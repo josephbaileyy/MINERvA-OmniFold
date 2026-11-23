@@ -1,0 +1,29 @@
+Note figure style, group C families 3-6 (2026-11-15): the checks after the fetch. Each line names the measurement and its
+result; the tools are in ../tools/ and each family's record is under family3/ ... family6/.
+
+Identity of each cluster off arm with the installed figure (pdftoppm -r 100, differing pixels):
+  uq_spread_2d 0; uq_corr_2d 0; eavail_spectrum 0; generators_vs_unfolded_band_central 0; mode_decomp_eavail_central 0;
+  compare_mec_eavail_central 0; ascencio_fullcov_compare_central 0; fps_acceptance_MEFHC 0.
+  q3_excess_projection 49212, fps_pilot_compare_MEFHC and fps_prior_envelope_MEFHC (canvas heights 506 vs 464 and 594 vs
+  542 px): the installed figures were committed on 2026-07-04 (242e996c6), before technote_style.py 1e7c28688 (07-15, the
+  header move). Drawn locally from the cluster dumps with technote_style.py as at 242e996c6 (matplotlib 3.10.8): 0, 0, 0
+  differing pixels, so the dumps hold the installed figures' data and only the style module had changed.
+  paper_joint_nulls 3782: the installed PDF was written by matplotlib 3.11.1 (its Creator field), the cluster's is
+  3.10.8. Drawn locally from the cluster dump with matplotlib 3.11.1: 0 differing pixels.
+  eavailW_band (ROOT): 591, the non-reproduction RE1-REPORT.md:64 recorded; the ROOT outputs of the base commit's
+  producer, the new default path and the new default path from the dump are byte-identical PNGs (f1e7b4a7) with
+  bit-equal TH1 readbacks (family5/eavailW-numcheck.txt).
+From-arrays capture against the off arm's (compare_any.py), all seven producers: COMPARE :: PASS.
+Pickles (family 4): every PICKLES.tsv sha256 matches its file; the unpickled figures' data-artist hash multisets equal
+  their live cluster capture (27, 31, 13 and 10 items).
+Print style against the cluster off arm (compare_any.py on the print-style capture; restyle_families3to6.sh):
+  PASS for uq_spread_2d, uq_corr_2d, eavail_spectrum, q3_excess_projection, fps_prior_envelope_MEFHC and, by
+  restyle_family4.py (RESTYLE4 :: PASS), the four RE-1 redraws.
+  fps_acceptance_MEFHC, fps_pilot_compare_MEFHC and paper_joint_nulls differ from the cluster capture in one artist each
+  (the log10 panel's QuadMesh; one histogram, whose bins come from np.geomspace). The same local default draw (no print
+  style) differs from the cluster capture in exactly those artists, and the local default and print-style draws are
+  hash-equal (COMPARE :: PASS) in all three: the difference is the platform's transcendental functions evaluated at draw
+  time (Apple arm64 against the cluster's x86_64 numpy, both 1.26.4), not the restyle.
+eavailW_band's new rendering: EAVAILW-NUMCHECK :: PASS (family5/eavailW-numcheck.txt): every step, point and edge of
+  the --print-style figure equals the off readback's hEa_*, hW_*, hData_ea and hData_W.
+Default paths unchanged by the restyle code: IDENTITY-FAMILY3/4/5/6 :: PASS at the commit that adds --print-style.

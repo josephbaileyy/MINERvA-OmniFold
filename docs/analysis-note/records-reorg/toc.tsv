@@ -1,0 +1,53 @@
+dest	level	title	label	file	inputs
+P1	part	Supporting detail, in the order of the analysis note			
+R1	section	Introduction: earlier work and the measurement landscape	recsec:intro	records_r01_intro.tex	
+R1.1	subsection	Earlier OmniFold studies and the practices applied here	recsec:intro-omnifold	records_r01_intro.tex	
+R1.2	subsection	The published MINERvA measurement, and why unbinned	recsec:intro-measurement	records_r01_intro.tex	
+R1.3	subsection	The dimensionality of MINERvA's published measurements	recsec:intro-survey	records_r01_intro.tex	
+R2	section	Data, observables and the unfolding method	recsec:method	records_r02_method.tex	
+R2.1	subsection	Data, simulation and event selection	recsec:method-data	records_r02_method.tex	
+R2.2	subsection	Observable definitions	recsec:method-observables	records_r02_method.tex	
+R2.3	subsection	The OmniFold implementation and its training settings	recsec:method-omnifold	records_r02_method.tex	
+R2.4	subsection	Background subtraction in the unfolding	recsec:method-background	records_r02_method.tex	
+R2.5	subsection	Estimators, configurations and the exact-split cross-check	recsec:method-estimators	records_r02_method.tex	
+R2.6	subsection	Binning, migrations and the reported product	recsec:method-binning	records_r02_method.tex	
+R2.7	subsection	Related developments: Profile OmniFold, SPINUP and gradient-boosted trees	recsec:method-related	records_r02_method.tex	
+R3	section	The two-dimensional muon cross section	recsec:twod	records_r03_twod.tex	
+R3.1	subsection	The unfolded cross section and the comparison with MINERvA	recsec:twod-result	records_r03_twod.tex	
+R3.1b	subsection	-		records_r03_twod.tex	
+R3.2	subsection	Construction of the two-dimensional covariance	recsec:twod-covariance	records_r03_twod.tex	
+R3.3	subsection	Closure, injected-feature and unbinned diagnostics	recsec:twod-validation	records_r03_twod.tex	
+R4	section	Higher-dimensional unfolding and validation	recsec:higherdim	records_r04_higherdim.tex	
+R4.1	subsection	The three-dimensional extension: binning, generator predictions and 2p2h	recsec:higherdim-3d	records_r04_higherdim.tex	
+R4.2	subsection	Adding momentum transfer and hadronic invariant mass	recsec:higherdim-q3w	records_r04_higherdim.tex	
+R4.3	subsection	Five-dimensional estimators and their development	recsec:higherdim-estimators	records_r04_higherdim.tex	
+R4.4	subsection	Closure tests and background-subtraction bias	recsec:higherdim-closure	records_r04_higherdim.tex	
+R4.5	subsection	Prior dependence and algorithmic robustness	recsec:higherdim-prior	records_r04_higherdim.tex	
+R4.6	subsection	Uncertainty calibration and the scope of the five-axis covariance	recsec:higherdim-calibration	records_r04_higherdim.tex	
+R4.7	subsection	Figure and table detail	recsec:higherdim-captions	records_r04_higherdim.tex	
+R4.8	subsection	The extended fiducial phase-space study (preliminary; no reported covariance)	recsec:higherdim-fps	records_r04_higherdim.tex	
+R5	section	The sixteen-cell cross section	recsec:sixteen	records_r05_sixteen.tex	
+R5.1	subsection	Cells, covariance blocks and the uncertainty budget	recsec:sixteen-budget	records_r05_sixteen.tex	
+R5.2	subsection	Coverage tests of the sixteen-cell covariance	recsec:sixteen-coverage	records_r05_sixteen.tex	
+R5.3	subsection	Generator comparison and the hydrocarbon-target correction	recsec:sixteen-generators	records_r05_sixteen.tex	
+R6	section	Limitations in full	recsec:limitations	records_r06_limitations.tex	
+R6.1	subsection	Principal limitations	recsec:limitations-principal	records_r06_limitations.tex	
+R6.2	subsection	Limitations by result	recsec:limitations-results	records_r06_limitations.tex	
+R7	section	Statistical methods	recsec:methods	records_r07_statistics.tex	
+R7.1	subsection	Covariance construction and MINERvA's conventions	recsec:methods-covariance	records_r07_statistics.tex	
+R7.2	subsection	Numerical conventions, inversion and rank	recsec:methods-rank	records_r07_statistics.tex	
+R7.3	subsection	Comparison statistics, closure and coverage	recsec:methods-comparison	records_r07_statistics.tex	
+R7.4	subsection	Multidimensional statistical methods	recsec:methods-nd	records_r07_statistics.tex	
+R7.5	subsection	Calibrated joint generator tests	recsec:methods-joint	records_r07_statistics.tex	
+R8	section	Negative-weight background subtraction	recsec:negweight	records_r08_negweight.tex	
+R8.1	subsection	The estimator and its binned limit	recsec:negweight-estimator	records_r08_negweight.tex	
+R8.2	subsection	Comparison, propagation and the production chains	recsec:negweight-comparison	records_r08_negweight.tex	
+R8.3	subsection	Refined subtraction in five dimensions	recsec:negweight-refined	records_r08_negweight.tex	
+R9	section	Detector response and further figure detail	recsec:supplementary	records_r09_supplementary.tex	
+R9.1	subsection	The detector-response mismatch	recsec:supplementary-response	records_r09_supplementary.tex	
+R9.2	subsection	Figure and table detail for Sections 2, 3 and 5 and the appendices	recsec:supplementary-captions	records_r09_supplementary.tex	
+R10	section	Reproducibility: the result package and its fixed identities	recsec:repro	records_r10_reproducibility.tex	
+R10.1	subsection	-		records_r10_reproducibility.tex	app_release_records
+R10.4	subsection	Test-suite discipline	recsec:repro-tests	records_r10_reproducibility.tex	app_codebase_records
+R10.5	subsection	Reproduction scope and required inputs	recsec:repro-scope	records_r10_reproducibility.tex	
+P2	part	Provenance and audit trail			

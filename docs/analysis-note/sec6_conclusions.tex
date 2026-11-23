@@ -1,0 +1,47 @@
+\section{Discussion and conclusions}
+\label{sec:discussion-and-conclusions}
+
+\subsection{What the measurements and tests establish}
+\label{sec:result-validity}
+
+The two-dimensional benchmark reproduces the published MINERvA integral to about $1\%$, with a correlated shape difference. The five-observable central values preserve the normalization and agree with the lower-dimensional results in the tested projections. At nominal truth, refined background subtraction removes most of the purity bias in the affected muon bins and, in a separate test, at high $W$. Calibrated joint tests of the generator predictions find no discrepancy that a matched coarse projection does not also show. Table~\ref{tab:validity} gives the scope of each result.
+
+\begingroup
+\setlength{\LTcapwidth}{\textwidth}
+\begin{xltabular}{\textwidth}{@{}>{\footnotesize\RaggedRight\arraybackslash\hsize=0.80\hsize}X
+                                 >{\footnotesize\RaggedRight\arraybackslash\hsize=1.00\hsize}X >{\footnotesize\RaggedRight\arraybackslash\hsize=0.95\hsize}X >{\footnotesize\RaggedRight\arraybackslash\hsize=1.25\hsize}X@{}}
+  \caption{Reported results, supported uses, and principal validation limits. Table~\ref{tab:higher-dimensional-validation} identifies the estimators and criteria used in the higher-dimensional validation tests.}
+  \label{tab:validity}\label{tab:result-status}\\
+    \toprule Result & Reported quantities & Supported use & Principal limit \\
+    \midrule \endfirsthead \toprule Result & Reported quantities & Supported use & Principal limit \\
+    \midrule \endhead \bottomrule \endlastfoot 2D muon cross section & \lrval{q-ncells} bin values and $Q_R$, with prior-shape dependence reported separately. & Quantitative benchmark of the integral with propagated uncertainties and descriptive comparisons of shape. & Shared inputs limit the published-result comparison, and the covariance gives no calibrated significance for generator comparisons. The statistical block lacks a coverage test, and the evaluated covariance under-covers jointly at both held-out tunes (Sec.~\ref{sec:part-2d}). \\
+    \addlinespace 3D and 4D unfoldings & Central values only, with $E_{\mathrm{avail}}$ and then $q_3$ added. & Normalization and projection checks. & Joint recovery remains unestablished, and the central values alone support no significance for generator comparisons (Secs.~\ref{sec:higher-dimensional-extension} and~\ref{sec:higher-dimensional-closure}). \\
+    \addlinespace Exploratory five-axis unfolding & Purity-based central values and $C_Z$. & Qualitative shape comparisons and use of $C_Z$ as a scale for diagnostics. & The covariance failed its acceptance requirements. The training-seed check exceeded its tolerance in two companion builds and was not computed for $C_Z$. Inference from these central values would require a validated estimator and covariance (Secs.~\ref{sec:higher-dimensional-closure} and~\ref{sec:higher-dimensional-calibration}). \\
+% Search: s_proj (limitation-resolver's search, carried from sec4_higherdim.tex Sec. 4.5 at ae84584de); estimator-seed magnitude criterion; L2 (computed only for 361090f9/7e4636a3, DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md:36-38; OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md:3-5) @ 0d919b1a
+    \addlinespace Sixteen-cell unfolding & Coarse five-observable integrals and $C_{\mathrm{rep}}$. & Illustration and descriptive generator comparisons only. & The estimator fails fake-data bias and rounding-stability criteria, and the reported covariance is too small for the deviations of held-out-tune pseudo-experiments. Model tuning or constraints would require resolving these failures (Secs.~\ref{sec:higher-dimensional-prior} and~\ref{sec:higher-dimensional-calibration}). \\
+    \addlinespace Joint generator tests & Decisions on ten hybrid rate-and-shape or shape-only hypotheses. & Tests of the specified predictions within the calibrated simulation model. & The tests depend on six conditions (Appendix~\ref{sec:joint5d-conditions}). Physical exclusions of generators are outside the scope of the hybrid tests (Sec.~\ref{sec:sixteen-cell-generator-comparison}). The false-rejection rate for null data processed as in the experiment remains unmeasured. The NuWro rate-and-shape decision is sensitive to the hydrocarbon target correction (Appendix~\ref{app:joint-generator-tests}). \\
+\end{xltabular}
+\endgroup
+
+\subsection{Limitations and their mechanisms}
+\label{sec:multidimensional-limitations}
+\label{sec:limitations}
+\label{sec:execsummary-limitations}
+
+Recovery of the joint five-observable distribution remains unestablished. Agreement in the total rate and in marginal projections does not establish a reliable joint unfolded distribution. A shift of cross section between hadronic cells within a muon quadrant cancels in the quadrant sum. The five-axis $W$ injection illustrates the same problem in simulation: the $W$ marginal meets its recovery criterion even as the joint $(E_{\mathrm{avail}},W)$ cells in the peak interval fall below their targets.
+
+The recovery of correlations among the observables depends on how much information the measured inputs carry about truth. Reconstructed $W$ is fixed by the other inputs, so separating events in true $W$ relies on the simulated mapping from reconstructed variables to truth. The missed-event correction adds a dependence on the simulated acceptance. It transfers weights learned on selected events to missed events at the same truth inputs and relies on extrapolation in regions with very low acceptance (Sec.~\ref{sec:omnifold-implementation}).
+
+The sixteen-cell result is sensitive to regularization and to the starting distribution. It retains part of the prior at both the GiBUU-like truth and the synthetic $q_3$ tilt, and its cell integrals differ from those of binned iterative Bayesian unfolding on the same inputs. In a study on noise-free samples, the retention at the GiBUU hybrid is consistent with a limit set by the weights of the missed events, and at the $q_3$ tilt with a limit set by the representation of the second, truth-level step (Sec.~\ref{sec:fived16-prr}). Coarsening the grid leaves appreciable prior dependence. Rounding-level changes also move the central values beyond the tolerance of the stability test.
+
+\phantomsection
+\label{sec:usage}\label{sec:limitations-use}
+The covariances propagate the specified variations but are too small for the deviations of held-out-tune pseudo-experiments from the truth (Secs.~\ref{sec:coverage-tunes} and~\ref{sec:higher-dimensional-calibration}). The scale of the run-period term and its ability to account for bias from pooling periods require independent checks. Linear projections of reported bins inherit the limitations of the input covariance. For inference on new observables, treating the unfolded events as independent in a likelihood can understate uncertainty because the fit correlates their weights.
+
+\subsection{Implications for multidimensional measurements}
+\label{sec:unfolding-outlook}
+\label{sec:summary}
+
+This study shows that unbinned unfolding can reproduce the normalization of a published neutrino cross-section measurement. A five-observable measurement requires demonstrating recovery and uncertainty coverage for the joint distribution at the reported resolution. Joint validation must probe changes in correlations at the resolution of the reported result. The main open steps are an end-to-end coverage test of the full reported covariance, including its response and run-period terms; identifying the origins of the run-period step and of the 2D shape difference with MINERvA; and validating the transfer of weights to events missed by the selection.
+
+% PASS2: The source prints the integral agreement as "about one percent". The equivalent literal 1\% is retained, along with the source's literal dimension labels, test counts, and q_3 subscript. (Check stage, 2026-11-21: the outlook no longer prints a study count, so the earlier "Three related studies" item is dropped.) The original summary/outlook label (sec:summary) is attached to Outlook. The original usage labels are attached to the applicability paragraph in the limitations subsection. The original top-level section wrapper was not included, so any label on that wrapper could not be verified. The restored xltabular compiled in a one-column article test. An optional REVTeX preprint test stopped inside xltabular at \@acoll.

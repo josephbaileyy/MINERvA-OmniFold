@@ -1,0 +1,245 @@
+key	runin	order	source
+d50e3a5d46		5	orchestrator (R7.5 order)
+d378743482	Opening.	10	orchestrator
+f291a11b24	Hypotheses, grid and statistics.	20	orchestrator
+8effc7e85f	Calibration within the implemented simulation model.	30	orchestrator
+1e16165fb9	Confidence intervals for functionals.	32	claude-school (opus, high), order by orchestrator
+205d1ded33	Empty cells in calibration pseudo-experiments.	34	claude-school (opus, high), order by orchestrator
+a7f5728f3d	Monte Carlo independence of predictions.	36	claude-school (opus, high), order by orchestrator
+525288d187	Lost pseudo-experiments and test size.	38	claude-school (opus, high), order by orchestrator
+47ee138f55	Multiplicity, stopping rule and design.	40	orchestrator
+e08fc66f8f	Holm reduction without independence.	42	claude-school (opus, high), order by orchestrator
+13f69b241b	Familywise error: the crossing event and the worst case.	44	orchestrator
+42811f80d1	Familywise error: certified evaluation of $R(c)$.	46	orchestrator
+192c2a20dd	-	48	claude-school (opus, high), order by orchestrator
+146c3ba5be	Decisions on the ten hypotheses.	50	orchestrator
+2bee3173ef	Scan of the multiplier $\kappa$.	52	orchestrator
+2bee3173ef#1	Power of the joint tests.	54	orchestrator
+3b46be3442	Six conditions attached to the ten rejections.	60	orchestrator
+cb18d9cfc5	Numerical convergence.	61	orchestrator
+53de49e8e7	Calibration validity.	62	orchestrator
+c9b301aa7f	Physical-model adequacy.	63	orchestrator
+ff40a2e5a6	Paired rounding diagnostic.	64	claude-school (opus, high), order by orchestrator
+be66632411	Paired-model $\sqrt{2}$ factor.	65	claude-school (opus, high), order by orchestrator
+a0642f78c2	Lost pseudo-experiments and their recovery.	70	orchestrator
+e8c199f77d	Evaluation of the recovered draws.	71	orchestrator
+ab56846a20	Worst case and determinism check.	72	orchestrator
+1f46e22958	Matched coarse projections.	80	orchestrator
+62477ba945	Hadronic-response condition and recoil-energy sensitivity.	90	orchestrator
+2bee3173ef#3	Recoil-energy scale study.	92	orchestrator
+2bee3173ef#2	The published comparison in muon kinematics.	94	orchestrator
+2bee3173ef#4	Hydrocarbon target correction.	100	orchestrator
+dd256f1ac6	Construction.	101	orchestrator
+c3e9a6086d	Re-evaluated tests.	102	orchestrator
+2cea6ebd64	Generation checks.	103	orchestrator
+c4fa422595		104	orchestrator (R7.5 order)
+2cea6ebd64-2		105	orchestrator (R7.5 order)
+03fcc86d93	Detector layout and muon spectrometer.		claude-school (opus, high), checked by records_reorg format rules
+fa43562e59	Reweighting components of the reference simulation.		claude-school (opus, high), checked by records_reorg format rules
+7436b75cf3	Background subtraction before unfolding.		claude-school (opus, high), checked by records_reorg format rules
+5d7645fc3b	Composition of the background template.		claude-school (opus, high), checked by records_reorg format rules
+2ebe3bd38d	Data-to-simulation normalization at reconstructed level.		claude-school (opus, high), checked by records_reorg format rules
+4bf41cbc59	Status of the PET method.		claude-school (opus, high), checked by records_reorg format rules
+5c5c577cc0	Energy transfer $q_{0}$.		claude-school (opus, high), checked by records_reorg format rules
+c5c278b6d4	Classifier inputs and reported observables.		claude-school (opus, high), checked by records_reorg format rules
+5e79138e29	Effect of the sample-definition convention on cells.		claude-school (opus, high), checked by records_reorg format rules
+3cd24428a2	Charged-pion mass replacement in $E_{\mathrm{avail}}$.		claude-school (opus, high), checked by records_reorg format rules
+3500ab8503	Generator neutrino axis for muon kinematics.		claude-school (opus, high), checked by records_reorg format rules
+18320440fb	Step-1 weights for missed truth events.		claude-school (opus, high), checked by records_reorg format rules
+398ab92b9a	Adding observables in unbinned OmniFold.		claude-school (opus, high), checked by records_reorg format rules
+cf1c58da18	Gradient-boosted decision trees as classifiers.		claude-school (opus, high), checked by records_reorg format rules
+22ad9cd779	Learner of the quoted 2D central value.		claude-school (opus, high), checked by records_reorg format rules
+4d6e3ed261	Reproducibility and seed dispersion of the central value.		claude-school (opus, high), checked by records_reorg format rules
+7427a378ae	Multidimensional estimator settings.		claude-school (opus, high), checked by records_reorg format rules
+546d806a46	Fixed GBDT settings and capacity.		claude-school (opus, high), checked by records_reorg format rules
+c216c3c90e	Keras multilayer-perceptron cross-check.		claude-school (opus, high), checked by records_reorg format rules
+6aac1d5717	Performance diagnostics.		claude-school (opus, high), checked by records_reorg format rules
+caa691880f	Iteration count.		claude-school (opus, high), checked by records_reorg format rules
+abf36abb39	Inputs to the step-1 classifier.		claude-school (opus, high), checked by records_reorg format rules
+d75b1fa142	Class weights and effective sample size.		claude-school (opus, high), checked by records_reorg format rules
+0da9acf58d	Alternative-seed central unfolding.		claude-school (opus, high), checked by records_reorg format rules
+f2feb69e8c	Missed-event regressor variants and transfer probe.		claude-school (opus, high), checked by records_reorg format rules
+689952be25	Hyperparameter choice.		claude-school (opus, high), checked by records_reorg format rules
+3ac479272f	Absence of injected negative weights.		claude-school (opus, high), checked by records_reorg format rules
+dae402e0ff	Refined and binned subtraction variants.		claude-school (opus, high), checked by records_reorg format rules
+7f326aaadc	Estimators of the multidimensional results.		claude-school (opus, high), checked by records_reorg format rules
+286ad7ddcc	Seed dependence of the exact-split result.		claude-school (opus, high), checked by records_reorg format rules
+2db5165adb	Estimator configurations.		claude-school (opus, high), checked by records_reorg format rules
+cd51cd4558	Histogram construction and deterministic training.		claude-school (opus, high), checked by records_reorg format rules
+4c83564a0b	Regularization scan of the $\chi^{2}$.		claude-school (opus, high), checked by records_reorg format rules
+c93c27e7ea	Separation of configurations.		claude-school (opus, high), checked by records_reorg format rules
+85a9ccf083	Scope of reduced prior dependence.		claude-school (opus, high), checked by records_reorg format rules
+64e75959a9	Exact-split central-value differences.		claude-school (opus, high), checked by records_reorg format rules
+a951825ecb	-		claude-school (opus, high), checked by records_reorg format rules
+bd1ca11a1f	Shape distance of the exact-split cross-check.		claude-school (opus, high), checked by records_reorg format rules
+62d647ef66	Correction factor, self-test and flux integral.		claude-school (opus, high), checked by records_reorg format rules
+7c466faa84	Nucleon count and flux units.		claude-school (opus, high), checked by records_reorg format rules
+44cbf8206f	Extension-axis bin edges.		claude-school (opus, high), checked by records_reorg format rules
+c852049dab	Truth-to-reco migration.		claude-school (opus, high), checked by records_reorg format rules
+ab00d4aae9	Profile OmniFold.		claude-school (opus, high), checked by records_reorg format rules
+200e3911e8	SPINUP and AUSSIE.		claude-school (opus, high), checked by records_reorg format rules
+795d485e04	Published MINERvA triple-differential results.		claude-school (opus, high), checked by records_reorg format rules
+244b1282b4	Interpretive scope of generator comparisons.		claude-school (opus, high), checked by records_reorg format rules
+81c5d794fb	Charged-pion offset test without retraining.		claude-school (opus, high), checked by records_reorg format rules
+93b5bd49d0	Marginalization check against the 2D result.		claude-school (opus, high), checked by records_reorg format rules
+1e864b4353	Sources of generator predictions.		claude-school (opus, high), checked by records_reorg format rules
+975e88c507	Flux repair of generator samples.		claude-school (opus, high), checked by records_reorg format rules
+302a775fc3	Generator ordering in $E_{\mathrm{avail}}$.		claude-school (opus, high), checked by records_reorg format rules
+1bdff356b7	Low-recoil excess and multi-nucleon physics.		claude-school (opus, high), checked by records_reorg format rules
+25d917832c	Flux defect in reweighting ratios.		claude-school (opus, high), checked by records_reorg format rules
+072c3d5bb7	Absence of MEC events in the GENIE sample.		claude-school (opus, high), checked by records_reorg format rules
+bb44b6ecbf	2p2h category and two-body currents.		claude-school (opus, high), checked by records_reorg format rules
+48f369b294	Comparison with the low-recoil inclusive measurement.		claude-school (opus, high), checked by records_reorg format rules
+b254ed37fe	Inherited available-energy definitions.		claude-school (opus, high), checked by records_reorg format rules
+1600629698	GENIE with Valencia 2p2h.		claude-school (opus, high), checked by records_reorg format rules
+b81e4e1bea	Distinguishing feature of the analysis.		claude-school (opus, high), checked by records_reorg format rules
+5774365f23	Species contributions to truth available energy.		claude-school (opus, high), checked by records_reorg format rules
+a1ee6715e5	-		claude-school (opus, high), checked by records_reorg format rules
+d5040c0105	Studies with unrepaired samples.		claude-school (opus, high), checked by records_reorg format rules
+0be06f420b	Integrated rates without the catch bin.		claude-school (opus, high), checked by records_reorg format rules
+cee2b5df90	Pion final-state-interaction dials.		claude-school (opus, high), checked by records_reorg format rules
+e2c90f8fe2	Interaction-mode content of base GENIE.		claude-school (opus, high), checked by records_reorg format rules
+49195f8ba2	Integrated rate with Valencia 2p2h.		claude-school (opus, high), checked by records_reorg format rules
+0e1dbc940a	-		claude-school (opus, high), checked by records_reorg format rules
+13f32e97a3	Scope of the pion-FSI conclusion.		claude-school (opus, high), checked by records_reorg format rules
+1c44a33906	Three-momentum transfer as fourth axis.		claude-school (opus, high), checked by records_reorg format rules
+c0e49e427b	Reference prediction and 4D-to-3D recovery.		claude-school (opus, high), checked by records_reorg format rules
+bfe1c20668	Unresolved $(E_{\mathrm{avail}},q_{3})$ correlation.		claude-school (opus, high), checked by records_reorg format rules
+655acf5213	Unified throw and 4D uncertainty.		claude-school (opus, high), checked by records_reorg format rules
+57e2931b92	Reconstructed and truth $W$ conventions.		claude-school (opus, high), checked by records_reorg format rules
+489421d831	Lateral shifts of $W$ and hadronic diagnostics.		claude-school (opus, high), checked by records_reorg format rules
+52bee4dddb	Response-mismatch closure and seed shifts.		claude-school (opus, high), checked by records_reorg format rules
+fb4899c469	Normalization of generator predictions.		claude-school (opus, high), checked by records_reorg format rules
+a68d0fb427	GiBUU energy limit and corner contrast.		claude-school (opus, high), checked by records_reorg format rules
+8e9cffd467	Valencia 2p2h and high-$W$ ratios.		claude-school (opus, high), checked by records_reorg format rules
+3b7cdea417	Shallow-inelastic measurements as context.		claude-school (opus, high), checked by records_reorg format rules
+8bec654910	Cell R04 uncertainty and correlations.		claude-school (opus, high), checked by records_reorg format rules
+b9e960f3d4	Common grid for the low-recoil comparison.		claude-school (opus, high), checked by records_reorg format rules
+2d7130893a	Scope of the five-axis validation.		claude-school (opus, high), checked by records_reorg format rules
+5e0625face	4D-to-3D marginalization check.		claude-school (opus, high), checked by records_reorg format rules
+49bf7e9f36	Prior of the $(E_{\mathrm{avail}},q_{3})$ map.		claude-school (opus, high), checked by records_reorg format rules
+212a90a5c3	Valencia 2p2h and the high-$E_{\mathrm{avail}}$ region.		claude-school (opus, high), checked by records_reorg format rules
+555db35233	GENIE CV at high $E_{\mathrm{avail}}$.		claude-school (opus, high), checked by records_reorg format rules
+3aec2491e1	$W$ bin edges.		claude-school (opus, high), checked by records_reorg format rules
+afb3a2ad8f	Units and binning of generator predictions.		claude-school (opus, high), checked by records_reorg format rules
+6a7115d352	Hydrogen and the target difference.		claude-school (opus, high), checked by records_reorg format rules
+d41f1783f7	OmniFold prior as compared prediction.		claude-school (opus, high), checked by records_reorg format rules
+a22967f377	Corner ratios of the generators.		claude-school (opus, high), checked by records_reorg format rules
+d23d95945a	Contents of the five-dimensional section.		claude-school (opus, high), checked by records_reorg format rules
+74eae90a3a	Separate mechanisms behind validation tests.		claude-school (opus, high), checked by records_reorg format rules
+b528d4672d	Limits of the fake-data truths.		claude-school (opus, high), checked by records_reorg format rules
+05d57ec91e	Fake-data control checks.		claude-school (opus, high), checked by records_reorg format rules
+f955d3a3aa	Per-cell validity rules.		claude-school (opus, high), checked by records_reorg format rules
+941846b8be	Purity bias relative to total uncertainty.		claude-school (opus, high), checked by records_reorg format rules
+0175679dd8	Joint-cell residuals with background.		claude-school (opus, high), checked by records_reorg format rules
+d0bc76d79c	Purity bias in statistical units.		claude-school (opus, high), checked by records_reorg format rules
+f4aa0a81ef	Interpretation of the retained fraction.		claude-school (opus, high), checked by records_reorg format rules
+d60f7aa5d9	Recovery without and with background.		claude-school (opus, high), checked by records_reorg format rules
+7dec6a935f	Injected $E_{\mathrm{avail}}$ bump closure.		claude-school (opus, high), checked by records_reorg format rules
+585341675b	Alternative constructions of $C_{\mathrm{model}}$ in fake-data tests.		claude-school (opus, high), checked by records_reorg format rules
+d28d3bce71	Reuse of saved outputs in the synthesis.		claude-school (opus, high), checked by records_reorg format rules
+c10a21faf3	Unfolding-model dependence at withheld shapes.		claude-school (opus, high), checked by records_reorg format rules
+dcdb525f75	Held-out GENIE tunes.		claude-school (opus, high), checked by records_reorg format rules
+fa007d91e6	Generator-sized GiBUU-to-GENIE departure.		claude-school (opus, high), checked by records_reorg format rules
+77d57a8208	Reading of the binned IBU comparison.		claude-school (opus, high), checked by records_reorg format rules
+3e92cf022e	-		claude-school (opus, high), checked by records_reorg format rules
+8e5d02fa0d	Reconstructed-level recovery versus truth residual.		claude-school (opus, high), checked by records_reorg format rules
+a251a66799	Estimator selection and coarser cells.		claude-school (opus, high), checked by records_reorg format rules
+dbdeda4137	Sixteen-cell comparison with binned IBU.		claude-school (opus, high), checked by records_reorg format rules
+0386180b9b	MLP and GBDT classifier comparison.		claude-school (opus, high), checked by records_reorg format rules
+b57197c4f3	Acceptance status of the five-axis covariance.		claude-school (opus, high), checked by records_reorg format rules
+84431ec77f	Scope of the five-axis covariance use.		claude-school (opus, high), checked by records_reorg format rules
+fb965e6aac	Diagonal seed-sensitivity measures.		claude-school (opus, high), checked by records_reorg format rules
+4178d2dbcb	Five-dimensional coverage figure.		claude-school (opus, high), checked by records_reorg format rules
+aae1a6f7ae	Ensemble size and resampling floor.		claude-school (opus, high), checked by records_reorg format rules
+edd5904abf	Quadrant comparisons with the 2D result.		claude-school (opus, high), checked by records_reorg format rules
+31ec1c4ea2	Event-loop modes for lateral bands.		claude-school (opus, high), checked by records_reorg format rules
+8f97ebaf0b	Bands outside the kinematic replacement.		claude-school (opus, high), checked by records_reorg format rules
+a958ba6c08	Scope of $C_Z$.		claude-school (opus, high), checked by records_reorg format rules
+47f5fa856a	Components of $C_{\mathrm{e}}$.		claude-school (opus, high), checked by records_reorg format rules
+855c7de4e2	Generator-shape block $C_{\mathrm{model}}$.		claude-school (opus, high), checked by records_reorg format rules
+30df7469ec	GiBUU reweighting and $C_{\mathrm{model}}$ trace.		claude-school (opus, high), checked by records_reorg format rules
+d6a6e9683f	Run-period block $C_{\mathrm{PL,5D}}$.		claude-school (opus, high), checked by records_reorg format rules
+6e2a86b2c6	-		claude-school (opus, high), checked by records_reorg format rules
+0201314db0	Single-playlist unfoldings.		claude-school (opus, high), checked by records_reorg format rules
+d533734017	Location of the run-period step.		claude-school (opus, high), checked by records_reorg format rules
+4af81e7432	Effect of adding the run-period block.		claude-school (opus, high), checked by records_reorg format rules
+13e1f67b46	Contents of the sixteen-cell section.		claude-school (opus, high), checked by records_reorg format rules
+c1974d31bc	Formation of the sixteen cells.		claude-school (opus, high), checked by records_reorg format rules
+180aea97d5	Unreported boxes in quadrant sums.		claude-school (opus, high), checked by records_reorg format rules
+159731221f	Detector-response block $C_{\mathrm{resp}}$.		claude-school (opus, high), checked by records_reorg format rules
+316aece1e0	Kinds of inverted blocks.		claude-school (opus, high), checked by records_reorg format rules
+bede452fba	Overlap and origin of the run-period block.		claude-school (opus, high), checked by records_reorg format rules
+dfac578812	Comparison without the cross covariance.		claude-school (opus, high), checked by records_reorg format rules
+cf8d2d5c8b	Comparison with the cross covariance.		claude-school (opus, high), checked by records_reorg format rules
+170c250dfa	Unpaired terms of the cross covariance.		claude-school (opus, high), checked by records_reorg format rules
+a12ba00f7f	Kinematic bands in $C_Z$.		claude-school (opus, high), checked by records_reorg format rules
+e6e9fdf477	-		claude-school (opus, high), checked by records_reorg format rules
+7aedea4a35	Permutation statistic $F$ for run periods.		claude-school (opus, high), checked by records_reorg format rules
+55f090608c	Agreement rule without cross covariance.		claude-school (opus, high), checked by records_reorg format rules
+4c2c2f1ffe	Paired terms of the cross covariance.		claude-school (opus, high), checked by records_reorg format rules
+19177f4ac0	Agreement rule with cross covariance.		claude-school (opus, high), checked by records_reorg format rules
+2daa6cfc4f	Coverage status of $C_{\mathrm{model}}$.		claude-school (opus, high), checked by records_reorg format rules
+40b9f6facc	Cell flags of the second coverage test.		claude-school (opus, high), checked by records_reorg format rules
+8d2bad7334	Generator $\chi^{2}$ definitions.		claude-school (opus, high), checked by records_reorg format rules
+1bcfaba4f8	Generator content of the comparison covariance.		claude-school (opus, high), checked by records_reorg format rules
+081d2e2b7c	Sensitivity to the flux correlations.		claude-school (opus, high), checked by records_reorg format rules
+4fe3098be3	Eigenmode decomposition of $\chi^{2}$.		claude-school (opus, high), checked by records_reorg format rules
+467156fcbe	Secondary comparison in analysis definitions.		claude-school (opus, high), checked by records_reorg format rules
+168b347745	Generator comparison corrected to CH.		claude-school (opus, high), checked by records_reorg format rules
+6718e7ca7e	$C_{\mathrm{model}}$ rebuilt from CH ratios.		claude-school (opus, high), checked by records_reorg format rules
+bb863e6692	Scale of $C_{\mathrm{model}}$.		claude-school (opus, high), checked by records_reorg format rules
+5a54383b84	Scope of the CH-ratio rebuild.		claude-school (opus, high), checked by records_reorg format rules
+e626e91679	-		claude-school (opus, high), checked by records_reorg format rules
+e66407c3ba	Scope of the statistical appendix.		claude-school (opus, high), checked by records_reorg format rules
+8ac3cfd3d0	Coherent Poisson bootstrap.		claude-school (opus, high), checked by records_reorg format rules
+2f51cfa4cd	Bootstrap replica count.		claude-school (opus, high), checked by records_reorg format rules
+37f52112a6	Bands in the universe sweep.		claude-school (opus, high), checked by records_reorg format rules
+b0a9b9c259	Two-universe limit of the MAT covariance.		claude-school (opus, high), checked by records_reorg format rules
+8c2772ffd9	Corrected systematic construction.		claude-school (opus, high), checked by records_reorg format rules
+9c11a2b88a	-		claude-school (opus, high), checked by records_reorg format rules
+c4ca0d2e43	Mean- versus CV-centered pair estimators.		claude-school (opus, high), checked by records_reorg format rules
+e7f47a5da3	MAT covariance convention.		claude-school (opus, high), checked by records_reorg format rules
+ab8f10e97a	MAT implementation and normalization.		claude-school (opus, high), checked by records_reorg format rules
+51f259ed30	Band sum and rank of the total covariance.		claude-school (opus, high), checked by records_reorg format rules
+414735f75d	Variance sources of the blocks.		claude-school (opus, high), checked by records_reorg format rules
+d0e456d073	Combined median uncertainties.		claude-school (opus, high), checked by records_reorg format rules
+c7e351285a	-		claude-school (opus, high), checked by records_reorg format rules
+2a95fbcee0	Variance versus bias.		claude-school (opus, high), checked by records_reorg format rules
+2ab463b474	Acceptance leakage bound.		claude-school (opus, high), checked by records_reorg format rules
+5e70bba9d6	Normality of toy residuals.		claude-school (opus, high), checked by records_reorg format rules
+df9fa39982	-		claude-school (opus, high), checked by records_reorg format rules
+cabdb34efe	Rank of sample covariances.		claude-school (opus, high), checked by records_reorg format rules
+72bd4e071c	Global scale of the bootstrap block.		claude-school (opus, high), checked by records_reorg format rules
+4a346d8ee9	Seed pinning and cross-correlations.		claude-school (opus, high), checked by records_reorg format rules
+5de9e1e52a	Bins suppressed by the efficiency cut.		claude-school (opus, high), checked by records_reorg format rules
+85da894f40	Strict-interior mask.		claude-school (opus, high), checked by records_reorg format rules
+657ee7cb0c	Computation of the comparison $\chi^{2}$.		claude-school (opus, high), checked by records_reorg format rules
+eacc82f201	Truncation scan and ndf choice.		claude-school (opus, high), checked by records_reorg format rules
+e6a7beecd1	Missing cross-covariance.		claude-school (opus, high), checked by records_reorg format rules
+f88c0dfca8	Expected spread of $\chi^{2}/\mathrm{ndf}$.		claude-school (opus, high), checked by records_reorg format rules
+957b8b35b9	Shared estimator and scope of the scalar.		claude-school (opus, high), checked by records_reorg format rules
+f0888e082b	Statistical floor in the combined covariance.		claude-school (opus, high), checked by records_reorg format rules
+a78d2bba74	Trace share and inverse dominance.		claude-school (opus, high), checked by records_reorg format rules
+99da6c0f4a	-		claude-school (opus, high), checked by records_reorg format rules
+7801af64bb	Shape-only comparison.		claude-school (opus, high), checked by records_reorg format rules
+5a74559476	Band count and covariance rank.		claude-school (opus, high), checked by records_reorg format rules
+22319bf195	-		claude-school (opus, high), checked by records_reorg format rules
+ed428da40a	Truncated pseudo-inverse as collaboration practice.		claude-school (opus, high), checked by records_reorg format rules
+786e87147b	MAT conformance of the band sum.		claude-school (opus, high), checked by records_reorg format rules
+bb5d6aae09	Toy pulls and training-seed block.		claude-school (opus, high), checked by records_reorg format rules
+5515f7830c	Edge-bin sensitivity.		claude-school (opus, high), checked by records_reorg format rules
+39eb52c704	Fixed-truth coverage rescoring.		claude-school (opus, high), checked by records_reorg format rules
+c8595fd099	Injected $W$ bump in five dimensions.		claude-school (opus, high), checked by records_reorg format rules
+a41d93a4d8	Scope of the multidimensional appendix.		claude-school (opus, high), checked by records_reorg format rules
+40f39b1c5c	Rank deficiency of N-D covariances.		claude-school (opus, high), checked by records_reorg format rules
+e3c7543fc7	-		claude-school (opus, high), checked by records_reorg format rules
+eef127c625	Recording of ensemble sizes.		claude-school (opus, high), checked by records_reorg format rules
+529fa57fc9	Finite-ensemble debiasing.		claude-school (opus, high), checked by records_reorg format rules
+c95c22b36a	Normal-model approximations.		claude-school (opus, high), checked by records_reorg format rules
+96df2fc870	Interval assessment examples.		claude-school (opus, high), checked by records_reorg format rules
+f4eb41d992	Diagnostic reductions and checkpoints.		claude-school (opus, high), checked by records_reorg format rules
+04bb066ed3	Inference from unfolded events.		claude-school (opus, high), checked by records_reorg format rules
+7259e02ac8	-		claude-school (opus, high), checked by records_reorg format rules
+97bdb2df9d	Bin-identical comparison with the published low-recoil data.		claude-school (opus, high), checked by records_reorg format rules
+1f06a114eb			orchestrator, flag b (Joseph, 2026-11-21): R4.8's own heading replaces the wrapper and sec_fps.tex headings

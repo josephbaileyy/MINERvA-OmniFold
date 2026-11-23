@@ -13,6 +13,11 @@ statistics with the frozen-rule replay. Per null and statistic, it shows the dec
 distribution has the largest median (the most conservative), with the observed statistic and k/B.
 
 Usage: python3 plot_joint_null_distributions.py --npz <inference_sufficient.npz> --out <pdf>
+
+Opt-in (note figure style, group C family 6): --dump-arrays FILE.npz writes every drawn value (each null's chosen
+variant, its null statistics, the observed value, k and B) after the replay; --from-arrays FILE.npz draws from such a
+dump without the extract or the replay; --print-style draws in the note's print style (note_print_style). With none of
+them, the figure is drawn as before.
 """
 from __future__ import annotations
 
@@ -67,15 +72,40 @@ def null_sets(z, man):
     return out
 
 
-def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
-    ap.add_argument("--npz", type=Path, required=True)
-    ap.add_argument("--out", type=Path, required=True)
-    a = ap.parse_args(argv)
-    z = np.load(a.npz, allow_pickle=False)
-    man = json.loads(Path(str(a.npz) + ".manifest.json").read_text())
-    ns = null_sets(z, man)
-    order = ["MnvTune_v1", "GENIE_2_12_10_CV", "GENIE_2_12_10_MEC", "NuWro_21_09", "GiBUU_2019"]
+ORDER = ["MnvTune_v1", "GENIE_2_12_10_CV", "GENIE_2_12_10_MEC", "NuWro_21_09", "GiBUU_2019"]
+
+
+def dump(ns, path):
+    out = {}
+    for key, r in ns.items():
+        for s, d in r.items():
+            out[f"{key}__{s}__null"] = np.asarray(d["null"])
+            out[f"{key}__{s}__obs"] = np.float64(d["obs"])
+            out[f"{key}__{s}__k"] = np.int64(d["k"])
+            out[f"{key}__{s}__B"] = np.int64(d["B"])
+            out[f"{key}__{s}__variant"] = np.array(d["variant"])
+    np.savez(path, **out)
+
+
+def undump(path):
+    ns = {}
+    with np.load(path, allow_pickle=False) as z:
+        for name in z.files:
+            key, s, field = name.split("__")
+            v = z[name]
+            v = str(v) if field == "variant" else (int(v) if field in ("k", "B") else (float(v) if field == "obs" else v))
+            ns.setdefault(key, {}).setdefault(s, {})[field] = v
+    return ns
+
+
+def draw(ns, out, print_style=False):
+    order = ORDER
+    if print_style:
+        _root = Path(__file__).resolve().parents[3]
+        if str(_root) not in sys.path:
+            sys.path.insert(0, str(_root))
+        import note_print_style as nps
+        nps.apply()
     plt.rcParams.update({"font.size": 7, "axes.linewidth": 0.6, "xtick.major.width": 0.6, "ytick.major.width": 0.6,
                          "axes.edgecolor": INK_2, "xtick.color": INK_2, "ytick.color": INK_2})
     fig, axes = plt.subplots(2, 5, figsize=(7.0, 3.1), constrained_layout=True)
@@ -110,8 +140,29 @@ def main(argv=None) -> int:
                         plt.Line2D([0], [0], color=INK, linewidth=1.2)],
                labels=["null pseudo-experiments (shifted null with the largest median)", "data"],
                loc="outside lower center", ncol=2, frameon=False, fontsize=6.5)
-    a.out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(a.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out)
+
+
+def main(argv=None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
+    ap.add_argument("--npz", type=Path, default=None)
+    ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--dump-arrays", type=Path, default=None, help="write every drawn value to this .npz after the replay")
+    ap.add_argument("--from-arrays", type=Path, default=None, help="draw from this .npz (no extract, no replay)")
+    ap.add_argument("--print-style", action="store_true", help="draw in the note's print style")
+    a = ap.parse_args(argv)
+    if a.from_arrays:
+        ns = undump(a.from_arrays)
+    else:
+        if a.npz is None:
+            ap.error("--npz is required unless --from-arrays is given")
+        z = np.load(a.npz, allow_pickle=False)
+        man = json.loads(Path(str(a.npz) + ".manifest.json").read_text())
+        ns = null_sets(z, man)
+        if a.dump_arrays:
+            dump(ns, a.dump_arrays)
+    draw(ns, a.out, a.print_style)
     summary = {k: {s: {kk: (v if not isinstance(v, np.ndarray) else None) for kk, v in d.items() if kk != "null"}
                    for s, d in r.items()} for k, r in ns.items()}
     print(json.dumps(summary, indent=1))

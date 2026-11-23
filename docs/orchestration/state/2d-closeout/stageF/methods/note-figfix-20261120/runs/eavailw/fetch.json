@@ -1,0 +1,54 @@
+{
+ "what": "read-only O_NOATIME fetch of the four s5p stage-7 repaired (E_avail, W) generator files from the s5p CFS archive (director's GO, 2026-11-21, window to 2026-11-21T02:48:52Z; tier3-design ack 01:19:09Z)",
+ "reader": "remote_read.py over ssh -o ControlPath=none saul.nersc.gov 'python3 -' (stdin; nothing written on the cluster)",
+ "files": [
+  {
+   "name": "genie_cv",
+   "path": "/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/stage7/genfig/3d-unfolding/genie/genie_cv_xsec_eavailW.root",
+   "host": "login38",
+   "utc": "2026-11-21T01:19:53Z",
+   "size": 5420,
+   "st_size": 5420,
+   "sha256": "debaf83e66cb8918ab10ecbeeb0a34bec1be8f457ae3fe3ab29dd8399796a664",
+   "atime_before_ns": 1791446515872882045,
+   "atime_after_ns": 1791446515872882045,
+   "mtime_ns": 1790500377000000000
+  },
+  {
+   "name": "genie_mec",
+   "path": "/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/stage7/genfig/3d-unfolding/genie/genie_mec_xsec_eavailW.root",
+   "host": "login38",
+   "utc": "2026-11-21T01:19:53Z",
+   "size": 5434,
+   "st_size": 5434,
+   "sha256": "1098e9124ddd6ee2e6845594ee65f486fc3c86679a1dde9a34c876638421e70d",
+   "atime_before_ns": 1791505077387689748,
+   "atime_after_ns": 1791505077387689748,
+   "mtime_ns": 1790500381000000000
+  },
+  {
+   "name": "nuwro_cv",
+   "path": "/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/stage7/genfig/3d-unfolding/genie/nuwro_cv_xsec_eavailW.root",
+   "host": "login38",
+   "utc": "2026-11-21T01:19:53Z",
+   "size": 5421,
+   "st_size": 5421,
+   "sha256": "d7d46a0c547dfd83ccce7bba39a2f81eae80a597a32817bf7289b80729145d3c",
+   "atime_before_ns": 1791505077388143869,
+   "atime_after_ns": 1791505077388143869,
+   "mtime_ns": 1790500385000000000
+  },
+  {
+   "name": "gibuu_cv",
+   "path": "/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/stage7/genfig/3d-unfolding/genie/gibuu_cv_xsec_eavailW.root",
+   "host": "login38",
+   "utc": "2026-11-21T01:19:53Z",
+   "size": 5422,
+   "st_size": 5422,
+   "sha256": "b430ddc6c2f22568d1f3cfd4b997afda1860daa1422946ff5653adb53ca556d9",
+   "atime_before_ns": 1791505077387812117,
+   "atime_after_ns": 1791505077387812117,
+   "mtime_ns": 1790500388000000000
+  }
+ ]
+}

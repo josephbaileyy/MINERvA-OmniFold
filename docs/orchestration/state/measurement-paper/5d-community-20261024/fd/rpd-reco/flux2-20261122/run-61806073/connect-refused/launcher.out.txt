@@ -1,0 +1,2 @@
+STOP: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7e3f49f7-e8e4-452d-b380-399d4f6c529e/scratchpad/f2run/connect is not a new empty directory
+launcher rc=9

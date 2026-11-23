@@ -1,0 +1,84 @@
+### fig:eavailWband (`eavailW_band`)
+
+1. **Does the caption still describe the NEW figure correctly?**  
+   None. The caption states that the figure shows "Projections of the unfolded $(\Eavail,W)$ cross section onto $\Eavail$ (left) and $W$ (right), with the predictions of four generators (GENIE~CV, GENIE$+$MEC, NuWro, GiBUU; GENIE and NuWro flux-corrected, \S\ref{sec:3d-models})." The new figure retains $E_{\mathrm{avail}}$ on the left, $W$ on the right, and the legend includes all four named generators ("GENIE-CV", "GENIE+MEC", "NuWro", "GiBUU"). The caption specifies no colors, markers, or line styles, so no statements are contradicted.
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**  
+   None. All text elements are preserved verbatim in the new figure:
+   - Annotation: `"MINERvA ME FHC, 1.06 \times 10^{21} POT"`
+   - Legend labels: `"data (unfolded)"`, `"GENIE-CV"`, `"GENIE+MEC"`, `"NuWro"`, `"GiBUU"`
+   - Axis labels: left panel y-axis `"$d\sigma/dE_{\mathrm{avail}}$"`, x-axis `"$E_{\mathrm{avail}}\ (\mathrm{GeV})$"`; right panel y-axis `"$d\sigma/dW$"`, x-axis `"$W\ (\mathrm{GeV})$"`
+   - All axis tick marks and numeric labels.
+
+3. **Does the NEW figure show anything the old one did not?**  
+   No new label, changed number, or different quantity. The plotted curves and data points represent the identical numerical values. Only the series colors and marker styles were changed:
+   - `"data (unfolded)"`: marker color changed from black to red/rust (circle marker retained).
+   - `"GENIE-CV"`: line and marker color changed from red to pink/mauve; marker changed from circle to downward-pointing triangle ($\triangledown$).
+   - `"GENIE+MEC"`: line and marker color changed from blue to orange (square marker retained).
+   - `"NuWro"`: line and marker color changed from green to teal (upward-pointing triangle marker retained).
+   - `"GiBUU"`: line and marker color changed from purple to dark indigo/slate blue (diamond marker retained).
+
+---
+
+### fig:q3excess (`q3_excess_projection`)
+
+1. **Does the caption still describe the NEW figure correctly?**  
+   The caption states: "4D data/Tune~v1 ratio (``data/GENIE'' in the figure) projected onto $(\Eavail,q_{3})$ (left; blank cells are kinematically empty), with $q_{3}$ (center) and $\Eavail$ (right) marginals." This contradicts the new figure: the y-axis label on both the center ($q_3$) and right ($E_{\mathrm{avail}}$) marginal panels has been changed from `"data/GENIE"` to `"unfolded / GENIE prior"`. The text `"data/GENIE"` no longer appears anywhere in the figure. All other caption statements (projection panels, blank kinematically empty cells, absence of drawn uncertainties) remain accurate.
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**  
+   - `"data/GENIE"`: Printed on the y-axes of both the center and right marginal panels in the old figure; lost in the new figure (replaced by `"unfolded / GENIE prior"`). While the caption contains ``data/GENIE'', it does so as an explicit assertion of what the figure supposedly prints (`"(``data/GENIE'' in the figure)"`), so it does not carry the replacement text.
+   - Notation edits on axis labels (reformatted with LaTeX math notation and parentheses instead of brackets; content preserved):
+     - `"E_avail [GeV]"` replaced by `"$E_{\mathrm{avail}}\ (\mathrm{GeV})$"`
+     - `"q3 [GeV]"` replaced by `"$q_{3}\ (\mathrm{GeV})$"`
+     - `"q3 [GeV] (low edge)"` replaced by `"$q_{3}\text{, low edge (GeV)}$"`
+     - `"E_avail [GeV] (low edge)"` replaced by `"$E_{\mathrm{avail}}\text{, low edge (GeV)}$"`
+
+3. **Does the NEW figure show anything the old one did not?**  
+   - New y-axis label: `"unfolded / GENIE prior"` on both the center and right marginal panels.
+   - Updated LaTeX typography on axis labels (`$E_{\mathrm{avail}}$` and `$q_{3}$` with subscripts, and units in parentheses).
+   No numbers were changed; the annotated values in the joint heatmap bins (e.g. 1.13, 1.23, 1.24, 1.26, 1.25, 1.17, 1.11, 0.66, 0.84, etc.) and marginal curves are unchanged.
+
+---
+
+### fig:eavail (`eavail_spectrum`)
+
+1. **Does the caption still describe the NEW figure correctly?**  
+   None. The caption states that the figure displays "Unfolded $d\sigma/d\Eavail$, the 1D projection of the 3D result. The wide $[3,100]\,\si{GeV}$ catch bin is excluded from the axis; its value is annotated." In the new figure, the plotted curve is unfolded $d\sigma/dE_{\mathrm{avail}}$, the horizontal axis ends at $3.0\,\mathrm{GeV}$ excluding the wide catch bin, and the catch bin is annotated in the panel (`"catch bin [3, 100] GeV: 6.74 \times 10^{-41}"`). The caption specifies no colors or formatting choices.
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**  
+   - `"1e-38"`: The standalone power-of-ten multiplier above the top-left of the y-axis in the old figure was removed from that position and incorporated directly into the y-axis label as `"$d\sigma/dE_{\mathrm{avail}}\ (10^{-38}\ \mathrm{cm}^2/\mathrm{nucleon/GeV})$"`. The figure still carries the scale factor directly in the label; the caption does not mention it.
+   - `"6.74e-41"`: The computer notation in the catch bin annotation was replaced by standard LaTeX scientific notation `"$6.74 \times 10^{-41}$"` (identical numerical value).
+   - Tick labels on the y-axis `"0.0"`, `"1.0"`, and `"2.0"` were simplified to `"0"`, `"1"`, and `"2"`.
+   - The legend label `"unfolded data"` and annotation `"MINERvA ME FHC, 1.06 \times 10^{21} POT"` remain verbatim.
+
+3. **Does the NEW figure show anything the old one did not?**  
+   - The y-axis label incorporates the scale factor: `"$d\sigma/dE_{\mathrm{avail}}\ (10^{-38}\ \mathrm{cm}^2/\mathrm{nucleon/GeV})$"` (previously `"$d\sigma/dE_{\mathrm{avail}}\ (\mathrm{cm}^2/\mathrm{nucleon/GeV})$"`).
+   - Catch bin annotation displays `"$6.74 \times 10^{-41}$"` using LaTeX math formatting instead of `"6.74e-41"`.
+   - The step histogram and legend key are drawn in red/rust instead of black.
+   No new numbers or different physical quantities are shown.
+
+---
+
+### fig:control (`control_plots`)
+
+1. **Does the caption still describe the NEW figure correctly?**  
+   The caption states: "Data points overlay POT-scaled simulated signal (blue) stacked on background (orange); data/MC ratios appear below." This is contradicted by the new figure: the stacked MC background histogram and the `"MC background"` legend swatch are colored gray (`RGB [187, 187, 187]`), not orange. All other statements in the caption (reconstructed $p_T$, $p_{\parallel}$, $E_{\mathrm{avail}}$, $q_{3}$, $W$ variables; blue signal; ratio panels below; compressed catch bins at right edge; gray MC-statistical band on ratio) remain correct.
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**  
+   None. All text elements are preserved verbatim:
+   - Legend labels: `"Data"`, `"MC signal (MnvTune v1)"`, `"MC background"`
+   - Axis labels: `"Data / MC Events (POT-scaled)"`, `"Data / MC"`, `"$p_T\ (\mathrm{GeV/c})$"`, `"$p_{\parallel}\ (\mathrm{GeV/c})$"`, `"$E_{\mathrm{avail}}\ (\mathrm{GeV})$"`, `"$q_3\ (\mathrm{GeV})$"`, `"$W\ (\mathrm{GeV})$"`
+   - Annotations: `"MINERvA ME FHC, 1.06 \times 10^{21} POT"` and `"wide catch bin compressed to 100 at right"`
+   - All axis tick labels and axis break markers (`"//"`) on the catch bins.
+
+3. **Does the NEW figure show anything the old one did not?**  
+   No new label, changed number, or different quantity. The only change is the fill color for the simulated background: `"MC background"` and its stacked histogram fill were changed from orange (`RGB [221, 132, 82]`) to gray (`RGB [187, 187, 187]`).
+
+---
+
+### Verdicts
+
+fig:eavailWband: OK  
+fig:q3excess: FLAG - caption says the figure labels the ratio "data/GENIE"; both new marginal axes say "unfolded / GENIE prior"  
+fig:eavail: OK  
+fig:control: FLAG - caption says background (orange); the new MC background is gray

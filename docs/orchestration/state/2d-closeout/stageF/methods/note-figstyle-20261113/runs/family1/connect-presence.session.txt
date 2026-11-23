@@ -1,0 +1,67 @@
+ssh rc=0
+node login40 staged sha256 fa6ae0f44c8acd3f8f10b2d92a11d6a5a9c51ede84d8d4ee479f540a95b62c00
+detached pid 1464125, output /dev/shm/figc-presence.1463746.sh.out
+figc presence host=login40 utc=2026-11-14T03:24:38Z sha256=fa6ae0f44c8acd3f8f10b2d92a11d6a5a9c51ede84d8d4ee479f540a95b62c00
+== 1. fence (our jobs; STOP on ll5d_|rsn_|e96data|rdx_|t2a)
+FENCE: pass (0 jobs of ours listed)
+lists: inputs 53, ll5d 1146 (column sha256 71bd8498114c8153), g2r 18
+== 2. overlap (path, realpath, G2R prefix, device:inode)
+guard paths 1164, resolved 1164, with inode 1164
+OVERLAP: none
+== 3. presence (path | realpath | exists | size | mtime | dev:inode)
+/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root|/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root|yes|62196|1792826582|3592384858:882727030087483812
+/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/block_c08.root|/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/block_c08.root|yes|315355|1792858709|3592384858:882727051059074777
+/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/block_playlist.root|/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/block_playlist.root|yes|314098|1792858709|3592384858:882727051059074778
+/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/block_stat.root|/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/block_stat.root|yes|316095|1792858709|3592384858:882727051059074776
+/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/uq_adopted_covariance.root|/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/uq_adopted_covariance.root|yes|15672324|1792858708|3592384858:882727051059074775
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/ascencio_fullcov_compare_central.pdf|/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/ascencio_fullcov_compare_central.pdf|yes|22599|1792729645|3592384858:882727017001255114
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/ascencio_fullcov_compare_central.png|/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/ascencio_fullcov_compare_central.png|yes|42812|1792729624|3592384858:882727017001255113
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/compare_mec_eavail_central.pdf|/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/compare_mec_eavail_central.pdf|yes|21299|1792729521|3592384858:882727017001255068
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/compare_mec_eavail_central.png|/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/compare_mec_eavail_central.png|yes|36183|1792729509|3592384858:882727017001255067
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/eavail_marginal_vs_paper_pull_full.pdf|/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/eavail_marginal_vs_paper_pull_full.pdf|yes|30883|1792729369|3592384858:882727017001255018
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/eavail_marginal_vs_paper_pull_full.png|/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/eavail_marginal_vs_paper_pull_full.png|yes|44798|1792729338|3592384858:882727017001255017
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/eavail_spectrum.pdf|/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/eavail_spectrum.pdf|yes|20175|1792729226|3592384858:882727017001254970
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/eavail_spectrum.png|/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/eavail_spectrum.png|yes|29715|1792729196|3592384858:882727017001254969
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/generators_vs_unfolded_band_central.pdf|/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/generators_vs_unfolded_band_central.pdf|yes|31754|1792729494|3592384858:882727017001255064
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/generators_vs_unfolded_band_central.png|/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/generators_vs_unfolded_band_central.png|yes|88666|1792729470|3592384858:882727017001255063
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/mode_decomp_eavail_central.pdf|/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/mode_decomp_eavail_central.pdf|yes|23901|1792729508|3592384858:882727017001255066
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/mode_decomp_eavail_central.png|/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/k3/mode_decomp_eavail_central.png|yes|41728|1792729497|3592384858:882727017001255065
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/xsec_3d_p3.root|/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/xsec_3d_p3.root|yes|20246|1792730200|3592384858:882727010525249612
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/xsec_4d_p4.root|/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/new/xsec_4d_p4.root|yes|45836|1792730258|3592384858:882727010525249659
+/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/numbers.json|/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/f/numbers.json|yes|1383|1792730316|3592384858:882727010525249705
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root|yes|55513|1779203751|3592384858:882724779642061028
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root|yes|1272641|1777227322|3592384858:882724771874215702
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/model_ptpl_minerva_inclusive_6GeV_MINERvA_Tune_v1.txt|/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/model_ptpl_minerva_inclusive_6GeV_MINERvA_Tune_v1.txt|yes|3123|1776785832|3592384858:882724833463382091
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/ascencio_2110.13372_supplemental.txt|/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/ascencio_2110.13372_supplemental.txt|yes|29799|1781113020|3592384858:882725149747552684
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_cv_xsec_eavailW.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_cv_xsec_eavailW.root|yes|5656|1780948254|3592384858:882725207360405737
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mec_xsec_eavailW.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mec_xsec_eavailW.root|yes|5665|1780949049|3592384858:882725207360405739
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/gibuu_cv_xsec_eavailW.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/gibuu_cv_xsec_eavailW.root|yes|5631|1781027269|3592384858:882725144110355670
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/nuwro_cv_xsec_eavailW.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/nuwro_cv_xsec_eavailW.root|yes|6018|1780949064|3592384858:882725207360405740
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root|yes|60637|1780163877|3592384858:882725161357279351
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/4d/xsec_4d_MEFHC_5iter_lgbm.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/4d/xsec_4d_MEFHC_5iter_lgbm.root|yes|198403|1780574565|3592384858:882725158169653719
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/excess_eavail_W.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/excess_eavail_W.root|yes|6166|1784002939|3592384858:882725683564950028
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_2d_CTRL_MEFHC.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_2d_CTRL_MEFHC.root|yes|22188|1781085720|3592384858:882725226587117050
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_2d_FPS_MEFHC_genie.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_2d_FPS_MEFHC_genie.root|yes|25246|1781119146|3592384858:882725212511032002
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_2d_FPS_MEFHC_nuwroprior.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_2d_FPS_MEFHC_nuwroprior.root|yes|26279|1781088766|3592384858:882725210933984186
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_2d_FPS_MEFHC_tune.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_2d_FPS_MEFHC_tune.root|yes|26259|1781083984|3592384858:882725226587117046
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root|yes|479553|1780811283|3592384858:882725212074833888
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_4D_MEFHC.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_4D_MEFHC.root|yes|3547019607|1780571357|3592384858:882725158169653708
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_FPS_MEFHC.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_FPS_MEFHC.root|yes|6858231993|1781083034|3592384858:882725226587117042
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root|yes|4825716683|1780810390|3592384858:882725212074833886
+/pscratch/sd/j/josephrb/pub-release-20261006/figs/fig_arrays.npz|/pscratch/sd/j/josephrb/pub-release-20261006/figs/fig_arrays.npz|yes|639694|1791303240|3592384858:882726809416857886
+/pscratch/sd/j/josephrb/pub-release-20261006/frozen/inference_sufficient.npz|/pscratch/sd/j/josephrb/pub-release-20261006/frozen/inference_sufficient.npz|yes|7094074|1791260757|3592384858:882726807537748140
+/pscratch/sd/j/josephrb/pub-release-20261006/frozen/inference_sufficient.npz.manifest.json|/pscratch/sd/j/josephrb/pub-release-20261006/frozen/inference_sufficient.npz.manifest.json|yes|1029232|1791260757|3592384858:882726807537748141
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz|/pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz|yes|224713|1790445748|3592384858:882726766886537998
+/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_cv_xsec_eavailW.root|/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_cv_xsec_eavailW.root|yes|5420|1790500377|3592384858:882726774268512730
+/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_cv_xsec3d_modes.root|/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_cv_xsec3d_modes.root|yes|22008|1790500896|3592384858:882726774268512777
+/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_cv_xsec3d.root|/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_cv_xsec3d.root|yes|19244|1790500375|3592384858:882726774268512728
+/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_mec_cv_xsec3d.root|/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_mec_cv_xsec3d.root|yes|23356|1790500916|3592384858:882726774268512778
+/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_mec_xsec_eavailW.root|/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_mec_xsec_eavailW.root|yes|5434|1790500381|3592384858:882726774268512734
+/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/gibuu_cv_xsec_eavailW.root|/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/gibuu_cv_xsec_eavailW.root|yes|5422|1790500388|3592384858:882726774268512742
+/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/gibuu_cv_xsec3d.root|/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/gibuu_cv_xsec3d.root|yes|17864|1790500387|3592384858:882726774268512740
+/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/model_tunev1_xsec3d.root|/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/model_tunev1_xsec3d.root|yes|33339|1780199172|3592384858:882725154814205196
+/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/nuwro_cv_xsec_eavailW.root|/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/nuwro_cv_xsec_eavailW.root|yes|5421|1790500385|3592384858:882726774268512738
+/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/nuwro_cv_xsec3d.root|/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/nuwro_cv_xsec3d.root|yes|19522|1790500383|3592384858:882726774268512736
+presence: 53 present, 0 missing, of 53
+figc presence rc=0 utc=2026-11-14T03:24:56Z
+script rc=0

@@ -1,0 +1,28 @@
+# figure width (in)	3.185
+6.5	$d\sigma/dp_\parallel$ (cm$^2$/(GeV/$c$)/nucleon)
+5.5	$\times\mathdefault{10^{−39}}\mathdefault{}$
+5.5	$\mathdefault{0}$
+5.5	$\mathdefault{1}$
+5.5	$\mathdefault{2}$
+5.5	$\mathdefault{3}$
+5.5	$\mathdefault{4}$
+5.5	$\mathdefault{5}$
+5.5	$\mathdefault{6}$
+5.5	$\mathdefault{7}$
+5.5	GENIE 2.12.6 + MINERvA Tune v1
+5.5	This work (OmniFold)
+6.5	$p_\parallel$ (GeV/$c$)
+5.5	0
+5.5	10
+5.5	20
+5.5	30
+5.5	40
+5.5	50
+5.5	60
+6.5	This work / GENIE
+5.5	0.50
+5.5	0.75
+5.5	1.00
+5.5	1.25
+5.5	1.50
+8.0	MINERvA ME FHC, $1.06\times10^{21}$ POT

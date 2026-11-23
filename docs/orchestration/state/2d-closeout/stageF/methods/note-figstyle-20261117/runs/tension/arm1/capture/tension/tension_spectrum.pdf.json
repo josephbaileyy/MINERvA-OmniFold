@@ -1,0 +1,92 @@
+[
+ {
+  "i": 0,
+  "kind": "line",
+  "axes": 0,
+  "label": "_child0",
+  "hash": "5008f8b5bb6ef620336cf677e17aca586a6a9f3db4f9be1e743a3ed09e33a6fa",
+  "dhash": "d8a2149a4df8392b20f8f2a7e2faa7593ecce04fa62f4adb4cbda689ebbdcad0",
+  "xhash": "fdeaba0f191646f01f7de4386bce22717a448a655144914a9499b571404783c8",
+  "colours": {
+   "color": [
+    "#404040FF"
+   ],
+   "mfc": [
+    "#404040FF"
+   ],
+   "mec": [
+    "#404040FF"
+   ]
+  },
+  "style": {
+   "linestyle": "-",
+   "marker": ".",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "log"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "line",
+  "axes": 1,
+  "label": "_child0",
+  "hash": "480a8170175366245a90ca8ff1d151c37a02312fdada85b674b9bb5f124322dd",
+  "dhash": "0a07a7c5148abb8c82dc57eae71ff9fa09b8eef93997749900e0633311f9d510",
+  "xhash": "44f667f57a47b134f0b252191daf2a70e6c09d4a57b492389dd5bd229f1367dd",
+  "colours": {
+   "color": [
+    "#404040FF"
+   ],
+   "mfc": [
+    "#404040FF"
+   ],
+   "mec": [
+    "#404040FF"
+   ]
+  },
+  "style": {
+   "linestyle": "-",
+   "marker": ".",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "line",
+  "axes": 1,
+  "label": "90% of $\\chi^2$",
+  "hash": "45bff72a83ebce42cfc3711cd5c8ac43b7b482f7395a41f5561355293300d6d1",
+  "dhash": "cb6a54c67494d0f5693e07ea67c9f048650e10ac863ae59827454e2e836de828",
+  "xhash": "769ed9a7ff06b925cfadcd34661466e393ffbfdab5fd7963781e2eb08cbaf582",
+  "colours": {
+   "color": [
+    "#808080FF"
+   ],
+   "mfc": [
+    "#808080FF"
+   ],
+   "mec": [
+    "#808080FF"
+   ]
+  },
+  "style": {
+   "linestyle": "--",
+   "marker": "None",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]

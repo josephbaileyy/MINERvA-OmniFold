@@ -1,0 +1,196 @@
+{
+ "artists_py_sha256": "feb486fefd363c0d80174fc034c82f53874558de718736af2c34c6b5344de041",
+ "size_in": [
+  7.6,
+  5.3
+ ],
+ "items": [
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "247e739e5dc7b031aa02dd6413d5f83c96c696d6b16e3a3e6e6226b52ba7eb01",
+   "dhash": "e52afcc725e4e763517d4c8a32b7dec1598182ef30c960f91c14a3afceea1d24",
+   "xhash": "e52afcc725e4e763517d4c8a32b7dec1598182ef30c960f91c14a3afceea1d24"
+  },
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "a922a23d660e409c205eeb38ad553c83f6a006f1e1bbe95fcb1f29bb90d26b49",
+   "dhash": "ad4710f636c5b73e68aa7ff936d7d9232c3ab4c6c3bd975c8b2c2a3ad970606a",
+   "xhash": "ad4710f636c5b73e68aa7ff936d7d9232c3ab4c6c3bd975c8b2c2a3ad970606a"
+  },
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "62e8a7eca33da37794c9b076a471afe00783fa042a2431037025dd7fb51782d8",
+   "dhash": "9583dc0e78433565cda31eb884549efa8457a58ed20e1a55595dff750bdfa935",
+   "xhash": "9583dc0e78433565cda31eb884549efa8457a58ed20e1a55595dff750bdfa935"
+  },
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "035fab5b5f9e3db4e1adc25ccf7a0a036216f7c3df6d0ea36a71121b5cfbcad2",
+   "dhash": "448babce77b4fed713bdbeda6d9b318f79296c14c0ce0baf06b778fdd07fd571",
+   "xhash": "448babce77b4fed713bdbeda6d9b318f79296c14c0ce0baf06b778fdd07fd571"
+  },
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "545ef24372d725ce1d66596cf0b4b02e682e0dd951490246879cb205f24aa8ad",
+   "dhash": "02e20949c934c486b98a35eb4ce2a6cec0d653b357ba102e61eec0f0a806e7cf",
+   "xhash": "02e20949c934c486b98a35eb4ce2a6cec0d653b357ba102e61eec0f0a806e7cf"
+  },
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "bbed50ae3319417d6815dd4daec316a88532ed208d19aa2f6086fdf63c9b5732",
+   "dhash": "716ad8769b4738c69854d424005aa560bba51d0fddf10c69d92280eb1402a203",
+   "xhash": "716ad8769b4738c69854d424005aa560bba51d0fddf10c69d92280eb1402a203"
+  },
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "67f10436a99ece3afe562efc977f3a5e54da6f14b264556106f23cd14069b443",
+   "dhash": "6caaa4e3dcff96467fc3e7d6842c938363e298cd0035c2630b286ddeabbe212c",
+   "xhash": "6caaa4e3dcff96467fc3e7d6842c938363e298cd0035c2630b286ddeabbe212c"
+  },
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "ba35df3e564e743a6885bea88220fd750081f968c20069eefce21cd3f1e746e5",
+   "dhash": "dacac6ab015852fa7f33bc301edfaf57d687777511d64e386aab246b1bcb9dbe",
+   "xhash": "dacac6ab015852fa7f33bc301edfaf57d687777511d64e386aab246b1bcb9dbe"
+  },
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "ad0d2be0b08f4d604fa9ad21348008d2602c8a99f5eb52c7fc8a0f8c1afbbac1",
+   "dhash": "1d7f9d482584424fb6fd9c5abd49881d58d3efcfca3e6db37514edc7e07e22fb",
+   "xhash": "1d7f9d482584424fb6fd9c5abd49881d58d3efcfca3e6db37514edc7e07e22fb"
+  },
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "4ebfb3e0d6207d35378df85e0821252758ebf25348a591008eb7cfc05dc11d26",
+   "dhash": "765404bf0b3d3bdbb4b55fbbfb5c3859ef65aafc8e6e83da403cdbce78862be4",
+   "xhash": "765404bf0b3d3bdbb4b55fbbfb5c3859ef65aafc8e6e83da403cdbce78862be4"
+  },
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "64694af0fac25f41f3ce8312c439bf09d745fcf1e78876164030d2adfffd5f60",
+   "dhash": "fe4a6b9e1a036b1c01ed2a7f45a1b0ade5d8aa281ced653640322a957ad5eefb",
+   "xhash": "fe4a6b9e1a036b1c01ed2a7f45a1b0ade5d8aa281ced653640322a957ad5eefb"
+  },
+  {
+   "kind": "patch",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "c5b71fe5d783dc867ff5395e730965d978f86b5e4e585d6cb3497d8e0d2d38ba",
+   "dhash": "ec5b44d6f3280aa92a563ce79d2a96d37bf6b7bb875bd19d760ac96fb7995788",
+   "xhash": "ec5b44d6f3280aa92a563ce79d2a96d37bf6b7bb875bd19d760ac96fb7995788"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_nolegend_",
+   "hash": "9fc9ba1cce3e69287c217937c26e8e718f413cdbff4d2cd1307a2daae8671ec4",
+   "dhash": "68f413a5b6db2dba7464b25590664adbb2e0d3f72ebd850a12592262d184bb55",
+   "xhash": "ab14886da402ffab93a100413334c276b08aee4546a0de82853606f38cf552b5"
+  }
+ ],
+ "texts": [
+  [
+   10.0,
+   "$E_{avail}$ (GeV)"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "0.5"
+  ],
+  [
+   10.0,
+   "1.0"
+  ],
+  [
+   10.0,
+   "1.5"
+  ],
+  [
+   10.0,
+   "2.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   10.0,
+   "3.0"
+  ],
+  [
+   10.0,
+   "$d\\sigma/dE_{avail}$ (cm$^2$/nucleon/GeV)"
+  ],
+  [
+   10.0,
+   "1e\u221238"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "0.5"
+  ],
+  [
+   10.0,
+   "1.0"
+  ],
+  [
+   10.0,
+   "1.5"
+  ],
+  [
+   10.0,
+   "2.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   9.0,
+   "GENIE-CV (no 2p2h)"
+  ],
+  [
+   9.0,
+   "+ Valencia MEC (2p2h)"
+  ],
+  [
+   9.0,
+   "unfolded data"
+  ],
+  [
+   8.0,
+   "MINERvA ME FHC, $1.06\\times10^{21}$ POT"
+  ]
+ ],
+ "text_overlaps": []
+}

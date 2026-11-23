@@ -396,7 +396,7 @@ Audience-tiered PDFs are built from one shared LaTeX source set in
 |---|---|---|
 | Internal analysis note | `main_note.tex` | full detail, including retracted values shown struck |
 | Primer | `main_primer.tex` | short orientation |
-| Short paper, retired 2026-11-21 | `main_paper.tex`, at `evidence/short-paper-retired-45402896` | no longer built; see `docs/analysis-note/README.md` |
+| Short paper, retired 2026-11-21 | `main_paper.tex`, at `evidence/short-paper-retired-45402896` (`main`) and `evidence/short-paper-retired-a54f255e` (the rewrite branch) | no longer built; see `docs/analysis-note/README.md` |
 
 Build instructions are in [`docs/analysis-note/README.md`](docs/analysis-note/README.md). The article's
 state and remaining author actions are in `docs/publication/submission/PACKAGE-MANIFEST-20261006.md`.

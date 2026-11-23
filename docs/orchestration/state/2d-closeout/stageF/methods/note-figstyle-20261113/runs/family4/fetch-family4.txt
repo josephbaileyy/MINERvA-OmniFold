@@ -1,0 +1,2 @@
+scp rc=0
+b03af4c2269d5d7b947bba065b2d740022ef2241532b16859c1455cf56984c06  f4fetch/post-f4.tar.gz

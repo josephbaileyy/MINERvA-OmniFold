@@ -1,0 +1,92 @@
+diff --git a/nd-unfolding/msr/msr_build.py b/nd-unfolding/msr/msr_build.py
+index 062c2f705..323de57c5 100644
+--- a/nd-unfolding/msr/msr_build.py
++++ b/nd-unfolding/msr/msr_build.py
+@@ -12,8 +12,9 @@ measured array (its y is discarded).
+                                                    C-DID-CONS: the J-cell definitions and occupied reco cells by one side
+     msr_build.py probe --npz F --bkg F --bank F --out DIR --fraction 0.02
+                                                    a timed build on a row subsample (wall and peak RSS printed by the caller)
+-    msr_build.py build --npz F --bkg F --bank F --t3-run DIR --t3-stage-json F --out DIR
+-                                                   the declared products (section 8), one npz each, then SHA256SUMS
++    msr_build.py build --part {r5d,r2d,t3} --npz F --bkg F --bank F --t3-run DIR --t3-stage-json F --out DIR
++                                                   one declared product (section 8) per process: <part>.npz and
++                                                   <part>.json; refused (rc 9, no npz) if the process's peak RSS > 8e9 B
+ 
+ MEASURES: binned responses, priors, known terms, background templates and maps. CANNOT AUTHORIZE: a reading
+ (``msr_project.py`` applies the declared ones, locally) or any claim.
+@@ -56,6 +57,8 @@ PINS = {  # declaration section 2, full sha256
+ }
+ NPZ_SHA = "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f"
+ BANK_SHA = "60416384474d1a3b0644f1e09869cf09371382ecbf3c116b1ed110cd47341e2f"
++BKG_SHA = "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955"
++RSS_CAP = 8e9   # the director's ruling for connect B: each part's peak RSS is a recorded check, refused above this
+ PRIMARY_SEED = 991000          # FD-PRR's primary split (section 5.3, C-RID)
+ SPLIT2D_KEY = 20261122         # the 2D halves (section 5.3)
+ T3_ARMS = ("B0", "MO", "OP")
+@@ -510,6 +513,7 @@ def main(argv=None) -> int:
+             p.add_argument("--fraction", type=float, required=True)
+             p.add_argument("--part", choices=("5d", "2d"), required=True)
+         else:
++            p.add_argument("--part", choices=("r5d", "r2d", "t3"), required=True)
+             p.add_argument("--t3-run", type=Path, required=True)
+             p.add_argument("--t3-stage-json", type=Path, required=True)
+     a = ap.parse_args(argv)
+@@ -524,7 +528,8 @@ def main(argv=None) -> int:
+     if a.cmd == "did-cons":
+         print(json.dumps(did_cons(a.side, a.npz, a.bkg, a.out)))
+         return 0
+-    a.out.mkdir(parents=True, exist_ok=False)
++    if a.cmd == "probe":
++        a.out.mkdir(parents=True, exist_ok=False)
+     t0 = time.time()
+     if a.cmd == "probe":  # --npz / --bank are the subsample files `subsample` wrote
+         if a.part == "5d":
+@@ -534,22 +539,32 @@ def main(argv=None) -> int:
+         rec.update(part=a.part, fraction=a.fraction, seconds=round(time.time() - t0, 1), peak_rss_bytes=peak_rss_bytes())
+         print(json.dumps({k: rec[k] for k in ("part", "fraction", "seconds", "peak_rss_bytes")}))
+         return 0
+-    if noatime_sha256(a.npz) != NPZ_SHA or noatime_sha256(a.bank) != BANK_SHA:
+-        raise Refused("C-OPS: an input is not at its declared sha256")
+-    sums, record = [], {"schema": "msr-build/1", "code_pins": PINS}
+-    for name, fn in (("r5d", lambda: build_5d(a.npz, a.bkg)), ("r2d", lambda: build_2d(a.bank)),
+-                     ("t3", lambda: t3_vectors(a.t3_run, a.t3_stage_json, a.out / "stage-t3"))):
+-        ts = time.time()
+-        arrays, rec = fn()
+-        h = write_npz(a.out / f"{name}.npz", arrays)
+-        sums.append(f"{h}  {name}.npz")
+-        record[name] = {**rec, "seconds": round(time.time() - ts, 1), "sha256": h}
+-    record["peak_rss_bytes"] = peak_rss_bytes()
+-    record["environment"] = {k: os.environ.get(k) for k in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS")}
+-    (a.out / "build.json").write_text(json.dumps(record, indent=1, default=str) + "\n")
+-    sums.append(f"{plain_sha256(a.out / 'build.json')}  build.json")
+-    (a.out / "SHA256SUMS").write_text("\n".join(sums) + "\n")
+-    print(json.dumps({"built": [s.split("  ")[1] for s in sums], "seconds": round(time.time() - t0, 1)}))
++    # build: one part per process (the director's ruling for connect B); the inputs are this lane's staged copies
++    a.out.mkdir(parents=True, exist_ok=True)
++    target, recf = a.out / f"{a.part}.npz", a.out / f"{a.part}.json"
++    if target.exists() or recf.exists():
++        raise Refused(f"{a.part}: its product or record already exists in {a.out}")
++    if a.part == "r5d":
++        if plain_sha256(a.npz) != NPZ_SHA or plain_sha256(a.bkg) != BKG_SHA:
++            raise Refused("C-OPS: a staged 5D input is not at its pin")
++        arrays, rec = build_5d(a.npz, a.bkg)
++    elif a.part == "r2d":
++        if plain_sha256(a.bank) != BANK_SHA:
++            raise Refused("C-OPS: the staged bank is not at its pin")
++        arrays, rec = build_2d(a.bank)
++    else:
++        arrays, rec = t3_vectors(a.t3_run, a.t3_stage_json, a.out / "stage-t3")
++    peak = peak_rss_bytes()
++    record = {"schema": "msr-build-part/1", "part": a.part, "code_pins": PINS, **rec,
++              "seconds": round(time.time() - t0, 1), "peak_rss_bytes": peak, "rss_cap_bytes": RSS_CAP,
++              "environment": {k: os.environ.get(k) for k in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS")}}
++    if peak > RSS_CAP:
++        record["refused"] = f"peak RSS {peak} B > {RSS_CAP:.0f} B; no product written"
++        recf.write_text(json.dumps(record, indent=1, default=str) + "\n")
++        raise Refused(record["refused"])
++    record["sha256"] = write_npz(target, arrays)
++    recf.write_text(json.dumps(record, indent=1, default=str) + "\n")
++    print(json.dumps({"part": a.part, "sha256": record["sha256"], "seconds": record["seconds"], "peak_rss_bytes": peak}))
+     return 0
+ 
+ 

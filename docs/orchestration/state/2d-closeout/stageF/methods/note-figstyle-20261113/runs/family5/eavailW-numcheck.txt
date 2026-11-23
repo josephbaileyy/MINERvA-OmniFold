@@ -1,0 +1,13 @@
+ok   readback base == off (10 TH1)
+ok   readback from == off (10 TH1)
+ok   eavail GENIE-CV: steps and points == hEa_GENIE-CV (6 bins)
+ok   eavail GENIE+MEC: steps and points == hEa_GENIE+MEC (6 bins)
+ok   eavail NuWro: steps and points == hEa_NuWro (6 bins)
+ok   eavail GiBUU: steps and points == hEa_GiBUU (6 bins)
+ok   eavail data points == hData_ea
+ok   W GENIE-CV: steps and points == hW_GENIE-CV (5 bins)
+ok   W GENIE+MEC: steps and points == hW_GENIE+MEC (5 bins)
+ok   W NuWro: steps and points == hW_NuWro (5 bins)
+ok   W GiBUU: steps and points == hW_GiBUU (5 bins)
+ok   W data points == hData_W
+EAVAILW-NUMCHECK :: PASS

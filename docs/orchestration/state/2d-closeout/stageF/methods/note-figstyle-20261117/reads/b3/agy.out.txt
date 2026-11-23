@@ -1,0 +1,73 @@
+### Figure Review Report: Batch "Figs. 26–29"
+
+---
+
+#### 1. `inputs/fig_gbdt-recovery`: `gbdt_recovery`
+
+- **Caption (`sec_5d.tex`)**:
+  > "Noise-free 5D recovery: historical truths, fixed simulated response. Solid/dashed OmniFold curves: 100 trees/8 leaves and 400/31. Iteration maxima: D1/W1 40, $q_3$ 30, W3 200, capacity probes 10. Some baseline traces end at their last saved checkpoint. Top: median $|\hat f/f_{\rm true}-1|$ over supported cells. Bottom: residual proxy $\operatorname{median}(|\hat f/f_{\rm true}-1|/|f_{\rm true}/f_0-1|)$ for departures above 1\%, dotted bound 0.25. Different denominators prevent reading one minus this proxy as an exact recovered fraction. The $q_3$ stress has no eligible EW departure. These traces measure no repeat variance."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   - None. All statements in the caption match the new figure: solid vs. dashed curves correspond to 100 trees/8 leaves and 400/31; iteration spans match (D1/W1 to 40, $q_3$ to 30, W3 to 200, dashed capacity probes to 10); top panels show `"Median absolute residual (%)"`; bottom panels show `"Historical recovery proxy"` with a dotted horizontal line at 0.25; and the $q_3$ stress trace is absent in the bottom EW panel.
+2. **Was any text or caveat printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   - Yes, the two-line baked-in figure title at the top was removed:
+     - `"Noise-free development traces: solid 100 trees / 8 leaves; dashed 400 / 31"` — **Carried by the caption**: `"Noise-free 5D recovery: historical truths, fixed simulated response. Solid/dashed OmniFold curves: 100 trees/8 leaves and 400/31."`
+     - `"No repeat-variance axis; historical truth ratios, fixed detector response"` — **Carried by the caption**: `"historical truths, fixed simulated response"` and `"These traces measure no repeat variance."`
+3. **Does the NEW figure show anything the old one did not?**
+   - No (None).
+
+---
+
+#### 2. `inputs/fig_gbdt-bias-spread`: `gbdt_bias_spread`
+
+- **Caption (`sec_5d.tex`)**:
+  > "Estimator $R$ at five iterations. Each supported J or H2 cell gives the mean and SD of $(\hat f-f_{\rm true})/f_{\rm true}$ in the same background-inclusive ensemble: 40 nominal experiments, 20 each for W2 and W3. Bars give pointwise 95\% Student-$t$ intervals for means and normal-model intervals for SDs, conditional on saved simulation. They supply neither simultaneous bounds nor total uncertainties. Truth panels and reporting cells form no frontier across estimator settings."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   - None. The caption accurately describes the three panels (`"nominal: n = 40"`, `"W2: n = 20"`, `"W3: n = 20"`), the reporting cell markers (`"J"` and `"H2"`), the x-axis (`"Mean signed relative residual (%)"`), the y-axis (`"Repeat SD of relative residual (%)"`), and the horizontal Student-$t$ / vertical normal-model error bars.
+2. **Was any text or caveat printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   - Yes, the two-line baked-in figure title at the top was removed:
+     - `"One setting: R, five iterations; different cells estimate different quantities"` — **Partially carried by the caption**: `"Estimator $R$ at five iterations."` carries the setting, and `"Each supported J or H2 cell gives the mean and SD of $(\hat f-f_{\rm true})/f_{\rm true}$... Truth panels and reporting cells form no frontier across estimator settings."` reflects the per-cell reporting; the explicit phrase `"different cells estimate different quantities"` is not printed verbatim in the caption.
+     - `"95% pointwise t / normal-model SD intervals; development reuse"` — **Carried by the caption**: `"Bars give pointwise 95\% Student-$t$ intervals for means and normal-model intervals for SDs, conditional on saved simulation."`
+3. **Does the NEW figure show anything the old one did not?**
+   - No new labels, changed numbers, or different quantities are shown. (The legend box for `"J"` and `"H2"` in the first panel was moved from the top-left to the top-right corner, and its outer bounding box was removed).
+
+---
+
+#### 3. `inputs/fig_gbdt-coverage`: `gbdt_coverage`
+
+- **Caption (`sec_5d.tex`)**:
+  > "Development assessment of $R$: truth containment in $\hat f\pm\sigma$ for 42 EW functionals, with nominal-bootstrap $\sigma$ and historical truth deformations. Right: EW7 ($\Eavail\in[0.1,0.2)$, $W\in[1.1,1.4)$ GeV) and EW41 (both above 3 GeV), pointwise 95\% Clopper--Pearson bounds. Dotted: nominal Gaussian 68.27\%. Zero of 20 intervals contain truth, with upper 95\% bound 16.8\%. This does not imply zero population coverage. Neither total uncertainty nor a newly validated interval is shown."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   - **Contradiction on panel layout**: The caption refers to the pointwise interval panel as `"Right: EW7... and EW41..."`. However, the figure is laid out vertically in two panels (top and bottom). The panel showing EW7 and EW41 with 95% Clopper–Pearson bounds is the **bottom panel**, not the right panel.
+2. **Was any text or caveat printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   - Yes, the two-line baked-in figure title at the top was removed:
+     - `"Historical R statistical intervals: $\sigma$ from 100 replicas of nominal seed 700000"` — **Partially carried**: The caption states `"Development assessment of $R$: truth containment in $\hat f\pm\sigma$... with nominal-bootstrap $\sigma$"`, but the specific sample provenance detail `"from 100 replicas of nominal seed 700000"` was lost and is **not carried by the caption**.
+     - `"Reused assessment samples; no per-experiment or total-coverage claim"` — **Carried by the caption**: `"historical truth deformations"`, `"This does not imply zero population coverage"`, and `"Neither total uncertainty nor a newly validated interval is shown."`
+3. **Does the NEW figure show anything the old one did not?**
+   - No (None).
+
+---
+
+#### 4. `inputs/fig_gbdt-prior`: `gbdt_prior_response`
+
+- **Caption (`sec_5d.tex`)**:
+  > "Historical W3 at five iterations. Horizontal gives minus the noise-free relative truth residual; vertical gives the relative shift in real-data $R$ when its MC prior changes to W3, normalized to CV-prior results. Points are supported cells, not independent repeated experiments. The diagonal marks equality. Strong correlation supplies no per-cell bound; shifts do not measure unknown real-data bias."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   - None. All statements match: the three panels (`J`, `H2`, `EW`), the x-axis (`"Minus noise-free W3 residual (%)"`), the y-axis (`"Data shift under W3 prior (%)"`), the dotted line marking equality, and the per-panel correlation annotations (`"r = 0.92"`, `"r = 0.74"`, `"r = 0.92"`).
+2. **Was any text or caveat printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   - Yes, the single-line baked-in figure title at the top was removed:
+     - `"Historical W3 at five iterations: correlation is not a per-cell bias bound"` — **Carried by the caption**: `"Historical W3 at five iterations."` and `"Strong correlation supplies no per-cell bound"`.
+3. **Does the NEW figure show anything the old one did not?**
+   - No (None).
+
+---
+
+### One-Line Verdicts
+
+- `gbdt_recovery: OK`
+- `gbdt_bias_spread: OK`
+- `gbdt_coverage: FLAG - caption refers to bottom panel as "Right:"`
+- `gbdt_prior_response: OK`

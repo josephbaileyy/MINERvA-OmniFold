@@ -1,0 +1,358 @@
+{
+ "size_in": [
+  6.5,
+  4.03
+ ],
+ "texts": [
+  [
+   9.3,
+   "$d\\sigma/dp_T$ (cm$^2$/(GeV/c)/nucleon)"
+  ],
+  [
+   8.3,
+   "$\\times\\mathdefault{10^{\u221238}}\\mathdefault{}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{0}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{1}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{2}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{3}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{4}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{5}$"
+  ],
+  [
+   9.3,
+   "$d\\sigma/dp_\\parallel$ (cm$^2$/(GeV/c)/nucleon)"
+  ],
+  [
+   8.3,
+   "$\\times\\mathdefault{10^{\u221239}}\\mathdefault{}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{0}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{1}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{2}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{3}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{4}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{5}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{6}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{7}$"
+  ],
+  [
+   9.3,
+   "$d\\sigma/dE_{\\rm avail}$ (cm$^2$/GeV/nucleon)"
+  ],
+  [
+   8.3,
+   "$\\times\\mathdefault{10^{\u221238}}\\mathdefault{}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{0.0}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{0.5}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{1.0}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{1.5}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{2.0}$"
+  ],
+  [
+   8.3,
+   "$\\mathdefault{2.5}$"
+  ],
+  [
+   9.3,
+   "$p_T$ (GeV/c)"
+  ],
+  [
+   8.3,
+   "0"
+  ],
+  [
+   8.3,
+   "1"
+  ],
+  [
+   8.3,
+   "2"
+  ],
+  [
+   8.3,
+   "3"
+  ],
+  [
+   9.3,
+   "gen. / data"
+  ],
+  [
+   8.3,
+   "0.0"
+  ],
+  [
+   8.3,
+   "0.5"
+  ],
+  [
+   8.3,
+   "1.0"
+  ],
+  [
+   8.3,
+   "1.5"
+  ],
+  [
+   9.3,
+   "$p_\\parallel$ (GeV/c)"
+  ],
+  [
+   8.3,
+   "2"
+  ],
+  [
+   8.3,
+   "5"
+  ],
+  [
+   8.3,
+   "10"
+  ],
+  [
+   8.3,
+   "20"
+  ],
+  [
+   8.3,
+   "50"
+  ],
+  [
+   9.3,
+   "gen. / data"
+  ],
+  [
+   8.3,
+   "0.0"
+  ],
+  [
+   8.3,
+   "0.5"
+  ],
+  [
+   8.3,
+   "1.0"
+  ],
+  [
+   8.3,
+   "1.5"
+  ],
+  [
+   9.3,
+   "$E_{\\rm avail}$ (GeV)"
+  ],
+  [
+   8.3,
+   "0"
+  ],
+  [
+   8.3,
+   "1"
+  ],
+  [
+   8.3,
+   "2"
+  ],
+  [
+   8.3,
+   "3"
+  ],
+  [
+   9.3,
+   "gen. / data"
+  ],
+  [
+   8.3,
+   "0.0"
+  ],
+  [
+   8.3,
+   "0.5"
+  ],
+  [
+   8.3,
+   "1.0"
+  ],
+  [
+   8.3,
+   "1.5"
+  ],
+  [
+   8.5,
+   "unfolded (this work)"
+  ],
+  [
+   8.5,
+   "GENIE-CV"
+  ],
+  [
+   8.5,
+   "Tune-v1"
+  ],
+  [
+   8.5,
+   "NuWro"
+  ],
+  [
+   8.5,
+   "GiBUU"
+  ]
+ ],
+ "text_overlaps": [
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/(GeV/c)/nucleon)",
+   "$\\mathdefault{0}$",
+   18.7
+  ],
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/(GeV/c)/nucleon)",
+   "$\\mathdefault{1}$",
+   77.1
+  ],
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/(GeV/c)/nucleon)",
+   "$\\mathdefault{2}$",
+   82.8
+  ],
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/(GeV/c)/nucleon)",
+   "$\\mathdefault{3}$",
+   87.4
+  ],
+  [
+   "$d\\sigma/dp_T$ (cm$^2$/(GeV/c)/nucleon)",
+   "$\\mathdefault{4}$",
+   72.5
+  ],
+  [
+   "$d\\sigma/dp_\\parallel$ (cm$^2$/(GeV/c)/nucleon)",
+   "$\\mathdefault{0.0}$",
+   73.6
+  ],
+  [
+   "$d\\sigma/dp_\\parallel$ (cm$^2$/(GeV/c)/nucleon)",
+   "$\\mathdefault{0.5}$",
+   241.0
+  ],
+  [
+   "$d\\sigma/dp_\\parallel$ (cm$^2$/(GeV/c)/nucleon)",
+   "$\\mathdefault{1.0}$",
+   242.8
+  ],
+  [
+   "$d\\sigma/dp_\\parallel$ (cm$^2$/(GeV/c)/nucleon)",
+   "$\\mathdefault{1.5}$",
+   241.0
+  ],
+  [
+   "$d\\sigma/dp_\\parallel$ (cm$^2$/(GeV/c)/nucleon)",
+   "$\\mathdefault{2.0}$",
+   242.8
+  ],
+  [
+   "$p_T$ (GeV/c)",
+   "1",
+   95.9
+  ],
+  [
+   "gen. / data",
+   "0.5",
+   169.0
+  ],
+  [
+   "gen. / data",
+   "1.0",
+   169.0
+  ],
+  [
+   "$p_\\parallel$ (GeV/c)",
+   "5",
+   95.9
+  ],
+  [
+   "$p_\\parallel$ (GeV/c)",
+   "10",
+   191.8
+  ],
+  [
+   "$p_\\parallel$ (GeV/c)",
+   "20",
+   140.9
+  ],
+  [
+   "gen. / data",
+   "0.5",
+   169.0
+  ],
+  [
+   "gen. / data",
+   "1.0",
+   169.0
+  ],
+  [
+   "$E_{\\rm avail}$ (GeV)",
+   "1",
+   87.6
+  ],
+  [
+   "$E_{\\rm avail}$ (GeV)",
+   "2",
+   86.1
+  ]
+ ]
+}

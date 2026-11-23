@@ -137,6 +137,12 @@ echo "=== records citation pin (NoteRecords2026 names an ancestor commit holding
 python3 check_note_records.py --self-test-pin   # a good pin passes; a branch, a non-ancestor, a missing tag fail
 python3 check_note_records.py pin
 
+# (8b) The records move (2026-11-20, the director: R2's split broke ledger probe L9b and no build gate saw it): every
+# record and reader paragraph, App. G pointer, ledger probe (N:/X:/R:/D:/M:) and thinning count still holds. Source and
+# git only; outside a git checkout P8 cannot run and the verdict is SKIP, which this gate does not fail.
+echo "=== records move (every record, pointer and ledger probe holds) ==="
+python3 check_note_records.py probe records-inventory-base-20261122.json .
+
 # (9) N2-1 (note register round n2, director rulings 2026-10-26): the posted note cites records entries by number
 # through \recentry{<tag>}; the numbers are generated from app_provenance.tex into records_entry_numbers.tex, which
 # preamble.tex inputs. A stale file stops the build here, before any PDF or deposit export is made. The self-test
@@ -152,6 +158,10 @@ python3 check_note_records.py entry-numbers --check
 echo "=== five-observable values (generated file fresh; readouts pinned) ==="
 python3 make_values_fived16.py --self-test
 python3 make_values_fived16.py --check
+# The results that landed from 2026-11-01 on (note round 1, 2026-11-08): every number the note prints from them is a key
+# of values_landed.tex, generated from their committed readouts (pinned by sha256) or checked against their OUTCOME
+# record's line. A stale file stops the build here; in the standalone note repository the generator reports SKIP.
+python3 make_values_landed.py --check
 # The paper's machine-readable Supplemental Material (DECISION-20261029-joseph-oi160-reproduction-and-q8.md item 2):
 # each file pinned by sha256, reproduced from the pinned data product, and equal to the printed table to its precision.
 python3 make_supplemental.py --self-test

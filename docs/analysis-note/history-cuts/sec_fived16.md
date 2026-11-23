@@ -1,0 +1,155 @@
+# History restructure, §10 (sec_fived16.tex): cut log
+
+**Under** DECISION-20261113-joseph-note-n4-n5-role.md, the addendum recording Joseph's go of 2026-11-13, and the
+director's ruling (A) of 2026-11-14 (recorded in sec_5d.md): "declared" is the project's word for "specified before it
+ran". Each timing use is written out with its object, taken from its records, and each method use becomes "specified".
+
+**The rule, verbatim as adopted:** history stays in the note only if removing it would change a reader's understanding
+of the reported object, its reproducibility, its evidential independence or its limitations. Everything else goes to
+the ledger. Each "fixed before" names its object, and "declared" alone is replaced.
+
+**Referee:** for §10 it gave "10–20%, Compress / appendix, especially §§10.4–10.5. Keep the data-informed run-period
+term, failed controls, algorithm dependence, and both unsuccessful coverage attempts."
+
+**Base:** `docs/analysis-note/sec_fived16.tex` at `aa0ff83f5`. Line numbers are the base's. Records are under
+`docs/orchestration/state/measurement-paper/5d-community-20261024/` unless a path is given, and each date is the
+record's first commit.
+
+**Outcome for §10:** ten wording changes, all timing or method uses of "declared" and "in advance". No passage is cut.
+§§10.4–10.5 hold what the referee lists to keep: the run-period term, the failed controls, the algorithm dependence and
+both unsuccessful coverage attempts, with the earlier calibrated-term route as the limitation on $C_{\mathrm{model}}$.
+Both coverage attempts and the earlier route go to App. I.
+
+## The changes
+
+| id | base line | old text | new text | ledger home and the records for the object |
+|---|---|---|---|---|
+| T1 | :72 | "The rule, fixed in advance, is that the results agree if …" | "The rule, fixed before the comparison was made, is that …" (the wording of :47) | aa0ff83f5:sec_fived16.tex:72. FD-GENCMP-X-DECLARATION.md:27-28 and :258-261, the rule (a293dc3de, 2026-11-01 22:07 -0800); FD-GENCMP-X-BINDING.md (9c636cb61, 22:43); FD-GENCMP-X-REPORT.md (acd062947, 2026-11-02 09:06) |
+| T2 | :244 | "As fixed in advance, the six power alternatives built on that correction are therefore descriptive" | "As fixed before any of the tests was graded, …" (the object of :203) | aa0ff83f5:sec_fived16.tex:244. FD-F0-DECLARATION.md:210, control 7: "On FAIL, row 6 is printed as 'descriptive and ungraded'" (7d7dac1d3, 2026-10-25 13:43 -0700); FD-F0-REPORT.md (28c4870f4, 15:04); FD-F0b-DECLARATION.md:44-45 carries it ("row 6 stays descriptive") |
+| T3 | :279 | "A coverage test at these two tunes, declared in advance for the covariance without the run-period block, …" | "A coverage test at these two tunes, specified before any pseudo-experiment was generated, for the covariance without the run-period block, …" (the rule's own object, "before generating the pseudo-experiments"; a first wording, "before any of its stages ran", was failed by the read: the protocol was declared and bound in stages) | aa0ff83f5:sec_fived16.tex:279. FD-1B-DECLARATION.md, "the coverage protocol, fixed before any toy, and the stages that follow" (fcdc1afed, 2026-10-30 09:31 -0700), which fixes the matrix 1B tests; FD-1B-STAGE1-REPORT.md (c0ce80981, 16:59); FD-1B-STAGE2-DECLARATION.md (2026-10-31 10:44) and FD-1B-STAGE2-REPORT.md (1a4815a8a, 18:38), the gate |
+| T4 | :287 | "its first stage stopped under a fail-closed rule declared in advance" | "… under a fail-closed rule fixed before that stage ran" (as §9's F3) | aa0ff83f5:sec_fived16.tex:287. FD-1B-STAGED-AMENDMENT-2.md:204 at its first commit 2b8859efc (2026-11-03), unchanged at :222 @ b3f27fab3; the stage's receipt, job 60893641 (receipt.txt @ b3f27fab3, connect 2026-11-06T08:15Z) |
+| T5 | :304 | "A comparison declared before it ran" | "A comparison specified before it ran" | aa0ff83f5:sec_fived16.tex:304. REF-G1-DECLARATION.md (716e86df5, 2026-11-04 15:07 -0800; :5 "declared, audited and bound before it runs"); REF-G1-BINDING-1.md (1c3a1bda3, 22:01); OUTCOME-20261106-ref-g1-r1-differ.md (ed27964aa, 2026-11-05 21:54) |
+| T6 | :455 | "compared cell by cell with the combination under a rule fixed in advance" | "… under a rule fixed before the comparison was made" | aa0ff83f5:sec_fived16.tex:455. FD-GENCMP-DECLARATION.md §5 :317, the rule (0aa1ab93d, 2026-11-01 10:50 -0800); FD-GENCMP-BINDING.md (90ba8a8ac, 11:52); FD-GENCMP-REPORT.md and fd/gencmp/readout/native.json (e87dbda54, 13:05) |
+| T7 | :455 | "A diagnostic that was not a declared test" | "A diagnostic that was not a test specified before it ran" | as T6: the probe chunk is outside the declaration's rule |
+| M1 | :281 | "under this declared swap" | "under this specified swap" | a method use: no timing |
+| M2 | :287 | "if any declared draw", "of the … declared draws", "the declared composition of the natures" | "specified draw", "specified draws", "the specified composition" | as M1 |
+| M3 | :380 | "($\alpha$ of the declared grid;" | "($\alpha$ of the specified grid;" | as M1 |
+
+## The gate investigation moved to the N-D appendix (the director's go of 2026-11-14, after 1fcb3713d)
+
+| id | base line (1fcb3713d) | old text | new text | ledger home |
+|---|---|---|---|---|
+| G1 | :281–285, with the source comments :292–296 | three paragraphs: "For the interaction uncertainties, a later investigation at the nominal truth found that the gate compared unlike objects. …", "This concerns the test; it neither validates nor undermines the reported interaction block, …" and "A later pre-check of those two groups at the nominal truth found that, …" | moved verbatim to `app_statmethods_nd.tex` as `\subsection{Investigation of the gate of the sixteen-cell coverage test}` (`sec:cov1b-gate`), after an opening paragraph that restates :279, so that the moved text keeps the antecedents it had in §10: "The coverage test at the two tunes for the covariance without the run-period block (\S\ref{sec:fived16-fd}) was stopped before any coverage pseudo-experiment ran." followed by :279's gate sentence verbatim ("At one of its gates, the ratio of each cell's uncertainty reproduced through the pseudo-experiments to that of the drawn covariance lay outside … in \fvval{cov1b-ncells-out} of the 16 cells, ranging from … to ….") and "This subsection gives the investigation of that gate." (A first opening sentence, without the test's identity or the gate's ratio, was failed by the first read: §10.5 holds two coverage tests at the two tunes, and the moved text's "the gate's departure" then had only kappa as an antecedent.) In §10, :279 keeps the gate's result (outside the window in \fvval{cov1b-ncells-out} of the 16 cells) and is followed by the pointer "A later investigation of that gate at the nominal truth, which concerns the test and neither validates nor undermines the reported interaction block, and a pre-check of the flux and detector uncertainties are in App.~\ref{sec:cov1b-gate}." | no text leaves the note; 1fcb3713d:sec_fived16.tex:281-296 |
+
+The move is checked byte for byte: the base's lines 281–285 and 292–296 appear contiguous and unchanged in the
+appendix, and none remains in §10. The appendix's opening paragraph, which lists its contents, is unchanged, as §5's
+V2 left App. A's. `numdiff.py` over §10 plus the N-D appendix, base against new: no number, key or macro removed or
+added.
+
+**G1's meaning read:** pass 1 (a fresh Claude subagent, claude-opus-5-5, blind, while codex-school refused for its
+usage limit) FAIL on the opening sentence and the antecedent it left (above), reads/sec_fived16-g1-pass1.txt; pass 2
+(codex-school gpt-6.1-sol) PASS, reads/sec_fived16-g1-pass2.txt. Prompt: reads/sec_fived16-g1-prompt.txt.
+
+**F3's pointer in §9:** the director asked to retarget sec_5d.tex:237's "(\S\ref{sec:fived16-fd})" at the subsection
+that states the stop. That is already §10.5: `sec:fived16-fd` opens at :201, and the next subsection opens at :302, so
+:287 lies inside it. No change.
+
+**Kept as they are:**
+- **:47** "The rule was fixed before the comparison was made", **:191** "fixed before any playlist result was read" and
+  **:203** "fixed before any of the tests was graded against them": each names its object.
+- **:182** "the inverted dimension $p$ equals the number of cells and is fixed in advance": a property of the
+  construction (no truncation), not when a test was specified.
+- **:110–113, the earlier route to a calibrated model term** and its two tests: the reason the coverage of
+  $C_{\mathrm{model}}$ is not validated, a limitation. In App. I as D11.
+- **:277** "Rerunning the tests with the two tunes added reproduces every earlier fake-data result exactly": a
+  reproducibility statement.
+- **:279–281, the coverage test at the two tunes and the later investigation of its gate**, and **:287, the staged
+  test's stop**: the two unsuccessful coverage attempts the referee keeps, with their limits ("The stop concerns … not
+  the estimator's coverage"; "neither validates nor undermines").
+- **The run-period block** (§10.3, :185 onward), data-informed: the referee's keep list.
+
+**Numbers and keys:** `numdiff.py` on the base and new files, comments stripped: none removed, none added; value keys
+and macros unchanged.
+
+## The Development-history appendix: new rows
+
+| row | from | content |
+|---|---|---|
+| D11 | :110–115 | the earlier route to a calibrated model term with validated coverage: it did not pass its first two tests (Stage 0 failed its first part on both sets of cells and stopped; the reconstruction-information test, incomplete, had no configuration meet its residual requirement) and was not pursued further; $C_{\mathrm{model}}$ was then adopted unscaled, and its coverage is not validated |
+| D12 | :279 | the coverage test at the two tunes for the covariance without the run-period block: stopped before any coverage pseudo-experiment ran, at the gate whose ratio lay outside the window in \fvval{cov1b-ncells-out} of the 16 cells (a first wording without the count was failed by the read as widening the failure to every cell) |
+
+D10 (from §9) is the staged test of :287. "Already seen" is "--" for both, because §10 does not state what had been
+seen.
+
+## Disclosure checklist
+
+| disclosure | in §10? | survives |
+|---|---|---|
+| the 2D adoption after the published distance was known | no (§3) | — |
+| the post-observation run-period term | yes, §10.3: the run-period groups differ by more than their scatter, with the cause not known (:187), and the playlist study's readings were fixed before any playlist result was read (:191) | ✓ unchanged |
+| reused samples and seeds | no change: the fake-data truths "are not held-out truths" (:203) | ✓ unchanged |
+| the invalid q3 deformation | no (§9) | — |
+| the stopped coverage tests | yes: :279 and :287 | ✓ unchanged in substance (T3, T4 name the objects), and in D10 and D12 |
+| the data-informed joint-test design and budget extension | no (§11) | — |
+| the missing response uncertainty | yes: what $C_{\mathrm{resp}}$ does not cover (:119) | ✓ unchanged |
+| the generator-sample problems | in part: :455, the native CH NuWro check and the probe chunk's cross-section offset (the rest is App. C) | ✓ unchanged (T6, T7 name the objects) |
+| the target-correction sensitivity | no (§11) | — |
+| also found: the failed control 7 and the six power alternatives made descriptive (:244) | yes | ✓ unchanged (T2 names the object) |
+| also found: $C_{\mathrm{model}}$ adopted unscaled after the calibrated route failed (:110) | yes | ✓ unchanged, and in D11 |
+
+## Unreleased support
+
+No site in §10 changes its citation. `UNRELEASED-SUPPORT.md` is unchanged.
+
+## Style pass B, 2026-11-15 (the director's approval of the style-recheck plan, items 1, 2, 3 and 5)
+
+**Source:** the codex style recheck `note-style-recheck-6c38249bcf5c.md` (codex-school, style only). **Base:** this
+section at `80e8fb416307bb48c75e97fbb5c9c871c423fc69`, line numbers the base's; each removed passage stays at that sha and line, its ledger home. The
+director's condition: keep whatever the read classes NEEDED. The line count is unchanged (`%` lines hold the
+numbering).
+
+| id | base line | old text | new text | ledger home |
+|---|---|---|---|---|
+| T8 | :196 | "The block was chosen after the period differences had been seen. Before it was added, an audit examined its overlap with the existing blocks, …; its noise treatment, …; why its cell pattern differs from the projection of the two-dimensional period offsets, although their sizes agree; and the stability of its rank-two construction. Before any of its numbers were read, the audit stated that the block would not be added if … None of those results occurred. The addition therefore followed the data. Passing the audit establishes neither …" (style item 5) | "The block was chosen after the period differences had been seen, so its addition followed the data. Three conditions under which it would not be added were fixed before any of the measurements that decide them was computed: [O, N, R as before; R now says "in the median replica"]. None occurred. That result establishes neither …" The rest of :196 is unchanged. Cut: the audit's four-item agenda. Checked against the records: the conditions are clauses O, N and R of FD-CT-5B-AUDIT-DECLARATION.md:91–95 (first committed 28499ab5a, 2026-10-30 11:05 -0700, as the design freeze; "MEASURES: nothing" :30); the report FD-CT-5B-AUDIT-REPORT.md:23, :42 (8b5be08b0, 14:20 -0700) gives stop = false. The declaration's author had read 5B's reported numbers first (:52–:75, including σ at 9.0 times its noise floor, so "N and R are not expected to fire", :72), so the recheck's "Before evaluating its numbers" and the base's "Before any of its numbers were read" are both replaced by the narrower object, the measurements that decide the conditions. numdiff: none removed, none added. | 80e8fb416:sec_fived16.tex:196; FD-CT-5B-AUDIT-DECLARATION.md §1–§7 (the agenda) |
+
+## Meaning read (codex-school gpt-6.1-sol, high, read-only; reads/sec_fived16-prompt.txt, the form of §9's pass 3, with reads/sec_fived16-records.txt)
+
+- **Pass 1:** OVERALL FAIL.
+  - Question 1 failed T3 ("before any of its stages ran": the protocol was declared and bound in stages, the stage-2
+    declaration after the stage-1 report) and D12 (without the count, it widened the gate's failure to every cell).
+  - Everything else passed. Nothing was removed, and no disclosure was lost.
+  - reads/sec_fived16-pass1.txt.
+- **Pass 2, T3 and D12 fixed as above:** OVERALL PASS, with no FAILs. T1–T7, M1–M3, D11 and D12 pass; no NEEDED item
+  lost; no disclosure lost. reads/sec_fived16-pass2.txt.
+
+**Style pass B, meaning read (codex-school gpt-6.1-sol, high, read-only; rows S6, C8, F4 and T8 read together, records attached):**
+- **Pass 1:** OVERALL FAIL on F4 only ("for the purposes, and within the limits, stated in Table~\ref{tab:result-status}" imported Table 1's estimator-seed-only scope, which omits sec_eavailw.tex:118 and sec_systematics.tex:160). S6, C8 and T8 passed; every removed item was LEDGER or NEEDED and retained; no disclosure lost. reads/styleB-pass1.txt.
+- **Pass 2, F4 revised to "with the restrictions stated in this section":** OVERALL PASS, with no FAILs; no NEEDED item lost; no disclosure lost. reads/styleB-pass2.txt.
+
+## The director's ruling on the pass-B flag, 2026-11-15 (row T9)
+
+| id | base line | old text | new text | source |
+|---|---|---|---|---|
+| T9 | :196 (base `8b4758e46`) | — | added after the three conditions: "The conditions were set after the block's reported numbers had been read, and the second and third were not expected to fire." Source comment appended to :199, so no line moves. A new disclosure, in Joseph's batch. | ruling 2 (NEEDED: evidential independence); FD-CT-5B-AUDIT-DECLARATION.md:52–75 (what was read before the stop condition) and :72 ("So clauses N and R (§7) are not expected to fire") |
+
+**Meaning read of the rulings (codex-school gpt-6.1-sol, high, read-only; rows E3, E4, T9, I10, I11 together, records attached):** pass 1 FAIL on E3 only (its first wording listed the seed-shift scale, which sec_5d.tex:344 assigns to the companion covariances); pass 2, E3 revised, OVERALL PASS with no FAILs and no NEEDED item lost. reads/rulings-pass1.txt, reads/rulings-pass2.txt.
+
+## Cutdown, 2026-11-16 (lane/note-cutdown-20261116)
+
+**Under** Joseph's go for the cutdown (DECISION-20261116-joseph-paper-batch.md at main `99aefd3f0`, sixth answer,
+items 29 and 34) and the editor's brief of the same day. **The rule (2026-11-13):** history or detail stays in the
+note only if removing it would change a reader's understanding of the reported object, its reproducibility, its
+evidential independence or its limitations; everything else goes to the ledger or the records document.
+
+**Base:** `sec_fived16.tex` at `8342963c16d74bc10d740e5637d602300557e53a`. Line numbers are the base's; removed text stays at that sha and line.
+
+| id | base line | words cut | disposition | old text | new text | home of the content | why not NEEDED |
+|---|---|---|---|---|---|---|---|
+| K1 | :110 (after its first sentence), :113, :115 | 245 | cut to ledger | The description and results of the two tests of the earlier route to a calibrated model term: Stage 0 (what it asked on the J and H2 cells, its required covered fractions, the fractions reached per generator family and pooled, that its second part passed and that it stopped) and the reconstruction-information test (what it asked, that none of its configurations met the residual requirement, that it is incomplete). In the first sentence, "(the J and H2 cells and estimator R are those of §…gbdt-model-dependence)". | The first sentence stays, ending "(App. I)" in place of the parenthesis: "The coverage of C_model is not validated because an earlier route to a calibrated model term with validated coverage did not pass its first two tests and was not pursued further, after which C_model was adopted unscaled (App. I)." | App. I's row "Earlier route to a calibrated model term with validated coverage" states both tests' outcomes and what had been seen when C_model was adopted. The numbers are in `docs/orchestration/state/measurement-paper/5d-design-20261023/STAGE0-REPORT.md` (checked: the five fractions are there) and `docs/orchestration/state/measurement-scoping/r10/REPORT.md` ("Of the 11 decisive configurations, none is PASS"); 8342963c1:sec_fived16.tex:110–115. | The tests were of a different model term on different cells ("not C_model on the sixteen cells"). What bears on the reported covariance stays: that C_model's coverage is not validated, why, and that it was adopted unscaled after those results were seen. |
+
+**Kept, though the cutdown table proposed shortening them:** §10.2 (the paper prints its χ²); §10.4 and §10.5 (the
+Supplement cites the audit, the per-playlist tests and the prior-spread rule; §10.5's second-coverage-test paragraph
+is approved text); §10.7's eigenmode table, figure and R04 paragraph (the Supplement points to §10.7 for "the full
+set of correlation-sensitivity studies", and the R04 paragraph is the only statement of how strongly the flux block
+correlates the cells); §10.8 (the corrections branch has already made the CH tables secondary, and the Supplement
+cites the C_model scaling table).

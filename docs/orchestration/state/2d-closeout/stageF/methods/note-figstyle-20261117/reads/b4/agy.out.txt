@@ -1,0 +1,199 @@
+### Scientific Figure Review: Batch "Figs. 7–14" (2D Result Figures)
+
+---
+
+#### 1. `inputs/fig_xsec`: `MEFHC_5iter_fig13`, `MEFHC_5iter_xsec_proj_pt`, `MEFHC_5iter_xsec_proj_pz` (`fig:xsec`)
+
+* **Caption (`caption.txt`):**
+  > "The unfolded 2D cross section and its projections have the shapes expected for few-GeV CC-inclusive scattering. Bars: weight statistics only, not the covariance. Unfolded-point bars show reweighted-MC weight statistics: square root of summed squared event weights, combined in quadrature with the propagated completeness-ratio bin error (ratio one by construction). These represent neither the data's statistical uncertainty nor the reported covariance. Top: the 2D cross section, in the format of Fig.~13 of Ref.~\cite{MINERvA:2021owq}; bottom: the $\pT$ and $\pPar$ projections. Published-data bars (top) show square roots of the statistical-covariance diagonal. Horizontal bars span bins."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   * None. (The caption accurately describes the panels: top 2D cross section in Fig. 13 format, bottom $p_T$ and $p_\parallel$ projections with ratio panels, data point bars reflecting weight statistics, published data bars on top panel showing statistical diagonal, and horizontal bars spanning bins. No colours, markers, or labels named in the caption are contradicted.)
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   * None. All textual elements are preserved verbatim across both old and new figures:
+     * Header title: `"MINERvA ME FHC, 1.06 \times 10^{21} POT"`
+     * Legend entries: `"GENIE 2.12.6 + MINERvA Tune v1"`, `"Published (PRD 104, 092007)"`, and `"This work (OmniFold)"`
+     * Axis titles and units: `"Muon longitudinal momentum p_\parallel (GeV/c)"`, `"Muon transverse momentum p_T (GeV/c)"`, `"d^2\sigma/dp_T dp_\parallel (10^{-39} cm^2/(GeV/c)^2/nucleon)"`, `"d\sigma/dp_T (cm^2/(GeV/c)/nucleon)"`, `"d\sigma/dp_\parallel (cm^2/(GeV/c)/nucleon)"`, and ratio panel y-axis `"This work / GENIE"`
+     * Scale multipliers above y-axes (`\times 10^{-38}`, `\times 10^{-39}`) and per-panel multipliers (e.g. `\times 14.4`, `\times 722`).
+
+3. **Does the NEW figure show anything the old one did not?**
+   * Color palette restyle:
+     * `"This work (OmniFold)"`: bright red (`#FF0000`) $\to$ dark red (`#C0392B`).
+     * `"GENIE 2.12.6 + MINERvA Tune v1"`: steel blue (`#4C72B0`) $\to$ palette blue (`#2A78D6`).
+     * `"Published (PRD 104, 092007)"` remains black squares.
+   * Slight canvas crop/resize on the 1D projection figures (heights reduced from 324/325 px to 321 px).
+   * No new labels, changed numerical values, or different physical quantities are shown.
+
+---
+
+#### 2. `inputs/fig_pull`: `MEFHC_5iter_pull_full` (`fig:pull`)
+
+* **Caption (`caption.txt`):**
+  > "Differences from the published measurement, standardized by its per-bin uncertainty, are centered and well inside the published uncertainties; this diagonal-only scale is distinct from the full-covariance $\chi^{2}$ of the eigenmode analysis. It is descriptive, not a pull between independent results. Shown: the per-bin standardized difference $(\mathrm{this}-\mathrm{published})/\sigma_{\mathrm{published}}$ on the $14\times16$ grid, and its distribution."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   * None. (The caption's statement `"Shown: the per-bin standardized difference (\mathrm{this}-\mathrm{published})/\sigma_{\mathrm{published}} on the 14\times16 grid, and its distribution"` correctly describes both the left 14×16 grid map and the right distribution panel. The caption names neither RMS nor SD, nor specific axis limits.)
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   * Lost verbatim text:
+     * In the distribution summary annotation box: `"rms =0.54"` was lost and replaced by `"SD = 0.54"`. The caption does **not** carry `"rms =0.54"` or `"SD = 0.54"` (note: `sec_results.tex` line 128 explicitly discusses `"pull RMS of \pullRMS"`).
+     * Grid map tick labels were thinned: old $p_T$ bin ticks at `2, 4, 6, 8, 12, 14` and $p_\parallel$ bin ticks at `2, 4, 6, 8, 12, 14, 16` were removed (new ticks are at `0, 5, 10` and `0, 5, 10, 15`). The caption carries `"14\times16 grid"`.
+     * Distribution panel tick labels were thinned/rescaled: x-axis lost `-1, 1` (now `-2, 0, 2`); y-axis tick labels at `5, 15, 25` were removed. The caption does not carry the tick ranges.
+
+3. **Does the NEW figure show anything the old one did not?**
+   * New verbatim annotation: `"SD = 0.54"` (replacing `"rms =0.54"`).
+   * Extended vertical axis headroom on the distribution histogram: y-axis maximum is expanded to `50` (ticks at `0, 10, 20, 30, 40, 50`) compared to the old plot's maximum near `34` (ticks at `0, 5, 10, 15, 20, 25, 30`), allowing the summary box to sit above the peak.
+   * Vertical reference line at 0 changed from black dashed to light gray dashed.
+   * Significant resize: canvas resized from 1320×550 px to 501×253 px (redrawn to printed slot dimensions of 4.55 × 2.3 in).
+   * No different physical quantities are plotted.
+
+---
+
+#### 3. `inputs/fig_ptslices`: `MEFHC_5iter_xsec_paper_pt_slices` (`fig:ptslices`)
+
+* **Caption (`caption.txt`):**
+  > "The unfolded cross section compared with the prior, GENIE 2.12.6 $+$ MINERvA Tune~v1 simulated truth; no published measurement is used. Bars: weight statistics only, not the covariance (Fig.~\ref{fig:xsec}); they alone enter the descriptive panel $\chi^{2}$, and they represent neither the data's statistical uncertainty nor the reported covariance. Shown: the unfolded cross section (points) and the simulated truth (histogram), sliced in $\pT$ versus $\pPar$. The analysis-MC truth denominator uses the unfolded result's flux, nucleon-count and efficiency normalization. Only the panel format follows Fig.~13 of Ref.~\cite{MINERvA:2021owq}. Published-data comparisons are in Figs.~\ref{fig:pull} and~\ref{fig:model} and Table~\ref{tab:compare}."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   * None. (The caption accurately describes points for the unfolded cross section, histogram for simulated truth, slicing in $p_T$ versus $p_\parallel$, and error bars representing weight statistics only without published data.)
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   * None. All printed text and numbers are preserved verbatim:
+     * Header: `"MINERvA ME FHC, 1.06 \times 10^{21} POT"`
+     * Panel headers: e.g. `"0.00 < p_T < 0.07 (GeV/c)"` through `"2.50 < p_T < 4.50 (GeV/c)"`
+     * In-panel statistics: e.g. `"\chi^2/n = 1890.6/16"` through `"\chi^2/n = 2847.1/8"`
+     * Per-panel scale factors: e.g. `"\times 10^{40}"`, `"\times 10^{39}"`, `"\times 10^{42}"`
+     * Axis labels: `"d^2\sigma/dp_T dp_\parallel, scaled"` and `"p_\parallel (GeV/c)"`
+     * Legend entries: `"GENIE 2.12.6 + MINERvA Tune v1"` and `"This work (OmniFold)"`.
+
+3. **Does the NEW figure show anything the old one did not?**
+   * Color palette restyle:
+     * Data points (`"This work (OmniFold)"`): bright red (`#FF0000`) $\to$ dark red (`#C0392B`).
+     * Model histogram (`"GENIE 2.12.6 + MINERvA Tune v1"`): steel blue (`#4C72B0`) $\to$ blue (`#2A78D6`).
+   * Canvas dimension slightly re-cropped (709×618 px $\to$ 708×614 px).
+   * No new labels, changed numerical values, or different physical quantities are shown.
+
+---
+
+#### 4. `inputs/fig_pzslices`: `MEFHC_5iter_xsec_paper_pz_slices` (`fig:pzslices`)
+
+* **Caption (`caption.txt`):**
+  > "The unfolded cross section versus simulated truth (Fig.~\ref{fig:ptslices}), sliced in $\pPar$ versus $\pT$, with no published measurement. Bars: weight statistics only, not the covariance, the same error bars as there."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   * None. (The caption accurately reflects unfolded cross section points vs simulated truth histogram sliced in $p_\parallel$ versus $p_T$ with weight statistics bars and no published measurement.)
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   * None. All printed text and numbers are preserved verbatim:
+     * Header: `"MINERvA ME FHC, 1.06 \times 10^{21} POT"`
+     * Panel headers: e.g. `"1.5 < p_\parallel < 2.0 (GeV/c)"` through `"40.0 < p_\parallel < 60.0 (GeV/c)"`
+     * In-panel statistics: e.g. `"\chi^2/n = 1425.5/9"` through `"\chi^2/n = 2313.4/14"`
+     * Per-panel scale factors: `"\times 10^{39}"`, `"\times 10^{40}"`, `"\times 10^{41}"`, `"\times 10^{42}"`
+     * Axis labels: `"d^2\sigma/dp_T dp_\parallel, scaled"` and `"p_T (GeV/c)"`
+     * Legend entries: `"GENIE 2.12.6 + MINERvA Tune v1"` and `"This work (OmniFold)"`.
+
+3. **Does the NEW figure show anything the old one did not?**
+   * Color palette restyle:
+     * Data points (`"This work (OmniFold)"`): bright red (`#FF0000`) $\to$ dark red (`#C0392B`).
+     * Model histogram (`"GENIE 2.12.6 + MINERvA Tune v1"`): steel blue (`#4C72B0`) $\to$ blue (`#2A78D6`).
+   * Canvas dimension slightly re-cropped (704×616 px $\to$ 702×614 px).
+   * No new labels, changed numerical values, or different physical quantities are shown.
+
+---
+
+#### 5. `inputs/fig_tension`: `tension_spectrum`, `tension_chi2_map` (`fig:tension`)
+
+* **Caption (`caption.txt`):**
+  > "2"
+  *(Note: In `docs/analysis-note/sec_results.tex` line 147, the full caption is: `"Eigenmode decomposition of the published-covariance $\chi^{2}$: eigenvalue spectrum with cumulative $\chi^{2}$ (left) and the per-bin $\chi^{2}$-contribution map (right)."`)*
+
+1. **Does the caption still describe the NEW figure correctly?**
+   * `caption.txt` contains only `"2"`, an extraction/truncation defect. It describes neither panel.
+   * If judged against the canonical caption in `sec_results.tex`, it describes the figure accurately: eigenvalue spectrum with cumulative $\chi^2$ on the left and per-bin $\chi^2$-contribution map on the right. Contradictions: None.
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   * None. All textual elements are preserved verbatim:
+     * `tension_spectrum`: upper panel y-axis `"\lambda/\lambda_{\max}"`, upper panel x-axis `"Mode, by eigenvalue \lambda (largest first)"`, lower panel y-axis `"Cumulative \chi^2 fraction"`, lower panel x-axis `"Modes, by \chi^2 contribution"`, legend `"90% of \chi^2"`.
+     * `tension_chi2_map`: x-axis `"p_T bin"`, y-axis `"p_\parallel bin"`, and colorbar label `"\chi^2 contribution"`.
+
+3. **Does the NEW figure show anything the old one did not?**
+   * `tension_spectrum`: Grid line intensity slightly adjusted.
+   * `tension_chi2_map`: Slight numerical tolerance in the background heatmap array from LAPACK float rounding across compute environments ($< 10^{-7}$ rtol), but no sign changes.
+   * No new labels, changed numbers, or different physical quantities are shown.
+
+---
+
+#### 6. `inputs/fig_tensionmodes`: `tension_mode_maps` (`fig:tensionmodes`)
+
+* **Caption (`caption.txt`):**
+  > "2"
+  *(Note: In `docs/analysis-note/sec_results.tex` line 154, the full caption is: `"Leading $\chi^{2}$-carrying eigenmodes of the published covariance in bin space, for the LightGBM central value. Three of the six, all smallest-$\lambda$ directions, concentrate in the highest-$\pPar$ bins; the other three, moderate-$\lambda$ modes, lie below them."`)*
+
+1. **Does the caption still describe the NEW figure correctly?**
+   * `caption.txt` contains only `"2"`, an extraction/truncation defect. It describes none of the panels.
+   * If judged against the canonical caption in `sec_results.tex`, it describes the six leading eigenmode panels accurately. Contradictions: None.
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   * None. Panel labels `(a)`, `(b)`, `(c)`, `(d)`, `(e)`, `(f)`, axes labels `"p_T bin"` and `"p_\parallel bin"`, and all colorbar tick values and ranges are preserved.
+
+3. **Does the NEW figure show anything the old one did not?**
+   * Subtle numerical tolerance differences in the eigenvector heatmap arrays from LAPACK float precision across environments (rtol $\sim 2.9 \times 10^{-6}$), with no sign flips.
+   * No new labels, changed numbers, or different physical quantities are shown.
+
+---
+
+#### 7. `inputs/fig_model`: `model_comp_projections` (`fig:model`)
+
+* **Caption (`caption.txt`):**
+  > "GENIE 2.12.6 $+$ MINERvA Tune~v1 (blue line) lies below the data in the peak. Uncertainties are not drawn. Shown: projections of this result (red circles) and the published data (black squares)."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   * None. (The caption accurately describes GENIE 2.12.6 + MINERvA Tune v1 as a blue line lying below data in the peak, this result as red circles, published data as black squares, and uncertainties not drawn.)
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   * None. All printed text is preserved verbatim:
+     * Header: `"MINERvA ME FHC, 1.06 \times 10^{21} POT"`
+     * Axis labels: `"d\sigma/dp_T (cm^2/(GeV/c)/nucleon)"`, `"d\sigma/dp_\parallel (cm^2/(GeV/c)/nucleon)"`, `"p_T (GeV/c)"`, and `"p_\parallel (GeV/c)"`
+     * Scale multipliers above y-axes: `\times 10^{-38}` and `\times 10^{-39}`
+     * Legend entries: `"Published (PRD 104, 092007)"`, `"This work (OmniFold)"`, and `"GENIE 2.12.6 + MINERvA Tune v1"`.
+
+3. **Does the NEW figure show anything the old one did not?**
+   * Color palette restyle:
+     * `"This work (OmniFold)"` circles: bright red (`#FF0000`) $\to$ dark red (`#C0392B`).
+     * `"GENIE 2.12.6 + MINERvA Tune v1"` line: steel blue (`#4C72B0`) $\to$ blue (`#2A78D6`).
+     * `"Published (PRD 104, 092007)"` remains black squares.
+   * No new labels, changed numbers, or different physical quantities are shown.
+
+---
+
+#### 8. `inputs/fig_modelmaps`: `model_comp_ratio_maps` (`fig:modelmaps`)
+
+* **Caption (`caption.txt`):**
+  > "Our result and the published data show the same tune deficit, with ratios above unity over most of the plane and below it at the lowest $\pT$. The maps are close because both results depart from the tune in the same places by similar amounts. Shown: ratios to MINERvA Tune~v1 on the $(\pT,\pPar)$ grid, (a, left)~our result and (b, right)~published data, on a common color scale of $0.7$--$1.3$. The direct comparison is the median bin ratio of Table~\ref{tab:compare} and the residual map of Fig.~\ref{fig:pull}."
+
+1. **Does the caption still describe the NEW figure correctly?**
+   * None. (The caption accurately describes ratios to MINERvA Tune v1 on the $(p_T, p_\parallel)$ grid, panel (a) as our result and panel (b) as published data, and the common color scale running from 0.7 to 1.3 with ratios below unity in the lowest $p_T$ bin column and above unity elsewhere.)
+
+2. **Was any text or caveat that was printed in the OLD figure lost in the NEW figure, and if so is it carried by the caption?**
+   * None. All textual elements are preserved:
+     * Panel headers: `"(a) This work"` and `"(b) Published data"`
+     * Axis labels: `"p_T bin"` and `"p_\parallel bin"`
+     * Colorbar labels: `"Ratio to MINERvA Tune v1"` with scale running from `0.7` to `1.3`.
+
+3. **Does the NEW figure show anything the old one did not?**
+   * Minor 1-pixel vertical shift in panel titles during rendering.
+   * No new labels, changed numbers, or different physical quantities are shown.
+
+---
+
+### One-line Verdicts
+
+`fig:xsec: OK`
+`fig:pull: FLAG - "rms =0.54" was replaced by "SD = 0.54", which is not carried by the caption (and sec_results.tex refers to "pull RMS")`
+`fig:ptslices: OK`
+`fig:pzslices: OK`
+`fig:tension: FLAG - caption.txt contains only "2" (corrupted/truncated extraction; sec_results.tex carries the full caption)`
+`fig:tensionmodes: FLAG - caption.txt contains only "2" (corrupted/truncated extraction; sec_results.tex carries the full caption)`
+`fig:model: OK`
+`fig:modelmaps: OK`

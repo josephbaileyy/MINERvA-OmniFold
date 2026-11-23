@@ -1,0 +1,78 @@
+ssh rc=0
+node login14 staged sha256 e31687ebb2685d649a78806d5575b5bf3a0750f7a221cd857057720c6e43c68a
+detached pid 543550, output /dev/shm/figc-family5.543119.sh.out
+figc family5 host=login14 utc=2026-11-15T22:21:29Z sha256=e31687ebb2685d649a78806d5575b5bf3a0750f7a221cd857057720c6e43c68a
+== fence (our jobs; STOP on ll5d_|rsn_|e96data|rdx_|t2a)
+FENCE: pass
+== overlap (1164 guard paths) and identity of the twelve inputs
+OVERLAP: none; omni4d /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_4D_MEFHC.root size 3547019607 sha256 5a1a7b9df2bb07bcc00b710a5b0d3d553bd7f76bbe8306004e43aba1c7179a40
+OVERLAP: none; cv4d /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/4d/xsec_4d_MEFHC_5iter_lgbm.root size 198403 sha256 1fb8250820c00428fc547cb05aa95535023146723acdccb61f615f3fa763f9d2
+OVERLAP: none; fps_omni /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_FPS_MEFHC.root size 6858231993 sha256 6efdedc5fb33687ef5427b4ca40da0de1b40fd957900e175b96c2942a2344679 (no recorded sha256; this is the record)
+OVERLAP: none; fps_tune /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_2d_FPS_MEFHC_tune.root size 26259 sha256 f1304d05a5d60408efcc61ee5baf37d77ae548620447aa0a46cdfaf83db3bdcb (no recorded sha256; this is the record)
+OVERLAP: none; fps_genie /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_2d_FPS_MEFHC_genie.root size 25246 sha256 8bc02bd3d7fbcf7e968a287f1171d456213f3155c686a5a392cdd85d12e804cb (no recorded sha256; this is the record)
+OVERLAP: none; fps_nuwro /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_2d_FPS_MEFHC_nuwroprior.root size 26279 sha256 8d2ce926b6ff33e9275a287c8bfe3857f566b3e87aaeb8c0d794a68e48568d3e (no recorded sha256; this is the record)
+OVERLAP: none; ctrl /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_2d_CTRL_MEFHC.root size 22188 sha256 7af31fd7eebdb1a4f1a7cc296832e7684b6ac77e6809ee47d86809a617279ec3 (no recorded sha256; this is the record)
+OVERLAP: none; excess /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/excess_eavail_W.root size 6166 sha256 751bb859766adf684eb05f483800505cb5ee8160f31c8e93a4eec277d37f3058
+OVERLAP: none; gen_cv /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_cv_xsec_eavailW.root size 5656 sha256 b01613297e9a7759b50ac7cce0bfa142dfb14f9467c5365383e2d595ec328a10 (no recorded sha256; this is the record)
+OVERLAP: none; gen_mec /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mec_xsec_eavailW.root size 5665 sha256 99a3ec767a4607d27f9c8d9f8dc282cce78c3b44e8fe98707c6fbbf054533961 (no recorded sha256; this is the record)
+OVERLAP: none; gen_nuwro /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/nuwro_cv_xsec_eavailW.root size 6018 sha256 86b3da58c2f346dd0899ca80e61a177e60c36ed48db8eb3fded91e990c4f2c50 (no recorded sha256; this is the record)
+OVERLAP: none; gen_gibuu /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/gibuu_cv_xsec_eavailW.root size 5631 sha256 2461bdfdd522d207d9b73804a98cd07b263324bbce07b655c02e0a3088522856 (no recorded sha256; this is the record)
+== deploy (fresh clone at M)
+HEAD 3385ab2d8afece36ec285006e321b3c20df1546d; porcelain --ignored lines: 0
+env: python 3.11.14 matplotlib 3.10.8 numpy 1.26.4
+q3-off rc=0 wall=0:22.78 cpu_s=79.89
+q3-from rc=0 wall=0:03.41 cpu_s=9.87
+acc-off rc=0 wall=0:20.95 cpu_s=98.75
+acc-from rc=0 wall=0:03.98 cpu_s=9.91
+pilot-off rc=0 wall=0:04.01 cpu_s=10.21
+pilot-from rc=0 wall=0:02.37 cpu_s=8.97
+env-off rc=0 wall=0:03.62 cpu_s=9.92
+env-from rc=0 wall=0:01.38 cpu_s=9.47
+band-base rc=0 wall=0:02.67 cpu_s=10.34
+band-off rc=0 wall=0:02.53 cpu_s=9.12
+band-from rc=0 wall=0:02.36 cpu_s=8.83
+readback-base rc=0 wall=0:02.06 cpu_s=8.71
+readback-off rc=0 wall=0:02.22 cpu_s=8.54
+readback-from rc=0 wall=0:02.18 cpu_s=9.5
+== eavailW_band ROOT PNG, base vs off vs from (bytes)
+f1e7b4a7d246389170df7c7b7438d298ef7f4dbcbf2628001aad692341f42aa4  /pscratch/sd/j/josephrb/note-figstyle-20261114/f5/out-base/eavailW_band.png
+f1e7b4a7d246389170df7c7b7438d298ef7f4dbcbf2628001aad692341f42aa4  /pscratch/sd/j/josephrb/note-figstyle-20261114/f5/out/eavailW_band.png
+f1e7b4a7d246389170df7c7b7438d298ef7f4dbcbf2628001aad692341f42aa4  /pscratch/sd/j/josephrb/note-figstyle-20261114/f5/out-from/eavailW_band.png
+deploy porcelain --ignored after: 0
+== products
+0a771f3f4c7904c6680cb9c4c7c9fbb7a14c8c6167c817c7214cc5c40a2dff00  out/acc_arrays.npz
+1ef509c7ad40b533611a1f3a1a2a47633e34eac247b94c379aca60cd69ed6bee  out/band_arrays.npz
+8a470b0b57cfa7f0b5ee373d28f4a15f87e7c41121b7bcfd2e785bf9514fd61e  out-base/eavailW_band.pdf
+f1e7b4a7d246389170df7c7b7438d298ef7f4dbcbf2628001aad692341f42aa4  out-base/eavailW_band.png
+bbb80cc1c67f4d6a175d8d05707180700d39d003d0d2ff957cce36a4a11ef81d  out-base/eavailW_band.root
+51658ae5d3c59eb6935dcce137da03fd0cff33ae97abb1ff1c95d7696b6bc7a6  out-base/eavailW_band_root_th1.npz
+fdb353c7894932f0536cbc1ed918c46dcd55f815ecf51391c136a8b3f7dca6b9  out/eavailW_band.pdf
+f1e7b4a7d246389170df7c7b7438d298ef7f4dbcbf2628001aad692341f42aa4  out/eavailW_band.png
+f0b90007d95a7427a8e3abe53f97a932b643546025ca292e0f5204beacdcc3bc  out/eavailW_band.root
+51658ae5d3c59eb6935dcce137da03fd0cff33ae97abb1ff1c95d7696b6bc7a6  out/eavailW_band_root_th1.npz
+3d7c4119d517bb74c086fadb416d4e4e2a6f367fa367f423af1d47600dbb8594  out/env_arrays.npz
+c5891a85890fb5fc60b190ec8044f2856dbdc12eff44c9b982b42bef148de3a1  out/fps_acceptance_MEFHC.pdf
+bac0632436d11a932488d20c7887d97f494752beab7e3df59d8863c99197d5c1  out/fps_acceptance_MEFHC.png
+5bab21576af7b5fd8c0745caff8d9daf46cfd4fafdebf24d7247973cd200ff52  out/fps_pilot_compare_MEFHC.pdf
+0337a9149d420d1f8d4b2067f9b0ef6ccb09d3509090f270ed33fb8db87c6d17  out/fps_pilot_compare_MEFHC.png
+f4ea9952a10e68432c4dde3e952e0150237654afed63dcae9bea982f1f32002e  out/fps_prior_envelope_MEFHC.pdf
+56351e44505ff6b679ff1a0c3be8aefd61adbb221d8ea78301de5f8096444ff6  out/fps_prior_envelope_MEFHC.png
+1776a29f96c69124705b6208dfe2143ab6c4c03317051aa7cf23c2e2bf5f092a  out-from/eavailW_band.pdf
+f1e7b4a7d246389170df7c7b7438d298ef7f4dbcbf2628001aad692341f42aa4  out-from/eavailW_band.png
+162bf8071d16c3bc75997de209948331fca495c0b63c8d3b6b7643a257a8f7d8  out-from/eavailW_band.root
+51658ae5d3c59eb6935dcce137da03fd0cff33ae97abb1ff1c95d7696b6bc7a6  out-from/eavailW_band_root_th1.npz
+bd7ecc410d9d3d036c84bd7ea593a45a534f38ba3e67fd3c7077e3e235418ec6  out-from/fps_acceptance_MEFHC.pdf
+bac0632436d11a932488d20c7887d97f494752beab7e3df59d8863c99197d5c1  out-from/fps_acceptance_MEFHC.png
+ee89d72c0ffa13f9255079507fa70d1a6ff2cca4a57faafc5aa36117d398376e  out-from/fps_pilot_compare_MEFHC.pdf
+0337a9149d420d1f8d4b2067f9b0ef6ccb09d3509090f270ed33fb8db87c6d17  out-from/fps_pilot_compare_MEFHC.png
+31a1f9d29a6f44be7ea287604dd7d0ba1f8fbb2aced43fd046b5ea898a8e7a53  out-from/fps_prior_envelope_MEFHC.pdf
+56351e44505ff6b679ff1a0c3be8aefd61adbb221d8ea78301de5f8096444ff6  out-from/fps_prior_envelope_MEFHC.png
+9c08b90b72ba7a90a158fca0b782e1896ba2f9016c3970cb75090ead4f6e624a  out-from/q3_excess_projection.pdf
+f27d73e4a52cc548afdab7785fea097d40ba67e1884f92d157cab1cadc34d282  out-from/q3_excess_projection.png
+c93ddc0911d2f201f9bf79d1d70b612a9714e46d3a0c63e0baa84d543bd81802  out/pilot_arrays.npz
+aa02d0c32e6bee24d6a38558cd560d9043c19f132f9d6008fe66341d3d871af4  out/q3_arrays.npz
+f5c89f5e919b2b2a1fc087afdf6c2f0f4d779d71bbd640a7b3d72fc659de5f10  out/q3_excess_projection.pdf
+f27d73e4a52cc548afdab7785fea097d40ba67e1884f92d157cab1cadc34d282  out/q3_excess_projection.png
+e6340c4c6f833153be1c5d083502fd396f9b71c9bbe128a7dff9a905184fee89  /pscratch/sd/j/josephrb/note-figstyle-20261114/f5/post-f5.tar.gz
+figc family5 rc=0 utc=2026-11-15T22:26:16Z
+script rc=0

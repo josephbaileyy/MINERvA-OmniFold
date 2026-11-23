@@ -1,0 +1,27 @@
+ssh rc=0
+node login31 staged sha256 2be24d931825812e6462babf6d7e6bcccacd6c9b7729a00f6fdb2f272dc85bb0
+detached pid 1571504, output /dev/shm/figc-family3.1571134.sh.out
+figc family3 host=login31 utc=2026-11-15T22:16:47Z sha256=2be24d931825812e6462babf6d7e6bcccacd6c9b7729a00f6fdb2f272dc85bb0
+== fence (our jobs; STOP on ll5d_|rsn_|e96data|rdx_|t2a)
+FENCE: pass
+== overlap (1164 guard paths) and identity of the input
+OVERLAP: none; block_stat /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/block_stat.root size 316095 sha256 4a4a24e460304e56031c8d698400af13716178ba5ee93d24d1b1572827cec28b
+== deploy (fresh clone at M)
+HEAD 01e5b94b542c8ae7daae2b29d61b15960d9db77f; porcelain --ignored lines: 0
+env: python 3.11.14 matplotlib 3.10.8 numpy 1.26.4
+stat-off rc=0 wall=0:09.39 cpu_s=11.29
+stat-from rc=0 wall=0:01.88 cpu_s=8.53
+deploy porcelain --ignored after: 0
+== products
+f6b03d0b2a34250658ec2e2309b4d6916fbfe0d55adcf6a8a89034f879dc981a  out-from/uq_corr_2d.pdf
+a06171cba7caa336d340ce17626070ae0c17c108c3b397bb5e113e4e3e3a1b73  out-from/uq_corr_2d.png
+c0f87037a6cc5daa1168eccfb82ce9b263e4f32fd0a06e67e24fa873499db3ad  out-from/uq_spread_2d.pdf
+25687e43a4b7c919b1a2d68542f52de0f510926052573fb2189074de2bfe2d7a  out-from/uq_spread_2d.png
+b4b54fbebf6f6a3a2f46bca753eec71e76bf4d447d07744194709aa274420b53  out/stat_arrays.npz
+9527bdbb3bc6983434c45bece0e0665279c58f1477a0b2ed58c86f61403cfba6  out/uq_corr_2d.pdf
+a06171cba7caa336d340ce17626070ae0c17c108c3b397bb5e113e4e3e3a1b73  out/uq_corr_2d.png
+50d2cccfd5ee973a025c8f5999d9d0fcf0d7918e18bc0cb6242aa765476e6e65  out/uq_spread_2d.pdf
+25687e43a4b7c919b1a2d68542f52de0f510926052573fb2189074de2bfe2d7a  out/uq_spread_2d.png
+b7d5603a37e3de42a22e6f26ba333b258b3722537f37f8956966efb320188d15  /pscratch/sd/j/josephrb/note-figstyle-20261114/f3/post-f3.tar.gz
+figc family3 rc=0 utc=2026-11-15T22:18:01Z
+script rc=0

@@ -1,0 +1,19 @@
+Family 2 identity: the before arm (--style restyle-2026-10, the new code, no --print-font) against the installed figures
+docs/analysis-note/figures/<name>.pdf at 978bbe64a, rastered with pdftoppm -r 100; differing pixels:
+  MEFHC_5iter_fig13: 0
+  MEFHC_5iter_xsec_proj_pt: 0
+  MEFHC_5iter_xsec_proj_pz: 0
+  MEFHC_5iter_pull_full: 0
+  MEFHC_5iter_xsec_paper_pt_slices: 0
+  MEFHC_5iter_xsec_paper_pz_slices: 0
+  tension_spectrum: 0
+  tension_chi2_map: 0
+  tension_mode_maps: 0
+  model_comp_projections: 0
+  model_comp_ratio_maps: 0
+11 of 11 pixel-equal.
+
+Fonts (pdffonts over the fourteen PDFs each arm writes, the eleven installed among them, subset prefixes stripped, counted):
+  before:  14 DejaVuSans; 2 DejaVuSans-Bold; 14 DejaVuSans-Oblique;
+  after:  14 Cmmi10; 11 Cmr10; 10 Cmsy10; 14 DejaVuSerif; 2 DejaVuSerif-Bold; 9 STIXGeneral-Regular;
+  the paper's figures (origin/draft/methods-short-20261109, docs/analysis-note/figures/methods_short/*.pdf, 12 files):  5 Cmmi10; 4 Cmr10; 2 Cmsy10; 6 DejaVuSerif; 3 STIXGeneral-Regular;

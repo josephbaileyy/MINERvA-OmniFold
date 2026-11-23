@@ -1,0 +1,204 @@
+{
+ "all_killed": true,
+ "harness_sha256": "138bc5b4340307788b694692ad971ea3b861260eb29b328b264efe680f6b1ff2",
+ "killed": 24,
+ "module_sha256": "634670b33af6900eb9feb2c01748b0f107950e110382780db37b874ab77160d8",
+ "outcomes": [
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions"
+   ],
+   "name": "stderr-not-merged",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[named read fails-None-None-codes0-sacct failed (sacct_named)]"
+   ],
+   "name": "rc-ignored",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions"
+   ],
+   "name": "user-dropped",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions"
+   ],
+   "name": "named-window-dropped",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions"
+   ],
+   "name": "family-start-dropped",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions"
+   ],
+   "name": "family-end-dropped",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions"
+   ],
+   "name": "family-days-widened",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[whitespace line-None-   \\n-codes8-malformed]"
+   ],
+   "name": "blank-skip-broadened",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[2-field row-None-61300300|cov2d-q\\n-codes3-malformed]"
+   ],
+   "name": "field-count-unchecked",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[non-numeric JobID-None-JobID|cov2d-q|COMPLETED\\n-codes5-malformed]"
+   ],
+   "name": "jobid-unchecked",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[padded job name-None-61300311| cov2d-active|RUNNING\\n-codes15-malformed]"
+   ],
+   "name": "name-unchecked",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[uppercase family name-None-61300313|COV2D-UPPER|RUNNING\\n-codes17-unended]"
+   ],
+   "name": "family-case-sensitive",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_launch_error_keeps_the_first_read"
+   ],
+   "name": "launch-error-uncaught",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[JobID with a digit-None-x61300302|other|COMPLETED\\n-codes6-malformed]"
+   ],
+   "name": "jobid-unanchored",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions"
+   ],
+   "name": "state-whole-field",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions"
+   ],
+   "name": "family-drops-t2a",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[cov2d RUNNING-None-61300304|cov2d-r|RUNNING\\n-codes10-unended]"
+   ],
+   "name": "family-check-skipped",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[t2a PENDING-None-61300305|t2a_p|PENDING\\n-codes11-unended]"
+   ],
+   "name": "terminal-adds-pending",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[t2a REVOKED-None-61300307|t2a_v|REVOKED\\n-codes13-unended]"
+   ],
+   "name": "terminal-adds-revoked",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions"
+   ],
+   "name": "terminal-drops-timeout",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[named job repeated-60909280|cov2d-AR23_Tb|COMPLETED\\n60911676|cov2d-AR23_Tc|FAILED\\n60909280|cov2d-AR23_Tb|COMPLETED\\n-None-codes19-named job]"
+   ],
+   "name": "named-count-skipped",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[another job in place of a named one-60909280|cov2d-AR23_Tb|COMPLETED\\n61300310|other|COMPLETED\\n-None-codes21-named job]"
+   ],
+   "name": "named-presence-skipped",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions"
+   ],
+   "name": "named-terminal-skipped",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  },
+  {
+   "failed": [
+    "FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions"
+   ],
+   "name": "squeue-restored",
+   "pytest_rc": 1,
+   "status": "KILLED"
+  }
+ ],
+ "required": 24,
+ "schema": "rpd-reco-fence-mutation/1",
+ "selector": "cov2d_fence",
+ "suite_sha256": "e1b92ef0927e285534f131b73376563f207340556ead7f4e60310b356ac395ba"
+}

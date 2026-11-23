@@ -1,0 +1,17 @@
+# A1/N4 meaning read: codex-school gpt-6.1-sol, high, read-only; prompt a1n4-prompt.txt, texts a1n4-texts.txt, records a1n4-records.txt
+**A1: PASS.** R1–R2 support the analysed files’ summed exposure, \(1.057394261158926\times10^{21}\) POT, which rounds to the displayed \(1.057\times10^{21}\), and the publication’s \(10.61\times10^{20}\) POT. The publication’s value is **0.3410% higher**, supporting 0.34%. R2’s 0.35% is inconsistent with those numbers; the edit follows R1 and the arithmetic.
+
+The wording distinguishes an analysed-file sum from a published quotation without asserting different underlying data. It corrects the old numerical-equivalence claim while preserving the playlist identification and selected-event count. No still-supported meaning is lost.
+
+**N4: PASS.** R3 attributes all three numbers to the exact-split cross-check, at the displayed precision:
+
+- \(1.011\) from \(1.0113\).
+- \(1.006\) from \(1.0064\), independently corroborated by R4.
+- \(0.598\) directly.
+
+The quoted-value macros are respectively `\ratioTot` = 1.010, `\medianBinRatio` = 1.005, and `\pullRMS` = 0.535.
+
+The surrounding text explicitly assigns the derivation to the exact-split cross-check. Its numbers remain consistent: \(0.598^2+0.089^2=0.365525\approx0.366\), versus R4’s full-covariance 3.661, giving the stated approximately tenfold inflation. The added quoted-value comparison does not change that scope. Meaning changes only through the clarified attribution.
+
+**OVERALL: PASS**  
+FAILs: none.

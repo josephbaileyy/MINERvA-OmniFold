@@ -1,0 +1,522 @@
+{
+ "artists_py_sha256": "feb486fefd363c0d80174fc034c82f53874558de718736af2c34c6b5344de041",
+ "size_in": [
+  19.0,
+  5.0
+ ],
+ "items": [
+  {
+   "kind": "QuadMesh",
+   "axes": 0,
+   "label": "_child0",
+   "hash": "75de50e6a841b1562767976db45b2a0b29180227439d854a8e4ced0d0a980b19",
+   "dhash": "c147a35b732c1a63539ee5cab1d31e994905e36705db033bf7bfcc443275ed7a",
+   "xhash": "c147a35b732c1a63539ee5cab1d31e994905e36705db033bf7bfcc443275ed7a"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_child1",
+   "hash": "e462bef7df9e9ff1a756e71303f26da3eb9b0437dcef3dc223eee9a037dd95aa",
+   "dhash": "a39528dc1c26ff37bb0ab6d7bdeb2c107d5d385da3277b4526a893a3d1c8be51",
+   "xhash": "0e09a136d3dee5fd6122bda74656a6b78fc704875cb0042205f9195f79d19bcd"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_child2",
+   "hash": "d1a2f5e5c8c4151ca529749e98570d1acb61826728c0a8301e4ef8c4b4bb2425",
+   "dhash": "955b1b57056110927f8b72c8c8badf9c09972b60675e59bf8f7cfcbd5cf17c3a",
+   "xhash": "128c936b9bca5cb1ec17b2a58f10ef9650a440129633101f974b6e6fb6eccae3"
+  },
+  {
+   "kind": "line",
+   "axes": 0,
+   "label": "_child3",
+   "hash": "3ec8a24735f9406c94ce768326b6c8dc067e2d233bdcbcebef591138e0a72850",
+   "dhash": "ded63f142cf20d0b9e6e84d4f4769774651146cfc8e2634d7ad2096de46be65c",
+   "xhash": "1c39bc7f44749179f2d9fc92c590eb5c728e1712e46bd264ecd36529b97907c7"
+  },
+  {
+   "kind": "QuadMesh",
+   "axes": 1,
+   "label": "_child0",
+   "hash": "4a1e09cad81204a769694de18d8d73b9f4b264bfde7db435bc35210fd6d60eb7",
+   "dhash": "c714214e36396e8bf447b2595a2649dc6918c6aa566c504951985455f0d54d97",
+   "xhash": "c714214e36396e8bf447b2595a2649dc6918c6aa566c504951985455f0d54d97"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_child1",
+   "hash": "e462bef7df9e9ff1a756e71303f26da3eb9b0437dcef3dc223eee9a037dd95aa",
+   "dhash": "a39528dc1c26ff37bb0ab6d7bdeb2c107d5d385da3277b4526a893a3d1c8be51",
+   "xhash": "0e09a136d3dee5fd6122bda74656a6b78fc704875cb0042205f9195f79d19bcd"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_child2",
+   "hash": "d1a2f5e5c8c4151ca529749e98570d1acb61826728c0a8301e4ef8c4b4bb2425",
+   "dhash": "955b1b57056110927f8b72c8c8badf9c09972b60675e59bf8f7cfcbd5cf17c3a",
+   "xhash": "128c936b9bca5cb1ec17b2a58f10ef9650a440129633101f974b6e6fb6eccae3"
+  },
+  {
+   "kind": "line",
+   "axes": 1,
+   "label": "_child3",
+   "hash": "3ec8a24735f9406c94ce768326b6c8dc067e2d233bdcbcebef591138e0a72850",
+   "dhash": "ded63f142cf20d0b9e6e84d4f4769774651146cfc8e2634d7ad2096de46be65c",
+   "xhash": "1c39bc7f44749179f2d9fc92c590eb5c728e1712e46bd264ecd36529b97907c7"
+  },
+  {
+   "kind": "QuadMesh",
+   "axes": 2,
+   "label": "_child0",
+   "hash": "67d02f6d917fa9e61ed975d58248f968473893f3a1fc6560c409fe329c3540fe",
+   "dhash": "07b0cad88b6e3e70be432ad46ca02aba03ac0a91126b207da162d37ba977c4c8",
+   "xhash": "07b0cad88b6e3e70be432ad46ca02aba03ac0a91126b207da162d37ba977c4c8"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_child1",
+   "hash": "e462bef7df9e9ff1a756e71303f26da3eb9b0437dcef3dc223eee9a037dd95aa",
+   "dhash": "a39528dc1c26ff37bb0ab6d7bdeb2c107d5d385da3277b4526a893a3d1c8be51",
+   "xhash": "0e09a136d3dee5fd6122bda74656a6b78fc704875cb0042205f9195f79d19bcd"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_child2",
+   "hash": "d1a2f5e5c8c4151ca529749e98570d1acb61826728c0a8301e4ef8c4b4bb2425",
+   "dhash": "955b1b57056110927f8b72c8c8badf9c09972b60675e59bf8f7cfcbd5cf17c3a",
+   "xhash": "128c936b9bca5cb1ec17b2a58f10ef9650a440129633101f974b6e6fb6eccae3"
+  },
+  {
+   "kind": "line",
+   "axes": 2,
+   "label": "_child3",
+   "hash": "3ec8a24735f9406c94ce768326b6c8dc067e2d233bdcbcebef591138e0a72850",
+   "dhash": "ded63f142cf20d0b9e6e84d4f4769774651146cfc8e2634d7ad2096de46be65c",
+   "xhash": "1c39bc7f44749179f2d9fc92c590eb5c728e1712e46bd264ecd36529b97907c7"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 3,
+   "label": "_child0",
+   "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+   "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+   "xhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447"
+  },
+  {
+   "kind": "QuadMesh",
+   "axes": 3,
+   "label": "_child1",
+   "hash": "4186ecebcef04c336840826bb7991106bd5d3232c91c2b96a63b0757d941906c",
+   "dhash": "b161cad040c7518b05de26e20d047e10d95adbabb636aff93b97401983adcd0e",
+   "xhash": "b161cad040c7518b05de26e20d047e10d95adbabb636aff93b97401983adcd0e"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 4,
+   "label": "_child0",
+   "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+   "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+   "xhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447"
+  },
+  {
+   "kind": "QuadMesh",
+   "axes": 4,
+   "label": "_child1",
+   "hash": "231c79c7ee77376ec85f12f4fec2ad934a0ccfa1bf88159ac0d329d21ca71ff3",
+   "dhash": "fde38cfe3f2017b73bb4e6ebab668207409f348d50aea6dd945352e1360930c8",
+   "xhash": "fde38cfe3f2017b73bb4e6ebab668207409f348d50aea6dd945352e1360930c8"
+  },
+  {
+   "kind": "LineCollection",
+   "axes": 5,
+   "label": "_child0",
+   "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+   "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+   "xhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447"
+  },
+  {
+   "kind": "QuadMesh",
+   "axes": 5,
+   "label": "_child1",
+   "hash": "cbd4255dc59ed16c0b4f4a183d894c848ebe3f0804421949c3e481d987b051d5",
+   "dhash": "012540386aa876faf4a7b59e5ac7d743d23b72c212629baa8fd526f6f28811c8",
+   "xhash": "012540386aa876faf4a7b59e5ac7d743d23b72c212629baa8fd526f6f28811c8"
+  }
+ ],
+ "texts": [
+  [
+   11.0,
+   "(a) truth rate (log$_{10}$)"
+  ],
+  [
+   10.0,
+   "p_T bin (extended)"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   10.0,
+   "5.0"
+  ],
+  [
+   10.0,
+   "7.5"
+  ],
+  [
+   10.0,
+   "10.0"
+  ],
+  [
+   10.0,
+   "12.5"
+  ],
+  [
+   10.0,
+   "15.0"
+  ],
+  [
+   10.0,
+   "p_|| bin (extended)"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   10.0,
+   "5.0"
+  ],
+  [
+   10.0,
+   "7.5"
+  ],
+  [
+   10.0,
+   "10.0"
+  ],
+  [
+   10.0,
+   "12.5"
+  ],
+  [
+   10.0,
+   "15.0"
+  ],
+  [
+   10.0,
+   "17.5"
+  ],
+  [
+   10.0,
+   "20.0"
+  ],
+  [
+   11.0,
+   "(b) reco efficiency"
+  ],
+  [
+   10.0,
+   "p_T bin (extended)"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   10.0,
+   "5.0"
+  ],
+  [
+   10.0,
+   "7.5"
+  ],
+  [
+   10.0,
+   "10.0"
+  ],
+  [
+   10.0,
+   "12.5"
+  ],
+  [
+   10.0,
+   "15.0"
+  ],
+  [
+   10.0,
+   "p_|| bin (extended)"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   10.0,
+   "5.0"
+  ],
+  [
+   10.0,
+   "7.5"
+  ],
+  [
+   10.0,
+   "10.0"
+  ],
+  [
+   10.0,
+   "12.5"
+  ],
+  [
+   10.0,
+   "15.0"
+  ],
+  [
+   10.0,
+   "17.5"
+  ],
+  [
+   10.0,
+   "20.0"
+  ],
+  [
+   11.0,
+   "(c) dead region (eff$<$0.02)"
+  ],
+  [
+   10.0,
+   "p_T bin (extended)"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   10.0,
+   "5.0"
+  ],
+  [
+   10.0,
+   "7.5"
+  ],
+  [
+   10.0,
+   "10.0"
+  ],
+  [
+   10.0,
+   "12.5"
+  ],
+  [
+   10.0,
+   "15.0"
+  ],
+  [
+   10.0,
+   "p_|| bin (extended)"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "2.5"
+  ],
+  [
+   10.0,
+   "5.0"
+  ],
+  [
+   10.0,
+   "7.5"
+  ],
+  [
+   10.0,
+   "10.0"
+  ],
+  [
+   10.0,
+   "12.5"
+  ],
+  [
+   10.0,
+   "15.0"
+  ],
+  [
+   10.0,
+   "17.5"
+  ],
+  [
+   10.0,
+   "20.0"
+  ],
+  [
+   10.0,
+   "\u22121"
+  ],
+  [
+   10.0,
+   "0"
+  ],
+  [
+   10.0,
+   "1"
+  ],
+  [
+   10.0,
+   "2"
+  ],
+  [
+   10.0,
+   "3"
+  ],
+  [
+   10.0,
+   "4"
+  ],
+  [
+   10.0,
+   "5"
+  ],
+  [
+   10.0,
+   "6"
+  ],
+  [
+   10.0,
+   "7"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "0.1"
+  ],
+  [
+   10.0,
+   "0.2"
+  ],
+  [
+   10.0,
+   "0.3"
+  ],
+  [
+   10.0,
+   "0.4"
+  ],
+  [
+   10.0,
+   "0.5"
+  ],
+  [
+   10.0,
+   "0.6"
+  ],
+  [
+   10.0,
+   "0.7"
+  ],
+  [
+   10.0,
+   "0.0"
+  ],
+  [
+   10.0,
+   "0.2"
+  ],
+  [
+   10.0,
+   "0.4"
+  ],
+  [
+   10.0,
+   "0.6"
+  ],
+  [
+   10.0,
+   "0.8"
+  ],
+  [
+   10.0,
+   "1.0"
+  ]
+ ],
+ "text_overlaps": [
+  [
+   "p_T bin (extended)",
+   "5.0",
+   59.1
+  ],
+  [
+   "p_T bin (extended)",
+   "7.5",
+   59.5
+  ],
+  [
+   "p_T bin (extended)",
+   "10.0",
+   71.2
+  ],
+  [
+   "p_T bin (extended)",
+   "5.0",
+   59.1
+  ],
+  [
+   "p_T bin (extended)",
+   "7.5",
+   59.5
+  ],
+  [
+   "p_T bin (extended)",
+   "10.0",
+   71.2
+  ],
+  [
+   "p_T bin (extended)",
+   "5.0",
+   59.1
+  ],
+  [
+   "p_T bin (extended)",
+   "7.5",
+   59.5
+  ],
+  [
+   "p_T bin (extended)",
+   "10.0",
+   71.2
+  ]
+ ]
+}

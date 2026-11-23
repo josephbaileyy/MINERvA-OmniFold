@@ -1,0 +1,20 @@
+# tier 2 paper_slices (2026-11-18T02:28:46Z): ROOT 6.40.04, matplotlib 3.10.8, numpy 1.26.4; inputs xsec.root a5c13fc3 and cov_ptpl_minerva_inclusive_6GeV.root 6c6dce72 (the fetch of 2026-11-17); 
+== paper_slices: arm 0 against the cluster capture (paper_slices): colour-free data and texts
+-- MEFHC_5iter_xsec_paper_pt_slices.png.json
+data: 112 cluster items, 112 local; colour-free hash multisets equal
+texts: 193 cluster, 193 local; equal
+DATA-IDENTITY :: PASS
+-- MEFHC_5iter_xsec_paper_pz_slices.png.json
+data: 128 cluster items, 128 local; colour-free hash multisets equal
+texts: 251 cluster, 251 local; equal
+DATA-IDENTITY :: PASS
+== paper_slices: arm 1 against arm 0
+captures: MEFHC_5iter_xsec_paper_pt_slices.pdf.json MEFHC_5iter_xsec_paper_pt_slices.png.json MEFHC_5iter_xsec_paper_pz_slices.pdf.json MEFHC_5iter_xsec_paper_pz_slices.png.json 
+  equal  paper_slices/MEFHC_5iter_xsec_paper_pt_slices.pdf.json: 112 data artists, colours as the palette maps them, line styles as declared
+  equal  paper_slices/MEFHC_5iter_xsec_paper_pt_slices.png.json: 112 data artists, colours as the palette maps them, line styles as declared
+  equal  paper_slices/MEFHC_5iter_xsec_paper_pz_slices.pdf.json: 128 data artists, colours as the palette maps them, line styles as declared
+  equal  paper_slices/MEFHC_5iter_xsec_paper_pz_slices.png.json: 128 data artists, colours as the palette maps them, line styles as declared
+COMPARE :: PASS
+text overlaps MEFHC_5iter_xsec_paper_pt_slices: 2 -> 2 [['0.2', 'GENIE 2.12.6 + MINERvA Tune v1'], ['0.2', 'This work (OmniFold)']]
+text overlaps MEFHC_5iter_xsec_paper_pz_slices: 3 -> 3 [['$\\times 10^{39}$\n$\\chi^2/n=20645.8/13$', 'GENIE 2.12.6 + MINERvA Tune v1'], ['$\\times 10^{39}$\n$\\chi^2/n=15010.5/13$', 'This work (OmniFold)'], ['GENIE 2.12.6 + MINERvA Tune v1', 'This work (OmniFold)']]
+ARMS paper_slices :: PASS

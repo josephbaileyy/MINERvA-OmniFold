@@ -1,0 +1,228 @@
+{
+ "schema": "note-figfix-eavailw/1",
+ "inputs": {
+  "data": {
+   "path": "docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family5/dumps/band_arrays.npz",
+   "key": "data2d",
+   "bytes_digest_sha256": "1ef509c7ad40b533611a1f3a1a2a47633e34eac247b94c379aca60cd69ed6bee",
+   "made_from": {
+    "path": "docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family5/connect-family5.session.txt",
+    "data_input_sha256": "751bb859766adf684eb05f483800505cb5ee8160f31c8e93a4eec277d37f3058"
+   }
+  },
+  "generators": {
+   "GENIE-CV": {
+    "path": "docs/orchestration/state/2d-closeout/stageF/methods/note-figfix-20261120/runs/eavailw/inputs/genie_cv_xsec_eavailW.root",
+    "bytes_digest_sha256": "debaf83e66cb8918ab10ecbeeb0a34bec1be8f457ae3fe3ab29dd8399796a664",
+    "archive_list": "docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt"
+   },
+   "GENIE+MEC": {
+    "path": "docs/orchestration/state/2d-closeout/stageF/methods/note-figfix-20261120/runs/eavailw/inputs/genie_mec_xsec_eavailW.root",
+    "bytes_digest_sha256": "1098e9124ddd6ee2e6845594ee65f486fc3c86679a1dde9a34c876638421e70d",
+    "archive_list": "docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt"
+   },
+   "NuWro": {
+    "path": "docs/orchestration/state/2d-closeout/stageF/methods/note-figfix-20261120/runs/eavailw/inputs/nuwro_cv_xsec_eavailW.root",
+    "bytes_digest_sha256": "d7d46a0c547dfd83ccce7bba39a2f81eae80a597a32817bf7289b80729145d3c",
+    "archive_list": "docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt"
+   },
+   "GiBUU": {
+    "path": "docs/orchestration/state/2d-closeout/stageF/methods/note-figfix-20261120/runs/eavailw/inputs/gibuu_cv_xsec_eavailW.root",
+    "bytes_digest_sha256": "b430ddc6c2f22568d1f3cfd4b997afda1860daa1422946ff5653adb53ca556d9",
+    "archive_list": "docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt"
+   }
+  }
+ },
+ "panels": {
+  "E_avail": {
+   "edges": [
+    0.0,
+    0.1,
+    0.2,
+    0.4,
+    0.8,
+    1.5,
+    3.0
+   ],
+   "data": [
+    2.0987881628259297e-38,
+    2.0144827966680695e-38,
+    1.8624779622896982e-38,
+    1.2492425300047036e-38,
+    7.621795363370128e-39,
+    4.137630752554544e-39
+   ],
+   "gens": {
+    "GENIE-CV": [
+     2.020015598194449e-38,
+     1.506172663318197e-38,
+     1.5633388204232163e-38,
+     1.2084679584040845e-38,
+     7.499339218431093e-39,
+     3.807060561436472e-39
+    ],
+    "GENIE+MEC": [
+     2.1959768573202846e-38,
+     1.6761853024859232e-38,
+     1.728324888157305e-38,
+     1.2897756296290776e-38,
+     7.599755556601638e-39,
+     3.826555190190396e-39
+    ],
+    "NuWro": [
+     1.7303658435331383e-38,
+     1.8015905078488443e-38,
+     1.7054674197604406e-38,
+     1.0697496288673003e-38,
+     6.160700852556843e-39,
+     3.706572778898574e-39
+    ],
+    "GiBUU": [
+     2.215785908345096e-38,
+     1.8001879490372818e-38,
+     1.552904754846801e-38,
+     9.469520226539866e-39,
+     4.7986471436972475e-39,
+     3.0231196656888635e-39
+    ]
+   },
+   "ratio": {
+    "GENIE-CV": [
+     0.9624675962887951,
+     0.7476721398710323,
+     0.8393864797741148,
+     0.9673605640047609,
+     0.983933425249443,
+     0.9201064060842112
+    ],
+    "GENIE+MEC": [
+     1.0463070529059466,
+     0.8320673203356781,
+     0.9279706515466805,
+     1.0324461412822867,
+     0.9971083182219229,
+     0.9248179499410157
+    ],
+    "NuWro": [
+     0.8244595020029433,
+     0.8943191328457376,
+     0.9156980400797701,
+     0.8563186116176116,
+     0.8083004802470539,
+     0.8958200962253972
+    ],
+    "GiBUU": [
+     1.0557453808780939,
+     0.8936228951742706,
+     0.8337842306266469,
+     0.7580209606299756,
+     0.6295953794245442,
+     0.730640273741781
+    ]
+   },
+   "ratio_ylim": [
+    0.5955033793082603,
+    1.0898373809943778
+   ]
+  },
+  "W": {
+   "edges": [
+    0.0,
+    1.1,
+    1.4,
+    1.8,
+    2.2,
+    3.0
+   ],
+   "data": [
+    4.3704038327022864e-39,
+    1.8751279071206662e-38,
+    1.4187145388309696e-38,
+    1.1523036615731459e-38,
+    7.48101277833628e-39
+   ],
+   "gens": {
+    "GENIE-CV": [
+     3.231941617398891e-39,
+     1.6458094460645263e-38,
+     1.5519265995470758e-38,
+     1.130516478546183e-38,
+     6.662869748620478e-39
+    ],
+    "GENIE+MEC": [
+     3.523208157560373e-39,
+     1.8458286464425422e-38,
+     1.586019406585042e-38,
+     1.1293436481132825e-38,
+     6.734945218715681e-39
+    ],
+    "NuWro": [
+     3.768111558031242e-39,
+     1.5132970305692524e-38,
+     1.272901904974395e-38,
+     1.0944960268739797e-38,
+     6.621066837727601e-39
+    ],
+    "GiBUU": [
+     3.99913633773182e-39,
+     1.3782592222641535e-38,
+     1.0326440551575789e-38,
+     8.543778793468788e-39,
+     5.572354935936565e-39
+    ]
+   },
+   "ratio": {
+    "GENIE-CV": [
+     0.7395064028672456,
+     0.8777051633729522,
+     1.0938963104063724,
+     0.9810924986585405,
+     0.8906373971068459
+    ],
+    "GENIE+MEC": [
+     0.8061516263548398,
+     0.9843747935450898,
+     1.1179270834088533,
+     0.9800746849762518,
+     0.900271850653553
+    ],
+    "NuWro": [
+     0.8621884160533884,
+     0.8070366959089103,
+     0.8972220063546221,
+     0.9498329853258939,
+     0.8850495292430278
+    ],
+    "GiBUU": [
+     0.915049613449358,
+     0.7350214441533888,
+     0.7278730335762151,
+     0.7414520215795085,
+     0.7448663838769454
+    ]
+   },
+   "ratio_ylim": [
+    0.696668709589604,
+    1.1491314073954644
+   ]
+  }
+ },
+ "checks": {
+  "log_line_GENIE-CV": "[band] GENIE-CV: total=2.7645e-38 (data 3.0699e-38, ratio 1.110); hiE-hiW corner=1.1818e-38 (data 1.3497e-38, data/gen=1.142)",
+  "log_line_GENIE+MEC": "[band] GENIE+MEC: total=2.8756e-38 (data 3.0699e-38, ratio 1.068); hiE-hiW corner=1.1854e-38 (data 1.3497e-38, data/gen=1.139)",
+  "log_line_NuWro": "[band] NuWro: total=2.6628e-38 (data 3.0699e-38, ratio 1.153); hiE-hiW corner=1.1635e-38 (data 1.3497e-38, data/gen=1.160)",
+  "log_line_GiBUU": "[band] GiBUU: total=2.2152e-38 (data 3.0699e-38, ratio 1.386); hiE-hiW corner=8.3993e-39 (data 1.3497e-38, data/gen=1.607)",
+  "log_W_table_rows": 6,
+  "values_tex_genieWmid": {
+   "printed": [
+    9,
+    12
+   ],
+   "computed_pct": {
+    "GENIE-CV": 9.389631040637237,
+    "GENIE+MEC": 11.792708340885326
+   }
+  }
+ },
+ "identity_check": "every stairs, point and ratio equals the computed values"
+}

@@ -1,0 +1,24 @@
+ssh rc=0
+node login11 staged sha256 64bbf076ce08fc14b725006b72f232748dcb83ab86be7d7491b4e5006c121dd0
+detached pid 2339393, output /dev/shm/figc-family6.2339017.sh.out
+figc family6 host=login11 utc=2026-11-15T22:26:27Z sha256=64bbf076ce08fc14b725006b72f232748dcb83ab86be7d7491b4e5006c121dd0
+== fence (our jobs; STOP on ll5d_|rsn_|e96data|rdx_|t2a)
+FENCE: pass
+== overlap (1164 guard paths) and identity of the two inputs
+OVERLAP: none; extract /pscratch/sd/j/josephrb/pub-release-20261006/frozen/inference_sufficient.npz size 7094074 sha256 7bd019c646b44c6e94fcefd6e0827f6891d96d7acc16f86d124aee94cb776387
+OVERLAP: none; manifest /pscratch/sd/j/josephrb/pub-release-20261006/frozen/inference_sufficient.npz.manifest.json size 1029232 sha256 e8aedfe80ac1bdc97443b0cf61be8f0dadbfba2f2d1f6d5631a72ef362fef1c9
+== deploy (fresh clone at M)
+HEAD 6c38249bcf5cb2a292b340b33d58cbda501372b1; porcelain --ignored lines: 0
+5ceaf4eeb5d0036e5d3dbd84d6dc134039e140eb4863821561d392fae576190e  plot_joint_null_distributions_physlabels.py
+41f4af05eed0c07ad74acad73900fd22474e8bbac0e58f2e54eb424dddcbd7a4  replay_inference.py
+env: python 3.11.14 matplotlib 3.10.8 numpy 1.26.4 scipy 1.16.3
+jn-off rc=0 wall=0:41.09 cpu_s=377.96
+jn-from rc=0 wall=0:02.53 cpu_s=15.65
+deploy porcelain --ignored after: 0
+== products
+7a941bbfa00a99d14b843dd524af466d149de44dbfca61222d68d779d9ea8c82  out-from/paper_joint_nulls.pdf
+4fccc1e4b81a3bc86cea457164c77479bba84ad7ce8e1fec0860d6a484ce6fa0  out/joint_nulls_arrays.npz
+3ab9c264e2383166afa739d1ad9c86496eb1e1c3d243cae33d7190ccbcf9df2f  out/paper_joint_nulls.pdf
+68c13d2deaf8a68a5112dd5cc55ee905bcd4edcc3539f475d5d1afb79a4ac1e7  /pscratch/sd/j/josephrb/note-figstyle-20261114/f6/post-f6.tar.gz
+figc family6 rc=0 utc=2026-11-15T22:28:15Z
+script rc=0

@@ -1,0 +1,17 @@
+=== B1. sec_5d.tex:340
+\paragraph{The projection to $(\Eavail,W)$.} The quoted 42-cell covariance is $C_{EW}=M\,C_{Z}\,M^{\top}$, with $M$ of shape $\zprojCells\times\latBins$ over kept axes $(\Eavail,W)$. Each entry of $M$ is the product of the dropped axes' bin widths, giving a differential density in \si{cm^2/GeV^2/nucleon}. That factor is not an acceptance weight. The unfolding's efficiency correction is the step-1 regression for unreconstructed events, and a further efficiency division would double-correct (\S\ref{sec:method-driver}). No separate acceptance weight at the destination binning was specified, and none is applied to Fig.~\ref{fig:eavailWexcess}. Integrating a destination cell requires its own $\Delta\Eavail\,\Delta W$. Rows follow the $7\times6$ $(\Eavail,W)$ grid in measured C order. No source cell is dropped, and the result is exactly symmetric. Support and pinned masks and row-index arrays accompany the covariance and are byte-identical in the two variants. The covariance is paired with the central values of Fig.~\ref{fig:eavailWexcess} by checksum: the central-value array of the projected source and that of the figure are byte-identical, with numerical agreement only as a cross-check.
+
+=== B2. app_statmethods.tex:646-650 (sec:pull-diagnostic)
+\subsection{Same-ensemble pull diagnostic}
+\label{sec:pull-diagnostic}
+\paragraph{Same-ensemble pull diagnostic (not a coverage test).} An earlier ensemble of $N_{\text{toy}}=200$ 2D closure unfolds (Ref.~\cite{NoteRecords2026}, \recentry{coverage-toys}) uses weighted MC reco pseudo-data and stores the truth marginals in truth histograms. Each toy has its own bootstrap seed $k$ and per-event Poisson(1) draws, as in production, with seeds chosen not to collide with the production replicas. Toy seeds are independent. Bins within a toy are correlated. The MC bootstrap multiplies the truth weight. It fluctuates both the unfolded result and the stored truth. The stored truth varies in all 205 reported bins, and its all-toy mean $\bar X^{\text{truth}}$ is therefore not an independent fixed truth for a split-sample coverage claim. It only centers a same-ensemble diagnostic.
+
+=== R1. PROJ-20260920-m1-publication-receipt.json: acceptance_question = UNDECLARED; src_metadata.scientific_acceptance = NON-PASSING
+
+=== R2. the search for a deciding record (git grep over DECISION-* and AUTHORIZATION-* files) finds nothing @ c23305268
+
+=== R3. PLAN-scalar5d-reportable-uncertainties-and-inference.md:664
+Resolve the existing `acceptance_question: UNDECLARED` for each newly promoted reporting product,
+or withhold promotion for that scope. Test the package on a fresh checkout without private paths.
+
+=== R4. ruling (A) of 2026-11-14: "declared" → "specified before it ran" or a named, record-supported object; method uses → "specified". The director's ruling of 2026-11-15: sec_pet_campaigns :27 and :38 are method uses; :182 stays if a property of the construction.

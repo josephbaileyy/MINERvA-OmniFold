@@ -1,0 +1,170 @@
+Record excerpts attached to the Appendix G meaning read. Base: 6b9b5be5c678428f5c15403c1ff84a91a5ae3674.
+The new text adds no timing claim. G2-G5 are method wording, not claims that a condition was specified before results.
+
+
+=== ead7e3c22:docs/orchestration/DECISION-20261113-joseph-note-n4-n5-role.md lines 29-45 ===
+29: 1. **AUD-N4.** The planned-package text of `4708988a6` stays. AUD-N4's hold is lifted for that text. The deposit
+30:    itself still needs Joseph's final go (DECISION-20261112-joseph-consult-d1-d7.md, D6).
+31: 2. **AUD-N5.** The preservation text of `1fbade809` stays "for now". Its preservation sentence is a claim, so it needs
+32:    a record citable for it before the note is released.
+33: 3. **The note role.** The abstract and executive-summary change of `4836da131` is accepted.
+34: 4. **The note's development history.** A referee is asked whether the note's account of what was tried matches the
+35:    reporting style of comparable technical documents. Any history cut from the note stays in the internal ledger. Its
+36:    recommendation comes back to Joseph before any cut.
+37: 
+38: ISSUES.md's AUD-N4 and AUD-N5 rows, and the rows that repeat their holds, are updated to match.
+39: 
+40: ## CITABLE FOR / NOT CITABLE FOR
+41: 
+42: - **Citable for:** these choices, as Joseph's.
+43: - **Not citable for:** event-loop outputs being preserved; any deposit having been made; any note or paper sentence
+44:   beyond the three commits named.
+45: 
+
+=== ead7e3c22:docs/orchestration/DECISION-20261113-joseph-note-n4-n5-role.md lines 53-66 ===
+53: independence or its limitations, and the rest goes to the ledger. Its structure: a clean main text, technical
+54: appendices, and a compact "Development history" appendix. The director recommended adopting both, with director-helper-2
+55: editing one section per commit, each with a cut log pointing to the ledger home of every removed passage, a disclosure
+56: check, a meaning read, and before/after pages.
+57: 
+58: **Joseph's words, verbatim:**
+59: 
+60: > yes go ahead
+61: 
+62: (`d8770b2228a2edcf`, the sha256 of the text plus a final newline).
+63: 
+64: **What is decided:** the rule and the structure are adopted. Every disclosure of a choice made after results were seen
+65: stays, shortened if needed. No passage is removed without a ledger pointer. The executive summary's "It holds the full
+66: development history" sentence is reworded to match, with the director's approval of the wording.
+
+=== ead7e3c22:docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/note-history-referee-20261113/gpt.txt lines 109-114 ===
+109: 10. **§G.1, p. 134:**  
+110:     > “An earlier version of the package, RC1, was replayed… by a separate AI agent session (Opus 5.5)… its verifier passed.”
+111: 
+112:     **Cut (ledger).** Describe verification of the package actually distributed. Preserve every stated reproduction exclusion and provenance gap; an earlier candidate’s successful replay does not describe the current package’s verification.
+113: 
+114: Additional disclosures that must survive compression include the post-observation run-period uncertainty, reused development samples/seeds, invalid q₃ deformation, stopped coverage tests, data-informed joint-test design and budget extension, missing response uncertainty, unresolved generator-sample problems, and target-correction sensitivity. Their full enumeration need not recur in every summary.
+
+=== 6b9b5be5c:docs/publication/release/RC1-REPLAY-RECEIPT-20261006.md lines 1-25 ===
+1: # RC1 independent empty-directory replay (2026-10-06)
+2: 
+3: **Package:** `minerva-omnifold-joint-tests-rc1.tar.gz`. It is local only: not deposited, tagged or sent.
+4: 
+5: | version | tarball sha256 | change |
+6: |---|---|---|
+7: | tested | `b56aae87ba5724e4155cbafd19840008e6694a91cd5e0cf524baf57de5bebc97` | — |
+8: | current | `7f4cb7864bc9b1aedfe95f4f16863dd893c1e7215179fb413910e1429c1d35c2` | README only |
+9: 
+10: The checksums are in `RC1-SHA256SUMS.txt`. The source README is `RC1-README.md`.
+11: 
+12: ## Independent replay
+13: 
+14: **Who:** a fresh Opus 5.5 agent acting as an outside reader. It had no repository access and used only the
+15: tarball and its README.
+16: 
+17: **Environment:** macOS, Python 3.12.2 (conda-forge), numpy 1.26.4, scipy 1.15.2.
+18: 
+19: **Result: REPLAY PASS WITH DEFECTS.**
+20: - The tarball sha256 matched, and all 12 entries of `SHA256SUMS` checked OK.
+21: - `verify_rc.py` gave `VERIFY: PASS` in about 2 min 11 s.
+22: - Each individual step returned rc 0. Both replays gave `COMPARE: AGREE (0 differences)`.
+23: - The W1 output agrees with the committed result on all 475 numeric and boolean leaves, to within 1e-12. Only
+24:   labels and paths differ.
+25: 
+
+=== 6b9b5be5c:docs/publication/release/RC7-README.md lines 50-79 ===
+50: ## What this package lets you reproduce
+51: 
+52: The calibrated joint tests of five generator predictions on the five-observable unbinned unfolding of MINERvA
+53: medium-energy charged-current inclusive data (the article's Sec. VI and Table I). From the files here alone you can
+54: recompute, with numpy, scipy and matplotlib:
+55: 
+56: 1. **The frozen joint-test result.** Every Monte Carlo p-value, k and B, Holm-with-determinacy decision, κ = 3
+57:    robustness label and power figure of the recorded evaluation (`expected/joint-evaluate.json`).
+58: 2. **The lost-seed resolution, reading (a), report-only.** The same quantities with the 277 recovered
+59:    pseudo-experiments added (`expected/resolved-evaluate.json`).
+60: 3. **The matched coarse-projection comparison (W1, report-only).** All 40 projected claim p-values and the criterion
+61:    outcome (`expected/W1-RESULT-20261006.json`). W1 uses the recovery-union readings, B = 1400 (1800 for NuWro).
+62: 4. **The article's Figs. 1–4 and the numbers it quotes from Figs. 1–3.**
+63:    - `code/figs/fig_numbers.py` recomputes each quoted number from `data/figs/fig_arrays.npz` and checks it against
+64:      the printed value in `expected/values.tex`, to within half a unit of its last printed digit. That includes the
+65:      Sec. V generator ratios, the Fig. 2 ratio ranges and verbal shares, and the Fig. 3 caption's 9–12 %.
+66:    - `code/figs/make_figs.py` regenerates Figs. 1–3 as printed: the article's figure files are this script's output
+67:      (byte-identical with the `requirements-lock.txt` versions; see the table above).
+68:    - `code/figs/plot_joint_null_distributions.py` regenerates Fig. 4.
+69: 5. **Condition (i)'s fine-grid L2 ratios.**
+70:    - `code/m1_f2_norm_ratio.py` computes ‖D_M1/f_mid‖ / ‖D_F2/f_coarse‖ per generator from `data/m1f2/`:
+71:      0.759, 0.857, 0.542 and 0.504. That gives the printed 0.50–0.86. The norm is the L2 norm of the per-cell
+72:      *relative* differences; the raw L2 ratio does not reproduce the printed range.
+73:    - `verify_rc.py` also checks that the released M1 shifts equal the frozen evaluator's `d1` vectors.
+74: 
+75: Run from this directory, after `python3 -m pip install -r requirements.txt` in a fresh environment:
+76: 
+77: ```
+78: python3 code/verify_rc.py        # exit 0 and "VERIFY: PASS" if every replay and figure check agrees
+79: ```
+
+=== 6b9b5be5c:docs/publication/release/RC7-README.md lines 109-117 ===
+109: **Comparison tolerance:** relative 1e-12 on floats. Integers and decisions must match exactly.
+110: 
+111: **`jitters` and `observed_jitter_p`.**
+112: - The frozen evaluator used the 20 data rounding jitters (included as the `jitters` array) to report the stability of
+113:   the observed p-values (`observed_jitter_p` in `expected/joint-evaluate.json`).
+114: - `replay_inference.py` does not recompute or compare that field. The article's statement that rounding changes only
+115:   NuWro's shape test (2/1752 to 3/1752) is therefore not checked by `verify_rc.py`.
+116: - It is reproducible from the `jitters` array: the release audit's check script, `checks/agentC_checks.py` on the audit
+117:   branch, recomputed it exactly.
+
+=== 6b9b5be5c:docs/analysis-note/app_release_records.tex lines 14-24 ===
+14: Adopted five-axis covariance $C_{Z}$ &
+15:   \texttt{sha256} \zcvDigest\ldots &
+16:   \texttt{z-cv.npz}, \num{890500272} bytes; declared variant \texttt{cv}, read from the object's
+17:   own metadata; $\sqrt{\Tr C}=\SI{5.6742e-38}{}$; assembling revision
+18:   \texttt{fb9ec356}; producing job \texttt{58454524}. Its own metadata still
+19:   reads \texttt{NON-PASSING} / \texttt{adoptable: false}. \\
+20: \addlinespace
+21: Mean-centered sibling &
+22:   \texttt{z-mean.npz} &
+23:   \emph{Not interchangeable.} Same seven keys and shapes, byte-identical
+24:   central values and masks; $\sqrt{\Tr C}$ \SI{7.13}{\percent} lower. \\
+
+=== 6b9b5be5c:docs/analysis-note/app_release_records.tex lines 59-65 ===
+59: \paragraph{Adoption.} The adoption, recorded on 2026-09-20 (App.~\ref{app:provenance}, \texttt{z-cv-record}), is a decision to publish under a digest-bound exception. The object's own metadata is preserved unedited, and \textbf{an adoption does not turn those fields into pass labels.} The specification requires the null bound to be fixed before production and production had already happened, so the derivation step is unperformable for this object by anyone, which is why this is an exception and not a repair. The predeclared magnitude criterion for the estimator-seed sensitivity --- \emph{cause~3}'s $M(\mathrm{ii})$ in the internal dependency register --- was computed by the 2026-09-20 campaign for two \emph{other} products.
+60: 
+61: \paragraph{Assembly and centering.} The receipt records the pinned-bin count ($g=1$ by declaration). The algebra of Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation} is implemented in \texttt{nd-unfolding/z\_assembly.py} (App.~\ref{app:provenance}, \texttt{z-assembly}) and asserted independently of the object's producer. The mean-centered sibling \texttt{z-mean.npz} shares all seven keys and shapes, with byte-identical central values, support mask, pinned mask and row index. The projector enforces the variant: \texttt{project\_cov\_nd.py -{}-expect-variant} is required with no default, and \texttt{-{}-run-class publication} from a mean-centered source is refused.
+62: 
+63: \paragraph{Projection.} $M$ is built by \texttt{project\_cov\_nd.build\_projection}. The C-order of the rows is established by the F-order control of \S\ref{app:release-example}, step~3. No source cell is dropped ($\texttt{src\_cells\_dropped}=0$). Exact symmetry $\max|C-C^{\top}|=0$ follows structurally from $M C M^{\top}$, without a tolerance.
+64: 
+65: \paragraph{Conditioning.} The common label ``most-negative over max'' for $\lambda_{\min}/\lambda_{\max}$ is misleading because no eigenvalue is negative. A different mask, summation order or precision need not preserve $n_{\mathrm{negative}}=0$. The cutoff scan used the diagnostic projection of the same source through the same $M$. Its $\lambda_{\min}$, $\lambda_{\min}/\lambda_{\max}$ and rank-at-$10^{-12}$ match the publication run's recorded values identically. A later independent scan of the publication bytes found the publication and diagnostic $42\times42$ matrices bitwise identical (App.~\ref{app:provenance}, \texttt{z-conditioning}).
+
+=== 6b9b5be5c:docs/analysis-note/app_release.tex lines 94-104 ===
+94: The released package is to support the following computation, which checks the package's ordering, mask and weights from end to end.
+95: 
+96: \begin{enumerate}[itemsep=2pt]
+97:   \item The five-axis central values $\mathbf{x}$ have \num{65856} entries, and the reported-cell index array has \latBins\ entries.
+98:   \item $M$ has shape $\zprojCells\times\latBins$, and $C_{Z}$ has shape $\latBins\times\latBins$. The five-axis covariance of the configuration-(a) central value is the file \texttt{z-cv.npz}, with \texttt{sha256} \zcvDigest\ldots\ and $\sqrt{\Tr C}=\SI{5.6742e-38}{}$, so a loaded $C_{Z}$ can be checked against both.
+99:   \item The projection $\mathbf{y}=M\mathbf{x}_{\text{reported}}$, reshaped to $7\times6$ \textbf{in C order}, must reproduce the $(\Eavail,W)$ central-value map of Fig.~\ref{fig:eavailWexcess}. The F-order control establishes the ordering: C order agrees with the figure to a relative $1.7\times10^{-16}$; F order disagrees at relative $1.0$.
+100:   \item The projected covariance $C_{EW}=M\,C_{Z}\,M^{\top}$ is checked by $\sqrt{\Tr C_{EW}}=\SI{4.4552e-39}{}$ and exact symmetry ($\max|C-C^{\top}|=0$). Its numerical rank depends on the cutoff, because the spectrum decays smoothly with no plateau: the retained count is 26 at $10^{-6}$, 36 at the projector's hardcoded $10^{-12}$, 41 at \texttt{numpy.linalg.matrix\_rank}'s default, and 42 with no cutoff. The rank is therefore not an integrity check: with NumPy's default cutoff, an intact matrix fails a test for 36. The check is instead that $|\lambda_{\min}|/\lambda_{\max}$ is of order $10^{-15}$, the edge of double precision; the matrix is ill-conditioned, without a definite rank. Do not check the sign of $\lambda_{\min}$, which sits at the noise floor and carries no information; a second host reproduces $\lambda_{\min}$ to only five significant digits.
+101:   \item The per-cell relative uncertainty is $\sqrt{(C_{EW})_{rr}}/y_{r}$. Because $M$ carries the dropped axes' widths, $\mathbf{y}$ and $C_{EW}$ are on the \emph{density} scale. Converting cell $r$ to an integrated cross section requires multiplying by that cell's own $\Delta\Eavail\,\Delta W$, and the catch bins make that factor large.
+102:   \item $C_{EW}$ should \emph{not} be inverted without a declared regularization: its spectrum runs continuously down to the double-precision noise floor, so an inverse is set by the regularizer rather than by the data. The estimator-seed sensitivity, which exceeds its limit (the first measurement of \S\ref{sec:eavailw-adopted}), is why no significance is computed from it.
+103: \end{enumerate}
+104: 
+
+=== 6b9b5be5c:ISSUES.md lines 117-133 ===
+117: * **AUD-N4 [T]** — **Release appendix update.**  
+118:   *Finding:* The release appendix still specifies the measurement release; archive package is not mentioned.  
+119:   *Record:* `AUDIT.txt` row N4; `DECISION-20261106-joseph-methods-study-and-archive.md:57-61, :64-67` ("Publication, release and contact acts stay Joseph's").  
+120:   *Target:* `docs/analysis-note/app_release.tex:4`, `:58`.  
+121:   *Status:* **RESOLVED for the planned-package text (2026-11-13).** Held by the director (2026-11-08) and Joseph until Joseph's ruling, `DECISION-20261113-joseph-note-n4-n5-role.md` item 1: the planned, provisional Zenodo package paragraph of `4708988a6` (`app_release.tex`) stays, and the hold is lifted for that text only. The deposit itself still needs Joseph's final go (`DECISION-20261112-joseph-consult-d1-d7.md`, D6). No release schema change is drafted.
+122: 
+123: * **AUD-N5 [R]** — **Event-loop preservation.**  
+124:   *Finding:* Event-loop preservation CFS paths in `app_release.tex:50, :53`.  
+125:   *Record:* `AUDIT.txt` row N5; `DECISION-20261101-joseph-eventloops-copy-to-cfs.md:28-34, :38-48` has no CITABLE FOR block.  
+126:   *Target:* `docs/analysis-note/app_release.tex:50`, `:53`.  
+127:   *Status:* **KEPT FOR NOW (2026-11-13); OPEN, see AUD-N5a.** Held by the director (2026-11-08) and Joseph until Joseph's ruling, `DECISION-20261113-joseph-note-n4-n5-role.md` item 2: the preservation text of `1fbade809` (`app_release.tex`) stays "for now". No internal CFS path remains in the appendix.
+128: 
+129: * **AUD-N5a [R]** — **A citable record for the preservation sentence.**  
+130:   *Finding:* `app_release.tex` states "Event-loop outputs are preserved on the analysis's NERSC storage." (`1fbade809`). It is a claim, and its record, `DECISION-20261101-joseph-eventloops-copy-to-cfs.md`, has no CITABLE FOR block (the AUD-N5 finding).  
+131:   *Record:* `DECISION-20261113-joseph-note-n4-n5-role.md` item 2 ("Its preservation sentence is a claim, so it needs a record citable for it before the note is released"); its NOT CITABLE FOR names "event-loop outputs being preserved".  
+132:   *Target:* the preservation sentence in `docs/analysis-note/app_release.tex`.  
+133:   *Status:* **OPEN.** Needs a record citable for the preservation, or a CITABLE FOR block on the 2026-11-01 decision, before the note is released. This row authorizes no tex edit.

@@ -1,0 +1,2 @@
+fig:modedecomp (sec_3d.tex)
+Central-value $d\sigma/d\Eavail$ by interaction mode, overlaid with unfolded data. Data carry no error bars because no 3D covariance is quoted (\S\ref{sec:3d}).

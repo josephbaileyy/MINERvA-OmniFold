@@ -1,0 +1,2 @@
+fig:tension (sec_results.tex)
+The published-covariance $\chi^{2}$ is spread over many eigenmodes. Shown: the eigenmode decomposition of the published-covariance $\chi^{2}$: eigenvalue spectrum with cumulative $\chi^{2}$ (left) and the per-bin $\chi^{2}$-contribution map (right).

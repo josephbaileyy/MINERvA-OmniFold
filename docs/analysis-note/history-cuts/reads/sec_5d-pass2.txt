@@ -1,0 +1,22 @@
+# sec_5d meaning read, pass 2 (the bare "declared" removed): codex-school gpt-6.1-sol, high, read-only; prompt as pass 1
+For question 1, comparing each changed sentence’s assertions separately from whether history may leave:
+
+- **F1 — FAIL:** Changing “A declared probe” to “A probe” drops the assertion that the probe was declared, although the original did not specify when.
+- **F2 — FAIL:** Changing “A declared study” to “A study” likewise removes declaration status, without replacing it.
+- **F3 — FAIL:** Removing “declared in advance” from the fail-closed rule weakens the sentence’s explicit timing claim, even though D10 preserves it elsewhere.
+- **D8 — PASS:** The row preserves the tested variants, their failure to meet the stability requirement and the unchanged estimator.
+- **D9 — PASS:** The row preserves the tested variant, advance-set futility criterion, invalid deformation, verdict’s independence from that deformation and absence of a coverage claim.
+- **D10 — PASS:** The row preserves the stopped test and absence of a coverage result, with “fixed before that stage ran” supported by the original advance-declaration statement and the supplied chronology.
+
+For question 2, the removed items are:
+
+- **F1, “declared” — LEDGER:** Declaration status alone supplies no timing or independence guarantee, while the probe’s object, outcome and limitations remain printed; its declaration records have cut-log pointers.
+- **F2, “declared” — LEDGER:** The bare designation adds no specified evidential independence, while the single-pseudo-experiment scope and mechanism findings remain printed; the declaration and binding records have pointers.
+- **F3, “declared” modifying the coverage test — LEDGER:** The designation alone adds no timing information, and the test’s identity and stopped outcome remain printed.
+- **F3, “declared in advance” modifying the stop rule — NEEDED:** Advance specification affects interpretation of the stopping decision, but D10 retains it explicitly as “fixed before that stage ran.”
+
+**No NEEDED item was lost from the printed note.** The LEDGER removals cause no question-2 failures; the question-1 failures concern weakened assertions in sentences that remain.
+
+No disclosure of a choice made after results were seen disappeared: the disclosure that the null bound was not fixed before production, and that the covariance is nevertheless used, remains unchanged.
+
+OVERALL: FAIL — Q1: F1, F2, F3; Q2: no lost NEEDED items.

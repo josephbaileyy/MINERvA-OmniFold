@@ -1,0 +1,4 @@
+figures 37, tables 35, appendices 8 (ABCDEFGH), body sections 13
+last body section: 13 Summary and outlook; last line before the references: 'Error bars are the standard error of the mean.'
+words: full text 72404; blinded copy 69536
+COMPLETE: every figure and table caption, every appendix heading, the last body section and the last line before the references are in the blinded copy

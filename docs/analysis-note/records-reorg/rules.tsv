@@ -1,0 +1,66 @@
+dest	field	regex
+R3.1b	key	^7e2be87b31#1$
+R2.1	title	^Method and statistics detail moved from the note$
+R4.1	title	^Five-observable progression detail moved from the note$
+R1.1	title	^Introduction detail moved from the note$
+R3.1	title	^Reproduction detail moved from the note
+R3.2	title	^Part 3 detail moved from the note$
+R6.1	title	^Limitations moved from the note
+R4.4	title	^Validation detail moved from the note$
+R1.3	title	^Detail moved from the note in the compression$
+R2.3	title	^(Check-stage moves|Disclosures cut|Qualifications from the second).*(?<!x)$
+R1.1	title	Practices of the cross-experiment guide|Findings of the first neutrino OmniFold
+R1.2	src	^sec_intro$
+R1.2	title	^(Further introduction detail|The data and the published measurement|Why unbinned)
+R1.3	title	dimensionality survey|Additional recent measurements
+R2.2	title	charged-pion offset|generators' muon axis|Truth-level W residual
+R2.1	src	^(sec_experiment|selection_features)$
+R2.2	src	^sec_observables$
+R2.4	title	Background subtraction|other experiments' subtraction|The quoted 2D cross section
+R2.5	title	exact-split|estimator con|estPurity and the estTwoD|estimator scope
+R2.6	title	migrations|underflow|In n dimensions|For higher-dimensional ext|The 2D grid has|Truthtoreco
+R2.7	title	Profile OmniFold|SPINUP|Gradient-boosted trees in unbinned|related developments
+R2.3	src	^sec_method$
+R3.1	title	eigenmode decomposition|Eigenmode detail
+R3.2	title	Construction detail of the 2D covariance|PPFX flux universes|Flux normalization detail|Bootstrap construction detail|Training-seed block detail|earlier two-dimensional budget|earlier 2D budget|completeness-divided|^Development.history
+R3.1	src	^sec_results$
+R3.2	src	^sec_systematics$
+R7.3	title	fixed-truth coverage rescoring|test-index
+R3.3	src	^sec_validation$
+R4.1	title	Valencia 2p2h and the integrated deficit|pion final-state-interaction dials
+R4.2	title	q3|q_3|fourth axis|4D|Marginalization check|We report no 4D|\(Eavail,q3\)
+R4.1	src	^sec_3d$
+R4.2	src	^sec_eavailw$
+R4.8	title	extended fiducial phase-space study
+R4.7	title	Caption detail \(caption pass, Part 4\)
+R9.2	title	Caption detail \(caption pass, Parts 2
+R4.3	title	Five-dimensional estimator development detail|Recovery changes|ref\{sec:5d\}|val-fiveaxis|Five-dimensional estimator tests in full
+R4.4	title	val-negweight|3d-closure|fived16-fd|fake-data tests|fake-data control|per-cell validity|purity bias|low-capacity residual|retained fraction|Fake-data, closure and classifier|Closure detail
+R4.5	title	val-departure|gbdt-model-dependence|fived16-ibu|3d-classifier|withheld shap|held-out|generator-sized change|binned IBU|Fake-data and unfolding-algorithm
+R4.6	title	coverage-5d|eavailw-construction|five-axis covariance's acceptance|scope of the five-axis|diagonal seed measures|earlier note's section on the five-axis
+R4.4	src	^sec_q3_closure$
+R5.2	title	stopped coverage tests|Investigation of the gate|The rule, fixed before|The coverage of Cmathrmmodel|cell flags of the second sixteen-cell|The first comparison bounds|The second comparison evaluates
+R5.1	title	sixteen-cell run-period block
+R7.5	title	Hydrocarbon target correction
+R5.3	title	Correlation sensitivity of the sixteen-cell
+R5.1	src	^sec_fived16$
+R5.3	src	^sec_fived16_gen$
+R6.1	title	^Principal limitations
+R6.2	file	^records_compression_h3_rw\.tex$
+R6.2	file	^records_compression_h3_p6\.tex$
+R7.1	title	MINERvA's published-covariance|Ruterbories|Upstream references|Multinomial to independent Poisson
+R7.2	title	Regularization scans
+R7.3	title	Log-normal chi2|Edge-bin sensitivity|edge-bin sensitivity|Sources of the 2D comparison|Same-ensemble pull|exact-split shape distance
+R7.2	title	A sample covariance from Nle|Even at full rank|Eq\.eqrefeq:blocksum requires
+R7.1	title	This appendix gives the statist|A coherent bootstrap|For these replicas|The universe sweep|MAT|Equationeqrefeq:systblocksum|Grouped by category|For two universes|MnvVertErrorBand|GetTotalErrorMatr|The bootstrap varies|The combined sqrtTrmathbfC|The data/MC split bootstrap|The variance methods|OmniFold sees reco|In reported bin i|Because sigmai
+R7.3	src	^app_statmethods$
+R7.5	title	Familywise|Each calibration ps|Probability model|Holm reduction|The largest ratio|rounding|Recent work constructs
+R7.4	src	^app_statmethods_nd$
+R7.5	title	Generator-test detail moved|^Construction\.$|^Re-evaluated tests\.$|^Opening$|Hypotheses, grid|Calibration within|Multiplicity, stopping|Decisions on the ten|Six conditions|Numerical convergence|Calibration validity|Physical-model adequacy|Lost pseudo-experiments|Matched coarse projections|Hadronic-response condition|Calibrated joint generator tests
+R7.5	src	^sec_joint$
+R8.1	title	Background-subtraction detail moved|Background subtraction \(App|Binned limit|Estimator and binned limit|Closed-form toy
+R8.2	title	Comparison on the 2D result|Which background treatment|Displacement
+R8.3	title	Refined subtraction|Refined negative-weight|Refinement capacity|Background treatment and choice of covariance
+R8.2	src	^(app_negweight|sec_q3_negweight)$
+R9.1	title	Detector-response mismatch|Reconstruction-only test|Follow-up and interpretation
+R10.5	title	Release package \(App|Result package and reproduction limits|Scope of reproduction

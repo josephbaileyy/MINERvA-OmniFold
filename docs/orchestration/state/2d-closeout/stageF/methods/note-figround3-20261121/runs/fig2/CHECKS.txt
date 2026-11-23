@@ -1,0 +1,20 @@
+# Fig. 2 round 3 (2026-11-21T06:19:00Z): bash tools/run_r3.sh <wt> HEAD; compose_fig2_r3.py sha256 e17b65211adc37ef7c82ce1c5efae4bfb322aec1ccf5434c7ad463d7a58ac6c9
+# arm 0: note-figround-20261121/tools/compose_fig2_round.py (sha256 3ffd1215a8c255add5980fb5621d8f9f710bef44cd1ddeab9e23a392540cdb07), the installed recipe
+== arm 0 against the installed files at HEAD
+EQUAL-BUT-DATE MEFHC_5iter_xsec_proj_pt.pdf: /CreationDate (D:20261120215955-07'00') vs /CreationDate (D:20261120221910-07'00')
+EQUAL-BUT-DATE MEFHC_5iter_xsec_proj_pz.pdf: /CreationDate (D:20261120215956-07'00') vs /CreationDate (D:20261120221910-07'00')
+== arm 1 against arm 0: every data item equal with colours left out (dhash); full hashes differ only in the published-prediction line (colour); strings differ only in the two legend renames (p_par)
+  ok MEFHC_5iter_xsec_proj_pt.pdf: 18 items, colour-free data equal True; colour changed in ['Tune v1: published prediction']; strings = arm 0's with the renames True; overlaps 3 -> 3 (reported; see README)
+  ok MEFHC_5iter_xsec_proj_pt.png: 18 items, colour-free data equal True; colour changed in ['Tune v1: published prediction']; strings = arm 0's with the renames True; overlaps 1 -> 1 (reported; see README)
+  ok MEFHC_5iter_xsec_proj_pz.pdf: 18 items, colour-free data equal True; colour changed in ['Tune v1: published prediction']; strings = arm 0's with the renames True; overlaps 3 -> 3 (reported; see README)
+  ok MEFHC_5iter_xsec_proj_pz.png: 18 items, colour-free data equal True; colour changed in ['Tune v1: published prediction']; strings = arm 0's with the renames True; overlaps 5 -> 5 (reported; see README)
+FIG2-R3-CAPTURES :: PASS
+== the lower label clears the lower tick labels in the PDF itself (pdftotext word boxes: the label's right edge left of the ticks' left edge)
+  MEFHC_5iter_xsec_proj_pt: gap 5.61 pt
+  MEFHC_5iter_xsec_proj_pz: gap 5.63 pt
+== printed sizes (0.49 textwidth = 229.32 pt over the saved page width)
+  MEFHC_5iter_xsec_proj_pt: page width 228.772 pt, scale 1.0024; labels 8.44 pt, ticks 7.94 pt printed
+  MEFHC_5iter_xsec_proj_pz: page width 233.319 pt, scale 0.9829; labels 8.17 pt, ticks 7.69 pt printed
+installed MEFHC_5iter_xsec_proj_pt.pdf sha256 d27075c220081054caf51fb6130fe3a671e9dc0dacfb1a97469b3d07829f63af
+installed MEFHC_5iter_xsec_proj_pz.pdf sha256 caa9286bfec8e7f2b6d6dd06fda6d5fc9f0b8f1c7c95d4bacc290048726b4745
+RUN-FIG2-ROUND :: PASS

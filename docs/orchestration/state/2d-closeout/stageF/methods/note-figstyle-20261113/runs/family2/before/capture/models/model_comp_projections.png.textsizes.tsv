@@ -1,0 +1,51 @@
+# figure width (in)	5.5249999999999995
+6.5	$p_T$ (GeV/$c$)
+5.5	−0.5
+5.5	0.0
+5.5	0.5
+5.5	1.0
+5.5	1.5
+5.5	2.0
+5.5	2.5
+5.5	3.0
+5.5	3.5
+5.5	4.0
+6.5	$d\sigma/dp_T$ (cm$^2$/(GeV/$c$)/nucleon)
+5.5	$\times\mathdefault{10^{−38}}\mathdefault{}$
+5.5	$\mathdefault{−0.5}$
+5.5	$\mathdefault{0.0}$
+5.5	$\mathdefault{0.5}$
+5.5	$\mathdefault{1.0}$
+5.5	$\mathdefault{1.5}$
+5.5	$\mathdefault{2.0}$
+5.5	$\mathdefault{2.5}$
+5.5	$\mathdefault{3.0}$
+5.5	$\mathdefault{3.5}$
+5.5	$\mathdefault{4.0}$
+5.5	Published (PRD 104, 092007)
+5.5	This work (OmniFold)
+5.5	GENIE 2.12.6 + MINERvA Tune v1
+6.5	$p_\parallel$ (GeV/$c$)
+5.5	−10
+5.5	0
+5.5	10
+5.5	20
+5.5	30
+5.5	40
+5.5	50
+5.5	60
+6.5	$d\sigma/dp_\parallel$ (cm$^2$/(GeV/$c$)/nucleon)
+5.5	$\times\mathdefault{10^{−39}}\mathdefault{}$
+5.5	$\mathdefault{−1}$
+5.5	$\mathdefault{0}$
+5.5	$\mathdefault{1}$
+5.5	$\mathdefault{2}$
+5.5	$\mathdefault{3}$
+5.5	$\mathdefault{4}$
+5.5	$\mathdefault{5}$
+5.5	$\mathdefault{6}$
+5.5	$\mathdefault{7}$
+5.5	Published (PRD 104, 092007)
+5.5	This work (OmniFold)
+5.5	GENIE 2.12.6 + MINERvA Tune v1
+8.0	MINERvA ME FHC, $1.06\times10^{21}$ POT

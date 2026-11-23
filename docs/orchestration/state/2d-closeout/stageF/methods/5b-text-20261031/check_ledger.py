@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# frozen: validates the pre-rewrite note structure (before 2026-11-21); fails by design against the journal-voice note; not a gate. (2026-11-22, the director's ruling)
 """Check the 5B text round's ledger: r22/step2/check_ledger.py, run with this round's base, ledger and abstract pairs.
 
 The checks are step2/check_ledger.py's (one implementation; see its docstring). This round sets:

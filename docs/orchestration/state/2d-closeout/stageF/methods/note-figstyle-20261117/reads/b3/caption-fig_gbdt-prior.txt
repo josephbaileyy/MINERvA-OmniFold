@@ -1,0 +1,2 @@
+fig:gbdt-prior (sec_5d.tex)
+Historical W3 at five iterations. Horizontal gives minus the noise-free relative truth residual; vertical gives the relative shift in real-data $R$ when its MC prior changes to W3, normalized to CV-prior results. Points are supported cells, not independent repeated experiments. The diagonal marks equality. Strong correlation supplies no per-cell bound; shifts do not measure unknown real-data bias.

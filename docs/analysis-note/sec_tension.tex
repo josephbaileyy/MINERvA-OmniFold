@@ -1,0 +1,54 @@
+\subsection{Anatomy of the paper-covariance tension}
+\label{sec:tension}
+
+This derivation supports \S\ref{sec:results-tension}. Its numbers are for the exact-split cross-check, the quoted 2D central value when the derivation was made (\S\ref{sec:method-config}). For the quoted LightGBM central value, \S\ref{sec:results-tension} gives the same decomposition from the same code: a smaller distance ($\chiPaper$), an $8\times$ rather than $10\times$ off-diagonal inflation, \SI{9.6}{\percent} rather than \SI{3}{\percent} in the ten smallest-$\lambda$ modes, and its leading poorly determined modes in the highest-$\pPar$ bins, while its moderate-$\lambda$ modes lie below the highest-$\pPar$ bins.
+
+\paragraph{The paradox.} The central values agree well. For the exact-split cross-check, $\sigma_{\tot}^{\ours}/\sigma_{\tot}^{\paper} = 1.011$, the median bin ratio is $1.006$ and the per-bin pull standard deviation against the paper covariance is only $0.598$; for the quoted value they are $\ratioTot$, $\medianBinRatio$ and $\pullRMS$ (\S\ref{sec:pull}). A diagonal-only $\chi^{2}$, ignoring all off-diagonal correlations, is therefore % N4 (the director, 2026-11-16): the three exact-split values are values.tex's comments' (integral ratio 1.0113, median 1.0064, pull RMS 0.598); the quoted value's are \ratioTot, \medianBinRatio and \pullRMS (values.tex:10, :14, :19).
+\begin{equation}
+\chi^{2}_{\diag}/\mathrm{ndf}
+= \frac{1}{n}\sum_{i}\frac{\Delta_{i}^{2}}{C_{ii}}
+= \mathrm{SD}(\mathrm{pull})^{2} + \mathrm{mean}(\mathrm{pull})^{2}
+\approx 0.366,
+\end{equation}
+versus full-covariance $\chi^{2}/\mathrm{ndf}=3.661$. The $10\times$ inflation comes entirely from published \texttt{TotalCov}'s off-diagonal and small-eigenvalue structure.
+% (\texttt{diagnose\_tension.py})
+
+\paragraph{Eigenmode decomposition.} Diagonalizing the reported-block paper covariance, $\mathbf{C}=\sum_{k}\lambda_{k}\mathbf{u}_{k}\mathbf{u}_{k}\T$ ($\lambda_{1}\!\ge\!\cdots\!\ge\!\lambda_{n}$), and projecting $c_{k}=\mathbf{u}_{k}\T\boldsymbol{\Delta}$,
+\begin{equation}
+\chi^{2}=\boldsymbol{\Delta}\T\mathbf{C}^{+}\boldsymbol{\Delta}
+=\sum_{k}\frac{c_{k}^{2}}{\lambda_{k}},
+\qquad
+\text{``eigen-pull''}_{k}\equiv\frac{c_{k}}{\sqrt{\lambda_{k}}},
+\end{equation}
+reproduces the pseudo-inverse $\chi^{2}=750.49$ to $3\times10^{-9}$. The tension is neither a few pathological null directions nor the absolute smallest eigenvalues. The largest contributions lie at $\lambda_{k}/\lambda_{\max}\sim10^{-4}$--$10^{-5}$, in the lower-middle spectrum, $\sim7$--$8$ decades above the condition floor ($\lambda/\lambda_{\max}\sim10^{-12}$). Their standardized-component magnitudes $5$--$6$ are descriptive coordinates in the published basis, without calibrated significance for independent results. The ten \emph{smallest}-$\lambda$ modes carry only $3\%$ of the $\chi^{2}$ and about $90$ modes are needed to reach $90\%$: the $\chi^{2}$ is broadly distributed, not localized to the ill-conditioned tail. A scan of the pseudo-inverse cutoff excludes a numerical artifact: the $73$ best-determined directions ($\lambda_{k}/\lambda_{\max}>10^{-4}$) give $\chi^{2}=291$ ($\chi^{2}/205=1.42$), and $139$ directions ($>10^{-6}$) give $\chi^{2}=572$ ($\chi^{2}/205=2.79$), each divided by the number of reported bins, not by the number of directions kept. The rank-truncation scan of \S\ref{sec:chisq} rises smoothly with no late jump, so the tension does not depend on the last few least-determined modes.
+% Revision D' 2026-11-06 (referee reads of D, both ACCEPT; Sonnet and the interpreter: print the raw chi2 and the directions kept): docs/orchestration/receipts/2d-lgbm42-20261011/tension_report_exact_control.txt:55-56 print "1e-06  2.791  139" and "1e-04  1.419  73". Arithmetic: 2.791 x 205 = 572.2, in [572.05, 572.26], 572 at three figures; 1.419 x 205 = 290.9, in [290.8, 291.0], 291.
+% Director-added wording correction 2026-11-06, for Joseph's review before merge (not among the two he approved): the truncated chi2 was printed as chi2/ndf, but its divisor is the 205 reported bins, not the directions kept. 2d-unfolding/diagnose_tension.py @ c3dbe30f4 (main): :110 n = int(mask.sum()), the 205 reported bins; :183 and :193 divide every truncated chi2 by n (the same divisor at 56e30b9c9 :108/:181/:191 and at 735c909da). Receipt docs/orchestration/receipts/2d-lgbm42-20261011/tension_report_exact_control.txt:55-56 ("1e-06  2.791  139", "1e-04  1.419  73"). No number changed.
+
+\paragraph{Shape contribution.} Splitting $\boldsymbol{\Delta}$ along $\mathbf{x}^{\paper}$ and its orthogonal remainder gives $\chi^{2}_{\mathrm{norm}}=0.10$ for scale, $\chi^{2}_{\text{shape}}=750.1$ for shape, and cross term $0.28$; the split is not $\mathbf{C}^{+}$-orthogonal. The $+1.1\%$ normalization offset is statistically irrelevant to the tension; it is a correlated shape difference, consistent with Jacobian shape-only $\chi^{2}/\mathrm{ndf}=3.60$ (\S\ref{sec:shape}).
+
+\paragraph{Location in the $(\pT,\pPar)$ plane.} Mapping dominant eigenvectors and per-bin contributions $\Delta_{i}(\mathbf{C}^{+}\boldsymbol{\Delta})_{i}$ to the $14\times16$ grid (numbers for the exact-split cross-check; Figs.~\ref{fig:tension} and~\ref{fig:tensionmodes} show the LightGBM central value) locates tension on the low-$\pT$ peak ridge ($\pT\lesssim0.4$ GeV/c, $\pT$-bins 2/7/10 carry $16/11/12\%$) and low-$\pPar$ near-edge cells ($\pPar$-bins 0/1/8). Carrier modes oscillate in sign across the peak. They form neither vertical $\pT$-columns characteristic of a flux $1/\Phi(\pT)$ normalization error nor the $\theta_{\mu}<20^{\circ}$ acceptance boundary. Flux and Muon\_Energy, the largest bands and only named cross-band correlation (Bashyal, \S\ref{sec:rank}), dominate there. Tight bin-to-bin correlations leave little freedom to absorb a coherent $\sim1$--$2\%$ shape difference, so a small OmniFold-vs-IBU shape difference becomes a large $\chi^{2}$.\footnote{The pipeline uses one global $\mathrm{POT}_{\mathrm{data}}/\mathrm{POT}_{\mathrm{MC}}$ ratio; per-playlist ratios span $0.1707$--$0.2371$. Sensitivity at $1$--$2\%$ motivated a direct mixture check: $R_{\mathrm{glob}}\sum_p \mathrm{MC}_p$ versus $\sum_p R_p\,\mathrm{MC}_p$ over twelve playlists changes reco shape by at most $0.07\%$ in $\pT$, $0.14\%$ in $\pPar$, and $0.03\%$ on the low-$\pT$ ridge. The residual $+0.12\%$ is normalization. Nearly shape-identical playlists make even large mixture reweighting almost pure normalization, leaving the statement above unaffected at the $14$--$30\times$ level.}
+%
+
+\paragraph{A methodological component (estimator and iteration).} Changing the GBDT backend on the same data and normalization ($\Sigma\sigma$ within $0.1\%$) shifts the $\chi^{2}$ against the paper covariance by $\sim1$ unit. The integrated agreement does not mean the bins agree: the LightGBM seed-1 and exact-split central values differ by a median of \SI{0.97}{\percent} per bin, $1.3$ statistical standard deviations (seed~42: \SI{0.98}{\percent}, 1.32; \S\ref{sec:method-config}). Iteration-count effects are negligible,
+\begin{center}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+OmniFold configuration & $\chi^{2}/\mathrm{ndf}$, paper covariance & pull SD \\
+\midrule
+exact-split, 5 iter (cross-check; earlier central value) & $3.66$ & $0.598$ \\
+HistGBT, 5 iter (10-seed mean) & $2.70\pm0.04$ & $0.56$ (RMS) \\
+LightGBM, 5 iter, seed 42, refined subtraction (quoted) & $2.270$ & $0.535$ \\
+LightGBM, 5 iter, seed 42 & $2.654$ & $0.564$ \\
+LightGBM, 5 iter, seed 1 & $2.65$ & $0.563$ \\
+LightGBM, 10 iter, seed 1 & $2.66$ & $0.565$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+All rows except the quoted one use the purity-based subtraction. (i) \textbf{Iteration count, for this statistic}: LightGBM $5\to10$ iters moves the $\chi^{2}$ by $+0.01$ ($2.645\to2.657$). That is the movement of this comparison statistic between five and ten iterations. It does not establish convergence of every functional. (ii) \textbf{The GBDT estimator carries a $\sim1$-unit band}: the exact-split cross-check ($3.66$) is the outlier, while both histogram-binned backends agree at $2.65$--$2.70$. HistGBT, the scikit-learn histogram estimator, is a $10$-seed mean, range $2.63$--$2.74$. The $\pm0.04$ ML-seed jitter is $\sim25\times$ smaller than the $0.96$ exact$\to$hist gap, so these runs differ by backend. That jitter does not measure the exact-split seed spread, which is unmeasured (\S\ref{sec:method}). The exact-gradient trees fit finer shape structure (less implicit smoothing) and so deviate more from the paper's IBU-regularized result. The comparison shows that the $\chi^{2}$ moves with the estimator. It does not separate implicit regularization from a physical data--MC disagreement.
+% absence-ok: scoping statement: exact-split seed spread is unmeasured in sec_method.tex
+% RE-2 integration W2 (approved, DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md): the seed-42 purity row is E_U (values_table.tsv cfg-lgbm42-chi2 / cfg-lgbm42-pullrms
+% purity_value 2.654, 0.564); the quoted row is E_R (refined 2.270, 0.535).
+% (\texttt{tension\_iter/})
+
+\paragraph{Conclusion.} For the exact-split cross-check, the tension is a broadly distributed, correlated shape difference concentrated on the low-$\pT$ peak dominated by flux/Muon\_Energy bands; for the LightGBM central value the distance is smaller and a larger share lies in poorly determined directions (\S\ref{sec:results-tension}). Normalization and small-$\lambda$ inversion artifacts do not drive it. A $\sim1$-$\chi^{2}$-unit GBDT estimator/iteration regularization band adds a methodological component. Both point to the same structure: the Bashyal flux\,$\leftrightarrow$\,Muon\_Energy joint block (\S\ref{sec:rank}) is the covariance structure that governs the region carrying the tension.
+

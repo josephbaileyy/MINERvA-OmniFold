@@ -1,0 +1,2 @@
+fig:control (sec_experiment.tex)
+Reconstructed $\pT$, $\pPar$, $\Eavail$, $q_{3}$ and $W$ for the analysis selection. Data points overlay POT-scaled simulated signal (blue) stacked on background (orange); data/MC ratios appear below. Wide hadronic catch bins extend to \SI{100}{GeV} and are compressed at each panel's right edge. The gray MC-statistical band on the ratio is mostly narrower than the points. The $\sim\SI{12}{\percent}$ data normalization excess over MINERvA Tune~v1 reflects the truth-level generator deficits in \S\ref{sec:3d-models}.

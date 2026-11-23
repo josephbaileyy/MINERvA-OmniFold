@@ -1,0 +1,11 @@
+You are checking two factual corrections to a HEP technical note, read-only. Files here:
+- old.tex: the two sentences before the change (sec_eavailw.tex:65, then sec_results.tex:130; lines starting with % and text after an unescaped % are source comments, not printed).
+- new.tex: the same two sentences after the change.
+- records.txt: the records each correction cites, and the companion Supplement's printing of the same two quantities.
+- cutlog.md: the issue rows describing the corrections.
+
+For each of the two corrections, answer:
+1. Does the new printed value equal what the cited record supports, at the printed precision, for the population the sentence names (weighted or unweighted events; the same comparison and metric)? Quote the record field you rely on.
+2. Does the new sentence change any other part of its meaning, or lose a qualifier? Quote the text if so.
+3. Does the new value now agree with the Supplement's printing?
+Give each correction PASS or FAIL with one sentence per question, then end with one line: "OVERALL: PASS" or "OVERALL: FAIL", followed by the failures.

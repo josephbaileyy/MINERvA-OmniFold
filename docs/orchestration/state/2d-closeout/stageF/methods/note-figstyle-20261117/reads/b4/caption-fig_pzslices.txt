@@ -1,0 +1,2 @@
+fig:pzslices (sec_results.tex)
+The unfolded cross section versus simulated truth (Fig.~\ref{fig:ptslices}), sliced in $\pPar$ versus $\pT$, with no published measurement. Bars: weight statistics only, not the covariance, the same error bars as there.

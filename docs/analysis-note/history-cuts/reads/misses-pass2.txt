@@ -1,0 +1,25 @@
+# D1 misses-limitation meaning read, pass 2: codex-school gpt-6.1-sol, high, read-only; prompt misses-pass2-prompt.txt, texts misses-pass2-texts.txt, records misses-pass2-records.txt
+Question 1:
+
+- **PASS — Missed-event weights:** R1’s VALID row and R1b support “each event that fails reconstruction carries that universe’s own truth weight.”
+- **PASS — Earlier construction:** R1b supports the description of central-value weights divided by universe completeness.
+- **PASS — Adoption date and comparison status:** The revised wording dates adoption, not rebuilding, to 2026-11-14, consistent with R2, while R2 item 2 and R3 support retaining the earlier covariance only as a documented comparison.
+- **PASS — App. I construction and applicability:** R1’s VALID row and R2 support the corrected weights, replacement of the earlier covariance, and statement that the reported covariance does not use the approximation.
+- **PASS — App. I “Already seen”:** R1’s header establishes that the outcome table preceded the numerical readout, and R2 records adoption after the condition was met, consistent with the VALID row.
+- **PASS — D5’s changed applicability:** “The yardstick of the retraining test” accurately describes the retained retraining sentence’s use of the earlier ten-seed block’s σ.
+- **PASS — Remaining subsection:** Removing the old :224 item eliminates the obsolete active limitation and dangling test reference, while the revised :273 preserves the 3.7 scale relation.
+
+Question 2, applying R4:
+
+- **LEDGER — “The central value has completeness 1, so that division does not change it.”:** This detail of the retired construction is unnecessary to understand or reproduce the rebuilt covariance.
+- **LEDGER — “The approximation is not corrected.”:** This superseded status does not describe the reported covariance.
+- **LEDGER — Two-universe identities and seeds:** The MaRES_0/Flux:23 tests at seeds 42 and 43 concern the retired approximation.
+- **LEDGER — No effect resolved above training-seed noise:** This qualifies the historical approximation tests, not the rebuilt covariance.
+- **LEDGER — Historical tests’ comparison with the earlier ten-seed σ:** That comparison procedure belongs to the retired approximation tests.
+- **NEEDED, retained — The approximately 3.7 ratio between the earlier and current training-seed σ:** It remains necessary to interpret the retained retraining result and is explicitly preserved in new :273.
+- **LEDGER — Excluding only a median effect above twice the earlier σ:** This sensitivity limit concerns the retired approximation tests.
+- **LEDGER — Retraining shifts of 1.13–1.23 times that σ in those two universes:** The retained six-universe retraining paragraph already communicates the relevant limitation and its scale.
+
+**OVERALL: PASS**
+
+FAILs: None.

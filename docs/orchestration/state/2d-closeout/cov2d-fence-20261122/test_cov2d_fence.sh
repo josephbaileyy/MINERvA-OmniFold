@@ -1,5 +1,5 @@
 #!/bin/bash
-# Stub test for cov2d_fence.sh rev 2: sacct, date, id, hostname and squeue are shims on PATH; squeue must never run.
+# Stub test for cov2d_fence.sh rev 3: sacct, date, id, hostname and squeue are shims on PATH; squeue must never run.
 # Every case checks the exit code AND the verdict line (exit 0 <=> last line "FENCE CLEAR"; exit 3 <=> "FENCE REFUSED"
 # printed and no "FENCE CLEAR"). Usage: bash test_cov2d_fence.sh   (exit 0 iff every check passes)
 here=$(cd "$(dirname "$0")" && pwd); F=$here/cov2d_fence.sh
@@ -76,6 +76,7 @@ SACCT_RC=1                                                          case_ sacct_
 SACCT_ERR='sacct: error: Problem talking to the database\n'         case_ stderr_rc0_empty     3
 SACCT_ERR='sacct: error: Problem talking to the database\n' SACCT_OUT='1|cov2d_a|COMPLETED\n' case_ stderr_rc0_ended 3
 SACCT_ERR='sacct: error: x|y|z\n'                                   case_ stderr_three_fields  3
+SACCT_ERR='sacct: error: Too wide of a date range in query\n' SACCT_RC=1 case_ too_wide_range     3
 DATE_BAD=garbage                                                    case_ date_malformed       3
 DATE_RC=1                                                           case_ date_fails           3
 ID_RC=1                                                             case_ id_fails             3
@@ -86,6 +87,10 @@ args=$(cat "$T_LOG")
 st=$(printf '%s\n' "$args" | sed -n 's/.*-S \([^ ]*\).*/\1/p')
 age=$(python3 -c "import datetime as d,sys; print(int((d.datetime.now()-d.datetime.fromisoformat(sys.argv[1])).total_seconds()))" "$st" 2>/dev/null)
 if [ -n "$age" ] && [ "$age" -ge 172800 ]; then echo "ok   start $st is ${age}s back (>= 172800)"; else echo "FAIL start '$st' age '$age'"; fail=1; fi
+# Perlmutter refused a 60-day range (rev 2); the window must be at most 14 days (1209600 s, plus 120 s for test runtime).
+if [ -n "$age" ] && [ "$age" -le 1209720 ]; then echo "ok   start $st is at most 14 days back"; else echo "FAIL start '$st' more than 14 days back"; fail=1; fi
+# Static check on the script text: exactly one date -d window, and it is 14 days.
+if [ "$(/usr/bin/grep -c "date -d '14 days ago'" "$F")" = 1 ] && [ "$(/usr/bin/grep -c "date -d '" "$F")" = 1 ]; then echo "ok   script's only date -d window is '14 days ago'"; else echo "FAIL script's date -d window is not exactly '14 days ago'"; fail=1; fi
 for want in '-X' '-n' '-P' '-u stubuser' '-E now' '-o JobID,JobName,State'; do
   case " $args " in *" $want "*) echo "ok   argv has $want";; *) echo "FAIL argv lacks $want"; fail=1;; esac
 done

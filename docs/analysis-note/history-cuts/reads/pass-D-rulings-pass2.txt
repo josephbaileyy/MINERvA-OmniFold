@@ -1,0 +1,21 @@
+# D leftovers meaning read, pass 2: codex-school gpt-6.1-sol, high, read-only; prompt pass-D-rulings-pass2-prompt.txt, records pass-D-rulings-records.txt
+Question 1
+
+- **Q10 PASS** — B2 explicitly places `coverage-toys` at `sec:pull-diagnostic`, supporting the corrected pointer without changing the diagnostic’s meaning.
+- **Q11 PASS** — “Fixed in advance” describes the construction’s dimension—full covariance inversion without truncation makes \(p\) the cell count—rather than a timing claim requiring a named object.
+- **Q12 PASS** — Both “specified” replacements preserve the method specifications authorized by R4, with the operating point, packing qualification and numbers unchanged.
+- **Q13 PASS** — The revision (a) retains `acceptance_question: UNDECLARED` as stored metadata, (b) leaves the acceptance question open without claiming an exhaustive absence of deciding records, (c) accurately states B1’s treatment of the destination-binning projection, and (d) preserves “must carry the field with its stored value until that is decided.”
+
+Question 2
+
+| Row | Removed or replaced phrase | Classification and disposition |
+|---|---|---|
+| Q10 | `\S\ref{sec:val-other}` | **NEEDED** pointer function; preserved through the supported correction to `sec:pull-diagnostic`. |
+| Q11 | Nothing removed; “fixed in advance” retained | **NEEDED** construction property; retained. |
+| Q12 | “declared” in “its declared ten-iteration operating point” | **LEDGER** for the bare declaration wording; the **NEEDED** operating-point specification remains as “specified ten-iteration operating point.” |
+| Q12 | “declared” in “at the declared packing” | **LEDGER** for the bare declaration wording; the **NEEDED** packing qualification remains as “at the specified packing.” |
+| Q13 | “when the projection was built, it had not been decided whether an acceptance correction is needed at the destination binning” | **NEEDED** historical limitation; preserved by “At that time…” with the same referent and question. |
+| Q13 | “must carry this field with its value until that is decided” | **NEEDED** retention requirement and duration; preserved, including the stored value. |
+| Q13 | “so that no default in the data format makes that scientific choice” | **NEEDED** restriction on interpreting the metadata; preserved as preventing a default from answering the question. |
+
+OVERALL: PASS — FAILs: none.

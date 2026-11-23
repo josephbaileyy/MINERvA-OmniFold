@@ -265,6 +265,7 @@ def _figures(
     traces: list[dict[str, Any]],
     ensembles: list[dict[str, Any]],
     priors: list[dict[str, Any]],
+    print_style: bool = False,
 ) -> None:
     import matplotlib
 
@@ -280,6 +281,36 @@ def _figures(
             "svg.hashsalt": "gbdt-synthesis",
         }
     )
+    # --print-style (the note's figure style, director 2026-11-13): the methods paper's rcParams from the repo-root
+    # note_print_style.py, each canvas at the note's printed width (\linewidth), and the suptitle and legend sizes
+    # tied to its label and tick sizes. Without the flag nothing below changes the output.
+    if print_style:
+        import sys as _sys
+
+        for _a in Path(__file__).resolve().parents:
+            if (_a / "note_print_style.py").exists():
+                _sys.path.insert(0, str(_a))
+                break
+        import note_print_style
+
+        note_print_style.apply()
+        plt.rcParams["axes.titlesize"] = plt.rcParams["font.size"]
+
+    def fs(w: float, h: float, print_h: float | None = None) -> tuple[float, float]:
+        if not print_style:
+            return (w, h)
+        return (note_print_style.NOTE_TEXTWIDTH_IN, print_h) if print_h else note_print_style.figsize(1.0, h / w)
+
+    def xlabel_once(fig: Any, axes_row: Any, text: str) -> None:
+        # Print style: an x label identical in every panel of a row is set once, below the row.
+        if print_style:
+            fig.supxlabel(text, fontsize=plt.rcParams["axes.labelsize"])
+        else:
+            for ax in axes_row:
+                ax.set_xlabel(text)
+
+    sup_size = plt.rcParams["axes.labelsize"] if print_style else 11
+    leg_size = plt.rcParams["xtick.labelsize"] if print_style else 8
     colors = {"gibuu": "#4477aa", "q3": "#cc6677", "w1": "#228833", "w3": "#aa3377"}
     titles = {
         "J": "J: 109 supported joint cells",
@@ -300,7 +331,7 @@ def _figures(
         )
         plt.close(fig)
 
-    fig, axes = plt.subplots(2, 3, figsize=(10.2, 6), layout="constrained")
+    fig, axes = plt.subplots(2, 3, figsize=fs(10.2, 6, 5.6), layout="constrained")
     for col, group in enumerate(("J", "H2", "EW")):
         for truth, color in colors.items():
             for family in ("b0", "cap10"):
@@ -343,20 +374,24 @@ def _figures(
         for ax in axes[:, col]:
             ax.set_xscale("log")
             ax.set_xticks(
-                [1, 5, 10, 30, 100, 200], ["1", "5", "10", "30", "100", "200"]
+                [1, 5, 10, 30, 100, 200],
+                ["1", "5", "10", "30", "" if print_style else "100", "200"],  # print: "200", the maximum Fig. 26 cites
             )
             ax.grid(alpha=0.15)
-        axes[1, col].set_xlabel("Iteration (available ranges only)")
+        if not print_style:
+            axes[1, col].set_xlabel("Iteration (available ranges only)")
+    if print_style:
+        xlabel_once(fig, axes[1, :], "Iteration (available ranges only)")
     axes[0, 0].set_ylabel("Median absolute residual (%)")
     axes[1, 0].set_ylabel("Historical recovery proxy")
-    axes[0, 0].legend(fontsize=8)
+    axes[0, 0].legend(fontsize=leg_size)
     fig.suptitle(
         "Noise-free development traces: solid 100 trees / 8 leaves; dashed 400 / 31\nNo repeat-variance axis; historical truth ratios, fixed detector response",
-        fontsize=11,
+        fontsize=sup_size,
     )
     save(fig, "gbdt_recovery")
 
-    fig, axes = plt.subplots(1, 3, figsize=(10.2, 3.6), layout="constrained")
+    fig, axes = plt.subplots(1, 3, figsize=fs(10.2, 3.6, 3.3), layout="constrained")
     for ax, point in zip(axes, ("nominal", "W2", "W3"), strict=True):
         for group, color, marker in [("J", "#4477aa", "o"), ("H2", "#cc6677", "s")]:
             subset = [
@@ -391,18 +426,25 @@ def _figures(
                 label=group,
             )
         ax.set_title(f'{point}: n = {40 if point=="nominal" else 20}')
-        ax.set_xlabel("Mean signed relative residual (%)")
+        if not print_style:
+            ax.set_xlabel("Mean signed relative residual (%)")
         ax.set_yscale("log")
+        if print_style:  # minor ticks at 2x and 5x per decade, so adjacent minor labels do not collide
+            from matplotlib.ticker import LogLocator
+
+            ax.yaxis.set_minor_locator(LogLocator(base=10, subs=(2.0, 5.0)))
         ax.grid(alpha=0.15)
+    if print_style:
+        xlabel_once(fig, axes, "Mean signed relative residual (%)")
     axes[0].set_ylabel("Repeat SD of relative residual (%)")
     axes[0].legend()
     fig.suptitle(
         "One setting: R, five iterations; different cells estimate different quantities\n95% pointwise t / normal-model SD intervals; development reuse",
-        fontsize=11,
+        fontsize=sup_size,
     )
     save(fig, "gbdt_bias_spread")
 
-    fig, axes = plt.subplots(1, 3, figsize=(10.2, 3.5), layout="constrained")
+    fig, axes = plt.subplots(1, 3, figsize=fs(10.2, 3.5, 3.0), layout="constrained")
     for ax, group in zip(axes, ("J", "H2", "EW"), strict=True):
         subset = [r for r in priors if r["map"] == group]
         x = np.array([-r["W3_bias_pct"] for r in subset])
@@ -412,25 +454,33 @@ def _figures(
         high = max(x.max(), y.max())
         ax.plot([low, high], [low, high], color="0.5", ls=":")
         fraction = np.mean(np.abs(y) >= np.abs(x))
-        ax.set_title(
-            f"{group}: r = {np.corrcoef(x,y)[0,1]:.2f}; |shift| ≥ |bias|: {fraction:.0%}"
-        )
-        ax.set_xlabel("Minus noise-free W3 residual (%)")
+        title = f"{group}: r = {np.corrcoef(x,y)[0,1]:.2f}; |shift| ≥ |bias|: {fraction:.0%}"
+        ax.set_title(title.replace("; ", ";\n") if print_style else title)
+        if not print_style:
+            ax.set_xlabel("Minus noise-free W3 residual (%)")
         ax.grid(alpha=0.15)
+    if print_style:
+        xlabel_once(fig, axes, "Minus noise-free W3 residual (%)")
     axes[0].set_ylabel("Data shift under W3 prior (%)")
     fig.suptitle(
         "Historical W3 at five iterations: correlation is not a per-cell bias bound",
-        fontsize=11,
+        fontsize=sup_size,
     )
     save(fig, "gbdt_prior_response")
 
-    fig, axes = plt.subplots(
-        1,
-        2,
-        figsize=(10.2, 3.7),
-        layout="constrained",
-        gridspec_kw={"width_ratios": [1.65, 1]},
-    )
+    if print_style:  # the two panels stacked, each at the full printed width
+        fig, axes = plt.subplots(
+            2, 1, figsize=fs(10.2, 3.7, 5.4), layout="constrained",
+            gridspec_kw={"height_ratios": [1.2, 1]},
+        )
+    else:
+        fig, axes = plt.subplots(
+            1,
+            2,
+            figsize=fs(10.2, 3.7),
+            layout="constrained",
+            gridspec_kw={"width_ratios": [1.65, 1]},
+        )
     matrix = np.array(
         [
             [
@@ -475,7 +525,7 @@ def _figures(
     axes[1].set_ylabel("Coverage with 95% pointwise exact bounds")
     fig.suptitle(
         "Historical R statistical intervals: σ from 100 replicas of nominal seed 700000\nReused assessment samples; no per-experiment or total-coverage claim",
-        fontsize=11,
+        fontsize=sup_size,
     )
     save(fig, "gbdt_coverage")
 
@@ -484,6 +534,8 @@ def main() -> None:
     """Check identities and reproduce all diagnostic outputs."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=PACKAGE / "results")
+    parser.add_argument("--print-style", action="store_true",
+                        help="draw the figures in the note's print style (note_print_style.py); data unchanged")
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     path = PACKAGE / "inputs/operands.npz"
@@ -505,7 +557,7 @@ def main() -> None:
             ("overlap", overlap),
         ]:
             _csv(args.out / (name + ".csv"), rows)
-        _figures(args.out, traces, ensembles, priors)
+        _figures(args.out, traces, ensembles, priors, print_style=args.print_style)
     receipt = _json(ROOT / "docs/orchestration/state/s5p/stage2/stage2_receipt.json")
     costs = [
         {

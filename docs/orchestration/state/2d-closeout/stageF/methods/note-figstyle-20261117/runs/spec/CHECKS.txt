@@ -1,0 +1,13 @@
+# spec (2026-11-17T21:56:45Z): bash tools/arms.sh <wt> spec figenv/mpl3108 2fe070feca48256639797278eff0e1ac6f17abd7 eavail_spectrum docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/tools/fakeroot4 3d-unfolding/plot_eavail_spectrum.py --from-arrays docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/runs/family4/dumps/eavail_spectrum_arrays.npz --out @OUT@/eavail_spectrum.png --print-style
+== spec (eavail_spectrum): arm 0 against the file installed at 2fe070feca48256639797278eff0e1ac6f17abd7
+EQUAL-BUT-DATE tmp.zzthMOYPcC: /CreationDate (D:20261115144015-07'00') vs /CreationDate (D:20261117135648-07'00')
+raster: RASTER :: EQUAL :: 1 page(s), 0 differing pixel(s)
+== spec: arm 1 against arm 0
+captures: eavail_spectrum.pdf.json eavail_spectrum.png.json 
+  equal  spec/eavail_spectrum.pdf.json: 4 data artists, colours as the palette maps them, line styles as declared
+  equal  spec/eavail_spectrum.png.json: 4 data artists, colours as the palette maps them, line styles as declared
+COMPARE :: PASS
+text overlaps eavail_spectrum: 0 -> 0
+ARMS spec :: PASS
+== the installed copy (figs/) against this arm 1
+EQUAL-BUT-DATE eavail_spectrum.pdf: /CreationDate (D:20261117134752-07'00') vs /CreationDate (D:20261117135651-07'00')

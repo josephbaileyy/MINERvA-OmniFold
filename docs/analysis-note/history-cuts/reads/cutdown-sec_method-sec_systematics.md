@@ -1,0 +1,13 @@
+# Cutdown meaning read: §3 (sec_method.tex K1, K2) and §4 (sec_systematics.tex K1–K3)
+
+Reader: the editor (Claude Fable 5.2), reading the new text against the base `8342963c1`. The editor's own read, not
+an independent model's. (a) does the sentence still say exactly what it said, or less? (b) does every remaining
+sentence's antecedent and pointer still hold?
+
+| row | (a) | (b) |
+|---|---|---|
+| sec_method K1 | Two whole sentences removed; no remaining sentence is reworded. | The next sentence opens "The quoted central value records its run configuration", which needs nothing from the removed pair. The sentence after it names "The purity-subtracted seed-42 central value" in full, so it does not lean on the removed "With the purity-based subtraction (configuration (a))"; configuration (a) is defined in the list later in the subsection and in Table tab:estimators-matrix. App. A.5's "(seed 42: 0.98%, 1.32; §…method-config)" points to the exact-split paragraph, which is unchanged. |
+| sec_method K2 | One whole sentence removed. | It was the only sentence pointing back to K1's 0.18%. The sentence before it ("The spread over seeds is unmeasured.") and the one after ("The exact-split central value differs …") are unchanged and independent of it. §4.3's "(§…method-config)" pointer for the reseeded run still finds the 0.18% and 1.6% in this paragraph. |
+| sec_systematics K1 | Four whole sentences moved; the four that stay are word for word. | "The replacement" in the next paragraph ("Scope of the re-selected replacement") formerly followed "Replacing the single-pass lateral-band block …". It now follows "the re-selected event loops supply the lateral-band block of C_Z; … single-pass shifted observables are not used", which still says what replaces what. The macros \latTraceMove, \latBins, \latRatio… are defined in values.tex, which main_records.tex inputs. §4.1's pointer to this subsection for the re-selected universes still finds their definition. |
+| sec_systematics K2 | Whole paragraph moved, word for word. | In the records the paragraph's "(Eq. zassembly)" and "§…method-algo" resolve through the note's labels (xr-hyper), as the records' other pointers do. In the note, nothing else names the split-varied band or the twelve-seed scan. Eq. zassembly's C_ML term now has its definition in the records; the §9.6 commit adds the pointer. Until that commit the equation's term is defined only there, which this branch closes before its last commit. |
+| sec_systematics K3 | Whole sentence removed. | §9.6 "Status" states the same in its first sentence. The last paragraph of §4.7 ("… and C_Z is not transferred to them") needs no antecedent from it. |

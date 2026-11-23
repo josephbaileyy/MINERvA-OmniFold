@@ -1,0 +1,12 @@
+You are a short confirming reader. READ-ONLY: write nothing except your report to stdout; never touch any git checkout.
+
+In inputs/: connect-44f8ad7a.sh (the previously reviewed and approved connect script, sha256 44f8ad7a...), connect-new.sh (its regeneration), launch-old.sh and launch-new.sh (its launcher before and after), cov2d_fence_rev2.sh (sha256 3fbc9cbd...) and cov2d_fence_rev3.sh (sha256 7e81a721...). The connect embeds the fence as a base64 block between the lines `base64 -d > "$SHM/cov2d_fence.sh" <<'B64'` and `B64`, and pins its sha256 in FENCE_SHA.
+
+Confirm, by your own comparison:
+1. The only differences between connect-44f8ad7a.sh and connect-new.sh are: the base64 block, the FENCE_SHA line, and label/comment text "rev 2" -> "rev 3" (with 3fbc9cbd -> 7e81a721 in one comment). List every differing line class you find; anything else is a FIX.
+2. The new base64 block decodes byte-exactly to cov2d_fence_rev3.sh, and FENCE_SHA equals its sha256 (7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738). State how you checked.
+3. The rev 2 -> rev 3 fence diff changes only the sacct -S lookback (60 -> 14 days) and comments.
+4. launch-new.sh differs from launch-old.sh only in the pinned connect sha256 on the S=/SHA= line, and that sha equals sha256(connect-new.sh).
+5. No squeue call anywhere in connect-new.sh, launch-new.sh or the decoded fence (comments mentioning the word are fine; say so).
+
+First line "VERDICT: GO" or "VERDICT: FIX", then numbered confirmations or findings. Be brief.

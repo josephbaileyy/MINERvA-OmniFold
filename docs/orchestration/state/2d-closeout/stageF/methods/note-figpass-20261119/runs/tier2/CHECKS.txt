@@ -1,0 +1,17 @@
+# tier2 (Figs. 7, 9, 10, 13 with each series drawn once), 2026-11-19T04:56:20Z: capture_palette.py <capture> note-figstyle-20261117/tools/remap_anc.py <anc> tools/compose_tier2.py <xsec.root> <anc> <out>; figenv/rootmpl3108 (ROOT 6.40.04, matplotlib 3.10.8, numpy 1.26.4), BLAS threads 1; inputs xsec.root a5c13fc3 and cov_ptpl_minerva_inclusive_6GeV.root 6c6dce72 (the read-only fetch of 2026-11-17)
+[compose_tier2] wrote 4 figures; mosaic panels matched 30 of 30
+MEFHC_5iter_xsec_proj_pt: Fig. 13's This work against the projection's, max rel 3.4e-16; added ['Published (PRD 104, 092007)', 'Tune v1: published prediction']; renamed {'GENIE 2.12.6 + MINERvA Tune v1': 'Tune v1: our simulation (the prior)', 'This work / GENIE': 'This work / prior'}
+MEFHC_5iter_xsec_proj_pz: Fig. 13's This work against the projection's, max rel 0.0e+00; added ['Published (PRD 104, 092007)', 'Tune v1: published prediction']; renamed {'GENIE 2.12.6 + MINERvA Tune v1': 'Tune v1: our simulation (the prior)', 'This work / GENIE': 'This work / prior'}
+MEFHC_5iter_xsec_paper_pt_slices: 14 panels matched to mosaic panels; This work ratio constant to 2.2e-16; mosaic prior / slice prior - 1 at most 2.2e-16; published points added 224
+MEFHC_5iter_xsec_paper_pz_slices: 16 panels matched to mosaic panels; This work ratio constant to 2.2e-16; mosaic prior / slice prior - 1 at most 2.1e-16; published points added 224
+== check_tier2.py against the palette pass's committed arm-1 captures
+MEFHC_5iter_xsec_proj_pt: 18 items = installed 16 + 2 added (published hash equal: True; Tune v1 published-prediction xhash equal: True); installed items missing: 0
+MEFHC_5iter_xsec_proj_pz: 18 items = installed 16 + 2 added (published hash equal: True; Tune v1 published-prediction xhash equal: True); installed items missing: 0
+MEFHC_5iter_xsec_paper_pt_slices: 210 items = installed 112 + 98 added (all black: True; in 14 axes); installed items missing: 0
+MEFHC_5iter_xsec_paper_pz_slices: 240 items = installed 128 + 112 added (all black: True; in 16 axes); installed items missing: 0
+CHECK-TIER2 :: PASS
+== installed copies (figs/) = this run's outputs:
+  MEFHC_5iter_xsec_proj_pt: yes
+  MEFHC_5iter_xsec_proj_pz: yes
+  MEFHC_5iter_xsec_paper_pt_slices: yes
+  MEFHC_5iter_xsec_paper_pz_slices: yes

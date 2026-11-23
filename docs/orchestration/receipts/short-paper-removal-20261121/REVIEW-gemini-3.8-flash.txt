@@ -1,0 +1,110 @@
+VERDICT: APPROVE WITH CHANGES
+
+---
+
+### FINDINGS
+
+#### 1. [SHOULD-FIX] `docs/POST_PUBLICATION_REORG_PLAN.md:708`
+**What is wrong:** The new section *"Family short paper, 2026-11-21"* records items 1 through 6, but omits recording steps 7 through 10 of the repository's 10-step family removal gate (specifically: Step 7 clean checkout build/test execution, Step 8 proof that the note's PDF text is unchanged, Step 9 independent review record, and Step 10 before/after tracked-file, Markdown-file, and Markdown-line counts table).
+**Evidence:**
+In `docs/POST_PUBLICATION_REORG_PLAN.md:37-40`, the mandatory gate specifies:
+```markdown
+37: 7. Run affected lint, tests, dry runs, and all three publication builds from a clean checkout.
+38: 8. Verify scientific products and build outputs are unchanged when the family can affect them.
+39: 9. Obtain read-only independent review of the family-scoped diff.
+40: 10. Record before/after tracked-file, Markdown-file, and Markdown-line counts.
+```
+And `SHORT-PAPER-REMOVAL-LIST-20261121.md:101-106` reiterates:
+```markdown
+101: ## Remaining gate steps when it runs (for whoever executes)
+102: 
+103: - **Step 7.** Lint, tests (test_build_all, test_check_sec4_receipts, the registry tests) and all builds from a clean
+104:   checkout: build_all's targets become main_note, main_primer, pet_note and main_records.
+105: - **Step 8.** The note's PDF text is unchanged; removing the paper must not alter the note.
+106: - **Step 9.** A read-only independent review of the family diff.
+107: - **Step 10.** Before and after tracked-file, Markdown-file and Markdown-line counts.
+```
+In `docs/POST_PUBLICATION_REORG_PLAN.md`, the section terminates at line 708 immediately after subsection 6 (*Discovery route*). Earlier family entries (e.g., *Lane A closure and A2*, lines 178–205) include explicit subsections and tables for steps 7–10. Steps 7, 8, 9, and the Step 10 count table must be added to the decision record upon completion of this review.
+
+---
+
+#### 2. [NIT] `docs/POST_PUBLICATION_REORG_PLAN.md:708`
+**What is wrong:** The discovery route statement cites commit `5bbb9d269` as the development branch state when written, but the actual latest development commit on `origin/draft/methods-short-20261109` is `5c7589bb5`.
+**Evidence:**
+`docs/POST_PUBLICATION_REORG_PLAN.md:708` reads:
+```markdown
+708:    - the paper's development branch `origin/draft/methods-short-20261109` (`5bbb9d269` when this was written), which is kept.
+```
+Whereas `SHORT-PAPER-REMOVAL-LIST-20261121.md:10, 93` records:
+```markdown
+10:   - Its last development is on `origin/draft/methods-short-20261109`, at 5c7589bb5 (2026-11-16).
+...
+93: - **The paper's archive.** `origin/draft/methods-short-20261109` (5c7589bb5) holds its last development state. It stays
+94:   and is not deleted.
+```
+Commit `5bbb9d269` is an earlier commit on that branch (from which the note's currency updates were ported), while `5c7589bb5` represents the terminal development state on `origin/draft/methods-short-20261109`.
+
+---
+
+#### 3. [NIT] `AGENTS.md:136`, `README.md:64`, `README.md:399`
+**What is wrong:** Top-level prose/routing tables in root `README.md` and `AGENTS.md` still mention `docs/analysis-note/main_paper.tex` as an active deliverable source. These are descriptive only and have no runtime, test, or build effect, but updating them prevents reader confusion.
+**Evidence:**
+`AGENTS.md:136`:
+```markdown
+136: | Prepare or check the article and its release | `docs/publication/submission/PACKAGE-MANIFEST-20261006.md`, then the routed `docs/publication/` record; code in `publication/`; article sources `docs/analysis-note/main_paper.tex` |
+```
+`README.md:64, 399`:
+```markdown
+64: | **Article and release** | `docs/analysis-note/main_paper.tex`, `publication/`, `docs/publication/` | `docs/publication/submission/PACKAGE-MANIFEST-20261006.md` | The PRD-class article, its release candidates, the replay and figure code, and the W1/W2 checks. Submission, deposit and tagging are Joseph's acts. |
+...
+399: | External paper | `main_paper.tex` | a distillation, not an extract |
+```
+
+---
+
+### REVIEW CHECKLIST
+
+#### 1. Surviving dependencies
+Check finds nothing: there is no remaining line in the repository that reads, builds, tests, pins (hash/digest), or installs any of the five removed paths (`docs/analysis-note/main_paper.tex`, `docs/analysis-note/paper_body.tex`, `docs/analysis-note/figures/paper_fig1_validation.pdf`, `docs/analysis-note/figures/fd_g_fig_ratio.pdf`, `docs/analysis-note/figures/paper_fig_deformation.pdf`) at run time.
+- `docs/orchestration/oi130_quoted_value_inventory.py:43` names `"paper": "main_paper.tex"`, but this is a historical one-off inventory script for Open Item 130 and is not invoked by any active test, runtime build, or CI gate.
+- Mentions in `2d-unfolding/re2/partc/re2c_values_spec.tsv:202-210, 248, 250-251` and `re2c_values_unmatched.tsv:19` are frozen audit TSVs from the completed RE-2 campaign.
+- Mentions in `nd-unfolding/` (`fd_cpl_addition.py`, `fd_g_figures.py`, etc.) refer to files generated in `fd/figures/`, `fd/with-cpl/figures/`, or test temporary directories, not `docs/analysis-note/figures/fd_g_fig_ratio.pdf`.
+- All surviving mentions in `docs/analysis-note/` are LaTeX comments (`%`) or Python comments (`#`).
+
+#### 2. Rebinding of checks
+All checks and citations were rebound correctly without weakening any gate:
+- **`check_sec4_receipts.py`**:
+  - `statistical block median (Q_R, S1)`: Rebound from `paper_body.tex:445` (`with a median statistical uncertainty of \SI{0.676}{\percent}`) to `sec3_twod.tex:51` (`Statistical bootstrap & 0.676 &`). Same quantity, receipt function `stat_median`, same tolerance (`"round"`, ±0.0005).
+  - `regularization bias at high W (VL151)`: Rebound from `paper_body.tex:188` (`by up to \SI{74}{\percent} at high $W$`) to `sec4_higherdim.tex:270` (`reaches $74\%$ in the highest-$W$ column`). Same quantity, receipt function `regularization_max`, same tolerance (`"round"`, ±0.5).
+  - `an earlier estimator's 68% coverage under the rate reduction (s5c tier S)`: Rebound from `paper_body.tex:266` (`with coverage as low as 0.06 for 68\% intervals`) to `sec4_higherdim.tex:398` (`The lowest empirical coverage for the $68\%$ intervals is 0.060.`). Same quantity, receipt function `tilt_coverage68_min`. The tolerance is **stricter** because the printed string was narrowed from `0.06` (half-ULP 0.005) to `0.060` (half-ULP 0.0005).
+  - `other fixed shapes, most affected cell (VL154)`: Rebound from `paper_body.tex:284` (`it is \SIrange{16}{31}{\percent} in the most affected`) to `primer_body.tex:204` (`the effect is \SIrange{16}{31}{\percent} in the worst cell`). Same quantities, receipt function `shapes_range`, same tolerance (`"round"`, ±0.5).
+  - `about half of those cells (VL154: 20 of 42)` (verbal): Rebound from `paper_body.tex:284` (`within the quoted total uncertainty in about half of those cells`) to `primer_body.tex:205` (`smaller than the quoted uncertainty in about half of the $(\Eavail,W)$ cells`). Same receipt function `half_of_cells` and bounds `[0.40, 0.60]`.
+  - SEC4-RECEIPTS retains 17/17 checks, and test perturbations in `test_check_sec4_receipts.py` were properly rebound to `sec3_twod.tex` and `primer_body.tex`.
+- **`make_values_fived16.py`**:
+  - `fd_g_fig_ratio.pdf` pin was dropped from `FIGURES` as it was paper-only.
+  - Sentence checks for `"keys"`, `"without"`, and `"both"` remain actively enforced in `sec_q3_fived16.tex`.
+  - The `"ctotal"` check (`Under $C_{\mathrm{total}}$ alone...`) and its self-test plant were dropped because the note does not present $C_{\mathrm{total}}$ tables. The drop is explicitly stated and justified in lines 220–225 and `POST_PUBLICATION_REORG_PLAN.md:673-675`.
+  - Self-test plants for `"keys"`, `"drops keys"`, `"names wrong truth without block"`, and `"loses its anchor"` were rebound to `sec_q3_fived16.tex`. The assertion checking the number of failing sentences under an extra truth was updated from `== 2` to `== 1` to match the single remaining `"keys"` sentence.
+- **Registry citations**:
+  - `docs/orchestration/registry/ALIASES.tsv:38, 47` and `ATTRIBUTION.tsv:17` were re-cited from `docs/analysis-note/paper_body.tex:56` to `docs/analysis-note/records_r07_statistics.tex:467`.
+  - Line 467 of `records_r07_statistics.tex` describes the exact same estimator `e-R-joint-test`:
+    `The null distribution of each statistic is obtained from pseudo-experiments that run the full analysis chain at the null truth, using the joint-test estimator (\S\ref{sec:val-departure}). That estimator is deterministic LightGBM OmniFold with five iterations and the negative-weight background treatment, whose refinement classifier has 400 trees and 31 leaves. Each pseudo-experiment`
+  - Digest `dd51cdc382e8b520` matches the line digest computed by `reglib.line_digest()`.
+  - `ALIASES.tsv:47` pattern `refinement (classifier )?(at |has )?400 trees,? (and )?31 leaves` matches the line text. `docs/analysis-note/records_estimators.tex` was cleanly regenerated.
+
+#### 3. Tests
+Check finds nothing wrong:
+- `test_build_all.py`: `TARGETS` updated to `("main_note", "main_primer", "pet_note", "main_records")`. Stale-product test and struck-literal test were rebound from `main_paper` to `main_primer` (another outward build). Freshness assertion counts were adjusted from 5 to 4 and 4 to 3, matching the new build count.
+- `test_check_sec4_receipts.py`: Mutated assertions for `stat_median` and `shapes_range` were rebound to `sec3_twod.tex` and `primer_body.tex`.
+- `tools/registry/check_registry.py`: `DRIVERS` and `POSTED_DRIVERS` dropped `main_paper.tex`. The self-test conflict fixture was rewritten to use an isolated `conflict_fixture.tex` rather than relying on an empty trailing line of `paper_body.tex`.
+- `tools/registry/results_index.py`: `POSTED` dropped `main_paper.tex`. Self-test fixture uses `main_note.tex`.
+
+#### 4. The decision record
+- `docs/analysis-note/README.md` lines 12–16 (*Retired: the short paper*) accurately states the retirement, recovery command with evidence tag `evidence/short-paper-retired-a54f255e`, and surviving development branch `origin/draft/methods-short-20261109`.
+- In `docs/POST_PUBLICATION_REORG_PLAN.md:629-708`, the factual statements in items 1–6 are supported by the diff and inputs, subject to Findings 1 and 2 above.
+
+#### 5. Safety and completeness
+The removal family is exact and complete:
+- The `\input` and `\includegraphics` closure of `main_paper.tex` and `paper_body.tex` consists solely of the five removed files.
+- `make_figures.sh` installs only the surviving paper-named crops (`paper_validation_residual.pdf`, `paper_eavailW_generators.pdf`, `paper_joint_localization.pdf`), and its install of `paper_fig1_validation.pdf` was cleanly removed.
+- `docs/orchestration/CATALOG.md:2427-2436` contains the required router entry under *Frozen pre-compaction evidence*.

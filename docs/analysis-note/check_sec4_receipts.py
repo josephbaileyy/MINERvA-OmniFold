@@ -2,8 +2,8 @@
 """Tie the paper's Sec. IV printed values, and the note values moved from it, to their committed receipts (PRD release
 audit ea939701, G11).
 
-Each check finds one printed value in the note's values.tex, sec_results.tex, sec_validation.tex or sec_5d.tex, or in the
-primer's primer_body.tex, recomputes it
+Each check finds one printed value in the note's values.tex, sec3_twod.tex, sec4_higherdim.tex, sec_validation.tex,
+sec_5d.tex or app_devhistory.tex, or in the primer's primer_body.tex, recomputes it
 from the committed receipt that backs it, and compares at the printed precision: |computed - printed| <= half a unit in
 the printed last digit ("round"), or printed - one unit <= computed < printed ("below", for "below X%": true, and tight
 to one unit). LaTeX comments are removed first, so a sentence kept only in a comment is not found. A value that cannot
@@ -13,7 +13,9 @@ publication/release/figs/fig_numbers.py instead; this covers the Sec. IV values 
 Register round r18 (DECISION-20261025-joseph-r18-history-to-note.md item 1) moved the history of the two superseded
 2D statistical bands out of the paper. Its bound values are now found where they print, in the note: the two-sigma
 nominal of the earlier band's test in sec_validation.tex (erf(2/sqrt 2), as a fraction); the post hoc rescoring against
-the rebuilt band in sec_validation.tex (the same receipt, rescore_vl169_toys_vl170.json, as fractions); and the earlier
+the rebuilt band, in sec_validation.tex until the deep restructure (DECISION-20261118) moved it verbatim to App. I's
+app:devhistory-band in app_devhistory.tex (move rows CV-VA02..VA04; the same receipt, rescore_vl169_toys_vl170.json, as
+fractions); and the earlier
 band's C2 as \\covTwoDCTwo in values.tex (the macro the note prints; the paper's percent form is no longer printed).
 The targeted round of 2026-11-03 moved the paper's background-closure paragraph (Sec. IV D) to the note, so its four
 bound values (VL149, VL151, VL152) are now found in sec_5d.tex's sec:val-negweight, with the residual of the other
@@ -21,9 +23,9 @@ bound values (VL149, VL151, VL152) are now found in sec_5d.tex's sec:val-negweig
 
 The short paper (main_paper.tex, paper_body.tex) was retired on 2026-11-21 (docs/POST_PUBLICATION_REORG_PLAN.md, family
 "short paper"). Its five values bind where they still print, from the same receipts: the statistical block median in
-the note's uncertainty table (sec_results.tex); the high-W regularization bias in the note's validation table
-(sec_validation.tex); the earlier estimator's lowest 68% coverage under the rate reduction in sec:coverage-5d
-(sec_5d.tex); the withheld-shape range and its "about half of the cells" in the primer (primer_body.tex).
+the note's Table tab:uq (sec3_twod.tex); the high-W regularization bias in sec:val-departure and the earlier
+estimator's lowest 68% coverage under the rate reduction (s5c tier S) in sec:coverage-5d (both sec4_higherdim.tex); the
+withheld-shape range and its "about half of the cells" in the primer (primer_body.tex).
 
   python3 check_sec4_receipts.py              # exit 0 only if every check passes
   python3 check_sec4_receipts.py --self-test  # each printed value perturbed by one unit must be rejected
@@ -62,7 +64,11 @@ def receipt(rel: str) -> dict:
 # budget, committed gzipped (RE2-PARTC-REPORT.md sec. 3; gunzip -c gives bbe13622..., as partc-r2/SHA256SUMS lists).
 # Repointed at integration as RE2-DECLARATION-C sec. 6.4 says; before, the Stage F rebuild's Q budget
 # (2d-closeout/stageF/rebuild/outputs/outA/budget_Q.json.gz).
-BUDGET_Q = "2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/outA/budget_Q.json.gz"
+# G2R (DECISION-20261114-joseph-d1-g2r-adopted.md; the director's ruling of 2026-11-15, re-key every printed Q_R value):
+# repointed to RE-2-shapes run 2 (C_new), merged at main d58d0d18 by #1167; its SHA256SUMS lists ./outA/budget_Q.json
+# (gunzip of the committed .gz gives 7ed733c6...); g2r-integration/README.md. Before, RE-2 part C's budget:
+# 2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/outA/budget_Q.json.gz.
+BUDGET_Q = "measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/re2shapes/run2/g2r/outA/budget_Q.json.gz"
 
 
 def ev(name: str) -> bool:
@@ -160,9 +166,8 @@ CHECKS = [
      lambda: interim("C1"), "round"),
     ("two-sigma nominal of the earlier band's test (note sec:coverage)", "sec_validation.tex",
      r"lies entirely below its window \(Gaussian ([0-9.]+)\)", lambda: math.erf(2.0 / math.sqrt(2.0)), "round"),
-    ("statistical block median (Q_R, S1)", "sec_results.tex",
-     r"Statistical \(Poisson bootstrap\) & 300 & \\num\{[0-9.e-]+\} & \\SI\{([0-9.]+)\}\{\\percent\}", stat_median, "round"),
-    ("rescoring against the rebuilt (VL170) band, 2 and 1 sigma (note sec:coverage)", "sec_validation.tex",
+    ("statistical block median (Q_R, S1)", "sec3_twod.tex", r"Statistical bootstrap & ([0-9.]+) &", stat_median, "round"),
+    ("rescoring against the rebuilt (VL170) band, 2 and 1 sigma (note app:devhistory-band)", "app_devhistory.tex",
      r"removes the tail undercoverage: \$C_2=([0-9.]+)\$ \$\[[0-9.,]+\]\$ and \$C_1=([0-9.]+)\$",
      lambda: (rescore("C2") / 100.0, rescore("C1") / 100.0), "round"),
     # The background-closure values bind in the note since the targeted round (DECISION-20261103-joseph-retire-density-
@@ -178,10 +183,10 @@ CHECKS = [
      r"Some joint cells remain up to \\SI\{([0-9.]+)\}\{\\percent\} high", negweight_joint_max, "round"),
     ("treatments on data (VL152)", "sec_5d.tex", r"and at most \\SI\{([0-9.]+)\}\{\\percent\} over the reported functionals",
      data_method_diff, "round"),
-    ("regularization bias at high W (VL151)", "sec_validation.tex",
-     r"residuals median \\SI\{[0-9.]+\}\{\\percent\}, up to \\SI\{([0-9.]+)\}\{\\percent\} at highest \$W\$", regularization_max, "round"),
-    ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "sec_5d.tex",
-     r"with coverage as low as ([0-9.]+), and 42 of the 153 fail", tilt_coverage68_min, "round"),
+    ("regularization bias at high W (VL151)", "sec4_higherdim.tex",
+     r"reaches \$([0-9.]+)\\%\$ in the highest-\$W\$ column", regularization_max, "round"),
+    ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "sec4_higherdim.tex",
+     r"The lowest empirical coverage for the \$68\\%\$ intervals is ([0-9.]+)\.", tilt_coverage68_min, "round"),
     ("other fixed shapes, most affected cell (VL154)", "primer_body.tex",
      r"the effect is \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\} in the worst cell", shapes_range, "round"),
 ]
@@ -221,8 +226,8 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 
 def load() -> dict[str, str]:
-    return {n: (HERE / n).read_text() for n in ("values.tex", "sec_results.tex", "sec_validation.tex", "sec_5d.tex",
-                                               "primer_body.tex")}
+    return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec4_higherdim.tex", "sec_validation.tex",
+                                               "sec_5d.tex", "app_devhistory.tex", "primer_body.tex")}
 
 
 def gzip_self_test() -> bool:

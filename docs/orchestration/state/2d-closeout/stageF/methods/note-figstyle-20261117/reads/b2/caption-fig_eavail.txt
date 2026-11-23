@@ -1,0 +1,2 @@
+fig:eavail (sec_3d.tex)
+Unfolded $d\sigma/d\Eavail$, the 1D projection of the 3D result. The wide $[3,100]\,\si{GeV}$ catch bin is excluded from the axis; its value is annotated.

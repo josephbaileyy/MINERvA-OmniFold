@@ -1,0 +1,54 @@
+I'll compare each old/new figure pair against its caption and report only mismatches. First I'll locate the four figure directories and read the captions and images.
+
+The image descriptions disagree on colours, markers, and which series has error bars. I'll OCR the figures and sample pix
+
+The axis text is readable now. I'll check the Ascencio legend
+
+OCR on the small figures was too noisy. I'll upscale them in memory and re
+
+**fig:3dmodels** (`generators_vs_unfolde
+
+## fig:3dmodels (`generators_vs_unfolded_band_central`)
+
+Caption: "1D projections of the unfolded 3D central cross section **(black)** versus truth-level predictions from GENIE 2.12 CV, MINERvA Tune v1, NuWro 21.09, and GiBUU 2019 … The wide Eavail catch bin is omitted from the axis. Data have no error bars …"
+
+1. The clause "unfolded 3D central cross section (black)" is contradicted. The new legend entry "unfolded (this work)" is a red circle, and the points on all three panels are that same red. The legend still reads "GENIE-CV", "Tune-v1", "NuWro", "GiBUU", "unfolded (this work)". The Eavail axis still ends at about 3 GeV (the wide catch bin is still off the axis). The data markers have no error bars.
+
+2. No text was dropped. The old offsets "1e-38", "1e-39", and "1e-38" are now inside the y-axis labels as 10⁻³⁸ (pT and Eavail) and 10⁻³⁹ (p∥). The header "MINERvA ME FHC, 1.06 × 10²¹ POT" and the legend strings are still printed. The caption does not have to carry the powers of ten.
+
+3. The GENIE-CV marker is a downward triangle; on the old figure it was a filled circle. Tune-v1 is still a square, NuWro still an upward triangle, GiBUU still a diamond, and the unfolded series still a circle. p∥ tick labels are 0, 25, 50 (old: 0, 20, 40, 60) and Eavail tick labels are 0, 2 (old: 0, 1, 2, 3). The spines still run to about 60 GeV/c and about 3 GeV, and the Eavail step heights match the old figure. No new quantity and no changed data value.
+
+## fig:modedecomp (`mode_decomp_eavail_central`)
+
+Caption: "Central-value dσ/dEavail **by interaction mode**, overlaid with unfolded data. Data carry no error bars because no 3D covariance is quoted."
+
+1. None. The new legend is "GENIE-CV QE", "GENIE-CV RES", "GENIE-CV DIS", "GENIE-CV COH", "data − GENIE-CV (2p2h-shaped gap)", "unfolded data". The unfolded points have no error bars. The long red verticals are the edges of the gap rectangles, which the old figure also drew.
+
+2. No text was dropped. The old "1e-38" is now in the y-axis label, "(10⁻³⁸ cm²/nucleon/GeV)". The header "MINERvA ME FHC, 1.06 × 10²¹ POT" and every legend entry remain. The caption does not have to carry the power of ten.
+
+3. No new label, number, or quantity. The stacked-mode fills are gray and the unfolded points are red. Normalized bar tops match the old figure.
+
+## fig:mec (`compare_mec_eavail_central`)
+
+The fig:mec caption in `sec_3d.tex` is: "GENIE regenerated with Valencia 2p2h **(red, stacked on no-2p2h CV**; both flux-repaired) closes about half the low-Eavail data−CV gap in central values (52%). … Data carry no error bars …" The `caption.txt` in this folder repeats the mode-decomposition sentence instead of that caption.
+
+1. The clause "(red, stacked on no-2p2h CV)" is contradicted. On the new figure the stack "+ Valencia MEC (2p2h)" is orange, drawn on top of pink "GENIE-CV (no 2p2h)". The red circles are the legend entry "unfolded data". On the old figure the red stack was "+ Valencia MEC (2p2h)" and the points were black. "Data carry no error bars" still holds: the red markers are about 9 pixels tall, with no error bars. The legend text is still "GENIE-CV (no 2p2h)", "+ Valencia MEC (2p2h)", "unfolded data".
+
+2. No text was dropped. The old "1e-38" is now in the y-axis label as 10⁻³⁸. The header and the three legend entries remain. The caption does not have to carry the power of ten.
+
+3. No new label and no changed number. The series that is red is the unfolded data.
+
+## fig:ascencio (`ascencio_fullcov_compare_central`)
+
+Caption: "Bin-identical comparison to Ascencio et al. on the maximal common (Eavail, q₃) grid. **Our points have no uncertainty or χ² drawn** …; **the published points carry the published covariance.**"
+
+1. None. The new legend is "this work (4D marginal, p∥ < 20)" with a red circle and no vertical error bar, and "Ascencio et al." in black with a vertical error bar. There is no χ² on the figure. Both panels are still Eavail from 0.0 to 0.4 GeV, with the same two levels as the old figure (this work above, Ascencio below).
+
+2. No caveat was dropped. The old legend "this work (4D marginal, p_z < 20)" now reads "this work (4D marginal, p∥ < 20)"; the "< 20" cut is still printed. The caption states the (Eavail, q₃) grid and does not quote p_z or p∥. The old "1e-38" on both panels remains: inside the left y-axis label as 10⁻³⁸, and as "×10⁻³⁸" above the right panel. The header remains.
+
+3. The legend symbol is p∥ where the old figure printed p_z. This work is red and Ascencio is black. No new numeric value: the two horizontal levels sit at the same place in the axes as before, and the vertical error bar is still only on Ascencio.
+
+fig:3dmodels: FLAG - caption says the unfolded cross section is black; the new points are red
+fig:modedecomp: OK
+fig:mec: FLAG - note caption calls the stacked Valencia 2p2h red; that stack is orange and the red markers are unfolded data
+fig:ascencio: OK

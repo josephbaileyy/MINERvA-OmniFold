@@ -1,0 +1,21 @@
+# eavailw (fig:eavailWband; the director's item (a) and GO of 2026-11-21), 2026-11-21T01:24:09Z: python3 -I tools/make_fig_eavailW_ratio.py --out <dir>; figenv/rootmpl3108 (ROOT 6.40.04 matplotlib 3.10.8 numpy 1.26.4); base draft 9e116f555
+== fetch (runs/eavailw/connect.sh, remote_read.py, fetch.json): tier3-design ack 2026-11-21T01:19:09Z; own fence: pgrep found no cluster process; window end 1795229332 (2026-11-21T02:48:52Z, recomputed from the UTC stamp); ssh rc 0 at 01:19:53Z on login38
+  genie_cv: size 5420 sha256 debaf83e66cb8918ab10ecbeeb0a34bec1be8f457ae3fe3ab29dd8399796a664 atime unchanged True
+  genie_mec: size 5434 sha256 1098e9124ddd6ee2e6845594ee65f486fc3c86679a1dde9a34c876638421e70d atime unchanged True
+  nuwro_cv: size 5421 sha256 d7d46a0c547dfd83ccce7bba39a2f81eae80a597a32817bf7289b80729145d3c atime unchanged True
+  gibuu_cv: size 5422 sha256 b430ddc6c2f22568d1f3cfd4b997afda1860daa1422946ff5653adb53ca556d9 atime unchanged True
+== committed copies against state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt
+  genie_cv: equal (debaf83e66cb8918ab10ecbeeb0a34bec1be8f457ae3fe3ab29dd8399796a664)
+  genie_mec: equal (1098e9124ddd6ee2e6845594ee65f486fc3c86679a1dde9a34c876638421e70d)
+  nuwro_cv: equal (d7d46a0c547dfd83ccce7bba39a2f81eae80a597a32817bf7289b80729145d3c)
+  gibuu_cv: equal (b430ddc6c2f22568d1f3cfd4b997afda1860daa1422946ff5653adb53ca556d9)
+== producer (sha256 1ebed7556719): checks 1-3 passed (it refuses otherwise)
+wrote /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/eaw/o4/eavailW_band.pdf ; W-mid (GENIE-CV, GENIE+MEC) %: 9.39, 11.79 (printed 9-12)
+  log_line_GENIE-CV : [band] GENIE-CV: total=2.7645e-38 (data 3.0699e-38, ratio 1.110); hiE-hiW corner=1.1818e-38 (data 1.3497e-38, data/gen=1.142)
+  log_line_GENIE+MEC : [band] GENIE+MEC: total=2.8756e-38 (data 3.0699e-38, ratio 1.068); hiE-hiW corner=1.1854e-38 (data 1.3497e-38, data/gen=1.139)
+  log_line_NuWro : [band] NuWro: total=2.6628e-38 (data 3.0699e-38, ratio 1.153); hiE-hiW corner=1.1635e-38 (data 1.3497e-38, data/gen=1.160)
+  log_line_GiBUU : [band] GiBUU: total=2.2152e-38 (data 3.0699e-38, ratio 1.386); hiE-hiW corner=8.3993e-39 (data 1.3497e-38, data/gen=1.607)
+  log_W_table_rows : 6
+  values_tex_genieWmid : {'printed': [9, 12], 'computed_pct': {'GENIE-CV': 9.389631040637237, 'GENIE+MEC': 11.792708340885326}}
+== rerun: PDF and values byte-identical across two runs: yes
+== installed docs/analysis-note/figures/eavailW_band.pdf = this run's output: yes 337be2a3ddf1

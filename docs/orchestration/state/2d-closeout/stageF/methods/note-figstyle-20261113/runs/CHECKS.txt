@@ -1,0 +1,34 @@
+# Group L checks (note figure style, 2026-11-13), regenerated in one pass at 2026-11-13T16:50:00Z from the arms in scratch.
+# gbdt: matplotlib 3.11.2 / numpy 2.5.4 / scipy venv; landscape: matplotlib 3.10.8 venv; both Python 3.12, env -i, empty HOME.
+== gbdt identity: before (base 96705540d) and off (new code, no flag) against the committed package results/
+  before: 14 of 14 files byte-equal
+  off: 14 of 14 files byte-equal
+== gbdt data files: after (--print-style) against the committed package results/
+  equal costs.csv
+  equal ensembles.csv
+  equal overlap.csv
+  equal prior.csv
+  equal recovery.csv
+  equal summary.json
+== gbdt artists: before vs after (compare_any.py)
+ok   gbdt_bias_spread.pdf.json: 18 vs 18 data artists, hash multisets equal; printed text 5.7-7.0 pt (canvas 10.20 in) -> printed text 8.3-9.3 pt (canvas 6.50 in); text overlaps 0 -> 0
+ok   gbdt_coverage.pdf.json: 8 vs 8 data artists, hash multisets equal; printed text 5.7-7.0 pt (canvas 10.20 in) -> printed text 8.3-9.3 pt (canvas 6.50 in); text overlaps 2 -> 0
+ok   gbdt_prior_response.pdf.json: 6 vs 6 data artists, hash multisets equal; printed text 5.7-7.0 pt (canvas 10.20 in) -> printed text 8.3-9.3 pt (canvas 6.50 in); text overlaps 0 -> 0
+ok   gbdt_recovery.pdf.json: 45 vs 45 data artists, hash multisets equal; printed text 5.1-7.0 pt (canvas 10.20 in) -> printed text 8.3-9.3 pt (canvas 6.50 in); text overlaps 0 -> 1
+       B overlap: 'q3 stress' x 'W1 historical' (30.8 px^2)
+COMPARE :: PASS
+  compare_any.py rc=0 (on the committed .pdf.json records in runs/gbdt/)
+== landscape identity: before and off rasters (pdftoppm -r 100) against the committed figure's
+  before: pixel-equal
+  off: pixel-equal
+== landscape artists: before vs after
+ok   minerva_unfolding_landscape.pdf.json: 31 vs 31 data artists, hash multisets equal; printed text 4.7-6.7 pt (canvas 9.40 in) -> printed text 7.0-9.3 pt (canvas 6.30 in); text overlaps 1 -> 1
+       B overlap: 'Pion production (CC & coherent)' x '$\\nu_e$' (7.6 px^2)
+COMPARE :: PASS
+  compare_any.py rc=0 (on the committed .pdf.json records in runs/landscape/)
+== install pins (make_figures.sh install_printstyle_fig): record copy and installed copy
+  ok gbdt_recovery.pdf 62bf4a8337115ffa4ca4227bf15d2883c6a74771583f672122ca5b14dcf69e11
+  ok gbdt_bias_spread.pdf f1786f4862eea1a3439b79ef7af2132969e95f7fb087bddcf9661802cf6310c2
+  ok gbdt_coverage.pdf 422ef3f7c8e53b47d371cbeee68742a869ec372394c81a8324a121c18a10fd54
+  ok gbdt_prior_response.pdf 445374318044846a72b8a71da3a474d3d63820e8f5491ac6d5eb06a42745a2d3
+  ok minerva_unfolding_landscape.pdf bf1f14eae609fdf06f01a248674a175a1df72bd0ed1b4c8f269b860e66b78372

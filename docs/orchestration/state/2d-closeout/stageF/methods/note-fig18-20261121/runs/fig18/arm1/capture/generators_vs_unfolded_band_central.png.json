@@ -1,0 +1,734 @@
+[
+ {
+  "i": 0,
+  "kind": "patch",
+  "axes": 0,
+  "label": "GENIE-CV",
+  "hash": "b4e4f6a8e351baa2402d9ce5a2cef9821ffb4139df733082bf951fab8eb0fc66",
+  "dhash": "2bce5a76eda40bd76922a3eb8a5b92ffe6c4ec03cec1637bd843e1b2a0d9db9b",
+  "xhash": "2bce5a76eda40bd76922a3eb8a5b92ffe6c4ec03cec1637bd843e1b2a0d9db9b",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#CC79A7FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "patch",
+  "axes": 0,
+  "label": "Tune-v1",
+  "hash": "b0544e1ac3222ce7ec7d3477e1a79f9ba16ed365baea7e90c3cc1ade5ce882f8",
+  "dhash": "92c9962cc6382292f31160d5d18e1bc40b498cb81e1dc34be8f3890edc7a6a71",
+  "xhash": "92c9962cc6382292f31160d5d18e1bc40b498cb81e1dc34be8f3890edc7a6a71",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#2A78D6FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "patch",
+  "axes": 0,
+  "label": "NuWro",
+  "hash": "255b3da653853b7cd6fb848445a7e8c2fb3dbb48541ec66d04f3e98f1d6aed80",
+  "dhash": "05cca6c6e10f39f6a39a9ed3563a76ef18e46342ed0315d70232f8f3e8267982",
+  "xhash": "05cca6c6e10f39f6a39a9ed3563a76ef18e46342ed0315d70232f8f3e8267982",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#1BAF7AFF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 3,
+  "kind": "patch",
+  "axes": 0,
+  "label": "GiBUU",
+  "hash": "c1d925041055c6cc493ea1cca3a2cbeaeca33dfb4b183c921b6ca4808fbf553d",
+  "dhash": "db3e038fbdba214383026f568b0c00d33061f0c6b4a12bb34c5743a998ca2ea8",
+  "xhash": "db3e038fbdba214383026f568b0c00d33061f0c6b4a12bb34c5743a998ca2ea8",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#4A3AA7FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 4,
+  "kind": "line",
+  "axes": 0,
+  "label": "unfolded (this work)",
+  "hash": "50b358a092c26356bda92931fa41e485d121b769652642318cd8667427541a9d",
+  "dhash": "1024148941c1b42f94c15c53bde969440794f43db39bbadfa4325416b5148c92",
+  "xhash": "00b5b3def6c7a6ddd9c3e6c5de16b1823f6e58fbf159f2ea82f7aec59a153c0a",
+  "colours": {
+   "color": [
+    "#C0392BFF"
+   ],
+   "mfc": [
+    "#C0392BFF"
+   ],
+   "mec": [
+    "#C0392BFF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "o",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 5,
+  "kind": "patch",
+  "axes": 1,
+  "label": "None",
+  "hash": "e11f2bd98ac5b98385942e28435310cbe0314873c5b0b6503c47a3ba802c9e2c",
+  "dhash": "154ed4811b2cd3f3456c24ef8b6f54e6068bb85d98b5dbd18dfef71c4e0bce81",
+  "xhash": "154ed4811b2cd3f3456c24ef8b6f54e6068bb85d98b5dbd18dfef71c4e0bce81",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#CC79A7FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "log",
+   "linear"
+  ]
+ },
+ {
+  "i": 6,
+  "kind": "patch",
+  "axes": 1,
+  "label": "None",
+  "hash": "16767e7f11fdacbb5485772aef61e45004afcb2e8d5dea72a3e8903c18ca1720",
+  "dhash": "404daa69184883d45d89d6484d5f434d4baf85aedb23c896439b01308b08d969",
+  "xhash": "404daa69184883d45d89d6484d5f434d4baf85aedb23c896439b01308b08d969",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#2A78D6FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "log",
+   "linear"
+  ]
+ },
+ {
+  "i": 7,
+  "kind": "patch",
+  "axes": 1,
+  "label": "None",
+  "hash": "8f291ac8c7afeb2b2e91c0f4eaf71bda66482a9bc6f79f1170dc0ba97b9345ce",
+  "dhash": "dde5f7b7282809cf4c2c7d52a2159da08da0fda44c1d0a16d43105cce90b24fc",
+  "xhash": "dde5f7b7282809cf4c2c7d52a2159da08da0fda44c1d0a16d43105cce90b24fc",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#1BAF7AFF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "log",
+   "linear"
+  ]
+ },
+ {
+  "i": 8,
+  "kind": "patch",
+  "axes": 1,
+  "label": "None",
+  "hash": "79657c8e67e9247c3653549eafa4353fe9faecc9900af4865856e7abe50554a2",
+  "dhash": "b63bb2ca75e2bfb7273a6921786eeff3e43eec78698973814b8b0fc085c13b7e",
+  "xhash": "b63bb2ca75e2bfb7273a6921786eeff3e43eec78698973814b8b0fc085c13b7e",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#4A3AA7FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "log",
+   "linear"
+  ]
+ },
+ {
+  "i": 9,
+  "kind": "line",
+  "axes": 1,
+  "label": "_child4",
+  "hash": "98e5948c44cc93ed862b82a70272798bc7e8b851f5e9314256632888d07881f1",
+  "dhash": "1dbf032374c87be7d42e2cef6d361f308a635a93190e96b5bad02c1330534985",
+  "xhash": "157145e8e9f84326f355b64a4f4783b0050a66d1b16af7b374a0ecc7df16647f",
+  "colours": {
+   "color": [
+    "#C0392BFF"
+   ],
+   "mfc": [
+    "#C0392BFF"
+   ],
+   "mec": [
+    "#C0392BFF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "o",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "log",
+   "linear"
+  ]
+ },
+ {
+  "i": 10,
+  "kind": "patch",
+  "axes": 2,
+  "label": "None",
+  "hash": "de1a3f356ef1a0a8d11167d243b63725e12710e46e958805db6274dbc9614e5b",
+  "dhash": "8901b06660c005b51ea0c59a108ffe175a79bb820d1430c08ad42592bedb18ca",
+  "xhash": "8901b06660c005b51ea0c59a108ffe175a79bb820d1430c08ad42592bedb18ca",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#CC79A7FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 11,
+  "kind": "patch",
+  "axes": 2,
+  "label": "None",
+  "hash": "32d1c23423a569213b4e189c7a8f89042c4fecfb8ce9ef55c8df8dcb472c473f",
+  "dhash": "9af32770fa309729fc048c5443fc42c54f2c3c47cba0d0c5317dbe41f5d70cee",
+  "xhash": "9af32770fa309729fc048c5443fc42c54f2c3c47cba0d0c5317dbe41f5d70cee",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#2A78D6FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 12,
+  "kind": "patch",
+  "axes": 2,
+  "label": "None",
+  "hash": "11b658ab7ebe766c57c307d187ffb31c2f361ec65901e99c87e03ef384d14466",
+  "dhash": "9ba104726bc73896ffb2878a5a24e9377e1c834bf5d8149a2a96fb9df4be7148",
+  "xhash": "9ba104726bc73896ffb2878a5a24e9377e1c834bf5d8149a2a96fb9df4be7148",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#1BAF7AFF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 13,
+  "kind": "patch",
+  "axes": 2,
+  "label": "None",
+  "hash": "09a838ecd8ecbdf99ccad8faf0d5638f79890372fca7fdd507ad2f8d67e31889",
+  "dhash": "02eace8ae59e457729fc0919c6b09bf8dbb0df2ca1e20343fae39cbf290fd8d8",
+  "xhash": "02eace8ae59e457729fc0919c6b09bf8dbb0df2ca1e20343fae39cbf290fd8d8",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#4A3AA7FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 14,
+  "kind": "line",
+  "axes": 2,
+  "label": "_child4",
+  "hash": "aff7315f1112caccb2bc4051c49f4a69f2df1f50283c72dbe98721f98285f644",
+  "dhash": "68f413a5b6db2dba7464b25590664adbb2e0d3f72ebd850a12592262d184bb55",
+  "xhash": "ab14886da402ffab93a100413334c276b08aee4546a0de82853606f38cf552b5",
+  "colours": {
+   "color": [
+    "#C0392BFF"
+   ],
+   "mfc": [
+    "#C0392BFF"
+   ],
+   "mec": [
+    "#C0392BFF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "o",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 15,
+  "kind": "patch",
+  "axes": 3,
+  "label": "",
+  "hash": "da176cee5f0e6bcd06eeb4033e4892d94984c72b89f57e5d6ef1aedb712fb72c",
+  "dhash": "3cf43134a73c0d075bc1876c3502adc44cf76fda5e36909f18df4071038d6b0c",
+  "xhash": "3cf43134a73c0d075bc1876c3502adc44cf76fda5e36909f18df4071038d6b0c",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#CC79A7FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 16,
+  "kind": "patch",
+  "axes": 3,
+  "label": "",
+  "hash": "c054dc275e471f5dbb38ee92c98dcddc9719868b6c0195d13ca26583a2132e97",
+  "dhash": "7b315acc5fc03ddc775cc1de742d553fc9451bbfdfb88b328da04e7d89f1b343",
+  "xhash": "7b315acc5fc03ddc775cc1de742d553fc9451bbfdfb88b328da04e7d89f1b343",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#2A78D6FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 17,
+  "kind": "patch",
+  "axes": 3,
+  "label": "",
+  "hash": "94934a46c9c945818453129f0eebfdd8ca6c4956d0fecc0be90e788a4b1ec0d2",
+  "dhash": "4bfbb054323892c6a0eb84a4065b8fa8b156c8c5ca5eab7bbc0ca5dc7f4ab0de",
+  "xhash": "4bfbb054323892c6a0eb84a4065b8fa8b156c8c5ca5eab7bbc0ca5dc7f4ab0de",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#1BAF7AFF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 18,
+  "kind": "patch",
+  "axes": 3,
+  "label": "",
+  "hash": "67b099c8205758c9e352c3b4fda1ace7aaf99762822e1784ff4d9c165a4477f4",
+  "dhash": "fa0565e9d553c5b8609ea74f51de0a64408245ddebdf5ce39b067ececa73a609",
+  "xhash": "fa0565e9d553c5b8609ea74f51de0a64408245ddebdf5ce39b067ececa73a609",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#4A3AA7FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 19,
+  "kind": "line",
+  "axes": 3,
+  "label": "_child4",
+  "hash": "24d235b4865e9c71cc258d0ac31cb5c0dbbfe4de859f4f93ff89ffd096e09fca",
+  "dhash": "e7264aa0ed09914cfdd2f1b30f55e7896f2217e5575bc30c046b984296d91a37",
+  "xhash": "81b1f80e69422b30d5c57554ad089580df28a592c900810d3828cf0f2c76f838",
+  "colours": {
+   "color": [
+    "#595959FF"
+   ],
+   "mfc": [
+    "#595959FF"
+   ],
+   "mec": [
+    "#595959FF"
+   ]
+  },
+  "style": {
+   "linestyle": "--",
+   "marker": "None",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 20,
+  "kind": "patch",
+  "axes": 4,
+  "label": "",
+  "hash": "0288761514c736ce87fb918f72adf5feff3c9ec395beedab4577d820ab26ffef",
+  "dhash": "2157d2487634e67b3d547832397823c6b43ff637d3a5d02c8b1237f5f56b3cfd",
+  "xhash": "2157d2487634e67b3d547832397823c6b43ff637d3a5d02c8b1237f5f56b3cfd",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#CC79A7FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "log",
+   "linear"
+  ]
+ },
+ {
+  "i": 21,
+  "kind": "patch",
+  "axes": 4,
+  "label": "",
+  "hash": "00f59aa5b48ee90176ba9158b9fb72e0ec4ed62db43dc6559d8b3a9c91c8cc98",
+  "dhash": "ef42004e4f9eda6fc44e786af0a26eb1c5c86f082d6b28c72215f8678cf58b90",
+  "xhash": "ef42004e4f9eda6fc44e786af0a26eb1c5c86f082d6b28c72215f8678cf58b90",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#2A78D6FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "log",
+   "linear"
+  ]
+ },
+ {
+  "i": 22,
+  "kind": "patch",
+  "axes": 4,
+  "label": "",
+  "hash": "ef4effbe5cfce97cdfdc427b187639e6ddbd2911c46bdb7483893f6c738ee913",
+  "dhash": "2e377c14e5c9fd90c8c70f3d7a8f9be930565d7864ac189dedd21adbe11265dd",
+  "xhash": "2e377c14e5c9fd90c8c70f3d7a8f9be930565d7864ac189dedd21adbe11265dd",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#1BAF7AFF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "log",
+   "linear"
+  ]
+ },
+ {
+  "i": 23,
+  "kind": "patch",
+  "axes": 4,
+  "label": "",
+  "hash": "76da4abd5bfdec4ae7bb14e7de629c83c223eeef8420cbfc48b914d65be5ff5e",
+  "dhash": "ad7892c87931f9e01cd1478fd0304e5e3d533ed81abbc1ef8c194074b285a043",
+  "xhash": "ad7892c87931f9e01cd1478fd0304e5e3d533ed81abbc1ef8c194074b285a043",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#4A3AA7FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "log",
+   "linear"
+  ]
+ },
+ {
+  "i": 24,
+  "kind": "line",
+  "axes": 4,
+  "label": "_child4",
+  "hash": "24d235b4865e9c71cc258d0ac31cb5c0dbbfe4de859f4f93ff89ffd096e09fca",
+  "dhash": "e7264aa0ed09914cfdd2f1b30f55e7896f2217e5575bc30c046b984296d91a37",
+  "xhash": "81b1f80e69422b30d5c57554ad089580df28a592c900810d3828cf0f2c76f838",
+  "colours": {
+   "color": [
+    "#595959FF"
+   ],
+   "mfc": [
+    "#595959FF"
+   ],
+   "mec": [
+    "#595959FF"
+   ]
+  },
+  "style": {
+   "linestyle": "--",
+   "marker": "None",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "log",
+   "linear"
+  ]
+ },
+ {
+  "i": 25,
+  "kind": "patch",
+  "axes": 5,
+  "label": "",
+  "hash": "000bf4bb6277dae6ba6cb26026457de0c5fd1403fcd37b3f42fe1eaea1341dca",
+  "dhash": "8a4cc18e1a7b8ee9552de2c799843ecec26ab1b78afefadb6f5a621f0b89b142",
+  "xhash": "8a4cc18e1a7b8ee9552de2c799843ecec26ab1b78afefadb6f5a621f0b89b142",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#CC79A7FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 26,
+  "kind": "patch",
+  "axes": 5,
+  "label": "",
+  "hash": "03a298d8cc772d5c32266129a2cc6fbdb38f2547703bd0c995b3e16fe2fc88d5",
+  "dhash": "5642186d3798d6df87ceb295a6eeee74ecb4d8bd38a6ebe15ecd7d31a2ebf2e7",
+  "xhash": "5642186d3798d6df87ceb295a6eeee74ecb4d8bd38a6ebe15ecd7d31a2ebf2e7",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#2A78D6FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 27,
+  "kind": "patch",
+  "axes": 5,
+  "label": "",
+  "hash": "5ffb13b962010ad6f42ba867811805488fd4478963713f0656ffbbb0f6320103",
+  "dhash": "bd383ca9e4134af68b05b941a0ffec8fafdefa30fcdd046d2329e7b249f14b74",
+  "xhash": "bd383ca9e4134af68b05b941a0ffec8fafdefa30fcdd046d2329e7b249f14b74",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#1BAF7AFF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 28,
+  "kind": "patch",
+  "axes": 5,
+  "label": "",
+  "hash": "3c8df9d9d91f9a13e7ce5165fe0a6a3599fc703081e7834f4783acf2e850e7b5",
+  "dhash": "f1cc8921d9be2428a898b1a807ab08ff9fe9494805fe362e0860d77da0edd671",
+  "xhash": "f1cc8921d9be2428a898b1a807ab08ff9fe9494805fe362e0860d77da0edd671",
+  "colours": {
+   "face": [
+    "#1F77B400"
+   ],
+   "edge": [
+    "#4A3AA7FF"
+   ]
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 29,
+  "kind": "line",
+  "axes": 5,
+  "label": "_child4",
+  "hash": "24d235b4865e9c71cc258d0ac31cb5c0dbbfe4de859f4f93ff89ffd096e09fca",
+  "dhash": "e7264aa0ed09914cfdd2f1b30f55e7896f2217e5575bc30c046b984296d91a37",
+  "xhash": "81b1f80e69422b30d5c57554ad089580df28a592c900810d3828cf0f2c76f838",
+  "colours": {
+   "color": [
+    "#595959FF"
+   ],
+   "mfc": [
+    "#595959FF"
+   ],
+   "mec": [
+    "#595959FF"
+   ]
+  },
+  "style": {
+   "linestyle": "--",
+   "marker": "None",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]

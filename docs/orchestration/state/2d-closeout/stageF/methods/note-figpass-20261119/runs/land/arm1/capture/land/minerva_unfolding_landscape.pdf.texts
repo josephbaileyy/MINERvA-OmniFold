@@ -1,0 +1,127 @@
+{
+ "size_in": [
+  6.305,
+  4.4135
+ ],
+ "texts": [
+  [
+   8.5,
+   "binned D'Agostini IBU: 29 of 30 measurements at $\\leq 2$ simultaneously unfolded variables"
+  ],
+  [
+   9.0,
+   "this work \u2014 unbinned OmniFold ($p_T$, $p_\\parallel$, $E_{\\rm avail}$, $q_3$, $W$)"
+  ],
+  [
+   8.5,
+   "and beyond \u2014 point-cloud inputs (toward the full final state)"
+  ],
+  [
+   7.0,
+   "[target] 2106.16210"
+  ],
+  [
+   7.0,
+   "triple-differential 2203.08022"
+  ],
+  [
+   9.3,
+   "Publication year"
+  ],
+  [
+   8.3,
+   "2012"
+  ],
+  [
+   8.3,
+   "2014"
+  ],
+  [
+   8.3,
+   "2016"
+  ],
+  [
+   8.3,
+   "2018"
+  ],
+  [
+   8.3,
+   "2020"
+  ],
+  [
+   8.3,
+   "2022"
+  ],
+  [
+   8.3,
+   "2024"
+  ],
+  [
+   8.3,
+   "2026"
+  ],
+  [
+   8.3,
+   "2028"
+  ],
+  [
+   9.3,
+   "Kinematic variables unfolded simultaneously"
+  ],
+  [
+   8.3,
+   "1"
+  ],
+  [
+   8.3,
+   "2"
+  ],
+  [
+   8.3,
+   "3"
+  ],
+  [
+   8.3,
+   "4"
+  ],
+  [
+   8.3,
+   "5"
+  ],
+  [
+   8.0,
+   "CC inclusive"
+  ],
+  [
+   8.0,
+   "CCQE / QE-like (incl. TKI)"
+  ],
+  [
+   8.0,
+   "Pion production (CC & coherent)"
+  ],
+  [
+   8.0,
+   "DIS / kaon"
+  ],
+  [
+   8.0,
+   "$\\nu_e$"
+  ],
+  [
+   8.0,
+   "Nuclear-target ratio"
+  ],
+  [
+   8.0,
+   "this work, OmniFold (5D)"
+  ]
+ ],
+ "text_overlaps": [
+  [
+   "Pion production (CC & coherent)",
+   "$\\nu_e$",
+   7.6
+  ]
+ ]
+}

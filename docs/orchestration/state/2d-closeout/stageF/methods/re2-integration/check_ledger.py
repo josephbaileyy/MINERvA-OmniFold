@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Check the RE-2 integration against its fact ledger (ledger.tsv beside this file).
 
+Frozen (2026-11-22): validates the pre-rewrite note structure (before 2026-11-21); fails by design against the
+journal-voice note (its V and F rows name files and sentences the rewrite replaced, 38 of them main_paper.tex); not a
+gate. Since 2026-11-22 a row naming an absent file is that row's failure, not a crash.
+
 usage: check_ledger.py <worktree> [--base REF] [--ledger FILE] [--self-test]
 
 Modelled on re1-integration/check_ledger.py. Paths in the ledger are relative to the repository root, except a V row's
@@ -11,8 +15,8 @@ and whitespace collapsed. Row kinds:
        V <id> <file> <base line> <old printed> <new printed> <new context> <old context or -> <table> <row id> <field>
      the table row <row id> must have status "control PASS", `printed` equal to <old printed> and <field> equal to
      <new printed>; <new context> (which contains the new value) must print in docs/analysis-note/<file>; when the value
-     changed, <old context> must print in NO posted file (the printed \\input closure of main_note, main_paper,
-     main_primer and pet_note), so a stale copy elsewhere also fails.
+     changed, <old context> must print in NO posted file (the printed \\input closure of main_note, main_primer and
+     pet_note; main_paper until its retirement on 2026-11-21), so a stale copy elsewhere also fails.
   M  a new values.tex macro computed from a committed product:
        M <id> <macro> <source> <key> <scale> <format>
      \\newcommand{\\<macro>}{X} must be defined exactly once in values.tex, and X must equal
@@ -37,10 +41,10 @@ and whitespace collapsed. Row kinds:
   current tree, while the figure pins still do.
 
 Also:
-  - Fig. 1: docs/analysis-note/figures/paper_fig1_validation.pdf and the committed copy fig1/fig1_validation.pdf both
-    have sha256 71a2ea48... (RE2-PARTC-A3-REPORT.md sec. 3);
+  - Fig. 1: docs/analysis-note/figures/paper_fig1_validation.pdf and the committed copy FIG_COPY (#1168, COV2D-G2R's
+    RE-2-shapes route A on C_new) both have sha256 1ead58a2...; before D1, fig1/fig1_validation.pdf at 71a2ea48...;
   - check_sec4_receipts.py reads Q_R's budget (BUDGET_Q names re2/run/partc_r2/partc-r2/outA/budget_Q.json.gz);
-  - protected text is untouched: main_paper.tex has no diff against BASE, and no added or removed line of any changed
+  - protected text is untouched: no added or removed line of any changed
     .tex deliverable matches the protected patterns (holds, acknowledgments, funding, AI-use, data availability).
 --self-test plants one bad row of each kind (a V row whose new value is not the table's, an M row whose macro value is
 wrong, an F row whose old text still prints in another posted file, a G row whose pin is not the file's digest) and
@@ -59,11 +63,15 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 METHODS = HERE.parent
-FIG_SHA = "71a2ea488ab758a466d40b7d5a7a061ebd95b1cdb90a79427c3da968238b6427"
+FIG_SHA = "1ead58a2223ecf88f3de505d7cbcca76ab306af49814ea7c9d50ec0f2c373e0c"
+FIG_COPY = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/re2shapes/fig1/route-a/fig1_validation.pdf"
 BUDGET_QR = "2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/outA/budget_Q.json.gz"
 PROTECTED = re.compile(r"\\pubhold|acknowledg|funding|DE-AC|DE-SC|Claude|AI-use|AI use|data availability|"
                        r"artificial intelligence", re.I)
-POSTED_DRIVERS = ["main_note", "main_paper", "main_primer", "pet_note"]
+# 2026-11-22: main_paper.tex left the tree when the short paper was retired on 2026-11-21 (evidence/short-paper-retired-
+# a54f255e on the rewrite branch, evidence/short-paper-retired-45402896 on main; docs/POST_PUBLICATION_REORG_PLAN.md,
+# Family short paper), so it is no longer a posted driver and no longer protected text: reading it crashed this tool.
+POSTED_DRIVERS = ["main_note", "main_primer", "pet_note"]
 INPUT_RE = re.compile(r"\\(?:input|include)\{([^}]+)\}")
 BASE_DEFAULT = "104c69a365e7e63734062ad642924cdf6b9a96ea"  # origin/main when this integration branched
 
@@ -150,7 +158,11 @@ def check_rows(wt, ledger, figures_only=False):
             if new not in nctx:
                 fail(rid, f"new value {new!r} not in its context {nctx!r}")
             if f not in cache:
-                cache[f] = printed(note / f)
+                # 2026-11-22: a row may name a file that has left the tree (main_paper.tex, retired 2026-11-21); that is
+                # this row's failure, not a crash of the whole check
+                cache[f] = printed(note / f) if (note / f).is_file() else None
+            if cache[f] is None:
+                fail(rid, f"FILE ABSENT: docs/analysis-note/{f} is not in the tree"); continue
             if norm(nctx) not in cache[f]:
                 fail(rid, f"NEW NOT PRINTED in {f}: {nctx!r}")
             if octx != "-":
@@ -185,7 +197,11 @@ def check_rows(wt, ledger, figures_only=False):
                 fail(c[1] if len(c) > 1 else "?", "MALFORMED F row"); continue
             _, rid, f, new, old, src, lit = c
             if f not in cache:
-                cache[f] = printed(note / f)
+                # 2026-11-22: a row may name a file that has left the tree (main_paper.tex, retired 2026-11-21); that is
+                # this row's failure, not a crash of the whole check
+                cache[f] = printed(note / f) if (note / f).is_file() else None
+            if cache[f] is None:
+                fail(rid, f"FILE ABSENT: docs/analysis-note/{f} is not in the tree"); continue
             if norm(new) not in cache[f]:
                 fail(rid, f"NEW NOT PRINTED in {f}: {new!r}")
             if old != "-":
@@ -199,7 +215,7 @@ def check_rows(wt, ledger, figures_only=False):
 
 def check_fig(wt):
     fails = 0
-    for p in (wt / "docs/analysis-note/figures/paper_fig1_validation.pdf", HERE / "fig1/fig1_validation.pdf"):
+    for p in (wt / "docs/analysis-note/figures/paper_fig1_validation.pdf", wt / FIG_COPY):
         h = hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else "missing"
         ok = h == FIG_SHA
         print(f"  figure {p.relative_to(wt) if p.is_relative_to(wt) else p} {h} {'OK' if ok else '!= ' + FIG_SHA}")
@@ -217,9 +233,7 @@ def check_sec4(wt):
 
 def check_protected(wt, base):
     fails = 0
-    paper = subprocess.run(["git", "-C", str(wt), "diff", "--quiet", base, "--", "docs/analysis-note/main_paper.tex"])
-    if paper.returncode != 0:
-        print("PROTECTED: main_paper.tex differs from base"); fails += 1
+    # main_paper.tex is no longer compared against BASE: it was retired on 2026-11-21 (see POSTED_DRIVERS)
     diff = subprocess.run(["git", "-C", str(wt), "diff", "-U0", base, "--", "docs/analysis-note/*.tex"],
                           capture_output=True, text=True, check=True).stdout
     n = 0
@@ -228,7 +242,7 @@ def check_protected(wt, base):
             n += 1
             if PROTECTED.search(l):
                 print(f"PROTECTED pattern in a changed line: {l[:120]!r}"); fails += 1
-    print(f"  protected: main_paper.tex unchanged against {base[:12]}; {n} changed .tex lines scanned")
+    print(f"  protected: {n} changed .tex lines scanned against {base[:12]} (main_paper.tex retired 2026-11-21)")
     return fails
 
 
