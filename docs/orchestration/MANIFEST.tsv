@@ -8307,6 +8307,7 @@ docs/orchestration/state/ai-disclosure-reconciliation-20261121/raw/zst.txt	track
 docs/orchestration/state/annealed-nominal-complete-56563761.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/annealed-nominal-error-56563092.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/INVENTORY-AND-DRAFT.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-BINDING-1.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-DECLARATION.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/connect/README.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/connect/b5d_launch.sh	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
@@ -8822,6 +8823,17 @@ docs/orchestration/state/ibu-chi2-20261123/tier1/receipts/tier1_logs_er_e.time	t
 docs/orchestration/state/ibu-chi2-20261123/tier1/receipts/tier1_logs_er_old.time	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/tier1/score.out	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/tier1/score_t1.py	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/tier1/signed/README.md	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/tier1/signed/SD-DECLARATION.txt	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/tier1/signed/SHA256SUMS	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/tier1/signed/impl_e.diff	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/tier1/signed/readout.json	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/tier1/signed/sd_out.sha256	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/tier1/signed/sd_prepare.out	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/tier1/signed/sd_prepare.sh	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/tier1/signed/sd_presubmit.txt	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/tier1/signed/sd_run.log	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/tier1/signed/signed_data.npz	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/tier1/stage.log	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/tier1/t1.sbatch	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/tier1/t1i_runner.diff	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
