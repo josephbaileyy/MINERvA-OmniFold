@@ -70,6 +70,10 @@ class Model(unittest.TestCase):
             out = json.loads(buf.getvalue())
             self.assertEqual((out["cells"], out["k"], out["every_cell_needs"]), (["R00", "R02"], 2,
                                                                                  sim.veto_count(2, 2) + 1))
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                sim.main(["--cov", path, "--cells", "none", "--truths", "3"])
+            self.assertEqual(json.loads(buf.getvalue())["result"], "no measured-set test")
             for bad in ("R00,R00", "R09", ""):
                 with self.subTest(bad=bad), self.assertRaises(SystemExit):
                     sim.main(["--cov", path, "--cells", bad, "--truths", "2", "--replicas", "10"])

@@ -1,6 +1,6 @@
 """COVFIX rev 12 §4.5: the simulated pass probability of §4.4's (b) SUPPORT rule.
 
-  python3 -B covfix_b_threshold_sim.py --cov <covariance-reported.csv> --cells all|R00,R03,... --truths 3|2
+  python3 -B covfix_b_threshold_sim.py --cov <covariance-reported.csv> --cells all|none|R00,R03,... --truths 3|2
                                        [--replicas 20000] [--seed 20261124]
 
 The model is §6.2's zero-bias Gaussian law under uniform scale inflation:
@@ -20,6 +20,8 @@ Printed for c = 68.27 %, 64 %, 62 % and 60 %: the pass rate with its binomial SE
 - the veto count;
 - the exact deficit bound: the largest d with P(X ≤ d | 0.60) ≤ 0.05/((k+1)·T);
 - the exact one-sided 95 % lower bound at 185.
+
+With --cells none (k = 0 measured cells), it records "no measured-set test" and simulates nothing (§4.4).
 
 Everything is in correlation units, because both readings are invariant under a per-cell rescaling.
 
@@ -98,12 +100,16 @@ def pass_rate(r: np.ndarray, t: int, c: float, replicas: int, rng: np.random.Gen
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--cov", required=True)
-    ap.add_argument("--cells", required=True, help="'all' or comma-separated labels (the frozen measured set)")
+    ap.add_argument("--cells", required=True,
+                    help="'all', 'none' (k = 0) or comma-separated labels (the frozen measured set)")
     ap.add_argument("--truths", type=int, choices=(2, 3), required=True)
     ap.add_argument("--replicas", type=int, default=20000)
     ap.add_argument("--seed", type=int, default=20261124)
     a = ap.parse_args(argv)
     names, kfull = load_cov(a.cov)
+    if a.cells == "none":
+        print(json.dumps({"cells": [], "k": 0, "truths": a.truths, "result": "no measured-set test"}, indent=1))
+        return 0
     sel = names if a.cells == "all" else a.cells.split(",")
     if not sel or len(set(sel)) != len(sel) or set(sel) - set(names):
         raise SystemExit("the cell list is empty, repeated or names an unknown cell")
