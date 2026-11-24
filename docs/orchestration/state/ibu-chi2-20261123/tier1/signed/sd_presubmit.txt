@@ -1,0 +1,11 @@
+2026-11-24T22:24:22Z
+34749511fa162fb39f33a97c21dacdb0d77a8de0a70b8ef8383efeb5f7d80ea3  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/impl_e/2d-unfolding/ibukt/signed_data.py
+49efcdffe480b690f5791a9a7f4b20a4c997074b38a43a0e94bdd30cbc09661b  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/impl_e/2d-unfolding/ibukt/config.json
+b6cb61429b8d5a6f694147fb2ff985462eb433ab2478cda900d3ef8924ceaab0  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/stage_sd/c2.npz
+43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/stage_sd/cv.root
+5171c7b8ecacda6090e242349dd622218c1c38885c60ef8b91027033a8c4b780  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/stage_sd/er.root
+d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/stage_sd/flux.root
+0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/stage_sd/libRooUnfold.so
+6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/stage_sd/paper.root
+ls: cannot access '/pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/sd_out': No such file or directory
+started
