@@ -16,7 +16,7 @@ The COV2D code is imported unchanged: ``cov2d_score.errors`` and ``lateral_delta
 ``spread_alone``, and ``cov2d_readout``'s ``Run``, ``completeness``, ``plan``, ``inventory_paths``, ``read_pinned`` and
 ``read_provenance``.
 
-  python ibub_readout.py --truth G18 --units DIR --out DIR [--run-dir O]
+  python ibub_readout.py --truth G18 --units DIR --out DIR --job ID --job-m COMMIT --records DIR [--run-dir O]
 
 It writes ``ibub_<T>.json`` (the record, through ``Run.finish``) and ``ibub_<T>_errors.npz`` (the per-toy errors).
 
@@ -26,10 +26,13 @@ the director.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import hashlib
 import io
 import json
 import os
+import stat
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -184,8 +187,30 @@ def c_of(E_post: np.ndarray, C_T: np.ndarray, C_model_abs: np.ndarray, score: di
     return out
 
 
+def read_inv(inv: dict, path) -> tuple[bytes, str]:
+    """One O_NOATIME read of ``path``; its sha256 goes into the readout's inventory of graded bytes."""
+    data, got = cb.read_noatime(path)
+    inv[str(path)] = got
+    return data, got
+
+
+def pinned_inv(inv: dict, path, want: str) -> bytes:
+    """``rd.read_pinned`` (one O_NOATIME read, equal to ``want`` or a c.Refusal), with the digest into the inventory."""
+    data = rd.read_pinned(path, want)
+    inv[str(path)] = want
+    return data
+
+
+def copy_inv(inv: dict, run, src, want: str, name: str) -> Path:
+    """``run.copy`` (one O_NOATIME read, equal to ``want`` or a c.Refusal), with the digest into the inventory. Every
+    graded product goes through here, so the reading names the exact bytes it graded."""
+    dst = run.copy(src, want, name)
+    inv[str(src)] = want
+    return dst
+
+
 def ibu_products(run, units: Path, truth: str, shas: dict, ks_want: list, rep: np.ndarray, cells, cfg: dict,
-                 bound: dict) -> dict:
+                 bound: dict, inv: dict) -> dict:
     """C-COMPLETE, C-TRUTH's IBU side, C-DATA and C-CELLS over the tune's IBU toy units, and their cross sections at
     K = 10 (hXSec2D) and K = 5 (the npz row), on the 205 cells.
 
@@ -209,7 +234,7 @@ def ibu_products(run, units: Path, truth: str, shas: dict, ks_want: list, rep: n
     for s in c.TOY_SEEDS[truth]:
         name = f"toy_{truth}_{s}"
         try:
-            marker = json.loads(cb.read_noatime(units / f"{name}.done")[0])
+            marker = json.loads(read_inv(inv, units / f"{name}.done")[0])
         except OSError:
             missing.append(s)
             continue
@@ -223,13 +248,13 @@ def ibu_products(run, units: Path, truth: str, shas: dict, ks_want: list, rep: n
             continue
         h = row10 = row5 = z = meta = root = None
         try:                                # each artifact verifies and counts on its own
-            root = run.copy(units / f"{name}.root", marker["root_sha256"], f"{name}.root")
+            root = copy_inv(inv, run, units / f"{name}.root", marker["root_sha256"], f"{name}.root")
             h = np.asarray(cells.vec(root), np.float64)
             nonfinite["K10"] += int((~np.isfinite(h)).sum())
         except (c.Refusal, OSError, KeyError) as e:
             problems.append(f"{name}: its ROOT product is not its marker's ({e})")
         try:
-            npz = run.copy(units / f"{name}.npz", marker["sha256"], f"{name}.npz")
+            npz = copy_inv(inv, run, units / f"{name}.npz", marker["sha256"], f"{name}.npz")
             z = np.load(npz)
             meta = json.loads(str(z["meta"]))
             if list(z["ks"]) != ks_want:
@@ -277,42 +302,263 @@ def ibu_products(run, units: Path, truth: str, shas: dict, ks_want: list, rep: n
     return out
 
 
-def job_record(units: Path, bound: dict) -> dict:
-    """The terminal job record and the barrier receipt it binds.
-    - IBUB-DONE, beside units/, must be the bound job's at the bound deploy: stage toys, rc 0, completion PASS.
-    - Its completion's barrier_sha256 must be refcheck.json's sha256.
-    - refcheck.json must be that job's PASS by the bound runner, with both references passing at their markers'
-      digests."""
-    try:
-        done_raw = cb.read_noatime(units.parent / "IBUB-DONE")[0]
-        done = json.loads(done_raw)
-        braw, bsha = cb.read_noatime(units / "refcheck.json")
-        b = json.loads(braw)
-    except (OSError, ValueError) as e:
-        return {"pass": False, "why": f"IBUB-DONE or refcheck.json is not readable ({e})"}
-    comp = done.get("completion") if isinstance(done, dict) else None
-    want_done = {"job": str(bound["slurm_job"]), "M": bound["deploy_head"], "stage": "toys", "rc": 0}
-    got_done = {k: (str(done.get(k)) if k == "job" else done.get(k)) for k in want_done} if isinstance(done, dict) else {}
-    if got_done != want_done or not isinstance(comp, dict) or comp.get("verdict") != "PASS":
-        return {"pass": False, "why": f"IBUB-DONE is {got_done} with completion {comp and comp.get('verdict')}"}
-    if comp.get("barrier_sha256") != bsha:
-        return {"pass": False, "why": f"IBUB-DONE binds barrier {comp.get('barrier_sha256')}, refcheck.json is {bsha}"}
-    want = {"verdict": "PASS", "job": str(bound["slurm_job"]), "deploy_head": bound["deploy_head"],
-            "runner_sha256": bound["runner_sha256"]}
-    got = {k: (str(b.get(k)) if k == "job" else b.get(k)) for k in want} if isinstance(b, dict) else {}
-    if got != want:
-        return {"pass": False, "why": f"refcheck.json is {got}, not {want}"}
+def job_code(job_m: str) -> dict:
+    """The job's own runner and config, by sha256, from the job's commit ``job_m`` (``--job-m``). The readout may run
+    at a later commit. Every unit and the barrier must carry the job's code, not the readout's. ``job_m`` must be a
+    40-hex commit that is an ancestor of the readout's HEAD. These are plain git reads of the repository, made before
+    Run installs the open audit."""
+    if not (isinstance(job_m, str) and len(job_m) == 40 and all(ch in "0123456789abcdef" for ch in job_m)):
+        raise c.Refusal(f"--job-m {job_m!r} is not a 40-hex commit")
+    anc = subprocess.run(["git", "-C", str(REPO), "merge-base", "--is-ancestor", job_m, "HEAD"], capture_output=True)
+    if anc.returncode != 0:
+        raise c.Refusal(f"--job-m {job_m} is not an ancestor of the readout's HEAD (git rc {anc.returncode})")
+    out = {}
+    for key, rel in (("runner_sha256", "2d-unfolding/ibub/ibub_unit.py"), ("config_sha256", "2d-unfolding/ibub/config.json")):
+        blob = subprocess.run(["git", "-C", str(REPO), "cat-file", "blob", f"{job_m}:{rel}"], capture_output=True)
+        if blob.returncode != 0:
+            raise c.Refusal(f"{rel} is not readable at --job-m {job_m}")
+        out[key] = hashlib.sha256(blob.stdout).hexdigest()
+    return out
+
+
+def reference_products(run, units: Path, bound: dict, barrier: dict, inv: dict) -> str | None:
+    """Both references, verified, as the barrier names them (codex2 read 3, item 1). For each reference unit, all of
+    these must hold:
+    - its marker names it, reads PASS and is the bound job's at the bound deploy;
+    - the barrier names it passing, with srun rc 0, at the marker's digests;
+    - its npz and ROOT products are not symlinks and are, as read now through O_NOATIME (``run.copy``), at those
+      digests;
+    - the npz's own meta names the same unit, kind, job and deploy, and its controls are exactly the declared ones
+      (C-REP or C-REP-D, and C-SIM on central), each passing.
+    Returns None when both hold, else why."""
     for u in iu.REFERENCE_UNITS:
-        r = (b.get("units") or {}).get(u) or {}
+        r = (barrier.get("units") or {}).get(u) or {}
         try:
-            m = json.loads(cb.read_noatime(units / f"{u}.done")[0])
+            m = json.loads(read_inv(inv, units / f"{u}.done")[0])
         except (OSError, ValueError) as e:
-            return {"pass": False, "why": f"{u}'s marker is not readable ({e})"}
-        if not (r.get("pass") is True and r.get("srun_rc") == 0 and m.get("verdict") == "PASS"
-                and (str(m.get("job")), m.get("deploy_head")) == (str(bound["slurm_job"]), bound["deploy_head"])
+            return f"{u}'s marker is not readable ({e})"
+        if not isinstance(m, dict) or (m.get("unit"), m.get("verdict")) != (u, "PASS") \
+                or (str(m.get("job")), m.get("deploy_head")) != (str(bound["slurm_job"]), bound["deploy_head"]):
+            return f"{u}'s marker is not the bound job's PASS for {u}"
+        if not (r.get("pass") is True and r.get("srun_rc") == 0
                 and (r.get("npz_sha256"), r.get("root_sha256")) == (m.get("sha256"), m.get("root_sha256"))):
-            return {"pass": False, "why": f"refcheck.json's {u} is not a passing reference at its marker's digests"}
-    return {"pass": True, "barrier_sha256": bsha, "done_sha256": hashlib.sha256(done_raw).hexdigest()}
+            return f"refcheck.json's {u} is not a passing reference at its marker's digests"
+        try:
+            got = {}
+            for ext, key in (("npz", "sha256"), ("root", "root_sha256")):
+                src = units / f"{u}.{ext}"
+                if src.is_symlink():
+                    raise c.Refusal(f"{src} is a symlink")
+                got[ext] = copy_inv(inv, run, src, m[key], f"ref_{u}.{ext}")
+            meta = json.loads(str(np.load(got["npz"])["meta"]))
+        except (c.Refusal, OSError, KeyError, ValueError) as e:
+            return f"{u}'s products are not at the barrier's digests ({e})"
+        if (meta.get("unit"), meta.get("kind"), str(meta.get("slurm_job")), meta.get("deploy_head")) != \
+                (u, u, str(bound["slurm_job"]), bound["deploy_head"]):
+            return f"{u}'s npz meta names {meta.get('unit')}/{meta.get('kind')}/{meta.get('slurm_job')}/{meta.get('deploy_head')}"
+        ctl = meta.get("controls") if isinstance(meta.get("controls"), dict) else {}
+        if set(ctl) != iu.CONTROLS[u] or not all(isinstance(v, dict) and v.get("pass") is True for v in ctl.values()):
+            return f"{u}'s controls {sorted(ctl)} are not the declared {sorted(iu.CONTROLS[u])}, each passing"
+    return None
+
+
+# sacct States that end a job. Anything else (PENDING, RUNNING, REQUEUED, SUSPENDED, any other) or no row is not
+# terminal, and the readout STOPs before it reads anything else (the director's ruling of 2026-11-24).
+TERMINAL = {"COMPLETED", "FAILED", "TIMEOUT", "CANCELLED", "OUT_OF_MEMORY", "NODE_FAIL"}
+
+
+def sacct_state(records: Path, job: str) -> dict:
+    """The job's sacct row from the fetch (``sacct-<job>.txt``, `sacct -j <job> -X -P -o JobID,JobName,State,ExitCode`,
+    checked against its RECORDS.SHA256SUMS line), classified in code. It reads only those two files. Raises
+    c.Refusal (a STOP: nothing is read or graded) unless exactly one row is the job's, as ibub_run, in a terminal
+    State. "CANCELLED by <uid>" reads CANCELLED."""
+    rel = f"sacct-{job}.txt"
+    try:
+        sums = cb.read_noatime(records / "RECORDS.SHA256SUMS")[0].decode()
+        data, got = cb.read_noatime(records / rel)
+    except (OSError, UnicodeDecodeError) as e:
+        raise c.Refusal(f"STOP: the fetch's sacct record is not readable ({e})")
+    want = [ln[:64] for ln in sums.splitlines() if ln[64:] == f"  {rel}"]
+    if want != [got]:
+        raise c.Refusal(f"STOP: {rel} is not at its RECORDS.SHA256SUMS line")
+    rows = [r.split("|") for r in data.decode(errors="replace").splitlines()]
+    mine = [r for r in rows if r and r[0] == str(job)]
+    if len(mine) != 1 or len(mine[0]) < 4:
+        raise c.Refusal(f"STOP: sacct has {len(mine)} rows for job {job} (a missing row is never read as finished)")
+    _, name, state, code = mine[0][:4]
+    word = state.split()[0] if state.split() else ""
+    if name != "ibub_run" or word not in TERMINAL:
+        raise c.Refusal(f"STOP: job {job} ({name}) is {state!r}, not terminal")
+    return {"JobName": name, "State": state, "ExitCode": code}
+
+
+def scontrol_key(text: str, key: str) -> str:
+    """The job's own key rule: the first space- or line-separated token ``key=...``, its value ('' if none)."""
+    for tok in text.replace(" ", "\n").split("\n"):
+        if tok.startswith(key + "="):
+            return tok[len(key) + 1:]
+    return ""
+
+
+def allocation_ok(text: str, lanes: int = 4, mem_mb: int = 114688, cpus: int = 64) -> str | None:
+    """The batch's scontrol record, re-parsed as the job parses it: JobName=ibub_run, QOS=regular,
+    TimeLimit=11:29:00, NumNodes=1, OverSubscribe=NO, and AllocTRES fitting four steps of 112G and 64 CPUs. Returns
+    None when it holds, else why."""
+    for k, v in (("JobName", "ibub_run"), ("QOS", "regular"), ("TimeLimit", "11:29:00"), ("NumNodes", "1"),
+                 ("OverSubscribe", "NO")):
+        if scontrol_key(text, k) != v:
+            return f"{k} is {scontrol_key(text, k)!r}, not {v}"
+    tres = dict(t.partition("=")[::2] for t in scontrol_key(text, "AllocTRES").split(",") if "=" in t)
+    mem, cpu = tres.get("mem", ""), tres.get("cpu", "")
+    unit = {"M": 1, "G": 1024}.get(mem[-1:])
+    amem = int(mem[:-1]) * unit if unit and mem[:-1].isdigit() else None
+    if amem is None or not cpu.isdigit():
+        return f"the allocation is not readable from AllocTRES {scontrol_key(text, 'AllocTRES')!r}"
+    if lanes * mem_mb > amem or lanes * cpus > int(cpu):
+        return f"{lanes} steps do not fit (mem {amem}M, cpu {cpu})"
+    return None
+
+
+# the job's line once every allocation check holds (jobs/ibub_job.sbatch, `say "allocation: ..."`)
+ALLOCATION_LINE = "[ibub] allocation: ibub_run regular 11:29:00 1 node exclusive;"
+
+
+def fetched_records(records: Path, job: str) -> dict:
+    """The readout connect's fetch of the job's records: {relative path: bytes}, every RECORDS.SHA256SUMS line
+    verified by an O_NOATIME read. The fetch must list the records the job-wide checks read. Raises c.Refusal."""
+    try:
+        raw = cb.read_noatime(records / "RECORDS.SHA256SUMS")[0].decode()
+    except (OSError, UnicodeDecodeError) as e:
+        raise c.Refusal(f"RECORDS.SHA256SUMS is not readable in {records} ({e})")
+    out = {}
+    for line in raw.splitlines():
+        want, sep, rel = line.partition("  ")
+        if not (sep and len(want) == 64 and all(ch in "0123456789abcdef" for ch in want)) or not rel \
+                or rel.startswith("/") or ".." in Path(rel).parts or rel in out:
+            raise c.Refusal(f"RECORDS.SHA256SUMS has a malformed or repeated line {line!r}")
+        try:
+            data, got = cb.read_noatime(records / rel)
+        except OSError as e:
+            raise c.Refusal(f"the fetched record {rel} is not readable ({e})")
+        if got != want:
+            raise c.Refusal(f"the fetched record {rel} is {got}, not RECORDS.SHA256SUMS's {want}")
+        out[rel] = data
+    need = {"units/refcheck.json", "stage/stage.json", f"logs/scontrol-batch-{job}.txt", f"slurm/ibub_run-{job}.out",
+            f"sacct-{job}.txt"}
+    if need - set(out):
+        raise c.Refusal(f"the fetch lacks {sorted(need - set(out))}")
+    return out
+
+
+def terminal_state(recs: dict) -> dict:
+    """Disclosed beside the readings, whatever it is, and never a gate (the director's ruling of 2026-11-24): whether
+    IBUB-DONE was published (its sha256, stage, rc and completion verdict), and complete.json's verdict. sacct's State
+    and ExitCode join it in ``readout``, from ``sacct_state``."""
+    done = recs.get("IBUB-DONE")
+    out = {"ibub_done": None}
+    if done is not None:
+        try:
+            d = json.loads(done)
+        except ValueError:
+            d = {}
+        d = d if isinstance(d, dict) else {}
+        out["ibub_done"] = {"sha256": hashlib.sha256(done).hexdigest(), "stage": d.get("stage"), "rc": d.get("rc"),
+                            "completion": (d.get("completion") or {}).get("verdict")
+                            if isinstance(d.get("completion"), dict) else None}
+    try:
+        comp = json.loads(recs["logs/complete.json"]) if "logs/complete.json" in recs else None
+    except ValueError:
+        comp = None
+    out["complete_json"] = comp.get("verdict") if isinstance(comp, dict) else None
+    return out
+
+
+def job_wide(run, units: Path, records: Path, bound: dict, inv: dict) -> dict:
+    """The job-wide prerequisites (the director's ruling of 2026-11-24). If any fails or is missing, neither tune is
+    graded and the reason is named:
+    - the fetch verifies (``fetched_records``);
+    - stage.json reads PASS;
+    - the allocation: the batch's stdout carries the job's allocation line exactly once, and its scontrol record
+      names this job and, re-parsed here (``allocation_ok``), is the declared allocation;
+    - the barrier: the fetched refcheck.json is units/refcheck.json byte for byte, the bound job's PASS at the bound
+      deploy by the job's runner, both references passing with srun rc 0, and central_df against central (C-REP)
+      passing;
+    - both references verified (``reference_products``);
+    - IBUB-DONE, if published, is the bound job's at the bound deploy at stage toys, and binds that barrier.
+    The job's terminal state is disclosed (``terminal_state``) and never gates: each tune is then graded by C-COMPLETE
+    alone."""
+    job = str(bound["slurm_job"])
+    try:
+        recs = fetched_records(records, job)
+    except c.Refusal as e:
+        return {"pass": False, "why": str(e)}
+    out = {"terminal": terminal_state(recs), "records": len(recs),
+           "records_sha256sums_sha256": hashlib.sha256(cb.read_noatime(records / "RECORDS.SHA256SUMS")[0]).hexdigest()}
+
+    def fail(why: str) -> dict:
+        return {"pass": False, "why": why, **out}
+    try:
+        st = json.loads(recs["stage/stage.json"])
+        b = json.loads(recs["units/refcheck.json"])
+        braw, bsha = read_inv(inv, units / "refcheck.json")
+    except (OSError, ValueError) as e:
+        return fail(f"stage.json or refcheck.json is not readable ({e})")
+    if not (isinstance(st, dict) and st.get("verdict") == "PASS"):
+        return fail("stage.json does not read PASS")
+    lines = recs[f"slurm/ibub_run-{job}.out"].decode(errors="replace").splitlines()
+    if sum(ln.startswith(ALLOCATION_LINE) for ln in lines) != 1:
+        return fail("the batch's stdout does not carry the allocation line exactly once")
+    scon = recs[f"logs/scontrol-batch-{job}.txt"].decode(errors="replace")
+    if scontrol_key(scon, "JobId") != job:
+        return fail(f"the batch's scontrol record names job {scontrol_key(scon, 'JobId')!r}, not {job}")
+    why = allocation_ok(scon)
+    if why is not None:
+        return fail(f"the batch's scontrol record: {why}")
+    if braw != recs["units/refcheck.json"]:
+        return fail("the fetched refcheck.json is not units/refcheck.json")
+    if not isinstance(b, dict):
+        return fail("refcheck.json is not a JSON object")
+    want = {"verdict": "PASS", "job": job, "deploy_head": bound["deploy_head"], "runner_sha256": bound["runner_sha256"]}
+    got = {k: (str(b.get(k)) if k == "job" else b.get(k)) for k in want}
+    if got != want:
+        return fail(f"refcheck.json is {got}, not {want}")
+    if (b.get("central_df_vs_central") or {}).get("pass") is not True:
+        return fail("C-REP: refcheck.json's central_df against central does not pass")
+    why = reference_products(run, units, bound, b, inv)
+    if why is not None:
+        return fail(why)
+    if "IBUB-DONE" in recs:
+        try:
+            d = json.loads(recs["IBUB-DONE"])
+        except ValueError:
+            d = None
+        comp = d.get("completion") if isinstance(d, dict) else None
+        if not isinstance(d, dict) or (str(d.get("job")), d.get("M"), d.get("stage")) != (job, bound["deploy_head"], "toys"):
+            return fail("IBUB-DONE is not the bound job's, at the bound deploy, at stage toys")
+        if isinstance(comp, dict) and comp.get("barrier_sha256") not in (None, bsha):
+            return fail(f"IBUB-DONE binds barrier {comp.get('barrier_sha256')}, refcheck.json is {bsha}")
+    return {"pass": True, "barrier_sha256": bsha, **out}
+
+
+def check_write_root(root) -> str:
+    """The declared readout root (config.json readout.write_root) must already be a real directory at exactly its
+    declared path (codex2 read 3, item 2): absolute; neither it nor any ancestor a symlink; owned by this user; not
+    writable by group or others. Returns it."""
+    root = str(root)
+    if not os.path.isabs(root):
+        raise c.Refusal(f"the readout root {root} is not absolute")
+    try:
+        st = os.lstat(root)
+    except OSError as e:
+        raise c.Refusal(f"the readout root {root} does not exist ({e})")
+    if stat.S_ISLNK(st.st_mode) or not stat.S_ISDIR(st.st_mode):
+        raise c.Refusal(f"the readout root {root} is not a real directory")
+    if os.path.realpath(root) != os.path.normpath(root):
+        raise c.Refusal(f"the readout root {root} resolves to {os.path.realpath(root)}")
+    if st.st_uid != os.getuid() or st.st_mode & 0o022:
+        raise c.Refusal(f"the readout root {root} is not this user's private directory "
+                        f"(uid {st.st_uid}, mode {stat.S_IMODE(st.st_mode):o})")
+    return os.path.normpath(root)
 
 
 def guard_off_tree(path, what: str) -> None:
@@ -338,27 +584,66 @@ def guard_in_root(path, root, what: str) -> None:
 # ------------------------------------------------------------------------------------------- the readout
 
 
-def readout(truth: str, units: Path, out: Path, run_dir: str, job: str) -> dict:
+@contextlib.contextmanager
+def private_tmp(tmp_root: str):
+    """A temporary directory under ``tmp_root``, with tempfile's default pointed there too while it is open, so no
+    library's temporary file lands anywhere else. Both are restored on exit."""
+    saved, tempfile.tempdir = tempfile.tempdir, tmp_root
+    try:
+        with tempfile.TemporaryDirectory(dir=tmp_root) as td:
+            yield td
+    finally:
+        tempfile.tempdir = saved
+
+
+def check_out(out: Path, root: str) -> None:
+    """``out`` must be absent, and its parent a real directory under the declared root at exactly its own path (no
+    symlink on the way), checked before anything is created beside it (codex2 read 3, item 2)."""
+    if out.exists() or out.is_symlink():
+        raise c.Refusal(f"--out {out} exists")
+    parent = os.path.abspath(out.parent)
+    try:
+        st = os.lstat(parent)
+    except OSError as e:
+        raise c.Refusal(f"--out's parent {parent} does not exist ({e})")
+    if stat.S_ISLNK(st.st_mode) or not stat.S_ISDIR(st.st_mode) or os.path.realpath(parent) != os.path.normpath(parent):
+        raise c.Refusal(f"--out's parent {parent} is not a real directory at its own path")
+    guard_in_root(parent, root, "--out's parent")
+
+
+def readout(truth: str, units: Path, out: Path, run_dir: str, job: str, job_m: str, records: Path) -> dict:
     """The declared readings at one tune. Every control failure or refusal is recorded (INVALID or INCOMPLETE, with
     its reason and no reading). Everything is first built in a private staging directory beside ``out``: the audit's
     record (Run.finish, whose atime, open-audit and module checks run there), then, only if that reads PASS, the
     readings and the errors npz. The staging directory then becomes ``out`` by one atomic rename. ``out`` never
-    exists partly written, and a PASS record never exists without its npz, whose sha256 it names."""
+    exists partly written, and a PASS record never exists without its npz, whose sha256 it names.
+
+    Before anything is written, the declared root (config.json readout.write_root) must be a real, private directory
+    at its own path (``check_write_root``), ``out`` must be absent with its parent a real directory under that root
+    (``check_out``), and the temporary root (TMPDIR, else the declared root) must lie under it. ``job_m`` is the job's
+    commit (``--job-m``): every unit, the barrier and IBUB-DONE must carry its deploy and its runner and config.
+    ``records`` is the readout connect's fetch of the job's records (``--records``), which ``job_wide`` reads."""
     # every plain read of the repository happens here, before Run installs the open audit
     cfg = iu.load_config()
     iu.check_code(cfg)
     rcfg, pins = cfg["readout"], cfg["cov2d_records"][truth]
-    shas, rep_cfg = iu.toy_shas(cfg, truth), iu.reported_cells(cfg)
-    own = {"schema": SCHEMA, "units": str(units), "config_sha256": iu.rc.sha256(iu.CONFIG),
-           "readout_sha256": iu.rc.sha256(Path(__file__).resolve()), "unit_sha256": iu.rc.sha256(Path(iu.__file__)),
-           "job": str(job)}
-    tmp_root = os.environ.get("TMPDIR") or tempfile.gettempdir()
-    root = rcfg["write_root"]
+    root = check_write_root(rcfg["write_root"])
+    tmp_root = os.environ.get("TMPDIR") or root
     for path, what in ((out, "--out"), (tmp_root, "the temporary root")):
         guard_off_tree(path, what)
         guard_in_root(path, root, what)
-    if out.exists() or out.is_symlink():
-        raise c.Refusal(f"--out {out} exists")
+    check_out(out, root)
+    terminal = sacct_state(records, str(job))       # STOP unless the job has ended: before any other read
+    bound = {"slurm_job": str(job), "deploy_head": job_m, **job_code(job_m)}
+    try:                        # a pinned input that fails is recorded below, through the diagnostic path (item 4)
+        shas, rep_cfg, pre = iu.toy_shas(cfg, truth), iu.reported_cells(cfg), None
+    except (c.Refusal, iu.GateFailure, OSError, ValueError, KeyError) as e:
+        shas = rep_cfg = None
+        pre = f"{type(e).__name__}: {e}"
+    own = {"schema": SCHEMA, "units": str(units), "config_sha256": iu.rc.sha256(iu.CONFIG),
+           "readout_sha256": iu.rc.sha256(Path(__file__).resolve()), "unit_sha256": iu.rc.sha256(Path(iu.__file__)),
+           "job": str(job), "job_m": job_m, "job_runner_sha256": bound["runner_sha256"],
+           "job_config_sha256": bound["config_sha256"], "sacct": terminal}
     stage = Path(tempfile.mkdtemp(prefix=f".{out.name}.staging-", dir=out.parent))     # private until the rename
     guard_in_root(stage, root, "the staging directory")
     name = f"ibub_{truth}.json"
@@ -366,12 +651,11 @@ def readout(truth: str, units: Path, out: Path, run_dir: str, job: str) -> dict:
     def publish_stage() -> None:
         os.rename(stage, out)
 
-    with tempfile.TemporaryDirectory(dir=tmp_root) as td:     # the private copies, as phase_score's
+    with private_tmp(tmp_root) as td:     # the private copies, as phase_score's
         run = rd.Run(truth, run_dir, Path(td))
         rec = run.rec
         rec.update(own)
-        bound = {"slurm_job": str(job), "runner_sha256": own["unit_sha256"], "config_sha256": own["config_sha256"],
-                 "deploy_head": rec["M"]}
+        inv = rec["inventory"] = {}                     # every graded byte: path -> sha256, each from its one read
 
         def invalid(why: str) -> dict:
             rec["controls_failed"].append(why)
@@ -380,9 +664,13 @@ def readout(truth: str, units: Path, out: Path, run_dir: str, job: str) -> dict:
             return final
         try:
             try:
-                B = dict(np.load(io.BytesIO(rd.read_pinned(REPO / pins["blocks"], pins["blocks_sha256"]))))
-                score = json.loads(rd.read_pinned(REPO / pins["score"], pins["score_sha256"]))
-                cells = run.er_cells()
+                if pre is not None:
+                    raise c.Refusal(f"a pinned input: {pre}")
+                B = dict(np.load(io.BytesIO(pinned_inv(inv, REPO / pins["blocks"], pins["blocks_sha256"]))))
+                score = json.loads(pinned_inv(inv, REPO / pins["score"], pins["score_sha256"]))
+                er = copy_inv(inv, run, f"{run.ro.NS_R}/out/ER/xsec.root", run.ro.partb_sums()["ER/xsec.root"],
+                              "ER.root")                  # as Run.er_cells, with the digest inventoried
+                cells = run.ro.Cells(er)
                 rep = np.asarray(cells.rep, bool)
                 if not (np.array_equal(rep, B["rep"].astype(bool)) and np.array_equal(rep, rep_cfg)):
                     return invalid("C-TRUTH: E_R's cells differ from the blocks record's or the config's")
@@ -391,13 +679,16 @@ def readout(truth: str, units: Path, out: Path, run_dir: str, job: str) -> dict:
                 pl = rd.plan(truth, comp)
                 if pl["toy"] != [f"T_{truth}_{s}" for s in c.TOY_SEEDS[truth]]:
                     return invalid("C-TRUTH: the OmniFold labels are not the declared seeds in order")
-                files = {lab: run.copy(f"{run_dir}/out/{lab}/xsec.root", comp[lab]["sha256"], f"{lab}.root")
+                files = {lab: copy_inv(inv, run, f"{run_dir}/out/{lab}/xsec.root", comp[lab]["sha256"], f"{lab}.root")
                          for lab in pl["toy"]}
                 x_of = np.stack([cells.vec(files[lab]) for lab in pl["toy"]])
                 tpath = rd.inventory_paths(run_dir, truth)["truth_xsec_npz"]
                 run.watch(tpath)                                  # the truth file joins the atime ledger
-                txs = np.load(io.BytesIO(rd.read_pinned(tpath, pins["truth_xsec_sha256"])))
-                pa = json.loads(rd.read_pinned(rd.REC / "pseudo" / truth / "pseudo_a.json", rd.PSEUDO_A_SHA[truth]))
+                txs = np.load(io.BytesIO(pinned_inv(inv, tpath, pins["truth_xsec_sha256"])))
+                pa = json.loads(pinned_inv(inv, rd.REC / "pseudo" / truth / "pseudo_a.json", rd.PSEUDO_A_SHA[truth]))
+                ratio_rec = json.loads(pinned_inv(inv, *rd.C2_RECORD))
+                weakened = c.weakened_cells(ratio_rec["b"][truth]["variance_ratio"]["option_1_clipped"],
+                                            ratio_rec["efficiency"]["cells205"])
             except c.Refusal as e:                    # an input off its pin, or a plan refusal: recorded, no reading
                 rec["refused"] = str(e)
                 return invalid(f"refused: {e}")
@@ -419,10 +710,12 @@ def readout(truth: str, units: Path, out: Path, run_dir: str, job: str) -> dict:
             rec["C-OF"] = c_of(E_post, B["C_T"], B["C_model_abs"], score["readouts"])
             if not rec["C-OF"]["pass"]:
                 rec["controls_failed"].append("C-OF")
-            rec["C-BARRIER"] = job_record(units, bound)
-            if not rec["C-BARRIER"]["pass"]:
-                rec["controls_failed"].append("C-BARRIER: IBUB-DONE and refcheck.json are not the bound job's PASS")
-            ibu = ibu_products(run, units, truth, shas, list(cfg["c2"]["scan"]), rep, cells, cfg, bound)
+            rec["C-JOB"] = job_wide(run, units, records, bound, inv)
+            rec["job_terminal"] = {"sacct": {k: rec["sacct"][k] for k in ("State", "ExitCode")},   # disclosed,
+                                   **(rec["C-JOB"].get("terminal") or {})}                # whatever it is
+            if not rec["C-JOB"]["pass"]:
+                rec["controls_failed"].append(f"C-JOB: a job-wide prerequisite fails ({rec['C-JOB']['why']})")
+            ibu = ibu_products(run, units, truth, shas, list(cfg["c2"]["scan"]), rep, cells, cfg, bound, inv)
             rec["C-COMPLETE"] = {"units": len(c.TOY_SEEDS[truth]) - len(ibu["missing"]), "missing": ibu["missing"]}
             rec["C-DATA"] = {"problems": ibu["problems"]}
             if ibu["problems"]:
@@ -431,7 +724,7 @@ def readout(truth: str, units: Path, out: Path, run_dir: str, job: str) -> dict:
                               "pass": ibu["nonfinite"] == {"K10": 0, "K5": 0}}
             if not rec["C-CELLS"]["pass"]:
                 rec["controls_failed"].append("C-CELLS")
-            if ibu["missing"]:
+            if ibu["missing"]:                          # C-COMPLETE, per tune as declared; never the job's status
                 if not rec["controls_failed"]:
                     rec["verdict"] = "INCOMPLETE"
                 final = run.finish(stage, name)
@@ -459,7 +752,6 @@ def readout(truth: str, units: Path, out: Path, run_dir: str, job: str) -> dict:
                 i = flat.index(int(g))
                 named[str(g)] = {f"K{k}": {"b_OF": float(E_of[:, i].mean()), "b_IBU": float(E[:, i].mean()),
                                            "d": float((E - E_of)[:, i].mean())} for k, E in ((10, E10), (5, E5))}
-            ratio_rec = json.loads(rd.read_pinned(*rd.C2_RECORD))
             pending = {
                 "bootstrap": {"B": rcfg["bootstrap_B"], "seed": boot_seed},
                 "readings": readings,
@@ -467,8 +759,7 @@ def readout(truth: str, units: Path, out: Path, run_dir: str, job: str) -> dict:
                 "descriptive": {
                     "surrogate_realized_mean_in_sigma": ((E_post - E_of).mean(axis=0) / sigma).tolist(),
                     "cov2d_flagged_cells": named,
-                    "weakened_cells": c.weakened_cells(ratio_rec["b"][truth]["variance_ratio"]["option_1_clipped"],
-                                                       ratio_rec["efficiency"]["cells205"])}}
+                    "weakened_cells": weakened}}
             arrays = dict(seeds=np.array(list(c.TOY_SEEDS[truth])), flat=np.array(flat), E_of=E_of, E_ibu10=E10,
                           E_ibu5=E5, x_true=x_true, x_of=x_of)
         except Exception:
@@ -491,8 +782,15 @@ def main(argv=None) -> int:
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--run-dir", default=rd.RUN_DIR)
     ap.add_argument("--job", required=True, help="the bound job's id, which every unit must have run under")
+    ap.add_argument("--job-m", required=True, help="the job's commit (IBUB-DONE's M), whose runner and config bind")
+    ap.add_argument("--records", type=Path, required=True,
+                    help="the readout connect's fetch of the job's records, with RECORDS.SHA256SUMS")
     a = ap.parse_args(argv)
-    rec = readout(a.truth, a.units, a.out, a.run_dir, a.job)
+    try:
+        rec = readout(a.truth, a.units, a.out, a.run_dir, a.job, a.job_m, a.records)
+    except c.Refusal as e:                         # refused before any record: nothing was graded or written
+        print(f"IBUB-READOUT {a.truth} REFUSED: {e}")
+        return 4
     print(f"IBUB-READOUT {a.truth} {rec['verdict']} reading={rec.get('reading')} "
           f"controls_failed={len(rec['controls_failed'])} stops={len(rec['stop'])}")
     return 0 if rec["verdict"] == "PASS" else 3
