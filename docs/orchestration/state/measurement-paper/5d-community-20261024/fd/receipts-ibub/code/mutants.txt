@@ -1,0 +1,49 @@
+# IBUB hand mutants: 2d-unfolding/ibub/mutants.py run against commit 79a3427a0a87 in a separate detached worktree
+# (/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/mut-wt, removed afterwards; its porcelain was empty after the run). Interpreter: a venv over ROOT 6.40.04 with
+# LightGBM 4.7.0 and scikit-learn 1.9.1, numpy 1.26.4 (macOS). Blobs at that commit:
+#   32d24a3ece18d9f041a9a98731c403f8e458804b499ecaee4eecd42288a8ad53  ibub_unit.py
+#   4ba541aa33105ea45a9cfa2b4ac829e3bd8793fde24dfc78255cd6b9f0be1654  ibub_readout.py
+#   87a4e91328fa8d2988633ecf5d5af26c0dae339a7c8eea13ad8fe8ef1d0b0ff4  test_ibub_unit.py
+#   9aa7b18a8fc5de514ab4f93d7eeeba08c8dcb81429f5c671b4c54502109d9a4e  test_ibub_readout.py
+#   a59b4282f90d264340b4c08757711b94ba57005ad3e13c400379e70298ba9b6a  mutants.py
+#   1793c73b78297680e6431eb02996adf8c820890973c71aeeafe512ec05ffc1da  config.json
+1	KILLED	ibub_unit.py	test_ibub_unit.Pure,test_ibub_unit.Driver	C-G2R refuses nothing
+2	KILLED	ibub_unit.py	test_ibub_unit.Pure	C-G2R misses --miss-map=v
+3	KILLED	ibub_unit.py	test_ibub_unit.Driver	a data unit runs without its data file
+4	KILLED	ibub_unit.py	test_ibub_unit.Driver	the thread gate is gone
+5	KILLED	ibub_unit.py	test_ibub_unit.Driver	the CPU gate is gone
+6	KILLED	ibub_unit.py	test_ibub_unit.Driver	a data file off its pin is used
+7	KILLED	ibub_unit.py	test_ibub_unit.Driver	the data copy is kept
+8	KILLED	ibub_unit.py	test_ibub_unit.Driver	C-DATA ignores the recorded digest
+9	KILLED	ibub_unit.py	test_ibub_unit.Pure	C-REP compares the unreported cells
+10	KILLED	ibub_unit.py	test_ibub_unit.Pure	C-REP ignores T
+11	KILLED	ibub_unit.py	test_ibub_unit.Pure	the re-price trigger is gone
+12	KILLED	ibub_unit.py	test_ibub_unit.Pure	the barrier ignores central_df against central
+13	KILLED	ibub_unit.py	test_ibub_unit.Pure	staged copies stay writable
+14	KILLED	ibub_unit.py	test_ibub_unit.Pure	the preflight ignores a missing toy file
+15	KILLED	ibub_unit.py	test_ibub_unit.Pure	pseudo_b.json is read off its pin
+16	KILLED	ibub_unit.py	test_ibub_unit.Driver	C-ROO always passes
+17	KILLED	ibub_readout.py	test_ibub_readout.Pure	bands are bare sums, not area-weighted
+18	KILLED	ibub_readout.py	test_ibub_readout.Pure	z* uses 205 tests, not the family
+19	KILLED	ibub_readout.py	test_ibub_readout.Pure	the difference is not paired toy by toy
+20	KILLED	ibub_readout.py	test_ibub_readout.Pure	the rule reads IBU's own bias, not the difference
+21	KILLED	ibub_readout.py	test_ibub_readout.Pure	C-OF checks only the means (blind to a mispairing)
+22	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	the product's recorded data digest is not checked
+23	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	C-K10 is gone
+24	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	C-CELLS skips K = 5
+25	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	OmniFold's errors are taken after the surrogates
+26	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	a missing unit does not stop the reading
+27	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	the truth rows are not checked against the natures
+28	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	--out under a guarded tree is allowed
+29	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	a failed C-OF does not invalidate the tune
+30	KILLED	ibub_unit.py	test_ibub_unit.Refusals	a partial data copy stays behind
+31	KILLED	ibub_unit.py	test_ibub_unit.Driver	a unit with an undeclared control set writes a marker
+32	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	a unit from another job, runner or config is read
+33	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	a unit lacking a declared control is read
+34	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	a unit of another K scan is not missing
+35	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	the marker's data digest is not checked
+36	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	a unit of another tune or kind is read
+37	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	a marker naming another unit is read
+38	KILLED	ibub_unit.py	test_ibub_unit.Pure	the barrier ignores the reference root's digest
+39	KILLED	ibub_unit.py	test_ibub_unit.Pure	the barrier accepts a misnamed marker
+TOTAL	39/39 killed

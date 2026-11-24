@@ -149,7 +149,9 @@ done
 echo "sacct: ${row:-<none>}"
 [ "$listed" -eq 1 ] || { echo "STOP: sacct did not list $jid within 5 minutes (the job may exist: do not resubmit)"; finish 5; }
 info=$(scontrol show job "$jid" 2>&1); echo "$info" > "$N/logs/scontrol-$jid.txt"
-grep -q "JobName=$JOBNAME " <<<"$info" && grep -q "QOS=regular" <<<"$info" && grep -q "TimeLimit=$LIMIT " <<<"$info" \
+# scontrol ends its first line with JobName=..., so each key is matched up to a space or the end of the line
+grep -Eq "JobName=$JOBNAME( |\$)" <<<"$info" && grep -Eq "QOS=regular( |\$)" <<<"$info" \
+  && grep -Eq "TimeLimit=$LIMIT( |\$)" <<<"$info" \
   || { echo "STOP: scontrol does not show $JOBNAME / regular / $LIMIT for $jid"; finish 5; }
 echo "scontrol: name, QOS and limit as declared"
 gs=$(git -C "$D" status --porcelain --ignored) || { echo "STOP: git status failed (after)"; finish 9; }
