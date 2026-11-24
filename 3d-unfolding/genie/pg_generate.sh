@@ -21,6 +21,7 @@ D="$(cd "$HERE/../.." && pwd)"
 NT=7; NEV=160000; P=14; TO=5115     # F1b''s tasks, events, concurrency and per-task timeout (budget3.json)
 PHIT=/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix
 X=/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL
+PRIV=/pscratch/sd/j/josephrb/covfix-pg/products   # slot 1's private genie_xsec (run_gevgen_v3.sh, setup_genie_v3.sh)
 
 refuse() { echo "[pg] refusing: $1" >&2; exit 2; }
 W=""; SEEDS=""
@@ -44,7 +45,11 @@ dirty=$(git -C "$D" status --porcelain --untracked-files=no 2>/dev/null | wc -l)
 [ "$head_sha" = "$PG_DEPLOY_PIN" ] && [ "$dirty" -eq 0 ] || refuse "the deploy is not the pinned commit, or is modified"
 
 O="$W/out"; R="$W/run"; G="$D/3d-unfolding/genie"
-mkdir -p "$O/logs" "$O/splines" "$O/gst" "$O/gen5d" "$O/work" "$R" || refuse "cannot create W/out and W/run"
+REC="$D/docs/orchestration/state/2d-closeout/covfix-20261122/pg/record"
+pin() { python3 -I -c 'import json,sys; v=json.load(open(sys.argv[1]))[sys.argv[2]]; print(v or "")' "$G/pg_pins.json" "$1"; }
+STRACE=$(pin strace_path); STRACE_SHA=$(pin strace_sha256); DBCONFIG_SHA=$(pin dbconfig_sha256)
+[ -n "$STRACE" ] && [ -n "$STRACE_SHA" ] && [ -n "$DBCONFIG_SHA" ] || refuse "pg_pins.json is not filled (R1)"
+mkdir -p "$O/logs" "$O/splines" "$O/gst" "$O/gen5d" "$O/work" "$O/traces" "$R" || refuse "cannot create W/out and W/run"
 git -C "$D" status --porcelain --untracked-files=all --ignored > "$R/deploy-status-before.txt" 2>&1
 need() { [ "$1" -eq 0 ] || { echo "[pg] STOP: $2 rc=$1"; exit 1; }; }
 deploy_unchanged() {   # nothing may be written into the deploy (every output stays under W)
@@ -78,38 +83,80 @@ anaenv() {
 }
 echo "[pg] start $(date -u +%FT%TZ) host=$(hostname)"
 
+# The first compute step (R1; the director's answer 2): strace is opened once, on fd 9. Its sha256 is read through
+# that descriptor and the same descriptor is executed, by the self-test here and by every traced command below.
+exec 9< "$STRACE" || need 1 "open strace"
+FDD=/proc/self/fd; [ -d "$FDD" ] || FDD=/dev/fd
+python3 -I -B "$G/pg_verify.py" tool-check --path "$FDD/9" --sha256 "$STRACE_SHA" --self-test \
+  > "$O/tool_check_strace.json" 2> "$O/logs/tool_check_strace.log"
+need $? "strace (its pinned sha through the descriptor, and the self-test)"
+pass "strace"
+python3 -I -B "$G/pg_verify.py" members-check --root "$PRIV" --members "$REC/G2111a-members.json" \
+  > "$O/members_check_G21_11a_00_000.json" 2> "$O/logs/members_check.log"
+need $? "slot 1's private product against its pinned members"
+python3 -I -B "$G/pg_verify.py" tool-check --path "$PRIV/.upsfiles/dbconfig" --sha256 "$DBCONFIG_SHA" \
+  > "$O/dbconfig_check.json" 2> "$O/logs/dbconfig_check.log"
+need $? "slot 1's UPS database file"
+pass "slot 1's private product" "$(python3 -I -c 'import json,sys; print(len(json.load(open(sys.argv[1]))["members"]))' "$REC/G2111a-members.json") members"
+export PG_STRACE_FD=9
+xroot() { if [ "$1" = G21_11a_00_000 ]; then echo "$PRIV/genie_xsec/v3_04_00/NULL"; else echo "$X"; fi; }
+tcheck() {   # tcheck ROLE TUNE TRACE SPLINE SPLINE_SHA CWD OUT
+  python3 -I -B "$G/pg_verify.py" trace-check --trace "$3" --rc 0 --role "$1" --tune "$2" --spline "$4" \
+    --spline-sha256 "$5" --cwd "$6" --record "$REC/PG-RECORD.json" --manifest "$REC/genie-manifest.json" \
+    --private-members "$REC/G2111a-members.json" --w-root "$W" --w-pin "$O/splines/${2}_CH.xml.gz=$(reduced_sha "$2")" \
+    --out "$7"
+}
+reduced_sha() { [ -s "$O/spline_check_$1.json" ] && python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["reduced"]["sha256"])' "$O/spline_check_$1.json" || echo none; }
+source_sha() { python3 -I -c 'import ast,sys
+t = ast.parse(open(sys.argv[1]).read())
+pins = next(ast.literal_eval(n.value) for n in t.body if isinstance(n, ast.Assign) and getattr(n.targets[0], "id", "") == "PG_SPLINE_PINS")
+print(pins[sys.argv[2]][0])' "$G/gen5d_v3.py" "$1"; }
+
 ( anaenv q; python3 -B "$G/pg_lib.py" queue --seeds "$SEEDS" --out "$R/queue.txt" ) > "$O/logs/queue.log" 2>&1
 need $? "seeds.json"
 TUNES=$(awk '{print $1}' "$R/queue.txt" | awk '!seen[$0]++' | tr '\n' ' ')
 [ "$(wc -l < "$R/queue.txt")" -eq $((2 * NT)) ] || need 1 "the task queue"
 pass "seeds.json" "$(wc -l < "$R/queue.txt" | tr -d ' ') tasks"
 
-pids=(); for T in $TUNES; do bash "$G/run_gevgen_v3.sh" reduce "$T" "$O/splines" > "$O/logs/reduce_$T.log" 2>&1 & pids+=($!); done
+pids=(); for T in $TUNES; do PG_TRACE_DIR="$O/traces" bash "$G/run_gevgen_v3.sh" reduce "$T" "$O/splines" > "$O/logs/reduce_$T.log" 2>&1 & pids+=($!); done
 for p in "${pids[@]}"; do wait "$p"; need $? "spline reduce"; done
 pass "spline reduce"
 ( anaenv a1
   python3 -B "$G/gen5d_v3.py" make-flux --phi-t-dir "$PHIT" --out "$O/flux_phi_t_0_100.root" || exit 1
   for T in $TUNES; do
-    Q=$(echo "$T" | tr -d '_')-k250-e1000
-    python3 -B "$G/gen5d_v3.py" spline-check --tune "$T" --source "$X/$Q/data/gxspl-NUsmall.xml" \
-      --reduced "$O/splines/${T}_CH.xml.gz" --readme "$X/$Q/data/README" --out "$O/spline_check_$T.json" || exit 1
+    Q=$(echo "$T" | tr -d '_')-k250-e1000; XT=$(xroot "$T")
+    python3 -B "$G/gen5d_v3.py" spline-check --tune "$T" --source "$XT/$Q/data/gxspl-NUsmall.xml" \
+      --reduced "$O/splines/${T}_CH.xml.gz" --readme "$XT/$Q/data/README" --out "$O/spline_check_$T.json" || exit 1
   done ) > "$O/logs/flux_and_splines.log" 2>&1
 need $? "flux file or spline check"
 pass "flux file and spline check"
-pids=(); for T in $TUNES; do bash "$G/run_gevgen_v3.sh" graphs "$T" "$O/splines" "$O/graphs_$T.root" > "$O/logs/graphs_$T.log" 2>&1 & pids+=($!); done
+pids=(); for T in $TUNES; do PG_TRACE_DIR="$O/traces" bash "$G/run_gevgen_v3.sh" graphs "$T" "$O/splines" "$O/graphs_$T.root" > "$O/logs/graphs_$T.log" 2>&1 & pids+=($!); done
 for p in "${pids[@]}"; do wait "$p"; need $? "gspl2root"; done
 pass "gspl2root"
+for T in $TUNES; do   # conditions 2 and 3 before any generation: the reduce awk read the pinned source, gspl2root the
+  Q=$(echo "$T" | tr -d '_')-k250-e1000   # reduced spline and the pinned configuration
+  tcheck reduce "$T" "$O/traces/reduce_$T.trace" "$(xroot "$T")/$Q/data/gxspl-NUsmall.xml" "$(source_sha "$T")" \
+    "$W" "$O/trace_check_reduce_$T.json" >> "$O/logs/trace_check.log" 2>&1 || need 1 "trace check (reduce $T)"
+  tcheck graphs "$T" "$O/traces/graphs_$T.trace" "$O/splines/${T}_CH.xml.gz" "$(reduced_sha "$T")" "$W" \
+    "$O/trace_check_graphs_$T.json" >> "$O/logs/trace_check.log" 2>&1 || need 1 "trace check (graphs $T)"
+done
+pass "trace check before generation" "$(echo $TUNES | wc -w | tr -d ' ') tunes"
 deploy_unchanged setup
 pass "the deploy unchanged by the environments"
 
 export G O NEV TO
-xargs -P "$P" -L 1 bash -c 'mkdir -p "$O/work/$2" && /usr/bin/time -v -o "$O/work/$2/task.time" timeout "$TO" \
+xargs -P "$P" -L 1 bash -c 'mkdir -p "$O/work/$2" && PG_TRACE_DIR="$O/work/$2" /usr/bin/time -v -o "$O/work/$2/task.time" timeout "$TO" \
     bash "$G/run_gevgen_v3.sh" genie "$0" "$O/splines" "$NEV" "$1" "$O/work/$2" "$O/flux_phi_t_0_100.root" \
     > "$O/work/$2/task.log" 2>&1; rc=$?; seedfree "$O/work/$2"; [ "$rc" -eq 0 ] || exit 255' \
     < "$R/queue.txt" > "$O/logs/xargs.log" 2>&1
 need $? "generation"
 seedfree
 pass "generation" "$(ls "$O"/work/u*/t*/genie_v3.gst.root 2>/dev/null | wc -l | tr -d ' ') gst"
+while read -r T _ k; do   # condition 3 from the run itself: each gevgen opened the reduced spline and the pinned configs
+  tcheck gevgen "$T" "$O/work/$k/gevgen.trace" "$O/splines/${T}_CH.xml.gz" "$(reduced_sha "$T")" "$O/work/$k" \
+    "$O/work/$k/trace_check.json" >> "$O/logs/trace_check.log" 2>&1 || need 1 "trace check (gevgen ${k})"
+done < "$R/queue.txt"
+pass "trace check of every gevgen task" "$(wc -l < "$R/queue.txt" | tr -d ' ') tasks"
 ( anaenv fc; python3 -B "$G/gen5d_v3.py" flux-check --flux "$O/flux_phi_t_0_100.root" --work "$O"/work/u*/t* ) \
   > "$O/logs/flux_check.log" 2>&1
 need $? "the sampled-spectrum check (NOWIDTH)"
@@ -122,9 +169,8 @@ done
 pids=(); u=0
 for T in $TUNES; do
   case "$T" in   # pg_lib.TRUTH, fd_f1_prep.PG_TRUTHS
-    G21_11b_00_000) N=genie_v3_g21 ;;
-    G18_02b_02_11b) N=genie_v3_g18_02b ;;
-    G18_02a_02_11b) N=genie_v3_g18_02a ;;
+    G21_11a_00_000) N=genie_v3_g21 ;;
+    G18_02a_00_000) N=genie_v3_g18_02a ;;
     *) need 1 "truth name" ;;
   esac
   ( anaenv "c_u$u"
@@ -149,5 +195,8 @@ pass "PRODUCTS.json"
 need $? "the sums file"
 deploy_unchanged after
 pass "the deploy unchanged"
+( anaenv i; python3 -B "$G/pg_lib.py" inventory --workdir "$W" ) > "$O/logs/inventory.log" 2>&1
+need $? "the required inventory"
+pass "the required inventory"
 echo "[pg] done $(date -u +%FT%TZ) files=$(find "$W" -type f | wc -l | tr -d ' ')"
 exit 0

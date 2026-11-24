@@ -15,6 +15,23 @@
 set -eo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MODE=$1; shift
+# COVFIX PG (state/2d-closeout/covfix-20261122/pg/PLAN-SLOT1-PROBE.md): slot 1's private copy of genie_xsec, and the
+# open-trace prefix. PG_TRACE is never inherited: it is rebuilt here, empty unless both PG_STRACE_FD (the descriptor
+# of the pinned strace, sha-checked by pg_verify.py tool-check in the same process chain) and PG_TRACE_DIR (an existing
+# absolute directory) are given. With neither, every command below runs exactly as F1's.
+PG_PRIVATE_PRODUCTS=/pscratch/sd/j/josephrb/covfix-pg/products
+PG_TRACE=()
+pg_trace() {   # pg_trace NAME: PG_TRACE for one command, tracing to $PG_TRACE_DIR/NAME.trace
+  PG_TRACE=()
+  [ -n "${PG_STRACE_FD:-}" ] || [ -n "${PG_TRACE_DIR:-}" ] || return 0
+  case "${PG_STRACE_FD:-}" in ''|*[!0-9]*) echo "refusing: PG_STRACE_FD is not a descriptor" >&2; exit 2 ;; esac
+  case "${PG_TRACE_DIR:-}" in /*) ;; *) echo "refusing: PG_TRACE_DIR is not absolute" >&2; exit 2 ;; esac
+  case "$PG_TRACE_DIR" in *..*) echo "refusing: PG_TRACE_DIR has .." >&2; exit 2 ;; esac
+  local fdd=/proc/self/fd; [ -d "$fdd" ] || fdd=/dev/fd
+  [ -d "$PG_TRACE_DIR" ] && [ -e "$fdd/$PG_STRACE_FD" ] || { echo "refusing: no trace directory or strace" >&2; exit 2; }
+  [ ! -e "$PG_TRACE_DIR/$1.trace" ] || { echo "refusing to overwrite $PG_TRACE_DIR/$1.trace" >&2; exit 2; }
+  PG_TRACE=("$fdd/$PG_STRACE_FD" -f -q -e "trace=open,openat,openat2,access,faccessat,faccessat2,stat,lstat,newfstatat,statx,readlink,readlinkat,chdir" -o "$PG_TRACE_DIR/$1.trace")
+}
 
 case "$MODE" in
   reduce)
@@ -22,16 +39,18 @@ case "$MODE" in
     case "$TUNE" in
       G18_10a_02_11b)  Q=G1810a0211b-k250-e1000 ;;
       AR23_20i_00_000) Q=AR2320i00000-k250-e1000 ;;
-      G21_11b_00_000)  Q=G2111b00000-k250-e1000 ;;   # COVFIX PG (COVFIX-DECLARATION.md section 4.1)
-      G18_02b_02_11b)  Q=G1802b0211b-k250-e1000 ;;
-      G18_02a_02_11b)  Q=G1802a0211b-k250-e1000 ;;
+      G21_11a_00_000)  Q=G2111a00000-k250-e1000 ;;   # COVFIX PG, slot 1 (private copy)
+      G18_02a_00_000)  Q=G1802a00000-k250-e1000 ;;   # COVFIX PG, slot 2
       *) echo "unknown tune $TUNE" >&2; exit 2 ;;
     esac
-    SRC=/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/$Q/data/gxspl-NUsmall.xml
+    XROOT=/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL
+    [ "$TUNE" != G21_11a_00_000 ] || XROOT=$PG_PRIVATE_PRODUCTS/genie_xsec/v3_04_00/NULL   # slot 1's private copy
+    SRC=$XROOT/$Q/data/gxspl-NUsmall.xml
     OUT="$SPLDIR/${TUNE}_CH.xml"
     [ ! -e "$OUT.gz" ] || { echo "refusing to overwrite $OUT.gz" >&2; exit 2; }
     mkdir -p "$SPLDIR"
-    awk '
+    pg_trace "reduce_$TUNE"
+    "${PG_TRACE[@]}" awk '
       /<spline / { insp=1; buf=$0;
                    keep=($0 ~ /tgt:1000060120/ || $0 ~ /tgt:1000010010/); next }
       insp       { buf=buf ORS $0;
@@ -50,7 +69,8 @@ case "$MODE" in
     mkdir -p "$WORK"; cd "$WORK"
     MSG="$GENIE/config/Messenger_laconic.xml"
     echo "[v3] genie $TUNE N=$N seed=$SEED flux=$FLUX start $(date -u '+%F %T UTC')"
-    gevgen \
+    pg_trace gevgen
+    "${PG_TRACE[@]}" gevgen \
       -n "$N" \
       -e 0,100 \
       -p 14 \
@@ -73,7 +93,8 @@ case "$MODE" in
     set +e; source "$HERE/setup_genie_v3.sh" "$TUNE" "$SPLDIR"; RC=$?; set -e
     [ $RC -eq 0 ] || exit 1
     [ ! -e "$OUT" ] || { echo "refusing to overwrite $OUT" >&2; exit 2; }
-    gspl2root -f "$GENIE_SPLINES_V3" --tune "$TUNE" -p 14 -t 1000060120,1000010010 -e 100 -o "$OUT" \
+    pg_trace "graphs_$TUNE"
+    "${PG_TRACE[@]}" gspl2root -f "$GENIE_SPLINES_V3" --tune "$TUNE" -p 14 -t 1000060120,1000010010 -e 100 -o "$OUT" \
       > "${OUT%.root}.log" 2>&1
     echo "[v3] gspl2root rc=$? -> $OUT"
     ;;

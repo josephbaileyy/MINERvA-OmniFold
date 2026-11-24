@@ -23,7 +23,7 @@ from unittest import mock
 ND = Path(__file__).resolve().parents[1]
 REPO = ND.parent
 GENIE = REPO / "3d-unfolding" / "genie"
-PROBE_DIR = REPO / "docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe"
+RECORD_DIR = REPO / "docs/orchestration/state/2d-closeout/covfix-20261122/pg/record"
 for p in (str(ND), str(ND / "pv-ladder"), str(GENIE)):
     if p not in sys.path:
         sys.path.insert(1, p)
@@ -31,16 +31,17 @@ import fd_f1_prep as PREP  # noqa: E402
 import gen5d_v3 as V3  # noqa: E402
 import pg_lib  # noqa: E402
 
-_spec = importlib.util.spec_from_file_location("pg_probe", PROBE_DIR / "pg-probe.py")
-PROBE = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(PROBE)
-
+RECORD = json.loads((RECORD_DIR / "PG-RECORD.json").read_text())
 BASE = 1_234_567_890
-PG_TUNES = ("G21_11b_00_000", "G18_02b_02_11b", "G18_02a_02_11b")
+PG_TUNES = ("G21_11a_00_000", "G18_02a_00_000")
 
 
-def seeds(base=BASE, u1="G18_02b_02_11b", **over):
-    d = {"tunes": [{"u": 0, "name": "G21_11b_00_000", "task_seeds": [base + k for k in range(7)]},
+def qualifier(t):
+    return t.replace("_", "") + "-k250-e1000"
+
+
+def seeds(base=BASE, u1="G18_02a_00_000", **over):
+    d = {"tunes": [{"u": 0, "name": "G21_11a_00_000", "task_seeds": [base + k for k in range(7)]},
                    {"u": 1, "name": u1, "task_seeds": [base + 10_000 + k for k in range(7)]}]}
     for k, v in over.items():
         u, field = k.split("_", 1)
@@ -67,9 +68,13 @@ class Seeds(unittest.TestCase):
 
     def test_valid(self):
         t = self.load(seeds())
-        self.assertEqual([(u, n) for u, n, _ in t], [(0, "G21_11b_00_000"), (1, "G18_02b_02_11b")])
+        self.assertEqual([(u, n) for u, n, _ in t], [(0, "G21_11a_00_000"), (1, "G18_02a_00_000")])
         self.assertEqual(t[1][2][0], BASE + 10_000)
-        self.assertEqual(self.load(seeds(u1="G18_02a_02_11b"))[1][1], "G18_02a_02_11b")
+        for old in ("G18_02b_02_11b", "G18_02a_02_11b"):               # rev 12: no fallback, and not in the product
+            with self.assertRaises(pg_lib.Refusal):
+                self.load(seeds(u1=old))
+        with self.assertRaises(pg_lib.Refusal):
+            self.load(seeds(u0_name="G21_11b_00_000"))
         rev = seeds()
         rev["tunes"].reverse()
         self.assertEqual([u for u, _, _ in self.load(rev)], [0, 1])
@@ -115,8 +120,8 @@ class Seeds(unittest.TestCase):
         self.assertEqual(rc, 0)
         lines = out.read_text().splitlines()
         self.assertEqual(len(lines), 14)
-        self.assertEqual(lines[0], f"G21_11b_00_000 {BASE} u0/t0")
-        self.assertEqual(lines[13], f"G18_02b_02_11b {BASE + 10_006} u1/t6")
+        self.assertEqual(lines[0], f"G21_11a_00_000 {BASE} u0/t0")
+        self.assertEqual(lines[13], f"G18_02a_00_000 {BASE + 10_006} u1/t6")
         self.assertNotIn(str(BASE)[:7], so + se)
         rc, so, se = quiet(pg_lib.main, ["queue", "--seeds", str(self.tmp / "seeds.json"), "--out", str(out)])
         self.assertEqual(rc, 2)                                         # refuses to overwrite
@@ -127,15 +132,29 @@ class Seeds(unittest.TestCase):
         self.assertFalse((self.tmp / "q2.txt").exists())
 
     def test_products(self):
-        (self.tmp / "seeds.json").write_text(json.dumps(seeds(u1="G18_02a_02_11b")))
+        (self.tmp / "seeds.json").write_text(json.dumps(seeds()))
         argv = ["products", "--workdir", str(self.tmp), "--seeds", str(self.tmp / "seeds.json")]
         self.assertEqual(quiet(pg_lib.main, argv)[0], 2)               # nothing to list yet
         for t in ("genie_v3_g21", "genie_v3_g18_02a"):
             for rel in (f"out/prep/bridged/{t}.json", f"out/prep/ratios/L-5D-PV/{t}.json", f"out/gen5d/{t}_xsec5d.npz"):
                 (self.tmp / rel).parent.mkdir(parents=True, exist_ok=True)
                 (self.tmp / rel).write_text("x")
+        checks = list(pg_lib.CHECKS) + [f"out/trace_check_{r}_{t}.json" for r in ("reduce", "graphs")
+                                        for t in PG_TUNES] + [f"out/work/u{u}/t{k}/trace_check.json"
+                                                              for u in (0, 1) for k in range(7)]
+        for c in checks:
+            (self.tmp / c).parent.mkdir(parents=True, exist_ok=True)
+            (self.tmp / c).write_text('{"check": "x", "pass": true}\n' if "trace" not in c else '{\n "pass": true\n}\n')
+        for broken in ('{"pass": false}\n', "not json\n"):          # a failed or unreadable check refuses
+            (self.tmp / checks[5]).write_text(broken)
+            self.assertEqual(quiet(pg_lib.main, argv)[0], 2)
+        (self.tmp / checks[5]).unlink()                               # so does a missing one
+        self.assertEqual(quiet(pg_lib.main, argv)[0], 2)
+        (self.tmp / checks[5]).write_text('{\n "pass": true\n}\n')
         self.assertEqual(quiet(pg_lib.main, argv)[0], 0)
         rec = json.loads((self.tmp / "PRODUCTS.json").read_text())
+        self.assertEqual(len(rec["checks"]), 21)
+        self.assertTrue(all(rec["checks"].values()))
         self.assertEqual([(p["u"], p["truth"], p["bridged"]) for p in rec["products"]],
                          [(0, "genie_v3_g21", "out/prep/bridged/genie_v3_g21.json"),
                           (1, "genie_v3_g18_02a", "out/prep/bridged/genie_v3_g18_02a.json")])
@@ -146,7 +165,10 @@ class Consistency(unittest.TestCase):
     """The tune names, qualifiers and truth names agree across every file that carries them."""
 
     def test_names(self):
-        self.assertEqual((pg_lib.U0,) + pg_lib.U1, (PROBE.SLOT1, PROBE.SLOT2, PROBE.SLOT2_FALLBACK))
+        self.assertEqual((pg_lib.U0,) + pg_lib.U1, PG_TUNES)
+        for t in PG_TUNES:                                 # both are candidates in the offline record, and novel
+            self.assertEqual(RECORD["tunes"][t]["role"], "candidate")
+            self.assertTrue(RECORD["novelty"][t]["novel"])
         self.assertEqual(sorted(pg_lib.TRUTH.values()), sorted(PREP.PG_TRUTHS))
         self.assertEqual(PREP.PG_U0, pg_lib.TRUTH[pg_lib.U0])
         self.assertEqual(PREP.PG_U1, tuple(pg_lib.TRUTH[t] for t in pg_lib.U1))
@@ -154,14 +176,14 @@ class Consistency(unittest.TestCase):
         for t in PG_TUNES:
             self.assertIn(t, V3.TUNES)
             self.assertIn(t, PREP.PG_TRUTHS[pg_lib.TRUTH[t]])
-            self.assertIn(PROBE.qualifier(t), V3.TUNES[t])
+            self.assertIn(qualifier(t), V3.TUNES[t])
 
     def test_qualifier_cases(self):
         run = (GENIE / "run_gevgen_v3.sh").read_text()
         setup = (GENIE / "setup_genie_v3.sh").read_text()
         gen = (GENIE / "pg_generate.sh").read_text()
         for t in PG_TUNES:
-            q = PROBE.qualifier(t)
+            q = qualifier(t)
             self.assertRegex(run, rf"\n\s*{t}\)\s+Q={q} ;;")
             self.assertRegex(setup, rf"\n\s*{t}\)\s+export GENIE_XSEC_QUAL={q.replace('-', ':')} ;;")
             self.assertRegex(gen, rf"\n\s*{t}\) N={pg_lib.TRUTH[t]} ;;")
@@ -183,18 +205,24 @@ class Consistency(unittest.TestCase):
             self.assertIn(x, gen)
             self.assertIn(x, b3)
 
-    def test_pg_pins_match_the_probe(self):
-        out = PROBE_DIR / "pg-probe.out"
-        if not out.exists():
-            self.skipTest("pending: PG's probe has not run (pg-probe.out absent)")
-        line = [ln for ln in out.read_text().splitlines() if ln.startswith("PG-PROBE-RESULT ")]
-        rec = json.loads(line[-1].split(" ", 1)[1])
-        chosen = [t for t in rec["decision"]["chosen"].values() if t]
-        self.assertTrue(chosen)
-        for t in chosen:
-            c = rec["catalog"][t]
+    def test_pg_pins_are_the_records(self):
+        self.assertEqual(sorted(V3.PG_SPLINE_PINS), sorted(PG_TUNES))
+        for t in PG_TUNES:
+            c = RECORD["splines"][t]
             self.assertEqual(V3.PG_SPLINE_PINS[t], (c["spline_sha256"], c["readme_sha256"],
                                                     c["readme_version_lines"][0]))
+        m = json.loads((RECORD_DIR / "G2111a-members.json").read_text())["members"]
+        d = "genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data/"
+        self.assertEqual((m[d + "gxspl-NUsmall.xml"]["sha256"], m[d + "README"]["sha256"]),
+                         V3.PG_SPLINE_PINS["G21_11a_00_000"][:2])
+
+    def test_one_private_products_path(self):
+        want = "/pscratch/sd/j/josephrb/covfix-pg/products"
+        import pg_verify
+        self.assertEqual(pg_verify.PRIVATE_PRODUCTS, want)
+        self.assertIn(f"PG_PRIVATE_PRODUCTS={want}\n", (GENIE / "run_gevgen_v3.sh").read_text())
+        self.assertIn(f'export PRODUCTS="{want}:${{PRODUCTS}}"', (GENIE / "setup_genie_v3.sh").read_text())
+        self.assertIn(f"PRIV={want} ", (GENIE / "pg_generate.sh").read_text())
 
 
 class Gen5dV3Pins(unittest.TestCase):
@@ -202,20 +230,20 @@ class Gen5dV3Pins(unittest.TestCase):
         tmp = Path(tempfile.mkdtemp(prefix="pg-v3-"))
         self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
         import gzip
-        spl = '<genie_xsec_spline_list version="3.00"><genie_tune name="G21_11b_00_000">' \
+        spl = '<genie_xsec_spline_list version="3.00"><genie_tune name="G21_11a_00_000">' \
               '<spline name="genie::X;tgt:1000060120;y">1</spline></genie_tune></genie_xsec_spline_list>'
         (tmp / "src.xml").write_text(spl)
         (tmp / "red.xml.gz").write_bytes(gzip.compress(spl.encode()))
-        (tmp / "README").write_text("version v3_04_00 qualifier G2111b00000:k250:e1000\n")
-        argv = ["spline-check", "--tune", "G21_11b_00_000", "--source", str(tmp / "src.xml"), "--reduced",
+        (tmp / "README").write_text("version v3_04_00 qualifier G2111a00000:k250:e1000\n")
+        argv = ["spline-check", "--tune", "G21_11a_00_000", "--source", str(tmp / "src.xml"), "--reduced",
                 str(tmp / "red.xml.gz"), "--readme", str(tmp / "README"), "--out", str(tmp / "c.json")]
         with mock.patch.dict(V3.PG_SPLINE_PINS, {}, clear=True):
             self.assertEqual(quiet(V3.main, argv)[0], 1)
         self.assertIn("no pinned spline file", json.loads((tmp / "c.json").read_text())["refused"][0])
         pin = (hashlib.sha256((tmp / "src.xml").read_bytes()).hexdigest(),
                hashlib.sha256((tmp / "README").read_bytes()).hexdigest(),
-               "version v3_04_00 qualifier G2111b00000:k250:e1000")
-        with mock.patch.dict(V3.PG_SPLINE_PINS, {"G21_11b_00_000": pin}):
+               "version v3_04_00 qualifier G2111a00000:k250:e1000")
+        with mock.patch.dict(V3.PG_SPLINE_PINS, {"G21_11a_00_000": pin}):
             self.assertEqual(quiet(V3.main, argv)[0], 0)
 
 
@@ -235,12 +263,13 @@ class PrepPG(unittest.TestCase):
                 self.assertEqual(cfg[k], self.base[k], k)
         for bad in ({"genie_v3_g21": ("/a", "a")},
                     {"genie_v3_g18_02b": ("/a", "a"), "genie_v3_g18_02a": ("/b", "b")},
+                    {"genie_v3_g21": ("/a", "a"), "genie_v3_g18_02b": ("/b", "b")},
                     {"genie_v3_g21": ("/a", "a"), "genie_v3_g18_02b": ("/b", "b"), "genie_v3_g18_02a": ("/c", "c")},
                     {"genie_v3_g21": ("/a", "a"), "genie_v3_g18": ("/b", "b")}):
             with self.subTest(sorted(bad)), self.assertRaises(SystemExit):
                 PREP.f1_config(self.base, bad, "pg")
         with self.assertRaises(SystemExit):
-            PREP.f1_config(self.base, {"genie_v3_g21": ("/a", "a"), "genie_v3_g18_02b": ("/b", "b")}, "f1")
+            PREP.f1_config(self.base, {"genie_v3_g21": ("/a", "a"), "genie_v3_g18_02a": ("/b", "b")}, "f1")
         with self.assertRaises(SystemExit):
             PREP.f1_config(self.base, {}, "other")
 
@@ -249,7 +278,7 @@ class PrepPG(unittest.TestCase):
         import pvl_lib as L
         n = int(np.prod([len(L.FINE[a]) - 1 for a in L.AXES5]))
         preds = {}
-        for k in ("genie_v3_g21", "genie_v3_g18_02b"):
+        for k in ("genie_v3_g21", "genie_v3_g18_02a"):
             p = self.tmp / f"{k}.npz"
             p.write_bytes(k.encode())
             preds[k] = p
@@ -279,9 +308,10 @@ class PrepPG(unittest.TestCase):
 STUB_RUN = r'''#!/bin/bash
 echo "run_gevgen_v3 $*" >> "$PG_STUB_LOG"
 case "$1" in
-  reduce) mkdir -p "$3"; echo s > "$3/$2_CH.xml.gz" ;;
-  graphs) echo g > "$4" ;;
-  genie) mkdir -p "$6"; cd "$6"; echo "[v3] genie $2 N=$4 seed=$5"
+  reduce) mkdir -p "$3"; echo s > "$3/$2_CH.xml.gz"; echo t > "$PG_TRACE_DIR/reduce_$2.trace" ;;
+  graphs) echo g > "$4"; echo l > "${4%.root}.log"; echo t > "$PG_TRACE_DIR/graphs_$2.trace" ;;
+  genie) mkdir -p "$6"; cd "$6"; echo "[v3] genie $2 N=$4 seed=$5"; echo l > gevgen.log; echo l > gntpc.log
+         echo t > "$PG_TRACE_DIR/gevgen.trace"
          echo st > "genie-mcjob-$5.status"
          [ -n "$PG_STUB_SLOW" ] && sleep "$PG_STUB_SLOW"
          [ "$5" = "${PG_STUB_FAIL_SEED:-none}" ] && { echo ghep > "gntp.$5.ghep.root"; exit 1; }
@@ -295,10 +325,23 @@ log.write("TMPDIR " + os.environ.get("TMPDIR", "") + "\n")
 a = sys.argv[1:]
 def arg(k): return a[a.index(k) + 1]
 if a[0] == "make-flux": open(arg("--out"), "w").write("flux")
-elif a[0] == "spline-check": open(arg("--out"), "w").write("{}")
+elif a[0] == "spline-check": open(arg("--out"), "w").write(json.dumps({"reduced": {"sha256": "r" * 64}}))
 elif a[0] == "flux-check": sys.exit(int(os.environ.get("PG_STUB_FLUXCHECK_RC", "0")))
-elif a[0] == "convert": open(arg("--out"), "w").write("npz")
+elif a[0] == "convert":
+    open(arg("--out"), "w").write("npz")
+    if not os.environ.get("PG_STUB_NO_META"): open(arg("--out")[:-4] + ".meta.json", "w").write("{}")
+''' + "PG_SPLINE_PINS = " + repr({"G21_11a_00_000": ("a" * 64, "b" * 64, "v"), "G18_02a_00_000": ("c" * 64, "d" * 64, "v")}) + "\n"
+STUB_VERIFY = r'''import sys, os
+log = open(os.environ["PG_STUB_LOG"], "a"); log.write("pg_verify " + " ".join(sys.argv[1:]) + "\n")
+a = sys.argv[1:]
+if a[0] == "trace-check":
+    open(a[a.index("--out") + 1], "w").write('{"pass": true}')
+fail = os.environ.get("PG_STUB_VERIFY_FAIL")
+if fail and fail in " ".join(a):
+    print('{"pass": false}'); sys.exit(1)
+print('{"pass": true}')
 '''
+STRACE = "#!/bin/sh\necho strace-stub\n"
 STUB_PREP = r'''import sys, os
 log = open(os.environ["PG_STUB_LOG"], "a"); log.write("fd_f1_prep " + " ".join(sys.argv[1:]) + "\n")
 a = sys.argv[1:]
@@ -309,6 +352,8 @@ for i, x in enumerate(a):
         for d in ("bridged", "ratios/L-5D-PV"):
             os.makedirs(os.path.join(out, d), exist_ok=True)
             open(os.path.join(out, d, n + ".json"), "w").write(n)
+for f in ("config-pg.json", "f1-prep-SHA256SUMS", "ratios/L-5D-PV/ratios.json"):
+    open(os.path.join(out, f), "w").write("x")
 if os.environ.get("PG_STUB_WRITE_DEPLOY"):
     open(os.path.join(os.environ["PG_STUB_DEPLOY"], "stray.txt"), "w").write("x")
 '''
@@ -349,6 +394,12 @@ class Generate(unittest.TestCase):
         self.assertEqual(src.count("/usr/bin/time -v -o"), 1)
         (g / "pg_generate.sh").write_text(src.replace("/usr/bin/time -v -o", f"{timev} -v -o"))
         shutil.copy(GENIE / "pg_lib.py", g / "pg_lib.py")
+        (g / "pg_verify.py").write_text(STUB_VERIFY)
+        rec = self.dep / "docs/orchestration/state/2d-closeout/covfix-20261122/pg/record"
+        rec.mkdir(parents=True)
+        (rec / "G2111a-members.json").write_text(json.dumps({"members": {"genie_xsec": {"type": "dir"}}}))
+        for n in ("PG-RECORD.json", "genie-manifest.json"):
+            (rec / n).write_text("{}")
         (g / "run_gevgen_v3.sh").write_text(STUB_RUN)
         (g / "gen5d_v3.py").write_text(STUB_V3)
         (self.dep / "nd-unfolding/fd_f1_prep.py").write_text(STUB_PREP)
@@ -360,6 +411,9 @@ class Generate(unittest.TestCase):
         self.sysbin.mkdir()
         (self.sysbin / "timeout").write_text(TIMEOUT)
         (self.sysbin / "timeout").chmod(0o755)
+        (self.sysbin / "strace").write_text(STRACE)
+        (g / "pg_pins.json").write_text(json.dumps({"strace_path": str(self.sysbin / "strace"),
+                                                    "strace_sha256": "e" * 64, "dbconfig_sha256": "f" * 64}))
         git = ["git", "-C", str(self.dep), "-c", "user.name=t", "-c", "user.email=t@t"]
         subprocess.run(git[:3] + ["init", "-q"], check=True)
         subprocess.run(git + ["add", "-A"], check=True)
@@ -387,6 +441,11 @@ class Generate(unittest.TestCase):
             self.assertNotIn(str(s), out)
         self.assertNotIn(str(self.W), out)
         self.assertIn("[pg] the deploy unchanged: pass", out)
+        self.assertIn("[pg] the required inventory: pass", out)
+        self.assertEqual(pg_lib.inventory_problems(str(self.W), pg_lib.inventory()), [])
+        checks = json.loads((self.W / "PRODUCTS.json").read_text())["checks"]
+        self.assertEqual(len(checks), 3 + 2 * (2 + 7))
+        self.assertTrue(all(checks.values()))
         self.assertIn("[pg] generation: pass (14 gst)", out)
         log = self.log.read_text().splitlines()
         gen = [ln.split() for ln in log if ln.startswith("run_gevgen_v3 genie")]
@@ -398,22 +457,39 @@ class Generate(unittest.TestCase):
         self.assertTrue(all(g[3].endswith("/out/splines") for g in gen))
         self.assertEqual(sum(ln == "timeout 5115" for ln in log), 14)
         self.assertEqual(sorted(ln.split()[2] for ln in log if ln.startswith("run_gevgen_v3 reduce")),
-                         ["G18_02b_02_11b", "G21_11b_00_000"])
+                         ["G18_02a_00_000", "G21_11a_00_000"])
         checks = [ln for ln in log if ln.startswith("gen5d_v3 spline-check")]
         self.assertEqual(len(checks), 2)
-        self.assertIn("/G2111b00000-k250-e1000/data/gxspl-NUsmall.xml", checks[0])
-        self.assertIn("/G1802b0211b-k250-e1000/data/README", checks[1])
+        self.assertIn("/pscratch/sd/j/josephrb/covfix-pg/products/genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/"
+                      "data/gxspl-NUsmall.xml", checks[0])
+        self.assertIn("/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1802a00000-k250-e1000/"
+                      "data/README", checks[1])
+        ver = [ln.split() for ln in log if ln.startswith("pg_verify ")]
+        self.assertEqual([v[1] for v in ver[:3]], ["tool-check", "members-check", "tool-check"])
+        self.assertEqual(log.index(" ".join(ver[0])), 0)                           # strace is the first step
+        self.assertIn("--self-test", ver[0])
+        self.assertTrue(ver[0][ver[0].index("--path") + 1].endswith("/9"))       # checked through the descriptor
+        self.assertEqual(ver[0][ver[0].index("--sha256") + 1], "e" * 64)
+        self.assertEqual(ver[2][ver[2].index("--sha256") + 1], "f" * 64)
+        tc = [v for v in ver if v[1] == "trace-check"]
+        self.assertEqual(sorted(v[v.index("--role") + 1] for v in tc), ["gevgen"] * 14 + ["graphs"] * 2 + ["reduce"] * 2)
+        first_gen = next(i for i, ln in enumerate(log) if ln.startswith("run_gevgen_v3 genie"))
+        last_pre = max(i for i, ln in enumerate(log) if ln.startswith("pg_verify trace-check") and "--role graphs" in ln)
+        self.assertLess(last_pre, first_gen)                                    # conditions 2 and 3 before generation
+        red = next(v for v in tc if v[v.index("--role") + 1] == "reduce" and "G21_11a_00_000" in v)
+        self.assertEqual(red[red.index("--spline-sha256") + 1], "a" * 64)
+        self.assertIn("/covfix-pg/products/genie_xsec/", red[red.index("--spline") + 1])
         fc = [ln for ln in log if ln.startswith("gen5d_v3 flux-check")][0]
         self.assertEqual(len(re.findall(r"/work/u[01]/t\d", fc)), 14)
         conv = [ln for ln in log if ln.startswith("gen5d_v3 convert")]
         self.assertEqual(sorted(re.search(r"--tune (\S+)", c).group(1) for c in conv),
-                         ["G18_02b_02_11b", "G21_11b_00_000"])
+                         ["G18_02a_00_000", "G21_11a_00_000"])
         prep = [ln for ln in log if ln.startswith("fd_f1_prep")][0]
         self.assertIn("--truth-set pg", prep)
         self.assertRegex(prep, r"--pred genie_v3_g21=\S+/out/gen5d/genie_v3_g21_xsec5d\.npz=[0-9a-f]{64}")
-        self.assertRegex(prep, r"--pred genie_v3_g18_02b=\S+genie_v3_g18_02b_xsec5d\.npz=[0-9a-f]{64}")
+        self.assertRegex(prep, r"--pred genie_v3_g18_02a=\S+genie_v3_g18_02a_xsec5d\.npz=[0-9a-f]{64}")
         rec = json.loads((self.W / "PRODUCTS.json").read_text())
-        self.assertEqual([x["truth"] for x in rec["products"]], ["genie_v3_g21", "genie_v3_g18_02b"])
+        self.assertEqual([x["truth"] for x in rec["products"]], ["genie_v3_g21", "genie_v3_g18_02a"])
         tmpdirs = {ln.split(" ", 1)[1] for ln in log if ln.startswith("TMPDIR ")}
         self.assertEqual(tmpdirs, {str(self.W / "tmp")})              # re-exported after every activation
         for u in (0, 1):
@@ -422,7 +498,7 @@ class Generate(unittest.TestCase):
         self.assertEqual(list(self.W.rglob("genie-mcjob-*")), [])
         self.assertEqual(len(list(self.W.rglob("gevgen.status"))), 14)
         sums = (self.W / "out/PG-SHA256SUMS").read_text()
-        for f in ("./flux_phi_t_0_100.root", "./graphs_G21_11b_00_000.root", "./spline_check_G18_02b_02_11b.json",
+        for f in ("./flux_phi_t_0_100.root", "./graphs_G21_11a_00_000.root", "./spline_check_G18_02a_00_000.json",
                   "./gen5d/genie_v3_g21_xsec5d.npz", "./prep/bridged/genie_v3_g21.json", "./work/u1/t6/genie_v3.gst.root"):
             self.assertIn(f"  {f}\n", sums)
         self.assertNotIn("./logs/", sums)
@@ -460,7 +536,7 @@ class Generate(unittest.TestCase):
         p = self.run_gen()
         self.assertEqual(p.returncode, 1)
         self.assertIn("[pg] STOP: seeds.json", p.stdout)
-        self.assertFalse(self.log.exists())
+        self.assertEqual({ln.split()[0] for ln in self.log.read_text().splitlines()}, {"pg_verify"})   # checks only
 
     def no_seed_in_any_name(self):
         names = [q.name for q in self.W.rglob("*")]
@@ -488,7 +564,7 @@ class Generate(unittest.TestCase):
 
     def test_a_stop_ends_the_other_background_steps(self):
         mark = self.tmp / "late-marker"
-        p = self.run_gen(PG_STUB_HADD_FAIL="genie_v3_g21_ALL", PG_STUB_HADD_SLOW="genie_v3_g18_02b_ALL",
+        p = self.run_gen(PG_STUB_HADD_FAIL="genie_v3_g21_ALL", PG_STUB_HADD_SLOW="genie_v3_g18_02a_ALL",
                          PG_STUB_MARK=str(mark))
         self.assertEqual(p.returncode, 1)
         self.assertIn("[pg] STOP: hadd or conversion", p.stdout)
@@ -527,12 +603,64 @@ class Generate(unittest.TestCase):
         self.assertEqual(p.returncode, 1)
         self.assertIn("[pg] STOP: the deploy changed (after)", p.stdout)
 
-    def test_fallback_tune(self):
-        (self.W / "seeds.json").write_text(json.dumps(seeds(u1="G18_02a_02_11b")))
-        p = self.run_gen()
-        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
-        rec = json.loads((self.W / "PRODUCTS.json").read_text())
-        self.assertEqual(rec["products"][1]["tune"], "G18_02a_02_11b")
+    def test_a_missing_inventory_file_stops(self):
+        p = self.run_gen(PG_STUB_NO_META="1")
+        self.assertEqual(p.returncode, 1)
+        self.assertIn("[pg] STOP: the required inventory", p.stdout)
+        self.assertIn("out/gen5d/genie_v3_g21_xsec5d.meta.json: 0 files, not 1",
+                      (self.W / "out/logs/inventory.log").read_text())
+
+    def test_inventory_rules(self):
+        req = pg_lib.inventory()
+        pats = [r["pattern"] for r in req]
+        self.assertEqual(len(pats), len(set(pats)))
+        self.assertTrue(all(not p.startswith("/") and ".." not in p.split("/") and r["count"] >= 1
+                            for p, r in zip(pats, req)))
+        self.assertNotIn("gntp.ghep.root", " ".join(pats))
+        self.assertIn({"pattern": "out/work/u0/t*/gevgen.log", "count": 7}, req)
+        self.assertIn({"pattern": "out/gen5d/genie_v3_g21_xsec5d.npz", "count": 1}, req)
+        rc, so, _ = quiet(pg_lib.main, ["inventory"])
+        self.assertEqual((rc, json.loads(so)), (0, req))
+
+    def test_a_failed_strace_check_stops_before_any_step(self):
+        p = self.run_gen(PG_STUB_VERIFY_FAIL="--self-test")
+        self.assertEqual(p.returncode, 1)
+        self.assertIn("[pg] STOP: strace", p.stdout)
+        self.assertEqual([ln.split()[:2] for ln in self.log.read_text().splitlines()], [["pg_verify", "tool-check"]])
+
+    def test_unfilled_pins_refuse(self):
+        g = self.dep / "3d-unfolding/genie"
+        (g / "pg_pins.json").write_text(json.dumps({"strace_path": "/usr/bin/strace", "strace_sha256": None,
+                                                    "dbconfig_sha256": "f" * 64}))
+        subprocess.run(["git", "-C", str(self.dep), "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qam", "p"],
+                       check=True)
+        pin = subprocess.run(["git", "-C", str(self.dep), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+        self.refused(self.run_gen(PG_DEPLOY_PIN=pin))
+
+    def test_a_failed_members_or_dbconfig_check_stops(self):
+        for fail, msg in (("members-check", "slot 1's private product"), ("f" * 64, "slot 1's UPS database file")):
+            with self.subTest(fail):
+                for d in ("out", "run"):
+                    shutil.rmtree(self.W / d, ignore_errors=True)
+                p = self.run_gen(PG_STUB_VERIFY_FAIL=fail)
+                self.assertEqual(p.returncode, 1)
+                self.assertIn(f"[pg] STOP: {msg}", p.stdout)
+                self.assertFalse([ln for ln in self.log.read_text().splitlines() if ln.startswith("run_gevgen_v3")])
+                self.log.unlink()
+
+    def test_a_failed_trace_check_stops(self):
+        for fail, msg, gen in (("--role graphs", "trace check (graphs", False), ("--role reduce", "trace check (reduce", False),
+                               ("--role gevgen", "trace check (gevgen", True)):
+            with self.subTest(fail):
+                for d in ("out", "run"):
+                    shutil.rmtree(self.W / d, ignore_errors=True)
+                p = self.run_gen(PG_STUB_VERIFY_FAIL=fail)
+                self.assertEqual(p.returncode, 1, p.stdout)
+                self.assertIn(f"[pg] STOP: {msg}", p.stdout)
+                ran = [ln for ln in self.log.read_text().splitlines() if ln.startswith("run_gevgen_v3 genie")]
+                self.assertEqual(bool(ran), gen)
+                self.assertFalse((self.W / "PRODUCTS.json").exists())
+                self.log.unlink()
 
 
 if __name__ == "__main__":

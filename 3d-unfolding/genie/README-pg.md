@@ -17,8 +17,8 @@ cd W && TMPDIR=W/tmp pg_generate.sh --workdir W --seeds W/seeds.json < /dev/null
 
 - **The parent** gives it cwd W, `TMPDIR=W/tmp` (existing), stdin `/dev/null`, captured stdout and stderr, and a
   scrubbed environment. It runs on one exclusive CPU node. The parent verifies this file's sha256.
-- **seeds.json:** `{"tunes": [{"u": 0, "name": "G21_11b_00_000", "task_seeds": [7 ints]}, {"u": 1, "name":
-  "G18_02b_02_11b" | "G18_02a_02_11b", "task_seeds": [7 ints]}]}`. `pg_lib.load_seeds` checks §4.2's rule as far as the
+- **seeds.json:** `{"tunes": [{"u": 0, "name": "G21_11a_00_000", "task_seeds": [7 ints]}, {"u": 1, "name":
+  "G18_02a_00_000", "task_seeds": [7 ints]}]}`. `pg_lib.load_seeds` checks §4.2's rule as far as the
   file allows, since the base is not in it. u0's first seed must be in [1e9, 2e9). Seeds must be consecutive within a
   tune, and u1's first must be u0's + 10,000. Every seed must be below 2³¹ − 1. A refusal names the rule, never the value.
 - **Exit:** 0 on success, 1 on a failed step (a STOP), 2 on a refusal before any step (bad arguments, cwd, TMPDIR, an
@@ -66,8 +66,7 @@ difference is a STOP.
 - **No pilot and no budget gate.** PG's price comes from F1b′'s measured timings (director, 2026-11-23). The per-task
   timeout is F1b′'s 5,115 s (`budget3.json`), and the node's wall limit is the parent's.
 - **Work directories** are `u<u>/t<k>`, not `s<seed>`, and the status file is renamed (above).
-- **The truths** go through `fd_f1_prep.py --truth-set pg`, with the names `genie_v3_g21` and `genie_v3_g18_02b` (or
-  `genie_v3_g18_02a`). `--truth-set f1`, the default, is F1's, unchanged.
+- **The truths** go through `fd_f1_prep.py --truth-set pg`, with the names `genie_v3_g21` and `genie_v3_g18_02a`. `--truth-set f1`, the default, is F1's, unchanged.
 - **The PG spline pins** are in `gen5d_v3.PG_SPLINE_PINS`, apart from F1's bound `SPLINE_PINS`.
 - `setup_genie_v3.sh` and `run_gevgen_v3.sh` gain the three PG qualifier cases. `setup_genie_v3.sh`'s
   `GENIE_XSEC_TUNE` check is unchanged: it requires the product to set the tune asked for, and the probe prints the

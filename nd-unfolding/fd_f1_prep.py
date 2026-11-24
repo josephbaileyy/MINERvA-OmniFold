@@ -15,7 +15,7 @@ pv-ladder ratios, and the same ratios in ratio_nd's format.
 Refuses to write into an existing --out, and refuses a prediction whose sha256 is not the one given.
 
 --truth-set pg runs the same steps for COVFIX PG's two validation truths (state/2d-closeout/covfix-20261122/
-COVFIX-DECLARATION.md section 4.2), PG_TRUTHS: genie_v3_g21 and one of genie_v3_g18_02b, genie_v3_g18_02a. The config
+COVFIX-DECLARATION.md section 4.2), PG_TRUTHS: genie_v3_g21 and genie_v3_g18_02a. The config
 is then config-pg.json. The default, f1, is F1's unchanged.
 
 MEASURES: the truths' reweights. CANNOT AUTHORIZE: anything.
@@ -39,12 +39,12 @@ RUNG = "L-5D-PV"
 TRUTHS = {"genie_v3_g18": "GENIE v3.04.00 G18_10a_02_11b, phi_t-sampled 5D (E_nu < 100 GeV)",
           "genie_v3_ar23": "GENIE v3.04.00 AR23_20i_00_000, phi_t-sampled 5D (E_nu < 100 GeV)"}
 # COVFIX PG's two validation truths (state/2d-closeout/covfix-20261122/COVFIX-DECLARATION.md section 4.1): u0 is
-# G21_11b_00_000; u1 is G18_02b_02_11b, or G18_02a_02_11b only if 02b is absent from the product.
+# G21_11a_00_000 and u1 is G18_02a_00_000 (COVFIX rev 12's amendment, pending; the declared 02b, 02a_02_11b and
+# 11b are not in the product).
 PG_U0 = "genie_v3_g21"
-PG_U1 = ("genie_v3_g18_02b", "genie_v3_g18_02a")
-PG_TRUTHS = {"genie_v3_g21": "GENIE v3.04.00 G21_11b_00_000, phi_t-sampled 5D (E_nu < 100 GeV)",
-             "genie_v3_g18_02b": "GENIE v3.04.00 G18_02b_02_11b, phi_t-sampled 5D (E_nu < 100 GeV)",
-             "genie_v3_g18_02a": "GENIE v3.04.00 G18_02a_02_11b, phi_t-sampled 5D (E_nu < 100 GeV)"}
+PG_U1 = ("genie_v3_g18_02a",)
+PG_TRUTHS = {"genie_v3_g21": "GENIE v3.04.00 G21_11a_00_000, phi_t-sampled 5D (E_nu < 100 GeV)",
+             "genie_v3_g18_02a": "GENIE v3.04.00 G18_02a_00_000, phi_t-sampled 5D (E_nu < 100 GeV)"}
 BRIDGE_DEFINITION = ("shape_ratio = the pvl-ratio/1 file's r per fine cell (C order on pt, pz, eavail, q3, W): the "
                      "gated shape ratio to GENIE 2.12 CV, k-normalised over the assigned cells, 1 elsewhere")
 

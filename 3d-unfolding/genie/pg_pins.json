@@ -1,0 +1,6 @@
+{
+ "_comment": "COVFIX PG's tool and product pins, filled only from the director's confirm of PG's probe receipt (state/2d-closeout/covfix-20261122/pg/PLAN-SLOT1-PROBE.md, R1). pg_generate.sh refuses while any is null.",
+ "dbconfig_sha256": null,
+ "strace_path": "/usr/bin/strace",
+ "strace_sha256": null
+}
