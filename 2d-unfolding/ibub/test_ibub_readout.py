@@ -802,7 +802,7 @@ class EndToEnd(Patched):
                  ({}, {"runner_sha256": "0" * 64}), ({}, {"units": failed_ref}),           # r2 item 2: the references
                  ({"rc": 1}, {}), ({"stage": "refs"}, {}), ({"job": "61000002"}, {}), ({"M": "M1"}, {}),
                  ({"completion": {"verdict": "PASS", "barrier_sha256": "0" * 64}}, {}),  # IBUB-DONE binds another barrier
-                 ({"completion": {"verdict": "FAIL"}}, {}), None, "no reference marker"]
+                 ({"completion": {"verdict": "FAIL"}}, {}), None, "no reference marker", "a reference marker from another job"]
         for case in cases:
             td = Path(tempfile.mkdtemp()).resolve()
             self.addCleanup(shutil.rmtree, td, True)
@@ -811,6 +811,9 @@ class EndToEnd(Patched):
                 (tr.units / "refcheck.json").unlink()
             elif case == "no reference marker":
                 (tr.units / "central_df.done").unlink()
+            elif case == "a reference marker from another job":       # agy read 5: the marker's own binding
+                m = json.loads((tr.units / "central.done").read_text())
+                (tr.units / "central.done").write_text(json.dumps(dict(m, job="61000002")))
             else:
                 tr.write_barrier(done=case[0], **case[1])
             change = case

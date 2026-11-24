@@ -575,6 +575,12 @@ class Refusals(unittest.TestCase):
         with self.assertRaises(iu.GateFailure):
             iu.write_contained(cfg, d / "outside.json", b"x")
         self.assertFalse((d / "outside.json").exists())
+        real = os.write                                        # agy read 5: a short write(2) is completed, not dropped
+        with mock.patch.object(os, "write", lambda fd, b: real(fd, bytes(b[:3]))):
+            iu.write_contained(cfg, d / "ns" / "long.bin", b"0123456789")
+        self.assertEqual((d / "ns" / "long.bin").read_bytes(), b"0123456789")
+        with mock.patch.object(os, "write", lambda fd, b: 0), self.assertRaises(OSError):
+            iu.write_contained(cfg, d / "ns" / "stuck.bin", b"x")
 
     def test_marker_ok_needs_identity_digests_and_embedded_provenance(self):
         d = self.tmp()

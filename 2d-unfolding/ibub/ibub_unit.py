@@ -104,7 +104,12 @@ def write_contained(cfg: dict, path, data: bytes, *, exclusive: bool = True) -> 
     flags = os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW | (os.O_EXCL if exclusive else os.O_TRUNC)
     fd = os.open(path, flags, 0o644)
     try:
-        os.write(fd, data)
+        view, done = memoryview(data), 0
+        while done < len(view):                      # write(2) may write fewer bytes than asked: loop to the end
+            n = os.write(fd, view[done:])
+            if n <= 0:
+                raise OSError(f"write to {path} made no progress at byte {done} of {len(view)}")
+            done += n
     finally:
         os.close(fd)
 

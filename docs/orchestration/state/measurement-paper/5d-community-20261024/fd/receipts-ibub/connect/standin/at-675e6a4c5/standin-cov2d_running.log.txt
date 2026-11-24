@@ -1,0 +1,9 @@
+== variant cov2d_running: script rc=9; session: fence host=b8d9fb9f74ce utc=2026-11-24T07:06:32Z sacct -X -n -P -u root -S 2026-11-10T07:06:32 -E now -o JobID,JobName,State 2>&1 sacct unended: 61000001|cov2d_g2r|RUNNING sacct matching rows: 2 FENCE REFUSED: an unended, unclassifiable or malformed sacct row BAIL cov2d fence rev 3 not clear (rc 3) 
+== self copy left: ls: cannot access '/dev/shm/ibubc.1.sh': No such file or directory; shm dir: ls: cannot access '/dev/shm/ibub-connect': No such file or directory
+== the connect log
+  cat: /pscratch/sd/j/josephrb/ibub-20261123/logs/connect-run.log: No such file or directory
+== done: cat: /pscratch/sd/j/josephrb/ibub-20261123/logs/connect-run.done: No such file or directory
+/connect/standin.sh: line 72: /tmp/sbatch.argv: No such file or directory
+== sbatch argv: 
+== stage: 
+== records tar: No

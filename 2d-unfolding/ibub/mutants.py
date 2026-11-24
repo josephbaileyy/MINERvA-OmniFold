@@ -212,6 +212,9 @@ MUTANTS = [
     (J, 'all_zero "${lrcs[@]}" || ok=0', 'true || ok=0', [f"{TJ}.Job"], "a failed toy lane ends PASS"),
     (J, '--step-rc "central=$r0" --step-rc "central_df=$r1"', '--step-rc "central=$r0" --step-rc "central_df=0"',
      [f"{TJ}.ReceiptChain"], "the barrier is not told a reference srun failed"),
+    (U, "            done += n", "            done += len(view)", [f"{TU}.Refusals"], "a short write is taken as complete"),
+    (R, '                and (str(m.get("job")), m.get("deploy_head")) == (str(bound["slurm_job"]), bound["deploy_head"])\n',
+     "", [f"{TR}.EndToEnd"], "the readout accepts a reference marker from another job"),
 ]
 
 

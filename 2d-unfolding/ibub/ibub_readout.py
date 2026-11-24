@@ -309,6 +309,7 @@ def job_record(units: Path, bound: dict) -> dict:
         except (OSError, ValueError) as e:
             return {"pass": False, "why": f"{u}'s marker is not readable ({e})"}
         if not (r.get("pass") is True and r.get("srun_rc") == 0 and m.get("verdict") == "PASS"
+                and (str(m.get("job")), m.get("deploy_head")) == (str(bound["slurm_job"]), bound["deploy_head"])
                 and (r.get("npz_sha256"), r.get("root_sha256")) == (m.get("sha256"), m.get("root_sha256"))):
             return {"pass": False, "why": f"refcheck.json's {u} is not a passing reference at its marker's digests"}
     return {"pass": True, "barrier_sha256": bsha, "done_sha256": hashlib.sha256(done_raw).hexdigest()}
