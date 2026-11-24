@@ -19,10 +19,12 @@
 
 **Preconditions, to be confirmed fresh just before the launcher runs:**
 1. the director's binding and GO;
-2. fresh "still true?" acks from cov2d, limitation-resolver and tier3-design, with any newly named protected roots (for
-   example limitation-resolver's d2-predict/step0 chain) added to `ibub_overlap.py` before the connect is regenerated;
-3. a valid NERSC certificate, which runs until 2026-11-25T01:36:35Z. The job takes up to 11:29:00, and the readout
-   follows, so the run must start by about 2026-11-24T12:00Z.
+2. fresh "still true?" acks from cov2d, limitation-resolver and tier3-design. Any root a lane newly names is recorded
+   as disjoint in the director's binding, and M does not change for it (the director's ruling of 2026-11-24). IBUB's
+   own writes are confined by `write_contained` and the job's realpath checks;
+3. a valid NERSC certificate for the connect's ssh (it runs until 2026-11-25T01:36:35Z). This is not a deadline for
+   the job, which Slurm runs whatever the certificate's state. If the readout falls after the expiry, Joseph renews
+   the certificate (the director's ruling).
 
 ## Connect O: the readout (to be written after the job; it comes to the director separately)
 
