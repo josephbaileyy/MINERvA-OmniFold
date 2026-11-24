@@ -1,0 +1,12 @@
+== variant ibuchi_running: script rc=9; session: BAIL fence (sacct) not clear: fenced jobs not terminal, or malformed rows: 61860000|ibuchi_evloop|RUNNING 
+== self copy left: ls: cannot access '/dev/shm/ibubc.1.sh': No such file or directory; shm dir: ls: cannot access '/dev/shm/ibub-connect': No such file or directory
+== the connect log
+  cat: /pscratch/sd/j/josephrb/ibub-20261123/logs/connect-run.log: No such file or directory
+== done: cat: /pscratch/sd/j/josephrb/ibub-20261123/logs/connect-run.done: No such file or directory
+/connect/standin.sh: line 77: /tmp/sbatch.argv: No such file or directory
+== sbatch argv: 
+== stage: 
+== records tar: No
+== stdout dir: stat: cannot statx '/pscratch/sd/j/josephrb/ibub-20261123/slurm': No such file or directory
+== batch record: cat: /pscratch/sd/j/josephrb/ibub-20261123/logs/scontrol-batch-61900001.txt: No such file or directory
+== connect record: cat: /pscratch/sd/j/josephrb/ibub-20261123/logs/scontrol-connect-61900001.txt: No such file or directory

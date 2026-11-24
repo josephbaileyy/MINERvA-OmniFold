@@ -1,0 +1,17 @@
+You are an independent, adversarial reviewer of code and cluster scripts for a particle-physics analysis on NERSC Perlmutter. READ-ONLY task: do not modify, create or delete any file; print one report to stdout. Never write to any git checkout.
+
+Inputs: the tree /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree, extracted by git archive from commit 675e6a4c5 (sha256 of each file in /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/inputs.sha256).
+- Declaration: docs/orchestration/state/measurement-paper/5d-community-20261024/IBUB-DECLARATION.md (rev 3).
+- Code: 2d-unfolding/ibub/ (ibub_unit.py, ibub_readout.py, ibub_lanes.py, ibub_overlap.py, config.json, jobs/ibub_job.sbatch, tests, mutants.py).
+- The previous read: .../fd/receipts-ibub/reads/codex2-r2/REPORT.txt (a NO-GO with 8 blocking items) and README.md (how each was fixed).
+
+Main task: for EACH of codex2-r2's 8 blocking items, check against the code at 675e6a4c5 whether the fix is CORRECT and COMPLETE (file:line), and say plainly if any is partly fixed. Pay particular attention to:
+1. the job: can it exit 0 without a freshly published, read-back IBUB-DONE? are all statuses checked (no tr/ls/pipe status lost)? noclobber side effects (could a legitimate write now fail)?
+2. marker_ok / refcheck / barrier_ok / complete / job_record: can any stale, foreign, partial or mismatched product, marker or barrier pass? does the barrier see the srun statuses?
+3. write containment: every write of the unit, refcheck, complete, stage and readout (write_contained, O_NOFOLLOW, the readout write_root and staging rename): any write that escapes?
+4. non-finite handling (c_sim_finite, C-CELLS per artifact, C-K10).
+5. the readout's staging-and-rename publication and INCOMPLETE vs INVALID classification.
+6. mutants.py's runner: can a harness/setup failure still count as a kill?
+Then list any NEW defect the fixes introduced, and anything that would fail on Perlmutter (bash 4/5, GNU coreutils, Slurm, Linux O_NOFOLLOW/os.rename semantics).
+
+Output a numbered list of findings labelled BLOCKER, MAJOR, MINOR or NOTE, each with file:line and a concrete fix. End with exactly one line: VERDICT: GO (no BLOCKER or MAJOR) or VERDICT: REVISE.

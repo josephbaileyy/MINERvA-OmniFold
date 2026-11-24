@@ -1,0 +1,140 @@
+I am waiting for the unit tests in `standin/sw` (`test_ibub_unit.py`) to finish.
+I am waiting for `test_ibub_unit.py` in `standin/sw` to complete.
+# Independent Adversarial Review: IBUB Code & Cluster Scripts (Commit `d547fa1fa`)
+
+**Reviewer:** Antigravity (Independent Adversarial Reviewer)  
+**Target Commit:** `d547fa1fa` (extracted at [agy-code-r4/tree](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree), verified against `inputs.sha256`)  
+**Declaration:** `docs/orchestration/state/measurement-paper/5d-community-20261024/IBUB-DECLARATION.md` (rev 3)  
+**Prior Reads Examined:** `reads/codex2-r1/REPORT.txt`, `reads/codex2-r1/README.md`, `reads/code-r3/README.md`
+
+---
+
+## 1. Verification of Codex2-r1 Findings (B1–B8, NB1, NB3, NB4)
+
+### B1. Slurm Allocation Verification
+- **Status:** **CORRECT AND COMPLETE**
+- **Citations:** [ibub_job.sbatch:8-9,50-53,80-99](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L8-L9), [test_ibub_job.py:216-227](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/test_ibub_job.py#L216-L227)
+- **Evaluation:** Directives `#SBATCH --time=11:29:00` and `#SBATCH --job-name=ibub_run` are present in `ibub_job.sbatch`. The job queries `scontrol show job "$SLURM_JOB_ID"` and checks:
+  1. `JobName == ibub_run`
+  2. `QOS == regular`
+  3. `TimeLimit == 11:29:00`
+  4. `NumNodes == 1`
+  5. `OverSubscribe == NO` (exclusive CPU allocation)
+  6. `StdOut` resolves under canonical namespace `$RN`
+  7. `AllocTRES` parsed for both memory and CPU capacity: requires $4 \times 112\,\text{GB} \le \text{Allocated RAM}$ and $4 \times 64 \le \text{Allocated CPUs}$.
+  In test mode (`IBUB_TEST=1`), mock Slurm environment variables are assigned and the entire production check path executes identically without bypassing the validation logic. Refusal paths are thoroughly tested across all 9 mismatch/failure conditions in `test_ibub_job.py`.
+
+### B2. Pipestatus, Cleanliness Filter, and Atomic Completion Record
+- **Status:** **CORRECT AND COMPLETE**
+- **Citations:** [ibub_job.sbatch:75-76,110,120-126,128-134,173-182](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L75-L76), [ibub_run_connect.template.sh:112-114,158-160](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh#L112-L114), [ibub_unit.py:493-520](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_unit.py#L493-L520)
+- **Evaluation:** `git status --porcelain --ignored` exit status and porcelain output are checked before and after execution without any `__pycache__` exclusions; any untracked or modified file fails the job. The lane table pipeline was eliminated: `lane_units()` redirects table generator stdout to a temporary file, asserts returncode 0, and then populates the `UNITS` array. `ibub_lanes.py verify` runs prior to phase execution. `ibub_unit.py complete` enforces the exact declared marker set (rejecting missing and undeclared markers) and verifies the barrier receipt. `IBUB-DONE` is written only once, atomically via `mv -n "$tmp" "$N/IBUB-DONE"` after all completion checks succeed.
+
+### B3. Re-price Gate Full Step Wall Timing
+- **Status:** **CORRECT AND COMPLETE**
+- **Citations:** [ibub_job.sbatch:116,146-152](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L116), [ibub_unit.py:441-456,469-482](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_unit.py#L441-L456)
+- **Evaluation:** Step execution in `ibub_job.sbatch` wraps `srun` with `/usr/bin/time -v -o "$L/$tag.time"`, capturing full process elapsed wall time and process exit status. In `ibub_unit.py refcheck`, `gnu_time()` parses the GNU time output files passed via `--time`. It checks that `step_wall_s <= limit_s` (1800 s) and `step_exit_status == 0`. The full wall measurement is recorded in `refcheck.json`, gating toy phase release.
+
+### B4. Job and Deploy Binding
+- **Status:** **CORRECT AND COMPLETE**
+- **Citations:** [ibub_unit.py:100-112,313-319,464-482,496-520](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_unit.py#L100-L112), [ibub_job.sbatch:70](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L70), [ibub_readout.py:192-194,280-286,363-365](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_readout.py#L192-L194)
+- **Evaluation:** `binding()` verifies non-empty `SLURM_JOB_ID` and enforces `IBUB_M == git rev-parse HEAD`. `ibub_unit.py run` only skips existing unit markers if `verdict == PASS` AND both `job` and `deploy_head` match the current execution context. The batch job explicitly requires `$U` to be completely empty at start. The barrier receipt (`refcheck.json`) binds `job` and `deploy_head`. `ibub_unit.py complete` and `ibub_readout.py` assert `refcheck.json` provenance, verify matching `job` and `deploy_head` across all unit markers and NPZ metadata payloads, and flag any undeclared marker files as `INVALID`.
+
+### B5. Protected-Tree Write Exclusion & Realpath Containment
+- **Status:** **CORRECT AND COMPLETE**
+- **Citations:** [ibub_unit.py:81-96,391,545,561](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_unit.py#L81-L96), [ibub_job.sbatch:58,61-70,89-91,108](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L58), [ibub_readout.py:289-294](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_readout.py#L289-L294)
+- **Evaluation:** `ibub_unit.inside(child, parent)` resolves paths canonically and ensures containment using `Path.resolve().relative_to(...)`, defeating symlink redirection. `ibub_job.sbatch` validates that `$N` is its own canonical realpath, verifies that `$U`, `$L`, `$N/stage`, `$TMPDIR`, and the job's `StdOut` resolve within `$RN` via `realpath` and `under()`, and checks that subdirectories are not symlinks. In `ibub_readout.py`, `guard_off_tree()` rejects any `--out` or `TMPDIR` residing inside guarded source trees (`cb.GUARDED`).
+
+### B6. Non-finite Operands & Failure Recording
+- **Status:** **CORRECT AND COMPLETE**
+- **Citations:** [ibub_unit.py:253-264](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_unit.py#L253-L264), [ibub_readout.py:237-246,377-384](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_readout.py#L237-L246)
+- **Evaluation:** `max_rel()` and `max_abs_rel()` explicitly check `np.all(np.isfinite(a)) and np.all(np.isfinite(b))`. If any operand contains non-finite entries (NaN or Inf), the function immediately returns `float("inf")`, ensuring no NaN can bypass threshold comparisons in `C-REP`, `C-REP-D`, `C-ROO`, and `C-FILL`. In `ibub_readout.py`, `ibu_products()` iterates over all readable, digest-verified products and tallies non-finite K=5 and K=10 cells *before* checking marker pass status. Any non-finite cell appends to `controls_failed` (`C-CELLS: non-finite ...`) and forces the tune status to `INVALID`.
+
+### B7. Refusals Recorded & Publishing After STOP Checks
+- **Status:** **CORRECT AND COMPLETE**
+- **Citations:** [ibub_readout.py:327-329,337,342,351,353,418-428](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_readout.py#L327-L329)
+- **Evaluation:** C-TRUTH mask, seed-order, and label mismatches call `invalid()`, which records specific reasons into `controls_failed` and persists an `INVALID` JSON record without raising uncaught exceptions. Readout calculations populate an internal `pending` dictionary. The `run.finish()` method runs all audit checks (atime ledger, module origin paths, open file descriptors) first. Final publishing sets `reading`, `reading_detail`, and `stats` to `None` by default; values and the `errors.npz` artifact are written only if `final["verdict"] == "PASS"`. If `run.finish()` encounters an audit issue, the verdict is overridden to `STOP`, and no readings or error arrays are emitted.
+
+### B8. C-G2R Runs Before Driver Import
+- **Status:** **CORRECT AND COMPLETE**
+- **Citations:** [ibub_unit.py:562-566](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_unit.py#L562-L566), [test_ibub_unit.py:408-417](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/test_ibub_unit.py#L408-L417)
+- **Evaluation:** In `ibub_unit.main()`, `resolve_argv()` is executed across all unit arguments prior to calling `rc.load_driver()`. `resolve_argv()` invokes `g2r_check()`, catching and refusing any `--miss-map` or `--miss_map` argument before the RE2 driver module is loaded or imported into the Python runtime. Verified by `test_c_g2r_refuses_before_the_driver_is_imported`.
+
+### NB1. Descriptive Hotelling Conditioning Cutoff
+- **Status:** **CORRECT AND COMPLETE**
+- **Citations:** [ibub_readout.py:108-126](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_readout.py#L108-L126)
+- **Evaluation:** The arbitrary `COND_MAX = 1e12` threshold was removed. Hotelling $T^2$ is computed whenever `np.linalg.solve(S, d)` succeeds, reporting `cond_S` alongside the statistic. If `solve()` raises `LinAlgError`, it records `T2 = None` and notes the failure without crashing.
+
+### NB3. Add truth_xsec.npz to Run.watch
+- **Status:** **CORRECT AND COMPLETE**
+- **Citations:** [ibub_readout.py:348](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_readout.py#L348), [test_ibub_readout.py:787-795](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/test_ibub_readout.py#L787-L795)
+- **Evaluation:** `run.watch(tpath)` is called immediately when `truth_xsec.npz` is located, registering the file in the audit ledger and ensuring access timestamps are monitored by `run.finish()`.
+
+### NB4. Mutation Suite Scope, Runner, and Receipt
+- **Status:** **PARTLY FIXED (RUNNER IMPLEMENTED, BUT COMMITTED RECEIPT IS STALE)**
+- **Citations:** [mutants.py:114-168](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/mutants.py#L114-L168), [docs/.../fd/receipts-ibub/code/mutants.txt:1-4,49](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/code/mutants.txt#L1-L4), [docs/.../fd/receipts-ibub/reads/codex2-r1/README.md:24](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/reads/codex2-r1/README.md#L24)
+- **Evaluation:**
+  - **Runner Logic:** Fully fixed. `mutants.py` executes a clean baseline test run first, parses code syntax (`ast.parse` / `bash -n`) before running tests, and strictly checks exit status: returncode 2 indicates a harness/framework crash (`FAILED`), returncode 1 indicates an expected test failure (`KILLED`), and returncode 0 indicates survival (`SURVIVED`).
+  - **Mutant Suite Scope:** Expanded from 39 to 69 mutants covering `ibub_lanes.py`, `ibub_overlap.py`, and `ibub_job.sbatch`. All 69 mutant patch sites were verified to exist exactly once in the tree at commit `d547fa1fa`.
+  - **DEFECT:** The committed receipt file `docs/.../fd/receipts-ibub/code/mutants.txt` remains stale at commit `79a3427a0a87` recording only 39 mutants (`total 39, killed 39, survived 0, failed 0`). It was **never regenerated or updated** for commit `d547fa1fa`. This directly contradicts `reads/codex2-r1/README.md:24`, which claimed: *"Re-ran suite at final commit; receipt committed."*
+
+---
+
+## 2. In-Depth Focus Area Evaluations
+
+### A. Slurm `scontrol` Parsing and Perlmutter Compatibility
+- **Implementation:** [ibub_job.sbatch:81-99](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L81-L99)
+- **Mechanism:**
+  - `key()` converts space-separated tokens to newlines (`tr ' ' '\n'`) and extracts values matching `^$1=` using `sed -n "s/^$1=//p" | head -1`.
+  - Tested against historical Perlmutter `scontrol show job` outputs (`scontrol-running-59655414.txt` and `scontrol-job-59655414.txt`). Key extraction for `JobName`, `QOS`, `TimeLimit`, `NumNodes`, and `OverSubscribe` works reliably.
+  - `AllocTRES` parsing splits entries by comma (`tr ',' '\n'`), matching `mem=([0-9]+)M`, converting `mem=([0-9]+)G` to megabytes, and matching `cpu=([0-9]+)`. On Perlmutter CPU nodes (`cpu=256,mem=498000M,node=1,billing=256`), this yields `amem=498000` and `acpu=256`, satisfying the bounds $458752 \le 498000$ and $256 \le 256$.
+  - `StdOut` realpath validation uses `dirname "$so"` to resolve the parent log directory canonically before checking `under "$rso" "$RN"`, correctly handling cases where the stdout file descriptor has not yet been flushed to disk.
+
+### B. Binding Integrity Across Lifecycle
+- **Implementation:** [ibub_unit.py:100-112,313-319,464-482,496-520](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_unit.py#L100-L112), [ibub_readout.py:192-194,280-286,363-365](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_readout.py#L192-L194)
+- **Mechanism:**
+  - Unit skip logic strictly verifies `cur_m.get("verdict") == "PASS" and cur_m.get("job") == env_job and cur_m.get("deploy_head") == env_dep`.
+  - Batch job startup verifies `$U` is completely empty.
+  - `refcheck.json` barrier receipt binds both `job` and `deploy_head`.
+  - `ibub_unit.py complete` and `ibub_readout.py` check `refcheck.json`, marker files, and product NPZ metadata payloads. Any foreign job ID, differing deploy commit, or undeclared marker immediately marks the run `INVALID`. No cross-job or cross-deploy product reuse is possible.
+
+### C. Namespace Containment and Symlink Protection
+- **Implementation:** [ibub_unit.py:81-96](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_unit.py#L81-L96), [ibub_job.sbatch:58,61-70,89-91,108](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L58), [ibub_readout.py:289-294](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_readout.py#L289-L294)
+- **Mechanism:**
+  - `inside(child, parent)` relies on `Path.resolve().relative_to(...)`, which canonicalizes symlinks on both macOS and Linux.
+  - `ibub_job.sbatch` verifies `$N` is a non-symlink directory matching its own `realpath`. Subdirectories (`$U`, `$L`, `$N/stage`, `$TMPDIR`) and `StdOut` are validated using GNU `realpath` and `under()`.
+  - `guard_off_tree()` guards against writes into protected source trees (`cb.GUARDED`).
+
+### D. Readout Publish-After-Finish Semantics
+- **Implementation:** [ibub_readout.py:418-428](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/ibub_readout.py#L418-L428)
+- **Mechanism:**
+  - Evaluated: *Can a STOP or INVALID record carry readings? Can a PASS record lose them?*
+  - In `ibub_readout.py`, `pending` readings are only populated if upstream tune status is `PASS`.
+  - `run.finish()` performs STOP audit validations first.
+  - In the final record construction, `reading`, `reading_detail`, and `stats` are defaulted to `None`. They are populated from `pending` and `errors.npz` is saved if and only if `final["verdict"] == "PASS"`.
+  - If a STOP or INVALID occurs, `final["verdict"] != "PASS"`, so readings remain `None` and no `errors.npz` is generated. Conversely, a clean PASS publishes readings. Verified by `test_a_stop_at_finish_publishes_no_reading_and_no_errors` and `test_clean_run_reads_not_resolved_apart_with_every_control_passed`.
+
+### E. Perlmutter Runtime Execution (Bash 4/5, GNU coreutils, Slurm)
+- **Implementation:** [ibub_job.sbatch](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch), [ibub_run_connect.template.sh](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh), [ibub_run_launch.template.sh](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_launch.template.sh), [gen_run_connect.py](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/gen_run_connect.py)
+- **Mechanism:**
+  - Shell scripts avoid `set -u` to prevent premature aborts during Conda activation (`Miniforge3` shell hook).
+  - Array operations, `read -r -a`, and pattern matching conform strictly to Bash 4/5.
+  - Coreutils invocations (`realpath -m`, `dd iflag=noatime`, `date -u +%s`, `stat -c %s`) are fully compatible with Perlmutter's GNU environment.
+  - Slurm step layout (`srun --exclusive -n1 -c 64 --mem=112G`) correctly shards four 64-CPU/112GB lanes across Perlmutter's 256-CPU/512GB compute node.
+
+---
+
+## 3. Numbered Findings
+
+### 1. [MAJOR] Mutation Suite Receipt is Stale and Does Not Certify Commit `d547fa1fa`
+- **Location:** [docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/code/mutants.txt:1-4,49](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/code/mutants.txt#L1-L4) (and [docs/.../fd/receipts-ibub/reads/codex2-r1/README.md:24](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/reads/codex2-r1/README.md#L24))
+- **Finding:** The committed receipt file `mutants.txt` records only 39 mutants (`total 39, killed 39, survived 0, failed 0`) at commit `79a3427a0a87` (from an earlier code iteration before the codex2-r1 and step-5 fixes). At commit `d547fa1fa`, `mutants.py` defines 69 mutants (including 30 new mutants targeting `ibub_lanes.py`, `ibub_overlap.py`, and `ibub_job.sbatch`). In `reads/codex2-r1/README.md:24`, it is explicitly recorded: *"Added 30 mutants covering ibub_lanes.py, ibub_overlap.py and ibub_job.sbatch (total 69, all killed)... Re-ran suite at final commit; receipt committed."* However, `mutants.txt` was never updated or committed at `d547fa1fa`. Under the project's verification protocol, an uncertified or stale receipt file representing code validation is an audit deficiency.
+- **Concrete Fix:** Run `2d-unfolding/ibub/mutants.py` in a clean worktree at commit `d547fa1fa` using the approved `root_6_28` environment, confirm all 69 mutants are killed (0 survived, 0 failed), and commit the updated 69-mutant `mutants.txt` receipt file to `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/code/mutants.txt`.
+
+### 2. [NOTE] Omission of Dependent Files from Extracted Archive
+- **Location:** `inputs.sha256` / [agy-code-r4/tree](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree)
+- **Finding:** The archived tree provided in `inputs.sha256` omits `2d-unfolding/cov2d/cov2d.py` and `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux2-20261122/tools/fence_overlap.py`. Running `test_ibub_readout.py` and `test_ibub_overlap.py` directly inside the isolated extracted archive fails with import/file-not-found errors unless pointed at a full git repository checkout via `PYTHONPATH` or `--clone`. In production, `ibub_run_connect.template.sh` performs a full repository clone at `$M`, so cluster execution is unaffected.
+- **Concrete Fix:** When preparing standalone input archives for independent reviewers, include all imported repository modules (`cov2d.py`, `fence_overlap.py`) in `inputs.sha256`.
+
+---
+
+VERDICT: REVISE

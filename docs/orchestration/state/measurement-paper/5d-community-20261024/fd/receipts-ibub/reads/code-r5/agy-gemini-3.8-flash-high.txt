@@ -1,0 +1,158 @@
+# Independent Adversarial Review: IBUB Code & Cluster Scripts (Commit `675e6a4c5`)
+
+**Reviewer:** Antigravity (Independent Adversarial Reviewer)  
+**Target Commit:** `675e6a4c5` (extracted from git archive at `agy-code-r5/tree`, verified against `inputs.sha256`)  
+**Declaration:** [IBUB-DECLARATION.md](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/IBUB-DECLARATION.md) (rev 3)  
+**Prior Read Examined:** [REPORT.txt](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/reads/codex2-r2/REPORT.txt) (codex2-r2, NO-GO with 8 blockers on `ee189fefc`) and [README.md](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/reads/codex2-r2/README.md)  
+**Mode:** READ-ONLY inspection; no files created, modified, or deleted in any repository or tree.
+
+---
+
+## 1. Audit of Codex2-r2's 8 Blocking Items Against Commit `675e6a4c5`
+
+### Item 1 (B2): Batch Job Completion Record, Exit Statuses, and Pipeline Integrity
+- **Status:** **CORRECT AND COMPLETE**
+- **Citations:** [ibub_job.sbatch:72-73,115,134-144,153,159,180,185-196](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L72-L73), [test_ibub_job.py:283-294](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/test_ibub_job.py#L283-L294)
+- **Audit Details:**
+  1. `entries=$(ls -A "$U") || refuse "listing $U failed"` checks directory listing exit status directly; empty directory check `[ -z "$entries" ]` succeeds only after non-error listing.
+  2. The shell pipeline with `tr` was removed. Waited process returncodes are collected directly into Bash arrays (`r0=$?`, `r1=$?`, `lrcs+=($?)`). Helper `all_zero()` iterates over positional arguments (`[ "$r" = 0 ] || return 1`) and verifies `$# > 0`.
+  3. `complete.json` writing is status-checked via `printf '%s\n' "$comp" > "$L/complete.json" || { ok=0; say "writing complete.json failed"; }`. Output validity is confirmed via Python `json.loads(sys.argv[1]) || { ok=0; comp=null; }`.
+  4. `publish_done` refuses existing `$N/IBUB-DONE`, writes `$body` to a unique `$tmp`, atomically renames via `mv -- "$tmp" "$N/IBUB-DONE"`, reads the file back, and asserts byte-level equality with `$body`. Exit 0 at [ibub_job.sbatch:195](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L195) is strictly guarded by `publish_done toys 0 "$comp" || { ... exit 1; }`. The job cannot exit 0 without a freshly published, verified `IBUB-DONE`.
+
+### Item 2 (B4): PASS Markers, Barrier Receipts, and Provenance Binding
+- **Status:** **CORRECT AND COMPLETE**
+- **Citations:** [ibub_unit.py:307-333,381-386,528-565,568-590,593-614](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/ibub_unit.py#L307-L333), [ibub_job.sbatch:156-162](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L156-L162), [ibub_readout.py:280-315](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/ibub_readout.py#L280-L315)
+- **Audit Details:**
+  1. `marker_ok(out, name, bound, kind)` requires: `m.get("unit") == name`, `m.get("verdict") == "PASS"`, `(str(m.get("job")), m.get("deploy_head")) == (bound["job"], bound["deploy_head"])`, regular non-symlink files for both `.npz` and `.root`, exact sha256 digests matching marker records, readable NPZ `meta` JSON, matching embedded provenance (`meta.unit`, `meta.slurm_job`, `meta.deploy_head`), and matching `meta.kind`.
+  2. In `run_unit`, any existing product or marker triggers `marker_ok(out, name, bound, unit["kind"])`. If verification fails, it refuses with `RC_CONTROL` rather than overwriting or skipping.
+  3. `refcheck` accepts waited step exit codes via `--step-rc "central=$r0"` and `--step-rc "central_df=$r1"`. It enforces `srun_rc == 0`, GNU time exit status 0, wall time within the re-price limit, `marker_ok` on both references, and C-REP agreement between `central_df` and `central`. Both reference product digests are stored in `refcheck.json`, written exclusively with `write_contained`.
+  4. `barrier_ok` re-validates that `refcheck.json` is a regular file, matches bound `job` and `deploy_head`, asserts `r["srun_rc"] == 0` for both references, executes `marker_ok` on the reference products on disk, and verifies current file digests equal `refcheck.json`'s recorded digests. It returns `hashlib.sha256(raw).hexdigest()`.
+  5. `complete` validates all 600 toy units via `marker_ok(..., "toy")`, rejects undeclared markers, validates the barrier via `barrier_ok`, and embeds `barrier_sha256` in the completion payload.
+  6. `job_record` in `ibub_readout.py` confirms `IBUB-DONE` (`stage="toys"`, `rc=0`, matching `job` and `M`, completion `verdict="PASS"`), asserts `comp["barrier_sha256"] == bsha` of `refcheck.json`, and asserts `refcheck.json` provenance, reference srun statuses, and reference product digests.
+
+### Item 3 (B5): Write Containment, Symlink Protection, and Protected-Tree Exclusion
+- **Status:** **CORRECT AND COMPLETE**
+- **Citations:** [ibub_unit.py:98-110,244,443-447,480,563](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/ibub_unit.py#L98-L110), [ibub_overlap.py:55-58](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/ibub_overlap.py#L55-L58), [config.json:140](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/config.json#L140), [ibub_job.sbatch:92-94,113,120](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L92-L94), [ibub_readout.py:354-362](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/ibub_readout.py#L354-L362)
+- **Audit Details:**
+  1. `write_contained(cfg, path, data, exclusive=True)` checks `inside(cfg, path.parent)` and opens with `os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW | (os.O_EXCL if exclusive else os.O_TRUNC)`. It is used for all `.npz`, `.done`, `refcheck.json`, and `stage.json` writes. Staged data copies in `stage_data()` enforce `inside(cfg, dest.parent)` and copy through `rc.copy_noatime` with exclusive mode (`open(dest, "xb")`).
+  2. `ibub_overlap.py` declares write roots for both phases: `WRITES["readout"]` includes `N_ROOT` (`$N`), `CONFIG["readout"]["write_root"]` (`/dev/shm/ibub-connect`), and `/dev/shm/ibubc.`. Overlap against LR P0 protected paths (`rpd-reco-p0-20261123`, `/dev/shm/limres-rpd-flux1`) is enforced.
+  3. `ibub_readout.py` enforces `guard_in_root` on `--out`, `TMPDIR`, and `stage`, verifying that canonical paths resolve strictly within `readout.write_root`. `guard_off_tree` confirms none resolve within `/pscratch` or `/global/cfs`.
+  4. In `ibub_job.sbatch:92-94`, the full `StdOut` path from `scontrol` is verified to exist, be a non-symlink regular file (`[ -f "$so" ] && [ ! -L "$so" ]`), and resolve under `$RN`. `set -o noclobber` prevents log clobbering, and step execution aborts if `$L/$tag.time` exists.
+
+### Item 4 (B6): Non-Finite Handling in Controls
+- **Status:** **CORRECT AND COMPLETE**
+- **Citations:** [ibub_unit.py:336-358,416-419](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/ibub_unit.py#L336-L358), [ibub_readout.py:224-245,269,439-442](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/ibub_readout.py#L224-L245), [test_ibub_unit.py:895-926](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/test_ibub_unit.py#L895-L926), [test_ibub_readout.py:567-588](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/test_ibub_readout.py#L567-L588)
+- **Audit Details:**
+  1. `c_sim_finite(driver, cap, ks)` directly evaluates all covered cells of the simulated extraction across every $K$ and the unweighted reference extraction, asserting `np.all(np.isfinite(...))`. `C-SIM` sets `sim["pass"] = bool(sim["pass"] and sim["all_finite"] and np.isfinite(sim["max_rel"]))`, catching NaNs dropped by `ref_c2c1.c_sim`'s running Python `max`.
+  2. `ibu_products` extracts and validates ROOT and NPZ products in separate `try/except` blocks: ROOT verifies `h = cells.vec(root)` and increments `nonfinite["K10"] += int((~np.isfinite(h)).sum())` immediately; NPZ verifies and increments `nonfinite["K5"] += int((~np.isfinite(row5)).sum())`. If one artifact fails digest validation, the other is still independently counted.
+  3. NPZ K=10 values are compared to ROOT via `iu.max_rel(row10, h)` under `C-K10`. If `row10` contains a NaN, `max_rel` returns `float("inf")`, failing `C-K10` without double-counting in `C-CELLS`.
+
+### Item 5 (B7): Atomic Staging and Publication of Readout Artifacts
+- **Status:** **CORRECT AND COMPLETE**
+- **Citations:** [ibub_readout.py:361-367,476-483](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/ibub_readout.py#L361-L367), [test_ibub_readout.py:549-566](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/test_ibub_readout.py#L549-L566)
+- **Audit Details:**
+  1. `readout()` creates a private staging directory in `out.parent`: `stage = Path(tempfile.mkdtemp(prefix=f".{out.name}.staging-", dir=out.parent))`.
+  2. `run.finish()` writes initial audit records to `stage / name`. Only if `final["verdict"] == "PASS"` are `ibub_<T>_errors.npz` and the finalized `ibub_<T>.json` (embedding `errors_npz_sha256` and readings) written to `stage`.
+  3. `publish_stage()` executes a single `os.rename(stage, out)`. Because `stage` and `out` share `out.parent`, they reside on the same filesystem, guaranteeing POSIX atomic directory rename semantics. `--out` never exists in a partial or intermediate state.
+
+### Item 6 (B7): Readout Tune Record Emission & INCOMPLETE vs. INVALID Verdict Classification
+- **Status:** **CORRECT AND COMPLETE**
+- **Citations:** [ibub_readout.py:245-250,400-405,425-438](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/ibub_readout.py#L245-L250), [test_ibub_readout.py:600-610](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/test_ibub_readout.py#L600-L610)
+- **Audit Details:**
+  1. Missing or unreadable inputs (such as `truth_xsec.npz` or blocks records) are trapped by `except (OSError, ValueError, KeyError) as e:` at [ibub_readout.py:403](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/ibub_readout.py#L403). It sets `rec["refused"]`, invokes `invalid()`, and emits a recorded `INVALID` tune JSON through `publish_stage()`.
+  2. A unit with a digest-valid product but `verdict != "PASS"` is appended solely to `missing` ([ibub_readout.py:246](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/ibub_readout.py#L246)), not `problems`.
+  3. If `ibu["missing"]` is non-empty, [ibub_readout.py:434-435](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/ibub_readout.py#L434-L435) sets `rec["verdict"] = "INCOMPLETE"` if and only if `rec["controls_failed"]` is empty. Independent failures (e.g. `C-CELLS`) remain recorded in `controls_failed` and result in `INVALID`.
+
+### Item 7 (R2): R2 P0 Outcome and Records Commit Precondition
+- **Status:** **PARTLY FIXED (DEFERRED BY ADMINISTRATIVE RULING)**
+- **Citations:** [reads/codex2-r2/README.md:24](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/reads/codex2-r2/README.md#L24), [connect/README.md:32-38](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/README.md#L32-L38)
+- **Audit Details:**
+  - Codex2-r2 reported that R2 is absent from the implementation: `ibub_overlap.py` compares paths statically, and `ibub_readout.py` can be launched without verifying P0 completion or committed records.
+  - The author did not add P0 verification logic to `ibub_readout.py` or `ibub_overlap.py`. Instead, `reads/codex2-r2/README.md` documents an administrative ruling by the director: *"the director's ruling: it does not block connect R. It belongs to the readout connect, which comes as its own package; its preconditions are written in ../../connect/README.md, and it will block that connect if absent there"*.
+  - Because `connect/` currently provides only Connect R (`ibub_run_connect.sh`) and Connect O has not yet been authored or committed to the repository, P0 status verification is absent from the code in `675e6a4c5`.
+
+### Item 8 (NB4): Mutation Suite Harness Protection, Production Boundary Tests, and Receipt Certification
+- **Status:** **PARTLY FIXED (RUNNER & CODE TESTS COMPLETE; RECEIPT STALE)**
+- **Citations:** [mutants.py:225-244](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/mutants.py#L225-L244), [test_ibub_job.py:252-293,382-449](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/test_ibub_job.py#L252-L293), [fd/receipts-ibub/code/mutants.txt:1-4,130](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/code/mutants.txt#L1-L4), [fd/receipts-ibub/reads/codex2-r2/README.md:19](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/reads/codex2-r2/README.md#L19)
+- **Audit Details:**
+  1. **Harness Protection:** `RUNNER` in `mutants.py:241` inspects `r.errors + r.failures`. If `r.testsRun == 0` or any failure item has `type(t).__name__ == "_ErrorHolder"`, it exits with code 2. In `mutants.py:291`, exit code 2 records `HARNESS` and stops the run. A setup failure or zero-test run can no longer be counted as a kill.
+  2. **Boundary Kills & ReceiptChain:** `test_ibub_job.py` adds real failure-injection tests (`test_a_failed_git_status_refuses`, `test_a_failed_lane_producer_stops_its_lane`, `test_a_failed_ibub_done_publication_never_ends_pass`). `ReceiptChain` runs `ibub_job.sbatch` against the real deploy's `refcheck` and `complete`.
+  3. **New Mutants:** `mutants.py` expanded from 69 to 90 mutants (adding 21 new sites covering containment, srun returncode tracking, barrier reference digests, C-SIM NaN trapping, and publication checks).
+  4. **DEFECT:** The committed artifact [code/mutants.txt](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/code/mutants.txt#L1-L4) remains the 69-mutant run from commit `ee189fefcb6e475a9c2bb3362062efc68ad7260b`. It was **not** re-run or updated at commit `675e6a4c5`. Mutants 70–90 are absent from the receipt. This directly contradicts `reads/codex2-r2/README.md:19`, which claimed Item 8 was proved by *"../../code/mutants.txt (at the new commit)"*. Similarly, `code/trace.txt` remains un-updated from `ee189fefc`.
+
+---
+
+## 2. In-Depth Focus Area Evaluations
+
+### A. The Batch Job (`ibub_job.sbatch`)
+- **Exit 0 contingent on IBUB-DONE:** Lines 193–196 require `publish_done toys 0 "$comp"`. If `publish_done` encounters any failure (existing file, write error, rename error, read-back mismatch), it returns 1 and the job exits 1. Exit 0 is unreachable without a freshly published and verified `IBUB-DONE`.
+- **Exit code tracking:** `all_zero` validates array elements for both reference sruns (`r0`, `r1`) and toy lanes (`lrcs`). No pipe status is dropped.
+- **`noclobber` side effects:** `set -o noclobber` is invoked at line 113. All subsequent redirects (`lanes-verify.txt`, `$tag.log`, `lane-$1-$2.txt`, `refcheck.log`, `complete.err`, `complete.json`, `IBUB-DONE.tmp.$$`) target paths that are fresh and uniquely named per step or job ID. No legitimate write fails under `noclobber`.
+
+### B. Marker, Barrier, and Provenance Validation
+- **Stale/foreign markers:** `marker_ok` requires exact unit identity, matching job ID and deploy HEAD, regular files, matching sha256 digests, and matching embedded NPZ metadata. Stale markers from prior jobs or wrong units cannot pass.
+- **Reference srun status:** Waited srun codes are passed directly to `refcheck` via `--step-rc`, requiring `srun_rc == 0`.
+- **Barrier integrity:** `barrier_ok` re-hashes both reference products on disk, checks `refcheck.json` provenance, and passes `barrier_sha256` to `complete`. Readout validates `IBUB-DONE` binds `barrier_sha256` to `refcheck.json`'s current digest.
+
+### C. Write Containment
+- All writes in `ibub_unit.py` use `write_contained`, checking `inside(cfg, path.parent)` and `os.O_NOFOLLOW`.
+- Staged data files verify `inside(cfg, dest.parent)` and copy with exclusive creation `open(dest, "xb")`.
+- `ibub_readout.py` enforces `guard_in_root` on `--out`, `TMPDIR`, and `stage` against `/dev/shm/ibub-connect`.
+- `ibub_job.sbatch` verifies `StdOut` is a regular non-symlink file under `$RN`.
+
+### D. Non-Finite Handling
+- `c_sim_finite` inspects all covered cells across reference and scan extractions, preventing unhandled NaNs from escaping into `C-SIM`.
+- `ibu_products` extracts ROOT and NPZ products independently, so non-finite cells are tallied even if companion files fail digest validation.
+- `C-K10` reports non-finite discrepancies between ROOT and NPZ rows without double-counting in `C-CELLS`.
+
+### E. Readout Publication and Classification
+- Readout builds entirely inside `stage = tempfile.mkdtemp(prefix=..., dir=out.parent)`. Final results are published atomically via `os.rename(stage, out)`.
+- A missing truth file triggers `except (OSError, ValueError, KeyError)` and publishes an `INVALID` record.
+- A unit with a `FAIL` marker increments `missing` only, emitting `INCOMPLETE` when no other controls fail.
+
+### F. Mutants Runner
+- `mutants.py:241` intercepts `_ErrorHolder` and `testsRun == 0`, forcing exit status 2 (`HARNESS`), preventing setup crashes from being classified as kills.
+
+---
+
+## 3. Numbered Findings
+
+### 1. [MAJOR] Mutation Suite Receipt (`code/mutants.txt`) is Stale and Does Not Certify Commit `675e6a4c5`
+- **Location:** [docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/code/mutants.txt:1-4,130](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/code/mutants.txt#L1-L4) (and [reads/codex2-r2/README.md:19](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/reads/codex2-r2/README.md#L19))
+- **Finding:** In `reads/codex2-r2/README.md:19`, Item 8 is claimed to be proved by: *"../../code/mutants.txt (at the new commit)"*. However, `code/mutants.txt` at `675e6a4c5` remains the receipt from commit `ee189fefcb6e475a9c2bb3362062efc68ad7260b` covering only 69 mutants (`TOTAL 69/69 killed`). In `675e6a4c5`, `mutants.py` defines 90 mutants (adding 21 new sites covering boundary conditions and plumbing integrity). The committed receipt was never executed or regenerated at `675e6a4c5`, leaving the new mutants uncertified in the repository record. Similarly, [code/trace.txt:1-14](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/code/trace.txt#L1-L14) was not re-run for `675e6a4c5`.
+- **Concrete Fix:** In a clean environment matching the project specifications, execute `python -B -m mutants` across all 90 mutants at commit `675e6a4c5`, verify all 90 are killed (with 0 harness failures and 0 survivals), and commit the regenerated `mutants.txt` (and updated `trace.txt`) to `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/code/`.
+
+### 2. [MAJOR] Connect R Scripts (`ibub_run_connect.sh`, `ibub_run_launch.sh`) Hardcode Commit `ee189fefc` and Reject `675e6a4c5`
+- **Location:** [docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.sh:26,175-182](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.sh#L26), [connect/ibub_run_launch.sh:28](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_launch.sh#L28), [connect/README.md:9-10](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/README.md#L9-L10)
+- **Finding:** The deployment connect package committed in `fd/receipts-ibub/connect/` was generated for `M = ee189fefcb6e475a9c2bb3362062efc68ad7260b`. Line 26 sets `M=ee189fefcb6e475a9c2bb3362062efc68ad7260b`, and lines 175–182 check the sha256 digests of `ibub_unit.py`, `ibub_readout.py`, `ibub_lanes.py`, `ibub_overlap.py`, `config.json`, and `jobs/ibub_job.sbatch` against their `ee189fefc` hashes. Executing `ibub_run_connect.sh` on Perlmutter will clone the old, rejected commit `ee189fefc`; if pointed at `675e6a4c5`, the strict sha256 check fails at line 175 with `STOP: the ibub files are not the declared ones`.
+- **Concrete Fix:** Run `python gen_run_connect.py 675e6a4c5...` using `ibub_run_connect.template.sh` to regenerate `ibub_run_connect.sh` with the file hashes of `675e6a4c5`, update `ibub_run_launch.sh` with the new connect sha256, run `ibub_overlap.py run` to refresh `overlap-run-675e6a4c5.txt`, and update `connect/README.md`.
+
+### 3. [MINOR] Low-Level `os.write` in `write_contained` Lacks POSIX Partial Write Handling
+- **Location:** [2d-unfolding/ibub/ibub_unit.py:107](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/ibub_unit.py#L107)
+- **Finding:** `write_contained` performs `os.write(fd, data)` in a single call. Under POSIX / Linux semantics, `write(2)` may write fewer bytes than requested when handling buffers larger than system buffer limits or if interrupted. When writing multi-kilobyte compressed `.npz` arrays ([ibub_unit.py:443](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/ibub_unit.py#L443)), partial writes would result in corrupted archives.
+- **Concrete Fix:** Wrap `os.write` in a loop to ensure all bytes are transferred:
+  ```python
+  total = 0
+  while total < len(data):
+      n = os.write(fd, data[total:])
+      if n == 0:
+          raise OSError("write zero bytes")
+      total += n
+  ```
+
+### 4. [NOTE] Marker Job and Deploy Verification in `ibub_readout.py:job_record`
+- **Location:** [2d-unfolding/ibub/ibub_readout.py:311-313](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r5/tree/2d-unfolding/ibub/ibub_readout.py#L311-L313)
+- **Finding:** In `job_record`, line 311 checks:
+  ```python
+  if not (r.get("pass") is True and r.get("srun_rc") == 0 and m.get("verdict") == "PASS"
+          and (r.get("npz_sha256"), r.get("root_sha256")) == (m.get("sha256"), m.get("root_sha256"))):
+  ```
+  While `refcheck.json` (`b`) is validated against `bound["slurm_job"]` and `bound["deploy_head"]`, and its digest is checked against `IBUB-DONE`, the marker `m` itself is not checked for `(str(m.get("job")), m.get("deploy_head")) == (bound["slurm_job"], bound["deploy_head"])`.
+- **Concrete Fix:** Add explicit bound checks on `m`:
+  ```python
+  and (str(m.get("job")), m.get("deploy_head")) == (str(bound["slurm_job"]), bound["deploy_head"])
+  ```
+
+---
+
+VERDICT: REVISE
