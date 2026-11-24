@@ -1,6 +1,8 @@
 """Tests of b5d_build.py (B5D-DECLARATION.md rev 1): the bias block, the per-band factor and its bootstrap, the trigger
 in each direction, the fluctuation block, and the band rules. Run: python3 -B -m unittest nd-unfolding/b5d/test_b5d.py"""
 import sys
+import json
+import types
 import unittest
 from pathlib import Path
 
@@ -63,6 +65,57 @@ class Fluctuation(unittest.TestCase):
         self.assertTrue(np.all(np.diff(w) <= 0))
         for i in range(N):
             self.assertGreater(V[np.argmax(np.abs(V[:, i])), i], 0)
+
+    def test_eig_sorted_canonical_on_an_exact_tie(self):
+        d = np.array([1.0, 3.0, 3.0, 2.0] + [0.5] * (N - 4))
+        rng = np.random.default_rng(5)
+        for _ in range(5):
+            w, V = M.eig_sorted(np.diag(d))
+            np.testing.assert_allclose(V[:, :2], np.eye(N)[:, 1:3], atol=1e-12)  # e_2, e_3 in cell order
+            self.assertEqual(list(w[:2]), [3.0, 3.0])
+        Q = np.linalg.qr(rng.normal(size=(N, N)))[0]
+        w1, V1 = M.eig_sorted(Q @ np.diag(d) @ Q.T)
+        self.assertTrue(np.all(np.diff(w1) <= 0))
+        # a solver that returns the tied space in a rotated basis: the canonical basis comes back
+        from unittest import mock
+        c, s_ = np.cos(0.7), np.sin(0.7)
+        Vr = np.eye(N)
+        Vr[:, 1], Vr[:, 2] = c * np.eye(N)[:, 1] + s_ * np.eye(N)[:, 2], -s_ * np.eye(N)[:, 1] + c * np.eye(N)[:, 2]
+        with mock.patch.object(M.np.linalg, "eigh", lambda A: (d.copy(), Vr.copy())):
+            w2, V2 = M.eig_sorted(np.diag(d))
+        np.testing.assert_allclose(V2[:, :2], np.eye(N)[:, 1:3], atol=1e-12)
+
+    def test_against_a_zero_rank_block(self):
+        r = M.against(np.ones(N), np.zeros((N, N)))
+        self.assertIsNone(r["quad"])
+        self.assertEqual(r["rank"], 0)
+        self.assertEqual(r["fraction_outside_span"], 1.0)
+
+    def test_fhat_averages_only_the_ensembles_that_keep_the_band(self):
+        D = spd(31)
+        w, V = M.eig_sorted(D)
+        A, B2 = self.sample(D, 400, 1.0, 1), self.sample(D, 400, 4.0, 2)
+        ens = {("g18", "minus2"): (A, w, V), ("ar23", "minus2"): (B2, w, V)}
+        full, _ = M.bands_kept(w)
+        bands = {("g18", "minus2"): full, ("ar23", "minus2"): [x for x in full if x[0] != M.BANDS[2][0]]}
+        f = M.fhat(ens, bands)
+        only = M.band_factor(M.mode_spreads(A, w, V), full[2][2], 400)
+        self.assertAlmostEqual(f[2], only, places=12)
+        self.assertGreater(f[0], 2.0)  # both enter R1
+        f_none = M.fhat(ens, {k: [x for x in v if x[0] != 0] for k, v in bands.items()})
+        self.assertIsNone(f_none[0])
+        self.assertEqual(M.trigger(f_none, {0: None, 1: 0.1, 2: 0.1})[0]["phi"], 1.0)
+
+    def test_l_acts_only_on_c_e_kept_modes(self):
+        rng = np.random.default_rng(8)
+        A = rng.normal(size=(N, 10))
+        C = A @ A.T  # rank 10: modes 11-16 are not kept
+        trig = {0: {"active": False, "phi": 1.0}, 1: {"active": False, "phi": 1.0}, 2: {"active": True, "phi": 4.0}}
+        V_F, L = M.fluctuation_block(C, trig)
+        w, V = M.eig_sorted(C)
+        null = V[:, 10:]
+        np.testing.assert_allclose(L @ null, null, atol=1e-10)
+        np.testing.assert_allclose(V[:, 8:10].T @ L @ V[:, 8:10], 2 * np.eye(2), atol=1e-10)
 
     def test_a_correct_block_gives_fhat_near_one_and_an_inflated_one_more(self):
         D = spd(3)
@@ -273,9 +326,32 @@ class EndToEnd(unittest.TestCase):
         self.assertEqual(rec["schema"], M.SCHEMA)
         self.assertEqual(len(rec["bias_block"]["C_b_tune_v1_units"]), N)
         self.assertEqual(set(rec["fluctuation"]["f_hat"]), {"R1", "R2", "R3"})
-        self.assertIn("nuwro" if False else "A7_nuwro", rec["cal_cross_check_sd_over_s1_flux_stat"])
+        self.assertNotIn("cal_cross_check_sd_over_s1_flux_stat", rec)  # A1 item 1: the cal cross-check is dropped
+        me = rec["bias_block"]["ll5d_toy_mean_error_tune_v1_units"]
+        self.assertEqual(set(me), {"g18/minus2", "g18/all", "ar23/minus2", "ar23/all"})
+        self.assertTrue({"quad", "fraction_outside_span", "rank", "beta"} <= set(me["g18/minus2"]))
+        M.check_leak(rec)
         self.assertEqual(set(rec["fluctuation"]["per_ensemble"]), {"g18/minus2", "g18/all", "ar23/minus2", "ar23/all"})
 
+
+    def test_an_active_trigger_inside_build(self):
+        orig = M.toy_errors
+        M.toy_errors = lambda d, U, t, rd, *a: 3.0 * orig(d, U, t, rd, *a)  # spread 9x: R1 and R2 active
+        try:
+            rec = self.build()
+        finally:
+            M.toy_errors = orig
+        fl = rec["fluctuation"]
+        measured = [r for r, v in fl["f_hat"].items() if v is not None]
+        self.assertTrue(measured)
+        for r in measured:
+            self.assertTrue(fl["trigger"][r]["active"])
+            self.assertEqual(fl["trigger"][r]["phi"], fl["f_hat"][r])
+            self.assertGreater(fl["trigger"][r]["phi"], 1.0)
+        C_e = spd(13)  # the fixture's C_e
+        V_F, L = np.asarray(fl["V_F"]), np.asarray(fl["L"])
+        np.testing.assert_allclose(V_F, L @ C_e @ L.T, rtol=1e-10, atol=0)
+        self.assertGreater(np.trace(V_F), np.trace(C_e))
 
     def test_a_rank_deficient_block_drops_modes_not_the_build(self):
         rec = self.build()  # the fixture's D has 6 universes + 5 replicas: fewer than 16 positive modes
@@ -334,12 +410,200 @@ class EndToEnd(unittest.TestCase):
             rows = (Path(d) / "C_b_abs.csv").read_text().splitlines()
             self.assertEqual(len(rows), 17)
             self.assertIn("B5D blocks:", (Path(d) / "blocks5d.txt").read_text())
+            j = json.loads((Path(d) / "blocks5d.json").read_text())
+            self.assertEqual(j["matrices_sha256"], {n: M.sha256_path(Path(d) / n) for n in names if n.endswith(".csv")})
+        bad = json.loads(json.dumps(rec))
+        bad["fluctuation"]["f_hat"]["R1"] = float("inf")
+        with tempfile.TemporaryDirectory() as d, self.assertRaises(ValueError):
+            M.write_record(Path(d), bad)
+        z = json.loads(json.dumps(rec))
+        for v in z["bias_block"]["printed_against_C_b"].values():
+            v["quad"] = None  # a rank-0 C_b: null, never Infinity
+        with tempfile.TemporaryDirectory() as d:
+            M.write_record(Path(d), z)
+            self.assertIn("n/a (C_b rank 0)", (Path(d) / "blocks5d.txt").read_text())
             rec2 = dict(rec)
             rec2["fluctuation"] = dict(rec["fluctuation"], V_F=None)
         with tempfile.TemporaryDirectory() as d:
             M.write_record(Path(d), rec2)
             self.assertNotIn("V_F.csv", [p.name for p in Path(d).iterdir()])
 
+
+    def test_the_mean_error_is_in_tune_v1_units_through_r(self):
+        base = self.build()["bias_block"]["ll5d_toy_mean_error_tune_v1_units"]["g18/minus2"]["beta"]
+        b, sig, R, sr, g = self.B.prepare(None, None, None)
+        R = dict(R, F1_genie_v3_g18=np.full(N, 2.0))
+        self.B.prepare = lambda *a: (b, sig, R, sr, g)
+        rec = self.build()["bias_block"]["ll5d_toy_mean_error_tune_v1_units"]
+        np.testing.assert_allclose(rec["g18/minus2"]["beta"], 2 * np.asarray(base), rtol=1e-12)
+        orig = M.cells
+        M.cells = lambda d, U, name, key="xsec_flat": orig(d, U, name, key) * (2.0 if key == "xtrue_flat" and "_central_" in name else 1.0)
+        try:
+            half = self.build()["bias_block"]["ll5d_toy_mean_error_tune_v1_units"]["ar23/all"]["beta"]
+        finally:
+            M.cells = orig
+        np.testing.assert_allclose(half, np.asarray(rec["ar23/all"]["beta"]) / 2, rtol=1e-12)
+
+    def test_a_truth_with_a_zero_cell_stops(self):
+        orig = M.cells
+        M.cells = lambda d, U, name, key="xsec_flat": orig(d, U, name, key) * (0.0 if key == "xtrue_flat" and "_central_" in name else 1.0)
+        try:
+            with self.assertRaisesRegex(M.Stop, "C-FIN.*cell integrals are not all positive"):
+                self.build()
+        finally:
+            M.cells = orig
+
+    def test_an_indefinite_d_stops(self):
+        orig = M.drawn_block
+        M.drawn_block = lambda *a: np.diag([2.0] * (N - 1) + [-1.0])
+        try:
+            with self.assertRaisesRegex(M.Stop, "C-PSD.*indefinite"):
+                self.build()
+        finally:
+            M.drawn_block = orig
+
+    def test_a_nan_bias_block_stops(self):
+        orig = M.bias_block
+        M.bias_block = lambda beta, Sigma: (np.full((N, N), np.nan), np.eye(N))
+        try:
+            with self.assertRaisesRegex(M.Stop, "C-PSD"):
+                self.build()
+        finally:
+            M.bias_block = orig
+
+    def test_a_nonfinite_secondary_factor_stops(self):
+        orig_te, orig_ms = M.toy_errors, M.mode_spreads
+        secondary = set()
+
+        def te(d, U, t, rd, *a):
+            E = orig_te(d, U, t, rd, *a)
+            if rd == M.SECONDARY:
+                secondary.add(id(E))
+            return E
+        M.toy_errors = te
+        M.mode_spreads = lambda E, w, V: np.full(len(w), np.nan) if id(E) in secondary else orig_ms(E, w, V)
+        try:
+            with self.assertRaisesRegex(M.Stop, "C-FIN.*/all R1: the band factor"):
+                self.build()
+        finally:
+            M.toy_errors, M.mode_spreads = orig_te, orig_ms
+
+    def test_the_remaining_stops(self):
+        for name, fake, pat in (
+                ("bias_block", lambda beta, Sigma: (-np.eye(N), np.eye(N)), "C-PSD.*C_b is not positive semidefinite"),
+                ("fhat", lambda ens, bands: {0: float("inf"), 1: 1.0, 2: 1.0}, "C-FIN.*band 1: f-hat"),
+                ("against", lambda beta, C: {"quad": float("nan"), "fraction_outside_span": 0.0, "rank": 1}, "C-FIN.*quad is not finite")):
+            orig = getattr(M, name)
+            setattr(M, name, fake)
+            try:
+                with self.assertRaisesRegex(M.Stop, pat):
+                    self.build()
+            finally:
+                setattr(M, name, orig)
+
+    def test_main_writes_the_record_and_says_so(self):
+        import tempfile, io, contextlib
+        rec = self.build()
+        mods = {"s1_assemble": types.SimpleNamespace(), "ll5d": types.SimpleNamespace(),
+                "ll5d_b": types.SimpleNamespace(Refusal=RuntimeError), "bsel_select": types.SimpleNamespace(Stop=RuntimeError)}
+        saved = {k: sys.modules.get(k) for k in mods}
+        sys.modules.update(mods)
+        orig = M.build
+        try:
+            for unresolved, verdict in ((False, "COMPLETE"), (True, "UNRESOLVED: no V_F")):
+                r = json.loads(json.dumps(rec))
+                r["fluctuation"]["unresolved_stop"] = unresolved
+                M.build = lambda *a, r=r: r
+                with tempfile.TemporaryDirectory() as d, contextlib.redirect_stdout(io.StringIO()) as out:
+                    self.assertEqual(M.main(["--repo", d, "--ll5d", d, "--out", str(Path(d) / "o")]), 0)
+                    self.assertEqual(json.loads(out.getvalue())["verdict"], verdict)
+                    self.assertTrue((Path(d) / "o" / "blocks5d.json").exists())
+        finally:
+            M.build = orig
+            for k, v in saved.items():
+                if v is None:
+                    sys.modules.pop(k, None)
+                else:
+                    sys.modules[k] = v
+
+    def test_a_nonfinite_v_f_stops(self):
+        orig = M.fluctuation_block
+        M.fluctuation_block = lambda C_e, trig: (np.full((N, N), np.nan), np.eye(N))
+        try:
+            with self.assertRaisesRegex(M.Stop, "C-FIN.*V_F"):
+                self.build()
+        finally:
+            M.fluctuation_block = orig
+
+    def test_all_bands_dropped_gives_no_v_f(self):
+        orig = M.bands_kept
+        M.bands_kept = lambda w: ([], [(a, b, []) for a, b in M.BANDS])
+        try:
+            rec = self.build()
+        finally:
+            M.bands_kept = orig
+        fl = rec["fluctuation"]
+        self.assertTrue(fl["unresolved_stop"])
+        self.assertIsNone(fl["V_F"])
+        self.assertEqual(set(fl["f_hat"].values()), {None})
+
+    def test_c_leak(self):
+        rec = self.build()
+        M.check_leak(rec)  # C_b_abs (absolute) is exempt
+        self.assertLess(abs(np.asarray(rec["bias_block"]["C_b_abs"])).max(), 1e-60)
+        bad = json.loads(json.dumps(rec))
+        bad["bias_block"]["printed_against_C_b"]["W1"]["x_T"] = [2e-39] * N
+        with self.assertRaisesRegex(M.Stop, "C-LEAK"):
+            M.check_leak(bad)
+        bad = json.loads(json.dumps(rec))
+        bad["fluctuation"]["L"] = [[3e-39] * N] * N  # only V_F and C_b_abs are exempt
+        with self.assertRaisesRegex(M.Stop, "C-LEAK"):
+            M.check_leak(bad)
+        ok = json.loads(json.dumps(rec))
+        ok["fluctuation"]["V_F"] = [[3e-79] * N] * N
+        M.check_leak(ok)
+
+    def test_main_maps_every_refusal_to_stop_5(self):
+        import tempfile, io, contextlib
+
+        class BStop(RuntimeError):
+            pass
+
+        class Refusal(RuntimeError):
+            pass
+        mods = {"s1_assemble": types.SimpleNamespace(), "ll5d": types.SimpleNamespace(),
+                "ll5d_b": types.SimpleNamespace(Refusal=Refusal), "bsel_select": types.SimpleNamespace(Stop=BStop)}
+        saved = {k: sys.modules.get(k) for k in mods}
+        sys.modules.update(mods)
+        orig = M.build
+        try:
+            for exc in (M.Stop("C-X", "y"), BStop("b"), Refusal("r"), OSError("o"), SystemExit(3)):
+                def raiser(*a, exc=exc):
+                    raise exc
+                M.build = raiser
+                with tempfile.TemporaryDirectory() as d, contextlib.redirect_stderr(io.StringIO()) as err:
+                    self.assertEqual(M.main(["--repo", d, "--ll5d", d, "--out", str(Path(d) / "o")]), 5)
+                    self.assertFalse((Path(d) / "o").exists())
+                    self.assertIn("STOP", err.getvalue())
+
+            def boom(*a):
+                raise TypeError("a bug is not a STOP")
+            M.build = boom
+            with tempfile.TemporaryDirectory() as d, self.assertRaises(TypeError):
+                M.main(["--repo", d, "--ll5d", d, "--out", str(Path(d) / "o")])
+            rec = orig(self.repo, self.ll5d, self.sa, self.ll5d_mod, self.ll5d_b, self.B)
+            rec["bias_block"]["members"]["nominal"]["leak"] = 1e-39
+            M.build = lambda *a: rec
+            with tempfile.TemporaryDirectory() as d, contextlib.redirect_stderr(io.StringIO()):
+                self.assertEqual(M.main(["--repo", d, "--ll5d", d, "--out", str(Path(d) / "o")]), 5)
+                self.assertFalse((Path(d) / "o").exists())
+        finally:
+            M.build = orig
+            for k, v in saved.items():
+                if v is None:
+                    sys.modules.pop(k, None)
+                else:
+                    sys.modules[k] = v
 
     def test_toy_errors_refuses_an_incomplete_seed_set(self):
         (self.ll5d / "ll5d_g18_toy_all_101.npz").unlink()

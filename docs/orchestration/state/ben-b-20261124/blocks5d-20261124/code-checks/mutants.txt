@@ -1,0 +1,36 @@
+no debias: KILLED
+abs not positive part: KILLED
+family minus nominal: KILLED
+no (N-1)/N: KILLED
+trigger >=: KILLED
+trigger 2 SE: KILLED
+phi below 1 allowed: KILLED
+phi not sqrt: KILLED
+band edges: KILLED
+min modes 2: KILLED
+not centred: KILLED
+bootstrap no resample: KILLED
+n_eff unchecked: KILLED
+flux unweighted: KILLED
+stat block dropped: KILLED
+error not minus truth: KILLED
+keep rule: KILLED
+Sigma not in Tune v1 units: KILLED
+tie rule off: KILLED
+fhat over all ensembles: KILLED
+L on unkept modes: KILLED
+indefinite D passes: KILLED
+NaN C_b passes: KILLED
+per_ens unchecked: KILLED
+X_T unchecked: KILLED
+mean err not through R: KILLED
+mean err not relative: KILLED
+C-LEAK off: KILLED
+L exempt: KILLED
+main skips C-LEAK: KILLED
+no digests: KILLED
+NaN json allowed: KILLED
+B/LL5D refusals uncaught: KILLED
+OSError/SystemExit uncaught: KILLED
+zero rank inf: KILLED
+V_F unchecked: KILLED
