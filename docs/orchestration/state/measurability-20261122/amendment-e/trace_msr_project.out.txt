@@ -1,0 +1,24 @@
+REFUSED: did.py is not at its pin
+usage: msr_project.py [-h] {run} ...
+msr_project.py: error: the following arguments are required: cmd
+----------------------------------------------------------------------
+Ran 59 tests in 140.975s
+
+OK
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpg6kt8qa6/out/readout.json"}
+{"stops": ["C-RHO"]}
+{"stops": ["C-OPS"]}
+{"stops": ["C-RID"]}
+{"stops": ["C-T3"]}
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp3cjberkl/out/readout.json"}
+{"stops": ["C-2D"]}
+{"stops": ["C-D"]}
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp30mvtq88/out/readout.json"}
+{"stops": ["C-DID"]}
+{"stops": ["C-L"]}
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp68lw1jgr/out/readout.json"}
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp1vbbdp2c/o1/readout.json"}
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpo4rcya5k/o2/readout.json"}
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpk0di7nac/o1/readout.json"}
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpk0di7nac/o2/readout.json"}
+executable lines 750; executed 750; not executed 0
