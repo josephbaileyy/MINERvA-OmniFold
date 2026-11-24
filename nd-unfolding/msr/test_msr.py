@@ -699,8 +699,9 @@ class EndToEnd(unittest.TestCase):
 
 # ---------------------------------------------------------------------------------------------- Amendment E
 def ill_conditioned(seed: int, n: int = 40, m: int = 30):
-    """A 2D-like problem with truth populations over nine decades, a few low-efficiency truth cells and one unseen cell:
-    C = J F+ J^T then spans ~1e10 in scale, which is the defect C-ROUTE found (diagnostic 2, branch c-formation)."""
+    """A 2D-like problem with truth populations over 5.8 decades (so K = J J^T stays inside C-RANK's 1e-12), three
+    low-efficiency truth cells and one unseen cell: C = J F+ J^T then spans many decades in scale, which is the defect
+    C-ROUTE found (diagnostic 2, branch c-formation)."""
     rng = np.random.default_rng(seed)
     nr = n + 4
     R = np.zeros((nr, n))
@@ -710,10 +711,10 @@ def ill_conditioned(seed: int, n: int = 40, m: int = 30):
                 R[j + d, j] = f * rng.uniform(.8, 1.2)
     eff = np.ones(n)
     idx = rng.choice(n, 4, replace=False)
-    eff[idx[:3]] = (1e-2, 1e-3, 1e-4)
+    eff[idx[:3]] = (1e-3, 1e-4, 1e-5)
     eff[idx[3]] = 0.0
     R = R * eff[None, :]
-    t0 = 10 ** rng.uniform(0, 9, n)
+    t0 = 10 ** rng.uniform(0, 5.8, n)
     b = rng.uniform(1, 10, nr)
     sel = np.sort(np.r_[idx, rng.choice(np.setdiff1d(np.arange(n), idx), m - len(idx), replace=False)])
     J = np.zeros((m, n))
@@ -722,7 +723,7 @@ def ill_conditioned(seed: int, n: int = 40, m: int = 30):
     return sparse.csr_matrix(R), t0, b, J
 
 
-ILL_SEEDS = (1, 4)    # seeds where the pre-Amendment-E formation misses the reference by > 1e-8 in BOTH routes
+ILL_SEEDS = (0, 1, 3)   # seeds where the pre-Amendment-E formation misses the reference by > 1e-8 in BOTH routes
 
 
 class AmendmentE(unittest.TestCase):
@@ -774,14 +775,14 @@ class AmendmentE(unittest.TestCase):
         np.testing.assert_allclose(A @ V[:, 0], 0.0, atol=1e-12)
         np.testing.assert_allclose(V @ np.diag(lam) @ V.T, A.T @ A, atol=1e-12)
 
-    def test_more_q_directions_than_range_directions_get_zero_widths(self):
-        F = np.diag([4.0, 1.0, 0.0])
-        J = np.eye(3)
-        with mock.patch.object(P, "NULL_TOL", 2.0):   # nothing is sent to U-infinity, so C_Q is singular on Q
-            d = P.decompose(F, J)
-        self.assertEqual(d["s"].size, 3)
-        self.assertEqual(d["s"][0], 0.0)
-        np.testing.assert_allclose(sorted(d["s"][1:]), [0.5, 1.0], rtol=1e-12)
+    def test_a_singular_c_q_on_q_is_refused(self):
+        for F in (np.diag([4.0, 1.0, 0.0]), np.diag([4.0, 0.0, 0.0])):   # one and two zero widths (agy's cases)
+            with mock.patch.object(P, "NULL_TOL", 2.0):   # nothing is sent to U-infinity, so C_Q is singular on Q
+                with self.assertRaises(ValueError):
+                    P.decompose(F, np.eye(3), cut=0.6)
+        d = P.decompose(np.diag([4.0, 1.0, 0.0]), np.eye(3))   # the declared rule sends that direction to U-infinity
+        self.assertEqual((d["dim_inf"], d["s"].size), (1, 2))
+        np.testing.assert_allclose(d["s"], [0.5, 1.0], rtol=1e-12)
 
     def test_both_routes_meet_the_50_digit_reference_on_the_ill_conditioned_fixture(self):
         for R, t0, b, J, ref in self.cases:
@@ -803,6 +804,28 @@ class AmendmentE(unittest.TestCase):
             got = np.sort(d["s"][d["well"]])
             want = np.sort([float(ref["s"][k]) for k in ref["well"]])
             np.testing.assert_allclose(got, want, rtol=1e-8)
+
+    def test_the_fixture_passes_c_rank_as_production_requires(self):
+        for R, t0, b, J, _ in self.cases:
+            self.assertTrue(P.decompose(did.fisher(R, t0, b), J, "numpy", A=P.fisher_root(R, t0, b))["rank_ok"])
+
+    def test_widths_stay_ascending_and_aligned_when_refinement_reorders(self):
+        R, t0, b, J, _ = self.cases[0]
+        real, calls = P.svd, []
+
+        def bump(a, driver):   # the third SVD (the well-block refinement): push its largest width past all others
+            u, s, vt = real(a, driver)
+            calls.append(1)
+            if len(calls) == 3:
+                s = s.copy()
+                s[0] = 1e12
+            return u, s, vt
+        with mock.patch.object(P, "svd", bump):
+            d = P.decompose(did.fisher(R, t0, b), J, "numpy", A=P.fisher_root(R, t0, b))
+        self.assertEqual(len(calls), 3)   # root, B_Q^T G, refinement
+        self.assertTrue(np.all(np.diff(d["s"]) >= 0))
+        self.assertEqual(d["s"][-1], 1e12)
+        np.testing.assert_array_equal(d["well"], d["s"] <= P.CUT)
 
     def test_the_routes_agree_to_the_c_route_bar(self):
         for R, t0, b, J, _ in self.cases:

@@ -55,16 +55,16 @@ def main() -> int:
         R, t0, b, J = test_msr.ill_conditioned(seed)
         ref = D.mp_decompose(D.mp_fisher(R, t0, b), J)
         d = real(did.fisher(R, t0, b), J, "numpy")
-        worst_e = worst_i = 0.0
+        both, pairs = False, []
         for k in range(4):
             beta = np.random.default_rng(100 + k).normal(size=J.shape[0])
             z_ref = D.mp_z(ref, beta)
             e, i = D.rel(old.z_well(d, beta), z_ref), D.rel(old.route_independent(d, beta)[1], z_ref)
-            worst_e = max(worst_e, e) if e == e else float("inf")
-            worst_i = max(worst_i, i) if i == i else float("inf")
-        both = worst_e > 1e-8 and worst_i > 1e-8
-        print(f"seed {seed}: old eigen route worst rel {worst_e:.2e}, old independent route worst rel {worst_i:.2e}: "
-              f"{'both miss (defect reproduced)' if both else 'NOT both'}")
+            miss = not (e <= 1e-8) and not (i <= 1e-8)   # NaN counts as a miss
+            both = both or miss
+            pairs.append(f"{e:.1e}/{i:.1e}")
+        print(f"seed {seed}: old eigen/independent rel per vector {', '.join(pairs)}: "
+              f"{'both miss on one vector (defect reproduced)' if both else 'NOT both on one vector'}")
         bad += not both
     print(f"old formation at {OLD_COMMIT} (msr_project {OLD_SHA[:8]}): {len(TESTS) - min(bad, len(TESTS))}/{len(TESTS)} "
           f"fixture tests fail; not reproduced: {bad}")

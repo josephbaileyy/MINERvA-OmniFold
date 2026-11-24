@@ -132,7 +132,10 @@ computed before this declaration, its reads and the director's GO.
   - **E2, the eigen route.** C is never formed. G = J V_r Λ_r^{-1/2}, so C = G Gᵀ. C_Q's eigenpairs (s², c) are the
     singular pairs of B_Qᵀ G, and w = B_Q c. The well-constrained block (s ≤ 0.10) is then re-diagonalized from Gᵀ W,
     whose singular values are ≤ 0.10, so no small width is a difference of large numbers. In exact arithmetic this is
-    §3.3's C_Q eigen-decomposition.
+    §3.3's C_Q eigen-decomposition. C_Q cannot be singular on Q, because a zero-width direction would lie in U∞. So
+    dim Q > the number of range directions (G's columns) is refused as a numerical defect (a crash, so the run stops),
+    not padded with zero widths. A zero width within these dimensions needs J to be row-rank deficient, which C-RANK
+    stops. After refinement the widths are re-sorted ascending, because rounding may reorder near-equal widths.
   - **E3, the independent route (C-ROUTE).** χ²_well = aᵀ(Wᵀ C W)⁻¹a by a triangular solve with the R factor of a QR of
     Gᵀ W, since Wᵀ C W = (Gᵀ W)ᵀ(Gᵀ W). W still comes from a pivoted QR of the well-constrained block. It remains a solve,
     not eigenvalues (QR against SVD).

@@ -50,6 +50,7 @@ class Verdict(unittest.TestCase):
         self.assertEqual(C.confirm(rows(ind=[float("inf")] + [0.0] * 23))[0], "FAIL")
         self.assertEqual(C.confirm(rows(part=[False] + [True] * 23)), ("FAIL", 23, 24))
         self.assertEqual(C.confirm(rows(part=[None] + [True] * 23)), ("FAIL", 23, 24))
+        self.assertEqual(C.confirm(rows(eig=[float("-inf")] + [0.0] * 23)), ("FAIL", 23, 24))
 
     def test_missing_or_extra_rows_fail(self):
         self.assertEqual(C.confirm(rows()[1:]), ("FAIL", 0, 24))
@@ -64,6 +65,7 @@ class Kappa(unittest.TestCase):
 
     def test_rank_deficient_is_infinite(self):
         self.assertEqual(C.kappa_g({"G": np.array([[1.0], [1.0]])}), float("inf"))
+        self.assertEqual(C.kappa_g({"G": np.ones((2, 2))}), float("inf"))   # numerically singular (codex's case)
         self.assertEqual(C.kappa_q({"s": np.array([0.0, 1.0])}), float("inf"))
         self.assertEqual(C.kappa_q({"s": np.zeros(0)}), float("inf"))
 

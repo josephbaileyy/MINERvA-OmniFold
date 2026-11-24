@@ -12,7 +12,7 @@ differences from diagnostic 2, all forced by Amendment E:
     fields and ref_partition_equal are filled.
 It writes no a, b, value, label or band. The verdict, fixed before the run (`confirm()`), is PASS only if every one of the
 24 rows has ref_partition_equal true and both routes within 1e-8 of the reference; stdout carries only the verdict and
-the counts.
+the counts, and the exit status is 0 for PASS, 5 for FAIL (the record is written either way).
 
     msr_route_confirm.py --products DIR --out FILE.json
 """
@@ -45,15 +45,16 @@ def confirm(rows: list[dict]) -> tuple[str, int, int]:
         return "FAIL", 0, len(want)
 
     def ok(r):
-        return (r["ref_partition_equal"] is True and r["rel_diff_eigen_vs_ref"] <= TOL
-                and r["rel_diff_indep_vs_ref"] <= TOL)
+        return (r["ref_partition_equal"] is True and 0.0 <= r["rel_diff_eigen_vs_ref"] <= TOL
+                and 0.0 <= r["rel_diff_indep_vs_ref"] <= TOL)
     n = sum(1 for r in rows if ok(r))
     return ("PASS" if n == len(want) else "FAIL"), n, len(want)
 
 
 def kappa_g(dec: dict) -> float:
     sg = np.linalg.svd(dec["G"], compute_uv=False)
-    return float((sg[0] / sg[-1]) ** 2) if sg.size and sg[-1] > 0 and sg.size == dec["G"].shape[0] else float("inf")
+    full = sg.size == dec["G"].shape[0] and sg.size and sg[-1] > sg[0] * max(dec["G"].shape) * np.finfo(float).eps
+    return float((sg[0] / sg[-1]) ** 2) if full else float("inf")
 
 
 def kappa_q(dec: dict) -> float:
@@ -107,7 +108,7 @@ def run(prod: Path, out: Path) -> int:
     rec.dump(out)
     verdict, n, total = confirm(rec.rows)
     print(json.dumps({"verdict": verdict, "rows_passing": n, "rows": total}))
-    return 0
+    return 0 if verdict == "PASS" else 5   # the record is written either way; a FAIL cannot read as success
 
 
 def main(argv=None) -> int:

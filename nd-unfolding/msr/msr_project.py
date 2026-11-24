@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """MSR, the local step: the declared controls, then the declared readings, on connect B's committed products.
 
-Declaration: ``docs/orchestration/state/measurability-20261122/DECLARATION.md`` (rev 4 with Amendment B). Nothing here
+Declaration: ``docs/orchestration/state/measurability-20261122/DECLARATION.md`` (rev 4, Amendments B, C, E). Nothing here
 is chosen after a statistic is computed: the cut, floors, bands, intervals, sets, truths and k are the declaration's,
 written below as constants. The STOP controls run first; if any fails, the run writes the controls record and exits
 rc 3 with no statistic of any bias vector computed.
@@ -156,15 +156,18 @@ def decompose(F: np.ndarray, J: np.ndarray, driver: str = "numpy", cut: float = 
     inf = rho > NULL_TOL
     BQ = np.linalg.qr(U[:, ~inf])[0] if (~inf).any() else np.zeros((n, 0))
     if BQ.shape[1]:
+        if BQ.shape[1] > G.shape[1]:
+            # a direction of Q with zero width would have Jᵀu in F_c's null space, i.e. lie in U-infinity: C_Q cannot
+            # be singular on Q, so this is a numerical defect, refused rather than padded (it would break both routes)
+            raise ValueError(f"C_Q is singular on Q: dim Q {BQ.shape[1]} > rank range {G.shape[1]}")
         c, s, _ = svd(BQ.T @ G, driver)
-        if c.shape[1] < BQ.shape[1]:   # more Q directions than range directions: C_Q's remaining eigenvalues are 0
-            c = np.hstack([c, sla.null_space(c.T)])
-            s = np.concatenate([s, np.zeros(c.shape[1] - s.size)])
         s, w = s[::-1].copy(), (BQ @ c)[:, ::-1].copy()      # ascending, as eigh returned them
         blk = s <= cut
         if blk.any():   # the well-constrained block from G^T W alone (Rayleigh-Ritz on its span)
             _, sw, vt = svd(G.T @ w[:, blk], driver)
             s[blk], w[:, blk] = sw[::-1], (w[:, blk] @ vt.T)[:, ::-1]
+            o = np.argsort(s, kind="stable")   # a refined width may pass an unrefined neighbour by rounding
+            s, w = s[o], w[:, o]
     else:
         s, w = np.zeros(0), np.zeros((n, 0))
     well = s <= cut

@@ -64,8 +64,8 @@ MUTANTS = [
     ("C-D primary only restored", "    with_d = list(F0B_PRIMARY) + [t for t in F0B_SECONDARY_WITH_D]", "    with_d = list(F0B_PRIMARY)"),
     # Amendment E
     ("E: C's float64 formation restored (eigen route)",
-     "        c, s, _ = svd(BQ.T @ G, driver)\n        if c.shape[1] < BQ.shape[1]:",
-     "        s2, c = eigh(BQ.T @ (G @ G.T) @ BQ, driver)\n        s = np.sqrt(np.clip(s2, 0.0, None))[::-1]\n        c = c[:, ::-1]\n        if c.shape[1] < BQ.shape[1]:"),
+     "        c, s, _ = svd(BQ.T @ G, driver)\n        s, w = s[::-1].copy(), (BQ @ c)[:, ::-1].copy()",
+     "        s2, c = eigh(BQ.T @ (G @ G.T) @ BQ, driver)\n        s, w = np.sqrt(np.clip(s2, 0.0, None)), BQ @ c"),
     ("E: C's float64 formation restored (independent route)",
      "    rf = np.linalg.qr(dec[\"G\"].T @ Wb, mode=\"r\")\n    y = sla.solve_triangular(rf, a, trans=\"T\")\n    return sp, float(np.linalg.norm(y))",
      "    z2 = float(a @ np.linalg.solve(Wb.T @ (dec[\"G\"] @ dec[\"G\"].T) @ Wb, a))\n    return sp, float(np.sqrt(max(z2, 0.0)))"),
@@ -73,7 +73,8 @@ MUTANTS = [
     ("E: production eigenbasis from eigh(F)", "    if A is None:\n        return eigh(F, driver)", "    if True:\n        return eigh(F, driver)"),
     ("E: root keeps mu <= 0 rows", "    keep = mu > 0\n    return np.asarray((sparse.diags", "    keep = mu != 0\n    return np.asarray((sparse.diags"),
     ("E: root null completion off", "    if V.shape[1] < n:   # fewer kept", "    if False:   # fewer kept"),
-    ("E: zero-width padding off", "        if c.shape[1] < BQ.shape[1]:   # more Q", "        if False:   # more Q"),
+    ("E: re-sort after refinement off", "            s, w = s[o], w[:, o]\n", "            pass\n"),
+    ("E: singular-Q refusal off", "        if BQ.shape[1] > G.shape[1]:\n", "        if False:\n"),
     ("E: G without the 1/sqrt(lambda) scale", "    G = (J @ V[:, rng]) / np.sqrt(lam[rng])[None, :]", "    G = (J @ V[:, rng]) / lam[rng][None, :]"),
     ("E: a production call drops the root", "                d = decompose(p[\"F\"], p[\"J\"], drv, A=p[\"A\"])", "                d = decompose(p[\"F\"], p[\"J\"], drv)"),
 ]
