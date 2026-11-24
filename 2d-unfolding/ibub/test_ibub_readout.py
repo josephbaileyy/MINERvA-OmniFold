@@ -1185,6 +1185,19 @@ class JobRules(unittest.TestCase):
         self.assertEqual(ir.ALLOCATION_LINE, "[ibub] allocation: ibub_run regular 11:29:00 1 node exclusive;")
         self.assertIsNone(ir.allocation_ok(SCONTROL))
 
+    def test_the_readout_connect_uses_the_readouts_terminal_states_and_flags(self):
+        import re
+        t = (HERE.parents[1] / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect"
+             / "ibub_readout_connect.template.sh").read_text()
+        m = re.search(r'case "\$state" in ([A-Z_|]+)\) ;;', t)
+        self.assertIsNotNone(m)
+        self.assertEqual(set(m.group(1).split("|")), ir.TERMINAL)       # the connect STOPs on exactly what the readout does
+        for flag in ("--truth", "--units", "--out", "--job", "--job-m", "--records"):
+            self.assertIn(f"{flag} ", t[t.index("python -B ibub_readout.py"):])
+        self.assertIn('--records "$R/records"', t)
+        self.assertIn("R=/dev/shm/ibub-connect", t)
+        self.assertEqual(iu.load_config()["readout"]["write_root"], "/dev/shm/ibub-connect")   # the readout's declared root
+
     def test_scontrol_key_reads_as_the_jobs_key_function(self):
         import subprocess
         line = next(ln for ln in self.SBATCH.read_text().splitlines() if ln.startswith("key() {"))
