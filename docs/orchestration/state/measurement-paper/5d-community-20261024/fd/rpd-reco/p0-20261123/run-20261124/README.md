@@ -79,19 +79,29 @@ The largest peak is 0.143 GB, against the 8e9 B cap; the macOS estimate was 0.18
   (checked locally);
 - `run_class` is `diagnostic`.
 
-**The two pins records are held out of git.** Each names its staged dumps and `nn_*.npz` products by bare filename
-as well as by absolute path. The receipt-artifact hook (`verify_receipt_artifacts.py`) reads the bare names as missing
-deliverables and refuses the commit: 24 citations, 12 per record. The repo practice is not to widen the shared checker
-from a lane, but to keep such records out of git, listed by sha256 (as flux1, flux2 and flux3 did with
-`prestage.json`). Both were fetched, and each matched its printed sha256:
+**The two pins records are committed gzipped,** as `records/dry/pins.json.gz` and `records/run/pins.json.gz`.
+- Each plain record names its staged dumps and `nn_*.npz` products by bare filename as well as by absolute path.
+- The receipt-artifact hook (`verify_receipt_artifacts.py`) reads those bare names as missing deliverables and refused
+  the plain records: 24 citations, 12 per record.
+- The director ruled (2026-11-24): do not widen the shared checker, but do not leave the records only on pscratch,
+  which purges. So each is committed byte-exact as gzip (level 9, `mtime` 0, no stored name), which the hook does not
+  parse as a run record.
 
-| record | bytes | sha256 |
+| record | `.gz` sha256 (bytes) | decompressed sha256 (bytes) |
 |---|---|---|
-| `dry/pins.json` | 12,069 | `ce181449d5ba6dbafc4a5831b7918c4d3cc538114062ce23c5e464291bcc3f76` |
-| `run/pins.json` | 12,053 | `52fc41f41cf17954ceddab8c581aa327a62d160c059cbee8bf2941c1880e5c8a` |
+| `dry/pins.json` | `77ddff10062e17a97f311827266628643ba75a0fa8c993c250ca24cb9c2caa21` (2,926) | `ce181449d5ba6dbafc4a5831b7918c4d3cc538114062ce23c5e464291bcc3f76` (12,069) |
+| `run/pins.json` | `36b6738110cfc651ecbfb8b4f7f95fd0dba11891a395558973e1e9141fd0871e` (2,921) | `52fc41f41cf17954ceddab8c581aa327a62d160c059cbee8bf2941c1880e5c8a` (12,053) |
 
-These are exactly the `predecessor_sha256` values that the committed `dry/p0.json` and `run/p0.json` carry, so the
-chain stays checkable from the committed records. The originals stay in the run root on pscratch.
+The decompressed sha256s are the ones the fetch printed for these files, and exactly the `predecessor_sha256` values the
+committed `dry/p0.json` and `run/p0.json` carry. [`tests/test_pins_gz.py`](tests/test_pins_gz.py) checks, for each:
+- the `.gz` sha256;
+- the decompressed bytes and sha256;
+- equality with the p0 record's `predecessor_sha256`;
+- the pins record's step, status, `dry_run`, code and config against the p0 record;
+- that recompressing reproduces the `.gz`;
+- that one changed byte breaks the match.
+
+It passes (4 passed; `tests/test_pins_gz.out.txt`). The originals also stay in the run root on pscratch.
 
 ## Ruling 5: the product
 
@@ -128,7 +138,7 @@ Script rc 0, launcher rc 0. The fetch reported:
 - 18 files sent, 384,121 bytes, `TAR END tar rc=0 base64 rc=0`.
 
 The tar's 18 entries are all plain relative paths. Untarred locally, each matched its printed sha256 under
-`shasum -c`. `records/` holds 16 of them; the two pins records are held out (above).
+`shasum -c`. `records/` holds 16 of them plainly and the two pins records gzipped (above).
 
 `fetch1/session.notar.out` and `fetch1/launcher.notar.out.txt` are the session and launcher outputs with the base64 tar
 block replaced by one line. The full files had these sha256:
