@@ -1,0 +1,39 @@
+# Rerun on the corrected pT edges, plus the efficiency-convention test (declared before computing)
+
+Joseph's go: "yes can we do the quick rerun" (2026-11-24). The director prices and receives the package before it runs.
+
+Question.
+- With the paper's pT edges E = {0, .075, .15, .25, .325, .40, .475, .55, .70, .85, 1.00, 1.25, 1.50, 2.50, 4.50}, what
+  is our 10-iteration binned IBU's chi2/205 against the published result, and do the fold residuals of the published
+  result through our response change?
+- Does an efficiency that counts selected events reconstructed outside the grid (eps_any) reproduce the published
+  result's 40-60 behaviour better than our in-grid efficiency (eps_in)?
+
+Build (cluster, one shared-QOS job, rebuild.py). This lane's merged event-loop output only. For each edge set
+X in {OLD (ours), E}, it builds M, T, B and N exactly as evloop/ana.py builds BASE, with gidx on X for both reco and
+truth. It also builds Mflow[t]: the sum of w_reco over selected signal rows (sim_pass, mu_p_total > 0, truth in X's grid
+cell t, good weights) whose reco falls outside the grid. Output: products/rebuild/rebuild.npz.
+
+Local scoring (rerun.py).
+- Published values: pt_pl_cross_section via compare_to_paper_fullcov.flatten_th2d. TotalCovariance; pinv over the 205
+  reported cells.
+- Conversion: F_X = F_OLD * area_OLD / area_X per cell, with F_OLD from priortest/vectors.npz. Control C-FAC:
+  F_OLD * area_OLD is constant over reported cells to 1e-9.
+- IBU: K=10 D'Agostini as in score_evloop.dag, prior T. D10_X = chi2(F_X u - pub)/205.
+- Fold residual: S_COL, S_ROW and per-column S_j, as score_evloop.stats, with tpub_X = pub/F_X on reported cells.
+- Efficiency arms on E: eps_in = M.sum(0)/T; eps_any = (M.sum(0) + Mflow)/T; t_any = u_in * eps_in/eps_any.
+  - D10_any = chi2(F_E t_any - pub)/205.
+  - The per-column fold residual of t_any through the in-grid R, S_j(any), is computed with the same weights as the
+    published residual S_j(pub).
+
+Controls (STOP if failing).
+- C-OLD: the OLD build equals evloop BASE M, T, B and N to 1e-9, and D10_OLD = 0.96136 within 1e-4.
+- C-FAC.
+
+Readings.
+- ROW-CLOSED if |S_ROW(pub, E)| <= 0.02, else ROW-OPEN.
+- Overflow, on column 15 (p|| 40-60):
+  - OVERFLOW-EXPLAINS if |S_15(pub,E) - S_15(any)| <= |S_15(pub,E)|/3 and |S_14(pub,E) - S_14(any)| <= 0.01;
+  - OVERFLOW-PARTIAL if not EXPLAINS and S_15(any) >= 0.3 S_15(pub,E) with the same sign;
+  - OVERFLOW-NO otherwise.
+- Descriptive: D10_OLD, D10_E and D10_any; S_COL, S_ROW and S_j for j = 12..15, OLD and E.

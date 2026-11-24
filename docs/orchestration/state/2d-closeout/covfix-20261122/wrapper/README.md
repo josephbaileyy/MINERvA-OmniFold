@@ -130,8 +130,13 @@ The real items (`covfix-`) use one canonical ledger, `~/director-tools/covfix`, 
 `keychain` override. At its first use the ledger writes `LEDGER.json`, recording the mirror's remote URL, branch and
 path. A config pointing elsewhere is refused, and a ledger that has records but no `LEDGER.json` is terminal. For the
 real items the mirror branch must be **`covfix-ledger`**, a dedicated branch that holds only the consumption record.
-A shallow mirror clone is refused, because its history cannot be scanned. It should be protected
-against force pushes and deletion; that repository setting is Joseph's call.
+A shallow mirror clone is refused, because its history cannot be scanned.
+
+**`covfix-ledger` is protected** by GitHub ruleset 27996874, "covfix-ledger append-only" (requested by Joseph, set 2026-11-24). It is
+active with no bypass actors, and its rules are `non_fast_forward` and `deletion`. Creation and fast-forward pushes
+are allowed, and those are the only pushes the wrapper makes: a plain `git push <remote> HEAD:refs/heads/<branch>`,
+never forced. The wrapper does not rely on the ruleset. A refused push is an uncertain spend that blocks the role, and
+a rewound or deleted branch is terminal, all before any launch (`LedgerProtectionTests`).
 
 ## Order of operations in `run --role R`
 
@@ -281,7 +286,9 @@ The tests:
   LANG and the test git settings), never the caller's whole environment;
 - run git with every inherited `GIT_*` variable removed, no global or system config, an empty template and the file
   transport only;
-- seal only synthetic truths, so no test is a launch.
+- seal only synthetic truths, so no test is a launch;
+- push only to local bare repositories, never to the real `covfix-ledger`. `LedgerProtectionTests` sets
+  `receive.denyNonFastForwards` and `receive.denyDeletes` on one to stand in for the ruleset.
 
 ## The synthetic seal and the director's rehearsal (§3.4)
 

@@ -1,0 +1,33 @@
+# Axis test: does a beam-axis shift common to data and MC explain our low-pT data deficit against Fig. 2? (declared before computing)
+
+Question. Against MINERvA's Fig. 2 (fig2, descriptive), our selected data and MC are both about 7 % low at reco pT
+0-0.07, with equal data/MC, and about 3 % low at 0.07-0.15. If the cause is a difference in the beam-axis convention, a
+rotation of our reconstructed muon direction should move our *data* onto *their data*. It should do so in every p|| slice
+and across the first several pT rows: it must predict where the missing counts reappear.
+
+Inputs.
+- Ours: evloop scanA[i, j] (ibuchi_products.npz). This is our selected data binned after adding (dx, dy) to thetaX and
+  thetaY, with dx, dy in -3 to +3 mrad in 0.25 mrad steps. scanA at (0, 0) equals BASE_N (checked).
+- Theirs: fig2 bottom block (one panel per reco p|| slice, x = pT), D_bot per cell, with quantum_count per point
+  (fig2/fig2_points.csv). Within a bottom panel all pT rows share one printed scale factor, so the factor cancels in
+  within-slice fractions.
+
+Statistic. For each p|| slice s = 0..15 and pT rows i = 0..4:
+- f_ours(s, i) = N(s, i) / sum over all rows of N(s, ·); f_theirs is the same with D_bot.
+- var = f^2 (1/N_cell + 1/N_slice) for each side, plus (quantum/sqrt(12) / D_slice)^2 for theirs.
+- X(dx, dy) = sum over s and i of (f_ours - f_theirs)^2 / var.
+- Best (dx*, dy*) = argmin X.
+- rho_i = pooled ratio over slices, sum_s N(s, i)/N_slice / sum_s D(s, i)/D_slice, normalized the same way, for
+  i = 0, 1, 2.
+
+Readings:
+- AXIS-EXPLAINS  at (dx*, dy*), not on the scan edge: |rho_0 - 1| <= 0.02 and |rho_1 - 1| <= 0.02, and
+  X(dx*, dy*) <= 0.5 X(0, 0).
+- AXIS-PARTIAL   not EXPLAINS, but the row-0 deficit |rho_0 - 1| at least halves from (0, 0) to (dx*, dy*).
+- AXIS-NO        otherwise.
+- EDGE           (dx*, dy*) on the scan edge: report it, and read nothing beyond PARTIAL.
+
+Limits stated now:
+- This rotates our data only, and compares it with their data. MC is not used.
+- A rotation is the only convention tested. Smearing or acceptance differences are not.
+- Precision is limited by the Fig. 2 extraction quanta.
