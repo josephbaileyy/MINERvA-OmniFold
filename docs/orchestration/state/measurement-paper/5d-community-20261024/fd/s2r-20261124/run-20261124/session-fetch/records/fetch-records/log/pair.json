@@ -1,0 +1,67 @@
+{
+ "job": "run",
+ "C-PAIR": {
+  "nominal": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "A7_gibuu": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "q3": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  }
+ },
+ "C-X": {
+  "s2r_B0_nominal_s991000": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "s2r_S2R_nominal_s991000": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "s2r_B0_A7_gibuu_s991000": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "s2r_S2R_A7_gibuu_s991000": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "s2r_B0_q3_s991000": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "s2r_S2R_q3_s991000": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  }
+ },
+ "C-ONE": {
+  "nominal": {
+   "pass": true,
+   "max_rel": 2.220446049250313e-16
+  },
+  "A7_gibuu": {
+   "pass": true,
+   "max_rel": 2.220446049250313e-16
+  },
+  "q3": {
+   "pass": true,
+   "max_rel": 2.220446049250313e-16
+  }
+ },
+ "pass": true
+}
