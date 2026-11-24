@@ -108,36 +108,128 @@ class Tilt(unittest.TestCase):
 
 
 class Noise(unittest.TestCase):
-    def test_zero_noise_is_zero_and_noise_is_positive(self):
-        tabs = {g: gaussian_table(0.1 * i, seed=1) for i, g in enumerate(("genie_cv", *cal.BUILD_TRUTHS))}
-        zero = cal.noise_diagnostic(tabs, {g: np.zeros(SHAPE) for g in tabs})
-        self.assertTrue(all(v == 0.0 for v in zero["self_noise"].values()))
-        some = cal.noise_diagnostic(tabs, {g: 0.05 * t for g, t in tabs.items()})
-        self.assertTrue(all(v > 0.0 for v in some["self_noise"].values()))
-        q = some["quadrature_vs_reference"]["gibuu"]
-        self.assertAlmostEqual(q, float(np.hypot(some["self_noise"]["gibuu"], some["self_noise"]["genie_cv"])))
+    def test_rho_variance_zero_without_noise_and_inf_when_invalid(self):
+        s = gaussian_table(0.2)
+        s[0, 0, 0] = 0.0
+        v = cal.rho_variance(s, np.zeros(SHAPE), np.random.default_rng(0))
+        self.assertTrue(np.isinf(v[0, 0, 0]))
+        self.assertLess(float(np.max(v[np.isfinite(v)])), 1e-25)
+
+    def test_rho_variance_matches_spread(self):
+        s = gaussian_table(0.2)
+        old = cal.NOISE_REPS
+        cal.NOISE_REPS = 400
+        try:
+            v1 = cal.rho_variance(s, 0.02 * s, np.random.default_rng(1))
+            v2 = cal.rho_variance(s, 0.04 * s, np.random.default_rng(1))
+        finally:
+            cal.NOISE_REPS = old
+        self.assertTrue(np.all(v1 > 0))
+        ratio = float(np.median(v2 / v1))
+        self.assertGreater(ratio, 3.0)
+        self.assertLess(ratio, 5.0)
+
+    def test_rho_variance_is_ddof1_over_the_replay(self):
+        s = gaussian_table(0.2)
+        sd = 0.05 * s
+        old = cal.NOISE_REPS
+        cal.NOISE_REPS = 5
+        try:
+            v = cal.rho_variance(s, sd, np.random.default_rng(9))
+            rng = np.random.default_rng(9)
+            reps = np.stack([cal.cell_corr(cal.resample(s, sd, rng))[0] for _ in range(5)])
+        finally:
+            cal.NOISE_REPS = old
+        np.testing.assert_allclose(v, np.var(reps, axis=0, ddof=1), rtol=1e-12)
+
+    def test_debiased_formula(self):
+        a, b = gaussian_table(0.3, seed=2), gaussian_table(0.1, seed=2)
+        w = b.sum(axis=(3, 4))
+        ra, _ = cal.cell_corr(a)
+        rb, _ = cal.cell_corr(b)
+        va = np.random.default_rng(5).uniform(0.0, 0.004, SHAPE[:3])
+        vb = np.full(SHAPE[:3], 0.002)
+        va[0, 0, 0] = np.inf
+        out = cal.debiased(a, b, va, vb, w)
+        d2 = np.maximum(0.0, (ra - rb) ** 2 - va - vb)
+        self.assertAlmostEqual(out["D_debiased"], float((w * np.sqrt(d2)).sum() / w.sum()), places=12)
+        self.assertAlmostEqual(out["D"], float((w * np.abs(ra - rb)).sum() / w.sum()), places=12)
+        self.assertEqual(out["cells_debiased_to_zero"], int(np.sum(d2 == 0.0)))
+        self.assertEqual(out["cells_with_infinite_noise"], 1)
+        m = np.isfinite(va)
+        self.assertAlmostEqual(out["noise_scale"], float((w[m] * np.sqrt(va + vb)[m]).sum() / w[m].sum()), places=12)
+        self.assertLess(out["D_debiased"], out["D"])
+
+    def test_debiased_equals_raw_without_noise(self):
+        a, b = gaussian_table(0.3, seed=2), gaussian_table(0.1, seed=2)
+        z = np.zeros(SHAPE[:3])
+        out = cal.debiased(a, b, z, z, b.sum(axis=(3, 4)))
+        self.assertAlmostEqual(out["D_debiased"], out["D"], places=12)
+        self.assertEqual(out["cells_debiased_to_zero"], 0)
 
 
 class Calibrate(unittest.TestCase):
-    def tables(self):
-        return {"genie_cv": gaussian_table(0.0, seed=1), "genie_mec": gaussian_table(0.05, seed=1),
-                "nuwro": gaussian_table(0.10, seed=1), "gibuu": gaussian_table(-0.15, seed=1)}
+    def tables(self, gibuu_rho=-0.15, mec_rho=0.05):
+        return {"genie_cv": gaussian_table(0.0, seed=1), "genie_mec": gaussian_table(mec_rho, seed=1),
+                "nuwro": gaussian_table(0.10, seed=1), "gibuu": gaussian_table(gibuu_rho, seed=1)}
 
-    def test_brackets_and_targets(self):
-        out = cal.calibrate(self.tables())
-        self.assertLess(out["a_lo"], out["a_hi"])
-        self.assertAlmostEqual(out["at_a_lo"]["A"], out["D_min"], places=4)
-        self.assertAlmostEqual(out["at_a_hi"]["A"], out["D_max"], places=4)
-        self.assertEqual(out["D_min"], min(v["D"] for v in out["D"].values()))
+    def run_cal(self, tables, rel_sd=0.0, reps=20):
+        old = cal.NOISE_REPS
+        cal.NOISE_REPS = reps
+        try:
+            return cal.calibrate(tables, {g: rel_sd * t for g, t in tables.items()})
+        finally:
+            cal.NOISE_REPS = old
+
+    def test_noiseless_rules_agree_min_branch(self):
+        out = self.run_cal(self.tables())
+        r1, r2 = out["rule1_raw"], out["rule2_debiased"]
+        self.assertEqual(r2["branch"], "min")
+        self.assertAlmostEqual(r1["a_lo"], r2["a_lo"], places=6)
+        self.assertAlmostEqual(r1["a_hi"], r2["a_hi"], places=6)
+        self.assertAlmostEqual(r2["at_a_lo"]["A"], r2["t_lo"], places=4)
+        self.assertAlmostEqual(r2["at_a_hi"]["A"], r2["t_hi"], places=4)
+        self.assertEqual(out["a_lo"], r2["a_lo"])
+        self.assertAlmostEqual(r2["nontrivial_threshold"], 0.5 * r2["t_lo"], places=15)
+        self.assertEqual(out["map_noise"]["at_a_lo"]["A_sd"], 0.0)
+
+    def test_floor_branch(self):
+        t = self.tables(mec_rho=0.005)   # min D' below 0.25 x max D'
+        out = self.run_cal(t)
+        r2 = out["rule2_debiased"]
+        self.assertEqual(r2["branch"], "floor")
+        self.assertAlmostEqual(r2["t_lo"], 0.25 * r2["t_hi"], places=15)
+        self.assertGreater(r2["t_lo"], r2["min_D_debiased"])
+        self.assertAlmostEqual(r2["at_a_lo"]["A"], r2["t_lo"], places=4)
+
+    def test_noise_lowers_debiased_targets(self):
+        out = self.run_cal(self.tables(), rel_sd=0.05, reps=50)
+        per = out["per_truth"]
+        self.assertTrue(all(v["D_debiased"] < v["D"] for v in per.values()))
+        self.assertLess(out["rule2_debiased"]["t_hi"], out["rule1_raw"]["t_hi"])
+        self.assertGreater(out["map_noise"]["at_a_hi"]["A_sd"], 0.0)
+
+    def test_non_monotone_scan_refused(self):
+        old = cal.amplitude
+        cal.amplitude = lambda w, c: (abs(c - 1.0), None, 1)
+        try:
+            with self.assertRaises(cal.Refusal):
+                cal._scan(gaussian_table(0.0))
+        finally:
+            cal.amplitude = old
+
+    def test_all_zero_debiased_refused(self):
+        t = {g: gaussian_table(0.0, seed=1) for g in ("genie_cv", *cal.BUILD_TRUTHS)}
+        with self.assertRaises(cal.Refusal):
+            self.run_cal(t)
 
     def test_target_beyond_scan_refused(self):
-        t = self.tables()
-        t["gibuu"] = gaussian_table(-0.99, seed=1)
+        t = self.tables(gibuu_rho=-0.99)
         old = cal.SCAN
         cal.SCAN = np.linspace(0.0, 0.05, 6)
         try:
             with self.assertRaises(cal.Refusal):
-                cal.calibrate(t)
+                self.run_cal(t)
         finally:
             cal.SCAN = old
 

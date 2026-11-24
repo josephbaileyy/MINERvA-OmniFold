@@ -15,8 +15,23 @@ The rule (§4.2):
 - The tilt phi_1 = xi * eta (standardized under the reference). r0 = exp(c * phi_1), clipped to [0.5, 2], then
   raked by IPF so that s_ref * r reproduces s_ref's joint (pT, p_par, E_avail) totals and its global q3 and W marginals
   to 1e-9 relative within 1000 iterations.
-- A(c) is the reference-weighted mean within-cell |rho(s_ref * r) - rho(s_ref)|. a_lo and a_hi solve
-  A(a) = min_g D_g and A(a) = max_g D_g by bisection, on a scan that must show A increasing.
+- A(c) is the reference-weighted mean within-cell |rho(s_ref * r) - rho(s_ref)|, solved by bisection on a scan that
+  must show A increasing.
+- Rule 2 (rev 12, director 2026-11-24; the deciding rule). The noise-debiased D'_g:
+  - each table is resampled NOISE_REPS times, independently per FINE cell, as max(0, s + z * sd) with sd from sumw2,
+    from one generator seeded NOISE_SEED, in the order reference, genie_mec, nuwro, gibuu;
+  - sigma2_g,c is the variance (ddof 1) of rho over the replicates in which cell c is valid; a cell with fewer than two
+    valid replicates has sigma2 = inf;
+  - d2_c = max(0, (rho_g - rho_ref)^2 - sigma2_g,c - sigma2_ref,c), and D'_g is the mean of sqrt(d2_c) over the cells
+    valid for both nominal tables, weighted by the reference's cell total;
+  - a_hi solves A(a) = max_g D'_g. a_lo solves A(a) = t_lo, where t_lo = min_g D'_g unless that is below
+    FLOOR_FRACTION * max_g D'_g, in which case t_lo = FLOOR_FRACTION * max_g D'_g (the "floor" branch);
+  - the non-triviality threshold of §4.2's check 2 is NONTRIVIAL_FRACTION * t_lo.
+- Rule 1 (the original: the raw D_g, a_lo from min D_g, a_hi from max D_g) is computed and recorded beside it, and
+  decides nothing.
+- Reported only: the noise scale per truth (the weighted mean of sqrt(sigma2_g + sigma2_ref)), the count of cells
+  debiased to zero, and the map's own noise: the mean and standard deviation of A over NOISE_REPS resamplings of the
+  reference, with r fixed at a_lo and a_hi.
 
 MEASURES: the calibration constants. CANNOT AUTHORIZE: a draw, or any validation reading.
 """
@@ -48,7 +63,9 @@ RAKE_MAXIT = 1000
 BISECT_TOL = 1e-6
 SCAN = np.linspace(0.0, 2.0, 41)
 NOISE_SEED = 20261124
-NOISE_REPS = 20
+NOISE_REPS = 200
+FLOOR_FRACTION = 0.25
+NONTRIVIAL_FRACTION = 0.5
 
 
 class Refusal(Exception):
@@ -77,19 +94,39 @@ def load(path: Path) -> tuple[np.ndarray, np.ndarray]:
     return x * vol, sd * vol
 
 
-def noise_diagnostic(tables: dict[str, np.ndarray], sds: dict[str, np.ndarray]) -> dict:
-    """Reported only, deciding nothing: each table's self-noise N = mean over NOISE_REPS Gaussian resamplings (by its
-    sumw2, clipped at 0) of the reference-weighted mean |rho(resampled) - rho(table)|, and the quadrature
-    sqrt(N_g^2 + N_ref^2), an approximate scale of D_g from statistics alone."""
-    rng = np.random.default_rng(NOISE_SEED)
-    weight = tables[REFERENCE].sum(axis=(3, 4))
-    selfn = {}
-    for g in (REFERENCE, *BUILD_TRUTHS):
-        vals = [mean_abs_drho(np.clip(tables[g] + rng.standard_normal(SHAPE) * sds[g], 0.0, None), tables[g],
-                              weight)[0] for _ in range(NOISE_REPS)]
-        selfn[g] = float(np.mean(vals))
-    return {"seed": NOISE_SEED, "reps": NOISE_REPS, "self_noise": selfn,
-            "quadrature_vs_reference": {g: float(np.hypot(selfn[g], selfn[REFERENCE])) for g in BUILD_TRUTHS}}
+def resample(s: np.ndarray, sd: np.ndarray, rng: np.random.Generator) -> np.ndarray:
+    return np.clip(s + rng.standard_normal(SHAPE) * sd, 0.0, None)
+
+
+def rho_variance(s: np.ndarray, sd: np.ndarray, rng: np.random.Generator) -> np.ndarray:
+    """Per (pT, p_par, E_avail) cell, the variance (ddof 1) of rho over NOISE_REPS resamplings, over the replicates in
+    which the cell is valid; inf where fewer than two are."""
+    rows = []
+    for _ in range(NOISE_REPS):
+        rho, valid = cell_corr(resample(s, sd, rng))
+        rows.append(np.where(valid, rho, np.nan))
+    a = np.stack(rows)
+    n = np.sum(np.isfinite(a), axis=0)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        var = np.nanvar(np.where(n >= 2, a, 0.0), axis=0, ddof=1)
+    return np.where(n >= 2, var, np.inf)
+
+
+def debiased(s_g, s_ref, var_g, var_ref, weight) -> dict:
+    rg, vg = cell_corr(s_g)
+    rr, vr = cell_corr(s_ref)
+    both = vg & vr
+    w = weight[both]
+    if w.sum() <= 0:
+        raise Refusal("no cell is valid for both tables")
+    d2 = np.maximum(0.0, (rg - rr)[both] ** 2 - var_g[both] - var_ref[both])
+    noise = np.sqrt(var_g[both] + var_ref[both])
+    fin = np.isfinite(noise)
+    return {"D": float((w * np.abs(rg - rr)[both]).sum() / w.sum()),
+            "D_debiased": float((w * np.sqrt(d2)).sum() / w.sum()),
+            "noise_scale": float((w[fin] * noise[fin]).sum() / w[fin].sum()) if fin.any() else float("inf"),
+            "cells_valid_both": int(both.sum()), "cells_debiased_to_zero": int(np.sum(d2 == 0.0)),
+            "cells_with_infinite_noise": int(np.sum(~fin))}
 
 
 def _moments(s: np.ndarray):
@@ -191,40 +228,75 @@ def solve(w: np.ndarray, target: float, lo: float, hi: float) -> float:
     return 0.5 * (lo + hi)
 
 
-def calibrate(tables: dict[str, np.ndarray]) -> dict:
-    w = tables[REFERENCE]
-    weight = w.sum(axis=(3, 4))
-    D = {}
-    for g in BUILD_TRUTHS:
-        d, n = mean_abs_drho(tables[g], w, weight)
-        D[g] = {"D": d, "cells_valid_both": n}
+def _scan(w: np.ndarray) -> list[dict]:
     scan = []
     for c in SCAN:
-        a, r, it = amplitude(w, float(c))
+        a, _, it = amplitude(w, float(c))
         scan.append({"c": float(c), "A": a, "ipf_iterations": it})
     As = [row["A"] for row in scan]
-    if any(b <= a for a, b in zip(As[1:], As[2:])) or As[1] <= As[0]:
+    if As[1] <= As[0] or any(b <= a for a, b in zip(As[1:], As[2:])):
         raise Refusal("A(c) is not increasing on the scan")
-    dmin = min(v["D"] for v in D.values())
-    dmax = max(v["D"] for v in D.values())
+    return scan
 
-    def bracket(t):
-        for a, b in zip(scan, scan[1:]):
-            if a["A"] <= t <= b["A"]:
-                return a["c"], b["c"]
-        raise Refusal(f"target {t:.6g} is outside the scan's A range [{As[0]:.6g}, {As[-1]:.6g}]")
 
-    a_lo = solve(w, dmin, *bracket(dmin))
-    a_hi = solve(w, dmax, *bracket(dmax))
-    out = {"D": D, "D_min": dmin, "D_max": dmax, "scan": scan, "a_lo": a_lo, "a_hi": a_hi}
-    for name, c in (("at_a_lo", a_lo), ("at_a_hi", a_hi)):
-        a, r, it = amplitude(w, c)
-        r0 = tilt(w, c)
-        pop = w > 0
-        out[name] = {"A": a, "ipf_iterations": it,
-                     "clipped_fraction_of_populated_cells": float(np.mean((r0[pop] <= CLIP[0]) | (r0[pop] >= CLIP[1]))),
-                     "raked_r_min": float(r[pop].min()), "raked_r_max": float(r[pop].max())}
-    return out
+def _match(w: np.ndarray, scan: list[dict], target: float) -> float:
+    for a, b in zip(scan, scan[1:]):
+        if a["A"] <= target <= b["A"]:
+            return solve(w, target, a["c"], b["c"])
+    raise Refusal(f"target {target:.6g} is outside the scan's A range [{scan[0]['A']:.6g}, {scan[-1]['A']:.6g}]")
+
+
+def _at(w: np.ndarray, c: float) -> dict:
+    a, r, it = amplitude(w, c)
+    r0 = tilt(w, c)
+    pop = w > 0
+    return {"c": c, "A": a, "ipf_iterations": it,
+            "clipped_fraction_of_populated_cells": float(np.mean((r0[pop] <= CLIP[0]) | (r0[pop] >= CLIP[1]))),
+            "raked_r_min": float(r[pop].min()), "raked_r_max": float(r[pop].max())}
+
+
+def map_noise(w: np.ndarray, sd: np.ndarray, c: float, rng: np.random.Generator) -> dict:
+    """Reported only: A with r fixed (raked on the nominal reference) over NOISE_REPS resamplings of the reference."""
+    _, r, _ = amplitude(w, c)
+    weight = w.sum(axis=(3, 4))
+    vals = []
+    for _ in range(NOISE_REPS):
+        we = resample(w, sd, rng)
+        vals.append(mean_abs_drho(we * r, we, weight)[0])
+    return {"c": c, "A_mean": float(np.mean(vals)), "A_sd": float(np.std(vals, ddof=1))}
+
+
+def calibrate(tables: dict[str, np.ndarray], sds: dict[str, np.ndarray]) -> dict:
+    w = tables[REFERENCE]
+    weight = w.sum(axis=(3, 4))
+    rng = np.random.default_rng(NOISE_SEED)
+    var = {g: rho_variance(tables[g], sds[g], rng) for g in (REFERENCE, *BUILD_TRUTHS)}
+    per = {g: debiased(tables[g], w, var[g], var[REFERENCE], weight) for g in BUILD_TRUTHS}
+    scan = _scan(w)
+
+    d_raw = [per[g]["D"] for g in BUILD_TRUTHS]
+    r1 = {"t_lo": min(d_raw), "t_hi": max(d_raw)}
+    r1["a_lo"] = _match(w, scan, r1["t_lo"])
+    r1["a_hi"] = _match(w, scan, r1["t_hi"])
+
+    d_deb = [per[g]["D_debiased"] for g in BUILD_TRUTHS]
+    t_hi = max(d_deb)
+    if t_hi <= 0.0:
+        raise Refusal("every debiased D is zero: no correlation spread above noise")
+    floor = FLOOR_FRACTION * t_hi
+    branch = "floor" if min(d_deb) < floor else "min"
+    t_lo = floor if branch == "floor" else min(d_deb)
+    a_lo, a_hi = _match(w, scan, t_lo), _match(w, scan, t_hi)
+    return {"per_truth": per, "scan": scan,
+            "rule1_raw": {**r1, "decides": False},
+            "rule2_debiased": {"t_lo": t_lo, "t_hi": t_hi, "branch": branch, "floor_fraction": FLOOR_FRACTION,
+                               "min_D_debiased": min(d_deb), "a_lo": a_lo, "a_hi": a_hi,
+                               "nontrivial_threshold": NONTRIVIAL_FRACTION * t_lo, "decides": True,
+                               "at_a_lo": _at(w, a_lo), "at_a_hi": _at(w, a_hi)},
+            "a_lo": a_lo, "a_hi": a_hi,
+            "map_noise": {"at_a_lo": map_noise(w, sds[REFERENCE], a_lo, rng),
+                          "at_a_hi": map_noise(w, sds[REFERENCE], a_hi, rng)},
+            "noise": {"seed": NOISE_SEED, "reps": NOISE_REPS}}
 
 
 def main(argv=None) -> int:
@@ -244,12 +316,11 @@ def main(argv=None) -> int:
                 raise Refusal(f"{name}: sha256 {got} is not the pin {pin}")
             tables[g], sds[g] = load(path)
             inputs[g] = {"origin_path": ORIGIN + name, "sha256": got}
-        result = calibrate(tables)
-        result["noise_diagnostic"] = noise_diagnostic(tables, sds)
+        result = calibrate(tables, sds)
     except Refusal as e:
         print(f"refused: {e}", file=sys.stderr)
         return 3
-    rec = {"schema": "covfix-u2-calibration/1", "inputs": inputs, "reference": REFERENCE,
+    rec = {"schema": "covfix-u2-calibration/2", "inputs": inputs, "reference": REFERENCE,
            "rule": {"coordinates": "q3 and W bin indices, standardized within each (pT, p_par, E_avail) cell",
                     "weight": "the reference's integrated cross section per (pT, p_par, E_avail) cell",
                     "clip": list(CLIP), "rake_tol": RAKE_TOL, "rake_maxit": RAKE_MAXIT, "bisect_tol": BISECT_TOL},
@@ -258,7 +329,9 @@ def main(argv=None) -> int:
     with os.fdopen(fd, "w") as fh:
         json.dump(rec, fh, indent=1, sort_keys=True)
         fh.write("\n")
-    print(f"a_lo {rec['a_lo']:.6f} a_hi {rec['a_hi']:.6f} D {json.dumps({g: v['D'] for g, v in rec['D'].items()})}")
+    r2 = rec["rule2_debiased"]
+    print(f"a_lo {rec['a_lo']:.6f} a_hi {rec['a_hi']:.6f} branch {r2['branch']} "
+          f"D' {json.dumps({g: v['D_debiased'] for g, v in rec['per_truth'].items()})}")
     return 0
 
 

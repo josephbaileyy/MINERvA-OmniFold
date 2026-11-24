@@ -337,6 +337,11 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
     (director's go, 2026-11-24) and committed before any draw (`u2-calibration/`). Two refinements were made before
     any value was computed: ordinal q3 and W indices replace bin centres, and the IPF limit is 1000 iterations (200 did
     not reach 1e-9 at every scanned amplitude).
+  - **The calibration rule then changed (rule 1 → rule 2), before any draw and any read.** Rule 1's raw D_g gave
+    a_lo = 0.032106 and a_hi = 0.084680. Its reported-only noise diagnostic showed the noise scale of D to be the size
+    of D itself, and D, a mean of absolute differences, is biased upward by noise. The director ruled rule 2: a
+    noise-debiased D'_g, with a 0.25 × max floor for the lower end and check 2's threshold at 0.5 × t_lo (§4.2). Rule
+    1's values are kept in its record; rule 2's are computed after the rule is committed.
 
 <!-- absence-ok: rule statement -->
 **Rules are fixed before computation.** Every reading, bar, candidate rule, seed and stop rule below is fixed at
@@ -1008,16 +1013,31 @@ CV `w_truth` of `mc_truth_denom`'s rows binned on that grid:
   - `gibuu_cv_xsec5d_fluxfix.npz` `48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18`.
   [a_lo, a_hi] is set so that φ₁ alone at |c₁| = a_lo and a_hi gives, after clipping and raking, a w-weighted mean
   within-cell |Δρ| equal to min_g D_g and max_g D_g.
-  - **The values** (`2d-unfolding/covfix/covfix_u2_calibrate.py`; record `u2-calibration/calibration.json`, with the
-    fetch receipt beside it): D_genie_mec = 0.017616, D_nuwro = 0.030206, D_gibuu = 0.035883;
-    **a_lo = 0.032106, a_hi = 0.084680.** At a_hi, 10.4 % of populated cells are clipped, and the raked r
-    spans 0.7760–2.1647. The non-triviality threshold (check 2) is 0.5 × 0.017616 = 0.008808.
-  - **Disclosure: statistical noise.** The predictions are finite samples. A reported-only diagnostic (seed
-    20261124, 20 Gaussian resamplings by each file's sumw2) gives each table's self-noise in this metric,
-    and their quadrature with the reference's: genie_mec 0.0167, nuwro 0.0155,
-    gibuu 0.0214. D_genie_mec is at that scale, so a_lo is set near the noise level of the
-    metric; D_nuwro and D_gibuu are 2.0 and 1.7 times theirs. The rule was fixed before the values and is not changed
-    by them.
+  - **Rule 1, superseded (decides nothing).** The rule as first written (raw D_g; a_lo from min D_g, a_hi from max D_g)
+    gave D_genie_mec = 0.017616, D_nuwro = 0.030206, D_gibuu = 0.035883, so **a_lo = 0.032106 and a_hi = 0.084680**
+    (record `u2-calibration/calibration.json`, kept as the record of rule 1). Its reported-only noise diagnostic (seed
+    20261124, 20 resamplings) put the noise scale of D at 0.0167 (genie_mec), 0.0155 (nuwro) and 0.0214 (gibuu): the
+    size of the D values themselves.
+  - **Why the rule changed.** D_g is a mean of absolute differences, so noise inflates it: E|ρ̂_g − ρ̂_ref| ≥ |ρ_g − ρ_ref|.
+    Calibrated on it, the amplitudes would overstate the generators' real correlation spread, and because u = 2 decides,
+    an implausibly large deformation could fail a sound covariance. The director ruled the change on 2026-11-24, after
+    the diagnostic and before any draw and any read.
+  - **Rule 2, the deciding rule, fixed before its values were computed:**
+    - Each table is resampled 200 times, independently per FINE cell, as max(0, s + z·sd) with sd from its sumw2, from
+      one generator seeded 20261124, in the order genie_cv, genie_mec, nuwro, gibuu.
+    - σ²_g,c is the variance (ddof 1) of ρ over the replicates in which cell c is valid. A cell with fewer than two
+      valid replicates has σ² = ∞, so it is debiased to zero.
+    - d²_c = max(0, (ρ̂_g − ρ̂_ref)² − σ²_g,c − σ²_ref,c), and **D'_g** is the mean of √d²_c over the cells valid for both
+      nominal tables, weighted by the reference's cell total.
+    - **a_hi** matches φ₁'s A to max_g D'_g. **a_lo** matches it to t_lo = min_g D'_g, unless that is below
+      0.25 × max_g D'_g, in which case t_lo = 0.25 × max_g D'_g (the floor branch). The record states the branch.
+    - Check 2's non-triviality threshold is 0.5 × t_lo, half the lower end of the range.
+    - Reported only, deciding nothing: per truth, D, D', the noise scale (the weighted mean of √(σ²_g + σ²_ref)) and
+      the number of cells debiased to zero; and the map's own noise, the mean and standard deviation of A over 200
+      resamplings of the reference with r fixed, at a_lo and at a_hi.
+    - Code: `2d-unfolding/covfix/covfix_u2_calibrate.py` (21 tests; 22 hand mutants, all killed: `u2-calibration/mutants-rule2.txt`). The values are
+      computed after this rule is committed and are recorded in `u2-calibration/calibration-rule2.json`.
+      <!-- absence-ok: the order of a declared computation, recorded so the rule provably precedes its values -->
 
 *The draw.* Attempt k = 1, 2, … takes its parameters from SHA-256(domain tag ‖ seed base ‖ salt ‖ k):
 - The domain tag is "covfix-u2-correlation-draw/1". The seed base and salt are the director-held secrets of §4.2, whose
@@ -1044,7 +1064,7 @@ CV `w_truth` of `mc_truth_denom`'s rows binned on that grid:
      and r_2 is fixed per row, so a band's reweighting of q3 and W within a cell can move the graded truth slightly;
      (b) bounds that motion at 5 % of the data's statistical error.
 2. **Truth-level non-triviality:** the w-weighted mean within-cell |Δρ(q3, W)| of the raked map is at least
-   0.5·min_g D_g.
+   0.5 × t_lo, rule 2's threshold in `u2-calibration/calibration-rule2.json`.
 3. **The bounds:** the raked r lies in [0.4, 2.5] on every FINE cell whose CV support meets `pvl_lib.SUPPORT_MIN`, and
    is finite and positive everywhere.
 4. **The reco floor:** Δᵀ S⁻¹ Δ ≥ 1.
