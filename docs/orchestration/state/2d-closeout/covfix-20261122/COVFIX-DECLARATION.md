@@ -333,6 +333,10 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
     - unsealed draws reported before sealing, and full disclosure after PV.
   - **The per-phase balance check (§3, ST6):** a committed iris read before each paid phase, against that phase's cap
     plus the expected price of later phases.
+  - **The calibration of u = 2's amplitude range** was computed from a read-only fetch of the four pinned 5D predictions
+    (director's go, 2026-11-24) and committed before any draw (`u2-calibration/`). Two refinements were made before
+    any value was computed: ordinal q3 and W indices replace bin centres, and the IPF limit is 1000 iterations (200 did
+    not reach 1e-9 at every scanned amplitude).
 
 <!-- absence-ok: rule statement -->
 **Rules are fixed before computation.** Every reading, bar, candidate rule, seed and stop rule below is fixed at
@@ -981,28 +985,39 @@ seed, with a reco floor** (relayed by the director, 2026-11-24).
 
 *The family.* On the 5D FINE grid (`pvl_lib.FINE`: 14 p_T × 16 p∥ × 7 E_avail × 7 q3 × 6 W = 65,856 cells), with w the
 CV `w_truth` of `mc_truth_denom`'s rows binned on that grid:
-- In each (p_T, p∥, E_avail) cell, ξ and η are q3's and W's bin centres, standardized within the cell under w (mean 0,
-  variance 1). Cells with fewer than two populated (q3, W) bins get r = 1.
+- In each (p_T, p∥, E_avail) cell, ξ and η are q3's and W's **bin indices** (0–6 and 0–5), standardized within the cell
+  under w (mean 0, variance 1). The ordinal index replaces the bin centre because the top q3 and W bins are open-ended
+  (to 100 GeV): q3's top bin holds 46–49 % of every build truth's cross section, and its centre (51) would dominate.
+  Cells where either index has zero variance get r = 1. This refinement was made before any value was computed.
 - **The basis φ:** φ₁ = ξη, φ₂ = (ξ² − ⟨ξ²⟩)η and φ₃ = ξ(η² − ⟨η²⟩), with ⟨·⟩ the cell's w-mean: a small basis of q3–W
   correlation shapes, which leave each cell's q3 and W means unchanged to first order.
 - **The tilt:** r⁰ = exp(c₁φ₁ + c₂φ₂ + c₃φ₃), with |c₁| ∈ [a_lo, a_hi], |c₂|, |c₃| ≤ |c₁| / 2, and all three signs drawn.
 - **Clip, then rake:** r⁰ is clipped to [0.5, 2]. Then iterative proportional fitting on w·r restores, to 1e-9
-  relative, the joint (p_T, p∥, E_avail) distribution and the global q3 and W marginals of w, within 200 iterations.
+  relative, the joint (p_T, p∥, E_avail) distribution and the global q3 and W marginals of w, within 1000 iterations.
   Non-convergence is an attempt failure. The raked r is applied per row by `s5e_deform.ratio_weight(gen, FINE, w_truth,
   ratio, 1.0)`. Its in-grid renormalization is then 1 to within the raking tolerance.
 - **The calibration of [a_lo, a_hi],** fixed now as a rule and computed before any draw. For each public build truth
   g ∈ {genie_mec, nuwro, gibuu}, D_g is the w-weighted mean over (p_T, p∥, E_avail) cells of |ρ_g − ρ_ref|. Here ρ is the
-  within-cell q3–W correlation of the bin centres under the generator's 5D density, and ref is untuned GENIE 2.12 CV.
+  within-cell correlation of the q3 and W indices under the generator's integrated cross section per FINE cell, and
+  ref is untuned GENIE 2.12 CV. In the calibration, w is the reference prediction (its cross section per cell), not
+  `mc_truth_denom`'s rows, which are not on the laptop; the weights of the mean are the reference's cell totals.
   These are the same pinned predictions PV2D's ratio files cite:
   - `genie_cv_xsec5d_full.npz` `cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2`;
   - `genie_mec_xsec5d_full.npz` `c179855df6e42a5b8bab1f839aae675c53a5150f132649c855356ad75f26790f`;
   - `nuwro_cv_xsec5d_full.npz` `475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070`;
   - `gibuu_cv_xsec5d_fluxfix.npz` `48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18`.
   [a_lo, a_hi] is set so that φ₁ alone at |c₁| = a_lo and a_hi gives, after clipping and raking, a w-weighted mean
-  within-cell |Δρ| equal to min_g D_g and max_g D_g. **The numerical values are not yet computed.** The four files are
-  on pscratch only, and their fetch (a login-node read by sha) needs the director's go. The script, its output and
-  [a_lo, a_hi] are committed before any draw, sealed or unsealed.
-  <!-- absence-ok: scoping statement about this declaration's own method parameter, defined here and computed later -->
+  within-cell |Δρ| equal to min_g D_g and max_g D_g.
+  - **The values** (`2d-unfolding/covfix/covfix_u2_calibrate.py`; record `u2-calibration/calibration.json`, with the
+    fetch receipt beside it): D_genie_mec = 0.017616, D_nuwro = 0.030206, D_gibuu = 0.035883;
+    **a_lo = 0.032106, a_hi = 0.084680.** At a_hi, 10.4 % of populated cells are clipped, and the raked r
+    spans 0.7760–2.1647. The non-triviality threshold (check 2) is 0.5 × 0.017616 = 0.008808.
+  - **Disclosure: statistical noise.** The predictions are finite samples. A reported-only diagnostic (seed
+    20261124, 20 Gaussian resamplings by each file's sumw2) gives each table's self-noise in this metric,
+    and their quadrature with the reference's: genie_mec 0.0167, nuwro 0.0155,
+    gibuu 0.0214. D_genie_mec is at that scale, so a_lo is set near the noise level of the
+    metric; D_nuwro and D_gibuu are 2.0 and 1.7 times theirs. The rule was fixed before the values and is not changed
+    by them.
 
 *The draw.* Attempt k = 1, 2, … takes its parameters from SHA-256(domain tag ‖ seed base ‖ salt ‖ k):
 - The domain tag is "covfix-u2-correlation-draw/1". The seed base and salt are the director-held secrets of §4.2, whose

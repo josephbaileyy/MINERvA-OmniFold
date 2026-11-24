@@ -1,0 +1,28 @@
+# COVFIX rev 12 u=2 calibration inputs: read-only fetch receipt (cov2d)
+# director's go 2026-11-24; one login node via a private ssh master; O_NOATIME reads streamed to the laptop;
+# nothing written on the cluster. Laptop copies under ~/cov2d-work/u2-calib/inputs/ (not committed).
+# The sacct snapshot (josephrb, R/PD, since yesterday) printed no rows.
+laptop_start_utc 2026-11-24T07:42:25Z
+host login36
+remote_utc 2026-11-24T07:42:30Z
+host login36
+before /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz 1627680 atime=1793480607 mtime=1790499796
+before /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz 1632624 atime=1793480607 mtime=1790499830
+before /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz 1637412 atime=1793480607 mtime=1790499845
+before /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz 1720180 atime=1793480607 mtime=1790499886
+sha OK /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2 1627680
+sha OK /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz c179855df6e42a5b8bab1f839aae675c53a5150f132649c855356ad75f26790f 1632624
+sha OK /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz 475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070 1637412
+sha OK /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz 48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18 1720180
+host login36
+after /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz 1627680 atime=1793480607 mtime=1790499796
+after /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz 1632624 atime=1793480607 mtime=1790499830
+after /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz 1637412 atime=1793480607 mtime=1790499845
+after /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz 1720180 atime=1793480607 mtime=1790499886
+remote_utc_end 2026-11-24T07:42:39Z
+atime unchanged /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz
+atime unchanged /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz
+atime unchanged /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz
+atime unchanged /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz
+host lines 3 distinct 1
+laptop_end_utc 2026-11-24T07:42:39Z rc=0
