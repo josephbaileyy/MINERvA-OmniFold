@@ -33,6 +33,11 @@ The existing 2D (pT, p∥) products appear in §1.4 for context. COV2D, IBUB and
    - with three truths: (3 × 300 + 3) × 0.028559 = **25.8 GPU node-h**;
    - with the declared two: (2 × 300 + 2) × 0.028559 = **17.2 GPU node-h**.
    The unit is the measured 5D unit, 0.028559 GPU node-h per unfold (`state/gpu-timing-20261023/REPORT.md:21–23`).
+   - **Per the director (2026-11-24):** a DRAFT rev 12 on branch `cov2d/covfix-rev12-20261124` (head `13344558`), not
+     yet approved by Joseph, adds a third sealed truth, u = 2, which is a sealed correlation-deformation reweighting.
+     So the figure is **17.2 GPU node-h at u = 0, 1 (rev 11.4 as bound), and 25.8 if rev 12 is approved.**
+   - **The sealed set itself is still open.** Slot 1's tune, G21_11b, is absent from CVMFS: PR #1281, "GENIE spline
+     listing on CVMFS", merged at `9c657843`. Its replacement is pending Joseph's choice.
 2. **A held-out clause at COVFIX's seals conflicts with COVFIX as bound.** COVFIX is bound at M_C1 `90b29087`
    (`COVFIX-BINDING-1.md:1–9`).
    - Its validation "is spent once", with consumption keyed by seal digest **and role**. The roles are the PV writer
@@ -42,10 +47,15 @@ The existing 2D (pT, p∥) products appear in §1.4 for context. COV2D, IBUB and
    - §5–§7 change only by ST1's named exception or by an executability fix (`:692–694`; `COVFIX-BINDING-1.md:6–9`).
    - "A later construction needs new sealed truths, and the catalog may not supply a third distinct family" (`:695`).
    - A per-cell coverage readout of 3D, 4D or 5D unfolds of PV's pseudo-data is a new construction and a new role.
-     Under the binding as written it is not available. **Options, for the director and Joseph (OPEN):**
-     - (i) an explicit amendment or ruling that adds a "(b) readout" role to the PV seals before ST4's first spend;
-     - (ii) new sealed truths through a fresh PG, which `:695` says the catalog may not supply as a third family;
-     - (iii) validation only at truths already read (F1's G18 and AR23), which are not held out.
+     Under the binding as written it is not available. **Options (the choice stays OPEN for Joseph and Ben):**
+     - **(i), the director's recommended option (2026-11-24).** Fold a "(b) readout" provision into rev 12 while it is
+       still an unbound draft, before ST4's first spend. The provision would cover:
+       - the 16-cell 5D unfolds of PV's pseudo-data, which are not secret and can run on GPU nodes;
+       - grading the 16 cells against the sealed truths inside the director's readout, as an added role;
+       - (b)'s per-cell test and threshold, frozen in that amendment.
+     - (ii) new sealed truths through a fresh PG. The director judges this likely impossible: the catalog has no
+       further families on CVMFS (`:695`; #1281).
+     - (iii) validation only at truths already read (F1's G18 and AR23). These are not held out.
    - **Technically**, PV's pseudo-data are 5D-capable: each event is reweighted by u's bridged ratio on the 5D FINE grid
      (`:710–713`). So a 3D, 4D or 16-cell unfold of the same toys is possible, if the custody question is settled.
 3. **The closest committed precedents for such a rule** are V-PRIOR and V-HALF, both diagnostic, on R00–R15:
@@ -165,12 +175,14 @@ The existing 2D (pT, p∥) products appear in §1.4 for context. COV2D, IBUB and
 
 **(b)-6. The held-out validation clause, frozen before PV.**
 - (b)-1 to (b)-5 and the resulting reportable set are frozen and committed before any PV seal is spent.
-- At each sealed truth u ∈ ⟨0, 1⟩ (COVFIX declares two, §0.1), for each reportable cell, the per-cell coverage is
+- At each sealed truth u ∈ ⟨0, 1 (rev 11.4 as bound) / 0, 1, 2 (if draft rev 12 is approved)⟩ (§0.1), for each
+  reportable cell, the per-cell coverage is
   ⟨the fraction of PV toys with |z_{c}| ≤ 1 against the carried covariance / the interval covers the truth⟩.
 - The cell's coverage must be ≥ ⟨__: e.g. 0.6827 minus a declared binomial tolerance at N = 300⟩.
 - If it fails: ⟨the cell is dropped / the rule is declared failed and nothing is quoted on it / it is reported with a
   label⟩.
-- **Blocked as COVFIX is bound (§0.2).** This clause needs option (i), (ii) or (iii) of §0.2 first.
+- **Blocked as COVFIX is bound (§0.2).** This clause needs one of §0.2's options first. The director recommends (i),
+  folding it into draft rev 12 before ST4's first spend; the choice is OPEN.
 
 **(b)-7. Disclosure.** The rule, its date and its simulation-only basis are recorded before it is applied, and the
 fact that it was fixed after data is disclosed. Where it is disclosed is Joseph's call; no wording is proposed here.
@@ -179,7 +191,7 @@ fact that it was fixed after data is disclosed. Where it is disclosed is Joseph'
 
 | | Inventory and freeze (no rule applied) | Bias at held-out tunes | IBU beside OmniFold | Generator differences | Held-out PV clause |
 |---|---|---|---|---|---|
-| **S5** | days; every OmniFold input exists (§1.1) | **exists** (F1) | 0.15–0.3 CPU node-h, if F1's pseudo-data survive (UNVERIFIED); otherwise regenerate at F1's cost (1.3275 CPU node-h total, of which the 42-unfold batch was 0.609; `FD-F1-REPORT.md:128–143`) | exists, 0 node-h | 16-cell 5D unfolds of PV's toys: **17.2 GPU node-h** at the declared two truths (25.8 at three); blocked by §0.2 |
+| **S5** | days; every OmniFold input exists (§1.1) | **exists** (F1) | 0.15–0.3 CPU node-h, if F1's pseudo-data survive (UNVERIFIED); otherwise regenerate at F1's cost (1.3275 CPU node-h total, of which the 42-unfold batch was 0.609; `FD-F1-REPORT.md:128–143`) | exists, 0 node-h | 16-cell 5D unfolds of PV's toys: **17.2 GPU node-h** at u = 0, 1 (rev 11.4), 25.8 if rev 12 adds u = 2; needs §0.2's option (i), as the director recommends |
 | **S4** | days, plus a fixed truth-W definition | new native 4D fake-data unfolds: about 42 unfolds (F1's 2 × (20 + 1)) at roughly 0.04 CPU node-h each. That is RE-1's mixed 3D/4D/5D batch throughput of 0.0423 (`RE1-REPORT-2.md:356–368`) and is only a rough unit; a pilot would re-measure. So about 2 CPU node-h, plus input preparation (0.12) | S4 response plus IBU: about 0.2–0.5 CPU node-h | 0 node-h if the cells align with fine edges; a login extraction if W is derived per event | 4D unfolds of PV's toys: about 602 × 0.04 ≈ 25 CPU node-h (rough unit); blocked by §0.2 |
 | **S3** | days | as S4, in 3D: about 2 CPU node-h | as S4 | 0 node-h (projection) | as S4, in 3D: about 25 CPU node-h (rough); blocked by §0.2 |
 
