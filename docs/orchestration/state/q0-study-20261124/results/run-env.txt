@@ -1,0 +1,6 @@
+start 2026-11-24T11:23:41Z
+rc=0
+2026-11-24T11:26:08Z
+command: OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 /usr/bin/time -l python3 docs/orchestration/state/q0-study-20261124/q0_analyze.py --npz ~/msr-work/q0study-session-20261124/records/extract/q0_extract.npz --out ~/msr-work/q0study-analysis
+code: q0_analyze.py 339f70d044b4b0ea432a0dcd8277cf51daf7ea26a111cd3ab7f97c5050517948 at d7cbfda2 (clean tree)
+python 3.12.2 numpy 1.26.4 sklearn 1.6.1
