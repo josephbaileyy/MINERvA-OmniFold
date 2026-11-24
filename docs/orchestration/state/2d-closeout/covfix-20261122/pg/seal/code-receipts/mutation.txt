@@ -1,21 +1,25 @@
-# PG mutation receipt: a full run, then a partial rerun of the two mutants changed after it.
-# The modules under test (covfix_seal.py, covfix_pg.py, covfix_sealcheck.py) are unchanged since before the full run:
-#   module mtimes 2026-11-23T19:38-19:51 PST; the full run's log was created 2026-11-23T22:21:54 PST.
-# After the full run only test_covfix_seal.py (one test added, test_workdir_left_nonempty_fails) and the harness
-# (seed-lo replaced by seed-lo-raised: lowering SEED_BASE_LO is equivalent, the frame regex [1-9][0-9]{9} already
-# rejects < 1e9; --only added) changed. An added test cannot revive a killed mutant, so the full run's 78 kills stand.
+# PG mutation receipt: one full run of all 104 mutants, then a partial rerun of its one survivor after a test fix.
+# The modules under test and the harness are unchanged since before the full run started:
+#   covfix_seal.py/covfix_pg.py 03:52:14, covfix_sealcheck.py 03:47:41, covfix_seal_mutation.py 04:09:36 (2026-11-24 PST mtimes);
+#   the full run's log was created 2026-11-24T04:13:34 PST and last written 06:38:09 PST.
+# After the full run only test_covfix_seal.py changed: test_tools_must_be_absolute_executables now passes the right pins
+# (a wrong pin had masked the resolved-path check) and adds a path through a linked parent directory, which the
+# O_NOFOLLOW hash open cannot see (it refuses only a linked last component). Three tests and four cases in existing tests were also added for failure
+# branches the line trace showed unexecuted (an unreadable tool, an unremovable GNUPGHOME, a directory entry, a
+# special scratch entry, an unremovable spill, a group that will not end, an unconfirmed group end in a run).
+# Adding tests or cases cannot revive a killed mutant, so the full run's 103 kills stand.
 # command: the files as now
 # python: 3.12.2 numpy 1.26.4  gpg: gpg (GnuPG) 2.4.8  host: Darwin arm64
-# d5a18115d64b695a1a28c677012f6036dd1313a4164d25db17d79b7582beaf43  covfix_seal.py
-# 57938f4a9a8bf31df7a1a981ca53219ce3f8dd4a28333e3a0ce6ab2e81e2391a  covfix_pg.py
-# d606385e5c97e352f9f199df35f46a9aa55c0c83b43539a89b4d007d23d5a02d  covfix_sealcheck.py
-# e5407c0971ca4ec5e3c18737ca0b4f728d4fd661d8185586148b713b287d89f9  test_covfix_seal.py
-# 79095f33397eeb4e5d5fd3acab69cda2bbecf443d4b3e3ffbd34ca7891c6d4d6  covfix_seal_mutation.py
-# start: 2026-11-24T11:37:27Z
-# ---- full run: python3 -B covfix_seal_mutation.py --jobs 6 (78/80; seed-lo equivalent, workdir-empty-unchecked then unkilled)
+# aa052aca09a05b989d5368bf6fc239e2b6bc45a3278335e2eb6fb4748e99a30c  covfix_seal.py
+# ca4dbe68009b33a239dc9972ed25cc3054289620edb07ba0ffa80341639c4404  covfix_pg.py
+# ed4d30ab2cea71e7aa87259adc6ffc4497a4b44d93b525b843b65a26151dba16  covfix_sealcheck.py
+# 4a19f351ce0492cdf725a0ceba88dc621b515f11f217987aadb4c69234da80ff  test_covfix_seal.py
+# e9b5ebaa2cc2928cdd9f8fc3bebac0716a0073c8ab06d0f1e2cb92f7ef37ee54  covfix_seal_mutation.py
+# start: 2026-11-24T15:42:43Z
+# ---- full run: python3 -B covfix_seal_mutation.py --jobs 6 (103/104; unresolved-tool-ok then unkilled)
 baseline pass OK (skipped=1)
 frame-uppercase: killed FAIL: test_pg_frame_refusals (test_covfix_seal.Frame.test_pg_frame_refusals) (bad='AA\n1234567890\n')
-seed-lo: SURVIVED OK (skipped=1)
+seed-lo-raised: killed ERROR: test_seed_range_edges (test_covfix_seal.Frame.test_seed_range_edges)
 seed-hi: killed FAIL: test_pg_frame_refusals (test_covfix_seal.Frame.test_pg_frame_refusals) (bad='aa\n2000000000\n')
 seed-limit-strict: killed FAIL: test_limit_refused (test_covfix_seal.Seeds.test_limit_refused)
 u-stride: killed FAIL: test_declared_maximum_is_below_the_limit (test_covfix_seal.Seeds.test_declared_maximum_is_below_the_limit)
@@ -23,7 +27,6 @@ n-tasks: killed ERROR: test_symlink_from_generator_is_refused_and_trapped (test_
 no-force-mdc: killed FAIL: test_declared_flags (test_covfix_seal.Gpg.test_declared_flags)
 decrypt-symkey-cache: killed FAIL: test_declared_flags (test_covfix_seal.Gpg.test_declared_flags)
 gpg-rc-ignored: killed ERROR: test_manifest_schema (test_covfix_seal.Reader.test_manifest_schema)
-tools-relative-ok: killed FAIL: test_tools_must_be_absolute_executables (test_covfix_seal.Gpg.test_tools_must_be_absolute_executables) (g='../../../../../../../opt/homebrew/Cellar/gnupg/2.4.8/bin/gpg')
 env-inherited: killed FAIL: test_child_sees_exactly_fds_0_to_3_no_core_and_minimal_env (test_covfix_seal.Gpg.test_child_sees_exactly_fds_0_to_3_no_core_and_minimal_env)
 fds-not-closed: killed FAIL: test_child_sees_exactly_fds_0_to_3_no_core_and_minimal_env (test_covfix_seal.Gpg.test_child_sees_exactly_fds_0_to_3_no_core_and_minimal_env)
 core-not-limited: killed FAIL: test_child_sees_exactly_fds_0_to_3_no_core_and_minimal_env (test_covfix_seal.Gpg.test_child_sees_exactly_fds_0_to_3_no_core_and_minimal_env)
@@ -32,30 +35,30 @@ scratch-root-ok: killed FAIL: test_home_under_scratch_refused (test_covfix_seal.
 home-max: killed FAIL: test_long_home_refused (test_covfix_seal.Gpg.test_long_home_refused)
 home-mode: killed FAIL: test_gnupg_home_short_node_local_and_removed (test_covfix_seal.Gpg.test_gnupg_home_short_node_local_and_removed)
 home-not-removed: killed ERROR: test_child_sees_exactly_fds_0_to_3_no_core_and_minimal_env (test_covfix_seal.Gpg.test_child_sees_exactly_fds_0_to_3_no_core_and_minimal_env)
-removal-unverified: killed FAIL: test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_removal_fails (test_covfix_seal.Gpg.test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_removal_fails)
-gpgconf-error-skips-removal: killed ERROR: test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_removal_fails (test_covfix_seal.Gpg.test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_removal_fails)
-symlink-allowed: killed ERROR: test_symlinked_entry_refused (test_covfix_seal.SealCheck.test_symlinked_entry_refused)
-walk-errors-ignored: killed FAIL: test_walk_errors_refuse (test_covfix_seal.Seal.test_walk_errors_refuse) (f=<function enumerate_files at 0x105bbc5e0>)
+removal-unverified: killed FAIL: test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails (test_covfix_seal.Gpg.test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails)
+gpgconf-error-skips-removal: killed ERROR: test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails (test_covfix_seal.Gpg.test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails)
+symlink-allowed: killed FAIL: test_symlink_from_generator_is_refused_and_trapped (test_covfix_seal.PG.test_symlink_from_generator_is_refused_and_trapped)
+walk-errors-ignored: killed FAIL: test_walk_errors_refuse (test_covfix_seal.Seal.test_walk_errors_refuse) (f=<function enumerate_files at 0x1065cc860>)
 ids-from-zero: killed ERROR: test_missing_is_a_break_unreadable_or_linked_is_a_role_failure (test_covfix_seal.Reader.test_missing_is_a_break_unreadable_or_linked_is_a_role_failure)
 max-products: killed FAIL: test_refusals (test_covfix_seal.Seal.test_refusals)
 manifest-no-paths: killed ERROR: test_generation_failure_still_seals (test_covfix_seal.PG.test_generation_failure_still_seals)
 round-trip-skipped: killed FAIL: test_break_exit_and_line (test_covfix_seal.PG.test_break_exit_and_line)
 manifest-trip-skipped: killed FAIL: test_break_on_manifest_mismatch (test_covfix_seal.Seal.test_break_on_manifest_mismatch)
-seal-publishes-paths: killed ERROR: test_an_id_absent_from_the_manifest_is_refused_before_any_read (test_covfix_seal.Reader.test_an_id_absent_from_the_manifest_is_refused_before_any_read)
+seal-publishes-paths: killed ERROR: test_a_linked_seal_root_or_a_path_name_is_refused (test_covfix_seal.Reader.test_a_linked_seal_root_or_a_path_name_is_refused)
 overwrite-ciphertext: killed FAIL: test_existing_ciphertext_not_overwritten (test_covfix_seal.Seal.test_existing_ciphertext_not_overwritten)
 delete-follows-dir-link: killed ERROR: test_delete_plaintext (test_covfix_seal.Seal.test_delete_plaintext)
 scan-inverted: killed FAIL: test_a_benign_scratch_change_is_scanned_but_not_a_spill (test_covfix_seal.PG.test_a_benign_scratch_change_is_scanned_but_not_a_spill)
 scan-skips-file-root: killed FAIL: test_content_scan (test_covfix_seal.Seal.test_content_scan)
-nofollow-off: killed FAIL: test_missing_is_a_break_unreadable_or_linked_is_a_role_failure (test_covfix_seal.Reader.test_missing_is_a_break_unreadable_or_linked_is_a_role_failure)
+nofollow-off: killed FAIL: test_a_linked_seal_root_or_a_path_name_is_refused (test_covfix_seal.Reader.test_a_linked_seal_root_or_a_path_name_is_refused)
 regular-check-off: killed ERROR: test_regular_read_refuses_a_directory (test_covfix_seal.Seal.test_regular_read_refuses_a_directory)
 seal-dup-allowed: killed FAIL: test_canonical_seal (test_covfix_seal.SealCheck.test_canonical_seal) (bad='000000000000000000000000000000')
 seal-noncanonical-ok: killed FAIL: test_canonical_seal (test_covfix_seal.SealCheck.test_canonical_seal) (bad='000000000000000000000000000000')
 check-mismatch-inverted: killed FAIL: test_a_benign_scratch_change_is_scanned_but_not_a_spill (test_covfix_seal.PG.test_a_benign_scratch_change_is_scanned_but_not_a_spill)
 check-extra-ignored: killed FAIL: test_ok_missing_extra_mismatched (test_covfix_seal.SealCheck.test_ok_missing_extra_mismatched)
 check-seal-file-counted: killed FAIL: test_a_benign_scratch_change_is_scanned_but_not_a_spill (test_covfix_seal.PG.test_a_benign_scratch_change_is_scanned_but_not_a_spill)
-reader-unlisted-break: killed ERROR: test_requests_outside_the_seal_or_manifest_are_role_failures (test_covfix_seal.Reader.test_requests_outside_the_seal_or_manifest_are_role_failures)
+reader-unlisted-break: killed ERROR: test_a_linked_seal_root_or_a_path_name_is_refused (test_covfix_seal.Reader.test_a_linked_seal_root_or_a_path_name_is_refused)
 reader-missing-as-refusal: killed ERROR: test_missing_is_a_break_unreadable_or_linked_is_a_role_failure (test_covfix_seal.Reader.test_missing_is_a_break_unreadable_or_linked_is_a_role_failure)
-reader-oserror-as-break: killed ERROR: test_missing_is_a_break_unreadable_or_linked_is_a_role_failure (test_covfix_seal.Reader.test_missing_is_a_break_unreadable_or_linked_is_a_role_failure)
+reader-oserror-as-break: killed ERROR: test_a_linked_seal_root_or_a_path_name_is_refused (test_covfix_seal.Reader.test_a_linked_seal_root_or_a_path_name_is_refused)
 reader-no-seal-sha: killed ERROR: test_tampered_bytes_break_before_any_decrypt (test_covfix_seal.Reader.test_tampered_bytes_break_before_any_decrypt)
 manifest-dups-ok: killed FAIL: test_manifest_schema (test_covfix_seal.Reader.test_manifest_schema) (i=3)
 manifest-hex-unchecked: killed FAIL: test_manifest_schema (test_covfix_seal.Reader.test_manifest_schema) (i=5)
@@ -74,31 +77,55 @@ tmpdir-not-set: killed FAIL: test_success (test_covfix_seal.PG.test_success)
 workdir-not-empty-ok: killed ERROR: test_dirs_refused (test_covfix_seal.PG.test_dirs_refused)
 sealed-exists-ok: killed ERROR: test_dirs_refused (test_covfix_seal.PG.test_dirs_refused)
 disjoint-unchecked: killed FAIL: test_dirs_refused (test_covfix_seal.PG.test_dirs_refused)
-products-json-optional: killed FAIL: test_products_json_validated (test_covfix_seal.PG.test_products_json_validated) (mode='noproducts')
+products-json-optional: killed FAIL: test_a_pg_owned_file_is_not_a_product (test_covfix_seal.PG.test_a_pg_owned_file_is_not_a_product)
 products-dups-ok: killed FAIL: test_products_json_validated (test_covfix_seal.PG.test_products_json_validated) (mode='dupproducts')
 command-change-ignored: killed FAIL: test_command_changed_during_the_run (test_covfix_seal.PG.test_command_changed_during_the_run)
 synthetic-skipped: killed ERROR: test_synthetic_round_trip_failure_stops_before_generation (test_covfix_seal.PG.test_synthetic_round_trip_failure_stops_before_generation)
 scratch-optional: killed FAIL: test_scratch_required (test_covfix_seal.PG.test_scratch_required)
-workdir-empty-unchecked: SURVIVED OK (skipped=1)
-spill-not-failing: killed FAIL: test_plaintext_spill_is_caught_and_removed (test_covfix_seal.PG.test_plaintext_spill_is_caught_and_removed)
-spill-not-removed: killed FAIL: test_plaintext_spill_is_caught_and_removed (test_covfix_seal.PG.test_plaintext_spill_is_caught_and_removed)
+workdir-empty-unchecked: killed FAIL: test_workdir_left_nonempty_fails (test_covfix_seal.PG.test_workdir_left_nonempty_fails)
+spill-not-failing: killed FAIL: test_a_seed_in_a_link_target_is_caught_and_removed (test_covfix_seal.PG.test_a_seed_in_a_link_target_is_caught_and_removed)
+spill-not-removed: killed FAIL: test_a_seed_in_a_link_target_is_caught_and_removed (test_covfix_seal.PG.test_a_seed_in_a_link_target_is_caught_and_removed)
 seed-scan-off: killed FAIL: test_seed_spill_at_depth_is_caught_and_removed (test_covfix_seal.PG.test_seed_spill_at_depth_is_caught_and_removed)
+seed-name-scan-off: killed FAIL: test_a_seed_in_a_link_target_is_caught_and_removed (test_covfix_seal.PG.test_a_seed_in_a_link_target_is_caught_and_removed)
 snapshot-top-level-only: killed FAIL: test_seed_spill_at_depth_is_caught_and_removed (test_covfix_seal.PG.test_seed_spill_at_depth_is_caught_and_removed)
-final-check-skipped: killed FAIL: test_final_seal_check_is_a_break (test_covfix_seal.PG.test_final_seal_check_is_a_break)
+final-check-skipped: killed FAIL: test_a_missing_published_index_is_a_break (test_covfix_seal.PG.test_a_missing_published_index_is_a_break)
 trap-removed: killed ERROR: test_symlink_from_generator_is_refused_and_trapped (test_covfix_seal.PG.test_symlink_from_generator_is_refused_and_trapped)
-trap-spills-off: killed FAIL: test_trap_removes_spills_on_failure (test_covfix_seal.PG.test_trap_removes_spills_on_failure)
+trap-spills-off: killed FAIL: test_the_trap_stays_armed_through_the_scan (test_covfix_seal.PG.test_the_trap_stays_armed_through_the_scan)
 trap-delete-coupled: killed ERROR: test_trap_spill_failure_still_deletes (test_covfix_seal.PG.test_trap_spill_failure_still_deletes)
 internal-error-leaks: killed FAIL: test_termination_and_internal_error_use_fixed_codes (test_covfix_seal.PG.test_termination_and_internal_error_use_fixed_codes)
 sigterm-not-installed: killed FAIL: test_sigterm_handler_is_installed_during_the_run (test_covfix_seal.PG.test_sigterm_handler_is_installed_during_the_run)
 receipt-on-failure: killed FAIL: test_generation_failure_still_seals (test_covfix_seal.PG.test_generation_failure_still_seals)
-break-line-missing: killed FAIL: test_break_exit_and_line (test_covfix_seal.PG.test_break_exit_and_line)
+break-line-missing: killed FAIL: test_a_missing_published_index_is_a_break (test_covfix_seal.PG.test_a_missing_published_index_is_a_break)
 pin-ignored: killed FAIL: test_cli (test_covfix_seal.SealCheck.test_cli)
 check-message-leaks: killed FAIL: test_cli (test_covfix_seal.SealCheck.test_cli)
-78/80 killed; survived, harness or not applied: ['seed-lo', 'workdir-empty-unchecked']
+index-check-skipped: killed FAIL: test_a_missing_published_index_is_a_break (test_covfix_seal.PG.test_a_missing_published_index_is_a_break)
+non-regular-uncounted: killed FAIL: test_symlinked_or_non_file_entries_fail (test_covfix_seal.SealCheck.test_symlinked_or_non_file_entries_fail)
+non-regular-not-failing: killed FAIL: test_symlinked_or_non_file_entries_fail (test_covfix_seal.SealCheck.test_symlinked_or_non_file_entries_fail)
+reader-opens-by-path: killed FAIL: test_a_linked_seal_root_or_a_path_name_is_refused (test_covfix_seal.Reader.test_a_linked_seal_root_or_a_path_name_is_refused)
+reader-name-unchecked: killed ERROR: test_a_linked_seal_root_or_a_path_name_is_refused (test_covfix_seal.Reader.test_a_linked_seal_root_or_a_path_name_is_refused)
+dot-path-ok: killed FAIL: test_manifest_schema (test_covfix_seal.Reader.test_manifest_schema) (i=10)
+dup-paths-ok: killed FAIL: test_duplicate_manifest_paths_break (test_covfix_seal.Reader.test_duplicate_manifest_paths_break)
+agent-unconfirmed-ok: killed FAIL: test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails (test_covfix_seal.Gpg.test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails)
+chmod-failure-leaves-home: killed ERROR: test_a_chmod_failure_still_removes_the_home (test_covfix_seal.Gpg.test_a_chmod_failure_still_removes_the_home)
+pin-unchecked: killed FAIL: test_tools_are_pinned_and_verified_before_every_exec (test_covfix_seal.Gpg.test_tools_are_pinned_and_verified_before_every_exec)
+gpg-unverified-at-exec: killed FAIL: test_tools_are_pinned_and_verified_before_every_exec (test_covfix_seal.Gpg.test_tools_are_pinned_and_verified_before_every_exec)
+gpgconf-unverified-at-exec: killed FAIL: test_tools_are_pinned_and_verified_before_every_exec (test_covfix_seal.Gpg.test_tools_are_pinned_and_verified_before_every_exec)
+unresolved-tool-ok: SURVIVED OK (skipped=1)
+same-file-tools-ok: killed FAIL: test_tools_are_pinned_and_verified_before_every_exec (test_covfix_seal.Gpg.test_tools_are_pinned_and_verified_before_every_exec)
+sealcheck-pin-optional: killed FAIL: test_cli (test_covfix_seal.SealCheck.test_cli)
+group-not-ended: killed FAIL: test_an_orphan_of_the_generator_is_killed_before_the_seal (test_covfix_seal.PG.test_an_orphan_of_the_generator_is_killed_before_the_seal)
+end-group-noop: killed FAIL: test_an_orphan_of_the_generator_is_killed_before_the_seal (test_covfix_seal.PG.test_an_orphan_of_the_generator_is_killed_before_the_seal)
+pg-owned-product-ok: killed FAIL: test_a_pg_owned_file_is_not_a_product (test_covfix_seal.PG.test_a_pg_owned_file_is_not_a_product)
+link-target-unscanned: killed FAIL: test_a_seed_in_a_link_target_is_caught_and_removed (test_covfix_seal.PG.test_a_seed_in_a_link_target_is_caught_and_removed)
+dirs-not-snapshotted: killed ERROR: test_snapshot_edge_cases (test_covfix_seal.PG.test_snapshot_edge_cases)
+new-dir-not-removed: killed FAIL: test_a_seed_in_a_new_directory_name_is_caught_and_removed (test_covfix_seal.PG.test_a_seed_in_a_new_directory_name_is_caught_and_removed)
+old-dir-removed: killed FAIL: test_snapshot_edge_cases (test_covfix_seal.PG.test_snapshot_edge_cases)
+trap-disarmed-before-scan: killed FAIL: test_the_trap_stays_armed_through_the_scan (test_covfix_seal.PG.test_the_trap_stays_armed_through_the_scan)
+trap-forgets-sealed-hashes: killed FAIL: test_the_trap_stays_armed_through_the_scan (test_covfix_seal.PG.test_the_trap_stays_armed_through_the_scan)
+103/104 killed; survived, harness or not applied: ['unresolved-tool-ok']
 rc=1
-# ---- partial rerun: python3 -B covfix_seal_mutation.py --jobs 2 --only seed-lo-raised,workdir-empty-unchecked
+# ---- partial rerun: python3 -B covfix_seal_mutation.py --only unresolved-tool-ok
 baseline pass OK (skipped=1)
-seed-lo-raised: killed ERROR: test_seed_range_edges (test_covfix_seal.Frame.test_seed_range_edges)
-workdir-empty-unchecked: killed FAIL: test_workdir_left_nonempty_fails (test_covfix_seal.PG.test_workdir_left_nonempty_fails)
-2/2 killed; survived, harness or not applied: []
-# result: 80/80 killed (78 in the full run, 2 in the rerun)
+unresolved-tool-ok: killed FAIL: test_tools_must_be_absolute_executables (test_covfix_seal.Gpg.test_tools_must_be_absolute_executables) (g='/private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpjhvmi10d/bin-link/gpg')
+1/1 killed; survived, harness or not applied: []
+# result: 104/104 killed (103 in the full run, 1 in the rerun)

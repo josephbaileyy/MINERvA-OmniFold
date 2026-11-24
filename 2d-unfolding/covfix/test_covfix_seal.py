@@ -15,6 +15,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -28,7 +29,17 @@ BASE = 1_234_567_890
 FRAME = f"{PW}\n{BASE}\n".encode()
 ATT = "0123456789abcdef0123456789abcdef"
 GPG, GPGCONF = os.path.realpath(shutil.which("gpg")), os.path.realpath(shutil.which("gpgconf"))
-TOOLS = cs.Tools(GPG, GPGCONF)
+
+
+def fsha(path) -> str:
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def tools(gpg=GPG, gpgconf=GPGCONF):
+    return cs.Tools(gpg, gpgconf, fsha(gpg), fsha(gpgconf))
+
+
+TOOLS = tools()
 DECLARED_ENCRYPT = ("gpg --batch --yes --pinentry-mode loopback --passphrase-fd 3 --no-symkey-cache --symmetric "
                     "--cipher-algo AES256 --s2k-digest-algo SHA512 --force-mdc")
 DECLARED_DECRYPT = "gpg --batch --pinentry-mode loopback --passphrase-fd 3 --no-symkey-cache --decrypt"
@@ -50,7 +61,8 @@ open(os.path.join(w, "genie-mcjob-%d.status" % seeds["tunes"][1]["task_seeds"][6
 print("convert: f_MEC=0.1234 p=0.5 n_in_grid=42")
 print("gevgen log line", file=sys.stderr)
 products = {{"ok": ["out/G21/ratio.json"], "noproducts": None, "emptyproducts": [], "missingproduct": ["out/none"],
-             "unsafeproduct": ["../x"], "dupproducts": ["out/G21/ratio.json", "out/G21/ratio.json"]}}.get(mode, ["out/G21/ratio.json"])
+             "unsafeproduct": ["../x"], "dupproducts": ["out/G21/ratio.json", "out/G21/ratio.json"],
+             "captureproduct": ["capture/stdout.log"]}}.get(mode, ["out/G21/ratio.json"])
 if products is not None:
     open(os.path.join(w, "PRODUCTS.json"), "w").write(json.dumps(products))
 tmp = os.path.join(os.environ.get("SPILL_ROOT", "/nonexistent"), "tmp")
@@ -64,6 +76,16 @@ if mode == "symlink":
     os.symlink("/etc/hosts", os.path.join(w, "link"))
 if mode == "mutate":
     open(sys.argv[0], "a").write("\n# changed\n")
+if mode == "seeddir":
+    dn = os.path.join(tmp, "run-%d" % seeds["tunes"][0]["task_seeds"][1], "inner")
+    os.makedirs(dn)
+    open(os.path.join(dn, "a.log"), "w").write("benign")
+if mode == "seedlink":
+    os.symlink("/nonexistent/%d" % seeds["tunes"][1]["task_seeds"][2], os.path.join(tmp, "plain-link"))
+if mode == "orphan":
+    import subprocess as sp
+    sp.Popen([sys.executable, "-c", "import time, sys; time.sleep(1.5); open(sys.argv[1], 'w').write('late')",
+              os.path.join(tmp, "late.txt")])
 sys.exit(3 if mode in ("fail", "faileak") else 0)
 '''
 
@@ -97,11 +119,11 @@ def published_problems(text: str, rels: list[str]) -> list[str]:
     return out
 
 
-def fake_tool(d: Path, body: str) -> str:
-    p = d / "faketool.py"
+def fake_tool(d: Path, body: str, name: str = "faketool.py") -> str:
+    p = d / name
     p.write_text(f"#!{sys.executable}\n{body}")
     p.chmod(0o755)
-    return str(p)
+    return os.path.realpath(p)
 
 
 class Frame(unittest.TestCase):
@@ -158,9 +180,39 @@ class Gpg(unittest.TestCase):
         self.assertEqual(" ".join(cs.GPG_DECRYPT), DECLARED_DECRYPT)
 
     def test_tools_must_be_absolute_executables(self):
-        for g in ("gpg", "/nonexistent/gpg", str(self.d), os.path.relpath(GPG)):
+        link = os.path.join(os.path.realpath(self.d), "gpg-link")
+        os.symlink(GPG, link)                                              # the last component a link
+        dlink = os.path.join(os.path.realpath(self.d), "bin-link")
+        os.symlink(os.path.dirname(GPG), dlink)                            # a linked parent: O_NOFOLLOW cannot see it
+        via = os.path.join(dlink, os.path.basename(GPG))
+        cs.Tools(GPG, GPGCONF, fsha(GPG), fsha(GPGCONF))                    # the right pins: only the path can refuse
+        for g in ("gpg", "/nonexistent/gpg", str(self.d), os.path.relpath(GPG), link, via):
             with self.subTest(g=g), self.assertRaises(cs.Refusal):
-                cs.Tools(g, GPGCONF)
+                cs.Tools(g, GPGCONF, fsha(GPG), fsha(GPGCONF))
+
+    def test_tools_are_pinned_and_verified_before_every_exec(self):
+        with self.assertRaises(cs.Refusal):
+            cs.Tools(GPG, GPGCONF, "0" * 64, fsha(GPGCONF))                # a wrong pin: a STOP
+        with self.assertRaises(cs.Refusal):
+            cs.Tools(GPG, GPGCONF, fsha(GPG), "A" * 64)                    # a malformed pin
+        with self.assertRaises(cs.Refusal):
+            cs.Tools(GPG, GPG, fsha(GPG), fsha(GPG))                        # the same file twice
+        link = self.d / "gpglink"
+        link.symlink_to(GPG)
+        with self.assertRaises(cs.Refusal):
+            cs.Tools(str(link), GPGCONF, fsha(GPG), fsha(GPGCONF))          # not a resolved path
+        g = fake_tool(self.d, "import sys\nsys.exit(0)\n", "fakegpg.py")
+        t = tools(gpg=g)
+        Path(g).write_text(Path(g).read_text() + "# changed after binding\n")
+        with self.assertRaises(cs.Refusal) as e:
+            cs.gpg_run(cs.GPG_ENCRYPT, PW, b"x", t)                       # re-hashed before the exec
+        self.assertIn("pinned", str(e.exception))
+        c = fake_tool(self.d, "import sys\nsys.exit(0)\n", "fakeconf.py")
+        t = tools(gpgconf=c)
+        Path(c).write_text(Path(c).read_text() + "# changed\n")
+        with self.assertRaises(cs.Refusal) as e:
+            cs.gpg_run(cs.GPG_ENCRYPT, PW, b"x", t)                       # gpgconf too: shutdown not confirmed
+        self.assertIn("shutdown", str(e.exception))
 
     def test_round_trip_and_wrong_passphrase(self):
         ct = cs.gpg_run(cs.GPG_ENCRYPT, PW, b"payload", TOOLS)
@@ -191,7 +243,7 @@ class Gpg(unittest.TestCase):
         if raised:
             resource.setrlimit(resource.RLIMIT_CORE, (1 << 20 if hard == resource.RLIM_INFINITY else hard, hard))
         try:
-            out = json.loads(cs.gpg_run(cs.GPG_DECRYPT, PW, b"", cs.Tools(tool, GPGCONF)))
+            out = json.loads(cs.gpg_run(cs.GPG_DECRYPT, PW, b"", tools(gpg=tool)))
         finally:
             os.close(r)
             os.close(w)
@@ -251,15 +303,60 @@ class Gpg(unittest.TestCase):
                 cs.new_gnupg_home()
             rm.assert_called_once()
 
-    def test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_removal_fails(self):
-        bad = cs.Tools(GPG, fake_tool(self.d, "import sys\nsys.exit(5)\n"))
-        ct = cs.gpg_run(cs.GPG_ENCRYPT, PW, b"x", bad)                     # gpgconf exits 5: removal still happens
-        self.assertEqual(cs.gpg_run(cs.GPG_DECRYPT, PW, ct, TOOLS), b"x")
-        with mock.patch.object(cs.subprocess, "run", side_effect=OSError("no gpgconf")):
-            cs.gpg_run(cs.GPG_ENCRYPT, PW, b"y", TOOLS)                  # a launch error: removal still happens
+    def test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails(self):
+        homes = []
+        real = cs.new_gnupg_home
+
+        def spy():
+            homes.append(real())
+            return homes[-1]
+
+        bad = tools(gpgconf=fake_tool(self.d, "import sys\nsys.exit(5)\n"))
+        with mock.patch.object(cs, "new_gnupg_home", spy):
+            with self.assertRaises(cs.Refusal) as e:
+                cs.gpg_run(cs.GPG_ENCRYPT, PW, b"x", bad)                 # gpgconf exits 5: removed, then refused
+            self.assertIn("shutdown", str(e.exception))
+            with mock.patch.object(cs.subprocess, "run", side_effect=OSError("no gpgconf")), \
+                    self.assertRaises(cs.Refusal) as e:
+                cs.gpg_run(cs.GPG_ENCRYPT, PW, b"y", TOOLS)              # a launch error: removed, then refused
+            self.assertIn("shutdown", str(e.exception))
+        self.assertTrue(homes and not any(os.path.lexists(h) for h in homes))
         with mock.patch.object(cs.shutil, "rmtree"), self.assertRaises(cs.Refusal) as e:
             cs.gpg_run(cs.GPG_ENCRYPT, PW, b"z", TOOLS)
         self.assertIn("could not be removed", str(e.exception))
+
+    def test_a_chmod_failure_still_removes_the_home(self):
+        made = []
+        real = cs.tempfile.mkdtemp
+
+        def mk(*a, **k):
+            made.append(real(*a, **k))
+            return made[-1]
+
+        with mock.patch.object(cs.tempfile, "mkdtemp", mk), \
+                mock.patch.object(cs.os, "chmod", side_effect=PermissionError("no")), self.assertRaises(OSError):
+            cs.new_gnupg_home()
+        self.assertTrue(made and not os.path.lexists(made[0]))
+        stuck = self.d / "stuck-home"
+        stuck.mkdir()
+        with mock.patch.object(cs.tempfile, "mkdtemp", return_value=str(stuck)), \
+                mock.patch.object(cs.os, "chmod", side_effect=PermissionError("no")), \
+                mock.patch.object(cs.shutil, "rmtree"), self.assertRaises(cs.Refusal) as e:
+            cs.new_gnupg_home()                                           # a failure, and the home cannot be removed
+        self.assertIn("could not be removed", str(e.exception))
+
+    def test_an_unreadable_tool_is_refused(self):
+        copy = self.d / "gpg-copy"
+        shutil.copy2(GPG, copy)
+        copy = os.path.realpath(copy)
+        t = cs.Tools(copy, GPGCONF, fsha(copy), fsha(GPGCONF))
+        os.chmod(copy, 0o100)                                             # executable, not readable
+        try:
+            with self.assertRaises(cs.Refusal) as e:
+                t.verify(copy)
+            self.assertIn("cannot be read", str(e.exception))
+        finally:
+            os.chmod(copy, 0o700)
 
 
 class Base(unittest.TestCase):
@@ -397,6 +494,9 @@ class Seal(Base):
     def test_regular_read_refuses_a_directory(self):
         with self.assertRaises(cs.Refusal):
             cs.regular_read(self.w)
+        (self.s / "sub").mkdir(parents=True)
+        with self.assertRaises(cs.Refusal):
+            cs._read_in_dir(self.s, "sub")                                # an entry that is a directory
 
     def test_content_scan_skips_a_special_root(self):
         fifo = self.d / "fifo"
@@ -426,12 +526,33 @@ class SealCheck(Base):
         os.remove(self.s / "p0001.gpg")
         self.assertEqual(cs.seal_check(self.s, text)["missing"], ["p0001.gpg"])
 
-    def test_symlinked_entry_refused(self):
+    def test_symlinked_or_non_file_entries_fail(self):
         text = self.sealed()
         os.remove(self.s / "p0002.gpg")
         os.symlink(self.s / "p0001.gpg", self.s / "p0002.gpg")
-        with self.assertRaises(cs.Refusal):
-            cs.seal_check(self.s, text)
+        r = cs.seal_check(self.s, text)
+        self.assertEqual((r["ok"], r["missing"], r["extra_other"]), (False, ["p0002.gpg"], 1))
+        shutil.rmtree(self.s)
+        text = self.sealed_again()
+        (self.s / "emptydir").mkdir()                                    # an empty directory is an extra too
+        r = cs.seal_check(self.s, text)
+        self.assertEqual((r["ok"], r["extra_other"]), (False, 1))
+        self.assertNotIn("emptydir", json.dumps(r))
+
+    def sealed_again(self):
+        for p in self.w.iterdir():
+            p.unlink() if p.is_file() else shutil.rmtree(p)
+        return self.sealed()
+
+    def test_the_on_disk_index_must_be_the_seal(self):
+        text = self.sealed()
+        self.assertTrue(cs.seal_check(self.s, text)["index_ok"])
+        (self.s / cs.SEAL_FILE).write_text(text + "\n")
+        r = cs.seal_check(self.s, text)
+        self.assertEqual((r["ok"], r["index_ok"]), (False, False))
+        os.remove(self.s / cs.SEAL_FILE)
+        r = cs.seal_check(self.s, text)
+        self.assertEqual((r["ok"], r["index_ok"]), (False, False))
 
     def test_canonical_seal(self):
         h, m = "0" * 64, f"{'0' * 64}  PG-MANIFEST.json.gpg\n"
@@ -455,13 +576,20 @@ class SealCheck(Base):
         self.assertEqual(sc.main(["--sealed", str(self.s), "--seal-file", str(sf), "--seal-sha256", "0" * 64], out), 1)
         self.assertIn("pinned", json.loads(out.getvalue())["refused"])
         out = io.StringIO()
-        self.assertEqual(sc.main(["--sealed", str(self.s), "--seal-file", str(self.d / "none")], out), 1)
+        self.assertEqual(sc.main(["--sealed", str(self.s), "--seal-file", str(self.d / "none"), "--seal-sha256", sha],
+                                 out), 1)
         self.assertEqual(json.loads(out.getvalue())["refused"], "the seal file or the sealed dir cannot be read")
         bad = self.d / "bad.txt"
         bad.write_text("nonsense\n")
         out = io.StringIO()
-        self.assertEqual(sc.main(["--sealed", str(self.s), "--seal-file", str(bad)], out), 1)
+        self.assertEqual(sc.main(["--sealed", str(self.s), "--seal-file", str(bad), "--seal-sha256",
+                                  hashlib.sha256(b"nonsense\n").hexdigest()], out), 1)
         self.assertIn("malformed", json.loads(out.getvalue())["refused"])
+        with self.assertRaises(SystemExit), mock.patch("sys.stderr", io.StringIO()):
+            sc.main(["--sealed", str(self.s), "--seal-file", str(sf)], io.StringIO())       # the pin is required
+        out = io.StringIO()
+        self.assertEqual(sc.main(["--sealed", str(self.s), "--seal-file", str(sf), "--seal-sha256", sha.upper()],
+                                 out), 1)
 
 
 class Reader(Base):
@@ -528,6 +656,7 @@ class Reader(Base):
                 json.dumps(dict(good, paths={"p0001": "/abs"})).encode(),
                 json.dumps(dict(good, paths={"p0001": "a//b"})).encode(),
                 json.dumps(dict(good, paths={"p0001": ""})).encode(),
+                json.dumps(dict(good, paths={"p0001": "."})).encode(),
                 json.dumps(dict(good, paths={"p0002": "a"})).encode()]
         for i, bad in enumerate(bads):
             with self.subTest(i=i):
@@ -539,6 +668,26 @@ class Reader(Base):
                 smap = {"PG-MANIFEST.json.gpg": hashlib.sha256(ct).hexdigest(), "p0001.gpg": "0" * 64}
                 with self.assertRaises(cs.Break):
                     cs.open_manifest(d, smap, PW, TOOLS)
+
+    def test_duplicate_manifest_paths_break(self):
+        man = {"products": {"p0001": "0" * 64, "p0002": "1" * 64}, "paths": {"p0001": "a", "p0002": "a"}}
+        ct = cs.gpg_run(cs.GPG_ENCRYPT, PW, json.dumps(man).encode(), TOOLS)
+        d = self.d / "dup"
+        d.mkdir()
+        (d / "PG-MANIFEST.json.gpg").write_bytes(ct)
+        smap = {"PG-MANIFEST.json.gpg": hashlib.sha256(ct).hexdigest(), "p0001.gpg": "0" * 64, "p0002.gpg": "0" * 64}
+        with self.assertRaises(cs.Break):
+            cs.open_manifest(d, smap, PW, TOOLS)
+
+    def test_a_linked_seal_root_or_a_path_name_is_refused(self):
+        sm = self.sealed()
+        link = self.d / "sealed-link"
+        link.symlink_to(self.s)
+        with self.assertRaises(cs.Refusal) as e:
+            cs.read_ciphertext(link, sm, "p0001.gpg")
+        self.assertNotIsInstance(e.exception, cs.Break)
+        with self.assertRaises(cs.Refusal):
+            cs.read_ciphertext(self.s, dict(sm, **{"../w/a": "0" * 64}), "../w/a")
 
     def test_an_id_absent_from_the_manifest_is_refused_before_any_read(self):
         sm = self.sealed()
@@ -575,7 +724,8 @@ class PG(Base):
             if not scratch:
                 os.environ.pop("SCRATCH", None)
             rc = pg.main(["--covfix-attempt", attempt, "--workdir", str(self.w), "--sealed", str(sealed or self.s),
-                          "--gen-spec", str(spec), "--gpg", GPG, "--gpgconf", GPGCONF],
+                          "--gen-spec", str(spec), "--gpg", GPG, "--gpgconf", GPGCONF,
+                          "--gpg-sha256", fsha(GPG), "--gpgconf-sha256", fsha(GPGCONF)],
                          stdin=io.BytesIO(frame), stdout=out)
         return rc, out.getvalue()
 
@@ -687,7 +837,8 @@ class PG(Base):
         self.assertIn("32 lowercase hex", out)
         out = io.StringIO()
         rc = pg.main(["--covfix-attempt", ATT, "--workdir", str(self.w), "--sealed", str(self.s), "--gen-spec", "x",
-                      "--gpg", "gpg", "--gpgconf", GPGCONF], stdin=io.BytesIO(FRAME), stdout=out)
+                      "--gpg", "gpg", "--gpgconf", GPGCONF, "--gpg-sha256", fsha(GPG),
+                      "--gpgconf-sha256", fsha(GPGCONF)], stdin=io.BytesIO(FRAME), stdout=out)
         self.assertEqual(rc, 1)
         self.assertIn("absolute", out.getvalue())
 
@@ -842,8 +993,83 @@ class PG(Base):
         self.assertEqual(pg.snapshot(None), {})
         self.assertEqual(pg.snapshot(self.d / "absent"), {})
         os.symlink("/etc/hosts", self.scratch / "tmp" / "lnk")
-        self.assertNotIn("lnk", pg.snapshot(self.scratch / "tmp"))
-        self.assertTrue(pg.remove_verified([self.d / "never-existed"]))
+        snap = pg.snapshot(self.scratch / "tmp")
+        self.assertEqual(snap["lnk"][0], "l")
+        self.assertEqual(snap["lnk"][2], "/etc/hosts")
+        self.assertEqual(snap["old"][0], "d")
+        self.assertTrue(pg.remove_verified(self.d, [("never-existed", ("f", 0, 0, 0), True)]))
+        self.assertFalse(pg.remove_verified(self.scratch / "tmp", [("old", snap["old"], False)]))   # never an old dir
+        self.assertTrue((self.scratch / "tmp" / "old").is_dir())
+        os.mkfifo(self.scratch / "tmp" / "fifo")
+        self.assertEqual(pg.snapshot(self.scratch / "tmp")["fifo"][0], "o")                  # a special entry
+        (self.scratch / "tmp" / "stuck").write_text("x")
+        with mock.patch.object(pg.os, "unlink", side_effect=PermissionError("no")):
+            self.assertFalse(pg.remove_verified(self.scratch / "tmp", [("stuck", ("f", 0, 0, 0), True)]))
+
+    def test_a_group_that_will_not_end_is_refused(self):
+        with mock.patch.object(pg.os, "killpg", side_effect=PermissionError("no")), \
+                mock.patch.object(pg, "GROUP_WAIT_S", 0), self.assertRaises(cs.Refusal):
+            pg.end_group(999999)
+
+    def test_an_unconfirmed_group_end_fails_the_run(self):
+        with mock.patch.object(pg, "end_group", side_effect=cs.Refusal("the group did not end")):
+            rc, out = self.go()
+        s = self.summary(out)
+        self.assertEqual((rc, s["group_ended"]), (1, "failed"))
+
+    def test_a_seed_in_a_new_directory_name_is_caught_and_removed(self):
+        rc, out = self.go("seeddir")
+        s = self.summary(out)
+        self.assertEqual((rc, s["spills_removed"]), (1, True))
+        self.assertGreaterEqual(s["scratch_spills"], 1)
+        self.assertEqual(sorted(p.name for p in (self.scratch / "tmp").iterdir()), ["old"])
+
+    def test_a_seed_in_a_link_target_is_caught_and_removed(self):
+        rc, out = self.go("seedlink")
+        s = self.summary(out)
+        self.assertEqual((rc, s["scratch_spills"], s["spills_removed"]), (1, 1, True))
+        self.assertFalse(os.path.lexists(self.scratch / "tmp" / "plain-link"))
+
+    def test_a_pg_owned_file_is_not_a_product(self):
+        rc, out = self.go("captureproduct")
+        self.assertEqual(rc, 1)
+        self.assertFalse(self.summary(out)["products_json"])
+
+    def test_an_orphan_of_the_generator_is_killed_before_the_seal(self):
+        rc, out = self.go("orphan")
+        self.assertEqual(rc, 0)
+        time.sleep(2.5)
+        self.assertFalse((self.scratch / "tmp" / "late.txt").exists())
+
+    def test_a_missing_published_index_is_a_break(self):
+        real = cs.seal
+
+        def seal_then_drop(*a, **k):
+            r = real(*a, **k)
+            os.remove(Path(a[1]) / cs.SEAL_FILE)
+            return r
+
+        with mock.patch.object(cs, "seal", side_effect=seal_then_drop):
+            rc, out = self.go()
+        self.assertEqual(rc, cs.BREAK_RC)
+        self.assertIn("covfix-break", out)
+
+    def test_the_trap_stays_armed_through_the_scan(self):
+        real, calls = pg.remove_verified, []
+
+        def fail_first(*a):
+            calls.append(a)
+            if len(calls) == 1:
+                raise OSError("io")                                      # the main path's removal fails
+            return real(*a)                                              # the trap's removal is real
+
+        with mock.patch.object(pg, "remove_verified", side_effect=fail_first):
+            rc, out = self.go("leak")
+        self.assertEqual(len(calls), 2)
+        s = self.summary(out)
+        self.assertEqual(rc, 1)
+        self.assertIs(s["trap_spills_removed"], True)
+        self.assertFalse((self.scratch / "tmp" / "leak.json").exists())   # found by the sealed hashes: W is gone
 
 
 @unittest.skipUnless(hasattr(os, "O_NOATIME"), "O_NOATIME is Linux-only")

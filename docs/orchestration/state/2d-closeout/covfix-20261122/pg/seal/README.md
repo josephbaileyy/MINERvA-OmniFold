@@ -22,13 +22,21 @@ The PG binary runs tune-generator's command as its only subprocess. It is invoke
 The binary resolves the command's absolute path once, checks its sha256 against the gen-spec, launches it by that
 resolved path, and hashes it again after the run. If the bytes changed, the run is a role failure.
 
+**Residual window (disclosed, the director's ruling R2 of 2026-11-24).** A replacement written by this same account
+between the hash and the launch, and restored before the re-hash, would not be seen. §4.2's cooperative assumption
+already trusts that account, and the same class was accepted as non-blocking in JE's wrapper. The fix (copying the
+command and executing the copy) would forbid $0-relative paths in the command for no gain against the declared threat
+model, so the window is disclosed rather than closed.
+
 The command runs with:
 
 - cwd W, TMPDIR = W/tmp, and stdin /dev/null;
 - stdout and stderr captured to W/capture/{stdout,stderr}.log, so nothing reaches the terminal;
 - a scrubbed environment: only the gen-spec's `env_keep` variables that are set, plus TMPDIR. In particular, it gets
   no `SCRATCH` unless `env_keep` lists it;
-- its own process group, which is killed on failure or SIGTERM.
+- its own process group. When the command exits, the binary kills the whole group and confirms it is gone before
+  sealing, so **no background process the command started survives it**. Anything still writing is killed. The group
+  is also killed on failure or SIGTERM.
 
 `seeds.json` is:
 
@@ -41,11 +49,13 @@ with `task_seeds[i]` = base + 10 000·u + i, for i = 0 to 6.
 The command must:
 
 - **write every output under W:** products, gevgen.log, gntpc.log, setup_genie_v3.sh output, job scripts, meta JSON,
-  the convert stage's f_MEC, p and n_in_grid, and the ratio files. Nothing may go elsewhere. If anything is created or
-  changed under $SCRATCH/tmp and it carries a plaintext hash, or a task seed in its name or bytes, it is a spill: the
-  binary removes it and fails the run.
+  the convert stage's f_MEC, p and n_in_grid, and the ratio files. Nothing may go elsewhere. If anything (a file, a
+  directory or a link) is created or changed under $SCRATCH/tmp and it carries a plaintext hash, or a task seed
+  anywhere in its relative path, its bytes or a link's target, it is a spill: the binary removes it (a new directory
+  with its contents) and fails the run.
 - **write W/PRODUCTS.json:** a non-empty JSON list of distinct, safe relative paths of regular files under W, naming
-  the physics products PV will read.
+  the physics products PV will read. PG's own files are not products: no entry may lie under `capture/` or `tmp/`, or
+  be `seeds.json` or `PRODUCTS.json`.
 - **exit 0 on success.** On a non-zero exit, everything under W is still sealed, and the run fails.
 - **not create symlinks or special files under W.** These are refused, and the trap still deletes W.
 
@@ -61,6 +71,7 @@ The gen-spec is a JSON object with exactly four keys:
 ```
 --covfix-attempt <32 hex> --workdir <empty dir> --sealed <new dir, disjoint from W>
 --gen-spec <file> --gpg <absolute path> --gpgconf <absolute path>
+--gpg-sha256 <64 hex> --gpgconf-sha256 <64 hex>
 ```
 
 Its stdin is exactly "<64-hex passphrase>\n<10-digit seed base>\n", 76 bytes, then EOF.
@@ -93,7 +104,12 @@ Stdout carries fixed codes, booleans and counts, and then the contract's last li
 The pinned flags are §4.2's. The passphrase is passed on fd 3 only, and gpg is left with exactly fds 0–3 and core
 dumps off.
 
+**gpg and gpgconf are pinned (the director's ruling R1).** PG's binding records both binaries' sha256. Both paths
+must be absolute and fully resolved. Each binary is hashed through a file descriptor when PG starts and again
+immediately before every exec. A mismatch, for example after a NERSC update, is a STOP and a rebinding, never a
+fallback. The exec is by path after the hash, the same residual window as above.
+
 Each call gets a fresh GNUPGHOME under /dev/shm: under 80 characters, mode 700, and never under $SCRATCH. The binary
-kills gpg-agent with it and removes it. A removal that cannot be confirmed is a role failure. ~/.gnupg is never touched.
+kills gpg-agent with it and removes it. An agent shutdown or a removal that cannot be confirmed is a role failure. ~/.gnupg is never touched.
 
 Before generation, the binary runs a synthetic round trip with the pinned gpg and the real passphrase.

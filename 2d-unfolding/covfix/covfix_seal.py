@@ -105,13 +105,38 @@ def task_seeds(base: int, tunes: list[str]) -> dict:
 
 # --------------------------------------------------------------------------------------------------------- gpg
 class Tools:
-    """The absolute paths of gpg and gpgconf; each must be an executable regular file."""
+    """gpg and gpgconf, pinned by sha256 in PG's binding (the director's ruling R1). Each path must be absolute, fully
+    resolved (no link) and an executable regular file. Each binary is hashed through a file descriptor opened without
+    following a link, at construction and again immediately before every exec; a mismatch is a STOP and a rebinding,
+    never a fallback. RESIDUAL WINDOW (disclosed): the exec is by path, after the hash, so a write by this same account
+    between the two would not be seen; section 4.2's cooperative assumption covers that account."""
 
-    def __init__(self, gpg: str, gpgconf: str):
+    def __init__(self, gpg: str, gpgconf: str, gpg_sha256: str, gpgconf_sha256: str):
         for p in (gpg, gpgconf):
-            if not os.path.isabs(p) or not os.path.isfile(p) or not os.access(p, os.X_OK):
-                raise Refusal("gpg and gpgconf must be absolute paths of executable files")
+            if not os.path.isabs(p) or os.path.realpath(p) != p or not os.path.isfile(p) or not os.access(p, os.X_OK):
+                raise Refusal("gpg and gpgconf must be absolute, resolved paths of executable files")
+        for h in (gpg_sha256, gpgconf_sha256):
+            if not (isinstance(h, str) and HEX64.fullmatch(h)):
+                raise Refusal("gpg's and gpgconf's pins must be 64 lowercase hex")
         self.gpg, self.gpgconf = gpg, gpgconf
+        self.pins = {gpg: gpg_sha256, gpgconf: gpgconf_sha256} if gpg != gpgconf else None
+        if self.pins is None:
+            raise Refusal("gpg and gpgconf must be different files")
+        self.verify(gpg)
+        self.verify(gpgconf)
+
+    def verify(self, path: str) -> str:
+        try:
+            fd = os.open(path, os.O_RDONLY | NOFOLLOW)
+            try:
+                h = hashlib.sha256(_read_fd(fd)).hexdigest()
+            finally:
+                os.close(fd)
+        except OSError as e:
+            raise Refusal("gpg or gpgconf cannot be read") from e
+        if h != self.pins[path]:
+            raise Refusal("gpg or gpgconf is not its pinned sha256 (a STOP and a rebinding)")
+        return path
 
 
 def _inside(path: str, root: str) -> bool:
@@ -127,10 +152,15 @@ def new_gnupg_home() -> str:
     if scratch and _inside(root, scratch):
         raise Refusal("the GNUPGHOME root is under $SCRATCH")
     home = tempfile.mkdtemp(prefix="cfx", dir=root)
-    os.chmod(home, 0o700)
-    if len(home) >= GNUPG_HOME_MAX:
+    try:
+        os.chmod(home, 0o700)
+        if len(home) >= GNUPG_HOME_MAX:
+            raise Refusal("the GNUPGHOME path is not short")
+    except BaseException:
         shutil.rmtree(home, ignore_errors=True)
-        raise Refusal("the GNUPGHOME path is not short")
+        if os.path.lexists(home):
+            raise Refusal("the GNUPGHOME could not be removed")
+        raise
     return home
 
 
@@ -157,7 +187,7 @@ def gpg_run(argv: tuple, passphrase: str, payload: bytes, tools: Tools) -> bytes
                 os.write(w, passphrase.encode("ascii") + b"\n")
             finally:
                 os.close(w)
-            p = subprocess.Popen([tools.gpg, *argv[1:]], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+            p = subprocess.Popen([tools.verify(tools.gpg), *argv[1:]], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE, close_fds=True, pass_fds=(3,), preexec_fn=_child_fd3(r),
                                  env=env)
         finally:
@@ -165,14 +195,17 @@ def gpg_run(argv: tuple, passphrase: str, payload: bytes, tools: Tools) -> bytes
         out, _err = p.communicate(payload)
         rc = p.returncode
     finally:
+        agent_down = False
         try:
-            subprocess.run([tools.gpgconf, "--homedir", home, "--kill", "gpg-agent"], capture_output=True, env=env,
-                           timeout=60)
-        except (OSError, subprocess.SubprocessError):
+            agent_down = subprocess.run([tools.verify(tools.gpgconf), "--homedir", home, "--kill", "gpg-agent"],
+                                        capture_output=True, env=env, timeout=60).returncode == 0
+        except (OSError, subprocess.SubprocessError, Refusal):
             pass
         shutil.rmtree(home, ignore_errors=True)
         if os.path.lexists(home):
             raise Refusal("the GNUPGHOME could not be removed")
+        if not agent_down:
+            raise Refusal("the gpg-agent shutdown could not be confirmed")
     if rc != 0:
         raise Refusal(f"gpg exited {rc}")
     return out
@@ -338,24 +371,50 @@ def _public(names) -> list[str]:
 
 
 def seal_check(sealed: Path, seal_text: str) -> dict:
-    """Every entry of the sealed dir (PG-SEAL.sha256 excepted) against a canonical seal: the same set, the same bytes.
-    No decryption. Only opaque names are reported; other extra names are counted."""
+    """The sealed dir against a canonical seal, with no decryption: its own PG-SEAL.sha256 must be a regular file with
+    exactly seal_text's bytes; every other root entry must be a regular file of the set, with its listed bytes. The dir
+    is flat: a subdirectory, link or special entry is an extra. Only opaque names are reported; other extras are
+    counted."""
     want = parse_seal(seal_text)
     sealed = Path(sealed)
-    have = set(enumerate_files(sealed)) - {SEAL_FILE}
+    regular, other = set(), 0
+    for name in os.listdir(sealed):
+        if stat.S_ISREG(os.lstat(sealed / name).st_mode):
+            regular.add(name)
+        else:
+            other += 1
+    index_ok = SEAL_FILE in regular and regular_read(sealed / SEAL_FILE) == seal_text.encode("ascii")
+    have = regular - {SEAL_FILE}
     missing = sorted(set(want) - have)
     extra = have - set(want)
     mismatched = sorted(r for r in set(want) & have if hashlib.sha256(regular_read(sealed / r)).hexdigest() != want[r])
-    return {"ok": not (missing or extra or mismatched), "missing": missing, "extra": _public(extra),
-            "extra_other": len(extra) - len(_public(extra)), "mismatched": mismatched, "n": len(want)}
+    return {"ok": index_ok and not (missing or extra or mismatched or other), "index_ok": index_ok,
+            "missing": missing, "extra": _public(extra), "extra_other": len(extra) - len(_public(extra)) + other,
+            "mismatched": mismatched, "n": len(want)}
 
 
 # ------------------------------------------------------------------------------------------------- reader side
+def _read_in_dir(root: Path, name: str) -> bytes:
+    """Open name relative to a directory descriptor of root (root itself not a link), never following a link, and
+    read it once as a regular file."""
+    dfd = os.open(str(root), os.O_RDONLY | os.O_DIRECTORY | NOFOLLOW)
+    try:
+        fd = os.open(name, os.O_RDONLY | NOATIME | NOFOLLOW, dir_fd=dfd)
+    finally:
+        os.close(dfd)
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise Refusal("a sealed entry is not a regular file")
+        return _read_fd(fd)
+    finally:
+        os.close(fd)
+
+
 def read_ciphertext(seal_root: Path, seal_map: dict, name: str) -> bytes:
-    if name not in seal_map:
+    if name not in seal_map or not (name == MANIFEST_CT or (name.endswith(".gpg") and ID.fullmatch(name[:-4]))):
         raise Refusal("a requested name is not in the seal")
     try:
-        data = regular_read(Path(seal_root) / name)
+        data = _read_in_dir(Path(seal_root), name)
     except FileNotFoundError as e:
         raise Break("a sealed ciphertext is missing") from e
     except OSError as e:
@@ -375,7 +434,7 @@ def _no_dup_pairs(pairs):
 
 
 def _safe_rel(p) -> bool:
-    return (isinstance(p, str) and p != "" and not p.startswith("/") and "\x00" not in p
+    return (isinstance(p, str) and p not in ("", ".") and not p.startswith("/") and "\x00" not in p
             and os.path.normpath(p) == p and ".." not in p.split("/"))
 
 
@@ -390,7 +449,8 @@ def open_manifest(seal_root: Path, seal_map: dict, passphrase: str, tools: Tools
           and isinstance(man["products"], dict) and isinstance(man["paths"], dict)
           and set(man["products"]) == set(man["paths"]) == listed
           and all(isinstance(h, str) and HEX64.fullmatch(h) for h in man["products"].values())
-          and all(_safe_rel(p) for p in man["paths"].values()))
+          and all(_safe_rel(p) for p in man["paths"].values())
+          and len(set(man["paths"].values())) == len(man["paths"]))
     if not ok:
         raise Break("the manifest's schema or ids are not the seal's")
     return man

@@ -1,9 +1,14 @@
 # command: python3 -B -m unittest -v test_covfix_ledger.py
 # python: 3.12.2 numpy 1.26.4  gpg: gpg (GnuPG) 2.4.8  host: Darwin arm64
-# 0ca6a7acb82ab43b92fd211f808154bfebf456d7f19c59278cad7c068cf2f82d  covfix_ledger.py
-# 4a8674db8f57e611b469f6251411fc0f606b884d9e24e24d211bd71ec0ba07f7  test_covfix_ledger.py
-# b54f7fc5fdde131f42653a198bf500488bdf5b206efeeff0d56c33cd49e83198  covfix_ledger_mutation.py
-# start: 2026-11-24T11:37:27Z
+# aa3e929cf34801d33198ab7953a34a4118b10ad3cff9d8827d90a4ff524c3847  covfix_ledger.py
+# 869e559b569dc1e886f6f31b53f133e22bfc81405ca6da50c3af07611d64ea56  test_covfix_ledger.py
+# 9e1d4a058d61ff378ed3526651ec053cc075b0fb8b19ce9ba05304d9d7cc1b69  covfix_ledger_mutation.py
+# start: 2026-11-24T15:42:43Z
+test_a_line_refuses_a_larger_or_unknown_draw (test_covfix_ledger.FixedAndAmend.test_a_line_refuses_a_larger_or_unknown_draw) ... ok
+test_amendment_needs_a_sha_and_moves_the_cap (test_covfix_ledger.FixedAndAmend.test_amendment_needs_a_sha_and_moves_the_cap) ... ok
+test_an_intent_draws_on_its_line_once (test_covfix_ledger.FixedAndAmend.test_an_intent_draws_on_its_line_once) ... ok
+test_fixed_lines_are_held_from_init (test_covfix_ledger.FixedAndAmend.test_fixed_lines_are_held_from_init) ... ok
+test_policy_validation_of_toys_and_fixed (test_covfix_ledger.FixedAndAmend.test_policy_validation_of_toys_and_fixed) ... ok
 test_init_once_policy_bound_and_absent_refused (test_covfix_ledger.Init.test_init_once_policy_bound_and_absent_refused) ... ok
 test_locked_needs_the_directory (test_covfix_ledger.Init.test_locked_needs_the_directory) ... ok
 test_group_cap_and_ceiling_exact_integers (test_covfix_ledger.Intents.test_group_cap_and_ceiling_exact_integers) ... ok
@@ -12,6 +17,7 @@ test_intent_and_job_name (test_covfix_ledger.Intents.test_intent_and_job_name) .
 test_no_new_intent_while_one_is_unrecorded (test_covfix_ledger.Intents.test_no_new_intent_while_one_is_unrecorded) ... ok
 test_record_submission (test_covfix_ledger.Intents.test_record_submission) ... ok
 test_unknown_phase (test_covfix_ledger.Intents.test_unknown_phase) ... ok
+test_accept_only_toys_in_the_policy (test_covfix_ledger.PolicyToys.test_accept_only_toys_in_the_policy) ... ok
 test_a_different_phase_in_the_name_does_not_match (test_covfix_ledger.Reconcile.test_a_different_phase_in_the_name_does_not_match) ... ok
 test_a_matched_job_already_used_stays_unresolved (test_covfix_ledger.Reconcile.test_a_matched_job_already_used_stays_unresolved) ... ok
 test_ambiguous_or_absent_stays_unresolved (test_covfix_ledger.Reconcile.test_ambiguous_or_absent_stays_unresolved) ... ok
@@ -24,9 +30,12 @@ test_a_duplicated_acceptance_line_refuses (test_covfix_ledger.Storage.test_a_dup
 test_corrupt_or_invalid_transitions_refuse (test_covfix_ledger.Storage.test_corrupt_or_invalid_transitions_refuse) ... ok
 test_every_append_is_fsynced (test_covfix_ledger.Storage.test_every_append_is_fsynced) ... ok
 test_lock_is_exclusive (test_covfix_ledger.Storage.test_lock_is_exclusive) ... ok
+test_an_sbatch_that_cannot_launch_stops (test_covfix_ledger.Submit.test_an_sbatch_that_cannot_launch_stops) ... ok
+test_argv_from_the_stored_reservation_and_extra_allowlist (test_covfix_ledger.Submit.test_argv_from_the_stored_reservation_and_extra_allowlist) ... ok
+test_claim_once_before_sbatch (test_covfix_ledger.Submit.test_claim_once_before_sbatch) ... ok
 test_cluster_suffix_parsed (test_covfix_ledger.Submit.test_cluster_suffix_parsed) ... ok
 test_mismatches_scancel_and_stop (test_covfix_ledger.Submit.test_mismatches_scancel_and_stop) ... ok
-test_sbatch_failure_leaves_the_intent_open (test_covfix_ledger.Submit.test_sbatch_failure_leaves_the_intent_open) ... ok
+test_sbatch_failure_keeps_the_hold_and_stops (test_covfix_ledger.Submit.test_sbatch_failure_keeps_the_hold_and_stops) ... ok
 test_submit_argv_record_and_verify (test_covfix_ledger.Submit.test_submit_argv_record_and_verify) ... ok
 test_whole_minutes_required (test_covfix_ledger.Submit.test_whole_minutes_required) ... ok
 test_accept_exactly_once_tied_to_a_job_of_the_phase (test_covfix_ledger.Toys.test_accept_exactly_once_tied_to_a_job_of_the_phase) ... ok
@@ -35,9 +44,11 @@ test_minute_rounding_in_node_seconds (test_covfix_ledger.Units.test_minute_round
 test_policy_validation (test_covfix_ledger.Units.test_policy_validation) ... ok
 test_refusals (test_covfix_ledger.Units.test_refusals) ... ok
 test_sacct_state (test_covfix_ledger.Units.test_sacct_state) ... ok
+test_a_zero_charge_needs_a_never_started_job (test_covfix_ledger.ZeroAndCanon.test_a_zero_charge_needs_a_never_started_job) ... ok
+test_job_ids_are_canonical (test_covfix_ledger.ZeroAndCanon.test_job_ids_are_canonical) ... ok
 
 ----------------------------------------------------------------------
-Ran 31 tests in 2.880s
+Ran 42 tests in 3.641s
 
 OK
 # rc: 0

@@ -3,12 +3,16 @@ exclusive node under the director's wrapper (JE's round-3 contract), and is the 
 passphrase, which it hands to gpg on fd 3.
 
   covfix_pg.py --covfix-attempt <32 hex> --workdir <empty dir> --sealed <new dir, disjoint from it>
-               --gen-spec <json> --gpg <absolute path> --gpgconf <absolute path>  < frame
+               --gen-spec <json> --gpg <absolute path> --gpgconf <absolute path>
+               --gpg-sha256 <64 hex> --gpgconf-sha256 <64 hex>  < frame
 
   stdin       exactly "<passphrase, 64 hex>\\n<seed base, 10 digits>\\n" (76 bytes), then EOF
   gen-spec    {"command": [absolute path, args...], "command_sha256": "<64 hex>", "tunes": [u=0 name, u=1 name],
                "env_keep": [variable names the generator needs]}. The command path is resolved once, hashed, launched
-              by that resolved path and hashed again after the run; a change is a role failure.
+              by that resolved path and hashed again after the run; a change is a role failure. RESIDUAL WINDOW (disclosed,
+              the director's ruling R2): a replacement written by this same account between the hash and the exec,
+              and restored before the re-hash, would not be seen; section 4.2's cooperative assumption covers it.
+  gpg         gpg and gpgconf are pinned by sha256 (the binding) and hashed before every exec (ruling R1)
   before      a synthetic gpg round trip with the pinned gpg and the real passphrase
   generation  <resolved command...> --workdir W --seeds W/seeds.json, with cwd W, stdin /dev/null, stdout and stderr
               into W/capture/, a scrubbed environment (env_keep's set variables, plus TMPDIR = W/tmp), in its own
@@ -41,10 +45,12 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import signal
 import stat
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -54,6 +60,8 @@ import covfix_seal as cs  # noqa: E402
 ATTEMPT = re.compile(r"[0-9a-f]{32}")
 SPEC_KEYS = {"command", "command_sha256", "tunes", "env_keep"}
 SYNTHETIC = b"covfix-pg synthetic round trip"
+PG_OWNED = ("capture", "tmp", "seeds.json", "PRODUCTS.json")   # PG's own files under W: never a physics product
+GROUP_WAIT_S = 30
 SEED_ALIAS = ("task (u=0, i=0) = the seed base: present inside W only (W/seeds.json, that task's gevgen argv and logs), "
               "sealed and deleted; the spill scan treats it like every task seed")
 
@@ -105,42 +113,69 @@ def scratch_tmp() -> Path | None:
     return Path(s) / "tmp" if s else None
 
 
+def _sig(st: os.stat_result, path: str) -> tuple:
+    if stat.S_ISLNK(st.st_mode):
+        return ("l", st.st_ino, os.readlink(path))
+    if stat.S_ISDIR(st.st_mode):
+        return ("d", st.st_ino)
+    if stat.S_ISREG(st.st_mode):
+        return ("f", st.st_ino, st.st_mtime_ns, st.st_size)
+    return ("o", st.st_ino, st.st_mode)
+
+
 def snapshot(root: Path | None) -> dict:
-    """{relpath: (inode, mtime_ns, size)} of every regular file under root, at any depth; a walk error refuses."""
+    """{relpath: signature} of every entry under root at any depth (files, directories, links and special entries,
+    never followed); a walk error refuses."""
     out = {}
     if root is None or not root.is_dir():
         return out
-    for dirpath, _, filenames in os.walk(root, followlinks=False, onerror=cs._raise):
-        for name in filenames:
+    for dirpath, dirnames, filenames in os.walk(root, followlinks=False, onerror=cs._raise):
+        for name in dirnames + filenames:
             p = os.path.join(dirpath, name)
-            st = os.lstat(p)
-            if stat.S_ISREG(st.st_mode):
-                out[os.path.relpath(p, root)] = (st.st_ino, st.st_mtime_ns, st.st_size)
+            out[os.path.relpath(p, root)] = _sig(os.lstat(p), p)
     return out
 
 
-def changed(root: Path | None, before: dict) -> list[Path]:
+def changed(root: Path | None, before: dict) -> list[tuple[str, tuple, bool]]:
+    """(relpath, signature, new) for every entry created or changed since `before`."""
     after = snapshot(root)
-    return [root / rel for rel, sig in sorted(after.items()) if before.get(rel) != sig]
+    return [(rel, sig, rel not in before) for rel, sig in sorted(after.items()) if before.get(rel) != sig]
 
 
-def spill_hits(paths: list[Path], hashes: set[str], seeds: list[bytes]) -> list[Path]:
+def spill_hits(root: Path, entries: list, hashes: set[str], seeds: list[bytes]) -> list[tuple[str, tuple, bool]]:
+    """Entries carrying a task seed anywhere in their relative path (or, for a link, its target), or a regular file
+    whose sha256 is a plaintext hash or whose bytes carry a task seed."""
     hits = []
-    for p in paths:
-        data = cs.noatime_read(p)
-        name = os.fsencode(p.name)
-        if hashlib.sha256(data).hexdigest() in hashes or any(s in data or s in name for s in seeds):
-            hits.append(p)
+    for rel, sig, new in entries:
+        text = os.fsencode(rel) + (b"\x00" + os.fsencode(sig[2]) if sig[0] == "l" else b"")
+        hit = any(sd in text for sd in seeds)
+        if not hit and sig[0] == "f":
+            data = cs.noatime_read(root / rel)
+            hit = hashlib.sha256(data).hexdigest() in hashes or any(sd in data for sd in seeds)
+        if hit:
+            hits.append((rel, sig, new))
     return hits
 
 
-def remove_verified(paths: list[Path]) -> bool:
-    for p in paths:
+def remove_verified(root: Path, hits: list) -> bool:
+    """Remove each hit (a new directory with its contents; an existing directory is never removed, and fails the
+    check), deepest first, never following a link; True only if every hit is gone."""
+    ok = True
+    for rel, sig, new in sorted(hits, key=lambda h: h[0].count("/"), reverse=True):
+        p = root / rel
         try:
-            os.unlink(p)
+            if sig[0] == "d":
+                if not new:
+                    ok = False
+                    continue
+                shutil.rmtree(p)
+            else:
+                os.unlink(p)
         except FileNotFoundError:
             pass
-    return not any(os.path.lexists(p) for p in paths)
+        except OSError:
+            ok = False
+    return ok and not any(os.path.lexists(root / rel) for rel, _, _ in hits)
 
 
 def plaintext_hashes(workdir: Path) -> set[str]:
@@ -165,17 +200,35 @@ class Generator:
                                          stdin=subprocess.DEVNULL, stdout=fo, stderr=fe, close_fds=True,
                                          start_new_session=True)
             rc = self.proc.wait()
+            end_group(self.proc.pid)
         self.proc = None
         (workdir / "capture" / "rc.txt").write_text(f"{rc}\n")
         return rc
 
     def kill(self) -> None:
-        if self.proc is not None and self.proc.poll() is None:
+        if self.proc is not None:
             try:
                 os.killpg(self.proc.pid, signal.SIGKILL)
             except ProcessLookupError:
                 pass
             self.proc.wait()
+            end_group(self.proc.pid)
+
+
+def end_group(pgid: int) -> None:
+    """Kill the generator's process group (the leader and every descendant that kept it) and confirm it is gone, so
+    nothing writes after the seal starts; refuses if the group outlives GROUP_WAIT_S."""
+    deadline = time.monotonic() + GROUP_WAIT_S
+    while True:
+        try:
+            os.killpg(pgid, signal.SIGKILL)
+        except ProcessLookupError:
+            return
+        except PermissionError:
+            pass
+        if time.monotonic() > deadline:
+            raise cs.Refusal("the generator's process group did not end")
+        time.sleep(0.05)
 
 
 def products_ok(workdir: Path) -> bool:
@@ -187,7 +240,8 @@ def products_ok(workdir: Path) -> bool:
         return False
     for p in lst:
         q = workdir / p
-        if not cs._safe_rel(p) or not os.path.lexists(q) or not stat.S_ISREG(os.lstat(q).st_mode):
+        if not cs._safe_rel(p) or p.split("/")[0] in PG_OWNED or not os.path.lexists(q) \
+                or not stat.S_ISREG(os.lstat(q).st_mode):
             return False
     return True
 
@@ -197,7 +251,7 @@ def run(workdir: Path, sealed: Path, spec_path: Path, frame: bytes, tools: cs.To
     """(exit code, summary). The summary holds fixed codes, booleans and counts only."""
     summary = {"frame_ok": False, "spec_ok": False, "seed_alias": SEED_ALIAS}
     gen = Generator()
-    started, stmp, before, seeds_b = False, None, {}, []
+    started, stmp, before, seeds_b, known = False, None, {}, [], set()
     try:
         passphrase, base = cs.read_frame(frame, with_seed=True)
         summary["frame_ok"] = True
@@ -220,15 +274,16 @@ def run(workdir: Path, sealed: Path, spec_path: Path, frame: bytes, tools: cs.To
         summary["command_unchanged"] = file_sha256(spec["resolved"]) == spec["command_sha256"]
         summary["products_json"] = products_ok(workdir)
         s = cs.seal(workdir, sealed, passphrase, tools)
+        known = set(s["hashes"].values())
         summary |= {"sealed_products": s["n_products"], "round_trip": True}
         summary["plaintext_deleted"] = cs.delete_plaintext(workdir)
         summary["workdir_empty"] = not any(workdir.iterdir())
-        started = False
         new = changed(stmp, before)
-        hits = spill_hits(new, set(s["hashes"].values()), seeds_b)
+        hits = spill_hits(stmp, new, known, seeds_b)
         summary |= {"scratch_tmp_changed": len(new), "scratch_spills": len(hits),
-                    "spills_removed": remove_verified(hits),
-                    "sealed_scan_hits": len(cs.content_scan([sealed], set(s["hashes"].values())))}
+                    "spills_removed": remove_verified(stmp, hits),
+                    "sealed_scan_hits": len(cs.content_scan([sealed], known))}
+        started = False                                # the trap stays armed until the scan and removal are done
         if not cs.seal_check(sealed, s["seal_text"])["ok"]:
             raise cs.Break("the sealed dir does not match its own seal")
         summary["final_seal_check"] = True
@@ -245,11 +300,14 @@ def run(workdir: Path, sealed: Path, spec_path: Path, frame: bytes, tools: cs.To
         summary["refused"] = "terminated" if isinstance(e, SystemExit) else "internal error"
         return 1, summary
     finally:
-        gen.kill()
+        try:
+            gen.kill()
+        except (OSError, cs.Refusal):
+            summary["group_ended"] = "failed"           # only on a failure path: the exit is already 1
         if started and workdir.is_dir():               # the trap: no plaintext and no spill left behind
             try:
-                hits = spill_hits(changed(stmp, before), plaintext_hashes(workdir), seeds_b)
-                summary["trap_spills_removed"] = remove_verified(hits)
+                hits = spill_hits(stmp, changed(stmp, before), known | plaintext_hashes(workdir), seeds_b)
+                summary["trap_spills_removed"] = remove_verified(stmp, hits)
             except (OSError, cs.Refusal):
                 summary["trap_spills_removed"] = "failed"
             try:
@@ -270,13 +328,15 @@ def main(argv=None, stdin=None, stdout=None) -> int:
     ap.add_argument("--gen-spec", type=Path, required=True)
     ap.add_argument("--gpg", required=True)
     ap.add_argument("--gpgconf", required=True)
+    ap.add_argument("--gpg-sha256", required=True)
+    ap.add_argument("--gpgconf-sha256", required=True)
     a = ap.parse_args(argv)
     out = stdout or sys.stdout
     if not ATTEMPT.fullmatch(a.covfix_attempt):
         print(json.dumps({"refused": "the attempt must be 32 lowercase hex"}), file=out)
         return 1
     try:
-        tools = cs.Tools(a.gpg, a.gpgconf)
+        tools = cs.Tools(a.gpg, a.gpgconf, a.gpg_sha256, a.gpgconf_sha256)
     except cs.Refusal as e:
         print(json.dumps({"refused": str(e)}), file=out)
         return 1
