@@ -40,7 +40,13 @@ The salt never leaves the laptop before `reveal`.
 - hand the passphrase to gpg on **fd 3** through an internal pipe, with §4.2's pinned flags and a fresh empty
   `GNUPGHOME`;
 - use no decrypted byte before gpg exits 0;
-- print no secret, and disable core dumps.
+- print no secret, and disable core dumps;
+- **check every ciphertext it opens against its `PG-SEAL.sha256` entry before decrypting it.** The wrapper verifies
+  the listed files and requires the list to include `PG-MANIFEST.json.gpg`, but it cannot see which products the
+  manifest names;
+- report only a **confirmed** break as `covfix-break`: a missing file (ENOENT), or content that fails its pinned hash
+  or the manifest's schema. An access or storage error (EACCES, EIO, an unavailable mount) is a role failure
+  (non-zero exit, no break line).
 
 `reference_role.py` does all of this.
 
@@ -50,7 +56,8 @@ with plain values. The wrapper runs:
 
 ```
 <ssh> -T -o RequestTTY=no [allowed opts] <host> \
-  'salloc --exclusive -N 1 -n 1 [-A -q -C -t] srun --exclusive -N 1 -n 1 \
+  'env -u SRUN_INPUT -u SRUN_OUTPUT -u SRUN_ERROR -u SLURM_STD{IN,OUT,ERR}MODE \
+   salloc --exclusive -N 1 -n 1 [-A -q -C -t] srun --exclusive -N 1 -n 1 \
    bash -c <exec check> covfix-exec <binary> <sha256> <args> --covfix-...'
 ```
 
@@ -58,9 +65,11 @@ That is one task on one exclusive node. The exec check runs on the compute node:
 on a match (exit 86 otherwise), leaving stdin untouched. `pg-connect` has no allocation and runs on the host.
 
 The ssh options a config may add are limited to:
-- `-o` with BatchMode, ConnectTimeout, ServerAliveInterval, ServerAliveCountMax, StrictHostKeyChecking,
-  UserKnownHostsFile, IdentitiesOnly or IdentityFile;
-- `-i`, `-p`, `-l`, `-F`.
+- `-o` with BatchMode, ConnectTimeout, ServerAliveInterval, ServerAliveCountMax, StrictHostKeyChecking (`yes`
+  only), UserKnownHostsFile, IdentitiesOnly or IdentityFile;
+- `-i`, `-p`, `-l`.
+
+`-F` is not allowed, so no other configuration file can loosen host-key checking.
 
 Any `-t`, port forward or other option is refused. The frame goes on ssh's stdin, and the task's stdout and stderr
 come back through the wrapper. Any passphrase or seed base in that output is replaced by `[redacted]`, and the run is
@@ -77,8 +86,9 @@ The digests given on the command line must equal these.
 
 The real items (`covfix-`) use one canonical ledger, `~/director-tools/covfix`, and take no `security` or
 `keychain` override. At its first use the ledger writes `LEDGER.json`, recording the mirror's remote URL, branch and
-path. A config pointing elsewhere is refused, and a ledger that has records but no `LEDGER.json` is terminal. The
-mirror branch is **`covfix-ledger`**, a dedicated branch that holds only the consumption record. It should be protected
+path. A config pointing elsewhere is refused, and a ledger that has records but no `LEDGER.json` is terminal. For the
+real items the mirror branch must be **`covfix-ledger`**, a dedicated branch that holds only the consumption record.
+A shallow mirror clone is refused, because its history cannot be scanned. It should be protected
 against force pushes and deletion; that repository setting is Joseph's call.
 
 ## Order of operations in `run --role R`
@@ -153,7 +163,9 @@ recorded, the run still refuses and marks nothing.
 - The seal and the commitment must be the binding's.
 - It needs a `pv-readout` outcome (completed, terminal or break) in the pushed record, or
   `--after-stop <stop id>`.
-- It refuses while a PV role is spent with no outcome (in flight), unless `--inflight-resolved <ruling id>`.
+- It refuses while a PV role is spent with no outcome in the **pushed** record (in flight), unless
+  `--inflight-resolved <ruling id>`. A local-only outcome whose push failed counts as in flight.
+- This eligibility is checked again under the lock, just before the reveal line is written.
 - Stop and ruling ids are identifiers: a letter, then letters, digits, `.`, `_` or `-`, with no long hex or digit runs.
   So a pasted secret can't reach the mirror.
 - The seed base and salt must reproduce the commitment.
@@ -168,6 +180,15 @@ recorded, the run still refuses and marks nothing.
 ## Limits, disclosed
 
 All of this rests on §4.2's cooperative assumption of one shared account.
+
+- **A lock failure whose fallback marker also fails leaves nothing durable.** At that point nothing has been spent, so
+  a retry after the storage recovers is harmless. The run exits 3 and says so.
+- **A healthy seal root from which every listed file was deleted refuses (exit 2) rather than breaking.** The wrapper
+  cannot tell it from an unmounted or wrong root, and refusing is the choice that does not burn a validation spent only
+  once. A partial absence is a break.
+- **Ciphertext-before-decrypt inside the task is the bound binary's job.** The wrapper verifies the listed files and
+  requires the manifest's entry, but the products named inside the manifest are visible only to the task. So the task
+  must check each ciphertext it opens against `PG-SEAL.sha256` before decrypting it (the interface rule above).
 
 - A session that deletes the local record, markers, `LEDGER.json`, the published and seen refs, and rewinds the remote
   can defeat the history checks. Branch protection on `covfix-ledger` closes the remote half.

@@ -136,6 +136,7 @@ sys.exit(subprocess.run(["bash", "-c", command]).returncode)
 STUB_ALLOC = r'''#!/bin/bash
 # stub {name}: require --exclusive -N 1 -n 1, drop the options up to the next command ({until}), exec it with stdin
 [ "$1 $2 $3 $4 $5" = "--exclusive -N 1 -n 1" ] || {{ echo "stub {name}: unexpected flags $*" >&2; exit 64; }}
+[ -z "${{SRUN_INPUT}}${{SRUN_OUTPUT}}${{SRUN_ERROR}}" ] || {{ echo "stub {name}: inherited Slurm I/O settings" >&2; exit 65; }}
 shift 5
 while [ $# -gt 0 ] && [ "$(basename -- "$1")" != "{until}" ]; do shift; done
 exec "$@"
@@ -672,8 +673,10 @@ class ConfigTests(unittest.TestCase):
     def test_ssh_options_are_allow_listed(self):
         self.assertEqual(cw.check_ssh(["ssh", "-o", "BatchMode=yes", "-p", "22"]),
                          ["ssh", "-T", "-o", "RequestTTY=no", "-o", "BatchMode=yes", "-p", "22"])
+        self.assertEqual(cw.check_ssh(["ssh", "-o", "StrictHostKeyChecking=yes"])[-1], "StrictHostKeyChecking=yes")
         for bad in (["ssh", "-t"], ["ssh", "-tt"], ["ssh", "-o", "RequestTTY=yes"], ["ssh", "-L", "1:h:2"],
-                    ["ssh", "-o"], ["ssh", "-o", "BatchMode"]):
+                    ["ssh", "-o"], ["ssh", "-o", "BatchMode"], ["ssh", "-o", "StrictHostKeyChecking=no"],
+                    ["ssh", "-o", "StrictHostKeyChecking=accept-new"], ["ssh", "-F", "/tmp/cfg"]):
             with self.assertRaises(cw.Stop, msg=bad):
                 cw.check_ssh(bad)
 
@@ -693,6 +696,8 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(argv[r + 1:r + 6], ["--exclusive", "-N", "1", "-n", "1"])
         self.assertEqual(argv[s + 6:r], ["-A", "m0000", "-t", "0:30:00"])
         self.assertEqual(argv[r + 6:r + 8], ["bash", "-c"])
+        self.assertEqual(argv[0], "env")
+        self.assertEqual(argv[1:s], [x for v in cw.SLURM_IO_ENV for x in ("-u", v)])
         self.assertEqual(argv[-6:], [REF, cw.sha256_file(REF), "--role", "pv-writer", "--covfix-attempt", "a1"])
         pg = shlex.split(cw.launch_command("pg-connect", rig.cfg["roles"]["pg-connect"], []))
         self.assertEqual(pg[:2], ["bash", "-c"])
@@ -1873,6 +1878,209 @@ class TraceGapTests(unittest.TestCase):
         self.assertEqual(rc, cw.REFUSED, err)
         self.assertEqual(rig.events()[-1]["event"], "freeze-mismatch-refused")
         self.assertFalse(rig.launched())
+
+
+class Round4Tests(unittest.TestCase):
+    """The round-3 confirm fixes (the director's list of ten)."""
+
+    def test_reveal_rechecks_in_flight_under_the_lock(self):
+        rig = Rig()
+        commitment = rig.commitment()
+        real = cw.Keychain.read
+        n = []
+
+        def read(self, item):
+            n.append(item)
+            if len(n) == 1:                       # between reveal's first check and its locked write
+                other = cw.Context(rig.cfg)
+                other.commit_event({"event": "spent", "key": rig.seal["seal_digest"], "role": "pv-writer"}, "m")
+            return real(self, item)
+
+        with mock.patch.object(cw.Keychain, "read", read):
+            rc, out, err = run_main("reveal", "--config", rig.config, "--config-sha256", rig.config_sha,
+                                    "--seal-digest", rig.seal["seal_digest"], "--commitment", commitment,
+                                    "--after-stop", "ST1")
+        self.assertEqual((rc, out), (cw.REFUSED, ""), err)
+        self.assertIn("in flight", err)
+        self.assertNotIn("reveal", [e["event"] for e in rig.events()])
+        self.assertNotIn("reveal", [r for _, _, r in rig.markers()])
+
+    def test_a_local_only_outcome_is_still_in_flight(self):
+        rig = Rig()
+        real = cw.Mirror.publish
+        n = []
+
+        def publish(self, data, message, seq):
+            n.append(1)
+            if len(n) == 2:
+                raise cw.Stop(cw.REFUSED, "push refused")
+            return real(self, data, message, seq)
+
+        with mock.patch.object(cw.Mirror, "publish", publish):
+            self.assertEqual(rig.run("pv-writer")[0], cw.TERMINAL)
+        self.assertIn("completed", [e["event"] for e in rig.events()])      # local only
+        rc, out, err = run_main("reveal", "--config", rig.config, "--config-sha256", rig.config_sha,
+                                "--seal-digest", rig.seal["seal_digest"], "--commitment", rig.commitment(),
+                                "--after-stop", "ST1")
+        self.assertEqual((rc, out), (cw.REFUSED, ""), err)
+        self.assertIn("in flight", err)
+
+    def test_a_typed_break_with_an_echo_is_still_a_break(self):
+        rig = Rig(role_flags={"pv-writer": ["--echo-secret"]})
+        rig.reseal(json.dumps({"products": {"synthetic-truth-u0.json": "0" * 64}}).encode())
+        rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        e = rig.events()[-1]
+        self.assertEqual(e["event"], "break")
+        self.assertIn("echoed a secret", e["detail"])
+
+    def test_an_in_role_break_whose_marker_fails_still_records_the_line(self):
+        rig = Rig()
+        rig.reseal(json.dumps({"products": {"synthetic-truth-u0.json": "0" * 64}}).encode())
+        real = cw.Record.mark
+
+        def mark(self, kind, key, role):
+            if kind == "break":
+                raise OSError("read-only")
+            return real(self, kind, key, role)
+
+        with mock.patch.object(cw.Record, "mark", mark):
+            rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertEqual(rig.events()[-1]["event"], "break")
+        self.assertIn("could not be written", rig.events()[-1]["detail"])
+        self.assertEqual(rig.run("pv-readout")[0], cw.TERMINAL)
+
+    def test_a_shallow_mirror_is_refused(self):
+        rig = Rig()
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        shallow = os.path.join(rig.root, "shallow")
+        subprocess.run(["git", "clone", "-q", "--depth", "1", "-b", "covfix-consumption", "file://" + rig.bare, shallow],
+                       check=True)
+        rig.cfg["mirror"]["worktree"] = shallow
+        rig.write_config()
+        rc, _, err = rig.run("pv-readout")
+        self.assertEqual(rc, cw.REFUSED, err)
+        self.assertIn("shallow", err)
+
+    def test_a_record_changed_between_validation_and_append_is_terminal(self):
+        rig = Rig()
+        real = cw.Record.append
+        recpath = os.path.join(rig.cfg["record_dir"], "RECORD.jsonl")
+
+        def append(self, event, expected=None):
+            if event["event"] == "spent":
+                with open(recpath, "ab") as f:       # a writer that ignored the lock
+                    f.write(b"")
+                os.utime(recpath)
+                with open(recpath, "wb") as f:
+                    f.write(b"")
+            return real(self, event, expected)
+
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        with mock.patch.object(cw.Record, "append", append):
+            rc, _, err = rig.run("pv-readout")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertIn("changed after it was validated", err)
+        self.assertNotIn("pv-readout", slurp(os.path.join(rig.root, "at-launch.txt")))
+
+    def test_a_same_role_uncertain_marker_before_launch_stops_it(self):
+        rig = Rig()
+        real = cw.Context.commit_event
+
+        def commit(self, event, message, absorb_exclude=None, soft=False, gate=None):
+            real(self, event, message, absorb_exclude, soft, gate)
+            if event["event"] == "spent":
+                self.record.mark("uncertain", event["key"], event["role"])
+
+        with mock.patch.object(cw.Context, "commit_event", commit):
+            rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertFalse(rig.launched())
+        self.assertIn("uncertain marker for pv-writer", rig.events()[-1]["detail"])
+
+    def test_a_seal_list_without_the_manifest_is_a_break(self):
+        rig = Rig()
+        root = rig.seal["seal_root"]
+        with open(rig.cfg["seal_file"], "w") as f:
+            f.write(f"{cw.sha256_file(os.path.join(root, 'synthetic-truth-u0.json.gpg'))}  synthetic-truth-u0.json.gpg\n")
+        rig.cfg["binding"]["seal_digest"] = cw.sha256_file(rig.cfg["seal_file"])
+        rig.write_config()
+        rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertIn("does not list PG-MANIFEST.json.gpg", err)
+
+    def test_inherited_slurm_io_settings_are_removed(self):
+        rig = Rig()
+        with mock.patch.dict(os.environ, {"SRUN_OUTPUT": "/tmp/leak-%j.out", "SRUN_INPUT": "none"}):
+            rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, 0, err)
+
+    def test_gpg_gets_exactly_fds_0_to_3(self):
+        d = tempfile.mkdtemp(dir=TMP)
+        shim = os.path.join(d, "gpg")
+        with open(shim, "w") as f:                 # Python, not bash: bash keeps its own fds 10-11 open
+            f.write(f"#!{sys.executable} -I -S\nimport os\n"
+                    "def is_open(i):\n    try:\n        os.fstat(i)\n        return True\n    except OSError:\n"
+                    "        return False\n"
+                    "print(*[i for i in range(3, 64) if is_open(i)])\n"
+                    "p = os.read(3, 100).decode().strip()\n"
+                    "print('pipe-ok' if len(p) == 64 else 'pipe-bad')\n")
+        os.chmod(shim, 0o755)
+        holder = None
+        for occupy in (False, True):
+            try:
+                if occupy and not _fd_open(3):
+                    holder = os.open(os.devnull, os.O_RDONLY)
+                out = cw.gpg_run(cw.GPG_DECRYPT, "9" * 64, b"", gpg=shim)
+            finally:
+                if holder is not None:
+                    os.close(holder)
+                    holder = None
+            self.assertEqual(out.decode().split(), ["3", "pipe-ok"], occupy)
+
+    def test_gpg_fd3_with_stdout_closed_and_fd3_taken(self):
+        code = ("import os, sys; sys.path.insert(0, sys.argv[1]); import covfix_wrapper as cw\n"
+                "a = os.open(os.devnull, os.O_RDONLY)\n"
+                "if not cw._fd_is_open(3): os.dup2(a, 3)\n"
+                "os.close(1)\n"
+                "pw = '4' * 64\n"
+                "ok = cw.gpg_run(cw.GPG_DECRYPT, pw, cw.gpg_run(cw.GPG_ENCRYPT, pw, b'w')) == b'w'\n"
+                "sys.stderr.write('combined ok\\n' if ok else 'bad\\n')\n")
+        r = subprocess.run([sys.executable, "-c", code, HERE], capture_output=True, text=True)
+        self.assertEqual(r.stderr.strip(), "combined ok", r.stderr)
+
+    def test_the_real_ledger_branch_and_run_hooks_type(self):
+        rig = Rig()
+        with mock.patch.dict(os.environ, {cw.FORBID_REAL_ENV: ""}):
+            with self.assertRaises(cw.Stop) as cm:
+                cw.Context({**rig.cfg, "keychain_prefix": "covfix-", "record_dir": cw.REAL_RECORD_DIR})
+            self.assertIn("covfix-ledger", str(cm.exception))
+        rig.cfg["mirror"]["run_hooks"] = "no"
+        rig.write_config()
+        self.assertEqual(rig.run("pv-writer")[0], cw.ERROR)
+
+    def test_a_compute_side_read_error_is_not_a_break(self):
+        rig = Rig()
+        pw = rig.kc.read("passphrase")
+        ct = os.path.join(rig.seal["seal_root"], "synthetic-truth-u0.json.gpg")
+        os.chmod(ct, 0)
+        try:
+            r = subprocess.run([sys.executable, REF, "--role", "pv-writer", "--covfix-attempt", "a3",
+                                "--covfix-seal-root", rig.seal["seal_root"]], input=(pw + "\n").encode(),
+                               capture_output=True)
+            man = os.path.join(rig.seal["seal_root"], "PG-MANIFEST.json.gpg")
+            os.chmod(ct, 0o600)
+            os.chmod(man, 0)
+            r2 = subprocess.run([sys.executable, REF, "--role", "pv-writer", "--covfix-attempt", "a3",
+                                 "--covfix-seal-root", rig.seal["seal_root"]], input=(pw + "\n").encode(),
+                                capture_output=True)
+        finally:
+            os.chmod(ct, 0o600)
+            os.chmod(os.path.join(rig.seal["seal_root"], "PG-MANIFEST.json.gpg"), 0o600)
+        for res in (r, r2):
+            self.assertEqual(res.returncode, 1, res.stderr)
+            self.assertNotIn(b"covfix-break", res.stdout)
 
 
 class ReferenceRoleTests(unittest.TestCase):

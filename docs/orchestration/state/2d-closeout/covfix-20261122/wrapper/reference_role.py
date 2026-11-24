@@ -69,8 +69,11 @@ def main(argv=None) -> int:
         try:
             with open(os.path.join(sealed, "PG-MANIFEST.json.gpg"), "rb") as f:
                 blob = f.read()
-        except OSError as e:
-            return broken(a.covfix_attempt, f"the sealed manifest cannot be opened ({e})")
+        except FileNotFoundError as e:
+            return broken(a.covfix_attempt, f"the sealed manifest is missing ({e})")
+        except OSError as e:                  # access or storage trouble is not a confirmed break
+            print(f"reference-role: the sealed manifest cannot be read ({e})", file=sys.stderr)
+            return 1
         try:
             manifest = json.loads(cw.gpg_run(cw.GPG_DECRYPT, passphrase, blob))
             products = manifest["products"]
@@ -82,8 +85,11 @@ def main(argv=None) -> int:
             try:
                 with open(os.path.join(sealed, name + ".gpg"), "rb") as f:
                     ct = f.read()
+            except FileNotFoundError as e:
+                return broken(a.covfix_attempt, f"{name} is missing ({e})")
             except OSError as e:
-                return broken(a.covfix_attempt, f"{name} cannot be opened ({e})")
+                print(f"reference-role: {name} cannot be read ({e})", file=sys.stderr)
+                return 1
             plain = cw.gpg_run(cw.GPG_DECRYPT, passphrase, ct)
             if hashlib.sha256(plain).hexdigest() != want:
                 return broken(a.covfix_attempt, f"{name} does not reproduce its plaintext sha256")
