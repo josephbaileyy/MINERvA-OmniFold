@@ -1,0 +1,32 @@
+# command: python3 -B -m unittest -v test_covfix_ledger.py
+# python: 3.12.2 numpy 1.26.4  gpg: gpg (GnuPG) 2.4.8  host: Darwin arm64
+# 1162a522e480f08d4f6a488571b081dd5063bb3a1754489a9f48f3b59bc39daa  covfix_ledger.py
+# a4487f5d634baeac7a3aa3aea3e9af3efbab4672f568b30801ef774a7dc457a1  test_covfix_ledger.py
+# 4ba9cf948564abf4a59a296086f01514df111c6ea2d04b3f5b41fde055a1f1e5  covfix_ledger_mutation.py
+# start: 2026-11-24T03:27:51Z
+test_group_cap_and_ceiling (test_covfix_ledger.Intents.test_group_cap_and_ceiling) ... ok
+test_group_totals_are_separate (test_covfix_ledger.Intents.test_group_totals_are_separate) ... ok
+test_intent_and_job_name (test_covfix_ledger.Intents.test_intent_and_job_name) ... ok
+test_no_new_intent_while_one_is_unrecorded (test_covfix_ledger.Intents.test_no_new_intent_while_one_is_unrecorded) ... ok
+test_record_submission (test_covfix_ledger.Intents.test_record_submission) ... ok
+test_unknown_phase (test_covfix_ledger.Intents.test_unknown_phase) ... ok
+test_a_matched_job_already_used_stays_unresolved (test_covfix_ledger.Reconcile.test_a_matched_job_already_used_stays_unresolved) ... ok
+test_ambiguous_or_absent_stays_unresolved (test_covfix_ledger.Reconcile.test_ambiguous_or_absent_stays_unresolved) ... ok
+test_foreign_rows_are_ignored (test_covfix_ledger.Reconcile.test_foreign_rows_are_ignored) ... ok
+test_lost_id_is_matched_from_the_job_name (test_covfix_ledger.Reconcile.test_lost_id_is_matched_from_the_job_name) ... ok
+test_running_or_garbled_stays_open (test_covfix_ledger.Reconcile.test_running_or_garbled_stays_open) ... ok
+test_terminal_charge_once_and_frees_the_reservation (test_covfix_ledger.Reconcile.test_terminal_charge_once_and_frees_the_reservation) ... ok
+test_groups_need_caps (test_covfix_ledger.Reservation.test_groups_need_caps) ... ok
+test_minute_rounding (test_covfix_ledger.Reservation.test_minute_rounding) ... ok
+test_refusals (test_covfix_ledger.Reservation.test_refusals) ... ok
+test_sacct_state (test_covfix_ledger.Reservation.test_sacct_state) ... ok
+test_corrupt_or_unknown_lines_refuse (test_covfix_ledger.Storage.test_corrupt_or_unknown_lines_refuse) ... ok
+test_every_append_is_fsynced (test_covfix_ledger.Storage.test_every_append_is_fsynced) ... ok
+test_lock_is_exclusive (test_covfix_ledger.Storage.test_lock_is_exclusive) ... ok
+test_accept_exactly_once (test_covfix_ledger.Toys.test_accept_exactly_once) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.118s
+
+OK
+# rc: 0

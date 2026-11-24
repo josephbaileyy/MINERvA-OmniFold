@@ -397,6 +397,9 @@ class Reader(Base):
             p.chmod(0o600)
         with self.assertRaises(cs.Break):
             cs.read_ciphertext(self.s, sm, "p9999.gpg")                   # not in the seal
+        (self.s / "extra.gpg").write_bytes(b"present but unlisted")
+        with self.assertRaises(cs.Break):
+            cs.read_ciphertext(self.s, sm, "extra.gpg")                   # a file on disk the seal does not list
 
     def test_manifest_checks(self):
         sm = self.sealed()

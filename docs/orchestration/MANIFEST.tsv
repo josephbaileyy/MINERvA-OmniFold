@@ -1036,6 +1036,9 @@ docs/orchestration/state/2d-closeout/cov2d-fence-20261122/test_cov2d_fence.sh	tr
 docs/orchestration/state/2d-closeout/covfix-20261122/COVFIX-BINDING-1.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/COVFIX-DECLARATION.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/INVENTORY.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/ledger/code-receipts/line-trace.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/ledger/code-receipts/mutation.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/ledger/code-receipts/tests.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/p0/FOLLOWUPS.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/p0/code-receipts/line-trace.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/p0/code-receipts/mutation.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -1068,6 +1071,9 @@ docs/orchestration/state/2d-closeout/covfix-20261122/p0/run/rc.txt	tracked	MACHI
 docs/orchestration/state/2d-closeout/covfix-20261122/p0/run/start_utc.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/p0/run/stderr.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/p0/run/stdout.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/pg/seal/code-receipts/line-trace.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/pg/seal/code-receipts/mutation.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/pg/seal/code-receipts/tests.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/agy-rev1-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/agy-rev10-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/agy-rev10-read-prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
