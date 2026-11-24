@@ -78,12 +78,14 @@ least 15 times the floor. Flags, rms b, χ², p and max |z| at k = 5 are reporte
 - **The namespace check** on the runner's own parse:
   - configuration R, noise-free, MC half;
   - seed 42, 32 threads;
-  - the declared iterations, tag, split, hypothesis and alternative;
+  - the declared iterations, tag, split, hypothesis, and the alternative's path, kind and amplitude;
+  - the output directory, exactly `<OUT>/runs/<arm>/<truth>`;
   - no `--capacity`.
 - **C-ARM** at every S2R iteration:
   - the reference is the previous push weights;
   - w_push equals ν_{n−1} · L to 1e-10 relative where neither is clipped;
   - ν_0 = 1;
+  - every row of ν_{n−1} · L inside the loop's clip of p. Otherwise STOP, because the loop would saturate the product;
   - one relative fit per iteration.
 - **C-PAIR (the reproduction control):** B0's k = 5 unfold equals FD-PRR's B0 product bitwise at each truth, at FD-PRR's
   thread count.
@@ -102,7 +104,9 @@ least 15 times the floor. Flags, rms b, χ², p and max |z| at k = 5 are reporte
     FD-PRR's K = 2 and K = 50 maxima. T3's dry job measured about 190 s + k × 78.5 s with its tracer.
   - The lane wall is 0.58 h. Divided by the gate's 0.9 and with 0.25 h added for staging, the least limit is 1.0 h.
   - Expected charge: about 0.6 node-h.
-- **Writes:** only `/pscratch/sd/j/josephrb/s2r-20261124`. Nothing goes to CFS.
+- **Writes:** only `/pscratch/sd/j/josephrb/s2r-20261124` (its temporary files in `tmp/` and `tmp-connect/` there),
+  plus the launcher's copy of each connect script and its captured output on the login node,
+  `/dev/shm/s2rc.<pid>.sh` and `.out`, which the connect deletes at exit. Nothing goes to CFS.
 - **Reads:** FD-PRR's four inputs, the GiBUU fine-ratio ρ array, and FD-PRR's three B0 products at split 991000, each
   by its pin.
 - **Job states** come from sacct only.

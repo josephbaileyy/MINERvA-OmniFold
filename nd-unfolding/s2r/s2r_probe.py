@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import sys
 from contextlib import contextmanager
 from pathlib import Path
@@ -101,7 +102,7 @@ def queue_lines(a) -> list[str]:
 
 
 # ------------------------------------------------------------------------------------------- the namespace check
-def check_namespace(ns, arm: str, truth: str) -> str | None:
+def check_namespace(ns, arm: str, truth: str, runs: Path | None = None) -> str | None:
     import s5e_trace
     if getattr(ns, "config", None) != "R":
         return "every arm is built on configuration (e): --config must be R"
@@ -144,12 +145,16 @@ def check_namespace(ns, arm: str, truth: str) -> str | None:
     out = Path(str(getattr(ns, "out", "")))
     if out.parts[-3:] != ("runs", arm, truth):
         return f"the output directory is <runs>/{arm}/{truth}"
+    if runs is not None:
+        want = Path(os.path.realpath(runs)) / arm / truth  # both sides by realpath: a symlinked prefix is the same place
+        if Path(os.path.realpath(out)) != want:
+            return f"the output directory is {want}"
     return None
 
 
 # ------------------------------------------------------------------------------------------- one run
 @contextmanager
-def install(arm: str, truth: str, rho: dict | None, guard: bool = True, M16=None, fm=None):
+def install(arm: str, truth: str, rho: dict | None, guard: bool = True, M16=None, fm=None, runs: Path | None = None):
     """Rebind, for one invocation, the parse, the build, the unfold, the rho loader and the writer (module doc)."""
     import s5n_pseudo
     import s5p_numerics
@@ -169,7 +174,7 @@ def install(arm: str, truth: str, rho: dict | None, guard: bool = True, M16=None
     def parse_args(self, args=None, namespace=None):
         ns = orig_parse(self, args, namespace)
         if hasattr(ns, "pseudo_seeds"):
-            why = check_namespace(ns, arm, truth)
+            why = check_namespace(ns, arm, truth, runs)
             if why:
                 print(f"refusing: {why}", file=sys.stderr)
                 raise SystemExit(2)
@@ -253,13 +258,15 @@ def run(arm: str, truth: str, stage_json: Path, rest: list[str]) -> int:
             print(f"refusing: {exc}", file=sys.stderr)
             return 2
     try:
-        rho = T.rho_copies(json.loads(Path(stage_json).read_text()))
+        stage_rec = json.loads(Path(stage_json).read_text())
+        rho = T.rho_copies(stage_rec)
+        runs = Path(stage_rec["dest"]).parent / "runs"  # the job's layout: <OUT>/stage and <OUT>/runs
     except (OSError, KeyError, ValueError, Refused) as e:
         print(f"refusing: the stage record: {e}", file=sys.stderr)
         return 2
     import s5p_nullexp
     try:
-        with install(arm, truth, rho), esp.pvl_truth():
+        with install(arm, truth, rho, runs=runs), esp.pvl_truth():
             return s5p_nullexp.main(rest)
     except Refused as e:
         print(f"refusing: {e}", file=sys.stderr)

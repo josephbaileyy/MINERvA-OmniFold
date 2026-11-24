@@ -107,17 +107,53 @@ class Arm(StandIns, unittest.TestCase):
         self.assertTrue(np.allclose(as_["X16_push"][0], ab["X16_push"][0], rtol=1e-12, atol=0))
         self.assertFalse(np.allclose(as_["X16_push"][3], ab["X16_push"][3], rtol=1e-9, atol=0))
 
-    def test_a_wrong_reference_is_refused(self):
-        orig = S.S2RTracer.s2r_weight
+    def test_the_push_is_the_previous_push_times_the_inner_ratio(self):
+        """REQUIRED: the loop's w_push at iteration k equals nu_(k-1) * L_k, L_k the inner step-2 classifier's own
+        clipped ratio (recorded from the inner estimator), to the round-trip tolerance."""
+        import omnifold_nn_core as onc
+        pushes, inner = [], []
+        orig_rw, orig_pp = onc._reweight, Linear.predict_proba
 
+        def rw(events, clf):
+            out = orig_rw(events, clf)
+            if getattr(clf, "_role", None) == "step2":
+                pushes.append(np.array(out, copy=True))
+            return out
+
+        def pp(self_, X):
+            out = orig_pp(self_, X)
+            inner.append((id(self_), np.array(out, copy=True)))
+            return out
+        onc._reweight, Linear.predict_proba = rw, pp
+        try:
+            self.traced("S2R", 4)
+        finally:
+            onc._reweight, Linear.predict_proba = orig_rw, orig_pp
+        clf2 = self.built[-1][1]
+        L = [s5e_trace.reweight_like_loop(o) for i, o in inner if i == id(clf2)]
+        self.assertEqual((len(L), len(pushes)), (4, 4))
+        prev = np.ones_like(pushes[0])
+        for k in range(4):
+            self.assertLess(float(np.max(np.abs(pushes[k] / (prev * L[k]) - 1))), S.ROUND_TRIP_RTOL, k)
+            prev = pushes[k]
+        self.assertGreater(float(np.max(np.abs(pushes[3] / L[3] - 1))), 1e-6)  # the product is not L alone
+
+    def test_a_wrong_reference_is_refused(self):
+        """A reference that is not the tracer's previous push, used consistently in the fit and the output, so only the
+        reference check can see it."""
         def bad(self, loop_w):
-            w = orig(self, loop_w)
-            self._s2r_ref = self._s2r_ref * 1.001
+            loop_w = np.asarray(loop_w, float)
+            ref = np.array(self.w_push, dtype=float, copy=True) * 1.001
+            self._s2r_ref = ref
+            w = loop_w.copy()
+            w[:self.n] = ref * self.w_truth
+            self.evidence["s2r_fits"] += 1
             return w
+        orig = S.S2RTracer.s2r_weight
         S.S2RTracer.s2r_weight = bad
         try:
-            with self.assertRaises(s5e_trace.TraceError):
-                self.traced("S2R", 2)
+            with self.assertRaisesRegex(s5e_trace.TraceError, "reference is not the previous push"):
+                self.traced("S2R", 4)
         finally:
             S.S2RTracer.s2r_weight = orig
 
@@ -237,6 +273,8 @@ class Queues(unittest.TestCase):
             arm, truth = argv[argv.index("--arm") + 1], argv[argv.index("--truth") + 1]
             ns = parse_runner(argv[argv.index("--") + 1:])
             self.assertIsNone(SP.check_namespace(ns, arm, truth), cols[0])
+            self.assertIsNone(SP.check_namespace(ns, arm, truth, Path("/S/runs")), cols[0])
+            self.assertIsNotNone(SP.check_namespace(ns, arm, truth, Path("/elsewhere/runs")), cols[0])
             self.assertEqual(cols[0], SP.task_id(arm, truth))
             self.assertEqual(float(cols[2]), SP.TASK_S[arm])
             self.assertEqual(cols[3], "s2r/s2r_probe.py")
@@ -277,6 +315,10 @@ class Queues(unittest.TestCase):
         ns = argparse.Namespace(**vars(good))
         ns.out = Path("/S/runs/B0/q3")
         self.assertIsNotNone(SP.check_namespace(ns, "S2R", "q3"))
+        ns = argparse.Namespace(**vars(good))
+        ns.out = Path("/outside/runs/S2R/q3")  # codex r2: the right suffix under another root
+        self.assertIsNone(SP.check_namespace(ns, "S2R", "q3"))
+        self.assertIsNotNone(SP.check_namespace(ns, "S2R", "q3", Path("/S/runs")))
         self.assertIsNotNone(SP.check_namespace(good, "S2R", "A7_gibuu"))  # q3's hypothesis
 
 
@@ -751,6 +793,23 @@ class Cli(unittest.TestCase):
         rc, _, err = self.call(lambda a: SP.run("S2R", "q3", self.d / "none.json", a), ["--iters", "20"])
         self.assertEqual(rc, 2)
         self.assertIn("the stage record", err)
+
+    def test_run_refuses_an_output_outside_the_stage_records_out(self):
+        """codex r2 M1: run() derives <OUT>/runs from the stage record and the runner's parse refuses any other root."""
+        (self.d / "stage.json").write_text(json.dumps({"dest": str(self.d / "X" / "stage"), "files": []}))
+        a = SP.staged_paths(Path("/S/stage"), Path("/Y/runs"), self.d / "stage.json")
+        argv = SP.runner_argv(a, "S2R", "q3")
+        cwd = os.getcwd()
+        os.chdir(REPO)
+        err = io.StringIO()
+        try:
+            with self.assertRaises(SystemExit) as cm, contextlib.redirect_stderr(err):
+                SP.run("S2R", "q3", self.d / "stage.json", argv)
+        finally:
+            os.chdir(cwd)
+        self.assertEqual(cm.exception.code, 2)
+        want = Path(os.path.realpath(self.d / "X" / "runs")) / "S2R" / "q3"
+        self.assertIn(f"refusing: the output directory is {want}", err.getvalue())
 
     def test_stage_and_pair_refuse_cleanly(self):
         (self.d / "stage.json").write_text(json.dumps({"dest": str(self.d), "files": [
