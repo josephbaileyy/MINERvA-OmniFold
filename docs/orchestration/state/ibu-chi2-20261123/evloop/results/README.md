@@ -80,6 +80,12 @@ selection at high p that is not among the official MINOS cuts tested here, remai
 open.
 <!-- absence-ok: scoped to this lane's test chain; it says which changes these tests did not cover, not that no such study exists elsewhere -->
 
+**Correction, 2026-11-24.** The sentence "The excess is a reco effect confined to high-momentum, curvature-measured
+muons" overreaches. The fold test shows *where* in reco space our data and the folded published result disagree. It does
+not identify the mechanism: about 24 % of the predicted signal in reco p‖ 40–60 comes from truth 20–40, so migration and
+response differences can show up there too. The excluded items above stand as tested. See [`../../fig2/`](../../fig2/README.md)
+for the next test.
+
 ## Custody
 
 - **Writes:** only under `/pscratch/sd/j/josephrb/ibuchi-evloop-20261123/`. CPU only, nothing to CFS. The one
