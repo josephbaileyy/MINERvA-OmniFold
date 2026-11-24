@@ -2,8 +2,8 @@
  "_comment": "SHAPE ONLY. The director writes the real config at binding and pins its sha256; every path, host, digest and sha here is a placeholder.",
  "record_dir": "~/director-tools/covfix",
  "keychain_prefix": "covfix-",
- "ssh": ["/usr/bin/ssh", "-o", "BatchMode=yes"],
- "host": "<login node>",
+ "ssh": {"user": "<user>", "identity_file": "/Users/<user>/.ssh/nersc", "certificate_file": "/Users/<user>/.ssh/nersc-cert.pub"},
+ "host": "perlmutter.nersc.gov",
  "binding": {
   "commitment": "<64 hex: the published commitment>",
   "seal_digest": "<64 hex: sha256 of the committed PG-SEAL.sha256 (PV binding)>",

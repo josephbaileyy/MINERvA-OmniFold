@@ -55,7 +55,7 @@ block may name `salloc` and `srun` (paths ending in those names) and set `accoun
 with plain values. The wrapper runs:
 
 ```
-<ssh> -F none -T -o RequestTTY=no -o StrictHostKeyChecking=yes [...the forced options] [allowed opts] <host> \
+/usr/bin/ssh <the forced options> -l <user> -i <identity_file> [-o CertificateFile=...] <host> \
   'env -u SRUN_INPUT -u SRUN_OUTPUT -u SRUN_ERROR -u SLURM_STD{IN,OUT,ERR}MODE \
    salloc --exclusive -N 1 -n 1 [-A -q -C -t] srun --exclusive -N 1 -n 1 \
    bash -c <exec check> covfix-exec <binary> <sha256> <args> --covfix-...'
@@ -64,22 +64,47 @@ with plain values. The wrapper runs:
 That is one task on one exclusive node. The exec check runs on the compute node: it hashes the binary and execs it only
 on a match (exit 86 otherwise), leaving stdin untouched. `pg-connect` has no allocation and runs on the host.
 
-The ssh options a config may add are limited to:
-- `-o` with BatchMode, ConnectTimeout, ServerAliveInterval, ServerAliveCountMax, StrictHostKeyChecking (`yes`
-  only), UserKnownHostsFile, IdentitiesOnly or IdentityFile;
-- `-i`, `-p`, `-l`.
+**ssh is built by the wrapper from a closed schema (director, 2026-11-23).** The role config's `ssh` object may hold
+only these keys; any other key is refused:
 
-The wrapper always runs ssh with **`-F none`**, so no ssh_config file is read at all: no Host or Match block can add
-a relay, a local command, a shared master connection or a host-authentication exception. It also puts these first:
-`-T -o RequestTTY=no -o StrictHostKeyChecking=yes -o ControlMaster=no -o ControlPath=none -o
-NoHostAuthenticationForLocalhost=no -o PermitLocalCommand=no -o ProxyCommand=none -o ProxyJump=none`. ssh keeps the
-first value it obtains for an option. Every run makes a fresh, direct connection and checks the host key itself.
+| Key | Rule |
+|---|---|
+| `program` | must be `/usr/bin/ssh` for the real items |
+| `user` | a plain user name |
+| `identity_file` | absolute, literal, a regular file owned by this user |
+| `certificate_file` | optional; absolute, literal, a regular file owned by this user |
+| `agent` | optional, a boolean |
 
-Two consequences for the role config:
-- `host` must be the real host name, because there is no alias mapping;
-- the identity, user and port go in the allowed options (`-i`, `-l`, `-p`, `-o IdentityFile=...`).
+`host` is a plain host name. The wrapper's argv is exactly:
 
-The host must already be in known_hosts. `-F`, `-S`, `-J` and any other option are refused.
+```
+/usr/bin/ssh -F none -T -o RequestTTY=no -o StrictHostKeyChecking=yes -o BatchMode=yes
+  -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no
+  -o IdentitiesOnly=yes -o ControlMaster=no -o ControlPath=none -o NoHostAuthenticationForLocalhost=no
+  -o PermitLocalCommand=no -o ProxyCommand=none -o ProxyJump=none
+  -l <user> -i <identity_file> [-o CertificateFile=<certificate_file>] <host> <command>
+```
+
+With `-F none`, no ssh_config is read.
+
+ssh starts from an **empty environment** plus:
+- `HOME`, this user's home from the password database, never the launch environment's;
+- `PATH=/usr/bin:/bin`;
+- `LANG=C`;
+- `SSH_AUTH_SOCK`, only if the config declares `"agent": true`.
+
+`SSH_ASKPASS`, `DISPLAY`, `LD_*` and everything else are therefore absent by construction. The wrapper's own `security`
+calls run in the same minimal environment.
+
+For NERSC:
+
+```
+"ssh": {"user": "<user>", "identity_file": "/Users/<user>/.ssh/nersc",
+        "certificate_file": "/Users/<user>/.ssh/nersc-cert.pub"},
+"host": "perlmutter.nersc.gov"
+```
+
+The certificate is named explicitly. The host must already be in `~/.ssh/known_hosts`.
 
 Any `-t`, port forward or other option is refused. The frame goes on ssh's stdin, and the task's stdout and stderr
 come back through the wrapper. Any passphrase or seed base in that output is replaced by `[redacted]`, and the run is

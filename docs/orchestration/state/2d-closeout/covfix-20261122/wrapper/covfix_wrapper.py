@@ -42,6 +42,7 @@ import fcntl
 import hashlib
 import json
 import os
+import pwd
 import re
 import resource
 import secrets
@@ -106,13 +107,22 @@ LOCK_NAME = "LOCK"
 LOCK_TIMEOUT_S = 10.0
 GENESIS = "0" * 64
 
-# ssh options a role config may add (after the forced -T -o RequestTTY=no); anything else is refused.
-SSH_FLAGS_WITH_VALUE = {"-i", "-p", "-l"}
-SSH_FORCED = ("-T", "-o", "RequestTTY=no", "-o", "StrictHostKeyChecking=yes", "-o", "ControlMaster=no",
-              "-o", "ControlPath=none", "-o", "NoHostAuthenticationForLocalhost=no", "-o", "PermitLocalCommand=no",
+# ssh is set up from a CLOSED schema (director, 2026-11-23): the role config's "ssh" object may hold only these keys,
+# and the wrapper builds the whole argv and the whole environment itself.
+SSH_KEYS = {"program", "user", "identity_file", "certificate_file", "agent"}
+SSH_PROGRAM = "/usr/bin/ssh"                 # the real items use exactly this client
+SSH_FORCED = ("-F", "none",                  # no ssh_config file: no Host/Match block can add anything
+              "-T", "-o", "RequestTTY=no",
+              "-o", "StrictHostKeyChecking=yes",
+              "-o", "BatchMode=yes", "-o", "PreferredAuthentications=publickey",
+              "-o", "PasswordAuthentication=no", "-o", "KbdInteractiveAuthentication=no",
+              "-o", "IdentitiesOnly=yes",
+              "-o", "ControlMaster=no", "-o", "ControlPath=none",
+              "-o", "NoHostAuthenticationForLocalhost=no", "-o", "PermitLocalCommand=no",
               "-o", "ProxyCommand=none", "-o", "ProxyJump=none")
-SSH_O_KEYS = {"BatchMode", "ConnectTimeout", "ServerAliveInterval", "ServerAliveCountMax", "StrictHostKeyChecking",
-              "UserKnownHostsFile", "IdentitiesOnly", "IdentityFile"}
+SSH_USER = re.compile(r"[a-z_][a-z0-9_.-]{0,31}")
+SSH_HOST = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9.-]{0,251}[A-Za-z0-9])?")
+LITERAL_PATH = re.compile(r"/[A-Za-z0-9/._+-]+")   # absolute and literal: no ~, $, % or spaces
 SLURM_VALUE = re.compile(r"[A-Za-z0-9_:.,=/-]{1,64}")
 SLURM_KEYS = {"account": "-A", "qos": "-q", "constraint": "-C", "time": "-t"}
 # Inherited Slurm I/O settings that could send the task's stdin or output anywhere but the wrapper's pipes.
@@ -205,8 +215,15 @@ def check_prefix(prefix: str) -> str:
     raise Stop(ERROR, f"Keychain prefix {prefix!r} is neither {REAL_PREFIX!r} nor covfix-test-*/covfix-synth-*")
 
 
+def base_env() -> dict:
+    """The minimal environment the wrapper gives `security` and ssh: this user's HOME from the password database (never
+    the launch environment's), PATH=/usr/bin:/bin and LANG=C."""
+    return {"HOME": pwd.getpwuid(os.getuid()).pw_dir, "PATH": "/usr/bin:/bin", "LANG": "C"}
+
+
 def login_keychain(security: str = SECURITY) -> str:
-    r = subprocess.run([security, "login-keychain"], stdin=subprocess.DEVNULL, capture_output=True, text=True)
+    r = subprocess.run([security, "login-keychain"], stdin=subprocess.DEVNULL, capture_output=True, text=True,
+                       env=base_env())
     path = r.stdout.strip().strip('"')
     if r.returncode != 0 or not KEYCHAIN_PATH.fullmatch(path):
         raise Stop(ERROR, "cannot resolve the login Keychain to a plain path")
@@ -234,7 +251,7 @@ class Keychain:
     def exists(self, item: str) -> bool:
         r = subprocess.run([self.security, "find-generic-password", "-s", self.service(item), "-a", ACCOUNT,
                             self.keychain], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                           stderr=subprocess.DEVNULL)
+                           stderr=subprocess.DEVNULL, env=base_env())
         if r.returncode == 0:
             return True
         if r.returncode == 44:          # errSecItemNotFound
@@ -243,7 +260,7 @@ class Keychain:
 
     def read(self, item: str) -> str:
         r = subprocess.run([self.security, "find-generic-password", "-s", self.service(item), "-a", ACCOUNT, "-w",
-                            self.keychain], stdin=subprocess.DEVNULL, capture_output=True)
+                            self.keychain], stdin=subprocess.DEVNULL, capture_output=True, env=base_env())
         if r.returncode != 0:
             raise Stop(REFUSED, f"cannot read Keychain item {self.service(item)} (security exited {r.returncode})")
         try:
@@ -256,7 +273,7 @@ class Keychain:
         if not re.fullmatch(r"[0-9a-f]+", value):
             raise ValueError("only lowercase hex or decimal values are stored")
         command = f"add-generic-password -s {self.service(item)} -a {ACCOUNT} -w {value} {self.keychain}\n"
-        r = subprocess.run([self.security, "-i"], input=command.encode("ascii"), capture_output=True)
+        r = subprocess.run([self.security, "-i"], input=command.encode("ascii"), capture_output=True, env=base_env())
         if r.returncode != 0:
             raise Stop(ERROR, f"security -i add exited {r.returncode} for {self.service(item)}"
                               + (" (item already exists)" if r.returncode == 45 else ""))
@@ -424,30 +441,52 @@ EXEC_CHECK = ('h=$(sha256sum < "$1") || exit 87; [ "${h%% *}" = "$2" ] || '
               'b=$1; shift 2; exec "$b" "$@"')
 
 
-def check_ssh(ssh) -> list:
-    """The ssh program and the options a config may add. -F none and SSH_FORCED always go first, so no ssh_config file
-    and no command-line option can give the frame a PTY, a shared or relayed connection, a local command, or a host
-    whose key this run did not verify."""
-    argv = str_list(ssh, "ssh")
-    if not argv:
-        raise Stop(ERROR, "the role config names no ssh program")
-    opts, i = argv[1:], 0
-    while i < len(opts):
-        o = opts[i]
-        if o == "-o" and i + 1 < len(opts) and opts[i + 1].split("=", 1)[0] in SSH_O_KEYS and "=" in opts[i + 1]:
-            k, v = opts[i + 1].split("=", 1)
-            if k == "StrictHostKeyChecking" and v.lower() != "yes":
-                raise Stop(ERROR, "ssh must verify the host key: StrictHostKeyChecking may only be yes")
-            i += 2
-        elif o in SSH_FLAGS_WITH_VALUE and i + 1 < len(opts):
-            i += 2
-        else:
-            raise Stop(ERROR, f"ssh option {o!r} is not allowed (only -o {sorted(SSH_O_KEYS)}, -i, -p, -l)")
-    # ssh uses the first value it obtains for an option, so these override any ssh_config setting.
-    # -F none: read no ssh_config at all, so no Host or Match block can add a relay, a local command, a shared
-    # master or a host-authentication exception; the pinned role config's allowed options are the whole setup.
-    # The -o settings repeat the safe values explicitly (ssh keeps the first value it obtains for an option).
-    return [argv[0], "-F", "none", *SSH_FORCED, *opts]
+def own_regular_file(path, what: str) -> str:
+    if not isinstance(path, str) or not LITERAL_PATH.fullmatch(path) or ".." in path.split("/"):
+        raise Stop(ERROR, f"the ssh {what} must be an absolute, literal path")
+    try:
+        st = os.lstat(path)
+    except OSError as e:
+        raise Stop(ERROR, f"the ssh {what} {path} cannot be read ({e})")
+    if not stat.S_ISREG(st.st_mode) or st.st_uid != os.getuid():
+        raise Stop(ERROR, f"the ssh {what} {path} must be a regular file owned by this user")
+    return path
+
+
+def ssh_setup(cfg, host, real: bool):
+    """(argv, environment) for ssh, built entirely by the wrapper from the closed schema: the forced options, then -l,
+    -i and the certificate; the environment is HOME (this user's, from the password database), PATH=/usr/bin:/bin,
+    LANG=C, and SSH_AUTH_SOCK only when the config declares an agent. Nothing else the launch environment holds
+    reaches ssh."""
+    if not isinstance(cfg, dict):
+        raise Stop(ERROR, "the role config's ssh must be an object (program, user, identity_file, certificate_file, "
+                          "agent)")
+    extra = sorted(set(cfg) - SSH_KEYS)
+    if extra:
+        raise Stop(ERROR, f"the role config's ssh may not hold {extra}")
+    if not isinstance(host, str) or not SSH_HOST.fullmatch(host):
+        raise Stop(ERROR, "the role config's host must be a plain host name")
+    program = cfg.get("program", SSH_PROGRAM)
+    if real and program != SSH_PROGRAM:
+        raise Stop(ERROR, f"the real items use {SSH_PROGRAM} only")
+    if not isinstance(program, str) or not LITERAL_PATH.fullmatch(program):
+        raise Stop(ERROR, "the ssh program must be an absolute, literal path")
+    user = cfg.get("user")
+    if not isinstance(user, str) or not SSH_USER.fullmatch(user):
+        raise Stop(ERROR, "the role config's ssh user must be a plain user name")
+    argv = [program, *SSH_FORCED, "-l", user, "-i", own_regular_file(cfg.get("identity_file"), "identity_file")]
+    if cfg.get("certificate_file") is not None:
+        argv += ["-o", f"CertificateFile={own_regular_file(cfg['certificate_file'], 'certificate_file')}"]
+    agent = cfg.get("agent", False)
+    if not isinstance(agent, bool):
+        raise Stop(ERROR, "the role config's ssh agent must be true or false")
+    env = base_env()
+    if agent:
+        sock = os.environ.get("SSH_AUTH_SOCK", "")
+        if not LITERAL_PATH.fullmatch(sock):
+            raise Stop(REFUSED, "the role config declares an ssh agent, but SSH_AUTH_SOCK is not a literal path")
+        env["SSH_AUTH_SOCK"] = sock
+    return argv, env
 
 
 class LaunchResult:
@@ -456,10 +495,8 @@ class LaunchResult:
 
 
 class Cluster:
-    def __init__(self, ssh, host):
-        if not isinstance(host, str) or not host:
-            raise Stop(ERROR, "the role config names no host")
-        self.ssh_argv = check_ssh(ssh)
+    def __init__(self, ssh, host, real: bool = False):
+        self.ssh_argv, self.env = ssh_setup(ssh, host, real)
         self.host = host
 
     def hash_files(self, root: str, rels):
@@ -467,7 +504,7 @@ class Cluster:
         Anything short of exactly one typed answer per path is the link or the environment: REFUSED."""
         remote = f"cd -- {shlex.quote(root)} || exit {ROOT_MISSING_RC}; bash -c {shlex.quote(HASH_SCRIPT)}"
         r = subprocess.run([*self.ssh_argv, self.host, remote], input=b"".join(x.encode() + b"\0" for x in rels),
-                           capture_output=True)
+                           capture_output=True, env=self.env)
         if r.returncode == ROOT_MISSING_RC:
             raise Stop(REFUSED, f"remote root {root} does not exist; nothing spent")
         lines = r.stdout.decode("ascii", errors="replace").splitlines()
@@ -495,7 +532,7 @@ class Cluster:
         """Run the task, write the frame unbuffered and zero it, and pass the task's stdout and stderr through,
         redacting any secret. The result says whether the frame was delivered, whether the last stdout line was the
         attempt's receipt or break line, and whether a secret was echoed."""
-        p = subprocess.Popen([*self.ssh_argv, self.host, command], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+        p = subprocess.Popen([*self.ssh_argv, self.host, command], env=self.env, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE, bufsize=0)
         state = {"echoed": False, "last": b""}
 
@@ -934,7 +971,7 @@ class Context:
                 raise Stop(ERROR, f"the real ledger's mirror branch is {REAL_LEDGER_BRANCH} only")
         ledger_id = sha256_bytes(self.record.dir.encode())[:16]
         self.mirror = Mirror(cfg["mirror"], ledger_id)
-        self.cluster = Cluster(cfg["ssh"], cfg["host"])
+        self.cluster = Cluster(cfg["ssh"], cfg["host"], prefix == REAL_PREFIX)
         self._kc = None
         self._remote_events = []
 

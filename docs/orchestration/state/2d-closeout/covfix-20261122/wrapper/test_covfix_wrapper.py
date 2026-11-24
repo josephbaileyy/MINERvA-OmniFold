@@ -13,6 +13,7 @@ import io
 import json
 import os
 import secrets
+import shlex
 import shutil
 import stat
 import subprocess
@@ -35,6 +36,18 @@ os.environ.update({"GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_NOSYSTEM": "1",
                    "GIT_TERMINAL_PROMPT": "0", "GIT_TEMPLATE_DIR": os.path.join(TMP, "git-template"),
                    "GIT_CEILING_DIRECTORIES": TMP})
 REF = os.path.join(HERE, "reference_role.py")
+KEYFILE = os.path.join(TMP, "id_test")
+CERTFILE = os.path.join(TMP, "id_test-cert.pub")
+for _p in (KEYFILE, CERTFILE):
+    with open(_p, "w") as _f:
+        _f.write("not a real key\n")
+REMOTE_ENV = os.path.join(TMP, "remote-env.json")      # what a remote login session would provide the command
+with open(REMOTE_ENV, "w") as _f:
+    json.dump(dict(os.environ), _f)
+
+
+def ssh_cfg(program):
+    return {"program": program, "user": "tester", "identity_file": KEYFILE}
 REL = "docs/orchestration/state/2d-closeout/covfix-20261122/consumption/RECORD.jsonl"
 
 
@@ -71,14 +84,19 @@ def run_main(*argv):
 
 def ssh_stub(body: str) -> str:
     """A stand-in ssh that drops its options, takes <host> <command>, and runs body (or the command if body is
-    "RUN") under bash, with stdin forwarded."""
+    "RUN") under bash, with stdin forwarded, in the PATH a remote session would have."""
     d = tempfile.mkdtemp(dir=TMP)
     path = os.path.join(d, "ssh")
     with open(path, "w") as f:
-        f.write("#!/bin/bash\nwhile [ \"${1#-}\" != \"$1\" ]; do case \"$1\" in -o|-F|-i|-p|-l) shift;; esac; shift; done\n"
+        f.write("#!/bin/bash\n" f"export PATH={shlex.quote(os.environ['PATH'])}\n"
+                "while [ \"${1#-}\" != \"$1\" ]; do case \"$1\" in -o|-F|-i|-p|-l) shift;; esac; shift; done\n"
                 "host=$1; cmd=$2\n" + ('exec bash -c "$cmd"\n' if body == "RUN" else body + "\n"))
     os.chmod(path, 0o755)
     return path
+
+
+def stub_cluster(body: str):
+    return cw.Cluster(ssh_cfg(ssh_stub(body)), "h")
 
 
 def git(cwd, *args):
@@ -99,6 +117,9 @@ while args and args[0].startswith("-"):
 host, command = args[0], args[1]
 with open(os.path.join(here, "ssh-log.jsonl"), "a") as f:
     f.write(json.dumps({{"argv": sys.argv, "opts": opts, "env": dict(os.environ)}}) + "\n")
+with open({remote_env!r}) as f:
+    os.environ.clear()
+    os.environ.update(json.load(f))                 # the remote session's own environment, as a login would give
 mp = os.path.join(here, "ssh-mode")
 mode = open(mp).read().strip() if os.path.exists(mp) else ""
 if mode == "down":
@@ -165,7 +186,8 @@ class Rig:
         git(self.wt, "remote", "add", "origin", self.bare)
         git(self.wt, "push", "-q", "origin", "HEAD:refs/heads/covfix-consumption")
         with open(os.path.join(self.bin, "ssh"), "w") as f:
-            f.write(STUB_SSH.format(python=sys.executable, here=self.root, bare=self.bare, rel=REL))
+            f.write(STUB_SSH.format(python=sys.executable, here=self.root, bare=self.bare, rel=REL,
+                                    remote_env=REMOTE_ENV))
         for name, until in (("salloc", "srun"), ("srun", "bash")):
             with open(os.path.join(self.bin, name), "w") as f:
                 f.write(STUB_ALLOC.format(name=name, until=until))
@@ -183,7 +205,7 @@ class Rig:
         self.cfg = {
             "record_dir": os.path.join(self.root, "record"),
             "keychain_prefix": self.prefix,
-            "ssh": [os.path.join(self.bin, "ssh")], "host": "stub-login",
+            "ssh": ssh_cfg(os.path.join(self.bin, "ssh")), "host": "stub-login",
             "binding": {"commitment": self.commitment(), "seal_digest": self.seal["seal_digest"],
                         "freeze_digest": self.seal["freeze_digest"]},
             "seal_file": os.path.join(self.root, "synthetic", "PG-SEAL.sha256"),
@@ -670,21 +692,47 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(rig.events(), [])
         self.assertEqual(rig.ssh_log(), [])
 
-    def test_ssh_options_are_allow_listed(self):
-        self.assertEqual(cw.check_ssh(["ssh", "-o", "BatchMode=yes", "-p", "22"]),
-                         ["ssh", "-F", "none", "-T", "-o", "RequestTTY=no", "-o", "StrictHostKeyChecking=yes",
-                          "-o", "ControlMaster=no", "-o", "ControlPath=none",
-                          "-o", "NoHostAuthenticationForLocalhost=no", "-o", "PermitLocalCommand=no",
-                          "-o", "ProxyCommand=none", "-o", "ProxyJump=none", "-o", "BatchMode=yes", "-p", "22"])
-        self.assertEqual(cw.check_ssh(["ssh", "-o", "StrictHostKeyChecking=yes"])[-1], "StrictHostKeyChecking=yes")
-        for bad in (["ssh", "-t"], ["ssh", "-tt"], ["ssh", "-o", "RequestTTY=yes"], ["ssh", "-L", "1:h:2"],
-                    ["ssh", "-o", "ControlPath=/tmp/master"], ["ssh", "-o", "ControlMaster=auto"], ["ssh", "-S", "/tmp/m"],
-                    ["ssh", "-o", "NoHostAuthenticationForLocalhost=yes"], ["ssh", "-o", "PermitLocalCommand=yes"],
-                    ["ssh", "-o", "LocalCommand=cat"], ["ssh", "-o", "ProxyCommand=nc h 22"], ["ssh", "-J", "jump"],
-                    ["ssh", "-o"], ["ssh", "-o", "BatchMode"], ["ssh", "-o", "StrictHostKeyChecking=no"],
-                    ["ssh", "-o", "StrictHostKeyChecking=accept-new"], ["ssh", "-F", "/tmp/cfg"]):
-            with self.assertRaises(cw.Stop, msg=bad):
-                cw.check_ssh(bad)
+    def test_ssh_argv_is_built_from_the_closed_schema(self):
+        argv, env = cw.ssh_setup({**ssh_cfg("/usr/bin/ssh"), "certificate_file": CERTFILE}, "perlmutter.nersc.gov", True)
+        self.assertEqual(argv, ["/usr/bin/ssh", *cw.SSH_FORCED, "-l", "tester", "-i", KEYFILE,
+                                "-o", f"CertificateFile={CERTFILE}"])
+        self.assertEqual(argv[1:3], ["-F", "none"])
+        self.assertEqual(env, {"HOME": __import__("pwd").getpwuid(os.getuid()).pw_dir, "PATH": "/usr/bin:/bin",
+                               "LANG": "C"})
+        good = ssh_cfg("/usr/bin/ssh")
+        bad = [{**good, "options": ["-t"]}, {**good, "port": 22}, {k: v for k, v in good.items() if k != "user"},
+               {**good, "user": "u; rm"}, {**good, "identity_file": "~/.ssh/nersc"},
+               {**good, "identity_file": "relative/key"}, {**good, "identity_file": "/tmp/$HOME/k"},
+               {**good, "identity_file": TMP}, {**good, "identity_file": "/etc/hosts"},
+               {**good, "certificate_file": "/etc/hosts"}, {**good, "agent": "yes"},
+               {**good, "program": "ssh"}, ["/usr/bin/ssh"]]
+        for cfg in bad:
+            with self.assertRaises(cw.Stop, msg=cfg):
+                cw.ssh_setup(cfg, "perlmutter.nersc.gov", False)
+        # existing files of this user, reached by a path that is not literal: refused before any lstat
+        odd = os.path.join(TMP, "id_$HOME")
+        shutil.copy(KEYFILE, odd)
+        dotdot = os.path.join(TMP, "..", os.path.basename(TMP), "id_test")
+        rel = os.path.relpath(KEYFILE)
+        for path in (odd, dotdot, rel):
+            self.assertTrue(os.path.isfile(path), path)
+            with self.assertRaises(cw.Stop, msg=path) as c:
+                cw.ssh_setup({**good, "identity_file": path}, "perlmutter.nersc.gov", False)
+            self.assertIn("absolute, literal path", c.exception.args[-1], path)
+        for host in ("", "a b", "h;id", "-oProxyCommand=x", "h.", None):
+            with self.assertRaises(cw.Stop, msg=host):
+                cw.ssh_setup(good, host, False)
+        with self.assertRaises(cw.Stop):
+            cw.ssh_setup({**good, "program": KEYFILE}, "h", True)       # the real items: /usr/bin/ssh only
+
+    def test_an_agent_is_passed_only_when_declared(self):
+        with mock.patch.dict(os.environ, {"SSH_AUTH_SOCK": "/tmp/agent.sock"}):
+            self.assertNotIn("SSH_AUTH_SOCK", cw.ssh_setup(ssh_cfg("/usr/bin/ssh"), "h", False)[1])
+            env = cw.ssh_setup({**ssh_cfg("/usr/bin/ssh"), "agent": True}, "h", False)[1]
+            self.assertEqual(env["SSH_AUTH_SOCK"], "/tmp/agent.sock")
+        with mock.patch.dict(os.environ, {"SSH_AUTH_SOCK": "$HOME/sock"}):
+            with self.assertRaises(cw.Stop):
+                cw.ssh_setup({**ssh_cfg("/usr/bin/ssh"), "agent": True}, "h", False)
 
     def test_pv_roles_need_the_seal_and_freeze_paths(self):
         rig = Rig()
@@ -726,11 +774,35 @@ class RunTests(unittest.TestCase):
         self.assertEqual(rig.remote_record(), slurp(os.path.join(rig.cfg["record_dir"], "RECORD.jsonl"), "rb"))
         self.assertEqual(rig.markers(), [("attempt", rig.seal["seal_digest"], "pv-writer")])
 
+    def test_a_hostile_environment_never_reaches_ssh(self):
+        rig = Rig()
+        bogus = os.path.join(rig.root, "bogus-home")
+        os.makedirs(os.path.join(bogus, ".ssh"))
+        with open(os.path.join(bogus, ".ssh", "config"), "w") as f:
+            f.write("Host *\n  ProxyCommand nc evil 22\n  PermitLocalCommand yes\n  LocalCommand cat\n")
+        hostile = {"SSH_ASKPASS": "/tmp/reads-stdin", "SSH_ASKPASS_REQUIRE": "force", "DISPLAY": ":0",
+                   "HOME": bogus, "SSH_AUTH_SOCK": "/tmp/agent.sock", "LD_PRELOAD": "/tmp/x.so",
+                   "PATH": "/tmp/evil:" + os.environ["PATH"], "LANG": "xx_YY.UTF-8"}
+        with mock.patch.dict(os.environ, hostile):
+            self.assertEqual(rig.run("pv-writer")[0], 0)
+        want_env = {"HOME": __import__("pwd").getpwuid(os.getuid()).pw_dir, "PATH": "/usr/bin:/bin", "LANG": "C"}
+        want_argv = [os.path.join(rig.bin, "ssh"), *cw.SSH_FORCED, "-l", "tester", "-i", KEYFILE, "stub-login"]
+        log = rig.ssh_log()
+        self.assertGreaterEqual(len(log), 3)                 # the binary probe, the two lists, the launch
+        for entry in log:
+            # The stub is a Python script: at its own startup Python's PEP 538 locale coercion adds LC_CTYPE=C.UTF-8
+            # (because LANG=C), and macOS adds __CF_USER_TEXT_ENCODING. Neither comes from the wrapper, whose exact
+            # environment test_ssh_argv_is_built_from_the_closed_schema asserts on ssh_setup itself.
+            env = {k: v for k, v in entry["env"].items()
+                   if k != "__CF_USER_TEXT_ENCODING" and not (k == "LC_CTYPE" and v == "C.UTF-8")}
+            self.assertEqual(env, want_env)
+            self.assertEqual(entry["argv"][:-1], want_argv)
+
     def test_ssh_never_gets_a_pty(self):
         rig = Rig()
         self.assertEqual(rig.run("pv-writer")[0], 0)
         for entry in rig.ssh_log():
-            self.assertEqual(entry["opts"][:2 + len(cw.SSH_FORCED)], ["-F", "none", *cw.SSH_FORCED])
+            self.assertEqual(entry["opts"][:len(cw.SSH_FORCED)], list(cw.SSH_FORCED))
 
     def test_no_secret_in_any_argv_env_record_or_output(self):
         rig = Rig()
@@ -1021,7 +1093,7 @@ class RunTests(unittest.TestCase):
             f.write("y")
         os.chmod(os.path.join(d, "locked"), 0)
         try:
-            c = cw.Cluster([ssh_stub("RUN")], "h")
+            c = stub_cluster("RUN")
             got, missing, unreadable = c.hash_files(d, ["a b", "-", "gone", "locked/f"])
         finally:
             os.chmod(os.path.join(d, "locked"), 0o700)
@@ -1251,7 +1323,7 @@ class RunTests(unittest.TestCase):
 
     def test_launch_zeroes_its_frame(self):
         frame = bytearray(b"abc\n")
-        c = cw.Cluster([ssh_stub("cat >/dev/null; echo covfix-receipt a1")], "h")
+        c = stub_cluster("cat >/dev/null; echo covfix-receipt a1")
         res = c.launch("x", frame, "a1", [])
         self.assertEqual((res.rc, res.delivered, res.receipt, res.echoed), (0, True, True, False))
         self.assertEqual(frame, bytearray(4))
@@ -1377,7 +1449,7 @@ class FailureBranchTests(unittest.TestCase):
                 cw.login_keychain(path)
 
     def test_config_shapes(self):
-        for ssh, host in (([], "h"), (["ssh"], ""), ("ssh", "h")):
+        for ssh, host in (([], "h"), (ssh_cfg("/usr/bin/ssh"), ""), ("ssh", "h")):
             with self.assertRaises(cw.Stop):
                 cw.Cluster(ssh, host)
         for m in ({"worktree": "x"}, {"worktree": 1, "path": "p", "remote": "o", "branch": "b"}, []):
@@ -1390,12 +1462,12 @@ class FailureBranchTests(unittest.TestCase):
 
     def test_launch_survives_a_binary_that_reads_nothing(self):
         frame = bytearray(b"x" * (1 << 20))
-        res = cw.Cluster([ssh_stub("exit 0")], "h").launch("x", frame, "a", [])
+        res = stub_cluster("exit 0").launch("x", frame, "a", [])
         self.assertEqual((res.rc, res.delivered, res.receipt), (0, False, False))
         self.assertEqual(frame.count(0), len(frame))
 
     def test_launch_kills_its_child_on_an_interrupt(self):
-        c = cw.Cluster([ssh_stub("sleep 5")], "h")
+        c = stub_cluster("sleep 5")
         real_wait = subprocess.Popen.wait
         calls = []
 
