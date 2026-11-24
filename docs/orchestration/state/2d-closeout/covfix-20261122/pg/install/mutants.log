@@ -1,4 +1,4 @@
-baseline install: clean ['Ran 10 tests in 0.592s', 'OK']
+baseline install: clean ['Ran 14 tests in 2.013s', 'OK']
 M01 KILLED by test_refusals_write_nothing: identity not enforced [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
 M02 KILLED by test_refusals_write_nothing: an unfilled dbconfig pin [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
 M03 KILLED by test_refusals_write_nothing: an existing product directory [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
@@ -25,4 +25,15 @@ M23 KILLED by test_receipts: a GO with stops [docs/orchestration/state/2d-closeo
 M24 KILLED by test_refusals_and_options: an unreviewed script [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
 M25 KILLED by test_receipts: invalid receipt exit [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
 M26 KILLED by test_refusals_and_options: user ssh config used [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
-26 of 26 killed; 0 invalid; 0 survived
+M27 KILLED by test_refusals_and_driver_failures: B3 identity not enforced [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M28 KILLED by test_the_archive_and_the_blobs: the archive's pin [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M29 KILLED by test_refusals_and_driver_failures: nothing embedded [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M30 KILLED by test_refusals_and_driver_failures: an existing replay directory [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M31 KILLED by test_the_archive_and_the_blobs: an unpinned archive member [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M32 KILLED by test_the_archive_and_the_blobs: a link in the archive [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M33 KILLED by test_the_archive_and_the_blobs: a missing blob [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M34 KILLED by test_the_archive_and_the_blobs: a changed blob [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M35 KILLED by test_refusals_and_driver_failures: a failed driver [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M36 KILLED by test_refusals_and_driver_failures: a failed replay record [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M37 KILLED by test_go: no nice or wall cap [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+37 of 37 killed; 0 invalid; 0 survived

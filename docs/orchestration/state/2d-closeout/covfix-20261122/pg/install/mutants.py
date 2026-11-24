@@ -10,7 +10,7 @@ _s = importlib.util.spec_from_file_location("mutrun", HERE.parent / "mutrun.py")
 R = importlib.util.module_from_spec(_s)
 _s.loader.exec_module(R)
 D = "docs/orchestration/state/2d-closeout/covfix-20261122/pg/install"
-IN, NL = f"{D}/pg-install-g2111a.py", f"{D}/pg-node-launch.py"
+IN, NL, RP = f"{D}/pg-install-g2111a.py", f"{D}/pg-node-launch.py", f"{D}/pg-replay-g2111a.py"
 M = [(f, old, new, what, "install") for f, old, new, what in [
     (IN, '        if not rec["identity"]["pass"]:', '        if False:', "identity not enforced"),
     (IN, '        if not dbconfig_sha:', '        if False:', "an unfilled dbconfig pin"),
@@ -43,6 +43,23 @@ M = [(f, old, new, what, "install") for f, old, new, what in [
     (NL, '    if schema is None:', '    if False:', "an unreviewed script"),
     (NL, '    return p.returncode if ok else 4', '    return p.returncode', "invalid receipt exit"),
     (NL, 'SSH_OPTS = ["-F", "/dev/null", ', 'SSH_OPTS = [', "user ssh config used"),
+    # B3's node script
+    (RP, '        if not rec["identity"]["pass"]:', '        if False:', "B3 identity not enforced"),
+    (RP, '        if rec["archive_sha256"] != archive_sha:', '        if False:', "the archive's pin"),
+    (RP, '        if not (commit and archive_sha and blobs and archive_b64):', '        if False:', "nothing embedded"),
+    (RP, '        if os.path.lexists(w):', '        if False:', "an existing replay directory"),
+    (RP, '                if n not in blobs:\n                    raise Stop', '                if False:\n                    raise Stop',
+     "an unpinned archive member"),
+    (RP, '            else:\n                raise Stop(f"{n} is neither a directory nor a regular file")',
+     '            else:\n                continue', "a link in the archive"),
+    (RP, '    probs = [f"missing: {n}" for n in sorted(set(blobs) - set(seen))]', '    probs = []', "a missing blob"),
+    (RP, '    probs += [f"{n}: blob differs" for n in sorted(set(seen) & set(blobs)) if seen[n] != blobs[n]]', '',
+     "a changed blob"),
+    (RP, '        if p.returncode != 0:\n            raise Stop(f"the replay driver', '        if False:\n            raise Stop(f"the replay driver',
+     "a failed driver"),
+    (RP, '        if r.get("pass") is not True:', '        if False:', "a failed replay record"),
+    (RP, '["/usr/bin/nice", "-n", "19", "/usr/bin/timeout", str(WALL_CAP_S), "bash", driver,', '["/usr/bin/true", "-n", "19", "/usr/bin/true", "0", "bash", driver,',
+     "no nice or wall cap"),
 ]]
 
 if __name__ == "__main__":

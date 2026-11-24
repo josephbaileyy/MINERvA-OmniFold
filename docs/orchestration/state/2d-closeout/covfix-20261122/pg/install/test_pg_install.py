@@ -8,6 +8,7 @@ import io
 import json
 import os
 import shutil
+import subprocess
 import tarfile
 import tempfile
 import unittest
@@ -201,6 +202,109 @@ class NodeLaunch(unittest.TestCase):
         self.assertEqual(self.launch("exit 0"), 5)
         PL = load("pg_probe_launch", HERE.parent / "probe" / "pg-probe-launch.py")
         self.assertEqual((self.L.SSH_OPTS, self.L.REMOTE, self.L.HOST), (PL.SSH_OPTS, PL.REMOTE, PL.HOST))
+
+
+RP = load("pg_replay", HERE / "pg-replay-g2111a.py")
+EA = load("embed_archive", HERE / "embed_archive.py")
+DRIVER = """#!/bin/bash
+[ "$1" = --workdir ] || exit 2
+echo "[replay] stub $PG_STUB_RC"
+printf '{"pass": %s, "checks": {"x": true}, "spline_opened": {}, "gated": {}}' "${PG_STUB_PASS:-true}" > "$2/replay.json"
+exit ${PG_STUB_RC:-0}
+"""
+
+
+class Replay(unittest.TestCase):
+    def setUp(self):
+        self.tmp = Path(os.path.realpath(tempfile.mkdtemp(prefix="pgr-", dir="/tmp")))
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
+        r = self.repo = self.tmp / "repo"
+        (r / "3d-unfolding/genie").mkdir(parents=True)
+        (r / "3d-unfolding/genie/pg_replay.sh").write_text(DRIVER)
+        (r / "3d-unfolding/genie/pg_replay.sh").chmod(0o755)
+        (r / "3d-unfolding/genie/gen5d_v3.py").write_text("x = 1\n")
+        (r / "setup_salloc_env.sh").write_text("true\n")
+        git = ["git", "-C", str(r), "-c", "user.name=t", "-c", "user.email=t@t"]
+        subprocess.run(git[:3] + ["init", "-q"], check=True)
+        subprocess.run(git + ["add", "-A"], check=True)
+        subprocess.run(git + ["commit", "-qm", "c"], check=True)
+        self.paths = ["3d-unfolding/genie", "setup_salloc_env.sh"]
+        self.commit = subprocess.run(git[:3] + ["rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+        self.data, self.blobs = EA.build(self.commit, r, self.paths)
+        self.seen = []
+
+    def run_replay(self, data=None, blobs=None, env=None, **kw):
+        import base64
+
+        def run(argv, **k):
+            self.seen.append(argv)
+            k["env"] = dict(k["env"], **(env or {}))
+            return subprocess.run(argv[5:], **k)                 # without nice and timeout, which macOS lacks
+        import datetime as dt
+        self.calls = getattr(self, "calls", 0) + 1                # a distinct replay directory per call
+        args = dict(now=dt.datetime(2026, 11, 25, 0, 0, self.calls, tzinfo=dt.timezone.utc),
+                    parent=str(self.tmp / "scratch"), archive_b64=base64.b64encode(data or self.data).decode(),
+                    archive_sha=sha(self.data), blobs=self.blobs if blobs is None else blobs, commit=self.commit,
+                    ident=lambda: {"pass": True}, run=run, home=str(self.tmp))
+        args.update(kw)
+        return RP.replay(**args)
+
+    def assert_stop(self, r, text):
+        self.assertEqual(r["verdict"], "STOP", r)
+        self.assertTrue(any(text in x for x in r["stops"]), r["stops"])
+
+    def test_go(self):
+        r = self.run_replay()
+        self.assertEqual(r["verdict"], "GO", r["stops"])
+        self.assertEqual(r["n_files_checked"], 3)
+        self.assertEqual(self.seen[0][:5], ["/usr/bin/nice", "-n", "19", "/usr/bin/timeout", str(RP.WALL_CAP_S)])
+        self.assertEqual(r["driver_lines"], ["[replay] stub "])
+        self.assertTrue(r["replay"]["pass"])
+        self.assertEqual(sorted(os.listdir(r["replay_dir"])), ["deploy", "driver.log", "run", "tmp"])
+
+    def test_the_archive_and_the_blobs(self):
+        import gzip
+        import tarfile as tf_
+        bad = gzip.compress(b"x" * 100)
+        r = self.run_replay(data=bad)
+        self.assert_stop(r, "the archive differs from its pin")
+        self.assertFalse((self.tmp / "scratch").exists())                         # nothing written
+        r = self.run_replay(blobs=dict(self.blobs, **{"3d-unfolding/genie/gen5d_v3.py": "0" * 40}))
+        self.assert_stop(r, "blob differs")
+        r = self.run_replay(blobs=dict(self.blobs, **{"extra.txt": "0" * 40}))
+        self.assert_stop(r, "missing: extra.txt")
+        bl = dict(self.blobs)
+        bl.pop("setup_salloc_env.sh")
+        r = self.run_replay(blobs=bl)
+        self.assert_stop(r, "is not a pinned blob")
+        buf = io.BytesIO()
+        with tf_.open(fileobj=buf, mode="w") as t:
+            ti = tf_.TarInfo("3d-unfolding/genie/link")
+            ti.type, ti.linkname = tf_.SYMTYPE, "/etc/passwd"
+            t.addfile(ti)
+        lnk = gzip.compress(buf.getvalue())
+        r = self.run_replay(data=lnk, archive_sha=sha(lnk))
+        self.assert_stop(r, "neither a directory nor a regular file")
+        for d in (self.tmp / "scratch").iterdir():
+            self.assertFalse((d / "driver.log").exists())                        # the driver never ran
+
+    def test_refusals_and_driver_failures(self):
+        import datetime as dt
+        now = dt.datetime(2026, 11, 24, 12, 0, 0, tzinfo=dt.timezone.utc)
+        (self.tmp / "scratch/replay-20261124T120000Z").mkdir(parents=True)
+        self.assert_stop(self.run_replay(now=now), "already exists")
+        self.assert_stop(self.run_replay(ident=lambda: {"pass": False}), "identity")
+        self.assert_stop(self.run_replay(commit="", archive_b64=""), "not embedded")
+        self.assert_stop(self.run_replay(env={"PG_STUB_RC": "4"}), "exited 4")
+        self.assert_stop(self.run_replay(env={"PG_STUB_PASS": "false"}), "did not all pass")
+
+    def test_embed_refuses_links(self):
+        (self.repo / "3d-unfolding/genie/l").symlink_to("gen5d_v3.py")
+        git = ["git", "-C", str(self.repo), "-c", "user.name=t", "-c", "user.email=t@t"]
+        subprocess.run(git + ["add", "-A"], check=True)
+        subprocess.run(git + ["commit", "-qm", "l"], check=True)
+        with self.assertRaises(SystemExit):
+            EA.build("HEAD", self.repo, self.paths)
 
 
 class Constants(unittest.TestCase):

@@ -338,7 +338,8 @@ STUB_VERIFY = r'''import sys, os
 log = open(os.environ["PG_STUB_LOG"], "a"); log.write("pg_verify " + " ".join(sys.argv[1:]) + "\n")
 a = sys.argv[1:]
 if a[0] == "trace-check":
-    open(a[a.index("--out") + 1], "w").write('{"pass": true}')
+    opened = "false" if os.environ.get("PG_STUB_NO_SPLINE") else "true"
+    open(a[a.index("--out") + 1], "w").write('{"pass": true, "initial_opened_spline": %s, "gated": []}' % opened)
 fail = os.environ.get("PG_STUB_VERIFY_FAIL")
 if fail and fail in " ".join(a):
     print('{"pass": false}'); sys.exit(1)
@@ -695,6 +696,70 @@ class Generate(unittest.TestCase):
                 self.assertEqual(bool(ran), gen)
                 self.assertFalse((self.W / "PRODUCTS.json").exists())
                 self.log.unlink()
+
+
+class Replay(unittest.TestCase):
+    """pg_replay.sh (B3's driver) against the same stubbed deploy (Generate's setUp, none of its tests)."""
+
+    def setUp(self):
+        Generate.setUp(self)
+        shutil.copy(GENIE / "pg_replay.sh", self.dep / "3d-unfolding/genie/pg_replay.sh")
+        self.R = self.tmp / "R"
+        self.R.mkdir()
+
+    def run_replay(self, **env):
+        e = {"PATH": f"/usr/bin:/bin:/usr/sbin:/sbin:{self.sysbin}", "HOME": str(self.tmp), "TMPDIR": str(self.W / "tmp"),
+             "PG_STUB_LOG": str(self.log), "PG_STUB_BIN": str(self.bin), "PG_STUB_DEPLOY": str(self.dep)}
+        e.update(env)
+        return subprocess.run(["bash", str(self.dep / "3d-unfolding/genie/pg_replay.sh"), "--workdir", str(self.R)],
+                              cwd=self.R, env=e, stdin=subprocess.DEVNULL, capture_output=True, text=True)
+
+    def test_the_replay(self):
+        p = self.run_replay()
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        log = self.log.read_text().splitlines()
+        self.assertTrue(log[0].startswith("pg_verify tool-check") and "--self-test" in log[0])
+        gen = [ln.split() for ln in log if ln.startswith("run_gevgen_v3 genie")]
+        self.assertEqual(len(gen), 1)
+        self.assertEqual(gen[0][2:6], ["G21_11a_00_000", str(self.R / "splines"), "100", "123456789"])
+        tenv = [ln for ln in log if ln.startswith("trace-env ")]
+        self.assertEqual(len(tenv), 3)
+        self.assertTrue(all(ln.endswith(" fd=9 dir=set") for ln in tenv))
+        self.assertEqual(sorted(ln.split("--role ")[1].split()[0] for ln in log if "trace-check" in ln),
+                         ["gevgen", "graphs", "reduce"])
+        rec = json.loads((self.R / "replay.json").read_text())
+        self.assertTrue(rec["pass"])
+        self.assertEqual(len(rec["checks"]), 7)
+        gone = json.loads((self.R / "deleted.json").read_text())
+        self.assertEqual(sorted(gone), ["genie_v3.gst.root", "gevgen.status", "input-flux.root"])
+        self.assertEqual([q.name for q in (self.R / "work/t0").iterdir() if q.name.endswith((".root", ".status"))], [])
+        self.assertNotIn("123456789", json.dumps(gone))
+
+    def test_stops(self):
+        for fail, msg in (("--self-test", "strace"), ("members-check", "slot 1's private product"),
+                          ("--role reduce", "trace check (reduce)"), ("--role graphs", "trace check (graphs)"),
+                          ("--role gevgen", "trace check (gevgen)")):
+            with self.subTest(fail):
+                shutil.rmtree(self.R)
+                self.R.mkdir()
+                if self.log.exists():
+                    self.log.unlink()
+                p = self.run_replay(PG_STUB_VERIFY_FAIL=fail)
+                self.assertEqual(p.returncode, 1, p.stdout)
+                self.assertIn(f"[replay] STOP: {msg}", p.stdout)
+                self.assertFalse((self.R / "replay.json").exists())
+
+    def test_a_replay_record_that_fails_stops(self):
+        p = self.run_replay(PG_STUB_NO_SPLINE="1")                 # every check exits 0, but no spline open is shown
+        self.assertEqual(p.returncode, 1, p.stdout)
+        self.assertIn("[replay] STOP: the replay", p.stdout)
+
+    def test_refusals(self):
+        (self.R / "x").write_text("x")
+        self.assertEqual(self.run_replay().returncode, 2)                 # not empty
+        p = subprocess.run(["bash", str(self.dep / "3d-unfolding/genie/pg_replay.sh"), "--workdir", "rel"],
+                           cwd=self.tmp, capture_output=True, text=True)
+        self.assertEqual(p.returncode, 2)
 
 
 if __name__ == "__main__":
