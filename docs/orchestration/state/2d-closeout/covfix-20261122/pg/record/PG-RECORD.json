@@ -83,6 +83,11 @@
    "target": "libGPhQELXS-3.04.00.so"
   }
  },
+ "genie_manifest": {
+  "members_file": "genie-manifest.json",
+  "n_members": 4090,
+  "tarball_sha256": "d1a08091921e2197195292fb33abe74661f511469ec8aecf5803128e4f63f37f"
+ },
  "genie_root": "/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00",
  "github_tag_equal": {
   "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AR23_20i/CommonParam.xml": true,
@@ -339,6 +344,13 @@
    ],
    "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a/GDNu20_01a_00_000": null
   }
+ },
+ "private_product": {
+  "members_file": "G2111a-members.json",
+  "n_members": 17,
+  "provenance": "the re-download on 2026-11-24 equals the earlier download of the same SciSoft URL the same day (record-sources.json at a754e4a4 and b31559e2); SciSoft publishes no checksum. Two reads agreeing show the bytes did not change between them, not that they are the publisher's. The independent anchors are the two spent tunes, whose SciSoft spline and README equal F1's CVMFS pins.",
+  "tarball_sha256": "ae159887772a54891fc4bddb189ab108d74c4a48db68c13ed7166524e8797590",
+  "tune": "G21_11a_00_000"
  },
  "schema": "covfix-pg-record/1",
  "sources": {

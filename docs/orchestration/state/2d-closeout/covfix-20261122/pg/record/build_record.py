@@ -32,8 +32,10 @@ import hashlib
 import json
 import os
 import re
+import posixpath
 import stat
 import subprocess
+import tarfile
 import xml.etree.ElementTree as ET
 
 FLAVOR = "Linux64bit+3.10-2.17-e20-prof"
@@ -191,6 +193,40 @@ class Tune:
         return rec
 
 
+def members(tarball):
+    """{member: {type, sha256 or target, mode}} of a tarball, read as a stream. Refused: an absolute name, a '..'
+    component, a link whose target resolves outside the tree, a hard link to a missing member, any other type."""
+    out = {}
+    with tarfile.open(tarball, "r|*") as tf:
+        for m in tf:
+            n = m.name.rstrip("/")
+            parts = n.split("/")
+            if not n or n.startswith("/") or ".." in parts or "" in parts or n in out:
+                raise RecordError(f"{tarball}: member {m.name!r}")
+            rec = {"mode": oct(m.mode & 0o7777)}
+            if m.isreg():
+                h = hashlib.sha256()
+                f = tf.extractfile(m)
+                for b in iter(lambda: f.read(1 << 20), b""):
+                    h.update(b)
+                rec.update(type="file", size=m.size, sha256=h.hexdigest())
+            elif m.isdir():
+                rec["type"] = "dir"
+            elif m.issym():
+                t = posixpath.normpath(posixpath.join(posixpath.dirname(n), m.linkname))
+                if m.linkname.startswith("/") or t == ".." or t.startswith("../"):
+                    raise RecordError(f"{tarball}: link {n} -> {m.linkname} leaves the tree")
+                rec.update(type="symlink", target=m.linkname)
+            elif m.islnk():
+                if m.linkname.rstrip("/") not in out:
+                    raise RecordError(f"{tarball}: hard link {n} -> {m.linkname} to no earlier member")
+                rec.update(type="hardlink", target=m.linkname)
+            else:
+                raise RecordError(f"{tarball}: {n} is neither a file, a directory nor a link")
+            out[n] = rec
+    return dict(sorted(out.items()))
+
+
 def survey(genie, name):
     """What a tune's files say when it does not resolve: listings, its global models and generators, and why."""
     t = Tune(genie, name)
@@ -304,8 +340,8 @@ def splines(xsec, tunes):
 
 def main():
     a = argparse.ArgumentParser()
-    for k in ("genie", "xsec", "github", "tree", "sources", "out"):
-        a.add_argument("--" + k, required=True)
+    for k in ("genie", "xsec", "github", "tree", "sources", "out", "genie_tarball", "private_tarball"):
+        a.add_argument("--" + k.replace("_", "-"), dest=k, required=True)
     o = a.parse_args()
     recs = {t: Tune(o.genie, t).resolve() for t in SPENT + CANDIDATES}
     for t in SPENT:
@@ -341,6 +377,27 @@ def main():
                                  for d, v in r["listings"].items()}},
            "github_tag_equal": github, "splines": splines(o.xsec, SPENT + CANDIDATES + SURVEYED)}
     os.makedirs(o.out, exist_ok=True)
+    private = members(o.private_tarball)
+    genie_manifest = members(o.genie_tarball)
+    for path, data in (("G2111a-members.json", {"schema": "covfix-pg-members/1",
+                                                 "tarball": os.path.basename(o.private_tarball),
+                                                 "tarball_sha256": sha256(o.private_tarball), "members": private}),
+                       ("genie-manifest.json", {"schema": "covfix-pg-members/1",
+                                                "tarball": os.path.basename(o.genie_tarball),
+                                                "tarball_sha256": sha256(o.genie_tarball), "members": genie_manifest})):
+        with open(os.path.join(o.out, path), "w") as f:
+            json.dump(data, f, indent=1, sort_keys=True)
+            f.write("\n")
+    rec["private_product"] = {"tune": "G21_11a_00_000", "members_file": "G2111a-members.json",
+                              "tarball_sha256": sha256(o.private_tarball), "n_members": len(private),
+                              "provenance": "the re-download on 2026-11-24 equals the earlier download of the same "
+                                            "SciSoft URL the same day (record-sources.json at a754e4a4 and b31559e2); "
+                                            "SciSoft publishes no checksum. Two reads agreeing show the bytes did not "
+                                            "change between them, not that they are the publisher's. The independent "
+                                            "anchors are the two spent tunes, whose SciSoft spline and README equal "
+                                            "F1's CVMFS pins."}
+    rec["genie_manifest"] = {"members_file": "genie-manifest.json", "tarball_sha256": sha256(o.genie_tarball),
+                             "n_members": len(genie_manifest)}
     with open(os.path.join(o.out, "PG-RECORD.json"), "w") as f:
         json.dump(rec, f, indent=1, sort_keys=True)
         f.write("\n")

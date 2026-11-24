@@ -1,0 +1,95 @@
+{
+ "members": {
+  "genie_xsec/v3_04_00": {
+   "mode": "0o755",
+   "type": "dir"
+  },
+  "genie_xsec/v3_04_00.version": {
+   "mode": "0o755",
+   "type": "dir"
+  },
+  "genie_xsec/v3_04_00.version/NULL_G2111a00000-k250-e1000": {
+   "mode": "0o644",
+   "sha256": "0a46f15d8ecd39d7864aaee906c5f38a880013275809f4baf305b8dff60d51a0",
+   "size": 456,
+   "type": "file"
+  },
+  "genie_xsec/v3_04_00/NULL": {
+   "mode": "0o755",
+   "type": "dir"
+  },
+  "genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000": {
+   "mode": "0o755",
+   "type": "dir"
+  },
+  "genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data": {
+   "mode": "0o755",
+   "type": "dir"
+  },
+  "genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data/README": {
+   "mode": "0o644",
+   "sha256": "4a2beead2f261240a4fed7f7d419d2d68c11bc1fa264faa7e129f8223a7ba7fd",
+   "size": 2690,
+   "type": "file"
+  },
+  "genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data/gxspl-FNALbig.xml.gz": {
+   "mode": "0o777",
+   "target": "gxspl-NUbig.xml.gz",
+   "type": "symlink"
+  },
+  "genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data/gxspl-FNALsmall.xml": {
+   "mode": "0o777",
+   "target": "gxspl-NUsmall.xml",
+   "type": "symlink"
+  },
+  "genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data/gxspl-NUbig.xml.gz": {
+   "mode": "0o644",
+   "sha256": "100791492718a525ccf9acaf9eb2b453e872b8efc139fef344e7a189ed5a8f2a",
+   "size": 183432408,
+   "type": "file"
+  },
+  "genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data/gxspl-NUsmall.xml": {
+   "mode": "0o644",
+   "sha256": "fa475f7f5066b314f177b10c4c821d76f2db072508be2734243a26544ef7ed1c",
+   "size": 561654302,
+   "type": "file"
+  },
+  "genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data/gxspl-freenuc.xml.gz": {
+   "mode": "0o644",
+   "sha256": "fdb326eda3188d82fb603053eb34a89f7ea32d1cdfa2024bd39476731a7fb46d",
+   "size": 1442580,
+   "type": "file"
+  },
+  "genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data/isotopes.cfg": {
+   "mode": "0o644",
+   "sha256": "8570db1561c2c41d8928f41f3318218a179cb029d9b5d90761e0f9cd350e4673",
+   "size": 13025,
+   "type": "file"
+  },
+  "genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data/reduce_gxspl.awk": {
+   "mode": "0o755",
+   "sha256": "ba64ba5a511fb2314dd1f12ec55a833ce0c257f35f0b8712004e42168c1b6368",
+   "size": 3719,
+   "type": "file"
+  },
+  "genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data/xsec_graphs.root": {
+   "mode": "0o644",
+   "sha256": "10707a2debcaf7e6e9174b0a4cdee2439ec3014e92e032885205e7a41129d271",
+   "size": 245767846,
+   "type": "file"
+  },
+  "genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/ups": {
+   "mode": "0o755",
+   "type": "dir"
+  },
+  "genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/ups/genie_xsec.table": {
+   "mode": "0o644",
+   "sha256": "15b0d8abab0abfcedcfa06d7b6552241fb5f1667619367c48457ccc2ebc88d76",
+   "size": 752,
+   "type": "file"
+  }
+ },
+ "schema": "covfix-pg-members/1",
+ "tarball": "genie_xsec-3.04.00-noarch-G2111a00000-k250-e1000.tar.bz2",
+ "tarball_sha256": "ae159887772a54891fc4bddb189ab108d74c4a48db68c13ed7166524e8797590"
+}

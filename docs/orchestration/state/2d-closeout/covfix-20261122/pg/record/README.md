@@ -20,11 +20,26 @@ itself only checks byte identity against these pins.
   - the raw copy of each pinned config file, `raw.githubusercontent.com/GENIE-MC/Generator/R-3_04_00/config/<path>`,
     saved under `--github` as `<path>` with `/` replaced by `__`.
 
+- SciSoft's genie tarball and G2111a00000 tarball are also given whole (`--genie-tarball`, `--private-tarball`).
+  They give `genie-manifest.json`, every member of the genie product with its sha256 or link target, which the
+  trace-check pins against. They also give `G2111a-members.json`, slot 1's private product, with 17 members: 9 files,
+  6 directories and 2 links inside `data/`. Absolute names, `..` components, links leaving the tree and special
+  files are refused.
+
+**Provenance of the private product.** The A1 re-download on 2026-11-24 has sha256
+`ae159887772a54891fc4bddb189ab108d74c4a48db68c13ed7166524e8797590`. That equals the earlier download of the same
+SciSoft URL the same day, recorded in `record-sources.json` at `a754e4a4` and `b31559e2`. SciSoft publishes no
+checksum. Two reads agreeing show the bytes did not change between them; they don't show the bytes are the
+publisher's. The independent anchors are the two spent tunes: their SciSoft spline and README equal F1's CVMFS pins.
+The product's UPS version file declares `PROD_DIR = genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000`, relative to
+its database, so it sets up from a private `PRODUCTS` directory.
+
 ## Reproducing
 
 ```
 python3 -I build_record.py --genie <genie/v3_04_00> --xsec <genie_xsec/v3_04_00/NULL> --github <raw copies> \
-    --tree <tree.json> --sources record-sources.json --out <dir>
+    --tree <tree.json> --sources record-sources.json --genie-tarball <genie tarball> \
+    --private-tarball <G2111a00000 tarball> --out <dir>
 ```
 
 The output is deterministic: two runs on the same inputs gave identical files. `nm` (with `-D --defined-only`) must
