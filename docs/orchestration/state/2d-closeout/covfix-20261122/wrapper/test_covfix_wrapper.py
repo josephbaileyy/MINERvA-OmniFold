@@ -75,7 +75,7 @@ def ssh_stub(body: str) -> str:
     d = tempfile.mkdtemp(dir=TMP)
     path = os.path.join(d, "ssh")
     with open(path, "w") as f:
-        f.write("#!/bin/bash\nwhile [ \"${1#-}\" != \"$1\" ]; do [ \"$1\" = -o ] && shift; shift; done\n"
+        f.write("#!/bin/bash\nwhile [ \"${1#-}\" != \"$1\" ]; do case \"$1\" in -o|-F|-i|-p|-l) shift;; esac; shift; done\n"
                 "host=$1; cmd=$2\n" + ('exec bash -c "$cmd"\n' if body == "RUN" else body + "\n"))
     os.chmod(path, 0o755)
     return path
@@ -93,7 +93,7 @@ here = {here!r}
 args = sys.argv[1:]
 opts = []
 while args and args[0].startswith("-"):
-    n = 2 if args[0] == "-o" else 1
+    n = 2 if args[0] in ("-o", "-F", "-i", "-p", "-l") else 1
     opts += args[:n]
     args = args[n:]
 host, command = args[0], args[1]
@@ -672,11 +672,15 @@ class ConfigTests(unittest.TestCase):
 
     def test_ssh_options_are_allow_listed(self):
         self.assertEqual(cw.check_ssh(["ssh", "-o", "BatchMode=yes", "-p", "22"]),
-                         ["ssh", "-T", "-o", "RequestTTY=no", "-o", "StrictHostKeyChecking=yes",
-                          "-o", "ControlMaster=no", "-o", "ControlPath=none", "-o", "BatchMode=yes", "-p", "22"])
+                         ["ssh", "-F", "none", "-T", "-o", "RequestTTY=no", "-o", "StrictHostKeyChecking=yes",
+                          "-o", "ControlMaster=no", "-o", "ControlPath=none",
+                          "-o", "NoHostAuthenticationForLocalhost=no", "-o", "PermitLocalCommand=no",
+                          "-o", "ProxyCommand=none", "-o", "ProxyJump=none", "-o", "BatchMode=yes", "-p", "22"])
         self.assertEqual(cw.check_ssh(["ssh", "-o", "StrictHostKeyChecking=yes"])[-1], "StrictHostKeyChecking=yes")
         for bad in (["ssh", "-t"], ["ssh", "-tt"], ["ssh", "-o", "RequestTTY=yes"], ["ssh", "-L", "1:h:2"],
                     ["ssh", "-o", "ControlPath=/tmp/master"], ["ssh", "-o", "ControlMaster=auto"], ["ssh", "-S", "/tmp/m"],
+                    ["ssh", "-o", "NoHostAuthenticationForLocalhost=yes"], ["ssh", "-o", "PermitLocalCommand=yes"],
+                    ["ssh", "-o", "LocalCommand=cat"], ["ssh", "-o", "ProxyCommand=nc h 22"], ["ssh", "-J", "jump"],
                     ["ssh", "-o"], ["ssh", "-o", "BatchMode"], ["ssh", "-o", "StrictHostKeyChecking=no"],
                     ["ssh", "-o", "StrictHostKeyChecking=accept-new"], ["ssh", "-F", "/tmp/cfg"]):
             with self.assertRaises(cw.Stop, msg=bad):
@@ -726,8 +730,7 @@ class RunTests(unittest.TestCase):
         rig = Rig()
         self.assertEqual(rig.run("pv-writer")[0], 0)
         for entry in rig.ssh_log():
-            self.assertEqual(entry["opts"][:9], ["-T", "-o", "RequestTTY=no", "-o", "StrictHostKeyChecking=yes",
-                                                 "-o", "ControlMaster=no", "-o", "ControlPath=none"])
+            self.assertEqual(entry["opts"][:2 + len(cw.SSH_FORCED)], ["-F", "none", *cw.SSH_FORCED])
 
     def test_no_secret_in_any_argv_env_record_or_output(self):
         rig = Rig()

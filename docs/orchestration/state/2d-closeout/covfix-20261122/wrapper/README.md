@@ -55,7 +55,7 @@ block may name `salloc` and `srun` (paths ending in those names) and set `accoun
 with plain values. The wrapper runs:
 
 ```
-<ssh> -T -o RequestTTY=no -o StrictHostKeyChecking=yes -o ControlMaster=no -o ControlPath=none [allowed opts] <host> \
+<ssh> -F none -T -o RequestTTY=no -o StrictHostKeyChecking=yes [...the forced options] [allowed opts] <host> \
   'env -u SRUN_INPUT -u SRUN_OUTPUT -u SRUN_ERROR -u SLURM_STD{IN,OUT,ERR}MODE \
    salloc --exclusive -N 1 -n 1 [-A -q -C -t] srun --exclusive -N 1 -n 1 \
    bash -c <exec check> covfix-exec <binary> <sha256> <args> --covfix-...'
@@ -69,11 +69,17 @@ The ssh options a config may add are limited to:
   only), UserKnownHostsFile, IdentitiesOnly or IdentityFile;
 - `-i`, `-p`, `-l`.
 
-The wrapper always puts `-o StrictHostKeyChecking=yes -o ControlMaster=no -o ControlPath=none` first. ssh uses the
-first value it obtains for an option, so neither an ssh_config file nor the command line can turn host-key checking
-off, or reuse a shared master connection whose host was accepted under looser settings. Every run makes a fresh
-connection and checks the host key itself, and the host must already be in known_hosts. `-F` and `-S` are not
-allowed.
+The wrapper always runs ssh with **`-F none`**, so no ssh_config file is read at all: no Host or Match block can add
+a relay, a local command, a shared master connection or a host-authentication exception. It also puts these first:
+`-T -o RequestTTY=no -o StrictHostKeyChecking=yes -o ControlMaster=no -o ControlPath=none -o
+NoHostAuthenticationForLocalhost=no -o PermitLocalCommand=no -o ProxyCommand=none -o ProxyJump=none`. ssh keeps the
+first value it obtains for an option. Every run makes a fresh, direct connection and checks the host key itself.
+
+Two consequences for the role config:
+- `host` must be the real host name, because there is no alias mapping;
+- the identity, user and port go in the allowed options (`-i`, `-l`, `-p`, `-o IdentityFile=...`).
+
+The host must already be in known_hosts. `-F`, `-S`, `-J` and any other option are refused.
 
 Any `-t`, port forward or other option is refused. The frame goes on ssh's stdin, and the task's stdout and stderr
 come back through the wrapper. Any passphrase or seed base in that output is replaced by `[redacted]`, and the run is

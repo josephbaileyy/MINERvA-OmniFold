@@ -108,6 +108,9 @@ GENESIS = "0" * 64
 
 # ssh options a role config may add (after the forced -T -o RequestTTY=no); anything else is refused.
 SSH_FLAGS_WITH_VALUE = {"-i", "-p", "-l"}
+SSH_FORCED = ("-T", "-o", "RequestTTY=no", "-o", "StrictHostKeyChecking=yes", "-o", "ControlMaster=no",
+              "-o", "ControlPath=none", "-o", "NoHostAuthenticationForLocalhost=no", "-o", "PermitLocalCommand=no",
+              "-o", "ProxyCommand=none", "-o", "ProxyJump=none")
 SSH_O_KEYS = {"BatchMode", "ConnectTimeout", "ServerAliveInterval", "ServerAliveCountMax", "StrictHostKeyChecking",
               "UserKnownHostsFile", "IdentitiesOnly", "IdentityFile"}
 SLURM_VALUE = re.compile(r"[A-Za-z0-9_:.,=/-]{1,64}")
@@ -422,8 +425,9 @@ EXEC_CHECK = ('h=$(sha256sum < "$1") || exit 87; [ "${h%% *}" = "$2" ] || '
 
 
 def check_ssh(ssh) -> list:
-    """The ssh program and the options a config may add; -T, RequestTTY=no and StrictHostKeyChecking=yes always go
-    first, so neither a config file nor the command line can give the frame a PTY or an unverified host."""
+    """The ssh program and the options a config may add. -F none and SSH_FORCED always go first, so no ssh_config file
+    and no command-line option can give the frame a PTY, a shared or relayed connection, a local command, or a host
+    whose key this run did not verify."""
     argv = str_list(ssh, "ssh")
     if not argv:
         raise Stop(ERROR, "the role config names no ssh program")
@@ -440,10 +444,10 @@ def check_ssh(ssh) -> list:
         else:
             raise Stop(ERROR, f"ssh option {o!r} is not allowed (only -o {sorted(SSH_O_KEYS)}, -i, -p, -l)")
     # ssh uses the first value it obtains for an option, so these override any ssh_config setting.
-    # ControlMaster=no and ControlPath=none: never reuse a shared connection, whose host may have been accepted
-    # under looser settings; every run makes a fresh connection and checks the host key itself.
-    return [argv[0], "-T", "-o", "RequestTTY=no", "-o", "StrictHostKeyChecking=yes", "-o", "ControlMaster=no",
-            "-o", "ControlPath=none", *opts]
+    # -F none: read no ssh_config at all, so no Host or Match block can add a relay, a local command, a shared
+    # master or a host-authentication exception; the pinned role config's allowed options are the whole setup.
+    # The -o settings repeat the safe values explicitly (ssh keeps the first value it obtains for an option).
+    return [argv[0], "-F", "none", *SSH_FORCED, *opts]
 
 
 class LaunchResult:
