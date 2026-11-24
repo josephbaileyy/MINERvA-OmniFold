@@ -1,0 +1,18 @@
+[t1] start 2026-11-24T17:55:14Z job=61928141 node=login02 nproc=64
+[t1] done 2026-11-24T18:04:58Z rcs: 0 0 0 0
+old er: {"unit": "er", "verdict": "PASS", "sha256": "6671778e1cd05347d7f0053fbe4a1cbd76bf8f5ad02729309d93b45eb7461d89", "root_sha256": "13cf436d982384d9ea437adbdf7cf08195ea372790df16554a52fbd6d4beb3b4"}
+old c2_central: {"unit": "c2_central", "verdict": "PASS", "sha256": "3986c85a3a1ee4306424cbfb32ded6fc4b35710f271284e3dbb68937292a4da2", "root_sha256": "d07bc95f7501308269ea987f1b201376420522bdd4b3b5084059cea713d6dc32"}
+e er: {"unit": "er", "verdict": "PASS", "sha256": "b3830b7c7dd79fffecf487d83d6f4758edcf37f439835ca38d9c333096d4d520", "root_sha256": "5171c7b8ecacda6090e242349dd622218c1c38885c60ef8b91027033a8c4b780"}
+e c2_central: {"unit": "c2_central", "verdict": "PASS", "sha256": "b6cb61429b8d5a6f694147fb2ff985462eb433ab2478cda900d3ef8924ceaab0", "root_sha256": "7b350eecacd225aba554bef69ed9255fbe1f4c762720981efa3922ce6ebde0a2"}
+ef23690fc87538b477a33310c4ba2f60cca5b28eb2d57f956d21cb164c5963da  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_e/c2_central.done
+b6cb61429b8d5a6f694147fb2ff985462eb433ab2478cda900d3ef8924ceaab0  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_e/c2_central.npz
+7b350eecacd225aba554bef69ed9255fbe1f4c762720981efa3922ce6ebde0a2  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_e/c2_central.root
+cabc671dd4100ba6958aab1c1052ae8637d018c1203a86d557df76b893ec6bbe  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_e/er.done
+b3830b7c7dd79fffecf487d83d6f4758edcf37f439835ca38d9c333096d4d520  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_e/er.npz
+5171c7b8ecacda6090e242349dd622218c1c38885c60ef8b91027033a8c4b780  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_e/er.root
+35463b5cc920c0ef18e9177c302da44d82b9947961ce04a525ae600ddb7f0561  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_old/c2_central.done
+3986c85a3a1ee4306424cbfb32ded6fc4b35710f271284e3dbb68937292a4da2  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_old/c2_central.npz
+d07bc95f7501308269ea987f1b201376420522bdd4b3b5084059cea713d6dc32  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_old/c2_central.root
+860332e2cc6d56439318bbec90f7a8aeb063aa48b371f0813f996bf6868c766b  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_old/er.done
+6671778e1cd05347d7f0053fbe4a1cbd76bf8f5ad02729309d93b45eb7461d89  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_old/er.npz
+13cf436d982384d9ea437adbdf7cf08195ea372790df16554a52fbd6d4beb3b4  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_old/er.root
