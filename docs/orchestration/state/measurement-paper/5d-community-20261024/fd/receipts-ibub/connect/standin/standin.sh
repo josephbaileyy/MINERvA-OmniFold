@@ -4,7 +4,7 @@
 # clone's URL (a clone of the mounted depth-1 bare repo of the stand-in commit). The inputs are fake bytes at the
 # real paths, and the stand-in commit's config pins those bytes.
 # Variant ($1): ok | cov2d_running | ibub_running | ibuchi_running | ns_exists | ref_missing | cv_offpin |
-#               sbatch_fails | scontrol_mismatch | window | connect_record_exists
+#               sbatch_fails | scontrol_mismatch | window | connect_record_exists | qos_regular | qos_other
 # In every variant that submits, the sbatch stub writes the batch's own scontrol record first, as a job that starts at
 # once would (the batch-first ordering). In connect_record_exists it also plants the connect's own record.
 V=${1:?variant}
@@ -42,10 +42,11 @@ echo "the batch's own record, written first" > /pscratch/sd/j/josephrb/ibub-2026
 echo 61900001
 S3
 TL=11:29:00; [ "$V" = scontrol_mismatch ] && TL=12:00:00
+Q=regular_1; [ "$V" = qos_regular ] && Q=regular; [ "$V" = qos_other ] && Q=regular_2
 cat > /stub/scontrol <<S4
 #!/bin/bash
 echo "JobId=61900001 JobName=ibub_run"
-echo "   UserId=root(0) Priority=1 QOS=regular_1 JobState=PENDING"   # Perlmutter's spelling (receipts-cov2d/a2/bulk/complete/connect-complete-1.log.txt:78)
+echo "   UserId=root(0) Priority=1 QOS=$Q JobState=PENDING"   # regular_1 by default: Perlmutter's spelling (receipts-cov2d/a2/bulk/complete/connect-complete-1.log.txt:78)
 echo "   RunTime=00:00:00 TimeLimit=$TL TimeMin=N/A"
 S4
 chmod +x /stub/git /stub/sacct /stub/sbatch /stub/scontrol
