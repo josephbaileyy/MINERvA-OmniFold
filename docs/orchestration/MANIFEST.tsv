@@ -8647,6 +8647,16 @@ docs/orchestration/state/ibu-chi2-20261123/fig2/overlay_top.png	tracked	MACHINE	
 docs/orchestration/state/ibu-chi2-20261123/fig2/score.out	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/fig2/score_fig2.py	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/fig2/summary.json	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/flux/README.md	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/flux/SHA256SUMS	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/flux/first/DECLARATION.txt	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/flux/first/dump_flux.py	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/flux/first/score.out	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/flux/first/score_flux.py	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/flux/fluxrw/DECLARATION.txt	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/flux/fluxrw/fluxrw.py	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/flux/fluxrw/run.log	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/flux/inputs.sha256	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/foldtest/DECLARATION.txt	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/foldtest/cells.py	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/foldtest/foldtest.py	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes

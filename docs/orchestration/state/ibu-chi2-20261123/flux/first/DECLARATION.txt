@@ -1,0 +1,30 @@
+# Flux test: does our constrained nu_mu flux differ in shape from the one the 2021 paper used? (declared before computing)
+
+Question. The 2021 paper (PRD 104 092007) cites Valencia et al. 2019 (PRD 100 092001) for its flux constraint: the FHC
+nu-e constraint. Our MAT, with SetNuEConstraint(true) on ME playlists, loads
+sorted_NuEConstraint_FHC_RHC_IMD.txt (FHC + RHC nu-e + IMD; FluxReweighter.cxx:504-506). The variant test found shipped
+bare GENIE about 12 % above our tuned truth in shape at truth p|| 40-60. Is our constrained flux lower than Valencia's at
+high E_nu, in shape?
+
+Inputs.
+- Valencia: arXiv 1906.00111v2 anc MINERvA_Flux_pdg14_500MeVBins.csv (sha 2f00972e...) and its covariance
+  (sha 4693f406...).
+- Ours: flux-g4numiv6-pdg14-minervame1{D,M,N}_rearrangedUniverses.root from
+  MINERvA101/opt/lib/data/flux (the files the event loop logged), and the constraint file the event loop used. Our
+  constrained CV = sum_i w_i phi_i / sum_i w_i over the 100 Flux universes, with w_i from the file's 'Flux i w' lines,
+  as cov2d.flux_weights reads them. The unconstrained CV histogram is reported beside it.
+- Both rebinned to 0.5 GeV over 0-100 GeV, where the binning allows.
+
+Statistic. Shape ratio rho(E) = [ours(E)/sum_{2-20} ours] / [val(E)/sum_{2-20} val], normalized over 2-20 GeV. Region
+means: LOW 2-6, MID 6-11, HIGH 11-20, VHIGH 20-50 GeV, flux-weighted. Valencia's diagonal error on each region is
+taken from its covariance.
+
+Readings, per flux period:
+  HIGH-LOW   rho(VHIGH) <= 0.95 and the deficit exceeds 2 sigma of Valencia's VHIGH uncertainty.
+  HIGH-HIGH  rho(VHIGH) >= 1.05 under the same sigma condition.
+  SAME       otherwise.
+Controls (STOP if failing): C-W, 100 finite non-negative weights; C-UNIT, the unconstrained CV integral over 0-100 GeV
+within 30 % of Valencia's. That only guards against a units or binning mistake. A constrained/unconstrained CV ratio
+is reported but not read.
+Descriptive only: a link to the truth test needs the playlist POT mix and the E_nu to p|| mapping, which this test does
+not do.
