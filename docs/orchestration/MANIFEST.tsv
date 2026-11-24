@@ -1111,6 +1111,12 @@ docs/orchestration/state/2d-closeout/covfix-20261122/reads/rev2-read-prompt.txt	
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/rev3-read-prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/rev4-read-prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/rev4.1-read-prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/wrapper/DIRECTOR-README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/wrapper/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/wrapper/covfix_wrapper.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/wrapper/reference_role.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/wrapper/role-config.example.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/wrapper/test_covfix_wrapper.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/ibukt-a2/PASS.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/ibukt-a2/cell-readings.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/ibukt-a2/readout.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
