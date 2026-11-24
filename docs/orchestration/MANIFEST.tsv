@@ -8937,13 +8937,17 @@ docs/orchestration/state/laned-cstat-crosscheck/LANED_CSTAT_CROSSCHECK.npz	track
 docs/orchestration/state/live-state-last-known.json	tracked	LIVE	state-artifact			open		route-only	no
 docs/orchestration/state/live-state.json	tracked	LIVE	state-artifact			open		route-only	no
 docs/orchestration/state/live-state.schema.json	tracked	LIVE	state-artifact			open		route-only	no
+docs/orchestration/state/mat-upstream-audit-20261124/2D-CLOSURE-A1.md	tracked	MACHINE	state-artifact	mat-upstream-audit-20261124		generated		exact-path-only	yes
 docs/orchestration/state/mat-upstream-audit-20261124/2D-CLOSURE.md	tracked	MACHINE	state-artifact	mat-upstream-audit-20261124		generated		exact-path-only	yes
 docs/orchestration/state/mat-upstream-audit-20261124/README.md	tracked	MACHINE	state-artifact	mat-upstream-audit-20261124		generated		exact-path-only	yes
 docs/orchestration/state/mat-upstream-audit-20261124/SHA256SUMS	tracked	MACHINE	state-artifact	mat-upstream-audit-20261124		generated		exact-path-only	yes
 docs/orchestration/state/mat-upstream-audit-20261124/SHA256SUMS-2D-CLOSURE	tracked	MACHINE	state-artifact	mat-upstream-audit-20261124		generated		exact-path-only	yes
+docs/orchestration/state/mat-upstream-audit-20261124/SHA256SUMS-2D-CLOSURE-A1	tracked	MACHINE	state-artifact	mat-upstream-audit-20261124		generated		exact-path-only	yes
 docs/orchestration/state/mat-upstream-audit-20261124/capture.sh	tracked	MACHINE	state-artifact	mat-upstream-audit-20261124		generated		exact-path-only	yes
 docs/orchestration/state/mat-upstream-audit-20261124/closure_2d.py	tracked	MACHINE	state-artifact	mat-upstream-audit-20261124		generated		exact-path-only	yes
 docs/orchestration/state/mat-upstream-audit-20261124/closure_2d.txt	tracked	MACHINE	state-artifact	mat-upstream-audit-20261124		generated		exact-path-only	yes
+docs/orchestration/state/mat-upstream-audit-20261124/closure_2d_a1.py	tracked	MACHINE	state-artifact	mat-upstream-audit-20261124		generated		exact-path-only	yes
+docs/orchestration/state/mat-upstream-audit-20261124/closure_2d_a1.txt	tracked	MACHINE	state-artifact	mat-upstream-audit-20261124		generated		exact-path-only	yes
 docs/orchestration/state/mat-upstream-audit-20261124/upstream-compare.txt	tracked	MACHINE	state-artifact	mat-upstream-audit-20261124		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/DECLARATION.md	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/amendment-e/confirm/README.md	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
