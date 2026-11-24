@@ -1788,6 +1788,9 @@ stands alone, and each candidate's PV verdict is reported descriptively.
    - a committed iris receipt showing at least the pinned ceiling remaining (541.50 at rev 11.4; 600.00 for rev 12), or the
      binding goes back to Joseph;
    - the fresh PG session named;
+   - the 2D grid (ours vs the paper's pT edges) is confirmed by Joseph before the first seal spend. Ours are
+     0.07/0.33/0.47 (`MINERvA101/MINERvA-101-Cross-Section/util/Binning.h:6`); the published result's are very
+     probably 0.075/0.325/0.475. A move to the paper's edges would rebuild COVFIX's inputs;
    - the director's passphrase generated, with the director's piping wrapper, and never shown to cov2d.
 5. **The bars:**
    - the fluctuation affirmative and two-sided (F̃ and every band "covers");
