@@ -1,29 +1,29 @@
-# IBUB hand mutants: 2d-unfolding/ibub/mutants.py at commit db8854e286f6ce4a976e0d603b43454674fc9129, run as `python -B -m mutants` in a separate detached
-# worktree at that commit (removed afterwards; its porcelain was empty before and after). The interpreter is a venv over
-# ROOT 6.40.04 with LightGBM 4.7.0, scikit-learn 1.9.1 and numpy 1.26.4 (macOS).
+# IBUB hand mutants: 2d-unfolding/ibub/mutants.py at commit d12c4f2a38a53001eb92bbefc8b2dc6001f034dc (M‴), run as `python -B -m mutants` in a separate
+# detached worktree at that commit (removed afterwards; its porcelain was empty before and after). The interpreter is a
+# venv over ROOT 6.40.04 with LightGBM 4.7.0, scikit-learn 1.9.1 and numpy 1.26.4 (macOS).
 # The runner (codex2 read 2, item 8):
 #   - every named test set passes unmutated first (BASELINE);
 #   - each mutant compiles;
 #   - a kill is a named test's failure or error;
 #   - a load error, a zero-test run or a class or module setup error is a harness failure that stops the run.
-# This supersedes the runs at 79a3427a0 (39), ee189fefc (69), 1031c8200 (92) and 1230e29a8 (95). The set now has 99
-# mutants. The item-3 confirm's fix (separate scontrol records for the connect and the batch; StdErr pinned and checked)
-# adds four sites: the batch's record given the connect's name (96), StdErr unchecked (97), and in the connect template
-# the connect's record given the batch's name (98) and written without its fresh check (99). Sites 85, 92 and 95 are
-# updated to the new lines (StdOut or StdErr symlinked; the batch's record pre-check; StdOut or StdErr outside $N/slurm).
+# This supersedes the runs at 79a3427a0 (39), ee189fefc (69), 1031c8200 (92), 1230e29a8 (95) and db8854e28 (99). The
+# set now has 103 mutants. Connect R's STOP 5 (QOS=regular_1, ../connect/run-stop-61914825/) adds four sites: the
+# exact QOS=regular match restored in the job (100) and in the connect (102), each killed by the regular_1 default,
+# and a widening to regular* in each (101, 103), killed by regular_2. Site 58 (another QOS accepted) now targets the
+# job's QOS set.
 # Blobs at that commit:
 #   e8e5969f978107e45991164a16c84f1794694dee752cbf189eab00e3ddd54633  ibub_unit.py
 #   1cc64564448277831dc4ac5fc888b4a3dd15a2c56badfab6325f83d962bcfed7  ibub_readout.py
 #   62591f998f6d3c907bcec460c9399a419755d8f041b40652f37066074b3ab85b  ibub_lanes.py
-#   13316a39994057d21e72fe4243e89e6ba8b0fb6f65db54b6325947eff48e4e78  ibub_overlap.py
-#   5e8e0abf0aa4e85907f00e568db1e8468face153655f4723db801504c05bfc55  jobs/ibub_job.sbatch
-#   8f1900e43d20cbc7b6dabb73e0419314bd6c0456b485d13b91afa450ed6ddb2e  config.json
+#   507767798ed13edd7c896b0955fcf4090e5dfc0307e0067d9684df2d30c78928  ibub_overlap.py
+#   ab0d7387e7b63605f5091342eea2b1a976b39dda7263b31099309e85c6195518  jobs/ibub_job.sbatch
+#   bf0838c67ac5c3c0ce375ca7083623d3b44c8007d7de06d30e59ac9f7a02143b  config.json
 #   8cb7435df261729c4354f0422e461d2de303307225363fd1d65549c7a1c7cb0c  test_ibub_unit.py
 #   2471b368b31567be3aeb63dbaa0e24ae9583396b062acabbf6da28e3f73615e2  test_ibub_readout.py
-#   ffa2b217b91c48979f36bd9b3bd1791d11a0185bcf309f5a8afcb23a7b22bf9d  test_ibub_job.py
+#   d4917d37f2770cc797b0cfdc70e896634ecba508e63ccbcad8fb463e0fe7c304  test_ibub_job.py
 #   6edb2a400bb48490d11ab0c1a01038a0477f0a13b1a8fa9a59746e6a729e1c6e  test_ibub_overlap.py
-#   972cae69309058c1d0da144f6cb07cfb995524628cab22fc79eb2b40f501e5cf  mutants.py
-#   3224d2f0f97c4c1d1f7f6f6f981e963ffbc5ebd6bbff29ca171f4181aa7d1fcc  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh (the runner's CT)
+#   299f49c3718b5769b29f2fa250cb18d38d4b563cc216fc7eb360ab9ee53694a6  mutants.py
+#   70ab88cac2672df3ff94cfe4ccacc44d1ed65fe210d70a8c78a4d172bcb1b427  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh (the runner's CT)
 BASELINE	PASS	test_ibub_job.Job
 BASELINE	PASS	test_ibub_job.Lanes
 BASELINE	PASS	test_ibub_job.ReceiptChain
@@ -134,4 +134,8 @@ BASELINE	PASS	test_ibub_unit.Refusals
 97	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	StdErr is not checked
 98	KILLED	../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh	test_ibub_job.Job	the connect's scontrol record takes the batch's name (the shared name restored)
 99	KILLED	../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh	test_ibub_job.Job	the connect writes its scontrol record without the fresh check
-TOTAL	99/99 killed
+100	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	the job's exact QOS=regular match is restored (Perlmutter's regular_1 refuses)
+101	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	the job accepts any regular* QOS (regular_2)
+102	KILLED	../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh	test_ibub_job.Job	the connect's exact QOS=regular match is restored (Perlmutter's regular_1 STOPs)
+103	KILLED	../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh	test_ibub_job.Job	the connect accepts any regular* QOS (regular_2)
+TOTAL	103/103 killed

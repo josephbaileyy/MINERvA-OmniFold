@@ -37,7 +37,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
 U = "/pscratch/sd/j/josephrb"
 O = f"{U}/cov2d-run-20261104"
-N_ROOT = f"{U}/ibub-20261123"
+N_ROOT = f"{U}/ibub-20261124"
 INTERPRETER = "/global/homes/j/josephrb/.conda/envs/root_6_28"
 CONFIG = json.loads((HERE / "config.json").read_text())
 

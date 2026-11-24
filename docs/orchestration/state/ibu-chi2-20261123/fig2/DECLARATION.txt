@@ -1,0 +1,40 @@
+# Fig. 2 test: do our selected data and our selected MC match MINERvA's in the two regions? (declared before computing)
+
+Question. The fold test finds our reco data above R t_pub at reco p|| 40-60 (S_COL = +0.100) and below it at reco
+pT 0-0.07 (S_ROW = -0.064). Separate:
+  DATA  our selected data already differ from MINERvA's selected data in that region (selection, exposure mix, or reco
+        bin assignment), from
+  MC    our data agree but our total selected MC differs from theirs (MC production, weighting, reconstruction), from
+  NEITHER  both agree, which points to signal/background classification, conditional migration, efficiency or extraction.
+
+Inputs.
+- MINERvA: arXiv 2106.16210v4 PDF (sha256 39b6b8f1e6a59007ce31f4da4ab1af50dd07b491f537a3bbd898d57e2271ef69), page 4,
+  Fig. 2: black points (data) and red line (MINERvA Tune v1 total), Events (x1e-5) per (GeV/c)^2, divided by the printed
+  panel scale factor, times the cell area, gives counts D_r and Q_r. Extracted from the vector paths by a worker that
+  does not see our numbers.
+- Ours: evloop/results/ibuchi_products.npz (sha f66c0e1b...), BASE: N_r = BASE_N, P_r = BASE_M.sum(axis=1) + BASE_B
+  (MC already POT-scaled to data by ana.py).
+- Cell index g = ipt*16 + ipz, pT edges 0,.07,.15,.25,.33,.40,.47,.55,.70,.85,1.00,1.25,1.50,2.50,4.50;
+  p|| edges 1.5,2,2.5,3,3.5,4,4.5,5,6,7,8,9,10,15,20,40,60.
+
+Controls on the extraction (any failure: STOP, no reading).
+- C-DUP: every cell appears in a top (fixed pT) and a bottom (fixed p||) panel. On cells with D > 100, the median
+  |top/bottom - 1| <= 1 % for data and for MC. delta_reg = |region-sum top/bottom - 1| for each region, data and MC.
+- C-ERR: where the data error bar is resolvable, N implied by the bar half-length (sqrt(N) statistics) agrees with the
+  point's N: median ratio within 2 % of 1.
+- C-TOT: sum of D over all cells within 1 % of the paper's 4,105,696 selected events (page 3).
+
+Statistics (regions COL = ipz 15; ROW = ipt 0; ALL = cells extracted in both):
+  rho_data(reg) = [sum_reg N / sum_reg D] / [sum_ALL N / sum_ALL D] - 1
+  rho_MC(reg)   = [sum_reg P / sum_reg Q] / [sum_ALL P / sum_ALL Q] - 1
+  Thresholds: tau_COL = 0.05, tau_ROW = 0.032 (half of |S|). delta = max(delta_reg(data), delta_reg(MC)).
+
+Readings, per region:
+  UNRESOLVED  3*delta >= tau.
+  DATA        |rho_data| >= tau.
+  MC          |rho_data| < tau and |rho_MC| >= tau.
+  NEITHER     |rho_data| < tau and |rho_MC| < tau.
+Expected before computing: the truth test found shipped Tune v1 truth 16-20 % above ours at truth p|| 40-60. A COL MC
+reading with their MC higher than ours is therefore anticipated from that result and is not by itself new; its size is
+reported. Descriptive only: absolute ratios sum N / sum D and sum P / sum Q, per-cell ratios, and their data/MC in
+each region.
