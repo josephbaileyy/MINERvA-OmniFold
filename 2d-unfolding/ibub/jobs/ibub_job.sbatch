@@ -16,7 +16,8 @@
 #   and prints nothing;
 # - $N/stage/stage.json reads PASS;
 # - **the allocation**, read from one successful `scontrol show job`, is exactly as declared: JobName=ibub_run,
-#   QOS=regular, TimeLimit=11:29:00, NumNodes=1, OverSubscribe=NO (exclusive), and StdOut under $N. Four steps of 112G
+#   QOS=regular, TimeLimit=11:29:00, NumNodes=1, OverSubscribe=NO (exclusive), and StdOut a regular file of its own in the
+#   connect's fresh, private $N/slurm. Four steps of 112G
 #   and 64 CPUs must also fit its AllocTRES;
 # - the lane table checks (ibub_lanes.py verify);
 # - the root_6_28 environment activates.
@@ -43,6 +44,7 @@
 # scontrol, and skips the conda activation. Every check runs either way. NOT set -u, because the conda activation
 # would abort under it.
 set -o pipefail
+set -o noclobber   # from the first line: a `>` to an absent path opens O_CREAT|O_EXCL, which refuses any symlink
 C="${1:?deploy}"; N="${2:?namespace}"; M="${3:?commit}"
 PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
 SRUN=srun; SCONTROL=scontrol
@@ -56,6 +58,7 @@ fi
 NL=4; MEM=112G; MEM_MB=114688; CHUNK=${IBUB_CHUNK:-10}; LIMIT=11:29:00; JOBNAME=ibub_run
 U="$N/units"; L="$N/logs"
 say() { echo "[ibub] $*"; }
+fresh() { [ ! -e "$1" ] && [ ! -L "$1" ]; }   # a path about to be created is absent and not a symlink (noclobber holds)
 refuse() { say "refusing: $*"; exit 2; }
 under() { case "$1" in "$2"|"$2"/*) return 0;; esac; return 1; }     # under <real path> <real root>
 
@@ -81,6 +84,7 @@ say "start $(date -u +%FT%TZ) job=${SLURM_JOB_ID:-none} node=$(hostname) nproc=$
 
 # ---- the allocation, from one successful scontrol query
 [[ "${SLURM_JOB_ID:-}" =~ ^[0-9]+$ ]] || refuse "SLURM_JOB_ID '${SLURM_JOB_ID:-}' is not a job id"
+fresh "$L/scontrol-$SLURM_JOB_ID.txt" || refuse "$L/scontrol-$SLURM_JOB_ID.txt exists or is a symlink"
 info=$("$SCONTROL" show job "$SLURM_JOB_ID") || refuse "scontrol show job failed"
 printf '%s\n' "$info" > "$L/scontrol-$SLURM_JOB_ID.txt" || refuse "writing the scontrol record"
 key() { printf '%s\n' "$info" | tr ' ' '\n' | sed -n "s/^$1=//p" | head -1; }
@@ -89,9 +93,18 @@ key() { printf '%s\n' "$info" | tr ' ' '\n' | sed -n "s/^$1=//p" | head -1; }
 [ "$(key TimeLimit)" = "$LIMIT" ] || refuse "TimeLimit is '$(key TimeLimit)', not $LIMIT"
 [ "$(key NumNodes)" = 1 ] || refuse "NumNodes is '$(key NumNodes)', not 1"
 [ "$(key OverSubscribe)" = NO ] || refuse "OverSubscribe is '$(key OverSubscribe)', not NO (exclusive)"
-so=$(key StdOut); rso=""        # the full path: Slurm has opened it, so it exists, and it must not be a symlink
-[ -n "$so" ] && [ -f "$so" ] && [ ! -L "$so" ] && rso=$(realpath "$so") || rso=""
-[ -n "$rso" ] && under "$rso" "$RN" || refuse "StdOut '$so' is not a regular file under $N"
+# StdOut: the connect submits --output into $N/slurm, a directory it creates fresh with mode 700 just before sbatch, so
+# nothing can be planted there before Slurm opens the file. The job checks four things:
+# - that directory is a real directory, not a symlink, mode 700, and owned by the job's user;
+# - StdOut is a regular file in exactly that directory;
+# - StdOut is not a symlink;
+# - StdOut is owned by the job's user.
+SD="$N/slurm"
+[ -d "$SD" ] && [ ! -L "$SD" ] || refuse "$SD is not a real directory (a symlink?)"
+[ -O "$SD" ] && [ -n "$(find "$SD" -maxdepth 0 -perm 700)" ] || refuse "$SD is not private (mode 700, owned by the job's user)"
+so=$(key StdOut); rso=""
+[ -n "$so" ] && [ -f "$so" ] && [ ! -L "$so" ] && [ -O "$so" ] && rso=$(realpath "$so") || rso=""
+[ -n "$rso" ] && [ "$(dirname "$rso")" = "$(realpath "$SD")" ] || refuse "StdOut '$so' is not a regular file of its own in $SD"
 tres=$(key AllocTRES)
 amem=$(printf '%s\n' "$tres" | tr ',' '\n' | sed -n 's/^mem=\([0-9][0-9]*\)M$/\1/p')
 case "$(printf '%s\n' "$tres" | tr ',' '\n' | sed -n 's/^mem=//p')" in *G) amem=$(( $(printf '%s\n' "$tres" | tr ',' '\n' | sed -n 's/^mem=\([0-9][0-9]*\)G$/\1/p') * 1024 ));; esac
@@ -110,7 +123,6 @@ export TMPDIR="$N/tmp-$SLURM_JOB_ID" PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=
 export OMP_NUM_THREADS=64 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 mkdir -p "$TMPDIR" && r=$(realpath "$TMPDIR") && under "$r" "$RN" || refuse "TMPDIR $TMPDIR is not under $N"
 cd "$C" || refuse "cd $C"
-set -o noclobber                     # from here on, no redirection replaces or writes through an existing file or symlink
 "$PY" -B 2d-unfolding/ibub/ibub_lanes.py verify > "$L/lanes-verify.txt" 2>&1 || refuse "the lane table does not verify"
 all_zero() { local r; for r in "$@"; do [ "$r" = 0 ] || return 1; done; [ "$#" -gt 0 ]; }
 

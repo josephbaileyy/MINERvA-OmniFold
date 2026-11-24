@@ -137,7 +137,10 @@ cat "$N/logs/stage.json"; date -u +%FT%TZ
 echo "== the fence again, just before the submission"
 fence_sacct || { echo "STOP: fence (before sbatch)"; finish 9; }
 echo "== sbatch"
-jid=$(sbatch --parsable --job-name="$JOBNAME" --time="$LIMIT" --output="$N/logs/%x-%j.out" \
+# the job's stdout goes to a fresh private directory, made here just before the submission (it cannot exist: $N is
+# this connect's own), so nothing can be planted where Slurm will open the file
+mkdir -m 700 "$N/slurm" || { echo "STOP: mkdir $N/slurm"; finish 5; }
+jid=$(sbatch --parsable --job-name="$JOBNAME" --time="$LIMIT" --output="$N/slurm/%x-%j.out" \
   "$D/2d-unfolding/ibub/jobs/ibub_job.sbatch" "$D" "$N" "$M" 2> "$N/logs/sbatch.err"); brc=$?
 cat "$N/logs/sbatch.err"
 [ "$brc" -eq 0 ] && [[ "$jid" =~ ^[0-9]+$ ]] || { echo "STOP: sbatch rc $brc, id '$jid'"; finish 5; }

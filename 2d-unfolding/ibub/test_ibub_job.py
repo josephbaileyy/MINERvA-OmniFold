@@ -76,12 +76,14 @@ exit $rc
 '''
 SCONTROL = r'''#!/bin/bash
 [ -n "$FAKE_SCONTROL_FAIL" ] && exit 1
+# a race: plant a symlink where the job is about to write the scontrol record, after its pre-check, before its redirect
+[ -n "$PLANT_SCONTROL_LINK" ] && ln -s "$PLANT_SCONTROL_LINK" "$IBUB_NS/logs/scontrol-$3.txt"
 echo "JobId=$3 JobName=${F_NAME:-ibub_run}"
 echo "   QOS=${F_QOS:-regular} JobState=RUNNING"
 echo "   RunTime=00:00:01 TimeLimit=${F_LIMIT:-11:29:00} TimeMin=N/A"
 echo "   NumNodes=${F_NODES:-1} NumCPUs=256 OverSubscribe=${F_OVER:-NO} Contiguous=0"
 echo "   AllocTRES=${F_TRES:-cpu=256,mem=480000M,node=1,billing=256}"
-echo "   StdOut=${F_STDOUT:-$IBUB_NS/logs/ibub_run-$3.out}"     # scontrol show job ID: the id is $3
+echo "   StdOut=${F_STDOUT:-$IBUB_NS/slurm/ibub_run-$3.out}"     # scontrol show job ID: the id is $3
 '''
 
 
@@ -151,8 +153,10 @@ class Job(unittest.TestCase):
         self.scontrol.write_text(SCONTROL)
         self.scontrol.chmod(0o755)
         self.log = self.d / "dispatch.log"
-        (self.N / "logs").mkdir()                                # Slurm has opened StdOut before the job runs
-        (self.N / "logs" / "ibub_run-61900001.out").write_text("")
+        (self.N / "logs").mkdir()
+        (self.N / "slurm").mkdir(mode=0o700)                     # the connect's fresh private stdout directory
+        (self.N / "slurm").chmod(0o700)
+        (self.N / "slurm" / "ibub_run-61900001.out").write_text("")      # Slurm has opened StdOut before the job runs
 
     def run_job(self, M=None, **env):
         e = dict(os.environ, IBUB_TEST="1", IBUB_PY=sys.executable, IBUB_SRUN=str(self.srun),
@@ -230,13 +234,65 @@ class Job(unittest.TestCase):
         self.assertEqual(self.run_job(F_TRES="cpu=256,mem=470G").returncode, 0)     # mem given in G is read too
 
     def test_a_symlinked_stdout_is_refused(self):
-        out = self.N / "logs" / "ibub_run-61900001.out"
+        out = self.N / "slurm" / "ibub_run-61900001.out"
         out.unlink()
-        (self.N / "logs" / "real.out").write_text("")            # a symlink even to a file inside $N is refused
-        out.symlink_to(self.N / "logs" / "real.out")
+        (self.N / "slurm" / "real.out").write_text("")           # a symlink even to a file in the same directory
+        out.symlink_to(self.N / "slurm" / "real.out")
         r = self.run_job()
         self.assertEqual(r.returncode, 2, r.stdout)
         self.assertIn("StdOut", r.stdout)
+
+    def test_stdout_must_be_in_the_private_slurm_directory(self):
+        """The codex read r3, item 3: stdout goes to the connect's fresh 700 directory, and only there."""
+        cases = {
+            "stdout in logs/": (lambda: ((self.N / "logs" / "ibub_run-61900001.out").write_text(""),
+                                         {"F_STDOUT": str(self.N / "logs" / "ibub_run-61900001.out")}),
+                                "is not a regular file of its own in"),
+            "slurm/ not private": (lambda: ((self.N / "slurm").chmod(0o755), {}), "is not private"),
+            "slurm/ a symlink": (lambda: (self.replace_slurm_with_link(), {}), "is not a real directory"),
+        }
+        for tag, (make, why) in cases.items():
+            with self.subTest(case=tag):
+                self.setUp()
+                _, env = make()
+                r = self.run_job(**env)
+                self.assertEqual(r.returncode, 2, r.stdout)
+                self.assertIn(why, r.stdout)                      # the check that fired is the one named
+                self.assertEqual(self.dispatched(), [])
+
+    def replace_slurm_with_link(self):
+        real = self.d / "elsewhere-slurm"
+        real.mkdir(mode=0o700)
+        real.chmod(0o700)
+        (real / "ibub_run-61900001.out").write_text("")
+        shutil.rmtree(self.N / "slurm")
+        (self.N / "slurm").symlink_to(real)
+
+    def test_a_stale_scontrol_record_is_refused_by_the_pre_check(self):
+        (self.N / "logs" / "scontrol-61900001.txt").write_text("stale")
+        r = self.run_job()
+        self.assertEqual(r.returncode, 2, r.stdout)
+        self.assertIn("exists or is a symlink", r.stdout)
+        self.assertEqual((self.N / "logs" / "scontrol-61900001.txt").read_text(), "stale")
+
+    def test_a_symlink_planted_between_the_check_and_the_redirect_is_refused_by_o_excl(self):
+        """The director's note: the pre-check is belt and braces. A symlink planted after it, before the redirect,
+        is refused by noclobber's O_CREAT|O_EXCL, whether it dangles or points to an existing regular file."""
+        target = self.d / "victim.txt"
+        for tag, make_target in (("dangling", lambda: None), ("to a regular file", lambda: target.write_text("v"))):
+            with self.subTest(link=tag):
+                self.setUp()
+                target = self.d / "victim.txt"
+                make_target()
+                r = self.run_job(PLANT_SCONTROL_LINK=str(target))
+                self.assertEqual(r.returncode, 2, r.stdout)
+                self.assertIn("writing the scontrol record", r.stdout)
+                self.assertTrue((self.N / "logs" / "scontrol-61900001.txt").is_symlink())   # planted, not followed
+                if tag == "dangling":
+                    self.assertFalse(target.exists())
+                else:
+                    self.assertEqual(target.read_text(), "v")
+                self.assertEqual(self.dispatched(), [])
 
     def test_a_step_never_writes_over_an_existing_log_or_time_file(self):
         for f in ("refs_l0.log", "refs_l0.time"):
