@@ -23,7 +23,7 @@
 SELF=$1; WEND=$2
 set -o pipefail
 TAG=run
-M=ee189fefcb6e475a9c2bb3362062efc68ad7260b
+M=1031c8200b3b66e0ddbc9d895f5ecc369351ac41
 N=/pscratch/sd/j/josephrb/ibub-20261123
 D=$N/deploy
 FR=$N/fetch-$TAG
@@ -173,12 +173,12 @@ gs=$(git -C "$D" status --porcelain --ignored) || { echo "STOP: git status faile
 echo "HEAD $M; porcelain --ignored before: '${gs}'"
 [ -z "$gs" ] || { echo "STOP: the deploy is not clean"; finish 9; }
 ( cd "$D/2d-unfolding/ibub" && sha256sum --strict -c ) <<SUMS || { echo "STOP: the ibub files are not the declared ones"; finish 9; }
-2e62f6108506d3440ecca81b1ddcf60a292fee45614c4faa7a9647183a2f59d5  ibub_unit.py
-e8f20d383536ba4c59622f4deb90ec4137c4b6ed3766b5abf510f5c8789a9bbb  ibub_readout.py
+e8e5969f978107e45991164a16c84f1794694dee752cbf189eab00e3ddd54633  ibub_unit.py
+1cc64564448277831dc4ac5fc888b4a3dd15a2c56badfab6325f83d962bcfed7  ibub_readout.py
 62591f998f6d3c907bcec460c9399a419755d8f041b40652f37066074b3ab85b  ibub_lanes.py
-3fe2faf7dcd1d6df2e543e28a733b825483bf4e855329c434662d2330198762d  ibub_overlap.py
-fbf64c48f0d716fd53b15c29496cd2385ac69438e3519175e803a16a14327e33  config.json
-779739bb847c97b5b66e61da4d671e7991d91ee74ba1d6dff9f50a4c62ebfa03  jobs/ibub_job.sbatch
+13316a39994057d21e72fe4243e89e6ba8b0fb6f65db54b6325947eff48e4e78  ibub_overlap.py
+8f1900e43d20cbc7b6dabb73e0419314bd6c0456b485d13b91afa450ed6ddb2e  config.json
+623a1f39c203d6ea6b803048a53e077bcd793cf4cf58cb318c5172f22fb116ec  jobs/ibub_job.sbatch
 SUMS
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 NUMEXPR_NUM_THREADS=2
 export PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1

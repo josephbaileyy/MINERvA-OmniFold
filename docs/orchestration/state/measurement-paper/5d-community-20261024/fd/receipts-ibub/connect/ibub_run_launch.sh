@@ -21,7 +21,7 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 case "$NODE" in login[0-9][0-9]) ;; *) echo "STOP: '$NODE' is not a login node name"; exit 9;; esac
 [[ "$WEND" =~ ^[0-9]{10}$ ]] || { echo "STOP: window end '$WEND'"; exit 9; }
 [ "$(date +%s)" -le "$WEND" ] || { echo "STOP: the window has ended"; exit 9; }
-S="$HERE/ibub_run_connect.sh"; SHA=c198753e3dd1af04297b98864a832275452b2b8560998eb029f4b69f3d8402bd
+S="$HERE/ibub_run_connect.sh"; SHA=5e792c8eed6ae8739bc2df6be54ce83f106468c7823161eb1837436ab78d64da
 [ "$(shasum -a 256 "$S" | cut -d' ' -f1)" = "$SHA" ] || { echo "STOP: the local connect script is not the approved one"; exit 8; }
 SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=8)
 HOP=(-o BatchMode=yes -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=8 -o StrictHostKeyChecking=yes -o UpdateHostKeys=no)

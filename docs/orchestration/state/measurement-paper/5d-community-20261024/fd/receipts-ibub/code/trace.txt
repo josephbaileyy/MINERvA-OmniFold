@@ -1,5 +1,5 @@
-# IBUB line trace: coverage.py over the four modules, while all test files run (111 tests, OK), at commit
-# ee189fefcb6e475a9c2bb3362062efc68ad7260b, in the same clean worktree as the mutants.
+# IBUB line trace: coverage.py over the four modules, while all test files run (131 tests, OK), at commit
+# 1031c8200b3b66e0ddbc9d895f5ecc369351ac41, in the same clean worktree as the mutants.
 # The four uncovered lines are each module's `if __name__ == "__main__": sys.exit(main())`. Subprocess tests run each of them:
 #   - test_ibub_readout.AsScripts covers ibub_unit and ibub_readout;
 #   - test_ibub_job.Lanes.test_the_cli covers ibub_lanes;
@@ -7,8 +7,8 @@
 Name              Stmts   Miss  Cover   Missing
 -----------------------------------------------
 ibub_lanes.py        51      1    98%   79
-ibub_overlap.py      73      1    99%   132
-ibub_readout.py     303      1    99%   443
-ibub_unit.py        399      1    99%   579
+ibub_overlap.py      73      1    99%   134
+ibub_readout.py     345      1    99%   502
+ibub_unit.py        483      1    99%   685
 -----------------------------------------------
-TOTAL               826      4    99%
+TOTAL               952      4    99%
