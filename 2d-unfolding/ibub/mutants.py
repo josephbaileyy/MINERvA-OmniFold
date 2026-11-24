@@ -67,8 +67,8 @@ MUTANTS = [
     (R, '        if prov.get("dataFileSha256") != shas[s]:', "        if False:", [f"{TR}.EndToEnd"],
      "the product's recorded data digest is not checked"),
     (R, "        k10.append(iu.max_rel(row10, h))", "        k10.append(0.0)", [f"{TR}.EndToEnd"], "C-K10 is gone"),
-    (R, '                              "pass": ibu["nonfinite"] == {"K10": 0, "K5": 0}}',
-     '                              "pass": ibu["nonfinite"]["K10"] == 0}', [f"{TR}.EndToEnd"], "C-CELLS skips K = 5"),
+    (R, '                nonfinite["K5"] += int((~np.isfinite(row5)).sum())', "                pass", [f"{TR}.EndToEnd"],
+     "C-CELLS skips K = 5"),
     (R, "            E_of = x_of - x_true", "            E_of = E_post", [f"{TR}.EndToEnd"],
      "OmniFold's errors are taken after the surrogates"),
     (R, '            if ibu["missing"]:\n                if not rec["controls_failed"]:',
@@ -76,7 +76,8 @@ MUTANTS = [
      "a missing unit does not stop the reading"),
     (R, "            if nseeds != [n[\"seed\"] for n in natures]:", "            if False:", [f"{TR}.EndToEnd"],
      "the truth rows are not checked against the natures"),
-    (R, '    guard_off_tree(out, "--out")', "    pass", [f"{TR}.EndToEnd"], "--out under a guarded tree is allowed"),
+    (R, "        guard_off_tree(path, what)\n        guard_in_root(path, root, what)", "        guard_in_root(path, root, what)",
+     [f"{TR}.EndToEnd"], "--out under a guarded tree is allowed"),
     (R, '            if not rec["C-OF"]["pass"]:\n                rec["controls_failed"].append("C-OF")',
      '            if False:\n                rec["controls_failed"].append("C-OF")', [f"{TR}.EndToEnd"],
      "a failed C-OF does not invalidate the tune"),
@@ -88,9 +89,8 @@ MUTANTS = [
      "a unit from another job, runner or config is read"),
     (R, '        if set(ctl) != iu.CONTROLS["toy"]:', "        if False:", [f"{TR}.EndToEnd"],
      "a unit lacking a declared control is read"),
-    (R, "        if list(z[\"ks\"]) != ks_want:\n            missing.append(s)",
-     "        if list(z[\"ks\"]) != ks_want:\n            pass", [f"{TR}.EndToEnd"],
-     "a unit of another K scan is not missing"),
+    (R, "                problems.append(f\"{name}: K scan {list(z['ks'])}\")", "                pass", [f"{TR}.EndToEnd"],
+     "a unit of another K scan reads as only incomplete"),
     (R, '        if meta.get("data_sha256") != shas[s] or marker.get("data_sha256") != shas[s]:',
      '        if meta.get("data_sha256") != shas[s]:', [f"{TR}.EndToEnd"], "the marker's data digest is not checked"),
     (R, '        if (meta.get("kind"), meta.get("tune"), meta.get("seed")) != ("toy", truth, s):',
@@ -106,19 +106,14 @@ MUTANTS = [
      "a failed reference step passes the barrier"),
     (U, '        ok = ok and rec["central_df_vs_central"]["pass"]', "        pass", [f"{TU}.Pure"],
      "the barrier ignores central_df against central"),
-    (U, ' and rc.sha256(npz) == m.get("sha256") and rc.sha256(root) == m.get("root_sha256"))\n        mine',
-     ' and rc.sha256(npz) == m.get("sha256"))\n        mine', [f"{TU}.Pure"],
-     "the barrier ignores the reference root's digest"),
-    (U, "        ok = ok and good and mine and fast", "        ok = ok and good and fast", [f"{TU}.Pure"],
-     "the barrier accepts another job's references"),
+    (U, "    if (str(m.get(\"job\")), m.get(\"deploy_head\")) != (bound[\"job\"], bound[\"deploy_head\"]):\n        return False, f\"marker job/deploy",
+     "    if False:\n        return False, f\"marker job/deploy", [f"{TU}.Refusals"], "a marker from another job is accepted"),
     (U, '    if p != n and not p.startswith(n + os.sep):', "    if False:", [f"{TU}.Hardening"],
      "a destination outside the namespace is accepted"),
     (U, "    if os.path.realpath(n) != os.path.abspath(n):", "    if False:", [f"{TU}.Hardening"],
      "a symlinked namespace is accepted"),
     (U, "    if r.returncode != 0 or head != want:", "    if r.returncode != 0:", [f"{TU}.Hardening"],
      "a unit runs at another deploy"),
-    (U, '        if m.get("verdict") == "PASS" and (m.get("job"), m.get("deploy_head")) == (bound["job"], bound["deploy_head"]):',
-     '        if m.get("verdict") == "PASS":', [f"{TU}.Driver"], "another job's PASS marker is accepted as done"),
     (U, "    rec[\"verdict\"] = \"PASS\" if (passed == len(expected) and not extra and barrier) else \"FAIL\"",
      "    rec[\"verdict\"] = \"PASS\" if (passed == len(expected) and barrier) else \"FAIL\"", [f"{TU}.Hardening"],
      "the completion check ignores undeclared markers"),
@@ -139,8 +134,6 @@ MUTANTS = [
      "a meta from another deploy is read"),
     (R, "        if final[\"verdict\"] == \"PASS\":", "        if True:", [f"{TR}.EndToEnd"],
      "a STOP record still carries the readings"),
-    (R, '        nonfinite["K5"] += int((~np.isfinite(row5)).sum())\n        if marker.get("verdict") != "PASS":',
-     '        if marker.get("verdict") != "PASS":', [f"{TR}.EndToEnd"], "C-CELLS skips K = 5"),
     (R, "                run.watch(tpath)                                  # the truth file joins the atime ledger",
      "                pass", [f"{TR}.EndToEnd"], "the truth file is not in the atime ledger"),
     (L, "    rows += [(\"toys\", k % LANES, u) for k, u in enumerate(toys)]",
@@ -150,7 +143,7 @@ MUTANTS = [
      '               or (o[0] == "read (cov2d-acked)")]', [f"{TO}"], "an acked read on another lane's path is allowed"),
     (O, "    out += IBUCHI + LR_P0", "    out += IBUCHI", [f"{TO}"], "LR's P0 paths are not protected"),
     (O, "    out += IBUCHI + LR_P0", "    out += LR_P0", [f"{TO}"], "the ibuchi root is not protected"),
-    (J, 'if [ "$brc" -ne 0 ] || [ "$(echo $REF_RCS | tr -d \' 0\')" != "" ]; then', "if false; then", [f"{TJ}.Job"],
+    (J, 'if [ "$brc" -ne 0 ] || ! all_zero "$r0" "$r1"; then', "if false; then", [f"{TJ}.Job"],
      "the toys start without the barrier"),
     (J, '[ "$(key QOS)" = regular ] || refuse', '[ -n "$(key QOS)" ] || refuse', [f"{TJ}.Job"],
      "another QOS is accepted"),
@@ -159,12 +152,66 @@ MUTANTS = [
     (J, '[ "$(key OverSubscribe)" = NO ] || refuse', 'true || refuse', [f"{TJ}.Job"], "a shared node is accepted"),
     (J, '[ "$(key TimeLimit)" = "$LIMIT" ] || refuse', 'true || refuse', [f"{TJ}.Job"], "another time limit is accepted"),
     (J, '[ -n "$rso" ] && under "$rso" "$RN" || refuse', 'true || refuse', [f"{TJ}.Job"], "StdOut outside $N is accepted"),
-    (J, '[ -z "$(ls -A "$U")" ] || refuse', 'true || refuse', [f"{TJ}.Job"], "a used units directory is accepted"),
+    (J, '[ -z "$entries" ] || refuse', 'true || refuse', [f"{TJ}.Job"], "a used units directory is accepted"),
     (J, 'r=$(realpath "$d") && under "$r" "$RN" && [ ! -L "$d" ] || refuse', 'true || refuse', [f"{TJ}.Job"],
      "a symlinked logs directory is accepted"),
     (J, '[ "$crc" -eq 0 ] || ok=0', 'true || ok=0', [f"{TJ}.Job"], "a failed completion check ends PASS"),
     (J, 'info=$("$SCONTROL" show job "$SLURM_JOB_ID") || refuse', 'info=$("$SCONTROL" show job "$SLURM_JOB_ID") || true',
      [f"{TJ}.Job"], "a failed scontrol query is not refused"),
+    (U, "    flags = os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW | (os.O_EXCL if exclusive else os.O_TRUNC)",
+     "    flags = os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW | os.O_TRUNC", [f"{TU}.Refusals"],
+     "a contained write replaces an existing file"),
+    (U, "    path = Path(path)\n    inside(cfg, path.parent)", "    path = Path(path)", [f"{TU}.Refusals"],
+     "a contained write may land outside the namespace"),
+    (U, "    inside(cfg, dest.parent)                      # a symlinked stage/data", "    pass  # a symlinked stage/data",
+     [f"{TU}.Refusals"], "a symlinked data directory takes the copy out of $N"),
+    (U, "    if (meta.get(\"unit\"), str(meta.get(\"slurm_job\")), meta.get(\"deploy_head\")) != (name, bound[\"job\"], bound[\"deploy_head\"]):",
+     "    if False:", [f"{TU}.Refusals"], "a skip ignores the npz's embedded provenance"),
+    (U, "    if rc.sha256(npz) != m.get(\"sha256\") or rc.sha256(root) != m.get(\"root_sha256\"):\n        return False, \"a product is not at its marker's digest\"",
+     "    if False:\n        return False, \"a product is not at its marker's digest\"", [f"{TU}.Refusals"],
+     "a skip ignores the products' digests"),
+    (U, "        ok, why = marker_ok(out, name, bound, unit[\"kind\"])", "        ok, why = True, \"ok\"", [f"{TU}.Driver"],
+     "a present unit is skipped without its provenance"),
+    (U, "        unit_ok = bool(good and fast and srun_rc == 0)", "        unit_ok = bool(good and fast)", [f"{TU}.Pure"],
+     "the barrier ignores a failed srun step"),
+    (U, "                and (r.get(\"npz_sha256\"), r.get(\"root_sha256\")) == (m.get(\"sha256\"), m.get(\"root_sha256\"))):\n            return False, f\"refcheck.json's",
+     "                and True):\n            return False, f\"refcheck.json's", [f"{TU}.Hardening"],
+     "the completion check ignores the barrier's reference digests"),
+    (U, "        if not np.all(np.isfinite(x[covered])):\n            return False\n    return True",
+     "        pass\n    return True", [f"{TU}.Driver"], "C-SIM's IBUB finite check passes a NaN"),
+    (R, '    for path, what in ((out, "--out"), (tmp_root, "the temporary root")):\n        guard_off_tree(path, what)\n        guard_in_root(path, root, what)',
+     '    for path, what in ((out, "--out"), (tmp_root, "the temporary root")):\n        guard_off_tree(path, what)',
+     [f"{TR}.EndToEnd"], "the readout writes outside its declared root"),
+    (R, '    if comp.get("barrier_sha256") != bsha:', "    if False:", [f"{TR}.EndToEnd"],
+     "the readout does not bind IBUB-DONE to refcheck.json"),
+    (R, '    if got_done != want_done or not isinstance(comp, dict) or comp.get("verdict") != "PASS":',
+     "    if not isinstance(comp, dict):", [f"{TR}.EndToEnd"], "the readout does not check the terminal job record"),
+    (R, '            missing.append(s)               # absent from the reading; INCOMPLETE unless something else fails',
+     '            missing.append(s); problems.append(f"{name}: FAIL")', [f"{TR}.EndToEnd"],
+     "a FAIL marker makes the tune INVALID"),
+    (R, '            nonfinite["K10"] += int((~np.isfinite(h)).sum())', "            pass", [f"{TR}.EndToEnd"],
+     "C-CELLS does not count a ROOT row on its own"),
+    (R, '            except (OSError, ValueError, KeyError) as e:   # an input absent or unreadable: recorded, with its name\n                rec["refused"] = f"{type(e).__name__}: {e}"\n                return invalid(f"an input is absent or unreadable: {e}")',
+     '            except ZeroDivisionError as e:\n                raise', [f"{TR}.EndToEnd"], "a missing input leaves no tune record"),
+    (R, "        final = run.finish(stage, name)            # the atime, open-audit and module checks; STOP outranks a reading",
+     "        final = run.finish(stage, name); publish_stage(); stage = out", [f"{TR}.EndToEnd"],
+     "the result is published before its npz is written"),
+    (J, '  publish_done toys 0 "$comp" || { say "end: IBUB-DONE was not published"; exit 1; }',
+     '  publish_done toys 0 "$comp" || true', [f"{TJ}.Job"], "a failed IBUB-DONE publication ends PASS"),
+    (J, 'gs=$(git -C "$C" status --porcelain --ignored) || refuse "git status failed (before)"',
+     'gs=$(git -C "$C" status --porcelain --ignored) || true', [f"{TJ}.Job"], "a failed git status reads as clean"),
+    (J, '  "$PY" -B 2d-unfolding/ibub/ibub_lanes.py "$1" "$2" > "$f" || return 1',
+     '  "$PY" -B 2d-unfolding/ibub/ibub_lanes.py "$1" "$2" > "$f" || true', [f"{TJ}.Job"],
+     "a failed lane producer's partial list runs"),
+    (J, '[ -n "$so" ] && [ -f "$so" ] && [ ! -L "$so" ] && rso=$(realpath "$so") || rso=""',
+     '[ -n "$so" ] && [ -f "$so" ] && rso=$(realpath "$so") || rso=""', [f"{TJ}.Job"], "a symlinked StdOut is accepted"),
+    (J, "set -o noclobber                     # from here on", "true                     # from here on", [f"{TJ}.Job"],
+     "a step writes over an existing log"),
+    (J, '  [ ! -e "$L/$tag.time" ] && [ ! -L "$L/$tag.time" ] || { say "refusing step $tag: $L/$tag.time exists"; return 2; }',
+     "  true", [f"{TJ}.Job"], "a step writes over an existing time file"),
+    (J, 'all_zero "${lrcs[@]}" || ok=0', 'true || ok=0', [f"{TJ}.Job"], "a failed toy lane ends PASS"),
+    (J, '--step-rc "central=$r0" --step-rc "central_df=$r1"', '--step-rc "central=$r0" --step-rc "central_df=0"',
+     [f"{TJ}.ReceiptChain"], "the barrier is not told a reference srun failed"),
 ]
 
 
@@ -172,8 +219,9 @@ def sha(b: bytes) -> str:
     return hashlib.sha256(b).hexdigest()
 
 
-# Run in a fresh interpreter: rc 0 when every test passed, 1 when a test failed or errored, 2 when the suite itself
-# could not load (an import or syntax failure, or a named test that does not exist), which is a harness failure.
+# Run in a fresh interpreter: rc 0 when every test passed, 1 when a named test failed or errored, 2 when the suite
+# itself could not load (an import or syntax failure, or a named test that does not exist), ran no test, or failed in
+# a class or module setup. That is a harness failure, which stops the run (the codex read, round 2, NB4).
 RUNNER = """
 import sys, unittest
 sys.argv = sys.argv[:1]
@@ -189,6 +237,9 @@ tests = list(walk(suite))
 if loader.errors or not tests or any(type(t).__name__ == "_FailedTest" for t in tests):
     sys.exit(2)
 r = unittest.TextTestRunner(verbosity=0).run(suite)
+# a class or module setup error (an _ErrorHolder), or no test executed, is a harness failure, never a kill
+if r.testsRun == 0 or any(type(t).__name__ == "_ErrorHolder" for t, _ in r.errors + r.failures):
+    sys.exit(2)
 sys.exit(0 if r.wasSuccessful() else 1)
 """
 

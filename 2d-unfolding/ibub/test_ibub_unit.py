@@ -72,6 +72,22 @@ REAL = iu.load_config()
 HEAD = subprocess.run(["git", "-C", str(REPO), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
 BOUND = {"job": "61900001", "deploy_head": HEAD}
 ENV = {"SLURM_JOB_ID": BOUND["job"], "IBUB_M": HEAD}     # what the job exports for every unit
+SRUN_OK = {"central": 0, "central_df": 0}                # each reference srun step's status, as the job waited for it
+
+
+def write_unit_products(d: Path, name: str, kind: str, *, job=None, deploy=None, verdict="PASS", arrays=None,
+                        meta_unit=None):
+    """A unit's products as run_unit writes them: an npz whose meta names the unit, kind, job and deploy; the root;
+    and the marker with both digests."""
+    job, deploy = job or BOUND["job"], deploy or BOUND["deploy_head"]
+    arrays = arrays if arrays is not None else {"ks": np.array([5, 10]), "xsec": np.ones((2, 224)), "T": np.ones(224),
+                                                 "y": np.ones(224)}
+    meta = {"unit": meta_unit or name, "kind": kind, "slurm_job": job, "deploy_head": deploy}
+    np.savez(d / f"{name}.npz", **arrays, meta=json.dumps(meta))
+    (d / f"{name}.root").write_bytes(name.encode() + b"-root")
+    (d / f"{name}.done").write_text(json.dumps({"unit": name, "kind": kind, "verdict": verdict, "job": job,
+                                                "deploy_head": deploy, "sha256": rc.sha256(d / f"{name}.npz"),
+                                                "root_sha256": rc.sha256(d / f"{name}.root")}))
 
 
 def gnu_time_file(path: Path, wall: str = "3:36.74", status: int = 0) -> Path:
@@ -270,23 +286,31 @@ class Pure(unittest.TestCase):
                 "y": rng.uniform(1, 2, 224)}
         times = {}
         for i, (u, v, scale) in enumerate((("central", "PASS", 1.0), ("central_df", df_verdict, df_scale))):
-            arr = dict(base, xsec=base["xsec"] * scale)
-            np.savez(d / f"{u}.npz", **arr)
-            (d / f"{u}.root").write_bytes(u.encode())
-            (d / f"{u}.done").write_text(json.dumps({"unit": u, "verdict": v, "seconds": 100.0, "job": job,
-                                                     "deploy_head": BOUND["deploy_head"],
-                                                     "sha256": rc.sha256(d / f"{u}.npz"),
-                                                     "root_sha256": rc.sha256(d / f"{u}.root")}))
+            write_unit_products(d, u, u, job=job, verdict=v, arrays=dict(base, xsec=base["xsec"] * scale))
             times[u] = gnu_time_file(d / f"{u}.time", walls[i], status[i])
         return rep, times
 
     def test_refcheck_is_the_barrier(self):
         d = self.tmp()
         rep, times = self.refs(d)
-        self.assertEqual(iu.refcheck(REAL, d, rep, BOUND, times), 0)
+        self.assertEqual(iu.refcheck(dict(REAL, namespace=str(d)), d, rep, BOUND, times, SRUN_OK), 0)
         self.assertEqual(json.loads((d / "refcheck.json").read_text())["verdict"], "PASS")
         rec = json.loads((d / "refcheck.json").read_text())
         self.assertEqual((rec["job"], rec["deploy_head"]), (BOUND["job"], BOUND["deploy_head"]))   # the receipt's binding
+        self.assertEqual(rec["units"]["central"]["npz_sha256"], rc.sha256(d / "central.npz"))      # it records the digests
+        # the codex read r2, item 2: GNU time reads 0 but the enclosing srun step failed: no barrier
+        for u in iu.REFERENCE_UNITS:
+            d2 = self.tmp()
+            rep2, times2 = self.refs(d2)
+            with self.subTest(srun_failed=u):
+                self.assertEqual(iu.refcheck(dict(REAL, namespace=str(d2)), d2, rep2, BOUND, times2, {**SRUN_OK, u: 1}), iu.RC_STOP)
+                self.assertFalse(json.loads((d2 / "refcheck.json").read_text())["units"][u]["pass"])
+        d2 = self.tmp()                                           # a planted refcheck.json is never replaced
+        rep2, times2 = self.refs(d2)
+        (d2 / "refcheck.json").symlink_to(d2 / "elsewhere.json")
+        with self.assertRaises(OSError):
+            iu.refcheck(dict(REAL, namespace=str(d2)), d2, rep2, BOUND, times2, SRUN_OK)
+        self.assertFalse((d2 / "elsewhere.json").exists())
         self.assertEqual(rec["units"]["central"]["step_wall_s"], 200.0)       # the full step's wall, from time -v
         cases = {"df_failed": dict(df_verdict="FAIL"), "df_differs": dict(df_scale=1 + 1e-6),
                  # the codex read, blocker 3: the re-price trigger reads the full srun step's wall time
@@ -297,34 +321,34 @@ class Pure(unittest.TestCase):
             d = self.tmp()
             rep, times = self.refs(d, **kw)
             with self.subTest(case=tag):
-                self.assertEqual(iu.refcheck(REAL, d, rep, BOUND, times), iu.RC_STOP)
+                self.assertEqual(iu.refcheck(dict(REAL, namespace=str(d)), d, rep, BOUND, times, SRUN_OK), iu.RC_STOP)
         d = self.tmp()
         rep, times = self.refs(d)
         np.savez(d / "central.npz", ks=np.array([5, 10]))        # bytes off the marker's digest
-        self.assertEqual(iu.refcheck(REAL, d, rep, BOUND, times), iu.RC_STOP)
+        self.assertEqual(iu.refcheck(dict(REAL, namespace=str(d)), d, rep, BOUND, times, SRUN_OK), iu.RC_STOP)
         d = self.tmp()
         rep, times = self.refs(d)
         (d / "central_df.done").unlink()
-        self.assertEqual(iu.refcheck(REAL, d, rep, BOUND, times), iu.RC_STOP)
+        self.assertEqual(iu.refcheck(dict(REAL, namespace=str(d)), d, rep, BOUND, times, SRUN_OK), iu.RC_STOP)
         d = self.tmp()                                            # the agy code read 2, finding 6: the root's digest too
         rep, times = self.refs(d)
         (d / "central.root").write_bytes(b"other")
-        self.assertEqual(iu.refcheck(REAL, d, rep, BOUND, times), iu.RC_STOP)
+        self.assertEqual(iu.refcheck(dict(REAL, namespace=str(d)), d, rep, BOUND, times, SRUN_OK), iu.RC_STOP)
         d = self.tmp()                                            # a reference step with no time record
         rep, times = self.refs(d)
         del times["central_df"]
-        self.assertEqual(iu.refcheck(REAL, d, rep, BOUND, times), iu.RC_STOP)
+        self.assertEqual(iu.refcheck(dict(REAL, namespace=str(d)), d, rep, BOUND, times, SRUN_OK), iu.RC_STOP)
         for bad in ("", '{"verdict": "PA', '"PASS"'):          # finding 4: a malformed marker is never PASS
             d = self.tmp()
             rep, times = self.refs(d)
             (d / "central.done").write_text(bad)
             with self.subTest(marker=bad):
-                self.assertEqual(iu.refcheck(REAL, d, rep, BOUND, times), iu.RC_STOP)
+                self.assertEqual(iu.refcheck(dict(REAL, namespace=str(d)), d, rep, BOUND, times, SRUN_OK), iu.RC_STOP)
         d = self.tmp()                                            # a marker naming the other reference
         rep, times = self.refs(d)
         m = json.loads((d / "central.done").read_text())
         (d / "central.done").write_text(json.dumps(dict(m, unit="central_df")))
-        self.assertEqual(iu.refcheck(REAL, d, rep, BOUND, times), iu.RC_STOP)
+        self.assertEqual(iu.refcheck(dict(REAL, namespace=str(d)), d, rep, BOUND, times, SRUN_OK), iu.RC_STOP)
 
 
 class Hardening(unittest.TestCase):
@@ -386,15 +410,18 @@ class Hardening(unittest.TestCase):
             iu.inside(dict(cfg, namespace=str(d / "alias")), d / "alias" / "units")
 
     def complete_tree(self, d: Path, *, job=BOUND["job"]):
+        """600 toy units, the two references and their barrier receipt, all this job's (as run_unit and refcheck
+        write them)."""
         for t in ("G18", "AR23"):
-            for s in c.TOY_SEEDS[t]:
-                n = f"toy_{t}_{s}"
-                (d / f"{n}.npz").write_bytes(n.encode())
-                (d / f"{n}.root").write_bytes(n.encode() + b"r")
-                (d / f"{n}.done").write_text(json.dumps({"unit": n, "verdict": "PASS", "job": job,
-                                                         "deploy_head": BOUND["deploy_head"],
-                                                         "sha256": sha(n.encode()), "root_sha256": sha(n.encode() + b"r")}))
-        (d / "refcheck.json").write_text(json.dumps({"verdict": "PASS", "job": job, "deploy_head": BOUND["deploy_head"]}))
+            for s_ in c.TOY_SEEDS[t]:
+                write_unit_products(d, f"toy_{t}_{s_}", "toy", job=job)
+        units = {}
+        for u in iu.REFERENCE_UNITS:
+            write_unit_products(d, u, u, job=job)
+            units[u] = {"pass": True, "srun_rc": 0, "npz_sha256": rc.sha256(d / f"{u}.npz"),
+                        "root_sha256": rc.sha256(d / f"{u}.root")}
+        (d / "refcheck.json").write_text(json.dumps({"verdict": "PASS", "job": job, "deploy_head": BOUND["deploy_head"],
+                                                     "units": units}))
 
     def test_complete_checks_the_exact_marker_set_and_its_binding(self):
         d = self.tmp()
@@ -410,7 +437,23 @@ class Hardening(unittest.TestCase):
             "an undeclared marker": lambda d: (d / "toy_G18_9999999.done").write_text("{}"),
             "no barrier receipt": lambda d: (d / "refcheck.json").unlink(),
             "another job's barrier": lambda d: (d / "refcheck.json").write_text(json.dumps(
-                {"verdict": "PASS", "job": "61800000", "deploy_head": BOUND["deploy_head"]})),
+                dict(json.loads((d / "refcheck.json").read_text()), job="61800000"))),
+            # the codex read r2, item 2: a PASS barrier must carry two passing references at their current digests
+            "a barrier whose reference failed": lambda d: (d / "refcheck.json").write_text(json.dumps(
+                dict(json.loads((d / "refcheck.json").read_text()), units={
+                    **json.loads((d / "refcheck.json").read_text())["units"],
+                    "central_df": {**json.loads((d / "refcheck.json").read_text())["units"]["central_df"], "pass": False}}))),
+            "a reference changed after the barrier": lambda d: write_unit_products(
+                d, "central", "central", arrays={"ks": np.array([5]), "xsec": np.ones((1, 224)), "T": np.ones(224),
+                                                 "y": np.ones(224)}),
+            "a toy whose npz meta names another unit": lambda d: write_unit_products(
+                d, "toy_G18_5720009", "toy", meta_unit="toy_G18_5720010"),
+            "a toy whose products are gone": lambda d: [(d / "toy_AR23_5730001.npz").unlink(),
+                                                         (d / "toy_AR23_5730001.root").unlink()],
+            "a symlinked barrier": lambda d: [(d / "refcheck.json").rename(d / "rc.json"),
+                                              (d / "refcheck.json").symlink_to(d / "rc.json")],
+            "a barrier that is not JSON": lambda d: (d / "refcheck.json").write_text("{not json"),
+            "a barrier that is not an object": lambda d: (d / "refcheck.json").write_text('["PASS"]'),
         }
         for tag, defect in cases.items():
             d = self.tmp()
@@ -487,6 +530,7 @@ class Refusals(unittest.TestCase):
     def test_a_failed_data_copy_leaves_nothing_behind(self):
         d = self.tmp()
         cfg = copy.deepcopy(REAL)
+        cfg["namespace"] = str(d)
         cfg["staging"]["root"] = str(d / "stage")
         cfg["refs"]["k2a"].update(path=str(d / "k2a.root"), sha256=sha(b"k2a"))
         (d / "k2a.root").write_bytes(b"k2a")
@@ -500,6 +544,68 @@ class Refusals(unittest.TestCase):
         dest, got = iu.stage_data(cfg, iu.parse_unit("central_df"), {})     # and a rerun is not blocked
         self.assertEqual(got, sha(b"k2a"))
         dest.unlink()
+
+    def test_a_symlinked_data_dir_cannot_take_the_copy_out_of_the_namespace(self):
+        d = self.tmp()
+        cfg = dict(copy.deepcopy(REAL), namespace=str(d / "ns"))
+        cfg["staging"] = dict(cfg["staging"], root=str(d / "ns" / "stage"))
+        cfg["refs"]["k2a"].update(path=str(d / "k2a.root"), sha256=sha(b"k2a"))
+        (d / "k2a.root").write_bytes(b"k2a")
+        (d / "ns" / "stage").mkdir(parents=True)
+        (d / "elsewhere").mkdir()
+        (d / "ns" / "stage" / "data").symlink_to(d / "elsewhere")
+        with self.assertRaises(iu.GateFailure):
+            iu.stage_data(cfg, iu.parse_unit("central_df"), {})
+        self.assertEqual(list((d / "elsewhere").iterdir()), [])
+
+    def test_write_contained_refuses_a_symlink_an_existing_file_and_a_path_outside(self):
+        d = self.tmp()
+        cfg = dict(copy.deepcopy(REAL), namespace=str(d / "ns"))
+        (d / "ns").mkdir()
+        iu.write_contained(cfg, d / "ns" / "a.json", b"one")
+        self.assertEqual((d / "ns" / "a.json").read_bytes(), b"one")
+        with self.assertRaises(FileExistsError):                  # exclusive: never replaced
+            iu.write_contained(cfg, d / "ns" / "a.json", b"two")
+        (d / "ns" / "link.json").symlink_to(d / "target.json")
+        with self.assertRaises(OSError):                          # O_NOFOLLOW (and O_EXCL): never written through
+            iu.write_contained(cfg, d / "ns" / "link.json", b"x")
+        with self.assertRaises(OSError):
+            iu.write_contained(cfg, d / "ns" / "link.json", b"x", exclusive=False)
+        self.assertFalse((d / "target.json").exists())
+        with self.assertRaises(iu.GateFailure):
+            iu.write_contained(cfg, d / "outside.json", b"x")
+        self.assertFalse((d / "outside.json").exists())
+
+    def test_marker_ok_needs_identity_digests_and_embedded_provenance(self):
+        d = self.tmp()
+        write_unit_products(d, "toy_G18_5720001", "toy")
+        self.assertEqual(iu.marker_ok(d, "toy_G18_5720001", BOUND, "toy"), (True, "ok"))
+        cases = {
+            "another job": lambda: write_unit_products(d, "toy_G18_5720001", "toy", job="61800000"),
+            "a FAIL verdict": lambda: write_unit_products(d, "toy_G18_5720001", "toy", verdict="FAIL"),
+            "meta names another unit": lambda: write_unit_products(d, "toy_G18_5720001", "toy", meta_unit="toy_G18_5720002"),
+            "the npz gone": lambda: (d / "toy_G18_5720001.npz").unlink(),
+            "the root changed": lambda: (d / "toy_G18_5720001.root").write_bytes(b"other"),
+            "another kind": lambda: write_unit_products(d, "toy_G18_5720001", "central"),
+        }
+        for tag, defect in cases.items():
+            write_unit_products(d, "toy_G18_5720001", "toy")
+            defect()
+            with self.subTest(case=tag):
+                self.assertFalse(iu.marker_ok(d, "toy_G18_5720001", BOUND, "toy")[0])
+        write_unit_products(d, "toy_G18_5720001", "toy")         # an npz at its digest whose meta is unreadable
+        (d / "toy_G18_5720001.npz").write_bytes(b"not an npz")
+        m = json.loads((d / "toy_G18_5720001.done").read_text())
+        (d / "toy_G18_5720001.done").write_text(json.dumps(dict(m, sha256=rc.sha256(d / "toy_G18_5720001.npz"))))
+        self.assertIn("not readable", iu.marker_ok(d, "toy_G18_5720001", BOUND, "toy")[1])
+        write_unit_products(d, "toy_G18_5720001", "toy")         # only the marker names another job (its meta is ours)
+        m = json.loads((d / "toy_G18_5720001.done").read_text())
+        (d / "toy_G18_5720001.done").write_text(json.dumps(dict(m, job="61800000")))
+        self.assertFalse(iu.marker_ok(d, "toy_G18_5720001", BOUND, "toy")[0])
+        write_unit_products(d, "toy_G18_5720001", "toy")         # a marker naming another unit
+        m = json.loads((d / "toy_G18_5720001.done").read_text())
+        (d / "toy_G18_5720001.done").write_text(json.dumps(dict(m, unit="toy_G18_5720002")))
+        self.assertFalse(iu.marker_ok(d, "toy_G18_5720001", BOUND, "toy")[0])
 
     def test_resolve_argv_refuses_an_unresolved_variable(self):
         cfg = copy.deepcopy(REAL)
@@ -538,6 +644,7 @@ class Refusals(unittest.TestCase):
             self.assertEqual(iu.main(["refcheck", "--out", str(d)]), iu.RC_STOP)   # no reference units there
             self.assertEqual(iu.main(["run", "--unit", "central", "--out", str(d.parent)]), iu.RC_GATE)   # off $N
             self.assertEqual(iu.main(["refcheck", "--out", str(d), "--time", "er=x"]), iu.RC_GATE)
+            self.assertEqual(iu.main(["refcheck", "--out", str(d), "--step-rc", "central=x"]), iu.RC_GATE)
             stage_cfg = copy.deepcopy(cfg)
             for k in ("CV", "MC", "lib"):
                 (d / f"s_{k}").write_bytes(k.encode())
@@ -624,10 +731,12 @@ class Driver(unittest.TestCase):
         cls.rep = iu.reported_cells(REAL)
         cls.driver, cls.ohf = rc.load_driver()
         first = cls.td / "first"                          # the reference: an earlier central run (C-REP needs one)
-        assert iu.run_unit(cls.driver, cls.ohf, cfg, iu.parse_unit("central"), first, shas=cls.shas, rep=cls.rep,
-                           ref=None, bound=BOUND, unfolder=rc.dagostini) == iu.RC_CONTROL     # no reference: C-REP fails
-        z = np.load(first / "central.npz")
-        cls.ref = {k: z[k] for k in ("ks", "xsec", "T", "y")}
+        # no assertion here: a setup error would be a harness failure, so the outcome is a test's (the codex read r2)
+        cls.first_rc = iu.run_unit(cls.driver, cls.ohf, cfg, iu.parse_unit("central"), first, shas=cls.shas,
+                                   rep=cls.rep, ref=None, bound=BOUND, unfolder=rc.dagostini)
+        z = np.load(first / "central.npz") if (first / "central.npz").exists() else None
+        cls.ref = {k: z[k] for k in ("ks", "xsec", "T", "y")} if z is not None else {
+            "ks": np.array([]), "xsec": np.zeros((0, 224)), "T": np.zeros(224), "y": np.zeros(224)}
         cls.out = cls.td / "units"
         cls.rcs = {u: cls.unit(u, cls.out) for u in ("central", "central_df", f"toy:G18:{cls.seed}")}
 
@@ -642,6 +751,10 @@ class Driver(unittest.TestCase):
 
     def meta(self, name, out=None):
         return json.loads(str(np.load((out or self.out) / f"{name}.npz")["meta"]))
+
+    def test_a_central_with_no_reference_fails_c_rep(self):
+        self.assertEqual(self.first_rc, iu.RC_CONTROL)
+        self.assertFalse(self.meta("central", self.td / "first")["controls"]["C-REP"]["pass"])
 
     def test_every_unit_passes_every_control(self):
         self.assertEqual(self.rcs, {"central": 0, "central_df": 0, f"toy:G18:{self.seed}": 0})
@@ -748,7 +861,7 @@ class Driver(unittest.TestCase):
         out = self.td / "main"
         times = []
         for u in iu.REFERENCE_UNITS:                          # each reference step's /usr/bin/time file
-            times += ["--time", f"{u}={gnu_time_file(self.td / f'{u}.time', '3:00.00')}"]
+            times += ["--time", f"{u}={gnu_time_file(self.td / f'{u}.time', '3:00.00')}", "--step-rc", f"{u}=0"]
         with mock.patch.object(iu, "load_config", lambda path=None: cfg), mock.patch.dict(os.environ, ENV), \
                 mock.patch.object(rc, "load_driver", lambda: (self.driver, self.ohf)), \
                 mock.patch.object(rc, "roounfold_bayes", lambda M, T, y, ks, lib_: rc.dagostini(M, T, y, ks)):
@@ -766,6 +879,62 @@ class Driver(unittest.TestCase):
         (out / "central.done").write_text("{trunc")
         self.assertEqual(self.unit("central", out), iu.RC_CONTROL)
         self.assertEqual((out / "central.root").read_bytes(), b"x")
+
+    def test_a_pass_marker_without_its_products_or_naming_another_unit_is_not_skipped(self):
+        """The codex read r2, item 2: a skip needs identity, both digests and the embedded provenance."""
+        out = self.td / "skip"
+        self.assertEqual(self.unit("central_df", out), 0)
+        (out / "central_df.npz").unlink()
+        self.assertEqual(self.unit("central_df", out), iu.RC_CONTROL)
+        out2 = self.td / "skip2"
+        self.assertEqual(self.unit("central_df", out2), 0)
+        m = json.loads((out2 / "central_df.done").read_text())
+        (out2 / "central_df.done").write_text(json.dumps(dict(m, unit="central")))
+        self.assertEqual(self.unit("central_df", out2), iu.RC_CONTROL)
+
+    def test_c_sim_finite_catches_a_nan_the_pinned_c_sim_drops(self):
+        """The codex read r2, item 4: ref_c2c1.c_sim keeps a running max that drops a NaN at a later K."""
+        cap = rc.run_driver(self.driver, self.ohf, iu.resolve_argv(self.cfg, None), self.td / "csim.root",
+                            ibu={"unfolder": rc.dagostini, "ks": REAL["c2"]["scan"], "primary": 10},
+                            staging=iu.staging_root(self.cfg))
+        ks = REAL["c2"]["scan"]
+        self.assertTrue(iu.c_sim_finite(self.driver, cap, ks))
+        real = cap["real_extract"]
+
+        def poisoned():
+            calls = []
+
+            def extract(h, *a, **k):              # call 0 is the reference; call 2 is the second K's extraction
+                out = real(h, *a, **k)
+                calls.append(1)
+                if len(calls) == 3:
+                    out.SetBinContent(5, 8, float("nan"))
+                return out
+            return extract
+        def poisoned_reference():
+            def extract(h, *a, **k):              # the reference (call 0) holds a NaN
+                out = real(h, *a, **k)
+                if not getattr(extract, "done", False):
+                    out.SetBinContent(5, 8, float("nan"))
+                    extract.done = True
+                return out
+            return extract
+        self.assertFalse(iu.c_sim_finite(self.driver, dict(cap, real_extract=poisoned_reference()), ks))
+        bad = dict(cap, real_extract=poisoned())
+        self.assertTrue(rc.c_sim(self.driver, bad, rc.dagostini, ks, 1e-9)["pass"])     # the pinned check misses it
+        self.assertFalse(iu.c_sim_finite(self.driver, dict(cap, real_extract=poisoned()), ks))
+
+    def test_a_driver_output_that_is_not_a_regular_file_writes_no_marker(self):
+        out = self.td / "notfile"
+        real = iu.provenance
+
+        def provenance_then_remove(path):          # the output disappears after the driver's own checks read it
+            p = real(path)
+            Path(path).unlink()
+            return p
+        with mock.patch.object(iu, "provenance", provenance_then_remove):
+            self.assertEqual(self.unit("central_df", out), iu.RC_GATE)
+        self.assertFalse((out / "central_df.done").exists())
 
     def test_a_pass_unit_is_skipped_only_for_this_job_and_deploy(self):
         """Blocker 4: a PASS marker from another job or deploy is refused, never accepted as done."""

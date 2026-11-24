@@ -47,9 +47,11 @@ C="${1:?deploy}"; N="${2:?namespace}"; M="${3:?commit}"
 PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
 SRUN=srun; SCONTROL=scontrol
 NS=/pscratch/sd/j/josephrb/ibub-20261123
+RUNNER=2d-unfolding/ibub/ibub_unit.py
 if [ "${IBUB_TEST:-0}" = 1 ]; then
   PY=${IBUB_PY:?test mode needs IBUB_PY}; SRUN=${IBUB_SRUN:?test mode needs IBUB_SRUN}
   SCONTROL=${IBUB_SCONTROL:?test mode needs IBUB_SCONTROL}; NS=${IBUB_NS:?test mode needs IBUB_NS}
+  RUNNER=${IBUB_RUNNER:-$RUNNER}     # tests only: the run steps' runner; refcheck and complete are always the deploy's
 fi
 NL=4; MEM=112G; MEM_MB=114688; CHUNK=${IBUB_CHUNK:-10}; LIMIT=11:29:00; JOBNAME=ibub_run
 U="$N/units"; L="$N/logs"
@@ -67,7 +69,8 @@ mkdir -p "$U" "$L" || refuse "mkdir units/logs"
 for d in "$U" "$L" "$N/stage"; do
   r=$(realpath "$d") && under "$r" "$RN" && [ ! -L "$d" ] || refuse "$d resolves outside $N or is a symlink"
 done
-[ -z "$(ls -A "$U")" ] || refuse "$U is not empty: every job starts from a new units directory"
+entries=$(ls -A "$U") || refuse "listing $U failed"
+[ -z "$entries" ] || refuse "$U is not empty: every job starts from a new units directory"
 
 # ---- the deploy: HEAD M, clean, each git call's status checked
 head=$(git -C "$C" rev-parse HEAD) || refuse "git rev-parse failed"
@@ -86,9 +89,9 @@ key() { printf '%s\n' "$info" | tr ' ' '\n' | sed -n "s/^$1=//p" | head -1; }
 [ "$(key TimeLimit)" = "$LIMIT" ] || refuse "TimeLimit is '$(key TimeLimit)', not $LIMIT"
 [ "$(key NumNodes)" = 1 ] || refuse "NumNodes is '$(key NumNodes)', not 1"
 [ "$(key OverSubscribe)" = NO ] || refuse "OverSubscribe is '$(key OverSubscribe)', not NO (exclusive)"
-so=$(key StdOut); rso=""
-[ -n "$so" ] && sd=$(realpath "$(dirname "$so")" 2>/dev/null) && rso="$sd/$(basename "$so")"
-[ -n "$rso" ] && under "$rso" "$RN" || refuse "StdOut '$so' is not under $N"
+so=$(key StdOut); rso=""        # the full path: Slurm has opened it, so it exists, and it must not be a symlink
+[ -n "$so" ] && [ -f "$so" ] && [ ! -L "$so" ] && rso=$(realpath "$so") || rso=""
+[ -n "$rso" ] && under "$rso" "$RN" || refuse "StdOut '$so' is not a regular file under $N"
 tres=$(key AllocTRES)
 amem=$(printf '%s\n' "$tres" | tr ',' '\n' | sed -n 's/^mem=\([0-9][0-9]*\)M$/\1/p')
 case "$(printf '%s\n' "$tres" | tr ',' '\n' | sed -n 's/^mem=//p')" in *G) amem=$(( $(printf '%s\n' "$tres" | tr ',' '\n' | sed -n 's/^mem=\([0-9][0-9]*\)G$/\1/p') * 1024 ));; esac
@@ -107,13 +110,16 @@ export TMPDIR="$N/tmp-$SLURM_JOB_ID" PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=
 export OMP_NUM_THREADS=64 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 mkdir -p "$TMPDIR" && r=$(realpath "$TMPDIR") && under "$r" "$RN" || refuse "TMPDIR $TMPDIR is not under $N"
 cd "$C" || refuse "cd $C"
+set -o noclobber                     # from here on, no redirection replaces or writes through an existing file or symlink
 "$PY" -B 2d-unfolding/ibub/ibub_lanes.py verify > "$L/lanes-verify.txt" 2>&1 || refuse "the lane table does not verify"
+all_zero() { local r; for r in "$@"; do [ "$r" = 0 ] || return 1; done; [ "$#" -gt 0 ]; }
 
 step() {  # step <tag> <unit>...: one srun step running these units in one process; its rc is the step's
   local tag=$1; shift
   local args=(); for u in "$@"; do args+=(--unit "$u"); done
+  [ ! -e "$L/$tag.time" ] && [ ! -L "$L/$tag.time" ] || { say "refusing step $tag: $L/$tag.time exists"; return 2; }
   "$SRUN" --exclusive -n1 -c 64 --mem=$MEM --job-name="ibub_$tag" \
-    /usr/bin/time -v -o "$L/$tag.time" "$PY" -B 2d-unfolding/ibub/ibub_unit.py run "${args[@]}" --out "$U" \
+    /usr/bin/time -v -o "$L/$tag.time" "$PY" -B "$RUNNER" run "${args[@]}" --out "$U" \
     < /dev/null > "$L/$tag.log" 2>&1
 }
 
@@ -125,28 +131,32 @@ lane_units() {  # lane_units <phase> <lane>: sets UNITS from the lane table, or 
   return 0
 }
 
-publish_done() {  # publish_done <stage> <rc> <completion JSON or empty>: IBUB-DONE, written once by a rename
-  local tmp="$N/IBUB-DONE.tmp.$$"
-  printf '{"job": "%s", "M": "%s", "stage": "%s", "rc": %s, "ref_rcs": "%s", "toy_rcs": "%s", "completion": %s}\n' \
-    "$SLURM_JOB_ID" "$M" "$1" "$2" "${REF_RCS# }" "${TOY_RCS# }" "${3:-null}" > "$tmp" && mv -n "$tmp" "$N/IBUB-DONE" \
-    || { say "could not publish IBUB-DONE"; rm -f -- "$tmp"; }
-  cat "$N/IBUB-DONE" 2>/dev/null
+publish_done() {  # publish_done <stage> <rc> <completion JSON or empty>: IBUB-DONE, written once by a rename, then
+  # read back. Its status is 0 only if the published file is exactly what was written.
+  local tmp="$N/IBUB-DONE.tmp.$$" body
+  body=$(printf '{"job": "%s", "M": "%s", "stage": "%s", "rc": %s, "ref_rcs": "%s", "toy_rcs": "%s", "completion": %s}' \
+    "$SLURM_JOB_ID" "$M" "$1" "$2" "${REF_RCS# }" "${TOY_RCS# }" "${3:-null}") || return 1
+  [ ! -e "$N/IBUB-DONE" ] && [ ! -L "$N/IBUB-DONE" ] || { say "could not publish: IBUB-DONE exists"; return 1; }
+  printf '%s\n' "$body" > "$tmp" || { say "could not publish: writing $tmp failed"; rm -f -- "$tmp"; return 1; }
+  mv -- "$tmp" "$N/IBUB-DONE" || { say "could not publish: the rename failed"; rm -f -- "$tmp"; return 1; }
+  [ "$(cat "$N/IBUB-DONE" 2>/dev/null)" = "$body" ] || { say "could not publish: IBUB-DONE does not read back"; return 1; }
+  printf '%s\n' "$body"
 }
 
 # ---- the reference phase
-REF_RCS=""; TOY_RCS=""; pids=""
+REF_RCS=""; TOY_RCS=""; pids=()
 for l in 0 1; do
   lane_units refs "$l" || { say "STOP: the refs lane $l table failed"; publish_done refs 3; exit 3; }
   [ "${#UNITS[@]}" -eq 1 ] || { say "STOP: refs lane $l has ${#UNITS[@]} units"; publish_done refs 3; exit 3; }
-  step "refs_l$l" "${UNITS[@]}" & pids="$pids $!"
+  step "refs_l$l" "${UNITS[@]}" & pids+=($!)
 done
-for p in $pids; do wait "$p"; REF_RCS="$REF_RCS $?"; done
-say "references done $(date -u +%FT%TZ); rcs:$REF_RCS"
+wait "${pids[0]}"; r0=$?; wait "${pids[1]}"; r1=$?; REF_RCS="$r0 $r1"
+say "references done $(date -u +%FT%TZ); srun rcs: central $r0, central_df $r1"
 for l in 0 1; do tail -3 "$L/refs_l$l.log" | sed "s/^/[ibub]   refs_l$l: /"; done
 "$PY" -B 2d-unfolding/ibub/ibub_unit.py refcheck --out "$U" --time "central=$L/refs_l0.time" \
-  --time "central_df=$L/refs_l1.time" > "$L/refcheck.log" 2>&1; brc=$?
+  --time "central_df=$L/refs_l1.time" --step-rc "central=$r0" --step-rc "central_df=$r1" > "$L/refcheck.log" 2>&1; brc=$?
 cat "$L/refcheck.log"
-if [ "$brc" -ne 0 ] || [ "$(echo $REF_RCS | tr -d ' 0')" != "" ]; then
+if [ "$brc" -ne 0 ] || ! all_zero "$r0" "$r1"; then
   say "STOP: the barrier did not pass (refcheck rc $brc; reference rcs$REF_RCS); no toy starts"
   publish_done refs 3; exit 3
 fi
@@ -164,19 +174,25 @@ lane() {
   done
   return $rc
 }
-pids=""
-for l in $(seq 0 $((NL - 1))); do lane "$l" & pids="$pids $!"; done
-for p in $pids; do wait "$p"; TOY_RCS="$TOY_RCS $?"; done
-say "toys done $(date -u +%FT%TZ); lane rcs:$TOY_RCS"
+pids=()
+for l in $(seq 0 $((NL - 1))); do lane "$l" & pids+=($!); done
+lrcs=()
+for p in "${pids[@]}"; do wait "$p"; lrcs+=($?); done
+TOY_RCS="${lrcs[*]}"
+say "toys done $(date -u +%FT%TZ); lane rcs: $TOY_RCS"
 
 # ---- the completion: the exact marker set, then the deploy still clean, then IBUB-DONE once
 comp=$("$PY" -B 2d-unfolding/ibub/ibub_unit.py complete --out "$U" 2> "$L/complete.err"); crc=$?
-printf '%s\n' "$comp" > "$L/complete.json"
-gs=$(git -C "$C" status --porcelain --ignored); grc=$?
 ok=1
+printf '%s\n' "$comp" > "$L/complete.json" || { ok=0; say "writing complete.json failed"; }
+gs=$(git -C "$C" status --porcelain --ignored); grc=$?
 [ "$crc" -eq 0 ] || ok=0
-[ "$grc" -eq 0 ] && [ -z "$gs" ] || { ok=0; say "the deploy is not clean after the run (git rc $grc): $(printf '%s\n' "$gs" | head -3 | tr '\n' ' ')"; }
-[ "$(echo $TOY_RCS | tr -d ' 0')" = "" ] || ok=0
-[ -n "$comp" ] || comp=null
-if [ "$ok" = 1 ]; then publish_done toys 0 "$comp"; say "end PASS"; exit 0; fi
-publish_done toys 1 "$comp"; say "end: not every check held (complete rc $crc, lane rcs$TOY_RCS, git rc $grc)"; exit 1
+[ "$grc" -eq 0 ] && [ -z "$gs" ] || { ok=0; say "the deploy is not clean after the run (git rc $grc)"; }
+all_zero "${lrcs[@]}" || ok=0
+"$PY" -c "import json, sys; json.loads(sys.argv[1])" "$comp" 2> /dev/null || { ok=0; comp=null; say "complete printed no JSON"; }
+if [ "$ok" = 1 ]; then
+  publish_done toys 0 "$comp" || { say "end: IBUB-DONE was not published"; exit 1; }
+  say "end PASS"; exit 0
+fi
+publish_done toys 1 "$comp" || say "IBUB-DONE was not published"
+say "end: not every check held (complete rc $crc, lane rcs $TOY_RCS, git rc $grc)"; exit 1

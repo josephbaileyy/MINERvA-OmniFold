@@ -136,7 +136,8 @@
   },
   "alpha": 0.05,
   "tests": 236,
-  "k10_vs_root_rtol": 1e-09
+  "k10_vs_root_rtol": 1e-09,
+  "write_root": "/dev/shm/ibub-connect"
  },
  "namespace": "/pscratch/sd/j/josephrb/ibub-20261123"
 }

@@ -158,10 +158,24 @@ class Tree:
             self.write_unit(k, s)
         self.write_barrier()
 
-    def write_barrier(self, **change):
-        rec = {"verdict": "PASS", "job": JOB, "deploy_head": DEPLOY, "runner_sha256": iu.rc.sha256(Path(iu.__file__))}
+    def write_barrier(self, done=None, **change):
+        """The two reference markers, the barrier receipt with their digests, and the job's IBUB-DONE binding the
+        receipt's sha256 (as refcheck, complete and the job write them)."""
+        units = {}
+        for u in iu.REFERENCE_UNITS:
+            m = {"unit": u, "verdict": "PASS", "job": JOB, "deploy_head": DEPLOY, "sha256": sha(u.encode()),
+                 "root_sha256": sha(u.encode() + b"r")}
+            (self.units / f"{u}.done").write_text(json.dumps(m))
+            units[u] = {"pass": True, "srun_rc": 0, "npz_sha256": m["sha256"], "root_sha256": m["root_sha256"]}
+        rec = {"verdict": "PASS", "job": JOB, "deploy_head": DEPLOY, "runner_sha256": iu.rc.sha256(Path(iu.__file__)),
+               "units": units}
         rec.update(change)
-        (self.units / "refcheck.json").write_text(json.dumps(rec))
+        raw = json.dumps(rec).encode()
+        (self.units / "refcheck.json").write_bytes(raw)
+        d = {"job": JOB, "M": DEPLOY, "stage": "toys", "rc": 0,
+             "completion": {"verdict": "PASS", "barrier_sha256": sha(raw)}}
+        d.update(done or {})
+        (self.units.parent / "IBUB-DONE").write_text(json.dumps(d))
 
     def other_labels(self):
         labs = [f"X_{self.T}"] + [f"U_{self.T}_{b}_{i}" for b in c.ORDER for i in range(c.BANDS[b])]
@@ -241,6 +255,7 @@ class Tree:
         cfg["cells"].update(blocks=str(self.blocks_path), blocks_sha256=sha(self.blocks_path.read_bytes()))
         cfg["toys"][self.T].update(dir=f"{self.run}/{self.pdir}", pseudo_b=str(self.pb_path), pseudo_b_sha256=self.pb_sha)
         cfg["readout"]["bootstrap_B"] = 2000
+        cfg["readout"]["write_root"] = str(self.d)          # the declared readout root, for the test
         return cfg
 
 
@@ -504,6 +519,73 @@ class EndToEnd(Patched):
         self.assertIn("sha256", rec["refused"])
         self.assertNotIn("readings", json.loads((tr.d / "out" / f"ibub_{T}.json").read_text()))
 
+    def test_a_missing_truth_file_is_a_recorded_refusal(self):
+        tr = Tree(self.td)
+        (tr.run / tr.pdir / "truth_xsec.npz").unlink()
+        self.patch(tr)
+        rec = self.go(tr)                                     # the codex read r2, item 6: a record, never a bare raise
+        self.assertEqual(rec["verdict"], "INVALID")
+        self.assertIn("truth_xsec.npz", rec["refused"])
+        self.assertTrue((tr.d / "out" / f"ibub_{T}.json").exists())
+
+    def test_out_or_tmp_outside_the_declared_readout_root_is_refused(self):
+        """The codex read r2, item 3: e.g. /dev/shm/limres-rpd-flux1, which is outside the declared root."""
+        tr = Tree(self.td)
+        cfg = tr.config()
+        cfg["readout"]["write_root"] = str(tr.d / "root")
+        (tr.d / "root").mkdir()
+        self.patch(tr, cfg)
+        with self.assertRaises(c.Refusal):
+            ir.readout(T, tr.units, tr.d / "elsewhere-out", str(tr.run), JOB)
+        self.assertFalse((tr.d / "elsewhere-out").exists())
+        with mock.patch.dict(os.environ, {"TMPDIR": str(tr.d)}), self.assertRaises(c.Refusal):
+            ir.readout(T, tr.units, tr.d / "root" / "out", str(tr.run), JOB)
+        (tr.d / "root" / "existing").mkdir()
+        (tr.d / "root" / "tmp").mkdir()
+        with mock.patch.dict(os.environ, {"TMPDIR": str(tr.d / "root" / "tmp")}), self.assertRaises(c.Refusal) as cm:
+            ir.readout(T, tr.units, tr.d / "root" / "existing", str(tr.run), JOB)   # an existing out is never written
+        self.assertIn("exists", str(cm.exception))
+
+    def test_the_result_appears_at_once_and_names_its_npz(self):
+        """The codex read r2, item 5: a staging directory becomes out by one rename; a failure before it leaves no
+        out; a PASS record names its npz's digest."""
+        tr = Tree(self.td)
+        self.patch(tr)
+        with mock.patch.object(np, "savez_compressed", side_effect=OSError("disk full")), self.assertRaises(OSError):
+            self.go(tr)
+        self.assertFalse((tr.d / "out").exists())
+        tr2 = Tree(Path(tempfile.mkdtemp()).resolve())
+        self.addCleanup(shutil.rmtree, tr2.d, True)
+        self.patch(tr2)
+        rec = self.go(tr2)
+        self.assertEqual(rec["verdict"], "PASS")
+        on_disk = json.loads((tr2.d / "out" / f"ibub_{T}.json").read_text())
+        self.assertEqual(on_disk["errors_npz_sha256"], iu.rc.sha256(tr2.d / "out" / on_disk["errors_npz"]))
+        self.assertIn("readings", on_disk)
+        self.assertEqual([p.name for p in tr2.d.glob(".out.staging-*")], [])
+
+    def test_c_cells_counts_each_artifact_on_its_own(self):
+        """The codex read r2, item 4: a non-finite ROOT row counts even when its npz fails its digest, and a
+        non-finite K = 10 npz row fails C-K10 without being counted twice."""
+        tr = Tree(self.td)
+        k = 50
+        tr.x_ibu[k, 3] = np.nan                               # its ROOT row (hXSec2D) holds a NaN
+        tr.write_unit(k, SEEDS[k])
+        (tr.units / f"toy_{T}_{SEEDS[k]}.npz").write_bytes(b"corrupt")    # and its npz is off its digest
+        self.patch(tr)
+        rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "INVALID")
+        self.assertEqual(rec["C-CELLS"]["nonfinite"], {"K10": 1, "K5": 0})
+        td = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, td, True)
+        tr = Tree(td)
+        tr.write_unit(51, SEEDS[51], k10_tweak=np.nan)        # only the npz's K = 10 row is non-finite
+        self.patch(tr)
+        rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "INVALID")
+        self.assertFalse(rec["C-K10"]["pass"])
+        self.assertEqual(rec["C-CELLS"]["nonfinite"], {"K10": 0, "K5": 0})
+
     def test_out_under_a_guarded_tree_is_refused(self):
         tr = Tree(self.td)
         self.patch(tr)
@@ -518,9 +600,9 @@ class EndToEnd(Patched):
         name(1).with_suffix(".done").write_text(json.dumps(dict(m, verdict="FAIL")))
         self.patch(tr)
         rec = self.go(tr, "o1")
-        self.assertEqual(rec["verdict"], "INVALID")          # a FAIL unit is a defect, not an absence
+        self.assertEqual(rec["verdict"], "INCOMPLETE")       # the codex read r2, item 6: a FAIL alone is an absence
         self.assertEqual(rec["C-COMPLETE"]["missing"], [SEEDS[1]])
-        self.assertTrue(any("verdict FAIL" in p for p in rec["C-DATA"]["problems"]))
+        self.assertEqual(rec["C-DATA"]["problems"], [])
 
     def rewrite_meta(self, tr, k, **change):
         """Rewrite toy k's npz with a changed meta or scan, and its marker's digest to match."""
@@ -649,7 +731,9 @@ class EndToEnd(Patched):
         rec = self.go(tr)
         self.assertEqual(rec["verdict"], "INVALID")
         self.assertEqual(rec["C-COMPLETE"]["missing"], [SEEDS[14], SEEDS[15]])
-        self.assertEqual(sum("not its marker's" in p for p in rec["C-DATA"]["problems"]), 2)
+        probs = rec["C-DATA"]["problems"]
+        self.assertTrue(any(str(SEEDS[14]) in p and "npz" in p for p in probs), probs)
+        self.assertTrue(any(str(SEEDS[15]) in p and "ROOT product" in p for p in probs), probs)
 
     def test_ar23_runs_end_to_end_at_its_own_paths_seed_and_cells(self):
         tr = Tree(self.td, tune="AR23", flagged=2)
@@ -713,15 +797,23 @@ class EndToEnd(Patched):
         self.assertTrue(any("not readable" in p for p in rec["C-DATA"]["problems"]))
 
     def test_the_barrier_receipt_must_be_the_bound_jobs_pass(self):
-        for change in ({"verdict": "STOP"}, {"job": "61000002"}, {"deploy_head": "M1"}, {"runner_sha256": "0" * 64},
-                       None):
+        failed_ref = {u: {"pass": u != "central_df", "srun_rc": 0} for u in iu.REFERENCE_UNITS}
+        cases = [({}, {"verdict": "STOP"}), ({}, {"job": "61000002"}), ({}, {"deploy_head": "M1"}),
+                 ({}, {"runner_sha256": "0" * 64}), ({}, {"units": failed_ref}),           # r2 item 2: the references
+                 ({"rc": 1}, {}), ({"stage": "refs"}, {}), ({"job": "61000002"}, {}), ({"M": "M1"}, {}),
+                 ({"completion": {"verdict": "PASS", "barrier_sha256": "0" * 64}}, {}),  # IBUB-DONE binds another barrier
+                 ({"completion": {"verdict": "FAIL"}}, {}), None, "no reference marker"]
+        for case in cases:
             td = Path(tempfile.mkdtemp()).resolve()
             self.addCleanup(shutil.rmtree, td, True)
             tr = Tree(td)
-            if change is None:
+            if case is None:
                 (tr.units / "refcheck.json").unlink()
+            elif case == "no reference marker":
+                (tr.units / "central_df.done").unlink()
             else:
-                tr.write_barrier(**change)
+                tr.write_barrier(done=case[0], **case[1])
+            change = case
             with self.subTest(change=change):
                 self.patch(tr)
                 rec = self.go(tr)

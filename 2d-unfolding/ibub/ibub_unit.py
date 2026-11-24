@@ -21,7 +21,7 @@ Subcommands:
   preflight             login node: the two references' O_NOATIME sha256 and the 600 toy files' stat (section 8)
   run --unit U ... --out DIR
                         the units, after the code pins, the staged inputs' digests and the CPU/thread gate
-  refcheck --out DIR --time central=F --time central_df=F
+  refcheck --out DIR --time central=F --time central_df=F --step-rc central=RC --step-rc central_df=RC
                         the barrier (section 8): both references PASS and this job's, each full srun step (its
                         /usr/bin/time file) exit 0 within the re-price trigger, and central_df equal to central;
                         writes refcheck.json; exit 0 lets the toys start
@@ -93,6 +93,20 @@ def inside(cfg: dict, path) -> Path:
     if p != n and not p.startswith(n + os.sep):
         raise GateFailure(f"{path} resolves to {p}, outside the namespace {n}")
     return Path(p)
+
+
+def write_contained(cfg: dict, path, data: bytes, *, exclusive: bool = True) -> None:
+    """Write ``data`` to ``path``, whose directory must resolve under the namespace. The final component is never
+    followed if it is a symlink (O_NOFOLLOW). With ``exclusive``, the file must not already exist: a stale file or a
+    planted symlink is refused, never replaced or written through."""
+    path = Path(path)
+    inside(cfg, path.parent)
+    flags = os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW | (os.O_EXCL if exclusive else os.O_TRUNC)
+    fd = os.open(path, flags, 0o644)
+    try:
+        os.write(fd, data)
+    finally:
+        os.close(fd)
 
 
 def binding() -> dict:
@@ -227,6 +241,7 @@ def stage_data(cfg: dict, unit: dict, shas: dict) -> tuple[Path, str]:
     src, want = data_source(cfg, unit, shas)
     dest = data_dir(cfg) / f"{unit['name']}.root"
     dest.parent.mkdir(parents=True, exist_ok=True)
+    inside(cfg, dest.parent)                      # a symlinked stage/data can never take the copy out of $N
     try:
         got = rc.copy_noatime(src, dest)
     except BaseException:
@@ -289,6 +304,60 @@ def read_marker(path: Path) -> dict:
     return m if isinstance(m, dict) else {}
 
 
+def marker_ok(out: Path, name: str, bound: dict, kind: str | None = None) -> tuple[bool, str]:
+    """A unit is done only if all of these hold:
+    - its marker names it;
+    - the marker is PASS and was written by this job at this deploy (``bound``);
+    - neither product is a symlink;
+    - both products are at the marker's digests;
+    - the npz's own meta names the same unit, kind, job and deploy.
+    Returns (ok, why)."""
+    m = read_marker(out / f"{name}.done")
+    npz, root = out / f"{name}.npz", out / f"{name}.root"
+    if m.get("unit") != name or m.get("verdict") != "PASS":
+        return False, f"marker unit {m.get('unit')!r}, verdict {m.get('verdict')!r}"
+    if (str(m.get("job")), m.get("deploy_head")) != (bound["job"], bound["deploy_head"]):
+        return False, f"marker job/deploy {m.get('job')}/{m.get('deploy_head')}"
+    if npz.is_symlink() or root.is_symlink() or not (npz.is_file() and root.is_file()):
+        return False, "a product is absent or a symlink"
+    if rc.sha256(npz) != m.get("sha256") or rc.sha256(root) != m.get("root_sha256"):
+        return False, "a product is not at its marker's digest"
+    try:
+        meta = json.loads(str(np.load(npz)["meta"]))
+    except (ValueError, KeyError, OSError) as e:
+        return False, f"its npz meta is not readable ({e})"
+    if (meta.get("unit"), str(meta.get("slurm_job")), meta.get("deploy_head")) != (name, bound["job"], bound["deploy_head"]):
+        return False, f"its npz meta names {meta.get('unit')}/{meta.get('slurm_job')}/{meta.get('deploy_head')}"
+    if kind is not None and meta.get("kind") != kind:
+        return False, f"its npz meta kind is {meta.get('kind')}"
+    return True, "ok"
+
+
+def c_sim_finite(driver, cap, ks) -> bool:
+    """IBUB's finite check on C-SIM: every covered cell of the simulated extraction, at every K, and of its reference,
+    must be finite. ref_c2c1.c_sim, pinned and unchanged, keeps a running Python max that drops a NaN (the codex read,
+    round 2, item 4). The extraction here uses the same ref_c2c1 helpers and the driver's recorded arguments."""
+    T, M, tin, w_in = cap["T"], cap["M"], cap["tin"], cap["w_in"]
+    a, k = cap["extract"]
+    h_comp, _, h_den = cap["completeness"]
+    nx, ny = len(driver.PT_EDGES) - 1, len(driver.PZ_EDGES) - 1
+    unit = h_comp.Clone("ibub_csim_unit")
+    for ix in range(1, nx + 1):
+        for iy in range(1, ny + 1):
+            unit.SetBinContent(ix, iy, 1.0)
+    covered = rc.th2_vector(h_comp, nx, ny) > 0
+    ref = rc.th2_vector(cap["real_extract"](h_den, unit, *a[1:], **k), nx, ny)
+    if not np.all(np.isfinite(ref[covered])):
+        return False
+    traj = rc.dagostini(M, T, M.sum(axis=1), ks)
+    for K in ks:
+        h = rc.filled(driver, tin, w_in, rc.event_factors(traj[K], T, tin), f"ibub_csim_K{K}")
+        x = rc.th2_vector(cap["real_extract"](h, *a, **k), nx, ny)
+        if not np.all(np.isfinite(x[covered])):
+            return False
+    return True
+
+
 def provenance(path: Path) -> dict:
     """The driver's TNamed records in its own output."""
     import ROOT
@@ -309,12 +378,11 @@ def run_unit(driver, ohf, cfg: dict, unit: dict, out: Path, *, shas: dict, rep: 
     is refused, never overwritten."""
     name = unit["name"]
     root, npz, marker = out / f"{name}.root", out / f"{name}.npz", out / f"{name}.done"
-    if npz.exists() or root.exists() or marker.exists():
-        m = read_marker(marker)
-        if m.get("verdict") == "PASS" and (m.get("job"), m.get("deploy_head")) == (bound["job"], bound["deploy_head"]):
+    if any(p.exists() or p.is_symlink() for p in (npz, root, marker)):
+        ok, why = marker_ok(out, name, bound, unit["kind"])
+        if ok:
             return 0
-        print(f"refusing: {name} exists (verdict {m.get('verdict')}, job {m.get('job')}, deploy {m.get('deploy_head')})"
-              f" and is not this job's PASS", file=sys.stderr)
+        print(f"refusing: {name} exists and is not this job's verified PASS ({why})", file=sys.stderr)
         return RC_CONTROL
     try:
         cpus, threads = gate_env(cfg)
@@ -345,7 +413,10 @@ def run_unit(driver, ohf, cfg: dict, unit: dict, out: Path, *, shas: dict, rep: 
         roo = max([max_abs_rel(cap["traj"][K], numpy_traj[K]) for K in ks])
         controls["C-ROO"] = {"max_rel": roo, "pass": bool(roo <= c2["c_roo_rtol"])}
         if unit["kind"] == "central":
-            controls["C-SIM"] = rc.c_sim(driver, cap, rc.dagostini, ks, c2["c_sim_rtol"])
+            sim = rc.c_sim(driver, cap, rc.dagostini, ks, c2["c_sim_rtol"])
+            sim["all_finite"] = c_sim_finite(driver, cap, ks)
+            sim["pass"] = bool(sim["pass"] and sim["all_finite"] and np.isfinite(sim["max_rel"]))
+            controls["C-SIM"] = sim
         prov = provenance(root)
         recorded_argv = json.loads(prov.get("runArgv", "null")) or []
         data = {"argv_equal": list(recorded_argv[1:]) == argv + ["--out", str(root)],
@@ -365,12 +436,15 @@ def run_unit(driver, ohf, cfg: dict, unit: dict, out: Path, *, shas: dict, rep: 
         if set(controls) != CONTROLS[unit["kind"]]:
             raise GateFailure(f"{name}: controls {sorted(controls)} are not the declared {sorted(CONTROLS[unit['kind']])}")
         passed = all(v["pass"] for v in controls.values())
-        np.savez_compressed(npz, **arrays, meta=json.dumps(meta, default=str))
-        marker.write_text(json.dumps({"unit": name, "kind": unit["kind"], "tune": unit["tune"], "seed": unit["seed"],
-                                      "job": bound["job"], "deploy_head": bound["deploy_head"],
-                                      "verdict": "PASS" if passed else "FAIL", "seconds": meta["seconds"],
-                                      "sha256": rc.sha256(npz), "root_sha256": rc.sha256(root),
-                                      "data_sha256": data_sha}) + "\n")
+        if root.is_symlink() or not root.is_file():
+            raise GateFailure(f"{name}: the driver's output {root} is not a regular file")
+        buf = io.BytesIO()
+        np.savez_compressed(buf, **arrays, meta=json.dumps(meta, default=str))
+        write_contained(cfg, npz, buf.getvalue())
+        write_contained(cfg, marker, (json.dumps({
+            "unit": name, "kind": unit["kind"], "tune": unit["tune"], "seed": unit["seed"], "job": bound["job"],
+            "deploy_head": bound["deploy_head"], "verdict": "PASS" if passed else "FAIL", "seconds": meta["seconds"],
+            "sha256": rc.sha256(npz), "root_sha256": rc.sha256(root), "data_sha256": data_sha}) + "\n").encode())
     except GateFailure as e:
         print(f"refusing: {name}: {e}", file=sys.stderr)
         return RC_GATE
@@ -403,7 +477,7 @@ def stage(cfg: dict) -> int:
             ok = False
         rec["files"][key] = {"source": str(src), "staged": str(dest), "sha256": got, "pin": want, "pass": good}
     rec["verdict"] = "PASS" if ok else "FAIL"
-    (root / "stage.json").write_text(json.dumps(rec, indent=1, sort_keys=True) + "\n")
+    write_contained(cfg, root / "stage.json", (json.dumps(rec, indent=1, sort_keys=True) + "\n").encode())
     print(json.dumps(rec, sort_keys=True))
     return 0 if ok else RC_GATE
 
@@ -451,70 +525,90 @@ def gnu_time(path: Path) -> dict:
     return {"wall_s": wall, "exit_status": int(e.group(1)) if e else None}
 
 
-def refcheck(cfg: dict, out: Path, rep: np.ndarray, bound: dict, times: dict) -> int:
+def refcheck(cfg: dict, out: Path, rep: np.ndarray, bound: dict, times: dict, step_rcs: dict) -> int:
     """The barrier. Its checks:
-    - both reference units are PASS (C-REP, C-REP-D), written by this job at this deploy;
-    - each product is at its marker's digest;
-    - each full reference STEP (``times``: the /usr/bin/time file of its srun step) exited 0 within the re-price
-      trigger;
+    - both reference units are this job's verified PASS (``marker_ok``: identity, digests, embedded provenance);
+    - each full reference srun step exited 0 (``step_rcs``, the job's waited statuses);
+    - the step's /usr/bin/time file reads exit status 0 within the re-price trigger (``times``);
     - central_df's cross sections equal central's to C-REP's tolerance.
-    It writes refcheck.json, the barrier receipt the readout binds to; exit 0 lets the toys start."""
-    rec = {"schema": "ibub-refcheck/1", "job": bound["job"], "deploy_head": bound["deploy_head"],
+    It writes refcheck.json once (no stale or planted file is replaced), the barrier receipt, which records both
+    references' digests; exit 0 lets the toys start."""
+    rec = {"schema": "ibub-refcheck/2", "job": bound["job"], "deploy_head": bound["deploy_head"],
            "runner_sha256": rc.sha256(Path(__file__).resolve()), "units": {}}
     ok = True
     limit = cfg["price"]["reprice_factor"] * cfg["price"]["unit_s"]
     arrays = {}
     for u in REFERENCE_UNITS:
-        marker, npz, root = out / f"{u}.done", out / f"{u}.npz", out / f"{u}.root"
-        m = read_marker(marker)
-        good = (m.get("verdict") == "PASS" and m.get("unit") == u and npz.exists() and root.exists()
-                and rc.sha256(npz) == m.get("sha256") and rc.sha256(root) == m.get("root_sha256"))
-        mine = (str(m.get("job")), m.get("deploy_head")) == (bound["job"], bound["deploy_head"])
+        good, why = marker_ok(out, u, bound, u)
         t = gnu_time(times[u]) if u in times else {"wall_s": None, "exit_status": None}
+        srun_rc = step_rcs.get(u)
         fast = isinstance(t["wall_s"], float) and t["wall_s"] <= limit and t["exit_status"] == 0
-        rec["units"][u] = {"verdict": m.get("verdict"), "this_job": mine, "step_wall_s": t["wall_s"],
-                           "step_exit_status": t["exit_status"], "limit_s": limit, "pass": bool(good and mine and fast)}
-        ok = ok and good and mine and fast
+        unit_ok = bool(good and fast and srun_rc == 0)
+        m = read_marker(out / f"{u}.done")
+        rec["units"][u] = {"marker": why, "srun_rc": srun_rc, "step_wall_s": t["wall_s"],
+                           "step_exit_status": t["exit_status"], "limit_s": limit,
+                           "npz_sha256": m.get("sha256") if good else None,
+                           "root_sha256": m.get("root_sha256") if good else None, "pass": unit_ok}
+        ok = ok and unit_ok
         if good:
-            z = np.load(npz)
+            z = np.load(out / f"{u}.npz")
             arrays[u] = {k: z[k] for k in ("ks", "xsec", "T", "y")}
     if len(arrays) == 2:
         rec["central_df_vs_central"] = compare(arrays["central_df"], arrays["central"], rep, cfg["c2"]["c_rep_rtol"])
         ok = ok and rec["central_df_vs_central"]["pass"]
     else:
-        rec["central_df_vs_central"] = {"pass": False, "why": "a reference unit is missing or not PASS"}
+        rec["central_df_vs_central"] = {"pass": False, "why": "a reference unit is not this job's verified PASS"}
         ok = False
     rec["verdict"] = "PASS" if ok else "STOP"
-    (out / "refcheck.json").write_text(json.dumps(rec, indent=1, sort_keys=True) + "\n")
+    write_contained(cfg, out / "refcheck.json", (json.dumps(rec, indent=1, sort_keys=True) + "\n").encode())
     print(json.dumps(rec, sort_keys=True))
     return 0 if ok else RC_STOP
 
 
+def barrier_ok(out: Path, bound: dict) -> tuple[bool, str, str | None]:
+    """refcheck.json is the bound job's PASS at the bound deploy, with both references passing. The digests it
+    records must equal the reference products as they are now. Returns (ok, why, its sha256)."""
+    p = out / "refcheck.json"
+    if p.is_symlink() or not p.is_file():
+        return False, "refcheck.json is absent or a symlink", None
+    raw = p.read_bytes()
+    try:
+        b = json.loads(raw)
+    except ValueError:
+        return False, "refcheck.json is not JSON", None
+    if not isinstance(b, dict):
+        return False, "refcheck.json is not an object", None
+    if (b.get("verdict"), str(b.get("job")), b.get("deploy_head")) != ("PASS", bound["job"], bound["deploy_head"]):
+        return False, f"refcheck.json is {b.get('verdict')} for {b.get('job')}/{b.get('deploy_head')}", None
+    for u in REFERENCE_UNITS:
+        r = (b.get("units") or {}).get(u) or {}
+        m = read_marker(out / f"{u}.done")
+        good, why = marker_ok(out, u, bound, u)
+        if not (r.get("pass") is True and r.get("srun_rc") == 0 and good
+                and (r.get("npz_sha256"), r.get("root_sha256")) == (m.get("sha256"), m.get("root_sha256"))):
+            return False, f"refcheck.json's {u} is not a passing reference at its products' digests ({why})", None
+    return True, "ok", hashlib.sha256(raw).hexdigest()
+
+
 def complete(cfg: dict, out: Path, bound: dict) -> int:
     """The job's completion check, which the job publishes as IBUB-DONE. Each of these is a failure:
-    - any of the 600 declared toy units without a PASS marker naming it, this job and this deploy, with its products
-      at the marker's digests;
+    - any of the 600 declared toy units that is not this job's verified PASS (``marker_ok``);
     - any marker for an undeclared unit;
-    - a refcheck.json that is not this job's PASS.
-    It prints one JSON line; exit 0 only when every check holds."""
+    - a barrier receipt that is not this job's PASS at its references' current digests (``barrier_ok``).
+    It prints one JSON line, which records the barrier's sha256; exit 0 only when every check holds."""
     expected = [f"toy_{t}_{s}" for t in ("G18", "AR23") for s in c.TOY_SEEDS[t]]
     bad, passed = [], 0
     for name in expected:
-        m = read_marker(out / f"{name}.done")
-        npz, root = out / f"{name}.npz", out / f"{name}.root"
-        ok = (m.get("verdict") == "PASS" and m.get("unit") == name and str(m.get("job")) == bound["job"]
-              and m.get("deploy_head") == bound["deploy_head"] and npz.exists() and root.exists()
-              and rc.sha256(npz) == m.get("sha256") and rc.sha256(root) == m.get("root_sha256"))
+        ok, why = marker_ok(out, name, bound, "toy")
         passed += ok
         if not ok:
-            bad.append(name)
+            bad.append(f"{name}: {why}")
     known = set(expected) | set(REFERENCE_UNITS)
     extra = sorted(f[:-5] for f in os.listdir(out) if f.endswith(".done") and f[:-5] not in known)
-    b = read_marker(out / "refcheck.json")
-    barrier = (b.get("verdict"), str(b.get("job")), b.get("deploy_head")) == ("PASS", bound["job"], bound["deploy_head"])
-    rec = {"schema": "ibub-complete/1", "job": bound["job"], "deploy_head": bound["deploy_head"],
+    barrier, why, bsha = barrier_ok(out, bound)
+    rec = {"schema": "ibub-complete/2", "job": bound["job"], "deploy_head": bound["deploy_head"],
            "toy_pass": passed, "toy_expected": len(expected), "not_pass": bad[:50], "not_pass_count": len(bad),
-           "undeclared_markers": extra, "barrier_pass": barrier}
+           "undeclared_markers": extra, "barrier_pass": barrier, "barrier_why": why, "barrier_sha256": bsha}
     rec["verdict"] = "PASS" if (passed == len(expected) and not extra and barrier) else "FAIL"
     print(json.dumps(rec, sort_keys=True))
     return 0 if rec["verdict"] == "PASS" else 1
@@ -532,6 +626,8 @@ def main(argv=None) -> int:
     b.add_argument("--out", type=Path, required=True)
     b.add_argument("--time", action="append", default=[], metavar="UNIT=PATH",
                    help="the /usr/bin/time -v file of each reference unit's srun step")
+    b.add_argument("--step-rc", action="append", default=[], metavar="UNIT=RC",
+                   help="each reference unit's srun step exit status, as the job waited for it")
     d = sub.add_parser("complete")
     d.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
@@ -546,13 +642,18 @@ def main(argv=None) -> int:
         bound = binding()
         rep = reported_cells(cfg)
         if a.cmd == "refcheck":
-            times = {}
+            times, step_rcs = {}, {}
             for t in a.time:
                 u, _, path = t.partition("=")
                 if u not in REFERENCE_UNITS or not path:
                     raise ValueError(f"--time {t!r} is not UNIT=PATH for a reference unit")
                 times[u] = Path(path)
-            return refcheck(cfg, out, rep, bound, times)
+            for t in a.step_rc:
+                u, _, v = t.partition("=")
+                if u not in REFERENCE_UNITS or not re.fullmatch(r"-?[0-9]+", v):
+                    raise ValueError(f"--step-rc {t!r} is not UNIT=RC for a reference unit")
+                step_rcs[u] = int(v)
+            return refcheck(cfg, out, rep, bound, times, step_rcs)
         if a.cmd == "complete":
             return complete(cfg, out, bound)
         units = [parse_unit(s) for s in a.unit]

@@ -53,7 +53,9 @@ ACKED_READOUT = [  # the readout's reads of cov2d's files (through cov2d_readout
 ]
 READS_READOUT: list = []
 WRITES = {"run": [N_ROOT, "/dev/shm/ibub-connect", "/dev/shm/ibubc."],
-          "readout": ["/dev/shm/ibub-connect", "/dev/shm/ibubc."]}   # the readout writes only off pscratch, then fetches
+          # the readout writes only under config.json's readout.write_root (/dev/shm/ibub-connect), which
+          # ibub_readout.guard_in_root enforces; the readout connect then publishes the products into $N
+          "readout": [N_ROOT, CONFIG["readout"]["write_root"], "/dev/shm/ibubc."]}
 IBUCHI = [("ibuchi write root", f"{U}/ibuchi-evloop-20261123")]
 LR_P0 = [  # limitation-resolver's ack of 2026-11-24: P0 (RPD-RECO), a login-only connect that may run in this lane's window
     ("rpd-reco P0 write root", f"{U}/rpd-reco-p0-20261123"),
