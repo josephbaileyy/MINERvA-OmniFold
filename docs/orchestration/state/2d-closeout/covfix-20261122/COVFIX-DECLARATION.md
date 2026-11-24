@@ -1320,10 +1320,10 @@ u = 1 (G18_02a_00_000) and u = 2.
 - **Thresholds,** with T the number of sealed truths and k the number of measured cells. Each was recomputed by cov2d
   with exact binomial tails (`scipy.stats`).
   - **SUPPORT:** the joint count is at least 185/300 at every truth, and no cell is vetoed. A cell is vetoed when its 1σ
-    count lies in the exact lower binomial tail (p = 0.6827, n = 300) at 0.05/(k·T). At k = 16:
+    count lies in the exact lower binomial tail (p = 0.6827, n = 300) at 0.05/(k·T). **At the frozen k = 13** (and at
+    k = 16 alike):
     - three truths: every cell needs at least 180, and the veto fires at 179 or fewer;
     - two truths: every cell needs at least 181, and the veto fires at 180 or fewer.
-    For another frozen k, the veto count follows from the same rule and is printed before the spend.
   - **The wording of SUPPORT.** A pass supports only "met the prespecified screening criterion" and "no cell triggered
     the undercoverage flag". It does not support a claim that coverage exceeds 60 % at every truth.
     - The affirmative threshold of 195 was considered and not chosen.
@@ -1331,20 +1331,26 @@ u = 1 (G18_02a_00_000) and u = 2.
     - If one truth is at 60 % and the others are nominal, the joint rule at 185 passes 29.5 % of the time
       (independent truths, before the veto).
   - **DEMONSTRATED DEFICIT:** at some truth or cell, the one-sided exact upper bound on coverage falls below the 60 %
-    floor. The bound is Bonferroni-corrected over the (k + 1)·T readings. At k = 16 a deficit means a count of
-    **153 or fewer** for three truths, or **154 or fewer** for two (a single test would be 165 or fewer).
+    floor. The bound is Bonferroni-corrected over the (k + 1)·T readings. At the frozen k = 13 (and at k = 16 alike), a
+    deficit means a count of **153 or fewer** for three truths, or **154 or fewer** for two (a single test would be 165
+    or fewer).
   - **INCONCLUSIVE:** neither. At true 60 % coverage, a single count lands in 166–184 about 65.7 % of the time, so
     INCONCLUSIVE is the expected outcome near the floor. This is a limit of 300 toys.
   - The three outcome labels are frozen. They cannot overlap: a deficit count fails SUPPORT's joint rule or its veto.
-- **Both branches are stated now:** three truths, or two truths (u = 1, 2) if slot 1's replay fails (§4.1). Their k = 16
-  thresholds are above.
-- **Design pass rates, PROVISIONAL.** These come from the 16-cell covariance under a Gaussian scale-inflation model,
-  with the veto. §4.5's correlated simulation replaces them before binding.
+- **The frozen measured set, k = 13:** R00, R01, R02, R04, R05, R06, R08, R09, R10, R12, R13, R14, R15. These are
+  tier3-design's B-SEL labels on the frozen E_R estimator; the record is `selection.json`, sha256
+  `4d4205d4cb5e5b98a9aacc18e792a074dfbfa7f8aa05cb11f7f8bfb35d44c634`, PR to follow. R03, R07 and R11 are exploratory.
+  R00, R04, R05, R09 and R14 also meet 0.5·S_g, so they may support discrimination claims. The selection reran
+  nothing; the estimator was frozen when the step-2 test failed its rule.
+- **Both branches are stated now:** three truths, or two truths (u = 1, 2) if slot 1's replay fails (§4.1). Their
+  k = 13 thresholds are above.
+- **Design pass rates,** simulated by §4.5 on the frozen set's 13 × 13 submatrix of the reported covariance, with
+  20,000 replicas per branch (SE at most 0.004). They replace the spec's provisional Gaussian table.
 
   | true joint coverage | 68.27 % (nominal) | 64 % | 62 % | 60 % |
   |---|---|---|---|---|
-  | three truths | 93.7 % | 48 % | 16 % | 2 % |
-  | two truths | 94.4 % | 59.1 % | 27.8 % | 7.3 % |
+  | three truths | 94.3 % | 48.8 % | 16.3 % | 2.1 % |
+  | two truths | 94.9 % | 59.4 % | 28.3 % | 7.5 % |
 
 **4. Reporting.** The frozen estimates are always reported, with every count, interval and signed bias. No cell is
 dropped after a seal is opened. In the paper this is brief closure language, with the details in a supplement.
@@ -1356,12 +1362,13 @@ dropped after a seal is opened. In the paper this is brief closure language, wit
   deficit is in coverage, in bias, or in both.
 
 **Open before binding** (each must close, or (b) is set aside):
-- **The correlated simulation of the thresholds (§4.5):** both branches, for the actual frozen set. cov2d runs it once
-  tier3-design supplies the frozen measured/exploratory labels and the 16-cell covariance file.
+- ~~The correlated simulation of the thresholds (§4.5)~~ **closed 2026-11-24:** both branches were run on the frozen
+  k = 13 set (table above; `b-sim/`). The nominal pass rates, 94.3 % and 94.9 %, clear §4.5's 0.90 rule.
 - **The 5D GPU unfolds' reproduction test.**
 - **Which response and run-period variations the PV toys exercise.** C_PL and C_run are not drawn.
-- **The 5D bias and fluctuation blocks.** COVFIX builds them for 2D only, and tier3-design is pricing the 5D blocks for
-  Joseph. **Until they exist, no support claim attaches to the 16-cell covariance.**
+- **The 5D bias and fluctuation blocks.** COVFIX builds them for 2D only. **Approved by Joseph, 2026-11-24 ("yes build
+  the 5D bias block", to the director). In progress:** tier3-design builds C_b^5D and F_A^5D from existing products,
+  with no new unfolds, in about 3 lane-days. **Until they exist, no support claim attaches to the 16-cell covariance.**
 
 **Freeze or set aside.** (b) is frozen by these rules before the first seal spend, or set aside. If the 5D blocks
 cannot be built, or the design cannot be frozen and rehearsed in time, COVFIX proceeds in 2D only and forgoes this use
@@ -1380,7 +1387,15 @@ any sealed output is read.
   - It runs for both branches (T = 3 and T = 2).
   - The same run re-prints the exact deficit bounds and the veto counts for the frozen k.
 - **The amendment states, for each branch,** the simulated pass probability at nominal (68.27 %) and at true joint
-  coverage of 64 %, 62 % and 60 %. These replace §4.4's provisional Gaussian table wherever they differ.
+  coverage of 64 %, 62 % and 60 %. These replace §4.4's provisional Gaussian table.
+- **The result, 2026-11-24,** on the frozen k = 13 set, 20,000 replicas per branch, seed 20261124
+  (`covfix_b_threshold_sim.py` sha256 `0c3dd7e0c7288e16e3c7b2dec37341f0b26a98546e862396b58fdf2a0a088f69`; outputs and
+  their shas in `b-sim/`):
+  - three truths: 94.3 % at nominal, 48.8 % at 64 %, 16.3 % at 62 %, 2.1 % at 60 %;
+  - two truths: 94.9 %, 59.4 %, 28.3 %, 7.5 %;
+  - the k = 13 veto counts (every cell ≥ 180 or ≥ 181) and deficit bounds (≤ 153 or ≤ 154) equal the k = 16 values.
+
+  **Both nominal rates are above 0.90, so the thresholds stand** and nothing goes back to Joseph.
 - **If the simulated pass rate at nominal falls below 0.90 in either branch,** the threshold goes back to Joseph before
   the amendment binds. It is not adjusted here (the director, 2026-11-24).
 - **The earlier per-cell rule, not adopted.** The advisory's first rule was a one-sided 95 % exact binomial lower bound
