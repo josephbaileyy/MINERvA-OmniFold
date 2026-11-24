@@ -324,6 +324,15 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
   - **The amendment rule:** the DECISION supersedes §3.3's "ST1's named exception, the only post-binding amendment to
     §5–§7" for these changes only: the descriptive readings of §6.6, and u = 2's place in §6.4 and §7. Every other
     deciding rule in §5–§7 is unchanged.
+  - **u = 2's custody (§4.2), Joseph's choice:** a declared family, drawn by a committed seed, with a reco floor:
+    - a tilt of q3–W correlation shapes, calibrated from the public build truths, clipped and raked;
+    - attempts derived from the director-held secrets through the wrapper, the first passing one taken, with a 64-attempt
+      cap and a STOP;
+    - four checks: invariance on the graded weights of all 300 natures, non-triviality, bounds, and a reco floor
+      Δᵀ S⁻¹ Δ ≥ 1 on the reco muon (p_T, p∥) histogram that is E_R's complete reco input;
+    - unsealed draws reported before sealing, and full disclosure after PV.
+  - **The per-phase balance check (§3, ST6):** a committed iris read before each paid phase, against that phase's cap
+    plus the expected price of later phases.
 
 <!-- absence-ok: rule statement -->
 **Rules are fixed before computation.** Every reading, bar, candidate rule, seed and stop rule below is fixed at
@@ -505,6 +514,23 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
     - **Balance:** binding needs the committed iris receipt to show at least the pinned ceiling remaining (599 node-h at
       rev 12). If it does not, the binding goes back to Joseph.
     - The ceiling is separate from the expected price and from the 534 sum of caps.
+  - **The per-phase balance check (rev 12).** The m3246 pool is shared with other users, so the binding-time receipt
+    does not protect later phases. Before each paid phase (PG, W1, PX, W2, PV), a committed iris read must show the
+    pool's remaining node-h ≥ that phase's cap plus the expected price of every phase after it. Otherwise the phase
+    stops and goes to the director.
+    - "That phase's cap" is PG's 3.0, PV's 201, PX's bound price, and, for W1 and for W2, the P1 cap (330) less P1's
+      reconciled charges.
+    - The expected prices after a phase are those of §3's table (and PX's, only once bound).
+    - **At rev 12's figures**, before any spend:
+
+      | before | requirement |
+      |---|---|
+      | PG | 3.0 + (162.07 + 129.77 + 174.57) = 469.41 |
+      | W1 | 330 + 174.57 = 504.57 |
+      | PV | 201 |
+
+    - Binding at 599 is satisfied today: iris showed 630.4 node-h remaining for the whole m3246 pool at 06:55Z on
+      2026-11-24 (PR #1276, merged `62be2eff`).
   - **The priced worst case for each ST1 branch,** with PG at its 2.0 top, on rev 12's no-firing base
     2.00 + 162.07 + 129.77 + 174.57 = 468.41:
 
@@ -946,13 +972,88 @@ is no regeneration.
 - Atime does not detect O_NOATIME reads, so it is housekeeping only.
 - The generating session saw the plaintext and is retired after PG.
 
-**The third truth (u = 2): definition and custody. PLACEHOLDER (rev 12 DRAFT).** Joseph is choosing between:
-- a **human definer**: a named person or session, blind to every COVFIX build input, defines the correlation deformation,
-  and it is sealed as PG's truths are; or
-- a **declared family drawn by a committed seed**: the family of deformations is declared here, and one member is drawn
-  by a seed committed before the draw and revealed after PV's readout, as PG's seed base is.
-This subsection, its seal and its custody roles are written once Joseph chooses, before rev 12 is final. Until then no
-u = 2 code, seal or price is fixed beyond PV's 300 toys and one central unfold (§3).
+**The third truth (u = 2): definition and custody (rev 12 DRAFT).** Joseph chose a **declared family drawn by a committed
+seed, with a reco floor** (relayed by the director, 2026-11-24).
+
+*The family.* On the 5D FINE grid (`pvl_lib.FINE`: 14 p_T × 16 p∥ × 7 E_avail × 7 q3 × 6 W = 65,856 cells), with w the
+CV `w_truth` of `mc_truth_denom`'s rows binned on that grid:
+- In each (p_T, p∥, E_avail) cell, ξ and η are q3's and W's bin centres, standardized within the cell under w (mean 0,
+  variance 1). Cells with fewer than two populated (q3, W) bins get r = 1.
+- **The basis φ:** φ₁ = ξη, φ₂ = (ξ² − ⟨ξ²⟩)η and φ₃ = ξ(η² − ⟨η²⟩), with ⟨·⟩ the cell's w-mean: a small basis of q3–W
+  correlation shapes, which leave each cell's q3 and W means unchanged to first order.
+- **The tilt:** r⁰ = exp(c₁φ₁ + c₂φ₂ + c₃φ₃), with |c₁| ∈ [a_lo, a_hi], |c₂|, |c₃| ≤ |c₁| / 2, and all three signs drawn.
+- **Clip, then rake:** r⁰ is clipped to [0.5, 2]. Then iterative proportional fitting on w·r restores, to 1e-9
+  relative, the joint (p_T, p∥, E_avail) distribution and the global q3 and W marginals of w, within 200 iterations.
+  Non-convergence is an attempt failure. The raked r is applied per row by `s5e_deform.ratio_weight(gen, FINE, w_truth,
+  ratio, 1.0)`. Its in-grid renormalization is then 1 to within the raking tolerance.
+- **The calibration of [a_lo, a_hi],** fixed now as a rule and computed before any draw. For each public build truth
+  g ∈ {genie_mec, nuwro, gibuu}, D_g is the w-weighted mean over (p_T, p∥, E_avail) cells of |ρ_g − ρ_ref|. Here ρ is the
+  within-cell q3–W correlation of the bin centres under the generator's 5D density, and ref is untuned GENIE 2.12 CV.
+  These are the same pinned predictions PV2D's ratio files cite:
+  - `genie_cv_xsec5d_full.npz` `cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2`;
+  - `genie_mec_xsec5d_full.npz` `c179855df6e42a5b8bab1f839aae675c53a5150f132649c855356ad75f26790f`;
+  - `nuwro_cv_xsec5d_full.npz` `475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070`;
+  - `gibuu_cv_xsec5d_fluxfix.npz` `48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18`.
+  [a_lo, a_hi] is set so that φ₁ alone at |c₁| = a_lo and a_hi gives, after clipping and raking, a w-weighted mean
+  within-cell |Δρ| equal to min_g D_g and max_g D_g. **The numerical values are not yet computed.** The four files are
+  on pscratch only, and their fetch (a login-node read by sha) needs the director's go. The script, its output and
+  [a_lo, a_hi] are committed before any draw, sealed or unsealed.
+  <!-- absence-ok: scoping statement about this declaration's own method parameter, defined here and computed later -->
+
+*The draw.* Attempt k = 1, 2, … takes its parameters from SHA-256(domain tag ‖ seed base ‖ salt ‖ k):
+- The domain tag is "covfix-u2-correlation-draw/1". The seed base and salt are the director-held secrets of §4.2, whose
+  commitment is already published, so the draw is replayable after their reveal.
+- The 32 digest bytes give four 64-bit unsigned integers, U_i = n_i / 2⁶⁴. |c₁| = a_lo + (a_hi − a_lo)·U₁; |c₂| =
+  (|c₁| / 2)·U₂; |c₃| = (|c₁| / 2)·U₃; the three signs are bits 0–2 of n₄.
+- **It runs only through the director's wrapper,** as a secret-bearing role ("u2-draw") on one exclusive node, with the
+  §4.2 stdin framing and JE's round-3 contract. Its binary is cov2d's to write and goes through §8's chain.
+- **The first passing attempt is taken.** The attempt cap is K_max = 64. If no attempt passes by k = 64, the role ends
+  without a map, and that is a STOP to the director. u = 2 is then not formed, and PV does not run until the director
+  and Joseph rule.
+- **Sealing:** the taken map r_2 is encrypted and sealed as PG's products are (§4.2), with its manifest and seal file.
+  Every attempt's parameters and check results, the count and the timing are sealed with it. They are revealed in full
+  after PV's readout, so the selection can be replayed.
+
+*The checks inside custody.* Each prints pass or fail only; nothing else leaves the role.
+1. **Invariance, on the weights the toys grade.** Two parts:
+   - (a) at CV: the raked w·r reproduces w's joint (p_T, p∥, E_avail) and its q3 and W marginals to 1e-9 relative;
+   - (b) for each of u = 2's 300 toy natures (drawn by `cov2d.draw` at their public seeds, §3.4), the graded 2D truth
+     (the clipped, band-varied composite truth of §3.4, normalized as there) with r_2 and without it differs by at most
+     0.05·σ_c on every reported cell. σ_c is the data-statistical standard deviation, √(stat_cc) from Q_rep's `stat`
+     block at x_R.
+   - Band variation is handled by checking every nature, not only CV. `ratio_weight` restores only the in-grid CV total,
+     and r_2 is fixed per row, so a band's reweighting of q3 and W within a cell can move the graded truth slightly;
+     (b) bounds that motion at 5 % of the data's statistical error.
+2. **Truth-level non-triviality:** the w-weighted mean within-cell |Δρ(q3, W)| of the raked map is at least
+   0.5·min_g D_g.
+3. **The bounds:** the raked r lies in [0.4, 2.5] on every FINE cell whose CV support meets `pvl_lib.SUPPORT_MIN`, and
+   is finite and positive everywhere.
+4. **The reco floor:** Δᵀ S⁻¹ Δ ≥ 1.
+   - Δ = μ(r_2) − μ₀ and S = diag(μ₀), where μ₀ is the expected reco summary at nominal and μ(r_2) the same under r_2.
+     Both are at one dataset's exposure (data POT), signal plus background. Cells with μ₀ = 0 are excluded and counted.
+   - **The reco summary, frozen now:** the joint histogram of the reco muon (p_T, p∥) of every passing event, on FINE's
+     (p_T, p∥) edges (224 cells, 14 × 16).
+   - **Why this summary.** It is the complete set of reco features E_R's OmniFold uses. `re2_driver.py:2336-2338`
+     builds MCreco and the measured array from (reco_pt, reco_pz) only, and the data tree carries `measured`,
+     `measured_pz` and `measured_pass` and nothing else (`re2_driver.py:1096`). A summary built on other variables
+     would test reco differences the unfold cannot see.
+   - In 2D, a muon-only histogram is therefore the right object, not a coarse stand-in. The advisory's concern about a
+     muon-only histogram applies where the unfold has more inputs. The joint 224-cell binning keeps the p_T–p∥
+     correlations the unfold learns from, and the total rate is inside it.
+   - A score of 1 is roughly a one-standard-deviation separation along the shift, in the local Gaussian approximation
+     with Poisson statistics. It is a modest floor, and it guarantees no unfolded bias and no coverage power.
+
+*Before sealing, on unsealed draws.* The same family and checks are run with a public domain tag,
+"covfix-u2-correlation-unsealed/1", and a public seed published in the same commit, never the committed secrets. Over
+200 unsealed attempts it reports:
+- how often each check rejects, and the floor in particular;
+- for draws within 20 % of the floor, how often a map crosses it under 50 bootstrap resamplings of the simulation (finite
+  simulation noise);
+- which (φ₁, φ₂, φ₃) directions survive raking and the cuts.
+This report is committed before the sealed draw. It is a description, and changes no cut after the fact.
+
+*After PV, published:* the cut, the reco summary, the taken map's achieved score Δᵀ S⁻¹ Δ, the redraw count, and every
+sealed attempt's record.
 
 ### 4.3 What the validation family can and cannot show
 
@@ -969,6 +1070,10 @@ the same 2D truth. u = 2 therefore **tests hidden-variable dependence through th
   the response model, not to the bias allowance.
 - u = 2 is a reweighting of the nominal simulation. It is not a generator sample, and it shares the nominal's physics
   outside the deformed conditional.
+- **A PASS at u = 2 applies to one sealed draw from the declared family**, conditional on the declared cuts (invariance,
+  non-triviality, the bounds and the reco floor), under the fixed toy law. **Weakly visible maps, below the reco floor,
+  are outside the claim.** The floor selects a subset of the family, favouring changes the reco summary measures well;
+  its effect on the difficulty of passing the bars can go either way, and that is disclosed beside any u = 2 reading.
 
 ## 5. Candidate constructions, built from P0 and P1, frozen at P2
 
@@ -1384,8 +1489,13 @@ stands alone, and each candidate's PV verdict is reported descriptively.
 7. **The carry.** COVFIX tests the reported covariance carried in relative form, not remade at each truth. P0 measures
    the difference at G18 and AR23. If the director wants the remade object instead, that is 486 unfolds per truth (about
    92 node-h each), and it changes the price.
-8. **Rev 12's open items (for Joseph):**
-   - u = 2's definition and custody (§4.2's placeholder): a human definer, or a declared family drawn by a committed seed;
-   - u = 2's role: deciding (as drafted) or descriptive (the change log's alternative);
-   - the DECISION's text superseding §3.3's clause for rev 12's changes;
-   - a committed iris receipt of at least 599 node-h.
+8. **Rev 12's open items:**
+   - **for Joseph:** u = 2's role, deciding (as drafted) or descriptive (the change log's alternative); and the
+     DECISION's text superseding §3.3's clause for rev 12's changes;
+   - **for the director:**
+     - the go for a login-node fetch, by sha, of the four 5D predictions the calibration of [a_lo, a_hi] reads (§4.2);
+     - the u2-draw role's node-h, about 1.0 and unmeasured, on one exclusive node, not in §3's base. It is proposed
+       inside PV's cap margin (201 − 174.57 = 26.43); say if it should be priced separately;
+       <!-- absence-ok: price of a role this draft declares and has not yet written -->
+   - the receipt: binding at 599 is satisfied by PR #1276 (630.4 node-h at 06:55Z); the per-phase check then applies
+     before each paid phase.
