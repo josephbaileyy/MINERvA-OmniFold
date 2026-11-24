@@ -1,0 +1,20 @@
+=== script rc=9; /dev/shm copy left: no
+=== /pscratch/sd/j/josephrb/s2r-20261124/logs/connect-submit.log
+node a3dd238852fe nproc=4 loadavg 1.41 1.00 0.80
+2026-11-24T18:28:25Z
+window_end_epoch 1795545782 (now 1795544905); fence prefixes cov2d,rpd_,d2s0,covfix
+connect script sha256 fa3fbaf75a60ee5ea277240579b785909b5d468e22be76e9da263f464079b4d7
+== fence (sacct)
+fence clear
+== iris
+m3246 cpu x 0.0 1.5
+balance_node_h=1.5 half=0.8 cap_total=1.0
+STOP: the cap 1.0 is above half the balance 1.5
+s2r submit rc=9
+2026-11-24T18:28:25Z
+=== tests.log tail
+=== stub calls
+sacct -X -n -P -S now-14days -o JobID,JobName,State
+sacct -X -n -P -S now-14days -o JobID,JobName,State
+=== files written under /pscratch outside /pscratch/sd/j/josephrb/s2r-20261124 (newer than the planting):
+/pscratch/sd/j/josephrb

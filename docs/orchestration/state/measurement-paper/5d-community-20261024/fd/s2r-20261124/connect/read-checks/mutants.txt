@@ -1,0 +1,11 @@
+fit ref dropped: KILLED
+output not times ref: KILLED
+saturation STOP off: KILLED
+ref check off: KILLED
+ref = 1 always: KILLED
+bar strict: KILLED
+nominal ignored: KILLED
+grade at k20: KILLED
+out root pin off: KILLED
+runs not passed: KILLED
+nu0 check off: SURVIVED

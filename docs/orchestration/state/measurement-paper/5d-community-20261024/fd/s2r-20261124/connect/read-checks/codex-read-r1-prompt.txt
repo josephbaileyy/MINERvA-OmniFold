@@ -1,0 +1,14 @@
+You are reviewing a small, time-boxed cluster test in the read-only git checkout at the current directory (commit 37affb03a). Do not modify anything.
+
+Read docs/orchestration/state/measurement-paper/5d-community-20261024/fd/s2r-20261124/S2R-DECLARATION.md first. Then read nd-unfolding/s2r/ (s2r_arm.py, s2r_probe.py, s2r_read.py, s2r_rule.py, sbatch_s2r.sh, test_s2r.py). They build on nd-unfolding/tier3/t3p_arms.py, nd-unfolding/tier3/t3p_probe.py, nd-unfolding/tier3/t3p_read.py, nd-unfolding/s5e_trace.py, nd-unfolding/omnifold_nn_core.py (omnifold_loop, _reweight) and nd-unfolding/s5c_unfold.py; read those as needed. Also read the connect templates under /Users/josephbailey/s2r-wt/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/s2r-20261124/connect/ (s2r_submit.template.sh, s2r_fetch.sh, s2r_launch.template.sh; @@...@@ placeholders get filled from shasum/git later).
+
+The intent: S2R replaces production step 2 (relearn the full ratio from the prior each iteration) with the incremental form nu_n = nu_{n-1} * L[(w_pull, Gen), (nu_{n-1}, Gen)], implemented as a wrapper on the loop's step-2 estimator, then tested once at two truths against a pass rule fixed in advance.
+
+Report BLOCKERS first, then MAJORS, then minors, each with file:line and a concrete failure scenario. Focus on:
+1. Is the wrapper mathematically the incremental step 2? Check the fit weights (first class nu_{n-1}*w_truth), that nu_{n-1} is really the previous iteration's push weights at that moment, the output mapping p/(1-p) = nu_{n-1}*L, clipping interplay with omnifold_nn_core._reweight, and that the loop's own w_push equals the tracer's.
+2. Is anything truth- or oracle-derived reaching the estimator (it must be data-usable)?
+3. Does the pass rule in s2r_rule.py / s2r_read.py implement the declaration's section 3 exactly (k = 5, both truths, bar inclusive, nominal flag from S2R's nominal, undefined rho fails)?
+4. Can the job script or connects launch anything not declared, write outside /pscratch/sd/j/josephrb/s2r-20261124, use squeue, or silently pass a failed step? Does the S2R_SMOKE stop prevent a smoke test from staging or running tasks?
+5. Controls: C-PAIR (bitwise B0 vs FD-PRR), C-X, C-ONE, C-ARM. Would each fail when it should? Any test that passes vacuously?
+6. Pricing/--time: 6 tasks on 6 lanes, B0 700 s, S2R 2100 s, gate 0.9, limit 1:00:00.
+Keep it under about 900 words.
