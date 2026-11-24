@@ -1,0 +1,2 @@
+FROM python:3.11-slim-bookworm
+RUN apt-get update -qq && apt-get install -y -qq git procps > /dev/null && rm -rf /var/lib/apt/lists/* && pip install -q numpy==1.26.4 scipy==1.16.3 lightgbm scikit-learn

@@ -1,0 +1,29 @@
+=== script rc=0; /dev/shm copy left: no
+=== /pscratch/sd/j/josephrb/s2r-20261124/logs/connect-records.log
+node d4c30c75c6ab nproc=4 loadavg 0.94 1.01 0.85
+2026-11-24T18:32:20Z
+window_end_epoch 1795546039 (now 1795545140); fence prefixes cov2d,rpd_,d2s0,covfix
+connect script sha256 b5c9f5bc717ac5ad97959c17873b9b02528ba1d1e8d23ee5a76b54505444c4f3
+== fence (sacct)
+fence clear
+== the job (sacct)
+7000001|s2r_run|COMPLETED|0:0|2026-11-24T20:00:00|2026-11-24T20:40:00|2400|1|01:00:00|1|regular|m3246
+log/DONE: {"tasks": 6, "ended": 6, "rc": 0}
+log/SHA256SUMS: 6 lines, 6 well-formed product lines (want 6)
+log/SHA256SUMS: OK
+npz files under runs/: 6
+read/readout.json sha256 67e3915ea976ed4ba8ed9ac4509994bd8aa9f21863565cd08ee877b62eafdc8f bytes 20
+read/readout.txt sha256 681759d8a7ee7483983aca87b30f28c646ac82c712f6125328f883bc433541b5 bytes 18
+== records
+2026-11-24T18:32:20Z
+records copied: 12 files, 28820 bytes
+fetch-records.tar sha256 45bb1be845e5c2a74041978f9711cb29a13901e590994db039e8c258accacdcf bytes 30720
+s2r records rc=0
+2026-11-24T18:32:21Z
+=== tar RECORDS.SHA256SUMS: OK (12 files)
+=== stub calls
+sacct -X -n -P -S now-14days -o JobID,JobName,State
+sacct -j 7000001 -X -n -P -o JobName,State
+sacct -X -n -P -S now-14days -o JobID,JobName,State
+sacct -j 7000001 -X -n -P -o JobID,JobName,State,ExitCode,Start,End,ElapsedRaw,NNodes
+=== files written under /pscratch outside /pscratch/sd/j/josephrb/s2r-20261124 (newer than the planting):
