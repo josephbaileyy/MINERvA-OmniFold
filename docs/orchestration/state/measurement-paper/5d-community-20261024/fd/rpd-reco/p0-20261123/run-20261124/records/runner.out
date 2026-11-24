@@ -1,0 +1,17 @@
+== rpd_p0 runner 1269346 on login05 2026-11-24T03:18:07Z, nice 19
+handoff.ok: 1269346 2026-11-24T03:18:07Z
+deadline (monotonic) 467749.227837311, 7200 s from now
+== pins-dry start 2026-11-24T03:18:07Z
+{"dry_run": true, "status": "PASS", "step": "pins"}
+pins-dry supervisor_rc=0 rc=0 signal=- deadline=0 leftover_killed=0 group_gone=1 peak_rss_bytes=35700736 end=2026-11-24T03:18:13Z
+== p0-dry start 2026-11-24T03:18:13Z
+{"dry_run": true, "status": "PASS", "step": "p0"}
+p0-dry supervisor_rc=0 rc=0 signal=- deadline=0 leftover_killed=0 group_gone=1 peak_rss_bytes=142704640 end=2026-11-24T03:18:20Z
+== pins start 2026-11-24T03:18:20Z
+{"dry_run": false, "status": "PASS", "step": "pins"}
+pins supervisor_rc=0 rc=0 signal=- deadline=0 leftover_killed=0 group_gone=1 peak_rss_bytes=37748736 end=2026-11-24T03:18:25Z
+== p0 start 2026-11-24T03:18:25Z
+{"dry_run": false, "status": "PASS", "step": "p0"}
+p0 supervisor_rc=0 rc=0 signal=- deadline=0 leftover_killed=0 group_gone=1 peak_rss_bytes=140455936 end=2026-11-24T03:18:32Z
+== P0 DONE 2026-11-24T03:18:32Z
+removed /dev/shm/limres-rpd-flux1
