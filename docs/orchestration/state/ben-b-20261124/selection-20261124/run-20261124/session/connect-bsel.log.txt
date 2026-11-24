@@ -1,0 +1,17 @@
+node login38 nproc=244 loadavg 132.06 133.62 129.29
+2026-11-24T21:59:36Z
+window_end_epoch 1795558392 (now 1795557576); fence prefixes cov2d,rpd_,d2s0,covfix
+connect script sha256 199cc946b5a7238873f99702b55caf0872fce95ed3e253cb9fdbc67c400ad547
+== fence (sacct)
+fence clear
+== sources
+pin	sha256_ok	copy_ok	stat_unmoved	size	atime_before_s	atime_after_s	src
+7384c6518aa0f59b	true	true	true	1068642	1793239474.000000000	1793239474.000000000	/pscratch/sd/j/josephrb/fd-f0b-20261026/fd_f0b_experiments.npz
+997c7dae34ef9703	true	true	true	1075668	1793191469.000000000	1793191469.000000000	/pscratch/sd/j/josephrb/fd-f1-20261027/grade/fd_f1_experiments.npz
+198205b6466a4b7a	true	true	true	188557	1793480602.000000000	1793480602.000000000	/pscratch/sd/j/josephrb/fd-f1-20261027/f1c/closure/f1_closure_genie_v3_g18.npz
+532a6ac014274e54	true	true	true	188498	1793480602.000000000	1793480602.000000000	/pscratch/sd/j/josephrb/fd-f1-20261027/f1c/closure/f1_closure_genie_v3_ar23.npz
+eb3e218866dd36e0	true	true	true	188532	1794507919.000000000	1794507919.000000000	/pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_closure_tune_v1.npz
+fff9030e7fd63c53	true	true	true	188455	1794507919.000000000	1794507919.000000000	/pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_closure_nuwro.npz
+fetch-bsel.tar sha256 f6e67b9e0d3ec5c4eab4a3b641509473a985120a2d4f3b1d8bb270974a3e5575 bytes 2918400
+bsel read rc=0
+2026-11-24T21:59:36Z

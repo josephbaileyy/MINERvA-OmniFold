@@ -8310,6 +8310,7 @@ docs/orchestration/state/ben-b-20261124/INVENTORY-AND-DRAFT.md	tracked	MACHINE	s
 docs/orchestration/state/ben-b-20261124/codex-school-sweep.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/selection-20261124/B-SEL-DECLARATION.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/selection-20261124/BSEL-BINDING-1.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/README.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/selection-20261124/connect/README.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/selection-20261124/connect/bsel_launch.sh	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/selection-20261124/connect/bsel_launch.template.sh	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
@@ -8327,6 +8328,29 @@ docs/orchestration/state/ben-b-20261124/selection-20261124/connect/standin/stand
 docs/orchestration/state/ben-b-20261124/selection-20261124/connect/standin/standin-pin_bad.log.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/selection-20261124/connect/standin/standin-window_ended.log.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/selection-20261124/connect/standin/standin.sh	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/record/checks/line-trace.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/record/checks/line_trace.py	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/record/checks/mutants.py	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/record/checks/mutants.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/record/checks/tests.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/record/selection.json	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/record/selection.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/record/selection/L-5D-PV_e_closure_nuwro.npz	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/record/selection/L-5D-PV_e_closure_tune_v1.npz	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/record/selection/f1_closure_genie_v3_ar23.npz	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/record/selection/f1_closure_genie_v3_g18.npz	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/record/selection/fd_f0b_experiments.npz	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/record/selection/fd_f1_experiments.npz	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/run-20261124/RENAMES.tsv	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/run-20261124/lane/launcher.out.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/run-20261124/lane/wend.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/run-20261124/session/connect-bsel.done	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/run-20261124/session/connect-bsel.log.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/run-20261124/session/fetch.err.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/run-20261124/session/records-check.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/run-20261124/session/records/fetch-bsel/RECORDS.SHA256SUMS	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/run-20261124/session/session.err.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/selection-20261124/run-20261124/session/session.out.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben106-stamp-verify-active-56695424.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/ben106-stamp-verify-complete-56695424.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/canonical-namespace-field-pins-20260817.json	tracked	MACHINE	state-artifact		20260817	generated		exact-path-only	yes
