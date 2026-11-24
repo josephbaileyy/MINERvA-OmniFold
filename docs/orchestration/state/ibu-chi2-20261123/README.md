@@ -58,6 +58,8 @@ and `/pscratch/sd/j/josephrb/`. Local runs used Python 3.11.18, ROOT 6.40.04, nu
 | 14 | [`resp`](resp/README.md) | Do our p‖ migration and efficiency match the paper's Figs. 3 and 5? | **EFF-DIFF** | Migrations agree within 0.03. Our efficiency at true p‖ 40–60 is 0.747 against 0.861. Reco overflow (6 %) explains about half of the gap (descriptive). |
 | 15 | [`axis`](axis/README.md) | Does a common beam-axis rotation explain the low-pT rows against Fig. 2? | **EDGE: AXIS-NO** | The deficit is largest at low p‖, the opposite of what a rotation predicts. Explained by test 16. |
 | 16 | [`edges`](edges/README.md) | Are the paper's pT edges 0.075 / 0.325 / 0.475? | **EDGES-CONFIRMED** | The release's own TH2D axis stores them. Rebinning our data with them against Fig. 2 takes X from 104.9 to 19.4, and every affected row lands within 1.5 %. Our analysis uses 0.07 / 0.33 / 0.47; see the impact inventory. |
+| 17 | [`rebuild`](rebuild/README.md) | This lane's IBU on the paper's pT edges; a reco-anywhere efficiency arm | **ROW-CLOSED**; **OVERFLOW-PARTIAL** | IBU χ²/205 0.961 → 0.474. The low-pT fold residual goes −6.4 % → −0.6 %. The reco-anywhere efficiency reproduces 57 % of the 40–60 column residual. |
+| 18 | [`tier1`](tier1/README.md) | E_R and its binned IBU (REF-C2C1) on the paper's pT edges | controls pass | **IBU χ²/205 vs published 1.027 → 0.538 at K = 10** (0.830 → 0.395 at K = 5). D_ER 2.270 → 2.121. |
 
 **Post hoc, read by no rule (`foldtest/posthoc_exclude.py`).** Dropping reco pT row 0 and the p‖ 40–60 column from the
 IBU-vs-published χ² takes it from 210 to 100 over 176 cells. Cells were dropped from a correlated covariance, so this

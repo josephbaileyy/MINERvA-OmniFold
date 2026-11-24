@@ -1,0 +1,23 @@
+	Command being timed: "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 -B 2d-unfolding/ref_c2c1/ref_c2c1.py --unit c2_central --out /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_old"
+	User time (seconds): 1083.74
+	System time (seconds): 10.55
+	Percent of CPU this job got: 508%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:35.29
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 9762384
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 1319
+	Minor (reclaiming a frame) page faults: 2590188
+	Voluntary context switches: 105349
+	Involuntary context switches: 6510
+	Swaps: 0
+	File system inputs: 771032
+	File system outputs: 224
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
