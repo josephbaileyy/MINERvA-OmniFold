@@ -1341,7 +1341,10 @@ u = 1 (G18_02a_00_000) and u = 2.
   tier3-design's B-SEL labels on the frozen E_R estimator; the record is `selection.json`, sha256
   `4d4205d4cb5e5b98a9aacc18e792a074dfbfa7f8aa05cb11f7f8bfb35d44c634`, PR to follow. R03, R07 and R11 are exploratory.
   R00, R04, R05, R09 and R14 also meet 0.5·S_g, so they may support discrimination claims. The selection reran
-  nothing; the estimator was frozen when the step-2 test failed its rule.
+  nothing; the estimator was frozen when the step-2 test failed its rule. **S2R, the time-boxed step-2 test, FAILED its
+  declared rule at both truths** (`docs/orchestration/state/measurement-paper/5d-community-20261024/fd/s2r-20261124/
+  run-20261124/README.md` at merge commit `aa50979af796436e6278f920f59ad29d2a2302c0`, #1309), so (b) uses the current
+  E_R estimator, frozen.
 - **Both branches are stated now:** three truths, or two truths (u = 1, 2) if slot 1's replay fails (§4.1). Their
   k = 13 thresholds are above.
 - **Design pass rates,** simulated by §4.5 on the frozen set's 13 × 13 submatrix of the reported covariance, with
