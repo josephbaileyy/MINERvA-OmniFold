@@ -40,6 +40,9 @@ FLAVOR = "Linux64bit+3.10-2.17-e20-prof"
 CONFIG = FLAVOR + "/GENIE-Generator/config"
 SPENT = ("G18_10a_02_11b", "AR23_20i_00_000")
 CANDIDATES = ("G21_11b_00_000", "G18_02b_02_11b", "G18_02a_02_11b", "G21_11a_00_000", "G18_02a_00_000")
+# Tunes surveyed at the director's request that do not resolve to a CCQE and a 2p2h class: recorded, not judged.
+SURVEYED = ("GDNu20_01a_00_000",)
+QUALIFIER = {"GDNu20_01a_00_000": "GDNu2001a00000-k120-e200"}
 SLOTS = {"QEL-CC": "ccqe", "MEC-CC": "2p2h"}
 KEY = "XSecModel@genie::EventGenerator/{}"
 
@@ -61,7 +64,7 @@ def cmc(t):
 
 
 def qualifier(t):
-    return t.replace("_", "") + "-k250-e1000"
+    return QUALIFIER.get(t, t.replace("_", "") + "-k250-e1000")
 
 
 def listing(d):
@@ -148,7 +151,7 @@ class Tune:
         trel = self.find("TuneGeneratorList.xml")
         tl = self.params(self.xml(trel), trel, "Default")
         rec["model_configuration"], rec["event_generator"], rec["tune_generator_list"] = mrel, erel, trel
-        rec["hadron_transport"] = gpl["HadronTransp-Model"][1]           # for the declaration's FSI-twin rule
+        rec["hadron_transport"] = gpl.get("HadronTransp-Model", ("", None))[1]   # for the declaration's FSI-twin rule
         for thread, slot in SLOTS.items():
             ep = self.params(eroot, erel, thread)
             if "XSecModel" in ep:
@@ -186,6 +189,45 @@ class Tune:
                     self.used.setdefault(f"{d}/{n}", sha256(os.path.join(self.genie, d, n)))
         rec["files"] = dict(sorted(self.used.items()))
         return rec
+
+
+def survey(genie, name):
+    """What a tune's files say when it does not resolve: listings, its global models and generators, and why."""
+    t = Tune(genie, name)
+    rec = {"tune": name, "cmc": cmc(name), "role": "surveyed", "resolved": False}
+    try:
+        t.resolve()
+    except (RecordError, KeyError):
+        pass
+    else:
+        raise RecordError(f"{name} resolves; list it as a candidate")
+    mrel = t.find("ModelConfiguration.xml")
+    rec["model_configuration"] = mrel
+    rec["model_configuration_default"] = {k: v[1] for k, v in t.params(t.xml(mrel), mrel, "Default").items()}
+    trel = t.find("TuneGeneratorList.xml")
+    rec["tune_generator_list"] = trel
+    rec["generators"] = {k: v[1] for k, v in t.params(t.xml(trel), trel, "Default").items()}
+    rec["hadron_transport"] = rec["model_configuration_default"].get("HadronTransp-Model")
+    missing = [th for th in SLOTS if KEY.format(th) not in rec["model_configuration_default"]]
+    off = [th for th in SLOTS if f"genie::EventGenerator/{th}" not in rec["generators"].values()]
+    rec["reason"] = (f"ModelConfiguration's Default sets no XSecModel for {', '.join(missing) or 'none'}, and "
+                     f"TuneGeneratorList enables no {', '.join(off) or 'none'} thread")
+    cdir, tdir = f"{CONFIG}/{cmc(name)}", f"{CONFIG}/{cmc(name)}/{name}"
+    rec["listings"] = {cdir: listing(os.path.join(genie, cdir)), tdir: listing(os.path.join(genie, tdir))}
+    for d, names in rec["listings"].items():
+        for n in names or []:
+            if not n.endswith("/"):
+                t.used.setdefault(f"{d}/{n}", sha256(os.path.join(genie, d, n)))
+    rec["files"] = dict(sorted(t.used.items()))
+    return rec
+
+
+def spline_processes(path):
+    """{algorithm/set: number of splines} from a spline file's spline names (a count, for the record)."""
+    out = {}
+    for m in re.finditer(r'<spline name="([^/"]+/[^/"]+)/', open(path, errors="replace").read()):
+        out[m.group(1)] = out.get(m.group(1), 0) + 1
+    return dict(sorted(out.items()))
 
 
 def novelty(recs):
@@ -255,6 +297,7 @@ def splines(xsec, tunes):
                   "spline_sha256": sha256(os.path.join(d, "data", "gxspl-NUsmall.xml")),
                   "readme_sha256": sha256(os.path.join(d, "data", "README")), "readme_version_lines": lines,
                   "ups_table_sha256": sha256(os.path.join(d, "ups", "genie_xsec.table")),
+                  "processes": spline_processes(os.path.join(d, "data", "gxspl-NUsmall.xml")),
                   "ups_table_genie_xsec_tune": re.findall(r'envSet\s*\(\s*GENIE_XSEC_TUNE\s*,\s*"?([^)\s"]+)"?\s*\)', table)}
     return out
 
@@ -270,6 +313,7 @@ def main():
     for t in CANDIDATES:
         recs[t]["role"] = "candidate"
     pool, nov = novelty(recs)
+    surveyed = {t: survey(o.genie, t) for t in SURVEYED}
     classes = {x for r in recs.values() for s in SLOTS.values() for x in r[s]["branches"] + [r[s]["alg"][0]]}
     libs, lib_pins, lib_links = libraries(o.genie, classes)
     tree = {x["path"] for x in json.load(open(o.tree))["tree"]}
@@ -280,7 +324,7 @@ def main():
             raise RecordError(f"{c}: source {hits}")
         src[c] = hits[0]
     config_pins = {}
-    for r in recs.values():
+    for r in list(recs.values()) + list(surveyed.values()):
         config_pins.update(r["files"])
     github = {}
     for p, h in sorted(config_pins.items()):
@@ -289,12 +333,13 @@ def main():
     rec = {"schema": "covfix-pg-record/1", "sources": json.load(open(o.sources)),
            "genie_root": "/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00",
            "xsec_root": "/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00",
-           "tunes": recs, "spent_pool": pool, "novelty": nov, "classes": libs, "class_sources_at_tag": src,
+           "tunes": recs, "surveyed": surveyed, "spent_pool": pool, "novelty": nov, "classes": libs, "class_sources_at_tag": src,
            "pins": {"files": dict(sorted({**config_pins, **lib_pins,
                                           "ups/genie.table": sha256(os.path.join(o.genie, "ups", "genie.table"))}.items())),
                     "links": lib_links,
-                    "listings": {d: v for r in recs.values() for d, v in r["listings"].items()}},
-           "github_tag_equal": github, "splines": splines(o.xsec, SPENT + CANDIDATES)}
+                    "listings": {d: v for r in list(recs.values()) + list(surveyed.values())
+                                 for d, v in r["listings"].items()}},
+           "github_tag_equal": github, "splines": splines(o.xsec, SPENT + CANDIDATES + SURVEYED)}
     os.makedirs(o.out, exist_ok=True)
     with open(os.path.join(o.out, "PG-RECORD.json"), "w") as f:
         json.dump(rec, f, indent=1, sort_keys=True)
@@ -313,6 +358,8 @@ def markdown(r):
          "  ModelConfiguration's set `Default`; each genie::<Class>/<set> through exactly one master_config.xml entry,",
          "  its file and exactly one param_set; hybrids resolved one level, a nested hybrid refused. The QEL-CC and MEC-CC",
          "  threads must be in TuneGeneratorList and must not set their own XSecModel in EventGenerator.xml.",
+         "- The slots are the charged-current threads QEL-CC and MEC-CC. Other threads, such as MEC-NC and MEC-EM,",
+         "  are outside the test; `splines.*.processes` counts every spline by algorithm.",
          "- Novelty: the pool is every class and branch of the spent tunes. All branches in a slot must agree, and a tune",
          "  is novel if its CCQE or 2p2h class is outside the pool.",
          "- Instantiability: each class must be listed in exactly one of the build's .rootmap files, with a defined",
@@ -337,6 +384,13 @@ def markdown(r):
         sh = "; ".join(f"{k}: {', '.join(v)}" for k, v in n["overlap_with_spent"].items() if v) or "none"
         L.append(f"| {t} | {n['novel']} | {n['branches_agree']} | {n['branches_novel']['ccqe']} | "
                  f"{n['branches_novel']['2p2h']} | {sh} |")
+    for t, x in r["surveyed"].items():
+        L += ["", f"## Surveyed, not a candidate: {t}", "",
+              f"- It does not resolve to a CCQE and a 2p2h class: {x['reason']}.",
+              f"- ModelConfiguration `{x['model_configuration']}`, set Default: {x['model_configuration_default']}.",
+              f"- TuneGeneratorList `{x['tune_generator_list']}`, set Default: {x['generators']}.",
+              f"- Intranuclear transport (`HadronTransp-Model`): {x['hadron_transport']}.",
+              f"- Spline processes (SciSoft): {r['splines'][t].get('processes')}."]
     L += ["", "## Files that define each tune's models", ""]
     for t, x in r["tunes"].items():
         L.append(f"- **{t}**: ModelConfiguration `{x['model_configuration']}`; EventGenerator `{x['event_generator']}`; "

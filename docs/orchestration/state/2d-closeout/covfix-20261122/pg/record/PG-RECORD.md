@@ -11,6 +11,8 @@ the same content for reading.
   ModelConfiguration's set `Default`; each genie::<Class>/<set> through exactly one master_config.xml entry,
   its file and exactly one param_set; hybrids resolved one level, a nested hybrid refused. The QEL-CC and MEC-CC
   threads must be in TuneGeneratorList and must not set their own XSecModel in EventGenerator.xml.
+- The slots are the charged-current threads QEL-CC and MEC-CC. Other threads, such as MEC-NC and MEC-EM,
+  are outside the test; `splines.*.processes` counts every spline by algorithm.
 - Novelty: the pool is every class and branch of the spent tunes. All branches in a slot must agree, and a tune
   is novel if its CCQE or 2p2h class is outside the pool.
 - Instantiability: each class must be listed in exactly one of the build's .rootmap files, with a defined
@@ -29,6 +31,7 @@ the same content for reading.
 - `scisoft genie_xsec-3.04.00-noarch-G1802a00000-k250-e1000.tar.bz2`: sha256 `d7189bd6c3933b3017c83fafddb84d57b48414632b577835e49babec8537ab6e`
 - `scisoft genie_xsec-3.04.00-noarch-G1810a0211b-k250-e1000.tar.bz2`: sha256 `a1031e49ac8ac426074f247d91b2c886edaf7c4fef13993fe69aad92ad698c34`
 - `scisoft genie_xsec-3.04.00-noarch-G2111a00000-k250-e1000.tar.bz2`: sha256 `ae159887772a54891fc4bddb189ab108d74c4a48db68c13ed7166524e8797590`
+- `scisoft genie_xsec-3.04.00-noarch-GDNu2001a00000-k120-e200.tar.bz2`: sha256 `69146aacc6c55bdc5c519e917e48ea005d160824bf960d17734e9c7c6d85b6cb`
 
 ## Classes per tune
 
@@ -55,6 +58,14 @@ Spent pool: NievesQELCCPXSec, NievesSimoVacasMECPXSec2016, SuSAv2MECPXSec.
 | G18_02a_02_11b | True | True | {'LwlynSmithQELCCPXSec': True} | {'EmpiricalMECPXSec2015': True} | none |
 | G21_11a_00_000 | True | True | {'LwlynSmithQELCCPXSec': True, 'RosenbluthPXSec': True, 'SuSAv2QELPXSec': True} | {'SuSAv2MECPXSec': False} | SuSAv2MECPXSec: AR23_20i_00_000 |
 | G18_02a_00_000 | True | True | {'LwlynSmithQELCCPXSec': True} | {'EmpiricalMECPXSec2015': True} | none |
+
+## Surveyed, not a candidate: GDNu20_01a_00_000
+
+- It does not resolve to a CCQE and a 2p2h class: ModelConfiguration's Default sets no XSecModel for QEL-CC, MEC-CC, and TuneGeneratorList enables no QEL-CC, MEC-CC thread.
+- ModelConfiguration `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a/ModelConfiguration.xml`, set Default: {'XSecModel@genie::EventGenerator/COHDNu': 'genie::BertuzzoDNuCOHPXSec/Default'}.
+- TuneGeneratorList `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a/TuneGeneratorList.xml`, set Default: {'NGenerators': '1', 'Generator-0': 'genie::EventGenerator/COHDNu'}.
+- Intranuclear transport (`HadronTransp-Model`): None.
+- Spline processes (SciSoft): {'genie::BertuzzoDNuCOHPXSec/Default': 294}.
 
 ## Files that define each tune's models
 
@@ -104,10 +115,11 @@ Spent pool: NievesQELCCPXSec, NievesSimoVacasMECPXSec2016, SuSAv2MECPXSec.
 | G18_02a_02_11b | no | | | | |
 | G21_11a_00_000 | yes | `fa475f7f5066b314f177b10c4c821d76f2db072508be2734243a26544ef7ed1c` | `4a2beead2f261240a4fed7f7d419d2d68c11bc1fa264faa7e129f8223a7ba7fd` | ['version v3_04_00 qualifier G2111a00000:k250:e1000'] | ['G21_11a_00_000'] |
 | G18_02a_00_000 | yes | `f7ad710100f66e2bb9f260e328fe7fb10ac063148b4222eebe0e3b61b8bfa45a` | `740bc066a9f41f67910e711ebb856be5aed61ee7b71c59895d001d83e80ab0ae` | ['version v3_04_00 qualifier G1802a00000:k250:e1000'] | ['G18_02a_00_000'] |
+| GDNu20_01a_00_000 | yes | `dc9bd330f2e1b696d18cc670d4993578ac58dc62cda93cec909fa0f6f1dcb96a` | `46043975af9a5309f4943876eb89c351669182948706ac3c71327f7749acad16` | ['version v3_02_00 qualifier GDNu2001a00000:k120:e200'] | ['GDNu20_01a_00_000'] |
 
 ## Pins
 
-46 files by sha256, 3 links by target, and 13 directory listings, relative to `genie_root`. Of the 36 config files, 36 equal the GitHub tag's bytes, 0 differ and 0 were not fetched.
+48 files by sha256, 3 links by target, and 15 directory listings, relative to `genie_root`. Of the 38 config files, 38 equal the GitHub tag's bytes, 0 differ and 0 were not fetched.
 
 - `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AR23_20i/CommonParam.xml` `aac2040eff7ee43afe9ef859ef512569a01935ff9e35c296d4701f15d66757ef`
 - `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AR23_20i/MECInteractionListGenerator.xml` `b9112c10f460ea6400d9b77653f0bc782c530e6b25b39c6224b32c1bf4b9cfc3`
@@ -137,6 +149,8 @@ Spent pool: NievesQELCCPXSec, NievesSimoVacasMECPXSec2016, SuSAv2MECPXSec.
 - `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11b/MECInteractionListGenerator.xml` `d8eef71429aa49f0eaa2aa14e14d6955ca39e36313c30d2d6b5f0276d53cbcf3`
 - `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11b/ModelConfiguration.xml` `83fe3292148169255818c7e3960c8f8302bf67ea5dfc933fd34400d857ee8fa9`
 - `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11b/TuneGeneratorList.xml` `531d2749ed4416bfb317fe074ad72536c01b6c682d3f5eaae32a3afb98cb82ad`
+- `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a/ModelConfiguration.xml` `a49e119f8ad68f19dac0e8ff771c04b7885249f32d9b6f86c5de09ec385356c0`
+- `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a/TuneGeneratorList.xml` `eae101a92a2f992fea20d54cfc2303bc3869e4834b03eefd1db8f2c86528d95f`
 - `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/HybridXSecAlgorithm.xml` `1e196c647991b2b5d9ddcdcadefa0e9adde4f80a9a81a381d96311854119e00d`
 - `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/LwlynSmithQELCCPXSec.xml` `f1f5c1e4ec47958b9e43e2555ba39e13c81deb2b2b520f0c3a6502fe1e947404`
 - `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/NievesQELCCPXSec.xml` `38333360158eab5d0f84dec5ff46f8fdb8ddc169b38da40dd08255a3a2bd033f`
@@ -171,3 +185,5 @@ Spent pool: NievesQELCCPXSec, NievesSimoVacasMECPXSec2016, SuSAv2MECPXSec.
 - listing `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a`: ['CommonParam.xml', 'EventGenerator.xml', 'MECInteractionListGenerator.xml', 'ModelConfiguration.xml', 'TuneGeneratorList.xml']
 - listing `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/G21_11a_00_000`: absent
 - listing `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G18_02a/G18_02a_00_000`: absent
+- listing `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a`: ['ModelConfiguration.xml', 'TuneGeneratorList.xml']
+- listing `Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a/GDNu20_01a_00_000`: absent

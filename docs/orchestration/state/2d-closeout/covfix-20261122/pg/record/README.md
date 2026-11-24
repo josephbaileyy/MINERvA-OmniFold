@@ -11,8 +11,8 @@ itself only checks byte identity against these pins.
 `record-sources.json` lists every input with its sha256. All of them are public.
 - SciSoft `genie-3.04.00-sl7-x86_64-e20-prof.tar.bz2`, from https://scisoft.fnal.gov/scisoft/packages/genie/v3_04_00/,
   extracted. `--genie` is its `genie/v3_04_00`.
-- SciSoft `genie_xsec-3.04.00-noarch-<Q>-k250-e1000.tar.bz2` for Q = G1810a0211b, AR2320i00000, G2111a00000 and
-  G1802a00000, from https://scisoft.fnal.gov/scisoft/packages/genie_xsec/v3_04_00/. Only `data/gxspl-NUsmall.xml`,
+- SciSoft `genie_xsec-3.04.00-noarch-<Q>.tar.bz2` for Q = G1810a0211b-k250-e1000, AR2320i00000-k250-e1000,
+  G2111a00000-k250-e1000, G1802a00000-k250-e1000 and GDNu2001a00000-k120-e200, from https://scisoft.fnal.gov/scisoft/packages/genie_xsec/v3_04_00/. Only `data/gxspl-NUsmall.xml`,
   `data/README` and `ups/genie_xsec.table` are needed. `--xsec` is their `genie_xsec/v3_04_00/NULL`. SciSoft lists 8
   qualifiers for v3_04_00, and G2111b00000, G1802b0211b and G1802a0211b are not among them.
 - GENIE-MC/Generator at tag R-3_04_00:
@@ -36,5 +36,17 @@ read ELF; the record was built with macOS's `/usr/bin/nm`.
   `SuSAv2MECPXSec` with AR23_20i_00_000, the overlap §4.1 discloses. G21_11a differs from G21_11b only in
   `HadronTransp-Model`: hA versus hN. G18_02a_00_000 has G18_02a_02_11b's model classes, with no tune directory.
 - **The splines.** SciSoft's splines and READMEs for the two spent tunes equal F1's CVMFS pins.
-- **The tag.** All 36 pinned config files from the SciSoft build are byte-identical to the GitHub tag's.
+- **The tag.** All 38 pinned config files from the SciSoft build are byte-identical to the GitHub tag's.
 - **The classes.** Every class is in the build's ROOT dictionary, with a defined default constructor.
+- **GDNu20_01a_00_000** (surveyed for the director, on CVMFS as GDNu2001a00000-k120-e200) is a dark-neutrino
+  coherent tune.
+  - Its ModelConfiguration sets only `XSecModel@genie::EventGenerator/COHDNu` = `BertuzzoDNuCOHPXSec`, and its
+    TuneGeneratorList enables only `COHDNu`.
+  - Its spline holds 294 `BertuzzoDNuCOHPXSec` splines and no charged-current process.
+  - It has no CCQE or 2p2h class, so it gets no novelty verdict.
+  - Its README says `version v3_02_00 qualifier GDNu2001a00000:k120:e200`. Its range is 120 knots up to 200 GeV,
+    against F1's `-e 0,100` (run_gevgen_v3.sh:55, gen5d_v3.py `E_HI`), so the 200 GeV maximum would cover F1's flux.
+    The tune has no CC events to give, whatever its range.
+- **G21_11a's MEC splines.** G21_11a's MEC-NC model is `EmpiricalMECPXSec2015`; all 864 of those splines are
+  `Weak[NC],MEC`. Its MEC-CC is `SuSAv2MECPXSec`, which covers all 288 CC MEC splines.
+- `SLOT1-PRIVATE-PRODUCT.md` answers the director's question on using G21_11a from a private product directory.

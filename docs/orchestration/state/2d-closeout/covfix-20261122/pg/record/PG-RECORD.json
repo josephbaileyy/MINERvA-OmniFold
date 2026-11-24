@@ -113,6 +113,8 @@
   "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11b/MECInteractionListGenerator.xml": true,
   "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11b/ModelConfiguration.xml": true,
   "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11b/TuneGeneratorList.xml": true,
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a/ModelConfiguration.xml": true,
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a/TuneGeneratorList.xml": true,
   "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/HybridXSecAlgorithm.xml": true,
   "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/LwlynSmithQELCCPXSec.xml": true,
   "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/NievesQELCCPXSec.xml": true,
@@ -246,6 +248,8 @@
    "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11b/MECInteractionListGenerator.xml": "d8eef71429aa49f0eaa2aa14e14d6955ca39e36313c30d2d6b5f0276d53cbcf3",
    "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11b/ModelConfiguration.xml": "83fe3292148169255818c7e3960c8f8302bf67ea5dfc933fd34400d857ee8fa9",
    "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11b/TuneGeneratorList.xml": "531d2749ed4416bfb317fe074ad72536c01b6c682d3f5eaae32a3afb98cb82ad",
+   "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a/ModelConfiguration.xml": "a49e119f8ad68f19dac0e8ff771c04b7885249f32d9b6f86c5de09ec385356c0",
+   "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a/TuneGeneratorList.xml": "eae101a92a2f992fea20d54cfc2303bc3869e4834b03eefd1db8f2c86528d95f",
    "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/HybridXSecAlgorithm.xml": "1e196c647991b2b5d9ddcdcadefa0e9adde4f80a9a81a381d96311854119e00d",
    "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/LwlynSmithQELCCPXSec.xml": "f1f5c1e4ec47958b9e43e2555ba39e13c81deb2b2b520f0c3a6502fe1e947404",
    "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/NievesQELCCPXSec.xml": "38333360158eab5d0f84dec5ff46f8fdb8ddc169b38da40dd08255a3a2bd033f",
@@ -328,7 +332,12 @@
     "ModelConfiguration.xml",
     "TuneGeneratorList.xml"
    ],
-   "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11b/G21_11b_00_000": null
+   "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11b/G21_11b_00_000": null,
+   "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a": [
+    "ModelConfiguration.xml",
+    "TuneGeneratorList.xml"
+   ],
+   "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a/GDNu20_01a_00_000": null
   }
  },
  "schema": "covfix-pg-record/1",
@@ -338,7 +347,8 @@
   "scisoft genie_xsec-3.04.00-noarch-AR2320i00000-k250-e1000.tar.bz2": "13cc9d740c170af9033623049162eeff0fb0b68156122d380aa3262e92e9f61f",
   "scisoft genie_xsec-3.04.00-noarch-G1802a00000-k250-e1000.tar.bz2": "d7189bd6c3933b3017c83fafddb84d57b48414632b577835e49babec8537ab6e",
   "scisoft genie_xsec-3.04.00-noarch-G1810a0211b-k250-e1000.tar.bz2": "a1031e49ac8ac426074f247d91b2c886edaf7c4fef13993fe69aad92ad698c34",
-  "scisoft genie_xsec-3.04.00-noarch-G2111a00000-k250-e1000.tar.bz2": "ae159887772a54891fc4bddb189ab108d74c4a48db68c13ed7166524e8797590"
+  "scisoft genie_xsec-3.04.00-noarch-G2111a00000-k250-e1000.tar.bz2": "ae159887772a54891fc4bddb189ab108d74c4a48db68c13ed7166524e8797590",
+  "scisoft genie_xsec-3.04.00-noarch-GDNu2001a00000-k120-e200.tar.bz2": "69146aacc6c55bdc5c519e917e48ea005d160824bf960d17734e9c7c6d85b6cb"
  },
  "spent_pool": [
   "NievesQELCCPXSec",
@@ -347,6 +357,22 @@
  ],
  "splines": {
   "AR23_20i_00_000": {
+   "processes": {
+    "genie::AhrensNCELPXSec/Default": 600,
+    "genie::AivazisCharmPXSecLO/CC-Default": 1500,
+    "genie::BardinIMDRadCorPXSec/Default": 51,
+    "genie::BergerSehgalCOHPiPXSec2015/Default": 588,
+    "genie::BergerSehgalRESPXSec2014/NoPauliBlock": 19050,
+    "genie::EmpiricalMECPXSec2015/Default": 864,
+    "genie::IMDAnnihilationPXSec/Default": 51,
+    "genie::KNOTunedQPMDISPXSec/Default": 7200,
+    "genie::KovalenkoQELCharmPXSec/Default": 450,
+    "genie::NievesQELCCPXSec/ZExp": 300,
+    "genie::NuElectronPXSec/Default": 306,
+    "genie::PaisQELLambdaPXSec/Default": 450,
+    "genie::ReinDFRPXSec/Default": 12,
+    "genie::SuSAv2MECPXSec/Default": 288
+   },
    "published": true,
    "qualifier": "AR2320i00000-k250-e1000",
    "readme_sha256": "744cba18f82cc5fe4805cd8be120e5f7e5f7b36f657f4cc9f2118e69c803bcb2",
@@ -361,6 +387,21 @@
    "ups_table_sha256": "fe9c08d6ea916a3e00e2fd14e7632fe1b47a26e7046aa8bea5757da26db02145"
   },
   "G18_02a_00_000": {
+   "processes": {
+    "genie::AhrensNCELPXSec/Default": 600,
+    "genie::AivazisCharmPXSecLO/CC-Default": 1500,
+    "genie::BardinIMDRadCorPXSec/Default": 51,
+    "genie::BergerSehgalCOHPiPXSec2015/Default": 588,
+    "genie::BergerSehgalRESPXSec2014/NoPauliBlock": 19050,
+    "genie::EmpiricalMECPXSec2015/Default": 1440,
+    "genie::IMDAnnihilationPXSec/Default": 51,
+    "genie::KNOTunedQPMDISPXSec/Default": 7200,
+    "genie::KovalenkoQELCharmPXSec/Default": 450,
+    "genie::LwlynSmithQELCCPXSec/Dipole": 300,
+    "genie::NuElectronPXSec/Default": 306,
+    "genie::PaisQELLambdaPXSec/Default": 450,
+    "genie::ReinDFRPXSec/Default": 12
+   },
    "published": true,
    "qualifier": "G1802a00000-k250-e1000",
    "readme_sha256": "740bc066a9f41f67910e711ebb856be5aed61ee7b71c59895d001d83e80ab0ae",
@@ -381,6 +422,22 @@
    "published": false
   },
   "G18_10a_02_11b": {
+   "processes": {
+    "genie::AhrensNCELPXSec/Default": 600,
+    "genie::AivazisCharmPXSecLO/CC-Default": 1500,
+    "genie::BardinIMDRadCorPXSec/Default": 51,
+    "genie::BergerSehgalCOHPiPXSec2015/Default": 588,
+    "genie::BergerSehgalRESPXSec2014/NoPauliBlock": 19050,
+    "genie::EmpiricalMECPXSec2015/Default": 864,
+    "genie::IMDAnnihilationPXSec/Default": 51,
+    "genie::KNOTunedQPMDISPXSec/Default": 7200,
+    "genie::KovalenkoQELCharmPXSec/Default": 450,
+    "genie::NievesQELCCPXSec/Dipole": 300,
+    "genie::NievesSimoVacasMECPXSec2016/Default": 288,
+    "genie::NuElectronPXSec/Default": 306,
+    "genie::PaisQELLambdaPXSec/Default": 450,
+    "genie::ReinDFRPXSec/Default": 12
+   },
    "published": true,
    "qualifier": "G1810a0211b-k250-e1000",
    "readme_sha256": "abfca258817a3f7d8169cdd2dbf9349a025ab38312435c718347598b53f16726",
@@ -395,6 +452,22 @@
    "ups_table_sha256": "6ee162520b9ce2a9d439d4ed5277aee6d73c0c107afc5a5ec85a057d64f05800"
   },
   "G21_11a_00_000": {
+   "processes": {
+    "genie::AhrensNCELPXSec/Default": 600,
+    "genie::AivazisCharmPXSecLO/CC-Default": 1500,
+    "genie::BardinIMDRadCorPXSec/Default": 51,
+    "genie::BergerSehgalCOHPiPXSec2015/Default": 588,
+    "genie::BergerSehgalRESPXSec2014/NoPauliBlock": 20100,
+    "genie::EmpiricalMECPXSec2015/Default": 864,
+    "genie::HybridXSecAlgorithm/SuSAv2-QEL": 300,
+    "genie::IMDAnnihilationPXSec/Default": 51,
+    "genie::KNOTunedQPMDISPXSec/Default": 7200,
+    "genie::KovalenkoQELCharmPXSec/Default": 450,
+    "genie::NuElectronPXSec/Default": 306,
+    "genie::PaisQELLambdaPXSec/Default": 450,
+    "genie::ReinDFRPXSec/Default": 12,
+    "genie::SuSAv2MECPXSec/Default": 288
+   },
    "published": true,
    "qualifier": "G2111a00000-k250-e1000",
    "readme_sha256": "4a2beead2f261240a4fed7f7d419d2d68c11bc1fa264faa7e129f8223a7ba7fd",
@@ -410,6 +483,54 @@
   },
   "G21_11b_00_000": {
    "published": false
+  },
+  "GDNu20_01a_00_000": {
+   "processes": {
+    "genie::BertuzzoDNuCOHPXSec/Default": 294
+   },
+   "published": true,
+   "qualifier": "GDNu2001a00000-k120-e200",
+   "readme_sha256": "46043975af9a5309f4943876eb89c351669182948706ac3c71327f7749acad16",
+   "readme_version_lines": [
+    "version v3_02_00 qualifier GDNu2001a00000:k120:e200"
+   ],
+   "spline": "NULL/GDNu2001a00000-k120-e200/data/gxspl-NUsmall.xml",
+   "spline_sha256": "dc9bd330f2e1b696d18cc670d4993578ac58dc62cda93cec909fa0f6f1dcb96a",
+   "ups_table_genie_xsec_tune": [
+    "GDNu20_01a_00_000"
+   ],
+   "ups_table_sha256": "40ce69a6aa449009c07e1a5122b81e02d43ba47e26e019bc49f4addfb8cf6a41"
+  }
+ },
+ "surveyed": {
+  "GDNu20_01a_00_000": {
+   "cmc": "GDNu20_01a",
+   "files": {
+    "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/EventGenerator.xml": "6de7109b5bba799d075700d41032ea9c4c10afabc99c14d7af9cf5346adea09d",
+    "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a/ModelConfiguration.xml": "a49e119f8ad68f19dac0e8ff771c04b7885249f32d9b6f86c5de09ec385356c0",
+    "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a/TuneGeneratorList.xml": "eae101a92a2f992fea20d54cfc2303bc3869e4834b03eefd1db8f2c86528d95f"
+   },
+   "generators": {
+    "Generator-0": "genie::EventGenerator/COHDNu",
+    "NGenerators": "1"
+   },
+   "hadron_transport": null,
+   "listings": {
+    "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a": [
+     "ModelConfiguration.xml",
+     "TuneGeneratorList.xml"
+    ],
+    "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a/GDNu20_01a_00_000": null
+   },
+   "model_configuration": "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a/ModelConfiguration.xml",
+   "model_configuration_default": {
+    "XSecModel@genie::EventGenerator/COHDNu": "genie::BertuzzoDNuCOHPXSec/Default"
+   },
+   "reason": "ModelConfiguration's Default sets no XSecModel for QEL-CC, MEC-CC, and TuneGeneratorList enables no QEL-CC, MEC-CC thread",
+   "resolved": false,
+   "role": "surveyed",
+   "tune": "GDNu20_01a_00_000",
+   "tune_generator_list": "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/GDNu20_01a/TuneGeneratorList.xml"
   }
  },
  "tunes": {
