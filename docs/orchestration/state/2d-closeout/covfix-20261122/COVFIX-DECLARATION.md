@@ -313,9 +313,9 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
       nothing, with the verdict and §7 left at u = 0, 1. That form changes nothing deciding in §5–§7. The director's
       ruling of 2026-11-24 drafts the deciding form, because Joseph's words were "add it to §4's held-out validation
       family", and that family decides.
-  - **The price:** the expected no-firing base becomes 467.74–468.41 node-h (PV 174.57, up 57.19 = 300 × 0.19 + 0.19).
-    PV's cap becomes 201. The ceiling becomes 599 node-h, funding every single-block ST1 branch (§3's table, recomputed).
-    Binding needs a committed iris receipt of at least 599 node-h.
+  - **The price:** the expected no-firing base becomes 468.74–469.41 node-h (PV 175.57, up 58.19 = 300 × 0.19 + 0.19 + the u2-draw's 1.0).
+    PV's cap becomes 202. The ceiling becomes 600.00 node-h, funding every single-block ST1 branch (§3's table, recomputed).
+    Binding needs a committed iris receipt of at least 600.00 node-h.
   - **Descriptive readings, deciding nothing** (§6.6): the two off-diagonal corners of the factorial between K0 and K_B
     ("fluctuation block only" = V_F + C_model_abs; "bias block only" = F_A + C_b), graded on the same PV toys; the lower
     95 % Clopper–Pearson bound on joint coverage beside P-3; M with its bands both with and without the undrawn
@@ -461,18 +461,20 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
 | **P1 W2** | N4, A1f, A1p, plus three A1 central unfolds, after ST1 is read on W1 | 129.77 | 86.07 | — |
 | **P1** | total | 291.84 | 210.14 | 330 / 240 |
 | **P2** | build and freeze the candidates (§5) | 0 (local) | 0 | 0 |
-| **PV** | 900 validation toys (300 at each of three sealed truths), 3 central unfolds, the synthetic-seal test (a fixed 2.0 reservation, §3.3), and the exclusive-node writer and readout (about 1.0, an unmeasured estimate) (§3.4, §6) | 174.57 | 174.57 | 201 |
+| **PV** | 900 validation toys (300 at each of three sealed truths), 3 central unfolds, the synthetic-seal test (a fixed 2.0 reservation, §3.3), the exclusive-node writer and readout (about 1.0, an unmeasured estimate), and the u2-draw role (about 1.0, an unmeasured estimate, §4.2) (§3.4, §6) | 175.57 | 175.57 | 202 |
 
-- **Totals:** full 467.74–468.41; lean 386.04–386.71, including the synthetic test's 2.0 added in rev 10, at PG's priced
+- **Totals:** full 468.74–469.41; lean 387.04–387.71, including the synthetic test's 2.0 added in rev 10, at PG's priced
   range of 1.33–2.00.
   - **Rev 12's PV arithmetic:** 900 toys × 0.19 = 171.00, plus 3 central unfolds × 0.19 = 0.57, plus the synthetic
-    test's 2.0 and the writer and readout's 1.0, is 174.57 (rev 11.4: 600 × 0.19 + 2 × 0.19 + 2.0 + 1.0 = 117.38; the
-    difference is 57.19). PV's cap keeps rev 11.4's proportion, 135 / 117.38 = 1.150: 174.57 × 1.150 = 200.8, set at
-    201.
-  - These are the expected no-firing prices. The 599 ceiling below is headroom for PX only.
+    test's 2.0, the writer and readout's 1.0 and the u2-draw's 1.0, is 175.57 (rev 11.4: 600 × 0.19 + 2 × 0.19 + 2.0 + 1.0 = 117.38; the
+    difference is 58.19). PV's cap keeps rev 11.4's proportion, 135 / 117.38: 175.57 × 135 / 117.38 = 201.92, set at
+    202.
+  - **The u2-draw's 1.0 is expected spend, not contingency,** like the synthetic test's 2.0 (director, 2026-11-24). It is
+    re-measured in the synthetic rehearsal, with the writer and readout.
+  - These are the expected no-firing prices. The 600.00 ceiling below is headroom for PX only.
   - The ranges come from PG's range only. The printed range starts at 1.33, above F1's measured 1.3275 node-h for two
     tunes.
-  - Without N5 (§9.1): full 391.74–392.41; lean 329.04–329.71.
+  - Without N5 (§9.1): full 392.74–393.41; lean 330.04–330.71.
 - **Every cell is priced at n × 0.19** node-h per unfold, with no rounding. That is the director's planning figure:
   COV2D's 112.74 node-h over 600 toys is 0.188, including pilots and retries.
 - **Lean** sets N1, N2 and N4 to 150 toys each and N5 to 150 + 150, and drops A1f. Cell 4 then rests on IBUKT A2's
@@ -482,16 +484,16 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
   receipt.** Half of 725.6 is 362.8. The director has asked limitation-resolver for a fresh committed receipt for rev 12.
 - **Against half the balance** (rev 12):
   - every phase price and every phase cap is below 362.8;
-  - the caps' sums (full 534, lean 444) are not, and neither is the full total, with or without N5, nor the lean total;
-  - only the lean total without N5 (329.04–329.71) is below it;
-  - **Joseph chose full** (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`, his governing re-confirmation: "Full, as designed"), with N5, under a ceiling of 541.50 node-h at rev 11.4, raised to 599 at rev 12 (below). ST6 keeps the campaign inside that ceiling. The lean columns are kept as the record of the alternative he did not choose.
+  - the caps' sums (full 535, lean 445) are not, and neither is the full total, with or without N5, nor the lean total;
+  - only the lean total without N5 (330.04–330.71) is below it;
+  - **Joseph chose full** (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`, his governing re-confirmation: "Full, as designed"), with N5, under a ceiling of 541.50 node-h at rev 11.4, raised to 600.00 at rev 12 (below). ST6 keeps the campaign inside that ceiling. The lean columns are kept as the record of the alternative he did not choose.
 - **ST6, the cumulative ceiling** (§3.3).
   - Joseph's approved total is pinned in every connect.
   - Each submission's charge ceiling is its nodes × its `--time`. Each toy job's `--time` is 1.5 × its priced per-toy
     time (0.19 node-h is a mean), so a slow job is not killed, and a stalled one cannot charge more than its ceiling.
   - A phase is submitted in chunks small enough that ended charges plus unended ceilings stay within its cap (ST3).
   - The admission check is ST3/ST6's reservation ledger (§3.3), not a prefix poll of sacct.
-  - **The ceiling is pinned in the binding at 541.50 node-h (rev 11.4); rev 12 raises it to 599 node-h.**
+  - **The ceiling is pinned in the binding at 541.50 node-h (rev 11.4); rev 12 raises it to 600.00 node-h.**
     - **History.** Joseph approved about 409, then raised it to 411.22 for the synthetic test ("Raise to 411.22
       (Recommended)", sha256 prefix `8fb26c62f91e7b20`).
     - **The headroom.** He then raised it again for PX headroom: "Raise to about 540" (the sha256 of the text plus a
@@ -504,49 +506,51 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
     - The director records all three in the binding document (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`
       holds the first decisions).
     - **Rev 12's ceiling.** Joseph: "we can raise the ceiling too" (relayed by the rewrite helper and the director,
-      2026-11-24). The director set 599 node-h: it funds every single-block ST1 branch on rev 12's base, including
-      `universe` with laterals rebuilt (598.56). The DECISION records it.
-    - **The expected no-firing price** is 467.74–468.41 at rev 12 (391.74–392.41 without N5). The ceiling beyond it is
+      2026-11-24), and "Raise the ceiling to about 600" (relayed by the director, 2026-11-24). The director first set
+      599; with the u2-draw priced in PV it set 600.00, which funds every single-block ST1 branch on rev 12's base,
+      including `universe` with laterals rebuilt (599.56). Joseph sees the final figure when he approves
+      rev 12's text and the DECISION, which records it.
+    - **The expected no-firing price** is 468.74–469.41 at rev 12 (392.74–393.41 without N5). The ceiling beyond it is
       headroom for PX only.
-    - **ST6 is the hard stop:** the ledger's atomic gate (§3.3) at the pinned ceiling (599 node-h at rev 12). A submission
+    - **ST6 is the hard stop:** the ledger's atomic gate (§3.3) at the pinned ceiling (600.00 node-h at rev 12). A submission
       it refuses stops the run, and that goes to the director, not to Joseph as a re-approval. The price table above is
       an estimate, not a trigger; PX keeps its own repricing rule.
-    - **Balance:** binding needs the committed iris receipt to show at least the pinned ceiling remaining (599 node-h at
+    - **Balance:** binding needs the committed iris receipt to show at least the pinned ceiling remaining (600.00 node-h at
       rev 12). If it does not, the binding goes back to Joseph.
-    - The ceiling is separate from the expected price and from the 534 sum of caps.
+    - The ceiling is separate from the expected price and from the 535 sum of caps.
   - **The per-phase balance check (rev 12).** The m3246 pool is shared with other users, so the binding-time receipt
     does not protect later phases. Before each paid phase (PG, W1, PX, W2, PV), a committed iris read must show the
     pool's remaining node-h ≥ that phase's cap plus the expected price of every phase after it. Otherwise the phase
     stops and goes to the director.
-    - "That phase's cap" is PG's 3.0, PV's 201, PX's bound price, and, for W1 and for W2, the P1 cap (330) less P1's
+    - "That phase's cap" is PG's 3.0, PV's 202, PX's bound price, and, for W1 and for W2, the P1 cap (330) less P1's
       reconciled charges.
     - The expected prices after a phase are those of §3's table (and PX's, only once bound).
     - **At rev 12's figures**, before any spend:
 
       | before | requirement |
       |---|---|
-      | PG | 3.0 + (162.07 + 129.77 + 174.57) = 469.41 |
-      | W1 | 330 + 174.57 = 504.57 |
-      | PV | 201 |
+      | PG | 3.0 + (162.07 + 129.77 + 175.57) = 470.41 |
+      | W1 | 330 + 175.57 = 505.57 |
+      | PV | 202 |
 
-    - Binding at 599 is satisfied today: iris showed 630.4 node-h remaining for the whole m3246 pool at 06:55Z on
+    - Binding at 600.00 is satisfied today: iris showed 630.4 node-h remaining for the whole m3246 pool at 06:55Z on
       2026-11-24 (PR #1276, merged `62be2eff`).
   - **The priced worst case for each ST1 branch,** with PG at its 2.0 top, on rev 12's no-firing base
-    2.00 + 162.07 + 129.77 + 174.57 = 468.41:
+    2.00 + 162.07 + 129.77 + 175.57 = 469.41:
 
-    | ST1 branch | PX | total | at 599 |
+    | ST1 branch | PX | total | at 600.00 |
     |---|---|---|---|
-    | none | 0 | 468.41 | fits |
-    | `c08` (W1) | 15.20 | 483.61 | fits |
-    | `stat` (W1) | 57.00 | 525.41 | fits |
-    | N5 data-stream method (W1), which also regenerates `stat` | 95.00 | 563.41 | fits |
-    | `c08` + `stat` (W1) | 72.20 | 540.61 | fits |
-    | `c08` + N5 method + `stat` (W1) | 110.20 | 578.61 | fits |
-    | `universe` after W2, laterals reused | 128.25 | 596.66 | fits |
-    | `universe` after W2, laterals rebuilt (+10 unfolds) | 130.15 | 598.56 | fits |
-    | any W1 exception + `universe` | ≥ 145.35 | ≥ 613.76 | **unfunded by design** |
+    | none | 0 | 469.41 | fits |
+    | `c08` (W1) | 15.20 | 484.61 | fits |
+    | `stat` (W1) | 57.00 | 526.41 | fits |
+    | N5 data-stream method (W1), which also regenerates `stat` | 95.00 | 564.41 | fits |
+    | `c08` + `stat` (W1) | 72.20 | 541.61 | fits |
+    | `c08` + N5 method + `stat` (W1) | 110.20 | 579.61 | fits |
+    | `universe` after W2, laterals reused | 128.25 | 597.66 | fits |
+    | `universe` after W2, laterals rebuilt (+10 unfolds) | 130.15 | 599.56 | fits |
+    | any W1 exception + `universe` | ≥ 145.35 | ≥ 614.76 | **unfunded by design** |
 
-    - Rev 11.4's table, on its base of 411.22 against 541.50, is the same less 57.19 in every total.
+    - Rev 11.4's table, on its base of 411.22 against 541.50, is the same less 58.19 in every total.
 
     - The last row is unfunded whatever the ceiling: under §3.3's sole-exception rule, a row firing after the exception
       has been bound stops the campaign.
@@ -676,7 +680,7 @@ N1 is never a construction-error reading. N1/N5 is reported as the same-event fa
    - If it does not, PX has **no funded path**, and the ST1 branch ends at the construction finding, reported as a
      finding (§7, Part 1). K_A is omitted for this run, and the campaign continues with K0 and K_B.
    - W2's first-time work is counted once in the remainder, never as part of PX.
-   - Every single-block branch fits the ceiling on the priced figures (§3's table: 541.50 at rev 11.4, 599 at rev 12),
+   - Every single-block branch fits the ceiling on the priced figures (§3's table: 541.50 at rev 11.4, 600.00 at rev 12),
      and so does every W1 combination. A W1 exception followed by a `universe` firing is unfunded by design (item 4).
 4. **A row fires after the sole exception has been bound.** The campaign stops and goes to the director.
 
@@ -1005,7 +1009,7 @@ CV `w_truth` of `mc_truth_denom`'s rows binned on that grid:
   commitment is already published, so the draw is replayable after their reveal.
 - The 32 digest bytes give four 64-bit unsigned integers, U_i = n_i / 2⁶⁴. |c₁| = a_lo + (a_hi − a_lo)·U₁; |c₂| =
   (|c₁| / 2)·U₂; |c₃| = (|c₁| / 2)·U₃; the three signs are bits 0–2 of n₄.
-- **It runs only through the director's wrapper,** as a secret-bearing role ("u2-draw") on one exclusive node, with the
+- **It runs only through the director's wrapper,** as a secret-bearing role ("u2-draw") on one exclusive node (about 1.0 node-h in PV's price, §3), with the
   §4.2 stdin framing and JE's round-3 contract. Its binary is cov2d's to write and goes through §8's chain.
 - **The first passing attempt is taken.** The attempt cap is K_max = 64. If no attempt passes by k = 64, the role ends
   without a map, and that is a STOP to the director. u = 2 is then not formed, and PV does not run until the director
@@ -1036,7 +1040,9 @@ CV `w_truth` of `mc_truth_denom`'s rows binned on that grid:
    - **Why this summary.** It is the complete set of reco features E_R's OmniFold uses. `re2_driver.py:2336-2338`
      builds MCreco and the measured array from (reco_pt, reco_pz) only, and the data tree carries `measured`,
      `measured_pz` and `measured_pass` and nothing else (`re2_driver.py:1096`). A summary built on other variables
-     would test reco differences the unfold cannot see.
+     would test reco differences the unfold cannot see, and a floor on them would mean nothing. The director accepted
+     this summary on 2026-11-24, with a separate read agreeing that `re2_driver.py:2336` stacks only reco p_T and p∥ for
+     the 2D unfold.
    - In 2D, a muon-only histogram is therefore the right object, not a coarse stand-in. The advisory's concern about a
      muon-only histogram applies where the unfold has more inputs. The joint 224-cell binning keeps the p_T–p∥
      correlations the unfold learns from, and the total rate is inside it.
@@ -1072,7 +1078,8 @@ the same 2D truth. u = 2 therefore **tests hidden-variable dependence through th
   outside the deformed conditional.
 - **A PASS at u = 2 applies to one sealed draw from the declared family**, conditional on the declared cuts (invariance,
   non-triviality, the bounds and the reco floor), under the fixed toy law. **Weakly visible maps, below the reco floor,
-  are outside the claim.** The floor selects a subset of the family, favouring changes the reco summary measures well;
+  are outside the claim.** At u = 2 the 2D unfold can respond only through the hadronic dependence of the muon-side
+  efficiency and smearing: that is the mechanism u = 2 tests. The floor selects a subset of the family, favouring changes the reco summary measures well;
   its effect on the difficulty of passing the bars can go either way, and that is disclosed beside any u = 2 reading.
 
 ## 5. Candidate constructions, built from P0 and P1, frozen at P2
@@ -1379,7 +1386,7 @@ The result has three independent parts, each reported.
   correction and its acceptance check did not run, and K_A was omitted for this run."
 - "A defect in <block>'s builder was found; the correction did not resolve the discrepancy."
 
-**Outcome A within the ceiling** (§3's table: 541.50 at rev 11.4, 599 at rev 12):
+**Outcome A within the ceiling** (§3's table: 541.50 at rev 11.4, 600.00 at rev 12):
 - Outcome A is reachable for **every single-block firing**: `c08`, `stat` or the N5 data-stream method on W1, or
   `universe` after W2, laterals included.
 - It is also reachable for every combination of W1 blocks.
@@ -1465,14 +1472,14 @@ stands alone, and each candidate's PV verdict is reported descriptively.
 2. **Size: decided.** Full, as designed (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`, Joseph's governing re-confirmation): two sealed tunes, full P1 toy
    counts, and N5 always, at an expected no-firing price of 410.55–411.22 node-h. Joseph later raised the ceiling,
    first to 411.22 for the synthetic test, then to "about 540" for PX headroom, and confirmed the exact 541.50 (§3).
-   Rev 12 (DRAFT) adds a third sealed truth (467.74–468.41 node-h) and raises the ceiling to 599. ST6 enforces the ceiling. That is above half the balance, and Joseph approved it. Each phase is still capped from
+   Rev 12 (DRAFT) adds a third sealed truth (468.74–469.41 node-h) and raises the ceiling to 600.00. ST6 enforces the ceiling. That is above half the balance, and Joseph approved it. Each phase is still capped from
    sacct. The second reader is
    codex-school2, alongside agy, by the same decision.
 3. **Outcome A's reach** (§7, Part 1). Within the ceiling it is reachable for every single-block firing, including
-   `universe` with laterals rebuilt (541.37 at rev 11.4; 598.56 at rev 12, under 599), and for every W1 combination. Only a W1 exception followed by a `universe`
+   `universe` with laterals rebuilt (541.37 at rev 11.4; 599.56 at rev 12, under 600.00), and for every W1 combination. Only a W1 exception followed by a `universe`
    firing is unfunded, by the sole-exception rule.
 4. **Binding prerequisites:**
-   - a committed iris receipt showing at least the pinned ceiling remaining (541.50 at rev 11.4; 599 for rev 12), or the
+   - a committed iris receipt showing at least the pinned ceiling remaining (541.50 at rev 11.4; 600.00 for rev 12), or the
      binding goes back to Joseph;
    - the fresh PG session named;
    - the director's passphrase generated, with the director's piping wrapper, and never shown to cov2d.
@@ -1493,9 +1500,10 @@ stands alone, and each candidate's PV verdict is reported descriptively.
    - **for Joseph:** u = 2's role, deciding (as drafted) or descriptive (the change log's alternative); and the
      DECISION's text superseding §3.3's clause for rev 12's changes;
    - **for the director:**
-     - the go for a login-node fetch, by sha, of the four 5D predictions the calibration of [a_lo, a_hi] reads (§4.2);
-     - the u2-draw role's node-h, about 1.0 and unmeasured, on one exclusive node, not in §3's base. It is proposed
-       inside PV's cap margin (201 − 174.57 = 26.43); say if it should be priced separately;
+     - the go for a login-node fetch, by sha, of the four 5D predictions the calibration of [a_lo, a_hi] reads (§4.2):
+       GIVEN 2026-11-24; the values are committed before any draw;
+     - the u2-draw role's node-h: RULED 2026-11-24, priced at about 1.0 in PV's expected price, re-measured in the
+       synthetic rehearsal, with the ceiling at 600.00;
        <!-- absence-ok: price of a role this draft declares and has not yet written -->
-   - the receipt: binding at 599 is satisfied by PR #1276 (630.4 node-h at 06:55Z); the per-phase check then applies
+   - the receipt: binding at 600.00 is satisfied by PR #1276 (630.4 node-h at 06:55Z); the per-phase check then applies
      before each paid phase.
