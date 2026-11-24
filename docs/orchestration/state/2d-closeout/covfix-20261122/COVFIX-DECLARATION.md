@@ -1338,8 +1338,10 @@ u = 1 (G18_02a_00_000) and u = 2.
     INCONCLUSIVE is the expected outcome near the floor. This is a limit of 300 toys.
   - The three outcome labels are frozen. They cannot overlap: a deficit count fails SUPPORT's joint rule or its veto.
 - **The frozen measured set, k = 13:** R00, R01, R02, R04, R05, R06, R08, R09, R10, R12, R13, R14, R15. These are
-  tier3-design's B-SEL labels on the frozen E_R estimator; the record is `selection.json`, sha256
-  `4d4205d4cb5e5b98a9aacc18e792a074dfbfa7f8aa05cb11f7f8bfb35d44c634`, PR to follow. R03, R07 and R11 are exploratory.
+  tier3-design's B-SEL labels on the frozen E_R estimator. The record is
+  `docs/orchestration/state/ben-b-20261124/selection-20261124/record/selection.json` at merge commit
+  `ab5adeebbb0e325868f58b1eeda3f3d00e31c97b` (#1312), sha256
+  `4d4205d4cb5e5b98a9aacc18e792a074dfbfa7f8aa05cb11f7f8bfb35d44c634`. cov2d checked its per-cell labels against this text. R03, R07 and R11 are exploratory.
   R00, R04, R05, R09 and R14 also meet 0.5·S_g, so they may support discrimination claims. The selection reran
   nothing; the estimator was frozen when the step-2 test failed its rule. **S2R, the time-boxed step-2 test, FAILED its
   declared rule at both truths** (`docs/orchestration/state/measurement-paper/5d-community-20261024/fd/s2r-20261124/
