@@ -55,7 +55,7 @@ block may name `salloc` and `srun` (paths ending in those names) and set `accoun
 with plain values. The wrapper runs:
 
 ```
-<ssh> -T -o RequestTTY=no -o StrictHostKeyChecking=yes [allowed opts] <host> \
+<ssh> -T -o RequestTTY=no -o StrictHostKeyChecking=yes -o ControlMaster=no -o ControlPath=none [allowed opts] <host> \
   'env -u SRUN_INPUT -u SRUN_OUTPUT -u SRUN_ERROR -u SLURM_STD{IN,OUT,ERR}MODE \
    salloc --exclusive -N 1 -n 1 [-A -q -C -t] srun --exclusive -N 1 -n 1 \
    bash -c <exec check> covfix-exec <binary> <sha256> <args> --covfix-...'
@@ -69,9 +69,11 @@ The ssh options a config may add are limited to:
   only), UserKnownHostsFile, IdentitiesOnly or IdentityFile;
 - `-i`, `-p`, `-l`.
 
-The wrapper always puts `-o StrictHostKeyChecking=yes` first. ssh uses the first value it obtains for an option, so
-neither an ssh_config file nor the command line can turn host-key checking off. The host must already be in
-known_hosts. `-F` is not allowed.
+The wrapper always puts `-o StrictHostKeyChecking=yes -o ControlMaster=no -o ControlPath=none` first. ssh uses the
+first value it obtains for an option, so neither an ssh_config file nor the command line can turn host-key checking
+off, or reuse a shared master connection whose host was accepted under looser settings. Every run makes a fresh
+connection and checks the host key itself, and the host must already be in known_hosts. `-F` and `-S` are not
+allowed.
 
 Any `-t`, port forward or other option is refused. The frame goes on ssh's stdin, and the task's stdout and stderr
 come back through the wrapper. Any passphrase or seed base in that output is replaced by `[redacted]`, and the run is
@@ -165,8 +167,9 @@ recorded, the run still refuses and marks nothing.
 ## reveal
 
 - The seal and the commitment must be the binding's.
-- It needs a **confirmed** `pv-readout` end in the pushed record, `completed` or `break` (the task's own receipt or
-  break line), or `--after-stop <stop id>`.
+- It needs a **confirmed** `pv-readout` end in the pushed record, or `--after-stop <stop id>`. A confirmed end is
+  `completed` or `break` carrying the **attempt id of the readout's spend**, so it is the task's own receipt or break
+  line. A wrapper preflight break, or another invocation's line, does not end that task.
 - It refuses while a PV role is spent with no confirmed end in the **pushed** record (in flight), unless
   `--inflight-resolved <ruling id>`. A local-only outcome whose push failed, and a `terminal` outcome, count as in
   flight. After a dropped link or a crash the task may still be running, so a `terminal` readout needs both

@@ -440,7 +440,10 @@ def check_ssh(ssh) -> list:
         else:
             raise Stop(ERROR, f"ssh option {o!r} is not allowed (only -o {sorted(SSH_O_KEYS)}, -i, -p, -l)")
     # ssh uses the first value it obtains for an option, so these override any ssh_config setting.
-    return [argv[0], "-T", "-o", "RequestTTY=no", "-o", "StrictHostKeyChecking=yes", *opts]
+    # ControlMaster=no and ControlPath=none: never reuse a shared connection, whose host may have been accepted
+    # under looser settings; every run makes a fresh connection and checks the host key itself.
+    return [argv[0], "-T", "-o", "RequestTTY=no", "-o", "StrictHostKeyChecking=yes", "-o", "ControlMaster=no",
+            "-o", "ControlPath=none", *opts]
 
 
 class LaunchResult:
@@ -755,16 +758,28 @@ def unresolved_freeze_refusals(events, key: str) -> int:
     return sum(1 for e in events if e["key"] == key and e["event"] == "freeze-mismatch-refused" and e["seq"] > last)
 
 
+def confirmed_end(pushed, key: str, role: str, attempts) -> list:
+    """The PUSHED outcome lines that confirm the end of one of these attempts of the role: `completed` or `break`
+    carrying the attempt id of the spend. A wrapper preflight break (no attempt) or another invocation's line is not
+    the end of this task."""
+    attempts = {a for a in attempts if a}
+    return [e for e in pushed if e["key"] == key and e["role"] == role and e["event"] in CONFIRMED_END
+            and e.get("attempt") in attempts]
+
+
+def spent_attempts(events, key: str, role: str) -> list:
+    return [e.get("attempt") for e in events if e["key"] == key and e["role"] == role and e["event"] == "spent"]
+
+
 def in_flight(events, key: str, pushed=None) -> list:
-    """PV roles of the seal that were spent (locally) and have no confirmed end in the PUSHED record: a local-only
-    outcome whose publication failed, or a `terminal` outcome (a dropped link, a crash: the task's exit is not
-    known), is still in flight until a director ruling."""
+    """PV roles of the seal that were spent (locally) and whose spend has no confirmed end in the PUSHED record: a
+    local-only outcome whose publication failed, a `terminal` outcome (a dropped link, a crash: the task's exit is not
+    known), or a break that is not this attempt's own, is still in flight until a director ruling."""
     pushed = events if pushed is None else pushed
     out = []
     for role in ("pv-writer", "pv-readout"):
-        spent = any(e["key"] == key and e["role"] == role and e["event"] == "spent" for e in events)
-        ended = any(e["key"] == key and e["role"] == role and e["event"] in CONFIRMED_END for e in pushed)
-        if spent and not ended:
+        attempts = spent_attempts(events, key, role)
+        if attempts and any(not confirmed_end(pushed, key, role, [a]) for a in attempts):
             out.append(role)
     return out
 
@@ -1272,8 +1287,8 @@ def reveal(ctx: Context, seal_digest, commitment, after_stop, inflight_resolved)
     inflight_resolved = check_stop_id(inflight_resolved, "--inflight-resolved")
     def gate():
         """Reveal's eligibility, from the current record and the pushed one; run before and again under the lock."""
-        done = [e for e in ctx._remote_events if e["key"] == key and e["role"] == "pv-readout"
-                and e["event"] in CONFIRMED_END]
+        done = confirmed_end(ctx._remote_events, key, "pv-readout",
+                             spent_attempts(ctx._remote_events, key, "pv-readout"))
         if not done and not after_stop:
             raise GateRefusal("PV's readout has no confirmed end (completed or break) in the pushed record; reveal "
                               "needs --after-stop <stop id>")

@@ -673,9 +673,10 @@ class ConfigTests(unittest.TestCase):
     def test_ssh_options_are_allow_listed(self):
         self.assertEqual(cw.check_ssh(["ssh", "-o", "BatchMode=yes", "-p", "22"]),
                          ["ssh", "-T", "-o", "RequestTTY=no", "-o", "StrictHostKeyChecking=yes",
-                          "-o", "BatchMode=yes", "-p", "22"])
+                          "-o", "ControlMaster=no", "-o", "ControlPath=none", "-o", "BatchMode=yes", "-p", "22"])
         self.assertEqual(cw.check_ssh(["ssh", "-o", "StrictHostKeyChecking=yes"])[-1], "StrictHostKeyChecking=yes")
         for bad in (["ssh", "-t"], ["ssh", "-tt"], ["ssh", "-o", "RequestTTY=yes"], ["ssh", "-L", "1:h:2"],
+                    ["ssh", "-o", "ControlPath=/tmp/master"], ["ssh", "-o", "ControlMaster=auto"], ["ssh", "-S", "/tmp/m"],
                     ["ssh", "-o"], ["ssh", "-o", "BatchMode"], ["ssh", "-o", "StrictHostKeyChecking=no"],
                     ["ssh", "-o", "StrictHostKeyChecking=accept-new"], ["ssh", "-F", "/tmp/cfg"]):
             with self.assertRaises(cw.Stop, msg=bad):
@@ -725,7 +726,8 @@ class RunTests(unittest.TestCase):
         rig = Rig()
         self.assertEqual(rig.run("pv-writer")[0], 0)
         for entry in rig.ssh_log():
-            self.assertEqual(entry["opts"][:5], ["-T", "-o", "RequestTTY=no", "-o", "StrictHostKeyChecking=yes"])
+            self.assertEqual(entry["opts"][:9], ["-T", "-o", "RequestTTY=no", "-o", "StrictHostKeyChecking=yes",
+                                                 "-o", "ControlMaster=no", "-o", "ControlPath=none"])
 
     def test_no_secret_in_any_argv_env_record_or_output(self):
         rig = Rig()
@@ -2103,6 +2105,30 @@ class ConfirmBlockerTests(unittest.TestCase):
             rc, out, err = self.reveal(rig, *extra)
             self.assertEqual((rc, out), (cw.REFUSED, ""), (extra, err))
         rc, out, err = self.reveal(rig, "--after-stop", "ST3", "--inflight-resolved", "DECISION-readout-ended")
+        self.assertEqual(rc, 0, err)
+
+    def test_another_invocations_preflight_break_is_not_the_readouts_end(self):
+        rig = Rig()
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        rig.set_ssh_mode("drop-link")
+        self.assertEqual(rig.run("pv-readout")[0], cw.TERMINAL)
+        rig.set_ssh_mode("")
+        ctx = cw.Context(rig.cfg)                          # a second readout invocation's preflight break
+        ctx.commit_event({"event": "break", "key": rig.seal["seal_digest"], "role": "pv-readout",
+                          "detail": "preflight"}, "m")
+        self.assertIn(b'"break"', rig.remote_record())
+        for extra in ((), ("--after-stop", "ST3"), ("--inflight-resolved", "DECISION-readout-ended")):
+            rc, out, err = self.reveal(rig, *extra)
+            self.assertEqual((rc, out), (cw.REFUSED, ""), (extra, err))
+        rc, out, err = self.reveal(rig, "--after-stop", "ST3", "--inflight-resolved", "DECISION-readout-ended")
+        self.assertEqual(rc, 0, err)
+
+    def test_the_readouts_own_break_is_a_confirmed_end(self):
+        rig = Rig()
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        with mock.patch.object(cw.Cluster, "launch", return_value=cw.LaunchResult(cw.BREAK_RC, True, False, True, False)):
+            self.assertEqual(rig.run("pv-readout")[0], cw.TERMINAL)
+        rc, out, err = self.reveal(rig)
         self.assertEqual(rc, 0, err)
 
     def test_a_restore_after_the_write_cannot_change_what_is_published(self):
