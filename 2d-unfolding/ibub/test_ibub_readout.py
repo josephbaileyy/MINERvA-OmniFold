@@ -52,7 +52,8 @@ KS = [1, 2, 3, 4, 5, 10, 15, 20]
 JOB = "61000001"
 DEPLOY = "d0" * 20     # the job's commit (--job-m); the readout's own M is "M0" (c.deploy_head is patched to it)
 JOB_CODE = {"runner_sha256": iu.rc.sha256(Path(iu.__file__)), "config_sha256": iu.rc.sha256(iu.CONFIG)}
-SCONTROL = (f"JobId={JOB} JobName=ibub_run\n   UserId=josephrb(1) GroupId=m3246(2) QOS=regular\n"
+# QOS=regular_1: Perlmutter's spelling of --qos=regular (receipts-cov2d/a2/bulk/complete/connect-complete-1.log.txt:78)
+SCONTROL = (f"JobId={JOB} JobName=ibub_run\n   UserId=josephrb(1) GroupId=m3246(2) QOS=regular_1\n"
             "   JobState=RUNNING Reason=None\n   TimeLimit=11:29:00 TimeMin=N/A\n"
             "   NumNodes=1 NumCPUs=256 NumTasks=1 CPUs/Task=1\n   OverSubscribe=NO Contiguous=0\n"
             "   AllocTRES=cpu=256,mem=480G,node=1,billing=256\n")
@@ -980,8 +981,14 @@ class JobWide(Patched):
                 ("two allocation lines", lambda tr: tr.write_fetch(stdout=ALLOC + "\n" + ALLOC), "allocation line"),
                 ("scontrol names another job", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace(
                     f"JobId={JOB}", "JobId=61000002")), "names job"),
-                ("scontrol QOS debug", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("QOS=regular", "QOS=debug")),
-                 "QOS"),
+                ("scontrol QOS debug", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("QOS=regular_1", "QOS=debug")),
+                 "QOS is 'debug', not one of {regular, regular_1}"),
+                ("scontrol QOS regular_2", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("QOS=regular_1",
+                                                                                         "QOS=regular_2")),
+                 "QOS is 'regular_2'"),
+                ("scontrol QOS regular1", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("QOS=regular_1",
+                                                                                        "QOS=regular1")),
+                 "QOS is 'regular1'"),
                 ("scontrol shared", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("OverSubscribe=NO",
                                                                                       "OverSubscribe=OK")), "OverSubscribe"),
                 ("AllocTRES too small", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("mem=480G", "mem=400G")),
@@ -998,6 +1005,15 @@ class JobWide(Patched):
                 tr = self.tree()
                 edit(tr)
                 self.invalid_job(tr, why)
+
+    def test_the_declared_qos_spelling_regular_is_accepted_beside_regular_1(self):
+        self.assertIsNone(ir.allocation_ok(SCONTROL))
+        self.assertIsNone(ir.allocation_ok(SCONTROL.replace("QOS=regular_1", "QOS=regular")))
+        tr = self.tree()
+        tr.write_fetch(scontrol=SCONTROL.replace("QOS=regular_1", "QOS=regular"))
+        self.patch(tr)
+        rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "PASS", rec.get("controls_failed"))
 
     def test_vi_a_scontrol_time_limit_of_12h_fails_under_a_correct_stdout_line(self):
         tr = self.tree()

@@ -299,6 +299,10 @@ MUTANTS = [
     (R, '    if anc.returncode != 0:',
      '    if False:', [f"{TR}.JobCode"],
      "--job-m need not be an ancestor of the readout's HEAD"),
+    (R, '    if scontrol_key(text, "QOS") not in QOS:', '    if scontrol_key(text, "QOS") != "regular":',
+     [f"{TR}.JobWide"], "the readout's exact QOS=regular match is restored (Perlmutter's regular_1 fails)"),
+    (R, '    if scontrol_key(text, "QOS") not in QOS:', '    if not scontrol_key(text, "QOS").startswith("regular"):',
+     [f"{TR}.JobWide"], "the readout accepts any regular* QOS (regular_2)"),
 ]
 
 

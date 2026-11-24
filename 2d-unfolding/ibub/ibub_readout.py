@@ -400,12 +400,17 @@ def scontrol_key(text: str, key: str) -> str:
     return ""
 
 
+QOS = {"regular", "regular_1"}      # the declared QOS and Perlmutter's recorded spelling of it, exactly
+
+
 def allocation_ok(text: str, lanes: int = 4, mem_mb: int = 114688, cpus: int = 64) -> str | None:
-    """The batch's scontrol record, re-parsed as the job parses it: JobName=ibub_run, QOS=regular,
+    """The batch's scontrol record, re-parsed as the job parses it: JobName=ibub_run, QOS in exactly {regular,
+    regular_1} (Perlmutter records --qos=regular as regular_1, receipts-cov2d/a2/bulk/complete/connect-complete-1.log.txt:78),
     TimeLimit=11:29:00, NumNodes=1, OverSubscribe=NO, and AllocTRES fitting four steps of 112G and 64 CPUs. Returns
     None when it holds, else why."""
-    for k, v in (("JobName", "ibub_run"), ("QOS", "regular"), ("TimeLimit", "11:29:00"), ("NumNodes", "1"),
-                 ("OverSubscribe", "NO")):
+    if scontrol_key(text, "QOS") not in QOS:
+        return f"QOS is {scontrol_key(text, 'QOS')!r}, not one of {{regular, regular_1}}"
+    for k, v in (("JobName", "ibub_run"), ("TimeLimit", "11:29:00"), ("NumNodes", "1"), ("OverSubscribe", "NO")):
         if scontrol_key(text, k) != v:
             return f"{k} is {scontrol_key(text, k)!r}, not {v}"
     tres = dict(t.partition("=")[::2] for t in scontrol_key(text, "AllocTRES").split(",") if "=" in t)
