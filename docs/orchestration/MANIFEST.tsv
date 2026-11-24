@@ -8335,13 +8335,6 @@ docs/orchestration/state/ben-b-20261124/blocks5d-20261124/connect/standin/standi
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r1-agy-gemini-4-hydrogen-xhigh.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r1-codex-school-gpt-6.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r1-prompt.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
-docs/orchestration/state/ben-b-20261124/blocks5d-20261124/run-20261124/lane/launcher.out.txt	intended	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
-docs/orchestration/state/ben-b-20261124/blocks5d-20261124/run-20261124/lane/wend.txt	intended	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
-docs/orchestration/state/ben-b-20261124/blocks5d-20261124/run-20261124/session/connect-b5d.done	intended	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
-docs/orchestration/state/ben-b-20261124/blocks5d-20261124/run-20261124/session/fetch-b5d.tar	intended	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
-docs/orchestration/state/ben-b-20261124/blocks5d-20261124/run-20261124/session/records-check.txt	intended	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
-docs/orchestration/state/ben-b-20261124/blocks5d-20261124/run-20261124/session/records/fetch-b5d/RECORDS.SHA256SUMS	intended	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
-docs/orchestration/state/ben-b-20261124/blocks5d-20261124/run-20261124/session/records/fetch-b5d/sorted_NuEConstraint_FHC_RHC_IMD.txt	intended	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/codex-school-sweep.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/selection-20261124/B-SEL-DECLARATION.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/selection-20261124/BSEL-BINDING-1.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
