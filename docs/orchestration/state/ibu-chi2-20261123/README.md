@@ -50,12 +50,21 @@ and `/pscratch/sd/j/josephrb/`. Local runs used Python 3.11.18, ROOT 6.40.04, nu
 | 6 | `lattest` | Do the standard lateral shifts of our response close either region? | 40–60 × Muon_Energy_MINOS **CLOSES-3**; all others **NO-EFFECT** | The 40–60 shape excess is +10.0 % at CV and +4.6 % at the +1σ shift, which raises MC reco momentum. A zero is reached at σ* = 2.007, just past the declared 2σ bar. MuonResolution, Muon_Energy_MINERvA and the beam angles have no effect on 40–60, and no band moves the low-pT row past its bar. |
 | 7 | `wstest` S | Does one MINOS momentum scale fit the whole p‖ profile? | **TOP-ONLY** | σ = 0.056 [0.029, 0.083] from p‖ < 20, against 1.43 [1.25, 1.62] from p‖ ≥ 20. |
 | 8 | `wstest` W | Do the shipped model's weights, applied per event in (E_ν, Q²), explain it? | **WEIGHT-MODEL-INADEQUATE** (inconclusive) | The fit matched the 40–60 truth (17.9 % → 0.2 %) but left +3.3 % in the lowest pT row, against a 2 % bar. Reported, not licensed: the 40–60 reco misfit goes 10.0 → 8.8 %, low pT −6.4 → −6.5 %, IBU K=10 0.961 → 1.186. |
+| 9 | [`evloop`](evloop/results/README.md) | Do the official MINOS cuts, MasterAnaDev's momentum, a data-only MINOS scale or a data-only beam-angle offset fit the published result to our reco data? | **NONE** of the tested | Controls pass. MasterAnaDev `muon_P` equals `GetPmu` on every row, so that variant had no power. Removing the 40–60 excess needs a −2.7 % curvature scale, at fold χ² 4,522 against 395. |
+| 10 | [`fig2`](fig2/README.md) | Do our selected data and MC match MINERvA's Fig. 2 in the two regions? | **UNRESOLVED** (both) | Descriptive: at 40–60 our data match theirs (+0.2 %) and our MC is 11 % low. At pT 0–0.07 our data and MC are both about 7 % low, with equal data/MC. |
+| 11 | [`variants`](variants/README.md) | Is the truth difference already there against shipped bare GENIE? | **UPSTREAM**, against our *tuned* truth | Bare GENIE is +12.0 % in shape at 40–60 (Tune v1 +14.7 %). The test cannot separate an upstream difference from our tune weights without our own bare-GENIE truth. |
 
 **Post hoc, read by no rule (`foldtest/posthoc_exclude.py`).** Dropping reco pT row 0 and the p‖ 40–60 column from the
 IBU-vs-published χ² takes it from 210 to 100 over 176 cells. Cells were dropped from a correlated covariance, so this
 is not an attribution.
 
 ## What the chain is consistent with
+
+**Correction, 2026-11-24.** In the list below, "a reco effect confined to high-momentum, curvature-measured muons"
+overreaches: the fold locates the disagreement in reco space, not its mechanism. "Beam angle" in the low-pT item means a
+*data-only* angle offset; a difference common to data and MC, which test 10 suggests, was not tested. Tests 9–11 above
+update the picture.
+<!-- absence-ok: scoped to this lane's test chain; it names what these tests covered, not whether a study exists elsewhere -->
 
 - Our MC truth differs from MINERvA's shipped Tune v1 prediction beyond rounding and MC statistics. The events are the
   same public ones, so this is consistent with different event weights (flux or tune). It is not consistent with
