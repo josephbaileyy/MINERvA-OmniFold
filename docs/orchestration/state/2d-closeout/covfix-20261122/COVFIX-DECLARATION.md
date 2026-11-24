@@ -1788,11 +1788,14 @@ stands alone, and each candidate's PV verdict is reported descriptively.
    - a committed iris receipt showing at least the pinned ceiling remaining (541.50 at rev 11.4; 600.00 for rev 12), or the
      binding goes back to Joseph;
    - the fresh PG session named;
-   - the 2D grid (ours vs the paper's pT edges) is confirmed by Joseph before the first seal spend. Ours are
-     0.07/0.33/0.47 (`MINERvA101/MINERvA-101-Cross-Section/util/Binning.h:6`). The paper's grid is 0.075/0.325/0.475,
-     as stored in the release's own TH2D `pt_pl_cross_section` in `cov_ptpl_minerva_inclusive_6GeV.root` (sha256
-     `6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3`, the pin in `2d-unfolding/pv2d/config.json`;
-     read by the director, 2026-11-24). A move to the paper's edges would rebuild COVFIX's inputs;
+   - **the 2D grid: Joseph chose our grid (i), 2026-11-24; a full move to the paper's grid (ii) is being priced for
+     Ben, and would supersede this declaration's inputs if adopted.** If (ii) is adopted before the first seal spend,
+     COVFIX STOPs for a revision.
+     - Ours are 0.07/0.33/0.47 (`MINERvA101/MINERvA-101-Cross-Section/util/Binning.h:6`).
+     - The paper's are 0.075/0.325/0.475, as stored in the release's own TH2D `pt_pl_cross_section` in
+       `cov_ptpl_minerva_inclusive_6GeV.root` (sha256
+       `6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3`, the pin in `2d-unfolding/pv2d/config.json`;
+       read by the director, 2026-11-24);
    - the director's passphrase generated, with the director's piping wrapper, and never shown to cov2d.
 5. **The bars:**
    - the fluctuation affirmative and two-sided (F̃ and every band "covers");
