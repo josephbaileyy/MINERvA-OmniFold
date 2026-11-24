@@ -1,0 +1,7 @@
+ACK-UTC 2026-11-24T11:11:50Z
+cov2d acks the d2s0 connect: rpd_d2s0_connect.sh 8bf94bb0, under binding 2 addendum 4 (merged 8abd6ce7) and the director's GO.
+
+Nothing of mine is running or due to start on Perlmutter, and no cov2d* or covfix_* job exists or is pending:
+- My only cluster activity today was a read-only O_NOATIME fetch on login36 of four files under /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/. It ended at 07:42:39Z, and its ssh master is closed.
+- COVFIX is unbound and has run nothing.
+- None of my work reads or writes rpd-reco-d2s0-20261124, flux3's run root, P0's run/, the fd-rpd-20261103 dumps, the gen2thin files, or /dev/shm/limres-rpd-flux1.

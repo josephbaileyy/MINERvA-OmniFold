@@ -1,0 +1,53 @@
+node login12 staged sha256 55227af2fa4d0a4b526e2224ee6736b8cfdb5aea1c16bcfb698abefcfd79b287
+node login12 2026-11-24T11:42:51Z; fetch script sha256 55227af2fa4d0a4b526e2224ee6736b8cfdb5aea1c16bcfb698abefcfd79b287
+runner pid 1389816 host login12 start ticks 48204368 start 2026-11-24T11:14:16Z
+chain.rc: rc=4 cause=step-d2-predict end=2026-11-24T11:20:59Z
+== state STOP
+== the root (mode, bytes, path), staged copies by count only
+drwx------ 4096 
+-rw------- 52 chain.rc
+-rw------- 405 fence-overlap.txt
+-rw------- 29 handoff.ok
+-rw------- 3583 inputs-check.txt
+-rw------- 16007 production-config.ready.json
+-rw------- 8765 rpd_d2s0_runner.sh
+drwx------ 4096 run
+-rw------- 2483 run/d2-predict.STOP.json
+-rw------- 494 runner.out
+-rw------- 46 runner.pid
+-rw------- 134 runner-steps.txt
+-rw------- 162404 run/p0.json
+-rw------- 12053 run/pins.json
+-rw------- 3681 stat-d2s0.txt
+-rw------- 283 sup-d2-predict.json
+-rw------- 8 sup-d2-predict.json.pgid
+drwx------ 4096 tools
+-rw------- 6007 tools/d2s0_checks.py
+-rw------- 5895 tools/d2s0_expected.json
+-rw------- 4676 tools/fence_overlap.py
+-rw------- 9897 tools/p0_supervise.py
+run/staged: 38 files
+send files 14, bytes 210419
+== runner-steps.txt
+d2-predict supervisor_rc=1 rc=4 signal=- deadline=0 leftover_killed=0 group_gone=1 peak_rss_bytes=2003857408 end=2026-11-24T11:20:58Z
+== chain.rc
+rc=4 cause=step-d2-predict end=2026-11-24T11:20:59Z
+sha256 a8446b27c02ceedadbacf00233ef9982e03936c0ff1cce8494ac88fd99d32234 runner.pid
+sha256 ce832fb9055044640977e35177ba50dbb3b37c4744dea0d07d5d3b3d9719a7b6 runner.out
+sha256 cbc59e2ab568463852f57a4903e1216bb57155ef65fc8ac1942d3fab6a49728e runner-steps.txt
+sha256 ebf7b0ecf5b1134143ab7cc0c13c4af484b373fa3b82c247d7ff533749657941 chain.rc
+sha256 6298cf5ff3c63a29c866c74c495d16f26220200320fb08a47b8916ab10931cf5 handoff.ok
+sha256 ff24caf58810e8578ba0ea1e5515c2687ec3d7635580e9a469e30937fda931c4 stat-d2s0.txt
+sha256 3d78b32e836245672aa41bcb377fe9c437f40e95401637af43f7da51c935e7d6 inputs-check.txt
+sha256 fe503114deba07ad89305f73176003af3510e70ca754b950e343bdfc55306885 fence-overlap.txt
+sha256 9303b1cfc0a6e5c26ad40abcd8f2ae6f321846b0611a92d93d954d7070f72c44 rpd_d2s0_runner.sh
+sha256 3b2afde495d630cc44df730e3e1acf12e0c332953e9fa298fa979f2e2e39b057 production-config.ready.json
+sha256 04c4e42f35cad0e73d6c1f3d52ac58e838b9c4f4bfeb9b8059ff24a96e94692d sup-d2-predict.json
+sha256 adabe65879261e9963f317149ef1aad82e77cb0c704bbb8b18adbce88b71116c run/d2-predict.STOP.json
+sha256 8ed2faf71a3966ed832831ba669c093235aa39c00fda515edecfd6b60a34be10 run/p0.json
+sha256 52fc41f41cf17954ceddab8c581aa327a62d160c059cbee8bf2941c1880e5c8a run/pins.json
+== TAR BEGIN
+[base64 tar block removed: records/ holds the files; see the run README]
+== TAR END tar rc=0 base64 rc=0
+== rpd-d2s0-fetch rc=12 2026-11-24T11:42:52Z
+script rc=12
