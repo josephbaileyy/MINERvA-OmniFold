@@ -23,7 +23,7 @@
 SELF=$1; WEND=$2
 set -o pipefail
 TAG=run
-M=1230e29a88fb9f618f0d7100426f3ccd896dad1f
+M=db8854e286f6ce4a976e0d603b43454674fc9129
 N=/pscratch/sd/j/josephrb/ibub-20261123
 D=$N/deploy
 FR=$N/fetch-$TAG
@@ -178,7 +178,7 @@ e8e5969f978107e45991164a16c84f1794694dee752cbf189eab00e3ddd54633  ibub_unit.py
 62591f998f6d3c907bcec460c9399a419755d8f041b40652f37066074b3ab85b  ibub_lanes.py
 13316a39994057d21e72fe4243e89e6ba8b0fb6f65db54b6325947eff48e4e78  ibub_overlap.py
 8f1900e43d20cbc7b6dabb73e0419314bd6c0456b485d13b91afa450ed6ddb2e  config.json
-b62a7825ddc2f3309a4ceb4a6ba56bb11b8144c3336fdd237fea65b9c07890f9  jobs/ibub_job.sbatch
+5e8e0abf0aa4e85907f00e568db1e8468face153655f4723db801504c05bfc55  jobs/ibub_job.sbatch
 SUMS
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 NUMEXPR_NUM_THREADS=2
 export PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
@@ -202,10 +202,12 @@ cat "$N/logs/stage.json"; date -u +%FT%TZ
 echo "== the fence again, just before the submission"
 fence_sacct || { echo "STOP: fence (before sbatch)"; finish 9; }
 echo "== sbatch"
-# the job's stdout goes to a fresh private directory, made here just before the submission (it cannot exist: $N is
-# this connect's own), so nothing can be planted where Slurm will open the file
+# the job's stdout and stderr go to a fresh private directory, made here just before the submission (it cannot exist:
+# $N is this connect's own), so nothing can be planted where Slurm will open the files. Both are pinned, so an
+# inherited SBATCH_OUTPUT or SBATCH_ERROR cannot send either elsewhere
 mkdir -m 700 "$N/slurm" || { echo "STOP: mkdir $N/slurm"; finish 5; }
 jid=$(sbatch --parsable --job-name="$JOBNAME" --time="$LIMIT" --output="$N/slurm/%x-%j.out" \
+  --error="$N/slurm/%x-%j.err" \
   "$D/2d-unfolding/ibub/jobs/ibub_job.sbatch" "$D" "$N" "$M" 2> "$N/logs/sbatch.err"); brc=$?
 cat "$N/logs/sbatch.err"
 [ "$brc" -eq 0 ] && [[ "$jid" =~ ^[0-9]+$ ]] || { echo "STOP: sbatch rc $brc, id '$jid'"; finish 5; }
@@ -217,7 +219,11 @@ for i in $(seq 1 20); do
 done
 echo "sacct: ${row:-<none>}"
 [ "$listed" -eq 1 ] || { echo "STOP: sacct did not list $jid within 5 minutes (the job may exist: do not resubmit)"; finish 5; }
-info=$(scontrol show job "$jid" 2>&1); echo "$info" > "$N/logs/scontrol-$jid.txt"
+# the connect's own record; the batch writes scontrol-batch-<id>.txt, so neither can refuse or overwrite the other
+SREC="$N/logs/scontrol-connect-$jid.txt"
+[ ! -e "$SREC" ] && [ ! -L "$SREC" ] || { echo "STOP: $SREC exists or is a symlink"; finish 5; }
+info=$(scontrol show job "$jid" 2>&1); ( set -o noclobber; printf '%s\n' "$info" > "$SREC" ) \
+  || { echo "STOP: writing $SREC"; finish 5; }
 # scontrol ends its first line with JobName=..., so each key is matched up to a space or the end of the line
 grep -Eq "JobName=$JOBNAME( |\$)" <<<"$info" && grep -Eq "QOS=regular( |\$)" <<<"$info" \
   && grep -Eq "TimeLimit=$LIMIT( |\$)" <<<"$info" \
