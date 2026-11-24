@@ -17911,6 +17911,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/fetch1/session.err	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/fetch1/session.notar.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/records/dry/p0.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/records/dry/pins.json.gz	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/records/fence-overlap.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/records/flux3-inputs.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/records/handoff.ok	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
@@ -17918,6 +17919,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/records/production-config.ready.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/records/rpd_p0_runner.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/records/run/p0.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/records/run/pins.json.gz	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/records/runner-steps.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/records/runner.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/records/runner.pid	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
@@ -17929,6 +17931,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/survey/launcher.out.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/survey/survey.err	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/survey/survey.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/tests/test_pins_gz.out.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/run-20261124/tests/test_pins_gz.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/tests/fence_overlap_real_config.out.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/tests/test_connect_start.out.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/tests/test_connect_start.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
