@@ -340,6 +340,21 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
     - disclosed: elapsed time can reveal the attempt count;
     - three stale "placeholder" references to u = 2's custody, the "named sealed truths" wording, and the reco floor's
       last sentence.
+  - **Joseph's decisions of 2026-11-24** on the codex-school advisory
+    (`~/codex-reports/note-measurement/seven-decisions-20261124/FINAL.md`), relayed by the rewrite helper ("okay I agree
+    with it all and yes set the branch protection and check pass probability") and by the director:
+    - **Slot 1: G21_11a_00_000,** from a sha-pinned private copy of SciSoft's tarball. It holds only if a clean replay
+      verifies the extracted files, the GENIE configuration as resolved, and the spline the generator opens. Otherwise
+      slot 1 is dropped and the claim narrows; the drop branch is written now (§4.1, §3, §4.3, §6.4).
+    - **Slot 2: G18_02a_00_000,** from CVMFS, table entries only (§4.1). Rev 11.4's G21_11b_00_000 and
+      G18_02b_02_11b are withdrawn: G21_11b has no product on the node.
+    - **(b), conditional:** the estimator, the cells (R00–R15, kept), the intervals, the failure rule, the response and
+      run-period variations the toys exercise, and a joint-coverage grade are frozen before the first seal spend, or
+      COVFIX proceeds in 2D only (§4.4). Its cost is GPU and does not move the 600.00 ceiling.
+    - **Pass probability:** each threshold is chosen for a declared pass probability at nominal and simulated with
+      correlated toys before freezing. It is never tuned on a sealed output (§4.5).
+    - **The codex-school review** reads the final amendment text once, then rechecks any blockers it finds. The
+      `covfix-ledger` ref is protected (ruleset 27996874) (§9).
   - **The calibration of u = 2's amplitude range** was computed from a read-only fetch of the four pinned 5D predictions
     (director's go, 2026-11-24) and committed before any draw (`u2-calibration/`). Two refinements were made before
     any value was computed: ordinal q3 and W indices replace bin centres, and the IPF limit is 1000 iterations (200 did
@@ -473,7 +488,7 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
 | phase | what | price, full (node-h) | price, lean | cap, full / lean |
 |---|---|---|---|---|
 | **P0** | re-analysis of committed records (§3.1) | 0 (local) | 0 | 0 |
-| **PG** | generate, encrypt and seal the two GENIE validation truths, u = 0, 1 (§4) | 1.33–2.0 | 1.33–2.0 | 3.0 |
+| **PG** | generate, encrypt and seal the two GENIE validation truths: u = 0, G21_11a_00_000 from the pinned private copy after §4.1's replay checks (dropped by §4.1's rule if any fails), and u = 1, G18_02a_00_000 (§4) | 1.33–2.0 | 1.33–2.0 | 3.0 |
 | **P1 W1** | N1, N2, N5, N3, plus the nominal central unfold and the §2-vector unfolds at G18 and AR23 (§3.2) | 162.07 | 124.07 | — |
 | **P1 W2** | N4, A1f, A1p, plus three A1 central unfolds, after ST1 is read on W1 | 129.77 | 86.07 | — |
 | **P1** | total | 291.84 | 210.14 | 330 / 240 |
@@ -492,6 +507,12 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
   - The ranges come from PG's range only. The printed range starts at 1.33, above F1's measured 1.3275 node-h for two
     tunes.
   - Without N5 (§9.1): full 392.74–393.41; lean 330.04–330.71.
+  - **If slot 1 is dropped (§4.1):** PV loses u = 0's 300 toys and one central unfold, 300 × 0.19 + 0.19 = 57.19:
+    PV 118.38, full 411.55–412.22. The ceiling and PV's cap are unchanged.
+- **Rev 12's gates before any sealed spend** (Joseph, 2026-11-24): slot 1's clean replay passes all three of §4.1's
+  checks before PG generates u = 0, or slot 1 is dropped; and before the first seal spend, (b) is either frozen by
+  §4.4 or set aside, with COVFIX proceeding in 2D only. Neither gate moves the 600.00 CPU ceiling: (b)'s cost is
+  GPU, ledgered against the 5,100 GPU node-h line (§4.4).
 - **Every cell is priced at n × 0.19** node-h per unfold, with no rounding. That is the director's planning figure:
   COV2D's 112.74 node-h over 600 toys is 0.188, including pilots and retries.
 - **Lean** sets N1, N2 and N4 to 150 toys each and N5 to 150 + 150, and drops A1f. Cell 4 then rests on IBUKT A2's
@@ -885,41 +906,86 @@ and the estimator. N2 probes sim's increment at nominal truth; it cannot establi
 
 ### 4.1 Which, and how many
 
-- **Two never-read GENIE v3 tunes,** each with a CCQE or 2p2h model that the spent tunes do not use:
-  1. `G21_11b_00_000`;
-  2. `G18_02b_02_11b`, or `G18_02a_02_11b` only if 02b is absent: the same G18_02 construction, with a different
-     intranuclear transport.
-- **Both are required.** If either family is absent from the genie_xsec `v3_04_00` product on Perlmutter, PG stops and
-  goes to the director. No FSI twin of a spent tune may replace it.
+- **Two never-read GENIE v3 tunes,** each with a CCQE or 2p2h model that the spent tunes do not use (Joseph's decision of
+  2026-11-24, rev 12):
+  1. **u = 0, slot 1: `G21_11a_00_000`,** from a sha-pinned private copy of SciSoft's tarball
+     `genie_xsec-3.04.00-noarch-G2111a00000-k250-e1000.tar.bz2` (sha256
+     `ae159887772a54891fc4bddb189ab108d74c4a48db68c13ed7166524e8797590`). It is not on CVMFS (the genie_xsec listing at
+     revision 1249, PR #1281). Rev 11.4's `G21_11b_00_000` has no product on the node.
+     - **It holds only if a clean replay verifies three things, not only the tarball's hash** (below). Otherwise slot 1
+       is dropped.
+  2. **u = 1, slot 2: `G18_02a_00_000`,** from CVMFS's `G1802a00000-k250-e1000`. It needs only the table-driven entries
+     (setup's qualifier, reduce's case, a `TUNES` label, the `PG_SPLINE_PINS` entry and PG's truth names), with no path
+     change. Rev 11.4's `G18_02b_02_11b` and its 02a fallback are withdrawn.
+- **Slot 2 is required.** If `G1802a00000-k250-e1000` is absent from the genie_xsec `v3_04_00` product on Perlmutter, or
+  its bytes differ from the record's pins, PG stops and goes to the director. No other tune replaces either slot, and no
+  FSI twin of a spent tune may replace one.
+- **Their model classes,** from tune-generator's offline record (`pg/record/PG-RECORD.md`, b31559e29), which resolves
+  GENIE R-3_04_00's configuration from public files only:
+
+  | tune | role | CCQE class | 2p2h class | transport |
+  |---|---|---|---|---|
+  | G18_10a_02_11b | spent | NievesQELCCPXSec | NievesSimoVacasMECPXSec2016 | hA (HAIntranuke2018) |
+  | AR23_20i_00_000 | spent | NievesQELCCPXSec | SuSAv2MECPXSec | hA |
+  | G21_11a_00_000 | slot 1 | SuSAv2QELPXSec (a hybrid; branches LwlynSmithQELCCPXSec, RosenbluthPXSec, SuSAv2QELPXSec) | SuSAv2MECPXSec | hA |
+  | G18_02a_00_000 | slot 2 | LwlynSmithQELCCPXSec | EmpiricalMECPXSec2015 | hA |
+
+  - **Overlap, disclosed:** G21_11a's 2p2h is spent AR23's `SuSAv2MECPXSec`. Its CCQE differs from both spent tunes'
+    `NievesQELCCPXSec`.
+  - G18_02a_00_000's CCQE and 2p2h are both outside the spent pool.
+  - All four tunes use hA transport, so neither slot tests a change of intranuclear transport.
 - **A third sealed truth, u = 2** (rev 12): a blind correlation deformation of p(q3, W | p_T, p∥, E_avail) on the 5D FINE
-  grid (pt, pz, eavail, q3, W), applied by `s5e_deform.ratio_weight`. It is not a GENIE tune and is not generated by PG;
+  grid (pt, pz, eavail, q3, W), applied by `s5e_deform.ratio_weight`. It is not a GENIE tune and PG does not generate it;
   it reweights the nominal simulation. It keeps p(p_T, p∥, E_avail), so the graded 2D truth is the nominal's (§4.3). It
-  joins the held-out validation family, and it decides (§6.4). Its definition and custody: §4.2's declared family, draw
-  and checks.
-- **What the names mean,** as v3.2.0 descriptions pending PG's probe of v3_04_00, from GENIE's "Global Fits and Physics Tunes" page (https://genie-mc.github.io/tunes.html,
+  joins the held-out validation family and decides (§6.4). Its definition and custody: §4.2's declared family, draw and
+  checks.
+- **What the names mean,** from GENIE's "Global Fits and Physics Tunes" page (https://genie-mc.github.io/tunes.html,
   read 2026-11-22; it covers v3.0.0–v3.2.0):
-  - In the CMC token (`11b`, `02b`), the letter selects the intranuclear transport: a = INTRANUKE/hA,
-    b = INTRANUKE/hN, c = Liège/INCL, d = Geant4 Bertini. The trailing `_02_11b` is GENIE's "final 2020 free-nucleon
-    x-section retune".
-  - G21_11* "uses the SuSAv2 QE and 2p2h model". **Overlap, disclosed:** spent AR23_20i_00_000's 2p2h is
-    `SuSAv2MECPXSec` (FD-F1-REPORT.md §1.3), so G21_11b shares AR23's 2p2h. Its CCQE (SuSAv2) differs from both spent
-    tunes' `NievesQELCCPXSec`.
+  - In the CMC token (`11a`, `02a`), the letter selects the intranuclear transport: a = INTRANUKE/hA,
+    b = INTRANUKE/hN, c = Liège/INCL, d = Geant4 Bertini. Neither chosen tune carries the `_02_11b` suffix, GENIE's
+    "final 2020 free-nucleon x-section retune".
+  - G21_11* "uses the SuSAv2 QE and 2p2h model".
   - G18_02* is "similar to G18_01* CMCs, but upgrade[s] the resonance and coherent pion production models (RS → BS)".
-    The page says G18_10* adds to it "a consistent theory-based model of interactions around the quasi-elastic peak (NAV
-    QE and NSV 2p2h model)", so G18_02 does not carry spent G18_10a's NAV QE and NSV 2p2h. The page does not name
-    G18_02's own QE and 2p2h models.
+    The page says G18_10* adds to it "a consistent theory-based model of interactions around the quasi-elastic peak
+    (NAV QE and NSV 2p2h model)", so G18_02 does not carry spent G18_10a's NAV QE and NSV 2p2h.
+- **Slot 1's clean replay** (Joseph's condition, 2026-11-24). tune-generator builds the private product and the replay
+  on the node, before PG generates u = 0. The replay runs F1's bound pipeline with slot 1's §4.2 changes, at a public
+  seed outside §4.2's seed range, and its events are discarded unread. It must verify all three of:
+  1. **The extracted files.** The tarball's sha256 equals the pin above, and each extracted file equals the record's
+     pins: the spline `gxspl-NUsmall.xml` (sha256 `fa475f7f5066b314f177b10c4c821d76f2db072508be2734243a26544ef7ed1c`), the
+     README (sha256 `4a2beead2f261240a4fed7f7d419d2d68c11bc1fa264faa7e129f8223a7ba7fd`), `ups/genie_xsec.table`, and the
+     names-only listing of its `data/`. That listing holds no file named like a GENIE configuration file, because the
+     table prepends `data/` to `GXMLPATH`, ahead of the tune and CMC directories.
+  2. **The GENIE configuration as resolved.** A record of every configuration (XML) file the replay's GENIE processes
+     open, each with its sha256, taken from the processes themselves (an open-file trace, or GENIE's own load log
+     where it names every file). Every opened configuration file must be one the record pins for G21_11a_00_000 and
+     match its pin. The resolved tune must be `G21_11a_00_000`, with the classes in the table above.
+  3. **The spline the generator actually opens.** The same record shows the spline file the generator opens. Its
+     sha256 equals that of the reduced spline made from the pinned source by the bound reduce step. Its header names
+     tune `G21_11a_00_000`, format `3.00`.
+
+  The three checks' record (the commands, the opened-file lists and every sha) is committed before PG generates u = 0.
+- **The drop branch,** declared now so that it needs no later amendment. **If any of the three checks fails, or cannot
+  be run,** slot 1 is dropped:
+  - PG generates no u = 0, and no other tune replaces it;
+  - the validation family is u = 1 and u = 2, two sealed truths; u = 0's seeds stay unused;
+  - every "three sealed truths" in §3–§7 reads "two sealed truths, u = 1 and u = 2", and every "two GENIE v3 tunes"
+    reads "one GENIE v3 tune";
+  - §6.4's "any" and "every" range over u = 1, 2;
+  - the claim narrows accordingly (§4.3), and the drop and its reason are printed beside every reading;
+  - PV's price falls by 57.19 node-h (§3).
+- **The novelty test,** applied to the record and confirmed by PG's probe of the node before any generation. A chosen
+  tune qualifies only if at least one of its CCQE class and its 2p2h class is used by **neither** spent tune. A tune whose
+  two classes both appear among the spent tunes' classes is excluded, even in a new pairing. Both chosen tunes qualify in
+  the record. If the node's probe disagrees with the record for slot 2, PG stops. If it disagrees for slot 1, slot 1 is
+  dropped.
 - **PG's stat-only probe,** before any generation:
   - it lists the product's tune qualifiers;
   - it prints, for each chosen tune, the CCQE and 2p2h model class names from GENIE's own tune configuration (public
     configuration, not generated content);
   - it confirms an encryption tool (§4.2).
-- **The novelty test,** applied to the probe's output: a chosen tune qualifies only if at least one of its CCQE class
-  and its 2p2h class is used by **neither** spent tune. A tune whose two classes both appear among the spent tunes'
-  classes is excluded, even in a new pairing. The 02a fallback substitutes only for 02b's **absence** from the product.
-  02a shares 02b's CCQE and 2p2h classes, so a novelty exclusion of 02b excludes 02a too. If no qualifying tune
-  remains for a slot, PG stops.
-- The probe's output, the fallback taken and the overlap record are committed before generation. Partial overlaps are
-  disclosed in §4.3.
+- The probe's output, slot 1's replay record (or the drop and its reason), and the overlap record are committed before
+  generation. Partial overlaps are disclosed in §4.3.
 - FD-F1-DECLARATION.md:76 is cited only for the product, path and qualifier convention.
 
 ### 4.2 Custody
@@ -927,7 +993,9 @@ and the estimator. N2 probes sim's increment at nominal truth; it cannot establi
 **Who generates.** A session that is not cov2d and has read none of COV2D, T2A, G2R, REGRADE or this declaration's
 §5–§7: a fresh session Joseph opens, which the director names at binding. **Binding requires it.** That session runs
 F1's bound pipeline (`gen5d_v3.py`, `run_gevgen_v3.sh`, the pv-ladder ratios and the bridge), unchanged except for the
-tune names and the seeds.
+tune names and the seeds, and, for slot 1 only, the private product's entries that `pg/record/SLOT1-PRIVATE-PRODUCT.md`
+(b31559e29) lists: the `PRODUCTS` prepend, reduce's spline source, PG's genie_xsec root, and the tune's pins and labels
+(§4.1).
 - **The seeds are director-held,** so a builder cannot regenerate the truths from public tune names and public seeds.
   - The director draws PG's seed base and a random salt.
   - Before generation, the director publishes sha256(seed base ‖ salt), and reveals both after PV's readout. The
@@ -1138,9 +1206,10 @@ sealed attempt's record.
 
 ### 4.3 What the validation family can and cannot show
 
-u = 0 and u = 1 are GENIE v3 configurations. G21_11b shares AR23's 2p2h class, and G18_02's models will be named by the
-probe. A pass licenses readings at the **three named sealed truths under the fixed toy law** only (rev 12; two at rev
-11.4), with those overlaps stated beside it. It does not license a GENIE v3 model family, or any other generator. A
+u = 0 and u = 1 are GENIE v3 configurations. G21_11a shares AR23's 2p2h class (`SuSAv2MECPXSec`); G18_02a_00_000's
+CCQE (`LwlynSmithQELCCPXSec`) and 2p2h (`EmpiricalMECPXSec2015`) are both outside the spent pool; both use hA transport,
+as both spent tunes do (§4.1). A pass licenses readings at the **three named sealed truths under the fixed toy law**
+only (rev 12; two at rev 11.4; two if slot 1 is dropped, §4.1), with those overlaps stated beside it. It does not license a GENIE v3 model family, or any other generator. A
 non-GENIE generator truth would need a sample this project does not have; that is disclosed, not tested.
 
 **u = 2 leaves the graded 2D truth at nominal** (rev 12). Its deformation changes only p(q3, W | p_T, p∥, E_avail), so the
@@ -1156,6 +1225,46 @@ the same 2D truth. u = 2 therefore **tests hidden-variable dependence through th
   are outside the claim.** At u = 2 the 2D unfold can respond only through the hadronic dependence of the muon-side
   efficiency and smearing: that is the mechanism u = 2 tests. The floor selects a subset of the family, favouring changes the reco summary measures well;
   its effect on the difficulty of passing the bars can go either way, and that is disclosed beside any u = 2 reading.
+
+### 4.4 (b): the shared held-out 5D readout (conditional; frozen before the first seal spend)
+
+Joseph's decision of 2026-11-24: a conditional yes. The director's readout may grade encrypted toy-specific 5D truths of
+the sealed PV toys and release summary counts only. **It decides nothing in §5–§7.** Its own failure rule decides only
+the 5D measurement claim.
+- **Before the first seal spend, this declaration freezes, by amendment:**
+  - the estimator;
+  - the cells, R00–R15, kept as they are;
+  - the intervals;
+  - the failure rule. A failure, or an empty selected set, ends the proposed 5D measurement claim. The diagnostic counts
+    are published, and no survivors are selected from the holdout;
+  - which response and run-period variations the toys exercise;
+  - a joint-coverage grade of the frozen cell set, beside the per-cell grades;
+  - each threshold with its simulated pass probability and power (§4.5).
+- **Who drafts it.** tier3-design drafts the 5D design after its time-boxed step-2 pricing ends; cov2d folds it in. The
+  readout reads only the summary counts it releases, never a sealed truth.
+- **If the 5D design cannot be frozen and rehearsed before the first seal spend,** COVFIX proceeds in 2D only and forgoes
+  this use of the seals. No later amendment can add (b) to seals already spent.
+- **The cost is GPU,** about 25.8 GPU node-h for three truths and 17.2 for two, per tier3-design's inventory. It is
+  ledgered against the 5,100 GPU node-h line. It does not move the 600.00 CPU node-h ceiling, which stays until then.
+
+### 4.5 Thresholds by simulated pass probability, never tuned on a sealed output
+
+A threshold for (b)'s per-cell test and for its joint-coverage test is chosen for a **declared pass probability at
+nominal coverage**, for example 0.95 for the whole family. It is never set or moved after any sealed output is read.
+- **The simulation.** Before freezing, each threshold is simulated with COVFIX's zero-bias reference machinery (§6.2's
+  law). The toys are correlated, drawn from the carried 16-cell covariance that tier3-design supplies, at the actual
+  number of sealed truths (three, or two if slot 1 is dropped).
+- **The amendment states, for each threshold,** its simulated pass probability at nominal, and its power at one or two
+  under-coverage points declared with it.
+- **Why the advisory's per-cell rule is not adopted.** That rule was a one-sided 95 % exact binomial lower bound of at
+  least 63.27 %, i.e. 204/300 per cell. Under the independence approximation, recomputed by cov2d with
+  `scipy.stats.binom` at p = 0.6827 and n = 300:
+  - one cell passes with probability 0.567;
+  - all 48 tests (16 cells × 3 truths) pass with probability 1.54e-12, and 8 tests with 0.0107;
+  - a joint 0.95 at nominal over 48 tests needs at least 180/300 per cell.
+
+  Correlated cells change these numbers, which is why the frozen thresholds come from the correlated simulation and not
+  from this approximation.
 
 ## 5. Candidate constructions, built from P0 and P1, frozen at P2
 
@@ -1400,8 +1509,8 @@ readings it affects:
 K0's verdict is reported as observed. A refusal cannot hide a valid observed deficit, because FAILS is read first, and
 every refusal is printed beside it.
 
-**Rev 12:** "any" and "every" range over the three sealed truths u = 0, 1, 2. At rev 11.4 they were "either" and "both"
-over u = 0, 1. The order of the conditions and every bar are unchanged. The alternative Joseph may choose instead is in
+**Rev 12:** "any" and "every" range over the three sealed truths u = 0, 1, 2, or over u = 1, 2 if slot 1 is dropped
+(§4.1). At rev 11.4 they were "either" and "both" over u = 0, 1. The order of the conditions and every bar are unchanged. The alternative Joseph may choose instead is in
 the change log: u = 2 descriptive, with this table over u = 0, 1 only.
 
 ### 6.5 No operating rates are claimed
@@ -1580,5 +1689,14 @@ stands alone, and each candidate's PV verdict is reported descriptively.
      - the u2-draw role's node-h: RULED 2026-11-24, priced at about 1.0 in PV's expected price, re-measured in the
        synthetic rehearsal, with the ceiling at 600.00;
        <!-- absence-ok: price of a role this draft declares and has not yet written -->
+   - **from Joseph's decisions of 2026-11-24 (§4.1, §4.4, §4.5):**
+     - tune-generator builds slot 1's private product and its clean replay; the three checks' record is committed
+       before PG generates u = 0, or slot 1 is dropped;
+     - tier3-design drafts (b)'s 5D design after its time-boxed step-2 pricing, and supplies the carried 16-cell
+       covariance for §4.5's simulation; cov2d folds both in by amendment before the first seal spend, or COVFIX
+       proceeds in 2D only;
+     - the codex-school (gpt-6.2) review reads the final amendment text once, then rechecks any blockers it finds;
+     - the `covfix-ledger` ref is protected by ruleset 27996874 (non_fast_forward and deletion, no bypass);
+       nothing pushes to it without the director's approval.
    - the receipt: binding at 600.00 is satisfied by PR #1276 (630.4 node-h at 06:55Z); the per-phase check then applies
      before each paid phase.
