@@ -1,0 +1,6 @@
+BAIL the window ended (now 1795507540 > 1795507530)
+== script rc=9
+== the connect log
+  cat: /pscratch/sd/j/josephrb/q0study-20261124/logs/connect-q0.log: No such file or directory
+== done: cat: /pscratch/sd/j/josephrb/q0study-20261124/logs/connect-q0.done: No such file or directory
+ls: cannot access '/pscratch/sd/j/josephrb/q0study-20261124': No such file or directory

@@ -1,0 +1,53 @@
+{
+ "schema": "q0-extract/1",
+ "host": "login38",
+ "start_utc": "2026-11-24T08:14:56Z",
+ "code_sha256": "9ef4a1f247726532c2c98c84de9f66af221db55a949006ce0d9ec43b38274255",
+ "omni": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root",
+ "tree": "mc_signal_reco",
+ "python": "3.10.19",
+ "numpy": "2.2.6",
+ "uproot": "5.6.9",
+ "omni_stat_before": {
+  "size": 4825716683,
+  "atime_ns": 1794652655000000000,
+  "mtime_ns": 1780810390000000000
+ },
+ "omni_sha256": "b6d2651cfdbc52790cc7ed6032f2062a3e0ea50c12d63725beba29098dd5175a",
+ "omni_stat_after": {
+  "size": 4825716683,
+  "atime_ns": 1794652655000000000,
+  "mtime_ns": 1780810390000000000
+ },
+ "n_entries": 32849103,
+ "n_pass": 20498013,
+ "recovery_control": {
+  "rows": 20181786,
+  "max_abs_resid_GeV": 3.2146193262860836e-10,
+  "tol_GeV": 1e-06,
+  "n_W2_negative": 316227
+ },
+ "q0_status_counts": {
+  "0": 20498013,
+  "1": 0,
+  "2": 0
+ },
+ "n_q0_le_0": 73,
+ "npz_sha256": "91d013793fae94a363bc3e515fa600474c0d9218e412cd0766b42535c7f152b5",
+ "npz_bytes": 778927176,
+ "columns": {
+  "pt": "float32",
+  "pz": "float32",
+  "eavail": "float32",
+  "q3": "float32",
+  "W": "float32",
+  "q0": "float32",
+  "w_reco": "float32",
+  "q3_true": "float32",
+  "W_true": "float32",
+  "q0_status": "int8",
+  "in_truth_ps": "int8"
+ },
+ "peak_rss_bytes": 6512271360,
+ "end_utc": "2026-11-24T08:15:24Z"
+}

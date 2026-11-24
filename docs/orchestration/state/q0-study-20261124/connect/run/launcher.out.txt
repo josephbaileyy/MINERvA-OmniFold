@@ -1,0 +1,11 @@
+ssh rc=0
+node login38 staged sha256 9fc0f3c01303278c21fb284aad86bef8ee0d07b873becca29a0c55e4c4aa1846
+detached pid 1219656, output /dev/shm/q0s.1219227.sh.out
+script rc=0
+connect script rc=0 (every stop after $OUT exists writes the records tar first)
+fetch logs/connect-q0.log rc=0 bytes 1798
+fetch logs/connect-q0.done rc=0 bytes 2
+fetch fetch-q0.tar rc=0 bytes 778977280
+fetch-q0.tar sha256 197f835cb2224edbee324f58cb2c61a5a02becc87a3ade751d34fc9dc6f49f05 (the log's: 197f835cb2224edbee324f58cb2c61a5a02becc87a3ade751d34fc9dc6f49f05)
+RECORDS.SHA256SUMS check rc=0 (6 files)
+connect done file: 0
