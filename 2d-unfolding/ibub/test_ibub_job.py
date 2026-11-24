@@ -208,15 +208,19 @@ class Job(unittest.TestCase):
         self.assertEqual((self.done()["rc"], self.done()["completion"]["verdict"]), (1, "FAIL"))
 
     def test_each_allocation_mismatch_or_a_failed_query_refuses_with_nothing_run(self):
-        cases = {"name": {"F_NAME": "ibub_other"}, "qos": {"F_QOS": "debug"}, "limit": {"F_LIMIT": "12:00:00"},
-                 "nodes": {"F_NODES": "2"}, "shared": {"F_OVER": "OK"}, "stdout": {"F_STDOUT": "/tmp/elsewhere.out"},
-                 "tres unreadable": {"F_TRES": "billing=256"}, "too small": {"F_TRES": "cpu=128,mem=200000M"},
-                 "query fails": {"FAKE_SCONTROL_FAIL": "1"}}
-        for tag, env in cases.items():
+        cases = {"name": ({"F_NAME": "ibub_other"}, "JobName is"), "qos": ({"F_QOS": "debug"}, "QOS is"),
+                 "limit": ({"F_LIMIT": "12:00:00"}, "TimeLimit is"), "nodes": ({"F_NODES": "2"}, "NumNodes is"),
+                 "shared": ({"F_OVER": "OK"}, "OverSubscribe is"),
+                 "stdout": ({"F_STDOUT": "/tmp/elsewhere.out"}, "StdOut"),
+                 "tres unreadable": ({"F_TRES": "billing=256"}, "not readable from AllocTRES"),
+                 "too small": ({"F_TRES": "cpu=128,mem=200000M"}, "do not fit"),
+                 "query fails": ({"FAKE_SCONTROL_FAIL": "1"}, "scontrol show job failed")}
+        for tag, (env, why) in cases.items():
             with self.subTest(case=tag):
                 self.setUp()
                 r = self.run_job(**env)
                 self.assertEqual(r.returncode, 2, r.stdout)
+                self.assertIn(why, r.stdout)                      # the check that fired is the one named
                 self.assertEqual(self.dispatched(), [])
         self.setUp()
         self.assertEqual(self.run_job(F_TRES="cpu=256,mem=470G").returncode, 0)     # mem given in G is read too
@@ -276,7 +280,8 @@ class Job(unittest.TestCase):
         self.assertEqual(il.verify(), [])
         real = il.table
         for tag, bad in (("a toy dropped", lambda: real()[:-1]), ("a toy twice", lambda: real() + [real()[-1]]),
-                         ("references swapped", lambda: [("refs", 0, "central_df"), ("refs", 1, "central")] + real()[2:])):
+                         ("references swapped", lambda: [("refs", 0, "central_df"), ("refs", 1, "central")] + real()[2:]),
+                         ("a toy moved to another lane", lambda: real()[:2] + [("toys", 1, real()[2][2])] + real()[3:])):
             with self.subTest(case=tag), unittest.mock.patch.object(il, "table", bad):
                 self.assertNotEqual(il.verify(), [])
 
