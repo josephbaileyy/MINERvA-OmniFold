@@ -1,0 +1,19 @@
+utc 2026-11-24T11:15:00Z
+node login05
+== 3 (again). getfattr, one attribute per call (getfattr honours a single -n)
+getfattr: Removing leading '/' from absolute path names
+# file: cvmfs/larsoft.opensciencegrid.org
+user.fqrn="larsoft.opensciencegrid.org"
+
+rc=0
+getfattr: Removing leading '/' from absolute path names
+# file: cvmfs/larsoft.opensciencegrid.org
+user.revision="1249"
+
+rc=0
+getfattr: Removing leading '/' from absolute path names
+# file: cvmfs/larsoft.opensciencegrid.org
+user.root_hash="ea35e3340c01bfaaf1eb70be6d1bed654dedb642"
+
+rc=0
+utc-end 2026-11-24T11:15:00Z
