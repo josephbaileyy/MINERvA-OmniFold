@@ -72,4 +72,5 @@ echo "== done: $(cat $U/ibub-20261123/logs/connect-run.done 2>&1)"
 echo "== sbatch argv: $(tr '\n' ' ' < /tmp/sbatch.argv 2>&1)"
 echo "== stage: $(ls -l $U/ibub-20261123/stage 2>&1 | tail -n +2 | awk '{print $1, $NF}' | tr '\n' ' ')"
 echo "== records tar: $(ls -l $U/ibub-20261123/fetch-run.tar 2>&1 | awk '{print $5}')"
+echo "== stdout dir: $(stat -c '%a %U %F' $U/ibub-20261123/slurm 2>&1)"
 exit 0

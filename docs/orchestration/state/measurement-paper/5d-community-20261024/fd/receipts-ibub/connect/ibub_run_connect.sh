@@ -23,7 +23,7 @@
 SELF=$1; WEND=$2
 set -o pipefail
 TAG=run
-M=1031c8200b3b66e0ddbc9d895f5ecc369351ac41
+M=1230e29a88fb9f618f0d7100426f3ccd896dad1f
 N=/pscratch/sd/j/josephrb/ibub-20261123
 D=$N/deploy
 FR=$N/fetch-$TAG
@@ -178,7 +178,7 @@ e8e5969f978107e45991164a16c84f1794694dee752cbf189eab00e3ddd54633  ibub_unit.py
 62591f998f6d3c907bcec460c9399a419755d8f041b40652f37066074b3ab85b  ibub_lanes.py
 13316a39994057d21e72fe4243e89e6ba8b0fb6f65db54b6325947eff48e4e78  ibub_overlap.py
 8f1900e43d20cbc7b6dabb73e0419314bd6c0456b485d13b91afa450ed6ddb2e  config.json
-623a1f39c203d6ea6b803048a53e077bcd793cf4cf58cb318c5172f22fb116ec  jobs/ibub_job.sbatch
+b62a7825ddc2f3309a4ceb4a6ba56bb11b8144c3336fdd237fea65b9c07890f9  jobs/ibub_job.sbatch
 SUMS
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 NUMEXPR_NUM_THREADS=2
 export PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
@@ -202,7 +202,10 @@ cat "$N/logs/stage.json"; date -u +%FT%TZ
 echo "== the fence again, just before the submission"
 fence_sacct || { echo "STOP: fence (before sbatch)"; finish 9; }
 echo "== sbatch"
-jid=$(sbatch --parsable --job-name="$JOBNAME" --time="$LIMIT" --output="$N/logs/%x-%j.out" \
+# the job's stdout goes to a fresh private directory, made here just before the submission (it cannot exist: $N is
+# this connect's own), so nothing can be planted where Slurm will open the file
+mkdir -m 700 "$N/slurm" || { echo "STOP: mkdir $N/slurm"; finish 5; }
+jid=$(sbatch --parsable --job-name="$JOBNAME" --time="$LIMIT" --output="$N/slurm/%x-%j.out" \
   "$D/2d-unfolding/ibub/jobs/ibub_job.sbatch" "$D" "$N" "$M" 2> "$N/logs/sbatch.err"); brc=$?
 cat "$N/logs/sbatch.err"
 [ "$brc" -eq 0 ] && [[ "$jid" =~ ^[0-9]+$ ]] || { echo "STOP: sbatch rc $brc, id '$jid'"; finish 5; }

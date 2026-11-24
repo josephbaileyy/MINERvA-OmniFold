@@ -1,4 +1,4 @@
-# IBUB hand mutants: 2d-unfolding/ibub/mutants.py at commit 1031c8200b3b66e0ddbc9d895f5ecc369351ac41, run as `python -B -m mutants` in a separate detached
+# IBUB hand mutants: 2d-unfolding/ibub/mutants.py at commit 1230e29a88fb9f618f0d7100426f3ccd896dad1f, run as `python -B -m mutants` in a separate detached
 # worktree at that commit (removed afterwards; its porcelain was empty before and after). The interpreter is a venv over
 # ROOT 6.40.04 with LightGBM 4.7.0, scikit-learn 1.9.1 and numpy 1.26.4 (macOS).
 # The runner (codex2 read 2, item 8):
@@ -6,20 +6,22 @@
 #   - each mutant compiles;
 #   - a kill is a named test's failure or error;
 #   - a load error, a zero-test run or a class or module setup error is a harness failure that stops the run.
-# This supersedes the runs at 79a3427a0 (39) and ee189fefc (69). A run started at 675e6a4c5 was stopped, because
-# agy read 5's fixes superseded that commit; it is not counted.
+# This supersedes the runs at 79a3427a0 (39), ee189fefc (69) and 1031c8200 (92). The set now has 95 mutants:
+# codex2 read 3's item 3 adds five sites (noclobber from the first line; the scontrol record's pre-check; the stdout
+# directory not a symlink; that directory private; StdOut in exactly that directory) and replaces the symlinked-StdOut
+# site. It drops two sites whose code was superseded: StdOut under $N, and the mid-script noclobber.
 # Blobs at that commit:
 #   e8e5969f978107e45991164a16c84f1794694dee752cbf189eab00e3ddd54633  ibub_unit.py
 #   1cc64564448277831dc4ac5fc888b4a3dd15a2c56badfab6325f83d962bcfed7  ibub_readout.py
 #   62591f998f6d3c907bcec460c9399a419755d8f041b40652f37066074b3ab85b  ibub_lanes.py
 #   13316a39994057d21e72fe4243e89e6ba8b0fb6f65db54b6325947eff48e4e78  ibub_overlap.py
-#   623a1f39c203d6ea6b803048a53e077bcd793cf4cf58cb318c5172f22fb116ec  jobs/ibub_job.sbatch
+#   b62a7825ddc2f3309a4ceb4a6ba56bb11b8144c3336fdd237fea65b9c07890f9  jobs/ibub_job.sbatch
 #   8f1900e43d20cbc7b6dabb73e0419314bd6c0456b485d13b91afa450ed6ddb2e  config.json
 #   8cb7435df261729c4354f0422e461d2de303307225363fd1d65549c7a1c7cb0c  test_ibub_unit.py
 #   2471b368b31567be3aeb63dbaa0e24ae9583396b062acabbf6da28e3f73615e2  test_ibub_readout.py
-#   b8ef98db796ce23d5c6138a1f7ada3581508614b8b07915729be7c0c81c61035  test_ibub_job.py
+#   26aa757589c15a379d0b5e67f11767ecafcc3c4daae36f51a4481e0d77a18008  test_ibub_job.py
 #   6edb2a400bb48490d11ab0c1a01038a0477f0a13b1a8fa9a59746e6a729e1c6e  test_ibub_overlap.py
-#   47c0012f1990b06454fb9be64993fc41af4ec8318c438f7f1dd9823a386c2e51  mutants.py
+#   0a24492d52bfbfc0fae291b0cc67d9ad83ca9c48ed3bca4c649ec13679285ecd  mutants.py
 BASELINE	PASS	test_ibub_job.Job
 BASELINE	PASS	test_ibub_job.Lanes
 BASELINE	PASS	test_ibub_job.ReceiptChain
@@ -92,35 +94,38 @@ BASELINE	PASS	test_ibub_unit.Refusals
 59	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	another node count is accepted
 60	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a shared node is accepted
 61	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	another time limit is accepted
-62	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	StdOut outside $N is accepted
-63	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a used units directory is accepted
-64	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a symlinked logs directory is accepted
-65	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a failed completion check ends PASS
-66	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a failed scontrol query is not refused
-67	KILLED	ibub_unit.py	test_ibub_unit.Refusals	a contained write replaces an existing file
-68	KILLED	ibub_unit.py	test_ibub_unit.Refusals	a contained write may land outside the namespace
-69	KILLED	ibub_unit.py	test_ibub_unit.Refusals	a symlinked data directory takes the copy out of $N
-70	KILLED	ibub_unit.py	test_ibub_unit.Refusals	a skip ignores the npz's embedded provenance
-71	KILLED	ibub_unit.py	test_ibub_unit.Refusals	a skip ignores the products' digests
-72	KILLED	ibub_unit.py	test_ibub_unit.Driver	a present unit is skipped without its provenance
-73	KILLED	ibub_unit.py	test_ibub_unit.Pure	the barrier ignores a failed srun step
-74	KILLED	ibub_unit.py	test_ibub_unit.Hardening	the completion check ignores the barrier's reference digests
-75	KILLED	ibub_unit.py	test_ibub_unit.Driver	C-SIM's IBUB finite check passes a NaN
-76	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	the readout writes outside its declared root
-77	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	the readout does not bind IBUB-DONE to refcheck.json
-78	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	the readout does not check the terminal job record
-79	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	a FAIL marker makes the tune INVALID
-80	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	C-CELLS does not count a ROOT row on its own
-81	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	a missing input leaves no tune record
-82	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	the result is published before its npz is written
-83	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a failed IBUB-DONE publication ends PASS
-84	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a failed git status reads as clean
-85	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a failed lane producer's partial list runs
-86	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a symlinked StdOut is accepted
-87	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a step writes over an existing log
-88	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a step writes over an existing time file
-89	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a failed toy lane ends PASS
-90	KILLED	jobs/ibub_job.sbatch	test_ibub_job.ReceiptChain	the barrier is not told a reference srun failed
-91	KILLED	ibub_unit.py	test_ibub_unit.Refusals	a short write is taken as complete
-92	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	the readout accepts a reference marker from another job
-TOTAL	92/92 killed
+62	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a used units directory is accepted
+63	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a symlinked logs directory is accepted
+64	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a failed completion check ends PASS
+65	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a failed scontrol query is not refused
+66	KILLED	ibub_unit.py	test_ibub_unit.Refusals	a contained write replaces an existing file
+67	KILLED	ibub_unit.py	test_ibub_unit.Refusals	a contained write may land outside the namespace
+68	KILLED	ibub_unit.py	test_ibub_unit.Refusals	a symlinked data directory takes the copy out of $N
+69	KILLED	ibub_unit.py	test_ibub_unit.Refusals	a skip ignores the npz's embedded provenance
+70	KILLED	ibub_unit.py	test_ibub_unit.Refusals	a skip ignores the products' digests
+71	KILLED	ibub_unit.py	test_ibub_unit.Driver	a present unit is skipped without its provenance
+72	KILLED	ibub_unit.py	test_ibub_unit.Pure	the barrier ignores a failed srun step
+73	KILLED	ibub_unit.py	test_ibub_unit.Hardening	the completion check ignores the barrier's reference digests
+74	KILLED	ibub_unit.py	test_ibub_unit.Driver	C-SIM's IBUB finite check passes a NaN
+75	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	the readout writes outside its declared root
+76	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	the readout does not bind IBUB-DONE to refcheck.json
+77	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	the readout does not check the terminal job record
+78	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	a FAIL marker makes the tune INVALID
+79	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	C-CELLS does not count a ROOT row on its own
+80	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	a missing input leaves no tune record
+81	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	the result is published before its npz is written
+82	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a failed IBUB-DONE publication ends PASS
+83	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a failed git status reads as clean
+84	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a failed lane producer's partial list runs
+85	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a symlinked StdOut is accepted
+86	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a step writes over an existing time file
+87	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a failed toy lane ends PASS
+88	KILLED	jobs/ibub_job.sbatch	test_ibub_job.ReceiptChain	the barrier is not told a reference srun failed
+89	KILLED	ibub_unit.py	test_ibub_unit.Refusals	a short write is taken as complete
+90	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	the readout accepts a reference marker from another job
+91	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a redirect follows a planted symlink (no noclobber)
+92	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a stale scontrol record is not refused before the query
+93	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a symlinked stdout directory is accepted
+94	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	a non-private stdout directory is accepted
+95	KILLED	jobs/ibub_job.sbatch	test_ibub_job.Job	stdout outside the private directory is accepted
+TOTAL	95/95 killed
