@@ -24,6 +24,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 U, R, L, O, J = "ibub_unit.py", "ibub_readout.py", "ibub_lanes.py", "ibub_overlap.py", "jobs/ibub_job.sbatch"
 TU, TR, TJ, TO = "test_ibub_unit", "test_ibub_readout", "test_ibub_job", "test_ibub_overlap"
+CT = "../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh"
 
 # (file, old, new, tests, what the mutant breaks)
 MUTANTS = [
@@ -202,9 +203,9 @@ MUTANTS = [
     (J, '  "$PY" -B 2d-unfolding/ibub/ibub_lanes.py "$1" "$2" > "$f" || return 1',
      '  "$PY" -B 2d-unfolding/ibub/ibub_lanes.py "$1" "$2" > "$f" || true', [f"{TJ}.Job"],
      "a failed lane producer's partial list runs"),
-    (J, '[ -n "$so" ] && [ -f "$so" ] && [ ! -L "$so" ] && [ -O "$so" ] && rso=$(realpath "$so") || rso=""',
-     '[ -n "$so" ] && [ -f "$so" ] && [ -O "$so" ] && rso=$(realpath "$so") || rso=""', [f"{TJ}.Job"],
-     "a symlinked StdOut is accepted"),
+    (J, '[ -n "$f" ] && [ -f "$f" ] && [ ! -L "$f" ] && [ -O "$f" ] && r=$(realpath "$f") || r=""',
+     '[ -n "$f" ] && [ -f "$f" ] && [ -O "$f" ] && r=$(realpath "$f") || r=""', [f"{TJ}.Job"],
+     "a symlinked StdOut or StdErr is accepted"),
     (J, '  [ ! -e "$L/$tag.time" ] && [ ! -L "$L/$tag.time" ] || { say "refusing step $tag: $L/$tag.time exists"; return 2; }',
      "  true", [f"{TJ}.Job"], "a step writes over an existing time file"),
     (J, 'all_zero "${lrcs[@]}" || ok=0', 'true || ok=0', [f"{TJ}.Job"], "a failed toy lane ends PASS"),
@@ -215,14 +216,21 @@ MUTANTS = [
      "", [f"{TR}.EndToEnd"], "the readout accepts a reference marker from another job"),
     (J, "set -o noclobber   # from the first line", "true   # from the first line", [f"{TJ}.Job"],
      "a redirect follows a planted symlink (no noclobber)"),
-    (J, 'fresh "$L/scontrol-$SLURM_JOB_ID.txt" || refuse', 'true || refuse', [f"{TJ}.Job"],
+    (J, 'fresh "$SREC" || refuse', 'true || refuse', [f"{TJ}.Job"],
      "a stale scontrol record is not refused before the query"),
     (J, '[ -d "$SD" ] && [ ! -L "$SD" ] || refuse', '[ -d "$SD" ] || refuse', [f"{TJ}.Job"],
      "a symlinked stdout directory is accepted"),
     (J, '[ -O "$SD" ] && [ -n "$(find "$SD" -maxdepth 0 -perm 700)" ] || refuse', '[ -O "$SD" ] || refuse',
      [f"{TJ}.Job"], "a non-private stdout directory is accepted"),
-    (J, '[ -n "$rso" ] && [ "$(dirname "$rso")" = "$(realpath "$SD")" ] || refuse', '[ -n "$rso" ] || refuse',
-     [f"{TJ}.Job"], "stdout outside the private directory is accepted"),
+    (J, '[ -n "$r" ] && [ "$(dirname "$r")" = "$(realpath "$SD")" ] || refuse', '[ -n "$r" ] || refuse',
+     [f"{TJ}.Job"], "stdout or stderr outside the private directory is accepted"),
+    (J, 'SREC="$L/scontrol-batch-$SLURM_JOB_ID.txt"', 'SREC="$L/scontrol-connect-$SLURM_JOB_ID.txt"', [f"{TJ}.Job"],
+     "the batch's scontrol record takes the connect's name (the shared name restored)"),
+    (J, 'in_sd StdErr      #', 'true StdErr      #', [f"{TJ}.Job"], "StdErr is not checked"),
+    (CT, 'SREC="$N/logs/scontrol-connect-$jid.txt"', 'SREC="$N/logs/scontrol-batch-$jid.txt"', [f"{TJ}.Job"],
+     "the connect's scontrol record takes the batch's name (the shared name restored)"),
+    (CT, '[ ! -e "$SREC" ] && [ ! -L "$SREC" ] || { echo "STOP: $SREC exists', 'true || { echo "STOP: $SREC exists',
+     [f"{TJ}.Job"], "the connect writes its scontrol record without the fresh check"),
 ]
 
 

@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -38,6 +39,8 @@ sys.path.insert(0, str(HERE))
 import ibub_lanes as il  # noqa: E402
 
 JOB = HERE / "jobs" / "ibub_job.sbatch"
+CONNECT_TEMPLATE = (HERE.parents[1] / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub"
+                    / "connect" / "ibub_run_connect.template.sh")
 FAKE_UNIT = r'''import json, os, sys
 from pathlib import Path
 a = sys.argv[1:]
@@ -77,13 +80,14 @@ exit $rc
 SCONTROL = r'''#!/bin/bash
 [ -n "$FAKE_SCONTROL_FAIL" ] && exit 1
 # a race: plant a symlink where the job is about to write the scontrol record, after its pre-check, before its redirect
-[ -n "$PLANT_SCONTROL_LINK" ] && ln -s "$PLANT_SCONTROL_LINK" "$IBUB_NS/logs/scontrol-$3.txt"
+[ -n "$PLANT_SCONTROL_LINK" ] && ln -s "$PLANT_SCONTROL_LINK" "$IBUB_NS/logs/scontrol-batch-$3.txt"
 echo "JobId=$3 JobName=${F_NAME:-ibub_run}"
 echo "   QOS=${F_QOS:-regular} JobState=RUNNING"
 echo "   RunTime=00:00:01 TimeLimit=${F_LIMIT:-11:29:00} TimeMin=N/A"
 echo "   NumNodes=${F_NODES:-1} NumCPUs=256 OverSubscribe=${F_OVER:-NO} Contiguous=0"
 echo "   AllocTRES=${F_TRES:-cpu=256,mem=480000M,node=1,billing=256}"
 echo "   StdOut=${F_STDOUT:-$IBUB_NS/slurm/ibub_run-$3.out}"     # scontrol show job ID: the id is $3
+echo "   StdErr=${F_STDERR:-$IBUB_NS/slurm/ibub_run-$3.err}"
 '''
 
 
@@ -157,6 +161,7 @@ class Job(unittest.TestCase):
         (self.N / "slurm").mkdir(mode=0o700)                     # the connect's fresh private stdout directory
         (self.N / "slurm").chmod(0o700)
         (self.N / "slurm" / "ibub_run-61900001.out").write_text("")      # Slurm has opened StdOut before the job runs
+        (self.N / "slurm" / "ibub_run-61900001.err").write_text("")      # and StdErr (the connect pins --error)
 
     def run_job(self, M=None, **env):
         e = dict(os.environ, IBUB_TEST="1", IBUB_PY=sys.executable, IBUB_SRUN=str(self.srun),
@@ -220,6 +225,8 @@ class Job(unittest.TestCase):
                  "shared": ({"F_OVER": "OK"}, "OverSubscribe is"),
                  "stdout": ({"F_STDOUT": "/tmp/elsewhere.out"}, "StdOut"),
                  "stdout absent": ({"F_STDOUT": "/nonexistent/ibub.out"}, "StdOut"),
+                 "stderr": ({"F_STDERR": "/tmp/elsewhere.err"}, "StdErr"),
+                 "stderr absent": ({"F_STDERR": "/nonexistent/ibub.err"}, "StdErr"),
                  "tres unreadable": ({"F_TRES": "billing=256"}, "not readable from AllocTRES"),
                  "too small": ({"F_TRES": "cpu=128,mem=200000M"}, "do not fit"),
                  "query fails": ({"FAKE_SCONTROL_FAIL": "1"}, "scontrol show job failed")}
@@ -260,20 +267,94 @@ class Job(unittest.TestCase):
                 self.assertIn(why, r.stdout)                      # the check that fired is the one named
                 self.assertEqual(self.dispatched(), [])
 
+    def test_a_symlinked_stderr_is_refused(self):
+        err = self.N / "slurm" / "ibub_run-61900001.err"
+        err.unlink()
+        (self.N / "slurm" / "real.err").write_text("")
+        err.symlink_to(self.N / "slurm" / "real.err")
+        r = self.run_job()
+        self.assertEqual(r.returncode, 2, r.stdout)
+        self.assertIn("StdErr", r.stdout)
+        self.assertEqual(self.dispatched(), [])
+
+    # ---- the scontrol records: the connect's and the batch's never collide (the item-3 confirm's finding)
+
+    @staticmethod
+    def connect_record_block() -> str:
+        """The connect's own scontrol-record lines, exactly as the template has them."""
+        t = CONNECT_TEMPLATE.read_text()
+        a = t.index("# the connect's own record")
+        b = t.index('finish 5; }', t.index('STOP: writing $SREC', a)) + len('finish 5; }')
+        return t[a:b]
+
+    def run_connect_record(self) -> subprocess.CompletedProcess:
+        """The connect's record block, run in bash with this namespace, the job id and a stub scontrol."""
+        script = (f'set -o pipefail\nN={self.N}; jid=61900001\n'
+                  'finish() { echo "finish $1"; exit "$1"; }\n'
+                  'scontrol() { echo "JobId=$3 JobName=ibub_run (the connect\'s query)"; }\n'
+                  + self.connect_record_block() + '\necho "connect record written"\n')
+        return subprocess.run(["bash", "-c", script], capture_output=True, text=True)
+
+    def test_the_connect_and_the_batch_name_their_records_apart(self):
+        m = re.search(r'SREC="\$N/logs/(scontrol-[a-z]+-)\$jid\.txt"', self.connect_record_block())
+        self.assertIsNotNone(m)
+        b = re.search(r'SREC="\$L/(scontrol-[a-z]+-)\$SLURM_JOB_ID\.txt"', JOB.read_text())
+        self.assertIsNotNone(b)
+        self.assertEqual((m.group(1), b.group(1)), ("scontrol-connect-", "scontrol-batch-"))
+
+    def test_connect_first_then_the_batch_runs_and_leaves_the_connects_record(self):
+        r = self.run_connect_record()
+        self.assertIn("connect record written", r.stdout, r.stdout + r.stderr)
+        crec = self.N / "logs" / "scontrol-connect-61900001.txt"
+        before = crec.read_text()
+        j = self.run_job()
+        self.assertEqual(j.returncode, 0, j.stdout)
+        self.assertEqual(crec.read_text(), before)
+        self.assertIn("JobId=61900001", (self.N / "logs" / "scontrol-batch-61900001.txt").read_text())
+
+    def test_batch_first_then_the_connect_writes_its_own_and_leaves_the_batchs(self):
+        j = self.run_job()
+        self.assertEqual(j.returncode, 0, j.stdout)
+        brec = self.N / "logs" / "scontrol-batch-61900001.txt"
+        before = brec.read_text()
+        r = self.run_connect_record()
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn("connect record written", r.stdout)
+        self.assertEqual(brec.read_text(), before)
+        self.assertIn("the connect's query", (self.N / "logs" / "scontrol-connect-61900001.txt").read_text())
+
+    def test_the_connect_refuses_an_existing_or_symlinked_record_of_its_own(self):
+        crec = self.N / "logs" / "scontrol-connect-61900001.txt"
+        victim = self.d / "victim-c.txt"
+        for tag, make in (("exists", lambda: crec.write_text("stale")),
+                          ("a symlink", lambda: (victim.write_text("v"), crec.symlink_to(victim)))):
+            with self.subTest(case=tag):
+                self.setUp()
+                crec = self.N / "logs" / "scontrol-connect-61900001.txt"
+                victim = self.d / "victim-c.txt"
+                make()
+                r = self.run_connect_record()
+                self.assertEqual(r.returncode, 5, r.stdout)
+                self.assertIn("exists or is a symlink", r.stdout)
+                self.assertNotIn("connect record written", r.stdout)
+                if tag == "a symlink":
+                    self.assertEqual(victim.read_text(), "v")
+
     def replace_slurm_with_link(self):
         real = self.d / "elsewhere-slurm"
         real.mkdir(mode=0o700)
         real.chmod(0o700)
         (real / "ibub_run-61900001.out").write_text("")
+        (real / "ibub_run-61900001.err").write_text("")
         shutil.rmtree(self.N / "slurm")
         (self.N / "slurm").symlink_to(real)
 
     def test_a_stale_scontrol_record_is_refused_by_the_pre_check(self):
-        (self.N / "logs" / "scontrol-61900001.txt").write_text("stale")
+        (self.N / "logs" / "scontrol-batch-61900001.txt").write_text("stale")
         r = self.run_job()
         self.assertEqual(r.returncode, 2, r.stdout)
         self.assertIn("exists or is a symlink", r.stdout)
-        self.assertEqual((self.N / "logs" / "scontrol-61900001.txt").read_text(), "stale")
+        self.assertEqual((self.N / "logs" / "scontrol-batch-61900001.txt").read_text(), "stale")
 
     def test_a_symlink_planted_between_the_check_and_the_redirect_is_refused_by_o_excl(self):
         """The director's note: the pre-check is belt and braces. A symlink planted after it, before the redirect,
@@ -287,7 +368,7 @@ class Job(unittest.TestCase):
                 r = self.run_job(PLANT_SCONTROL_LINK=str(target))
                 self.assertEqual(r.returncode, 2, r.stdout)
                 self.assertIn("writing the scontrol record", r.stdout)
-                self.assertTrue((self.N / "logs" / "scontrol-61900001.txt").is_symlink())   # planted, not followed
+                self.assertTrue((self.N / "logs" / "scontrol-batch-61900001.txt").is_symlink())   # planted, not followed
                 if tag == "dangling":
                     self.assertFalse(target.exists())
                 else:

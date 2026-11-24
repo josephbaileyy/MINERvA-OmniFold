@@ -16,8 +16,8 @@
 #   and prints nothing;
 # - $N/stage/stage.json reads PASS;
 # - **the allocation**, read from one successful `scontrol show job`, is exactly as declared: JobName=ibub_run,
-#   QOS=regular, TimeLimit=11:29:00, NumNodes=1, OverSubscribe=NO (exclusive), and StdOut a regular file of its own in the
-#   connect's fresh, private $N/slurm. Four steps of 112G
+#   QOS=regular, TimeLimit=11:29:00, NumNodes=1, OverSubscribe=NO (exclusive), and StdOut and StdErr each a regular file
+#   of its own in the connect's fresh, private $N/slurm. Four steps of 112G
 #   and 64 CPUs must also fit its AllocTRES;
 # - the lane table checks (ibub_lanes.py verify);
 # - the root_6_28 environment activates.
@@ -44,7 +44,11 @@
 # scontrol, and skips the conda activation. Every check runs either way. NOT set -u, because the conda activation
 # would abort under it.
 set -o pipefail
-set -o noclobber   # from the first line: a `>` to an absent path opens O_CREAT|O_EXCL, which refuses any symlink
+set -o noclobber   # from the first line. Exactly what bash's noclobber does: a `>` to a path that does not exist opens
+#                    O_CREAT|O_EXCL, so a dangling symlink planted there is refused; an existing regular file, or a
+#                    symlink to one, is refused. An existing non-regular file (a FIFO, a device), or a symlink to one, is
+#                    still opened. That residual is held by the fresh mode-700 directories the connect makes ($N,
+#                    $N/logs, $N/slurm).
 C="${1:?deploy}"; N="${2:?namespace}"; M="${3:?commit}"
 PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
 SRUN=srun; SCONTROL=scontrol
@@ -84,9 +88,10 @@ say "start $(date -u +%FT%TZ) job=${SLURM_JOB_ID:-none} node=$(hostname) nproc=$
 
 # ---- the allocation, from one successful scontrol query
 [[ "${SLURM_JOB_ID:-}" =~ ^[0-9]+$ ]] || refuse "SLURM_JOB_ID '${SLURM_JOB_ID:-}' is not a job id"
-fresh "$L/scontrol-$SLURM_JOB_ID.txt" || refuse "$L/scontrol-$SLURM_JOB_ID.txt exists or is a symlink"
+SREC="$L/scontrol-batch-$SLURM_JOB_ID.txt"   # the batch's own name: the connect writes scontrol-connect-<id>.txt
+fresh "$SREC" || refuse "$SREC exists or is a symlink"
 info=$("$SCONTROL" show job "$SLURM_JOB_ID") || refuse "scontrol show job failed"
-printf '%s\n' "$info" > "$L/scontrol-$SLURM_JOB_ID.txt" || refuse "writing the scontrol record"
+printf '%s\n' "$info" > "$SREC" || refuse "writing the scontrol record"
 key() { printf '%s\n' "$info" | tr ' ' '\n' | sed -n "s/^$1=//p" | head -1; }
 [ "$(key JobName)" = "$JOBNAME" ] || refuse "JobName is '$(key JobName)', not $JOBNAME"
 [ "$(key QOS)" = regular ] || refuse "QOS is '$(key QOS)', not regular"
@@ -94,17 +99,20 @@ key() { printf '%s\n' "$info" | tr ' ' '\n' | sed -n "s/^$1=//p" | head -1; }
 [ "$(key NumNodes)" = 1 ] || refuse "NumNodes is '$(key NumNodes)', not 1"
 [ "$(key OverSubscribe)" = NO ] || refuse "OverSubscribe is '$(key OverSubscribe)', not NO (exclusive)"
 # StdOut: the connect submits --output into $N/slurm, a directory it creates fresh with mode 700 just before sbatch, so
-# nothing can be planted there before Slurm opens the file. The job checks four things:
+# nothing can be planted there before Slurm opens the files. The job checks two things:
 # - that directory is a real directory, not a symlink, mode 700, and owned by the job's user;
-# - StdOut is a regular file in exactly that directory;
-# - StdOut is not a symlink;
-# - StdOut is owned by the job's user.
+# - StdOut and StdErr (the connect pins both) are each a regular file, not a symlink, owned by the job's user, in
+#   exactly that directory.
 SD="$N/slurm"
 [ -d "$SD" ] && [ ! -L "$SD" ] || refuse "$SD is not a real directory (a symlink?)"
 [ -O "$SD" ] && [ -n "$(find "$SD" -maxdepth 0 -perm 700)" ] || refuse "$SD is not private (mode 700, owned by the job's user)"
-so=$(key StdOut); rso=""
-[ -n "$so" ] && [ -f "$so" ] && [ ! -L "$so" ] && [ -O "$so" ] && rso=$(realpath "$so") || rso=""
-[ -n "$rso" ] && [ "$(dirname "$rso")" = "$(realpath "$SD")" ] || refuse "StdOut '$so' is not a regular file of its own in $SD"
+in_sd() {  # in_sd <scontrol key>: that file is a regular file of the job's own, not a symlink, in exactly $SD
+  local f r; f=$(key "$1"); r=""
+  [ -n "$f" ] && [ -f "$f" ] && [ ! -L "$f" ] && [ -O "$f" ] && r=$(realpath "$f") || r=""
+  [ -n "$r" ] && [ "$(dirname "$r")" = "$(realpath "$SD")" ] || refuse "$1 '$f' is not a regular file of its own in $SD"
+}
+in_sd StdOut
+in_sd StdErr      # the connect pins --error beside --output, so an inherited SBATCH_ERROR cannot send it elsewhere
 tres=$(key AllocTRES)
 amem=$(printf '%s\n' "$tres" | tr ',' '\n' | sed -n 's/^mem=\([0-9][0-9]*\)M$/\1/p')
 case "$(printf '%s\n' "$tres" | tr ',' '\n' | sed -n 's/^mem=//p')" in *G) amem=$(( $(printf '%s\n' "$tres" | tr ',' '\n' | sed -n 's/^mem=\([0-9][0-9]*\)G$/\1/p') * 1024 ));; esac

@@ -137,10 +137,12 @@ cat "$N/logs/stage.json"; date -u +%FT%TZ
 echo "== the fence again, just before the submission"
 fence_sacct || { echo "STOP: fence (before sbatch)"; finish 9; }
 echo "== sbatch"
-# the job's stdout goes to a fresh private directory, made here just before the submission (it cannot exist: $N is
-# this connect's own), so nothing can be planted where Slurm will open the file
+# the job's stdout and stderr go to a fresh private directory, made here just before the submission (it cannot exist:
+# $N is this connect's own), so nothing can be planted where Slurm will open the files. Both are pinned, so an
+# inherited SBATCH_OUTPUT or SBATCH_ERROR cannot send either elsewhere
 mkdir -m 700 "$N/slurm" || { echo "STOP: mkdir $N/slurm"; finish 5; }
 jid=$(sbatch --parsable --job-name="$JOBNAME" --time="$LIMIT" --output="$N/slurm/%x-%j.out" \
+  --error="$N/slurm/%x-%j.err" \
   "$D/2d-unfolding/ibub/jobs/ibub_job.sbatch" "$D" "$N" "$M" 2> "$N/logs/sbatch.err"); brc=$?
 cat "$N/logs/sbatch.err"
 [ "$brc" -eq 0 ] && [[ "$jid" =~ ^[0-9]+$ ]] || { echo "STOP: sbatch rc $brc, id '$jid'"; finish 5; }
@@ -152,7 +154,11 @@ for i in $(seq 1 20); do
 done
 echo "sacct: ${row:-<none>}"
 [ "$listed" -eq 1 ] || { echo "STOP: sacct did not list $jid within 5 minutes (the job may exist: do not resubmit)"; finish 5; }
-info=$(scontrol show job "$jid" 2>&1); echo "$info" > "$N/logs/scontrol-$jid.txt"
+# the connect's own record; the batch writes scontrol-batch-<id>.txt, so neither can refuse or overwrite the other
+SREC="$N/logs/scontrol-connect-$jid.txt"
+[ ! -e "$SREC" ] && [ ! -L "$SREC" ] || { echo "STOP: $SREC exists or is a symlink"; finish 5; }
+info=$(scontrol show job "$jid" 2>&1); ( set -o noclobber; printf '%s\n' "$info" > "$SREC" ) \
+  || { echo "STOP: writing $SREC"; finish 5; }
 # scontrol ends its first line with JobName=..., so each key is matched up to a space or the end of the line
 grep -Eq "JobName=$JOBNAME( |\$)" <<<"$info" && grep -Eq "QOS=regular( |\$)" <<<"$info" \
   && grep -Eq "TimeLimit=$LIMIT( |\$)" <<<"$info" \
