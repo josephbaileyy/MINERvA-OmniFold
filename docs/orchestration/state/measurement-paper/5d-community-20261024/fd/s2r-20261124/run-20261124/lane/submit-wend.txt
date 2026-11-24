@@ -1,0 +1,1 @@
+acks: cov2d 2026-11-24T19:12:18Z, director-helper-3 2026-11-24T19:12:33Z, limitation-resolver 2026-11-24T19:12:38Z; oldest epoch 1795547538; window_end_epoch 1795548438 (2026-11-24T19:27:18Z), computed with date

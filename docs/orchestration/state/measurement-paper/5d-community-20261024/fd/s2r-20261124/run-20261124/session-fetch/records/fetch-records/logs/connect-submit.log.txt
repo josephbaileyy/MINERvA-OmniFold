@@ -1,0 +1,52 @@
+node login38 nproc=244 loadavg 124.01 111.28 115.93
+2026-11-24T19:13:25Z
+window_end_epoch 1795548438 (now 1795547605); fence prefixes cov2d,rpd_,d2s0,covfix
+connect script sha256 fa3fbaf75a60ee5ea277240579b785909b5d468e22be76e9da263f464079b4d7
+== fence (sacct)
+fence clear
+== iris
+m3246               2614.3            10000.0     19391.3      20000.0
+balance_node_h=608.7 half=304.4 cap_total=1.0
+HEAD 4017c0825444c4e88742801653bf088075c197ed
+porcelain lines (tracked+untracked) 0; ignored entries other than __pycache__/ 0
+s2r/s2r_arm.py: OK
+s2r/s2r_probe.py: OK
+s2r/s2r_read.py: OK
+s2r/s2r_rule.py: OK
+s2r/sbatch_s2r.sh: OK
+s2r/test_s2r.py: OK
+tier3/t3p_arms.py: OK
+tier3/t3p_probe.py: OK
+declaration sha256 16c7f5fb62e4b62aa9ee34dd62a16be15f49b598b8437f716bb99d51cf7970cd
+Ran 58 tests in 12.281s
+
+OK
+porcelain lines (tracked+untracked) 0; ignored entries other than __pycache__/ 0
+3a7efd52158e36e75f4f219a9cdcc624ebe8780c01baf54c13682d334ab4774e  /pscratch/sd/j/josephrb/s2r-20261124/logs/manifest-connect.json
+role	sha256_ok	stat_unmoved	size	atime_before_ns	atime_after_ns	src
+of_inputs_5d	True	True	1548438020	1794546256000000000	1794546256000000000	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+bkg_dump	True	True	16017201	1794546256000000000	1794546256000000000	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+bank_cv	True	True	2163648810	1794179841000000000	1794179841000000000	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz
+closure_ratio_nuwro	True	True	547429	1794492598000000000	1794492598000000000	/pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json
+rho_gibuu_cv-F	True	True	39772	1794937564000000000	1794937564000000000	/pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-gibuu_cv-F.npz
+prr_B0_nominal_s991000	True	True	184263	1794267345000000000	1794267345000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s991000.npz
+prr_B0_A7_gibuu_s991000	True	True	184401	1794267345000000000	1794267345000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s991000.npz
+prr_B0_q3_s991000	True	True	184471	1794267345000000000	1794267345000000000	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/q3/prr_B0_q3_s991000.npz
+python 3.11.14 lightgbm 4.6.0 scipy 1.16.3 numpy 1.26.4
+fence.txt:
+cov2d
+rpd_
+d2s0
+covfix
+s2r_probe.py limit -> '1:00:00' (rc 0), declared 1:00:00
+== fence again (sacct)
+2026-11-24T19:15:40Z
+Slurm option variables left: 0
+sbatch rc=0
+Submitted batch job 61935360
+s2r_run job 61935360
+scontrol TimeLimit=01:00:00 (declared 01:00:00); array fields 0
+61935360|s2r_run|PENDING|01:00:00|1|regular_1|m3246
+porcelain lines (tracked+untracked) 0; ignored entries other than __pycache__/ 0
+s2r submit rc=0
+2026-11-24T19:15:52Z
