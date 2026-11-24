@@ -357,6 +357,12 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
       COVFIX proceeds in 2D only (§4.4). Its cost is GPU and does not move the 600.00 ceiling.
     - **Pass probability:** each threshold is chosen for a declared pass probability at nominal and simulated with
       correlated toys before freezing. It is never tuned on a sealed output (§4.5).
+    - **(b)'s design** is folded into §4.4: all 16 cells reported as measured or exploratory; κ = 1, with 0.5·S_g for
+      discrimination claims; a fixed panel with a GiBUU sensitivity printout; no cap and no minimum k; IBU printed only;
+      SUPPORT at ≥ 185/300 at every truth plus the per-cell veto; three frozen outcomes; and both branches. **185
+      confirmed by Joseph, 2026-11-24, relayed by the rewrite helper.**
+    - §4.2 discloses round 3's item 7 beside R2, with the cgroup detector, and lists tune-generator's trace prefix in
+      `run_gevgen_v3.sh`.
     - **The codex-school review** reads the final amendment text once, then rechecks any blockers it finds. The
       `covfix-ledger` ref is protected (ruleset 27996874) (§9).
   - **The calibration of u = 2's amplitude range** was computed from a read-only fetch of the four pinned 5D predictions
@@ -1020,6 +1026,14 @@ F1's bound pipeline (`gen5d_v3.py`, `run_gevgen_v3.sh`, the pv-ladder ratios and
 tune names and the seeds, and, for slot 1 only, the private product's entries that `pg/record/SLOT1-PRIVATE-PRODUCT.md`
 (b31559e29) lists: the `PRODUCTS` prepend, reduce's spline source, PG's genie_xsec root, and the tune's pins and labels
 (§4.1).
+- **One addition to F1's `run_gevgen_v3.sh` for every tune** (tune-generator's A2, approved in principle by the director,
+  2026-11-24): a trace prefix array before the reduce step's awk, the graphs step's gspl2root and the genie step's
+  gevgen.
+  - It starts empty and ignores any inherited value. It is built only from the pinned strace, passed as a
+    verified descriptor, and a trace path under W.
+  - With neither input it stays empty, so F1's runs execute byte-identical argv.
+  - It traces path-only syscalls (open, openat, openat2, access, faccessat, faccessat2, stat, lstat, newfstatat, statx,
+    readlink, readlinkat, chdir). There is no execve, so no argv and no seed are recorded.
 - **The seeds are director-held,** so a builder cannot regenerate the truths from public tune names and public seeds.
   - The director draws PG's seed base and a random salt.
   - Before generation, the director publishes sha256(seed base ‖ salt), and reveals both after PV's readout. The
@@ -1086,6 +1100,14 @@ is no regeneration.
 - Before PV, the barriers against cov2d are the director's key and the director-held seeds, not file permissions.
   Beyond those, the design rests on a cooperative assumption: no builder reads another session's private directories
   or processes. That assumption is stated, not enforced.
+- **Two residuals of PG's bound binary, under that assumption** (the director's rulings, 2026-11-24):
+  - R2: the generator command is executed by path after its hash, so a replacement written by this same account in
+    between would not be seen.
+  - Round 3's item 7: a generator descendant that calls setsid escapes PG's process-group kill and could outlive it.
+    F1's bound pipeline never detaches. Just before the seal, PG's detector reads its own cgroup v2 membership and
+    refuses to seal if any process other than its own and its ancestors' is in it. An unreadable cgroup is a STOP. The
+    synthetic-seal rehearsal runs the detector on a compute node; if it does not work there, the question returns to the
+    director before any real seal.
 - Atime does not detect O_NOATIME reads, so it is housekeeping only.
 - The generating session saw the plaintext and is retired after PG.
 
@@ -1250,45 +1272,119 @@ the same 2D truth. u = 2 therefore **tests hidden-variable dependence through th
   efficiency and smearing: that is the mechanism u = 2 tests. The floor selects a subset of the family, favouring changes the reco summary measures well;
   its effect on the difficulty of passing the bars can go either way, and that is disclosed beside any u = 2 reading.
 
-### 4.4 (b): the shared held-out 5D readout (conditional; frozen before the first seal spend)
+### 4.4 (b): the shared held-out 5D readout (frozen before the first seal spend, or set aside)
 
-Joseph's decision of 2026-11-24: a conditional yes. The director's readout may grade encrypted toy-specific 5D truths of
-the sealed PV toys and release summary counts only. **It decides nothing in §5–§7.** Its own failure rule decides only
-the 5D measurement claim.
-- **Before the first seal spend, this declaration freezes, by amendment:**
-  - the estimator;
-  - the cells, R00–R15, kept as they are;
-  - the intervals;
-  - the failure rule. A failure, or an empty selected set, ends the proposed 5D measurement claim. The diagnostic counts
-    are published, and no survivors are selected from the holdout;
-  - which response and run-period variations the toys exercise;
-  - a joint-coverage grade of the frozen cell set, beside the per-cell grades;
-  - each threshold with its simulated pass probability and power (§4.5).
-- **Who drafts it.** tier3-design drafts the 5D design after its time-boxed step-2 pricing ends; cov2d folds it in. The
-  readout reads only the summary counts it releases, never a sealed truth.
-- **If the 5D design cannot be frozen and rehearsed before the first seal spend,** COVFIX proceeds in 2D only and forgoes
-  this use of the seals. No later amendment can add (b) to seals already spent.
-- **The cost is GPU,** about 25.8 GPU node-h for three truths and 17.2 for two, per tier3-design's inventory. It is
-  ledgered against the 5,100 GPU node-h line. It does not move the 600.00 CPU node-h ceiling, which stays until then.
+Joseph's decisions of 2026-11-24, relayed by the rewrite helper and the director, with the threshold of 185 confirmed by
+Joseph the same day. The director's readout grades encrypted toy-specific 5D truths of the sealed PV toys, inside the
+readout, and releases counts only. **It decides nothing in §5–§7.** It decides only the 5D measurement claim.
+- **Disclosed:** the rule was introduced after the data were seen. Selection uses simulation at spent truths only.
+- **The method bias is carried as a systematic** in the reported covariance, as a bias block plus a fluctuation block
+  (open below).
+
+**1. Selection, at spent truths only, frozen before the first seal spend.**
+- **Truths:** the two spent F1 tunes (G18_10a_02_11b, AR23_20i_00_000) and the 12 graded F0b truths.
+- **Units:** the bias b and the generator spread S_g are both in units of the cell's Tune v1 cross section.
+- **S_g** is the RMS of the pairwise differences among GENIE CV, GENIE+MEC and NuWro, using CH-harmonized predictions.
+  - Tune v1 is excluded from the panel, because it is the prior. The panel is fixed now.
+  - The minimum S_g on this panel is 2.09 %, so no cell needs an unassessable branch.
+  - A sensitivity printout adds GiBUU where it is available. That raises the maximum S_g from 20.35 % to 42.51 %.
+- **The reporting criterion, κ = 1:** at the worst truth, |b̂| + 1.96·SE(b̂) ≤ 1.0 × S_g.
+  - SE includes pseudo-experiment noise and finite-MC split variation, counting shared inputs once.
+  - A cell whose decision flips across supported MC splits is exploratory.
+  - The guard is the maximum of the 14 guarded bounds. That is conservative for selection; each guard is pointwise.
+- **All 16 cells (R00–R15) are reported,** each labelled **measured** (it meets the criterion) or **exploratory**. The
+  labels are frozen before the first seal spend.
+- **The discrimination flag.** A measured cell may support a claim that tells generators apart only if it also meets
+  0.5 × S_g, or, when a named model pair defines the question, that pair's separation.
+- **There is no absolute bias cap and no minimum number of cells.** With k = 0 measured cells, there is no measured-set
+  test.
+
+**2. OmniFold and IBU: printed only.** Where matched toys exist, each method's signed bias against the same truth is
+printed, with their paired difference and its SE.
+- A paired difference above 2 SE is flagged descriptively, with its size relative to S_g. Isolated flags are expected
+  across many cells and truths.
+- A missing comparison is marked missing.
+
+**3. The held-out test, at the sealed truths of §4.1.** These are u = 0 (G21_11a_00_000, if its replay passes),
+u = 1 (G18_02a_00_000) and u = 2.
+- The labels stay frozen. The joint ellipsoid uses the measured subset's submatrix of the reported covariance.
+- At each truth, 300 toys are unfolded with the frozen 16-cell 5D estimator on GPU, and graded inside the director's
+  readout.
+- **Readings, all printed:**
+  - the joint count: the toys whose truth falls inside the frozen set's 68.27 % ellipsoid under the reported covariance;
+  - the per-cell 1σ counts;
+  - the centred toy fluctuations against the fluctuation block;
+  - the signed bias, and the fraction of it outside the fitted bias directions;
+  - the bias relative to κ·S_g;
+  - the guarded total χ² (M + h), as a diagnostic.
+- **Thresholds,** with T the number of sealed truths and k the number of measured cells. Each was recomputed by cov2d
+  with exact binomial tails (`scipy.stats`).
+  - **SUPPORT:** the joint count is at least 185/300 at every truth, and no cell is vetoed. A cell is vetoed when its 1σ
+    count lies in the exact lower binomial tail (p = 0.6827, n = 300) at 0.05/(k·T). At k = 16:
+    - three truths: every cell needs at least 180, and the veto fires at 179 or fewer;
+    - two truths: every cell needs at least 181, and the veto fires at 180 or fewer.
+    For another frozen k, the veto count follows from the same rule and is printed before the spend.
+  - **The wording of SUPPORT.** A pass supports only "met the prespecified screening criterion" and "no cell triggered
+    the undercoverage flag". It does not support a claim that coverage exceeds 60 % at every truth.
+    - The affirmative threshold of 195 was considered and not chosen.
+    - At 185, the one-sided 95 % exact lower bound on joint coverage is 56.8 % (at 195 it is 60.2 %).
+    - If one truth is at 60 % and the others are nominal, the joint rule at 185 passes 29.5 % of the time
+      (independent truths, before the veto).
+  - **DEMONSTRATED DEFICIT:** at some truth or cell, the one-sided exact upper bound on coverage falls below the 60 %
+    floor. The bound is Bonferroni-corrected over the (k + 1)·T readings. At k = 16 a deficit means a count of
+    **153 or fewer** for three truths, or **154 or fewer** for two (a single test would be 165 or fewer).
+  - **INCONCLUSIVE:** neither. At true 60 % coverage, a single count lands in 166–184 about 65.7 % of the time, so
+    INCONCLUSIVE is the expected outcome near the floor. This is a limit of 300 toys.
+  - The three outcome labels are frozen. They cannot overlap: a deficit count fails SUPPORT's joint rule or its veto.
+- **Both branches are stated now:** three truths, or two truths (u = 1, 2) if slot 1's replay fails (§4.1). Their k = 16
+  thresholds are above.
+- **Design pass rates, PROVISIONAL.** These come from the 16-cell covariance under a Gaussian scale-inflation model,
+  with the veto. §4.5's correlated simulation replaces them before binding.
+
+  | true joint coverage | 68.27 % (nominal) | 64 % | 62 % | 60 % |
+  |---|---|---|---|---|
+  | three truths | 93.7 % | 48 % | 16 % | 2 % |
+  | two truths | 94.4 % | 59.1 % | 27.8 % | 7.3 % |
+
+**4. Reporting.** The frozen estimates are always reported, with every count, interval and signed bias. No cell is
+dropped after a seal is opened. In the paper this is brief closure language, with the details in a supplement.
+- **SUPPORT:** the covariance is supported for the named uses. The paper states the 60 % floor and the observed counts,
+  and never says "covariance validated" without qualification.
+- **INCONCLUSIVE:** the measurement and its diagnostics are reported. Claims that need the declared tolerance are
+  withheld.
+- **DEMONSTRATED DEFICIT:** covariance-based inference (fits, exclusions) is restricted. The paper says whether the
+  deficit is in coverage, in bias, or in both.
+
+**Open before binding** (each must close, or (b) is set aside):
+- **The correlated simulation of the thresholds (§4.5):** both branches, for the actual frozen set. cov2d runs it once
+  tier3-design supplies the frozen measured/exploratory labels and the 16-cell covariance file.
+- **The 5D GPU unfolds' reproduction test.**
+- **Which response and run-period variations the PV toys exercise.** C_PL and C_run are not drawn.
+- **The 5D bias and fluctuation blocks.** COVFIX builds them for 2D only, and tier3-design is pricing the 5D blocks for
+  Joseph. **Until they exist, no support claim attaches to the 16-cell covariance.**
+
+**Freeze or set aside.** (b) is frozen by these rules before the first seal spend, or set aside. If the 5D blocks
+cannot be built, or the design cannot be frozen and rehearsed in time, COVFIX proceeds in 2D only and forgoes this use
+of the seals. No later amendment can add (b) to seals already spent.
+- **The cost is GPU:** about 25.8 GPU node-h for three truths and 17.2 for two, per tier3-design's inventory, ledgered
+  against the 5,100 GPU node-h line. It does not move the 600.00 CPU node-h ceiling.
 
 ### 4.5 Thresholds by simulated pass probability, never tuned on a sealed output
 
-A threshold for (b)'s per-cell test and for its joint-coverage test is chosen for a **declared pass probability at
-nominal coverage**, for example 0.95 for the whole family. It is never set or moved after any sealed output is read.
-- **The simulation.** Before freezing, each threshold is simulated with COVFIX's zero-bias reference machinery (§6.2's
-  law). The toys are correlated, drawn from the carried 16-cell covariance that tier3-design supplies, at the actual
-  number of sealed truths (three, or two if slot 1 is dropped).
-- **The amendment states, for each threshold,** its simulated pass probability at nominal, and its power at one or two
-  under-coverage points declared with it.
-- **Why the advisory's per-cell rule is not adopted.** That rule was a one-sided 95 % exact binomial lower bound of at
-  least 63.27 %, i.e. 204/300 per cell. Under the independence approximation, recomputed by cov2d with
-  `scipy.stats.binom` at p = 0.6827 and n = 300:
+Each of §4.4's thresholds is held to a **declared pass probability at nominal coverage**. It is never set or moved after
+any sealed output is read.
+- **The simulation.** Before binding, cov2d simulates §4.4's SUPPORT rule (the joint count and the veto together) with
+  COVFIX's zero-bias reference machinery (§6.2's law).
+  - The toys are correlated, drawn from tier3-design's carried 16-cell covariance, restricted to the frozen measured
+    set.
+  - It runs for both branches (T = 3 and T = 2).
+  - The same run re-prints the exact deficit bounds and the veto counts for the frozen k.
+- **The amendment states, for each branch,** the simulated pass probability at nominal (68.27 %) and at true joint
+  coverage of 64 %, 62 % and 60 %. These replace §4.4's provisional Gaussian table wherever they differ.
+- **The earlier per-cell rule, not adopted.** The advisory's first rule was a one-sided 95 % exact binomial lower bound
+  of at least 63.27 %, i.e. 204/300 per cell. Under independence (cov2d, `scipy.stats.binom`, p = 0.6827, n = 300):
   - one cell passes with probability 0.567;
-  - all 48 tests (16 cells × 3 truths) pass with probability 1.54e-12, and 8 tests with 0.0107;
-  - a joint 0.95 at nominal over 48 tests needs at least 180/300 per cell.
-
-  Correlated cells change these numbers, which is why the frozen thresholds come from the correlated simulation and not
-  from this approximation.
+  - all 48 tests pass with probability 1.54e-12, and 8 tests with probability 0.0107.
 
 ## 5. Candidate constructions, built from P0 and P1, frozen at P2
 
