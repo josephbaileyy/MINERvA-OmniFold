@@ -998,6 +998,10 @@ class JobWide(Patched):
                 ("a record off its sum", lambda tr: tr.write_fetch(bad_sum="stage/stage.json"), "RECORDS.SHA256SUMS"),
                 ("a needed record unlisted", lambda tr: tr.write_fetch(drop=("stage/stage.json",)), "lacks"),
                 ("IBUB-DONE at stage refs", lambda tr: tr.write_barrier(done={"stage": "refs"}), "stage toys"),
+                ("IBUB-DONE not JSON", lambda tr: ((tr.units.parent / "IBUB-DONE").write_text("{truncated"),
+                                                   tr.write_fetch()), "IBUB-DONE is not the bound job's"),
+                ("refcheck.json not an object", lambda tr: ((tr.units / "refcheck.json").write_text("[]"),
+                                                            tr.write_fetch()), "not a JSON object"),
                 ("IBUB-DONE at another M", lambda tr: tr.write_barrier(done={"M": "e0" * 20}), "bound deploy"),
                 ("IBUB-DONE binding another barrier", lambda tr: tr.write_barrier(comp={"barrier_sha256": "0" * 64}),
                  "binds barrier")):
@@ -1146,6 +1150,12 @@ class JobWide(Patched):
         tr = self.tree()
         tr.write_fetch(bad_sum=f"sacct-{JOB}.txt")
         self.stopped(tr, "RECORDS.SHA256SUMS")
+        tr = self.tree()
+        (tr.fetch / f"sacct-{JOB}.txt").unlink()                  # listed, but not there
+        self.patch(tr)
+        with self.assertRaises(c.Refusal) as cm:
+            self.go(tr)
+        self.assertIn("STOP: the fetch's sacct record is not readable", str(cm.exception))
 
     def test_every_graded_byte_is_inventoried_from_its_one_read(self):
         tr = self.tree()
@@ -1186,6 +1196,46 @@ class JobRules(unittest.TestCase):
                 self.assertEqual(ir.scontrol_key(text, k), r.stdout.rstrip("\n"))
 
 
+class FetchAndDisclosure(unittest.TestCase):
+    """fetched_records' refusals and terminal_state's disclosure, on their own."""
+
+    def setUp(self):
+        p = mock.patch.object(os, "O_NOATIME", getattr(os, "O_NOATIME", 0), create=True)   # macOS has none
+        p.start()
+        self.addCleanup(p.stop)
+
+    def fetch(self, lines: list, files: dict) -> Path:
+        d = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, d, True)
+        for rel, data in files.items():
+            (d / rel).parent.mkdir(parents=True, exist_ok=True)
+            (d / rel).write_bytes(data)
+        if lines is not None:
+            (d / "RECORDS.SHA256SUMS").write_text("".join(ln + "\n" for ln in lines))
+        return d
+
+    def test_each_malformed_fetch_is_refused(self):
+        ok = sha(b"x")
+        for name, lines, why in (
+                ("no RECORDS.SHA256SUMS", None, "RECORDS.SHA256SUMS is not readable"),
+                ("a short digest", ["abc  a.txt"], "malformed or repeated"),
+                ("one space", [f"{ok} a.txt"], "malformed or repeated"),
+                ("an absolute path", [f"{ok}  /etc/passwd"], "malformed or repeated"),
+                ("a parent step", [f"{ok}  ../a.txt"], "malformed or repeated"),
+                ("a repeated line", [f"{ok}  a.txt", f"{ok}  a.txt"], "malformed or repeated"),
+                ("a listed file absent", [f"{ok}  b.txt"], "the fetched record b.txt is not readable")):
+            with self.subTest(case=name), self.assertRaises(c.Refusal) as cm:
+                ir.fetched_records(self.fetch(lines, {"a.txt": b"x"}), JOB)
+            self.assertIn(why, str(cm.exception))
+
+    def test_unreadable_disclosures_are_recorded_as_unknown(self):
+        out = ir.terminal_state({"IBUB-DONE": b"{truncated", "logs/complete.json": b"not json"})
+        self.assertEqual(out["ibub_done"]["stage"], None)
+        self.assertEqual(out["ibub_done"]["sha256"], sha(b"{truncated"))
+        self.assertIsNone(out["complete_json"])
+        self.assertEqual(ir.terminal_state({}), {"ibub_done": None, "complete_json": None})
+
+
 class ReadoutInputs(Patched):
     """codex2 read 3, items 2 and 4: the root and --out are checked before anything is created; a pinned input that
     fails is recorded through the diagnostic path."""
@@ -1210,8 +1260,8 @@ class ReadoutInputs(Patched):
                 self.doCleanups()
 
     def test_a_symlinked_relative_or_shared_root_is_refused(self):
-        for root, why in (("link", "not a real directory"), ("link/inner", "resolves to"), ("relative/root", "not absolute"),
-                          ("shared", "private")):
+        for root, why in (("link", "is not a real directory"), ("link/inner", "/link/inner resolves to"),
+                          ("relative/root", "is not absolute"), ("shared", "is not this user's private directory")):
             with self.subTest(root=root):
                 tr = self.tree()
                 (tr.d / "real" / "inner").mkdir(parents=True)        # a real directory under a symlinked ancestor
@@ -1220,7 +1270,8 @@ class ReadoutInputs(Patched):
                 os.chmod(tr.d / "shared", 0o777)
                 cfg = tr.config()
                 cfg["readout"]["write_root"] = root if root.startswith("relative") else str(tr.d / root)
-                self.refused(tr, cfg, tr.d / "real" / "out", why)
+                exc = self.refused(tr, cfg, tr.d / "real" / "out", why)
+                self.assertTrue(str(exc).startswith("the readout root "), str(exc))     # the root check, not another
                 self.assertEqual([p.name for p in (tr.d / "real").iterdir()], ["inner"])
                 self.assertEqual(list((tr.d / "real" / "inner").iterdir()), [])
                 self.doCleanups()
@@ -1289,6 +1340,12 @@ class JobCode(unittest.TestCase):
         got = ir.job_code(head)
         self.assertEqual(got["runner_sha256"], sha(self.git("cat-file", "blob", f"{head}:2d-unfolding/ibub/ibub_unit.py")))
         self.assertEqual(got["config_sha256"], sha(self.git("cat-file", "blob", f"{head}:2d-unfolding/ibub/config.json")))
+
+    def test_an_ancestor_lacking_the_jobs_files_is_refused(self):
+        root = self.git("rev-list", "--max-parents=0", "HEAD").decode().split()[0]
+        with self.assertRaises(c.Refusal) as cm:
+            ir.job_code(root)
+        self.assertIn("is not readable at --job-m", str(cm.exception))
 
     def test_a_malformed_or_unknown_commit_is_refused(self):
         for bad, why in (("abc", "40-hex"), ("G" * 40, "40-hex"), ("HEAD", "40-hex"), ("0" * 40, "ancestor")):
