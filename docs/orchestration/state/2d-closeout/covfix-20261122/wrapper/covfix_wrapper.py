@@ -93,6 +93,7 @@ ROLES = {
     "pv-readout": ("seal", False),
 }
 OUTCOMES = ("completed", "terminal", "break")
+CONFIRMED_END = ("completed", "break")  # the task's own receipt or break line: it ended. `terminal` does not say so
 # A refused freeze conflict and the director's ruling that clears such refusals spend nothing (director, 2026-11-23).
 NON_CONSUMING = ("freeze-mismatch-refused", "ruling")
 FREEZE_MISMATCH_LIMIT = 2             # this many unresolved refusals on one seal block every role until a ruling
@@ -421,7 +422,8 @@ EXEC_CHECK = ('h=$(sha256sum < "$1") || exit 87; [ "${h%% *}" = "$2" ] || '
 
 
 def check_ssh(ssh) -> list:
-    """The ssh program and the options a config may add; -T -o RequestTTY=no always go first."""
+    """The ssh program and the options a config may add; -T, RequestTTY=no and StrictHostKeyChecking=yes always go
+    first, so neither a config file nor the command line can give the frame a PTY or an unverified host."""
     argv = str_list(ssh, "ssh")
     if not argv:
         raise Stop(ERROR, "the role config names no ssh program")
@@ -437,7 +439,8 @@ def check_ssh(ssh) -> list:
             i += 2
         else:
             raise Stop(ERROR, f"ssh option {o!r} is not allowed (only -o {sorted(SSH_O_KEYS)}, -i, -p, -l)")
-    return [argv[0], "-T", "-o", "RequestTTY=no", *opts]
+    # ssh uses the first value it obtains for an option, so these override any ssh_config setting.
+    return [argv[0], "-T", "-o", "RequestTTY=no", "-o", "StrictHostKeyChecking=yes", *opts]
 
 
 class LaunchResult:
@@ -591,6 +594,7 @@ class Record:
         self.dir = os.path.realpath(os.path.expanduser(directory))
         self.path = os.path.join(self.dir, RECORD_NAME)
         self._lock_fd = None
+        self.pinned = None          # under the lock: the record bytes read once, right after the lock was taken
 
     def ensure_dir(self) -> None:
         if not os.path.isdir(self.dir):
@@ -600,6 +604,11 @@ class Record:
             raise Stop(REFUSED, f"{self.dir} must be mode 700 and owned by this user")
 
     def raw(self) -> bytes:
+        """The record. Under the lock, the snapshot taken when the lock was acquired (and extended by our own
+        appends), so every check in one locked transaction sees the same bytes."""
+        return self.pinned if self.pinned is not None else self._read_file()
+
+    def _read_file(self) -> bytes:
         try:
             with open(self.path, "rb") as f:
                 return f.read()
@@ -662,6 +671,7 @@ class Record:
             try:
                 fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
                 self._lock_fd = fd
+                self.pinned = self._read_file()
                 return
             except OSError as e:
                 if e.errno not in (errno.EWOULDBLOCK, errno.EAGAIN) or time.monotonic() > deadline:
@@ -674,13 +684,15 @@ class Record:
             fcntl.flock(self._lock_fd, fcntl.LOCK_UN)
             os.close(self._lock_fd)
             self._lock_fd = None
+        self.pinned = None
 
     def append(self, event: dict, expected: bytes | None = None) -> bytes:
         """Append one chained line and fsync the file and the directory. Caller holds the lock. With `expected`, the
         record must still be exactly the bytes the caller validated (a restore that ignored the lock fails here)."""
         assert self._lock_fd is not None, "append without the lock"
-        data = self.raw()
-        if expected is not None and data != expected:
+        data = self.pinned
+        actual = self._read_file()
+        if actual != data or (expected is not None and actual != expected):
             raise OSError("the record changed after it was validated under the lock")
         lines = self.parse(data)
         prev = sha256_bytes(data.splitlines()[-1]) if lines else GENESIS
@@ -693,7 +705,10 @@ class Record:
         finally:
             os.close(fd)
         fsync_dir(self.dir)
-        return self.raw()
+        # The bytes published are the validated snapshot plus this line, computed here: never a reread of the file,
+        # which a restore after the write could have replaced.
+        self.pinned = data + line
+        return self.pinned
 
     def absorb_markers(self, exclude=None) -> None:
         """Under the lock: every marker the chain does not yet reflect becomes a record line (except `exclude`, the
@@ -741,13 +756,14 @@ def unresolved_freeze_refusals(events, key: str) -> int:
 
 
 def in_flight(events, key: str, pushed=None) -> list:
-    """PV roles of the seal that were spent (locally) and have no outcome in the PUSHED record yet: a local-only
-    outcome whose publication failed, or a dropped link with no confirmed exit, is still in flight."""
+    """PV roles of the seal that were spent (locally) and have no confirmed end in the PUSHED record: a local-only
+    outcome whose publication failed, or a `terminal` outcome (a dropped link, a crash: the task's exit is not
+    known), is still in flight until a director ruling."""
     pushed = events if pushed is None else pushed
     out = []
     for role in ("pv-writer", "pv-readout"):
         spent = any(e["key"] == key and e["role"] == role and e["event"] == "spent" for e in events)
-        ended = any(e["key"] == key and e["role"] == role and e["event"] in OUTCOMES for e in pushed)
+        ended = any(e["key"] == key and e["role"] == role and e["event"] in CONFIRMED_END for e in pushed)
         if spent and not ended:
             out.append(role)
     return out
@@ -1257,9 +1273,10 @@ def reveal(ctx: Context, seal_digest, commitment, after_stop, inflight_resolved)
     def gate():
         """Reveal's eligibility, from the current record and the pushed one; run before and again under the lock."""
         done = [e for e in ctx._remote_events if e["key"] == key and e["role"] == "pv-readout"
-                and e["event"] in OUTCOMES]
+                and e["event"] in CONFIRMED_END]
         if not done and not after_stop:
-            raise GateRefusal("PV's readout has no outcome in the pushed record; reveal needs --after-stop <stop id>")
+            raise GateRefusal("PV's readout has no confirmed end (completed or break) in the pushed record; reveal "
+                              "needs --after-stop <stop id>")
         busy = in_flight(ctx.record.lines(), key, ctx._remote_events)
         if busy and not inflight_resolved:
             raise GateRefusal(f"{', '.join(busy)} spent with no outcome in the pushed record (in flight?); reveal "

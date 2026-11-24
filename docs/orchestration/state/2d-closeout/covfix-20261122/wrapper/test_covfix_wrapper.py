@@ -672,7 +672,8 @@ class ConfigTests(unittest.TestCase):
 
     def test_ssh_options_are_allow_listed(self):
         self.assertEqual(cw.check_ssh(["ssh", "-o", "BatchMode=yes", "-p", "22"]),
-                         ["ssh", "-T", "-o", "RequestTTY=no", "-o", "BatchMode=yes", "-p", "22"])
+                         ["ssh", "-T", "-o", "RequestTTY=no", "-o", "StrictHostKeyChecking=yes",
+                          "-o", "BatchMode=yes", "-p", "22"])
         self.assertEqual(cw.check_ssh(["ssh", "-o", "StrictHostKeyChecking=yes"])[-1], "StrictHostKeyChecking=yes")
         for bad in (["ssh", "-t"], ["ssh", "-tt"], ["ssh", "-o", "RequestTTY=yes"], ["ssh", "-L", "1:h:2"],
                     ["ssh", "-o"], ["ssh", "-o", "BatchMode"], ["ssh", "-o", "StrictHostKeyChecking=no"],
@@ -724,7 +725,7 @@ class RunTests(unittest.TestCase):
         rig = Rig()
         self.assertEqual(rig.run("pv-writer")[0], 0)
         for entry in rig.ssh_log():
-            self.assertEqual(entry["opts"][:3], ["-T", "-o", "RequestTTY=no"])
+            self.assertEqual(entry["opts"][:5], ["-T", "-o", "RequestTTY=no", "-o", "StrictHostKeyChecking=yes"])
 
     def test_no_secret_in_any_argv_env_record_or_output(self):
         rig = Rig()
@@ -1454,10 +1455,10 @@ class FailureBranchTests(unittest.TestCase):
             f.write(b"\0")
         real = cw.Record.append
 
-        def append(self, event):
+        def append(self, event, expected=None):
             if event["event"] == "break":
                 raise OSError("disk full")
-            return real(self, event)
+            return real(self, event, expected)
 
         with mock.patch.object(cw.Record, "append", append):
             rc, _, err = rig.run("pv-writer")
@@ -2081,6 +2082,88 @@ class Round4Tests(unittest.TestCase):
         for res in (r, r2):
             self.assertEqual(res.returncode, 1, res.stderr)
             self.assertNotIn(b"covfix-break", res.stdout)
+
+
+class ConfirmBlockerTests(unittest.TestCase):
+    """The three blockers of the round-4 confirm."""
+
+    def reveal(self, rig, *extra):
+        return run_main("reveal", "--config", rig.config, "--config-sha256", rig.config_sha,
+                        "--seal-digest", rig.seal["seal_digest"], "--commitment", rig.cfg["binding"]["commitment"],
+                        *extra)
+
+    def test_a_terminal_readout_needs_a_ruling_before_reveal(self):
+        rig = Rig()
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        rig.set_ssh_mode("drop-link")
+        self.assertEqual(rig.run("pv-readout")[0], cw.TERMINAL)
+        rig.set_ssh_mode("")
+        self.assertIn(b'"terminal"', rig.remote_record())
+        for extra in ((), ("--after-stop", "ST3"), ("--inflight-resolved", "DECISION-readout-ended")):
+            rc, out, err = self.reveal(rig, *extra)
+            self.assertEqual((rc, out), (cw.REFUSED, ""), (extra, err))
+        rc, out, err = self.reveal(rig, "--after-stop", "ST3", "--inflight-resolved", "DECISION-readout-ended")
+        self.assertEqual(rc, 0, err)
+
+    def test_a_restore_after_the_write_cannot_change_what_is_published(self):
+        rig = Rig()
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        recpath = os.path.join(rig.cfg["record_dir"], "RECORD.jsonl")
+        older = slurp(recpath, "rb").splitlines(keepends=True)[0]       # the writer's spend only
+        real = cw.fsync_dir
+        state = {"done": False}
+
+        def fsync_dir(path):
+            real(path)
+            if not state["done"] and b'"pv-readout"' in slurp(recpath, "rb") and b'"spent"' in slurp(recpath, "rb"):
+                state["done"] = True
+                with open(recpath, "wb") as f:                  # restored right after the readout's append
+                    f.write(older)
+
+        with mock.patch.object(cw, "fsync_dir", fsync_dir):
+            rc, _, err = rig.run("pv-readout")
+        self.assertTrue(state["done"])
+        pushed = rig.remote_record()
+        self.assertIn(b'"role":"pv-readout"', pushed)                  # the spend is durable in the mirror
+        self.assertIn(b'"completed"', pushed.splitlines()[1])          # and the writer's completion was kept
+        rc2, _, err2 = rig.run("pv-readout")
+        self.assertEqual(rc2, cw.TERMINAL, err2)
+
+    def test_a_fresh_mirror_checkout_and_a_restored_record_are_caught(self):
+        rig = Rig()
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        recpath = os.path.join(rig.cfg["record_dir"], "RECORD.jsonl")
+        older = slurp(recpath, "rb").splitlines(keepends=True)[0]
+        fresh = os.path.join(rig.root, "fresh")
+        subprocess.run(["git", "clone", "-q", "-b", "covfix-consumption", rig.bare, fresh], check=True)
+        rig.cfg["mirror"]["worktree"] = fresh
+        rig.write_config()
+        for n in os.listdir(rig.cfg["record_dir"]):
+            if n.startswith("MARK-"):
+                os.unlink(os.path.join(rig.cfg["record_dir"], n))
+        with open(recpath, "wb") as f:
+            f.write(older)
+        rc, _, err = rig.run("pv-readout")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertIn("not an extension", err)
+        self.assertFalse(b"pv-readout" in rig.remote_record())
+
+    def test_the_lock_snapshot_is_what_every_locked_check_reads(self):
+        d = tempfile.mkdtemp(dir=TMP)
+        os.rmdir(d)
+        rec = cw.Record(d)
+        rec.ensure_dir()
+        rec.lock()
+        try:
+            snap = rec.raw()
+            with open(rec.path, "wb") as f:
+                f.write(b"restored\n")
+            self.assertEqual(rec.raw(), snap)
+            with self.assertRaises(OSError):
+                rec.append({"key": "1" * 64, "role": "pv-writer", "event": "spent"})
+        finally:
+            rec.unlock()
+        self.assertEqual(rec.raw(), b"restored\n")
 
 
 class ReferenceRoleTests(unittest.TestCase):

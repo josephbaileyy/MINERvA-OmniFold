@@ -55,7 +55,7 @@ block may name `salloc` and `srun` (paths ending in those names) and set `accoun
 with plain values. The wrapper runs:
 
 ```
-<ssh> -T -o RequestTTY=no [allowed opts] <host> \
+<ssh> -T -o RequestTTY=no -o StrictHostKeyChecking=yes [allowed opts] <host> \
   'env -u SRUN_INPUT -u SRUN_OUTPUT -u SRUN_ERROR -u SLURM_STD{IN,OUT,ERR}MODE \
    salloc --exclusive -N 1 -n 1 [-A -q -C -t] srun --exclusive -N 1 -n 1 \
    bash -c <exec check> covfix-exec <binary> <sha256> <args> --covfix-...'
@@ -69,7 +69,9 @@ The ssh options a config may add are limited to:
   only), UserKnownHostsFile, IdentitiesOnly or IdentityFile;
 - `-i`, `-p`, `-l`.
 
-`-F` is not allowed, so no other configuration file can loosen host-key checking.
+The wrapper always puts `-o StrictHostKeyChecking=yes` first. ssh uses the first value it obtains for an option, so
+neither an ssh_config file nor the command line can turn host-key checking off. The host must already be in
+known_hosts. `-F` is not allowed.
 
 Any `-t`, port forward or other option is refused. The frame goes on ssh's stdin, and the task's stdout and stderr
 come back through the wrapper. Any passphrase or seed base in that output is replaced by `[redacted]`, and the run is
@@ -125,7 +127,9 @@ against force pushes and deletion; that repository setting is Joseph's call.
    | some files missing | a break |
    | incomplete or contradictory answers | refused |
 
-8. **The spend, under the lock.**
+8. **The spend, under the lock.** The record is read once, as the lock is taken, and every check in the transaction
+   reads that snapshot. The append refuses if the file no longer matches it, and publishes the snapshot plus the new
+   line, never a re-read of the file.
    1. Steps 3 and 4 again.
    2. The attempt marker, `MARK-attempt-<key12>-<role>` (O_EXCL, fsynced). If it can't be written, nothing is spent.
    3. Append `spent` (with the attempt id), fsync, commit, push, and fetch the remote record back; it must equal the
@@ -161,10 +165,12 @@ recorded, the run still refuses and marks nothing.
 ## reveal
 
 - The seal and the commitment must be the binding's.
-- It needs a `pv-readout` outcome (completed, terminal or break) in the pushed record, or
-  `--after-stop <stop id>`.
-- It refuses while a PV role is spent with no outcome in the **pushed** record (in flight), unless
-  `--inflight-resolved <ruling id>`. A local-only outcome whose push failed counts as in flight.
+- It needs a **confirmed** `pv-readout` end in the pushed record, `completed` or `break` (the task's own receipt or
+  break line), or `--after-stop <stop id>`.
+- It refuses while a PV role is spent with no confirmed end in the **pushed** record (in flight), unless
+  `--inflight-resolved <ruling id>`. A local-only outcome whose push failed, and a `terminal` outcome, count as in
+  flight. After a dropped link or a crash the task may still be running, so a `terminal` readout needs both
+  `--after-stop` and `--inflight-resolved`, once the director has ruled.
 - This eligibility is checked again under the lock, just before the reveal line is written.
 - Stop and ruling ids are identifiers: a letter, then letters, digits, `.`, `_` or `-`, with no long hex or digit runs.
   So a pasted secret can't reach the mirror.
