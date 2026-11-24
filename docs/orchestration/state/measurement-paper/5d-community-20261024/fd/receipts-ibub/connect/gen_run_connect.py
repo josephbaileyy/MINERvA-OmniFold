@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Writes ibub_run_connect.sh (IBUB connect R) from ibub_run_connect.template.sh, embedding three things:
+"""Writes ibub_run_connect.sh (IBUB connect R) from ibub_run_connect.template.sh, and ibub_run_launch.sh from its
+template with that script's sha256 bound in. The connect embeds three things:
 - cov2d_fence.sh rev 3 (sha256 7e81a721...) as base64, so the node runs those exact bytes before anything else;
 - M;
 - the sha256 of every ibub file the node runs.
@@ -24,6 +25,9 @@ FILES = ("ibub_unit.py", "ibub_readout.py", "ibub_lanes.py", "ibub_overlap.py", 
 
 
 def main(argv) -> int:
+    if not argv or len(argv) > 2 or len(argv[0]) != 40:
+        print("usage: gen_run_connect.py M [OUT]   (M: the 40-hex commit the node clones)", file=sys.stderr)
+        return 2
     M = argv[0]
     out = Path(argv[1]) if len(argv) > 1 else HERE / "ibub_run_connect.sh"
     fence = FENCE.read_bytes()
@@ -38,7 +42,13 @@ def main(argv) -> int:
             .replace("@@M@@", M).replace("@@IBUB_SUMS@@", sums))
     assert "@@" not in text
     out.write_text(text)
-    print(hashlib.sha256(out.read_bytes()).hexdigest(), out.name)
+    sha = hashlib.sha256(out.read_bytes()).hexdigest()
+    launch = out.with_name("ibub_run_launch.sh")         # the launcher, with this connect's sha bound in
+    lt = (HERE / "ibub_run_launch.template.sh").read_text().replace("@@CONNECT_SHA@@", sha)
+    assert "@@" not in lt
+    launch.write_text(lt)
+    print(sha, out.name)
+    print(hashlib.sha256(launch.read_bytes()).hexdigest(), launch.name)
     return 0
 
 

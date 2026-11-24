@@ -21,8 +21,15 @@ Subcommands:
   preflight             login node: the two references' O_NOATIME sha256 and the 600 toy files' stat (section 8)
   run --unit U ... --out DIR
                         the units, after the code pins, the staged inputs' digests and the CPU/thread gate
-  refcheck --out DIR    the barrier (section 8): both references PASS, within the re-price trigger, and central_df
-                        equal to central; exit 0 lets the toys start
+  refcheck --out DIR --time central=F --time central_df=F
+                        the barrier (section 8): both references PASS and this job's, each full srun step (its
+                        /usr/bin/time file) exit 0 within the re-price trigger, and central_df equal to central;
+                        writes refcheck.json; exit 0 lets the toys start
+  complete --out DIR    the job's completion check: the exact 600 toy markers PASS and this job's, no undeclared
+                        marker, and the barrier receipt this job's PASS
+
+Every run, refcheck and complete is bound to SLURM_JOB_ID and to IBUB_M, the deploy commit, which must equal the
+checkout's HEAD; each destination must resolve under the namespace (config.json "namespace").
 
 MEASURES: one driver run per unit. CANNOT AUTHORIZE: a reading (``ibub_readout.py`` applies the declared ones).
 """
@@ -33,7 +40,9 @@ import hashlib
 import io
 import json
 import os
+import re
 import stat
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -67,6 +76,38 @@ def check_code(cfg: dict) -> None:
     for rel, digest in cfg["code_sha256"].items():
         if rc.sha256(REPO / rel) != digest:
             raise GateFailure(f"{rel} digest differs from config.json")
+
+
+def namespace(cfg: dict) -> Path:
+    """The bound namespace $N, which must not itself be a symlink (its path as written is its real path)."""
+    n = Path(cfg["namespace"])
+    if os.path.realpath(n) != os.path.abspath(n):
+        raise GateFailure(f"the namespace {n} is not its own real path (a symlink?)")
+    return n
+
+
+def inside(cfg: dict, path) -> Path:
+    """``path`` resolved (every symlink followed) must lie under the namespace: no write or staged read escapes it."""
+    n = os.path.realpath(namespace(cfg))
+    p = os.path.realpath(path)
+    if p != n and not p.startswith(n + os.sep):
+        raise GateFailure(f"{path} resolves to {p}, outside the namespace {n}")
+    return Path(p)
+
+
+def binding() -> dict:
+    """The job and deploy every unit, the barrier and the completion check are bound to: SLURM_JOB_ID, and the
+    deploy's HEAD, which must equal IBUB_M (the commit the job was submitted with)."""
+    job, want = os.environ.get("SLURM_JOB_ID"), os.environ.get("IBUB_M")
+    if not job or not re.fullmatch(r"[0-9]+", job):
+        raise GateFailure(f"SLURM_JOB_ID is {job!r}, not a job id")
+    if not want or not re.fullmatch(r"[0-9a-f]{40}", want):
+        raise GateFailure(f"IBUB_M is {want!r}, not a commit")
+    r = subprocess.run(["git", "-C", str(REPO), "rev-parse", "HEAD"], capture_output=True, text=True)
+    head = r.stdout.strip()
+    if r.returncode != 0 or head != want:
+        raise GateFailure(f"the deploy HEAD {head!r} (rc {r.returncode}) is not IBUB_M {want}")
+    return {"job": job, "deploy_head": head}
 
 
 def staging_root(cfg: dict) -> Path:
@@ -210,9 +251,10 @@ def read_reference(cfg: dict) -> dict:
 
 
 def max_rel(a: np.ndarray, b: np.ndarray) -> float:
-    """max |a/b - 1| over b != 0, and inf when a is non-zero where b is zero."""
+    """max |a/b - 1| over b != 0; inf when a is non-zero where b is zero, when the shapes differ, or when either side
+    holds a non-finite value (a NaN never reaches a reduction, where it could be dropped)."""
     a, b = np.asarray(a, float), np.asarray(b, float)
-    if a.shape != b.shape:
+    if a.shape != b.shape or not (np.all(np.isfinite(a)) and np.all(np.isfinite(b))):
         return float("inf")
     nz = b != 0
     if np.any(a[~nz] != 0):
@@ -224,10 +266,18 @@ def compare(a: dict, b: dict, rep: np.ndarray, rtol: float) -> dict:
     """C-REP's comparison: xsec at every K of the scan on the 205 cells, and the binned T and y, to rtol."""
     if list(np.asarray(a["ks"])) != list(np.asarray(b["ks"])):
         return {"pass": False, "why": "the K scans differ"}
-    xs = max(max_rel(np.asarray(a["xsec"])[i][rep], np.asarray(b["xsec"])[i][rep]) for i in range(len(a["ks"])))
+    xs = max([max_rel(np.asarray(a["xsec"])[i][rep], np.asarray(b["xsec"])[i][rep]) for i in range(len(a["ks"]))])
     out = {"xsec_max_rel": xs, "T_max_rel": max_rel(a["T"], b["T"]), "y_max_rel": max_rel(a["y"], b["y"]), "rtol": rtol}
     out["pass"] = bool(max(out["xsec_max_rel"], out["T_max_rel"], out["y_max_rel"]) <= rtol)
     return out
+
+
+def max_abs_rel(a, b) -> float:
+    """C-ROO's measure, max |a - b| / max(|b|, 1e-300); inf when either side holds a non-finite value."""
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    if a.shape != b.shape or not (np.all(np.isfinite(a)) and np.all(np.isfinite(b))):
+        return float("inf")
+    return float(np.max(np.abs(a - b) / np.maximum(np.abs(b), 1e-300))) if a.size else 0.0
 
 
 def read_marker(path: Path) -> dict:
@@ -253,15 +303,18 @@ def provenance(path: Path) -> dict:
 
 
 def run_unit(driver, ohf, cfg: dict, unit: dict, out: Path, *, shas: dict, rep: np.ndarray, ref: dict | None,
-             inputs_verified: dict | None = None, unfolder=None) -> int:
-    """One unit; its done-marker carries its control verdict, and only a PASS unit is skipped on a rerun."""
+             bound: dict, inputs_verified: dict | None = None, unfolder=None) -> int:
+    """One unit; its done-marker carries its control verdict and the job and deploy it ran under. A unit already
+    present is skipped only if its marker is PASS and was written by this job at this deploy; anything else present
+    is refused, never overwritten."""
     name = unit["name"]
     root, npz, marker = out / f"{name}.root", out / f"{name}.npz", out / f"{name}.done"
-    if npz.exists() or root.exists():
-        verdict = read_marker(marker).get("verdict")
-        if verdict == "PASS":
+    if npz.exists() or root.exists() or marker.exists():
+        m = read_marker(marker)
+        if m.get("verdict") == "PASS" and (m.get("job"), m.get("deploy_head")) == (bound["job"], bound["deploy_head"]):
             return 0
-        print(f"refusing: {name} exists without a PASS done-marker (verdict {verdict})", file=sys.stderr)
+        print(f"refusing: {name} exists (verdict {m.get('verdict')}, job {m.get('job')}, deploy {m.get('deploy_head')})"
+              f" and is not this job's PASS", file=sys.stderr)
         return RC_CONTROL
     try:
         cpus, threads = gate_env(cfg)
@@ -286,13 +339,10 @@ def run_unit(driver, ohf, cfg: dict, unit: dict, out: Path, *, shas: dict, rep: 
                   "unfolded": np.array([cap["traj"][K] for K in ks]), "T": cap["T"], "y": cap["y"]}
         controls = {"C-G2R": {"pass": True, "forbidden": cfg["g2r_forbidden_options"]}}
         own = rc.own_hxsec(driver, root, (out, staging_root(cfg)))
-        prim = xs[c2["primary"]]
-        nz = prim != 0
-        fill = float(np.max(np.abs(own[nz] / prim[nz] - 1))) if nz.any() else 0.0
-        controls["C-FILL"] = {"max_rel": fill, "pass": bool(fill <= c2["c_fill_rtol"] and np.all(own[~nz] == 0))}
+        fill = max_rel(own, xs[c2["primary"]])     # inf on a non-finite value, or on own != 0 where the extraction is 0
+        controls["C-FILL"] = {"max_rel": fill, "pass": bool(fill <= c2["c_fill_rtol"])}
         numpy_traj = rc.dagostini(cap["M"], cap["T"], cap["y"], ks)
-        roo = max(float(np.max(np.abs(cap["traj"][K] - numpy_traj[K]) / np.maximum(np.abs(numpy_traj[K]), 1e-300)))
-                  for K in ks)
+        roo = max([max_abs_rel(cap["traj"][K], numpy_traj[K]) for K in ks])
         controls["C-ROO"] = {"max_rel": roo, "pass": bool(roo <= c2["c_roo_rtol"])}
         if unit["kind"] == "central":
             controls["C-SIM"] = rc.c_sim(driver, cap, rc.dagostini, ks, c2["c_sim_rtol"])
@@ -309,7 +359,7 @@ def run_unit(driver, ohf, cfg: dict, unit: dict, out: Path, *, shas: dict, rep: 
         meta = {"schema": "ibub-unit/1", "unit": name, "kind": unit["kind"], "tune": unit["tune"], "seed": unit["seed"],
                 "argv": argv, "runner_sha256": rc.sha256(Path(__file__).resolve()), "config_sha256": rc.sha256(CONFIG),
                 "code_sha256": cfg["code_sha256"], "inputs_sha256": inputs_verified, "data_sha256": data_sha,
-                "slurm_job": os.environ.get("SLURM_JOB_ID"), "cpus": cpus, "thread_env": threads,
+                "slurm_job": bound["job"], "deploy_head": bound["deploy_head"], "cpus": cpus, "thread_env": threads,
                 "measured_weights_sha256": hashlib.sha256(cap["measured_weights"].tobytes()).hexdigest(),
                 "controls": controls, "seconds": round(time.time() - t0, 3)}
         if set(controls) != CONTROLS[unit["kind"]]:
@@ -317,6 +367,7 @@ def run_unit(driver, ohf, cfg: dict, unit: dict, out: Path, *, shas: dict, rep: 
         passed = all(v["pass"] for v in controls.values())
         np.savez_compressed(npz, **arrays, meta=json.dumps(meta, default=str))
         marker.write_text(json.dumps({"unit": name, "kind": unit["kind"], "tune": unit["tune"], "seed": unit["seed"],
+                                      "job": bound["job"], "deploy_head": bound["deploy_head"],
                                       "verdict": "PASS" if passed else "FAIL", "seconds": meta["seconds"],
                                       "sha256": rc.sha256(npz), "root_sha256": rc.sha256(root),
                                       "data_sha256": data_sha}) + "\n")
@@ -337,7 +388,9 @@ def run_unit(driver, ohf, cfg: dict, unit: dict, out: Path, *, shas: dict, rep: 
 def stage(cfg: dict) -> int:
     """Copy each input once through O_NOATIME into the staging root, check it against its pin, make it read-only."""
     root = staging_root(cfg)
+    inside(cfg, root.parent if not root.exists() else root)
     root.mkdir(parents=True, exist_ok=True)
+    inside(cfg, root)
     rec, ok = {"schema": "ibub-stage/1", "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "files": {}}, True
     for key, dest in staged(cfg).items():
         src, want = Path(cfg["inputs"][f"{key}_source"]), cfg["inputs"][f"{key}_sha256"]
@@ -382,10 +435,33 @@ def preflight(cfg: dict) -> int:
     return 0 if ok else RC_STOP
 
 
-def refcheck(cfg: dict, out: Path, rep: np.ndarray) -> int:
-    """The barrier: both reference units PASS (C-REP, C-REP-D), each within the re-price trigger, and central_df's
-    cross sections equal central's to C-REP's tolerance. Writes refcheck.json; 0 lets the toys start."""
-    rec, ok = {"schema": "ibub-refcheck/1", "units": {}}, True
+def gnu_time(path: Path) -> dict:
+    """The full step's wall time and exit status from ``/usr/bin/time -v`` output: "Elapsed (wall clock) time
+    (h:mm:ss or m:ss): 3:36.74" and "Exit status: 0". Anything unreadable reads as no wall and no status."""
+    try:
+        text = Path(path).read_text()
+    except OSError:
+        return {"wall_s": None, "exit_status": None}
+    m = re.search(r"Elapsed \(wall clock\) time \(h:mm:ss or m:ss\):\s*([0-9:.]+)", text)
+    e = re.search(r"Exit status:\s*(-?[0-9]+)", text)
+    wall = None
+    if m:
+        parts = [float(x) for x in m.group(1).split(":")]
+        wall = sum(v * 60 ** (len(parts) - 1 - i) for i, v in enumerate(parts))
+    return {"wall_s": wall, "exit_status": int(e.group(1)) if e else None}
+
+
+def refcheck(cfg: dict, out: Path, rep: np.ndarray, bound: dict, times: dict) -> int:
+    """The barrier. Its checks:
+    - both reference units are PASS (C-REP, C-REP-D), written by this job at this deploy;
+    - each product is at its marker's digest;
+    - each full reference STEP (``times``: the /usr/bin/time file of its srun step) exited 0 within the re-price
+      trigger;
+    - central_df's cross sections equal central's to C-REP's tolerance.
+    It writes refcheck.json, the barrier receipt the readout binds to; exit 0 lets the toys start."""
+    rec = {"schema": "ibub-refcheck/1", "job": bound["job"], "deploy_head": bound["deploy_head"],
+           "runner_sha256": rc.sha256(Path(__file__).resolve()), "units": {}}
+    ok = True
     limit = cfg["price"]["reprice_factor"] * cfg["price"]["unit_s"]
     arrays = {}
     for u in REFERENCE_UNITS:
@@ -393,10 +469,12 @@ def refcheck(cfg: dict, out: Path, rep: np.ndarray) -> int:
         m = read_marker(marker)
         good = (m.get("verdict") == "PASS" and m.get("unit") == u and npz.exists() and root.exists()
                 and rc.sha256(npz) == m.get("sha256") and rc.sha256(root) == m.get("root_sha256"))
-        secs = m.get("seconds")
-        fast = isinstance(secs, (int, float)) and secs <= limit
-        rec["units"][u] = {"verdict": m.get("verdict"), "seconds": secs, "limit_s": limit, "pass": bool(good and fast)}
-        ok = ok and good and fast
+        mine = (str(m.get("job")), m.get("deploy_head")) == (bound["job"], bound["deploy_head"])
+        t = gnu_time(times[u]) if u in times else {"wall_s": None, "exit_status": None}
+        fast = isinstance(t["wall_s"], float) and t["wall_s"] <= limit and t["exit_status"] == 0
+        rec["units"][u] = {"verdict": m.get("verdict"), "this_job": mine, "step_wall_s": t["wall_s"],
+                           "step_exit_status": t["exit_status"], "limit_s": limit, "pass": bool(good and mine and fast)}
+        ok = ok and good and mine and fast
         if good:
             z = np.load(npz)
             arrays[u] = {k: z[k] for k in ("ks", "xsec", "T", "y")}
@@ -412,6 +490,36 @@ def refcheck(cfg: dict, out: Path, rep: np.ndarray) -> int:
     return 0 if ok else RC_STOP
 
 
+def complete(cfg: dict, out: Path, bound: dict) -> int:
+    """The job's completion check, which the job publishes as IBUB-DONE. Each of these is a failure:
+    - any of the 600 declared toy units without a PASS marker naming it, this job and this deploy, with its products
+      at the marker's digests;
+    - any marker for an undeclared unit;
+    - a refcheck.json that is not this job's PASS.
+    It prints one JSON line; exit 0 only when every check holds."""
+    expected = [f"toy_{t}_{s}" for t in ("G18", "AR23") for s in c.TOY_SEEDS[t]]
+    bad, passed = [], 0
+    for name in expected:
+        m = read_marker(out / f"{name}.done")
+        npz, root = out / f"{name}.npz", out / f"{name}.root"
+        ok = (m.get("verdict") == "PASS" and m.get("unit") == name and str(m.get("job")) == bound["job"]
+              and m.get("deploy_head") == bound["deploy_head"] and npz.exists() and root.exists()
+              and rc.sha256(npz) == m.get("sha256") and rc.sha256(root) == m.get("root_sha256"))
+        passed += ok
+        if not ok:
+            bad.append(name)
+    known = set(expected) | set(REFERENCE_UNITS)
+    extra = sorted(f[:-5] for f in os.listdir(out) if f.endswith(".done") and f[:-5] not in known)
+    b = read_marker(out / "refcheck.json")
+    barrier = (b.get("verdict"), str(b.get("job")), b.get("deploy_head")) == ("PASS", bound["job"], bound["deploy_head"])
+    rec = {"schema": "ibub-complete/1", "job": bound["job"], "deploy_head": bound["deploy_head"],
+           "toy_pass": passed, "toy_expected": len(expected), "not_pass": bad[:50], "not_pass_count": len(bad),
+           "undeclared_markers": extra, "barrier_pass": barrier}
+    rec["verdict"] = "PASS" if (passed == len(expected) and not extra and barrier) else "FAIL"
+    print(json.dumps(rec, sort_keys=True))
+    return 0 if rec["verdict"] == "PASS" else 1
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -422,6 +530,10 @@ def main(argv=None) -> int:
     r.add_argument("--out", type=Path, required=True)
     b = sub.add_parser("refcheck")
     b.add_argument("--out", type=Path, required=True)
+    b.add_argument("--time", action="append", default=[], metavar="UNIT=PATH",
+                   help="the /usr/bin/time -v file of each reference unit's srun step")
+    d = sub.add_parser("complete")
+    d.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
     cfg = load_config()
     try:
@@ -430,12 +542,25 @@ def main(argv=None) -> int:
             return stage(cfg)
         if a.cmd == "preflight":
             return preflight(cfg)
+        out = inside(cfg, a.out)                     # every write of run, refcheck and complete stays under $N
+        bound = binding()
         rep = reported_cells(cfg)
         if a.cmd == "refcheck":
-            return refcheck(cfg, a.out, rep)
+            times = {}
+            for t in a.time:
+                u, _, path = t.partition("=")
+                if u not in REFERENCE_UNITS or not path:
+                    raise ValueError(f"--time {t!r} is not UNIT=PATH for a reference unit")
+                times[u] = Path(path)
+            return refcheck(cfg, out, rep, bound, times)
+        if a.cmd == "complete":
+            return complete(cfg, out, bound)
         units = [parse_unit(s) for s in a.unit]
         if len({u["name"] for u in units}) != len(units):
             raise ValueError("a unit is named twice")
+        inside(cfg, staging_root(cfg))
+        for u in units:                              # C-G2R, before the driver is imported (section 5)
+            resolve_argv(cfg, None if u["kind"] == "central" else data_dir(cfg) / f"{u['name']}.root")
         shas = {t: toy_shas(cfg, t) for t in cfg["toys"]}
         verified = check_inputs(cfg)
         ref = read_reference(cfg) if any(u["kind"] in REFERENCE_UNITS for u in units) else None
@@ -445,7 +570,8 @@ def main(argv=None) -> int:
         return RC_GATE
     rc_ = 0
     for u in units:
-        rc_ = run_unit(driver, ohf, cfg, u, a.out, shas=shas, rep=rep, ref=ref, inputs_verified=verified) or rc_
+        rc_ = run_unit(driver, ohf, cfg, u, out, shas=shas, rep=rep, ref=ref, bound=bound,
+                       inputs_verified=verified) or rc_
     return rc_
 
 

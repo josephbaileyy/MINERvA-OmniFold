@@ -79,7 +79,8 @@ records() {
   echo "== records"; date -u +%FT%TZ
   mkdir "$FR" || { echo "records: mkdir $FR failed"; return 1; }
   local rel src a b fail=0 nf=0
-  ( cd "$N" && { find logs -type f ! -name "connect-$TAG.log" -print0; [ -f stage/stage.json ] && printf 'stage/stage.json\0'; } | sort -z ) > "$FR.list" \
+  # stage.json exists only after the staging; the test is written so its absence is not a failure under pipefail
+  ( cd "$N" && { find logs -type f ! -name "connect-$TAG.log" -print0; [ ! -f stage/stage.json ] || printf 'stage/stage.json\0'; } | sort -z ) > "$FR.list" \
     || { echo "records: the list failed (find)"; return 1; }
   while IFS= read -r -d '' rel; do
     src="$N/$rel"
@@ -108,9 +109,9 @@ echo "== fence (sacct)"; fence_sacct || { echo "STOP: fence"; finish 9; }; echo 
 git clone -q https://github.com/josephbaileyy/MINERvA-OmniFold.git "$D" > "$N/logs/clone.log" 2>&1 || { echo "STOP: clone"; finish 3; }
 git -C "$D" -c advice.detachedHead=false checkout -q "$M" || { echo "STOP: checkout"; finish 3; }
 [ "$(git -C "$D" rev-parse HEAD)" = "$M" ] || { echo "STOP: HEAD is not M"; finish 9; }
-n=$(git -C "$D" status --porcelain --ignored | wc -l) || { echo "STOP: git status failed (before)"; finish 9; }
-echo "HEAD $M; porcelain --ignored lines before: $n"
-[ "$n" -eq 0 ] || { echo "STOP: the deploy is not clean"; finish 9; }
+gs=$(git -C "$D" status --porcelain --ignored) || { echo "STOP: git status failed (before)"; finish 9; }
+echo "HEAD $M; porcelain --ignored before: '${gs}'"
+[ -z "$gs" ] || { echo "STOP: the deploy is not clean"; finish 9; }
 ( cd "$D/2d-unfolding/ibub" && sha256sum --strict -c ) <<SUMS || { echo "STOP: the ibub files are not the declared ones"; finish 9; }
 @@IBUB_SUMS@@
 SUMS
@@ -155,7 +156,6 @@ grep -Eq "JobName=$JOBNAME( |\$)" <<<"$info" && grep -Eq "QOS=regular( |\$)" <<<
   || { echo "STOP: scontrol does not show $JOBNAME / regular / $LIMIT for $jid"; finish 5; }
 echo "scontrol: name, QOS and limit as declared"
 gs=$(git -C "$D" status --porcelain --ignored) || { echo "STOP: git status failed (after)"; finish 9; }
-n=$(printf '%s\n' "$gs" | awk 'NF && index($0, "__pycache__") == 0 { c++ } END { print c + 0 }')
-echo "porcelain --ignored lines after (pycache excluded): $n"
-[ "$n" -eq 0 ] || { echo "STOP: the deploy changed"; finish 9; }
+echo "porcelain --ignored after: '${gs}'"
+[ -z "$gs" ] || { echo "STOP: the deploy changed (no exception: the job requires it clean)"; finish 9; }
 finish 0

@@ -11,7 +11,8 @@ tool it loads:
 
 To those it adds:
 - tier3-design's MSR reads (``msr_overlap.READS``), with its write roots ``msr-*`` and ``/dev/shm/msr-connect``;
-- the ``ibuchi_`` root of Joseph's session (the director's FYI of 2026-11-23).
+- the ``ibuchi_`` root of Joseph's session (the director's FYI of 2026-11-23);
+- limitation-resolver's P0 (RPD-RECO): its write roots and its flux3 reads (its ack of 2026-11-24).
 
 **Ours** is the declared set for the phase. IBUB reads cov2d's own files by design: the toys' data files, `$K2A`, the
 CV omnifile's CFS original and, in the readout, the OmniFold toy outputs, the truths and E_R. Each of those is read
@@ -54,6 +55,11 @@ READS_READOUT: list = []
 WRITES = {"run": [N_ROOT, "/dev/shm/ibub-connect", "/dev/shm/ibubc."],
           "readout": ["/dev/shm/ibub-connect", "/dev/shm/ibubc."]}   # the readout writes only off pscratch, then fetches
 IBUCHI = [("ibuchi write root", f"{U}/ibuchi-evloop-20261123")]
+LR_P0 = [  # limitation-resolver's ack of 2026-11-24: P0 (RPD-RECO), a login-only connect that may run in this lane's window
+    ("rpd-reco P0 write root", f"{U}/rpd-reco-p0-20261123"),
+    ("rpd-reco P0 write (login node)", "/dev/shm/limres-rpd-flux1"),
+    ("rpd-reco P0 read (flux3 products)", f"{U}/rpd-reco-flux3-20261123/run"),
+]
 
 
 def load(path: Path, name: str):
@@ -74,7 +80,7 @@ def theirs(clone: Path) -> list:
     out += list(mo.LR_EXTRA)
     out += [("tier3 msr read", p) for p in mo.READS]
     out += [("tier3 msr write root", f"{U}/msr-"), ("tier3 msr write", "/dev/shm/msr-connect")]
-    out += IBUCHI
+    out += IBUCHI + LR_P0
     return out, mo, rpd
 
 

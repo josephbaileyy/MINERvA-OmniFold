@@ -7,6 +7,7 @@
 
   python ibub_lanes.py PHASE LANE     prints that lane's --unit arguments, one per line (PHASE refs | toys)
   python ibub_lanes.py table          prints every row as "phase<TAB>lane<TAB>unit"
+  python ibub_lanes.py verify         exit 0 only if the table is the declared one
 
 MEASURES: nothing. CANNOT AUTHORIZE: a run.
 """
@@ -36,8 +37,30 @@ def lane(phase: str, n: int) -> list[str]:
     return [u for p, ln, u in table() if p == phase and ln == n]
 
 
+def verify() -> list[str]:
+    """The table's own checks: the two references alone on lanes 0 and 1; each declared toy exactly once; 150 per
+    lane. The problems, empty when it holds."""
+    rows = table()
+    probs = []
+    if [r for r in rows if r[0] == "refs"] != [("refs", 0, "central"), ("refs", 1, "central_df")]:
+        probs.append("the reference rows are not central on lane 0 and central_df on lane 1")
+    toys = [u for p, _, u in rows if p == "toys"]
+    want = [f"toy:{t}:{s}" for t in TUNES for s in c.TOY_SEEDS[t]]
+    if sorted(toys) != sorted(want) or len(set(toys)) != len(toys):
+        probs.append("the toys are not each declared toy exactly once")
+    for ln in range(LANES):
+        n = sum(1 for p, x, _ in rows if p == "toys" and x == ln)
+        if n != len(want) // LANES:
+            probs.append(f"lane {ln} has {n} toys, not {len(want) // LANES}")
+    return probs
+
+
 def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
+    if argv == ["verify"]:
+        probs = verify()
+        print("\n".join(probs) if probs else "LANES OK: 2 references, 600 toys, 150 per lane")
+        return 1 if probs else 0
     if argv == ["table"]:
         print("\n".join(f"{p}\t{ln}\t{u}" for p, ln, u in table()))
         return 0

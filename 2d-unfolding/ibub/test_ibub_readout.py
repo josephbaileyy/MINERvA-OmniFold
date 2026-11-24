@@ -50,6 +50,7 @@ SEEDS = list(c.TOY_SEEDS[T])
 REAL = c.REALIZATION_SEED[T]
 KS = [1, 2, 3, 4, 5, 10, 15, 20]
 JOB = "61000001"
+DEPLOY = "M0"     # c.deploy_head is patched to return it, as test_cov2d_readout patches it
 
 
 def sha(b: bytes) -> str:
@@ -155,6 +156,12 @@ class Tree:
         self.prov = {}
         for k, s in enumerate(self.SEEDS):
             self.write_unit(k, s)
+        self.write_barrier()
+
+    def write_barrier(self, **change):
+        rec = {"verdict": "PASS", "job": JOB, "deploy_head": DEPLOY, "runner_sha256": iu.rc.sha256(Path(iu.__file__))}
+        rec.update(change)
+        (self.units / "refcheck.json").write_text(json.dumps(rec))
 
     def other_labels(self):
         labs = [f"X_{self.T}"] + [f"U_{self.T}_{b}_{i}" for b in c.ORDER for i in range(c.BANDS[b])]
@@ -176,7 +183,7 @@ class Tree:
         self.score_path.write_bytes(raw)
         self.score_sha = sha(raw)
 
-    def write_unit(self, k, s, *, data_sha=None, k10_tweak=0.0, k5_nan=False):
+    def write_unit(self, k, s, *, data_sha=None, k10_tweak=0.0, k5_nan=False, verdict="PASS"):
         name = f"toy_{self.T}_{s}"
         full = np.zeros((len(KS), 224))
         for i, K in enumerate(KS):
@@ -187,7 +194,7 @@ class Tree:
             full[KS.index(5), int(self.flat[0])] = np.nan
         ds = self.data_sha[s] if data_sha is None else data_sha
         meta = {"kind": "toy", "tune": self.T, "seed": s, "data_sha256": ds,
-                "controls": {k: {"pass": True} for k in iu.CONTROLS["toy"]}, "slurm_job": JOB,
+                "controls": {k: {"pass": True} for k in iu.CONTROLS["toy"]}, "slurm_job": JOB, "deploy_head": DEPLOY,
                 "runner_sha256": iu.rc.sha256(Path(iu.__file__)), "config_sha256": iu.rc.sha256(iu.CONFIG)}
         buf = io.BytesIO()
         np.savez(buf, ks=np.array(KS), xsec=full, meta=json.dumps(meta))
@@ -197,8 +204,8 @@ class Tree:
         self.vec[key.decode()] = self.x_ibu[k]
         self.prov[key.decode()] = {"dataFileSha256": ds}
         (self.units / f"{name}.done").write_text(json.dumps({
-            "unit": name, "kind": "toy", "tune": self.T, "seed": s, "verdict": "PASS", "sha256": sha(buf.getvalue()),
-            "root_sha256": sha(key), "data_sha256": ds}))
+            "unit": name, "kind": "toy", "tune": self.T, "seed": s, "job": JOB, "deploy_head": DEPLOY, "verdict": verdict,
+            "sha256": sha(buf.getvalue()), "root_sha256": sha(key), "data_sha256": ds}))
 
     def reorder_truth(self):
         """truth_xsec.npz with two rows' seeds exchanged (its rows no longer follow the natures)."""
@@ -487,13 +494,15 @@ class EndToEnd(Patched):
         self.assertEqual(rec["verdict"], "INVALID")
         self.assertFalse(rec["C-OF"]["bias"]["pass"])
 
-    def test_a_truth_file_off_its_pin_is_refused_before_any_reading(self):
+    def test_a_truth_file_off_its_pin_is_a_recorded_refusal_with_no_reading(self):
         tr = Tree(self.td)
         cfg = tr.config()
         cfg["cov2d_records"][T]["truth_xsec_sha256"] = "0" * 64
         self.patch(tr, cfg)
-        with self.assertRaises(c.Refusal):
-            self.go(tr)
+        rec = self.go(tr)                                     # the codex read, blocker 7: a record, never a bare raise
+        self.assertEqual(rec["verdict"], "INVALID")
+        self.assertIn("sha256", rec["refused"])
+        self.assertNotIn("readings", json.loads((tr.d / "out" / f"ibub_{T}.json").read_text()))
 
     def test_out_under_a_guarded_tree_is_refused(self):
         tr = Tree(self.td)
@@ -509,7 +518,7 @@ class EndToEnd(Patched):
         name(1).with_suffix(".done").write_text(json.dumps(dict(m, verdict="FAIL")))
         self.patch(tr)
         rec = self.go(tr, "o1")
-        self.assertEqual(rec["verdict"], "INCOMPLETE")
+        self.assertEqual(rec["verdict"], "INVALID")          # a FAIL unit is a defect, not an absence
         self.assertEqual(rec["C-COMPLETE"]["missing"], [SEEDS[1]])
         self.assertTrue(any("verdict FAIL" in p for p in rec["C-DATA"]["problems"]))
 
@@ -548,7 +557,7 @@ class EndToEnd(Patched):
         self.rewrite_meta(tr, 9, ks=np.array([1, 2, 3, 4, 5, 10, 15, 25]))
         self.patch(tr)
         rec = self.go(tr)
-        self.assertEqual(rec["verdict"], "INCOMPLETE")          # the agy code read, finding 3: missing, not a crash
+        self.assertEqual(rec["verdict"], "INVALID")             # agy read 1 finding 3: recorded, not a crash
         self.assertEqual(rec["C-COMPLETE"]["missing"], [SEEDS[9]])
         self.assertTrue(any("K scan" in p for p in rec["C-DATA"]["problems"]))
 
@@ -566,8 +575,10 @@ class EndToEnd(Patched):
             defect(tr)
             with self.subTest(defect=tag):
                 self.patch(tr)
-                with self.assertRaises(c.Refusal):
-                    self.go(tr)
+                rec = self.go(tr)
+                self.assertEqual(rec["verdict"], "INVALID")
+                self.assertTrue(any(x.startswith("C-TRUTH") for x in rec["controls_failed"]), rec["controls_failed"])
+                self.assertTrue((tr.d / "out" / f"ibub_{T}.json").exists())
         td = Path(tempfile.mkdtemp()).resolve()
         self.addCleanup(shutil.rmtree, td, True)
         tr = Tree(td)
@@ -577,24 +588,29 @@ class EndToEnd(Patched):
         def reversed_toys(truth, comp):
             p = real_plan(truth, comp)
             return dict(p, toy=p["toy"][::-1])
-        with mock.patch.object(rd, "plan", reversed_toys), self.assertRaises(c.Refusal):
-            self.go(tr, "o2")
+        with mock.patch.object(rd, "plan", reversed_toys):
+            rec = self.go(tr, "o2")
+        self.assertEqual(rec["verdict"], "INVALID")
+        self.assertIn("C-TRUTH: the OmniFold labels are not the declared seeds in order", rec["controls_failed"])
 
     def test_cells_other_than_the_configs_are_refused(self):
         tr = Tree(self.td)
         rep = tr.rep.copy()
         rep[int(np.flatnonzero(~rep)[0])] = True
         self.patch(tr)
-        with mock.patch.object(iu, "reported_cells", lambda cfg: rep), self.assertRaises(c.Refusal):
-            self.go(tr)
+        with mock.patch.object(iu, "reported_cells", lambda cfg: rep):
+            rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "INVALID")
+        self.assertTrue(any("cells differ" in x for x in rec["controls_failed"]))
 
     def test_a_test_count_other_than_the_declared_is_refused(self):
         tr = Tree(self.td)
         cfg = tr.config()
         cfg["readout"]["tests"] = 235
         self.patch(tr, cfg)
-        with self.assertRaises(c.Refusal):
-            self.go(tr)
+        rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "INVALID")
+        self.assertNotIn("readings", rec)
 
     def test_main_prints_the_verdict_and_exits_by_it(self):
         tr = Tree(self.td)
@@ -631,7 +647,7 @@ class EndToEnd(Patched):
         (tr.units / f"toy_{T}_{SEEDS[15]}.root").unlink()
         self.patch(tr)
         rec = self.go(tr)
-        self.assertEqual(rec["verdict"], "INCOMPLETE")
+        self.assertEqual(rec["verdict"], "INVALID")
         self.assertEqual(rec["C-COMPLETE"]["missing"], [SEEDS[14], SEEDS[15]])
         self.assertEqual(sum("not its marker's" in p for p in rec["C-DATA"]["problems"]), 2)
 
@@ -654,7 +670,7 @@ class EndToEnd(Patched):
         (tr.units / f"toy_{T}_{SEEDS[22]}.done").write_text(json.dumps(m))        # toy 23's marker in toy 22's place
         self.patch(tr)
         rec = self.go(tr)
-        self.assertEqual(rec["verdict"], "INCOMPLETE")
+        self.assertEqual(rec["verdict"], "INVALID")
         self.assertEqual(rec["C-COMPLETE"]["missing"], [SEEDS[20], SEEDS[21], SEEDS[22]])
         self.assertEqual(sum("not readable JSON" in p for p in rec["C-DATA"]["problems"]), 2)
         self.assertTrue(any("done-marker names" in p for p in rec["C-DATA"]["problems"]))
@@ -693,8 +709,103 @@ class EndToEnd(Patched):
         name.with_suffix(".done").write_text(json.dumps(dict(m, sha256=sha(buf.getvalue()))))
         self.patch(tr)
         rec = self.go(tr)
-        self.assertEqual(rec["verdict"], "INCOMPLETE")
+        self.assertEqual(rec["verdict"], "INVALID")
         self.assertTrue(any("not readable" in p for p in rec["C-DATA"]["problems"]))
+
+    def test_the_barrier_receipt_must_be_the_bound_jobs_pass(self):
+        for change in ({"verdict": "STOP"}, {"job": "61000002"}, {"deploy_head": "M1"}, {"runner_sha256": "0" * 64},
+                       None):
+            td = Path(tempfile.mkdtemp()).resolve()
+            self.addCleanup(shutil.rmtree, td, True)
+            tr = Tree(td)
+            if change is None:
+                (tr.units / "refcheck.json").unlink()
+            else:
+                tr.write_barrier(**change)
+            with self.subTest(change=change):
+                self.patch(tr)
+                rec = self.go(tr)
+                self.assertEqual(rec["verdict"], "INVALID")
+                self.assertFalse(rec["C-BARRIER"]["pass"])
+                self.assertNotIn("readings", rec)
+
+    def test_a_marker_from_another_job_or_deploy_is_invalid(self):
+        for field, value in (("job", "61000002"), ("deploy_head", "M1")):
+            td = Path(tempfile.mkdtemp()).resolve()
+            self.addCleanup(shutil.rmtree, td, True)
+            tr = Tree(td)
+            f = tr.units / f"toy_{T}_{SEEDS[30]}.done"
+            f.write_text(json.dumps(dict(json.loads(f.read_text()), **{field: value})))
+            with self.subTest(field=field):
+                self.patch(tr)
+                rec = self.go(tr)
+                self.assertEqual(rec["verdict"], "INVALID")
+                self.assertTrue(any("marker's job/deploy" in p for p in rec["C-DATA"]["problems"]))
+
+    def test_a_meta_from_another_deploy_is_invalid(self):
+        tr = Tree(self.td)
+        self.rewrite_meta(tr, 31, meta={"deploy_head": "M1"})
+        self.patch(tr)
+        rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "INVALID")
+        self.assertTrue(any("deploy_head" in p for p in rec["C-DATA"]["problems"]))
+
+    def test_an_undeclared_extra_marker_is_invalid(self):
+        tr = Tree(self.td)
+        (tr.units / f"toy_{T}_9999999.done").write_text("{}")
+        self.patch(tr)
+        rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "INVALID")
+        self.assertTrue(any("undeclared unit" in p for p in rec["C-DATA"]["problems"]))
+
+    def test_a_nonfinite_cell_in_a_failed_unit_still_fires_c_cells(self):
+        tr = Tree(self.td)
+        tr.write_unit(40, SEEDS[40], k5_nan=True, verdict="FAIL")
+        self.patch(tr)
+        rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "INVALID")
+        self.assertEqual(rec["C-CELLS"]["nonfinite"]["K5"], 1)
+        self.assertFalse(rec["C-CELLS"]["pass"])
+        self.assertIn("C-CELLS", rec["controls_failed"])
+
+    def test_a_stop_at_finish_publishes_no_reading_and_no_errors(self):
+        tr = Tree(self.td)
+        self.patch(tr)
+        real = rd.Run.finish
+
+        def stopping(self_, out, name):
+            self_.rec["stop"].append("a simulated atime move")
+            return real(self_, out, name)
+        with mock.patch.object(rd.Run, "finish", stopping):
+            rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "STOP")
+        on_disk = json.loads((tr.d / "out" / f"ibub_{T}.json").read_text())
+        self.assertNotIn("readings", on_disk)
+        self.assertNotIn("reading", on_disk)
+        self.assertFalse((tr.d / "out" / f"ibub_{T}_errors.npz").exists())
+
+    def test_the_truth_file_joins_the_atime_ledger(self):
+        tr = Tree(self.td)
+        self.patch(tr)
+        seen = []
+        with mock.patch.object(rd.Run, "watch", lambda self_, path: seen.append(str(path))):
+            rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "PASS")
+        self.assertIn(str(tr.run / tr.pdir / "truth_xsec.npz"), seen)
+
+    def test_an_unexpected_error_uninstalls_the_audit_and_raises(self):
+        tr = Tree(self.td)
+        self.patch(tr)
+        with mock.patch.object(cs, "errors", side_effect=RuntimeError("boom")), self.assertRaises(RuntimeError):
+            self.go(tr)
+        self.assertTrue(cb.AUDIT is None or cb.AUDIT._undo == [])          # the audit's patches are gone
+
+    def test_a_temporary_root_under_a_guarded_tree_is_refused(self):
+        tr = Tree(self.td)
+        self.patch(tr)
+        (tr.g / "tmp").mkdir()
+        with mock.patch.dict(os.environ, {"TMPDIR": str(tr.g / "tmp")}), self.assertRaises(c.Refusal):
+            self.go(tr)
 
 
 class HotellingSingular(unittest.TestCase):
@@ -702,9 +813,9 @@ class HotellingSingular(unittest.TestCase):
         D = np.random.default_rng(1).normal(size=(50, 4))
         D[:, 3] = D[:, 2]                          # two identical columns: S is exactly singular
         h = ir.hotelling(D)
-        self.assertIsNone(h["T2"])
-        self.assertIn("ill-conditioned", h["why"])
+        self.assertGreater(h["cond_S"], 1e12)                  # printed beside it, as declared; no cutoff applies
         self.assertEqual(h["read_by"], "nothing")
+        self.assertNotIn("why", h) if h["T2"] is not None else self.assertIn("singular", h["why"])
         with mock.patch.object(np.linalg, "solve", side_effect=np.linalg.LinAlgError("Singular matrix")):
             h = ir.hotelling(np.random.default_rng(2).normal(size=(50, 4)))
         self.assertIsNone(h["T2"])

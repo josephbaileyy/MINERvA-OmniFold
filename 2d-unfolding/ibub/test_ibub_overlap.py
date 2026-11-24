@@ -49,8 +49,19 @@ class Overlap(unittest.TestCase):
     def test_a_write_into_the_ibuchi_root_stops(self):
         self.stops(WRITES={"run": [ov.N_ROOT, "/pscratch/sd/j/josephrb/ibuchi-evloop-20261123/x"], "readout": []})
 
+    def test_a_write_into_lr_p0s_root_stops(self):
+        hits = self.stops(WRITES={"run": [ov.N_ROOT, "/pscratch/sd/j/josephrb/rpd-reco-p0-20261123/x"], "readout": []})
+        self.assertTrue(any("rpd-reco P0" in h for h in hits))
+
     def test_a_write_under_an_msr_root_stops(self):
         self.stops(WRITES={"run": [ov.N_ROOT, "/pscratch/sd/j/josephrb/msr-b-20261123/x"], "readout": []})
+
+    def test_it_runs_as_a_script(self):
+        import subprocess
+        r = subprocess.run([sys.executable, "-B", str(HERE / "ibub_overlap.py"), "run", ov.N_ROOT], capture_output=True,
+                           text=True)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn("OVERLAP: CLEAR", r.stdout)
 
     def test_the_cli_refuses_another_out_root_or_phase(self):
         self.assertEqual(ov.main(["run", "/pscratch/sd/j/josephrb/other"]), 2)

@@ -50,7 +50,6 @@ import ibub_unit as iu  # noqa: E402
 
 NX, NY = 14, 16
 SCHEMA = "ibub-readout/1"
-COND_MAX = 1e12
 
 
 # ------------------------------------------------------------------------------------------- the tests (section 4)
@@ -109,15 +108,15 @@ def per_test(Y: np.ndarray, counts: np.ndarray, zs: float, xt: np.ndarray, sigma
 
 def hotelling(D: np.ndarray) -> dict:
     """Descriptive only (section 4): T^2 = n dbar' S^-1 dbar on the cells, with S the paired differences' sample
-    covariance (ddof 1), F = (n - p) / (p (n - 1)) T^2 against F(p, n - p), and S's condition number."""
+    covariance (ddof 1), F = (n - p) / (p (n - 1)) T^2 against F(p, n - p), and S's condition number printed beside
+    it, as declared. No conditioning cutoff is applied (the codex read: none is declared). A solve that numpy refuses
+    as singular is recorded as not computable."""
     from scipy import stats
     n, p = D.shape
     S = np.cov(D, rowvar=False, ddof=1)
     dbar = D.mean(axis=0)
     cond = float(np.linalg.cond(S))
     none = {"T2": None, "F": None, "p_value": None, "df": [p, n - p], "cond_S": cond, "read_by": "nothing"}
-    if not np.isfinite(cond) or cond > COND_MAX:   # COV2D's null-subspace threshold, 1e-12 of the largest eigenvalue
-        return dict(none, why=f"S is ill-conditioned (cond {cond:.3g} > {COND_MAX:g})")
     try:
         t2 = float(n * dbar @ np.linalg.solve(S, dbar))
     except np.linalg.LinAlgError as e:
@@ -186,15 +185,24 @@ def c_of(E_post: np.ndarray, C_T: np.ndarray, C_model_abs: np.ndarray, score: di
 
 def ibu_products(run, units: Path, truth: str, shas: dict, ks_want: list, rep: np.ndarray, cells, cfg: dict,
                  bound: dict) -> dict:
-    """C-COMPLETE, C-TRUTH's IBU side, C-DATA and C-CELLS over the 300 IBU toy units, and their cross sections at
+    """C-COMPLETE, C-TRUTH's IBU side, C-DATA and C-CELLS over the tune's IBU toy units, and their cross sections at
     K = 10 (hXSec2D) and K = 5 (the npz row), on the 205 cells.
 
-    A unit that is absent, not PASS, unreadable at its marker's digests, or of another K scan is missing (the tune
-    reads INCOMPLETE), with its problem named. A readable unit that names another toy, data file, job, runner or
-    config, or lacks or fails a declared control, is a problem (the tune reads INVALID). ``bound`` is the job id and
-    the runner's and config's sha256 the units must all carry."""
+    - **Missing** (the tune reads INCOMPLETE), with its problem named: a unit that is absent, whose marker is unreadable
+      or names another unit, whose products are not at its marker's digests, whose npz or meta is unreadable, that has
+      another K scan, or whose verdict is not PASS.
+    - **A problem** (the tune reads INVALID): a marker for a seed that is not declared; or a readable PASS unit that names
+      another toy, data file, job, deploy, runner or config, or that lacks or fails a declared control.
+    - **Non-finite cells are counted in every unit whose products are at their digests,** a FAIL unit included, so
+      C-CELLS fires even when another control failed first.
+
+    ``bound`` holds the job id, the deploy commit and the runner's and config's sha256, which every unit must carry."""
     c2 = cfg["c2"]
+    expected = {f"toy_{truth}_{s}" for s in c.TOY_SEEDS[truth]}
     missing, problems, x10, x5, k10 = [], [], [], [], []
+    present = {f[:-len(".done")] for f in os.listdir(units) if f.startswith(f"toy_{truth}_") and f.endswith(".done")}
+    problems += [f"{name}: a marker for an undeclared unit" for name in sorted(present - expected)]
+    nonfinite = {"K10": 0, "K5": 0}
     for s in c.TOY_SEEDS[truth]:
         name = f"toy_{truth}_{s}"
         try:
@@ -209,10 +217,6 @@ def ibu_products(run, units: Path, truth: str, shas: dict, ks_want: list, rep: n
         if not isinstance(marker, dict) or (marker.get("unit"), marker.get("seed")) != (name, s):
             missing.append(s)
             problems.append(f"{name}: its done-marker names {marker.get('unit') if isinstance(marker, dict) else marker!r}")
-            continue
-        if marker.get("verdict") != "PASS":
-            missing.append(s)
-            problems.append(f"{name}: verdict {marker.get('verdict')}")
             continue
         try:
             npz = run.copy(units / f"{name}.npz", marker["sha256"], f"{name}.npz")
@@ -232,6 +236,15 @@ def ibu_products(run, units: Path, truth: str, shas: dict, ks_want: list, rep: n
             missing.append(s)
             problems.append(f"{name}: K scan {list(z['ks'])}")
             continue
+        h = np.asarray(cells.vec(root), np.float64)
+        row10 = np.asarray(z["xsec"][ks_want.index(c2["primary"])], np.float64)[rep]
+        row5 = np.asarray(z["xsec"][ks_want.index(c2["second"])], np.float64)[rep]
+        nonfinite["K10"] += int((~np.isfinite(h)).sum() + (~np.isfinite(row10)).sum())
+        nonfinite["K5"] += int((~np.isfinite(row5)).sum())
+        if marker.get("verdict") != "PASS":
+            missing.append(s)
+            problems.append(f"{name}: verdict {marker.get('verdict')}")
+            continue
         if (meta.get("kind"), meta.get("tune"), meta.get("seed")) != ("toy", truth, s):
             problems.append(f"{name}: meta names {meta.get('kind')} {meta.get('tune')} {meta.get('seed')}")
         if meta.get("data_sha256") != shas[s] or marker.get("data_sha256") != shas[s]:
@@ -244,27 +257,54 @@ def ibu_products(run, units: Path, truth: str, shas: dict, ks_want: list, rep: n
             problems.append(f"{name}: controls {sorted(ctl)} are not the declared {sorted(iu.CONTROLS['toy'])}")
         if not all(v.get("pass") for v in ctl.values()):
             problems.append(f"{name}: a unit control failed")
-        for k in ("slurm_job", "runner_sha256", "config_sha256"):
+        for k in ("slurm_job", "runner_sha256", "config_sha256", "deploy_head"):
             if str(meta.get(k)) != str(bound[k]):
                 problems.append(f"{name}: {k} {meta.get(k)} is not the bound {bound[k]}")
-        h = np.asarray(cells.vec(root), np.float64)
-        row10 = np.asarray(z["xsec"][ks_want.index(c2["primary"])], np.float64)[rep]
+        if (str(marker.get("job")), marker.get("deploy_head")) != (str(bound["slurm_job"]), bound["deploy_head"]):
+            problems.append(f"{name}: its marker's job/deploy {marker.get('job')}/{marker.get('deploy_head')} "
+                            f"is not the bound {bound['slurm_job']}/{bound['deploy_head']}")
         k10.append(iu.max_rel(row10, h))
         x10.append(h)
-        x5.append(np.asarray(z["xsec"][ks_want.index(c2["second"])], np.float64)[rep])
-    out = {"missing": missing, "problems": problems}
+        x5.append(row5)
+    out = {"missing": missing, "problems": problems, "nonfinite": nonfinite}
     if not missing:
         x10, x5 = np.stack(x10), np.stack(x5)
         out.update(x10=x10, x5=x5, k10_vs_root_max_rel=float(max(k10)),
-                   nonfinite={"K10": int((~np.isfinite(x10)).sum()), "K5": int((~np.isfinite(x5)).sum())},
                    negative={"K10": int((x10 < 0).sum()), "K5": int((x5 < 0).sum())})
     return out
+
+
+def barrier_receipt(units: Path, bound: dict) -> dict:
+    """The job's refcheck.json: PASS, written by the bound job at the bound deploy by the bound runner."""
+    try:
+        r = json.loads(cb.read_noatime(units / "refcheck.json")[0])
+    except (OSError, ValueError) as e:
+        return {"pass": False, "why": f"refcheck.json is not readable ({e})"}
+    want = {"verdict": "PASS", "job": str(bound["slurm_job"]), "deploy_head": bound["deploy_head"],
+            "runner_sha256": bound["runner_sha256"]}
+    got = {k: (str(r.get(k)) if k == "job" else r.get(k)) for k in want} if isinstance(r, dict) else {}
+    return {"got": got, "want": want, "pass": got == want}
+
+
+def guard_off_tree(path, what: str) -> None:
+    """``path`` (resolved) must not lie under a guarded tree, where the open audit refuses every plain open."""
+    real = os.path.realpath(path)
+    for g in (os.path.realpath(x) for x in cb.GUARDED):
+        if real == g or real.startswith(g + os.sep):
+            raise c.Refusal(f"{what} {path} resolves under {g}: the open audit refuses every plain open there")
+
+
+def publish(out: Path, name: str, rec: dict) -> None:
+    (out / name).write_text(json.dumps(rd.jsonable(rec), indent=1, sort_keys=True))
 
 
 # ------------------------------------------------------------------------------------------- the readout
 
 
 def readout(truth: str, units: Path, out: Path, run_dir: str, job: str) -> dict:
+    """The declared readings at one tune. Every control failure or refusal is recorded (INVALID or INCOMPLETE, with
+    its reason and no reading). The readings and the errors npz are published only once Run.finish, whose atime,
+    open-audit and module checks run there, has read PASS."""
     # every plain read of the repository happens here, before Run installs the open audit
     cfg = iu.load_config()
     iu.check_code(cfg)
@@ -273,41 +313,50 @@ def readout(truth: str, units: Path, out: Path, run_dir: str, job: str) -> dict:
     own = {"schema": SCHEMA, "units": str(units), "config_sha256": iu.rc.sha256(iu.CONFIG),
            "readout_sha256": iu.rc.sha256(Path(__file__).resolve()), "unit_sha256": iu.rc.sha256(Path(iu.__file__)),
            "job": str(job)}
-    bound = {"slurm_job": str(job), "runner_sha256": own["unit_sha256"], "config_sha256": own["config_sha256"]}
-    guarded = tuple(os.path.realpath(g) for g in cb.GUARDED)
-    real_out = os.path.realpath(out)
-    if any(real_out == g or real_out.startswith(g + os.sep) for g in guarded):
-        raise c.Refusal(f"--out {out} is under {cb.GUARDED}: the open audit refuses every plain open there")
+    tmp_root = os.environ.get("TMPDIR") or tempfile.gettempdir()
+    guard_off_tree(out, "--out")
+    guard_off_tree(tmp_root, "the temporary root")
     out.mkdir(parents=True, exist_ok=False)
-    with tempfile.TemporaryDirectory(dir=os.environ.get("TMPDIR")) as td:     # the private copies, as phase_score's
+    name = f"ibub_{truth}.json"
+    with tempfile.TemporaryDirectory(dir=tmp_root) as td:     # the private copies, as phase_score's
         run = rd.Run(truth, run_dir, Path(td))
         rec = run.rec
         rec.update(own)
+        bound = {"slurm_job": str(job), "runner_sha256": own["unit_sha256"], "config_sha256": own["config_sha256"],
+                 "deploy_head": rec["M"]}
+
+        def invalid(why: str) -> dict:
+            rec["controls_failed"].append(why)
+            return run.finish(out, name)
         try:
-            B = dict(np.load(io.BytesIO(rd.read_pinned(REPO / pins["blocks"], pins["blocks_sha256"]))))
-            score = json.loads(rd.read_pinned(REPO / pins["score"], pins["score_sha256"]))
-            cells = run.er_cells()
-            rep = np.asarray(cells.rep, bool)
-            # C-TRUTH: one set of cells everywhere
-            if not (np.array_equal(rep, B["rep"].astype(bool)) and np.array_equal(rep, rep_cfg)):
-                raise c.Refusal("E_R's cells differ from the blocks record's or the config's")
-            flat = [int(i) for i in np.flatnonzero(rep)]
-            comp = rd.completeness(truth)
-            pl = rd.plan(truth, comp)
-            files = {lab: run.copy(f"{run_dir}/out/{lab}/xsec.root", comp[lab]["sha256"], f"{lab}.root")
-                     for lab in pl["toy"]}
-            x_of = np.stack([cells.vec(files[lab]) for lab in pl["toy"]])
-            txs = np.load(io.BytesIO(rd.read_pinned(rd.inventory_paths(run_dir, truth)["truth_xsec_npz"],
-                                                    pins["truth_xsec_sha256"])))
-            pa = json.loads(rd.read_pinned(rd.REC / "pseudo" / truth / "pseudo_a.json", rd.PSEUDO_A_SHA[truth]))
+            try:
+                B = dict(np.load(io.BytesIO(rd.read_pinned(REPO / pins["blocks"], pins["blocks_sha256"]))))
+                score = json.loads(rd.read_pinned(REPO / pins["score"], pins["score_sha256"]))
+                cells = run.er_cells()
+                rep = np.asarray(cells.rep, bool)
+                if not (np.array_equal(rep, B["rep"].astype(bool)) and np.array_equal(rep, rep_cfg)):
+                    return invalid("C-TRUTH: E_R's cells differ from the blocks record's or the config's")
+                flat = [int(i) for i in np.flatnonzero(rep)]
+                comp = rd.completeness(truth)
+                pl = rd.plan(truth, comp)
+                if pl["toy"] != [f"T_{truth}_{s}" for s in c.TOY_SEEDS[truth]]:
+                    return invalid("C-TRUTH: the OmniFold labels are not the declared seeds in order")
+                files = {lab: run.copy(f"{run_dir}/out/{lab}/xsec.root", comp[lab]["sha256"], f"{lab}.root")
+                         for lab in pl["toy"]}
+                x_of = np.stack([cells.vec(files[lab]) for lab in pl["toy"]])
+                tpath = rd.inventory_paths(run_dir, truth)["truth_xsec_npz"]
+                run.watch(tpath)                                  # the truth file joins the atime ledger
+                txs = np.load(io.BytesIO(rd.read_pinned(tpath, pins["truth_xsec_sha256"])))
+                pa = json.loads(rd.read_pinned(rd.REC / "pseudo" / truth / "pseudo_a.json", rd.PSEUDO_A_SHA[truth]))
+            except c.Refusal as e:                    # an input off its pin, or a plan refusal: recorded, no reading
+                rec["refused"] = str(e)
+                return invalid(f"refused: {e}")
             natures = pa["natures"]
             nseeds = [int(s) for s in txs["seeds"]]
             if nseeds != [n["seed"] for n in natures]:
-                raise c.Refusal("C-TRUTH: truth_xsec.npz's rows are not pseudo_a's natures in order")
+                return invalid("C-TRUTH: truth_xsec.npz's rows are not pseudo_a's natures in order")
             if [n["seed"] for n in natures if n["role"] == "toy"] != list(c.TOY_SEEDS[truth]):
-                raise c.Refusal("C-TRUTH: pseudo_a's toys are not the declared seeds in order")
-            if pl["toy"] != [f"T_{truth}_{s}" for s in c.TOY_SEEDS[truth]]:
-                raise c.Refusal("C-TRUTH: the OmniFold labels are not the declared seeds in order")
+                return invalid("C-TRUTH: pseudo_a's toys are not the declared seeds in order")
             xs = np.asarray(txs["xsec"], np.float64).reshape(len(nseeds), -1)[:, rep]
             x_true = xs[[nseeds.index(s) for s in c.TOY_SEEDS[truth]]]
             bands = {k[len("band__"):]: v for k, v in B.items() if k.startswith("band__")}
@@ -317,32 +366,36 @@ def readout(truth: str, units: Path, out: Path, run_dir: str, job: str) -> dict:
             rec["C-OF"] = c_of(E_post, B["C_T"], B["C_model_abs"], score["readouts"])
             if not rec["C-OF"]["pass"]:
                 rec["controls_failed"].append("C-OF")
+            rec["C-BARRIER"] = barrier_receipt(units, bound)
+            if not rec["C-BARRIER"]["pass"]:
+                rec["controls_failed"].append("C-BARRIER: the job's refcheck.json is not the bound job's PASS")
             ibu = ibu_products(run, units, truth, shas, list(cfg["c2"]["scan"]), rep, cells, cfg, bound)
             rec["C-COMPLETE"] = {"units": len(c.TOY_SEEDS[truth]) - len(ibu["missing"]), "missing": ibu["missing"]}
             rec["C-DATA"] = {"problems": ibu["problems"]}
             if ibu["problems"]:
                 rec["controls_failed"].append(f"C-DATA/C-TRUTH: {len(ibu['problems'])} problems")
+            rec["C-CELLS"] = {"nonfinite": ibu["nonfinite"], "negative": ibu.get("negative"),
+                              "pass": ibu["nonfinite"] == {"K10": 0, "K5": 0}}
+            if not rec["C-CELLS"]["pass"]:
+                rec["controls_failed"].append("C-CELLS")
             if ibu["missing"]:
-                rec["verdict"] = "INCOMPLETE"
-                return run.finish(out, f"ibub_{truth}.json")
+                if not rec["controls_failed"]:
+                    rec["verdict"] = "INCOMPLETE"
+                return run.finish(out, name)
             rec["C-K10"] = {"max_rel": ibu["k10_vs_root_max_rel"], "rtol": rcfg["k10_vs_root_rtol"],
                             "pass": ibu["k10_vs_root_max_rel"] <= rcfg["k10_vs_root_rtol"]}
-            rec["C-CELLS"] = {"nonfinite": ibu["nonfinite"], "negative": ibu["negative"],
-                              "pass": ibu["nonfinite"] == {"K10": 0, "K5": 0}}
-            for k in ("C-K10", "C-CELLS"):
-                if not rec[k]["pass"]:
-                    rec["controls_failed"].append(k)
+            if not rec["C-K10"]["pass"]:
+                rec["controls_failed"].append("C-K10")
             if rec["controls_failed"]:
-                return run.finish(out, f"ibub_{truth}.json")
+                return run.finish(out, name)
             W, labels = test_matrix(flat, cells.area)
             if W.shape[1] != rcfg["tests"]:
-                raise c.Refusal(f"{W.shape[1]} tests, not the declared {rcfg['tests']}")
+                return invalid(f"{W.shape[1]} tests, not the declared {rcfg['tests']}")
             boot_seed = [rcfg["bootstrap_seed"], rcfg["tune_index"][truth]]
             counts = bootstrap_counts(len(x_true), rcfg["bootstrap_B"], boot_seed)
-            rec["bootstrap"] = {"B": rcfg["bootstrap_B"], "seed": boot_seed}
             E5, E10 = ibu["x5"] - x_true, ibu["x10"] - x_true
-            rec["readings"] = {f"K{k}": statistics(E_of, E, x_true, W, labels, B["C_T"], counts, rcfg["alpha"],
-                                                   len(flat)) for k, E in ((10, E10), (5, E5))}
+            readings = {f"K{k}": statistics(E_of, E, x_true, W, labels, B["C_T"], counts, rcfg["alpha"], len(flat))
+                        for k, E in ((10, E10), (5, E5))}
             sigma = np.sqrt(np.diag(B["C_T"]))
             named = {}
             for g in score["grade"]["flagged_cells"]:
@@ -350,18 +403,26 @@ def readout(truth: str, units: Path, out: Path, run_dir: str, job: str) -> dict:
                 named[str(g)] = {f"K{k}": {"b_OF": float(E_of[:, i].mean()), "b_IBU": float(E[:, i].mean()),
                                            "d": float((E - E_of)[:, i].mean())} for k, E in ((10, E10), (5, E5))}
             ratio_rec = json.loads(rd.read_pinned(*rd.C2_RECORD))
-            rec["descriptive"] = {
-                "surrogate_realized_mean_in_sigma": ((E_post - E_of).mean(axis=0) / sigma).tolist(),
-                "cov2d_flagged_cells": named,
-                "weakened_cells": c.weakened_cells(ratio_rec["b"][truth]["variance_ratio"]["option_1_clipped"],
-                                                   ratio_rec["efficiency"]["cells205"])}
-            np.savez_compressed(out / f"ibub_{truth}_errors.npz", seeds=np.array(list(c.TOY_SEEDS[truth])),
-                                flat=np.array(flat), E_of=E_of, E_ibu10=E10, E_ibu5=E5, x_true=x_true, x_of=x_of)
-            rec["reading"] = {k: v["reading"] for k, v in rec["readings"].items()}
+            pending = {
+                "bootstrap": {"B": rcfg["bootstrap_B"], "seed": boot_seed},
+                "readings": readings,
+                "reading": {k: v["reading"] for k, v in readings.items()},
+                "descriptive": {
+                    "surrogate_realized_mean_in_sigma": ((E_post - E_of).mean(axis=0) / sigma).tolist(),
+                    "cov2d_flagged_cells": named,
+                    "weakened_cells": c.weakened_cells(ratio_rec["b"][truth]["variance_ratio"]["option_1_clipped"],
+                                                       ratio_rec["efficiency"]["cells205"])}}
+            arrays = dict(seeds=np.array(list(c.TOY_SEEDS[truth])), flat=np.array(flat), E_of=E_of, E_ibu10=E10,
+                          E_ibu5=E5, x_true=x_true, x_of=x_of)
         except Exception:
             cb.AUDIT is not None and cb.AUDIT.uninstall()
             raise
-        return run.finish(out, f"ibub_{truth}.json")
+        final = run.finish(out, name)              # the atime, open-audit and module checks; STOP outranks a reading
+        if final["verdict"] == "PASS":
+            final.update(pending)
+            publish(out, name, final)
+            np.savez_compressed(out / f"ibub_{truth}_errors.npz", **arrays)
+        return final
 
 
 def main(argv=None) -> int:

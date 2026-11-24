@@ -69,6 +69,14 @@ except Exception:  # pragma: no cover
 NOATIME_SUB = mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True)
 NOATIME_SUB.start()
 REAL = iu.load_config()
+HEAD = subprocess.run(["git", "-C", str(REPO), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+BOUND = {"job": "61900001", "deploy_head": HEAD}
+ENV = {"SLURM_JOB_ID": BOUND["job"], "IBUB_M": HEAD}     # what the job exports for every unit
+
+
+def gnu_time_file(path: Path, wall: str = "3:36.74", status: int = 0) -> Path:
+    path.write_text(f"\tElapsed (wall clock) time (h:mm:ss or m:ss): {wall}\n\tExit status: {status}\n")
+    return path
 TOY_BLOB_SHA256 = "938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b"   # score records' code.driverSha256
 COV2D_M = "a60547692df5f963e428cdfe4661fc51ab785b7b"   # COV2D's bulk deploy (receipts-cov2d/a2/bulk/README.md)
 
@@ -177,13 +185,14 @@ class Pure(unittest.TestCase):
         self.assertEqual(iu.max_rel(np.array([1.0, 1e-30]), np.array([1.0, 0.0])), float("inf"))
 
     def tmp(self) -> Path:
-        d = Path(tempfile.mkdtemp())
+        d = Path(tempfile.mkdtemp()).resolve()                # the namespace check compares real paths
         self.addCleanup(shutil.rmtree, d, True)
         return d
 
     def test_stage_copies_checks_and_makes_read_only(self):
         d = self.tmp()
         cfg = copy.deepcopy(REAL)
+        cfg["namespace"] = str(d)
         cfg["staging"]["root"] = str(d / "stage")
         for k in ("CV", "MC", "lib"):
             (d / f"src_{k}").write_bytes(f"bytes of {k}".encode())
@@ -195,6 +204,11 @@ class Pure(unittest.TestCase):
             self.assertFalse(os.stat(p).st_mode & (stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH))
         self.assertEqual(json.loads((d / "stage" / "stage.json").read_text())["verdict"], "PASS")
         self.assertEqual(iu.check_inputs(cfg), {k: cfg["inputs"][f"{k}_sha256"] for k in ("CV", "MC", "lib")})
+        out = copy.deepcopy(cfg)                              # a staging root outside the namespace is refused
+        out["staging"]["root"] = str(d.parent / (d.name + "-elsewhere") / "stage")
+        with self.assertRaises(iu.GateFailure):
+            iu.stage(out)
+        self.assertFalse(Path(out["staging"]["root"]).exists())
         bad = copy.deepcopy(cfg)
         bad["staging"]["root"] = str(d / "stage2")
         bad["inputs"]["MC_sha256"] = "0" * 64
@@ -247,55 +261,163 @@ class Pure(unittest.TestCase):
         with self.assertRaises(iu.GateFailure):
             iu.toy_shas(cfg, "G18")
 
-    def refs(self, d: Path, *, df_verdict="PASS", seconds=(200.0, 210.0), df_scale=1.0):
+    def refs(self, d: Path, *, df_verdict="PASS", walls=("3:20.00", "3:30.00"), status=(0, 0), df_scale=1.0,
+             job=BOUND["job"]):
+        """Two reference units in d, and each one's srun-step /usr/bin/time file; returns (rep, times)."""
         rep = iu.reported_cells(REAL)
         rng = np.random.default_rng(5)
         base = {"ks": np.array([5, 10]), "xsec": rng.uniform(1, 2, (2, 224)), "T": rng.uniform(1, 2, 224),
                 "y": rng.uniform(1, 2, 224)}
-        for u, v, s, scale in (("central", "PASS", seconds[0], 1.0), ("central_df", df_verdict, seconds[1], df_scale)):
+        times = {}
+        for i, (u, v, scale) in enumerate((("central", "PASS", 1.0), ("central_df", df_verdict, df_scale))):
             arr = dict(base, xsec=base["xsec"] * scale)
             np.savez(d / f"{u}.npz", **arr)
             (d / f"{u}.root").write_bytes(u.encode())
-            (d / f"{u}.done").write_text(json.dumps({"unit": u, "verdict": v, "seconds": s,
+            (d / f"{u}.done").write_text(json.dumps({"unit": u, "verdict": v, "seconds": 100.0, "job": job,
+                                                     "deploy_head": BOUND["deploy_head"],
                                                      "sha256": rc.sha256(d / f"{u}.npz"),
                                                      "root_sha256": rc.sha256(d / f"{u}.root")}))
-        return rep
+            times[u] = gnu_time_file(d / f"{u}.time", walls[i], status[i])
+        return rep, times
 
     def test_refcheck_is_the_barrier(self):
         d = self.tmp()
-        rep = self.refs(d)
-        self.assertEqual(iu.refcheck(REAL, d, rep), 0)
+        rep, times = self.refs(d)
+        self.assertEqual(iu.refcheck(REAL, d, rep, BOUND, times), 0)
         self.assertEqual(json.loads((d / "refcheck.json").read_text())["verdict"], "PASS")
-        cases = {"df_failed": dict(df_verdict="FAIL"), "slow": dict(seconds=(200.0, 1.25 * 217 + 1)),
-                 "df_differs": dict(df_scale=1 + 1e-6)}
+        rec = json.loads((d / "refcheck.json").read_text())
+        self.assertEqual((rec["job"], rec["deploy_head"]), (BOUND["job"], BOUND["deploy_head"]))   # the receipt's binding
+        self.assertEqual(rec["units"]["central"]["step_wall_s"], 200.0)       # the full step's wall, from time -v
+        cases = {"df_failed": dict(df_verdict="FAIL"), "df_differs": dict(df_scale=1 + 1e-6),
+                 # the codex read, blocker 3: the re-price trigger reads the full srun step's wall time
+                 "slow step": dict(walls=("3:20.00", "4:31.26")), "step failed": dict(status=(0, 1)),
+                 # blocker 4: references from another job are never accepted
+                 "another job": dict(job="61800000")}
         for tag, kw in cases.items():
             d = self.tmp()
-            rep = self.refs(d, **kw)
+            rep, times = self.refs(d, **kw)
             with self.subTest(case=tag):
-                self.assertEqual(iu.refcheck(REAL, d, rep), iu.RC_STOP)
+                self.assertEqual(iu.refcheck(REAL, d, rep, BOUND, times), iu.RC_STOP)
         d = self.tmp()
-        rep = self.refs(d)
+        rep, times = self.refs(d)
         np.savez(d / "central.npz", ks=np.array([5, 10]))        # bytes off the marker's digest
-        self.assertEqual(iu.refcheck(REAL, d, rep), iu.RC_STOP)
+        self.assertEqual(iu.refcheck(REAL, d, rep, BOUND, times), iu.RC_STOP)
         d = self.tmp()
-        rep = self.refs(d)
+        rep, times = self.refs(d)
         (d / "central_df.done").unlink()
-        self.assertEqual(iu.refcheck(REAL, d, rep), iu.RC_STOP)
+        self.assertEqual(iu.refcheck(REAL, d, rep, BOUND, times), iu.RC_STOP)
         d = self.tmp()                                            # the agy code read 2, finding 6: the root's digest too
-        rep = self.refs(d)
+        rep, times = self.refs(d)
         (d / "central.root").write_bytes(b"other")
-        self.assertEqual(iu.refcheck(REAL, d, rep), iu.RC_STOP)
+        self.assertEqual(iu.refcheck(REAL, d, rep, BOUND, times), iu.RC_STOP)
+        d = self.tmp()                                            # a reference step with no time record
+        rep, times = self.refs(d)
+        del times["central_df"]
+        self.assertEqual(iu.refcheck(REAL, d, rep, BOUND, times), iu.RC_STOP)
         for bad in ("", '{"verdict": "PA', '"PASS"'):          # finding 4: a malformed marker is never PASS
             d = self.tmp()
-            rep = self.refs(d)
+            rep, times = self.refs(d)
             (d / "central.done").write_text(bad)
             with self.subTest(marker=bad):
-                self.assertEqual(iu.refcheck(REAL, d, rep), iu.RC_STOP)
+                self.assertEqual(iu.refcheck(REAL, d, rep, BOUND, times), iu.RC_STOP)
         d = self.tmp()                                            # a marker naming the other reference
-        rep = self.refs(d)
+        rep, times = self.refs(d)
         m = json.loads((d / "central.done").read_text())
         (d / "central.done").write_text(json.dumps(dict(m, unit="central_df")))
-        self.assertEqual(iu.refcheck(REAL, d, rep), iu.RC_STOP)
+        self.assertEqual(iu.refcheck(REAL, d, rep, BOUND, times), iu.RC_STOP)
+
+
+class Hardening(unittest.TestCase):
+    """The codex read's blockers 2-6 and 8, each as a test."""
+
+    def tmp(self) -> Path:
+        d = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, d, True)
+        return d
+
+    def test_gnu_time_reads_the_full_steps_wall_and_status(self):
+        d = self.tmp()
+        self.assertEqual(iu.gnu_time(gnu_time_file(d / "a", "3:36.74")), {"wall_s": 216.74, "exit_status": 0})
+        self.assertEqual(iu.gnu_time(gnu_time_file(d / "b", "1:02:03.5", 6)), {"wall_s": 3723.5, "exit_status": 6})
+        (d / "c").write_text("garbage")
+        self.assertEqual(iu.gnu_time(d / "c"), {"wall_s": None, "exit_status": None})
+        self.assertEqual(iu.gnu_time(d / "absent"), {"wall_s": None, "exit_status": None})
+
+    def test_a_nonfinite_value_never_passes_a_comparison(self):
+        """Blocker 6: a NaN in a later K, in T or in y, and a NaN or inf anywhere in C-ROO's or C-FILL's operands."""
+        rep = iu.reported_cells(REAL)
+        rng = np.random.default_rng(3)
+        a = {"ks": np.array([5, 10, 15]), "xsec": rng.uniform(1, 2, (3, 224)), "T": rng.uniform(1, 2, 224),
+             "y": rng.uniform(1, 2, 224)}
+        g = int(np.flatnonzero(rep)[4])
+        for key, idx in (("xsec", (2, g)), ("T", 5), ("y", 9)):
+            for bad in (np.nan, np.inf):
+                b = copy.deepcopy(a)
+                b[key][idx] = bad
+                with self.subTest(key=key, value=bad):
+                    got = iu.compare(a, b, rep, 1e-8)
+                    self.assertFalse(got["pass"])
+                    self.assertEqual(max(got["xsec_max_rel"], got["T_max_rel"], got["y_max_rel"]), float("inf"))
+        x = np.ones(4)
+        self.assertEqual(iu.max_abs_rel(np.array([1, np.nan, 1, 1.0]), x), float("inf"))
+        self.assertEqual(iu.max_abs_rel(x, np.array([1, 1, np.inf, 1.0])), float("inf"))
+        self.assertEqual(iu.max_rel(np.array([1, 1, np.nan, 1.0]), x), float("inf"))
+        self.assertEqual(iu.max_abs_rel(x, x), 0.0)
+
+    def test_binding_needs_this_job_and_the_deploy_head(self):
+        with mock.patch.dict(os.environ, ENV):
+            self.assertEqual(iu.binding(), BOUND)
+        for env in ({"IBUB_M": "0" * 40}, {"SLURM_JOB_ID": ""}, {"SLURM_JOB_ID": "12a"}, {"IBUB_M": "HEAD"}):
+            with self.subTest(env=env), mock.patch.dict(os.environ, {**ENV, **env}), self.assertRaises(iu.GateFailure):
+                iu.binding()
+
+    def test_inside_refuses_a_path_or_symlink_out_of_the_namespace(self):
+        d = self.tmp()
+        cfg = dict(copy.deepcopy(REAL), namespace=str(d / "ns"))
+        (d / "ns" / "units").mkdir(parents=True)
+        (d / "other").mkdir()
+        self.assertEqual(iu.inside(cfg, d / "ns" / "units"), d / "ns" / "units")
+        (d / "ns" / "link").symlink_to(d / "other")
+        for bad in (d / "other", d / "ns" / "link", d / "ns" / ".." / "other"):
+            with self.subTest(path=bad), self.assertRaises(iu.GateFailure):
+                iu.inside(cfg, bad)
+        (d / "alias").symlink_to(d / "ns")                    # the namespace itself may not be a symlink
+        with self.assertRaises(iu.GateFailure):
+            iu.inside(dict(cfg, namespace=str(d / "alias")), d / "alias" / "units")
+
+    def complete_tree(self, d: Path, *, job=BOUND["job"]):
+        for t in ("G18", "AR23"):
+            for s in c.TOY_SEEDS[t]:
+                n = f"toy_{t}_{s}"
+                (d / f"{n}.npz").write_bytes(n.encode())
+                (d / f"{n}.root").write_bytes(n.encode() + b"r")
+                (d / f"{n}.done").write_text(json.dumps({"unit": n, "verdict": "PASS", "job": job,
+                                                         "deploy_head": BOUND["deploy_head"],
+                                                         "sha256": sha(n.encode()), "root_sha256": sha(n.encode() + b"r")}))
+        (d / "refcheck.json").write_text(json.dumps({"verdict": "PASS", "job": job, "deploy_head": BOUND["deploy_head"]}))
+
+    def test_complete_checks_the_exact_marker_set_and_its_binding(self):
+        d = self.tmp()
+        self.complete_tree(d)
+        self.assertEqual(iu.complete(REAL, d, BOUND), 0)
+        cases = {
+            "a missing marker": lambda d: (d / "toy_AR23_5730100.done").unlink(),
+            "a FAIL marker": lambda d: (d / "toy_G18_5720003.done").write_text(json.dumps(
+                dict(json.loads((d / "toy_G18_5720003.done").read_text()), verdict="FAIL"))),
+            "another job's marker": lambda d: (d / "toy_G18_5720004.done").write_text(json.dumps(
+                dict(json.loads((d / "toy_G18_5720004.done").read_text()), job="61800000"))),
+            "a product off its digest": lambda d: (d / "toy_G18_5720005.npz").write_bytes(b"other"),
+            "an undeclared marker": lambda d: (d / "toy_G18_9999999.done").write_text("{}"),
+            "no barrier receipt": lambda d: (d / "refcheck.json").unlink(),
+            "another job's barrier": lambda d: (d / "refcheck.json").write_text(json.dumps(
+                {"verdict": "PASS", "job": "61800000", "deploy_head": BOUND["deploy_head"]})),
+        }
+        for tag, defect in cases.items():
+            d = self.tmp()
+            self.complete_tree(d)
+            defect(d)
+            with self.subTest(case=tag):
+                self.assertEqual(iu.complete(REAL, d, BOUND), 1)
 
 
 class Refusals(unittest.TestCase):
@@ -406,23 +528,58 @@ class Refusals(unittest.TestCase):
 
     def test_main_dispatches_and_refuses(self):
         d, cfg = Pure.preflight_tree(self)
-        with mock.patch.object(iu, "load_config", lambda path=None: cfg):
+        cfg["namespace"] = str(d)
+        cfg["staging"]["root"] = str(d / "stage")
+        with mock.patch.object(iu, "load_config", lambda path=None: cfg), mock.patch.dict(os.environ, ENV):
             self.assertEqual(iu.main(["preflight"]), 0)
             self.assertEqual(iu.main(["run", "--unit", "er", "--out", str(d / "u")]), iu.RC_GATE)
             self.assertEqual(iu.main(["run", "--unit", "central", "--unit", "central", "--out", str(d / "u")]),
                              iu.RC_GATE)
             self.assertEqual(iu.main(["refcheck", "--out", str(d)]), iu.RC_STOP)   # no reference units there
+            self.assertEqual(iu.main(["run", "--unit", "central", "--out", str(d.parent)]), iu.RC_GATE)   # off $N
+            self.assertEqual(iu.main(["refcheck", "--out", str(d), "--time", "er=x"]), iu.RC_GATE)
             stage_cfg = copy.deepcopy(cfg)
-            stage_cfg["staging"]["root"] = str(d / "stage")
             for k in ("CV", "MC", "lib"):
                 (d / f"s_{k}").write_bytes(k.encode())
                 stage_cfg["inputs"].update({f"{k}_source": str(d / f"s_{k}"), f"{k}_sha256": sha(k.encode())})
-        with mock.patch.object(iu, "load_config", lambda path=None: stage_cfg):
+        with mock.patch.object(iu, "load_config", lambda path=None: stage_cfg), mock.patch.dict(os.environ, ENV):
             self.assertEqual(iu.main(["stage"]), 0)
             # a run whose staged inputs pass reaches the driver loader; a missing reference is refused there
             stage_cfg["refs"]["c2_central"]["path"] = str(d / "absent.npz")
             self.assertEqual(iu.main(["run", "--unit", "central", "--out", str(d / "u")]), iu.RC_GATE)
         self.assertFalse((d / "u").exists())
+
+    def test_c_g2r_refuses_before_the_driver_is_imported(self):
+        """Blocker 8: main() checks every unit's argv before rc.load_driver, in both spellings."""
+        d, cfg = Pure.preflight_tree(self)
+        cfg["namespace"] = str(d)
+        cfg["staging"]["root"] = str(d / "stage")
+        for extra in (["--miss-map", "m.npz"], ["--miss-map=m.npz"]):
+            bad = copy.deepcopy(cfg)
+            bad["e_r"]["argv"] = cfg["e_r"]["argv"] + extra
+            loads = []
+            with self.subTest(extra=extra), mock.patch.object(iu, "load_config", lambda path=None: bad), \
+                    mock.patch.dict(os.environ, ENV), mock.patch.object(rc, "load_driver", lambda: loads.append(1)), \
+                    mock.patch.object(iu, "check_inputs", side_effect=AssertionError("inputs were read")):
+                self.assertEqual(iu.main(["run", "--unit", "toy:G18:5720001", "--out", str(d / "u")]), iu.RC_GATE)
+                self.assertEqual(loads, [])
+
+    def test_main_runs_complete_bound_to_this_job(self):
+        d, cfg = Pure.preflight_tree(self)
+        cfg["namespace"] = str(d)
+        with mock.patch.object(iu, "load_config", lambda path=None: cfg), mock.patch.dict(os.environ, ENV):
+            self.assertEqual(iu.main(["complete", "--out", str(d)]), 1)        # an empty directory is not complete
+            Hardening.complete_tree(self, d)
+            self.assertEqual(iu.main(["complete", "--out", str(d)]), 0)
+
+    def test_main_refuses_another_deploy_or_no_job(self):
+        d, cfg = Pure.preflight_tree(self)
+        cfg["namespace"] = str(d)
+        for env in ({"IBUB_M": "0" * 40}, {"SLURM_JOB_ID": ""}):
+            with self.subTest(env=env), mock.patch.object(iu, "load_config", lambda path=None: cfg), \
+                    mock.patch.dict(os.environ, {**ENV, **env}):
+                self.assertEqual(iu.main(["run", "--unit", "central", "--out", str(d / "u")]), iu.RC_GATE)
+                self.assertEqual(iu.main(["complete", "--out", str(d)]), iu.RC_GATE)
 
 
 @unittest.skipUnless(HAVE_DRIVER, "needs PyROOT and LightGBM")
@@ -455,6 +612,7 @@ class Driver(unittest.TestCase):
         raw = json.dumps({"verdict": "PASS", "files": files}).encode()
         (cls.td / "pb.json").write_bytes(raw)
         cfg = copy.deepcopy(REAL)
+        cfg["namespace"] = str(cls.td)
         cfg["staging"].update(root=str(stage), CV=omni.name, MC=flux.name)
         cfg["e_r"]["argv"] = [("2" if x == "5" else x) for x in REAL["e_r"]["argv"]]     # --iters 2, as test_ref_c2c1
         cfg["e_r"]["cpus"] = rc.cpu_count()
@@ -467,7 +625,7 @@ class Driver(unittest.TestCase):
         cls.driver, cls.ohf = rc.load_driver()
         first = cls.td / "first"                          # the reference: an earlier central run (C-REP needs one)
         assert iu.run_unit(cls.driver, cls.ohf, cfg, iu.parse_unit("central"), first, shas=cls.shas, rep=cls.rep,
-                           ref=None, unfolder=rc.dagostini) == iu.RC_CONTROL     # no reference: C-REP fails
+                           ref=None, bound=BOUND, unfolder=rc.dagostini) == iu.RC_CONTROL     # no reference: C-REP fails
         z = np.load(first / "central.npz")
         cls.ref = {k: z[k] for k in ("ks", "xsec", "T", "y")}
         cls.out = cls.td / "units"
@@ -478,9 +636,9 @@ class Driver(unittest.TestCase):
         shutil.rmtree(cls.td, True)
 
     @classmethod
-    def unit(cls, spec, out, cfg=None, ref=None):
+    def unit(cls, spec, out, cfg=None, ref=None, bound=None):
         return iu.run_unit(cls.driver, cls.ohf, cfg or cls.cfg, iu.parse_unit(spec), out, shas=cls.shas, rep=cls.rep,
-                           ref=cls.ref if ref is None else ref, unfolder=rc.dagostini)
+                           ref=cls.ref if ref is None else ref, bound=bound or BOUND, unfolder=rc.dagostini)
 
     def meta(self, name, out=None):
         return json.loads(str(np.load((out or self.out) / f"{name}.npz")["meta"]))
@@ -497,6 +655,8 @@ class Driver(unittest.TestCase):
             marker = json.loads((self.out / f"{name}.done").read_text())
             self.assertEqual((marker["verdict"], marker["unit"], marker["kind"]), ("PASS", name, m["kind"]))
             self.assertEqual((marker["tune"], marker["seed"]), (m["tune"], m["seed"]))
+            self.assertEqual((marker["job"], marker["deploy_head"]), (BOUND["job"], BOUND["deploy_head"]))
+            self.assertEqual((m["slurm_job"], m["deploy_head"]), (BOUND["job"], BOUND["deploy_head"]))
 
     def test_central_df_equals_central_and_the_toy_differs(self):
         a, b, t = (np.load(self.out / f"{n}.npz") for n in ("central", "central_df", f"toy_G18_{self.seed}"))
@@ -515,7 +675,7 @@ class Driver(unittest.TestCase):
         shas = {"G18": {**self.shas["G18"], self.seed: "0" * 64}}
         out = self.td / "offpin"
         rc_ = iu.run_unit(self.driver, self.ohf, self.cfg, iu.parse_unit(f"toy:G18:{self.seed}"), out, shas=shas,
-                          rep=self.rep, ref=self.ref, unfolder=rc.dagostini)
+                          rep=self.rep, ref=self.ref, bound=BOUND, unfolder=rc.dagostini)
         self.assertEqual(rc_, iu.RC_GATE)
         self.assertEqual(list(out.glob("*")), [])
         self.assertEqual(list(iu.data_dir(self.cfg).glob("*.root")), [])
@@ -531,7 +691,7 @@ class Driver(unittest.TestCase):
         off = lambda M, T, y, ks: {k: v * (1 + 1e-6) for k, v in rc.dagostini(M, T, y, ks).items()}  # noqa: E731
         out = self.td / "croo"
         rc_ = iu.run_unit(self.driver, self.ohf, self.cfg, iu.parse_unit(f"toy:G18:{self.seed}"), out, shas=self.shas,
-                          rep=self.rep, ref=self.ref, unfolder=off)
+                          rep=self.rep, ref=self.ref, bound=BOUND, unfolder=off)
         self.assertEqual(rc_, iu.RC_CONTROL)
         self.assertFalse(self.meta(f"toy_G18_{self.seed}", out)["controls"]["C-ROO"]["pass"])
 
@@ -586,12 +746,15 @@ class Driver(unittest.TestCase):
         np.savez(self.td / "ref.npz", **self.ref)
         cfg["refs"]["c2_central"].update(path=str(self.td / "ref.npz"), sha256=rc.sha256(self.td / "ref.npz"))
         out = self.td / "main"
-        with mock.patch.object(iu, "load_config", lambda path=None: cfg), \
+        times = []
+        for u in iu.REFERENCE_UNITS:                          # each reference step's /usr/bin/time file
+            times += ["--time", f"{u}={gnu_time_file(self.td / f'{u}.time', '3:00.00')}"]
+        with mock.patch.object(iu, "load_config", lambda path=None: cfg), mock.patch.dict(os.environ, ENV), \
                 mock.patch.object(rc, "load_driver", lambda: (self.driver, self.ohf)), \
                 mock.patch.object(rc, "roounfold_bayes", lambda M, T, y, ks, lib_: rc.dagostini(M, T, y, ks)):
             self.assertEqual(iu.main(["run", "--unit", "central", "--unit", f"toy:G18:{self.seed}", "--out", str(out)]), 0)
             self.assertEqual(iu.main(["run", "--unit", "central_df", "--out", str(out)]), 0)
-            self.assertEqual(iu.main(["refcheck", "--out", str(out)]), 0)
+            self.assertEqual(iu.main(["refcheck", "--out", str(out), *times]), 0)
         self.assertEqual(json.loads((out / "refcheck.json").read_text())["verdict"], "PASS")
         self.assertEqual(self.meta(f"toy_G18_{self.seed}", out)["inputs_sha256"],
                          {k: cfg["inputs"][f"{k}_sha256"] for k in ("CV", "MC", "lib")})
@@ -603,6 +766,13 @@ class Driver(unittest.TestCase):
         (out / "central.done").write_text("{trunc")
         self.assertEqual(self.unit("central", out), iu.RC_CONTROL)
         self.assertEqual((out / "central.root").read_bytes(), b"x")
+
+    def test_a_pass_unit_is_skipped_only_for_this_job_and_deploy(self):
+        """Blocker 4: a PASS marker from another job or deploy is refused, never accepted as done."""
+        self.assertEqual(self.unit("central", self.out), 0)
+        for other in ({"job": "61800000", "deploy_head": HEAD}, {"job": BOUND["job"], "deploy_head": "0" * 40}):
+            with self.subTest(other=other):
+                self.assertEqual(self.unit("central", self.out, bound=other), iu.RC_CONTROL)
 
     def test_a_pass_unit_is_skipped_and_a_failed_one_is_not_overwritten(self):
         self.assertEqual(self.unit("central", self.out), 0)
