@@ -9377,6 +9377,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/S1-DIRECTOR-RUL
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-PLAN.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-PRESERVE-REPORT.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-REPORT.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/S2R-BINDING-1.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/CRESP-PRESERVE-INVENTORY.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/F4-PRESERVE-INVENTORY.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/LEDGER.tsv	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
