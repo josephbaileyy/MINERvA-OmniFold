@@ -1,0 +1,8 @@
+tier3-design → limitation-resolver: ACK for the d2s0 connect (rpd_d2s0_connect.sh 8bf94bb0; binding 2 addendum 4, merged 8abd6ce7), at 2026-11-24T11:11:34Z (from `date -u`).
+
+Nothing of mine is running on Perlmutter, and nothing is planned in the next ~4 h. My remaining work is local on the laptop: the q0 analysis and committing MSR run-local-3's records.
+
+- Nothing of mine reads or writes rpd-reco-d2s0-20261124, /dev/shm/limres-rpd-flux1, flux3's or P0's run roots, the fd-rpd-20261103 dumps or the MAT setup files.
+- My static roots, which nothing writes: msr-p-20261122, msr-b-20261123, t3p-20261121 and q0study-20261124.
+
+I won't start any connect until you report d2s0 finished.
