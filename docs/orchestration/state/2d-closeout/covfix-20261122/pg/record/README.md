@@ -50,3 +50,12 @@ read ELF; the record was built with macOS's `/usr/bin/nm`.
 - **G21_11a's MEC splines.** G21_11a's MEC-NC model is `EmpiricalMECPXSec2015`; all 864 of those splines are
   `Weak[NC],MEC`. Its MEC-CC is `SuSAv2MECPXSec`, which covers all 288 CC MEC splines.
 - `SLOT1-PRIVATE-PRODUCT.md` answers the director's question on using G21_11a from a private product directory.
+- **GXMLPATH.** Every genie_xsec UPS table read here runs `pathPrepend(GXMLPATH, ${UPS_PROD_DIR}/data)` (table
+  line 19). These are G1810a0211b, AR2320i00000, G2111a00000, G1802a00000 and GDNu2001a00000.
+  - After `setup_genie_v3.sh`, GENIE therefore searches the spline product's `data/` before `config/<CMC>/<tune>/`,
+    `config/<CMC>/` and `config/`.
+  - F1's own runs of G18_10a_02_11b and AR23_20i_00_000 inherit the same prepend, as PG's would.
+  - The two `data/` directories extracted in full (G1810a0211b, GDNu2001a00000) hold no file named like a GENIE
+    configuration file.
+  - This record pins the genie product's directories only. The director accepted that the probe rebuild pins each
+    used tune's `data/` listing from the node, by names only.
