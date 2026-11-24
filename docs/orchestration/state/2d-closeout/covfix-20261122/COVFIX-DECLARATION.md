@@ -341,7 +341,8 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
     a_lo = 0.032106 and a_hi = 0.084680. Its reported-only noise diagnostic showed the noise scale of D to be the size
     of D itself, and D, a mean of absolute differences, is biased upward by noise. The director ruled rule 2: a
     noise-debiased D'_g, with a 0.25 × max floor for the lower end and check 2's threshold at 0.5 × t_lo (§4.2). Rule
-    1's values are kept in its record; rule 2's are computed after the rule is committed.
+    1's values are kept in its record. Rule 2, committed first (`db5ced41`), gives a_lo = 0.013777 and
+    a_hi = 0.047110 (min branch).
 
 <!-- absence-ok: rule statement -->
 **Rules are fixed before computation.** Every reading, bar, candidate rule, seed and stop rule below is fixed at
@@ -1038,6 +1039,24 @@ CV `w_truth` of `mc_truth_denom`'s rows binned on that grid:
     - Code: `2d-unfolding/covfix/covfix_u2_calibrate.py` (21 tests; 22 hand mutants, all killed: `u2-calibration/mutants-rule2.txt`). The values are
       computed after this rule is committed and are recorded in `u2-calibration/calibration-rule2.json`.
       <!-- absence-ok: the order of a declared computation, recorded so the rule provably precedes its values -->
+  - **Rule 2's values** (`u2-calibration/calibration-rule2.json`, code sha256 `780e0ed68bd30243cf85e3e99b4339139682b26e7add7d3b8d55742bb0ecff14`):
+
+      | truth | D | D' | noise scale | cells debiased to zero |
+      |---|---|---|---|---|
+      | genie_mec | 0.017616 | 0.008063 | 0.0215 | 663 of 1006 |
+      | nuwro | 0.030206 | 0.022496 | 0.0202 | 461 of 1004 |
+      | gibuu | 0.035883 | 0.024519 | 0.0279 | 473 of 914 |
+
+    - min D' / max D' = 0.329, above 0.25: **the min branch applies**, t_lo = 0.008063,
+      t_hi = 0.024519.
+    - **a_lo = 0.013777, a_hi = 0.047110** (rule 1: 0.032106, 0.084680). At a_hi,
+      4.8 % of populated cells are clipped and the raked r spans
+      0.8346–2.0876; at a_lo, 0.4 % and 0.9357–1.9591.
+    - **Check 2's threshold: 0.004031** (0.5 × t_lo).
+    - **The map's own noise** (r fixed, 200 resamplings of the reference): A = 0.007966 ± 5.4e-05
+      at a_lo and 0.024318 ± 1.0e-04 at a_hi. The standard deviation at a_lo is
+      75 times smaller than check 2's threshold, so that check does not sit at noise level. The map's
+      Δρ is computed on one sample for both terms, so its noise largely cancels; D compares independent samples.
 
 *The draw.* Attempt k = 1, 2, … takes its parameters from SHA-256(domain tag ‖ seed base ‖ salt ‖ k):
 - The domain tag is "covfix-u2-correlation-draw/1". The seed base and salt are the director-held secrets of §4.2, whose
