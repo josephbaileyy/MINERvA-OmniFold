@@ -33,11 +33,14 @@ any C-E gate; any reading of d1 or d2.
   - No measured key was opened.
 - **The declaration's branch.** §4: "If C-E3 fails, the event-loop route returns to the director, priced." This
   amendment is that route. The gates are not loosened.
-- **A likely cause** (reasoning, not measured):
+- **A possible contributor** (reasoning, not measured):
   - MAT's truth W (`CVUniverse.h:396-409`) uses the struck nucleon's mass, M_n or M_p. The inversion had to use their
     mean, so it is off by half their difference, 0.65 MeV, on every row.
-  - Since ∂Eν/∂M ≈ Eμ/M, that is about 6.5 MeV of Eν at Eμ ≈ 10 GeV. Through q0 = Eν − Eμ, this is a few percent of a
-    small q0, which is a tail in q₃′/q₃.
+  - At fixed W, Eμ and θ, the inversion gives ∂Eν/∂M = −(M + q0) / (M − 2Eμ sin²(θ/2)), about −1 for forward muons and
+    larger where the denominator is small. So Eν is off by about 0.65 MeV or more on every row.
+  - Through q0 = Eν − Eμ, that is about 1% of a 65 MeV q0, and more near the denominator's zero. This feeds a tail in
+    q₃′/q₃. Whether it accounts for the whole of the 99th percentile in [8, 15) is not established. (agy's read
+    corrected an earlier, wrong derivative here.)
   - True Eν removes this term. Whether C-E3 then passes is measured only by the bound run.
 
 ## 2. The Eν source, exactly
@@ -124,10 +127,11 @@ C-JOIN is a STOP on any failure, in two parts. Neither part reads a measured key
   - For any true median m in [1, 50] GeV, a double conversion gives m/1000 ≤ 0.05 GeV and no conversion gives
     1000·m ≥ 1,000 GeV, so both land outside the band.
   - A true median outside [1, 50] GeV is itself a STOP to the director.
-- **The declared spot rows,** per playlist: the first row, the last row, and 64 distinct rows drawn without replacement
-  by `numpy.random.default_rng(SeedSequence([20261124, 17, k + 1])).choice(rows, 64, replace=False)`, with k the
-  playlist index.
-  - flux4 records each spot row's (run, subrun, event) and Eν in GeV in its record. That is 792 rows in all.
+- **The declared spot rows,** per playlist: the sorted, distinct union of the first row, the last row, and 64 distinct
+  rows drawn without replacement by `numpy.random.default_rng(SeedSequence([20261124, 17, k + 1])).choice(rows, 64,
+  replace=False)`, with k the playlist index.
+  - That is 64 to 66 rows per playlist, since the draw may include an end row, and at most 792 in all.
+  - flux4 records each spot row's (run, subrun, event) and Eν in GeV in its record.
 
 **Part 2, in P0, in the numerical environment that reads ROOT files with uproot.**
 - **Why P0:** the MAT process (root_6_28) has no uproot. A ROOT tree read inside the traced extract would load
