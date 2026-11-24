@@ -8829,6 +8829,16 @@ docs/orchestration/state/live-state-last-known.json	tracked	LIVE	state-artifact	
 docs/orchestration/state/live-state.json	tracked	LIVE	state-artifact			open		route-only	no
 docs/orchestration/state/live-state.schema.json	tracked	LIVE	state-artifact			open		route-only	no
 docs/orchestration/state/measurability-20261122/DECLARATION.md	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/amendment-e/confirm/README.md	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/amendment-e/confirm/confirm.json	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/amendment-e/confirm/run-env.json	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/amendment-e/confirm/run.stderr.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/amendment-e/confirm/run.stdout.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/amendment-e/mutate_msr_project.out.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/amendment-e/old_formation_check.out.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/amendment-e/test_msr.out.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/amendment-e/test_msr_route_confirm.out.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
+docs/orchestration/state/measurability-20261122/amendment-e/trace_msr_project.out.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/connect/connect-44f8ad7a-to-rev3.diff.txt	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/connect/gen_build_connect.py	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
 docs/orchestration/state/measurability-20261122/connect/gen_probe_connect.py	tracked	MACHINE	state-artifact	measurability-20261122		generated		exact-path-only	yes
