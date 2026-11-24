@@ -1,0 +1,101 @@
+# rm-ibub-20261123.sh (sha256 e7f875eabff78091a706d435165be2d507cd680736a61f44908e90c5165714bc) in python:3.11-slim, --hostname login38 (nid001234 for wronghost), driven by case.sh
+== case ok
+host login38 utc 2026-11-24T16:22:28Z
+path ok: /pscratch/sd/j/josephrb/ibub-20261123 (directory, owner josephrb, realpath equal)
+sacct ok: 1 ibub_ rows, all ended; 61914825: 61914825|ibub_run|CANCELLED by 112498
+dir stat before: mtime inode owner = 1795537348 1496940 josephrb
+== inventory begin: find /pscratch/sd/j/josephrb/ibub-20261123 -printf '%y %s %T@ %p\n'
+d 4096 1795537348.4778580910 /pscratch/sd/j/josephrb/ibub-20261123
+d 4096 1795537348.4768581070 /pscratch/sd/j/josephrb/ibub-20261123/deploy
+d 4096 1795537348.4768581070 /pscratch/sd/j/josephrb/ibub-20261123/deploy/.git
+d 4096 1795537348.4788580750 /pscratch/sd/j/josephrb/ibub-20261123/logs
+l 13 1795537348.4788580750 /pscratch/sd/j/josephrb/ibub-20261123/logs/alink
+f 6 1795537348.4778580910 /pscratch/sd/j/josephrb/ibub-20261123/logs/connect-run.log
+d 4096 1795537348.4778580910 /pscratch/sd/j/josephrb/ibub-20261123/slurm
+d 4096 1795537348.4778580910 /pscratch/sd/j/josephrb/ibub-20261123/stage
+f 3 1795537348.4778580910 /pscratch/sd/j/josephrb/ibub-20261123/stage/a.root
+== inventory end
+inventory: 9 entries, 2 files, 9 bytes
+dir stat after the inventory: 1795537348 1496940 josephrb (stat_match=yes)
+rm rc=0
+stat rc=1: stat: cannot statx '/pscratch/sd/j/josephrb/ibub-20261123': No such file or directory
+removed: /pscratch/sd/j/josephrb/ibub-20261123 is gone (ENOENT)
+rm-ibub rc=0
+exit=0
+after: old=gone new=keep cov2d=keep 2a=kept rpd=kept hostname=kept
+== case arg
+REFUSE: this script takes no argument
+rm-ibub rc=9
+exit=9
+after: old=present new=keep cov2d=keep 2a=kept rpd=kept hostname=kept
+== case symlink
+host login38 utc 2026-11-24T16:22:29Z
+REFUSE: /pscratch/sd/j/josephrb/ibub-20261123 is a symlink
+rm-ibub rc=9
+exit=9
+after: old=present new=keep cov2d=keep 2a=kept rpd=kept hostname=kept
+== case notdir
+host login38 utc 2026-11-24T16:22:30Z
+REFUSE: /pscratch/sd/j/josephrb/ibub-20261123 is not a directory
+rm-ibub rc=9
+exit=9
+after: old=present new=keep cov2d=keep 2a=kept rpd=kept hostname=kept
+== case owner
+host login38 utc 2026-11-24T16:22:30Z
+REFUSE: /pscratch/sd/j/josephrb/ibub-20261123 is owned by 'other', not josephrb
+rm-ibub rc=9
+exit=9
+after: old=present new=keep cov2d=keep 2a=kept rpd=kept hostname=kept
+== case ancestor
+host login38 utc 2026-11-24T16:22:31Z
+REFUSE: /pscratch/sd/j/josephrb/ibub-20261123 resolves to /pscratch/sd/j/realjr/ibub-20261123
+rm-ibub rc=9
+exit=9
+after: old=present new=keep cov2d=keep 2a=kept rpd=kept hostname=kept
+== case running
+host login38 utc 2026-11-24T16:22:32Z
+path ok: /pscratch/sd/j/josephrb/ibub-20261123 (directory, owner josephrb, realpath equal)
+REFUSE: an ibub_ job is unended, or a row is malformed: 61920000|ibub_run|RUNNING 
+rm-ibub rc=9
+exit=9
+after: old=present new=keep cov2d=keep 2a=kept rpd=kept hostname=kept
+== case pending
+host login38 utc 2026-11-24T16:22:32Z
+path ok: /pscratch/sd/j/josephrb/ibub-20261123 (directory, owner josephrb, realpath equal)
+REFUSE: an ibub_ job is unended, or a row is malformed: 61920000|ibub_run|PENDING 
+rm-ibub rc=9
+exit=9
+after: old=present new=keep cov2d=keep 2a=kept rpd=kept hostname=kept
+== case notcancel
+host login38 utc 2026-11-24T16:22:33Z
+path ok: /pscratch/sd/j/josephrb/ibub-20261123 (directory, owner josephrb, realpath equal)
+REFUSE: 61914825 is not CANCELLED: '61914825|ibub_run|COMPLETED'
+rm-ibub rc=9
+exit=9
+after: old=present new=keep cov2d=keep 2a=kept rpd=kept hostname=kept
+== case norow
+host login38 utc 2026-11-24T16:22:33Z
+path ok: /pscratch/sd/j/josephrb/ibub-20261123 (directory, owner josephrb, realpath equal)
+REFUSE: sacct has no single row for 61914825: ''
+rm-ibub rc=9
+exit=9
+after: old=present new=keep cov2d=keep 2a=kept rpd=kept hostname=kept
+== case malformed
+host login38 utc 2026-11-24T16:22:33Z
+path ok: /pscratch/sd/j/josephrb/ibub-20261123 (directory, owner josephrb, realpath equal)
+REFUSE: an ibub_ job is unended, or a row is malformed: malformed: garbage line 
+rm-ibub rc=9
+exit=9
+after: old=present new=keep cov2d=keep 2a=kept rpd=kept hostname=kept
+== case sacctfail
+host login38 utc 2026-11-24T16:22:34Z
+path ok: /pscratch/sd/j/josephrb/ibub-20261123 (directory, owner josephrb, realpath equal)
+REFUSE: sacct failed: sacct: error: stub
+rm-ibub rc=9
+exit=9
+after: old=present new=keep cov2d=keep 2a=kept rpd=kept hostname=kept
+== case wronghost
+REFUSE: not a Perlmutter login node (nid001234)
+rm-ibub rc=9
+exit=9
+after: old=present new=keep cov2d=keep 2a=kept rpd=kept hostname=kept

@@ -16,7 +16,7 @@
 #   and prints nothing;
 # - $N/stage/stage.json reads PASS;
 # - **the allocation**, read from one successful `scontrol show job`, is exactly as declared: JobName=ibub_run,
-#   QOS=regular, TimeLimit=11:29:00, NumNodes=1, OverSubscribe=NO (exclusive), and StdOut and StdErr each a regular file
+#   QOS regular or regular_1, TimeLimit=11:29:00, NumNodes=1, OverSubscribe=NO (exclusive), and StdOut and StdErr each a regular file
 #   of its own in the connect's fresh, private $N/slurm. Four steps of 112G
 #   and 64 CPUs must also fit its AllocTRES;
 # - the lane table checks (ibub_lanes.py verify);
@@ -52,7 +52,7 @@ set -o noclobber   # from the first line. Exactly what bash's noclobber does: a 
 C="${1:?deploy}"; N="${2:?namespace}"; M="${3:?commit}"
 PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
 SRUN=srun; SCONTROL=scontrol
-NS=/pscratch/sd/j/josephrb/ibub-20261123
+NS=/pscratch/sd/j/josephrb/ibub-20261124
 RUNNER=2d-unfolding/ibub/ibub_unit.py
 if [ "${IBUB_TEST:-0}" = 1 ]; then
   PY=${IBUB_PY:?test mode needs IBUB_PY}; SRUN=${IBUB_SRUN:?test mode needs IBUB_SRUN}
@@ -94,7 +94,8 @@ info=$("$SCONTROL" show job "$SLURM_JOB_ID") || refuse "scontrol show job failed
 printf '%s\n' "$info" > "$SREC" || refuse "writing the scontrol record"
 key() { printf '%s\n' "$info" | tr ' ' '\n' | sed -n "s/^$1=//p" | head -1; }
 [ "$(key JobName)" = "$JOBNAME" ] || refuse "JobName is '$(key JobName)', not $JOBNAME"
-[ "$(key QOS)" = regular ] || refuse "QOS is '$(key QOS)', not regular"
+# Perlmutter records --qos=regular as QOS=regular_1 (receipts-cov2d/a2/bulk/complete/connect-complete-1.log.txt:78); the accepted set is exactly these two
+case "$(key QOS)" in regular|regular_1) ;; *) refuse "QOS is '$(key QOS)', not one of {regular, regular_1}";; esac
 [ "$(key TimeLimit)" = "$LIMIT" ] || refuse "TimeLimit is '$(key TimeLimit)', not $LIMIT"
 [ "$(key NumNodes)" = 1 ] || refuse "NumNodes is '$(key NumNodes)', not 1"
 [ "$(key OverSubscribe)" = NO ] || refuse "OverSubscribe is '$(key OverSubscribe)', not NO (exclusive)"
