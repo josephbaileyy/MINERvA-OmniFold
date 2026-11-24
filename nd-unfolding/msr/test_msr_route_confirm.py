@@ -57,6 +57,12 @@ class Verdict(unittest.TestCase):
         self.assertEqual(C.confirm(rows() + [dict(GOOD, vector_id="2d#999")]), ("FAIL", 0, 24))
 
 
+class Pins(unittest.TestCase):
+    def test_the_pins_match_the_files(self):   # a stale pin would refuse the real run (rc 9)
+        self.assertEqual(C.MSR_PROJECT_SHA, P.sha256(Path(P.__file__)))
+        self.assertEqual(C.DIAG2_SHA, P.sha256(Path(D.__file__)))
+
+
 class Kappa(unittest.TestCase):
     def test_kappa_from_singular_values(self):
         d = {"G": np.diag([10.0, 1.0]), "s": np.array([0.1, 2.0])}

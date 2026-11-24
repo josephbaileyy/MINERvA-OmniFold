@@ -32,7 +32,7 @@ sys.path.insert(0, str(HERE))
 import msr_project as P  # noqa: E402
 import msr_route_diag2 as D  # noqa: E402
 
-MSR_PROJECT_SHA = "SET-AFTER-REVIEW"       # the amended msr_project.py
+MSR_PROJECT_SHA = "f073cb94e149e45e018c4ba24e0824cbdebc59da624c9ff2beef43e0fb3ecefc"   # the amended msr_project.py (Amendment E)
 DIAG2_SHA = "35d2357f7eec5954c5b9de0d32bfbbcf9cb3cb93bebc82249f0e2ad0e71e2c1b"   # msr_route_diag2.py, merged (#1270)
 TOL = 1e-8
 

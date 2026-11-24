@@ -827,6 +827,23 @@ class AmendmentE(unittest.TestCase):
         self.assertEqual(d["s"][-1], 1e12)
         np.testing.assert_array_equal(d["well"], d["s"] <= P.CUT)
 
+    def test_the_independent_route_never_forms_c(self):
+        """A well direction orthogonal (in exact arithmetic) to a 1e8 width: C = G G^T rounds at ~1 against s^2 = 1e-6,
+        so a solve with C fails; the QR of G^T W does not (50-digit value from the same float64 G and W)."""
+        mp = self.mp
+        th = 0.3
+        w = np.array([[np.cos(th), -np.sin(th)], [np.sin(th), np.cos(th)]])
+        G = np.column_stack([1e8 * w[:, 1], 1e-3 * w[:, 0]])
+        dec = {"w": w, "well": np.array([True, False]), "n_well": 1, "G": G, "PW": np.outer(w[:, 0], w[:, 0])}
+        beta = np.array([0.7, -0.2])
+        wm = mp.matrix(w[:, 0].tolist())
+        gw = mp.matrix(G.T.tolist()) * wm
+        z_ref = abs((wm.T * mp.matrix(beta.tolist()))[0]) / mp.sqrt((gw.T * gw)[0])
+        self.assertLessEqual(self.D.rel(P.route_independent(dec, beta)[1], z_ref), 1e-10)
+        a = w[:, 0] @ beta
+        z_c = float(np.sqrt(abs(a * a / (w[:, 0] @ (G @ G.T) @ w[:, 0]))))   # the formation Amendment E removed
+        self.assertGreater(self.D.rel(z_c, z_ref), 1e-3)
+
     def test_the_routes_agree_to_the_c_route_bar(self):
         for R, t0, b, J, _ in self.cases:
             d = P.decompose(did.fisher(R, t0, b), J, "numpy", A=P.fisher_root(R, t0, b))
