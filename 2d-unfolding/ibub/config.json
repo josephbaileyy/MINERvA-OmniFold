@@ -22,7 +22,7 @@
   "lib_sha256": "0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd"
  },
  "staging": {
-  "root": "/pscratch/sd/j/josephrb/ibub-20261123/stage",
+  "root": "/pscratch/sd/j/josephrb/ibub-20261124/stage",
   "CV": "runEventLoopOmniFold_MEFHC.root",
   "MC": "runEventLoopMC_MEFHC.root",
   "lib": "libRooUnfold.so",
@@ -139,5 +139,5 @@
   "k10_vs_root_rtol": 1e-09,
   "write_root": "/dev/shm/ibub-connect"
  },
- "namespace": "/pscratch/sd/j/josephrb/ibub-20261123"
+ "namespace": "/pscratch/sd/j/josephrb/ibub-20261124"
 }
