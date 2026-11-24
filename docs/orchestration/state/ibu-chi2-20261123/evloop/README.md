@@ -2,8 +2,8 @@
 
 **By** the `ibu-chi-squared-issue` session (Claude Opus 5.5). This follows the test chain in [`../README.md`](../README.md).
 Joseph authorized running these jobs. The director's GO named three conditions: this record, one agy read, and no
-`squeue` in any script. This directory satisfies them before the first submission. The results will follow in a
-separate records PR.
+`squeue` in any script. This directory satisfies them before the first submission. The results are in
+[`results/`](results/README.md), in the same PR as this code record, as a separate commit.
 
 **What it tests** ([`DECLARATION.txt`](DECLARATION.txt), sha256 `f3a8064f7f073381916d6fdba862f2a0b7ef5775b0cb341d6b4be623265796ec`,
 written before running). It asks which tested change to our chain makes the published result fit our reco data at
