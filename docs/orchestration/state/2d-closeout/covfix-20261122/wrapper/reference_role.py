@@ -9,8 +9,12 @@ It is NOT PG or PV code. It shows what cov2d's binaries must do with the frame:
   4. keep plaintext in memory only, and print no secret;
   5. exit covfix_wrapper.BREAK_RC (66) on a confirmed integrity break, so the wrapper stops the whole seal.
 
-  reference_role.py --role pv-writer --sealed DIR [--fail-after-decrypt]
-  reference_role.py --role pg-connect
+  5b. print "covfix-break <attempt>" as the last stdout line with that exit, and "covfix-receipt <attempt>" as
+      the last stdout line after the role's work succeeded.
+
+  reference_role.py --role pv-writer --covfix-attempt N --covfix-seal-root DIR --covfix-freeze-root DIR
+  reference_role.py --role pg-connect --covfix-attempt N
+  test flags: --fail-after-decrypt, --no-receipt, --echo-secret
 """
 import argparse
 import hashlib
@@ -34,34 +38,63 @@ def read_frame(stream, with_seed: bool):
     return passphrase, seed_base
 
 
+def broken(attempt: str, why: str) -> int:
+    """A confirmed integrity break: the typed line on stdout, the reason on stderr, exit BREAK_RC."""
+    print(f"reference-role: {why}", file=sys.stderr)
+    print(f"covfix-break {attempt}", flush=True)
+    return cw.BREAK_RC
+
+
 def main(argv=None) -> int:
+    cw.no_core_dumps()
     ap = argparse.ArgumentParser()
     ap.add_argument("--role", required=True, choices=sorted(cw.ROLES))
-    ap.add_argument("--sealed")
+    ap.add_argument("--covfix-attempt", required=True)
+    ap.add_argument("--covfix-seal-root")
+    ap.add_argument("--covfix-freeze-root")
     ap.add_argument("--fail-after-decrypt", action="store_true")
+    ap.add_argument("--no-receipt", action="store_true")
+    ap.add_argument("--echo-secret", action="store_true")
     a = ap.parse_args(argv)
     with_seed = cw.ROLES[a.role][1]
     passphrase, seed_base = read_frame(sys.stdin.buffer, with_seed)
+    if a.echo_secret:
+        print(f"debug: frame was {passphrase}", flush=True)
     if with_seed:
         if not cw.SEED_BASE_LO <= seed_base < cw.SEED_BASE_HI:
             raise SystemExit("reference-role: seed base out of range")
         print(f"reference-role: {a.role} frame ok (passphrase and seed base received)")
-        return 0
-    with open(os.path.join(a.sealed, "PG-MANIFEST.json.gpg"), "rb") as f:
-        manifest = json.loads(cw.gpg_run(cw.GPG_DECRYPT, passphrase, f.read()))
-    n = 0
-    for name, want in sorted(manifest["products"].items()):
-        with open(os.path.join(a.sealed, name + ".gpg"), "rb") as f:
-            plain = cw.gpg_run(cw.GPG_DECRYPT, passphrase, f.read())
-        if hashlib.sha256(plain).hexdigest() != want:
-            print(f"reference-role: {name} does not reproduce its plaintext sha256", file=sys.stderr)
-            return cw.BREAK_RC          # a confirmed integrity break, typed for the wrapper
-        del plain
-        n += 1
-    if a.fail_after_decrypt:
-        print("reference-role: simulated crash after decryption", file=sys.stderr)
-        return 1
-    print(f"reference-role: {a.role} verified {n} product(s) against the sealed manifest")
+    else:
+        sealed = a.covfix_seal_root
+        try:
+            with open(os.path.join(sealed, "PG-MANIFEST.json.gpg"), "rb") as f:
+                blob = f.read()
+        except OSError as e:
+            return broken(a.covfix_attempt, f"the sealed manifest cannot be opened ({e})")
+        try:
+            manifest = json.loads(cw.gpg_run(cw.GPG_DECRYPT, passphrase, blob))
+            products = manifest["products"]
+            assert isinstance(products, dict) and products
+        except (ValueError, KeyError, TypeError, AssertionError):
+            return broken(a.covfix_attempt, "the authenticated manifest is not a product map")
+        n = 0
+        for name, want in sorted(products.items()):
+            try:
+                with open(os.path.join(sealed, name + ".gpg"), "rb") as f:
+                    ct = f.read()
+            except OSError as e:
+                return broken(a.covfix_attempt, f"{name} cannot be opened ({e})")
+            plain = cw.gpg_run(cw.GPG_DECRYPT, passphrase, ct)
+            if hashlib.sha256(plain).hexdigest() != want:
+                return broken(a.covfix_attempt, f"{name} does not reproduce its plaintext sha256")
+            del plain
+            n += 1
+        if a.fail_after_decrypt:
+            print("reference-role: simulated crash after decryption", file=sys.stderr)
+            return 1
+        print(f"reference-role: {a.role} verified {n} product(s) against the sealed manifest")
+    if not a.no_receipt:
+        print(f"covfix-receipt {a.covfix_attempt}", flush=True)
     return 0
 
 

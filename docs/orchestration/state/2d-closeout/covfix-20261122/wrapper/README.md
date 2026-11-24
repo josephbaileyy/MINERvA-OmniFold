@@ -8,8 +8,8 @@ guards three things: the secrets, the consumption record, and the order of opera
 This directory holds:
 
 - `covfix_wrapper.py`, the wrapper (stdlib only; it needs `security`, `gpg`, `git` and `ssh`);
-- `reference_role.py`, a reference bound binary. It is the stdin side of the interface, used by the tests and the
-  synthetic seal, and it is not PG or PV code;
+- `reference_role.py`, a reference bound binary. It is the interface's other side, used by the tests and the synthetic
+  seal, and it is not PG or PV code;
 - `test_covfix_wrapper.py`, the tests;
 - `role-config.example.json`, the shape of the sha-pinned role config;
 - `DIRECTOR-README.md`, the secret-free README installed beside the record in `~/director-tools/covfix/`.
@@ -25,109 +25,156 @@ This directory holds:
 
 The salt never leaves the laptop before `reveal`.
 
-**A bound binary must:**
-1. read stdin to EOF and refuse any other frame;
-2. hand the passphrase to gpg on **fd 3** through an internal pipe, with §4.2's pinned flags, in a fresh empty
-   `GNUPGHOME`, streaming the payload on gpg's stdin and stdout;
-3. use no decrypted byte before gpg exits 0;
-4. print no secret;
-5. exit **66** (`BREAK_RC`) on a confirmed integrity break of its inputs, manifest or chain. Any other non-zero exit is
-   a role failure.
+**Arguments:**
+- first, the config's `args`;
+- then the wrapper's own `--covfix-attempt <32 hex>`;
+- for the PV roles, also `--covfix-seal-root <dir> --covfix-freeze-root <dir>`. These are the roots the wrapper just
+  verified, and the binary must read from them.
 
-`reference_role.py` does all five.
+**stdout, last line:**
+- `covfix-receipt <attempt>` after the role's work succeeded. Without it the run is terminal, even at exit 0.
+- `covfix-break <attempt>`, with exit status **66**, for a confirmed integrity break of its inputs, manifest or chain.
+  That is recorded as a break of the whole seal. Exit 66 without the line is only a role-terminal outcome.
 
-**The launch is built by the wrapper, never written as a command string.** Each role's entry in the config gives:
-- `launcher`: an argument list. For the PV roles it must contain `salloc ... --exclusive ...` and then
-  `srun ... --exclusive ...`;
-- `binary`: an absolute path;
-- `binary_sha256`;
-- `args`: an argument list.
+**The binary must also:**
+- hand the passphrase to gpg on **fd 3** through an internal pipe, with §4.2's pinned flags and a fresh empty
+  `GNUPGHOME`;
+- use no decrypted byte before gpg exits 0;
+- print no secret, and disable core dumps.
 
-The wrapper runs:
+`reference_role.py` does all of this.
+
+**The launch is built by the wrapper from validated fields, never from a command string.** Each PV role's `slurm`
+block may name `salloc` and `srun` (paths ending in those names) and set `account`, `qos`, `constraint` and `time`,
+with plain values. The wrapper runs:
 
 ```
-<ssh> -T -o RequestTTY=no [opts] <host> '<launcher> bash -c <exec check> covfix-exec <binary> <sha256> <args>'
+<ssh> -T -o RequestTTY=no [allowed opts] <host> \
+  'salloc --exclusive -N 1 -n 1 [-A -q -C -t] srun --exclusive -N 1 -n 1 \
+   bash -c <exec check> covfix-exec <binary> <sha256> <args> --covfix-...'
 ```
 
-The exec check runs on the compute node, inside the allocation. It hashes the binary and execs it only on a match
-(exit 86 otherwise), leaving stdin untouched for the binary. The frame goes on ssh's stdin, which salloc and srun
-forward to the task, and ssh never gets a PTY. Before the spend, the wrapper also hashes the binary on the login
-node.
+That is one task on one exclusive node. The exec check runs on the compute node: it hashes the binary and execs it only
+on a match (exit 86 otherwise), leaving stdin untouched. `pg-connect` has no allocation and runs on the host.
 
-## The binding
+The ssh options a config may add are limited to:
+- `-o` with BatchMode, ConnectTimeout, ServerAliveInterval, ServerAliveCountMax, StrictHostKeyChecking,
+  UserKnownHostsFile, IdentitiesOnly or IdentityFile;
+- `-i`, `-p`, `-l`, `-F`.
+
+Any `-t`, port forward or other option is refused. The frame goes on ssh's stdin, and the task's stdout and stderr
+come back through the wrapper. Any passphrase or seed base in that output is replaced by `[redacted]`, and the run is
+then terminal.
+
+## The binding and the ledger
 
 The role config is pinned by sha256 in the binding (`--config-sha256`). Its `binding` block pins three digests:
-- `commitment`, for `pg-connect`;
+- `commitment`;
 - `seal_digest`, the sha256 of the committed `PG-SEAL.sha256`;
 - `freeze_digest`, the sha256 of `P2-FREEZE.sha256`.
 
-The digests given on the command line must equal these. A regenerated or reordered list therefore cannot open a
-fresh key for an already-spent role.
+The digests given on the command line must equal these.
+
+The real items (`covfix-`) use one canonical ledger, `~/director-tools/covfix`, and take no `security` or
+`keychain` override. At its first use the ledger writes `LEDGER.json`, recording the mirror's remote URL, branch and
+path. A config pointing elsewhere is refused, and a ledger that has records but no `LEDGER.json` is terminal. The
+mirror branch is **`covfix-ledger`**, a dedicated branch that holds only the consumption record. It should be protected
+against force pushes and deletion; that repository setting is Joseph's call.
 
 ## Order of operations in `run --role R`
 
-1. **Config.** Its sha256 is the pinned one, its digests are the binding's, and the launch is built and checked.
-2. **Record and mirror (pre-check).**
-   - The record directory is mode 700 and the record's hash chain intact.
-   - The mirror worktree is on its branch, with the record path clean.
-   - The remote branch is fetched. A tip that does not descend from what was last seen is a rewound branch and
-     terminal, and so is a deleted branch.
-   - The pushed record is a prefix of the local record.
-   - No commit reachable from any ref holds a line the local record lacks. That includes the local
-     `refs/covfix/published/*`, which keep every published version.
-   - A line or marker for (key, R) refuses as consumed. A break or a reveal (line or marker) refuses every role of
-     the seal.
-   - The freeze bound at the seal's first spend must be this one.
-   - `pv-readout` needs a **completed** `pv-writer` for the seal.
-3. **Secrets.** They are read from the login Keychain and checked: a 64-hex passphrase, and a seed base in
-   [1 000 000 000, 2 000 000 000). For `pg-connect`, sha256(seed base ':' salt) must equal the commitment.
-4. **Cluster checks.**
-   - The bound binary must hash to its pin.
-   - For the PV roles, the local `PG-SEAL.sha256` and `P2-FREEZE.sha256` must hash to the binding, and every file they
-     list is hashed on the login node. Each path gets exactly one typed answer: a hash, `covfix-missing` (only when
-     stat says "No such file or directory"), or `covfix-unreadable`.
-   - A missing or altered file, or a list off the binding, is a **break**: a seal-wide marker first, then a mirrored
-     line, terminal for every role of the seal.
-   - A link or environment failure refuses and spends nothing. That covers a missing end line, a non-zero exit, an
-     unreadable path, a missing root, an unexpected line, or an answer count that doesn't match the paths.
-5. **The spend, under the lock.**
-   - Absorb any markers.
-   - Run **step 2 again**.
-   - Create the attempt marker, `MARK-attempt-<key12>-<role>` (O_EXCL, fsynced).
-   - Append `spent` and fsync the file and the directory.
-   - Commit the record path and push.
-   - Fetch, require the remote blob to equal the local record, and keep a published ref.
+1. **Config.**
+   - The config's sha256 is the pinned one, and its digests are the binding's.
+   - The real items are on the canonical ledger.
+   - The launch is built and validated.
+2. **Local terminal states first.** A line or marker for (key, R) is consumed, and so is a seal-wide break or reveal.
+   These checks run before any transport or mirror step, so a refusal there can't mask them.
+3. **The mirror.**
+   - The worktree is on its branch, with the record path clean, and `LEDGER.json` matches.
+   - The remote tip, fetched to a commit id, must descend from the last-seen one; otherwise the branch was rewound,
+     which is terminal. A vanished branch after any publication is also terminal.
+   - The pushed record must be a prefix of the local one.
+   - No commit reachable from any ref (full history) holds a line the local record lacks. That includes
+     `refs/covfix/published/<ledger>/*`, which keep every published version.
+4. **Spend conditions.**
+   - Not consumed.
+   - The freeze is the seal's bound one; the freeze-conflict rule below applies otherwise.
+   - For `pv-readout`, a completed `pv-writer` in the pushed record.
+5. **Secrets.** Read from the login Keychain and checked. For `pg-connect`, sha256(seed base ':' salt) must equal the
+   commitment.
+6. **The local lists.** `PG-SEAL.sha256` and `P2-FREEZE.sha256` must hash to the binding and parse. A failure is a
+   break, found before any ssh call.
+7. **The cluster.** The bound binary must hash to its pin, and every listed file is hashed on the login node, one typed
+   answer per path. The outcomes:
 
-   Any failure from the attempt marker on blocks the role for good, and a lock failure leaves an uncertain marker.
-6. **The launch.** The frame is written unbuffered and then zeroed, and the outcome is recorded:
-
-   | What happened | Outcome |
+   | Answer | Outcome |
    |---|---|
-   | exit 0 with the whole frame delivered | `completed` |
-   | exit 66 | `break` (seal-wide) |
-   | anything else, including an undelivered frame, a dropped link or an interrupt | `terminal` |
+   | an altered file | a break, even if other paths were unreadable |
+   | an unreadable path | refused |
+   | none of the files found (wrong or unmounted storage?) | refused |
+   | some files missing | a break |
+   | incomplete or contradictory answers | refused |
 
-   Nothing retries.
+8. **The spend, under the lock.**
+   1. Steps 3 and 4 again.
+   2. The attempt marker, `MARK-attempt-<key12>-<role>` (O_EXCL, fsynced). If it can't be written, nothing is spent.
+   3. Append `spent` (with the attempt id), fsync, commit, push, and fetch the remote record back; it must equal the
+      local one. Keep a published ref.
 
-**`reveal`:**
+   Any failure from the marker on blocks the role for good.
+9. **A stop recorded during the spend wins.** If a break or reveal for the seal appeared meanwhile, the run is terminal
+   and nothing launches.
+10. **The launch.** The frame is written unbuffered and then zeroed. The outcome is recorded under the lock, with the
+    mirror re-checked first:
+
+    | What happened | Outcome |
+    |---|---|
+    | exit 0, the frame delivered, the receipt line present, no secret echoed | `completed` |
+    | exit 66 with the break line | `break` (seal-wide) |
+    | anything else | `terminal` |
+
+    Nothing retries.
+
+## The freeze conflict (director's ruling, 2026-11-23)
+
+A freeze other than the one already bound to the seal is **refused (exit 2) and spends nothing**. A
+`freeze-mismatch-refused` line, holding the presented and bound digests, is **appended, committed and pushed**, so the
+attempt is visible.
+
+It is not a break, because a configuration mistake must not burn a validation that can be spent only once.
+
+Two unresolved refusals on one seal block **every** role of the seal, the right freeze included, until a director
+ruling clears them with `run ... --freeze-mismatch-resolved <ruling id>`. The ruling itself is recorded as a line.
+This way repeated attempts can't be retried silently. Neither line spends or binds anything. If the refusal cannot be
+recorded, the run still refuses and marks nothing.
+
+## reveal
+
 - The seal and the commitment must be the binding's.
-- It requires a `pv-readout` outcome line for the seal, or `--after-stop '<named stop>'` (plain words only).
+- It needs a `pv-readout` outcome (completed, terminal or break) in the pushed record, or
+  `--after-stop <stop id>`.
+- It refuses while a PV role is spent with no outcome (in flight), unless `--inflight-resolved <ruling id>`.
+- Stop and ruling ids are identifiers: a letter, then letters, digits, `.`, `_` or `-`, with no long hex or digit runs.
+  So a pasted secret can't reach the mirror.
 - The seed base and salt must reproduce the commitment.
-- The `reveal` line is recorded before anything is printed, and it stops every PV role of the seal for good.
+- The `reveal` line (with the commitment) is recorded before anything is printed. It stops every PV role of the seal,
+  and `pg-connect` for the commitment, for good.
 
 **Exit codes:** 0 done; 2 refused (nothing spent); 3 terminal; 4 usage or environment error.
 
-**Mirror commits and pushes run without the repository's hooks** (`core.hooksPath=/dev/null`; `"run_hooks": true`
-turns them on). They touch one path on a dedicated branch, before decryption, and a hook failure there would be an
-uncertain spend that burns the role. **The remote should forbid force pushes and deletion of that branch** (a
-branch-protection rule on the host). The wrapper detects a rewind or deletion it has seen, but it cannot prevent one.
+**Mirror commits, pushes and fetches run without the repository's hooks** (`core.hooksPath=/dev/null`;
+`"run_hooks": true` turns them on). A hook failure there would be an uncertain spend that burns the role.
 
-**Limits, disclosed.** All of this rests on the declaration's cooperative assumption of one shared account (§4.2).
+## Limits, disclosed
 
-- A session that deletes the local record, the markers, the published and seen refs, and rewinds the remote can
-  defeat the history checks.
-- Between the login-node checks and the task's own reads, a cluster file could be swapped. The compute-side exec check
-  narrows this for the binary. The bound readout re-verifies the freeze and the chain itself (§3.4 point 5).
+All of this rests on §4.2's cooperative assumption of one shared account.
+
+- A session that deletes the local record, markers, `LEDGER.json`, the published and seen refs, and rewinds the remote
+  can defeat the history checks. Branch protection on `covfix-ledger` closes the remote half.
+- Between the login-node checks and the task's own reads, a cluster file could be swapped, and the exec check reopens
+  the binary by path after hashing it. The bound readout re-verifies freeze and chain itself (§3.4 point 5).
+- The pass-through redaction catches the secrets verbatim only, not an encoded copy. The bound binaries must print
+  none.
 
 ## Tests
 
@@ -140,7 +187,8 @@ The tests:
 - use only `covfix-test-<random>-*` Keychain items in the login Keychain, which they create and delete;
 - set `COVFIX_FORBID_REAL_KEYCHAIN=1`, so the real `covfix-` prefix refuses;
 - stub ssh, salloc and srun locally;
-- run git with no global or system config and the file transport only;
+- run git with every inherited `GIT_*` variable removed, no global or system config, an empty template and the file
+  transport only;
 - seal only synthetic truths, so no test is a launch.
 
 ## The synthetic seal and the director's rehearsal (§3.4)
@@ -160,10 +208,12 @@ It prints the two digests and the two roots.
    Copy `DIR/sealed` and `DIR/frozen` to the cluster.
 2. Write a rehearsal role config:
    - `keychain_prefix`: `covfix-synth-`;
-   - `record_dir`: a fresh mode-700 directory, not the real one;
+   - `record_dir`: a fresh mode-700 directory, not the canonical one;
    - mirror branch: a fresh rehearsal branch;
    - `binding`: the two printed digests;
-   - roles: the bound writer and readout, with their launchers.
+   - `seal_root` and `freeze_root`: the cluster copies;
+   - roles: the bound writer and readout, with their `slurm` blocks.
 3. Run `pv-writer`, then `pv-readout`. Record each allocation's job ID and elapsed time (`sacct -j <id> -o
-   JobID,Elapsed,State`) in the rehearsal record. §3.4 has these two times replace its 1.0 node-h estimate for PV in the re-price.
+   JobID,Elapsed,State`) in the rehearsal record. §3.4 has these two times replace its 1.0 node-h estimate for PV in
+   the re-price.
 4. Check that a second run of each role exits 3, and that `status` shows spent and completed for both.

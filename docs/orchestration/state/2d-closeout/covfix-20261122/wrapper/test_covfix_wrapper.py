@@ -26,10 +26,14 @@ sys.path.insert(0, HERE)
 import covfix_wrapper as cw  # noqa: E402
 
 os.environ[cw.FORBID_REAL_ENV] = "1"
-os.environ.update({"GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_NOSYSTEM": "1", "GIT_ALLOW_PROTOCOL": "file",
-                   "GIT_TERMINAL_PROMPT": "0"})
+for _k in [k for k in os.environ if k.startswith("GIT_")]:
+    del os.environ[_k]                     # no inherited repository, template, config or hook selection
 PREFIXES = []
 TMP = tempfile.mkdtemp(prefix="covfix-wrapper-test-")
+os.makedirs(os.path.join(TMP, "git-template"))
+os.environ.update({"GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_NOSYSTEM": "1", "GIT_ALLOW_PROTOCOL": "file",
+                   "GIT_TERMINAL_PROMPT": "0", "GIT_TEMPLATE_DIR": os.path.join(TMP, "git-template"),
+                   "GIT_CEILING_DIRECTORIES": TMP})
 REF = os.path.join(HERE, "reference_role.py")
 REL = "docs/orchestration/state/2d-closeout/covfix-20261122/consumption/RECORD.jsonl"
 
@@ -130,9 +134,10 @@ sys.exit(subprocess.run(["bash", "-c", command]).returncode)
 '''
 
 STUB_ALLOC = r'''#!/bin/bash
-# stub salloc/srun: drop "--exclusive -N 1", exec the rest with stdin forwarded
-[ "$1" = "--exclusive" ] && [ "$2" = "-N" ] && [ "$3" = "1" ] || {{ echo "stub {name}: unexpected flags $*" >&2; exit 64; }}
-shift 3
+# stub {name}: require --exclusive -N 1 -n 1, drop the options up to the next command ({until}), exec it with stdin
+[ "$1 $2 $3 $4 $5" = "--exclusive -N 1 -n 1" ] || {{ echo "stub {name}: unexpected flags $*" >&2; exit 64; }}
+shift 5
+while [ $# -gt 0 ] && [ "$(basename -- "$1")" != "{until}" ]; do shift; done
 exec "$@"
 '''
 
@@ -160,19 +165,20 @@ class Rig:
         git(self.wt, "push", "-q", "origin", "HEAD:refs/heads/covfix-consumption")
         with open(os.path.join(self.bin, "ssh"), "w") as f:
             f.write(STUB_SSH.format(python=sys.executable, here=self.root, bare=self.bare, rel=REL))
-        for name in ("salloc", "srun"):
+        for name, until in (("salloc", "srun"), ("srun", "bash")):
             with open(os.path.join(self.bin, name), "w") as f:
-                f.write(STUB_ALLOC.format(name=name))
+                f.write(STUB_ALLOC.format(name=name, until=until))
         for name in ("ssh", "salloc", "srun"):
             os.chmod(os.path.join(self.bin, name), 0o755)
         self.seal = cw.synthetic_seal(self.kc, os.path.join(self.root, "synthetic"))
         flags = role_flags or {}
         roles = {}
         for role in cw.ROLES:
-            launcher = ([f"{self.bin}/salloc", "--exclusive", "-N", "1", f"{self.bin}/srun", "--exclusive", "-N", "1"]
-                        if role != "pg-connect" else [])
-            roles[role] = {"launcher": launcher, "binary": REF, "binary_sha256": cw.sha256_file(REF),
-                           "args": ["--role", role, "--sealed", self.seal["seal_root"], *flags.get(role, [])]}
+            roles[role] = {"binary": REF, "binary_sha256": cw.sha256_file(REF),
+                           "args": ["--role", role, *flags.get(role, [])]}
+            if role != "pg-connect":
+                roles[role]["slurm"] = {"salloc": f"{self.bin}/salloc", "srun": f"{self.bin}/srun",
+                                        "account": "m0000", "time": "0:30:00"}
         self.cfg = {
             "record_dir": os.path.join(self.root, "record"),
             "keychain_prefix": self.prefix,
@@ -205,7 +211,7 @@ class Rig:
         else:
             argv += ["--seal-digest", kw.get("seal", self.cfg["binding"]["seal_digest"]),
                      "--freeze-digest", kw.get("freeze", self.cfg["binding"]["freeze_digest"])]
-        return argv
+        return argv + list(kw.get("extra", []))
 
     def run(self, role, **kw):
         return run_main(*self.argv(role, **kw))
@@ -232,11 +238,29 @@ class Rig:
         with open(os.path.join(self.root, "ssh-mode"), "w") as f:
             f.write(mode)
 
+    def restore_empty(self):
+        """As if the record directory were restored from a copy taken before the first spend."""
+        d = self.cfg["record_dir"]
+        for n in os.listdir(d):
+            if n == "RECORD.jsonl" or n.startswith("MARK-"):
+                os.unlink(os.path.join(d, n))
+
     def launched(self):
         return os.path.exists(os.path.join(self.root, "at-launch.txt"))
 
     def secrets(self):
         return [self.kc.read(i) for i in cw.ITEMS]
+
+    def reseal(self, manifest_bytes):
+        """Replace the sealed manifest with an encrypted manifest_bytes and re-pin the seal (list and binding)."""
+        pw = self.kc.read("passphrase")
+        root = self.seal["seal_root"]
+        with open(os.path.join(root, "PG-MANIFEST.json.gpg"), "wb") as f:
+            f.write(cw.gpg_run(cw.GPG_ENCRYPT, pw, manifest_bytes))
+        with open(self.cfg["seal_file"], "w") as f:
+            f.write("".join(f"{cw.sha256_file(os.path.join(root, n))}  {n}\n" for n in sorted(os.listdir(root))))
+        self.cfg["binding"]["seal_digest"] = cw.sha256_file(self.cfg["seal_file"])
+        self.write_config()
 
 
 # ------------------------------------------------------------------------------------------------------------
@@ -627,20 +651,31 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(rig.events(), [])
         self.assertEqual(rig.ssh_log(), [])
 
-    def test_pv_roles_need_an_exclusive_allocation_and_absolute_binary(self):
+    def test_the_launch_is_one_exclusive_task_from_validated_fields(self):
         rig = Rig()
-        good = dict(rig.cfg["roles"]["pv-writer"])
-        for change in ({"launcher": []}, {"launcher": good["launcher"][:1] + good["launcher"][2:]},
-                       {"launcher": good["launcher"][:5] + good["launcher"][6:]}, {"binary": "reference_role.py"},
-                       {"args": [1]}):
-            rig.cfg["roles"]["pv-writer"] = {**good, **change}
+        good = json.loads(json.dumps(rig.cfg["roles"]["pv-writer"]))
+        bad = [{"slurm": None}, {"slurm": {**good["slurm"], "ntasks": "2"}}, {"slurm": {**good["slurm"], "salloc": "sbatch"}},
+               {"slurm": {**good["slurm"], "time": "1:00 --pty"}}, {"binary": "reference_role.py"},
+               {"binary_sha256": "x"}, {"args": [1]}, {"args": "--role pv-writer"},
+               {"args": ["--covfix-seal-root", "/elsewhere"]}]
+        for change in bad:
+            cfg = {**good, **change}
+            if change.get("slurm") is None and "slurm" in change:
+                del cfg["slurm"]
+            rig.cfg["roles"]["pv-writer"] = cfg
             rig.write_config()
             rc, _, err = rig.run("pv-writer")
             self.assertEqual(rc, cw.ERROR, (change, err))
-        rig.cfg["roles"]["pv-writer"] = {k: v for k, v in good.items() if k != "launcher"}
-        rig.write_config()
-        self.assertEqual(rig.run("pv-writer")[0], cw.ERROR)
         self.assertEqual(rig.events(), [])
+        self.assertEqual(rig.ssh_log(), [])
+
+    def test_ssh_options_are_allow_listed(self):
+        self.assertEqual(cw.check_ssh(["ssh", "-o", "BatchMode=yes", "-p", "22"]),
+                         ["ssh", "-T", "-o", "RequestTTY=no", "-o", "BatchMode=yes", "-p", "22"])
+        for bad in (["ssh", "-t"], ["ssh", "-tt"], ["ssh", "-o", "RequestTTY=yes"], ["ssh", "-L", "1:h:2"],
+                    ["ssh", "-o"], ["ssh", "-o", "BatchMode"]):
+            with self.assertRaises(cw.Stop, msg=bad):
+                cw.check_ssh(bad)
 
     def test_pv_roles_need_the_seal_and_freeze_paths(self):
         rig = Rig()
@@ -651,11 +686,16 @@ class ConfigTests(unittest.TestCase):
 
     def test_the_command_is_built_from_the_structured_config(self):
         rig = Rig()
-        cmd = cw.launch_command("pv-writer", rig.cfg["roles"]["pv-writer"])
-        argv = subprocess.run(["python3", "-c", "import shlex,sys; print(shlex.split(sys.argv[1]))", cmd],
-                              capture_output=True, text=True).stdout
-        self.assertIn("'bash', '-c'", argv)
-        self.assertIn(f"'{REF}', '{cw.sha256_file(REF)}', '--role', 'pv-writer'", argv)
+        import shlex
+        argv = shlex.split(cw.launch_command("pv-writer", rig.cfg["roles"]["pv-writer"], ["--covfix-attempt", "a1"]))
+        s, r = argv.index(f"{rig.bin}/salloc"), argv.index(f"{rig.bin}/srun")
+        self.assertEqual(argv[s + 1:s + 6], ["--exclusive", "-N", "1", "-n", "1"])
+        self.assertEqual(argv[r + 1:r + 6], ["--exclusive", "-N", "1", "-n", "1"])
+        self.assertEqual(argv[s + 6:r], ["-A", "m0000", "-t", "0:30:00"])
+        self.assertEqual(argv[r + 6:r + 8], ["bash", "-c"])
+        self.assertEqual(argv[-6:], [REF, cw.sha256_file(REF), "--role", "pv-writer", "--covfix-attempt", "a1"])
+        pg = shlex.split(cw.launch_command("pg-connect", rig.cfg["roles"]["pg-connect"], []))
+        self.assertEqual(pg[:2], ["bash", "-c"])
 
 
 # ------------------------------------------------------------------------------------------------------------
@@ -774,22 +814,88 @@ class RunTests(unittest.TestCase):
 
     def test_an_undelivered_frame_is_terminal_even_at_rc_0(self):
         rig = Rig()
-        with mock.patch.object(cw.Cluster, "launch", return_value=(0, False)):
+        with mock.patch.object(cw.Cluster, "launch", return_value=cw.LaunchResult(0, False, True, False, False)):
             rc, _, err = rig.run("pv-writer")
         self.assertEqual(rc, cw.TERMINAL, err)
         self.assertIn("frame not delivered", rig.events()[-1]["detail"])
 
     def test_a_confirmed_in_role_break_stops_the_seal(self):
         rig = Rig()
-        pw = rig.kc.read("passphrase")
-        sealed = rig.seal["seal_root"]
-        with mock.patch.object(cw.Cluster, "launch", return_value=(cw.BREAK_RC, True)):
-            rc, _, err = rig.run("pv-writer")
+        rig.reseal(json.dumps({"products": {"synthetic-truth-u0.json": "0" * 64}}).encode())
+        rc, out, err = rig.run("pv-writer")
         self.assertEqual(rc, cw.TERMINAL, err)
         self.assertEqual(rig.events()[-1]["event"], "break")
-        self.assertIn(("break", rig.seal["seal_digest"], "seal"), rig.markers())
+        self.assertIn(("break", rig.cfg["binding"]["seal_digest"], "seal"), rig.markers())
         self.assertEqual(rig.run("pv-readout")[0], cw.TERMINAL)
-        del pw, sealed
+
+    def test_a_malformed_authenticated_manifest_is_a_break(self):
+        rig = Rig()
+        rig.reseal(b"not json at all")
+        rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertEqual(rig.events()[-1]["event"], "break")
+
+    def test_exit_66_without_the_attempts_break_line_is_only_terminal(self):
+        rig = Rig()
+        with mock.patch.object(cw.Cluster, "launch", return_value=cw.LaunchResult(66, False, False, False, False)):
+            rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertEqual(rig.events()[-1]["event"], "terminal")
+        self.assertNotIn("break", [k for k, _, _ in rig.markers()])
+
+    def test_a_receipt_with_a_nonzero_exit_is_terminal(self):
+        rig = Rig()
+        with mock.patch.object(cw.Cluster, "launch", return_value=cw.LaunchResult(1, True, True, False, False)):
+            rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertEqual(rig.events()[-1]["event"], "terminal")
+
+    def test_no_receipt_is_terminal(self):
+        rig = Rig(role_flags={"pv-writer": ["--no-receipt"]})
+        rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertIn("no receipt", rig.events()[-1]["detail"])
+
+    def test_a_secret_echoed_by_the_task_is_redacted_and_terminal(self):
+        rig = Rig(role_flags={"pv-writer": ["--echo-secret"]})
+        r = subprocess.run([sys.executable, os.path.join(HERE, "covfix_wrapper.py"), *rig.argv("pv-writer")],
+                           capture_output=True)
+        self.assertEqual(r.returncode, cw.TERMINAL, r.stderr)
+        pw = rig.kc.read("passphrase").encode()
+        self.assertNotIn(pw, r.stdout + r.stderr)
+        self.assertIn(b"[redacted]", r.stdout)
+        self.assertIn("echoed a secret", rig.events()[-1]["detail"])
+
+    def test_a_stop_recorded_during_the_spend_wins_over_the_launch(self):
+        rig = Rig()
+        real = cw.Context.commit_event
+
+        def commit(self, event, message, absorb_exclude=None):
+            real(self, event, message, absorb_exclude)
+            if event["event"] == "spent":
+                self.record.mark("break", event["key"], "seal")
+
+        with mock.patch.object(cw.Context, "commit_event", commit):
+            rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertFalse(rig.launched())
+        self.assertIn("stopped before launch", rig.events()[-1]["detail"])
+
+    def test_an_outcome_over_a_restored_record_is_terminal(self):
+        rig = Rig()
+        recpath = os.path.join(rig.cfg["record_dir"], "RECORD.jsonl")
+        real = cw.Cluster.launch
+
+        def launch(self, *a):
+            res = real(self, *a)
+            os.unlink(recpath)                         # restored to empty while the task ran
+            return res
+
+        with mock.patch.object(cw.Cluster, "launch", launch):
+            rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertIn("not mirrored", err)
+        self.assertIn(b'"spent"', rig.remote_record())
 
     def test_the_compute_side_hash_check_stops_a_swapped_binary(self):
         rig = Rig()
@@ -803,15 +909,15 @@ class RunTests(unittest.TestCase):
         rig.write_config()
 
         def hash_files(self, root, rels):
-            got, missing = real(self, root, rels)
+            got, missing, unreadable = real(self, root, rels)
             if rels == ["other_role.py"]:
                 got = {"other_role.py": cw.sha256_file(REF)}
-            return got, missing
+            return got, missing, unreadable
 
         with mock.patch.object(cw.Cluster, "hash_files", hash_files):
             rc, _, err = rig.run("pv-writer")
         self.assertEqual(rc, cw.TERMINAL, err)
-        self.assertEqual(rig.events()[-1]["detail"], f"rc {cw.EXEC_MISMATCH_RC}")
+        self.assertTrue(rig.events()[-1]["detail"].startswith(f"rc {cw.EXEC_MISMATCH_RC}"), rig.events()[-1])
 
     def test_interrupt_during_launch_is_recorded_terminal(self):
         rig = Rig()
@@ -905,15 +1011,12 @@ class RunTests(unittest.TestCase):
         os.chmod(os.path.join(d, "locked"), 0)
         try:
             c = cw.Cluster([ssh_stub("RUN")], "h")
-            got, missing = c.hash_files(d, ["a b", "-", "gone"])
-            with self.assertRaises(cw.Stop) as cm:
-                c.hash_files(d, ["a b", "locked/f"])
+            got, missing, unreadable = c.hash_files(d, ["a b", "-", "gone", "locked/f"])
         finally:
             os.chmod(os.path.join(d, "locked"), 0o700)
         self.assertEqual(got, {"a b": hashlib.sha256(b"x").hexdigest(), "-": hashlib.sha256(b"dash").hexdigest()})
         self.assertEqual(missing, {"gone"})
-        self.assertEqual(cm.exception.code, cw.REFUSED)
-        self.assertIn("unreadable", str(cm.exception))
+        self.assertEqual(unreadable, {"locked/f"})
 
     def test_a_missing_remote_root_refuses_without_a_break(self):
         rig = Rig()
@@ -948,7 +1051,18 @@ class RunTests(unittest.TestCase):
 
     def test_a_remote_blob_mismatch_is_an_uncertain_spend(self):
         rig = Rig()
-        with mock.patch.object(cw, "git_blob_sha", return_value="0" * 40):
+        real_publish, real_fetch = cw.Mirror.publish, cw.Mirror.fetch
+        flag = []
+
+        def publish(self, *a):
+            flag.append(1)
+            return real_publish(self, *a)
+
+        def fetch(self, *a):
+            data = real_fetch(self, *a)
+            return data + b"tampered\n" if flag and data is not None else data
+
+        with mock.patch.object(cw.Mirror, "publish", publish), mock.patch.object(cw.Mirror, "fetch", fetch):
             rc, _, err = rig.run("pv-writer")
         self.assertEqual(rc, cw.TERMINAL, err)
         self.assertFalse(rig.launched())
@@ -982,9 +1096,8 @@ class RunTests(unittest.TestCase):
 
     def test_a_restored_older_record_is_detected(self):
         rig = Rig()
-        recpath = os.path.join(rig.cfg["record_dir"], "RECORD.jsonl")
         self.assertEqual(rig.run("pv-writer")[0], 0)
-        os.unlink(recpath)
+        rig.restore_empty()
         rc, _, err = rig.run("pv-writer")
         self.assertEqual(rc, cw.TERMINAL, err)
         self.assertIn("not an extension of the pushed mirror", err)
@@ -1015,7 +1128,7 @@ class RunTests(unittest.TestCase):
     def test_a_rewound_remote_branch_is_terminal(self):
         rig = Rig()
         self.assertEqual(rig.run("pv-writer")[0], 0)
-        os.unlink(os.path.join(rig.cfg["record_dir"], "RECORD.jsonl"))
+        rig.restore_empty()
         first = git(rig.wt, "rev-list", "--max-parents=0", "HEAD").strip()
         git(rig.wt, "reset", "-q", "--hard", first)
         git(rig.wt, "push", "-q", "-f", "origin", "HEAD:refs/heads/covfix-consumption")
@@ -1029,18 +1142,39 @@ class RunTests(unittest.TestCase):
         subprocess.run(["git", "--git-dir", rig.bare, "update-ref", "-d", "refs/heads/covfix-consumption"], check=True)
         rc, _, err = rig.run("pv-readout")
         self.assertEqual(rc, cw.TERMINAL, err)
-        self.assertIn("deleted", err)
+        self.assertIn("gone after it was published", err)
+        for ref in git(rig.wt, "for-each-ref", "--format=%(refname)", "refs/covfix/seen/").split():
+            git(rig.wt, "update-ref", "-d", ref)
+        rc, _, err = rig.run("pv-readout")             # without the seen ref, the published refs still tell
+        self.assertEqual(rc, cw.TERMINAL, err)
 
     def test_published_refs_keep_history_when_branch_and_seen_ref_are_rewound(self):
         rig = Rig()
         self.assertEqual(rig.run("pv-writer")[0], 0)
         self.assertTrue(git(rig.wt, "for-each-ref", "refs/covfix/published/").strip())
-        os.unlink(os.path.join(rig.cfg["record_dir"], "RECORD.jsonl"))
+        rig.restore_empty()
         first = git(rig.wt, "rev-list", "--max-parents=0", "HEAD").strip()
         git(rig.wt, "reset", "-q", "--hard", first)
         git(rig.wt, "push", "-q", "-f", "origin", "HEAD:refs/heads/covfix-consumption")
-        git(rig.wt, "update-ref", "-d", "refs/covfix/seen/covfix-consumption")
+        for ref in git(rig.wt, "for-each-ref", "--format=%(refname)", "refs/covfix/seen/").split():
+            git(rig.wt, "update-ref", "-d", ref)
         rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertIn("lacks", err)
+
+    def test_a_line_reachable_only_through_a_merge_is_found(self):
+        rig = Rig()
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        ident = ["-c", "user.name=t", "-c", "user.email=t@t"]
+        git(rig.wt, "checkout", "-q", "-b", "side")
+        with open(os.path.join(rig.wt, REL), "a") as f:
+            f.write('{"hidden":"a spend that the merge drops"}\n')
+        git(rig.wt, *ident, "commit", "-q", "-am", "side")
+        git(rig.wt, "checkout", "-q", "covfix-consumption")
+        git(rig.wt, *ident, "merge", "-q", "-s", "ours", "side", "-m", "merge keeping the older record")
+        git(rig.wt, "branch", "-q", "-D", "side")
+        git(rig.wt, "push", "-q", "origin", "HEAD:refs/heads/covfix-consumption")
+        rc, _, err = rig.run("pv-readout")
         self.assertEqual(rc, cw.TERMINAL, err)
         self.assertIn("lacks", err)
 
@@ -1071,6 +1205,8 @@ class RunTests(unittest.TestCase):
         rc, _, err = rig2.run("pv-writer")
         self.assertEqual(rc, cw.TERMINAL, err)
         self.assertFalse(rig2.launched())
+        rc, _, err = rig2.run("pv-writer")              # the staged mirror path cannot mask the attempt
+        self.assertEqual(rc, cw.TERMINAL, err)
 
     def test_pg_connect_frame_and_commitment(self):
         rig = Rig()
@@ -1092,9 +1228,9 @@ class RunTests(unittest.TestCase):
         rig = Rig()
         seen = []
 
-        def launch(self, command, frame):
+        def launch(self, command, frame, attempt, redact):
             seen.append(bytes(frame))
-            return 0, True
+            return cw.LaunchResult(0, True, True, False, False)
 
         with mock.patch.object(cw.Cluster, "launch", launch):
             self.assertEqual(rig.run("pg-connect")[0], 0)
@@ -1104,8 +1240,9 @@ class RunTests(unittest.TestCase):
 
     def test_launch_zeroes_its_frame(self):
         frame = bytearray(b"abc\n")
-        c = cw.Cluster([ssh_stub("cat >/dev/null")], "h")
-        self.assertEqual(c.launch("x", frame), (0, True))
+        c = cw.Cluster([ssh_stub("cat >/dev/null; echo covfix-receipt a1")], "h")
+        res = c.launch("x", frame, "a1", [])
+        self.assertEqual((res.rc, res.delivered, res.receipt, res.echoed), (0, True, True, False))
         self.assertEqual(frame, bytearray(4))
 
 
@@ -1135,23 +1272,36 @@ class RevealTests(unittest.TestCase):
 
     def test_after_stop_records_a_stop_that_blocks_later_pv_roles(self):
         rig = Rig()
-        self.assertEqual(self.reveal(rig, "--after-stop", "  ")[0], cw.REFUSED)
-        self.assertEqual(self.reveal(rig, "--after-stop", "ST1 $(rm -rf)")[0], cw.REFUSED)
-        rc, out, err = self.reveal(rig, "--after-stop", "ST1 construction finding (director ruling)")
+        _, base, salt = rig.secrets()
+        for bad in ("  ", "ST1 $(rm -rf)", "ST1 construction finding", salt, f"S{base}", "x" * 81):
+            self.assertEqual(self.reveal(rig, "--after-stop", bad)[0], cw.REFUSED, bad)
+        rc, out, err = self.reveal(rig, "--after-stop", "ST1-construction-finding")
         self.assertEqual(rc, 0, err)
-        self.assertIn("after stop: ST1", rig.events()[-1]["detail"])
-        rc, _, err = rig.run("pv-writer")
-        self.assertEqual(rc, cw.TERMINAL, err)
-        self.assertIn("reveal", err)
+        self.assertIn("after stop ST1-construction-finding", rig.events()[-1]["detail"])
+        for role in ("pv-writer", "pg-connect"):
+            rc, _, err = rig.run(role)
+            self.assertEqual(rc, cw.TERMINAL, (role, err))
+
+    def test_reveal_refuses_while_a_role_is_in_flight(self):
+        rig = Rig()
+        ctx = cw.Context(rig.cfg)
+        ctx.record.ensure_dir()
+        ctx.commit_event({"event": "spent", "key": rig.seal["seal_digest"], "role": "pv-writer"}, "m")
+        rc, out, err = self.reveal(rig, "--after-stop", "ST2")
+        self.assertEqual((rc, out), (cw.REFUSED, ""), err)
+        self.assertIn("in flight", err)
+        rc, out, err = self.reveal(rig, "--after-stop", "ST2", "--inflight-resolved", "DECISION-x")
+        self.assertEqual(rc, 0, err)
+        self.assertIn("resolved by DECISION-x", rig.events()[-1]["detail"])
 
     def test_the_commitment_and_seal_must_be_the_binding_and_reproduce(self):
         rig = Rig()
         rc, out, err = self.reveal(rig, "--after-stop", "stop", commitment="a" * 64)
         self.assertEqual(rc, cw.REFUSED, err)
         self.assertEqual(out, "")
-        rig.cfg["binding"]["commitment"] = "a" * 64
+        rig.cfg["binding"]["commitment"] = "e" * 64
         rig.write_config()
-        rc, out, err = self.reveal(rig, "--after-stop", "stop", commitment="a" * 64)
+        rc, out, err = self.reveal(rig, "--after-stop", "stop", commitment="e" * 64)
         self.assertEqual(rc, cw.TERMINAL, err)
         self.assertEqual(out, "")
         self.assertEqual(rig.events(), [])
@@ -1216,10 +1366,12 @@ class FailureBranchTests(unittest.TestCase):
                 cw.login_keychain(path)
 
     def test_config_shapes(self):
-        with self.assertRaises(cw.Stop):
-            cw.Cluster([], "h")
-        with self.assertRaises(cw.Stop):
-            cw.Mirror({"worktree": "x"})
+        for ssh, host in (([], "h"), (["ssh"], ""), ("ssh", "h")):
+            with self.assertRaises(cw.Stop):
+                cw.Cluster(ssh, host)
+        for m in ({"worktree": "x"}, {"worktree": 1, "path": "p", "remote": "o", "branch": "b"}, []):
+            with self.assertRaises(cw.Stop):
+                cw.Mirror(m, "id")
         rig = Rig()
         del rig.cfg["roles"]["pv-readout"]
         rig.write_config()
@@ -1227,7 +1379,8 @@ class FailureBranchTests(unittest.TestCase):
 
     def test_launch_survives_a_binary_that_reads_nothing(self):
         frame = bytearray(b"x" * (1 << 20))
-        self.assertEqual(cw.Cluster([ssh_stub("exit 0")], "h").launch("x", frame), (0, False))
+        res = cw.Cluster([ssh_stub("exit 0")], "h").launch("x", frame, "a", [])
+        self.assertEqual((res.rc, res.delivered, res.receipt), (0, False, False))
         self.assertEqual(frame.count(0), len(frame))
 
     def test_launch_kills_its_child_on_an_interrupt(self):
@@ -1243,7 +1396,7 @@ class FailureBranchTests(unittest.TestCase):
 
         with mock.patch.object(subprocess.Popen, "wait", wait):
             with self.assertRaises(KeyboardInterrupt):
-                c.launch("x", bytearray(b"y\n"))
+                c.launch("x", bytearray(b"y\n"), "a", [])
         self.assertEqual(len(calls), 2)
 
     def test_a_short_write_raises(self):
@@ -1253,7 +1406,7 @@ class FailureBranchTests(unittest.TestCase):
         rec.ensure_dir()
         rec.lock()
         try:
-            with mock.patch.object(cw.os, "write", return_value=1):
+            with mock.patch.object(cw.os, "write", return_value=0):
                 with self.assertRaises(OSError):
                     rec.append({"key": "1" * 64, "role": "pv-writer", "event": "spent"})
         finally:
@@ -1273,6 +1426,7 @@ class FailureBranchTests(unittest.TestCase):
         rig = Rig()
         ctx = cw.Context(rig.cfg)
         ctx.record.ensure_dir()
+        ctx.check_mirror()                               # the ledger exists before any marker
         ctx.record.mark("attempt", "7" * 64, "pv-writer")
         # as if the marker appeared after the spend checks ran: the O_EXCL create is the last word
         with mock.patch.object(cw.Context, "spend_checks", lambda self, *a: None):
@@ -1340,6 +1494,9 @@ class FailureBranchTests(unittest.TestCase):
         self.assertEqual(rc, cw.TERMINAL)
         self.assertIn("was not mirrored", err)
         self.assertEqual(rig.run("pv-writer")[0], cw.TERMINAL)
+        rc, _, err = rig.run("pv-readout")             # the writer's completion never reached the mirror
+        self.assertEqual(rc, cw.REFUSED, err)
+        self.assertIn("pushed record", err)
 
     def test_an_absorb_failure_on_an_outcome_marks_the_role(self):
         rig = Rig()
@@ -1397,14 +1554,335 @@ class FailureBranchTests(unittest.TestCase):
         self.assertEqual(r.stdout, "")
 
 
+class Round3Tests(unittest.TestCase):
+    """Behaviour added for the round-2 reads."""
+
+    def test_altered_plus_unreadable_is_still_a_break(self):
+        rig = Rig()
+        with open(os.path.join(rig.seal["seal_root"], "synthetic-truth-u0.json.gpg"), "ab") as f:
+            f.write(b"\0")
+        ct = os.path.join(rig.seal["seal_root"], "PG-MANIFEST.json.gpg")
+        os.chmod(ct, 0)
+        try:
+            rc, _, err = rig.run("pv-writer")
+        finally:
+            os.chmod(ct, 0o600)
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertIn("altered", err)
+
+    def test_nothing_found_under_the_root_refuses(self):
+        rig = Rig()
+        for n in os.listdir(rig.seal["seal_root"]):
+            os.unlink(os.path.join(rig.seal["seal_root"], n))
+        rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.REFUSED, err)
+        self.assertIn("unmounted", err)
+        self.assertEqual(rig.events(), [])
+
+    def test_an_off_binding_list_breaks_even_with_the_link_down(self):
+        rig = Rig()
+        rig.set_ssh_mode("down")
+        with open(rig.cfg["seal_file"], "a") as f:
+            f.write("# edited\n")
+        rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertIn(("break", rig.seal["seal_digest"], "seal"), rig.markers())
+
+    def test_an_attempt_marker_write_failure_spends_nothing(self):
+        rig = Rig()
+        real = cw.Record.mark
+
+        def mark(self, kind, key, role):
+            if kind == "attempt":
+                raise OSError("read-only file system")
+            return real(self, kind, key, role)
+
+        with mock.patch.object(cw.Record, "mark", mark):
+            rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.REFUSED, err)
+        self.assertEqual(rig.events(), [])
+        self.assertFalse(rig.launched())
+
+    def test_the_ledger_fixes_its_mirror(self):
+        rig = Rig()
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        other = os.path.join(rig.root, "other.git")
+        subprocess.run(["git", "init", "-q", "--bare", other], check=True)
+        git(rig.wt, "remote", "set-url", "origin", other)
+        rc, _, err = rig.run("pv-readout")
+        self.assertEqual(rc, cw.REFUSED, err)
+        self.assertIn("not the ledger's", err)
+        git(rig.wt, "remote", "set-url", "origin", rig.bare)
+        os.unlink(os.path.join(rig.cfg["record_dir"], "LEDGER.json"))
+        rc, _, err = rig.run("pv-readout")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertIn("no LEDGER.json", err)
+
+    def test_the_real_items_use_the_canonical_ledger_and_no_overrides(self):
+        rig = Rig()
+        with mock.patch.dict(os.environ, {cw.FORBID_REAL_ENV: ""}):
+            with self.assertRaises(cw.Stop) as cm:
+                cw.Context({**rig.cfg, "keychain_prefix": "covfix-"})
+            self.assertIn("canonical ledger", str(cm.exception))
+            with self.assertRaises(cw.Stop):
+                cw.Context({**rig.cfg, "keychain_prefix": "covfix-", "record_dir": cw.REAL_RECORD_DIR,
+                            "security": "/tmp/fake"})
+            with self.assertRaises(cw.Stop):
+                cw.Keychain("covfix-", security="/tmp/fake")
+
+    def test_status_does_not_touch_the_keychain(self):
+        rig = Rig()
+        with mock.patch.object(cw, "login_keychain", side_effect=AssertionError("keychain touched")):
+            rc, out, err = run_main("status", "--config", rig.config, "--config-sha256", rig.config_sha)
+        self.assertEqual(rc, 0, err)
+
+    def test_generate_reports_the_state_after_an_interrupt(self):
+        kc = cw.Keychain(new_prefix())
+        real = cw.Keychain.add
+
+        def add(self, item, value):
+            if item == "seed-base":
+                raise KeyboardInterrupt
+            return real(self, item, value)
+
+        with mock.patch.object(cw.Keychain, "add", add):
+            with self.assertRaises(cw.Stop) as cm:
+                cw.generate(kc)
+        self.assertIn("now holds 1 of 3 items (passphrase)", str(cm.exception))
+
+    def test_core_dumps_are_off(self):
+        code = ("import resource, sys; sys.path.insert(0, sys.argv[1]); import covfix_wrapper as cw; "
+                "cw.main(['generate']); print(resource.getrlimit(resource.RLIMIT_CORE))")
+        r = subprocess.run([sys.executable, "-c", code, HERE], capture_output=True, text=True)
+        self.assertEqual(r.stdout.strip(), "(0, 0)", r.stderr)
+
+    def test_gpg_redacts_the_passphrase_from_its_errors(self):
+        d = tempfile.mkdtemp(dir=TMP)
+        shim = os.path.join(d, "gpg")
+        with open(shim, "w") as f:
+            f.write("#!/bin/bash\nread -r p <&3; echo \"leak $p\" >&2; exit 2\n")
+        os.chmod(shim, 0o755)
+        pw = secrets.token_hex(32)
+        with self.assertRaises(cw.Stop) as cm:
+            cw.gpg_run(cw.GPG_DECRYPT, pw, b"x", gpg=shim)
+        self.assertNotIn(pw, str(cm.exception))
+        self.assertIn("[redacted]", str(cm.exception))
+
+
+class FreezeConflictTests(unittest.TestCase):
+    """The director's ruling (2026-11-23): a freeze conflict is refused, spends nothing, and is recorded; two
+    unresolved refusals on a seal block every role until a director ruling clears them."""
+
+    def rebind(self, rig, extra_line):
+        good = (rig.cfg["binding"]["freeze_digest"], slurp(rig.cfg["freeze_file"]))
+        with open(rig.cfg["freeze_file"], "a") as f:
+            f.write(extra_line)
+        rig.cfg["binding"]["freeze_digest"] = cw.sha256_file(rig.cfg["freeze_file"])
+        rig.write_config()
+        return good
+
+    def restore(self, rig, good):
+        with open(rig.cfg["freeze_file"], "w") as f:
+            f.write(good[1])
+        rig.cfg["binding"]["freeze_digest"] = good[0]
+        rig.write_config()
+
+    def test_a_conflict_is_refused_recorded_and_pushed(self):
+        rig = Rig()
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        bound = rig.seal["freeze_digest"]
+        self.rebind(rig, f"{bound}  extra.txt\n")
+        rc, _, err = rig.run("pv-readout")
+        self.assertEqual(rc, cw.REFUSED, err)
+        self.assertIn("refused and recorded", err)
+        e = rig.events()[-1]
+        self.assertEqual((e["event"], e["role"], e["bound"], e["presented"]),
+                         ("freeze-mismatch-refused", "pv-readout", bound, rig.cfg["binding"]["freeze_digest"]))
+        self.assertIn(b"freeze-mismatch-refused", rig.remote_record())
+        self.assertNotIn("pv-readout", [r for _, _, r in rig.markers()])
+
+    def test_two_refusals_block_every_role_until_a_ruling(self):
+        rig = Rig()
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        good = self.rebind(rig, f"{'a' * 64}  extra.txt\n")
+        for _ in range(2):
+            self.assertEqual(rig.run("pv-readout")[0], cw.REFUSED)
+        self.restore(rig, good)
+        rc, _, err = rig.run("pv-readout")            # the right freeze now waits for the ruling
+        self.assertEqual(rc, cw.REFUSED, err)
+        self.assertIn("unresolved freeze-mismatch", err)
+        self.assertEqual(rig.run("pv-readout", extra=["--freeze-mismatch-resolved", "DECISION-x y"])[0], cw.REFUSED)
+        rc, _, err = rig.run("pv-readout", extra=["--freeze-mismatch-resolved", "DECISION-20261123-freeze"])
+        self.assertEqual(rc, 0, err)
+        self.assertIn("ruling", [e["event"] for e in rig.events()])
+
+    def test_a_ruling_with_nothing_to_resolve_refuses(self):
+        rig = Rig()
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        rc, _, err = rig.run("pv-readout", extra=["--freeze-mismatch-resolved", "DECISION-x"])
+        self.assertEqual(rc, cw.REFUSED, err)
+        self.assertIn("nothing to resolve", err)
+        rc, _, err = rig.run("pg-connect", extra=["--freeze-mismatch-resolved", "DECISION-x"])
+        self.assertEqual(rc, cw.ERROR, err)
+
+    def test_a_refusal_that_cannot_be_recorded_still_refuses_and_marks_nothing(self):
+        rig = Rig()
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        self.rebind(rig, f"{'b' * 64}  extra.txt\n")
+        git(rig.wt, "remote", "set-url", "--push", "origin", os.path.join(rig.root, "no-such.git"))
+        rc, _, err = rig.run("pv-readout")
+        self.assertEqual(rc, cw.REFUSED, err)
+        self.assertIn("recording the refusal failed", err)
+        self.assertNotIn("pv-readout", [r for _, _, r in rig.markers()])
+
+    def test_refusal_lines_neither_consume_nor_bind(self):
+        k = "1" * 64
+        ev = [{"seq": 0, "key": k, "role": "pv-readout", "event": "freeze-mismatch-refused",
+               "presented": "a" * 64, "bound": "b" * 64}]
+        self.assertIsNone(cw.blocked(ev, [], k, "pv-readout"))
+        self.assertIsNone(cw.bound_freeze(ev, k))
+        self.assertEqual(cw.unresolved_freeze_refusals(ev, k), 1)
+        ev.append({"seq": 1, "key": k, "role": "ruling", "event": "ruling"})
+        self.assertEqual(cw.unresolved_freeze_refusals(ev, k), 0)
+
+
+class TraceGapTests(unittest.TestCase):
+    """The branches the round-3 line trace found unexecuted."""
+
+    def test_a_keychain_path_must_be_plain(self):
+        with self.assertRaises(cw.Stop):
+            cw.Keychain("covfix-test-", keychain="/tmp/a b")
+
+    def test_generate_says_when_the_state_cannot_be_determined(self):
+        kc = cw.Keychain(new_prefix())
+        calls = []
+
+        def exists(self, item):
+            calls.append(item)
+            if len(calls) > 3:
+                raise cw.Stop(cw.ERROR, "security broke")
+            return False
+
+        with mock.patch.object(cw.Keychain, "exists", exists), \
+                mock.patch.object(cw.Keychain, "add", side_effect=cw.Stop(cw.ERROR, "add broke")):
+            with self.assertRaises(cw.Stop) as cm:
+                cw.generate(kc)
+        self.assertIn("could not be determined", str(cm.exception))
+
+    def test_gpg_fd3_when_the_std_streams_were_closed(self):
+        code = ("import os, sys; sys.path.insert(0, sys.argv[1]); import covfix_wrapper as cw\n"
+                "assert not cw._fd_is_open(0)\n"
+                "pw = '5' * 64\n"
+                "ct = cw.gpg_run(cw.GPG_ENCRYPT, pw, b'z')\n"
+                "assert cw.gpg_run(cw.GPG_DECRYPT, pw, ct) == b'z'\n"
+                "assert not cw._fd_is_open(3)\n"
+                "sys.stderr.write('closed ok\\n')\n")
+        r = subprocess.run([sys.executable, "-c", code, HERE], capture_output=True, text=True,
+                           preexec_fn=lambda: os.close(0))
+        self.assertEqual((r.returncode, r.stderr.strip()), (0, "closed ok"), r.stderr)
+
+    def test_config_shape_errors(self):
+        with self.assertRaises(cw.Stop):
+            cw.launch_command("pv-writer", ["not", "an", "object"], [])
+        path = os.path.join(TMP, "shape.json")
+        for body in ("[]", json.dumps({"record_dir": "x", "keychain_prefix": "p", "ssh": [], "host": "h",
+                                       "mirror": {}, "roles": {}, "binding": "not an object"})):
+            with open(path, "w") as f:
+                f.write(body)
+            with self.assertRaises(cw.Stop) as cm:
+                cw.load_config(path, cw.sha256_file(path))
+            self.assertEqual(cm.exception.code, cw.ERROR)
+
+    def test_an_unreadable_ledger_file_is_terminal(self):
+        rig = Rig()
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        with open(os.path.join(rig.cfg["record_dir"], "LEDGER.json"), "w") as f:
+            f.write("{not json")
+        rc, _, err = rig.run("pv-readout")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertIn("unreadable", err)
+
+    def _conflicting_rig(self):
+        rig = Rig()
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        with open(rig.cfg["freeze_file"], "a") as f:
+            f.write(f"{'c' * 64}  extra.txt\n")
+        rig.cfg["binding"]["freeze_digest"] = cw.sha256_file(rig.cfg["freeze_file"])
+        rig.write_config()
+        return rig
+
+    def test_recording_a_refusal_without_the_lock_or_with_a_write_error_refuses(self):
+        rig = self._conflicting_rig()
+        real_lock = cw.Record.lock
+        n = []
+
+        def lock(self):
+            n.append(1)
+            if len(n) == 1:                       # the refusal's own lock (the pre-check takes none)
+                raise OSError("held")
+            return real_lock(self)
+
+        with mock.patch.object(cw.Record, "lock", lock):
+            rc, _, err = rig.run("pv-readout")
+        self.assertEqual(rc, cw.REFUSED, err)
+        self.assertIn("cannot take the record lock", err)
+        with mock.patch.object(cw.Record, "append", side_effect=OSError("disk")):
+            rc, _, err = rig.run("pv-readout")
+        self.assertEqual(rc, cw.REFUSED, err)
+        self.assertIn("failed (OSError", err)
+        self.assertNotIn("pv-readout", [r for _, _, r in rig.markers()])
+
+    def test_a_lock_failure_whose_marker_also_fails_is_terminal(self):
+        rig = Rig()
+        with mock.patch.object(cw.Record, "lock", side_effect=OSError("held")), \
+                mock.patch.object(cw.Record, "mark", side_effect=OSError("read-only")):
+            rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertIn("nor mark", err)
+
+    def test_a_break_whose_marker_cannot_be_written_still_records_the_line(self):
+        rig = Rig()
+        with open(os.path.join(rig.seal["seal_root"], "PG-MANIFEST.json.gpg"), "ab") as f:
+            f.write(b"\0")
+        real = cw.Record.mark
+
+        def mark(self, kind, key, role):
+            if kind == "break":
+                raise OSError("read-only")
+            return real(self, kind, key, role)
+
+        with mock.patch.object(cw.Record, "mark", mark):
+            rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertIn("break marker could not be written", err)
+        self.assertEqual(rig.events()[-1]["event"], "break")
+
+    def test_a_freeze_bound_by_a_concurrent_spend_is_caught_under_the_lock(self):
+        rig = Rig()
+        real = cw.Context.spend_checks
+        n = []
+
+        def checks(self, key, role, freeze):
+            n.append(1)
+            if len(n) == 2:                       # the locked re-check sees a freeze bound meanwhile
+                raise cw.FreezeConflict(key, freeze, "d" * 64)
+            return real(self, key, role, freeze)
+
+        with mock.patch.object(cw.Context, "spend_checks", checks):
+            rc, _, err = rig.run("pv-writer")
+        self.assertEqual(rc, cw.REFUSED, err)
+        self.assertEqual(rig.events()[-1]["event"], "freeze-mismatch-refused")
+        self.assertFalse(rig.launched())
+
+
 class ReferenceRoleTests(unittest.TestCase):
     def test_malformed_frames_refuse(self):
         rig = Rig()
         pw = rig.kc.read("passphrase")
         for role, frame in (("pv-writer", pw + "\nextra\n"), ("pv-writer", pw), ("pg-connect", pw + "\n"),
                             ("pg-connect", pw + "\n123\n")):
-            r = subprocess.run([sys.executable, REF, "--role", role, "--sealed", rig.seal["seal_root"]],
-                               input=frame.encode(), capture_output=True)
+            r = subprocess.run([sys.executable, REF, "--role", role, "--covfix-attempt", "a",
+                                "--covfix-seal-root", rig.seal["seal_root"]], input=frame.encode(), capture_output=True)
             self.assertNotEqual(r.returncode, 0, (role, frame[-8:]))
 
     def test_a_product_off_its_manifest_hash_is_a_typed_break(self):
@@ -1414,14 +1892,27 @@ class ReferenceRoleTests(unittest.TestCase):
         bad = {"products": {"synthetic-truth-u0.json": "0" * 64}}
         with open(os.path.join(sealed, "PG-MANIFEST.json.gpg"), "wb") as f:
             f.write(cw.gpg_run(cw.GPG_ENCRYPT, pw, json.dumps(bad).encode()))
-        r = subprocess.run([sys.executable, REF, "--role", "pv-writer", "--sealed", sealed],
-                           input=(pw + "\n").encode(), capture_output=True)
+        r = subprocess.run([sys.executable, REF, "--role", "pv-writer", "--covfix-attempt", "a9",
+                            "--covfix-seal-root", sealed], input=(pw + "\n").encode(), capture_output=True)
         self.assertEqual(r.returncode, cw.BREAK_RC)
         self.assertIn(b"does not reproduce", r.stderr)
+        self.assertEqual(r.stdout.strip().splitlines()[-1], b"covfix-break a9")
+
+    def test_a_missing_manifest_or_product_is_a_typed_break(self):
+        rig = Rig()
+        pw = rig.kc.read("passphrase")
+        sealed = rig.seal["seal_root"]
+        for gone in ("synthetic-truth-u0.json.gpg", "PG-MANIFEST.json.gpg"):
+            os.unlink(os.path.join(sealed, gone))
+            r = subprocess.run([sys.executable, REF, "--role", "pv-writer", "--covfix-attempt", "a7",
+                                "--covfix-seal-root", sealed], input=(pw + "\n").encode(), capture_output=True)
+            self.assertEqual(r.returncode, cw.BREAK_RC, (gone, r.stderr))
+            self.assertEqual(r.stdout.strip().splitlines()[-1], b"covfix-break a7")
 
     def test_wrong_passphrase_fails_in_gpg(self):
         rig = Rig()
-        r = subprocess.run([sys.executable, REF, "--role", "pv-readout", "--sealed", rig.seal["seal_root"]],
+        r = subprocess.run([sys.executable, REF, "--role", "pv-readout", "--covfix-attempt", "a",
+                            "--covfix-seal-root", rig.seal["seal_root"]],
                            input=(secrets.token_hex(32) + "\n").encode(), capture_output=True)
         self.assertEqual(r.returncode, cw.TERMINAL)
 

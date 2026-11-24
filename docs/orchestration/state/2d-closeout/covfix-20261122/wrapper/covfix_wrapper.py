@@ -4,25 +4,31 @@
   generate        create the passphrase, the PG seed base and the salt in the macOS login Keychain, never on argv;
   commitment      print sha256(seed base ':' salt-hex), the value published before PG generates (sec. 4.2);
   run             run one secret-bearing role (pg-connect, pv-writer, pv-readout) through ST4's consumption record:
-                  verify the seal and the freeze on the cluster, spend the role durably (attempt marker, append,
-                  fsync, commit, push, verify the remote blob), and only then pipe the secrets into the bound
-                  binary's stdin;
+                  verify the seal and the freeze, spend the role durably (attempt marker, append, fsync, commit,
+                  push, verify the remote blob), and only then pipe the secrets into the bound binary's stdin;
   reveal          print the seed base and salt after PV's readout, once they reproduce the commitment;
   synthetic-seal  build a dummy sealed truth with the same flags, for the end-to-end test of sec. 3.4;
   status          print the consumption record and markers (they hold no secret).
 
-THE SECRETS go from `security find-generic-password -w` into this process's memory and then into the stdin of ssh
-(no PTY), which hands them to salloc/srun, which forward stdin to the task. They are never written to a file, put
-in an argument vector or the environment, or printed. `generate` feeds `security -i` on stdin for the same reason.
+THE SECRETS go from `security find-generic-password -w` (the login Keychain, /usr/bin/security) into this
+process's memory and then into the stdin of ssh (no PTY), which hands them to salloc/srun, which forward stdin to
+the one task. They are never written to a file, put in an argument vector or the environment, or printed; the
+task's own output passes through this process and any secret in it is redacted (and the run is terminal).
 
-THE BINDING. The role config is sha-pinned in the binding, and it pins the campaign's digests too (`binding`:
-commitment, seal_digest, freeze_digest). The digests given on the command line must equal them.
+THE BINDING. The role config is sha-pinned in the binding, and it pins the campaign's digests (`binding`:
+commitment, seal_digest, freeze_digest). The digests given on the command line must equal them. The real items
+use one canonical ledger, ~/director-tools/covfix, whose mirror identity is fixed at its first write.
 
-THE STDIN FRAME a bound binary receives (cov2d's PG and PV code must read exactly this, then EOF):
-  pg-connect               b"<passphrase: 64 lowercase hex>\\n<seed base: ASCII decimal>\\n"
-  pv-writer, pv-readout    b"<passphrase: 64 lowercase hex>\\n"
-The salt never leaves this laptop before `reveal`. A bound binary that finds a confirmed integrity break (its
-manifest, chain or inputs) exits BREAK_RC (66), which the wrapper records as a break of the whole seal.
+THE INTERFACE cov2d's bound binaries must match:
+  stdin, then EOF:   pg-connect  b"<passphrase: 64 lowercase hex>\\n<seed base: ASCII decimal>\\n"
+                     pv-writer, pv-readout  b"<passphrase: 64 lowercase hex>\\n"
+  arguments:         the config's args, then --covfix-attempt <32 hex>, and for the PV roles
+                     --covfix-seal-root <dir> --covfix-freeze-root <dir> (the roots the wrapper verified)
+  stdout, last line: b"covfix-receipt <attempt>" after the role's work succeeded (else the run is terminal), or
+                     b"covfix-break <attempt>" with exit status 66 for a confirmed integrity break of its inputs,
+                     manifest or chain (recorded as a break of the whole seal)
+  never print a secret; gpg in a fresh empty GNUPGHOME with the passphrase on fd 3; no core dumps.
+The salt never leaves this laptop before `reveal`.
 
 EXIT CODES: 0 done; 2 REFUSED (nothing spent, fix and retry); 3 TERMINAL (the role or the seal is stopped);
 4 usage or environment error before any record was touched.
@@ -37,6 +43,7 @@ import hashlib
 import json
 import os
 import re
+import resource
 import secrets
 import shlex
 import shutil
@@ -44,6 +51,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 
 OK, REFUSED, TERMINAL, ERROR = 0, 2, 3, 4
@@ -53,9 +61,11 @@ EXEC_MISMATCH_RC = 86                  # the compute-side hash check of the boun
 SECURITY = "/usr/bin/security"
 ACCOUNT = "director"
 REAL_PREFIX = "covfix-"
+REAL_RECORD_DIR = "~/director-tools/covfix"
 TEST_PREFIX_RE = re.compile(r"covfix-(test|synth)-(?:[a-z0-9]+-)?")
 ITEMS = ("passphrase", "seed-base", "salt")
 FORBID_REAL_ENV = "COVFIX_FORBID_REAL_KEYCHAIN"
+KEYCHAIN_PATH = re.compile(r"/[A-Za-z0-9/._-]+")
 
 # PG's seed base (sec. 4.2): tune u's task seed = base + 10_000*u + task index, u in {0, 1}. run_gevgen_v3.sh
 # passes the seed to gevgen as both --seed and -r, so every task seed must stay below 2**31 - 1.
@@ -67,7 +77,8 @@ MAX_TASK_INDEX = 9_999                # cov2d confirms PG's task index < 10_000 
 assert SEED_BASE_HI + TUNE_STRIDE * (N_TUNES - 1) + MAX_TASK_INDEX < 2**31 - 1, "seed range overflows int32"
 
 HEX64 = re.compile(r"[0-9a-f]{64}")
-STOP_TEXT = re.compile(r"[A-Za-z0-9 .,:;()'_/-]{1,200}")
+STOP_ID = re.compile(r"[A-Za-z][A-Za-z0-9._-]{0,79}")      # a named stop or ruling, e.g. ST1 or DECISION-2026...
+SECRET_LIKE = re.compile(r"[0-9a-f]{16}|[0-9]{9}")
 
 GPG_ENCRYPT = ("gpg", "--batch", "--yes", "--pinentry-mode", "loopback", "--passphrase-fd", "3",
                "--no-symkey-cache", "--symmetric", "--cipher-algo", "AES256", "--s2k-digest-algo", "SHA512",
@@ -81,13 +92,25 @@ ROLES = {
     "pv-writer": ("seal", False),
     "pv-readout": ("seal", False),
 }
-EVENTS = ("spent", "completed", "terminal", "uncertain", "break", "reveal")
+OUTCOMES = ("completed", "terminal", "break")
+# A refused freeze conflict and the director's ruling that clears such refusals spend nothing (director, 2026-11-23).
+NON_CONSUMING = ("freeze-mismatch-refused", "ruling")
+FREEZE_MISMATCH_LIMIT = 2             # this many unresolved refusals on one seal block every role until a ruling
+EVENTS = ("spent", "uncertain", "reveal") + OUTCOMES + NON_CONSUMING
 SEAL_WIDE = ("break", "reveal")       # events that stop every role of their key
 MARK_KINDS = ("attempt", "uncertain", "break")
 RECORD_NAME = "RECORD.jsonl"
+LEDGER_NAME = "LEDGER.json"
 LOCK_NAME = "LOCK"
 LOCK_TIMEOUT_S = 10.0
 GENESIS = "0" * 64
+
+# ssh options a role config may add (after the forced -T -o RequestTTY=no); anything else is refused.
+SSH_FLAGS_WITH_VALUE = {"-i", "-p", "-l", "-F"}
+SSH_O_KEYS = {"BatchMode", "ConnectTimeout", "ServerAliveInterval", "ServerAliveCountMax", "StrictHostKeyChecking",
+              "UserKnownHostsFile", "IdentitiesOnly", "IdentityFile"}
+SLURM_VALUE = re.compile(r"[A-Za-z0-9_:.,=/-]{1,64}")
+SLURM_KEYS = {"account": "-A", "qos": "-q", "constraint": "-C", "time": "-t"}
 
 
 class Stop(Exception):
@@ -105,6 +128,14 @@ class Consumed(Stop):
         super().__init__(TERMINAL, message)
 
 
+class FreezeConflict(Stop):
+    """A freeze other than the one bound to the seal: refused, spends nothing, and is recorded."""
+
+    def __init__(self, key: str, presented: str, bound: str):
+        super().__init__(REFUSED, f"seal {key[:12]} is bound to freeze {bound[:12]}, not {presented[:12]}")
+        self.key, self.presented, self.bound = key, presented, bound
+
+
 def sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -112,10 +143,6 @@ def sha256_bytes(data: bytes) -> str:
 def sha256_file(path: str) -> str:
     with open(path, "rb") as f:
         return sha256_bytes(f.read())
-
-
-def git_blob_sha(data: bytes) -> str:
-    return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
 
 
 def utc_now() -> str:
@@ -130,6 +157,25 @@ def fsync_dir(path: str) -> None:
         os.close(fd)
 
 
+def write_all(fd: int, data: bytes) -> None:
+    view = memoryview(data)
+    while view:
+        n = os.write(fd, view)
+        if n <= 0:
+            raise OSError("short write")
+        view = view[n:]
+
+
+def no_core_dumps() -> None:
+    resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
+
+
+def str_list(x, what: str) -> list:
+    if not isinstance(x, list) or not all(isinstance(i, str) for i in x):
+        raise Stop(ERROR, f"{what} must be a JSON list of strings")
+    return list(x)
+
+
 # ----------------------------------------------------------------------------------------------------------
 # Keychain
 # ----------------------------------------------------------------------------------------------------------
@@ -139,7 +185,7 @@ def check_prefix(prefix: str) -> str:
         if os.environ.get(FORBID_REAL_ENV):
             raise Stop(ERROR, f"the real Keychain prefix {REAL_PREFIX!r} is forbidden here ({FORBID_REAL_ENV})")
         return prefix
-    if TEST_PREFIX_RE.fullmatch(prefix):
+    if isinstance(prefix, str) and TEST_PREFIX_RE.fullmatch(prefix):
         return prefix
     raise Stop(ERROR, f"Keychain prefix {prefix!r} is neither {REAL_PREFIX!r} nor covfix-test-*/covfix-synth-*")
 
@@ -147,19 +193,23 @@ def check_prefix(prefix: str) -> str:
 def login_keychain(security: str = SECURITY) -> str:
     r = subprocess.run([security, "login-keychain"], stdin=subprocess.DEVNULL, capture_output=True, text=True)
     path = r.stdout.strip().strip('"')
-    if r.returncode != 0 or not path.startswith("/") or any(c.isspace() for c in path):
-        raise Stop(ERROR, "cannot resolve the login Keychain (or its path holds whitespace)")
+    if r.returncode != 0 or not KEYCHAIN_PATH.fullmatch(path):
+        raise Stop(ERROR, "cannot resolve the login Keychain to a plain path")
     return path
 
 
 class Keychain:
     """The three director-held items, service names <prefix><item>, account 'director', in the LOGIN Keychain
-    (every call names it, so a changed default Keychain or search list cannot move them)."""
+    (every call names it). The real items always use /usr/bin/security and the resolved login Keychain."""
 
     def __init__(self, prefix: str, security: str = SECURITY, keychain: str | None = None):
         self.prefix = check_prefix(prefix)
+        if self.prefix == REAL_PREFIX and (security != SECURITY or keychain is not None):
+            raise Stop(ERROR, "the real Keychain items take no security or keychain override")
         self.security = security
         self.keychain = keychain or login_keychain(security)
+        if not KEYCHAIN_PATH.fullmatch(self.keychain):
+            raise Stop(ERROR, "the Keychain path must be plain (letters, digits, / . _ -)")
 
     def service(self, item: str) -> str:
         if item not in ITEMS:
@@ -224,7 +274,7 @@ def commitment_digest(seed_base: int, salt_hex: str) -> str:
 
 def generate(kc: Keychain) -> str:
     """Create all three items. 'exists' if all three are there; a partial set is an ERROR that names the items
-    present (never their values) and changes nothing."""
+    present (never their values) and changes nothing; any failure part-way reports what the Keychain holds."""
     present = [item for item in ITEMS if kc.exists(item)]
     if len(present) == len(ITEMS):
         return "exists"
@@ -239,10 +289,13 @@ def generate(kc: Keychain) -> str:
     for item in ITEMS:
         try:
             kc.add(item, values[item])
-        except Stop as e:
-            now = [i for i in ITEMS if kc.exists(i)]
-            raise Stop(ERROR, f"{e}; the Keychain now holds {len(now)} of {len(ITEMS)} items "
-                              f"({', '.join(now) or 'none'})")
+        except BaseException as e:
+            try:
+                now = [i for i in ITEMS if kc.exists(i)]
+                state = f"the Keychain now holds {len(now)} of {len(ITEMS)} items ({', '.join(now) or 'none'})"
+            except BaseException:
+                state = "the Keychain's state could not be determined"
+            raise Stop(ERROR, f"generate stopped at {item} ({type(e).__name__}: {e}); {state}")
     return "created"
 
 
@@ -250,38 +303,51 @@ def generate(kc: Keychain) -> str:
 # gpg, with the passphrase on fd 3 through an internal pipe (sec. 4.2 point 2)
 # ----------------------------------------------------------------------------------------------------------
 
+def _fd_is_open(fd: int) -> bool:
+    try:
+        os.fstat(fd)
+        return True
+    except OSError:
+        return False
+
+
 def gpg_run(argv, passphrase: str, payload: bytes, gpg: str = "gpg") -> bytes:
     """Run gpg with the pinned argv in a fresh, empty, private GNUPGHOME (no ambient gpg.conf can change where the
-    plaintext goes or how an integrity failure exits). Returns stdout only after gpg exited 0."""
+    plaintext goes or how an integrity failure exits), passing only fds 0-2 and 3. Returns stdout only after gpg
+    exited 0; its stderr is redacted of the passphrase before it goes into any message."""
     argv = [gpg, *argv[1:]]
     home = tempfile.mkdtemp(prefix="cfxg", dir="/tmp" if os.path.isdir("/tmp") else None)
     os.chmod(home, 0o700)
     env = {k: v for k, v in os.environ.items() if not k.startswith("GPG") and k != "GNUPGHOME"}
     env["GNUPGHOME"] = home
     r, w = os.pipe()
+    temp3 = None
     try:
         try:
-            os.write(w, passphrase.encode("ascii") + b"\n")
+            write_all(w, passphrase.encode("ascii") + b"\n")
         finally:
             os.close(w)
-
-        def child():               # runs after the std streams are set up and before fds are closed and exec
-            if r != 3:
-                os.dup2(r, 3)
-            else:
-                os.set_inheritable(3, True)
+        if r == 3:
+            keep, pre = (3,), None
+        elif _fd_is_open(3):
+            keep, pre = (r, 3), (lambda: os.dup2(r, 3))      # 3 is taken here; the child gets the pipe on 3
+        else:
+            temp3 = os.dup2(r, 3)                              # 3 is free here (only when 0-2 were closed)
+            keep, pre = (3,), None
         try:
-            # close_fds=False: Python's own descriptors are non-inheritable (PEP 446), so only 0-2 and fd 3 pass.
             p = subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                 close_fds=False, preexec_fn=child, env=env)
+                                 close_fds=True, pass_fds=keep, preexec_fn=pre, env=env)
         finally:
             os.close(r)
+            if temp3 is not None:
+                os.close(3)
         out, err = p.communicate(payload)
     finally:
         subprocess.run(["gpgconf", "--homedir", home, "--kill", "gpg-agent"], capture_output=True, env=env)
         shutil.rmtree(home, ignore_errors=True)
     if p.returncode != 0:
-        raise Stop(TERMINAL, f"gpg exited {p.returncode}: {err.decode(errors='replace').strip()[-300:]}")
+        msg = err.decode(errors="replace").replace(passphrase, "[redacted]").strip()[-300:]
+        raise Stop(TERMINAL, f"gpg exited {p.returncode}: {msg}")
     return out
 
 
@@ -325,7 +391,7 @@ HASH_END = "covfix-hash-end"
 
 # Run under bash on the login node, one typed line per requested path. The file is opened by redirection (so a
 # name like "-" is a file, never stdin). A path is MISSING only when stat says "No such file or directory"; any
-# other failure (a permission error on the file or a parent, a directory) is UNREADABLE, which refuses.
+# other failure (a permission error on the file or a parent, a directory) is UNREADABLE.
 HASH_SCRIPT = ('export LC_ALL=C; while IFS= read -r -d "" f; do '
                'if h=$(sha256sum < "./$f" 2>/dev/null); then printf "%s  %s\\n" "${h%% *}" "$f"; '
                'else e=$(stat -- "./$f" 2>&1 >/dev/null); case "$e" in '
@@ -339,17 +405,38 @@ EXEC_CHECK = ('h=$(sha256sum < "$1") || exit 87; [ "${h%% *}" = "$2" ] || '
               'b=$1; shift 2; exec "$b" "$@"')
 
 
+def check_ssh(ssh) -> list:
+    """The ssh program and the options a config may add; -T -o RequestTTY=no always go first."""
+    argv = str_list(ssh, "ssh")
+    if not argv:
+        raise Stop(ERROR, "the role config names no ssh program")
+    opts, i = argv[1:], 0
+    while i < len(opts):
+        o = opts[i]
+        if o == "-o" and i + 1 < len(opts) and opts[i + 1].split("=", 1)[0] in SSH_O_KEYS and "=" in opts[i + 1]:
+            i += 2
+        elif o in SSH_FLAGS_WITH_VALUE and i + 1 < len(opts):
+            i += 2
+        else:
+            raise Stop(ERROR, f"ssh option {o!r} is not allowed (only -o {sorted(SSH_O_KEYS)}, -i, -p, -l, -F)")
+    return [argv[0], "-T", "-o", "RequestTTY=no", *opts]
+
+
+class LaunchResult:
+    def __init__(self, rc, delivered: bool, receipt: bool, break_line: bool, echoed: bool):
+        self.rc, self.delivered, self.receipt, self.break_line, self.echoed = rc, delivered, receipt, break_line, echoed
+
+
 class Cluster:
-    def __init__(self, ssh_argv, host: str):
-        if not ssh_argv or not host:
-            raise Stop(ERROR, "the role config names no ssh program or host")
-        # No PTY, ever: a forced terminal would echo the frame back on ssh's output.
-        self.ssh_argv = [ssh_argv[0], "-T", "-o", "RequestTTY=no", *ssh_argv[1:]]
+    def __init__(self, ssh, host):
+        if not isinstance(host, str) or not host:
+            raise Stop(ERROR, "the role config names no host")
+        self.ssh_argv = check_ssh(ssh)
         self.host = host
 
     def hash_files(self, root: str, rels):
-        """(sha256 per relpath under root, set of relpaths confirmed absent), computed on the cluster. Anything
-        short of exactly one typed answer per path is the link or the environment: REFUSED."""
+        """(sha256 per relpath under root, confirmed-absent set, unreadable set), computed on the cluster.
+        Anything short of exactly one typed answer per path is the link or the environment: REFUSED."""
         remote = f"cd -- {shlex.quote(root)} || exit {ROOT_MISSING_RC}; bash -c {shlex.quote(HASH_SCRIPT)}"
         r = subprocess.run([*self.ssh_argv, self.host, remote], input=b"".join(x.encode() + b"\0" for x in rels),
                            capture_output=True)
@@ -372,14 +459,37 @@ class Cluster:
                 seen.append(line[len("covfix-unreadable "):])
             else:
                 raise Stop(REFUSED, f"hashing on {self.host}: an unexpected line; nothing spent")
-        if sorted(seen) != sorted(rels) or unreadable:
-            raise Stop(REFUSED, f"hashing on {self.host}: {len(unreadable)} unreadable path(s), "
-                                f"{len(seen)} answers for {len(rels)} paths; nothing spent")
-        return got, missing
+        if sorted(seen) != sorted(rels):
+            raise Stop(REFUSED, f"hashing on {self.host}: {len(seen)} answers for {len(rels)} paths; nothing spent")
+        return got, missing, unreadable
 
-    def launch(self, command: str, frame: bytearray) -> tuple:
-        """(exit status, whether the whole frame reached ssh's stdin). The frame is written unbuffered and zeroed."""
-        p = subprocess.Popen([*self.ssh_argv, self.host, command], stdin=subprocess.PIPE, bufsize=0)
+    def launch(self, command: str, frame: bytearray, attempt: str, redact) -> LaunchResult:
+        """Run the task, write the frame unbuffered and zero it, and pass the task's stdout and stderr through,
+        redacting any secret. The result says whether the frame was delivered, whether the last stdout line was the
+        attempt's receipt or break line, and whether a secret was echoed."""
+        p = subprocess.Popen([*self.ssh_argv, self.host, command], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, bufsize=0)
+        state = {"echoed": False, "last": b""}
+
+        def pump(src, dst, track):
+            for line in iter(src.readline, b""):
+                clean = line
+                for s in redact:
+                    if s and s in clean:
+                        clean = clean.replace(s, b"[redacted]")
+                        state["echoed"] = True
+                if track and line.strip():
+                    state["last"] = line.strip()
+                out = dst()
+                if hasattr(out, "buffer"):
+                    out.buffer.write(clean)
+                else:
+                    out.write(clean.decode(errors="replace"))
+                out.flush()
+        threads = [threading.Thread(target=pump, args=(p.stdout, lambda: sys.stdout, True), daemon=True),
+                   threading.Thread(target=pump, args=(p.stderr, lambda: sys.stderr, False), daemon=True)]
+        for t in threads:
+            t.start()
         delivered = False
         try:
             try:
@@ -394,34 +504,55 @@ class Cluster:
                 for i in range(len(frame)):
                     frame[i] = 0
                 p.stdin.close()
-            return p.wait(), delivered
+            rc = p.wait()
+            for t in threads:
+                t.join()
         except BaseException:
             p.kill()
             p.wait()
             raise
+        finally:
+            for t in threads:
+                t.join(timeout=5)
+            p.stdout.close()
+            p.stderr.close()
+        last = state["last"]
+        return LaunchResult(rc, delivered, last == f"covfix-receipt {attempt}".encode(),
+                            last == f"covfix-break {attempt}".encode(), state["echoed"])
 
 
-def launch_command(role: str, rcfg: dict) -> str:
-    """The remote command, built from the structured role config: launcher + the compute-side hash check + the
-    bound binary + its arguments. PV roles must run on an exclusive node (salloc --exclusive, srun --exclusive)."""
-    try:
-        launcher, binary, args = list(rcfg["launcher"]), rcfg["binary"], list(rcfg.get("args", []))
-        want = check_hex64(rcfg["binary_sha256"], "binary sha256")
-    except (KeyError, TypeError) as e:
-        raise Stop(ERROR, f"role config for {role} lacks or mistypes {e}")
+def launch_command(role: str, rcfg: dict, extra_args: list) -> str:
+    """The remote command, built from the structured role config: for the PV roles one exclusive node and one task
+    (salloc and srun, both --exclusive -N 1 -n 1, with only account/qos/constraint/time added), then the
+    compute-side hash check, the bound binary, its args and the wrapper's own --covfix-* args."""
+    if not isinstance(rcfg, dict):
+        raise Stop(ERROR, f"role config for {role} must be an object")
+    binary, want = rcfg.get("binary"), rcfg.get("binary_sha256")
     if not isinstance(binary, str) or not binary.startswith("/"):
         raise Stop(ERROR, f"role config for {role}: the binary must be an absolute path")
-    if not all(isinstance(x, str) for x in launcher + args):
-        raise Stop(ERROR, f"role config for {role}: launcher and args must be strings")
+    if not isinstance(want, str) or not HEX64.fullmatch(want):
+        raise Stop(ERROR, f"role config for {role}: binary_sha256 must be 64 lowercase hex")
+    args = str_list(rcfg.get("args", []), f"{role} args")
+    if any(a.startswith("--covfix-") for a in args):
+        raise Stop(ERROR, f"role config for {role}: --covfix-* arguments are the wrapper's own")
+    launcher = []
     if role != "pg-connect":
-        names = [os.path.basename(x) for x in launcher]
-        try:
-            s, r = names.index("salloc"), names.index("srun")
-        except ValueError:
-            raise Stop(ERROR, f"{role} must run under salloc and srun")
-        if not (s < r and "--exclusive" in launcher[s + 1:r] and "--exclusive" in launcher[r + 1:]):
-            raise Stop(ERROR, f"{role} must run with salloc --exclusive and srun --exclusive")
-    return shlex.join([*launcher, "bash", "-c", EXEC_CHECK, "covfix-exec", binary, want, *args])
+        slurm = rcfg.get("slurm")
+        if not isinstance(slurm, dict):
+            raise Stop(ERROR, f"{role} needs a slurm block (salloc, srun, account, qos, constraint, time)")
+        salloc, srun = slurm.get("salloc", "salloc"), slurm.get("srun", "srun")
+        if not all(isinstance(x, str) and x for x in (salloc, srun)) or \
+                os.path.basename(salloc) != "salloc" or os.path.basename(srun) != "srun":
+            raise Stop(ERROR, f"{role}: salloc and srun must name salloc and srun")
+        opts = []
+        for k, v in slurm.items():
+            if k in ("salloc", "srun"):
+                continue
+            if k not in SLURM_KEYS or not isinstance(v, str) or not SLURM_VALUE.fullmatch(v):
+                raise Stop(ERROR, f"{role}: slurm option {k!r} is not allowed or not plain")
+            opts += [SLURM_KEYS[k], v]
+        launcher = [salloc, "--exclusive", "-N", "1", "-n", "1", *opts, srun, "--exclusive", "-N", "1", "-n", "1"]
+    return shlex.join([*launcher, "bash", "-c", EXEC_CHECK, "covfix-exec", binary, want, *args, *extra_args])
 
 
 # ----------------------------------------------------------------------------------------------------------
@@ -432,12 +563,12 @@ class Record:
     """Append-only, hash-chained JSON lines in a mode-700 directory, plus O_EXCL markers.
 
     Markers: MARK-attempt-<key12>-<role> is created, fsynced, BEFORE a spend is appended, so a crash or failure at
-    any later point leaves the role blocked; MARK-uncertain-<key12>-<role> records a lock failure;
+    any later point leaves the role blocked; MARK-uncertain-<key12>-<role> records a lock or write failure;
     MARK-break-<key12>-seal is created before a break is recorded, so a break that cannot be appended still stops
     every role of the seal. Markers are never removed; each is absorbed into the chain at the next locked write."""
 
     def __init__(self, directory: str):
-        self.dir = os.path.abspath(os.path.expanduser(directory))
+        self.dir = os.path.realpath(os.path.expanduser(directory))
         self.path = os.path.join(self.dir, RECORD_NAME)
         self._lock_fd = None
 
@@ -486,7 +617,7 @@ class Record:
         except FileExistsError:
             return False
         try:
-            os.write(fd, f"{kind} {key} {role} {utc_now()}\n".encode())
+            write_all(fd, f"{kind} {key} {role} {utc_now()}\n".encode())
             os.fsync(fd)
         finally:
             os.close(fd)
@@ -534,8 +665,7 @@ class Record:
         line = json.dumps(ev, sort_keys=True, separators=(",", ":")).encode() + b"\n"
         fd = os.open(self.path, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600)
         try:
-            if os.write(fd, line) != len(line):
-                raise OSError("short write")
+            write_all(fd, line)
             os.fsync(fd)
         finally:
             os.close(fd)
@@ -552,17 +682,22 @@ class Record:
             if kind == "break":
                 if not any(e["key"] == key and e["event"] == "break" for e in events):
                     self.append({"event": "break", "key": key, "role": role, "detail": "from marker"})
-            elif not any(e["key"] == key and e["role"] == role for e in events):
+            elif not any(e["key"] == key and e["role"] == role and e["event"] not in NON_CONSUMING
+                         for e in events):
                 self.append({"event": "uncertain", "key": key, "role": role, "detail": f"from {kind} marker"})
             events = self.lines()
 
 
 def blocked(events, markers, key: str, role: str):
     """Why (key, role) may not be spent, or None. Any line or marker for the pair blocks it; a break or a reveal
-    (line or marker) blocks every role of the key."""
+    (line or marker) blocks every role of the seal; a reveal also blocks pg-connect for its commitment."""
     for e in events:
+        if e["event"] in NON_CONSUMING:
+            continue
         if e["key"] == key and (e["role"] == role or e["event"] in SEAL_WIDE):
             return f"record line seq {e.get('seq')}: {e['event']} {e['role']}"
+        if role == "pg-connect" and e["event"] == "reveal" and e.get("commitment") == key:
+            return f"record line seq {e.get('seq')}: the commitment was revealed"
     for kind, k, r in markers:
         if k == key and (r == role or kind == "break"):
             return f"{kind} marker for {r}"
@@ -576,8 +711,21 @@ def bound_freeze(events, key: str):
     return None
 
 
-def writer_completed(events, key: str) -> bool:
-    return any(e["key"] == key and e["role"] == "pv-writer" and e["event"] == "completed" for e in events)
+def unresolved_freeze_refusals(events, key: str) -> int:
+    """Freeze-mismatch refusals on the seal since its last director ruling."""
+    last = max((e["seq"] for e in events if e["key"] == key and e["event"] == "ruling"), default=-1)
+    return sum(1 for e in events if e["key"] == key and e["event"] == "freeze-mismatch-refused" and e["seq"] > last)
+
+
+def in_flight(events, key: str) -> list:
+    """PV roles of the seal that were spent and have no outcome line yet."""
+    out = []
+    for role in ("pv-writer", "pv-readout"):
+        spent = any(e["key"] == key and e["role"] == role and e["event"] == "spent" for e in events)
+        ended = any(e["key"] == key and e["role"] == role and e["event"] in OUTCOMES + ("uncertain",) for e in events)
+        if spent and not ended:
+            out.append(role)
+    return out
 
 
 # ----------------------------------------------------------------------------------------------------------
@@ -585,22 +733,22 @@ def writer_completed(events, key: str) -> bool:
 # ----------------------------------------------------------------------------------------------------------
 
 class Mirror:
-    """The record's mirror. Three guards against a restored or rewound history:
-    - every version ever published stays reachable from a local ref refs/covfix/published/<seq>;
-    - the remote branch is fetched WITHOUT force into refs/covfix/seen/<branch>, so a rewound or deleted remote
-      branch fails the fetch (terminal) instead of silently replacing what was seen;
-    - every version in any commit reachable from any ref is scanned for lines the local record lacks.
+    """The record's mirror. Guards against a restored or rewound history:
+    - every version ever published stays reachable from refs/covfix/published/<ledger id>/<seq>;
+    - the remote tip is fetched to an immutable commit id and must descend from the last-seen one (else rewound,
+      terminal); a vanished remote branch after any publication is terminal;
+    - every version in any commit reachable from any ref (full history, no simplification) is scanned for lines
+      the local record lacks.
     The remote should also forbid force pushes and deletion of the branch (a host setting, outside this tool)."""
 
-    def __init__(self, cfg: dict):
-        try:
-            self.wt = os.path.expanduser(cfg["worktree"])
-            self.rel = cfg["path"]
-            self.remote = cfg["remote"]
-            self.branch = cfg["branch"]
-        except KeyError as e:
-            raise Stop(ERROR, f"mirror config lacks {e}")
-        self.hooks = [] if cfg.get("run_hooks", False) else ["-c", "core.hooksPath=/dev/null"]
+    def __init__(self, cfg: dict, ledger_id: str):
+        if not isinstance(cfg, dict) or not all(isinstance(cfg.get(k), str) and cfg.get(k)
+                                                 for k in ("worktree", "path", "remote", "branch")):
+            raise Stop(ERROR, "the mirror config needs string worktree, path, remote and branch")
+        self.wt = os.path.expanduser(cfg["worktree"])
+        self.rel, self.remote, self.branch = cfg["path"], cfg["remote"], cfg["branch"]
+        self.ledger_id = ledger_id
+        self.hooks = [] if cfg.get("run_hooks", False) is True else ["-c", "core.hooksPath=/dev/null"]
         self.ident = ["-c", "user.name=director", "-c", "user.email=director@minerva-omnifold.invalid"]
 
     def git(self, *args, check=True, input=None):
@@ -612,46 +760,61 @@ class Mirror:
 
     @property
     def seen(self) -> str:
-        return f"refs/covfix/seen/{self.branch}"
+        return f"refs/covfix/seen/{self.ledger_id}"
+
+    @property
+    def published(self) -> str:
+        return f"refs/covfix/published/{self.ledger_id}/"
+
+    def remote_url(self) -> str:
+        return self.git("remote", "get-url", self.remote).stdout.decode().strip()
 
     def preflight(self) -> None:
         head = self.git("symbolic-ref", "--short", "HEAD").stdout.decode().strip()
         if head != self.branch:
             raise Stop(REFUSED, f"mirror worktree is on {head!r}, not {self.branch!r}")
         if self.git("status", "--porcelain", "--", self.rel).stdout.strip():
-            raise Stop(REFUSED, f"mirror path {self.rel} has uncommitted changes")
+            raise Stop(REFUSED, f"mirror path {self.rel} has uncommitted or staged changes")
 
-    def fetch(self) -> bytes | None:
-        """Fetch the branch without force; return its mirrored record bytes, or None before the first publish."""
-        had_seen = self.git("rev-parse", "-q", "--verify", self.seen, check=False).returncode == 0
-        ls = self.git("ls-remote", "--heads", self.remote, self.branch).stdout.strip()
-        if not ls:
-            if had_seen:
-                raise Stop(TERMINAL, f"the remote mirror branch {self.branch} was deleted after it was seen")
+    def blob_at(self, rev: str):
+        """The record's bytes at a commit; None if the path is absent there; REFUSED if it is present but unreadable."""
+        if not self.git("ls-tree", rev, "--", self.rel).stdout.strip():
             return None
-        incoming = f"refs/covfix/incoming/{self.branch}"
+        return self.git("cat-file", "blob", f"{rev}:{self.rel}").stdout
+
+    def fetch(self, local_nonempty: bool) -> bytes | None:
+        """Fetch the branch's tip to a commit id; return its mirrored record bytes, or None before the first publish."""
+        seen = self.git("rev-parse", "-q", "--verify", self.seen, check=False)
+        old = seen.stdout.decode().strip() if seen.returncode == 0 else None
+        ls = self.git("ls-remote", "--heads", self.remote, self.branch).stdout.decode().split()
+        if not ls:
+            published = self.git("for-each-ref", "--count=1", self.published).stdout.strip()
+            if old or published or local_nonempty:
+                raise Stop(TERMINAL, f"the remote mirror branch {self.branch} is gone after it was published")
+            return None
+        incoming = f"refs/covfix/incoming/{self.ledger_id}"
         r = self.git(*self.hooks, "fetch", "-q", self.remote, f"+refs/heads/{self.branch}:{incoming}", check=False)
         if r.returncode != 0:
             raise Stop(REFUSED, f"git fetch of the mirror failed: {r.stderr.decode(errors='replace').strip()[-300:]}")
-        if had_seen and self.git("merge-base", "--is-ancestor", self.seen, incoming, check=False).returncode != 0:
+        tip = self.git("rev-parse", "--verify", f"{incoming}^{{commit}}").stdout.decode().strip()
+        if old and self.git("merge-base", "--is-ancestor", old, tip, check=False).returncode != 0:
             raise Stop(TERMINAL, f"the remote mirror branch {self.branch} was rewound (what was seen is not an "
                                  "ancestor of its tip)")
-        self.git("update-ref", self.seen, incoming)
-        r = self.git("cat-file", "blob", f"{self.seen}:{self.rel}", check=False)
-        return r.stdout if r.returncode == 0 else None
+        self.git("update-ref", self.seen, tip, *([old] if old else []))
+        return self.blob_at(tip)
 
     def history(self) -> list:
-        """Every version of the mirrored record in any commit reachable from any ref."""
-        revs = self.git("rev-list", "--all", "--", self.rel).stdout.decode().split()
+        """Every version of the mirrored record in any commit reachable from any ref, merges included."""
+        revs = self.git("rev-list", "--all", "--full-history", "--", self.rel).stdout.decode().split()
         out = []
         for rev in revs:
-            r = self.git("cat-file", "blob", f"{rev}:{self.rel}", check=False)
-            if r.returncode == 0:
-                out.append((rev, r.stdout))
+            blob = self.blob_at(rev)
+            if blob is not None:
+                out.append((rev, blob))
         return out
 
     def publish(self, data: bytes, message: str, seq: int) -> None:
-        """Commit the record bytes, push, refetch, require the remote blob to equal them, keep a published ref."""
+        """Commit the record bytes, push, refetch, require the remote bytes to equal them, keep a published ref."""
         dest = os.path.join(self.wt, self.rel)
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         with open(dest, "wb") as f:
@@ -661,10 +824,9 @@ class Mirror:
         self.git("add", "--", self.rel)
         self.git(*self.hooks, *self.ident, "commit", "-q", "-m", message, "--", self.rel)
         self.git(*self.hooks, "push", "-q", self.remote, f"HEAD:refs/heads/{self.branch}")
-        if self.fetch() is None or \
-                self.git("rev-parse", f"{self.seen}:{self.rel}").stdout.decode().strip() != git_blob_sha(data):
-            raise Stop(TERMINAL, "the pushed mirror's blob does not equal the local record")
-        self.git("update-ref", f"refs/covfix/published/{seq:06d}", "HEAD")
+        if self.fetch(True) != data:
+            raise Stop(TERMINAL, "the pushed mirror's record does not equal the local record")
+        self.git("update-ref", f"{self.published}{seq:06d}", "HEAD", "")
 
 
 # ----------------------------------------------------------------------------------------------------------
@@ -683,19 +845,39 @@ def load_config(path: str, pinned: str) -> dict:
         cfg = json.loads(data)
     except ValueError:
         raise Stop(ERROR, "the role config is not JSON")
+    if not isinstance(cfg, dict):
+        raise Stop(ERROR, "the role config must be a JSON object")
     for k in ("record_dir", "keychain_prefix", "ssh", "host", "mirror", "roles", "binding"):
         if k not in cfg:
             raise Stop(ERROR, f"role config lacks {k!r}")
+    if not isinstance(cfg["binding"], dict) or not isinstance(cfg["roles"], dict) \
+            or not isinstance(cfg["record_dir"], str):
+        raise Stop(ERROR, "role config: binding and roles must be objects, record_dir a string")
     return cfg
 
 
 class Context:
     def __init__(self, cfg: dict):
         self.cfg = cfg
+        prefix = check_prefix(cfg["keychain_prefix"])
         self.record = Record(cfg["record_dir"])
-        self.mirror = Mirror(cfg["mirror"])
+        if prefix == REAL_PREFIX:
+            if self.record.dir != os.path.realpath(os.path.expanduser(REAL_RECORD_DIR)):
+                raise Stop(ERROR, f"the real items use the canonical ledger {REAL_RECORD_DIR} only")
+            if "security" in cfg or "keychain" in cfg:
+                raise Stop(ERROR, "the real items take no security or keychain override")
+        ledger_id = sha256_bytes(self.record.dir.encode())[:16]
+        self.mirror = Mirror(cfg["mirror"], ledger_id)
         self.cluster = Cluster(cfg["ssh"], cfg["host"])
-        self.kc = Keychain(cfg["keychain_prefix"], cfg.get("security", SECURITY), cfg.get("keychain"))
+        self._kc = None
+        self._remote_events = []
+
+    @property
+    def kc(self) -> Keychain:
+        if self._kc is None:
+            self._kc = Keychain(self.cfg["keychain_prefix"], self.cfg.get("security", SECURITY),
+                                self.cfg.get("keychain"))
+        return self._kc
 
     def pinned(self, name: str, given) -> str:
         """A campaign digest from the pinned binding; the command-line value must equal it."""
@@ -704,14 +886,39 @@ class Context:
             raise Stop(REFUSED, f"--{name.replace('_', '-')} is not the binding's {name}")
         return want
 
+    def check_ledger(self) -> None:
+        """The mirror identity (remote URL, branch, path) is fixed at the ledger's first use."""
+        ident = {"remote_url": self.mirror.remote_url(), "branch": self.mirror.branch, "path": self.mirror.rel}
+        path = os.path.join(self.record.dir, LEDGER_NAME)
+        try:
+            with open(path) as f:
+                have = json.load(f)
+        except FileNotFoundError:
+            if self.record.raw() or self.record.markers():
+                raise Stop(TERMINAL, f"the ledger {self.record.dir} has records but no {LEDGER_NAME}")
+            fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+            try:
+                write_all(fd, (json.dumps(ident, sort_keys=True) + "\n").encode())
+                os.fsync(fd)
+            finally:
+                os.close(fd)
+            fsync_dir(self.record.dir)
+            return
+        except ValueError:
+            raise Stop(TERMINAL, f"{LEDGER_NAME} is unreadable")
+        if have != ident:
+            raise Stop(REFUSED, f"this config's mirror is not the ledger's ({LEDGER_NAME}: {have})")
+
     def check_mirror(self) -> None:
         """The pushed mirror must be a prefix of the local record, and no version in its history may hold a line
         the local record lacks (a restored older copy)."""
         self.mirror.preflight()
+        self.check_ledger()
         local = self.record.raw()
-        remote = self.mirror.fetch()
+        remote = self.mirror.fetch(bool(local))
         if remote is not None and not local.startswith(remote):
             raise Stop(TERMINAL, "the local record is not an extension of the pushed mirror (restored copy?)")
+        self._remote_events = Record.parse(remote or b"", "the pushed mirror's record")
         local_lines = set(local.splitlines())
         for rev, blob in self.mirror.history():
             missing = [x for x in blob.splitlines() if x not in local_lines]
@@ -719,42 +926,83 @@ class Context:
                 raise Stop(TERMINAL, f"mirror commit {rev[:12]} holds {len(missing)} line(s) the local record "
                                      "lacks (restored copy?)")
 
+    def local_checks(self, key: str, role: str) -> None:
+        """Known local terminal states first, so no transport or mirror refusal can mask them."""
+        why = blocked(self.record.lines(), self.record.markers(), key, role)
+        if why:
+            raise Consumed(f"{role} for {key[:12]} is already consumed ({why})")
+
     def spend_checks(self, key: str, role: str, freeze) -> None:
-        """Every reason a spend of (key, role) is not allowed, read from the current record and markers."""
+        """Every reason a spend of (key, role) is not allowed, read from the current record, markers and mirror."""
         events, markers = self.record.lines(), self.record.markers()
         why = blocked(events, markers, key, role)
         if why:
             raise Consumed(f"{role} for {key[:12]} is already consumed ({why})")
         if freeze:
+            n = unresolved_freeze_refusals(events, key)
+            if n >= FREEZE_MISMATCH_LIMIT:
+                raise Stop(REFUSED, f"seal {key[:12]} has {n} unresolved freeze-mismatch refusals; every role waits "
+                                    "for a director ruling (run --freeze-mismatch-resolved <ruling id>)")
             bound = bound_freeze(events, key)
             if bound and bound != freeze:
-                raise Stop(REFUSED, f"seal {key[:12]} is bound to freeze {bound[:12]}, not {freeze[:12]}")
-        if role == "pv-readout" and not writer_completed(events, key):
-            raise Stop(REFUSED, f"pv-readout needs a completed pv-writer for seal {key[:12]}")
+                raise FreezeConflict(key, freeze, bound)
+        if role == "pv-readout":
+            pushed = any(e["key"] == key and e["role"] == "pv-writer" and e["event"] == "completed"
+                         for e in self._remote_events)
+            if not pushed:
+                raise Stop(REFUSED, f"pv-readout needs a completed pv-writer in the pushed record for seal {key[:12]}")
 
-    def commit_event(self, event: dict, message: str, absorb_exclude=None) -> None:
-        """Lock; absorb markers; for a spend, re-check the mirror and every spend condition UNDER the lock and
-        create the attempt marker; then append, fsync, commit, push, verify. Any failure after the attempt marker
-        leaves the role blocked, and is terminal."""
+    def commit_event(self, event: dict, message: str, absorb_exclude=None, soft: bool = False) -> None:
+        """Lock; check the mirror against the local record; absorb markers; for a spend, check every spend
+        condition and create the attempt marker; then append, fsync, commit, push, verify. Any failure after the
+        attempt marker (or any failure writing a non-spend event) leaves the role marked, and is terminal."""
         key, role = event["key"], event["role"]
+        spend = event["event"] == "spent"
+        if soft:
+            # A non-consuming line (a refused freeze conflict, a ruling): any failure refuses, marks nothing.
+            assert event["event"] in NON_CONSUMING
+            try:
+                self.record.lock()
+            except OSError as e:
+                raise Stop(REFUSED, f"cannot take the record lock to record {event['event']} ({e})")
+            try:
+                self.check_mirror()
+                data = self.record.append(event)
+                self.mirror.publish(data, message, len(data.splitlines()) - 1)
+            except Stop as e:
+                raise Stop(REFUSED if e.code != TERMINAL else TERMINAL, f"recording {event['event']}: {e}")
+            except Exception as e:
+                raise Stop(REFUSED, f"recording {event['event']} failed ({type(e).__name__}: {e})")
+            finally:
+                self.record.unlock()
+            return
         try:
             self.record.lock()
         except BaseException as e:
-            self.record.mark("uncertain", key, role)
+            try:
+                self.record.mark("uncertain", key, role)
+            except BaseException as m:
+                raise Stop(TERMINAL, f"cannot take the record lock ({e}) nor mark {role} uncertain ({m}); "
+                                     "the director must treat it as blocked")
             raise Stop(TERMINAL, f"cannot take the record lock ({type(e).__name__}: {e}); {role} is now blocked")
         try:
             try:
+                self.check_mirror()
                 self.record.absorb_markers(absorb_exclude)
-                if event["event"] == "spent":
-                    self.check_mirror()
+                if spend:
                     self.spend_checks(key, role, event.get("freeze"))
             except BaseException:
-                if event["event"] == "spent":
+                if spend:
                     raise                       # nothing spent: the refusal stands as raised
                 self.record.mark("uncertain", key, role)
                 raise
-            if event["event"] == "spent" and not self.record.mark("attempt", key, role):
-                raise Consumed(f"{role} for {key[:12]} has an attempt marker already")
+            if spend:
+                try:
+                    created = self.record.mark("attempt", key, role)
+                except OSError as e:
+                    raise Stop(REFUSED, f"cannot write the attempt marker ({e}); nothing spent")
+                if not created:
+                    raise Consumed(f"{role} for {key[:12]} has an attempt marker already")
             try:
                 data = self.record.append(event)
                 self.mirror.publish(data, message, len(data.splitlines()) - 1)
@@ -770,7 +1018,8 @@ class Context:
 # run
 # ----------------------------------------------------------------------------------------------------------
 
-def verify_list(ctx: Context, sumfile: str, digest: str, root: str, what: str, key: str, role: str) -> None:
+def read_list(ctx: Context, sumfile: str, digest: str, what: str, key: str, role: str) -> dict:
+    """The local checksum list: readable, on the binding, well formed (else a break). No transport involved."""
     try:
         with open(os.path.expanduser(sumfile), "rb") as f:
             data = f.read()
@@ -779,20 +1028,31 @@ def verify_list(ctx: Context, sumfile: str, digest: str, root: str, what: str, k
     if sha256_bytes(data) != digest:
         break_seal(ctx, key, role, f"{what} file does not hash to the pinned digest")
     try:
-        want = parse_sumfile(data, what)
+        return parse_sumfile(data, what)
     except Stop as e:
         break_seal(ctx, key, role, str(e))
-    got, missing = ctx.cluster.hash_files(root, list(want))
+
+
+def verify_remote(ctx: Context, want: dict, root: str, what: str, key: str, role: str) -> None:
+    got, missing, unreadable = ctx.cluster.hash_files(root, list(want))
     altered = sorted(rel for rel, d in want.items() if rel in got and got[rel] != d)
-    if missing or altered:
-        first = sorted(missing)[0] if missing else altered[0]
-        break_seal(ctx, key, role, f"{what}: {len(missing)} missing and {len(altered)} altered of {len(want)} "
-                                   f"files, first {first}")
+    if altered:
+        break_seal(ctx, key, role, f"{what}: {len(altered)} altered of {len(want)} files, first {altered[0]}")
+    if unreadable:
+        raise Stop(REFUSED, f"{what}: {len(unreadable)} unreadable path(s) on the cluster; nothing spent")
+    if missing and len(missing) == len(want):
+        raise Stop(REFUSED, f"{what}: none of the {len(want)} files exists under {root} (wrong or unmounted "
+                            "storage?); nothing spent")
+    if missing:
+        break_seal(ctx, key, role, f"{what}: {len(missing)} missing of {len(want)} files, first {sorted(missing)[0]}")
 
 
 def break_seal(ctx: Context, key: str, role: str, detail: str):
     """A confirmed break: the seal-wide marker first (durable even if the record cannot be written), then the line."""
-    ctx.record.mark("break", key, "seal")
+    try:
+        ctx.record.mark("break", key, "seal")
+    except BaseException as e:
+        detail += f"; the break marker could not be written ({e})"
     try:
         ctx.commit_event({"event": "break", "key": key, "role": role, "detail": detail},
                          f"[record] covfix: BREAK {key[:12]} ({role})", absorb_exclude=("break", key, "seal"))
@@ -801,67 +1061,124 @@ def break_seal(ctx: Context, key: str, role: str, detail: str):
     raise Stop(TERMINAL, f"BREAK: {detail}")
 
 
-def run_role(ctx: Context, role: str, seal_digest, freeze_digest, commitment) -> int:
+def record_freeze_conflict(ctx: Context, conflict: FreezeConflict, role: str):
+    """Director, 2026-11-23: refuse a freeze conflict and spend nothing, but append it (presented and bound digests),
+    committed and pushed, so the attempt is visible; it is not a break (a configuration mistake must not burn a
+    validation that is spent once)."""
+    try:
+        ctx.commit_event({"event": "freeze-mismatch-refused", "key": conflict.key, "role": role,
+                          "presented": conflict.presented, "bound": conflict.bound},
+                         f"[record] covfix: freeze mismatch refused {role} {conflict.key[:12]}", soft=True)
+    except Stop as e:
+        raise Stop(REFUSED, f"{conflict}; and recording the refusal failed: {e}")
+    raise Stop(REFUSED, f"{conflict}; refused and recorded (no spend)")
+
+
+def record_ruling(ctx: Context, key: str, ruling: str, role: str) -> None:
+    n = unresolved_freeze_refusals(ctx.record.lines(), key)
+    if n < FREEZE_MISMATCH_LIMIT:
+        raise Stop(REFUSED, f"--freeze-mismatch-resolved given, but seal {key[:12]} has {n} unresolved refusals "
+                            f"(fewer than {FREEZE_MISMATCH_LIMIT}); nothing to resolve")
+    ctx.commit_event({"event": "ruling", "key": key, "role": "ruling", "detail": f"{ruling} clears {n} "
+                      f"freeze-mismatch refusals (for {role})"},
+                     f"[record] covfix: ruling {ruling} on {key[:12]}", soft=True)
+
+
+def run_role(ctx: Context, role: str, seal_digest, freeze_digest, commitment, freeze_ruling=None) -> int:
     kind, frame_has_seed = ROLES[role]
     rcfg = ctx.cfg["roles"].get(role)
-    if not rcfg:
+    if rcfg is None:
         raise Stop(ERROR, f"the role config has no entry for {role}")
-    command = launch_command(role, rcfg)
-    ctx.record.ensure_dir()
-
+    attempt = secrets.token_hex(16)
     if kind == "seal":
         for k in ("seal_file", "seal_root", "freeze_file", "freeze_root"):
             if not isinstance(ctx.cfg.get(k), str):
                 raise Stop(ERROR, f"role config lacks {k!r}")
+        extra = ["--covfix-attempt", attempt, "--covfix-seal-root", ctx.cfg["seal_root"],
+                 "--covfix-freeze-root", ctx.cfg["freeze_root"]]
+    else:
+        extra = ["--covfix-attempt", attempt]
+    command = launch_command(role, rcfg, extra)
+    ctx.record.ensure_dir()
+    if kind == "seal":
         key = ctx.pinned("seal_digest", seal_digest)
         freeze = ctx.pinned("freeze_digest", freeze_digest)
     else:
         key = ctx.pinned("commitment", commitment)
         freeze = None
 
-    # 1. The record and its mirror, before anything else: a consumed role refuses without touching the cluster.
-    #    (Repeated under the lock at the spend.)
+    # 1. Local terminal states, then the mirror, then every spend condition. (Repeated under the lock.)
+    ctx.local_checks(key, role)
     ctx.check_mirror()
-    ctx.spend_checks(key, role, freeze)
+    freeze_ruling = check_stop_id(freeze_ruling, "--freeze-mismatch-resolved")
+    if freeze_ruling:
+        if kind != "seal":
+            raise Stop(ERROR, "--freeze-mismatch-resolved applies to the PV roles only")
+        record_ruling(ctx, key, freeze_ruling, role)
+    try:
+        ctx.spend_checks(key, role, freeze)
+    except FreezeConflict as conflict:
+        record_freeze_conflict(ctx, conflict, role)
 
     # 2. The secrets, read and checked before the spend so a Keychain failure burns nothing.
     passphrase = check_hex64(ctx.kc.read("passphrase"), "passphrase")
     frame = bytearray(passphrase.encode("ascii") + b"\n")
+    redact = [passphrase.encode("ascii")]
     if frame_has_seed:
         seed_base = parse_seed_base(ctx.kc.read("seed-base"))
         if commitment_digest(seed_base, check_hex64(ctx.kc.read("salt"), "salt")) != key:
             raise Stop(REFUSED, "the Keychain seed base and salt do not reproduce the published commitment")
         frame += str(seed_base).encode("ascii") + b"\n"
+        redact.append(str(seed_base).encode("ascii"))
 
-    # 3. The bound binary, then the seal and the freeze, hashed on the cluster.
+    # 3. The local lists (a break needs no transport), then the bound binary, the seal and the freeze on the cluster.
+    if kind == "seal":
+        seal_want = read_list(ctx, ctx.cfg["seal_file"], key, "PG-SEAL.sha256", key, role)
+        freeze_want = read_list(ctx, ctx.cfg["freeze_file"], freeze, "P2-FREEZE.sha256", key, role)
     binary, want_bin = rcfg["binary"], rcfg["binary_sha256"]
-    got_bin, _ = ctx.cluster.hash_files(os.path.dirname(binary), [os.path.basename(binary)])
+    got_bin, _, _ = ctx.cluster.hash_files(os.path.dirname(binary), [os.path.basename(binary)])
     if got_bin.get(os.path.basename(binary)) != want_bin:
         raise Stop(REFUSED, f"the bound binary {binary} does not hash to the pinned sha256; nothing spent")
     if kind == "seal":
-        verify_list(ctx, ctx.cfg["seal_file"], key, ctx.cfg["seal_root"], "PG-SEAL.sha256", key, role)
-        verify_list(ctx, ctx.cfg["freeze_file"], freeze, ctx.cfg["freeze_root"], "P2-FREEZE.sha256", key, role)
+        verify_remote(ctx, seal_want, ctx.cfg["seal_root"], "PG-SEAL.sha256", key, role)
+        verify_remote(ctx, freeze_want, ctx.cfg["freeze_root"], "P2-FREEZE.sha256", key, role)
 
-    # 4. The spend: durable (attempt marker, fsync, commit, push, remote blob verified) before any plaintext exists.
-    spent = {"event": "spent", "key": key, "role": role, "binary_sha256": want_bin}
+    # 4. The spend: durable (attempt marker, fsync, commit, push, remote record verified) before any plaintext.
+    spent = {"event": "spent", "key": key, "role": role, "binary_sha256": want_bin, "attempt": attempt}
     if freeze:
         spent["freeze"] = freeze
-    ctx.commit_event(spent, f"[record] covfix: spent {role} {key[:12]}")
+    try:
+        ctx.commit_event(spent, f"[record] covfix: spent {role} {key[:12]}")
+    except FreezeConflict as conflict:            # bound by a concurrent first spend after the pre-check
+        record_freeze_conflict(ctx, conflict, role)
 
-    # 5. The launch. A crash, a dropped link or an undelivered frame after this point is terminal; no retry.
-    try:
-        rc, delivered = ctx.cluster.launch(command, frame)
-    except BaseException as e:
-        rc, delivered = f"interrupted ({type(e).__name__})", False
-    if rc == BREAK_RC and kind == "seal":
-        ctx.record.mark("break", key, "seal")
-        outcome, detail = "break", f"the bound {role} reported a confirmed integrity break (rc {BREAK_RC})"
-    elif rc == 0 and delivered:
-        outcome, detail = "completed", "rc 0"
+    # 5. A stop recorded while the spend was publishing wins over the launch.
+    stops = [e for e in ctx.record.lines() if e["event"] in SEAL_WIDE]
+    why = blocked(stops, ctx.record.markers(), key, "-") or \
+        (kind == "commitment" and blocked(stops, [], key, "pg-connect"))
+    if why:
+        outcome, detail, res = "terminal", f"stopped before launch ({why})", None
     else:
-        outcome, detail = "terminal", f"rc {rc}" + ("" if delivered else ", frame not delivered")
+        # 6. The launch. A crash, a dropped link, an undelivered frame or a missing receipt is terminal; no retry.
+        try:
+            res = ctx.cluster.launch(command, frame, attempt, redact)
+        except BaseException as e:
+            res, outcome, detail = None, "terminal", f"interrupted ({type(e).__name__})"
+        if res is not None:
+            if res.echoed:
+                outcome, detail = "terminal", f"rc {res.rc}; the task echoed a secret (redacted here)"
+            elif res.rc == BREAK_RC and res.break_line and kind == "seal":
+                ctx.record.mark("break", key, "seal")
+                outcome, detail = "break", f"the bound {role} reported a confirmed integrity break"
+            elif res.rc == 0 and res.delivered and res.receipt:
+                outcome, detail = "completed", "rc 0, receipt"
+            else:
+                outcome, detail = "terminal", (f"rc {res.rc}" + ("" if res.delivered else ", frame not delivered")
+                                               + ("" if res.receipt else ", no receipt"))
+    for i in range(len(frame)):
+        frame[i] = 0
     try:
-        ctx.commit_event({"event": outcome, "key": key, "role": role, "detail": detail},
+        ctx.commit_event({"event": outcome, "key": key, "role": role, "detail": detail, "attempt": attempt},
                          f"[record] covfix: {outcome} {role} {key[:12]}",
                          absorb_exclude=("break", key, "seal") if outcome == "break" else None)
     except Stop as e:
@@ -875,25 +1192,39 @@ def run_role(ctx: Context, role: str, seal_digest, freeze_digest, commitment) ->
 # reveal
 # ----------------------------------------------------------------------------------------------------------
 
-def reveal(ctx: Context, seal_digest, commitment, after_stop) -> int:
+def check_stop_id(text, flag: str) -> str:
+    if text is None:
+        return None
+    t = text.strip()
+    if not STOP_ID.fullmatch(t) or SECRET_LIKE.search(t):
+        raise Stop(REFUSED, f"{flag} must be a stop or ruling identifier (a letter, then letters, digits, . _ -; "
+                            "no long hex or digit runs)")
+    return t
+
+
+def reveal(ctx: Context, seal_digest, commitment, after_stop, inflight_resolved) -> int:
     ctx.record.ensure_dir()
     key = ctx.pinned("seal_digest", seal_digest)
     commitment = ctx.pinned("commitment", commitment)
+    after_stop = check_stop_id(after_stop, "--after-stop")
+    inflight_resolved = check_stop_id(inflight_resolved, "--inflight-resolved")
     ctx.check_mirror()
     events = ctx.record.lines()
-    done = [e for e in events if e["key"] == key and e["role"] == "pv-readout"
-            and e["event"] in ("completed", "terminal")]
-    if after_stop is not None and not STOP_TEXT.fullmatch(after_stop.strip() or "-"):
-        raise Stop(REFUSED, "--after-stop must name the stop in plain words (letters, digits, .,:;()'_/- only)")
-    if not done and not (after_stop or "").strip():
-        raise Stop(REFUSED, "PV's readout has no outcome line for this seal; reveal needs --after-stop '<stop>'")
+    done = [e for e in ctx._remote_events if e["key"] == key and e["role"] == "pv-readout" and e["event"] in OUTCOMES]
+    if not done and not after_stop:
+        raise Stop(REFUSED, "PV's readout has no outcome in the pushed record; reveal needs --after-stop <stop id>")
+    busy = in_flight(events, key)
+    if busy and not inflight_resolved:
+        raise Stop(REFUSED, f"{', '.join(busy)} spent with no outcome yet (in flight?); reveal needs "
+                            "--inflight-resolved <ruling id> once the director has ruled")
     seed_base = parse_seed_base(ctx.kc.read("seed-base"))
     salt = check_hex64(ctx.kc.read("salt"), "salt")
     if commitment_digest(seed_base, salt) != commitment:
         raise Stop(TERMINAL, "the Keychain seed base and salt do not reproduce the published commitment")
-    # The reveal line stops every PV role of the seal for good, and it is recorded before anything is printed.
+    # The reveal line stops every PV role of the seal and pg-connect for good; it is recorded before any print.
+    detail = f"after {done[-1]['event']} readout" if done else f"after stop {after_stop}"
     ctx.commit_event({"event": "reveal", "key": key, "role": "reveal", "commitment": commitment,
-                      "detail": f"after {done[-1]['event']} readout" if done else f"after stop: {after_stop.strip()}"},
+                      "detail": detail + (f"; in flight resolved by {inflight_resolved}" if busy else "")},
                      f"[record] covfix: reveal for {key[:12]}")
     print(f"seed_base={seed_base}")
     print(f"salt={salt}")
@@ -946,6 +1277,7 @@ def synthetic_seal(kc: Keychain, out: str, gpg: str = "gpg") -> dict:
 # ----------------------------------------------------------------------------------------------------------
 
 def main(argv=None) -> int:
+    no_core_dumps()
     ap = argparse.ArgumentParser(prog="covfix_wrapper.py", description=__doc__.split("\n\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     g = sub.add_parser("generate", help="create the three Keychain items, never overwriting")
@@ -962,9 +1294,12 @@ def main(argv=None) -> int:
             p.add_argument("--role", required=True, choices=sorted(ROLES))
             p.add_argument("--freeze-digest")
             p.add_argument("--commitment")
+            p.add_argument("--freeze-mismatch-resolved", help="a director ruling id clearing this seal's "
+                                                               "freeze-mismatch refusals")
         if name == "reveal":
             p.add_argument("--commitment", required=True)
             p.add_argument("--after-stop")
+            p.add_argument("--inflight-resolved")
     s = sub.add_parser("synthetic-seal", help="build a dummy sealed truth with test credentials")
     s.add_argument("--keychain-prefix", required=True)
     s.add_argument("--out", required=True)
@@ -988,8 +1323,8 @@ def main(argv=None) -> int:
             print(f"markers: {ctx.record.markers()}")
             return OK
         if a.cmd == "reveal":
-            return reveal(ctx, a.seal_digest, a.commitment, a.after_stop)
-        return run_role(ctx, a.role, a.seal_digest, a.freeze_digest, a.commitment)
+            return reveal(ctx, a.seal_digest, a.commitment, a.after_stop, a.inflight_resolved)
+        return run_role(ctx, a.role, a.seal_digest, a.freeze_digest, a.commitment, a.freeze_mismatch_resolved)
     except Stop as e:
         print(f"covfix: {['OK', '', 'REFUSED', 'TERMINAL', 'ERROR'][e.code]}: {e}", file=sys.stderr)
         return e.code
