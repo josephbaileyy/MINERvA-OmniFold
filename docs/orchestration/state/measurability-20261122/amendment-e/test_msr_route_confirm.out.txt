@@ -1,0 +1,25 @@
+test_output_fields_rows_and_no_reading_value (test_msr_route_confirm.EndToEnd.test_output_fields_rows_and_no_reading_value) ... ok
+test_refuses_a_changed_msr_project_or_diag2 (test_msr_route_confirm.EndToEnd.test_refuses_a_changed_msr_project_or_diag2) ... REFUSED: msr_project.py is f073cb94e149e45e018c4ba24e0824cbdebc59da624c9ff2beef43e0fb3ecefc, not 0000000000000000000000000000000000000000000000000000000000000000
+REFUSED: msr_route_diag2.py is 35d2357f7eec5954c5b9de0d32bfbbcf9cb3cb93bebc82249f0e2ad0e71e2c1b, not 0000000000000000000000000000000000000000000000000000000000000000
+ok
+test_refuses_an_existing_output (test_msr_route_confirm.EndToEnd.test_refuses_an_existing_output) ... REFUSED: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp0m76578z/x.json exists
+ok
+test_refuses_when_a_control_fails (test_msr_route_confirm.EndToEnd.test_refuses_when_a_control_fails) ... REFUSED: a first-block control failed
+ok
+test_refuses_when_a_target_row_is_not_reached (test_msr_route_confirm.EndToEnd.test_refuses_when_a_target_row_is_not_reached) ... REFUSED: target rows not reached: ['2d#999']
+ok
+test_kappa_from_singular_values (test_msr_route_confirm.Kappa.test_kappa_from_singular_values) ... ok
+test_rank_deficient_is_infinite (test_msr_route_confirm.Kappa.test_rank_deficient_is_infinite) ... ok
+test_the_pins_match_the_files (test_msr_route_confirm.Pins.test_the_pins_match_the_files) ... ok
+test_missing_or_extra_rows_fail (test_msr_route_confirm.Verdict.test_missing_or_extra_rows_fail) ... ok
+test_nan_inf_and_partition_fail (test_msr_route_confirm.Verdict.test_nan_inf_and_partition_fail) ... ok
+test_one_route_missing_on_one_row_fails (test_msr_route_confirm.Verdict.test_one_route_missing_on_one_row_fails) ... ok
+test_pass_needs_every_row (test_msr_route_confirm.Verdict.test_pass_needs_every_row) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 24.965s
+
+OK
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpncif8_o0/ref/readout.json"}
+{"verdict": "PASS", "rows_passing": 6, "rows": 6}
+rc=0
