@@ -95,6 +95,66 @@ computed before this declaration, its reads and the director's GO.
   - all of B's outputs go under a fresh `$OUT` (`msr-b-20261123`), never into the probe's. The probe's `$OUT` stays as
     is until B's records merge, and its removal is Joseph's call (it is listed for him);
   - every C-* control, including C-DID and C-RID, is applied locally to the fetched products, before any reading.
+- **Amendment C (2026-11-23, after the local run STOPped at C-DID, `run-local/`; the director's ruling):** an executability
+  fix that changes no number, bar or set of any reading. It makes three controls implement §6's text as written.
+  - **C-DID** compares "on the functionals both name", as §6 says.
+    - Rule: the intersection must be non-empty, and its size must equal **151** for these inputs. That value is a
+      recorded expectation, pinned, not a tolerance.
+    - The one-sided names are recorded and printed: IBU-1 only `EW_all_ones` and `total_integrated`, plus D-ID's 32
+      names that IBU-1 lacks.
+    - Values are checked on the intersection at the declared bars. The code had also required every IBU-1 name to be
+      among D-ID's, which is stricter than §6 and caused the STOP.
+  - **C-2D** takes §6's bar, relative ≤ 1e-12 cell by cell. The code had required M and b_known to match exactly.
+  - **C-D** checks each F0b truth whose bias is converted with d: the 11 primary truths and the secondary
+    `closure_nuwro`.
+    - The six P-sets (ungraded, §4 printed secondary) have no FD-PRR entry, so they are printed only in truth-relative
+      units (P/f0), and C-D records them as "printed without d".
+    - The code had checked the primaries only. A literal "each F0b truth used" would have stopped on the P-sets, which
+      §4 prints without d.
+  - **C-RID, C-T3 and C-F0B** were audited against §6 and need no change:
+    - C-T3 matches §6.
+    - C-F0B's equal-name-set condition is implied by "bias equal in the two readouts".
+    - C-RID's NaN-pattern condition on null_fraction is no stricter than the declared absolute bar for these inputs,
+      which hold no NaN.
+- **Amendment E (2026-11-23, after the rerun STOPped at C-ROUTE, `run-local-2/`; the director's ruling on
+  `route-diag2/`):** an executability fix that changes **how** §3.3's quantities are computed. It changes no number, bar,
+  cut (1e-12 and 0.10 stay), set or reading.
+  - **Why.** Diagnostic 1 (`route-diag/`) found the routes disagreeing on 21 2D Z_well rows, with κ₂(Wᵀ C W) only 539.
+    Diagnostic 2 (`route-diag2/`) compared both routes with a 50-digit mpmath reference, from the same float64 inputs
+    through §3.3, and its pre-committed rule printed `c-formation`, which the director confirmed. So C's float64
+    formation is the defect, not either route alone. C = J F_c⁺ Jᵀ takes its scale from the largest widths, so rounding
+    at ε‖C‖ swamps well-constrained s² ≤ 0.01 in both routes.
+  - **E1, F_c's eigenpairs.** They come from the thin SVD of its root A: the rows R_i/√μ_i over reco cells with μ > 0,
+    which are `did.fisher`'s rows, so AᵀA = F_c. Then λ = σ², and v are the right singular vectors, completed with A's
+    null space if fewer reco cells are kept than parameters. F_c is not formed for §3.3's decomposition, and the
+    1e-12·λ_max cut applies to these λ unchanged. C-DID's reproduction of D-ID keeps `eigh(did.fisher)`, as D-ID
+    computed it.
+  - **E2, the eigen route.** C is never formed. G = J V_r Λ_r^{-1/2}, so C = G Gᵀ. C_Q's eigenpairs (s², c) are the
+    singular pairs of B_Qᵀ G, and w = B_Q c. The well-constrained block (s ≤ 0.10) is then re-diagonalized from Gᵀ W,
+    whose singular values are ≤ 0.10, so no small width is a difference of large numbers. In exact arithmetic this is
+    §3.3's C_Q eigen-decomposition. C_Q cannot be singular on Q, because a zero-width direction would lie in U∞. So
+    dim Q > the number of range directions (G's columns) is refused as a numerical defect (a crash, so the run stops),
+    not padded with zero widths. A zero width within these dimensions needs J to be row-rank deficient, which C-RANK
+    stops. After refinement the widths are re-sorted ascending, because rounding may reorder near-equal widths.
+  - **E3, the independent route (C-ROUTE).** χ²_well = aᵀ(Wᵀ C W)⁻¹a by a triangular solve with the R factor of a QR of
+    Gᵀ W, since Wᵀ C W = (Gᵀ W)ᵀ(Gᵀ W). W still comes from a pivoted QR of the well-constrained block. It remains a solve,
+    not eigenvalues (QR against SVD).
+  - **E4, N-PREC's driver pair.** The pair applies to these SVDs as two LAPACK families: "numpy" is
+    `numpy.linalg.svd` (gesdd), and "evr" is `scipy.linalg.svd(lapack_driver="gesvd")`. The generalized eigenproblem
+    for U∞ is unchanged (`scipy.linalg.eigh`).
+  - **Tests.**
+    - A synthetic ill-conditioned fixture (`test_msr.AmendmentE`, two seeds). On the pre-amendment code at 88994c9a,
+      both routes miss the 50-digit reference by more than 1e-8 (`old_formation_check.py`). On this code both routes
+      are within 1e-8 with both drivers.
+    - The existing suite, a line tracer over every executable line, and mutants. One mutant restores C's float64
+      formation in each route, and both must be killed.
+    - An agy read, and the director's review of the diff.
+  - **What follows.**
+    - A blind confirmation on the real inputs with diagnostic 2's fields and rows: both routes within 1e-8 of the
+      reference on all 21 2D rows, with `ref_partition_equal` true. The 5D control rows get a 50-digit reference too,
+      since 5D has 29 parameters. Only pass or fail and the count are reported.
+    - Then one rerun of the full run at the merged commit into `run-local-3/`. Any STOP is terminal and goes to the
+      director.
 
 **Rulings folded in (the director, 2026-11-22):** Q1, a cluster build (login node if light, otherwise one shared-QOS job of
 at most 0.1 node-h); Q2, T3's B0, MO and OP as operands; Q3, H2 truth cells, with the 16-cell biases taken through the

@@ -1,0 +1,17 @@
+killed    tol boundary
+killed    indep branch any
+killed    c-form any->all
+killed    partition ignored
+killed    rows check off
+killed    fisher mu skip off
+killed    range cut off
+killed    null tol
+killed    well cut
+killed    z no s
+killed    no BQ
+killed    fisher no 1/mu
+killed    5d ref nan off
+killed    partition none ok off
+killed    missing check off
+mutants 15; not killed 0
+rc=0

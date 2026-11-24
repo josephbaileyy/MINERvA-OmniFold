@@ -1,0 +1,181 @@
+### Q1. Output Identity with `MNV101_DUMP_MUONQ` Unset
+
+**Yes**, with `MNV101_DUMP_MUONQ` unset, the program's behavior and output are byte-for-byte identical to production.
+
+Every added branch booking, address binding, reading, and resetting operation is guarded by the flag:
+- **Struct definition & name constants** ([runEventLoopOmniFold.cpp:190-271](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/runEventLoopOmniFold.cpp#L190-L271)): Pure declarations (`struct RecoMuonQDump`, `kRecoMuonQBranchNames`) with zero runtime side effects when unused.
+- **Truth-only miss rebind** ([runEventLoopOmniFold.cpp:882-885](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/runEventLoopOmniFold.cpp#L882-L885)):
+  ```cpp
+  RecoMuonQDump missMuq;  // constructor sets every field to -9999
+  const bool haveMuonQ = (getenv("MNV101_DUMP_MUONQ") != nullptr &&
+                          sigOut->GetBranch("mu_p_total") != nullptr);
+  if(haveMuonQ) missMuq.Bind(sigOut);
+  ```
+  `missMuq` is a local stack allocation initializing 14 primitive member fields to `-9999`. With the environment variable unset, `getenv` returns `nullptr`, `haveMuonQ` is `false`, and `missMuq.Bind(sigOut)` is never invoked.
+- **Name-exclusion set in miss path** ([runEventLoopOmniFold.cpp:919-927](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/runEventLoopOmniFold.cpp#L919-L927)):
+  ```cpp
+  const std::set<std::string> muonQNames(std::begin(kRecoMuonQBranchNames),
+                                         std::end(kRecoMuonQBranchNames));
+  ...
+  if(explicitNames.count(nm) || muonQNames.count(nm)) continue;
+  ```
+  When `MNV101_DUMP_MUONQ` is unset, no branches from `kRecoMuonQBranchNames` are created on `sigOut`, and no production branch name matches any name in that set. Hence `muonQNames.count(nm)` evaluates to `0` for every branch on `sigOut`. The branch rebind iteration is identical to production.
+- **MC Signal Reco Tree** ([runEventLoopOmniFold.cpp:1081-1083](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/runEventLoopOmniFold.cpp#L1081-L1083), [1284-1287](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/runEventLoopOmniFold.cpp#L1284-L1287)):
+  ```cpp
+  const bool dumpMuonQ = (getenv("MNV101_DUMP_MUONQ") != nullptr);
+  RecoMuonQDump muq;
+  if(dumpMuonQ) muq.Book(out);
+  ```
+  ```cpp
+  if(dumpMuonQ){
+    muq.Reset();                       // -9999 on !passesReco, like sim/sim_pz
+    if(passesReco) muq.Read(recoCV);   // reco mode, CV universe at entry i
+  }
+  ```
+  Guarded by `dumpMuonQ`. Unset, `muq.Book(out)` and `muq.Read(recoCV)` are skipped entirely.
+- **MC Background Tree** ([runEventLoopOmniFold.cpp:1449-1450, 1485](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/runEventLoopOmniFold.cpp#L1449-L1450), [1575-1579](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/runEventLoopOmniFold.cpp#L1575-L1579)):
+  ```cpp
+  const bool dumpMuonQ = (getenv("MNV101_DUMP_MUONQ") != nullptr);
+  RecoMuonQDump muq;
+  ...
+  if(dumpMuonQ) muq.Book(out);
+  ```
+  ```cpp
+  if(dumpMuonQ){
+    // Every background row passed the reco selection, so the reco muon exists.
+    muq.Reset();
+    muq.Read(recoCV);
+  }
+  ```
+  Guarded by `dumpMuonQ`. Unset, `muq.Book(out)` and `muq.Read(recoCV)` are skipped.
+- **Data Tree** ([runEventLoopOmniFold.cpp:1659-1661](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/runEventLoopOmniFold.cpp#L1659-L1661), [1716-1720](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/runEventLoopOmniFold.cpp#L1716-L1720)):
+  ```cpp
+  const bool dumpMuonQ = (getenv("MNV101_DUMP_MUONQ") != nullptr);
+  RecoMuonQDump muq;
+  if(dumpMuonQ) muq.Book(out);
+  ```
+  ```cpp
+  if(dumpMuonQ){
+    // Every data row passed isDataSelected, so the reco muon exists.
+    muq.Reset();
+    muq.Read(dataCV);
+  }
+  ```
+  Guarded by `dumpMuonQ`. Unset, `muq.Book(out)` and `muq.Read(dataCV)` are skipped.
+
+---
+
+### Q2. Filesystem Access Constraints
+
+**No**, nothing writes outside `/pscratch/sd/j/josephrb/ibuchi-evloop-20261123/`, and **nothing writes to CFS** (no paths under `/global/cfs`).
+
+- **build.sh**: Sets `ROOT=/pscratch/sd/j/josephrb/ibuchi-evloop-20261123` ([build.sh:5](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/build.sh#L5)). Writes exclusively under `$ROOT`:
+  - [build.sh:9](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/build.sh#L9): `mkdir -p $ROOT/src $ROOT/build $ROOT/opt`
+  - [build.sh:10](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/build.sh#L10): `rsync -a --exclude 'build' --exclude 'build.*' --exclude '.ipynb_checkpoints' $S/ $ROOT/src/`
+  - [build.sh:12](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/build.sh#L12): `cp $CPP $ROOT/src/runEventLoopOmniFold.cpp`
+  - [build.sh:15-16](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/build.sh#L15-L16): CMake build and configure output directed to `$ROOT/build/configure.log` and `$ROOT/build/build.log`.
+  - [build.sh:17](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/build.sh#L17): `install -D -m 755 $ROOT/build/runEventLoopOmniFold $ROOT/opt/bin/runEventLoopOmniFold`
+- **evl.sbatch**: Sets `ROOT=/pscratch/sd/j/josephrb/ibuchi-evloop-20261123` ([evl.sbatch:17](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/evl.sbatch#L17)). Writes exclusively under `$ROOT`:
+  - [evl.sbatch:12-13](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/evl.sbatch#L12-L13): Slurm logs to `/pscratch/sd/j/josephrb/ibuchi-evloop-20261123/logs/evl_%a_%A.out` and `.err`.
+  - [evl.sbatch:20](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/evl.sbatch#L20): `mkdir -p $ROOT/work/$PL $ROOT/out && cd $ROOT/work/$PL`
+  - [evl.sbatch:24](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/evl.sbatch#L24): `mv -v runEventLoopOmniFold.root $ROOT/out/runEventLoopOmniFold_${PL}.root`
+- **ana.sbatch**: Sets `ROOT=/pscratch/sd/j/josephrb/ibuchi-evloop-20261123` ([ana.sbatch:15](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.sbatch#L15)). Writes exclusively under `$ROOT`:
+  - [ana.sbatch:11-12](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.sbatch#L11-L12): Slurm logs to `/pscratch/sd/j/josephrb/ibuchi-evloop-20261123/logs/ana_%j.out` and `.err`.
+  - [ana.sbatch:19](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.sbatch#L19): Merged ROOT file written in `$ROOT/out/runEventLoopOmniFold_MEFHC.root`.
+  - [ana.sbatch:20](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.sbatch#L20): `mkdir -p $ROOT/products && /usr/bin/time -v python3 $ROOT/scripts/ana.py > $ROOT/products/ana.json`
+- **ana.py**: Sets `R = "/pscratch/sd/j/josephrb/ibuchi-evloop-20261123"` ([ana.py:4](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L4)). Writes exclusively under `$R`:
+  - [ana.py:59](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L59): `np.savez_compressed(R + "/products/ibuchi_products.npz", ...)`
+  - [ana.py:62](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L62): `print(json.dumps(out))` (redirected to `$ROOT/products/ana.json`).
+
+---
+
+### Q3. Command Execution & Pipeline Safety
+
+- **`squeue` check**: None of `build.sh`, `evl.sbatch`, `ana.sbatch`, or `ana.py` call `squeue`.
+- **`set -e` / `pipefail`**: Every shell script specifies strict error-handling flags at the top:
+  - `build.sh:4`: `set -eo pipefail`
+  - `evl.sbatch:15`: `set -eo pipefail`
+  - `ana.sbatch:14`: `set -eo pipefail`
+- **Pipeline evaluation**:
+  - `build.sh:7`: `[ "$(sha256sum $CPP | cut -c1-64)" = "$PIN_CPP" ] || { echo "REFUSED: uploaded cpp sha differs"; exit 2; }`
+  - `build.sh:19`: `grep -c -E 'warning|error' $ROOT/build/build.log || true` — explicit `|| true` guards against exit code 1 when no warnings/errors are present.
+  - `evl.sbatch:22`: `env | grep '^MNV101_' | sort` — line 19 exports `MNV101_DUMP_MUONQ=1`, ensuring `grep` finds matches and returns status 0.
+  - `ana.sbatch:17`: `cd $ROOT/out; ls runEventLoopOmniFold_1?.root | wc -l | grep -qx 12 || { echo "REFUSED: not 12 playlist outputs"; exit 2; }` — with `pipefail`, an upstream failure in `ls` propagates an exit status > 0 to abort the pipeline and trigger the `|| { echo ...; exit 2; }` refusal.
+
+No pipe hides a failure.
+
+---
+
+### Q4. Implementation Compliance with `DECLARATION.txt`
+
+`ana.py` matches `DECLARATION.txt` in all controls, variant definitions, parameter ranges, steps, and binning:
+
+1. **Controls**:
+   - **C-KIN** ([DECLARATION.txt:19-20](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/DECLARATION.txt#L19-L20)): Verified in [ana.py:11, 20-26](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L11-L26):
+     ```python
+     def kin(p, th): return p / 1000 * np.sin(th), p / 1000 * np.cos(th)
+     ...
+     def ctl_kin(a, x, z, passed):
+         m = passed & (a["mu_p_total"] > 0)
+         pt, pz = kin(a["mu_p_total"][m], a["mu_theta"][m])
+         return float(max(np.max(np.abs(pt - a[x][m])), np.max(np.abs(pz - a[z][m])))), float(np.max(np.abs(th3(a["mu_thetaX"][m], a["mu_thetaY"][m]) - a["mu_theta"][m])))
+     out["C_KIN_sig"], out["C_ANG_sig"] = ctl_kin(sig, "sim", "sim_pz", sig["sim_pass"] != 0)
+     out["C_KIN_bkg"], out["C_ANG_bkg"] = ctl_kin(bkg, "sim_background", "sim_background_pz", bkg["sim_background_pass"] != 0)
+     out["C_KIN_data"], out["C_ANG_data"] = ctl_kin(dat, "measured", "measured_pz", dat["measured_pass"] != 0)
+     ```
+   - **C-ANG** ([DECLARATION.txt:21](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/DECLARATION.txt#L21)): Verified in [ana.py:12, 23](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L12):
+     ```python
+     def th3(tx, ty): return np.arctan(np.sqrt(np.tan(tx)**2 + np.tan(ty)**2))
+     ```
+   - **C-REPRO** ([DECLARATION.txt:16-18](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/DECLARATION.txt#L16-L18)): Unweighted tree entry counts recorded in [ana.py:18](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L18) (`"n_sig": int(len(sig["sim"]))`, `"n_bkg": int(len(bkg["w_bkg"]))`, `"n_data": int(len(dat["measured"]))`), and products `BASE_M`, `T`, `BASE_B`, `BASE_N` are exported in [ana.py:59](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L59) for offline scoring.
+
+2. **Variants**:
+   - **BASE** ([DECLARATION.txt:24](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/DECLARATION.txt#L24)): Built in [ana.py:43](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L43) with production reco values and flags.
+   - **SEL** ([DECLARATION.txt:25-27](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/DECLARATION.txt#L25-L27)): Defined and applied in [ana.py:35, 44](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L35):
+     ```python
+     def Q(a): return (a["mu_trk_quality"] == 1) & ((a["mu_used_curv"] == 0) | (np.abs(a["mu_trk_eqp_qp"]) < 0.3))
+     ...
+     prod["SEL"] = build(sig["sim"], sig["sim_pz"], sp & Q(sig), bkg["sim_background"], bkg["sim_background_pz"], Q(bkg), dat["measured"], dat["measured_pz"], Q(dat))
+     ```
+   - **MAD** ([DECLARATION.txt:28](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/DECLARATION.txt#L28)): Built in [ana.py:45-46](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L45-L46) using `mu_mad_p` with angles preserved.
+   - **CURV(d)** ([DECLARATION.txt:29](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/DECLARATION.txt#L29)): Scanned in [ana.py:48-53](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L48-L53) with range $[-0.03, +0.03]$ and step $0.001$ (`d in [-3 %, +3 %] step 0.1 %`), modifying $p = (\mu\_p\_\text{total} - \mu\_p\_\text{minos}) + \mu\_p\_\text{minos}(1 + d)$ for `curv` (`mu_used_curv == 1`) in data only.
+   - **RANGE(d)** ([DECLARATION.txt:30](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/DECLARATION.txt#L30)): Scanned in [ana.py:51-53](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L51-L53) with `~curv` (`mu_used_curv == 0`) across identical grid and step in data only.
+   - **ANG(dx, dy)** ([DECLARATION.txt:31](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/DECLARATION.txt#L31)): Scanned in [ana.py:54-58](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L54-L58) with range $[-0.003, +0.003]$ rad and step $0.00025$ rad (`dx, dy in [-3, +3] mrad, step 0.25 mrad`) using $\theta_{3D}$.
+
+3. **Binning**:
+   Defined in [ana.py:5](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L5):
+   ```python
+   PT = np.array([0,0.07,0.15,0.25,0.33,0.40,0.47,0.55,0.70,0.85,1.00,1.25,1.50,2.50,4.50]); PZ = np.array([1.5,2,2.5,3,3.5,4,4.5,5,6,7,8,9,10,15,20,40,60])
+   ```
+   14 $p_T$ bins and 16 $p_{||}$ bins yielding 224 unrolled bins, consistent with the declared boundaries (e.g. $p_T \in [0, 0.07]$, $p_{||} \in [40, 60]$).
+
+**List of mismatches**: None.
+
+---
+
+### Q5. Physics and Numerical Integrity Checks
+
+- **Units (MeV vs GeV)**:
+  - `mu_p_total`, `mu_p_minos`, and `mu_mad_p` are filled in MeV by `runEventLoopOmniFold.cpp` ([runEventLoopOmniFold.cpp:208, 209, 218](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/runEventLoopOmniFold.cpp#L208)).
+  - [ana.py:11](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L11): `kin(p, th)` divides `p / 1000` to convert to GeV before evaluating $p_T$ and $p_{||}$.
+  - `sim`, `sim_pz`, `measured`, `measured_pz`, `sim_background`, `sim_background_pz`, `MC`, and `MC_pz` are filled in GeV by `runEventLoopOmniFold.cpp` ([runEventLoopOmniFold.cpp:1279-1280, 1570-1571, 1711-1712](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/runEventLoopOmniFold.cpp#L1279-L1280)).
+  - `PT` and `PZ` bin edges in [ana.py:5](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L5) are specified in GeV. No unit discrepancies exist.
+- **The theta3D Formula**:
+  - [ana.py:12](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L12): `np.arctan(np.sqrt(np.tan(tx)**2 + np.tan(ty)**2))` correctly models the projected angles $\tan^2 \theta = \tan^2 \theta_X + \tan^2 \theta_Y$.
+- **Selection Masks**:
+  - Signal reco is gated by `sp = sig["sim_pass"] != 0` ([ana.py:41](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L41)), properly keeping misses (`sim_pass == 0`) out of migration matrix $M$.
+  - True fiducial signal is gated by `tru` ([ana.py:31](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L31): `np.arctan2(tp, tz) < np.radians(20)`), so truth denominator $T$ correctly includes both reco-selected signal and truth-only misses.
+  - Background is gated by `bok` ([ana.py:33](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L33): `bkg["sim_background_pass"] != 0`), and data is gated by `dok` ([ana.py:34](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L34): `dat["measured_pass"] != 0`).
+- **Weights times POT Scale**:
+  - [ana.py:13](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L13): `s = f.Get("dataPOTUsed").GetVal() / f.Get("mcPOTUsed").GetVal()`.
+  - Signal weights are scaled by `s` in [ana.py:29](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L29) (`wt, wr = wt * s, wr * s`) and applied to $T$ and $M$ without double-scaling.
+  - Background weights are scaled by `s` in [ana.py:38](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L38) (`weights=bw[mb] * s`).
+  - Data counts are unweighted ([ana.py:39](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/ana.py#L39)).
+- **Background and Data Gating**:
+  - Gated properly in `runEventLoopOmniFold.cpp` ([runEventLoopOmniFold.cpp:1568, 1709](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyread/files/runEventLoopOmniFold.cpp#L1568)).
+
+No bugs found.
+
+---
+
+VERDICT: GO

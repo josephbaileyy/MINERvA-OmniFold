@@ -1,0 +1,5 @@
+srun rc=0
+{"source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full_bkgaware.root", "n": 32849103, "pot_scale": 0.21240500334472884, "n_nonfinite_truthpass": 8839, "w_nonfinite_frac": 0.0002994649112368961, "Enu_q": [2.6153323149484238, 6.4816463021336865, 40.292402803029155], "Q2_neg_frac": 0.00018381019414746272}
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:30.39
+	Maximum resident set size (kbytes): 11621284
+1e491dff6683e960dd1015819ff6147fac725f6fe72456a56627fc8e34fe6ca4  wsplit_a1.npz

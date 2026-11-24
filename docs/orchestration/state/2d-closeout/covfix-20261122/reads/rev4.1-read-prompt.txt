@@ -1,0 +1,10 @@
+Read-only review. Never write anywhere except the single report file /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/agy-covfix41/report.md.
+
+inputs/COVFIX-DECLARATION.md is rev 4.1 of a draft pre-registration. Your own read of rev 4 (inputs/agy-rev4-REPORT.md)
+found three MAJOR and two MINOR defects and no BLOCKING one. inputs/rev4-to-rev4.1.diff is the complete change from rev 4
+(inputs/COVFIX-DECLARATION-rev4.md) to rev 4.1.
+1. For each of the five defects: CLOSED or OPEN, with the rev 4.1 line.
+2. Does the diff introduce any new defect (check every number it adds: 1.8e-6, 5.4e-6, 0.85, 0.15, 0.023, 0.07,
+   1.279, 1.267)? Does anything else in the declaration still contradict the changed text?
+3. Setting aside the binding prerequisites listed in section 9, is rev 4.1 ready to bind?
+Give each finding a severity and a fix. First line of the report: GO or NO-GO.

@@ -1,0 +1,14 @@
+Read-only review. Never write anywhere except the single report file /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/agy-covfix5/report.md.
+
+inputs/COVFIX-DECLARATION.md is rev 5 of a draft pre-registration. The second reader (codex-school2) returned NO-GO on
+rev 4.1 (inputs/codex2-rev4.1-REPORT.md). inputs/rev4.1-to-rev5.diff is the complete change; rev 5's header ("Rev 5
+answers ...") maps findings to sections. inputs/DECISION-20261123.md is Joseph's decision the draft now cites.
+1. For every BLOCKING and MAJOR finding in codex2-rev4.1-REPORT.md: CLOSED, PARTLY CLOSED, or OPEN in rev 5, with the
+   line.
+2. New defects introduced by the diff: logic, statistics (sections 6.1-6.5: F_exp and F~, the calibration law and its
+   bias grid, the whole-rule simulation and its gates, the conservative binomial cutoffs, the affirmative total bar and
+   the stated 0.025 / 0.075 false-PASS, the k >= 25 illustration numbers 5.1/6.8 and 10.3/13.3 SE), the verdict
+   precedence, prices (the exception phase PX numbers 33.25, 1.90, 57.00, 15.20, 95.00), custody and spent-once, and
+   consistency with DECISION-20261123. Does anything elsewhere in the declaration still contradict the changed text?
+3. Setting aside binding prerequisites (iris receipt, PG session, passphrase), is rev 5 ready to bind?
+Give each finding a severity (BLOCKING, MAJOR, MINOR) and a concrete fix. First line of the report: GO or NO-GO.

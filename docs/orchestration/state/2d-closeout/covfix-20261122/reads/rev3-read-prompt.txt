@@ -1,0 +1,27 @@
+Read-only review. Never write anywhere except the single report file /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/grok-covfix3/report.md.
+
+inputs/COVFIX-DECLARATION.md is DRAFT rev 3 of a pre-registration to fix a 2D cross-section covariance that under-covers
+at two held-out generator tunes. Rev 2 got NO-GO from two readers (inputs/grok-rev2-REPORT.md, inputs/agy-rev2-REPORT.md);
+rev 3's header lists how each finding is answered. Other inputs: the records cited (COV2D declaration and outcome, T2A,
+REGRADE and its amendment, the 2D regrade JSONs, the G2R adoption decision, RE-2 part C report, KNOWN_ISSUES 84-85, F1
+report and declaration, IBUKT A2, b1, PV2D excerpts, a NODE-SHA256 excerpt for the Q file, and cov2d's identity check of
+that file), plus inputs/director-rev0-items.md.
+
+The outside review's Fix 1: separate bias from fluctuation (E[ee^T] = C_fluct + b b^T); test the matrix of cases along V's
+eigenmodes; accept (A) construction error found and fixed, (B) coverage for a stated model class with truth-model bias
+quantified separately, or (C) uncertainties only for coarser or selected combinations; no scaling the covariance until
+the two tunes pass.
+
+Answer with line numbers from COVFIX-DECLARATION.md:
+1. For every BLOCKING and MAJOR finding in both rev-2 reports: CLOSED, PARTLY CLOSED, or OPEN in rev 3, with the line.
+2. Is the new structure sound: K0 = Q_rep + C_model_abs with the single relative carry V(t) = D_t V D_t; every candidate
+   = fluctuation block + bias block; PASS = fluctuation two-sided AND total one-sided ("not under")? Does the one-sided
+   total let a bad candidate through? Does C_b as a SUM over six truths (including the spent G18 and AR23, whose
+   biases are large) make K_B trivially pass the total bar at the validation truths, and if so, is the two-sided
+   fluctuation bar enough to keep outcome B meaningful? Say what outcome B would then actually certify.
+3. New defects in rev 3: fidelity, logic, statistics (section 6.4 numbers, SE(f_R), the residual stop, the k floor),
+   prices (check every product and total), custody and spent-once enforceability (piped passphrase, login-node writer,
+   encrypted graded truths, plaintext scan), and the ST1 named exception.
+4. Anything that should block binding; anything minor. Binding prerequisites already listed in section 9 (iris receipt,
+   KI 85 decision, PG session, passphrase) are known and need not be re-raised as defects unless the text mishandles them.
+Give each finding a severity (BLOCKING, MAJOR, MINOR) and a concrete fix. First line of the report: GO or NO-GO.

@@ -1,0 +1,8 @@
+Read-only review. Never write anywhere except the single report file /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/agy-covfix10/report.md.
+inputs/COVFIX-DECLARATION.md is rev 10 of a draft pre-registration. inputs/rev9-to-rev10.diff is the complete change
+from rev 9. The rev 9 reads are inputs/agy-rev9-REPORT.md and inputs/codex2-rev9-REPORT.md. Scope is fixed by the director: K_C and outcome C are dropped; no testability veto and no rate claims (stress runs descriptive only); one Gaussian reference law; custody in the simpler form; the binding ceiling is 409.22 node-h with ST6 as the hard stop, by the director. Do not re-raise items those decisions removed; judge rev 10 as scoped. Prefer fixes that remove rather than add machinery.
+1. For each finding in both rev 9 reports: CLOSED, PARTLY CLOSED, or OPEN in rev 10, with the line.
+2. New defects introduced by the diff (check every price number in section 3 and the rev 10 header), and any remaining
+   internal contradiction anywhere in the declaration.
+3. Setting aside binding prerequisites (iris receipt, PG session, passphrase), is rev 10 ready to bind?
+Severity (BLOCKING, MAJOR, MINOR) and a fix for each. First line: GO or NO-GO.

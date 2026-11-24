@@ -457,9 +457,9 @@ install_layout_fig() {  # install_layout_fig <basename under $NFP and in $FIGDIR
   echo "  installed $1 ($want)"
 }
 # install_layout_fig q3_excess_projection.pdf                 32084e6044ae80181b5f627d499012b16197b67f762d02a8a7c6ac9ee1ca47ef   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
-install_layout_fig paper_fig_coverage.pdf                   e1c3a18072270c99d89de22f2d56f08ae2992d44ed03bba9f325b3b27d2e6b59
-install_layout_fig paper_fig_bkg_residual.pdf               1c6732728aecb53930d26be5f93480d821fd451c3cf868cf054c4c4b993decc1
-install_layout_fig fived16_headline.pdf                     97766f5c52470b8bdc1f46b982fdbdae97d7c67aef9fde4faf9f27e680ee0f3e
+# install_layout_fig paper_fig_coverage.pdf                   e1c3a18072270c99d89de22f2d56f08ae2992d44ed03bba9f325b3b27d2e6b59   (superseded by the figure redraw of 2026-11-23; installed below by install_redraw_fig)
+# install_layout_fig paper_fig_bkg_residual.pdf               1c6732728aecb53930d26be5f93480d821fd451c3cf868cf054c4c4b993decc1   (superseded by the figure redraw of 2026-11-23; installed below by install_redraw_fig)
+# install_layout_fig fived16_headline.pdf                     97766f5c52470b8bdc1f46b982fdbdae97d7c67aef9fde4faf9f27e680ee0f3e   (superseded by the figure redraw of 2026-11-23; installed below by install_redraw_fig)
 install_layout_fig runperiod_steps.pdf                      4496bcf824d56393e50991b1b6f70068df15ffd73eb5f7add26f738c7e1d95fb
 # install_layout_fig mode_decomp_mec_eavail_central.pdf       0b30b46b0456039d499e4bd399f9160d49ea1da42fa8d171c901099bfadadb7f   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
 # install_layout_fig MEFHC_5iter_xsec_proj_pt.pdf             f401ad1c3de18a34305f59d03fc3d4fb1a00360d9f68f8212c7b5fc564744b2c   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
@@ -505,6 +505,27 @@ install_current_fig eavailW_band.pdf                         9e71e49361259663458
 install_current_fig eavail_marginal_vs_paper_pull_full.pdf   7f272d2639db72b2cecec5ada11d4bf4e0da470703f2729189bed86c880f0cb9
 install_current_fig mode_decomp_mec_eavail_central.pdf       b56f4d90b1047b8aa8842bf47534d457848208d97c201f3fd3e60ca2f32d2f0c
 install_current_fig q3_excess_projection.pdf                 2c836ace97c0c36d811f698d9aa6652ff8f8b38867abb6ec6d149841029f8222
+
+# 2026-11-23 (rh/figs-b4-s3-20261123; Joseph approved each figure and caption): Figs. fig:bkg-residual-note,
+# fig:coverage-5d-paper and fig:fived16-headline redrawn, presentation only. Record: note-figredraw-20261123/README.md
+# (rounds 1-4 and the final R07 label; tools/run_arms.sh <wt> <bkg|cov|f16> P). Arm 0 reproduces each file installed
+# above byte-equal but the date; every plotted value is bit-equal by name (tools/check_data.py). Fig. 7's heatmaps do
+# not draw panel (a)'s 84 standard errors (kept in the data dump and checked). Installed after every earlier line.
+NRD="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/figs"
+install_redraw_fig() {  # install_redraw_fig <basename under $NRD and in $FIGDIR> <sha256>
+  local src="$NRD/$1" dst="$FIGDIR/$1" want="$2"
+  if [[ "$(sha256_of "$src")" != "$want" ]]; then
+    echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1
+  fi
+  cp "$src" "$dst"
+  if [[ "$(sha256_of "$dst")" != "$want" ]]; then
+    echo "REFUSE install: $dst differs from $src after the copy" >&2; exit 1
+  fi
+  echo "  installed $1 ($want)"
+}
+install_redraw_fig paper_fig_bkg_residual.pdf               4ce60395d4136cd21959665e6ee5d65fbd746fb99795e675a8d99c0af84180aa
+install_redraw_fig paper_fig_coverage.pdf                   3d035311565d1e08f9226bf13d7553574cb178d7d6eb34be54ff0bf6f3ea826f
+install_redraw_fig fived16_headline.pdf                     1002e7056bfe457f1f932a10b886d4a7b2996fcfb8507dee380f2bb9f5826bf6
 
 echo
 echo "== paper-only vector crops =="

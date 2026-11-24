@@ -1,0 +1,208 @@
+{
+ "primary_pz_40_60": {
+  "cells": 14,
+  "sum_N": 20355.0,
+  "sum_B": 1453.4808518655204,
+  "B_over_N_pct": 7.140657587155591,
+  "gap_y_minus_f": 1874.4903094731976,
+  "gap_over_B": 1.2896560054900743,
+  "K": 2.289656005490074,
+  "reading": "INTERMEDIATE",
+  "C_Y_refined_over_NminusB": 0.9997831406180562,
+  "per_cell": [
+   {
+    "ipt": 0,
+    "ipz": 15,
+    "B_over_N_pct": 13.14,
+    "K": 2.32
+   },
+   {
+    "ipt": 1,
+    "ipz": 15,
+    "B_over_N_pct": 6.87,
+    "K": 2.29
+   },
+   {
+    "ipt": 2,
+    "ipz": 15,
+    "B_over_N_pct": 6.85,
+    "K": 3.37
+   },
+   {
+    "ipt": 3,
+    "ipz": 15,
+    "B_over_N_pct": 7.57,
+    "K": 1.9
+   },
+   {
+    "ipt": 4,
+    "ipz": 15,
+    "B_over_N_pct": 6.38,
+    "K": 2.86
+   },
+   {
+    "ipt": 5,
+    "ipz": 15,
+    "B_over_N_pct": 6.42,
+    "K": 2.65
+   },
+   {
+    "ipt": 6,
+    "ipz": 15,
+    "B_over_N_pct": 8.38,
+    "K": 1.75
+   },
+   {
+    "ipt": 7,
+    "ipz": 15,
+    "B_over_N_pct": 6.62,
+    "K": 2.58
+   },
+   {
+    "ipt": 8,
+    "ipz": 15,
+    "B_over_N_pct": 6.52,
+    "K": 2.4
+   },
+   {
+    "ipt": 9,
+    "ipz": 15,
+    "B_over_N_pct": 6.23,
+    "K": 2.81
+   },
+   {
+    "ipt": 10,
+    "ipz": 15,
+    "B_over_N_pct": 6.36,
+    "K": 1.93
+   },
+   {
+    "ipt": 11,
+    "ipz": 15,
+    "B_over_N_pct": 7.31,
+    "K": 1.73
+   },
+   {
+    "ipt": 12,
+    "ipz": 15,
+    "B_over_N_pct": 6.88,
+    "K": 2.19
+   },
+   {
+    "ipt": 13,
+    "ipz": 15,
+    "B_over_N_pct": 8.22,
+    "K": 2.51
+   }
+  ]
+ },
+ "secondary_pt_0_007": {
+  "cells": 16,
+  "sum_N": 15621.0,
+  "sum_B": 919.6916113093258,
+  "B_over_N_pct": 5.887533520961051,
+  "gap_y_minus_f": -820.688527195442,
+  "gap_over_B": -0.8923518678473784,
+  "K": 0.10764813215262159,
+  "reading": "WRONG-SIGN",
+  "C_Y_refined_over_NminusB": 1.0007213022833292,
+  "per_cell": [
+   {
+    "ipt": 0,
+    "ipz": 0,
+    "B_over_N_pct": 46.43,
+    "K": 0.99
+   },
+   {
+    "ipt": 0,
+    "ipz": 1,
+    "B_over_N_pct": 14.31,
+    "K": 0.73
+   },
+   {
+    "ipt": 0,
+    "ipz": 2,
+    "B_over_N_pct": 5.05,
+    "K": 0.37
+   },
+   {
+    "ipt": 0,
+    "ipz": 3,
+    "B_over_N_pct": 3.04,
+    "K": -1.09
+   },
+   {
+    "ipt": 0,
+    "ipz": 4,
+    "B_over_N_pct": 2.16,
+    "K": -1.11
+   },
+   {
+    "ipt": 0,
+    "ipz": 5,
+    "B_over_N_pct": 2.21,
+    "K": -2.34
+   },
+   {
+    "ipt": 0,
+    "ipz": 6,
+    "B_over_N_pct": 1.92,
+    "K": -1.87
+   },
+   {
+    "ipt": 0,
+    "ipz": 7,
+    "B_over_N_pct": 1.97,
+    "K": -2.15
+   },
+   {
+    "ipt": 0,
+    "ipz": 8,
+    "B_over_N_pct": 1.64,
+    "K": -1.93
+   },
+   {
+    "ipt": 0,
+    "ipz": 9,
+    "B_over_N_pct": 1.93,
+    "K": -5.19
+   },
+   {
+    "ipt": 0,
+    "ipz": 10,
+    "B_over_N_pct": 2.2,
+    "K": 2.06
+   },
+   {
+    "ipt": 0,
+    "ipz": 11,
+    "B_over_N_pct": 2.55,
+    "K": -3.11
+   },
+   {
+    "ipt": 0,
+    "ipz": 12,
+    "B_over_N_pct": 2.41,
+    "K": -0.3
+   },
+   {
+    "ipt": 0,
+    "ipz": 13,
+    "B_over_N_pct": 1.99,
+    "K": -1.08
+   },
+   {
+    "ipt": 0,
+    "ipz": 14,
+    "B_over_N_pct": 3.08,
+    "K": -3.86
+   },
+   {
+    "ipt": 0,
+    "ipz": 15,
+    "B_over_N_pct": 13.14,
+    "K": 2.32
+   }
+  ]
+ }
+}

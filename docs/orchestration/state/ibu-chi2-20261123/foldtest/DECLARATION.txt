@@ -1,0 +1,28 @@
+# Fold test: the published result seen through our response, against our reco data (declared before computing)
+
+Inputs: priortest/in/signed_data.npz (7a35b7e2...: M[reco,truth], T, refined_y, signed_y); priortest/vectors.npz
+(F extraction factor, ur10 = our refined IBU K=10 yield, pub, mask; all from the passed prior test);
+~/cov2d-work/figfetch/er-anc/xsec.root (a5c13fc3...): hDataReco2D, hBkgReco2D. potScale 0.212405.
+
+Truth vectors: t_pub = pub/F on the 205 reported cells; on the 19 unreported cells use ur10 (secondary: T).
+Fold: f = R t, R = M/T (columns with T>0). Reco cells: the 224 in-grid cells with data count N_i > 0.
+Errors: data e_d,i = sqrt(N_i) (Poisson on the raw data count); approx MC e_m,i^2 = potScale * sum_j (t_j/T_j)^2 M_ij
+(unit-weight approximation; mean tune weight ~0.83 so it is approximate); combined e_i^2 = e_d^2 + e_m^2.
+
+Controls (must pass, else STOP):
+ C-Y     signed_y == hDataReco2D - hBkgReco2D on in-grid cells, rel <= 1e-9.
+ C-OWN   our own fold R@ur10 is reported beside the published fold (reference, no bar).
+ C-POW   a synthetic +2% linear-in-log(p||) tilt applied to f is detected by P|| at |z| > 3 (else UNINFORMATIVE for P||).
+
+Statistics on reco cells, with r_i = y_i/f_i - 1 (refined_y primary; signed_y secondary):
+ G     chi2_reco/n with e_d, and with e (combined); normalization Sum y / Sum f.
+ P||   weighted LS slope of r on log(p|| reco-column centre), z = slope/sigma (combined errors).
+ EDGE  weighted mean r on reco cells crossed by theta = 20 deg minus interior mean, z (combined).
+ LOWPT weighted mean r on reco pT bins 0-1 (pT < 0.15) minus the rest, z (combined).
+ Each pattern is FLAGGED if |z| > 3. Readings:
+  CONSISTENT  G(combined)/n <= 1.5 and no flag  -> publication is compatible with our data through our response;
+              the IBU distance would then come from the iteration path, not from a data/response mismatch.
+  PATTERNED   any flag -> name the flagged patterns (descriptive pointer, not a cause).
+  MISFIT      G(combined)/n > 1.5 and no flag -> mismatch with no declared pattern.
+Descriptive: same statistics for our own fold R@ur10; pT-row and p||-column weighted mean r.
+Not citable for a cause; nothing committed.

@@ -120,3 +120,38 @@ working tree is exactly the fixed point of `reflow_tex.reflow_text` applied to t
 generated files unchanged). It passes; a one-word change to a reflowed records file fails it (REFLOW-IDENTITY). The
 typeset text of the four PDFs is unchanged across the reflow (pdftotext byte-identical).
 
+
+## Records edits after the reflow (`--since`, 2026-11-23)
+
+`--reflowed-from` alone requires every records source to be exactly the reflow of 666d71fdd, so any later records
+edit fails it by construction, including a new generated value key in `values_fived16.tex`, which `main_records.tex`
+inputs. A records edit after the reflow is checked with
+
+```
+python3 records_reorg.py check --phase D --base ab0596ac3 --reflowed-from 666d71fdd --since <main sha> [--template FILE]
+```
+
+This runs the reorganization gate as before (`ab0596ac3` against `666d71fdd`), then two post-reflow gates:
+
+- **CHAIN**, from the reflow of 666d71fdd to `<main sha>`. It proves that main itself is reached by declared changes
+  only; a plain reflow passes with no row.
+- **SINCE**, from `<main sha>` to the working tree.
+
+Both gates compare **reflowed paragraphs**: each paragraph is one printed line, whatever its wrapping, and heading
+titles count, labels do not. They cover the records closure without the four generated files.
+
+| What changed | What declares it |
+|---|---|
+| A paragraph or generated value line that newly prints (a one-word edit is one lost and one new paragraph) | an `adds.tsv` row `text, reason, P` |
+| One that stops printing | a `drops.tsv` row `line, text, reason, P` |
+| A comment line that goes | a `comment-fixes.tsv` row `old, new, reason, P` (the new line must be a comment now), or a `drops.tsv` row `comment, text, reason, P` |
+
+A register re-anchor that printed must still print.
+
+The P rows are cumulative, from the reflow onward. Each needs a reason, every one must be used by one of the two gates,
+and the reorganization gate never reads them, just as the post-reflow gate never reads the B/C/D rows. `--template FILE`
+writes the undeclared changes as rows to copy into the named files, with `<reason>` to fill in; a reason that starts
+with `<` fails.
+
+The self-test plants 23 post-reflow cases, among them a one-word undeclared change (fails), the same change declared
+(passes), a changed heading title (fails), an unused row (fails), and a declared change inside the chain.

@@ -365,22 +365,24 @@ def make_fixture(root: Path, seed: int = 11) -> tuple[Path, dict]:
     put("h2_rid", Rf, t0)
     R1, t1 = resp(nf, nT1), rng.uniform(1e3, 2e3, nT1)
     put("t1_did", R1, t1, bx=np.zeros(nf))
-    maps = rng.uniform(0, 1, (6, nT1))
+    ibu_names = names + ["IBU1ONLY"]                 # a functional IBU-1 names and D-ID does not (Amendment C)
+    maps = rng.uniform(0, 1, (len(ibu_names), nT1))
     z5["t1_did__maps"] = maps
     np.savez(prod / "r5d.npz", **z5)
     F1 = P.fisher_c(did, R1, t1, z5["t1_did__b_known"])
     lam, V = np.linalg.eigh(F1)
     sig, nul = did.widths_from_eig(lam, V, maps)
     srel = sig / np.abs(maps @ t1)
-    all_names = names + [f"X{i}" for i in range(179)]
+    all_names = names + ["DIDONLY"] + [f"X{i}" for i in range(178)]   # and one D-ID names and IBU-1 does not
     sr183, nf183 = np.full(183, np.nan), np.full(183, np.nan)
-    sr183[:6], nf183[:6] = srel, nul
+    sr183[:6], nf183[:6] = srel[:6], nul[:6]
+    sr183[6], nf183[6] = 0.5, 0.0
     np.savez(root / "tables.npz", names=np.array(all_names), f183=np.arange(183),
              **{"T1/nominal/widths_nom/sigma_rel": sr183, "T1/nominal/widths_nom/null_fraction": nf183})
     rid = {"label": "x", "sigma_rel": list(rng.uniform(0.01, 0.2, 16)), "null_fraction": [0.0] * 16, "n_null_modes": 0,
            "n_cells_grid": nH}
     (prod / "r5d.json").write_text(json.dumps({"world_shape": shape, "axes": ["pt", "pz", "eavail", "q3", "W"],
-                                               "C-L_linearity_rel": 0.0, "R-ID_rebuilt": rid, "t1_names": names,
+                                               "C-L_linearity_rel": 0.0, "R-ID_rebuilt": rid, "t1_names": ibu_names,
                                                "n_cells": {"h2": nH, "t1": nT1, "h2_rid": nH, "h2_nonempty_coarse": nH}}))
     # 2D
     T = rng.uniform(50, 100, 224)
@@ -440,6 +442,12 @@ def make_fixture(root: Path, seed: int = 11) -> tuple[Path, dict]:
     return prod, ops
 
 
+class Pins(unittest.TestCase):
+    def test_the_recorded_c_did_expectation(self):
+        self.assertEqual(P.C_DID_COMMON_EXPECTED, 151)
+        self.assertEqual(P.F0B_SECONDARY_WITH_D, ("closure_nuwro",))
+
+
 class Problems(unittest.TestCase):
     def test_5d_gradient_is_the_count_space_one(self):
         """Section 3.3: J = diag(1/f0) L (count space, the gradient widths_from_eig uses), f0 = L t0."""
@@ -467,7 +475,64 @@ class Problems(unittest.TestCase):
             self.assertEqual(np.count_nonzero(p["J"][r]), 1)
 
 
+FIXTURE_COMMON = 6   # the fixture's shared functional set (the real inputs' is pinned at 151)
+
+
 class EndToEnd(unittest.TestCase):
+    def setUp(self):
+        p = mock.patch.object(P, "C_DID_COMMON_EXPECTED", FIXTURE_COMMON)
+        p.start()
+        self.addCleanup(p.stop)
+
+    def test_c_did_reads_the_declared_intersection(self):
+        with tempfile.TemporaryDirectory() as d:
+            prod, ops = make_fixture(Path(d))
+            with mock.patch.dict(P.OPERANDS, ops):
+                rc = P.run(prod, Path(d) / "out")
+            rec = json.loads((Path(d) / "out/readout.json").read_text())
+        self.assertEqual(rc, 0, rec.get("stops"))
+        c = rec["controls"]["C-DID"]
+        self.assertEqual((c["functionals_compared"], c["ibu1_only"]), (6, ["IBU1ONLY"]))
+        self.assertIn("DIDONLY", c["did_only"])
+
+    def test_c_did_stops_when_the_intersection_is_not_the_expected_size(self):
+        with tempfile.TemporaryDirectory() as d:
+            prod, ops = make_fixture(Path(d))
+            with mock.patch.dict(P.OPERANDS, ops), mock.patch.object(P, "C_DID_COMMON_EXPECTED", 7):
+                rc = P.run(prod, Path(d) / "out")
+            rec = json.loads((Path(d) / "out/readout.json").read_text())
+        self.assertEqual(rc, 3)
+        self.assertEqual(rec["stops"], ["C-DID"])
+
+    def test_c_2d_takes_the_declared_relative_bar(self):
+        for scale, want in ((1e-14, 0), (1e-9, 3)):
+            with tempfile.TemporaryDirectory() as d:
+                prod, ops = make_fixture(Path(d))
+                z2 = dict(np.load(prod / "r2d.npz"))
+                z2["d2_full__M"] = z2["d2_full__M"] * (1 + scale)
+                np.savez(prod / "r2d.npz", **z2)
+                sums = "\n".join(f"{P.sha256(prod / f)}  {f}" for f in ("r5d.npz", "r5d.json", "r2d.npz", "r2d.json", "t3.npz", "t3.json"))
+                (prod / "SHA256SUMS").write_text(sums + "\n")
+                with mock.patch.dict(P.OPERANDS, ops):
+                    rc = P.run(prod, Path(d) / "out")
+                rec = json.loads((Path(d) / "out/readout.json").read_text())
+            self.assertEqual(rc, want, (scale, rec.get("stops")))
+            if want:
+                self.assertIn("C-2D", rec["stops"])
+
+    def test_c_d_covers_the_secondary_truth_converted_with_d(self):
+        with tempfile.TemporaryDirectory() as d:
+            prod, ops = make_fixture(Path(d))
+            fd = json.loads(ops["fdprr"][0].read_text())
+            del fd["table"]["B0/closure_nuwro/s991000"]
+            ops["fdprr"][0].write_text(json.dumps(fd))
+            ops["fdprr"] = (ops["fdprr"][0], P.sha256(ops["fdprr"][0]))
+            with mock.patch.dict(P.OPERANDS, ops):
+                rc = P.run(prod, Path(d) / "out")
+            rec = json.loads((Path(d) / "out/readout.json").read_text())
+        self.assertEqual(rc, 3)
+        self.assertIn("C-D", rec["stops"])
+        self.assertEqual(rec["controls"]["C-D"]["printed_without_d"], ["P1r"])
     def test_controls_pass_and_the_readout_is_written(self):
         with tempfile.TemporaryDirectory() as d:
             prod, ops = make_fixture(Path(d))
@@ -506,8 +571,8 @@ class EndToEnd(unittest.TestCase):
                 return out
             real_dec = P.decompose
 
-            def tagged(F, J, driver="numpy", cut=P.CUT):
-                return dict(real_dec(F, J, driver, cut), _tag=driver)
+            def tagged(F, J, driver="numpy", cut=P.CUT, A=None):
+                return dict(real_dec(F, J, driver, cut, A=A), _tag=driver)
             with mock.patch.dict(P.OPERANDS, ops), mock.patch.object(P, "evaluate_r", drift), \
                     mock.patch.object(P, "decompose", tagged):
                 P.run(prod, Path(d) / "o1")
@@ -630,6 +695,178 @@ class EndToEnd(unittest.TestCase):
             with mock.patch.dict(P.OPERANDS, ops):
                 rc = P.main(["run", "--products", str(prod), "--out", str(Path(d) / "o2")])
         self.assertEqual(rc, 0)
+
+
+# ---------------------------------------------------------------------------------------------- Amendment E
+def ill_conditioned(seed: int, n: int = 40, m: int = 30):
+    """A 2D-like problem with truth populations over 5.8 decades (so K = J J^T stays inside C-RANK's 1e-12), three
+    low-efficiency truth cells and one unseen cell: C = J F+ J^T then spans many decades in scale, which is the defect
+    C-ROUTE found (diagnostic 2, branch c-formation)."""
+    rng = np.random.default_rng(seed)
+    nr = n + 4
+    R = np.zeros((nr, n))
+    for j in range(n):
+        for d, f in ((-1, .15), (0, .5), (1, .15), (2, .05)):
+            if 0 <= j + d < nr:
+                R[j + d, j] = f * rng.uniform(.8, 1.2)
+    eff = np.ones(n)
+    idx = rng.choice(n, 4, replace=False)
+    eff[idx[:3]] = (1e-3, 1e-4, 1e-5)
+    eff[idx[3]] = 0.0
+    R = R * eff[None, :]
+    t0 = 10 ** rng.uniform(0, 5.8, n)
+    b = rng.uniform(1, 10, nr)
+    sel = np.sort(np.r_[idx, rng.choice(np.setdiff1d(np.arange(n), idx), m - len(idx), replace=False)])
+    J = np.zeros((m, n))
+    for r, c in enumerate(sel):
+        J[r, c] = 1.0 / t0[c]
+    return sparse.csr_matrix(R), t0, b, J
+
+
+ILL_SEEDS = (0, 1, 3)   # seeds where the pre-Amendment-E formation misses the reference by > 1e-8 in BOTH routes
+
+
+class AmendmentE(unittest.TestCase):
+    """C = J F+ J^T is never formed; F_c's eigenbasis comes from its root's SVD; both routes meet a 50-digit reference."""
+
+    @classmethod
+    def setUpClass(cls):
+        import mpmath as mp
+        sys.path.insert(0, str(HERE))
+        import msr_route_diag2 as D   # its mp_fisher / mp_decompose / mp_z: section 3.3 at 50 digits
+        cls.D, cls.mp = D, mp
+        cls.dps = mp.mp.dps
+        mp.mp.dps = 50
+        cls.cases = []
+        for seed in ILL_SEEDS:
+            R, t0, b, J = ill_conditioned(seed)
+            ref = D.mp_decompose(D.mp_fisher(R, t0, b), J)
+            cls.cases.append((R, t0, b, J, ref))
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.mp.mp.dps = cls.dps
+
+    def test_fisher_root_squares_to_did_fisher(self):
+        R, t0, b, _ = ill_conditioned(2)
+        b = b.copy()
+        b[5] = -1e12                      # mu <= 0: excluded, as did.fisher excludes it
+        A = P.fisher_root(R, t0, b)
+        F = did.fisher(R, t0, b)
+        self.assertEqual(A.shape, (R.shape[0] - 1, R.shape[1]))
+        np.testing.assert_allclose(A.T @ A, F, rtol=1e-12, atol=1e-14 * np.abs(F).max())
+
+    def test_eigenbasis_from_the_root_matches_eigh_where_eigh_is_accurate(self):
+        rng = np.random.default_rng(3)
+        R = sparse.csr_matrix(rng.uniform(0.1, 1.0, (12, 6)))
+        t0, b = rng.uniform(50, 100, 6), rng.uniform(1, 5, 12)
+        A = P.fisher_root(R, t0, b)
+        for drv in ("numpy", "evr"):
+            lam, V = P.eigenbasis(None, A, drv)
+            lam_e, V_e = np.linalg.eigh(did.fisher(R, t0, b))
+            np.testing.assert_allclose(lam, lam_e, rtol=1e-10)
+            np.testing.assert_allclose(np.abs(V.T @ V_e), np.eye(6), atol=1e-8)
+
+    def test_a_root_with_fewer_rows_than_parameters_is_completed(self):
+        A = np.array([[1.0, 2.0, 0.0], [0.0, 1.0, 1.0]])
+        lam, V = P.eigenbasis(None, A, "numpy")
+        np.testing.assert_allclose(V.T @ V, np.eye(3), atol=1e-12)
+        self.assertEqual(lam[0], 0.0)
+        np.testing.assert_allclose(A @ V[:, 0], 0.0, atol=1e-12)
+        np.testing.assert_allclose(V @ np.diag(lam) @ V.T, A.T @ A, atol=1e-12)
+
+    def test_a_singular_c_q_on_q_is_refused(self):
+        for F in (np.diag([4.0, 1.0, 0.0]), np.diag([4.0, 0.0, 0.0])):   # one and two zero widths (agy's cases)
+            with mock.patch.object(P, "NULL_TOL", 2.0):   # nothing is sent to U-infinity, so C_Q is singular on Q
+                with self.assertRaises(ValueError):
+                    P.decompose(F, np.eye(3), cut=0.6)
+        d = P.decompose(np.diag([4.0, 1.0, 0.0]), np.eye(3))   # the declared rule sends that direction to U-infinity
+        self.assertEqual((d["dim_inf"], d["s"].size), (1, 2))
+        np.testing.assert_allclose(d["s"], [0.5, 1.0], rtol=1e-12)
+
+    def test_both_routes_meet_the_50_digit_reference_on_the_ill_conditioned_fixture(self):
+        for R, t0, b, J, ref in self.cases:
+            A = P.fisher_root(R, t0, b)
+            F = did.fisher(R, t0, b)
+            for drv in ("numpy", "evr"):
+                d = P.decompose(F, J, drv, A=A)
+                self.assertEqual((d["n_well"], d["dim_inf"]), (ref["n_well"], ref["dim_inf"]))
+                self.assertGreater(d["n_well"], 3)
+                for k in range(4):
+                    beta = np.random.default_rng(100 + k).normal(size=J.shape[0])
+                    z_ref = self.D.mp_z(ref, beta)
+                    self.assertLessEqual(self.D.rel(P.z_well(d, beta), z_ref), 1e-8, (drv, k))
+                    self.assertLessEqual(self.D.rel(P.route_independent(d, beta)[1], z_ref), 1e-8, (drv, k))
+
+    def test_the_eigen_route_widths_meet_the_reference(self):
+        for R, t0, b, J, ref in self.cases:
+            d = P.decompose(did.fisher(R, t0, b), J, "numpy", A=P.fisher_root(R, t0, b))
+            got = np.sort(d["s"][d["well"]])
+            want = np.sort([float(ref["s"][k]) for k in ref["well"]])
+            np.testing.assert_allclose(got, want, rtol=1e-8)
+
+    def test_the_fixture_passes_c_rank_as_production_requires(self):
+        for R, t0, b, J, _ in self.cases:
+            self.assertTrue(P.decompose(did.fisher(R, t0, b), J, "numpy", A=P.fisher_root(R, t0, b))["rank_ok"])
+
+    def test_widths_stay_ascending_and_aligned_when_refinement_reorders(self):
+        R, t0, b, J, _ = self.cases[0]
+        real, calls = P.svd, []
+
+        def bump(a, driver):   # the third SVD (the well-block refinement): push its largest width past all others
+            u, s, vt = real(a, driver)
+            calls.append(1)
+            if len(calls) == 3:
+                s = s.copy()
+                s[0] = 1e12
+            return u, s, vt
+        with mock.patch.object(P, "svd", bump):
+            d = P.decompose(did.fisher(R, t0, b), J, "numpy", A=P.fisher_root(R, t0, b))
+        self.assertEqual(len(calls), 3)   # root, B_Q^T G, refinement
+        self.assertTrue(np.all(np.diff(d["s"]) >= 0))
+        self.assertEqual(d["s"][-1], 1e12)
+        np.testing.assert_array_equal(d["well"], d["s"] <= P.CUT)
+
+    def test_the_independent_route_never_forms_c(self):
+        """A well direction orthogonal (in exact arithmetic) to a 1e8 width: C = G G^T rounds at ~1 against s^2 = 1e-6,
+        so a solve with C fails; the QR of G^T W does not (50-digit value from the same float64 G and W)."""
+        mp = self.mp
+        th = 0.3
+        w = np.array([[np.cos(th), -np.sin(th)], [np.sin(th), np.cos(th)]])
+        G = np.column_stack([1e8 * w[:, 1], 1e-3 * w[:, 0]])
+        dec = {"w": w, "well": np.array([True, False]), "n_well": 1, "G": G, "PW": np.outer(w[:, 0], w[:, 0])}
+        beta = np.array([0.7, -0.2])
+        wm = mp.matrix(w[:, 0].tolist())
+        gw = mp.matrix(G.T.tolist()) * wm
+        z_ref = abs((wm.T * mp.matrix(beta.tolist()))[0]) / mp.sqrt((gw.T * gw)[0])
+        self.assertLessEqual(self.D.rel(P.route_independent(dec, beta)[1], z_ref), 1e-10)
+        a = w[:, 0] @ beta
+        z_c = float(np.sqrt(abs(a * a / (w[:, 0] @ (G @ G.T) @ w[:, 0]))))   # the formation Amendment E removed
+        self.assertGreater(self.D.rel(z_c, z_ref), 1e-3)
+
+    def test_the_routes_agree_to_the_c_route_bar(self):
+        for R, t0, b, J, _ in self.cases:
+            d = P.decompose(did.fisher(R, t0, b), J, "numpy", A=P.fisher_root(R, t0, b))
+            for k in range(4):
+                beta = np.random.default_rng(200 + k).normal(size=J.shape[0])
+                ze, zi = P.z_well(d, beta), P.route_independent(d, beta)[1]
+                self.assertLessEqual(abs(zi - ze), 1e-10 + 1e-8 * abs(ze))
+
+    def test_every_production_decomposition_gets_the_root(self):
+        calls = []
+        real = P.decompose
+
+        def spy(F, J, driver="numpy", cut=P.CUT, A=None):
+            calls.append(A is not None)
+            return real(F, J, driver, cut, A=A)
+        with tempfile.TemporaryDirectory() as d:
+            prod, ops = make_fixture(Path(d))
+            with mock.patch.dict(P.OPERANDS, ops), mock.patch.object(P, "decompose", spy), \
+                    mock.patch.object(P, "C_DID_COMMON_EXPECTED", FIXTURE_COMMON):
+                rc = P.run(prod, Path(d) / "out")
+        self.assertEqual(rc, 0)
+        self.assertGreater(len(calls), 12)
+        self.assertTrue(all(calls))
 
 
 if __name__ == "__main__":
