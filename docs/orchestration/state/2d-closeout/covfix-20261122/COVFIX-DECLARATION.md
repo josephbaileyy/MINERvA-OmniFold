@@ -1,8 +1,10 @@
-# COVFIX declaration, DRAFT rev 11.4: the 2D covariance fix (2026-11-23)
+# COVFIX declaration, DRAFT rev 12: the 2D covariance fix (2026-11-24)
 <!-- absence-ok: a draft declaration of studies not yet run; every existing study is routed to INVENTORY.md -->
 
 <!-- absence-ok: status line of an unrun draft -->
-**Status: DRAFT.** Not bound. No code is written, nothing is computed, and no cluster connect is made under it.
+**Status: rev 11.4 is bound** (COVFIX-BINDING-1, at M_C1 `90b29087`; sha256 `464ce635…`). **This rev 12 is a DRAFT
+amendment and binds nothing** until Joseph approves its text and the director writes its binding. Until then rev 11.4
+governs every phase. Rev 12 is drafted before any sealed truth exists and before any PV toy is drawn.
 
 **By** the `cov2d` session, at the director's request of 2026-11-22 (`reads/director-rev0-items.md` quotes its items on
 rev 0). Joseph authorized starting the design phase, via the director, after an outside review of the note asked for
@@ -299,6 +301,29 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
   - the expected no-firing price is unchanged;
   - a citation fix accepted by the director without a read (2026-11-23): the seed range now cites F1's amendment 2 (7
     tasks per tune, one wave), with the task index still capped at 63. No rule changes.
+- **Rev 12 (DRAFT, 2026-11-24):** Joseph's decisions, relayed by the rewrite helper and the director: "lets do the blind
+  correlation truth and the three smaller items", and "we can raise the ceiling too". The director writes the governing
+  DECISION (`DECISION-<date>-joseph-covfix-rev12`, cited below by that placeholder name).
+  - **A third sealed truth, u = 2,** joins the held-out validation family and decides (§4.1, §4.3, §6.4, §7): a
+    correlation deformation of p(q3, W | p_T, p∥, E_avail) on the 5D FINE grid, applied by `s5e_deform.ratio_weight`, with
+    300 PV toys at seed base 9_820_000 and one central unfold. It leaves the graded 2D truth at nominal, so it tests
+    hidden-variable dependence through the response, not a truth shift. **Its definition and custody are a placeholder**
+    (§4.2): Joseph is choosing between a human definer and a declared family drawn by a committed seed.
+    - **The alternative Joseph may choose instead:** u = 2 graded with every §6 reading but **descriptive**, deciding
+      nothing, with the verdict and §7 left at u = 0, 1. That form changes nothing deciding in §5–§7. The director's
+      ruling of 2026-11-24 drafts the deciding form, because Joseph's words were "add it to §4's held-out validation
+      family", and that family decides.
+  - **The price:** the expected no-firing base becomes 467.74–468.41 node-h (PV 174.57, up 57.19 = 300 × 0.19 + 0.19).
+    PV's cap becomes 201. The ceiling becomes 599 node-h, funding every single-block ST1 branch (§3's table, recomputed).
+    Binding needs a committed iris receipt of at least 599 node-h.
+  - **Descriptive readings, deciding nothing** (§6.6): the two off-diagonal corners of the factorial between K0 and K_B
+    ("fluctuation block only" = V_F + C_model_abs; "bias block only" = F_A + C_b), graded on the same PV toys; the lower
+    95 % Clopper–Pearson bound on joint coverage beside P-3; M with its bands both with and without the undrawn
+    components, always; and, beside P-2, the undrawn share tr(V⁺U)/ndf and the zero-bias a = tr(V⁺V₊)/ndf, overall and
+    per band. P-2 itself stays on the full V.
+  - **The amendment rule:** the DECISION supersedes §3.3's "ST1's named exception, the only post-binding amendment to
+    §5–§7" for these changes only: the descriptive readings of §6.6, and u = 2's place in §6.4 and §7. Every other
+    deciding rule in §5–§7 is unchanged.
 
 <!-- absence-ok: rule statement -->
 **Rules are fixed before computation.** Every reading, bar, candidate rule, seed and stop rule below is fixed at
@@ -306,6 +331,10 @@ binding, before P0. After binding, §5–§7 may not be amended except by ST1's 
 (a crash or a typo) that changes no number, bar, family, seed or choice rule (§3.3). The executability fix is allowed
 only before the first spend of the real PV seal (ST4), and needs the director's ruling. Any other amendment names every
 output already seen.
+- **Rev 12's amendment** (DRAFT) is made under `DECISION-<date>-joseph-covfix-rev12`, which supersedes the clause above
+  for rev 12's changes only: §6.6's descriptive readings, and the third sealed truth's place in §6.4 and §7. It is made
+  before any sealed truth exists or any PV toy is drawn, so it is still pre-registration. No output of PG or PV has been
+  seen. P0's committed record (the spent tunes) has been seen; rev 12 changes no bar or rule that P0 informed.
 
 ## 1. What the review asked, and what the inventory already settles
 
@@ -418,38 +447,42 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
 | phase | what | price, full (node-h) | price, lean | cap, full / lean |
 |---|---|---|---|---|
 | **P0** | re-analysis of committed records (§3.1) | 0 (local) | 0 | 0 |
-| **PG** | generate, encrypt and seal two validation truths (§4) | 1.33–2.0 | 1.33–2.0 | 3.0 |
+| **PG** | generate, encrypt and seal the two GENIE validation truths, u = 0, 1 (§4) | 1.33–2.0 | 1.33–2.0 | 3.0 |
 | **P1 W1** | N1, N2, N5, N3, plus the nominal central unfold and the §2-vector unfolds at G18 and AR23 (§3.2) | 162.07 | 124.07 | — |
 | **P1 W2** | N4, A1f, A1p, plus three A1 central unfolds, after ST1 is read on W1 | 129.77 | 86.07 | — |
 | **P1** | total | 291.84 | 210.14 | 330 / 240 |
 | **P2** | build and freeze the candidates (§5) | 0 (local) | 0 | 0 |
-| **PV** | 600 validation toys, 2 central unfolds, the synthetic-seal test (a fixed 2.0 reservation, §3.3), and the exclusive-node writer and readout (about 1.0, an unmeasured estimate) (§3.4, §6) | 117.38 | 117.38 | 135 |
+| **PV** | 900 validation toys (300 at each of three sealed truths), 3 central unfolds, the synthetic-seal test (a fixed 2.0 reservation, §3.3), and the exclusive-node writer and readout (about 1.0, an unmeasured estimate) (§3.4, §6) | 174.57 | 174.57 | 201 |
 
-- **Totals:** full 410.55–411.22; lean 328.85–329.52, including the synthetic test's 2.0 added in rev 10, at PG's priced
+- **Totals:** full 467.74–468.41; lean 386.04–386.71, including the synthetic test's 2.0 added in rev 10, at PG's priced
   range of 1.33–2.00.
-  - These are the expected no-firing prices. The 541.50 ceiling below is headroom for PX only.
+  - **Rev 12's PV arithmetic:** 900 toys × 0.19 = 171.00, plus 3 central unfolds × 0.19 = 0.57, plus the synthetic
+    test's 2.0 and the writer and readout's 1.0, is 174.57 (rev 11.4: 600 × 0.19 + 2 × 0.19 + 2.0 + 1.0 = 117.38; the
+    difference is 57.19). PV's cap keeps rev 11.4's proportion, 135 / 117.38 = 1.150: 174.57 × 1.150 = 200.8, set at
+    201.
+  - These are the expected no-firing prices. The 599 ceiling below is headroom for PX only.
   - The ranges come from PG's range only. The printed range starts at 1.33, above F1's measured 1.3275 node-h for two
     tunes.
-  - Without N5 (§9.1): full 334.55–335.22; lean 271.85–272.52.
+  - Without N5 (§9.1): full 391.74–392.41; lean 329.04–329.71.
 - **Every cell is priced at n × 0.19** node-h per unfold, with no rounding. That is the director's planning figure:
   COV2D's 112.74 node-h over 600 toys is 0.188, including pilots and retries.
 - **Lean** sets N1, N2 and N4 to 150 toys each and N5 to 150 + 150, and drops A1f. Cell 4 then rests on IBUKT A2's
   committed 5-draw means at genie_mec and nuwro only. **gibuu has no fixed-response ensemble in the lean campaign.**
 - **The balance.** The director's message of 2026-11-22 gives 725.6 node-h, from the iris row read at limitation-
   resolver's S1 survey (login23, 2026-11-22T22:01:53Z). That row is not committed. **Binding requires a committed iris
-  receipt.** Half of 725.6 is 362.8.
-- **Against half the balance:**
+  receipt.** Half of 725.6 is 362.8. The director has asked limitation-resolver for a fresh committed receipt for rev 12.
+- **Against half the balance** (rev 12):
   - every phase price and every phase cap is below 362.8;
-  - the caps' sums (full 468, lean 378) are not, and neither is the full total with N5;
-  - the lean total, and either total without N5, is below it;
-  - **Joseph chose full** (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`, his governing re-confirmation: "Full, as designed"), with N5, under a ceiling of 541.50 node-h (below). ST6 keeps the campaign inside that ceiling. The lean columns are kept as the record of the alternative he did not choose.
+  - the caps' sums (full 534, lean 444) are not, and neither is the full total, with or without N5, nor the lean total;
+  - only the lean total without N5 (329.04–329.71) is below it;
+  - **Joseph chose full** (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`, his governing re-confirmation: "Full, as designed"), with N5, under a ceiling of 541.50 node-h at rev 11.4, raised to 599 at rev 12 (below). ST6 keeps the campaign inside that ceiling. The lean columns are kept as the record of the alternative he did not choose.
 - **ST6, the cumulative ceiling** (§3.3).
   - Joseph's approved total is pinned in every connect.
   - Each submission's charge ceiling is its nodes × its `--time`. Each toy job's `--time` is 1.5 × its priced per-toy
     time (0.19 node-h is a mean), so a slow job is not killed, and a stalled one cannot charge more than its ceiling.
   - A phase is submitted in chunks small enough that ended charges plus unended ceilings stay within its cap (ST3).
   - The admission check is ST3/ST6's reservation ledger (§3.3), not a prefix poll of sacct.
-  - **The ceiling is pinned in the binding at 541.50 node-h.**
+  - **The ceiling is pinned in the binding at 541.50 node-h (rev 11.4); rev 12 raises it to 599 node-h.**
     - **History.** Joseph approved about 409, then raised it to 411.22 for the synthetic test ("Raise to 411.22
       (Recommended)", sha256 prefix `8fb26c62f91e7b20`).
     - **The headroom.** He then raised it again for PX headroom: "Raise to about 540" (the sha256 of the text plus a
@@ -461,28 +494,33 @@ V(t) = D_t V D_t, with D_t = diag(x̂_t / x_R).
       ceiling.
     - The director records all three in the binding document (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`
       holds the first decisions).
-    - **The expected no-firing price is unchanged** at 410.55–411.22 (334.55–335.22 without N5). The ceiling beyond it
-      is headroom for PX only.
-    - **ST6 is the hard stop:** the ledger's atomic gate (§3.3) at 541.50 node-h. A submission it refuses stops the run,
-      and that goes to the director, not to Joseph as a re-approval. The price table above is an estimate, not a
-      trigger; PX keeps its own repricing rule.
-    - **Balance:** binding needs the committed iris receipt to show at least 541.50 node-h remaining. If it does not,
-      the binding goes back to Joseph.
-    - The ceiling is separate from the expected price and from the 468 sum of caps.
-  - **The priced worst case for each ST1 branch,** with PG at its 2.0 top, on the no-firing base
-    2.00 + 162.07 + 129.77 + 117.38 = 411.22:
+    - **Rev 12's ceiling.** Joseph: "we can raise the ceiling too" (relayed by the rewrite helper and the director,
+      2026-11-24). The director set 599 node-h: it funds every single-block ST1 branch on rev 12's base, including
+      `universe` with laterals rebuilt (598.56). The DECISION records it.
+    - **The expected no-firing price** is 467.74–468.41 at rev 12 (391.74–392.41 without N5). The ceiling beyond it is
+      headroom for PX only.
+    - **ST6 is the hard stop:** the ledger's atomic gate (§3.3) at the pinned ceiling (599 node-h at rev 12). A submission
+      it refuses stops the run, and that goes to the director, not to Joseph as a re-approval. The price table above is
+      an estimate, not a trigger; PX keeps its own repricing rule.
+    - **Balance:** binding needs the committed iris receipt to show at least the pinned ceiling remaining (599 node-h at
+      rev 12). If it does not, the binding goes back to Joseph.
+    - The ceiling is separate from the expected price and from the 534 sum of caps.
+  - **The priced worst case for each ST1 branch,** with PG at its 2.0 top, on rev 12's no-firing base
+    2.00 + 162.07 + 129.77 + 174.57 = 468.41:
 
-    | ST1 branch | PX | total | at 541.50 |
+    | ST1 branch | PX | total | at 599 |
     |---|---|---|---|
-    | none | 0 | 411.22 | fits |
-    | `c08` (W1) | 15.20 | 426.42 | fits |
-    | `stat` (W1) | 57.00 | 468.22 | fits |
-    | N5 data-stream method (W1), which also regenerates `stat` | 95.00 | 506.22 | fits |
-    | `c08` + `stat` (W1) | 72.20 | 483.42 | fits |
-    | `c08` + N5 method + `stat` (W1) | 110.20 | 521.42 | fits |
-    | `universe` after W2, laterals reused | 128.25 | 539.47 | fits |
-    | `universe` after W2, laterals rebuilt (+10 unfolds) | 130.15 | 541.37 | fits |
-    | any W1 exception + `universe` | ≥ 145.35 | ≥ 556.57 | **unfunded by design** |
+    | none | 0 | 468.41 | fits |
+    | `c08` (W1) | 15.20 | 483.61 | fits |
+    | `stat` (W1) | 57.00 | 525.41 | fits |
+    | N5 data-stream method (W1), which also regenerates `stat` | 95.00 | 563.41 | fits |
+    | `c08` + `stat` (W1) | 72.20 | 540.61 | fits |
+    | `c08` + N5 method + `stat` (W1) | 110.20 | 578.61 | fits |
+    | `universe` after W2, laterals reused | 128.25 | 596.66 | fits |
+    | `universe` after W2, laterals rebuilt (+10 unfolds) | 130.15 | 598.56 | fits |
+    | any W1 exception + `universe` | ≥ 145.35 | ≥ 613.76 | **unfunded by design** |
+
+    - Rev 11.4's table, on its base of 411.22 against 541.50, is the same less 57.19 in every total.
 
     - The last row is unfunded whatever the ceiling: under §3.3's sole-exception rule, a row firing after the exception
       has been bound stops the campaign.
@@ -612,8 +650,8 @@ N1 is never a construction-error reading. N1/N5 is reported as the same-event fa
    - If it does not, PX has **no funded path**, and the ST1 branch ends at the construction finding, reported as a
      finding (§7, Part 1). K_A is omitted for this run, and the campaign continues with K0 and K_B.
    - W2's first-time work is counted once in the remainder, never as part of PX.
-   - Every single-block branch fits the 541.50 ceiling on the priced figures (§3's table), and so does every W1
-     combination. A W1 exception followed by a `universe` firing is unfunded by design (item 4).
+   - Every single-block branch fits the ceiling on the priced figures (§3's table: 541.50 at rev 11.4, 599 at rev 12),
+     and so does every W1 combination. A W1 exception followed by a `universe` firing is unfunded by design (item 4).
 4. **A row fires after the sole exception has been bound.** The campaign stops and goes to the director.
 
 **ST1's named exception, the only post-binding amendment to §5–§7.**
@@ -665,7 +703,7 @@ and regenerate nothing, and N5 would not run. That gate is kept for the record.
 - **Uncertainty keeps the reservation open,** whether about acceptance or about the final charge.
 - **Each expected toy ID** in a P1 arm, PX or PV is accepted exactly once, with one verified complete product.
 - **The synthetic-seal test** gets a fixed advance reservation of 2.0 node-h under the PV cap.
-- Its measurements, scaled to the 600-toy workload, re-price the production writer and readout. That price is reserved
+- Its measurements, scaled to the 900-toy workload (rev 12; 600 at rev 11.4), re-price the production writer and readout. That price is reserved
   before PV is submitted.
 - A descriptive stress run's failure never blocks a completed grade.
 - **Reservations:** nodes × `--time` (1.5 × the priced per-toy time), including exclusive allocations, with
@@ -707,10 +745,13 @@ controls refuse a candidate at a truth (§6.4) rather than stop the phase.
 
 PV draws the full source list of §3.2, the same as N4 and A1p, at a sealed truth u.
 
-- **The truth deformation.** r_u is u's own bridged ratio, applied per row by
+- **The truth deformation.** For u = 0, 1, r_u is u's own bridged ratio, applied per row by
   `s5e_deform.ratio_weight(gen, FINE, w_truth, ratio, 1.0)`, computed once with the CV `w_truth` and its rescale constant
   from `mc_truth_denom`'s rows (COV2D §4.1). The same per-row factor applies to every `mc_signal_reco` row. Rows outside
   the 5D grid and background rows get r = 1.
+- **For u = 2** (rev 12), r_2 is §4.1's correlation deformation on the 5D FINE grid (pt, pz, eavail, q3, W), applied by the
+  same `s5e_deform.ratio_weight` call and the same rules for rows outside the grid and background rows. It leaves the
+  graded (p_T, p∥) truth at nominal (§4.3). Its definition and custody are §4.2's placeholder.
 - **The toy law is §3.2's single recipe:** the 38 bands composed on the nature's reco and truth; lateral and norm on
   the unfolded output; sim on the unfolding side; Poisson on the pseudo-data.
   - **The lateral Δ_b(t)** are carried in relative form from part B's lateral products, Δ_b ∘ (x̂_t / x_R), as COV2D §4.4's
@@ -725,7 +766,10 @@ PV draws the full source list of §3.2, the same as N4 and A1p, at a sealed trut
 - **The graded truth** is each toy's own clipped composite truth, normalized with the drawn Flux universe's integral and
   completeness ≡ 1 (COV2D §4.2).
 - **The estimator seed** is fixed at 42, and the seed block c08 is in every candidate.
-- **Count:** 300 toys per sealed truth, seed base 9_800_000 + 10_000·u (u = 0, 1), plus one central unfold per truth.
+- **Count:** 300 toys per sealed truth, seed base 9_800_000 + 10_000·u (u = 0, 1, 2), plus one central unfold per truth.
+  u = 2's base, 9_820_000, follows the same formula; its toys' seeds 9_820_000–9_820_299 are disjoint from u = 0's and
+  u = 1's (9_800_000–9_800_299, 9_810_000–9_810_299), from every P1 seed (9_100_000–9_720_099, §3.2; A1p's last arm, j = 2, ends at 9_720_099), and from the
+  bootstrap and stress seeds (9_991_000–9_994_000).
 
 **Who runs it, and where, in order.** cov2d writes and tests the bound PV code; it does not run the secret-bearing
 roles. The **writer** and the **readout** are run by the director, or a session the director controls, through the
@@ -733,8 +777,8 @@ director's wrapper. The wrapper acquires ST4's consumption record, verifies ever
 `PG-SEAL.sha256` before decrypting, and pipes the passphrase on stdin.
 1. **The writer** runs on an exclusive compute node (`salloc --exclusive -N 1`, then `srun --exclusive -N 1 <writer>`,
    which forwards stdin to the task). The decrypted r_u lives only in that node's /dev/shm.
-2. In that one process it writes, for all 600 toys, the pseudo-data files (reco-level counts, which the compute jobs
-   need) and the graded truths, plus the two round(λ⁺) files for D_u. The graded truths are encrypted (§4.2) before they
+2. In that one process it writes, for all 900 toys (600 at rev 11.4), the pseudo-data files (reco-level counts, which the
+   compute jobs need) and the graded truths, plus the three round(λ⁺) files for D_u. The graded truths are encrypted (§4.2) before they
    touch disk.
    - It also writes **one authenticated manifest**, encrypted with the same flags. The manifest binds the graded
      ciphertexts, the toy IDs, the hash of each pseudo-data file, and the central inputs, to the original PG manifest's
@@ -754,7 +798,7 @@ director's wrapper. The wrapper acquires ST4's consumption record, verifies ever
      invocation for that ID, rehashes each output it consumes, and runs the missing, extra and mismatch checks. Exactly
      one verified product per expected ID must come from the accepted set.
    - A missing, extra or mismatched record is a break, and terminal.
-   - The same applies to the two central unfolds that determine D_u.
+   - The same applies to the three central unfolds that determine D_u.
    - The original PG seal is pinned at PG's close, and the freeze at P2's, so both are in PV's binding.
 5. **The readout** runs on its own exclusive node, from a fresh pipe. Before decrypting any graded truth, it verifies:
    - the writer's manifest;
@@ -797,6 +841,10 @@ and the estimator. N2 probes sim's increment at nominal truth; it cannot establi
      intranuclear transport.
 - **Both are required.** If either family is absent from the genie_xsec `v3_04_00` product on Perlmutter, PG stops and
   goes to the director. No FSI twin of a spent tune may replace it.
+- **A third sealed truth, u = 2** (rev 12): a blind correlation deformation of p(q3, W | p_T, p∥, E_avail) on the 5D FINE
+  grid (pt, pz, eavail, q3, W), applied by `s5e_deform.ratio_weight`. It is not a GENIE tune and is not generated by PG;
+  it reweights the nominal simulation. It keeps p(p_T, p∥, E_avail), so the graded 2D truth is the nominal's (§4.3). It
+  joins the held-out validation family, and it decides (§6.4). Its definition and custody: §4.2, placeholder.
 - **What the names mean,** as v3.2.0 descriptions pending PG's probe of v3_04_00, from GENIE's "Global Fits and Physics Tunes" page (https://genie-mc.github.io/tunes.html,
   read 2026-11-22; it covers v3.0.0–v3.2.0):
   - In the CMC token (`11b`, `02b`), the letter selects the intranuclear transport: a = INTRANUKE/hA,
@@ -898,12 +946,29 @@ is no regeneration.
 - Atime does not detect O_NOATIME reads, so it is housekeeping only.
 - The generating session saw the plaintext and is retired after PG.
 
+**The third truth (u = 2): definition and custody. PLACEHOLDER (rev 12 DRAFT).** Joseph is choosing between:
+- a **human definer**: a named person or session, blind to every COVFIX build input, defines the correlation deformation,
+  and it is sealed as PG's truths are; or
+- a **declared family drawn by a committed seed**: the family of deformations is declared here, and one member is drawn
+  by a seed committed before the draw and revealed after PV's readout, as PG's seed base is.
+This subsection, its seal and its custody roles are written once Joseph chooses, before rev 12 is final. Until then no
+u = 2 code, seal or price is fixed beyond PV's 300 toys and one central unfold (§3).
+
 ### 4.3 What the validation family can and cannot show
 
-Both truths are GENIE v3 configurations. G21_11b shares AR23's 2p2h class, and G18_02's models will be named by the
-probe. A pass licenses readings at the **two named deformations under the fixed toy law** only, with those overlaps
-stated beside it. It does not license a GENIE v3 model family, or any other generator. A non-GENIE validation truth would
-need a sample this project does not have; that is disclosed, not tested.
+u = 0 and u = 1 are GENIE v3 configurations. G21_11b shares AR23's 2p2h class, and G18_02's models will be named by the
+probe. A pass licenses readings at the **three named deformations under the fixed toy law** only (rev 12; two at rev
+11.4), with those overlaps stated beside it. It does not license a GENIE v3 model family, or any other generator. A
+non-GENIE generator truth would need a sample this project does not have; that is disclosed, not tested.
+
+**u = 2 leaves the graded 2D truth at nominal** (rev 12). Its deformation changes only p(q3, W | p_T, p∥, E_avail), so the
+graded (p_T, p∥) cross section, a marginal over q3 and W at fixed E_avail, is the nominal's. What changes is the response:
+the reconstruction's efficiency and migration depend on q3 and W, so the unfold sees a different hidden-variable mix at
+the same 2D truth. u = 2 therefore **tests hidden-variable dependence through the response, not a truth shift.**
+- C_b, fitted from truth shifts (§5.2), is **not what u = 2 tests**. A u = 2 deficit speaks to the fluctuation block and
+  the response model, not to the bias allowance.
+- u = 2 is a reweighting of the nominal simulation. It is not a generator sample, and it shares the nominal's physics
+  outside the deformed conditional.
 
 ## 5. Candidate constructions, built from P0 and P1, frozen at P2
 
@@ -914,8 +979,8 @@ are printed descriptively. Nothing in PG's seal is read.
 ### 5.1 K0, the control, and K_A
 
 - **K0** = Q_rep + C_model_abs(x_R), carried (§2): fluctuation block Q_rep, model block C_model_abs. Its expected PV
-  reading is "under". **If K0 is VALIDATED at both sealed truths (§6.4),** the comparison showed no need for a change
-  at those truths ("no deficit shown", §7).
+  reading is "under". **If K0 is VALIDATED at every sealed truth (§6.4; three at rev 12),** the comparison showed no
+  need for a change at those truths ("no deficit shown", §7).
 - **K_A** is Q_rep with ST1's firing block regenerated (ST1's named exception), plus C_model_abs. **If ST1 does not fire,
   K_A = K0, and K_A is not read separately.** Outcome A is then unavailable.
 
@@ -1139,20 +1204,62 @@ readings it affects:
 
 | verdict | condition |
 |---|---|
-| **FAILS** | at either truth, a valid reading shows: M − h > 1.25, or a total band does so; P-3 or P-4 flags "under"; or F̃ or a band reads "under" |
-| **REFUSED** | no FAILS, and a required reading is refused at either truth |
-| **INFLATED** | no FAILS and no refusal, and F̃ or a band reads "over" at either truth |
-| **VALIDATED** | P-1 to P-4 hold, with every required reading valid, at both truths |
+| **FAILS** | at any sealed truth, a valid reading shows: M − h > 1.25, or a total band does so; P-3 or P-4 flags "under"; or F̃ or a band reads "under" |
+| **REFUSED** | no FAILS, and a required reading is refused at any sealed truth |
+| **INFLATED** | no FAILS and no refusal, and F̃ or a band reads "over" at any sealed truth |
+| **VALIDATED** | P-1 to P-4 hold, with every required reading valid, at every sealed truth (u = 0, 1, 2 at rev 12) |
 | **UNRESOLVED** | otherwise, for example a band unresolved across labels, or M + h > 1.25 with M − h ≤ 1.25 |
 
 K0's verdict is reported as observed. A refusal cannot hide a valid observed deficit, because FAILS is read first, and
 every refusal is printed beside it.
+
+**Rev 12:** "any" and "every" range over the three sealed truths u = 0, 1, 2. At rev 11.4 they were "either" and "both"
+over u = 0, 1. The order of the conditions and every bar are unchanged. The alternative Joseph may choose instead is in
+the change log: u = 2 descriptive, with this table over u = 0, 1 only.
 
 ### 6.5 No operating rates are claimed
 
 PASS rests on the fixed affirmative bars applied to the real toys. §6.1's cutoffs are a fixed recipe against the
 zero-bias Gaussian reference. §6.2's stress runs are descriptive. COVFIX claims no false-PASS or false-FAIL operating
 rate.
+
+### 6.6 Descriptive readings added in rev 12 (decide nothing)
+
+<!-- absence-ok: descriptive reading rules for future measurements -->
+Each reading below is printed at every sealed truth, on the same PV toys, and labelled "descriptive". None enters §6.3,
+§6.4, §5.3 or §7, and none is read by any rule. They are added under `DECISION-<date>-joseph-covfix-rev12` (the rules
+paragraph before §1).
+
+**The factorial's off-diagonal corners.** With K0 = F_A + C_model_abs (F_A = Q_rep unless an accepted K_A exists, §5.2)
+and K_B = V_F + C_b, the two changes from K0 to K_B are the fluctuation block (F_A → V_F) and the bias block
+(C_model_abs → C_b). The other two corners isolate each:
+- **"fluctuation block only"** = V_F + C_model_abs(x_R): K_B's fluctuation block with K0's bias block;
+- **"bias block only"** = F_A + C_b: K0's fluctuation block with K_B's bias block.
+- Each is carried by §2's formula and graded with every §6.1 and §6.2 reading, as a candidate is. Its kept modes are
+  referenced to its own fluctuation block's λ₁ (V_F, F_A). Its drawn part is its fluctuation block less the undrawn part
+  under the same map (V_F − L(C_PL + c08)Lᵀ, F_A − (C_PL + c08)), handled to V₊ as §6.2 does.
+- **The alternative not taken:** a stacked form F_A + C_model_abs + C_b, which adds K_B's bias block on top of K0's.
+  It is off the factorial (it changes no single block of K0), so it isolates neither change.
+- They are graded only if K_B was formed (§5.2). They inherit K_B's omission otherwise.
+
+**The lower 95 % Clopper–Pearson bound on joint coverage,** beside P-3, for each candidate and truth: the lower end of the
+two-sided 95 % Clopper–Pearson interval for K_J / N (§6.1), printed with q, the reference probability. It is a
+description of the observed joint count, not a bar.
+
+**M and its bands, with and without the undrawn components,** always, for each candidate (and the two corners above) at
+each truth:
+- **(i) against V − L·C_PL·Lᵀ:** V(t) with the run-period block removed (C_PL, carried by D_t as C_run is; L = I for K0
+  and K_A). This is the reported covariance without C_PL;
+- **(ii) against V − U (all undrawn width):** V(t) less the whole undrawn part U = L(C_PL + c08)Lᵀ of §6.1, carried.
+  **(ii) is not the P-2 bar.** P-2 is read against V(t) as §6.3 states.
+- Each is printed beside M and its bands against V(t), with the same guards.
+
+**Beside P-2: the undrawn share and the zero-bias expectation,** for every candidate (and the two corners above) at every
+sealed truth, overall and for every total band with at least 10 modes, in V(t)'s basis (u_i, λ_i) and kept set:
+- **the undrawn share** tr(V⁺U)/ndf = (1/ndf) Σ_i u_iᵀ U u_i / λ_i, and per band (1/ndf_R) Σ_{i∈R} u_iᵀ U u_i / λ_i;
+- **the zero-bias a** = tr(V⁺V₊)/ndf = (1/ndf) Σ_i u_iᵀ V₊ u_i / λ_i, and per band a_R (the a and a_R of §6.2's stress
+  scenarios), the mean χ²/ndf the toys would give with no bias and the candidate's own drawn width.
+- Both decide nothing. **P-2 stays on the full V(t)** (§6.3).
 
 ## 7. What each outcome licenses (adoption and wording remain Joseph's and the director's)
 
@@ -1167,7 +1274,7 @@ The result has three independent parts, each reported.
   correction and its acceptance check did not run, and K_A was omitted for this run."
 - "A defect in <block>'s builder was found; the correction did not resolve the discrepancy."
 
-**Outcome A within the 541.50 ceiling** (§3's table):
+**Outcome A within the ceiling** (§3's table: 541.50 at rev 11.4, 599 at rev 12):
 - Outcome A is reachable for **every single-block firing**: `c08`, `stat` or the N5 data-stream method on W1, or
   `universe` after W2, laterals included.
 - It is also reachable for every combination of W1 blocks.
@@ -1181,8 +1288,9 @@ Any covariance change from Part 1 enters the journal paper or a later Zenodo ver
 **Part 2: the baseline** (K0's PV verdict, as observed):
 - **challenge:** at one sealed truth at least, a valid K0 reading shows a FAILS condition, whatever K0's other readings
   are. Any refusal is printed beside it;
-- **no deficit shown:** K0 is VALIDATED at both. "At the two named sealed tunes, the reported covariance showed no
-  deficit under these bars."
+- **no deficit shown:** K0 is VALIDATED at every sealed truth. "At the three named sealed truths (two GENIE v3 tunes,
+  and a hidden-variable response test with the 2D truth at nominal), the reported covariance showed no deficit under
+  these bars."
 - **unchallenged:** K0 is INFLATED, UNRESOLVED or REFUSED;
 - **ungraded:** PV did not produce complete grades. That covers ST2 leaving no eligible candidate, and every stop or
   terminal rule before complete grades: integrity failures, and ST5's terminal incompleteness after retries.
@@ -1194,16 +1302,19 @@ stands alone, and each candidate's PV verdict is reported descriptively.
 <!-- absence-ok: outcome licensing table for a future result -->
 | outcome | condition | licensed sentence (substance, not wording) | not licensed |
 |---|---|---|---|
-| **A** | challenge; K_A selected | "With the corrected <block>, at each of the two named sealed tunes under the declared toy law, the fluctuation block's mean ratio <F̃ ± h> and every band read 'covers', and the total's guarded upper bound is <M + h> ≤ 1.25 (and per band), with no joint or mode under-flag." | a model-class claim; coverage at the data; that the total is tight |
-| **B** | challenge; K_B selected | "At each of the two named sealed tunes under the declared toy law: the fluctuation block, measured on nominal and alternative-truth ensembles, has mean ratio <F̃ ± h> and every band reads 'covers'; with a fitted bias allowance from nominal and the three named PV2D deformations, reported separately, the total's guarded upper bound is <M + h> ≤ 1.25 (and per band), with no joint or mode under-flag. The held-out biases against the allowance: Q_u = <value ± SE>, outside-span fraction <value ± SE>." The factors f̂_R and C_b's rank and trace are printed with it. | coverage of any model family; "covers" for the total beyond the printed bound; a cause of the bias; that the allowance bounds a model class |
+| **A** | challenge; K_A selected | "With the corrected <block>, at each of the three named sealed truths (two GENIE v3 tunes, and a hidden-variable response test with the 2D truth at nominal) under the declared toy law, the fluctuation block's mean ratio <F̃ ± h> and every band read 'covers', and the total's guarded upper bound is <M + h> ≤ 1.25 (and per band), with no joint or mode under-flag." | a model-class claim; coverage at the data; that the total is tight |
+| **B** | challenge; K_B selected | "At each of the three named sealed truths (two GENIE v3 tunes, and a hidden-variable response test with the 2D truth at nominal) under the declared toy law: the fluctuation block, measured on nominal and alternative-truth ensembles, has mean ratio <F̃ ± h> and every band reads 'covers'; with a fitted bias allowance from nominal and the three named PV2D deformations, reported separately, the total's guarded upper bound is <M + h> ≤ 1.25 (and per band), with no joint or mode under-flag. The held-out biases against the allowance: Q_u = <value ± SE>, outside-span fraction <value ± SE>." The factors f̂_R and C_b's rank and trace are printed with it. | coverage of any model family; "covers" for the total beyond the printed bound; a cause of the bias; that the allowance bounds a model class |
 | **none, with a challenge** | challenge; no candidate VALIDATED | Nothing new. "Coverage remains unvalidated" stands, with P1's readings and every candidate's verdict as description. | any covariance change |
 | **descriptive only** | no deficit shown, or unchallenged | Part 2's sentence, if any, and each candidate's verdict as description. A VALIDATED candidate is reported as such, but licenses no A or B sentence. | any covariance change; an A or B sentence |
-| **none, PV ungraded** | ungraded | Part 1's finding, and P1's readings as description. | any statement about the sealed tunes |
+| **none, PV ungraded** | ungraded | Part 1's finding, and P1's readings as description. | any statement about the sealed truths |
 
 - **In-sample disclosure.** An A sentence states its corrected block. A B sentence states that C_b was fitted from
   nominal and the three named deformations (not G18 or AR23), and that the factors f̂_R came from N4 and A1p. Both name
-  the two sealed tunes and their overlaps (§4.3), and say that the covariance is the reported one carried in relative
-  form (§2).
+  the three sealed truths and their overlaps (§4.3), say that u = 2 tests hidden-variable dependence through the
+  response with its 2D truth at nominal (so C_b is not what it tests), and say that the covariance is the reported one
+  carried in relative form (§2).
+- **Rev 12's descriptive readings** (§6.6) may be printed beside any outcome, labelled descriptive. They license no
+  sentence of their own.
 - **Coexistence.** Part 1's finding and Part 3's outcome are reported together.
 - **INFLATED** is reported as "the fluctuation block is wider than the held-out scatter by <F̃, bands>".
 - **UNRESOLVED** is explained as sampling ambiguity only when a band or the total is unresolved across labels. Resolving
@@ -1248,14 +1359,16 @@ stands alone, and each candidate's PV verdict is reported descriptively.
      left unchanged.
 2. **Size: decided.** Full, as designed (`DECISION-20261123-joseph-covfix-ki85-size-reader.md`, Joseph's governing re-confirmation): two sealed tunes, full P1 toy
    counts, and N5 always, at an expected no-firing price of 410.55–411.22 node-h. Joseph later raised the ceiling,
-   first to 411.22 for the synthetic test, then to "about 540" for PX headroom, and confirmed the exact 541.50 (§3). ST6 enforces the ceiling. That is above half the balance, and Joseph approved it. Each phase is still capped from
+   first to 411.22 for the synthetic test, then to "about 540" for PX headroom, and confirmed the exact 541.50 (§3).
+   Rev 12 (DRAFT) adds a third sealed truth (467.74–468.41 node-h) and raises the ceiling to 599. ST6 enforces the ceiling. That is above half the balance, and Joseph approved it. Each phase is still capped from
    sacct. The second reader is
    codex-school2, alongside agy, by the same decision.
-3. **Outcome A's reach** (§7, Part 1). Within the 541.50 ceiling it is reachable for every single-block firing, including
-   `universe` with laterals rebuilt (541.37), and for every W1 combination. Only a W1 exception followed by a `universe`
+3. **Outcome A's reach** (§7, Part 1). Within the ceiling it is reachable for every single-block firing, including
+   `universe` with laterals rebuilt (541.37 at rev 11.4; 598.56 at rev 12, under 599), and for every W1 combination. Only a W1 exception followed by a `universe`
    firing is unfunded, by the sole-exception rule.
 4. **Binding prerequisites:**
-   - a committed iris receipt showing at least 541.50 node-h remaining, or the binding goes back to Joseph;
+   - a committed iris receipt showing at least the pinned ceiling remaining (541.50 at rev 11.4; 599 for rev 12), or the
+     binding goes back to Joseph;
    - the fresh PG session named;
    - the director's passphrase generated, with the director's piping wrapper, and never shown to cov2d.
 5. **The bars:**
@@ -1271,3 +1384,8 @@ stands alone, and each candidate's PV verdict is reported descriptively.
 7. **The carry.** COVFIX tests the reported covariance carried in relative form, not remade at each truth. P0 measures
    the difference at G18 and AR23. If the director wants the remade object instead, that is 486 unfolds per truth (about
    92 node-h each), and it changes the price.
+8. **Rev 12's open items (for Joseph):**
+   - u = 2's definition and custody (§4.2's placeholder): a human definer, or a declared family drawn by a committed seed;
+   - u = 2's role: deciding (as drafted) or descriptive (the change log's alternative);
+   - the DECISION's text superseding §3.3's clause for rev 12's changes;
+   - a committed iris receipt of at least 599 node-h.
