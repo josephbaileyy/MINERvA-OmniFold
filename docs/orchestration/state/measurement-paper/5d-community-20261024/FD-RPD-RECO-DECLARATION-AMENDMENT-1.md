@@ -132,9 +132,18 @@ C-JOIN is a STOP on any failure, in two parts. Neither part reads a measured key
 **Part 2, in P0, in the numerical environment that reads ROOT files with uproot.**
 - **Why P0:** the MAT process (root_6_28) has no uproot. A ROOT tree read inside the traced extract would load
   libraries the custody policy has not pinned, and custody STOPs on those.
-- **The omnifiles:** the 12 are pinned by c2's sha256s and staged by O_NOATIME copy.
+- **The director's placement conditions** (2026-11-24):
+  - **Order.** Part 2 is the first P0 work that reads flux4's output after P0 checks that output's identity. The flux
+    factors, spectra and products are used only after part 2 passes.
+  - **A failure is a STOP.** If part 2 fails, P0 STOPs, and flux4's factors are used by nothing. `d2-predict` and every
+    later step require P0's passing record, so no flux4 product reaches a control or a reading before part 2 passes.
+- **The omnifiles:** the 12 are pinned at c2's sha256s and staged by O_NOATIME copy. A pin mismatch is a STOP.
+- **The spot rows** are read from flux4's pinned record, not recomputed from the seed. P0 requires each playlist's
+  record to:
+  - list sorted, distinct rows inside the dump, including its first and last rows, with at least
+    min(64, rows) of them;
+  - give one (run, subrun, event) and one Eν per row.
 - **The checks, for each spot row:**
-  - P0 recomputes the spot rows from the same seed, and requires them equal to flux4's record;
   - the row's (run, subrun, event) must be in that playlist's `mc_signal_reco` exactly once;
   - at that entry, `truthx_enu / 1000` equals the recorded Eν, bitwise;
   - `float32(MC)` and `float32(MC_pz)` equal `lat_<PL>`'s MCgen[i, 0] and MCgen[i, 1] bitwise. This is the dump's cast
@@ -203,7 +212,8 @@ flux3, P0 and d2s0 records stay as history.
 - **C-JOIN part 2:**
   - a spot row whose id is missing from its omnifile, or appears twice;
   - an Eν, MC or MC_pz that differs by one ulp;
-  - a spot-row set that differs from the seed's;
+  - a spot-row list that is unsorted, repeated, out of range or missing its first or last row (P0), and one that
+    differs from the seed's (flux4);
   - a product `energy` that differs from the record;
   - a MCgen that is not float32;
   - P0 stopping when an omnifile is not at its pin.
