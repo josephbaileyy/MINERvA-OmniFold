@@ -1,0 +1,482 @@
+{
+ "schema": "note-newfigs-fived16-headline/1",
+ "record": {
+  "path": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/data-product/fd_data_product_cpl.json",
+  "bytes_digest_sha256": "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50",
+  "covariance": "C_total_plus_C_resp_plus_C_PL5D"
+ },
+ "unit": "1e-40 cm^2/nucleon (the cell-integrated cross section f, as tab:fived16-cells)",
+ "cells": [
+  {
+   "cell": "R00",
+   "box": {
+    "pt": [
+     0.0,
+     0.7
+    ],
+    "pz": [
+     1.5,
+     4.5
+    ],
+    "eavail": [
+     0.0,
+     0.8
+    ],
+    "q3": [
+     0.0,
+     2.0
+    ],
+    "W": [
+     0.0,
+     100.0
+    ]
+   },
+   "label": "eavail $<$0.8; q3 $<$2; W any",
+   "f": 32.58849411025612,
+   "sigma_reported": 2.3163440434336713,
+   "relative_sigma_reported": 0.07107858484030659
+  },
+  {
+   "cell": "R01",
+   "box": {
+    "pt": [
+     0.0,
+     0.7
+    ],
+    "pz": [
+     1.5,
+     4.5
+    ],
+    "eavail": [
+     0.0,
+     100.0
+    ],
+    "q3": [
+     2.0,
+     100.0
+    ],
+    "W": [
+     1.8,
+     100.0
+    ]
+   },
+   "label": "eavail any; q3 $>$2; W $>$1.8",
+   "f": 36.70686989951547,
+   "sigma_reported": 2.7874270670104786,
+   "relative_sigma_reported": 0.07593747640812253
+  },
+  {
+   "cell": "R02",
+   "box": {
+    "pt": [
+     0.0,
+     0.7
+    ],
+    "pz": [
+     1.5,
+     4.5
+    ],
+    "eavail": [
+     0.8,
+     100.0
+    ],
+    "q3": [
+     0.0,
+     2.0
+    ],
+    "W": [
+     0.0,
+     1.8
+    ]
+   },
+   "label": "eavail $>$0.8; q3 $<$2; W $<$1.8",
+   "f": 6.311285362959607,
+   "sigma_reported": 0.8867397101880551,
+   "relative_sigma_reported": 0.14050065227477346
+  },
+  {
+   "cell": "R03",
+   "box": {
+    "pt": [
+     0.0,
+     0.7
+    ],
+    "pz": [
+     1.5,
+     4.5
+    ],
+    "eavail": [
+     0.8,
+     100.0
+    ],
+    "q3": [
+     0.0,
+     2.0
+    ],
+    "W": [
+     1.8,
+     100.0
+    ]
+   },
+   "label": "eavail $>$0.8; q3 $<$2; W $>$1.8",
+   "f": 4.304968937170949,
+   "sigma_reported": 0.5478333412893495,
+   "relative_sigma_reported": 0.12725604976127033
+  },
+  {
+   "cell": "R04",
+   "box": {
+    "pt": [
+     0.0,
+     0.7
+    ],
+    "pz": [
+     4.5,
+     60.0
+    ],
+    "eavail": [
+     0.0,
+     0.8
+    ],
+    "q3": [
+     0.0,
+     2.0
+    ],
+    "W": [
+     0.0,
+     100.0
+    ]
+   },
+   "label": "eavail $<$0.8; q3 $<$2; W any",
+   "f": 48.99572263040665,
+   "sigma_reported": 2.350324033846813,
+   "relative_sigma_reported": 0.04796998406526627
+  },
+  {
+   "cell": "R05",
+   "box": {
+    "pt": [
+     0.0,
+     0.7
+    ],
+    "pz": [
+     4.5,
+     60.0
+    ],
+    "eavail": [
+     0.0,
+     100.0
+    ],
+    "q3": [
+     2.0,
+     100.0
+    ],
+    "W": [
+     1.8,
+     100.0
+    ]
+   },
+   "label": "eavail any; q3 $>$2; W $>$1.8",
+   "f": 9.981502501812427,
+   "sigma_reported": 0.8101962901064999,
+   "relative_sigma_reported": 0.08116977278314418
+  },
+  {
+   "cell": "R06",
+   "box": {
+    "pt": [
+     0.0,
+     0.7
+    ],
+    "pz": [
+     4.5,
+     60.0
+    ],
+    "eavail": [
+     0.8,
+     100.0
+    ],
+    "q3": [
+     0.0,
+     2.0
+    ],
+    "W": [
+     0.0,
+     1.8
+    ]
+   },
+   "label": "eavail $>$0.8; q3 $<$2; W $<$1.8",
+   "f": 5.567619496246484,
+   "sigma_reported": 0.3651823587295205,
+   "relative_sigma_reported": 0.06559039441824556
+  },
+  {
+   "cell": "R07",
+   "box": {
+    "pt": [
+     0.0,
+     0.7
+    ],
+    "pz": [
+     4.5,
+     60.0
+    ],
+    "eavail": [
+     0.8,
+     100.0
+    ],
+    "q3": [
+     0.0,
+     2.0
+    ],
+    "W": [
+     1.8,
+     100.0
+    ]
+   },
+   "label": "eavail $>$0.8; q3 $<$2; W $>$1.8",
+   "f": 3.2063249914490246,
+   "sigma_reported": 0.2709939983870518,
+   "relative_sigma_reported": 0.0845185684887739
+  },
+  {
+   "cell": "R08",
+   "box": {
+    "pt": [
+     0.7,
+     4.5
+    ],
+    "pz": [
+     1.5,
+     4.5
+    ],
+    "eavail": [
+     0.0,
+     0.8
+    ],
+    "q3": [
+     0.0,
+     100.0
+    ],
+    "W": [
+     0.0,
+     1.8
+    ]
+   },
+   "label": "eavail $<$0.8; q3 any; W $<$1.8",
+   "f": 13.85481216152987,
+   "sigma_reported": 0.8674686677451188,
+   "relative_sigma_reported": 0.06261136258157192
+  },
+  {
+   "cell": "R09",
+   "box": {
+    "pt": [
+     0.7,
+     4.5
+    ],
+    "pz": [
+     1.5,
+     4.5
+    ],
+    "eavail": [
+     0.0,
+     100.0
+    ],
+    "q3": [
+     0.0,
+     100.0
+    ],
+    "W": [
+     1.8,
+     100.0
+    ]
+   },
+   "label": "eavail any; q3 any; W $>$1.8",
+   "f": 39.60989903023601,
+   "sigma_reported": 2.713868288881598,
+   "relative_sigma_reported": 0.0685149004497583
+  },
+  {
+   "cell": "R10",
+   "box": {
+    "pt": [
+     0.7,
+     4.5
+    ],
+    "pz": [
+     1.5,
+     4.5
+    ],
+    "eavail": [
+     0.8,
+     100.0
+    ],
+    "q3": [
+     0.0,
+     2.0
+    ],
+    "W": [
+     0.0,
+     1.8
+    ]
+   },
+   "label": "eavail $>$0.8; q3 $<$2; W $<$1.8",
+   "f": 7.830277107561073,
+   "sigma_reported": 0.6803108729984633,
+   "relative_sigma_reported": 0.0868820941651658
+  },
+  {
+   "cell": "R11",
+   "box": {
+    "pt": [
+     0.7,
+     4.5
+    ],
+    "pz": [
+     1.5,
+     4.5
+    ],
+    "eavail": [
+     0.8,
+     100.0
+    ],
+    "q3": [
+     2.0,
+     100.0
+    ],
+    "W": [
+     0.0,
+     1.8
+    ]
+   },
+   "label": "eavail $>$0.8; q3 $>$2; W $<$1.8",
+   "f": 5.612329010620665,
+   "sigma_reported": 0.7794482412740382,
+   "relative_sigma_reported": 0.13888142334475137
+  },
+  {
+   "cell": "R12",
+   "box": {
+    "pt": [
+     0.7,
+     4.5
+    ],
+    "pz": [
+     4.5,
+     60.0
+    ],
+    "eavail": [
+     0.0,
+     0.8
+    ],
+    "q3": [
+     0.0,
+     2.0
+    ],
+    "W": [
+     0.0,
+     100.0
+    ]
+   },
+   "label": "eavail $<$0.8; q3 $<$2; W any",
+   "f": 21.96832215199146,
+   "sigma_reported": 1.5338075547094372,
+   "relative_sigma_reported": 0.06981905782779114
+  },
+  {
+   "cell": "R13",
+   "box": {
+    "pt": [
+     0.7,
+     4.5
+    ],
+    "pz": [
+     4.5,
+     60.0
+    ],
+    "eavail": [
+     0.0,
+     100.0
+    ],
+    "q3": [
+     2.0,
+     100.0
+    ],
+    "W": [
+     0.0,
+     1.8
+    ]
+   },
+   "label": "eavail any; q3 $>$2; W $<$1.8",
+   "f": 9.040920607196835,
+   "sigma_reported": 1.029118437606984,
+   "relative_sigma_reported": 0.1138289431264086
+  },
+  {
+   "cell": "R14",
+   "box": {
+    "pt": [
+     0.7,
+     4.5
+    ],
+    "pz": [
+     4.5,
+     60.0
+    ],
+    "eavail": [
+     0.0,
+     100.0
+    ],
+    "q3": [
+     2.0,
+     100.0
+    ],
+    "W": [
+     1.8,
+     100.0
+    ]
+   },
+   "label": "eavail any; q3 $>$2; W $>$1.8",
+   "f": 49.63286357273214,
+   "sigma_reported": 2.8191716714023123,
+   "relative_sigma_reported": 0.05680050411097256
+  },
+  {
+   "cell": "R15",
+   "box": {
+    "pt": [
+     0.7,
+     4.5
+    ],
+    "pz": [
+     4.5,
+     60.0
+    ],
+    "eavail": [
+     0.8,
+     100.0
+    ],
+    "q3": [
+     0.0,
+     2.0
+    ],
+    "W": [
+     0.0,
+     100.0
+    ]
+   },
+   "label": "eavail $>$0.8; q3 $<$2; W any",
+   "f": 11.283323466645909,
+   "sigma_reported": 0.9350285835903066,
+   "relative_sigma_reported": 0.08286818917797578
+  }
+ ],
+ "checks": {
+  "record_sha256_pinned": true,
+  "relative_sigma_equals_record": true,
+  "plotted_points_equal_record_f": true,
+  "plotted_bars_equal_sqrt_diag": true,
+  "quadrants_share_one_pt_pz_box": true
+ }
+}

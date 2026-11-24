@@ -1,0 +1,280 @@
+{
+ "schema": "msr-route-diag2/1",
+ "fields": [
+  "stat",
+  "vector_id",
+  "build",
+  "kappa2_C",
+  "kappa2_CQ",
+  "rel_diff_drivers",
+  "rel_diff_eigen_vs_ref",
+  "rel_diff_indep_vs_ref",
+  "ref_partition_equal"
+ ],
+ "rows": [
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#013",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.033880740494551774,
+   "rel_diff_eigen_vs_ref": 0.005659928046134563,
+   "rel_diff_indep_vs_ref": 5.311267152130734e-06,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#014",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.05771625547929545,
+   "rel_diff_eigen_vs_ref": 0.04363021959928227,
+   "rel_diff_indep_vs_ref": 1.8561330816744014e-07,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#015",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.02767829983134828,
+   "rel_diff_eigen_vs_ref": 0.018167189989132936,
+   "rel_diff_indep_vs_ref": 5.938155260117062e-06,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#030",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.010489017875820345,
+   "rel_diff_eigen_vs_ref": 0.0027083672938408524,
+   "rel_diff_indep_vs_ref": 7.70131439262216e-05,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#031",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.003685771073577448,
+   "rel_diff_eigen_vs_ref": 0.012267730053507437,
+   "rel_diff_indep_vs_ref": 0.0006415875443548978,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#032",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.02001700072488589,
+   "rel_diff_eigen_vs_ref": 0.017497553493169005,
+   "rel_diff_indep_vs_ref": 0.0004082505675613612,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#033",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.02293009137040555,
+   "rel_diff_eigen_vs_ref": 0.020107321474750816,
+   "rel_diff_indep_vs_ref": 0.0004861158021619693,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#034",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.050553954306772134,
+   "rel_diff_eigen_vs_ref": 0.036125841218558635,
+   "rel_diff_indep_vs_ref": 8.521987158393468e-05,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#035",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.02497086594659634,
+   "rel_diff_eigen_vs_ref": 0.020177081429036764,
+   "rel_diff_indep_vs_ref": 0.00027566531117915685,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#036",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.010310385244544851,
+   "rel_diff_eigen_vs_ref": 0.024472405006824818,
+   "rel_diff_indep_vs_ref": 0.00016503232757888794,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#037",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.0646670131514199,
+   "rel_diff_eigen_vs_ref": 0.05978064260558571,
+   "rel_diff_indep_vs_ref": 3.134029045305784e-05,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#038",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.007880580531709144,
+   "rel_diff_eigen_vs_ref": 0.018162146111148986,
+   "rel_diff_indep_vs_ref": 0.0003116651058809388,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#039",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.011552751671987313,
+   "rel_diff_eigen_vs_ref": 0.0179625264290413,
+   "rel_diff_indep_vs_ref": 0.0003872435139779858,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#040",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.0007649206349696085,
+   "rel_diff_eigen_vs_ref": 0.004528799173099425,
+   "rel_diff_indep_vs_ref": 0.0004967355194832557,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#041",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.04219082748209227,
+   "rel_diff_eigen_vs_ref": 0.03152727108079082,
+   "rel_diff_indep_vs_ref": 0.00011538257828695856,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#042",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.01117768928302679,
+   "rel_diff_eigen_vs_ref": 0.008603161891957164,
+   "rel_diff_indep_vs_ref": 0.00012295586980934226,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#043",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.004716848102452236,
+   "rel_diff_eigen_vs_ref": 0.013479617728405119,
+   "rel_diff_indep_vs_ref": 8.63650364176214e-05,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#044",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.04318409481325331,
+   "rel_diff_eigen_vs_ref": 0.02669852157022608,
+   "rel_diff_indep_vs_ref": 0.00013404347334131515,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#045",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.0066750843944458115,
+   "rel_diff_eigen_vs_ref": 0.013158806648725811,
+   "rel_diff_indep_vs_ref": 0.00044634119402047054,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#046",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.016850462709039584,
+   "rel_diff_eigen_vs_ref": 0.02483001668488237,
+   "rel_diff_indep_vs_ref": 0.00037417917814543095,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#047",
+   "build": "full/numpy",
+   "kappa2_C": 2.114104177558273e+16,
+   "kappa2_CQ": 2.1046873956628148e+16,
+   "rel_diff_drivers": 0.005373588854802506,
+   "rel_diff_eigen_vs_ref": 0.01209936428335129,
+   "rel_diff_indep_vs_ref": 0.0005512293862422848,
+   "ref_partition_equal": true
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#001",
+   "build": "full/numpy",
+   "kappa2_C": 846.4710188607497,
+   "kappa2_CQ": 846.471018860748,
+   "rel_diff_drivers": 3.5468326919514403e-16,
+   "rel_diff_eigen_vs_ref": NaN,
+   "rel_diff_indep_vs_ref": NaN,
+   "ref_partition_equal": null
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#002",
+   "build": "full/numpy",
+   "kappa2_C": 846.4710188607497,
+   "kappa2_CQ": 846.471018860748,
+   "rel_diff_drivers": 1.4943879694315149e-15,
+   "rel_diff_eigen_vs_ref": NaN,
+   "rel_diff_indep_vs_ref": NaN,
+   "ref_partition_equal": null
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#003",
+   "build": "full/numpy",
+   "kappa2_C": 846.4710188607497,
+   "kappa2_CQ": 846.471018860748,
+   "rel_diff_drivers": 3.304012480889228e-16,
+   "rel_diff_eigen_vs_ref": NaN,
+   "rel_diff_indep_vs_ref": NaN,
+   "ref_partition_equal": null
+  }
+ ]
+}

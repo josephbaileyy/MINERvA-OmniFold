@@ -1,0 +1,10 @@
+cert valid to 2026-11-24T05:57:28Z (UTC)
+ssh rc=10
+node login05 staged sha256 40645b69f02ee67db830fc9f95e3c69bf79cf46a9db4fbada26ce9da7ccf0f2e
+node login05 2026-11-23T16:07:04Z; fetch script sha256 40645b69f02ee67db830fc9f95e3c69bf79cf46a9db4fbada26ce9da7ccf0f2e
+job 61861637; sacct rc=0; state [PENDING]
+sacct: 61861637|rpd_flux3|PENDING|0:0|00:00:00|Unknown|Unknown|None assigned||0|16G|01:00:00
+== job-host.txt
+(absent)
+NOT FINISHED: no job.rc; sacct state [PENDING]
+script rc=10

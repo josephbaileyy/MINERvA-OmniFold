@@ -1,0 +1,21 @@
+{
+ "dpi": 100.0,
+ "canvas_px": [
+  650.0,
+  280.0
+ ],
+ "n_texts": 29,
+ "overlaps": [],
+ "off_canvas": [
+  [
+   "signal rate lowered by about 10%, weak $E_{\\rm avail}$ slope: upper bound below threshold for 51 (68%) and 42 (95%) of 153",
+   [
+    47.0,
+    218.3,
+    651.5,
+    232.3
+   ]
+  ]
+ ],
+ "pdf": "m3_fig3_coverage.pdf"
+}

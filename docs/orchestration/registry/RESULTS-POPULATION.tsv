@@ -2,6 +2,7 @@
 # roots: docs/orchestration/state/, docs/orchestration/receipts/, docs/orchestration/runs/. One row per INCLUDED receipt; `results_index.py --population` lists the excluded ones.
 path	class	rows	note
 docs/orchestration/receipts/2d-lgbm42-20261011/receipt_model_chi2_2d_lgbm42.json	included	9	
+docs/orchestration/state/2d-closeout/covfix-20261122/p0/run/p0.json	included	428	
 docs/orchestration/state/2d-closeout/period-unfold-20261014/outputs/supplement_bias_dr.json	included	6	
 docs/orchestration/state/2d-closeout/playlist-spread-20261014/coverage/outputs/coverage.json	included	164	
 docs/orchestration/state/2d-closeout/playlist-spread-20261014/coverage/outputs/reco_universes.json	included	94	
@@ -18,6 +19,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/m2-archive/m2_archive_result
 docs/orchestration/state/2d-closeout/stageF/methods/m4-w/probe_gen.json	included	8	
 docs/orchestration/state/2d-closeout/stageF/methods/m4-w/probe_mad.json	included	23	
 docs/orchestration/state/2d-closeout/stageF/methods/m4-w/probe_omni.json	included	28	
+docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/runs/round4/cov/arm1/out/m3_fig3_coverage_data.json	included	306	
 docs/orchestration/state/2d-closeout/stageF/methods/note-genresid-20261120/run/fived16_genresidual_values.json	included	72	
 docs/orchestration/state/2d-closeout/stageF/methods/ratefail/diag_out.json	included	612	
 docs/orchestration/state/2d-closeout/stageF/methods/re1/f/fig_numbers_p5.json	included	2	

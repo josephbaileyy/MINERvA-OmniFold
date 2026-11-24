@@ -1,0 +1,896 @@
+{
+ "schema": "msr-route-diag/1",
+ "fields": [
+  "stat",
+  "vector_id",
+  "build",
+  "rel_diff",
+  "passes_current_bar",
+  "kappa2",
+  "ten_kappa_eps"
+ ],
+ "rows": [
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#001",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#001",
+   "build": "full/numpy",
+   "rel_diff": 3.5468326919514403e-16,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#002",
+   "build": "full/numpy",
+   "rel_diff": 1.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#002",
+   "build": "full/numpy",
+   "rel_diff": 3.668043197695528e-15,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#003",
+   "build": "full/numpy",
+   "rel_diff": 1.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#003",
+   "build": "full/numpy",
+   "rel_diff": 4.956018721333844e-16,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#004",
+   "build": "full/numpy",
+   "rel_diff": 0.5,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#004",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#005",
+   "build": "full/numpy",
+   "rel_diff": 1.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#005",
+   "build": "full/numpy",
+   "rel_diff": 2.1833147795886756e-15,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#006",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#006",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#007",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#007",
+   "build": "full/numpy",
+   "rel_diff": 8.720402020605833e-16,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#008",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#008",
+   "build": "full/numpy",
+   "rel_diff": 3.918887045253216e-14,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#009",
+   "build": "full/numpy",
+   "rel_diff": 1.5,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#009",
+   "build": "full/numpy",
+   "rel_diff": 2.8291423367354175e-15,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#010",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#010",
+   "build": "full/numpy",
+   "rel_diff": 4.41512473859063e-16,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#011",
+   "build": "full/numpy",
+   "rel_diff": 1.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#011",
+   "build": "full/numpy",
+   "rel_diff": 1.178051177890508e-15,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#012",
+   "build": "full/numpy",
+   "rel_diff": 1.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#012",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#013",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#013",
+   "build": "full/numpy",
+   "rel_diff": 0.005654646812322303,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#014",
+   "build": "full/numpy",
+   "rel_diff": 3.8318406970436314e-16,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#014",
+   "build": "full/numpy",
+   "rel_diff": 0.04363004208429055,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#015",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#015",
+   "build": "full/numpy",
+   "rel_diff": 0.018173020264798258,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "r_poor",
+   "vector_id": "arm#1",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "r_well",
+   "vector_id": "arm#1",
+   "build": "full/numpy",
+   "rel_diff": 6.376275723069545e-16,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "r_poor",
+   "vector_id": "arm#2",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "r_well",
+   "vector_id": "arm#2",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#016",
+   "build": "full/numpy",
+   "rel_diff": 1.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#016",
+   "build": "full/numpy",
+   "rel_diff": 4.137648147903681e-16,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#017",
+   "build": "full/numpy",
+   "rel_diff": 0.6666666666666666,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#017",
+   "build": "full/numpy",
+   "rel_diff": 2.7596463549048713e-15,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#018",
+   "build": "full/numpy",
+   "rel_diff": 0.5,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#018",
+   "build": "full/numpy",
+   "rel_diff": 2.8807416035842274e-15,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#019",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#019",
+   "build": "full/numpy",
+   "rel_diff": 6.240801387455567e-16,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#020",
+   "build": "full/numpy",
+   "rel_diff": 1.5,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#020",
+   "build": "full/numpy",
+   "rel_diff": 4.487159535930621e-16,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#021",
+   "build": "full/numpy",
+   "rel_diff": 0.5,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#021",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#022",
+   "build": "full/numpy",
+   "rel_diff": 1.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#022",
+   "build": "full/numpy",
+   "rel_diff": 1.6499804679287808e-15,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#023",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#023",
+   "build": "full/numpy",
+   "rel_diff": 1.729106645422665e-15,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#024",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#024",
+   "build": "full/numpy",
+   "rel_diff": 2.4504179713463707e-15,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#025",
+   "build": "full/numpy",
+   "rel_diff": 2.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#025",
+   "build": "full/numpy",
+   "rel_diff": 3.2827429868826466e-15,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#026",
+   "build": "full/numpy",
+   "rel_diff": 0.5,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#026",
+   "build": "full/numpy",
+   "rel_diff": 1.8898588944696185e-16,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#027",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#027",
+   "build": "full/numpy",
+   "rel_diff": 2.9891603484525604e-15,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#028",
+   "build": "full/numpy",
+   "rel_diff": 0.6666666666666666,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#028",
+   "build": "full/numpy",
+   "rel_diff": 4.38736048577245e-15,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "5d#029",
+   "build": "full/numpy",
+   "rel_diff": 1.5,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000013,
+   "ten_kappa_eps": 2.2204460492503162e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "5d#029",
+   "build": "full/numpy",
+   "rel_diff": 8.109675576648174e-15,
+   "passes_current_bar": true,
+   "kappa2": 846.471018860748,
+   "ten_kappa_eps": 1.879543229634235e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#030",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#030",
+   "build": "full/numpy",
+   "rel_diff": 0.0027851718578868682,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#031",
+   "build": "full/numpy",
+   "rel_diff": 1.312064986028787e-15,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#031",
+   "build": "full/numpy",
+   "rel_diff": 0.012901446775062497,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#032",
+   "build": "full/numpy",
+   "rel_diff": 2.203101451365289e-15,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#032",
+   "build": "full/numpy",
+   "rel_diff": 0.017096282492638455,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#033",
+   "build": "full/numpy",
+   "rel_diff": 1.8964328391650115e-15,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#033",
+   "build": "full/numpy",
+   "rel_diff": 0.019630748489637927,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#034",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#034",
+   "build": "full/numpy",
+   "rel_diff": 0.036043692985862366,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#035",
+   "build": "full/numpy",
+   "rel_diff": 1.9054777320415304e-16,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#035",
+   "build": "full/numpy",
+   "rel_diff": 0.019906903760677407,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#036",
+   "build": "full/numpy",
+   "rel_diff": 3.120578452385029e-16,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#036",
+   "build": "full/numpy",
+   "rel_diff": 0.02463339859644398,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#037",
+   "build": "full/numpy",
+   "rel_diff": 1.9876461960655837e-16,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#037",
+   "build": "full/numpy",
+   "rel_diff": 0.05981010935333604,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#038",
+   "build": "full/numpy",
+   "rel_diff": 1.3011397000438992e-16,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#038",
+   "build": "full/numpy",
+   "rel_diff": 0.01846815070983917,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#039",
+   "build": "full/numpy",
+   "rel_diff": 6.457946241472069e-16,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#039",
+   "build": "full/numpy",
+   "rel_diff": 0.01834281407116498,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#040",
+   "build": "full/numpy",
+   "rel_diff": 1.9651788186794e-15,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#040",
+   "build": "full/numpy",
+   "rel_diff": 0.005023285077172796,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#041",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#041",
+   "build": "full/numpy",
+   "rel_diff": 0.03141551330542725,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#042",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#042",
+   "build": "full/numpy",
+   "rel_diff": 0.008481248841476195,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#043",
+   "build": "full/numpy",
+   "rel_diff": 1.3028431520533614e-16,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#043",
+   "build": "full/numpy",
+   "rel_diff": 0.01356481859714673,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#044",
+   "build": "full/numpy",
+   "rel_diff": 3.6527561446139417e-16,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#044",
+   "build": "full/numpy",
+   "rel_diff": 0.026828986281003046,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#045",
+   "build": "full/numpy",
+   "rel_diff": 0.0,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#045",
+   "build": "full/numpy",
+   "rel_diff": 0.013599274525274804,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#046",
+   "build": "full/numpy",
+   "rel_diff": 1.02214480154305e-15,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#046",
+   "build": "full/numpy",
+   "rel_diff": 0.02519490498779131,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  },
+  {
+   "stat": "S_poor",
+   "vector_id": "2d#047",
+   "build": "full/numpy",
+   "rel_diff": 5.547774811895995e-16,
+   "passes_current_bar": true,
+   "kappa2": 1.0000000000000018,
+   "ten_kappa_eps": 2.220446049250317e-15
+  },
+  {
+   "stat": "Z_well",
+   "vector_id": "2d#047",
+   "build": "full/numpy",
+   "rel_diff": 0.012643924144445741,
+   "passes_current_bar": false,
+   "kappa2": 539.4162103163642,
+   "ten_kappa_eps": 1.197744593098547e-12
+  }
+ ]
+}

@@ -1,0 +1,15 @@
+You are an independent reviewer of analysis code for COVFIX phase P0 (a particle-physics covariance study), round 3. Read-only: do not run anything on real data, do not modify files. All files are in the current directory.
+
+Authority: COVFIX-DECLARATION.md (rev 11.4, bound); P0 is its section 3.1, using sections 2, 5.2 and 8. Code: covfix_core.py (shared math) and covfix_p0.py (the P0 driver). Tests: test_covfix_core.py and test_covfix_p0.py (synthetic only) and test_covfix_p0_pins.py (production pin audit). Receipts: tests.txt, line-trace.txt, mutation.txt (via covfix_mutation.py). regrade_crep.py is context only (REGRADE's carry_frac of C_PL and its A0 tolerance form).
+
+Round 2: codex2-p0-r2-REPORT.md (NO-GO, 7 blocking) and agy-p0-r2-REPORT.md (GO). The author's response, item by item, is p0-r2-dispositions.md.
+
+Do two things.
+A. For EVERY round 2 item (codex section A items still NOT RESOLVED, codex blocking 1-7, codex non-blocking 1-5, agy non-blocking 1-2), state RESOLVED, ACCEPTABLY KEPT (the stated reason holds), or NOT RESOLVED, with file:line evidence.
+B. Re-review the whole code fresh against the declaration (sections 2, 3.1, 5.2, 8): any line whose behaviour differs from the declaration, any declared P0 reading missing, any undeclared stop, any test gap, and anything the round 3 changes broke. In particular check: C-PSD now before A0 and covering the rebuilt tune model block; both residual angles and the full below-well list; Gram-Schmidt in eigenspace coordinates with GS_NULL = 100 eps; evr compared only where exact-tie partitions agree; the spread guards (unlabelled, X = the spread, psi = the delta-method influence term); scoped refusals for single readings; the G2R frame vectors printed, not barred; IBUKT preflight; A0's kappa from the grader's eigh spectrum and the no-positive refusal; exclusive creation of the record. If an item is a matter of taste rather than a deviation from the declaration or a wrong record, say so and put it under NON-BLOCKING.
+
+Output format:
+A. ROUND 2 ITEMS: one line each.
+B. BLOCKING (would make P0's record wrong, or violates the declaration): numbered, each with file:line, the declaration section and a concrete fix.
+NON-BLOCKING: numbered, same format.
+Last line exactly: "VERDICT: GO" or "VERDICT: NO-GO".
