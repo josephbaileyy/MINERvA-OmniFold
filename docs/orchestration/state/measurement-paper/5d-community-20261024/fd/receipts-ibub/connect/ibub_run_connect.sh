@@ -23,8 +23,8 @@
 SELF=$1; WEND=$2
 set -o pipefail
 TAG=run
-M=db8854e286f6ce4a976e0d603b43454674fc9129
-N=/pscratch/sd/j/josephrb/ibub-20261123
+M=d12c4f2a38a53001eb92bbefc8b2dc6001f034dc
+N=/pscratch/sd/j/josephrb/ibub-20261124
 D=$N/deploy
 FR=$N/fetch-$TAG
 SHM=/dev/shm/ibub-connect
@@ -176,9 +176,9 @@ echo "HEAD $M; porcelain --ignored before: '${gs}'"
 e8e5969f978107e45991164a16c84f1794694dee752cbf189eab00e3ddd54633  ibub_unit.py
 1cc64564448277831dc4ac5fc888b4a3dd15a2c56badfab6325f83d962bcfed7  ibub_readout.py
 62591f998f6d3c907bcec460c9399a419755d8f041b40652f37066074b3ab85b  ibub_lanes.py
-13316a39994057d21e72fe4243e89e6ba8b0fb6f65db54b6325947eff48e4e78  ibub_overlap.py
-8f1900e43d20cbc7b6dabb73e0419314bd6c0456b485d13b91afa450ed6ddb2e  config.json
-5e8e0abf0aa4e85907f00e568db1e8468face153655f4723db801504c05bfc55  jobs/ibub_job.sbatch
+507767798ed13edd7c896b0955fcf4090e5dfc0307e0067d9684df2d30c78928  ibub_overlap.py
+bf0838c67ac5c3c0ce375ca7083623d3b44c8007d7de06d30e59ac9f7a02143b  config.json
+ab0d7387e7b63605f5091342eea2b1a976b39dda7263b31099309e85c6195518  jobs/ibub_job.sbatch
 SUMS
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 NUMEXPR_NUM_THREADS=2
 export PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
@@ -225,10 +225,12 @@ SREC="$N/logs/scontrol-connect-$jid.txt"
 info=$(scontrol show job "$jid" 2>&1); ( set -o noclobber; printf '%s\n' "$info" > "$SREC" ) \
   || { echo "STOP: writing $SREC"; finish 5; }
 # scontrol ends its first line with JobName=..., so each key is matched up to a space or the end of the line
-grep -Eq "JobName=$JOBNAME( |\$)" <<<"$info" && grep -Eq "QOS=regular( |\$)" <<<"$info" \
-  && grep -Eq "TimeLimit=$LIMIT( |\$)" <<<"$info" \
-  || { echo "STOP: scontrol does not show $JOBNAME / regular / $LIMIT for $jid"; finish 5; }
-echo "scontrol: name, QOS and limit as declared"
+grep -Eq "JobName=$JOBNAME( |\$)" <<<"$info" && grep -Eq "TimeLimit=$LIMIT( |\$)" <<<"$info" \
+  || { echo "STOP: scontrol does not show $JOBNAME / $LIMIT for $jid"; finish 5; }
+# Perlmutter records --qos=regular as QOS=regular_1 (receipts-cov2d/a2/bulk/complete/connect-complete-1.log.txt:78); the accepted set is exactly these two
+qos=$(tr ' ' '\n' <<<"$info" | sed -n 's/^QOS=//p' | head -1)
+case "$qos" in regular|regular_1) ;; *) echo "STOP: scontrol shows QOS '$qos' for $jid, not one of {regular, regular_1}"; finish 5;; esac
+echo "scontrol: name, QOS ($qos) and limit as declared"
 gs=$(git -C "$D" status --porcelain --ignored) || { echo "STOP: git status failed (after)"; finish 9; }
 echo "porcelain --ignored after: '${gs}'"
 [ -z "$gs" ] || { echo "STOP: the deploy changed (no exception: the job requires it clean)"; finish 9; }
