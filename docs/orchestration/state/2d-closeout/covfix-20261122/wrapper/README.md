@@ -244,6 +244,29 @@ All of this rests on §4.2's cooperative assumption of one shared account.
 - The pass-through redaction catches the secrets verbatim only, not an encoded copy. The bound binaries must print
   none.
 
+
+## Known limitations, accepted as non-blocking (director, 2026-11-23)
+
+The final confirms judged each of these non-blocking: none can leak a secret, lose or double a spend, or spend validation
+without a durable record.
+
+- **Late uncertain marker from a lock contender.** Two runs of the same role can both pass the pre-checks. The one that
+  loses the lock times out and writes an uncertain marker. If that marker lands after the winner's launch gate has read
+  the markers, the winner still launches. The role is still spent exactly once, and the late marker only blocks
+  further runs.
+- **A reveal's recorded detail can omit a ruling.** If a role becomes in flight between reveal's first check and its
+  locked re-check, the locked check accepts the `--inflight-resolved` ruling. The reveal line's detail, though, is
+  built from the first check and may not name that ruling. The ruling id is still on the director's command line.
+- **A refused reveal can leave one local-only line.** If reveal's locked re-check refuses after the lock absorbed a
+  pending marker, that marker's line is in the local record but not pushed. The next locked write re-checks the mirror
+  and publishes it (the local record still extends the pushed one).
+- **A failed fd move in `gpg_run` skips its cleanup.** If moving the passphrase pipe above stdio fails (for example
+  when descriptors are exhausted), the original read end stays open until the process exits, and the temporary
+  `GNUPGHOME` is left on disk. Nothing secret is written there; the failure comes before gpg starts.
+- **The ssh file checks run at setup.** The wrapper checks that `known_hosts`, the identity and the certificate are
+  regular files owned by this user before ssh starts, and ssh opens them by path later. Swapping one of them in
+  between needs this same account, which §4.2's cooperative assumption already trusts (confirm 6).
+
 ## Tests
 
 ```
