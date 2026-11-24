@@ -1,0 +1,18 @@
+READ-ONLY review. The files are in the directory you were given (files/). Do not create, edit, rename or delete any file. Do not run builds, git or cluster commands. Read the files only.
+
+Files:
+- runEventLoopOmniFold.cpp.diff: a diff of a C++ ROOT event loop against the production version. It adds an opt-in env flag MNV101_DUMP_MUONQ.
+- runEventLoopOmniFold.cpp: the full modified file.
+- build.sh: a login-node build script.
+- evl.sbatch: a Slurm array job, one task per playlist.
+- ana.sbatch: a Slurm job that merges with hadd, then runs ana.py.
+- ana.py: an offline pass that writes binned products.
+- DECLARATION.txt: the analysis declaration that ana.py must implement.
+
+Answer each question with file:line citations, quoting the exact line text. If something is fine, say so with the line that shows it. Never invent a line; if unsure, write UNSURE.
+Q1. With MNV101_DUMP_MUONQ unset, is the program's behaviour and output byte-for-byte identical to production? Check every added line in the diff: is every Branch/SetBranchAddress/fill-related change guarded by the flag, and could any unguarded addition (struct construction, the name-exclusion set in the truth-only miss path) change any output?
+Q2. Does anything in build.sh, evl.sbatch, ana.sbatch or ana.py write outside /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/? Does anything write to CFS (paths under /global/cfs)?
+Q3. Do the scripts call squeue (they must not)? Do any of them mishandle a pipe's exit status (a failure hidden by a pipe, or set -e/pipefail missing where it matters)?
+Q4. Does ana.py match DECLARATION.txt: the controls (C-KIN, C-ANG; C-REPRO is scored later from its products), the variants (BASE, SEL, MAD, CURV(d), RANGE(d), ANG(dx,dy)) with the stated definitions, ranges and steps, and the binning? List every mismatch.
+Q5. Any other bug likely to give wrong numbers (units: MeV vs GeV; the theta3D formula; the selection masks; weights times POT scale; background and data gating).
+Final answer: Q1-Q5, then one line "VERDICT: GO" or "VERDICT: FIX" followed by the numbered fixes.

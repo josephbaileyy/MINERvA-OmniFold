@@ -1,0 +1,28 @@
+node login38 nproc=244 loadavg 21.27 29.01 31.68
+2026-11-24T08:14:55Z
+window_end_epoch 1795508720 (now 1795508095); fence prefixes cov2d,rpd_,ibub_,d2s0,covfix
+connect script sha256 9fc0f3c01303278c21fb284aad86bef8ee0d07b873becca29a0c55e4c4aa1846
+== cov2d fence rev 3 (7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738)
+fence host=login38 utc=2026-11-24T08:14:55Z
+sacct -X -n -P -u josephrb -S 2026-11-10T00:14:55 -E now -o JobID,JobName,State 2>&1
+sacct matching rows: 14
+FENCE CLEAR
+== fence (sacct)
+fence clear
+== extractor sha256 9ef4a1f247726532c2c98c84de9f66af221db55a949006ce0d9ec43b38274255 (checked)
+threads 2; nice 19; ionice idle; python 3.10.19
+== extract (mc_signal_reco only; O_NOATIME)
+{"n_pass": 20498013, "q0_status_counts": {"0": 20498013, "1": 0, "2": 0}, "recovery_control": {"rows": 20181786, "max_abs_resid_GeV": 3.2146193262860836e-10, "tol_GeV": 1e-06, "n_W2_negative": 316227}, "npz_sha256": "91d013793fae94a363bc3e515fa600474c0d9218e412cd0766b42535c7f152b5", "npz_bytes": 778927176}
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:29.46
+	Maximum resident set size (kbytes): 6359640
+== records
+2026-11-24T08:15:25Z
+8c952aef6acf855d92812ef35cbb516f6fae987082b6ba6dab07b60e6fc5b97b  extract/q0_extract.json
+91d013793fae94a363bc3e515fa600474c0d9218e412cd0766b42535c7f152b5  extract/q0_extract.npz
+2cf7b92d2b604adc371ddaf0ed1debd3be820429939814c6d2084787f616101a  logs/extract.err
+e81c111369d840f35cc805a70068915f266daeb1a8c5ced89722947d780f0e05  logs/extract.out
+9ef4a1f247726532c2c98c84de9f66af221db55a949006ce0d9ec43b38274255  logs/q0_extract.py
+9fc0f3c01303278c21fb284aad86bef8ee0d07b873becca29a0c55e4c4aa1846  logs/q0_q0.sh
+fetch-q0.tar sha256 197f835cb2224edbee324f58cb2c61a5a02becc87a3ade751d34fc9dc6f49f05 bytes 778977280
+q0 q0 rc=0
+2026-11-24T08:15:38Z

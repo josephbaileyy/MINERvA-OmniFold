@@ -1,0 +1,4 @@
+/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/scripts/score_evloop.py:24: RuntimeWarning: invalid value encountered in divide
+  f0 = R(MB, T) @ tpub; e2 = NB + s * (MB @ ((tpub / np.where(T > 0, T, 1))**2)); wgt = np.where(f0 > 0, f0**2 / e2, 0)
+/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/scripts/score_evloop.py:32: RuntimeWarning: invalid value encountered in divide
+  c = np.sum((y * fo / e2)[use]) / np.sum((fo**2 / e2)[use]); S["chi2"] = float(np.sum(((y - c * fo)**2 / e2)[use]))

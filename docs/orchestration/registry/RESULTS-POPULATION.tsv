@@ -2,6 +2,7 @@
 # roots: docs/orchestration/state/, docs/orchestration/receipts/, docs/orchestration/runs/. One row per INCLUDED receipt; `results_index.py --population` lists the excluded ones.
 path	class	rows	note
 docs/orchestration/receipts/2d-lgbm42-20261011/receipt_model_chi2_2d_lgbm42.json	included	9	
+docs/orchestration/state/2d-closeout/covfix-20261122/p0/run/p0.json	included	428	
 docs/orchestration/state/2d-closeout/period-unfold-20261014/outputs/supplement_bias_dr.json	included	6	
 docs/orchestration/state/2d-closeout/playlist-spread-20261014/coverage/outputs/coverage.json	included	164	
 docs/orchestration/state/2d-closeout/playlist-spread-20261014/coverage/outputs/reco_universes.json	included	94	
@@ -139,6 +140,7 @@ docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260810c.json	included	
 docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260812.json	included	3	
 docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260813.json	included	3	
 docs/orchestration/state/p3f-pet-gate4-launch-code-gate-20260923.json	included	3	
+docs/orchestration/state/q0-study-20261124/connect/run/records/extract/q0_extract.json	included	1	
 docs/orchestration/state/s5c/d1/bias_vs_adopted.json	included	84	
 docs/orchestration/state/s5c/d1/d1_summary.json	included	84	
 docs/orchestration/state/s5c/d2/d2_summary.json	included	28	

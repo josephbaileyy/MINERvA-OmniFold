@@ -1,0 +1,208 @@
+diff --git a/MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp b/MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp
+index b7e1edbce..b20b2c10c 100644
+--- a/MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp
++++ b/MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp
+@@ -181,6 +181,94 @@ inline TruthMuonKin GetTruthMuonKin(const CVUniverse* u)
+   return k;
+ }
+ 
++// Reco-muon momentum/selection dump (gated, MNV101_DUMP_MUONQ): per-event MINOS
++// track momentum estimators, fit flags and angles so selection and momentum
++// variants can be recomputed offline. Added to mc_signal_reco, mc_background and
++// data only when the flag is set; unset, no branch is booked and no value read.
++// Every field is -9999 on rows with no reco muon (sim_pass false, truth-only
++// misses), exactly like sim/sim_pz. Read in reco mode from the CV universe.
++struct RecoMuonQDump
++{
++  double mu_p_total, mu_p_minos, mu_trk_p, mu_trk_p_range, mu_trk_p_curv;
++  int    mu_used_range, mu_used_curv, mu_trk_quality;
++  double mu_trk_qp, mu_trk_eqp_qp, mu_mad_p, mu_thetaX, mu_thetaY, mu_theta;
++
++  RecoMuonQDump() { Reset(); }
++
++  void Reset()
++  {
++    mu_p_total = mu_p_minos = mu_trk_p = mu_trk_p_range = mu_trk_p_curv = -9999.0;
++    mu_used_range = mu_used_curv = mu_trk_quality = -9999;
++    mu_trk_qp = mu_trk_eqp_qp = mu_mad_p = -9999.0;
++    mu_thetaX = mu_thetaY = mu_theta = -9999.0;
++  }
++
++  void Book(TTree* out)
++  {
++    out->Branch("mu_p_total",     &mu_p_total);      // MeV, GetPmu()
++    out->Branch("mu_p_minos",     &mu_p_minos);      // MeV, GetPmuMinos()
++    out->Branch("mu_trk_p",       &mu_trk_p);        // MeV, MINOS trk p
++    out->Branch("mu_trk_p_range", &mu_trk_p_range);  // MeV, MINOS range p
++    out->Branch("mu_trk_p_curv",  &mu_trk_p_curv);   // MeV, MINOS curvature p
++    out->Branch("mu_used_range",  &mu_used_range);   // MINOS used-range flag
++    out->Branch("mu_used_curv",   &mu_used_curv);    // MINOS used-curvature flag
++    out->Branch("mu_trk_quality", &mu_trk_quality);  // MINOS track quality
++    out->Branch("mu_trk_qp",      &mu_trk_qp);       // MINOS q/p
++    out->Branch("mu_trk_eqp_qp",  &mu_trk_eqp_qp);   // MINOS sigma(q/p)/(q/p)
++    out->Branch("mu_mad_p",       &mu_mad_p);        // MeV, <AnaTool>_muon_P
++    out->Branch("mu_thetaX",      &mu_thetaX);       // rad
++    out->Branch("mu_thetaY",      &mu_thetaY);       // rad
++    out->Branch("mu_theta",       &mu_theta);        // rad, GetThetamu()
++  }
++
++  // Rebind already-booked branches (AppendTruthOnlyMisses: the booking
++  // function's locals have gone out of scope).
++  void Bind(TTree* out)
++  {
++    out->SetBranchAddress("mu_p_total",     &mu_p_total);
++    out->SetBranchAddress("mu_p_minos",     &mu_p_minos);
++    out->SetBranchAddress("mu_trk_p",       &mu_trk_p);
++    out->SetBranchAddress("mu_trk_p_range", &mu_trk_p_range);
++    out->SetBranchAddress("mu_trk_p_curv",  &mu_trk_p_curv);
++    out->SetBranchAddress("mu_used_range",  &mu_used_range);
++    out->SetBranchAddress("mu_used_curv",   &mu_used_curv);
++    out->SetBranchAddress("mu_trk_quality", &mu_trk_quality);
++    out->SetBranchAddress("mu_trk_qp",      &mu_trk_qp);
++    out->SetBranchAddress("mu_trk_eqp_qp",  &mu_trk_eqp_qp);
++    out->SetBranchAddress("mu_mad_p",       &mu_mad_p);
++    out->SetBranchAddress("mu_thetaX",      &mu_thetaX);
++    out->SetBranchAddress("mu_thetaY",      &mu_thetaY);
++    out->SetBranchAddress("mu_theta",       &mu_theta);
++  }
++
++  void Read(const CVUniverse* u)
++  {
++    const std::string tool = u->GetAnaToolName();
++    mu_p_total     = u->GetPmu();
++    mu_p_minos     = u->GetPmuMinos();
++    mu_trk_p       = u->GetDouble((tool + "_minos_trk_p").c_str());
++    mu_trk_p_range = u->GetDouble((tool + "_minos_trk_p_range").c_str());
++    mu_trk_p_curv  = u->GetDouble((tool + "_minos_trk_p_curvature").c_str());
++    // Flags read with GetInt, as IsMinosMatchMuon reads _minos_trk_is_ok.
++    mu_used_range  = u->GetInt((tool + "_minos_used_range").c_str());
++    mu_used_curv   = u->GetInt((tool + "_minos_used_curvature").c_str());
++    mu_trk_quality = u->GetInt((tool + "_minos_trk_quality").c_str());
++    mu_trk_qp      = u->GetDouble((tool + "_minos_trk_qp").c_str());
++    mu_trk_eqp_qp  = u->GetDouble((tool + "_minos_trk_eqp_qp").c_str());
++    mu_mad_p       = u->GetDouble((tool + "_muon_P").c_str());
++    mu_thetaX      = u->GetDouble("muon_thetaX");
++    mu_thetaY      = u->GetDouble("muon_thetaY");
++    mu_theta       = u->GetThetamu();
++  }
++};
++
++// Names of the RecoMuonQDump branches, for AppendTruthOnlyMisses's generic
++// dangling-branch rebind exclusion list.
++static const char* const kRecoMuonQBranchNames[] = {
++    "mu_p_total", "mu_p_minos", "mu_trk_p", "mu_trk_p_range", "mu_trk_p_curv",
++    "mu_used_range", "mu_used_curv", "mu_trk_quality", "mu_trk_qp",
++    "mu_trk_eqp_qp", "mu_mad_p", "mu_thetaX", "mu_thetaY", "mu_theta"};
++
+ // Phase 18 (2026-05): truth-denom entries cached so the reco-loop can gate
+ // on truthCV.isEfficiencyDenom membership, and miss-append can iterate the
+ // cache rather than re-walking the truth tree. See main() and
+@@ -789,6 +877,13 @@ long AppendTruthOnlyMisses(
+     sigOut->SetBranchAddress("mc_nthEvtInFile", &miss_id_nth);
+   }
+ 
++  // MNV101_DUMP_MUONQ: rebind the reco-muon dump branches (their signal-loop
++  // addresses dangle) to constant -9999 sentinels; a miss has no reco muon.
++  RecoMuonQDump missMuq;  // constructor sets every field to -9999
++  const bool haveMuonQ = (getenv("MNV101_DUMP_MUONQ") != nullptr &&
++                          sigOut->GetBranch("mu_p_total") != nullptr);
++  if(haveMuonQ) missMuq.Bind(sigOut);
++
+   // KNOWN_ISSUES #12: every OTHER branch on sigOut (the per-universe weight and
+   // shifted-kinematics branches written by the signal loop when
+   // MNV101_DUMP_UNIVERSES is set) also dangles here -- the signal loop's local
+@@ -820,12 +915,15 @@ long AppendTruthOnlyMisses(
+         "mu_true_px", "mu_true_py", "mu_true_pz", "mu_true_E", "mu_true_phi",
+         "vtx_true_x", "vtx_true_y", "vtx_true_z",
+         "mc_run", "mc_subrun", "mc_nthEvtInFile"};
++    // MNV101_DUMP_MUONQ branches are bound explicitly above as well.
++    const std::set<std::string> muonQNames(std::begin(kRecoMuonQBranchNames),
++                                           std::end(kRecoMuonQBranchNames));
+     TObjArray* brs = sigOut->GetListOfBranches();
+     std::vector<std::pair<std::string, MissCat>> pending;
+     for(int bi = 0; bi < brs->GetEntriesFast(); ++bi)
+     {
+       const std::string nm = brs->At(bi)->GetName();
+-      if(explicitNames.count(nm)) continue;
++      if(explicitNames.count(nm) || muonQNames.count(nm)) continue;
+       MissCat cat = MissCat::Other;
+       auto startsWith = [&nm](const char* p){ return nm.rfind(p, 0) == 0; };
+       if(startsWith("w_truth_"))      cat = MissCat::WTruth;
+@@ -979,6 +1077,11 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
+   out->Branch("MC_hadangle", &MC_hadangle); // truth hadronic-system angle (rad)
+   out->Branch("w_truth", &w_truth);
+ 
++  // Reco-muon momentum/selection dump (gated, MNV101_DUMP_MUONQ).
++  const bool dumpMuonQ = (getenv("MNV101_DUMP_MUONQ") != nullptr);
++  RecoMuonQDump muq;
++  if(dumpMuonQ) muq.Book(out);
++
+   // Phase 3 point-cloud dump (gated, MNV101_DUMP_POINTCLOUD): per-event
+   // variable-length truth FS-hadron + reco-cluster vectors for the PET track.
+   // Off by default so the canonical / q3 / universe omnifiles stay lean.
+@@ -1178,6 +1281,10 @@ void LoopAndFillUnbinnedMCSelectedSignalReco(
+     sim_eavail = passesReco ? recoCV->NewEavail() / 1000.0 : -9999.0;  // MeV -> GeV
+     sim_q3   = passesReco ? recoCV->RecoQ3() / 1000.0 : -9999.0;       // MeV -> GeV
+     sim_W    = passesReco ? recoCV->RecoW() / 1000.0 : -9999.0;        // MeV -> GeV
++    if(dumpMuonQ){
++      muq.Reset();                       // -9999 on !passesReco, like sim/sim_pz
++      if(passesReco) muq.Read(recoCV);   // reco mode, CV universe at entry i
++    }
+ 
+     if(!isSignalTruth) continue; // keep only signal for this tree
+     
+@@ -1338,6 +1445,10 @@ void LoopAndFillUnbinnedMCBackground(
+   double bkg_vtx_y = 0.0;
+   double bkg_vtx_z = 0.0;
+ 
++  // Reco-muon momentum/selection dump (gated, MNV101_DUMP_MUONQ).
++  const bool dumpMuonQ = (getenv("MNV101_DUMP_MUONQ") != nullptr);
++  RecoMuonQDump muq;
++
+   // Phase 3 point-cloud dump (gated, MNV101_DUMP_POINTCLOUD): per-event
+   // reco-cluster vectors for the background reco point cloud (reco-only),
+   // mirrors LoopAndFillUnbinnedData (:1166-1191) so background clouds can be
+@@ -1371,6 +1482,7 @@ void LoopAndFillUnbinnedMCBackground(
+   out->Branch("bkg_vtx_y",   &bkg_vtx_y);    // truth vertex y (mm)
+   out->Branch("bkg_vtx_z",   &bkg_vtx_z);    // truth vertex z (mm); fiducial split
+                                              //   offline vs minZ=5980,maxZ=8422,apothem=850
++  if(dumpMuonQ) muq.Book(out);
+   if(dumpPC){
+     out->Branch("part_reco_E",   &pc_reco_E);
+     out->Branch("part_reco_pos", &pc_reco_pos);
+@@ -1460,6 +1572,11 @@ void LoopAndFillUnbinnedMCBackground(
+     sim_background_eavail = recoCV->NewEavail() / 1000.0;  // MeV -> GeV
+     sim_background_q3 = recoCV->RecoQ3() / 1000.0;         // MeV -> GeV
+     sim_background_W = recoCV->RecoW() / 1000.0;           // MeV -> GeV
++    if(dumpMuonQ){
++      // Every background row passed the reco selection, so the reco muon exists.
++      muq.Reset();
++      muq.Read(recoCV);
++    }
+     w_bkg = cvWeight;
+ 
+     // Truth channel labels for the offline genuine-vs-fake split.
+@@ -1538,6 +1655,11 @@ void LoopAndFillUnbinnedData(
+   out->Branch("measured_W", &measured_W);            // reco hadronic invariant mass (GeV)
+   out->Branch("measured_pass", &measured_pass);
+ 
++  // Reco-muon momentum/selection dump (gated, MNV101_DUMP_MUONQ).
++  const bool dumpMuonQ = (getenv("MNV101_DUMP_MUONQ") != nullptr);
++  RecoMuonQDump muq;
++  if(dumpMuonQ) muq.Book(out);
++
+   // Phase 3 point-cloud dump (gated): per-event reco-cluster vectors for data
+   // (the measured point cloud; no truth on data).
+   const bool dumpPC = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr);
+@@ -1591,6 +1713,11 @@ void LoopAndFillUnbinnedData(
+     measured_eavail = dataCV->NewEavail() / 1000.0;  // MeV -> GeV
+     measured_q3 = dataCV->RecoQ3() / 1000.0;         // MeV -> GeV
+     measured_W = dataCV->RecoW() / 1000.0;           // MeV -> GeV
++    if(dumpMuonQ){
++      // Every data row passed isDataSelected, so the reco muon exists.
++      muq.Reset();
++      muq.Read(dataCV);
++    }
+     if(dumpPC){
+       dataCV->GetRecoClusters(pc_reco_E, pc_reco_pos, pc_reco_z,
+                               pc_reco_view, pc_reco_time);

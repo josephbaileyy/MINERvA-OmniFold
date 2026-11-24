@@ -95,9 +95,9 @@ where $m_\mu$ is the muon mass and $\bar M=(1.5M_n+M_p)/2.5$ is the effective nu
 \label{sec:method}
 \label{sec:method-algo}
 
-OmniFold estimates the truth distribution by iteratively reweighting simulated events with classifier-based likelihood ratios~\cite{Andreassen:2019cjw,Andreassen:2021zzk}. In the first step, a classifier distinguishes the background-corrected measured sample from selected simulated signal carrying the current weights. For a classifier probability $p$ for the measured class, the odds $p/(1-p)$ estimate the ratio of the two weighted densities with the corresponding class normalization. The current weight of each selected signal event is multiplied by this ratio and transferred to its paired truth record. In the second step, a classifier compares the reweighted truth sample with the original truth sample. Its likelihood ratio gives the new truth weights relative to the original simulation. These weights are carried to the matched detector-level records for the next iteration.
+OmniFold estimates the truth distribution by iteratively reweighting simulated events with classifier-based likelihood ratios~\cite{Andreassen:2019cjw,Andreassen:2021zzk}. The first classifier distinguishes the background-corrected measured sample from selected simulated signal with the current weights. The odds $p/(1-p)$ for measured-class probability $p$ estimate the ratio of their weighted densities with the corresponding class normalization. We multiply each selected signal weight by this ratio and transfer it to the paired truth event. The second classifier compares the reweighted and original truth samples. Its likelihood ratio gives new weights relative to the original simulation. The matched detector-level records carry those weights into the next iteration.
 
-Truth signal events without a selected reconstructed partner enter the second step. At each iteration, a regressor trained with uniform training weights on matched events predicts their first-step weights from the truth observables. This procedure incorporates the selection-efficiency correction into the reweighted truth sample. It relies on the simulated acceptance and on transferring the weight inferred for matched events to missed events at the same values of the truth inputs. Where the simulated selection efficiency is very low, the estimate depends on the regressor's extrapolation from matched events. The classifiers train and evaluate on the full samples, without a held-out split, cross-fitting, or early stopping. We use five iterations with gradient-boosted trees. The number of iterations and the learner capacity regularize the weight estimate. The final truth weights can be integrated on any of the reporting grids.
+Truth signal events without a selected reconstructed partner enter the second step. At each iteration, a regressor trained with uniform weights on matched events predicts first-step weights for missed events from their truth observables. This corrects for selection efficiency using the simulated acceptance and assumes that the weights transfer from matched to missed events at the same truth inputs. At very low simulated efficiency the regressor extrapolates from matched events. We use five OmniFold iterations, with gradient-boosted-tree classifiers and regressor. The classifiers train and evaluate on the full samples without a held-out split, cross-fitting, or early stopping. The iteration count and learner capacity regularize the weights. The final weights can be integrated on any reporting grid.
 
 Background enters the measured class in the first step. Let $D(x)$ and $B(x)$ be the selected data and exposure-scaled background densities in reconstructed coordinates $x$, with integrals $D_b$ and $B_b$ in reconstructed bin $b$. The binned purity method assigns the same weight to each data event in an occupied bin,
 \begin{equation}
@@ -114,7 +114,7 @@ The refined estimators convert the signed sample to nonnegative weights before t
 \label{sec:estimators-and-extraction}
 \label{sec:method-config}
 
-The two-dimensional (2D) benchmark uses $(p_T,p_\parallel)$. The 3D, 4D, and 5D unfoldings add $E_{\mathrm{avail}}$, $q_3$, and $W$ in sequence at both reconstruction and truth level. Table~\ref{tab:estimators} identifies the estimator for each result and for the diagnostic studies that use a different configuration.
+The benchmark against MINERvA uses the two-dimensional (2D) muon kinematics $(p_T,p_\parallel)$. The 3D, 4D, and 5D unfoldings add $E_{\mathrm{avail}}$, $q_3$, and $W$ in sequence at both reconstruction and truth level. Table~\ref{tab:estimators} identifies the configurations for each result and diagnostic.
 
 \begin{table}[!t]
   \centering\small
@@ -141,9 +141,9 @@ The two-dimensional (2D) benchmark uses $(p_T,p_\parallel)$. The 3D, 4D, and 5D 
       Fine five-axis grid with diagnostic covariance $C_Z$, also projected
       onto the $E_{\mathrm{avail}}$--$W$ plane. \\
     \addlinespace
-    Sixteen-cell result (illustrative) &
+    Sixteen-cell cross section &
       \EstMultiD{} (refined negative weights) &
-      Merged reporting regions with covariance $C_{\mathrm{rep}}$. \\
+      Merged regions with covariance $C_{\mathrm{rep}}$ for descriptive generator comparisons. See Sec.~\ref{sec:part-illustrative-multidimensional} for the limits on model tuning or constraints. \\
     \addlinespace
     Joint generator tests &
       Variant of the \estMultiD{} (refined negative weights) &
@@ -183,7 +183,7 @@ Here $N_{\mathrm{nuc}}$ is the fiducial nucleon count and $N_{\mathrm{POT}}$ is 
 \label{sec:method-binning}
 The 2D result follows the published $14\times16$ muon grid and its mapping of 205 reported bins~\cite{MINERvA:2021owq}. The remaining 19 cells lie in the high-$p_T$, low-$p_\parallel$ corner, with $p_T^{\mathrm{hi}}/p_\parallel^{\mathrm{lo}}>\tan20^\circ$. The higher-dimensional fine grids add seven $E_{\mathrm{avail}}$ bins, seven $q_3$ bins, and six $W$ bins, each with a wide final bin extending to 100 in its respective axis units. Appendix~\ref{app:reproducibility} gives the bin edges. A marginal cross section sums the bin integrals over the eliminated axes and divides by the retained bin widths when reported as a density. The wide bins contribute their full integrals to projections and totals.
 
-The 3D and 4D results are reported as central values only. The covariance of the \resFiveAxis{} serves as a scale for diagnostics. The \resSixteen{} uses coarser regions of the joint phase space, defined in Sec.~\ref{sec:five-dimensional-reporting}. It is expressed as integrated cross sections in $\mathrm{cm}^2$ per nucleon and is reported with its covariance for illustration. The calibrated generator tests in Sec.~\ref{sec:sixteen-cell-generator-comparison} apply a variant of the multidimensional estimator on a separate joint grid.
+The 3D and 4D results are reported as central values only. The covariance of the \resFiveAxis{} serves as a scale for diagnostics. We report the \resSixteen{} as integrated cross sections in $\mathrm{cm}^2$ per nucleon in the regions defined in Sec.~\ref{sec:five-dimensional-reporting}. The cell integrals support descriptive comparisons with generator predictions. Model tuning or constraints would require resolving the limitations in Sec.~\ref{sec:part-illustrative-multidimensional}, including the coverage shortfall seen when rescoring held-out pseudo-experiments. The calibrated generator tests use a variant of the multidimensional estimator on a separate joint grid (Sec.~\ref{sec:sixteen-cell-generator-comparison}).
 
 AI language-model agents assisted with the analysis code, statistical procedures, computing campaigns, and internal reviews. The first author set the scientific questions and approved the estimator, the uncertainty construction, and the reported claims. The AI Use Disclosure lists the tools and their versions and describes how their output was verified.
 % 2026-11-21 (journal-editor; Joseph via the rewrite helper and the director): the methods pointer the APS policy asks for

@@ -1,0 +1,20 @@
+test_lowest_pt_cell_merges_upward_and_chains_repeat (test_q0_analyze.Grid.test_lowest_pt_cell_merges_upward_and_chains_repeat) ... ok
+test_no_merge_when_every_cell_is_full (test_q0_analyze.Grid.test_no_merge_when_every_cell_is_full) ... ok
+test_outside_rows_are_minus_one (test_q0_analyze.Grid.test_outside_rows_are_minus_one) ... ok
+test_sparse_cell_merges_into_its_lower_pt_neighbour (test_q0_analyze.Grid.test_sparse_cell_merges_into_its_lower_pt_neighbour) ... ok
+test_deterministic (test_q0_analyze.Readings.test_deterministic) ... ok
+test_structure_and_that_q0_helps_when_it_should (test_q0_analyze.Readings.test_structure_and_that_q0_helps_when_it_should) ... ok
+test_refusals (test_q0_analyze.Refusals.test_refusals) ... REFUSED: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp6user7f2 exists
+REFUSED: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp6user7f2/x.npz is 5615b0dfed95fd5bbf0d1c34f4776900c9cf4c6cc76f7ed9017b16f78f988d05, not 91d013793fae94a363bc3e515fa600474c0d9218e412cd0766b42535c7f152b5
+REFUSED: OMP_NUM_THREADS must be 4 (matched threads, PLAN 3)
+ok
+test_integer_weights_equal_replication (test_q0_analyze.Weighted.test_integer_weights_equal_replication) ... ok
+test_ties_get_mid_ranks (test_q0_analyze.Weighted.test_ties_get_mid_ranks) ... ok
+test_unit_weights_match_the_standard_statistics (test_q0_analyze.Weighted.test_unit_weights_match_the_standard_statistics) ... ok
+test_weighted_quantile (test_q0_analyze.Weighted.test_weighted_quantile) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 2.417s
+
+OK
+rc=0

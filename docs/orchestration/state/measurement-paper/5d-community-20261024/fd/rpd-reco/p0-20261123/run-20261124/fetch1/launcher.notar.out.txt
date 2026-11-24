@@ -1,0 +1,71 @@
+cert valid to 2026-11-25T01:36:35Z (UTC)
+ssh rc=0
+node login05 staged sha256 12626af6f6ff5d765b602ebd0f012f2e3d6f8d3f1fa60969b0f8bd4d4e022b6a
+node login05 2026-11-24T03:33:43Z; fetch script sha256 12626af6f6ff5d765b602ebd0f012f2e3d6f8d3f1fa60969b0f8bd4d4e022b6a
+runner pid 1269346 host login05 start ticks 46054889 start 2026-11-24T03:18:07Z
+p0.rc: rc=0 cause=exit end=2026-11-24T03:18:33Z
+== state DONE
+== the root (mode, bytes, path), staged copies by count only
+drwx------ 4096 
+drwx------ 4096 dry
+-rw------- 162417 dry/p0.json
+-rw------- 12069 dry/pins.json
+-rw------- 405 fence-overlap.txt
+-rw------- 3166 flux3-inputs.txt
+-rw------- 29 handoff.ok
+-rw------- 41 p0.rc
+-rw------- 16007 production-config.ready.json
+-rw------- 9076 rpd_p0_runner.sh
+drwx------ 4096 run
+-rw------- 1088 runner.out
+-rw------- 46 runner.pid
+-rw------- 510 runner-steps.txt
+-rw------- 162404 run/p0.json
+-rw------- 12053 run/pins.json
+-rw------- 3684 stat-p0.txt
+-rw------- 282 sup-p0-dry.json
+-rw------- 8 sup-p0-dry.json.pgid
+-rw------- 282 sup-p0.json
+-rw------- 8 sup-p0.json.pgid
+-rw------- 281 sup-pins-dry.json
+-rw------- 8 sup-pins-dry.json.pgid
+-rw------- 281 sup-pins.json
+-rw------- 8 sup-pins.json.pgid
+drwx------ 4096 tools
+-rw------- 4674 tools/fence_overlap.py
+-rw------- 3673 tools/p0_checks.py
+-rw------- 5633 tools/p0_expected.json
+-rw------- 9897 tools/p0_supervise.py
+dry/staged: 43 files
+run/staged: 43 files
+send files 18, bytes 384121
+== runner-steps.txt
+pins-dry supervisor_rc=0 rc=0 signal=- deadline=0 leftover_killed=0 group_gone=1 peak_rss_bytes=35700736 end=2026-11-24T03:18:13Z
+p0-dry supervisor_rc=0 rc=0 signal=- deadline=0 leftover_killed=0 group_gone=1 peak_rss_bytes=142704640 end=2026-11-24T03:18:20Z
+pins supervisor_rc=0 rc=0 signal=- deadline=0 leftover_killed=0 group_gone=1 peak_rss_bytes=37748736 end=2026-11-24T03:18:25Z
+p0 supervisor_rc=0 rc=0 signal=- deadline=0 leftover_killed=0 group_gone=1 peak_rss_bytes=140455936 end=2026-11-24T03:18:32Z
+== p0.rc
+rc=0 cause=exit end=2026-11-24T03:18:33Z
+sha256 5a28f16db2ecc59d25f338673bb9663c8807285d214956a22ba3d055df540f49 runner.pid
+sha256 e92f2716a9629527e1e2d5fb8b86e7a2f50ea10822e6adcd856680893326b695 runner.out
+sha256 86c17a25b6dbb415302c571fbcd4b5efb4fd7c1b4f95fbdcd815616eb0ccc750 runner-steps.txt
+sha256 20c2fa3ed310993c09a9a50a3d9ed26f36cd86a84dddc49646ad04c67c064b43 p0.rc
+sha256 5a57f979ff4a1a9fc156e6eb7adb2f66678faa941209fd6c29c588e944cdc429 handoff.ok
+sha256 f647f8bf0c00a8877a64ee4507c4f4170cb8e234b063868bdf48ce4a1a54321e stat-p0.txt
+sha256 eff7f23587ba2678724875dea529bc52525ecffeefcbf7bf38d9e9fa3464df7b flux3-inputs.txt
+sha256 fe503114deba07ad89305f73176003af3510e70ca754b950e343bdfc55306885 fence-overlap.txt
+sha256 3ef4abad4f05a8ef9fb5319c6d463d72e5ecabb3bed75defa74c712a28df07c4 rpd_p0_runner.sh
+sha256 3b2afde495d630cc44df730e3e1acf12e0c332953e9fa298fa979f2e2e39b057 production-config.ready.json
+sha256 ab9cd8769cb0f17eb0d8b41da8729e9ebe1dd271e882d16255880da7e3b6a5e4 sup-p0-dry.json
+sha256 b9affcdc47d74ec8571f2cbf12e518fff6fd416b30ed73b0a5a1b28a328f7297 sup-p0.json
+sha256 8041a2d0fd3203a196bdd664e8f3e547b709b70b6ea4b4ba2ff695e3a1a0ef8a sup-pins-dry.json
+sha256 e8a0243660e61d6c87fbf6183d4c8039cf3efd17ecff85a92314320ad9a9ef6c sup-pins.json
+sha256 0c5ec4a1b2259cdf97f799ca9d0a06ef2a22d79cceb37b4d2bf7497bb510aa68 dry/p0.json
+sha256 ce181449d5ba6dbafc4a5831b7918c4d3cc538114062ce23c5e464291bcc3f76 dry/pins.json
+sha256 8ed2faf71a3966ed832831ba669c093235aa39c00fda515edecfd6b60a34be10 run/p0.json
+sha256 52fc41f41cf17954ceddab8c581aa327a62d160c059cbee8bf2941c1880e5c8a run/pins.json
+== TAR BEGIN
+[base64 tar block removed: records/ holds the files; see the run README]
+== TAR END tar rc=0 base64 rc=0
+== rpd-p0-fetch rc=0 2026-11-24T03:33:44Z
+script rc=0

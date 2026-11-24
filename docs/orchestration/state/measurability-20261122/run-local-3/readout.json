@@ -1,0 +1,4084 @@
+{
+ "schema": "msr-readout/1",
+ "controls": {
+  "C-OPS": {
+   "pass": true,
+   "mismatched": [],
+   "products_ok": true
+  },
+  "C-RID": {
+   "pass": true,
+   "sigma_rel_max_rel": 0.0,
+   "null_fraction_max_abs": 0.0,
+   "inf_match": true,
+   "nan_match": true,
+   "n_null_modes": [
+    1,
+    1
+   ],
+   "n_cells_grid": [
+    29,
+    29
+   ]
+  },
+  "C-DID": {
+   "pass": true,
+   "functionals_compared": 151,
+   "expected_common": 151,
+   "sigma_rel_max_rel": 7.094008813157951e-13,
+   "null_fraction_max_abs": 1.396582544372142e-16,
+   "ibu1_only": [
+    "EW_all_ones",
+    "total_integrated"
+   ],
+   "did_only": [
+    "H2_0",
+    "H2_1",
+    "H2_2",
+    "H2_3",
+    "H2_4",
+    "H2_5",
+    "H2_6",
+    "H2_7",
+    "H2_8",
+    "H2_9",
+    "H2_10",
+    "H2_11",
+    "H2_12",
+    "H2_13",
+    "H2_14",
+    "H2_15",
+    "H2_16",
+    "H2_17",
+    "H2_18",
+    "H2_19",
+    "H2_20",
+    "H2_21",
+    "H2_22",
+    "H2_23",
+    "H2_24",
+    "H2_25",
+    "H2_26",
+    "H2_27",
+    "H2_28",
+    "H2_29",
+    "H2_30",
+    "H2_31"
+   ]
+  },
+  "C-L": {
+   "pass": true,
+   "linearity_rel": 3.4986249085388037e-16,
+   "U_equals_M16": true,
+   "cells_equal_selected": true
+  },
+  "C-GRID": {
+   "pass": true,
+   "n_cells": {
+    "h2": 29,
+    "t1": 134,
+    "h2_rid": 29,
+    "h2_nonempty_coarse": 29
+   }
+  },
+  "C-T3": {
+   "pass": true,
+   "max_abs": 0.0,
+   "t3_verdict": "COMPLETE"
+  },
+  "C-F0B": {
+   "pass": true
+  },
+  "C-D": {
+   "pass": true,
+   "truths_checked": [
+    "nominal",
+    "W1",
+    "W2",
+    "W3",
+    "q3",
+    "stage0c_gibuu",
+    "A7_mnvtune",
+    "A7_genie_cv",
+    "A7_genie_mec",
+    "A7_nuwro",
+    "A7_gibuu",
+    "closure_nuwro"
+   ],
+   "printed_without_d": [
+    "P1r",
+    "P2r",
+    "P3r",
+    "P1g",
+    "P2g",
+    "P3g"
+   ]
+  },
+  "C-A2": {
+   "pass": true,
+   "max_abs": 0.0
+  },
+  "C-2D": {
+   "pass": true,
+   "M_vs_bank_ibu_response_max_abs": 0.0,
+   "R_vs_bank_ibu_response_max_abs": 53963.153672716326,
+   "T_vs_bank_ibu_prior_max_rel": 0.0,
+   "sum_b_bkg": 119132.36881367955,
+   "sum_bw_in_window": 119132.3688136796,
+   "b_known_equal": true,
+   "b_bkg_max_abs": 0.0
+  },
+  "C-MARG": {
+   "pass": true,
+   "world_shape": [
+    14,
+    16,
+    7,
+    7,
+    6
+   ],
+   "axes": [
+    "pt",
+    "pz",
+    "eavail",
+    "q3",
+    "W"
+   ]
+  },
+  "C-RANK": {
+   "pass": true
+  },
+  "C-RHO": {
+   "pass": true,
+   "max_abs": 2.524354896707238e-29
+  },
+  "C-ROUTE": {
+   "pass": true,
+   "max_excess": 0.0
+  }
+ },
+ "stops": [],
+ "M1": {
+  "5D-B0": {
+   "A7_gibuu": {
+    "norm": 0.28550354258257643,
+    "norm_interval": [
+     0.2825177176342882,
+     0.2884893675308647
+    ],
+    "floor": "read",
+    "S_poor": 5.551115123125783e-16,
+    "S_interval": [
+     3.701631153686736e-16,
+     7.400599092564829e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 20.033161907311843,
+    "Z_interval": [
+     19.490473090961817,
+     20.57585072366187
+    ],
+    "Z_noise": null,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 13.475669490938053,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   }
+  },
+  "5D-F0b": {
+   "nominal": {
+    "norm": 0.0013896938502452028,
+    "norm_interval": [
+     0.0012721131073829583,
+     0.0022503392401754456
+    ],
+    "floor": "no bias to locate",
+    "S_poor": 2.220446049250313e-16,
+    "S_interval": [
+     -4.440892098500626e-16,
+     8.881784197001252e-16
+    ],
+    "S_label": "no bias to locate",
+    "Z_well": 0.4086105322275349,
+    "Z_interval": [
+     0.26144928895316777,
+     0.7938244531413012
+    ],
+    "Z_noise": 0.5325640851627785,
+    "Z_label": "below",
+    "Z_axis_max_printed": 0.2359654014631117,
+    "isotropic_reference": 0.0,
+    "combined": "no bias to locate",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "no bias to locate",
+      "Z_label": "below",
+      "combined": "no bias to locate"
+     },
+     "B": {
+      "S_label": "no bias to locate",
+      "Z_label": "below",
+      "combined": "no bias to locate"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "W1": {
+    "norm": 0.07481446805502945,
+    "norm_interval": [
+     0.0739930967520094,
+     0.07572114238173731
+    ],
+    "floor": "read",
+    "S_poor": 6.661338147750939e-16,
+    "S_interval": [
+     4.440892098500626e-16,
+     8.881784197001252e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 5.376362376579664,
+    "Z_interval": [
+     5.298808577281733,
+     5.530664052112746
+    ],
+    "Z_noise": 0.9106149434086221,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 3.4128974809378985,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "W2": {
+    "norm": 0.020418990650290927,
+    "norm_interval": [
+     0.01947940149306896,
+     0.021586661329137162
+    ],
+    "floor": "read",
+    "S_poor": 4.440892098500626e-16,
+    "S_interval": [
+     2.220446049250313e-16,
+     6.661338147750939e-16
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 1.5898778984029924,
+    "Z_interval": [
+     1.4918020990445249,
+     1.9285020031307158
+    ],
+    "Z_noise": 0.8801387478898985,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 0.9047385511188749,
+    "isotropic_reference": 0.0,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "unresolved across intermediate, resolvable",
+      "combined": "unresolved"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "unresolved across intermediate, resolvable",
+      "combined": "unresolved"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "W3": {
+    "norm": 0.14345674361032937,
+    "norm_interval": [
+     0.1418744970515019,
+     0.14505787504427178
+    ],
+    "floor": "read",
+    "S_poor": 0.0,
+    "S_interval": [
+     -2.220446049250313e-16,
+     2.220446049250313e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 16.272109326671625,
+    "Z_interval": [
+     15.897136732997993,
+     16.695538847681018
+    ],
+    "Z_noise": 1.0700515107981425,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 13.201523543921775,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "q3": {
+    "norm": 0.2388080634951875,
+    "norm_interval": [
+     0.23773716324603067,
+     0.2398949964033188
+    ],
+    "floor": "read",
+    "S_poor": 1.1102230246251565e-16,
+    "S_interval": [
+     0.0,
+     3.3306690738754696e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 16.9175747821861,
+    "Z_interval": [
+     16.785877985358184,
+     17.070109800170567
+    ],
+    "Z_noise": 0.874137586021758,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 11.795949210542538,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "stage0c_gibuu": {
+    "norm": 0.18544972132781362,
+    "norm_interval": [
+     0.18451344822894744,
+     0.18647839190338822
+    ],
+    "floor": "read",
+    "S_poor": 7.771561172376096e-16,
+    "S_interval": [
+     5.551115123125783e-16,
+     9.992007221626409e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 12.222075325445896,
+    "Z_interval": [
+     12.126808381189928,
+     12.327942034167048
+    ],
+    "Z_noise": 0.7863636238754433,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 6.7864197994977085,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "A7_mnvtune": {
+    "norm": 0.000987066843237243,
+    "norm_interval": [
+     0.0011294876714074437,
+     0.0022806961901590058
+    ],
+    "floor": "no bias to locate",
+    "S_poor": 6.661338147750939e-16,
+    "S_interval": [
+     -6.661338147750939e-16,
+     8.881784197001252e-16
+    ],
+    "S_label": "no bias to locate",
+    "Z_well": 0.3187131673560641,
+    "Z_interval": [
+     0.2548355508891323,
+     0.7939088759120618
+    ],
+    "Z_noise": 0.6635134701269708,
+    "Z_label": "below",
+    "Z_axis_max_printed": 0.19934762655789592,
+    "isotropic_reference": 0.0,
+    "combined": "no bias to locate",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "no bias to locate",
+      "Z_label": "below",
+      "combined": "no bias to locate"
+     },
+     "B": {
+      "S_label": "no bias to locate",
+      "Z_label": "below",
+      "combined": "no bias to locate"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "A7_genie_cv": {
+    "norm": 0.07216986652156507,
+    "norm_interval": [
+     0.07118553253832657,
+     0.07320562263444037
+    ],
+    "floor": "read",
+    "S_poor": -2.220446049250313e-16,
+    "S_interval": [
+     -4.440892098500626e-16,
+     -2.220446049250313e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 7.220599468556645,
+    "Z_interval": [
+     7.064448166854794,
+     7.4068915039781915
+    ],
+    "Z_noise": 0.6085795628338917,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 3.710831363684408,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "A7_genie_mec": {
+    "norm": 0.06178280202648825,
+    "norm_interval": [
+     0.0605416958454813,
+     0.06304084323712715
+    ],
+    "floor": "read",
+    "S_poor": -4.440892098500626e-16,
+    "S_interval": [
+     -6.661338147750939e-16,
+     -2.220446049250313e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 8.046689253754979,
+    "Z_interval": [
+     7.805916022525562,
+     8.307677079323009
+    ],
+    "Z_noise": 0.649865025839175,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 4.876730212482342,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "A7_nuwro": {
+    "norm": 0.20460793044443842,
+    "norm_interval": [
+     0.2029668916871121,
+     0.20640166807684945
+    ],
+    "floor": "read",
+    "S_poor": 1.1102230246251565e-16,
+    "S_interval": [
+     -2.220446049250313e-16,
+     3.3306690738754696e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 18.094529739338896,
+    "Z_interval": [
+     17.614889072547854,
+     18.61290471573965
+    ],
+    "Z_noise": 0.9617365306940866,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 14.040397467512024,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "A7_gibuu": {
+    "norm": 0.2840895120241208,
+    "norm_interval": [
+     0.2829179783346856,
+     0.2852134599395555
+    ],
+    "floor": "read",
+    "S_poor": 5.551115123125783e-16,
+    "S_interval": [
+     3.3306690738754696e-16,
+     6.661338147750939e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 19.952609132280806,
+    "Z_interval": [
+     19.806205440795313,
+     20.110603187250142
+    ],
+    "Z_noise": 0.6517217208263388,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 13.463171271422878,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   }
+  },
+  "2D-A2": {
+   "nominal": {
+    "norm": 0.039153249327017185,
+    "norm_interval": [
+     0.047044898294740775,
+     0.0655225449296898
+    ],
+    "floor": "read",
+    "S_poor": 0.4454279460057614,
+    "S_interval": [
+     0.31294177294686265,
+     0.6271883508618941
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 1.6853718793026937,
+    "Z_interval": [
+     1.7344077194211507,
+     2.4876080944114087
+    ],
+    "Z_noise": 1.5938412742099015,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 0.680065085012596,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "unresolved across intermediate, resolvable",
+      "combined": "unresolved"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "unresolved across intermediate, resolvable",
+      "combined": "unresolved"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "genie_mec": {
+    "norm": 0.29295231977173125,
+    "norm_interval": [
+     0.2907845345982446,
+     0.2998307430889036
+    ],
+    "floor": "read",
+    "S_poor": 0.29003175527921543,
+    "S_interval": [
+     0.2803171952350662,
+     0.3114908928385446
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 11.032730252905674,
+    "Z_interval": [
+     10.82830193630603,
+     11.378069939044732
+    ],
+    "Z_noise": 1.4559532006031335,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 2.877416744204742,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "nuwro": {
+    "norm": 0.6677265999881684,
+    "norm_interval": [
+     0.6495445499936475,
+     0.6923112531986393
+    ],
+    "floor": "read",
+    "S_poor": 0.4033422144028742,
+    "S_interval": [
+     0.37914189596848247,
+     0.42982131276708485
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 17.46805397083912,
+    "Z_interval": [
+     17.1114106231252,
+     17.968779986421183
+    ],
+    "Z_noise": 1.9906711848951477,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 7.150892071480738,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   }
+  }
+ },
+ "M2": {
+  "MO": {
+   "r_poor": {
+    "value": null,
+    "label": "no poorly constrained component to remove"
+   },
+   "r_well": {
+    "value": 0.3482355760144866,
+    "interval": [
+     0.3381503802632763,
+     0.35832077176569693
+    ],
+    "label": "removes part"
+   },
+   "k": 5,
+   "b0_k": 5
+  },
+  "OP": {
+   "r_poor": {
+    "value": null,
+    "label": "no poorly constrained component to remove"
+   },
+   "r_well": {
+    "value": 0.6046966169702579,
+    "interval": [
+     0.584714887698751,
+     0.6246783462417648
+    ],
+    "label": "removes most"
+   },
+   "k": 2,
+   "b0_k": 5
+  }
+ },
+ "secondary": {
+  "5D q3 (single split, k=5; OP k=2)": {
+   "B0": {
+    "norm": 0.24167796098877953,
+    "norm_interval": [
+     0.24167796098877953,
+     0.24167796098877953
+    ],
+    "floor": "read",
+    "S_poor": 2.220446049250313e-16,
+    "S_interval": [
+     2.220446049250313e-16,
+     2.220446049250313e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 17.172623441171357,
+    "Z_interval": [
+     17.172623441171357,
+     17.172623441171357
+    ],
+    "Z_noise": null,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 11.936670685680378,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "MO": {
+    "norm": 0.1577667502320316,
+    "norm_interval": [
+     0.1577667502320316,
+     0.1577667502320316
+    ],
+    "floor": "read",
+    "S_poor": -2.220446049250313e-16,
+    "S_interval": [
+     -2.220446049250313e-16,
+     -2.220446049250313e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 12.873800559575585,
+    "Z_interval": [
+     12.873800559575585,
+     12.873800559575585
+    ],
+    "Z_noise": null,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 7.239542718138516,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "OP": {
+    "norm": 0.097335214906576,
+    "norm_interval": [
+     0.097335214906576,
+     0.097335214906576
+    ],
+    "floor": "read",
+    "S_poor": 0.0,
+    "S_interval": [
+     0.0,
+     0.0
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 11.09937214411102,
+    "Z_interval": [
+     11.09937214411102,
+     11.09937214411102
+    ],
+    "Z_noise": null,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 6.698557246147706,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   }
+  },
+  "5D k=50, secondary; not M2": {
+   "B0": {
+    "norm": 0.26905596033758905,
+    "norm_interval": [
+     0.2650135549924102,
+     0.2730983656827679
+    ],
+    "floor": "read",
+    "S_poor": 3.3306690738754696e-16,
+    "S_interval": [
+     1.7589099321676795e-16,
+     4.90242821558326e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 17.078160919886127,
+    "Z_interval": [
+     16.553777172288132,
+     17.60254466748412
+    ],
+    "Z_noise": null,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 12.985772536429078,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "MO": {
+    "norm": 0.17556336535384612,
+    "norm_interval": [
+     0.17228906857021842,
+     0.17883766213747382
+    ],
+    "floor": "read",
+    "S_poor": 0.0,
+    "S_interval": [
+     -6.164946564796823e-17,
+     6.164946564796823e-17
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 11.876267102893404,
+    "Z_interval": [
+     11.341931053076133,
+     12.410603152710676
+    ],
+    "Z_noise": null,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 6.704414039320462,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "B0 at q3": {
+    "norm": 0.2425935031190043,
+    "norm_interval": [
+     0.2425935031190043,
+     0.2425935031190043
+    ],
+    "floor": "read",
+    "S_poor": 2.220446049250313e-16,
+    "S_interval": [
+     2.220446049250313e-16,
+     2.220446049250313e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 17.286508448594926,
+    "Z_interval": [
+     17.286508448594926,
+     17.286508448594926
+    ],
+    "Z_noise": null,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 12.110698968764448,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "MO at q3": {
+    "norm": 0.15254301228652523,
+    "norm_interval": [
+     0.15254301228652523,
+     0.15254301228652523
+    ],
+    "floor": "read",
+    "S_poor": -2.220446049250313e-16,
+    "S_interval": [
+     -2.220446049250313e-16,
+     -2.220446049250313e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 11.842519116563384,
+    "Z_interval": [
+     11.842519116563384,
+     11.842519116563384
+    ],
+    "Z_noise": null,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 6.71079948603734,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   }
+  },
+  "5D-F0b secondary": {
+   "closure_nuwro": {
+    "norm": 0.10415843001306217,
+    "norm_interval": [
+     0.10415843001306217,
+     0.10415843001306217
+    ],
+    "floor": "read",
+    "S_poor": 0.0,
+    "S_interval": [
+     0.0,
+     0.0
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 7.704947714341402,
+    "Z_interval": [
+     7.704947714341402,
+     7.704947714341402
+    ],
+    "Z_noise": null,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 3.802633436581856,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   }
+  },
+  "5D-F0b secondary, no d (truth-relative units, P/f0 only)": {
+   "P1r": {
+    "norm": 0.16164953455185657,
+    "norm_interval": [
+     0.16164953455185657,
+     0.16164953455185657
+    ],
+    "floor": "read",
+    "S_poor": 2.220446049250313e-16,
+    "S_interval": [
+     2.220446049250313e-16,
+     2.220446049250313e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 26.097117702443445,
+    "Z_interval": [
+     26.097117702443445,
+     26.097117702443445
+    ],
+    "Z_noise": null,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 13.892155026857232,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "P2r": {
+    "norm": 0.24320247910946302,
+    "norm_interval": [
+     0.24320247910946302,
+     0.24320247910946302
+    ],
+    "floor": "read",
+    "S_poor": -2.220446049250313e-16,
+    "S_interval": [
+     -2.220446049250313e-16,
+     -2.220446049250313e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 21.64478725868344,
+    "Z_interval": [
+     21.64478725868344,
+     21.64478725868344
+    ],
+    "Z_noise": null,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 11.007552160830983,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "P3r": {
+    "norm": 0.08729475595772608,
+    "norm_interval": [
+     0.08729475595772608,
+     0.08729475595772608
+    ],
+    "floor": "read",
+    "S_poor": 3.3306690738754696e-16,
+    "S_interval": [
+     3.3306690738754696e-16,
+     3.3306690738754696e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 18.79883037403994,
+    "Z_interval": [
+     18.79883037403994,
+     18.79883037403994
+    ],
+    "Z_noise": null,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 9.648034815565541,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "P1g": {
+    "norm": 0.19266722149847176,
+    "norm_interval": [
+     0.19266722149847176,
+     0.19266722149847176
+    ],
+    "floor": "read",
+    "S_poor": 0.0,
+    "S_interval": [
+     0.0,
+     0.0
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 28.524775639872306,
+    "Z_interval": [
+     28.524775639872306,
+     28.524775639872306
+    ],
+    "Z_noise": null,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 16.48793717103292,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "P2g": {
+    "norm": 0.2485709624223494,
+    "norm_interval": [
+     0.2485709624223494,
+     0.2485709624223494
+    ],
+    "floor": "read",
+    "S_poor": 0.0,
+    "S_interval": [
+     0.0,
+     0.0
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 17.004982265931798,
+    "Z_interval": [
+     17.004982265931798,
+     17.004982265931798
+    ],
+    "Z_noise": null,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 8.058318952609484,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   },
+   "P3g": {
+    "norm": 0.07329647778112561,
+    "norm_interval": [
+     0.07329647778112561,
+     0.07329647778112561
+    ],
+    "floor": "read",
+    "S_poor": -2.220446049250313e-16,
+    "S_interval": [
+     -2.220446049250313e-16,
+     -2.220446049250313e-16
+    ],
+    "S_label": "well-dominated",
+    "Z_well": 7.7759791008523385,
+    "Z_interval": [
+     7.7759791008523385,
+     7.7759791008523385
+    ],
+    "Z_noise": null,
+    "Z_label": "resolvable",
+    "Z_axis_max_printed": 4.500242696194434,
+    "isotropic_reference": 0.0,
+    "combined": "points at a resolvable component",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "well-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      16,
+      16,
+      16
+     ],
+     "dim_inf": [
+      0,
+      0,
+      0
+     ],
+     "proj_AB": 4.379157703193522e-15,
+     "proj_fullA": 4.330023348578657e-15,
+     "proj_fullB": 4.443314128743275e-15
+    }
+   }
+  },
+  "2D-A2 secondary": {
+   "bump": {
+    "norm": 0.15199626212104012,
+    "norm_interval": [
+     0.14658706018063977,
+     0.16720548502393376
+    ],
+    "floor": "read",
+    "S_poor": 0.4926577473091879,
+    "S_interval": [
+     0.44049176730814044,
+     0.5524252404975584
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 4.106290473757445,
+    "Z_interval": [
+     3.998600014295507,
+     4.556538092365805
+    ],
+    "Z_noise": 1.4558419448241937,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 1.0518565679273795,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "tilt": {
+    "norm": 0.08840420053346765,
+    "norm_interval": [
+     0.08636773407729612,
+     0.10446421903132085
+    ],
+    "floor": "read",
+    "S_poor": 0.4228167555589938,
+    "S_interval": [
+     0.36636366425876377,
+     0.5286932042725676
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 2.2353711826184344,
+    "Z_interval": [
+     2.215689978744986,
+     2.717026501493805
+    ],
+    "Z_noise": 1.247263858830149,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 0.9572283038463594,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "within_plus": {
+    "norm": 0.46423540950195297,
+    "norm_interval": [
+     0.4566128120472632,
+     0.47986426900294377
+    ],
+    "floor": "read",
+    "S_poor": 0.30248004359026237,
+    "S_interval": [
+     0.28620883252747986,
+     0.3317657974701792
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 27.27100654958406,
+    "Z_interval": [
+     26.921893159493287,
+     27.67213089857181
+    ],
+    "Z_noise": 1.5001672580873073,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 10.435394664657299,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "within_minus": {
+    "norm": 0.46206142173125603,
+    "norm_interval": [
+     0.45449117882711115,
+     0.47381447455886094
+    ],
+    "floor": "read",
+    "S_poor": 0.29277183669298756,
+    "S_interval": [
+     0.2759302924002011,
+     0.31736796490574143
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 26.87795699982379,
+    "Z_interval": [
+     26.549434450117978,
+     27.277252895527912
+    ],
+    "Z_noise": 1.7154309476591096,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 9.95095037911025,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   }
+  },
+  "2D ibu5 (printed)": {
+   "nominal": {
+    "norm": 0.1194098652113325,
+    "norm_interval": [
+     0.1440473223802587,
+     0.20879085630350025
+    ],
+    "floor": "read",
+    "S_poor": 0.524635835258445,
+    "S_interval": [
+     0.41467194359761916,
+     0.7188980705881589
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 3.2068186253829007,
+    "Z_interval": [
+     3.903427893653709,
+     5.252490673261081
+    ],
+    "Z_noise": 3.8766830038853266,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 0.8760996101416563,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "genie_mec": {
+    "norm": 0.2753511261971069,
+    "norm_interval": [
+     0.2832291042794387,
+     0.3614193449541797
+    ],
+    "floor": "read",
+    "S_poor": 0.5830858599904964,
+    "S_interval": [
+     0.5257473839277218,
+     0.7092822186237847
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 5.642142879947703,
+    "Z_interval": [
+     5.953986897751329,
+     6.954352557742021
+    ],
+    "Z_noise": 3.6960724168119907,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 1.647147355129059,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "nuwro": {
+    "norm": 0.5170482340099645,
+    "norm_interval": [
+     0.5084838119561641,
+     0.5814193744571787
+    ],
+    "floor": "read",
+    "S_poor": 0.7113413033649165,
+    "S_interval": [
+     0.6668105620962944,
+     0.7554202623626853
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 7.24227111565674,
+    "Z_interval": [
+     7.41385853697782,
+     8.58957718221167
+    ],
+    "Z_noise": 4.057382201977333,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 1.6307602967181838,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "bump": {
+    "norm": 0.24487140642048708,
+    "norm_interval": [
+     0.25026076351818655,
+     0.3209003737483347
+    ],
+    "floor": "read",
+    "S_poor": 0.5579394999681563,
+    "S_interval": [
+     0.46996124357248464,
+     0.6786505412808059
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 5.566684552724724,
+    "Z_interval": [
+     5.793524909036854,
+     7.085988981845481
+    ],
+    "Z_noise": 3.7998112048267254,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 1.5881509300713308,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "tilt": {
+    "norm": 0.2374168868395236,
+    "norm_interval": [
+     0.23955442575842534,
+     0.32004776209758984
+    ],
+    "floor": "read",
+    "S_poor": 0.8531438368361167,
+    "S_interval": [
+     0.726110350660493,
+     0.8776865933582526
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 3.7276334581403563,
+    "Z_interval": [
+     4.183399686338455,
+     5.451063981954884
+    ],
+    "Z_noise": 3.5626176853223903,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 1.5437842768841328,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "unresolved across mixed, poor-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "unresolved across mixed, poor-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "within_plus": {
+    "norm": 0.513747454250922,
+    "norm_interval": [
+     0.5059291979161122,
+     0.566733421546191
+    ],
+    "floor": "read",
+    "S_poor": 0.34394577486327826,
+    "S_interval": [
+     0.32287632701632635,
+     0.42862123171875427
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 26.902229136981983,
+    "Z_interval": [
+     26.122326253197812,
+     28.0593119337818
+    ],
+    "Z_noise": 3.7562966016293386,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 8.73317496278014,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "within_minus": {
+    "norm": 0.5209951242102905,
+    "norm_interval": [
+     0.5108919952177418,
+     0.5688181366544494
+    ],
+    "floor": "read",
+    "S_poor": 0.3389118907988041,
+    "S_interval": [
+     0.31304128672360093,
+     0.41062855115927477
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 26.724535889959387,
+    "Z_interval": [
+     25.94755949355327,
+     27.872123276529464
+    ],
+    "Z_noise": 3.7751953381403074,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 8.358563582483255,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   }
+  },
+  "2D ibu10 (printed)": {
+   "nominal": {
+    "norm": 0.18634130947416455,
+    "norm_interval": [
+     0.21493134715491677,
+     0.3244529474068528
+    ],
+    "floor": "read",
+    "S_poor": 0.6501429165599371,
+    "S_interval": [
+     0.5037277270270496,
+     0.7911376611763816
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 3.8842581397082454,
+    "Z_interval": [
+     5.078430477796041,
+     6.77835791983858
+    ],
+    "Z_noise": 5.284640074061987,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 0.9449950107567663,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "unresolved across within-the-noise-maximum and resolvable",
+      "combined": "unresolved"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "unresolved across within-the-noise-maximum and resolvable",
+      "combined": "unresolved"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "genie_mec": {
+    "norm": 0.30674339002538886,
+    "norm_interval": [
+     0.32336930843217604,
+     0.47836902445035245
+    ],
+    "floor": "read",
+    "S_poor": 0.6949969575215854,
+    "S_interval": [
+     0.5982667834682636,
+     0.8234018549575244
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 5.023353495151996,
+    "Z_interval": [
+     5.930745896860226,
+     7.450478423421709
+    ],
+    "Z_noise": 5.187993017246572,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 1.3693838583871696,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "unresolved across mixed, poor-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "unresolved across mixed, poor-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "nuwro": {
+    "norm": 0.4885007560895229,
+    "norm_interval": [
+     0.48431744743440147,
+     0.6103120118230726
+    ],
+    "floor": "read",
+    "S_poor": 0.8521276645479698,
+    "S_interval": [
+     0.7765837513079272,
+     0.8772834672042555
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 5.549356655380745,
+    "Z_interval": [
+     6.419045163499986,
+     8.007164653582056
+    ],
+    "Z_noise": 5.476980881226139,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 1.3908674918137214,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "unresolved across mixed, poor-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "unresolved across mixed, poor-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "bump": {
+    "norm": 0.2427195283934705,
+    "norm_interval": [
+     0.2725606599488419,
+     0.397974853928278
+    ],
+    "floor": "read",
+    "S_poor": 0.6073105769591045,
+    "S_interval": [
+     0.5062563925515913,
+     0.7766574748650854
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 6.463206623273663,
+    "Z_interval": [
+     6.967879773198976,
+     8.84265934295132
+    ],
+    "Z_noise": 5.286582674439684,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 1.8728179806375702,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "tilt": {
+    "norm": 0.2953641309742258,
+    "norm_interval": [
+     0.2959278181299636,
+     0.43896028001454296
+    ],
+    "floor": "read",
+    "S_poor": 0.8468996551230741,
+    "S_interval": [
+     0.6963389027760013,
+     0.883780658200133
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 4.272605913905614,
+    "Z_interval": [
+     5.15548161416126,
+     6.81181202158661
+    ],
+    "Z_noise": 4.922764827119215,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 1.6408884804812813,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "unresolved across mixed, poor-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "unresolved across mixed, poor-dominated",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "within_plus": {
+    "norm": 0.5973469745459287,
+    "norm_interval": [
+     0.5896850483724495,
+     0.6781708941604062
+    ],
+    "floor": "read",
+    "S_poor": 0.4345854328894643,
+    "S_interval": [
+     0.4068586752241329,
+     0.5313293905651711
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 27.53557303787303,
+    "Z_interval": [
+     26.548234320235483,
+     29.198476938575364
+    ],
+    "Z_noise": 5.119790430712059,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 8.712867202024823,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   },
+   "within_minus": {
+    "norm": 0.5943247376859864,
+    "norm_interval": [
+     0.5873647004742488,
+     0.6696189220454997
+    ],
+    "floor": "read",
+    "S_poor": 0.40012144528200533,
+    "S_interval": [
+     0.36990638007825355,
+     0.490953230167049
+    ],
+    "S_label": "MC-unresolved",
+    "Z_well": 27.423513480507125,
+    "Z_interval": [
+     26.48814245945173,
+     29.043276069792192
+    ],
+    "Z_noise": 5.051757298728843,
+    "Z_label": "MC-unresolved",
+    "Z_axis_max_printed": 8.35946081433043,
+    "isotropic_reference": 0.2731707317073171,
+    "combined": "unresolved",
+    "numerically_resolved": true,
+    "halves": {
+     "A": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     },
+     "B": {
+      "S_label": "mixed",
+      "Z_label": "resolvable",
+      "combined": "points at a resolvable component"
+     }
+    },
+    "partition": {
+     "n_well": [
+      149,
+      149,
+      149
+     ],
+     "dim_inf": [
+      0,
+      0,
+      1
+     ],
+     "proj_AB": 0.3325428276366552,
+     "proj_fullA": 0.1832221063968901,
+     "proj_fullB": 0.15720250216095272
+    }
+   }
+  }
+ },
+ "printed": {
+  "2D_P_over_f0": {
+   "min": 0.9999999999999998,
+   "max": 1.0000000000000002,
+   "spread": 1.1129275914211157e-16
+  },
+  "dropped_cells_f0_zero": {
+   "5d full": 0,
+   "5d A": 0,
+   "5d B": 0,
+   "2d full": 0,
+   "2d A": 0,
+   "2d B": 0
+  },
+  "P_over_f0_5D": [
+   0.9999814614834683,
+   0.9999945698369183,
+   0.9999927639523326,
+   0.9999999999999999,
+   0.9999639927078791,
+   0.9998176508095068,
+   0.9999846932286163,
+   0.9999839342851775,
+   0.9999949607318486,
+   0.9999992974861491,
+   1.0,
+   1.0,
+   0.9999837051661441,
+   0.9999575066909586,
+   0.9999918316033151,
+   0.9999972834147864
+  ],
+  "5d_spectrum_s": [
+   0.0013282549506032698,
+   0.0017641335358696713,
+   0.0020315521377547155,
+   0.0026422487927803243,
+   0.002983718472673752,
+   0.0031750889276457137,
+   0.005616676133882025,
+   0.006515420067080949,
+   0.00917932150019172,
+   0.012101365406089458,
+   0.016554365999766407,
+   0.01727008510724268,
+   0.019074194452680233,
+   0.02825928726411278,
+   0.03502345311031421,
+   0.038644481975871094
+  ],
+  "5d_fisher_eigenvalues": [
+   3.074757257236721e-38,
+   2.956182292629462e-08,
+   3.442571225699546e-08,
+   5.220194081016072e-08,
+   5.539839190713697e-08,
+   7.247612714866137e-08,
+   9.712478472599849e-08,
+   1.2977621428347661e-07,
+   1.517365337052902e-07,
+   1.6427490581807785e-07,
+   1.783916660933671e-07,
+   2.2940958763892434e-07,
+   2.388713362406558e-07,
+   2.6976941000519924e-07,
+   3.3696137944215103e-07,
+   4.4551437094045686e-07,
+   5.491093432724002e-07,
+   5.54732116121291e-07,
+   6.665264925500599e-07,
+   7.188393473033151e-07,
+   7.852281039779503e-07,
+   1.054319547273652e-06,
+   1.2506789896958935e-06,
+   1.8933536438415408e-06,
+   2.0967115149644184e-06,
+   2.322534000457689e-06,
+   3.2122179486982366e-06,
+   4.0900223730111524e-06,
+   7.085226572124229e-06
+  ],
+  "5d_n_well_at_cuts": {
+   "0.05": 16,
+   "0.2": 16
+  },
+  "5d_per_cell_width_printed": [
+   0.006720425739649756,
+   0.002951741194515061,
+   0.02105334308418171,
+   0.03606099335313972,
+   0.0035342024103436572,
+   0.006851543208361402,
+   0.018147624593830753,
+   0.03477969930763368,
+   0.011505937573141882,
+   0.003410514744548431,
+   0.01633351457781735,
+   0.027255912869340006,
+   0.0047893794298908155,
+   0.009846711507203119,
+   0.0022332207682584414,
+   0.010951699042642708
+  ],
+  "5d_per_cell_null_fraction_printed": [
+   1.3687551575568833e-16,
+   1.0967731784535657e-16,
+   1.8518734303082992e-16,
+   1.3538878840151505e-17,
+   4.8753773605904845e-17,
+   4.410714696954166e-18,
+   1.3616211457500268e-16,
+   1.688539017635308e-17,
+   2.1861170655310442e-16,
+   1.059221002830376e-17,
+   1.9842272357463112e-16,
+   3.2789529341407327e-18,
+   4.6080840800056275e-17,
+   2.9457944306648496e-17,
+   4.058215757869301e-17,
+   1.2984517723661802e-16
+  ],
+  "2d_spectrum_s": [
+   0.00405498974645298,
+   0.004796218209008356,
+   0.005391014448074289,
+   0.0058496256765805605,
+   0.006034085913951557,
+   0.006578844783109966,
+   0.0067904162781600285,
+   0.007261368197255728,
+   0.007407812910123247,
+   0.00768220224457113,
+   0.007948703775643188,
+   0.00821577208838787,
+   0.0085271747397373,
+   0.008740396410574341,
+   0.008933137160065163,
+   0.008984896636338148,
+   0.009389581995720216,
+   0.009425171020176785,
+   0.009721556880679463,
+   0.00989424140259898,
+   0.010220203978030844,
+   0.010496462057822634,
+   0.010661912011938132,
+   0.010718191800802294,
+   0.011096453793254865,
+   0.011292737155862398,
+   0.01151078209937473,
+   0.01193724174915325,
+   0.012162168301257041,
+   0.012300014794518303,
+   0.012589023769846146,
+   0.012730039950949429,
+   0.013013582304414826,
+   0.013061356934017,
+   0.013476037467558355,
+   0.013854205991775009,
+   0.01399849453055779,
+   0.014192193873789592,
+   0.014354538627431156,
+   0.014521769134327477,
+   0.014892122407911402,
+   0.01510081067280638,
+   0.015416936436437406,
+   0.015603227820296,
+   0.015917422257197063,
+   0.016000450972010128,
+   0.0161707096855954,
+   0.01647631146788092,
+   0.01665623415989236,
+   0.01672872625355691,
+   0.01705522394626493,
+   0.017224468396320015,
+   0.01726746145206699,
+   0.0174805700027302,
+   0.017666421787287823,
+   0.018066201590948492,
+   0.018161225383092405,
+   0.018412585994899776,
+   0.01863714256886348,
+   0.01883939486884847,
+   0.01928755384030741,
+   0.019489075927935924,
+   0.019816897288305862,
+   0.02020389560521648,
+   0.020387053935893035,
+   0.02058359364086258,
+   0.021009154231977894,
+   0.021438932463914356,
+   0.02195129386292131,
+   0.022255777032966995,
+   0.02247597365576546,
+   0.02280515808130595,
+   0.023382444709135426,
+   0.023554452200777103,
+   0.02371784365845099,
+   0.0238662787153622,
+   0.02423661688991774,
+   0.024315517463833956,
+   0.024721280498394928,
+   0.025035391439949126,
+   0.025753871768031025,
+   0.02619549041716178,
+   0.026544407395992967,
+   0.026965702146754672,
+   0.027148927617681284,
+   0.027755932973400566,
+   0.028139009076525806,
+   0.028231445625354065,
+   0.0283571750251233,
+   0.028457990783576633,
+   0.028907181940809164,
+   0.02937202086529174,
+   0.029710814354371107,
+   0.030433916033974506,
+   0.030936708396105104,
+   0.03149991329589384,
+   0.03208078004859908,
+   0.033019655752634144,
+   0.033071714715062234,
+   0.03333334957804479,
+   0.0338517504541201,
+   0.03446664335708355,
+   0.03517019119784257,
+   0.03532199946616076,
+   0.03585027105106151,
+   0.03668353553002307,
+   0.038107488853491356,
+   0.03842444683507907,
+   0.03850334027567235,
+   0.03919923438082247,
+   0.04015208362256573,
+   0.04191123996641428,
+   0.042206212948144944,
+   0.043320010338433655,
+   0.04469850734309866,
+   0.04588356581550097,
+   0.0465894312941005,
+   0.04806847723594959,
+   0.04855492189353634,
+   0.04961759977589119,
+   0.05025668111091582,
+   0.05055654706162039,
+   0.05214666571817968,
+   0.052992744646188736,
+   0.05388860202951146,
+   0.05439932525552519,
+   0.056197232792765395,
+   0.05741917868302592,
+   0.05831181363078168,
+   0.05930319570114377,
+   0.06213086005947677,
+   0.06413450258905347,
+   0.06448943540609332,
+   0.06576987012497341,
+   0.06617647425526221,
+   0.06771171016187048,
+   0.07152526417042446,
+   0.07286467547054878,
+   0.07590682406761091,
+   0.07850610236058256,
+   0.07994741935878395,
+   0.08164061775724589,
+   0.08355150638160447,
+   0.0856295790256868,
+   0.08642234646521747,
+   0.08986084885400858,
+   0.09079108329577724,
+   0.09217871059731206,
+   0.09453039526849963,
+   0.10101385302147008,
+   0.10240273341763872,
+   0.10874312147277747,
+   0.11015081912066511,
+   0.11429921643076801,
+   0.11609808894260269,
+   0.11722153887710286,
+   0.12278756280596308,
+   0.12836447143082505,
+   0.13190052287440926,
+   0.1328360885903451,
+   0.13473472697594405,
+   0.13520915653878463,
+   0.1376521246854991,
+   0.14358379483982128,
+   0.14926892355591295,
+   0.15611363172877962,
+   0.15959229410997708,
+   0.170629479485869,
+   0.17914233496550921,
+   0.18532961896342787,
+   0.1888541151288516,
+   0.22671951144398314,
+   0.2362750486950247,
+   0.25714028697549796,
+   0.2632771440481098,
+   0.26450095865617745,
+   0.26650089842043073,
+   0.28222879302917614,
+   0.3048405682529299,
+   0.32000612611909746,
+   0.34018447024554743,
+   0.3525064546035876,
+   0.3906344520837927,
+   0.48509281118625186,
+   0.48795160658818454,
+   0.5026199334456428,
+   0.6486510335490695,
+   0.7142575576400022,
+   0.9051073396198137,
+   0.9422756029832439,
+   1.0108753888168813,
+   1.0551807432172724,
+   1.1853684618333278,
+   1.3847410685213304,
+   1.58352833242772,
+   1.7419574445663513,
+   2.1920928274848777,
+   2.610094866867968,
+   3.844984941060477,
+   6.123886072670247,
+   6.4818123117492155,
+   8.090475557464607,
+   39.48835887337124,
+   111.10429940928371,
+   589593.844895955
+  ],
+  "2d_fisher_eigenvalues": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   5.4295594261108533e-14,
+   1.0828341738607124e-10,
+   2.345697854859857e-09,
+   6.721725413367032e-09,
+   2.618041664202128e-08,
+   4.5948277240950964e-08,
+   9.741462636884085e-08,
+   9.94470120541818e-08,
+   1.1631390874946377e-07,
+   1.1641438277630924e-07,
+   1.3012203112967186e-07,
+   1.3284195204430944e-07,
+   1.4671894850437075e-07,
+   1.4796544688994776e-07,
+   1.605175129117947e-07,
+   1.6280785004907142e-07,
+   1.8310504289649495e-07,
+   1.932780157352607e-07,
+   2.0448650524521816e-07,
+   2.2344674850243293e-07,
+   2.267413214117525e-07,
+   2.275845161065606e-07,
+   2.47423517024458e-07,
+   2.548993690139296e-07,
+   2.6987782116633574e-07,
+   2.7895960478572396e-07,
+   2.8936646489468637e-07,
+   2.9918532046638495e-07,
+   3.058365971330362e-07,
+   3.1208570418851207e-07,
+   3.184230490299809e-07,
+   3.2269401358584185e-07,
+   3.299445574116211e-07,
+   3.3459293132664563e-07,
+   3.620969897326258e-07,
+   3.705977477084004e-07,
+   3.959561191731383e-07,
+   4.015129731982744e-07,
+   4.096378306768404e-07,
+   4.170595502593237e-07,
+   4.2482415123544926e-07,
+   4.434097268183663e-07,
+   4.579059244715438e-07,
+   4.7041086353285466e-07,
+   4.7514013875101443e-07,
+   4.813701513585089e-07,
+   4.940848123547985e-07,
+   4.988797445507247e-07,
+   5.313865817489029e-07,
+   5.424174240643968e-07,
+   5.678938141939535e-07,
+   5.702139299282549e-07,
+   5.799621333459001e-07,
+   5.890554119391451e-07,
+   6.213466892457661e-07,
+   6.435772062930653e-07,
+   6.540249090600948e-07,
+   6.596645108834982e-07,
+   7.012902737479584e-07,
+   7.127804925423534e-07,
+   7.401809840607327e-07,
+   7.547910174866629e-07,
+   7.952533137544628e-07,
+   8.104554346914578e-07,
+   8.374723983624431e-07,
+   8.540563388110819e-07,
+   8.981925448573289e-07,
+   9.166530145334016e-07,
+   9.249547685790486e-07,
+   9.510673256779312e-07,
+   9.56913914653331e-07,
+   9.849611662910169e-07,
+   1.0065146732560888e-06,
+   1.0162300079879867e-06,
+   1.0335280006931796e-06,
+   1.087363969853101e-06,
+   1.114393783016489e-06,
+   1.145121819712548e-06,
+   1.1675315458996235e-06,
+   1.1926068263280205e-06,
+   1.2242966555382589e-06,
+   1.2839433896725779e-06,
+   1.3197811595662915e-06,
+   1.3410007825309684e-06,
+   1.39166726181016e-06,
+   1.4130651658842008e-06,
+   1.4371714271316448e-06,
+   1.5051344333368604e-06,
+   1.5564427723550605e-06,
+   1.5849531527429152e-06,
+   1.604954591382326e-06,
+   1.622895168578944e-06,
+   1.7111232406286094e-06,
+   1.7367626459108778e-06,
+   1.8314189641487836e-06,
+   1.8498674950796706e-06,
+   1.923965948934543e-06,
+   1.9897745845155196e-06,
+   2.023593176925846e-06,
+   2.084024114462942e-06,
+   2.152928361682485e-06,
+   2.239861331555398e-06,
+   2.2766665031941305e-06,
+   2.3442881407609616e-06,
+   2.379865810462549e-06,
+   2.3916007463914487e-06,
+   2.4913266452459857e-06,
+   2.515049827669922e-06,
+   2.5378400938301297e-06,
+   2.647674646048007e-06,
+   2.7223624187737343e-06,
+   2.7358427257954677e-06,
+   2.779725864511801e-06,
+   2.9199529143617585e-06,
+   3.1104109710668694e-06,
+   3.126946944119345e-06,
+   3.2432846742561915e-06,
+   3.3831479384447633e-06,
+   3.466398395722034e-06,
+   3.5879888247880497e-06,
+   3.6615078850521744e-06,
+   3.766074773234847e-06,
+   3.860684360640881e-06,
+   4.160551317691806e-06,
+   4.1946205967682015e-06,
+   4.288841496705725e-06,
+   4.444482825609952e-06,
+   4.5690898938413516e-06,
+   4.637121963633822e-06,
+   4.7274801251568416e-06,
+   4.88652972855237e-06,
+   5.0015656109686415e-06,
+   5.191550634541389e-06,
+   5.290308817348076e-06,
+   5.458467365211276e-06,
+   5.675593728927192e-06,
+   5.946305504664182e-06,
+   6.267719819669698e-06,
+   6.4127366144730845e-06,
+   6.810667340011794e-06,
+   7.253098220567966e-06,
+   7.33487237150744e-06,
+   7.5165583904473175e-06,
+   7.778958930631946e-06,
+   8.036611828683358e-06,
+   8.412260318432097e-06,
+   8.500502635989372e-06,
+   9.029216967624713e-06,
+   9.37680405785537e-06,
+   9.681046254284065e-06,
+   1.001905265228431e-05,
+   1.0367566978492262e-05,
+   1.058529435347139e-05,
+   1.138880356938709e-05,
+   1.153798270158799e-05,
+   1.1850508546151943e-05,
+   1.2307390009671093e-05,
+   1.280772980823695e-05,
+   1.2866250892889172e-05,
+   1.3393464937242872e-05,
+   1.3940965003909333e-05,
+   1.5578616749056027e-05,
+   1.5879467971476882e-05,
+   1.6147590724888737e-05,
+   1.7591801667230298e-05,
+   1.915958935929171e-05,
+   1.9951187434464087e-05,
+   2.0518945413917003e-05,
+   2.0598037289697827e-05,
+   2.119543621170147e-05,
+   2.148568448914181e-05,
+   2.439491701677964e-05,
+   2.5696923227105563e-05,
+   2.6040361585027956e-05,
+   2.7657517729105633e-05,
+   2.8524072755705093e-05,
+   3.094120684685023e-05,
+   3.1988661174896204e-05,
+   3.622513284832825e-05,
+   3.69847946510302e-05,
+   3.9066063457976126e-05,
+   4.359577762165219e-05,
+   4.664011950282288e-05,
+   4.865490092260225e-05,
+   5.4742708534480245e-05,
+   5.796148413378609e-05,
+   5.9660922674321584e-05,
+   6.245658471683253e-05,
+   6.726481147358363e-05,
+   7.817218836586602e-05,
+   8.830123039578976e-05,
+   0.0001011060901245998,
+   0.000106865320204437,
+   0.00011249967403826937,
+   0.0001197187719980933,
+   0.00015969587090849897,
+   0.00016254353426590337,
+   0.00017166681690648308,
+   0.00022301749294741273,
+   0.0002842839181677737,
+   0.00028903496801214974,
+   0.000306990608172442,
+   0.0004447470800271909,
+   0.0006899468111554721,
+   0.0014233542857178564
+  ],
+  "2d_n_well_at_cuts": {
+   "0.05": 120,
+   "0.2": 171
+  },
+  "2d_per_cell_width_printed": [
+   0.2599662704387808,
+   0.07834651209798135,
+   0.08802704286168675,
+   0.12721066185108937,
+   0.11121616809090155,
+   0.12185157373791014,
+   0.13587552078150894,
+   0.0761264173171615,
+   0.13939911594567786,
+   0.344592157999021,
+   0.6870690367740948,
+   1.0572391414391515,
+   0.7204659433471989,
+   3.229104814790755,
+   25.35162018020067,
+   73.74190616996044,
+   0.06385573669879532,
+   0.0424078062169845,
+   0.03574570318009116,
+   0.041772728291334014,
+   0.05027796107992291,
+   0.06150501464407738,
+   0.06704164049113068,
+   0.03848765454572426,
+   0.06674091664097886,
+   0.15901044170965045,
+   0.38119975940487566,
+   0.7233085218529071,
+   0.7427671092927134,
+   4.071009944241237,
+   28.56236419327821,
+   5.616727025478548,
+   0.03827152780200837,
+   0.0201596054884812,
+   0.02015716978715011,
+   0.02307237441611628,
+   0.02822794883290584,
+   0.034310150286680066,
+   0.036091827145176496,
+   0.02131955592580221,
+   0.0377733554545765,
+   0.08886118089109253,
+   0.1893257130192716,
+   0.2824187296321922,
+   0.33051263037959316,
+   1.1808812410937366,
+   21.219851227769794,
+   31.034109260395663,
+   0.043062893702719235,
+   0.02607001195485005,
+   0.019772184027551983,
+   0.02153861311837376,
+   0.025617934174062638,
+   0.030284102075820368,
+   0.03231675422630565,
+   0.019925864914566563,
+   0.034721667173863886,
+   0.078982944126417,
+   0.1578817728602529,
+   0.23655624377143059,
+   0.18802887731108053,
+   0.8919083314942957,
+   22.10943227248627,
+   7.589966264490767,
+   0.2562575440704995,
+   0.05407977009114826,
+   0.022961241640042245,
+   0.02209182471902362,
+   0.02528831787759438,
+   0.0290582658736746,
+   0.031361517671968125,
+   0.020619983806119572,
+   0.03347512220160537,
+   0.0727839601313618,
+   0.1509262955038137,
+   0.2465123112783589,
+   0.20024162311870486,
+   1.5912399657219594,
+   16.731151612705688,
+   31.70933622674786,
+   1.2186207049037965,
+   0.18390658871488183,
+   0.035641572073268984,
+   0.021691259212248494,
+   0.02379048751819229,
+   0.026695463516930473,
+   0.02881179808339095,
+   0.019291863979033572,
+   0.031658968459290955,
+   0.06883546764736444,
+   0.14916684323049892,
+   0.21706268551608165,
+   0.19860329939682894,
+   1.4097094171532285,
+   6.046378434941445,
+   37.200998976409174,
+   5.465331868506443,
+   0.5582125581050758,
+   0.0717612958770807,
+   0.020148834383722305,
+   0.019125655659733,
+   0.02181112864733385,
+   0.02339761822494622,
+   0.015369529708810161,
+   0.023904655274926932,
+   0.04877441289265561,
+   0.11548751924728541,
+   0.20589746332035627,
+   0.14649128711899473,
+   0.6946854269454582,
+   1.307479049181389,
+   19.84878535445447,
+   26.455963524101335,
+   1.5028070538621205,
+   0.13394684380274857,
+   0.019439493148672975,
+   0.011475481934960358,
+   0.012649577259791036,
+   0.013591389898006453,
+   0.008641868540757486,
+   0.014053699454133855,
+   0.03051600850520727,
+   0.06516724974915983,
+   0.0998804368294648,
+   0.05483556322577687,
+   0.16825138489721017,
+   1.1638624575591632,
+   8.43527441492372,
+   100.04756541541678,
+   0.7432357740551192,
+   0.13871696519822257,
+   0.021532167761679037,
+   0.012377907454668753,
+   0.013513433641268517,
+   0.01434299381776194,
+   0.009418448603043007,
+   0.015459788995098865,
+   0.031595632699275816,
+   0.06375882638716064,
+   0.0865244422514684,
+   0.05050718874836967,
+   0.12645641055902704,
+   0.7918654026021095,
+   13.117515337892856,
+   0.2992757150318026,
+   0.27805368140293724,
+   0.03896994757359294,
+   0.016798107180359578,
+   0.017490514737851705,
+   0.01761618178526955,
+   0.011688387934909478,
+   0.019045603000084316,
+   0.0370129102316042,
+   0.06946069370229732,
+   0.09917077507465533,
+   0.052326827702348255,
+   0.11667204809182555,
+   0.45421498952011424,
+   13.634310920735228,
+   0.15653964351789312,
+   0.155825074110867,
+   0.02845664293633072,
+   0.02637123593102204,
+   0.02035216491998619,
+   0.012850584828403004,
+   0.019520202260342304,
+   0.03637039123427194,
+   0.06318342996019584,
+   0.07677772187957498,
+   0.03228169199582885,
+   0.06342847150513332,
+   0.17000721104019761,
+   4.8800249075241835,
+   45.09778951483007,
+   0.6222861950683353,
+   0.11476987071863398,
+   0.06163287221904909,
+   0.0632594374639773,
+   0.043477751281458296,
+   0.05699643058721183,
+   0.07843492834758219,
+   0.08688768978275206,
+   0.03275192964099779,
+   0.05690913768619347,
+   0.1003311470714446,
+   1.9620788556338193,
+   1.4014221910817004,
+   0.4951260992737379,
+   0.3768701932517805,
+   0.16141057895059863,
+   0.19236495872186923,
+   0.10371135471218831,
+   0.08434983307901991,
+   0.016565177268710807,
+   0.021565938387836596,
+   0.02401307563004335,
+   0.22384135145492234,
+   589593.8320082008,
+   62.683388947656965,
+   6.566335629699519,
+   6.8927442601656255,
+   0.3113946100106585,
+   0.11094195750014665,
+   0.03562839227675077,
+   0.17763395655940525
+  ],
+  "2d_per_cell_null_fraction_printed": [
+   1.4997605782190603e-16,
+   1.0547251427954085e-16,
+   7.143254650195957e-17,
+   4.880127208497033e-17,
+   9.240721809928278e-17,
+   6.541084583386994e-17,
+   1.0790047217570599e-16,
+   7.01726480643774e-17,
+   1.045614108681008e-16,
+   1.254430177783507e-16,
+   1.0063833753232381e-16,
+   8.220508974285064e-17,
+   6.253220583913677e-17,
+   1.3563059752081029e-16,
+   1.3458000955484703e-16,
+   1.0740970682930229e-16,
+   9.813793320005483e-17,
+   1.2282486713686019e-16,
+   1.163674692736053e-16,
+   1.1488584338615853e-16,
+   1.1731729224006515e-16,
+   1.0894860396438725e-16,
+   1.40376296745237e-16,
+   1.1817731855915822e-16,
+   1.194170171306337e-16,
+   1.2924789787954639e-16,
+   8.657296232928588e-17,
+   8.25125499538665e-17,
+   1.388982659172211e-16,
+   1.3319224381963284e-16,
+   1.5351016875928317e-16,
+   9.13273637590749e-17,
+   1.7850885385323574e-16,
+   1.6114391950355716e-16,
+   1.868825126989672e-16,
+   1.2691557759736418e-16,
+   8.044014090272027e-17,
+   1.1987584666497838e-16,
+   1.2323573388777896e-16,
+   1.6393997210754748e-16,
+   2.1036104779089587e-16,
+   1.839952355961324e-16,
+   1.7182647243787983e-16,
+   1.0900597088653035e-16,
+   1.3526003328592868e-16,
+   1.27208242454273e-16,
+   2.084936462164973e-16,
+   1.8521167873937054e-16,
+   1.4654665896737338e-16,
+   1.4169505631095086e-16,
+   1.155690482265216e-16,
+   2.1207366471562858e-16,
+   1.2800497775224441e-16,
+   1.3326843629685696e-16,
+   1.4418285134550888e-16,
+   2.19731243410229e-16,
+   1.3978460993718513e-16,
+   1.8883921662199128e-16,
+   1.419741510638053e-16,
+   2.1755821833425892e-16,
+   1.0217948458887703e-16,
+   9.588983392244424e-17,
+   1.532375128565831e-16,
+   1.5785528979718162e-16,
+   2.7804593129589513e-16,
+   1.5228372011103718e-16,
+   8.93365565824847e-17,
+   2.341764061976828e-16,
+   1.77073266974764e-16,
+   1.9751657719754886e-16,
+   1.7950423539533215e-16,
+   1.8089716637687613e-16,
+   2.4831440306557667e-16,
+   1.4884472667303579e-16,
+   1.3302852320619458e-16,
+   1.360538285248888e-16,
+   2.4930130271829797e-16,
+   1.8807841872862582e-16,
+   1.5480568080326283e-16,
+   1.6078104034340967e-16,
+   1.7978902719515666e-15,
+   2.915248796434259e-16,
+   2.516233213164043e-16,
+   2.0738867374822641e-16,
+   3.1681070333859e-16,
+   2.102857056812498e-16,
+   2.862073917404285e-16,
+   1.914265052120764e-16,
+   1.7320698060750054e-16,
+   1.738345728091295e-16,
+   1.6594237579590268e-16,
+   2.614803184845664e-16,
+   2.2119228565396378e-16,
+   1.4209585175430267e-16,
+   1.885742917692073e-16,
+   2.2865312599754933e-16,
+   1.0849368779822627e-14,
+   1.0503112281938348e-15,
+   1.9340575663836655e-16,
+   2.2455938115740504e-16,
+   2.8555974481386974e-16,
+   1.8677536566709019e-16,
+   2.8941916308769455e-16,
+   2.14715833960928e-16,
+   2.7694231471677906e-16,
+   1.985278553219977e-16,
+   1.6302031318182099e-16,
+   2.243525343793972e-16,
+   2.0313574770351942e-16,
+   1.3277470477697278e-16,
+   1.8981132803776675e-16,
+   1.48131203900933e-16,
+   6.571254108830495e-14,
+   6.350589104191234e-15,
+   5.344292259623216e-16,
+   1.711715939774969e-16,
+   3.534520910712437e-16,
+   3.8791381251810025e-16,
+   3.6489049729071176e-16,
+   1.8558092199308514e-16,
+   3.7714094398459553e-16,
+   1.4163366162773234e-16,
+   2.397914548248692e-16,
+   1.9742681984388992e-16,
+   1.6039792366212088e-16,
+   1.628531503976943e-16,
+   2.0184959014348832e-16,
+   2.3130766521931953e-16,
+   6.667858978989358e-15,
+   2.2914908841886293e-15,
+   5.611221474941794e-16,
+   1.628137123265272e-16,
+   2.999613195886607e-16,
+   3.2733521547612744e-16,
+   2.091258364012324e-16,
+   2.4597235669696543e-16,
+   3.88158921464665e-16,
+   1.705368059557639e-16,
+   4.962107306130757e-16,
+   2.507135052041094e-16,
+   1.598757685509752e-16,
+   7.632459340096207e-17,
+   2.7573598683101677e-16,
+   2.4983937616074103e-16,
+   2.1711929697452365e-16,
+   9.324830913760727e-16,
+   2.275308231991135e-16,
+   2.0342168202104803e-16,
+   3.2622770866908234e-16,
+   2.2954076701515774e-16,
+   1.7177961548579388e-16,
+   2.2914525466778124e-16,
+   5.168670619279322e-16,
+   3.146433320455681e-16,
+   3.043639673696278e-16,
+   2.1656427931003457e-16,
+   2.374369767717679e-16,
+   1.3491779066691192e-16,
+   1.980983923373133e-16,
+   3.02506978738413e-16,
+   4.540235502649262e-16,
+   6.09530842084379e-16,
+   3.7931946443544017e-16,
+   3.4336390137124344e-16,
+   3.4637347776781454e-16,
+   3.048533415407751e-16,
+   3.472414240196303e-16,
+   4.432346700825221e-16,
+   2.3951040764534155e-16,
+   2.4192880531763863e-16,
+   2.4343983980162697e-16,
+   2.133777703589775e-16,
+   3.48821465100236e-16,
+   3.768524773291066e-16,
+   4.994055886457156e-16,
+   4.427827951085544e-16,
+   4.068861270351879e-16,
+   3.8054507376876803e-16,
+   2.5968086712117337e-16,
+   1.933242874821006e-16,
+   1.2458670456674176e-16,
+   3.144741168529077e-16,
+   2.2866284641940505e-16,
+   1.4717469613906538e-16,
+   2.0580705117047382e-16,
+   2.3636391061995533e-16,
+   3.75855211253671e-16,
+   3.0706864402145737e-16,
+   4.821848197716142e-16,
+   2.799913715469285e-16,
+   2.4930892573069893e-16,
+   2.2329047383227256e-16,
+   2.1673669231556085e-16,
+   3.2006085516059326e-16,
+   2.0919532943387632e-16,
+   2.2108452756292298e-16,
+   2.221659853614781e-16,
+   1.3427520846588314e-13,
+   9.311898209240278e-16,
+   1.9748043111448297e-16,
+   2.8976456947365634e-16,
+   2.214294159807983e-16,
+   1.1795506403184114e-16,
+   1.897415607776425e-16,
+   1.413629471065771e-16
+  ],
+  "5d_variant_b0": {
+   "n_well": 16,
+   "n_mid": 0,
+   "dim_inf": 0,
+   "s": [
+    0.0013161778486375686,
+    0.00171426345747293,
+    0.0019925994757646775,
+    0.00259758968564894,
+    0.002926901982537428,
+    0.0031475451763136922,
+    0.005538023849313783,
+    0.006410439590162708,
+    0.009057116947048778,
+    0.011947740241044207,
+    0.016364816624990397,
+    0.017018147305817088,
+    0.018821163674087697,
+    0.02755718712356004,
+    0.034516103932268845,
+    0.037953160594639615
+   ]
+  },
+  "5d_variant_did_settings": {
+   "n_well": 16,
+   "n_mid": 0,
+   "dim_inf": 0,
+   "s": [
+    0.0013162964249330675,
+    0.0017143166797061612,
+    0.0019926084928872704,
+    0.002597609640209613,
+    0.0029269190229399725,
+    0.0031476773086646695,
+    0.005538082216454629,
+    0.006411504395882068,
+    0.009058129892666997,
+    0.011949064434091555,
+    0.01636543446774298,
+    0.017019423259264643,
+    0.018821402551887263,
+    0.027563423983936547,
+    0.034517551941558,
+    0.037953720592995475
+   ]
+  },
+  "R00_R15_alone": {
+   "label": "approximate aggregation; printed only",
+   "n_well": 16,
+   "n_mid": 0,
+   "dim_inf": 0,
+   "s": [
+    0.0012148543481333395,
+    0.0016735030386679538,
+    0.0018771810715246665,
+    0.0021782234534106484,
+    0.002587687696928642,
+    0.0027290853380861004,
+    0.004263281309434266,
+    0.004708376026969044,
+    0.005456881115572138,
+    0.006685751692090947,
+    0.007722654849170265,
+    0.008717320670828473,
+    0.011101731007536276,
+    0.01726231988718996,
+    0.018796099064417426,
+    0.021393985564027225
+   ]
+  }
+ },
+ "M1_across": {
+  "5D-F0b": "unresolved at W2",
+  "2D-A2": "unresolved at nominal, genie_mec, nuwro"
+ },
+ "M3": {
+  "5D": {
+   "n_well_resolved": 16,
+   "n_mid_resolved": 0,
+   "dim_inf": 0,
+   "unmatched_or_crossing": 0,
+   "raw": {
+    "full": [
+     16,
+     0,
+     0
+    ],
+    "A": [
+     16,
+     0,
+     0
+    ],
+    "B": [
+     16,
+     0,
+     0
+    ]
+   },
+   "spectrum_full_printed": [
+    0.0013282549506032698,
+    0.0017641335358696713,
+    0.0020315521377547155,
+    0.0026422487927803243,
+    0.002983718472673752,
+    0.0031750889276457137,
+    0.005616676133882025,
+    0.006515420067080949,
+    0.00917932150019172,
+    0.012101365406089458,
+    0.016554365999766407,
+    0.01727008510724268,
+    0.019074194452680233,
+    0.02825928726411278,
+    0.03502345311031421,
+    0.038644481975871094
+   ]
+  },
+  "4D": {
+   "n_well_resolved": 16,
+   "n_mid_resolved": 0,
+   "dim_inf": 0,
+   "unmatched_or_crossing": 0,
+   "raw": {
+    "full": [
+     16,
+     0,
+     0
+    ],
+    "A": [
+     16,
+     0,
+     0
+    ],
+    "B": [
+     16,
+     0,
+     0
+    ]
+   },
+   "spectrum_full_printed": [
+    0.0013358605089783112,
+    0.0017922312826963113,
+    0.0020378190943017237,
+    0.002705996066481443,
+    0.0030966780572412845,
+    0.003316161506100853,
+    0.006042956255209143,
+    0.007271822347680609,
+    0.011559807529869907,
+    0.014008907144401195,
+    0.01869313000229391,
+    0.023782414903656623,
+    0.025890584730157415,
+    0.034460832315626515,
+    0.04244914863941411,
+    0.04682805687732392
+   ]
+  },
+  "3D": {
+   "n_well_resolved": 16,
+   "n_mid_resolved": 0,
+   "dim_inf": 0,
+   "unmatched_or_crossing": 0,
+   "raw": {
+    "full": [
+     16,
+     0,
+     0
+    ],
+    "A": [
+     16,
+     0,
+     0
+    ],
+    "B": [
+     16,
+     0,
+     0
+    ]
+   },
+   "spectrum_full_printed": [
+    0.0013631930633843136,
+    0.0018458140597910917,
+    0.0020498619785825263,
+    0.0028323853084116757,
+    0.0041822249146565476,
+    0.0044823820636116,
+    0.009438770775835912,
+    0.009765043089467974,
+    0.012234864229737855,
+    0.020537211493806263,
+    0.02817425325707189,
+    0.031947664366296896,
+    0.03571072235776245,
+    0.04432327545053297,
+    0.07032016085170842,
+    0.07767507137594658
+   ]
+  },
+  "angles_3D_4D_printed": [
+   8.772512766015646e-14,
+   7.271836250205217e-14,
+   4.8895902016527593e-14,
+   3.694183736795486e-14,
+   3.13800547719515e-14,
+   2.52186559986447e-14,
+   2.1243638126661682e-14,
+   1.9724642446454104e-14,
+   1.9022508714224333e-14,
+   1.485682626255412e-14,
+   1.1636798275451842e-14,
+   9.914154199388059e-15,
+   9.022346156910923e-15,
+   5.2758924939050825e-15,
+   3.7982754626487716e-15,
+   1.5131491892260329e-15
+  ],
+  "angles_4D_5D_printed": [
+   9.286000780007808e-14,
+   8.743587266016215e-14,
+   7.434299041052246e-14,
+   4.5027921277227116e-14,
+   3.9921181356710675e-14,
+   3.7110794496976585e-14,
+   2.5512973644324934e-14,
+   2.1241783146689203e-14,
+   1.7588059010415797e-14,
+   1.5924896155874553e-14,
+   1.3377573196457497e-14,
+   1.180309779790467e-14,
+   6.729802195172694e-15,
+   3.9175339554315744e-15,
+   2.1343534518735216e-15,
+   4.3998924036155577e-16
+  ]
+ },
+ "M4": {
+  "n_well_resolved": 118,
+  "n_mid_resolved": 25,
+  "dim_inf": null,
+  "unmatched_or_crossing": 62,
+  "spectrum_full_printed": [
+   0.00405498974645298,
+   0.004796218209008356,
+   0.005391014448074289,
+   0.0058496256765805605,
+   0.006034085913951557,
+   0.006578844783109966,
+   0.0067904162781600285,
+   0.007261368197255728,
+   0.007407812910123247,
+   0.00768220224457113,
+   0.007948703775643188,
+   0.00821577208838787,
+   0.0085271747397373,
+   0.008740396410574341,
+   0.008933137160065163,
+   0.008984896636338148,
+   0.009389581995720216,
+   0.009425171020176785,
+   0.009721556880679463,
+   0.00989424140259898,
+   0.010220203978030844,
+   0.010496462057822634,
+   0.010661912011938132,
+   0.010718191800802294,
+   0.011096453793254865,
+   0.011292737155862398,
+   0.01151078209937473,
+   0.01193724174915325,
+   0.012162168301257041,
+   0.012300014794518303,
+   0.012589023769846146,
+   0.012730039950949429,
+   0.013013582304414826,
+   0.013061356934017,
+   0.013476037467558355,
+   0.013854205991775009,
+   0.01399849453055779,
+   0.014192193873789592,
+   0.014354538627431156,
+   0.014521769134327477,
+   0.014892122407911402,
+   0.01510081067280638,
+   0.015416936436437406,
+   0.015603227820296,
+   0.015917422257197063,
+   0.016000450972010128,
+   0.0161707096855954,
+   0.01647631146788092,
+   0.01665623415989236,
+   0.01672872625355691,
+   0.01705522394626493,
+   0.017224468396320015,
+   0.01726746145206699,
+   0.0174805700027302,
+   0.017666421787287823,
+   0.018066201590948492,
+   0.018161225383092405,
+   0.018412585994899776,
+   0.01863714256886348,
+   0.01883939486884847,
+   0.01928755384030741,
+   0.019489075927935924,
+   0.019816897288305862,
+   0.02020389560521648,
+   0.020387053935893035,
+   0.02058359364086258,
+   0.021009154231977894,
+   0.021438932463914356,
+   0.02195129386292131,
+   0.022255777032966995,
+   0.02247597365576546,
+   0.02280515808130595,
+   0.023382444709135426,
+   0.023554452200777103,
+   0.02371784365845099,
+   0.0238662787153622,
+   0.02423661688991774,
+   0.024315517463833956,
+   0.024721280498394928,
+   0.025035391439949126,
+   0.025753871768031025,
+   0.02619549041716178,
+   0.026544407395992967,
+   0.026965702146754672,
+   0.027148927617681284,
+   0.027755932973400566,
+   0.028139009076525806,
+   0.028231445625354065,
+   0.0283571750251233,
+   0.028457990783576633,
+   0.028907181940809164,
+   0.02937202086529174,
+   0.029710814354371107,
+   0.030433916033974506,
+   0.030936708396105104,
+   0.03149991329589384,
+   0.03208078004859908,
+   0.033019655752634144,
+   0.033071714715062234,
+   0.03333334957804479,
+   0.0338517504541201,
+   0.03446664335708355,
+   0.03517019119784257,
+   0.03532199946616076,
+   0.03585027105106151,
+   0.03668353553002307,
+   0.038107488853491356,
+   0.03842444683507907,
+   0.03850334027567235,
+   0.03919923438082247,
+   0.04015208362256573,
+   0.04191123996641428,
+   0.042206212948144944,
+   0.043320010338433655,
+   0.04469850734309866,
+   0.04588356581550097,
+   0.0465894312941005,
+   0.04806847723594959,
+   0.04855492189353634,
+   0.04961759977589119,
+   0.05025668111091582,
+   0.05055654706162039,
+   0.05214666571817968,
+   0.052992744646188736,
+   0.05388860202951146,
+   0.05439932525552519,
+   0.056197232792765395,
+   0.05741917868302592,
+   0.05831181363078168,
+   0.05930319570114377,
+   0.06213086005947677,
+   0.06413450258905347,
+   0.06448943540609332,
+   0.06576987012497341,
+   0.06617647425526221,
+   0.06771171016187048,
+   0.07152526417042446,
+   0.07286467547054878,
+   0.07590682406761091,
+   0.07850610236058256,
+   0.07994741935878395,
+   0.08164061775724589,
+   0.08355150638160447,
+   0.0856295790256868,
+   0.08642234646521747,
+   0.08986084885400858,
+   0.09079108329577724,
+   0.09217871059731206,
+   0.09453039526849963,
+   0.10101385302147008,
+   0.10240273341763872,
+   0.10874312147277747,
+   0.11015081912066511,
+   0.11429921643076801,
+   0.11609808894260269,
+   0.11722153887710286,
+   0.12278756280596308,
+   0.12836447143082505,
+   0.13190052287440926,
+   0.1328360885903451,
+   0.13473472697594405,
+   0.13520915653878463,
+   0.1376521246854991,
+   0.14358379483982128,
+   0.14926892355591295,
+   0.15611363172877962,
+   0.15959229410997708,
+   0.170629479485869,
+   0.17914233496550921,
+   0.18532961896342787,
+   0.1888541151288516,
+   0.22671951144398314,
+   0.2362750486950247,
+   0.25714028697549796,
+   0.2632771440481098,
+   0.26450095865617745,
+   0.26650089842043073,
+   0.28222879302917614,
+   0.3048405682529299,
+   0.32000612611909746,
+   0.34018447024554743,
+   0.3525064546035876,
+   0.3906344520837927,
+   0.48509281118625186,
+   0.48795160658818454,
+   0.5026199334456428,
+   0.6486510335490695,
+   0.7142575576400022,
+   0.9051073396198137,
+   0.9422756029832439,
+   1.0108753888168813,
+   1.0551807432172724,
+   1.1853684618333278,
+   1.3847410685213304,
+   1.58352833242772,
+   1.7419574445663513,
+   2.1920928274848777,
+   2.610094866867968,
+   3.844984941060477,
+   6.123886072670247,
+   6.4818123117492155,
+   8.090475557464607,
+   39.48835887337124,
+   111.10429940928371,
+   589593.844895955
+  ]
+ }
+}

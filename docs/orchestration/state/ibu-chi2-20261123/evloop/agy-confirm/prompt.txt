@@ -1,0 +1,7 @@
+READ-ONLY review, short. Do not create, edit, rename or delete any file. Read only.
+Files: ana_old.py (sha 8c078cd6...), ana_new.py (7f9417dc...), ana.diff (old to new), runEventLoopOmniFold.cpp (the event loop that writes the trees), DECLARATION.txt.
+Fact from a smoke test: in tree mc_signal_reco, sim_pass is nonzero on EVERY row, including truth-only "miss" rows. On miss rows sim and sim_pz are -9999, and every mu_* branch is -9999. In mc_background and data every row has a real reco muon.
+Q1. Is the new guard `sp & (sig["mu_mad_p"] > 0)` (with `bkg["mu_mad_p"] > 0` and `dat["mu_mad_p"] > 0`) correct and complete for the MAD variant? Could a row with a real reco muon be wrongly excluded (for example a valid mu_mad_p <= 0)?
+Q2. Can any OTHER variant or tree in ana_new.py admit a -9999 sentinel into the grid? Check BASE, SEL, the CURV/RANGE scans and the ANG scan, for signal, background and data, and the C_KIN/C_ANG control masks. Quote the lines.
+Q3. Did the diff change anything else?
+Answer Q1-Q3 with quoted lines, then "VERDICT: GO" or "VERDICT: FIX" with numbered fixes.

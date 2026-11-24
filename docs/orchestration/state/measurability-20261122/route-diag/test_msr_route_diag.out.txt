@@ -1,0 +1,9 @@
+REFUSED: msr_project.py is ffb88e7b32d8cf1f5df03be96e9506b82c00f81f4f12123d6de0c134d7af994e, not the merged 0000000000000000000000000000000000000000000000000000000000000000
+.REFUSED: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpjpob46x2/x.json exists
+.......
+----------------------------------------------------------------------
+Ran 8 tests in 16.856s
+
+OK
+{"comparisons": 88, "failing_current_bar": 0}
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmps797vkxq/ref/readout.json"}

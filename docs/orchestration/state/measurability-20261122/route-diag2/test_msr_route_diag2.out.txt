@@ -1,0 +1,31 @@
+test_refuses_a_changed_msr_project (test_msr_route_diag2.EndToEnd.test_refuses_a_changed_msr_project) ... REFUSED: msr_project.py is ffb88e7b32d8cf1f5df03be96e9506b82c00f81f4f12123d6de0c134d7af994e, not 0000000000000000000000000000000000000000000000000000000000000000
+ok
+test_refuses_an_existing_output (test_msr_route_diag2.EndToEnd.test_refuses_an_existing_output) ... REFUSED: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpzm7kg21d/x.json exists
+ok
+test_refuses_when_a_control_fails (test_msr_route_diag2.EndToEnd.test_refuses_when_a_control_fails) ... REFUSED: a first-block control failed
+ok
+test_refuses_when_a_target_row_is_not_reached (test_msr_route_diag2.EndToEnd.test_refuses_when_a_target_row_is_not_reached) ... REFUSED: target rows not reached: ['2d#999']
+ok
+test_the_output_holds_only_the_fields_and_no_reading_value (test_msr_route_diag2.EndToEnd.test_the_output_holds_only_the_fields_and_no_reading_value) ... ok
+test_fisher_matches_did (test_msr_route_diag2.Reference.test_fisher_matches_did) ... ok
+test_reference_reproduces_float64_where_it_is_accurate (test_msr_route_diag2.Reference.test_reference_reproduces_float64_where_it_is_accurate) ... ok
+test_reference_sees_an_error_a_perturbed_float64_c_would_make (test_msr_route_diag2.Reference.test_reference_sees_an_error_a_perturbed_float64_c_would_make)
+The reference is independent of the float64 C: corrupting C by 1e-6 relative moves the float64 Z, not it. ... ok
+test_rel (test_msr_route_diag2.Reference.test_rel) ... ok
+test_anything_else_goes_to_the_director (test_msr_route_diag2.Rule.test_anything_else_goes_to_the_director) ... ok
+test_c_formation_branch (test_msr_route_diag2.Rule.test_c_formation_branch) ... ok
+test_independent_route_branch (test_msr_route_diag2.Rule.test_independent_route_branch) ... ok
+test_nan_eigen_is_not_within_tolerance (test_msr_route_diag2.Rule.test_nan_eigen_is_not_within_tolerance) ... ok
+test_a_missing_field_is_refused (test_msr_route_diag2.Writer.test_a_missing_field_is_refused) ... ok
+test_any_other_field_is_refused (test_msr_route_diag2.Writer.test_any_other_field_is_refused) ... ok
+test_exact_fields_accepted (test_msr_route_diag2.Writer.test_exact_fields_accepted) ... ok
+test_targets_are_diagnostic_1s_failing_rows (test_msr_route_diag2.Writer.test_targets_are_diagnostic_1s_failing_rows) ... ok
+test_wrong_types_are_refused (test_msr_route_diag2.Writer.test_wrong_types_are_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 32.510s
+
+OK
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpiydtx_lc/ref/readout.json"}
+{"rows": 6, "branch": "director"}
+rc=0
