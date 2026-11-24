@@ -82,10 +82,16 @@ only these keys; any other key is refused:
   -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no
   -o IdentitiesOnly=yes -o ControlMaster=no -o ControlPath=none -o NoHostAuthenticationForLocalhost=no
   -o PermitLocalCommand=no -o ProxyCommand=none -o ProxyJump=none
+  -o UserKnownHostsFile=<home>/.ssh/known_hosts -o GlobalKnownHostsFile=/dev/null
   -l <user> -i <identity_file> [-o CertificateFile=<certificate_file>] <host> <command>
 ```
 
 With `-F none`, no ssh_config is read.
+
+**One trust anchor.** ssh would otherwise also accept a host key listed in `~/.ssh/known_hosts2`,
+`/etc/ssh/ssh_known_hosts` or `/etc/ssh/ssh_known_hosts2`. The wrapper names exactly one host-key file:
+`<home>/.ssh/known_hosts`, where `<home>` comes from the password database and must be a literal path. The global file
+is `/dev/null`. For the real items, `known_hosts` must be a regular file owned by this user.
 
 ssh starts from an **empty environment** plus:
 - `HOME`, this user's home from the password database, never the launch environment's;
@@ -104,7 +110,8 @@ For NERSC:
 "host": "perlmutter.nersc.gov"
 ```
 
-The certificate is named explicitly. The host must already be in `~/.ssh/known_hosts`.
+The certificate is named explicitly. Perlmutter's host key must already be in `<home>/.ssh/known_hosts`. No other file
+is consulted.
 
 Any `-t`, port forward or other option is refused. The frame goes on ssh's stdin, and the task's stdout and stderr
 come back through the wrapper. Any passphrase or seed base in that output is replaced by `[redacted]`, and the run is
@@ -247,7 +254,8 @@ python3 -W error::ResourceWarning -m unittest test_covfix_wrapper
 The tests:
 - use only `covfix-test-<random>-*` Keychain items in the login Keychain, which they create and delete;
 - set `COVFIX_FORBID_REAL_KEYCHAIN=1`, so the real `covfix-` prefix refuses;
-- stub ssh, salloc and srun locally;
+- stub ssh, salloc and srun locally; the stub remote gets a fixed list of environment names (PATH, HOME, TMPDIR,
+  LANG and the test git settings), never the caller's whole environment;
 - run git with every inherited `GIT_*` variable removed, no global or system config, an empty template and the file
   transport only;
 - seal only synthetic truths, so no test is a launch.

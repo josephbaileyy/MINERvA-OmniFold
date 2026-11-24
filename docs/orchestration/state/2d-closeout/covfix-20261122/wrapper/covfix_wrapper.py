@@ -215,10 +215,15 @@ def check_prefix(prefix: str) -> str:
     raise Stop(ERROR, f"Keychain prefix {prefix!r} is neither {REAL_PREFIX!r} nor covfix-test-*/covfix-synth-*")
 
 
+def home_dir() -> str:
+    """This user's home directory from the password database, never the launch environment's HOME."""
+    return pwd.getpwuid(os.getuid()).pw_dir
+
+
 def base_env() -> dict:
-    """The minimal environment the wrapper gives `security` and ssh: this user's HOME from the password database (never
-    the launch environment's), PATH=/usr/bin:/bin and LANG=C."""
-    return {"HOME": pwd.getpwuid(os.getuid()).pw_dir, "PATH": "/usr/bin:/bin", "LANG": "C"}
+    """The minimal environment the wrapper gives `security` and ssh: HOME from home_dir(), PATH=/usr/bin:/bin and
+    LANG=C."""
+    return {"HOME": home_dir(), "PATH": "/usr/bin:/bin", "LANG": "C"}
 
 
 def login_keychain(security: str = SECURITY) -> str:
@@ -454,7 +459,8 @@ def own_regular_file(path, what: str) -> str:
 
 
 def ssh_setup(cfg, host, real: bool):
-    """(argv, environment) for ssh, built entirely by the wrapper from the closed schema: the forced options, then -l,
+    """(argv, environment) for ssh, built entirely by the wrapper from the closed schema: the forced options, then the
+    host-key files (this user's ~/.ssh/known_hosts as a literal path, the only trust anchor; no global file), then -l,
     -i and the certificate; the environment is HOME (this user's, from the password database), PATH=/usr/bin:/bin,
     LANG=C, and SSH_AUTH_SOCK only when the config declares an agent. Nothing else the launch environment holds
     reaches ssh."""
@@ -474,7 +480,14 @@ def ssh_setup(cfg, host, real: bool):
     user = cfg.get("user")
     if not isinstance(user, str) or not SSH_USER.fullmatch(user):
         raise Stop(ERROR, "the role config's ssh user must be a plain user name")
-    argv = [program, *SSH_FORCED, "-l", user, "-i", own_regular_file(cfg.get("identity_file"), "identity_file")]
+    known_hosts = os.path.join(home_dir(), ".ssh", "known_hosts")
+    if real:
+        own_regular_file(known_hosts, "known_hosts file")
+    elif not LITERAL_PATH.fullmatch(known_hosts) or ".." in known_hosts.split("/"):
+        raise Stop(ERROR, "the ssh known_hosts file must be an absolute, literal path")
+    # one user file, named literally: known_hosts2 and /etc/ssh/ssh_known_hosts{,2} are never consulted
+    argv = [program, *SSH_FORCED, "-o", f"UserKnownHostsFile={known_hosts}", "-o", "GlobalKnownHostsFile=/dev/null",
+            "-l", user, "-i", own_regular_file(cfg.get("identity_file"), "identity_file")]
     if cfg.get("certificate_file") is not None:
         argv += ["-o", f"CertificateFile={own_regular_file(cfg['certificate_file'], 'certificate_file')}"]
     agent = cfg.get("agent", False)

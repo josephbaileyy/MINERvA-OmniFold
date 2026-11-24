@@ -12,6 +12,7 @@ import hashlib
 import io
 import json
 import os
+import pwd
 import secrets
 import shlex
 import shutil
@@ -42,8 +43,13 @@ for _p in (KEYFILE, CERTFILE):
     with open(_p, "w") as _f:
         _f.write("not a real key\n")
 REMOTE_ENV = os.path.join(TMP, "remote-env.json")      # what a remote login session would provide the command
+# Only the names the stub remote needs, never the caller's whole environment (which may hold tokens).
+REMOTE_ENV_KEYS = ("PATH", "HOME", "TMPDIR", "LANG", cw.FORBID_REAL_ENV, "GIT_CONFIG_GLOBAL", "GIT_CONFIG_NOSYSTEM",
+                   "GIT_ALLOW_PROTOCOL", "GIT_TERMINAL_PROMPT", "GIT_TEMPLATE_DIR", "GIT_CEILING_DIRECTORIES")
 with open(REMOTE_ENV, "w") as _f:
-    json.dump(dict(os.environ), _f)
+    json.dump({k: os.environ[k] for k in REMOTE_ENV_KEYS if k in os.environ}, _f)
+KNOWN_HOSTS = os.path.join(pwd.getpwuid(os.getuid()).pw_dir, ".ssh", "known_hosts")
+HOST_FILES = ("-o", f"UserKnownHostsFile={KNOWN_HOSTS}", "-o", "GlobalKnownHostsFile=/dev/null")
 
 
 def ssh_cfg(program):
@@ -693,12 +699,26 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(rig.ssh_log(), [])
 
     def test_ssh_argv_is_built_from_the_closed_schema(self):
-        argv, env = cw.ssh_setup({**ssh_cfg("/usr/bin/ssh"), "certificate_file": CERTFILE}, "perlmutter.nersc.gov", True)
-        self.assertEqual(argv, ["/usr/bin/ssh", *cw.SSH_FORCED, "-l", "tester", "-i", KEYFILE,
+        home = tempfile.mkdtemp(dir=TMP)
+        kh = os.path.join(home, ".ssh", "known_hosts")
+        os.makedirs(os.path.dirname(kh))
+        with mock.patch.object(cw, "home_dir", return_value=home):
+            with self.assertRaises(cw.Stop, msg="a missing known_hosts"):
+                cw.ssh_setup(ssh_cfg("/usr/bin/ssh"), "perlmutter.nersc.gov", True)
+            os.symlink(KEYFILE, kh)
+            with self.assertRaises(cw.Stop, msg="a symlinked known_hosts"):
+                cw.ssh_setup(ssh_cfg("/usr/bin/ssh"), "perlmutter.nersc.gov", True)
+            os.unlink(kh)
+            shutil.copy(KEYFILE, kh)
+            argv, env = cw.ssh_setup({**ssh_cfg("/usr/bin/ssh"), "certificate_file": CERTFILE},
+                                     "perlmutter.nersc.gov", True)
+        self.assertEqual(argv, ["/usr/bin/ssh", *cw.SSH_FORCED, "-o", f"UserKnownHostsFile={kh}",
+                                "-o", "GlobalKnownHostsFile=/dev/null", "-l", "tester", "-i", KEYFILE,
                                 "-o", f"CertificateFile={CERTFILE}"])
         self.assertEqual(argv[1:3], ["-F", "none"])
-        self.assertEqual(env, {"HOME": __import__("pwd").getpwuid(os.getuid()).pw_dir, "PATH": "/usr/bin:/bin",
-                               "LANG": "C"})
+        self.assertEqual(env, {"HOME": home, "PATH": "/usr/bin:/bin", "LANG": "C"})
+        self.assertEqual(cw.ssh_setup(ssh_cfg("/usr/bin/ssh"), "h", False)[1]["HOME"],
+                         pwd.getpwuid(os.getuid()).pw_dir)
         good = ssh_cfg("/usr/bin/ssh")
         bad = [{**good, "options": ["-t"]}, {**good, "port": 22}, {k: v for k, v in good.items() if k != "user"},
                {**good, "user": "u; rm"}, {**good, "identity_file": "~/.ssh/nersc"},
@@ -785,8 +805,9 @@ class RunTests(unittest.TestCase):
                    "PATH": "/tmp/evil:" + os.environ["PATH"], "LANG": "xx_YY.UTF-8"}
         with mock.patch.dict(os.environ, hostile):
             self.assertEqual(rig.run("pv-writer")[0], 0)
-        want_env = {"HOME": __import__("pwd").getpwuid(os.getuid()).pw_dir, "PATH": "/usr/bin:/bin", "LANG": "C"}
-        want_argv = [os.path.join(rig.bin, "ssh"), *cw.SSH_FORCED, "-l", "tester", "-i", KEYFILE, "stub-login"]
+        want_env = {"HOME": pwd.getpwuid(os.getuid()).pw_dir, "PATH": "/usr/bin:/bin", "LANG": "C"}
+        want_argv = [os.path.join(rig.bin, "ssh"), *cw.SSH_FORCED, *HOST_FILES, "-l", "tester", "-i", KEYFILE,
+                     "stub-login"]
         log = rig.ssh_log()
         self.assertGreaterEqual(len(log), 3)                 # the binary probe, the two lists, the launch
         for entry in log:
@@ -797,6 +818,10 @@ class RunTests(unittest.TestCase):
                    if k != "__CF_USER_TEXT_ENCODING" and not (k == "LC_CTYPE" and v == "C.UTF-8")}
             self.assertEqual(env, want_env)
             self.assertEqual(entry["argv"][:-1], want_argv)
+
+    def test_the_stub_remote_environment_holds_only_allowlisted_names(self):
+        with open(REMOTE_ENV) as f:
+            self.assertLessEqual(set(json.load(f)), set(REMOTE_ENV_KEYS))
 
     def test_ssh_never_gets_a_pty(self):
         rig = Rig()
