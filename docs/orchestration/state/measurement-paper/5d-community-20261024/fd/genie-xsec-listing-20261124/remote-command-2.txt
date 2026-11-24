@@ -1,0 +1,1 @@
+echo "utc $(date -u +%FT%TZ)"; echo "node $(hostname)"; echo "== 3 (again). getfattr, one attribute per call (getfattr honours a single -n)"; for a in user.fqrn user.revision user.root_hash; do getfattr -n $a /cvmfs/larsoft.opensciencegrid.org 2>&1; echo "rc=$?"; done; echo "utc-end $(date -u +%FT%TZ)"

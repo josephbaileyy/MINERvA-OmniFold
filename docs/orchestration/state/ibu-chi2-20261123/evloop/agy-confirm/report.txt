@@ -1,0 +1,78 @@
+### Q1. Correctness and Completeness of the MAD Guard
+
+**Yes**, the guard `sp & (sig["mu_mad_p"] > 0)` (along with `bkg["mu_mad_p"] > 0` and `dat["mu_mad_p"] > 0`) is **correct and complete**.
+
+In [ana_new.py](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyconfirm/files/ana_new.py#L48):
+```python
+prod["MAD"] = build(ks[0], ks[1], sp & (sig["mu_mad_p"] > 0), kb[0], kb[1], bkg["mu_mad_p"] > 0, kd[0], kd[1], dat["mu_mad_p"] > 0)
+```
+
+- **Completeness**: On truth-only miss rows, `sig["sim_pass"] != 0` is set, but all `mu_*` branches (including `mu_mad_p` and `mu_theta`) are initialized to `-9999.0` ([runEventLoopOmniFold.cpp#L202](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyconfirm/files/runEventLoopOmniFold.cpp#L202)). Without the guard, `kin(-9999, -9999)` could trigonometrically wrap into the fiducial grid ($p_T \in [0, 4.5]$ GeV, $p_z \in [1.5, 60]$ GeV). Requiring `sig["mu_mad_p"] > 0` strictly eliminates miss rows.
+- **No valid reco muon excluded**: In MINERvA / MasterAnaDev, muon momentum $p$ is the magnitude of the 3-momentum ($|\vec{p}|$), which is strictly positive ($p > 0$, and $\ge 1500\text{ MeV}$ for fiducial phase space). Non-positive values ($\le 0$) occur only as missing/sentinel entries (`-9999.0`). Thus, no physical reconstructed muon can have `mu_mad_p <= 0`.
+
+---
+
+### Q2. Grid Sentinel Ingestion Check for Other Variants and Trees
+
+**No**, no other variant, scan, or tree can admit a `-9999` sentinel into the grid.
+
+1. **Grid index bounds check**:
+   [ana_new.py#L9-L10](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyconfirm/files/ana_new.py#L9-L10)
+   ```python
+   ok = np.isfinite(pt) & np.isfinite(pz) & (pt >= 0) & (pt <= 4.5) & (pz >= 1.5) & (pz <= 60) & (ip >= 0) & (ip < 14) & (iz >= 0) & (iz < 16)
+   return np.where(ok, ip * 16 + iz, -1)
+   ```
+   Any `pt < 0` or `pz < 1.5` yields index `-1`. `build` requires index `>= 0` ([ana_new.py#L37-L39](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyconfirm/files/ana_new.py#L37-L39)).
+
+2. **BASE & SEL variants**:
+   [ana_new.py#L43-L44](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyconfirm/files/ana_new.py#L43-L44)
+   ```python
+   prod["BASE"] = build(sig["sim"], sig["sim_pz"], sp, bkg["sim_background"], bkg["sim_background_pz"], np.ones(len(bw), bool), dat["measured"], dat["measured_pz"], np.ones(len(dok), bool))
+   prod["SEL"] = build(sig["sim"], sig["sim_pz"], sp & Q(sig), bkg["sim_background"], bkg["sim_background_pz"], Q(bkg), dat["measured"], dat["measured_pz"], Q(dat))
+   ```
+   - On miss rows, `sig["sim"] = -9999.0 < 0` and `sig["sim_pz"] = -9999.0 < 1.5`, evaluating to `r = -1`.
+   - In `SEL`, `Q(sig)` also fails on misses because `mu_trk_quality == -9999 != 1` ([ana_new.py#L35](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyconfirm/files/ana_new.py#L35)).
+   - In `mc_background` and `data`, every row has a real reco muon.
+
+3. **CURV/RANGE and ANG scans**:
+   [ana_new.py#L53-L58](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyconfirm/files/ana_new.py#L53-L58)
+   ```python
+   p = np.where(which, pmin + pmo * (1 + d), dat["mu_p_total"]); pt, pz = kin(p, dat["mu_theta"])
+   g = gidx(pt, pz); m = dok & (g >= 0); lst.append(np.bincount(g[m], minlength=224))
+   ...
+   th = th3(dat["mu_thetaX"] + dx, dat["mu_thetaY"] + dy); pt, pz = kin(dat["mu_p_total"], th)
+   g = gidx(pt, pz); m = dok & (g >= 0); scanA[i, j] = np.bincount(g[m], minlength=224)
+   ```
+   Both scans run data-only on `dat` (`dok = dat["measured_pass"] != 0`), where every row has a real reco muon.
+
+4. **C_KIN and C_ANG control masks**:
+   [ana_new.py#L20-L24](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyconfirm/files/ana_new.py#L20-L24)
+   ```python
+   def ctl_kin(a, x, z, passed):
+       m = passed & (a["mu_p_total"] > 0)
+       pt, pz = kin(a["mu_p_total"][m], a["mu_theta"][m])
+       return float(max(np.max(np.abs(pt - a[x][m])), np.max(np.abs(pz - a[z][m])))), float(np.max(np.abs(th3(a["mu_thetaX"][m], a["mu_thetaY"][m]) - a["mu_theta"][m])))
+   out["C_KIN_sig"], out["C_ANG_sig"] = ctl_kin(sig, "sim", "sim_pz", sig["sim_pass"] != 0)
+   ```
+   Line 21 explicitly masks on `a["mu_p_total"] > 0`. Because miss rows have `mu_p_total = -9999.0 <= 0`, they are excluded from the control comparisons.
+
+---
+
+### Q3. Other Changes in the Diff
+
+**No.** The diff ([ana.diff](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyconfirm/files/ana.diff#L1-L13)) changes only line 46 of `ana_old.py`:
+
+```diff
+ ks, kb, kd = kin(sig["mu_mad_p"], sig["mu_theta"]), kin(bkg["mu_mad_p"], bkg["mu_theta"]), kin(dat["mu_mad_p"], dat["mu_theta"])
+-prod["MAD"] = build(ks[0], ks[1], sp, kb[0], kb[1], np.ones(len(bw), bool), kd[0], kd[1], np.ones(len(dok), bool))
++# Signal rows keep sim_pass set on truth-only misses, whose mu_* are -9999 (smoke, 2026-11-23); require a real
++# reco muon so -9999 MeV at a -9999 rad angle cannot land in the grid. sim itself is -9999 there, so BASE/SEL are safe.
++prod["MAD"] = build(ks[0], ks[1], sp & (sig["mu_mad_p"] > 0), kb[0], kb[1], bkg["mu_mad_p"] > 0, kd[0], kd[1], dat["mu_mad_p"] > 0)
+ # data-only scans (N only)
+```
+
+No other lines were modified, added, or removed.
+
+---
+
+VERDICT: GO
