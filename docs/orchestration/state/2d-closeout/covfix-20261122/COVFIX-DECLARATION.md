@@ -346,6 +346,10 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
     - **Slot 1: G21_11a_00_000,** from a sha-pinned private copy of SciSoft's tarball. It holds only if a clean replay
       verifies the extracted files, the GENIE configuration as resolved, and the spline the generator opens. Otherwise
       slot 1 is dropped and the claim narrows; the drop branch is written now (§4.1, §3, §4.3, §6.4).
+    - **Slot 1's replay** (the director's alignment, 2026-11-24): tune-generator's B3 spline steps plus one traced gevgen
+      at public seed 123456789 with 100 events, which are deleted unread. The bound binary traces every gevgen task and
+      checks strace before a seal is consumed. The synthetic-seal rehearsal runs that check on a compute node, and a
+      missing strace sends slot 1 back to the director (§4.1).
     - **Slot 2: G18_02a_00_000,** from CVMFS, table entries only (§4.1). Rev 11.4's G21_11b_00_000 and
       G18_02b_02_11b are withdrawn: G21_11b has no product on the node.
     - **(b), conditional:** the estimator, the cells (R00–R15, kept), the intervals, the failure rule, the response and
@@ -949,8 +953,21 @@ and the estimator. N2 probes sim's increment at nominal truth; it cannot establi
     The page says G18_10* adds to it "a consistent theory-based model of interactions around the quasi-elastic peak
     (NAV QE and NSV 2p2h model)", so G18_02 does not carry spent G18_10a's NAV QE and NSV 2p2h.
 - **Slot 1's clean replay** (Joseph's condition, 2026-11-24). tune-generator builds the private product and the replay
-  on the node, before PG generates u = 0. The replay runs F1's bound pipeline with slot 1's §4.2 changes, at a public
-  seed outside §4.2's seed range, and its events are discarded unread. It must verify all three of:
+  on the node, before PG generates u = 0. It runs on a login node, under the same open-file trace the bound binary uses.
+  It has two parts:
+  - **The spline steps:** `run_gevgen_v3.sh reduce`, `gen5d_v3.py spline-check` and `run_gevgen_v3.sh graphs` for
+    G21_11a_00_000 (tune-generator's B3, `pg/PLAN-SLOT1-PROBE.md` at 85283a33). These steps take no seed and make no
+    events.
+  - **One short gevgen,** because condition 3 is the spline the generator opens, and gspl2root is not the generator.
+    It is F1's `run_gevgen_v3.sh` generation step for G21_11a_00_000, with slot 1's §4.2 changes and with its flux,
+    target and energy range unchanged.
+    - **Its seed is 123456789,** passed to both `--seed` and `-r`. That is public and below §4.2's seed range, whose
+      smallest task seed is 1,000,000,000.
+    - **It makes 100 events.**
+    - **The events are deleted unread** (the event and status files, never opened by anything but gevgen). Only the
+      trace check's booleans and the opened files' shas are kept.
+
+  The replay must verify all three of:
   1. **The extracted files.** The tarball's sha256 equals the pin above, and each extracted file equals the record's
      pins: the spline `gxspl-NUsmall.xml` (sha256 `fa475f7f5066b314f177b10c4c821d76f2db072508be2734243a26544ef7ed1c`), the
      README (sha256 `4a2beead2f261240a4fed7f7d419d2d68c11bc1fa264faa7e129f8223a7ba7fd`), `ups/genie_xsec.table`, and the
@@ -965,6 +982,13 @@ and the estimator. N2 probes sim's increment at nominal truth; it cannot establi
      tune `G21_11a_00_000`, format `3.00`.
 
   The three checks' record (the commands, the opened-file lists and every sha) is committed before PG generates u = 0.
+- **The same checks during generation** (director, 2026-11-24):
+  - The bound PG binary runs each gevgen task under the same open-file trace. It applies checks 2 and 3 to every task.
+  - **Its first compute step,** before the wrapper consumes a seal, checks strace: its path, its pinned sha256, and a
+    self-test that traces one open of a file the step creates.
+  - **The synthetic-seal rehearsal (§3.3) runs that first step on a compute node.**
+  - If strace is missing there, or fails its pin or its self-test, slot 1 goes back to the director before any real
+    seal is consumed. It is not dropped silently, and no untraced generation runs.
 - **The drop branch,** declared now so that it needs no later amendment. **If any of the three checks fails, or cannot
   be run,** slot 1 is dropped:
   - PG generates no u = 0, and no other tune replaces it;
