@@ -9254,6 +9254,12 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/S1-REPORT.md	tr
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/CRESP-PRESERVE-INVENTORY.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/F4-PRESERVE-INVENTORY.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/LEDGER.tsv	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/anatuple-mc-stat-20261124/README.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/anatuple-mc-stat-20261124/SHA256SUMS	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/anatuple-mc-stat-20261124/anatuple_stat.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/anatuple-mc-stat-20261124/ssh-rc.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/anatuple-mc-stat-20261124/stat.err	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/anatuple-mc-stat-20261124/stat.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-gate16-20261103/ANSWER.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-gate16-20261103/PROMPT.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-gate16-20261103/SHA256SUMS	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
