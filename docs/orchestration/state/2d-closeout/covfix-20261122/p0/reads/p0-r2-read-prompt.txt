@@ -1,0 +1,15 @@
+You are an independent reviewer of analysis code for COVFIX phase P0 (a particle-physics covariance study), round 2. Read-only: do not run anything on real data, do not modify files. All files are in the current directory.
+
+Authority: COVFIX-DECLARATION.md (rev 11.4, bound); P0 is its section 3.1, using sections 2, 5.2 and 8. Code: covfix_core.py (shared math) and covfix_p0.py (the P0 driver). Tests: test_covfix_core.py and test_covfix_p0.py (synthetic only) and test_covfix_p0_pins.py (production pin audit). Receipts: tests.txt, line-trace.txt, mutation.txt (via covfix_mutation.py). regrade_crep.py is context only (REGRADE's carry_frac of C_PL and its A0 tolerance form).
+
+Round 1: codex2-p0-r1-REPORT.md (NO-GO, 8 blocking) and agy-p0-r1-REPORT.md (GO). The author's response, item by item, is p0-r1-dispositions.md.
+
+Do two things.
+A. For EVERY round 1 item (codex blocking 1-8, codex non-blocking 1-6, codex interpretations, agy non-blocking 1-3), state RESOLVED, ACCEPTABLY KEPT (the stated reason holds), or NOT RESOLVED, with file:line evidence.
+B. Re-review the whole code fresh against the declaration (sections 2, 3.1, 5.2, 8): any line whose behaviour differs from the declaration, any declared P0 reading missing, any undeclared stop, any test gap, and anything the round 2 changes broke. In particular check: that P0 now stops before any reading if the residual rule fires; that C-PSD covers every block used or formed; that the one-matrix-representation change (symmetric part everywhere in COVFIX readings, raw C_T only for the legacy A0 path) is consistent; the Gram-Schmidt tolerance 10*n*eps; the evr comparison through the same canonical basis; the removal of the W1 vector input and the "pre-W1 part" status.
+
+Output format:
+A. ROUND 1 ITEMS: one line each.
+B. BLOCKING (would make P0's record wrong, or violates the declaration): numbered, each with file:line, the declaration section and a concrete fix.
+NON-BLOCKING: numbered, same format.
+Last line exactly: "VERDICT: GO" or "VERDICT: NO-GO".
