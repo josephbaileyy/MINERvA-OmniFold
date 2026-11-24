@@ -1,0 +1,166 @@
+# Raw upstream comparison outputs, captured 2026-11-24T16:19:27Z with gh api against public MinervaExpt repos.
+# Regenerate: bash capture.sh (the commands are echoed before each block).
+
+## MAT: pin 35097b65ab1680db8058f9ede18fecffdc3a1ea3 vs main
+$ gh api repos/MinervaExpt/MAT/commits/35097b65ab1680db8058f9ede18fecffdc3a1ea3
+pin 35097b65ab1680db8058f9ede18fecffdc3a1ea3 2025-10-09T06:15:48Z Updating minimum CMake required to 3.10 (2017), required to compile if using CMake 4
+$ gh api repos/MinervaExpt/MAT/compare/35097b65ab1680db8058f9ede18fecffdc3a1ea3...main
+status=ahead ahead_by=2 behind_by=0
+664055af46f448767d92e9e6fb6474032aef542d 2026-05-30 Updating this outdated .rootlogon.C with the version that we previously provided in the tutorial wiki. This is only necessary to write ROOT 
+5d066e7a87086acc3ed4bf4f6695e604c9410b5f 2026-06-01 Adding an extra line to add PlotUtils to $PYTHONPATH
+
+## MAT-MINERvA: pin 50d7631416d1c93edd4db6886a2ca29da64fee60 vs main
+$ gh api repos/MinervaExpt/MAT-MINERvA/commits/50d7631416d1c93edd4db6886a2ca29da64fee60
+pin 50d7631416d1c93edd4db6886a2ca29da64fee60 2025-10-09T11:17:39Z Updates to help with Open Data Product. More to be done
+$ gh api repos/MinervaExpt/MAT-MINERvA/compare/50d7631416d1c93edd4db6886a2ca29da64fee60...main
+status=ahead ahead_by=3 behind_by=0
+3e411c0d3a6f598aa2072c6729790e4701e4089d 2026-03-02 Turn truth weighting on for Geant Hadron weights and systematics.
+c20ad220e95f55b4ef2e9426c56dd2a3800f7533 2026-03-05 adding some include <cmath> headers for files that use sqrt in templated code, needed for root 6.30 and up
+5bf46c535afaafb9328b7b2bff091ad90c87c479 2026-09-23 New reweighter for the existing weightZExp for QE axial form factor
+
+## MINERvA-101-Cross-Section: no pin recorded in this repo; main commits since 2025-06-01
+$ gh api 'repos/MinervaExpt/MINERvA-101-Cross-Section/commits?since=2025-06-01T00:00:00Z&per_page=50'
+5fdc3f86cc86f4efe0d7740e1cd308d8651b7a0b 2026-05-29 Update installation instructions link in README
+9a52580e7b612a3924beea6dfb00199ddf360d5b 2026-03-03 Remove MINERvA-specific plot label.
+48a52760b191b657a21b97faaa394d77767b16d1 2026-03-02 Properly adding the muon cut to remove susbtantial odd backgrounds.
+ff77796f00cf35b7bed87f6b8f6e92be67ec3a86 2026-03-02 Changes to work with more modern ROOT version than 6.28 and python 3. Maybe David-system specific?
+16fc0f02a7812d90ac844b4b3a660a69a3b67fb7 2026-02-26 Fix GPVM to set up ROOT by Spack.
+b697620a64e4b766220368fb3091aa58e3d9f8a6 2026-02-20 Playlists updated for tutorial for people to more easily download.
+85b3d5fe4f762ae8a43b4308af03bf6f49b8c10f 2026-02-20 Fill truth systematics for flux so that cross section extraction still works when syst are turned off.
+bb44ad8788dd94344eaf1d74570f64278e86e9a3 2026-02-20 Changes to assume parameter files are already downloaded for bootstrap build to avoid any calls to CVS.
+3bba031271c67fa4a5daa2f16b7a71063b98c1cd 2026-02-20 Renaming Project away from old fork.
+43f7f58af704b7612dfe4409d2a2f1ffd34dea38 2025-10-09 README update to point to wiki for instructions for install and use.
+6c1977d8d294aec78a4155a002f47bfa1ad96dcd 2025-10-09 Update README
+1eaccb8bcd1eaa8c68e4dbe90b97d35c02aa981a 2025-10-09 Updating the file paths again to the correct OpenData directory
+5bf38f426efb78b7e40d544573070563b546a0ea 2025-10-09 Updating CMakeLists to include the new p6 file lists
+e7f23df5b5a48203036ebf650de210e09469630d 2025-10-09 Updating input file lists to modern p6 tuples using their xrootd paths.
+ac293280e774a99ccf498b0c8be5829932d5c256 2025-10-09 Updating minimum CMake required to 3.10 (2017), required to compile if using CMake 4
+66eee1de97b3974abf691a075116ec89ba069481 2025-10-09 Updating minimum CMake required to 3.10 (2017), required to compile if using CMake 4
+9c3476fd98a616bf4f6c010f62d78d9442af4fc0 2025-09-24 Changing this back to the Tracker after it was accidentally swapped to Target region in an earlier commit
+6802552a957bca93b5adcc61a58d33bf33669a5f 2025-07-15 Namespacing ChainWrapper and string to PlotUtils::ChainWrapper and std::string respectively. This goes along with a change Akeem made to GEN
+
+## UnfoldUtils: no pin recorded in this repo; main commits since 2025-06-01
+$ gh api 'repos/MinervaExpt/UnfoldUtils/commits?since=2025-06-01T00:00:00Z&per_page=50'
+a2bbe41ca914e1d9f196782c3d2b299163fcbf05 2026-02-20 Merge branch 'feature/aolivier_alma9' into main.
+f9099cd3f446083055b151add7811afc193b8393 2025-10-09 Updating minimum CMake required to 3.10 (2017), required to compile if using CMake 4
+
+## GENIEXSecExtract: no pin recorded in this repo; main commits since 2025-06-01
+$ gh api 'repos/MinervaExpt/GENIEXSecExtract/commits?since=2025-06-01T00:00:00Z&per_page=50'
+0e679adc0669ffcf97a879b64584d37a92962f78 2026-05-30 Fix for TF1 functor constructor compatibility with more modern ROOT versions (tested on 6.40.00), should still be compatible with older vers
+3ecf9175af0baf7177a5e12cd92705acc2467d81 2025-10-09 Updating minimum CMake required to 3.10 (2017), required to compile if using CMake 4
+
+## UnfoldUtils: f9099cd3...a2bbe41c changed files
+$ gh api repos/MinervaExpt/UnfoldUtils/compare/f9099cd3...a2bbe41c
+CMakeLists.txt +4 -4
+MinervaUnfold/MnvUnfold.cxx +2 -0
+dict/UnfoldUtilsDict.h +1 -1
+dict/UnfoldUtilsDict.xml +1 -1
+
+## MAT-MINERvA 3e411c0d
+$ gh api repos/MinervaExpt/MAT-MINERvA/commits/3e411c0d
+sha 3e411c0d3a6f598aa2072c6729790e4701e4089d author David Last authored 2025-10-17T18:01:39Z committed 2026-03-02T19:11:10Z
+--- universes/GeantHadronSystematics.cxx
+@@ -139,7 +139,8 @@ GeantHadronUniverse<T>::GeantHadronUniverse(typename T::config_t chw,
+ // Get weight
+ template <class T>
+ double GeantHadronUniverse<T>::GetGeantHadronWeight() const {
+-  if( T::IsTruth() ) return 1; //No reweighting for truth events 
++  //Removing the following line after confirmation that it should not be the standard practice for this weight, and this should be applied to the efficiency denominator to combat biasing from the reweight. -David L. 10/09/2024
++  //if( T::IsTruth() ) return 1; //No reweighting for truth events 
+   InelXSecWeights weights =
+       weight_hadron<PlotUtils::TreeWrapper*>().getWeights(*this);
+   double wgt = 1.;
+@@ -151,7 +152,8 @@ double GeantHadronUniverse<T>::GetGeantHadronWeight() const {
+ 
+ template <class T>
+ double GeantHadronUniverse<T>::GetWeightRatioToCV() const {
+-  if( T::IsTruth() ) return 1; //No reweighting for truth events 
++  //Removing the following line after confirmation that it should not be the standard practice for this weight, and this should be applied to the efficiency denominator to combat biasing from the reweight. -David L. 10/09/2024
++  //if( T::IsTruth() ) return 1; //No reweighting for truth events 
+   InelXSecWeights weights =
+       weight_hadron<PlotUtils::TreeWrapper*>().getWeights(*this);
+   double wgt = 1.;
+--- weighters/GeantNeutronCVReweighter.h
+@@ -26,7 +26,8 @@ namespace PlotUtils
+ 
+       double GetWeight(const UNIVERSE& univ, const EVENT& /*event*/) const override
+       {
+-        if(univ.IsTruth()) return 1; // No efficiency reweighting for truth events
++	//Removing the following line after confirmation that it should not be the standard practice for this weight, and this should be applied to the efficiency denominator to combat biasing from the reweight. -David L. 10/09/2024
++        //if(univ.IsTruth()) return 1; // No efficiency reweighting for truth events
+ 
+         univ.SetupMHRWeighter(); //TODO: do this once in the constructor
+         return PlotUtils::weight_hadron<PlotUtils::TreeWrapper*>().reweightNeutronCV(univ);
+
+## MAT-MINERvA 5bf46c53
+$ gh api repos/MinervaExpt/MAT-MINERvA/commits/5bf46c53
+sha 5bf46c535afaafb9328b7b2bff091ad90c87c479 author Noah Harvey Vaughan committed 2026-09-23T20:43:29Z
+--- buildOSX/CMakeLists.txt +1 -0
+--- weighters/ZExpansionReweighter.h +44 -0
+
+## MAT-MINERvA c20ad220
+$ gh api repos/MinervaExpt/MAT-MINERvA/commits/c20ad220
+sha c20ad220e95f55b4ef2e9426c56dd2a3800f7533 author cpernas committed 2026-03-05T06:40:44Z
+--- universes/MichelSystematics.cxx +1 -0
+--- universes/MuonSystematics.cxx +1 -0
+--- weighters/weightLowQ2Pi.cxx +1 -0
+
+## MINERvA-101-Cross-Section 48a52760
+$ gh api repos/MinervaExpt/MINERvA-101-Cross-Section/commits/48a52760
+sha 48a52760b191b657a21b97faaa394d77767b16d1 author David Last authored 2026-03-02T23:29:22Z committed 2026-03-02T23:29:22Z
+--- event/CVUniverse.h
+@@ -105,7 +105,8 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
+   }
+ 
+   virtual bool IsMinosMatchMuon() const {
+-    return GetInt("has_interaction_vertex") == 1;
++    int matchMuon = GetIsMinosMatchTrack();
++    return (matchMuon == 1);
+   }
+   
+   ROOT::Math::XYZTVector GetVertex() const
+@@ -187,6 +188,8 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
+     return TMath::Sqrt(pow(nuclMass,2) + 2.0*(Enu-Emu)*nuclMass - Q2);
+   }
+ 
++  virtual int GetIsMinosMatchTrack() const { return GetInt("isMinosMatchTrack"); }
++  
+   //Still needed for some systematics to compile, but shouldn't be used for reweighting anymore.
+   protected:
+   #include "PlotUtils/WeightFunctions.h" // Get*Weight
+
+## MINERvA-101-Cross-Section 85b3d5fe
+$ gh api repos/MinervaExpt/MINERvA-101-Cross-Section/commits/85b3d5fe
+sha 85b3d5fe4f762ae8a43b4308af03bf6f49b8c10f author David Last authored 2026-02-20T18:44:16Z committed 2026-02-20T18:44:16Z
+--- runEventLoop.cpp
+@@ -404,6 +404,10 @@ int main(const int argc, const char** argv)
+   error_bands["cv"] = {new CVUniverse(options.m_mc)};
+   std::map< std::string, std::vector<CVUniverse*> > truth_bands;
+   if(doSystematics) truth_bands = GetStandardSystematics(options.m_truth);
++  else{
++    std::map<std::string, std::vector<CVUniverse*> > band_flux = PlotUtils::GetFluxSystematicsMap<CVUniverse>(options.m_truth, CVUniverse::GetNFluxUniverses());
++    truth_bands.insert(band_flux.begin(), band_flux.end()); //Necessary to get cross-section later...
++  }
+   truth_bands["cv"] = {new CVUniverse(options.m_truth)};
+ 
+   std::vector<double> dansPTBins = {0, 0.075, 0.15, 0.25, 0.325, 0.4, 0.475, 0.55, 0.7, 0.85, 1, 1.25, 1.5, 2.5, 4.5},
+
+## MAT branches: newest commit per branch
+2026-11-20 alhart_CCInclusiveNuMuTargets d75a2edc4c1a80c81139d9336b6c6ea216b96f00
+2026-06-01 main 5d066e7a87086acc3ed4bf4f6695e604c9410b5f
+2025-08-26 feature/anezkak_inclusiveAntinuML 9b98b70216369f6e4e70116069cf69c5e2c127cf
+2025-02-11 feature/rh_fixMemLeak 5b5a6b488d2ca112ad32690416adf40565525a99
+2024-06-20 disentangle_frw c8394e8cbef775fd704bcfb868ffb3c8ef537c05
+2024-06-18 feature/anezkak_plotting f924b879b6afd0d9ee8f08a42b55cb9340a4125e
+2023-10-26 feature/afilkins_DISplots 3a223ad90a085805330eddf338f30c47f304823f
+2023-10-21 hmsOct23 c2153797e043ebf48a78059acb24613ae9c33fa6
+2022-12-16 feature/aolivier_CutterEventFix 3636db8b77cf8ff0f4aadc5a0b0a0dba5ac12bcb
+2022-09-10 hms-patches 688984c1a1c8f03ec4667a3239595ae6381ef6fb
+2022-08-07 throw-error-when-branch-not-found 1903f56b94c2e89c2f41193e5607a99508c120b2
+2021-10-06 feature/hsu_MnvPlotter_dont_mess_axis_range_in_log_plot b6db30432031ccb2629cafbfeb33bb9feab20bb3
+2021-09-24 replacedPLOTUTILSROOT 0ffa3635fe840607c27a262db14dc5300b0a1d0a
+2021-08-31 feature/aolivier_relativeSymLinks 1cd6e73cd1e668b83d0bb97d0ea3dbe225ba76d6
+2021-08-18 feature/aolivier_oneLibrary 0ed6f42f6a22ed4f0684fd834612c42a81e32747
+2021-08-02 feature/highNu caa65e2e00aa16a6fd46f0dd571fdb7fa76bf94d
+2021-07-25 remove-minerva 276a97139ba8e2e7c4e71df0612912b96a3aaac1
+2021-07-19 feature/aolivier_namespaceMAT a92387a8596fd362ba45198659fbba8732e59004
