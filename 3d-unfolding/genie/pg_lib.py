@@ -124,7 +124,8 @@ def inventory(tunes=None):
                   f"out/gen5d/{n}_xsec5d.meta.json", f"out/prep/bridged/{n}.json", f"out/prep/ratios/{RUNG}/{n}.json",
                   f"out/logs/reduce_{t}.log", f"out/logs/graphs_{t}.log", f"out/logs/hadd_u{u}.log",
                   f"out/logs/convert_u{u}.log", f"out/logs/env-c_u{u}.log", f"out/traces/reduce_{t}.trace",
-                  f"out/traces/graphs_{t}.trace", f"out/trace_check_reduce_{t}.json", f"out/trace_check_graphs_{t}.json"):
+                  f"out/traces/graphs_{t}.trace", f"out/trace_check_reduce_{t}.json", f"out/trace_check_graphs_{t}.json",
+                  f"out/exe_check_{t}.json", f"run/exe_{t}.txt", f"out/logs/exe_{t}.log"):
             add(p)
         for f in ("task.time", "task.log", "gevgen.log", "gntpc.log", "genie_v3.gst.root", "input-flux.root",
                   "gevgen.status", "gevgen.trace", "trace_check.json"):
@@ -167,7 +168,8 @@ def cmd_products(a):
     if out.exists():
         raise Refusal("PRODUCTS.json already exists")
     rec = products(a.workdir, load_seeds(a.seeds))
-    checks = list(CHECKS) + sorted(str(q.relative_to(a.workdir)) for q in Path(a.workdir).glob("out/**/trace_check*.json"))
+    checks = list(CHECKS) + sorted(str(q.relative_to(a.workdir)) for g in ("out/**/trace_check*.json", "out/exe_check_*.json")
+                                   for q in Path(a.workdir).glob(g))
     rec["checks"] = {}
     for c in checks:
         try:
@@ -180,7 +182,7 @@ def cmd_products(a):
         except (OSError, ValueError, IndexError, AttributeError):
             ok = False
         rec["checks"][c] = ok
-    if len(checks) != len(CHECKS) + (1 + len(U1)) * (2 + N_TASKS) or not all(rec["checks"].values()):
+    if len(checks) != len(CHECKS) + (1 + len(U1)) * (3 + N_TASKS) or not all(rec["checks"].values()):
         raise Refusal("a verification step did not pass, or is missing")
     out.write_text(json.dumps(rec, indent=1) + "\n")
     print(f"[pg_lib] products: {len(rec['products'])} truths")

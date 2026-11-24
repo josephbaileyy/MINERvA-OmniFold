@@ -27,7 +27,8 @@ import pg_verify as V  # noqa: E402
 _spec = importlib.util.spec_from_file_location("build_record", RECORD_DIR / "build_record.py")
 BR = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(BR)
-F1_RUN = subprocess.run(["git", "-C", str(REPO), "show", "54a5c71b7^:3d-unfolding/genie/run_gevgen_v3.sh"],
+F1_RUN = subprocess.run(["git", "-C", os.environ.get("PG_GIT_ROOT") or str(REPO), "show",   # a sandbox has no git
+                         "54a5c71b7^:3d-unfolding/genie/run_gevgen_v3.sh"],
                         capture_output=True, text=True, check=True).stdout
 
 
@@ -373,6 +374,29 @@ class Trace(Tmp):
         self.assertTrue(ev[0]["write"])
 
 
+class Exe(Tmp):
+    def test_programs_against_the_manifest(self):
+        root = self.tmp / "genie/v3_04_00"
+        b = root / "Linux64bit+3.10-2.17-e20-prof/bin"
+        b.mkdir(parents=True)
+        (b / "gevgen").write_text("gevgen")
+        (b / "gspl2root-real").write_text("gspl")
+        (b / "gspl2root").symlink_to("gspl2root-real")
+        man = {"genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gevgen": {"type": "file", "sha256": sha(b"gevgen")},
+               "genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gspl2root-real": {"type": "file", "sha256": sha(b"gspl")},
+               "genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gspl2root": {"type": "symlink", "target": "gspl2root-real"}}
+        ok = [str(b / "gevgen"), str(b / "gspl2root")]
+        self.assertEqual(V.exe_problems(ok, man, genie_root=str(root)), [])
+        (self.tmp / "gevgen").write_text("gevgen")                                                   # same bytes, outside
+        self.assertTrue(V.exe_problems([str(self.tmp / "gevgen")], man, genie_root=str(root)))
+        self.assertTrue(V.exe_problems(["gevgen"], man, genie_root=str(root)))                        # not absolute
+        self.assertTrue(V.exe_problems([str(b)], man, genie_root=str(root)))                          # a directory
+        (b / "extra").write_text("x")
+        self.assertTrue(V.exe_problems([str(b / "extra")], man, genie_root=str(root)))               # not in the manifest
+        (b / "gevgen").write_text("changed")
+        self.assertTrue(V.exe_problems(ok, man, genie_root=str(root)))                               # other bytes
+
+
 # ------------------------------------------------------------------------------------- run_gevgen_v3.sh's trace prefix
 
 STUB = '#!/bin/sh\nprintf "NAME %s\\n" "$(printf "%s " "$@" | tr "\\n" "~")" >> "$PG_ARGV_LOG"\nEXTRA\n'
@@ -472,18 +496,23 @@ class Prefix(Tmp):
         pg = self.script((GENIE / "run_gevgen_v3.sh").read_text(), "pg")
         tdir = self.tmp / "traces"
         tdir.mkdir()
+        (self.tmp / "fd").mkdir(exist_ok=True)
+        (self.tmp / "okdir").mkdir()                    # clean: only the rule under test can refuse
         (tdir / "gevgen.trace").write_text("old")
         for i, env in enumerate(({"PG_STRACE_FD": "FD"}, {"PG_TRACE_DIR": str(self.tmp)},
                                  {"PG_STRACE_FD": "x9", "PG_TRACE_DIR": str(self.tmp)},
-                                 {"PG_STRACE_FD": "FD", "PG_TRACE_DIR": "rel/dir"},
-                                 {"PG_STRACE_FD": "FD", "PG_TRACE_DIR": f"{self.tmp}/a/../b"},
+                                 {"PG_STRACE_FD": "FD", "PG_TRACE_DIR": "okdir"},              # exists, from cwd
+                                 {"PG_STRACE_FD": "FD", "PG_TRACE_DIR": f"{self.tmp}/fd/../okdir"},    # exists
                                  {"PG_STRACE_FD": "FD", "PG_TRACE_DIR": f"{self.tmp}/missing"},
-                                 {"PG_STRACE_FD": "FD", "PG_TRACE_DIR": str(tdir)},
+                                 {"PG_STRACE_FD": "FD", "PG_TRACE_DIR": str(tdir)},           # gevgen.trace exists
                                  {"PG_STRACE_FD": "999", "PG_TRACE_DIR": str(self.tmp)})):
             with self.subTest(i):
                 p, argv = self.go(pg, "genie", fd=True if env.get("PG_STRACE_FD") == "FD" else None, **env)
                 self.assertEqual(p.returncode, 2, p.stderr)
                 self.assertFalse([x for x in argv if x.startswith("gevgen ")])
+        p, argv = self.go(pg, "reduce", fd=True, PG_STRACE_FD="FD", PG_TRACE_DIR="okdir")   # reduce stays in the cwd
+        self.assertEqual(p.returncode, 2, p.stderr)
+        self.assertFalse([x for x in argv if x.startswith("strace ")])
 
     def test_slot1_reads_its_private_source(self):
         pg = self.script((GENIE / "run_gevgen_v3.sh").read_text(), "pg")

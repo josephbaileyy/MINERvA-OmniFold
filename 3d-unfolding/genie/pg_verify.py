@@ -24,6 +24,10 @@
       - for graphs and gevgen, every file PG-RECORD.json names as defining the tune is opened at its expected path,
         and no defining path is read through a link (a successful readlink on it fails).
 
+  exe-check --manifest genie-manifest.json --path P [--path P ...]
+      each P (gevgen and gspl2root as setup_genie_v3.sh's PATH resolves them) must lie in the genie product and match
+      the manifest: the kernel maps a program without an open(), so no trace shows which binary ran.
+
 Every refusal names the rule. Exit 0 on pass, 1 on a failed check, 2 on bad arguments.
 
 MEASURES: byte identity and trace completeness. CANNOT AUTHORIZE: anything.
@@ -373,6 +377,33 @@ def cmd_trace(a):
     return 0 if rec["pass"] else 1
 
 
+def exe_problems(paths, manifest, genie_root=GENIE_ROOT):
+    """[problems]: each resolved program must be a manifest member of the genie product, with its pinned bytes."""
+    probs = []
+    for p in paths:          # a path outside the product has no manifest key, and a non-file member cannot be hashed
+        p = os.path.normpath(p)
+        key = os.path.normpath("genie/v3_04_00/" + os.path.relpath(p, genie_root)) if p.startswith("/") else None
+        rel, m = _manifest_file(manifest, key) if key else (None, None)
+        try:
+            ok = m is not None and sha_path(os.path.join(genie_root, rel[len("genie/v3_04_00/"):])) == m.get("sha256")
+        except (OSError, Fail):
+            ok = False
+        if not ok:
+            probs.append(f"{p} is not a genie-product file with the manifest's sha256")
+    return probs
+
+
+def cmd_exe(a):
+    try:
+        probs = exe_problems(a.path or [], json.load(open(a.manifest))["members"])
+    except (OSError, ValueError, KeyError) as e:
+        probs = [f"{type(e).__name__}: {e}"]
+    if not a.path:
+        probs.append("no program given")
+    print(json.dumps({"check": "exe", "pass": not probs, "paths": a.path or [], "problems": probs}))
+    return 0 if not probs else 1
+
+
 def cmd_members(a):
     n = None
     try:
@@ -434,8 +465,11 @@ def main(argv=None):
         r.add_argument("--" + k, required=True)
     r.add_argument("--rc", type=int, required=True)
     r.add_argument("--w-pin", action="append")
+    e = sub.add_parser("exe-check")
+    e.add_argument("--manifest", required=True)
+    e.add_argument("--path", action="append")
     a = ap.parse_args(argv)
-    return {"members-check": cmd_members, "tool-check": cmd_tool, "trace-check": cmd_trace}[a.cmd](a)
+    return {"members-check": cmd_members, "tool-check": cmd_tool, "trace-check": cmd_trace, "exe-check": cmd_exe}[a.cmd](a)
 
 
 if __name__ == "__main__":

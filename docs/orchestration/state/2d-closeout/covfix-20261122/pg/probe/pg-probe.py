@@ -1,78 +1,44 @@
-"""PG's stat-only probe and novelty test (COVFIX-DECLARATION.md section 4.1), for a Perlmutter login node. Rev 3.
+"""PG's probe (COVFIX-DECLARATION.md section 4.1, rev 12), for a Perlmutter login node. Rev 4: verify, don't interpret.
 
 Run with no arguments by pg-probe-launch.py, as `env -i PATH=/usr/bin:/bin LC_ALL=C /usr/bin/python3.11 -I -S -B -`
-with this file on stdin. Standard library only. Each step's rule:
+with this file on stdin. Standard library only. The novelty test and every interpretation of GENIE's configuration are
+in PG's offline record (state/2d-closeout/covfix-20261122/pg/record/PG-RECORD.json); PINS_JSON below is derived from
+it by make_pins.py. On the node the probe only checks that bytes, links and listings equal those pins. It parses no
+XML, emulates no registry and follows no search path. Each step:
 
-0. Identity, before anything else: the host must be a Perlmutter login node (hostname login<NN>, /pscratch,
-   /global/common and the CVMFS products tree present). Otherwise STOP with nothing read.
-1. Product roots, before any content read: the CVMFS repository path must be on its own mount (or /cvmfs's) of a
-   type that is not a node-local filesystem (/proc/mounts). Each product root's real path must lie beneath that
-   repository path (so a repository path through a link admits nothing), on that mount, and be a directory. The
-   verified real roots are the read boundary. Otherwise STOP.
-2. Read boundary: every read resolves (realpath) beneath a verified root and is opened relative to that root's
-   directory, without following a final link; files must be regular, listings directories. Otherwise the item is
-   unresolved, a STOP.
-3. Catalog: a tune's genie_xsec entry is
-   - present: its exact qualifier is in both the directory listing and the UPS table's declared qualifiers; the table
-     sets GENIE_XSEC_TUNE to the tune; gxspl-NUsmall.xml parses (expat, no DOCTYPE) with root
-     <genie_xsec_spline_list> and exactly one top-level <genie_tune>, which names the tune; the README has exactly one
-     version line, `version v<N_N_N> qualifier <Q>`, whose whole qualifier field is the tune's;
-   - absent: the listing and the table were both read, neither has the qualifier, and no other entry names the tune
-     (a listing name or a UPS qualifier containing it, or a UPS entry setting GENIE_XSEC_TUNE to it);
-   - unresolved: anything else, including, for G18_02b_02_11b, any other entry naming it.
-   Only a confirmed absence of 02b admits the 02a fallback.
-4. Configuration, as GENIE v3_04_00 loads it (GENIE-MC/Generator tag R-3_04_00: XmlParserUtils GetXMLFilePath and
-   GetXMLPathList; AlgConfigPool LoadMasterConfig, LoadAlgConfig and LoadGlobalParamLists; Algorithm FindConfig; TuneId
-   CMCDirectory and TuneDirectory).
-   - Any file is the FIRST of config/<CMC>/<tune>/, config/<CMC>/ and config/ that holds it. There is no merge. A
-     directory counts as not holding the file only when lstat reports it absent, or its listing lacks the name; any
-     other error is unresolved.
-   - ModelConfiguration.xml's root must be <global_param_list>, and the active param_set is "Default" (GUSERPHYSOPT
-     unset). The genie UPS table must not mention GXMLPATH, GXMLPATHS, GALGCONF or GUSERPHYSOPT.
-   - XML is parsed structurally. A DOCTYPE, malformed XML, a duplicate parameter name in an active set, an empty value,
-     a type other than alg, or a value that is not genie::<Class>[/<set>] is unresolved.
-   - Every reference genie::<Class>/<set> that the probe uses, including each hybrid leaf, must resolve as GENIE's
-     registry would: exactly one master_config.xml entry for genie::<Class> (root <genie_config>), its file on the
-     search path (root <alg_conf>), and exactly one param_set named <set> in it. Otherwise unresolved, never novel.
-   - A HybridXSecAlgorithm value is resolved one level: its set's DefaultXSecAlg and XSecAlg@Interaction=... entries
-     (any other parameter is unresolved). The slot's class is DefaultXSecAlg's (the nuclear-target default), and the
-     slot's branches are the default and every entry. Every effective value records its file, set and raw text.
-5. Novelty: the spent pool is every class and branch of G18_10a_02_11b and AR23_20i_00_000. In each slot (CCQE,
-   2p2h), every branch must agree on whether it is in the pool; any disagreement is a STOP for the director, decided
-   before the tune-level rule. A tune is then novel if its CCQE class or its 2p2h class is outside the pool. Per slot:
-   - u0 is G21_11b_00_000: present, resolved, as section 4.1 declares it (CCQE genie::HybridXSecAlgorithm/SuSAv2-QEL
-     with default SuSAv2QELPXSec; 2p2h SuSAv2MECPXSec alone, shared with AR23_20i_00_000 only, the disclosed
-     overlap), with agreeing branches, and novel. Agreement and novelty then put no CCQE branch in the pool;
-   - u1 is G18_02b_02_11b when present. Its exclusion is a STOP; 02a is never considered then.
-   - Only on 02b's confirmed absence, u1 is G18_02a_02_11b, when present, resolved, with agreeing branches and novel,
-     and only if 02b's configuration also resolves and its classes and branches equal 02a's (section 4.1's premise).
-   The overlap record lists, for each chosen class and branch, every spent tune that uses it in either slot.
-6. Positive controls: the spent tunes must be present with F1's pinned digests and README lines
-   (gen5d_v3.SPLINE_PINS), and must resolve to their classes at tag R-3_04_00 (SPENT_CLASSES). FD-F1-REPORT.md 1.3's
-   "NievesSimoVacasMECPXSec" is the alphabetic prefix of R-3_04_00's NievesSimoVacasMECPXSec2016: a grep token, not
-   the class.
-7. gpg (section 4.2), with approved absolute executables only:
-   - GNUPGHOME and HOME are a fresh mode-700 directory under /tmp, which must be a node-local mount (/proc/mounts),
-     in a minimal environment.
-   - Before any other gpg call, `gpgconf --list-dirs` must report that homedir, and a socket dir that is either inside
-     it, or exactly gpg's own /run/user/<uid>/gnupg/d.<zbase32 of SHA-1(homedir), 120 bits> (GnuPG common/homedir.c)
-     with /run/user/<uid>, its gnupg/ and d.* all real directories owned by the user, the last two mode 0700, on tmpfs.
-     Every socket it reports must lie in that dir. Anything else is a STOP, and gpg is not run.
-   - A synthetic round trip with the pinned flags must reproduce the payload, in an SKESK + SEIPD (MDC) message.
-   - Flipping the last byte of the SEIPD packet must exit 2 with "encrypted message has been manipulated", and a
-     wrong passphrase must exit 2 with "Bad session key". A signal or any other exit fails.
-   - The probe's own agent is identified by `gpg-connect-agent --no-autostart 'getinfo pid'`, and must be gone after
-     `gpgconf --kill gpg-agent` (exit 0). Then, success or not, a verified outside socket dir is removed with
-     `gpgconf --remove-socketdir`, and an lstat must find that canonical path and the homedir absent. Nothing else is
-     removed.
-   - The passphrase is synthetic (secrets.token_hex(32)) and is never printed.
+0. Identity, before anything else: hostname login<NN>, /pscratch, /global/common and the CVMFS tree. Otherwise STOP
+   with nothing read.
+1. The repository. /cvmfs/larsoft.opensciencegrid.org must be on its own mount (or /cvmfs's) of a type that is not
+   node-local (/proc/mounts), and its xattr user.fqrn must be larsoft.opensciencegrid.org. user.revision and
+   user.root_hash are recorded. Unreadable xattrs are a STOP.
+2. The genie product, through a descriptor of its root (which must be its own real path). Every pinned file is opened
+   relative to it, one component at a time with O_NOFOLLOW, and hashed through its descriptor (O_NOATIME when the
+   kernel allows it). Every pinned link is read with readlink, every pinned listing is listed. Any missing, extra or
+   different item is a STOP, and the node's value is recorded for every pinned path, hash only.
+3. genie_xsec: the live qualifier listing of NULL/ (exact names), with the three used qualifiers required; the pinned
+   spline and README of each, hashed as above; and each used data/ listing by names, where a name ending in .xml that
+   is not a gxspl-* file is a STOP (GXMLPATH searches data/ first).
+4. The UPS database file products/.upsfiles/dbconfig, hashed and recorded, for slot 1's private product (B2).
+5. Tools (R1): strace, gpg, gpgconf and gpg-connect-agent are each opened once, on a descriptor of 10 or more (clear
+   of gpg's --passphrase-fd 3), and hashed through the descriptor,
+   and every later run executes that descriptor. `rpm -qf` names each one's package, and the package's recorded
+   digest (`rpm -q --dump`) must equal the hash; a tool with no RPM record is recorded as first-use. strace's
+   self-test traces one open of a probe-created file, through its descriptor, and the trace must be complete.
+6. gpg (section 4.2) in a fresh mode-700 GNUPGHOME under a node-local /tmp. `gpgconf --list-dirs` comes first: the
+   socket dir must be the homedir (or in it) or exactly gpg's /run/user/<uid>/gnupg/d.<zbase32(SHA-1(home))>, private,
+   real and on tmpfs, with every reported socket directly in it. Otherwise nothing else runs, not even --kill. The
+   round trip, tamper (exit 2, "encrypted message has been manipulated") and wrong passphrase (exit 2, "Bad session
+   key") follow. The agent is identified (getinfo pid) once gpg has run, even if crypto failed; then --kill, the
+   agent gone, and only then a verified outside socket dir removed; the canonical socket dir and the homedir must be
+   lstat-absent at the end.
 
 Exit 0 on GO, 3 on STOP. The last line is `PG-PROBE-RESULT <json>`.
 
-MEASURES: the product's catalog and the tunes' configured model classes. CANNOT AUTHORIZE: generation or any choice
-the declaration leaves to the director.
+MEASURES: byte identity of the pinned GENIE files, the product listing, the tools. CANNOT AUTHORIZE: generation, or
+any choice the declaration leaves to the director.
 """
 import datetime
+import fcntl
 import hashlib
 import json
 import os
@@ -85,50 +51,21 @@ import subprocess
 import sys
 import tempfile
 import time
-import xml.etree.ElementTree as ET
-import xml.parsers.expat as expat
 
-SCHEMA = "covfix-pg-probe/3"
-CVMFS_REPO = "/cvmfs/larsoft.opensciencegrid.org"
-PRODUCTS = CVMFS_REPO + "/products"
-XSEC_PRODUCT = PRODUCTS + "/genie_xsec/v3_04_00"
-GENIE_PRODUCT = PRODUCTS + "/genie/v3_04_00"
-ROOTS = (XSEC_PRODUCT, GENIE_PRODUCT)
-XSEC_ROOT = XSEC_PRODUCT + "/NULL"
-XSEC_UPS = XSEC_PRODUCT + "/ups/genie_xsec.table"
-GENIE_UPS = GENIE_PRODUCT + "/ups/genie.table"
-GENIE_CONFIG = GENIE_PRODUCT + "/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config"
+SCHEMA = "covfix-pg-probe/4"
+REPO = "/cvmfs/larsoft.opensciencegrid.org"
+FQRN = "larsoft.opensciencegrid.org"
+GENIE_ROOT = REPO + "/products/genie/v3_04_00"
+XSEC_REL = "products/genie_xsec/v3_04_00/NULL"
+DBCONFIG_REL = "products/.upsfiles/dbconfig"
 GNUPG_PARENT = "/tmp"
 RUN_USER = "/run/user"
-GPG_BINS = {"gpg": ("/usr/bin/gpg", "/usr/bin/gpg2"), "gpgconf": ("/usr/bin/gpgconf",),
-            "gpg-connect-agent": ("/usr/bin/gpg-connect-agent",)}
+TOOLS = {"strace": ("/usr/bin/strace",), "gpg": ("/usr/bin/gpg", "/usr/bin/gpg2"), "gpgconf": ("/usr/bin/gpgconf",),
+         "gpg-connect-agent": ("/usr/bin/gpg-connect-agent",)}
+RPM = ("/usr/bin/rpm", "/bin/rpm")
 LOCAL_FS = ("tmpfs", "ext4", "xfs", "btrfs", "ext3")
-
-SPENT = ("G18_10a_02_11b", "AR23_20i_00_000")
-SLOT1 = "G21_11b_00_000"
-SLOT2, SLOT2_FALLBACK = "G18_02b_02_11b", "G18_02a_02_11b"
-ALL_TUNES = SPENT + (SLOT1, SLOT2, SLOT2_FALLBACK)
-
-# F1's pins (gen5d_v3.SPLINE_PINS): gxspl-NUsmall.xml sha256, README sha256, the README's version line.
-SPENT_PINS = {
-    "G18_10a_02_11b": ("1b4b0b37fc8c11acbf00884a94d0a3bda519d9c458f2c916573ef3d673a3ee35",
-                       "abfca258817a3f7d8169cdd2dbf9349a025ab38312435c718347598b53f16726",
-                       "version v3_02_00 qualifier G1810a0211b:k250:e1000"),
-    "AR23_20i_00_000": ("185d7d8a4674b5df445fcadea3d17232804390c8421d563aa402c6ee743a0bbb",
-                        "744cba18f82cc5fe4805cd8be120e5f7e5f7b36f657f4cc9f2118e69c803bcb2",
-                        "version v3_04_00 qualifier AR2320i00000:k250:e1000")}
-# (CCQE class, 2p2h class) at GENIE-MC/Generator tag R-3_04_00, config/<CMC>/ModelConfiguration.xml, set Default.
-SPENT_CLASSES = {"G18_10a_02_11b": ("NievesQELCCPXSec", "NievesSimoVacasMECPXSec2016"),
-                 "AR23_20i_00_000": ("NievesQELCCPXSec", "SuSAv2MECPXSec")}
-# Section 4.1's description of u0: "the SuSAv2 QE and 2p2h model", sharing AR23_20i_00_000's 2p2h (the disclosed
-# overlap), with a CCQE that differs from both spent tunes'. At R-3_04_00 that is the hybrid below.
-DECLARED = {SLOT1: {"ccqe_alg": ["HybridXSecAlgorithm", "SuSAv2-QEL"], "ccqe": "SuSAv2QELPXSec",
-                    "2p2h_branches": ["SuSAv2MECPXSec"], "2p2h_users": ["AR23_20i_00_000"]}}
-SLOTS = {"QEL-CC": "ccqe", "MEC-CC": "2p2h"}
-KEY = "XSecModel@genie::EventGenerator/{}"
-SEARCH_ENV = ("GXMLPATH", "GXMLPATHS", "GALGCONF", "GUSERPHYSOPT")
-VERSION_LINE = re.compile(r"version\s+(v\d+_\d+_\d+)\s+qualifier\s+(\S+)")
-
+TRACE_SET = ("trace=open,openat,openat2,access,faccessat,faccessat2,stat,lstat,newfstatat,statx,readlink,readlinkat,"
+             "chdir")
 ENCRYPT = ["--batch", "--yes", "--pinentry-mode", "loopback", "--passphrase-fd", "3", "--no-symkey-cache",
            "--symmetric", "--cipher-algo", "AES256", "--s2k-digest-algo", "SHA512", "--force-mdc"]
 DECRYPT = ["--batch", "--pinentry-mode", "loopback", "--passphrase-fd", "3", "--no-symkey-cache", "--decrypt"]
@@ -137,13 +74,434 @@ WRONG_TEXT = "Bad session key"
 GPG_TIMEOUT_S = 120
 O_NOFOLLOW = getattr(os, "O_NOFOLLOW", 0)
 O_DIRECTORY = getattr(os, "O_DIRECTORY", 0)
+O_NOATIME = getattr(os, "O_NOATIME", 0)
+FD_DIR = "/proc/self/fd" if os.path.isdir("/proc/self/fd") else "/dev/fd"
+
+PINS_JSON = r'''{
+ "genie_files": {
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AR23_20i/CommonParam.xml": "aac2040eff7ee43afe9ef859ef512569a01935ff9e35c296d4701f15d66757ef",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AR23_20i/MECInteractionListGenerator.xml": "b9112c10f460ea6400d9b77653f0bc782c530e6b25b39c6224b32c1bf4b9cfc3",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AR23_20i/ModelConfiguration.xml": "67f7bf23160a4f92b1f9f69676fc307416d9365950bcda5acd9aa9930e4c0220",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AR23_20i/NucDeExcitationSim.xml": "83fd8f2072f3f21793ef8e0a6caebe65decd0b838aa8441018a81b4a99ae5c72",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AR23_20i/README.md": "6fa1fcf2913bab8ddb98b5f646f04c2d98e84040f9b09df34575c61e3b5b2785",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AR23_20i/TuneGeneratorList.xml": "7a51f7565e0574bbb27749772eeb1f89d2cc2216f55d9e4523d5b408fb397c70",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/EmpiricalMECPXSec2015.xml": "cf4bdcf5a00efe795973e5fdd3b1c3af252ced3b28ac3cc3493f0cf87ad10af4",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/EventGenerator.xml": "6de7109b5bba799d075700d41032ea9c4c10afabc99c14d7af9cf5346adea09d",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G18_02a/ModelConfiguration.xml": "abb2ac669975a0ff75429b71593c1e4ebd98ea5f21cf2dab75052b2f864acd8c",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G18_02a/TuneGeneratorList.xml": "7a51f7565e0574bbb27749772eeb1f89d2cc2216f55d9e4523d5b408fb397c70",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G18_10a/G18_10a_02_11b/CommonParam.xml": "c59dfd384799cf134675b052d5f0009b8531ef49dbd1ceec25ef17b4e9f79df4",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G18_10a/MECInteractionListGenerator.xml": "b9112c10f460ea6400d9b77653f0bc782c530e6b25b39c6224b32c1bf4b9cfc3",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G18_10a/ModelConfiguration.xml": "0a861e5c54806f79cdadaa3d175a29e428354d623dc3290b97a1ba2bacbfdbcc",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G18_10a/TuneGeneratorList.xml": "7a51f7565e0574bbb27749772eeb1f89d2cc2216f55d9e4523d5b408fb397c70",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/CommonParam.xml": "06eaf6bfacc5e891275ddcdb748dd7f6c28168e2032d728f7e9f9da2446011b2",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/EventGenerator.xml": "1430cb7a7ddd76149c2e10ed22227f8c125941d06fa7f772bcfc5db58fc90ea2",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/MECInteractionListGenerator.xml": "d8eef71429aa49f0eaa2aa14e14d6955ca39e36313c30d2d6b5f0276d53cbcf3",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/ModelConfiguration.xml": "2d92e16023607a9998bea383732585a66b3857ec6a23e1abf0f8a28e9bc33611",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/TuneGeneratorList.xml": "531d2749ed4416bfb317fe074ad72536c01b6c682d3f5eaae32a3afb98cb82ad",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/HybridXSecAlgorithm.xml": "1e196c647991b2b5d9ddcdcadefa0e9adde4f80a9a81a381d96311854119e00d",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/LwlynSmithQELCCPXSec.xml": "f1f5c1e4ec47958b9e43e2555ba39e13c81deb2b2b520f0c3a6502fe1e947404",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/NievesQELCCPXSec.xml": "38333360158eab5d0f84dec5ff46f8fdb8ddc169b38da40dd08255a3a2bd033f",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/NievesSimoVacasMECPXSec2016.xml": "e97dfcce427f963dcd8e8c8b15a987785b2172522ae60d4cf96ab36ce181abff",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/RosenbluthPXSec.xml": "c916a07c32ae11bdd05df2a3f9b4818b07d41b11f5836f9a00f39dd4792a127e",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/SuSAv2MECPXSec.xml": "eefaf070e5e8714cc8db74de8835919759f88f3d0c8b01f185046d17477d3d97",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/SuSAv2QELPXSec.xml": "66f2deb1099578c4451201b16e284af0c52632e835becfa39b34dc25ee9ab41b",
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/master_config.xml": "e7ee825dbbf646f71c07db1d0e5f7ed4f2b9044b1163038ed153d88673a534b1",
+  "Linux64bit+3.10-2.17-e20-prof/lib/libGFwEG-3.04.00.so": "17a907b15fcef1edb5731d18cd046b77161e7b2c57e3e41b1f15a82d2ba38288",
+  "Linux64bit+3.10-2.17-e20-prof/lib/libGFwEG.rootmap": "9aabd31c4b1ea36db2fa2b0cea393a2d4cc405ec974a7d35f22a432f937607ff",
+  "Linux64bit+3.10-2.17-e20-prof/lib/libGFwEG_rdict.pcm": "47da9af85b35c3505d77725ef5b74afd5146f5636aca0dfd823643f4630f4494",
+  "Linux64bit+3.10-2.17-e20-prof/lib/libGPhMNucXS-3.04.00.so": "b6416ed4e2c86ee9b81ae0c144388d02edb237e7731c12f3d228a131c902c4be",
+  "Linux64bit+3.10-2.17-e20-prof/lib/libGPhMNucXS.rootmap": "7633da40522401ed4c429be77b470c8f463c50d6f4ff76445efe220788b714cd",
+  "Linux64bit+3.10-2.17-e20-prof/lib/libGPhMNucXS_rdict.pcm": "8e0f991f28210544d3417bbce4becbc8a874e8e142934024d7113bd013ff1121",
+  "Linux64bit+3.10-2.17-e20-prof/lib/libGPhQELXS-3.04.00.so": "ee5b004d549fc8eb8070089abe9f1b5a19f1b30696769ebea2d9fc5c5bf88b2b",
+  "Linux64bit+3.10-2.17-e20-prof/lib/libGPhQELXS.rootmap": "71a163dfa7290867bef8f55ff64f0b90afb3e55a6c98c8cdf8835ddf49a56d6e",
+  "Linux64bit+3.10-2.17-e20-prof/lib/libGPhQELXS_rdict.pcm": "f14b52a17b00adfc7d3ba3a2a57884ecc88bcb3aea32efed8ef526813b71c133",
+  "ups/genie.table": "bea8ac631c5f4dc067e723cae6bab22ed37bad4d6184e8950ccbc60dd772a031"
+ },
+ "genie_links": {
+  "Linux64bit+3.10-2.17-e20-prof/lib/libGFwEG.so": "libGFwEG-3.04.00.so",
+  "Linux64bit+3.10-2.17-e20-prof/lib/libGPhMNucXS.so": "libGPhMNucXS-3.04.00.so",
+  "Linux64bit+3.10-2.17-e20-prof/lib/libGPhQELXS.so": "libGPhQELXS-3.04.00.so"
+ },
+ "genie_listings": {
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AR23_20i": [
+   "CommonParam.xml",
+   "MECInteractionListGenerator.xml",
+   "ModelConfiguration.xml",
+   "NucDeExcitationSim.xml",
+   "README.md",
+   "TuneGeneratorList.xml"
+  ],
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AR23_20i/AR23_20i_00_000": null,
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G18_02a": [
+   "G18_02a_02_11a/",
+   "G18_02a_02_11b/",
+   "G18_02a_03_320/",
+   "G18_02a_03_330/",
+   "ModelConfiguration.xml",
+   "TuneGeneratorList.xml"
+  ],
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G18_02a/G18_02a_00_000": null,
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G18_10a": [
+   "G18_10a_02_11a/",
+   "G18_10a_02_11b/",
+   "G18_10a_03_320/",
+   "G18_10a_03_330/",
+   "MECInteractionListGenerator.xml",
+   "ModelConfiguration.xml",
+   "TuneGeneratorList.xml"
+  ],
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G18_10a/G18_10a_02_11b": [
+   "CommonParam.xml"
+  ],
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a": [
+   "CommonParam.xml",
+   "EventGenerator.xml",
+   "MECInteractionListGenerator.xml",
+   "ModelConfiguration.xml",
+   "TuneGeneratorList.xml"
+  ],
+  "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/G21_11a_00_000": null
+ },
+ "record_sha256": "7b8c7a88458acfdee3fd2d1ed9fe85c1945a629861d5552c2120bbc5274b87a2",
+ "required_qualifiers": [
+  "AR2320i00000-k250-e1000",
+  "G1802a00000-k250-e1000",
+  "G1810a0211b-k250-e1000"
+ ],
+ "xsec_files": {
+  "AR2320i00000-k250-e1000/data/README": "744cba18f82cc5fe4805cd8be120e5f7e5f7b36f657f4cc9f2118e69c803bcb2",
+  "AR2320i00000-k250-e1000/data/gxspl-NUsmall.xml": "185d7d8a4674b5df445fcadea3d17232804390c8421d563aa402c6ee743a0bbb",
+  "G1802a00000-k250-e1000/data/README": "740bc066a9f41f67910e711ebb856be5aed61ee7b71c59895d001d83e80ab0ae",
+  "G1802a00000-k250-e1000/data/gxspl-NUsmall.xml": "f7ad710100f66e2bb9f260e328fe7fb10ac063148b4222eebe0e3b61b8bfa45a",
+  "G1810a0211b-k250-e1000/data/README": "abfca258817a3f7d8169cdd2dbf9349a025ab38312435c718347598b53f16726",
+  "G1810a0211b-k250-e1000/data/gxspl-NUsmall.xml": "1b4b0b37fc8c11acbf00884a94d0a3bda519d9c458f2c916573ef3d673a3ee35"
+ }
+}'''
+PINS = json.loads(PINS_JSON)
 
 
-class Unresolved(Exception):
-    """An input the probe cannot read under its rules, or cannot interpret without guessing."""
+class Unverified(Exception):
+    """An item that cannot be read under the probe's rules."""
 
 
-# ------------------------------------------------------------------------------------------------------ mounts, roots
+def exe(fd):
+    """The path that executes descriptor fd (Linux: /proc/self/fd/<fd>, valid in the child that inherits it)."""
+    return f"{FD_DIR}/{fd}"
+
+
+# ------------------------------------------------------------------------------------------------ reading by descriptor
+
+def _open_final(dirfd, name, flags):
+    try:
+        return os.open(name, flags | O_NOFOLLOW | O_NOATIME, dir_fd=dirfd)
+    except PermissionError:
+        if not O_NOATIME:
+            raise
+        return os.open(name, flags | O_NOFOLLOW, dir_fd=dirfd)      # O_NOATIME needs ownership; still unfollowed
+
+
+def _walk(rootfd, rel):
+    """(descriptor of rel's parent directory, rel's last component), every component opened with O_NOFOLLOW."""
+    parts = rel.split("/")
+    if not rel or rel.startswith("/") or any(p in ("", ".", "..") for p in parts):
+        raise Unverified(f"{rel!r} is not a plain relative path")
+    fd = os.dup(rootfd)
+    try:
+        for p in parts[:-1]:
+            nfd = os.open(p, os.O_RDONLY | O_DIRECTORY | O_NOFOLLOW, dir_fd=fd)
+            os.close(fd)
+            fd = nfd
+    except OSError:
+        os.close(fd)
+        raise
+    return fd, parts[-1]
+
+
+def sha_rel(rootfd, rel):
+    dfd, name = _walk(rootfd, rel)
+    try:
+        fd = _open_final(dfd, name, os.O_RDONLY | os.O_NONBLOCK)
+    finally:
+        os.close(dfd)
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise Unverified(f"{rel} is not a regular file")
+        h = hashlib.sha256()
+        for b in iter(lambda: os.read(fd, 1 << 20), b""):
+            h.update(b)
+        return h.hexdigest()
+    finally:
+        os.close(fd)
+
+
+def link_rel(rootfd, rel):
+    dfd, name = _walk(rootfd, rel)
+    try:
+        if not stat.S_ISLNK(os.stat(name, dir_fd=dfd, follow_symlinks=False).st_mode):
+            raise Unverified(f"{rel} is not a link")
+        return os.readlink(name, dir_fd=dfd)
+    finally:
+        os.close(dfd)
+
+
+def list_rel(rootfd, rel):
+    """Sorted names, directories marked with a trailing '/', or None when lstat reports rel absent."""
+    try:
+        dfd, name = _walk(rootfd, rel)
+    except FileNotFoundError:
+        return None
+    try:
+        try:
+            fd = os.open(name, os.O_RDONLY | O_DIRECTORY | O_NOFOLLOW, dir_fd=dfd)
+        except FileNotFoundError:
+            return None
+    finally:
+        os.close(dfd)
+    try:
+        out = []
+        for n in sorted(os.listdir(fd)):
+            m = os.stat(n, dir_fd=fd, follow_symlinks=False).st_mode
+            out.append(n + "/" if stat.S_ISDIR(m) else n)
+        return out
+    finally:
+        os.close(fd)
+
+
+def _try(fn, *a):
+    try:
+        return fn(*a), None
+    except (OSError, Unverified) as e:
+        return None, f"{type(e).__name__}: {e}"
+
+
+# ------------------------------------------------------------------------------------------------------- identity
+
+def identity():
+    host = socket.gethostname()
+    checks = {"hostname login<NN>": bool(re.fullmatch(r"login\d{2}", host)),
+              "/pscratch": os.path.isdir("/pscratch"), "/global/common": os.path.isdir("/global/common"),
+              "CVMFS products": os.path.isdir(REPO + "/products")}
+    return {"host": host, "checks": checks, "pass": all(checks.values())}
+
+
+def read_xattr(path, name):
+    return os.getxattr(path, name).decode()
+
+
+# ---------------------------------------------------------------------------------------------- the verify steps
+
+def verify_repo(repo, mounts_text, xattr=read_xattr):
+    rec = {"pass": False}
+    mp, typ, dev = mount_entry(repo, mounts_text)
+    rec["mount"] = {"point": mp, "type": typ, "device": dev}
+    probs = []
+    if os.path.realpath(repo) != repo:
+        probs.append(f"{repo} is not its own real path")
+    if mp not in (repo, os.path.dirname(repo)) or typ is None or typ in LOCAL_FS:
+        probs.append(f"{repo} is not on a CVMFS mount of its own: {mp} {typ}")
+    rec["xattrs"] = {}
+    for k in ("user.fqrn", "user.revision", "user.root_hash"):
+        try:
+            rec["xattrs"][k] = xattr(repo, k)
+        except (OSError, AttributeError) as e:
+            probs.append(f"xattr {k}: {type(e).__name__}: {e}")
+    if rec["xattrs"].get("user.fqrn") != FQRN:
+        probs.append(f"user.fqrn is {rec['xattrs'].get('user.fqrn')!r}, not {FQRN}")
+    rec["problems"], rec["pass"] = probs, not probs
+    return rec
+
+
+def verify_genie(genie_root, pins):
+    rec = {"files": {}, "links": {}, "listings": {}, "problems": []}
+    if os.path.realpath(genie_root) != genie_root:
+        rec["problems"].append(f"{genie_root} is not its own real path")
+        return rec
+    try:
+        rfd = os.open(genie_root, os.O_RDONLY | O_DIRECTORY | O_NOFOLLOW)
+    except OSError as e:
+        rec["problems"].append(f"{genie_root}: {e.strerror}")
+        return rec
+    try:
+        for rel, want in pins["genie_files"].items():
+            got, err = _try(sha_rel, rfd, rel)
+            rec["files"][rel] = {"sha256": got, "match": got == want, **({"error": err} if err else {})}
+        for rel, want in pins["genie_links"].items():
+            got, err = _try(link_rel, rfd, rel)
+            rec["links"][rel] = {"target": got, "match": got == want, **({"error": err} if err else {})}
+        for rel, want in pins["genie_listings"].items():
+            got, err = _try(list_rel, rfd, rel)
+            rec["listings"][rel] = {"names": got, "match": err is None and got == want, **({"error": err} if err else {})}
+    finally:
+        os.close(rfd)
+    for kind in ("files", "links", "listings"):
+        bad = sorted(k for k, v in rec[kind].items() if not v["match"])
+        if bad:
+            rec["problems"].append(f"{len(bad)} {kind} differ from the pins: {bad}")
+    return rec
+
+
+def verify_xsec(repo, pins):
+    rec = {"qualifiers": None, "files": {}, "data_listings": {}, "problems": []}
+    try:
+        rfd = os.open(repo, os.O_RDONLY | O_DIRECTORY | O_NOFOLLOW)
+    except OSError as e:
+        rec["problems"].append(f"{repo}: {e.strerror}")
+        return rec
+    try:
+        rec["qualifiers"], err = _try(list_rel, rfd, XSEC_REL)
+        if err or rec["qualifiers"] is None:
+            rec["problems"].append(f"the qualifier listing: {err or 'absent'}")
+        else:
+            names = [n.rstrip("/") for n in rec["qualifiers"]]
+            missing = [q for q in pins["required_qualifiers"] if q + "/" not in rec["qualifiers"]]
+            if missing:
+                rec["problems"].append(f"required qualifiers missing (exact names): {missing}")
+            rec["qualifier_names"] = names
+        for rel, want in pins["xsec_files"].items():
+            got, err = _try(sha_rel, rfd, f"{XSEC_REL}/{rel}")
+            rec["files"][rel] = {"sha256": got, "match": got == want, **({"error": err} if err else {})}
+        for q in pins["required_qualifiers"]:
+            got, err = _try(list_rel, rfd, f"{XSEC_REL}/{q}/data")
+            shadow = [n for n in (got or []) if n.endswith((".xml", ".xml.gz")) and not n.startswith("gxspl-")]
+            rec["data_listings"][q] = {"names": got, "config_like": shadow, **({"error": err} if err else {})}
+            if err or got is None:
+                rec["problems"].append(f"{q}/data: {err or 'absent'}")
+            elif shadow:
+                rec["problems"].append(f"{q}/data holds names GENIE could load as configuration: {shadow}")
+        rec["dbconfig"] = {}
+        got, err = _try(sha_rel, rfd, DBCONFIG_REL)
+        rec["dbconfig"] = {"path": f"{repo}/{DBCONFIG_REL}", "sha256": got, **({"error": err} if err else {})}
+        if got is None:
+            rec["problems"].append(f"dbconfig: {err}")
+    finally:
+        os.close(rfd)
+    bad = sorted(k for k, v in rec["files"].items() if not v["match"])
+    if bad:
+        rec["problems"].append(f"{len(bad)} genie_xsec files differ from the pins: {bad}")
+    return rec
+
+
+def _rpm_digest(path, rpm_run):
+    """(package, the digest RPM records for path, rpm -V's output for path) or Nones."""
+    out = rpm_run(["-qf", "--qf", "%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\\n", path])
+    if out is None or out[0] != 0 or not out[1].strip() or "not owned" in out[1]:
+        return None, None, None
+    pkg = out[1].strip().splitlines()[0]
+    dump = rpm_run(["-q", "--dump", pkg])
+    digest = None
+    for ln in (dump[1] if dump and dump[0] == 0 else "").splitlines():
+        f = ln.split()
+        if len(f) >= 4 and f[0] == path:
+            digest = f[3]
+    v = rpm_run(["-V", pkg])
+    verify = [ln for ln in (v[1] if v else "").splitlines() if ln.rstrip().endswith(" " + path)]
+    return pkg, digest, verify
+
+
+def _rpm_runner():
+    rpm = next((p for p in RPM if os.path.isfile(p)), None)
+    if rpm is None:
+        return lambda args: None
+
+    def run(args):
+        try:
+            p = subprocess.run([rpm] + args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=120,
+                               env={"PATH": "/usr/bin:/bin", "LC_ALL": "C"})
+            return p.returncode, p.stdout.decode(errors="replace")
+        except (OSError, subprocess.SubprocessError):
+            return None
+    return run
+
+
+def open_tools(tools=TOOLS, rpm_run=None):
+    """({name: fd}, record): each tool opened once, hashed through its descriptor, checked against RPM's digest."""
+    rpm_run = rpm_run or _rpm_runner()
+    fds, rec = {}, {}
+    for name, paths in tools.items():
+        path = next((p for p in paths if os.path.lexists(p)), None)
+        r = {"path": path}
+        if path is None:
+            r["problem"] = "missing"
+            rec[name] = r
+            continue
+        try:
+            low = os.open(path, os.O_RDONLY | O_NOFOLLOW)
+            fd = fcntl.fcntl(low, fcntl.F_DUPFD, 10)      # above 0-3: fd 3 is gpg's --passphrase-fd
+            os.close(low)
+        except OSError as e:
+            r["problem"] = f"cannot open: {e.strerror}"
+            rec[name] = r
+            continue
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            os.close(fd)
+            r["problem"] = "not a regular file"
+            rec[name] = r
+            continue
+        h = hashlib.sha256()
+        for b in iter(lambda: os.read(fd, 1 << 20), b""):
+            h.update(b)
+        os.lseek(fd, 0, os.SEEK_SET)
+        r["sha256"] = h.hexdigest()
+        r["rpm_package"], r["rpm_digest"], r["rpm_verify"] = _rpm_digest(path, rpm_run)
+        if r["rpm_digest"] is None:
+            r["rpm_match"], r["pin_basis"] = None, "first use: no RPM record"
+        else:
+            r["rpm_match"], r["pin_basis"] = r["rpm_digest"] == r["sha256"], "RPM's recorded digest"
+            if not r["rpm_match"]:
+                r["problem"] = "the hash differs from RPM's recorded digest"
+        fds[name] = fd
+        rec[name] = r
+    return fds, rec
+
+
+def trace_complete(text, rc):
+    probs = []
+    if rc != 0:
+        probs.append(f"strace exited {rc}")
+    if not text:
+        return probs + ["the trace is empty"]
+    if not text.endswith("\n"):
+        probs.append("the trace's last line is truncated")
+    lines = text.splitlines()
+    m = [re.match(r"^(\d+) +(.*)$", ln) for ln in lines]
+    if not all(m):
+        return probs + ["a trace line has no pid"]
+    if any("+++ killed by" in ln for ln in lines):
+        probs.append("a traced process was killed")
+    if not any(x.group(1) == m[0].group(1) and x.group(2).startswith("+++ exited with 0 +++") for x in m):
+        probs.append("the initial process did not exit 0")
+    if "<unfinished ...>" in lines[-1]:
+        probs.append("the trace ends inside a call")
+    return probs
+
+
+def strace_self_test(fd, parent=GNUPG_PARENT):
+    rec = {"pass": False}
+    d = tempfile.mkdtemp(prefix="pgst", dir=parent)
+    try:
+        probe, out = os.path.join(d, "pg-self-test.txt"), os.path.join(d, "trace.txt")
+        with open(probe, "w") as f:
+            f.write("pg\n")
+        p = subprocess.run([exe(fd), "-f", "-q", "-e", TRACE_SET, "-o", out, "/bin/cat", probe], pass_fds=(fd,),
+                           stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, timeout=60,
+                           env={"PATH": "/usr/bin:/bin", "LC_ALL": "C"})
+        text = ""
+        if os.path.exists(out):
+            with open(out) as f:
+                text = f.read()
+        probs = trace_complete(text, p.returncode)
+        if not re.search(r'open(at)?\((AT_FDCWD, )?"' + re.escape(probe) + r'", .*\) = \d+$', text, re.M):
+            probs.append("the self-test's open is not in the trace")
+        rec.update(rc=p.returncode, n_lines=len(text.splitlines()), problems=probs)
+        rec["pass"] = not probs
+    except (OSError, subprocess.SubprocessError) as e:
+        rec["problems"] = [f"{type(e).__name__}: {e}"]
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
+    return rec
+
+
+# ------------------------------------------------------------- rev 3's reviewed mount, OpenPGP and socket helpers
 
 def mount_entry(path, mounts_text):
     """(mount point, type, device) of the longest mount point containing path, from /proc/mounts' text."""
@@ -160,490 +518,6 @@ def mount_entry(path, mounts_text):
 def mount_fs(path, mounts_text):
     return mount_entry(path, mounts_text)[1]
 
-
-def verify_roots(declared, repo, mounts_text):
-    """(verified real roots, record). Each declared root must resolve beneath the repository, on its mount."""
-    rec = {"repo": repo, "resolved": {}, "pass": False}
-    mp, typ, dev = mount_entry(repo, mounts_text)
-    rec["mount"] = {"point": mp, "type": typ, "device": dev}
-    if mp not in (repo, os.path.dirname(repo)) or typ is None or typ in LOCAL_FS:
-        raise Unresolved(f"{repo} is not on a CVMFS mount of its own: {mp} {typ}")
-    out = []
-    for r in declared:
-        real = os.path.realpath(r)
-        rec["resolved"][r] = real
-        if not real.startswith(repo + "/"):
-            raise Unresolved(f"{r} resolves to {real}, outside {repo}")
-        if mount_entry(real, mounts_text)[0] != mp:
-            raise Unresolved(f"{r} resolves onto another mount")
-        try:
-            if not stat.S_ISDIR(os.lstat(real).st_mode):
-                raise Unresolved(f"{r} is not a directory")
-        except OSError as e:
-            raise Unresolved(f"{r}: {e.strerror}") from None
-        out.append(real)
-    rec["pass"] = True
-    return tuple(out), rec
-
-
-# ------------------------------------------------------------------------------------------------- the read boundary
-
-def _beneath(path, roots):
-    """(real path, the verified root it lies beneath)."""
-    real = os.path.realpath(path)
-    for rr in roots:
-        if real == rr or real.startswith(rr.rstrip("/") + "/"):
-            return real, rr
-    raise Unresolved(f"{path} resolves outside the approved roots")
-
-
-def _open_beneath(path, roots, flags):
-    real, rr = _beneath(path, roots)
-    try:
-        rfd = os.open(rr, os.O_RDONLY | O_DIRECTORY | O_NOFOLLOW)
-    except OSError as e:
-        raise Unresolved(f"{rr}: {e.strerror}") from None
-    try:
-        return os.open(os.path.relpath(real, rr), flags | O_NOFOLLOW, dir_fd=rfd)
-    except OSError as e:
-        raise Unresolved(f"{path}: {e.strerror}") from None
-    finally:
-        os.close(rfd)
-
-
-def _open_regular(path, roots):
-    fd = _open_beneath(path, roots, os.O_RDONLY | os.O_NONBLOCK)
-    if not stat.S_ISREG(os.fstat(fd).st_mode):
-        os.close(fd)
-        raise Unresolved(f"{path} is not a regular file")
-    return fd
-
-
-def read_file(path, roots):
-    """Bytes of a regular file beneath a verified root, opened without following a final link."""
-    fd = _open_regular(path, roots)
-    try:
-        return b"".join(iter(lambda: os.read(fd, 1 << 20), b""))
-    finally:
-        os.close(fd)
-
-
-def list_dir(path, roots):
-    fd = _open_beneath(path, roots, os.O_RDONLY | O_DIRECTORY)
-    try:
-        if not stat.S_ISDIR(os.fstat(fd).st_mode):
-            raise Unresolved(f"{path} is not a directory")
-        return sorted(os.listdir(fd))
-    finally:
-        os.close(fd)
-
-
-def is_regular(path, roots):
-    os.close(_open_regular(path, roots))
-    return True
-
-
-def _absent(path):
-    """True when lstat reports nothing there; False when something is; Unresolved on any other error."""
-    try:
-        os.lstat(path)
-        return False
-    except FileNotFoundError:
-        return True
-    except OSError as e:
-        raise Unresolved(f"{path}: {e.strerror}") from None
-
-
-# ------------------------------------------------------------------------------------------------------- identity
-
-def identity():
-    host = socket.gethostname()
-    checks = {"hostname login<NN>": bool(re.fullmatch(r"login\d{2}", host)),
-              "/pscratch": os.path.isdir("/pscratch"), "/global/common": os.path.isdir("/global/common"),
-              "CVMFS products": os.path.isdir(PRODUCTS)}
-    return {"host": host, "checks": checks, "pass": all(checks.values())}
-
-
-# ------------------------------------------------------------------------------------------------------- catalog
-
-def qualifier(tune):
-    """G18_10a_02_11b -> G1810a0211b-k250-e1000 (the genie_xsec directory convention, FD-F1-DECLARATION.md:76)."""
-    return tune.replace("_", "") + "-k250-e1000"
-
-
-def cmc(tune):
-    """G18_10a_02_11b -> G18_10a (TuneId::CMC: prefix, year, '_', model id)."""
-    return "_".join(tune.split("_")[:2])
-
-
-def _key(s):
-    return re.sub(r"[^a-z0-9]", "", s.lower())
-
-
-def ups_table(text):
-    """{declared qualifier: GENIE_XSEC_TUNE or None} from a UPS table, in order of declaration."""
-    out, cur = {}, None
-    for ln in text.splitlines():
-        m = re.search(r'Qualifiers\s*=\s*"([^"]*)"', ln)
-        if m:
-            cur = m.group(1)
-            if cur in out:
-                raise Unresolved(f"the UPS table declares {cur} twice")
-            out[cur] = None
-            continue
-        m = re.search(r"envSet\s*\(\s*GENIE_XSEC_TUNE\s*,\s*([^)\s]+)\s*\)", ln)
-        if m and cur is not None:
-            if out[cur] is not None:
-                raise Unresolved(f"the UPS table sets GENIE_XSEC_TUNE twice for {cur}")
-            out[cur] = m.group(1)
-    return out
-
-
-def spline_scan(path, roots):
-    """(sha256, bytes, root element, [top-level genie_tune names]) from one structural (expat) pass of the file."""
-    fd = _open_regular(path, roots)
-    h, size, st = hashlib.sha256(), 0, {"depth": 0, "root": None, "tunes": []}
-
-    def start(name, attrs):
-        if st["depth"] == 0:
-            st["root"] = name
-        elif st["depth"] == 1 and name == "genie_tune":
-            st["tunes"].append(attrs.get("name"))
-        st["depth"] += 1
-
-    def end(name):
-        st["depth"] -= 1
-
-    def refuse(*a):
-        raise Unresolved(f"{path}: a DOCTYPE or entity declaration")
-
-    p = expat.ParserCreate()
-    p.SetParamEntityParsing(expat.XML_PARAM_ENTITY_PARSING_NEVER)
-    p.StartElementHandler, p.EndElementHandler = start, end
-    p.StartDoctypeDeclHandler = p.EntityDeclHandler = refuse
-    try:
-        for b in iter(lambda: os.read(fd, 1 << 20), b""):
-            h.update(b)
-            size += len(b)
-            p.Parse(b, False)
-        if size:
-            p.Parse(b"", True)
-    except expat.ExpatError as e:
-        raise Unresolved(f"{path}: malformed XML ({e})") from None
-    finally:
-        os.close(fd)
-    return h.hexdigest(), size, st["root"], st["tunes"]
-
-
-def catalog(xsec_root, ups, listing, tune, roots):
-    q = qualifier(tune)
-    qc = q.replace("-", ":")
-    k = _key(tune)
-    rec = {"qualifier": q, "status": None, "problems": [], "in_listing": q in listing, "in_ups": qc in ups,
-           "ups_tune": ups.get(qc),
-           "other_entries": sorted({n for n in listing if n != q and k in _key(n)}
-                                   | {u for u, v in ups.items() if u != qc and (k in _key(u) or v == tune)})}
-    if not rec["in_listing"] and not rec["in_ups"]:
-        if rec["other_entries"]:
-            rec["problems"].append(f"not under {q}, but other entries name it: {rec['other_entries']}")
-            rec["status"] = "unresolved"
-        else:
-            rec["status"] = "absent"
-        return rec
-    if tune == SLOT2 and rec["other_entries"]:
-        rec["problems"].append(f"other entries name it besides {q}: {rec['other_entries']}")
-    if rec["in_listing"] != rec["in_ups"]:
-        rec["problems"].append("the directory listing and the UPS table disagree")
-    if rec["in_ups"] and rec["ups_tune"] != tune:
-        rec["problems"].append(f"the UPS table sets GENIE_XSEC_TUNE={rec['ups_tune']}")
-    d = os.path.join(xsec_root, q, "data")
-    spl, readme = os.path.join(d, "gxspl-NUsmall.xml"), os.path.join(d, "README")
-    try:
-        rec["spline_sha256"], rec["spline_bytes"], rec["spline_root"], rec["spline_tunes"] = spline_scan(spl, roots)
-        raw = read_file(readme, roots)
-        rec["readme_sha256"] = hashlib.sha256(raw).hexdigest()
-        rec["readme_version_lines"] = [ln.strip() for ln in raw.decode(errors="replace").splitlines()
-                                       if ln.strip().startswith("version ")]
-    except (Unresolved, OSError) as e:
-        rec["problems"].append(f"unreadable entry: {e}")
-    else:
-        if rec["spline_root"] != "genie_xsec_spline_list" or rec["spline_tunes"] != [tune]:
-            rec["problems"].append(f"the spline has root <{rec['spline_root']}> and tunes {rec['spline_tunes']}")
-        lines = rec["readme_version_lines"]
-        m = VERSION_LINE.fullmatch(lines[0]) if len(lines) == 1 else None
-        if not m or m.group(2) != qc:
-            rec["problems"].append(f"README version lines {lines}")
-        else:
-            rec["readme_version"] = m.group(1)
-    rec["status"] = "unresolved" if rec["problems"] else "present"
-    return rec
-
-
-# ------------------------------------------------------------------------------------------------- configuration
-
-def find_config(config_root, tune, name, roots):
-    """GetXMLFilePath: the first of config/<CMC>/<tune>/, config/<CMC>/, config/ that holds name. A directory is
-    passed over only when it is confirmed absent or its listing lacks name."""
-    for d in (os.path.join(config_root, cmc(tune), tune), os.path.join(config_root, cmc(tune)), config_root):
-        if _absent(d) or name not in list_dir(d, roots):
-            continue
-        p = os.path.join(d, name)
-        is_regular(p, roots)
-        return p
-    raise Unresolved(f"no {name} on the search path for {tune}")
-
-
-def parse_xml(path, roots):
-    data = read_file(path, roots)
-    if re.search(rb"<!DOCTYPE|<!ENTITY", data):
-        raise Unresolved(f"{path}: a DOCTYPE or ENTITY declaration")
-    try:
-        return ET.fromstring(data)
-    except ET.ParseError as e:
-        raise Unresolved(f"{path}: malformed XML ({e})") from None
-
-
-def _sets(root, set_name):
-    return [s for s in root if s.tag == "param_set" and (s.get("name") or "").strip() == set_name]
-
-
-def param_set(root, path, set_name):
-    sets = _sets(root, set_name)
-    if len(sets) != 1:
-        raise Unresolved(f"{path}: {len(sets)} param_set named {set_name!r}")
-    params = {}
-    for p in sets[0]:
-        if p.tag != "param":
-            continue
-        k = (p.get("name") or "").strip()
-        if k in params:
-            raise Unresolved(f"{path}: {k} twice in {set_name}")
-        params[k] = ((p.get("type") or "").strip(), (p.text or "").strip())
-    return params
-
-
-def alg_value(typ, raw, where):
-    """('Class', 'set') from an alg parameter's text, as AddBasicParameter splits it."""
-    if typ != "alg":
-        raise Unresolved(f"{where}: type {typ!r}, not alg")
-    if not raw:
-        raise Unresolved(f"{where}: empty value")
-    parts = raw.split("/")
-    if len(parts) not in (1, 2) or not re.fullmatch(r"genie::[A-Za-z_][A-Za-z0-9_]*", parts[0].strip()):
-        raise Unresolved(f"{where}: {raw!r} is not genie::<Class>[/<set>]")
-    conf = parts[1].strip() if len(parts) == 2 else "Default"
-    if not re.fullmatch(r"[A-Za-z0-9_.-]+", conf):
-        raise Unresolved(f"{where}: set {conf!r}")
-    return parts[0].strip().split("::", 1)[1], conf
-
-
-def master_entries(config_root, tune, roots):
-    """(master_config.xml's path, {alg: [file, ...]})."""
-    mpath = find_config(config_root, tune, "master_config.xml", roots)
-    mroot = parse_xml(mpath, roots)
-    if mroot.tag != "genie_config":
-        raise Unresolved(f"{mpath}: root <{mroot.tag}>")
-    ents = {}
-    for c in mroot:
-        if c.tag == "config":
-            ents.setdefault((c.get("alg") or "").strip(), []).append((c.text or "").strip())
-    return mpath, ents
-
-
-def resolve_ref(config_root, tune, cls, conf, master, roots):
-    """(the parsed file, {class, set, file}) for genie::<cls>/<conf>, as GENIE's registry pool would find it."""
-    files = master[1].get("genie::" + cls, [])
-    if len(files) != 1 or not re.fullmatch(r"[A-Za-z0-9_.-]+\.xml", files[0]):
-        raise Unresolved(f"{master[0]}: {len(files)} entries for genie::{cls}")
-    path = find_config(config_root, tune, files[0], roots)
-    root = parse_xml(path, roots)
-    if root.tag != "alg_conf":
-        raise Unresolved(f"{path}: root <{root.tag}>")
-    n = len(_sets(root, conf))
-    if n != 1:
-        raise Unresolved(f"{path}: {n} param_set named {conf!r} for genie::{cls}")
-    return root, {"class": cls, "set": conf, "file": path}
-
-
-def resolve_hybrid(config_root, tune, conf, master, roots):
-    """HybridXSecAlgorithm/<conf>: its resolved default and per-interaction algorithms."""
-    hroot, href = resolve_ref(config_root, tune, "HybridXSecAlgorithm", conf, master, roots)
-    hpath = href["file"]
-    params = param_set(hroot, hpath, conf)
-    if "DefaultXSecAlg" not in params:
-        raise Unresolved(f"{hpath}: no DefaultXSecAlg in {conf}")
-    default = resolve_ref(config_root, tune, *alg_value(*params["DefaultXSecAlg"], f"{hpath} {conf} DefaultXSecAlg"),
-                          master, roots)[1]
-    branches = []
-    for k, v in params.items():
-        if k.startswith("XSecAlg@Interaction="):
-            ref = resolve_ref(config_root, tune, *alg_value(*v, f"{hpath} {conf} {k}"), master, roots)[1]
-            branches.append(dict(ref, interaction=k))
-        elif k != "DefaultXSecAlg":
-            raise Unresolved(f"{hpath}: unexpected parameter {k} in {conf}")
-    return {"file": hpath, "set": conf, "master_config": master[0], "default": default, "branches": branches}
-
-
-def model_classes(config_root, genie_ups_text, tune, roots):
-    rec = {"cmc": cmc(tune), "ccqe": None, "2p2h": None, "components": {}, "sources": {}, "problems": []}
-    try:
-        for v in SEARCH_ENV:
-            if v in genie_ups_text:
-                raise Unresolved(f"the genie UPS table mentions {v}")
-        path = find_config(config_root, tune, "ModelConfiguration.xml", roots)
-        rec["file"] = path
-        root = parse_xml(path, roots)
-        if root.tag != "global_param_list":
-            raise Unresolved(f"{path}: root <{root.tag}>")
-        params = param_set(root, path, "Default")
-        master = master_entries(config_root, tune, roots)
-        for key, slot in SLOTS.items():
-            k = KEY.format(key)
-            if k not in params:
-                raise Unresolved(f"{path}: no {k} in Default")
-            cls, conf = alg_value(*params[k], f"{path} {k}")
-            src = {"file": path, "set": "Default", "raw": params[k][1], "alg": [cls, conf]}
-            if cls == "HybridXSecAlgorithm":
-                h = resolve_hybrid(config_root, tune, conf, master, roots)
-                src["hybrid"] = h
-                rec[slot] = h["default"]["class"]
-                rec["components"][slot] = sorted({h["default"]["class"]} | {b["class"] for b in h["branches"]})
-            else:
-                src["registry"] = resolve_ref(config_root, tune, cls, conf, master, roots)[1]
-                rec[slot], rec["components"][slot] = cls, [cls]
-            rec["sources"][slot] = src
-    except (Unresolved, OSError) as e:
-        rec["problems"].append(str(e))
-        rec["ccqe"] = rec["2p2h"] = None
-        rec["components"] = {}
-    return rec
-
-
-def resolved(rec):
-    return not rec["problems"] and rec["ccqe"] is not None and rec["2p2h"] is not None
-
-
-# ------------------------------------------------------------------------------------------------------- decision
-
-def decide(cat, cls, spent_pins=SPENT_PINS, spent_classes=SPENT_CLASSES):
-    stops, controls = [], {}
-    for t in SPENT:
-        c, pin = cat[t], spent_pins[t]
-        ok = (c["status"] == "present" and c.get("spline_sha256") == pin[0] and c.get("readme_sha256") == pin[1]
-              and c.get("readme_version_lines") == [pin[2]])
-        okc = resolved(cls[t]) and (cls[t]["ccqe"], cls[t]["2p2h"]) == spent_classes[t]
-        controls[f"{t}: catalog equals F1's pins"] = ok
-        controls[f"{t}: classes equal R-3_04_00's"] = okc
-        if not ok:
-            stops.append(f"control: {t}'s catalog is not F1's pins")
-        if not okc:
-            stops.append(f"control: {t}'s resolved classes are not R-3_04_00's")
-    pool = sorted({x for t in SPENT if resolved(cls[t]) for s in SLOTS.values() for x in cls[t]["components"][s]})
-
-    def users(x):
-        return [u for u in SPENT if any(x in cls[u]["components"].get(s, []) for s in SLOTS.values())]
-
-    def novelty(t):
-        if not resolved(cls[t]):
-            return None
-        by_slot = {s: {x: x not in pool for x in cls[t]["components"][s]} for s in SLOTS.values()}
-        agree = all(len(set(v.values())) == 1 for v in by_slot.values())
-        return {"branches": by_slot, "branches_agree": agree,
-                "novel": any(by_slot[s][cls[t][s]] for s in SLOTS.values()) if agree else None}
-
-    def undeclared(t):
-        d, c = DECLARED.get(t), cls[t]
-        if d is None:
-            return []
-        out = []
-        if c["sources"]["ccqe"]["alg"] != d["ccqe_alg"] or c["ccqe"] != d["ccqe"]:
-            out.append(f"CCQE {c['sources']['ccqe']['alg']} with class {c['ccqe']}")
-        if c["components"]["2p2h"] != d["2p2h_branches"] or users(c["2p2h"]) != d["2p2h_users"]:
-            out.append(f"2p2h {c['components']['2p2h']} used by {users(c['2p2h'])}")
-        return out
-
-    nov = {t: novelty(t) for t in (SLOT1, SLOT2, SLOT2_FALLBACK)}
-
-    def eligible(t):
-        if cat[t]["status"] != "present":
-            return f"not eligible: catalog {cat[t]['status']}"
-        if nov[t] is None:
-            return "not eligible: configuration unresolved"
-        bad = undeclared(t)
-        if bad:
-            return f"not eligible: not section 4.1's configuration ({'; '.join(bad)})"
-        if not nov[t]["branches_agree"]:
-            return "not eligible: a slot's branches disagree on novelty (director's ruling)"
-        return "eligible" if nov[t]["novel"] else "not eligible: both classes in the spent pool"
-
-    elig = {SLOT1: eligible(SLOT1)}
-    slot1 = SLOT1 if elig[SLOT1] == "eligible" else None
-    if slot1 is None:
-        stops.append(f"slot 1: {SLOT1} {elig[SLOT1]}")
-    same_02 = None
-    if resolved(cls[SLOT2]) and resolved(cls[SLOT2_FALLBACK]):
-        same_02 = all(cls[SLOT2]["components"][s] == cls[SLOT2_FALLBACK]["components"][s] for s in SLOTS.values()) \
-            and (cls[SLOT2]["ccqe"], cls[SLOT2]["2p2h"]) == (cls[SLOT2_FALLBACK]["ccqe"], cls[SLOT2_FALLBACK]["2p2h"])
-    slot2, fallback = None, False
-    st02b = cat[SLOT2]["status"]
-    if st02b == "present":
-        elig[SLOT2] = eligible(SLOT2)
-        elig[SLOT2_FALLBACK] = "not considered: 02b is present"
-        if elig[SLOT2] == "eligible":
-            slot2 = SLOT2
-        else:
-            stops.append(f"slot 2: {SLOT2} {elig[SLOT2]} (02a substitutes only for 02b's absence)")
-    elif st02b == "absent":
-        elig[SLOT2] = "not eligible: confirmed absent"
-        e = eligible(SLOT2_FALLBACK)
-        if e == "eligible" and same_02 is not True:
-            e = ("not eligible: its classes differ from 02b's, against section 4.1's premise" if same_02 is False
-                 else "not eligible: 02b's configuration is unresolved, so section 4.1's premise cannot be checked")
-        elig[SLOT2_FALLBACK] = e
-        if e == "eligible":
-            slot2, fallback = SLOT2_FALLBACK, True
-        else:
-            stops.append(f"slot 2: {SLOT2} absent, {SLOT2_FALLBACK} {e}")
-    else:
-        elig[SLOT2] = "not eligible: catalog unresolved"
-        elig[SLOT2_FALLBACK] = "not considered: 02b's presence is unresolved"
-        stops.append(f"slot 2: {SLOT2}'s catalog is unresolved; no fallback")
-    overlap = {t: {x: users(x) for s in SLOTS.values() for x in cls[t]["components"][s]} for t in (slot1, slot2) if t}
-    return {"spent_pool": pool, "novelty": nov, "eligibility": elig, "chosen": {"u0": slot1, "u1": slot2},
-            "fallback_taken": fallback, "overlap_with_spent_pool": overlap, "02a_02b_same_classes": same_02,
-            "controls": controls, "stops": stops}
-
-
-# ------------------------------------------------------------------------------------------------------------ gpg
-
-def _fd_open(fd):
-    try:
-        os.fstat(fd)
-        return True
-    except OSError:
-        return False
-
-
-def _run_gpg(gpg, args, passphrase, payload, env):
-    """One gpg call with the passphrase on fd 3 and the payload on stdin: (rc, stdout, stderr lines)."""
-    if _fd_open(3):
-        raise RuntimeError("fd 3 is already open in the probe")
-    r, w = os.pipe()
-    try:
-        if r != 3:
-            os.dup2(r, 3)
-            os.close(r)
-            r = 3
-        os.write(w, (passphrase + "\n").encode())
-        os.close(w)
-        w = None
-        p = subprocess.run([gpg] + args, input=payload, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                           pass_fds=(3,), env=env, timeout=GPG_TIMEOUT_S, cwd=env["GNUPGHOME"])
-        return p.returncode, p.stdout, p.stderr.decode(errors="replace").splitlines()
-    finally:
-        os.close(r)
-        if w is not None:
-            os.close(w)
 
 
 def _new_len(data, j):
@@ -733,15 +607,15 @@ def _owned_dir(p, uid, private):
 
 
 def check_sockets(dirs, home, uid, mounts_text, base=RUN_USER):
-    """(confined, the verified socket dir if outside home else None, problems), from `gpgconf --list-dirs`."""
+    """(confined, the verified socket dir if outside home else None, problems), from `gpgconf --list-dirs`, before
+    any other gpg call. The socket dir is the homedir itself (or inside it), or exactly gpg's canonical
+    /run/user/<uid>/gnupg/d.<hash> for it; every reported socket lies directly in that socket dir."""
     h, sd = dirs.get("homedir", ""), dirs.get("socketdir", "")
-    socks = {k: v for k, v in dirs.items() if k.endswith("-socket")}
+    socks = {k: v for k, v in dirs.items() if k.endswith("-socket") and v}
     if not h or os.path.realpath(h) != home or not sd or "agent-socket" not in socks:
         return False, None, [f"homedir {h!r}, socketdir {sd!r}, sockets {sorted(socks)}"]
     probs, outside = [], None
-    if _inside(sd, home):
-        target = home
-    else:
+    if not _inside(sd, home):
         want = socketdir_for(home, uid, base)
         if sd != want:
             return False, None, [f"socketdir {sd} is neither in the homedir nor gpg's {want}"]
@@ -756,8 +630,10 @@ def check_sockets(dirs, home, uid, mounts_text, base=RUN_USER):
             probs.append(f"{sd} is not its own real path")
         if mount_fs(sd, mounts_text) != "tmpfs":
             probs.append(f"{sd} is on {mount_fs(sd, mounts_text)}, not tmpfs")
-        target, outside = sd, sd
-    probs += [f"{k} {v} is outside {target}" for k, v in sorted(socks.items()) if not _inside(v, target)]
+        outside = sd
+    real_sd = os.path.realpath(sd)
+    probs += [f"{k} {v} is not directly in the socket dir {sd}" for k, v in sorted(socks.items())
+              if os.path.realpath(os.path.dirname(v)) != real_sd]
     return not probs, (outside if not probs else None), probs
 
 
@@ -781,8 +657,14 @@ def _confirmed_absent(p):
         return False
 
 
-def _genv(home):
-    return {"PATH": "/usr/bin:/bin", "HOME": home, "GNUPGHOME": home, "LC_ALL": "C", "LANG": "C"}
+
+
+def _fd_open(fd):
+    try:
+        os.fstat(fd)
+        return True
+    except OSError:
+        return False
 
 
 def _std_fds_open():
@@ -798,29 +680,51 @@ def _std_fds_open():
     return reopened
 
 
-def gpg_check(bins=None, parent=GNUPG_PARENT, mounts_text=None, run_base=RUN_USER, uid=None):
-    """Section 4.2's encryption-tool check, confined to a throwaway GNUPGHOME."""
-    rec = {"pass": False, "std_fds_reopened": _std_fds_open()}
+def _genv(home):
+    return {"PATH": "/usr/bin:/bin", "HOME": home, "GNUPGHOME": home, "LC_ALL": "C", "LANG": "C"}
+
+
+def _run(fd, args, env, home, **kw):
+    """Run the tool on descriptor fd (the descriptor that was hashed)."""
+    return subprocess.run([exe(fd)] + args, env=env, cwd=home, timeout=kw.pop("timeout", 30),
+                          pass_fds=tuple(sorted({fd} | set(kw.pop("extra_fds", ())))), **kw)
+
+
+def _run_gpg(gfd, args, passphrase, payload, env):
+    """One gpg call with the passphrase on fd 3 and the payload on stdin: (rc, stdout, stderr lines)."""
+    if _fd_open(3):
+        raise RuntimeError("fd 3 is already open in the probe")
+    r, w = os.pipe()
+    try:
+        if r != 3:
+            os.dup2(r, 3)
+            os.close(r)
+            r = 3
+        os.write(w, (passphrase + "\n").encode())
+        os.close(w)
+        w = None
+        p = _run(gfd, args, env, env["GNUPGHOME"], input=payload, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                 extra_fds=(3,), timeout=GPG_TIMEOUT_S)
+        return p.returncode, p.stdout, p.stderr.decode(errors="replace").splitlines()
+    finally:
+        os.close(r)
+        if w is not None:
+            os.close(w)
+
+
+def gpg_check(fds, parent=GNUPG_PARENT, mounts_text=None, run_base=RUN_USER, uid=None):
+    """Section 4.2's encryption-tool check, confined to a throwaway GNUPGHOME, with the tools run by descriptor."""
+    rec = {"pass": False, "std_fds_reopened": _std_fds_open(), "gpg_started": False}
     uid = os.getuid() if uid is None else uid
-    bins = bins or {k: next((p for p in v if os.path.isfile(p) and os.access(p, os.X_OK)), None)
-                    for k, v in GPG_BINS.items()}
-    rec["bins"] = bins
-    if not all(bins.values()):
+    if not all(k in fds for k in ("gpg", "gpgconf", "gpg-connect-agent")):
         rec["problem"] = "an approved gpg executable is missing"
         return rec
-    if mounts_text is None:
-        try:
-            with open("/proc/mounts") as f:
-                mounts_text = f.read()
-        except OSError:
-            rec["problem"] = "no /proc/mounts"
-            return rec
     parent = os.path.realpath(parent)
     rec["parent"], rec["parent_fs"] = parent, mount_fs(parent, mounts_text)
     if rec["parent_fs"] not in LOCAL_FS:
         rec["problem"] = f"{parent} is on {rec['parent_fs']}, not a node-local filesystem"
         return rec
-    home, agent_pid, outside, canonical = None, None, None, None
+    home, canonical, outside, crypto = None, None, None, False
     try:
         home = os.path.realpath(tempfile.mkdtemp(prefix="pgprobe", dir=parent))
         os.chmod(home, 0o700)
@@ -828,38 +732,32 @@ def gpg_check(bins=None, parent=GNUPG_PARENT, mounts_text=None, run_base=RUN_USE
         rec["gnupghome_mode"] = oct(os.stat(home).st_mode & 0o777)
         canonical = socketdir_for(home, uid, run_base)
         rec["canonical_socketdir"] = canonical
-        ld = subprocess.run([bins["gpgconf"], "--list-dirs"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
-                            env=env, timeout=30, cwd=home)
+        ld = _run(fds["gpgconf"], ["--list-dirs"], env, home, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
         d = {k: v.replace("%3a", ":").replace("%25", "%") for k, v in
              (ln.split(":", 1) for ln in ld.stdout.decode(errors="replace").splitlines() if ":" in ln)}
         rec["gpgconf_dirs"] = {k: v for k, v in d.items() if k in ("homedir", "socketdir") or k.endswith("-socket")}
-        rec["confined"], outside, rec["socket_problems"] = check_sockets(d, home, uid, mounts_text, run_base)
-        rec["confined"] = rec["confined"] and ld.returncode == 0
+        ok, outside, rec["socket_problems"] = check_sockets(d, home, uid, mounts_text, run_base)
+        rec["confined"] = ok and ld.returncode == 0
         rec["socketdir_outside_home"] = outside
         if not rec["confined"]:
-            raise RuntimeError("the agent's sockets are not confined; gpg was not run")
-        v = subprocess.run([bins["gpg"], "--version"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=env,
-                           timeout=30, cwd=home)
+            raise RuntimeError("the agent's sockets are not confined; nothing else was run")
+        rec["gpg_started"] = crypto = True
+        v = _run(fds["gpg"], ["--version"], env, home, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         rec["version"] = v.stdout.decode(errors="replace").splitlines()[:2]
         pw, payload = secrets.token_hex(32), os.urandom(1 << 16)
-        rc_e, ct, err_e = _run_gpg(bins["gpg"], ENCRYPT, pw, payload, env)
+        rc_e, ct, err_e = _run_gpg(fds["gpg"], ENCRYPT, pw, payload, env)
         rec.update(encrypt_rc=rc_e, encrypt_stderr=err_e[-6:])
         if rc_e != 0:
             raise RuntimeError("encryption failed")
         rec["packet_tags"] = [p[0] for p in packets(ct)]
         bad = tamper_seipd(ct)
-        rc_d, pt, err_d = _run_gpg(bins["gpg"], DECRYPT, pw, ct, env)
-        rc_t, _, err_t = _run_gpg(bins["gpg"], DECRYPT, pw, bad, env)
-        rc_w, _, err_w = _run_gpg(bins["gpg"], DECRYPT, secrets.token_hex(32), ct, env)
+        rc_d, pt, _ = _run_gpg(fds["gpg"], DECRYPT, pw, ct, env)
+        rc_t, _, err_t = _run_gpg(fds["gpg"], DECRYPT, pw, bad, env)
+        rc_w, _, err_w = _run_gpg(fds["gpg"], DECRYPT, secrets.token_hex(32), ct, env)
         rec.update(decrypt_rc=rc_d, round_trip_equal=hashlib.sha256(pt).digest() == hashlib.sha256(payload).digest(),
                    tampered={"rc": rc_t, "stderr": err_t[-6:], "evidence": any(TAMPER_TEXT in x for x in err_t)},
                    wrong_passphrase={"rc": rc_w, "stderr": err_w[-6:],
                                      "evidence": any(WRONG_TEXT in x for x in err_w)})
-        a = subprocess.run([bins["gpg-connect-agent"], "--no-autostart", "getinfo pid", "/bye"],
-                           stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, env=env, timeout=30, cwd=home)
-        m = re.search(r"^D (\d+)$", a.stdout.decode(errors="replace"), re.M)
-        agent_pid = int(m.group(1)) if m else None
-        rec["agent_pid"] = agent_pid
         rec["pass"] = (rc_d == 0 and rec["round_trip_equal"] and rec["packet_tags"] == [3, 18]
                        and rc_t == 2 and rec["tampered"]["evidence"] and rc_w == 2
                        and rec["wrong_passphrase"]["evidence"])
@@ -867,11 +765,19 @@ def gpg_check(bins=None, parent=GNUPG_PARENT, mounts_text=None, run_base=RUN_USE
         rec["problem"] = f"{type(e).__name__}: {e}"
         rec["pass"] = False
     finally:
-        if home:
+        agent_pid = None
+        if home and crypto:              # gpg has run: identify its agent, kill it, and only then remove its sockets
             try:
-                rec["gpgconf_kill_rc"] = subprocess.run([bins["gpgconf"], "--kill", "gpg-agent"], env=_genv(home),
-                                                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                                                        timeout=30, cwd=home).returncode
+                a = _run(fds["gpg-connect-agent"], ["--no-autostart", "getinfo pid", "/bye"], _genv(home), home,
+                         stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+                m = re.search(r"^D (\d+)$", a.stdout.decode(errors="replace"), re.M)
+                agent_pid = int(m.group(1)) if m else None
+            except (OSError, subprocess.SubprocessError):
+                pass
+            rec["agent_pid"] = agent_pid
+            try:
+                rec["gpgconf_kill_rc"] = _run(fds["gpgconf"], ["--kill", "gpg-agent"], _genv(home), home,
+                                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
             except (OSError, subprocess.SubprocessError) as e:
                 rec["gpgconf_kill_rc"] = f"{type(e).__name__}: {e}"
             gone = False
@@ -881,13 +787,13 @@ def gpg_check(bins=None, parent=GNUPG_PARENT, mounts_text=None, run_base=RUN_USE
                     time.sleep(0.1)
                 gone = not _pid_alive(agent_pid)
             rec["agent_gone"] = gone
-            if outside:
+            if outside and gone:
                 try:
-                    rec["remove_socketdir_rc"] = subprocess.run(
-                        [bins["gpgconf"], "--remove-socketdir"], env=_genv(home), stdout=subprocess.DEVNULL,
-                        stderr=subprocess.DEVNULL, timeout=30, cwd=home).returncode
+                    rec["remove_socketdir_rc"] = _run(fds["gpgconf"], ["--remove-socketdir"], _genv(home), home,
+                                                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
                 except (OSError, subprocess.SubprocessError) as e:
                     rec["remove_socketdir_rc"] = f"{type(e).__name__}: {e}"
+        if home:
             rec["socketdir_absent"] = _confirmed_absent(canonical) if canonical else False
             shutil.rmtree(home, ignore_errors=True)
             rec["gnupghome_removed"] = _confirmed_absent(home)
@@ -906,40 +812,45 @@ def _mounts():
         return f.read()
 
 
-def probe(xsec_root=XSEC_ROOT, xsec_ups=XSEC_UPS, genie_ups=GENIE_UPS, config_root=GENIE_CONFIG, roots=ROOTS,
-          ident=identity, gpg=gpg_check, spent_pins=SPENT_PINS, spent_classes=SPENT_CLASSES, repo=CVMFS_REPO,
-          mounts=_mounts):
+def probe(ident=identity, repo=REPO, genie_root=GENIE_ROOT, pins=None, mounts=_mounts, xattr=read_xattr,
+          tools=TOOLS, rpm_run=None, gpg=gpg_check, self_test=strace_self_test):
+    pins = pins or PINS
     rec = {"schema": SCHEMA, "start_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-           "roots": list(roots)}
+           "pins_sha256": hashlib.sha256(json.dumps(pins, sort_keys=True).encode()).hexdigest(),
+           "record_sha256": pins.get("record_sha256")}
     rec["identity"] = ident()
     if not rec["identity"]["pass"]:
         rec["stops"] = ["identity: not a Perlmutter login node; nothing was read"]
         rec["verdict"] = "STOP"
         return rec
+    stops = []
     try:
-        roots, rec["roots_verified"] = verify_roots(roots, repo, mounts())
-    except (Unresolved, OSError) as e:
-        rec["roots_verified"] = {"pass": False, "problem": str(e)}
-        rec["stops"] = [f"roots: {e}"]
+        mounts_text = mounts()
+    except OSError as e:
+        rec["stops"] = [f"mounts: {e}"]
         rec["verdict"] = "STOP"
         return rec
+    rec["repo"] = verify_repo(repo, mounts_text, xattr)
+    stops += [f"repo: {p}" for p in rec["repo"]["problems"]]
+    if rec["repo"]["pass"]:
+        rec["genie"] = verify_genie(genie_root, pins)
+        stops += [f"genie: {p}" for p in rec["genie"]["problems"]]
+        rec["xsec"] = verify_xsec(repo, pins)
+        stops += [f"genie_xsec: {p}" for p in rec["xsec"]["problems"]]
+    rec["std_fds_reopened"] = _std_fds_open()
+    fds, rec["tools"] = open_tools(tools, rpm_run)
     try:
-        rec["qualifiers"] = list_dir(xsec_root, roots)
-        ups = ups_table(read_file(xsec_ups, roots).decode(errors="replace"))
-        rec["ups_declared"] = ups
-        genie_ups_text = read_file(genie_ups, roots).decode(errors="replace")
-        rec["genie_ups_search_env"] = [v for v in SEARCH_ENV if v in genie_ups_text]
-    except (Unresolved, OSError) as e:
-        rec["stops"] = [f"catalog: {e}"]
-        rec["verdict"] = "STOP"
-        return rec
-    rec["catalog"] = {t: catalog(xsec_root, ups, rec["qualifiers"], t, roots) for t in ALL_TUNES}
-    rec["classes"] = {t: model_classes(config_root, genie_ups_text, t, roots) for t in ALL_TUNES}
-    rec["decision"] = decide(rec["catalog"], rec["classes"], spent_pins, spent_classes)
-    rec["gpg"] = gpg()
-    stops = list(rec["decision"]["stops"])
-    if not rec["gpg"]["pass"]:
-        stops.append("gpg: the tool or its pinned round trip failed")
+        stops += [f"tool {k}: {v['problem']}" for k, v in rec["tools"].items() if "problem" in v]
+        rec["strace_self_test"] = self_test(fds["strace"]) if "strace" in fds else {"pass": False,
+                                                                                   "problems": ["no strace"]}
+        if not rec["strace_self_test"]["pass"]:
+            stops.append(f"strace self-test: {rec['strace_self_test'].get('problems')}")
+        rec["gpg"] = gpg(fds, mounts_text=mounts_text)
+        if not rec["gpg"]["pass"]:
+            stops.append("gpg: the tool or its pinned round trip failed")
+    finally:
+        for fd in fds.values():
+            os.close(fd)
     rec["stops"] = stops
     rec["verdict"] = "GO" if not stops else "STOP"
     rec["end_utc"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -949,16 +860,12 @@ def probe(xsec_root=XSEC_ROOT, xsec_ups=XSEC_UPS, genie_ups=GENIE_UPS, config_ro
 def report(rec):
     p = print
     p(f"identity {rec['identity']}")
-    for q in rec.get("qualifiers") or []:
+    if "repo" in rec:
+        p(f"repo {rec['repo'].get('mount')} xattrs {rec['repo'].get('xattrs')}")
+    for q in (rec.get("xsec") or {}).get("qualifiers") or []:
         p(f"  qualifier {q}")
-    for t in ALL_TUNES if "catalog" in rec else ():
-        c, m = rec["catalog"][t], rec["classes"][t]
-        p(f"{t}: catalog {c['status']} {c['problems']}")
-        p(f"  CCQE {m['ccqe']}  2p2h {m['2p2h']}  components {m['components']}  problems {m['problems']}")
-    if "decision" in rec:
-        d = rec["decision"]
-        p(f"eligibility {d['eligibility']}")
-        p(f"chosen {d['chosen']} fallback_taken {d['fallback_taken']}")
+    for k, v in (rec.get("tools") or {}).items():
+        p(f"tool {k}: {v.get('path')} {v.get('sha256')} rpm {v.get('rpm_package')} match {v.get('rpm_match')}")
     p(f"verdict {rec['verdict']}  stops {rec['stops']}")
     p("PG-PROBE-RESULT " + json.dumps(rec, sort_keys=True))
 

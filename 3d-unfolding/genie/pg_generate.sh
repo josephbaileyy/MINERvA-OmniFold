@@ -118,6 +118,13 @@ TUNES=$(awk '{print $1}' "$R/queue.txt" | awk '!seen[$0]++' | tr '\n' ' ')
 [ "$(wc -l < "$R/queue.txt")" -eq $((2 * NT)) ] || need 1 "the task queue"
 pass "seeds.json" "$(wc -l < "$R/queue.txt" | tr -d ' ') tasks"
 
+for T in $TUNES; do   # the programs the traced steps run, as their own setup resolves them (no trace shows an exec)
+  ( source "$G/setup_genie_v3.sh" "$T" "$O/splines" > /dev/null 2>&1 || exit 1; command -v gevgen && command -v gspl2root ) \
+    > "$R/exe_$T.txt" 2> "$O/logs/exe_$T.log" || need 1 "resolve gevgen and gspl2root ($T)"
+  python3 -I -B "$G/pg_verify.py" exe-check --manifest "$REC/genie-manifest.json" $(sed 's/^/--path /' "$R/exe_$T.txt") \
+    > "$O/exe_check_$T.json" 2>> "$O/logs/exe_$T.log" || need 1 "gevgen and gspl2root against the manifest ($T)"
+done
+pass "gevgen and gspl2root against the manifest"
 pids=(); for T in $TUNES; do PG_TRACE_DIR="$O/traces" bash "$G/run_gevgen_v3.sh" reduce "$T" "$O/splines" > "$O/logs/reduce_$T.log" 2>&1 & pids+=($!); done
 for p in "${pids[@]}"; do wait "$p"; need $? "spline reduce"; done
 pass "spline reduce"

@@ -141,10 +141,12 @@ class Seeds(unittest.TestCase):
                 (self.tmp / rel).write_text("x")
         checks = list(pg_lib.CHECKS) + [f"out/trace_check_{r}_{t}.json" for r in ("reduce", "graphs")
                                         for t in PG_TUNES] + [f"out/work/u{u}/t{k}/trace_check.json"
-                                                              for u in (0, 1) for k in range(7)]
+                                                              for u in (0, 1) for k in range(7)] + [
+            f"out/exe_check_{t}.json" for t in PG_TUNES]
         for c in checks:
             (self.tmp / c).parent.mkdir(parents=True, exist_ok=True)
             (self.tmp / c).write_text('{"check": "x", "pass": true}\n' if "trace" not in c else '{\n "pass": true\n}\n')
+        self.assertEqual(len(checks), 23)
         for broken in ('{"pass": false}\n', "not json\n"):          # a failed or unreadable check refuses
             (self.tmp / checks[5]).write_text(broken)
             self.assertEqual(quiet(pg_lib.main, argv)[0], 2)
@@ -153,7 +155,7 @@ class Seeds(unittest.TestCase):
         (self.tmp / checks[5]).write_text('{\n "pass": true\n}\n')
         self.assertEqual(quiet(pg_lib.main, argv)[0], 0)
         rec = json.loads((self.tmp / "PRODUCTS.json").read_text())
-        self.assertEqual(len(rec["checks"]), 21)
+        self.assertEqual(len(rec["checks"]), 23)
         self.assertTrue(all(rec["checks"].values()))
         self.assertEqual([(p["u"], p["truth"], p["bridged"]) for p in rec["products"]],
                          [(0, "genie_v3_g21", "out/prep/bridged/genie_v3_g21.json"),
@@ -307,6 +309,7 @@ class PrepPG(unittest.TestCase):
 
 STUB_RUN = r'''#!/bin/bash
 echo "run_gevgen_v3 $*" >> "$PG_STUB_LOG"
+echo "trace-env $1 fd=${PG_STRACE_FD:-} dir=${PG_TRACE_DIR:+set}" >> "$PG_STUB_LOG"
 case "$1" in
   reduce) mkdir -p "$3"; echo s > "$3/$2_CH.xml.gz"; echo t > "$PG_TRACE_DIR/reduce_$2.trace" ;;
   graphs) echo g > "$4"; echo l > "${4%.root}.log"; echo t > "$PG_TRACE_DIR/graphs_$2.trace" ;;
@@ -401,10 +404,12 @@ class Generate(unittest.TestCase):
         for n in ("PG-RECORD.json", "genie-manifest.json"):
             (rec / n).write_text("{}")
         (g / "run_gevgen_v3.sh").write_text(STUB_RUN)
+        (g / "setup_genie_v3.sh").write_text('export PATH="$PG_STUB_BIN:$PATH"\n')
         (g / "gen5d_v3.py").write_text(STUB_V3)
         (self.dep / "nd-unfolding/fd_f1_prep.py").write_text(STUB_PREP)
         (self.dep / "setup_salloc_env.sh").write_text(STUB_ENV)
-        for name, body in (("python3", PY311.replace("{py}", sys.executable)), ("hadd", HADD), ("timev", TIMEV)):
+        for name, body in (("python3", PY311.replace("{py}", sys.executable)), ("hadd", HADD), ("timev", TIMEV),
+                           ("gevgen", "#!/bin/sh\n"), ("gspl2root", "#!/bin/sh\n")):
             (self.bin / name).write_text(body)
             (self.bin / name).chmod(0o755)
         self.sysbin = self.tmp / "sysbin"            # what /usr/bin gives on Perlmutter and not on macOS
@@ -442,9 +447,12 @@ class Generate(unittest.TestCase):
         self.assertNotIn(str(self.W), out)
         self.assertIn("[pg] the deploy unchanged: pass", out)
         self.assertIn("[pg] the required inventory: pass", out)
+        tenv = [ln for ln in self.log.read_text().splitlines() if ln.startswith("trace-env ")]
+        self.assertEqual(len(tenv), 2 + 2 + 14)                     # every pipeline step traced, on descriptor 9
+        self.assertTrue(all(ln.endswith(" fd=9 dir=set") for ln in tenv), tenv)
         self.assertEqual(pg_lib.inventory_problems(str(self.W), pg_lib.inventory()), [])
         checks = json.loads((self.W / "PRODUCTS.json").read_text())["checks"]
-        self.assertEqual(len(checks), 3 + 2 * (2 + 7))
+        self.assertEqual(len(checks), 3 + 2 * (3 + 7))
         self.assertTrue(all(checks.values()))
         self.assertIn("[pg] generation: pass (14 gst)", out)
         log = self.log.read_text().splitlines()
@@ -465,7 +473,10 @@ class Generate(unittest.TestCase):
         self.assertIn("/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1802a00000-k250-e1000/"
                       "data/README", checks[1])
         ver = [ln.split() for ln in log if ln.startswith("pg_verify ")]
-        self.assertEqual([v[1] for v in ver[:3]], ["tool-check", "members-check", "tool-check"])
+        self.assertEqual([v[1] for v in ver[:5]], ["tool-check", "members-check", "tool-check", "exe-check", "exe-check"])
+        for v in ver[3:5]:                                        # the programs as each tune's setup resolves them
+            self.assertEqual([v[i + 1].rsplit("/", 1)[1] for i, x in enumerate(v) if x == "--path"], ["gevgen", "gspl2root"])
+        self.assertLess(log.index(" ".join(ver[4])), next(i for i, ln in enumerate(log) if ln.startswith("run_gevgen_v3")))
         self.assertEqual(log.index(" ".join(ver[0])), 0)                           # strace is the first step
         self.assertIn("--self-test", ver[0])
         self.assertTrue(ver[0][ver[0].index("--path") + 1].endswith("/9"))       # checked through the descriptor
@@ -621,6 +632,21 @@ class Generate(unittest.TestCase):
         self.assertIn({"pattern": "out/gen5d/genie_v3_g21_xsec5d.npz", "count": 1}, req)
         rc, so, _ = quiet(pg_lib.main, ["inventory"])
         self.assertEqual((rc, json.loads(so)), (0, req))
+        w = Path(tempfile.mkdtemp(prefix="pg-inv-"))
+        self.addCleanup(shutil.rmtree, w, ignore_errors=True)
+        for r in req:                                              # exactly the required files
+            for k in range(r["count"]):
+                q = w / r["pattern"].replace("t*", f"t{k}")
+                q.parent.mkdir(parents=True, exist_ok=True)
+                q.write_text("x")
+        self.assertEqual(pg_lib.inventory_problems(str(w), req), [])
+        (w / "out/work/u0/t7").mkdir()
+        (w / "out/work/u0/t7/gevgen.log").write_text("x")          # one too many
+        self.assertEqual(pg_lib.inventory_problems(str(w), req), ["out/work/u0/t*/gevgen.log: 8 files, not 7"])
+        (w / "out/work/u0/t7/gevgen.log").unlink()
+        (w / "PRODUCTS.json").unlink()
+        (w / "PRODUCTS.json").symlink_to(w / "seeds.json")          # a link is not a file
+        self.assertEqual(pg_lib.inventory_problems(str(w), req), ["PRODUCTS.json: 0 files, not 1"])
 
     def test_a_failed_strace_check_stops_before_any_step(self):
         p = self.run_gen(PG_STUB_VERIFY_FAIL="--self-test")
@@ -638,7 +664,8 @@ class Generate(unittest.TestCase):
         self.refused(self.run_gen(PG_DEPLOY_PIN=pin))
 
     def test_a_failed_members_or_dbconfig_check_stops(self):
-        for fail, msg in (("members-check", "slot 1's private product"), ("f" * 64, "slot 1's UPS database file")):
+        for fail, msg in (("members-check", "slot 1's private product"), ("f" * 64, "slot 1's UPS database file"),
+                          ("exe-check", "gevgen and gspl2root against the manifest")):
             with self.subTest(fail):
                 for d in ("out", "run"):
                     shutil.rmtree(self.W / d, ignore_errors=True)
@@ -647,6 +674,13 @@ class Generate(unittest.TestCase):
                 self.assertIn(f"[pg] STOP: {msg}", p.stdout)
                 self.assertFalse([ln for ln in self.log.read_text().splitlines() if ln.startswith("run_gevgen_v3")])
                 self.log.unlink()
+
+    def test_a_program_that_does_not_resolve_stops(self):
+        os.remove(self.bin / "gspl2root")
+        p = self.run_gen()
+        self.assertEqual(p.returncode, 1)
+        self.assertIn("[pg] STOP: resolve gevgen and gspl2root (G21_11a_00_000)", p.stdout)
+        self.assertFalse([ln for ln in self.log.read_text().splitlines() if ln.startswith(("run_gevgen_v3", "pg_verify exe"))])
 
     def test_a_failed_trace_check_stops(self):
         for fail, msg, gen in (("--role graphs", "trace check (graphs", False), ("--role reduce", "trace check (reduce", False),

@@ -4,10 +4,21 @@
 (`state/2d-closeout/covfix-20261122/COVFIX-DECLARATION.md` §4.1–§4.2). It runs F1's bound pipeline with only the
 tune names and the seeds changed, in F1b′'s single-wave layout (`FD-F1-DECLARATION-AMENDMENT-2.md` §4).
 
-**Status: not ready to bind.** `gen5d_v3.PG_SPLINE_PINS` is empty until PG's probe has run
-(`state/2d-closeout/covfix-20261122/pg/probe/`). Until it is filled, `spline-check` refuses every PG tune, so the run
-STOPs at its second step. `test_covfix_pg.py::Consistency::test_pg_pins_match_the_probe` checks the filled pins
-against the committed probe output.
+**Status: not ready to bind.**
+- `pg_pins.json` (strace's path and sha256, CVMFS's dbconfig sha256) is empty until the director pins it from PG's
+  probe receipt (R1). Until then `pg_generate.sh` refuses before any step.
+- Slot 1's private product must also be installed by B2 (`state/2d-closeout/covfix-20261122/pg/install/`).
+
+**Slot 1 and the checks** (`state/2d-closeout/covfix-20261122/pg/PLAN-SLOT1-PROBE.md`, approved; `RULINGS-A2.md`).
+Slot 1 is G21_11a_00_000, from a sha-pinned private copy of SciSoft's G2111a00000 product under
+`/pscratch/sd/j/josephrb/covfix-pg/products`. Slot 2 is G18_02a_00_000, from CVMFS. Before generation, in order:
+1. strace is opened once on fd 9, its sha256 is checked through that descriptor, and its self-test runs.
+2. The private product is checked against every pinned member, and its UPS database file against its pin.
+3. `gevgen` and `gspl2root`, as each tune's setup resolves them, are checked against the genie manifest.
+4. reduce and gspl2root run under strace, and their traces are checked: the pinned configuration from the run, and
+   the reduced spline opened.
+Every gevgen task is traced the same way, and checked after generation. Every check's pass is recorded in
+PRODUCTS.json, and the required inventory (`pg_lib.py inventory`) is checked last.
 
 ## Contract
 
@@ -67,10 +78,15 @@ difference is a STOP.
   timeout is F1b′'s 5,115 s (`budget3.json`), and the node's wall limit is the parent's.
 - **Work directories** are `u<u>/t<k>`, not `s<seed>`, and the status file is renamed (above).
 - **The truths** go through `fd_f1_prep.py --truth-set pg`, with the names `genie_v3_g21` and `genie_v3_g18_02a`. `--truth-set f1`, the default, is F1's, unchanged.
-- **The PG spline pins** are in `gen5d_v3.PG_SPLINE_PINS`, apart from F1's bound `SPLINE_PINS`.
-- `setup_genie_v3.sh` and `run_gevgen_v3.sh` gain the three PG qualifier cases. `setup_genie_v3.sh`'s
-  `GENIE_XSEC_TUNE` check is unchanged: it requires the product to set the tune asked for, and the probe prints the
-  product's UPS lines for it.
+- **The PG spline pins** are in `gen5d_v3.PG_SPLINE_PINS`, apart from F1's bound `SPLINE_PINS`. They are SciSoft's
+  digests from PG's offline record, and the node's bytes must equal them.
+- `setup_genie_v3.sh` and `run_gevgen_v3.sh` gain the two PG qualifier cases. `setup_genie_v3.sh`'s
+  `GENIE_XSEC_TUNE` check is unchanged: it requires the product to set the tune asked for.
+- **Slot 1 only:** `setup_genie_v3.sh` prepends the private products directory to `PRODUCTS`, and
+  `run_gevgen_v3.sh reduce` reads that copy's `gxspl-NUsmall.xml`.
+- **The trace prefix:** `run_gevgen_v3.sh` runs awk, gspl2root and gevgen under strace only when both
+  `PG_STRACE_FD` and `PG_TRACE_DIR` are given. It never inherits `PG_TRACE`. With neither, F1's commands run
+  byte-identically.
 
 ## Tests
 

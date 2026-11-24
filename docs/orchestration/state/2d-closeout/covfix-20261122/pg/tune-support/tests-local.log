@@ -1,32 +1,15 @@
-============================= test session starts ==============================
-platform darwin -- Python 3.12.2, pytest-8.3.4, pluggy-1.5.0 -- /Users/josephbailey/miniconda3/bin/python3
-standard-P4 suites: writable tmpdir = True
-rootdir: /Users/josephbailey/tunegen-wt/nd-unfolding
-plugins: zarr-3.2.1, cov-7.1.0, anyio-4.6.2, typeguard-4.3.0
-collecting ... collected 23 items
+........................................................................ [ 86%]
+...........                                                              [100%]
+=============================== warnings summary ===============================
+nd-unfolding/tests/test_pg_verify.py::Members::test_members_check
+nd-unfolding/tests/test_pg_verify.py::Members::test_members_check
+nd-unfolding/tests/test_pg_verify.py::Members::test_members_check
+nd-unfolding/tests/test_pg_verify.py::Members::test_members_check
+nd-unfolding/tests/test_pg_verify.py::Members::test_members_check
+nd-unfolding/tests/test_pg_verify.py::Members::test_members_check
+nd-unfolding/tests/test_pg_verify.py::Members::test_members_check
+  /Users/josephbailey/miniconda3/lib/python3.12/tarfile.py:2221: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.
+    warnings.warn(
 
-tests/test_covfix_pg.py::Seeds::test_products PASSED                     [  4%]
-tests/test_covfix_pg.py::Seeds::test_queue PASSED                        [  8%]
-tests/test_covfix_pg.py::Seeds::test_refusals_name_the_rule_not_the_seed PASSED [ 13%]
-tests/test_covfix_pg.py::Seeds::test_the_ceiling_rule_itself PASSED      [ 17%]
-tests/test_covfix_pg.py::Seeds::test_valid PASSED                        [ 21%]
-tests/test_covfix_pg.py::Consistency::test_f1_is_unchanged PASSED        [ 26%]
-tests/test_covfix_pg.py::Consistency::test_layout_is_f1b_primes PASSED   [ 30%]
-tests/test_covfix_pg.py::Consistency::test_names PASSED                  [ 34%]
-tests/test_covfix_pg.py::Consistency::test_pg_pins_match_the_probe SKIPPED [ 39%]
-tests/test_covfix_pg.py::Consistency::test_qualifier_cases PASSED        [ 43%]
-tests/test_covfix_pg.py::Gen5dV3Pins::test_spline_check_refuses_an_unpinned_tune PASSED [ 47%]
-tests/test_covfix_pg.py::PrepPG::test_config PASSED                      [ 52%]
-tests/test_covfix_pg.py::PrepPG::test_main_pg PASSED                     [ 56%]
-tests/test_covfix_pg.py::Generate::test_a_failed_task_stops_and_leaves_no_seed_in_a_name PASSED [ 60%]
-tests/test_covfix_pg.py::Generate::test_a_missing_gst_stops_before_any_conversion PASSED [ 65%]
-tests/test_covfix_pg.py::Generate::test_a_stop_ends_the_other_background_steps PASSED [ 69%]
-tests/test_covfix_pg.py::Generate::test_a_write_into_the_deploy_stops PASSED [ 73%]
-tests/test_covfix_pg.py::Generate::test_bad_seeds_stop_before_any_step PASSED [ 78%]
-tests/test_covfix_pg.py::Generate::test_end_to_end PASSED                [ 82%]
-tests/test_covfix_pg.py::Generate::test_fallback_tune PASSED             [ 86%]
-tests/test_covfix_pg.py::Generate::test_flux_check_failure_stops PASSED  [ 91%]
-tests/test_covfix_pg.py::Generate::test_refusals PASSED                  [ 95%]
-tests/test_covfix_pg.py::Generate::test_tasks_rename_their_own_files_if_the_script_is_killed PASSED [100%]
-
-======================== 22 passed, 1 skipped in 18.24s ========================
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+83 passed, 7 warnings in 224.97s (0:03:44)
