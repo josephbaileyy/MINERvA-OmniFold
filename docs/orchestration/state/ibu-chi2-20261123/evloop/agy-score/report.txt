@@ -1,0 +1,214 @@
+### Q1. Implementation of Controls
+
+Every control declared in [`DECLARATION.txt`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/DECLARATION.txt#L15-L21) is implemented exactly as declared with the specified $10^{-9}$ thresholds and strict STOP conditions.
+
+#### Declared Text ([`DECLARATION.txt` lines 15–21](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/DECLARATION.txt#L15-L21)):
+```text
+## Controls (STOP if any fails; no reading)
+ C-REPRO  BASE products from the merged rerun equal what the chain analysed: M and T equal signed_data.npz
+          (7a35b7e2...) at max|diff|/max <= 1e-9; B equals hBkgReco2D and N equals hDataReco2D (E_R xsec.root
+          a5c13fc3...) at rel <= 1e-9. Entry counts: mc_signal_reco 32,849,103, mc_background 658,227.
+ C-KIN    for selected reco rows, (mu_p_total/1000) sin(mu_theta) and cos(mu_theta) equal sim/sim_pz (data:
+          measured/measured_pz), max |diff| <= 1e-9 GeV.
+ C-ANG    theta3D(mu_thetaX, mu_thetaY) = atan(sqrt(tan^2 tx + tan^2 ty)) equals mu_theta, max |diff| <= 1e-9 rad.
+```
+
+#### Implemented Lines:
+- **C-KIN and C-ANG evaluation** in [`ana.py` lines 20–26](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/ana.py#L20-L26):
+  ```python
+  def ctl_kin(a, x, z, passed):
+      m = passed & (a["mu_p_total"] > 0)
+      pt, pz = kin(a["mu_p_total"][m], a["mu_theta"][m])
+      return float(max(np.max(np.abs(pt - a[x][m])), np.max(np.abs(pz - a[z][m])))), float(np.max(np.abs(th3(a["mu_thetaX"][m], a["mu_thetaY"][m]) - a["mu_theta"][m])))
+  out["C_KIN_sig"], out["C_ANG_sig"] = ctl_kin(sig, "sim", "sim_pz", sig["sim_pass"] != 0)
+  out["C_KIN_bkg"], out["C_ANG_bkg"] = ctl_kin(bkg, "sim_background", "sim_background_pz", bkg["sim_background_pass"] != 0)
+  out["C_KIN_data"], out["C_ANG_data"] = ctl_kin(dat, "measured", "measured_pz", dat["measured_pass"] != 0)
+  ```
+- **Control verification and STOP condition** in [`score_evloop.py` lines 12–20](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/score_evloop.py#L12-L20):
+  ```python
+  mx = lambda a, b: float(np.max(np.abs(a - b)) / np.max(np.abs(b)))
+  rl = lambda a, b: float(np.max(np.abs(a - b)[b > 0] / b[b > 0]))
+  T = P["T"]; ctl = {"C-REPRO-M": mx(P["BASE_M"], M0), "C-REPRO-T": mx(T, T0), "C-REPRO-B": rl(P["BASE_B"], Bref), "C-REPRO-N": rl(P["BASE_N"], Nref)}
+  cnt = {"n_sig": A["n_sig"] == 32849103, "n_bkg": A["n_bkg"] == 658227}
+  kin = {k: A[k] for k in A if k.startswith("C_KIN") or k.startswith("C_ANG")}
+  ok = all(x <= 1e-9 for x in ctl.values()) and all(cnt.values()) and all(x <= 1e-9 for x in kin.values())
+  out = dict(controls=ctl, counts=cnt, kin_ang=kin, controls_pass=ok, ana=A)
+  if not ok:
+      out["reading"] = "STOP"; print(json.dumps(out, indent=1, default=float)); raise SystemExit
+  ```
+
+---
+
+### Q2. Implementation of Readings and Comparison of Texts
+
+Every declared reading rule is implemented. Below is the clause-by-clause comparison and audit of any mismatches or nuances:
+
+1. **SEL and MAD COL and ROW classes:**
+   - **Declaration ([line 41](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/DECLARATION.txt#L41)):**
+     > `"COL, for SEL, MAD:   EXPLAINS |S_COL| <= |S_COL,BASE|/3; PARTIAL reduction >= 30 %; NONE otherwise; WRONG-WAY > 1.3x."`
+   - **Declaration ([line 45](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/DECLARATION.txt#L45)):**
+     > `"ROW for SEL, MAD, CURV: reported with the SEL/MAD classes."`
+   - **Scorer ([lines 40–43, 48](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/score_evloop.py#L40-L48)):**
+     ```python
+     def cls(a, b):
+         if abs(b) > 1.3 * abs(a): return "WRONG-WAY"
+         if abs(b) <= abs(a) / 3: return "EXPLAINS"
+         return "PARTIAL" if 1 - abs(b) / abs(a) >= 0.3 else "NONE"
+     ...
+     COL=cls(S0["COL"], Sk["COL"]), ROW=cls(S0["ROW"], Sk["ROW"])
+     ```
+   - **Audit:** Exact implementation of thresholds and ordering.
+
+2. **CURV and RANGE COL EXPLAINS & Rules:**
+   - **Declaration ([lines 42–43](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/DECLARATION.txt#L42-L43)):**
+     > `"COL, for CURV, RANGE: EXPLAINS if the best d has |d| <= 3 %, |S_COL(d)| <= |S_COL,BASE|/3, and no column with p|| < 20 moves by more than 1 percentage point; PARTIAL if reduction >= 30 % within |d| <= 3 %; else NONE."`
+   - **Scorer ([lines 50–57](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/score_evloop.py#L50-L57)):**
+     ```python
+     chi = np.array([stats(MB, H[i], BB)["chi2"] for i in range(len(d))]); i0 = int(np.argmin(chi))
+     inside = d[chi <= chi[i0] + 1]; Sd = stats(MB, H[i0], BB); dh = float(d[i0])
+     colmove = max(abs(Sd["cols"][j] - S0["cols"][j]) for j in range(14))
+     red = 1 - abs(Sd["COL"]) / abs(S0["COL"])
+     best_any = max(1 - abs(stats(MB, H[i], BB)["COL"]) / abs(S0["COL"]) for i in range(len(d)))
+     c = ("EXPLAINS" if (abs(dh) <= 0.03 and abs(Sd["COL"]) <= abs(S0["COL"]) / 3 and colmove <= 0.01) else "PARTIAL" if red >= 0.3 else "NONE")
+     return dict(d_hat=dh, interval=[float(inside.min()), float(inside.max())], at_edge=bool(i0 in (0, len(d) - 1)), S=Sd, colmove_lt20=colmove,
+                 COL=c, ROW=cls(S0["ROW"], Sd["ROW"]), D10=dag(MB, H[i0], BB), best_COL_reduction_any_d=best_any)
+     ```
+   - **Audit of conditions:**
+     - `|d| <= 3 %`: `abs(dh) <= 0.03`.
+     - 1/3 bar: `abs(Sd["COL"]) <= abs(S0["COL"]) / 3`.
+     - `no column with p|| < 20 moves by more than 1 percentage point`: `colmove <= 0.01` where `colmove` is checked over `range(14)` (bins 0 through 13 correspond to $[1.5, 20)$ GeV).
+     - `PARTIAL`: evaluated as `red >= 0.3` at $\hat{d}$, with `best_COL_reduction_any_d` reported descriptively.
+     - `WRONG-WAY`: Declaration specifies `else NONE` for CURV/RANGE COL; scorer returns `"NONE"` when `red < 0.3`.
+
+3. **ANG ROW EXPLAINS & Rules:**
+   - **Declaration ([line 44](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/DECLARATION.txt#L44)):**
+     > `"ROW, for ANG:        EXPLAINS if the best (dx,dy) has |dx|,|dy| <= 2 mrad and |S_ROW| <= |S_ROW,BASE|/3; PARTIAL >= 30 %; else NONE."`
+   - **Scorer ([lines 59–62](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/score_evloop.py#L59-L62)):**
+     ```python
+     a = P["scan_a"]; HA = P["scanA"]; chiA = np.array([[stats(MB, HA[i, j], BB)["chi2"] for j in range(len(a))] for i in range(len(a))])
+     i0, j0 = np.unravel_index(np.argmin(chiA), chiA.shape); SA = stats(MB, HA[i0, j0], BB)
+     cA = ("EXPLAINS" if (abs(a[i0]) <= 0.002 and abs(a[j0]) <= 0.002 and abs(SA["ROW"]) <= abs(S0["ROW"]) / 3) else "PARTIAL" if 1 - abs(SA["ROW"]) / abs(S0["ROW"]) >= 0.3 else "NONE")
+     res["ANG"] = dict(dx=float(a[i0]), dy=float(a[j0]), at_edge=bool(i0 in (0, len(a) - 1) or j0 in (0, len(a) - 1)), S=SA, ROW=cA, D10=dag(MB, HA[i0, j0], BB))
+     ```
+   - **Audit:**
+     - Best point: `(i0, j0) = argmin(chiA)`.
+     - $|dx|, |dy| \le 2\text{ mrad}$: `abs(a[i0]) <= 0.002 and abs(a[j0]) <= 0.002`.
+     - 1/3 bar: `abs(SA["ROW"]) <= abs(S0["ROW"]) / 3`.
+     - `PARTIAL`: `1 - abs(SA["ROW"]) / abs(S0["ROW"]) >= 0.3`.
+
+4. **ROW for RANGE (Minor addition):**
+   - **Declaration ([line 45](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/DECLARATION.txt#L45)):**
+     > `"ROW for SEL, MAD, CURV: reported with the SEL/MAD classes."`
+   - **Scorer ([line 57](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/score_evloop.py#L57)):**
+     `scan1` assigns `ROW=cls(S0["ROW"], Sd["ROW"])` for both CURV and RANGE. While the declaration explicitly required ROW reporting for SEL, MAD, and CURV, reporting it for RANGE as well is completely harmless and consistent.
+
+5. **Combined Statements:**
+   - **Declaration ([lines 46–47](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/DECLARATION.txt#L46-L47)):**
+     > `"Combined COL statement: exactly one of {SEL, MAD, CURV} EXPLAINS -> "consistent with <that>"; several -> "not separable among <those>"; none -> "none of the tested". Same for ROW with {ANG, SEL, MAD}."`
+   - **Scorer ([lines 63–65](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/score_evloop.py#L63-L65)):**
+     ```python
+     colx = [k for k in ("SEL", "MAD", "CURV") if res[k]["COL"] == "EXPLAINS"]; rowx = [k for k in ("ANG", "SEL", "MAD") if res[k]["ROW"] == "EXPLAINS"]
+     comb = lambda L: ("consistent with " + L[0]) if len(L) == 1 else ("not separable among " + ", ".join(L)) if L else "none of the tested"
+     out.update(results=res, COL_statement=comb(colx), ROW_statement=comb(rowx), reading="READ")
+     ```
+   - **Audit:** Exact match in strings, logic, and tested sets (`{SEL, MAD, CURV}` for COL; `{ANG, SEL, MAD}` for ROW).
+
+---
+
+### Q3. Readings of "PARTIAL if reduction >= 30 % within |d| <= 3 %"
+
+#### Alternative Readings:
+The declaration text ([lines 42–43](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/DECLARATION.txt#L42-L43)):
+> `"COL, for CURV, RANGE: EXPLAINS if the best d has |d| <= 3 %, |S_COL(d)| <= |S_COL,BASE|/3, and no column with p|| < 20 moves by more than 1 percentage point; PARTIAL if reduction >= 30 % within |d| <= 3 %; else NONE."`
+
+While the EXPLAINS clause explicitly specifies `"the best d"`, the PARTIAL clause shifts phrasing to `"reduction >= 30 % within |d| <= 3 %"`. This admits two primary readings:
+1. **The Fitted $\hat{d}$ Reading (Scorer's implementation):**
+   Evaluate reduction strictly at the global best-fit parameter $\hat{d} = \text{argmin}(\chi^2)$:
+   $$\text{reduction}(\hat{d}) = 1 - \frac{|S_{\text{COL}}(\hat{d})|}{|S_{\text{COL,BASE}}|} \ge 0.30$$
+2. **The Profile/Existential Reading (Alternative):**
+   Evaluate whether *any* tested parameter within the scan window $|d| \le 3\%$ achieves a $30\%$ reduction:
+   $$\max_{|d| \le 0.03} \left(1 - \frac{|S_{\text{COL}}(d)|}{|S_{\text{COL,BASE}}|}\right) \ge 0.30$$
+3. **The Confidence-Interval Reading (Alternative):**
+   Evaluate whether any $d$ inside the declared $1\sigma$ uncertainty interval ($\Delta \chi^2 \le 1$ around $\hat{d}$) achieves $\ge 30\%$ reduction.
+
+#### Conservatism of the Scorer's Choice:
+The scorer's choice (Reading 1) is strictly the **more conservative** one:
+- **Prevents cherry-picking:** In an unconstrained scan over 61 points in $d \in [-3\%, +3\%]$, a shift might fortuitously pull down $S_{\text{COL}}$ while drastically degrading the fit across the rest of the 223 cells (leading to a high $\chi^2$ that is statistically ruled out).
+- **Physical consistency:** It demands that the single parameter value favored by the complete dataset $\hat{d}$ must itself resolve at least $30\%$ of the discrepancy.
+- **Reporting transparency:** The scorer evaluates the formal classification `COL` at $\hat{d}$, but also computes and outputs `best_COL_reduction_any_d` descriptively ([line 57](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/score_evloop.py#L57)), providing full visibility into Alternative 2 without compromising the conservative classification bar.
+
+---
+
+### Q4. Post-Data Choices, Adaptations, or Free Parameters
+
+There is **no code path** in [`score_evloop.py`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/score_evloop.py) or [`ana.py`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/ana.py) that chooses a variant, a $d$, a $(dx, dy)$, a region, or a weight after seeing data, other than the declared fits:
+
+1. **Fixed Weights (No recomputation per variant):**
+   - Declared: `"fixed BASE weights"` ([`DECLARATION.txt` line 37](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/DECLARATION.txt#L37)).
+   - Implemented: [`score_evloop.py` lines 23–24](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/score_evloop.py#L23-L24):
+     ```python
+     s = float(A["pot_scale"]); NB, BB, MB = P["BASE_N"], P["BASE_B"], P["BASE_M"]
+     f0 = R(MB, T) @ tpub; e2 = NB + s * (MB @ ((tpub / np.where(T > 0, T, 1))**2)); wgt = np.where(f0 > 0, f0**2 / e2, 0)
+     ```
+     `wgt` is constructed once from BASE and reused unchanged in all calls to `stats(...)`.
+2. **Fixed Cell Masks and Regions:**
+   - Implemented: [`score_evloop.py` lines 25–26](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/score_evloop.py#L25-L26):
+     ```python
+     ipt, ipz = np.divmod(np.arange(224), 16); use = NB > 0
+     REG = {"COL": use & (ipz == 15), "ROW": use & (ipt == 0)}
+     ```
+     Cell sets are fixed beforehand by kinematic bin indices and non-zero BASE data count.
+3. **No Dynamic Variant Selection:**
+   - [`score_evloop.py` lines 44–62](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/score_evloop.py#L44-L62) loop unconditionally over all variants (`BASE`, `SEL`, `MAD`, `CURV`, `RANGE`, `ANG`).
+4. **Parameter Optimization strictly follows declared fit:**
+   - Declared: `"fit the parameter(s) by the reco fold chi2 over all cells with data, CV combined errors, free global c"` ([`DECLARATION.txt` lines 32–33](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/DECLARATION.txt#L32-L33)).
+   - Implemented: [`score_evloop.py` lines 32, 50, 60](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/score_evloop.py#L32):
+     ```python
+     c = np.sum((y * fo / e2)[use]) / np.sum((fo**2 / e2)[use]); S["chi2"] = float(np.sum(((y - c * fo)**2 / e2)[use]))
+     ...
+     i0 = int(np.argmin(chi))
+     ...
+     i0, j0 = np.unravel_index(np.argmin(chiA), chiA.shape)
+     ```
+     The free global $c$ is the exact closed-form analytic minimum $\partial \chi^2 / \partial c = 0$, used strictly for finding the fit minimum. $c$ is not applied to scale $S_{\text{reg}}$.
+
+---
+
+### Q5. Technical Audit for Calculation or Number Bugs
+
+1. **Kinematic Indexing:**
+   - In [`ana.py` lines 5, 8–10](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/ana.py#L5): `PT` has 15 edges ($N_{p_T} = 14$ bins, index 0..13); `PZ` has 17 edges ($N_{p_\parallel} = 16$ bins, index 0..15).
+   - Global linear index is `ip * 16 + iz`.
+   - In [`score_evloop.py` line 25](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/score_evloop.py#L25): `ipt, ipz = np.divmod(np.arange(224), 16)`.
+     - `ipt = idx // 16`: $p_T$ bin index (0..13). Row `ipt == 0` corresponds to $p_T \in [0, 0.07]$ GeV.
+     - `ipz = idx % 16`: $p_\parallel$ bin index (0..15). Column `ipz == 15` corresponds to $p_\parallel \in [40, 60]$ GeV.
+     - In line 52, `range(14)` checks columns 0 through 13, which are bins with upper edge $\le 20$ GeV ($p_\parallel < 20$ GeV). Column 14 is $[20, 40)$ GeV, and Column 15 is $[40, 60)$ GeV.
+   - Matches official reference flattening in `compare_to_paper_fullcov.flatten_ours`: `(Ptbin - 1) * 16 + (P||bin - 1)`.
+   - **Verdict:** Indexing is completely bug-free.
+
+2. **Units:**
+   - In [`ana.py` line 11](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/ana.py#L11): `p / 1000 * np.sin(th)` correctly converts MeV to GeV.
+   - In [`ana.py` line 12](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/ana.py#L12): `th3()` operates in radians. The scan grid $A \in [-0.003, 0.003]$ rad correctly represents $[-3, +3]$ mrad with $0.25$ mrad steps.
+   - In [`score_evloop.py` line 61](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/score_evloop.py#L61): `abs(a) <= 0.002` correctly enforces the $2\text{ mrad}$ limit.
+   - Column movement `colmove <= 0.01` correctly represents 1 percentage point ($0.01$ in fractional deviation).
+   - **Verdict:** Units are consistent and correct throughout.
+
+3. **Shape-Only Statistic Definition:**
+   - Declared: $S_{\text{reg}} = \text{wmean}_{\text{reg}}(y/f - 1) - \text{wmean}_{\text{all}}(y/f - 1)$ with fixed BASE weights $w_i = f_{0, i}^2 / e_i^2$.
+   - In [`score_evloop.py` lines 28–31](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/score_evloop.py#L28-L31):
+     `r = y / fo - 1`
+     `g = np.sum(wgt[use] * r[use]) / np.sum(wgt[use])`
+     `S = float(np.sum(wgt[m] * r[m]) / np.sum(wgt[m]) - g)`
+   - **Verdict:** Implements the exact declared mathematical formula.
+
+4. **D10 Computation:**
+   - In [`score_evloop.py` lines 34–39](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evloop/agyscore/files/score_evloop.py#L34-L39):
+     Standard D'Agostini iteration:
+     $$u_j^{(n+1)} = \frac{u_j^{(n)}}{\epsilon_j} \sum_i R_{ij} \frac{y_i}{(R u^{(n)})_i}$$
+     Initial prior $u^{(0)} = T$, efficiency $\epsilon_j = \sum_i R_{ij}$.
+     Evaluates distance $D_{10} = (F u^{(10)} - \text{pub})^T_{\text{mask}} C^{-1}_{\text{mask}} (F u^{(10)} - \text{pub})_{\text{mask}} / 205$.
+   - **Verdict:** Implemented correctly.
+
+---
+
+### VERDICT: GO

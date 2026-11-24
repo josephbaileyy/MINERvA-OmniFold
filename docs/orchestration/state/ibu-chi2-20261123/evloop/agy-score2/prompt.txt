@@ -1,0 +1,5 @@
+READ-ONLY, short. Do not create, edit, rename or delete any file. Read only.
+score_evloop.v1-v2.diff changes a scorer (score_evloop.py is the new full file). The intent is to ADD two DESCRIPTIVE numbers and change nothing else: for the CURV/RANGE scans, the best reduction of |S_COL| over the whole d range, and over the d values inside the fitted Delta chi2 <= 1 interval, each with a "would meet 30 %" flag. The declared classification (COL = EXPLAINS/PARTIAL/NONE at the fitted d-hat) must be unchanged.
+Q1. Does the diff change the declared classification, the controls, or any other output value? Quote the lines.
+Q2. Are the two descriptive numbers computed correctly (the interval mask `chi <= chi[i0] + 1` and the max)?
+Final: "VERDICT: GO" or "VERDICT: FIX" with numbered fixes.
