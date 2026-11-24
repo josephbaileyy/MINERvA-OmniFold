@@ -1,0 +1,5 @@
+BAIL the window ended (now 1795558979 > 1795558977)
+=== script rc=9; /dev/shm copy left: no
+=== /pscratch/sd/j/josephrb/b5d-20261124/logs/connect-b5d.log
+=== stub calls
+=== written under /pscratch outside /pscratch/sd/j/josephrb/b5d-20261124 (newer than the planting):
