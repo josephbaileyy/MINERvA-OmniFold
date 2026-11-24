@@ -95,6 +95,16 @@ MUTANTS = [
     (R, "        if list(z[\"ks\"]) != ks_want:\n            missing.append(s)",
      "        if list(z[\"ks\"]) != ks_want:\n            pass", [f"{TR}.EndToEnd"],
      "a unit of another K scan is not missing"),
+    (R, '        if meta.get("data_sha256") != shas[s] or marker.get("data_sha256") != shas[s]:',
+     '        if meta.get("data_sha256") != shas[s]:', [f"{TR}.EndToEnd"], "the marker's data digest is not checked"),
+    (R, '        if (meta.get("kind"), meta.get("tune"), meta.get("seed")) != ("toy", truth, s):',
+     '        if meta.get("seed") != s:', [f"{TR}.EndToEnd"], "a unit of another tune or kind is read"),
+    (R, '        if not isinstance(marker, dict) or (marker.get("unit"), marker.get("seed")) != (name, s):',
+     "        if not isinstance(marker, dict):", [f"{TR}.EndToEnd"], "a marker naming another unit is read"),
+    (U, ' and rc.sha256(npz) == m.get("sha256") and rc.sha256(root) == m.get("root_sha256"))',
+     ' and rc.sha256(npz) == m.get("sha256"))', [f"{TU}.Pure"], "the barrier ignores the reference root's digest"),
+    (U, 'good = (m.get("verdict") == "PASS" and m.get("unit") == u and npz.exists()',
+     'good = (m.get("verdict") == "PASS" and npz.exists()', [f"{TU}.Pure"], "the barrier accepts a misnamed marker"),
 ]
 
 

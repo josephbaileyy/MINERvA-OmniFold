@@ -1,0 +1,194 @@
+# Adversarial Code Review: IBUB (Read 2)
+
+**Inputs Evaluated:**
+- `IBUB-DECLARATION.md` (revision 3, accepted design)
+- `ibub_unit.py` and `config.json`
+- `ibub_readout.py`
+- `test_ibub_unit.py`, `test_ibub_readout.py`, `mutants.py`
+- `README.md` (Read 1 record and dispositions)
+- Imported code: `ref_c2c1.py`, `cov2d_readout.py`, `cov2d_readouts.py`, `cov2d_score.py`, `cov2d_blocks.py`
+
+---
+
+## Section Assessment
+
+### 1. Correctness
+- **Indexing (224 vs 205 cells, GlobalID = $p_T \times 16 + p_\parallel$):**
+  - Grid dimensions are correctly defined as $N_X = 14, N_Y = 16$ (`ibub_readout.py:51`).
+  - In `ref_c2c1.py:238-242`, `global_index` maps $(p_T, p_\parallel) \to i_p \times 16 + i_z$.
+  - In `ibub_readout.py:60-74`, `test_matrix` partitions `flat` ($205$ reported cells from `rep`, `ibub_unit.py:127-130`) via `flat // 16` for the $14$ $p_T$ bins and `flat % 16` for the $16$ $p_\parallel$ bins.
+  - The cell count per $p_T$ band reproduces the declared sequence ($16, 16, 16, 16, 16, 16, 16, 16, 16, 15, 14, 13, 11, 8$; `IBUB-DECLARATION.md:185-186`, verified by `test_ibub_readout.py:298-299`).
+  - Masking from 224 to 205 is correctly applied via `[rep]` on `txs["xsec"]` (`ibub_readout.py:298`), on the IBU $K=10$ and $K=5$ rows (`ibub_readout.py:238, 241`), and on `Cells.vec` for $hXSec2D$ (`ibub_readout.py:237, 286`).
+- **Pairing (toys / truths / IBU units / OmniFold labels):**
+  - OmniFold labels are validated against `c.TOY_SEEDS[truth]` in declared order (`ibub_readout.py:296`).
+  - Truth rows from `truth_xsec.npz` are validated against `pseudo_a.json` natures in declared order (`ibub_readout.py:291-295`) and indexed directly by seed (`ibub_readout.py:299`).
+  - IBU units iterate strictly over `c.TOY_SEEDS[truth]` (`ibub_readout.py:198`), matching `dataFileSha256` from `pseudo_b.json` against `meta`, the done-marker, and ROOT provenance (`ibub_readout.py:224-228`).
+  - All errors ($E_{\text{of}}, E_{\text{ibu10}}, E_{\text{ibu5}}$) have shape $(300, 205)$ strictly paired toy-by-toy (`ibub_readout.py:303, 330`).
+- **Bootstrap:**
+  - $B = 10,000$ draws seeded via `numpy.random.default_rng([5_760_000, k])` with $k=0$ (G18) and $k=1$ (AR23) (`config.json:131-136`, `ibub_readout.py:83, 327-328`).
+  - The exact same resampling count matrix `counts` ($B \times n$) is passed to both methods and their paired difference (`ibub_readout.py:139-141`), ensuring sample correlation cancels correctly.
+- **Band Integrals and $\sigma_{\text{band}}$:**
+  - `test_matrix` (`ibub_readout.py:59-74`) builds $W$ ($205 \times 236$) where cell columns are unit basis vectors, band columns contain cell areas $A_c$ for constituent cells ($0$ elsewhere), and the total column contains all cell areas.
+  - Errors and truths are integrated via matrix multiplication ($E W$, $x_{\text{true}} W$; `ibub_readout.py:137, 139`).
+  - $\sigma_{\text{band}} = \sqrt{a^T C_T a}$ is computed via tensor contraction `np.sqrt(np.einsum("ct,cd,dt->t", W, C_T, W))` (`ibub_readout.py:138`), yielding $\sqrt{\text{diag}(C_T)}$ for cells and $\sqrt{a^T C_T a}$ for bands.
+- **$z^*$ and the Reading Rule:**
+  - $z^* = \Phi^{-1}(1 - 0.025 / 236) = 3.7044007\dots$ is computed via `NormalDist().inv_cdf` (`ibub_readout.py:77-78`).
+  - $z_c = \bar{d}_c / \text{SE}_{\text{boot}}(\bar{d}_c)$ evaluates two-sided significance at $|z| > z^*$ (`ibub_readout.py:105, 145`).
+  - Reading emits `"DIFFER"` if any test is flagged, recording test name, $\bar{d}$, $\text{SE}_{\text{boot}}$, $z$, and sign (`ibub_readout.py:155-158`), or `"NOT RESOLVED APART"` with resolution percentage $100 \times z^* \times \text{SE}_{\text{boot}} / |\bar{x}_{\text{true}}|$ (`ibub_readout.py:142`).
+  - If any control fails, no reading is made and the verdict is recorded as `"INVALID"` (`ibub_readout.py:322-323`).
+- **Exit Codes:**
+  - `ibub_unit.py`: `stage` returns $0$ or $4$ (`RC_GATE`); `preflight` returns $0$ or $3$ (`RC_STOP`); `refcheck` returns $0$ or $3$ (`RC_STOP`); `run` returns $0$, $4$ (`RC_GATE`), or $6$ (`RC_CONTROL`) (`ibub_unit.py:53, 321, 345, 372, 401, 434, 438`).
+  - `ibub_readout.py`: returns $0$ on `"PASS"`, $3$ otherwise (`ibub_readout.py:365`).
+- **Exception Paths and Staging Cleanliness:**
+  - `stage_data` (`ibub_unit.py:189-194`) deletes partial copies under `BaseException` before re-raising, and unlinks on sha256 mismatch (`ibub_unit.py:196`).
+  - `run_unit` (`ibub_unit.py:316-318`) always executes `finally: data_copy.unlink()`, ensuring no staged data copy lingers on failure or success.
+  - A unit existing without a PASS done-marker cannot proceed and refuses with `RC_CONTROL` (`ibub_unit.py:251-256`).
+- **Barrier (`refcheck`):**
+  - Requires PASS markers, valid `.npz` digests matching markers, wall-time $\le 1.25 \times 217\,\text{s}$, and agreement between `central_df` and `central` to $10^{-8}$ on the 205 reported cells (`ibub_unit.py:375-401`). Emits `refcheck.json` and exits $0$ only if all checks pass.
+
+---
+
+### 2. Fidelity
+- Every reading and control of `IBUB-DECLARATION.md` §§4–6 is coded:
+  - C-OF (§5, lines 219–235): verified in `ibub_readout.py:172-185, 304-306`.
+  - C-TRUTH (§5, lines 236–244): verified in `ibub_readout.py:276-299`.
+  - C-REP & C-REP-D (§5, lines 245–259): verified in `ibub_unit.py:296-299, 392-397`.
+  - C-G2R (§5, lines 260–261): verified in `ibub_unit.py:148-153, 162, 278`.
+  - C-DATA (§5, lines 262–265): verified in `ibub_unit.py:195-197, 290-295` and `ibub_readout.py:224-228`.
+  - C-FILL & C-ROO (§5, lines 266–268): verified in `ibub_unit.py:279-287`.
+  - C-SIM (§5, line 269): verified in `ibub_unit.py:288-289`.
+  - C-COMPLETE (§5, lines 270–274): verified in `ibub_readout.py:205-208, 308, 312-314`.
+  - C-CELLS (§5, lines 275–278): verified in `ibub_readout.py:246-247, 317-318`.
+  - Descriptive readouts (§6, lines 280–289): surrogate realized mean (`ibub_readout.py:341`), flagged cells 29 & 56 (`ibub_readout.py:334-338`), bootstrap vs. analytic SE ratio (`ibub_readout.py:153, 164`), weakened cells (`ibub_readout.py:339-344`), and Hotelling's $T^2$ (§4, lines 208–210; `ibub_readout.py:110-128, 165`).
+- **Gaps between Declaration and Implementation:**
+  - C-TRUTH declares: *"The IBU unit's done-marker and meta name the same seed"* (`IBUB-DECLARATION.md:240-241`). The done-marker written in `ibub_unit.py:310` writes `"unit": name` but omits an explicit `"seed"` field, and `ibub_readout.py:201-228` does not validate `marker.get("unit") == name` (Finding 2).
+
+---
+
+### 3. Guards
+- **Unit Reading under `/pscratch` or `/global/cfs`:**
+  - All source reads for staging, reference checking, and data staging strictly use `rc.sha256_noatime`, `rc.open_noatime`, or `rc.copy_noatime` (`ibub_unit.py:92, 190, 204, 334, 354`). No plain Python `open` touches guarded paths.
+- **ROOT Opening outside Staging Root:**
+  - In `ibub_unit.py:274`, `rc.run_driver` is invoked with `staging=staging_root(cfg)`.
+  - In `ref_c2c1.py:407-408`, passing `staging` activates `tfile_guard((staging,), (Path(out_root).resolve().parent,), ...)`.
+  - `ROOT.TFile.Open` is patched by `tfile_guard` (`ref_c2c1.py:135-152`), raising `GateFailure` if any file is opened for reading outside the staging root or for writing outside the unit output parent directory.
+- **Readout Guards:**
+  - `ibub_readout.py:266-267` strictly checks that `--out` is not under `cb.GUARDED` (`/global/cfs`, `/pscratch`), raising `c.Refusal` if attempted.
+  - `rd.Run` (`cov2d_readout.py:342-353`) installs `cb.OpenAudit` on `ROOT.TFile.Open`, `builtins.open`, `io.open`, and `os.open` (`cov2d_blocks.py:181-228`), raising `c.Refusal` on any plain open under guarded paths.
+  - All guarded reads within the readout are performed via `cb.read_noatime` and copied into a local scratch directory (`run.copy`, `cov2d_readout.py:358-362`).
+
+---
+
+### 4. Read 1's Dispositions
+All 9 dispositions from `README.md:20-33` were checked against the source code:
+1. **Finding 1 (BLOCKER, C-G2R):** Confirmed not applicable to real code. In `ibub_unit.py:150`, `bad = sorted({a.split("=", 1)[0] for a in argv} & set(cfg["g2r_forbidden_options"]))` correctly catches forbidden flags in both `--opt val` and `--opt=val` syntax.
+2. **Finding 2 (MAJOR, `stage_data` cleanup):** Verified in `ibub_unit.py:189-194` (`except BaseException: if dest.exists(): dest.unlink(); raise`).
+3. **Finding 3 (MAJOR, K scan crash):** Verified in `ibub_readout.py:218-221` (mismatched scan appended to `missing` and `problems`, marked INCOMPLETE).
+4. **Finding 4 (MAJOR, marker digest mismatch crash):** Verified in `ibub_readout.py:209-215` (catches `(c.Refusal, OSError, KeyError)` and marks INCOMPLETE).
+5. **Finding 5 (MAJOR, missing code pins in config):** Verified in `config.json:9-10` (`s5c_unfold.py` and `compare_to_paper_fullcov.py` pinned).
+6. **Finding 6 (MINOR, unit control sets):** Verified in `ibub_unit.py:306-307` and `ibub_readout.py:230-231` (enforcing `CONTROLS[unit["kind"]]`).
+7. **Finding 7 (MINOR, deploy and job binding):** Verified in `ibub_readout.py:234-236, 260-263, 360` (checking `slurm_job`, `runner_sha256`, `config_sha256`).
+8. **Finding 8 (MINOR, AR23 end-to-end test):** Verified in `test_ibub_readout.py:638-647`.
+9. **Finding 9 (NOTE, descriptive fields assertions):** Verified in `test_ibub_readout.py:341-350, 647`.
+
+---
+
+### 5. Tests and Concrete Surviving Mutants
+- 67 tests currently pass across `test_ibub_unit.py` and `test_ibub_readout.py`, and 34 mutants in `mutants.py` are killed.
+- **Surviving Mutant A (`marker.get("data_sha256")` check bypass):**
+  - In `ibub_readout.py:224`:
+    ```python
+    - if meta.get("data_sha256") != shas[s] or marker.get("data_sha256") != shas[s]:
+    + if meta.get("data_sha256") != shas[s]:
+    ```
+  - In `test_ibub_readout.py:448-456` (`test_a_unit_on_another_toys_data_is_invalid`), `Tree.write_unit` mutates `data_sha` simultaneously in both `meta` and `marker`. No test corrupts `marker["data_sha256"]` while keeping `meta["data_sha256"]` valid. This mutant survives all 67 tests.
+- **Surviving Mutant B (`meta` tuple check reduction):**
+  - In `ibub_readout.py:222`:
+    ```python
+    - if (meta.get("kind"), meta.get("tune"), meta.get("seed")) != ("toy", truth, s):
+    + if meta.get("seed") != s:
+    ```
+  - In `test_ibub_readout.py:530-536` (`test_a_unit_naming_another_seed_is_invalid`), only `seed` is perturbed. No test checks a mismatched `tune` or `kind`. This mutant survives all 67 tests.
+
+---
+
+### 6. Referee Demands
+Before executing 600 real toy runs on Perlmutter:
+1. The exception handling in `ibu_products` must catch `json.JSONDecodeError` / `ValueError` when reading `.done` markers and `.npz` metadata, preventing an unhandled crash when a marker is truncated or 0-byte (Finding 1).
+2. `marker.get("unit") == name` (or an explicit `seed` key in the marker) must be verified to satisfy C-TRUTH (Finding 2).
+3. `refcheck` should verify both `.root` and `.npz` product digests before allowing toy submission (Finding 6).
+
+---
+
+## Numbered Findings
+
+### 1. MAJOR: Corrupted or zero-byte `.done` marker causes unhandled crash (`JSONDecodeError`) instead of recording `INCOMPLETE`
+- **Location:** `ibub_readout.py:201-204`, `ibub_readout.py:216-217`
+- **Problem:**
+  In `ibub_readout.py:201-204`:
+  ```python
+  try:
+      marker = json.loads(cb.read_noatime(units / f"{name}.done")[0])
+  except OSError:
+      missing.append(s)
+      continue
+  ```
+  If a SLURM task aborts abruptly (e.g., node eviction, wall-time limit, or filesystem flush failure) leaving a $0$-byte or truncated `<name>.done` file, `json.loads` raises `json.decoder.JSONDecodeError`. Because `JSONDecodeError` inherits from `ValueError` (not `OSError`), the exception escapes uncaught, crashing the readout with a traceback rather than treating the unit as missing and setting verdict `"INCOMPLETE"`. Similarly, malformed metadata in `z["meta"]` at line 217 raises an unhandled `JSONDecodeError`.
+- **Fix:**
+  Catch `(OSError, ValueError, json.JSONDecodeError)` in line 203:
+  ```python
+  try:
+      marker = json.loads(cb.read_noatime(units / f"{name}.done")[0])
+  except (OSError, ValueError) as e:
+      missing.append(s)
+      problems.append(f"{name}: unreadable done-marker ({e})")
+      continue
+  ```
+  and wrap lines 216–221 in a `try...except (ValueError, KeyError, OSError)` block that appends `s` to `missing`.
+
+---
+
+### 2. MINOR: Done-marker omits explicit seed check declared in C-TRUTH
+- **Location:** `IBUB-DECLARATION.md:240-241`, `ibub_unit.py:310`, `ibub_readout.py:201-228`
+- **Problem:**
+  Declaration §5 states: *"The IBU unit's done-marker and meta name the same seed."* `ibub_unit.py:310` writes `"unit": name` without a `"seed"` key, and `ibub_readout.py:201-228` checks `meta.get("seed") == s` but never validates `marker.get("unit") == name` or `marker.get("seed") == s`.
+- **Fix:**
+  In `ibub_unit.py:310`, add `"seed": unit["seed"]` and `"tune": unit["tune"]` to the marker payload. In `ibub_readout.py:222`, verify `(marker.get("unit"), marker.get("seed")) == (name, s)`.
+
+---
+
+### 3. MINOR: Missing test coverage for independent `marker.get("data_sha256")` failure (Surviving Mutant)
+- **Location:** `ibub_readout.py:224`, `test_ibub_readout.py:448-456`, `mutants.py`
+- **Problem:**
+  `test_a_unit_on_another_toys_data_is_invalid` writes the mismatched hash to both `meta` and `marker`. Consequently, a mutant deleting `or marker.get("data_sha256") != shas[s]` survives all tests.
+- **Fix:**
+  Add a unit test in `test_ibub_readout.py` where `marker["data_sha256"]` is mismatched while `meta["data_sha256"]` is correct, and register this mutant in `mutants.py`.
+
+---
+
+### 4. MINOR: Unhandled `JSONDecodeError` on malformed marker in `refcheck` and unit check
+- **Location:** `ibub_unit.py:252`, `ibub_unit.py:383`
+- **Problem:**
+  In `refcheck` (`ibub_unit.py:383`), `m = json.loads(marker.read_text()) if marker.exists() else {}` crashes with `JSONDecodeError` if `<unit>.done` exists but contains malformed or empty text, rather than recording `pass: False` and exiting with `RC_STOP` (3).
+- **Fix:**
+  Wrap `json.loads(marker.read_text())` in a `try...except (ValueError, OSError): m = {}`.
+
+---
+
+### 5. NOTE: Guard check rejects `--out` pointing to `/pscratch`
+- **Location:** `ibub_readout.py:264-268`
+- **Observation:**
+  `ibub_readout.py:266` deliberately refuses `--out` directories located under `/pscratch` to maintain the open audit integrity. Operational submission scripts must explicitly supply an output path outside guarded trees (such as the repository receipt checkout or local scratch).
+
+---
+
+### 6. NOTE: Barrier `refcheck` does not verify reference `.root` product digest
+- **Location:** `ibub_unit.py:384`, `IBUB-DECLARATION.md:320-322`
+- **Observation:**
+  `refcheck` validates `npz.exists()` and `rc.sha256(npz) == m["sha256"]`, but does not verify `root.exists()` or `root_sha256` for `central` and `central_df`.
+- **Fix:**
+  Add `root.exists() and rc.sha256(root) == m.get("root_sha256")` to `good` in `ibub_unit.py:384`.
+
+---
+
+VERDICT: REVISE

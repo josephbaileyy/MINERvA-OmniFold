@@ -255,7 +255,10 @@ class Pure(unittest.TestCase):
         for u, v, s, scale in (("central", "PASS", seconds[0], 1.0), ("central_df", df_verdict, seconds[1], df_scale)):
             arr = dict(base, xsec=base["xsec"] * scale)
             np.savez(d / f"{u}.npz", **arr)
-            (d / f"{u}.done").write_text(json.dumps({"verdict": v, "seconds": s, "sha256": rc.sha256(d / f"{u}.npz")}))
+            (d / f"{u}.root").write_bytes(u.encode())
+            (d / f"{u}.done").write_text(json.dumps({"unit": u, "verdict": v, "seconds": s,
+                                                     "sha256": rc.sha256(d / f"{u}.npz"),
+                                                     "root_sha256": rc.sha256(d / f"{u}.root")}))
         return rep
 
     def test_refcheck_is_the_barrier(self):
@@ -277,6 +280,21 @@ class Pure(unittest.TestCase):
         d = self.tmp()
         rep = self.refs(d)
         (d / "central_df.done").unlink()
+        self.assertEqual(iu.refcheck(REAL, d, rep), iu.RC_STOP)
+        d = self.tmp()                                            # the agy code read 2, finding 6: the root's digest too
+        rep = self.refs(d)
+        (d / "central.root").write_bytes(b"other")
+        self.assertEqual(iu.refcheck(REAL, d, rep), iu.RC_STOP)
+        for bad in ("", '{"verdict": "PA', '"PASS"'):          # finding 4: a malformed marker is never PASS
+            d = self.tmp()
+            rep = self.refs(d)
+            (d / "central.done").write_text(bad)
+            with self.subTest(marker=bad):
+                self.assertEqual(iu.refcheck(REAL, d, rep), iu.RC_STOP)
+        d = self.tmp()                                            # a marker naming the other reference
+        rep = self.refs(d)
+        m = json.loads((d / "central.done").read_text())
+        (d / "central.done").write_text(json.dumps(dict(m, unit="central_df")))
         self.assertEqual(iu.refcheck(REAL, d, rep), iu.RC_STOP)
 
 
@@ -476,7 +494,9 @@ class Driver(unittest.TestCase):
             m = self.meta(name)
             self.assertEqual(set(m["controls"]), keys)
             self.assertTrue(all(v["pass"] for v in m["controls"].values()), m["controls"])
-            self.assertEqual(json.loads((self.out / f"{name}.done").read_text())["verdict"], "PASS")
+            marker = json.loads((self.out / f"{name}.done").read_text())
+            self.assertEqual((marker["verdict"], marker["unit"], marker["kind"]), ("PASS", name, m["kind"]))
+            self.assertEqual((marker["tune"], marker["seed"]), (m["tune"], m["seed"]))
 
     def test_central_df_equals_central_and_the_toy_differs(self):
         a, b, t = (np.load(self.out / f"{n}.npz") for n in ("central", "central_df", f"toy_G18_{self.seed}"))
@@ -575,6 +595,14 @@ class Driver(unittest.TestCase):
         self.assertEqual(json.loads((out / "refcheck.json").read_text())["verdict"], "PASS")
         self.assertEqual(self.meta(f"toy_G18_{self.seed}", out)["inputs_sha256"],
                          {k: cfg["inputs"][f"{k}_sha256"] for k in ("CV", "MC", "lib")})
+
+    def test_a_malformed_marker_beside_products_is_not_overwritten(self):
+        out = self.td / "malformed"
+        out.mkdir()
+        (out / "central.root").write_bytes(b"x")
+        (out / "central.done").write_text("{trunc")
+        self.assertEqual(self.unit("central", out), iu.RC_CONTROL)
+        self.assertEqual((out / "central.root").read_bytes(), b"x")
 
     def test_a_pass_unit_is_skipped_and_a_failed_one_is_not_overwritten(self):
         self.assertEqual(self.unit("central", self.out), 0)

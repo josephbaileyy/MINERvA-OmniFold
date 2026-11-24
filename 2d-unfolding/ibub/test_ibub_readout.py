@@ -197,7 +197,8 @@ class Tree:
         self.vec[key.decode()] = self.x_ibu[k]
         self.prov[key.decode()] = {"dataFileSha256": ds}
         (self.units / f"{name}.done").write_text(json.dumps({
-            "unit": name, "verdict": "PASS", "sha256": sha(buf.getvalue()), "root_sha256": sha(key), "data_sha256": ds}))
+            "unit": name, "kind": "toy", "tune": self.T, "seed": s, "verdict": "PASS", "sha256": sha(buf.getvalue()),
+            "root_sha256": sha(key), "data_sha256": ds}))
 
     def reorder_truth(self):
         """truth_xsec.npz with two rows' seeds exchanged (its rows no longer follow the natures)."""
@@ -644,6 +645,56 @@ class EndToEnd(Patched):
         self.assertEqual(set(rec["descriptive"]["cov2d_flagged_cells"]), {str(int(x)) for x in tr.flat[3:5]})
         self.assertTrue(str(tr.run / "pseudo/AR23-a2/b") in tr.config()["toys"]["AR23"]["dir"])
         self.assertEqual(rec["C-CELLS"]["negative"], {"K10": 0, "K5": 0})
+
+    def test_a_truncated_or_misnamed_marker_is_missing_not_a_crash(self):
+        tr = Tree(self.td)
+        (tr.units / f"toy_{T}_{SEEDS[20]}.done").write_text("")                  # empty
+        (tr.units / f"toy_{T}_{SEEDS[21]}.done").write_text('{"unit": "toy_G18')   # truncated
+        m = json.loads((tr.units / f"toy_{T}_{SEEDS[23]}.done").read_text())
+        (tr.units / f"toy_{T}_{SEEDS[22]}.done").write_text(json.dumps(m))        # toy 23's marker in toy 22's place
+        self.patch(tr)
+        rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "INCOMPLETE")
+        self.assertEqual(rec["C-COMPLETE"]["missing"], [SEEDS[20], SEEDS[21], SEEDS[22]])
+        self.assertEqual(sum("not readable JSON" in p for p in rec["C-DATA"]["problems"]), 2)
+        self.assertTrue(any("done-marker names" in p for p in rec["C-DATA"]["problems"]))
+
+    def test_a_marker_naming_another_toys_data_is_invalid(self):
+        tr = Tree(self.td)
+        f = tr.units / f"toy_{T}_{SEEDS[24]}.done"
+        f.write_text(json.dumps(dict(json.loads(f.read_text()), data_sha256=tr.data_sha[SEEDS[25]])))  # meta is right
+        self.patch(tr)
+        rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "INVALID")
+        self.assertTrue(any("is not toy" in p for p in rec["C-DATA"]["problems"]))
+
+    def test_a_unit_naming_another_tune_or_kind_is_invalid(self):
+        for field, value in (("tune", "AR23"), ("kind", "central_df")):
+            td = Path(tempfile.mkdtemp()).resolve()
+            self.addCleanup(shutil.rmtree, td, True)
+            tr = Tree(td)
+            self.rewrite_meta(tr, 26, meta={field: value})
+            with self.subTest(field=field):
+                self.patch(tr)
+                rec = self.go(tr)
+                self.assertEqual(rec["verdict"], "INVALID")
+                self.assertTrue(any("meta names" in p for p in rec["C-DATA"]["problems"]))
+
+    def test_an_npz_whose_meta_is_not_json_is_missing(self):
+        tr = Tree(self.td)
+        self.rewrite_meta(tr, 27)
+        name = tr.units / f"toy_{T}_{SEEDS[27]}"
+        z = dict(np.load(name.with_suffix(".npz")))
+        z["meta"] = "{not json"
+        buf = io.BytesIO()
+        np.savez(buf, **z)
+        name.with_suffix(".npz").write_bytes(buf.getvalue())
+        m = json.loads(name.with_suffix(".done").read_text())
+        name.with_suffix(".done").write_text(json.dumps(dict(m, sha256=sha(buf.getvalue()))))
+        self.patch(tr)
+        rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "INCOMPLETE")
+        self.assertTrue(any("not readable" in p for p in rec["C-DATA"]["problems"]))
 
 
 class HotellingSingular(unittest.TestCase):

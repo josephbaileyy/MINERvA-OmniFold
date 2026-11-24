@@ -202,6 +202,14 @@ def ibu_products(run, units: Path, truth: str, shas: dict, ks_want: list, rep: n
         except OSError:
             missing.append(s)
             continue
+        except ValueError as e:            # a truncated or empty marker (JSONDecodeError is a ValueError)
+            missing.append(s)
+            problems.append(f"{name}: its done-marker is not readable JSON ({e})")
+            continue
+        if not isinstance(marker, dict) or (marker.get("unit"), marker.get("seed")) != (name, s):
+            missing.append(s)
+            problems.append(f"{name}: its done-marker names {marker.get('unit') if isinstance(marker, dict) else marker!r}")
+            continue
         if marker.get("verdict") != "PASS":
             missing.append(s)
             problems.append(f"{name}: verdict {marker.get('verdict')}")
@@ -213,8 +221,13 @@ def ibu_products(run, units: Path, truth: str, shas: dict, ks_want: list, rep: n
             missing.append(s)
             problems.append(f"{name}: its products are not its marker's ({e})")
             continue
-        z = np.load(npz)
-        meta = json.loads(str(z["meta"]))
+        try:
+            z = np.load(npz)
+            meta = json.loads(str(z["meta"]))
+        except (ValueError, KeyError, OSError) as e:
+            missing.append(s)
+            problems.append(f"{name}: its npz or meta is not readable ({e})")
+            continue
         if list(z["ks"]) != ks_want:
             missing.append(s)
             problems.append(f"{name}: K scan {list(z['ks'])}")

@@ -230,6 +230,15 @@ def compare(a: dict, b: dict, rep: np.ndarray, rtol: float) -> dict:
     return out
 
 
+def read_marker(path: Path) -> dict:
+    """A done-marker as a dict; an absent, empty or malformed one reads as {} (no verdict, so never PASS)."""
+    try:
+        m = json.loads(Path(path).read_text())
+    except (OSError, ValueError):
+        return {}
+    return m if isinstance(m, dict) else {}
+
+
 def provenance(path: Path) -> dict:
     """The driver's TNamed records in its own output."""
     import ROOT
@@ -249,7 +258,7 @@ def run_unit(driver, ohf, cfg: dict, unit: dict, out: Path, *, shas: dict, rep: 
     name = unit["name"]
     root, npz, marker = out / f"{name}.root", out / f"{name}.npz", out / f"{name}.done"
     if npz.exists() or root.exists():
-        verdict = json.loads(marker.read_text()).get("verdict") if marker.exists() else None
+        verdict = read_marker(marker).get("verdict")
         if verdict == "PASS":
             return 0
         print(f"refusing: {name} exists without a PASS done-marker (verdict {verdict})", file=sys.stderr)
@@ -307,7 +316,8 @@ def run_unit(driver, ohf, cfg: dict, unit: dict, out: Path, *, shas: dict, rep: 
             raise GateFailure(f"{name}: controls {sorted(controls)} are not the declared {sorted(CONTROLS[unit['kind']])}")
         passed = all(v["pass"] for v in controls.values())
         np.savez_compressed(npz, **arrays, meta=json.dumps(meta, default=str))
-        marker.write_text(json.dumps({"unit": name, "verdict": "PASS" if passed else "FAIL", "seconds": meta["seconds"],
+        marker.write_text(json.dumps({"unit": name, "kind": unit["kind"], "tune": unit["tune"], "seed": unit["seed"],
+                                      "verdict": "PASS" if passed else "FAIL", "seconds": meta["seconds"],
                                       "sha256": rc.sha256(npz), "root_sha256": rc.sha256(root),
                                       "data_sha256": data_sha}) + "\n")
     except GateFailure as e:
@@ -379,9 +389,10 @@ def refcheck(cfg: dict, out: Path, rep: np.ndarray) -> int:
     limit = cfg["price"]["reprice_factor"] * cfg["price"]["unit_s"]
     arrays = {}
     for u in REFERENCE_UNITS:
-        marker, npz = out / f"{u}.done", out / f"{u}.npz"
-        m = json.loads(marker.read_text()) if marker.exists() else {}
-        good = m.get("verdict") == "PASS" and npz.exists() and rc.sha256(npz) == m.get("sha256")
+        marker, npz, root = out / f"{u}.done", out / f"{u}.npz", out / f"{u}.root"
+        m = read_marker(marker)
+        good = (m.get("verdict") == "PASS" and m.get("unit") == u and npz.exists() and root.exists()
+                and rc.sha256(npz) == m.get("sha256") and rc.sha256(root) == m.get("root_sha256"))
         secs = m.get("seconds")
         fast = isinstance(secs, (int, float)) and secs <= limit
         rec["units"][u] = {"verdict": m.get("verdict"), "seconds": secs, "limit_s": limit, "pass": bool(good and fast)}
