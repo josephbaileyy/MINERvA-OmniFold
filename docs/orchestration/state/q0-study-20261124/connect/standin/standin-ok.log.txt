@@ -1,0 +1,45 @@
+== script rc=0
+== the connect log
+  node c5847adcb816 nproc=4 loadavg 0.66 0.19 0.06
+  2026-11-24T08:05:36Z
+  window_end_epoch 1795508436 (now 1795507536); fence prefixes cov2d,rpd_,ibub_,ibuchi_,d2s0,covfix
+  connect script sha256 1bfa6286f2b4787e943b06b7cfd8a97d4413652ca7b12075f6453af5d65433c1
+  == cov2d fence rev 3 (7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738)
+  fence host=c5847adcb816 utc=2026-11-24T08:05:36Z
+  sacct -X -n -P -u root -S 2026-11-10T08:05:36 -E now -o JobID,JobName,State 2>&1
+  sacct matching rows: 1
+  FENCE CLEAR
+  == fence (sacct)
+  fence clear
+  == extractor sha256 5dd1f2bf03fd7bf2db30c0dd990b14cb909da00124b6ac38919b90b32f535d17 (checked)
+  threads 2; nice 19; ionice idle; python 3.11.18
+  == extract (mc_signal_reco only; O_NOATIME)
+  {"n_pass": 2778, "q0_status_counts": {"0": 2775, "1": 3, "2": 0}, "recovery_control": {"rows": 2298, "max_abs_resid_GeV": 1.426059270670521e-14, "tol_GeV": 1e-06, "n_W2_negative": 477}, "npz_sha256": "c1ee471e2aad7d3e67a251202434877a41573b0cebae63e35e485e2bccfec23b", "npz_bytes": 108246}
+  	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.43
+  	Maximum resident set size (kbytes): 49564
+  == records
+  2026-11-24T08:05:37Z
+  3a3ac5642e583412953fba73e9b246a3cdde3e630a8bbdf375210660b83e6fe7  extract/q0_extract.json
+  c1ee471e2aad7d3e67a251202434877a41573b0cebae63e35e485e2bccfec23b  extract/q0_extract.npz
+  a09aab30f2dc8b1e98e662dab462fdfd0c997ef4aeb8479f3dc957ab2eadfa02  logs/extract.err
+  ee6e350e9d7c6b213b1b624e62609d89f62e863654b39d1c1db6452041fdaf99  logs/extract.out
+  5dd1f2bf03fd7bf2db30c0dd990b14cb909da00124b6ac38919b90b32f535d17  logs/q0_extract.py
+  1bfa6286f2b4787e943b06b7cfd8a97d4413652ca7b12075f6453af5d65433c1  logs/q0_q0.sh
+  fetch-q0.tar sha256 deac43c65be5acda24ffe63ecbc1b2d1d8097355ee40846b001e294616bcd7d4 bytes 153600
+  q0 q0 rc=0
+  2026-11-24T08:05:37Z
+== done: 0
+RECORDS.SHA256SUMS
+extract
+fetch-q0.tar
+logs
+== tar members
+logs/
+logs/extract.out
+logs/q0_extract.py
+logs/extract.err
+logs/q0_q0.sh
+extract/
+extract/q0_extract.npz
+extract/q0_extract.json
+RECORDS.SHA256SUMS
