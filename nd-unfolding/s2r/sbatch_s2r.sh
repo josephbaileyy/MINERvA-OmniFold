@@ -18,6 +18,9 @@
 set -o pipefail   # NOT set -u
 D="${1:?deploy}"; PIN="${2:?pin}"; OUT="${3:?out}"
 PY="$D/nd-unfolding/s2r/s2r_probe.py"
+if [ -n "$SLURM_JOB_ID" ] || [ -z "$S2R_SMOKE" ]; then
+    [ "$OUT" = /pscratch/sd/j/josephrb/s2r-20261124 ] || { echo "[s2r] refusing: OUT $OUT is not the declared /pscratch/sd/j/josephrb/s2r-20261124" >&2; exit 2; }
+fi
 RD="$D/nd-unfolding/s2r/s2r_read.py"
 head_sha=$(git -C "$D" rev-parse HEAD 2>/dev/null)
 dirty=$(git -C "$D" status --porcelain --untracked-files=no 2>/dev/null | wc -l)
@@ -81,8 +84,10 @@ fence_check() {
 }
 fence_check
 if [ -z "$SLURM_JOB_ID" ] && [ -n "$S2R_SMOKE" ]; then echo "[s2r] smoke: past the fence, nothing staged or run" >&2; exit 0; fi
-mkdir -p "$L/tasks"
+T0=$(python3 -c "import time; print(time.time())")   # before staging: the gate counts the staging time
+mkdir -p "$L/tasks" "$OUT/tmp"
 source "$D/setup_salloc_env.sh" > "$L/env.log" 2>&1
+export TMPDIR="$OUT/tmp"   # setup_salloc_env.sh sets $SCRATCH/tmp: every temporary file stays under OUT
 python3 -c "import lightgbm, scipy, numpy" >> "$L/env.log" 2>&1 || { echo "[s2r] refusing: the environment lacks lightgbm/scipy" >&2; exit 7; }
 ( cd "$D" && python3 "$PY" manifest --out "$OUT/manifest.json" ) > "$L/manifest.log" 2>&1 \
     || { echo "manifest failed" > "$L/STOP"; echo "[s2r] STOP: the manifest refused; see $L/manifest.log" >&2; exit 1; }
@@ -92,10 +97,9 @@ python3 -c "import lightgbm, scipy, numpy" >> "$L/env.log" 2>&1 || { echo "[s2r]
     > "$L/tasks.log" 2>&1 || { echo "tasks failed" > "$L/STOP"; echo "[s2r] STOP: the queue was not written" >&2; exit 1; }
 Q="$OUT/queues/run.tsv"
 [ "$(grep -vc '^#' "$Q")" -eq 6 ] || { echo "queue count" > "$L/STOP"; echo "[s2r] STOP: the queue does not hold six tasks" >&2; exit 1; }
-T0=$(python3 -c "import time; print(time.time())")
 echo "[s2r] job=$SLURM_JOB_ID host=$(hostname) pin=$PIN lanes=6 limit=$LIMIT start=$(date -u +%FT%TZ)"
 TIME_BIN="${S2R_TIME_BIN:-/usr/bin/time}"
-export D Q L T0 LIMIT_H TIME_BIN PY
+export D Q L T0 LIMIT_H TIME_BIN PY TMPDIR
 grep -v '^#' "$Q" | cut -f1 | xargs -P 6 -I{} bash -c '
     id="$1"
     python3 "$PY" gate --task "$id" --queue "$Q" --log "$L" --t0 "$T0" --limit-h "$LIMIT_H"
@@ -111,16 +115,19 @@ grep -v '^#' "$Q" | cut -f1 | xargs -P 6 -I{} bash -c '
 rc=$?
 echo "[s2r] queue rc=$rc end=$(date -u +%FT%TZ)"
 ( cd "$OUT" && find runs -type f -name '*.npz' -print0 | sort -z | xargs -0 -r sha256sum ) > "$L/SHA256SUMS"
+src=$?
 [ -e "$L/STOP" ] && { echo "[s2r] STOP: $(cat "$L/STOP")" >&2; exit 1; }
 [ "$rc" -eq 0 ] || { echo "rc=$rc" > "$L/FAILED"; echo "[s2r] STOP: a task failed (rc=$rc)" >&2; exit 1; }
 n_end=0
 for id in $(grep -v '^#' "$Q" | cut -f1); do [ -e "$L/$id.end" ] && n_end=$((n_end + 1)); done
 [ "$n_end" -eq 6 ] || { echo "ended=$n_end of 6" > "$L/FAILED"; echo "[s2r] STOP: $n_end of 6 tasks ended" >&2; exit 1; }
+[ "$src" -eq 0 ] && [ "$(grep -c '' "$L/SHA256SUMS")" -eq 6 ] || { echo "sums rc=$src" > "$L/FAILED"; echo "[s2r] STOP: the products' SHA256SUMS failed" >&2; exit 1; }
 ( cd "$D" && python3 "$PY" pair --stage "$OUT/stage.json" --runs "$OUT/runs" --out "$L/pair.json" ) > "$L/pair.log" 2>&1
 pc=$?
 [ "$pc" -eq 0 ] || { echo "pair rc=$pc" > "$L/STOP"; echo "[s2r] STOP: C-PAIR, C-X or C-ONE did not pass (rc=$pc)" >&2; exit 1; }
 ( cd "$D" && python3 "$RD" --runs "$OUT/runs" --stage "$OUT/stage.json" --pair "$L/pair.json" --out "$OUT/read" ) > "$L/read.log" 2>&1
 rdc=$?
 [ "$rdc" -eq 0 ] || { echo "read rc=$rdc" > "$L/STOP"; echo "[s2r] STOP: the read refused (rc=$rdc)" >&2; exit 1; }
-echo "{\"tasks\": 6, \"ended\": $n_end, \"rc\": 0, \"job\": \"$SLURM_JOB_ID\"}" > "$L/DONE"
+echo "{\"tasks\": 6, \"ended\": $n_end, \"rc\": 0, \"job\": \"$SLURM_JOB_ID\"}" > "$L/DONE.tmp" && mv "$L/DONE.tmp" "$L/DONE" \
+    || { echo "[s2r] STOP: DONE was not written" >&2; exit 1; }
 echo "[s2r] done"

@@ -13,7 +13,8 @@ wrappers around its own three estimators; ``s5e_trace``'s bitwise rebuild of w_p
   [w_truth, w_pull * w_truth] (``omnifold_nn_core.py``, s2w), which the tracer checks bitwise as it always does; the
   wrapper then fits the inner classifier on [nu_{n-1} * w_truth, w_pull * w_truth] instead, and its ``predict_proba``
   returns p with p / (1 - p) = nu_{n-1} * L, L being the inner classifier's clipped ratio. So the loop's own
-  ``_reweight`` sets w_push = nu_{n-1} * L. Nothing else changes: step 1, the regressor and the extraction are the
+  ``_reweight`` sets w_push = nu_{n-1} * L (C-ARM STOPs if any row's nu_{n-1} * L reaches the loop's clip of p, where
+  the loop would saturate it). Nothing else changes: step 1, the regressor and the extraction are the
   loop's. At n = 1, nu_0 = 1, so S2R's first fit is B0's (its output differs only by the p -> q -> p round trip).
 
 S2R uses only w_pull and w_push, which the loop computes from the pseudo-data and the simulation: no truth weight
@@ -43,6 +44,7 @@ ITERS = {"B0": 5, "S2R": 20}
 GRADE_K = 5  # the production iteration count: the declared test reads every arm at k = 5
 ROUND_TRIP_RTOL = 1e-10  # C-ARM: w_push equals nu_{n-1} * L to this relative tolerance where neither is clipped
 CLIP = A.CLIP
+Q_LOW, Q_HIGH = 1.01 * CLIP / (1 - CLIP), 0.99 * (1 - CLIP) / CLIP  # inside the loop's clip of p, with margin
 
 
 class S2RWrapped(A.ArmWrapped):
@@ -124,11 +126,14 @@ class S2RTracer(A.ArmTracer):
         if not np.array_equal(self._s2r_ref, self.w_push):  # the tracer's w_push is still nu_{n-1} here
             raise TraceError(f"C-ARM S2R: iteration {k}: the reference is not the previous push weights")
         q = self._s2r_q
-        free =(q > CLIP * 1.01) & (q < 0.99 / CLIP)
+        free = (q > Q_LOW) & (q < Q_HIGH)
         dev = float(np.max(np.abs(w_push[free] / q[free] - 1.0))) if free.any() else 0.0
         ev["s2r_max_round_trip"].append(dev)
         ev["s2r_clipped"].append(int((~free).sum()))
         ev["s2r_ref_is_push"].append(bool(k > 1 or np.all(self._s2r_ref == 1.0)))
+        if not free.all():  # the loop's clip of p would replace nu_(n-1) * L on these rows: not the declared product
+            raise TraceError(f"C-ARM S2R: iteration {k}: {int((~free).sum())} rows of nu_(n-1) * L outside "
+                             f"({Q_LOW:.3g}, {Q_HIGH:.3g}), where the loop's clip of p saturates")
         if not dev <= ROUND_TRIP_RTOL:
             raise TraceError(f"C-ARM S2R: iteration {k}: w_push departs from nu_(n-1) * L by {dev:.3e}")
         if k == 1 and not np.all(self._s2r_ref == 1.0):

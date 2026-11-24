@@ -131,6 +131,19 @@ def check_namespace(ns, arm: str, truth: str) -> str | None:
         return f"truth {truth}'s alternative is {alt}"
     if alt is not None and float(getattr(ns, "alternative_amplitude", -1)) != float(amp):
         return f"truth {truth}'s amplitude is {amp}"
+    if alt is not None and not alt.startswith("CLUSTER:") and str(got_alt) != alt:
+        return f"truth {truth}'s alternative path is {alt}"
+    if alt is not None:
+        import estimator_stability_probe as esp
+        try:
+            want_kind = esp.closure_truth_kind(Path(alt), kind) if not alt.startswith("CLUSTER:") else kind
+        except (ValueError, OSError) as exc:
+            return f"truth {truth}'s alternative kind cannot be resolved: {exc}"
+        if getattr(ns, "alternative_truth", None) != want_kind:
+            return f"truth {truth}'s alternative kind is {want_kind}"
+    out = Path(str(getattr(ns, "out", "")))
+    if out.parts[-3:] != ("runs", arm, truth):
+        return f"the output directory is <runs>/{arm}/{truth}"
     return None
 
 

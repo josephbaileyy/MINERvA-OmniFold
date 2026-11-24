@@ -25,6 +25,7 @@ for _p in (HERE, ND, ND / "tier3", ND / "pv-ladder", ND / "prior_retention"):
         sys.path.insert(0, str(_p))
 import prr_read as RD  # noqa: E402
 import t3p_probe as T  # noqa: E402
+import t3p_arms as A  # noqa: E402
 import t3p_read as RT  # noqa: E402
 import s2r_arm as S  # noqa: E402
 import s2r_probe as SP  # noqa: E402
@@ -57,6 +58,10 @@ def products(runs: Path) -> dict:
         blk = meta.get("s2r") or {}
         if blk.get("arm") != arm or blk.get("truth") != t or blk.get("iters") != S.ITERS[arm]:
             raise Stop("product", f"{p.name}: its s2r block names {blk.get('arm')}/{blk.get('truth')}/{blk.get('iters')}")
+        need = [f"xs_k{k}" for k in A.PAIR_KS if k <= S.ITERS[arm]]
+        missing = [k for k in need if k not in arrays]
+        if missing or S.GRADE_K not in [int(k[4:]) for k in need]:
+            raise Stop("C-TRACE", f"{p.name}: the snapshots {missing} are missing (k = {S.GRADE_K} is graded)")
         if arrays["X16_push"].shape != (S.ITERS[arm], 16):
             raise Stop("product", f"{p.name}: X16_push has shape {arrays['X16_push'].shape}")
         if not all(np.all(np.isfinite(arrays[k])) for k in ("xsec_flat", "xtrue_flat", "X16_push")):

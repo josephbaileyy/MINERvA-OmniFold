@@ -61,21 +61,33 @@ class Arm(StandIns, unittest.TestCase):
         self.assertEqual(tr.evidence["s2r_fits"], 0)
 
     def test_s2r_fits_step2_against_the_previous_push(self):
-        """REQUIRED: the inner step-2 fit's first class carries nu_(k-1) * w_truth, the second the loop's own."""
-        _, rec, tr = self.traced("S2R", 4)
+        """REQUIRED: the inner step-2 fit's first class carries nu_(k-1) * w_truth, nu_(k-1) being the push weights the
+        loop produced at iteration k-1 (recorded from the loop's own w_push, independently of the fit)."""
+        pushes = []
+        orig = s5c_unfold.unfold
+
+        import omnifold_nn_core as onc
+        orig_loop = onc._reweight
+
+        def spy(events, clf):
+            out = orig_loop(events, clf)
+            if getattr(clf, "_role", None) == "step2":
+                pushes.append(np.array(out, copy=True))
+            return out
+        onc._reweight = spy
+        try:
+            _, rec, tr = self.traced("S2R", 4)
+        finally:
+            onc._reweight = orig_loop
         clf2 = self.built[-1][1]
         m = np.asarray(self.unf["pass_truth"], bool)
         wt = np.asarray(self.unf["w_truth"])[m]
         n = len(wt)
-        self.assertEqual(len(clf2.weights), 4)
+        self.assertEqual((len(clf2.weights), len(pushes)), (4, 4))
         self.assertTrue(np.array_equal(clf2.weights[0][:n], wt))  # nu_0 = 1
-        # the push after iteration k-1, rebuilt from the recorded truth functional is not enough: use the tracer chain
-        pushes = [np.ones(n)]
         for k in range(1, 4):
-            w = clf2.weights[k]
-            self.assertFalse(np.array_equal(w[:n], wt))
-            pushes.append(w[:n] / wt)
-        self.assertTrue(np.allclose(pushes[-1] * wt, clf2.weights[3][:n], rtol=0, atol=0))
+            self.assertTrue(np.array_equal(clf2.weights[k][:n], pushes[k - 1] * wt), k)
+            self.assertFalse(np.array_equal(clf2.weights[k][:n], wt), k)
         self.assertEqual(tr.evidence["s2r_fits"], 4)
         self.assertTrue(all(d <= S.ROUND_TRIP_RTOL for d in tr.evidence["s2r_max_round_trip"]))
 
@@ -131,14 +143,23 @@ class Arm(StandIns, unittest.TestCase):
             S.S2RTracer({"pass_reco": np.ones(2, bool), "w_truth": np.ones(2), "w_reco": np.ones(2)},
                         lambda *a: None, "MO", np.ones(2))
 
-    def test_the_inner_clip_is_counted(self):
+    def test_saturation_of_the_accumulated_ratio_stops(self):
+        """B1 (codex read): where nu_(k-1) * L leaves the loop's clip range, the loop would saturate it: C-ARM STOPs."""
         saved = Linear.predict_proba
         Linear.predict_proba = lambda self, X: np.column_stack([np.ones(len(X)), np.zeros(len(X))])
         try:
-            with self.assertRaises(Exception):
-                self.traced("S2R", 2)  # every weight clipped to 1e-6: the extraction or C-ARM refuses, never silently
+            with self.assertRaisesRegex(s5e_trace.TraceError, "outside"):
+                self.traced("S2R", 4)
         finally:
             Linear.predict_proba = saved
+
+    def test_saturation_bounds_sit_inside_the_loops_clip(self):
+        lo, hi = S.Q_LOW, S.Q_HIGH
+        self.assertGreater(lo, S.CLIP / (1 - S.CLIP))
+        self.assertLess(hi, (1 - S.CLIP) / S.CLIP)
+        for q in (lo * 1.0001, 1.0, hi * 0.9999):  # inside: the loop's odds return q to 1e-10
+            p = q / (1 + q)
+            self.assertLess(abs(s5e_trace.reweight_like_loop(np.array([[1 - p, p]]))[0] / q - 1), S.ROUND_TRIP_RTOL)
 
 
 class Rule(unittest.TestCase):
@@ -248,6 +269,14 @@ class Queues(unittest.TestCase):
         ns.pseudo_seeds = "994001:994001"
         self.assertIsNotNone(SP.check_namespace(ns, "S2R", "q3"))
         self.assertIsNotNone(SP.check_namespace(good, "B0", "q3"))  # B0 runs 5 iterations
+        for k, v in {"alternative": Path("docs/elsewhere.json"), "alternative_truth": "eavail_tilt",
+                     "out": Path("/S/elsewhere/S2R/q3"), }.items():
+            ns = argparse.Namespace(**vars(good))
+            setattr(ns, k, v)
+            self.assertIsNotNone(SP.check_namespace(ns, "S2R", "q3"), k)
+        ns = argparse.Namespace(**vars(good))
+        ns.out = Path("/S/runs/B0/q3")
+        self.assertIsNotNone(SP.check_namespace(ns, "S2R", "q3"))
         self.assertIsNotNone(SP.check_namespace(good, "S2R", "A7_gibuu"))  # q3's hypothesis
 
 
@@ -544,6 +573,12 @@ class Read(unittest.TestCase):
         with self.assertRaises(SR.Stop):
             self.read()
 
+        def no_k5(arrays, meta):
+            del arrays["xs_k5"]
+        self.build(self.passing, tamper=(("S2R", "q3"), no_k5))
+        with self.assertRaisesRegex(SR.Stop, "snapshots"):
+            self.read()
+
         def bad_meta(arrays, meta):
             meta["s2r"]["iters"] = 50
         self.build(self.passing, tamper=(("B0", "A7_gibuu"), bad_meta))
@@ -599,6 +634,14 @@ class JobScript(unittest.TestCase):
         rc, err = self.sh(pin="0" * 40)
         self.assertEqual(rc, 2)
         self.assertIn("deploy HEAD", err)
+
+    def test_out_is_pinned_outside_a_smoke(self):
+        e = {**os.environ, "PATH": f"{self.bin}:{os.environ['PATH']}", "SLURM_JOB_ID": "1", "SLURM_JOB_NAME": "s2r_run"}
+        e.pop("S2R_SMOKE", None)
+        p = subprocess.run(["bash", str(HERE / "sbatch_s2r.sh"), str(self.deploy), self.pin, str(self.out)],
+                           capture_output=True, text=True, env=e, timeout=120)
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("is not the declared /pscratch/sd/j/josephrb/s2r-20261124", p.stderr)
 
     def test_a_wrong_job_name_refuses(self):
         rc, err = self.sh(S2R_NAME="t3p_dry")
