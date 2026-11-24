@@ -1,0 +1,1 @@
+d2-predict supervisor_rc=1 rc=4 signal=- deadline=0 leftover_killed=0 group_gone=1 peak_rss_bytes=2003857408 end=2026-11-24T11:20:58Z

@@ -1,0 +1,9 @@
+READ-ONLY review. Do not create, edit, rename or delete any file. Read only.
+Files: score_evloop.py (sha a1a4a046...), the local scorer; DECLARATION.txt (sha f3a8064f...), the analysis declaration it must implement; ana.py, the cluster pass that writes the products the scorer reads (keys T, BASE_/SEL_/MAD_ M,B,N, scan_d, scanC, scanR, scan_a, scanA, and ana.json fields).
+The scorer evaluates CURV/RANGE "PARTIAL" at the fitted d-hat (argmin of the fold chi2), not at the best d in the range; it prints the best-over-range reduction as descriptive only.
+Q1. Is every control (C-REPRO, the entry counts, C-KIN, C-ANG with their 1e-9 thresholds) implemented as declared? Quote the lines.
+Q2. Is every reading implemented as declared: SEL/MAD COL and ROW classes, CURV/RANGE EXPLAINS (with |d|<=3 %, the 1/3 bar, and the "no column with p|| < 20 moves by more than 1 percentage point" rule), ANG EXPLAINS (|dx|,|dy| <= 2 mrad, 1/3 bar), the PARTIAL and WRONG-WAY rules, and the combined statements? List every mismatch, quoting both texts.
+Q3. Does the declaration's text "PARTIAL if reduction >= 30 % within |d| <= 3 %" allow any reading other than the fitted d-hat? State what the alternatives are, and whether the scorer's choice is the more conservative one.
+Q4. Could any code path choose a variant, a d, a (dx,dy), a region or a weight after seeing the data, other than the declared fits? For example: weights recomputed per variant, cell sets chosen from data, or a free normalization used where the declaration does not allow it. Quote the lines.
+Q5. Any bug that would give wrong numbers (indexing of p|| columns ipz in 0..15 with column 15 = 40-60 and row ipt=0 = pT 0-0.07; units; the shape-only statistic definition; the D10 computation).
+Final: Q1-Q5, then "VERDICT: GO" or "VERDICT: FIX" with numbered fixes.

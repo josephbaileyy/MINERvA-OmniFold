@@ -1,0 +1,9 @@
+/Users/josephbailey/meas-wt/nd-unfolding/msr/msr_project.py:157: RuntimeWarning: divide by zero encountered in divide
+  BQ = np.linalg.qr(U[:, ~inf])[0] if (~inf).any() else np.zeros((n, 0))
+FAILS (as required)  test_both_routes_meet_the_50_digit_reference_on_the_ill_conditioned_fixture  AssertionError: 2.207822759879702e-05 not less than or equal to 1e-08 : ('numpy', 0)
+FAILS (as required)  test_the_eigen_route_widths_meet_the_reference  AssertionError: 
+seed 0: old eigen/independent rel per vector 2.2e-05/7.3e-08, 2.1e-03/2.8e-07, 1.0e-04/1.2e-08, 1.8e-06/2.8e-09: both miss on one vector (defect reproduced)
+seed 1: old eigen/independent rel per vector 8.7e-02/4.8e-04, 4.3e-02/5.6e-05, 5.4e-02/9.6e-05, 9.8e-02/1.3e-05: both miss on one vector (defect reproduced)
+seed 3: old eigen/independent rel per vector nan/1.3e-02, nan/1.8e-04, nan/1.7e-02, nan/2.9e-04: both miss on one vector (defect reproduced)
+old formation at 88994c9a (msr_project ffb88e7b): 2/2 fixture tests fail; not reproduced: 0
+rc=0

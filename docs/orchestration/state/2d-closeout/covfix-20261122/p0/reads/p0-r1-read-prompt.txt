@@ -1,0 +1,27 @@
+You are an independent reviewer of new analysis code for COVFIX phase P0 (a particle-physics covariance study). Read-only: do not run anything on real data, do not modify files. All files are in the current directory.
+
+Authority: COVFIX-DECLARATION.md (rev 11.4, bound). The code is covfix_core.py (shared math, to be reused by later phases) and covfix_p0.py (the P0 driver). Tests: test_covfix_core.py, test_covfix_p0.py (synthetic data only). Receipts: tests.txt (56 tests OK), line-trace.txt (100% lines and branches), mutation.txt (46/46 hand mutants killed), via covfix_mutation.py. regrade_crep.py is the earlier REGRADE driver, given only as context for how C_run was carried from C_PL (carry_frac) and for the A0 tolerance form.
+
+Check that the code implements EXACTLY what the declaration says in:
+- section 2: the carry V(t) = D_t V D_t with D_t = diag(x_t/x_R), the finite-and-nonzero refusal; the notation (divisor N for b and S, z, m_i, v_i, q_i, q = m^2 + v); the eigenbasis cut (kept iff lambda_i > 1e-12 lambda_1 of the candidate's OWN fluctuation block); bands R1 1-73, R2 74-139, R3 >=140, a band used only with >= 10 kept modes; the analytic guard h = t_{0.975,N-1} * SE with SE = sd(psi, ddof 1)/sqrt(N), psi = chi2_s/ndf or its band analogue; zero or non-finite SE refuses; labels over < 0.8, covers [0.8, 1.25], under > 1.25, read only if [X-h, X+h] lies inside one interval, else "unresolved across <labels>".
+- section 3.1 (P0's full content): controls (Q_rep's two block identities, its sha256, C_model's sha256, C-PSD on every block with lambda_min >= -1e-12 lambda_max; a failure stops at P0); the carry check at G18 and AR23 (K0 carried vs COV2D's remade C_T, with the committed x_hat_T and, later, the round(lambda+) vector; E_<T> under each, the eigenvalue ratio per band, principal angles between the kept spans); the residual rule's go/no-go control on the regrade pair (old = C_T with fluctuation reference C_T - C_model_abs(T); new = C_T + C_run(T), C_run carried from Q_rep's C_PL exactly as REGRADE carried it; both at the tune's frame; print the rule's maximum principal angle; if it fires, P0 stops and goes to the director); the per-mode profiles under carried K0, C_T and G2R's C_T'; IBUKT A2's mean residuals times E_R in K0's modes (m_i only); c2 as scoped (T2A's mean error projected on C_PL's two directions).
+- section 5.2: the residual rule (well-determined iff lambda_i >= 1e-6 lambda_1(F_ref); directed residual ||(I - P_new,kept) U_ref,well||_2 > 0.1 fires; ndf difference and tail modes printed, not stopped on); the cut diagnostic; the deterministic basis (numpy eigh, sign so the largest-magnitude component is positive); the exactly-tied eigenspace canonical Gram-Schmidt of the ordered cell axes; the 1e-9 near-tie rule used only for band assignment, a straddling cluster assigned whole to the lower-rank band.
+- section 8: the A0-type controls (COV2D's committed mean chi2 at G18 and AR23 reproduced from E_<T> against C_T to max(1e-9, 10 kappa_2 eps), kappa_2 on the non-null subspace; numpy vs scipy evr mode agreement).
+
+Interpretation choices the author made; assess each (agree / disagree with reason):
+(1) IBUKT: residual = estimate/truth - 1 per cell; "times E_R" is implemented as the omnifold (E_R's method) mean residual times x_R, so x_R stands in for the truth value; m_i = u_i^T b / sqrt(lambda_i) in K0's basis at x_R with K0's cut referenced to Q_rep's lambda_1.
+(2) c2: T2A's mean error ebar (at the tune frame) projected on the nonzero eigen-directions of C_run(T) = carry(C_PL, x_T/x_R); the uncarried C_PL directions are also printed, read by nothing.
+(3) Q_rep's identities are checked bitwise exact, summed in the declared order (universe + stat + c08).
+(4) G2R's C_T' comes from laptop copies pinned to the sha256 listed (not committed) in the G2R readout records.
+(5) Matrix asymmetry is printed, not barred (the declaration states no symmetry bar).
+(6) Gram-Schmidt treats a projection with norm <= 1e-10 as null.
+(7) The profiles are total-basis readings only (M, bands, split); fluctuation readings F~ need the reference law V+ and are left to the PV readout.
+(8) The A0 control and the C-MAP alignment checks (cells and x vectors equal across files) are STOPs.
+
+Also judge: are the tests adequate for each declared rule; any line whose behaviour differs from the declaration; any guard or stop NOT declared (flag it); any declared P0 reading that is missing.
+
+Output format:
+BLOCKING (would make P0's record wrong, or violates the declaration): numbered, each with file:line, the declaration section, and a concrete fix.
+NON-BLOCKING: numbered, same format.
+INTERPRETATIONS (1)-(8): one line each.
+Last line exactly: "VERDICT: GO" or "VERDICT: NO-GO".

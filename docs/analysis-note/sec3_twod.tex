@@ -1,8 +1,8 @@
-\section{Two-dimensional muon cross section}
+\section{Two-dimensional benchmark against MINERvA}
 \label{sec:part-2d}
 \label{sec:results}
 
-Unbinned OmniFold reproduces the published MINERvA integral to about $\fpeval{round(100*(\ratioTot-1),0)}\%$. A correlated shape difference of undetermined origin remains (Sec.~\ref{sec:muon-cross-section-comparison}), and the covariance procedure under-covers at both held-out simulation tunes (Sec.~\ref{sec:muon-cross-section-validation}). Closure tests in simulation recover the injected features, but they use the same detector simulation as the unfolding.
+The two-dimensional OmniFold central values reproduce the published MINERvA integral to about $\fpeval{round(100*(\ratioTot-1),0)}\%$. This descriptive benchmark also shows a correlated shape difference of undetermined origin (Sec.~\ref{sec:muon-cross-section-comparison}). The covariance procedure under-covers at both held-out simulation tunes. The closure tests recovered the injected features. They test recovery only within the same detector simulation used for unfolding (Sec.~\ref{sec:muon-cross-section-validation}).
 
 \subsection{Unfolded cross section and comparison with MINERvA}
 \label{sec:muon-cross-section-comparison}
@@ -19,9 +19,9 @@ We use the two-dimensional refined OmniFold estimator of Sec.~\ref{sec:estimator
   \label{fig:xsec}
 \end{figure}
 
-Integrating over the reported bins gives $\num{\sigTwoD}\,\mathrm{cm}^2$ per nucleon, compared with $\num{\sigTwoDpaper}\,\mathrm{cm}^2$ per nucleon for MINERvA, a ratio of \ratioTot. This integration weights the differential cross section in each bin by its area. The fractional uncertainty from the covariance of the OmniFold result is $\uqIntegral\%$ on the integral, and the corresponding published uncertainty is $\uqPaperIntegral\%$. Agreement of the integrals does not test the shape, because excesses and deficits in different regions can cancel.
+Integrating the differential cross section with bin-area weights gives $\num{\sigTwoD}\,\mathrm{cm}^2$ per nucleon. The MINERvA integral is $\num{\sigTwoDpaper}\,\mathrm{cm}^2$ per nucleon, giving a ratio of \ratioTot. The respective fractional uncertainties from the OmniFold and published covariances are $\uqIntegral\%$ and $\uqPaperIntegral\%$. Agreement of the integrals does not test the shape, because excesses and deficits in different regions can cancel.
 
-\phantomsection\label{sec:results-compare} The median binwise ratio to MINERvA is \medianBinRatio, and $\binsFive\%$, $\binsTen\%$, and $\binsTwenty\%$ of the bins agree within $5\%$, $10\%$, and $20\%$, respectively. Figure~\ref{fig:muon-standardized-differences} shows the differences in units of the published bin uncertainties. The distribution has a mean of \pullMean{} and a standard deviation of \pullRMS. Let $\Delta$ be the vector of differences between the differential cross sections and $V_{\mathrm{pub}}$ the published covariance. Using only the diagonal of $V_{\mathrm{pub}}$ gives a quadratic distance per bin of 0.29. Using the full matrix gives $\Delta^{\mathsf T}V_{\mathrm{pub}}^{+}\Delta/205=\chiPaper$, where the superscript $+$ denotes the pseudoinverse. Thus the covariance correlations give substantially greater weight to the observed pattern of differences than the diagonal comparison suggests. The published uncertainty of a linear combination of bins can be small even when the uncertainties of its constituent bins are comparatively large. This makes the quadratic distance sensitive to differences that are small on the scale of the individual bins.
+\phantomsection\label{sec:results-compare} The median binwise ratio to MINERvA is \medianBinRatio, and $\binsFive\%$, $\binsTen\%$, and $\binsTwenty\%$ of the bins agree within $5\%$, $10\%$, and $20\%$, respectively. In units of the published bin uncertainties, the differences have a mean of \pullMean{} and a standard deviation of \pullRMS{} (Fig.~\ref{fig:muon-standardized-differences}). Let $\Delta$ be the vector of differences between the differential cross sections and $V_{\mathrm{pub}}$ the published covariance. The diagonal of $V_{\mathrm{pub}}$ gives a quadratic distance per bin of 0.29. The full matrix gives $\Delta^{\mathsf T}V_{\mathrm{pub}}^{+}\Delta/205=\chiPaper$, where $+$ denotes the pseudoinverse. The full covariance gives substantially greater weight to the observed pattern than the diagonal does. A linear combination of bins can have a small uncertainty even when the individual bin uncertainties are large. This makes the full-covariance distance sensitive to differences that are small on the scale of individual bin uncertainties.
 
 \begin{figure}[H]
   \centering
@@ -33,14 +33,14 @@ Integrating over the reported bins gives $\num{\sigTwoD}\,\mathrm{cm}^2$ per nuc
 
 \phantomsection\label{sec:results-tension} The distance is dominated by shape. Using the published covariance, the normalization difference gives $\chi^2_{\mathrm{norm}}=0.04$, whereas comparison of the unit-area shapes with the propagated covariance gives $\chi^2_{\mathrm{shape}}\simeq465$. The shape difference contributes across many covariance eigenmodes, including both small- and moderate-variance directions. A comparison of separate run-period unfolds finds that the observed run-period step cannot account for the distance in the best-determined covariance directions at the sensitivity of that test. Appendix~\ref{app:comparison-closure-coverage} defines the comparison statistics, and Appendix~\ref{app:additional-2d-comparisons} gives the additional comparisons.
 
-\phantomsection\label{sec:results-benchmarks} The published measurement used binned IBU at ten iterations~\cite{MINERvA:2021owq}. Applied to the same inputs, this IBU differs from the two-dimensional OmniFold result by more than statistical fluctuations explain. The test statistic is $T=\fvval{c2c1-T}$, against \fvval{c2c1-q95} at the 95th percentile of paired bootstrap replicas. Relative to the published result and using its covariance, ten-iteration IBU and OmniFold give descriptive $\chi^2$ per bin of \fvval{c2c1-dibu} and \fvval{c2c1-der}, respectively. The origin of the correlated shape difference remains undetermined.
+\phantomsection\label{sec:results-benchmarks} Ten-iteration binned IBU, as used in the publication~\cite{MINERvA:2021owq}, differs from the two-dimensional OmniFold result on the same inputs by more than statistical fluctuations explain. The test statistic is $T=\fvval{c2c1-T}$, against \fvval{c2c1-q95} at the 95th percentile of paired bootstrap replicas. Relative to the published result and using its covariance, ten-iteration IBU and OmniFold give descriptive $\chi^2$ per bin of \fvval{c2c1-dibu} and \fvval{c2c1-der}, respectively.
 
-The comparison with the publication is descriptive. The two results share data and flux, detector, and interaction-model uncertainties, and their cross-covariance is unavailable. With $K$ the cross-covariance between the OmniFold and published results, the covariance of their difference is
+The comparison with the publication is a descriptive benchmark of the central values. The two results share data and flux, detector, and interaction-model uncertainties, and their cross-covariance is unavailable. With $K$ the cross-covariance between the OmniFold and published results, the covariance of their difference is
 \begin{equation}
   \operatorname{Cov}(\Delta)=Q_R+V_{\mathrm{pub}}-K-K^{\mathsf T} .
   \label{eq:muon-difference-covariance}
 \end{equation}
-Using the simple sum $Q_R+V_{\mathrm{pub}}$ gives a distance per bin of \chiCombined. This sum omits the cross terms and counts shared uncertainty contributions twice. The published covariance is also ill-conditioned, because the variance differs by many orders of magnitude across its eigenmodes. These distances therefore carry no goodness-of-fit probability. The tree implementation and the refined background subtraction were adopted with the published comparison available (Appendix~\ref{app:choices-after-results}). Together these conditions make the publication comparison a benchmark of the central values with shared inputs.
+Using the simple sum $Q_R+V_{\mathrm{pub}}$ gives a distance per bin of \chiCombined. The sum omits the cross terms and counts shared uncertainties twice. The published covariance is ill-conditioned because its eigenmode variances span many orders of magnitude. These distances therefore carry no goodness-of-fit probability. The tree implementation and the refined background subtraction were adopted with the published comparison available (Appendix~\ref{app:choices-after-results}).
 
 \subsection{Uncertainty and covariance}
 \label{sec:muon-cross-section-covariance}
@@ -52,7 +52,7 @@ The OmniFold covariance gives a smaller median bin uncertainty than the publishe
   Q_R=C_{\mathrm{syst}}+C_{\mathrm{stat}}+C_{\mathrm{seed}}+C_{\mathrm{run}} .
   \label{eq:muon-covariance-block-sum}
 \end{equation}
-The sum assumes zero cross-covariances between blocks and a linear response to simultaneous perturbations. The common data and unfolding can couple the effects of different sources of variation. For example, changes in the training sample can affect the dependence of the result on the training seed. The reported sum has no separate block for interactions of seed variation with the bootstrap or systematic perturbations. Appendix~\ref{app:covariance-construction} gives the construction of the ensembles, the treatment of the flux normalization, and the assumptions used to combine their covariances.
+The sum assumes zero cross-covariances between blocks and a linear response to simultaneous perturbations. The common data and unfolding can couple these effects. For example, changes in the training sample can change the dependence on the training seed. The sum has no separate block for interactions of seed variation with bootstrap or systematic perturbations. Appendix~\ref{app:covariance-construction} describes the ensembles, flux normalization, and covariance sum.
 
 \phantomsection\label{sec:results-uq}
 \begin{table}[H]
@@ -93,7 +93,7 @@ Appendix~\ref{app:covariance-inversion} discusses how small eigenvalues affect t
 
 $Q_R$ is conditional on the chosen learner, regularization, and parametrized detector response. It omits variation across learner families and regularization choices, response discrepancies outside that parametrization, and possible bias from pooling inconsistent run periods. The construction propagates the specified sources of variation with their correlations across bins. The coverage studies in Sec.~\ref{sec:muon-cross-section-validation} leave uncertainties for the reported bins, projections, and integral without validated coverage.
 
-\subsection{Closure tests and uncertainty validation}
+\subsection{Closure and coverage tests}
 \label{sec:muon-cross-section-validation}
 \label{sec:validation}
 

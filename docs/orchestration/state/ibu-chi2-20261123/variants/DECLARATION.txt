@@ -1,0 +1,31 @@
+# Variant test: where does the shipped-Tune-v1-vs-our-MC truth difference come from? (declared before computing)
+
+Question. truthtest found chi2(shipped Tune v1 - ours, TotalCov)/205 = 1.572, with shipped/ours - 1 rising to
++16-20 % at truth p|| 40-60 and +6-9 % at pT 0-0.07. Separate
+  REWEIGHT  the difference comes from Tune v1's reweights (RPA, non-resonant pion, low-recoil 2p2h), so it is absent
+            from bare GENIE 2.12.6 vs ours, from
+  UPSTREAM  it is already present in bare GENIE vs ours (flux, target, truth definition, sample).
+
+Inputs.
+- Ours: truthtest/vectors.npz (committed): m (our CV MC truth as a cross section), sig, mod (shipped Tune v1), mask (205
+  reported cells), area.
+- Published TotalCovariance from cov_ptpl_minerva_inclusive_6GeV.root (sha 6c6dce72...), pinv on the 205 cells, via
+  2d-unfolding/compare_to_paper_fullcov.py, as in truthtest.
+- arXiv 2106.16210v4 anc model tables (sha256 in SHA256SUMS of the fetch): GENIE_2_12_6, GENIE_2_12_6_and_QE_RPA,
+  GENIE_2_12_6_and_NonResPionTune_Only, GENIE_2_12_6_and_Low_Recoil_Enhancement, MINERvA_Tune_v1,
+  MINERvA_Tune_v1_Low_Q2_Pion_MINOS, MINERvA_Tune_v2. Parsed as truthtest parses Tune v1.
+
+Controls (any failure: STOP).
+- C-MOD: the arXiv Tune v1 table parses to mod in vectors.npz exactly.
+- C-CELLS: every table's nonzero cells equal mask (205).
+
+Statistics. For each model k: X_k = chi2(ship_k - m)/205; region ratios r_k(reg) = sum_reg(ship_k*area) /
+sum_reg(m*area) for COL40 (truth p|| 40-60), COL20 (20-40), ROW0 (pT 0-0.07), ALL (205 cells); shape ratio
+s_k(reg) = r_k(reg)/r_k(ALL) - 1. Variant effects e_v(reg) = r_v(reg)/r_GENIE(reg) - 1 for the three single
+modifications.
+
+Readings on COL40, with s_T = s_TuneV1(COL40) (expected about +0.17) and s_G = s_GENIE(COL40):
+  UPSTREAM  s_G has the sign of s_T and |s_G| >= 0.5 |s_T|.
+  REWEIGHT  |s_G| <= 0.25 |s_T|.
+  MIXED     otherwise.
+The same reading is made on ROW0 separately. Descriptive: the model with the smallest X_k, all r_k, s_k and e_v.

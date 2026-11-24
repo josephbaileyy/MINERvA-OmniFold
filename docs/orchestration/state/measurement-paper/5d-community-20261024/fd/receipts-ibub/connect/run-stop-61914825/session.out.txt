@@ -1,0 +1,3 @@
+node login38 staged sha256 503042750285daf08ab5cf1ca85c4b3b2db58a4ba5f6b961c3ece54c232e1d18
+detached pid 1526669, output /dev/shm/ibubc.1526254.sh.out
+script rc=5

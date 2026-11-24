@@ -1,0 +1,49 @@
+# ibuchi event-loop diagnostic: selection, momentum code, MINOS calibration, or angle? (declared before running)
+
+Joseph's go 2026-11-23 ("can you do those jobs too"); the director's fence go is required before any submission.
+Context: docs/orchestration/state/ibu-chi2-20261123/ (on main at 83dd3bd8). The published result folded through our
+response misses our reco data at p|| 40-60 (S_COL = +10.0 %) and pT 0-0.07 (S_ROW = -6.38 %). A MINOS momentum shift
+is wanted only at p|| >= 20 (TOP-ONLY); event weights do not move it (descriptive).
+
+## What runs
+One rerun of runEventLoopOmniFold, all 12 playlists (1A-1P), in production configuration (no MNV101_* flag) plus the
+new opt-in MNV101_DUMP_MUONQ, which only ADDS per-event mu_* branches (MINOS track quality, used_range/used_curvature,
+eqp_qp, qp, minos_trk_p and its range/curvature values, MasterAnaDev muon_P, thetaX/Y, theta, GetPmu, GetPmuMinos) to
+mc_signal_reco, mc_background and data. Selection, weights and the existing branches are unchanged. Merged with hadd.
+Then one offline pass builds binned products per variant. Scoring is local.
+
+## Controls (STOP if any fails; no reading)
+ C-REPRO  BASE products from the merged rerun equal what the chain analysed: M and T equal signed_data.npz
+          (7a35b7e2...) at max|diff|/max <= 1e-9; B equals hBkgReco2D and N equals hDataReco2D (E_R xsec.root
+          a5c13fc3...) at rel <= 1e-9. Entry counts: mc_signal_reco 32,849,103, mc_background 658,227.
+ C-KIN    for selected reco rows, (mu_p_total/1000) sin(mu_theta) and cos(mu_theta) equal sim/sim_pz (data:
+          measured/measured_pz), max |diff| <= 1e-9 GeV.
+ C-ANG    theta3D(mu_thetaX, mu_thetaY) = atan(sqrt(tan^2 tx + tan^2 ty)) equals mu_theta, max |diff| <= 1e-9 rad.
+
+## Variants (each rebuilds M, T, B, N; reco kinematics pT = p sin(theta), p|| = p cos(theta))
+ BASE     as produced.
+ SEL      adds to every reco selection (signal sim_pass, background pass, data pass):
+          mu_trk_quality == 1 and (mu_used_curv == 0 or |mu_trk_eqp_qp| < 0.3)   [the official MasterAnaDev cuts we omit;
+          2D_OMNIFOLD_REFERENCE.md:497-516, CURV_A reading].
+ MAD      momentum p = mu_mad_p (MasterAnaDev muon_P) in data and MC; angle unchanged.
+ CURV(d)  data only: p = (mu_p_total - mu_p_minos) + mu_p_minos (1 + d) for mu_used_curv == 1; d in [-3 %, +3 %] step 0.1 %.
+ RANGE(d) the same for mu_used_curv == 0.
+ ANG(dx,dy) data only: thetaX + dx, thetaY + dy, theta = theta3D; dx, dy in [-3, +3] mrad, step 0.25 mrad.
+For scans: fit the parameter(s) by the reco fold chi2 over all cells with data, CV combined errors, free global c;
+report the best point and its Delta chi2 = 1 interval.
+
+## Statistics (as in ibu-chi2-20261123 lattest amendment 2)
+ fold f = R t_pub (R = M/T of the variant; t_pub = published/F, unreported cells from priortest ur10); y = N - B;
+ shape-only S_reg = wmean_reg(y/f - 1) - wmean_all(...), fixed BASE weights; regions COL (reco p|| 40-60), ROW
+ (reco pT 0-0.07); per-column S profile. Descriptive: IBU K=10 chi2/205 vs published (signed target) per variant.
+
+## Readings
+COL, for SEL, MAD:   EXPLAINS |S_COL| <= |S_COL,BASE|/3; PARTIAL reduction >= 30 %; NONE otherwise; WRONG-WAY > 1.3x.
+COL, for CURV, RANGE: EXPLAINS if the best d has |d| <= 3 %, |S_COL(d)| <= |S_COL,BASE|/3, and no column with
+                     p|| < 20 moves by more than 1 percentage point; PARTIAL if reduction >= 30 % within |d| <= 3 %; else NONE.
+ROW, for ANG:        EXPLAINS if the best (dx,dy) has |dx|,|dy| <= 2 mrad and |S_ROW| <= |S_ROW,BASE|/3; PARTIAL >= 30 %; else NONE.
+ROW for SEL, MAD, CURV: reported with the SEL/MAD classes.
+Combined COL statement: exactly one of {SEL, MAD, CURV} EXPLAINS -> "consistent with <that>"; several -> "not separable
+among <those>"; none -> "none of the tested". Same for ROW with {ANG, SEL, MAD}.
+Licences: a reading says which tested modification of OUR chain makes the publication fit OUR data. It is not a
+statement about MINERvA's code or calibration, not a cause, and no note wording.

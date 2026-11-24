@@ -21,7 +21,7 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 case "$NODE" in login[0-9][0-9]) ;; *) echo "STOP: '$NODE' is not a login node name"; exit 9;; esac
 [[ "$WEND" =~ ^[0-9]{10}$ ]] || { echo "STOP: window end '$WEND'"; exit 9; }
 [ "$(date +%s)" -le "$WEND" ] || { echo "STOP: the window has ended"; exit 9; }
-S="$HERE/ibub_run_connect.sh"; SHA=503042750285daf08ab5cf1ca85c4b3b2db58a4ba5f6b961c3ece54c232e1d18
+S="$HERE/ibub_run_connect.sh"; SHA=f73494a6699584cd66c1dbf28c010e38f811a555f8e1d92a418d500699c3dc85
 [ "$(shasum -a 256 "$S" | cut -d' ' -f1)" = "$SHA" ] || { echo "STOP: the local connect script is not the approved one"; exit 8; }
 SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=8)
 HOP=(-o BatchMode=yes -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=8 -o StrictHostKeyChecking=yes -o UpdateHostKeys=no)
@@ -36,7 +36,7 @@ grep -q '^BAIL ' "$F/session.out" && { echo "STOP: the connect bailed before wri
 echo "connect script rc=$src (every stop after \$N exists writes the records tar first)"
 
 # ---- the fetch, after the session (the connect has finished writing; nothing below writes on the cluster)
-O=/pscratch/sd/j/josephrb/ibub-20261123
+O=/pscratch/sd/j/josephrb/ibub-20261124
 frc=0
 for rel in logs/connect-run.log logs/connect-run.done fetch-run.tar; do
   ssh "${SSH[@]}" saul.nersc.gov "ssh ${HOP[*]} $NODE $(printf '%q' "dd if=$O/$rel iflag=noatime status=none")" \

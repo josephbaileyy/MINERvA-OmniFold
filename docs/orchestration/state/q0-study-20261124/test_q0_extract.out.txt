@@ -1,0 +1,20 @@
+test_atime_change_stops (test_q0_extract.Extract.test_atime_change_stops) ... ok
+test_end_to_end (test_q0_extract.Extract.test_end_to_end) ... ok
+test_main_writes_json_and_refuses_a_non_empty_dir (test_q0_extract.Extract.test_main_writes_json_and_refuses_a_non_empty_dir) ... REFUSED: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmplyfodr8k/out is not an existing empty directory
+ok
+test_only_the_signal_tree_is_opened (test_q0_extract.Extract.test_only_the_signal_tree_is_opened) ... ok
+test_stops (test_q0_extract.Extract.test_stops) ... ok
+test_a_negative_q0_is_not_recoverable_and_the_w_control_sees_it (test_q0_extract.Recovery.test_a_negative_q0_is_not_recoverable_and_the_w_control_sees_it)
+RecoQ3 clamps Q^2 for a negative q0; the inversion then returns another (positive) q0, so W(q0) != W. ... ok
+test_clamp_and_nonfinite_status (test_q0_extract.Recovery.test_clamp_and_nonfinite_status) ... ok
+test_inverts_recoq3 (test_q0_extract.Recovery.test_inverts_recoq3) ... ok
+test_w_identity (test_q0_extract.Recovery.test_w_identity) ... ok
+test_no_noatime_refuses (test_q0_extract.Refusals.test_no_noatime_refuses) ... STOP rc 9: O_NOATIME is not available here
+ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.036s
+
+OK
+{"n_pass": 2778, "q0_status_counts": {"0": 2775, "1": 3, "2": 0}, "recovery_control": {"rows": 2298, "max_abs_resid_GeV": 1.426059270670521e-14, "tol_GeV": 1e-06, "n_W2_negative": 477}, "npz_sha256": "c1ee471e2aad7d3e67a251202434877a41573b0cebae63e35e485e2bccfec23b", "npz_bytes": 108246}
+rc=0

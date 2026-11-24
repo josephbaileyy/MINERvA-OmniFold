@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """MSR, the local step: the declared controls, then the declared readings, on connect B's committed products.
 
-Declaration: ``docs/orchestration/state/measurability-20261122/DECLARATION.md`` (rev 4 with Amendment B). Nothing here
+Declaration: ``docs/orchestration/state/measurability-20261122/DECLARATION.md`` (rev 4, Amendments B, C, E). Nothing here
 is chosen after a statistic is computed: the cut, floors, bands, intervals, sets, truths and k are the declaration's,
 written below as constants. The STOP controls run first; if any fails, the run writes the controls record and exits
 rc 3 with no statistic of any bias vector computed.
@@ -102,12 +102,47 @@ def fisher_c(did, R, t0: np.ndarray, b: np.ndarray) -> np.ndarray:
     return did.fisher(sparse.csr_matrix(R), np.asarray(t0, float), np.asarray(b, float))
 
 
-def decompose(F: np.ndarray, J: np.ndarray, driver: str = "numpy", cut: float = CUT) -> dict:
-    """Section 3.3 on F_c and the count-space gradient J (n_cells x n_params)."""
-    lam, V = eigh(F, driver)
+def fisher_root(R, t0: np.ndarray, b: np.ndarray) -> np.ndarray:
+    """Amendment E: A with A^T A = F_c, the rows R_i / sqrt(mu_i) over the reco cells with mu = R t0 + b > 0 (did.fisher's
+    rows). F_c's eigenbasis is taken from A's SVD (lambda = sigma^2), so F_c is never formed for decompose."""
+    R = sparse.csr_matrix(R)
+    mu = R @ np.asarray(t0, float) + np.asarray(b, float)
+    keep = mu > 0
+    return np.asarray((sparse.diags(1.0 / np.sqrt(mu[keep])) @ R[keep]).todense())
+
+
+def svd(a: np.ndarray, driver: str):
+    """Thin SVD by one of the two declared LAPACK families (N-PREC, Amendment E): numpy's gesdd or scipy's gesvd."""
+    if driver == "numpy":
+        return np.linalg.svd(a, full_matrices=False)
+    return sla.svd(a, full_matrices=False, lapack_driver="gesvd")
+
+
+def eigenbasis(F: np.ndarray, A, driver: str) -> tuple[np.ndarray, np.ndarray]:
+    """F_c's eigenpairs, ascending: from the SVD of its root A when given (Amendment E), else eigh(F) (toy inputs)."""
+    if A is None:
+        return eigh(F, driver)
+    A = np.asarray(A, float)
+    n = A.shape[1]
+    _, sig, vt = svd(A, driver)
+    V = vt.T
+    if V.shape[1] < n:   # fewer kept reco cells than parameters: complete the basis with A's null space
+        V = np.hstack([V, sla.null_space(V.T)])
+    lam = np.zeros(n)
+    lam[:sig.size] = sig ** 2
+    o = np.argsort(lam, kind="stable")
+    return lam[o], V[:, o]
+
+
+def decompose(F: np.ndarray, J: np.ndarray, driver: str = "numpy", cut: float = CUT, A=None) -> dict:
+    """Section 3.3 on F_c and the count-space gradient J (n_cells x n_params), computed per Amendment E: C = J F+ J^T is
+    never formed. With G = J V_r Lambda_r^(-1/2) (so C = G G^T), C_Q's eigenpairs (s^2, c) are the singular pairs of
+    B_Q^T G, and the well-constrained block is then re-diagonalised from G^T W, whose singular values are <= cut, so no
+    small width is a difference of large numbers. A (fisher_root) gives F_c's eigenbasis without forming F_c."""
+    lam, V = eigenbasis(F, A, driver)
     rng = lam > EIG_RTOL * lam.max()
     VN = V[:, ~rng]
-    Fp = (V[:, rng] / lam[rng]) @ V[:, rng].T
+    G = (J @ V[:, rng]) / np.sqrt(lam[rng])[None, :]
     K = J @ J.T
     kev = np.linalg.eigvalsh(K)
     rank_ok = bool(kev.min() > EIG_RTOL * kev.max())
@@ -120,16 +155,24 @@ def decompose(F: np.ndarray, J: np.ndarray, driver: str = "numpy", cut: float = 
         rho, U = np.zeros(n), np.eye(n)
     inf = rho > NULL_TOL
     BQ = np.linalg.qr(U[:, ~inf])[0] if (~inf).any() else np.zeros((n, 0))
-    C = J @ Fp @ J.T
     if BQ.shape[1]:
-        s2, Cv = eigh(BQ.T @ C @ BQ, driver)
-        s = np.sqrt(np.clip(s2, 0.0, None))
-        w = BQ @ Cv
+        if BQ.shape[1] > G.shape[1]:
+            # a direction of Q with zero width would have Jᵀu in F_c's null space, i.e. lie in U-infinity: C_Q cannot
+            # be singular on Q, so this is a numerical defect, refused rather than padded (it would break both routes)
+            raise ValueError(f"C_Q is singular on Q: dim Q {BQ.shape[1]} > rank range {G.shape[1]}")
+        c, s, _ = svd(BQ.T @ G, driver)
+        s, w = s[::-1].copy(), (BQ @ c)[:, ::-1].copy()      # ascending, as eigh returned them
+        blk = s <= cut
+        if blk.any():   # the well-constrained block from G^T W alone (Rayleigh-Ritz on its span)
+            _, sw, vt = svd(G.T @ w[:, blk], driver)
+            s[blk], w[:, blk] = sw[::-1], (w[:, blk] @ vt.T)[:, ::-1]
+            o = np.argsort(s, kind="stable")   # a refined width may pass an unrefined neighbour by rounding
+            s, w = s[o], w[:, o]
     else:
         s, w = np.zeros(0), np.zeros((n, 0))
     well = s <= cut
     W = w[:, well]
-    return {"lam": lam, "V": V, "range": rng, "C": C, "s": s, "w": w, "well": well, "n_well": int(well.sum()),
+    return {"lam": lam, "V": V, "range": rng, "G": G, "s": s, "w": w, "well": well, "n_well": int(well.sum()),
             "n_mid": int((~well).sum()), "dim_inf": int(inf.sum()), "PW": W @ W.T, "rank_ok": rank_ok, "n": n,
             "U_inf": U[:, inf]}
 
@@ -192,7 +235,8 @@ def r_independent(dec: dict, b_arm: np.ndarray, b_b0: np.ndarray) -> dict:
 
 
 def route_independent(dec: dict, beta: np.ndarray) -> tuple[float, float | None]:
-    """C-ROUTE: W by a pivoted QR of the well-constrained block, chi^2 by solving with the full C."""
+    """C-ROUTE: W by a pivoted QR of the well-constrained block; chi^2 = a^T (W^T C W)^(-1) a by a triangular solve with the
+    QR factor of G^T W (W^T C W = (G^T W)^T (G^T W), Amendment E), not by the eigenpairs."""
     if dec["n_well"] == 0:
         return s_poor(dec, beta), None
     Wb = dec["w"][:, dec["well"]]
@@ -200,8 +244,9 @@ def route_independent(dec: dict, beta: np.ndarray) -> tuple[float, float | None]
     nb = float(beta @ beta)
     sp = 1.0 - float(np.sum((q.T @ beta) ** 2)) / nb
     a = Wb.T @ beta
-    z2 = float(a @ np.linalg.solve(Wb.T @ dec["C"] @ Wb, a))
-    return sp, float(np.sqrt(max(z2, 0.0)))
+    rf = np.linalg.qr(dec["G"].T @ Wb, mode="r")
+    y = sla.solve_triangular(rf, a, trans="T")
+    return sp, float(np.linalg.norm(y))
 
 
 # ---------------------------------------------------------------------------------------------- bands and labels
@@ -381,7 +426,8 @@ def problem_5d(z, prefix: str, did, background: bool = True, known: bool = True)
     f0 = L @ t0
     keep = np.abs(f0) > 0
     J = (L[keep] / f0[keep, None])
-    return {"R": R, "t0": t0, "b": b, "J": J, "f0": f0, "keep": keep, "F": fisher_c(did, R, t0, b)}
+    return {"R": R, "t0": t0, "b": b, "J": J, "f0": f0, "keep": keep, "F": fisher_c(did, R, t0, b),
+            "A": fisher_root(R, t0, b)}
 
 
 def marginal(R, b: np.ndarray, shape, drop_axes) -> tuple:
@@ -406,7 +452,7 @@ def problem_2d(z2, half: str, cells: np.ndarray) -> dict:
         J[r, c] = 1.0 / T[c]
     import did
     return {"R": sparse.csr_matrix(R), "t0": T, "b": b, "J": J, "f0": f0, "keep": keep,
-            "F": fisher_c(did, sparse.csr_matrix(R), T, b)}
+            "F": fisher_c(did, sparse.csr_matrix(R), T, b), "A": fisher_root(R, T, b)}
 
 
 # ---------------------------------------------------------------------------------------------- MC resolution
@@ -629,7 +675,7 @@ def run(prod: Path, out: Path) -> int:
     for dim, probs in (("5d", probs5), ("2d", probs2)):
         for h, p in probs.items():
             for drv in ("numpy", "evr"):
-                d = decompose(p["F"], p["J"], drv)
+                d = decompose(p["F"], p["J"], drv, A=p["A"])
                 d["keep"] = p["keep"]
                 decs[(dim, h, drv)] = d
                 rank_ok = rank_ok and d["rank_ok"]
@@ -752,10 +798,10 @@ def readings(L: dict, probs5: dict, probs2: dict, decs: dict, did, cells: np.nda
         for h, p in probs5.items():
             if drop:
                 Rm, bm = marginal(p["R"], p["b"], shape, drop)
-                F = fisher_c(did, Rm, p["t0"], bm)
+                F, A = fisher_c(did, Rm, p["t0"], bm), fisher_root(Rm, p["t0"], bm)
             else:
-                F = p["F"]
-            dd[h] = decompose(F, p["J"], "numpy")
+                F, A = p["F"], p["A"]
+            dd[h] = decompose(F, p["J"], "numpy", A=A)
             dd[h]["keep"] = p["keep"]
         M3[name] = {**matched_counts(dd), "raw": {h: [dd[h]["n_well"], dd[h]["n_mid"], dd[h]["dim_inf"]] for h in dd},
                     "spectrum_full_printed": dd["full"]["s"].tolist()}
@@ -805,13 +851,13 @@ def readings(L: dict, probs5: dict, probs2: dict, decs: dict, did, cells: np.nda
         P[f"{dim}_spectrum_s"] = d["s"].tolist()
         P[f"{dim}_fisher_eigenvalues"] = d["lam"].tolist()
         p = (probs5 if dim == "5d" else probs2)["full"]
-        P[f"{dim}_n_well_at_cuts"] = {str(c): decompose(p["F"], p["J"], "numpy", cut=c)["n_well"] for c in CUTS_PRINT}
+        P[f"{dim}_n_well_at_cuts"] = {str(c): decompose(p["F"], p["J"], "numpy", cut=c, A=p["A"])["n_well"] for c in CUTS_PRINT}
         sig, nul = did.widths_from_eig(d["lam"], d["V"], p["J"], rtol=EIG_RTOL)
         P[f"{dim}_per_cell_width_printed"] = sig.tolist()
         P[f"{dim}_per_cell_null_fraction_printed"] = nul.tolist()
     for tag, kw in (("b0", {"background": False, "known": False}), ("did_settings", {"background": False, "known": True})):
         pv = problem_5d(L["z5"], "h2_full", did, **kw)
-        dv = decompose(pv["F"], pv["J"], "numpy")
+        dv = decompose(pv["F"], pv["J"], "numpy", A=pv["A"])
         P[f"5d_variant_{tag}"] = {"n_well": dv["n_well"], "n_mid": dv["n_mid"], "dim_inf": dv["dim_inf"], "s": dv["s"].tolist()}
     P["R00_R15_alone"] = r16_alone(probs5["full"], L["z5"], did)
     return {**R, "_route_worst": route_worst[0]}
@@ -827,7 +873,7 @@ def r16_alone(p: dict, z5, did) -> dict:
     F = fisher_c(did, R16, t16, p["b"])
     keep = t16 > 0
     J = np.diag(1.0 / t16[keep]) if keep.all() else np.eye(16)[keep] / t16[keep, None]
-    d = decompose(F, J, "numpy")
+    d = decompose(F, J, "numpy", A=fisher_root(R16, t16, p["b"]))
     return {"label": "approximate aggregation; printed only", "n_well": d["n_well"], "n_mid": d["n_mid"],
             "dim_inf": d["dim_inf"], "s": d["s"].tolist()}
 
