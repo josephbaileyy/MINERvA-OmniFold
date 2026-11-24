@@ -1,0 +1,1 @@
+{"n_pass": 20498013, "q0_status_counts": {"0": 20498013, "1": 0, "2": 0}, "recovery_control": {"rows": 20181786, "max_abs_resid_GeV": 3.2146193262860836e-10, "tol_GeV": 1e-06, "n_W2_negative": 316227}, "npz_sha256": "91d013793fae94a363bc3e515fa600474c0d9218e412cd0766b42535c7f152b5", "npz_bytes": 778927176}
