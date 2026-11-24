@@ -1381,6 +1381,8 @@ any sealed output is read.
   - The same run re-prints the exact deficit bounds and the veto counts for the frozen k.
 - **The amendment states, for each branch,** the simulated pass probability at nominal (68.27 %) and at true joint
   coverage of 64 %, 62 % and 60 %. These replace §4.4's provisional Gaussian table wherever they differ.
+- **If the simulated pass rate at nominal falls below 0.90 in either branch,** the threshold goes back to Joseph before
+  the amendment binds. It is not adjusted here (the director, 2026-11-24).
 - **The earlier per-cell rule, not adopted.** The advisory's first rule was a one-sided 95 % exact binomial lower bound
   of at least 63.27 %, i.e. 204/300 per cell. Under independence (cov2d, `scipy.stats.binom`, p = 0.6827, n = 300):
   - one cell passes with probability 0.567;
