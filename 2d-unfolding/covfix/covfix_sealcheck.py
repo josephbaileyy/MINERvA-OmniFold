@@ -4,7 +4,8 @@ with no decryption and no secret. Used before P1's first connect, for the HPSS c
   covfix_sealcheck.py --sealed DIR --seal-file PATH [--seal-sha256 <64 hex>]
 
 --seal-sha256 pins the seal file itself (the committed PG-SEAL.sha256's digest). Prints one JSON line; exit 0 only if
-the sealed dir holds exactly the listed .gpg files with exactly the listed bytes (and the seal file matches its pin).
+the sealed dir holds exactly the canonical set's files with exactly the listed bytes (and the seal file matches its
+pin). Diagnostics are fixed codes, counts and opaque names only.
 MEASURES: ciphertext integrity. CANNOT AUTHORIZE: anything about the plaintext.
 """
 from __future__ import annotations
@@ -34,8 +35,10 @@ def main(argv=None, stdout=None) -> int:
             rec |= {"ok": False, "refused": "the seal file is not its pinned sha256"}
         else:
             rec |= cs.seal_check(a.sealed, data.decode("ascii"))
-    except (OSError, UnicodeDecodeError, cs.Refusal) as e:
-        rec = {"ok": False, "refused": f"{type(e).__name__}: {e}"}
+    except cs.Refusal as e:
+        rec = {"ok": False, "refused": str(e)}
+    except (OSError, UnicodeDecodeError):
+        rec = {"ok": False, "refused": "the seal file or the sealed dir cannot be read"}
     print(json.dumps(rec, sort_keys=True), file=out)
     return 0 if rec["ok"] else 1
 

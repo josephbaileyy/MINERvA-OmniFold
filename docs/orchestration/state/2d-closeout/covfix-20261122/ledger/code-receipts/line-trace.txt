@@ -1,12 +1,12 @@
 # command: coverage run --branch -m unittest test_covfix_ledger.py; coverage report -m
 # python: 3.12.2 numpy 1.26.4  gpg: gpg (GnuPG) 2.4.8  host: Darwin arm64
-# 1162a522e480f08d4f6a488571b081dd5063bb3a1754489a9f48f3b59bc39daa  covfix_ledger.py
-# a4487f5d634baeac7a3aa3aea3e9af3efbab4672f568b30801ef774a7dc457a1  test_covfix_ledger.py
-# 4ba9cf948564abf4a59a296086f01514df111c6ea2d04b3f5b41fde055a1f1e5  covfix_ledger_mutation.py
-# start: 2026-11-24T03:27:51Z
+# 0ca6a7acb82ab43b92fd211f808154bfebf456d7f19c59278cad7c068cf2f82d  covfix_ledger.py
+# 4a8674db8f57e611b469f6251411fc0f606b884d9e24e24d211bd71ec0ba07f7  test_covfix_ledger.py
+# b54f7fc5fdde131f42653a198bf500488bdf5b206efeeff0d56c33cd49e83198  covfix_ledger_mutation.py
+# start: 2026-11-24T11:37:30Z
 # unittest rc: 0
 Name               Stmts   Miss Branch BrPart  Cover   Missing
 --------------------------------------------------------------
-covfix_ledger.py     146      0     58      0   100%
+covfix_ledger.py     221      0     88      0   100%
 --------------------------------------------------------------
-TOTAL                146      0     58      0   100%
+TOTAL                221      0     88      0   100%

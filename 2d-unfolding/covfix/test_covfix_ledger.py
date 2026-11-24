@@ -1,10 +1,10 @@
-"""Tests for covfix_ledger (COVFIX-DECLARATION.md rev 11.4 section 3.3, ST3/ST6). Synthetic sacct rows only.
+"""Tests for covfix_ledger (COVFIX-DECLARATION.md rev 11.4 section 3.3, ST3/ST6). Synthetic sacct rows and a fake
+scheduler (sbatch, scontrol, scancel scripts) only.
 
   python3 -B -m unittest -v test_covfix_ledger.py
 """
 from __future__ import annotations
 
-import fcntl
 import json
 import re
 import subprocess
@@ -18,6 +18,7 @@ import covfix_ledger as cl
 
 CAPS = {"PG": 3.0, "P1": 330.0, "PV": 135.0}
 GROUPS = {"pg": "PG", "w1": "P1", "w2": "P1", "pv": "PV"}
+H = 3600
 
 
 def row(job, name, state, nodes=1, elapsed=3600):
@@ -29,29 +30,72 @@ class Base(unittest.TestCase):
         self._td = tempfile.TemporaryDirectory()
         self.d = Path(self._td.name)
         self.L = cl.Ledger(self.d / "campaign", CAPS, GROUPS, 541.50)
+        self.L.init()
 
     def tearDown(self):
         self._td.cleanup()
 
+    def submitted(self, phase="w1", nodes=1, t=60, job="1"):
+        r = self.L.new_intent(phase, nodes, t)
+        self.L.record_submission(r["intent"], job)
+        return r
 
-class Reservation(unittest.TestCase):
-    def test_minute_rounding(self):
-        self.assertEqual(cl.reservation_nodeh(1, 3600), 1.0)
-        self.assertEqual(cl.reservation_nodeh(2, 61), 2 * 2 / 60)
-        self.assertEqual(cl.reservation_nodeh(1, 60), 1 / 60)
+
+class Units(unittest.TestCase):
+    def test_minute_rounding_in_node_seconds(self):
+        self.assertEqual(cl.reservation_ns(1, 3600), 3600)
+        self.assertEqual(cl.reservation_ns(2, 61), 2 * 120)
+        self.assertEqual(cl.reservation_ns(1, 60), 60)
 
     def test_refusals(self):
-        for n, t in ((0, 60), (1, 0), (1.5, 60), (1, 60.0)):
+        for n, t in ((0, 60), (1, 0), (1.5, 60), (1, 60.0), (True, 60)):
             with self.subTest(n=n, t=t), self.assertRaises(cl.Refusal):
-                cl.reservation_nodeh(n, t)
+                cl.reservation_ns(n, t)
+
+    def test_hhmmss_and_scontrol_time(self):
+        self.assertEqual(cl.hhmmss(45 * 60), "00:45:00")                 # never "0:45" (45 seconds)
+        self.assertEqual(cl.hhmmss(11 * H + 29 * 60), "11:29:00")
+        self.assertEqual(cl.hhmmss(48 * H), "48:00:00")
+        self.assertEqual(cl.slurm_seconds("1-02:03:04"), ((24 + 2) * 60 + 3) * 60 + 4)
+        self.assertEqual(cl.slurm_seconds("02:03:04"), (2 * 60 + 3) * 60 + 4)
+        self.assertEqual(cl.slurm_seconds("45:00"), 45 * 60)
+        self.assertIsNone(cl.slurm_seconds("UNLIMITED"))
 
     def test_sacct_state(self):
         self.assertEqual(cl.sacct_state("CANCELLED by 12345"), "CANCELLED")
         self.assertEqual(cl.sacct_state(""), "")
 
-    def test_groups_need_caps(self):
+    def test_policy_validation(self):
+        for caps, groups, ceil in (({"P1": float("nan")}, {"w1": "P1"}, 1.0), ({"P1": 1.0}, {"w1": "P1"}, float("inf")),
+                                   ({"P1": -1.0}, {"w1": "P1"}, 1.0), ({"P1": 1.0}, {"w1": "P1"}, 1 / 7),
+                                   ({"P1": 1.0}, {"pv": "PV"}, 1.0), ({}, {}, 1.0), ({"P1": 1.0}, {"W 1": "P1"}, 1.0)):
+            with self.subTest(caps=caps, ceil=ceil), self.assertRaises(cl.Refusal):
+                cl.Ledger("/nowhere", caps, groups, ceil)
+        self.assertEqual(cl.Ledger("/nowhere", CAPS, GROUPS, 541.50).ceiling, 1_949_400)
+
+
+class Init(unittest.TestCase):
+    def test_init_once_policy_bound_and_absent_refused(self):
+        with tempfile.TemporaryDirectory() as td:
+            d = Path(td) / "c"
+            L = cl.Ledger(d, CAPS, GROUPS, 541.50)
+            with self.assertRaises(cl.Refusal):
+                L.new_intent("w1", 1, 60)                               # not initialized
+            with mock.patch.object(cl.os, "fsync") as f:
+                L.init()
+            self.assertEqual(f.call_count, 2)                            # the file and its directory
+            with self.assertRaises(cl.Refusal):
+                L.init()                                                 # never re-created
+            other = cl.Ledger(d, dict(CAPS, P1=331.0), GROUPS, 541.50)
+            with self.assertRaises(cl.Refusal):
+                other.new_intent("w1", 1, 60)                           # a different policy
+            with self.assertRaises(cl.Refusal):
+                cl.Ledger(Path(td) / "absent", CAPS, GROUPS, 541.50).state()
+
+    def test_locked_needs_the_directory(self):
         with self.assertRaises(cl.Refusal):
-            cl.Ledger("/nowhere", {"P1": 1.0}, {"pv": "PV"}, 1.0)
+            with cl.Ledger("/nonexistent-dir-xyz", CAPS, GROUPS, 541.50).locked():
+                pass
 
 
 class Intents(Base):
@@ -59,9 +103,9 @@ class Intents(Base):
         r = self.L.new_intent("w1", 1, 3600)
         self.assertTrue(re.fullmatch(r"[0-9a-f]{32}", r["intent"]))
         self.assertEqual(r["job_name"], f"covfix_w1_{r['intent']}")
-        self.assertEqual(r["gate"]["group"], "P1")
-        line = json.loads((self.d / "campaign" / cl.LEDGER).read_text().splitlines()[0])
-        self.assertEqual((line["kind"], line["phase"], line["reservation"]), ("intent", "w1", 1.0))
+        self.assertEqual((r["gate"]["group"], r["gate"]["total_ns"]), ("P1", 3600))
+        line = json.loads((self.d / "campaign" / cl.LEDGER).read_text().splitlines()[1])
+        self.assertEqual((line["kind"], line["phase"], line["reservation"]), ("intent", "w1", 3600))
 
     def test_no_new_intent_while_one_is_unrecorded(self):
         self.L.new_intent("w1", 1, 3600)
@@ -73,26 +117,25 @@ class Intents(Base):
             with self.subTest(p=p), self.assertRaises(cl.Refusal):
                 self.L.new_intent(p, 1, 60)
 
-    def test_group_cap_and_ceiling(self):
-        r = self.L.new_intent("pg", 1, 3 * 3600)               # exactly the PG cap: allowed
-        self.L.record_submission(r["intent"], "1")
+    def test_group_cap_and_ceiling_exact_integers(self):
+        self.submitted("pg", 1, 3 * H, "1")                             # exactly the PG cap
         with self.assertRaises(cl.Refusal):
-            self.L.new_intent("pg", 1, 60)                     # one more minute exceeds the cap
-        L = cl.Ledger(self.d / "c2", {"P1": 1000.0}, {"w1": "P1"}, 2.0)
-        r = L.new_intent("w1", 1, 2 * 3600)                    # exactly the ceiling
-        L.record_submission(r["intent"], "2")
-        with self.assertRaises(cl.Refusal):
-            L.new_intent("w1", 1, 60)
+            self.L.new_intent("pg", 1, 60)
+        with tempfile.TemporaryDirectory() as td:
+            L = cl.Ledger(Path(td), {"P1": 1000.0}, {"w1": "P1"}, 2.0)
+            L.init()
+            r = L.new_intent("w1", 1, 2 * H)                            # exactly the ceiling
+            L.record_submission(r["intent"], "2")
+            with self.assertRaises(cl.Refusal):
+                L.new_intent("w1", 1, 60)
 
     def test_group_totals_are_separate(self):
-        a = self.L.new_intent("pg", 1, 3600)
-        self.L.record_submission(a["intent"], "21")
-        b = self.L.new_intent("w1", 2, 3600)
-        self.L.record_submission(b["intent"], "22")
+        self.submitted("pg", 1, H, "21")
+        self.submitted("w1", 2, H, "22")
         st = self.L.state()
-        self.assertEqual(self.L.totals(st, "PG"), {"spent": 0.0, "held": 1.0})
-        self.assertEqual(self.L.totals(st, "P1"), {"spent": 0.0, "held": 2.0})
-        self.assertEqual(self.L.totals(st), {"spent": 0.0, "held": 3.0})
+        self.assertEqual(self.L.totals(st, "PG"), {"spent_ns": 0, "held_ns": H})
+        self.assertEqual(self.L.totals(st, "P1"), {"spent_ns": 0, "held_ns": 2 * H})
+        self.assertEqual(self.L.totals(st), {"spent_ns": 0, "held_ns": 3 * H})
 
     def test_record_submission(self):
         r = self.L.new_intent("w1", 1, 60)
@@ -106,16 +149,21 @@ class Intents(Base):
             self.L.record_submission(r["intent"], "6")
         r2 = self.L.new_intent("w1", 1, 60)
         with self.assertRaises(cl.Refusal):
-            self.L.record_submission(r2["intent"], "5")        # the job is another intent's
+            self.L.record_submission(r2["intent"], "5")
 
 
 class Reconcile(Base):
-    def test_lost_id_is_matched_from_the_job_name(self):
+    def test_lost_id_is_matched_from_the_full_job_name(self):
         r = self.L.new_intent("w1", 2, 3600)
         out = self.L.reconcile([row(900, r["job_name"], "RUNNING", 2, 100)])
         self.assertEqual((out["matched"], out["open"]), (1, 1))
         self.assertEqual(self.L.state()["intents"][r["intent"]]["job"], "900")
-        self.L.new_intent("w1", 1, 60)                          # reconciled: a new intent may proceed
+        self.L.new_intent("w1", 1, 60)
+
+    def test_a_different_phase_in_the_name_does_not_match(self):
+        r = self.L.new_intent("w1", 1, 60)
+        out = self.L.reconcile([row(901, f"covfix_w2_{r['intent']}", "RUNNING")])
+        self.assertEqual(out["unresolved"], [r["intent"]])
 
     def test_ambiguous_or_absent_stays_unresolved(self):
         r = self.L.new_intent("w1", 1, 60)
@@ -126,62 +174,162 @@ class Reconcile(Base):
             self.L.new_intent("w1", 1, 60)
 
     def test_a_matched_job_already_used_stays_unresolved(self):
-        a = self.L.new_intent("w1", 1, 60)
-        self.L.record_submission(a["intent"], "7")
+        self.submitted("w1", job="7")
         b = self.L.new_intent("w1", 1, 60)
-        out = self.L.reconcile([row(7, b["job_name"], "PENDING")])
-        self.assertEqual(out["unresolved"], [b["intent"]])
+        self.assertEqual(self.L.reconcile([row(7, b["job_name"], "PENDING")])["unresolved"], [b["intent"]])
 
     def test_terminal_charge_once_and_frees_the_reservation(self):
-        r = self.L.new_intent("pg", 1, 3 * 3600)
-        self.L.record_submission(r["intent"], "11")
-        self.assertEqual(self.L.totals(self.L.state(), "PG"), {"spent": 0.0, "held": 3.0})
-        out = self.L.reconcile([row(11, r["job_name"], "CANCELLED by 9", 1, 1800)])
-        self.assertEqual(out["charged"], 1)
-        self.assertEqual(self.L.totals(self.L.state(), "PG"), {"spent": 0.5, "held": 0.0})
+        r = self.submitted("pg", 1, 3 * H, "11")
+        self.assertEqual(self.L.totals(self.L.state(), "PG"), {"spent_ns": 0, "held_ns": 3 * H})
+        self.assertEqual(self.L.reconcile([row(11, r["job_name"], "CANCELLED by 9", 1, 1800)])["charged"], 1)
+        self.assertEqual(self.L.totals(self.L.state(), "PG"), {"spent_ns": 1800, "held_ns": 0})
         self.assertEqual(self.L.reconcile([row(11, r["job_name"], "COMPLETED", 1, 9999)])["charged"], 0)
-        self.assertEqual(self.L.state()["intents"][r["intent"]]["charge"], 0.5)
-        self.L.new_intent("pg", 1, int(2.5 * 3600))            # 0.5 spent + 2.5 = the cap
+        self.assertEqual(self.L.state()["intents"][r["intent"]]["charge"], 1800)
+        self.L.new_intent("pg", 1, int(2.5 * H))
 
-    def test_running_or_garbled_stays_open(self):
-        r = self.L.new_intent("w1", 1, 60)
-        self.L.record_submission(r["intent"], "3")
-        self.assertEqual(self.L.reconcile([row(3, r["job_name"], "RUNNING")])["open"], 1)
-        bad = row(3, r["job_name"], "COMPLETED")
-        bad["NNodes"] = "x"
-        self.assertEqual(self.L.reconcile([bad])["open"], 1)
+    def test_charge_counts_every_node(self):
+        r = self.submitted("w1", 2, H, "12")
+        self.L.reconcile([row(12, r["job_name"], "COMPLETED", 2, 1800)])
+        self.assertEqual(self.L.state()["intents"][r["intent"]]["charge"], 2 * 1800)
+
+    def test_uncertain_accounting_stays_open(self):
+        r = self.submitted("w1", job="3")
+        n = r["job_name"]
+        for rows in ([row(3, n, "RUNNING")],
+                     [dict(row(3, n, "COMPLETED"), NNodes="x")],
+                     [dict(row(3, n, "COMPLETED"), ElapsedRaw="-5")],
+                     [dict(row(3, n, "COMPLETED"), NNodes="0")],
+                     [row(3, n, "COMPLETED", 1, 100), row(3, n, "COMPLETED", 1, 200)],   # conflicting rows
+                     [row(3, "someone_else", "COMPLETED")],                              # the job's name is not ours
+                     []):
+            with self.subTest(rows=str(rows)[:60]):
+                self.assertEqual(self.L.reconcile(rows)["open"], 1)
         self.assertIsNone(self.L.state()["intents"][r["intent"]]["charge"])
 
-    def test_foreign_rows_are_ignored(self):
+    def test_foreign_and_step_rows_are_ignored(self):
         r = self.L.new_intent("w1", 1, 60)
         out = self.L.reconcile([row(5, "ibub_run", "COMPLETED"), row("5.batch", r["job_name"], "COMPLETED")])
         self.assertEqual(out["unresolved"], [r["intent"]])
 
 
+class Submit(Base):
+    def fake(self, name, body):
+        p = self.d / name
+        p.write_text(f"#!{sys.executable}\nimport sys, os\n{body}")
+        p.chmod(0o755)
+        return str(p)
+
+    def scheduler(self, job_out="4242", tl=None, name=None, qos="regular_1", sb_rc=0):
+        log = self.d / "calls.log"
+        sb = self.fake("sbatch", f"open({str(log)!r}, 'a').write('sbatch ' + ' '.join(sys.argv[1:]) + '\\n')\n"
+                                 f"print({job_out!r}); sys.exit({sb_rc})\n")
+        sc = self.fake("scontrol", f"open({str(log)!r}, 'a').write('scontrol ' + ' '.join(sys.argv[1:]) + '\\n')\n"
+                                   "args = [a for a in open(" + repr(str(log)) + ").read().split() if a.startswith('--')]\n"
+                                   "nm = [a.split('=',1)[1] for a in args if a.startswith('--job-name=')][-1]\n"
+                                   "tm = [a.split('=',1)[1] for a in args if a.startswith('--time=')][-1]\n"
+                                   f"nm = {name!r} or nm\ntm = {tl!r} or tm\n"
+                                   f"print('JobId=4242 JobName=' + nm + ' UserId=x QOS={qos} TimeLimit=' + tm)\n")
+        sx = self.fake("scancel", f"open({str(log)!r}, 'a').write('scancel ' + ' '.join(sys.argv[1:]) + '\\n')\n")
+        return sb, sc, sx, log
+
+    def test_submit_argv_record_and_verify(self):
+        it = self.L.new_intent("w1", 1, 45 * 60)
+        sb, sc, sx, log = self.scheduler()
+        self.assertEqual(self.L.submit(it, "/x/job.sbatch", sb, sc, sx), "4242")
+        calls = log.read_text()
+        self.assertIn(f"--job-name={it['job_name']}", calls)
+        self.assertIn("--time=00:45:00", calls)
+        self.assertIn("--no-requeue", calls)
+        self.assertIn("--nodes=1", calls)
+        self.assertIn("scontrol show job 4242", calls)
+        self.assertNotIn("scancel", calls)
+        self.assertNotIn("squeue", calls)
+        self.assertEqual(self.L.state()["intents"][it["intent"]]["job"], "4242")
+
+    def test_cluster_suffix_parsed(self):
+        it = self.L.new_intent("w1", 1, 60)
+        sb, sc, sx, _ = self.scheduler(job_out="4242;perlmutter")
+        self.assertEqual(self.L.submit(it, "/x/j", sb, sc, sx), "4242")
+
+    def test_mismatches_scancel_and_stop(self):
+        for kw, field in (({"tl": "00:44:00"}, "TimeLimit"), ({"name": "covfix_w1_" + "0" * 32}, "JobName"),
+                          ({"qos": "debug"}, "QOS")):
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as td:
+                L = cl.Ledger(Path(td), CAPS, GROUPS, 541.50)
+                L.init()
+                it = L.new_intent("w1", 1, 45 * 60)
+                sb, sc, sx, log = self.scheduler(**kw)
+                log.write_text("")
+                with self.assertRaises(cl.Refusal) as e:
+                    L.submit(it, "/x/j", sb, sc, sx)
+                self.assertIn(field, str(e.exception))
+                self.assertIn("scancel 4242", log.read_text())
+                self.assertIn(field, L.state()["intents"][it["intent"]]["stop"])
+
+    def test_sbatch_failure_leaves_the_intent_open(self):
+        it = self.L.new_intent("w1", 1, 60)
+        sb, sc, sx, _ = self.scheduler(job_out="4242", sb_rc=1)         # a job ID printed, but sbatch failed
+        with self.assertRaises(cl.Refusal):
+            self.L.submit(it, "/x/j", sb, sc, sx)
+        self.assertIsNone(self.L.state()["intents"][it["intent"]]["job"])
+        sb, sc, sx, _ = self.scheduler(job_out="error")
+        with self.assertRaises(cl.Refusal):
+            self.L.submit(it, "/x/j", sb, sc, sx)
+
+    def test_whole_minutes_required(self):
+        it = self.L.new_intent("w1", 1, 61)
+        with self.assertRaises(cl.Refusal):
+            self.L.submit(it, "/x/j", "/bin/false", "/bin/false", "/bin/false")
+
+
 class Toys(Base):
-    def test_accept_exactly_once(self):
+    def test_accept_exactly_once_tied_to_a_job_of_the_phase(self):
+        self.submitted("w1", job="31")
+        self.submitted("pg", job="32")
         exp = {"t1", "t2"}
-        self.L.accept("w1", "N1", "t1", "a" * 64, exp)
+        self.L.accept("w1", "N1", "t1", "a" * 64, exp, "31")
         with self.assertRaises(cl.Refusal):
-            self.L.accept("w1", "N1", "t1", "b" * 64, exp)
-        with self.assertRaises(cl.Refusal):
-            self.L.accept("w1", "N1", "t9", "a" * 64, exp)
-        with self.assertRaises(cl.Refusal):
-            self.L.accept("w1", "N1", "t2", "A" * 64, exp)
+            self.L.accept("w1", "N1", "t1", "b" * 64, exp, "31")
+        for bad in (("t9", "a" * 64, "31"), ("t2", "A" * 64, "31"), ("t2", "a" * 64, "32"), ("t2", "a" * 64, "99")):
+            with self.subTest(bad=bad), self.assertRaises(cl.Refusal):
+                self.L.accept("w1", "N1", bad[0], bad[1], exp, bad[2])
         self.assertEqual(self.L.complete("w1", "N1", exp), {"complete": False, "missing": ["t2"], "n": 1})
-        self.L.accept("w1", "N1", "t2", "c" * 64, exp)
+        self.L.accept("w1", "N1", "t2", "c" * 64, exp, "31")
         self.assertTrue(self.L.complete("w1", "N1", exp)["complete"])
-        self.L.accept("w1", "N2", "t1", "d" * 64, exp)          # another arm is separate
+        self.L.accept("w1", "N2", "t1", "d" * 64, exp, "31")
 
 
 class Storage(Base):
-    def test_corrupt_or_unknown_lines_refuse(self):
-        self.L.new_intent("w1", 1, 60)
+    def lines(self):
+        return (self.d / "campaign" / cl.LEDGER).read_text()
+
+    def test_corrupt_or_invalid_transitions_refuse(self):
+        r = self.submitted("w1", job="41")
+        good = self.lines()
         p = self.d / "campaign" / cl.LEDGER
-        p.write_text(p.read_text() + "not json\n")
+        bad_tails = ["not json\n", json.dumps({"kind": "other"}) + "\n",
+                     json.dumps({"kind": "intent", "intent": r["intent"], "phase": "w1", "reservation": 60}) + "\n",
+                     json.dumps({"kind": "submitted", "intent": r["intent"], "job": "42"}) + "\n",
+                     json.dumps({"kind": "reconciled", "intent": r["intent"], "job": "99", "charge": 1}) + "\n",
+                     json.dumps({"kind": "policy"}) + "\n"]
+        for tail in bad_tails:
+            with self.subTest(tail=tail[:40]):
+                p.write_text(good + tail)
+                with self.assertRaises(cl.Refusal):
+                    self.L.state()
+        p.write_text(good)
+        self.L.reconcile([row(41, r["job_name"], "COMPLETED")])
+        twice = self.lines().splitlines()[-1] + "\n"
+        p.write_text(self.lines() + twice)
         with self.assertRaises(cl.Refusal):
             self.L.state()
-        p.write_text(json.dumps({"kind": "other"}) + "\n")
+
+    def test_a_duplicated_acceptance_line_refuses(self):
+        self.submitted("w1", job="51")
+        self.L.accept("w1", "N1", "t1", "a" * 64, {"t1"}, "51")
+        p = self.d / "campaign" / cl.LEDGER
+        last = p.read_text().splitlines()[-1] + "\n"
+        p.write_text(p.read_text() + last)
         with self.assertRaises(cl.Refusal):
             self.L.state()
 

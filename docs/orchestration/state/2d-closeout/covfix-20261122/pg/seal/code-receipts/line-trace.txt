@@ -1,19 +1,21 @@
 # command: coverage run --branch -m unittest test_covfix_seal.py, + coverage run -a covfix_pg.py and covfix_sealcheck.py with no arguments (the __main__ lines); coverage report -m
 # python: 3.12.2 numpy 1.26.4  gpg: gpg (GnuPG) 2.4.8  host: Darwin arm64
-# c42035db13ca1d54a2e8955f64c6b732b784c95bb7b5751b4861e0d1cb2f57f2  covfix_seal.py
-# 9b0ba6d6ba5a6950641e7e11d23cbe7e41fbb2af08cabaa791e933034ba59f5b  covfix_pg.py
-# 432ab3f6801ac54746eb15214cc896068ddb1b316d727b94c37bfffa0f662ab3  covfix_sealcheck.py
-# 45dcf44a5a3a79ace2076fbe4d76e1f75fe0012c74b2fe92bd60be61f374252f  test_covfix_seal.py
-# 3915d2f11d7deb675b59a299eeb9b1061920c37291288c53ac70571e059e3552  covfix_seal_mutation.py
-# start: 2026-11-24T02:43:36Z
+# d5a18115d64b695a1a28c677012f6036dd1313a4164d25db17d79b7582beaf43  covfix_seal.py
+# 57938f4a9a8bf31df7a1a981ca53219ce3f8dd4a28333e3a0ce6ab2e81e2391a  covfix_pg.py
+# d606385e5c97e352f9f199df35f46a9aa55c0c83b43539a89b4d007d23d5a02d  covfix_sealcheck.py
+# e5407c0971ca4ec5e3c18737ca0b4f728d4fd661d8185586148b713b287d89f9  test_covfix_seal.py
+# 79095f33397eeb4e5d5fd3acab69cda2bbecf443d4b3e3ffbd34ca7891c6d4d6  covfix_seal_mutation.py
+# start: 2026-11-24T11:32:17Z
 # unittest rc: 0
 # covfix_pg.py rc: 2 (2 = argparse)
 # covfix_sealcheck.py rc: 2 (2 = argparse)
+Combined 1 file
 Name                  Stmts   Miss Branch BrPart  Cover   Missing
 -----------------------------------------------------------------
-covfix_pg.py            110      0     18      0   100%
-covfix_seal.py          213      3     74      0    98%   119-122
-covfix_sealcheck.py      28      0      4      0   100%
+covfix_ledger.py        221      0     88      0   100%
+covfix_pg.py            205      0     48      0   100%
+covfix_seal.py          267      4     90      0    98%   139-143
+covfix_sealcheck.py      30      0      4      0   100%
 -----------------------------------------------------------------
-TOTAL                   351      3     96      0    99%
+TOTAL                   723      4    230      0    99%
 # NOT TRACEABLE: covfix_seal.py's gpg_run preexec_fn body (def child: the fd-3 dup2 / set_inheritable). It runs in the forked child between fork and exec, where coverage cannot record. It is exercised behaviourally: every gpg round trip needs the passphrase on fd 3, and Gpg.test_passphrase_pipe_on_fd_3 forces the r == 3 branch.

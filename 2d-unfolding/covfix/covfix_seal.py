@@ -1,33 +1,35 @@
 """COVFIX PG's generic seal (COVFIX-DECLARATION.md rev 11.4 section 4.2; COVFIX-BINDING-1 ruling 4: cov2d writes PG's
 capture, encryption, seal check and content scan). Library; the bound binary is covfix_pg.py, the check covfix_sealcheck.py.
 
-  read_frame        the fixed stdin frame: PG "<64 hex>\\n<decimal>\\n", PV "<64 hex>\\n", then EOF; anything else refused
+  read_frame        the fixed stdin frame, exact length: PG "<64 hex>\\n<10-digit seed base>\\n" (76 bytes), PV
+                    "<64 hex>\\n" (65 bytes); anything else is refused
   task_seeds        base + 10_000 u + i for i < N_TASKS; a computed seed at or above 2^31 - 1 is refused
-  gpg_run           the declared gpg argv, the passphrase on fd 3 through an internal pipe, a fresh throwaway
-                    GNUPGHOME per call: short and node-local (/dev/shm, or /tmp where there is none; never $SCRATCH or
-                    $TMPDIR, whose long Lustre paths break gpg-agent's socket), under 80 characters, mode 700; gpg-agent
-                    is killed with it and the directory removed, so ~/.gnupg is never created or touched;
+  Tools             absolute paths of gpg and gpgconf, checked to be executable regular files
+  gpg_run           the declared gpg argv, run from Tools' absolute path with a minimal environment; the passphrase on
+                    fd 3 through an internal pipe; exactly fds 0-3 open in gpg (pass_fds); core dumps off; a fresh
+                    throwaway GNUPGHOME per call, short and node-local (/dev/shm, else /tmp; never under $SCRATCH),
+                    under 80 characters, mode 700, guarded from creation: gpg-agent is killed with it and the directory
+                    removed, and a removal that cannot be confirmed is a role failure. ~/.gnupg is never touched.
                     stdout is returned only after gpg exited 0 (a non-zero exit, such as an MDC failure, is a refusal)
-  seal              section 4.2 steps 1-3: plaintext sha256 of every file under the work dir (O_NOATIME where the
-                    platform has it), each encrypted to <sealed>/<id>.gpg under an OPAQUE id (p0001, p0002, ... in
-                    sorted relpath order), the encrypted manifest PG-MANIFEST.json.gpg = {"products": {id: plaintext
-                    sha256}, "paths": {id: relpath}} ("products" is the format the wrapper's reference role reads), a
-                    decrypt-and-hash round trip of every product and the manifest, and the public PG-SEAL.sha256
-                    (ciphertext sha256 per id and of the manifest). No relpath from the work dir is ever published:
-                    a file name can carry a seed (gevgen's genie-mcjob-<seed>.status)
-  delete_plaintext  step 4
-  content_scan      step 5: every regular file under the enumerated PG-owned paths (a path may be a file), hashed,
-                    against the plaintext list; symlinks and special files are skipped, never followed
-  seal_check        the ciphertexts against a PG-SEAL.sha256, with no decryption (exact set, exact bytes)
-  read_ciphertext   the reader side (PG's own round trip excepted): a ciphertext's bytes, read once and checked
-                    against PG-SEAL.sha256 by opaque id BEFORE any decryption (JE's round-3 rule). A missing listed file
-                    or different bytes is a Break; any other open or read error (permission, I/O) is a Refusal, a role
-                    failure, never a break
-  open_manifest     the manifest through read_ciphertext, decrypted, and its ids checked equal to the seal's
-  read_product      one product through read_ciphertext, decrypted, its plaintext sha256 checked against the manifest
-                    (a mismatch is a Break; a gpg failure on bytes that matched the seal is a Refusal)
+  seal              section 4.2 steps 1-3 and 6's file: plaintext sha256 of every file under the work dir (O_NOATIME
+                    where the platform has it), each encrypted to <sealed>/<id>.gpg under an opaque id (p0001, p0002,
+                    ... in sorted relpath order), the encrypted manifest PG-MANIFEST.json.gpg = {"products": {id:
+                    plaintext sha256}, "paths": {id: relpath}}, a decrypt-and-hash round trip of every product and the
+                    manifest, and the public PG-SEAL.sha256 (ciphertext sha256 by id). No work-dir relpath is published.
+  delete_plaintext  step 4, and the failure trap (never follows a link)
+  content_scan      step 5: every regular file under the enumerated paths (or the path itself, if a file), hashed,
+                    against the plaintext list; links and special files are not followed; a walk error refuses
+  parse_seal /      the canonical sealed set: exactly p0001..pN.gpg and PG-MANIFEST.json.gpg, N >= 1; the check
+  seal_check        compares every entry of the sealed dir (any name, PG-SEAL.sha256 excepted) with no decryption,
+                    and reports only opaque names and counts
+  read_ciphertext / the reader side: a ciphertext opened without following links (regular files only), read once, and
+  open_manifest /   checked against PG-SEAL.sha256 BEFORE any decryption. A missing listed file or different bytes is a
+  read_product      Break; any other open or read error is a role failure. The manifest's full schema is checked
+                    (dicts, 64-hex hashes, safe relpaths, no duplicate keys, ids equal to the seal's). A request for an
+                    id the manifest does not list is a role failure, not a break.
 
-The plaintext hashes never leave memory except inside the encrypted manifest. Nothing here prints.
+The plaintext hashes never leave memory except inside the encrypted manifest. Nothing here prints, and no message
+names a work-dir entry.
 MEASURES: nothing. CANNOT AUTHORIZE: a connect, a seal's acceptance, or any reading of sealed content.
 """
 from __future__ import annotations
@@ -36,6 +38,7 @@ import hashlib
 import json
 import os
 import re
+import resource
 import shutil
 import stat
 import subprocess
@@ -46,16 +49,23 @@ GPG_ENCRYPT = ("gpg", "--batch", "--yes", "--pinentry-mode", "loopback", "--pass
                "--symmetric", "--cipher-algo", "AES256", "--s2k-digest-algo", "SHA512", "--force-mdc")
 GPG_DECRYPT = ("gpg", "--batch", "--pinentry-mode", "loopback", "--passphrase-fd", "3", "--no-symkey-cache", "--decrypt")
 BREAK_RC = 66
-SEED_BASE_LO, SEED_BASE_HI = 1_000_000_000, 2_000_000_000      # [lo, hi)
+SEED_BASE_LO, SEED_BASE_HI = 1_000_000_000, 2_000_000_000      # [lo, hi): always 10 digits
 SEED_LIMIT = 2 ** 31 - 1                                         # a computed seed must be below this
 N_TASKS = 7                                                      # FD-F1-DECLARATION-AMENDMENT-2: 7 tasks per tune
 U_STRIDE = 10_000
 MANIFEST = "PG-MANIFEST.json"
+MANIFEST_CT = MANIFEST + ".gpg"
 SEAL_FILE = "PG-SEAL.sha256"
 MAX_PRODUCTS = 9999
 NOATIME = getattr(os, "O_NOATIME", 0)
-_PG_FRAME = re.compile(rb"([0-9a-f]{64})\n([1-9][0-9]*)\n")
+NOFOLLOW = getattr(os, "O_NOFOLLOW", 0)
+PG_FRAME_LEN, PV_FRAME_LEN = 76, 65
+_PG_FRAME = re.compile(rb"([0-9a-f]{64})\n([1-9][0-9]{9})\n")
 _PV_FRAME = re.compile(rb"([0-9a-f]{64})\n")
+ID = re.compile(r"p[0-9]{4}")
+HEX64 = re.compile(r"[0-9a-f]{64}")
+GNUPG_HOME_MAX = 80
+GPG_ENV = {"PATH": "/usr/bin:/bin", "LC_ALL": "C"}
 
 
 class Refusal(Exception):
@@ -63,12 +73,17 @@ class Refusal(Exception):
 
 
 class Break(Exception):
-    """A confirmed integrity break: a ciphertext does not decrypt to its recorded plaintext."""
+    """A confirmed integrity break: the sealed set disagrees with its seal or its manifest."""
+
+
+def _raise(e: OSError):
+    raise Refusal(f"a directory walk failed ({type(e).__name__})") from e
 
 
 # ------------------------------------------------------------------------------------------------ frame and seeds
 def read_frame(data: bytes, with_seed: bool) -> tuple[str, int | None]:
-    m = (_PG_FRAME if with_seed else _PV_FRAME).fullmatch(data)
+    want = PG_FRAME_LEN if with_seed else PV_FRAME_LEN
+    m = (_PG_FRAME if with_seed else _PV_FRAME).fullmatch(data) if len(data) == want else None
     if not m:
         raise Refusal("the stdin frame is malformed")
     seed = int(m.group(2)) if with_seed else None
@@ -89,12 +104,28 @@ def task_seeds(base: int, tunes: list[str]) -> dict:
 
 
 # --------------------------------------------------------------------------------------------------------- gpg
-GNUPG_HOME_MAX = 80
+class Tools:
+    """The absolute paths of gpg and gpgconf; each must be an executable regular file."""
+
+    def __init__(self, gpg: str, gpgconf: str):
+        for p in (gpg, gpgconf):
+            if not os.path.isabs(p) or not os.path.isfile(p) or not os.access(p, os.X_OK):
+                raise Refusal("gpg and gpgconf must be absolute paths of executable files")
+        self.gpg, self.gpgconf = gpg, gpgconf
+
+
+def _inside(path: str, root: str) -> bool:
+    path, root = os.path.realpath(path), os.path.realpath(root)
+    return path == root or path.startswith(root.rstrip("/") + "/")
 
 
 def new_gnupg_home() -> str:
-    """A fresh, empty, mode-700 GNUPGHOME on a short node-local path (gpg-agent's socket path must stay short)."""
+    """A fresh, empty, mode-700 GNUPGHOME on a short node-local path (gpg-agent's socket path must stay short), never
+    under $SCRATCH."""
     root = "/dev/shm" if os.path.isdir("/dev/shm") else "/tmp"
+    scratch = os.environ.get("SCRATCH")
+    if scratch and _inside(root, scratch):
+        raise Refusal("the GNUPGHOME root is under $SCRATCH")
     home = tempfile.mkdtemp(prefix="cfx", dir=root)
     os.chmod(home, 0o700)
     if len(home) >= GNUPG_HOME_MAX:
@@ -103,62 +134,90 @@ def new_gnupg_home() -> str:
     return home
 
 
-def gpg_run(argv: tuple, passphrase: str, payload: bytes, gpg: str = "gpg") -> bytes:
-    """Run gpg with the declared argv; the passphrase reaches it on fd 3 only. Raises Refusal on a non-zero exit."""
-    home = new_gnupg_home()
-    env = {k: v for k, v in os.environ.items() if not k.startswith("GPG") and k != "GNUPGHOME"}
-    env["GNUPGHOME"] = home
-    r, w = os.pipe()
-    try:
-        try:
-            os.write(w, passphrase.encode("ascii") + b"\n")
-        finally:
-            os.close(w)
+def _child_fd3(r: int):
+    def child():
+        resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
+        if r != 3:
+            os.dup2(r, 3)
+        else:
+            os.set_inheritable(3, True)
+    return child
 
-        def child():
-            if r != 3:
-                os.dup2(r, 3)
-            else:
-                os.set_inheritable(3, True)
+
+def gpg_run(argv: tuple, passphrase: str, payload: bytes, tools: Tools) -> bytes:
+    """Run gpg with the declared argv; the passphrase reaches it on fd 3 only. Raises Refusal on a non-zero exit or
+    on a GNUPGHOME whose removal cannot be confirmed."""
+    home = new_gnupg_home()
+    env = dict(GPG_ENV, GNUPGHOME=home)
+    rc = None
+    try:
+        r, w = os.pipe()
         try:
-            p = subprocess.Popen([gpg, *argv[1:]], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE, close_fds=False, preexec_fn=child, env=env)
+            try:
+                os.write(w, passphrase.encode("ascii") + b"\n")
+            finally:
+                os.close(w)
+            p = subprocess.Popen([tools.gpg, *argv[1:]], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE, close_fds=True, pass_fds=(3,), preexec_fn=_child_fd3(r),
+                                 env=env)
         finally:
             os.close(r)
         out, _err = p.communicate(payload)
+        rc = p.returncode
     finally:
-        subprocess.run(["gpgconf", "--homedir", home, "--kill", "gpg-agent"], capture_output=True, env=env)
+        try:
+            subprocess.run([tools.gpgconf, "--homedir", home, "--kill", "gpg-agent"], capture_output=True, env=env,
+                           timeout=60)
+        except (OSError, subprocess.SubprocessError):
+            pass
         shutil.rmtree(home, ignore_errors=True)
-    if p.returncode != 0:
-        raise Refusal(f"gpg exited {p.returncode}")
+        if os.path.lexists(home):
+            raise Refusal("the GNUPGHOME could not be removed")
+    if rc != 0:
+        raise Refusal(f"gpg exited {rc}")
     return out
 
 
 # ------------------------------------------------------------------------------------------------- files
+def _read_fd(fd: int) -> bytes:
+    chunks = []
+    while True:
+        b = os.read(fd, 1 << 24)
+        if not b:
+            break
+        chunks.append(b)
+    return b"".join(chunks)
+
+
 def noatime_read(path: Path) -> bytes:
     fd = os.open(str(path), os.O_RDONLY | NOATIME)
     try:
-        chunks = []
-        while True:
-            b = os.read(fd, 1 << 24)
-            if not b:
-                break
-            chunks.append(b)
+        return _read_fd(fd)
     finally:
         os.close(fd)
-    return b"".join(chunks)
+
+
+def regular_read(path: Path) -> bytes:
+    """Open without following a link (O_NOFOLLOW), require a regular file, read once (O_NOATIME where available)."""
+    fd = os.open(str(path), os.O_RDONLY | NOATIME | NOFOLLOW)
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise Refusal("a sealed entry is not a regular file")
+        return _read_fd(fd)
+    finally:
+        os.close(fd)
 
 
 def enumerate_files(root: Path) -> list[str]:
     """Sorted relative paths of the regular files under root. A symlink or a special file is refused: it could name
-    bytes outside the PG-owned tree."""
+    bytes outside the tree. A walk error refuses."""
     root = Path(root)
     out = []
-    for dirpath, dirnames, filenames in os.walk(root, followlinks=False):
+    for dirpath, dirnames, filenames in os.walk(root, followlinks=False, onerror=_raise):
         for name in dirnames + filenames:
             st = os.lstat(os.path.join(dirpath, name))
             if stat.S_ISLNK(st.st_mode) or not (stat.S_ISDIR(st.st_mode) or stat.S_ISREG(st.st_mode)):
-                raise Refusal("a non-regular entry (symlink or special file) under the work dir")
+                raise Refusal("a non-regular entry (symlink or special file) in a sealed tree")
         out += [os.path.relpath(os.path.join(dirpath, f), root) for f in filenames]
     return sorted(out)
 
@@ -176,8 +235,8 @@ def product_ids(n: int) -> list[str]:
     return [f"p{i:04d}" for i in range(1, n + 1)]
 
 
-def seal(workdir: Path, sealed: Path, passphrase: str, gpg: str = "gpg") -> dict:
-    """Section 4.2 steps 1-3 and 6's file. Returns {"hashes": {id: plaintext sha256}, "n_products", "seal_file"};
+def seal(workdir: Path, sealed: Path, passphrase: str, tools: Tools) -> dict:
+    """Section 4.2 steps 1-3 and 6's file. Returns {"hashes": {id: plaintext sha256}, "n_products", "seal_text"};
     the hashes are for the content scan only and are never written in plaintext. Raises Break on a round-trip
     mismatch."""
     workdir, sealed = Path(workdir), Path(sealed)
@@ -189,26 +248,25 @@ def seal(workdir: Path, sealed: Path, passphrase: str, gpg: str = "gpg") -> dict
     for pid, rel in zip(ids, rels):
         plain = noatime_read(workdir / rel)
         hashes[pid], paths[pid] = hashlib.sha256(plain).hexdigest(), rel
-        ct = gpg_run(GPG_ENCRYPT, passphrase, plain, gpg)
+        ct = gpg_run(GPG_ENCRYPT, passphrase, plain, tools)
         _write_new(sealed / (pid + ".gpg"), ct)
         cipher[pid + ".gpg"] = hashlib.sha256(ct).hexdigest()
         del plain
     man_plain = json.dumps({"products": hashes, "paths": paths}, sort_keys=True).encode()
-    man_ct = gpg_run(GPG_ENCRYPT, passphrase, man_plain, gpg)
-    _write_new(sealed / (MANIFEST + ".gpg"), man_ct)
-    cipher[MANIFEST + ".gpg"] = hashlib.sha256(man_ct).hexdigest()
-    # step 3: the decrypt-and-hash round trip, from the bytes on disk
-    for pid in ids:
-        back = gpg_run(GPG_DECRYPT, passphrase, (sealed / (pid + ".gpg")).read_bytes(), gpg)
+    man_ct = gpg_run(GPG_ENCRYPT, passphrase, man_plain, tools)
+    _write_new(sealed / MANIFEST_CT, man_ct)
+    cipher[MANIFEST_CT] = hashlib.sha256(man_ct).hexdigest()
+    for pid in ids:                                  # step 3: the round trip, from the bytes on disk
+        back = gpg_run(GPG_DECRYPT, passphrase, regular_read(sealed / (pid + ".gpg")), tools)
         if hashlib.sha256(back).hexdigest() != hashes[pid]:
             raise Break(f"{pid} does not reproduce its plaintext sha256")
         del back
-    back = gpg_run(GPG_DECRYPT, passphrase, (sealed / (MANIFEST + ".gpg")).read_bytes(), gpg)
+    back = gpg_run(GPG_DECRYPT, passphrase, regular_read(sealed / MANIFEST_CT), tools)
     if back != man_plain:
         raise Break("the manifest does not reproduce itself")
     seal_text = "".join(f"{h}  {name}\n" for name, h in sorted(cipher.items()))
     _write_new(sealed / SEAL_FILE, seal_text.encode())
-    return {"hashes": hashes, "n_products": len(rels), "seal_file": str(sealed / SEAL_FILE)}
+    return {"hashes": hashes, "n_products": len(rels), "seal_text": seal_text}
 
 
 def delete_plaintext(workdir: Path) -> int:
@@ -216,7 +274,7 @@ def delete_plaintext(workdir: Path) -> int:
     special entry, never followed), then remove its subdirectories deepest first; returns the count unlinked."""
     workdir = Path(workdir)
     n = 0
-    for dirpath, dirnames, filenames in os.walk(workdir, topdown=False, followlinks=False):
+    for dirpath, dirnames, filenames in os.walk(workdir, topdown=False, followlinks=False, onerror=_raise):
         for name in filenames:
             os.unlink(os.path.join(dirpath, name))
             n += 1
@@ -237,7 +295,7 @@ def _regular_files(root: Path):
         return
     if not stat.S_ISDIR(st.st_mode):
         return
-    for dirpath, _, filenames in os.walk(root, followlinks=False):
+    for dirpath, _, filenames in os.walk(root, followlinks=False, onerror=_raise):
         for name in filenames:
             p = Path(dirpath) / name
             if stat.S_ISREG(os.lstat(p).st_mode):
@@ -245,8 +303,8 @@ def _regular_files(root: Path):
 
 
 def content_scan(paths: list[Path], plaintext_hashes: set[str]) -> list[str]:
-    """Step 5: every regular file under each enumerated PG-owned path (or the path itself, if it is a file) whose
-    sha256 is a plaintext hash. A missing path is skipped; symlinks and special files are not followed."""
+    """Step 5: every regular file under each enumerated path (or the path itself, if it is a file) whose sha256 is a
+    plaintext hash. A missing path is skipped; links and special files are not followed; a walk error refuses."""
     hits = []
     for root in paths:
         root = Path(root)
@@ -260,37 +318,44 @@ def content_scan(paths: list[Path], plaintext_hashes: set[str]) -> list[str]:
 
 # ------------------------------------------------------------------------------------------------- seal check
 def parse_seal(text: str) -> dict:
+    """The canonical PG-SEAL.sha256: one "<64 hex>  <name>" line per entry, the names exactly p0001..pN.gpg (N >= 1)
+    and PG-MANIFEST.json.gpg."""
     out = {}
     for line in text.splitlines():
-        m = re.fullmatch(r"([0-9a-f]{64})  (\S.*)", line)
+        m = re.fullmatch(r"([0-9a-f]{64})  (\S+)", line)
         if not m or m.group(2) in out:
             raise Refusal(f"a malformed or repeated {SEAL_FILE} line")
         out[m.group(2)] = m.group(1)
-    if MANIFEST + ".gpg" not in out:
-        raise Refusal(f"{SEAL_FILE} names no manifest")
+    ids = sorted(k[:-4] for k in out if k != MANIFEST_CT)
+    if MANIFEST_CT not in out or not ids or ids != product_ids(len(ids)) or \
+            any(not (k == MANIFEST_CT or (k.endswith(".gpg") and ID.fullmatch(k[:-4]))) for k in out):
+        raise Refusal(f"{SEAL_FILE} is not a canonical set (p0001..pN.gpg and the manifest)")
     return out
 
 
+def _public(names) -> list[str]:
+    return sorted(n for n in names if n == MANIFEST_CT or (n.endswith(".gpg") and ID.fullmatch(n[:-4])))
+
+
 def seal_check(sealed: Path, seal_text: str) -> dict:
-    """The ciphertexts under ``sealed`` against a PG-SEAL.sha256's text: the same set of .gpg files and the same
-    bytes. No decryption. Returns {"ok", "missing", "extra", "mismatched", "n"}."""
+    """Every entry of the sealed dir (PG-SEAL.sha256 excepted) against a canonical seal: the same set, the same bytes.
+    No decryption. Only opaque names are reported; other extra names are counted."""
     want = parse_seal(seal_text)
     sealed = Path(sealed)
-    have = {r for r in enumerate_files(sealed) if r.endswith(".gpg")}
+    have = set(enumerate_files(sealed)) - {SEAL_FILE}
     missing = sorted(set(want) - have)
-    extra = sorted(have - set(want))
-    mismatched = sorted(r for r in set(want) & have
-                        if hashlib.sha256(noatime_read(sealed / r)).hexdigest() != want[r])
-    return {"ok": not (missing or extra or mismatched), "missing": missing, "extra": extra, "mismatched": mismatched,
-            "n": len(want)}
+    extra = have - set(want)
+    mismatched = sorted(r for r in set(want) & have if hashlib.sha256(regular_read(sealed / r)).hexdigest() != want[r])
+    return {"ok": not (missing or extra or mismatched), "missing": missing, "extra": _public(extra),
+            "extra_other": len(extra) - len(_public(extra)), "mismatched": mismatched, "n": len(want)}
 
 
 # ------------------------------------------------------------------------------------------------- reader side
 def read_ciphertext(seal_root: Path, seal_map: dict, name: str) -> bytes:
     if name not in seal_map:
-        raise Break("a requested ciphertext is not in the seal")
+        raise Refusal("a requested name is not in the seal")
     try:
-        data = noatime_read(Path(seal_root) / name)
+        data = regular_read(Path(seal_root) / name)
     except FileNotFoundError as e:
         raise Break("a sealed ciphertext is missing") from e
     except OSError as e:
@@ -300,24 +365,42 @@ def read_ciphertext(seal_root: Path, seal_map: dict, name: str) -> bytes:
     return data
 
 
-def open_manifest(seal_root: Path, seal_map: dict, passphrase: str, gpg: str = "gpg") -> dict:
-    ct = read_ciphertext(seal_root, seal_map, MANIFEST + ".gpg")
+def _no_dup_pairs(pairs):
+    d = {}
+    for k, v in pairs:
+        if k in d:
+            raise ValueError("a duplicate key")
+        d[k] = v
+    return d
+
+
+def _safe_rel(p) -> bool:
+    return (isinstance(p, str) and p != "" and not p.startswith("/") and "\x00" not in p
+            and os.path.normpath(p) == p and ".." not in p.split("/"))
+
+
+def open_manifest(seal_root: Path, seal_map: dict, passphrase: str, tools: Tools) -> dict:
+    ct = read_ciphertext(seal_root, seal_map, MANIFEST_CT)
     try:
-        man = json.loads(gpg_run(GPG_DECRYPT, passphrase, ct, gpg))
+        man = json.loads(gpg_run(GPG_DECRYPT, passphrase, ct, tools), object_pairs_hook=_no_dup_pairs)
     except ValueError as e:
-        raise Break("the manifest is not JSON") from e
-    ids = set(man.get("products", {})) if isinstance(man, dict) else set()
-    listed = {k[:-len(".gpg")] for k in seal_map if k != MANIFEST + ".gpg"}
-    if not (isinstance(man, dict) and set(man) == {"products", "paths"} and set(man["paths"]) == ids
-            and ids == listed):
-        raise Break("the manifest's ids are not the seal's")
+        raise Break("the manifest is not valid JSON") from e
+    listed = {k[:-4] for k in seal_map if k != MANIFEST_CT}
+    ok = (isinstance(man, dict) and set(man) == {"products", "paths"}
+          and isinstance(man["products"], dict) and isinstance(man["paths"], dict)
+          and set(man["products"]) == set(man["paths"]) == listed
+          and all(isinstance(h, str) and HEX64.fullmatch(h) for h in man["products"].values())
+          and all(_safe_rel(p) for p in man["paths"].values()))
+    if not ok:
+        raise Break("the manifest's schema or ids are not the seal's")
     return man
 
 
-def read_product(seal_root: Path, seal_map: dict, manifest: dict, pid: str, passphrase: str,
-                 gpg: str = "gpg") -> bytes:
+def read_product(seal_root: Path, seal_map: dict, manifest: dict, pid: str, passphrase: str, tools: Tools) -> bytes:
+    if pid not in manifest["products"]:
+        raise Refusal("a requested id is not in the manifest")
     ct = read_ciphertext(seal_root, seal_map, pid + ".gpg")
-    plain = gpg_run(GPG_DECRYPT, passphrase, ct, gpg)
+    plain = gpg_run(GPG_DECRYPT, passphrase, ct, tools)
     if hashlib.sha256(plain).hexdigest() != manifest["products"][pid]:
         raise Break(f"{pid} does not decrypt to its manifest sha256")
     return plain

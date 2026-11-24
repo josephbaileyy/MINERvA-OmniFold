@@ -1,32 +1,43 @@
 # command: python3 -B -m unittest -v test_covfix_ledger.py
 # python: 3.12.2 numpy 1.26.4  gpg: gpg (GnuPG) 2.4.8  host: Darwin arm64
-# 1162a522e480f08d4f6a488571b081dd5063bb3a1754489a9f48f3b59bc39daa  covfix_ledger.py
-# a4487f5d634baeac7a3aa3aea3e9af3efbab4672f568b30801ef774a7dc457a1  test_covfix_ledger.py
-# 4ba9cf948564abf4a59a296086f01514df111c6ea2d04b3f5b41fde055a1f1e5  covfix_ledger_mutation.py
-# start: 2026-11-24T03:27:51Z
-test_group_cap_and_ceiling (test_covfix_ledger.Intents.test_group_cap_and_ceiling) ... ok
+# 0ca6a7acb82ab43b92fd211f808154bfebf456d7f19c59278cad7c068cf2f82d  covfix_ledger.py
+# 4a8674db8f57e611b469f6251411fc0f606b884d9e24e24d211bd71ec0ba07f7  test_covfix_ledger.py
+# b54f7fc5fdde131f42653a198bf500488bdf5b206efeeff0d56c33cd49e83198  covfix_ledger_mutation.py
+# start: 2026-11-24T11:37:27Z
+test_init_once_policy_bound_and_absent_refused (test_covfix_ledger.Init.test_init_once_policy_bound_and_absent_refused) ... ok
+test_locked_needs_the_directory (test_covfix_ledger.Init.test_locked_needs_the_directory) ... ok
+test_group_cap_and_ceiling_exact_integers (test_covfix_ledger.Intents.test_group_cap_and_ceiling_exact_integers) ... ok
 test_group_totals_are_separate (test_covfix_ledger.Intents.test_group_totals_are_separate) ... ok
 test_intent_and_job_name (test_covfix_ledger.Intents.test_intent_and_job_name) ... ok
 test_no_new_intent_while_one_is_unrecorded (test_covfix_ledger.Intents.test_no_new_intent_while_one_is_unrecorded) ... ok
 test_record_submission (test_covfix_ledger.Intents.test_record_submission) ... ok
 test_unknown_phase (test_covfix_ledger.Intents.test_unknown_phase) ... ok
+test_a_different_phase_in_the_name_does_not_match (test_covfix_ledger.Reconcile.test_a_different_phase_in_the_name_does_not_match) ... ok
 test_a_matched_job_already_used_stays_unresolved (test_covfix_ledger.Reconcile.test_a_matched_job_already_used_stays_unresolved) ... ok
 test_ambiguous_or_absent_stays_unresolved (test_covfix_ledger.Reconcile.test_ambiguous_or_absent_stays_unresolved) ... ok
-test_foreign_rows_are_ignored (test_covfix_ledger.Reconcile.test_foreign_rows_are_ignored) ... ok
-test_lost_id_is_matched_from_the_job_name (test_covfix_ledger.Reconcile.test_lost_id_is_matched_from_the_job_name) ... ok
-test_running_or_garbled_stays_open (test_covfix_ledger.Reconcile.test_running_or_garbled_stays_open) ... ok
+test_charge_counts_every_node (test_covfix_ledger.Reconcile.test_charge_counts_every_node) ... ok
+test_foreign_and_step_rows_are_ignored (test_covfix_ledger.Reconcile.test_foreign_and_step_rows_are_ignored) ... ok
+test_lost_id_is_matched_from_the_full_job_name (test_covfix_ledger.Reconcile.test_lost_id_is_matched_from_the_full_job_name) ... ok
 test_terminal_charge_once_and_frees_the_reservation (test_covfix_ledger.Reconcile.test_terminal_charge_once_and_frees_the_reservation) ... ok
-test_groups_need_caps (test_covfix_ledger.Reservation.test_groups_need_caps) ... ok
-test_minute_rounding (test_covfix_ledger.Reservation.test_minute_rounding) ... ok
-test_refusals (test_covfix_ledger.Reservation.test_refusals) ... ok
-test_sacct_state (test_covfix_ledger.Reservation.test_sacct_state) ... ok
-test_corrupt_or_unknown_lines_refuse (test_covfix_ledger.Storage.test_corrupt_or_unknown_lines_refuse) ... ok
+test_uncertain_accounting_stays_open (test_covfix_ledger.Reconcile.test_uncertain_accounting_stays_open) ... ok
+test_a_duplicated_acceptance_line_refuses (test_covfix_ledger.Storage.test_a_duplicated_acceptance_line_refuses) ... ok
+test_corrupt_or_invalid_transitions_refuse (test_covfix_ledger.Storage.test_corrupt_or_invalid_transitions_refuse) ... ok
 test_every_append_is_fsynced (test_covfix_ledger.Storage.test_every_append_is_fsynced) ... ok
 test_lock_is_exclusive (test_covfix_ledger.Storage.test_lock_is_exclusive) ... ok
-test_accept_exactly_once (test_covfix_ledger.Toys.test_accept_exactly_once) ... ok
+test_cluster_suffix_parsed (test_covfix_ledger.Submit.test_cluster_suffix_parsed) ... ok
+test_mismatches_scancel_and_stop (test_covfix_ledger.Submit.test_mismatches_scancel_and_stop) ... ok
+test_sbatch_failure_leaves_the_intent_open (test_covfix_ledger.Submit.test_sbatch_failure_leaves_the_intent_open) ... ok
+test_submit_argv_record_and_verify (test_covfix_ledger.Submit.test_submit_argv_record_and_verify) ... ok
+test_whole_minutes_required (test_covfix_ledger.Submit.test_whole_minutes_required) ... ok
+test_accept_exactly_once_tied_to_a_job_of_the_phase (test_covfix_ledger.Toys.test_accept_exactly_once_tied_to_a_job_of_the_phase) ... ok
+test_hhmmss_and_scontrol_time (test_covfix_ledger.Units.test_hhmmss_and_scontrol_time) ... ok
+test_minute_rounding_in_node_seconds (test_covfix_ledger.Units.test_minute_rounding_in_node_seconds) ... ok
+test_policy_validation (test_covfix_ledger.Units.test_policy_validation) ... ok
+test_refusals (test_covfix_ledger.Units.test_refusals) ... ok
+test_sacct_state (test_covfix_ledger.Units.test_sacct_state) ... ok
 
 ----------------------------------------------------------------------
-Ran 20 tests in 0.118s
+Ran 31 tests in 2.880s
 
 OK
 # rc: 0

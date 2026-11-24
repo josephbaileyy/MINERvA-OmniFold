@@ -1,34 +1,60 @@
 # command: python3 -B covfix_ledger_mutation.py
 # python: 3.12.2 numpy 1.26.4  gpg: gpg (GnuPG) 2.4.8  host: Darwin arm64
-# 1162a522e480f08d4f6a488571b081dd5063bb3a1754489a9f48f3b59bc39daa  covfix_ledger.py
-# a4487f5d634baeac7a3aa3aea3e9af3efbab4672f568b30801ef774a7dc457a1  test_covfix_ledger.py
-# 4ba9cf948564abf4a59a296086f01514df111c6ea2d04b3f5b41fde055a1f1e5  covfix_ledger_mutation.py
-# start: 2026-11-24T03:27:52Z
+# 0ca6a7acb82ab43b92fd211f808154bfebf456d7f19c59278cad7c068cf2f82d  covfix_ledger.py
+# 4a8674db8f57e611b469f6251411fc0f606b884d9e24e24d211bd71ec0ba07f7  test_covfix_ledger.py
+# b54f7fc5fdde131f42653a198bf500488bdf5b206efeeff0d56c33cd49e83198  covfix_ledger_mutation.py
+# start: 2026-11-24T11:37:32Z
 baseline rc 0 OK
-no-minute-rounding: killed FAIL: test_minute_rounding (test_covfix_ledger.Reservation.test_minute_rounding)
-float-nodes-ok: killed FAIL: test_refusals (test_covfix_ledger.Reservation.test_refusals) (n=1.5, t=60)
+no-minute-rounding: killed FAIL: test_minute_rounding_in_node_seconds (test_covfix_ledger.Units.test_minute_rounding_in_node_seconds)
+bool-nodes-ok: killed FAIL: test_refusals (test_covfix_ledger.Units.test_refusals) (n=True, t=60)
+hhmmss-hmm: killed ERROR: test_cluster_suffix_parsed (test_covfix_ledger.Submit.test_cluster_suffix_parsed)
+slurm-days-dropped: killed FAIL: test_hhmmss_and_scontrol_time (test_covfix_ledger.Units.test_hhmmss_and_scontrol_time)
 state-first-word: killed FAIL: test_terminal_charge_once_and_frees_the_reservation (test_covfix_ledger.Reconcile.test_terminal_charge_once_and_frees_the_reservation)
-cap-group-unchecked: killed FAIL: test_groups_need_caps (test_covfix_ledger.Reservation.test_groups_need_caps)
+cap-infinite-ok: killed ERROR: test_policy_validation (test_covfix_ledger.Units.test_policy_validation) (caps={'P1': 1.0}, ceil=inf)
+cap-fraction-ok: killed FAIL: test_policy_validation (test_covfix_ledger.Units.test_policy_validation) (caps={'P1': 1.0}, ceil=0.14285714285714285)
+policy-reopen-ok: killed FAIL: test_init_once_policy_bound_and_absent_refused (test_covfix_ledger.Init.test_init_once_policy_bound_and_absent_refused)
+init-overwrite: killed FAIL: test_init_once_policy_bound_and_absent_refused (test_covfix_ledger.Init.test_init_once_policy_bound_and_absent_refused)
+init-no-dir-fsync: killed FAIL: test_init_once_policy_bound_and_absent_refused (test_covfix_ledger.Init.test_init_once_policy_bound_and_absent_refused)
 no-fsync: killed FAIL: test_every_append_is_fsynced (test_covfix_ledger.Storage.test_every_append_is_fsynced)
+dup-intent-ok: killed FAIL: test_corrupt_or_invalid_transitions_refuse (test_covfix_ledger.Storage.test_corrupt_or_invalid_transitions_refuse) (tail='{"kind": "intent", "intent": "b8ec252508')
+double-submit-replay-ok: killed FAIL: test_corrupt_or_invalid_transitions_refuse (test_covfix_ledger.Storage.test_corrupt_or_invalid_transitions_refuse) (tail='{"kind": "submitted", "intent": "e5d2810')
+double-charge-replay-ok: killed FAIL: test_corrupt_or_invalid_transitions_refuse (test_covfix_ledger.Storage.test_corrupt_or_invalid_transitions_refuse) (tail='{"kind": "reconciled", "intent": "44ec2d')
+dup-accept-replay-ok: killed FAIL: test_a_duplicated_acceptance_line_refuses (test_covfix_ledger.Storage.test_a_duplicated_acceptance_line_refuses)
+unknown-kind-ok: killed FAIL: test_a_duplicated_acceptance_line_refuses (test_covfix_ledger.Storage.test_a_duplicated_acceptance_line_refuses)
 unrecorded-allowed: killed FAIL: test_no_new_intent_while_one_is_unrecorded (test_covfix_ledger.Intents.test_no_new_intent_while_one_is_unrecorded)
-ceiling-unchecked: killed FAIL: test_group_cap_and_ceiling (test_covfix_ledger.Intents.test_group_cap_and_ceiling)
-cap-unchecked: killed FAIL: test_group_cap_and_ceiling (test_covfix_ledger.Intents.test_group_cap_and_ceiling)
-held-not-counted: killed FAIL: test_group_cap_and_ceiling (test_covfix_ledger.Intents.test_group_cap_and_ceiling)
+ceiling-unchecked: killed FAIL: test_group_cap_and_ceiling_exact_integers (test_covfix_ledger.Intents.test_group_cap_and_ceiling_exact_integers)
+cap-unchecked: killed FAIL: test_group_cap_and_ceiling_exact_integers (test_covfix_ledger.Intents.test_group_cap_and_ceiling_exact_integers)
+held-not-counted: killed FAIL: test_group_cap_and_ceiling_exact_integers (test_covfix_ledger.Intents.test_group_cap_and_ceiling_exact_integers)
 group-filter-off: killed FAIL: test_group_totals_are_separate (test_covfix_ledger.Intents.test_group_totals_are_separate)
 phase-unvalidated: killed ERROR: test_unknown_phase (test_covfix_ledger.Intents.test_unknown_phase) (p='px')
 job-nonnumeric-ok: killed ERROR: test_record_submission (test_covfix_ledger.Intents.test_record_submission)
 double-submit-ok: killed FAIL: test_record_submission (test_covfix_ledger.Intents.test_record_submission)
 job-reuse-ok: killed FAIL: test_record_submission (test_covfix_ledger.Intents.test_record_submission)
+whole-minute-unchecked: killed ERROR: test_whole_minutes_required (test_covfix_ledger.Submit.test_whole_minutes_required)
+no-requeue-dropped: killed FAIL: test_submit_argv_record_and_verify (test_covfix_ledger.Submit.test_submit_argv_record_and_verify)
+time-not-hhmmss: killed ERROR: test_cluster_suffix_parsed (test_covfix_ledger.Submit.test_cluster_suffix_parsed)
+jobid-suffix-rejected: killed ERROR: test_cluster_suffix_parsed (test_covfix_ledger.Submit.test_cluster_suffix_parsed)
+sbatch-rc-ignored: killed FAIL: test_sbatch_failure_leaves_the_intent_open (test_covfix_ledger.Submit.test_sbatch_failure_leaves_the_intent_open)
+timelimit-unchecked: killed FAIL: test_mismatches_scancel_and_stop (test_covfix_ledger.Submit.test_mismatches_scancel_and_stop) (field='TimeLimit')
+jobname-unchecked: killed FAIL: test_mismatches_scancel_and_stop (test_covfix_ledger.Submit.test_mismatches_scancel_and_stop) (field='JobName')
+qos-unchecked: killed FAIL: test_mismatches_scancel_and_stop (test_covfix_ledger.Submit.test_mismatches_scancel_and_stop) (field='QOS')
+no-scancel: killed FAIL: test_mismatches_scancel_and_stop (test_covfix_ledger.Submit.test_mismatches_scancel_and_stop) (field='TimeLimit')
+no-stop-record: killed ERROR: test_mismatches_scancel_and_stop (test_covfix_ledger.Submit.test_mismatches_scancel_and_stop) (field='TimeLimit')
+lost-id-phase-ignored: killed FAIL: test_a_different_phase_in_the_name_does_not_match (test_covfix_ledger.Reconcile.test_a_different_phase_in_the_name_does_not_match)
 ambiguous-matched: killed FAIL: test_ambiguous_or_absent_stays_unresolved (test_covfix_ledger.Reconcile.test_ambiguous_or_absent_stays_unresolved)
 used-job-matched: killed FAIL: test_a_matched_job_already_used_stays_unresolved (test_covfix_ledger.Reconcile.test_a_matched_job_already_used_stays_unresolved)
-step-rows-matched: killed FAIL: test_foreign_rows_are_ignored (test_covfix_ledger.Reconcile.test_foreign_rows_are_ignored)
-running-charged: killed FAIL: test_lost_id_is_matched_from_the_job_name (test_covfix_ledger.Reconcile.test_lost_id_is_matched_from_the_job_name)
+step-rows-matched: killed FAIL: test_foreign_and_step_rows_are_ignored (test_covfix_ledger.Reconcile.test_foreign_and_step_rows_are_ignored)
+conflicting-rows-ok: killed FAIL: test_uncertain_accounting_stays_open (test_covfix_ledger.Reconcile.test_uncertain_accounting_stays_open) (rows="[{'JobID': '3', 'JobName': 'covfix_w1_e6af8367f8f33542173a8d")
+running-charged: killed FAIL: test_lost_id_is_matched_from_the_full_job_name (test_covfix_ledger.Reconcile.test_lost_id_is_matched_from_the_full_job_name)
+negative-ok: killed FAIL: test_uncertain_accounting_stays_open (test_covfix_ledger.Reconcile.test_uncertain_accounting_stays_open) (rows="[{'JobID': '3', 'JobName': 'covfix_w1_51c599ff3e52c45d9c2e4a")
+nnodes-zero-ok: killed FAIL: test_uncertain_accounting_stays_open (test_covfix_ledger.Reconcile.test_uncertain_accounting_stays_open) (rows="[{'JobID': '3', 'JobName': 'covfix_w1_ca7351dbd40fdb27054a60")
+recorded-name-unchecked: killed FAIL: test_uncertain_accounting_stays_open (test_covfix_ledger.Reconcile.test_uncertain_accounting_stays_open) (rows="[{'JobID': '3', 'JobName': 'someone_else', 'State': 'COMPLET")
 charge-twice: killed FAIL: test_terminal_charge_once_and_frees_the_reservation (test_covfix_ledger.Reconcile.test_terminal_charge_once_and_frees_the_reservation)
-charge-nodes-ignored: killed FAIL: test_running_or_garbled_stays_open (test_covfix_ledger.Reconcile.test_running_or_garbled_stays_open)
-unexpected-toy-ok: killed FAIL: test_accept_exactly_once (test_covfix_ledger.Toys.test_accept_exactly_once)
-bad-sha-ok: killed FAIL: test_accept_exactly_once (test_covfix_ledger.Toys.test_accept_exactly_once)
-duplicate-toy-ok: killed FAIL: test_accept_exactly_once (test_covfix_ledger.Toys.test_accept_exactly_once)
-unknown-kind-ok: killed FAIL: test_corrupt_or_unknown_lines_refuse (test_covfix_ledger.Storage.test_corrupt_or_unknown_lines_refuse)
+charge-nodes-ignored: killed FAIL: test_charge_counts_every_node (test_covfix_ledger.Reconcile.test_charge_counts_every_node)
+unexpected-toy-ok: killed FAIL: test_accept_exactly_once_tied_to_a_job_of_the_phase (test_covfix_ledger.Toys.test_accept_exactly_once_tied_to_a_job_of_the_phase) (bad=('t9', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', '31'))
+bad-sha-ok: killed FAIL: test_accept_exactly_once_tied_to_a_job_of_the_phase (test_covfix_ledger.Toys.test_accept_exactly_once_tied_to_a_job_of_the_phase) (bad=('t2', 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', '31'))
+accept-job-unchecked: killed FAIL: test_accept_exactly_once_tied_to_a_job_of_the_phase (test_covfix_ledger.Toys.test_accept_exactly_once_tied_to_a_job_of_the_phase) (bad=('t2', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', '32'))
+duplicate-toy-ok: killed FAIL: test_accept_exactly_once_tied_to_a_job_of_the_phase (test_covfix_ledger.Toys.test_accept_exactly_once_tied_to_a_job_of_the_phase)
 lock-noop: killed FAIL: test_lock_is_exclusive (test_covfix_ledger.Storage.test_lock_is_exclusive)
-25/25 killed; survived, harness or not applied: []
+51/51 killed; survived, harness or not applied: []
 # rc: 0
