@@ -1,0 +1,4 @@
+== 2026-11-23T08:27:33Z Darwin arm64, python 3.12.2 numpy 1.26.4
+{'factors_big.npz': 106505136, 'lat_big.npz': 318429381, 'lat_big_bkg.npz': 6132258}
+rows touched 143376816 peak RSS bytes 188547072 = 0.189 GB
+baseline: numpy import alone, peak RSS bytes 35225600
