@@ -25,7 +25,9 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
+import math
 import os
 import subprocess
 import sys
@@ -78,6 +80,12 @@ LABELS = {
     "not_citable_for": ["a validated size for V_F", "a coverage or calibration statement"],
 }
 report, Stop = A.report, A.Stop
+
+
+def load_npz_bytes(raw: bytes) -> dict:
+    """An npz decoded from the bytes whose digest was checked (never reopened by path)."""
+    with np.load(io.BytesIO(raw), allow_pickle=False) as z:
+        return {k: np.asarray(z[k], float) for k in z.files}
 
 
 def symmetric(M: np.ndarray, tol: float = TOL) -> bool:
@@ -133,7 +141,7 @@ def block_inputs(repo: Path) -> tuple:
     report("V0", "the B5D record names this V_F", rec["matrices_sha256"]["V_F.csv"] == PINS["v_f_csv"])
     VFj, L = (np.array(rec["fluctuation"][k], float) for k in ("V_F", "L"))
     report("V0", "the record's V_F is the CSV's, bit for bit", np.array_equal(VFj, VF))
-    return VF, L, Ce, json.loads(raw["data_product_cpl"]), A.load_npz(repo / SOURCES["cpl_block_npz"])
+    return VF, L, Ce, json.loads(raw["data_product_cpl"]), load_npz_bytes(raw["cpl_block_npz"])
 
 
 def cmd_block(a) -> int:
@@ -201,6 +209,9 @@ def build_product(dp: dict, blk: dict, bj: dict, gr: dict, pins: dict) -> dict:
            float(np.abs(blk[REPORTED_F] - (old[A.REPORTED] + dF)).max()) <= TOL * scale
            and float(np.abs(blk[WITHOUT_F] - (old["C_total_plus_C_resp"] + dF)).max()) <= TOL * scale)
     sig = np.sqrt(np.diag(blk[REPORTED_F])) / f
+    report("K3", "Stage G's predictions are its declared five, in order, on their declared cells",
+           [(p["name"], p["cells"]) for p in gr["predictions"]] == declared_cells()
+           and all(len(p["sigma_total_over_f"]) == len(p["cells"]) for p in gr["predictions"]))
     for p in gr["predictions"]:
         idx = [CELLS.index(c) for c in p["cells"]]
         report("K3", f"{p['name']}: Stage G's sigma_total_over_f is sqrt(diag(C_rep,F))/f to 1e-12 and its covariance "
@@ -248,7 +259,7 @@ def cmd_product(a, pins: dict | None) -> int:
     report("K0", "the committed data product's pin is the declared one", pins["data_product"] == PINS["data_product_cpl"])
     raw = {k: A.pinned(getattr(a, k), pins[k], k, "K0") for k in PRODUCT_INPUTS}
     dp, bj, gr = (json.loads(raw[k]) for k in ("data_product", "block_json", "g_readout"))
-    p = build_product(dp, A.load_npz(a.block_npz), bj, gr, pins)
+    p = build_product(dp, load_npz_bytes(raw["block_npz"]), bj, gr, pins)
     files = product_files(p, dp)
     readout = {"schema": "fd-data-product-vf/1", "labels": {**product_labels(dp), "cells": dp["labels"]["cells"]},
                "controls_passed": ["K0", "K1", "K2", "K3", "K4", "K5", "K6"], "cells": dp["cells"], "h2": dp["h2"],
@@ -271,8 +282,30 @@ def cmd_product(a, pins: dict | None) -> int:
     files[f"{PRODUCT_STEM}.json"] = json.dumps(readout, indent=1, allow_nan=False) + "\n"
     for n, text in files.items():
         A.write_atomic(a.out_dir / n, text.encode())
+    check_written(a.out_dir, files, p)
+    for n in files:
         print(json.dumps({"wrote": str(a.out_dir / n), "sha256": A.sha256(a.out_dir / n)}), flush=True)
     return 0
+
+
+def check_written(out: Path, files: dict, p: dict) -> None:
+    """K6 on the files as written: each is its text's bytes and the JSON's files_sha256; the JSON's f, matrices,
+    correlation and relative sigma, and the cells CSV's f and sigma columns, read back bit for bit."""
+    for n, text in files.items():
+        report("K6", f"{n}: the file on disk is the bytes written", (out / n).read_bytes() == text.encode())
+    js = json.loads((out / f"{PRODUCT_STEM}.json").read_bytes())
+    report("K6", "every CSV's sha256 is the JSON's files_sha256", js["files_sha256"] == {
+        n: A.sha256(out / n) for n in files if n.endswith(".csv")})
+    report("K6", "the JSON's f, matrices, correlation and relative sigma read back bit for bit",
+           np.array_equal(np.array(js["f"]), p["f"]) and np.array_equal(np.array(js["correlation"]), p["correlation"])
+           and all(np.array_equal(np.array(js["matrices"][k]), p["matrices"][k]) for k in PRODUCT_MATRICES)
+           and all(np.array_equal(np.array(js["relative_sigma"][k]), p["relative_sigma"][k]) for k in PRODUCT_MATRICES))
+    import csv as _csv
+    rows = list(_csv.DictReader(io.StringIO((out / f"{PRODUCT_STEM}_cells.csv").read_text())))
+    report("K6", "the cells CSV lists R00-R15 with f and every relative sigma, bit for bit",
+           [r["cell"] for r in rows] == CELLS and np.array_equal(np.array([float(r["f"]) for r in rows]), p["f"])
+           and all(np.array_equal(np.array([float(r[f"rel_sigma_{k}"]) for r in rows]), p["relative_sigma"][k])
+                   for k in PRODUCT_MATRICES))
 
 
 def deposit_variant(pins: dict) -> DC.Variant:
@@ -286,32 +319,69 @@ def deposit_variant(pins: dict) -> DC.Variant:
                             "d^T (C + V_g)^-1 d with d = f - g, C this covariance on c, and V_g = diag of g's own "
                             "finite-MC variance, ndf n; its shape-only chi2 adds 100 f f^T (f on c, absolute units) to "
                             "C + V_g, ndf n - 1; g and V_g are the prediction's, not part of the measurement",
-              "block": LABELS["block"]}
+              "block": LABELS["block"],
+              "not_citable_for": f"{DC.LABELS['not_citable_for']}; {'; '.join(LABELS['not_citable_for'])}"}
     return DC.Variant(key=REPORTED_F, name=REPORTED_NAME, labels=labels,
                       pins={"data_product": pins["data_product"], "g_readout": pins["g_readout"]},
                       sources={"data_product": f"fd/with-vf/data-product/{PRODUCT_STEM}.json",
                                "g_readout": "fd/with-vf/readout/S/vf-with/fd_g_readout.json"})
 
 
+# ---------------------------------------------------------------- strict reading and comparison
+
+def _reject_constant(name: str):
+    raise Stop("R", f"a readout holds the non-finite constant {name}")
+
+
+def load_strict(raw: bytes) -> dict:
+    """A readout decoded with NaN and Infinity refused (the writers use allow_nan=False)."""
+    return json.loads(raw, parse_constant=_reject_constant)
+
+
+def finite_mismatch(old, new) -> list:
+    """Every numeric leaf at the same path whose finiteness or infinite sign differs (fd_cpl_addition.same_number
+    reads inf against a finite number as equal)."""
+    lo = dict(A.numeric_leaves(old))
+    bad = []
+    for p, y in A.numeric_leaves(new):
+        x = lo.get(p)
+        if isinstance(x, float) or isinstance(y, float):
+            fx = x is None or isinstance(x, bool) or math.isfinite(x)
+            fy = y is None or isinstance(y, bool) or math.isfinite(y)
+            if fx != fy or (not fx and x != y):
+                bad.append(f"finite {p}: {x!r} vs {y!r}")
+    return bad
+
+
+def compare(old: dict, new: dict, exclude, strings: bool) -> list:
+    return (A.compare_numbers(old, new, exclude) + finite_mismatch(old, new)
+            + (A.compare_strings(old, new, exclude) if strings else []))
+
+
 # ---------------------------------------------------------------- table
 
 def rename_vf(key: str) -> str:
-    """A V_F readout's key, as the OLD readout spells it (keys built from the block's name)."""
-    for k in ("C_resp_plus_C_PL5D_plus_dF", "C_resp_plus_dF"):
-        key = key.replace(BLOCKS[k], BLOCKS[k][:-len(" + dF")])
+    """A V_F readout's key, as the OLD readout spells it: keys built from the block's name lose its " + dF"."""
     return key.replace(" + dF", "")
 
 
-def paired(old, new, path=""):
-    """(path, OLD, V_F) for every numeric leaf at the same place in both readouts, keys renamed."""
+def paired(old, new, path="", unpaired=None):
+    """(path, OLD, V_F) for every numeric leaf at the same place in both readouts, keys renamed; every leaf or
+    container that has no partner (a missing key, a list of another length) is appended to ``unpaired``."""
+    unpaired = [] if unpaired is None else unpaired
     if isinstance(old, dict) and isinstance(new, dict):
         nk = {rename_vf(k): k for k in new}
-        for k in sorted(old):
-            if k in nk:
-                yield from paired(old[k], new[nk[k]], f"{path}/{k}")
-    elif isinstance(old, list) and isinstance(new, list) and len(old) == len(new):
+        for k in sorted(set(old) | set(nk)):
+            if k in old and k in nk:
+                yield from paired(old[k], new[nk[k]], f"{path}/{k}", unpaired)
+            else:
+                unpaired.append(f"{path}/{k} ({'OLD' if k in old else 'V_F'} only)")
+    elif isinstance(old, list) and isinstance(new, list):
+        if len(old) != len(new):
+            unpaired.append(f"{path} (lengths {len(old)} and {len(new)})")
+            return
         for i, (x, y) in enumerate(zip(old, new)):
-            yield from paired(x, y, f"{path}/{i}")
+            yield from paired(x, y, f"{path}/{i}", unpaired)
     elif not isinstance(old, (dict, list, str)) and not isinstance(new, (dict, list, str)):
         yield path, old, new
 
@@ -320,14 +390,32 @@ def listed(r: dict) -> list:
     return sorted(x["truth"] for x in r["triggers"]["listed"])
 
 
+def vf_matrix(old_name: str, stage_g: bool) -> str:
+    """The matrix a V_F readout names, from its OLD readout's: dF added to the block (Stage G: before V_g)."""
+    return old_name.replace(" + V_g", " + dF + V_g", 1) if stage_g else old_name + " + dF"
+
+
+def block_label(r: dict) -> dict:
+    a = r.get("argv") or []
+    return {f: (a[a.index(f) + 1] if f in a else None) for f in ("--extra-block-key", "--extra-block-name")}
+
+
 def curated(old: dict, new: dict) -> dict:
-    """The named rows: each F readout's listing and per-truth grades, each Stage G prediction's chi2 and p."""
-    out = {"listings": {}, "truths": {}, "stage_g": {}}
+    """The named rows: each readout's block, each F readout's listing and per-truth grades (F0's sigma, base OLD and
+    revised V_F, paired by name), each Stage G prediction's chi2 and p on the same cells; each side names its matrix
+    (the V_F side the OLD side's with dF added)."""
+    out = {"blocks": {}, "listings": {}, "truths": {}, "stage_g": {}, "f0_sigma": None}
     for k in old:
         o, n = old[k], new[k]
+        out["blocks"][k] = {"old": block_label(o), "vf": block_label(n)}
         if "triggers" in o:
             report("T", f"{k}: the truths are the same, in the same order, on both sides",
-                   [t["name"] for t in o["truths"]] == [t["name"] for t in n["truths"]])
+                   bool(o["truths"]) and [t["name"] for t in o["truths"]] == [t["name"] for t in n["truths"]])
+            for to, tn in zip(o["truths"], n["truths"]):
+                report("T", f"{k} {to['name']}: the V_F grade matrix is the OLD one with dF added, on the same cells",
+                       tn["grade_matrix"] == vf_matrix(to["grade_matrix"], False)
+                       and tn["grade"]["cells"] == to["grade"]["cells"],
+                       f"{to['grade_matrix']!r} / {tn['grade_matrix']!r}")
             out["listings"][k] = {"old": listed(o), "vf": listed(n), "newly_listed": sorted(set(listed(n)) - set(listed(o))),
                                   "cleared": sorted(set(listed(o)) - set(listed(n)))}
             out["truths"][k] = [{"truth": to["name"], "graded": to["graded"],
@@ -337,9 +425,21 @@ def curated(old: dict, new: dict) -> dict:
                                         "cells_abs_z_gt_2": tn["grade"]["cells_abs_z_gt_2"]},
                                  "grade_matrix": {"old": to["grade_matrix"], "vf": tn["grade_matrix"]}}
                                 for to, tn in zip(o["truths"], n["truths"])]
+            if k == "F0":
+                out["f0_sigma"] = {"old": o["relative_sigma"], "vf": n.get(f"relative_sigma_plus_{BLOCKS['dF']}")}
+                report("T", "F0: the V_F readout carries its revised sigma (relative_sigma_plus_dF)",
+                       out["f0_sigma"]["vf"] is not None)
         elif k.endswith("/g"):
-            report("T", f"{k}: the predictions are the same, in the same order, on both sides",
-                   [p["name"] for p in o["predictions"]] == [p["name"] for p in n["predictions"]])
+            report("T", f"{k}: the predictions are the same, in the same order, on the same cells, on both sides",
+                   bool(o["predictions"]) and [(p["name"], p["cells"]) for p in o["predictions"]]
+                   == [(p["name"], p["cells"]) for p in n["predictions"]])
+            for po, pn in zip(o["predictions"], n["predictions"]):
+                for kind in ("total", "shape_only"):
+                    report("T", f"{k} {po['name']} {kind}: the OLD matrix is C_total + its block + V_g, and the V_F "
+                                "matrix is it with dF added",
+                           po[kind]["matrix"].startswith("C_total + ") and " + V_g" in po[kind]["matrix"]
+                           and pn[kind]["matrix"] == vf_matrix(po[kind]["matrix"], True),
+                           f"{po[kind]['matrix']!r} / {pn[kind]['matrix']!r}")
             out["stage_g"][k] = [{"prediction": po["name"], "kind": kind, "ndf": po[kind]["ndf"],
                                   "old": {q: po[kind][q] for q in ("chi2", "p", "matrix")},
                                   "vf": {q: pn[kind][q] for q in ("chi2", "p", "matrix")}}
@@ -347,12 +447,15 @@ def curated(old: dict, new: dict) -> dict:
     return out
 
 
-def table_md(c: dict, counts: dict) -> str:
+def table_md(c: dict, counts: dict, unpaired: dict) -> str:
     L = ["# V_F's adoption: every Phase 1 readout, OLD and V_F", "", LABELS["block"] + ".", "",
          "## Listings (p < 0.01 or any |z| > 2)", "", "| readout | OLD | V_F | newly listed | cleared |",
          "|---|---|---|---|---|"]
     L += [f"| {k} | {', '.join(v['old']) or 'none'} | {', '.join(v['vf']) or 'none'} | "
           f"{', '.join(v['newly_listed']) or '-'} | {', '.join(v['cleared']) or '-'} |" for k, v in c["listings"].items()]
+    L += ["", "## Each readout's block (argv)", "", "| readout | OLD key | V_F key |", "|---|---|---|"]
+    L += [f"| {k} | {v['old']['--extra-block-key'] or 'none'} | {v['vf']['--extra-block-key'] or 'none'} |"
+          for k, v in c["blocks"].items()]
     for k, rows in c["stage_g"].items():
         L += ["", f"## Stage G, {k}", "", "| prediction | kind | ndf | chi2 OLD | p OLD | chi2 V_F | p V_F |",
               "|---|---|---:|---:|---:|---:|---:|"]
@@ -365,32 +468,38 @@ def table_md(c: dict, counts: dict) -> str:
               f"{' '.join(t['old']['cells_abs_z_gt_2']) or '-'} | {t['vf']['chi2']:.4g} | {t['vf']['p']:.3g} | "
               f"{' '.join(t['vf']['cells_abs_z_gt_2']) or '-'} |" for t in rows]
     L += ["", "## Every other number", "", "`fd_vf_table.json` `leaves` pairs every numeric leaf of each readout:", ""]
-    L += [f"- {k}: {n} paired leaves" for k, n in counts.items()]
+    L += [f"- {k}: {n} paired leaves, {len(unpaired[k])} without a partner" for k, n in counts.items()]
     L += ["", f"NOT CITABLE FOR: {'; '.join(LABELS['not_citable_for'])}. Readings go to the director first.", ""]
     return "\n".join(L)
 
 
 def cmd_table(a, pins: dict | None) -> int:
-    """``pairs``: a JSON list of [label, OLD path, V_F path]; ``pins`` the sha256 of each path, from the chain."""
+    """``pairs``: a JSON list of [label, OLD path, OLD pin, V_F path, V_F pin], the OLD pins the declared ones and the
+    V_F pins the digests the chain recorded when each file was written; ``pins`` must be the same map."""
     if pins is None:
-        raise Stop("T", "table runs in the chain only: the readouts' pins are the files the chain read and wrote")
+        raise Stop("T", "table runs in the chain only: the readouts' pins are the declared and recorded ones")
     out_json, out_md = a.out_dir / "fd_vf_table.json", a.out_dir / "fd_vf_table.md"
     report("T", "no output exists (no overwrite)", not out_json.exists() and not out_md.exists())
     pairs = json.loads(a.pairs.read_bytes())
+    report("T", "every pair's pins are the chain's", bool(pairs) and all(
+        pins.get(po) == ho and pins.get(pn) == hn for _, po, ho, pn, hn in pairs))
     old, new = {}, {}
-    for label, po, pn in pairs:
-        old[label] = json.loads(A.pinned(Path(po), pins[po], f"{label} OLD", "T"))
-        new[label] = json.loads(A.pinned(Path(pn), pins[pn], f"{label} V_F", "T"))
+    for label, po, ho, pn, hn in pairs:
+        old[label] = load_strict(A.pinned(Path(po), ho, f"{label} OLD", "T"))
+        new[label] = load_strict(A.pinned(Path(pn), hn, f"{label} V_F", "T"))
     c = curated(old, new)
-    leaves = {k: [[p, x, y] for p, x, y in paired(old[k], new[k])] for k in old}
+    leaves, unpaired = {}, {}
+    for k in old:
+        unpaired[k] = []
+        leaves[k] = [[p, x, y] for p, x, y in paired(old[k], new[k], "", unpaired[k])]
     counts = {k: len(v) for k, v in leaves.items()}
     table = {"schema": "fd-vf-table/1", "labels": {"what": "every Phase 1 readout's numbers, OLD and with V_F",
                                                    **LABELS}, "controls_passed": ["T"], "curated": c,
-             "leaves": leaves, "leaf_counts": counts, "inputs_sha256": dict(pins),
+             "leaves": leaves, "leaf_counts": counts, "unpaired": unpaired, "inputs_sha256": dict(pins),
              "code_sha256": {"fd_vf_addition.py": A.sha256(Path(__file__).resolve())}, "argv": list(sys.argv)}
     a.out_dir.mkdir(parents=True, exist_ok=True)
     A.write_atomic(out_json, (json.dumps(table, indent=1, allow_nan=False) + "\n").encode())
-    A.write_atomic(out_md, table_md(c, counts).encode())
+    A.write_atomic(out_md, table_md(c, counts, unpaired).encode())
     for p in (out_json, out_md):
         print(json.dumps({"wrote": str(p), "sha256": A.sha256(p)}), flush=True)
     return 0
@@ -410,35 +519,41 @@ OLD_S = {
                    "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd")},
     "nopl": {k: A.COMMITTED[k] for k in S_STEPS},
 }
-_CE = f"{FD}/fd/gencmp-e/rerun1/chain/chdefs"
+_CE = f"{FD}/fd/gencmp-e/rerun1/chain"
 OLD_E = {
-    "with": {"g": (f"{_CE}/with/readout/fd_g_readout.json",
+    "with": {"g": (f"{_CE}/chdefs/with/readout/fd_g_readout.json",
                    "a19009e0bd83b9bb8f9ad65fb65804e6f62c8953310103fbfe6fce5f84995875"),
-             "g_diag": (f"{_CE}/with/readout/fd_g_diag_readout.json",
+             "g_diag": (f"{_CE}/chdefs/with/readout/fd_g_diag_readout.json",
                         "522bfafa3016fadbd62c72f9f34153e17cd514a3b06acf282030d550f5dc1855"),
-             "g_followup": (f"{_CE}/with/readout/fd_g_followup_readout.json",
+             "g_followup": (f"{_CE}/chdefs/with/readout/fd_g_followup_readout.json",
                             "586cd74105d0837c69290d0370f6327cda75a92ee31f2d437658c626b4ab1e8f"),
-             "g_sens2": (f"{_CE}/with/readout/fd_g_sens2_readout.json",
+             "g_sens2": (f"{_CE}/chdefs/with/readout/fd_g_sens2_readout.json",
                          "4bc21dfda9c49762227fc4c486ee9decc349863aaea095f94347ad4b963d4513"),
-             "flux_boot": (f"{_CE}/with/readout/fd_flux_boot_readout.json",
+             "flux_boot": (f"{_CE}/chdefs/with/readout/fd_flux_boot_readout.json",
                            "5bb475eada29d270f93bf124251b98152a437280fa684429fe20e15d940f2e5d")},
-    "nopl": {"g": (f"{_CE}/nopl/readout/fd_g_readout.json",
+    "nopl": {"g": (f"{_CE}/chdefs/nopl/readout/fd_g_readout.json",
                    "d9a1ce38040b8cd3c2a6deb787f8a7dc90aca5c4d3a5a8d25a60b7f8ab582ed9"),
-             "g_diag": (f"{_CE}/nopl/readout/fd_g_diag_readout.json",
+             "g_diag": (f"{_CE}/chdefs/nopl/readout/fd_g_diag_readout.json",
                         "4e77966e93bd21d53ae777f2af02f00963d9eec45372997fc7af5fd45d2a099f"),
-             "g_followup": (f"{_CE}/nopl/readout/fd_g_followup_readout.json",
+             "g_followup": (f"{_CE}/chdefs/nopl/readout/fd_g_followup_readout.json",
                             "748f3af6e7fa54f916d73295b078e5b8a768a8abe024e848a55d9b90f9a806ac"),
-             "g_sens2": (f"{_CE}/nopl/readout/fd_g_sens2_readout.json",
+             "g_sens2": (f"{_CE}/chdefs/nopl/readout/fd_g_sens2_readout.json",
                          "6626cb7347793b50a4431307244d50e3e863202c6ac920d659d10ec691e7f7e9"),
-             "flux_boot": (f"{_CE}/nopl/readout/fd_flux_boot_readout.json",
+             "flux_boot": (f"{_CE}/chdefs/nopl/readout/fd_flux_boot_readout.json",
                            "24ff27f90067864292ef93bd018f5040548f90118368b3cf03fc3760377661ed")},
 }
-OLD_E_FIG = {"with": f"{_CE}/with/figures", "nopl": f"{_CE}/nopl/figures"}
+# the figures the note shows: E-A2's redraw of the with arm at the current fd_g_figures.py (5d2916cb). The nopl arm's
+# committed figures predate E-A1/E-A2's legends and are drawn by no current tool; the note shows none of them, so the
+# chain draws figures in the with arms only.
+OLD_E_FIG = f"{_CE}/chdefs/with/figures-a2"
+OLD_E_FIG_SUMS = f"{FD}/fd/gencmp-e/a2/run/receipts/figures-a2.sha256"
+CHDEFS_SPEC = f"{_CE}/pins/predictions-chdefs.json"
+CHDEFS_SUMS = "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0"     # rerun1/pred/SHA256SUMS
 OLD_DEP = f"{FD}/fd/with-cpl/deposit-candidate"
 CPL_BLOCK_JSON = "4023746e3a819e8cc8348c457d7dc1ee55df66eaa5f5f68082824b9df27cabd6"
 R_EXCLUDE = ("/argv", "/code_sha256", "/code", "/versions", "/extra_block/file")
 FIG_EXCLUDE = A.FIG_EXCLUDE
-DP_EXCLUDE = ("/argv", "/code_sha256")
+F_TOOLS = ("fd_f0_regrade",)                       # the tools that take no --extra-block-role
 
 BOOT = """import json, sys
 nd, mod, pins_file, variant, preds_file, argv = (sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5],
@@ -457,10 +572,12 @@ if variant in ("with-cpl", "with-vf"):
     pins = None
 sys.exit(T.run(T.build_args(argv), pins=pins, **kw))
 """
+CLI_ONLY = "fd_g_figures_check"
 
 
 class Chain(A.Chain):
-    """fd_cpl_addition's Chain, with one BOOT for the pins, the prediction set and either deposit variant."""
+    """fd_cpl_addition's Chain, with one BOOT for the pins, the prediction set and either deposit variant; the
+    figures check (main() only) runs as its CLI, as fd_gencmp_e's chain runs it."""
 
     def __init__(self, paths, receipt: Path, steps: list, preds_file: Path | None = None):
         super().__init__(paths, receipt)
@@ -468,8 +585,8 @@ class Chain(A.Chain):
 
     def run(self, name, arm, tool, argv, outputs, timeout, pins=None, variant=""):
         log = self.p.BA / "logs" / f"{arm}-{name}"
-        preds = "-" if self.preds_file is None or tool == "fd_g_figures_check" else str(self.preds_file)
-        if pins is None:
+        preds = "-" if self.preds_file is None or tool == CLI_ONLY else str(self.preds_file)
+        if pins is None or tool == CLI_ONLY:
             cmd = [sys.executable, "-I", "-B", str(self.p.nd / f"{tool}.py"), *argv]
         else:
             pf = self.p.BA / "pins" / f"{arm}-{name}.json"
@@ -505,231 +622,329 @@ def arm_flags(p, arm: str, vf: dict, role: bool = True) -> list:
     return A.extra(vf["npz"], vf["sha"], SIDE_KEY[side], BLOCKS[SIDE_KEY[side]], role)
 
 
-def arm_name(arm: str) -> str | None:
-    """The reported block's name a figure is drawn with; None for OLD without, whose figures use the default."""
-    kind, side = arm.split("-")
-    if kind == "old":
-        return A.NAME if side == "with" else None
-    return BLOCKS[SIDE_KEY[side]]
+def check_c(c: Chain, label: str, path: Path, vf_sha: str, key: str, upstream: dict, role: bool) -> None:
+    """C, right after a V_F step: its recorded argv names vf_block.npz's sha256, this member's key and name (and role
+    adopted, or none for the F tools); every digest field it records for the block is that sha256 (at least one); and
+    every upstream readout's sha256, where it is recorded (inputs_sha256, referenced), is the one the chain wrote."""
+    r = load_strict(path.read_bytes())
+    a = r.get("argv") or []
+
+    def fl(f):
+        return a[a.index(f) + 1] if a.count(f) == 1 else None
+    xbr, ins, ref = r.get("extra_block") or {}, r.get("inputs_sha256") or {}, r.get("referenced") or {}
+    digests = [v for v in (xbr.get("sha256"), ins.get("extra_block")) if v is not None]
+    ok = (fl("--extra-block-sha256") == vf_sha and fl("--extra-block-key") == key and fl("--extra-block-name") == BLOCKS[key]
+          and (fl("--extra-block-role") == "adopted" if role else "--extra-block-role" not in a)
+          and bool(digests) and all(v == vf_sha for v in digests)
+          and xbr.get("key", key) == key and xbr.get("name", BLOCKS[key]) == BLOCKS[key]
+          and all(ins.get(f) == h for f, h in upstream.items())
+          and all(ref.get(f, h) == h for f, h in upstream.items()))
+    c.check(f"C {label}: argv, the block's digests, key, name and role, and each upstream digest are as written", ok,
+            {"argv_block": [fl(f) for f in ("--extra-block-sha256", "--extra-block-key", "--extra-block-name",
+                                            "--extra-block-role")], "digests": digests,
+             "upstream": {f: [ins.get(f), ref.get(f)] for f in upstream}})
 
 
-def run_f0(c: Chain, arm: str, vf: dict) -> Path:
+def check_table(c: Chain, label: str, readout: Path, npz: Path, want: str) -> None:
+    """The experiment table: the npz the step wrote is the one its readout names, and the table it must be."""
+    r = load_strict(readout.read_bytes())
+    h = A.sha256(npz)
+    c.check(f"R {label}: the experiment table is the readout's table_sha256 and the declared table",
+            r.get("table_sha256") == h == want, {"npz": h, "readout": r.get("table_sha256"), "want": want})
+
+
+def run_f0(c: Chain, arm: str, vf: dict) -> tuple[Path, Path]:
     p = c.p
     W = p.BA / "S" / arm
-    (W / "readout").mkdir(parents=True, exist_ok=True)
-    out = W / "readout" / "fd_f0_readout.json"
+    (W / "readout").mkdir(parents=True)
+    out, npz = W / "readout" / "fd_f0_readout.json", W / "fd_f0_experiments.npz"
     xb0 = [] if arm == "old-f0" else A.extra(vf["npz"], vf["sha"], "dF", BLOCKS["dF"], role=False)
-    c.run("f0", arm, "fd_f0_regrade", [*p.f0(), *xb0, "--out-json", str(out), "--out-npz",
-                                       str(W / "fd_f0_experiments.npz")], [out], A.TIMEOUT["f0b"])
-    return out
+    c.run("f0", arm, "fd_f0_regrade", [*p.f0(), *xb0, "--out-json", str(out), "--out-npz", str(npz)], [out, npz],
+          A.TIMEOUT["f0b"])
+    if arm != "old-f0":
+        check_c(c, f"{arm} f0", out, vf["sha"], "dF", {}, role=False)
+    return out, npz
 
 
 def run_s(c: Chain, arm: str, vf: dict, f0b_old: tuple[Path, str] | None) -> dict:
     """F0b, F1 and Stage G on the original predictions for one arm. F1 reads ``f0b_old`` (an OLD arm: the committed
-    F0b, as its pinned readout was made) or this arm's F0b."""
+    F0b, as its pinned readout was made) or this arm's F0b. A V_F step's C runs as soon as it returns."""
     p = c.p
     xb, xb0 = arm_flags(p, arm, vf), arm_flags(p, arm, vf, role=False)
+    vfarm = arm.startswith("vf-")
+    key = SIDE_KEY[arm.split("-")[1]]
     W = p.BA / "S" / arm
-    (W / "readout").mkdir(parents=True, exist_ok=True)
+    (W / "readout").mkdir(parents=True)
     out = {k: W / "readout" / Path(A.COMMITTED[k][0]).name for k in S_STEPS}
-    c.run("f0b", arm, "fd_f0_regrade", A.step_argv(p, "f0b", xb, xb0, {}, out["f0b"], "with"), [out["f0b"]],
-          A.TIMEOUT["f0b"])
+    out["f0b_npz"], out["f1_npz"] = W / "fd_f0b_experiments.npz", W / "fd_f1_experiments.npz"
+    c.run("f0b", arm, "fd_f0_regrade", A.step_argv(p, "f0b", xb, xb0, {}, out["f0b"], "with"),
+          [out["f0b"], out["f0b_npz"]], A.TIMEOUT["f0b"])
+    if vfarm:
+        check_c(c, f"{arm} f0b", out["f0b"], vf["sha"], key, {}, role=False)
     up = ({"f0b": f0b_old[0], "f0b_sha256": f0b_old[1]} if f0b_old else
           {"f0b": out["f0b"], "f0b_sha256": A.sha256(out["f0b"])})
-    c.run("f1", arm, "fd_f0_regrade", A.step_argv(p, "f1", xb, xb0, up, out["f1"], "with"), [out["f1"]],
+    c.run("f1", arm, "fd_f0_regrade", A.step_argv(p, "f1", xb, xb0, up, out["f1"], "with"), [out["f1"], out["f1_npz"]],
           A.TIMEOUT["f1"])
+    if vfarm:
+        check_c(c, f"{arm} f1", out["f1"], vf["sha"], key, {"f0b_readout": up["f0b_sha256"]}, role=False)
     c.run("g", arm, "fd_g_compare", A.step_argv(p, "g", xb, xb0, up, out["g"], "with"), [out["g"]], A.TIMEOUT["g"])
+    if vfarm:
+        check_c(c, f"{arm} g", out["g"], vf["sha"], key, {}, role=True)
     return out
 
 
 def run_e(c: Chain, arm: str, vf: dict, f0b: tuple[Path, str]) -> dict:
-    """The chdefs set for one arm: Stage G, G-DIAG, G-FOLLOWUP, G-SENS2 and the flux bootstrap, each pinned to the
-    readouts the steps before wrote (fd_gencmp_e.run_set), then the three figures (with ``f0b``) and their check."""
+    """The chdefs set for one arm: Stage G, G-DIAG, G-FOLLOWUP, G-SENS2 and the flux bootstrap. In an OLD arm each
+    downstream step reads the COMMITTED upstream readouts, pinned by their declared digests (fd_gencmp_e's old set:
+    each readout records its upstream's digest, so R can hold only on the committed upstream); in a V_F arm each reads,
+    and is pinned to, the readout the step before wrote, and its C runs as soon as it returns. Then, in the with arms
+    only, the three figures (with ``f0b``) and their check."""
     import fd_g_figures as FG
     import fd_gencmp_e as E
     p = c.p
+    kind, side = arm.split("-")
     xb = arm_flags(p, arm, vf)
     base = {"s5p_sums": A.sha256(p.s5p_sums)}
     W = p.BA / "E" / arm
-    (W / "readout").mkdir(parents=True, exist_ok=True)
+    (W / "readout").mkdir(parents=True)
     out = {k: W / "readout" / Path(A.COMMITTED[k][0]).name for k in E_STEPS}
-    up, H = {}, {}
+    H, up = {}, {}
+    if kind == "old":
+        src = {k: p.D / OLD_E[side][k][0] for k in E_STEPS}
+        hsrc = {k: OLD_E[side][k][1] for k in E_STEPS}
+    else:
+        src, hsrc = up, H
     for k in E_STEPS:
-        c.run(k, f"E-{arm}", A.TOOLS[k], A.step_argv(p, k, xb, xb, up, out[k], "with"), [out[k]], A.TIMEOUT[k],
-              pins=E.step_pins(k, H, base))
+        c.run(k, f"E-{arm}", A.TOOLS[k], A.step_argv(p, k, xb, xb, src, out[k], "with"), [out[k]], A.TIMEOUT[k],
+              pins=E.step_pins(k, hsrc, base))
         H[k], up[k] = A.sha256(out[k]), out[k]
-    src = {**up, "f0b": f0b[0]}
+        if kind == "vf":
+            check_c(c, f"E {arm} {k}", out[k], vf["sha"], SIDE_KEY[side],
+                    {f: H[u] for f, u in A.UPSTREAM.get(k, {}).items()}, role=True)
+    res = {"out": out, "H": H, "fig": None}
+    if side != "with":
+        return res
+    fsrc, fh = {**src, "f0b": f0b[0]}, hsrc
     fig = W / "figures"
-    name = arm_name(arm)
-    fargv = [*A.step_argv(p, "figures", xb, xb, src, fig, "without"),
-             *(["--reported-block-name", name] if name else []), "--prediction-set", "gencmp-chdefs"]
+    name = A.NAME if kind == "old" else BLOCKS[SIDE_KEY["with"]]
+    fargv = [*A.step_argv(p, "figures", xb, xb, fsrc, fig, "without"), "--reported-block-name", name,
+             "--prediction-set", "gencmp-chdefs"]
     c.run("figures", f"E-{arm}", "fd_g_figures", fargv, [fig / f"{n}{e}" for n in A.FIG_NAMES for e in (".pdf", ".json")],
-          75, pins={**FG.PINS, "g_readout": H["g"], "g_diag_readout": H["g_diag"], "g_followup_readout": H["g_followup"],
-                    "g_sens2_readout": H["g_sens2"], "f0b_readout": f0b[1]})
-    c.run("figures_check", f"E-{arm}", "fd_g_figures_check",
-          [*A.step_argv(p, "figures_check", xb, xb, src, fig, "with"), "--prediction-set", "gencmp-chdefs"], [], 75,
-          pins={})
-    return {"out": out, "H": H, "fig": fig}
+          75, pins={**FG.PINS, "g_readout": fh["g"], "g_diag_readout": fh["g_diag"], "g_followup_readout": fh["g_followup"],
+                    "g_sens2_readout": fh["g_sens2"], "f0b_readout": f0b[1]})
+    c.run("figures_check", f"E-{arm}", CLI_ONLY,
+          [*A.step_argv(p, "figures_check", xb, xb, fsrc, fig, "with"), "--prediction-set", "gencmp-chdefs"], [], 75)
+    res["fig"] = fig
+    return res
 
 
 def check_r(c: Chain, label: str, D: Path, rel: str, pin: str, new: Path, strings: bool) -> None:
-    c.check(f"R {label}: the committed readout is the pinned bytes", A.sha256(D / rel) == pin, rel)
-    old, nw = json.loads((D / rel).read_bytes()), json.loads(new.read_bytes())
-    bad = A.compare_numbers(old, nw, R_EXCLUDE) + (A.compare_strings(old, nw, R_EXCLUDE) if strings else [])
-    c.check(f"R {label}: structure and numbers{' and strings' if strings else ''} are the committed readout's",
-            not bad, bad[:20])
+    raw = (D / rel).read_bytes()
+    c.check(f"R {label}: the committed readout is the pinned bytes", hashlib.sha256(raw).hexdigest() == pin, rel)
+    bad = compare(load_strict(raw), load_strict(new.read_bytes()), R_EXCLUDE, strings)
+    c.check(f"R {label}: structure, numbers and finiteness{' and strings' if strings else ''} are the committed "
+            "readout's", not bad, bad[:20])
 
 
-def check_r_figures(c: Chain, label: str, D: Path, rel: str, fig: Path) -> None:
+def check_r_figures(c: Chain, label: str, D: Path, fig: Path) -> None:
+    """Each figure against E-A2's committed redraw: the committed files are E-A2's receipt bytes; the sidecar is
+    the committed one but argv, code and versions; the PDF the same bytes."""
+    sums = {ln.split()[1]: ln.split()[0] for ln in (D / OLD_E_FIG_SUMS).read_text().splitlines() if ln.strip()}
     for n in A.FIG_NAMES:
-        old = json.loads((D / rel / f"{n}.json").read_bytes())
-        new = json.loads((fig / f"{n}.json").read_bytes())
-        bad = A.compare_numbers(old, new, FIG_EXCLUDE) + A.compare_strings(old, new, FIG_EXCLUDE)
+        for e in (".pdf", ".json"):
+            c.check(f"R {label} figure {n}{e}: the committed file is E-A2's receipt bytes",
+                    A.sha256(D / OLD_E_FIG / f"{n}{e}") == sums.get(f"{n}{e}"), f"{n}{e}")
+        old = load_strict((D / OLD_E_FIG / f"{n}.json").read_bytes())
+        new = load_strict((fig / f"{n}.json").read_bytes())
+        bad = compare(old, new, FIG_EXCLUDE, True)
         c.check(f"R {label} figure {n}: the sidecar is the committed one but argv, code and versions; the PDF the same "
-                "bytes", not bad and (fig / f"{n}.pdf").read_bytes() == (D / rel / f"{n}.pdf").read_bytes(), bad[:20])
+                "bytes", not bad and (fig / f"{n}.pdf").read_bytes() == (D / OLD_E_FIG / f"{n}.pdf").read_bytes(),
+                bad[:20])
+
+
+def declared_cells() -> list:
+    """Stage G's five predictions, in order, each with its declared cells (fd_g_compare.PREDICTIONS; "gibuu" is
+    GIBUU_CELLS), as a readout spells them."""
+    import fd_g_compare as G
+    return [(q["name"], CELLS if q["cells"] == "all" else [CELLS[i] for i in G.GIBUU_CELLS]) for q in G.PREDICTIONS]
 
 
 def check_s(c: Chain, label: str, g: Path, f0b: Path | None, blk: dict, side: str) -> None:
+    """S: the arm's reported sigma is sqrt(diag) of its own revised matrix, on Stage G's declared predictions and
+    cells, and in F0b's revised sigma."""
     M = blk[REPORTED_F] if side == "with" else blk[WITHOUT_F]
     sig = np.sqrt(np.diag(M)) / blk["f"]
-    gr = json.loads(g.read_bytes())
+    gr = load_strict(g.read_bytes())
+    have = [(q["name"], q["cells"]) for q in gr["predictions"]]
+    c.check(f"S {label} g: Stage G's predictions are its declared five, in order, on their declared cells",
+            have == declared_cells() and all(len(q["sigma_total_over_f"]) == len(q["cells"]) for q in gr["predictions"]),
+            have)
     c.check(f"S {label} g: every prediction's sigma_total_over_f is sqrt(diag(C_rep,F))/f", all(
         F.worst(np.array(q["sigma_total_over_f"]), sig[[CELLS.index(x) for x in q["cells"]]]) <= TOL
         for q in gr["predictions"]), None)
     if f0b is not None:
-        b = json.loads(f0b.read_bytes())
+        b = load_strict(f0b.read_bytes())
         c.check(f"S {label} f0b: its sqrt(diag(C_total + X_F))/f is sqrt(diag(C_rep,F))/f",
                 F.worst(np.array(b[f"relative_sigma_plus_{BLOCKS[SIDE_KEY[side]]}"]["C_total"]), sig) <= TOL, None)
 
 
-def check_c(c: Chain, label: str, path: Path, vf_sha: str, upstream: dict) -> None:
-    r = json.loads(path.read_bytes())
-    xbr, ins = r.get("extra_block") or {}, r.get("inputs_sha256", {})
-    named = [v for v in (xbr.get("sha256"), ins.get("extra_block")) if v is not None]
-    c.check(f"C {label}: the readout names vf_block.npz's sha256, and each upstream readout's as written",
-            bool(named) and all(v == vf_sha for v in named) and all(ins.get(f) == h for f, h in upstream.items()),
-            {"named": named, "upstream": {f: ins.get(f) for f in upstream}})
+def old_product_deposit(cS: Chain, D: Path, pS, BA: Path) -> None:
+    """The with-block data product and deposit candidate as committed, by their own tools, compared with the
+    committed files (control R): the product's CSVs byte for byte and its JSON but argv; the deposit built and
+    checked as recorded, its CSVs byte for byte and its JSON files but code_sha256."""
+    pdir = BA / "S" / "old-with" / "data-product"
+    cS.run("data_product", "old-with", "fd_cpl_addition",
+           ["product", "--data-product", str(pS.committed["data_product"]), "--block-npz",
+            str(pS.T / "fd/with-cpl/block/cpl_block.npz"), "--block-json", str(pS.T / "fd/with-cpl/block/cpl_block.json"),
+            "--g-readout", str(D / OLD_S["with"]["g"][0]), "--audit-json", str(pS.audit), "--out-dir", str(pdir)],
+           [pdir / n for n in A_PRODUCT_NAMES], 75,
+           pins={"data_product": A.PINS["data_product"], "block_npz": PINS["cpl_block_npz"],
+                 "block_json": CPL_BLOCK_JSON, "g_readout": OLD_S["with"]["g"][1], "audit_json": A.PINS["audit"]})
+    cdp = D / FD / "fd/with-cpl/data-product"
+    csvs = sorted(q.name for q in cdp.glob("*.csv"))
+    cS.check("R data_product: every CSV is the committed with-block product's, byte for byte", bool(csvs) and all(
+        (pdir / n).read_bytes() == (cdp / n).read_bytes() for n in csvs)
+        and sorted(q.name for q in pdir.glob("*.csv")) == csvs, csvs)
+    raw = (D / SOURCES["data_product_cpl"]).read_bytes()
+    cS.check("R data_product: the committed product is the pinned bytes",
+             hashlib.sha256(raw).hexdigest() == PINS["data_product_cpl"], None)
+    bad = compare(load_strict(raw), load_strict((pdir / f"{A.PRODUCT_STEM}.json").read_bytes()), A.DP_EXCLUDE, True)
+    cS.check("R data_product: its JSON is the committed one but argv", not bad, bad[:20])
+    dep = BA / "S" / "old-with" / "deposit-candidate"
+    dpins = {"data_product": PINS["data_product_cpl"], "g_readout": OLD_S["with"]["g"][1]}
+    cS.run("deposit_build", "old-with", "fd_deposit_candidate",
+           ["build", "--data-product", str(D / SOURCES["data_product_cpl"]), "--g-readout",
+            str(D / OLD_S["with"]["g"][0]), "--out-dir", str(dep)],
+           [dep / n for n in (*DC.FILES, DC.REFERENCE)], 75, pins=dpins, variant="with-cpl")
+    cS.run("deposit_check", "old-with", "fd_deposit_candidate",
+           ["check", "--package", str(dep), "--data-product", str(D / SOURCES["data_product_cpl"]), "--g-readout",
+            str(D / OLD_S["with"]["g"][0])], [dep / "deposit.json"], 75, pins=dpins, variant="with-cpl")
+    for n in (*DC.FILES, DC.REFERENCE):
+        a_, b_ = (D / OLD_DEP / n).read_bytes().decode(), (dep / n).read_bytes().decode()
+        ok = a_ == b_ if n.endswith(".csv") else DC.without_code(a_) == DC.without_code(b_)
+        cS.check(f"R deposit {n}: the committed with-block file{'' if n.endswith('.csv') else ' but code_sha256'}", ok, n)
+
+
+A_PRODUCT_NAMES = (f"{A.PRODUCT_STEM}.json", f"{A.PRODUCT_STEM}_cells.csv",
+                   *[f"{A.PRODUCT_STEM}_{k}.csv" for k in A.PRODUCT_MATRICES], f"{A.PRODUCT_STEM}_corr_{A.REPORTED}.csv")
+
+
+def vf_arms(cS: Chain, cE: Chain, D: Path, BA: Path, vf: dict, blk: dict, tables: dict) -> None:
+    """The V_F arms (F0, then each side's set S and chdefs set, each step's C as it returns, then S), the V_F data
+    product, the deposit candidate and the table. Called only after every OLD-arm control has passed. ``tables``: the
+    experiment tables' declared digests (the OLD readouts'), which a V_F arm must write unchanged."""
+    vnpz = vf["npz"]
+    f0, f0npz = run_f0(cS, "vf-f0", vf)
+    check_table(cS, "vf-f0 f0", f0, f0npz, tables["f0"])
+    res_s, res_e = {}, {}
+    for side in ("with", "nopl"):
+        arm = f"vf-{side}"
+        out = run_s(cS, arm, vf, None)
+        res_s[side] = out
+        check_table(cS, f"{arm} f0b", out["f0b"], out["f0b_npz"], tables[f"{side}/f0b"])
+        check_table(cS, f"{arm} f1", out["f1"], out["f1_npz"], tables[f"{side}/f1"])
+        check_s(cS, arm, out["g"], out["f0b"], blk, side)
+        res = run_e(cE, arm, vf, (out["f0b"], A.sha256(out["f0b"])))
+        res_e[side] = res
+        check_s(cE, f"E {arm}", res["out"]["g"], None, blk, side)
+    vdir = BA / "vf" / "data-product"
+    gS = res_s["with"]["g"]
+    bj = D / FD / "fd/with-vf/block/vf_block.json"
+    cS.run("data_product", "vf-with", "fd_vf_addition",
+           ["product", "--data-product", str(D / SOURCES["data_product_cpl"]), "--block-npz", str(vnpz),
+            "--block-json", str(bj), "--g-readout", str(gS), "--out-dir", str(vdir)],
+           [vdir / n for n in product_names()], 75,
+           pins={"data_product": PINS["data_product_cpl"], "block_npz": vf["sha"], "block_json": vf["json_sha"],
+                 "g_readout": A.sha256(gS)})
+    vdep = BA / "vf" / "deposit-candidate"
+    vpins = {"data_product": A.sha256(vdir / f"{PRODUCT_STEM}.json"), "g_readout": A.sha256(gS)}
+    cS.run("deposit_build", "vf-with", "fd_deposit_candidate",
+           ["build", "--data-product", str(vdir / f"{PRODUCT_STEM}.json"), "--g-readout", str(gS), "--out-dir",
+            str(vdep)], [vdep / n for n in (*DC.FILES, DC.REFERENCE)], 75, pins=vpins, variant="with-vf")
+    cS.run("deposit_check", "vf-with", "fd_deposit_candidate",
+           ["check", "--package", str(vdep), "--data-product", str(vdir / f"{PRODUCT_STEM}.json"), "--g-readout",
+            str(gS)], [vdep / "deposit.json"], 75, pins=vpins, variant="with-vf")
+
+    # the table: every V_F readout beside its OLD one; OLD pins declared, V_F pins as recorded when written
+    written = {q: h for s in cS.steps if "outputs" in s for q, h in s["outputs"].items()}
+    pairs = [["F0", str(D / OLD_F0[0]), OLD_F0[1], str(f0), written[str(f0)]]]
+    for side in ("with", "nopl"):
+        pairs += [[f"S {side}/{k}", str(D / OLD_S[side][k][0]), OLD_S[side][k][1], str(res_s[side][k]),
+                   written[str(res_s[side][k])]] for k in S_STEPS]
+        pairs += [[f"E {side}/{k}", str(D / OLD_E[side][k][0]), OLD_E[side][k][1], str(res_e[side]["out"][k]),
+                   written[str(res_e[side]["out"][k])]] for k in E_STEPS]
+    pf2 = BA / "pins" / "table-pairs.json"
+    A.write_atomic(pf2, (json.dumps(pairs, indent=1) + "\n").encode())
+    tab = BA / "table"
+    cS.run("table", "vf", "fd_vf_addition", ["table", "--pairs", str(pf2), "--out-dir", str(tab)],
+           [tab / "fd_vf_table.json", tab / "fd_vf_table.md"], 75,
+           pins={q: h for _, po, ho, pn, hn in pairs for q, h in ((po, ho), (pn, hn))})
 
 
 def cmd_chain(a) -> int:
-    import fd_gencmp_e as E
     D = DEPLOY
-    BA = a.run_dir
-    for d in ("S", "E", "vf", "table", "chain.json"):
-        report("C", f"{d} does not exist (no overwrite)", not (BA / d).exists())
-    for d in ("logs", "pins"):
-        (BA / d).mkdir(parents=True, exist_ok=True)
+    BA = a.run_dir.resolve()
+    for d in ("S", "E", "vf", "table", "logs", "pins", "mpl", "tmp", "chain.json"):
+        report("C", f"{d} does not exist (no overwrite)", not (BA / d).exists() and not (BA / d).is_symlink())
+    for d in ("logs", "pins", "mpl", "tmp"):
+        (BA / d).mkdir(parents=True)
+    os.environ["MPLCONFIGDIR"] = str(BA / "mpl")          # before any figure import, here and in every subprocess
+    os.environ["TMPDIR"] = str(BA / "tmp")
+    import fd_gencmp_e as E
     steps: list = []
     receipt = BA / "chain.json"
-    pS = A.Paths(D, a.scratch, BA)
-    pE = E.Paths(D, BA, a.run_e, "chdefs")
+    pS = A.Paths(D, a.scratch.resolve(), BA)
+    run_e_dir = a.run_e.resolve()
+    pE = E.Paths(D, BA, run_e_dir, "chdefs")
     try:
         cS = Chain(pS, receipt, steps)
-        # the block: the committed npz is the pinned bytes, and rebuilding it here gives the same bytes
-        vnpz = D / FD / "fd/with-vf/block/vf_block.npz"
-        cS.check("C vf_block.npz: the committed block is the pinned bytes", A.sha256(vnpz) == VF_BLOCK_NPZ, str(vnpz))
+        # the block: the committed npz is the pinned bytes, decoded from those bytes; the deploy rebuilds the npz and
+        # its readout as the same bytes as the committed ones
+        vnpz, vjson = D / FD / "fd/with-vf/block/vf_block.npz", D / FD / "fd/with-vf/block/vf_block.json"
+        raw = vnpz.read_bytes()
+        cS.check("C vf_block.npz: the committed block is the pinned bytes",
+                 hashlib.sha256(raw).hexdigest() == VF_BLOCK_NPZ, str(vnpz))
+        blk = load_npz_bytes(raw)
         cS.run("block", "vf", "fd_vf_addition", ["block", "--repo", str(D), "--out-dir", str(BA / "vf" / "block")],
                [BA / "vf" / "block" / "vf_block.npz", BA / "vf" / "block" / "vf_block.json"], 75)
-        cS.check("C vf_block.npz: rebuilt in the deploy, the same bytes",
-                 A.sha256(BA / "vf" / "block" / "vf_block.npz") == VF_BLOCK_NPZ, None)
-        vf = {"npz": vnpz, "sha": VF_BLOCK_NPZ}
-        blk = A.load_npz(vnpz)
-        specs = E.load_chdefs(a.run_e / "pred")
+        cS.check("C vf_block: rebuilt in the deploy, the npz and its readout are the committed bytes",
+                 (BA / "vf" / "block" / "vf_block.npz").read_bytes() == raw
+                 and (BA / "vf" / "block" / "vf_block.json").read_bytes() == vjson.read_bytes(), None)
+        vf = {"npz": vnpz, "sha": VF_BLOCK_NPZ, "json_sha": A.sha256(vjson)}
+        # the chdefs set: its manifest is the recorded one, and its specification the committed one
+        cS.check("C chdefs: the staged predictions' manifest is the recorded one", A.sha256(pE.s5p_sums) == CHDEFS_SUMS,
+                 str(pE.s5p_sums))
+        specs = E.load_chdefs(run_e_dir / "pred")
+        cS.check("C chdefs: the predictions' specification is the committed one",
+                 specs == json.loads((D / CHDEFS_SPEC).read_bytes()), CHDEFS_SPEC)
         pf = BA / "pins" / "predictions-chdefs.json"
         A.write_atomic(pf, (json.dumps(specs, indent=1) + "\n").encode())
         cE = Chain(pE, receipt, steps, pf)
         for rel, pin in [OLD_F0, *[v for s in (OLD_S, OLD_E) for arm in s.values() for v in arm.values()]]:
             cS.check(f"R {rel}: the committed file is the pinned bytes", A.sha256(D / rel) == pin, rel)
+        tables = {"f0": load_strict((D / OLD_F0[0]).read_bytes())["table_sha256"],
+                  **{f"{side}/{k}": load_strict((D / OLD_S[side][k][0]).read_bytes())["table_sha256"]
+                     for side in ("with", "nopl") for k in ("f0b", "f1")}}
 
         # ---- the OLD arms: every output against its pinned file before any V_F number
-        check_r(cS, "F0", D, *OLD_F0, run_f0(cS, "old-f0", vf), strings=False)
+        f0, f0npz = run_f0(cS, "old-f0", vf)
+        check_r(cS, "F0", D, *OLD_F0, f0, strings=False)
+        check_table(cS, "old-f0 f0", f0, f0npz, tables["f0"])
         for side in ("with", "nopl"):
             arm = f"old-{side}"
             f0b_old = (D / OLD_S[side]["f0b"][0], OLD_S[side]["f0b"][1])
             out = run_s(cS, arm, vf, f0b_old)
             for k in S_STEPS:
                 check_r(cS, f"S {arm} {k}", D, *OLD_S[side][k], out[k], strings=False)
+            check_table(cS, f"{arm} f0b", out["f0b"], out["f0b_npz"], tables[f"{side}/f0b"])
+            check_table(cS, f"{arm} f1", out["f1"], out["f1_npz"], tables[f"{side}/f1"])
             res = run_e(cE, arm, vf, f0b_old)
             for k in E_STEPS:
                 check_r(cE, f"E {arm} {k}", D, *OLD_E[side][k], res["out"][k], strings=(side == "with"))
-            check_r_figures(cE, f"E {arm}", D, OLD_E_FIG[side], res["fig"])
-        # the product and the deposit candidate as committed, by their own tools
-        pdir = BA / "S" / "old-with" / "data-product"
-        cS.run("data_product", "old-with", "fd_cpl_addition",
-               ["product", "--data-product", str(pS.committed["data_product"]), "--block-npz",
-                str(pS.T / "fd/with-cpl/block/cpl_block.npz"), "--block-json", str(pS.T / "fd/with-cpl/block/cpl_block.json"),
-                "--g-readout", str(D / OLD_S["with"]["g"][0]), "--audit-json", str(pS.audit), "--out-dir", str(pdir)],
-               [pdir / f"{A.PRODUCT_STEM}.json"], 75,
-               pins={"data_product": A.PINS["data_product"], "block_npz": PINS["cpl_block_npz"],
-                     "block_json": CPL_BLOCK_JSON, "g_readout": OLD_S["with"]["g"][1], "audit_json": A.PINS["audit"]})
-        cdp = D / FD / "fd/with-cpl/data-product"
-        csvs = sorted(q.name for q in cdp.glob("*.csv"))
-        cS.check("R data_product: every CSV is the committed with-block product's, byte for byte", bool(csvs) and all(
-            (pdir / n).read_bytes() == (cdp / n).read_bytes() for n in csvs)
-            and sorted(q.name for q in pdir.glob("*.csv")) == csvs, csvs)
-        old = json.loads(Path(D / SOURCES["data_product_cpl"]).read_bytes())
-        new = json.loads((pdir / f"{A.PRODUCT_STEM}.json").read_bytes())
-        bad = A.compare_numbers(old, new, DP_EXCLUDE) + A.compare_strings(old, new, DP_EXCLUDE)
-        cS.check("R data_product: its JSON is the committed one but argv and code_sha256", not bad, bad[:20])
-        dep = BA / "S" / "old-with" / "deposit-candidate"
-        dpins = {"data_product": PINS["data_product_cpl"], "g_readout": OLD_S["with"]["g"][1]}
-        dargv = ["build", "--data-product", str(D / SOURCES["data_product_cpl"]), "--g-readout",
-                 str(D / OLD_S["with"]["g"][0]), "--out-dir", str(dep)]
-        cS.run("deposit_build", "old-with", "fd_deposit_candidate", dargv,
-               [dep / n for n in (*DC.FILES, DC.REFERENCE)], 75, pins=dpins, variant="with-cpl")
-        for n in (*DC.FILES, DC.REFERENCE):
-            a_, b_ = (D / OLD_DEP / n).read_bytes().decode(), (dep / n).read_bytes().decode()
-            ok = a_ == b_ if n.endswith(".csv") else DC.without_code(a_) == DC.without_code(b_)
-            cS.check(f"R deposit {n}: the committed with-block file{'' if n.endswith('.csv') else ' but code_sha256'}",
-                     ok, n)
-
-        # ---- the V_F arms
-        f0 = run_f0(cS, "vf-f0", vf)
-        check_c(cS, "vf-f0 f0", f0, vf["sha"], {})
-        res_s, res_e = {}, {}
-        for side in ("with", "nopl"):
-            arm = f"vf-{side}"
-            out = run_s(cS, arm, vf, None)
-            res_s[side] = out
-            check_c(cS, f"{arm} f0b", out["f0b"], vf["sha"], {})
-            check_c(cS, f"{arm} f1", out["f1"], vf["sha"], {"f0b_readout": A.sha256(out["f0b"])})
-            check_c(cS, f"{arm} g", out["g"], vf["sha"], {})
-            check_s(cS, arm, out["g"], out["f0b"], blk, side)
-            res = run_e(cE, arm, vf, (out["f0b"], A.sha256(out["f0b"])))
-            res_e[side] = res
-            H = res["H"]
-            for k in E_STEPS:
-                check_c(cE, f"E {arm} {k}", res["out"][k], vf["sha"],
-                        {f: H[u] for f, u in A.UPSTREAM.get(k, {}).items()})
-            check_s(cE, f"E {arm}", res["out"]["g"], None, blk, side)
-        vdir = BA / "vf" / "data-product"
-        gS = res_s["with"]["g"]
-        cS.run("data_product", "vf-with", "fd_vf_addition",
-               ["product", "--data-product", str(D / SOURCES["data_product_cpl"]), "--block-npz", str(vnpz),
-                "--block-json", str(D / FD / "fd/with-vf/block/vf_block.json"), "--g-readout", str(gS),
-                "--out-dir", str(vdir)], [vdir / f"{PRODUCT_STEM}.json"], 75,
-               pins={"data_product": PINS["data_product_cpl"], "block_npz": vf["sha"],
-                     "block_json": A.sha256(D / FD / "fd/with-vf/block/vf_block.json"), "g_readout": A.sha256(gS)})
-        vdep = BA / "vf" / "deposit-candidate"
-        vpins = {"data_product": A.sha256(vdir / f"{PRODUCT_STEM}.json"), "g_readout": A.sha256(gS)}
-        cS.run("deposit_build", "vf-with", "fd_deposit_candidate",
-               ["build", "--data-product", str(vdir / f"{PRODUCT_STEM}.json"), "--g-readout", str(gS), "--out-dir",
-                str(vdep)], [vdep / n for n in (*DC.FILES, DC.REFERENCE)], 75, pins=vpins, variant="with-vf")
-        cS.run("deposit_check", "vf-with", "fd_deposit_candidate",
-               ["check", "--package", str(vdep), "--data-product", str(vdir / f"{PRODUCT_STEM}.json"), "--g-readout",
-                str(gS)], [vdep / "deposit.json"], 75, pins=vpins, variant="with-vf")
-
-        # ---- the table: every V_F readout beside its OLD one
-        pairs = [["F0", str(D / OLD_F0[0]), str(f0)]]
-        for side in ("with", "nopl"):
-            pairs += [[f"S {side}/{k}", str(D / OLD_S[side][k][0]), str(res_s[side][k])] for k in S_STEPS]
-            pairs += [[f"E {side}/{k}", str(D / OLD_E[side][k][0]), str(res_e[side]["out"][k])] for k in E_STEPS]
-        pf2 = BA / "pins" / "table-pairs.json"
-        A.write_atomic(pf2, (json.dumps(pairs, indent=1) + "\n").encode())
-        tab = BA / "table"
-        cS.run("table", "vf", "fd_vf_addition", ["table", "--pairs", str(pf2), "--out-dir", str(tab)],
-               [tab / "fd_vf_table.json", tab / "fd_vf_table.md"], 75,
-               pins={q: A.sha256(Path(q)) for _, po, pn in pairs for q in (po, pn)})
+            if side == "with":
+                check_r_figures(cE, f"E {arm}", D, res["fig"])
+        old_product_deposit(cS, D, pS, BA)
+        vf_arms(cS, cE, D, BA, vf, blk, tables)
     except Stop as e:
         print(f"[STOP] {e}", file=sys.stderr, flush=True)
         return 1
