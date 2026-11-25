@@ -9010,11 +9010,6 @@ docs/orchestration/state/ibu-chi2-20261123/regenA3/receipts/pins_after.sha256	tr
 docs/orchestration/state/ibu-chi2-20261123/regenA3/receipts/pins_before.sha256	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/regenA3/receipts/regenA3_run.sh	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/regenA3/receipts/run_time.txt	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
-docs/orchestration/state/ibu-chi2-20261123/regenA4/a4_readout.py	intended	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
-docs/orchestration/state/ibu-chi2-20261123/regenA4/receipts/a4_controls.sh	intended	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
-docs/orchestration/state/ibu-chi2-20261123/regenA4/receipts/regenA4_run.sh	intended	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
-docs/orchestration/state/ibu-chi2-20261123/regenA4/receipts/tier2.sh	intended	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
-docs/orchestration/state/ibu-chi2-20261123/regenA4/receipts/tier2_argv_equal.sh	intended	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/resp/DECLARATION.txt	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/resp/README.md	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/resp/SHA256SUMS	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
