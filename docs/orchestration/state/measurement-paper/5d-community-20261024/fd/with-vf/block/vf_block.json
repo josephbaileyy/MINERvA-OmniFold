@@ -1,7 +1,7 @@
 {
  "schema": "fd-vf-block/1",
  "labels": {
-  "block": "DeltaC_e = C_e^infl - C_e, the covariance increment; C_e^infl = L C_e L^T is C_e with its eigenvalue ranks 1-4, 5-8 and 9-16 rescaled by the applied variance multipliers phi_j (B5D's fluctuation block, V_F in its build records: blocks5d-20261124/RECEIPT.md), adopted into the reported covariance C_rep = C_e^infl + C_model + C_resp + C_PL,5D by DECISION-20261125 section 3, with A1 section 4's caveat: the multiplier measures the toy spread relative to LL5D's rebuilt reference block",
+  "block": "DeltaC_e = C_e^infl - C_e, the covariance increment; C_e^infl = L C_e L^T is C_e with its eigenvalue ranks 1-4, 5-8 and 9-16 rescaled by the applied variance multipliers phi_j (B5D's fluctuation block, V_F in its build records: blocks5d-20261124/RECEIPT.md), adopted into the reported covariance C_rep = C_e^infl + C_model + C_resp + C_PL,5D by DECISION-20261125 section 3, with A1 section 4's caveat: the estimated band ratio r_hat_j, which sets phi_j, measures the toy spread relative to LL5D's rebuilt reference block",
   "not_citable_for": [
    "a validated size for C_e^infl",
    "a coverage or calibration statement"
@@ -203,7 +203,7 @@
   "cpl_block_npz": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/block/cpl_block.npz"
  },
  "code_sha256": {
-  "fd_vf_addition.py": "da7168b22eb4a3d7ae18aa2bf430ce64d1967b6e86a637d1b95ae095b3ffc532",
+  "fd_vf_addition.py": "a5b99045c0b841b25531da0a1fc4866ebbe6586114bdda1eb83c1cded8925240",
   "fd_cpl_addition.py": "7c5fe70882599c1d1da0b0061397ccd162eca9c5baa2d27619c0ff5be9fd2685"
  }
 }

@@ -4,7 +4,8 @@ nd-unfolding/fd_vf_addition.py, applied in place in the repository copy given (n
 source is compiled first: a mutant that does not compile is INVALID, never killed. The unmutated suite must pass
 first (the baseline, with every test), or nothing is counted. Mutants run with VF_MUTANT_RUN=1, which skips the one
 exact-provenance test (the committed vf_block.json records this file's sha256, so any textual change fails it: a
-false kill). A valid mutant is KILLED only if the suite ran to its summary and reported a failure or an error;
+false kill); the baseline is also run that way, and its test count N recorded. A valid mutant is KILLED only if
+the suite ran all N tests (an import failure reports "Ran 1 test") and reported a failure or an error;
 HARNESS if it ended without a summary (an import failure or crash, counted as a failure of this receipt); TIMEOUT if
 it did not finish (also counted); and SURVIVED if it passed. One whose text is not
 found exactly once is MISSING. The file is restored and its sha256 checked after every mutant and at the end.
@@ -61,7 +62,6 @@ MUTANTS = [
      "WITHOUT_F: blk[WITHOUT_F], REPORTED_F: blk[WITHOUT_F]}"),
     ("deposit variant: the key without C_PL5D", "    return DC.Variant(key=REPORTED_F,", "    return DC.Variant(key=WITHOUT_F,"),
     # T: the table
-    ("T: keys not renamed", '    return key.replace(" + DeltaC_e", "")', "    return key"),
     ("T: Stage G's V_F matrix not checked", 'and pn[kind]["matrix"] == vf_matrix(po[kind]["matrix"], True),', ","),
     ("T: dF placed after V_g", 'old_name.replace(" + V_g", " + DeltaC_e + V_g", 1)', 'old_name + " + DeltaC_e"'),
     ("T: cleared truths dropped", '"cleared": sorted(set(listed(o)) - set(listed(n)))}', '"cleared": []}'),
@@ -96,16 +96,13 @@ MUTANTS = [
     ("C: the role unchecked", '(fl("--extra-block-role") == "adopted" if role else "--extra-block-role" not in a)', "True"),
     ("C: duplicate references unchecked", "and all(ref.get(f, h) == h for f, h in upstream.items()))", ")"),
     ("C: argv naming the digest twice passes", "return a[a.index(f) + 1] if a.count(f) == 1 else None", "return a[a.index(f) + 1] if f in a else None"),
-    ("C: F0 not checked", '        check_c(c, f"{arm} f0", out, vf["sha"], "DeltaC_e", {}, role=False)\n', "        pass\n"),
+    ("C: F0 not checked", '        check_c(c, f"{arm} f0", out, vf["sha"], "DeltaC_e", {}, role=False, tool="fd_f0_regrade")\n', "        pass\n"),
     ("C: a chdefs V_F step not checked", '            check_c(c, f"E {arm} {k}", out[k], vf["sha"], SIDE_KEY[side],', '            (lambda *x, **y: None)(c, f"E {arm} {k}", out[k], vf["sha"], SIDE_KEY[side],'),
     ("S: Stage G's predictions and cells unchecked", "have == declared_cells() and all(len(q[\"sigma_total_over_f\"]) == len(q[\"cells\"]) for q in gr[\"predictions\"]),", "True,"),
     ("K3: Stage G's predictions and cells unchecked", '[(p["name"], p["cells"]) for p in gr["predictions"]] == declared_cells()', "True"),
     ("K6: the files on disk not read back", '        report("K6", f"{n}: the file on disk is the bytes written", (out / n).read_bytes() == text.encode())', '        pass'),
     ("K6: the cells CSV not read back", '[r["cell"] for r in rows] == CELLS and same_bits(np.array([float(r["f"]) for r in rows]), p["f"])', "True"),
-    ("T: truths' order unchecked", 'bool(o["truths"]) and [t["name"] for t in o["truths"]] == [t["name"] for t in n["truths"]])', "True)"),
     ("T: the V_F grade matrix not checked", 'tn["grade_matrix"] == vf_matrix(to["grade_matrix"], False)', "True"),
-    ("T: Stage G's cells not paired", '== [(p["name"], p["cells"]) for p in n["predictions"]])', '== [(p["name"], p["cells"]) for p in o["predictions"]])'),
-    ("T: unpaired leaves dropped", '                unpaired.append(f"{path}/{k} ({\'OLD\' if k in old else \'V_F\'} only)")', "                pass"),
     ("T: F0's revised sigma not required", 'out["f0_sigma"]["vf"] is not None)', "True)"),
     ("T: the pairs' pins not the chain's", "pins.get(po) == ho and pins.get(pn) == hn for _, po, ho, pn, hn in pairs))", "True for _ in pairs))"),
     ("chain: OLD chdefs downstream reads fresh upstreams", '    if kind == "old":\n        src = {k: p.D / OLD_E[side][k][0] for k in E_STEPS}', '    if False:\n        src = {k: p.D / OLD_E[side][k][0] for k in E_STEPS}'),
@@ -126,16 +123,20 @@ MUTANTS = [
     ("T: named records not checked before pairing", "        identities(o, n, k)\n", ""),
     ("T: block names not mapped back in identities", 'idb = [(rename_vf(x["name"]) if isinstance(x.get("name"), str) else x.get("name"), x.get("cells"))',
      'idb = [(x.get("name"), x.get("cells"))'),
-    ("T: a number against a string dropped", '        unpaired.append(f"{path} (types {type(old).__name__} and {type(new).__name__})")', "        pass"),
     ("chdefs: the observed manifest digest pinned", '    base = {"s5p_sums": CHDEFS_SUMS}', '    base = {"s5p_sums": A.sha256(p.s5p_sums)}'),
     ("chain: the chdefs specification unchecked", 'specs == json.loads((D / CHDEFS_SPEC).read_bytes()), CHDEFS_SPEC)', "True, CHDEFS_SPEC)"),
     ("K6: a refusal installs the outputs", "    check_written(stage, files, p, dp)", "    os.rename(stage, out); stage = out\n    check_written(stage, files, p, dp)"),
     ("K6: the cells' box edges unchecked", "for r, c in zip(rows, dp[\"cells\"]) for ax in c[\"box\"]))", "for r, c in zip(rows, dp[\"cells\"]) for ax in c[\"box\"]) or True)"),
     ("R deposit: the 5B receipt's bytes unchecked", 'A.sha256(D / OLD_DEP / n) == sums.get(n), n)', "True, n)"),
     ("OLD: the deposit check not run", '    cS.run("deposit_check", "old-with", "fd_deposit_candidate",', '    (lambda *x, **k: None)("deposit_check", "old-with", "fd_deposit_candidate",'),
-    ("OLD: the product compared but code_sha256", "A.DP_EXCLUDE, True)", '(*A.DP_EXCLUDE, "/code_sha256"), True)'),
+    ("C: structured fields unchecked", '          and (all(f in xbr for f in STRUCTURED[tool]) if tool in STRUCTURED else "extra_block" in ins)\n', "          and True\n"),
+    ("renderer: the environment unchecked", 'bool(want) and all(have.get(k) == v for k, v in want.items()), {"have": have, "want": want})', 'True, {"have": have, "want": want})'),
+    ("T: keys not renamed in identities", '    return key.replace(" + DeltaC_e", "")', "    return key"),
     ("BOOT: the variants' modules swapped", '(A if variant == "with-cpl" else V)', '(V if variant == "with-cpl" else A)'),
 ]
+# Not run, each with its reason: T's truth-order and Stage G cell checks in curated() are redundant with identities()
+# (named records, in order, on the same cells), which runs first; excluding /code_sha256 again from the OLD product's R
+# is equivalent while the deploy's fd_cpl_addition.py is the committed product's (its recorded sha).
 
 
 def sha(p: Path) -> str:
@@ -154,6 +155,14 @@ def main() -> int:
             print("STOP: the baseline fails; no mutant is counted", flush=True)
             print(b.stderr[-3000:], flush=True)
             return 9
+        bm = subprocess.run([sys.executable, "-B", "-m", "unittest", "-q", "test_fd_vf_addition"], cwd=TESTS,
+                            capture_output=True, text=True, timeout=1200, env={**os.environ, "VF_MUTANT_RUN": "1"})
+        nm = re.search(r"^Ran (\d+) tests? in ", bm.stderr, re.M)
+        if bm.returncode != 0 or nm is None:
+            print("STOP: the mutant-mode baseline fails; no mutant is counted", flush=True)
+            return 9
+        n_tests = int(nm.group(1))
+        print(f"baseline in mutant mode: rc 0, {n_tests} tests", flush=True)
     for name, old, new in MUTANTS:
         n = orig.count(old)
         if n != 1:
@@ -174,7 +183,9 @@ def main() -> int:
         try:
             r = subprocess.run([sys.executable, "-B", "-m", "unittest", "-q", "test_fd_vf_addition"], cwd=TESTS,
                                capture_output=True, text=True, timeout=1200, env={**os.environ, "VF_MUTANT_RUN": "1"})
-            ran = re.search(r"^Ran \d+ tests? in ", r.stderr, re.M) is not None
+            nr = re.search(r"^Ran (\d+) tests? in ", r.stderr, re.M)
+            ran = (nr is not None and int(nr.group(1)) == n_tests and "Failed to import test module" not in r.stderr
+                   and "_FailedTest" not in r.stderr)
             if r.returncode == 0:
                 status = "SURVIVED"
             elif ran and re.search(r"^FAILED \((failures|errors)=", r.stderr, re.M):

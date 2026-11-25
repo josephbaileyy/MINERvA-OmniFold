@@ -356,6 +356,46 @@ class Product(unittest.TestCase):
         self.assertEqual(rep.call_args_list[-1].args[0], "K6")
         self.assertFalse((self.tmp / "p-k6").exists(), "a refused product installs no output")
 
+    def test_a_json_whose_bytes_changed_on_disk_refuses_k6(self):
+        real = A.write_atomic
+
+        def spaced(path, data):
+            real(path, data + b" " if path.name == f"{V.PRODUCT_STEM}.json" else data)
+        with mock.patch.object(A, "write_atomic", spaced), mock.patch.object(V, "report", wraps=V.report) as rep:
+            self.assertEqual(self.t.product(self.tmp / "p-k6j"), 1)
+        self.assertEqual(rep.call_args_list[-1].args[:2], ("K6", f"{V.PRODUCT_STEM}.json: the file on disk is the bytes written"))
+
+    def cells_text_changed(self, out, change):
+        real = V.product_files
+
+        def files(p, dp):
+            f = real(p, dp)
+            n = f"{V.PRODUCT_STEM}_cells.csv"
+            f[n] = change(f[n])
+            return f
+        with mock.patch.object(V, "product_files", files), mock.patch.object(V, "report", wraps=V.report) as rep:
+            self.assertEqual(self.t.product(self.tmp / out), 1)
+        return rep.call_args_list[-1].args[:2]
+
+    def test_a_cells_csv_whose_f_is_not_the_products_refuses_k6_on_readback(self):
+        def bump(text):
+            rows = text.splitlines()
+            head = rows[0].split(",")
+            r1 = rows[1].split(",")
+            r1[head.index("f")] = repr(float(r1[head.index("f")]) * 1.0000001)
+            return "\n".join([rows[0], ",".join(r1), *rows[2:]]) + "\n"
+        self.assertEqual(self.cells_text_changed("p-k6f", bump),
+                         ("K6", "the cells CSV lists R00-R15 with f and every relative sigma, bit for bit"))
+
+    def test_a_cells_csv_whose_box_edges_are_not_the_products_refuses_k6_on_readback(self):
+        def edge(text):
+            rows = text.splitlines()
+            r1 = rows[1].split(",")
+            r1[1] = repr(float(r1[1]) + 0.001)
+            return "\n".join([rows[0], ",".join(r1), *rows[2:]]) + "\n"
+        self.assertEqual(self.cells_text_changed("p-k6e", edge),
+                         ("K6", "the cells CSV's box edges are the committed product's cells"))
+
     def test_cells_whose_box_edges_are_not_the_products_refuse_k6(self):
         real = A.write_atomic
 
@@ -426,13 +466,6 @@ class Table(unittest.TestCase):
         self.assertEqual(V.rename_vf("relative_sigma_plus_C_resp + DeltaC_e"), "relative_sigma_plus_C_resp")
         self.assertEqual(V.rename_vf("C_total"), "C_total")
 
-    def test_pairing_follows_renamed_keys(self):
-        old = {"relative_sigma_plus_C_resp + C_PL5D": {"C_total": [1.0, 2.0]}, "x": 3}
-        new = {"relative_sigma_plus_C_resp + C_PL5D + DeltaC_e": {"C_total": [1.5, 2.5]}, "x": 4}
-        got = list(V.paired(old, new))
-        self.assertIn(("/relative_sigma_plus_C_resp + C_PL5D/C_total/0", 1.0, 1.5), got)
-        self.assertIn(("/x", 3, 4), got)
-
     def test_curated_names_newly_listed_and_cleared_truths(self):
         o = fake_f(["a", "b", "c"], ["a", "b"])
         n = fake_f(["a", "b", "c"], ["a"], m="M + DeltaC_e")
@@ -466,17 +499,6 @@ class Table(unittest.TestCase):
         with quiet():
             V.identities(o, n, "x")
 
-    def test_a_number_against_a_string_is_listed_without_a_partner(self):
-        un = []
-        self.assertEqual(list(V.paired({"a": 1.0}, {"a": "1.0"}, "", un)), [])
-        self.assertEqual(un, ["/a (types float and str)"])
-
-    def test_leaves_without_a_partner_are_listed_not_dropped(self):
-        un = []
-        got = list(V.paired({"a": [1, 2], "b": 1}, {"a": [1, 2, 3], "c": 2}, "", un))
-        self.assertEqual(got, [])
-        self.assertEqual(sorted(un), ["/a (lengths 2 and 3)", "/b (OLD only)", "/c (V_F only)"])
-
     def test_f0s_sigma_pairs_its_base_with_the_revised_one(self):
         o, n = fake_f(["a"], []), fake_f(["a"], [], m="M + DeltaC_e")
         o["relative_sigma"] = {"C_total": [1.0]}
@@ -486,6 +508,15 @@ class Table(unittest.TestCase):
         with quiet():
             c = V.curated({"F0": o}, {"F0": n})
         self.assertEqual(c["f0_sigma"], {"old": {"C_total": [1.0]}, "vf": {"C_total": [1.1]}})
+
+    def test_curated_checks_identities_in_a_family_it_has_no_rows_for(self):
+        rel = V.OLD_E["with"]["g_diag"][0]
+        o = json.loads((REPO / rel).read_text())
+        n = copy.deepcopy(o)
+        n["predictions"] = n["predictions"][::-1]
+        with quiet(), self.assertRaises(V.Stop) as cm:
+            V.curated({"E with/g_diag": o}, {"E with/g_diag": n})
+        self.assertEqual(cm.exception.control, "T")
 
     def test_each_side_names_its_matrix(self):
         o = fake_f(["a"], [])
@@ -515,10 +546,11 @@ class Table(unittest.TestCase):
     def test_the_table_refuses_without_the_chains_pins(self):
         tmp = Path(tempfile.mkdtemp(prefix="vf-tab-"))
         self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
-        (tmp / "pairs.json").write_text("[]")
+        (tmp / "pairs.json").write_text(json.dumps([["F0", str(tmp / "o"), "0" * 64, str(tmp / "n"), "0" * 64]]))
         a = V.build_args(["table", "--pairs", str(tmp / "pairs.json"), "--out-dir", str(tmp / "t")])
-        with quiet(), mock.patch("sys.stderr"):
+        with quiet(), mock.patch("sys.stderr") as err:
             self.assertEqual(V.run(a, pins=None), 1)
+        self.assertIn("table runs in the chain only", "".join(str(c) for c in err.mock_calls))
 
     def test_the_table_is_written_from_pinned_pairs(self):
         tmp = Path(tempfile.mkdtemp(prefix="vf-tab-"))
@@ -603,6 +635,14 @@ class Arms(unittest.TestCase):
         self.assertEqual(old, [*self.pS.f0(), "--out-json", flag(old, "--out-json"), "--out-npz", flag(old, "--out-npz")])
         self.assertEqual((flag(new, "--extra-block-key"), flag(new, "--extra-block-name")), ("DeltaC_e", "DeltaC_e"))
         self.assertNotIn("--extra-block-role", new)
+
+    def test_f0s_c_e_infl_arm_is_checked_with_its_block_and_the_old_arm_is_not(self):
+        seen = []
+        c = self.chain(self.pS)
+        with mock.patch.object(V, "check_c", lambda c, label, path, sha, key, up, role, **k: seen.append((label, key, k))):
+            V.run_f0(c, "old-f0", self.vf)
+            V.run_f0(c, "vf-f0", self.vf)
+        self.assertEqual(seen, [("vf-f0 f0", "DeltaC_e", {"tool": "fd_f0_regrade"})])
 
     def test_f1_reads_the_committed_f0b_in_an_old_arm_and_its_own_in_a_v_f_arm(self):
         c = self.chain(self.pS)
@@ -708,6 +748,71 @@ class Checks(unittest.TestCase):
         self.assertTrue(V.finite_mismatch(new_, old))
         self.assertEqual(V.finite_mismatch(old, copy.deepcopy(old)), [])
 
+    def test_strict_decoding_refuses_every_non_finite_constant(self):
+        for c in (b'{"x": Infinity}', b'{"x": -Infinity}', b'{"x": NaN}'):
+            with self.assertRaises(V.Stop):
+                V.load_strict(c)
+        self.assertEqual(V.load_strict(b'{"x": 1.5}'), {"x": 1.5})
+
+    def test_r_fires_on_an_overflowed_exponent_that_decodes_to_infinity(self):
+        rel, pin = V.OLD_S["with"]["g"]
+        old = (REPO / rel).read_text()
+        chi2 = json.loads(old)["predictions"][0]["total"]["chi2"]
+        new = self.tmp / "g.json"
+        new.write_text(old.replace(repr(chi2), "1e999", 1))       # no Infinity constant: only finiteness can see it
+        self.assertNotEqual(new.read_text(), old)
+        with quiet(), self.assertRaises(V.Stop) as cm:
+            V.check_r(self.c, "g", REPO, rel, pin, new, strings=False)
+        self.assertEqual(cm.exception.control, "R")
+
+    def test_r_figures_fires_on_a_committed_figure_that_is_not_e_a2s_receipt_bytes(self):
+        fig = self.tmp / "fig"
+        shutil.copytree(REPO / V.OLD_E_FIG, fig)
+        sums = self.tmp / "sums"
+        sums.write_text("".join(f"{'0' * 64}  {q.name}\n" for q in sorted(fig.iterdir())))
+        with mock.patch.object(V, "OLD_E_FIG_SUMS", str(sums)), quiet(), self.assertRaises(V.Stop) as cm:
+            V.check_r_figures(self.c, "E", REPO, fig)
+        self.assertIn("E-A2's receipt bytes", cm.exception.args[0])
+
+    def test_the_renderer_must_be_e_a2s(self):
+        with quiet():
+            have = {"python": sys.version.split()[0], "numpy": np.__version__}
+            want = json.loads((REPO / V.OLD_E_FIG / "fd_g_fig_modes.json").read_text())["versions"]
+            if all(have.get(k) == v for k, v in want.items() if k != "matplotlib"):
+                self.skipTest("this interpreter is E-A2's")
+            with self.assertRaises(V.Stop) as cm:
+                V.check_renderer(self.c, REPO)
+        self.assertEqual(cm.exception.control, "C")
+
+    def test_c_requires_each_producers_structured_fields_and_its_argv_role(self):
+        p = self.tmp / "g.json"
+        base = ["t.py", "--extra-block-sha256", "ab" * 32, "--extra-block-key", "DeltaC_e", "--extra-block-name",
+                "DeltaC_e"]
+        g = {"argv": [*base, "--extra-block-role", "adopted"],
+             "extra_block": {"sha256": "ab" * 32, "key": "DeltaC_e", "name": "DeltaC_e", "role": "adopted"}}
+        for drop in (None, "role", "key", "name"):
+            r = copy.deepcopy(g)
+            if drop:
+                del r["extra_block"][drop]
+            p.write_text(json.dumps(r))
+            if drop is None:
+                with quiet():
+                    V.check_c(self.c, "x", p, "ab" * 32, "DeltaC_e", {}, True, tool="fd_g_compare")
+            else:
+                with quiet(), self.assertRaises(V.Stop, msg=drop):
+                    V.check_c(self.c, "x", p, "ab" * 32, "DeltaC_e", {}, True, tool="fd_g_compare")
+        p.write_text(json.dumps({**g, "argv": base}))                # a Stage G whose argv has no role
+        with quiet(), self.assertRaises(V.Stop):
+            V.check_c(self.c, "x", p, "ab" * 32, "DeltaC_e", {}, True, tool="fd_g_compare")
+        f = {"argv": [*base, "--extra-block-role", "adopted"], "extra_block": {"sha256": "ab" * 32, "key": "DeltaC_e",
+                                                                              "name": "DeltaC_e"}}
+        p.write_text(json.dumps(f))                                  # an F tool whose argv has a role
+        with quiet(), self.assertRaises(V.Stop):
+            V.check_c(self.c, "x", p, "ab" * 32, "DeltaC_e", {}, False, tool="fd_f0_regrade")
+        p.write_text(json.dumps({"argv": base, "inputs_sha256": {}}))  # a downstream tool without inputs' block digest
+        with quiet(), self.assertRaises(V.Stop):
+            V.check_c(self.c, "x", p, "ab" * 32, "DeltaC_e", {}, False, tool="fd_g_diag")
+
     def test_the_experiment_table_must_be_the_readouts_and_the_declared_one(self):
         r, npz = self.tmp / "r.json", self.tmp / "t.npz"
         npz.write_bytes(b"table")
@@ -730,17 +835,17 @@ class Checks(unittest.TestCase):
         blk = A.load_npz(t.npz)
         with quiet():
             V.check_s(self.c, "x", t.g, None, blk, "with")
-            V.check_c(self.c, "x", t.g, digest(t.npz), V.SIDE_KEY["with"], {}, True)
+            V.check_c(self.c, "x", t.g, digest(t.npz), V.SIDE_KEY["with"], {}, True, tool="fd_g_compare")
         with quiet(), self.assertRaises(V.Stop) as cm:
             V.check_s(self.c, "x", t.g, None, blk, "nopl")        # the nopl matrix's sigma is smaller
         self.assertEqual(cm.exception.control, "S")
         with quiet(), self.assertRaises(V.Stop) as cm:
-            V.check_c(self.c, "x", t.g, "0" * 64, V.SIDE_KEY["with"], {}, True)
+            V.check_c(self.c, "x", t.g, "0" * 64, V.SIDE_KEY["with"], {}, True, tool="fd_g_compare")
         self.assertEqual(cm.exception.control, "C")
         with quiet(), self.assertRaises(V.Stop) as cm:            # the readout records the reported key, not nopl's
-            V.check_c(self.c, "x", t.g, digest(t.npz), V.SIDE_KEY["nopl"], {}, True)
+            V.check_c(self.c, "x", t.g, digest(t.npz), V.SIDE_KEY["nopl"], {}, True, tool="fd_g_compare")
         with quiet(), self.assertRaises(V.Stop) as cm:            # a Stage G records a role; an F tool records none
-            V.check_c(self.c, "x", t.g, digest(t.npz), V.SIDE_KEY["with"], {}, False)
+            V.check_c(self.c, "x", t.g, digest(t.npz), V.SIDE_KEY["with"], {}, False, tool="fd_g_compare")
         self.assertEqual(cm.exception.control, "C")
 
     def test_s_fires_on_an_f0b_whose_sigma_is_not_the_revised_matrix(self):
@@ -1077,6 +1182,21 @@ class OldProductDeposit(unittest.TestCase):
         self.assertEqual([s["step"] for s in c.steps if "tool" in s], ["data_product", "deposit_build", "deposit_check"])
         self.assertTrue(all(s["ok"] for s in c.steps if s.get("check")))
         self.assertEqual(sum(1 for s in c.steps if s.get("check") and "5B receipt" in s["step"]), 5)
+
+
+class OldDepositReceipt(unittest.TestCase):
+    def test_a_committed_deposit_file_that_is_not_the_5b_receipts_refuses(self):
+        self.assertEqual(sorted(V.deposit_receipt_sums(REPO)), sorted((*DC.FILES, DC.REFERENCE)))
+        tmp = Path(tempfile.mkdtemp(prefix="vf-dep5b-"))
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        BA = tmp / "BA"
+        for d in ("logs", "pins"):
+            (BA / d).mkdir(parents=True)
+        c = V.Chain(A.Paths(REPO, tmp / "P", BA), BA / "chain.json", [])
+        wrong = {n: "0" * 64 for n in (*DC.FILES, DC.REFERENCE)}
+        with mock.patch.object(V, "deposit_receipt_sums", lambda D: wrong), quiet(), self.assertRaises(V.Stop) as cm:
+            V.old_product_deposit(c, REPO, c.p, BA)
+        self.assertIn("5B receipt", cm.exception.args[0])
 
 
 class Boot(unittest.TestCase):
