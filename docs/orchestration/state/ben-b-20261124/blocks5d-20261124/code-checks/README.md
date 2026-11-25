@@ -1,10 +1,12 @@
-# b5d_build.py: tests, line trace and mutants (A1 and A2 package, tier3-design, 2026-11-24)
+# b5d_build.py: tests, line trace and mutants (after the follow-ups, tier3-design, 2026-11-25)
+
+These are main's post-fix code. B5D-FOLLOWUPS.md maps the bound shas to these.
 
 The checks are for:
-- `nd-unfolding/b5d/b5d_build.py`, sha256 `69f11025c4bc0ad0288bb74641c0e76d0286fea1ba9c86531fc25cc7bb27f30d`;
-- `test_b5d.py`, sha256 `2df87a4d08487c4b65eb2cc9fe74b5c906321674cae53a6674a260f5294ae857`.
+- `nd-unfolding/b5d/b5d_build.py`, sha256 `60745a0e28f2c06c8f2d1b06385076e1ed8251cb21c0fb3fe18f9229d6e54fab`;
+- `test_b5d.py`, sha256 `511591f81050a29d8d5817be7f945d61cd5e41ee97d76a2d279eb1951d9fc76a`.
 
-**Tests:** 68 pass (`python3 -m pytest -q nd-unfolding/b5d/test_b5d.py`).
+**Tests:** 70 pass (`python3 -m pytest -q nd-unfolding/b5d/test_b5d.py`).
 
 <!-- absence-ok: a coverage statement about two named lines of the code, not the absence of a result -->
 **Line trace** (`line-trace.txt`, coverage.py 7.15.4): 99%. Two lines are not run:
@@ -12,7 +14,7 @@ The checks are for:
 - the Linux `renameat2` branch of `rename_noreplace`. The build runs on macOS, which takes the `renamex_np` branch,
   and that branch is tested.
 
-**Mutants** (`mutants.py`, output `mutants.txt`, one clean run): 73 of 73 killed.
+**Mutants** (`mutants.py`, output `mutants.txt`, one clean run): 77 of 77 killed, 0 INVALID (the runner refuses to count a mutant that does not compile).
 - 18 are on the rev 1 method.
 - The rest are on the A1 and A2 delta and the delta-recheck fixes:
   - the tie rule: COVFIX's relative null test, two passes, the span check, the sign;
