@@ -293,9 +293,10 @@ The tests:
 ## The synthetic seal and the director's rehearsal (§3.4)
 
 `synthetic-seal --keychain-prefix covfix-synth- --out DIR` refuses the real prefix. It builds:
-- a dummy truth, encrypted with the pinned flags plus `--compress-algo none` (director, 2026-11-24). Without
-  compression, a ciphertext's size depends only on the plaintext's length, not on how well a fixed-width seed-bearing
-  file compresses;
+- a dummy truth, encrypted with the pinned flags of §4.2 item 2 as amended in rev 12, which add
+  `--compress-algo none` (declaration sha256 `6b8fbdae9f482da65aa7e1c4fb6bdf7b5d8c68b307ebe16af668bb1fbcf16b97`, at
+  `eaa6d064`, line 1091). Without compression, a ciphertext's size depends only on the plaintext's length, not on how
+  well a fixed-width seed-bearing file compresses;
 - an encrypted manifest of plaintext hashes;
 - a decrypt round trip;
 - `PG-SEAL.sha256` over the ciphertexts;
