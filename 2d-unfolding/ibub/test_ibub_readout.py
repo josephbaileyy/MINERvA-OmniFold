@@ -50,7 +50,14 @@ SEEDS = list(c.TOY_SEEDS[T])
 REAL = c.REALIZATION_SEED[T]
 KS = [1, 2, 3, 4, 5, 10, 15, 20]
 JOB = "61000001"
-DEPLOY = "M0"     # c.deploy_head is patched to return it, as test_cov2d_readout patches it
+DEPLOY = "d0" * 20     # the job's commit (--job-m); the readout's own M is "M0" (c.deploy_head is patched to it)
+JOB_CODE = {"runner_sha256": iu.rc.sha256(Path(iu.__file__)), "config_sha256": iu.rc.sha256(iu.CONFIG)}
+# QOS=regular_1: Perlmutter's spelling of --qos=regular (receipts-cov2d/a2/bulk/complete/connect-complete-1.log.txt:78)
+SCONTROL = (f"JobId={JOB} JobName=ibub_run\n   UserId=josephrb(1) GroupId=m3246(2) QOS=regular_1\n"
+            "   JobState=RUNNING Reason=None\n   TimeLimit=11:29:00 TimeMin=N/A\n"
+            "   NumNodes=1 NumCPUs=256 NumTasks=1 CPUs/Task=1\n   OverSubscribe=NO Contiguous=0\n"
+            "   AllocTRES=cpu=256,mem=480G,node=1,billing=256\n")
+ALLOC = "[ibub] allocation: ibub_run regular 11:29:00 1 node exclusive; fit 4 x 114688 MB within 491520M, 4 x 64 CPUs within 256"
 
 
 def sha(b: bytes) -> str:
@@ -74,6 +81,7 @@ class Tree:
         self.g = d / "g"                    # the guarded tree ("pscratch")
         self.run = self.g / "cov2d-run"
         self.units = self.g / "ibub" / "units"
+        self.fetch = d / "fetch"            # the readout connect's fetch, under the readout root
         self.rec = d / "rec"                # the repository's receipts (read through read_pinned)
         for p in (self.run / "out", self.run / self.pdir, self.units, self.rec / "pseudo" / self.T, d / "ns/out/ER"):
             p.mkdir(parents=True, exist_ok=True)
@@ -158,24 +166,63 @@ class Tree:
             self.write_unit(k, s)
         self.write_barrier()
 
-    def write_barrier(self, done=None, **change):
-        """The two reference markers, the barrier receipt with their digests, and the job's IBUB-DONE binding the
-        receipt's sha256 (as refcheck, complete and the job write them)."""
+    def write_barrier(self, done=None, comp=None, ref_meta=None, ref_meta_json=None, **change):
+        """The two reference units (marker, npz with its meta and controls, ROOT), the barrier receipt with their
+        digests, the job's IBUB-DONE binding the receipt's sha256 (as refcheck, complete and the job write them), and
+        then the readout connect's fetch (``write_fetch``). ``done=False`` publishes no IBUB-DONE. ``ref_meta_json``
+        maps a unit to the raw JSON text of its npz meta, in place of the built one."""
         units = {}
         for u in iu.REFERENCE_UNITS:
-            m = {"unit": u, "verdict": "PASS", "job": JOB, "deploy_head": DEPLOY, "sha256": sha(u.encode()),
-                 "root_sha256": sha(u.encode() + b"r")}
+            meta = {"unit": u, "kind": u, "slurm_job": JOB, "deploy_head": DEPLOY, **JOB_CODE,
+                    "controls": {k: {"pass": True} for k in iu.CONTROLS[u]}}
+            meta.update((ref_meta or {}).get(u, {}))
+            buf = io.BytesIO()
+            np.savez(buf, ks=np.array(KS), meta=(ref_meta_json or {}).get(u, json.dumps(meta)))
+            (self.units / f"{u}.npz").write_bytes(buf.getvalue())
+            (self.units / f"{u}.root").write_bytes(f"REF-{u}".encode())
+            m = {"unit": u, "kind": u, "verdict": "PASS", "job": JOB, "deploy_head": DEPLOY,
+                 "sha256": sha(buf.getvalue()), "root_sha256": sha(f"REF-{u}".encode())}
             (self.units / f"{u}.done").write_text(json.dumps(m))
             units[u] = {"pass": True, "srun_rc": 0, "npz_sha256": m["sha256"], "root_sha256": m["root_sha256"]}
         rec = {"verdict": "PASS", "job": JOB, "deploy_head": DEPLOY, "runner_sha256": iu.rc.sha256(Path(iu.__file__)),
-               "units": units}
+               "units": units, "central_df_vs_central": {"pass": True}}
         rec.update(change)
         raw = json.dumps(rec).encode()
         (self.units / "refcheck.json").write_bytes(raw)
-        d = {"job": JOB, "M": DEPLOY, "stage": "toys", "rc": 0,
-             "completion": {"verdict": "PASS", "barrier_sha256": sha(raw)}}
-        d.update(done or {})
-        (self.units.parent / "IBUB-DONE").write_text(json.dumps(d))
+        done_path = self.units.parent / "IBUB-DONE"
+        done_path.unlink(missing_ok=True)
+        if done is not False:
+            cm = {"verdict": "PASS", "job": JOB, "deploy_head": DEPLOY, "barrier_sha256": sha(raw)}
+            cm.update(comp or {})
+            d = {"job": JOB, "M": DEPLOY, "stage": "toys", "rc": 0, "completion": cm}
+            d.update(done or {})
+            done_path.write_text(json.dumps(d))
+        self.write_fetch()
+
+    def write_fetch(self, *, state="COMPLETED", code="0:0", sacct=None, scontrol=SCONTROL, stdout=ALLOC,
+                    stage="PASS", refcheck=None, drop=(), bad_sum=None):
+        """The readout connect's fetch of the job's records, with RECORDS.SHA256SUMS. ``drop`` leaves files unlisted;
+        ``bad_sum`` names a file whose listed digest is wrong."""
+        f = self.fetch
+        if f.exists():
+            shutil.rmtree(f)
+        files = {f"sacct-{JOB}.txt": (sacct if sacct is not None else
+                                      f"JobID|JobName|State|ExitCode\n{JOB}|ibub_run|{state}|{code}\n").encode(),
+                 "stage/stage.json": json.dumps({"schema": "ibub-stage/1", "verdict": stage}).encode(),
+                 f"logs/scontrol-batch-{JOB}.txt": scontrol.encode(),
+                 f"slurm/ibub_run-{JOB}.out": (f"[ibub] start M={DEPLOY}\n{stdout}\n[ibub] refs\n").encode(),
+                 f"slurm/ibub_run-{JOB}.err": b"",
+                 "units/refcheck.json": (self.units / "refcheck.json").read_bytes() if refcheck is None else refcheck,
+                 "logs/complete.json": b'{"verdict": "PASS"}'}
+        if (self.units.parent / "IBUB-DONE").exists():
+            files["IBUB-DONE"] = (self.units.parent / "IBUB-DONE").read_bytes()
+        lines = []
+        for rel, data in files.items():
+            (f / rel).parent.mkdir(parents=True, exist_ok=True)
+            (f / rel).write_bytes(data)
+            if rel not in drop:
+                lines.append(f"{'0' * 64 if rel == bad_sum else sha(data)}  {rel}")
+        (f / "RECORDS.SHA256SUMS").write_text("\n".join(lines) + "\n")
 
     def other_labels(self):
         labs = [f"X_{self.T}"] + [f"U_{self.T}_{b}_{i}" for b in c.ORDER for i in range(c.BANDS[b])]
@@ -262,8 +309,13 @@ class Tree:
 class Patched(unittest.TestCase):
     """The real Run and its open audit, patched as test_cov2d_readout.Base patches them."""
 
-    def patch(self, tree: Tree, cfg: dict | None = None):
+    def patch(self, tree: Tree, cfg: dict | None = None, job_code: dict | None = None):
         tr = tree
+
+        def fake_job_code(job_m):               # the real one reads git; its own tests are in JobCode
+            if job_m != DEPLOY:
+                raise c.Refusal(f"--job-m {job_m} is not the fixture's job commit")
+            return dict(job_code or JOB_CODE)
 
         class FakeCells:
             def __init__(self, er):
@@ -281,6 +333,7 @@ class Patched(unittest.TestCase):
             (rd, "read_provenance", lambda p: tr.prov[Path(p).read_bytes().decode()]),
             (c, "deploy_head", lambda root: "M0"),
             (iu, "load_config", lambda path=None: cfg or tr.config()),
+            (ir, "job_code", fake_job_code),
             (rd.Run, "watch", lambda self_, path: None),      # macOS has no O_NOATIME, so reads move atime
             (os, "O_NOATIME", getattr(os, "O_NOATIME", 0)),
         ]
@@ -294,8 +347,15 @@ class Patched(unittest.TestCase):
         self.addCleanup(p.stop)
         self.addCleanup(lambda: cb.AUDIT is not None and cb.AUDIT.uninstall())
 
+    def tree(self, tune="G18") -> Tree:
+        """A fresh tune in its own directory. Tests that loop make one per subtest, after the previous subtest's
+        cleanups ran, so no cleanup ever removes a tree still in use."""
+        td = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, td, True)
+        return Tree(td, tune=tune)
+
     def go(self, tree: Tree, name="out"):
-        return ir.readout(tree.T, tree.units, tree.d / name, str(tree.run), JOB)
+        return ir.readout(tree.T, tree.units, tree.d / name, str(tree.run), JOB, DEPLOY, tree.fetch)
 
 
 # ------------------------------------------------------------------------------------------- pure
@@ -536,14 +596,14 @@ class EndToEnd(Patched):
         (tr.d / "root").mkdir()
         self.patch(tr, cfg)
         with self.assertRaises(c.Refusal):
-            ir.readout(T, tr.units, tr.d / "elsewhere-out", str(tr.run), JOB)
+            ir.readout(T, tr.units, tr.d / "elsewhere-out", str(tr.run), JOB, DEPLOY, tr.fetch)
         self.assertFalse((tr.d / "elsewhere-out").exists())
         with mock.patch.dict(os.environ, {"TMPDIR": str(tr.d)}), self.assertRaises(c.Refusal):
-            ir.readout(T, tr.units, tr.d / "root" / "out", str(tr.run), JOB)
+            ir.readout(T, tr.units, tr.d / "root" / "out", str(tr.run), JOB, DEPLOY, tr.fetch)
         (tr.d / "root" / "existing").mkdir()
         (tr.d / "root" / "tmp").mkdir()
         with mock.patch.dict(os.environ, {"TMPDIR": str(tr.d / "root" / "tmp")}), self.assertRaises(c.Refusal) as cm:
-            ir.readout(T, tr.units, tr.d / "root" / "existing", str(tr.run), JOB)   # an existing out is never written
+            ir.readout(T, tr.units, tr.d / "root" / "existing", str(tr.run), JOB, DEPLOY, tr.fetch)   # an existing out is never written
         self.assertIn("exists", str(cm.exception))
 
     def test_the_result_appears_at_once_and_names_its_npz(self):
@@ -590,7 +650,7 @@ class EndToEnd(Patched):
         tr = Tree(self.td)
         self.patch(tr)
         with self.assertRaises(c.Refusal):
-            ir.readout(T, tr.units, tr.g / "out", str(tr.run), JOB)
+            ir.readout(T, tr.units, tr.g / "out", str(tr.run), JOB, DEPLOY, tr.fetch)
         self.assertFalse((tr.g / "out").exists())
 
     def test_a_unit_that_failed_or_names_another_toy_or_scan_does_not_read_pass(self):
@@ -604,14 +664,23 @@ class EndToEnd(Patched):
         self.assertEqual(rec["C-COMPLETE"]["missing"], [SEEDS[1]])
         self.assertEqual(rec["C-DATA"]["problems"], [])
 
+    def fresh_tree(self) -> "Tree":
+        """A tree in its own resolved temporary directory, removed by its own cleanup, so a subtest's doCleanups
+        (which also undoes its patches) never removes a tree that a later subtest still uses."""
+        d = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, d, True)
+        return Tree(d)
+
     def rewrite_meta(self, tr, k, **change):
-        """Rewrite toy k's npz with a changed meta or scan, and its marker's digest to match."""
+        """Rewrite toy k's npz with a changed meta or scan, and its marker's digest to match. ``meta_json`` is the raw
+        JSON text of the new meta, in place of the updated one."""
         name = tr.units / f"toy_{T}_{SEEDS[k]}"
         z = dict(np.load(name.with_suffix(".npz")))
         meta = json.loads(str(z["meta"]))
         meta.update(change.pop("meta", {}))
+        raw = change.pop("meta_json", None)
         z.update(change)
-        z["meta"] = json.dumps(meta)
+        z["meta"] = json.dumps(meta) if raw is None else raw
         buf = io.BytesIO()
         np.savez(buf, **z)
         name.with_suffix(".npz").write_bytes(buf.getvalue())
@@ -698,10 +767,17 @@ class EndToEnd(Patched):
         tr = Tree(self.td)
         self.patch(tr)
         self.assertEqual(ir.main(["--truth", T, "--units", str(tr.units), "--out", str(tr.d / "m"),
-                                  "--run-dir", str(tr.run), "--job", JOB]), 0)
+                                  "--run-dir", str(tr.run), "--job", JOB, "--job-m", DEPLOY,
+                                  "--records", str(tr.fetch)]), 0)
         (tr.units / f"toy_{T}_{SEEDS[0]}.done").unlink()
         self.assertEqual(ir.main(["--truth", T, "--units", str(tr.units), "--out", str(tr.d / "m2"),
-                                  "--run-dir", str(tr.run), "--job", JOB]), 3)
+                                  "--run-dir", str(tr.run), "--job", JOB, "--job-m", DEPLOY,
+                                  "--records", str(tr.fetch)]), 3)
+        tr.write_fetch(state="RUNNING")                  # refused before any record: rc 4, nothing written
+        self.assertEqual(ir.main(["--truth", T, "--units", str(tr.units), "--out", str(tr.d / "m3"),
+                                  "--run-dir", str(tr.run), "--job", JOB, "--job-m", DEPLOY,
+                                  "--records", str(tr.fetch)]), 4)
+        self.assertFalse((tr.d / "m3").exists())
 
     def test_a_unit_from_another_job_runner_or_config_is_invalid(self):
         for k, v in (("slurm_job", "61000002"), ("runner_sha256", "0" * 64), ("config_sha256", "1" * 64)):
@@ -796,34 +872,6 @@ class EndToEnd(Patched):
         self.assertEqual(rec["verdict"], "INVALID")
         self.assertTrue(any("not readable" in p for p in rec["C-DATA"]["problems"]))
 
-    def test_the_barrier_receipt_must_be_the_bound_jobs_pass(self):
-        failed_ref = {u: {"pass": u != "central_df", "srun_rc": 0} for u in iu.REFERENCE_UNITS}
-        cases = [({}, {"verdict": "STOP"}), ({}, {"job": "61000002"}), ({}, {"deploy_head": "M1"}),
-                 ({}, {"runner_sha256": "0" * 64}), ({}, {"units": failed_ref}),           # r2 item 2: the references
-                 ({"rc": 1}, {}), ({"stage": "refs"}, {}), ({"job": "61000002"}, {}), ({"M": "M1"}, {}),
-                 ({"completion": {"verdict": "PASS", "barrier_sha256": "0" * 64}}, {}),  # IBUB-DONE binds another barrier
-                 ({"completion": {"verdict": "FAIL"}}, {}), None, "no reference marker", "a reference marker from another job"]
-        for case in cases:
-            td = Path(tempfile.mkdtemp()).resolve()
-            self.addCleanup(shutil.rmtree, td, True)
-            tr = Tree(td)
-            if case is None:
-                (tr.units / "refcheck.json").unlink()
-            elif case == "no reference marker":
-                (tr.units / "central_df.done").unlink()
-            elif case == "a reference marker from another job":       # agy read 5: the marker's own binding
-                m = json.loads((tr.units / "central.done").read_text())
-                (tr.units / "central.done").write_text(json.dumps(dict(m, job="61000002")))
-            else:
-                tr.write_barrier(done=case[0], **case[1])
-            change = case
-            with self.subTest(change=change):
-                self.patch(tr)
-                rec = self.go(tr)
-                self.assertEqual(rec["verdict"], "INVALID")
-                self.assertFalse(rec["C-BARRIER"]["pass"])
-                self.assertNotIn("readings", rec)
-
     def test_a_marker_from_another_job_or_deploy_is_invalid(self):
         for field, value in (("job", "61000002"), ("deploy_head", "M1")):
             td = Path(tempfile.mkdtemp()).resolve()
@@ -846,12 +894,63 @@ class EndToEnd(Patched):
         self.assertTrue(any("deploy_head" in p for p in rec["C-DATA"]["problems"]))
 
     def test_an_undeclared_extra_marker_is_invalid(self):
-        tr = Tree(self.td)
-        (tr.units / f"toy_{T}_9999999.done").write_text("{}")
-        self.patch(tr)
-        rec = self.go(tr)
-        self.assertEqual(rec["verdict"], "INVALID")
-        self.assertTrue(any("undeclared unit" in p for p in rec["C-DATA"]["problems"]))
+        for stray in (f"toy_{T}_9999999.done", "bogus.done"):     # under the tune's prefix, and under none (agy r1, 4)
+            with self.subTest(stray=stray):
+                tr = self.fresh_tree()
+                (tr.units / stray).write_text("{}")
+                self.patch(tr)
+                rec = self.go(tr)
+                self.assertEqual(rec["verdict"], "INVALID")
+                self.assertTrue(any("undeclared unit" in p for p in rec["C-DATA"]["problems"]))
+                self.doCleanups()
+
+    def test_a_failed_marker_from_another_job_is_invalid_not_incomplete(self):
+        """agy readout read 1, item 4: a marker naming another job or deploy is a problem whatever its verdict."""
+        for field, value in (("job", "61000002"), ("deploy_head", "e0" * 20)):
+            with self.subTest(field=field):
+                tr = self.fresh_tree()
+                p = tr.units / f"toy_{T}_{SEEDS[12]}.done"
+                p.write_text(json.dumps(dict(json.loads(p.read_text()), verdict="FAIL", **{field: value})))
+                self.patch(tr)
+                rec = self.go(tr)
+                self.assertEqual(rec["verdict"], "INVALID")
+                self.assertIn(SEEDS[12], rec["C-COMPLETE"]["missing"])
+                self.assertTrue(any("job/deploy" in p for p in rec["C-DATA"]["problems"]))
+                self.doCleanups()
+
+    def test_a_symlinked_toy_marker_or_product_is_invalid(self):
+        """agy readout read 1, item 4: a symlink is refused even when it points at the right bytes."""
+        for ext in ("done", "npz", "root"):
+            with self.subTest(ext=ext):
+                tr = self.fresh_tree()
+                p = tr.units / f"toy_{T}_{SEEDS[5]}.{ext}"
+                real = tr.d / f"real.{ext}"
+                real.write_bytes(p.read_bytes())
+                p.unlink()
+                p.symlink_to(real)
+                self.patch(tr)
+                rec = self.go(tr)
+                self.assertEqual(rec["verdict"], "INVALID")
+                self.assertIn(SEEDS[5], rec["C-COMPLETE"]["missing"])
+                self.assertTrue(any("symlink" in q for q in rec["C-DATA"]["problems"]))
+                self.doCleanups()
+
+    def test_a_non_object_meta_or_a_truthy_non_true_control_is_invalid(self):
+        for name, change, why in (("a meta that is a JSON list", {"meta_json": "[1, 2]"}, "is not a JSON object"),
+                                  ("a control passing as 1",
+                                   {"meta": {"controls": {k: {"pass": 1} for k in iu.CONTROLS["toy"]}}},
+                                   "a unit control failed"),
+                                  ("a control that is not an object",
+                                   {"meta": {"controls": {k: True for k in iu.CONTROLS["toy"]}}},
+                                   "a unit control failed")):
+            with self.subTest(case=name):
+                tr = self.fresh_tree()
+                self.rewrite_meta(tr, 9, **change)
+                self.patch(tr)
+                rec = self.go(tr)
+                self.assertEqual(rec["verdict"], "INVALID")
+                self.assertTrue(any(why in p for p in rec["C-DATA"]["problems"]), rec["C-DATA"]["problems"])
+                self.doCleanups()
 
     def test_a_nonfinite_cell_in_a_failed_unit_still_fires_c_cells(self):
         tr = Tree(self.td)
@@ -901,6 +1000,469 @@ class EndToEnd(Patched):
         (tr.g / "tmp").mkdir()
         with mock.patch.dict(os.environ, {"TMPDIR": str(tr.g / "tmp")}), self.assertRaises(c.Refusal):
             self.go(tr)
+
+
+class JobWide(Patched):
+    """The job-wide prerequisites, the terminal-state STOP, per-tune grading and the inventory (codex2 read 3, items
+    1 and 4, and the director's rulings of 2026-11-24)."""
+
+    def invalid_job(self, tr, why_has=None):
+        self.patch(tr)
+        rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "INVALID")
+        self.assertFalse(rec["C-JOB"]["pass"])
+        self.assertNotIn("readings", rec)
+        self.assertFalse((tr.d / "out" / f"ibub_{tr.T}_errors.npz").exists())
+        if why_has:
+            self.assertIn(why_has, rec["C-JOB"]["why"])
+        return rec
+
+    def test_i_a_failing_job_wide_prerequisite_grades_nothing(self):
+        def swap_for_link(p):
+            """Replace p with a symlink to a copy of the same bytes, so only the link itself is wrong."""
+            real = p.with_name(p.name + ".real")
+            real.write_bytes(p.read_bytes())
+            p.unlink()
+            p.symlink_to(real)
+        failed_ref = {u: {"pass": u != "central_df", "srun_rc": 0} for u in iu.REFERENCE_UNITS}
+        nonzero_rc = {u: {"pass": True, "srun_rc": 1 if u == "central" else 0} for u in iu.REFERENCE_UNITS}
+        barrier = [({"verdict": "STOP"}, "refcheck.json is"), ({"job": "61000002"}, "refcheck.json is"),
+                   ({"deploy_head": "e0" * 20}, "refcheck.json is"), ({"runner_sha256": "0" * 64}, "refcheck.json is"),
+                   ({"units": failed_ref}, "not a passing reference"), ({"units": nonzero_rc}, "not a passing reference"),
+                   ({"central_df_vs_central": {"pass": False}}, "C-REP"),
+                   ({"central_df_vs_central": [True]}, "C-REP"),
+                   ({"units": ["central"]}, "not a passing reference")]
+        for change, why in barrier:
+            with self.subTest(barrier=change):
+                tr = self.tree()
+                tr.write_barrier(**change)
+                self.invalid_job(tr, why)
+        for name, edit, why in (
+                ("no refcheck.json", lambda tr: ((tr.units / "refcheck.json").unlink(), tr.write_fetch(refcheck=b"{}")),
+                 "not readable"),
+                ("the fetched refcheck differs", lambda tr: tr.write_fetch(refcheck=b'{"verdict": "PASS"}'),
+                 "not units/refcheck.json"),
+                ("no reference marker", lambda tr: (tr.units / "central_df.done").unlink(), "marker is not readable"),
+                ("a reference marker from another job", lambda tr: (tr.units / "central.done").write_text(json.dumps(
+                    dict(json.loads((tr.units / "central.done").read_text()), job="61000002"))), "bound job's PASS"),
+                ("stage FAIL", lambda tr: tr.write_fetch(stage="FAIL"), "stage.json"),
+                ("no allocation line", lambda tr: tr.write_fetch(stdout="[ibub] something else"), "allocation line"),
+                ("two allocation lines", lambda tr: tr.write_fetch(stdout=ALLOC + "\n" + ALLOC), "allocation line"),
+                ("scontrol names another job", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace(
+                    f"JobId={JOB}", "JobId=61000002")), "names job"),
+                ("scontrol QOS debug", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("QOS=regular_1", "QOS=debug")),
+                 "QOS is 'debug', not one of {regular, regular_1}"),
+                ("scontrol QOS regular_2", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("QOS=regular_1",
+                                                                                         "QOS=regular_2")),
+                 "QOS is 'regular_2'"),
+                ("scontrol QOS regular1", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("QOS=regular_1",
+                                                                                        "QOS=regular1")),
+                 "QOS is 'regular1'"),
+                ("scontrol shared", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("OverSubscribe=NO",
+                                                                                      "OverSubscribe=OK")), "OverSubscribe"),
+                ("AllocTRES too small", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("mem=480G", "mem=400G")),
+                 "do not fit"),
+                ("AllocTRES unreadable", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("mem=480G", "mem=lots")),
+                 "not readable from AllocTRES"),
+                ("scontrol JobName", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("JobName=ibub_run",
+                                                                                       "JobName=ibub_other")),
+                 "JobName is 'ibub_other'"),
+                ("scontrol NumNodes=2", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("NumNodes=1 ", "NumNodes=2 ")),
+                 "NumNodes is '2'"),
+                ("AllocTRES cpu=128", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("cpu=256,", "cpu=128,")),
+                 "do not fit"),
+                ("the barrier's npz digest is not the marker's", lambda tr: tr.write_barrier(units=dict(
+                    json.loads((tr.units / "refcheck.json").read_text())["units"],
+                    central=dict(json.loads((tr.units / "refcheck.json").read_text())["units"]["central"],
+                                 npz_sha256="0" * 64))), "not a passing reference"),
+                ("a reference's srun_rc is JSON false (False == 0 in Python)", lambda tr: tr.write_barrier(units=dict(
+                    json.loads((tr.units / "refcheck.json").read_text())["units"],
+                    central=dict(json.loads((tr.units / "refcheck.json").read_text())["units"]["central"],
+                                 srun_rc=False))), "not a passing reference"),
+                ("a symlinked reference marker", lambda tr: swap_for_link(tr.units / "central.done"),
+                 "central's marker is a symlink"),
+                ("a symlinked units/refcheck.json", lambda tr: swap_for_link(tr.units / "refcheck.json"),
+                 "units/refcheck.json is a symlink"),
+                ("a reference meta from another runner", lambda tr: tr.write_barrier(
+                    ref_meta={"central": {"runner_sha256": "0" * 64}}), "runner_sha256"),
+                ("a reference meta from another config", lambda tr: tr.write_barrier(
+                    ref_meta={"central_df": {"config_sha256": "1" * 64}}), "config_sha256"),
+                ("a record off its sum", lambda tr: tr.write_fetch(bad_sum="stage/stage.json"), "RECORDS.SHA256SUMS"),
+                ("a needed record unlisted", lambda tr: tr.write_fetch(drop=("stage/stage.json",)), "lacks"),
+                ("IBUB-DONE at stage refs", lambda tr: tr.write_barrier(done={"stage": "refs"}), "stage toys"),
+                ("IBUB-DONE not JSON", lambda tr: ((tr.units.parent / "IBUB-DONE").write_text("{truncated"),
+                                                   tr.write_fetch()), "IBUB-DONE is not the bound job's"),
+                ("refcheck.json not an object", lambda tr: ((tr.units / "refcheck.json").write_text("[]"),
+                                                            tr.write_fetch()), "not a JSON object"),
+                ("IBUB-DONE at another M", lambda tr: tr.write_barrier(done={"M": "e0" * 20}), "bound deploy"),
+                ("IBUB-DONE binding another barrier", lambda tr: tr.write_barrier(comp={"barrier_sha256": "0" * 64}),
+                 "binds barrier")):
+            with self.subTest(case=name):
+                tr = self.tree()
+                edit(tr)
+                self.invalid_job(tr, why)
+
+    def test_the_declared_qos_spelling_regular_is_accepted_beside_regular_1(self):
+        self.assertIsNone(ir.allocation_ok(SCONTROL))
+        self.assertIsNone(ir.allocation_ok(SCONTROL.replace("QOS=regular_1", "QOS=regular")))
+        tr = self.tree()
+        tr.write_fetch(scontrol=SCONTROL.replace("QOS=regular_1", "QOS=regular"))
+        self.patch(tr)
+        rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "PASS", rec.get("controls_failed"))
+
+    def test_vi_a_scontrol_time_limit_of_12h_fails_under_a_correct_stdout_line(self):
+        tr = self.tree()
+        tr.write_fetch(scontrol=SCONTROL.replace("TimeLimit=11:29:00", "TimeLimit=12:00:00"))
+        self.invalid_job(tr, "TimeLimit is '12:00:00'")
+
+    def test_vii_an_ibub_done_naming_another_job_fails(self):
+        tr = self.tree()
+        tr.write_barrier(done={"job": "61000002"})
+        self.invalid_job(tr, "IBUB-DONE is not the bound job's")
+
+    def test_reference_products_are_hashed_as_they_are_now(self):
+        """codex2 read 3, item 1: receipts naming the digests are not enough; the files themselves must be there."""
+        def swap_for_link(tr):
+            real = tr.d / "central.npz.real"
+            real.write_bytes((tr.units / "central.npz").read_bytes())
+            (tr.units / "central.npz").unlink()
+            (tr.units / "central.npz").symlink_to(real)
+        for name, edit, why in (
+                ("all four products absent", lambda tr: [(tr.units / f"{u}.{e}").unlink()
+                                                         for u in iu.REFERENCE_UNITS for e in ("npz", "root")],
+                 "products are not at the barrier's digests"),
+                ("a ROOT product off its digest", lambda tr: (tr.units / "central_df.root").write_bytes(b"other"),
+                 "products are not at the barrier's digests"),
+                ("a symlinked npz at the right digest", swap_for_link, "symlink"),
+                ("meta from another job", lambda tr: tr.write_barrier(ref_meta={"central": {"slurm_job": "61000002"}}),
+                 "npz meta names"),
+                ("a meta that is a JSON list", lambda tr: tr.write_barrier(ref_meta_json={"central_df": "[1, 2]"}),
+                 "is not a JSON object"),
+                ("C-SIM missing on central", lambda tr: tr.write_barrier(ref_meta={"central": {"controls": {
+                    k: {"pass": True} for k in iu.CONTROLS["central"] - {"C-SIM"}}}}), "controls"),
+                ("C-REP-D failing", lambda tr: tr.write_barrier(ref_meta={"central_df": {"controls": dict(
+                    {k: {"pass": True} for k in iu.CONTROLS["central_df"]}, **{"C-REP-D": {"pass": False}})}}),
+                 "controls")):
+            with self.subTest(case=name):
+                tr = self.tree()
+                edit(tr)
+                self.invalid_job(tr, why)
+
+    def test_ii_a_complete_tune_is_graded_and_an_incomplete_one_names_its_seed_with_the_job_not_pass(self):
+        """The job ended FAILED, its completion FAIL (one AR23 toy failed): G18 is complete and graded, AR23 reads
+        INCOMPLETE naming the seed. The job's state is disclosed in both. The job-PASS-gate mutant fails here."""
+        comp = {"verdict": "FAIL", "toy_pass": 599, "toy_expected": 600, "not_pass_count": 1}
+
+        def failed_job(tune):
+            tr = self.tree(tune)
+            tr.write_barrier(done={"rc": 1}, comp=comp)
+            tr.write_fetch(state="FAILED", code="1:0")
+            return tr
+        g = failed_job("G18")
+        self.patch(g)
+        rec = self.go(g)
+        self.assertEqual(rec["verdict"], "PASS", rec.get("controls_failed"))
+        self.assertIn("readings", rec)
+        self.assertEqual(rec["job_terminal"]["sacct"], {"State": "FAILED", "ExitCode": "1:0"})
+        self.assertEqual((rec["job_terminal"]["ibub_done"]["rc"], rec["job_terminal"]["ibub_done"]["completion"]),
+                         (1, "FAIL"))
+        self.doCleanups()
+        a = failed_job("AR23")
+        bad = a.SEEDS[17]
+        (a.units / f"toy_AR23_{bad}.done").unlink()
+        self.patch(a)
+        rec = self.go(a)
+        self.assertEqual(rec["verdict"], "INCOMPLETE")
+        self.assertEqual(rec["C-COMPLETE"]["missing"], [bad])
+        self.assertEqual(rec["controls_failed"], [])
+        self.assertNotIn("readings", rec)
+        self.assertEqual(rec["job_terminal"]["sacct"]["State"], "FAILED")
+
+    def test_iii_both_tunes_complete_are_graded(self):
+        for tune in ("G18", "AR23"):
+            with self.subTest(tune=tune):
+                tr = self.tree(tune)
+                self.patch(tr)
+                rec = self.go(tr)
+                self.assertEqual(rec["verdict"], "PASS", rec.get("controls_failed"))
+                self.assertTrue(rec["C-JOB"]["pass"])
+                self.assertEqual(rec["job_terminal"]["sacct"], {"State": "COMPLETED", "ExitCode": "0:0"})
+                self.assertEqual(rec["sacct"]["State"], "COMPLETED")
+                self.doCleanups()
+
+    def test_any_terminal_state_proceeds_and_an_unpublished_ibub_done_is_only_disclosed(self):
+        for state in ("TIMEOUT", "CANCELLED by 12345", "OUT_OF_MEMORY", "NODE_FAIL", "FAILED"):
+            with self.subTest(state=state):
+                tr = self.tree()
+                tr.write_barrier(done=False)
+                tr.write_fetch(state=state, code="0:15")
+                self.patch(tr)
+                rec = self.go(tr)
+                self.assertEqual(rec["verdict"], "PASS", rec.get("controls_failed"))
+                self.assertIsNone(rec["job_terminal"]["ibub_done"])
+                self.assertEqual(rec["job_terminal"]["sacct"]["State"], state)
+                self.doCleanups()
+
+    def stopped(self, tr, why):
+        """The readout refuses with a STOP, and reads nothing but the fetch's RECORDS.SHA256SUMS and sacct record."""
+        self.patch(tr)
+        seen, real = [], cb.read_noatime
+
+        def tracing(path, *a, **k):
+            seen.append(os.path.realpath(path))
+            return real(path, *a, **k)
+        with mock.patch.object(cb, "read_noatime", tracing), self.assertRaises(c.Refusal) as cm:
+            self.go(tr)
+        self.assertIn(why, str(cm.exception))
+        self.assertTrue(str(cm.exception).startswith("STOP"))
+        self.assertTrue(seen)
+        self.assertEqual(sorted(set(seen)), sorted({os.path.realpath(tr.fetch / "RECORDS.SHA256SUMS"),
+                                                    os.path.realpath(tr.fetch / f"sacct-{JOB}.txt")}))
+        self.assertFalse((tr.d / "out").exists())
+        self.assertEqual([p for p in tr.d.iterdir() if p.name.startswith(".out.staging-")], [])
+
+    def test_iv_a_job_not_ended_stops_and_nothing_is_read(self):
+        for state in ("RUNNING", "PENDING", "REQUEUED", "SUSPENDED", "PREEMPTED", "COMPLETING", ""):
+            with self.subTest(state=state):
+                tr = self.tree()
+                tr.write_fetch(state=state)
+                self.stopped(tr, "not terminal")
+                self.doCleanups()
+
+    def test_v_no_sacct_row_stops(self):
+        for name, sacct, why in (("no row", "JobID|JobName|State|ExitCode\n", "0 rows"),
+                                 ("only a step row", f"JobID|JobName|State|ExitCode\n{JOB}.batch|batch|COMPLETED|0:0\n",
+                                  "0 rows"),
+                                 ("two rows", f"{JOB}|ibub_run|COMPLETED|0:0\n{JOB}|ibub_run|RUNNING|0:0\n", "2 rows"),
+                                 ("another job name", f"{JOB}|cov2d|COMPLETED|0:0\n", "not terminal"),
+                                 ("a three-column row", f"{JOB}|ibub_run|COMPLETED\n", "1 rows")):
+            with self.subTest(case=name):
+                tr = self.tree()
+                tr.write_fetch(sacct=sacct)
+                self.stopped(tr, why)
+                self.doCleanups()
+        tr = self.tree()
+        tr.write_fetch(bad_sum=f"sacct-{JOB}.txt")
+        self.stopped(tr, "RECORDS.SHA256SUMS")
+        tr = self.tree()
+        (tr.fetch / f"sacct-{JOB}.txt").unlink()                  # listed, but not there
+        self.patch(tr)
+        with self.assertRaises(c.Refusal) as cm:
+            self.go(tr)
+        self.assertIn("STOP: the fetch's sacct record is not readable", str(cm.exception))
+
+    def test_every_graded_byte_is_inventoried_from_its_one_read(self):
+        tr = self.tree()
+        self.patch(tr)
+        rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "PASS", rec.get("controls_failed"))
+        inv = rec["inventory"]
+        want = [tr.units / f"toy_{T}_{s}.{e}" for s in SEEDS for e in ("done", "npz", "root")]
+        want += [tr.units / f"{u}.{e}" for u in iu.REFERENCE_UNITS for e in ("done", "npz", "root")]
+        want += [tr.units / "refcheck.json", tr.run / tr.pdir / "truth_xsec.npz", tr.d / "ns/out/ER/xsec.root"]
+        want += [tr.run / "out" / f"T_{T}_{s}" / "xsec.root" for s in SEEDS]
+        want += [tr.pb_path, tr.blocks_path, tr.comp_path]          # read before the audit (agy readout read 1, item 3)
+        want += [tr.fetch / "RECORDS.SHA256SUMS"] + [tr.fetch / ln.split("  ", 1)[1] for ln in
+                                                     (tr.fetch / "RECORDS.SHA256SUMS").read_text().splitlines()]
+        for p in want:
+            self.assertEqual(inv.get(str(p)), sha(p.read_bytes()), str(p))
+        self.assertEqual(rec["C-JOB"]["records_sha256sums_sha256"], sha((tr.fetch / "RECORDS.SHA256SUMS").read_bytes()))
+
+
+class JobRules(unittest.TestCase):
+    """The readout's copies of the job's rules are the job's: its allocation line, its constants and its key rule."""
+
+    SBATCH = HERE / "jobs" / "ibub_job.sbatch"
+
+    def test_the_allocation_line_and_constants_are_the_jobs(self):
+        src = self.SBATCH.read_text()
+        self.assertIn('say "allocation: $JOBNAME regular $LIMIT 1 node exclusive;', src)
+        self.assertIn("NL=4; MEM=112G; MEM_MB=114688;", src)
+        self.assertIn("LIMIT=11:29:00; JOBNAME=ibub_run", src)
+        self.assertEqual(ir.ALLOCATION_LINE, "[ibub] allocation: ibub_run regular 11:29:00 1 node exclusive;")
+        self.assertIsNone(ir.allocation_ok(SCONTROL))
+
+    def test_the_readout_connect_uses_the_readouts_terminal_states_and_flags(self):
+        import re
+        t = (HERE.parents[1] / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect"
+             / "ibub_readout_connect.template.sh").read_text()
+        m = re.search(r'case "\$state" in ([A-Z_|]+)\) ;;', t)
+        self.assertIsNotNone(m)
+        self.assertEqual(set(m.group(1).split("|")), ir.TERMINAL)       # the connect STOPs on exactly what the readout does
+        for flag in ("--truth", "--units", "--out", "--job", "--job-m", "--records"):
+            self.assertIn(f"{flag} ", t[t.index("python -B ibub_readout.py"):])
+        self.assertIn('--records "$R/records"', t)
+        self.assertIn("R=/dev/shm/ibub-connect", t)
+        self.assertEqual(iu.load_config()["readout"]["write_root"], "/dev/shm/ibub-connect")   # the readout's declared root
+
+    def test_scontrol_key_reads_as_the_jobs_key_function(self):
+        import subprocess
+        line = next(ln for ln in self.SBATCH.read_text().splitlines() if ln.startswith("key() {"))
+        text = SCONTROL + "   Comment=a b JobName=decoy\n   Empty=\n"
+        for k in ("JobId", "JobName", "QOS", "TimeLimit", "NumNodes", "OverSubscribe", "AllocTRES", "Empty", "Absent"):
+            with self.subTest(key=k):
+                r = subprocess.run(["bash", "-c", f'{line}\ninfo="$1"; key "$2"', "_", text, k],
+                                   capture_output=True, text=True, check=True)
+                self.assertEqual(ir.scontrol_key(text, k), r.stdout.rstrip("\n"))
+
+
+class FetchAndDisclosure(unittest.TestCase):
+    """fetched_records' refusals and terminal_state's disclosure, on their own."""
+
+    def setUp(self):
+        p = mock.patch.object(os, "O_NOATIME", getattr(os, "O_NOATIME", 0), create=True)   # macOS has none
+        p.start()
+        self.addCleanup(p.stop)
+
+    def fetch(self, lines: list, files: dict) -> Path:
+        d = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, d, True)
+        for rel, data in files.items():
+            (d / rel).parent.mkdir(parents=True, exist_ok=True)
+            (d / rel).write_bytes(data)
+        if lines is not None:
+            (d / "RECORDS.SHA256SUMS").write_text("".join(ln + "\n" for ln in lines))
+        return d
+
+    def test_each_malformed_fetch_is_refused(self):
+        ok = sha(b"x")
+        for name, lines, why in (
+                ("no RECORDS.SHA256SUMS", None, "RECORDS.SHA256SUMS is not readable"),
+                ("a short digest", ["abc  a.txt"], "malformed or repeated"),
+                ("one space", [f"{ok} a.txt"], "malformed or repeated"),
+                ("an absolute path", [f"{ok}  /etc/passwd"], "malformed or repeated"),
+                ("a parent step", [f"{ok}  ../a.txt"], "malformed or repeated"),
+                ("a repeated line", [f"{ok}  a.txt", f"{ok}  a.txt"], "malformed or repeated"),
+                ("a listed file absent", [f"{ok}  b.txt"], "the fetched record b.txt is not readable")):
+            with self.subTest(case=name), self.assertRaises(c.Refusal) as cm:
+                ir.fetched_records(self.fetch(lines, {"a.txt": b"x"}), JOB)
+            self.assertIn(why, str(cm.exception))
+
+    def test_unreadable_disclosures_are_recorded_as_unknown(self):
+        out = ir.terminal_state({"IBUB-DONE": b"{truncated", "logs/complete.json": b"not json"})
+        self.assertEqual(out["ibub_done"]["stage"], None)
+        self.assertEqual(out["ibub_done"]["sha256"], sha(b"{truncated"))
+        self.assertIsNone(out["complete_json"])
+        self.assertEqual(ir.terminal_state({}), {"ibub_done": None, "complete_json": None})
+
+
+class ReadoutInputs(Patched):
+    """codex2 read 3, items 2 and 4: the root and --out are checked before anything is created; a pinned input that
+    fails is recorded through the diagnostic path."""
+
+    def refused(self, tr, cfg, out, why):
+        self.patch(tr, cfg)                                 # its own TMPDIR is made here, before the listing
+        before = sorted(p.name for p in tr.d.iterdir())
+        with self.assertRaises(c.Refusal) as cm:
+            ir.readout(T, tr.units, out, str(tr.run), JOB, DEPLOY, tr.fetch)
+        self.assertIn(why, str(cm.exception))
+        self.assertEqual(sorted(p.name for p in tr.d.iterdir()), before)     # nothing was created anywhere
+        return cm.exception
+
+    def test_an_absent_root_is_refused_before_any_staging_beside_it(self):
+        for inside in (False, True):                 # --out equal to the absent root, or in it
+            with self.subTest(inside=inside):
+                tr = self.tree()
+                cfg = tr.config()
+                cfg["readout"]["write_root"] = str(tr.d / "ibub-connect")
+                out = tr.d / "ibub-connect" / "out" if inside else tr.d / "ibub-connect"
+                self.refused(tr, cfg, out, "does not exist")
+                self.doCleanups()
+
+    def test_a_symlinked_relative_or_shared_root_is_refused(self):
+        for root, why in (("link", "is not a real directory"), ("link/inner", "/link/inner resolves to"),
+                          ("relative/root", "is not absolute"), ("shared", "is not this user's private directory")):
+            with self.subTest(root=root):
+                tr = self.tree()
+                (tr.d / "real" / "inner").mkdir(parents=True)        # a real directory under a symlinked ancestor
+                (tr.d / "link").symlink_to(tr.d / "real")
+                (tr.d / "shared").mkdir()
+                os.chmod(tr.d / "shared", 0o777)
+                cfg = tr.config()
+                cfg["readout"]["write_root"] = root if root.startswith("relative") else str(tr.d / root)
+                exc = self.refused(tr, cfg, tr.d / "real" / "out", why)
+                self.assertTrue(str(exc).startswith("the readout root "), str(exc))     # the root check, not another
+                self.assertEqual([p.name for p in (tr.d / "real").iterdir()], ["inner"])
+                self.assertEqual(list((tr.d / "real" / "inner").iterdir()), [])
+                self.doCleanups()
+
+    def test_an_out_whose_parent_is_absent_or_a_symlink_is_refused(self):
+        for parent, why in (("nope", "does not exist"), ("plink", "its own path")):
+            with self.subTest(parent=parent):
+                tr = self.tree()
+                (tr.d / "sub").mkdir()
+                (tr.d / "plink").symlink_to(tr.d / "sub")
+                self.refused(tr, None, tr.d / parent / "out", why)
+                self.assertEqual(list((tr.d / "sub").iterdir()), [])
+                self.doCleanups()
+
+    def test_temporary_files_default_to_the_root_and_tempfile_is_restored(self):
+        tr = self.tree()
+        self.patch(tr)
+        seen, real = [], rd.Run.__init__
+
+        def init(self_, truth, run_dir, td):
+            seen.append((str(td), tempfile.gettempdir()))
+            real(self_, truth, run_dir, td)
+        before = tempfile.tempdir
+        env = {k: v for k, v in os.environ.items() if k != "TMPDIR"}
+        with mock.patch.dict(os.environ, env, clear=True), mock.patch.object(rd.Run, "__init__", init):
+            rec = self.go(tr)
+        self.assertEqual(rec["verdict"], "PASS", rec.get("controls_failed"))
+        self.assertEqual(os.path.dirname(seen[0][0]), str(tr.d))
+        self.assertEqual(seen[0][1], str(tr.d))
+        self.assertEqual(tempfile.tempdir, before)
+
+    def test_a_pinned_input_that_fails_is_recorded_with_no_reading(self):
+        def pb_off(tr, cfg):
+            cfg["toys"][T]["pseudo_b_sha256"] = "0" * 64
+        def cells_off(tr, cfg):
+            cfg["cells"]["blocks_sha256"] = "0" * 64
+        def c2_off(tr, cfg):
+            pt = mock.patch.object(rd, "C2_RECORD", (tr.c2_path, "0" * 64))
+            pt.start()
+            self.addCleanup(pt.stop)
+        for name, edit, why in (("pseudo_b off its pin", pb_off, "pseudo_b"), ("the cells' blocks off pin", cells_off,
+                                                                              "blocks record"),
+                                ("C2_RECORD off its pin", c2_off, "c2.json")):
+            with self.subTest(case=name):
+                tr = self.tree()
+                cfg = tr.config()
+                self.patch(tr, cfg)
+                edit(tr, cfg)
+                rec = self.go(tr)
+                self.assertEqual(rec["verdict"], "INVALID")
+                self.assertIn(why, rec["refused"])
+                self.assertNotIn("readings", rec)
+                self.assertTrue((tr.d / "out" / f"ibub_{T}.json").exists())
+                self.doCleanups()
+
+
+class JobCode(unittest.TestCase):
+    """The real job_code, on this repository's own history."""
+
+    def git(self, *a):
+        import subprocess
+        return subprocess.run(["git", "-C", str(ir.REPO), *a], capture_output=True, check=True).stdout
+
+    def test_the_jobs_runner_and_config_are_read_at_its_commit(self):
+        head = self.git("rev-parse", "HEAD").decode().strip()
+        got = ir.job_code(head)
+        self.assertEqual(got["runner_sha256"], sha(self.git("cat-file", "blob", f"{head}:2d-unfolding/ibub/ibub_unit.py")))
+        self.assertEqual(got["config_sha256"], sha(self.git("cat-file", "blob", f"{head}:2d-unfolding/ibub/config.json")))
+
+    def test_an_ancestor_lacking_the_jobs_files_is_refused(self):
+        root = self.git("rev-list", "--max-parents=0", "HEAD").decode().split()[0]
+        with self.assertRaises(c.Refusal) as cm:
+            ir.job_code(root)
+        self.assertIn("is not readable at --job-m", str(cm.exception))
+
+    def test_a_malformed_or_unknown_commit_is_refused(self):
+        for bad, why in (("abc", "40-hex"), ("G" * 40, "40-hex"), ("HEAD", "40-hex"), ("0" * 40, "ancestor")):
+            with self.subTest(bad=bad), self.assertRaises(c.Refusal) as cm:
+                ir.job_code(bad)
+            self.assertIn(why, str(cm.exception))
 
 
 class HotellingSingular(unittest.TestCase):
