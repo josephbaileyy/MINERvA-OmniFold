@@ -609,9 +609,29 @@ class GpgTests(unittest.TestCase):
 
     def test_pinned_flags(self):
         self.assertEqual(" ".join(cw.GPG_ENCRYPT), "gpg --batch --yes --pinentry-mode loopback --passphrase-fd 3 "
-                         "--no-symkey-cache --symmetric --cipher-algo AES256 --s2k-digest-algo SHA512 --force-mdc")
+                         "--no-symkey-cache --symmetric --cipher-algo AES256 --s2k-digest-algo SHA512 --force-mdc "
+                         "--compress-algo none")
         self.assertEqual(" ".join(cw.GPG_DECRYPT), "gpg --batch --pinentry-mode loopback --passphrase-fd 3 "
                          "--no-symkey-cache --decrypt")
+
+    def test_encryption_does_not_compress(self):
+        pw = secrets.token_hex(32)
+        self.assertEqual(cw.GPG_ENCRYPT[-2:], ("--compress-algo", "none"))
+        # Same length, very different compressibility: the ciphertext sizes must be equal.
+        for n in (64, 4096):
+            sizes = {len(cw.gpg_run(cw.GPG_ENCRYPT, pw, p)) for p in
+                     (b"0" * n, secrets.token_hex(n // 2).encode(), secrets.token_bytes(n))}
+            self.assertEqual(len(sizes), 1, (n, sizes))
+        # A fixed-width seed-bearing file: its ciphertext size must not depend on the seed's digits.
+        def seed_file(seeds):
+            return json.dumps({"seeds": [f"{s:020d}" for s in seeds]}, sort_keys=True).encode()
+        files = [seed_file([0] * 16), seed_file([10 ** 20 - 1] * 16),
+                 seed_file([secrets.randbelow(10 ** 20) for _ in range(16)])]
+        self.assertEqual(len({len(f) for f in files}), 1)
+        self.assertEqual(len({len(cw.gpg_run(cw.GPG_ENCRYPT, pw, f)) for f in files}), 1)
+        for f in files:
+            ct = cw.gpg_run(cw.GPG_ENCRYPT, pw, f)
+            self.assertEqual(cw.gpg_run(cw.GPG_DECRYPT, pw, ct), f)
 
 
 def _fd_open(fd):

@@ -83,7 +83,10 @@ SECRET_LIKE = re.compile(r"[0-9a-f]{16}|[0-9]{9}")
 
 GPG_ENCRYPT = ("gpg", "--batch", "--yes", "--pinentry-mode", "loopback", "--passphrase-fd", "3",
                "--no-symkey-cache", "--symmetric", "--cipher-algo", "AES256", "--s2k-digest-algo", "SHA512",
-               "--force-mdc")
+               "--force-mdc", "--compress-algo", "none")
+# --compress-algo none: with compression a ciphertext's size depends on how well the plaintext compresses, so a
+# fixed-width file holding a seed would vary in size with the seed's digits. Uncompressed, the size depends on the
+# plaintext's length only.
 GPG_DECRYPT = ("gpg", "--batch", "--pinentry-mode", "loopback", "--passphrase-fd", "3", "--no-symkey-cache",
                "--decrypt")
 
