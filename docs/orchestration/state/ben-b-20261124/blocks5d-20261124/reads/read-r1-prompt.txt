@@ -1,0 +1,16 @@
+Adversarial review, READ-ONLY. Never write to any file in the repository. Write nothing except your final answer.
+
+The checkout at the current directory is at commit c8834fd6b. Review this pair for correctness against each other:
+- the declaration docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-DECLARATION.md (rev 1, accepted by the director as written);
+- its implementation nd-unfolding/b5d/b5d_build.py, with tests nd-unfolding/b5d/test_b5d.py.
+
+The code reuses nd-unfolding/bsel/bsel_select.py (the bound part-1 selection: R, the tables), nd-unfolding/ll5d_b.py and nd-unfolding/ll5d.py (LL5D's product naming, bands_of, remade, products_digest, TOY_SEEDS), and nd-unfolding/s1_assemble.py (EXPECT, mat_cov, flux_weights, functional_matrix). The 2D precedent the declaration adapts is docs/orchestration/state/2d-closeout/covfix-20261122/COVFIX-DECLARATION.md section 5.2 and section 6.1.
+
+This build gates a covariance support claim for a physics paper, so be strict. Report BLOCKERS, then MAJORS, then minors, each with file:line and a concrete failure scenario. Check especially:
+1. Does C_b implement [sum over the family (beta beta^T - Sigma_t)]_+ with beta and Sigma_t in Tune v1 units exactly as declared, and is Sigma_t the right debiasing term for each member's estimator (row 1 Poisson+split experiments for nominal, row 4 noise-free splits for the A7 truths)?
+2. Does drawn_block reproduce exactly the drawn part of ll5d_b.remade (bands, flux weighting, stat replicas), and nothing from S1's data products?
+3. Are the raw toy errors e = U xsec - U xtrue the right quantity to compare with that drawn block, given how LL5D's toys draw their natures (ll5d_b nature/toy code, clipping)? Is anything in D that the toys don't draw, or drawn but not in D?
+4. The per-mode spread, the (N-1)/N factor, the eigen-rank bands, f-hat as the mean over the two minus2 ensembles, the 2,000-replicate bootstrap, the 3 SE trigger, and V_F = L C_e L^T: any statistical error, or any departure from the declaration?
+5. Controls C-PIN, C-LL5D, C-SEED, C-FLUX, C-TAB, C-PSD, C-FIN: can any pass vacuously? Is any declared control missing in code (C-LEAK)?
+6. Anything in the declaration itself that is wrong or would mislead Joseph's adoption decision.
+Keep it under about 900 words. Name your model.
