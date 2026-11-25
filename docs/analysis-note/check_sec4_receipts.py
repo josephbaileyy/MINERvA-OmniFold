@@ -6,7 +6,8 @@ Each check finds one printed value in the note's values.tex, sec3_twod.tex, sec4
 sec_5d.tex or app_devhistory.tex, or in the primer's primer_body.tex, recomputes it
 from the committed receipt that backs it, and compares at the printed precision: |computed - printed| <= half a unit in
 the printed last digit ("round"), or printed - one unit <= computed < printed ("below", for "below X%": true, and tight
-to one unit). LaTeX comments are removed first, so a sentence kept only in a comment is not found. A value that cannot
+to one unit). "round-3dp-source" is "round" for a record that prints only 3 dp: the whole interval the record's value
+stands for (+-0.0005) must round to the printed value, so a record on a rounding boundary fails instead of guessing. LaTeX comments are removed first, so a sentence kept only in a comment is not found. A value that cannot
 be located, or a receipt key that is missing, is a failure. Release-reproducible values are checked by
 publication/release/figs/fig_numbers.py instead; this covers the Sec. IV values the release cannot recompute.
 
@@ -155,8 +156,82 @@ def half_of_cells():  # VL154 A4: cells whose model dependence is within the ado
     return receipt("s5e/cand/assess_receipt.json")["A4"]["n_useful_cells"] / 42.0
 
 
+# Option (i) (Joseph, 2026-11-24): our 2D grid stays the analysis grid, and every comparison with the published result is
+# made on the paper's pT edges (0.075/0.325/0.475). ibu-chi's regenA (PR #1322, merge 7c7a3cfb) regenerated those
+# comparisons as records; READINGS.md maps each value to where the note prints it. The checks below bind the printed
+# values to the regenA records of E (E_R on the paper's edges), so a later regeneration that moves one fails here.
+REGEN_A = "ibu-chi2-20261123/regenA"
+
+
+def regen_a_number(rel: str, pattern: str) -> float:
+    """One number from a committed regenA text record: the pattern must match exactly once."""
+    m = re.findall(pattern, (STATE / REGEN_A / rel).read_text())
+    if len(m) != 1:
+        raise ValueError(f"{REGEN_A}/{rel}: {pattern!r} matched {len(m)} times (expected 1)")
+    return float(m[0])
+
+
+def regen_a_pull(which: str) -> float:  # P1a: per-bin pull mean or RMS against the published TotalCovariance
+    mean, rms = (regen_a_number("out/e_P1a_chi2_paperonly.log", r"pull mean / rms\s*:\s*([0-9.]+) / [0-9.]+"),
+                 regen_a_number("out/e_P1a_chi2_paperonly.log", r"pull mean / rms\s*:\s*[0-9.]+ / ([0-9.]+)"))
+    return {"mean": mean, "rms": rms}[which]
+
+
+def regen_a_tension(pattern: str) -> float:  # P4: tension_report.txt (diagonal-only distance; norm/shape split)
+    return regen_a_number("out/e/tension_report.txt", pattern)
+
+
+def regen_a_windows() -> dict:  # P7: agreement_windows_receipt.py on E
+    return receipt(f"{REGEN_A}/out/e/RECEIPT-agreement-windows.json")
+
+
+def regen_a_median() -> float:
+    """The median per-bin ratio at full precision. The P7 receipt stores it rounded to 4 dp, which sits on the 3-dp
+    printing boundary (1.0075); receipts/median_fullprec.py recomputes it with the producer's definition and checks
+    that its 4-dp rounding equals the stored value. Both are required here."""
+    full = regen_a_number("receipts/median_fullprec.out", r"(?m)^e: median=([0-9.]+) ")
+    stored = regen_a_windows()["results"]["median_bin_ratio"]
+    if round(full, 4) != stored:
+        raise ValueError(f"median_fullprec.out ({full}) does not round to the P7 receipt's {stored}")
+    return full
+
+
+def regen_a_within(pct: int) -> float:  # percent of the 205 reported bins within pct%, from the count (not the 1-dp %)
+    w = regen_a_windows()["results"][f"within_{pct}_percent"]
+    assert abs(100.0 * w["count"] / 205 - w["percent"]) < 0.05, "count and percent disagree in the P7 receipt"
+    return 100.0 * w["count"] / 205
+
+
+def regen_a_ratio_tot() -> float:  # P7: integral ratio ours/published over the reported cells (\ratioTot)
+    return regen_a_windows()["headline_totals_oi130"]["values"]["ratio_integrals_reported"]
+
+
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
+    ("median per-bin ratio (regenA P7, paper's pT edges)", "values.tex",
+     r"\\newcommand\{\\medianBinRatio\}\{([0-9.]+)\}", regen_a_median, "round"),
+    ("bins within 5% (regenA P7)", "values.tex", r"\\newcommand\{\\binsFive\}\{([0-9.]+)\}",
+     lambda: regen_a_within(5), "round"),
+    ("bins within 10% (regenA P7)", "values.tex", r"\\newcommand\{\\binsTen\}\{([0-9.]+)\}",
+     lambda: regen_a_within(10), "round"),
+    ("bins within 20% (regenA P7)", "values.tex", r"\\newcommand\{\\binsTwenty\}\{([0-9.]+)\}",
+     lambda: regen_a_within(20), "round"),
+    ("integral ratio, reported cells (regenA P7)", "values.tex", r"\\newcommand\{\\ratioTot\}\{([0-9.]+)\}",
+     regen_a_ratio_tot, "round"),
+    ("pull mean vs published TotalCovariance (regenA P1a)", "values.tex",
+     r"\\newcommand\{\\pullMean\}\{([0-9.]+)\}", lambda: regen_a_pull("mean"), "round"),
+    ("pull RMS vs published TotalCovariance (regenA P1a)", "values.tex",
+     r"\\newcommand\{\\pullRMS\}\{([0-9.]+)\}", lambda: regen_a_pull("rms"), "round"),
+    ("pull RMS, prose rounding (regenA P1a)", "values.tex",
+     r"\\newcommand\{\\pullRMSr\}\{([0-9.]+)\}", lambda: regen_a_pull("rms"), "round-3dp-source"),
+    ("diagonal-only distance per bin (regenA P4)", "sec3_twod.tex",
+     r"gives a quadratic distance per bin of ([0-9.]+)\.",
+     lambda: regen_a_tension(r"diagonal-only chi2/ndf =\s*([0-9.]+)"), "round"),
+    ("tension split: chi2_norm (regenA P4)", "sec3_twod.tex", r"\$\\chi\^2_\{\\mathrm\{norm\}\}=([0-9.]+)\$",
+     lambda: regen_a_tension(r"chi2_norm\s*=\s*([0-9.]+)"), "round"),
+    ("tension split: chi2_shape (regenA P4)", "sec3_twod.tex",
+     r"\$\\chi\^2_\{\\mathrm\{shape\}\}\\simeq([0-9.]+)\$",
+     lambda: regen_a_tension(r"chi2_shape\s*=\s*([0-9.]+)"), "round"),
     ("total median uncertainty (Q_R)", "values.tex", r"\\newcommand\{\\uqMedian\}\{([0-9.]+)\}", total_median, "round"),
     ("total integral uncertainty (Q_R)", "values.tex", r"\\newcommand\{\\uqIntegral\}\{([0-9.]+)\}", total_integral, "round"),
     ("closure toys (VL169)", "values.tex", r"\\newcommand\{\\covTwoDNtoy\}\{([0-9.]+)\}", lambda: interim("n_toys"), "round"),
@@ -215,6 +290,8 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
         comp = comp if isinstance(comp, tuple) else (comp,)
         if mode == "round":
             good = all(abs(c - float(p)) <= half_ulp(p) for c, p in zip(comp, printed))
+        elif mode == "round-3dp-source":  # the record prints 3 dp: every value it can stand for must round to `printed`
+            good = all(abs(c - float(p)) + 0.0005 <= half_ulp(p) + 1e-12 for c, p in zip(comp, printed))
         else:  # below: true, and no looser than one unit of the printed precision
             good = all(float(p) - 2 * half_ulp(p) <= c < float(p) for c, p in zip(comp, printed))
         rows.append((label, good, f"printed {'/'.join(printed)} | receipt {'/'.join(f'{c:.6g}' for c in comp)} | {mode}"))
