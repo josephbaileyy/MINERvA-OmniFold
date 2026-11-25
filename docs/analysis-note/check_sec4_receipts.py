@@ -300,6 +300,17 @@ CHECKS = [
      r"\\newcommand\{\\pullRMS\}\{([0-9.]+)\}", lambda: regen_a_pull("rms"), "round"),
     ("pull RMS, prose rounding (regenA P1a)", "values.tex",
      r"\\newcommand\{\\pullRMSr\}\{([0-9.]+)\}", lambda: regen_a_pull("rms"), "round-3dp-source"),
+    ("A5 ten smallest-lambda modes' share, appC:7", "appC_supplementary.tex",
+     r"The ten smallest-eigenvalue modes carry \$([0-9.]+)\\%\$ of the distance", lambda: 100 * regen_a45("5")["share10_smallest"],
+     "round"),
+    ("A5 ten smallest-lambda modes' share, records_r03:18", "records_r03_twod.tex",
+     r"The 10 smallest-\$\\lambda\$ modes carry \\SI\{([0-9.]+)\}\{\\percent\}", lambda: 100 * regen_a45("5")["share10_smallest"],
+     "round"),
+    ("A5 largest standardized component and the next nine, records_r03:18", "records_r03_twod.tex",
+     r"The largest mode has a paper-covariance-standardized component of magnitude \$([0-9.]+)\$, and the next nine "
+     r"\$([0-9.]+)\$--\$([0-9.]+)\$",
+     lambda: (regen_a45("5")["largest_abs_z"], min(regen_a45("5")["next_nine_abs_z"]), max(regen_a45("5")["next_nine_abs_z"])),
+     "round"),
     ("chi2/ndf vs published on the published pT edges, \\chiPaper (regenA E P1a)", "values.tex",
      r"\\newcommand\{\\chiPaper\}\{([0-9.]+)\}",
      lambda: regen_a_number("out/e_P1a_chi2_paperonly.log", r"PAPER \(stat\+syst\)\s+chi2 =\s*([0-9.]+)\s+ndf = 205") / 205,
@@ -400,6 +411,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
         m2 = re.findall(EDGE_STEP_SEC2, text("sec2_method.tex", sources))
         rows.append(("pT edge step in sec2_method.tex equals sec3's, exactly", len(m2) == 1 and m2[0] == step,
                      f"sec2 prints {m2} | sec3 step {step}"))
+    rows += mode_split_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
         found = len(re.findall(pat, text(src, sources))) == 1
         c = fn()
@@ -407,10 +419,85 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     return rows
 
 
+def regen_a45(which: str) -> dict:
+    """regenA A4's or A5's readout on the published pT edges (#1329, #1330)."""
+    return json.loads((STATE / f"ibu-chi2-20261123/regenA{which}/out/readout_e.json").read_text())
+
+
+NUM_WORD = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6}
+ORDINAL = {1: "first", 2: "second", 3: "third", 4: "fourth", 5: "fifth", 6: "sixth"}
+# The eigenmode sentences on the published pT edges (Joseph's wording, 2026-11-25), bound to A4 and A5
+MODE_CAPTION = (r"(\w+) of the six published-covariance eigenvectors with the largest contributions to the descriptive "
+                r"\$\\chi\^2\$, in panels (\([a-f]\)(?:--\([a-f]\))?(?:(?:, | and )\([a-f]\)(?:--\([a-f]\))?)*), concentrate "
+                r"at the highest")
+MODE_APPC7 = (r"The ten smallest-eigenvalue modes carry \$([0-9.]+)\\%\$ of the distance\. Among the six largest contributors, "
+              r"(\w+) are concentrated in the highest-\$p_\\parallel\$ bins and have "
+              r"\$\\lambda_k/\\lambda_\{\\max\}\\lesssim10\^\{(-\d+)\}\$, while the (\w+) lies at lower \$p_\\parallel\$ "
+              r"and has a relative eigenvalue of \$(\d)\\times10\^\{(-\d+)\}\$")
+MODE_REC18 = (r"Of the five largest contributors, (\w+) lies? in the smallest-\$\\lambda\$ tenth of the spectrum\. Of the six "
+              r"leading modes, the (\w+) in the highest-\$\\pPar\$ bins are all poorly determined directions "
+              r"\(\$\\lambda/\\lambda_\{\\max\}\\lesssim10\^\{(-\d+)\}\$\)\. The (\w+) is a moderate-\$\\lambda\$ mode "
+              r"\(\$\\lambda/\\lambda_\{\\max\}\\approx(\d)\\times10\^\{(-\d+)\}\$\)")
+
+
+def panel_letters(spec: str) -> list[str]:
+    out = []
+    for a, b in re.findall(r"\(([a-f])\)(?:--\(([a-f])\))?", spec):
+        out += [chr(c) for c in range(ord(a), ord(b or a) + 1)]
+    return out
+
+
+def mode_split_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    """Fig. 14's caption, appC:7 and records_r03_twod.tex:18 against A4/A5: count words, panel letters, the decade bound on
+    the high-p_par modes' lambda/lambda_max (true, and no looser than one decade), and the other mode's value at 1 s.f."""
+    a4, a5 = regen_a45("4"), regen_a45("5")
+    high, low = a5["six_split"]["high_pz"], a5["six_split"]["lower_pz"]
+    lam = [m["lam_rel"] for m in sorted(a5["modes"], key=lambda m: m["rank"])]
+    high_letters = [chr(ord("a") + i) for i in high]
+    hmax = max(lam[i] for i in high)
+    other = f"{lam[low[0]]:.0e}" if len(low) == 1 else None
+
+    def decade(e: str) -> bool:
+        return 10.0 ** (int(e) - 1) < hmax <= 10.0 ** int(e)
+
+    def rest(word: str) -> bool:  # "the sixth" names the one remaining mode
+        return len(low) == 1 and word == ORDINAL[len(high) + 1]
+
+    rows = []
+    m = re.findall(MODE_CAPTION, text("appC_supplementary.tex", sources))
+    lab = "A5/A4 Fig. 14 caption: count and panels at the highest p_par"
+    if len(m) != 1:
+        rows.append((lab, False, f"caption found {len(m)} times (expected 1)"))
+    else:
+        word, spec = m[0][0], m[0][1]
+        letters = panel_letters(spec)
+        good = (NUM_WORD.get(word.lower()) == len(letters) and letters == a4["modes_share_gt_half"] == high_letters)
+        rows.append((lab, good, f"printed {word} {letters} | A4 {a4['modes_share_gt_half']} A5 {high_letters}"))
+    m = re.findall(MODE_APPC7, text("appC_supplementary.tex", sources))
+    lab = "A5 appC:7: count, decade bound, the other mode"
+    if len(m) != 1:
+        rows.append((lab, False, f"sentence found {len(m)} times (expected 1)"))
+    else:
+        _, word, e1, rword, c, e2 = m[0]
+        good = NUM_WORD.get(word) == len(high) and decade(e1) and rest(rword) and other == f"{c}e{int(e2):+03d}"
+        rows.append((lab, good, f"printed {word}, <~1e{e1}, the {rword} {c}e{e2} | A5 {len(high)} high, max {hmax:.3g}, other {other}"))
+    m = re.findall(MODE_REC18, text("records_r03_twod.tex", sources))
+    lab = "A5 records_r03:18: top five in the smallest tenth, count, decade bound, the other mode"
+    if len(m) != 1:
+        rows.append((lab, False, f"sentence found {len(m)} times (expected 1)"))
+    else:
+        tword, word, e1, rword, c, e2 = m[0]
+        good = (NUM_WORD.get(tword) == a5["top5_in_smallest_tenth"] and NUM_WORD.get(word) == len(high) and decade(e1)
+                and rest(rword.lower()) and other == f"{c}e{int(e2):+03d}")
+        rows.append((lab, good, f"printed {tword}/{word}, <~1e{e1}, the {rword} {c}e{e2} | A5 top5 "
+                                f"{a5['top5_in_smallest_tenth']}, {len(high)} high, max {hmax:.3g}, other {other}"))
+    return rows
+
+
 def load() -> dict[str, str]:
     return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec4_higherdim.tex", "sec_validation.tex",
                                                "sec_5d.tex", "app_devhistory.tex", "primer_body.tex", "appA_methods.tex",
-                                               "sec2_method.tex")}
+                                               "sec2_method.tex", "appC_supplementary.tex", "records_r03_twod.tex")}
 
 
 def gzip_self_test() -> bool:
@@ -489,6 +576,31 @@ def self_test() -> int:
             print(f"  NOT CAUGHT  {lab}: {old_s} -> {new_s}"); ok = False
         else:
             caught += 1; print(f"  caught      {lab}: {old_s} -> {new_s}")
+    # The eigenmode-split rows (not in CHECKS): each word, letter or exponent changed must be rejected.
+    for src, old_s, new_s in (
+            ("appC_supplementary.tex", "Five of the six published-covariance", "Four of the six published-covariance"),
+            ("appC_supplementary.tex", "in panels (a) and (c)--(f), concentrate", "in panels (a) and (c)--(e), concentrate"),
+            ("appC_supplementary.tex", "in panels (a) and (c)--(f), concentrate", "in panels (a), (b) and (d)--(f), concentrate"),
+            ("appC_supplementary.tex", "contributors, five are concentrated", "contributors, four are concentrated"),
+            ("appC_supplementary.tex", "\\lambda_{\\max}\\lesssim10^{-8}$, while", "\\lambda_{\\max}\\lesssim10^{-9}$, while"),
+            ("appC_supplementary.tex", "\\lambda_{\\max}\\lesssim10^{-8}$, while", "\\lambda_{\\max}\\lesssim10^{-7}$, while"),
+            ("appC_supplementary.tex", "while the sixth lies", "while the fifth lies"),
+            ("appC_supplementary.tex", "eigenvalue of $6\\times10^{-5}$", "eigenvalue of $5\\times10^{-5}$"),
+            ("records_r03_twod.tex", "contributors, one lies in", "contributors, two lie in"),
+            ("records_r03_twod.tex", "modes, the five in the", "modes, the three in the"),
+            ("records_r03_twod.tex", "\\lesssim10^{-8}$). The", "\\lesssim10^{-9}$). The"),
+            ("records_r03_twod.tex", "The sixth is a moderate", "The fourth is a moderate"),
+            ("records_r03_twod.tex", "\\approx6\\times10^{-5}$", "\\approx6\\times10^{-6}$")):
+        t = text(src, base)
+        if t.count(old_s) != 1:
+            print(f"  NOT FOUND   mode mutation {old_s!r} in {src}"); ok = False; continue
+        trial = dict(base)
+        trial[src] = t.replace(old_s, new_s)
+        bad_rows = [r[0] for r in mode_split_claims(trial) if not r[1]]
+        if not bad_rows:
+            print(f"  NOT CAUGHT  mode split: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      mode split ({bad_rows[0][:24]}...): {old_s} -> {new_s}")
     trial = dict(base)
     trial["primer_body.tex"] = text("primer_body.tex", base).replace("in about half of the", "in about a third of the")
     if dict((r[0], r[1]) for r in evaluate(trial))[VERBAL[0][0]]:
