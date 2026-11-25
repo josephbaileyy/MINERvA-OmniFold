@@ -1,0 +1,32 @@
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+{
+ "controls_pass": true,
+ "C-BOUNDARY": {
+  "old": 0.0015752868764268158,
+  "e": 0.00013605901388196172,
+  "clear": true
+ },
+ "old": {
+  "c2c1-dibu": "1.03",
+  "c2c1-dibu-k5": "0.83",
+  "c2c1-dibu-k1": "3.95",
+  "c2c1-dibu-k20": "2.16",
+  "c2c1-dibu-mid-lo": "0.83",
+  "c2c1-dibu-mid-hi": "1.59",
+  "c2c1-der": "2.27"
+ },
+ "e": {
+  "c2c1-dibu": "0.54",
+  "c2c1-dibu-k5": "0.39",
+  "c2c1-dibu-k1": "4.26",
+  "c2c1-dibu-k20": "1.67",
+  "c2c1-dibu-mid-lo": "0.39",
+  "c2c1-dibu-mid-hi": "1.44",
+  "c2c1-der": "2.12"
+ },
+ "e_mid_K": [
+  5,
+  2
+ ],
+ "e_max_mid_below_D_ER": true
+}

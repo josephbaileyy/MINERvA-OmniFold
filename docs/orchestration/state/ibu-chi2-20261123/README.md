@@ -62,6 +62,9 @@ and `/pscratch/sd/j/josephrb/`. Local runs used Python 3.11.18, ROOT 6.40.04, nu
 | 18 | [`tier1`](tier1/README.md) | E_R and its binned IBU (REF-C2C1) on the paper's pT edges | controls pass | **IBU χ²/205 vs published 1.027 → 0.538 at K = 10** (0.830 → 0.395 at K = 5). D_ER 2.270 → 2.121. |
 | 19 | [`tier1/signed`](tier1/signed/README.md) | The signed-target IBU (`ibukt/signed_data`) on the paper's pT edges | PASS (reproduces Tier 1) | IBU χ²/205 vs published, signed target: 0.961 → **0.474** at K = 10 (0.816 → 0.380 at K = 5). |
 | 20 | [`regenA`](regenA/README.md) | The note's central-value comparisons with the published result, on the paper's pT edges | C-OLD PASS (6 products exact); P8 rerun once | χ²/205 vs published 2.270 → **2.121**; 185-cell shape 2.568 → 2.092; readings for journal-editor in `regenA/READINGS.md`. |
+| 21 | [`regenA2`](regenA2/README.md) | The sec3_twod.tex:11 projection ratios, ours / published, on the paper's pT edges | C-LIT PASS (all four literals) | Lowest-pT ratio 0.97 → **1.04**; the others are unchanged at 2 decimals. |
+| 22 | [`regenA3`](regenA3/README.md) | The REF-C2C1 IBU ladder (every stored K) on the paper's pT edges | all controls PASS; one rerun after a crash | K = 2–15 range 0.83–1.59 → **0.39–1.44**; K = 20 2.16 → 1.67; K = 1 3.95 → 4.26. |
+| 23 | [`regenA4`](regenA4/README.md) | The note's figures from the published comparison, on the paper's pT edges (A4, A4b) | all controls PASS for the 8 figures; Fig. 2 via A4b at its installing commit | Mode maps: five of six modes at high p∥ (OLD: the caption's three). Slices: 14/14 and 16/16 toward the published points on both grids. Figure shas for journal-editor. |
 
 **Post hoc, read by no rule (`foldtest/posthoc_exclude.py`).** Dropping reco pT row 0 and the p‖ 40–60 column from the
 IBU-vs-published χ² takes it from 210 to 100 over 176 cells. Cells were dropped from a correlated covariance, so this

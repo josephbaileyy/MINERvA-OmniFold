@@ -40,7 +40,7 @@ from plot_2d_cross_section import (  # noqa: E402
 _UQ = str(_pathlib.Path(__file__).resolve().parent / "uq")
 if _UQ not in _sys.path:
     _sys.path.append(_UQ)
-from reported_cells import th2d_edges  # noqa: E402
+from reported_cells import edge_label, th2d_edges  # noqa: E402
 
 
 N_PT = len(PT_EDGES) - 1
@@ -69,15 +69,6 @@ def cumulative_display_edges(physical_edges):
     if np.any(widths <= 0):
         raise RuntimeError(f"Non-monotonic edges: {physical_edges}")
     return np.concatenate([[0.0], np.cumsum(np.sqrt(widths))])
-
-
-def edge_label(x):
-    """A bin edge with the fewest decimals, at least 2, that give it to 1e-9: 0.07 -> "0.07",
-    0.075 -> "0.075", 1.5 -> "1.50"."""
-    for nd in range(2, 10):
-        if abs(round(x, nd) - x) <= 1e-9:
-            return f"{x:.{nd}f}"
-    return f"{x:.9f}"
 
 
 def tmatrix_to_numpy(tm):

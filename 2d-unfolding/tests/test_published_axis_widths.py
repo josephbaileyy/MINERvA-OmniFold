@@ -1015,5 +1015,331 @@ class Fig13Test(Fixture):
             m.paper_arrays(str(p))
 
 
+# main before plot_2d_cross_section.py drew on its inputs' own axes
+BASE_XS = "359ee648e6528689a77ff380cdf06313dff907d1"
+
+
+def base_module_at(sha, rel, name, d):
+    """The file at commit sha, written to directory d and imported as module `name`; None when git
+    or sha is unavailable."""
+    try:
+        src = subprocess.run(["git", "-C", str(REPO), "show", f"{sha}:{rel}"],
+                             capture_output=True, check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    path = Path(d) / f"{name}.py"
+    path.write_bytes(src)
+    spec = importlib.util.spec_from_file_location(name, path)
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
+def th1_dump(h):
+    n = h.GetNbinsX()
+    return (np.array([h.GetXaxis().GetBinLowEdge(i) for i in range(1, n + 2)]),
+            np.array([h.GetBinContent(i) for i in range(1, n + 1)]),
+            np.array([h.GetBinError(i) for i in range(1, n + 1)]))
+
+
+@unittest.skipUnless(HAVE_DEPS, "PyROOT or matplotlib unavailable")
+class CrossSectionPlotEdges(unittest.TestCase):
+    """plot_2d_cross_section.py (and plot_2d_paper_comparison.py, which imports its slices) on its
+    input's own axes: on our grid every value, string and output equals BASE_XS's; on the release's
+    grid the labels, projection widths and efficiency map follow the 0.075 / 0.325 / 0.475 axis."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.dir = Path(cls.tmp.name)
+        rng = np.random.default_rng(23)
+        cls.cont = rng.lognormal(0.0, 0.5, rc.GRID_SHAPE)
+        cls.err = 0.05 * cls.cont
+        cls.eff = rng.uniform(0.2, 0.95, rc.GRID_SHAPE)
+        cls.truth = 1e4 * cls.cont * (1 + 0.1 * rng.standard_normal(rc.GRID_SHAPE))
+        cls.flux = 1e-4 * (2 + np.arange(N_PT))
+        for tag, pt in (("g07", OUR_PT), ("g075", PAPER_PT)):
+            cls.write_input(cls.dir / f"{tag}.root", pt)
+        for name, kw in (("eff", "hEff2D"), ("flux", "hFlux_pt"), ("truth", "hOFTruthDenom2D"), ("xpt", "hXSec_pt")):
+            cls.write_input(cls.dir / f"mixed_{name}.root", PAPER_PT, other={kw: OUR_PT})
+        pz = PZ.copy()
+        pz[9] = 7.5
+        cls.write_input(cls.dir / "mixed_xpz.root", PAPER_PT, other={"hXSec_pz": pz})
+        cls.write_input(cls.dir / "mixed_truthpz.root", PAPER_PT, other={"hOFTruthDenom2D": (PAPER_PT, pz)})
+        cls.write_input(cls.dir / "noflux075.root", PAPER_PT, skip=("hFlux_pt",))
+        cls.write_input(cls.dir / "notruthdenom075.root", PAPER_PT, skip=("hOFTruthDenom2D",))
+        for tag, pt in (("mc07", OUR_PT), ("mc075", PAPER_PT)):
+            f = ROOT.TFile.Open(str(cls.dir / f"{tag}.root"), "RECREATE")
+            h = ROOT.TH1D("pTmu_reweightedflux_integrated", "", N_PT, np.asarray(pt, dtype=float))
+            for i in range(N_PT):
+                h.SetBinContent(i + 1, float(cls.flux[i]))
+            h.Write()
+            f.Close()
+
+    @classmethod
+    def tearDownClass(cls):
+        plt.close("all")
+        cls.tmp.cleanup()
+
+    @classmethod
+    def th2(cls, name, pt, vals, errs=None):
+        pt, pz = pt if isinstance(pt, tuple) else (pt, PZ)
+        h = ROOT.TH2D(name, "", N_PT, np.asarray(pt, dtype=float), N_PZ, np.asarray(pz, dtype=float))
+        h.Sumw2()
+        for ix in range(N_PT):
+            for iy in range(N_PZ):
+                h.SetBinContent(ix + 1, iy + 1, float(vals[ix, iy]))
+                if errs is not None:
+                    h.SetBinError(ix + 1, iy + 1, float(errs[ix, iy]))
+        h.SetDirectory(0)
+        return h
+
+    POT, NUC = 1.06e21, 3.2e30
+
+    @classmethod
+    def write_input(cls, path, pt, other=None, skip=()):
+        """The fields main() reads, as unfold_2d_omnifold_unbinned.py writes them; `other` puts the
+        named histograms on other edges (pT, or p_par for hXSec_pz), `skip` leaves them out."""
+        o = other or {}
+        f = ROOT.TFile.Open(str(path), "RECREATE")
+        cls.th2("hXSec2D", pt, 1e-39 * cls.cont, 1e-39 * cls.err).Write()
+        for name, vals in (("hOFTruthDenom2D", cls.truth), ("hTruth2D", cls.truth), ("hEff2D", cls.eff)):
+            if name not in skip:
+                cls.th2(name, o.get(name, pt), vals).Write()
+        for name, edges, n in (("hXSec_pt", o.get("hXSec_pt", pt), N_PT), ("hXSec_pz", o.get("hXSec_pz", PZ), N_PZ),
+                               ("hFlux_pt", o.get("hFlux_pt", pt), N_PT)):
+            if name in skip:
+                continue
+            h = ROOT.TH1D(name, "", n, np.asarray(edges, dtype=float))
+            for i in range(n):
+                h.SetBinContent(i + 1, float(1e-38 * (1 + i)) if name != "hFlux_pt" else float(cls.flux[i]))
+                h.SetBinError(i + 1, float(1e-40 * (1 + i)))
+            h.Write()
+        ROOT.TParameter("double")("dataPOT", cls.POT).Write()
+        ROOT.TParameter("double")("nNucleons", cls.NUC).Write()
+        ROOT.TParameter("int")("nIterations", 5).Write()
+        f.Close()
+
+    def expected_truth_xsec(self, pt):
+        """compute_truth_xsec_2d's definition, written out: u / (flux_i N POT dpT dp_par) in cm^2."""
+        return self.truth / (self.flux[:, None] * self.NUC * self.POT * np.outer(np.diff(pt), np.diff(PZ))) * 1e4
+
+    def new(self, tag):
+        return new_module("plot_2d_cross_section.py", f"xs_new_{tag}")
+
+    def modules(self, tag):
+        old = base_module_at(BASE_XS, "2d-unfolding/plot_2d_cross_section.py", f"xs_old_{tag}", self.dir)
+        if old is None:
+            self.skipTest(f"git show {BASE_XS[:12]} unavailable")
+        return old, new_module("plot_2d_cross_section.py", f"xs_new_{tag}")
+
+    def test_edge_label(self):
+        for x, want in ((0.07, "0.07"), (0.075, "0.075"), (1.5, "1.50"), (0.0, "0.00"), (0.325, "0.325"),
+                        (0.475, "0.475"), (4.5, "4.50"), (0.33, "0.33")):
+            self.assertEqual(rc.edge_label(x), want)
+        self.assertEqual(rc.edge_label(1 / 3), "0.333333333")
+        f13 = new_module("plot_2d_threeway_fig13.py", "f13_lab")
+        self.assertIs(f13.edge_label, rc.edge_label)
+
+    def test_slice_labels(self):
+        old, new = self.modules("lab")
+        for tag in ("07", "075"):
+            h = self.th2(f"hlab{tag}", OUR_PT if tag == "07" else PAPER_PT, self.cont, self.err)
+            for axis in ("pt", "pz"):
+                so, sn = old.th2_to_slices(h, axis), new.th2_to_slices(h, axis)
+                for (lo_, ho), (ln, hn) in zip(so, sn):
+                    np.testing.assert_array_equal(th1_dump(ho)[1], th1_dump(hn)[1])
+                    np.testing.assert_array_equal(th1_dump(ho)[2], th1_dump(hn)[2])
+                if tag == "07" or axis == "pz":
+                    self.assertEqual([x[0] for x in so], [x[0] for x in sn])
+            if tag == "075":
+                got = [x[0] for x in new.th2_to_slices(h, "pt")]
+                self.assertEqual(got[0], "0.00 < p_T < 0.075")
+                self.assertEqual(got[3], "0.25 < p_T < 0.325")
+                self.assertEqual(got[5], "0.40 < p_T < 0.475")
+                self.assertEqual(got[6], "0.475 < p_T < 0.55")
+                self.assertEqual([x[0] for x in old.th2_to_slices(h, "pt")][0], "0.00 < p_T < 0.07")
+
+    def test_truth_projections(self):
+        old, new = self.modules("proj")
+        import unfold_2d_omnifold_unbinned as uu
+        h07 = self.th2("hp07", OUR_PT, self.cont, self.err)
+        for a, b in zip(new.truth_projections(h07), (uu.project_xsec_1d(h07, ax, old.PT_EDGES, old.PZ_EDGES)
+                                                      for ax in ("pt", "pz"))):
+            for x, y in zip(th1_dump(a), th1_dump(b)):
+                np.testing.assert_array_equal(x, y)
+        h075 = self.th2("hp075", PAPER_PT, self.cont, self.err)
+        hpt, hpz = new.truth_projections(h075)
+        e, v, _ = th1_dump(hpt)
+        np.testing.assert_array_equal(e, PAPER_PT)
+        np.testing.assert_allclose(v, self.cont @ np.diff(PZ), rtol=1e-12)
+        e, v, _ = th1_dump(hpz)
+        np.testing.assert_array_equal(e, PZ)
+        np.testing.assert_allclose(v, np.diff(PAPER_PT) @ self.cont, rtol=1e-12)
+        self.assertFalse(np.allclose(v, np.diff(OUR_PT) @ self.cont, rtol=1e-6))
+
+    def test_efficiency_mesh(self):
+        new = self.new("eff")
+        for pt in (OUR_PT, PAPER_PT):
+            pz_e, pt_e, arr = new.efficiency_mesh(self.th2("heff", pt, self.eff))
+            np.testing.assert_array_equal(pt_e, pt)
+            np.testing.assert_array_equal(pz_e, PZ)
+            np.testing.assert_array_equal(arr, self.eff)
+
+    def th2_grid(self, name, pt, pz, vals):
+        h = ROOT.TH2D(name, "", N_PT, np.asarray(pt, dtype=float), N_PZ, np.asarray(pz, dtype=float))
+        for ix in range(N_PT):
+            for iy in range(N_PZ):
+                h.SetBinContent(ix + 1, iy + 1, float(vals[ix, iy]))
+        h.SetDirectory(0)
+        return h
+
+    def test_helpers_follow_the_p_parallel_axis_too(self):
+        new = self.new("pz")
+        pz = PZ.copy()
+        pz[9] = 7.5
+        h = self.th2_grid("hbadpz", PAPER_PT, pz, self.cont)
+        hpt, hpz = new.truth_projections(h)
+        np.testing.assert_allclose(th1_dump(hpt)[1], self.cont @ np.diff(pz), rtol=1e-12)
+        np.testing.assert_array_equal(th1_dump(hpz)[0], pz)
+        pz_e, pt_e, _ = new.efficiency_mesh(h)
+        np.testing.assert_array_equal(pz_e, pz)
+        np.testing.assert_array_equal(pt_e, PAPER_PT)
+        self.assertEqual(new.th2_to_slices(h, "pz")[9][0], "7.5 < p_|| < 8.0")
+
+    def test_transposed_or_mixed_inputs_are_refused(self):
+        new = self.new("refuse")
+        t = ROOT.TH2D("htr", "", N_PZ, PZ, N_PT, PAPER_PT)
+        t.SetDirectory(0)
+        for fn in (new.truth_projections, new.efficiency_mesh):
+            with self.assertRaises(ValueError):
+                fn(t)
+        with self.assertRaises(ValueError):
+            new.th2_to_slices(t, "pt")
+        for bad in ("eff", "flux", "truth", "truthpz", "xpt", "xpz"):
+            with self.assertRaises(RuntimeError, msg=bad):
+                self.run_xs(new, self.dir / f"mixed_{bad}.root", str(self.dir / f"m_{bad}"), False)
+        pc = new_module("plot_2d_paper_comparison.py", "pc_refuse")
+        for bad in ("eff", "flux", "truth", "truthpz"):
+            with self.assertRaises(RuntimeError, msg=bad):
+                run_main(pc, ["--infile", self.dir / f"mixed_{bad}.root", "--prefix", self.dir / f"pc_{bad}"])
+
+    def test_fallback_flux_must_be_on_the_truth_edges(self):
+        new = self.new("fallback")
+        pc = new_module("plot_2d_paper_comparison.py", "pc_fallback")
+        inp = self.dir / "noflux075.root"
+        with self.assertRaises(RuntimeError):
+            self.run_xs(new, inp, str(self.dir / "fb07"), False, ["--mcfile", self.dir / "mc07.root"])
+        with self.assertRaises(RuntimeError):
+            run_main(pc, ["--infile", inp, "--prefix", self.dir / "pcfb07", "--mcfile", self.dir / "mc07.root"])
+        out = self.run_xs(new, inp, str(self.dir / "fb075"), False, ["--mcfile", self.dir / "mc075.root"])
+        self.assertIn("mc075.root:pTmu_reweightedflux_integrated", out)
+        run_main(pc, ["--infile", inp, "--prefix", self.dir / "pcfb075", "--mcfile", self.dir / "mc075.root"])
+
+    def test_truth_fallback_to_hTruth2D(self):
+        new = self.new("tfb")
+        out = self.run_xs(new, self.dir / "notruthdenom075.root", str(self.dir / "tfb"), False)
+        self.assertIn("hOFTruthDenom2D not found", out)
+
+    def run_xs(self, module, infile, prefix, style, extra=()):
+        argv = ["--infile", infile, "--prefix", prefix] + (["--style", "restyle-2026-10", "--print-font"] if style else []) + list(extra)
+        _, out = run_main(module, argv)
+        return out
+
+    def test_main_on_our_grid_equals_base(self):
+        old, new = self.modules("main")
+        for style in (False, True):
+            outs = {}
+            for tag, m in (("old", old), ("new", new)):
+                prefix = str(self.dir / f"m{int(style)}_{tag}")
+                outs[tag] = self.run_xs(m, self.dir / "g07.root", prefix, style).replace(prefix, "P")
+            self.assertEqual(outs["old"], outs["new"])
+            for stem in ("pt_slices", "pz_slices", "proj_pt", "proj_pz", "eff_heatmap"):
+                a = (self.dir / f"m{int(style)}_old_{stem}.png").read_bytes()
+                b = (self.dir / f"m{int(style)}_new_{stem}.png").read_bytes()
+                self.assertEqual(a, b, f"{stem} style={style}")
+
+    def test_main_on_paper_grid(self):
+        new = self.new("main075")
+        want = self.expected_truth_xsec(PAPER_PT)
+        for style in (False, True):
+            proj, grids, meshes = [], [], []
+
+            def rec_proj(h_xsec, h_truth, **k):
+                proj.append((th1_dump(h_xsec), th1_dump(h_truth)))
+                return orig_proj(h_xsec, h_truth, **k)
+
+            def rec_grid(xs, ts, *a, **k):
+                grids.append(([x[0] for x in xs], [t[0] for t in ts], [th1_dump(t[1]) for t in ts]))
+                return orig_grid(xs, ts, *a, **k)
+
+            def rec_mesh(ax, *a, **k):
+                meshes.append(tuple(np.asarray(x, dtype=float) for x in a[:3]))
+                return orig_mesh(ax, *a, **k)
+
+            orig_proj, orig_grid, orig_mesh = new.plot_1d_projection, new.plot_panel_grid, Axes.pcolormesh
+            with mock.patch.object(new, "plot_1d_projection", rec_proj), \
+                    mock.patch.object(new, "plot_panel_grid", rec_grid), mock.patch.object(Axes, "pcolormesh", rec_mesh):
+                self.run_xs(new, self.dir / "g075.root", str(self.dir / f"p075_{int(style)}"), style)
+            (xpt, tpt), (xpz, tpz) = proj
+            np.testing.assert_array_equal(xpt[0], PAPER_PT)
+            np.testing.assert_array_equal(tpt[0], PAPER_PT)
+            np.testing.assert_allclose(tpt[1], want @ np.diff(PZ), rtol=1e-12)
+            np.testing.assert_array_equal(tpz[0], PZ)
+            np.testing.assert_allclose(tpz[1], np.diff(PAPER_PT) @ want, rtol=1e-12)
+            (lx, lt, tslices), (pzx, pzt, pzslices) = grids
+            np.testing.assert_array_equal(xpz[0], PZ)
+            self.assertEqual(pzx, pzt)
+            self.assertEqual(pzx[0], "1.5 < p_|| < 2.0")
+            for k, d in enumerate(pzslices):
+                np.testing.assert_array_equal(d[0], PAPER_PT)
+                np.testing.assert_allclose(d[1], want[:, k], rtol=1e-12)
+            self.assertEqual(lx, lt)
+            self.assertEqual(lx[6], "0.475 < p_T < 0.55")
+            self.assertEqual(lx[0], "0.00 < p_T < 0.075")
+            for k, d in enumerate(tslices):
+                np.testing.assert_allclose(d[1], want[k], rtol=1e-12)
+            pz_e, pt_e, arr = meshes[0]
+            np.testing.assert_array_equal(pz_e, PZ)
+            np.testing.assert_array_equal(pt_e, PAPER_PT)
+            np.testing.assert_array_equal(arr, self.eff)
+
+    def test_paper_comparison_main(self):
+        old = base_module_at(BASE_XS, "2d-unfolding/plot_2d_paper_comparison.py", "pc_old", self.dir)
+        if old is None:
+            self.skipTest(f"git show {BASE_XS[:12]} unavailable")
+        new = new_module("plot_2d_paper_comparison.py", "pc_new")
+        for style in (False, True):
+            st = ["--style", "restyle-2026-10", "--print-font"] if style else []
+            outs = {}
+            for tag, m in (("old", old), ("new", new)):
+                prefix = str(self.dir / f"pc{int(style)}_{tag}")
+                outs[tag] = run_main(m, ["--infile", self.dir / "g07.root", "--prefix", prefix] + st)[1].replace(prefix, "P")
+            self.assertEqual(outs["old"], outs["new"])
+            for stem in ("pt_slices", "pz_slices"):
+                self.assertEqual((self.dir / f"pc{int(style)}_old_{stem}.png").read_bytes(),
+                                 (self.dir / f"pc{int(style)}_new_{stem}.png").read_bytes(), f"{stem} style={style}")
+
+    def test_paper_comparison_on_the_release_grid(self):
+        new = new_module("plot_2d_paper_comparison.py", "pc_075")
+        for style in (False, True):
+            st = ["--style", "restyle-2026-10", "--print-font"] if style else []
+            texts, stairs = [], []
+            ot, ox, os_ = Axes.set_title, Axes.text, Axes.stairs
+            with mock.patch.object(Axes, "set_title", lambda ax, t, *a, **k: (texts.append(t), ot(ax, t, *a, **k))[1]), \
+                    mock.patch.object(Axes, "text", lambda ax, x, y, t, *a, **k: (texts.append(t), ox(ax, x, y, t, *a, **k))[1]), \
+                    mock.patch.object(Axes, "stairs", lambda ax, v, e=None, *a, **k: (stairs.append(np.asarray(e, dtype=float)), os_(ax, v, e, *a, **k))[1]):
+                run_main(new, ["--infile", self.dir / "g075.root", "--prefix", self.dir / f"pc075_{int(style)}"] + st)
+            want = "$0.475 < p_T < 0.55$" if style else "0.475 < p_T < 0.55"
+            self.assertTrue(any(want in str(t) for t in texts), style)
+            self.assertFalse(any("0.47 < p_T" in str(t) for t in texts), style)
+            self.assertTrue(any(len(e) == N_PT + 1 and np.array_equal(e, PAPER_PT) for e in stairs), style)
+
+    def test_paper_comparison_slices_use_the_label(self):
+        pc = new_module("plot_2d_paper_comparison.py", "pc_lab")
+        h = self.th2("hpc", PAPER_PT, self.cont, self.err)
+        self.assertEqual(pc.th2_to_slices(h, "pt")[6][0], "0.475 < p_T < 0.55")
+
+
 if __name__ == "__main__":
     unittest.main()

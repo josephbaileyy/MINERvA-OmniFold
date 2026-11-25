@@ -1,0 +1,98 @@
+# Second-Commit Review (`plot_2d_cross_section.py` & `plot_2d_paper_comparison.py` Input-Axis Update)
+
+Static review from `inputs/change.diff`, `inputs/first_review.md`, and the files under `inputs/2d-unfolding/`. Tests were not executed (read-only review; this snapshot lacks `technote_style.py`, `restyle_2026_10.py`, and git history for `BASE_XS`).
+
+*(Note: `inputs/change.diff:169-222, 527-622` also contains hunks in `2d-unfolding/re2/partc/test_re2c.py` and `docs/orchestration/` whose files are not in `inputs/` and were not in `first_review.md`; those are not evaluated here.)*
+
+---
+
+## 1. Status of Every Finding in `first_review.md`
+
+### Section 1: Correctness Bugs
+
+1. **`truth_projections` and `efficiency_mesh` accept `(16, 14)` via `th2d_edges` while assuming `(14, 16)` (`X = p_T, Y = p_||`) — Addressed**
+   - **Locations:** `2d-unfolding/plot_2d_cross_section.py:271-275, 298, 305`; `2d-unfolding/tests/test_published_axis_widths.py:1191-1197`.
+   - **Assessment:** `require_pt_on_x(h)` (`2d-unfolding/plot_2d_cross_section.py:271-275`) rejects any `TH2D` whose bin counts are not `(N_PT, N_PZ)` (`(14, 16)`) with `ValueError`. Both `truth_projections` (`:298`) and `efficiency_mesh` (`:305`) now call `require_pt_on_x` before invoking `th2d_edges` (`2d-unfolding/uq/reported_cells.py:79-94`), indexing `(npt, npz)`, or calling `project_xsec_1d` (`2d-unfolding/unfold_2d_omnifold_unbinned.py:1276-1308`). `test_transposed_or_mixed_inputs_are_refused` (`2d-unfolding/tests/test_published_axis_widths.py:1191-1197`) tests both functions with a `(16, 14)` `TH2D`.
+   - *(Side note: `th2_to_slices` at `2d-unfolding/plot_2d_cross_section.py:43-67` still has no `require_pt_on_x` guard of its own, though `main()` guards it via `require_one_grid`.)*
+   - **Certainty:** Certain.
+
+2. **No consistency check across histograms in `main()`, `plot_1d_projection`, `plot_panel_grid`, or `load_flux_bins_for_truth` — Partly addressed**
+   - **Locations:** `2d-unfolding/plot_2d_cross_section.py:70-135, 145-213, 245-268, 278-292, 355-361`; `2d-unfolding/plot_2d_paper_comparison.py:181, 186-187`.
+   - **What is addressed:** `require_one_grid(h2ds, h_pt=None, h_pz=None, h_flux=None)` (`2d-unfolding/plot_2d_cross_section.py:278-292`) enforces `(14, 16)` shape via `require_pt_on_x` and exact (`np.array_equal`) edge agreement across all passed `TH2D`s and optional 1D histograms. Both `2d-unfolding/plot_2d_cross_section.py:355` (`[hXSec2D, hTruth2D, hEff2D]`, `hXSec_pt`, `hXSec_pz`, `f.Get("hFlux_pt") or None`) and `2d-unfolding/plot_2d_paper_comparison.py:181` (`[hXSec2D, hTruth2D, hEff2D]`, `h_flux=f.Get("hFlux_pt") or None`) call it. Because `hXSecTruth2D` clones `hTruth2D` (`plot_2d_cross_section.py:227`) and `truth_projections` uses `hXSecTruth2D`'s edges (`:295-300`), all histograms loaded from `--infile` are verified to share one grid.
+   - **What remains unaddressed:**
+     - **Fallback `--mcfile` / `runEventLoopMC.root` flux path (`2d-unfolding/plot_2d_cross_section.py:254-268, 355-361`; `2d-unfolding/plot_2d_paper_comparison.py:181, 186-187`):** When `--infile` lacks `hFlux_pt`, `f.Get("hFlux_pt") or None` passes `h_flux=None` to `require_one_grid`. `load_flux_bins_for_truth` then loads `h_flux` from `--mcfile` (or sibling `runEventLoopMC.root`) by bin index `1..GetNbinsX()` without verifying its bin count or `p_T` bin edges against `hTruth2D`. The exact failure flagged in `first_review.md`—an input on the `0.075` grid lacking `hFlux_pt` silently dividing by old-grid fallback flux—still occurs.
+     - **Direct callers of `plot_panel_grid` and `_plot_1d_projection` (`2d-unfolding/plot_2d_cross_section.py:70-135, 145-213`):** Neither helper checks that `h_xsec` and `h_truth` match internally, relying on `main()` having called `require_one_grid`.
+   - **Certainty:** Certain.
+
+---
+
+### Section 2: Ways Output Could Be Altered on the Old Grid
+
+- **Non-`14 x 16` inputs — Updated (now rejected via `require_pt_on_x`):** Previously noted as `CellIdentityError` in `truth_projections`/`efficiency_mesh`; now rejected with `ValueError` in `require_pt_on_x` (`2d-unfolding/plot_2d_cross_section.py:271-275, 281, 298, 305`, note `CellIdentityError` subclasses `ValueError` at `2d-unfolding/uq/reported_cells.py:33`) and checked across all `--infile` histograms by `require_one_grid` (`plot_2d_cross_section.py:355`, `plot_2d_paper_comparison.py:181`).
+- **`TH2F` (float32-promoted edges) formatting in `edge_label` — Not addressed (unchanged):** `edge_label` (`2d-unfolding/uq/reported_cells.py:70-76`) retains the `1e-9` tolerance.
+- **`_sys.path.append(_UQ)` import ordering — Not addressed (unchanged):** `2d-unfolding/plot_2d_cross_section.py:37-40` (and `plot_2d_threeway_fig13.py` in `inputs/change.diff:145-148`) still appends `_UQ` to the end of `sys.path`.
+- **Certainty:** Certain (old-grid parity is covered by `test_main_on_our_grid_equals_base` at `tests/test_published_axis_widths.py:1211-1222` and `test_paper_comparison_main` at `:1263-1277`).
+
+---
+
+### Section 3: Anything Still Tied to the Old Edges (or Grid Assumptions)
+
+1. **`p_||` slice label format `:.1f` (`2d-unfolding/plot_2d_cross_section.py:63`) — Not addressed (intentionally kept):** Still `f"{lo:.1f} < p_|| < {hi:.1f}"` (preserves old-grid output on `0.5`-multiple `PZ_EDGES`).
+2. **Module constants `PT_EDGES`, `PZ_EDGES`, `N_PT`, `N_PZ` (`2d-unfolding/plot_2d_cross_section.py:29-35`) — Partly changed (intentionally retained):** `PT_EDGES` and `PZ_EDGES` remain unused inside `plot_2d_cross_section.py` (for `plot_2d_threeway_fig13.py` imports); `N_PT` and `N_PZ` are now referenced by `require_pt_on_x` (`:273-275`).
+3. **Fixed `14 x 16` bin count in `th2d_edges` (`2d-unfolding/uq/reported_cells.py:27, 79-94`) — Not changed:** Matches `(N_PT, N_PZ)` = `(14, 16)` in `require_pt_on_x` (`2d-unfolding/plot_2d_cross_section.py:273`).
+4. **Unchanged sibling/imported modules (`unfold_2d_omnifold_unbinned.py`, rest of `uq/reported_cells.py`, `plot_2d_threeway_fig13.py` defaults) — Not changed:** Unchanged in the second commit (outside plotting scope).
+- **Certainty:** Certain.
+
+---
+
+### Section 4: Gaps in the Tests (`2d-unfolding/tests/test_published_axis_widths.py`)
+
+1. **`test_main_on_paper_grid` never checks rendered plots, slice labels/widths, `eff_arr`, or `pz_edges` on the `0.075` grid — Partly addressed**
+   - **Addressed (`2d-unfolding/tests/test_published_axis_widths.py:1224-1261`):** Runs both `style=False` and `style=True`, hooks `plot_1d_projection`, `plot_panel_grid`, and `Axes.pcolormesh`, and asserts: `hXSec_pt`/`hXSecTruth_pt`/`hXSecTruth_pz` edges and truth projection integrals (`:1246-1251`); `p_T` slice labels (`"0.00 < p_T < 0.075"`, `"0.475 < p_T < 0.55"`) and `compute_truth_xsec_2d` slice values `want[k]` (`:1252-1257`); and all three `pcolormesh` arguments `(pz_edges, pt_edges, eff_arr)` (`:1258-1261`).
+   - **Remaining gaps:** `xpz` (1D `p_||` data projection) and the entire `pz_slices` tuple `(pzx, pzt, _)` (labels and `PAPER_PT` bin edges) are unpacked and never asserted (`:1246, 1252`); `rec_proj` and `rec_grid` inspect inputs passed to `plot_1d_projection` and `plot_panel_grid` rather than the Matplotlib `Axes` output (`errorbar`/`stairs`/`set_title`).
+   - **Certainty:** Certain.
+
+2. **No test in `CrossSectionPlotEdges` varies the `p_||` (`PZ`) axis — Partly addressed**
+   - **Addressed (`2d-unfolding/tests/test_published_axis_widths.py:1170-1189`):** `test_helpers_follow_the_p_parallel_axis_too` sets `pz[9] = 7.5` and checks `truth_projections` (`hpt` integral values against `self.cont @ np.diff(pz)` and `hpz` edges), `efficiency_mesh` (`pz_e`, `pt_e`), and `th2_to_slices(h, "pz")[9][0] == "7.5 < p_|| < 8.0"`.
+   - **Remaining gaps:** `main()` (including `compute_truth_xsec_2d`, `require_one_grid` with `hXSec_pz`, and `plot_2d_paper_comparison.main()`) is still never run with a varied `p_||` axis, and non-`0.1`-multiple `p_||` edges (`:.1f` rounding at `2d-unfolding/plot_2d_cross_section.py:63`) remain untested.
+   - **Certainty:** Certain.
+
+3. **`plot_2d_paper_comparison.main()` is never tested — Partly addressed**
+   - **Addressed (`2d-unfolding/tests/test_published_axis_widths.py:1201-1204, 1263-1283`):** `test_paper_comparison_main` runs `plot_2d_paper_comparison.main()` on `g07.root` against `BASE_XS` for both `style=False` and `style=True` (comparing stdout and `pt_slices`/`pz_slices` PNG bytes) and on `g075.root` with `style=False` (asserting `Axes.set_title` includes `"0.475 < p_T < 0.55"` and not `"0.47 < p_T < 0.55"`). `test_transposed_or_mixed_inputs_are_refused` (`:1201-1204`) also runs `plot_2d_paper_comparison.main()` on `mixed_eff` and `mixed_flux`.
+   - **Remaining gaps:** `g075.root` is not run with `--style restyle-2026-10` (which draws labels via `ax.text(..., rs.slice_label(label))` at `2d-unfolding/plot_2d_paper_comparison.py:113` while `technote_style` suppresses titles); `test_paper_comparison_main` does not check `compute_truth_xsec_2d` values, `chi2/ndf`, or `pz_slices` `p_T` bin edges on `g075.root`; and missing `BASE_XS` (`:1264-1266`) skips the `g075.root` check (`:1278-1283`) as well.
+   - **Certainty:** Certain.
+
+4. **No test passes a transposed `(16, 14)` `TH2D` to `truth_projections`, `efficiency_mesh`, or `th2_to_slices` — Partly addressed**
+   - **Addressed for `truth_projections` and `efficiency_mesh` (`2d-unfolding/tests/test_published_axis_widths.py:1191-1197`):** Asserts `ValueError` on a `(16, 14)` `TH2D`.
+   - **Remaining gap:** `th2_to_slices` is not tested with `(16, 14)` (and still does not reject `(16, 14)` if called outside `main()`).
+   - **Certainty:** Certain.
+
+5. **Minor test gaps / test-hygiene issues:**
+   - **Unconditional skip on missing `BASE_XS` — Partly addressed:** Fixed in `test_efficiency_mesh` (`2d-unfolding/tests/test_published_axis_widths.py:1163`) and `test_main_on_paper_grid` (`:1225`) via `self.new(...)`; however, the newly added `test_paper_comparison_main` (`:1264-1266`) skips the `g075.root` check (`:1278-1283`) when `BASE_XS` is unavailable.
+   - **Fallback paths untested (`hTruth2D` and `--mcfile` flux fallback) — Not addressed:** `write_input` (`:1086-1102`) still always writes `hOFTruthDenom2D` and `hFlux_pt`.
+   - **Unused spy result in `test_main_on_our_grid_equals_base` — Addressed:** Removed at `:1211-1222`.
+   - **Certainty:** Certain.
+
+---
+
+## 2. Review of the Second Commit's Additions
+
+### New Correctness Bugs
+
+- **No brand-new correctness bugs introduced in the second commit's new helpers (`require_pt_on_x`, `require_one_grid`), `plot_2d_paper_comparison.py` call site, or test additions**, *aside from the incomplete flux-fallback guard already noted under Finding 1.2*: `require_one_grid(..., f.Get("hFlux_pt") or None)` (`2d-unfolding/plot_2d_cross_section.py:355`, `2d-unfolding/plot_2d_paper_comparison.py:181`) silently skips flux-axis validation whenever `hFlux_pt` is absent and `load_flux_bins_for_truth` (`2d-unfolding/plot_2d_cross_section.py:254-268`) falls back to `--mcfile` / `runEventLoopMC.root`.
+- **Certainty:** High (by static inspection; tests were not executed here).
+
+### Test Gaps in the Second Commit's Additions
+
+Beyond the unaddressed items from `first_review.md` Section 4 listed above:
+
+1. **Several branches of `require_one_grid` are never exercised by `test_transposed_or_mixed_inputs_are_refused` (`2d-unfolding/tests/test_published_axis_widths.py:1191-1204`):**
+   - Only `mixed_eff` (`hEff2D`) and `mixed_flux` (`hFlux_pt`) are tested. There is no test with a mismatched `hOFTruthDenom2D`/`hTruth2D`, mismatched `hXSec_pt`, or mismatched `hXSec_pz`, so omitting `hTruth2D`, `hXSec_pt`, or `hXSec_pz` from `require_one_grid(...)` (`2d-unfolding/plot_2d_cross_section.py:355`, `2d-unfolding/plot_2d_paper_comparison.py:181`)—or failing to check `h_pz` in `require_one_grid` (`2d-unfolding/plot_2d_cross_section.py:287-292`)—would go undetected.
+   - No test passes a transposed `(16, 14)` `TH2D` inside an input ROOT file to `main()` of `plot_2d_cross_section.py` or `plot_2d_paper_comparison.py`.
+2. **`test_main_on_paper_grid` unpacks and ignores `xpz` and `pz_slices` (`2d-unfolding/tests/test_published_axis_widths.py:1246, 1252-1257`):**
+   - `(pzx, pzt, _) = grids[1]` leaves both the `p_||` slice labels and the `p_T` bin edges of `pz_slices` unchecked, and `xpz` (`hXSec_pz` edges) is unchecked.
+3. **`test_paper_comparison_main` (`2d-unfolding/tests/test_published_axis_widths.py:1263-1283`) leaves `g075.root` with `--style restyle-2026-10`, numeric truth/chi2/pT-edge outputs, and standalone execution without `BASE_XS` untested:**
+   - Because `restyle=True` is only run on `g07.root` (vs `BASE_XS`) and not on `g075.root`, `rs.slice_label(label)` (`2d-unfolding/plot_2d_paper_comparison.py:113`) on `"0.475 < p_T < 0.55"` is never executed.
+   - On `g075.root` (`style=False`), only `Axes.set_title` containing `"0.475 < p_T < 0.55"` is asserted; `compute_truth_xsec_2d` values, `chi2/ndf`, and `pz_slices` `p_T` bin edges are not verified.
+   - Missing `BASE_XS` (`:1264-1266`) skips the `g075.root` check (`:1278-1283`).
+- **Certainty:** Certain (for what the new tests assert/omit by inspection).

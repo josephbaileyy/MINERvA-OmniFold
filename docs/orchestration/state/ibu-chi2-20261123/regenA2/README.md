@@ -45,3 +45,5 @@ Per-bin ratios, from [`out/old_projratio.json`](out/old_projratio.json) and [`ou
 
 The outputs' shas are listed in [`receipts/run.log`](receipts/run.log), and [`SHA256SUMS`](SHA256SUMS) covers this
 directory.
+
+**Disclosure (2026-11-25).** The runner [`receipts/regenA2_run.sh`](receipts/regenA2_run.sh) (sha256 f119bfb7cdb9921c153acfaf05fbf79f1f67b2cf28f64fe989f9b2cd26f94c83) ran without its sha going to the director first. From now on, every runner's sha goes to the director before it runs.
