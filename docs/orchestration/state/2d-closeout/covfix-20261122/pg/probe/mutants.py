@@ -28,8 +28,6 @@ M = [(f, old, new, what, "probe") for f, old, new, what in [
      '        return os.open(name, flags | O_NOATIME, dir_fd=dirfd)', "a pinned file through a link"),
     (PR, '    if not rel or rel.startswith("/") or any(p in ("", ".", "..") for p in parts):',
      '    if not rel:', "odd relative paths walked"),
-    (PR, '        if not stat.S_ISLNK(os.stat(name, dir_fd=dfd, follow_symlinks=False).st_mode):',
-     '        if False:', "a pinned link that is not a link"),
     (PR, '        except FileNotFoundError:\n            return None\n    finally:',
      '        except FileNotFoundError:\n            return []\n    finally:', "an absent pinned directory"),
     # the genie product
@@ -53,8 +51,6 @@ M = [(f, old, new, what, "probe") for f, old, new, what in [
      "an RPM mismatch accepted"),
     (PR, '            fd = fcntl.fcntl(low, fcntl.F_DUPFD, 10)', '            fd = os.dup(low)', "a tool on fd 3"),
     (PR, '        os.lseek(fd, 0, os.SEEK_SET)\n        r["sha256"]', '        r["sha256"]', "the offset left at the end"),
-    (PR, '        if not stat.S_ISREG(os.fstat(fd).st_mode):\n            os.close(fd)\n            r["problem"] = "not a regular file"',
-     '        if False:\n            os.close(fd)\n            r["problem"] = "not a regular file"', "a non-regular tool"),
     # the strace self-test
     (PR, '        if not re.search(r\'open(at)?\\((AT_FDCWD, )?"\' + re.escape(probe)',
      '        if False and not re.search(r\'open(at)?\\((AT_FDCWD, )?"\' + re.escape(probe)', "the self-test's open"),
@@ -94,7 +90,6 @@ M = [(f, old, new, what, "probe") for f, old, new, what in [
     (LA, '    if v != "GO":\n        return p\n', '    if True:\n        return p\n', "a GO's evidence not required"),
     (LA, '    if not _is(rec.get("pins_sha256"), want) or', '    if False and', "the receipt's pins"),
     (LA, '(("repo", "xattrs", "user.fqrn"), FQRN),', '', "the fqrn in a GO"),
-    (LA, 'or sorted(got) != sorted(pins.get(pk, {})) \\\n', '\\\n', "a pinned item left out"),
     (LA, '                or not all(isinstance(x, dict) and _is(x.get("match"), True) for x in got.values()):',
      '                or False:', "a mismatch in a GO"),
     (LA, '        p.append("required qualifiers")', '        pass', "qualifiers in a GO"),
@@ -129,8 +124,21 @@ M = [(f, old, new, what, "probe") for f, old, new, what in [
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', 'not st.st_mode & (0o077 if private else 0o022)', 'not st.st_mode & (0o077 if private else 0)', 'a writable /run/user/<uid>'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    probs += [f"socket-link: {k} {v} is a link" for k, v in sorted(socks.items()) if os.path.islink(v)]\n', '', 'a socket that is a link'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '"stops": [f"internal-error: {type(e).__name__}"]}', '"stops": [f"repo: {type(e).__name__}"]}', 'a crash posing as another stop'),
-    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe-launch.py', '                    or not (t.get("rpm_match") is True or t.get("rpm_match") is None):     # 1 == True', '                    or t.get("rpm_match") not in (True, None):', 'rpm_match 1 accepted'),
-    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe-launch.py', '                    or not (t.get("rpm_match") is True or t.get("rpm_match") is None):     # 1 == True', '                    or False:', 'an RPM mismatch in a GO'),
+    # round 3: agy (16bbb74c) and codex-school (f23847ad) reads of 5f141f7a, the director's GO and D1-D8
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '        st = os.stat(name, dir_fd=dfd, follow_symlinks=False)\n        if not stat.S_ISLNK(st.st_mode):', '        st = os.stat(name, dir_fd=dfd, follow_symlinks=False)\n        if False:', 'a pinned link that is not a link'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe-launch.py', '        if not isinstance(got, dict) or sorted(got) != sorted(want_) \\\n', '        if not isinstance(got, dict) \\\n', 'a pinned item left out'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe-launch.py', '        elif not all(got[k].get(field) == want_[k] for k in want_):', '        elif False:', 'r3: a claimed match with another value'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe-launch.py', '            elif not ((t.get("rpm_match") is True and t.get("rpm_status") == "recorded"', '            elif False and ((t.get("rpm_match") is True and t.get("rpm_status") == "recorded"', "r3: a tool's RPM basis"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', ' and stat.S_ISREG(os.lstat(p).st_mode)), None)', '), None)', 'r3: a linked first candidate taken'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '        raise Unverified("the RPM query failed")', '        return None, None, None', 'r3: a failed RPM query as no record'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    if repo is not None and os.fstat(rfd).st_dev != os.stat(repo, follow_symlinks=False).st_dev:', '    if False:', 'r3: a mount at the genie product'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '         "awk": ("/usr/bin/gawk", "/bin/gawk", "/usr/bin/awk")}', '         }', 'r3: awk unpinned'),
+    # the director's ruling: guards this host cannot reach by a real mount or race, tested by injection
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '        if not stat.S_ISREG(os.fstat(fd).st_mode):\n            os.close(fd)\n            r["problem"] = "not a regular file"', '        if False:\n            os.close(fd)\n            r["problem"] = "not a regular file"', 'a tool that changes after its lstat (injected)'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '        if os.fstat(fd).st_dev != dev:\n            raise Unverified(f"{rel} is another mount")', '        if False:\n            raise Unverified(f"{rel} is another mount")', "r3: list_rel's final directory on another device (injected)"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    if not rec["mount_control"]["pass"]:', '    if False:', 'r3: a failed mount control'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '        list_rel(fd, rel)\n        return {"pass": False, "refused": None}', '        list_rel(fd, rel)\n        return {"pass": True, "refused": None}', 'r3: a mount control that never refused'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe-launch.py', '(("mount_control", "pass"), True), ', '', 'r3: the launcher ignores the mount control'),
 ]]
 
 if __name__ == "__main__":

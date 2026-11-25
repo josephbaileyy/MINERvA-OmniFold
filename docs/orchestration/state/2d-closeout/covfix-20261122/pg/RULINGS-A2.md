@@ -74,3 +74,67 @@ separately, and count against the receipt.
   before then.
 - A changed byte in anything already approved comes back to the director first.
 - The blinding is unchanged.
+
+## Round 3 (2026-11-25): the director's rulings on agy's and codex-school's reads of 5f141f7a
+
+Restated, as above. The director's messages govern.
+
+**The seed in the traces (codex 11).** gevgen names its outputs by the run number, which is the seed, so the traces
+are not seed-free even though they are path-only.
+- Raw traces, task logs and their hashes are seed-bearing. They stay in W and never leave it.
+- The published sums omit them (`pg_lib.SEED_BEARING`, `out/PG-PUBLISH-SHA256SUMS`).
+- A leak scan, run where the seed is known, checks every outgoing file's path and bytes for each seed: decimal (any
+  zero-padding contains it) and hex in both cases. Any hit is a STOP.
+- How this fits the seal is cov2d's to review.
+- No redaction at write time: it would change what the trace proves. F1's argv stays.
+
+**D1, binding the programs.** The path-only rule (PLAN-SLOT1-PROBE.md:16, and the Q-C bullet above) was the director's,
+and is lifted. Since the traces are seed-bearing and stay in W, the argv in them no longer leaks.
+- `execve` is traced, and gntpc runs under the trace prefix.
+- Every successful exec must be a genie-manifest file with the manifest's bytes and real path, or a pinned system tool
+  (`pg_pins.json` `system_tools`, from the probe's awk).
+- run_gevgen_v3.sh's new sha goes to the director before anything runs it.
+
+**D2, threat model and links.** The threat model is environmental or accidental change, not a hostile process under
+the lane's own uid.
+- CVMFS is read-only. Its `user.revision` and `user.root_hash` are recorded at the start and end of every run and must
+  be equal, and its content is pinned by sha.
+- The private product is read-only and checked at the start.
+- The defining-link rule is now `realpath(p) == p`. The kernel follows links without a readlink call.
+
+**D3′, spline use, not just spline opens.** F1's laconic messenger sets GEVGDriver to WARN, so GENIE never logs its
+spline lookups (GEVGDriver.cxx:646-657 at R-3_04_00).
+- (i) The reduce must keep, for every (probe, target) pair in F1's argv (gevgen_cmd's `-p` and `-t`), exactly the
+  source's splines, knot counts included.
+- (ii) Each slot gets a one-event coverage run before any sealed seed is used:
+  - the public seed 123456789;
+  - Messenger_laconic.xml with only GEVGDriver raised to DEBUG, pinned by sha;
+  - an argv equal to the sealed run's except the event count, the seed and the messenger, checked by `argv-check`.
+  Its log must answer every "Need xsec spline for X" with "Spline was found", with no spline built. Its outputs are
+  deleted after the log check, and the log's hash is kept.
+- O_PATH opens are not reads.
+- Any read under a genie_xsec data directory other than the pinned spline is a STOP.
+
+**D4, search order.** A GENIE config basename must be read at the first existing path of the tune's search order.
+- The order is the run's GXMLPATH, captured from its own setup and equal to the tune's genie_xsec data directory,
+  then the record's search_dirs.
+- What exists comes from the manifest.
+- ROOT's .rootmap and .pcm files are exempt from the order, but stay bound by location and hash.
+
+**D5, B3's event files.** A trap deletes the event and status files on every exit, STOP included, after the writers
+end. Hashing them for deleted.json is allowed.
+
+**D6, cleanup.** After the process trees are killed, a scan finds any live process whose cwd lies under W. A survivor
+30 s past SIGKILL is a STOP with no publication, and seedfree still runs.
+
+**D7, `..` paths.** A `..` path is resolved on the node, after the run, while W is unchanged.
+- The resolved path must lie under an allowed root, and is then gated.
+- Both the raw and the resolved path are recorded.
+- A path that fails to resolve is a STOP.
+
+**D8.** The deploy check counts ignored files too.
+
+**The node checks this laptop cannot run** are recorded in B3 as named checks, PASS before slot 2 (`host-check`):
+- a final directory on another mount, as a positive control;
+- no mount point inside a walked root;
+- the real strace format of a path holding `) = -1`.

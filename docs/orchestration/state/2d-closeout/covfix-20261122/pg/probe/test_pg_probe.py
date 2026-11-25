@@ -235,6 +235,63 @@ class Genie(Tmp):
         r = P.verify_genie(str(mid / "products/genie/v3_04_00"), s.pins)
         self.assertEqual(r["problems"], [f"genie-realpath: {mid}/products/genie/v3_04_00 is not its own real path"])
 
+    def test_the_genie_root_on_another_device(self):
+        s = Stub(self.tmp)
+        r = P.verify_genie(str(s.genie), s.pins, repo="/dev")             # devfs: another device than the stub's
+        self.assertEqual(r["problems"], [f"genie-mount: {s.genie} is not on the repository's device"])
+        self.assertEqual(P.verify_genie(str(s.genie), s.pins, repo=str(s.repo))["problems"], [])
+
+    def test_a_tool_that_changes_after_its_lstat(self):
+        # the fstat guard behind the regular-file choice: injected, the path is a regular file at lstat, a directory at open
+        d = Path(self.tmp) / "dir"
+        d.mkdir()
+        real = P.os.lstat
+        P.os.lstat = lambda p, *a, **k: real(__file__) if p == str(d) else real(p, *a, **k)
+        try:
+            fds, rec = P.open_tools({"strace": (str(d),)}, NOT_OWNED)
+        finally:
+            P.os.lstat = real
+        self.assertEqual((fds, rec["strace"].get("problem")), ({}, "not a regular file"))
+
+    def test_a_final_directory_on_another_device(self):
+        # list_rel's own final-directory check, injected: the final directory's fstat reports another device, its
+        # entries none (on this host the entries check would otherwise catch a real mount first)
+        s = Stub(self.tmp)
+        fd = os.open(s.genie, os.O_RDONLY)
+        self.addCleanup(os.close, fd)
+        real, calls = P.os.fstat, []
+
+        def fstat(x):
+            st = real(x)
+            calls.append(x)
+            if len(calls) == 4:      # _walk: the root, the component; list_rel: the root (dev), then the final directory
+                return os.stat_result((st.st_mode, st.st_ino, st.st_dev + 1) + tuple(st)[3:])
+            return st
+        P.os.fstat = fstat
+        try:
+            with self.assertRaises(P.Unverified) as cm:
+                P.list_rel(fd, "Linux64bit+3.10-2.17-e20-prof/lib")
+        finally:
+            P.os.fstat = real
+        self.assertIn("another mount", str(cm.exception))
+
+    @unittest.skipUnless(os.path.isdir("/proc/self"), "untested on this host: no /proc (macOS); B1 runs it on the node")
+    def test_the_mount_control_on_linux(self):
+        self.assertTrue(P.mount_control()["pass"])
+
+    def test_the_mount_control_refuses_somewhere(self):
+        self.assertTrue(P.mount_control("/", "dev")["pass"])             # macOS: devfs is another mount
+        (Path(self.tmp) / "sub").mkdir()
+        self.assertEqual(P.mount_control(str(self.tmp), "sub"), {"pass": False, "refused": None})   # same device
+
+    def test_a_final_directory_on_another_mount(self):
+        fd = os.open("/", os.O_RDONLY)
+        self.addCleanup(os.close, fd)
+        self.assertNotEqual(os.stat("/").st_dev, os.stat("/dev").st_dev)
+        with self.assertRaises(P.Unverified) as cm:
+            P.list_rel(fd, "dev")
+        self.assertIn("another mount", str(cm.exception))
+
     def test_walk_refuses_odd_paths(self):
         s = Stub(self.tmp)
         fd = os.open(s.genie, os.O_RDONLY)
@@ -337,18 +394,36 @@ class Tools(Tmp):
     def test_a_directory_is_not_a_tool(self):
         d = Path(self.tmp) / "dir"
         d.mkdir()
-        try:
-            fds, rec = P.open_tools({"strace": (str(d),)}, lambda args: None)
-        except OSError as e:
-            self.fail(f"open_tools crashed on a directory: {e}")
-        self.assertEqual((fds, rec["strace"].get("problem")), ({}, "not a regular file"))
+        fds, rec = P.open_tools({"strace": (str(d),)}, NOT_OWNED)            # no crash-to-fail wrapper (agy 17)
+        self.assertEqual((fds, rec["strace"].get("problem")), ({}, "no regular file among the candidates"))
 
     def test_a_link_is_not_a_tool(self):
         a = self.make("a")
         (Path(self.tmp) / "l").symlink_to(a)
-        fds, rec = P.open_tools({"strace": (str(Path(self.tmp) / "l"),)}, lambda args: None)
+        fds, rec = P.open_tools({"strace": (str(Path(self.tmp) / "l"),)}, NOT_OWNED)
         self.assertEqual(fds, {})
-        self.assertIn("cannot open", rec["strace"]["problem"])
+        self.assertEqual(rec["strace"]["problem"], "no regular file among the candidates")
+
+    def test_a_linked_first_candidate_falls_through(self):
+        # SLES: /usr/bin/gpg may be a link to gpg2, the second candidate (agy B1)
+        b = self.make("gpg2")
+        (Path(self.tmp) / "gpg").symlink_to(b)
+        fds, rec = P.open_tools({"gpg": (str(Path(self.tmp) / "gpg"), b)}, NOT_OWNED)
+        self.addCleanup(lambda: [os.close(fd) for fd in fds.values()])
+        self.assertEqual(rec["gpg"]["path"], b)
+        self.assertNotIn("problem", rec["gpg"])
+
+    def test_a_failed_rpm_query_is_not_an_absent_record(self):
+        a = self.make("a")
+        fds, rec = P.open_tools({"strace": (a,)}, lambda args: None)
+        self.addCleanup(lambda: [os.close(fd) for fd in fds.values()])
+        self.assertEqual((rec["strace"]["rpm_status"], rec["strace"]["problem"]), ("query-failed", "the RPM query failed"))
+        fds2, rec2 = P.open_tools({"strace": (a,)}, NOT_OWNED)
+        self.addCleanup(lambda: [os.close(fd) for fd in fds2.values()])
+        self.assertEqual((rec2["strace"]["rpm_status"], rec2["strace"]["pin_basis"]), ("not-owned", "first use: no RPM record"))
+
+
+NOT_OWNED = lambda args: (1, f"file {args[-1]} is not owned by any package\n")      # no RPM record
 
 
 FAKE_STRACE = r'''#!/bin/sh
@@ -676,12 +751,17 @@ class Probe(Tmp):
     def run_probe(self, s, **kw):
         a = Path(self.tmp) / "t1"
         a.write_text("#!/bin/sh\n")
-        tools = {"strace": (str(a),), "gpg": (str(a),), "gpgconf": (str(a),), "gpg-connect-agent": (str(a),)}
+        tools = {k: (str(a),) for k in ("strace", "gpg", "gpgconf", "gpg-connect-agent", "awk")}
         args = dict(ident=fake_ident, repo=str(s.repo), genie_root=str(s.genie), pins=s.pins, mounts=lambda: s.mounts,
-                    xattr=s.xattr, tools=tools, rpm_run=lambda args: None,
-                    gpg=lambda fds, mounts_text=None: {"pass": True}, self_test=lambda fd: {"pass": True})
+                    xattr=s.xattr, tools=tools, rpm_run=NOT_OWNED,
+                    gpg=lambda fds, mounts_text=None: {"pass": True}, self_test=lambda fd: {"pass": True},
+                    control=lambda: {"pass": True, "refused": "proc is another mount"})
         args.update(kw)
         return P.probe(**args)
+
+    def test_a_failed_mount_control_stops(self):
+        r = self.run_probe(Stub(self.tmp), control=lambda: {"pass": False, "refused": None})
+        self.assertIn("mount-control: a walk into /proc did not refuse at its final directory", r["stops"])
 
     def test_go(self):
         r = self.run_probe(Stub(self.tmp))
@@ -738,6 +818,10 @@ class Constants(unittest.TestCase):
         self.assertEqual(P.ENCRYPT, re.search(r"encrypt: `gpg ([^`]+)`", decl).group(1).split())
         self.assertEqual(P.DECRYPT, re.search(r"decrypt: `gpg ([^`]+)`", decl).group(1).split())
 
+    def test_the_tools_are_the_launchers(self):
+        self.assertEqual(sorted(P.TOOLS), sorted(LAUNCH.TOOL_NAMES))
+        self.assertIn("awk", P.TOOLS)                                    # exec'd under strace: pinned (D1)
+
     def test_trace_set_is_the_pipelines(self):
         sys.path.insert(1, str(REPO / "3d-unfolding/genie"))
         import pg_verify
@@ -788,14 +872,15 @@ class Launcher(Tmp):
     def go_record(self):
         """A GO record with the real pins: what a probe on matching bytes would report."""
         pins = P.PINS
-        tool = {"path": "/usr/bin/x", "sha256": "a" * 64, "rpm_match": True}
+        tool = {"path": "/usr/bin/x", "sha256": "a" * 64, "rpm_match": True, "rpm_status": "recorded", "rpm_digest": "a" * 64}
         rec = {"schema": P.SCHEMA, "verdict": "GO", "stops": [], "identity": {"pass": True},
                "pins_sha256": sha(json.dumps(pins, sort_keys=True).encode()), "record_sha256": pins["record_sha256"],
                "repo": {"pass": True, "xattrs": {"user.fqrn": "larsoft.opensciencegrid.org"}},
-               "genie": {"problems": [], "files": {k: {"match": True} for k in pins["genie_files"]},
-                         "links": {k: {"match": True} for k in pins["genie_links"]},
-                         "listings": {k: {"match": True} for k in pins["genie_listings"]}},
-               "xsec": {"problems": [], "files": {k: {"match": True} for k in pins["xsec_files"]},
+               "mount_control": {"pass": True},
+               "genie": {"problems": [], "files": {k: {"sha256": v, "match": True} for k, v in pins["genie_files"].items()},
+                         "links": {k: {"target": v, "match": True} for k, v in pins["genie_links"].items()},
+                         "listings": {k: {"names": v, "match": True} for k, v in pins["genie_listings"].items()}},
+               "xsec": {"problems": [], "files": {k: {"sha256": v, "match": True} for k, v in pins["xsec_files"].items()},
                         "qualifiers": [q + "/" for q in pins["required_qualifiers"]],
                         "data_listings": {q: {"names": ["README"], "config_like": []} for q in pins["required_qualifiers"]},
                         "dbconfig": {"sha256": "b" * 64}},
@@ -804,7 +889,8 @@ class Launcher(Tmp):
                        "packet_tags": [3, 18], "tampered": {"rc": 2, "evidence": True},
                        "wrong_passphrase": {"rc": 2, "evidence": True}, "gnupghome_mode": "0o700",
                        "gpgconf_kill_rc": 0, "agent_gone": True, "socketdir_absent": True, "gnupghome_removed": True}}
-        rec["tools"]["gpgconf"]["rpm_match"] = None                               # first use is allowed
+        rec["tools"]["gpgconf"].update(rpm_match=None, rpm_status="not-owned", rpm_digest=None,
+                                       pin_basis="first use: no RPM record")       # first use is allowed
         return rec
 
     def emit(self, rec, rc):
@@ -837,9 +923,15 @@ class Launcher(Tmp):
         cases = [{"verdict": "GO"}, edit(lambda r: r.update(pins_sha256="0" * 64)),
                  edit(lambda r: r.update(record_sha256="0" * 64)),
                  edit(lambda r: r["repo"]["xattrs"].update({"user.fqrn": "x"})),
+                 edit(lambda r: r["mount_control"].update({"pass": False})),
                  edit(lambda r: r["genie"]["files"].pop(first)),
                  edit(lambda r: r["genie"]["files"][first].update(match=False)),
                  edit(lambda r: r["genie"]["files"].update({"extra": {"match": True}})),
+                 edit(lambda r: next(iter(r["genie"]["files"].values())).update(sha256="0" * 64)),   # a claimed match
+                 edit(lambda r: next(iter(r["genie"]["links"].values())).update(target="elsewhere")),
+                 edit(lambda r: next(iter(r["xsec"]["files"].values())).update(sha256="0" * 64)),
+                 edit(lambda r: r["tools"]["strace"].update(rpm_status="query-failed")),
+                 edit(lambda r: r["tools"]["strace"].update(rpm_match=None)),               # None without first use
                  edit(lambda r: r["xsec"]["data_listings"]["G1802a00000-k250-e1000"].update(config_like=["x.xml"])),
                  edit(lambda r: r["xsec"].update(qualifiers=[])),
                  edit(lambda r: r["xsec"]["dbconfig"].update(sha256=None)),

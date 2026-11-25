@@ -100,38 +100,63 @@ def unpack(data, dest, blobs):
     return len(seen)
 
 
-REPLAY_CHECKS = ("tool_check_strace.json", "members_check.json", "dbconfig_check.json", "exe_check.json",
-                 "trace_check_reduce.json", "trace_check_graphs.json", "trace_check_gevgen.json",
-                 "trace_check_reduce_slot2.json", "shape_check.json")
-DELETABLE = ("genie_v3.gst.root", "gevgen.status", "gntp.ghep.root", "input-flux.root")
+REPLAY_CHECKS = ("tool_check_strace.json", "revision_start.json", "members_check.json", "dbconfig_check.json",
+                 "exe_check.json", "reduce_check.json", "argv_check.json", "trace_check_reduce.json",
+                 "trace_check_graphs.json", "messenger_check.json", "trace_check_coverage.json", "coverage_check.json",
+                 "trace_check_gevgen.json", "trace_check_gntpc.json", "trace_check_reduce_slot2.json",
+                 "reduce_check_slot2.json", "trace_check_coverage_slot2.json", "coverage_check_slot2.json",
+                 "shape_check.json", "host_check.json", "revision_end.json")
+TRACES = tuple(n for n in REPLAY_CHECKS if n.startswith("trace_check"))
+SPLINE_TRACES = tuple(n for n in TRACES if n != "trace_check_gntpc.json")
+SHAPES = ("real_members_listing", "proc_fd_magic_link", "directory_open_recorded", "slot2_reduce_real_path")
+HOST_CHECKS = ("st_dev_final_dir", "no_submounts", "result_anchor_real_strace")
+DELETABLE = {"t0": ("genie_v3.gst.root", "gevgen.status", "gntp.ghep.root", "input-flux.root"),
+             "coverage_slot1": ("gevgen.log", "gevgen.status", "gntp.ghep.root", "input-flux.root"),
+             "coverage_slot2": ("gevgen.log", "gevgen.status", "gntp.ghep.root", "input-flux.root")}
+
+
+def _hex64(x):
+    return type(x) is str and re.fullmatch(r"[0-9a-f]{64}", x) is not None
+
+
+def _all_true(d, keys):
+    return type(d) is dict and sorted(d) == sorted(keys) and all(v is True for v in d.values())
 
 
 def replay_problems(r):
-    """[problems] with pg_replay.sh's replay.json: every named check, spline open and real shape present and true."""
+    """[problems] with pg_replay.sh's replay.json: every named check, spline open, gated list, real shape and host
+    check present, exactly, and true; typed records only."""
     p = []
     if r.get("pass") is not True:
         p.append("pass")
-    c = r.get("checks")
-    if not (isinstance(c, dict) and sorted(c) == sorted(REPLAY_CHECKS) and all(v is True for v in c.values())):
+    if not _all_true(r.get("checks"), REPLAY_CHECKS):
         p.append("checks")
-    s = r.get("spline_opened")
-    if not (isinstance(s, dict) and sorted(s) == sorted(n for n in REPLAY_CHECKS if n.startswith("trace_check"))
-            and all(v is True for v in s.values())):
+    if not _all_true(r.get("spline_opened"), SPLINE_TRACES):
         p.append("spline opens")
     g = r.get("gated")
-    if not (isinstance(g, dict) and len(g) == 4 and all(isinstance(v, list) and v for v in g.values())):
+    if not (type(g) is dict and sorted(g) == sorted(TRACES) and all(
+            type(v) is list and v and all(type(x) is dict and type(x.get("path")) is str and _hex64(x.get("sha256"))
+                                          and type(x.get("pinned_by")) is str for x in v) for v in g.values())):
         p.append("gated files")
-    rs = r.get("real_shapes")
-    if not (isinstance(rs, dict) and len(rs) == 4 and all(v is True for v in rs.values())):
+    if not _all_true(r.get("real_shapes"), SHAPES):
         p.append("real shapes")
+    if not _all_true(r.get("host"), HOST_CHECKS):
+        p.append("host checks")
+    c = r.get("coverage_log_sha256")
+    if not (type(c) is dict and sorted(c) == ["coverage_check.json", "coverage_check_slot2.json"]
+            and all(_hex64(v) for v in c.values())):
+        p.append("coverage log hashes")
     return p
 
 
 def deleted_problems(d):
-    if not (isinstance(d, dict) and "genie_v3.gst.root" in d and set(d) <= set(DELETABLE)):
+    """[problems] with deleted.json: the three runs, the t0 gst among them, only deletable names, typed records."""
+    if not (type(d) is dict and sorted(d) == sorted(DELETABLE) and all(type(v) is dict for v in d.values())
+            and "genie_v3.gst.root" in d["t0"] and all(set(d[k]) <= set(DELETABLE[k]) for k in d)):
         return ["names"]
-    return [n for n, v in sorted(d.items()) if not (isinstance(v, dict) and re.fullmatch(r"[0-9a-f]{64}", str(v.get(
-        "sha256"))) and isinstance(v.get("bytes"), int))]
+    return [f"{k}/{n}" for k in sorted(d) for n, v in sorted(d[k].items())
+            if not (type(v) is dict and _hex64(v.get("sha256")) and type(v.get("bytes")) is int and v["bytes"] >= 0
+                    and type(v.get("holds_public_seed")) is bool)]
 
 
 def replay(parent=REPLAY_PARENT, archive_b64=None, archive_sha=None, blobs=None, commit=None, ident=identity,
@@ -176,14 +201,17 @@ def replay(parent=REPLAY_PARENT, archive_b64=None, archive_sha=None, blobs=None,
             raise Stop(f"the replay driver exited {p.returncode}")
         with open(os.path.join(w, "run", "replay.json")) as f:
             r = json.load(f)
-        rec["replay"] = {k: r.get(k) for k in ("checks", "spline_opened", "gated", "real_shapes", "pass")}
+        rec["replay"] = {k: r.get(k) for k in ("checks", "spline_opened", "gated", "real_shapes", "host",
+                                               "coverage_log_sha256", "pass")}
         probs = replay_problems(r)
         if probs:
             raise Stop(f"replay-record: {probs}")
         with open(os.path.join(w, "run", "deleted.json")) as f:
             rec["deleted"] = json.load(f)
-        left = [n for n in os.listdir(os.path.join(w, "run", "work", "t0"))
-                if n.endswith((".ghep.root", ".gst.root", ".status")) or n == "input-flux.root"]
+        left = [n for d in ("work/t0", "coverage/G21_11a_00_000", "coverage/G18_02a_00_000")
+                for n in os.listdir(os.path.join(w, "run", d))
+                if n.endswith((".ghep.root", ".gst.root", ".status")) or n == "input-flux.root"
+                or (d.startswith("coverage") and n == "gevgen.log")]
         if deleted_problems(rec["deleted"]) or left:
             raise Stop(f"deleted-record: {deleted_problems(rec['deleted'])}, left {left}")
     except (Stop, OSError, ValueError, tarfile.TarError, subprocess.SubprocessError) as e:

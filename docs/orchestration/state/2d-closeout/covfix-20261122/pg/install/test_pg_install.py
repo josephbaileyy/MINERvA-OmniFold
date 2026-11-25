@@ -144,13 +144,18 @@ class Install(unittest.TestCase):
         self.assertTrue(r["stops"][0].startswith("root-exists: "), r["stops"])
         self.assertEqual(os.listdir(self.root), [])
 
+    def test_a_root_beside_scratch_is_refused(self):
+        (self.tmp / "scratch").mkdir()                          # an existing ancestor above scratch, a root not on it
+        r = self.install(root=str(self.tmp / "other/covfix-pg/products"))
+        self.assertTrue(r["stops"][0].startswith("root-place: "), r["stops"])
+        self.assertFalse((self.tmp / "other").exists())
+
     def test_scratch_is_checked_on_the_real_path(self):
         (self.tmp / "elsewhere").mkdir()
         (self.tmp / "scratch").symlink_to(self.tmp / "elsewhere")              # lexically on scratch, really not
         r = self.install()
         self.assertTrue(r["stops"][0].startswith("root-place: "), r["stops"])
-        self.assertEqual(os.listdir(self.tmp / "elsewhere"), ["covfix-pg"])
-        self.assertEqual(os.listdir(self.tmp / "elsewhere/covfix-pg"), [])
+        self.assertEqual(os.listdir(self.tmp / "elsewhere"), [])        # refused before anything was created
 
     def test_the_real_listing_installs(self):
         # the real G2111a listing's names, types and link targets (synthetic bytes): no container member
@@ -171,6 +176,17 @@ class Install(unittest.TestCase):
         os.chmod(self.root / "genie_xsec", 0o755)
         self.assertIn("tree-container: genie_xsec is not a read-only directory",
                       I.check_tree(str(self.root), self.members, readonly=True))
+
+    def test_a_missing_or_file_upsfiles_is_a_problem(self):
+        self.assertEqual(self.install()["verdict"], "GO")
+        up = self.root / ".upsfiles"
+        os.chmod(self.root, 0o755)
+        os.chmod(up, 0o755)
+        (up / "dbconfig").unlink()
+        up.rmdir()
+        self.assertIn("upsfiles: .upsfiles is missing", I.check_tree(str(self.root), self.members, readonly=True))
+        up.write_text("x")
+        self.assertIn("upsfiles: .upsfiles is not a directory", I.check_tree(str(self.root), self.members, readonly=True))
 
     def test_upsfiles_must_hold_only_dbconfig(self):
         self.assertEqual(self.install()["verdict"], "GO")
@@ -200,11 +216,13 @@ class Install(unittest.TestCase):
 RP = load("pg_replay", HERE / "pg-replay-g2111a.py")
 EA = load("embed_archive", HERE / "embed_archive.py")
 GOOD_REPLAY = {"pass": True, "checks": {n: True for n in RP.REPLAY_CHECKS},
-               "spline_opened": {n: True for n in RP.REPLAY_CHECKS if n.startswith("trace_check")},
-               "gated": {n: [{"path": "/p", "sha256": "0" * 64}] for n in RP.REPLAY_CHECKS if n.startswith("trace_check")},
-               "real_shapes": {f"s{i}": True for i in range(4)}}
-GOOD_DELETED = {"genie_v3.gst.root": {"sha256": "a" * 64, "bytes": 10}, "gevgen.status": {"sha256": "b" * 64, "bytes": 1}}
-
+               "spline_opened": {n: True for n in RP.SPLINE_TRACES},
+               "gated": {n: [{"path": "/p", "sha256": "0" * 64, "pinned_by": "genie manifest"}] for n in RP.TRACES},
+               "real_shapes": {k: True for k in RP.SHAPES}, "host": {k: True for k in RP.HOST_CHECKS},
+               "coverage_log_sha256": {"coverage_check.json": "1" * 64, "coverage_check_slot2.json": "2" * 64}}
+REC = {"sha256": "a" * 64, "bytes": 10, "holds_public_seed": False}
+GOOD_DELETED = {"t0": {"genie_v3.gst.root": REC, "gevgen.status": REC},
+                "coverage_slot1": {"gevgen.log": REC}, "coverage_slot2": {"gevgen.log": REC}}
 class NodeLaunch(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(os.path.realpath(tempfile.mkdtemp(prefix="pgl-", dir="/tmp")))
@@ -264,17 +282,25 @@ class NodeLaunch(unittest.TestCase):
         rec = {"schema": "covfix-pg-replay/1", "verdict": "GO", "stops": [], "commit": "c" * 40,
                "archive_sha256_pin": "a" * 64, "archive_sha256": "a" * 64, "n_blobs": 2, "n_files_checked": 2,
                "driver_rc": 0, "identity": {"pass": True}, "deleted": GOOD_DELETED,
-               "replay": {k: GOOD_REPLAY[k] for k in ("checks", "spline_opened", "real_shapes", "pass")}}
+               "replay": dict(GOOD_REPLAY)}
         self.assertEqual(self.L.payload_problems(rec, "covfix-pg-replay/1", pins), [])
         r2 = json.loads(json.dumps(rec))
         r2["replay"]["checks"] = {}
         for name, bad, want in (("commit", dict(rec, commit="d" * 40), "commit, archive pin or blob count"),
                                 ("driver rc", dict(rec, driver_rc=1), "a GO without its archive, blobs, driver rc or identity"),
                                 ("empty checks", r2, "replay checks"),
-                                ("deleted", dict(rec, deleted={}), "deleted files")):
+                                ("deleted", dict(rec, deleted={}), "deleted names"),
+                                ("driver rc False", dict(rec, driver_rc=False),
+                                 "a GO without its archive, blobs, driver rc or identity"),
+                                ("blob count True", dict(rec, n_blobs=True), "commit, archive pin or blob count"),
+                                ("no gated", dict(rec, replay={k: v for k, v in GOOD_REPLAY.items() if k != "gated"}),
+                                 "replay gated files"),
+                                ("a bool size", dict(rec, deleted=dict(GOOD_DELETED, t0={"genie_v3.gst.root": dict(
+                                    REC, bytes=True)})), "deleted t0/genie_v3.gst.root")):
             with self.subTest(name):
                 self.assertEqual(self.L.payload_problems(bad, "covfix-pg-replay/1", pins), [want])
-        self.assertEqual(self.L.REPLAY_CHECKS, RP.REPLAY_CHECKS)
+        for k in ("REPLAY_CHECKS", "TRACES", "SPLINE_TRACES", "SHAPES", "HOST_CHECKS", "DELETABLE"):
+            self.assertEqual(getattr(self.L, k), getattr(RP, k), k)                # one schema, in both places
 
     def test_refusals_and_options(self):
         self.assertEqual(self.launch("exit 0", sha_="0" * 64), 5)
@@ -290,10 +316,10 @@ class NodeLaunch(unittest.TestCase):
 DRIVER = """#!/bin/bash
 [ "$1" = --workdir ] || exit 2
 echo "[replay] stub $PG_STUB_RC"
-mkdir -p "$2/work/t0"
+mkdir -p "$2/work/t0" "$2/coverage/G21_11a_00_000" "$2/coverage/G18_02a_00_000"
 printf '%s' "${PG_STUB_REPLAY:-$GOOD_REPLAY}" > "$2/replay.json"
 printf '%s' "${PG_STUB_DELETED:-$GOOD_DELETED}" > "$2/deleted.json"
-[ -z "$PG_STUB_LEFT" ] || echo x > "$2/work/t0/$PG_STUB_LEFT"
+[ -z "$PG_STUB_LEFT" ] || echo x > "$2/${PG_STUB_LEFT_DIR:-work/t0}/$PG_STUB_LEFT"
 exit ${PG_STUB_RC:-0}
 """
 
@@ -393,9 +419,24 @@ class Replay(unittest.TestCase):
                 ("no gated files", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, gated={}))}, "replay-record"),
                 ("one run's gated list empty", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, gated=dict(
                     GOOD_REPLAY["gated"], **{"trace_check_gevgen.json": []})))}, "replay-record"),
-                ("no gst in deleted", {"PG_STUB_DELETED": json.dumps({"gevgen.status": GOOD_DELETED["gevgen.status"]})},
+                ("no gst in deleted", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, t0={"gevgen.status": REC}))},
                  "deleted-record"),
-                ("another name deleted", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, **{"x.root": {}}))},
+                ("another name deleted", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, t0=dict(
+                    GOOD_DELETED["t0"], **{"x.root": REC})))}, "deleted-record"),
+                ("a run missing", {"PG_STUB_DELETED": json.dumps({"t0": GOOD_DELETED["t0"]})}, "deleted-record"),
+                ("a bool size", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, t0={"genie_v3.gst.root": dict(
+                    REC, bytes=True)}))}, "deleted-record"),
+                ("a negative size", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, t0={"genie_v3.gst.root": dict(
+                    REC, bytes=-1)}))}, "deleted-record"),
+                ("arbitrary shape names", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, real_shapes={
+                    f"s{i}": True for i in range(4)}))}, "replay-record"),
+                ("a null gated record", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, gated={
+                    n: [None] for n in RP.TRACES}))}, "replay-record"),
+                ("no host checks", {"PG_STUB_REPLAY": json.dumps({k: v for k, v in GOOD_REPLAY.items() if k != "host"})},
+                 "replay-record"),
+                ("no coverage log hashes", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, coverage_log_sha256={}))},
+                 "replay-record"),
+                ("a coverage log left", {"PG_STUB_LEFT": "gevgen.log", "PG_STUB_LEFT_DIR": "coverage/G21_11a_00_000"},
                  "deleted-record"),
                 ("an event file left", {"PG_STUB_LEFT": "gntp.123456789.ghep.root"}, "deleted-record")):
             with self.subTest(name):

@@ -24,6 +24,7 @@ MEASURES: nothing. CANNOT AUTHORIZE: anything.
 """
 import argparse
 import fnmatch
+import hashlib
 import json
 import os
 import sys
@@ -125,19 +126,23 @@ def inventory(tunes=None):
                   f"out/logs/reduce_{t}.log", f"out/logs/graphs_{t}.log", f"out/logs/hadd_u{u}.log",
                   f"out/logs/convert_u{u}.log", f"out/logs/env-c_u{u}.log", f"out/traces/reduce_{t}.trace",
                   f"out/traces/graphs_{t}.trace", f"out/trace_check_reduce_{t}.json", f"out/trace_check_graphs_{t}.json",
-                  f"out/exe_check_{t}.json", f"run/exe_{t}.txt", f"out/logs/exe_{t}.log"):
+                  f"out/exe_check_{t}.json", f"run/exe_{t}.txt", f"out/logs/exe_{t}.log", f"out/reduce_check_{t}.json",
+                  f"out/coverage_check_{t}.json", f"out/trace_check_coverage_{t}.json", f"out/coverage/{t}/coverage.trace",
+                  f"out/logs/coverage_{t}.log", f"run/gxmlpath_{t}.txt", f"run/ld_library_path_{t}.txt", f"run/awk_{t}.txt"):
             add(p)
         for f in ("task.time", "task.log", "gevgen.log", "gntpc.log", "genie_v3.gst.root", "input-flux.root",
-                  "gevgen.status", "gevgen.trace", "trace_check.json"):
+                  "gevgen.status", "gevgen.trace", "trace_check.json", "gntpc.trace", "trace_check_gntpc.json"):
             add(f"out/work/u{u}/t*/{f}", N_TASKS)
-    for p in ("seeds.json", "PRODUCTS.json", "out/PG-SHA256SUMS", "out/flux_phi_t_0_100.root",
+    for p in ("seeds.json", "PRODUCTS.json", "out/PG-SHA256SUMS", PUBLISH_SUMS, "out/flux_phi_t_0_100.root",
+              "out/argv_check.json", "out/messenger_check.json", "out/Messenger_pg.xml", "out/revision_start.json",
+              "out/revision_end.json",
               "out/prep/config-pg.json", "out/prep/f1-prep-SHA256SUMS", f"out/prep/ratios/{RUNG}/ratios.json",
               "run/queue.txt", "run/truths.txt", "run/deploy-status-before.txt", "run/deploy-status-setup.txt",
               "run/deploy-status-after.txt") + CHECKS:
         add(p)
     for lg in ("queue", "flux_and_splines", "xargs", "flux_check", "prep", "products", "sums", "trace_check",
                "tool_check_strace", "members_check", "dbconfig_check", "inventory", "env-q", "env-a1", "env-fc",
-               "env-p", "env-w", "env-i"):
+               "env-p", "env-w", "env-i", "env-l", "reduce_check", "coverage", "revision", "publish"):
         add(f"out/logs/{lg}.log")
     return req
 
@@ -168,8 +173,9 @@ def cmd_products(a):
     if out.exists():
         raise Refusal("PRODUCTS.json already exists")
     rec = products(a.workdir, load_seeds(a.seeds))
-    checks = list(CHECKS) + sorted(str(q.relative_to(a.workdir)) for g in ("out/**/trace_check*.json", "out/exe_check_*.json")
-                                   for q in Path(a.workdir).glob(g))
+    globs = ("out/**/trace_check*.json", "out/exe_check_*.json", "out/reduce_check_*.json", "out/coverage_check_*.json",
+             "out/argv_check.json", "out/messenger_check.json", "out/revision_*.json")
+    checks = list(CHECKS) + sorted({str(q.relative_to(a.workdir)) for g in globs for q in Path(a.workdir).glob(g)})
     rec["checks"] = {}
     for c in checks:
         try:
@@ -182,10 +188,84 @@ def cmd_products(a):
         except (OSError, ValueError, IndexError, AttributeError):
             ok = False
         rec["checks"][c] = ok
-    if len(checks) != len(CHECKS) + (1 + len(U1)) * (3 + N_TASKS) or not all(rec["checks"].values()):
+    # per tune: exe, the reduce, graphs and coverage traces, reduce and coverage checks, and each task's gevgen and gntpc
+    # traces; once: the argv, the messenger and the revision at the start and the end
+    if len(checks) != len(CHECKS) + (1 + len(U1)) * (6 + 2 * N_TASKS) + 4 or not all(rec["checks"].values()):
         raise Refusal("a verification step did not pass, or is missing")
     out.write_text(json.dumps(rec, indent=1) + "\n")
     print(f"[pg_lib] products: {len(rec['products'])} truths")
+    return 0
+
+
+# ------------------------------------------------------------------------- the seed (codex 11; the director's ruling)
+
+# Files that hold the sealed seed, or could be searched for it, and so never leave W: gevgen names its outputs by the
+# run number, which is the seed, so every trace and log of a task carries it; their hashes would let a reader search
+# the seed space, so the published sums omit them. PG-SHA256SUMS (all files) stays in W for the seal.
+SEED_BEARING = ("seeds.json", "run/queue.txt", "out/PG-SHA256SUMS", "out/work/u*/t*/gevgen.trace",
+                "out/work/u*/t*/gntpc.trace", "out/work/u*/t*/gevgen.log", "out/work/u*/t*/gntpc.log",
+                "out/work/u*/t*/task.log", "out/work/u*/t*/task.time", "out/work/u*/t*/gevgen.status",
+                "out/work/u*/t*/gntp.ghep.root", "out/logs/*")
+PUBLISH_SUMS = "out/PG-PUBLISH-SHA256SUMS"
+
+
+def seed_forms(seed):
+    """The byte strings a seed is searched as: decimal (any zero-padding contains it) and hex in both cases."""
+    return sorted({str(seed).encode(), format(seed, "x").encode(), format(seed, "X").encode()})
+
+
+def seed_bearing(rel):
+    return any(fnmatch.fnmatchcase(rel, g) for g in SEED_BEARING)
+
+
+def leak_hits(workdir, files, seeds):
+    """[(relpath, where)]: each outgoing file whose path or bytes hold any form of any seed. Never prints a seed."""
+    forms = [f for s in seeds for f in seed_forms(s)]
+    width = max(len(f) for f in forms)
+    hits = []
+    for rel in files:
+        if any(f in rel.encode() for f in forms):
+            hits.append((None, "path"))                    # the path itself is not repeated
+            continue
+        with open(os.path.join(workdir, rel), "rb") as fh:
+            tail = b""
+            for chunk in iter(lambda: fh.read(1 << 20), b""):
+                buf = tail + chunk
+                if any(f in buf for f in forms):
+                    hits.append((rel, "bytes"))
+                    break
+                tail = buf[-(width - 1):]
+    return hits
+
+
+def cmd_publish(a):
+    w = Path(a.workdir)
+    out = w / PUBLISH_SUMS
+    if out.exists():
+        raise Refusal("the publish sums already exist")
+    seeds = [s for _, _, ss in load_seeds(a.seeds) for s in ss]
+    files = []
+    for d, dirs, names in os.walk(w, followlinks=False):
+        for x in names:
+            q = os.path.join(d, x)
+            rel = os.path.relpath(q, w)
+            if os.path.islink(q) or not os.path.isfile(q):
+                raise Refusal("a link or special file in W")
+            if not seed_bearing(rel) and rel != PUBLISH_SUMS:
+                files.append(rel)
+    hits = leak_hits(w, sorted(files), seeds)
+    if hits:
+        raise Refusal(f"leak scan: {len(hits)} outgoing files hold a seed ({sum(1 for r, _ in hits if r is None)} "
+                      f"in their path)")
+    lines = []
+    for rel in sorted(files):
+        h = hashlib.sha256()
+        with open(w / rel, "rb") as fh:
+            for b in iter(lambda: fh.read(1 << 20), b""):
+                h.update(b)
+        lines.append(f"{h.hexdigest()}  {rel}\n")
+    out.write_text("".join(lines))
+    print(f"[pg_lib] publish: {len(files)} files scanned clean; {PUBLISH_SUMS} written")
     return 0
 
 
@@ -200,9 +280,13 @@ def main(argv=None):
     p.add_argument("--seeds", required=True)
     i = sub.add_parser("inventory")
     i.add_argument("--workdir")
+    b = sub.add_parser("publish")
+    b.add_argument("--workdir", required=True)
+    b.add_argument("--seeds", required=True)
     a = ap.parse_args(argv)
     try:
-        return {"queue": cmd_queue, "products": cmd_products, "inventory": cmd_inventory}[a.cmd](a)
+        return {"queue": cmd_queue, "products": cmd_products, "inventory": cmd_inventory,
+                "publish": cmd_publish}[a.cmd](a)
     except Refusal as e:
         print(f"[pg_lib] refusing: {e}", file=sys.stderr)
         return 2

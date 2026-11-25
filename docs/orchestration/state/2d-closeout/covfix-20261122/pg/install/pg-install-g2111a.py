@@ -245,7 +245,11 @@ def check_tree(root, members, readonly):
     probs += [f"extra: {n}" for n in sorted(set(seen) - set(members))]
     probs += [f"missing: {n}" for n in sorted(set(members) - set(seen))]
     up = os.path.join(root, ".upsfiles")
-    if os.path.lexists(up):
+    if not os.path.lexists(up):
+        probs.append("upsfiles: .upsfiles is missing")
+    elif not stat.S_ISDIR(os.lstat(up).st_mode):
+        probs.append("upsfiles: .upsfiles is not a directory")
+    else:
         ust, names = os.lstat(up), sorted(os.listdir(up))
         if (not stat.S_ISDIR(ust.st_mode) or names != ["dbconfig"]
                 or not stat.S_ISREG(os.lstat(os.path.join(up, "dbconfig")).st_mode)
@@ -291,9 +295,12 @@ def install(root=ROOT, url=URL, tarball_sha=TARBALL_SHA256, members=None, dbconf
         parent = os.path.dirname(root)
         if not (parent + "/").startswith(scratch):
             raise Stop(f"root-place: {root} is not on {scratch}")
-        os.makedirs(parent, exist_ok=True)
-        if os.path.realpath(parent) != parent or not (os.path.realpath(parent) + "/").startswith(scratch):
-            raise Stop(f"root-place: {parent} resolves to {os.path.realpath(parent)}, not itself on {scratch}")
+        a = parent                          # every existing ancestor is its own real path, on scratch, before any mkdir
+        while not os.path.lexists(a):
+            a = os.path.dirname(a)
+        if os.path.realpath(a) != a or not ((a + "/").startswith(scratch) or scratch.startswith(a.rstrip("/") + "/")):
+            raise Stop(f"root-place: {a} resolves to {os.path.realpath(a)}, not itself on {scratch}; nothing was written")
+        os.makedirs(parent, exist_ok=True)                  # below the checked ancestor, every directory is new
         os.mkdir(root, 0o755)
         os.mkdir(os.path.join(root, "dl"), 0o700)
         tarball = os.path.join(root, "dl", os.path.basename(url))

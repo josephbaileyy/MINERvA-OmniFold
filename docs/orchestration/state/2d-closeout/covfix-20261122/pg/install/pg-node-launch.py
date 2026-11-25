@@ -46,10 +46,63 @@ def write_all(fd, data):
         view = view[n:]
 
 
-REPLAY_CHECKS = ("tool_check_strace.json", "members_check.json", "dbconfig_check.json", "exe_check.json",
-                 "trace_check_reduce.json", "trace_check_graphs.json", "trace_check_gevgen.json",
-                 "trace_check_reduce_slot2.json", "shape_check.json")
-DELETABLE = ("genie_v3.gst.root", "gevgen.status", "gntp.ghep.root", "input-flux.root")
+REPLAY_CHECKS = ("tool_check_strace.json", "revision_start.json", "members_check.json", "dbconfig_check.json",
+                 "exe_check.json", "reduce_check.json", "argv_check.json", "trace_check_reduce.json",
+                 "trace_check_graphs.json", "messenger_check.json", "trace_check_coverage.json", "coverage_check.json",
+                 "trace_check_gevgen.json", "trace_check_gntpc.json", "trace_check_reduce_slot2.json",
+                 "reduce_check_slot2.json", "trace_check_coverage_slot2.json", "coverage_check_slot2.json",
+                 "shape_check.json", "host_check.json", "revision_end.json")
+TRACES = tuple(n for n in REPLAY_CHECKS if n.startswith("trace_check"))
+SPLINE_TRACES = tuple(n for n in TRACES if n != "trace_check_gntpc.json")
+SHAPES = ("real_members_listing", "proc_fd_magic_link", "directory_open_recorded", "slot2_reduce_real_path")
+HOST_CHECKS = ("st_dev_final_dir", "no_submounts", "result_anchor_real_strace")
+DELETABLE = {"t0": ("genie_v3.gst.root", "gevgen.status", "gntp.ghep.root", "input-flux.root"),
+             "coverage_slot1": ("gevgen.log", "gevgen.status", "gntp.ghep.root", "input-flux.root"),
+             "coverage_slot2": ("gevgen.log", "gevgen.status", "gntp.ghep.root", "input-flux.root")}
+
+
+def _hex64(x):
+    return type(x) is str and re.fullmatch(r"[0-9a-f]{64}", x) is not None
+
+
+def _all_true(d, keys):
+    return type(d) is dict and sorted(d) == sorted(keys) and all(v is True for v in d.values())
+
+
+def _replay_problems(r):
+    """[problems] with pg_replay.sh's replay.json: every named check, spline open, gated list, real shape and host
+    check present, exactly, and true; typed records only."""
+    p = []
+    if r.get("pass") is not True:
+        p.append("pass")
+    if not _all_true(r.get("checks"), REPLAY_CHECKS):
+        p.append("checks")
+    if not _all_true(r.get("spline_opened"), SPLINE_TRACES):
+        p.append("spline opens")
+    g = r.get("gated")
+    if not (type(g) is dict and sorted(g) == sorted(TRACES) and all(
+            type(v) is list and v and all(type(x) is dict and type(x.get("path")) is str and _hex64(x.get("sha256"))
+                                          and type(x.get("pinned_by")) is str for x in v) for v in g.values())):
+        p.append("gated files")
+    if not _all_true(r.get("real_shapes"), SHAPES):
+        p.append("real shapes")
+    if not _all_true(r.get("host"), HOST_CHECKS):
+        p.append("host checks")
+    c = r.get("coverage_log_sha256")
+    if not (type(c) is dict and sorted(c) == ["coverage_check.json", "coverage_check_slot2.json"]
+            and all(_hex64(v) for v in c.values())):
+        p.append("coverage log hashes")
+    return p
+
+
+def _deleted_problems(d):
+    """[problems] with deleted.json: the three runs, the t0 gst among them, only deletable names, typed records."""
+    if not (type(d) is dict and sorted(d) == sorted(DELETABLE) and all(type(v) is dict for v in d.values())
+            and "genie_v3.gst.root" in d["t0"] and all(set(d[k]) <= set(DELETABLE[k]) for k in d)):
+        return ["names"]
+    return [f"{k}/{n}" for k in sorted(d) for n, v in sorted(d[k].items())
+            if not (type(v) is dict and _hex64(v.get("sha256")) and type(v.get("bytes")) is int and v["bytes"] >= 0
+                    and type(v.get("holds_public_seed")) is bool)]
 
 
 def script_pins(body):
@@ -64,45 +117,31 @@ def script_pins(body):
     return out
 
 
-def _hex64(x):
-    return isinstance(x, str) and re.fullmatch(r"[0-9a-f]{64}", x) is not None
-
-
 def payload_problems(rec, schema, pins):
     p, go = [], rec.get("verdict") == "GO"
     if schema == "covfix-pg-install/1":
         members = json.loads(pins["MEMBERS_JSON"])["members"]
         if rec.get("root") != pins["ROOT"] or rec.get("tarball_sha256_pin") != pins["TARBALL_SHA256"]:
             p.append("root or tarball pin")
-        if rec.get("n_members_pinned") != len(members):
+        if type(rec.get("n_members_pinned")) is not int or rec.get("n_members_pinned") != len(members):
             p.append("members count")
         if go and not (rec.get("tarball_sha256") == pins["TARBALL_SHA256"] and _hex64(pins.get("DBCONFIG_SHA256"))
                        and rec.get("dbconfig_sha256") == pins["DBCONFIG_SHA256"] and rec.get("scan_problems") == []
                        and rec.get("tree_problems") == [] and (rec.get("identity") or {}).get("pass") is True
-                       and isinstance(rec.get("install_utc"), str)):
+                       and type(rec.get("install_utc")) is str):
             p.append("a GO without its hashes, pins and empty problem lists")
     elif schema == "covfix-pg-replay/1":
         blobs = json.loads(pins["BLOBS_JSON"])
         if (rec.get("commit") != pins["COMMIT"] or rec.get("archive_sha256_pin") != pins["ARCHIVE_SHA256"]
-                or rec.get("n_blobs") != len(blobs)):
+                or type(rec.get("n_blobs")) is not int or rec.get("n_blobs") != len(blobs)):
             p.append("commit, archive pin or blob count")
         if go:
-            r = rec.get("replay") or {}
-            spl, shapes, gone = r.get("spline_opened"), r.get("real_shapes"), rec.get("deleted")
-            if not (rec.get("archive_sha256") == pins["ARCHIVE_SHA256"] and rec.get("n_files_checked") == len(blobs)
+            if not (rec.get("archive_sha256") == pins["ARCHIVE_SHA256"] and type(rec.get("n_files_checked")) is int
+                    and rec.get("n_files_checked") == len(blobs) and type(rec.get("driver_rc")) is int
                     and rec.get("driver_rc") == 0 and (rec.get("identity") or {}).get("pass") is True):
                 p.append("a GO without its archive, blobs, driver rc or identity")
-            if not (r.get("pass") is True and isinstance(r.get("checks"), dict)
-                    and sorted(r["checks"]) == sorted(REPLAY_CHECKS) and all(v is True for v in r["checks"].values())):
-                p.append("replay checks")
-            if not (isinstance(spl, dict) and len(spl) == 4 and all(v is True for v in spl.values())):
-                p.append("spline opens")
-            if not (isinstance(shapes, dict) and len(shapes) == 4 and all(v is True for v in shapes.values())):
-                p.append("real shapes")
-            if not (isinstance(gone, dict) and "genie_v3.gst.root" in gone and set(gone) <= set(DELETABLE)
-                    and all(isinstance(v, dict) and _hex64(v.get("sha256")) and isinstance(v.get("bytes"), int)
-                            for v in gone.values())):
-                p.append("deleted files")
+            p += [f"replay {x}" for x in _replay_problems(rec.get("replay") or {})]
+            p += [f"deleted {x}" for x in _deleted_problems(rec.get("deleted"))]
     return p
 
 

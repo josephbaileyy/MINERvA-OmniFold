@@ -5,6 +5,7 @@
 #   run_gevgen_v3.sh reduce TUNE SPLDIR           C12 + H1 splines of the tune's gxspl-NUsmall.xml -> SPLDIR/TUNE_CH.xml.gz
 #   run_gevgen_v3.sh genie  TUNE SPLDIR N SEED WORKDIR FLUXFILE
 #   run_gevgen_v3.sh graphs TUNE SPLDIR OUTFILE   gspl2root of the reduced splines for C12 and H1 to 100 GeV
+#   run_gevgen_v3.sh coverage TUNE SPLDIR WORKDIR FLUXFILE MESSENGER   COVFIX PG's one-event spline coverage check
 #
 # genie: run_gen5d_supplement.sh's gevgen/gntpc lines with the v3 setup: the same CH target mix, nu_mu, the
 #   laconic messenger and seed = run number; --tune TUNE and the tune's own event-generator list (Default);
@@ -30,8 +31,22 @@ pg_trace() {   # pg_trace NAME: PG_TRACE for one command, tracing to $PG_TRACE_D
   local fdd=/proc/self/fd; [ -d "$fdd" ] || fdd=/dev/fd
   [ -d "$PG_TRACE_DIR" ] && [ -e "$fdd/$PG_STRACE_FD" ] || { echo "refusing: no trace directory or strace" >&2; exit 2; }
   [ ! -e "$PG_TRACE_DIR/$1.trace" ] || { echo "refusing to overwrite $PG_TRACE_DIR/$1.trace" >&2; exit 2; }
-  PG_TRACE=("$fdd/$PG_STRACE_FD" -f -q -e "trace=open,openat,openat2,access,faccessat,faccessat2,stat,lstat,newfstatat,statx,readlink,readlinkat,chdir,fchdir" -o "$PG_TRACE_DIR/$1.trace")
+  PG_TRACE=("$fdd/$PG_STRACE_FD" -f -q -e "trace=open,openat,openat2,access,faccessat,faccessat2,stat,lstat,newfstatat,statx,readlink,readlinkat,chdir,fchdir,execve" -o "$PG_TRACE_DIR/$1.trace")
 }
+
+gevgen_cmd() {   # F1's gevgen argv, verbatim, from N, SEED and MSG (and FLUX, TUNE, GENIE_SPLINES_V3): the one
+  "${PG_TRACE[@]}" gevgen \
+    -n "$N" \
+    -e 0,100 \
+    -p 14 \
+    -t '1000060120[0.9225],1000010010[0.0775]' \
+    -f "${FLUX},flux_numu,NOWIDTH" \
+    --tune "$TUNE" \
+    --cross-sections "$GENIE_SPLINES_V3" \
+    --seed "$SEED" \
+    -r "$SEED" \
+    ${MSG:+--message-thresholds "$MSG"}
+}                # source of the genie and coverage modes, which set those three and nothing else differently
 
 case "$MODE" in
   reduce)
@@ -70,23 +85,27 @@ case "$MODE" in
     MSG="$GENIE/config/Messenger_laconic.xml"
     echo "[v3] genie $TUNE N=$N seed=$SEED flux=$FLUX start $(date -u '+%F %T UTC')"
     pg_trace gevgen
-    "${PG_TRACE[@]}" gevgen \
-      -n "$N" \
-      -e 0,100 \
-      -p 14 \
-      -t '1000060120[0.9225],1000010010[0.0775]' \
-      -f "${FLUX},flux_numu,NOWIDTH" \
-      --tune "$TUNE" \
-      --cross-sections "$GENIE_SPLINES_V3" \
-      --seed "$SEED" \
-      -r "$SEED" \
-      ${MSG:+--message-thresholds "$MSG"} \
-      > gevgen.log 2>&1
+    gevgen_cmd > gevgen.log 2>&1
     echo "[v3] gevgen rc=$? $(date -u '+%F %T UTC')"
-    gntpc -i "gntp.${SEED}.ghep.root" -f gst -o genie_v3.gst.root 2>&1 | tail -200 > gntpc.log
+    pg_trace gntpc
+    "${PG_TRACE[@]}" gntpc -i "gntp.${SEED}.ghep.root" -f gst -o genie_v3.gst.root 2>&1 | tail -200 > gntpc.log
     echo "[v3] gntpc done $(date -u '+%F %T UTC')"
     rm -f "gntp.${SEED}.ghep.root"   # the gst is the product; the GHEP is reproducible from the seed
     [ -s input-flux.root ] || { echo "no input-flux.root from gevgen" >&2; exit 1; }
+    ;;
+  coverage)   # COVFIX PG only: one public-seed event with gevgen_cmd's argv, the messenger file given, for the spline
+    # coverage check (GEVGDriver at DEBUG names each spline it needs and whether it was found); never F1's or the sealed run
+    TUNE=$1; SPLDIR=$2; WORK=$3; FLUX=$4; MSGFILE=$5
+    case "$MSGFILE" in /*) ;; *) echo "refusing: the messenger file is not absolute" >&2; exit 2 ;; esac
+    [ -f "$MSGFILE" ] || { echo "refusing: no messenger file" >&2; exit 2; }
+    set +e; source "$HERE/setup_genie_v3.sh" "$TUNE" "$SPLDIR"; RC=$?; set -e
+    [ $RC -eq 0 ] || { echo "setup_genie_v3.sh failed rc=$RC" >&2; exit 1; }
+    [ ! -e "$WORK/gevgen.log" ] || { echo "refusing to overwrite $WORK/gevgen.log" >&2; exit 2; }
+    mkdir -p "$WORK"; cd "$WORK"
+    pg_trace coverage
+    N=1; SEED=123456789; MSG="$MSGFILE"
+    gevgen_cmd > gevgen.log 2>&1
+    echo "[v3] coverage gevgen rc=$?"
     ;;
   graphs)
     TUNE=$1; SPLDIR=$2; OUT=$3

@@ -8,7 +8,10 @@
 # section 4): per tune, run_gevgen_v3.sh reduce, gen5d_v3.py spline-check, run_gevgen_v3.sh graphs; once,
 # gen5d_v3.py make-flux; 14 gevgen tasks of 160,000 events (7 per tune) at once, each under /usr/bin/time -v and
 # timeout; the NOWIDTH flux-check on all 14; hadd; gen5d_v3.py convert (sampling test included); fd_f1_prep.py
-# --truth-set pg. Then W/PRODUCTS.json (pg_lib.py products) and W/out/PG-SHA256SUMS.
+# --truth-set pg. Then W/PRODUCTS.json (pg_lib.py products), W/out/PG-SHA256SUMS (every file; it stays in W, being
+# seed-bearing) and W/out/PG-PUBLISH-SHA256SUMS (pg_lib.py publish: the files that may leave W, leak-scanned for the
+# seeds). Round 3 (RULINGS-A2.md) adds, before generation: the CVMFS revision, the reduce's completeness for F1's argv,
+# the argv check, and a one-event public-seed coverage run per tune; after it, every gntpc's trace and the revision.
 #
 # Every product, log, job input and meta file is written under W/out, W/run or W/tmp. Its own stdout carries only
 # step names with pass/STOP and file counts: no seed, no path from W, no physics number. Work directories are named
@@ -22,6 +25,8 @@ NT=7; NEV=160000; P=14; TO=5115     # F1b''s tasks, events, concurrency and per-
 PHIT=/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix
 X=/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL
 PRIV=/pscratch/sd/j/josephrb/covfix-pg/products   # slot 1's private genie_xsec (run_gevgen_v3.sh, setup_genie_v3.sh)
+GENIE_CFG=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config
+CVMFS_REPO=/cvmfs/larsoft.opensciencegrid.org
 PY=/usr/bin/python3.11   # the checks' interpreter outside the analysis environment (the probe's; not the node's python3)
 
 refuse() { echo "[pg] refusing: $1" >&2; exit 2; }
@@ -35,25 +40,29 @@ while [ $# -gt 0 ]; do
 done
 [ -n "$W" ] && [ -n "$SEEDS" ] || refuse "usage: --workdir W --seeds W/seeds.json"
 [ -x "$PY" ] || refuse "$PY is missing"
-for v in LD_PRELOAD LD_AUDIT BASH_ENV ENV; do   # a loader or shell hook would run code no trace attributes
+for v in LD_PRELOAD LD_AUDIT BASH_ENV ENV PYTHONPATH PYTHONSTARTUP PYTHONUSERBASE; do   # hooks no trace attributes
   [ -z "${!v:-}" ] || refuse "$v is set"
 done
 case "$W" in /*) ;; *) refuse "W must be absolute" ;; esac
 [ -d "$W" ] || refuse "W does not exist"
 [ "$(cd "$W" && pwd -P)" = "$(pwd -P)" ] || refuse "cwd is not W"
+[ "$(cd "$W" && pwd -P)" = "$W" ] || refuse "W must be its own physical path"   # a linked W would mis-gate its files
 [ "$SEEDS" = "$W/seeds.json" ] || refuse "--seeds must be W/seeds.json"
 [ "$TMPDIR" = "$W/tmp" ] && [ -d "$TMPDIR" ] || refuse "TMPDIR must be the existing W/tmp"
 for d in out run PRODUCTS.json; do [ ! -e "$W/$d" ] || refuse "W/$d already exists"; done
 [ -n "$PG_DEPLOY_PIN" ] || refuse "PG_DEPLOY_PIN is not set"
 head_sha=$(git -C "$D" rev-parse HEAD 2>/dev/null)
-dirty=$(git -C "$D" status --porcelain --untracked-files=all 2>/dev/null | wc -l)   # an untracked sitecustomize.py too
+dirty=$(git -C "$D" status --porcelain --untracked-files=all --ignored 2>/dev/null | wc -l)   # untracked or ignored
 [ "$head_sha" = "$PG_DEPLOY_PIN" ] && [ "$dirty" -eq 0 ] || refuse "the deploy is not the pinned commit, or is modified"
 
 O="$W/out"; R="$W/run"; G="$D/3d-unfolding/genie"
 REC="$D/docs/orchestration/state/2d-closeout/covfix-20261122/pg/record"
 pin() { "$PY" -I -c 'import json,sys; v=json.load(open(sys.argv[1]))[sys.argv[2]]; print(v or "")' "$G/pg_pins.json" "$1"; }
 STRACE=$(pin strace_path); STRACE_SHA=$(pin strace_sha256); DBCONFIG_SHA=$(pin dbconfig_sha256)
-[ -n "$STRACE" ] && [ -n "$STRACE_SHA" ] && [ -n "$DBCONFIG_SHA" ] || refuse "pg_pins.json is not filled (R1)"
+SYSPINS=$("$PY" -I -c 'import json,sys
+v = json.load(open(sys.argv[1])).get("system_tools") or {}
+print("".join(f"--system-pin\n{k}={h}\n" for k, h in sorted(v.items()) if k and h))' "$G/pg_pins.json")
+[ -n "$STRACE" ] && [ -n "$STRACE_SHA" ] && [ -n "$DBCONFIG_SHA" ] && [ -n "$SYSPINS" ] || refuse "pg_pins.json is not filled (R1)"
 mkdir -p "$O/logs" "$O/splines" "$O/gst" "$O/gen5d" "$O/work" "$O/traces" "$R" || refuse "cannot create W/out and W/run"
 git -C "$D" status --porcelain --untracked-files=all --ignored > "$R/deploy-status-before.txt" 2>&1
 need() { [ "$1" -eq 0 ] || { echo "[pg] STOP: $2 rc=$1"; exit 1; }; }
@@ -77,22 +86,48 @@ freeze() {     # freeze PID: stop PID, then each descendant (a stopped parent ca
   echo "$1"
   local c; for c in $(pgrep -P "$1"); do freeze "$c"; done
 }
-kill_tree() {  # kill_tree PID: end PID and every descendant, and wait until none is left (KILL after 30 s)
+alive() {      # alive PID: running or stopped, not a zombie (kill -0 succeeds on a zombie)
+  local st; st=$(ps -o stat= -p "$1" 2>/dev/null) || return 1
+  case "$st" in Z*|"") return 1 ;; esac
+}
+kill_tree() {  # kill_tree PID: end PID and every descendant, and wait until none is left alive (KILL after 15 s)
   local all i p live
   all=$(freeze "$1")
   [ -n "$all" ] || return 0
   kill -TERM $all 2>/dev/null; kill -CONT $all 2>/dev/null
   for i in $(seq 1 60); do
-    live=""; for p in $all; do kill -0 "$p" 2>/dev/null && live="$live $p"; done
-    [ -n "$live" ] || return 0
+    live=""; for p in $all; do alive "$p" && live="$live $p"; done
+    [ -n "$live" ] || break
     [ "$i" -le 30 ] || kill -KILL $live 2>/dev/null
     sleep 0.5
   done
+  wait "$1" 2>/dev/null   # reap the job itself
+  return 0
 }
-cleanup() {    # on every exit: end this script's background steps and everything under them, then leave no seed in a
-  local j      # file name (a task still running could otherwise write one after seedfree)
+survivors() {  # the pids of live processes, other than this shell and this scan, whose cwd lies under W (tasks run there)
+  local p me cands
+  me=$(exec sh -c 'echo $PPID')       # this function's own subshell (bash 3.2 has no BASHPID)
+  if [ -d /proc/self ]; then
+    cands=$(for p in /proc/[0-9]*; do c=$(readlink "$p/cwd" 2>/dev/null) || continue
+              if [ "$c" = "$W" ] || [ "${c#"$W"/}" != "$c" ]; then echo "${p#/proc/}"; fi; done)
+  else
+    cands=$(lsof -d cwd -Fpn 2>/dev/null | awk -v W="$W" '/^p/ {p=substr($0,2)} /^n/ {n=substr($0,2); if (n==W || index(n, W "/")==1) print p}')
+  fi
+  for p in $cands; do                 # the helpers that listed them have exited by now
+    [ "$p" != "$$" ] && [ "$p" != "$me" ] && alive "$p" && echo "$p"
+  done
+  return 0
+}
+cleanup() {    # on every exit: end this script's background steps and everything under them, verify nothing is left
+  local j left # running in W, then leave no seed in a file name (a live task could otherwise write one after seedfree)
   for j in $(jobs -p); do kill_tree "$j"; done
+  left=$(survivors)
+  if [ -n "$left" ]; then   # the backstop: a process the tree walk missed
+    echo "[pg] cleanup: $(echo $left | wc -w | tr -d ' ') processes outlived their trees"
+    kill -KILL $left 2>/dev/null; sleep 15; left=$(survivors)
+  fi
   seedfree
+  if [ -n "$left" ]; then echo "[pg] STOP: processes survived the cleanup ($(echo $left | wc -w | tr -d ' '))"; exit 1; fi
   return 0
 }
 trap cleanup EXIT
@@ -112,6 +147,9 @@ exec 9< "$STRACE" || need 1 "open strace"
   > "$O/tool_check_strace.json" 2> "$O/logs/tool_check_strace.log"
 need $? "strace (its pinned sha through the descriptor, and the self-test)"
 pass "strace"
+V() { "$PY" -I -B "$G/pg_verify.py" "$@"; }
+V revision --repo "$CVMFS_REPO" > "$O/revision_start.json" 2> "$O/logs/revision.log"
+need $? "the CVMFS revision (start)"
 "$PY" -I -B "$G/pg_verify.py" members-check --root "$PRIV" --members "$REC/G2111a-members.json" \
   > "$O/members_check_G21_11a_00_000.json" 2> "$O/logs/members_check.log"
 need $? "slot 1's private product against its pinned members"
@@ -121,18 +159,21 @@ need $? "slot 1's UPS database file"
 pass "slot 1's private product" "$("$PY" -I -c 'import json,sys; print(len(json.load(open(sys.argv[1]))["members"]))' "$REC/G2111a-members.json") members"
 export PG_STRACE_FD=9
 xroot() { if [ "$1" = G21_11a_00_000 ]; then echo "$PRIV/genie_xsec/v3_04_00/NULL"; else echo "$X"; fi; }
+qual() { echo "$(echo "$1" | tr -d '_')-k250-e1000"; }
 xpins() {    # a CVMFS tune's source spline and README at their exact paths (PG_SPLINE_PINS); slot 1's are its members
   [ "$1" != G21_11a_00_000 ] || return 0
-  local Q; Q=$(echo "$1" | tr -d '_')-k250-e1000
+  local Q; Q=$(qual "$1")
   printf -- '--pin\n%s\n--pin\n%s\n' "$X/$Q/data/gxspl-NUsmall.xml=$(source_sha "$1" 0)" "$X/$Q/data/README=$(source_sha "$1" 1)"
 }
 tcheck() {   # tcheck ROLE TUNE TRACE SPLINE SPLINE_SHA CWD OUT
-  local xp=() l; while IFS= read -r l; do xp+=("$l"); done < <(xpins "$2")
+  local xp=() sp=() l; while IFS= read -r l; do xp+=("$l"); done < <(xpins "$2")
+  while IFS= read -r l; do [ -z "$l" ] || sp+=("$l"); done <<< "$SYSPINS"
   [ "$2" = G21_11a_00_000 ] || [ "${#xp[@]}" -eq 4 ] || { echo "no exact pins for $2" >&2; return 1; }
   "$PY" -I -B "$G/pg_verify.py" trace-check --trace "$3" --rc 0 --role "$1" --tune "$2" --spline "$4" \
     --spline-sha256 "$5" --cwd "$6" --record "$REC/PG-RECORD.json" --manifest "$REC/genie-manifest.json" \
     --private-members "$REC/G2111a-members.json" --w-root "$W" --w-pin "$O/splines/${2}_CH.xml.gz=$(reduced_sha "$2")" \
-    "${xp[@]}" --out "$7"
+    --gxmlpath "$(cat "$R/gxmlpath_$2.txt")" --xsec-data "$(xroot "$2")/$(qual "$2")/data" "${xp[@]}" "${sp[@]}" \
+    --out "$7"
 }
 reduced_sha() { [ -s "$O/spline_check_$1.json" ] && "$PY" -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["reduced"]["sha256"])' "$O/spline_check_$1.json" || echo none; }
 source_sha() { "$PY" -I -c 'import ast,sys
@@ -149,7 +190,8 @@ pass "seeds.json" "$(wc -l < "$R/queue.txt" | tr -d ' ') tasks"
 for T in $TUNES; do   # the programs the traced steps run, as their own setup resolves them (no trace shows an exec)
   ( source "$G/setup_genie_v3.sh" "$T" "$O/splines" > /dev/null 2>&1 || exit 1
     command -v gevgen && command -v gspl2root || exit 1
-    printf '%s\n' "${LD_LIBRARY_PATH-}" > "$R/ld_library_path_$T.txt"; command -v awk > "$R/awk_$T.txt" ) \
+    printf '%s\n' "${LD_LIBRARY_PATH-}" > "$R/ld_library_path_$T.txt"; command -v awk > "$R/awk_$T.txt"
+    printf '%s\n' "${GXMLPATH-}" > "$R/gxmlpath_$T.txt" ) \
     > "$R/exe_$T.txt" 2> "$O/logs/exe_$T.log" || need 1 "resolve gevgen and gspl2root ($T)"
   "$PY" -I -B "$G/pg_verify.py" exe-check --manifest "$REC/genie-manifest.json" $(sed 's/^/--path /' "$R/exe_$T.txt") \
     --ld-library-path "$(cat "$R/ld_library_path_$T.txt")" --system-path "$(cat "$R/awk_$T.txt")" \
@@ -159,6 +201,12 @@ pass "gevgen and gspl2root against the manifest, awk and LD_LIBRARY_PATH"
 pids=(); for T in $TUNES; do PG_TRACE_DIR="$O/traces" bash "$G/run_gevgen_v3.sh" reduce "$T" "$O/splines" > "$O/logs/reduce_$T.log" 2>&1 & pids+=($!); done
 for p in "${pids[@]}"; do wait "$p"; need $? "spline reduce"; done
 pass "spline reduce"
+for T in $TUNES; do   # D3' (i): for every (probe, target) pair in F1's argv the reduce kept every spline, knots and all
+  V reduce-check --source "$(xroot "$T")/$(qual "$T")/data/gxspl-NUsmall.xml" --reduced "$O/splines/${T}_CH.xml.gz" \
+    --script "$G/run_gevgen_v3.sh" > "$O/reduce_check_$T.json" 2>> "$O/logs/reduce_check.log" || need 1 "reduce completeness ($T)"
+done
+V argv-check --script "$G/run_gevgen_v3.sh" > "$O/argv_check.json" 2>> "$O/logs/reduce_check.log" || need 1 "the coverage argv"
+pass "reduce completeness and the coverage argv"
 ( anaenv a1
   python3 -B "$G/gen5d_v3.py" make-flux --phi-t-dir "$PHIT" --out "$O/flux_phi_t_0_100.root" || exit 1
   for T in $TUNES; do
@@ -179,6 +227,19 @@ for T in $TUNES; do   # conditions 2 and 3 before any generation: the reduce awk
     "$O/trace_check_graphs_$T.json" >> "$O/logs/trace_check.log" 2>&1 || need 1 "trace check (graphs $T)"
 done
 pass "trace check before generation" "$(echo $TUNES | wc -w | tr -d ' ') tunes"
+V messenger --laconic "$GENIE_CFG/Messenger_laconic.xml" --out "$O/Messenger_pg.xml" > "$O/messenger_check.json" \
+  2>> "$O/logs/coverage.log" || need 1 "the coverage messenger"
+for T in $TUNES; do   # D3' (ii): one public-seed event per tune, before any sealed seed is used; GEVGDriver at DEBUG
+  C="$O/coverage/$T"; mkdir -p "$C"    # names every spline it needs and whether the pinned file supplied it
+  PG_TRACE_DIR="$C" bash "$G/run_gevgen_v3.sh" coverage "$T" "$O/splines" "$C" "$O/flux_phi_t_0_100.root" \
+    "$O/Messenger_pg.xml" > "$O/logs/coverage_$T.log" 2>&1 || need 1 "the coverage run ($T)"
+  tcheck coverage "$T" "$C/coverage.trace" "$O/splines/${T}_CH.xml.gz" "$(reduced_sha "$T")" "$C" \
+    "$O/trace_check_coverage_$T.json" >> "$O/logs/trace_check.log" 2>&1 || need 1 "trace check (coverage $T)"
+  V coverage-log --log "$C/gevgen.log" > "$O/coverage_check_$T.json" 2>> "$O/logs/coverage.log" || need 1 "spline coverage ($T)"
+  rm -f "$C/gevgen.log" "$C/gntp.123456789.ghep.root" "$C/genie-mcjob-123456789.status" "$C/input-flux.root"
+  [ "$(ls -A "$C")" = coverage.trace ] || need 1 "the coverage run's outputs ($T)"   # its log's sha is in the check
+done
+pass "spline coverage" "$(echo $TUNES | wc -w | tr -d ' ') tunes"
 deploy_unchanged setup
 pass "the deploy unchanged by the environments"
 
@@ -196,6 +257,17 @@ while read -r T _ k; do   # condition 3 from the run itself: each gevgen opened 
     "$O/work/$k/trace_check.json" >> "$O/logs/trace_check.log" 2>&1 || need 1 "trace check (gevgen ${k})"
 done < "$R/queue.txt"
 pass "trace check of every gevgen task" "$(wc -l < "$R/queue.txt" | tr -d ' ') tasks"
+while read -r T _ k; do   # gntpc, which writes the gst the pipeline consumes, is traced and checked too (D1)
+  tcheck gntpc "$T" "$O/work/$k/gntpc.trace" "" "" "$O/work/$k" "$O/work/$k/trace_check_gntpc.json" \
+    >> "$O/logs/trace_check.log" 2>&1 || need 1 "trace check (gntpc ${k})"
+done < "$R/queue.txt"
+pass "trace check of every gntpc task" "$(wc -l < "$R/queue.txt" | tr -d ' ') tasks"
+V revision --repo "$CVMFS_REPO" > "$O/revision_end.json" 2>> "$O/logs/revision.log"
+need $? "the CVMFS revision (end)"
+"$PY" -I -c 'import json,sys; a, b = (json.load(open(f)) for f in sys.argv[1:]); k = ("revision", "root_hash")
+sys.exit(0 if all(a.get(x) == b.get(x) and a.get(x) for x in k) else 1)' "$O/revision_start.json" "$O/revision_end.json"
+need $? "the CVMFS revision changed during the run"
+pass "the CVMFS revision unchanged"
 ( anaenv fc; python3 -B "$G/gen5d_v3.py" flux-check --flux "$O/flux_phi_t_0_100.root" --work "$O"/work/u*/t* ) \
   > "$O/logs/flux_check.log" 2>&1
 need $? "the sampled-spectrum check (NOWIDTH)"
@@ -232,6 +304,9 @@ pass "PRODUCTS.json"
 ( cd "$O" && find . -type f ! -path './logs/*' ! -name PG-SHA256SUMS ! -name '*.ghep.root' -print0 | sort -z \
   | xargs -0 sha256sum ) > "$O/PG-SHA256SUMS" 2> "$O/logs/sums.log"
 need $? "the sums file"
+( anaenv l; python3 -B "$G/pg_lib.py" publish --workdir "$W" --seeds "$SEEDS" ) > "$O/logs/publish.log" 2>&1
+need $? "the publish set and its leak scan"
+pass "the publish set and its leak scan"
 deploy_unchanged after
 pass "the deploy unchanged"
 ( anaenv i; python3 -B "$G/pg_lib.py" inventory --workdir "$W" ) > "$O/logs/inventory.log" 2>&1

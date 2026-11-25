@@ -69,3 +69,99 @@ They are checked three times: by pg_replay.sh's replay.json, by pg-replay-g2111a
 
 ## Not changed
 - `GENIE_COMPAT`-style library paths: no separate rule. Any library read is subject to `so-outside-roots`.
+
+# Round 3: agy's and codex-school's reads of 5f141f7a
+
+**The reads.** Both read the same head, 5f141f7a, from the same staged inputs: the delta 46740facf..5f141f7a without
+logs, and 20 PG files, none of them from the blinded sets. The copies were unchanged after each read.
+
+| Read | Model | Report sha256 | Verdict |
+|---|---|---|---|
+| agy | gemini-4-hydrogen-xhigh | 16bbb74c6e579903116b4e2313f2d2d499c081eece3b779018a4bd3db7da6027 | NO-GO: 20 findings, 6 blockers; my 19 dispositions: 4 HOLD, 1 WRONG (#19), the rest INCOMPLETE |
+| codex-school | gpt-6.2-sol, high effort | f23847ad2397a838ee7026d69f72be9b20b2aa4f873bc9010f08847e1e727946 | NO-GO: 18 findings, 4 blockers; 162,628 tokens |
+
+The director ruled D1–D8, D3′ and the seed (RULINGS-A2.md, round 3) and gave a GO on every mechanical fix. One
+regression was mine: in 5f141f7a an inline comment swallowed `and mcheck.get("pass") is True` (agy B5). That is the
+third such case, so a test now scans every PG Python file for a comment that reads as code (`CommentScan`), and a
+mutant covers the clause.
+
+## Dispositions
+
+<!-- absence-ok: "no test", "never" and "untested" here describe this host's test coverage or a rule, not a claim that a result does not exist -->
+| Finding | What was wrong | Done (reason code; a test and a mutant each) |
+|---|---|---|
+| agy B1 | `/usr/bin/gpg` as a link to gpg2 STOPs the probe on SLES | the first regular-file candidate is taken; "no regular file among the candidates" |
+| agy B2, codex 5 | `..` STOPs real `$ORIGIN/../lib` loads; chdir paths normalised lexically | D7: realpath of the directory on the node, under an allowed root (`dotdot-outside-roots`, `resolve-failed`); raw and resolved recorded |
+| agy B3, codex 5 | children inherit the cwd; a CLONE_FS thread moves the initial process | after any traced chdir, every relative watched path is `cwd-unknown` |
+| agy B4, codex 6 | O_CREAT without O_TRUNC under W read an existing file unchecked | an output needs O_TRUNC or O_EXCL, under W, and is never a config, xml or so name |
+| agy B5 | shape-check passed a failed members check (my regression) | restored, with a mutant; `CommentScan` |
+| agy B6, codex 14 | `kill -0` on a zombie stalled cleanup 30 s per job; survivors unchecked | zombies are not alive (`alive()`, tested on a real zombie). In practice bash reaps its own jobs and init its orphans, so the stall agy described doesn't arise in a run, and the TERM test can't distinguish the guard. Each job is reaped. D6 survivor scan (cwd under W): KILL, then a STOP if any survives. The cleanup says when the scan, not the tree walk, had to act, and the TERM test requires that it didn't |
+| agy 1, codex 5 | (see B3) | |
+| agy 2 | `..` in chdir bypassed | D7 covers every path |
+| agy 7, codex 8 | duplicate config names gave a false search-order STOP; probes pooled | D4: read path = first existing path of GXMLPATH + search_dirs; probes are records, not rules |
+| codex B3 | another tune's CommonParam.xml blessed by the global manifest | D4 (`search-order`); `gxmlpath` must be exactly the tune's data dir |
+| codex B1 | exe-check bound a preflight, not the run; gntpc unchecked | D1: execve traced, every exec bound (`exec-unbound`); gntpc traced and checked per task |
+| codex B2 | post-run hashes; the kernel follows links without readlink | D2: threat model stated; revision start = end (`revision`); `defining-link` = realpath(p) != p |
+| codex B4 | O_PATH counted as an open; an open is not use | O_PATH excluded; D3′ reduce completeness (`reduce-incomplete`, `reduce-pair-absent`) and the coverage run (`coverage-built`, `coverage-unanswered`, `coverage-none`); any other data-dir read is `other-spline` |
+| codex 7 | orphan resumptions, open-ended pids, undecodable lines passed | `resume-mismatch`, `no-terminal`, `undecodable`, `openat2-resolve`; the same rules in the probe's self-test |
+| agy 9, codex 12 | extra products beside genie_xsec passed members-check | `members-top`: exactly .upsfiles and genie_xsec |
+| agy 10 | ROOT config by lexical location, null hash accepted; a linked W | realpath under the repo, `root-config-unhashed`; W must be its own physical path |
+| agy 11, codex 13 | an empty LD_LIBRARY_PATH entry is the cwd; not recorded | `ld-library-path-empty`; the value and awk's path are recorded |
+| agy 12 | awk via a link from a writable directory | the path itself and its real path must both be under /usr/bin or /bin |
+| agy 13 | B2 created a directory before refusing off scratch | every existing ancestor checked before any mkdir; nothing is written |
+| agy 15, codex 15 | weak types; keys by count only; gated unchecked in the launcher | one exact, typed schema shared by B3's node script and the launcher (a test keeps them equal) |
+| agy 8, codex 16 | genie root's own device; reported values not compared; RPM failure = absent | `genie-mount`; the launcher compares hashes, targets and listings with the pins; `rpm_status` recorded / not-owned / query-failed |
+| agy 14, 19, codex 18 | FAIL+ERROR counted as KILLED; untested wrappers and codes | FAIL with any ERROR is INVALID; each CLI's crash is `internal-error: <type>`, tested; refusal tests assert codes |
+| agy 16 | ignored files in the deploy | D8 |
+| agy 17 | a missing or non-directory .upsfiles in check_tree | `upsfiles:` problems, checked before listing |
+| agy 18 | octal escapes took 8 and 9 | only 0–7 |
+| agy 19 | a benign helper exiting non-zero would STOP | kept as a STOP; if B3 hits one, the binary and args come to the director |
+| agy 20 | PYTHONPATH and friends unchecked | PYTHONPATH, PYTHONSTARTUP and PYTHONUSERBASE refuse at entry |
+| codex 9 | ROOT provenance not bound to a revision | revision start = end in every run; ROOT config hashed |
+| codex 10 | strace builds lacking openat2 or faccessat2 | the probe's self-test runs the exact TRACE_SET, so B1 STOPs on such a build |
+| codex 11 | the seed is in the traces | the seed proposal below |
+| codex 17 | B3 kept event files on a STOP | D5: a trap deletes them on every exit |
+
+## Proposal for cov2d: the seed (codex 11, with the director's ruling)
+
+Every file below stays in W, and the published sums omit it (`pg_lib.SEED_BEARING`). `pg_lib.py publish` runs where the
+seed is known, at the end of pg_generate.sh. It leak-scans the path and bytes of every other file in W for each seed,
+as decimal (zero-padding contains it) and as hex in both cases, then writes `out/PG-PUBLISH-SHA256SUMS`. A hit is a
+STOP that names no seed.
+
+| Artifact | Why seed-bearing | Where it ends up | Checked by |
+|---|---|---|---|
+| `gntp.<seed>.ghep.root` | gevgen's name for the run | deleted by run_gevgen after gntpc; renamed `gntp.ghep.root` by seedfree if gntpc fails | seedfree per task and on every exit; `no_seed_in_any_name` tests |
+| `genie-mcjob-<seed>.status` | gevgen's name for the run | renamed `gevgen.status` | the same |
+| `gevgen.trace`, `gntpc.trace` | the opens of the two files above | stay in W | SEED_BEARING |
+| `gevgen.log`, `gntpc.log`, `task.log`, `task.time` | the run number, the input name, `seed=`, the timed command | stay in W | SEED_BEARING |
+| `run/queue.txt`, `seeds.json`, `out/PG-SHA256SUMS`, `out/logs/*` | the seeds, their hashes, conservative for logs | stay in W | SEED_BEARING |
+| trace-check records | derived: W paths are kept out of the probe list | publishable | the leak scan |
+| `genie_v3.gst.root`, `input-flux.root` | unknown: whether ROOT stores the run number in them | publishable | the leak scan; B3's deleted.json records `holds_public_seed` for each, from the node |
+
+The proposal also covers binary encodings of the seed, which the scan does not search (ROOT compresses its files).
+That one is for cov2d and the director.
+
+## What this host cannot test, and where it is tested
+
+- **The ELOOP itself:** `proc_fd_magic_link`, a B3 shape check.
+- **A final directory on another mount:** `st_dev_final_dir`, a B3 host check (a positive control on /proc).
+- **A file or directory that is itself a mount inside a walked root:** `no_submounts`, from /proc/self/mountinfo.
+- **The end anchor of the result regex:** `result_anchor_real_strace`, the pinned strace's own line for a path holding
+  `) = -1`.
+<!-- absence-ok: 'no real mount or race reaches' scopes this host's test coverage of two guards (each is fault-injected and mutated), not a claim that a result does not exist -->
+- **Two guards no real mount or race reaches on this host, which the director rules UNTESTED-ON-HOST, not
+  equivalent:**
+  - the probe's fstat check on a tool after its regular-file lstat (a race);
+  - list_rel's final-directory device check, which here the entries check always catches first.
+  Each is tested by fault injection (`test_a_tool_that_changes_after_its_lstat`,
+  `test_a_final_directory_on_another_device`) and has its mutant. On the node, B1's probe records `mount_control`, a
+  walk from / into /proc that must refuse; the launcher requires it.
+- **The kill rule:** it is printed at the head of every mutants.log (mutrun.RULE).
+- **GENIE's real behaviour, which the stubs assume:**
+  - which execs occur;
+  - that the initial process opens `$GENIE/lib` as a directory;
+  - gntpc's config reads;
+  - GXMLPATH being exactly the data directory;
+  - the coverage log's lines.
+  B3 STOPs on any surprise, and the director gets the inventory before any rule changes.

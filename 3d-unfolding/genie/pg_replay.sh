@@ -2,17 +2,17 @@
 # pg_replay.sh --workdir R -- COVFIX PG's B3 replay for slot 1 (state/2d-closeout/covfix-20261122/pg/PLAN-SLOT1-PROBE.md,
 # approved; COVFIX rev 12 section 4.1, 783188cd), on a login node, from a git-archive deploy of the pinned commit.
 #
-# It runs pg_generate.sh's checks before generation for G21_11a_00_000, then one public-seed gevgen, each under the
-# same strace prefix and checks:
-#   strace (pinned sha through fd 9, self-test); slot 1's private product and its UPS file; gevgen and gspl2root
-#   against the manifest; run_gevgen_v3.sh reduce (traced) and gen5d_v3.py spline-check; gen5d_v3.py make-flux;
-#   run_gevgen_v3.sh graphs (traced); run_gevgen_v3.sh genie with N=100 and seed 123456789 (public, below the sealed
-#   range's smallest task seed; F1's flux, target and energy range), traced; trace-check of reduce, graphs, gevgen.
-# Then the director's four real-shape checks (pg_verify.py shape-check), which must pass here before slot 2 is
-# generated: the real member listing, the /proc/self/fd magic link, a real O_DIRECTORY open, and slot 2's (G18_02a_00_000)
-# reduce traced and checked at its real CVMFS path (an awk over CVMFS's spline; nothing generated for slot 2).
-# The event and status files of the 100-event run are deleted unread; their sha256 and size are kept in
-# R/deleted.json only. R/replay.json holds the checks' passes and the gated files each traced run opened.
+# It runs pg_generate.sh's checks for slot 1 (G21_11a_00_000) and slot 2 (G18_02a_00_000), each step under the same
+# strace prefix and checks (README-pg.md lists them), in this order:
+#   strace (pinned sha through fd 9, self-test); CVMFS's revision; slot 1's private product and its UPS file; both
+#   slots' setups (programs, awk, LD_LIBRARY_PATH, GXMLPATH); slot 1's reduce, its completeness, the argv check, the
+#   flux and spline check, gspl2root; slot 1's one-event coverage run (public seed, GEVGDriver at DEBUG); one
+#   100-event gevgen and its gntpc at seed 123456789 (public, below the sealed range; F1's flux, target and energy
+#   range); slot 2's reduce at its real CVMFS path, its completeness and its coverage run (nothing generated for slot
+#   2); the four real-shape checks and the three host checks; CVMFS's revision again.
+# All of it must pass here before slot 2 is generated. A trap deletes every event and status file of the public-seed
+# runs on any exit, STOP included; their sha256, size and whether they hold the public seed are kept in R/deleted.json.
+# R/replay.json holds every check's pass, the spline opens, the gated files and the coverage logs' hashes.
 # Exit 0 when every step and check passes, 1 on a STOP, 2 on a refusal before any step.
 set -o pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -22,6 +22,7 @@ SEED=123456789; NEV=100; TO=3600
 PHIT=/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix
 PRIV=/pscratch/sd/j/josephrb/covfix-pg/products   # slot 1's private genie_xsec (run_gevgen_v3.sh, setup_genie_v3.sh)
 REC="$D/docs/orchestration/state/2d-closeout/covfix-20261122/pg/record"
+CVMFS_REPO=/cvmfs/larsoft.opensciencegrid.org
 PY=/usr/bin/python3.11   # the checks' interpreter outside the analysis environment (the probe's; not the node's python3)
 
 refuse() { echo "[replay] refusing: $1" >&2; exit 2; }
@@ -30,14 +31,18 @@ R=$2
 case "$R" in /*) ;; *) refuse "R must be absolute" ;; esac
 [ -d "$R" ] && [ -z "$(ls -A "$R")" ] || refuse "R must be an existing empty directory"
 [ "$(cd "$R" && pwd -P)" = "$(pwd -P)" ] || refuse "cwd is not R"
+[ "$(cd "$R" && pwd -P)" = "$R" ] || refuse "R must be its own physical path"
 [ -n "$TMPDIR" ] && [ -d "$TMPDIR" ] || refuse "TMPDIR must exist"
 [ -x "$PY" ] || refuse "$PY is missing"
-for v in LD_PRELOAD LD_AUDIT BASH_ENV ENV; do   # a loader or shell hook would run code no trace attributes
+for v in LD_PRELOAD LD_AUDIT BASH_ENV ENV PYTHONPATH PYTHONSTARTUP PYTHONUSERBASE; do   # hooks no trace attributes
   [ -z "${!v:-}" ] || refuse "$v is set"
 done
 pin() { "$PY" -I -c 'import json,sys; v=json.load(open(sys.argv[1]))[sys.argv[2]]; print(v or "")' "$HERE/pg_pins.json" "$1"; }
 STRACE=$(pin strace_path); STRACE_SHA=$(pin strace_sha256); DBCONFIG_SHA=$(pin dbconfig_sha256)
-[ -n "$STRACE" ] && [ -n "$STRACE_SHA" ] && [ -n "$DBCONFIG_SHA" ] || refuse "pg_pins.json is not filled (R1)"
+SYSPINS=$("$PY" -I -c 'import json,sys
+v = json.load(open(sys.argv[1])).get("system_tools") or {}
+print("".join(f"--system-pin\n{k}={h}\n" for k, h in sorted(v.items()) if k and h))' "$HERE/pg_pins.json")
+[ -n "$STRACE" ] && [ -n "$STRACE_SHA" ] && [ -n "$DBCONFIG_SHA" ] && [ -n "$SYSPINS" ] || refuse "pg_pins.json is not filled (R1)"
 mkdir -p "$R/logs" "$R/splines" "$R/traces" "$R/work" || refuse "cannot create R's directories"
 need() { [ "$1" -eq 0 ] || { echo "[replay] STOP: $2 rc=$1"; exit 1; }; }
 pass() { echo "[replay] $1: pass"; }
@@ -65,31 +70,69 @@ EOF
 }
 V() { "$PY" -I -B "$HERE/pg_verify.py" "$@"; }
 echo "[replay] start $(date -u +%FT%TZ) host=$(hostname)"
+T2=G18_02a_00_000; Q2=G1802a00000-k250-e1000
+X1="$PRIV/genie_xsec/v3_04_00/NULL/$Q/data"; X2="$CVMFS_REPO/products/genie_xsec/v3_04_00/NULL/$Q2/data"
+W1="$R/work/t0"; C1="$R/coverage/$T"; C2="$R/coverage/$T2"
+DELETED=""
+delete_events() {   # D5: on every exit, once the writers have ended (every step here runs in the foreground), the event
+  # and status files of the public-seed runs are deleted unread; R/deleted.json keeps only each file's sha256 and
+  # size, and whether its bytes hold the public seed (for the seed inventory)
+  [ -z "$DELETED" ] || return 0
+  DELETED=1
+  "$PY" -I - "$R/deleted.json" "$W1" "$C1" "$C2" <<'EOF'
+import glob, hashlib, json, os, sys
+out, dirs = sys.argv[1], sys.argv[2:]
+forms = [b"123456789", format(123456789, "x").encode(), format(123456789, "X").encode()]
+rec = {}
+for key, w in zip(("t0", "coverage_slot1", "coverage_slot2"), dirs):
+    got = {}
+    for p in sorted(glob.glob(os.path.join(w, "genie_v3.gst.root")) + glob.glob(os.path.join(w, "gntp.*.ghep.root"))
+                    + glob.glob(os.path.join(w, "genie-mcjob-*.status")) + glob.glob(os.path.join(w, "input-flux.root"))
+                    + (glob.glob(os.path.join(w, "gevgen.log")) if key != "t0" else [])):
+        h, seen = hashlib.sha256(), False
+        with open(p, "rb") as f:
+            data = f.read()
+        h.update(data)
+        seen = any(x in data for x in forms)
+        name = "gevgen.status" if "mcjob" in p else "gntp.ghep.root" if ".ghep.root" in p else os.path.basename(p)
+        got[name] = {"sha256": h.hexdigest(), "bytes": len(data), "holds_public_seed": seen}
+        os.remove(p)
+    rec[key] = got
+open(out, "w").write(json.dumps(rec, indent=1, sort_keys=True) + "\n")
+EOF
+}
+trap delete_events EXIT
 
 exec 9< "$STRACE" || need 1 "open strace"
 V tool-check --fd 9 --sha256 "$STRACE_SHA" --self-test > "$R/tool_check_strace.json" 2> "$R/logs/tool.log"
 need $? "strace (its pinned sha through the descriptor, and the self-test)"
+V revision --repo "$CVMFS_REPO" > "$R/revision_start.json" 2> "$R/logs/revision.log"
+need $? "the CVMFS revision (start)"
 V members-check --root "$PRIV" --members "$REC/G2111a-members.json" > "$R/members_check.json" 2> "$R/logs/members.log"
 need $? "slot 1's private product against its pinned members"
 V tool-check --path "$PRIV/.upsfiles/dbconfig" --sha256 "$DBCONFIG_SHA" > "$R/dbconfig_check.json" 2> "$R/logs/dbconfig.log"
 need $? "slot 1's UPS database file"
-( source "$HERE/setup_genie_v3.sh" "$T" "$R/splines" > /dev/null 2>&1 || exit 1
-  command -v gevgen && command -v gspl2root || exit 1
-  printf '%s\n' "${LD_LIBRARY_PATH-}" > "$R/ld_library_path.txt"; command -v awk > "$R/awk.txt" ) \
-  > "$R/exe.txt" 2> "$R/logs/exe.log" || need 1 "resolve gevgen and gspl2root"
-V exe-check --manifest "$REC/genie-manifest.json" $(sed 's/^/--path /' "$R/exe.txt") \
-  --ld-library-path "$(cat "$R/ld_library_path.txt")" --system-path "$(cat "$R/awk.txt")" > "$R/exe_check.json" 2>> "$R/logs/exe.log"
+for TU in "$T" "$T2"; do   # each slot's setup: its programs, awk, LD_LIBRARY_PATH and GXMLPATH as the traced steps see them
+  ( source "$HERE/setup_genie_v3.sh" "$TU" "$R/splines" > /dev/null 2>&1 || exit 1
+    command -v gevgen && command -v gspl2root || exit 1
+    printf '%s\n' "${LD_LIBRARY_PATH-}" > "$R/ld_library_path_$TU.txt"; command -v awk > "$R/awk_$TU.txt"
+    printf '%s\n' "${GXMLPATH-}" > "$R/gxmlpath_$TU.txt" ) > "$R/exe_$TU.txt" 2>> "$R/logs/exe.log" || need 1 "resolve the programs ($TU)"
+done
+V exe-check --manifest "$REC/genie-manifest.json" $(sed 's/^/--path /' "$R/exe_$T.txt") \
+  --ld-library-path "$(cat "$R/ld_library_path_$T.txt")" --system-path "$(cat "$R/awk_$T.txt")" > "$R/exe_check.json" 2>> "$R/logs/exe.log"
 need $? "gevgen, gspl2root, awk and LD_LIBRARY_PATH"
 pass "strace, the private product, the programs"
 export PG_STRACE_FD=9
 
 PG_TRACE_DIR="$R/traces" bash "$HERE/run_gevgen_v3.sh" reduce "$T" "$R/splines" > "$R/logs/reduce.log" 2>&1
 need $? "spline reduce"
+V reduce-check --source "$X1/gxspl-NUsmall.xml" --reduced "$R/splines/${T}_CH.xml.gz" --script "$HERE/run_gevgen_v3.sh" \
+  > "$R/reduce_check.json" 2>> "$R/logs/reduce_check.log" || need 1 "reduce completeness"
+V argv-check --script "$HERE/run_gevgen_v3.sh" > "$R/argv_check.json" 2>> "$R/logs/reduce_check.log" || need 1 "the coverage argv"
 ( anaenv a || exit 1
   python3 -B "$HERE/gen5d_v3.py" make-flux --phi-t-dir "$PHIT" --out "$R/flux_phi_t_0_100.root" || exit 1
-  python3 -B "$HERE/gen5d_v3.py" spline-check --tune "$T" --source "$PRIV/genie_xsec/v3_04_00/NULL/$Q/data/gxspl-NUsmall.xml" \
-    --reduced "$R/splines/${T}_CH.xml.gz" --readme "$PRIV/genie_xsec/v3_04_00/NULL/$Q/data/README" \
-    --out "$R/spline_check.json" ) > "$R/logs/flux_and_spline.log" 2>&1
+  python3 -B "$HERE/gen5d_v3.py" spline-check --tune "$T" --source "$X1/gxspl-NUsmall.xml" \
+    --reduced "$R/splines/${T}_CH.xml.gz" --readme "$X1/README" --out "$R/spline_check.json" ) > "$R/logs/flux_and_spline.log" 2>&1
 need $? "flux file or spline check"
 PG_TRACE_DIR="$R/traces" bash "$HERE/run_gevgen_v3.sh" graphs "$T" "$R/splines" "$R/graphs_$T.root" > "$R/logs/graphs.log" 2>&1
 need $? "gspl2root"
@@ -98,53 +141,73 @@ spin() { "$PY" -I -c 'import ast,sys
 t = ast.parse(open(sys.argv[1]).read())
 print(next(ast.literal_eval(n.value) for n in t.body if isinstance(n, ast.Assign) and getattr(n.targets[0], "id", "") == "PG_SPLINE_PINS")[sys.argv[2]][int(sys.argv[3])])' "$HERE/gen5d_v3.py" "$1" "$2"; }
 SRC=$(spin "$T" 0)
-tcheck() {   # tcheck ROLE TRACE SPLINE SPLINE_SHA CWD OUT [ARG ...]
-  V trace-check --trace "$2" --rc 0 --role "$1" --tune "${TT:-$T}" --spline "$3" --spline-sha256 "$4" --cwd "$5" \
+tcheck() {   # tcheck ROLE TRACE SPLINE SPLINE_SHA CWD OUT [ARG ...]; TT selects the tune (slot 1 by default)
+  local tu="${TT:-$T}" sp=() l
+  while IFS= read -r l; do [ -z "$l" ] || sp+=("$l"); done <<< "$SYSPINS"
+  V trace-check --trace "$2" --rc 0 --role "$1" --tune "$tu" --spline "$3" --spline-sha256 "$4" --cwd "$5" \
     --record "$REC/PG-RECORD.json" --manifest "$REC/genie-manifest.json" --private-members "$REC/G2111a-members.json" \
-    --w-root "$R" --w-pin "$R/splines/${T}_CH.xml.gz=$RED" "${@:7}" --out "$6" >> "$R/logs/trace_check.log" 2>&1
+    --w-root "$R" --w-pin "$R/splines/${T}_CH.xml.gz=$RED" --gxmlpath "$(cat "$R/gxmlpath_$tu.txt")" \
+    --xsec-data "$([ "$tu" = "$T" ] && echo "$X1" || echo "$X2")" "${sp[@]}" "${@:7}" --out "$6" >> "$R/logs/trace_check.log" 2>&1
 }
-tcheck reduce "$R/traces/reduce_$T.trace" "$PRIV/genie_xsec/v3_04_00/NULL/$Q/data/gxspl-NUsmall.xml" "$SRC" "$R" \
-  "$R/trace_check_reduce.json" || need 1 "trace check (reduce)"
+tcheck reduce "$R/traces/reduce_$T.trace" "$X1/gxspl-NUsmall.xml" "$SRC" "$R" "$R/trace_check_reduce.json" \
+  || need 1 "trace check (reduce)"
 tcheck graphs "$R/traces/graphs_$T.trace" "$R/splines/${T}_CH.xml.gz" "$RED" "$R" "$R/trace_check_graphs.json" \
   || need 1 "trace check (graphs)"
-pass "reduce, spline check, flux, gspl2root, and their traces"
+pass "reduce, its completeness, spline check, flux, gspl2root, and their traces"
 
-W1="$R/work/t0"; mkdir -p "$W1"
+GENIE_CFG="$CVMFS_REPO/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config"
+V messenger --laconic "$GENIE_CFG/Messenger_laconic.xml" --out "$R/Messenger_pg.xml" > "$R/messenger_check.json" \
+  2>> "$R/logs/coverage.log" || need 1 "the coverage messenger"
+mkdir -p "$C1"
+PG_TRACE_DIR="$C1" bash "$HERE/run_gevgen_v3.sh" coverage "$T" "$R/splines" "$C1" "$R/flux_phi_t_0_100.root" \
+  "$R/Messenger_pg.xml" > "$R/logs/coverage_slot1.log" 2>&1 || need 1 "the coverage run (slot 1)"
+tcheck coverage "$C1/coverage.trace" "$R/splines/${T}_CH.xml.gz" "$RED" "$C1" "$R/trace_check_coverage.json" \
+  || need 1 "trace check (coverage)"
+V coverage-log --log "$C1/gevgen.log" > "$R/coverage_check.json" 2>> "$R/logs/coverage.log" || need 1 "spline coverage (slot 1)"
+pass "slot 1's spline coverage, before its gevgen"
+
+mkdir -p "$W1"
 PG_TRACE_DIR="$W1" timeout "$TO" bash "$HERE/run_gevgen_v3.sh" genie "$T" "$R/splines" "$NEV" "$SEED" "$W1" \
   "$R/flux_phi_t_0_100.root" > "$R/logs/genie.log" 2>&1
 need $? "gevgen ($NEV events, the public seed)"
 tcheck gevgen "$W1/gevgen.trace" "$R/splines/${T}_CH.xml.gz" "$RED" "$W1" "$R/trace_check_gevgen.json" \
   || need 1 "trace check (gevgen)"
-pass "gevgen and its trace"
+tcheck gntpc "$W1/gntpc.trace" "" "" "$W1" "$R/trace_check_gntpc.json" || need 1 "trace check (gntpc)"
+pass "gevgen, gntpc and their traces"
 
-T2=G18_02a_00_000; Q2=G1802a00000-k250-e1000; X2=/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/$Q2/data
 PG_TRACE_DIR="$R/traces" bash "$HERE/run_gevgen_v3.sh" reduce "$T2" "$R/splines" > "$R/logs/reduce_slot2.log" 2>&1
 need $? "slot 2's spline reduce"
 S2=$(spin "$T2" 0)
+RED2=$("$PY" -I -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest())' "$R/splines/${T2}_CH.xml.gz")
 TT=$T2 tcheck reduce "$R/traces/reduce_$T2.trace" "$X2/gxspl-NUsmall.xml" "$S2" "$R" "$R/trace_check_reduce_slot2.json" \
   --pin "$X2/gxspl-NUsmall.xml=$S2" --pin "$X2/README=$(spin "$T2" 1)" || need 1 "trace check (slot 2's reduce)"
+V reduce-check --source "$X2/gxspl-NUsmall.xml" --reduced "$R/splines/${T2}_CH.xml.gz" --script "$HERE/run_gevgen_v3.sh" \
+  > "$R/reduce_check_slot2.json" 2>> "$R/logs/reduce_check.log" || need 1 "reduce completeness (slot 2)"
+mkdir -p "$C2"
+PG_TRACE_DIR="$C2" bash "$HERE/run_gevgen_v3.sh" coverage "$T2" "$R/splines" "$C2" "$R/flux_phi_t_0_100.root" \
+  "$R/Messenger_pg.xml" > "$R/logs/coverage_slot2.log" 2>&1 || need 1 "the coverage run (slot 2)"
+TT=$T2 tcheck coverage "$C2/coverage.trace" "$R/splines/${T2}_CH.xml.gz" "$RED2" "$C2" "$R/trace_check_coverage_slot2.json" \
+  --w-pin "$R/splines/${T2}_CH.xml.gz=$RED2" --pin "$X2/gxspl-NUsmall.xml=$S2" --pin "$X2/README=$(spin "$T2" 1)" \
+  || need 1 "trace check (slot 2's coverage)"
+V coverage-log --log "$C2/gevgen.log" > "$R/coverage_check_slot2.json" 2>> "$R/logs/coverage.log" || need 1 "spline coverage (slot 2)"
+pass "slot 2's reduce at its real path, its completeness and its spline coverage"
+
 V shape-check --fd 9 --members "$REC/G2111a-members.json" --members-check "$R/members_check.json" \
   --tool-check "$R/tool_check_strace.json" --traces "$R/trace_check_reduce.json" "$R/trace_check_graphs.json" \
   "$R/trace_check_gevgen.json" --slot2-reduce "$R/trace_check_reduce_slot2.json" > "$R/shape_check.json" 2> "$R/logs/shape.log"
 need $? "the four real-shape checks"
-pass "slot 2's reduce at its real path, and the four real-shape checks"
+mkdir -p "$R/host"
+V host-check --fd 9 --tmp "$R/host" --root "$CVMFS_REPO/products/genie/v3_04_00" --root "$PRIV" \
+  --root "$CVMFS_REPO/products/genie_xsec/v3_04_00/NULL" > "$R/host_check.json" 2> "$R/logs/host.log"
+need $? "the three host checks"
+V revision --repo "$CVMFS_REPO" > "$R/revision_end.json" 2>> "$R/logs/revision.log"
+need $? "the CVMFS revision (end)"
+"$PY" -I -c 'import json,sys; a, b = (json.load(open(f)) for f in sys.argv[1:]); k = ("revision", "root_hash")
+sys.exit(0 if all(a.get(x) == b.get(x) and a.get(x) for x in k) else 1)' "$R/revision_start.json" "$R/revision_end.json"
+need $? "the CVMFS revision changed during the replay"
+pass "the real-shape and host checks, and the CVMFS revision unchanged"
 
-# the event and status files, deleted unread: sha256 and size kept in R/deleted.json only
-"$PY" -I - "$W1" "$R/deleted.json" <<'EOF' || need 1 "deleting the event and status files"
-import glob, hashlib, json, os, sys
-w, out = sys.argv[1], sys.argv[2]
-rec = {}
-for p in sorted(glob.glob(os.path.join(w, "genie_v3.gst.root")) + glob.glob(os.path.join(w, "gntp.*.ghep.root"))
-                + glob.glob(os.path.join(w, "genie-mcjob-*.status")) + glob.glob(os.path.join(w, "input-flux.root"))):
-    h = hashlib.sha256()
-    with open(p, "rb") as f:
-        for b in iter(lambda: f.read(1 << 20), b""):
-            h.update(b)
-    key = "gevgen.status" if "mcjob" in p else "gntp.ghep.root" if ".ghep.root" in p else os.path.basename(p)
-    rec[key] = {"sha256": h.hexdigest(), "bytes": os.path.getsize(p)}
-    os.remove(p)
-open(out, "w").write(json.dumps(rec, indent=1, sort_keys=True) + "\n")
-EOF
+delete_events || need 1 "deleting the event and status files"
 "$PY" -I - "$R" <<'EOF' > "$R/replay.json" || need 1 "the replay record"
 import json, os, sys
 r = sys.argv[1]
@@ -154,18 +217,25 @@ def load(n):
         return json.loads(t)
     except ValueError:
         return json.loads(t.splitlines()[-1])
-checks = {n: load(n) for n in ("tool_check_strace.json", "members_check.json", "dbconfig_check.json", "exe_check.json",
-                               "trace_check_reduce.json", "trace_check_graphs.json", "trace_check_gevgen.json",
-                               "trace_check_reduce_slot2.json", "shape_check.json")}
-rec = {"schema": "covfix-pg-replay-run/1", "tune": "G21_11a_00_000", "seed": 123456789, "events": 100,
-       "checks": {n: c.get("pass") is True for n, c in checks.items()},
-       "gated": {n: [{"path": g["path"], "sha256": g["sha256"], "pinned_by": g["pinned_by"]} for g in c.get("gated", [])]
-                 for n, c in checks.items() if n.startswith("trace_check")},
-       "spline_opened": {n: c.get("initial_opened_spline") for n, c in checks.items() if n.startswith("trace_check")},
-       "real_shapes": checks["shape_check.json"].get("checks")}
+names = ("tool_check_strace.json", "revision_start.json", "members_check.json", "dbconfig_check.json", "exe_check.json",
+         "reduce_check.json", "argv_check.json", "trace_check_reduce.json", "trace_check_graphs.json",
+         "messenger_check.json", "trace_check_coverage.json", "coverage_check.json", "trace_check_gevgen.json",
+         "trace_check_gntpc.json", "trace_check_reduce_slot2.json", "reduce_check_slot2.json",
+         "trace_check_coverage_slot2.json", "coverage_check_slot2.json", "shape_check.json", "host_check.json",
+         "revision_end.json")
+checks = {n: load(n) for n in names}
+traces = [n for n in names if n.startswith("trace_check")]
+rec = {"schema": "covfix-pg-replay-run/2", "tune": "G21_11a_00_000", "slot2": "G18_02a_00_000", "seed": 123456789,
+       "events": 100, "checks": {n: c.get("pass") is True for n, c in checks.items()},
+       "gated": {n: [{"path": g["path"], "sha256": g["sha256"], "pinned_by": g["pinned_by"]} for g in checks[n].get("gated", [])]
+                 for n in traces},
+       "spline_opened": {n: checks[n].get("initial_opened_spline") for n in traces if n != "trace_check_gntpc.json"},
+       "real_shapes": checks["shape_check.json"].get("checks"), "host": checks["host_check.json"].get("checks"),
+       "coverage_log_sha256": {n: checks[n].get("log_sha256") for n in ("coverage_check.json", "coverage_check_slot2.json")}}
 rec["pass"] = (all(rec["checks"].values()) and all(v is True for v in rec["spline_opened"].values())
                and isinstance(rec["real_shapes"], dict) and len(rec["real_shapes"]) == 4
-               and all(v is True for v in rec["real_shapes"].values()))
+               and all(v is True for v in rec["real_shapes"].values())
+               and isinstance(rec["host"], dict) and len(rec["host"]) == 3 and all(v is True for v in rec["host"].values()))
 print(json.dumps(rec, indent=1, sort_keys=True))
 EOF
 [ "$("$PY" -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["pass"])' "$R/replay.json")" = True ] || need 1 "the replay"

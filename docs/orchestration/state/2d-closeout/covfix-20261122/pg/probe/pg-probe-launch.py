@@ -41,7 +41,7 @@ REMOTE = "env -i PATH=/usr/bin:/bin LC_ALL=C /usr/bin/python3.11 -I -S -B -"
 RC_FOR = {"GO": 0, "STOP": 3}
 SCHEMA = "covfix-pg-probe/4"
 FQRN = "larsoft.opensciencegrid.org"
-TOOL_NAMES = ("strace", "gpg", "gpgconf", "gpg-connect-agent")
+TOOL_NAMES = ("strace", "gpg", "gpgconf", "gpg-connect-agent", "awk")
 GPG_REQUIRED = [(("pass",), True), (("gpg_started",), True), (("confined",), True), (("round_trip_equal",), True),
                 (("decrypt_rc",), 0), (("packet_tags",), [3, 18]), (("tampered", "rc"), 2),
                 (("tampered", "evidence"), True), (("wrong_passphrase", "rc"), 2),
@@ -102,16 +102,20 @@ def receipt_problems(rec, rc, pins):
     want = hashlib.sha256(json.dumps(pins, sort_keys=True).encode()).hexdigest()
     if not _is(rec.get("pins_sha256"), want) or not _is(rec.get("record_sha256"), pins.get("record_sha256")):
         p.append("the receipt's pins are not the probe's")
-    for keys, w in ((("identity", "pass"), True), (("repo", "pass"), True), (("repo", "xattrs", "user.fqrn"), FQRN),
+    for keys, w in ((("identity", "pass"), True), (("mount_control", "pass"), True), (("repo", "pass"), True),
+                    (("repo", "xattrs", "user.fqrn"), FQRN),
                     (("genie", "problems"), []), (("xsec", "problems"), []), (("strace_self_test", "pass"), True)):
         if not _is(_get(rec, *keys), w):
             p.append(f"{'.'.join(keys)} is not {w!r}")
     for section, kind, pk in (("genie", "files", "genie_files"), ("genie", "links", "genie_links"),
                               ("genie", "listings", "genie_listings"), ("xsec", "files", "xsec_files")):
-        got = _get(rec, section, kind)
-        if not isinstance(got, dict) or sorted(got) != sorted(pins.get(pk, {})) \
+        got, want_ = _get(rec, section, kind), pins.get(pk, {})
+        field = {"files": "sha256", "links": "target", "listings": "names"}[kind]
+        if not isinstance(got, dict) or sorted(got) != sorted(want_) \
                 or not all(isinstance(x, dict) and _is(x.get("match"), True) for x in got.values()):
             p.append(f"{section}.{kind} incomplete or not matching")
+        elif not all(got[k].get(field) == want_[k] for k in want_):          # the values, not the node's claim
+            p.append(f"{section}.{kind}: a reported {field} differs from the pin")
     q = _get(rec, "xsec", "qualifiers")
     if not isinstance(q, list) or not all(x + "/" in q for x in pins.get("required_qualifiers", [])):
         p.append("required qualifiers")
@@ -127,9 +131,13 @@ def receipt_problems(rec, rc, pins):
         p.append("tools")
     else:
         for k, t in tools.items():
-            if not isinstance(t, dict) or "problem" in t or not _hex64(t.get("sha256")) \
-                    or not (t.get("rpm_match") is True or t.get("rpm_match") is None):     # 1 == True
+            if not isinstance(t, dict) or "problem" in t or not _hex64(t.get("sha256")):
                 p.append(f"tool {k}")
+            elif not ((t.get("rpm_match") is True and t.get("rpm_status") == "recorded"
+                       and t.get("rpm_digest") == t.get("sha256"))
+                      or (t.get("rpm_match") is None and t.get("rpm_status") == "not-owned"
+                          and t.get("pin_basis") == "first use: no RPM record")):
+                p.append(f"tool {k}: its RPM basis")                       # absent is not a failed query
     for keys, w in GPG_REQUIRED:
         if not _is(_get(rec, "gpg", *keys), w):
             p.append(f"gpg {'.'.join(keys)} is not {w!r}")

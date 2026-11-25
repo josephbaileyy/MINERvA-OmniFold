@@ -1,15 +1,13 @@
-"""mutrun.py -- PG's mutant runner, with the director's kill rule (2026-11-24).
+"""mutrun.py -- PG's mutant runner, with the director's kill rule (2026-11-24; amended 2026-11-25).
 
 A mutant is (file, old, new, what, suite[, count]): `old` must occur exactly `count` times in `file` (default once)
 and is replaced by `new` in a throwaway copy of the repository subset the suites read. Then:
 - the copy must compile (compile() for .py, bash -n for .sh), or the mutant is INVALID;
-- its suite runs under unittest, which reports an assertion failure as FAIL and any other exception as ERROR;
-- KILLED only if at least one test FAILs and the suite exits non-zero, and the log names them; ERRORs alone, a
-  timeout, a non-zero exit with no FAIL, or a FAIL with exit 0 are INVALID, listed separately, and count against the
-  receipt; a clean pass is SURVIVED. The suites assert reason codes, and the code under test turns an unexpected
-  exception into the one reason "internal-error: <type>" that only its wrapper's own test expects, so a crash
-  cannot satisfy a test that expects a particular refusal.
-- every suite runs isolated (python3 -I): no user site, no PYTHONPATH, no current directory on sys.path.
+- its suite runs under unittest, isolated (python3 -I);
+- RULE (printed at the head of every receipt): an import or collection error makes it INVALID whatever else failed;
+  otherwise a FAIL or an ERROR with a non-zero exit KILLS it (the log names the tests); a timeout, or a FAIL with
+  exit 0, is INVALID; a clean pass SURVIVES. The suites assert reason codes, and the code turns an unexpected exception
+  into "internal-error: <type>", which only its wrapper's test expects.
 Every suite must first pass clean on the unmutated copy, or nothing runs.
 """
 import concurrent.futures
@@ -31,7 +29,7 @@ SUITES = {
                                 "test_covfix_pg.py"]),
     "install": (f"{PG}/pg/install", [sys.executable, "-I", "-B", "test_pg_install.py"]),
 }
-TIMEOUT_S = 900
+TIMEOUT_S = 1800   # the driver suite takes ~3.5 min alone, six run at once
 
 
 def sandbox():
@@ -66,12 +64,14 @@ def classify(rc, out, timed_out):
         return "INVALID", "timeout"
     fails = re.findall(r"^FAIL: (\S+) \((\S+?)\)", out, re.M)
     errs = re.findall(r"^ERROR: (\S+) \((\S+?)\)", out, re.M)
-    if fails and rc not in (0, None):
-        return "KILLED", ", ".join(sorted({n for n, _ in fails}))
-    if fails:
-        return "INVALID", f"FAIL reported with exit {rc}"
-    if errs:
-        return "INVALID", "errors only: " + ", ".join(sorted({n for n, _ in errs}))
+    collect = [n for n, c in errs if "_FailedTest" in c or "loader" in c]
+    if collect or re.search(r"^(ImportError|ModuleNotFoundError|SyntaxError)\b", out, re.M):
+        return "INVALID", "an import or collection error: " + ", ".join(sorted(set(collect)) or ["import"])
+    if (fails or errs) and rc not in (0, None):
+        names = sorted({n for n, _ in fails}) + [f"{n} (error)" for n in sorted({n for n, _ in errs})]
+        return "KILLED", ", ".join(names)
+    if fails or errs:
+        return "INVALID", f"FAIL or ERROR reported with exit {rc}"
     if rc != 0:
         return "INVALID", f"exit {rc} with no FAIL"
     return "SURVIVED", ""
@@ -107,8 +107,12 @@ def one(i, m):
         shutil.rmtree(tmp)
 
 
+RULE = "KILL RULE (the director, 2026-11-25): an import or collection error (unittest's _FailedTest, ImportError, ModuleNotFoundError, SyntaxError) makes a mutant INVALID; otherwise a FAIL or an ERROR with a non-zero exit kills (an error raised by the mutated code is detectable behaviour); a timeout, or a FAIL with exit 0, is INVALID; a clean pass SURVIVES. Every suite must pass clean on the unmutated copy first."
+
+
 def main(mutants, jobs=None):
     jobs = jobs or int(os.environ.get("PG_MUTANT_JOBS", "6"))
+    print(RULE)
     tmp = sandbox()
     try:
         for suite in sorted({m[4] for m in mutants}):

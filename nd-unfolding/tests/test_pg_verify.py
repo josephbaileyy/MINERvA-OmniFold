@@ -8,6 +8,7 @@ import hashlib
 import importlib.util
 import io
 import json
+import re
 import os
 import shutil
 import subprocess
@@ -246,13 +247,15 @@ class Trace(Tmp):
         self.W = t / "Wgenie"                      # a W whose own path contains "genie"
         cfg = self.genie / "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config"
         lib = self.genie / "Linux64bit+3.10-2.17-e20-prof/lib"
-        for d in (cfg / "G21_11a", lib, self.rootp / "etc", self.priv / "genie_xsec", self.W / "splines"):
+        for d in (cfg / "G21_11a", cfg / "G18_01a", lib, self.genie / "Linux64bit+3.10-2.17-e20-prof/bin",
+                  self.rootp / "etc", self.priv / "genie_xsec/data", self.W / "splines"):
             d.mkdir(parents=True)
         self.files = {}
         C = "Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config"
         for rel in (f"{C}/G21_11a/ModelConfiguration.xml", f"{C}/G21_11a/EventGenerator.xml",
                     f"{C}/G21_11a/TuneGeneratorList.xml", f"{C}/master_config.xml", f"{C}/SuSAv2MECPXSec.xml",
-                    "Linux64bit+3.10-2.17-e20-prof/lib/libGFwEG-3.04.00.so",
+                    "Linux64bit+3.10-2.17-e20-prof/lib/libGFwEG-3.04.00.so", f"{C}/CommonParam.xml",
+                    f"{C}/G18_01a/CommonParam.xml", "Linux64bit+3.10-2.17-e20-prof/bin/gevgen",
                     "Linux64bit+3.10-2.17-e20-prof/lib/libGFwEG.rootmap"):
             (self.genie / rel).write_text(rel)
             self.files[rel] = str(self.genie / rel)
@@ -269,12 +272,16 @@ class Trace(Tmp):
             "model_configuration": f"{C}/G21_11a/ModelConfiguration.xml", "event_generator": f"{C}/G21_11a/EventGenerator.xml",
             "tune_generator_list": f"{C}/G21_11a/TuneGeneratorList.xml",
             "ccqe": {"registry": {"file": f"{C}/SuSAv2MECPXSec.xml"}},
-            "2p2h": {"registry": {"file": f"{C}/SuSAv2MECPXSec.xml"}}}}}
+            "2p2h": {"registry": {"file": f"{C}/SuSAv2MECPXSec.xml"}},
+            "search_dirs": [f"{C}/G21_11a/G21_11a_00_000", f"{C}/G21_11a", C]}}}
+        self.private = {}
+        self.xdata = str(self.priv / "genie_xsec/data")
         self.C = C
 
     def good_lines(self):
         g, C = self.genie, self.C
-        return [f'100 openat(AT_FDCWD, "{self.spline}", O_RDONLY) = 3',
+        return [f'100 execve("{g}/Linux64bit+3.10-2.17-e20-prof/bin/gevgen", ["gevgen", "-n", "1"], 0x7ffd /* 40 vars */) = 0',
+                f'100 openat(AT_FDCWD, "{self.spline}", O_RDONLY) = 3',
                 f'100 access("{self.priv}/genie_xsec/data/ModelConfiguration.xml", R_OK) = -1 ENOENT (No such file or directory)',
                 f'100 access("{g}/{C}/G21_11a/ModelConfiguration.xml", R_OK) = 0',
                 f'100 openat(AT_FDCWD, "{g}/{C}/G21_11a/ModelConfiguration.xml", O_RDONLY) = 4',
@@ -291,12 +298,13 @@ class Trace(Tmp):
                 '100 openat(AT_FDCWD, "genie-mcjob-123456789.status", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 9',
                 '101 +++ exited with 0 +++', '100 +++ exited with 0 +++']
 
-    def check(self, lines=None, rc=0, role="gevgen", spline_sha=None, text=None, cwd=None):
+    def check(self, lines=None, rc=0, role="gevgen", spline_sha=None, text=None, cwd=None, gxmlpath=None, **kw):
         text = text if text is not None else "\n".join(lines if lines is not None else self.good_lines()) + "\n"
         return V.trace_check(text, rc, role, "G21_11a_00_000", str(self.spline), spline_sha or sha(b"spline"),
-                             cwd or str(self.W), self.record, self.manifest, {}, str(self.W),
+                             cwd or str(self.W), self.record, self.manifest, self.private, str(self.W),
                              {str(self.spline): sha(b"spline")}, genie_root=str(self.genie), repo=str(self.repo),
-                             private_root=str(self.priv))
+                             private_root=str(self.priv), gxmlpath=self.xdata if gxmlpath is None else gxmlpath,
+                             xsec_data=self.xdata, **kw)
 
     def assert_fails(self, rec, want):
         self.assertFalse(rec["pass"])
@@ -311,7 +319,10 @@ class Trace(Tmp):
         self.assertIn(str(self.genie / "Linux64bit+3.10-2.17-e20-prof/lib/libGFwEG.so"), gated)   # via the manifest link
         self.assertNotIn(str(self.W / "flux.root"), gated)                       # W's own "genie" does not gate it
         self.assertEqual([x["path"] for x in rec["root_config"]], [str(self.rootp / "etc/system.rootrc")])
-        self.assertEqual(rec["probes"]["ModelConfiguration.xml"][0]["errno"], "ENOENT")
+        self.assertIn({"call": "access", "path": f"{self.priv}/genie_xsec/data/ModelConfiguration.xml", "ok": False,
+                       "errno": "ENOENT", "initial": True}, rec["probes"])
+        self.assertEqual([(x["bound_by"], x["path"].rsplit("/", 1)[1]) for x in rec["execs"]], [("genie manifest", "gevgen")])
+        self.assertFalse([x for x in rec["probes"] if "genie-mcjob" in x["path"]])      # W's seed-named files stay out
         self.assertEqual(len(rec["defining_files"]), 5)
 
     def test_completeness(self):
@@ -346,36 +357,52 @@ class Trace(Tmp):
         g.insert(1, '100 openat(AT_FDCWD, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3')   # a system file, not config
         self.assertTrue(self.check(g)["pass"])
 
-    def test_search_order_shadow(self):
-        g = self.good_lines()
-        g.insert(2, f'100 access("{self.priv}/genie_xsec/data/EventGenerator.xml", R_OK) = 0')
-        self.assert_fails(self.check(g), "search-order: EventGenerator.xml")
+    def test_search_order(self):
+        # read at the first existing path of GXMLPATH, then the tune's search_dirs (the manifest says what exists)
         g = self.good_lines()
         g.insert(2, f'100 newfstatat(AT_FDCWD, "{self.tmp}/elsewhere/master_config.xml", {{st_mode=S_IFREG}}, 0) = 0')
-        self.assert_fails(self.check(g), "search-order: master_config.xml")
+        self.assertTrue(self.check(g)["pass"])                         # a probe that found a duplicate is not a read
+        self.private = {"genie_xsec/data/EventGenerator.xml": {"type": "file", "sha256": "0" * 64}}
+        self.assert_fails(self.check(), "search-order: EventGenerator.xml read at")      # GXMLPATH shadows the tune's
+        self.private = {}
+        g = self.good_lines()                                          # another tune's CommonParam.xml (codex B3)
+        g.insert(5, f'100 openat(AT_FDCWD, "{self.genie}/{self.C}/G18_01a/CommonParam.xml", O_RDONLY) = 4')
+        self.assert_fails(self.check(g), "search-order: CommonParam.xml read at")
+        g = self.good_lines()
+        g.insert(5, f'100 openat(AT_FDCWD, "{self.genie}/{self.C}/CommonParam.xml", O_RDONLY) = 4')
+        self.assertTrue(self.check(g)["pass"])
+
+    def test_gxmlpath_must_be_the_tunes_data_dir(self):
+        for v in ("", f"{self.xdata}:", f"/elsewhere:{self.xdata}", "/elsewhere"):
+            with self.subTest(v):
+                self.assert_fails(self.check(gxmlpath=v), "gxmlpath:")
 
     def test_defining_files(self):
         g = [ln for ln in self.good_lines() if "TuneGeneratorList" not in ln]
         self.assert_fails(self.check(g), "defining-not-opened:")
-        g = self.good_lines()
-        g.insert(3, f'100 readlink("{self.genie}/{self.C}/G21_11a/ModelConfiguration.xml", "x", 4096) = 1')
-        self.assert_fails(self.check(g), "defining-link:")
+        mc = Path(self.files[f"{self.C}/G21_11a/ModelConfiguration.xml"])     # a link on disk, followed by the kernel
+        mc.rename(mc.with_name("real.xml"))
+        mc.symlink_to("real.xml")
+        self.assert_fails(self.check(), "defining-link:")
+        mc.unlink()
+        mc.with_name("real.xml").rename(mc)
         self.assertTrue(self.check([ln for ln in self.good_lines() if "TuneGeneratorList" not in ln], role="reduce")["pass"])
 
     def test_relative_paths(self):
         g = self.good_lines()
         rel = os.path.relpath(self.files[f"{self.C}/G21_11a/EventGenerator.xml"], self.tmp)     # no '..'
-        g[4] = f'100 openat(AT_FDCWD, "{rel}", O_RDONLY) = 4'
+        self.assertIn("EventGenerator.xml", g[5])
+        g[5] = f'100 openat(AT_FDCWD, "{rel}", O_RDONLY) = 4'
         self.assertTrue(self.check(g, cwd=str(self.tmp))["pass"])                 # against the initial cwd
-        g.insert(4, f'100 chdir("{self.W}") = 0')
-        self.assert_fails(self.check(g, cwd=str(self.tmp)), "defining-not-opened:")   # chdir is followed
+        g.insert(5, f'100 chdir("{self.W}") = 0')
+        self.assert_fails(self.check(g, cwd=str(self.tmp)), "cwd-unknown:")      # after any chdir, relative is unknown
         g = self.good_lines()
         g.insert(1, '100 openat(7, "ModelConfiguration.xml", O_RDONLY) = 3')
         self.assert_fails(self.check(g), "dirfd-relative:")
 
     def test_escapes_and_writes(self):
         self.assertEqual(V._unescape(r"a\"b\\c\x41\101\n"), 'a"b\\cAA\n')
-        ev = V.parse_trace('7 openat(AT_FDCWD, "/a/genie.root", O_WRONLY|O_CREAT, 0644) = 3\n')
+        ev, _ = V.parse_trace('7 openat(AT_FDCWD, "/a/genie.root", O_WRONLY|O_CREAT, 0644) = 3\n')
         self.assertTrue(ev[0]["write_only"] and ev[0]["creat"])
 
 
@@ -489,17 +516,19 @@ class Prefix(Tmp):
         f1 = self.script(F1_RUN, "f1")
         tdir = self.tmp / "traces"
         tdir.mkdir()
-        for mode, name in (("genie", "gevgen"), ("graphs", "graphs_G18_10a_02_11b"), ("reduce", "reduce_G18_10a_02_11b")):
+        for mode, traced in (("genie", (("gevgen", "gevgen"), ("gntpc", "gntpc"))),
+                             ("graphs", (("graphs_G18_10a_02_11b", "gspl2root"),)),
+                             ("reduce", (("reduce_G18_10a_02_11b", "awk"),))):
             with self.subTest(mode):
                 plain = self.go(f1, mode)[1]
                 p, argv = self.go(pg, mode, fd=True, PG_STRACE_FD="FD", PG_TRACE_DIR=str(tdir))
-                cmd = {"genie": "gevgen", "graphs": "gspl2root", "reduce": "awk"}[mode]
                 st = [x for x in argv if x.startswith("strace ")]
-                self.assertEqual(len(st), 1, argv)
-                self.assertEqual(st[0], f"strace -f -q -e {V.TRACE_SET} -o {tdir}/{name}.trace "
-                                        + next(x for x in plain if x.startswith(cmd + " ")))
-                i = argv.index(st[0])
-                self.assertTrue(argv[i + 1].startswith(cmd + " "))             # strace exec'd the command directly
+                self.assertEqual(len(st), len(traced), argv)                    # gntpc too (D1)
+                for line, (name, cmd) in zip(st, traced):
+                    self.assertEqual(line, f"strace -f -q -e {V.TRACE_SET} -o {tdir}/{name}.trace "
+                                           + next(x for x in plain if x.startswith(cmd + " ")))
+                    i = argv.index(line)
+                    self.assertTrue(argv[i + 1].startswith(cmd + " "))         # strace exec'd the command directly
                 self.assertEqual([x for x in argv if not x.startswith("strace ")], plain)
 
     def test_invalid_inputs_refuse(self):
@@ -642,7 +671,8 @@ class TraceGaps(Trace):
                            (f'100 openat(AT_FDCWD, "{self.tmp}/evil.xml", O_RDONLY|O_CREAT, 0644) = 3', "gated-mismatch"),
                            (f'100 openat(AT_FDCWD, "{self.tmp}/O_WRONLY.xml", O_RDONLY) = 3', "gated-mismatch"),
                            (f'100 openat(AT_FDCWD, "{self.tmp}/x) = -1.xml", O_RDONLY) = 3', "gated-mismatch"),
-                           (f'100 openat(AT_FDCWD, "{self.tmp}/a, O_WRONLY.xml", O_RDONLY) = 3', "gated-mismatch")):
+                           (f'100 openat(AT_FDCWD, "{self.tmp}/a, O_WRONLY.xml", O_RDONLY) = 3', "gated-mismatch"),
+                           (f'100 openat(AT_FDCWD, "{self.tmp}/a,O_PATH,b.xml", O_RDONLY) = 3', "gated-mismatch")):
             with self.subTest(line):
                 g = self.good_lines()
                 g.insert(1, line)
@@ -650,8 +680,22 @@ class TraceGaps(Trace):
 
     def test_outputs_under_w_are_not_reads(self):
         g = self.good_lines()
-        g.insert(1, f'100 openat(AT_FDCWD, "{self.W}/genie-out.xml", O_RDWR|O_CREAT|O_TRUNC, 0644) = 3')
+        g.insert(1, f'100 openat(AT_FDCWD, "{self.W}/genie-out.root", O_RDWR|O_CREAT|O_TRUNC, 0644) = 3')
         self.assertTrue(self.check(g)["pass"])
+        for line, code in ((f'100 openat(AT_FDCWD, "{self.W}/evil.xml", O_RDWR|O_CREAT, 0644) = 3', "gated-mismatch"),
+                           (f'100 openat(AT_FDCWD, "{self.W}/evil.xml", O_RDWR|O_CREAT|O_TRUNC, 0644) = 3', "gated-mismatch"),
+                           (f'100 openat(AT_FDCWD, "{self.W}/.rootrc", O_RDONLY|O_CREAT, 0644) = 3', "config-unpinned"),
+                           (f'100 openat(AT_FDCWD, "{self.W}/genie-x.root", O_RDWR|O_CREAT, 0644) = 3', "gated-mismatch"),
+                           (f'100 openat(AT_FDCWD, "{self.W}/evil.so", O_RDWR|O_CREAT|O_TRUNC, 0755) = 3', "so-outside-roots"),
+                           (f'100 openat(AT_FDCWD, "{self.W}/x.root", O_RDONLY|O_CREAT, 0644) = 3', None)):
+            with self.subTest(line):                                   # O_CREAT alone may open an existing file
+                g = self.good_lines()
+                g.insert(1, line)
+                rec = self.check(g)
+                if code:
+                    self.assertIn(code, self.codes(rec))
+                else:
+                    self.assertTrue(rec["pass"], rec["problems"])
 
     def test_unresumed_calls_and_child_exits(self):
         g = self.good_lines()
@@ -671,9 +715,29 @@ class TraceGaps(Trace):
         self.assertIn("cwd-unknown", self.codes(self.check(g)))
 
     def test_dotdot_and_dirfd(self):
+        # a '..' path is resolved on the node (realpath of its directory), recorded raw and resolved, then gated
+        lib = f"{self.genie}/Linux64bit+3.10-2.17-e20-prof/lib"
         g = self.good_lines()
-        g.insert(1, f'100 openat(AT_FDCWD, "{self.tmp}/lnk/../{self.C}/master_config.xml", O_RDONLY) = 3')
-        self.assertIn("dotdot", self.codes(self.check(g)))
+        g.insert(2, f'100 openat(AT_FDCWD, "{lib}/../GENIE-Generator/config/master_config.xml", O_RDONLY) = 3')
+        rec = self.check(g)
+        self.assertTrue(rec["pass"], rec["problems"])
+        self.assertEqual(rec["dotdot"], [{"raw": f"{lib}/../GENIE-Generator/config/master_config.xml",
+                                          "resolved": os.path.realpath(self.files[f"{self.C}/master_config.xml"])}])
+        (self.genie / "alias").symlink_to(f"Linux64bit+3.10-2.17-e20-prof/lib")             # the kernel follows it
+        g = self.good_lines()
+        g.insert(2, f'100 openat(AT_FDCWD, "{self.genie}/alias/../GENIE-Generator/config/master_config.xml", O_RDONLY) = 3')
+        rec = self.check(g)
+        self.assertTrue(rec["pass"], rec["problems"])              # lexically it would be {genie}/GENIE-Generator/...
+        g = self.good_lines()
+        g.insert(2, f'100 openat(AT_FDCWD, "{self.tmp}/lnk/../x.xml", O_RDONLY) = 3')          # no such directory
+        self.assertIn("resolve-failed", self.codes(self.check(g)))
+        (self.tmp / "sub").mkdir()
+        g = self.good_lines()
+        g.insert(2, f'100 openat(AT_FDCWD, "{self.tmp}/sub/../rootlogon.C", O_RDONLY) = 3')
+        self.assertIn("dotdot-outside-roots", self.codes(self.check(g)))
+        g = self.good_lines()
+        g.insert(2, f'100 access("{self.tmp}/lnk/../x.xml", R_OK) = -1 ENOENT (No such file or directory)')
+        self.assertTrue(self.check(g)["pass"])                            # a failed probe is only recorded
         for raw in ("libGFwEG.so", "etc/custom.conf", "ModelConfiguration.xml"):
             with self.subTest(raw):
                 g = self.good_lines()
@@ -719,7 +783,9 @@ class Shapes(Tmp):
         slot2 = {"pass": True, "spline": self.S2, "initial_opened_spline": True,
                  "gated": [{"path": self.S2, "pinned_by": "exact pin", "match": True}]}
         return [7, members, {"pass": True, "n_pinned": 1}, {"pass": True, "fd": 7},
-                [{"pass": True, "directories_opened": 0}, {"pass": True, "directories_opened": 2}], slot2]
+                [{"pass": True, "role": "reduce", "directories": []},
+                 {"pass": True, "role": "gevgen", "directories": [{"path": "/elsewhere", "initial": True},
+                                                                  {"path": V.GENIE_LIB, "initial": True}]}], slot2]
 
     def test_each_shape_fails_alone(self):
         fd = os.open(__file__, os.O_RDONLY)
@@ -734,7 +800,10 @@ class Shapes(Tmp):
             self.assertEqual(why, {"proc_fd_magic_link": "untested-host: no /proc/self/fd"})
         for name, change in (("real_members_listing", lambda a: a[1].update({"genie_xsec": {"type": "dir"}})),
                              ("real_members_listing", lambda a: a[2].update({"n_pinned": 2})),
-                             ("directory_open_recorded", lambda a: a[4][1].update({"directories_opened": 0})),
+                             ("directory_open_recorded", lambda a: a[4][1].update({"directories": []})),
+                             ("directory_open_recorded", lambda a: a[4][1]["directories"][1].update({"initial": False})),
+                             ("directory_open_recorded", lambda a: a[4][1].update({"role": "graphs"})),
+                             ("real_members_listing", lambda a: a[2].update({"pass": False})),
                              ("directory_open_recorded", lambda a: a[4][0].update({"pass": False})),
                              ("slot2_reduce_real_path", lambda a: a[5].update({"spline": "/elsewhere/gxspl-NUsmall.xml"})),
                              ("slot2_reduce_real_path", lambda a: a[5]["gated"][0].update({"pinned_by": "genie manifest"})),
@@ -754,7 +823,11 @@ class Shapes(Tmp):
         self.assertTrue(V.system_tool_problems([str(p)])[0].startswith("system-tool:"))
 
     def test_ld_library_path(self):
-        self.assertEqual(V.exe_problems([], {}, ld_library_path="/usr/lib64::/cvmfs/larsoft.opensciencegrid.org/x"), [])
+        self.assertEqual(V.exe_problems([], {}, ld_library_path="/usr/lib64:/cvmfs/larsoft.opensciencegrid.org/x"), [])
+        for v in ("/usr/lib64::/cvmfs/larsoft.opensciencegrid.org/x", "/usr/lib64:", ":/usr/lib64"):
+            with self.subTest(v):                                       # an empty entry is the working directory
+                self.assertEqual([p.split(":")[0] for p in V.exe_problems([], {}, ld_library_path=v)],
+                                 ["ld-library-path-empty"])
         probs = V.exe_problems([], {}, ld_library_path=f"/usr/lib64:{self.tmp}")
         self.assertEqual(len(probs), 1)
         self.assertTrue(probs[0].startswith("ld-library-path:"))
@@ -790,3 +863,275 @@ class MoreRules(Trace):
                 g = self.good_lines()
                 g.insert(1, f'100 openat(AT_FDCWD, "{path}", O_RDONLY) = 3')
                 self.assertIn(code, self.codes(self.check(g)))
+
+
+# ------------------------------------------------------------------- round 3: agy and codex-school reads of 5f141f7a
+
+class Round3(Trace):
+    def codes(self, rec):
+        return {p.split(":", 1)[0] for p in rec["problems"]}
+
+    def test_every_exec_is_bound(self):
+        g = self.good_lines()
+        g.insert(1, f'101 execve("{self.tmp}/bin/sh", ["sh"], 0x1 /* 3 vars */) = 0')
+        (self.tmp / "bin").mkdir()
+        (self.tmp / "bin/sh").write_text("sh")
+        self.assertIn("exec-unbound", self.codes(self.check(g)))
+        rec = self.check(g, system_pins={os.path.realpath(self.tmp / "bin/sh"): sha(b"sh")})
+        self.assertTrue(rec["pass"], rec["problems"])
+        self.assertIn("system pin", [x["bound_by"] for x in rec["execs"]])
+        self.assertIn("exec-unbound", self.codes(self.check(g, system_pins={str(self.tmp / "bin/sh"): "0" * 64})))
+        g = self.good_lines()
+        g.insert(1, f'101 execve("{self.tmp}/nope", ["x"], 0x1 /* 3 vars */) = -1 ENOENT (No such file or directory)')
+        self.assertNotIn("exec-unbound", self.codes(self.check(g)))     # a failed exec ran nothing
+        Path(self.files["Linux64bit+3.10-2.17-e20-prof/bin/gevgen"]).write_text("other")
+        self.assertIn("exec-unbound", self.codes(self.check()))
+
+    def test_o_path_and_openat2_resolve(self):
+        g = self.good_lines()
+        g[1] = f'100 openat(AT_FDCWD, "{self.spline}", O_RDONLY|O_PATH) = 3'
+        self.assertIn("spline-not-opened", self.codes(self.check(g)))
+        g = self.good_lines()
+        g.insert(2, f'100 openat2(AT_FDCWD, "{self.tmp}/x", {{flags=O_RDONLY, resolve=RESOLVE_IN_ROOT}}, 24) = 3')
+        self.assertIn("openat2-resolve", self.codes(self.check(g)))
+
+    def test_strict_parsing(self):
+        for extra, code in (('100 openat(AT_FDCWD, "/x", O_RDONLY', "undecodable"),
+                            ('100 mmap(NULL, 4096, PROT_READ) = 0x7f', "undecodable"),
+                            ('100 <... openat resumed>) = 3', "resume-mismatch"),
+                            ('100 rename("/a", "/b") = 0', "undecodable")):
+            with self.subTest(extra):
+                g = self.good_lines()
+                g.insert(2, extra)
+                self.assertIn(code, self.codes(self.check(g)))
+        g = self.good_lines()
+        g.insert(2, '101 stat("/x" <unfinished ...>')
+        g.insert(3, '101 <... access resumed>) = 0')
+        self.assertIn("resume-mismatch", self.codes(self.check(g)))
+        g = self.good_lines()
+        g.insert(2, '102 access("/etc/hosts", R_OK) = 0')                   # 102 never exits
+        self.assertIn("no-terminal", self.codes(self.check(g)))
+
+    def test_any_chdir_makes_relative_paths_unknown(self):
+        g = self.good_lines()                                               # a CLONE_FS thread moves everyone
+        g.insert(2, f'101 chdir("{self.tmp}") = 0')
+        g.insert(3, '100 openat(AT_FDCWD, "ModelConfiguration.xml", O_RDONLY) = 4')
+        self.assertIn("cwd-unknown", self.codes(self.check(g)))
+
+    def test_other_reads_under_a_data_dir(self):
+        g = self.good_lines()
+        g.insert(2, f'100 openat(AT_FDCWD, "{self.priv}/genie_xsec/data/isotopes.cfg", O_RDONLY) = 3')
+        self.assertIn("other-spline", self.codes(self.check(g)))
+
+    def test_gntpc_and_coverage_roles(self):
+        g = [ln for ln in self.good_lines() if str(self.spline) not in ln]
+        rec = V.trace_check("\n".join(g) + "\n", 0, "gntpc", "G21_11a_00_000", None, None, str(self.W), self.record,
+                            self.manifest, {}, str(self.W), {}, genie_root=str(self.genie), repo=str(self.repo),
+                            private_root=str(self.priv))
+        self.assertTrue(rec["pass"], rec["problems"])
+        g.insert(1, f'100 openat(AT_FDCWD, "{self.spline}", O_RDONLY) = 3')
+        rec = V.trace_check("\n".join(g) + "\n", 0, "gntpc", "G21_11a_00_000", None, None, str(self.W), self.record,
+                            self.manifest, {}, str(self.W), {}, genie_root=str(self.genie), repo=str(self.repo),
+                            private_root=str(self.priv))
+        self.assertIn("other-spline", self.codes(rec))                  # gntpc reads no spline
+        self.assertTrue(self.check(role="coverage")["pass"])
+        self.assertIn("defining-not-opened", self.codes(
+            self.check([ln for ln in self.good_lines() if "TuneGeneratorList" not in ln], role="coverage")))
+
+    def test_root_config_bound_by_real_path_and_hash(self):
+        (self.tmp / "elsewhere").mkdir()
+        (self.tmp / "elsewhere/system.rootrc").write_text("x")
+        rc = self.rootp / "etc/system.rootrc"
+        rc.unlink()
+        rc.symlink_to(self.tmp / "elsewhere/system.rootrc")
+        self.assertIn("config-outside-roots", self.codes(self.check()))
+        rc.unlink()
+        rc.write_text("rootrc")
+
+        def sha_no_root(p):
+            if p.endswith("system.rootrc"):
+                raise OSError("unreadable")
+            return V.sha_path(p)
+        self.assertIn("root-config-unhashed", self.codes(self.check(sha=sha_no_root)))
+
+    def test_a_system_tool_by_its_own_path(self):
+        (self.tmp / "bin").mkdir()
+        (self.tmp / "bin/awk").symlink_to("/bin/sh")
+        self.assertTrue(V.system_tool_problems([str(self.tmp / "bin/awk")])[0].startswith("system-tool:"))
+        self.assertEqual(V.system_tool_problems(["/bin/sh"]), [])
+        self.assertTrue(V.system_tool_problems([""])[0].startswith("system-tool:"))
+
+    def test_the_products_top_level_is_exact(self):
+        pins = real_shape_tree(self.tmp / "p")
+        os.chmod(self.tmp / "p", 0o755)
+        (self.tmp / "p/genie").mkdir()
+        self.assertIn("members-top", {x.split(":")[0] for x in V.members_check(str(self.tmp / "p"), pins)})
+
+
+class Coverage(Tmp):
+    LACONIC = RECORD_DIR / "Messenger_laconic.xml"
+
+    def test_the_messenger_differs_from_laconic_by_exactly_the_gevgdriver_line(self):
+        lac = self.LACONIC.read_bytes()
+        self.assertEqual(sha(lac), V.LACONIC_SHA256)
+        man = json.loads((RECORD_DIR / "genie-manifest.json").read_text())["members"]
+        self.assertEqual(man["genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/Messenger_laconic.xml"]
+                         ["sha256"], V.LACONIC_SHA256)
+        out = V.messenger(lac)
+        self.assertEqual(sha(out), V.MESSENGER_SHA256)
+        a, b = lac.split(b"\n"), out.split(b"\n")
+        self.assertEqual(len(a), len(b))
+        diff = [(x, y) for x, y in zip(a, b) if x != y]
+        self.assertEqual(diff, [V.MESSENGER_LINE])
+        self.assertIn(b'msgstream="GEVGDriver"', diff[0][1])
+        for bad, code in ((lac + b" ", "messenger-laconic"),):
+            with self.subTest(code), self.assertRaises(V.Fail) as cm:
+                V.messenger(bad)
+            self.assertTrue(str(cm.exception).startswith(code))
+
+    def test_the_messenger_cli_writes_once(self):
+        import contextlib
+        out = self.tmp / "m.xml"
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(V.main(["messenger", "--laconic", str(self.LACONIC), "--out", str(out)]), 0)
+            self.assertEqual(V.main(["messenger", "--laconic", str(self.LACONIC), "--out", str(out)]), 1)
+        self.assertEqual(sha(out.read_bytes()), V.MESSENGER_SHA256)
+
+    def test_the_coverage_log(self):
+        need = lambda x: f"1700 NOTICE GEVGDriver : [n] <CreateSplines (646)> : Need xsec spline for {x}"
+        found = "1700 DEBUG GEVGDriver : [n] <CreateSplines (657)> : Spline was found"
+        built = "1700 DEBUG GEVGDriver : [n] <CreateSplines (651)> : The spline wasn't loaded at initialization. I can build..."
+        self.assertEqual(V.coverage_problems("\n".join([need("a"), found, need("b"), found])), [])
+        for lines, code in (([need("a"), found, need("b")], "coverage-unanswered"), ([need("a"), built], "coverage-built"),
+                            (["nothing"], "coverage-none"), ([found, need("a"), found], "coverage-orphan"),
+                            ([need("a"), need("b"), found], "coverage-unanswered")):
+            with self.subTest(code):
+                self.assertIn(code, {p.split(":")[0] for p in V.coverage_problems("\n".join(lines))})
+
+
+SPL = '<spline name="genie::X/Default/nu:{nu};tgt:{tgt};N:2112;proc:Weak[CC],QES;" nknots="{k}">\n<knot> 1 2 </knot>\n</spline>\n'
+
+
+class Reduce(Tmp):
+    def write(self, name, entries, gz=False):
+        import gzip
+        body = "<genie_xsec_spline_list>\n" + "".join(SPL.format(nu=n, tgt=t, k=k) for n, t, k in entries) + "</genie_xsec_spline_list>\n"
+        p = self.tmp / name
+        (gzip.open(p, "wt") if gz else open(p, "w")).write(body)
+        return str(p)
+
+    def test_the_argv_pairs_are_f1s(self):
+        self.assertEqual(V.argv_pairs((GENIE / "run_gevgen_v3.sh").read_text()),
+                         {("14", "1000060120"), ("14", "1000010010")})
+        self.assertEqual(V.argv_problems((GENIE / "run_gevgen_v3.sh").read_text()), [])
+
+    def test_completeness(self):
+        pairs = {("14", "1000060120"), ("14", "1000010010")}
+        src = self.write("src.xml", [(14, 1000060120, 30), (14, 1000010010, 30), (12, 1000060120, 30), (14, 1000080160, 30)])
+        self.assertEqual(V.reduce_problems(src, self.write("ok.xml.gz", [(14, 1000060120, 30), (14, 1000010010, 30),
+                                                                          (12, 1000060120, 30)], gz=True), pairs), [])
+        for name, red, code in (("a pair dropped", [(14, 1000060120, 30)], "reduce-incomplete"),
+                                ("knots differ", [(14, 1000060120, 29), (14, 1000010010, 30)], "reduce-incomplete")):
+            with self.subTest(name):
+                self.assertIn(code, {p.split(":")[0] for p in V.reduce_problems(src, self.write(name + ".xml", red), pairs)})
+        # the argv names a pair the reduced file lacks (oxygen): a STOP
+        with_o = pairs | {("14", "1000080160")}
+        self.assertIn("reduce-incomplete", {p.split(":")[0] for p in V.reduce_problems(
+            src, self.write("ok2.xml", [(14, 1000060120, 30), (14, 1000010010, 30)]), with_o)})
+        self.assertIn("reduce-pair-absent", {p.split(":")[0] for p in V.reduce_problems(
+            src, src, pairs | {("16", "1000010010")})})
+
+    def test_argv_rules(self):
+        s = (GENIE / "run_gevgen_v3.sh").read_text()
+        cov = '    N=1; SEED=123456789; MSG="$MSGFILE"'
+        for name, bad in (("a second gevgen", s.replace("    pg_trace coverage\n", "    pg_trace coverage\n    gevgen -n 1\n")),
+                          ("coverage with another seed", s.replace(cov, cov.replace("123456789", "99"))),
+                          ("coverage with more events", s.replace(cov, cov.replace("N=1", "N=2"))),
+                          ("genie mode with another messenger", s.replace('    MSG="$GENIE/config/Messenger_laconic.xml"',
+                                                                         '    MSG="$GENIE/config/Messenger.xml"')),
+                          ("genie mode's SEED from another argument", s.replace(
+                              "    TUNE=$1; SPLDIR=$2; N=$3; SEED=$4; WORK=$5; FLUX=$6",
+                              "    TUNE=$1; SPLDIR=$2; N=$3; SEED=$5; WORK=$5; FLUX=$6")),
+                          ("genie mode outside gevgen_cmd", s.replace("    gevgen_cmd > gevgen.log 2>&1\n", "", 1))):
+            with self.subTest(name):
+                self.assertTrue(V.argv_problems(bad))
+
+
+class Wrappers(Tmp):
+    """Each CLI's unexpected exception is the one reason "internal-error: <type>"."""
+
+    def run_main(self, argv):
+        import contextlib
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            rc = V.main(argv)
+        return rc, json.loads(out.getvalue().splitlines()[-1])
+
+    def test_each_cli_fails_closed_with_its_own_reason(self):
+        bad = self.tmp / "bad.json"
+        bad.write_text('{"members": 5}')
+        man = self.tmp / "man.json"
+        man.write_text('{"members": 5}')
+        for argv in (["members-check", "--root", str(self.tmp), "--members", str(bad)],
+                     ["exe-check", "--manifest", str(man), "--path", "/x"],
+                     ["shape-check", "--fd", "3", "--members", str(bad), "--members-check", str(bad),
+                      "--tool-check", str(bad), "--traces", str(bad), "--slot2-reduce", str(bad)],
+                     ["reduce-check", "--source", str(bad), "--reduced", str(bad), "--script", str(bad)],
+                     ["argv-check", "--script", str(self.tmp)],
+                     ["coverage-log", "--log", str(self.tmp)]):
+            with self.subTest(argv[0]):
+                rc, rec = self.run_main(argv)
+                self.assertEqual(rc, 1)
+                self.assertTrue(rec["problems"] and all(p.startswith(("internal-error: ", "reduce-", "argv-",
+                                                                      "coverage-")) for p in rec["problems"]),
+                                rec["problems"])
+        rc, rec = self.run_main(["members-check", "--root", str(self.tmp), "--members", str(bad)])
+        self.assertEqual(rec["problems"], ["internal-error: TypeError"])          # len(5): the exact reason
+
+
+class Host(Tmp):
+    @unittest.skipUnless(os.path.isdir("/proc/self"), "untested on this host: no /proc (macOS); recorded on the node")
+    def test_host_checks_on_linux(self):
+        c, why = V.host_checks(3, str(self.tmp), ["/cvmfs/x"], mountinfo_text="")
+        self.assertTrue(c["st_dev_final_dir"])
+
+    def test_a_submount_inside_a_root_and_no_proc(self):
+        if not os.path.isdir("/proc/self"):
+            c, why = V.host_checks(3, str(self.tmp), ["/cvmfs/x"])
+            self.assertEqual(set(why.values()), {"untested-host: no /proc"})
+            self.assertFalse(any(c.values()))
+        mi = ("36 35 98:0 / /cvmfs/x/products/genie rw - cvmfs2 cvmfs2 ro\n37 35 98:0 / /other rw - ext4 /dev ro\n"
+              "38 35 98:0 / /cvmfs/x rw - cvmfs2 cvmfs2 ro\n39 35 98:0 / /cvmfs/x/a\\040b rw - tmpfs t rw\n")
+        self.assertEqual(V.submounts(mi, ["/cvmfs/x"]), ["/cvmfs/x/a b", "/cvmfs/x/products/genie"])
+        self.assertEqual(V.submounts(mi, ["/elsewhere"]), [])
+
+
+class CommentScan(unittest.TestCase):
+    """The bug that bit three times: an inline comment appended to a line swallowed the code that continued it.
+    Fails on a comment that reads as code: a call, a comparison, a boolean, or a tuple element."""
+    CODE = re.compile(r"\.get\(|\bis (True|False|None)\b|\b(and|or) [a-z_]+[.(\[]|\", \"|None\)|\)\)\s*$|^\s*\(\"")
+
+    def offenders(self, text):
+        import tokenize
+        out = []
+        for tok in tokenize.generate_tokens(io.StringIO(text).readline):
+            if tok.type == tokenize.COMMENT and self.CODE.search(tok.string[1:]):
+                out.append((tok.start[0], tok.string))
+        return out
+
+    def test_no_comment_swallowed_code(self):
+        files = [GENIE / n for n in ("pg_verify.py", "pg_lib.py", "gen5d_v3.py")] + [
+            Path(__file__).parent / n for n in ("test_pg_verify.py", "test_covfix_pg.py")] + sorted(
+            (REPO / "docs/orchestration/state/2d-closeout/covfix-20261122/pg").glob("*/*.py")) + [
+            REPO / "docs/orchestration/state/2d-closeout/covfix-20261122/pg/mutrun.py"]
+        files = [f for f in files if f.exists()]                 # mutrun's sandbox copies a subset
+        self.assertGreaterEqual(len(files), 8)
+        bad = {str(f.relative_to(REPO)): self.offenders(f.read_text()) for f in files}
+        self.assertEqual({k: v for k, v in bad.items() if v}, {})
+
+    def test_the_scan_catches_the_three_past_cases(self):
+        for text in ('x = (a and b   # no container and mcheck.get("pass") is True\n     and c)\n',
+                     'E = [("a", "dir", None),   # the real shape ("genie_xsec/v3_04_00/NULL", "dir", None),\n     ("b",)]\n',
+                     'y = f(1)   # and g(2))\n'):
+            with self.subTest(text[:30]):
+                self.assertTrue(self.offenders(text), text)

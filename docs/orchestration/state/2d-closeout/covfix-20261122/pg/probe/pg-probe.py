@@ -62,11 +62,12 @@ DBCONFIG_REL = "products/.upsfiles/dbconfig"
 GNUPG_PARENT = "/tmp"
 RUN_USER = "/run/user"
 TOOLS = {"strace": ("/usr/bin/strace",), "gpg": ("/usr/bin/gpg", "/usr/bin/gpg2"), "gpgconf": ("/usr/bin/gpgconf",),
-         "gpg-connect-agent": ("/usr/bin/gpg-connect-agent",)}
+         "gpg-connect-agent": ("/usr/bin/gpg-connect-agent",),
+         "awk": ("/usr/bin/gawk", "/bin/gawk", "/usr/bin/awk")}      # the reduce's awk, exec'd under strace: pinned (D1)
 RPM = ("/usr/bin/rpm", "/bin/rpm")
 LOCAL_FS = ("tmpfs", "ext4", "xfs", "btrfs", "ext3")
 TRACE_SET = ("trace=open,openat,openat2,access,faccessat,faccessat2,stat,lstat,newfstatat,statx,readlink,readlinkat,"
-             "chdir,fchdir")
+             "chdir,fchdir,execve")
 ENCRYPT = ["--batch", "--yes", "--pinentry-mode", "loopback", "--passphrase-fd", "3", "--no-symkey-cache",
            "--symmetric", "--cipher-algo", "AES256", "--s2k-digest-algo", "SHA512", "--force-mdc"]
 DECRYPT = ["--batch", "--pinentry-mode", "loopback", "--passphrase-fd", "3", "--no-symkey-cache", "--decrypt"]
@@ -247,8 +248,11 @@ def sha_rel(rootfd, rel):
 def link_rel(rootfd, rel):
     dfd, name = _walk(rootfd, rel)
     try:
-        if not stat.S_ISLNK(os.stat(name, dir_fd=dfd, follow_symlinks=False).st_mode):
+        st = os.stat(name, dir_fd=dfd, follow_symlinks=False)
+        if not stat.S_ISLNK(st.st_mode):
             raise Unverified(f"{rel} is not a link")
+        if st.st_dev != os.fstat(rootfd).st_dev:
+            raise Unverified(f"{rel} is on another mount")
         return os.readlink(name, dir_fd=dfd)
     finally:
         os.close(dfd)
@@ -278,6 +282,20 @@ def list_rel(rootfd, rel):
                 raise Unverified(f"{rel}/{n} is another mount")
             out.append(n + "/" if stat.S_ISDIR(st.st_mode) else n)
         return out
+    finally:
+        os.close(fd)
+
+
+def mount_control(root="/", rel="proc"):
+    """A positive control, on the node: list_rel from / into /proc (another mount) must refuse."""
+    fd = os.open(root, os.O_RDONLY | O_DIRECTORY)
+    try:
+        list_rel(fd, rel)
+        return {"pass": False, "refused": None}
+    except Unverified as e:
+        return {"pass": "another mount" in str(e), "refused": str(e)}
+    except OSError as e:
+        return {"pass": False, "refused": f"{type(e).__name__}"}
     finally:
         os.close(fd)
 
@@ -329,7 +347,7 @@ def verify_repo(repo, mounts_text, xattr=read_xattr):
     return rec
 
 
-def verify_genie(genie_root, pins):
+def verify_genie(genie_root, pins, repo=None):
     rec = {"files": {}, "links": {}, "listings": {}, "problems": []}
     if os.path.realpath(genie_root) != genie_root:
         rec["problems"].append(f"genie-realpath: {genie_root} is not its own real path")
@@ -338,6 +356,10 @@ def verify_genie(genie_root, pins):
         rfd = os.open(genie_root, os.O_RDONLY | O_DIRECTORY | O_NOFOLLOW)
     except OSError as e:
         rec["problems"].append(f"genie-open: {genie_root}: {e.strerror}")
+        return rec
+    if repo is not None and os.fstat(rfd).st_dev != os.stat(repo, follow_symlinks=False).st_dev:
+        os.close(rfd)                                         # a mount at the genie product itself
+        rec["problems"].append(f"genie-mount: {genie_root} is not on the repository's device")
         return rec
     try:
         for rel, want in pins["genie_files"].items():
@@ -402,8 +424,10 @@ def verify_xsec(repo, pins):
 def _rpm_digest(path, rpm_run):
     """(package, the digest RPM records for path, rpm -V's output for path) or Nones."""
     out = rpm_run(["-qf", "--qf", "%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\\n", path])
-    if out is None or out[0] != 0 or not out[1].strip() or "not owned" in out[1]:
-        return None, None, None
+    if out is not None and out[0] != 0 and "not owned" in out[1]:
+        return None, None, None                                  # no RPM record: the first use pins it
+    if out is None or out[0] != 0 or not out[1].strip():
+        raise Unverified("the RPM query failed")                 # not the same as no record
     pkg = out[1].strip().splitlines()[0]
     dump = rpm_run(["-q", "--dump", pkg])
     digest = None
@@ -436,10 +460,11 @@ def open_tools(tools=TOOLS, rpm_run=None):
     rpm_run = rpm_run or _rpm_runner()
     fds, rec = {}, {}
     for name, paths in tools.items():
-        path = next((p for p in paths if os.path.lexists(p)), None)
+        path = next((p for p in paths if os.path.lexists(p) and stat.S_ISREG(os.lstat(p).st_mode)), None)   # gpg -> gpg2
         r = {"path": path}
         if path is None:
-            r["problem"] = "missing"
+            r["problem"] = ("no regular file among the candidates" if any(os.path.lexists(x) for x in paths)
+                            else "missing")
             rec[name] = r
             continue
         try:
@@ -460,8 +485,15 @@ def open_tools(tools=TOOLS, rpm_run=None):
             h.update(b)
         os.lseek(fd, 0, os.SEEK_SET)
         r["sha256"] = h.hexdigest()
-        r["rpm_package"], r["rpm_digest"], r["rpm_verify"] = _rpm_digest(path, rpm_run)
-        if r["rpm_digest"] is None:
+        try:
+            r["rpm_package"], r["rpm_digest"], r["rpm_verify"] = _rpm_digest(path, rpm_run)
+            r["rpm_status"] = "recorded" if r["rpm_digest"] else "not-owned"
+        except Unverified:
+            r["rpm_package"], r["rpm_digest"], r["rpm_verify"], r["rpm_status"] = None, None, None, "query-failed"
+            r["problem"] = "the RPM query failed"
+        if r.get("problem"):
+            r["rpm_match"], r["pin_basis"] = None, None
+        elif r["rpm_digest"] is None:
             r["rpm_match"], r["pin_basis"] = None, "first use: no RPM record"
         else:
             r["rpm_match"], r["pin_basis"] = r["rpm_digest"] == r["sha256"], "RPM's recorded digest"
@@ -843,7 +875,7 @@ def _mounts():
 
 
 def probe(ident=identity, repo=REPO, genie_root=GENIE_ROOT, pins=None, mounts=_mounts, xattr=read_xattr,
-          tools=TOOLS, rpm_run=None, gpg=gpg_check, self_test=strace_self_test):
+          tools=TOOLS, rpm_run=None, gpg=gpg_check, self_test=strace_self_test, control=None):
     pins = pins or PINS
     rec = {"schema": SCHEMA, "start_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
            "pins_sha256": hashlib.sha256(json.dumps(pins, sort_keys=True).encode()).hexdigest(),
@@ -860,10 +892,13 @@ def probe(ident=identity, repo=REPO, genie_root=GENIE_ROOT, pins=None, mounts=_m
         rec["stops"] = [f"mounts: {e}"]
         rec["verdict"] = "STOP"
         return rec
+    rec["mount_control"] = (control or mount_control)()
+    if not rec["mount_control"]["pass"]:
+        stops.append("mount-control: a walk into /proc did not refuse at its final directory")
     rec["repo"] = verify_repo(repo, mounts_text, xattr)
     stops += [f"repo: {p}" for p in rec["repo"]["problems"]]
     if rec["repo"]["pass"]:
-        rec["genie"] = verify_genie(genie_root, pins)
+        rec["genie"] = verify_genie(genie_root, pins, repo)
         stops += [f"genie: {p}" for p in rec["genie"]["problems"]]
         rec["xsec"] = verify_xsec(repo, pins)
         stops += [f"genie_xsec: {p}" for p in rec["xsec"]["problems"]]

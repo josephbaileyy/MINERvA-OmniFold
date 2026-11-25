@@ -139,14 +139,15 @@ class Seeds(unittest.TestCase):
             for rel in (f"out/prep/bridged/{t}.json", f"out/prep/ratios/L-5D-PV/{t}.json", f"out/gen5d/{t}_xsec5d.npz"):
                 (self.tmp / rel).parent.mkdir(parents=True, exist_ok=True)
                 (self.tmp / rel).write_text("x")
-        checks = list(pg_lib.CHECKS) + [f"out/trace_check_{r}_{t}.json" for r in ("reduce", "graphs")
-                                        for t in PG_TUNES] + [f"out/work/u{u}/t{k}/trace_check.json"
-                                                              for u in (0, 1) for k in range(7)] + [
-            f"out/exe_check_{t}.json" for t in PG_TUNES]
+        checks = list(pg_lib.CHECKS) + [f"out/trace_check_{r}_{t}.json" for r in ("reduce", "graphs", "coverage")
+                                        for t in PG_TUNES] + [f"out/work/u{u}/t{k}/{n}.json" for u in (0, 1)
+                                                              for k in range(7) for n in ("trace_check", "trace_check_gntpc")] + [
+            f"out/{c}_{t}.json" for c in ("exe_check", "reduce_check", "coverage_check") for t in PG_TUNES] + [
+            "out/argv_check.json", "out/messenger_check.json", "out/revision_start.json", "out/revision_end.json"]
         for c in checks:
             (self.tmp / c).parent.mkdir(parents=True, exist_ok=True)
             (self.tmp / c).write_text('{"check": "x", "pass": true}\n' if "trace" not in c else '{\n "pass": true\n}\n')
-        self.assertEqual(len(checks), 23)
+        self.assertEqual(len(checks), 3 + 2 * (6 + 14) + 4)
         for broken in ('{"pass": false}\n', "not json\n"):          # a failed or unreadable check refuses
             (self.tmp / checks[5]).write_text(broken)
             self.assertEqual(quiet(pg_lib.main, argv)[0], 2)
@@ -155,7 +156,7 @@ class Seeds(unittest.TestCase):
         (self.tmp / checks[5]).write_text('{\n "pass": true\n}\n')
         self.assertEqual(quiet(pg_lib.main, argv)[0], 0)
         rec = json.loads((self.tmp / "PRODUCTS.json").read_text())
-        self.assertEqual(len(rec["checks"]), 23)
+        self.assertEqual(len(rec["checks"]), 47)
         self.assertTrue(all(rec["checks"].values()))
         self.assertEqual([(p["u"], p["truth"], p["bridged"]) for p in rec["products"]],
                          [(0, "genie_v3_g21", "out/prep/bridged/genie_v3_g21.json"),
@@ -314,12 +315,17 @@ case "$1" in
   reduce) mkdir -p "$3"; echo s > "$3/$2_CH.xml.gz"; echo t > "$PG_TRACE_DIR/reduce_$2.trace" ;;
   graphs) echo g > "$4"; echo l > "${4%.root}.log"; echo t > "$PG_TRACE_DIR/graphs_$2.trace" ;;
   genie) mkdir -p "$6"; cd "$6"; echo "[v3] genie $2 N=$4 seed=$5"; echo l > gevgen.log; echo l > gntpc.log
-         echo t > "$PG_TRACE_DIR/gevgen.trace"
+         echo t > "$PG_TRACE_DIR/gevgen.trace"; echo t > "$PG_TRACE_DIR/gntpc.trace"
          echo st > "genie-mcjob-$5.status"
+         [ -z "$PG_STUB_LEAK" ] || echo x > "leak-$5.txt"
+         [ -z "$PG_STUB_ORPHAN" ] || [ "$5" != "${PG_STUB_ORPHAN}" ] || { ( sleep 60 & echo $! > "$PG_STUB_ORPHAN_PID" ) ; }
          [ -n "$PG_STUB_SLOW" ] && { sleep "$PG_STUB_SLOW"; [ -z "$PG_STUB_MARK" ] || echo late >> "$PG_STUB_MARK"; }
          [ "$5" = "${PG_STUB_FAIL_SEED:-none}" ] && { echo ghep > "gntp.$5.ghep.root"; exit 1; }
          [ "$5" = "${PG_STUB_NOGST_SEED:-none}" ] || echo gst > genie_v3.gst.root
          echo f > input-flux.root ;;
+  coverage) mkdir -p "$4"; cd "$4"; echo "Need xsec spline for a" > gevgen.log; echo st > genie-mcjob-123456789.status
+         echo g > gntp.123456789.ghep.root; echo f > input-flux.root; echo t > "$PG_TRACE_DIR/coverage.trace"
+         [ -z "$PG_STUB_COVERAGE_EXTRA" ] || echo x > extra.root ;;
 esac
 '''
 STUB_V3 = r'''import sys, os, json
@@ -335,7 +341,7 @@ elif a[0] == "convert":
     if not os.environ.get("PG_STUB_NO_META"): open(arg("--out")[:-4] + ".meta.json", "w").write("{}")
 ''' + "PG_SPLINE_PINS = " + repr({"G21_11a_00_000": ("a" * 64, "b" * 64, "v"), "G18_02a_00_000": ("c" * 64, "d" * 64, "v")}) + "\n"
 STUB_VERIFY = r'''import sys, os
-log = open(os.environ["PG_STUB_LOG"], "a"); log.write("pg_verify " + " ".join(sys.argv[1:]) + "\n")
+log = open(os.environ["PG_STUB_LOG"], "a"); log.write("pg_verify " + " ".join(sys.argv[1:]) + "\n"); log.flush()
 a = sys.argv[1:]
 if a[0] == "trace-check":
     opened = "false" if os.environ.get("PG_STUB_NO_SPLINE") else "true"
@@ -343,6 +349,15 @@ if a[0] == "trace-check":
 fail = os.environ.get("PG_STUB_VERIFY_FAIL")
 if fail and fail in " ".join(a):
     print('{"pass": false}'); sys.exit(1)
+if a[0] == "messenger":
+    open(a[a.index("--out") + 1], "x").write("messenger")
+if a[0] == "revision":
+    n = sum(1 for ln in open(os.environ["PG_STUB_LOG"]) if ln.startswith("pg_verify revision"))
+    rev = "2" if os.environ.get("PG_STUB_REVISION_CHANGE") and n >= 2 else "1"
+    print('{"pass": true, "revision": "%s", "root_hash": "h"}' % rev); sys.exit(0)
+if a[0] == "host-check":
+    n = 2 if os.environ.get("PG_STUB_TWO_HOST") else 3
+    print('{"pass": true, "checks": {%s}}' % ", ".join('"h%d": true' % i for i in range(n))); sys.exit(0)
 if a[0] == "shape-check":
     n = 3 if os.environ.get("PG_STUB_THREE_SHAPES") else 4
     print('{"pass": true, "checks": {%s}}' % ", ".join('"s%d": true' % i for i in range(n))); sys.exit(0)
@@ -401,7 +416,7 @@ class Generate(unittest.TestCase):
     """pg_generate.sh against a throwaway git deploy with stubbed pipeline steps."""
 
     def setUp(self):
-        self.tmp = Path(tempfile.mkdtemp(prefix="pg-gen-", dir="/tmp"))
+        self.tmp = Path(os.path.realpath(tempfile.mkdtemp(prefix="pg-gen-", dir="/tmp")))   # W must be physical
         self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
         self.dep = self.tmp / "deploy"
         g = self.dep / "3d-unfolding/genie"
@@ -437,7 +452,8 @@ class Generate(unittest.TestCase):
         (self.sysbin / "timeout").chmod(0o755)
         (self.sysbin / "strace").write_text(STRACE)
         (g / "pg_pins.json").write_text(json.dumps({"strace_path": str(self.sysbin / "strace"),
-                                                    "strace_sha256": "e" * 64, "dbconfig_sha256": "f" * 64}))
+                                                    "strace_sha256": "e" * 64, "dbconfig_sha256": "f" * 64,
+                                                    "system_tools": {"/usr/bin/gawk": "a" * 64}}))
         git = ["git", "-C", str(self.dep), "-c", "user.name=t", "-c", "user.email=t@t"]
         subprocess.run(git[:3] + ["init", "-q"], check=True)
         subprocess.run(git + ["add", "-A"], check=True)
@@ -467,11 +483,11 @@ class Generate(unittest.TestCase):
         self.assertIn("[pg] the deploy unchanged: pass", out)
         self.assertIn("[pg] the required inventory: pass", out)
         tenv = [ln for ln in self.log.read_text().splitlines() if ln.startswith("trace-env ")]
-        self.assertEqual(len(tenv), 2 + 2 + 14)                     # every pipeline step traced, on descriptor 9
+        self.assertEqual(len(tenv), 2 + 2 + 2 + 14)                 # reduce, graphs, coverage, tasks: all on fd 9
         self.assertTrue(all(ln.endswith(" fd=9 dir=set") for ln in tenv), tenv)
         self.assertEqual(pg_lib.inventory_problems(str(self.W), pg_lib.inventory()), [])
         checks = json.loads((self.W / "PRODUCTS.json").read_text())["checks"]
-        self.assertEqual(len(checks), 3 + 2 * (3 + 7))
+        self.assertEqual(len(checks), 3 + 2 * (6 + 2 * 7) + 4)
         self.assertTrue(all(checks.values()))
         self.assertIn("[pg] generation: pass (14 gst)", out)
         log = self.log.read_text().splitlines()
@@ -492,6 +508,9 @@ class Generate(unittest.TestCase):
         self.assertIn("/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1802a00000-k250-e1000/"
                       "data/README", checks[1])
         ver = [ln.split() for ln in log if ln.startswith("pg_verify ")]
+        self.assertEqual([v[1] for v in ver[:2]], ["tool-check", "revision"])     # the CVMFS revision right after strace
+        self.assertEqual([v[1] for v in ver if v[1] == "revision"], ["revision", "revision"])   # and at the end
+        ver = [v for v in ver if v[1] != "revision"]
         self.assertEqual([v[1] for v in ver[:5]], ["tool-check", "members-check", "tool-check", "exe-check", "exe-check"])
         for v in ver[3:5]:                                        # the programs as each tune's setup resolves them
             self.assertEqual([v[i + 1].rsplit("/", 1)[1] for i, x in enumerate(v) if x == "--path"], ["gevgen", "gspl2root"])
@@ -509,7 +528,14 @@ class Generate(unittest.TestCase):
         self.assertEqual(ver[0][ver[0].index("--sha256") + 1], "e" * 64)
         self.assertEqual(ver[2][ver[2].index("--sha256") + 1], "f" * 64)
         tc = [v for v in ver if v[1] == "trace-check"]
-        self.assertEqual(sorted(v[v.index("--role") + 1] for v in tc), ["gevgen"] * 14 + ["graphs"] * 2 + ["reduce"] * 2)
+        self.assertEqual(sorted(v[v.index("--role") + 1] for v in tc),
+                         ["coverage"] * 2 + ["gevgen"] * 14 + ["gntpc"] * 14 + ["graphs"] * 2 + ["reduce"] * 2)
+        first_gen_i = next(i for i, ln in enumerate(self.log.read_text().splitlines()) if ln.startswith("run_gevgen_v3 genie"))
+        cov_i = [i for i, ln in enumerate(self.log.read_text().splitlines()) if "--role coverage" in ln]
+        self.assertTrue(cov_i and max(cov_i) < first_gen_i)                      # coverage before any sealed seed
+        for v in tc:                                                             # GXMLPATH and the system pins, always
+            self.assertIn("--gxmlpath", v)
+            self.assertEqual(v[v.index("--system-pin") + 1], "/usr/bin/gawk=" + "a" * 64)
         first_gen = next(i for i, ln in enumerate(log) if ln.startswith("run_gevgen_v3 genie"))
         last_pre = max(i for i, ln in enumerate(log) if ln.startswith("pg_verify trace-check") and "--role graphs" in ln)
         self.assertLess(last_pre, first_gen)                                    # conditions 2 and 3 before generation
@@ -642,17 +668,95 @@ class Generate(unittest.TestCase):
         e = {"PATH": f"/usr/bin:/bin:/usr/sbin:/sbin:{self.sysbin}", "HOME": str(self.tmp),
              "TMPDIR": str(self.W / "tmp"), "PG_DEPLOY_PIN": self.pin, "PG_STUB_LOG": str(self.log),
              "PG_STUB_BIN": str(self.bin), "PG_STUB_DEPLOY": str(self.dep), "PG_STUB_SLOW": "3", "PG_STUB_MARK": str(mark)}
+        out = open(self.tmp / "term.out", "w")
         proc = subprocess.Popen(["bash", str(self.dep / "3d-unfolding/genie/pg_generate.sh"), "--workdir", str(self.W),
                                  "--seeds", str(self.W / "seeds.json")], cwd=self.W, env=e, stdin=subprocess.DEVNULL,
-                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                stdout=out, stderr=subprocess.DEVNULL)
         t0 = time.time()
         while len(list(self.W.rglob("genie-mcjob-*.status"))) < 14 and time.time() - t0 < 20:
             time.sleep(0.05)
         os.kill(proc.pid, signal.SIGTERM)
-        self.assertEqual(proc.wait(timeout=40), 143)
+        self.assertEqual(proc.wait(timeout=25), 143)                      # no 30 s stall on a zombie job
+        out.close()
+        self.assertNotIn("outlived their trees", (self.tmp / "term.out").read_text())   # the walk, not the backstop
         time.sleep(4)
         self.assertFalse(mark.exists(), "a task kept running after the script ended")
         self.no_seed_in_any_name()
+
+    def test_round3_stops(self):
+        for env, msg in (({"PG_STUB_REVISION_CHANGE": "1"}, "[pg] STOP: the CVMFS revision changed during the run"),
+                         ({"PG_STUB_COVERAGE_EXTRA": "1"}, "[pg] STOP: the coverage run's outputs"),
+                         ({"PG_STUB_LEAK": "1"}, "[pg] STOP: the publish set and its leak scan")):
+            with self.subTest(msg):
+                for d in ("out", "run", "PRODUCTS.json"):
+                    q = self.W / d
+                    shutil.rmtree(q) if q.is_dir() else q.unlink() if q.exists() else None
+                if self.log.exists():
+                    self.log.unlink()
+                p = self.run_gen(**env)
+                self.assertEqual(p.returncode, 1, p.stdout + p.stderr)
+                self.assertIn(msg, p.stdout)
+                if "leak" in msg:
+                    self.assertFalse((self.W / "out/PG-PUBLISH-SHA256SUMS").exists())
+                    for t_ in seeds()["tunes"]:                          # the refusal names no seed
+                        self.assertFalse(any(str(x) in (self.W / "out/logs/publish.log").read_text()
+                                             for x in t_["task_seeds"]))
+
+    def test_round3_refusals(self):
+        p = self.run_gen(PYTHONPATH="/x")
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("refusing: PYTHONPATH is set", p.stderr)
+        link = self.tmp / "Wlink"
+        link.symlink_to(self.W)
+        p = self.run_gen(cwd=link, args=["--workdir", str(link), "--seeds", str(link / "seeds.json")],
+                         TMPDIR=str(link / "tmp"))
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("W must be its own physical path", p.stderr)
+        (self.dep / ".git/info").mkdir(parents=True, exist_ok=True)
+        (self.dep / ".git/info/exclude").write_text("*.pyc\n")
+        (self.dep / "3d-unfolding/genie/x.pyc").write_text("x")              # an ignored file in the deploy
+        p = self.run_gen()
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("the deploy is not the pinned commit, or is modified", p.stderr)
+
+    def test_unfilled_system_pins_refuse(self):
+        g = self.dep / "3d-unfolding/genie/pg_pins.json"
+        d = json.loads(g.read_text())
+        d["system_tools"] = {}
+        g.write_text(json.dumps(d))
+        git = ["git", "-C", str(self.dep), "-c", "user.name=t", "-c", "user.email=t@t"]
+        subprocess.run(git + ["commit", "-qam", "unpin"], check=True)
+        pin = subprocess.run(git[:3] + ["rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+        p = self.run_gen(PG_DEPLOY_PIN=pin)
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("pg_pins.json is not filled (R1)", p.stderr)
+
+    def test_an_orphaned_task_process_is_killed(self):
+        import time
+        pidf = self.tmp / "orphan.pid"
+        p = self.run_gen(PG_STUB_ORPHAN=str(seeds()["tunes"][0]["task_seeds"][0]), PG_STUB_ORPHAN_PID=str(pidf))
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        pid = int(pidf.read_text())
+        time.sleep(0.5)
+        alive = subprocess.run(["ps", "-o", "stat=", "-p", str(pid)], capture_output=True, text=True).stdout.strip()
+        self.assertTrue(alive in ("",) or alive.startswith("Z"), f"orphan {pid} still running: {alive}")
+
+    def test_alive_does_not_count_a_zombie(self):
+        # pg_generate.sh's own alive(), on a real zombie: a parent that never waits on its exited child. (In the run
+        # itself bash reaps its jobs and init its orphans, so the guard is exercised here, directly.)
+        import time
+        src = (GENIE / "pg_generate.sh").read_text()
+        fn = src[src.index("alive() {"):src.index("\n}\n", src.index("alive() {")) + 3]
+        p = subprocess.Popen([sys.executable, "-c", "import os, time\npid = os.fork()\nif pid == 0:\n    os._exit(0)\n"
+                              "print(pid, flush=True)\ntime.sleep(20)"], stdout=subprocess.PIPE, text=True)
+        self.addCleanup(p.kill)
+        child = int(p.stdout.readline())
+        time.sleep(0.5)
+        st = subprocess.run(["ps", "-o", "stat=", "-p", str(child)], capture_output=True, text=True).stdout.strip()
+        self.assertTrue(st.startswith("Z"), st)                               # a real zombie
+        rc = subprocess.run(["bash", "-c", fn + f"\nalive {child}"]).returncode
+        self.assertEqual(rc, 1)
+        self.assertEqual(subprocess.run(["bash", "-c", fn + f"\nalive {p.pid}"]).returncode, 0)     # its live parent
 
     def test_an_untracked_file_in_the_deploy_refuses(self):
         (self.dep / "3d-unfolding/genie/sitecustomize.py").write_text("x")
@@ -740,7 +844,10 @@ class Generate(unittest.TestCase):
 
     def test_a_failed_trace_check_stops(self):
         for fail, msg, gen in (("--role graphs", "trace check (graphs", False), ("--role reduce", "trace check (reduce", False),
-                               ("--role gevgen", "trace check (gevgen", True)):
+                               ("--role coverage", "trace check (coverage", False), ("--role gevgen", "trace check (gevgen", True),
+                               ("--role gntpc", "trace check (gntpc", True), ("coverage-log", "spline coverage", False),
+                               ("reduce-check", "reduce completeness", False), ("argv-check", "the coverage argv", False),
+                               ("messenger", "the coverage messenger", False)):
             with self.subTest(fail):
                 for d in ("out", "run"):
                     shutil.rmtree(self.W / d, ignore_errors=True)
@@ -780,24 +887,42 @@ class Replay(unittest.TestCase):
         self.assertEqual(len(gen), 1)
         self.assertEqual(gen[0][2:6], ["G21_11a_00_000", str(self.R / "splines"), "100", "123456789"])
         tenv = [ln for ln in log if ln.startswith("trace-env ")]
-        self.assertEqual(len(tenv), 4)                                  # slot 2's reduce too
+        self.assertEqual(len(tenv), 6)                        # reduce x2, graphs, coverage x2, genie: all on fd 9
         self.assertTrue(all(ln.endswith(" fd=9 dir=set") for ln in tenv))
-        self.assertEqual(sorted(ln.split("--role ")[1].split()[0] for ln in log if "trace-check" in ln),
-                         ["gevgen", "graphs", "reduce", "reduce"])
+        roles = [ln.split("--role ")[1].split()[0] for ln in log if "trace-check" in ln]
+        self.assertEqual(sorted(roles), ["coverage", "coverage", "gevgen", "gntpc", "graphs", "reduce", "reduce"])
+        order = [ln.split()[1] for ln in log if ln.startswith("run_gevgen_v3 ")]
+        self.assertLess(order.index("coverage"), order.index("genie"))          # coverage before the gevgen
         s2 = [ln for ln in log if "trace-check" in ln and "--tune G18_02a_00_000" in ln]
         x2 = "/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1802a00000-k250-e1000/data"
-        self.assertEqual(len(s2), 1)
+        self.assertEqual(len(s2), 2)                                            # slot 2's reduce and coverage
         self.assertIn(f"--spline {x2}/gxspl-NUsmall.xml --spline-sha256 {'c' * 64} ", s2[0])
-        self.assertIn(f"--pin {x2}/gxspl-NUsmall.xml={'c' * 64} --pin {x2}/README={'d' * 64} ", s2[0])
+        for ln in s2:
+            self.assertIn(f"--pin {x2}/gxspl-NUsmall.xml={'c' * 64} --pin {x2}/README={'d' * 64} ", ln)
+            self.assertIn(f"--xsec-data {x2} ", ln)
         self.assertTrue(any(ln.startswith("pg_verify tool-check --fd 9 ") for ln in log))
+        self.assertTrue(any(ln.startswith("pg_verify host-check --fd 9 ") for ln in log))
         rec = json.loads((self.R / "replay.json").read_text())
         self.assertTrue(rec["pass"])
-        self.assertEqual(len(rec["checks"]), 9)
-        self.assertEqual(len(rec["real_shapes"]), 4)
+        self.assertEqual(len(rec["checks"]), 21)
+        self.assertEqual((len(rec["real_shapes"]), len(rec["host"])), (4, 3))
+        self.assertEqual(len(rec["spline_opened"]), 6)
         gone = json.loads((self.R / "deleted.json").read_text())
-        self.assertEqual(sorted(gone), ["genie_v3.gst.root", "gevgen.status", "input-flux.root"])
-        self.assertEqual([q.name for q in (self.R / "work/t0").iterdir() if q.name.endswith((".root", ".status"))], [])
+        self.assertEqual(sorted(gone), ["coverage_slot1", "coverage_slot2", "t0"])
+        self.assertEqual(sorted(gone["t0"]), ["genie_v3.gst.root", "gevgen.status", "input-flux.root"])
+        self.assertEqual(sorted(gone["coverage_slot1"]), ["gevgen.log", "gevgen.status", "gntp.ghep.root", "input-flux.root"])
+        for d, ends in (("work/t0", (".root", ".status")), ("coverage/G21_11a_00_000", (".root", ".status", ".log")),
+                        ("coverage/G18_02a_00_000", (".root", ".status", ".log"))):    # t0's logs stay: a public seed
+            self.assertEqual([q.name for q in (self.R / d).iterdir() if q.name.endswith(ends)], [])
         self.assertNotIn("123456789", json.dumps(gone))
+
+    def test_a_stop_still_deletes_the_events(self):
+        p = self.run_replay(PG_STUB_VERIFY_FAIL="--role gntpc")           # after the gevgen, before the record
+        self.assertEqual(p.returncode, 1, p.stdout)
+        self.assertIn("[replay] STOP: trace check (gntpc)", p.stdout)
+        gone = json.loads((self.R / "deleted.json").read_text())        # the trap ran on the STOP
+        self.assertIn("genie_v3.gst.root", gone["t0"])
+        self.assertEqual([q.name for q in (self.R / "work/t0").iterdir() if q.name.endswith((".root", ".status"))], [])
 
     def test_stops(self):
         for fail, msg in (("--self-test", "strace"), ("members-check", "slot 1's private product"),
@@ -852,7 +977,7 @@ class Replay(unittest.TestCase):
                 self.assertFalse(re.search(rf"(\$\{{?{v}\b|^\s*{v}=)", src, re.M), (f, v))
 
     def test_a_replay_record_that_fails_stops(self):
-        for k in ("PG_STUB_NO_SPLINE", "PG_STUB_THREE_SHAPES"):    # every check exits 0, but the record falls short
+        for k in ("PG_STUB_NO_SPLINE", "PG_STUB_THREE_SHAPES", "PG_STUB_TWO_HOST"):   # each exits 0; the record falls short
             with self.subTest(k):
                 shutil.rmtree(self.R)
                 self.R.mkdir()
@@ -861,7 +986,13 @@ class Replay(unittest.TestCase):
                 self.assertIn("[replay] STOP: the replay rc=1", p.stdout)
 
     def test_shape_and_slot2_failures_stop(self):
-        for fail, msg in (("--tune G18_02a_00_000", "trace check (slot 2's reduce)"), ("shape-check", "the four real-shape")):
+        for fail, msg in (("--role reduce --tune G18_02a_00_000", "trace check (slot 2's reduce)"),
+                          ("shape-check", "the four real-shape"), ("host-check", "the three host checks"),
+                          ("--role coverage --tune G21_11a", "trace check (coverage)"),
+                          ("--role coverage --tune G18", "trace check (slot 2's coverage)"),
+                          ("--role gntpc", "trace check (gntpc)"), ("coverage-log", "spline coverage (slot 1)"),
+                          ("reduce-check", "reduce completeness"), ("argv-check", "the coverage argv"),
+                          ("messenger", "the coverage messenger"), ("revision", "the CVMFS revision (start)")):
             with self.subTest(fail):
                 shutil.rmtree(self.R)
                 self.R.mkdir()
@@ -889,3 +1020,37 @@ class Replay(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Leak(unittest.TestCase):
+    """pg_lib's leak scan: every outgoing file's path and bytes, for each seed's decimal and hex forms."""
+
+    def setUp(self):
+        self.tmp = Path(os.path.realpath(tempfile.mkdtemp(prefix="pg-leak-", dir="/tmp")))
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
+        self.seed = 1_234_567_890
+
+    def test_planted_seeds_are_found(self):
+        w = self.tmp
+        (w / "out/traces").mkdir(parents=True)
+        cases = {"out/x_1234567890.txt": b"clean",                                  # in a filename
+                 "out/graphs_T.log": b"line one\n[v3] run 1234567890 done\n",         # in a log line
+                 "out/traces/reduce_T.trace": b'7 openat(AT_FDCWD, "gntp.1234567890.ghep.root", O_RDONLY) = 3\n',
+                 "out/hex_lower.bin": format(self.seed, "x").encode(), "out/hex_upper.bin": format(self.seed, "X").encode(),
+                 "out/padded.txt": b"run 0001234567890", "out/clean.txt": b"nothing here 123456789"}
+        for rel, data in cases.items():
+            (w / rel).write_bytes(data)
+        hits = pg_lib.leak_hits(str(w), sorted(cases), [self.seed])
+        self.assertEqual(sorted(r for r, _ in hits if r), sorted(set(cases) - {"out/x_1234567890.txt", "out/clean.txt"}))
+        self.assertEqual([where for r, where in hits if r is None], ["path"])        # the path hit is not repeated
+
+    def test_a_seed_across_a_chunk_boundary(self):
+        (self.tmp / "big.bin").write_bytes(b"x" * ((1 << 20) - 4) + b"1234567890")
+        self.assertEqual(pg_lib.leak_hits(str(self.tmp), ["big.bin"], [self.seed]), [("big.bin", "bytes")])
+
+    def test_seed_bearing_files_never_publish(self):
+        for rel, sb in (("out/work/u0/t3/gevgen.trace", True), ("out/work/u1/t0/task.time", True),
+                        ("out/logs/xargs.log", True), ("run/queue.txt", True), ("out/PG-SHA256SUMS", True),
+                        ("out/work/u0/t3/trace_check.json", False), ("out/gen5d/genie_v3_g21_xsec5d.npz", False)):
+            with self.subTest(rel):
+                self.assertEqual(pg_lib.seed_bearing(rel), sb)
