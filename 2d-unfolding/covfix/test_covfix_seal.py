@@ -11,6 +11,7 @@ import json
 import os
 import re
 import shutil
+import signal
 import stat
 import subprocess
 import sys
@@ -86,6 +87,22 @@ if mode == "orphan":
     import subprocess as sp
     sp.Popen([sys.executable, "-c", "import time, sys; time.sleep(1.5); open(sys.argv[1], 'w').write('late')",
               os.path.join(tmp, "late.txt")])
+if mode == "overwritekeep":                       # same length, mtime restored: only ctime moves
+    pre = os.path.join(tmp, "old", "pre.txt")
+    st0 = os.stat(pre)
+    open(pre, "w").write("s=%d" % seeds["tunes"][0]["task_seeds"][3])
+    os.utime(pre, ns=(st0.st_atime_ns, st0.st_mtime_ns))
+if mode == "lockedonly":                          # an unlistable directory and nothing else
+    os.mkdir(os.path.join(tmp, "a-lockdir"))
+    os.chmod(os.path.join(tmp, "a-lockdir"), 0)
+if mode in ("unreadable", "unlistable"):
+    if mode == "unreadable":
+        open(os.path.join(tmp, "a-locked.bin"), "w").write("x")
+        os.chmod(os.path.join(tmp, "a-locked.bin"), 0)
+    else:
+        os.mkdir(os.path.join(tmp, "a-lockdir"))
+        os.chmod(os.path.join(tmp, "a-lockdir"), 0)
+    open(os.path.join(tmp, "z-leak.txt"), "w").write("seed %d" % seeds["tunes"][1]["task_seeds"][4])
 sys.exit(3 if mode in ("fail", "faileak") else 0)
 '''
 
@@ -97,13 +114,38 @@ def write_gen(d: Path) -> Path:
     return p
 
 
+REQUIRED = [{"pattern": "out/G21/ratio.json", "count": 1}, {"pattern": "genie-mcjob-*.status", "count": 1}]
+
+
 def write_spec(d: Path, gen: Path, sha: str | None = None, env_keep=("FAKE_MODE", "PATH", "SPILL_ROOT"),
-               command0: str | None = None) -> Path:
+               command0: str | None = None, required=None) -> Path:
     s = d / "spec.json"
     s.write_text(json.dumps({"command": [command0 or str(gen)],
                              "command_sha256": sha or hashlib.sha256(gen.read_bytes()).hexdigest(),
-                             "tunes": ["G21_11b_00_000", "G18_02b_02_11b"], "env_keep": list(env_keep)}))
+                             "tunes": ["G21_11a_00_000", "G18_02a_00_000"], "env_keep": list(env_keep),
+                             "required": REQUIRED if required is None else required}))
     return s
+
+
+def fake_step(d: Path, extra_pids=(), cgroup_line="0::/slurm/job1/step0", readable=True):
+    """A fake /proc and /sys/fs/cgroup: the step holds this process, its parent and any extra pids."""
+    proc, cg = d / "fakeproc", d / "fakecgroup"
+    me, parent = os.getpid(), os.getppid()
+    for pid, ppid in ((me, parent), (parent, 1)):
+        (proc / str(pid)).mkdir(parents=True, exist_ok=True)
+        (proc / str(pid) / "stat").write_text(f"{pid} (a b) S {ppid} 0 0\n")
+    for x in extra_pids:                              # an int (parent pid 1) or (pid, parent pid)
+        pid, ppid = x if isinstance(x, tuple) else (x, 1)
+        (proc / str(pid)).mkdir(parents=True, exist_ok=True)
+        (proc / str(pid) / "stat").write_text(f"{pid} (gevgen) S {ppid} 0 0\n")
+    extra_pids = [x[0] if isinstance(x, tuple) else x for x in extra_pids]
+    (proc / "self").mkdir(exist_ok=True)
+    (proc / "self" / "cgroup").write_text(cgroup_line + "\n")
+    step = cg / "slurm" / "job1" / "step0"
+    step.mkdir(parents=True, exist_ok=True)
+    if readable:
+        (step / "cgroup.procs").write_text("".join(f"{p}\n" for p in (me, parent, *extra_pids)))
+    return proc, cg
 
 
 def published_problems(text: str, rels: list[str]) -> list[str]:
@@ -705,17 +747,22 @@ class Reader(Base):
             cs.read_product(self.s, sm, bad, "p0001", PW, TOOLS)
 
 
-class PG(Base):
+class PGBase(Base):
     def setUp(self):
         super().setUp()
+        proc, cg = fake_step(self.d)
+        for name, val in (("PROC", str(proc)), ("CGROUP_ROOT", str(cg))):
+            pt = mock.patch.object(pg, name, val, create=True)
+            pt.start()
+            self.addCleanup(pt.stop)
         self.scratch = self.d / "scratch"
         (self.scratch / "tmp" / "old").mkdir(parents=True)
         (self.scratch / "tmp" / "old" / "pre.txt").write_text("pre-existing")
 
     def go(self, mode="ok", frame=FRAME, sha=None, attempt=ATT, env_keep=("FAKE_MODE", "PATH", "SPILL_ROOT"),
-           sealed=None, command0=None, scratch=True, **env):
+           sealed=None, command0=None, scratch=True, spec=None, workdir=None, **env):
         gen = write_gen(self.d)
-        spec = write_spec(self.d, gen, sha, env_keep, command0)
+        spec = spec or write_spec(self.d, gen, sha, env_keep, command0)
         out = io.StringIO()
         base_env = {"FAKE_MODE": mode, "SECRETISH": "should-not-pass", "SPILL_ROOT": str(self.scratch)}
         if scratch:
@@ -723,7 +770,7 @@ class PG(Base):
         with mock.patch.dict(os.environ, {**base_env, **env}):
             if not scratch:
                 os.environ.pop("SCRATCH", None)
-            rc = pg.main(["--covfix-attempt", attempt, "--workdir", str(self.w), "--sealed", str(sealed or self.s),
+            rc = pg.main(["--covfix-attempt", attempt, "--workdir", str(workdir or self.w), "--sealed", str(sealed or self.s),
                           "--gen-spec", str(spec), "--gpg", GPG, "--gpgconf", GPGCONF,
                           "--gpg-sha256", fsha(GPG), "--gpgconf-sha256", fsha(GPGCONF)],
                          stdin=io.BytesIO(frame), stdout=out)
@@ -737,6 +784,8 @@ class PG(Base):
         pid = {v: k for k, v in man["paths"].items()}[rel]
         return cs.gpg_run(cs.GPG_DECRYPT, PW, (self.s / (pid + ".gpg")).read_bytes(), TOOLS)
 
+
+class PG(PGBase):
     def test_success(self):
         rc, out = self.go()
         self.assertEqual(rc, 0, out)
@@ -756,7 +805,7 @@ class PG(Base):
         self.assertIn(b"gevgen log line", self.unseal("capture/stderr.log"))
         self.assertEqual(self.unseal("capture/rc.txt"), b"0\n")
         self.assertEqual(json.loads(self.unseal("seeds.json")),
-                         cs.task_seeds(BASE, ["G21_11b_00_000", "G18_02b_02_11b"]))
+                         cs.task_seeds(BASE, ["G21_11a_00_000", "G18_02a_00_000"]))
         env = json.loads(self.unseal("env.json"))
         self.assertNotIn("SECRETISH", env)
         self.assertNotIn("SCRATCH", env)
@@ -1070,6 +1119,190 @@ class PG(Base):
         self.assertEqual(rc, 1)
         self.assertIs(s["trap_spills_removed"], True)
         self.assertFalse((self.scratch / "tmp" / "leak.json").exists())   # found by the sealed hashes: W is gone
+
+
+class Round3Findings(PGBase):
+    """codex-school2 round 3 (af5fdd5b), PG findings 6, 8, 9 and the item-7 detector (the director's ruling)."""
+
+    def test_f6_an_equal_length_overwrite_with_mtime_kept_is_a_spill(self):
+        rc, out = self.go("overwritekeep")
+        s = self.summary(out)
+        self.assertEqual(rc, 1, out)
+        self.assertGreaterEqual(s["scratch_spills"], 1)
+
+    def test_f6_an_unreadable_entry_does_not_stop_the_scan_or_the_cleanup(self):
+        rc, out = self.go("unreadable")
+        s = self.summary(out)
+        self.assertEqual(rc, 1, out)
+        self.assertNotIn("refused", s)
+        self.assertFalse((self.scratch / "tmp" / "z-leak.txt").exists())
+        self.assertFalse(os.path.lexists(self.scratch / "tmp" / "a-locked.bin"))   # unverifiable: removed too
+
+    def test_f6_an_unlistable_directory_fails_the_run_but_the_scan_goes_on(self):
+        rc, out = self.go("unlistable")
+        s = self.summary(out)
+        os.chmod(self.scratch / "tmp" / "a-lockdir", 0o700)
+        self.assertEqual(rc, 1, out)
+        self.assertGreaterEqual(s["scratch_scan_errors"], 1)
+        self.assertFalse((self.scratch / "tmp" / "z-leak.txt").exists())
+
+    def test_f6_scan_errors_alone_fail_the_run(self):
+        rc, out = self.go("lockedonly")
+        os.chmod(self.scratch / "tmp" / "a-lockdir", 0o700)
+        s = self.summary(out)
+        self.assertEqual((rc, s["scratch_spills"]), (1, 0), out)
+        self.assertGreaterEqual(s["scratch_scan_errors"], 1)
+
+    def test_f6_an_lstat_error_is_collected_not_raised(self):
+        (self.scratch / "tmp" / "gone.txt").write_text("x")
+        real = os.lstat
+
+        def flaky(p, *a, **k):
+            if str(p).endswith("gone.txt"):
+                raise FileNotFoundError(p)
+            return real(p, *a, **k)
+
+        errs = []
+        with mock.patch.object(pg.os, "lstat", flaky):
+            snap = pg.snapshot(self.scratch / "tmp", errs)
+            with self.assertRaises(OSError):
+                pg.snapshot(self.scratch / "tmp")
+        self.assertEqual(len(errs), 1)
+        self.assertNotIn("gone.txt", snap)
+
+    def test_f6_the_trap_rescan_tolerates_an_unlistable_directory(self):
+        real, calls = pg.remove_verified, []
+
+        def false_first(*a):
+            calls.append(a)
+            return False if len(calls) == 1 else real(*a)
+
+        with mock.patch.object(pg, "remove_verified", side_effect=false_first):
+            rc, out = self.go("unlistable")
+        os.chmod(self.scratch / "tmp" / "a-lockdir", 0o700)
+        self.assertEqual(rc, 1)
+        self.assertIs(self.summary(out)["trap_spills_removed"], True)
+        self.assertFalse((self.scratch / "tmp" / "z-leak.txt").exists())
+
+    def test_f6_a_removal_that_returns_false_keeps_the_trap_armed(self):
+        real, calls = pg.remove_verified, []
+
+        def false_first(*a):
+            calls.append(a)
+            return False if len(calls) == 1 else real(*a)
+
+        with mock.patch.object(pg, "remove_verified", side_effect=false_first):
+            rc, out = self.go("leak")
+        self.assertEqual((rc, len(calls)), (1, 2))
+        self.assertIs(self.summary(out)["trap_spills_removed"], True)
+        self.assertFalse((self.scratch / "tmp" / "leak.json").exists())
+
+    def test_f8_a_sigterm_during_the_agent_shutdown_still_removes_the_home(self):
+        homes, real_home, real_run = [], cs.new_gnupg_home, cs.subprocess.run
+
+        def spy():
+            homes.append(real_home())
+            return homes[-1]
+
+        def term_then_run(*a, **k):
+            os.kill(os.getpid(), signal.SIGTERM)
+            return real_run(*a, **k)
+
+        old = signal.signal(signal.SIGTERM, pg._term)
+        try:
+            with mock.patch.object(cs, "new_gnupg_home", spy), mock.patch.object(cs.subprocess, "run", term_then_run), \
+                    self.assertRaises(SystemExit):
+                cs.gpg_run(cs.GPG_ENCRYPT, PW, b"x", TOOLS)
+        finally:
+            signal.signal(signal.SIGTERM, old)
+        self.assertTrue(homes and not any(os.path.lexists(h) for h in homes))
+
+    def test_f8_off_the_main_thread_and_under_the_default_handler(self):
+        import threading
+        out = []
+        th = threading.Thread(target=lambda: out.append(cs.gpg_run(cs.GPG_ENCRYPT, PW, b"t", TOOLS)))
+        th.start()
+        th.join()
+        self.assertTrue(out and out[0])                                 # no handler to hold a SIGTERM there; it runs
+        real_run = cs.subprocess.run
+
+        def term_then_run(*a, **k):
+            signal.raise_signal(signal.SIGTERM)                         # held by gpg_run's recorder (not os.kill,
+            return real_run(*a, **k)                                    # which the test patches)
+
+        old = signal.signal(signal.SIGTERM, signal.SIG_DFL)
+        try:
+            with mock.patch.object(cs.subprocess, "run", term_then_run), mock.patch.object(cs.os, "kill") as kill:
+                cs.gpg_run(cs.GPG_ENCRYPT, PW, b"u", TOOLS)
+            kill.assert_called_once_with(os.getpid(), signal.SIGTERM)  # re-delivered to the default handler
+        finally:
+            signal.signal(signal.SIGTERM, old)
+
+    def test_f9_a_missing_required_product_fails_the_run(self):
+        gen = write_gen(self.d)
+        for i, req in enumerate(([{"pattern": "out/gen5d/*.npz", "count": 1}],
+                                 [{"pattern": "out/G21/*.json", "count": 2}],
+                                 [{"pattern": "*seeds.json", "count": 1}])):        # 2 files match: exact counts
+            with self.subTest(req=req):
+                w = self.d / f"w{i}"
+                w.mkdir()
+                spec = write_spec(self.d, gen, required=req)
+                rc, out = self.go(spec=spec, workdir=w, sealed=self.d / f"sealed{i}")
+                s = self.summary(out)
+                self.assertEqual(rc, 1, out)
+                self.assertNotIn("refused", s)
+                self.assertIs(s["required_products"], False)
+
+    def test_f9_the_required_inventory_is_validated(self):
+        gen = write_gen(self.d)
+        for req in ([], [{"pattern": "../x", "count": 1}], [{"pattern": "a", "count": 0}], [{"pattern": "a"}],
+                    [{"pattern": "/abs", "count": 1}], "x"):
+            with self.subTest(req=req), self.assertRaises(cs.Refusal):
+                pg.load_spec(write_spec(self.d, gen, required=req))
+
+    def test_f7_detector_a_clean_step_passes(self):
+        self.assertEqual(pg.step_cgroup_check(), {"pids": 2, "ancestors": 1})
+
+    def test_f7_detector_the_ancestor_chain_stops_at_the_first_gap(self):
+        proc, cg = fake_step(self.d / "gap", extra_pids=((5001, 1),))
+        parent = os.getppid()
+        (proc / str(parent) / "stat").write_text(f"{parent} (sh) S 5000 0 0\n")      # its parent is outside the step
+        (proc / "5000").mkdir()
+        (proc / "5000" / "stat").write_text("5000 (x) S 5001 0 0\n")                 # whose parent is back inside
+        with mock.patch.object(pg, "PROC", str(proc)), mock.patch.object(pg, "CGROUP_ROOT", str(cg)), \
+                self.assertRaises(cs.Refusal):
+            pg.step_cgroup_check()
+
+    def test_f7_detector_a_reparented_escapee_is_caught(self):
+        for i, ppid in enumerate((1, 31337, os.getpid())):         # init, a subreaper outside the step, the sealer
+            with self.subTest(ppid=ppid):
+                proc, cg = fake_step(self.d / f"esc{i}", extra_pids=((424250 + i, ppid),))
+                with mock.patch.object(pg, "PROC", str(proc)), mock.patch.object(pg, "CGROUP_ROOT", str(cg)), \
+                        self.assertRaises(cs.Refusal):
+                    pg.step_cgroup_check()
+
+    def test_f7_detector_an_extra_pid_in_the_step_refuses(self):
+        proc, cg = fake_step(self.d / "x", extra_pids=(424242,))
+        with mock.patch.object(pg, "PROC", str(proc)), mock.patch.object(pg, "CGROUP_ROOT", str(cg)), \
+                self.assertRaises(cs.Refusal):
+            pg.step_cgroup_check()
+
+    def test_f7_detector_an_unreadable_or_v1_cgroup_is_a_stop(self):
+        for kw in ({"readable": False}, {"cgroup_line": "4:memory:/slurm/job1"},
+                   {"cgroup_line": "0::/slurm/job1/step0\n4:memory:/slurm/job1"}):      # hybrid: not a single v2 entry
+            with self.subTest(kw=kw):
+                proc, cg = fake_step(self.d / str(len(kw)) / next(iter(kw)), **kw)
+                with mock.patch.object(pg, "PROC", str(proc)), mock.patch.object(pg, "CGROUP_ROOT", str(cg)), \
+                        self.assertRaises(cs.Refusal):
+                    pg.step_cgroup_check()
+
+    def test_f7_a_run_with_an_escaped_process_has_no_receipt(self):
+        proc, cg = fake_step(self.d / "y", extra_pids=(424243,))
+        with mock.patch.object(pg, "PROC", str(proc)), mock.patch.object(pg, "CGROUP_ROOT", str(cg)):
+            rc, out = self.go()
+        self.assertEqual(rc, 1, out)
+        self.assertIn("cgroup", self.summary(out)["refused"])
+        self.assertNotIn("covfix-receipt", out)
 
 
 @unittest.skipUnless(hasattr(os, "O_NOATIME"), "O_NOATIME is Linux-only")

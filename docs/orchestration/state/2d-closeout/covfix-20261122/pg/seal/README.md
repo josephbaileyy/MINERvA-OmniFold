@@ -37,6 +37,12 @@ The command runs with:
 - its own process group. When the command exits, the binary kills the whole group and confirms it is gone before
   sealing, so **no background process the command started survives it**. Anything still writing is killed. The group
   is also killed on failure or SIGTERM.
+- **the step check.** Just before the seal, the binary reads its own cgroup (`/proc/self/cgroup`, which must be a
+  single cgroup v2 entry, then that cgroup's `cgroup.procs`). It refuses to seal if any pid is there other than its
+  own and its ancestors' (the wrapper that launched it). A descendant that called setsid escapes the process group but
+  not the cgroup, so it is caught. An unreadable or non-v2 cgroup is a STOP. The escape itself is disclosed, not
+  prevented (the director's ruling on round 3's item 7; rev 12 §4.2). The summary records `step_cgroup`, with counts
+  only.
 
 `seeds.json` is:
 
@@ -53,20 +59,30 @@ The command must:
   directory or a link) is created or changed under $SCRATCH/tmp and it carries a plaintext hash, or a task seed
   anywhere in its relative path, its bytes or a link's target, it is a spill: the binary removes it (a new directory
   with its contents) and fails the run.
+  - A file's change includes its ctime, so restoring mtime does not hide an overwrite.
+  - An unreadable file is a spill. A directory that cannot be listed fails the run. Neither stops the scan.
+  - The trap stays armed until every removal is verified.
 - **write W/PRODUCTS.json:** a non-empty JSON list of distinct, safe relative paths of regular files under W, naming
   the physics products PV will read. PG's own files are not products: no entry may lie under `capture/` or `tmp/`, or
   be `seeds.json` or `PRODUCTS.json`.
+- **leave the gen-spec's required inventory:** each `required` pattern must match exactly its count of regular files
+  under W, or there is no receipt.
 - **exit 0 on success.** On a non-zero exit, everything under W is still sealed, and the run fails.
 - **not create symlinks or special files under W.** These are refused, and the trap still deletes W.
 
-The gen-spec is a JSON object with exactly four keys:
+The gen-spec is a JSON object with exactly five keys:
 
 ```
 {"command": [<absolute path>, args...], "command_sha256": "<64 hex>",
- "tunes": [<u=0 name>, <u=1 name>], "env_keep": [...]}
+ "tunes": [<u=0 name>, <u=1 name>], "env_keep": [...],
+ "required": [{"pattern": "<glob relative to W>", "count": <n>}, ...]}
 ```
 
-`env_keep` may not list TMPDIR. The binary's own arguments are:
+`env_keep` may not list TMPDIR. `required` is a non-empty list of distinct patterns. Each is relative, with no `..`,
+and is matched with fnmatchcase, where `*` crosses `/`. Each count is an integer ≥ 1. The interim list is pinned by
+the binding; tune-generator's `pg_lib.py inventory` prints the same format.
+
+gpg_run holds a SIGTERM until gpg has exited and the agent and the home are cleaned up, then delivers it. The binary's own arguments are:
 
 ```
 --covfix-attempt <32 hex> --workdir <empty dir> --sealed <new dir, disjoint from W>

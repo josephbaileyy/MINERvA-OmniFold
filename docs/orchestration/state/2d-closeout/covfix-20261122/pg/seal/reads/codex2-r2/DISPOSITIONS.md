@@ -17,8 +17,9 @@ three items on 2026-11-24 (R1, R2, R3 below). Tests are in `test_covfix_seal.py`
 | 12 | init omits a new parent's fsync; replay accepts negative charges and a reconciliation with no job | `init` fsyncs the parent of every directory it creates; replay validates each intent's fields and reservation, requires a job before a charge and a non-negative integer charge, canonical submitted IDs, accepted toys in the policy from a job of the phase. Tests: `Init.test_init_once_policy_bound_and_absent_refused`, `Storage.test_corrupt_or_invalid_transitions_refuse`. |
 | 13 | acceptance trusts the caller's set; `submit()` can call sbatch twice and skips node and requeue checks; no synthetic or PV re-price | `submit(intent)` claims the intent atomically under the lock before sbatch (a claimed, submitted or stopped intent is refused); argv comes from the ledger's stored reservation; extra flags are allowlisted (account, constraint, output, error, cpus-per-task, ntasks-per-node, mem, exclusive); scontrol must show NumNodes and Requeue=0 as well; an sbatch that returns no job ID keeps the hold and records a STOP. **R3:** the expected toy sets per (phase, arm) are bound in the policy at init; the synthetic test's 2.0 and the u2-draw's 1.0 node-h are fixed policy lines, held from init until one intent draws on each; a cap change (PV's re-price) is an amendment entry carrying the director's 40-hex commit sha; the connect hashes products and passes verified digests to `accept()`. Tests: `Submit.*`, `FixedAndAmend.*`, `PolicyToys.*`, `Toys.*`. |
 
-**Non-blocking.** NB1 (the composed receipt): this round's mutation receipts are single full runs, so no historical
-bytes need trusting. NB2 (argparse echoes malformed arguments): argparse errors go to stderr, not the published
+**Non-blocking.** NB1 (the composed receipt): this round's ledger mutation receipt is a single full run. The PG
+receipt is a full run plus a one-mutant rerun after a test-only change. *Corrected at round 3 (codex-school2 r3 item
+10): this line first said "single full runs". Round 4's receipts are single full runs.* NB2 (argparse echoes malformed arguments): argparse errors go to stderr, not the published
 stdout, and exit 2 before any secret is read; left as is.
 
 **Mutation.** PG: 104/104 killed. The full run killed 103. The one survivor, `unresolved-tool-ok`, was killed in a rerun

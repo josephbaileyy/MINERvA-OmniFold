@@ -76,7 +76,7 @@ MUTANTS = [
     ('attempt-loose', P, 'ATTEMPT = re.compile(r"[0-9a-f]{32}")', 'ATTEMPT = re.compile(r"[0-9a-zA-Z]+")'),
     ('command-relative-ok', P, '          and os.path.isabs(spec["command"][0])\n', ''),
     ('command-sha-skipped', P, '    if file_sha256(resolved) != spec["command_sha256"]:', '    if False:'),
-    ('tmpdir-keepable', P, '          and "TMPDIR" not in spec["env_keep"])', '          )'),
+    ('tmpdir-keepable', P, '          and "TMPDIR" not in spec["env_keep"] and _required_ok', '          and _required_ok'),
     ('env-not-scrubbed', P, '        env = {k: os.environ[k] for k in spec["env_keep"] if k in os.environ}', '        env = dict(os.environ)'),
     ('tmpdir-not-set', P, '        env["TMPDIR"] = str(workdir / "tmp")', '        pass'),
     ('workdir-not-empty-ok', P, '    if not workdir.is_dir() or any(workdir.iterdir()):', '    if not workdir.is_dir():'),
@@ -88,11 +88,11 @@ MUTANTS = [
     ('synthetic-skipped', P, '        if cs.gpg_run(cs.GPG_DECRYPT, passphrase, cs.gpg_run(cs.GPG_ENCRYPT, passphrase, SYNTHETIC, tools),\n                      tools) != SYNTHETIC:', '        if False:'),
     ('scratch-optional', P, '        if stmp is None:\n            raise cs.Refusal("SCRATCH', '        if False:\n            raise cs.Refusal("SCRATCH'),
     ('workdir-empty-unchecked', P, 'and summary["workdir_empty"] and not hits', 'and not hits'),
-    ('spill-not-failing', P, ' and not hits and summary["sealed_scan_hits"] == 0)', ' and summary["sealed_scan_hits"] == 0)'),
+    ('spill-not-failing', P, 'and not hits and not errs\n', 'and not errs\n'),
     ('spill-not-removed', P, '"spills_removed": remove_verified(stmp, hits),', '"spills_removed": True,'),
     ('seed-scan-off', P, ' or any(sd in data for sd in seeds)', ''),
     ('seed-name-scan-off', P, 'hit = any(sd in text for sd in seeds)', 'hit = False'),
-    ('snapshot-top-level-only', P, '    for dirpath, dirnames, filenames in os.walk(root, followlinks=False, onerror=cs._raise):\n        for name in dirnames + filenames:\n            p = os.path.join(dirpath, name)\n            out[', '    for dirpath, dirnames, filenames in [next(os.walk(root))]:\n        for name in dirnames + filenames:\n            p = os.path.join(dirpath, name)\n            out['),
+    ('snapshot-top-level-only', P, '    for dirpath, dirnames, filenames in os.walk(root, followlinks=False,\n                                                onerror=cs._raise if errors is None else errors.append):', '    for dirpath, dirnames, filenames in [next(os.walk(root))]:'),
     ('final-check-skipped', P, '        if not cs.seal_check(sealed, s["seal_text"])["ok"]:', '        if False:'),
     ('trap-removed', P, '        if started and workdir.is_dir():', '        if False:'),
     ('trap-spills-off', P, 'summary["trap_spills_removed"] = remove_verified(stmp, hits)', 'summary["trap_spills_removed"] = True'),
@@ -122,19 +122,48 @@ MUTANTS = [
     ('end-group-noop', P, '    deadline = time.monotonic() + GROUP_WAIT_S\n', '    return\n'),
     ('pg-owned-product-ok', P, ' or p.split("/")[0] in PG_OWNED', ''),
     ('link-target-unscanned', P, 'text = os.fsencode(rel) + (b"\\x00" + os.fsencode(sig[2]) if sig[0] == "l" else b"")', 'text = os.fsencode(rel)'),
-    ('dirs-not-snapshotted', P, '        for name in dirnames + filenames:\n            p = os.path.join(dirpath, name)\n            out[', '        for name in filenames:\n            p = os.path.join(dirpath, name)\n            out['),
+    ('dirs-not-snapshotted', P, '        for name in dirnames + filenames:\n            p = os.path.join(dirpath, name)\n            try:', '        for name in filenames:\n            p = os.path.join(dirpath, name)\n            try:'),
     ('new-dir-not-removed', P, '                shutil.rmtree(p)', '                pass'),
     ('old-dir-removed', P, '                if not new:\n                    ok = False\n                    continue\n', ''),
-    ('trap-disarmed-before-scan', P, '        new = changed(stmp, before)\n', '        started = False\n        new = changed(stmp, before)\n'),
+    ('trap-disarmed-before-scan', P, '        errs: list = []\n', '        started = False\n        errs: list = []\n'),
     ('trap-forgets-sealed-hashes', P, 'known | plaintext_hashes(workdir)', 'plaintext_hashes(workdir)'),
+    ('sig-ctime-dropped', P, 'return ("f", st.st_ino, st.st_mtime_ns, st.st_ctime_ns, st.st_size)', 'return ("f", st.st_ino, st.st_mtime_ns, st.st_size)'),
+    ('unreadable-not-a-hit', P, '                hit = True                             # unverifiable', '                hit = False                             # unverifiable'),
+    ('walk-error-raises', P, 'onerror=cs._raise if errors is None else errors.append):', 'onerror=cs._raise):'),
+    ('lstat-error-raises', P, '                if errors is None:\n                    raise\n                errors.append(e)', '                raise'),
+    ('scan-errors-ok', P, 'and not hits and not errs\n', 'and not hits\n'),
+    ('trap-disarmed-on-failed-removal', P, '        if summary["spills_removed"]:\n            started = False', '        if True:\n            started = False'),
+    ('trap-scan-strict', P, 'hits = spill_hits(stmp, changed(stmp, before, []), known', 'hits = spill_hits(stmp, changed(stmp, before), known'),
+    ('required-ignored', P, '              and summary["required_products"] and summary["workdir_empty"]', '              and summary["workdir_empty"]'),
+    ('required-count-loose', P, 'for r in rels) == q["count"] for q in req)', 'for r in rels) >= q["count"] for q in req)'),
+    ('required-spec-unchecked', P, ' and _required_ok(spec["required"]))', ')'),
+    ('required-empty-ok', P, '    return isinstance(req, list) and bool(req) and all(', '    return isinstance(req, list) and all('),
+    ('required-dotdot-ok', P, ' and ".." not in r["pattern"].split("/")', ''),
+    ('required-abs-ok', P, '        and not r["pattern"].startswith("/")', '        and True'),
+    ('required-count-zero-ok', P, 'and type(r["count"]) is int and r["count"] >= 1 for r in req)', 'and type(r["count"]) is int and r["count"] >= 0 for r in req)'),
+    ('required-keys-loose', P, 'isinstance(r, dict) and set(r) == {"pattern", "count"} and', 'isinstance(r, dict) and "pattern" in r and'),
+    ('cgroup-check-skipped', P, '        summary["step_cgroup"] = step_cgroup_check()\n', ''),
+    ('cgroup-extra-ok', P, '    if pids - allowed:\n', '    if False:\n'),
+    ('cgroup-v1-ok', P, '        if len(lines) != 1 or not lines[0].startswith("0::/"):', '        if not lines:'),
+    ('cgroup-unreadable-ok', P, '    except (OSError, ValueError) as e:\n        raise cs.Refusal("the step\'s cgroup cannot be read (a STOP)") from e', '    except (OSError, ValueError):\n        return 0'),
+    ('cgroup-ancestors-not-walked', P, '            allowed.add(pid)\n', '            break\n'),
+    ('cgroup-any-ancestor', P, '            if pid not in pids or pid in allowed:', '            if pid in allowed or pid <= 1:'),
+    ('sigterm-not-held', S, '        old = signal.signal(signal.SIGTERM, lambda signum, frame: pending.append(signum))', '        old = None'),
+    ('sigterm-swallowed', S, '            if pending:\n', '            if False:\n'),
+    ('sigterm-handler-not-restored', S, '        if old is not None:\n            signal.signal(signal.SIGTERM, old)\n', '        if old is not None:\n'),
+    ('sigterm-dfl-not-redelivered', S, '                elif old == signal.SIG_DFL:\n                    os.kill(os.getpid(), signal.SIGTERM)\n', ''),
+    ('offthread-crashes', S, '    except ValueError:                                 # not the main thread', '    except TypeError:                                 # not the main thread'),
 ]
 
 
 def run_tests(d: Path) -> tuple[int, str]:
     env = dict(os.environ, OMP_NUM_THREADS="1")
-    r = subprocess.run([sys.executable, "-B", "-m", "unittest", "test_covfix_seal.py"], cwd=d, env=env,
-                       stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL, timeout=1200,
-                       text=True)
+    try:                                               # -f: a killed mutant stops at its first failure
+        r = subprocess.run([sys.executable, "-B", "-m", "unittest", "-f", "test_covfix_seal.py"], cwd=d, env=env,
+                           stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL,
+                           timeout=3600, text=True)
+    except subprocess.TimeoutExpired:
+        return 0, "TIMEOUT after 3600 s (not counted as a kill)"
     lines = r.stderr.splitlines()
     named = [ln for ln in lines if ln.startswith(("FAIL: ", "ERROR: "))]
     if r.returncode != 0 and (not named or any("_FailedTest" in ln for ln in named)):
@@ -154,6 +183,8 @@ def one(m) -> tuple[str, str, str]:
                 return mid, "NOT APPLIED", f"pattern occurs {src.count(old)} times"
             (d / f).write_text(src.replace(old, new))
         rc, why = run_tests(d)
+    if why.startswith("TIMEOUT"):
+        return mid, "TIMEOUT", why
     return mid, ("killed" if rc > 0 else "HARNESS FAILURE" if rc < 0 else "SURVIVED") if mid != "baseline" \
         else ("pass" if rc == 0 else "FAIL"), why
 

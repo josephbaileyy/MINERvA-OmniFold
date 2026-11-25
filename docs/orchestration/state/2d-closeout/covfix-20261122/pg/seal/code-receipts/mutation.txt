@@ -1,32 +1,26 @@
-# PG mutation receipt: one full run of all 104 mutants, then a partial rerun of its one survivor after a test fix.
-# The modules under test and the harness are unchanged since before the full run started:
-#   covfix_seal.py/covfix_pg.py 03:52:14, covfix_sealcheck.py 03:47:41, covfix_seal_mutation.py 04:09:36 (2026-11-24 PST mtimes);
-#   the full run's log was created 2026-11-24T04:13:34 PST and last written 06:38:09 PST.
-# After the full run only test_covfix_seal.py changed: test_tools_must_be_absolute_executables now passes the right pins
-# (a wrong pin had masked the resolved-path check) and adds a path through a linked parent directory, which the
-# O_NOFOLLOW hash open cannot see (it refuses only a linked last component). Three tests and four cases in existing tests were also added for failure
-# branches the line trace showed unexecuted (an unreadable tool, an unremovable GNUPGHOME, a directory entry, a
-# special scratch entry, an unremovable spill, a group that will not end, an unconfirmed group end in a run).
-# Adding tests or cases cannot revive a killed mutant, so the full run's 103 kills stand.
+# PG mutation receipt: ONE full run of all 130 mutants against the files hashed below, unchanged since before the run.
+#   Latest mtime among these files: 2026-11-24T16:11:01-0800 covfix_seal_mutation.py
+#   The run started at Wed Nov 25 00:11:34 UTC 2026 (date -u, written just before launch).
+#   The harness runs unittest with -f (failfast) and counts a TIMEOUT as a survivor, never a kill.
 # command: the files as now
 # python: 3.12.2 numpy 1.26.4  gpg: gpg (GnuPG) 2.4.8  host: Darwin arm64
-# aa052aca09a05b989d5368bf6fc239e2b6bc45a3278335e2eb6fb4748e99a30c  covfix_seal.py
-# ca4dbe68009b33a239dc9972ed25cc3054289620edb07ba0ffa80341639c4404  covfix_pg.py
+# 9ef4fecf4963a9824aad9abc60dd3f6e8a296482a0c3aed880a2402e08684fab  covfix_seal.py
+# bb78f47a20a981dba9ad5565f0d6fed3740440169639ad2fb88109721d2f76ab  covfix_pg.py
 # ed4d30ab2cea71e7aa87259adc6ffc4497a4b44d93b525b843b65a26151dba16  covfix_sealcheck.py
-# 4a19f351ce0492cdf725a0ceba88dc621b515f11f217987aadb4c69234da80ff  test_covfix_seal.py
-# e9b5ebaa2cc2928cdd9f8fc3bebac0716a0073c8ab06d0f1e2cb92f7ef37ee54  covfix_seal_mutation.py
-# start: 2026-11-24T15:42:43Z
-# ---- full run: python3 -B covfix_seal_mutation.py --jobs 6 (103/104; unresolved-tool-ok then unkilled)
+# f23e926787af54ec604f197a1326184670a179b62ac911935aafccef67252416  test_covfix_seal.py
+# a235e97e010005a5adcd3b29c2e6dcb3082c42649c22db0caa9f689c9a3c2994  covfix_seal_mutation.py
+# start: 2026-11-25T02:39:01Z
+# ---- full run: python3 -B covfix_seal_mutation.py --jobs 6
 baseline pass OK (skipped=1)
 frame-uppercase: killed FAIL: test_pg_frame_refusals (test_covfix_seal.Frame.test_pg_frame_refusals) (bad='AA\n1234567890\n')
 seed-lo-raised: killed ERROR: test_seed_range_edges (test_covfix_seal.Frame.test_seed_range_edges)
 seed-hi: killed FAIL: test_pg_frame_refusals (test_covfix_seal.Frame.test_pg_frame_refusals) (bad='aa\n2000000000\n')
 seed-limit-strict: killed FAIL: test_limit_refused (test_covfix_seal.Seeds.test_limit_refused)
 u-stride: killed FAIL: test_declared_maximum_is_below_the_limit (test_covfix_seal.Seeds.test_declared_maximum_is_below_the_limit)
-n-tasks: killed ERROR: test_symlink_from_generator_is_refused_and_trapped (test_covfix_seal.PG.test_symlink_from_generator_is_refused_and_trapped)
+n-tasks: killed FAIL: test_a_benign_scratch_change_is_scanned_but_not_a_spill (test_covfix_seal.PG.test_a_benign_scratch_change_is_scanned_but_not_a_spill)
 no-force-mdc: killed FAIL: test_declared_flags (test_covfix_seal.Gpg.test_declared_flags)
 decrypt-symkey-cache: killed FAIL: test_declared_flags (test_covfix_seal.Gpg.test_declared_flags)
-gpg-rc-ignored: killed ERROR: test_manifest_schema (test_covfix_seal.Reader.test_manifest_schema)
+gpg-rc-ignored: killed FAIL: test_round_trip_and_wrong_passphrase (test_covfix_seal.Gpg.test_round_trip_and_wrong_passphrase)
 env-inherited: killed FAIL: test_child_sees_exactly_fds_0_to_3_no_core_and_minimal_env (test_covfix_seal.Gpg.test_child_sees_exactly_fds_0_to_3_no_core_and_minimal_env)
 fds-not-closed: killed FAIL: test_child_sees_exactly_fds_0_to_3_no_core_and_minimal_env (test_covfix_seal.Gpg.test_child_sees_exactly_fds_0_to_3_no_core_and_minimal_env)
 core-not-limited: killed FAIL: test_child_sees_exactly_fds_0_to_3_no_core_and_minimal_env (test_covfix_seal.Gpg.test_child_sees_exactly_fds_0_to_3_no_core_and_minimal_env)
@@ -38,13 +32,13 @@ home-not-removed: killed ERROR: test_child_sees_exactly_fds_0_to_3_no_core_and_m
 removal-unverified: killed FAIL: test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails (test_covfix_seal.Gpg.test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails)
 gpgconf-error-skips-removal: killed ERROR: test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails (test_covfix_seal.Gpg.test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails)
 symlink-allowed: killed FAIL: test_symlink_from_generator_is_refused_and_trapped (test_covfix_seal.PG.test_symlink_from_generator_is_refused_and_trapped)
-walk-errors-ignored: killed FAIL: test_walk_errors_refuse (test_covfix_seal.Seal.test_walk_errors_refuse) (f=<function enumerate_files at 0x1065cc860>)
+walk-errors-ignored: killed FAIL: test_walk_errors_refuse (test_covfix_seal.Seal.test_walk_errors_refuse) (f=<function enumerate_files at 0x118354f40>)
 ids-from-zero: killed ERROR: test_missing_is_a_break_unreadable_or_linked_is_a_role_failure (test_covfix_seal.Reader.test_missing_is_a_break_unreadable_or_linked_is_a_role_failure)
 max-products: killed FAIL: test_refusals (test_covfix_seal.Seal.test_refusals)
 manifest-no-paths: killed ERROR: test_generation_failure_still_seals (test_covfix_seal.PG.test_generation_failure_still_seals)
 round-trip-skipped: killed FAIL: test_break_exit_and_line (test_covfix_seal.PG.test_break_exit_and_line)
 manifest-trip-skipped: killed FAIL: test_break_on_manifest_mismatch (test_covfix_seal.Seal.test_break_on_manifest_mismatch)
-seal-publishes-paths: killed ERROR: test_a_linked_seal_root_or_a_path_name_is_refused (test_covfix_seal.Reader.test_a_linked_seal_root_or_a_path_name_is_refused)
+seal-publishes-paths: killed FAIL: test_a_benign_scratch_change_is_scanned_but_not_a_spill (test_covfix_seal.PG.test_a_benign_scratch_change_is_scanned_but_not_a_spill)
 overwrite-ciphertext: killed FAIL: test_existing_ciphertext_not_overwritten (test_covfix_seal.Seal.test_existing_ciphertext_not_overwritten)
 delete-follows-dir-link: killed ERROR: test_delete_plaintext (test_covfix_seal.Seal.test_delete_plaintext)
 scan-inverted: killed FAIL: test_a_benign_scratch_change_is_scanned_but_not_a_spill (test_covfix_seal.PG.test_a_benign_scratch_change_is_scanned_but_not_a_spill)
@@ -89,7 +83,7 @@ seed-scan-off: killed FAIL: test_seed_spill_at_depth_is_caught_and_removed (test
 seed-name-scan-off: killed FAIL: test_a_seed_in_a_link_target_is_caught_and_removed (test_covfix_seal.PG.test_a_seed_in_a_link_target_is_caught_and_removed)
 snapshot-top-level-only: killed FAIL: test_seed_spill_at_depth_is_caught_and_removed (test_covfix_seal.PG.test_seed_spill_at_depth_is_caught_and_removed)
 final-check-skipped: killed FAIL: test_a_missing_published_index_is_a_break (test_covfix_seal.PG.test_a_missing_published_index_is_a_break)
-trap-removed: killed ERROR: test_symlink_from_generator_is_refused_and_trapped (test_covfix_seal.PG.test_symlink_from_generator_is_refused_and_trapped)
+trap-removed: killed FAIL: test_break_exit_and_line (test_covfix_seal.PG.test_break_exit_and_line)
 trap-spills-off: killed FAIL: test_the_trap_stays_armed_through_the_scan (test_covfix_seal.PG.test_the_trap_stays_armed_through_the_scan)
 trap-delete-coupled: killed ERROR: test_trap_spill_failure_still_deletes (test_covfix_seal.PG.test_trap_spill_failure_still_deletes)
 internal-error-leaks: killed FAIL: test_termination_and_internal_error_use_fixed_codes (test_covfix_seal.PG.test_termination_and_internal_error_use_fixed_codes)
@@ -110,22 +104,43 @@ chmod-failure-leaves-home: killed ERROR: test_a_chmod_failure_still_removes_the_
 pin-unchecked: killed FAIL: test_tools_are_pinned_and_verified_before_every_exec (test_covfix_seal.Gpg.test_tools_are_pinned_and_verified_before_every_exec)
 gpg-unverified-at-exec: killed FAIL: test_tools_are_pinned_and_verified_before_every_exec (test_covfix_seal.Gpg.test_tools_are_pinned_and_verified_before_every_exec)
 gpgconf-unverified-at-exec: killed FAIL: test_tools_are_pinned_and_verified_before_every_exec (test_covfix_seal.Gpg.test_tools_are_pinned_and_verified_before_every_exec)
-unresolved-tool-ok: SURVIVED OK (skipped=1)
+unresolved-tool-ok: killed FAIL: test_tools_must_be_absolute_executables (test_covfix_seal.Gpg.test_tools_must_be_absolute_executables) (g='/private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmptdqyoqxm/bin-link/gpg')
 same-file-tools-ok: killed FAIL: test_tools_are_pinned_and_verified_before_every_exec (test_covfix_seal.Gpg.test_tools_are_pinned_and_verified_before_every_exec)
 sealcheck-pin-optional: killed FAIL: test_cli (test_covfix_seal.SealCheck.test_cli)
 group-not-ended: killed FAIL: test_an_orphan_of_the_generator_is_killed_before_the_seal (test_covfix_seal.PG.test_an_orphan_of_the_generator_is_killed_before_the_seal)
-end-group-noop: killed FAIL: test_an_orphan_of_the_generator_is_killed_before_the_seal (test_covfix_seal.PG.test_an_orphan_of_the_generator_is_killed_before_the_seal)
+end-group-noop: killed FAIL: test_a_group_that_will_not_end_is_refused (test_covfix_seal.PG.test_a_group_that_will_not_end_is_refused)
 pg-owned-product-ok: killed FAIL: test_a_pg_owned_file_is_not_a_product (test_covfix_seal.PG.test_a_pg_owned_file_is_not_a_product)
 link-target-unscanned: killed FAIL: test_a_seed_in_a_link_target_is_caught_and_removed (test_covfix_seal.PG.test_a_seed_in_a_link_target_is_caught_and_removed)
-dirs-not-snapshotted: killed ERROR: test_snapshot_edge_cases (test_covfix_seal.PG.test_snapshot_edge_cases)
+dirs-not-snapshotted: killed FAIL: test_a_seed_in_a_new_directory_name_is_caught_and_removed (test_covfix_seal.PG.test_a_seed_in_a_new_directory_name_is_caught_and_removed)
 new-dir-not-removed: killed FAIL: test_a_seed_in_a_new_directory_name_is_caught_and_removed (test_covfix_seal.PG.test_a_seed_in_a_new_directory_name_is_caught_and_removed)
 old-dir-removed: killed FAIL: test_snapshot_edge_cases (test_covfix_seal.PG.test_snapshot_edge_cases)
 trap-disarmed-before-scan: killed FAIL: test_the_trap_stays_armed_through_the_scan (test_covfix_seal.PG.test_the_trap_stays_armed_through_the_scan)
 trap-forgets-sealed-hashes: killed FAIL: test_the_trap_stays_armed_through_the_scan (test_covfix_seal.PG.test_the_trap_stays_armed_through_the_scan)
-103/104 killed; survived, harness or not applied: ['unresolved-tool-ok']
-rc=1
-# ---- partial rerun: python3 -B covfix_seal_mutation.py --only unresolved-tool-ok
-baseline pass OK (skipped=1)
-unresolved-tool-ok: killed FAIL: test_tools_must_be_absolute_executables (test_covfix_seal.Gpg.test_tools_must_be_absolute_executables) (g='/private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpjhvmi10d/bin-link/gpg')
-1/1 killed; survived, harness or not applied: []
-# result: 104/104 killed (103 in the full run, 1 in the rerun)
+sig-ctime-dropped: killed FAIL: test_f6_an_equal_length_overwrite_with_mtime_kept_is_a_spill (test_covfix_seal.Round3Findings.test_f6_an_equal_length_overwrite_with_mtime_kept_is_a_spill)
+unreadable-not-a-hit: killed FAIL: test_f6_an_unreadable_entry_does_not_stop_the_scan_or_the_cleanup (test_covfix_seal.Round3Findings.test_f6_an_unreadable_entry_does_not_stop_the_scan_or_the_cleanup)
+walk-error-raises: killed ERROR: test_f6_an_unlistable_directory_fails_the_run_but_the_scan_goes_on (test_covfix_seal.Round3Findings.test_f6_an_unlistable_directory_fails_the_run_but_the_scan_goes_on)
+lstat-error-raises: killed ERROR: test_f6_an_lstat_error_is_collected_not_raised (test_covfix_seal.Round3Findings.test_f6_an_lstat_error_is_collected_not_raised)
+scan-errors-ok: killed FAIL: test_f6_scan_errors_alone_fail_the_run (test_covfix_seal.Round3Findings.test_f6_scan_errors_alone_fail_the_run)
+trap-disarmed-on-failed-removal: killed FAIL: test_f6_a_removal_that_returns_false_keeps_the_trap_armed (test_covfix_seal.Round3Findings.test_f6_a_removal_that_returns_false_keeps_the_trap_armed)
+trap-scan-strict: killed FAIL: test_f6_the_trap_rescan_tolerates_an_unlistable_directory (test_covfix_seal.Round3Findings.test_f6_the_trap_rescan_tolerates_an_unlistable_directory)
+required-ignored: killed FAIL: test_f9_a_missing_required_product_fails_the_run (test_covfix_seal.Round3Findings.test_f9_a_missing_required_product_fails_the_run) (req=[{'pattern': 'out/gen5d/*.npz', 'count': 1}])
+required-count-loose: killed FAIL: test_f9_a_missing_required_product_fails_the_run (test_covfix_seal.Round3Findings.test_f9_a_missing_required_product_fails_the_run) (req=[{'pattern': '*seeds.json', 'count': 1}])
+required-spec-unchecked: killed FAIL: test_f9_the_required_inventory_is_validated (test_covfix_seal.Round3Findings.test_f9_the_required_inventory_is_validated) (req=[])
+required-empty-ok: killed FAIL: test_f9_the_required_inventory_is_validated (test_covfix_seal.Round3Findings.test_f9_the_required_inventory_is_validated) (req=[])
+required-dotdot-ok: killed FAIL: test_f9_the_required_inventory_is_validated (test_covfix_seal.Round3Findings.test_f9_the_required_inventory_is_validated) (req=[{'pattern': '../x', 'count': 1}])
+required-abs-ok: killed FAIL: test_f9_the_required_inventory_is_validated (test_covfix_seal.Round3Findings.test_f9_the_required_inventory_is_validated) (req=[{'pattern': '/abs', 'count': 1}])
+required-count-zero-ok: killed FAIL: test_f9_the_required_inventory_is_validated (test_covfix_seal.Round3Findings.test_f9_the_required_inventory_is_validated) (req=[{'pattern': 'a', 'count': 0}])
+required-keys-loose: killed ERROR: test_f9_the_required_inventory_is_validated (test_covfix_seal.Round3Findings.test_f9_the_required_inventory_is_validated) (req=[{'pattern': 'a'}])
+cgroup-check-skipped: killed FAIL: test_f7_a_run_with_an_escaped_process_has_no_receipt (test_covfix_seal.Round3Findings.test_f7_a_run_with_an_escaped_process_has_no_receipt)
+cgroup-extra-ok: killed FAIL: test_f7_a_run_with_an_escaped_process_has_no_receipt (test_covfix_seal.Round3Findings.test_f7_a_run_with_an_escaped_process_has_no_receipt)
+cgroup-v1-ok: killed FAIL: test_f7_detector_an_unreadable_or_v1_cgroup_is_a_stop (test_covfix_seal.Round3Findings.test_f7_detector_an_unreadable_or_v1_cgroup_is_a_stop) (kw={'cgroup_line': '0::/slurm/job1/step0\n4:memory:/slurm/job1'})
+cgroup-unreadable-ok: killed FAIL: test_f7_detector_an_unreadable_or_v1_cgroup_is_a_stop (test_covfix_seal.Round3Findings.test_f7_detector_an_unreadable_or_v1_cgroup_is_a_stop) (kw={'readable': False})
+cgroup-ancestors-not-walked: killed ERROR: test_a_benign_scratch_change_is_scanned_but_not_a_spill (test_covfix_seal.PG.test_a_benign_scratch_change_is_scanned_but_not_a_spill)
+cgroup-any-ancestor: killed FAIL: test_f7_detector_the_ancestor_chain_stops_at_the_first_gap (test_covfix_seal.Round3Findings.test_f7_detector_the_ancestor_chain_stops_at_the_first_gap)
+sigterm-not-held: killed FAIL: test_f8_a_sigterm_during_the_agent_shutdown_still_removes_the_home (test_covfix_seal.Round3Findings.test_f8_a_sigterm_during_the_agent_shutdown_still_removes_the_home)
+sigterm-swallowed: killed FAIL: test_f8_a_sigterm_during_the_agent_shutdown_still_removes_the_home (test_covfix_seal.Round3Findings.test_f8_a_sigterm_during_the_agent_shutdown_still_removes_the_home)
+sigterm-handler-not-restored: killed FAIL: test_sigterm_handler_is_installed_during_the_run (test_covfix_seal.PG.test_sigterm_handler_is_installed_during_the_run)
+sigterm-dfl-not-redelivered: killed FAIL: test_f8_off_the_main_thread_and_under_the_default_handler (test_covfix_seal.Round3Findings.test_f8_off_the_main_thread_and_under_the_default_handler)
+offthread-crashes: killed FAIL: test_f8_off_the_main_thread_and_under_the_default_handler (test_covfix_seal.Round3Findings.test_f8_off_the_main_thread_and_under_the_default_handler)
+130/130 killed; survived, harness or not applied: []
+rc=0

@@ -40,6 +40,7 @@ import os
 import re
 import resource
 import shutil
+import signal
 import stat
 import subprocess
 import tempfile
@@ -176,7 +177,26 @@ def _child_fd3(r: int):
 
 def gpg_run(argv: tuple, passphrase: str, payload: bytes, tools: Tools) -> bytes:
     """Run gpg with the declared argv; the passphrase reaches it on fd 3 only. Raises Refusal on a non-zero exit or
-    on a GNUPGHOME whose removal cannot be confirmed."""
+    on a GNUPGHOME whose removal cannot be confirmed. A SIGTERM that arrives meanwhile is held until gpg has exited
+    and the agent and the home are cleaned up, then delivered to the previous handler."""
+    pending: list = []
+    try:
+        old = signal.signal(signal.SIGTERM, lambda signum, frame: pending.append(signum))
+    except ValueError:                                 # not the main thread: no handler to hold it
+        old = None
+    try:
+        return _gpg_run(argv, passphrase, payload, tools)
+    finally:
+        if old is not None:
+            signal.signal(signal.SIGTERM, old)
+            if pending:
+                if callable(old):
+                    old(signal.SIGTERM, None)
+                elif old == signal.SIG_DFL:
+                    os.kill(os.getpid(), signal.SIGTERM)
+
+
+def _gpg_run(argv: tuple, passphrase: str, payload: bytes, tools: Tools) -> bytes:
     home = new_gnupg_home()
     env = dict(GPG_ENV, GNUPGHOME=home)
     rc = None

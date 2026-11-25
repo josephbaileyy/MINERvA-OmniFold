@@ -8,7 +8,9 @@ passphrase, which it hands to gpg on fd 3.
 
   stdin       exactly "<passphrase, 64 hex>\\n<seed base, 10 digits>\\n" (76 bytes), then EOF
   gen-spec    {"command": [absolute path, args...], "command_sha256": "<64 hex>", "tunes": [u=0 name, u=1 name],
-               "env_keep": [variable names the generator needs]}. The command path is resolved once, hashed, launched
+               "env_keep": [variable names the generator needs], "required": [{"pattern": <glob relative to W>,
+               "count": <n>}, ...]}. Each required pattern must match exactly n regular files under W after the run
+               (fnmatch, '*' crossing '/'), or the run fails with no receipt. The command path is resolved once, hashed, launched
               by that resolved path and hashed again after the run; a change is a role failure. RESIDUAL WINDOW (disclosed,
               the director's ruling R2): a replacement written by this same account between the hash and the exec,
               and restored before the re-hash, would not be seen; section 4.2's cooperative assumption covers it.
@@ -17,11 +19,20 @@ passphrase, which it hands to gpg on fd 3.
   generation  <resolved command...> --workdir W --seeds W/seeds.json, with cwd W, stdin /dev/null, stdout and stderr
               into W/capture/, a scrubbed environment (env_keep's set variables, plus TMPDIR = W/tmp), in its own
               process group, which is killed and reaped on any failure or SIGTERM
-  products    W/PRODUCTS.json: a non-empty JSON list of distinct safe relpaths of regular files under W
+  products    W/PRODUCTS.json: a non-empty JSON list of distinct safe relpaths of regular files under W; and the
+              gen-spec's required inventory, every pattern at its exact count
+  step check  just before the seal, the sealer reads its own cgroup (v2: /proc/self/cgroup, then that cgroup's
+              cgroup.procs) and refuses to seal if any pid is in it other than its own and its ancestors' (the wrapper
+              that launched it). A generator descendant that called setsid escapes the process group but not the
+              cgroup, so it is caught. An unreadable cgroup, or one that is not a single v2 entry, is a STOP. The
+              escape itself is disclosed, not prevented (the director's ruling on round 3's item 7): section 4.2's
+              same-account cooperative assumption covers F1's bound pipeline, which never detaches.
   seal        every file under W under opaque ids (covfix_seal.seal), then W's plaintext deleted and W verified empty
-  spill scan  every file created or changed during the run at any depth under $SCRATCH/tmp (setup_salloc_env.sh exports
+  spill scan  every entry created or changed (a file's ctime included) during the run at any depth under $SCRATCH/tmp (setup_salloc_env.sh exports
               TMPDIR=$SCRATCH/tmp), and the sealed dir, checked for a plaintext hash; the scratch files also for any
-              task seed in their name or bytes. A scratch hit is removed, its removal verified, and it fails the run.
+              task seed in their name or bytes. A scratch hit is removed, its removal verified, and it fails the run. An
+              entry that cannot be read is a hit; a directory that cannot be listed fails the run; neither stops the
+              scan. The trap stays armed until every hit's removal is verified.
   final       the sealed dir checked against its own PG-SEAL.sha256 (covfix_seal.seal_check)
 
 THE SEED ALIAS (the director's ruling of 2026-11-24 on B1): task (u=0, i=0)'s seed IS the seed base. It is present
@@ -41,6 +52,7 @@ MEASURES: nothing. CANNOT AUTHORIZE: a connect; PG runs only under its binding a
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import hashlib
 import json
 import os
@@ -58,7 +70,8 @@ sys.path.insert(0, str(HERE))
 import covfix_seal as cs  # noqa: E402
 
 ATTEMPT = re.compile(r"[0-9a-f]{32}")
-SPEC_KEYS = {"command", "command_sha256", "tunes", "env_keep"}
+SPEC_KEYS = {"command", "command_sha256", "tunes", "env_keep", "required"}
+PROC, CGROUP_ROOT = "/proc", "/sys/fs/cgroup"
 SYNTHETIC = b"covfix-pg synthetic round trip"
 PG_OWNED = ("capture", "tmp", "seeds.json", "PRODUCTS.json")   # PG's own files under W: never a physics product
 GROUP_WAIT_S = 30
@@ -79,20 +92,65 @@ def load_spec(path: Path) -> dict:
     except (OSError, ValueError) as e:
         raise cs.Refusal("the gen-spec cannot be read") from e
     if not isinstance(spec, dict) or set(spec) != SPEC_KEYS:
-        raise cs.Refusal("the gen-spec must have exactly its four keys")
+        raise cs.Refusal("the gen-spec must have exactly its five keys")
     ok = (isinstance(spec["command"], list) and spec["command"] and all(isinstance(a, str) for a in spec["command"])
           and os.path.isabs(spec["command"][0])
           and isinstance(spec["command_sha256"], str) and cs.HEX64.fullmatch(spec["command_sha256"])
           and isinstance(spec["tunes"], list) and len(spec["tunes"]) == 2
           and all(isinstance(t, str) and t for t in spec["tunes"])
           and isinstance(spec["env_keep"], list) and all(isinstance(v, str) for v in spec["env_keep"])
-          and "TMPDIR" not in spec["env_keep"])
+          and "TMPDIR" not in spec["env_keep"] and _required_ok(spec["required"]))
     if not ok:
         raise cs.Refusal("the gen-spec's values are malformed")
     resolved = os.path.realpath(spec["command"][0])
     if file_sha256(resolved) != spec["command_sha256"]:
         raise cs.Refusal("the generator command's sha256 is not the gen-spec's")
     return dict(spec, resolved=resolved)
+
+
+def _required_ok(req) -> bool:
+    """A non-empty list of distinct {"pattern": relative glob, "count": n >= 1}."""
+    return isinstance(req, list) and bool(req) and all(
+        isinstance(r, dict) and set(r) == {"pattern", "count"} and isinstance(r["pattern"], str) and r["pattern"]
+        and not r["pattern"].startswith("/") and ".." not in r["pattern"].split("/") and "\x00" not in r["pattern"]
+        and type(r["count"]) is int and r["count"] >= 1 for r in req) and len({r["pattern"] for r in req}) == len(req)
+
+
+def required_present(workdir: Path, req: list) -> bool:
+    """Every required pattern matches exactly its count of regular files under W (never following a link)."""
+    rels = []
+    for dirpath, _dirs, files in os.walk(workdir, followlinks=False):
+        for f in files:
+            p = os.path.join(dirpath, f)
+            if stat.S_ISREG(os.lstat(p).st_mode):
+                rels.append(os.path.relpath(p, workdir))
+    return all(sum(fnmatch.fnmatchcase(r, q["pattern"]) for r in rels) == q["count"] for q in req)
+
+
+def _ppid(pid: int) -> int:
+    text = Path(PROC, str(pid), "stat").read_text()
+    return int(text[text.rindex(")") + 1:].split()[1])
+
+
+def step_cgroup_check() -> int:
+    """Refuse to seal if the sealer's cgroup holds any pid other than its own and its ancestors'. Returns the counts
+    (what the step holds, for the rehearsal's record): {"pids": all, "ancestors": those of the sealer's chain}."""
+    try:
+        lines = Path(PROC, "self", "cgroup").read_text().splitlines()
+        if len(lines) != 1 or not lines[0].startswith("0::/"):
+            raise cs.Refusal("the step's cgroup is not a single cgroup v2 entry (a STOP)")
+        pids = {int(x) for x in Path(CGROUP_ROOT, lines[0][4:], "cgroup.procs").read_text().split()}
+        allowed, pid = {os.getpid()}, os.getpid()
+        while True:
+            pid = _ppid(pid)
+            if pid not in pids or pid in allowed:
+                break
+            allowed.add(pid)
+    except (OSError, ValueError) as e:
+        raise cs.Refusal("the step's cgroup cannot be read (a STOP)") from e
+    if pids - allowed:
+        raise cs.Refusal("a process outside PG's own chain is in its cgroup: no seal")
+    return {"pids": len(pids), "ancestors": len(allowed) - 1}
 
 
 def prepare(workdir: Path, sealed: Path) -> tuple[Path, Path]:
@@ -119,39 +177,48 @@ def _sig(st: os.stat_result, path: str) -> tuple:
     if stat.S_ISDIR(st.st_mode):
         return ("d", st.st_ino)
     if stat.S_ISREG(st.st_mode):
-        return ("f", st.st_ino, st.st_mtime_ns, st.st_size)
+        return ("f", st.st_ino, st.st_mtime_ns, st.st_ctime_ns, st.st_size)
     return ("o", st.st_ino, st.st_mode)
 
 
-def snapshot(root: Path | None) -> dict:
+def snapshot(root: Path | None, errors: list | None = None) -> dict:
     """{relpath: signature} of every entry under root at any depth (files, directories, links and special entries,
-    never followed); a walk error refuses."""
+    never followed). A walk or lstat error refuses, or, given `errors`, is appended there and the walk goes on."""
     out = {}
     if root is None or not root.is_dir():
         return out
-    for dirpath, dirnames, filenames in os.walk(root, followlinks=False, onerror=cs._raise):
+    for dirpath, dirnames, filenames in os.walk(root, followlinks=False,
+                                                onerror=cs._raise if errors is None else errors.append):
         for name in dirnames + filenames:
             p = os.path.join(dirpath, name)
-            out[os.path.relpath(p, root)] = _sig(os.lstat(p), p)
+            try:
+                out[os.path.relpath(p, root)] = _sig(os.lstat(p), p)
+            except OSError as e:
+                if errors is None:
+                    raise
+                errors.append(e)
     return out
 
 
-def changed(root: Path | None, before: dict) -> list[tuple[str, tuple, bool]]:
+def changed(root: Path | None, before: dict, errors: list | None = None) -> list[tuple[str, tuple, bool]]:
     """(relpath, signature, new) for every entry created or changed since `before`."""
-    after = snapshot(root)
+    after = snapshot(root, errors)
     return [(rel, sig, rel not in before) for rel, sig in sorted(after.items()) if before.get(rel) != sig]
 
 
 def spill_hits(root: Path, entries: list, hashes: set[str], seeds: list[bytes]) -> list[tuple[str, tuple, bool]]:
     """Entries carrying a task seed anywhere in their relative path (or, for a link, its target), or a regular file
-    whose sha256 is a plaintext hash or whose bytes carry a task seed."""
+    whose sha256 is a plaintext hash or whose bytes carry a task seed. A file that cannot be read is a hit."""
     hits = []
     for rel, sig, new in entries:
         text = os.fsencode(rel) + (b"\x00" + os.fsencode(sig[2]) if sig[0] == "l" else b"")
         hit = any(sd in text for sd in seeds)
         if not hit and sig[0] == "f":
-            data = cs.noatime_read(root / rel)
-            hit = hashlib.sha256(data).hexdigest() in hashes or any(sd in data for sd in seeds)
+            try:
+                data = cs.noatime_read(root / rel)
+                hit = hashlib.sha256(data).hexdigest() in hashes or any(sd in data for sd in seeds)
+            except OSError:
+                hit = True                             # unverifiable: removed, and it fails the run
         if hit:
             hits.append((rel, sig, new))
     return hits
@@ -273,22 +340,27 @@ def run(workdir: Path, sealed: Path, spec_path: Path, frame: bytes, tools: cs.To
         summary["generation_rc0"] = rc == 0
         summary["command_unchanged"] = file_sha256(spec["resolved"]) == spec["command_sha256"]
         summary["products_json"] = products_ok(workdir)
+        summary["required_products"] = required_present(workdir, spec["required"])
+        summary["step_cgroup"] = step_cgroup_check()
         s = cs.seal(workdir, sealed, passphrase, tools)
         known = set(s["hashes"].values())
         summary |= {"sealed_products": s["n_products"], "round_trip": True}
         summary["plaintext_deleted"] = cs.delete_plaintext(workdir)
         summary["workdir_empty"] = not any(workdir.iterdir())
-        new = changed(stmp, before)
+        errs: list = []
+        new = changed(stmp, before, errs)
         hits = spill_hits(stmp, new, known, seeds_b)
-        summary |= {"scratch_tmp_changed": len(new), "scratch_spills": len(hits),
+        summary |= {"scratch_tmp_changed": len(new), "scratch_spills": len(hits), "scratch_scan_errors": len(errs),
                     "spills_removed": remove_verified(stmp, hits),
                     "sealed_scan_hits": len(cs.content_scan([sealed], known))}
-        started = False                                # the trap stays armed until the scan and removal are done
+        if summary["spills_removed"]:
+            started = False                            # the trap stays armed until every removal is verified
         if not cs.seal_check(sealed, s["seal_text"])["ok"]:
             raise cs.Break("the sealed dir does not match its own seal")
         summary["final_seal_check"] = True
         ok = (summary["generation_rc0"] and summary["command_unchanged"] and summary["products_json"]
-              and summary["workdir_empty"] and not hits and summary["sealed_scan_hits"] == 0)
+              and summary["required_products"] and summary["workdir_empty"] and not hits and not errs
+              and summary["sealed_scan_hits"] == 0)
         return (0 if ok else 1), summary
     except cs.Break:
         summary["integrity_break"] = True
@@ -306,7 +378,7 @@ def run(workdir: Path, sealed: Path, spec_path: Path, frame: bytes, tools: cs.To
             summary["group_ended"] = "failed"           # only on a failure path: the exit is already 1
         if started and workdir.is_dir():               # the trap: no plaintext and no spill left behind
             try:
-                hits = spill_hits(stmp, changed(stmp, before), known | plaintext_hashes(workdir), seeds_b)
+                hits = spill_hits(stmp, changed(stmp, before, []), known | plaintext_hashes(workdir), seeds_b)
                 summary["trap_spills_removed"] = remove_verified(stmp, hits)
             except (OSError, cs.Refusal):
                 summary["trap_spills_removed"] = "failed"
