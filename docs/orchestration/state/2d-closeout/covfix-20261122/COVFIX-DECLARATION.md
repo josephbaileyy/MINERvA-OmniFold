@@ -375,6 +375,14 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
     noise-debiased D'_g, with a 0.25 × max floor for the lower end and check 2's threshold at 0.5 × t_lo (§4.2). Rule
     1's values are kept in its record. Rule 2, committed first (`db5ced41`), gives a_lo = 0.013777 and
     a_hi = 0.047110 (min branch).
+  - **Seed-bearing artifacts (the director's ruling and GO of 2026-11-25; §4.2).** gevgen names its outputs by the run
+    number, which is the seed, so W's traces, logs and file names carry seeds, and the hash of a seed-bearing file is
+    itself seed-bearing. The seal now:
+    - encrypts with `--compress-algo none`, and the wrapper's PV encryption follows;
+    - assigns opaque ids over a CSPRNG permutation;
+    - scans its stdout summary and the spill scan for any task seed and any plaintext hash's hex;
+    - refuses a gen-spec that names a seed.
+    The decrypted manifest's paths and hashes are not published before unblinding.
 
 <!-- absence-ok: rule statement -->
 **Rules are fixed before computation.** Every reading, bar, candidate rule, seed and stop rule below is fixed at
@@ -1079,8 +1087,12 @@ So:
 2. Each product is encrypted with pinned flags. The passphrase reaches the bound binary on its stdin: the director's
    wrapper pipes it into `srun`, which forwards stdin to the task. The binary hands it to gpg on fd 3 through an internal
    pipe, and streams the payload on gpg's stdin and stdout. srun does not forward other file descriptors.
-   - encrypt: `gpg --batch --yes --pinentry-mode loopback --passphrase-fd 3 --no-symkey-cache --symmetric --cipher-algo AES256 --s2k-digest-algo SHA512 --force-mdc`;
+   - encrypt: `gpg --batch --yes --pinentry-mode loopback --passphrase-fd 3 --no-symkey-cache --symmetric --cipher-algo AES256 --s2k-digest-algo SHA512 --force-mdc --compress-algo none`;
    - decrypt: `gpg --batch --pinentry-mode loopback --passphrase-fd 3 --no-symkey-cache --decrypt`.
+   - **Why `--compress-algo none`** (rev 12): gpg compresses by default, so a ciphertext's size depends on the
+     plaintext's content, and ciphertext sizes are public. gevgen's outputs carry the seed. Uncompressed, a ciphertext's
+     size is its plaintext's plus a constant, so a fixed-width seed in a status or log file does not change it. The
+     wrapper's PV encryption uses the same flags for the same reason.
    gpg's non-zero exit on an integrity (MDC) failure is a refusal, and no decrypted product is used before gpg has
    exited 0. PG stops if the probe does not find gpg, or if a synthetic round trip with these flags fails.
 3. A decrypt-and-hash round trip must reproduce each plaintext sha256.
@@ -1089,6 +1101,13 @@ So:
    cleanup through a trap on failure.
 6. `PG-SEAL.sha256` (**ciphertext** sha256 per product, plus the encrypted PG manifest's ciphertext sha256) is committed
    **before P1's first connect**.
+7. **Seed-bearing names and hashes** (rev 12). gevgen names its outputs by the seed, and a hash of a seed-bearing file
+   is itself seed-bearing.
+   - Opaque ids are assigned over a CSPRNG permutation, so an id's position says nothing about its path.
+   - The bound binary scans its stdout summary for every task seed and every plaintext hash's hex. A hit is redacted
+     and fails the run. The spill scan counts the same hex as a spill.
+   - A gen-spec that names a task seed is refused before anything runs.
+   - Whatever decrypts the PG manifest (PV) does not publish its paths or plaintext hashes before unblinding.
 
 **Copies.** The ciphertext sits on pscratch and, **required**, on HPSS (htar from a login node, then hashverify). The
 ratio files are not committed to the repo until PV's readout is. A missing or altered ciphertext stops the study. There
