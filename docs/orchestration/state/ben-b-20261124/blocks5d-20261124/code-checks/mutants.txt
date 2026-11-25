@@ -65,3 +65,6 @@ C-LEAK: None V_F refused: KILLED
 writer: staging name grows: KILLED
 C-LEAK: g not scaled: KILLED
 C-LEAK: exempt not scaled: KILLED
+C_e PSD unchecked: KILLED
+C_e indefinite accepted: KILLED
+verdict without band states: KILLED

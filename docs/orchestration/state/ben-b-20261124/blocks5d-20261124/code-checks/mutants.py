@@ -69,6 +69,9 @@ M = [
  ('    tmp = out_dir.parent / f".b5d-partial-{os.getpid()}-{secrets.token_hex(4)}"', '    tmp = out_dir.parent / f".{out_dir.name}.partial-{os.getpid()}"', 'writer: staging name grows'),
  ('    g = scaled_predictions(g, scale)\n', '    g = scaled_predictions(g, 1.0)\n', 'C-LEAK: g not scaled'),
  ('            want = x * k * k if path[:2] in LEAK_EXEMPT else x', '            want = x', 'C-LEAK: exempt not scaled'),
+ ('    if not (np.all(np.isfinite(w_e)) and w_e.max() > 0 and w_e.min() >= -KEEP_REL * w_e.max()):', '    if False:', 'C_e PSD unchecked'),
+ ('    if not (np.all(np.isfinite(w_e)) and w_e.max() > 0 and w_e.min() >= -KEEP_REL * w_e.max()):', '    if not (np.all(np.isfinite(w_e)) and w_e.max() > 0):', 'C_e indefinite accepted'),
+ ('                      "band_states": {r: t["state"] for r, t in fl["trigger"].items()}}))', '                      }))', 'verdict without band states'),
 ]
 for old, new, name in M:
     assert orig.count(old) == 1, name

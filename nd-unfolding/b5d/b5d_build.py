@@ -328,7 +328,9 @@ def main(argv=None) -> int:
             raise
         print(f"STOP {type(e).__name__}: {e}", file=sys.stderr)
         return 5
-    print(json.dumps({"verdict": "UNRESOLVED: no V_F" if out["fluctuation"]["unresolved_stop"] else "COMPLETE"}))
+    fl = out["fluctuation"]
+    print(json.dumps({"verdict": "UNRESOLVED: no V_F" if fl["unresolved_stop"] else "COMPLETE",
+                      "band_states": {r: t["state"] for r, t in fl["trigger"].items()}}))  # read the states, not the verdict
     return 0
 
 
@@ -442,6 +444,9 @@ def _build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B, scale: float) -> dic
     # A2: no V_F only if every band is UNRESOLVED or UNMEASURED; an ACTIVE or RESOLVED-INACTIVE band builds it
     unresolved = all(t["state"] in ("UNRESOLVED", "UNMEASURED") for t in trig.values())
     C_e = scale * scale * read_csv_matrix(repo / f"{FD}/with-cpl/data-product/fd_data_product_cpl_C_e.csv")
+    w_e = np.linalg.eigvalsh((C_e + C_e.T) / 2) if np.all(np.isfinite(C_e)) else np.array([np.nan])
+    if not (np.all(np.isfinite(w_e)) and w_e.max() > 0 and w_e.min() >= -KEEP_REL * w_e.max()):
+        raise Stop("C-PSD", "C_e is not positive semidefinite")  # fluctuation_block's kept-mode rule assumes it
     V_F, L = (None, None) if unresolved else fluctuation_block(C_e, trig)
     if V_F is not None and not (np.all(np.isfinite(V_F)) and np.all(np.isfinite(L))):
         raise Stop("C-FIN", "V_F is not finite")
@@ -514,6 +519,11 @@ def render_record(rec: dict) -> dict:
     for r in ("R1", "R2", "R3"):
         lines.append(f"{r}: f_hat {fl['f_hat'][r]}, SE {fl['se'][r]}, trigger {fl['trigger'][r]}")
     lines.append(f"unresolved stop: {fl['unresolved_stop']}")
+    for k, d in fl["per_ensemble"].items():
+        lines.append(f"{k} band factors: " + ", ".join(f"{r} {v}" for r, v in d.items()))
+    for t, v in rec["bias_block"]["members"].items():
+        lines.append(f"member {t} vs C_b: quad {'n/a' if v['quad'] is None else format(v['quad'], '.4g')}, "
+                     f"undebiased bound {v['undebiased_bound'] if v['undebiased_bound'] is None else format(v['undebiased_bound'], '.4g')}")
     for k, d in fl["band_traces_relative_to_T"].items():
         lines.append(f"{k} traces (relative to T): " + "; ".join(
             f"{r} toy {v['toy']:.4g} ref {v['reference']:.4g} ({v['kept_modes']} modes{'' if v['kept'] else ', dropped'})" for r, v in d.items()))

@@ -286,7 +286,6 @@ class EndToEnd(unittest.TestCase):
                     save(f"ll5d_{t}_toy_{rd}_{s}.npz", X_T + e, X_T)
         (self.ll5d / M.CONSTRAINT_NAME).write_text("Flux 0 1.0\nFlux 1 2.0\nFlux 2 1.0\nFlux 3 1.0\n")
         w = np.array([1.0, 2.0, 1.0, 1.0])
-        fdir = self.repo / M.FD
         lst = "\n".join(f"{g}\t{M.sha256_path(self.ll5d / n)}\t/pscratch/x/{n}" for g, n in pins) + "\n"
         files = {
             f"{M.FD}/with-cpl/data-product/fd_data_product_cpl_C_e.csv":
@@ -319,7 +318,6 @@ class EndToEnd(unittest.TestCase):
         M.COMMITTED.clear()
         M.COMMITTED.update({rel: M.sha256_path(self.repo / rel) for rel in list(files) + [
             f"{M.FD}/receipts-ll5d/null/node/null-g18.json", f"{M.FD}/receipts-ll5d/null/node/null-ar23.json"]})
-        self.saved_manifest_n = None
         self.sa = types.SimpleNamespace(
             CONSTRAINT_SHA256=M.sha256_path(self.ll5d / M.CONSTRAINT_NAME), EXPECT=bands, FLUX="Flux",
             mat_cov=lambda X, w=None: __import__("s1_assemble_stub").mat_cov(X, w),
@@ -439,6 +437,8 @@ class EndToEnd(unittest.TestCase):
             txt = (Path(d) / "blocks5d.txt").read_text()
         self.assertIn("unresolved stop: True", txt)
         self.assertIn("g18/minus2 traces (relative to T): R1 toy", txt)
+        self.assertIn("g18/all band factors: R1", txt)
+        self.assertIn("member nominal vs C_b: quad", txt)
 
     def test_a2_all_resolved_inactive_builds_v_f_equal_to_c_e(self):
         orig = M.toy_errors
@@ -667,6 +667,7 @@ class EndToEnd(unittest.TestCase):
                 with tempfile.TemporaryDirectory() as d, contextlib.redirect_stdout(io.StringIO()) as out:
                     self.assertEqual(M.main(["--repo", d, "--ll5d", d, "--out", str(Path(d) / "o")]), 0)
                     self.assertEqual(json.loads(out.getvalue())["verdict"], verdict)
+                    self.assertEqual(json.loads(out.getvalue())["band_states"], {k: t["state"] for k, t in r["fluctuation"]["trigger"].items()})
                     self.assertTrue((Path(d) / "o" / "blocks5d.json").exists())
                     self.assertEqual((Path(d) / "o" / "V_F.csv").exists(), has_vf)
                     self.assertEqual(sorted(p.name for p in Path(d).iterdir()), ["o"])  # no partial directory left
@@ -742,6 +743,17 @@ class EndToEnd(unittest.TestCase):
             M.band_traces = orig
         with self.assertRaisesRegex(M.Stop, "C-LEAK.*band_traces_relative_to_T.*an absolute quantity"):
             M.check_leak(rec, rk)
+
+    def test_a_c_e_that_is_not_psd_stops(self):
+        orig = M.read_csv_matrix
+        w13 = np.linalg.eigvalsh(spd(13))
+        for bad in (-spd(13), spd(13) - np.eye(N) * np.median(w13)):  # negative definite; indefinite
+            M.read_csv_matrix = lambda q, bad=bad: bad
+            try:
+                with self.assertRaisesRegex(M.Stop, "C-PSD.*C_e"):
+                    self.build()
+            finally:
+                M.read_csv_matrix = orig
 
     def test_a_nan_d_stops_before_the_solver(self):
         orig = M.drawn_block
