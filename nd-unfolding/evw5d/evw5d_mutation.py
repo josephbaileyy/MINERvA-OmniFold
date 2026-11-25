@@ -144,6 +144,9 @@ MUTANTS = [
     ("SB_OUT_LINK", '[ ! -e "$OUT/evw5d" ] && [ ! -L "$OUT/evw5d" ] ||', '[ ! -e "$OUT/evw5d" ] ||', "sbatch_evw5d.sh"),
     # the director's ruling of 2026-11-25: C-GRID's predicate in run(), killed by test_fail_on_grid
     ("GRID_PASS", 'grid["pass"] = all(grid.values())', 'grid["pass"] = True'),
+    # EVW5D attempt 1 (the director's ruling of 2026-11-25): the connect's NumNodes check restored to "= 1"
+    ("CONNECT_NUMNODES", "! printf '%s' \"$nn\" | grep -Eq '^1(-1)?$'", '[ "$nn" != 1 ]',
+     "../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_connect.sh"),
     # revision 5 (codex-school r3)
     ("READ_NPZ_DUP", 'if len(set(names)) != len(names) or not all(n.endswith(".npy") and "/" not in n for n in names):', 'if False:'),
     ("BIND_META_CANONICAL", 'out["meta_equal_except_per_run"] = canonical(sm_r) == canonical(sm_f)', 'out["meta_equal_except_per_run"] = sm_r == sm_f'),

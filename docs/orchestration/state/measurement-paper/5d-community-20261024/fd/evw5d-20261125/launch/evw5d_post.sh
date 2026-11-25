@@ -9,7 +9,7 @@
 # $OUT must be a real directory reached through no link; every destination is created exclusively. It submits and
 # cancels nothing. Launched from a private /dev/shm copy of itself, whose path is $1; it deletes that copy at exit.
 SELF=$1
-OUT=/pscratch/sd/j/josephrb/evw5d-20261125
+OUT=/pscratch/sd/j/josephrb/evw5d-20261125-r2
 P=$OUT/post
 E=$OUT/evw5d
 NPZ=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz

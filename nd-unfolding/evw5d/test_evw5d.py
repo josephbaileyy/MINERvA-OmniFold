@@ -1274,7 +1274,7 @@ def _fetch(launcher, env, d, bound):
 def test_launcher_fetch_products_runs_accepted(world, tmp_path):
     tmp_path = Path(os.path.realpath(tmp_path))
     launcher = launch_tree(tmp_path)
-    remote_key = "/pscratch/sd/j/josephrb/evw5d-20261125/evw5d"
+    remote_key = "/pscratch/sd/j/josephrb/evw5d-20261125-r2/evw5d"
     # a production-shaped bundle: fetched, verified and ACCEPTED
     prod = tmp_path / "prod-bundle"
     shutil.copytree(world["out"], prod)
@@ -1465,4 +1465,68 @@ def test_check_self_cm2_exact_alone(products):
     r = _self(products, c=c)
     assert r["xsec_bit_for_bit"] and r["independent_formula_max_rel"] <= ev.INDEP_RTOL
     assert not r["cm2_per_m2_exact"] and not r["pass"]
+
+
+# ---------------------------------------------------------------------------------- the connect's allocation check
+# Attempt 1 (job 61997953, 2026-11-25) was cancelled by a false STOP: scontrol shows a PENDING job's node count as a
+# range, NumNodes=1-1, and the check compared it with "1". The block below is extracted from the scripts as written
+# (template and bound copy) and run against scontrol text in the real format.
+
+SCONTROL = """JobId=61997953 JobName=evw5d
+   UserId=josephrb(00000) GroupId=josephrb(00000) MCS_label=N/A
+   Priority=69120 Nice=0 Account=m3246 QOS=regular_1
+   JobState=PENDING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0
+   RunTime=00:00:00 TimeLimit={tl} TimeMin=N/A
+   Partition=regular_milan_ss11 AllocNode:Sid=login31:1
+   {array}NumNodes={nn} NumCPUs=256 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null)
+"""
+
+
+def _alloc_block(path: Path) -> str:
+    lines = path.read_text().split("\n")
+    i = lines.index('sj=$(scontrol show job "$job")')
+    j = lines.index("fi", i)
+    return "\n".join(lines[i:j + 1])
+
+
+def _run_alloc(tmp: Path, block: str, text: str) -> tuple[int, str, bool]:
+    b = tmp / "bin"
+    b.mkdir(exist_ok=True)
+    (tmp / "scontrol.txt").write_text(text)
+    marker = tmp / "cancelled"
+    if marker.exists():
+        marker.unlink()
+    for name, body in (("scontrol", f'cat "{tmp / "scontrol.txt"}"'), ("scancel", f'touch "{marker}"'),
+                       ("sacct", "true"), ("sleep", "true")):
+        (b / name).write_text(f"#!/bin/bash\n{body}\n")
+        (b / name).chmod(0o755)
+    script = "TLIMIT=00:30:00; job=61997953\nfinish() { echo FINISH $1; exit $1; }\n" + block + "\necho PASSED\n"
+    r = subprocess.run(["bash", "-c", script], capture_output=True, text=True,
+                       env=dict(os.environ, PATH=f"{b}:{os.environ['PATH']}"))
+    return r.returncode, r.stdout, marker.exists()
+
+
+@pytest.mark.parametrize("which", ["template", "bound"])
+def test_connect_allocation_check(tmp_path, which):
+    path = LAUNCH / "evw5d_connect.sh" if which == "template" else LAUNCH / "bound" / "evw5d_connect.sh"
+    block = _alloc_block(path)
+    assert block == _alloc_block(LAUNCH / "evw5d_connect.sh"), "the bound check differs from the template's"
+    cases = [  # (TimeLimit, NumNodes, array line, accepted)
+        ("00:30:00", "1-1", "", True),        # attempt 1's pending job, verbatim fields
+        ("00:30:00", "1", "", True),          # a placed job
+        ("00:30:00", "2-2", "", False),
+        ("00:30:00", "1-2", "", False),
+        ("00:30:00", "2", "", False),
+        ("00:30:00", "11", "", False),
+        ("01:00:00", "1-1", "", False),
+        ("00:30:00", "1-1", "ArrayJobId=61997953 ArrayTaskId=0 ", False),
+    ]
+    for tl, nn, arr, ok in cases:
+        rc, out, cancelled = _run_alloc(tmp_path, block, SCONTROL.format(tl=tl, nn=nn, array=arr))
+        if ok:
+            assert rc == 0 and "PASSED" in out and not cancelled, (tl, nn, arr, out)
+        else:
+            assert rc == 6 and "FINISH 6" in out and cancelled, (tl, nn, arr, out)
 

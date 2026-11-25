@@ -10,7 +10,7 @@
 #             (the products by scp, then evw5d.accepted(dir, bound) on the Mac with $EVW5D_PY, default python3)
 MODE=${1:?connect|post|hpss|fetch|fetch-products}; F=${2:?session dir}; NODE=${3:-}; BOUND=${4:-}
 HERE=$(cd "$(dirname "$0")" && pwd)
-OUT=/pscratch/sd/j/josephrb/evw5d-20261125
+OUT=/pscratch/sd/j/josephrb/evw5d-20261125-r2
 SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20)
 [ -d "$F" ] && [ -z "$(ls -A "$F")" ] || { echo "STOP: $F is not a new empty directory"; exit 9; }
 hex64() { case "$1" in *[!0-9a-f]*|"") return 1;; esac; [ ${#1} -eq 64 ]; }

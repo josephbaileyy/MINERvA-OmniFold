@@ -19,7 +19,7 @@
 # Writes only under $OUT (on $SCRATCH; nothing on CFS). No set -u (it kills setup_salloc_env.sh). Launched from a
 # /dev/shm copy of itself, whose path is $1; it deletes that copy at exit.
 SELF=$1
-OUT=/pscratch/sd/j/josephrb/evw5d-20261125
+OUT=/pscratch/sd/j/josephrb/evw5d-20261125-r2   # attempt 1 (evw5d-20261125) ended at a false STOP; left as it is
 D=$OUT/deploy
 TC=$OUT/toolclone
 PIN=abdc88c52b909cfc1eb658ae97bd9defc8f640e7
@@ -131,7 +131,7 @@ tl=$(printf '%s\n' "$sj" | sed -n 's/.*TimeLimit=\([^ ]*\).*/\1/p' | head -1)
 nn=$(printf '%s\n' "$sj" | sed -n 's/.*NumNodes=\([^ ]*\).*/\1/p' | head -1)
 arr=$(printf '%s\n' "$sj" | grep -c 'ArrayJobId=')
 echo "scontrol TimeLimit=$tl (declared $TLIMIT) NumNodes=$nn array_lines=$arr"
-if [ "$tl" != "$TLIMIT" ] || [ "$nn" != 1 ] || [ "$arr" != 0 ]; then
+if [ "$tl" != "$TLIMIT" ] || ! printf '%s' "$nn" | grep -Eq '^1(-1)?$' || [ "$arr" != 0 ]; then   # pending: NumNodes=1-1
   scancel "$job"; echo "STOP: the allocation is not one 30-minute node; job $job cancelled (rc $?)"; sleep 5
   sacct -j "$job" -X -n -P -o JobID,State,Elapsed; finish 6
 fi
