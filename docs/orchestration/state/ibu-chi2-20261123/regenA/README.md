@@ -74,3 +74,5 @@ with the producer's own definition (agreement_windows_receipt.py:141-148) from t
 [`receipts/median_fullprec.out`](receipts/median_fullprec.out). The control is that round(·, 4) equals the stored value:
 PASS for both. E's median is 1.0074806014196405, which prints as **1.007** at 3 decimals; OLD's is 1.005357659335692
 (1.005). Within 5 %: E 175/205 = 85.3659 % (85.4), OLD 178/205 = 86.8293 % (86.8). READINGS.md is unchanged.
+
+**Hook re-run on f65ee65c (2026-11-25).** f65ee65c was committed with `--no-verify`, after its hook had been run on the staged tree. At the director's request the hook was re-run against that commit's exact tree: a temporary worktree at its parent 16d8947d, f65ee65c applied with `cherry-pick -n`, and `git write-tree` checked equal to f65ee65c^{tree}. Result: `pre-commit: 21 checks passed`, rc 0. `--no-verify` is not used again.
