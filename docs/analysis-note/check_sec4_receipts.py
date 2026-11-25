@@ -271,6 +271,11 @@ def pt_edges_printed_exact(printed_ours: str, printed_published: str, printed_st
 EDGE_SENTENCE = (r"Three of our \$p_T\$ edges \(([0-9.]+), ([0-9.]+) and \\SI\{([0-9.]+)\}\{GeV/c\}\) differ by "
                  r"\\SI\{([0-9.]+)\}\{GeV/c\} from the published ([0-9.]+), ([0-9.]+) and ([0-9.]+)\.")
 EDGE_STEP_APPC = r"with three interior \$p_T\$ edges \\SI\{([0-9.]+)\}\{GeV/c\} from the published ones"
+# Every printed copy of the edge step: "$p_T$ edges", an optional parenthetical (sec3's edge list), an optional
+# "differ by"/"shifted by", then the step. Pinned per file, so a reworded or dropped copy also fails.
+EDGE_STEP_COPY = r"\$p_T\$ edges(?: \([^)]*\))?(?: differ by| shifted by)? \\SI\{([0-9.]+)\}\{GeV/c\}"
+EDGE_STEP_COPIES = {"sec2_method.tex": 1, "sec3_twod.tex": 1, "appC_supplementary.tex": 2, "appD_reproducibility.tex": 1}
+EDGE_STEP_ALL = "pT edge step, all 5 printed copies (sec2, sec3, appC x2, appD) equal sec3's, exactly"
 
 
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
@@ -375,6 +380,8 @@ CHECKS = [
      data_method_diff, "round"),
     ("regularization bias at high W (VL151)", "appC_supplementary.tex",
      r"reaches \$([0-9.]+)\\%\$ in the highest-\$W\$ column", regularization_max, "round"),
+    ("regularization bias at high W (VL151), sec_5d's copy", "sec_5d.tex",
+     r"They reach \\SI\{([0-9.]+)\}\{\\percent\} in the highest-\$W\$ column", regularization_max, "round"),
     ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "appA_methods.tex",
      r"The lowest empirical coverage for the \$68\\%\$ intervals is ([0-9.]+)\.", tilt_coverage68_min, "round"),
     ("other fixed shapes, most affected cell (VL154)", "primer_body.tex",
@@ -421,6 +428,10 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
         m2 = re.findall(EDGE_STEP_APPC, text("appC_supplementary.tex", sources))
         rows.append(("pT edge step in appC_supplementary.tex equals sec3's, exactly", len(m2) == 1 and m2[0] == step,
                      f"appendix C prints {m2} | sec3 step {step}"))
+        found = {f: re.findall(EDGE_STEP_COPY, text(f, sources)) for f in EDGE_STEP_COPIES}
+        good = all(len(found[f]) == n for f, n in EDGE_STEP_COPIES.items()) and \
+            all(x == step for v in found.values() for x in v)
+        rows.append((EDGE_STEP_ALL, good, f"printed {found} | expected counts {EDGE_STEP_COPIES} | sec3 step {step}"))
     rows += mode_split_claims(sources)
     rows += ibub_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
@@ -591,7 +602,8 @@ def ibub_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 def load() -> dict[str, str]:
     return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec_validation.tex",
                                                "sec_5d.tex", "app_devhistory.tex", "primer_body.tex", "appA_methods.tex",
-                                               "appC_supplementary.tex", "records_r03_twod.tex")}
+                                               "appC_supplementary.tex", "records_r03_twod.tex", "sec2_method.tex",
+                                               "appD_reproducibility.tex")}
 
 
 def gzip_self_test() -> bool:
@@ -660,7 +672,17 @@ def self_test() -> int:
             ("sec3_twod.tex", "and \\SI{0.47}{GeV/c})", "and \\SI{0.48}{GeV/c})", edge_labels[0]),
             ("sec3_twod.tex", "the published 0.075, 0.325 and 0.475.", "the published 0.075, 0.325 and 0.48.", edge_labels[0]),
             ("sec3_twod.tex", "differ by \\SI{0.005}{GeV/c}", "differ by \\SI{0.006}{GeV/c}", edge_labels[0]),
-            ("appC_supplementary.tex", "edges \\SI{0.005}{GeV/c} from", "edges \\SI{0.006}{GeV/c} from", edge_labels[1])):
+            ("appC_supplementary.tex", "edges \\SI{0.005}{GeV/c} from", "edges \\SI{0.006}{GeV/c} from", edge_labels[1]),
+            # each printed copy of the step, changed or reworded out of the pattern, fails the all-copies row
+            ("sec2_method.tex", "edges differ by \\SI{0.005}{GeV/c}", "edges differ by \\SI{0.006}{GeV/c}", EDGE_STEP_ALL),
+            ("sec3_twod.tex", "differ by \\SI{0.005}{GeV/c} from", "differ by \\SI{0.006}{GeV/c} from", EDGE_STEP_ALL),
+            ("appC_supplementary.tex", "edges \\SI{0.005}{GeV/c} from the published ones",
+             "edges \\SI{0.006}{GeV/c} from the published ones", EDGE_STEP_ALL),
+            ("appC_supplementary.tex", "shifted by \\SI{0.005}{GeV/c}", "shifted by \\SI{0.006}{GeV/c}", EDGE_STEP_ALL),
+            ("appD_reproducibility.tex", "edges \\SI{0.005}{GeV/c} from the published values",
+             "edges \\SI{0.006}{GeV/c} from the published values", EDGE_STEP_ALL),
+            ("appC_supplementary.tex", "edges shifted by \\SI", "edges moved by \\SI", EDGE_STEP_ALL),
+            ("appD_reproducibility.tex", "three $p_T$ edges \\SI{0.005}", "three $p_T$ bin edges \\SI{0.005}", EDGE_STEP_ALL)):
         t = text(src, base)
         if t.count(old_s) != 1:
             print(f"  NOT FOUND   edge mutation {old_s!r} in {src}"); ok = False; continue
