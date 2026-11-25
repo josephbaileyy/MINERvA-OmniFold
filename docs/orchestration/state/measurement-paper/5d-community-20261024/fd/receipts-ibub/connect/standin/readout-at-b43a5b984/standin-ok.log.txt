@@ -1,0 +1,74 @@
+== variant ok: script rc=0; session: 
+== self copy left: ls: cannot access '/dev/shm/ibubc.1.sh': No such file or directory; root left: ls: cannot access '/dev/shm/ibub-connect': No such file or directory
+== the connect log
+  node acaab1552b0f nproc=4 loadavg 0.16 0.06 0.01
+  2026-11-25T08:14:12Z
+  window_end_epoch 1795595352 (now 1795594452); fence prefixes ibub_,ibuchi_,cov2d,t2a,rpd,msr
+  connect script sha256 5b3cdf7be868fbfb754b9c3f1f4b47cc218d3a80fd6b4ff34eb4ef60703d787d; M b43a5b984b28e68b6ea478b8a63329505c8f78be; job 61924744 at d12c4f2a38a53001eb92bbefc8b2dc6001f034dc
+  == cov2d fence rev 3 (7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738)
+  fence host=acaab1552b0f utc=2026-11-25T08:14:12Z
+  sacct -X -n -P -u root -S 2026-11-11T08:14:12 -E now -o JobID,JobName,State 2>&1
+  sacct matching rows: 1
+  FENCE CLEAR
+  == fence (sacct)
+  fence clear
+  == the job: 61924744|ibub_run|COMPLETED|0:0 (terminal: COMPLETED)
+  == fetch
+  fetch: IBUB-DONE e8bc043609852ad856e2739a7c74f5f3acc621b47b3a4f516e51995e9dfcb30c
+  fetch: units/refcheck.json dbe03cf2eebe14c634537d89307a5972f84a13b1ae1f66b0acdb6846ebf83257
+  fetch: stage/stage.json dbe03cf2eebe14c634537d89307a5972f84a13b1ae1f66b0acdb6846ebf83257
+  fetch: logs/scontrol-batch-61924744.txt dc381ebf95b56c76554970c62f491f2f229d8a67dd02289210f53ed947ea9d8f
+  fetch: logs/refcheck.log bacfbe9228adc199a30aaeacb811f27530f3f850a6f7bfdbca404d6d520d6f22
+  fetch: logs/complete.json dbe03cf2eebe14c634537d89307a5972f84a13b1ae1f66b0acdb6846ebf83257
+  fetch: slurm/ibub_run-61924744.out 2171b79001f003398e88247fde74d403f636c60257b8b68495c62804f0042c29
+  fetch: slurm/ibub_run-61924744.err e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  RECORDS.SHA256SUMS: 9 files
+  HEAD b43a5b984b28e68b6ea478b8a63329505c8f78be; porcelain --ignored before: ''
+  ibub_unit.py: OK
+  ibub_readout.py: OK
+  ibub_lanes.py: OK
+  ibub_overlap.py: OK
+  config.json: OK
+  jobs/ibub_job.sbatch: OK
+  P0 records in M: docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123
+  == overlap (ibub_overlap.py readout)
+  OVERLAP readout: ours 8; theirs 130
+  OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-run-20261104/out  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/cov2d-run-20261104
+  OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18/b/truth_xsec.npz  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/cov2d-run-20261104
+  OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/AR23-a2/b/truth_xsec.npz  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/cov2d-run-20261104
+  OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root
+  OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out
+  OVERLAP ALLOWED: ours read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28  ~  theirs rpd flux2 read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28
+  OVERLAP: CLEAR (pairs checked 1040, hits 0)
+  == MAT
+  MAT pin check (stand-in)
+  python=/stubpy/python TMPDIR=/dev/shm/ibub-connect/tmp
+  MAT preflight: MnvH1D PlotUtils::MnvH1D 10 bins (stand-in)
+  stand-in readout argv: -B ibub_readout.py --truth G18 --units /pscratch/sd/j/josephrb/ibub-20261124/units --out /dev/shm/ibub-connect/out-G18 --job 61924744 --job-m d12c4f2a38a53001eb92bbefc8b2dc6001f034dc --records /dev/shm/ibub-connect/records
+  IBUB-READOUT G18 PASS reading=None controls_failed=0 stops=0
+  READOUT G18 rc=0: IBUB-READOUT G18 PASS reading=None controls_failed=0 stops=0
+  python=/stubpy/python TMPDIR=/dev/shm/ibub-connect/tmp
+  MAT preflight: MnvH1D PlotUtils::MnvH1D 10 bins (stand-in)
+  stand-in readout argv: -B ibub_readout.py --truth AR23 --units /pscratch/sd/j/josephrb/ibub-20261124/units --out /dev/shm/ibub-connect/out-AR23 --job 61924744 --job-m d12c4f2a38a53001eb92bbefc8b2dc6001f034dc --records /dev/shm/ibub-connect/records
+  IBUB-READOUT AR23 PASS reading=None controls_failed=0 stops=0
+  READOUT AR23 rc=0: IBUB-READOUT AR23 PASS reading=None controls_failed=0 stops=0
+  porcelain --ignored after: ''
+  readout rcs: G18 0, AR23 0
+  == copy-out
+  ibub_G18.json: OK
+  ibub_G18_errors.npz: OK
+  copied G18: 1fcd72c43559573a6dec5cdfe7643862c9823bf29eb115acf7b64893a48d41b3  ibub_G18.json e504aee512604f727129d1f1a4384eb0e3c5b1a5704d4205e3e56177772941c5  ibub_G18_errors.npz 
+  ibub_AR23.json: OK
+  ibub_AR23_errors.npz: OK
+  copied AR23: 832f5e6e5a7343d9e4c8a2424ed3bb5b05091c8b1684f7ba4f52da4b0cb81745  ibub_AR23.json e504aee512604f727129d1f1a4384eb0e3c5b1a5704d4205e3e56177772941c5  ibub_AR23_errors.npz 
+  == records
+  2026-11-25T08:15:07Z
+  records copied: 19 files, 4023 bytes
+  fetch-readout.tar sha256 96647977fd66449a4ad99eb7542eb17fd98bc14c27f3484c27220d9cd2d0fe6e bytes 30720
+  root /dev/shm/ibub-connect removed rc=0 left=no
+  ibub readout rc=0
+  2026-11-25T08:15:08Z
+== done: 0
+== readout published: ./AR23/ibub_AR23.json ./AR23/ibub_AR23_errors.npz ./G18/ibub_G18.json ./G18/ibub_G18_errors.npz 
+== records tar: 30720; listed: 29
+== job records unchanged: {"verdict": "PASS"} refcheck.json 

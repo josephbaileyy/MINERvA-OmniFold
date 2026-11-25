@@ -1,0 +1,29 @@
+== variant not_regular: script rc=9; session: 
+== self copy left: ls: cannot access '/dev/shm/ibubc.1.sh': No such file or directory; root left: ls: cannot access '/dev/shm/ibub-connect': No such file or directory
+== the connect log
+  node 20ab35760a0c nproc=4 loadavg 1.21 0.88 0.74
+  2026-11-24T17:05:53Z
+  window_end_epoch 1795540853 (now 1795539953); fence prefixes ibub_,ibuchi_,cov2d,t2a,rpd,msr
+  connect script sha256 c7af61e4d050b6e6529568cde7a3a063876dd6a7153db4457052d5a266285521; M 4d19296170d061ac1b9c810052e53b6e8e5cb4a5; job 61924744 at 4d19296170d061ac1b9c810052e53b6e8e5cb4a5
+  == cov2d fence rev 3 (7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738)
+  fence host=20ab35760a0c utc=2026-11-24T17:05:53Z
+  sacct -X -n -P -u root -S 2026-11-10T17:05:53 -E now -o JobID,JobName,State 2>&1
+  sacct matching rows: 1
+  FENCE CLEAR
+  == fence (sacct)
+  fence clear
+  == the job: 61924744|ibub_run|COMPLETED|0:0 (terminal: COMPLETED)
+  == fetch
+  fetch: IBUB-DONE e8bc043609852ad856e2739a7c74f5f3acc621b47b3a4f516e51995e9dfcb30c
+  STOP: /pscratch/sd/j/josephrb/ibub-20261124/units/refcheck.json is not a regular file
+  == records
+  2026-11-24T17:05:53Z
+  records copied: 2 files, 284 bytes
+  fetch-readout.tar sha256 c55dde1a3cb2d77d89446fb2ad44e79b52c440e8f356fa40ae15ae5e24d22bd2 bytes 10240
+  root /dev/shm/ibub-connect removed rc=0 left=no
+  ibub readout rc=9
+  2026-11-24T17:05:53Z
+== done: 9
+== readout published: 
+== records tar: 10240; listed: 5
+== job records unchanged: {"verdict": "PASS"} refcheck.json refcheck.real 
