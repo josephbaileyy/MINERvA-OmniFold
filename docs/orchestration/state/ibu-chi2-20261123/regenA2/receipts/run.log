@@ -1,0 +1,55 @@
+f119bfb7cdb9921c153acfaf05fbf79f1f67b2cf28f64fe989f9b2cd26f94c83  regenA2_run.sh
+4f8cc580a5daa2bd6c1dfe9847b656ef257084e1212020cf5f77de319fb52af3  projratio.py
+[A2] start 2026-11-25T06:19:38Z host login02
+[A2] C-CLONE before: 903 0  e766 0
+[A2] C-PINS before:
+a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA/stage/er_old.root
+5171c7b8ecacda6090e242349dd622218c1c38885c60ef8b91027033a8c4b780  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_e/er.root
+6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3  /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+4f8cc580a5daa2bd6c1dfe9847b656ef257084e1212020cf5f77de319fb52af3  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA2/projratio.py
+[A2] OLD (903fb78b):
+rc=0
+{
+ "literals": {
+  "pt_lowest_2dp": 0.97,
+  "pt_highest_2dp": 1.04,
+  "pz_second_highest_2dp": 1.06,
+  "pz_highest_2dp": 0.93,
+  "max_abs_dev_other_bins": 0.024991332948081313,
+  "max_abs_dev_other_bins_pct_int": 2
+ },
+ "reproduced": {
+  "0.97 lowest pT": true,
+  "1.04 highest pT": true,
+  "1.06 and 0.93 in the two highest p||": true,
+  "within 2% elsewhere": true
+ }
+}
+[A2] E (e766ee52):
+rc=0
+{
+ "literals": {
+  "pt_lowest_2dp": 1.04,
+  "pt_highest_2dp": 1.04,
+  "pz_second_highest_2dp": 1.06,
+  "pz_highest_2dp": 0.93,
+  "max_abs_dev_other_bins": 0.024991332948156364,
+  "max_abs_dev_other_bins_pct_int": 2
+ },
+ "reproduced": {
+  "0.97 lowest pT": false,
+  "1.04 highest pT": true,
+  "1.06 and 0.93 in the two highest p||": true,
+  "within 2% elsewhere": true
+ }
+}
+[A2] C-PINS after:
+a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA/stage/er_old.root
+5171c7b8ecacda6090e242349dd622218c1c38885c60ef8b91027033a8c4b780  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_e/er.root
+6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3  /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+[A2] C-CLONE after: 903 0  e766 0
+fc054a56bed97761fd511c990eaf4d7b31276eb3ea94bba318378d334a611b83  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA2/out/e.log
+509b87b515e58b7c16e52ed57e194989fa85fb0a49279dd8585aba2f68e7b7fb  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA2/out/e_projratio.json
+cbb7b3a3fcc9e837bdffd5e2095c950f66b7c56ea6a023a453971f97ada995cd  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA2/out/old.log
+20273262f163d597b6f58b56734ddd66c5bdbcf2ae3c80fc97db5277b7a5df47  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA2/out/old_projratio.json
+[A2] end 2026-11-25T06:21:54Z
