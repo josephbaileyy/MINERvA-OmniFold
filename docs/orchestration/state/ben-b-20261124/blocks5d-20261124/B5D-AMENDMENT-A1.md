@@ -97,10 +97,11 @@ fixed before the build, and nothing is tuned on its output.
 
 The code (`nd-unfolding/b5d/b5d_build.py`) implements the declaration with A1:
 - C-LEAK is a dimensional check, with no magnitude cutoff:
-  - the build runs a second time with every absolute input scaled by 2¹⁰ (U·xsec, U·xtrue and g_TuneV1 by 2¹⁰, C_e by
-    2²⁰);
+  - the build runs a second time with every absolute quantity it holds scaled by 2¹⁰: the LL5D products (U·xsec,
+    U·xtrue), all of B-SEL's generator predictions g, and C_e (by 2²⁰). B-SEL's other outputs (b̂, the noise, R, the
+    splits) are relative. Its closure products enter only through the ratio R;
   - every number outside C_b,abs and V_F must be unchanged, those two must scale by 2²⁰, and the records must have the
-    same shape;
+    same shape and types;
   - an absolute cross section anywhere else would move by 2¹⁰;
 - LL5D's toy mean error is taken relative to T's cell integral, put into Tune v1 units through R (as β = b̂ ⊙ R), and
   printed against C_b;
@@ -115,8 +116,9 @@ The code (`nd-unfolding/b5d/b5d_build.py`) implements the declaration with A1:
   - V_F;
 - a zero-rank C_b prints its quadratic as null;
 - every refusal, including B-SEL's and LL5D's own, exits 5 and writes nothing;
-- the record carries its matrices' sha256. It is formed and checked whole in a hidden sibling directory, which is
-  renamed to the output atomically, refusing if the output exists in any form (macOS `renamex_np` RENAME_EXCL, Linux
-  `renameat2` RENAME_NOREPLACE). The output's parent must exist;
+- the record carries its matrices' sha256. It is formed and checked whole, written and synced in a uniquely named hidden
+  sibling directory, then renamed to the output atomically, refusing if the output exists in any form (macOS
+  `renamex_np` RENAME_EXCL, Linux `renameat2` RENAME_NOREPLACE). The output's parent must exist. A kill before the
+  rename can leave the hidden sibling, never a partial output;
 - for every band, reading and truth, the record prints the raw toy and reference traces on the band's kept modes,
   relative to T's cell integrals. An unresolved stop then still shows the size of the problem (the director, 2026-11-24).

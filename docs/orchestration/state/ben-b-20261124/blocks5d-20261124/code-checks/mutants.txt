@@ -48,10 +48,8 @@ A2 resolved-inactive stops: KILLED
 A2 unresolved inflates: KILLED
 phi below 1 allowed: KILLED
 C-LEAK: cells not scaled: KILLED
-C-LEAK: g not scaled: KILLED
 C-LEAK: C_e scaled by k: KILLED
 C-LEAK: main compares a build with itself: KILLED
-C-LEAK: exempt not scaled: KILLED
 C-LEAK: tolerance absorbs k: KILLED
 C-LEAK: length unchecked: KILLED
 C-LEAK: keys unchecked: KILLED
@@ -60,3 +58,10 @@ writer: plain rename: KILLED
 writer: partial sibling left: KILLED
 writer: fallback replaces: KILLED
 writer: creates parents: KILLED
+C-LEAK: only Tune v1 scaled: KILLED
+C-LEAK: types unchecked: KILLED
+C-LEAK: exempt ints accepted: KILLED
+C-LEAK: None V_F refused: KILLED
+writer: staging name grows: KILLED
+C-LEAK: g not scaled: KILLED
+C-LEAK: exempt not scaled: KILLED

@@ -52,10 +52,8 @@ M = [
  ('        out[r] = {"active": active, "phi": float(f[r]) if active else 1.0, "state": state}', '        out[r] = {"active": active, "phi": float(f[r]) if state != "RESOLVED-INACTIVE" else 1.0, "state": state}', 'A2 unresolved inflates'),
  ('        out[r] = {"active": active, "phi": float(f[r]) if active else 1.0, "state": state}', '        out[r] = {"active": active, "phi": float(f[r]), "state": state}', 'phi below 1 allowed'),
  ('        return ABS_SCALE[0] * (U @ np.asarray(z[key], float))', '        return U @ np.asarray(z[key], float)', 'C-LEAK: cells not scaled'),
- ('    g_tv1 = scale * np.asarray(g["mnvtune_v1"], float)', '    g_tv1 = np.asarray(g["mnvtune_v1"], float)', 'C-LEAK: g not scaled'),
  ('    C_e = scale * scale * read_csv_matrix(', '    C_e = scale * read_csv_matrix(', 'C-LEAK: C_e scaled by k'),
  ('        check_leak(out, build(a.repo, a.ll5d, sa, ll5d, ll5d_b, B, scale=LEAK_SCALE))', '        check_leak(out, out)', 'C-LEAK: main compares a build with itself'),
- ('            want = x * k * k if path[:2] in LEAK_EXEMPT and isinstance(x, float) else x', '            want = x', 'C-LEAK: exempt not scaled'),
  ('LEAK_RTOL = 1e-9', 'LEAK_RTOL = 2e3', 'C-LEAK: tolerance absorbs k'),
  ('            if not (isinstance(x, (list, tuple)) and isinstance(y, (list, tuple))) or len(x) != len(y):', '            if not (isinstance(x, (list, tuple)) and isinstance(y, (list, tuple))):', 'C-LEAK: length unchecked'),
  ('            if not (isinstance(x, dict) and isinstance(y, dict)) or set(x) != set(y):', '            if not (isinstance(x, dict) and isinstance(y, dict)):', 'C-LEAK: keys unchecked'),
@@ -64,6 +62,13 @@ M = [
  ('    except BaseException:\n        shutil.rmtree(tmp, ignore_errors=True)\n        raise', '    except BaseException:\n        raise', 'writer: partial sibling left'),
  ('        raise OSError(errno.ENOSYS, "no atomic no-replace rename on this system")', '        os.rename(src, dst)\n        return', 'writer: fallback replaces'),
  ('    tmp.mkdir()  # FileNotFoundError if the parent is absent', '    tmp.mkdir(parents=True)  # FileNotFoundError if the parent is absent', 'writer: creates parents'),
+ ('    return {n: scale * np.asarray(v, float) for n, v in g.items()}', '    return {n: (scale if n == "mnvtune_v1" else 1.0) * np.asarray(v, float) for n, v in g.items()}', 'C-LEAK: only Tune v1 scaled'),
+ ('        elif type(x) is not type(y):', '        elif False:', 'C-LEAK: types unchecked'),
+ ('        elif path[:2] in LEAK_EXEMPT and not isinstance(x, float) and x is not None:', '        elif False:', 'C-LEAK: exempt ints accepted'),
+ ('        elif path[:2] in LEAK_EXEMPT and not isinstance(x, float) and x is not None:', '        elif path[:2] in LEAK_EXEMPT and not isinstance(x, float):', 'C-LEAK: None V_F refused'),
+ ('    tmp = out_dir.parent / f".b5d-partial-{os.getpid()}-{secrets.token_hex(4)}"', '    tmp = out_dir.parent / f".{out_dir.name}.partial-{os.getpid()}"', 'writer: staging name grows'),
+ ('    g = scaled_predictions(g, scale)\n', '    g = scaled_predictions(g, 1.0)\n', 'C-LEAK: g not scaled'),
+ ('            want = x * k * k if path[:2] in LEAK_EXEMPT else x', '            want = x', 'C-LEAK: exempt not scaled'),
 ]
 for old, new, name in M:
     assert orig.count(old) == 1, name

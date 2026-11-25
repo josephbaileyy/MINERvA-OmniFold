@@ -709,11 +709,28 @@ class EndToEnd(unittest.TestCase):
         b["schema"] = "x"
         cases.append((a, b, "schema"))
         a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
+        a["fluctuation"]["flag"], b["fluctuation"]["flag"] = True, 1.0
+        cases.append((a, b, "flag.*different type"))
+        a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
+        a["fluctuation"]["V_F"] = b["fluctuation"]["V_F"] = [[1]]
+        cases.append((a, b, "V_F.*not a float"))
+        a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
         b["fluctuation"]["trigger"]["R1"]["phi"] = rec["fluctuation"]["trigger"]["R1"]["phi"] * (1 + 1e-6)
         cases.append((a, b, "phi"))
         for a, b, pat in cases:
             with self.assertRaisesRegex(M.Stop, "C-LEAK.*" + pat):
                 M.check_leak(a, b)
+
+    def test_c_leak_scales_every_generator_prediction(self):
+        g = {"mnvtune_v1": [2e-39] * N, "genie_cv": [3e-39] * N, "gibuu": [1e-39] * 8}
+        out = M.scaled_predictions(g, M.LEAK_SCALE)
+        self.assertEqual(set(out), set(g))
+        for n in g:
+            np.testing.assert_array_equal(out[n], M.LEAK_SCALE * np.asarray(g[n]))
+        b, sig, R, sr, gg = self.B.prepare(None, None, None)
+        self.B.prepare = lambda *a: (b, sig, R, sr, dict(gg, genie_cv=[3e-39] * N))
+        rec = self.build()
+        M.check_leak(rec, M.build(self.repo, self.ll5d, self.sa, self.ll5d_mod, self.ll5d_b, self.B, scale=M.LEAK_SCALE))
 
     def test_c_leak_catches_a_code_path_that_drops_the_normalization(self):
         orig = M.band_traces
@@ -760,6 +777,14 @@ class EndToEnd(unittest.TestCase):
             with self.assertRaises(FileNotFoundError):
                 M.write_files(Path(d) / "p" / "o", {"a.txt": b"x"})
             self.assertEqual(sorted(q.name for q in Path(d).iterdir()), ["o"])
+
+    def test_the_staging_name_does_not_grow_with_the_output_name(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d) / ("o" * 255)  # the longest basename the filesystem allows
+            M.write_files(out, {"a.txt": b"x"})
+            self.assertEqual(sorted(q.name for q in Path(d).iterdir()), ["o" * 255])
+            self.assertEqual((out / "a.txt").read_bytes(), b"x")
 
     def test_rename_noreplace(self):
         import tempfile
@@ -839,9 +864,10 @@ class EndToEnd(unittest.TestCase):
             rec["bias_block"]["members"]["nominal"]["leak"] = 1e-39
             rk["bias_block"]["members"]["nominal"]["leak"] = 1e-39 * M.LEAK_SCALE  # an absolute value moves with k
             M.build = lambda *a, scale=1.0: rec if scale == 1.0 else rk
-            with tempfile.TemporaryDirectory() as d, contextlib.redirect_stderr(io.StringIO()):
+            with tempfile.TemporaryDirectory() as d, contextlib.redirect_stderr(io.StringIO()) as err:
                 self.assertEqual(M.main(["--repo", d, "--ll5d", d, "--out", str(Path(d) / "o")]), 5)
                 self.assertFalse((Path(d) / "o").exists())
+                self.assertRegex(err.getvalue(), "C-LEAK.*members/nominal/leak.*an absolute quantity")
         finally:
             M.build = orig
             for k, v in saved.items():

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """(b) part 3: the 5D bias block C_b^5D and fluctuation block V_F^5D (B5D-DECLARATION.md rev 1, sha256 676c17fc...,
-with B5D-AMENDMENT-A1.md, sha256 0be1c4c4..., and B5D-AMENDMENT-A2.md, sha256 7f120dc6...).
+with B5D-AMENDMENT-A1.md, sha256 7efcffa8..., and B5D-AMENDMENT-A2.md, sha256 7f120dc6...).
 
 Implements the declaration's §3-§5 with A1 and A2 exactly. Reuses, unchanged: B-SEL's input layer (bsel_select.check_pins/prepare for
 b, noise, R and the F0b/F1 tables), LL5D's naming, layout and digest (ll5d, ll5d_b), S1's matrix helpers (s1_assemble:
@@ -23,7 +23,7 @@ import numpy as np
 
 SCHEMA = "b5d-blocks/1"
 DECLARATION_SHA256 = "676c17fc5982a01c21f4c7feae2f6c8cd32b0b8ecdc69ec93882e5e30c0f0b1b"
-AMENDMENT_A1_SHA256 = "0be1c4c4b70483fc34c46362abea5f8786f82b5bf3d90e3f6a74d0f0fe81b9ef"
+AMENDMENT_A1_SHA256 = "7efcffa809956b1be410161a3d723714c9fb56e62c1a09d4c905ee2ae58d7bda"
 AMENDMENT_A2_SHA256 = "7f120dc64c7f64b2843f545eb2d55e0f0cc657fc30a04a4eb282cbc4db32d602"
 B5D_DIR = "docs/orchestration/state/ben-b-20261124/blocks5d-20261124"
 N_CELLS = 16
@@ -332,10 +332,17 @@ def main(argv=None) -> int:
     return 0
 
 
+def scaled_predictions(g: dict, scale: float) -> dict:
+    """Every generator prediction from B-SEL's prepare is an absolute cross section: all are scaled, not only Tune v1's."""
+    return {n: scale * np.asarray(v, float) for n, v in g.items()}
+
+
 def build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B, scale: float = 1.0) -> dict:
-    """The record. scale multiplies every absolute input (U xsec, U xtrue, g_TuneV1; C_e by scale^2) for C-LEAK."""
-    ABS_SCALE[0] = scale
+    """The record. For C-LEAK, scale multiplies every absolute quantity the build holds: the LL5D products (through
+    cells), B-SEL's generator predictions g, and C_e (by scale^2). B-SEL's other outputs (b-hat, noise, R, the splits)
+    are relative; its closure products enter only through the ratio R."""
     try:
+        ABS_SCALE[0] = scale
         return _build(repo, ll5d_dir, sa, ll5d, ll5d_b, B, scale)
     finally:
         ABS_SCALE[0] = 1.0
@@ -366,6 +373,7 @@ def _build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B, scale: float) -> dic
     # §3 the bias block (B-SEL's checked layer: b, noise, R, tables)
     M16 = __import__("estimator_stability_analyze").cell_matrix(str(repo / "nd-unfolding/pv-ladder/readouts/h2_definition.json"))
     b, sig, R, split_r, g = B.prepare(repo, sel, M16)
+    g = scaled_predictions(g, scale)
     with np.load(sel / "fd_f0b_experiments.npz", allow_pickle=False) as z:
         tab = {f"r_{t}": np.asarray(z[f"r_{t}"]) for t in FAMILY}  # A1 item 1: only F's members; no cal set
     beta = {t: b[t] * R[t] for t in B.TRUTHS}
@@ -381,7 +389,7 @@ def _build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B, scale: float) -> dic
         raise Stop("C-PSD", "C_b is not finite")
     if np.linalg.eigvalsh(C_b).min() < -TOL * max(1e-300, abs(np.linalg.eigvalsh(C_b)).max()):
         raise Stop("C-PSD", "C_b is not positive semidefinite")
-    g_tv1 = scale * np.asarray(g["mnvtune_v1"], float)
+    g_tv1 = np.asarray(g["mnvtune_v1"], float)
     C_b_abs = np.diag(g_tv1) @ C_b @ np.diag(g_tv1)
     if not np.all(np.isfinite(C_b_abs)):
         raise Stop("C-FIN", "C_b_abs is not finite")
@@ -473,8 +481,12 @@ def check_leak(rec: dict, rec_k: dict, k: float = LEAK_SCALE) -> None:
                 raise Stop("C-LEAK", f"{where}: the scaled build's record has a different shape")
             for u, v in zip(x, y):
                 walk(u, v, path)
-        elif isinstance(x, float) or isinstance(y, float):
-            want = x * k * k if path[:2] in LEAK_EXEMPT and isinstance(x, float) else x
+        elif type(x) is not type(y):
+            raise Stop("C-LEAK", f"{where}: {x!r} becomes {y!r} (a different type) when the absolute inputs scale by {k:g}")
+        elif path[:2] in LEAK_EXEMPT and not isinstance(x, float) and x is not None:  # None: no V_F in either build
+            raise Stop("C-LEAK", f"{where}: {x!r} in an exempt covariance is not a float")
+        elif isinstance(x, float):
+            want = x * k * k if path[:2] in LEAK_EXEMPT else x
             if not (isinstance(x, (int, float)) and isinstance(y, (int, float))) or not (y == want or (
                     np.isfinite(want) and abs(y - want) <= LEAK_RTOL * abs(want))):
                 raise Stop("C-LEAK", f"{where}: {x!r} becomes {y!r} when the absolute inputs scale by {k:g}"
@@ -533,19 +545,34 @@ def rename_noreplace(src: Path, dst: Path) -> None:
 
 
 def write_files(out_dir: Path, files: dict) -> None:
-    """Write every file into a hidden sibling directory, then rename it to out_dir atomically, refusing if out_dir exists
-    in any form. The record appears whole or not at all, nothing that existed is replaced, and a parent that is absent is
-    not created (FileNotFoundError). A failure removes the sibling."""
+    """Write every file into a hidden sibling directory, sync it, then rename it to out_dir atomically, refusing if out_dir
+    exists in any form. The record appears whole or not at all, nothing that existed is replaced, and a parent that is
+    absent is not created (FileNotFoundError). A failure removes the sibling; a kill before the rename can leave it,
+    hidden and uniquely named."""
+    import secrets
     import shutil
-    tmp = out_dir.parent / f".{out_dir.name}.partial-{os.getpid()}"
+    tmp = out_dir.parent / f".b5d-partial-{os.getpid()}-{secrets.token_hex(4)}"
     tmp.mkdir()  # FileNotFoundError if the parent is absent
     try:
         for n, b in files.items():
-            (tmp / n).write_bytes(b)
+            with open(tmp / n, "wb") as fh:
+                fh.write(b)
+                fh.flush()
+                os.fsync(fh.fileno())
+        _fsync_dir(tmp)
         rename_noreplace(tmp, out_dir)
+        _fsync_dir(out_dir.parent)
     except BaseException:
         shutil.rmtree(tmp, ignore_errors=True)
         raise
+
+
+def _fsync_dir(d: Path) -> None:
+    fd = os.open(d, os.O_RDONLY)
+    try:
+        os.fsync(fd)
+    finally:
+        os.close(fd)
 
 
 def write_record(out_dir: Path, rec: dict) -> None:
