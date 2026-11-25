@@ -206,8 +206,41 @@ def regen_a_ratio_tot() -> float:  # P7: integral ratio ours/published over the 
     return regen_a_windows()["headline_totals_oi130"]["values"]["ratio_integrals_reported"]
 
 
+def regen_a2_ratios() -> dict:
+    """A2 (#1323): the 1D projection ratios ours/published on the paper's pT edges, compare_to_models.project()."""
+    r = receipt("ibu-chi2-20261123/regenA2/out/e_projratio.json")
+    assert r["n_reported"] == 205 and len(r["ratios"]["pt"]) == 14 and len(r["ratios"]["pz"]) == 16, "A2 shape changed"
+    return r["ratios"]
+
+
+def regen_a2_edge_ratios():  # the four edge bins sec3_twod.tex:11 names: lowest and highest pT, two highest p_par
+    r = regen_a2_ratios()
+    return r["pt"][0], r["pt"][-1], r["pz"][-2], r["pz"][-1]
+
+
+def regen_a2_max_dev_pct() -> float:
+    """Largest |ratio - 1| in percent over every projection bin except those four, computed from the bins (the stored
+    max_abs_dev_other_bins is only cross-checked)."""
+    r = regen_a2_ratios()
+    other = r["pt"][1:-1] + r["pz"][:-2]
+    dev = 100.0 * max(abs(x - 1.0) for x in other)
+    stored = 100.0 * receipt("ibu-chi2-20261123/regenA2/out/e_projratio.json")["literals"]["max_abs_dev_other_bins"]
+    assert abs(dev - stored) < 1e-9, f"computed {dev} != stored {stored}"
+    return dev
+
+
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
+    # One printed 1.04 stands for both pT edge bins, so it is bound twice: once to each bin.
+    ("projection ratio, lowest pT bin, and the two highest p_par bins (regenA2)", "sec3_twod.tex",
+     r"the ratio is ([0-9.]+) in both the lowest and the highest \$p_T\$ bins, and ([0-9.]+) and ([0-9.]+) in the two "
+     r"highest \$p_\\parallel\$ bins", lambda: tuple(regen_a2_edge_ratios()[i] for i in (0, 2, 3)), "round"),
+    ("projection ratio, highest pT bin (regenA2)", "sec3_twod.tex",
+     r"the ratio is ([0-9.]+) in both the lowest and the highest \$p_T\$ bins", lambda: regen_a2_edge_ratios()[1],
+     "round"),
+    ("projection ratios elsewhere, the bound (regenA2)", "sec3_twod.tex",
+     r"agree with the published result to within \$([0-9.]+)\\%\$, except at the edges of the phase space",
+     regen_a2_max_dev_pct, "below"),
     ("median per-bin ratio (regenA P7, paper's pT edges)", "values.tex",
      r"\\newcommand\{\\medianBinRatio\}\{([0-9.]+)\}", regen_a_median, "round"),
     ("bins within 5% (regenA P7)", "values.tex", r"\\newcommand\{\\binsFive\}\{([0-9.]+)\}",
