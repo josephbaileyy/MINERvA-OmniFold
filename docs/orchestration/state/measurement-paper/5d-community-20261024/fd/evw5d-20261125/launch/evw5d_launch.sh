@@ -29,12 +29,17 @@ case "$MODE" in
   fetch-products)
     BOUND=$3
     hex64 "$BOUND" || { echo "STOP: fetch-products needs the bound SHA256SUMS sha256"; exit 9; }
+    TOP=$(cd "$HERE/../../../../../../../.." && pwd) || exit 9      # launch/ is 8 levels below the checkout's top
+    EVW_SHA=__EVW5D_PY_SHA256__
+    case "$EVW_SHA" in *__*) echo "STOP: the approved evw5d.py sha256 is not filled in"; exit 9;; esac
+    W="$TOP/nd-unfolding/evw5d/evw5d.py"
+    [ -f "$W" ] && [ ! -L "$W" ] && [ "$(shasum -a 256 "$W" | cut -d' ' -f1)" = "$EVW_SHA" ] || \
+      { echo "STOP: the local checker $W is not the approved bytes"; exit 8; }
     mkdir -p "$F/evw5d/product"
     for f in weights.npz constants.npz constants.json run.json SHA256SUMS evw5d.done product/data_b-_j-.npz; do
       scp "${SSH[@]}" "saul.nersc.gov:$OUT/evw5d/$f" "$F/evw5d/$f" >> "$F/scp.out" 2>> "$F/scp.err"; r=$?
       echo "scp $f rc=$r"; [ $r = 0 ] || exit $r
     done
-    TOP=$(cd "$HERE/../../../../../../../.." && pwd) || exit 9      # launch/ is 8 levels below the checkout's top
     "${EVW5D_PY:-python3}" -B -c "import sys; sys.path.insert(0, sys.argv[1]); import evw5d
 ok = evw5d.accepted(sys.argv[2], sys.argv[3]); print('ACCEPTED' if ok else 'REFUSED'); sys.exit(0 if ok else 1)" \
       "$TOP/nd-unfolding/evw5d" "$F/evw5d" "$BOUND"

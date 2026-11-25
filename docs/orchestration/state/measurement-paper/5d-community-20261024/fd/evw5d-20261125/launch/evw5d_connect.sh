@@ -34,6 +34,8 @@ NPZ=/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
 BKG=/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
 REF=/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz
 bail() { rm -f -- "$SELF"; exit 9; }                # a precondition failed: nothing written
+LANE_PARENT=/pscratch/sd/j/josephrb
+[ -d "$LANE_PARENT" ] && [ ! -L "$LANE_PARENT" ] && [ "$(cd "$LANE_PARENT" && pwd -P)" = "$LANE_PARENT" ] || bail
 case "$TOOLC$EVW_SHA$SBATCH_SHA" in *__*) bail;; esac
 [ ! -e "$OUT" ] || bail
 q=$(squeue --me -h -o '%j') || bail                 # fails closed

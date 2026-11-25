@@ -36,9 +36,20 @@ stat -c '%n|%s|%X|%Y|%i' "$NPZ" "$BKG" "$REF" > "$P/stat-post.txt"; cat "$P/stat
 mkdir "$P/logs" "$P/evw5d"
 for f in "$OUT"/logs/*; do [ -f "$f" ] && [ ! -L "$f" ] && cp -p "$f" "$P/logs/"; done
 verify=FAIL
+EXPECT="constants.json
+constants.npz
+product/data_b-_j-.npz
+run.json
+weights.npz"                      # evw5d.PRODUCTS: SHA256SUMS must list exactly these, each a regular unlinked file
 if [ -d "$E" ] && [ ! -L "$E" ] && [ -f "$E/SHA256SUMS" ] && [ ! -L "$E/SHA256SUMS" ]; then
-  ( cd "$E" && sha256sum --strict -c SHA256SUMS ) > "$P/sha256sum-c.txt" 2>&1 && verify=PASS
-  cat "$P/sha256sum-c.txt"
+  listed=$(LC_ALL=C cut -c67- "$E/SHA256SUMS" | LC_ALL=C sort)
+  okset=1; [ "$listed" = "$EXPECT" ] || okset=0
+  for f in $EXPECT; do [ -f "$E/$f" ] && [ ! -L "$E/$f" ] || okset=0; done
+  echo "product set exact: $okset"
+  if [ "$okset" = 1 ]; then
+    ( cd "$E" && sha256sum --strict -c SHA256SUMS ) > "$P/sha256sum-c.txt" 2>&1 && verify=PASS
+    cat "$P/sha256sum-c.txt"
+  fi
 fi
 echo "VERIFY=$verify (the products against SHA256SUMS, in place)"
 echo "$verify" > "$P/verify.txt"

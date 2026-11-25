@@ -1,4 +1,4 @@
-# EVW5D declaration: configuration (e)'s central per-event weights for the sixteen-cell result (2026-11-25, revision 4)
+# EVW5D declaration: configuration (e)'s central per-event weights for the sixteen-cell result (2026-11-25, revision 5)
 
 **By** ibu-chi, at the director's request. **Status: a draft for the reads and the director's binding. Nothing has run
 on NERSC.** It runs only under a binding and the director's GO. Publication, and where a 1.7 GB file is hosted, are
@@ -27,6 +27,11 @@ other findings, all taken (§8).
 **Revision 4 (2026-11-25)** takes claude-personal `claude-sonnet-5-5`'s read of revision 2 (`receipts/reads/r2/`): GO
 WITH CHANGES, two BLOCKING (both already fixed in revision 3) and eight others; the ones not already fixed are taken
 (§8).
+
+**Revision 5 (2026-11-25)** takes codex-school's third read (`receipts/reads/r3/`), the last full round under the
+director's ruling: NO-GO, six BLOCKING and two others. The six are taken (§8); the others are in
+[`FOLLOWUPS.md`](FOLLOWUPS.md), with every non-blocking item the rounds left. claude-personal Sonnet 5.5 reads
+revision 5 as its r3 (its run on revision 4 was ended by the lane by mistake before it wrote anything; see the receipt).
 
 The code is in [`nd-unfolding/evw5d/`](../../../../../../../nd-unfolding/evw5d/): `evw5d.py`, `sbatch_evw5d.sh`,
 `test_evw5d.py` and `evw5d_mutation.py`.
@@ -143,7 +148,7 @@ flux. It does not supply that denominator.
 
 ## 5. Tests and mutants
 
-`test_evw5d.py` (pytest, 109 tests) builds a deploy at the code pin and synthetic inputs on the real fine grid, with
+`test_evw5d.py` (pytest, 116 tests) builds a deploy at the code pin and synthetic inputs on the real fine grid, with
 truth rows on the top edges and outside the grid, and a denominator 1.15 times the signal (so C-COMPLETE's finding
 fires). It reuses `test_ess_capture.py`'s helpers. Four kinds of test:
 - **end to end** through the real driver: PASS; a STOP on a one-ulp reference and on a meta difference; a FAIL on f
@@ -258,6 +263,19 @@ Local environment: Python 3.11.18, numpy 1.26.4, lightgbm 4.6.0 (the cluster's n
 | 8 | mutant and test gaps | end-to-end C-GRID failure and wrong-deploy refusals added; C-PINS after the run and C-KEY's early exit stay disclosed |
 | 9 | `htar -xf` inside `while read` could consume the list; hashcreate's rc ignored | `< /dev/null`, the retrieved count must equal the list, both hsi return codes counted |
 | 10 | a dangling `$OUT/evw5d` link passed; the job's canonical-path check could refuse without a marker | `-L` added; the connect checks the canonical path before submitting |
+
+**Revision 5: codex-school r3's findings (the last full round).**
+
+| # | finding (r3) | change |
+|---|---|---|
+| 1 | BLOCKING: HPSS re-read the marker and manifest between acceptance and archiving | a private snapshot of both; every pin and the list come from it; the whole archive is retrieved, each file compared with its pin and the count with the list, `accepted()` run on the retrieved bundle, and the scratch copies re-compared with the snapshot |
+| 2 | BLOCKING: HPSS and the fetch ran an acceptance checker whose bytes were not checked | both refuse unless `evw5d.py` is the approved sha256 (filled at the binding), checked before any transfer; tests: a changed checker refused, an unfilled pin refused, and a production-shaped bundle accepted end to end |
+| 3 | BLOCKING: duplicate NPZ members could hide from C-BIND; `false` passed for `0.0` in the meta | `read_npz` requires distinct `NAME.npy` members before reading; the meta is compared type-strictly (canonical JSON), with duplicate keys refused |
+| 4 | BLOCKING: the saved key definition and formula were compared only with what the writer emitted | both are fixed schema constants (`KEY_TEXT`, `FORMULA_TEXT`, `AXES`), and C-FILE checks the saved meta and `constants.json` against them; builder-side tests |
+| 5 | BLOCKING: `accepted()` took a duplicate `verdict` key and an int for a bool | the marker and `run.json` are parsed refusing duplicate keys, and compared type-strictly |
+| 6 | BLOCKING: the post reported VERIFY=PASS for a shortened manifest | the post requires `SHA256SUMS` to list exactly the five products, each a regular unlinked file, before checking |
+| 7 | the independent-formula tolerance had no isolated test | a test with equal and opposite extractor errors in two equal-volume fine cells of one reported cell; the rest of #7 is in FOLLOWUPS.md <!-- absence-ok: a statement about this lane's own suite (test_evw5d.py at revision 4), not a claim about the repository --> |
+| 8 | the connect checked the physical lane path only after `mkdir` | it checks the scratch parent's physical path first; the overtime point is in FOLLOWUPS.md |
 
 **CITABLE FOR:** what will run, what it writes and what each control checks. **NOT CITABLE FOR:** any number from the
 run, which comes from its receipt.

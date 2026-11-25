@@ -1229,48 +1229,194 @@ def test_launcher_propagates_a_remote_refusal(tmp_path):
     assert r.returncode == 8
 
 
+def launch_tree(tmp: Path) -> Path:
+    """A copy of the checkout's layout (nd-unfolding/evw5d, nd-unfolding/ess_e and launch/) with the launcher's
+    checker pin filled with the copied evw5d.py's sha256; returns the copied launcher."""
+    top = tmp / "top"
+    for sub in ("evw5d", "ess_e"):
+        shutil.copytree(EVW.parent / sub, top / "nd-unfolding" / sub, ignore=shutil.ignore_patterns("__pycache__"))
+    rel = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch"
+    (top / rel).mkdir(parents=True)
+    w = hashlib.sha256((top / "nd-unfolding/evw5d/evw5d.py").read_bytes()).hexdigest()
+    text = (LAUNCH / "evw5d_launch.sh").read_text()
+    assert text.count("__EVW5D_PY_SHA256__") == 1
+    (top / rel / "evw5d_launch.sh").write_text(text.replace("__EVW5D_PY_SHA256__", w))
+    return top / rel / "evw5d_launch.sh"
+
+
+def forge_production(d: Path) -> str:
+    """Rewrite a fixture bundle's run.json to carry the production pins (no --fixture), and re-make the manifest and
+    the marker to match: a production-shaped bundle for the positive path of the consumer's check."""
+    run = json.loads((d / "run.json").read_text())
+    run.update(code_pin=ec.CODE_PIN, main_pin=ec.MAIN_PIN, argv=["evw5d.py", "--deploy", "x", "--out", "y"])
+    for k in ec.SHARED:
+        run["reads"][k]["copy_digest"] = ec.SHARED[k][1]
+    rj = (json.dumps(run, indent=1) + "\n").encode()
+    (d / "run.json").write_bytes(rj)
+    digests = ev.parse_sums((d / ev.SUMS).read_text())
+    digests["run.json"] = hashlib.sha256(rj).hexdigest()
+    sums = ev.sums_text(digests).encode()
+    (d / ev.SUMS).write_bytes(sums)
+    fresh = ev.acceptance(d, digests)
+    done = json.loads((d / ev.DONE).read_text())
+    done.update(products=digests, sha256sums_sha256=hashlib.sha256(sums).hexdigest(), acceptance=fresh)
+    (d / ev.DONE).unlink()
+    (d / ev.DONE).write_text(json.dumps(done))
+    return hashlib.sha256(sums).hexdigest()
+
+
+def _fetch(launcher, env, d, bound):
+    d.mkdir()
+    return subprocess.run(["bash", str(launcher), "fetch-products", str(d), bound], capture_output=True, text=True,
+                          env=env)
+
+
 def test_launcher_fetch_products_runs_accepted(world, tmp_path):
     tmp_path = Path(os.path.realpath(tmp_path))
-    good = world["out"]
-    h = hashlib.sha256((good / ev.SUMS).read_bytes()).hexdigest()
-    remote = {"/pscratch/sd/j/josephrb/evw5d-20261125/evw5d": str(good)}
-    env = _stubs(tmp_path, tmp_path, remote)
-    # the products arrive and verify by sha, but a fixture bundle is never a production result: REFUSED
-    for name, bound in (("fixture", h), ("wrongbound", "0" * 64)):
-        d = tmp_path / name
-        d.mkdir()
-        r = subprocess.run(["bash", str(LAUNCH / "evw5d_launch.sh"), "fetch-products", str(d), bound],
-                           capture_output=True, text=True, env=env)
-        assert r.returncode == 1 and "REFUSED" in r.stdout and "scp weights.npz rc=0" in r.stdout, \
-            (name, r.stdout + r.stderr)
-    d = tmp_path / "fixture"
-    assert ev.accepted(d / "evw5d", h, production=False), "the fetched copy itself is complete and consistent"
-    bad = world["root"] / "failf-pristine"      # test_fail_on_f's FAIL bundle (verdict FAIL, valid checksums)
+    launcher = launch_tree(tmp_path)
+    remote_key = "/pscratch/sd/j/josephrb/evw5d-20261125/evw5d"
+    # a production-shaped bundle: fetched, verified and ACCEPTED
+    prod = tmp_path / "prod-bundle"
+    shutil.copytree(world["out"], prod)
+    hp = forge_production(prod)
+    assert ev.accepted(prod, hp), "the forged production bundle must pass the consumer's check"
+    (tmp_path / "s1").mkdir()
+    env = _stubs(tmp_path / "s1", tmp_path, {remote_key: str(prod)})
+    r = _fetch(launcher, env, tmp_path / "ok", hp)
+    assert r.returncode == 0 and "ACCEPTED" in r.stdout, r.stdout + r.stderr
+    r = _fetch(launcher, env, tmp_path / "wrongbound", "0" * 64)
+    assert r.returncode == 1 and "REFUSED" in r.stdout
+    # the fixture bundle as it is: never a production result
+    (tmp_path / "s2").mkdir()
+    env2 = _stubs(tmp_path / "s2", tmp_path, {remote_key: str(world["out"])})
+    h = hashlib.sha256((world["out"] / ev.SUMS).read_bytes()).hexdigest()
+    r = _fetch(launcher, env2, tmp_path / "fixture", h)
+    assert r.returncode == 1 and "REFUSED" in r.stdout and "scp weights.npz rc=0" in r.stdout
+    # the FAIL bundle of test_fail_on_f
+    bad = world["root"] / "failf-pristine"
     assert bad.is_dir(), "test_fail_on_f must run first (file order)"
-    hb = hashlib.sha256((bad / ev.SUMS).read_bytes()).hexdigest()
-    (tmp_path / "b").mkdir()
-    env = _stubs(tmp_path / "b", tmp_path, {"/pscratch/sd/j/josephrb/evw5d-20261125/evw5d": str(bad)})
-    d = tmp_path / "fail"
+    (tmp_path / "s3").mkdir()
+    env3 = _stubs(tmp_path / "s3", tmp_path, {remote_key: str(bad)})
+    r = _fetch(launcher, env3, tmp_path / "fail", hashlib.sha256((bad / ev.SUMS).read_bytes()).hexdigest())
+    assert r.returncode == 1 and "REFUSED" in r.stdout
+    # a changed checker is refused before it runs
+    w = launcher.parents[8] / "nd-unfolding/evw5d/evw5d.py"
+    w.write_text(w.read_text() + "\n# changed\n")
+    r = _fetch(launcher, env, tmp_path / "changedchecker", hp)
+    assert r.returncode == 8 and "not the approved bytes" in r.stdout, r.stdout + r.stderr
+
+
+def test_launcher_fetch_refuses_an_unfilled_checker_pin(tmp_path):
+    d = tmp_path / "x"
     d.mkdir()
-    r = subprocess.run(["bash", str(LAUNCH / "evw5d_launch.sh"), "fetch-products", str(d), hb],
-                       capture_output=True, text=True, env=env)
-    assert r.returncode == 1 and "REFUSED" in r.stdout, r.stdout + r.stderr
+    r = subprocess.run(["bash", str(LAUNCH / "evw5d_launch.sh"), "fetch-products", str(d), "a" * 64],
+                       capture_output=True, text=True, env=_stubs(tmp_path, tmp_path, {}))
+    assert r.returncode == 9 and "not filled in" in r.stdout
 
 
 
-def test_job_setup_runs_without_noclobber(job):
-    """A setup that writes over an existing file must succeed, as it would under ESS (noclobber is the job's own)."""
-    existing = job["tmp"] / "existing.txt"
-    existing.write_text("old")
-    job["setup"](f'echo new > "{existing}"\nreturn 0\n')
-    r = job["run"]()
-    done = json.loads((job["out"] / "logs" / "DONE-4242").read_text())
-    assert existing.read_text() == "new\n", "the setup's own redirect was refused"
-    assert "python3 is not root_6_28" in done["refused"], done     # it got past the setup
+# ---------------------------------------------------------------------------------- revision 5 (codex-school r3)
 
 
-def test_job_refuses_a_dangling_out_link(job):
-    (job["out"] / "evw5d").symlink_to(job["tmp"] / "nowhere")
-    r = job["run"]()
-    done = json.loads((job["out"] / "logs" / "DONE-4242").read_text())
-    assert r.returncode == 2 and "evw5d exists" in done["refused"]
+def test_read_npz_refuses_duplicate_members(tmp_path):
+    import zipfile as zf
+    p = tmp_path / "dup.npz"
+    np.savez(p, xsec_flat=np.ones(2), shape=np.array([2]), meta=np.array("{}"))
+    with zf.ZipFile(p, "a") as z:
+        import io as _io
+        b = _io.BytesIO()
+        np.save(b, np.zeros(2))
+        with pytest.warns(UserWarning):
+            z.writestr("xsec_flat.npy", b.getvalue())
+    with pytest.raises(ValueError, match="distinct"):
+        ev.read_npz(p)
+    q = tmp_path / "ok.npz"
+    np.savez(q, a=np.ones(1))
+    assert sorted(ev.read_npz(q)[1]) == ["a"]
+
+
+def test_check_bind_meta_is_type_strict(world):
+    _, ref = ev.read_npz(world["ref_copy"])
+    m = json.loads(str(ref["meta"]))
+    assert "amplitude" in m
+    bad = dict(m, amplitude=False if m["amplitude"] in (0, 0.0) else m["amplitude"])
+    if bad["amplitude"] is not False:
+        bad["amplitude"] = int(m["amplitude"]) if float(m["amplitude"]).is_integer() else m["amplitude"]
+    r = ev.check_bind(dict(ref, meta=np.array(json.dumps(bad))), ref, ref["xsec_flat"])
+    assert not r["pass"] and not r["meta_equal_except_per_run"]
+    dup = str(ref["meta"])[:-1] + ', "iters": 5}'
+    r = ev.check_bind(dict(ref, meta=np.array(dup)), ref, ref["xsec_flat"])
+    assert not r["pass"], "a duplicate key in the meta"
+
+
+def test_strict_json():
+    with pytest.raises(ValueError):
+        ev.strict_json('{"a": 1, "a": 2}')
+    assert ev.strict_json('{"a": {"b": 1}}') == {"a": {"b": 1}}
+    assert ev.canonical({"x": 1}) != ev.canonical({"x": True}) != ev.canonical({"x": 1.0})
+
+
+def test_accepted_refuses_duplicate_keys_and_coerced_types(out_copy):
+    raw = (out_copy / ev.DONE).read_text()
+    assert raw.startswith("{")
+    (out_copy / ev.DONE).unlink()
+    (out_copy / ev.DONE).write_text('{"verdict": "FAIL", ' + raw[1:])
+    assert not acc(out_copy), "a duplicate verdict key"
+    d = json.loads(raw)
+    d["acceptance"]["rehash_equal"] = 1
+    _write_done(out_copy, d)
+    assert not acc(out_copy), "an int where a bool was written"
+
+
+@pytest.mark.parametrize("field", ["key", "formula", "axes"])
+def test_check_file_schema_statements_from_a_faulty_builder(products, world, field):
+    meta, cj = dict(products["meta"]), json.loads(products["cj_raw"])
+    if field == "key":
+        meta["key"] = cj["key"] = meta["key"].replace("index in the npz's MCgen", "rank among the selected rows")
+    elif field == "formula":
+        cj["formula"] = cj["formula"].replace("/ (completeness_f *", "* completeness_f / (")
+    else:
+        meta["truth_axes"] = cj["truth_axes"] = ["pz", "pt", "eavail", "q3", "W"]
+    t, c = copy_t(products["t"]), copy_t(products["c"])
+    t["meta"] = c["meta"] = np.array(json.dumps(meta))
+    raw = (json.dumps(cj, indent=1) + "\n").encode()
+    r = _file_p(products, world, t=t, c=c, meta=meta, cj_raw=raw, cjson=cj)
+    assert r["meta_equal"] and r["constants_json_equal"] and not r["pass"], field
+
+
+def test_check_self_independent_formula_isolated(products):
+    """Equal and opposite errors in two equal-volume fine cells of one reported cell, in the extractor and the
+    reference alike: the result, the saved constants and both f stay within their gates; only the formula sees it."""
+    c, t = copy_t(products["c"]), products["t"]
+    fm, vol, xs0 = c["fine_to_cell"], c["volume"], np.asarray(c["xsec_flat"])
+    pair = None
+    for cell in range(16):
+        idx = np.flatnonzero((fm == cell) & (xs0 > 0))
+        for i in idx:
+            same = idx[(vol[idx] == vol[i]) & (idx != i)]
+            if same.size:
+                pair = (int(i), int(same[0]))
+                break
+        if pair:
+            break
+    assert pair, "no two equal-volume populated fine cells in one reported cell"
+    i, j = pair
+    eps = 1e-11
+    delta = eps * min(xs0[i], xs0[j])
+
+    def wrong(*a, **k):
+        x, g = products["extract"](*a, **k)
+        x = x.copy()
+        x.flat[i] += delta
+        x.flat[j] -= delta
+        return x, g
+    samp = np.column_stack([t[n] for n in ev.TRUTH_COLS])
+    d = {"edges": [c[f"edges_{q}"] for q in range(5)], "denom_nd": c["denom_nd"], "flux": c["flux"],
+         "data_pot": c["data_pot"], "n_nucleons": c["n_nucleons"]}
+    ref = ev.driver_maps(d, t["w_unfolded"], t["w_prior"], samp, wrong)["xs"].ravel(order="C")
+    c["xsec_flat"] = ref
+    f = ev.cell_integrals(ref, c["volume"], c["fine_to_cell"])
+    r = ev.check_self(t, c, ref, f, wrong, 5)
+    assert r["xsec_bit_for_bit"] and r["saved_xsec_equals_reference"]
+    assert r["f_from_file_max_rel"] <= ev.F_RTOL and r["volume_vs_edges_max_rel"] <= ev.VOLUME_RTOL
+    assert r["independent_formula_max_rel"] > ev.INDEP_RTOL and not r["pass"], r

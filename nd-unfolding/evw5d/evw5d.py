@@ -36,6 +36,7 @@ import hashlib
 import importlib.util
 import io
 import json
+import zipfile
 import os
 import platform
 import resource
@@ -62,7 +63,14 @@ COMPLETE_ATOL = 1e-12   # |c - 1| beyond this, where the denominator is positive
 VOLUME_RTOL = 1e-13     # the saved cell volumes against the products of the saved edges' widths
 C_ONE_LEVEL = 1e-5      # the director's ruling: "completeness is 1 to 1e-5" is stated only if every fine cell is
 PRODUCTS = ("constants.json", "constants.npz", "product/data_b-_j-.npz", "run.json", "weights.npz")
-NPZ_MEMBERS = ("meta", "shape", "xsec_flat")    # s5n_pseudo.write_product's members (@ abdc88c5)
+NPZ_MEMBERS = ("meta", "shape", "xsec_flat")
+AXES = ("pt", "pz", "eavail", "q3", "W")             # s5p_stage1_inspect.AXES @ abdc88c5; C-GRID checks the edges
+# the release schema's two statements, fixed here and checked on the saved bytes (C-FILE), not taken from the builder
+KEY_TEXT = ("(input npz sha256, entry): entry is the row's index in the npz's MCgen; rows are its pass_truth rows in "
+            "order; not a physical event id")
+FORMULA_TEXT = ("d5sigma_f = 1e4 * sum_{rows in fine cell f} w_unfolded / (completeness_f * flux[pT bin of f] * "
+                "n_nucleons * data_pot * volume_f), zero unless that denominator is finite and > 0 (the saved good "
+                "mask); flux in m^-2/POT, data_pot in POT; f_R = sum_{f in R} d5sigma_f * volume_f")    # s5n_pseudo.write_product's members (@ abdc88c5)
 GATED = ("C-BIND", "C-KEY", "C-ENTRY", "C-GRID", "C-F", "C-FILE", "C-SELF", "C-FLOW", "C-PINS")
 SUMS, DONE = "SHA256SUMS", "evw5d.done"
 RC_FAIL, RC_STOP, RC_FAILED = 6, 8, 9
@@ -107,11 +115,35 @@ def max_rel(x, ref) -> float:
     return float(np.max(np.abs(x[nz] / ref[nz] - 1))) if nz.any() else 0.0
 
 
+def _no_duplicate_keys(pairs):
+    keys = [k for k, _ in pairs]
+    if len(set(keys)) != len(keys):
+        raise ValueError(f"duplicate JSON keys: {sorted(k for k in set(keys) if keys.count(k) > 1)}")
+    return dict(pairs)
+
+
+def strict_json(raw) -> object:
+    """json.loads that refuses a duplicate key (Python would keep the last one silently)."""
+    return json.loads(raw, object_pairs_hook=_no_duplicate_keys)
+
+
+def canonical(x) -> str:
+    """A type-sensitive form for equality: 1, 1.0 and true differ."""
+    return json.dumps(x, sort_keys=True, allow_nan=False)
+
+
 def read_npz(path: Path) -> tuple[str, dict]:
-    """The sha256 of the file's bytes and the arrays parsed from those same bytes."""
+    """The sha256 of the file's bytes and the arrays parsed from those same bytes. The archive's raw member names
+    must be distinct, each NAME.npy, before any is read (np.load's mapping would hide a duplicate)."""
     raw = Path(path).read_bytes()
+    with zipfile.ZipFile(io.BytesIO(raw)) as zf:
+        names = [i.filename for i in zf.infolist()]
+    if len(set(names)) != len(names) or not all(n.endswith(".npy") and "/" not in n for n in names):
+        raise ValueError(f"{path}: the archive's members are not distinct NAME.npy entries: {names}")
     with np.load(io.BytesIO(raw), allow_pickle=False) as z:
         arrays = {k: np.array(z[k]) for k in z.files}
+    if sorted(arrays) != sorted(n[:-4] for n in names):
+        raise ValueError(f"{path}: the parsed arrays are not the archive's members")
     return hashlib.sha256(raw).hexdigest(), arrays
 
 
@@ -207,11 +239,11 @@ def check_bind(remade: dict, ref: dict, captured) -> dict:
     out["captured_equals_remade"] = same_bits(np.asarray(captured).ravel(order="C"), rx)
     out["n_entries"] = int(np.asarray(fx).size)
     try:
-        sm_r = ess.strip_per_run(json.loads(str(remade["meta"])))
-        sm_f = ess.strip_per_run(json.loads(str(ref["meta"])))
+        sm_r = ess.strip_per_run(strict_json(str(remade["meta"])))
+        sm_f = ess.strip_per_run(strict_json(str(ref["meta"])))
     except ValueError:
         sm_r, sm_f = {"unparsable": 1}, {"unparsable": 2}
-    out["meta_equal_except_per_run"] = sm_r == sm_f
+    out["meta_equal_except_per_run"] = canonical(sm_r) == canonical(sm_f)
     out["meta_differing_keys"] = sorted(k for k in set(sm_r) | set(sm_f) if sm_r.get(k) != sm_f.get(k))
     out["pass"] = bool(out["xsec_flat_bytes_equal"] and out["shape_bits_equal"] and out["captured_equals_remade"]
                        and out["meta_equal_except_per_run"])
@@ -294,6 +326,8 @@ def check_file(t: dict, c: dict, indep: dict, wpush, expected_c: dict, flat_inde
         vs_in[f"meta_{k}"] = pin in pins and saved_meta.get(k) == pins[pin]
     vs_in["meta_n_rows"] = saved_meta.get("n_rows") == int(entry.size)
     vs_in["meta_columns"] = saved_meta.get("columns") == list(COLUMNS)
+    vs_in["meta_key_text"] = saved_meta.get("key") == KEY_TEXT
+    vs_in["meta_truth_axes"] = saved_meta.get("truth_axes") == list(AXES)
     out["constants_vs_input"] = vs_in
     out["pass"] = bool(all(v for k, v in out.items() if k not in ("constants", "constants_vs_input"))
                        and all(out["constants"].values()) and len(out["constants"]) == len(expected_c)
@@ -305,7 +339,8 @@ def check_constants_json(cj: dict, c: dict, t: dict) -> bool:
     """constants.json's operands equal the saved arrays (exact float round trip), and its meta equals the npz meta."""
     try:
         axes = cj["truth_axes"]
-        ok = (cj["data_pot"] == float(c["data_pot"]) and cj["n_nucleons"] == float(c["n_nucleons"])
+        ok = (cj["formula"] == FORMULA_TEXT and cj["key"] == KEY_TEXT and list(axes) == list(AXES)
+              and cj["data_pot"] == float(c["data_pot"]) and cj["n_nucleons"] == float(c["n_nucleons"])
               and cj["cm2_per_m2"] == float(c["cm2_per_m2"])
               and cj["flux_per_m2_per_POT_by_pt_bin"] == [float(x) for x in np.asarray(c["flux"])]
               and list(cj["edges"]) == list(axes)
@@ -465,7 +500,7 @@ def accepted(out: Path, expect_sums_sha256: str, production: bool = True) -> boo
     try:
         if out.is_symlink() or not out.is_dir() or (out / DONE).is_symlink() or (out / SUMS).is_symlink():
             return False
-        done = json.loads((out / DONE).read_bytes())
+        done = strict_json((out / DONE).read_bytes())
         raw = (out / SUMS).read_bytes()
         digests = parse_sums(raw.decode("ascii"))
     except (OSError, ValueError, UnicodeDecodeError):
@@ -479,13 +514,14 @@ def accepted(out: Path, expect_sums_sha256: str, production: bool = True) -> boo
     fresh = acceptance(out, digests)
     if not (done["verdict"] == "PASS" and done["controls_verdict"] == "PASS"
             and done["failed_controls"] == [] and done["sha256sums_sha256"] == h
-            and done["products"] == digests and done["acceptance"] == fresh and fresh["pass"]):
+            and canonical(done["products"]) == canonical(digests)
+            and canonical(done["acceptance"]) == canonical(fresh) and fresh["pass"] is True):
         return False
     try:
         rj = (out / "run.json").read_bytes()
         if hashlib.sha256(rj).hexdigest() != digests.get("run.json"):
             return False
-        run = json.loads(rj)
+        run = strict_json(rj)
     except (OSError, ValueError):
         return False
     if not isinstance(run, dict) or not isinstance(run.get("controls"), dict):
@@ -500,7 +536,8 @@ def accepted(out: Path, expect_sums_sha256: str, production: bool = True) -> boo
     return bool(run.get("schema") == SCHEMA and run.get("controls_verdict") == "PASS"
                 and tuple(run.get("gated", ())) == GATED
                 and all(isinstance(ctl.get(k), dict) and ctl[k].get("pass") is True for k in GATED)
-                and run.get("findings") == done["findings"] and run.get("finding_sizes") == done["finding_sizes"])
+                and canonical(run.get("findings")) == canonical(done["findings"])
+                and canonical(run.get("finding_sizes")) == canonical(done["finding_sizes"]))
 
 
 def publish_done(out: Path, record: dict) -> None:
@@ -655,8 +692,7 @@ def run(a, cfg: dict) -> int:
 
         # ---- the products, written once, then read back from the bytes hashed
         constants = build_constants(d, maps, vol, fm)
-        meta = {"schema": SCHEMA, "key": "(input npz sha256, entry): entry is the row's index in the npz's MCgen; "
-                "rows are its pass_truth rows in order; not a physical event id",
+        meta = {"schema": SCHEMA, "key": KEY_TEXT,
                 "input_npz_sha256": cfg["shared"]["npz"][1], "bkg_dump_sha256": cfg["shared"]["bkg"][1],
                 "result_sha256": cfg["shared"]["ref"][1], "code_pin": cfg["code_pin"],
                 "columns": list(COLUMNS), "truth_axes": list(s1.AXES), "n_rows": int(table["entry"].size)}
@@ -666,10 +702,7 @@ def run(a, cfg: dict) -> int:
                  "cm2_per_m2": 1.0e4, "flux_per_m2_per_POT_by_pt_bin": [float(x) for x in constants["flux"]],
                  "edges": {ax: [float(x) for x in constants[f"edges_{i}"]] for i, ax in enumerate(s1.AXES)},
                  "f_cm2_per_nucleon": cf["f"], "fine_map_sha256_int32le": cfg["fine_map_sha"],
-                 "formula": "d5sigma_f = 1e4 * sum_{rows in fine cell f} w_unfolded / (completeness_f * flux[pT bin "
-                            "of f] * n_nucleons * data_pot * volume_f), zero unless that denominator is finite and "
-                            "> 0 (the saved good mask); flux in m^-2/POT, data_pot in POT; "
-                            "f_R = sum_{f in R} d5sigma_f * volume_f"}
+                 "formula": FORMULA_TEXT}
         cbytes = (json.dumps(cjson, indent=1) + "\n").encode()
         with open(out / "constants.json", "xb") as fh:
             fh.write(cbytes)
