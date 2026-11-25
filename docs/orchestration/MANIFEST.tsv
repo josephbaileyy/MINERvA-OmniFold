@@ -10236,7 +10236,6 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-202611
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/attempt1/lane/sacct-61997953.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/attempt1/lane/session.err	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/attempt1/lane/session.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
-docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/attempt1/removal.sh	intended	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/attempt2/README.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/attempt2/lane/c1effect.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/attempt2/lane/c1effect.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
