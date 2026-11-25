@@ -9088,6 +9088,7 @@ docs/orchestration/state/ibu-chi2-20261123/regenA4/receipts/regenA4_run.sh	track
 docs/orchestration/state/ibu-chi2-20261123/regenA4/receipts/step1_tier2_argv_equal.out	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/regenA4/receipts/tier2.sh	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/regenA4/receipts/tier2_argv_equal.sh	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/regenA5/AMENDMENT-A5-runner-r1.txt	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/regenA5/AMENDMENT-A5.txt	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/regenA5/a5_literals.py	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/regenA5/a5_readout.py	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
