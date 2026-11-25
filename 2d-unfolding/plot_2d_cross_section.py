@@ -47,6 +47,7 @@ def th2_to_slices(h2d, axis):
     axis="pz": for each p_|| bin, extract the p_T distribution
     Returns list of (label, TH1D) tuples.
     """
+    require_pt_on_x(h2d)
     slices = []
     if axis == "pt":
         for ix in range(1, h2d.GetNbinsX() + 1):
@@ -242,10 +243,24 @@ def compute_truth_xsec_2d(hTruth2D, hEff2D, flux_bins, data_pot, n_nucleons):
     return hXSec
 
 
+def x_edges(h):
+    """The bin edges of h's x axis."""
+    a = h.GetXaxis()
+    return np.array([a.GetBinLowEdge(i) for i in range(1, a.GetNbins() + 1)] + [a.GetBinUpEdge(a.GetNbins())])
+
+
+def require_flux_on(h_flux, pt_edges, source):
+    if pt_edges is not None and not np.array_equal(x_edges(h_flux), np.asarray(pt_edges, dtype=float)):
+        raise RuntimeError(f"the truth-normalization flux ({source}) is not on the truth histogram's pT edges")
+
+
 def load_flux_bins_for_truth(f_result, result_path, mcfile=None,
-                             flux_hist="pTmu_reweightedflux_integrated"):
+                             flux_hist="pTmu_reweightedflux_integrated", pt_edges=None):
+    """The flux per pT bin, embedded hFlux_pt or the --mcfile fallback; with pt_edges, the flux
+    histogram must be on those edges."""
     h_embedded = f_result.Get("hFlux_pt")
     if h_embedded:
+        require_flux_on(h_embedded, pt_edges, "embedded hFlux_pt")
         return (np.asarray([h_embedded.GetBinContent(i)
                             for i in range(1, h_embedded.GetNbinsX() + 1)],
                            dtype=float),
@@ -261,6 +276,7 @@ def load_flux_bins_for_truth(f_result, result_path, mcfile=None,
     h_flux = f_mc.Get(flux_hist)
     if not h_flux:
         raise RuntimeError(f"Missing {flux_hist} in {mc_path}")
+    require_flux_on(h_flux, pt_edges, f"{mc_path}:{flux_hist}")
     flux_bins = np.asarray(
         [h_flux.GetBinContent(i) for i in range(1, h_flux.GetNbinsX() + 1)],
         dtype=float)
@@ -275,7 +291,7 @@ def require_pt_on_x(h):
                          f"y = p_parallel ({N_PZ})")
 
 
-def require_one_grid(h2ds, h_pt=None, h_pz=None, h_flux=None):
+def require_one_grid(h2ds, h_pt=None, h_pz=None):
     """Refuse an input whose histograms are not all on one (pT, p_parallel) grid."""
     for h in h2ds:
         require_pt_on_x(h)
@@ -284,12 +300,9 @@ def require_one_grid(h2ds, h_pt=None, h_pz=None, h_flux=None):
         e = th2d_edges(h)
         if not (np.array_equal(e[0], pt) and np.array_equal(e[1], pz)):
             raise RuntimeError(f"{h.GetName()} is not on {h2ds[0].GetName()}'s grid")
-    for h, want in ((h_pt, pt), (h_pz, pz), (h_flux, pt)):
-        if h is not None:
-            a = h.GetXaxis()
-            got = np.array([a.GetBinLowEdge(i) for i in range(1, a.GetNbins() + 1)] + [a.GetBinUpEdge(a.GetNbins())])
-            if not np.array_equal(got, want):
-                raise RuntimeError(f"{h.GetName()}'s edges are not {h2ds[0].GetName()}'s")
+    for h, want in ((h_pt, pt), (h_pz, pz)):
+        if h is not None and not np.array_equal(x_edges(h), want):
+            raise RuntimeError(f"{h.GetName()}'s edges are not {h2ds[0].GetName()}'s")
 
 
 def truth_projections(h2d):
@@ -352,13 +365,13 @@ def main():
     # Detach from file
     for h in [hXSec2D, hTruth2D, hEff2D, hXSec_pt, hXSec_pz]:
         h.SetDirectory(0)
-    require_one_grid([hXSec2D, hTruth2D, hEff2D], hXSec_pt, hXSec_pz, f.Get("hFlux_pt") or None)
+    require_one_grid([hXSec2D, hTruth2D, hEff2D], hXSec_pt, hXSec_pz)
 
     # Read metadata for truth cross-section computation
     data_pot = float(f.Get("dataPOT").GetVal())
     n_nucleons = float(f.Get("nNucleons").GetVal())
     flux_bins, flux_source = load_flux_bins_for_truth(
-        f, args.infile, args.mcfile, args.flux_hist)
+        f, args.infile, args.mcfile, args.flux_hist, pt_edges=th2d_edges(hTruth2D)[0])
     print(f"[INFO] Truth-normalization flux source: {flux_source}")
 
     # Compute truth cross section for comparison

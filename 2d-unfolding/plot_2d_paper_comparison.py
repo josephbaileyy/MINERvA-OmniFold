@@ -31,7 +31,8 @@ import matplotlib.pyplot as plt
 from plot_2d_cross_section import (th2_to_slices,
                                     compute_truth_xsec_2d,
                                     load_flux_bins_for_truth,
-                                    require_one_grid)
+                                    require_one_grid,
+                                    th2d_edges)
 import restyle_2026_10 as rs
 
 
@@ -178,13 +179,13 @@ def main():
     hEff2D = f.Get("hEff2D")
     for h in [hXSec2D, hTruth2D, hEff2D]:
         h.SetDirectory(0)
-    require_one_grid([hXSec2D, hTruth2D, hEff2D], h_flux=f.Get("hFlux_pt") or None)
+    require_one_grid([hXSec2D, hTruth2D, hEff2D])
     data_pot = float(f.Get("dataPOT").GetVal())
     n_nucleons = float(f.Get("nNucleons").GetVal())
     niter = int(f.Get("nIterations").GetVal())
 
     flux_bins, flux_source = load_flux_bins_for_truth(
-        f, args.infile, args.mcfile, args.flux_hist)
+        f, args.infile, args.mcfile, args.flux_hist, pt_edges=th2d_edges(hTruth2D)[0])
     f.Close()
     print(f"[INFO] Truth-normalization flux source: {flux_source}")
 

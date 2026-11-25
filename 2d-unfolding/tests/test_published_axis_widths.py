@@ -1060,8 +1060,21 @@ class CrossSectionPlotEdges(unittest.TestCase):
         cls.flux = 1e-4 * (2 + np.arange(N_PT))
         for tag, pt in (("g07", OUR_PT), ("g075", PAPER_PT)):
             cls.write_input(cls.dir / f"{tag}.root", pt)
-        cls.write_input(cls.dir / "mixed_eff.root", PAPER_PT, eff_pt=OUR_PT)
-        cls.write_input(cls.dir / "mixed_flux.root", PAPER_PT, flux_pt=OUR_PT)
+        for name, kw in (("eff", "hEff2D"), ("flux", "hFlux_pt"), ("truth", "hOFTruthDenom2D"), ("xpt", "hXSec_pt")):
+            cls.write_input(cls.dir / f"mixed_{name}.root", PAPER_PT, other={kw: OUR_PT})
+        pz = PZ.copy()
+        pz[9] = 7.5
+        cls.write_input(cls.dir / "mixed_xpz.root", PAPER_PT, other={"hXSec_pz": pz})
+        cls.write_input(cls.dir / "mixed_truthpz.root", PAPER_PT, other={"hOFTruthDenom2D": (PAPER_PT, pz)})
+        cls.write_input(cls.dir / "noflux075.root", PAPER_PT, skip=("hFlux_pt",))
+        cls.write_input(cls.dir / "notruthdenom075.root", PAPER_PT, skip=("hOFTruthDenom2D",))
+        for tag, pt in (("mc07", OUR_PT), ("mc075", PAPER_PT)):
+            f = ROOT.TFile.Open(str(cls.dir / f"{tag}.root"), "RECREATE")
+            h = ROOT.TH1D("pTmu_reweightedflux_integrated", "", N_PT, np.asarray(pt, dtype=float))
+            for i in range(N_PT):
+                h.SetBinContent(i + 1, float(cls.flux[i]))
+            h.Write()
+            f.Close()
 
     @classmethod
     def tearDownClass(cls):
@@ -1070,7 +1083,8 @@ class CrossSectionPlotEdges(unittest.TestCase):
 
     @classmethod
     def th2(cls, name, pt, vals, errs=None):
-        h = ROOT.TH2D(name, "", N_PT, np.asarray(pt, dtype=float), N_PZ, PZ)
+        pt, pz = pt if isinstance(pt, tuple) else (pt, PZ)
+        h = ROOT.TH2D(name, "", N_PT, np.asarray(pt, dtype=float), N_PZ, np.asarray(pz, dtype=float))
         h.Sumw2()
         for ix in range(N_PT):
             for iy in range(N_PZ):
@@ -1083,14 +1097,19 @@ class CrossSectionPlotEdges(unittest.TestCase):
     POT, NUC = 1.06e21, 3.2e30
 
     @classmethod
-    def write_input(cls, path, pt, eff_pt=None, flux_pt=None):
-        """The fields main() reads, as unfold_2d_omnifold_unbinned.py writes them."""
+    def write_input(cls, path, pt, other=None, skip=()):
+        """The fields main() reads, as unfold_2d_omnifold_unbinned.py writes them; `other` puts the
+        named histograms on other edges (pT, or p_par for hXSec_pz), `skip` leaves them out."""
+        o = other or {}
         f = ROOT.TFile.Open(str(path), "RECREATE")
         cls.th2("hXSec2D", pt, 1e-39 * cls.cont, 1e-39 * cls.err).Write()
-        cls.th2("hOFTruthDenom2D", pt, cls.truth).Write()
-        cls.th2("hEff2D", pt if eff_pt is None else eff_pt, cls.eff).Write()
-        for name, edges, n in (("hXSec_pt", pt, N_PT), ("hXSec_pz", PZ, N_PZ),
-                               ("hFlux_pt", pt if flux_pt is None else flux_pt, N_PT)):
+        for name, vals in (("hOFTruthDenom2D", cls.truth), ("hTruth2D", cls.truth), ("hEff2D", cls.eff)):
+            if name not in skip:
+                cls.th2(name, o.get(name, pt), vals).Write()
+        for name, edges, n in (("hXSec_pt", o.get("hXSec_pt", pt), N_PT), ("hXSec_pz", o.get("hXSec_pz", PZ), N_PZ),
+                               ("hFlux_pt", o.get("hFlux_pt", pt), N_PT)):
+            if name in skip:
+                continue
             h = ROOT.TH1D(name, "", n, np.asarray(edges, dtype=float))
             for i in range(n):
                 h.SetBinContent(i + 1, float(1e-38 * (1 + i)) if name != "hFlux_pt" else float(cls.flux[i]))
@@ -1195,16 +1214,35 @@ class CrossSectionPlotEdges(unittest.TestCase):
         for fn in (new.truth_projections, new.efficiency_mesh):
             with self.assertRaises(ValueError):
                 fn(t)
-        for bad in ("mixed_eff", "mixed_flux"):
-            with self.assertRaises(RuntimeError):
-                self.run_xs(new, self.dir / f"{bad}.root", str(self.dir / bad), False)
+        with self.assertRaises(ValueError):
+            new.th2_to_slices(t, "pt")
+        for bad in ("eff", "flux", "truth", "truthpz", "xpt", "xpz"):
+            with self.assertRaises(RuntimeError, msg=bad):
+                self.run_xs(new, self.dir / f"mixed_{bad}.root", str(self.dir / f"m_{bad}"), False)
         pc = new_module("plot_2d_paper_comparison.py", "pc_refuse")
-        for bad in ("mixed_eff", "mixed_flux"):
-            with self.assertRaises(RuntimeError):
-                run_main(pc, ["--infile", self.dir / f"{bad}.root", "--prefix", self.dir / f"pc_{bad}"])
+        for bad in ("eff", "flux", "truth", "truthpz"):
+            with self.assertRaises(RuntimeError, msg=bad):
+                run_main(pc, ["--infile", self.dir / f"mixed_{bad}.root", "--prefix", self.dir / f"pc_{bad}"])
 
-    def run_xs(self, module, infile, prefix, style):
-        argv = ["--infile", infile, "--prefix", prefix] + (["--style", "restyle-2026-10", "--print-font"] if style else [])
+    def test_fallback_flux_must_be_on_the_truth_edges(self):
+        new = self.new("fallback")
+        pc = new_module("plot_2d_paper_comparison.py", "pc_fallback")
+        inp = self.dir / "noflux075.root"
+        with self.assertRaises(RuntimeError):
+            self.run_xs(new, inp, str(self.dir / "fb07"), False, ["--mcfile", self.dir / "mc07.root"])
+        with self.assertRaises(RuntimeError):
+            run_main(pc, ["--infile", inp, "--prefix", self.dir / "pcfb07", "--mcfile", self.dir / "mc07.root"])
+        out = self.run_xs(new, inp, str(self.dir / "fb075"), False, ["--mcfile", self.dir / "mc075.root"])
+        self.assertIn("mc075.root:pTmu_reweightedflux_integrated", out)
+        run_main(pc, ["--infile", inp, "--prefix", self.dir / "pcfb075", "--mcfile", self.dir / "mc075.root"])
+
+    def test_truth_fallback_to_hTruth2D(self):
+        new = self.new("tfb")
+        out = self.run_xs(new, self.dir / "notruthdenom075.root", str(self.dir / "tfb"), False)
+        self.assertIn("hOFTruthDenom2D not found", out)
+
+    def run_xs(self, module, infile, prefix, style, extra=()):
+        argv = ["--infile", infile, "--prefix", prefix] + (["--style", "restyle-2026-10", "--print-font"] if style else []) + list(extra)
         _, out = run_main(module, argv)
         return out
 
@@ -1249,7 +1287,13 @@ class CrossSectionPlotEdges(unittest.TestCase):
             np.testing.assert_allclose(tpt[1], want @ np.diff(PZ), rtol=1e-12)
             np.testing.assert_array_equal(tpz[0], PZ)
             np.testing.assert_allclose(tpz[1], np.diff(PAPER_PT) @ want, rtol=1e-12)
-            (lx, lt, tslices), (pzx, pzt, _) = grids
+            (lx, lt, tslices), (pzx, pzt, pzslices) = grids
+            np.testing.assert_array_equal(xpz[0], PZ)
+            self.assertEqual(pzx, pzt)
+            self.assertEqual(pzx[0], "1.5 < p_|| < 2.0")
+            for k, d in enumerate(pzslices):
+                np.testing.assert_array_equal(d[0], PAPER_PT)
+                np.testing.assert_allclose(d[1], want[:, k], rtol=1e-12)
             self.assertEqual(lx, lt)
             self.assertEqual(lx[6], "0.475 < p_T < 0.55")
             self.assertEqual(lx[0], "0.00 < p_T < 0.075")
@@ -1275,12 +1319,21 @@ class CrossSectionPlotEdges(unittest.TestCase):
             for stem in ("pt_slices", "pz_slices"):
                 self.assertEqual((self.dir / f"pc{int(style)}_old_{stem}.png").read_bytes(),
                                  (self.dir / f"pc{int(style)}_new_{stem}.png").read_bytes(), f"{stem} style={style}")
-        titles = []
-        orig = Axes.set_title
-        with mock.patch.object(Axes, "set_title", lambda ax, t, *a, **k: (titles.append(t), orig(ax, t, *a, **k))[1]):
-            run_main(new, ["--infile", self.dir / "g075.root", "--prefix", self.dir / "pc075"])
-        self.assertIn("0.475 < p_T < 0.55", titles)
-        self.assertNotIn("0.47 < p_T < 0.55", titles)
+
+    def test_paper_comparison_on_the_release_grid(self):
+        new = new_module("plot_2d_paper_comparison.py", "pc_075")
+        for style in (False, True):
+            st = ["--style", "restyle-2026-10", "--print-font"] if style else []
+            texts, stairs = [], []
+            ot, ox, os_ = Axes.set_title, Axes.text, Axes.stairs
+            with mock.patch.object(Axes, "set_title", lambda ax, t, *a, **k: (texts.append(t), ot(ax, t, *a, **k))[1]), \
+                    mock.patch.object(Axes, "text", lambda ax, x, y, t, *a, **k: (texts.append(t), ox(ax, x, y, t, *a, **k))[1]), \
+                    mock.patch.object(Axes, "stairs", lambda ax, v, e=None, *a, **k: (stairs.append(np.asarray(e, dtype=float)), os_(ax, v, e, *a, **k))[1]):
+                run_main(new, ["--infile", self.dir / "g075.root", "--prefix", self.dir / f"pc075_{int(style)}"] + st)
+            want = "$0.475 < p_T < 0.55$" if style else "0.475 < p_T < 0.55"
+            self.assertTrue(any(want in str(t) for t in texts), style)
+            self.assertFalse(any("0.47 < p_T" in str(t) for t in texts), style)
+            self.assertTrue(any(len(e) == N_PT + 1 and np.array_equal(e, PAPER_PT) for e in stairs), style)
 
     def test_paper_comparison_slices_use_the_label(self):
         pc = new_module("plot_2d_paper_comparison.py", "pc_lab")
