@@ -5,18 +5,24 @@
 \subsection{Estimator}
 \label{sec:negweight-estimator}
 
-Negative-weight subtraction supplies the reconstructed signal target for the first OmniFold step without imposing a subtraction grid. Using the notation of Sec.~\ref{sec:omnifold-implementation}, we give data unit weight and append simulated background with the negative of its exposure-scaled weights. The measured class then has signed density
+Negative-weight subtraction supplies the reconstructed signal target for the first OmniFold step without imposing a subtraction grid. As in Sec.~\ref{sec:omnifold-implementation}, $D(x)$ is the selected data density and $B(x)$ the exposure-scaled simulated background. The measured class then has signed density
 \begin{equation}
   \rho_1^{\mathrm{neg}}(x)=D(x)-B(x)
   \label{eq:negweight-continuous}
 \end{equation}
-and the simulated class has the current selected-signal density $S(x)$. For $S(x)>0$ and $D(x)>B(x)$, the population classifier odds with unnormalized class weights are $[D(x)-B(x)]/S(x)$. In a bin with positive net yield, purity weighting instead scales the data shape by the bin-averaged signal fraction.
+and the simulated class has the current selected-signal density $S(x)$. For $S(x)>0$ and $D(x)>B(x)$, the population classifier odds with unnormalized class weights are $[D(x)-B(x)]/S(x)$. For an occupied reconstructed bin $b$, let $D_b$ and $B_b$ be the integrals of $D(x)$ and $B(x)$. The binned purity method assigns the same weight to each data event in an occupied bin,
+\begin{equation}
+  w_{\mathrm{pur}}(b)=\frac{\max(0,D_b-B_b)}{D_b} .
+  \label{eq:purity-weight}
+\end{equation}
+
+The classifier uses the continuous event coordinates. Its measured-class density in an occupied bin is
 \begin{equation}
   \rho_1^{\mathrm{pur}}(x)=D(x)\,w_{\mathrm{pur}}(b)
   =D(x)\,\max\!\left(0,1-\frac{B_b}{D_b}\right)
   \label{eq:negweight-purity}
 \end{equation}
-The signed target differs from the purity-weighted target by $D(x)B_b/D_b-B(x)$, with zero net change in the bin.
+In bins with $D_b\geq B_b$, the signed target differs from the purity-weighted target by $D(x)B_b/D_b-B(x)$, with zero net change in the bin.
 
 The refinement gives the first-step classifier a nonnegative target. The sign classifier is trained on the absolute-weight sample, with density $D+B$. Its population score is $g=D/(D+B)$ wherever $D+B>0$. The factor $\max(0,2g-1)$ then gives the target $[D-B]_+$, where $[z]_+\equiv\max(0,z)$~\cite{Nachman:2025staypositive}. For a finite learner, the clipping acts on the fitted score. With histogram-based boosting in scikit-learn, the direct signed fit and the clipped refinement gave a median cross-section bin ratio of $\nwMedianBin$. With exact-split trees, the direct fit produced large excursions at low $p_T$ that the refinement removed.
 
@@ -87,6 +93,21 @@ In a matched, full-statistics LightGBM check in two dimensions, the ratios of $\
 A common shift from changing the subtraction cancels in a mean-centered covariance. If the change shifts the cross-section vector of member $u$ by $\delta_u$, the centered vector shifts by $\delta_u-\bar\delta$, where $\bar\delta$ is the mean shift within the systematic band or the bootstrap ensemble.
 
 The five-dimensional systematic check covers two individual variations at one unfolding iteration with the scikit-learn histogram-based learner. For the two-particle--two-hole variation, both treatments give an integrated cross section of $3.014\times10^{-38}\,\mathrm{cm}^2$ per nucleon at the reported precision. For the quasielastic axial-mass variation, the integral shifts by $-0.03\%$. The respective median bin ratios are 1.0005 and 0.9990. The five-dimensional background-inclusive closure tests probe bias separately (Sec.~\ref{sec:higher-dimensional-closure}).
+
+\subsection{Five-observable background tests}
+
+We compare a deterministic OmniFold fit with binned purity subtraction, a low-capacity refinement, and the sixteen-cell estimator at nominal truth. The deterministic fit uses fixed training settings and assigns data weights from reconstructed-bin purities. The low-capacity refinement leaves residuals that still exceed the closure threshold in some joint and projected cells (Fig.~\ref{fig:bkg-residual-note}). The sixteen-cell estimator passes the same criterion in 40 fresh pseudo-experiments, with a largest deviation of 2.7 standard errors and a pooled statistical pull width of 1.02. The comparison is descriptive because no common criterion was set in advance (Table~\ref{tab:validation-inventory}).
+
+With the deterministic purity control, the highest-$W$ column of the $E_{\mathrm{avail}}$--$W$ plane is $3.5\%$ to $4.1\%$ low, except for the highest-energy corner, which is $1.7\%$ high. The low-capacity negative-weight refinement reduces the absolute residuals to $0.11\%$--$0.24\%$ in that column and to at most $0.39\%$ elsewhere in the plane. With 60 pseudo-experiments, residuals well below $1\%$ are significant, and many cells in the plane also exceed the criterion's threshold. The largest failures are joint cells, at up to $1.0\%$ high and up to 14 standard errors (Fig.~\ref{fig:bkg-residual-note}). Table~\ref{tab:validation-inventory} records the criteria and the separate sixteen-cell check.
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/paper_fig_bkg_residual.pdf}
+  \caption{At nominal truth, the low-capacity negative-weight refinement reduces the closure residuals in the $(E_{\mathrm{avail}},W)$ plane, where the deterministic purity control is $3.5\%$ to $4.1\%$ low in most of the highest-$W$ column, but leaves residuals of about $1\%$ in some joint cells. Panel (a) maps the mean fractional closure residual with simulated backgrounds in the 42 $(E_{\mathrm{avail}},W)$ cells, for the deterministic purity control (9 pseudo-experiments, left) and the low-capacity negative-weight refinement (60 pseudo-experiments, right), on one color scale. Panel (b) shows the same residuals for the \jtNcells{} supported joint cells, in blocks of one $p_T$ bin and one $p_\parallel$ bin, followed by the integrated total. There, circles show the purity control and squares the refinement, with error bars giving standard errors of the mean. The two ensembles are unpaired. The plot uses $t$ for the mean residual in standard errors. A refinement value is printed in bold, or its square filled, when $|t|>3.6$, the per-quantity threshold of the nominal closure criterion.}
+  \label{fig:bkg-residual-note}
+\end{figure}
+
+The purity bias disappears in signal-only tests. In the widest mass bin, $W\geq3~\mathrm{GeV}$, the background yield is about $13\%$ of signal. Purity subtraction corrects the reconstructed bin integral, while the unbinned learner resolves background variation within the bin (Appendix~\ref{app:negative-weight-background}). On data, switching the subtraction method shifts the tested integrals by a median of $0.36\%$ and at most $1.4\%$.
 
 \subsection{Background treatment in other unbinned analyses}
 \label{sec:negweight-practice}

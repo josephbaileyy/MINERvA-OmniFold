@@ -2,7 +2,7 @@
 """Tie the paper's Sec. IV printed values, and the note values moved from it, to their committed receipts (PRD release
 audit ea939701, G11).
 
-Each check finds one printed value in the note's values.tex, sec3_twod.tex, sec4_higherdim.tex, sec_validation.tex,
+Each check finds one printed value in the note's values.tex, sec3_twod.tex, appC_supplementary.tex, sec_validation.tex,
 sec_5d.tex or app_devhistory.tex, or in the primer's primer_body.tex, recomputes it
 from the committed receipt that backs it, and compares at the printed precision: |computed - printed| <= half a unit in
 the printed last digit ("round"), or printed - one unit <= computed < printed ("below", for "below X%": true, and tight
@@ -270,7 +270,7 @@ def pt_edges_printed_exact(printed_ours: str, printed_published: str, printed_st
 
 EDGE_SENTENCE = (r"Three of our \$p_T\$ edges \(([0-9.]+), ([0-9.]+) and \\SI\{([0-9.]+)\}\{GeV/c\}\) differ by "
                  r"\\SI\{([0-9.]+)\}\{GeV/c\} from the published ([0-9.]+), ([0-9.]+) and ([0-9.]+)\.")
-EDGE_STEP_SEC2 = r"with three interior \$p_T\$ edges \\SI\{([0-9.]+)\}\{GeV/c\} from the published ones"
+EDGE_STEP_APPC = r"with three interior \$p_T\$ edges \\SI\{([0-9.]+)\}\{GeV/c\} from the published ones"
 
 
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
@@ -373,7 +373,7 @@ CHECKS = [
      r"Some joint cells remain up to \\SI\{([0-9.]+)\}\{\\percent\} high", negweight_joint_max, "round"),
     ("treatments on data (VL152)", "sec_5d.tex", r"and at most \\SI\{([0-9.]+)\}\{\\percent\} over the reported functionals",
      data_method_diff, "round"),
-    ("regularization bias at high W (VL151)", "sec4_higherdim.tex",
+    ("regularization bias at high W (VL151)", "appC_supplementary.tex",
      r"reaches \$([0-9.]+)\\%\$ in the highest-\$W\$ column", regularization_max, "round"),
     ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "appA_methods.tex",
      r"The lowest empirical coverage for the \$68\\%\$ intervals is ([0-9.]+)\.", tilt_coverage68_min, "round"),
@@ -418,9 +418,9 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
         o1, o2, o3, step, p1, p2, p3 = m[0]
         good, info = pt_edges_printed_exact([o1, o2, o3], [p1, p2, p3], step)
         rows.append(("pT edges, ours vs published (edges/root_axis.out, Binning.h)", good, info))
-        m2 = re.findall(EDGE_STEP_SEC2, text("sec2_method.tex", sources))
-        rows.append(("pT edge step in sec2_method.tex equals sec3's, exactly", len(m2) == 1 and m2[0] == step,
-                     f"sec2 prints {m2} | sec3 step {step}"))
+        m2 = re.findall(EDGE_STEP_APPC, text("appC_supplementary.tex", sources))
+        rows.append(("pT edge step in appC_supplementary.tex equals sec3's, exactly", len(m2) == 1 and m2[0] == step,
+                     f"appendix C prints {m2} | sec3 step {step}"))
     rows += mode_split_claims(sources)
     rows += ibub_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
@@ -589,9 +589,9 @@ def ibub_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 
 def load() -> dict[str, str]:
-    return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec4_higherdim.tex", "sec_validation.tex",
+    return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec_validation.tex",
                                                "sec_5d.tex", "app_devhistory.tex", "primer_body.tex", "appA_methods.tex",
-                                               "sec2_method.tex", "appC_supplementary.tex", "records_r03_twod.tex")}
+                                               "appC_supplementary.tex", "records_r03_twod.tex")}
 
 
 def gzip_self_test() -> bool:
@@ -654,13 +654,13 @@ def self_test() -> int:
                 print(f"  caught      {label}: {p} -> {bad}")
     # The pT-edge rows (not in CHECKS): each printed edge or step, changed, must be rejected.
     edge_labels = ("pT edges, ours vs published (edges/root_axis.out, Binning.h)",
-                   "pT edge step in sec2_method.tex equals sec3's, exactly")
+                   "pT edge step in appC_supplementary.tex equals sec3's, exactly")
     for src, old_s, new_s, lab in (
             ("sec3_twod.tex", "(0.07, 0.33 and", "(0.08, 0.33 and", edge_labels[0]),
             ("sec3_twod.tex", "and \\SI{0.47}{GeV/c})", "and \\SI{0.48}{GeV/c})", edge_labels[0]),
             ("sec3_twod.tex", "the published 0.075, 0.325 and 0.475.", "the published 0.075, 0.325 and 0.48.", edge_labels[0]),
             ("sec3_twod.tex", "differ by \\SI{0.005}{GeV/c}", "differ by \\SI{0.006}{GeV/c}", edge_labels[0]),
-            ("sec2_method.tex", "edges \\SI{0.005}{GeV/c} from", "edges \\SI{0.006}{GeV/c} from", edge_labels[1])):
+            ("appC_supplementary.tex", "edges \\SI{0.005}{GeV/c} from", "edges \\SI{0.006}{GeV/c} from", edge_labels[1])):
         t = text(src, base)
         if t.count(old_s) != 1:
             print(f"  NOT FOUND   edge mutation {old_s!r} in {src}"); ok = False; continue
