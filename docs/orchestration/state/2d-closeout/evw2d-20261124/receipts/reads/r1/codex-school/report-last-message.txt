@@ -1,0 +1,5 @@
+VERDICT: NO-GO
+
+[Review report](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-code/codex/report.md)
+
+The blocking findings cover serialized row and normalization checks, missing reference evidence, conflicting mutation receipts, and unenforced custody. The pinned source hashes match. The suite and production unfold were reviewed through the supplied records.

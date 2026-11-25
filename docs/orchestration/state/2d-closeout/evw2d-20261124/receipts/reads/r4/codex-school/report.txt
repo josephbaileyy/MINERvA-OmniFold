@@ -1,0 +1,60 @@
+VERDICT: NO-GO
+
+### Round-3 findings
+
+Paths in both disposition lists are relative to `inputs/new/`.
+
+1. **CLOSED** — C-BIND parses and hashes one buffer, records its digest, and rejects the scratch prefix itself. `evw2d.py:152–155,167–190,950`
+2. **PARTLY** — Numbered job and step IDs exclude `batch` and `extern`. Scheduler provenance and the cap depend on the bound launcher. `evw2d.py:245–255`; `EVW2D-DECLARATION.md:372–375`
+3. **PARTLY** — Git overrides, checkout-root mismatch, and linked pins are rejected. Imports still reopen the checked paths. `evw2d.py:216–241,268–304`
+4. **PARTLY** — C-KEY reads the held inode, closing the two-reader swap. The driver still opens by name, and §8 overstates what the gates catch. `evw2d.py:703–738,884–899`; `EVW2D-DECLARATION.md:339–346`
+5. **CLOSED** — C-FILE requires float64 denominator columns and checks their metadata. Every `same_bits` call requires equal operand dtypes. `evw2d.py:412–419,820–823`
+6. **PARTLY** — Constants are parsed from the hashed buffer. Rehashing catches lasting edits after the baseline, but C-SELF can use a replacement already present at the first ROOT hash. `evw2d.py:964–967,982,1009`
+7. **PARTLY** — A genuine interior rounding miss takes the declared fallback and records its size. The ratio comparison omits flow bins, and the end-to-end test still mocks the classification. `evw2d.py:510–525,915–923,973,1012`; `test_evw2d.py:1155–1165`
+8. **PARTLY** — Both staged identities and digests are checked before unlink, and the ledger opens first with `O_NOFOLLOW`. Ledger aliases and write failures remain. `evw2d.py:1041–1072`
+9. **CLOSED** — A lost exclusive create leaves the other invocation’s partial in place. Partial names include host, PID, and a random token. `evw2d.py:653–670`
+10. **CLOSED** — Both reference sources are screened, and uproot reads the buffers that were hashed. `make_references.py:49–58,69–76`
+11. **PARTLY** — The process and timing claims are corrected. The spies still lack argument snapshots at entry. `EVW2D-DECLARATION.md:268–269,301–304`; `test_evw2d.py:504–508,533–545`
+
+### Carried round-2 PARTLY items
+
+**Codex-school**
+
+1. **PARTLY** — Final-head mutation results are pending. `evw2d_mutation.py:282–318`
+2. **PARTLY** — Config bytes are bound to execution. Allocation provenance still depends on the launcher. `evw2d.py:152–169,245–255`
+3. **PARTLY** — Git overrides and linked source escapes are closed. Imports reopen paths. `evw2d.py:216–241,280–304`
+4. **PARTLY** — Both builder inputs are screened, and C-KEY reads the held file. The driver still reads staged names. `make_references.py:69–76`; `evw2d.py:884–898`
+5. **PARTLY** — Branch types are checked after fitting. `evw2d.py:364–375,890–898`
+6. **PARTLY** — Spies verify argument identity and call counts. They still miss an argument mutation restored before return. `test_evw2d.py:504–508,533–545`
+7. **CLOSED** — Denominator dtype and metadata are checked. Exactness uses the saved grids and completeness selector. `evw2d.py:817–823,974–985`
+8. **PARTLY** — A corrupted interior map above tolerance now stops. Flow-bin ratios are outside the refill comparison. `evw2d.py:510–525`
+9. **PARTLY** — The post-validation replacement window is closed for lasting edits. C-SELF can still take its first baseline from a replacement. `evw2d.py:964–982`
+10. **PARTLY** — Preflight and acceptance timings are recorded. Cleanup can lose ledger rows, and the custody snapshot omits `run.json`. `evw2d.py:878,1001–1013,1058–1072`
+
+**agy**
+
+1. **PARTLY** — Final-head mutation results are pending. `evw2d_mutation.py:282–318`
+3. **CLOSED** — Denominator values, float64 dtype, and metadata are checked. `evw2d.py:412–419,820–823`
+4. **PARTLY** — Scratch-prefix equality and special steps are rejected. The cap remains a launcher obligation. `evw2d.py:186–194,245–255`; `EVW2D-DECLARATION.md:372–375`
+6. **PARTLY** — Staged-path containment is exercised. The protected-root read guard and several refusal paths remain unexercised. `test_evw2d.py:1404–1408`; `evw2d.py:615,619,661–663,721,1105–1107`
+7. **CLOSED** — The price section specifies login-node staging in the ROOT environment. `EVW2D-DECLARATION.md:306–308`
+
+### Revision-4 findings
+
+1. **BLOCKING — C-SELF can compare against another run’s histogram.** `evw2d.py:890–898,961–982` — A stale `xsec.root` copied over the driver output during the independent read becomes the first hashed version. A file with matching flow histograms and an hXSec2D within tolerance passes C-SELF and acceptance, while both external exactness tests still use the reconstructed weights. The replacement can be permanent. Capture the driver’s own hXSec2D at the extraction seam, validate the persisted histogram against it, and add a replacement test before the first hash.
+
+2. **BLOCKING — The exactness references can change after their only pin check.** `evw2d.py:587–605,983–985` — A concurrent refresh that permanently replaces `references.npz` after the digest read can supply different float64 `er` and `paper` vectors with the same keys and axes. Both external gates then judge unpinned vectors. Hash and load one byte buffer, as the builder does, and test a lasting replacement between the old two reads.
+
+3. **SHOULD-FIX — C-CMAP’s refill covers the two input histograms more fully than their ratio.** `evw2d.py:510–525`; `test_evw2d.py:791–822,1155–1165` — A genuine interior rounding miss plus a corrupted overflow ratio still takes the fallback. The interior logic meets the director’s condition, and the flow omission leaves the published cross-section cells unchanged. Compare the ratio over every global bin or explicitly scope the ratio claim to the interior. Exercise the real fallback end to end with nonnegative weights. Summing `1.0` and 20,000 copies of `2**-54` in opposite orders gives a `1.11e-12` miss.
+
+4. **SHOULD-FIX — §8 overstates the detection of the named residual.** `EVW2D-DECLARATION.md:339–346`; `evw2d.py:898–902,913–923,973–985` — A driver-only swap that adds a zero-weight denominator row leaves C-KEY and both exactness comparisons unchanged. It can still trigger the fallback and change `denominator.npz` and the saved selector. State that C-KEY compares the derived signal arrays and exactness checks cell sums at the declared tolerances. The restored swap is within the director’s accepted exclusion. Findings 1 and 2 involve lasting replacements.
+
+5. **SHOULD-FIX — Cleanup opens the ledger first, but opening it does not establish safe logging.** `evw2d.py:1048–1072`; `test_evw2d.py:1623–1649` — A hard-linked ledger can append to a pinned file despite `O_NOFOLLOW`. An append error or short write can leave deletions unrecorded. Check the opened descriptor for a singly linked regular file, record deletion intent durably before unlinking, and check writes and close on failure. Test a bad second staged file and assert that the first stays.
+
+6. **SHOULD-FIX — Staged verification accepts a final symlink within the staging root.** `evw2d.py:703–738,1050–1054` — A symlink to an in-root file with the pinned bytes passes run verification because both stats follow the link. Cleanup later refuses the same name. Open staged names without following links and check for regular files before hashing.
+
+7. **SHOULD-FIX — Some revision-4 mutants miss the defense they are meant to isolate.** `evw2d_mutation.py:118–155,161`; `test_evw2d.py:417–425,473–479,1440–1452,1623–1649` — `GIT_ENV` can survive because the top-level check also rejects the redirected checkout. The config test would pass with two reads of a stable file, the partial-name test only checks the host component, and `CLEANUP_FILES` can be killed on identity alone. Isolate each with a subprocess-environment assertion, a changing config read, two generated names under the same host/PID, and a digest-only fixture. `CMAP_ROUNDING_BAND` only removes `zeros`, which the refill already implies for nonnegative denominators. Replace it with a mutant that widens the upper rounding limit, and test a genuine miss above that limit.
+
+8. **MINOR — Three test claims remain broader than their fixtures.** `test_evw2d.py:504–508,1223–1241,1243–1255,1349–1374` — The spies miss transient argument edits, the ROOT tamper test adds an object before C-SELF without changing hXSec2D, and saved-grid testing changes only the analysis pT edge. Snapshot argument digests on both entries, isolate ROOT changes before and after C-SELF, and exercise the saved paper grid, p∥ grid, and a dtype-only denominator change.
+
+9. **NOTE — Receipt and mutation audit.** All seven supplied digests match. The receipt reports 107 passing tests and 98% wrapper coverage. All 139 mutant spans apply once and compile. The supplied tests target the numbered allocation checks, linked pins, held-file identity and read, equal dtype, denominator metadata, late hashing, saved grid and selector, cleanup binding and links, and the three refill comparisons. Actual kills and worker cleanliness remain pending the campaign receipt. Confirm the Linux `/proc/self/fd` ROOT path and real `O_NOATIME` at binding. `evw2d_mutation.py:103–155,245–252,304–318`; `EVW2D-DECLARATION.md:84–94`
