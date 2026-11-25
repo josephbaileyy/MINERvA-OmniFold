@@ -110,7 +110,7 @@ MUTANTS = [
     ("COMPLETE_1E5", 'float(dev.max()) <= C_ONE_LEVEL)', 'float(dev.max()) <= 10 * C_ONE_LEVEL)'),
     ("PARSE_CRLF", 'if not text.endswith("\\n") or "\\r" in text:', 'if not text.endswith("\\n"):'),
     ("ACCEPTED_LINKS", "or (out / DONE).is_symlink() or (out / SUMS).is_symlink():", ":"),
-    ("ACCEPTED_BOUND", "if expect_sums_sha256 is not None and h != expect_sums_sha256:", "if False:"),
+    ("ACCEPTED_BOUND", "if not isinstance(expect_sums_sha256, str) or h != expect_sums_sha256:", "if False:"),
     ("ACCEPTED_CONTROLS_VERDICT", 'done["verdict"] == "PASS" and done["controls_verdict"] == "PASS"', 'done["verdict"] == "PASS"'),
     ("ACCEPTED_RUN_JSON", 'and all(isinstance(ctl.get(k), dict) and ctl[k].get("pass") is True for k in GATED)', 'and True'),
     ("ACCEPTED_PRODUCTS", 'and done["products"] == digests and', 'and'),
@@ -138,6 +138,11 @@ MUTANTS = [
     ("ACCEPTED_FAILED_CONTROLS", 'and done["failed_controls"] == [] and done["sha256sums_sha256"] == h', 'and done["sha256sums_sha256"] == h'),
     ("SB_ARRAY", '[ -z "${SLURM_ARRAY_JOB_ID:-}" ] && [ -z "${SLURM_ARRAY_TASK_ID:-}" ] || refuse "an array task"', 'true || refuse "an array task"', "sbatch_evw5d.sh"),
     ("SB_NODES", '[ "${SLURM_JOB_NUM_NODES:-}" = 1 ] || refuse', 'true || refuse', "sbatch_evw5d.sh"),
+    # revision 4 (claude-personal Sonnet 5.5, r2)
+    ("ACCEPTED_PRODUCTION", 'if production and not (run.get("code_pin") == ess.CODE_PIN', 'if False and not (run.get("code_pin") == ess.CODE_PIN'),
+    ("TABLE_WPRIOR_WIDEN", '[m]).astype(np.float64)   # exact widening', '[m])   # exact widening'),
+    ("SB_SOURCE_CLOBBER", 'set +o noclobber   # the setup runs', 'true   # the setup runs', "sbatch_evw5d.sh"),
+    ("SB_OUT_LINK", '[ ! -e "$OUT/evw5d" ] && [ ! -L "$OUT/evw5d" ] ||', '[ ! -e "$OUT/evw5d" ] ||', "sbatch_evw5d.sh"),
     ("LAUNCH_RC", 'echo \\"script rc=\\$r\\"; exit \\$r"', 'echo \\"script rc=\\$r\\""', "../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_launch.sh"),
     ("LAUNCH_FETCH_ACCEPTED", "ok = evw5d.accepted(sys.argv[2], sys.argv[3]); print('ACCEPTED' if ok else 'REFUSED'); sys.exit(0 if ok else 1)\"", "ok = True; print('ACCEPTED'); sys.exit(0)\"", "../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_launch.sh"),
 ]

@@ -43,6 +43,7 @@ q=$(squeue --me -h -o '%j') || bail                 # fails closed
 [ "$(stat -c %s "$REF" 2>/dev/null)" = 95564 ] || bail
 mkdir "$OUT" || bail                               # the exclusive claim
 mkdir "$OUT/logs" || bail
+[ "$(cd "$OUT" && pwd -P)" = "$OUT" ] && [ "$(cd "$OUT/logs" && pwd -P)" = "$OUT/logs" ] || bail   # the job's own check
 LOG=$OUT/logs/connect.log
 exec > "$LOG" 2>&1
 finish() { echo "evw5d connect rc=$1"; date -u +%FT%TZ; echo "$1" > "$OUT/logs/connect.done"; rm -f -- "$SELF"; exit "$1"; }

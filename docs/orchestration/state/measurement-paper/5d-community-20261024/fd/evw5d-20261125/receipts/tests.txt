@@ -1,12 +1,12 @@
 python=3.11.18 1.26.4 4.6.0
-e9a488d1cb5f49606ea3e7562e3d618faa2df0f6289a1b470cc4c3f8599051e5  evw5d.py
-078cb45c19f93e7faf8eef0c426437e36fd3cd54a812f4e75001bf526f7fde53  test_evw5d.py
-75abb81a1ded9031fe4b928acb2c2e9ce389c6f60fa86ec0b84bf56d8d85e354  evw5d_mutation.py
-c6c8bc72c6ff412a936e2bbad1ece67dc136af068df7fed8655b1a954a7ff629  sbatch_evw5d.sh
+d43ec79a9ae3c42a8497cd44bf7a81fb3c9f693ab3578a4f0b48b5be7be6b0c7  evw5d.py
+de83659dc7c057d4a041847f1739cfccf0264aa05a1f80598c1fbf2dddd9618b  test_evw5d.py
+286e235d77fa78cb7bcf3347d0a2a663023ed4c5af0fa8d7efecaa46c8db40a0  evw5d_mutation.py
+60fd4ec26714b2ccb956bd5abec4ba07092eca4c2f80b9ee1ab85bb02fd3533a  sbatch_evw5d.sh
 4755681f6ba8bd5060fe6ed4902e940b71e3b641d87c978a1f8016faaec468da  ../ess_e/ess_capture.py
 8687e85be161bfc993ea5a2c8be7b83dc92b5eb94caa13768261ea0ecbe5667e  ../ess_e/test_ess_capture.py
-cfa5166ea3f6a60bb8939bb2abe24724381a1b6e3929aacb3ab0f5bc4c6754b4  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_connect.sh
-673e6dd0b02ba9c8165e40c0e874d02f62bbbc796b5a92577a83d8580d7c5b32  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_hpss.sh
+ccd5c73bcc46486e5f8db5ef2680938e93bf591877af8f59d2a788cabc96e60c  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_connect.sh
+6460ff6c002406820a16b83f18b6bc01e444e4018a9f932660d4732fee3e83a8  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_hpss.sh
 4a1b3e16e0dc1fcdd237841b879002c7be8af3a02a0a8d758c25d6841bb76ff2  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_launch.sh
 ea7bf4a5006aec8ec8e75a003d83783e18a3d9217a813a078123e4f407d9ee55  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_post.sh
 PASSED test_evw5d.py::test_pass_run_exit
@@ -18,6 +18,8 @@ PASSED test_evw5d.py::test_stop_on_one_ulp
 PASSED test_evw5d.py::test_wrong_pin_fails_before_unfold
 PASSED test_evw5d.py::test_stop_on_meta
 PASSED test_evw5d.py::test_fail_on_f
+PASSED test_evw5d.py::test_fail_on_grid
+PASSED test_evw5d.py::test_wrong_deploy_refused
 PASSED test_evw5d.py::test_existing_out_and_slurm_refused
 PASSED test_evw5d.py::test_out_must_be_under_out_root
 PASSED test_evw5d.py::test_col_weights_do_not_depend_on_interior_edges
@@ -25,6 +27,7 @@ PASSED test_evw5d.py::test_same_bits_and_max_rel
 PASSED test_evw5d.py::test_check_entries
 PASSED test_evw5d.py::test_check_key_each_field
 PASSED test_evw5d.py::test_build_table_refuses_a_non_bool_mask_and_a_wide_entry
+PASSED test_evw5d.py::test_build_table_widens_a_float32_prior_exactly
 PASSED test_evw5d.py::test_build_table_widens_a_float32_push_exactly
 PASSED test_evw5d.py::test_check_file_passes_on_the_products
 PASSED test_evw5d.py::test_check_file_fires[shift_key]
@@ -113,5 +116,7 @@ PASSED test_evw5d.py::test_accepted_refuses_each_marker_edit[failed_controls_onl
 PASSED test_evw5d.py::test_accepted_linked_root
 PASSED test_evw5d.py::test_launcher_propagates_a_remote_refusal
 PASSED test_evw5d.py::test_launcher_fetch_products_runs_accepted
-104 passed in 84.57s (0:01:24)
+PASSED test_evw5d.py::test_job_setup_runs_without_noclobber
+PASSED test_evw5d.py::test_job_refuses_a_dangling_out_link
+109 passed in 209.74s (0:03:29)
 rc=0

@@ -1,4 +1,4 @@
-# EVW5D declaration: configuration (e)'s central per-event weights for the sixteen-cell result (2026-11-25, revision 3)
+# EVW5D declaration: configuration (e)'s central per-event weights for the sixteen-cell result (2026-11-25, revision 4)
 
 **By** ibu-chi, at the director's request. **Status: a draft for the reads and the director's binding. Nothing has run
 on NERSC.** It runs only under a binding and the director's GO. Publication, and where a 1.7 GB file is hosted, are
@@ -23,6 +23,10 @@ C-COL arm, and the 1e-5 completeness statement (§3).
 
 **Revision 3 (2026-11-25)** takes codex-school's second read (`receipts/reads/r2/`): NO-GO, seven BLOCKING and two
 other findings, all taken (§8).
+
+**Revision 4 (2026-11-25)** takes claude-personal `claude-sonnet-5-5`'s read of revision 2 (`receipts/reads/r2/`): GO
+WITH CHANGES, two BLOCKING (both already fixed in revision 3) and eight others; the ones not already fixed are taken
+(§8).
 
 The code is in [`nd-unfolding/evw5d/`](../../../../../../../nd-unfolding/evw5d/): `evw5d.py`, `sbatch_evw5d.sh`,
 `test_evw5d.py` and `evw5d_mutation.py`.
@@ -101,7 +105,9 @@ declared set, `SHA256SUMS` parses to exactly their digest map, every product re-
 A FAIL still writes the files, for diagnosis, under a FAIL done marker; an interrupted run leaves no marker, and a
 retry needs a new `--out`.
 
-**The consumer's check, `accepted(out, expect_sums_sha256)`.** It refuses a linked marker or manifest, reads
+**The consumer's check, `accepted(out, expect_sums_sha256)`.** The bound digest is required. With `production` (the
+default) `run.json` must also record the production pins (code and main pins, the ESS tool digest, the three staged
+inputs' digests) and no `--fixture`, so a test bundle is never a result. It refuses a linked marker or manifest, reads
 `SHA256SUMS` as bytes (LF-only, the exact form written), re-runs the acceptance, and requires the marker to agree with
 the hashed `run.json`: the verdict and controls verdict PASS, no failed control, the products' digests equal to the
 manifest's, and in `run.json` every gated control passing with the same findings. It also requires the marker to have
@@ -128,6 +134,7 @@ W < 100 GeV). What else a rebinning needs depends on the binning:
 - **a binning that splits fine cells:** the denominator is stored only binned on the fine grid
   (`nn_dump_inputs.py:88-98`), so it needs c at event level, from the denominator rows in the 5D omnifile. A fine
   cell's c can be 1 while its parts are not, so C-COMPLETE's measurement does not license splits, whatever it finds.
+  A split of a pT bin also needs that sub-bin's flux: the flux is stored per fine pT bin only.
   One case in point: the fine grid's pT edges are 0.07 / 0.33 / 0.47, so the paper's 0.075 / 0.325 / 0.475 split
   fine cells. The director has ruled that the 5D result is not compared on those edges in v1.
 
@@ -136,7 +143,7 @@ flux. It does not supply that denominator.
 
 ## 5. Tests and mutants
 
-`test_evw5d.py` (pytest, 104 tests) builds a deploy at the code pin and synthetic inputs on the real fine grid, with
+`test_evw5d.py` (pytest, 109 tests) builds a deploy at the code pin and synthetic inputs on the real fine grid, with
 truth rows on the top edges and outside the grid, and a denominator 1.15 times the signal (so C-COMPLETE's finding
 fires). It reuses `test_ess_capture.py`'s helpers. Four kinds of test:
 - **end to end** through the real driver: PASS; a STOP on a one-ulp reference and on a meta difference; a FAIL on f
@@ -151,10 +158,11 @@ fires). It reuses `test_ess_capture.py`'s helpers. Four kinds of test:
   and marker re-made to match, a short or CRLF `SHA256SUMS`, a bound digest that differs;
 - **the job script's refusals**, run with a fake `squeue` and two small git repositories: a linked log directory or
   log file (nothing is written through it), a writer digest that is not the bound one, a tool clone whose `git
-  status` fails, a setup that returns non-zero, an array task, more than one node;
+  status` fails, a setup that returns non-zero, an array task, more than one node, a dangling `$OUT/evw5d` link, and
+  a setup that writes over an existing file (it must succeed: `noclobber` is the job's own);
 - **the Mac launcher**, with stub `ssh` and `scp`: a remote refusal (rc 9) is the launcher's rc, a staged copy that is
-  not the approved bytes is refused (rc 8), and `fetch-products` accepts the PASS bundle with its bound digest and
-  refuses a wrong digest and the FAIL bundle.
+  not the approved bytes is refused (rc 8), and `fetch-products` fetches and checks the bundle and refuses it with a
+  wrong digest, as a FAIL bundle, and as a test (fixture) bundle, which is never a production result.
 
 Not tested locally: the connect, post and HPSS scripts end to end (they need iris, Slurm, git over the network and
 hsi/htar). Their checks are by reading, and the reads cover them.
@@ -162,16 +170,17 @@ hsi/htar). Their checks are by reading, and the reads cover them.
 `evw5d_mutation.py` applies each of its mutants (one exact span of `evw5d.py` or `sbatch_evw5d.sh`) to a copy of the directory and requires
 the full suite to fail with a named test; a control must pass. Its result is committed as
 `receipts/mutation.json`. **Not mutated, and disclosed:** C-PINS after the run, C-KEY's early exit in `run()`, and
-C-GRID's checks inside `run()`. None can fail on the synthetic inputs without a fault inside the pinned driver itself;
-their predicates are plain comparisons. The director accepted the first two on 2026-11-25; C-GRID is added here for
-the director's ruling.
+C-GRID's predicate inside `run()` (an end-to-end test makes C-GRID fail through a wrong map pin, but no mutant
+targets the predicate alone). The first two cannot fail on the synthetic inputs without a fault inside the pinned
+driver; their predicates are plain comparisons. The director accepted those two on 2026-11-25.
 
 Local environment: Python 3.11.18, numpy 1.26.4, lightgbm 4.6.0 (the cluster's numpy and lightgbm; its Python is
 3.11.14). A stub ROOT module stands in off the cluster, as in ESS's test.
 
 ## 6. Placement and price
 
-- One `regular` CPU node, exclusive, one srun step of 32 CPUs at 160 G, `#SBATCH -t 00:30:00` (`sbatch_evw5d.sh`).
+- One `regular` CPU node, exclusive, one srun step of 32 CPUs at 160 G, and a 30:00 limit given by the connect's
+  `--time` and checked by the job itself (`sbatch_evw5d.sh`).
   Before its first write, the job requires `$OUT` and `$OUT/logs` to be real directories reached through no link and
   each per-job file to be absent; it then creates them exclusively (`noclobber`). It refuses unless:
   - its name is `evw5d` and its limit 30:00;
@@ -234,6 +243,21 @@ Local environment: Python 3.11.18, numpy 1.26.4, lightgbm 4.6.0 (the cluster's n
 | 7 | BLOCKING: the launcher reported a remote refusal as success | the remote status is propagated; a stub-ssh test |
 | 8 | linked lane paths, unguarded tar destinations, predictable staging names, a numeric JobID match, the connect's precheck | physical `$OUT` checks and exclusive destinations in the post and HPSS; `mktemp` staging; a string JobID match; the connect stops on a failed setup or git call |
 | 9 | missing one-fault tests and a constant synthetic flux | a pT-dependent synthetic flux and a flux-per-bin unit test; one-field marker tests; an independent-formula test with a wrong extractor. Not added: an isolated C-GRID or final C-PINS failure (disclosed in §5's mutation note) |
+
+**Revision 4: claude-personal Sonnet 5.5's read of revision 2.**
+
+| # | finding | change |
+|---|---|---|
+| 1 | BLOCKING: a float32 `w_truth` would fail C-FILE spuriously | `w_prior` is widened exactly to float64 and compared widened; a float32-prior test. (The dump builds `w_truth` with `np.asarray` from Python floats, `unfold_nd_omnifold_unbinned.py` `collect_signal_nd` @ abdc88c5, so it is float64; the change only removes the dependence) |
+| 2 | BLOCKING: the fetch did not read the marker or a bound digest | fixed in revision 3 |
+| 3 | `noclobber` would also apply inside the sourced setup | turned off around the `source` in the job and the HPSS script; a test with a setup that overwrites a file |
+| 4 | `accepted()` without a bound digest took any self-consistent bundle, a fixture's included | the bound digest is required, and production pins and no `--fixture` are checked by default |
+| 5 | the flux unit label | fixed in revision 3 |
+| 6 | §4 omitted that a pT split needs the sub-bin's flux | §4 says so |
+| 7 | §6 claimed an `#SBATCH -t` the script does not carry | §6 corrected |
+| 8 | mutant and test gaps | end-to-end C-GRID failure and wrong-deploy refusals added; C-PINS after the run and C-KEY's early exit stay disclosed |
+| 9 | `htar -xf` inside `while read` could consume the list; hashcreate's rc ignored | `< /dev/null`, the retrieved count must equal the list, both hsi return codes counted |
+| 10 | a dangling `$OUT/evw5d` link passed; the job's canonical-path check could refuse without a marker | `-L` added; the connect checks the canonical path before submitting |
 
 **CITABLE FOR:** what will run, what it writes and what each control checks. **NOT CITABLE FOR:** any number from the
 run, which comes from its receipt.

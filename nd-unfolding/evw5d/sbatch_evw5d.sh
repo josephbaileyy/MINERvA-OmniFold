@@ -46,11 +46,13 @@ W="$TC/nd-unfolding/evw5d/evw5d.py"
 [ -f "$W" ] && [ ! -L "$W" ] || refuse "evw5d.py is not a plain file"
 wgot=$(sha256sum "$W" | cut -d' ' -f1)
 [ "$wgot" = "$WSHA" ] || refuse "evw5d.py sha256 $wgot is not the bound $WSHA"
-[ ! -e "$OUT/evw5d" ] || refuse "$OUT/evw5d exists"
+[ ! -e "$OUT/evw5d" ] && [ ! -L "$OUT/evw5d" ] || refuse "$OUT/evw5d exists"
 [ ! -e "/dev/shm/evw5d-$J" ] || refuse "/dev/shm/evw5d-$J exists"
 echo "[evw5d] job=$J host=$(hostname) start=$(date -u +%FT%TZ) pin=$PIN tool=$TPIN"
+set +o noclobber   # the setup runs as ESS's did; only this script's own redirects are exclusive
 source "$D/setup_salloc_env.sh" > "$L/job-env-$J.log" 2>&1
 src_rc=$?
+set -o noclobber
 echo "[evw5d] setup_salloc_env.sh rc=$src_rc python3=$(command -v python3)"
 [ "$src_rc" -eq 0 ] || refuse "setup_salloc_env.sh returned $src_rc"
 [ "$(command -v python3)" = "$HOME/.conda/envs/root_6_28/bin/python3" ] || refuse "python3 is not root_6_28's"

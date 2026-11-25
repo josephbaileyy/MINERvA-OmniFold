@@ -163,6 +163,17 @@ def products(world):
                      "code_pin": ec.CODE_PIN}}
 
 
+def acc(out, bound=None, production=False):
+    """accepted() with the bundle's own manifest digest as the bound one (the tests' bundles are fixtures)."""
+    out = Path(out)
+    if bound is None:
+        try:
+            bound = hashlib.sha256((out / ev.SUMS).read_bytes()).hexdigest()
+        except OSError:
+            bound = "0" * 64
+    return ev.accepted(out, bound, production=production)
+
+
 def copy_t(t):
     return {k: np.array(v, copy=True) for k, v in t.items()}
 
@@ -173,7 +184,7 @@ def copy_t(t):
 def test_pass_run_exit(world):
     assert world["rc"] == 0, world["log"][-4000:]
     done = json.loads((world["out"] / ev.DONE).read_text())
-    assert done["verdict"] == "PASS" and ev.accepted(world["out"])
+    assert done["verdict"] == "PASS" and acc(world["out"])
 
 
 def test_pass_run(world, products):
@@ -184,7 +195,7 @@ def test_pass_run(world, products):
                                  "C-PINS"}
     for k in run["gated"]:
         assert run["controls"][k]["pass"] is True, (k, run["controls"][k])
-    assert ev.accepted(out)
+    assert acc(out)
     assert ev.listing(out) == sorted(ev.PRODUCTS + (ev.SUMS, ev.DONE))
     assert not (world["root"] / "shm-pass").exists(), "the staging directory was not removed"
 
@@ -277,13 +288,34 @@ def test_fail_on_f(world):
     shutil.copytree(out, world["root"] / "failf-pristine")
     done = json.loads((out / ev.DONE).read_text())
     assert done["verdict"] == "FAIL" and done["failed_controls"] == ["C-F", "C-SELF"], done["failed_controls"]
-    assert done["acceptance"]["pass"] and not ev.accepted(out)
+    assert done["acceptance"]["pass"] and not acc(out)
     (out / ev.DONE).unlink()
     (out / ev.DONE).write_text(json.dumps(dict(done, verdict="PASS")))
-    assert not ev.accepted(out), "a FAIL run accepted after its verdict was edited"
+    assert not acc(out), "a FAIL run accepted after its verdict was edited"
     (out / ev.DONE).unlink()
     (out / ev.DONE).write_text(json.dumps(dict(done, verdict="PASS", controls_verdict="PASS", failed_controls=[])))
-    assert not ev.accepted(out), "a FAIL run accepted although run.json records the failure"
+    assert not acc(out), "a FAIL run accepted although run.json records the failure"
+
+
+def test_fail_on_grid(world):
+    """A wrong fine-map pin: C-GRID (and C-FILE's map digest) fail, the verdict FAIL."""
+    fx = json.loads(json.dumps(world["base"]))
+    fx["fine_map_sha"] = "0" * 64
+    rc, out, log = run_evw(world, fx, "failgrid")
+    assert rc == ev.RC_FAIL, log[-3000:]
+    done = json.loads((out / ev.DONE).read_text())
+    assert "C-GRID" in done["failed_controls"] and "C-FILE" in done["failed_controls"]
+
+
+def test_wrong_deploy_refused(world):
+    fx = json.loads(json.dumps(world["base"]))
+    fx["code_pin"] = "0" * 40
+    rc, out, log = run_evw(world, fx, "wrongdeploy")
+    assert rc == ev.RC_FAILED and "is not" in json.loads((out / "FAILED.json").read_text())["verdict"]
+    fx = json.loads(json.dumps(world["base"]))
+    fx["code_sha"] = dict(ec.CODE_SHA, **{"nd-unfolding/xsec_nd.py": "0" * 64})
+    rc, out, log = run_evw(world, fx, "wrongcode")
+    assert rc == ev.RC_FAILED and "not the pinned file" in json.loads((out / "FAILED.json").read_text())["verdict"]
 
 
 def test_existing_out_and_slurm_refused(world):
@@ -422,6 +454,22 @@ def test_build_table_refuses_a_non_bool_mask_and_a_wide_entry(products, monkeypa
     monkeypatch.setattr(ev.np, "flatnonzero", lambda m: np.array([2 ** 32]))
     with pytest.raises(ev.Failed):
         ev.build_table(d, wpush, products["flat_index"])
+
+
+def test_build_table_widens_a_float32_prior_exactly(products):
+    indep = products["indep"]
+    d = {k: indep[k] for k in indep}
+    d["edges"] = [indep[f"edges_{i}"] for i in range(int(indep["nedges"]))]
+    d["w_truth"] = indep["w_truth"].astype(np.float32)
+    t = ev.build_table(d, products["t"]["wpush"], products["flat_index"])
+    m = d["pass_truth"]
+    assert t["w_prior"].dtype == np.float64 and np.array_equal(t["w_prior"], d["w_truth"][m].astype(np.float64))
+    assert ev.same_bits(t["w_unfolded"], products["t"]["wpush"] * d["w_truth"][m])
+    ind32 = dict(indep, w_truth=d["w_truth"])
+    r = ev.check_file(t | {"meta": products["t"]["meta"]}, products["c"], ind32, products["t"]["wpush"],
+                      products["expected_c"], products["flat_index"], products["meta"], products["cj_raw"],
+                      products["cjson"], products["pins"])
+    assert r["w_prior"] and r["w_unfolded"] and r["weights_float64"]
 
 
 def test_build_table_widens_a_float32_push_exactly(products):
@@ -719,7 +767,7 @@ def test_measure_completeness():
 def out_copy(world, tmp_path):
     dst = tmp_path / "evw5d"
     shutil.copytree(world["out"], dst)
-    assert ev.accepted(dst)
+    assert acc(dst)
     return dst
 
 
@@ -728,16 +776,16 @@ def test_accepted_byte_change(out_copy):
     b = bytearray(p.read_bytes())
     b[-1] ^= 1
     p.write_bytes(bytes(b))
-    assert not ev.accepted(out_copy)
+    assert not acc(out_copy)
 
 
 def test_accepted_extra_and_missing(out_copy):
     (out_copy / "extra.txt").write_text("x")
-    assert not ev.accepted(out_copy)
+    assert not acc(out_copy)
     (out_copy / "extra.txt").unlink()
-    assert ev.accepted(out_copy)
+    assert acc(out_copy)
     (out_copy / "constants.json").unlink()
-    assert not ev.accepted(out_copy)
+    assert not acc(out_copy)
 
 
 def test_accepted_link(out_copy):
@@ -745,38 +793,40 @@ def test_accepted_link(out_copy):
     real = out_copy.parent / "real.json"
     shutil.move(p, real)
     p.symlink_to(real)
-    assert not ev.accepted(out_copy)
+    assert not acc(out_copy)
 
 
 def test_accepted_done_marker(out_copy):
     done = json.loads((out_copy / ev.DONE).read_text())
     (out_copy / ev.DONE).write_text(json.dumps(dict(done, verdict="FAIL")))
-    assert not ev.accepted(out_copy)
+    assert not acc(out_copy)
     (out_copy / ev.DONE).write_text(json.dumps(dict(done, sha256sums_sha256="0" * 64)))
-    assert not ev.accepted(out_copy)
+    assert not acc(out_copy)
     (out_copy / ev.DONE).write_text(json.dumps(dict(done, schema="evw2d/1")))
-    assert not ev.accepted(out_copy)
+    assert not acc(out_copy)
     (out_copy / ev.DONE).unlink()
-    assert not ev.accepted(out_copy)
+    assert not acc(out_copy)
 
 
 def test_accepted_done_link(out_copy):
     real = out_copy.parent / "done.json"
     shutil.move(out_copy / ev.DONE, real)
     (out_copy / ev.DONE).symlink_to(real)
-    assert not ev.accepted(out_copy)
+    assert not acc(out_copy)
 
 
 def test_accepted_crlf_sums(out_copy):
     raw = (out_copy / ev.SUMS).read_bytes()
     (out_copy / ev.SUMS).write_bytes(raw.replace(b"\n", b"\r\n"))
-    assert not ev.accepted(out_copy)
+    assert not acc(out_copy)
 
 
 def test_accepted_bound_digest(out_copy):
     h = hashlib.sha256((out_copy / ev.SUMS).read_bytes()).hexdigest()
-    assert ev.accepted(out_copy, expect_sums_sha256=h)
-    assert not ev.accepted(out_copy, expect_sums_sha256="0" * 64)
+    assert ev.accepted(out_copy, h, production=False)
+    assert not ev.accepted(out_copy, "0" * 64, production=False)
+    assert not ev.accepted(out_copy, h), "a fixture bundle is not a production result"
+    assert not ev.accepted(out_copy, None, production=False)
 
 
 def test_accepted_run_json_cross_check(out_copy):
@@ -792,14 +842,14 @@ def test_accepted_run_json_cross_check(out_copy):
     done = json.loads((out_copy / ev.DONE).read_text())
     done.update(products=digests, sha256sums_sha256=hashlib.sha256(sums.encode()).hexdigest())
     (out_copy / ev.DONE).write_text(json.dumps(done))
-    assert ev.acceptance(out_copy, digests)["pass"] and not ev.accepted(out_copy)
+    assert ev.acceptance(out_copy, digests)["pass"] and not acc(out_copy)
 
 
 def test_accepted_sums_file(out_copy):
     s = (out_copy / ev.SUMS).read_text()
     lines = s.splitlines()
     (out_copy / ev.SUMS).write_text("\n".join(lines[:-1]) + "\n")
-    assert not ev.accepted(out_copy)
+    assert not acc(out_copy)
 
 
 def test_parse_sums():
@@ -910,12 +960,22 @@ def job(tmp_path):
     env.pop("SLURM_ARRAY_JOB_ID", None)
     env.pop("SLURM_ARRAY_TASK_ID", None)
 
+    def set_setup(text):
+        (tmp_path / "deploy" / "setup_salloc_env.sh").write_text(text)
+        subprocess.run(["git", "-C", str(tmp_path / "deploy"), "-c", "user.name=t", "-c", "user.email=t@t", "commit",
+                        "-q", "-am", "setup"], check=True)
+        return subprocess.run(["git", "-C", str(tmp_path / "deploy"), "rev-parse", "HEAD"], capture_output=True,
+                              text=True, check=True).stdout.strip()
+    state = {"pin": pin}
+
     def run(out_arg=None, wsha_arg=None, extra_env=None):
-        args = [str(tmp_path / "deploy"), pin, str(out if out_arg is None else out_arg), str(tmp_path / "tool"), tpin,
+        args = [str(tmp_path / "deploy"), state["pin"], str(out if out_arg is None else out_arg), str(tmp_path / "tool"), tpin,
                 wsha if wsha_arg is None else wsha_arg]
         return subprocess.run(["bash", str(EVW / "sbatch_evw5d.sh"), *args], capture_output=True, text=True,
                               env=dict(env, **(extra_env or {})))
-    return {"run": run, "out": out, "tmp": tmp_path, "wsha": wsha}
+    def setup(text):
+        state["pin"] = set_setup(text)
+    return {"run": run, "out": out, "tmp": tmp_path, "wsha": wsha, "setup": setup}
 
 
 def test_job_refuses_a_linked_log_directory(job):
@@ -1115,13 +1175,13 @@ def test_accepted_refuses_each_marker_edit(out_copy, edit):
     else:
         d["failed_controls"] = ["C-F"]
     _write_done(out_copy, d)
-    assert not ev.accepted(out_copy), edit
+    assert not acc(out_copy), edit
 
 
 def test_accepted_linked_root(out_copy):
     link = out_copy.parent / "linked"
     link.symlink_to(out_copy)
-    assert ev.accepted(out_copy) and not ev.accepted(link)
+    assert acc(out_copy) and not acc(link, bound=hashlib.sha256((out_copy / ev.SUMS).read_bytes()).hexdigest())
 
 
 # ---------------------------------------------------------------------------------- the Mac launcher
@@ -1175,12 +1235,16 @@ def test_launcher_fetch_products_runs_accepted(world, tmp_path):
     h = hashlib.sha256((good / ev.SUMS).read_bytes()).hexdigest()
     remote = {"/pscratch/sd/j/josephrb/evw5d-20261125/evw5d": str(good)}
     env = _stubs(tmp_path, tmp_path, remote)
-    for name, bound, want in (("ok", h, 0), ("wrongbound", "0" * 64, 1)):
+    # the products arrive and verify by sha, but a fixture bundle is never a production result: REFUSED
+    for name, bound in (("fixture", h), ("wrongbound", "0" * 64)):
         d = tmp_path / name
         d.mkdir()
         r = subprocess.run(["bash", str(LAUNCH / "evw5d_launch.sh"), "fetch-products", str(d), bound],
                            capture_output=True, text=True, env=env)
-        assert r.returncode == want, (name, r.stdout + r.stderr)
+        assert r.returncode == 1 and "REFUSED" in r.stdout and "scp weights.npz rc=0" in r.stdout, \
+            (name, r.stdout + r.stderr)
+    d = tmp_path / "fixture"
+    assert ev.accepted(d / "evw5d", h, production=False), "the fetched copy itself is complete and consistent"
     bad = world["root"] / "failf-pristine"      # test_fail_on_f's FAIL bundle (verdict FAIL, valid checksums)
     assert bad.is_dir(), "test_fail_on_f must run first (file order)"
     hb = hashlib.sha256((bad / ev.SUMS).read_bytes()).hexdigest()
@@ -1191,3 +1255,22 @@ def test_launcher_fetch_products_runs_accepted(world, tmp_path):
     r = subprocess.run(["bash", str(LAUNCH / "evw5d_launch.sh"), "fetch-products", str(d), hb],
                        capture_output=True, text=True, env=env)
     assert r.returncode == 1 and "REFUSED" in r.stdout, r.stdout + r.stderr
+
+
+
+def test_job_setup_runs_without_noclobber(job):
+    """A setup that writes over an existing file must succeed, as it would under ESS (noclobber is the job's own)."""
+    existing = job["tmp"] / "existing.txt"
+    existing.write_text("old")
+    job["setup"](f'echo new > "{existing}"\nreturn 0\n')
+    r = job["run"]()
+    done = json.loads((job["out"] / "logs" / "DONE-4242").read_text())
+    assert existing.read_text() == "new\n", "the setup's own redirect was refused"
+    assert "python3 is not root_6_28" in done["refused"], done     # it got past the setup
+
+
+def test_job_refuses_a_dangling_out_link(job):
+    (job["out"] / "evw5d").symlink_to(job["tmp"] / "nowhere")
+    r = job["run"]()
+    done = json.loads((job["out"] / "logs" / "DONE-4242").read_text())
+    assert r.returncode == 2 and "evw5d exists" in done["refused"]

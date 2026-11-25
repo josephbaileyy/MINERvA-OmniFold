@@ -157,7 +157,7 @@ def build_table(d: dict, wpush, flat_index) -> dict:
     cols = {"entry": entry.astype(np.uint32)}
     for k, name in enumerate(TRUTH_COLS):
         cols[name] = np.ascontiguousarray(mc[m, k])
-    cols["w_prior"] = np.ascontiguousarray(np.asarray(d["w_truth"])[m])
+    cols["w_prior"] = np.ascontiguousarray(np.asarray(d["w_truth"])[m]).astype(np.float64)   # exact widening
     cols["wpush"] = np.asarray(wpush).astype(np.float64)      # exact: float64 already, or a widening
     cols["w_unfolded"] = wpush * d["w_truth"][m]               # the driver's histogram weight, the same expression
     samp = np.column_stack([mc[m, i] for i in range(mc.shape[1])])
@@ -267,7 +267,7 @@ def check_file(t: dict, c: dict, indep: dict, wpush, expected_c: dict, flat_inde
     e = entry
     for k, name in enumerate(TRUTH_COLS):
         out[name] = same_bits(t[name], np.ascontiguousarray(mc[e, k]))
-    out["w_prior"] = same_bits(t["w_prior"], np.ascontiguousarray(np.asarray(indep["w_truth"])[e]))
+    out["w_prior"] = same_bits(t["w_prior"], np.ascontiguousarray(np.asarray(indep["w_truth"])[e]).astype(np.float64))
     out["wpush"] = same_bits(t["wpush"], np.asarray(wpush).astype(np.float64))
     out["w_unfolded"] = same_bits(t["w_unfolded"], np.asarray(wpush) * np.asarray(indep["w_truth"])[e])
     out["weights_float64"] = all(t[k].dtype == np.float64 for k in ("w_prior", "wpush", "w_unfolded"))
@@ -456,10 +456,11 @@ DONE_KEYS = ("acceptance", "controls_verdict", "failed_controls", "finding_sizes
              "sha256sums_sha256", "verdict")
 
 
-def accepted(out: Path, expect_sums_sha256: str | None = None) -> bool:
-    """For a consumer: the acceptance re-run, a PASS done marker of exactly the written schema and consistent with the
-    hashed run.json (parsed from the bytes verified against SHA256SUMS), and, when the release binding gives it,
-    SHA256SUMS's digest equal to the bound one (which is what detects a replaced bundle)."""
+def accepted(out: Path, expect_sums_sha256: str, production: bool = True) -> bool:
+    """For a consumer: SHA256SUMS's digest equal to the one the release binding records (which is what detects a
+    replaced bundle), the acceptance re-run, and a PASS done marker of exactly the written schema and consistent with
+    the hashed run.json (parsed from the bytes verified against SHA256SUMS). With ``production`` (the default),
+    run.json must also record the production pins and no --fixture; tests pass production=False."""
     out = Path(out)
     try:
         if out.is_symlink() or not out.is_dir() or (out / DONE).is_symlink() or (out / SUMS).is_symlink():
@@ -473,7 +474,7 @@ def accepted(out: Path, expect_sums_sha256: str | None = None) -> bool:
     if digests is None or not isinstance(done, dict) or sorted(done) != sorted(DONE_KEYS) \
             or done.get("schema") != SCHEMA:
         return False
-    if expect_sums_sha256 is not None and h != expect_sums_sha256:
+    if not isinstance(expect_sums_sha256, str) or h != expect_sums_sha256:
         return False
     fresh = acceptance(out, digests)
     if not (done["verdict"] == "PASS" and done["controls_verdict"] == "PASS"
@@ -490,6 +491,12 @@ def accepted(out: Path, expect_sums_sha256: str | None = None) -> bool:
     if not isinstance(run, dict) or not isinstance(run.get("controls"), dict):
         return False
     ctl = run["controls"]
+    if production and not (run.get("code_pin") == ess.CODE_PIN and run.get("main_pin") == ess.MAIN_PIN
+                           and isinstance(run.get("argv"), list) and "--fixture" not in run["argv"]
+                           and run.get("ess_digest") == ESS_SHA
+                           and all((run.get("reads") or {}).get(k, {}).get("copy_digest") == ess.SHARED[k][1]
+                                   for k in ess.SHARED)):
+        return False
     return bool(run.get("schema") == SCHEMA and run.get("controls_verdict") == "PASS"
                 and tuple(run.get("gated", ())) == GATED
                 and all(isinstance(ctl.get(k), dict) and ctl[k].get("pass") is True for k in GATED)
