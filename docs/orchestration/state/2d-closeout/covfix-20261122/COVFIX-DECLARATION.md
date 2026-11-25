@@ -378,7 +378,8 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
   - **Seed-bearing artifacts (the director's ruling and GO of 2026-11-25; §4.2).** gevgen names its outputs by the run
     number, which is the seed, so W's traces, logs and file names carry seeds, and the hash of a seed-bearing file is
     itself seed-bearing. The seal now:
-    - encrypts with `--compress-algo none`, and the wrapper's PV encryption follows;
+    - encrypts with `--compress-algo none`; the bound binary's synthetic round trip uses the same argv, and so does
+      the wrapper's synthetic seal (it never encrypts a real product);
     - assigns opaque ids over a CSPRNG permutation;
     - scans its stdout summary and the spill scan for any task seed and any plaintext hash's hex;
     - refuses a gen-spec that names a seed.
@@ -1092,7 +1093,8 @@ So:
    - **Why `--compress-algo none`** (rev 12): gpg compresses by default, so a ciphertext's size depends on the
      plaintext's content, and ciphertext sizes are public. gevgen's outputs carry the seed. Uncompressed, a ciphertext's
      size is its plaintext's plus a constant, so a fixed-width seed in a status or log file does not change it. The
-     wrapper's PV encryption uses the same flags for the same reason.
+     bound binary's synthetic round trip uses this same argv. The wrapper encrypts no real product; its synthetic seal
+     uses the same flags so that it exercises the declared argv.
    gpg's non-zero exit on an integrity (MDC) failure is a refusal, and no decrypted product is used before gpg has
    exited 0. PG stops if the probe does not find gpg, or if a synthetic round trip with these flags fails.
 3. A decrypt-and-hash round trip must reproduce each plaintext sha256.
