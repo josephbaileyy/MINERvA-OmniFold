@@ -382,7 +382,9 @@ its "Fix 1". The inventory is `INVENTORY.md` in this directory, read at origin/m
       the wrapper's synthetic seal (it never encrypts a real product);
     - assigns opaque ids over a CSPRNG permutation;
     - scans its stdout summary and the spill scan for any task seed and any plaintext hash's hex;
-    - refuses a gen-spec that names a seed.
+    - refuses a gen-spec that names a seed;
+    - refuses a gen-spec off its pinned sha256 (`--gen-spec-sha256`, a new argument), or one whose `env_keep` names a
+      variable that is not set or lists one twice (the director's rulings (i) and (ii) of 2026-11-25).
     The decrypted manifest's paths and hashes are not published before unblinding.
 
 <!-- absence-ok: rule statement -->
@@ -1059,6 +1061,13 @@ tune names and the seeds, and, for slot 1 only, the private product's entries th
 - **Roles.** The PG session prepares and tests its run directory. The **director's wrapper invokes the bound PG
   connect**, with the passphrase piped in, so the PG session never holds the passphrase. The PG session's working
   directories are private to it by convention, and that privacy rests on the one-account limit below.
+  - **The bound binary's launch** (rev 12; the director's rulings (i) and (ii) of 2026-11-25):
+    `covfix_pg.py --covfix-attempt <32 hex> --workdir <empty dir> --sealed <new dir> --gen-spec <file>
+    --gen-spec-sha256 <64 hex> --gpg <path> --gpgconf <path> --gpg-sha256 <64 hex> --gpgconf-sha256 <64 hex>`, with
+    the frame on stdin. The gen-spec holds the generator command and its sha256, the variables the generator keeps
+    (`env_keep`) and the required inventory. The binding pins its sha256 in the pg role's arguments. The binary reads it
+    once, hashes and parses the same bytes, and refuses a mismatch before anything runs. Every `env_keep` name must be
+    set, and none listed twice, or the run is refused before the job check.
 
 **What it sees.** Its connect captures every stdout, stderr, log and meta file into the sealed set. The session sees
 only a final summary of booleans (each step's pass/fail) and file counts. Physics outputs, such as f_MEC, process
