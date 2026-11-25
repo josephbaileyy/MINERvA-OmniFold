@@ -334,6 +334,11 @@ MUTANTS = [
      '                pass', [f"{TR}.JobWide"], "the completeness table is not inventoried"),
     (R, '    bu = barrier.get("units") if isinstance(barrier.get("units"), dict) else {}',
      '    bu = barrier.get("units") or {}', [f"{TR}.JobWide"], "a barrier whose units is not an object crashes the readout"),
+    (R, '            if not isinstance(meta, dict):\n                raise ValueError("its meta is not a JSON object")\n            if list(z["ks"]) != ks_want:',
+     '            if list(z["ks"]) != ks_want:', [f"{TR}.EndToEnd"], "a toy meta that is not an object crashes the readout"),
+    (R, '                raise ValueError("its meta is not a JSON object")\n        except (c.Refusal, OSError, KeyError, ValueError) as e:\n            return',
+     '                pass\n        except (c.Refusal, OSError, KeyError, ValueError) as e:\n            return', [f"{TR}.JobWide"],
+     "a reference meta that is not an object crashes the readout"),
 ]
 
 

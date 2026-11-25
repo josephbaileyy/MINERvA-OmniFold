@@ -166,17 +166,18 @@ class Tree:
             self.write_unit(k, s)
         self.write_barrier()
 
-    def write_barrier(self, done=None, comp=None, ref_meta=None, **change):
+    def write_barrier(self, done=None, comp=None, ref_meta=None, ref_meta_json=None, **change):
         """The two reference units (marker, npz with its meta and controls, ROOT), the barrier receipt with their
         digests, the job's IBUB-DONE binding the receipt's sha256 (as refcheck, complete and the job write them), and
-        then the readout connect's fetch (``write_fetch``). ``done=False`` publishes no IBUB-DONE."""
+        then the readout connect's fetch (``write_fetch``). ``done=False`` publishes no IBUB-DONE. ``ref_meta_json``
+        maps a unit to the raw JSON text of its npz meta, in place of the built one."""
         units = {}
         for u in iu.REFERENCE_UNITS:
             meta = {"unit": u, "kind": u, "slurm_job": JOB, "deploy_head": DEPLOY, **JOB_CODE,
                     "controls": {k: {"pass": True} for k in iu.CONTROLS[u]}}
             meta.update((ref_meta or {}).get(u, {}))
             buf = io.BytesIO()
-            np.savez(buf, ks=np.array(KS), meta=json.dumps(meta))
+            np.savez(buf, ks=np.array(KS), meta=(ref_meta_json or {}).get(u, json.dumps(meta)))
             (self.units / f"{u}.npz").write_bytes(buf.getvalue())
             (self.units / f"{u}.root").write_bytes(f"REF-{u}".encode())
             m = {"unit": u, "kind": u, "verdict": "PASS", "job": JOB, "deploy_head": DEPLOY,
@@ -671,13 +672,15 @@ class EndToEnd(Patched):
         return Tree(d)
 
     def rewrite_meta(self, tr, k, **change):
-        """Rewrite toy k's npz with a changed meta or scan, and its marker's digest to match."""
+        """Rewrite toy k's npz with a changed meta or scan, and its marker's digest to match. ``meta_json`` is the raw
+        JSON text of the new meta, in place of the updated one."""
         name = tr.units / f"toy_{T}_{SEEDS[k]}"
         z = dict(np.load(name.with_suffix(".npz")))
         meta = json.loads(str(z["meta"]))
         meta.update(change.pop("meta", {}))
+        raw = change.pop("meta_json", None)
         z.update(change)
-        z["meta"] = json.dumps(meta)
+        z["meta"] = json.dumps(meta) if raw is None else raw
         buf = io.BytesIO()
         np.savez(buf, **z)
         name.with_suffix(".npz").write_bytes(buf.getvalue())
@@ -933,13 +936,16 @@ class EndToEnd(Patched):
                 self.doCleanups()
 
     def test_a_non_object_meta_or_a_truthy_non_true_control_is_invalid(self):
-        for name, meta, why in (("a control passing as 1", {"controls": {k: {"pass": 1} for k in iu.CONTROLS["toy"]}},
-                                 "a unit control failed"),
-                                ("a control that is not an object", {"controls": {k: True for k in iu.CONTROLS["toy"]}},
-                                 "a unit control failed")):
+        for name, change, why in (("a meta that is a JSON list", {"meta_json": "[1, 2]"}, "is not a JSON object"),
+                                  ("a control passing as 1",
+                                   {"meta": {"controls": {k: {"pass": 1} for k in iu.CONTROLS["toy"]}}},
+                                   "a unit control failed"),
+                                  ("a control that is not an object",
+                                   {"meta": {"controls": {k: True for k in iu.CONTROLS["toy"]}}},
+                                   "a unit control failed")):
             with self.subTest(case=name):
                 tr = self.fresh_tree()
-                self.rewrite_meta(tr, 9, meta=meta)
+                self.rewrite_meta(tr, 9, **change)
                 self.patch(tr)
                 rec = self.go(tr)
                 self.assertEqual(rec["verdict"], "INVALID")
@@ -1117,6 +1123,8 @@ class JobWide(Patched):
                 ("a symlinked npz at the right digest", swap_for_link, "symlink"),
                 ("meta from another job", lambda tr: tr.write_barrier(ref_meta={"central": {"slurm_job": "61000002"}}),
                  "npz meta names"),
+                ("a meta that is a JSON list", lambda tr: tr.write_barrier(ref_meta_json={"central_df": "[1, 2]"}),
+                 "is not a JSON object"),
                 ("C-SIM missing on central", lambda tr: tr.write_barrier(ref_meta={"central": {"controls": {
                     k: {"pass": True} for k in iu.CONTROLS["central"] - {"C-SIM"}}}}), "controls"),
                 ("C-REP-D failing", lambda tr: tr.write_barrier(ref_meta={"central_df": {"controls": dict(
