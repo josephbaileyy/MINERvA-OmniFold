@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """(b) part 3: the 5D bias block C_b^5D and fluctuation block V_F^5D (B5D-DECLARATION.md rev 1, sha256 676c17fc...,
-with B5D-AMENDMENT-A1.md, sha256 7efcffa8..., and B5D-AMENDMENT-A2.md, sha256 7f120dc6...).
+with B5D-AMENDMENT-A1.md, sha256 3d6a497d..., and B5D-AMENDMENT-A2.md, sha256 7f120dc6...).
 
 Implements the declaration's §3-§5 with A1 and A2 exactly. Reuses, unchanged: B-SEL's input layer (bsel_select.check_pins/prepare for
 b, noise, R and the F0b/F1 tables), LL5D's naming, layout and digest (ll5d, ll5d_b), S1's matrix helpers (s1_assemble:
@@ -23,7 +23,7 @@ import numpy as np
 
 SCHEMA = "b5d-blocks/1"
 DECLARATION_SHA256 = "676c17fc5982a01c21f4c7feae2f6c8cd32b0b8ecdc69ec93882e5e30c0f0b1b"
-AMENDMENT_A1_SHA256 = "7efcffa809956b1be410161a3d723714c9fb56e62c1a09d4c905ee2ae58d7bda"
+AMENDMENT_A1_SHA256 = "3d6a497d2d876c8b0141f8adba2a2a38fb474271a6f64421aef03d0408a55105"
 AMENDMENT_A2_SHA256 = "7f120dc64c7f64b2843f545eb2d55e0f0cc657fc30a04a4eb282cbc4db32d602"
 B5D_DIR = "docs/orchestration/state/ben-b-20261124/blocks5d-20261124"
 N_CELLS = 16
@@ -480,15 +480,17 @@ def check_leak(rec: dict, rec_k: dict, k: float = LEAK_SCALE) -> None:
             if not (isinstance(x, dict) and isinstance(y, dict)) or set(x) != set(y):
                 raise Stop("C-LEAK", f"{where}: the scaled build's record has a different shape")
             for key in x:
+                if path + (key,) == ("fluctuation", "V_F") and x[key] is None and y[key] is None:
+                    continue  # no V_F in either build: the one None an exempt key may hold, and only as its whole value
                 walk(x[key], y[key], path + (key,))
         elif isinstance(x, (list, tuple)) or isinstance(y, (list, tuple)):
-            if not (isinstance(x, (list, tuple)) and isinstance(y, (list, tuple))) or len(x) != len(y):
+            if type(x) is not type(y) or len(x) != len(y):
                 raise Stop("C-LEAK", f"{where}: the scaled build's record has a different shape")
             for u, v in zip(x, y):
                 walk(u, v, path)
         elif type(x) is not type(y):
             raise Stop("C-LEAK", f"{where}: {x!r} becomes {y!r} (a different type) when the absolute inputs scale by {k:g}")
-        elif path[:2] in LEAK_EXEMPT and not isinstance(x, float) and x is not None:  # None: no V_F in either build
+        elif path[:2] in LEAK_EXEMPT and not isinstance(x, float):
             raise Stop("C-LEAK", f"{where}: {x!r} in an exempt covariance is not a float")
         elif isinstance(x, float):
             want = x * k * k if path[:2] in LEAK_EXEMPT else x
@@ -523,7 +525,7 @@ def render_record(rec: dict) -> dict:
         lines.append(f"{k} band factors: " + ", ".join(f"{r} {v}" for r, v in d.items()))
     for t, v in rec["bias_block"]["members"].items():
         lines.append(f"member {t} vs C_b: quad {'n/a' if v['quad'] is None else format(v['quad'], '.4g')}, "
-                     f"undebiased bound {v['undebiased_bound'] if v['undebiased_bound'] is None else format(v['undebiased_bound'], '.4g')}")
+                     f"undebiased bound {'n/a' if v['undebiased_bound'] is None else format(v['undebiased_bound'], '.4g')}")
     for k, d in fl["band_traces_relative_to_T"].items():
         lines.append(f"{k} traces (relative to T): " + "; ".join(
             f"{r} toy {v['toy']:.4g} ref {v['reference']:.4g} ({v['kept_modes']} modes{'' if v['kept'] else ', dropped'})" for r, v in d.items()))
@@ -571,7 +573,10 @@ def write_files(out_dir: Path, files: dict) -> None:
                 os.fsync(fh.fileno())
         _fsync_dir(tmp)
         rename_noreplace(tmp, out_dir)
-        _fsync_dir(out_dir.parent)
+        try:  # the record is published whole by the rename; syncing the parent's entry is best effort, never a STOP
+            _fsync_dir(out_dir.parent)
+        except OSError as e:
+            print(f"warning: the output is written, but its parent directory could not be synced: {e}", file=sys.stderr)
     except BaseException:
         shutil.rmtree(tmp, ignore_errors=True)
         raise

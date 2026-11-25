@@ -1,0 +1,23 @@
+Model: **Gemini 4 Hydrogen (XHigh)** (read-only delta review of `93ec63dd6..289daa3ca`).
+
+**Verdict: GO; 0 BLOCKERS, 0 MAJORS, 3 minors.**  
+Observed checks: `python3 -B -X pycache_prefix=/tmp/b5d_pyc -m unittest -v nd-unfolding/b5d/test_b5d.py` passed (`Ran 67 tests in 50.781s`); all 8 `COMMITTED` SHA-256 pins (including `B5D-AMENDMENT-A1.md` `7efcffa8...`) and `C_e` spectrum (`w_min/w_max = 5.00e-5`) verified.
+
+### BLOCKERS
+None.
+
+### MAJORS
+None.
+
+### minors
+1. **A1 `C-PSD` note omits `C_e` ([B5D-AMENDMENT-A1.md:111](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A1.md#L111), [b5d_build.py:447-449](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L447-L449)).**
+   - *Scenario:* A1 line 111 states `C-PSD` "refuses an indefinite D or a non-finite C_b", omitting the new `C-PSD` refusal on non-finite, non-positive-max, or indefinite `C_e`.
+2. **Post-rename `_fsync_dir(out_dir.parent)` failure exits 5 after publishing `out_dir` ([b5d_build.py:326-330, 573-577](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L573-L577)).**
+   - *Scenario:* If a filesystem raises `OSError` on parent-directory `os.fsync`, `rename_noreplace` already published `out_dir`, so `main` prints `STOP` and returns exit 5 even though output was written.
+3. **Broad `None` allowance in `check_leak` and non-discriminating `build()` check in `test_c_leak_scales_every_generator_prediction` ([b5d_build.py:491](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L491), [test_b5d.py:731-734](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/test_b5d.py#L731-L734)).**
+   - *Scenario:* `path[:2] in LEAK_EXEMPT` allows `C_b_abs=None` or `V_F=[[None]]` when identical in both records (unreachable from `_build` given `C-FIN` and `.tolist()`). In `test_b5d.py:731-734`, `genie_cv` does not enter `rec`, so only lines 726–730 verify scaling non-Tune-v1 predictions.
+
+### Checklist (A & B)
+- **Round-5 fixes:** All taken fixes hold: `scaled_predictions` scales all entries in `g` and [B5D-AMENDMENT-A1.md:100-104](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A1.md#L100-L104) accurately states the scaled inputs and closure ratio path; `write_files`/`_fsync_dir` syncs files, stage, and parent while [B5D-AMENDMENT-A1.md:119-122](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A1.md#L119-L122) documents the parent-must-exist requirement; `.b5d-partial-{pid}-{hex8}` fixes 255-byte `ENAMETOOLONG` and PID reuse; `ABS_SCALE[0] = scale` inside `try` fixes pre-`try` interrupts (global state remains unisolated across concurrent in-process `build()` calls); `check_leak` enforces exact scalar types and `float` (or `None`) in `LEAK_EXEMPT`, and [test_b5d.py:882](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/test_b5d.py#L882) checks the `C-LEAK` stderr regex.
+- **Agy minors:** CLI stdout reports `band_states` ([b5d_build.py:331-333](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L331-L333)); `C_e` is PSD-checked under `C-PSD`; `blocks5d.txt` prints `per_ensemble` factors and `members` quadratics (`undebiased_bound` renders `"None"` vs `"n/a"` when `None`); unused fixture variables are removed.
+- **New defects (B):** None beyond minors 1–3 above.

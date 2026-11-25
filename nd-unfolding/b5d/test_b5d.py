@@ -716,6 +716,15 @@ class EndToEnd(unittest.TestCase):
         a["fluctuation"]["V_F"] = b["fluctuation"]["V_F"] = [[1]]
         cases.append((a, b, "V_F.*not a float"))
         a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
+        a["fluctuation"]["V_F"] = b["fluctuation"]["V_F"] = [[None]]
+        cases.append((a, b, "V_F.*not a float"))
+        a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
+        a["bias_block"]["C_b_abs"] = b["bias_block"]["C_b_abs"] = None  # only a whole V_F may be None
+        cases.append((a, b, "C_b_abs.*not a float"))
+        a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
+        b["fluctuation"]["L"] = tuple(b["fluctuation"]["L"])
+        cases.append((a, b, "fluctuation/L.*different shape"))
+        a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
         b["fluctuation"]["trigger"]["R1"]["phi"] = rec["fluctuation"]["trigger"]["R1"]["phi"] * (1 + 1e-6)
         cases.append((a, b, "phi"))
         for a, b, pat in cases:
@@ -730,8 +739,17 @@ class EndToEnd(unittest.TestCase):
             np.testing.assert_array_equal(out[n], M.LEAK_SCALE * np.asarray(g[n]))
         b, sig, R, sr, gg = self.B.prepare(None, None, None)
         self.B.prepare = lambda *a: (b, sig, R, sr, dict(gg, genie_cv=[3e-39] * N))
-        rec = self.build()
-        M.check_leak(rec, M.build(self.repo, self.ll5d, self.sa, self.ll5d_mod, self.ll5d_b, self.B, scale=M.LEAK_SCALE))
+        seen = []
+        orig = M.scaled_predictions
+        M.scaled_predictions = lambda g, scale: seen.append((set(g), scale, orig(g, scale))) or seen[-1][2]
+        try:
+            M.build(self.repo, self.ll5d, self.sa, self.ll5d_mod, self.ll5d_b, self.B, scale=M.LEAK_SCALE)
+        finally:
+            M.scaled_predictions = orig
+        self.assertEqual(len(seen), 1)  # _build passes B-SEL's whole g through the helper, at the build's scale
+        keys, scale, out = seen[0]
+        self.assertEqual((keys, scale), ({"mnvtune_v1", "genie_cv"}, M.LEAK_SCALE))
+        np.testing.assert_array_equal(out["genie_cv"], M.LEAK_SCALE * np.full(N, 3e-39))
 
     def test_c_leak_catches_a_code_path_that_drops_the_normalization(self):
         orig = M.band_traces
@@ -797,6 +815,25 @@ class EndToEnd(unittest.TestCase):
             M.write_files(out, {"a.txt": b"x"})
             self.assertEqual(sorted(q.name for q in Path(d).iterdir()), ["o" * 255])
             self.assertEqual((out / "a.txt").read_bytes(), b"x")
+
+    def test_a_failed_parent_sync_after_publishing_is_a_warning(self):
+        import tempfile, io, contextlib
+        orig = M._fsync_dir
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d) / "o"
+
+            def fs(q):
+                if Path(q) == Path(d):
+                    raise PermissionError("parent not readable")
+                orig(q)
+            M._fsync_dir = fs
+            try:
+                with contextlib.redirect_stderr(io.StringIO()) as err:
+                    M.write_files(out, {"a.txt": b"x"})
+            finally:
+                M._fsync_dir = orig
+            self.assertEqual((out / "a.txt").read_bytes(), b"x")
+            self.assertIn("warning: the output is written", err.getvalue())
 
     def test_rename_noreplace(self):
         import tempfile

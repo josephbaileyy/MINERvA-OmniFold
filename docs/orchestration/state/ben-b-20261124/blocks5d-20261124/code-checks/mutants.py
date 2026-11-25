@@ -55,7 +55,6 @@ M = [
  ('    C_e = scale * scale * read_csv_matrix(', '    C_e = scale * read_csv_matrix(', 'C-LEAK: C_e scaled by k'),
  ('        check_leak(out, build(a.repo, a.ll5d, sa, ll5d, ll5d_b, B, scale=LEAK_SCALE))', '        check_leak(out, out)', 'C-LEAK: main compares a build with itself'),
  ('LEAK_RTOL = 1e-9', 'LEAK_RTOL = 2e3', 'C-LEAK: tolerance absorbs k'),
- ('            if not (isinstance(x, (list, tuple)) and isinstance(y, (list, tuple))) or len(x) != len(y):', '            if not (isinstance(x, (list, tuple)) and isinstance(y, (list, tuple))):', 'C-LEAK: length unchecked'),
  ('            if not (isinstance(x, dict) and isinstance(y, dict)) or set(x) != set(y):', '            if not (isinstance(x, dict) and isinstance(y, dict)):', 'C-LEAK: keys unchecked'),
  ('        elif x != y:\n            raise Stop("C-LEAK"', '        elif False:\n            raise Stop("C-LEAK"', 'C-LEAK: non-numbers unchecked'),
  ('        rename_noreplace(tmp, out_dir)', '        os.rename(tmp, out_dir)', 'writer: plain rename'),
@@ -64,14 +63,18 @@ M = [
  ('    tmp.mkdir()  # FileNotFoundError if the parent is absent', '    tmp.mkdir(parents=True)  # FileNotFoundError if the parent is absent', 'writer: creates parents'),
  ('    return {n: scale * np.asarray(v, float) for n, v in g.items()}', '    return {n: (scale if n == "mnvtune_v1" else 1.0) * np.asarray(v, float) for n, v in g.items()}', 'C-LEAK: only Tune v1 scaled'),
  ('        elif type(x) is not type(y):', '        elif False:', 'C-LEAK: types unchecked'),
- ('        elif path[:2] in LEAK_EXEMPT and not isinstance(x, float) and x is not None:', '        elif False:', 'C-LEAK: exempt ints accepted'),
- ('        elif path[:2] in LEAK_EXEMPT and not isinstance(x, float) and x is not None:', '        elif path[:2] in LEAK_EXEMPT and not isinstance(x, float):', 'C-LEAK: None V_F refused'),
  ('    tmp = out_dir.parent / f".b5d-partial-{os.getpid()}-{secrets.token_hex(4)}"', '    tmp = out_dir.parent / f".{out_dir.name}.partial-{os.getpid()}"', 'writer: staging name grows'),
  ('    g = scaled_predictions(g, scale)\n', '    g = scaled_predictions(g, 1.0)\n', 'C-LEAK: g not scaled'),
  ('            want = x * k * k if path[:2] in LEAK_EXEMPT else x', '            want = x', 'C-LEAK: exempt not scaled'),
  ('    if not (np.all(np.isfinite(w_e)) and w_e.max() > 0 and w_e.min() >= -KEEP_REL * w_e.max()):', '    if False:', 'C_e PSD unchecked'),
  ('    if not (np.all(np.isfinite(w_e)) and w_e.max() > 0 and w_e.min() >= -KEEP_REL * w_e.max()):', '    if not (np.all(np.isfinite(w_e)) and w_e.max() > 0):', 'C_e indefinite accepted'),
  ('                      "band_states": {r: t["state"] for r, t in fl["trigger"].items()}}))', '                      }))', 'verdict without band states'),
+ ('        elif path[:2] in LEAK_EXEMPT and not isinstance(x, float):', '        elif False:', 'C-LEAK: exempt ints accepted'),
+ ('                if path + (key,) == ("fluctuation", "V_F") and x[key] is None and y[key] is None:', '                if path + (key,) in LEAK_EXEMPT and x[key] is None and y[key] is None:', 'C-LEAK: None C_b_abs allowed'),
+ ('                if path + (key,) == ("fluctuation", "V_F") and x[key] is None and y[key] is None:', '                if False:', 'C-LEAK: None V_F refused'),
+ ('            if type(x) is not type(y) or len(x) != len(y):', '            if len(x) != len(y):', 'C-LEAK: list/tuple accepted'),
+ ("        try:  # the record is published whole by the rename; syncing the parent's entry is best effort, never a STOP\n            _fsync_dir(out_dir.parent)\n        except OSError as e:", '        _fsync_dir(out_dir.parent)\n        if False:', 'writer: parent sync failure is a STOP'),
+ ('            if type(x) is not type(y) or len(x) != len(y):', '            if type(x) is not type(y):', 'C-LEAK: length unchecked'),
 ]
 for old, new, name in M:
     assert orig.count(old) == 1, name

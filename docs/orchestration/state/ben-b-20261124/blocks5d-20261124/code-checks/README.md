@@ -1,10 +1,10 @@
 # b5d_build.py: tests, line trace and mutants (A1 and A2 package, tier3-design, 2026-11-24)
 
 The checks are for:
-- `nd-unfolding/b5d/b5d_build.py`, sha256 `d9dd2e332fa32c850cc404f3b3a79b9aa87589e899b0cf88d895ec8d6c086bfc`;
-- `test_b5d.py`, sha256 `f8626e9ffbe9c7ba55eda61058625ea486a912b625abe87e5900bc3c1c6bcd5a`.
+- `nd-unfolding/b5d/b5d_build.py`, sha256 `69f11025c4bc0ad0288bb74641c0e76d0286fea1ba9c86531fc25cc7bb27f30d`;
+- `test_b5d.py`, sha256 `2df87a4d08487c4b65eb2cc9fe74b5c906321674cae53a6674a260f5294ae857`.
 
-**Tests:** 67 pass (`python3 -m pytest -q nd-unfolding/b5d/test_b5d.py`).
+**Tests:** 68 pass (`python3 -m pytest -q nd-unfolding/b5d/test_b5d.py`).
 
 <!-- absence-ok: a coverage statement about two named lines of the code, not the absence of a result -->
 **Line trace** (`line-trace.txt`, coverage.py 7.15.4): 99%. Two lines are not run:
@@ -12,7 +12,7 @@ The checks are for:
 - the Linux `renameat2` branch of `rename_noreplace`. The build runs on macOS, which takes the `renamex_np` branch,
   and that branch is tested.
 
-**Mutants** (`mutants.py`, output `mutants.txt`, one clean run): 70 of 70 killed.
+**Mutants** (`mutants.py`, output `mutants.txt`, one clean run): 73 of 73 killed.
 - 18 are on the rev 1 method.
 - The rest are on the A1 and A2 delta and the delta-recheck fixes:
   - the tie rule: COVFIX's relative null test, two passes, the span check, the sign;
@@ -23,7 +23,7 @@ The checks are for:
     and the shape, key, type and value comparisons;
   - the mean error's frame;
   - the cal arrays left unread;
-  - the atomic no-replace writer;
+  - the atomic no-replace writer, with a best-effort parent sync;
   - strict JSON and the matrix sha256;
   - main's STOP mapping and its verdict's band states;
   - the band traces;

@@ -1,0 +1,21 @@
+Focused adversarial recheck of the final delta, READ-ONLY. Never write to any file in the repository. Write nothing except your final answer.
+
+The checkout is at commit 289daa3ca (PR #1316). The previous full read (agy gemini-4-hydrogen-xhigh, of c8834fd6b..93ec63dd6)
+returned GO with 0 blockers and 0 majors; it is at
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r6-full-delta-agy-gemini-4-hydrogen-xhigh.txt, and codex-school's
+round 5 (of e6561dfb9..93ec63dd6) is at reads/read-r5-delta-codex-school-gpt-6.txt. This read covers only what changed after
+93ec63dd6: `git diff 93ec63dd6 HEAD -- nd-unfolding/b5d/ docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A1.md`.
+
+It contains:
+- round 5's fixes: all of B-SEL's generator predictions g scaled for the C-LEAK pass (scaled_predictions); the comparison
+  requires equal types and float entries in the exempt covariances (None allowed for no V_F); a short unique staging name,
+  fsync of files, staging directory and parent; ABS_SCALE set inside the try that resets it; A1's C-LEAK and writer notes;
+- agy's minors: the CLI verdict carries every band's state; C-PSD refuses a C_e that is not positive semidefinite;
+  blocks5d.txt adds the per-ensemble band factors and the members' quadratics; unused test variables removed.
+
+Check strictly, and only this delta:
+A. Is each round-5 BLOCKER, MAJOR and minor that was taken fixed, and each agy minor that was taken fixed?
+B. Any NEW defect: a control that passes vacuously, a check that STOPs a correct build, a test that passes for the wrong
+   reason, a regression, or A1 text inconsistent with the code.
+
+Report BLOCKERS, then MAJORS, then minors, each with file:line and a concrete failure scenario. Under about 400 words. Name your model.

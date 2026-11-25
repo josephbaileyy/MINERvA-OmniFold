@@ -99,7 +99,8 @@ The code (`nd-unfolding/b5d/b5d_build.py`) implements the declaration with A1:
 - C-LEAK is a dimensional check, with no magnitude cutoff:
   - the build runs a second time with every absolute quantity it holds scaled by 2¹⁰: the LL5D products (U·xsec,
     U·xtrue), all of B-SEL's generator predictions g, and C_e (by 2²⁰). B-SEL's other outputs (b̂, the noise, R, the
-    splits) are relative. Its closure products enter only through the ratio R;
+    splits) are relative. Its closure products enter only through the ratio R and through its own check that closure_nuwro's xsec/xtrue − 1
+    reproduces the bias;
   - every number outside C_b,abs and V_F must be unchanged, those two must scale by 2²⁰, and the records must have the
     same shape and types;
   - an absolute cross section anywhere else would move by 2¹⁰;
@@ -108,7 +109,7 @@ The code (`nd-unfolding/b5d/b5d_build.py`) implements the declaration with A1:
 - the declared Gram–Schmidt tie rule, as COVFIX's `covfix_core._canonical_tied` (null test relative to each
   projection), then the sign rule;
 - L acts only on C_e's kept modes;
-- C-PSD refuses an indefinite D or a non-finite C_b;
+- C-PSD refuses an indefinite D, a non-finite C_b, or a C_e that is not positive semidefinite;
 - C-FIN covers:
   - the `all` factors;
   - T's cell integrals (each must be positive);
@@ -119,6 +120,7 @@ The code (`nd-unfolding/b5d/b5d_build.py`) implements the declaration with A1:
 - the record carries its matrices' sha256. It is formed and checked whole, written and synced in a uniquely named hidden
   sibling directory, then renamed to the output atomically, refusing if the output exists in any form (macOS
   `renamex_np` RENAME_EXCL, Linux `renameat2` RENAME_NOREPLACE). The output's parent must exist. A kill before the
-  rename can leave the hidden sibling, never a partial output;
+  rename can leave the hidden sibling, never a partial output. Syncing the parent after the rename is best effort: a
+  failure there is a warning, since the record is already whole;
 - for every band, reading and truth, the record prints the raw toy and reference traces on the band's kept modes,
   relative to T's cell integrals. An unresolved stop then still shows the size of the problem (the director, 2026-11-24).
