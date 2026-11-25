@@ -438,6 +438,56 @@ class NormalizeShapeTest(Fixture):
                 m.fill_paper(f.Get("pt_pl_cross_section"))
             f.Close()
 
+    NOTE = "[NOTE] cross-grid shape chi2: our cell areas differ from the release axis's; not a note number"
+
+    def test_cross_grid_note_and_closure(self):
+        """One NOTE line exactly when the two sides' areas differ; every closure integral prints 1."""
+        for tag, ours, cross in (("anc075", "ours07", True), ("anc07", "ours075", True),
+                                 ("anc075", "ours075", False), ("anc07", "ours07", False)):
+            with self.subTest(release=tag, ours=ours):
+                _, out = self.run_new(tag, f"nx_note_{tag}_{ours}.root", ours)
+                lines = out.splitlines()
+                self.assertEqual(lines.count(self.NOTE), 1 if cross else 0)
+                self.assertEqual(sum("cross-grid" in line for line in lines), 1 if cross else 0)
+                closure = [line for line in lines if "closure: shape integral on" in line]
+                self.assertEqual([line.split(" on ")[1].split(" =")[0] for line in closure],
+                                 ["205 ours", "205 paper", "185 ours", "185 paper"])
+                for line in closure:
+                    self.assertTrue(line.endswith("= 1.0000000000"), line)
+
+
+@unittest.skipUnless(HAVE_DEPS, "PyROOT or matplotlib unavailable")
+class WellConditionedShapeChi2Test(unittest.TestCase):
+    """shape_chi2's cross-grid projection equals the exact pseudo-inverse chi^2 on a small,
+    well-conditioned case: C full rank, C_shape = J C J^T of rank n - 1 with null vector w."""
+
+    def test_projected_chi2_is_the_exact_pseudo_inverse(self):
+        nx = new_module("normalize_xsec_shape.py", "nx_wellcond")
+        rng = np.random.default_rng(3)
+        n = 7
+        A = rng.standard_normal((n, n))
+        Q0, _ = np.linalg.qr(A)
+        C = Q0 @ np.diag(np.linspace(1.0, 4.0, n)) @ Q0.T          # full rank, condition number 4
+        w = rng.uniform(0.5, 1.5, n)                                  # paper areas
+        w_ours = w * rng.uniform(0.8, 1.2, n)                         # different areas
+        x_p = rng.uniform(1.0, 2.0, n)
+        x_o = x_p * rng.uniform(0.95, 1.05, n)
+        mask = np.ones(n, dtype=bool)
+        with contextlib.redirect_stdout(io.StringIO()):
+            chi2, ndf, s_o, s_p, C_shape, idx = nx.shape_chi2(x_o, x_p, w, C, mask, "t", w_ours)
+        self.assertEqual(ndf, n - 1)
+        np.testing.assert_allclose(C_shape @ w, 0.0, atol=1e-12)    # w spans C_shape's null space
+        ev = np.linalg.eigvalsh(C_shape)
+        self.assertGreater(ev[1] / ev[-1], 1e-3)                      # well conditioned on its range
+        # exact pseudo-inverse: invert C_shape on an orthonormal basis of the complement of w
+        q, _ = np.linalg.qr(np.column_stack([w, np.eye(n)[:, :-1]]))
+        B = q[:, 1:]
+        np.testing.assert_allclose(B.T @ w, 0.0, atol=1e-12)
+        y = B.T @ (s_o - s_p)
+        ref = float(y @ np.linalg.solve(B.T @ C_shape @ B, y))
+        self.assertLessEqual(abs(chi2 / ref - 1.0), 1e-10)
+        self.assertGreater(abs(float((s_o - s_p) @ w)), 1e-5)         # the projection had work to do
+
 
 class InteriorTest(Fixture):
     def argv(self, out, ours="ours07"):
@@ -653,12 +703,71 @@ class Fig67Test(Fixture):
             h.Write()
             rc.identity_hist(cls.cells).Write()
             f.Close()
+        # ML seed covariances for --include-ml auto: one above the 0.002 draw threshold, one below
+        cls.ml = {}
+        for name, s in (("ml_big.root", 0.03), ("ml_small.root", 1e-5)):
+            c = np.diag((s * flat) ** 2)
+            cls.ml[name] = c
+            f = ROOT.TFile.Open(str(d / name), "RECREATE")
+            h = ROOT.TH2D("hCov2D_reported", "", n, 0, n, n, 0, n)
+            for i in range(n):
+                h.SetBinContent(i + 1, i + 1, float(c[i, i]))
+            h.Write()
+            rc.identity_hist(cls.cells).Write()
+            f.Close()
 
-    def argv(self, tag, prefix, ours="ours07"):
+    def argv(self, tag, prefix, ours="ours07", ml=("never", "")):
         d = self.dir
         return ["--xsec-root", d / f"{ours}.root", "--universe-root", d / "uni.root",
-                "--bootstrap-root", d / "boot.root", "--include-ml", "never", "--ml-root", "",
+                "--bootstrap-root", d / "boot.root", "--include-ml", ml[0], "--ml-root", ml[1],
                 "--paper-root", self.anc(tag), "--out-prefix", d / prefix, "--projections-json", d / f"{prefix}.json"]
+
+    def test_ml_auto_found_and_drawn(self):
+        """--include-ml auto with an ML file above the threshold: drawn, on our input's axis."""
+        m = new_module("uq/plot_uncertainty_fig6_7_style.py", "f67_ml_big")
+        with spy("stairs") as stairs:
+            run_main(m, self.argv("anc07", "f_ml_big", "ours075", ("auto", self.dir / "ml_big.root")))
+        got = json.loads((self.dir / "f_ml_big.json").read_text())
+        C_ml = self.ml["ml_big.root"]
+        for axis in ("pt", "pz"):
+            np.testing.assert_allclose(got[axis]["ML"], self.frac(self.ours, PAPER_PT, C_ml, axis), rtol=1e-10)
+            np.testing.assert_allclose(got[axis]["Total"], self.frac(self.ours, PAPER_PT, self.total + C_ml, axis),
+                                       rtol=1e-10)
+        drawn = {lab: e for lab, e in stairs if len(e) == N_PT + 1}
+        np.testing.assert_array_equal(drawn["ML"], PAPER_PT)
+        summary = (self.dir / "f_ml_big_summary.txt").read_text()
+        self.assertIn(f"ml_root: {self.dir / 'ml_big.root'}", summary)
+
+    def test_ml_auto_below_threshold_is_not_drawn(self):
+        m = new_module("uq/plot_uncertainty_fig6_7_style.py", "f67_ml_small")
+        run_main(m, self.argv("anc07", "f_ml_small", "ours075", ("auto", self.dir / "ml_small.root")))
+        got = json.loads((self.dir / "f_ml_small.json").read_text())
+        C_ml = self.ml["ml_small.root"]
+        for axis in ("pt", "pz"):
+            self.assertNotIn("ML", got[axis])
+            np.testing.assert_allclose(got[axis]["Total"], self.frac(self.ours, PAPER_PT, self.total + C_ml, axis),
+                                       rtol=1e-10)
+        self.assertIn("ML (not drawn)", (self.dir / "f_ml_small_summary.txt").read_text())
+
+    def test_ml_auto_missing_file_is_skipped(self):
+        m = new_module("uq/plot_uncertainty_fig6_7_style.py", "f67_ml_missing")
+        run_main(m, self.argv("anc075", "f_ml_missing", "ours07", ("auto", self.dir / "no_such_ml.root")))
+        run_main(m, self.argv("anc075", "f_ml_never", "ours07"))
+        self.assertEqual(json.loads((self.dir / "f_ml_missing.json").read_text()),
+                         json.loads((self.dir / "f_ml_never.json").read_text()))
+        self.assertIn("ml_root: (not used)", (self.dir / "f_ml_missing_summary.txt").read_text())
+
+    def test_ml_auto_unchanged_on_our_grid(self):
+        old = self.base("2d-unfolding/uq/plot_uncertainty_fig6_7_style.py", "f67_ml_base")
+        new = new_module("uq/plot_uncertainty_fig6_7_style.py", "f67_ml_new")
+        ml = ("auto", self.dir / "ml_big.root")
+        run_main(old, self.argv("anc07", "fmo", "ours07", ml))
+        run_main(new, self.argv("anc07", "fmn", "ours07", ml))
+        self.assertEqual((self.dir / "fmo.json").read_bytes(), (self.dir / "fmn.json").read_bytes())
+        for suffix in ("_pt.png", "_pz.png"):
+            self.assertEqual((self.dir / f"fmo{suffix}").read_bytes(), (self.dir / f"fmn{suffix}").read_bytes())
+        self.assertEqual((self.dir / "fmo_summary.txt").read_text().replace("fmo", "X"),
+                         (self.dir / "fmn_summary.txt").read_text().replace("fmn", "X"))
 
     def frac(self, x, pt, C, axis):
         w = np.diff(PZ)[None, :] if axis == "pt" else np.diff(pt)[:, None]
@@ -782,6 +891,30 @@ class Fig13Test(Fixture):
     def points(ax):
         """{label: x} of the errorbar points."""
         return {c.get_label(): np.asarray(c.lines[0].get_xdata()) for c in ax.containers}
+
+    @staticmethod
+    def xbars(ax):
+        """{label: [(x_lo, x_hi)]} of the errorbar x-error segments (the first bar collection)."""
+        return {c.get_label(): np.array([[s[0][0], s[1][0]] for s in c.lines[2][0].get_segments()])
+                for c in ax.containers}
+
+    def test_published_xerr_on_release_axis(self):
+        """The published x-errors span the release bins mapped onto our display axis; ours span ours."""
+        m = new_module("plot_2d_threeway_fig13.py", "f13_xerr")
+        for tag, ours, ours_pt, paper_pt in (("anc075", "ours053", PT053, PAPER_PT),
+                                             ("anc07", "ours075", PAPER_PT, OUR_PT)):
+            with self.subTest(release=tag, ours=ours):
+                axes = self.main(m, tag, ours, f"f13_xerr_{ours}.png")
+                d_ours = disp(ours_pt)
+                p_disp = np.interp(paper_pt, ours_pt, d_ours)
+                for ax in axes[16:]:                                  # p_parallel slices, along pT
+                    bars = self.xbars(ax)
+                    np.testing.assert_allclose(bars["Published (PRD 104, 092007)"],
+                                               np.column_stack([p_disp[:-1], p_disp[1:]]), rtol=0, atol=1e-12)
+                    np.testing.assert_allclose(bars["This work (OmniFold)"],
+                                               np.column_stack([d_ours[:-1], d_ours[1:]]), rtol=0, atol=1e-12)
+                half = 0.5 * np.diff(p_disp)
+                self.assertFalse(np.allclose(half, 0.5 * np.diff(d_ours)))   # the two differ on these grids
 
     def test_main_geometry(self):
         """Ours on an off-grid axis (0.53): titles, ticks and our points follow it; the published

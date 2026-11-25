@@ -224,6 +224,8 @@ def main():
     m_rep = (np.diag(cov_sta) > 0)
     m_int = interior_mask(paper_pt, paper_pz) & m_rep
     print(f"[masks] reported={int(m_rep.sum())}/{N}  strict-interior={int(m_int.sum())}/{N}")
+    if not np.array_equal(w_ours[m_rep], w[m_rep]):     # shape_chi2 then drops d's null-direction component
+        print("[NOTE] cross-grid shape chi2: our cell areas differ from the release axis's; not a note number")
 
     # 205-bin shape: paper's own sigma_total definition
     print("\n=== shape chi^2, 205 reported bins (headline) ===")
