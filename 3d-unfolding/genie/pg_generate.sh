@@ -116,7 +116,9 @@ kill_tree() {  # kill_tree PID: end PID and every descendant, and wait (30 s at 
     [ "$i" -le 30 ] || kill -KILL $live 2>/dev/null
     sleep 0.5
   done
-  alive "$1" || wait "$1" 2>/dev/null   # reap the job itself
+  [ -z "$live" ] || echo "[pg] cleanup: $(echo $live | wc -w | tr -d ' ') processes of a tree outlived KILL by 15 s"
+  if alive "$1"; then echo "[pg] cleanup: a job is left unreaped, still alive after KILL"   # the guard: no wait on it
+  else wait "$1" 2>/dev/null; fi   # reap the job itself
   return 0
 }
 ANCESTORS=""; a=$PPID   # this shell's parent chain (the bound binary among it), which the scan never kills
@@ -145,7 +147,12 @@ drain() {      # end every background step and its tree; then any survivor is KI
   [ -n "$left" ] || return 0
   echo "[pg] cleanup: $(echo $left | wc -w | tr -d ' ') processes outlived their trees"   # the backstop
   kill -KILL $left 2>/dev/null
-  for i in $(seq 1 60); do left=$(survivors); [ -n "$left" ] || return 0; sleep 0.5; done
+  for i in $(seq 1 60); do
+    left=$(survivors)
+    [ -n "$left" ] || { echo "[pg] cleanup: the survivors ended at poll $i of 60 (0.5 s each)"; return 0; }
+    sleep 0.5
+  done
+  echo "[pg] cleanup: $(echo $left | wc -w | tr -d ' ') survivors still alive 30 s after KILL"
   return 1
 }
 cleanup() {    # on every exit: end this script's background steps and everything under them, verify nothing is left

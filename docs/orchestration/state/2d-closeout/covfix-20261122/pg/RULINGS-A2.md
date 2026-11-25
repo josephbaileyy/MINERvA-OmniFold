@@ -147,7 +147,18 @@ end. Hashing them for deleted.json is allowed.
 <!-- absence-ok: "never", "untestable" and "no allocation" here state rules, this host's test coverage and a login node's setup, not a claim that a result does not exist -->
 
 The reads and their dispositions are in `delta-read-r4/`. The director gave a GO on the whole fix list, failing tests
-first, and ruled six items. cov2d gave its no-objection to C3 and C4 as built here.
+first, and ruled six items. cov2d gave its no-objection to the C3 and C4 design, and on 2026-11-25 to both as built
+at cd21bafb, including the C3 node record's move from B1 to the compute node. It set one condition and two wiring notes:
+- **Condition, for the director's confirm of `record/root-schemas.json` after B3.** Counting int32 only is safe only if
+  GENIE stores no seed as a 4-byte int in a published file. The confirm checks (i) that B3's decoded scan gives, for
+  every allowlisted file type, an int32 count consistent with its chance expectation (a per-event seed would give
+  about the entry count, not about 0), and (ii) that B3's gst schema has no branch or object carrying the run number.
+  If either fails, int32 becomes a STOP for that file type before PG.
+- **Wiring, publish_guard (JE's call site; cov2d copies JE).** `export_allowlist()` leaves out `out/leak_scan.json`,
+  which PG-PUBLISH-SHA256SUMS lists, so the guard's allowlist is `export_allowlist() + ["out/leak_scan.json"]`.
+- **Wiring, the gen-spec's env_keep.** It must name SLURM_JOB_ID and SLURM_CPUS_ON_NODE, or `node_check.json` records
+  `slurm_job` and `all_cpus_allocated` false on every run. That is a wrong record, not a failure; cov2d's cgroup steps
+  gate the job either way.
 
 **C2, ROOT's RECREATE.** ROOT's RECREATE unlinks the file, then opens it `O_RDWR|O_CREAT`. Such an open counts as an
 output only at the role's exact expected output path, and only after the same process probed that path for ENOENT or
@@ -188,6 +199,8 @@ processes by that group as well as by cwd, and excludes this shell's ancestor ch
 publication KILLs any survivor and polls 30 s; a survivor then is a STOP, and a STOP withdraws the publication set.
 
 **Untestable on this host, recorded on the node:** the job reaped only once dead (a process in uninterruptible sleep),
-and the 30 s poll after KILL (a SIGKILL that does not take effect at once). Both need the kernel to delay a kill.
+and the 30 s poll after KILL (a SIGKILL that does not take effect at once). Both need the kernel to delay a kill. The
+director accepted them as disclosed (2026-11-25). Each logs a count-only line when it fires, and
+`REHEARSAL-CHECKLIST.md` records what the first real run's log shows.
 S9: `--rc 0` is the status of a step that has already passed (`need`), so trace-check's rc rule is documentation.
 

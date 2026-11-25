@@ -39,6 +39,8 @@ its database, so it sets up from a private `PRODUCTS` directory.
 `root-schemas.json` holds the gst schema every published gst must match: its keys (class, name, title, less the
 file's own records) and its StreamerInfo's sha256. It is `null` until B3's replay records the schema of its 100-event
 gst (`replay.json` `gst_schema`) and the director confirms it. Until then `pg_generate.sh` refuses before any step.
+The confirm also checks cov2d's condition (RULINGS-A2.md, round 4): for every allowlisted file type, B3's decoded scan
+gives an int32 count consistent with chance, and the gst schema has no branch or object carrying the run number.
 
 ## Reproducing
 

@@ -817,6 +817,7 @@ class Generate(unittest.TestCase):
         p = self.run_gen(PG_STUB_ORPHAN_CD=str(seeds()["tunes"][0]["task_seeds"][2]), PG_STUB_ORPHAN_PID=str(pidf))
         self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
         self.assertLess(p.stdout.index("outlived their trees"), p.stdout.index("the publish set and its leak scan: pass"))
+        self.assertRegex(p.stdout, r"\[pg\] cleanup: the survivors ended at poll [0-9]+ of 60 \(0\.5 s each\)")   # the poll, logged
         pid = int(pidf.read_text())
         time.sleep(0.5)
         alive = subprocess.run(["ps", "-o", "stat=", "-p", str(pid)], capture_output=True, text=True).stdout.strip()

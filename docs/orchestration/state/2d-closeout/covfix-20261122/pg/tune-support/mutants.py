@@ -318,6 +318,13 @@ M = [
     ('3d-unfolding/genie/pg_replay.sh', '                    hits, st = pg_lib.leak_scan(', '                    raise pg_lib.Refusal("x")\n                    hits, st = pg_lib.leak_scan(', 'r4: B3 the decoded control', 'generate'),
     ('3d-unfolding/genie/pg_replay.sh', '               and isinstance(rec["gst_schema"], dict) and bool(rec["gst_schema"].get("keys"))\n', '', 'r4: B3 no gst schema', 'generate'),
     ('3d-unfolding/genie/pg_replay.sh', '"$R/revision_end.json" "${tcs[@]}" > "$R/revision_compare.json"', '"$R/revision_end.json" > "$R/revision_compare.json"', 'r4: B3 the revision compared with no files', 'generate'),
+    # round 5 (the director, 2026-11-25): node-record's fields and call, and the drain's logged poll
+    ('3d-unfolding/genie/pg_verify.py', '    rec["proc_options"] = opts[-1] if opts else None', '    rec["proc_options"] = None', "r5: node-record without /proc's options", 'verify'),
+    ('3d-unfolding/genie/pg_verify.py', '    rec["slurm_job"] = bool(env.get("SLURM_JOB_ID"))', '    rec["slurm_job"] = True', 'r5: node-record: a Slurm job always', 'verify'),
+    ('3d-unfolding/genie/pg_verify.py', 'rec["all_cpus_allocated"] = rec["cpus_on_node"] == str(rec["cpu_count"])', 'rec["all_cpus_allocated"] = True', 'r5: node-record: exclusivity always', 'verify'),
+    ('3d-unfolding/genie/pg_verify.py', '        n += uid != me and uid >= 1000', '        n += uid != me', 'r5: node-record counts system users', 'verify'),
+    ('3d-unfolding/genie/pg_generate.sh', '"$PY" -I -B "$G/pg_verify.py" node-record > "$O/node_check.json"', 'true > "$O/node_check.json"', 'r5: node-record never run', 'generate'),
+    ('3d-unfolding/genie/pg_generate.sh', '{ echo "[pg] cleanup: the survivors ended at poll $i of 60 (0.5 s each)"; return 0; }', '{ return 0; }', "r5: the drain's poll not logged", 'generate'),
 ]
 
 if __name__ == "__main__":

@@ -108,7 +108,9 @@ cd W && TMPDIR=W/tmp pg_generate.sh --workdir W --seeds W/seeds.json < /dev/null
 | `GENIE_COMPAT` (optional) | overrides the shim directory, as in F1 |
 | `ROOT628_PREFIX`, `ROOT628_CONDA` (optional) | override the analysis environment's location, as `setup_salloc_env.sh` allows |
 
-It needs no network, no `SLURM_*` variable, no passphrase and no GNUPGHOME: encryption is the parent's.
+It needs no network, no passphrase and no GNUPGHOME: encryption is the parent's. It runs without `SLURM_*`
+variables, but `node-record` reads `SLURM_JOB_ID` and `SLURM_CPUS_ON_NODE`. The parent's env_keep must pass both, or
+`node_check.json` records `slurm_job` and `all_cpus_allocated` false.
 
 ## What it writes (all under W)
 

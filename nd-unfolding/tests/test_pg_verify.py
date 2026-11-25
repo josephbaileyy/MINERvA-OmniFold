@@ -1420,6 +1420,7 @@ class NodeRecord(Tmp):
         mounts = "proc /proc proc rw,nosuid,nodev,noexec,relatime,hidepid=2 0 0\n/dev/sda / ext4 rw 0 0\n"
         rec = V.node_record(mounts, {"SLURM_JOB_ID": "1", "SLURM_CPUS_ON_NODE": str(os.cpu_count())}, proc=str(proc))
         self.assertEqual((rec["hidepid"], rec["slurm_job"], rec["all_cpus_allocated"]), ("2", True, True))
+        self.assertEqual(rec["proc_options"], "rw,nosuid,nodev,noexec,relatime,hidepid=2")
         self.assertEqual(rec["other_user_processes"], 1 if os.getuid() != 4242 else 0)
         rec = V.node_record("proc /proc proc rw 0 0\n", {}, proc=str(proc))
         self.assertEqual((rec["hidepid"], rec["slurm_job"], rec["all_cpus_allocated"]), ("0", False, False))
