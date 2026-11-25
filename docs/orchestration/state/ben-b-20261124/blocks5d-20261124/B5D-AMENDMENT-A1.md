@@ -26,7 +26,8 @@ fixed before the build, and nothing is tuned on its output.
   - the same clause in B5D-BINDING-1's authority line.
 - **The inputs that change use:**
   - `s1/readout/s1_assembly.json` is now read only for C-FLUX's `meta.flux_weights`;
-  - the `cal_*` arrays in `fd_f0b_experiments.npz` are not read.
+  - the build reads only F's members' `r_*` arrays from `fd_f0b_experiments.npz`, never a `cal_*` array. B-SEL's bound
+    `prepare`, reused unchanged, opens the same table for b̂ and the noise. The cal sets enter nothing here.
 
 ## 2. The untested share of C_e is about 29%, and an active L rescales it
 <!-- absence-ok: a scoping statement: the components of C_e that the toy ensembles do not draw, by construction -->
@@ -69,6 +70,8 @@ fixed before the build, and nothing is tuned on its output.
 - So SE(f̂_R) leaves out the denominator's own sampling variance:
   - the Flux band's effective count, n_eff about 19;
   - the 50 stat replicas.
+- The bootstrap resamples the toys only. Both truths' toys unfold with the same nominal MC, which it holds fixed, so
+  SE(f̂_R) is conditional on that MC.
 
 ## 6. Bands are kept per ensemble
 
@@ -85,8 +88,8 @@ fixed before the build, and nothing is tuned on its output.
 
 - C_b is fitted on nominal plus the three C_model vertex truths. Adding C_b alongside C_model can pay twice for the same
   model deviations.
-- The adoption record to Joseph names the formula proposed: C_b in addition to C_model, or in its place, or another
-  combination. It gives the numbers for each.
+- The adoption record goes to Joseph with the numbers, and names the formula proposed: C_b in addition to C_model, in
+  its place, or another combination.
 - This changes nothing in the build. Adoption stays Joseph's decision (§1).
 
 ## Implementation notes (within the declaration, no change of method)
@@ -105,4 +108,7 @@ The code (`nd-unfolding/b5d/b5d_build.py`) implements the declaration with A1:
   - V_F;
 - a zero-rank C_b prints its quadratic as null;
 - every refusal, including B-SEL's and LL5D's own, exits 5 and writes nothing;
-- the record carries its matrices' sha256.
+- the record carries its matrices' sha256, and is formed and checked whole before a temporary directory is renamed to
+  the output;
+- for every band, reading and truth, the record prints the raw toy and reference traces on the band's kept modes,
+  relative to T's cell integrals. An unresolved stop then still shows the size of the problem (the director, 2026-11-24).

@@ -21,16 +21,29 @@ fhat over all ensembles: KILLED
 L on unkept modes: KILLED
 indefinite D passes: KILLED
 NaN C_b passes: KILLED
-per_ens unchecked: KILLED
 X_T unchecked: KILLED
 mean err not through R: KILLED
 mean err not relative: KILLED
-C-LEAK off: KILLED
 L exempt: KILLED
 main skips C-LEAK: KILLED
-no digests: KILLED
-NaN json allowed: KILLED
-B/LL5D refusals uncaught: KILLED
-OSError/SystemExit uncaught: KILLED
 zero rank inf: KILLED
 V_F unchecked: KILLED
+C-LEAK off: KILLED
+C-LEAK ignores numeric strings: KILLED
+C-LEAK per entry: KILLED
+no digests: KILLED
+NaN json allowed: KILLED
+writer adds a stray file: KILLED
+partial dir left: KILLED
+ll5d.Refusal uncaught: KILLED
+OSError/SystemExit/LinAlg uncaught: KILLED
+existing out not 5: KILLED
+per_ens unchecked: KILLED
+zero spread refused: KILLED
+no sign after GS: KILLED
+GS threshold 1e-12: KILLED
+NaN D reaches solver: KILLED
+reads cal arrays: KILLED
+C_b_abs unchecked: KILLED
+toy trace not relative: KILLED
+toy trace ddof 0: KILLED

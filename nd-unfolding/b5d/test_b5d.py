@@ -85,6 +85,23 @@ class Fluctuation(unittest.TestCase):
             w2, V2 = M.eig_sorted(np.diag(d))
         np.testing.assert_allclose(V2[:, :2], np.eye(N)[:, 1:3], atol=1e-12)
 
+    def test_tie_rule_signs_and_a_small_first_projection(self):
+        from unittest import mock
+        d = np.array([3.0, 3.0] + [1.0] * (N - 2))
+        u1 = np.zeros(N); u1[0], u1[2] = 0.1, -np.sqrt(0.99)
+        A = np.column_stack([u1, np.eye(N)[:, 1]] + [np.eye(N)[:, k] for k in range(N) if k not in (1,)])
+        Q = np.linalg.qr(A)[0]
+        with mock.patch.object(M.np.linalg, "eigh", lambda X: (d.copy(), Q.copy())):
+            w, V = M.eig_sorted(np.eye(N))
+        for c in range(2):
+            self.assertGreater(V[int(np.argmax(np.abs(V[:, c]))), c], 0)  # the sign rule after Gram-Schmidt
+        a = np.zeros(N); a[0], a[7] = 1e-13, np.sqrt(1 - 1e-26)
+        A = np.column_stack([a, np.eye(N)[:, 5]] + [np.eye(N)[:, k] for k in range(N) if k not in (5, 7)])
+        Q = np.linalg.qr(A)[0]
+        with mock.patch.object(M.np.linalg, "eigh", lambda X: (d.copy(), Q.copy())):
+            w, V = M.eig_sorted(np.eye(N))
+        self.assertAlmostEqual(abs(V[7, 0]), 1.0, places=10)  # e_1's 1e-13 projection is not skipped: a comes first
+
     def test_against_a_zero_rank_block(self):
         r = M.against(np.ones(N), np.zeros((N, N)))
         self.assertIsNone(r["quad"])
@@ -277,7 +294,7 @@ class EndToEnd(unittest.TestCase):
         sel = self.repo / M.SELECTION_INPUTS
         sel.mkdir(parents=True)
         np.savez(sel / "fd_f0b_experiments.npz", **{f"r_{t}": v for t, v in tabs.items()},
-                 r_cal_A7_nuwro=beta_rng.normal(0, 0.03, (500, N)))
+                 r_cal_A7_nuwro=np.array([object()], dtype=object))  # unreadable with allow_pickle=False: never read
         b = {t: (tabs[t].mean(0) if t in tabs else np.full(N, 0.01)) for t in truths}
         sig = {t: (np.sqrt(np.diag(np.cov(tabs[t], rowvar=False, ddof=1)) / tabs[t].shape[0]) if t in tabs else np.full(N, 1e-3)) for t in truths}
         self.B = types.SimpleNamespace(TRUTHS=truths, check_pins=lambda repo, sel: None,
@@ -333,6 +350,42 @@ class EndToEnd(unittest.TestCase):
         M.check_leak(rec)
         self.assertEqual(set(rec["fluctuation"]["per_ensemble"]), {"g18/minus2", "g18/all", "ar23/minus2", "ar23/all"})
 
+
+    def test_band_traces_are_printed_for_every_band_and_reading(self):
+        rec = self.build()
+        tr = rec["fluctuation"]["band_traces_relative_to_T"]
+        self.assertEqual(set(tr), {"g18/minus2", "g18/all", "ar23/minus2", "ar23/all"})
+        for d in tr.values():
+            self.assertEqual(set(d), {"R1", "R2", "R3"})
+        D = spd(31)
+        w, V = M.eig_sorted(D)
+        E = np.random.default_rng(3).multivariate_normal(np.zeros(N), 2 * D, 400)
+        kept, dropped = M.bands_kept(w)
+        X = np.full(N, 2.0)
+        t = M.band_traces(E, D, V, X, kept, dropped)
+        v = M.mode_spreads(E, w, V)
+        idx = kept[0][2]
+        self.assertAlmostEqual(t["R1"]["reference"], w[idx].sum() / 4, places=12)  # W = I/2
+        self.assertAlmostEqual(t["R1"]["toy"], (w[idx] * v[idx]).sum() * 400 / 399 / 4, places=12)
+        self.assertTrue(t["R1"]["kept"])
+
+    def test_an_unresolved_build_still_prints_the_size(self):
+        import tempfile
+        orig = M.toy_errors
+        M.toy_errors = lambda d, U, t, rd, *a: 30.0 * orig(d, U, t, rd, *a)
+        try:
+            rec = self.build()
+        finally:
+            M.toy_errors = orig
+        fl = rec["fluctuation"]
+        self.assertTrue(fl["unresolved_stop"])
+        self.assertIsNone(fl["V_F"])
+        self.assertTrue(all(v is not None for r, v in fl["f_hat"].items() if r != "R3"))
+        with tempfile.TemporaryDirectory() as d:
+            M.write_record(Path(d), rec)
+            txt = (Path(d) / "blocks5d.txt").read_text()
+        self.assertIn("unresolved stop: True", txt)
+        self.assertIn("g18/minus2 traces (relative to T): R1 toy", txt)
 
     def test_an_active_trigger_inside_build(self):
         orig = M.toy_errors
@@ -414,8 +467,16 @@ class EndToEnd(unittest.TestCase):
             self.assertEqual(j["matrices_sha256"], {n: M.sha256_path(Path(d) / n) for n in names if n.endswith(".csv")})
         bad = json.loads(json.dumps(rec))
         bad["fluctuation"]["f_hat"]["R1"] = float("inf")
-        with tempfile.TemporaryDirectory() as d, self.assertRaises(ValueError):
-            M.write_record(Path(d), bad)
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(ValueError):
+                M.write_record(Path(d) / "o", bad)
+            self.assertEqual(list(Path(d).iterdir()), [])  # nothing written, not even the CSVs
+        bad = json.loads(json.dumps(rec))
+        bad["bias_block"]["C_b_abs"][0][0] = float("inf")
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(ValueError):
+                M.write_record(Path(d) / "o", bad)
+            self.assertEqual(list(Path(d).iterdir()), [])
         z = json.loads(json.dumps(rec))
         for v in z["bias_block"]["printed_against_C_b"].values():
             v["quad"] = None  # a rank-0 C_b: null, never Infinity
@@ -492,7 +553,9 @@ class EndToEnd(unittest.TestCase):
         for name, fake, pat in (
                 ("bias_block", lambda beta, Sigma: (-np.eye(N), np.eye(N)), "C-PSD.*C_b is not positive semidefinite"),
                 ("fhat", lambda ens, bands: {0: float("inf"), 1: 1.0, 2: 1.0}, "C-FIN.*band 1: f-hat"),
-                ("against", lambda beta, C: {"quad": float("nan"), "fraction_outside_span": 0.0, "rank": 1}, "C-FIN.*quad is not finite")):
+                ("against", lambda beta, C: {"quad": float("nan"), "fraction_outside_span": 0.0, "rank": 1}, "C-FIN.*quad is not finite"),
+                ("band_traces", lambda *a: {"R1": {"toy": float("nan"), "reference": 1.0, "kept_modes": 4, "kept": True}},
+                 "C-FIN.*band trace")):
             orig = getattr(M, name)
             setattr(M, name, fake)
             try:
@@ -510,14 +573,21 @@ class EndToEnd(unittest.TestCase):
         sys.modules.update(mods)
         orig = M.build
         try:
-            for unresolved, verdict in ((False, "COMPLETE"), (True, "UNRESOLVED: no V_F")):
-                r = json.loads(json.dumps(rec))
-                r["fluctuation"]["unresolved_stop"] = unresolved
+            te = M.toy_errors
+            M.toy_errors = lambda d, U, t, rd, *a: 30.0 * te(d, U, t, rd, *a)
+            try:
+                unres = orig(self.repo, self.ll5d, self.sa, self.ll5d_mod, self.ll5d_b, self.B)  # a real unresolved build
+            finally:
+                M.toy_errors = te
+            self.assertTrue(unres["fluctuation"]["unresolved_stop"])
+            for r, verdict, has_vf in ((rec, "COMPLETE", True), (unres, "UNRESOLVED: no V_F", False)):
                 M.build = lambda *a, r=r: r
                 with tempfile.TemporaryDirectory() as d, contextlib.redirect_stdout(io.StringIO()) as out:
                     self.assertEqual(M.main(["--repo", d, "--ll5d", d, "--out", str(Path(d) / "o")]), 0)
                     self.assertEqual(json.loads(out.getvalue())["verdict"], verdict)
                     self.assertTrue((Path(d) / "o" / "blocks5d.json").exists())
+                    self.assertEqual((Path(d) / "o" / "V_F.csv").exists(), has_vf)
+                    self.assertEqual(sorted(p.name for p in Path(d).iterdir()), ["o"])  # no partial directory left
         finally:
             M.build = orig
             for k, v in saved.items():
@@ -525,6 +595,56 @@ class EndToEnd(unittest.TestCase):
                     sys.modules.pop(k, None)
                 else:
                     sys.modules[k] = v
+
+    def test_c_leak_judges_arrays_by_size_and_numeric_strings(self):
+        rec = self.build()
+        ok = json.loads(json.dumps(rec))
+        ok["bias_block"]["C_b_tune_v1_units"][0][1] = 1e-32  # roundoff in a relative matrix is not a leak
+        ok["fluctuation"]["rows"] = [{"ok": 0.5}, {"n": 3}]
+        M.check_leak(ok)
+        bad = json.loads(json.dumps(rec))
+        bad["bias_block"]["members"]["nominal"]["note"] = "2e-39"
+        with self.assertRaisesRegex(M.Stop, "C-LEAK"):
+            M.check_leak(bad)
+        bad = json.loads(json.dumps(rec))
+        bad["fluctuation"]["xs"] = {"g18": [3e-39, 1e-39]}
+        with self.assertRaisesRegex(M.Stop, "C-LEAK"):
+            M.check_leak(bad)
+        bad = json.loads(json.dumps(rec))
+        bad["fluctuation"]["rows"] = [{"ok": 0.5}, {"x": 2e-39}]  # a list of records is walked record by record
+        with self.assertRaisesRegex(M.Stop, "C-LEAK.*rows/x"):
+            M.check_leak(bad)
+
+    def test_a_nan_d_stops_before_the_solver(self):
+        orig = M.drawn_block
+        M.drawn_block = lambda *a: np.full((N, N), np.nan)
+        try:
+            with self.assertRaisesRegex(M.Stop, "C-PSD.*not finite"):
+                self.build()
+        finally:
+            M.drawn_block = orig
+
+    def test_a_zero_spread_is_a_result_not_a_stop(self):
+        orig = M.toy_errors
+        M.toy_errors = lambda d, U, t, rd, *a: np.zeros_like(orig(d, U, t, rd, *a)) if rd == M.SECONDARY else orig(d, U, t, rd, *a)
+        try:
+            rec = self.build()
+        finally:
+            M.toy_errors = orig
+        self.assertEqual(rec["fluctuation"]["per_ensemble"]["g18/all"]["R1"], 0.0)
+
+    def test_a_nonfinite_c_b_abs_stops(self):
+        b, sig, R, sr, g = self.B.prepare(None, None, None)
+        self.B.prepare = lambda *a: (b, sig, R, sr, {"mnvtune_v1": [np.inf] * N})
+        with self.assertRaisesRegex(M.Stop, "C-FIN.*C_b_abs"):
+            self.build()
+
+    def test_a_failed_write_leaves_nothing(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(OSError):
+                M.write_files(Path(d) / "o", {"a.txt": b"x", "missing/b.txt": b"y"})
+            self.assertEqual(list(Path(d).iterdir()), [])
 
     def test_a_nonfinite_v_f_stops(self):
         orig = M.fluctuation_block
@@ -577,7 +697,9 @@ class EndToEnd(unittest.TestCase):
         sys.modules.update(mods)
         orig = M.build
         try:
-            for exc in (M.Stop("C-X", "y"), BStop("b"), Refusal("r"), OSError("o"), SystemExit(3)):
+            mods["ll5d"].Refusal = type("LL5DRefusal", (RuntimeError,), {})
+            for exc in (M.Stop("C-X", "y"), BStop("b"), Refusal("r"), mods["ll5d"].Refusal("l"), OSError("o"), SystemExit(3),
+                        np.linalg.LinAlgError("e"), ValueError("v")):
                 def raiser(*a, exc=exc):
                     raise exc
                 M.build = raiser
@@ -728,7 +850,7 @@ class Pins(unittest.TestCase):
         import tempfile, io, contextlib
         with tempfile.TemporaryDirectory() as d:
             with contextlib.redirect_stderr(io.StringIO()):
-                self.assertEqual(M.main(["--repo", d, "--ll5d", d, "--out", d]), 2)
+                self.assertEqual(M.main(["--repo", d, "--ll5d", d, "--out", d]), 5)
 
     def test_read_csv_matrix_shape(self):
         import tempfile

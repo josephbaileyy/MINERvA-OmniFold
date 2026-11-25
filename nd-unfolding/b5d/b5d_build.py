@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """(b) part 3: the 5D bias block C_b^5D and fluctuation block V_F^5D (B5D-DECLARATION.md rev 1, sha256 676c17fc...,
-with B5D-AMENDMENT-A1.md, sha256 9de0888f...).
+with B5D-AMENDMENT-A1.md, sha256 e1af192e...).
 
 Implements the declaration's §3-§5 with A1 exactly. Reuses, unchanged: B-SEL's input layer (bsel_select.check_pins/prepare for
 b, noise, R and the F0b/F1 tables), LL5D's naming, layout and digest (ll5d, ll5d_b), S1's matrix helpers (s1_assemble:
@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -22,7 +23,7 @@ import numpy as np
 
 SCHEMA = "b5d-blocks/1"
 DECLARATION_SHA256 = "676c17fc5982a01c21f4c7feae2f6c8cd32b0b8ecdc69ec93882e5e30c0f0b1b"
-AMENDMENT_A1_SHA256 = "9de0888f146e5bf0b04483d008ba35b93a092cf54cd3040dd6a59721d3d7fb61"
+AMENDMENT_A1_SHA256 = "e1af192eea97a53259fec4b790265601b9368af409cf4ef44ff41b5339fd2e40"
 B5D_DIR = "docs/orchestration/state/ben-b-20261124/blocks5d-20261124"
 N_CELLS = 16
 FAMILY = ("nominal", "A7_genie_mec", "A7_nuwro", "A7_gibuu")
@@ -92,11 +93,15 @@ def eig_sorted(M: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
                 for b in basis:
                     v -= (b @ v) * b
                 n = np.linalg.norm(v)
-                if n > 1e-12:
+                if n > 1e-14:  # a null projection is numerical noise (~16 eps), skipped
                     basis.append(v / n)
                 if len(basis) == j - i:
                     break
-            V[:, i:j] = np.column_stack(basis)
+            B = np.column_stack(basis)
+            for c in range(B.shape[1]):  # the declared sign rule holds for the canonical vectors too
+                if B[int(np.argmax(np.abs(B[:, c]))), c] < 0:
+                    B[:, c] = -B[:, c]
+            V[:, i:j] = B
         i = j
     return w, V
 
@@ -137,6 +142,21 @@ def against(beta: np.ndarray, C: np.ndarray) -> dict:
 
 
 # ------------------------------------------------------------------------------------------------ §4 the fluctuation
+def band_traces(E: np.ndarray, D: np.ndarray, V: np.ndarray, X_T: np.ndarray, kept: list, dropped: list) -> dict:
+    """Per band: the raw toy and reference traces on the band's kept modes of D, relative to T's cell integrals,
+    tr(W P S P W) and tr(W P D P W) with S = Cov(e) (ddof 1), P the projector, W = diag(1/X_T). Printed always, so the
+    size of an unresolved case is visible (director, 2026-11-24)."""
+    S = np.cov(E, rowvar=False, ddof=1)
+    W = np.diag(1.0 / X_T)
+    out = {}
+    for a, b, idx in sorted(kept + dropped):
+        P = V[:, idx] @ V[:, idx].T
+        out[f"R{[x[0] for x in BANDS].index(a) + 1}"] = {
+            "toy": float(np.trace(W @ P @ S @ P @ W)), "reference": float(np.trace(W @ P @ D @ P @ W)),
+            "kept_modes": len(idx), "kept": any(a == k[0] for k in kept)}
+    return out
+
+
 def mode_spreads(E: np.ndarray, w: np.ndarray, V: np.ndarray) -> np.ndarray:
     """v_i = (1/N) sum_s z_{s,i}^2, z = u_i^T (e_s - e_bar)/sqrt(lambda_i)."""
     Z = (E - E.mean(axis=0)) @ V / np.sqrt(np.where(w > 0, w, np.nan))
@@ -271,27 +291,28 @@ def main(argv=None) -> int:
     ap.add_argument("--ll5d", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
-    if a.out.exists():
-        print(f"refusing: {a.out} exists", file=sys.stderr)
-        return 2
     for p in (a.repo / "nd-unfolding", a.repo / "nd-unfolding/bsel"):
         sys.path.insert(0, str(p))
-    stops = (Stop, OSError, ImportError, SystemExit)
+    stops = (Stop, OSError, ImportError, SystemExit, ValueError, np.linalg.LinAlgError)
     try:
+        if a.out.exists():
+            raise Stop("C-OUT", f"{a.out} exists")
         import s1_assemble as sa
         import ll5d
         import ll5d_b
         import bsel_select as B
-        stops = stops + (B.Stop, ll5d_b.Refusal)  # B-SEL's and LL5D's refusals are this build's STOPs too
+        # B-SEL's and LL5D's refusals are this build's STOPs too
+        stops = stops + tuple(c for c in (getattr(B, "Stop", None), getattr(ll5d_b, "Refusal", None),
+                                          getattr(ll5d, "Refusal", None)) if isinstance(c, type))
         out = build(a.repo, a.ll5d, sa, ll5d, ll5d_b, B)
         check_leak(out)
+        files = render_record(out)  # every byte is formed and checked before anything is written
+        write_files(a.out, files)
     except BaseException as e:
         if not isinstance(e, stops):
             raise
         print(f"STOP {type(e).__name__}: {e}", file=sys.stderr)
         return 5
-    a.out.mkdir(parents=True)
-    write_record(a.out, out)
     print(json.dumps({"verdict": "UNRESOLVED: no V_F" if out["fluctuation"]["unresolved_stop"] else "COMPLETE"}))
     return 0
 
@@ -322,7 +343,7 @@ def build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B) -> dict:
     M16 = __import__("estimator_stability_analyze").cell_matrix(str(repo / "nd-unfolding/pv-ladder/readouts/h2_definition.json"))
     b, sig, R, split_r, g = B.prepare(repo, sel, M16)
     with np.load(sel / "fd_f0b_experiments.npz", allow_pickle=False) as z:
-        tab = {k: np.asarray(z[k]) for k in z.files}
+        tab = {f"r_{t}": np.asarray(z[f"r_{t}"]) for t in FAMILY}  # A1 item 1: only F's members; no cal set
     beta = {t: b[t] * R[t] for t in B.TRUTHS}
     Sigma = {}
     for t in FAMILY:
@@ -338,15 +359,19 @@ def build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B) -> dict:
         raise Stop("C-PSD", "C_b is not positive semidefinite")
     g_tv1 = np.asarray(g["mnvtune_v1"], float)
     C_b_abs = np.diag(g_tv1) @ C_b @ np.diag(g_tv1)
+    if not np.all(np.isfinite(C_b_abs)):
+        raise Stop("C-FIN", "C_b_abs is not finite")
     printed = {t: against(beta[t], C_b) for t in DIAGNOSTICS}
     members = {t: {**against(beta[t], C_b), "undebiased_bound": against(beta[t], C_b0)["quad"]} for t in FAMILY}
     # §4 the fluctuation block
-    ens, bands, dropped, Ds, mean_err = {}, {}, {}, {}, {}
+    ens, bands, dropped, Ds, mean_err, traces = {}, {}, {}, {}, {}, {}
     for t in TRUTHS_LL5D:
         for rd in (PRIMARY, SECONDARY):
             D = drawn_block(ll5d_dir, U, t, rd, w_flux, sa, ll5d_b)
+            if not np.all(np.isfinite(D)):
+                raise Stop("C-PSD", f"{t}/{rd}: D is not finite")
             w, V = eig_sorted(D)
-            if not (np.all(np.isfinite(D)) and w[0] > 0):  # §5 C-PSD: positive on the kept modes (> 1e-12 lambda_1)
+            if not w[0] > 0:  # §5 C-PSD: positive on the kept modes (> 1e-12 lambda_1)
                 raise Stop("C-PSD", f"{t}/{rd}: D has no positive mode")
             if w.min() < -KEEP_REL * w[0]:  # an indefinite D is refused, not hidden by the retention rule
                 raise Stop("C-PSD", f"{t}/{rd}: D is indefinite (lambda_min {w.min():.3g}, lambda_1 {w[0]:.3g})")
@@ -360,6 +385,9 @@ def build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B) -> dict:
                 raise Stop("C-FIN", f"{t}: the truth's cell integrals are not all positive")
             # §3: relative to T's cell integral, then into Tune v1 units through R, as beta = b-hat (.) R
             mean_err[(t, rd)] = E.mean(axis=0) / X_T * R[f"F1_genie_v3_{t}"]
+            traces[f"{t}/{rd}"] = band_traces(E, D, V, X_T, kb, dr)
+            if not all(np.isfinite(v["toy"]) and np.isfinite(v["reference"]) for v in traces[f"{t}/{rd}"].values()):
+                raise Stop("C-FIN", f"{t}/{rd}: a band trace is not finite")
     prim = {k: v for k, v in ens.items() if k[1] == PRIMARY}
     f = fhat(prim, bands)
     se = bootstrap_se(prim, bands)
@@ -371,8 +399,8 @@ def build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B) -> dict:
                              for r in range(len(BANDS))} for (t, rd) in ens}
     for k, d in per_ens.items():
         for r, v in d.items():
-            if v is not None and not (np.isfinite(v) and v > 0):
-                raise Stop("C-FIN", f"{k} {r}: the band factor is not finite and positive")
+            if v is not None and not (np.isfinite(v) and v >= 0):
+                raise Stop("C-FIN", f"{k} {r}: the band factor is not finite and non-negative")
     printed_err = {f"{t}/{rd}": {**against(v, C_b), "beta": v.tolist()} for (t, rd), v in mean_err.items()}
     for name, d in [*printed.items(), *members.items(), *printed_err.items()]:
         for key in ("quad", "fraction_outside_span", "undebiased_bound"):
@@ -392,7 +420,7 @@ def build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B) -> dict:
                            "ll5d_toy_mean_error_tune_v1_units": printed_err},
             "fluctuation": {"bands": [f"ranks {a + 1}-{b}" for a, b in BANDS], "f_hat": {f"R{r + 1}": f[r] for r in f},
                             "se": {f"R{r + 1}": se[r] for r in se}, "trigger": {f"R{r + 1}": trig[r] for r in trig},
-                            "per_ensemble": per_ens, "dropped": {f"{t}/{rd}": [f"ranks {a + 1}-{b}" for a, b, _ in d] for (t, rd), d in dropped.items()},
+                            "per_ensemble": per_ens, "band_traces_relative_to_T": traces, "dropped": {f"{t}/{rd}": [f"ranks {a + 1}-{b}" for a, b, _ in d] for (t, rd), d in dropped.items()},
                             "unresolved_stop": unresolved, "bootstrap": {"n": BOOT_N, "seed": BOOT_SEED},
                             "V_F": None if V_F is None else V_F.tolist(), "L": None if L is None else L.tolist()},
             "flux_weights": {"sum": float(w_flux.sum()), "n_eff": n_eff}}
@@ -403,41 +431,97 @@ LEAK_FLOOR = 1e-30  # an absolute cross section is ~1e-38 cm^2/nucleon; every ot
 
 
 def check_leak(rec: dict) -> None:
-    """§5 C-LEAK: no absolute cross section in the record, except C_b,abs and V_F (covariances in (cm^2/nucleon)^2)."""
+    """§5 C-LEAK: no absolute cross section in the record, except C_b,abs and V_F (covariances in (cm^2/nucleon)^2).
+    Every number outside the exempt paths is relative, a count or a probability. An array is judged by its largest
+    magnitude (a relative matrix may hold roundoff-small entries; an absolute vector is all ~1e-38); a scalar by itself;
+    and a string that parses as a number is judged as that number."""
+    def num(x):
+        if isinstance(x, bool):
+            return None
+        if isinstance(x, (int, float)):
+            return float(x)
+        if isinstance(x, str):
+            try:
+                return float(x)
+            except ValueError:
+                return None
+        return None
+
+    def leaves(x):
+        if isinstance(x, (list, tuple)):
+            for v in x:
+                yield from leaves(v)
+        else:
+            yield x
+
     def walk(x, path):
         if path in LEAK_EXEMPT:
             return
         if isinstance(x, dict):
             for k, v in x.items():
                 walk(v, path + (k,))
-        elif isinstance(x, (list, tuple)):
-            for v in x:
-                walk(v, path)
-        elif isinstance(x, float) and x != 0.0 and abs(x) < LEAK_FLOOR:
-            raise Stop("C-LEAK", f"{'/'.join(path)} holds {x:.3g}, an absolute-scale number")
+            return
+        if isinstance(x, (list, tuple)):
+            if any(isinstance(v, dict) for v in leaves(x)):
+                for v in x:
+                    walk(v, path)
+                return
+            mags = [abs(n) for n in map(num, leaves(x)) if n is not None and np.isfinite(n)]
+            biggest = max(mags, default=0.0)
+        else:
+            n = num(x)
+            biggest = abs(n) if n is not None and np.isfinite(n) else 0.0
+        if 0.0 < biggest < LEAK_FLOOR:
+            raise Stop("C-LEAK", f"{'/'.join(map(str, path))} holds numbers of size {biggest:.3g}, an absolute scale")
     walk(rec, ())
 
 
-def write_record(out_dir: Path, rec: dict) -> None:
+def render_record(rec: dict) -> dict:
+    """Every output file's bytes, formed and checked before anything is written. The JSON is strict (allow_nan=False)
+    and holds every matrix, so a non-finite matrix refuses here."""
+    files = {}
     hdr = "cell," + ",".join(f"R{c:02d}" for c in range(N_CELLS))
     for key, M in (("C_b_abs", rec["bias_block"]["C_b_abs"]), ("C_b_tune_v1_units", rec["bias_block"]["C_b_tune_v1_units"]),
                    ("V_F", rec["fluctuation"]["V_F"])):
         if M is None:
             continue
         rows = [hdr] + [f"R{c:02d}," + ",".join(repr(float(x)) for x in M[c]) for c in range(N_CELLS)]
-        (out_dir / f"{key}.csv").write_text("\n".join(rows) + "\n")
-    rec = {**rec, "matrices_sha256": {p.name: sha256_path(p) for p in sorted(out_dir.glob("*.csv"))}}
-    (out_dir / "blocks5d.json").write_text(json.dumps(rec, indent=1, allow_nan=False) + "\n")
+        files[f"{key}.csv"] = ("\n".join(rows) + "\n").encode()
+    rec = {**rec, "matrices_sha256": {n: hashlib.sha256(b).hexdigest() for n, b in sorted(files.items())}}
+    files["blocks5d.json"] = (json.dumps(rec, indent=1, allow_nan=False) + "\n").encode()
     fl = rec["fluctuation"]
     lines = [f"B5D blocks: C_b rank {rec['bias_block']['rank']} (family {', '.join(rec['bias_block']['family'])})"]
     for r in ("R1", "R2", "R3"):
         lines.append(f"{r}: f_hat {fl['f_hat'][r]}, SE {fl['se'][r]}, trigger {fl['trigger'][r]}")
     lines.append(f"unresolved stop: {fl['unresolved_stop']}")
+    for k, d in fl["band_traces_relative_to_T"].items():
+        lines.append(f"{k} traces (relative to T): " + "; ".join(
+            f"{r} toy {v['toy']:.4g} ref {v['reference']:.4g} ({v['kept_modes']} modes{'' if v['kept'] else ', dropped'})" for r, v in d.items()))
+
     def g4(x):
         return "n/a (C_b rank 0)" if x is None else f"{x:.4g}"
     for t, v in [*rec["bias_block"]["printed_against_C_b"].items(), *rec["bias_block"]["ll5d_toy_mean_error_tune_v1_units"].items()]:
         lines.append(f"{t} vs C_b: quad {g4(v['quad'])}, outside span {g4(v['fraction_outside_span'])}")
-    (out_dir / "blocks5d.txt").write_text("\n".join(lines) + "\n")
+    files["blocks5d.txt"] = ("\n".join(lines) + "\n").encode()
+    return files
+
+
+def write_files(out_dir: Path, files: dict) -> None:
+    """Write into a sibling temporary directory, then rename it to out_dir: the record appears whole or not at all."""
+    import shutil
+    tmp = out_dir.parent / f".{out_dir.name}.partial-{os.getpid()}"
+    tmp.mkdir(parents=True)
+    try:
+        for n, b in files.items():
+            (tmp / n).write_bytes(b)
+        os.rename(tmp, out_dir)
+    except BaseException:
+        shutil.rmtree(tmp, ignore_errors=True)
+        raise
+
+
+def write_record(out_dir: Path, rec: dict) -> None:
+    write_files(out_dir, render_record(rec))
 
 
 if __name__ == "__main__":
