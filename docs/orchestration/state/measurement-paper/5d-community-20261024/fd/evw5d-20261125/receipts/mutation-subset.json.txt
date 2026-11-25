@@ -1,0 +1,111 @@
+{
+ "schema": "evw5d-mutation/1",
+ "src_sha256": "f6f5bbb5ea1c0c7a704dfcd64e1f214c587db1e64db3d9c9ae4e943ac01ad990",
+ "tests_sha256": "9caf260bafa139c9636240b5fc2143ee95e4a444756be5bfc943db0ddf0a042a",
+ "sbatch_sha256": "60fd4ec26714b2ccb956bd5abec4ba07092eca4c2f80b9ee1ab85bb02fd3533a",
+ "python": "/Users/josephbailey/evw5d-env/bin/python3",
+ "control": "CONTROL-PASS",
+ "subset": [
+  "FILE_AXES",
+  "FILE_JSON",
+  "FILE_KEY_TEXT",
+  "SB_OUT_LINK",
+  "SB_SOURCE_CLOBBER",
+  "SELF_CM2_EXACT"
+ ],
+ "n_mutants": 4,
+ "n_killed": 4,
+ "not_killed": [],
+ "equivalent": [
+  {
+   "name": "FILE_KEY_TEXT",
+   "reason": "constants.json must carry every npz meta field unchanged (check_constants_json) and its key must equal KEY_TEXT, so a saved meta key other than KEY_TEXT already fails C-FILE through constants_json_vs_arrays",
+   "verdict": "SURVIVED"
+  },
+  {
+   "name": "FILE_AXES",
+   "reason": "the same: constants.json's truth_axes must equal the npz meta's and AXES, so a saved meta order other than AXES already fails C-FILE through constants_json_vs_arrays",
+   "verdict": "SURVIVED"
+  }
+ ],
+ "results": [
+  {
+   "name": "CONTROL",
+   "verdict": "CONTROL-PASS",
+   "rc": 0,
+   "failed": [],
+   "first_error": "",
+   "mutant_sha256": "f6f5bbb5ea1c0c7a704dfcd64e1f214c587db1e64db3d9c9ae4e943ac01ad990",
+   "seconds": 117.6,
+   "tail": ""
+  },
+  {
+   "name": "FILE_JSON",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_constants_json_raw_against_meant"
+   ],
+   "first_error": "E       assert (True and not True)",
+   "mutant_sha256": "04691b5eea0dafb34fc7afd2a6d3d905902353c5f34893acb76aac92e8d7916f",
+   "seconds": 121.4,
+   "tail": ""
+  },
+  {
+   "name": "SELF_CM2_EXACT",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_self_cm2_exact_alone"
+   ],
+   "first_error": "E       assert (not True)",
+   "mutant_sha256": "6c59927e76cc8a7279f1274b2a0793d748b9802fef2126ef088f01e31fbfa467",
+   "seconds": 117.4,
+   "tail": ""
+  },
+  {
+   "name": "SB_SOURCE_CLOBBER",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_job_setup_runs_without_noclobber"
+   ],
+   "first_error": "E       AssertionError: the setup's own redirect was refused",
+   "mutant_sha256": "e0231b73921bea805a8e829ae403f457fd1c073ad455abfbd69095021297ce05",
+   "seconds": 111.1,
+   "tail": ""
+  },
+  {
+   "name": "SB_OUT_LINK",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_job_refuses_a_dangling_out_link"
+   ],
+   "first_error": "E       AssertionError: assert (2 == 2 and 'evw5d exists' in 'setup_salloc_env.sh returned 1')",
+   "mutant_sha256": "d2d333c94789c1009a23cd958a9eeef2b619c97d52d77fd85a056ba882c11ead",
+   "seconds": 106.0,
+   "tail": ""
+  },
+  {
+   "name": "FILE_KEY_TEXT",
+   "verdict": "SURVIVED",
+   "rc": 0,
+   "failed": [],
+   "first_error": "",
+   "mutant_sha256": "619bd7fed9c4cd76cf272b07a1beef219720c3993c9b55aae417f28ea22b9a9c",
+   "seconds": 100.2,
+   "tail": "........................................................................ [ 60%]\n................................................                         [100%]\n120 passed in 99.70s (0:01:39)\n"
+  },
+  {
+   "name": "FILE_AXES",
+   "verdict": "SURVIVED",
+   "rc": 0,
+   "failed": [],
+   "first_error": "",
+   "mutant_sha256": "f9091bc6ec13f3827aa200f6448d776e69f22f3e63636ab6866a1f61a2777714",
+   "seconds": 103.9,
+   "tail": "........................................................................ [ 60%]\n................................................                         [100%]\n120 passed in 103.45s (0:01:43)\n"
+  }
+ ]
+}

@@ -1,0 +1,7 @@
+model=claude-sonnet-5-5 account=claude-personal (CLAUDE_CONFIG_DIR=~/.claude-personal) tools=Read,Grep,Glob strict-mcp cwd=copy commit=292b8a8bc started=2026-11-25T19:00:39Z cli=2.1.332 (Claude Code) attempt=2 (attempt 1: claude not on PATH, rc 127, nothing ran)
+rc=143 ended=2026-11-25T19:05:09Z
+INPUTS-UNCHANGED
+NOTE (the lane): attempt 2 ended with rc 143 (SIGTERM) after 4.5 min and wrote no report. The lane caused it: a
+`pkill -f 'evw5d_mutation.py'`, run to stop a superseded mutation campaign, also matched this reader's command line,
+whose argv carried the prompt text naming that file. No read of revision 4 by Sonnet exists. Sonnet reads revision 5
+instead (receipts/reads/r3-sonnet-rev5/).
