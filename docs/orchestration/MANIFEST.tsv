@@ -310,6 +310,7 @@ docs/orchestration/DECISION-20261122c-joseph-readability-pass-2.md	tracked	LIVE	
 docs/orchestration/DECISION-20261123-joseph-covfix-ki85-size-reader.md	tracked	LIVE	document		20261123	open		route-only	no
 docs/orchestration/DECISION-20261124-joseph-covfix-rev12-cpu-rule-and-seven-decisions.md	tracked	LIVE	document		20261124	open		route-only	no
 docs/orchestration/DECISION-20261124b-joseph-b-design-185-bias-block-old-namespace.md	tracked	LIVE	document		20261124	open		route-only	no
+docs/orchestration/DECISION-20261125-joseph-v1-scope-option-i-weights-hydrogen.md	tracked	LIVE	document		20261125	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	tracked	ARCHIVAL	document	fe-fps-campaign	20261029	terminal		exact-path-only	yes
