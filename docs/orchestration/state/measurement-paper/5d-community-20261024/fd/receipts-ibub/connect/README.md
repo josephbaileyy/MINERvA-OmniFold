@@ -52,18 +52,39 @@ job refuses with rc 2 before any unit, naming the value, at seconds of node time
    the job, which Slurm runs whatever the certificate's state. If the readout falls after the expiry, Joseph renews
    the certificate (the director's ruling).
 
-## Connect O: the readout (to be written after the job; it comes to the director separately)
+## Connect O: the readout (a package of its own; its binding comes after the run's)
 
-It runs `ibub_readout.py` on a login node for G18 and then AR23, with `--job <the job's id>`, at the same M. Its
-outputs go to `/dev/shm`, off the guarded trees, and are then published into `$N/readout/` and fetched as records.
+It runs `ibub_readout.py` on a login node for G18 and then AR23, with `--job 61924744`, `--job-m <the job's M>` and
+`--records <the fetched records>`. It runs at the readout's own M, a fresh clone in which the job's M
+(`d12c4f2a3…`) must be an ancestor. Its outputs go to `/dev/shm`, off the guarded trees. They are then published into
+`$N/readout/` and fetched as records.
 
-**Its preconditions, each a check in the connect, which stops if any fails:**
+**Its preconditions, each a check in the connect, which stops before the readout if any fails:**
 1. **Serialized after RPD-RECO P0** (the director's ruling of 2026-11-24). The readout plainly sources the six MAT
    setup scripts and maps `libMAT.so`, `MATDict.rootmap` and `MAT_rdict.pcm`, as COV2D's readout did. So the connect
-   checks two things: the committed P0 records (`p0-20261123`) exist on origin/main, and no `rpd_` step of P0's root is
-   unended. P0 itself is DONE (rc 0, 2026-11-24T03:18:33Z; records #1273, merge `055b9041`). The check also covers any
-   other RPD-RECO login step running at the same time, and those chains' roots are listed as protected once
-   limitation-resolver names them.
-2. The job has ended in sacct, and its IBUB-DONE reads `"stage": "toys"`, `"rc": 0`, completion PASS.
-3. The units' `refcheck.json` is the job's PASS (the readout checks it again itself, C-BARRIER).
-4. The same fences as connect R, and fresh acks.
+   checks two things:
+   - P0's committed records (`p0-20261123`) are in the clone at M;
+   - the fence finds no `rpd_` job unended. This also covers any other RPD-RECO step running at the same time, and
+     those chains' roots are listed as protected once limitation-resolver names them.
+
+   P0 itself is DONE (rc 0, 2026-11-24T03:18:33Z; records #1273, merge `055b9041`).
+2. **The job's state is terminal; its grade is the readout's** (the director's item-4 ruling and `--records`
+   corrections of 2026-11-24).
+   - **In the connect:** sacct must give exactly one row for the job, named `ibub_run`, in a terminal State:
+     COMPLETED, FAILED, TIMEOUT, CANCELLED, OUT_OF_MEMORY or NODE_FAIL. A missing row or any other State is a STOP
+     before anything of the job's is fetched or read. A missing row is never read as finished.
+   - **Then the fetch:** the job's records, read from `$N` by `dd iflag=noatime`, with RECORDS.SHA256SUMS.
+   - **No job-PASS gate:** neither the connect nor the readout gates on COMPLETED, on the ExitCode, or on IBUB-DONE's
+     rc or completion verdict. Each is disclosed in each tune's record (`job_terminal`, `sacct`). An IBUB-DONE that is
+     published must still be the bound job's, at the bound deploy, at stage toys, and must bind the same barrier.
+   - **In the readout, the job-wide prerequisites** (`C-JOB`; if one fails, neither tune is graded and the failure is
+     named): the fetched records verify against RECORDS.SHA256SUMS; stage.json reads PASS; the allocation (the batch's
+     stdout carries the allocation line exactly once, and the batch's scontrol record names the job and, re-parsed by
+     the job's key rule, is the declared allocation); the barrier (refcheck.json, byte for byte as fetched, is the
+     bound job's PASS at the bound deploy by the job's runner, with C-REP passing); and both references verified, with
+     C-SIM on central.
+   - **Per tune:** C-COMPLETE. A complete tune is graded. An incomplete one reads INCOMPLETE and names its missing
+     seeds.
+
+   For 61924744 the disclosure will read COMPLETED 0:0, with IBUB-DONE `de4ff546…` published (`run-61924744/job-end/`).
+3. The same fences as connect R, the readout root and `$N/readout` absent, and fresh acks.
