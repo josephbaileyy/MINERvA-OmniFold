@@ -2437,3 +2437,7 @@ producer and bound to it by `cv_code_revision` / `cv_producer_sha256`.
 387/32,849,103) is **preserved unchanged and unvalidated** — its rarity is not its justification.
 
 Full entry with every measured operand: `nd-unfolding/ND_OMNIFOLD_RUN_LOG.md` § 2026-09-14.
+
+## 2026-11-25 ME-FHC reconstructed charge control
+
+The all-selected fold is short by 1,064.5 negative and 66.9 positive tracks above 60 GeV/c in the twelve-playlist scan before the sign requirement. The combined deficit is 1,131.4 events. A change confined to assigning the charge sign at fixed reconstructed momentum cannot supply that yield. The [event counts and held-out threshold test](docs/orchestration/state/precharge-20261125/README.md) are a diagnostic of the local replay. The original production response is unresolved.

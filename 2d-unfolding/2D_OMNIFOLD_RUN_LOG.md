@@ -40,3 +40,7 @@ Append only committed post-2026-08-20 events here; keep the current-state summar
   the score allocation timed out. The outcome records the separate worker
   and allocation states, full charge and per-cell results.
   [IBUKT A2 outcome](../docs/orchestration/OUTCOME-20261119-ibukt-a2.md)
+
+## 2026-11-25 Pre-charge MINOS count
+
+A CV scan of 2,307 upstream data and standard-MC files removed the charge predicate. Playlist 1L was the pilot and Slurm array 61999201 processed the other eleven. The held-out charge-threshold test used the existing six-playlist split. The all-selected fold is short by 1,064.5 negative and 66.9 positive tracks above 60 GeV/c in the twelve-playlist scan before the sign requirement. The combined deficit is 1,131.4 events. A change confined to assigning the charge sign at fixed reconstructed momentum cannot supply that yield. [Measurement and scope](../docs/orchestration/state/precharge-20261125/README.md)
