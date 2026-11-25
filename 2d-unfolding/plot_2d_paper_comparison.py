@@ -30,7 +30,8 @@ import matplotlib.pyplot as plt
 
 from plot_2d_cross_section import (th2_to_slices,
                                     compute_truth_xsec_2d,
-                                    load_flux_bins_for_truth)
+                                    load_flux_bins_for_truth,
+                                    require_one_grid)
 import restyle_2026_10 as rs
 
 
@@ -177,6 +178,7 @@ def main():
     hEff2D = f.Get("hEff2D")
     for h in [hXSec2D, hTruth2D, hEff2D]:
         h.SetDirectory(0)
+    require_one_grid([hXSec2D, hTruth2D, hEff2D], h_flux=f.Get("hFlux_pt") or None)
     data_pot = float(f.Get("dataPOT").GetVal())
     n_nucleons = float(f.Get("nNucleons").GetVal())
     niter = int(f.Get("nIterations").GetVal())

@@ -268,15 +268,41 @@ def load_flux_bins_for_truth(f_result, result_path, mcfile=None,
     return flux_bins, f"{mc_path}:{flux_hist}"
 
 
+def require_pt_on_x(h):
+    """Refuse a TH2D whose x axis is not pT (14 bins): the helpers below index it as x = pT."""
+    if (h.GetNbinsX(), h.GetNbinsY()) != (N_PT, N_PZ):
+        raise ValueError(f"{h.GetName()}: {h.GetNbinsX()} x {h.GetNbinsY()} bins, expected x = pT ({N_PT}), "
+                         f"y = p_parallel ({N_PZ})")
+
+
+def require_one_grid(h2ds, h_pt=None, h_pz=None, h_flux=None):
+    """Refuse an input whose histograms are not all on one (pT, p_parallel) grid."""
+    for h in h2ds:
+        require_pt_on_x(h)
+    pt, pz = th2d_edges(h2ds[0])
+    for h in h2ds[1:]:
+        e = th2d_edges(h)
+        if not (np.array_equal(e[0], pt) and np.array_equal(e[1], pz)):
+            raise RuntimeError(f"{h.GetName()} is not on {h2ds[0].GetName()}'s grid")
+    for h, want in ((h_pt, pt), (h_pz, pz), (h_flux, pt)):
+        if h is not None:
+            a = h.GetXaxis()
+            got = np.array([a.GetBinLowEdge(i) for i in range(1, a.GetNbins() + 1)] + [a.GetBinUpEdge(a.GetNbins())])
+            if not np.array_equal(got, want):
+                raise RuntimeError(f"{h.GetName()}'s edges are not {h2ds[0].GetName()}'s")
+
+
 def truth_projections(h2d):
     """The 1D projections of a 2D cross section, each summed with the widths of h2d's own axes."""
     from unfold_2d_omnifold_unbinned import project_xsec_1d
+    require_pt_on_x(h2d)
     pt_edges, pz_edges = (list(e) for e in th2d_edges(h2d))
     return project_xsec_1d(h2d, "pt", pt_edges, pz_edges), project_xsec_1d(h2d, "pz", pt_edges, pz_edges)
 
 
 def efficiency_mesh(h_eff):
     """(p_parallel edges, pT edges, efficiency array pT x p_parallel) of h_eff, on its own axes."""
+    require_pt_on_x(h_eff)
     pt_edges, pz_edges = th2d_edges(h_eff)
     npt, npz = h_eff.GetNbinsX(), h_eff.GetNbinsY()
     eff_arr = np.zeros((npt, npz))
@@ -326,6 +352,7 @@ def main():
     # Detach from file
     for h in [hXSec2D, hTruth2D, hEff2D, hXSec_pt, hXSec_pz]:
         h.SetDirectory(0)
+    require_one_grid([hXSec2D, hTruth2D, hEff2D], hXSec_pt, hXSec_pz, f.Get("hFlux_pt") or None)
 
     # Read metadata for truth cross-section computation
     data_pot = float(f.Get("dataPOT").GetVal())
