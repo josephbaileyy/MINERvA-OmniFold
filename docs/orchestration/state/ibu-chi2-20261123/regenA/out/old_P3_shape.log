@@ -1,0 +1,22 @@
+[paper] opening /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+[ours] opening /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA/stage/er_old.root
+[masks] reported=205/224  strict-interior=185/224
+[NOTE] cross-grid shape chi2: our cell areas differ from the release axis's; not a note number
+
+=== shape chi^2, 205 reported bins (headline) ===
+  TOTAL covariance, 205-bin shape   chi2 =    450.21   ndf = 204   chi2/ndf =  2.207   sigma_tot(ours)/sigma_tot(paper) = 1.0098
+  STAT-only covariance, 205-bin shape  chi2 =    722.33   ndf = 204   chi2/ndf =  3.541   sigma_tot(ours)/sigma_tot(paper) = 1.0098
+
+=== shape chi^2, 185 strict-interior bins (secondary) ===
+  TOTAL covariance, 185-bin shape   chi2 =    472.60   ndf = 184   chi2/ndf =  2.568   sigma_tot(ours)/sigma_tot(paper) = 1.0102
+  closure: shape integral on 205 ours = 1.0000000000
+  closure: shape integral on 205 paper = 1.0000000000
+  closure: shape integral on 185 ours = 1.0000000000
+  closure: shape integral on 185 paper = 1.0000000000
+
+[out] writing /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA/out/old/xsec_shape.root
+
+Summary for run log / slide:
+  205-bin shape chi^2/ndf (total cov)  = 2.207   (450.2/204)
+  205-bin shape chi^2/ndf (stat only)  = 3.541
+  185-bin shape chi^2/ndf (total cov)  = 2.568   (472.6/184)

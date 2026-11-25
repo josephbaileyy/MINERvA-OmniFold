@@ -61,6 +61,7 @@ and `/pscratch/sd/j/josephrb/`. Local runs used Python 3.11.18, ROOT 6.40.04, nu
 | 17 | [`rebuild`](rebuild/README.md) | This lane's IBU on the paper's pT edges; a reco-anywhere efficiency arm | **ROW-CLOSED**; **OVERFLOW-PARTIAL** | IBU χ²/205 0.961 → 0.474. The low-pT fold residual goes −6.4 % → −0.6 %. The reco-anywhere efficiency reproduces 57 % of the 40–60 column residual. |
 | 18 | [`tier1`](tier1/README.md) | E_R and its binned IBU (REF-C2C1) on the paper's pT edges | controls pass | **IBU χ²/205 vs published 1.027 → 0.538 at K = 10** (0.830 → 0.395 at K = 5). D_ER 2.270 → 2.121. |
 | 19 | [`tier1/signed`](tier1/signed/README.md) | The signed-target IBU (`ibukt/signed_data`) on the paper's pT edges | PASS (reproduces Tier 1) | IBU χ²/205 vs published, signed target: 0.961 → **0.474** at K = 10 (0.816 → 0.380 at K = 5). |
+| 20 | [`regenA`](regenA/README.md) | The note's central-value comparisons with the published result, on the paper's pT edges | C-OLD PASS (6 products exact); P8 rerun once | χ²/205 vs published 2.270 → **2.121**; 185-cell shape 2.568 → 2.092; readings for journal-editor in `regenA/READINGS.md`. |
 
 **Post hoc, read by no rule (`foldtest/posthoc_exclude.py`).** Dropping reco pT row 0 and the p‖ 40–60 column from the
 IBU-vs-published χ² takes it from 210 to 100 over 176 cells. Cells were dropped from a correlated covariance, so this

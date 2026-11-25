@@ -1,0 +1,58 @@
+[regenA] start 2026-11-25T05:37:18Z host login02
+[regenA] clone e766ee5290de9dfc81b490b6165565daee6fa8d5 porcelain --ignored lines: 0
+[regenA] C-PINS before:
+a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA/stage/er_old.root
+5171c7b8ecacda6090e242349dd622218c1c38885c60ef8b91027033a8c4b780  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_e/er.root
+6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3  /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+222317522662b7001e8d4fcc155c1ec0b28b85f2cd868ab10206a7e7f6bf8240  /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/model_ptpl_minerva_inclusive_6GeV_MINERvA_Tune_v1.txt
+[regenA] C-AXES:
+E pT axis [0.0, 0.075, 0.15, 0.25, 0.325, 0.4, 0.475, 0.55, 0.7, 0.85, 1.0, 1.25, 1.5, 2.5, 4.5]
+release pT axis [0.0, 0.075, 0.15, 0.25, 0.325, 0.4, 0.475, 0.55, 0.7, 0.85, 1.0, 1.25, 1.5, 2.5, 4.5]
+C-AXES PASS
+[regenA] old_P1a_chi2_paperonly start 05:38:44Z
+[regenA] old_P1a_chi2_paperonly rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.75; Maximum resident set size (kbytes): 327120;
+[regenA] old_P1b_pull_full start 05:38:49Z
+[regenA] old_P1b_pull_full rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.21; Maximum resident set size (kbytes): 315140;
+[regenA] old_P2_interior start 05:38:55Z
+[regenA] old_P2_interior rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.39; Maximum resident set size (kbytes): 330148;
+[regenA] old_P3_shape start 05:39:00Z
+[regenA] old_P3_shape rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.95; Maximum resident set size (kbytes): 293412;
+[regenA] old_P4_tension start 05:39:04Z
+[regenA] old_P4_tension rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:07.15; Maximum resident set size (kbytes): 401376;
+[regenA] old_P5_models start 05:39:11Z
+[regenA] old_P5_models rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.74; Maximum resident set size (kbytes): 344956;
+[regenA] old_P6_tune start 05:39:17Z
+[regenA] old_P6_tune rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.39; Maximum resident set size (kbytes): 320904;
+[regenA] old_P7_agreement start 05:39:20Z
+[regenA] old_P7_agreement rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.64; Maximum resident set size (kbytes): 309668;
+[regenA] old_P8_strip start 05:39:24Z
+[regenA] old_P8_strip rc=1  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.50; Maximum resident set size (kbytes): 318500;
+[regenA] old_P9_fig13 start 05:39:28Z
+[regenA] old_P9_fig13 rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:06.95; Maximum resident set size (kbytes): 373428;
+[regenA] e_P1a_chi2_paperonly start 05:39:35Z
+[regenA] e_P1a_chi2_paperonly rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.23; Maximum resident set size (kbytes): 358124;
+[regenA] e_P1b_pull_full start 05:39:40Z
+[regenA] e_P1b_pull_full rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.03; Maximum resident set size (kbytes): 323344;
+[regenA] e_P2_interior start 05:39:45Z
+[regenA] e_P2_interior rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.47; Maximum resident set size (kbytes): 356224;
+[regenA] e_P3_shape start 05:39:50Z
+[regenA] e_P3_shape rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.66; Maximum resident set size (kbytes): 309228;
+[regenA] e_P4_tension start 05:39:54Z
+[regenA] e_P4_tension rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:07.02; Maximum resident set size (kbytes): 397640;
+[regenA] e_P5_models start 05:40:01Z
+[regenA] e_P5_models rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.98; Maximum resident set size (kbytes): 340604;
+[regenA] e_P6_tune start 05:40:07Z
+[regenA] e_P6_tune rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.35; Maximum resident set size (kbytes): 299036;
+[regenA] e_P7_agreement start 05:40:10Z
+[regenA] e_P7_agreement rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.23; Maximum resident set size (kbytes): 363208;
+[regenA] e_P8_strip start 05:40:14Z
+[regenA] e_P8_strip rc=1  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.46; Maximum resident set size (kbytes): 365524;
+[regenA] e_P9_fig13 start 05:40:17Z
+[regenA] e_P9_fig13 rc=0  Elapsed (wall clock) time (h:mm:ss or m:ss): 0:06.88; Maximum resident set size (kbytes): 392652;
+[regenA] C-GRID: cross-grid NOTE lines in E logs: 0
+[regenA] C-PINS after:
+a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA/stage/er_old.root
+5171c7b8ecacda6090e242349dd622218c1c38885c60ef8b91027033a8c4b780  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_e/er.root
+6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3  /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+[regenA] porcelain after: 0
+[regenA] end 2026-11-25T05:40:27Z

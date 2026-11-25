@@ -39,6 +39,8 @@ docs/orchestration/state/ben-b-20261124/blocks5d-20261124/record/blocks5d.json	i
 docs/orchestration/state/ben-b-20261124/selection-20261124/record/selection.json	included	19	
 docs/orchestration/state/coverage-2d-20261005/equivalence.json	included	5	
 docs/orchestration/state/coverage-2d-20261005/interim_score.json	included	20	
+docs/orchestration/state/ibu-chi2-20261123/regenA/out/e/receipt_model_chi2.json	included	9	
+docs/orchestration/state/ibu-chi2-20261123/regenA/out/old/receipt_model_chi2.json	included	9	
 docs/orchestration/state/ki84-rebuild-20261006/rescore_vl169_toys_vl170.json	included	14	
 docs/orchestration/state/ki98-wbias-test/receipts/ki98.json	included	1600	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_readout.json	included	10	
