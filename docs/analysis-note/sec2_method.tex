@@ -31,7 +31,7 @@ Figure~\ref{fig:control} compares data and simulation at reconstruction level. A
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{control_plots}
-  \caption{The data yield is about \SI{12}{\percent} higher than the sum of simulated signal and background at the data exposure, and the data-to-simulation ratio in $p_T$ rises from 0.88 in the lowest bin to about 1.2 above \SI{1}{GeV/c}. The panels show reconstructed $p_T$, $p_\parallel$, $E_{\mathrm{avail}}$, $q_3$, and $W$ in data and simulation.}
+  \caption{The data yield is about \SI{12}{\percent} higher than the sum of simulated signal and background at the data exposure, and the data-to-simulation ratio in $p_T$ rises from 0.88 in the lowest bin to about 1.2 above \SI{1}{GeV/c}. The panels show reconstructed $p_T$, $p_\parallel$, $E_{\mathrm{avail}}$, $q_3$, and $W$ in data and simulation. Axis breaks mark the compressed final bins in $E_{\mathrm{avail}}$, $q_3$, and $W$, each with upper edge 100 in the units shown.}
   \label{fig:control}
 \end{figure}
 
@@ -75,7 +75,7 @@ The true magnitude of the three-momentum transfer is $q_3^{\mathrm{true}}=\sqrt{
 \end{equation}
 where $M$ is the struck-nucleon mass and the last term uses the massless-muon approximation for $Q^2$. Events with a negative radicand account for $4.9\times10^{-5}$ of the simulated signal weight and are excluded from the five-observable truth sample and its normalization.
 
-At reconstruction level, $q_0^{\mathrm{reco}}$ is a separate calorimetric estimate of the energy transfer. It does not use the factor 1.17 in Eq.~\eqref{eq:available-energy-reco}. With reconstructed muon kinematics, the definitions are
+The four detector quantities used in reconstruction are the transverse and longitudinal muon momenta $p_T$ and $p_\parallel$, the available hadronic energy $E_{\mathrm{avail}}$, and the calorimetric recoil $q_0^{\mathrm{reco}}$. The calorimetric recoil estimates the energy transfer without the factor 1.17 in Eq.~\eqref{eq:available-energy-reco}. It combines with the muon kinematics to give both $q_3^{\mathrm{reco}}$ and $W^{\mathrm{reco}}$ through
 \begin{equation}
   \begin{aligned}[b]
     E_\nu^{\mathrm{reco}} &= E_\mu+q_0^{\mathrm{reco}},\\
@@ -118,7 +118,7 @@ The benchmark against MINERvA uses the two-dimensional (2D) muon kinematics $(p_
 
 \begin{table}[!t]
   \centering\small
-  \caption{Estimators, reporting grids, and diagnostics. Background treatment refers to the first OmniFold step.}
+  \caption{Estimators, reporting grids, and diagnostics. Background treatment refers to the first OmniFold step. Binned purity weighting gives data events the estimated signal fraction in their reconstructed bin. Appendix~\ref{app:reproducibility-definitions} defines the configurations.}
   \label{tab:estimators}
   \label{tab:estimators-matrix}
   \label{tab:config-key}
@@ -130,28 +130,28 @@ The benchmark against MINERvA uses the two-dimensional (2D) muon kinematics $(p_
     \midrule
     2D muon cross section &
       \EstTwoD{} (refined negative weights) &
-      Published muon grid (\lrval{q-ncells} bins) with covariance $Q_R$. \\
+      Published muon grid with the \lrval{q-ncells}-bin muon covariance $Q_R$. \\
     \addlinespace
     3D and 4D central values &
       \EstMultiD{} (refined negative weights) &
       Central values on fine muon and hadronic grids. \\
     \addlinespace
-    Exploratory five-axis result &
+    \ResFiveAxis{} &
       \EstPurity{} (binned purity weights) &
       Fine five-axis grid with diagnostic covariance $C_Z$, also projected
       onto the $E_{\mathrm{avail}}$--$W$ plane. \\
     \addlinespace
-    Sixteen-cell cross section &
-      \EstMultiD{} (refined negative weights) &
-      Merged regions with covariance $C_{\mathrm{rep}}$ for descriptive generator comparisons. See Sec.~\ref{sec:part-illustrative-multidimensional} for the limits on model tuning or constraints. \\
+    \ResSixteen{} &
+      \EstMultiD{} (classifier-refined background subtraction) &
+      Merged regions with reported covariance $C_{\mathrm{rep}}$ for descriptive generator comparisons. See Sec.~\ref{sec:part-illustrative-multidimensional} for the limits on model tuning or constraints. \\
     \addlinespace
-    Joint generator tests &
+    \ResJoint{} &
       Variant of the \estMultiD{} (refined negative weights) &
       Separate coarse grid with \jtNcells{} supported cells
       (\jtNcellsGiBUU{} for GiBUU). Calibrated quadratic distances use
       a shrinkage-based metric. \\
     \midrule
-    \multicolumn{3}{@{}l}{\emph{Diagnostic controls}} \\
+    \multicolumn{3}{@{}l}{\emph{Diagnostic controls (Appendix~\ref{app:reproducibility-definitions})}} \\
     Injected-feature closures and classifier-family cross-check &
       \EstPurity{} (binned purity weights) & \\
     \addlinespace
@@ -183,9 +183,9 @@ Here $N_{\mathrm{nuc}}$ is the fiducial nucleon count and $N_{\mathrm{POT}}$ is 
 \label{sec:method-binning}
 The 2D result follows the published $14\times16$ muon grid and its mapping of 205 reported bins~\cite{MINERvA:2021owq}. The remaining 19 cells lie in the high-$p_T$, low-$p_\parallel$ corner, with $p_T^{\mathrm{hi}}/p_\parallel^{\mathrm{lo}}>\tan20^\circ$. The higher-dimensional fine grids add seven $E_{\mathrm{avail}}$ bins, seven $q_3$ bins, and six $W$ bins, each with a wide final bin extending to 100 in its respective axis units. Appendix~\ref{app:reproducibility} gives the bin edges. A marginal cross section sums the bin integrals over the eliminated axes and divides by the retained bin widths when reported as a density. The wide bins contribute their full integrals to projections and totals.
 
-The 3D and 4D results are reported as central values only. The covariance of the \resFiveAxis{} serves as a scale for diagnostics. We report the \resSixteen{} as integrated cross sections in $\mathrm{cm}^2$ per nucleon in the regions defined in Sec.~\ref{sec:five-dimensional-reporting}. The cell integrals support descriptive comparisons with generator predictions. Model tuning or constraints would require resolving the limitations in Sec.~\ref{sec:part-illustrative-multidimensional}, including the coverage shortfall seen when rescoring held-out pseudo-experiments. The calibrated generator tests use a variant of the multidimensional estimator on a separate joint grid (Sec.~\ref{sec:sixteen-cell-generator-comparison}).
+The 3D and 4D results are reported as central values only. The covariance of the \resFiveAxis{} serves as a scale for diagnostics. We report the \resSixteen{} as integrated cross sections in $\mathrm{cm}^2$ per nucleon in the regions defined in Sec.~\ref{sec:five-dimensional-reporting}. The cell integrals support descriptive comparisons with generator predictions. Model tuning or constraints would require resolving the limitations in Sec.~\ref{sec:part-illustrative-multidimensional}, including the coverage shortfall seen when rescoring held-out pseudo-experiments. The \resJoint{} use a variant of the multidimensional estimator on a separate joint grid (Sec.~\ref{sec:sixteen-cell-generator-comparison}).
 
-AI language-model agents assisted with the analysis code, statistical procedures, computing campaigns, and internal reviews. The first author set the scientific questions and approved the estimator, the uncertainty construction, and the reported claims. The AI Use Disclosure lists the tools and their versions and describes how their output was verified.
+AI language-model agents assisted with the analysis code, statistical procedures, computing campaigns, and internal reviews. The \hyperref[sec:ai-use-disclosure]{AI Use Disclosure} gives the tools and versions, the first author's role, and the verification procedure.
 % 2026-11-21 (journal-editor; Joseph via the rewrite helper and the director): the methods pointer the APS policy asks for
 % (https://journals.aps.org/authors/appropriate-use-ai-tools: AI used to conduct the research "must, like any tool, be
 % disclosed within the paper's methods section"); wording as the director proposed. The longer draft is

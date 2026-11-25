@@ -24,7 +24,7 @@ bound values (VL149, VL151, VL152) are now found in sec_5d.tex's sec:val-negweig
 The short paper (main_paper.tex, paper_body.tex) was retired on 2026-11-21 (docs/POST_PUBLICATION_REORG_PLAN.md, family
 "short paper"). Its five values bind where they still print, from the same receipts: the statistical block median in
 the note's Table tab:uq (sec3_twod.tex); the high-W regularization bias in sec:val-departure and the earlier
-estimator's lowest 68% coverage under the rate reduction (s5c tier S) in sec:coverage-5d (both sec4_higherdim.tex); the
+estimator's lowest 68% coverage under the rate reduction (s5c tier S) in sec:coverage-5d (appA_methods.tex); the
 withheld-shape range and its "about half of the cells" in the primer (primer_body.tex).
 
   python3 check_sec4_receipts.py              # exit 0 only if every check passes
@@ -185,7 +185,7 @@ CHECKS = [
      data_method_diff, "round"),
     ("regularization bias at high W (VL151)", "sec4_higherdim.tex",
      r"reaches \$([0-9.]+)\\%\$ in the highest-\$W\$ column", regularization_max, "round"),
-    ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "sec4_higherdim.tex",
+    ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "appA_methods.tex",
      r"The lowest empirical coverage for the \$68\\%\$ intervals is ([0-9.]+)\.", tilt_coverage68_min, "round"),
     ("other fixed shapes, most affected cell (VL154)", "primer_body.tex",
      r"the effect is \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\} in the worst cell", shapes_range, "round"),
@@ -227,7 +227,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 def load() -> dict[str, str]:
     return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec4_higherdim.tex", "sec_validation.tex",
-                                               "sec_5d.tex", "app_devhistory.tex", "primer_body.tex")}
+                                               "sec_5d.tex", "app_devhistory.tex", "primer_body.tex", "appA_methods.tex")}
 
 
 def gzip_self_test() -> bool:
