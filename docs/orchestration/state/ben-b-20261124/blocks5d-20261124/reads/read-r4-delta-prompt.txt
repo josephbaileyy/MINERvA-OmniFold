@@ -1,0 +1,21 @@
+Focused adversarial recheck, round 4, READ-ONLY. Never write to any file in the repository. Write nothing except your final answer.
+
+The checkout is at commit e6561dfb9 (PR #1316). Your round-3 review of f0e7110dd is at
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r3-delta-codex-school-gpt-6.txt. This round's delta is
+`git diff f0e7110dd HEAD -- nd-unfolding/b5d/ docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A1.md docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A2.md`.
+
+New in it: amendment A2 (B5D-AMENDMENT-A2.md), the director's rule for when the build stops short of V_F: each band ACTIVE
+(f-hat - 1 > 3 SE, phi = f-hat), RESOLVED-INACTIVE (not active, SE <= 0.5), UNRESOLVED (not active, SE > 0.5; phi = 1, flagged)
+or UNMEASURED (no primary ensemble keeps it); no V_F only if every band is UNRESOLVED or UNMEASURED. A2 explains why it keeps
+the director's rule rather than your round-3 relative rule.
+
+Check strictly, and only this delta:
+A. Is each round-3 BLOCKER, MAJOR and minor fixed (C-LEAK per entry for vectors and by largest entry for matrices, plus a
+   dimensional-invariance test; COVFIX's _canonical_tied ported; the exclusive writer; A1 item 1's wording on B-SEL's prepare;
+   the nonuniform-X_T trace test)? Name any that is not, with the failure scenario.
+B. Does the code implement A2 exactly (trigger states, the stop rule, phi), and is A2's text internally consistent and correct
+   in its arithmetic and its comparison with your rule?
+C. Any NEW defect: a control that passes vacuously, a check that STOPs a correct build, a test that passes for the wrong
+   reason, a regression.
+
+Report BLOCKERS, then MAJORS, then minors, each with file:line and a concrete failure scenario. Under about 500 words. Name your model.

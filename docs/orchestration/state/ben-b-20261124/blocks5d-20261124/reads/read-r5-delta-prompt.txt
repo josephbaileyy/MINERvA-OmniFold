@@ -1,0 +1,25 @@
+Focused adversarial recheck, round 5, READ-ONLY. Never write to any file in the repository. Write nothing except your final answer.
+
+The checkout is at commit 93ec63dd6 (PR #1316). Your round-4 review of e6561dfb9 is at
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r4-delta-codex-school-gpt-6.txt. This round's delta is
+`git diff e6561dfb9 HEAD -- nd-unfolding/b5d/ docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A1.md docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A2.md`.
+
+The two main changes:
+- C-LEAK is now a dimensional check with no magnitude cutoff: main runs the build a second time with every absolute input
+  scaled by 2^10 (cells() via ABS_SCALE, g_TuneV1, and C_e by 2^20) and check_leak compares the two records: every number
+  outside C_b,abs and V_F unchanged (rtol 1e-9), those two scaled by exactly 2^20 (rtol 1e-9), same keys, lengths and
+  non-numeric values.
+- The writer forms the record in a hidden sibling directory and renames it atomically with a no-replace rename
+  (macOS renamex_np RENAME_EXCL, Linux renameat2 RENAME_NOREPLACE; refuses on other systems).
+
+Check strictly, and only this delta:
+A. Is each round-4 BLOCKER, MAJOR and minor fixed? Name any that is not, with the failure scenario.
+B. Is the dimensional check sound? In particular: is every absolute input actually scaled (any path that reads an absolute
+   quantity without cells(), g_TuneV1 or C_e?), can a relative quantity legitimately change under the scaling (a threshold
+   that is absolute, an eps, a guard) and so give a false STOP on a correct build, can an absolute quantity escape it, and is
+   the global ABS_SCALE reset on every exit path?
+C. Is the no-replace rename correct (ctypes signature, flag values, errno handling), and is the whole-or-nothing claim true?
+D. Any NEW defect: a control that passes vacuously, a check that STOPs a correct build, a test that passes for the wrong
+   reason, a regression; A1 or A2 text inconsistent with the code.
+
+Report BLOCKERS, then MAJORS, then minors, each with file:line and a concrete failure scenario. Under about 500 words. Name your model.

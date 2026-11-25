@@ -8307,8 +8307,14 @@ docs/orchestration/state/ai-disclosure-reconciliation-20261121/raw/zst.txt	track
 docs/orchestration/state/annealed-nominal-complete-56563761.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/annealed-nominal-error-56563092.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/INVENTORY-AND-DRAFT.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A1.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A2.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-BINDING-1.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-DECLARATION.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/code-checks/README.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/code-checks/line-trace.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/code-checks/mutants.py	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/code-checks/mutants.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/connect/README.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/connect/b5d_launch.sh	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/connect/b5d_launch.template.sh	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
@@ -8327,6 +8333,26 @@ docs/orchestration/state/ben-b-20261124/blocks5d-20261124/connect/standin/standi
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/connect/standin/standin-pin_bad.log.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/connect/standin/standin-window_ended.log.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/connect/standin/standin.sh	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r1-agy-gemini-4-hydrogen-xhigh.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r1-codex-school-gpt-6.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r1-prompt.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r2-delta-agy-gemini-4-hydrogen-xhigh.NOT-RUN.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r2-delta-codex-school-gpt-6.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r2-delta-prompt.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r3-delta-codex-school-gpt-6.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r3-delta-prompt.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r4-delta-codex-school-gpt-6.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r4-delta-prompt.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r5-delta-codex-school-gpt-6.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r5-delta-prompt.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r6-full-delta-agy-gemini-4-hydrogen-xhigh.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r6-full-delta-agy-prompt.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r7-final-delta-agy-gemini-4-hydrogen-xhigh.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r7-final-delta-codex-school-gpt-6.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r7-final-delta-prompt.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r8-micro-delta-agy-gemini-4-hydrogen-xhigh.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r8-micro-delta-codex-school-gpt-6.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r8-micro-delta-prompt.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/codex-school-sweep.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/selection-20261124/B-SEL-DECLARATION.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/selection-20261124/BSEL-BINDING-1.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
