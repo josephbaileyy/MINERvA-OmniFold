@@ -1,0 +1,17 @@
+pytest under trace: rc=0; 257 passed in 597.75s (0:09:57)
+
+== Python line coverage (coverage.py, subprocesses included) ==
+Name                    Stmts   Miss  Cover   Missing
+-----------------------------------------------------
+dumpcmp.py                 73      0   100%
+geanttw_provenance.py      73      0   100%
+geanttw_sacct.py           89      0   100%
+p0_check.py               168      0   100%
+-----------------------------------------------------
+TOTAL                     403      0   100%
+
+== Shell line trace (DEBUG trap; heredoc bodies, comments and block keywords excluded) ==
+geanttw_evloop.sbatch: 99/99 executable lines traced; not traced: none
+geanttw_build.sh: 154/154 executable lines traced; not traced: none
+geanttw_connect.sh: 39/39 executable lines traced; not traced: none
+geanttw_remote.sh: 124/124 executable lines traced; not traced: none
