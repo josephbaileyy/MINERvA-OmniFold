@@ -205,8 +205,12 @@ moves with Phase 1's data product. Nothing in REF-G1's own readout moves: its T 
 ### 4.2 The one Phase 2 connect: a read-only fetch
 
 Three recomputes need intermediate files that are on pscratch only:
-- xk's step-K cross matrices and bounds (its run directory `cov2d-xk-g2r-20261116/run`; the 171 GB
-  `universes_full.root` is **not** read: it was the launcher's identity check, never an input of K);
+- xk's step-K cross matrices and bounds, from its run directory `cov2d-xk-g2r-20261116/run`. The 171 GB
+  `universes_full.root` is **not** read:
+  - only step V1 opens it (`nd-unfolding/fd_xcov_steps.py:264–276`, `cmd_v1`);
+  - step K reads V1's saved state (`v1_state`, `:425–436`, used by `cmd_k`);
+  - xk's connect only hashed it against X's pin, as an identity check (`fd/receipts-cov2d/g2r/xk/connect/
+    connect-g2r-xk.sh:83–85`);
 - PRR's `route2/route2.npz`;
 - the NuE flux constraint (`sorted_NuEConstraint_FHC_RHC_IMD.txt`, `e38ad7d2…`) for RSN's row-6 weights.
 
