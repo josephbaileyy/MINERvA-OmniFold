@@ -35,6 +35,7 @@ docs/orchestration/state/GRADE-20260920-cause3-two-member.json	included	1
 docs/orchestration/state/RECEIPT-20260823-oi126-r4-preanneal-lr-sensitivity.json	included	6	
 docs/orchestration/state/RECEIPT-20260824-oi126-c-permutation-ensemble.json	included	2	
 docs/orchestration/state/RECEIPT-vl100-shape-corrected-foldforward-20260815.json	included	2	
+docs/orchestration/state/ben-b-20261124/selection-20261124/record/selection.json	included	19	
 docs/orchestration/state/coverage-2d-20261005/equivalence.json	included	5	
 docs/orchestration/state/coverage-2d-20261005/interim_score.json	included	20	
 docs/orchestration/state/ki84-rebuild-20261006/rescore_vl169_toys_vl170.json	included	14	
@@ -79,6 +80,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/regrade-crep
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/regrade-crep-20261121/run2d-g18/regrade_2d_g18.json	included	2	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/ensemble/receipts/stage1-a1-analysis/ens1_stage1.json	included	2	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/ensemble/receipts/stage2-a1-analysis/ens1_stage2.json	included	1	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/s2r-20261124/run-20261124/session-fetch/records/fetch-records/read/readout.json	included	1	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier3-20261110/run-20261121/cluster/read/readout.json	included	1	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json	included	25	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f1_readout.json	included	35	

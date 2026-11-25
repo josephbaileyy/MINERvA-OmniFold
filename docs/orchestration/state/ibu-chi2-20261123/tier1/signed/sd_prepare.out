@@ -1,0 +1,76 @@
+cbde4419e3025ba000f0a6400711ba0009b940f915215b26ebc34557fb63a8fe  scripts/sd_prepare.sh
+b6cb61429b8d5a6f694147fb2ff985462eb433ab2478cda900d3ef8924ceaab0  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/stage_sd/c2.npz
+43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/stage_sd/cv.root
+5171c7b8ecacda6090e242349dd622218c1c38885c60ef8b91027033a8c4b780  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/stage_sd/er.root
+d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/stage_sd/flux.root
+0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/stage_sd/libRooUnfold.so
+6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/stage_sd/paper.root
+ 2d-unfolding/ibukt/config.json    | 10 +++++-----
+ 2d-unfolding/ibukt/signed_data.py |  6 +++---
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+21abe6e1b662a27b60347f3184538bac1aae261625ab8b92daea26aa2ec64afd  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/impl_e.diff
+34749511fa162fb39f33a97c21dacdb0d77a8de0a70b8ef8383efeb5f7d80ea3  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/impl_e/2d-unfolding/ibukt/signed_data.py
+49efcdffe480b690f5791a9a7f4b20a4c997074b38a43a0e94bdd30cbc09661b  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/impl_e/2d-unfolding/ibukt/config.json
+library pin {'filename': 'libRooUnfold.so', 'sha256': '0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd'}
+diff --git a/2d-unfolding/ibukt/config.json b/2d-unfolding/ibukt/config.json
+index 29fa95aab..f7d8b1de1 100644
+--- a/2d-unfolding/ibukt/config.json
++++ b/2d-unfolding/ibukt/config.json
+@@ -22,12 +22,12 @@
+   ],
+   "pt_edges": [
+     0,
+-    0.07,
++    0.075,
+     0.15,
+     0.25,
+-    0.33,
++    0.325,
+     0.4,
+-    0.47,
++    0.475,
+     0.55,
+     0.7,
+     0.85,
+@@ -88,11 +88,11 @@
+     },
+     "er": {
+       "filename": "er.root",
+-      "sha256": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef"
++      "sha256": "5171c7b8ecacda6090e242349dd622218c1c38885c60ef8b91027033a8c4b780"
+     },
+     "c2": {
+       "filename": "c2.npz",
+-      "sha256": "929d0e78011ead72e9677a05bad06eec80e914e181c8d02f94bbdea1c43b76f4"
++      "sha256": "b6cb61429b8d5a6f694147fb2ff985462eb433ab2478cda900d3ef8924ceaab0"
+     },
+     "paper": {
+       "filename": "paper.root",
+diff --git a/2d-unfolding/ibukt/signed_data.py b/2d-unfolding/ibukt/signed_data.py
+index dac10c654..5972f927f 100644
+--- a/2d-unfolding/ibukt/signed_data.py
++++ b/2d-unfolding/ibukt/signed_data.py
+@@ -19,7 +19,7 @@ import run_ibukt as runner
+ 
+ KS = (5, 10)
+ REFERENCE_COMMIT = "77d76cfc2d621f8faa010b75006811868494652a"
+-REFERENCE_DRIVER = "938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b"
++REFERENCE_DRIVER = "677ac75f1d171ca7d71223f62bf3426f056e41b1b6cc8bfd433d49528a1371e8"
+ FAILED_CELLS = [*(16 * ipt + 15 for ipt in range(12)), 8 * 16, 9 * 16 + 1]
+ 
+ 
+@@ -106,12 +106,12 @@ def _readings(
+         return {"chi2": chi2, "ndf": ndf, "chi2_ndf": chi2 / ndf}
+ 
+     er_distance = distance(er - published)
+-    if not np.isclose(er_distance["chi2"], 465.41527219152636, rtol=1e-8, atol=0):
++    if not np.isclose(er_distance["chi2"], 434.8943632939891, rtol=1e-8, atol=0):
+         raise ValueError("E_R publication distance differs")
+     if not set(FAILED_CELLS).issubset(selected):
+         raise ValueError("historical control cells are outside the reporting mask")
+     readings: dict[str, Any] = {"E_R": er_distance}
+-    for k, expected in zip(KS, (0.83, 1.03), strict=True):
++    for k, expected in zip(KS, (0.39, 0.54), strict=True):
+         signed_distance = distance(signed[k] - published)
+         refined_distance = distance(refined[k] - published)
+         if round(refined_distance["chi2_ndf"], 2) != expected:

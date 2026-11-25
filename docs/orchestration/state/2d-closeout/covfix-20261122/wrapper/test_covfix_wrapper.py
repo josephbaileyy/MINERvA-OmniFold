@@ -2292,6 +2292,132 @@ class ConfirmBlockerTests(unittest.TestCase):
         self.assertEqual(rec.raw(), b"restored\n")
 
 
+def protect(bare: str) -> None:
+    """Make a local bare repo refuse what GitHub ruleset 27996874 ("covfix-ledger append-only") refuses on the real
+    ledger branch: non-fast-forward updates and deletion. Creation and fast-forward pushes stay allowed."""
+    for key in ("receive.denyNonFastForwards", "receive.denyDeletes"):
+        subprocess.run(["git", "--git-dir", bare, "config", key, "true"], check=True)
+
+
+def other_writer(rig) -> str:
+    """A second clone of the rig's remote, standing in for any other writer."""
+    d = tempfile.mkdtemp(dir=rig.root)
+    subprocess.run(["git", "clone", "-q", "-b", "covfix-consumption", rig.bare, d], check=True, capture_output=True)
+    return d
+
+
+def remote_tip(rig) -> str:
+    return subprocess.run(["git", "--git-dir", rig.bare, "rev-parse", "refs/heads/covfix-consumption"],
+                          capture_output=True, text=True, check=True).stdout.strip()
+
+
+def launches(rig) -> int:
+    """How many times ssh was asked to start a bound binary (the only path on which the frame is sent)."""
+    return sum("covfix-exec" in e["argv"][-1] for e in rig.ssh_log())
+
+
+class LedgerProtectionTests(unittest.TestCase):
+    """The wrapper under a remote that refuses non-fast-forward updates and deletion (ruleset 27996874 on
+    covfix-ledger). The wrapper only ever creates the branch and pushes fast-forward; a refused push, a deletion or a
+    rewind must fail closed with no launch, so no secret reaches a bound binary and nothing is decrypted."""
+
+    def test_under_protection_the_first_push_creates_the_branch_and_later_pushes_fast_forward(self):
+        rig = Rig()
+        protect(rig.bare)
+        subprocess.run(["git", "--git-dir", rig.bare, "update-ref", "-d", "refs/heads/covfix-consumption"], check=True)
+        rc, _, err = rig.run("pv-writer")                       # creates the branch: allowed
+        self.assertEqual(rc, 0, err)
+        first = remote_tip(rig)
+        rc, _, err = rig.run("pv-readout")                      # appends fast-forward: allowed
+        self.assertEqual(rc, 0, err)
+        second = remote_tip(rig)
+        self.assertNotEqual(first, second)
+        self.assertEqual(subprocess.run(["git", "--git-dir", rig.bare, "merge-base", "--is-ancestor", first, second])
+                         .returncode, 0)
+        self.assertEqual([(e["event"], e["role"]) for e in rig.events()],
+                         [("spent", "pv-writer"), ("completed", "pv-writer"),
+                          ("spent", "pv-readout"), ("completed", "pv-readout")])
+        self.assertEqual(rig.remote_record(), slurp(os.path.join(rig.cfg["record_dir"], "RECORD.jsonl"), "rb"))
+
+    def test_a_push_refused_as_non_fast_forward_fails_closed_before_launch(self):
+        # Another writer appends between the wrapper's fetch and its push. The wrapper's push must be refused, with
+        # or without the host's protection: it never forces.
+        for protected in (True, False):
+            with self.subTest(protected=protected):
+                rig = Rig()
+                if protected:
+                    protect(rig.bare)
+                self.assertEqual(rig.run("pv-writer")[0], 0)
+                before = launches(rig)
+                self.assertEqual(before, 1)
+                other = other_writer(rig)
+                real, raced = cw.Mirror.git, []
+
+                def mgit(self, *args, check=True, input=None):
+                    if "push" in args and not raced:
+                        raced.append(1)
+                        with open(os.path.join(other, "README"), "a") as f:
+                            f.write("another writer\n")
+                        git(other, "-c", "user.name=o", "-c", "user.email=o@o", "commit", "-q", "-am", "sibling")
+                        git(other, "push", "-q", "origin", "HEAD:refs/heads/covfix-consumption")
+                    return real(self, *args, check=check, input=input)
+
+                with mock.patch.object(cw.Mirror, "git", mgit):
+                    rc, _, err = rig.run("pv-readout")
+                self.assertTrue(raced)
+                self.assertEqual(rc, cw.TERMINAL, err)
+                self.assertIn("uncertain", err)
+                self.assertRegex(err, r"git [^:]*push failed")      # the remote refused the push itself
+                self.assertEqual(launches(rig), before)
+                self.assertEqual(remote_tip(rig), git(other, "rev-parse", "HEAD").strip())   # nothing overwritten
+                self.assertNotIn(b'"pv-readout"', rig.remote_record())
+                self.assertEqual(sorted(k for k, _, r in rig.markers() if r == "pv-readout"), ["attempt", "uncertain"])
+                rc, _, err = rig.run("pv-readout")                 # the role stays blocked
+                self.assertEqual(rc, cw.TERMINAL, err)
+                self.assertEqual(launches(rig), before)
+
+    def test_a_deletion_is_refused_and_a_bypassed_deletion_fails_closed_before_launch(self):
+        rig = Rig()
+        protect(rig.bare)
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        tip = remote_tip(rig)
+        r = subprocess.run(["git", "-C", other_writer(rig), "push", "origin", "--delete", "covfix-consumption"],
+                           capture_output=True, text=True)
+        self.assertNotEqual(r.returncode, 0)
+        self.assertIn("deletion prohibited", r.stderr)
+        self.assertEqual(remote_tip(rig), tip)
+        before = launches(rig)
+        self.assertEqual(before, 1)                              # the pv-writer run launched once
+        subprocess.run(["git", "--git-dir", rig.bare, "update-ref", "-d", "refs/heads/covfix-consumption"], check=True)
+        rc, _, err = rig.run("pv-readout")                      # as if an admin had bypassed the rule
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertIn("gone after it was published", err)
+        self.assertEqual(launches(rig), before)
+        self.assertNotIn("pv-readout", [e["role"] for e in rig.events()])
+
+    def test_a_rewind_is_refused_and_a_bypassed_rewind_fails_closed_before_launch(self):
+        rig = Rig()
+        protect(rig.bare)
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        tip = remote_tip(rig)
+        other = other_writer(rig)
+        first = git(other, "rev-list", "--max-parents=0", "HEAD").strip()
+        git(other, "reset", "-q", "--hard", first)
+        r = subprocess.run(["git", "-C", other, "push", "-f", "origin", "HEAD:refs/heads/covfix-consumption"],
+                           capture_output=True, text=True)
+        self.assertNotEqual(r.returncode, 0)
+        self.assertIn("non-fast-forward", r.stderr)
+        self.assertEqual(remote_tip(rig), tip)
+        before = launches(rig)
+        self.assertEqual(before, 1)                              # the pv-writer run launched once
+        subprocess.run(["git", "--git-dir", rig.bare, "update-ref", "refs/heads/covfix-consumption", first], check=True)
+        rc, _, err = rig.run("pv-readout")                      # as if an admin had bypassed the rule
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertIn("rewound", err)
+        self.assertEqual(launches(rig), before)
+        self.assertNotIn("pv-readout", [e["role"] for e in rig.events()])
+
+
 class ReferenceRoleTests(unittest.TestCase):
     def test_malformed_frames_refuse(self):
         rig = Rig()

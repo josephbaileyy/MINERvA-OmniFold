@@ -1,0 +1,40 @@
+# Response test: do our p|| migrations and efficiency match MINERvA's Figs. 3 and 5? (declared before computing)
+
+Question. Our selected data match MINERvA's Fig. 2 at reco p|| 40-60 (fig2, descriptive). After the flux swap, our
+selected MC matches too (to 2.6 %). Yet the published result, folded through our response R = M/T, falls about 9.5 %
+short of the data there. Is our response different from theirs, in migration (Fig. 3) or in efficiency (Fig. 5)?
+
+Inputs.
+- Theirs: arXiv 2106.16210v4 PDF (sha256 39b6b8f1...).
+  - Fig. 3, page 5: row-normalized migration, true p|| (rows) vs reco p||, projected over all pT.
+  - Fig. 4, page 5: the same for pT, projected over all p||.
+  - Fig. 5, page 6: efficiency in true (pT, p||).
+  Cell values come from each cell's fill colour, mapped through the figure's own palette bar. A Claude subagent
+  extracts them without access to our numbers.
+- Ours: evloop BASE_M (224 reco x 224 truth) and T, from evloop/results/ibuchi_products.npz.
+  - Migration P(reco j | true i) = sum of M over reco cells with p|| bin j and truth cells with p|| bin i, divided by
+    the row sum over all reco p|| bins. Fig. 4 is the same with pT.
+  - Efficiency per truth cell eps_t = sum_r M_rt / T_t, for reco in the grid.
+
+Extraction precision. sigma_x for each extracted value is half the palette step in value, or the colour-match residual
+if that is larger, as reported by the extraction.
+
+Statistics (40-60 = p|| bin 15, 20-40 = bin 14):
+- P_ii = P(reco 40-60 | true 40-60); P_bi = P(reco 20-40 | true 40-60); P_fi = P(reco 40-60 | true 20-40).
+- eps40 = mean of eps over the reported truth cells in p|| bin 15, weighted by our T. The same weights are applied to
+  their cells.
+
+Readings:
+- MIGRATION-DIFF  |P_ii(ours) - P_ii(theirs)| >= 0.03 and > 3 sigma_x, or the same test on P_fi.
+- EFF-DIFF        |eps40(ours)/eps40(theirs) - 1| >= 0.05 and > 3 sigma_x.
+- Both may hold.
+- NEITHER         neither holds, and 3 sigma_x < the thresholds.
+- UNRESOLVED      3 sigma_x >= a threshold.
+
+Caveats stated now:
+- Their projections are weighted by their Tune v1 MC with their flux, ours by ours. The flux test showed this mainly
+  changes rates, not the ratios.
+- Their efficiency numerator includes selected events generated above 20 degrees (paper page 5). Ours has none,
+  because our truth requires theta < 20 degrees. Their cells in that region are excluded from eps40 by construction:
+  at p|| 40-60, theta < 20 degrees holds for all pT <= 4.5.
+- Fig. 4 and the pT rows are reported descriptively for the low-pT question.

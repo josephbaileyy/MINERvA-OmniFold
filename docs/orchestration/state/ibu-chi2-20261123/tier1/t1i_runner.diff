@@ -1,0 +1,13 @@
+--- t1i_runner_v1.sh	2026-11-24 09:57:46
++++ t1i_runner_v2.sh	2026-11-24 09:57:46
+@@ -5,7 +5,9 @@
+ set -o pipefail
+ R=/pscratch/sd/j/josephrb/ibuchi-evloop-20261123
+ echo "[t1i] host $(hostname) job=$SLURM_JOB_ID start $(date -u +%FT%TZ)"
+-case "$(hostname)" in login*) echo "[t1i] REFUSED: on a login node"; exit 2;; esac
++# salloc runs this shell on the login node; every compute step below is an srun step (director condition 3).
++CN=$(srun -n1 -c 1 hostname); echo "[t1i] compute node via srun: $CN"
++case "$CN" in nid*) ;; *) echo "[t1i] REFUSED: srun did not reach a compute node"; exit 2;; esac
+ cd $R
+ sha256sum scripts/rebuild.py scripts/rebuild.sbatch scripts/t1_t1.sbatch \
+   tier1/deploy_old/2d-unfolding/re2/re2_driver.py tier1/deploy_old/2d-unfolding/ref_c2c1/config.json \
