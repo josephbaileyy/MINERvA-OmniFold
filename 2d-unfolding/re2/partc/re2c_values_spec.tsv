@@ -127,7 +127,7 @@ stat-vs-statonly-a	N/app_statmethods.tex:776	0.428	budget_Q	paper_ratios.sqrt_tr
 stat-trace-a	N/app_statmethods.tex:777	1.984	budget_Q	stat.sqrt_trace	v/1e-40	.3f	ranks_conditioning	typeset $1.984\times10^{-40}$	
 statonly-trace-a	N/app_statmethods.tex:778	4.639	budget_Q	paper_ratios.paper_sqrt_trace_StatOnly_205	v/1e-40	.3f	published_side	published-side, unchanged; typeset $4.639\times10^{-40}$	
 oo-univstat	N/app_statmethods.tex:781	23.57	ours_only_universe_plus_stat	direct inverse: .*chi\^2/ndf = (\S+)$	v	.2f	ranks_conditioning	ours-only direct-inverse chi2/ndf, universe + stat (23.566)	
-oo-q	N/app_statmethods.tex:782	23.23	ours_only_Q	direct inverse: .*chi\^2/ndf = (\S+)$	v	.2f	ranks_conditioning	ours-only direct-inverse chi2/ndf, all four blocks (23.233)	
+oo-q	N/appA_methods.tex:74	23.23	ours_only_Q	direct inverse: .*chi\^2/ndf = (\S+)$	v	.2f	ranks_conditioning	ours-only direct-inverse chi2/ndf, all four blocks (23.233)	
 stat-vs-statonly-b	N/app_statmethods.tex:805	0.428	budget_Q	paper_ratios.sqrt_trace_stat_over_sqrt_trace_StatOnly	v	.3f	ranks_conditioning		
 stat-vs-statonly-median	N/app_statmethods.tex:806	0.435	budget_Q	paper_ratios.median_sigma_stat_over_sigma_StatOnly	v	.3f	ranks_conditioning		
 stat-trace-b	N/app_statmethods.tex:856	1.984	budget_Q	stat.sqrt_trace	v/1e-40	.3f	ranks_conditioning	typeset $1.984\times10^{-40}$	

@@ -261,6 +261,13 @@ CHECKS = [
      r"\\newcommand\{\\chiPaperOurEdges\}\{([0-9.]+)\}",
      lambda: regen_a_number("out/old_P1a_chi2_paperonly.log", r"PAPER \(stat\+syst\)\s+chi2 =\s*([0-9.]+)\s+ndf = 205") / 205,
      "round"),
+    # appA_methods.tex:74's Q_R direct-inverse distance: G2R run 2's ours-only step oo_Q (re2c_run.sh; spec row oo-q).
+    # It stays on our pT edges (KNOWN_ISSUES 103), next to \\chiPaperOurEdges.
+    ("Q_R direct-inverse distance per bin vs the published central value (G2R run 2, oo-q)", "appA_methods.tex",
+     r"The direct inverse of \$Q_R\$ gives a quadratic distance of ([0-9.]+) per reported bin",
+     lambda: float(re.search(r"\[universe-only\] direct inverse: chi\^2 = [0-9.]+,\s+ndf = 205,\s+chi\^2/ndf = ([0-9.]+)",
+                             (STATE / "measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/re2shapes/run2/g2r/chi2/"
+                              "ours_only_Q.txt").read_text()).group(1)), "round"),
     ("diagonal-only distance per bin (regenA P4)", "sec3_twod.tex",
      r"gives a quadratic distance per bin of ([0-9.]+)\.",
      lambda: regen_a_tension(r"diagonal-only chi2/ndf =\s*([0-9.]+)"), "round"),
@@ -341,7 +348,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 def load() -> dict[str, str]:
     return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec4_higherdim.tex", "sec_validation.tex",
-                                               "sec_5d.tex", "app_devhistory.tex", "primer_body.tex")}
+                                               "sec_5d.tex", "app_devhistory.tex", "primer_body.tex", "appA_methods.tex")}
 
 
 def gzip_self_test() -> bool:
