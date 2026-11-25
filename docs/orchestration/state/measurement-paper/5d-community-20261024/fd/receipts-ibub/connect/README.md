@@ -59,6 +59,9 @@ It runs `ibub_readout.py` on a login node for G18 and then AR23, with `--job 619
 (`d12c4f2a3…`) must be an ancestor. Its outputs go to `/dev/shm`, off the guarded trees. They are then published into
 `$N/readout/` and fetched as records.
 
+**Ran** once under IBUB BINDING 3 (#1332) on 2026-11-25, 13:14–13:16Z, with rc 0: G18 PASS and AR23 PASS. The record is
+`readout-20261125/`.
+
 | item | value |
 |---|---|
 | M, the commit the login node clones | `b43a5b984b28e68b6ea478b8a63329505c8f78be`, on the branch `dh3/ibub-readout-20261124`: the readout's code with the fixes from agy readout read 1 (`86c4493f1`, `bee6e5522`; `../reads/readout-r1/`) and read 2 (`0cde04040`; `../reads/readout-r2/`), merged with main after DECISION-20261125 (#1326, merge `e75b6dd2`). The job's M, `d12c4f2a3`, is an ancestor |

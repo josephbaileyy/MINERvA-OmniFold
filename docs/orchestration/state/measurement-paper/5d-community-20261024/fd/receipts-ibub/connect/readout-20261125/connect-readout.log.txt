@@ -1,0 +1,109 @@
+node login38 nproc=244 loadavg 99.50 82.50 69.93
+2026-11-25T13:14:27Z
+window_end_epoch 1795660125 (now 1795612467); fence prefixes ibub_,ibuchi_,cov2d,t2a,rpd,msr
+connect script sha256 5b3cdf7be868fbfb754b9c3f1f4b47cc218d3a80fd6b4ff34eb4ef60703d787d; M b43a5b984b28e68b6ea478b8a63329505c8f78be; job 61924744 at d12c4f2a38a53001eb92bbefc8b2dc6001f034dc
+== cov2d fence rev 3 (7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738)
+fence host=login38 utc=2026-11-25T13:14:27Z
+sacct -X -n -P -u josephrb -S 2026-11-11T05:14:27 -E now -o JobID,JobName,State 2>&1
+sacct matching rows: 14
+FENCE CLEAR
+== fence (sacct)
+fence clear
+== the job: 61924744|ibub_run|COMPLETED|0:0 (terminal: COMPLETED)
+== fetch
+fetch: IBUB-DONE de4ff5467448e765e2fd8be6c971e9121a74736c4d78e4159a7871ca7b874064
+fetch: units/refcheck.json 784163284dec6f750a8215146fb881a3564bc0bfe6672d94aef5494a3d58e579
+fetch: stage/stage.json 7c9b0f3bd9ce22910e871c8acfd80b5842a1703a61a2b5ea6cde9b38ef45c175
+fetch: logs/scontrol-batch-61924744.txt 283e71a08d4943e2388580ee99ce6ff3b032f3a233b462ed2d2df06dc18da118
+fetch: logs/refcheck.log a258c332a32c1c85ad67ba67e73710493858fd80dfd462eb13a9ef28af7f0335
+fetch: logs/complete.json 5261561693afd448a2ff2afbd198cd6556456aaef333ee4756aa270180d0b1ef
+fetch: slurm/ibub_run-61924744.out 099d013787dad59b868c88896af8eb006ddeb527ca460a576fea0d9b2c40e4da
+fetch: slurm/ibub_run-61924744.err e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+RECORDS.SHA256SUMS: 9 files
+HEAD b43a5b984b28e68b6ea478b8a63329505c8f78be; porcelain --ignored before: ''
+ibub_unit.py: OK
+ibub_readout.py: OK
+ibub_lanes.py: OK
+ibub_overlap.py: OK
+config.json: OK
+jobs/ibub_job.sbatch: OK
+P0 records in M: docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123
+== overlap (ibub_overlap.py readout)
+OVERLAP readout: ours 8; theirs 130
+OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-run-20261104/out  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/cov2d-run-20261104
+OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18/b/truth_xsec.npz  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/cov2d-run-20261104
+OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/AR23-a2/b/truth_xsec.npz  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/cov2d-run-20261104
+OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root
+OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out
+OVERLAP ALLOWED: ours read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28  ~  theirs rpd flux2 read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28
+OVERLAP: CLEAR (pairs checked 1040, hits 0)
+== MAT
+{"mat_setup_scripts": 6, "mismatches": 0}
+MAT preflight: MnvH1D PlotUtils::MnvH1D 14 bins
+IBUB-READOUT G18 PASS reading={'K10': 'DIFFER', 'K5': 'DIFFER'} controls_failed=0 stops=0
+	Command being timed: "python -B ibub_readout.py --truth G18 --units /pscratch/sd/j/josephrb/ibub-20261124/units --out /dev/shm/ibub-connect/out-G18 --job 61924744 --job-m d12c4f2a38a53001eb92bbefc8b2dc6001f034dc --records /dev/shm/ibub-connect/records"
+	User time (seconds): 4.83
+	System time (seconds): 12.78
+	Percent of CPU this job got: 81%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:21.66
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 500592
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 153534
+	Voluntary context switches: 13387
+	Involuntary context switches: 25365
+	Swaps: 0
+	File system inputs: 29719264
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+READOUT G18 rc=0: IBUB-READOUT G18 PASS reading={'K10': 'DIFFER', 'K5': 'DIFFER'} controls_failed=0 stops=0
+MAT preflight: MnvH1D PlotUtils::MnvH1D 14 bins
+IBUB-READOUT AR23 PASS reading={'K10': 'DIFFER', 'K5': 'DIFFER'} controls_failed=0 stops=0
+	Command being timed: "python -B ibub_readout.py --truth AR23 --units /pscratch/sd/j/josephrb/ibub-20261124/units --out /dev/shm/ibub-connect/out-AR23 --job 61924744 --job-m d12c4f2a38a53001eb92bbefc8b2dc6001f034dc --records /dev/shm/ibub-connect/records"
+	User time (seconds): 4.43
+	System time (seconds): 12.01
+	Percent of CPU this job got: 84%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:19.47
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 499196
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 153591
+	Voluntary context switches: 9495
+	Involuntary context switches: 25335
+	Swaps: 0
+	File system inputs: 28731486
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+READOUT AR23 rc=0: IBUB-READOUT AR23 PASS reading={'K10': 'DIFFER', 'K5': 'DIFFER'} controls_failed=0 stops=0
+porcelain --ignored after: ''
+readout rcs: G18 0, AR23 0
+== copy-out
+ibub_G18_errors.npz: OK
+ibub_G18.json: OK
+copied G18: ea95ec81a8633c61d1cf64493e865a7bba4b0f262280317ec3b369d4f82ff078  ibub_G18_errors.npz dd5c718bcff4c57d5254780e9c520e051e6e89a1aa4b5e279899beb0e253ca39  ibub_G18.json 
+ibub_AR23_errors.npz: OK
+ibub_AR23.json: OK
+copied AR23: f5fabeac61f54d821d0e0db14711b471349daee1f0fde9ea73430df5c2470a98  ibub_AR23_errors.npz 13320b21534a7ce46696b0ec8134af61924e8e0ff746b1b4bf8d1d910b9915b8  ibub_AR23.json 
+== records
+2026-11-25T13:16:05Z
+records copied: 19 files, 5820485 bytes
+fetch-readout.tar sha256 d78ed2367dbaf37ae2957c18c6a12f9092dd7db9fee7f48cea420ae41be5f440 bytes 5836800
+root /dev/shm/ibub-connect removed rc=0 left=no
+ibub readout rc=0
+2026-11-25T13:16:07Z
