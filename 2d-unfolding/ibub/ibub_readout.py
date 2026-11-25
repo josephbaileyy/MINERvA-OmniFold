@@ -227,7 +227,6 @@ def ibu_products(run, units: Path, truth: str, shas: dict, ks_want: list, rep: n
 
     ``bound`` holds the job id, the deploy commit and the runner's and config's sha256, which every unit must carry."""
     c2 = cfg["c2"]
-    expected = {f"toy_{truth}_{s}" for s in c.TOY_SEEDS[truth]}
     missing, problems, x10, x5, k10 = [], [], [], [], []
     known = {f"toy_{t}_{s}" for t in ("G18", "AR23") for s in c.TOY_SEEDS[t]} | set(iu.REFERENCE_UNITS)
     present = {f[:-len(".done")] for f in os.listdir(units) if f.endswith(".done")}
@@ -344,6 +343,8 @@ def reference_products(run, units: Path, bound: dict, barrier: dict, inv: dict) 
     bu = barrier.get("units") if isinstance(barrier.get("units"), dict) else {}
     for u in iu.REFERENCE_UNITS:
         r = bu.get(u) if isinstance(bu.get(u), dict) else {}
+        if (units / f"{u}.done").is_symlink():
+            return f"{u}'s marker is a symlink"
         try:
             m = json.loads(read_inv(inv, units / f"{u}.done")[0])
         except (OSError, ValueError) as e:
@@ -351,7 +352,8 @@ def reference_products(run, units: Path, bound: dict, barrier: dict, inv: dict) 
         if not isinstance(m, dict) or (m.get("unit"), m.get("verdict")) != (u, "PASS") \
                 or (str(m.get("job")), m.get("deploy_head")) != (str(bound["slurm_job"]), bound["deploy_head"]):
             return f"{u}'s marker is not the bound job's PASS for {u}"
-        if not (r.get("pass") is True and r.get("srun_rc") == 0
+        rc = r.get("srun_rc")
+        if not (r.get("pass") is True and type(rc) is int and rc == 0      # a JSON false is not rc 0
                 and (r.get("npz_sha256"), r.get("root_sha256")) == (m.get("sha256"), m.get("root_sha256"))):
             return f"refcheck.json's {u} is not a passing reference at its marker's digests"
         try:
@@ -521,6 +523,8 @@ def job_wide(run, units: Path, records: Path, bound: dict, inv: dict) -> dict:
 
     def fail(why: str) -> dict:
         return {"pass": False, "why": why, **out}
+    if (units / "refcheck.json").is_symlink():
+        return fail("units/refcheck.json is a symlink")
     try:
         st = json.loads(recs["stage/stage.json"])
         b = json.loads(recs["units/refcheck.json"])

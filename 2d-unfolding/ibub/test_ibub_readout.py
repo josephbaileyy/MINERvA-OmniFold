@@ -1018,6 +1018,12 @@ class JobWide(Patched):
         return rec
 
     def test_i_a_failing_job_wide_prerequisite_grades_nothing(self):
+        def swap_for_link(p):
+            """Replace p with a symlink to a copy of the same bytes, so only the link itself is wrong."""
+            real = p.with_name(p.name + ".real")
+            real.write_bytes(p.read_bytes())
+            p.unlink()
+            p.symlink_to(real)
         failed_ref = {u: {"pass": u != "central_df", "srun_rc": 0} for u in iu.REFERENCE_UNITS}
         nonzero_rc = {u: {"pass": True, "srun_rc": 1 if u == "central" else 0} for u in iu.REFERENCE_UNITS}
         barrier = [({"verdict": "STOP"}, "refcheck.json is"), ({"job": "61000002"}, "refcheck.json is"),
@@ -1069,6 +1075,14 @@ class JobWide(Patched):
                     json.loads((tr.units / "refcheck.json").read_text())["units"],
                     central=dict(json.loads((tr.units / "refcheck.json").read_text())["units"]["central"],
                                  npz_sha256="0" * 64))), "not a passing reference"),
+                ("a reference's srun_rc is JSON false (False == 0 in Python)", lambda tr: tr.write_barrier(units=dict(
+                    json.loads((tr.units / "refcheck.json").read_text())["units"],
+                    central=dict(json.loads((tr.units / "refcheck.json").read_text())["units"]["central"],
+                                 srun_rc=False))), "not a passing reference"),
+                ("a symlinked reference marker", lambda tr: swap_for_link(tr.units / "central.done"),
+                 "central's marker is a symlink"),
+                ("a symlinked units/refcheck.json", lambda tr: swap_for_link(tr.units / "refcheck.json"),
+                 "units/refcheck.json is a symlink"),
                 ("a reference meta from another runner", lambda tr: tr.write_barrier(
                     ref_meta={"central": {"runner_sha256": "0" * 64}}), "runner_sha256"),
                 ("a reference meta from another config", lambda tr: tr.write_barrier(

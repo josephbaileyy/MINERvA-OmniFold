@@ -339,6 +339,15 @@ MUTANTS = [
     (R, '                raise ValueError("its meta is not a JSON object")\n        except (c.Refusal, OSError, KeyError, ValueError) as e:\n            return',
      '                pass\n        except (c.Refusal, OSError, KeyError, ValueError) as e:\n            return', [f"{TR}.JobWide"],
      "a reference meta that is not an object crashes the readout"),
+    (R, '        if not (r.get("pass") is True and type(rc) is int and rc == 0      # a JSON false is not rc 0',
+     '        if not (r.get("pass") is True and rc == 0      # a JSON false is not rc 0', [f"{TR}.JobWide"],
+     "a reference whose srun_rc is JSON false reads as rc 0"),
+    (R, '        if (units / f"{u}.done").is_symlink():\n            return f"{u}\'s marker is a symlink"',
+     '        if False:\n            return f"{u}\'s marker is a symlink"', [f"{TR}.JobWide"],
+     "a symlinked reference marker is read"),
+    (R, '    if (units / "refcheck.json").is_symlink():\n        return fail("units/refcheck.json is a symlink")',
+     '    if False:\n        return fail("units/refcheck.json is a symlink")', [f"{TR}.JobWide"],
+     "a symlinked units/refcheck.json is read"),
 ]
 
 
