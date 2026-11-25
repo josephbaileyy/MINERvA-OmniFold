@@ -311,6 +311,7 @@ docs/orchestration/DECISION-20261123-joseph-covfix-ki85-size-reader.md	tracked	L
 docs/orchestration/DECISION-20261124-joseph-covfix-rev12-cpu-rule-and-seven-decisions.md	tracked	LIVE	document		20261124	open		route-only	no
 docs/orchestration/DECISION-20261124b-joseph-b-design-185-bias-block-old-namespace.md	tracked	LIVE	document		20261124	open		route-only	no
 docs/orchestration/DECISION-20261125-joseph-v1-scope-option-i-weights-hydrogen.md	tracked	LIVE	document		20261125	open		route-only	no
+docs/orchestration/DECISION-20261125b-joseph-5d-unbinned-release-cinfl-naming-wording.md	tracked	LIVE	document		20261125	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	tracked	ARCHIVAL	document	fe-fps-campaign	20261029	terminal		exact-path-only	yes
@@ -13671,6 +13672,24 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibu
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/overlap-run-1230e29a8.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/overlap-run-d12c4f2a3.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/overlap-run-db8854e28.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/AR23/ibub_AR23.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/AR23/ibub_AR23_errors.npz	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/G18/ibub_G18.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/G18/ibub_G18_errors.npz	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/README.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/RECORDS.SHA256SUMS.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/acks.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/connect-readout.done.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/connect-readout.log.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/fetch-readout.tar	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/fetch.err.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/launch-end-utc.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/launch-start-utc.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/launcher.out.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/records-check.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/session.err.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/session.out.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125/window.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/run-61924744/README.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/run-61924744/connect-run.done.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/run-61924744/connect-run.log.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
@@ -17105,6 +17124,10 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-sta
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-stab-a1r/sacct-60827080.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/decl/map-codex.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/decl/map-prompt.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/naming-read-20261125/answer.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/naming-read-20261125/inputs.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/naming-read-20261125/prompt.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/naming-read-20261125/run-summary.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/deploy-tests.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/deploy.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/f0-start.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
