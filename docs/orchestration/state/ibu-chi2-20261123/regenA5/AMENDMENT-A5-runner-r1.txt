@@ -1,0 +1,6 @@
+# A5 runner revision r1 (2026-11-25, before anything runs), so that OLD's C5-REP and C5-LIT gate E, as the director's
+# GO requires ("Run C5-REP and C5-LIT on OLD before E, and if either misses, STOP before E").
+The declared runner (receipts/a5_run.sh, 21857634...) read E before it checked C5-LIT. r1 only reorders: OLD's readout,
+then C5-REP from its JSON, then C5-LIT; E's readout runs only if all three pass, and otherwise prerun.txt records
+"STOP before E". The commands themselves are unchanged. AMENDMENT-A5.txt is otherwise unchanged.
+Runner r1 sha256: ca84ffcef5226c41932a53223143cb32e0935a9eee475a1265c8b385570d5414

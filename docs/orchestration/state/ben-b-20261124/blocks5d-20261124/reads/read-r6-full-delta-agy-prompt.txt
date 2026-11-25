@@ -1,0 +1,28 @@
+Adversarial review, READ-ONLY. Never write to any file in the repository. Write nothing except your final answer.
+
+The checkout at the current directory is at commit 93ec63dd6 (PR #1316). It is the response to two earlier reads of commit
+c8834fd6b (yours, agy gemini-4-hydrogen-xhigh, and codex-school), saved under
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/ (read-r1-*), and to four codex-school delta rechecks
+(read-r2..r4-*). Review the WHOLE delta `git diff c8834fd6b HEAD -- nd-unfolding/b5d/ docs/orchestration/state/ben-b-20261124/blocks5d-20261124/`
+(ignore MANIFEST and generated index files).
+
+The package is:
+- the declaration B5D-DECLARATION.md (rev 1, unchanged);
+- amendment A1 (B5D-AMENDMENT-A1.md), the director-approved corrections from the first reads;
+- amendment A2 (B5D-AMENDMENT-A2.md), the director's rule for when the build stops short of V_F;
+- the implementation nd-unfolding/b5d/b5d_build.py and its tests nd-unfolding/b5d/test_b5d.py; checks under code-checks/.
+The code reuses nd-unfolding/bsel/bsel_select.py, nd-unfolding/ll5d_b.py, nd-unfolding/ll5d.py and nd-unfolding/s1_assemble.py;
+the 2D precedent is docs/orchestration/state/2d-closeout/covfix-20261122/COVFIX-DECLARATION.md section 5.2 and
+2d-unfolding/covfix/covfix_core.py.
+
+This build gates a covariance support claim for a physics paper, so be strict:
+1. Is every BLOCKER and MAJOR of YOUR first read (read-r1-agy-gemini-4-hydrogen-xhigh.txt) fixed, or answered by A1/A2? Name any that is not.
+2. Do A1 and A2 say what the code does, and is anything in them wrong or misleading for Joseph's adoption decision?
+3. Does the code implement declaration + A1 + A2 exactly (C_b, D, the errors, the bands, f-hat per ensemble, the bootstrap,
+   the trigger and A2's states, L on C_e's kept modes, the mean error in Tune v1 units, the band traces, the controls
+   C-PIN/C-LL5D/C-SEED/C-FLUX/C-TAB/C-PSD/C-FIN/C-LEAK, the writer)?
+4. Any defect the delta introduced: a control that passes vacuously, a check that can STOP a correct build, a test that
+   passes for the wrong reason.
+
+Report BLOCKERS, then MAJORS, then minors, each with file:line and a concrete failure scenario. Keep it under about 900 words.
+Name your model.

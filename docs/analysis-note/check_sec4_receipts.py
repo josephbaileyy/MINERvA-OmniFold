@@ -6,7 +6,8 @@ Each check finds one printed value in the note's values.tex, sec3_twod.tex, sec4
 sec_5d.tex or app_devhistory.tex, or in the primer's primer_body.tex, recomputes it
 from the committed receipt that backs it, and compares at the printed precision: |computed - printed| <= half a unit in
 the printed last digit ("round"), or printed - one unit <= computed < printed ("below", for "below X%": true, and tight
-to one unit). LaTeX comments are removed first, so a sentence kept only in a comment is not found. A value that cannot
+to one unit). "round-3dp-source" is "round" for a record that prints only 3 dp: the whole interval the record's value
+stands for (+-0.0005) must round to the printed value, so a record on a rounding boundary fails instead of guessing. LaTeX comments are removed first, so a sentence kept only in a comment is not found. A value that cannot
 be located, or a receipt key that is missing, is a failure. Release-reproducible values are checked by
 publication/release/figs/fig_numbers.py instead; this covers the Sec. IV values the release cannot recompute.
 
@@ -155,8 +156,187 @@ def half_of_cells():  # VL154 A4: cells whose model dependence is within the ado
     return receipt("s5e/cand/assess_receipt.json")["A4"]["n_useful_cells"] / 42.0
 
 
+# Option (i) (Joseph, 2026-11-24): our 2D grid stays the analysis grid, and every comparison with the published result is
+# made on the paper's pT edges (0.075/0.325/0.475). ibu-chi's regenA (PR #1322, merge 7c7a3cfb) regenerated those
+# comparisons as records; READINGS.md maps each value to where the note prints it. The checks below bind the printed
+# values to the regenA records of E (E_R on the paper's edges), so a later regeneration that moves one fails here.
+REGEN_A = "ibu-chi2-20261123/regenA"
+
+
+def regen_a_number(rel: str, pattern: str) -> float:
+    """One number from a committed regenA text record: the pattern must match exactly once."""
+    m = re.findall(pattern, (STATE / REGEN_A / rel).read_text())
+    if len(m) != 1:
+        raise ValueError(f"{REGEN_A}/{rel}: {pattern!r} matched {len(m)} times (expected 1)")
+    return float(m[0])
+
+
+def regen_a_pull(which: str) -> float:  # P1a: per-bin pull mean or RMS against the published TotalCovariance
+    mean, rms = (regen_a_number("out/e_P1a_chi2_paperonly.log", r"pull mean / rms\s*:\s*([0-9.]+) / [0-9.]+"),
+                 regen_a_number("out/e_P1a_chi2_paperonly.log", r"pull mean / rms\s*:\s*[0-9.]+ / ([0-9.]+)"))
+    return {"mean": mean, "rms": rms}[which]
+
+
+def regen_a_tension(pattern: str) -> float:  # P4: tension_report.txt (diagonal-only distance; norm/shape split)
+    return regen_a_number("out/e/tension_report.txt", pattern)
+
+
+def regen_a_windows() -> dict:  # P7: agreement_windows_receipt.py on E
+    return receipt(f"{REGEN_A}/out/e/RECEIPT-agreement-windows.json")
+
+
+def regen_a_median() -> float:
+    """The median per-bin ratio at full precision. The P7 receipt stores it rounded to 4 dp, which sits on the 3-dp
+    printing boundary (1.0075); receipts/median_fullprec.py recomputes it with the producer's definition and checks
+    that its 4-dp rounding equals the stored value. Both are required here."""
+    full = regen_a_number("receipts/median_fullprec.out", r"(?m)^e: median=([0-9.]+) ")
+    stored = regen_a_windows()["results"]["median_bin_ratio"]
+    if round(full, 4) != stored:
+        raise ValueError(f"median_fullprec.out ({full}) does not round to the P7 receipt's {stored}")
+    return full
+
+
+def regen_a_within(pct: int) -> float:  # percent of the 205 reported bins within pct%, from the count (not the 1-dp %)
+    w = regen_a_windows()["results"][f"within_{pct}_percent"]
+    assert abs(100.0 * w["count"] / 205 - w["percent"]) < 0.05, "count and percent disagree in the P7 receipt"
+    return 100.0 * w["count"] / 205
+
+
+def regen_a_ratio_tot() -> float:  # P7: integral ratio ours/published over the reported cells (\ratioTot)
+    return regen_a_windows()["headline_totals_oi130"]["values"]["ratio_integrals_reported"]
+
+
+def regen_a2_ratios() -> dict:
+    """A2 (#1323): the 1D projection ratios ours/published on the paper's pT edges, compare_to_models.project()."""
+    r = receipt("ibu-chi2-20261123/regenA2/out/e_projratio.json")
+    assert r["n_reported"] == 205 and len(r["ratios"]["pt"]) == 14 and len(r["ratios"]["pz"]) == 16, "A2 shape changed"
+    return r["ratios"]
+
+
+def regen_a2_edge_ratios():  # the four edge bins sec3_twod.tex:11 names: lowest and highest pT, two highest p_par
+    r = regen_a2_ratios()
+    return r["pt"][0], r["pt"][-1], r["pz"][-2], r["pz"][-1]
+
+
+def regen_a2_max_dev_pct() -> float:
+    """Largest |ratio - 1| in percent over every projection bin except those four, computed from the bins (the stored
+    max_abs_dev_other_bins is only cross-checked)."""
+    r = regen_a2_ratios()
+    other = r["pt"][1:-1] + r["pz"][:-2]
+    dev = 100.0 * max(abs(x - 1.0) for x in other)
+    stored = 100.0 * receipt("ibu-chi2-20261123/regenA2/out/e_projratio.json")["literals"]["max_abs_dev_other_bins"]
+    assert abs(dev - stored) < 1e-9, f"computed {dev} != stored {stored}"
+    return dev
+
+
+def pt_edges() -> tuple[list[float], list[float]]:
+    """(published, ours) muon pT bin edges in GeV/c. Published: the release's pt_pl_cross_section TH2D axis, as read
+    in ibu-chi2-20261123/edges/root_axis.out (release sha256 6c6dce72...). Ours: MINERvA101's util/Binning.h."""
+    txt = (STATE / "ibu-chi2-20261123/edges/root_axis.out").read_text()
+    m = re.findall(r"(?m)^Y p_\{t\} \(GeV/c\) \[([0-9., ]+)\]$", txt)
+    if len(m) != 1 or "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3" not in txt:
+        raise ValueError("edges/root_axis.out: the release's pT axis (sha 6c6dce72...) not found exactly once")
+    published = [float(x) for x in m[0].split(",")]
+    h = (HERE.parents[1] / "MINERvA101/MINERvA-101-Cross-Section/util/Binning.h").read_text()
+    o = re.findall(r"ptmu_bins = \{([0-9., \n]+)\};", h)
+    if len(o) != 1:
+        raise ValueError("Binning.h: ptmu_bins not found exactly once")
+    ours = [float(x) for x in o[0].replace("\n", " ").split(",")]
+    if len(published) != 15 or len(ours) != 15:
+        raise ValueError("expected 14 pT bins on both grids")
+    return published, ours
+
+
+def pt_edges_that_differ() -> tuple[list[float], list[float]]:
+    published, ours = pt_edges()
+    i = [k for k in range(15) if abs(published[k] - ours[k]) > 1e-12]
+    return [published[k] for k in i], [ours[k] for k in i]
+
+
+def pt_edges_printed_exact(printed_ours: str, printed_published: str, printed_step: str) -> tuple[bool, str]:
+    """sec3_twod.tex:11 prints our three differing pT edges, the published three and their difference. All must match
+    the records exactly, and each pair must differ by exactly the printed step in decimal arithmetic (not float)."""
+    from decimal import Decimal
+    published, ours = pt_edges_that_differ()
+    want_p = [Decimal(repr(x)) for x in published]
+    want_o = [Decimal(repr(x)) for x in ours]
+    got_o = [Decimal(x) for x in printed_ours]
+    got_p = [Decimal(x) for x in printed_published]
+    step = Decimal(printed_step)
+    ok = (got_o == want_o and got_p == want_p and all(abs(p - o) == step for p, o in zip(want_p, want_o)))
+    return ok, f"printed ours {printed_ours}, published {printed_published}, step {printed_step} | records ours {ours}, published {published}"
+
+
+EDGE_SENTENCE = (r"Three of our \$p_T\$ edges \(([0-9.]+), ([0-9.]+) and \\SI\{([0-9.]+)\}\{GeV/c\}\) differ by "
+                 r"\\SI\{([0-9.]+)\}\{GeV/c\} from the published ([0-9.]+), ([0-9.]+) and ([0-9.]+)\.")
+EDGE_STEP_SEC2 = r"with three interior \$p_T\$ edges \\SI\{([0-9.]+)\}\{GeV/c\} from the published ones"
+
+
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
+    # One printed 1.04 stands for both pT edge bins, so it is bound twice: once to each bin.
+    ("projection ratio, lowest pT bin, and the two highest p_par bins (regenA2)", "sec3_twod.tex",
+     r"the ratio is ([0-9.]+) in both the lowest and the highest \$p_T\$ bins, and ([0-9.]+) and ([0-9.]+) in the two "
+     r"highest \$p_\\parallel\$ bins", lambda: tuple(regen_a2_edge_ratios()[i] for i in (0, 2, 3)), "round"),
+    ("projection ratio, highest pT bin (regenA2)", "sec3_twod.tex",
+     r"the ratio is ([0-9.]+) in both the lowest and the highest \$p_T\$ bins", lambda: regen_a2_edge_ratios()[1],
+     "round"),
+    ("projection ratios elsewhere, the bound (regenA2)", "sec3_twod.tex",
+     r"agree with the published result to within \$([0-9.]+)\\%\$, except at the edges of the phase space",
+     regen_a2_max_dev_pct, "below"),
+    ("median per-bin ratio (regenA P7, paper's pT edges)", "values.tex",
+     r"\\newcommand\{\\medianBinRatio\}\{([0-9.]+)\}", regen_a_median, "round"),
+    ("bins within 5% (regenA P7)", "values.tex", r"\\newcommand\{\\binsFive\}\{([0-9.]+)\}",
+     lambda: regen_a_within(5), "round"),
+    ("bins within 10% (regenA P7)", "values.tex", r"\\newcommand\{\\binsTen\}\{([0-9.]+)\}",
+     lambda: regen_a_within(10), "round"),
+    ("bins within 20% (regenA P7)", "values.tex", r"\\newcommand\{\\binsTwenty\}\{([0-9.]+)\}",
+     lambda: regen_a_within(20), "round"),
+    ("integral ratio, reported cells (regenA P7)", "values.tex", r"\\newcommand\{\\ratioTot\}\{([0-9.]+)\}",
+     regen_a_ratio_tot, "round"),
+    ("pull mean vs published TotalCovariance (regenA P1a)", "values.tex",
+     r"\\newcommand\{\\pullMean\}\{([0-9.]+)\}", lambda: regen_a_pull("mean"), "round"),
+    ("pull RMS vs published TotalCovariance (regenA P1a)", "values.tex",
+     r"\\newcommand\{\\pullRMS\}\{([0-9.]+)\}", lambda: regen_a_pull("rms"), "round"),
+    ("pull RMS, prose rounding (regenA P1a)", "values.tex",
+     r"\\newcommand\{\\pullRMSr\}\{([0-9.]+)\}", lambda: regen_a_pull("rms"), "round-3dp-source"),
+    ("A5 ten smallest-lambda modes' share, appC:7", "appC_supplementary.tex",
+     r"The ten smallest-eigenvalue modes carry \$([0-9.]+)\\%\$ of the distance", lambda: 100 * regen_a45("5")["share10_smallest"],
+     "round"),
+    ("A5 ten smallest-lambda modes' share, records_r03:18", "records_r03_twod.tex",
+     r"The 10 smallest-\$\\lambda\$ modes carry \\SI\{([0-9.]+)\}\{\\percent\}", lambda: 100 * regen_a45("5")["share10_smallest"],
+     "round"),
+    ("A5 largest standardized component and the next nine, records_r03:18", "records_r03_twod.tex",
+     r"The largest mode has a paper-covariance-standardized component of magnitude \$([0-9.]+)\$, and the next nine "
+     r"\$([0-9.]+)\$--\$([0-9.]+)\$",
+     lambda: (regen_a45("5")["largest_abs_z"], min(regen_a45("5")["next_nine_abs_z"]), max(regen_a45("5")["next_nine_abs_z"])),
+     "round"),
+    ("chi2/ndf vs published on the published pT edges, \\chiPaper (regenA E P1a)", "values.tex",
+     r"\\newcommand\{\\chiPaper\}\{([0-9.]+)\}",
+     lambda: regen_a_number("out/e_P1a_chi2_paperonly.log", r"PAPER \(stat\+syst\)\s+chi2 =\s*([0-9.]+)\s+ndf = 205") / 205,
+     "round"),
+    ("chi2/ndf vs published on OUR pT edges, \\chiPaperOurEdges (regenA OLD P1a)", "values.tex",
+     r"\\newcommand\{\\chiPaperOurEdges\}\{([0-9.]+)\}",
+     lambda: regen_a_number("out/old_P1a_chi2_paperonly.log", r"PAPER \(stat\+syst\)\s+chi2 =\s*([0-9.]+)\s+ndf = 205") / 205,
+     "round"),
+    # appA_methods.tex:74's Q_R direct-inverse distance: G2R run 2's ours-only step oo_Q (re2c_run.sh; spec row oo-q).
+    # It stays on our pT edges (KNOWN_ISSUES 103), next to \\chiPaperOurEdges. The RE-2 spec row oo-q
+    # (2d-unfolding/re2/partc/re2c_values_spec.tsv) still cites N/app_statmethods.tex:782 with 23.23, on purpose: the
+    # spec is the frozen input of the bound run and describes the note at its deploy, 903fb78b (test_re2c.py checks it
+    # there, #1325). The sentence prints here now, and this row is the live binding.
+    ("Q_R direct-inverse distance per bin vs the published central value (G2R run 2, oo-q)", "appA_methods.tex",
+     r"The direct inverse of \$Q_R\$ gives a quadratic distance of ([0-9.]+) per reported bin",
+     lambda: float(re.search(r"\[universe-only\] direct inverse: chi\^2 = [0-9.]+,\s+ndf = 205,\s+chi\^2/ndf = ([0-9.]+)",
+                             (STATE / "measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/re2shapes/run2/g2r/chi2/"
+                              "ours_only_Q.txt").read_text()).group(1)), "round"),
+    ("diagonal-only distance per bin (regenA P4)", "sec3_twod.tex",
+     r"gives a quadratic distance per bin of ([0-9.]+)\.",
+     lambda: regen_a_tension(r"diagonal-only chi2/ndf =\s*([0-9.]+)"), "round"),
+    ("tension split: chi2_norm (regenA P4)", "sec3_twod.tex", r"\$\\chi\^2_\{\\mathrm\{norm\}\}=([0-9.]+)\$",
+     lambda: regen_a_tension(r"chi2_norm\s*=\s*([0-9.]+)"), "round"),
+    ("tension split: chi2_shape (regenA P4)", "sec3_twod.tex",
+     r"\$\\chi\^2_\{\\mathrm\{shape\}\}\\simeq([0-9.]+)\$",
+     lambda: regen_a_tension(r"chi2_shape\s*=\s*([0-9.]+)"), "round"),
     ("total median uncertainty (Q_R)", "values.tex", r"\\newcommand\{\\uqMedian\}\{([0-9.]+)\}", total_median, "round"),
     ("total integral uncertainty (Q_R)", "values.tex", r"\\newcommand\{\\uqIntegral\}\{([0-9.]+)\}", total_integral, "round"),
     ("closure toys (VL169)", "values.tex", r"\\newcommand\{\\covTwoDNtoy\}\{([0-9.]+)\}", lambda: interim("n_toys"), "round"),
@@ -215,9 +395,23 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
         comp = comp if isinstance(comp, tuple) else (comp,)
         if mode == "round":
             good = all(abs(c - float(p)) <= half_ulp(p) for c, p in zip(comp, printed))
+        elif mode == "round-3dp-source":  # the record prints 3 dp: every value it can stand for must round to `printed`
+            good = all(abs(c - float(p)) + 0.0005 <= half_ulp(p) + 1e-12 for c, p in zip(comp, printed))
         else:  # below: true, and no looser than one unit of the printed precision
             good = all(float(p) - 2 * half_ulp(p) <= c < float(p) for c, p in zip(comp, printed))
         rows.append((label, good, f"printed {'/'.join(printed)} | receipt {'/'.join(f'{c:.6g}' for c in comp)} | {mode}"))
+    m = re.findall(EDGE_SENTENCE, text("sec3_twod.tex", sources))
+    if len(m) != 1:
+        rows.append(("pT edges, ours vs published (edges/root_axis.out, Binning.h)", False,
+                     f"edge sentence found {len(m)} times in sec3_twod.tex (expected 1)"))
+    else:
+        o1, o2, o3, step, p1, p2, p3 = m[0]
+        good, info = pt_edges_printed_exact([o1, o2, o3], [p1, p2, p3], step)
+        rows.append(("pT edges, ours vs published (edges/root_axis.out, Binning.h)", good, info))
+        m2 = re.findall(EDGE_STEP_SEC2, text("sec2_method.tex", sources))
+        rows.append(("pT edge step in sec2_method.tex equals sec3's, exactly", len(m2) == 1 and m2[0] == step,
+                     f"sec2 prints {m2} | sec3 step {step}"))
+    rows += mode_split_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
         found = len(re.findall(pat, text(src, sources))) == 1
         c = fn()
@@ -225,9 +419,85 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     return rows
 
 
+def regen_a45(which: str) -> dict:
+    """regenA A4's or A5's readout on the published pT edges (#1329, #1330)."""
+    return json.loads((STATE / f"ibu-chi2-20261123/regenA{which}/out/readout_e.json").read_text())
+
+
+NUM_WORD = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6}
+ORDINAL = {1: "first", 2: "second", 3: "third", 4: "fourth", 5: "fifth", 6: "sixth"}
+# The eigenmode sentences on the published pT edges (Joseph's wording, 2026-11-25), bound to A4 and A5
+MODE_CAPTION = (r"(\w+) of the six published-covariance eigenvectors with the largest contributions to the descriptive "
+                r"\$\\chi\^2\$, in panels (\([a-f]\)(?:--\([a-f]\))?(?:(?:, | and )\([a-f]\)(?:--\([a-f]\))?)*), concentrate "
+                r"at the highest")
+MODE_APPC7 = (r"The ten smallest-eigenvalue modes carry \$([0-9.]+)\\%\$ of the distance\. Among the six largest contributors, "
+              r"(\w+) are concentrated in the highest-\$p_\\parallel\$ bins and have "
+              r"\$\\lambda_k/\\lambda_\{\\max\}\\lesssim10\^\{(-\d+)\}\$, while the (\w+) lies at lower \$p_\\parallel\$ "
+              r"and has a relative eigenvalue of \$(\d)\\times10\^\{(-\d+)\}\$")
+MODE_REC18 = (r"Of the five largest contributors, (\w+) lies? in the smallest-\$\\lambda\$ tenth of the spectrum\. Of the six "
+              r"leading modes, the (\w+) in the highest-\$\\pPar\$ bins are all poorly determined directions "
+              r"\(\$\\lambda/\\lambda_\{\\max\}\\lesssim10\^\{(-\d+)\}\$\)\. The (\w+) is a moderate-\$\\lambda\$ mode "
+              r"\(\$\\lambda/\\lambda_\{\\max\}\\approx(\d)\\times10\^\{(-\d+)\}\$\)")
+
+
+def panel_letters(spec: str) -> list[str]:
+    out = []
+    for a, b in re.findall(r"\(([a-f])\)(?:--\(([a-f])\))?", spec):
+        out += [chr(c) for c in range(ord(a), ord(b or a) + 1)]
+    return out
+
+
+def mode_split_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    """Fig. 14's caption, appC:7 and records_r03_twod.tex:18 against A4/A5: count words, panel letters, the decade bound on
+    the high-p_par modes' lambda/lambda_max (true, and no looser than one decade), and the other mode's value at 1 s.f."""
+    a4, a5 = regen_a45("4"), regen_a45("5")
+    high, low = a5["six_split"]["high_pz"], a5["six_split"]["lower_pz"]
+    lam = [m["lam_rel"] for m in sorted(a5["modes"], key=lambda m: m["rank"])]
+    high_letters = [chr(ord("a") + i) for i in high]
+    hmax = max(lam[i] for i in high)
+    other = f"{lam[low[0]]:.0e}" if len(low) == 1 else None
+
+    def decade(e: str) -> bool:
+        return 10.0 ** (int(e) - 1) < hmax <= 10.0 ** int(e)
+
+    def rest(word: str) -> bool:  # "the sixth" names the one remaining mode
+        return len(low) == 1 and word == ORDINAL[len(high) + 1]
+
+    rows = []
+    m = re.findall(MODE_CAPTION, text("appC_supplementary.tex", sources))
+    lab = "A5/A4 Fig. 14 caption: count and panels at the highest p_par"
+    if len(m) != 1:
+        rows.append((lab, False, f"caption found {len(m)} times (expected 1)"))
+    else:
+        word, spec = m[0][0], m[0][1]
+        letters = panel_letters(spec)
+        good = (NUM_WORD.get(word.lower()) == len(letters) and letters == a4["modes_share_gt_half"] == high_letters)
+        rows.append((lab, good, f"printed {word} {letters} | A4 {a4['modes_share_gt_half']} A5 {high_letters}"))
+    m = re.findall(MODE_APPC7, text("appC_supplementary.tex", sources))
+    lab = "A5 appC:7: count, decade bound, the other mode"
+    if len(m) != 1:
+        rows.append((lab, False, f"sentence found {len(m)} times (expected 1)"))
+    else:
+        _, word, e1, rword, c, e2 = m[0]
+        good = NUM_WORD.get(word) == len(high) and decade(e1) and rest(rword) and other == f"{c}e{int(e2):+03d}"
+        rows.append((lab, good, f"printed {word}, <~1e{e1}, the {rword} {c}e{e2} | A5 {len(high)} high, max {hmax:.3g}, other {other}"))
+    m = re.findall(MODE_REC18, text("records_r03_twod.tex", sources))
+    lab = "A5 records_r03:18: top five in the smallest tenth, count, decade bound, the other mode"
+    if len(m) != 1:
+        rows.append((lab, False, f"sentence found {len(m)} times (expected 1)"))
+    else:
+        tword, word, e1, rword, c, e2 = m[0]
+        good = (NUM_WORD.get(tword) == a5["top5_in_smallest_tenth"] and NUM_WORD.get(word) == len(high) and decade(e1)
+                and rest(rword.lower()) and other == f"{c}e{int(e2):+03d}")
+        rows.append((lab, good, f"printed {tword}/{word}, <~1e{e1}, the {rword} {c}e{e2} | A5 top5 "
+                                f"{a5['top5_in_smallest_tenth']}, {len(high)} high, max {hmax:.3g}, other {other}"))
+    return rows
+
+
 def load() -> dict[str, str]:
     return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec4_higherdim.tex", "sec_validation.tex",
-                                               "sec_5d.tex", "app_devhistory.tex", "primer_body.tex", "appA_methods.tex")}
+                                               "sec_5d.tex", "app_devhistory.tex", "primer_body.tex", "appA_methods.tex",
+                                               "sec2_method.tex", "appC_supplementary.tex", "records_r03_twod.tex")}
 
 
 def gzip_self_test() -> bool:
@@ -288,6 +558,49 @@ def self_test() -> int:
                     continue
                 caught += 1
                 print(f"  caught      {label}: {p} -> {bad}")
+    # The pT-edge rows (not in CHECKS): each printed edge or step, changed, must be rejected.
+    edge_labels = ("pT edges, ours vs published (edges/root_axis.out, Binning.h)",
+                   "pT edge step in sec2_method.tex equals sec3's, exactly")
+    for src, old_s, new_s, lab in (
+            ("sec3_twod.tex", "(0.07, 0.33 and", "(0.08, 0.33 and", edge_labels[0]),
+            ("sec3_twod.tex", "and \\SI{0.47}{GeV/c})", "and \\SI{0.48}{GeV/c})", edge_labels[0]),
+            ("sec3_twod.tex", "the published 0.075, 0.325 and 0.475.", "the published 0.075, 0.325 and 0.48.", edge_labels[0]),
+            ("sec3_twod.tex", "differ by \\SI{0.005}{GeV/c}", "differ by \\SI{0.006}{GeV/c}", edge_labels[0]),
+            ("sec2_method.tex", "edges \\SI{0.005}{GeV/c} from", "edges \\SI{0.006}{GeV/c} from", edge_labels[1])):
+        t = text(src, base)
+        if t.count(old_s) != 1:
+            print(f"  NOT FOUND   edge mutation {old_s!r} in {src}"); ok = False; continue
+        trial = dict(base)
+        trial[src] = t.replace(old_s, new_s)
+        if dict((r[0], r[1]) for r in evaluate(trial)).get(lab, True):
+            print(f"  NOT CAUGHT  {lab}: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      {lab}: {old_s} -> {new_s}")
+    # The eigenmode-split rows (not in CHECKS): each word, letter or exponent changed must be rejected.
+    for src, old_s, new_s in (
+            ("appC_supplementary.tex", "Five of the six published-covariance", "Four of the six published-covariance"),
+            ("appC_supplementary.tex", "in panels (a) and (c)--(f), concentrate", "in panels (a) and (c)--(e), concentrate"),
+            ("appC_supplementary.tex", "in panels (a) and (c)--(f), concentrate", "in panels (a), (b) and (d)--(f), concentrate"),
+            ("appC_supplementary.tex", "contributors, five are concentrated", "contributors, four are concentrated"),
+            ("appC_supplementary.tex", "\\lambda_{\\max}\\lesssim10^{-8}$, while", "\\lambda_{\\max}\\lesssim10^{-9}$, while"),
+            ("appC_supplementary.tex", "\\lambda_{\\max}\\lesssim10^{-8}$, while", "\\lambda_{\\max}\\lesssim10^{-7}$, while"),
+            ("appC_supplementary.tex", "while the sixth lies", "while the fifth lies"),
+            ("appC_supplementary.tex", "eigenvalue of $6\\times10^{-5}$", "eigenvalue of $5\\times10^{-5}$"),
+            ("records_r03_twod.tex", "contributors, one lies in", "contributors, two lie in"),
+            ("records_r03_twod.tex", "modes, the five in the", "modes, the three in the"),
+            ("records_r03_twod.tex", "\\lesssim10^{-8}$). The", "\\lesssim10^{-9}$). The"),
+            ("records_r03_twod.tex", "The sixth is a moderate", "The fourth is a moderate"),
+            ("records_r03_twod.tex", "\\approx6\\times10^{-5}$", "\\approx6\\times10^{-6}$")):
+        t = text(src, base)
+        if t.count(old_s) != 1:
+            print(f"  NOT FOUND   mode mutation {old_s!r} in {src}"); ok = False; continue
+        trial = dict(base)
+        trial[src] = t.replace(old_s, new_s)
+        bad_rows = [r[0] for r in mode_split_claims(trial) if not r[1]]
+        if not bad_rows:
+            print(f"  NOT CAUGHT  mode split: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      mode split ({bad_rows[0][:24]}...): {old_s} -> {new_s}")
     trial = dict(base)
     trial["primer_body.tex"] = text("primer_body.tex", base).replace("in about half of the", "in about a third of the")
     if dict((r[0], r[1]) for r in evaluate(trial))[VERBAL[0][0]]:

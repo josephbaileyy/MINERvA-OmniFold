@@ -4,10 +4,14 @@
 \subsection{Additional two-dimensional comparisons}
 \label{app:additional-2d-comparisons}
 
-The correlated shape difference spans both small- and moderate-variance directions of the published covariance. For a retained eigenpair $(\lambda_k,u_k)$, the contribution to the distance in Sec.~\ref{sec:muon-cross-section-comparison} is $(u_k^{\mathsf T}\Delta)^2/\lambda_k$. The ten smallest-eigenvalue modes carry $9.6\%$ of the distance.Among the six largest contributors, three are concentrated in the highest-$p_\parallel$ bins and have $\lambda_k/\lambda_{\max}\lesssim4\times10^{-9}$, while the other three lie at lower $p_\parallel$ and have relative eigenvalues between $4\times10^{-6}$ and $6\times10^{-5}$ (Figs.~\ref{fig:tension} and~\ref{fig:tensionmodes}). Figures~\ref{fig:ptslices} and~\ref{fig:pzslices} show the cross sections in the original muon bins.
+The correlated shape difference spans both small- and moderate-variance directions of the published covariance. For a retained eigenpair $(\lambda_k,u_k)$, the contribution to the distance in Sec.~\ref{sec:muon-cross-section-comparison} is $(u_k^{\mathsf T}\Delta)^2/\lambda_k$. The ten smallest-eigenvalue modes carry $8.7\%$ of the distance. Among the six largest contributors, five are concentrated in the highest-$p_\parallel$ bins and have $\lambda_k/\lambda_{\max}\lesssim10^{-8}$, while the sixth lies at lower $p_\parallel$ and has a relative eigenvalue of $6\times10^{-5}$ (Figs.~\ref{fig:tension} and~\ref{fig:tensionmodes}). Figures~\ref{fig:ptslices} and~\ref{fig:pzslices} show the cross sections in the original muon bins.
 %
 % Check stage (Grok 1, codex2 4): sourced, records_compression_h3.tex:42-43 @ e89694209 (the earlier note's full paragraph):
 % "The 10 smallest-lambda modes carry 9.6%"; "lambda/lambda_max <~ 4e-9"; the other three's relative eigenvalues.
+% 2026-11-25 (pT-edge option (i); Joseph's wording): on the published pT edges, regenA A5
+% (ibu-chi2-20261123/regenA5/out/readout_e.json, #1330): share10_smallest 0.0871 -> 8.7%; six_split 5 high / 1 lower;
+% the five's lam_rel <= 9.4e-9 -> <~1e-8; mode (b) 5.6e-5 -> 6e-5. A5's OLD reproduced the 9.6%, 4e-9 and 4e-6--6e-5.
+% Bound by check_sec4_receipts.py (rows "A5 ...").
 
 \begin{figure}[H]
   \centering
@@ -21,7 +25,7 @@ The correlated shape difference spans both small- and moderate-variance directio
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{tension_mode_maps}
-  \caption{Three of the six published-covariance eigenvectors with the largest contributions to the descriptive $\chi^2$, in panels (a), (b), and (d), concentrate at the highest $p_\parallel$. The panels are in decreasing order of contribution. The colors show eigenvector components, whose overall signs are arbitrary.}
+  \caption{Five of the six published-covariance eigenvectors with the largest contributions to the descriptive $\chi^2$, in panels (a) and (c)--(f), concentrate at the highest $p_\parallel$. The panels are in decreasing order of contribution. The colors show eigenvector components, whose overall signs are arbitrary.}
   \label{fig:tensionmodes}
 \end{figure}
 
@@ -39,7 +43,7 @@ The correlated shape difference spans both small- and moderate-variance directio
   \label{fig:pzslices}
 \end{figure}
 
-The distance to the publication depends on the learner and the background subtraction. At fixed LightGBM settings and training seed, refined negative-weight subtraction reduces $\chi^2$ per bin from \chiPaperPurity{} to \chiPaper{}. With purity subtraction, the distance is 2.64--2.75 across ten LightGBM seeds, $2.70\pm0.04$ for the histogram-based implementation in \textsc{scikit-learn}, and \chiPaperExact{} for exact-split gradient boosting.
+The distance to the publication depends on the learner and the background subtraction. At fixed LightGBM settings and training seed, refined negative-weight subtraction reduces $\chi^2$ per bin from \chiPaperPurity{} to \chiPaperOurEdges{}. With purity subtraction, the distance is 2.64--2.75 across ten LightGBM seeds, $2.70\pm0.04$ for the histogram-based implementation in \textsc{scikit-learn}, and \chiPaperExact{} for exact-split gradient boosting. These distances use this analysis's $p_T$ bin edges. Sec.~\ref{sec:results-compare} uses the published edges, where the refined result gives \chiPaper{}.
 
 Binned IBU gives a distance to the publication of \fvval{c2c1-dibu-mid-lo}--\fvval{c2c1-dibu-mid-hi} per bin for two to fifteen iterations, \fvval{c2c1-dibu-k20} at twenty iterations, and \fvval{c2c1-dibu-k1} at one. At fixed IBU settings, replacing the classifier-refined reconstructed target with the binwise data-minus-background histogram changes the OmniFold--IBU distance per bin from \fvval{ibusd-k5-ref} to \fvval{ibusd-k5-sig} at five iterations and from \fvval{ibusd-k10-ref} to \fvval{ibusd-k10-sig} at ten. These distances use the published covariance as a common descriptive metric for results that share data.
 

@@ -1,0 +1,7 @@
+P1	g	s1_npz	/pscratch/sd/j/josephrb/t/a.txt	5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03	6	x:1
+P1	g	pred	/pscratch/sd/j/josephrb/t/b.txt	5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03	NONE	x:2
+P2	prr	u	/pscratch/sd/j/josephrb/t/missing.npz	5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03	NONE	x:3
+P2	xk	dir	/pscratch/sd/j/josephrb/t/dirx	NONE	NONE	x:4
+P2	e96d	m	/pscratch/sd/j/josephrb/t/b.txt	NONE	99	x:5
+HPSS	-	archive	hpss:/home/j/josephrb/ok.tar	NONE	NONE	x:6
+HPSS	-	archive	hpss:/home/j/josephrb/gone.tar	NONE	NONE	x:7

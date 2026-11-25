@@ -1,0 +1,11 @@
+Focused adversarial recheck of a small final delta, READ-ONLY. Never write to any file in the repository. Write nothing except your final answer.
+
+The checkout is at 2d56425a1 (PR #1316). Your previous read is under docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/
+(read-r7-final-delta-*). This read covers only `git diff 289daa3ca HEAD -- nd-unfolding/b5d/ docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A1.md`:
+a failed parent sync after the publishing rename is now a warning; C-LEAK requires equal container types and allows None
+only as the whole V_F value; the generator test spies on _build's call to scaled_predictions; A1's C-PSD, closure and writer
+notes; "n/a" for a rank-0 undebiased bound in blocks5d.txt.
+
+Is each change correct, and did it introduce any defect (a control that passes vacuously, a check that STOPs a correct build,
+a test that passes for the wrong reason, A1 inconsistent with the code)? Report BLOCKERS, MAJORS, minors with file:line and a
+concrete failure scenario, under 300 words. Name your model.

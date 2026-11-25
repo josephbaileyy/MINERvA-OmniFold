@@ -112,6 +112,11 @@ READOUTS = {
     "ens1s1": (f"{FD}/fd/rounding-stability-20261106/ensemble/receipts/stage1-a1-analysis/ens1_stage1.json", "7f5a9ce4"),
     "ens1s2": (f"{FD}/fd/rounding-stability-20261106/ensemble/receipts/stage2-a1-analysis/ens1_stage2.json", "c2ee701d"),
     "c2c1": (f"{FD}/fd/receipts-ref-c2c1/step2/read-2/readout.json", "0ee21301"),
+    # pT-edge option (i) (Joseph 2026-11-24): REF-C2C1's distances to the publication on the published pT edges
+    # 0.075/0.325/0.475 (regenA A3, #1329, 91d18499; its OLD set reproduces read 2, which stays the control), and the
+    # refined result's chi2 against the published covariance on those edges (regenA P1a, #1322)
+    "c2c1a3": ("docs/orchestration/state/ibu-chi2-20261123/regenA3/out/ladder.json", "565d1f99"),
+    "regenAp1a": ("docs/orchestration/state/ibu-chi2-20261123/regenA/out/e_P1a_chi2_paperonly.log", "6e827b68"),
     "refg1": (f"{FD}/fd/receipts-ref-g1/a1-read/readout.json", "4db170d3"),
     "t2b": (f"{FD}/fd/tier2-20261110/t2b/t2b.json", "0e281a61"),
     "t2aar23": (f"{FD}/fd/receipts-cov2d/g2r/t2a/run/t2a_g2r_AR23.json", "74fab014"),
@@ -195,7 +200,7 @@ def paper_prec(k, x):
 # (6214ed78), which only the short paper printed, left with it on 2026-11-21 (POST_PUBLICATION_REORG_PLAN.md, "short paper").
 FIGURES = {"fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "0d6fe57c")}
 # the readouts that are text receipts, not JSON
-TEXT_READOUTS = {"gprobe", "e2sens", "s1code", "ll5ddecl"}
+TEXT_READOUTS = {"gprobe", "e2sens", "s1code", "ll5ddecl", "regenAp1a"}
 CELLS = [f"R{i:02d}" for i in range(16)]
 BLOCK = {"stat": "statistical", "interaction": "interaction", "flux": "flux", "detector": "detector",
          "lateral": "lateral", "normalization": "normalization", "seed": "training seed", "C_resp": r"$C_{\mathrm{resp}}$",
@@ -1755,15 +1760,28 @@ def currency_values(d, base):
     v["c2c1-nrep"] = str(k10["C2-R1"]["n_replicas"])
     v["c2c1-T"], v["c2c1-q95"], v["c2c1-max"] = (f"{k10['C2-R1'][x]:.1f}" for x in ("T", "q95", "max"))
     v["c1-T"], v["c1-q95"] = f"{c1['T']:.2f}", f"{c1['q95']:.2f}"
-    v["c2c1-dibu"], v["c2c1-dibu-k5"], v["c2c1-der"] = f"{k10['D_IBU']:.2f}", f"{c['K5']['D_IBU']:.2f}", f"{c['D_E_R']:.2f}"
-    assert abs(k10["D_IBU"] / c["D_E_R"] - k10["rho"]) < 1e-9, "D_IBU / D_E_R is the record's rho"
-    assert v["c2c1-der"] == "2.27", "D_E_R is the 2D result's chi2/ndf against the published covariance"
-    ek = {int(k): x for k, x in c["D_IBU_every_K"].items()}
-    assert sorted(ek) == [1, 2, 3, 4, 5, 10, 15, 20] and abs(ek[10] - k10["D_IBU"]) < 1e-12
+    # Read 2's distances to the publication are on our pT edges. It stays the control: regenA A3's OLD set must
+    # reproduce it (A3's C-R2 limit, 1e-6 relative). The printed distances are A3's set on the published pT edges.
+    assert abs(k10["D_IBU"] / c["D_E_R"] - k10["rho"]) < 1e-9, "D_IBU / D_E_R is read 2's rho"
+    ek2 = {int(k): x for k, x in c["D_IBU_every_K"].items()}
+    assert sorted(ek2) == [1, 2, 3, 4, 5, 10, 15, 20] and abs(ek2[10] - k10["D_IBU"]) < 1e-12
+    a3 = d["c2c1a3"]
+    assert a3["controls_pass"] is True
+    old, e = a3["sets"]["old"], a3["sets"]["e"]
+    assert all(abs(old["D_IBU_every_K"][str(k)] / ek2[k] - 1) < 1e-6 for k in ek2), "A3's OLD set is read 2"
+    assert abs(old["D_ER_from_score_out"] / c["D_E_R"] - 1) < 1e-6 and abs(old["rho_K10"] / k10["rho"] - 1) < 1e-6
+    assert e["ndf"] == [205] and e["ks"] == [1, 2, 3, 4, 5, 10, 15, 20]
+    ek = {int(k): x for k, x in e["D_IBU_every_K"].items()}
+    der = e["D_ER_from_score_out"]
+    assert abs(ek[10] / der - e["rho_K10"]) < 1e-9, "D_IBU / D_E_R is A3's rho on the published pT edges"
+    p1a = re.findall(r"PAPER \(stat\+syst\)\s+chi2 =\s*([0-9.]+)\s+ndf = 205\s", d["regenAp1a"])
+    assert len(p1a) == 1 and f"{205 * der:.2f}" == p1a[0], "D_E_R is the 2D result's chi2/ndf against the published covariance"
+    v["c2c1-dibu"], v["c2c1-dibu-k5"], v["c2c1-der"] = f"{ek[10]:.2f}", f"{ek[5]:.2f}", f"{der:.2f}"
     mid = [ek[k] for k in ek if 2 <= k <= 15]
     v["c2c1-dibu-k1"], v["c2c1-dibu-k20"] = f"{ek[1]:.2f}", f"{ek[20]:.2f}"
     v["c2c1-dibu-mid-lo"], v["c2c1-dibu-mid-hi"] = f"{min(mid):.2f}", f"{max(mid):.2f}"
-    assert max(mid) < c["D_E_R"], "IBU stays below the 2D result's distance for two to fifteen iterations"
+    assert all(v[k] == f"{x:.2f}" == e["macros_2dp"][k] for k, x in e["macros_full"].items()), "A3's own macros"
+    assert max(mid) < der, "IBU stays below the 2D result's distance for two to fifteen iterations"
     v["c1-nrep"] = str(c1["n_replicas"])
     assert c1["rank"] == c1["n_replicas"] // 4
     v["c1-rank-word"] = {12: "twelve"}[c1["rank"]]
@@ -2172,6 +2190,29 @@ def self_test():
         print("  FAIL a without-block value outside the matrix-dependent families that differs was accepted"); ok = False
     except AssertionError:
         print("  ok   a without-block value outside the matrix-dependent families that differs is refused")
+    a3_mutants = (                                            # the REF-C2C1 distances on the published pT edges (A3)
+        ("A3's OLD set no longer reproducing read 2 at K = 5",
+         lambda d: d["c2c1a3"]["sets"]["old"]["D_IBU_every_K"].__setitem__("5", 0.8299468720790133 * (1 + 2e-6))),
+        ("A3's rho on the published edges off by 1e-8",
+         lambda d: d["c2c1a3"]["sets"]["e"].__setitem__("rho_K10", 0.25362540069107586 + 1e-8)),
+        ("a P1a log whose chi2 is not 205 D_E_R (434.88)",
+         lambda d: d.__setitem__("regenAp1a", d["regenAp1a"].replace("chi2 =       434.89", "chi2 =       434.88"))),
+        ("a ladder whose printed macro differs from A3's own (k20 1.68)",
+         lambda d: d["c2c1a3"]["sets"]["e"]["macros_2dp"].__setitem__("c2c1-dibu-k20", "1.68")),
+        ("a ladder whose two-to-fifteen maximum exceeds D_E_R (its own macros consistent)",
+         lambda d: (d["c2c1a3"]["sets"]["e"]["D_IBU_every_K"].__setitem__("2", 2.2),
+                    d["c2c1a3"]["sets"]["e"]["macros_full"].__setitem__("c2c1-dibu-mid-hi", 2.2),
+                    d["c2c1a3"]["sets"]["e"]["macros_2dp"].__setitem__("c2c1-dibu-mid-hi", "2.20"))),
+    )
+    base = all_values()                                      # values() does not reach the currency keys
+    for what, plant in a3_mutants:
+        d = load()
+        plant(d)
+        try:
+            currency_values(d, base)
+            print(f"  FAIL {what} was accepted"); ok = False
+        except AssertionError:
+            print(f"  ok   {what} is refused")
     name = next(iter(FIGURES))                               # a figure that is not its source must fail --check
     with tempfile.TemporaryDirectory() as tmp:
         fig = OUT.parent / "figures" / name

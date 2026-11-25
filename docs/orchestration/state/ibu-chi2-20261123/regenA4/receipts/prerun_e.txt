@@ -1,0 +1,5 @@
+# pre-run E 2026-11-25T09:29:27Z (director's GO (b): E for the six; runner unchanged, so fig2 runs too and its E output is not a reading)
+env | grep A4_:
+[end]
+W 06893b0af3ff2245035f504de2c47f02bb48db0e porcelain=0
+pins equal the pre-run record

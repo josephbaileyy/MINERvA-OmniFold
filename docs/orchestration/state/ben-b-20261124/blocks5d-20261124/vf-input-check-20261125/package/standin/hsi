@@ -1,0 +1,2 @@
+#!/bin/bash
+case "$*" in *ok.tar*) echo "-rw-r----- 1 josephrb josephrb 1048576 Nov 11 ok.tar";; *) echo "*** hsi: HPSS_ENOENT: No such file or directory"; exit 72;; esac

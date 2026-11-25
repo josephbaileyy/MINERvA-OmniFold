@@ -1,0 +1,16 @@
+Model **GPT-6 (Codex)**. Reviewed `289daa3ca..2d56425a1`. Three focused tests passed with an in-memory filesystem.
+
+**BLOCKERS**  
+None.
+
+**MAJORS**  
+None.
+
+**Minors**
+
+- **The warning can still produce a STOP after publication.** An injected parent-sync failure followed by an `OSError` on the warning write made the CLI return 5 with the complete output present. The writer test also passed when I moved parent sync before the publishing rename. `b5d_build.py:325–330,575–581` · `test_b5d.py:825–836`
+- **C-LEAK only partially enforces equal container types.** It catches list/tuple changes and null covariance entries in normal records. A `dict` paired with an `OrderedDict` containing the same data still passes. Identical malformed `fluctuation=[{"V_F": None}]` records also pass because list traversal preserves the field path. `b5d_build.py:479–494` · `B5D-AMENDMENT-A1.md:104–105`
+- **The generator spy verifies the call and its arguments.** It caught narrowing the input to Tune v1. It still passed when I discarded the helper result and scaled only Tune v1 by hand. The current implementation uses the full result. `test_b5d.py:740–752` · `b5d_build.py:377–378`
+- **A1’s new PSD wording is stricter than the existing guard in one direction and looser in the other.** A zero PSD `C_e` STOPs, while `diag(1, …, 1, −5e−13)` passes and retains its negative mode in `V_F`. The pinned `C_e` passes. `B5D-AMENDMENT-A1.md:112` · `b5d_build.py:446–450`
+
+The closure note matches B-SEL’s NuWro bias check, the A1 digest matches, and the rank-zero undebiased bound renders `n/a` in text and `null` in JSON.

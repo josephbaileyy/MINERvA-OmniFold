@@ -33,8 +33,9 @@ from compare_to_paper_fullcov import (
     ANC_DIR, DEFAULT_OURS, N, N_PT, N_PZ,
     tmatrix_to_numpy, flatten_th2d, flatten_ours, chi2_with_cov,
 )
+from reported_cells import th2d_edges  # uq/, which compare_to_paper_fullcov puts on sys.path
 
-# Paper binning (STATUS / bin_mapping.txt); widths drive the 1D projections.
+# The analysis grid (bin_mapping.txt's printed edges). main() takes each input's widths from its own TH2D axes.
 PT_EDGES = np.array([0, 0.07, 0.15, 0.25, 0.33, 0.40, 0.47, 0.55,
                      0.70, 0.85, 1.00, 1.25, 1.50, 2.50, 4.50])
 PZ_EDGES = np.array([1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0,
@@ -59,18 +60,19 @@ def load_model_csv(path):
     return v
 
 
-def project(vec_red, mask, axis):
+def project(vec_red, mask, axis, pt_edges=PT_EDGES, pz_edges=PZ_EDGES):
     """Marginalize a length-n_reported differential xsec to 1D by integrating
-    over the other axis: dsigma/dpT = sum_j d2sigma * dpz_j (axis='pt')."""
+    over the other axis: dsigma/dpT = sum_j d2sigma * dpz_j (axis='pt'), with
+    the widths of the grid the values are on."""
     g = np.full((N_PT, N_PZ), 0.0)
     idx = np.where(mask)[0]
     for k, gid in enumerate(idx):
         g[gid // N_PZ, gid % N_PZ] = vec_red[k]
-    dpt = np.diff(PT_EDGES)
-    dpz = np.diff(PZ_EDGES)
+    dpt = np.diff(pt_edges)
+    dpz = np.diff(pz_edges)
     if axis == "pt":
-        return PT_EDGES, (g * dpz[None, :]).sum(axis=1)       # length N_PT
-    return PZ_EDGES, (g * dpt[:, None]).sum(axis=0)           # length N_PZ
+        return pt_edges, (g * dpz[None, :]).sum(axis=1)       # length N_PT
+    return pz_edges, (g * dpt[:, None]).sum(axis=0)           # length N_PZ
 
 
 def main():
@@ -96,9 +98,13 @@ def main():
     fp = ROOT.TFile.Open(f"{ANC_DIR}/cov_ptpl_minerva_inclusive_6GeV.root")
     cov_total = tmatrix_to_numpy(fp.Get("TotalCovariance"))
     cov_stat = tmatrix_to_numpy(fp.Get("StatOnlyCovariance"))
-    data_v = flatten_th2d(fp.Get("pt_pl_cross_section"))
+    h_paper = fp.Get("pt_pl_cross_section")
+    data_v = flatten_th2d(h_paper)
+    paper_edges = th2d_edges(h_paper)      # the published data and model tables are on this grid
     fo = ROOT.TFile.Open(args.ours)
-    ours_v = flatten_ours(fo.Get("hXSec2D"))
+    h_ours = fo.Get("hXSec2D")
+    ours_v = flatten_ours(h_ours)
+    ours_edges = th2d_edges(h_ours)
 
     mask = np.diag(cov_stat) > 0
     n = int(mask.sum())
@@ -150,28 +156,29 @@ def main():
     fig, axs = plt.subplots(1, 2, figsize=(13, 5) if not restyled else (rs.WIDTH["projections"], 2.35))
     for axis, ax, xlabel in [("pt", axs[0], "p_T (GeV/c)" if not restyled else f"{rs.PT} {rs.GEVC}"),
                              ("pz", axs[1], "p_|| (GeV/c)" if not restyled else f"{rs.PZ} {rs.GEVC}")]:
-        edges, y_ours = project(ours_v[mask], mask, axis)
-        _, y_data = project(data_v[mask], mask, axis)
-        ctr = 0.5 * (edges[:-1] + edges[1:])
+        edges, y_ours = project(ours_v[mask], mask, axis, *ours_edges)
+        p_edges, y_data = project(data_v[mask], mask, axis, *paper_edges)
+        ctr = 0.5 * (edges[:-1] + edges[1:])           # ours at our bin centres,
+        ctr_p = 0.5 * (p_edges[:-1] + p_edges[1:])     # published data and models at the release axis's
         # amendment 2: Published and This work as their markers with no line (ls "none" keeps the step's data and
         # drawstyle), Tune v1 as a bare step, each under its one name (restyle_2026_10.MARKER, LINESTYLE, NAMES)
         if not restyled:
-            ax.step(ctr, y_data, where="mid", color="k", lw=2, label="Published (PRD 104, 092007)",
+            ax.step(ctr_p, y_data, where="mid", color="k", lw=2, label="Published (PRD 104, 092007)",
                     marker=technote_style.gen_marker("data"), markersize=msz)
             ax.step(ctr, y_ours, where="mid", color="C0", lw=1.5, ls="--", label="This work (OmniFold)")
         else:
-            ax.step(ctr, y_data, where="mid", color="k", lw=1.1, ls=rs.LINESTYLE["published"],
+            ax.step(ctr_p, y_data, where="mid", color="k", lw=1.1, ls=rs.LINESTYLE["published"],
                     marker=rs.MARKER["published"], markersize=msz, label=rs.NAMES["published"])
             ax.step(ctr, y_ours, where="mid", color=rs.PALETTE["this_work"], lw=0.9, ls=rs.LINESTYLE["this_work"],
                     marker=rs.MARKER["this_work"], markersize=msz, label=rs.NAMES["this_work"])
         for j, (name, mv) in enumerate(model_vs.items()):
-            _, y_m = project(mv[mask], mask, axis)
+            _, y_m = project(mv[mask], mask, axis, *paper_edges)
             mcol = f"C{j+1}" if not (restyled and "tune" in name.lower()) else rs.PALETTE["tune"]
             if restyled and "tune" in name.lower():
-                ax.step(ctr, y_m, where="mid", color=mcol, lw=0.9, ls=rs.LINESTYLE["tune"], marker=rs.MARKER["tune"],
+                ax.step(ctr_p, y_m, where="mid", color=mcol, lw=0.9, ls=rs.LINESTYLE["tune"], marker=rs.MARKER["tune"],
                         label=rs.NAMES["tune"])
             else:
-                ax.step(ctr, y_m, where="mid", color=mcol, lw=1.5 if not restyled else 0.9, label=shown(name),
+                ax.step(ctr_p, y_m, where="mid", color=mcol, lw=1.5 if not restyled else 0.9, label=shown(name),
                         marker=technote_style.gen_marker(name), markersize=msz)
         ax.set_xlabel(xlabel)
         if not restyled:
