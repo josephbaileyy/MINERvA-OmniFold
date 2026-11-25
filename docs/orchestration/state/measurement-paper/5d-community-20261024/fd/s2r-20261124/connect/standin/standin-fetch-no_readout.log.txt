@@ -1,0 +1,7 @@
+BAIL no readout
+=== script rc=9; /dev/shm copy left: no
+=== /pscratch/sd/j/josephrb/s2r-20261124/logs/connect-records.log
+=== stub calls
+sacct -X -n -P -S now-14days -o JobID,JobName,State
+sacct -j 7000001 -X -n -P -o JobName,State
+=== files written under /pscratch outside /pscratch/sd/j/josephrb/s2r-20261124 (newer than the planting):

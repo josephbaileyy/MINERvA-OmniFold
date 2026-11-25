@@ -25,6 +25,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -82,7 +83,7 @@ SCONTROL = r'''#!/bin/bash
 # a race: plant a symlink where the job is about to write the scontrol record, after its pre-check, before its redirect
 [ -n "$PLANT_SCONTROL_LINK" ] && ln -s "$PLANT_SCONTROL_LINK" "$IBUB_NS/logs/scontrol-batch-$3.txt"
 echo "JobId=$3 JobName=${F_NAME:-ibub_run}"
-echo "   QOS=${F_QOS:-regular} JobState=RUNNING"
+echo "   QOS=${F_QOS:-regular_1} JobState=RUNNING"     # Perlmutter's spelling of --qos=regular (receipts-cov2d/a2/bulk/complete/connect-complete-1.log.txt:78)
 echo "   RunTime=00:00:01 TimeLimit=${F_LIMIT:-11:29:00} TimeMin=N/A"
 echo "   NumNodes=${F_NODES:-1} NumCPUs=256 OverSubscribe=${F_OVER:-NO} Contiguous=0"
 echo "   AllocTRES=${F_TRES:-cpu=256,mem=480000M,node=1,billing=256}"
@@ -220,7 +221,9 @@ class Job(unittest.TestCase):
         self.assertEqual((self.done()["rc"], self.done()["completion"]["verdict"]), (1, "FAIL"))
 
     def test_each_allocation_mismatch_or_a_failed_query_refuses_with_nothing_run(self):
-        cases = {"name": ({"F_NAME": "ibub_other"}, "JobName is"), "qos": ({"F_QOS": "debug"}, "QOS is"),
+        cases = {"name": ({"F_NAME": "ibub_other"}, "JobName is"), "qos": ({"F_QOS": "debug"}, "QOS is 'debug'"),
+                 "qos regular_2": ({"F_QOS": "regular_2"}, "QOS is 'regular_2', not one of {regular, regular_1}"),
+                 "qos regular1": ({"F_QOS": "regular1"}, "QOS is 'regular1'"),
                  "limit": ({"F_LIMIT": "12:00:00"}, "TimeLimit is"), "nodes": ({"F_NODES": "2"}, "NumNodes is"),
                  "shared": ({"F_OVER": "OK"}, "OverSubscribe is"),
                  "stdout": ({"F_STDOUT": "/tmp/elsewhere.out"}, "StdOut"),
@@ -294,6 +297,41 @@ class Job(unittest.TestCase):
                   'scontrol() { echo "JobId=$3 JobName=ibub_run (the connect\'s query)"; }\n'
                   + self.connect_record_block() + '\necho "connect record written"\n')
         return subprocess.run(["bash", "-c", script], capture_output=True, text=True)
+
+    def test_the_declared_spelling_regular_is_accepted_beside_regular_1(self):
+        r = self.run_job(F_QOS="regular")
+        self.assertEqual(r.returncode, 0, r.stdout)
+        self.assertIn("[ibub] allocation: ibub_run regular 11:29:00 1 node exclusive;", r.stdout)
+
+    @staticmethod
+    def connect_scontrol_block() -> str:
+        """The connect's scontrol field checks (name, limit, QOS), exactly as the template has them."""
+        t = CONNECT_TEMPLATE.read_text()
+        a = t.index("# scontrol ends its first line with JobName=")
+        b = t.index("\n", t.index('echo "scontrol: name, QOS', a))
+        return t[a:b]
+
+    def run_connect_scontrol(self, qos: str) -> subprocess.CompletedProcess:
+        info = (f"JobId=61900001 JobName=ibub_run\n   Account=m3246 QOS={qos} JobState=PENDING Reason=Priority\n"
+                "   RunTime=00:00:00 TimeLimit=11:29:00 TimeMin=N/A\n")
+        script = ('set -o pipefail\nJOBNAME=ibub_run; LIMIT=11:29:00; jid=61900001\n'
+                  'finish() { echo "finish $1"; exit "$1"; }\n' f"info={shlex.quote(info)}\n"
+                  + self.connect_scontrol_block() + '\necho "connect past scontrol"\n')
+        return subprocess.run(["bash", "-c", script], capture_output=True, text=True)
+
+    def test_the_connect_accepts_exactly_regular_and_regular_1(self):
+        for qos in ("regular_1", "regular"):
+            with self.subTest(qos=qos):
+                r = self.run_connect_scontrol(qos)
+                self.assertEqual(r.returncode, 0, r.stdout)
+                self.assertIn(f"scontrol: name, QOS ({qos}) and limit as declared", r.stdout)
+        for qos in ("regular_2", "debug", "regular1", ""):
+            with self.subTest(qos=qos):
+                r = self.run_connect_scontrol(qos)
+                self.assertEqual(r.returncode, 5, r.stdout)
+                self.assertIn(f"STOP: scontrol shows QOS '{qos}' for 61900001, not one of {{regular, regular_1}}",
+                              r.stdout)
+                self.assertNotIn("connect past scontrol", r.stdout)
 
     def test_the_connect_and_the_batch_name_their_records_apart(self):
         m = re.search(r'SREC="\$N/logs/(scontrol-[a-z]+-)\$jid\.txt"', self.connect_record_block())

@@ -24,7 +24,7 @@ SELF=$1; WEND=$2
 set -o pipefail
 TAG=run
 M=@@M@@
-N=/pscratch/sd/j/josephrb/ibub-20261123
+N=/pscratch/sd/j/josephrb/ibub-20261124
 D=$N/deploy
 FR=$N/fetch-$TAG
 SHM=/dev/shm/ibub-connect
@@ -160,10 +160,12 @@ SREC="$N/logs/scontrol-connect-$jid.txt"
 info=$(scontrol show job "$jid" 2>&1); ( set -o noclobber; printf '%s\n' "$info" > "$SREC" ) \
   || { echo "STOP: writing $SREC"; finish 5; }
 # scontrol ends its first line with JobName=..., so each key is matched up to a space or the end of the line
-grep -Eq "JobName=$JOBNAME( |\$)" <<<"$info" && grep -Eq "QOS=regular( |\$)" <<<"$info" \
-  && grep -Eq "TimeLimit=$LIMIT( |\$)" <<<"$info" \
-  || { echo "STOP: scontrol does not show $JOBNAME / regular / $LIMIT for $jid"; finish 5; }
-echo "scontrol: name, QOS and limit as declared"
+grep -Eq "JobName=$JOBNAME( |\$)" <<<"$info" && grep -Eq "TimeLimit=$LIMIT( |\$)" <<<"$info" \
+  || { echo "STOP: scontrol does not show $JOBNAME / $LIMIT for $jid"; finish 5; }
+# Perlmutter records --qos=regular as QOS=regular_1 (receipts-cov2d/a2/bulk/complete/connect-complete-1.log.txt:78); the accepted set is exactly these two
+qos=$(tr ' ' '\n' <<<"$info" | sed -n 's/^QOS=//p' | head -1)
+case "$qos" in regular|regular_1) ;; *) echo "STOP: scontrol shows QOS '$qos' for $jid, not one of {regular, regular_1}"; finish 5;; esac
+echo "scontrol: name, QOS ($qos) and limit as declared"
 gs=$(git -C "$D" status --porcelain --ignored) || { echo "STOP: git status failed (after)"; finish 9; }
 echo "porcelain --ignored after: '${gs}'"
 [ -z "$gs" ] || { echo "STOP: the deploy changed (no exception: the job requires it clean)"; finish 9; }

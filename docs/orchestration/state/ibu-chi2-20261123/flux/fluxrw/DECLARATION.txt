@@ -1,0 +1,37 @@
+# Flux-reweight test: how much of the truth gap and the reco column does the Valencia/MAT flux tail explain? (declared before computing)
+
+Background. MAT's runtime constrained nu_mu flux (state/s5p/gen5d/gen5d-fluxfix.json: POT-weighted
+GetFluxReweighted(14), nu-e constraint on, 100 universes, 12 ME FHC playlists) is 0.9959 of Valencia 2019's published
+constrained flux (arXiv 1906.00111v2 anc, MINERvA_Flux_pdg14_500MeVBins.csv) over 0-100 GeV. Normalized over 2-20 GeV
+it agrees up to 20 GeV and is 0.956 at 20-30, 0.888 at 30-50 and 0.887 at 50-100. The paper cites Valencia 2019 for its
+constraint.
+
+Question. If our MC truth events are reweighted by r(E_nu) = Valencia/MAT, how much of the shipped-Tune-v1-vs-ours
+shape gap closes at truth p|| 40-60 (variants: +14.7 % for Tune v1) and at pT 0-0.07 (+7.2 %)? And how far do the
+reco fold residual and the K=10 IBU distance move?
+
+Inputs.
+- wstest/wsplit_a1.npz (committed): A (224 truth cells x 141 (E_nu, Q2) bins) and M4 (224 x 224 x 141). E_nu edges
+  0,3,4,5,6,7,8,10,12,15,20,30,50,80,inf (wbuild_a1.py:23). Bin 140 is non-finite E_nu/Q2, weight 1.
+- r per E_nu bin: the absolute ratio Valencia/MAT over the gen5d band that contains the bin
+  (0.5-2, 2-5, 5-10, 10-15, 15-20, 20-30, 30-50, 50-100). The 0-3 bin uses 0-5 combined; 80-inf uses 50-100
+  (Valencia stops at 100 GeV). MAT band integral = frac_phi_t * Phi_t.
+- Everything else as wstest/wscore.py: signed_data.npz M0/T0, priortest vectors F/ur10/pub/mask, E_R hDataReco2D
+  and hBkgReco2D, published TotalCovariance, shipped Tune v1 table, pot_scale 0.21240500334472884.
+
+Controls (STOP if failing).
+- C-CV: max|A.sum(1) - T0|/max T0 and the same for M4.sum(2) vs M0, both <= 1e-9.
+- C-PHI: MAT Phi_t / Valencia integral over 0-100 = 0.9959 within 1e-3.
+
+Statistics.
+- Truth: m = (A @ w) * F. s(reg) = [sum_reg ship*area / sum_reg m*area] / [same over ALL 205] - 1, for COL40 and ROW0.
+  kappa(reg) = (s_before - s_after) / s_before.
+- Reco: S_COL and S_ROW from the wscore S(fo) with fo = R(M4@w, A@w) @ tpub, before and after. D10 = the K=10
+  IBU distance to the published result, before and after, as wscore computes it.
+
+Readings on truth COL40:
+  FLUX-MAJOR    kappa >= 0.5
+  FLUX-PARTIAL  0.2 <= kappa < 0.5
+  FLUX-MINOR    kappa < 0.2
+The same classes are reported for ROW0. Reco S and D10 changes are descriptive. A band-level r is coarse, and the
+reweight does not touch background. Both limits are stated with the result.

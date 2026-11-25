@@ -1,0 +1,45 @@
+node login38 nproc=244 loadavg 86.38 84.93 76.43
+2026-11-24T16:37:31Z
+window_end_epoch 1795570595 (now 1795538251); fence prefixes ibub_,ibuchi_,cov2d,t2a,rpd,msr
+connect script sha256 f73494a6699584cd66c1dbf28c010e38f811a555f8e1d92a418d500699c3dc85
+== cov2d fence rev 3 (7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738)
+fence host=login38 utc=2026-11-24T16:37:31Z
+sacct -X -n -P -u josephrb -S 2026-11-10T08:37:31 -E now -o JobID,JobName,State 2>&1
+sacct matching rows: 14
+FENCE CLEAR
+== fence (sacct)
+fence clear
+HEAD d12c4f2a38a53001eb92bbefc8b2dc6001f034dc; porcelain --ignored before: ''
+ibub_unit.py: OK
+ibub_readout.py: OK
+ibub_lanes.py: OK
+ibub_overlap.py: OK
+config.json: OK
+jobs/ibub_job.sbatch: OK
+threads 2; nice 19; ionice idle; python 3.11.14
+== overlap (ibub_overlap.py run)
+OVERLAP run: ours 11; theirs 130
+OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18/b  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/cov2d-run-20261104
+OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/AR23-a2/b  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/cov2d-run-20261104
+OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-2a/writer_control.root  ~  theirs cov2d disclosed root /pscratch/sd/j/josephrb/cov2d-2a
+OVERLAP ALLOWED: ours read (cov2d-acked) /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root  ~  theirs cov2d protected (flux2 config) /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root
+OVERLAP ALLOWED: ours read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28  ~  theirs rpd flux2 read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28
+OVERLAP: CLEAR (pairs checked 1430, hits 0)
+== preflight (ibub_unit.py preflight)
+{"refs": {"c2_central": {"pass": true, "path": "/pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_central.npz", "sha256": "929d0e78011ead72e9677a05bad06eec80e914e181c8d02f94bbdea1c43b76f4"}, "k2a": {"pass": true, "path": "/pscratch/sd/j/josephrb/cov2d-2a/writer_control.root", "sha256": "7eb39088a42844b48ec1f8e1b6b586b8d8d4363611d68b726112f9f75c99b9db"}}, "schema": "ibub-preflight/1", "toys": {"AR23": {"files": 300, "missing": []}, "G18": {"files": 300, "missing": []}}, "verdict": "PASS"}
+== staging (ibub_unit.py stage)
+2026-11-24T16:39:06Z
+{"files": {"CV": {"pass": true, "pin": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df", "sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df", "source": "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root", "staged": "/pscratch/sd/j/josephrb/ibub-20261124/stage/runEventLoopOmniFold_MEFHC.root"}, "MC": {"pass": true, "pin": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316", "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316", "source": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root", "staged": "/pscratch/sd/j/josephrb/ibub-20261124/stage/runEventLoopMC_MEFHC.root"}, "lib": {"pass": true, "pin": "0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd", "sha256": "0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd", "source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/libRooUnfold.so", "staged": "/pscratch/sd/j/josephrb/ibub-20261124/stage/libRooUnfold.so"}}, "schema": "ibub-stage/1", "utc": "2026-11-24T16:39:07Z", "verdict": "PASS"}
+2026-11-24T16:39:15Z
+== the fence again, just before the submission
+== sbatch
+submitted 61924744 2026-11-24T16:39:17Z
+sacct: 61924744|ibub_run|PENDING
+scontrol: name, QOS (regular_1) and limit as declared
+porcelain --ignored after: ''
+== records
+2026-11-24T16:39:37Z
+records copied: 8 files, 32961 bytes
+fetch-run.tar sha256 1cf1859fe91006e1ad849b9632e94b9f66dc1e0750ee8cd3e30ceb816abd603c bytes 51200
+ibub run rc=0
+2026-11-24T16:39:37Z

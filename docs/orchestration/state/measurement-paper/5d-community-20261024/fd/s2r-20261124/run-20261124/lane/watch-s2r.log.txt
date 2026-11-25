@@ -1,0 +1,8 @@
+2026-11-24T19:16:49Z poll 1 ssh rc=0 row=[61935360|s2r_run|PENDING|0:0|Unknown|Unknown|0|None assigned]
+2026-11-24T19:26:56Z poll 2 ssh rc=0 row=[61935360|s2r_run|PENDING|0:0|Unknown|Unknown|0|None assigned]
+2026-11-24T19:37:03Z poll 3 ssh rc=0 row=[61935360|s2r_run|PENDING|0:0|Unknown|Unknown|0|None assigned]
+2026-11-24T19:47:10Z poll 4 ssh rc=0 row=[61935360|s2r_run|RUNNING|0:0|2026-11-24T11:42:33|Unknown|277|nid005671]
+2026-11-24T19:57:17Z poll 5 ssh rc=0 row=[61935360|s2r_run|RUNNING|0:0|2026-11-24T11:42:33|Unknown|884|nid005671]
+2026-11-24T20:07:24Z poll 6 ssh rc=0 row=[61935360|s2r_run|RUNNING|0:0|2026-11-24T11:42:33|Unknown|1491|nid005671]
+2026-11-24T20:17:32Z poll 7 ssh rc=0 row=[61935360|s2r_run|COMPLETED|0:0|2026-11-24T11:42:33|2026-11-24T12:13:51|1878|nid005671]
+TERMINAL COMPLETED

@@ -1,0 +1,19 @@
+OVERLAP s2r: ours 11; theirs 149 (IBUB's own entries: 19)
+OURS read (cov2d-acked) /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+OURS read (cov2d-acked) /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+OURS read (cov2d-acked) /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz
+OURS read /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json
+OURS read /pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-gibuu_cv-F.npz
+OURS read /pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s991000.npz
+OURS read /pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s991000.npz
+OURS read /pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/q3/prr_B0_q3_s991000.npz
+OURS read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28
+OURS write /pscratch/sd/j/josephrb/s2r-20261124
+OURS write /dev/shm/s2rc.
+OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware
+OVERLAP ALLOWED: ours read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28  ~  theirs rpd flux2 read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28
+OVERLAP ALLOWED: ours read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28  ~  theirs ibub run read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28
+OVERLAP ALLOWED: ours read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28  ~  theirs ibub readout read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28
+OVERLAP: CLEAR (pairs checked 1639, hits 0)

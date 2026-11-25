@@ -36,7 +36,7 @@ grep -q '^BAIL ' "$F/session.out" && { echo "STOP: the connect bailed before wri
 echo "connect script rc=$src (every stop after \$N exists writes the records tar first)"
 
 # ---- the fetch, after the session (the connect has finished writing; nothing below writes on the cluster)
-O=/pscratch/sd/j/josephrb/ibub-20261123
+O=/pscratch/sd/j/josephrb/ibub-20261124
 frc=0
 for rel in logs/connect-run.log logs/connect-run.done fetch-run.tar; do
   ssh "${SSH[@]}" saul.nersc.gov "ssh ${HOP[*]} $NODE $(printf '%q' "dd if=$O/$rel iflag=noatime status=none")" \
