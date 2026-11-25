@@ -181,69 +181,82 @@ geanttw_build.sh:265 !=->== KILLED
 geanttw_build.sh:265 !=->== KILLED
 geanttw_build.sh:265 !=->== KILLED
 geanttw_build.sh:267 exit 1->true KILLED
-geanttw_connect.sh:28 bail->true KILLED
-geanttw_connect.sh:29 bail->true KILLED
-geanttw_connect.sh:30 bail->true KILLED
-geanttw_connect.sh:31 bail->true KILLED
-geanttw_connect.sh:33 bail->true KILLED
-geanttw_connect.sh:34 stop->true KILLED
-geanttw_connect.sh:36 stop->true KILLED
-geanttw_connect.sh:37 stop->true KILLED
+geanttw_connect.sh:34 bail->true KILLED
+geanttw_connect.sh:35 bail->true KILLED
+geanttw_connect.sh:36 bail->true KILLED
+geanttw_connect.sh:37 bail->true KILLED
+geanttw_connect.sh:38 bail->true KILLED
+geanttw_connect.sh:40 bail->true KILLED
+geanttw_connect.sh:41 stop->true KILLED
+geanttw_connect.sh:43 stop->true KILLED
 geanttw_connect.sh:44 stop->true KILLED
-geanttw_connect.sh:44 -eq->-ne KILLED
-geanttw_connect.sh:47 ==->!= KILLED
 geanttw_connect.sh:51 stop->true KILLED
-geanttw_connect.sh:51 ==->!= KILLED
-geanttw_connect.sh:54 stop->true KILLED
-geanttw_connect.sh:54 -eq->-ne KILLED
-geanttw_remote.sh:39 bail->true KILLED
-geanttw_remote.sh:40 bail->true KILLED
-geanttw_remote.sh:41 bail->true KILLED
-geanttw_remote.sh:42 bail->true KILLED
-geanttw_remote.sh:43 bail->true KILLED
-geanttw_remote.sh:46 stop->true KILLED
-geanttw_remote.sh:48 stop->true KILLED
-geanttw_remote.sh:51 stop->true KILLED
-geanttw_remote.sh:53 stop->true KILLED
+geanttw_connect.sh:51 -eq->-ne KILLED
+geanttw_connect.sh:54 ==->!= KILLED
+geanttw_connect.sh:58 stop->true KILLED
+geanttw_connect.sh:58 ==->!= KILLED
+geanttw_connect.sh:61 stop->true KILLED
+geanttw_connect.sh:61 -eq->-ne KILLED
+geanttw_remote.sh:47 bail->true KILLED
+geanttw_remote.sh:48 bail->true KILLED
+geanttw_remote.sh:49 bail->true KILLED
+geanttw_remote.sh:50 bail->true KILLED
+geanttw_remote.sh:51 bail->true KILLED
 geanttw_remote.sh:54 stop->true KILLED
-geanttw_remote.sh:54 ==->!= KILLED
 geanttw_remote.sh:56 stop->true KILLED
-geanttw_remote.sh:56 -eq->-ne KILLED
-geanttw_remote.sh:60 stop->true KILLED
-geanttw_remote.sh:66 stop->true KILLED
-geanttw_remote.sh:66 -eq->-ne KILLED
-geanttw_remote.sh:71 bail->true KILLED
-geanttw_remote.sh:73 stop->true KILLED
-geanttw_remote.sh:74 stop->true KILLED
-geanttw_remote.sh:82 bail->true KILLED
-geanttw_remote.sh:86 stop->true KILLED
-geanttw_remote.sh:86 -eq->-ne KILLED
-geanttw_remote.sh:91 bail->true KILLED
-geanttw_remote.sh:93 bail->true KILLED
-geanttw_remote.sh:96 stop->true KILLED
-geanttw_remote.sh:100 stop->true KILLED
-geanttw_remote.sh:102 stop->true KILLED
-geanttw_remote.sh:107 stop->true KILLED
-geanttw_remote.sh:108 stop->true KILLED
+geanttw_remote.sh:59 stop->true KILLED
+geanttw_remote.sh:61 stop->true KILLED
+geanttw_remote.sh:62 stop->true KILLED
+geanttw_remote.sh:62 ==->!= KILLED
+geanttw_remote.sh:64 stop->true KILLED
+geanttw_remote.sh:64 -eq->-ne KILLED
+geanttw_remote.sh:75 ==->!= KILLED
+geanttw_remote.sh:75 -eq->-ne KILLED
+geanttw_remote.sh:76 stop->true KILLED
+geanttw_remote.sh:77 ==->!= KILLED
+geanttw_remote.sh:77 ==->!= KILLED
+geanttw_remote.sh:78 stop->true KILLED
+geanttw_remote.sh:100 ==->!= KILLED
+geanttw_remote.sh:101 stop->true KILLED
+geanttw_remote.sh:105 stop->true KILLED
 geanttw_remote.sh:111 stop->true KILLED
-geanttw_remote.sh:116 stop->true KILLED
-geanttw_remote.sh:120 stop->true KILLED
+geanttw_remote.sh:111 -eq->-ne KILLED
+geanttw_remote.sh:116 bail->true KILLED
+geanttw_remote.sh:118 stop->true KILLED
+geanttw_remote.sh:119 stop->true KILLED
+geanttw_remote.sh:125 stop->true KILLED
+geanttw_remote.sh:126 stop->true KILLED
+geanttw_remote.sh:126 ==->!= KILLED
 geanttw_remote.sh:127 stop->true KILLED
-geanttw_remote.sh:128 stop->true KILLED
+geanttw_remote.sh:132 bail->true KILLED
 geanttw_remote.sh:136 stop->true KILLED
-geanttw_remote.sh:140 stop->true KILLED
-geanttw_remote.sh:141 stop->true KILLED
-geanttw_remote.sh:143 stop->true KILLED
+geanttw_remote.sh:136 -eq->-ne KILLED
+geanttw_remote.sh:141 bail->true KILLED
+geanttw_remote.sh:143 bail->true KILLED
+geanttw_remote.sh:146 stop->true KILLED
+geanttw_remote.sh:150 stop->true KILLED
+geanttw_remote.sh:152 stop->true KILLED
 geanttw_remote.sh:157 stop->true KILLED
-geanttw_remote.sh:157 -eq->-ne KILLED
-geanttw_remote.sh:159 bail->true KILLED
+geanttw_remote.sh:158 stop->true KILLED
+geanttw_remote.sh:161 stop->true KILLED
+geanttw_remote.sh:166 stop->true KILLED
+geanttw_remote.sh:170 stop->true KILLED
+geanttw_remote.sh:177 stop->true KILLED
+geanttw_remote.sh:178 stop->true KILLED
+geanttw_remote.sh:186 stop->true KILLED
+geanttw_remote.sh:190 stop->true KILLED
+geanttw_remote.sh:191 stop->true KILLED
+geanttw_remote.sh:193 stop->true KILLED
+geanttw_remote.sh:210 stop->true KILLED
+geanttw_remote.sh:210 -eq->-ne KILLED
+geanttw_remote.sh:212 bail->true KILLED
 
-mutants 239; killed 239; not killed 0 (survived or timed out)
+mutants 252; killed 252; not killed 0 (survived or timed out)
   dumpcmp.py: 21 mutants, 21 killed
   p0_check.py: 58 mutants, 58 killed
   geanttw_sacct.py: 29 mutants, 29 killed
   geanttw_provenance.py: 13 mutants, 13 killed
   geanttw_evloop.sbatch: 39 mutants, 39 killed
   geanttw_build.sh: 23 mutants, 23 killed
-  geanttw_connect.sh: 15 mutants, 15 killed
-  geanttw_remote.sh: 41 mutants, 41 killed
+  geanttw_connect.sh: 16 mutants, 16 killed
+  geanttw_remote.sh: 53 mutants, 53 killed

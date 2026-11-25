@@ -14,17 +14,24 @@ set -o pipefail
 STEP="${1:?usage: geanttw_connect.sh STEP M COV2D_ACK NUE_ACK [ARG]}"; M="${2:?M}"
 COV2D_ACK="${3:-}"; NUE_ACK="${4:-}"; ARG="${5:-}"
 ACK_RE='^[A-Za-z0-9._:@/+=-]{8,200}$'
-SSH="${GEANTTW_SSH:-ssh perlmutter.nersc.gov}"
+# A fresh connection every time: never an existing ssh master (one can outlive its certificate, which the director's
+# rule of 2026-11-25 forbids using), no jump or proxy client (which would not inherit these options), and never a
+# password or MFA prompt. Each call may land on a different login node; every step's state is on /pscratch. Only the
+# tests may replace it.
+SSH="ssh -o ControlMaster=no -o ControlPath=none -o BatchMode=yes -o ProxyJump=none -o ProxyCommand=none perlmutter.nersc.gov"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 LOCAL="${GEANTTW_LOCAL_REPO:-$(git -C "${HERE}" rev-parse --show-toplevel)}"
 B=/pscratch/sd/j/josephrb/geanttw-20261124
-[[ -n "${GEANTTW_TEST_B:-}" ]] && B="${GEANTTW_TEST_B}"
+if [[ -n "${GEANTTW_TEST_B:-}" ]]; then   # the tests' only door
+  B="${GEANTTW_TEST_B}"; SSH="${GEANTTW_SSH:-${SSH}}"
+fi
 CODE_REL=docs/orchestration/state/geanttw-20261124/code
 FENCE_REL=docs/orchestration/state/2d-closeout/cov2d-fence-20261122/cov2d_fence.sh
 
 bail() { echo "REFUSED: $*"; exit 9; }
 stop() { echo "STOP: $*"; echo "== geanttw connect ${STEP} rc=8 $(date -u +%FT%TZ)"; exit 8; }
 
+[[ -z "${GEANTTW_SSH:-}" || -n "${GEANTTW_TEST_B:-}" ]] || bail "GEANTTW_SSH is honoured only by the tests"
 case "${STEP}" in deploy|build|p0|check) ;; *) bail "step must be deploy, build, p0 or check, got '${STEP}'" ;; esac
 [[ "${M}" =~ ^[0-9a-f]{40}$ ]] || bail "M '${M}' is not a 40-hex commit"
 [[ "${COV2D_ACK}" =~ ${ACK_RE} ]] || bail "a fresh cov2d ack (a token) is required for every connect"

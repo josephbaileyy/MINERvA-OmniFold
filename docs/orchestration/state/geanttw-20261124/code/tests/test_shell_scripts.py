@@ -1114,8 +1114,13 @@ class RemoteHarness:
             '[ "$2" = "${TEST_SMOKE_REFUSES:-}" ] && exit 2\n'
             "exit 0\n")
         shutil.copy(HERE / "geanttw_sacct.py", code / "geanttw_sacct.py")
-        for f in ("dumpcmp.py", "S0-src_base.sha256", "geanttw_provenance.py"):
+        for f in ("dumpcmp.py", "geanttw_provenance.py"):
             (code / f).write_text("# stub\n")
+        self.s0 = tmp_path / "s0" / "MANIFEST.sha256"   # S0's manifest, which deploy re-hashes
+        self.s0.parent.mkdir()
+        self.s0.write_bytes(b"S0 manifest bytes\n")
+        self.s0_sha = hashlib.sha256(self.s0.read_bytes()).hexdigest()   # the ruling's sha256, in the tests
+        (code / "S0-src_base.sha256").write_text(self.s0_header())
         (code / "p0_check.py").write_text(
             "import os, sys\n"
             "open(os.environ['TEST_CALLS'], 'a').write('p0_check ' + ' '.join(sys.argv[1:]) + '\\n')\n"
@@ -1151,6 +1156,19 @@ for f in "$@"; do python3 -c "import hashlib,sys; print(hashlib.sha256(open(sys.
         self.sacct = tmp_path / "sacct.psv"
         self.sacct.write_text("")
 
+    def s0_header(self, path=None, sha=None):
+        sha = sha or self.s0_sha
+        return (f"# MP-1 S0's src_base rows\n# source {path or self.s0} sha256 {sha} bytes 18 read 2026-11-25T03:22:36Z\n"
+                f"{'a' * 64}  x.cpp\n")
+
+    def recommit(self, s0_text):
+        """Commit a different S0-src_base.sha256 and make that commit M."""
+        (self.repo / CODE_REL / "S0-src_base.sha256").write_text(s0_text)
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-am", "s0"], cwd=self.repo,
+                       check=True)
+        self.M = subprocess.run(["git", "rev-parse", "HEAD"], cwd=self.repo, capture_output=True, text=True,
+                                check=True).stdout.strip()
+
     def env(self, **kw):
         e = os.environ.copy()
         e.pop("SLURM_JOB_ID", None)
@@ -1163,6 +1181,8 @@ for f in "$@"; do python3 -c "import hashlib,sys; print(hashlib.sha256(open(sys.
         e["TEST_SACCT"] = str(self.sacct)
         e["GEANTTW_TEST_PY"] = "python3"
         e["GEANTTW_TEST_REF"] = str(self.ref)
+        e["GEANTTW_TEST_S0_PATH"] = str(self.s0)
+        e["GEANTTW_TEST_S0_SHA"] = self.s0_sha
         e.update(kw)
         return e
 
@@ -1177,6 +1197,11 @@ for f in "$@"; do python3 -c "import hashlib,sys; print(hashlib.sha256(open(sys.
 
 
 PAST = "2026-01-01T00:00:00Z"
+
+
+def remote_stops(r):
+    """The remote's own STOP lines; the connect then adds its 'STOP: remote STEP exited 8'."""
+    return sum(1 for ln in r.stdout.splitlines() if ln.startswith("STOP:") and not ln.startswith("STOP: remote "))
 
 
 class TestConnect:
@@ -1207,6 +1232,185 @@ class TestConnect:
         for f in ("geanttw_build.sh", "geanttw_evloop.sbatch", "geanttw_sacct.py", "geanttw_provenance.py",
                   "dumpcmp.py", "p0_check.py", "S0-src_base.sha256"):
             assert f"  {f}" in r.stdout, f
+
+    def test_deploy_rehashes_s0(self, tmp_path):
+        h = RemoteHarness(tmp_path)
+        r = h.connect("deploy")
+        sha = hashlib.sha256(h.s0.read_bytes()).hexdigest()
+        assert r.returncode == 0 and f"S0 re-hashed with O_NOATIME: {h.s0} {sha}" in r.stdout, r.stdout
+
+    def test_deploy_stops_when_s0_changed(self, tmp_path):
+        h = RemoteHarness(tmp_path)
+        want = hashlib.sha256(h.s0.read_bytes()).hexdigest()
+        h.s0.write_bytes(b"S0 manifest bytes, changed\n")
+        r = h.connect("deploy")
+        got = hashlib.sha256(h.s0.read_bytes()).hexdigest()
+        assert r.returncode == 8, r.stdout
+        assert f"STOP: {h.s0} is now {got}, not {want}: S0 changed since its read" in r.stdout
+        assert remote_stops(r) == 1 and "S0 re-hashed" not in r.stdout
+
+    def test_deploy_stops_when_s0_unreadable(self, tmp_path):
+        h = RemoteHarness(tmp_path)
+        h.s0.unlink()
+        r = h.connect("deploy")
+        assert r.returncode == 8 and f"STOP: the O_NOATIME re-hash of {h.s0} failed" in r.stdout, r.stdout
+        assert remote_stops(r) == 1 and "S0 re-hashed" not in r.stdout
+
+    @pytest.mark.parametrize("text", [
+        "# no source line\n",
+        "# source relative/MANIFEST.sha256 sha256 " + "a" * 64 + "\n",
+        "# source /abs/MANIFEST.sha256 sha256 nothex\n",
+        "# source /abs/MANIFEST.sha256 md5 " + "a" * 64 + "\n",
+    ])
+    def test_deploy_stops_without_a_usable_s0_header(self, tmp_path, text):
+        h = RemoteHarness(tmp_path)
+        h.recommit(text)
+        r = h.connect("deploy")
+        assert r.returncode == 8 and "STOP: S0-src_base.sha256 must have exactly one '# source PATH sha256 HEX' line" in r.stdout, r.stdout
+        assert remote_stops(r) == 1 and "S0 re-hashed" not in r.stdout
+
+    def test_deploy_stops_on_two_source_lines(self, tmp_path):
+        h = RemoteHarness(tmp_path)
+        h.recommit(h.s0_header() + h.s0_header())
+        r = h.connect("deploy")
+        assert r.returncode == 8 and "exactly one '# source PATH sha256 HEX' line" in r.stdout, r.stdout
+        assert remote_stops(r) == 1 and "S0 re-hashed" not in r.stdout
+
+    @pytest.mark.parametrize("which", ["path", "sha"])
+    def test_deploy_stops_on_a_source_other_than_the_rulings(self, tmp_path, which):
+        """A self-consistent header naming another file (or the same file at another sha256) is not the ruling's."""
+        h = RemoteHarness(tmp_path)
+        other = tmp_path / "other.sha256"
+        other.write_bytes(b"another file\n")
+        osha = hashlib.sha256(other.read_bytes()).hexdigest()
+        if which == "path":
+            h.recommit(h.s0_header(path=other, sha=osha))
+        else:
+            h.s0.write_bytes(b"another file\n")
+            h.recommit(h.s0_header(sha=osha))
+        r = h.connect("deploy")
+        assert r.returncode == 8 and "not the ruling's %s %s" % (h.s0, h.s0_sha) in r.stdout, r.stdout
+        assert remote_stops(r) == 1 and "S0 re-hashed" not in r.stdout
+
+    def test_committed_s0_header_and_constants_name_the_file_read(self):
+        """The real header and the script's constants: the path and sha256 the director's ruling names (the read of
+        2026-11-25T03:22:36Z), and exactly one source line."""
+        ruling = ["/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s0/build/MANIFEST.sha256",
+                  "fe0bc458b6bcbabcb3f589858e118e325a1c9d33de04edbdf677d06d5696f591"]
+        src = [ln.split() for ln in (HERE / "S0-src_base.sha256").read_text().splitlines() if ln.startswith("# source ")]
+        assert len(src) == 1 and src[0][2] == ruling[0] and src[0][3:5] == ["sha256", ruling[1]]
+        text = (HERE / "geanttw_remote.sh").read_text()
+        assert re.search(r"^S0_PATH=%s\s" % re.escape(ruling[0]), text, re.M)
+        assert re.search(r"^S0_SHA=%s$" % ruling[1], text, re.M)
+
+    @pytest.mark.parametrize("step", ["build", "p0", "check"])
+    def test_later_steps_need_a_passing_s0_rehash(self, tmp_path, step):
+        h = RemoteHarness(tmp_path)
+        h.s0.write_bytes(b"changed\n")
+        assert h.connect("deploy").returncode == 8   # the re-hash STOPs; the deploy itself is clean at M
+        r = h.connect(step, *([PAST] if step == "p0" else []))
+        assert r.returncode == 8 and "S0's MANIFEST.sha256 has no passing re-hash in %s" % (h.B / "deploy" / ".git" / "geanttw-s0-rehash.txt") \
+            in r.stdout, r.stdout
+        assert remote_stops(r) == 1 and not any(c.startswith(("build ", "smoke ", "sbatch ", "p0_check "))
+                                                 for c in h.calls_lines())
+
+    def test_a_stale_s0_record_does_not_pass(self, tmp_path):
+        h = RemoteHarness(tmp_path)
+        assert h.connect("deploy").returncode == 0
+        (h.B / "deploy" / ".git" / "geanttw-s0-rehash.txt").write_text("PASS %s %s\n" % (h.s0, "b" * 64))
+        r = h.connect("build")
+        assert r.returncode == 8 and "has no passing re-hash" in r.stdout and remote_stops(r) == 1
+
+    def test_unwritable_s0_record_stops(self, tmp_path):
+        """The deploy's .git is made read-only right after the checkout (a git wrapper), so the record cannot be
+        written; deploy STOPs rather than reporting a re-hash it did not record."""
+        h = RemoteHarness(tmp_path)
+        real = shutil.which("git")
+        _write_stub(h.bindir, "git", f'''
+"{real}" "$@"; rc=$?
+if [ "$1" = -C ]; then for a in "$@"; do [ "$a" = checkout ] && chmod 555 "$2/.git"; done; fi
+exit $rc
+''')
+        try:
+            r = h.connect("deploy")
+        finally:
+            (h.B / "deploy" / ".git").chmod(0o755)
+        rec = h.B / "deploy" / ".git" / "geanttw-s0-rehash.txt"
+        assert r.returncode == 8 and "STOP: cannot write %s" % rec in r.stdout, r.stdout
+        assert remote_stops(r) == 1 and "S0 re-hashed" not in r.stdout
+
+    @pytest.mark.skipif(hasattr(os, "O_NOATIME"), reason="needs a Python without O_NOATIME")
+    def test_deploy_refuses_a_python_without_noatime(self, tmp_path):
+        h = RemoteHarness(tmp_path)
+        r = h.connect("deploy", GEANTTW_TEST_NOATIME_OPTIONAL="0")
+        assert r.returncode == 8 and "STOP: the O_NOATIME re-hash of %s failed" % h.s0 in r.stdout, r.stdout
+        assert "this Python has no O_NOATIME" in r.stdout + r.stderr
+
+    def test_deploy_and_check_open_with_noatime(self, tmp_path):
+        """A Python whose os has O_NOATIME (a shim that logs each os.open's flags and strips the bit): the S0 re-hash
+        and the reference copy both pass it, and both run with O_NOATIME required."""
+        h = RemoteHarness(tmp_path)
+        log = tmp_path / "openflags.log"
+        shim = h.bindir / "pyshim"
+        shim.write_text(f"#!{sys.executable}\n" + textwrap.dedent('''
+            import os, sys
+            FAKE = 1 << 40
+            argv = sys.argv[1:]
+            if argv[:2] == ["-I", "-"]:
+                code = sys.stdin.read()
+                os.O_NOATIME = FAKE
+                real = os.open
+                def logged(path, flags, *a, **k):
+                    with open(os.environ["TEST_OPENFLAGS"], "a") as f:
+                        f.write("%s %d\\n" % (path, 1 if flags & FAKE else 0))
+                    return real(path, flags & ~FAKE, *a, **k)
+                os.open = logged
+                sys.argv = ["-"] + argv[2:]
+                exec(compile(code, "<stdin>", "exec"), {"__name__": "__main__"})
+            else:
+                os.execv(sys.executable, [sys.executable] + argv)
+            '''))
+        shim.chmod(0o755)
+        kw = dict(GEANTTW_TEST_PY=str(shim), GEANTTW_TEST_NOATIME_OPTIONAL="0", TEST_OPENFLAGS=str(log))
+        assert h.connect("deploy", **kw).returncode == 0
+        assert h.connect("build", **kw).returncode == 0
+        assert h.connect("p0", PAST, **kw).returncode == 0
+        for b in ("pin", "pat"):
+            (h.B / "run" / "p0" / b / f"runEventLoopOmniFold_GEANTTW_{b}_1L.root").write_text(f"dump {b}\n")
+        assert h.connect("check", **kw).returncode == 0
+        assert log.read_text().splitlines() == [f"{h.s0} 1", f"{h.ref} 1"]
+
+    def test_connect_never_uses_an_ssh_master(self, tmp_path):
+        """Without GEANTTW_SSH the connect runs ssh itself, with a fresh connection and no prompts."""
+        h = RemoteHarness(tmp_path)
+        _write_stub(h.bindir, "ssh", 'echo "ssh $*" >> "$TEST_CALLS"; exit 255')
+        e = h.env()
+        del e["GEANTTW_SSH"]
+        r = _run(["bash", str(CONNECT_SH), "deploy", h.M, "cov2d:ack-0001", "nue:ack-0001"], e, timeout=60)
+        assert r.returncode == 8 and "cov2d_fence.sh exited 255" in r.stdout, r.stdout
+        assert h.calls_lines() == ["ssh -o ControlMaster=no -o ControlPath=none -o BatchMode=yes -o ProxyJump=none "
+                                   "-o ProxyCommand=none perlmutter.nersc.gov bash -s"]
+
+    def test_a_replacement_checkout_needs_its_own_rehash(self, tmp_path):
+        """deploy/ replaced by a clean checkout at M (run/ kept): the old pass does not carry over."""
+        h = RemoteHarness(tmp_path)
+        assert h.connect("deploy").returncode == 0
+        d = h.B / "deploy"
+        shutil.rmtree(d)
+        subprocess.run(["git", "clone", "-q", str(h.repo), str(d)], check=True)
+        subprocess.run(["git", "-C", str(d), "-c", "advice.detachedHead=false", "checkout", "-q", h.M], check=True)
+        r = h.connect("build")
+        assert r.returncode == 8 and "has no passing re-hash" in r.stdout and remote_stops(r) == 1, r.stdout
+        assert not any(c.startswith("build ") for c in h.calls_lines())
+
+    def test_ssh_override_outside_the_tests_refuses(self, tmp_path):
+        h = RemoteHarness(tmp_path)
+        _write_stub(h.bindir, "ssh", 'echo "ssh $*" >> "$TEST_CALLS"; exit 255')
+        e = h.env()
+        del e["GEANTTW_TEST_B"]
+        r = _run(["bash", str(CONNECT_SH), "deploy", h.M, "cov2d:ack-0001", "nue:ack-0001"], e, timeout=60)
+        assert r.returncode == 9 and "REFUSED: GEANTTW_SSH is honoured only by the tests" in r.stdout, r.stdout
+        assert not h.calls_lines()
 
     def test_deploy_twice_refuses(self, tmp_path):
         h = RemoteHarness(tmp_path)

@@ -62,6 +62,11 @@ No outcome is a coverage statement, a mechanism ruling or an adoption.
 - **How it was read:** with O_NOATIME, on 2026-11-25T03:22:36Z; the atime was unchanged. ⚠ That read happened after
   the cert's stated expiry, 2026-11-25T01:36:35Z, through an ssh master connection that was still open. It is disclosed
   to the director; §7 now forbids it.
+- **The director's ruling (2026-11-25):** the read stands provisionally. P0's first connect under a fresh certificate
+  (`deploy`) re-hashes the file with O_NOATIME and STOPs unless it is still `fe0bc458…`. `geanttw_remote.sh` pins the
+  ruling's path and sha256 (`S0_PATH`, `S0_SHA`), and this file must have exactly one `# source` line naming the same
+  two. A passing re-hash is recorded inside the checkout's own `.git` (`deploy/.git/geanttw-s0-rehash.txt`, which no
+  porcelain check sees), and `build`, `p0` and `check` refuse without it, so a replacement checkout has none.
 - **What a check on 2026-11-24 found:** the canonical tree matched all 46 rows (none differing, missing or extra), and
   M's 10 tracked files matched their rows, including `build_mp1_s0.sh:28-34`'s pins.
 
@@ -110,7 +115,8 @@ Four connect steps, each on its own go: `deploy`, `build`, `p0` and `check`.
 
 1. **`deploy`.** Clone the repository at M into `B/deploy`. STOP unless it is clean at M. Print the sha256s of every file the cluster runs: `geanttw_remote.sh`,
    `geanttw_build.sh`, `geanttw_evloop.sbatch`, `geanttw_sacct.py`, `geanttw_provenance.py`, `dumpcmp.py`, `p0_check.py`
-   and `S0-src_base.sha256`.
+   and `S0-src_base.sha256`. Then re-hash S0's `MANIFEST.sha256` with O_NOATIME, and STOP unless its sha256 is the
+   ruling's `fe0bc458…` (§2). A Python without O_NOATIME refuses rather than reading normally.
 2. **`build`.** This is login-node work, run with `nice -n 19`, and costs 0 node-h.
    - Clone MAT and MAT-MINERvA at the pins. Make the patched source by `git cherry-pick 3e411c0d`, then run the
      DIFF_EQUALS_UPSTREAM check.
@@ -211,7 +217,7 @@ proposal's phase numbers still hold.
   - **(ii) a bound miss override,** which carries P2's patched `mc_truth_denom` weights onto the miss rows, after
     `docs/orchestration/state/2d-closeout/stageB/diagnostics/p5/build_miss_override.py`.
 - **Control C3, before any patched number is read.** C3 compares the pinned run of M's driver with S5's committed
-  band matrices in `production_cov.npz` (`6689d2fc…`), per element. There are three: `band_GEANT_Neutron`,
+  band matrices in `production_cov.npz` (`6689d2fc…`), band by band. There are three: `band_GEANT_Neutron`,
   `band_GEANT_Pion` and `band_GEANT_Proton`, each built by `s5_rollup.py` from the band's two universe unfolds.
   C3 builds its three the same way.
   - **Why C3 is needed:** S5 took its GEANT unfolds from the July sweep
@@ -332,6 +338,15 @@ The campaign STOPS on any of the following:
 - a needed code change outside §8;
 - **no valid NERSC certificate.** A connect runs only on a certificate Joseph has renewed for it. An ssh master
   connection that is still open after the certificate expires is **not** a valid certificate (see §2's disclosure).
+  The connect's ssh never uses a master or a jump client (`-o ControlMaster=no -o ControlPath=none -o BatchMode=yes -o ProxyJump=none -o ProxyCommand=none`),
+  so each call authenticates afresh and fails rather than prompting. Calls may land on different login nodes; every
+  step keeps its state on `/pscratch`. Only the tests can replace that command: the connect refuses
+  `GEANTTW_SSH` outside them.
+- **The tests' door is not a guard.** Both scripts honour test-only variables (`GEANTTW_TEST_B`, `GEANTTW_SSH` and
+  the rest) that redirect paths and the ssh command. Setting them for a real connect is a deliberate bypass the code
+  cannot prevent, and it is forbidden: a connect runs with none of them set. Likewise, the S0 record is written
+  into the checkout that `deploy` verified; someone swapping `deploy/` by hand while `deploy` runs could misplace it.
+  That too is a deliberate act, and `deploy/` is touched only by `geanttw_remote.sh`.
 - a director's stop.
 
 **Records.** Each phase ends in a `[receipt]` PR. Each holds scripts and committed outputs, sha256s, the measured
@@ -343,8 +358,8 @@ All files are in `code/`. Every step that runs is the committed bytes at M.
 
 | file | role |
 |---|---|
-| `geanttw_connect.sh` | the Mac side: `connect STEP M COV2D_ACK NUE_ACK [ARG]`, with STEP one of `deploy`, `build`, `p0`, `check`. It requires both acks, as tokens, and prints them. It reads `cov2d_fence.sh` rev 3 and `geanttw_remote.sh` with `git show M:…`, never from the working tree. It runs the fence on the login node and STOPs on any nonzero rc. Then it either streams `geanttw_remote.sh` (`deploy`) or first checks that the deploy's copy has the sha256 of M's blob. |
-| `geanttw_remote.sh` | the login-node steps of §4 P0. It refuses off a login node or inside a Slurm job, and appends every step's acks to `run/acks.log`. `build`, `p0` and `check` STOP unless the deploy is clean at M. |
+| `geanttw_connect.sh` | the Mac side: `connect STEP M COV2D_ACK NUE_ACK [ARG]`, with STEP one of `deploy`, `build`, `p0`, `check`. It requires both acks, as tokens, and prints them. It reads `cov2d_fence.sh` rev 3 and `geanttw_remote.sh` with `git show M:…`, never from the working tree. It runs the fence on the login node and STOPs on any nonzero rc. Then it either streams `geanttw_remote.sh` (`deploy`) or first checks that the deploy's copy has the sha256 of M's blob. Its ssh opens a fresh connection every time (§7). |
+| `geanttw_remote.sh` | the login-node steps of §4 P0. It refuses off a login node or inside a Slurm job, and appends every step's acks to `run/acks.log`. `build`, `p0` and `check` STOP unless the deploy is clean at M. `deploy` STOPs unless S0's `MANIFEST.sha256` re-hashes (O_NOATIME) to the ruling's sha256; the other three steps STOP unless that re-hash is recorded. Every O_NOATIME read refuses on a Python without the flag. |
 | `geanttw_sacct.py` | `fence`, fail-closed on sacct rows, and `cap`, the 8.0 node-h gate at 0.0391 node-h/h, counting sacct's spent and held jobs plus the unlisted submissions. Python 3.6. |
 | `geanttw_build.sh` | the login-node build and its five CHECKs (§2). It writes each prefix's `setup.sh` and the three data symlinks. Pin, canonical-source and production-opt overrides exist only for the tests (`GEANTTW_SMOKE_B`). |
 | `geanttw_provenance.py` and `S0-src_base.sha256` | SOURCE_PROVENANCE: the synced tree against MP-1 S0's committed 46 rows, plus M's tracked files. Python 3.6. |
@@ -354,8 +369,8 @@ by `geanttw_remote.sh`), not from `sacct -j`, and it stops before the second fen
 binary. It logs the NuE atime/mtime before and after, runs strace in P0, and writes the output via `.partial` with mode 0440. Its build variable is `GBUILD`, not `BUILD`: the ROOT env's conda activation exports `BUILD`, which overwrote RDX's (`fd/redump-f12i-20261112/RDX-BINDING-1.md:189-190`). |
 | `dumpcmp.py` | bitwise, branch-by-branch, entry-by-entry comparison of two dumps, at each tree's highest cycle. It takes an exempt regex (C0d) and an allowed-extras regex (C0f). No key join: C2's comes with the P2 package. |
 | `p0_check.py` | C0a–C0f and build.log's CHECKs, with the allowed read families fixed in code |
-| `tests/` | pytest. The Python half uses synthetic ROOT fixtures (uproot) and strace logs in `-f` formats. The shell half uses stubbed `sacct`/`sbatch`/`ssh`/`conda`/`ldd`/`strace`/`readelf`/`cmake`/`make` (a stub `squeue` fails if called) and local git repositories. The full run paths are executed, not grepped. Which refusals no test notices is `mutation.out`'s to say, not this table's. Tests added for mutants the earlier runs left alive assert the refusal's own message, and in the launcher (`only_refusal`) also that it is the only REFUSE, since a guard whose `exit` is removed still prints its message. |
-| `mutation.py` → `mutation.out` | single-site planted mutants. In the Python modules these are operator, keyword and verdict-literal tokens, found by Python's tokenizer, so string text is never mutated. In the shell scripts they are each refusal's `exit` or `bail`/`stop` call (after `||`, `&&` or a `case` label), and each `==`, `!=`, `-eq` and `-ne` on a refusal, `CHECK` or `[[` line. `=~`, `<`, `>` and the unary tests are not mutated. Each mutant runs its owner's test file in a scratch copy. A mutant whose tests time out is counted as not killed. |
+| `tests/` | pytest. The Python half uses synthetic ROOT fixtures (uproot) and strace logs in `-f` formats. The shell half uses stubbed `sacct`/`sbatch`/`ssh`/`conda`/`ldd`/`strace`/`readelf`/`cmake`/`make` (a stub `squeue` fails if called) and local git repositories. The full run paths are executed, not grepped. Which refusals no test notices is `mutation.txt`'s to say, not this table's. Tests added for mutants the earlier runs left alive assert the refusal's own message or, where a refusal prints none, its exit code and that the step after it did not run; in the launcher (`only_refusal`) also that it is the only REFUSE, since a guard whose `exit` is removed still prints its message. |
+| `mutation.py` → `mutation.txt` | single-site planted mutants. In the Python modules these are operator, keyword and verdict-literal tokens, found by Python's tokenizer, so string text is never mutated. In the shell scripts they are each refusal's `exit` or `bail`/`stop` call (after `||`, `&&` or a `case` label), and each `==`, `!=`, `-eq` and `-ne` on a refusal, `CHECK` or `[[` line. `=~`, `<`, `>` and the unary tests are not mutated. Each mutant runs its owner's test file in a scratch copy. A mutant whose tests time out is counted as not killed. |
 | `linetrace.py` → `linetrace.txt` | line trace under the tests: coverage.py for Python, including the tests' `python3 -I` subprocesses; a DEBUG-trap trace for the shell scripts (bash 3.2 has no `BASH_XTRACEFD`). Inside a command substitution that continues over `\` lines, bash 3.2 reports the command's last line, so a hit on a continuation line counts for the line its command starts on. It lists every executable line no test reaches. |
 
 Before the first contact, the launcher's smoke mode runs locally, as a stand-in, against a fake B (the tests above).
