@@ -1,5 +1,7 @@
 # RE-2 integration into the note, paper and primer: report (2026-10-24)
 
+**Status (2026-11-25).** `check_ledger.py` binds RE-2's 2026-10-24 note, paper and primer text. No CI workflow, `build_all.sh` or hook runs it. At main 2231cc6c it reports `LEDGER :: FAIL (V 240, M 5, F 94, G 1 rows; 305 failures)`, so the PASS below holds for the 10-24 text only and is NOT citable for the current note.
+
 **Status.** Joseph approved the wording on 2026-10-24 (`DECISION-20261024-joseph-approve-integration-wording-s1-compute-preserve.md`): "okay I like the new wording." The branch
 `stageF/re2-integration-20261024` is merged to `main` with the open sites below closed ("Merge", at the end).
 - The batch landed only after that approval (DECISION-20261024-joseph-adopt-re2-2d-refined.md item 3).
