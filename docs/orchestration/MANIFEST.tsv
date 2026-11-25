@@ -8653,6 +8653,25 @@ docs/orchestration/state/gate6-member-code-identity-split-56834281.json	tracked	
 docs/orchestration/state/gate6-member-trajectories-result-56847059.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/gate6-ml-ensemble-result-56834281.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/gate6-trajectory-array-active-56847059.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/DECLARATION.md	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/SHA256SUMS-P0	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/S0-src_base.sha256	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/dumpcmp.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/geanttw_build.sh	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/geanttw_connect.sh	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/geanttw_evloop.sbatch	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/geanttw_provenance.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/geanttw_remote.sh	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/geanttw_sacct.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/linetrace.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/linetrace.txt	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/mutation.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/mutation.txt	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/p0_check.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/tests/test_dumpcmp.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/tests/test_p0_check.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/tests/test_provenance_sacct.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/tests/test_shell_scripts.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
 docs/orchestration/state/gen_divergence_manifest_cstat_data_only.py	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/gen_manifest_run_bound_addendum.py	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/gpu-timing-20261023/ASSIGNMENT.md	tracked	LIVE	state-artifact	gpu-timing-20261023		open		route-only	no
@@ -10149,6 +10168,48 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/e96-data-202
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/e96-data-20261110/receipts/dry-20261111/connect/fence.session.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/e96-data-20261110/receipts/dry-20261111/connect/post-dry-1.session.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/e96-data-20261110/receipts/dry-20261111/connect/post-dry-2.session.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/EVW5D-BINDING-1.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/EVW5D-DECLARATION.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/FOLLOWUPS.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/bound/PINS.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/bound/evw5d_connect.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/bound/evw5d_hpss.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/bound/evw5d_launch.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/bound/evw5d_post.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_connect.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_hpss.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_launch.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_post.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/fill_pins.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/mutation-subset.json.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/mutation.json.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r1/codex-school/inputs-check.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r1/codex-school/model.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r1/codex-school/report.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r1/codex-school/started.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r1/inputs.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r1/prompt.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r2/claude-personal-sonnet/receipt.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r2/claude-personal-sonnet/report.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r2/codex-school/inputs-check.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r2/codex-school/model.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r2/codex-school/report.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r2/codex-school/started.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r2/inputs.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r2/prompt.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r3-sonnet-rev5/claude-personal-sonnet/receipt.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r3-sonnet-rev5/claude-personal-sonnet/report.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r3-sonnet-rev5/inputs.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r3-sonnet-rev5/prompt.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r3/claude-personal-sonnet-not-run/attempt1.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r3/claude-personal-sonnet-not-run/attempt2.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r3/codex-school/inputs-check.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r3/codex-school/model.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r3/codex-school/report.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r3/codex-school/started.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r3/inputs.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r3/prompt.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/tests.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/figures/fd_g_fig_modes.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/figures/fd_g_fig_modes.pdf	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/figures/fd_g_fig_ratio.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
