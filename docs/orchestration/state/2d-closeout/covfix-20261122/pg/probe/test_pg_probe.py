@@ -140,7 +140,16 @@ class Repo(Tmp):
         del s.xattrs["user.fqrn"]
         r = P.verify_repo(str(s.repo), s.mounts, s.xattr)
         self.assertFalse(r["pass"])
-        self.assertTrue(any("xattr user.fqrn" in p for p in r["problems"]))
+        self.assertTrue(any(p.startswith("repo-xattr: xattr user.fqrn") for p in r["problems"]))
+
+    def test_an_empty_revision_or_root_hash_fails(self):
+        for k in ("user.revision", "user.root_hash"):
+            with self.subTest(k):
+                self.fresh()
+                s = Stub(self.tmp)
+                s.xattrs[k] = " "
+                r = P.verify_repo(str(s.repo), s.mounts, s.xattr)
+                self.assertIn(f"repo-xattr-empty: {k} is empty", r["problems"])
 
     def test_mount_rules(self):
         s = Stub(self.tmp)
@@ -224,7 +233,7 @@ class Genie(Tmp):
         mid = Path(self.tmp) / "repolink"
         mid.symlink_to(s.repo)
         r = P.verify_genie(str(mid / "products/genie/v3_04_00"), s.pins)
-        self.assertEqual(r["problems"], [f"{mid}/products/genie/v3_04_00 is not its own real path"])
+        self.assertEqual(r["problems"], [f"genie-realpath: {mid}/products/genie/v3_04_00 is not its own real path"])
 
     def test_walk_refuses_odd_paths(self):
         s = Stub(self.tmp)
@@ -253,6 +262,8 @@ class Xsec(Tmp):
             "a spline differs": lambda s: (s.xsec / "G1802a00000-k250-e1000/data/gxspl-NUsmall.xml").write_text("x"),
             "a config-like name in data/": lambda s: (s.xsec / "G1802a00000-k250-e1000/data/ModelConfiguration.xml")
                                                       .write_text("x"),
+            "a name outside the data allowlist": lambda s: (s.xsec / "G1802a00000-k250-e1000/data/rootlogon.C")
+                                                            .write_text("x"),
             "no dbconfig": lambda s: (s.repo / "products/.upsfiles/dbconfig").unlink(),
             "the qualifier only under another case": lambda s: (s.xsec / "AR2320i00000-k250-e1000").rename(
                 s.xsec / "ar2320i00000-k250-e1000"),
@@ -262,7 +273,26 @@ class Xsec(Tmp):
                 self.fresh()
                 s = Stub(self.tmp)
                 change(s)
-                self.assertTrue(P.verify_xsec(str(s.repo), s.pins)["problems"], name)
+                probs = P.verify_xsec(str(s.repo), s.pins)["problems"]
+                want = {"a required qualifier missing": "xsec-qualifiers:", "a spline differs": "xsec-files:",
+                        "a config-like name in data/": "xsec-data-names:", "a name outside the data allowlist":
+                        "xsec-data-names:", "no dbconfig": "xsec-dbconfig:",
+                        "the qualifier only under another case": "xsec-qualifiers:"}[name]
+                self.assertTrue(any(x.startswith(want) for x in probs), (name, probs))
+
+    def test_another_mount_inside_a_walk_fails(self):
+        # the walks never leave the root's device: a file, a directory or a listed entry on another mount
+        cases = [c for c in (("/", "dev/null", "sha"), ("/", "proc/self/status", "sha"), ("/", "System/Volumes", "list"))
+                 if os.path.exists("/" + c[1])]
+        cases = [c for c in cases if os.stat("/").st_dev != os.stat("/" + c[1].split("/")[0]).st_dev
+                 or c[2] == "list"]
+        self.assertTrue(cases, "no cross-mount path on this host")
+        fd = os.open("/", os.O_RDONLY)
+        self.addCleanup(os.close, fd)
+        for root, rel, kind in cases:
+            with self.subTest(rel), self.assertRaises(P.Unverified) as cm:
+                (P.sha_rel if kind == "sha" else P.list_rel)(fd, rel)
+            self.assertIn("another mount", str(cm.exception))
 
 
 # ------------------------------------------------------------------------------------------------------------ tools
@@ -331,7 +361,9 @@ MODES = {"good": 'printf \'9 openat(AT_FDCWD, "%s", O_RDONLY) = 3\\n9 +++ exited
          "no-open": 'printf \'9 +++ exited with 0 +++\\n\' > "$out"',
          "killed": 'printf \'9 openat(AT_FDCWD, "%s", O_RDONLY) = 3\\n9 +++ killed by SIGKILL +++\\n\' "$2" > "$out"',
          "truncated": 'printf \'9 openat(AT_FDCWD, "%s", O_RDONLY) = 3\\n9 +++ exited with 0 +++\' "$2" > "$out"',
-         "empty": ': > "$out"', "rc": 'printf \'9 +++ exited with 0 +++\\n\' > "$out"; exit 4'}
+         "empty": ': > "$out"', "rc": 'printf \'9 +++ exited with 0 +++\\n\' > "$out"; exit 4',
+         "child-exit": 'printf \'9 openat(AT_FDCWD, "%s", O_RDONLY) = 3\\n10 +++ exited with 1 +++\\n9 +++ exited with 0 +++\\n\' "$2" > "$out"',
+         "unresumed": 'printf \'9 openat(AT_FDCWD, "%s", O_RDONLY) = 3\\n10 openat(AT_FDCWD, "/x", O_RDONLY <unfinished ...>\\n10 +++ exited with 0 +++\\n9 +++ exited with 0 +++\\n\' "$2" > "$out"'}
 
 
 class SelfTest(Tmp):
@@ -348,12 +380,13 @@ class SelfTest(Tmp):
 
     def test_modes(self):
         self.assertTrue(self.run_mode("good")["pass"])
-        for mode, want in (("no-open", "self-test's open"), ("killed", "killed"), ("truncated", "truncated"),
-                           ("empty", "empty"), ("rc", "strace exited 4")):
+        for mode, want in (("no-open", "self-test-open: "), ("killed", "killed: "), ("truncated", "truncated: "),
+                           ("empty", "empty: "), ("rc", "strace-rc: strace exited 4"), ("child-exit", "child-exit: "),
+                           ("unresumed", "unresumed: ")):
             with self.subTest(mode):
                 r = self.run_mode(mode)
                 self.assertFalse(r["pass"])
-                self.assertTrue(any(want in x for x in r["problems"]), r["problems"])
+                self.assertTrue(any(x.startswith(want) for x in r["problems"]), r["problems"])
         self.assertEqual([n for n in os.listdir(self.tmp) if n.startswith("pgst")], [])     # cleaned up
 
 
@@ -490,6 +523,21 @@ class Gpg(Tmp):
         self.assertFalse(r["confined"])
         self.assertTrue(any("not directly in the socket dir" in p for p in r["socket_problems"]))
         self.assertFalse(r["pass"])
+
+    def test_run_user_must_not_be_writable_by_others(self):
+        base = self.run_base()
+        os.chmod(os.path.join(base, str(os.getuid())), 0o777)
+        r = self.check(self.bins(base=base), base=base)
+        self.assertFalse(r["pass"])
+        self.assertTrue(any(p.startswith("socketdir-owner:") for p in r["socket_problems"]), r["socket_problems"])
+
+    def test_a_socket_that_is_a_link_fails(self):
+        h = os.path.realpath(self.tmp)
+        os.symlink("/elsewhere", os.path.join(h, "S.gpg-agent"))
+        ok, _, probs = P.check_sockets({"homedir": h, "socketdir": h, "agent-socket": h + "/S.gpg-agent"}, h,
+                                       os.getuid(), "")
+        self.assertFalse(ok)
+        self.assertEqual(probs, [f"socket-link: agent-socket {h}/S.gpg-agent is a link"])
 
     def test_a_failing_list_dirs_runs_nothing_else(self):
         r = self.check(self.bins(list_rc=2))
@@ -696,6 +744,22 @@ class Constants(unittest.TestCase):
         self.assertEqual(P.TRACE_SET, pg_verify.TRACE_SET)
         self.assertIn(f'-e "{P.TRACE_SET}"', (REPO / "3d-unfolding/genie/run_gevgen_v3.sh").read_text())
 
+    def test_a_crash_is_its_own_reason(self):
+        import contextlib
+        real = P.probe
+        def boom():
+            raise KeyError("x")
+        P.probe = boom
+        out = io.StringIO()
+        try:
+            with contextlib.redirect_stdout(out):
+                rc = P.main()
+        finally:
+            P.probe = real
+        self.assertEqual(rc, 3)
+        rec = json.loads(out.getvalue().splitlines()[-1].split(" ", 1)[1])
+        self.assertEqual(rec["stops"], ["internal-error: KeyError"])
+
     def test_identity_rules(self):
         self.assertFalse(P.identity()["pass"])                     # this laptop is not a login node
 
@@ -780,6 +844,7 @@ class Launcher(Tmp):
                  edit(lambda r: r["xsec"].update(qualifiers=[])),
                  edit(lambda r: r["xsec"]["dbconfig"].update(sha256=None)),
                  edit(lambda r: r["tools"]["strace"].update(rpm_match=False)), edit(lambda r: r["tools"].pop("gpg")),
+                 edit(lambda r: r["tools"]["strace"].update(rpm_match=1)),            # 1 == True, but not True
                  edit(lambda r: r["tools"]["gpg"].update(problem="x")),
                  edit(lambda r: r["strace_self_test"].update({"pass": 1})),
                  edit(lambda r: r["gpg"].update(gpg_started=False)),

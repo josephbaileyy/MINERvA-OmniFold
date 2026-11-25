@@ -27,7 +27,8 @@ def load(name, file):
 I = load("pg_install", HERE / "pg-install-g2111a.py")
 BR = load("build_record", HERE.parent / "record" / "build_record.py")
 Q = "genie_xsec/v3_04_00/NULL/Q"
-ENTRIES = [("genie_xsec", "dir", None), ("genie_xsec/v3_04_00", "dir", None), ("genie_xsec/v3_04_00/NULL", "dir", None),
+# the real shape: no container member (SciSoft's tarball starts at genie_xsec/v3_04_00)
+ENTRIES = [("genie_xsec/v3_04_00", "dir", None), ("genie_xsec/v3_04_00/NULL", "dir", None),
            (Q, "dir", None), (f"{Q}/data", "dir", None), (f"{Q}/data/gxspl-NUsmall.xml", "file", b"<spl/>\n" * 100),
            (f"{Q}/data/gxspl-FNALsmall.xml", "sym", "gxspl-NUsmall.xml"), (f"{Q}/data/README", "file", b"readme\n"),
            (f"{Q}/ups", "dir", None), (f"{Q}/ups/genie_xsec.table", "file", b"table\n")]
@@ -96,7 +97,7 @@ class Install(unittest.TestCase):
         make_tar(bad, ENTRIES[:-1])
         r = self.install(tar=bad)
         self.assertEqual(r["verdict"], "STOP")
-        self.assertIn("the download's sha256 differs", r["stops"][0])
+        self.assertTrue(r["stops"][0].startswith("download-sha: "), r["stops"])
         self.assertEqual(os.listdir(self.root / "dl"), [])
 
     def test_a_member_that_differs_from_its_pin_extracts_nothing(self):
@@ -110,11 +111,8 @@ class Install(unittest.TestCase):
                 self.setUp()
                 m = json.loads(json.dumps(self.members))
                 change(m)
-                try:
-                    r = self.install(members=m)
-                except Exception as e:                       # a crash is not a refusal
-                    self.fail(f"install crashed: {type(e).__name__}: {e}")
-                self.assertEqual(r["verdict"], "STOP")
+                r = self.install(members=m)
+                self.assertEqual(r["stops"], ["members: the tarball's members differ from the pins; nothing was extracted"])
                 self.assertTrue(r["scan_problems"])
                 self.assertFalse((self.root / "genie_xsec").exists())
 
@@ -130,20 +128,61 @@ class Install(unittest.TestCase):
     def test_dbconfig_must_be_the_pinned_one(self):
         r = self.install(dbconfig_sha="0" * 64)
         self.assertEqual(r["verdict"], "STOP")
-        self.assertIn("dbconfig differs from the pin", r["stops"][0])
+        self.assertTrue(r["stops"][0].startswith("dbconfig-sha: "), r["stops"])
         self.assertFalse((self.root / ".upsfiles").exists())
 
     def test_refusals_write_nothing(self):
-        for name, kw in (("identity", dict(ident=lambda: {"pass": False})), ("no dbconfig pin", dict(dbconfig_sha=None)),
-                         ("not on scratch", dict(scratch="/pscratch/"))):
+        for name, kw, code in (("identity", dict(ident=lambda: {"pass": False}), "identity: "),
+                               ("no dbconfig pin", dict(dbconfig_sha=None), "dbconfig-unpinned: "),
+                               ("not on scratch", dict(scratch="/pscratch/"), "root-place: ")):
             with self.subTest(name):
                 r = self.install(**kw)
-                self.assertEqual(r["verdict"], "STOP")
-                self.assertFalse(self.root.exists())
+                self.assertTrue(r["stops"][0].startswith(code), r["stops"])
+                self.assertFalse((self.tmp / "scratch").exists())                 # nothing at all was written
         self.root.mkdir(parents=True)
         r = self.install()
-        self.assertIn("already exists", r["stops"][0])
+        self.assertTrue(r["stops"][0].startswith("root-exists: "), r["stops"])
         self.assertEqual(os.listdir(self.root), [])
+
+    def test_scratch_is_checked_on_the_real_path(self):
+        (self.tmp / "elsewhere").mkdir()
+        (self.tmp / "scratch").symlink_to(self.tmp / "elsewhere")              # lexically on scratch, really not
+        r = self.install()
+        self.assertTrue(r["stops"][0].startswith("root-place: "), r["stops"])
+        self.assertEqual(os.listdir(self.tmp / "elsewhere"), ["covfix-pg"])
+        self.assertEqual(os.listdir(self.tmp / "elsewhere/covfix-pg"), [])
+
+    def test_the_real_listing_installs(self):
+        # the real G2111a listing's names, types and link targets (synthetic bytes): no container member
+        real = json.loads((HERE.parent / "record/G2111a-members.json").read_text())["members"]
+        self.assertNotIn("genie_xsec", real)
+        entries = [(n, {"file": "file", "dir": "dir", "symlink": "sym"}[m["type"]],
+                    n.encode() if m["type"] == "file" else m.get("target")) for n, m in sorted(real.items())]
+        tar = self.tmp / "real.tar.bz2"
+        make_tar(tar, entries)
+        members = BR.members(str(tar))
+        self.assertEqual({k: v["type"] for k, v in members.items()}, {k: v["type"] for k, v in real.items()})
+        r = self.install(tar=tar, members=members, tarball_sha=sha(tar.read_bytes()))
+        self.assertEqual(r["verdict"], "GO", r["stops"])
+        self.assertEqual(I.check_tree(str(self.root), members, readonly=True), [])
+
+    def test_a_writable_container_fails(self):
+        self.assertEqual(self.install()["verdict"], "GO")
+        os.chmod(self.root / "genie_xsec", 0o755)
+        self.assertIn("tree-container: genie_xsec is not a read-only directory",
+                      I.check_tree(str(self.root), self.members, readonly=True))
+
+    def test_upsfiles_must_hold_only_dbconfig(self):
+        self.assertEqual(self.install()["verdict"], "GO")
+        up = self.root / ".upsfiles"
+        os.chmod(up, 0o755)
+        (up / "extra").write_text("x")
+        self.assertTrue(any(p.startswith("upsfiles: ") for p in I.check_tree(str(self.root), self.members, True)))
+
+    def test_an_unexpected_exception_is_its_own_reason(self):
+        m = dict(self.members, **{"genie_xsec/v3_04_00": "dir"})          # a malformed pin: str, not a record
+        r = self.install(members=m)
+        self.assertEqual(r["stops"], ["internal-error: TypeError"])
 
     def test_check_tree_finds_changes(self):
         self.assertEqual(self.install()["verdict"], "GO")
@@ -158,14 +197,29 @@ class Install(unittest.TestCase):
         self.assertTrue(any("README: sha256 differs" in p for p in I.check_tree(str(self.root), self.members, False)))
 
 
+RP = load("pg_replay", HERE / "pg-replay-g2111a.py")
+EA = load("embed_archive", HERE / "embed_archive.py")
+GOOD_REPLAY = {"pass": True, "checks": {n: True for n in RP.REPLAY_CHECKS},
+               "spline_opened": {n: True for n in RP.REPLAY_CHECKS if n.startswith("trace_check")},
+               "gated": {n: [{"path": "/p", "sha256": "0" * 64}] for n in RP.REPLAY_CHECKS if n.startswith("trace_check")},
+               "real_shapes": {f"s{i}": True for i in range(4)}}
+GOOD_DELETED = {"genie_v3.gst.root": {"sha256": "a" * 64, "bytes": 10}, "gevgen.status": {"sha256": "b" * 64, "bytes": 1}}
+
 class NodeLaunch(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(os.path.realpath(tempfile.mkdtemp(prefix="pgl-", dir="/tmp")))
         self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
         self.L = load("pg_node_launch", HERE / "pg-node-launch.py")
-        self.script = self.tmp / "pg-install-g2111a.py"
-        self.script.write_text("print('hi')\n")
+        self.script = self.tmp / "pg-install-g2111a.py"          # the real script, its dbconfig pin filled
+        src = (HERE / "pg-install-g2111a.py").read_text()
+        self.assertEqual(src.count("DBCONFIG_SHA256 = None"), 1)
+        self.script.write_text(src.replace("DBCONFIG_SHA256 = None", f"DBCONFIG_SHA256 = {'d' * 64!r}"))
         self.sha = sha(self.script.read_bytes())
+        self.pins = self.L.script_pins(self.script.read_bytes())
+        self.go = {"schema": "covfix-pg-install/1", "verdict": "GO", "stops": [], "root": self.pins["ROOT"],
+                   "tarball_sha256_pin": self.pins["TARBALL_SHA256"], "tarball_sha256": self.pins["TARBALL_SHA256"],
+                   "n_members_pinned": len(I.MEMBERS["members"]), "dbconfig_sha256": "d" * 64, "scan_problems": [],
+                   "tree_problems": [], "identity": {"pass": True}, "install_utc": "t"}
 
     def launch(self, body, sha_=None, script=None):
         s = self.tmp / "ssh"
@@ -182,16 +236,45 @@ class NodeLaunch(unittest.TestCase):
 
     def test_receipts(self):
         out = Path(str(self.script) + ".out")
-        go = {"schema": "covfix-pg-install/1", "verdict": "GO", "stops": []}
+        go = self.go
         self.assertEqual(self.launch(self.emit(go, 0)), 0)
         self.assertEqual((self.tmp / "stdin").read_bytes(), self.script.read_bytes())
         for i, (rec, rc) in enumerate(((dict(go, schema="covfix-pg-replay/1"), 0), (dict(go, stops=["x"]), 0),
-                                       (dict(go, verdict="STOP"), 3), (go, 3), ({"verdict": "GO"}, 0))):
+                                       (dict(go, verdict="STOP"), 3), (go, 3), ({"verdict": "GO"}, 0),
+                                       (dict(go, root="/elsewhere"), 0))):                # a payload off its pins
             with self.subTest(i):
                 out.unlink()
                 self.assertEqual(self.launch(self.emit(rec, rc)), 4)
         out.unlink()
         self.assertEqual(self.launch(self.emit(dict(go, verdict="STOP", stops=["x"]), 3)), 3)
+
+    def test_install_payloads(self):
+        for k, v in (("root", "/elsewhere"), ("tarball_sha256", "0" * 64), ("n_members_pinned", 16),
+                     ("dbconfig_sha256", "e" * 64), ("scan_problems", ["x"]), ("tree_problems", None),
+                     ("identity", {"pass": 1}), ("install_utc", None)):
+            with self.subTest(k):
+                self.assertNotEqual(self.L.payload_problems(dict(self.go, **{k: v}), "covfix-pg-install/1", self.pins), [])
+        self.assertEqual(self.L.payload_problems(self.go, "covfix-pg-install/1", self.pins), [])
+        ok, why = self.L.validate("PG-RESULT " + json.dumps(dict(self.go, root="/x")), 0, "covfix-pg-install/1", self.pins)
+        self.assertEqual((ok, why), (False, "payload: ['root or tarball pin']"))
+
+    def test_replay_payloads(self):
+        blobs = {"a": "0" * 40, "b": "1" * 40}
+        pins = {"COMMIT": "c" * 40, "ARCHIVE_SHA256": "a" * 64, "BLOBS_JSON": json.dumps(blobs)}
+        rec = {"schema": "covfix-pg-replay/1", "verdict": "GO", "stops": [], "commit": "c" * 40,
+               "archive_sha256_pin": "a" * 64, "archive_sha256": "a" * 64, "n_blobs": 2, "n_files_checked": 2,
+               "driver_rc": 0, "identity": {"pass": True}, "deleted": GOOD_DELETED,
+               "replay": {k: GOOD_REPLAY[k] for k in ("checks", "spline_opened", "real_shapes", "pass")}}
+        self.assertEqual(self.L.payload_problems(rec, "covfix-pg-replay/1", pins), [])
+        r2 = json.loads(json.dumps(rec))
+        r2["replay"]["checks"] = {}
+        for name, bad, want in (("commit", dict(rec, commit="d" * 40), "commit, archive pin or blob count"),
+                                ("driver rc", dict(rec, driver_rc=1), "a GO without its archive, blobs, driver rc or identity"),
+                                ("empty checks", r2, "replay checks"),
+                                ("deleted", dict(rec, deleted={}), "deleted files")):
+            with self.subTest(name):
+                self.assertEqual(self.L.payload_problems(bad, "covfix-pg-replay/1", pins), [want])
+        self.assertEqual(self.L.REPLAY_CHECKS, RP.REPLAY_CHECKS)
 
     def test_refusals_and_options(self):
         self.assertEqual(self.launch("exit 0", sha_="0" * 64), 5)
@@ -204,12 +287,13 @@ class NodeLaunch(unittest.TestCase):
         self.assertEqual((self.L.SSH_OPTS, self.L.REMOTE, self.L.HOST), (PL.SSH_OPTS, PL.REMOTE, PL.HOST))
 
 
-RP = load("pg_replay", HERE / "pg-replay-g2111a.py")
-EA = load("embed_archive", HERE / "embed_archive.py")
 DRIVER = """#!/bin/bash
 [ "$1" = --workdir ] || exit 2
 echo "[replay] stub $PG_STUB_RC"
-printf '{"pass": %s, "checks": {"x": true}, "spline_opened": {}, "gated": {}}' "${PG_STUB_PASS:-true}" > "$2/replay.json"
+mkdir -p "$2/work/t0"
+printf '%s' "${PG_STUB_REPLAY:-$GOOD_REPLAY}" > "$2/replay.json"
+printf '%s' "${PG_STUB_DELETED:-$GOOD_DELETED}" > "$2/deleted.json"
+[ -z "$PG_STUB_LEFT" ] || echo x > "$2/work/t0/$PG_STUB_LEFT"
 exit ${PG_STUB_RC:-0}
 """
 
@@ -238,7 +322,8 @@ class Replay(unittest.TestCase):
 
         def run(argv, **k):
             self.seen.append(argv)
-            k["env"] = dict(k["env"], **(env or {}))
+            k["env"] = dict(k["env"], GOOD_REPLAY=json.dumps(GOOD_REPLAY), GOOD_DELETED=json.dumps(GOOD_DELETED),
+                            **(env or {}))
             return subprocess.run(argv[5:], **k)                 # without nice and timeout, which macOS lacks
         import datetime as dt
         self.calls = getattr(self, "calls", 0) + 1                # a distinct replay directory per call
@@ -296,7 +381,25 @@ class Replay(unittest.TestCase):
         self.assert_stop(self.run_replay(ident=lambda: {"pass": False}), "identity")
         self.assert_stop(self.run_replay(commit="", archive_b64=""), "not embedded")
         self.assert_stop(self.run_replay(env={"PG_STUB_RC": "4"}), "exited 4")
-        self.assert_stop(self.run_replay(env={"PG_STUB_PASS": "false"}), "did not all pass")
+        for name, env, code in (
+                ("pass false", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, **{"pass": False}))}, "replay-record"),
+                ("an empty checks map", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, checks={}))}, "replay-record"),
+                ("a check missing", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, checks={
+                    n: True for n in RP.REPLAY_CHECKS[:-1]}))}, "replay-record"),
+                ("three shapes", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, real_shapes={"a": True, "b": True,
+                                                                                               "c": True}))}, "replay-record"),
+                ("a spline open false", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, spline_opened=dict(
+                    GOOD_REPLAY["spline_opened"], **{"trace_check_gevgen.json": False})))}, "replay-record"),
+                ("no gated files", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, gated={}))}, "replay-record"),
+                ("one run's gated list empty", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, gated=dict(
+                    GOOD_REPLAY["gated"], **{"trace_check_gevgen.json": []})))}, "replay-record"),
+                ("no gst in deleted", {"PG_STUB_DELETED": json.dumps({"gevgen.status": GOOD_DELETED["gevgen.status"]})},
+                 "deleted-record"),
+                ("another name deleted", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, **{"x.root": {}}))},
+                 "deleted-record"),
+                ("an event file left", {"PG_STUB_LEFT": "gntp.123456789.ghep.root"}, "deleted-record")):
+            with self.subTest(name):
+                self.assert_stop(self.run_replay(env=env), f"Stop: {code}: ")
 
     def test_embed_refuses_links(self):
         (self.repo / "3d-unfolding/genie/l").symlink_to("gen5d_v3.py")

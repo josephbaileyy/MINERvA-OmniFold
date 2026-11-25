@@ -1,15 +1,1 @@
-........................................................................ [ 80%]
-..................                                                       [100%]
-=============================== warnings summary ===============================
-nd-unfolding/tests/test_pg_verify.py::Members::test_members_check
-nd-unfolding/tests/test_pg_verify.py::Members::test_members_check
-nd-unfolding/tests/test_pg_verify.py::Members::test_members_check
-nd-unfolding/tests/test_pg_verify.py::Members::test_members_check
-nd-unfolding/tests/test_pg_verify.py::Members::test_members_check
-nd-unfolding/tests/test_pg_verify.py::Members::test_members_check
-nd-unfolding/tests/test_pg_verify.py::Members::test_members_check
-  /Users/josephbailey/miniconda3/lib/python3.12/tarfile.py:2221: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.
-    warnings.warn(
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-90 passed, 7 warnings in 183.06s (0:03:03)
+135 passed, 1 skipped, 7 warnings in 226.16s (0:03:46)

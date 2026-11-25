@@ -24,13 +24,13 @@ PG_TRACE=()
 pg_trace() {   # pg_trace NAME: PG_TRACE for one command, tracing to $PG_TRACE_DIR/NAME.trace
   PG_TRACE=()
   [ -n "${PG_STRACE_FD:-}" ] || [ -n "${PG_TRACE_DIR:-}" ] || return 0
-  case "${PG_STRACE_FD:-}" in ''|*[!0-9]*) echo "refusing: PG_STRACE_FD is not a descriptor" >&2; exit 2 ;; esac
+  case "${PG_STRACE_FD:-}" in ''|*[!0-9]*|0*|1|2) echo "refusing: PG_STRACE_FD is not a descriptor above 2" >&2; exit 2 ;; esac
   case "${PG_TRACE_DIR:-}" in /*) ;; *) echo "refusing: PG_TRACE_DIR is not absolute" >&2; exit 2 ;; esac
   case "$PG_TRACE_DIR" in *..*) echo "refusing: PG_TRACE_DIR has .." >&2; exit 2 ;; esac
   local fdd=/proc/self/fd; [ -d "$fdd" ] || fdd=/dev/fd
   [ -d "$PG_TRACE_DIR" ] && [ -e "$fdd/$PG_STRACE_FD" ] || { echo "refusing: no trace directory or strace" >&2; exit 2; }
   [ ! -e "$PG_TRACE_DIR/$1.trace" ] || { echo "refusing to overwrite $PG_TRACE_DIR/$1.trace" >&2; exit 2; }
-  PG_TRACE=("$fdd/$PG_STRACE_FD" -f -q -e "trace=open,openat,openat2,access,faccessat,faccessat2,stat,lstat,newfstatat,statx,readlink,readlinkat,chdir" -o "$PG_TRACE_DIR/$1.trace")
+  PG_TRACE=("$fdd/$PG_STRACE_FD" -f -q -e "trace=open,openat,openat2,access,faccessat,faccessat2,stat,lstat,newfstatat,statx,readlink,readlinkat,chdir,fchdir" -o "$PG_TRACE_DIR/$1.trace")
 }
 
 case "$MODE" in

@@ -35,6 +35,9 @@ while [ $# -gt 0 ]; do
 done
 [ -n "$W" ] && [ -n "$SEEDS" ] || refuse "usage: --workdir W --seeds W/seeds.json"
 [ -x "$PY" ] || refuse "$PY is missing"
+for v in LD_PRELOAD LD_AUDIT BASH_ENV ENV; do   # a loader or shell hook would run code no trace attributes
+  [ -z "${!v:-}" ] || refuse "$v is set"
+done
 case "$W" in /*) ;; *) refuse "W must be absolute" ;; esac
 [ -d "$W" ] || refuse "W does not exist"
 [ "$(cd "$W" && pwd -P)" = "$(pwd -P)" ] || refuse "cwd is not W"
@@ -43,7 +46,7 @@ case "$W" in /*) ;; *) refuse "W must be absolute" ;; esac
 for d in out run PRODUCTS.json; do [ ! -e "$W/$d" ] || refuse "W/$d already exists"; done
 [ -n "$PG_DEPLOY_PIN" ] || refuse "PG_DEPLOY_PIN is not set"
 head_sha=$(git -C "$D" rev-parse HEAD 2>/dev/null)
-dirty=$(git -C "$D" status --porcelain --untracked-files=no 2>/dev/null | wc -l)
+dirty=$(git -C "$D" status --porcelain --untracked-files=all 2>/dev/null | wc -l)   # an untracked sitecustomize.py too
 [ "$head_sha" = "$PG_DEPLOY_PIN" ] && [ "$dirty" -eq 0 ] || refuse "the deploy is not the pinned commit, or is modified"
 
 O="$W/out"; R="$W/run"; G="$D/3d-unfolding/genie"
@@ -69,9 +72,26 @@ seedfree() {   # gevgen names files by its run number (= the seed): rename them 
   done
   return 0
 }
-cleanup() {    # on every exit: stop this script's background steps, then leave no seed in a file name
-  local j
-  for j in $(jobs -p); do pkill -TERM -P "$j" 2>/dev/null; kill -TERM "$j" 2>/dev/null; done
+freeze() {     # freeze PID: stop PID, then each descendant (a stopped parent cannot fork), printing every pid stopped
+  kill -STOP "$1" 2>/dev/null || return 0
+  echo "$1"
+  local c; for c in $(pgrep -P "$1"); do freeze "$c"; done
+}
+kill_tree() {  # kill_tree PID: end PID and every descendant, and wait until none is left (KILL after 30 s)
+  local all i p live
+  all=$(freeze "$1")
+  [ -n "$all" ] || return 0
+  kill -TERM $all 2>/dev/null; kill -CONT $all 2>/dev/null
+  for i in $(seq 1 60); do
+    live=""; for p in $all; do kill -0 "$p" 2>/dev/null && live="$live $p"; done
+    [ -n "$live" ] || return 0
+    [ "$i" -le 30 ] || kill -KILL $live 2>/dev/null
+    sleep 0.5
+  done
+}
+cleanup() {    # on every exit: end this script's background steps and everything under them, then leave no seed in a
+  local j      # file name (a task still running could otherwise write one after seedfree)
+  for j in $(jobs -p); do kill_tree "$j"; done
   seedfree
   return 0
 }
@@ -88,8 +108,7 @@ echo "[pg] start $(date -u +%FT%TZ) host=$(hostname)"
 # The first compute step (R1; the director's answer 2): strace is opened once, on fd 9. Its sha256 is read through
 # that descriptor and the same descriptor is executed, by the self-test here and by every traced command below.
 exec 9< "$STRACE" || need 1 "open strace"
-FDD=/proc/self/fd; [ -d "$FDD" ] || FDD=/dev/fd
-"$PY" -I -B "$G/pg_verify.py" tool-check --path "$FDD/9" --sha256 "$STRACE_SHA" --self-test \
+"$PY" -I -B "$G/pg_verify.py" tool-check --fd 9 --sha256 "$STRACE_SHA" --self-test \
   > "$O/tool_check_strace.json" 2> "$O/logs/tool_check_strace.log"
 need $? "strace (its pinned sha through the descriptor, and the self-test)"
 pass "strace"
@@ -102,17 +121,24 @@ need $? "slot 1's UPS database file"
 pass "slot 1's private product" "$("$PY" -I -c 'import json,sys; print(len(json.load(open(sys.argv[1]))["members"]))' "$REC/G2111a-members.json") members"
 export PG_STRACE_FD=9
 xroot() { if [ "$1" = G21_11a_00_000 ]; then echo "$PRIV/genie_xsec/v3_04_00/NULL"; else echo "$X"; fi; }
+xpins() {    # a CVMFS tune's source spline and README at their exact paths (PG_SPLINE_PINS); slot 1's are its members
+  [ "$1" != G21_11a_00_000 ] || return 0
+  local Q; Q=$(echo "$1" | tr -d '_')-k250-e1000
+  printf -- '--pin\n%s\n--pin\n%s\n' "$X/$Q/data/gxspl-NUsmall.xml=$(source_sha "$1" 0)" "$X/$Q/data/README=$(source_sha "$1" 1)"
+}
 tcheck() {   # tcheck ROLE TUNE TRACE SPLINE SPLINE_SHA CWD OUT
+  local xp=() l; while IFS= read -r l; do xp+=("$l"); done < <(xpins "$2")
+  [ "$2" = G21_11a_00_000 ] || [ "${#xp[@]}" -eq 4 ] || { echo "no exact pins for $2" >&2; return 1; }
   "$PY" -I -B "$G/pg_verify.py" trace-check --trace "$3" --rc 0 --role "$1" --tune "$2" --spline "$4" \
     --spline-sha256 "$5" --cwd "$6" --record "$REC/PG-RECORD.json" --manifest "$REC/genie-manifest.json" \
     --private-members "$REC/G2111a-members.json" --w-root "$W" --w-pin "$O/splines/${2}_CH.xml.gz=$(reduced_sha "$2")" \
-    --out "$7"
+    "${xp[@]}" --out "$7"
 }
 reduced_sha() { [ -s "$O/spline_check_$1.json" ] && "$PY" -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["reduced"]["sha256"])' "$O/spline_check_$1.json" || echo none; }
 source_sha() { "$PY" -I -c 'import ast,sys
 t = ast.parse(open(sys.argv[1]).read())
 pins = next(ast.literal_eval(n.value) for n in t.body if isinstance(n, ast.Assign) and getattr(n.targets[0], "id", "") == "PG_SPLINE_PINS")
-print(pins[sys.argv[2]][0])' "$G/gen5d_v3.py" "$1"; }
+print(pins[sys.argv[2]][int(sys.argv[3])])' "$G/gen5d_v3.py" "$1" "${2:-0}"; }
 
 ( anaenv q; python3 -B "$G/pg_lib.py" queue --seeds "$SEEDS" --out "$R/queue.txt" ) > "$O/logs/queue.log" 2>&1
 need $? "seeds.json"
@@ -121,12 +147,15 @@ TUNES=$(awk '{print $1}' "$R/queue.txt" | awk '!seen[$0]++' | tr '\n' ' ')
 pass "seeds.json" "$(wc -l < "$R/queue.txt" | tr -d ' ') tasks"
 
 for T in $TUNES; do   # the programs the traced steps run, as their own setup resolves them (no trace shows an exec)
-  ( source "$G/setup_genie_v3.sh" "$T" "$O/splines" > /dev/null 2>&1 || exit 1; command -v gevgen && command -v gspl2root ) \
+  ( source "$G/setup_genie_v3.sh" "$T" "$O/splines" > /dev/null 2>&1 || exit 1
+    command -v gevgen && command -v gspl2root || exit 1
+    printf '%s\n' "${LD_LIBRARY_PATH-}" > "$R/ld_library_path_$T.txt"; command -v awk > "$R/awk_$T.txt" ) \
     > "$R/exe_$T.txt" 2> "$O/logs/exe_$T.log" || need 1 "resolve gevgen and gspl2root ($T)"
   "$PY" -I -B "$G/pg_verify.py" exe-check --manifest "$REC/genie-manifest.json" $(sed 's/^/--path /' "$R/exe_$T.txt") \
-    > "$O/exe_check_$T.json" 2>> "$O/logs/exe_$T.log" || need 1 "gevgen and gspl2root against the manifest ($T)"
+    --ld-library-path "$(cat "$R/ld_library_path_$T.txt")" --system-path "$(cat "$R/awk_$T.txt")" \
+    > "$O/exe_check_$T.json" 2>> "$O/logs/exe_$T.log" || need 1 "gevgen, gspl2root, awk and LD_LIBRARY_PATH ($T)"
 done
-pass "gevgen and gspl2root against the manifest"
+pass "gevgen and gspl2root against the manifest, awk and LD_LIBRARY_PATH"
 pids=(); for T in $TUNES; do PG_TRACE_DIR="$O/traces" bash "$G/run_gevgen_v3.sh" reduce "$T" "$O/splines" > "$O/logs/reduce_$T.log" 2>&1 & pids+=($!); done
 for p in "${pids[@]}"; do wait "$p"; need $? "spline reduce"; done
 pass "spline reduce"
@@ -157,7 +186,8 @@ export G O NEV TO
 xargs -P "$P" -L 1 bash -c 'mkdir -p "$O/work/$2" && PG_TRACE_DIR="$O/work/$2" /usr/bin/time -v -o "$O/work/$2/task.time" timeout "$TO" \
     bash "$G/run_gevgen_v3.sh" genie "$0" "$O/splines" "$NEV" "$1" "$O/work/$2" "$O/flux_phi_t_0_100.root" \
     > "$O/work/$2/task.log" 2>&1; rc=$?; seedfree "$O/work/$2"; [ "$rc" -eq 0 ] || exit 255' \
-    < "$R/queue.txt" > "$O/logs/xargs.log" 2>&1
+    < "$R/queue.txt" > "$O/logs/xargs.log" 2>&1 &
+XP=$!; wait "$XP"   # a job, not the foreground: a TERM is handled now, and cleanup can reach every task
 need $? "generation"
 seedfree
 pass "generation" "$(ls "$O"/work/u*/t*/genie_v3.gst.root 2>/dev/null | wc -l | tr -d ' ') gst"

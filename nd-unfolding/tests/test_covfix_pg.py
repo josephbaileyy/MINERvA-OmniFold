@@ -316,7 +316,7 @@ case "$1" in
   genie) mkdir -p "$6"; cd "$6"; echo "[v3] genie $2 N=$4 seed=$5"; echo l > gevgen.log; echo l > gntpc.log
          echo t > "$PG_TRACE_DIR/gevgen.trace"
          echo st > "genie-mcjob-$5.status"
-         [ -n "$PG_STUB_SLOW" ] && sleep "$PG_STUB_SLOW"
+         [ -n "$PG_STUB_SLOW" ] && { sleep "$PG_STUB_SLOW"; [ -z "$PG_STUB_MARK" ] || echo late >> "$PG_STUB_MARK"; }
          [ "$5" = "${PG_STUB_FAIL_SEED:-none}" ] && { echo ghep > "gntp.$5.ghep.root"; exit 1; }
          [ "$5" = "${PG_STUB_NOGST_SEED:-none}" ] || echo gst > genie_v3.gst.root
          echo f > input-flux.root ;;
@@ -343,6 +343,9 @@ if a[0] == "trace-check":
 fail = os.environ.get("PG_STUB_VERIFY_FAIL")
 if fail and fail in " ".join(a):
     print('{"pass": false}'); sys.exit(1)
+if a[0] == "shape-check":
+    n = 3 if os.environ.get("PG_STUB_THREE_SHAPES") else 4
+    print('{"pass": true, "checks": {%s}}' % ", ".join('"s%d": true' % i for i in range(n))); sys.exit(0)
 print('{"pass": true}')
 '''
 STRACE = "#!/bin/sh\necho strace-stub\n"
@@ -492,10 +495,17 @@ class Generate(unittest.TestCase):
         self.assertEqual([v[1] for v in ver[:5]], ["tool-check", "members-check", "tool-check", "exe-check", "exe-check"])
         for v in ver[3:5]:                                        # the programs as each tune's setup resolves them
             self.assertEqual([v[i + 1].rsplit("/", 1)[1] for i, x in enumerate(v) if x == "--path"], ["gevgen", "gspl2root"])
-        self.assertLess(log.index(" ".join(ver[4])), next(i for i, ln in enumerate(log) if ln.startswith("run_gevgen_v3")))
+        last_exe = max(i for i, ln in enumerate(log) if ln.startswith("pg_verify exe-check"))
+        self.assertLess(last_exe, next(i for i, ln in enumerate(log) if ln.startswith("run_gevgen_v3")))
+        for v in ver[3:5]:
+            self.assertIn("--ld-library-path", v)
+            self.assertIn("--system-path", v)
+            self.assertEqual(v[v.index("--system-path") + 1], "/usr/bin/awk")
         self.assertEqual(log.index(" ".join(ver[0])), 0)                           # strace is the first step
         self.assertIn("--self-test", ver[0])
-        self.assertTrue(ver[0][ver[0].index("--path") + 1].endswith("/9"))       # checked through the descriptor
+        self.assertIn("--fd", ver[0])
+        self.assertEqual(ver[0][ver[0].index("--fd") + 1], "9")                 # checked through the descriptor
+        self.assertNotIn("--path", ver[0])
         self.assertEqual(ver[0][ver[0].index("--sha256") + 1], "e" * 64)
         self.assertEqual(ver[2][ver[2].index("--sha256") + 1], "f" * 64)
         tc = [v for v in ver if v[1] == "trace-check"]
@@ -506,6 +516,11 @@ class Generate(unittest.TestCase):
         red = next(v for v in tc if v[v.index("--role") + 1] == "reduce" and "G21_11a_00_000" in v)
         self.assertEqual(red[red.index("--spline-sha256") + 1], "a" * 64)
         self.assertIn("/covfix-pg/products/genie_xsec/", red[red.index("--spline") + 1])
+        self.assertNotIn("--pin", red)                                          # slot 1: its members pin it
+        x2 = "/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1802a00000-k250-e1000/data"
+        for v in (v for v in tc if "G18_02a_00_000" in v):                      # slot 2: exact pins at CVMFS's paths
+            pins = [v[i + 1] for i, x in enumerate(v) if x == "--pin"]
+            self.assertEqual(pins, [f"{x2}/gxspl-NUsmall.xml={'c' * 64}", f"{x2}/README={'d' * 64}"])
         fc = [ln for ln in log if ln.startswith("gen5d_v3 flux-check")][0]
         self.assertEqual(len(re.findall(r"/work/u[01]/t\d", fc)), 14)
         conv = [ln for ln in log if ln.startswith("gen5d_v3 convert")]
@@ -620,6 +635,31 @@ class Generate(unittest.TestCase):
         time.sleep(0.5)
         self.no_seed_in_any_name()
 
+    def test_a_term_during_generation_ends_every_task(self):
+        import signal
+        import time
+        mark = self.tmp / "late-marker"
+        e = {"PATH": f"/usr/bin:/bin:/usr/sbin:/sbin:{self.sysbin}", "HOME": str(self.tmp),
+             "TMPDIR": str(self.W / "tmp"), "PG_DEPLOY_PIN": self.pin, "PG_STUB_LOG": str(self.log),
+             "PG_STUB_BIN": str(self.bin), "PG_STUB_DEPLOY": str(self.dep), "PG_STUB_SLOW": "3", "PG_STUB_MARK": str(mark)}
+        proc = subprocess.Popen(["bash", str(self.dep / "3d-unfolding/genie/pg_generate.sh"), "--workdir", str(self.W),
+                                 "--seeds", str(self.W / "seeds.json")], cwd=self.W, env=e, stdin=subprocess.DEVNULL,
+                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        t0 = time.time()
+        while len(list(self.W.rglob("genie-mcjob-*.status"))) < 14 and time.time() - t0 < 20:
+            time.sleep(0.05)
+        os.kill(proc.pid, signal.SIGTERM)
+        self.assertEqual(proc.wait(timeout=40), 143)
+        time.sleep(4)
+        self.assertFalse(mark.exists(), "a task kept running after the script ended")
+        self.no_seed_in_any_name()
+
+    def test_an_untracked_file_in_the_deploy_refuses(self):
+        (self.dep / "3d-unfolding/genie/sitecustomize.py").write_text("x")
+        p = self.run_gen()
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("the deploy is not the pinned commit, or is modified", p.stderr)
+
     def test_flux_check_failure_stops(self):
         p = self.run_gen(PG_STUB_FLUXCHECK_RC="1")
         self.assertEqual(p.returncode, 1)
@@ -681,7 +721,7 @@ class Generate(unittest.TestCase):
 
     def test_a_failed_members_or_dbconfig_check_stops(self):
         for fail, msg in (("members-check", "slot 1's private product"), ("f" * 64, "slot 1's UPS database file"),
-                          ("exe-check", "gevgen and gspl2root against the manifest")):
+                          ("exe-check", "gevgen, gspl2root, awk and LD_LIBRARY_PATH")):
             with self.subTest(fail):
                 for d in ("out", "run"):
                     shutil.rmtree(self.W / d, ignore_errors=True)
@@ -740,13 +780,20 @@ class Replay(unittest.TestCase):
         self.assertEqual(len(gen), 1)
         self.assertEqual(gen[0][2:6], ["G21_11a_00_000", str(self.R / "splines"), "100", "123456789"])
         tenv = [ln for ln in log if ln.startswith("trace-env ")]
-        self.assertEqual(len(tenv), 3)
+        self.assertEqual(len(tenv), 4)                                  # slot 2's reduce too
         self.assertTrue(all(ln.endswith(" fd=9 dir=set") for ln in tenv))
         self.assertEqual(sorted(ln.split("--role ")[1].split()[0] for ln in log if "trace-check" in ln),
-                         ["gevgen", "graphs", "reduce"])
+                         ["gevgen", "graphs", "reduce", "reduce"])
+        s2 = [ln for ln in log if "trace-check" in ln and "--tune G18_02a_00_000" in ln]
+        x2 = "/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1802a00000-k250-e1000/data"
+        self.assertEqual(len(s2), 1)
+        self.assertIn(f"--spline {x2}/gxspl-NUsmall.xml --spline-sha256 {'c' * 64} ", s2[0])
+        self.assertIn(f"--pin {x2}/gxspl-NUsmall.xml={'c' * 64} --pin {x2}/README={'d' * 64} ", s2[0])
+        self.assertTrue(any(ln.startswith("pg_verify tool-check --fd 9 ") for ln in log))
         rec = json.loads((self.R / "replay.json").read_text())
         self.assertTrue(rec["pass"])
-        self.assertEqual(len(rec["checks"]), 7)
+        self.assertEqual(len(rec["checks"]), 9)
+        self.assertEqual(len(rec["real_shapes"]), 4)
         gone = json.loads((self.R / "deleted.json").read_text())
         self.assertEqual(sorted(gone), ["genie_v3.gst.root", "gevgen.status", "input-flux.root"])
         self.assertEqual([q.name for q in (self.R / "work/t0").iterdir() if q.name.endswith((".root", ".status"))], [])
@@ -805,9 +852,32 @@ class Replay(unittest.TestCase):
                 self.assertFalse(re.search(rf"(\$\{{?{v}\b|^\s*{v}=)", src, re.M), (f, v))
 
     def test_a_replay_record_that_fails_stops(self):
-        p = self.run_replay(PG_STUB_NO_SPLINE="1")                 # every check exits 0, but no spline open is shown
-        self.assertEqual(p.returncode, 1, p.stdout)
-        self.assertIn("[replay] STOP: the replay", p.stdout)
+        for k in ("PG_STUB_NO_SPLINE", "PG_STUB_THREE_SHAPES"):    # every check exits 0, but the record falls short
+            with self.subTest(k):
+                shutil.rmtree(self.R)
+                self.R.mkdir()
+                p = self.run_replay(**{k: "1"})
+                self.assertEqual(p.returncode, 1, p.stdout)
+                self.assertIn("[replay] STOP: the replay rc=1", p.stdout)
+
+    def test_shape_and_slot2_failures_stop(self):
+        for fail, msg in (("--tune G18_02a_00_000", "trace check (slot 2's reduce)"), ("shape-check", "the four real-shape")):
+            with self.subTest(fail):
+                shutil.rmtree(self.R)
+                self.R.mkdir()
+                p = self.run_replay(PG_STUB_VERIFY_FAIL=fail)
+                self.assertEqual(p.returncode, 1, p.stdout)
+                self.assertIn(f"[replay] STOP: {msg}", p.stdout)
+
+    def test_loader_and_shell_hooks_refuse(self):
+        for v in ("LD_PRELOAD", "LD_AUDIT", "BASH_ENV", "ENV"):
+            with self.subTest(v):
+                p = self.run_replay(**{v: "/x"})
+                self.assertEqual(p.returncode, 2, p.stdout + p.stderr)
+                self.assertIn(f"refusing: {v} is set", p.stderr)
+                p = Generate.run_gen(self, **{v: "/x"})
+                self.assertEqual(p.returncode, 2, p.stdout + p.stderr)
+                self.assertIn(f"refusing: {v} is set", p.stderr)
 
     def test_refusals(self):
         (self.R / "x").write_text("x")

@@ -57,6 +57,7 @@ REPO = "/cvmfs/larsoft.opensciencegrid.org"
 FQRN = "larsoft.opensciencegrid.org"
 GENIE_ROOT = REPO + "/products/genie/v3_04_00"
 XSEC_REL = "products/genie_xsec/v3_04_00/NULL"
+DATA_NAMES = ("README", "isotopes.cfg", "reduce_gxspl.awk", "xsec_graphs.root")   # and gxspl-<name>.xml[.gz]
 DBCONFIG_REL = "products/.upsfiles/dbconfig"
 GNUPG_PARENT = "/tmp"
 RUN_USER = "/run/user"
@@ -65,7 +66,7 @@ TOOLS = {"strace": ("/usr/bin/strace",), "gpg": ("/usr/bin/gpg", "/usr/bin/gpg2"
 RPM = ("/usr/bin/rpm", "/bin/rpm")
 LOCAL_FS = ("tmpfs", "ext4", "xfs", "btrfs", "ext3")
 TRACE_SET = ("trace=open,openat,openat2,access,faccessat,faccessat2,stat,lstat,newfstatat,statx,readlink,readlinkat,"
-             "chdir")
+             "chdir,fchdir")
 ENCRYPT = ["--batch", "--yes", "--pinentry-mode", "loopback", "--passphrase-fd", "3", "--no-symkey-cache",
            "--symmetric", "--cipher-algo", "AES256", "--s2k-digest-algo", "SHA512", "--force-mdc"]
 DECRYPT = ["--batch", "--pinentry-mode", "loopback", "--passphrase-fd", "3", "--no-symkey-cache", "--decrypt"]
@@ -171,10 +172,13 @@ PINS_JSON = r'''{
  "xsec_files": {
   "AR2320i00000-k250-e1000/data/README": "744cba18f82cc5fe4805cd8be120e5f7e5f7b36f657f4cc9f2118e69c803bcb2",
   "AR2320i00000-k250-e1000/data/gxspl-NUsmall.xml": "185d7d8a4674b5df445fcadea3d17232804390c8421d563aa402c6ee743a0bbb",
+  "AR2320i00000-k250-e1000/ups/genie_xsec.table": "fe9c08d6ea916a3e00e2fd14e7632fe1b47a26e7046aa8bea5757da26db02145",
   "G1802a00000-k250-e1000/data/README": "740bc066a9f41f67910e711ebb856be5aed61ee7b71c59895d001d83e80ab0ae",
   "G1802a00000-k250-e1000/data/gxspl-NUsmall.xml": "f7ad710100f66e2bb9f260e328fe7fb10ac063148b4222eebe0e3b61b8bfa45a",
+  "G1802a00000-k250-e1000/ups/genie_xsec.table": "d9e54113fccd1f6b7ee48399be1e1aa46d2fede79a0610899f681565d36ede03",
   "G1810a0211b-k250-e1000/data/README": "abfca258817a3f7d8169cdd2dbf9349a025ab38312435c718347598b53f16726",
-  "G1810a0211b-k250-e1000/data/gxspl-NUsmall.xml": "1b4b0b37fc8c11acbf00884a94d0a3bda519d9c458f2c916573ef3d673a3ee35"
+  "G1810a0211b-k250-e1000/data/gxspl-NUsmall.xml": "1b4b0b37fc8c11acbf00884a94d0a3bda519d9c458f2c916573ef3d673a3ee35",
+  "G1810a0211b-k250-e1000/ups/genie_xsec.table": "6ee162520b9ce2a9d439d4ed5277aee6d73c0c107afc5a5ec85a057d64f05800"
  }
 }'''
 PINS = json.loads(PINS_JSON)
@@ -206,11 +210,14 @@ def _walk(rootfd, rel):
     if not rel or rel.startswith("/") or any(p in ("", ".", "..") for p in parts):
         raise Unverified(f"{rel!r} is not a plain relative path")
     fd = os.dup(rootfd)
+    dev = os.fstat(rootfd).st_dev
     try:
         for p in parts[:-1]:
             nfd = os.open(p, os.O_RDONLY | O_DIRECTORY | O_NOFOLLOW, dir_fd=fd)
             os.close(fd)
             fd = nfd
+            if os.fstat(fd).st_dev != dev:
+                raise Unverified(f"{rel}: {p} is another mount")
     except OSError:
         os.close(fd)
         raise
@@ -224,8 +231,11 @@ def sha_rel(rootfd, rel):
     finally:
         os.close(dfd)
     try:
-        if not stat.S_ISREG(os.fstat(fd).st_mode):
+        st = os.fstat(fd)
+        if not stat.S_ISREG(st.st_mode):
             raise Unverified(f"{rel} is not a regular file")
+        if st.st_dev != os.fstat(rootfd).st_dev:
+            raise Unverified(f"{rel} is on another mount")
         h = hashlib.sha256()
         for b in iter(lambda: os.read(fd, 1 << 20), b""):
             h.update(b)
@@ -258,10 +268,15 @@ def list_rel(rootfd, rel):
     finally:
         os.close(dfd)
     try:
+        dev = os.fstat(rootfd).st_dev
+        if os.fstat(fd).st_dev != dev:
+            raise Unverified(f"{rel} is another mount")
         out = []
         for n in sorted(os.listdir(fd)):
-            m = os.stat(n, dir_fd=fd, follow_symlinks=False).st_mode
-            out.append(n + "/" if stat.S_ISDIR(m) else n)
+            st = os.stat(n, dir_fd=fd, follow_symlinks=False)
+            if st.st_dev != dev:
+                raise Unverified(f"{rel}/{n} is another mount")
+            out.append(n + "/" if stat.S_ISDIR(st.st_mode) else n)
         return out
     finally:
         os.close(fd)
@@ -296,17 +311,20 @@ def verify_repo(repo, mounts_text, xattr=read_xattr):
     rec["mount"] = {"point": mp, "type": typ, "device": dev}
     probs = []
     if os.path.realpath(repo) != repo:
-        probs.append(f"{repo} is not its own real path")
+        probs.append(f"repo-realpath: {repo} is not its own real path")
     if mp not in (repo, os.path.dirname(repo)) or typ is None or typ in LOCAL_FS:
-        probs.append(f"{repo} is not on a CVMFS mount of its own: {mp} {typ}")
+        probs.append(f"repo-mount: {repo} is not on a CVMFS mount of its own: {mp} {typ}")
     rec["xattrs"] = {}
     for k in ("user.fqrn", "user.revision", "user.root_hash"):
         try:
             rec["xattrs"][k] = xattr(repo, k)
         except (OSError, AttributeError) as e:
-            probs.append(f"xattr {k}: {type(e).__name__}: {e}")
+            probs.append(f"repo-xattr: xattr {k}: {type(e).__name__}: {e}")
     if rec["xattrs"].get("user.fqrn") != FQRN:
-        probs.append(f"user.fqrn is {rec['xattrs'].get('user.fqrn')!r}, not {FQRN}")
+        probs.append(f"repo-fqrn: user.fqrn is {rec['xattrs'].get('user.fqrn')!r}, not {FQRN}")
+    for k in ("user.revision", "user.root_hash"):
+        if k in rec["xattrs"] and not str(rec["xattrs"][k]).strip():
+            probs.append(f"repo-xattr-empty: {k} is empty")
     rec["problems"], rec["pass"] = probs, not probs
     return rec
 
@@ -314,12 +332,12 @@ def verify_repo(repo, mounts_text, xattr=read_xattr):
 def verify_genie(genie_root, pins):
     rec = {"files": {}, "links": {}, "listings": {}, "problems": []}
     if os.path.realpath(genie_root) != genie_root:
-        rec["problems"].append(f"{genie_root} is not its own real path")
+        rec["problems"].append(f"genie-realpath: {genie_root} is not its own real path")
         return rec
     try:
         rfd = os.open(genie_root, os.O_RDONLY | O_DIRECTORY | O_NOFOLLOW)
     except OSError as e:
-        rec["problems"].append(f"{genie_root}: {e.strerror}")
+        rec["problems"].append(f"genie-open: {genie_root}: {e.strerror}")
         return rec
     try:
         for rel, want in pins["genie_files"].items():
@@ -336,7 +354,7 @@ def verify_genie(genie_root, pins):
     for kind in ("files", "links", "listings"):
         bad = sorted(k for k, v in rec[kind].items() if not v["match"])
         if bad:
-            rec["problems"].append(f"{len(bad)} {kind} differ from the pins: {bad}")
+            rec["problems"].append(f"genie-{kind}: {len(bad)} {kind} differ from the pins: {bad}")
     return rec
 
 
@@ -345,39 +363,39 @@ def verify_xsec(repo, pins):
     try:
         rfd = os.open(repo, os.O_RDONLY | O_DIRECTORY | O_NOFOLLOW)
     except OSError as e:
-        rec["problems"].append(f"{repo}: {e.strerror}")
+        rec["problems"].append(f"xsec-open: {repo}: {e.strerror}")
         return rec
     try:
         rec["qualifiers"], err = _try(list_rel, rfd, XSEC_REL)
         if err or rec["qualifiers"] is None:
-            rec["problems"].append(f"the qualifier listing: {err or 'absent'}")
+            rec["problems"].append(f"xsec-qualifiers: the qualifier listing: {err or 'absent'}")
         else:
             names = [n.rstrip("/") for n in rec["qualifiers"]]
             missing = [q for q in pins["required_qualifiers"] if q + "/" not in rec["qualifiers"]]
             if missing:
-                rec["problems"].append(f"required qualifiers missing (exact names): {missing}")
+                rec["problems"].append(f"xsec-qualifiers: required qualifiers missing (exact names): {missing}")
             rec["qualifier_names"] = names
         for rel, want in pins["xsec_files"].items():
             got, err = _try(sha_rel, rfd, f"{XSEC_REL}/{rel}")
             rec["files"][rel] = {"sha256": got, "match": got == want, **({"error": err} if err else {})}
         for q in pins["required_qualifiers"]:
             got, err = _try(list_rel, rfd, f"{XSEC_REL}/{q}/data")
-            shadow = [n for n in (got or []) if n.endswith((".xml", ".xml.gz")) and not n.startswith("gxspl-")]
+            shadow = [n for n in (got or []) if not (n in DATA_NAMES or re.fullmatch(r"gxspl-[A-Za-z]+\.xml(\.gz)?", n))]
             rec["data_listings"][q] = {"names": got, "config_like": shadow, **({"error": err} if err else {})}
             if err or got is None:
-                rec["problems"].append(f"{q}/data: {err or 'absent'}")
+                rec["problems"].append(f"xsec-data: {q}/data: {err or 'absent'}")
             elif shadow:
-                rec["problems"].append(f"{q}/data holds names GENIE could load as configuration: {shadow}")
+                rec["problems"].append(f"xsec-data-names: {q}/data holds names outside the allowlist: {shadow}")
         rec["dbconfig"] = {}
         got, err = _try(sha_rel, rfd, DBCONFIG_REL)
         rec["dbconfig"] = {"path": f"{repo}/{DBCONFIG_REL}", "sha256": got, **({"error": err} if err else {})}
         if got is None:
-            rec["problems"].append(f"dbconfig: {err}")
+            rec["problems"].append(f"xsec-dbconfig: {err}")
     finally:
         os.close(rfd)
     bad = sorted(k for k, v in rec["files"].items() if not v["match"])
     if bad:
-        rec["problems"].append(f"{len(bad)} genie_xsec files differ from the pins: {bad}")
+        rec["problems"].append(f"xsec-files: {len(bad)} genie_xsec files differ from the pins: {bad}")
     return rec
 
 
@@ -457,21 +475,32 @@ def open_tools(tools=TOOLS, rpm_run=None):
 def trace_complete(text, rc):
     probs = []
     if rc != 0:
-        probs.append(f"strace exited {rc}")
+        probs.append(f"strace-rc: strace exited {rc}")
     if not text:
-        return probs + ["the trace is empty"]
+        return probs + ["empty: the trace is empty"]
     if not text.endswith("\n"):
-        probs.append("the trace's last line is truncated")
+        probs.append("truncated: the trace's last line is truncated")
     lines = text.splitlines()
     m = [re.match(r"^(\d+) +(.*)$", ln) for ln in lines]
     if not all(m):
-        return probs + ["a trace line has no pid"]
-    if any("+++ killed by" in ln for ln in lines):
-        probs.append("a traced process was killed")
-    if not any(x.group(1) == m[0].group(1) and x.group(2).startswith("+++ exited with 0 +++") for x in m):
-        probs.append("the initial process did not exit 0")
-    if "<unfinished ...>" in lines[-1]:
-        probs.append("the trace ends inside a call")
+        return probs + ["no-pid: a trace line has no pid"]
+    if any(x.group(2).startswith("+++ killed by") for x in m):
+        probs.append("killed: a traced process was killed")
+    exits, pending = {}, set()
+    for x in m:
+        pid, rest = x.group(1), x.group(2)
+        if rest.endswith("<unfinished ...>"):
+            pending.add(pid)
+        elif rest.startswith("<... "):
+            pending.discard(pid)
+        e = re.match(r"\+\+\+ exited with (\d+) \+\+\+", rest)
+        if e:
+            exits[pid] = int(e.group(1))
+    if exits.get(m[0].group(1)) != 0:
+        probs.append("initial-exit: the initial process did not exit 0")
+    probs += [f"child-exit: process {q} exited {v}" for q, v in sorted(exits.items()) if v != 0 and q != m[0].group(1)]
+    if pending:
+        probs.append(f"unresumed: calls left unfinished in {sorted(pending)}")
     return probs
 
 
@@ -491,11 +520,11 @@ def strace_self_test(fd, parent=GNUPG_PARENT):
                 text = f.read()
         probs = trace_complete(text, p.returncode)
         if not re.search(r'open(at)?\((AT_FDCWD, )?"' + re.escape(probe) + r'", .*\) = \d+$', text, re.M):
-            probs.append("the self-test's open is not in the trace")
+            probs.append("self-test-open: the self-test's open is not in the trace")
         rec.update(rc=p.returncode, n_lines=len(text.splitlines()), problems=probs)
         rec["pass"] = not probs
     except (OSError, subprocess.SubprocessError) as e:
-        rec["problems"] = [f"{type(e).__name__}: {e}"]
+        rec["problems"] = [f"self-test-error: {type(e).__name__}: {e}"]
     finally:
         shutil.rmtree(d, ignore_errors=True)
     return rec
@@ -602,8 +631,8 @@ def _inside(p, d):
 
 
 def _owned_dir(p, uid, private):
-    st = os.lstat(p)
-    return stat.S_ISDIR(st.st_mode) and st.st_uid == uid and not (private and st.st_mode & 0o077)
+    st = os.lstat(p)          # never writable by another user; the gnupg dirs not even readable
+    return stat.S_ISDIR(st.st_mode) and st.st_uid == uid and not st.st_mode & (0o077 if private else 0o022)
 
 
 def check_sockets(dirs, home, uid, mounts_text, base=RUN_USER):
@@ -613,27 +642,28 @@ def check_sockets(dirs, home, uid, mounts_text, base=RUN_USER):
     h, sd = dirs.get("homedir", ""), dirs.get("socketdir", "")
     socks = {k: v for k, v in dirs.items() if k.endswith("-socket") and v}
     if not h or os.path.realpath(h) != home or not sd or "agent-socket" not in socks:
-        return False, None, [f"homedir {h!r}, socketdir {sd!r}, sockets {sorted(socks)}"]
+        return False, None, [f"sockets-listing: homedir {h!r}, socketdir {sd!r}, sockets {sorted(socks)}"]
     probs, outside = [], None
     if not _inside(sd, home):
         want = socketdir_for(home, uid, base)
         if sd != want:
-            return False, None, [f"socketdir {sd} is neither in the homedir nor gpg's {want}"]
+            return False, None, [f"socketdir-place: socketdir {sd} is neither in the homedir nor gpg's {want}"]
         for p, private in ((f"{base}/{uid}", False), (f"{base}/{uid}/gnupg", True), (sd, True)):
             try:
                 ok = _owned_dir(p, uid, private)
             except OSError:
                 ok = False
             if not ok:
-                probs.append(f"{p} is not a {'private ' if private else ''}directory of uid {uid}")
+                probs.append(f"socketdir-owner: {p} is not a {'private ' if private else 'non-writable '}directory of uid {uid}")
         if os.path.realpath(sd) != sd:
-            probs.append(f"{sd} is not its own real path")
+            probs.append(f"socketdir-realpath: {sd} is not its own real path")
         if mount_fs(sd, mounts_text) != "tmpfs":
-            probs.append(f"{sd} is on {mount_fs(sd, mounts_text)}, not tmpfs")
+            probs.append(f"socketdir-fs: {sd} is on {mount_fs(sd, mounts_text)}, not tmpfs")
         outside = sd
     real_sd = os.path.realpath(sd)
-    probs += [f"{k} {v} is not directly in the socket dir {sd}" for k, v in sorted(socks.items())
+    probs += [f"socket-place: {k} {v} is not directly in the socket dir {sd}" for k, v in sorted(socks.items())
               if os.path.realpath(os.path.dirname(v)) != real_sd]
+    probs += [f"socket-link: {k} {v} is a link" for k, v in sorted(socks.items()) if os.path.islink(v)]
     return not probs, (outside if not probs else None), probs
 
 
@@ -871,7 +901,10 @@ def report(rec):
 
 
 def main():
-    rec = probe()
+    try:
+        rec = probe()
+    except Exception as e:                 # fail closed, with a reason no other test expects
+        rec = {"schema": SCHEMA, "identity": {}, "verdict": "STOP", "stops": [f"internal-error: {type(e).__name__}"]}
     report(rec)
     return 0 if rec["verdict"] == "GO" else 3
 

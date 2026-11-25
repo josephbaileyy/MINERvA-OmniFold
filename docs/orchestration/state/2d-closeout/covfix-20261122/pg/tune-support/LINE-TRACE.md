@@ -46,4 +46,10 @@ in `tests-local.log`. The mutants are in `mutants.py`, run with `../mutrun.py`'s
   stand-in links. Descriptor execution is exercised on the node by the probe's self-test and by the binary's first
   step.
 - **Tools the laptop lacks.** macOS has no `timeout`, and its `/usr/bin/time` has no `-v`; the tests substitute both.
+- **Stubs encode assumptions.** At 135571b9 four real-run defects passed every test because the stubs matched my
+  assumptions: the members container, the `/proc/self/fd` magic link, slot 2's unpinned CVMFS spline, and ROOT's
+  directory opens. Each now has a test on the real shape, and a named node check in B3. `../AGY-READ-A2.md` lists
+  every disposition, its test and mutant, and what this host cannot test.
+- **Reason codes.** Every refusal test asserts its reason code, and a crash is `internal-error: <type>`, so a
+  mutant that crashes a check can't pass a test that expects a particular refusal.
 - **Not priced or bound here.** That is the director's.

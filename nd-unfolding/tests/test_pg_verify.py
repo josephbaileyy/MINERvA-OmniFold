@@ -67,7 +67,7 @@ def make_tar(path, entries):
             tf.addfile(ti)
 
 
-GOOD = [("genie_xsec", "dir", None), ("genie_xsec/v3_04_00", "dir", None),
+GOOD = [("genie_xsec/v3_04_00", "dir", None),                                       # the real shape: no container member
         ("genie_xsec/v3_04_00/NULL", "dir", None), ("genie_xsec/v3_04_00/NULL/Q", "dir", None),
         ("genie_xsec/v3_04_00/NULL/Q/data", "dir", None),
         ("genie_xsec/v3_04_00/NULL/Q/data/gxspl-NUsmall.xml", "file", b"<spl/>\n"),
@@ -82,7 +82,8 @@ class Members(Tmp):
         self.assertEqual(m["genie_xsec/v3_04_00/NULL/Q/data/gxspl-NUsmall.xml"]["sha256"], sha(b"<spl/>\n"))
         self.assertEqual(m["genie_xsec/v3_04_00/NULL/Q/data/gxspl-FNALsmall.xml"],
                          {"type": "symlink", "target": "gxspl-NUsmall.xml", "mode": "0o755"})
-        self.assertEqual(m["genie_xsec"]["type"], "dir")
+        self.assertEqual(m["genie_xsec/v3_04_00"]["type"], "dir")
+        self.assertNotIn("genie_xsec", m)
 
     def test_listing_refusals(self):
         for i, bad in enumerate(([("/abs", "file", b"x")], [("a/../b", "file", b"x")],
@@ -108,14 +109,18 @@ class Members(Tmp):
                 if not os.path.islink(os.path.join(d, f)):
                     os.chmod(os.path.join(d, f), 0o444)
             os.chmod(d, 0o555)
+        (root / ".upsfiles").mkdir()
+        (root / ".upsfiles/dbconfig").write_text("db\n")
+        os.chmod(root / ".upsfiles/dbconfig", 0o444)
+        os.chmod(root / ".upsfiles", 0o555)
         return root, BR.members(str(self.tmp / "t.tar.bz2"))
 
     def test_members_check(self):
         root, m = self.install()
         self.assertEqual(V.members_check(str(root), m), [])
         data = root / "genie_xsec/v3_04_00/NULL/Q/data"
-        for change, want in (("extra", "extra: "), ("missing", "missing: "), ("bytes", "sha256 differs"),
-                             ("writable", "writable"), ("retarget", "link target differs"), ("type", "a dir, pinned")):
+        for change, want in (("extra", "members-extra: "), ("missing", "members-missing: "), ("bytes", "members-sha: "),
+                             ("writable", "members-writable: "), ("retarget", "members-link: "), ("type", "members-type: ")):
             with self.subTest(change):
                 self.clean()
                 self.tmp.mkdir(parents=True)
@@ -135,7 +140,7 @@ class Members(Tmp):
                 elif change == "type":
                     os.chmod(f, 0o644); f.unlink(); f.mkdir()
                 os.chmod(data, 0o555)
-                self.assertTrue(any(want in p for p in V.members_check(str(root), m)), V.members_check(str(root), m))
+                self.assertTrue(any(p.startswith(want) for p in V.members_check(str(root), m)), V.members_check(str(root), m))
 
 
 # ---------------------------------------------------------------------------------------------------------- tool-check
@@ -193,7 +198,7 @@ class ToolCheck(Tmp):
         self.assertEqual((rc, rec["problems"]), (0, []))
         rc, rec = self.run_check(p, "0" * 64)
         self.assertEqual(rc, 1)
-        self.assertIn("sha256 differs from the pin", rec["problems"])
+        self.assertIn("tool-sha: the sha256 differs from the pin", rec["problems"])
         for mode, want in (("no-open", "the self-test's open is not in the trace"), ("killed", "was killed"),
                            ("truncated", "last line is truncated"), ("empty", "the trace is empty"),
                            ("none", "the trace is empty"), ("rc", "strace exited 3")):
@@ -286,16 +291,16 @@ class Trace(Tmp):
                 '100 openat(AT_FDCWD, "genie-mcjob-123456789.status", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 9',
                 '101 +++ exited with 0 +++', '100 +++ exited with 0 +++']
 
-    def check(self, lines=None, rc=0, role="gevgen", spline_sha=None, text=None):
+    def check(self, lines=None, rc=0, role="gevgen", spline_sha=None, text=None, cwd=None):
         text = text if text is not None else "\n".join(lines if lines is not None else self.good_lines()) + "\n"
         return V.trace_check(text, rc, role, "G21_11a_00_000", str(self.spline), spline_sha or sha(b"spline"),
-                             str(self.W), self.record, self.manifest, {}, str(self.W),
+                             cwd or str(self.W), self.record, self.manifest, {}, str(self.W),
                              {str(self.spline): sha(b"spline")}, genie_root=str(self.genie), repo=str(self.repo),
                              private_root=str(self.priv))
 
     def assert_fails(self, rec, want):
         self.assertFalse(rec["pass"])
-        self.assertTrue(any(want in p for p in rec["problems"]), rec["problems"])
+        self.assertTrue(any(p.startswith(want) for p in rec["problems"]), rec["problems"])
 
     def test_a_good_trace_passes(self):
         rec = self.check()
@@ -311,32 +316,32 @@ class Trace(Tmp):
 
     def test_completeness(self):
         g = self.good_lines()
-        self.assert_fails(self.check(text=""), "the trace is empty")
-        self.assert_fails(self.check(rc=1), "strace exited 1")
-        self.assert_fails(self.check(g + ["100 +++ killed by SIGKILL +++"]), "was killed")
-        self.assert_fails(self.check(text="\n".join(g)), "last line is truncated")
-        self.assert_fails(self.check(g[:-1]), "the initial process did not exit 0")
-        self.assert_fails(self.check(g + [f'100 openat(AT_FDCWD, "/x", O_RDONLY <unfinished ...>']), "inside a call")
+        self.assert_fails(self.check(text=""), "empty:")
+        self.assert_fails(self.check(rc=1), "strace-rc:")
+        self.assert_fails(self.check(g + ["100 +++ killed by SIGKILL +++"]), "killed:")
+        self.assert_fails(self.check(text="\n".join(g)), "truncated:")
+        self.assert_fails(self.check(g[:-1]), "initial-exit:")
+        self.assert_fails(self.check(g + [f'100 openat(AT_FDCWD, "/x", O_RDONLY <unfinished ...>']), "unresumed:")
 
     def test_the_initial_process_must_open_the_spline(self):
         g = self.good_lines()
         g[0] = g[0].replace("100 ", "101 ", 1)
         self.assert_fails(self.check(["99 access(\"/x\", R_OK) = 0", "99 +++ exited with 0 +++"] + g),
-                          "the initial process did not open the expected spline")
-        self.assert_fails(self.check(spline_sha="0" * 64), "the opened spline's sha256 differs")
+                          "spline-not-opened:")
+        self.assert_fails(self.check(spline_sha="0" * 64), "spline-sha:")
 
     def test_gated_files_match_their_pins_at_their_own_path(self):
         Path(self.files[f"{self.C}/SuSAv2MECPXSec.xml"]).write_text("changed")
-        self.assert_fails(self.check(), "does not match its pin")
+        self.assert_fails(self.check(), "gated-mismatch:")
 
     def test_config_files_from_outside_the_roots(self):
-        for path in ("/home/u/.rootrc", f"{self.tmp}/x/ModelConfiguration.xml", "/tmp/rootlogon.C",
-                     f"{self.tmp}/lib/libGFwEG.so"):
+        for path, code in (("/home/u/.rootrc", "config-outside-roots:"),
+                           (f"{self.tmp}/x/ModelConfiguration.xml", "config-outside-roots:"),
+                           ("/tmp/rootlogon.C", "config-outside-roots:"), (f"{self.tmp}/lib/libGFwEG.so", "so-outside-roots:")):
             with self.subTest(path):
                 g = self.good_lines()
                 g.insert(1, f'100 openat(AT_FDCWD, "{path}", O_RDONLY) = 3')
-                rec = self.check(g)
-                self.assertFalse(rec["pass"])
+                self.assert_fails(self.check(g), code)
         g = self.good_lines()
         g.insert(1, '100 openat(AT_FDCWD, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3')   # a system file, not config
         self.assertTrue(self.check(g)["pass"])
@@ -344,34 +349,34 @@ class Trace(Tmp):
     def test_search_order_shadow(self):
         g = self.good_lines()
         g.insert(2, f'100 access("{self.priv}/genie_xsec/data/EventGenerator.xml", R_OK) = 0')
-        self.assert_fails(self.check(g), "EventGenerator.xml was found at")
+        self.assert_fails(self.check(g), "search-order: EventGenerator.xml")
         g = self.good_lines()
         g.insert(2, f'100 newfstatat(AT_FDCWD, "{self.tmp}/elsewhere/master_config.xml", {{st_mode=S_IFREG}}, 0) = 0')
-        self.assert_fails(self.check(g), "master_config.xml was found at")
+        self.assert_fails(self.check(g), "search-order: master_config.xml")
 
     def test_defining_files(self):
         g = [ln for ln in self.good_lines() if "TuneGeneratorList" not in ln]
-        self.assert_fails(self.check(g), "a defining file was not opened at its expected path")
+        self.assert_fails(self.check(g), "defining-not-opened:")
         g = self.good_lines()
         g.insert(3, f'100 readlink("{self.genie}/{self.C}/G21_11a/ModelConfiguration.xml", "x", 4096) = 1')
-        self.assert_fails(self.check(g), "read through a link")
+        self.assert_fails(self.check(g), "defining-link:")
         self.assertTrue(self.check([ln for ln in self.good_lines() if "TuneGeneratorList" not in ln], role="reduce")["pass"])
 
     def test_relative_paths(self):
         g = self.good_lines()
-        rel = os.path.relpath(self.files[f"{self.C}/G21_11a/EventGenerator.xml"], self.W)
+        rel = os.path.relpath(self.files[f"{self.C}/G21_11a/EventGenerator.xml"], self.tmp)     # no '..'
         g[4] = f'100 openat(AT_FDCWD, "{rel}", O_RDONLY) = 4'
-        self.assertTrue(self.check(g)["pass"])                                    # against the initial cwd
-        g.insert(4, f'100 chdir("{self.tmp}") = 0')
-        self.assert_fails(self.check(g), "a defining file was not opened")        # chdir is followed
+        self.assertTrue(self.check(g, cwd=str(self.tmp))["pass"])                 # against the initial cwd
+        g.insert(4, f'100 chdir("{self.W}") = 0')
+        self.assert_fails(self.check(g, cwd=str(self.tmp)), "defining-not-opened:")   # chdir is followed
         g = self.good_lines()
         g.insert(1, '100 openat(7, "ModelConfiguration.xml", O_RDONLY) = 3')
-        self.assert_fails(self.check(g), "relative to a directory descriptor")
+        self.assert_fails(self.check(g), "dirfd-relative:")
 
     def test_escapes_and_writes(self):
         self.assertEqual(V._unescape(r"a\"b\\c\x41\101\n"), 'a"b\\cAA\n')
         ev = V.parse_trace('7 openat(AT_FDCWD, "/a/genie.root", O_WRONLY|O_CREAT, 0644) = 3\n')
-        self.assertTrue(ev[0]["write"])
+        self.assertTrue(ev[0]["write_only"] and ev[0]["creat"])
 
 
 class Exe(Tmp):
@@ -395,6 +400,11 @@ class Exe(Tmp):
         self.assertTrue(V.exe_problems([str(b / "extra")], man, genie_root=str(root)))               # not in the manifest
         (b / "gevgen").write_text("changed")
         self.assertTrue(V.exe_problems(ok, man, genie_root=str(root)))                               # other bytes
+        (b / "gevgen").write_text("gevgen")
+        (self.tmp / "gspl-copy").write_text("gspl")                       # same bytes, but the link leaves the product
+        (b / "gspl2root").unlink()
+        (b / "gspl2root").symlink_to(self.tmp / "gspl-copy")
+        self.assertEqual([p.split(":")[0] for p in V.exe_problems(ok, man, genie_root=str(root))], ["exe-not-manifest"])
 
 
 # ------------------------------------------------------------------------------------- run_gevgen_v3.sh's trace prefix
@@ -505,10 +515,15 @@ class Prefix(Tmp):
                                  {"PG_STRACE_FD": "FD", "PG_TRACE_DIR": f"{self.tmp}/fd/../okdir"},    # exists
                                  {"PG_STRACE_FD": "FD", "PG_TRACE_DIR": f"{self.tmp}/missing"},
                                  {"PG_STRACE_FD": "FD", "PG_TRACE_DIR": str(tdir)},           # gevgen.trace exists
-                                 {"PG_STRACE_FD": "999", "PG_TRACE_DIR": str(self.tmp)})):
+                                 {"PG_STRACE_FD": "999", "PG_TRACE_DIR": str(self.tmp)},
+                                 {"PG_STRACE_FD": "2", "PG_TRACE_DIR": str(self.tmp)},       # stdio is never strace
+                                 {"PG_STRACE_FD": "0", "PG_TRACE_DIR": str(self.tmp)},
+                                 {"PG_STRACE_FD": "02", "PG_TRACE_DIR": str(self.tmp)})):
             with self.subTest(i):
                 p, argv = self.go(pg, "genie", fd=True if env.get("PG_STRACE_FD") == "FD" else None, **env)
                 self.assertEqual(p.returncode, 2, p.stderr)
+                if env.get("PG_STRACE_FD") in ("2", "0", "02", "x9"):
+                    self.assertIn("refusing: PG_STRACE_FD is not a descriptor above 2", p.stderr)
                 self.assertFalse([x for x in argv if x.startswith("gevgen ")])
         p, argv = self.go(pg, "reduce", fd=True, PG_STRACE_FD="FD", PG_TRACE_DIR="okdir")   # reduce stays in the cwd
         self.assertEqual(p.returncode, 2, p.stderr)
@@ -528,3 +543,250 @@ class Prefix(Tmp):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# ------------------------------------------------------------------ agy's read of 135571b9: real shapes and the gaps
+
+REAL_MEMBERS = json.loads((RECORD_DIR / "G2111a-members.json").read_text())["members"]
+
+
+def real_shape_tree(root):
+    """A tree with the real G2111a listing's names, types and link targets, synthetic bytes; and its pins."""
+    pins = {}
+    for n, m in sorted(REAL_MEMBERS.items()):
+        p = Path(root) / n
+        if m["type"] == "dir":
+            p.mkdir(parents=True, exist_ok=True)
+            pins[n] = {"type": "dir"}
+        elif m["type"] == "file":
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_bytes(n.encode())
+            pins[n] = {"type": "file", "sha256": sha(n.encode())}
+        else:
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.symlink_to(m["target"])
+            pins[n] = {"type": "symlink", "target": m["target"]}
+    for d, dirs, files in os.walk(Path(root) / "genie_xsec", topdown=False):
+        for f in files:
+            if not os.path.islink(os.path.join(d, f)):
+                os.chmod(os.path.join(d, f), 0o444)
+        os.chmod(d, 0o555)
+    up = Path(root) / ".upsfiles"
+    up.mkdir()
+    (up / "dbconfig").write_text("db\n")
+    os.chmod(up / "dbconfig", 0o444)
+    os.chmod(up, 0o555)
+    return pins
+
+
+class RealShapes(Tmp):
+    def test_the_real_listing_has_no_top_container_member_and_passes(self):
+        self.assertNotIn("genie_xsec", REAL_MEMBERS)                          # the shape the stub fixtures missed
+        pins = real_shape_tree(self.tmp / "p")
+        self.assertEqual(V.members_check(str(self.tmp / "p"), pins), [])
+
+    def test_upsfiles_must_hold_only_a_read_only_dbconfig(self):
+        pins = real_shape_tree(self.tmp / "p")
+        up = self.tmp / "p/.upsfiles"
+        os.chmod(up, 0o755)
+        (up / "extra").write_text("x")
+        self.assertTrue(any(p.startswith("upsfiles:") for p in V.members_check(str(self.tmp / "p"), pins)))
+
+    def test_tool_check_by_descriptor(self):
+        p = self.tmp / "tool"
+        p.write_text("#!/bin/sh\n")
+        fd = os.open(p, os.O_RDONLY)
+        self.addCleanup(os.close, fd)
+        import contextlib
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            rc = V.main(["tool-check", "--fd", str(fd), "--sha256", sha(p.read_bytes())])
+        self.assertEqual(rc, 0, out.getvalue())
+
+    @unittest.skipUnless(os.path.isdir("/proc/self/fd"), "untested on this host: no /proc/self/fd (macOS)")
+    def test_proc_self_fd_is_a_magic_link(self):
+        fd = os.open(__file__, os.O_RDONLY)
+        self.addCleanup(os.close, fd)
+        with self.assertRaises(OSError):                                       # why tool-check takes --fd, not a path
+            os.open(f"/proc/self/fd/{fd}", os.O_RDONLY | os.O_NOFOLLOW)
+
+
+class TraceGaps(Trace):
+    """codes: each failing case names its reason code, so a crash-STOP can never satisfy it."""
+
+    def codes(self, rec):
+        return {p.split(":", 1)[0] for p in rec["problems"]}
+
+    def test_a_real_directory_open_is_recorded_not_gated(self):
+        g = self.good_lines()
+        g.insert(1, f'100 openat(AT_FDCWD, "{self.genie}/Linux64bit+3.10-2.17-e20-prof/lib", '
+                    'O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 9')
+        rec = self.check(g)
+        self.assertTrue(rec["pass"], rec["problems"])
+        self.assertEqual(rec["directories_opened"], 1)
+
+    def test_slot2_reduce_at_its_real_cvmfs_path(self):
+        src = "/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1802a00000-k250-e1000/data/gxspl-NUsmall.xml"
+        text = f'7 openat(AT_FDCWD, "{src}", O_RDONLY) = 3\n7 +++ exited with 0 +++\n'
+        args = dict(genie_root=str(self.genie), repo="/cvmfs/larsoft.opensciencegrid.org", private_root=str(self.priv),
+                    sha=lambda p: "f" * 64 if p == src else V.sha_path(p))
+        rec = V.trace_check(text, 0, "reduce", "G18_02a_00_000", src, "f" * 64, str(self.W), self.record, self.manifest,
+                            {}, str(self.W), {src: "f" * 64}, **args)
+        self.assertTrue(rec["pass"], rec["problems"])
+        rec = V.trace_check(text, 0, "reduce", "G18_02a_00_000", src, "f" * 64, str(self.W), self.record, self.manifest,
+                            {}, str(self.W), {}, **args)
+        self.assertIn("gated-mismatch", self.codes(rec))
+
+    def test_flags_parsed_after_the_path(self):
+        for line, code in ((f'100 openat(AT_FDCWD, "{self.tmp}/evil.xml", O_RDWR) = 3', "gated-mismatch"),
+                           (f'100 openat(AT_FDCWD, "{self.tmp}/evil.xml", O_RDONLY|O_CREAT, 0644) = 3', "gated-mismatch"),
+                           (f'100 openat(AT_FDCWD, "{self.tmp}/O_WRONLY.xml", O_RDONLY) = 3', "gated-mismatch"),
+                           (f'100 openat(AT_FDCWD, "{self.tmp}/x) = -1.xml", O_RDONLY) = 3', "gated-mismatch"),
+                           (f'100 openat(AT_FDCWD, "{self.tmp}/a, O_WRONLY.xml", O_RDONLY) = 3', "gated-mismatch")):
+            with self.subTest(line):
+                g = self.good_lines()
+                g.insert(1, line)
+                self.assertIn(code, self.codes(self.check(g)))
+
+    def test_outputs_under_w_are_not_reads(self):
+        g = self.good_lines()
+        g.insert(1, f'100 openat(AT_FDCWD, "{self.W}/genie-out.xml", O_RDWR|O_CREAT|O_TRUNC, 0644) = 3')
+        self.assertTrue(self.check(g)["pass"])
+
+    def test_unresumed_calls_and_child_exits(self):
+        g = self.good_lines()
+        g.insert(1, f'101 openat(AT_FDCWD, "{self.tmp}/evil.xml", O_RDONLY <unfinished ...>')
+        self.assertIn("unresumed", self.codes(self.check(g)))
+        g = self.good_lines()
+        g[-2] = "101 +++ exited with 1 +++"
+        self.assertIn("child-exit", self.codes(self.check(g)))
+
+    def test_fchdir_and_unknown_cwds(self):
+        g = self.good_lines()
+        g.insert(1, "100 fchdir(7) = 0")
+        self.assertIn("fchdir", self.codes(self.check(g)))
+        g = self.good_lines()
+        g.insert(1, f'101 chdir("{self.tmp}") = 0')
+        g.insert(2, '101 openat(AT_FDCWD, "ModelConfiguration.xml", O_RDONLY) = 3')
+        self.assertIn("cwd-unknown", self.codes(self.check(g)))
+
+    def test_dotdot_and_dirfd(self):
+        g = self.good_lines()
+        g.insert(1, f'100 openat(AT_FDCWD, "{self.tmp}/lnk/../{self.C}/master_config.xml", O_RDONLY) = 3')
+        self.assertIn("dotdot", self.codes(self.check(g)))
+        for raw in ("libGFwEG.so", "etc/custom.conf", "ModelConfiguration.xml"):
+            with self.subTest(raw):
+                g = self.good_lines()
+                g.insert(1, f'100 openat(7, "{raw}", O_RDONLY) = 3')
+                self.assertIn("dirfd-relative", self.codes(self.check(g)))
+        g = self.good_lines()
+        g.insert(1, '100 newfstatat(7, "ModelConfiguration.xml", {st_mode=S_IFREG}, 0) = 0')
+        self.assertIn("dirfd-relative", self.codes(self.check(g)))
+
+    def test_a_manifest_link_retargeted_on_disk(self):
+        lib = self.genie / "Linux64bit+3.10-2.17-e20-prof/lib"
+        (lib / "evil.so").write_text("so")
+        (lib / "libGFwEG.so").unlink()
+        (lib / "libGFwEG.so").symlink_to("evil.so")
+        self.assertIn("gated-mismatch", self.codes(self.check()))
+
+    def test_libraries_from_outside_the_roots(self):
+        g = self.good_lines()
+        g.insert(1, f'100 openat(AT_FDCWD, "{self.tmp}/home/.genie_compatlibs/libssl.so.10", O_RDONLY|O_CLOEXEC) = 3')
+        self.assertIn("so-outside-roots", self.codes(self.check(g)))
+
+    def test_another_spline_and_defining_files_by_another_pid(self):
+        g = self.good_lines()
+        g.insert(1, f'100 openat(AT_FDCWD, "{self.W}/splines/other_CH.xml.gz", O_RDONLY) = 3')
+        self.assertIn("other-spline", self.codes(self.check(g)))
+        g = [ln.replace("100 openat", "101 openat") if "TuneGeneratorList" in ln else ln for ln in self.good_lines()]
+        self.assertIn("defining-not-opened", self.codes(self.check(g)))
+
+    def test_utf8_escapes(self):
+        self.assertEqual(V._unescape(r"\303\251.xml"), "é.xml")
+
+    def test_a_crash_is_its_own_reason(self):
+        rec = V.trace_check("1 x\n", 0, "gevgen", "G21_11a_00_000", "/s", "0", "/w", None, {}, {}, "/w", {})
+        self.assertEqual(self.codes(rec), {"internal-error"})
+        self.assertFalse(rec["pass"])
+
+
+class Shapes(Tmp):
+    S2 = V.SLOT2_SPLINE
+
+    def good(self):
+        members = {"genie_xsec/v3_04_00": {"type": "dir"}}
+        slot2 = {"pass": True, "spline": self.S2, "initial_opened_spline": True,
+                 "gated": [{"path": self.S2, "pinned_by": "exact pin", "match": True}]}
+        return [7, members, {"pass": True, "n_pinned": 1}, {"pass": True, "fd": 7},
+                [{"pass": True, "directories_opened": 0}, {"pass": True, "directories_opened": 2}], slot2]
+
+    def test_each_shape_fails_alone(self):
+        fd = os.open(__file__, os.O_RDONLY)
+        self.addCleanup(os.close, fd)
+        a = self.good()
+        a[0], a[3]["fd"] = fd, fd
+        c, why = V.shape_checks(*a, fd_dir="/proc/self/fd" if os.path.isdir("/proc/self/fd") else "/dev/fd")
+        self.assertEqual({k for k, v in c.items() if v}, {"real_members_listing", "directory_open_recorded",
+                                                          "slot2_reduce_real_path"} | (
+            {"proc_fd_magic_link"} if os.path.isdir("/proc/self/fd") else set()))
+        if not os.path.isdir("/proc/self/fd"):
+            self.assertEqual(why, {"proc_fd_magic_link": "untested-host: no /proc/self/fd"})
+        for name, change in (("real_members_listing", lambda a: a[1].update({"genie_xsec": {"type": "dir"}})),
+                             ("real_members_listing", lambda a: a[2].update({"n_pinned": 2})),
+                             ("directory_open_recorded", lambda a: a[4][1].update({"directories_opened": 0})),
+                             ("directory_open_recorded", lambda a: a[4][0].update({"pass": False})),
+                             ("slot2_reduce_real_path", lambda a: a[5].update({"spline": "/elsewhere/gxspl-NUsmall.xml"})),
+                             ("slot2_reduce_real_path", lambda a: a[5]["gated"][0].update({"pinned_by": "genie manifest"})),
+                             ("slot2_reduce_real_path", lambda a: a[5]["gated"][0].update({"match": False}))):
+            with self.subTest(name):
+                b = self.good()
+                b[0], b[3]["fd"] = fd, fd
+                change(b)
+                c, why = V.shape_checks(*b, fd_dir="/dev/fd")
+                self.assertFalse(c[name])
+                self.assertEqual(why[name], f"shape-{name.replace('_', '-')}: failed")
+
+    def test_system_tools(self):
+        self.assertEqual(V.system_tool_problems(["/bin/sh"]), [])
+        p = self.tmp / "awk"
+        p.write_text("x")
+        self.assertTrue(V.system_tool_problems([str(p)])[0].startswith("system-tool:"))
+
+    def test_ld_library_path(self):
+        self.assertEqual(V.exe_problems([], {}, ld_library_path="/usr/lib64::/cvmfs/larsoft.opensciencegrid.org/x"), [])
+        probs = V.exe_problems([], {}, ld_library_path=f"/usr/lib64:{self.tmp}")
+        self.assertEqual(len(probs), 1)
+        self.assertTrue(probs[0].startswith("ld-library-path:"))
+
+
+class MoreRules(Trace):
+    def codes(self, rec):
+        return {p.split(":", 1)[0] for p in rec["problems"]}
+
+    def test_a_writable_container_fails(self):
+        pins = real_shape_tree(self.tmp / "p")
+        os.chmod(self.tmp / "p/genie_xsec", 0o755)
+        self.assertIn("members-type: genie_xsec is not a read-only directory", V.members_check(str(self.tmp / "p"), pins))
+
+    def test_a_genie_library_name_is_gated_anywhere(self):
+        g = self.good_lines()
+        g.insert(1, f'100 openat(AT_FDCWD, "{self.repo}/other/lib/libGFwEG.so", O_RDONLY|O_CLOEXEC) = 3')
+        self.assertIn("gated-mismatch", self.codes(self.check(g)))
+
+    def test_a_root_owned_tool_outside_the_system_bins(self):
+        self.assertTrue(any(p.startswith("system-tool:") for p in V.system_tool_problems(["/etc/hosts"])))
+
+    def test_stdio_is_never_a_tool_descriptor(self):
+        import contextlib
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as cm:
+            V.main(["tool-check", "--fd", "2", "--sha256", "0" * 64])
+        self.assertEqual(cm.exception.code, 2)
+
+    def test_an_unpinned_config_file_in_w_or_the_private_product(self):
+        for path, code in ((f"{self.W}/.rootrc", "config-unpinned"), (f"{self.W}/rootlogon.C", "config-unpinned"),
+                           (f"{self.priv}/genie_xsec/rootlogon.C", "gated-mismatch")):   # genie_xsec: gated by name
+            with self.subTest(path):
+                g = self.good_lines()
+                g.insert(1, f'100 openat(AT_FDCWD, "{path}", O_RDONLY) = 3')
+                self.assertIn(code, self.codes(self.check(g)))

@@ -4,8 +4,12 @@ A mutant is (file, old, new, what, suite[, count]): `old` must occur exactly `co
 and is replaced by `new` in a throwaway copy of the repository subset the suites read. Then:
 - the copy must compile (compile() for .py, bash -n for .sh), or the mutant is INVALID;
 - its suite runs under unittest, which reports an assertion failure as FAIL and any other exception as ERROR;
-- KILLED only if at least one test FAILs, and the log names them; ERRORs alone, a timeout or a non-zero exit
-  with no FAIL are INVALID, listed separately, and count against the receipt; a clean pass is SURVIVED.
+- KILLED only if at least one test FAILs and the suite exits non-zero, and the log names them; ERRORs alone, a
+  timeout, a non-zero exit with no FAIL, or a FAIL with exit 0 are INVALID, listed separately, and count against the
+  receipt; a clean pass is SURVIVED. The suites assert reason codes, and the code under test turns an unexpected
+  exception into the one reason "internal-error: <type>" that only its wrapper's own test expects, so a crash
+  cannot satisfy a test that expects a particular refusal.
+- every suite runs isolated (python3 -I): no user site, no PYTHONPATH, no current directory on sys.path.
 Every suite must first pass clean on the unmutated copy, or nothing runs.
 """
 import concurrent.futures
@@ -22,8 +26,9 @@ PG = "docs/orchestration/state/2d-closeout/covfix-20261122"
 G, N = "3d-unfolding/genie", "nd-unfolding"
 SUITES = {
     "probe": (f"{PG}/pg/probe", [sys.executable, "-I", "-B", "test_pg_probe.py"]),
-    "verify": (f"{N}/tests", [sys.executable, "-B", "-m", "unittest", "test_pg_verify"]),
-    "generate": (f"{N}/tests", [sys.executable, "-B", "-m", "unittest", "test_covfix_pg"]),
+    "verify": (f"{N}/tests", [sys.executable, "-I", "-B", "-m", "unittest", "discover", "-s", ".", "-p", "test_pg_verify.py"]),
+    "generate": (f"{N}/tests", [sys.executable, "-I", "-B", "-m", "unittest", "discover", "-s", ".", "-p",
+                                "test_covfix_pg.py"]),
     "install": (f"{PG}/pg/install", [sys.executable, "-I", "-B", "test_pg_install.py"]),
 }
 TIMEOUT_S = 900
@@ -61,8 +66,10 @@ def classify(rc, out, timed_out):
         return "INVALID", "timeout"
     fails = re.findall(r"^FAIL: (\S+) \((\S+?)\)", out, re.M)
     errs = re.findall(r"^ERROR: (\S+) \((\S+?)\)", out, re.M)
-    if fails:
+    if fails and rc not in (0, None):
         return "KILLED", ", ".join(sorted({n for n, _ in fails}))
+    if fails:
+        return "INVALID", f"FAIL reported with exit {rc}"
     if errs:
         return "INVALID", "errors only: " + ", ".join(sorted({n for n, _ in errs}))
     if rc != 0:

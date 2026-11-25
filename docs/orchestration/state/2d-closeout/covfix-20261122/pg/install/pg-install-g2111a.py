@@ -199,7 +199,10 @@ def scan(tarball, members):
 
 
 def extract(tarball, root, members):
-    """Pass 2: write each pinned member beneath root, never following a link, never overwriting."""
+    """Pass 2: write each pinned member beneath root, never following a link, never overwriting. The container
+    genie_xsec is not a member of SciSoft's tarball (its first member is genie_xsec/v3_04_00), so it is made here."""
+    if "genie_xsec" not in members:
+        os.mkdir(os.path.join(root, "genie_xsec"), 0o755)
     with tarfile.open(tarball, "r|bz2") as tf:
         for m in tf:
             n = m.name.rstrip("/")
@@ -207,7 +210,7 @@ def extract(tarball, root, members):
             path = os.path.join(root, n)
             parent = os.path.dirname(path)
             if os.path.realpath(parent) != parent:
-                raise Stop(f"{n}: its parent resolves through a link")
+                raise Stop(f"extract-link: {n}: its parent resolves through a link")
             if want["type"] == "dir":
                 os.mkdir(path, 0o755)
             elif want["type"] == "file":
@@ -225,10 +228,13 @@ def extract(tarball, root, members):
 
 
 def check_tree(root, members, readonly):
-    """[problems]: root/genie_xsec must hold exactly the members, each file's bytes and each link's target."""
+    """[problems]: root/genie_xsec (a container, not a member) must hold exactly the members, each file's bytes and
+    each link's target; root/.upsfiles exactly one dbconfig."""
     seen, probs = {}, []
     stack = [os.path.join(root, "genie_xsec")]
-    seen["genie_xsec"] = os.lstat(stack[0])
+    st = os.lstat(stack[0])
+    if not stat.S_ISDIR(st.st_mode) or (readonly and st.st_mode & 0o222):
+        probs.append("tree-container: genie_xsec is not a read-only directory")
     while stack:
         d = stack.pop()
         for e in os.scandir(d):
@@ -238,6 +244,13 @@ def check_tree(root, members, readonly):
                 stack.append(e.path)
     probs += [f"extra: {n}" for n in sorted(set(seen) - set(members))]
     probs += [f"missing: {n}" for n in sorted(set(members) - set(seen))]
+    up = os.path.join(root, ".upsfiles")
+    if os.path.lexists(up):
+        ust, names = os.lstat(up), sorted(os.listdir(up))
+        if (not stat.S_ISDIR(ust.st_mode) or names != ["dbconfig"]
+                or not stat.S_ISREG(os.lstat(os.path.join(up, "dbconfig")).st_mode)
+                or (readonly and (ust.st_mode & 0o222 or os.lstat(os.path.join(up, "dbconfig")).st_mode & 0o222))):
+            probs.append(f"upsfiles: .upsfiles is not a {'read-only ' if readonly else ''}directory holding one dbconfig: {names}")
     for n in sorted(set(seen) & set(members)):
         st, m, p = seen[n], members[n], os.path.join(root, n)
         kind = ("dir" if stat.S_ISDIR(st.st_mode) else "file" if stat.S_ISREG(st.st_mode)
@@ -272,13 +285,15 @@ def install(root=ROOT, url=URL, tarball_sha=TARBALL_SHA256, members=None, dbconf
         if not rec["identity"]["pass"]:
             raise Stop("identity: not a Perlmutter login node; nothing was written")
         if not dbconfig_sha:
-            raise Stop("DBCONFIG_SHA256 is not filled; nothing was written")
+            raise Stop("dbconfig-unpinned: DBCONFIG_SHA256 is not filled; nothing was written")
         if os.path.lexists(root):
-            raise Stop(f"{root} already exists; nothing was written")
+            raise Stop(f"root-exists: {root} already exists; nothing was written")
         parent = os.path.dirname(root)
         if not (parent + "/").startswith(scratch):
-            raise Stop(f"{root} is not on {scratch}")
+            raise Stop(f"root-place: {root} is not on {scratch}")
         os.makedirs(parent, exist_ok=True)
+        if os.path.realpath(parent) != parent or not (os.path.realpath(parent) + "/").startswith(scratch):
+            raise Stop(f"root-place: {parent} resolves to {os.path.realpath(parent)}, not itself on {scratch}")
         os.mkdir(root, 0o755)
         os.mkdir(os.path.join(root, "dl"), 0o700)
         tarball = os.path.join(root, "dl", os.path.basename(url))
@@ -291,10 +306,10 @@ def install(root=ROOT, url=URL, tarball_sha=TARBALL_SHA256, members=None, dbconf
             os.close(fd)
         if rec["tarball_sha256"] != tarball_sha:
             os.unlink(tarball)
-            raise Stop("the download's sha256 differs from the pin; it was removed")
+            raise Stop("download-sha: the download's sha256 differs from the pin; it was removed")
         rec["scan_problems"] = scan(tarball, members)
         if rec["scan_problems"]:
-            raise Stop("the tarball's members differ from the pins; nothing was extracted")
+            raise Stop("members: the tarball's members differ from the pins; nothing was extracted")
         extract(tarball, root, members)
         os.unlink(tarball)
         os.rmdir(os.path.join(root, "dl"))
@@ -305,7 +320,7 @@ def install(root=ROOT, url=URL, tarball_sha=TARBALL_SHA256, members=None, dbconf
             os.close(sfd)
         rec["dbconfig_sha256"] = hashlib.sha256(data).hexdigest()
         if rec["dbconfig_sha256"] != dbconfig_sha:
-            raise Stop("CVMFS's dbconfig differs from the pin; it was not copied")
+            raise Stop("dbconfig-sha: CVMFS's dbconfig differs from the pin; it was not copied")
         os.mkdir(os.path.join(root, ".upsfiles"), 0o755)
         dfd = os.open(os.path.join(root, ".upsfiles", "dbconfig"), os.O_WRONLY | os.O_CREAT | os.O_EXCL | O_NOFOLLOW, 0o644)
         try:
@@ -322,10 +337,14 @@ def install(root=ROOT, url=URL, tarball_sha=TARBALL_SHA256, members=None, dbconf
         if sorted(os.listdir(root)) != [".upsfiles", "genie_xsec"]:
             rec["tree_problems"].append(f"{root} holds {sorted(os.listdir(root))}")
         if rec["tree_problems"]:
-            raise Stop("the installed tree differs from the pins")
+            raise Stop("tree: the installed tree differs from the pins")
         rec["install_utc"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
-    except (Stop, OSError, tarfile.TarError, subprocess.SubprocessError) as e:
-        rec["stops"].append(f"{type(e).__name__}: {e}")
+    except Stop as e:
+        rec["stops"].append(str(e))
+    except (OSError, tarfile.TarError, subprocess.SubprocessError) as e:
+        rec["stops"].append(f"io-error: {type(e).__name__}: {e}")
+    except Exception as e:                  # fail closed, with a reason no other test expects
+        rec["stops"].append(f"internal-error: {type(e).__name__}")
     rec["verdict"] = "GO" if not rec["stops"] else "STOP"
     return rec
 

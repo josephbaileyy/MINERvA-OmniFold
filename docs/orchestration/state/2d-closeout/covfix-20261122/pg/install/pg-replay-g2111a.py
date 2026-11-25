@@ -100,6 +100,40 @@ def unpack(data, dest, blobs):
     return len(seen)
 
 
+REPLAY_CHECKS = ("tool_check_strace.json", "members_check.json", "dbconfig_check.json", "exe_check.json",
+                 "trace_check_reduce.json", "trace_check_graphs.json", "trace_check_gevgen.json",
+                 "trace_check_reduce_slot2.json", "shape_check.json")
+DELETABLE = ("genie_v3.gst.root", "gevgen.status", "gntp.ghep.root", "input-flux.root")
+
+
+def replay_problems(r):
+    """[problems] with pg_replay.sh's replay.json: every named check, spline open and real shape present and true."""
+    p = []
+    if r.get("pass") is not True:
+        p.append("pass")
+    c = r.get("checks")
+    if not (isinstance(c, dict) and sorted(c) == sorted(REPLAY_CHECKS) and all(v is True for v in c.values())):
+        p.append("checks")
+    s = r.get("spline_opened")
+    if not (isinstance(s, dict) and sorted(s) == sorted(n for n in REPLAY_CHECKS if n.startswith("trace_check"))
+            and all(v is True for v in s.values())):
+        p.append("spline opens")
+    g = r.get("gated")
+    if not (isinstance(g, dict) and len(g) == 4 and all(isinstance(v, list) and v for v in g.values())):
+        p.append("gated files")
+    rs = r.get("real_shapes")
+    if not (isinstance(rs, dict) and len(rs) == 4 and all(v is True for v in rs.values())):
+        p.append("real shapes")
+    return p
+
+
+def deleted_problems(d):
+    if not (isinstance(d, dict) and "genie_v3.gst.root" in d and set(d) <= set(DELETABLE)):
+        return ["names"]
+    return [n for n, v in sorted(d.items()) if not (isinstance(v, dict) and re.fullmatch(r"[0-9a-f]{64}", str(v.get(
+        "sha256"))) and isinstance(v.get("bytes"), int))]
+
+
 def replay(parent=REPLAY_PARENT, archive_b64=None, archive_sha=None, blobs=None, commit=None, ident=identity,
            run=subprocess.run, home=None, now=None):
     archive_b64 = ARCHIVE_B64 if archive_b64 is None else archive_b64
@@ -142,11 +176,20 @@ def replay(parent=REPLAY_PARENT, archive_b64=None, archive_sha=None, blobs=None,
             raise Stop(f"the replay driver exited {p.returncode}")
         with open(os.path.join(w, "run", "replay.json")) as f:
             r = json.load(f)
-        rec["replay"] = {k: r.get(k) for k in ("checks", "spline_opened", "gated", "pass")}
-        if r.get("pass") is not True:
-            raise Stop("the replay's checks did not all pass")
+        rec["replay"] = {k: r.get(k) for k in ("checks", "spline_opened", "gated", "real_shapes", "pass")}
+        probs = replay_problems(r)
+        if probs:
+            raise Stop(f"replay-record: {probs}")
+        with open(os.path.join(w, "run", "deleted.json")) as f:
+            rec["deleted"] = json.load(f)
+        left = [n for n in os.listdir(os.path.join(w, "run", "work", "t0"))
+                if n.endswith((".ghep.root", ".gst.root", ".status")) or n == "input-flux.root"]
+        if deleted_problems(rec["deleted"]) or left:
+            raise Stop(f"deleted-record: {deleted_problems(rec['deleted'])}, left {left}")
     except (Stop, OSError, ValueError, tarfile.TarError, subprocess.SubprocessError) as e:
         rec["stops"].append(f"{type(e).__name__}: {e}")
+    except Exception as e:                  # fail closed, with a reason no other test expects
+        rec["stops"].append(f"internal-error: {type(e).__name__}")
     rec["verdict"] = "GO" if not rec["stops"] else "STOP"
     return rec
 

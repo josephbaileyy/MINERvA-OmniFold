@@ -12,13 +12,28 @@ tune names and the seeds changed, in F1b′'s single-wave layout (`FD-F1-DECLARA
 **Slot 1 and the checks** (`state/2d-closeout/covfix-20261122/pg/PLAN-SLOT1-PROBE.md`, approved; `RULINGS-A2.md`).
 Slot 1 is G21_11a_00_000, from a sha-pinned private copy of SciSoft's G2111a00000 product under
 `/pscratch/sd/j/josephrb/covfix-pg/products`. Slot 2 is G18_02a_00_000, from CVMFS. Before generation, in order:
-1. strace is opened once on fd 9, its sha256 is checked through that descriptor, and its self-test runs.
+0. Both drivers refuse if LD_PRELOAD, LD_AUDIT, BASH_ENV or ENV is set. pg_generate.sh also refuses if the deploy
+   has any untracked file.
+1. strace is opened once on fd 9. `pg_verify.py tool-check --fd 9` reads its sha256 through that inherited
+   descriptor (no path is opened: `/proc/self/fd/9` is a magic link that O_NOFOLLOW refuses), and its self-test runs.
 2. The private product is checked against every pinned member, and its UPS database file against its pin.
-3. `gevgen` and `gspl2root`, as each tune's setup resolves them, are checked against the genie manifest.
-4. reduce and gspl2root run under strace, and their traces are checked: the pinned configuration from the run, and
-   the reduced spline opened.
-Every gevgen task is traced the same way, and checked after generation. Every check's pass is recorded in
+   `genie_xsec` itself is a container, not a member, and `.upsfiles` must hold only a read-only dbconfig.
+3. Each tune's setup resolves `gevgen`, `gspl2root` and `awk`, and records `LD_LIBRARY_PATH`. The programs are checked
+   against the genie manifest, by bytes and by real path. awk must be a root-owned system tool. Every
+   LD_LIBRARY_PATH entry must lie under CVMFS or a system library directory.
+4. reduce and gspl2root run under strace, and their traces are checked (`pg_verify.py`'s docstring lists the rules):
+   - the pinned configuration from the run, and the reduced spline opened;
+   - a CVMFS tune's source spline and README by exact `--pin`;
+   - every shared library from CVMFS or a system library directory.
+   Every refusal names a reason code.
+Every gevgen task is traced the same way, and checked after generation. On any exit, every background step's whole
+process tree is stopped and waited for before seed-named files are renamed. Every check's pass is recorded in
 PRODUCTS.json, and the required inventory (`pg_lib.py inventory`) is checked last.
+
+**B3 (`pg_replay.sh`)** runs these checks for slot 1 on a login node, then one 100-event public-seed gevgen. It then runs
+slot 2's traced reduce at its real CVMFS path and the four real-shape checks (`pg_verify.py shape-check`), which must
+pass there before slot 2 is generated. agy's read of 135571b9 and its dispositions:
+`state/2d-closeout/covfix-20261122/pg/AGY-READ-A2.md`.
 
 ## Contract
 
@@ -85,8 +100,9 @@ difference is a STOP.
 - **Slot 1 only:** `setup_genie_v3.sh` prepends the private products directory to `PRODUCTS`, and
   `run_gevgen_v3.sh reduce` reads that copy's `gxspl-NUsmall.xml`.
 - **The trace prefix:** `run_gevgen_v3.sh` runs awk, gspl2root and gevgen under strace only when both
-  `PG_STRACE_FD` and `PG_TRACE_DIR` are given. It never inherits `PG_TRACE`. With neither, F1's commands run
-  byte-identically.
+  `PG_STRACE_FD` (a descriptor above 2) and `PG_TRACE_DIR` are given. It never inherits `PG_TRACE`. With neither,
+  F1's commands run byte-identically. Its bytes d5b4b596… (with fchdir traced and stdio refused) have the director's
+  GO for the PG path only; they run on NERSC only under a slot binding the director issues.
 
 ## Tests
 

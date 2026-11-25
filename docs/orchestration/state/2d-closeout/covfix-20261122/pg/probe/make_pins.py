@@ -35,6 +35,7 @@ def pins():
         s = r["splines"][t]
         xsec[f"{qualifier(t)}/data/gxspl-NUsmall.xml"] = s["spline_sha256"]
         xsec[f"{qualifier(t)}/data/README"] = s["readme_sha256"]
+        xsec[f"{qualifier(t)}/ups/genie_xsec.table"] = s["ups_table_sha256"]     # setup executes it
     return {"record_sha256": hashlib.sha256(raw).hexdigest(), "genie_files": dict(sorted(files.items())),
             "genie_links": r["pins"]["links"], "genie_listings": dict(sorted(listings.items())),
             "xsec_files": dict(sorted(xsec.items())), "required_qualifiers": sorted(qualifier(t) for t in CVMFS_SPLINES)}

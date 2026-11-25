@@ -128,7 +128,7 @@ def receipt_problems(rec, rc, pins):
     else:
         for k, t in tools.items():
             if not isinstance(t, dict) or "problem" in t or not _hex64(t.get("sha256")) \
-                    or t.get("rpm_match") not in (True, None):
+                    or not (t.get("rpm_match") is True or t.get("rpm_match") is None):     # 1 == True
                 p.append(f"tool {k}")
     for keys, w in GPG_REQUIRED:
         if not _is(_get(rec, "gpg", *keys), w):
