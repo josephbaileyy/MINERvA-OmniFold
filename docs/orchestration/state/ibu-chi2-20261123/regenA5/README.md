@@ -55,7 +55,7 @@ share:
 | 9 | 6.048e-05 | 121 | 3.103 | 9.63 | 0.000 |
 
 The same eigenvectors appear on both grids. The published covariance does not change, so λ and u are fixed; our
-residual reorders them. On the paper's edges, the moderate-λ modes with lam_rank 118, 121 and 79 drop in rank or out
-of the top six, and the small-λ modes with lam_rank 28 and 27 at high p∥ enter. This agrees with A4's mode-map reading.
+residual reorders them. On the paper's edges, the moderate-λ modes with lam_rank 121 and 79 leave the top six, and
+the one with lam_rank 118 rises to (b). The small-λ modes with lam_rank 28 and 27, at high p∥, enter. This agrees with A4's mode-map reading.
 
 [`SHA256SUMS`](SHA256SUMS) covers this directory. Files named `*.out` are committed with `git add -f`.
