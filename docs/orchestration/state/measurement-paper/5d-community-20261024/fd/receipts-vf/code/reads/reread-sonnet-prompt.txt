@@ -1,0 +1,13 @@
+You are the second reader (re-read) of the V_F Phase 1 code at commit f6288ff9. You read the FIRST version (cf65052d) and returned NO-GO; your earlier read is PRIOR-SONNET-READ.txt in this directory. Since then the code went through three codex-school re-reads; codex's last one (CODEX-REREAD4.txt) is GO. Read-only: you have Read, Grep and Glob only.
+
+Files (paths relative to this directory):
+- nd-unfolding/fd_vf_addition.py (the module), nd-unfolding/tests/test_fd_vf_addition.py (88 tests; all pass locally)
+- docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/code/mutants_vf_addition.py (85 mutants; at f95da53f all 85 KILLED, both baselines clean)
+- the governing declaration: docs/orchestration/state/measurement-paper/5d-community-20261024/FD-VF-ADDITION-DECLARATION.md, and its amendments FD-VF-ADDITION-AMENDMENT-A1.md (figures with arms only against figures-a2; OLD arms read committed upstreams; chdefs manifest pinned; renderer must be E-A2's) and FD-VF-ADDITION-AMENDMENT-A2.md (Joseph's names: C_e^infl, DeltaC_e; per-cell sigma layout).
+- producers it imports: nd-unfolding/fd_cpl_addition.py, fd_gencmp_e.py, fd_g_figures_check.py, fd_data_product*.py, fd_deposit_candidate.py.
+
+Tasks:
+1. For each of your nine prior findings, say FIXED / PARTLY / NOT FIXED with file:line evidence at this head. Items 1-3 were your blockers.
+2. Look for NEW defects introduced by the fixes, especially: control T (curated rows, identities on named records, matrix names); control C (STRUCTURED fields, REQUIRED_REFS); K6 readback (same_bits, box edges); the OLD routing (committed upstreams at declared pins); check_renderer; the mutation runner's classification (KILLED needs the module imported and unittest's FAILED summary; loader failures are HARNESS).
+3. For each defect: severity (BLOCKER / MAJOR / MINOR), file:line, a concrete failure scenario, and whether it could (a) produce a wrong number or (b) let a failed control pass.
+4. End with exactly one line: "VERDICT: GO" or "VERDICT: NO-GO" for binding Phase 1. Start your reply with "Reviewer: Sonnet 5.5".
