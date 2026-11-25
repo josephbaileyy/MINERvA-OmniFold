@@ -1,10 +1,11 @@
 #!/bin/bash
 # Stand-in of ibub_readout_connect.sh (connect O) in Debian, as standin.sh is for connect R. Stubs: sacct (the fence
-# rows and the job's row from the variant), git clone's URL (a depth-1 bare repo of the commit, which is also the
-# stand-in's JOB_M), the MAT pin check (PY310), and the shared checkout's setup_salloc_env.sh, which puts a stub
-# `python` first on PATH: it answers the MAT preflight and stands in for ibub_readout.py (it writes the tune's two
-# products and prints its verdict line). The real readout needs ROOT and MAT and is tested by test_ibub_readout.py;
-# this tests the connect around it. The job's records are fake bytes at the real paths of $N.
+# rows and the job's row from the variant), git clone's URL (a bare repo mounted at /hostgit: the readout's M with
+# its history, so the job's JOB_M is a real ancestor), the MAT pin check (PY310), and the shared checkout's
+# setup_salloc_env.sh, which puts a stub `python` first on PATH: it answers the MAT preflight and stands in for
+# ibub_readout.py (it writes the tune's two products and prints its verdict line). The real readout needs ROOT and
+# MAT and is tested by test_ibub_readout.py; this tests the connect around it. The job's records are fake bytes at
+# the real paths of $N.
 # Variant ($1): ok | done_absent | tune_invalid | job_preempted | job_norow | root_exists | readout_exists |
 #               cov2d_running | ibub_running | window | not_regular | readout_refused
 V=${1:?variant}
