@@ -1,8 +1,8 @@
 python=3.11.18 1.26.4 4.6.0
-ea1312419497c5920b288255cc5840a44378c6b442834d94976f7768f683d6ea  evw5d.py
-78faeb8abfe4b3ebb24144df8e51c7f0f0c5952fd8f214841e936a3cbbb2e3af  test_evw5d.py
-fbe66ecb9808d4da6ddfee80f07d93fa323d4249477c98d05c9b50f5cc2a795f  evw5d_mutation.py
-5dd9bef86f8523569e36b58fedabf2ecfeed05c3f8634053526b0c69d27d720d  sbatch_evw5d.sh
+36f3d2ee2b7b4d13cdbeca746dcd9398f479639bce254261b9a0d7b098822f5d  evw5d.py
+9ef3175b7a59332f57cdc2837275a35a72b564cd915fc3c2699ffe11bd6e6a23  test_evw5d.py
+733e5c948ad9f8af42e28ed2e02c9799ffb6fdd442903cb8571a35734f461f1a  evw5d_mutation.py
+cea8ab75e4715f6c82859402c119f07be02b11e52e1cba087ed6d200308c683d  sbatch_evw5d.sh
 4755681f6ba8bd5060fe6ed4902e940b71e3b641d87c978a1f8016faaec468da  ../ess_e/ess_capture.py
 8687e85be161bfc993ea5a2c8be7b83dc92b5eb94caa13768261ea0ecbe5667e  ../ess_e/test_ess_capture.py
 PASSED test_evw5d.py::test_pass_run_exit
@@ -53,6 +53,12 @@ PASSED test_evw5d.py::test_check_self_result_one_ulp
 PASSED test_evw5d.py::test_check_self_independent_formula_alone
 PASSED test_evw5d.py::test_check_self_f_alone
 PASSED test_evw5d.py::test_check_self_rows_alone
+PASSED test_evw5d.py::test_check_self_f_file_alone
+PASSED test_evw5d.py::test_check_self_volume_alone
+PASSED test_evw5d.py::test_check_self_saved_constants_from_the_builder[good_inverted]
+PASSED test_evw5d.py::test_check_self_saved_constants_from_the_builder[xsec_zero]
+PASSED test_evw5d.py::test_check_self_saved_constants_from_the_builder[cm2]
+PASSED test_evw5d.py::test_check_file_constants_against_the_input
 PASSED test_evw5d.py::test_check_self_saved_maps_alone[ofin]
 PASSED test_evw5d.py::test_check_self_saved_maps_alone[completeness]
 PASSED test_evw5d.py::test_contributions_skip_zero_denominator_cells
@@ -64,10 +70,19 @@ PASSED test_evw5d.py::test_accepted_byte_change
 PASSED test_evw5d.py::test_accepted_extra_and_missing
 PASSED test_evw5d.py::test_accepted_link
 PASSED test_evw5d.py::test_accepted_done_marker
+PASSED test_evw5d.py::test_accepted_done_link
+PASSED test_evw5d.py::test_accepted_crlf_sums
+PASSED test_evw5d.py::test_accepted_bound_digest
+PASSED test_evw5d.py::test_accepted_run_json_cross_check
 PASSED test_evw5d.py::test_accepted_sums_file
 PASSED test_evw5d.py::test_parse_sums
 PASSED test_evw5d.py::test_acceptance_requires_complete_digest_map
 PASSED test_evw5d.py::test_capture_unfold_refusals
 PASSED test_evw5d.py::test_ess_tool_pin
-64 passed in 53.06s
+PASSED test_evw5d.py::test_job_refuses_a_linked_log_directory
+PASSED test_evw5d.py::test_job_refuses_an_existing_or_linked_log_file
+PASSED test_evw5d.py::test_job_refuses_a_wrong_writer_digest
+PASSED test_evw5d.py::test_job_refuses_when_git_status_fails
+PASSED test_evw5d.py::test_job_refuses_a_failed_setup
+79 passed in 59.94s
 rc=0

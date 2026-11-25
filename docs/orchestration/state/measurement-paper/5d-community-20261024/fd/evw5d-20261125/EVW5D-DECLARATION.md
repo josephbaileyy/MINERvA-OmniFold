@@ -1,4 +1,4 @@
-# EVW5D declaration: configuration (e)'s central per-event weights for the sixteen-cell result (2026-11-25, revision 1)
+# EVW5D declaration: configuration (e)'s central per-event weights for the sixteen-cell result (2026-11-25, revision 2)
 
 **By** ibu-chi, at the director's request. **Status: a draft for the reads and the director's binding. Nothing has run
 on NERSC.** It runs only under a binding and the director's GO. Publication, and where a 1.7 GB file is hosted, are
@@ -16,6 +16,10 @@ this lane's scoping report:
 4. nothing on CFS: the output stays on $SCRATCH with its manifest, gets an HPSS copy, and is fetched by sha;
 5. reads by codex-school `gpt-6.2-sol` and claude-personal Sonnet 5.5, blocking only on what could change the
    published weights, constants or gates; price 0.25 node-h, cap 0.5, one CPU node.
+
+**Revision 2 (2026-11-25)** takes codex-school `gpt-6.2-sol`'s first read (`receipts/reads/r1/`): NO-GO, four
+BLOCKING and two other findings, all taken (§8). It also takes the director's rulings on revision 1: no production
+C-COL arm, and the 1e-5 completeness statement (§3).
 
 The code is in [`nd-unfolding/evw5d/`](../../../../../../../nd-unfolding/evw5d/): `evw5d.py`, `sbatch_evw5d.sh`,
 `test_evw5d.py` and `evw5d_mutation.py`.
@@ -83,16 +87,23 @@ PASS `evw5d.done` is not a result; a consumer checks it with `evw5d.accepted()`.
 | **C-ENTRY** | the key is unique: uint32 entries, strictly increasing | all |
 | **C-GRID** | ESS's mapping checks: the driver's maps recomputed from the table reproduce its result bit for bit; edges equal the fine grid; the fine map's digest; the volumes | all |
 | **C-F** (gate 2) | the sixteen f, from the result (Σ xs·vol) and from the per-row contributions (ESS's (B)), against the data product `fd_data_product_cpl.json` (`d6752d2c…`) | ≤ 1e-14 relative |
-| **C-FILE** | the products read back from the bytes hashed: exactly the declared columns and constants, each column equal to its source in the independent read (entry, truth, `w_prior`, `reco_partner`) or to the captured push weights, `w_unfolded` equal to their product, `fine_index` recomputed, the constants equal to the run's, the meta and `constants.json` as written | all, bit for bit |
-| **C-SELF** | from the read-back files alone: the result re-histogrammed and extracted bit for bit equal to fb5cc679's; the saved `ofin` and completeness bit for bit; an independently written formula to 1e-13; the sixteen f from the file and from its rows to 1e-14 | as stated |
+| **C-FILE** | the products read back from the bytes hashed: exactly the declared columns and constants, each column equal to its source in the independent read (entry, truth, `w_prior`, `reco_partner`) or to the captured push weights, `w_unfolded` equal to their product, `fine_index` recomputed, the constants equal to the run's, the input constants (edges, flux, POT, N, `denom_nd`) also equal to the independent read itself, the meta and `constants.json` as written | all, bit for bit |
+| **C-SELF** | from the read-back files alone: the result re-histogrammed and extracted bit for bit equal to fb5cc679's; the saved `ofin`, completeness and `good` mask bit for bit against the ones recomputed from the saved rows; the saved `xsec_flat` bit for bit against fb5cc679's; the saved 1e4 exactly; the saved volumes against the products of the saved edges' widths to 1e-13; an independently written formula to 1e-13; the sixteen f from the file and from its rows to 1e-14 | as stated |
 | **C-FLOW** | every truth-selected row is in the file; the in-grid rows, by `bincount` over `fine_index`, give the driver's per-cell `unf` and `ofin`; the rows outside the grid are counted with their weight | ≤ 1e-12 relative |
 | **C-PINS** | after the run, the eleven pinned modules and the staged copies equal their pins | all |
-| **C-COMPLETE** | a **measurement**: c_f = ofin_f / denom_f over the fine cells; max \|c − 1\|, its quantiles, cells beyond 1e-12, cells with signal and no denominator | a departure beyond 1e-12 is a **FINDING**, printed and recorded with its size; not a failure |
+| **C-COMPLETE** | a **measurement**: c_f = ofin_f / denom_f over the fine cells; max \|c − 1\|, its quantiles, cells beyond 1e-12, cells with signal and no denominator | a departure beyond 1e-12 is a **FINDING**, printed and recorded with its size; not a failure. Under the director's ruling, the record states "completeness is 1 to 1e-5" only if every fine cell with a denominator is within 1e-5 of 1 and no cell has signal without one (`c_one_to_1e-5_in_every_fine_cell`); otherwise the lane prices an event-level denominator for the director and builds nothing |
 
 The verdict is PASS only when every gated control passes and the acceptance holds: the products are exactly the
 declared set, `SHA256SUMS` parses to exactly their digest map, every product re-hashes equal, and nothing is a link.
 A FAIL still writes the files, for diagnosis, under a FAIL done marker; an interrupted run leaves no marker, and a
 retry needs a new `--out`.
+
+**The consumer's check, `accepted(out, expect_sums_sha256)`.** It refuses a linked marker or manifest, reads
+`SHA256SUMS` as bytes (LF-only, the exact form written), re-runs the acceptance, and requires the marker to agree with
+the hashed `run.json`: the verdict and controls verdict PASS, no failed control, the products' digests equal to the
+manifest's, and in `run.json` every gated control passing with the same findings. A product set replaced as a whole
+can only be told from the real one by the manifest's digest recorded in the release binding, passed as
+`expect_sums_sha256`; the receipt records it.
 
 ## 4. Binning independence, and its limit
 
@@ -103,17 +114,23 @@ The training sees no interior edge: the OmniFold loop takes the continuous coord
 driver on two grids with the same outer edges and every interior edge moved or dropped. It requires the push weights
 bit for bit equal, and grid B's result equal to grid A's saved weights re-histogrammed on grid B with B's denominator.
 
-So one weight set serves every binning inside the fiducial box (pT < 4.5, 1.5 ≤ p∥ < 60, E_avail, q3, W < 100 GeV),
-**with this limit**: the denominator is stored only binned on the fine grid (`nn_dump_inputs.py:88-98`), so the
-saved completeness is exact for any binning whose cells are unions of fine cells, which the sixteen cells are. A
-binning that splits fine cells needs c at event level. If C-COMPLETE finds c = 1 to rounding, c = 1 serves every
-binning. Otherwise, the denominator rows must come from the 5D omnifile, a separate item. One case in point: the fine
-grid's pT edges are 0.07 / 0.33 / 0.47, so the paper's 0.075 / 0.325 / 0.475 split fine cells. The ESS run's per-cell
-factors vary by 5.7e-6 (`fd/receipts-ess/README.md:119-124`), which suggests c is not exactly 1; this run measures it.
+So one set of push weights serves every binning inside the fiducial box (pT < 4.5, 1.5 ≤ p∥ < 60, E_avail, q3,
+W < 100 GeV). What else a rebinning needs depends on the binning:
+- **a union of fine cells** (the sixteen cells are): the result is the sum of the fine cells' integrals, each with its
+  own saved completeness and flux. That reproduces the released estimator exactly. A fresh extraction that pools one
+  completeness and one flux per coarse cell is a different estimator and can differ;
+- **a binning that splits fine cells:** the denominator is stored only binned on the fine grid
+  (`nn_dump_inputs.py:88-98`), so it needs c at event level, from the denominator rows in the 5D omnifile. A fine
+  cell's c can be 1 while its parts are not, so C-COMPLETE's measurement does not license splits, whatever it finds.
+  One case in point: the fine grid's pT edges are 0.07 / 0.33 / 0.47, so the paper's 0.075 / 0.325 / 0.475 split
+  fine cells. The director has ruled that the 5D result is not compared on those edges in v1.
+
+C-COL shows that the pushes do not change, and that grid B's result is recovered given grid B's own denominator and
+flux. It does not supply that denominator.
 
 ## 5. Tests and mutants
 
-`test_evw5d.py` (pytest, 64 tests) builds a deploy at the code pin and synthetic inputs on the real fine grid, with
+`test_evw5d.py` (pytest, 79 tests) builds a deploy at the code pin and synthetic inputs on the real fine grid, with
 truth rows on the top edges and outside the grid, and a denominator 1.15 times the signal (so C-COMPLETE's finding
 fires). It reuses `test_ess_capture.py`'s helpers. Four kinds of test:
 - **end to end** through the real driver: PASS; a STOP on a one-ulp reference and on a meta difference; a FAIL on f
@@ -123,10 +140,14 @@ fires). It reuses `test_ess_capture.py`'s helpers. Four kinds of test:
 - **each control with one fault injected**, each one the exactness gates alone would miss: a shifted key, two weights
   swapped within one cell, a truth value one ulp inside its cell, a flow row's weight, wrong dtypes, a missing or
   extra column or constant, a row moved to another reported cell, the factor read only by the independent formula;
-- **the consumer's acceptance:** a changed byte, an extra or missing file, a link, a FAIL or foreign done marker, a
-  short `SHA256SUMS`.
+- **the consumer's acceptance:** a changed byte, an extra or missing file, a link (product or marker), a FAIL or
+  foreign done marker, a FAIL run whose marker is edited to PASS, a `run.json` recording a failure with the manifest
+  and marker re-made to match, a short or CRLF `SHA256SUMS`, a bound digest that differs;
+- **the job script's refusals**, run with a fake `squeue` and two small git repositories: a linked log directory or
+  log file (nothing is written through it), a writer digest that is not the bound one, a tool clone whose `git
+  status` fails, and a setup that returns non-zero.
 
-`evw5d_mutation.py` applies each of its mutants (one exact span of `evw5d.py`) to a copy of the directory and requires
+`evw5d_mutation.py` applies each of its mutants (one exact span of `evw5d.py` or `sbatch_evw5d.sh`) to a copy of the directory and requires
 the full suite to fail with a named test; a control must pass. Its result is committed as
 `receipts/mutation.json`.
 
@@ -136,13 +157,26 @@ Local environment: Python 3.11.18, numpy 1.26.4, lightgbm 4.6.0 (the cluster's n
 ## 6. Placement and price
 
 - One `regular` CPU node, exclusive, one srun step of 32 CPUs at 160 G, `#SBATCH -t 00:30:00` (`sbatch_evw5d.sh`).
-  The job refuses unless its name is `evw5d` and its limit 30:00, the deploy is a clean clone at the code pin, the tool
-  clone is clean at the tool pin, and `$OUT/evw5d` is absent.
+  Before its first write, the job requires `$OUT` and `$OUT/logs` to be real directories reached through no link and
+  each per-job file to be absent; it then creates them exclusively (`noclobber`). It refuses unless:
+  - its name is `evw5d` and its limit 30:00;
+  - the deploy is a clean clone at the code pin and the tool clone a clean clone at the tool pin, with each git
+    command itself succeeding;
+  - `evw5d.py`'s bytes equal the bound sha256, checked before Python starts;
+  - `setup_salloc_env.sh` returns 0 (it did in both ESS records);
+  - `$OUT/evw5d` is absent.
 - **Expected about 0.28 node-h; price 0.25 node-h, cap 0.5.** The unfold is ESS's 794 s (`fd/receipts-ess/README.md:37-42`).
   The added steps took 11.4 s on 8.2 M synthetic rows on the laptop (table, maps, write, read-back, C-SELF, C-FLOW),
   so roughly 1–2 min at full size, plus the independent read of the npz.
 - The output stays on $SCRATCH with `SHA256SUMS`, is copied to HPSS, and is fetched to the laptop by sha for a
-  deposit. **Nothing is written to CFS.** The connect, post and HPSS scripts come with the binding.
+  deposit. **Nothing is written to CFS.** The scripts are in [`launch/`](launch/), adapted from ESS's:
+  `evw5d_connect.sh` (preconditions, iris bound, the two clean clones and their pinned bytes, the environment
+  pre-check including `os.O_NOATIME`, one sbatch, the TimeLimit check), `evw5d_post.sh` (sacct, the charge, the
+  products re-checked against `SHA256SUMS` in place, the small products tarred for the fetch), `evw5d_hpss.sh` (after
+  a PASS only: htar with CRC verify, hsi hashcreate/hashverify, every file retrieved and compared by sha256) and
+  `evw5d_launch.sh` (the Mac side: each script staged in `/dev/shm` and refused unless its sha256 is the approved one;
+  `fetch` and `fetch-products`, the latter checked with `shasum -c`). The tool commit and the approved digests are
+  filled in at the binding; until then each script refuses.
 
 ## 7. What this is not
 
@@ -151,6 +185,17 @@ Local environment: Python 3.11.18, numpy 1.26.4, lightgbm 4.6.0 (the cluster's n
   weights.
 - The weights are the central value, validated only through the reported result (gates 1 and 2) and for binnings
   within §4's limit.
+
+## 8. Revision 2: codex-school r1's findings and what changed
+
+| # | finding (r1) | change |
+|---|---|---|
+| 1 | BLOCKING: `accepted()` took a FAIL run whose marker's verdict was edited; a linked marker and a CRLF manifest passed | `accepted()` as in §3: links refused, bytes, the marker cross-checked with the hashed `run.json`, the optional bound digest; tests for each |
+| 2 | BLOCKING: the saved `good` and `xsec_flat` were compared only with the builder's own output | C-SELF compares them with the recomputed mask and fb5cc679's result, and the 1e4 and the volumes independently; C-FILE compares the input constants with the independent read; builder-side mutants |
+| 3 | BLOCKING: a failing `git status` passed as clean; the writer's digest was not enforced; the setup's rc was ignored | `clean_at` checks each git call; the bound sha256 of `evw5d.py` is checked before Python; setup must return 0; tests |
+| 4 | BLOCKING: a linked log directory or log file could redirect a write outside `$OUT` | physical `$OUT` and logs, absent per-job files, `noclobber`; tests |
+| 5 | §4 overstated what fine-grid completeness establishes | §4 rewritten |
+| 6 | `SELF_F_FILE` is killable (volumes 5e-14 high) | the test added; the mutant moved back into the kill set |
 
 **CITABLE FOR:** what will run, what it writes and what each control checks. **NOT CITABLE FOR:** any number from the
 run, which comes from its receipt.

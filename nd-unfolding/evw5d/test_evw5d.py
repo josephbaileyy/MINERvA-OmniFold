@@ -274,6 +274,12 @@ def test_fail_on_f(world):
     done = json.loads((out / ev.DONE).read_text())
     assert done["verdict"] == "FAIL" and done["failed_controls"] == ["C-F", "C-SELF"], done["failed_controls"]
     assert done["acceptance"]["pass"] and not ev.accepted(out)
+    (out / ev.DONE).unlink()
+    (out / ev.DONE).write_text(json.dumps(dict(done, verdict="PASS")))
+    assert not ev.accepted(out), "a FAIL run accepted after its verdict was edited"
+    (out / ev.DONE).unlink()
+    (out / ev.DONE).write_text(json.dumps(dict(done, verdict="PASS", controls_verdict="PASS", failed_controls=[])))
+    assert not ev.accepted(out), "a FAIL run accepted although run.json records the failure"
 
 
 def test_existing_out_and_slurm_refused(world):
@@ -563,6 +569,56 @@ def test_check_self_rows_alone(products):
     assert r["f_from_rows_max_rel"] > ev.F_RTOL
 
 
+def test_check_self_f_file_alone(products):
+    """Volumes 5e-14 high: within the volume and formula bounds, beyond gate 2 for the file-level f only."""
+    c = copy_t(products["c"])
+    c["volume"] = c["volume"] * (1 + 5e-14)
+    r = _self(products, c=c)
+    assert r["xsec_bit_for_bit"] and r["f_from_rows_max_rel"] <= ev.F_RTOL
+    assert r["volume_vs_edges_max_rel"] <= ev.VOLUME_RTOL and r["independent_formula_max_rel"] <= ev.INDEP_RTOL
+    assert r["f_from_file_max_rel"] > ev.F_RTOL and not r["pass"]
+
+
+def test_check_self_volume_alone(products):
+    """A saved volume doubled in a cell with no result: only the volume check can see it."""
+    c = copy_t(products["c"])
+    k = int(np.flatnonzero(np.asarray(c["xsec_flat"]) == 0)[0])
+    c["volume"][k] *= 2.0
+    r = _self(products, c=c)
+    assert r["xsec_bit_for_bit"] and r["f_from_file_max_rel"] <= ev.F_RTOL and r["f_from_rows_max_rel"] <= ev.F_RTOL
+    assert r["independent_formula_max_rel"] <= ev.INDEP_RTOL and not r["pass"]
+
+
+@pytest.mark.parametrize("fault", ["good_inverted", "xsec_zero", "cm2"])
+def test_check_self_saved_constants_from_the_builder(products, fault):
+    """A builder error on a saved array (C-FILE compares with the builder's own output, so it cannot see it)."""
+    c = copy_t(products["c"])
+    if fault == "good_inverted":
+        c["good"] = ~c["good"]
+    elif fault == "xsec_zero":
+        c["xsec_flat"] = np.zeros_like(c["xsec_flat"])
+    else:
+        c["cm2_per_m2"] = np.float64(1.0e4 + 1e-9)
+    r = _self(products, c=c)
+    assert r["xsec_bit_for_bit"] and not r["pass"], fault
+
+
+def test_check_file_constants_against_the_input(products):
+    """flux changed in both the saved constants and the builder's expectation: only the input comparison sees it."""
+    c, exp = copy_t(products["c"]), dict(products["expected_c"])
+    for d in (c, exp):
+        d["flux"] = np.array(d["flux"], copy=True)
+        d["flux"][0] = np.nextafter(d["flux"][0], np.inf)
+    r = _file(products, c=c, expected_c=exp)
+    assert all(r["constants"].values()) and not r["constants_vs_input"]["flux"] and not r["pass"]
+    for key in ("data_pot", "n_nucleons", "denom_nd", "edges_1"):
+        c, exp = copy_t(products["c"]), dict(products["expected_c"])
+        for d in (c, exp):
+            d[key] = np.array(d[key], copy=True)
+            d[key].flat[0] = np.nextafter(d[key].flat[0], np.inf)
+        assert not _file(products, c=c, expected_c=exp)["pass"], key
+
+
 @pytest.mark.parametrize("key", ["ofin", "completeness"])
 def test_check_self_saved_maps_alone(products, key):
     c = copy_t(products["c"])
@@ -639,11 +695,16 @@ def test_measure_completeness():
     assert not r["finding"]
     r = ev.measure_completeness(np.array([2.0, 4.0 * (1 + 3e-12), 0.0, 8.0]), den)
     assert r["finding"] and r["n_cells_beyond_atol"] == 1 and r["max_abs_c_minus_1"] > ev.COMPLETE_ATOL
+    assert r["c_one_to_1e-5_in_every_fine_cell"]
+    r = ev.measure_completeness(np.array([2.0, 4.0 * (1 + 2e-5), 0.0, 8.0]), den)
+    assert r["finding"] and not r["c_one_to_1e-5_in_every_fine_cell"]
+    assert not ev.measure_completeness(np.array([2.0, 4.0, 1.0, 8.0]), den)["c_one_to_1e-5_in_every_fine_cell"]
     r = ev.measure_completeness(np.array([2.0, 4.0, 1.0, 8.0]), den)
     assert r["finding"] and r["n_signal_without_denominator"] == 1
     r = ev.measure_completeness(np.array([2.0, 0.0, 0.0, 8.0]), den)
     assert r["finding"] and r["n_denominator_without_signal"] == 1
     assert ev.measure_completeness(np.zeros(2), np.zeros(2))["finding"]
+    assert not ev.measure_completeness(np.zeros(2), np.zeros(2))["c_one_to_1e-5_in_every_fine_cell"]
 
 
 # ---------------------------------------------------------------------------------- unit: acceptance
@@ -694,6 +755,41 @@ def test_accepted_done_marker(out_copy):
     assert not ev.accepted(out_copy)
 
 
+def test_accepted_done_link(out_copy):
+    real = out_copy.parent / "done.json"
+    shutil.move(out_copy / ev.DONE, real)
+    (out_copy / ev.DONE).symlink_to(real)
+    assert not ev.accepted(out_copy)
+
+
+def test_accepted_crlf_sums(out_copy):
+    raw = (out_copy / ev.SUMS).read_bytes()
+    (out_copy / ev.SUMS).write_bytes(raw.replace(b"\n", b"\r\n"))
+    assert not ev.accepted(out_copy)
+
+
+def test_accepted_bound_digest(out_copy):
+    h = hashlib.sha256((out_copy / ev.SUMS).read_bytes()).hexdigest()
+    assert ev.accepted(out_copy, expect_sums_sha256=h)
+    assert not ev.accepted(out_copy, expect_sums_sha256="0" * 64)
+
+
+def test_accepted_run_json_cross_check(out_copy):
+    """run.json rewritten to record a failure, with SHA256SUMS and the marker re-made to match: refused."""
+    run = json.loads((out_copy / "run.json").read_text())
+    run["controls"]["C-F"]["pass"] = False
+    rj = (json.dumps(run, indent=1) + "\n").encode()
+    (out_copy / "run.json").write_bytes(rj)
+    digests = ev.parse_sums((out_copy / ev.SUMS).read_text())
+    digests["run.json"] = hashlib.sha256(rj).hexdigest()
+    sums = ev.sums_text(digests)
+    (out_copy / ev.SUMS).write_bytes(sums.encode())
+    done = json.loads((out_copy / ev.DONE).read_text())
+    done.update(products=digests, sha256sums_sha256=hashlib.sha256(sums.encode()).hexdigest())
+    (out_copy / ev.DONE).write_text(json.dumps(done))
+    assert ev.acceptance(out_copy, digests)["pass"] and not ev.accepted(out_copy)
+
+
 def test_accepted_sums_file(out_copy):
     s = (out_copy / ev.SUMS).read_text()
     lines = s.splitlines()
@@ -708,6 +804,7 @@ def test_parse_sums():
     assert ev.parse_sums(f"{h} x\n") is None
     assert ev.parse_sums(f"{'A' * 64}  x\n") is None
     assert ev.parse_sums(f"{h[:-1]}  x\n") is None
+    assert ev.parse_sums(f"{h}  x") is None and ev.parse_sums(f"{h}  x\r\n") is None
 
 
 def test_acceptance_requires_complete_digest_map(out_copy):
@@ -770,3 +867,79 @@ def test_ess_tool_pin(tmp_path):
         fh.write("\n")
     r = subprocess.run([PY, "-B", "-c", code], capture_output=True, text=True)
     assert r.returncode != 0 and "pinned" in r.stderr
+
+
+# ---------------------------------------------------------------------------------- the job script's refusals
+
+
+def _git_repo(path: Path, files: dict) -> str:
+    path.mkdir(parents=True)
+    env = dict(os.environ, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t", GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@t")
+    subprocess.run(["git", "init", "-q", str(path)], check=True)
+    for rel, text in files.items():
+        (path / rel).parent.mkdir(parents=True, exist_ok=True)
+        (path / rel).write_text(text)
+    subprocess.run(["git", "-C", str(path), "add", "-A"], check=True)
+    subprocess.run(["git", "-C", str(path), "commit", "-q", "-m", "t"], check=True, env=env)
+    return subprocess.run(["git", "-C", str(path), "rev-parse", "HEAD"], capture_output=True, text=True,
+                          check=True).stdout.strip()
+
+
+@pytest.fixture()
+def job(tmp_path):
+    """A fake job environment for sbatch_evw5d.sh: an output root, a deploy and a tool clone (tiny git repos), and a
+    squeue that answers the 30:00 limit. Nothing reaches a scheduler; each case refuses before the setup is sourced."""
+    tmp_path = Path(os.path.realpath(tmp_path))
+    out = tmp_path / "OUT"
+    (out / "logs").mkdir(parents=True)
+    pin = _git_repo(tmp_path / "deploy", {"setup_salloc_env.sh": "return 1\n"})
+    w = (EVW / "evw5d.py").read_text()
+    tpin = _git_repo(tmp_path / "tool", {"nd-unfolding/evw5d/evw5d.py": w})
+    wsha = hashlib.sha256(w.encode()).hexdigest()
+    bin_ = tmp_path / "bin"
+    bin_.mkdir()
+    (bin_ / "squeue").write_text("#!/bin/bash\necho 30:00\n")
+    (bin_ / "squeue").chmod(0o755)
+    env = dict(os.environ, PATH=f"{bin_}:{os.environ['PATH']}", SLURM_JOB_ID="4242", SLURM_JOB_NAME="evw5d")
+
+    def run(out_arg=None, wsha_arg=None):
+        args = [str(tmp_path / "deploy"), pin, str(out if out_arg is None else out_arg), str(tmp_path / "tool"), tpin,
+                wsha if wsha_arg is None else wsha_arg]
+        return subprocess.run(["bash", str(EVW / "sbatch_evw5d.sh"), *args], capture_output=True, text=True, env=env)
+    return {"run": run, "out": out, "tmp": tmp_path, "wsha": wsha}
+
+
+def test_job_refuses_a_linked_log_directory(job):
+    target = job["tmp"] / "elsewhere"
+    target.mkdir()
+    shutil.rmtree(job["out"] / "logs")
+    (job["out"] / "logs").symlink_to(target)
+    r = job["run"]()
+    assert r.returncode == 2 and "refusing: logs" in r.stderr and list(target.iterdir()) == []
+
+
+def test_job_refuses_an_existing_or_linked_log_file(job):
+    victim = job["tmp"] / "victim.txt"
+    victim.write_text("keep")
+    (job["out"] / "logs" / "job-env-4242.log").symlink_to(victim)
+    r = job["run"]()
+    assert r.returncode == 2 and "exists" in r.stderr and victim.read_text() == "keep"
+
+
+def test_job_refuses_a_wrong_writer_digest(job):
+    r = job["run"](wsha_arg="0" * 64)
+    done = json.loads((job["out"] / "logs" / "DONE-4242").read_text())
+    assert r.returncode == 2 and "is not the bound" in done["refused"]
+
+
+def test_job_refuses_when_git_status_fails(job):
+    (job["tmp"] / "tool" / ".git" / "index").write_bytes(b"garbage")
+    r = job["run"]()
+    done = json.loads((job["out"] / "logs" / "DONE-4242").read_text())
+    assert r.returncode == 2 and "tool clone is not a clean checkout" in done["refused"]
+
+
+def test_job_refuses_a_failed_setup(job):
+    r = job["run"]()
+    done = json.loads((job["out"] / "logs" / "DONE-4242").read_text())
+    assert r.returncode == 2 and "setup_salloc_env.sh returned 1" in done["refused"]

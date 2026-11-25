@@ -59,7 +59,10 @@ F_RTOL = 1e-14          # gate 2, the director's ruling of 2026-11-25
 INDEP_RTOL = 1e-13      # the result from an independently written formula (a different multiplication order)
 FLOW_RTOL = 1e-12       # the per-fine-cell sums by bincount against the driver's histogramdd
 COMPLETE_ATOL = 1e-12   # |c - 1| beyond this, where the denominator is positive, is a finding (2D's C-CMAP bound)
+VOLUME_RTOL = 1e-13     # the saved cell volumes against the products of the saved edges' widths
+C_ONE_LEVEL = 1e-5      # the director's ruling: "completeness is 1 to 1e-5" is stated only if every fine cell is
 PRODUCTS = ("constants.json", "constants.npz", "product/data_b-_j-.npz", "run.json", "weights.npz")
+GATED = ("C-BIND", "C-KEY", "C-ENTRY", "C-GRID", "C-F", "C-FILE", "C-SELF", "C-FLOW", "C-PINS")
 SUMS, DONE = "SHA256SUMS", "evw5d.done"
 RC_FAIL, RC_STOP, RC_FAILED = 6, 8, 9
 
@@ -241,8 +244,17 @@ def check_file(t: dict, c: dict, indep: dict, wpush, expected_c: dict, flat_inde
     samp = np.column_stack([t[n] for n in TRUTH_COLS])
     out["fine_index"] = same_bits(t["fine_index"], np.asarray(flat_index(samp, edges)).astype(np.int32))
     out["constants"] = {k: same_bits(c[k], v) for k, v in expected_c.items() if k in c}
-    out["pass"] = bool(all(v for k, v in out.items() if k != "constants") and all(out["constants"].values())
-                       and len(out["constants"]) == len(expected_c))
+    # the input constants against the independent read itself, not only against what the builder made
+    vs_in = {f"edges_{i}": same_bits(c[f"edges_{i}"], np.asarray(indep[f"edges_{i}"], np.float64))
+             for i in range(int(indep["nedges"]))}
+    vs_in.update(flux=same_bits(c["flux"], np.asarray(indep["flux"])),
+                 data_pot=same_bits(c["data_pot"], np.float64(float(indep["data_pot"]))),
+                 n_nucleons=same_bits(c["n_nucleons"], np.float64(float(indep["n_nucleons"]))),
+                 denom_nd=same_bits(c["denom_nd"], np.asarray(indep["denom_nd"])))
+    out["constants_vs_input"] = vs_in
+    out["pass"] = bool(all(v for k, v in out.items() if k not in ("constants", "constants_vs_input"))
+                       and all(out["constants"].values()) and len(out["constants"]) == len(expected_c)
+                       and all(vs_in.values()))
     return out
 
 
@@ -256,7 +268,15 @@ def check_self(t: dict, c: dict, ref_xsec_flat, f_dp, extract, nd: int) -> dict:
     xs = mp["xs"].ravel(order="C")
     out = {"xsec_bit_for_bit": same_bits(xs, ref_xsec_flat),
            "ofin_bit_for_bit": same_bits(mp["ofin"], c["ofin"]),
-           "completeness_bit_for_bit": same_bits(mp["comp"], c["completeness"])}
+           "completeness_bit_for_bit": same_bits(mp["comp"], c["completeness"]),
+           "good_bit_for_bit": same_bits(mp["good"], c["good"]),
+           "saved_xsec_equals_reference": same_bits(c["xsec_flat"], ref_xsec_flat),
+           "cm2_per_m2_exact": same_bits(c["cm2_per_m2"], np.float64(1.0e4))}
+    widths = [np.diff(e) for e in edges]
+    vol_edges = np.ones(tuple(w.size for w in widths))
+    for k, w in enumerate(widths):
+        vol_edges = vol_edges * w.reshape((1,) * k + (-1,) + (1,) * (nd - 1 - k))
+    out["volume_vs_edges_max_rel"] = max_rel(c["volume"], vol_edges.ravel(order="C"))
     # the formula written out independently: d^5 sigma = 1e4 U / (vol c Phi(pT) N POT), zero where that is not > 0
     shape = mp["unf"].shape
     vol = np.asarray(c["volume"], np.float64).reshape(shape)
@@ -273,6 +293,8 @@ def check_self(t: dict, c: dict, ref_xsec_flat, f_dp, extract, nd: int) -> dict:
     out["f_from_rows_max_rel"] = max_rel(sums, f_dp)
     out.update(extra)
     out["pass"] = bool(out["xsec_bit_for_bit"] and out["ofin_bit_for_bit"] and out["completeness_bit_for_bit"]
+                       and out["good_bit_for_bit"] and out["saved_xsec_equals_reference"]
+                       and out["cm2_per_m2_exact"] and out["volume_vs_edges_max_rel"] <= VOLUME_RTOL
                        and out["independent_formula_max_rel"] <= INDEP_RTOL
                        and out["f_from_file_max_rel"] <= F_RTOL and out["f_from_rows_max_rel"] <= F_RTOL)
     return out
@@ -317,6 +339,8 @@ def measure_completeness(ofin, denom) -> dict:
            "c_min": float(c[pos].min()) if pos.any() else None, "c_max": float(c[pos].max()) if pos.any() else None,
            "sum_ofin_over_sum_denominator": float(ofin[pos].sum() / denom[pos].sum()) if pos.any() else None,
            "atol": COMPLETE_ATOL}
+    out["c_one_to_1e-5_in_every_fine_cell"] = bool(
+        pos.any() and out["n_signal_without_denominator"] == 0 and float(dev.max()) <= C_ONE_LEVEL)
     if dev.size:
         out["abs_c_minus_1_quantiles"] = {q: float(np.quantile(dev, float(q))) for q in ("0.5", "0.9", "0.99")}
     out["finding"] = bool(out["n_cells_beyond_atol"] > 0 or out["n_signal_without_denominator"] > 0
@@ -332,8 +356,11 @@ def sums_text(digests: dict) -> str:
 
 
 def parse_sums(text: str) -> dict | None:
+    """Exactly the form sums_text writes: LF-terminated lines, no CR, no duplicate path."""
+    if not text.endswith("\n") or "\r" in text:
+        return None
     out = {}
-    for line in text.splitlines():
+    for line in text[:-1].split("\n"):
         h, sep, p = line.partition("  ")
         if not sep or len(h) != 64 or any(ch not in "0123456789abcdef" for ch in h) or p in out:
             return None
@@ -352,7 +379,10 @@ def acceptance(out: Path, digests: dict) -> dict:
     acc = {"product_set_exact": files == sorted(PRODUCTS + (SUMS,)),
            "digest_map_complete": sorted(digests) == sorted(PRODUCTS)}
     sums_path = out / SUMS
-    parsed = parse_sums(sums_path.read_text()) if sums_path.is_file() else None
+    try:
+        parsed = parse_sums(sums_path.read_bytes().decode("ascii")) if sums_path.is_file() else None
+    except UnicodeDecodeError:
+        parsed = None
     acc["sums_parse_exact"] = parsed == digests
     acc["no_links"] = not any((out / f).is_symlink() for f in files)
     acc["rehash_equal"] = all((out / p).is_file() and ess.sha256_file(out / p) == h for p, h in digests.items())
@@ -360,20 +390,37 @@ def acceptance(out: Path, digests: dict) -> dict:
     return acc
 
 
-def accepted(out: Path) -> bool:
-    """For a consumer: a PASS done marker whose SHA256SUMS digest is the file's, and the acceptance re-run."""
+def accepted(out: Path, expect_sums_sha256: str | None = None) -> bool:
+    """For a consumer: the acceptance re-run, a PASS done marker consistent with the hashed run.json, and, when the
+    release binding gives it, SHA256SUMS's digest equal to the bound one (which is what detects a replaced bundle)."""
     out = Path(out)
     try:
-        done = json.loads((out / DONE).read_text())
-        sums = (out / SUMS).read_text()
+        if (out / DONE).is_symlink() or (out / SUMS).is_symlink():
+            return False
+        done = json.loads((out / DONE).read_bytes())
+        raw = (out / SUMS).read_bytes()
+        digests = parse_sums(raw.decode("ascii"))
+    except (OSError, ValueError, UnicodeDecodeError):
+        return False
+    h = hashlib.sha256(raw).hexdigest()
+    if digests is None or not isinstance(done, dict) or done.get("schema") != SCHEMA:
+        return False
+    if expect_sums_sha256 is not None and h != expect_sums_sha256:
+        return False
+    if not (done.get("verdict") == "PASS" and done.get("controls_verdict") == "PASS"
+            and done.get("failed_controls") == [] and done.get("sha256sums_sha256") == h
+            and done.get("products") == digests and (done.get("acceptance") or {}).get("pass") is True):
+        return False
+    if not acceptance(out, digests)["pass"]:
+        return False
+    try:
+        run = json.loads((out / "run.json").read_bytes())     # its bytes are the ones SHA256SUMS just verified
     except (OSError, ValueError):
         return False
-    digests = parse_sums(sums)
-    if done.get("schema") != SCHEMA or done.get("verdict") != "PASS" or digests is None:
-        return False
-    if hashlib.sha256(sums.encode()).hexdigest() != done.get("sha256sums_sha256"):
-        return False
-    return acceptance(out, digests)["pass"]
+    ctl = run.get("controls", {})
+    return bool(run.get("schema") == SCHEMA and run.get("controls_verdict") == "PASS"
+                and tuple(run.get("gated", ())) == GATED and all(ctl.get(k, {}).get("pass") is True for k in GATED)
+                and run.get("findings") == done.get("findings"))
 
 
 def publish_done(out: Path, record: dict) -> None:
@@ -575,7 +622,7 @@ def run(a, cfg: dict) -> int:
     finally:
         ess.shutil.rmtree(stage_dir, ignore_errors=True)
 
-    gated = ("C-BIND", "C-KEY", "C-ENTRY", "C-GRID", "C-F", "C-FILE", "C-SELF", "C-FLOW", "C-PINS")
+    gated = GATED
     controls_pass = all(controls[k]["pass"] for k in gated)
     record.update(controls=controls, gated=list(gated), controls_verdict="PASS" if controls_pass else "FAIL",
                   seconds_total=round(time.time() - t_start, 3),
@@ -585,8 +632,8 @@ def run(a, cfg: dict) -> int:
         fh.write(rj)
     digests["run.json"] = hashlib.sha256(rj).hexdigest()
     sums = sums_text(digests)
-    with open(out / SUMS, "x") as fh:
-        fh.write(sums)
+    with open(out / SUMS, "xb") as fh:
+        fh.write(sums.encode("ascii"))
     acc = acceptance(out, digests)
     verdict = "PASS" if controls_pass and acc["pass"] else "FAIL"
     publish_done(out, {"schema": SCHEMA, "verdict": verdict, "controls_verdict": record["controls_verdict"],

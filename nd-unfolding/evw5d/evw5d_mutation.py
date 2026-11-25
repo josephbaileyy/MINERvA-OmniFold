@@ -62,7 +62,7 @@ MUTANTS = [
     ("FILE_CONSTANTS", 'out["constants"] = {k: same_bits(c[k], v)', 'out["constants"] = {k: True'),
     ("SELF_BITWISE", '"xsec_bit_for_bit": same_bits(xs, ref_xsec_flat),', '"xsec_bit_for_bit": True,'),
     ("SELF_OFIN", '"ofin_bit_for_bit": same_bits(mp["ofin"], c["ofin"]),', '"ofin_bit_for_bit": True,'),
-    ("SELF_COMP", '"completeness_bit_for_bit": same_bits(mp["comp"], c["completeness"])}', '"completeness_bit_for_bit": True}'),
+    ("SELF_COMP", '"completeness_bit_for_bit": same_bits(mp["comp"], c["completeness"]),', '"completeness_bit_for_bit": True,'),
     ("SELF_INDEP_TOL", 'and out["independent_formula_max_rel"] <= INDEP_RTOL', 'and out["independent_formula_max_rel"] <= 1e3 * INDEP_RTOL'),
     ("SELF_CM2", 'x2[ok] = mp["unf"][ok] / den[ok] * float(c["cm2_per_m2"])', 'x2[ok] = mp["unf"][ok] / den[ok] * 1.0e4'),
     ("SELF_F_ROWS", 'out["f_from_rows_max_rel"] <= F_RTOL)\n    return out', 'True)\n    return out'),
@@ -79,9 +79,9 @@ MUTANTS = [
     ("ACC_MAP", '"digest_map_complete": sorted(digests) == sorted(PRODUCTS)}', '"digest_map_complete": True}'),
     ("ACC_LINKS", 'acc["no_links"] = not any((out / f).is_symlink() for f in files)', 'acc["no_links"] = True'),
     ("ACC_REHASH", "ess.sha256_file(out / p) == h for", "True for"),
-    ("ACCEPTED_VERDICT", 'done.get("verdict") != "PASS"', "False"),
-    ("ACCEPTED_SUMS_DIGEST", 'if hashlib.sha256(sums.encode()).hexdigest() != done.get("sha256sums_sha256"):', "if False:"),
-    ("ACCEPTED_SCHEMA", 'done.get("schema") != SCHEMA or ', ""),
+    ("ACCEPTED_VERDICT", 'if not (done.get("verdict") == "PASS" and ', 'if not (True and '),
+    ("ACCEPTED_SUMS_DIGEST", 'and done.get("sha256sums_sha256") == h', 'and True'),
+    ("ACCEPTED_SCHEMA", 'or done.get("schema") != SCHEMA:', 'or False:'),
     ("RUN_BIND_META", 'and bind["meta_equal_except_per_run"])', ")"),
     ("RUN_BIND_XS", 'bind["pass"] = bool(bind["xsec_flat_bytes_equal"] and ', 'bind["pass"] = bool('),
     ("RUN_F_GATE", 'cf["pass"] = bool(cf["f_from_result_max_rel"] <= F_RTOL and cf["f_from_rows_max_rel"] <= F_RTOL)', 'cf["pass"] = True'),
@@ -94,16 +94,36 @@ MUTANTS = [
     ("CAPTURE_COUNT", "if len(loops) != 1 or len(unfolds) != 1:", "if len(loops) < 1 or len(unfolds) < 1:"),
     ("CAPTURE_RC", 'if rc != 0:\n        raise Failed(f"s5p_numerics.main returned {rc}")', 'if False:\n        raise Failed(f"s5p_numerics.main returned {rc}")'),
     ("CAPTURE_RESTORE", "    finally:\n        onc.omnifold_loop, s5c_unfold.unfold = real_loop, real_unfold", "    finally:\n        pass"),
+    # revision 2 (codex-school r1): the saved constants checked independently of the builder
+    ("SELF_F_FILE", 'and out["f_from_file_max_rel"] <= F_RTOL and', 'and True and'),
+    ("CONST_GOOD", 'good=maps["good"],', 'good=~maps["good"],'),
+    ("CONST_XSEC", 'xsec_flat=maps["xs"].ravel(order="C"))', 'xsec_flat=np.zeros(maps["xs"].size))'),
+    ("CONST_CM2", "cm2_per_m2=np.float64(1.0e4),", "cm2_per_m2=np.float64(1.0e4 + 1e-6),"),
+    ("CONST_VOLUME", 'volume=np.asarray(vol, np.float64),', 'volume=np.asarray(vol, np.float64) * (1 + 5e-14),'),
+    ("SELF_GOOD", '"good_bit_for_bit": same_bits(mp["good"], c["good"]),', '"good_bit_for_bit": True,'),
+    ("SELF_SAVED_XS", '"saved_xsec_equals_reference": same_bits(c["xsec_flat"], ref_xsec_flat),', '"saved_xsec_equals_reference": True,'),
+    ("SELF_CM2_EXACT", '"cm2_per_m2_exact": same_bits(c["cm2_per_m2"], np.float64(1.0e4))}', '"cm2_per_m2_exact": True}'),
+    ("SELF_VOLUME", 'and out["volume_vs_edges_max_rel"] <= VOLUME_RTOL', 'and True'),
+    ("FILE_VS_INPUT", "                       and all(vs_in.values()))", "                       and True)"),
+    ("FILE_VS_INPUT_FLUX", 'vs_in.update(flux=same_bits(c["flux"], np.asarray(indep["flux"])),', 'vs_in.update(flux=True,'),
+    ("COMPLETE_1E5", 'float(dev.max()) <= C_ONE_LEVEL)', 'float(dev.max()) <= 10 * C_ONE_LEVEL)'),
+    ("PARSE_CRLF", 'if not text.endswith("\\n") or "\\r" in text:', 'if not text.endswith("\\n"):'),
+    ("ACCEPTED_LINKS", "if (out / DONE).is_symlink() or (out / SUMS).is_symlink():", "if False:"),
+    ("ACCEPTED_BOUND", "if expect_sums_sha256 is not None and h != expect_sums_sha256:", "if False:"),
+    ("ACCEPTED_CONTROLS_VERDICT", 'done.get("verdict") == "PASS" and done.get("controls_verdict") == "PASS"', 'done.get("verdict") == "PASS"'),
+    ("ACCEPTED_RUN_JSON", 'and tuple(run.get("gated", ())) == GATED and all(ctl.get(k, {}).get("pass") is True for k in GATED)', 'and True'),
+    ("ACCEPTED_PRODUCTS", 'and done.get("products") == digests and', 'and'),
+    # the job script (file sbatch_evw5d.sh)
+    ("SB_LOGS_LINK", '[ -d "$L" ] && [ ! -L "$L" ] && [ "$(cd "$L" && pwd -P)" = "$L" ] ||', '[ -d "$L" ] ||', "sbatch_evw5d.sh"),
+    ("SB_LOG_FILES", '  [ ! -e "$f" ] && [ ! -L "$f" ] || { echo', '  true || { echo', "sbatch_evw5d.sh"),
+    ("SB_GIT_STATUS", '  st=$(git -C "$1" status --porcelain --ignored 2>/dev/null) || return 1', '  st=$(git -C "$1" status --porcelain --ignored 2>/dev/null | head -0)', "sbatch_evw5d.sh"),
+    ("SB_WSHA", '[ "$wgot" = "$WSHA" ] || refuse', 'true || refuse', "sbatch_evw5d.sh"),
+    ("SB_SETUP_RC", '[ "$src_rc" -eq 0 ] || refuse', 'true || refuse', "sbatch_evw5d.sh"),
 ]
 
 
 # Equivalent mutants: kept out of the kill requirement, each with the reason it cannot be killed; run and reported.
-EQUIVALENT = [
-    ("SELF_F_FILE", 'and out["f_from_file_max_rel"] <= F_RTOL and', 'and True and',
-     "f from the file is f of the re-made result, which xsec_bit_for_bit already makes equal to the reference's; with "
-     "the row-level f (f_from_rows) also gated against the same data product, no fault moves the file-level f alone. "
-     "The check stays as a second statement of gate 2"),
-]
+EQUIVALENT: list = []   # revision 1 listed SELF_F_FILE here; codex-school r1 showed a killing fault (volumes 5e-14 high)
 
 
 def apply(src: str, old: str, new: str) -> str:
@@ -113,15 +133,15 @@ def apply(src: str, old: str, new: str) -> str:
     return src.replace(old, new)
 
 
-def run_one(name: str, old: str | None, new: str | None, python: str, timeout: int) -> dict:
+def run_one(name: str, old: str | None, new: str | None, python: str, timeout: int, target: str = "evw5d.py") -> dict:
     t0 = time.time()
     with tempfile.TemporaryDirectory(prefix=f"evw5d-mut-{name}-") as tmp:
         base = Path(tmp) / "nd-unfolding"
         for sub in ("evw5d", "ess_e"):
             shutil.copytree(HERE.parent / sub, base / sub, ignore=shutil.ignore_patterns("__pycache__"))
-        src = SRC.read_text()
+        src = (HERE / target).read_text()
         mutated = src if old is None else apply(src, old, new)
-        (base / "evw5d" / "evw5d.py").write_text(mutated)
+        (base / "evw5d" / target).write_text(mutated)
         env = dict(os.environ, EVW5D_DIR=str(base / "evw5d"), PYTHONDONTWRITEBYTECODE="1")
         env.setdefault("EVW5D_REPO", str(HERE.parents[1]))
         try:
@@ -148,8 +168,8 @@ def main(argv: list[str]) -> int:
     python, out = argv[1], Path(argv[2])
     workers = int(argv[3]) if len(argv) > 3 else 4
     src = SRC.read_text()
-    for name, old, new in MUTANTS:          # every span exactly once, before anything runs
-        apply(src, old, new)
+    for m in MUTANTS:                       # every span exactly once, before anything runs
+        apply((HERE / (m[3] if len(m) > 3 else "evw5d.py")).read_text(), m[1], m[2])
     names = [m[0] for m in MUTANTS]
     if len(set(names)) != len(names):
         raise SystemExit("duplicate mutant names")
@@ -157,15 +177,19 @@ def main(argv: list[str]) -> int:
     eq = [(n, o, w) for n, o, w, _ in EQUIVALENT]
     for name, old, new in eq:
         apply(src, old, new)
+    names = [m[0] for m in MUTANTS]
+    if len(set(names)) != len(names):
+        raise SystemExit("duplicate mutant names")
     cases = [("CONTROL", None, None)] + [m for m in MUTANTS + eq if not only or m[0] in only]
     with cf.ThreadPoolExecutor(max_workers=workers) as ex:
-        results = list(ex.map(lambda c: run_one(*c, python, 900), cases))
+        results = list(ex.map(lambda c: run_one(c[0], c[1], c[2], python, 900, *c[3:]), cases))
     ctl = results[0]
     eq_names = {e[0] for e in EQUIVALENT}
     killed = [r for r in results[1:] if r["verdict"] == "KILLED" and r["name"] not in eq_names]
     want = [r for r in results[1:] if r["name"] not in eq_names]
     rec = {"schema": "evw5d-mutation/1", "src_sha256": hashlib.sha256(src.encode()).hexdigest(),
            "tests_sha256": hashlib.sha256((HERE / "test_evw5d.py").read_bytes()).hexdigest(),
+           "sbatch_sha256": hashlib.sha256((HERE / "sbatch_evw5d.sh").read_bytes()).hexdigest(),
            "python": python, "control": ctl["verdict"], "subset": sorted(only), "n_mutants": len(want),
            "n_killed": len(killed), "not_killed": [r["name"] for r in want if r["verdict"] != "KILLED"],
            "equivalent": [{"name": n, "reason": why, "verdict": next((r["verdict"] for r in results if r["name"] == n), None)}
