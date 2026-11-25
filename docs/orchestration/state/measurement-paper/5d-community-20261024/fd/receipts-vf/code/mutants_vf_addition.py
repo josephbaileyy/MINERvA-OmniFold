@@ -190,8 +190,7 @@ def main() -> int:
                                capture_output=True, text=True, timeout=1200, env={**os.environ, "VF_MUTANT_RUN": "1"})
             nr = re.search(r"^Ran (\d+) tests? in ", r.stderr, re.M)
             # a fixture refused by the mutant runs fewer tests (a real kill); a module that fails to import is HARNESS
-            ran = (nr is not None and "Failed to import test module" not in r.stderr and "_FailedTest" not in r.stderr
-                   and "ModuleNotFoundError" not in r.stderr)
+            ran = (nr is not None and "Failed to import test module" not in r.stderr and "_FailedTest" not in r.stderr)
             if r.returncode == 0:
                 status = "SURVIVED"
             elif ran and re.search(r"^FAILED \((failures|errors)=", r.stderr, re.M):

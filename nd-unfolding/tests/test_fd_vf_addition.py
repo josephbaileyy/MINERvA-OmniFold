@@ -93,11 +93,15 @@ class Block(unittest.TestCase):
                 for k, v in arrays.items():
                     b = _io.BytesIO()
                     np.lib.format.write_array(b, np.asarray(v, dtype=">f8" if k == "f" else "<f8"), allow_pickle=False)
-                    z.writestr(f"{k}.npy", b.getvalue())
+                    zi = _zf.ZipInfo(f"{k}.npy", date_time=(1980, 1, 1, 0, 0, 0))   # fixed: both writes agree
+                    zi.compress_type = _zf.ZIP_STORED
+                    z.writestr(zi, b.getvalue())
             return buf.getvalue()
         with mock.patch.object(A, "npz_bytes", big), mock.patch.object(V, "report", wraps=V.report) as rep:
             self.assertEqual(self.run_block(self.tmp / "b"), 1)
-        self.assertEqual(rep.call_args_list[-1].args[0], "V4")
+        last = rep.call_args_list[-1].args
+        self.assertEqual(last[:2], ("V4", "the npz reads back key by key, bit for bit (dtype, shape and bytes)"))
+        self.assertFalse(last[2])
 
     def test_an_existing_output_refuses(self):
         (self.tmp / "b").mkdir()
