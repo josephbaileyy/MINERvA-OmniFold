@@ -36,9 +36,16 @@ Outputs:
 """
 import argparse
 import math
+import pathlib
+import sys
 
 import numpy as np
 import ROOT
+
+_UQ = str(pathlib.Path(__file__).resolve().parent / "uq")
+if _UQ not in sys.path:
+    sys.path.append(_UQ)
+from reported_cells import th2d_edges  # noqa: E402
 
 
 ANC_DIR = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc"
@@ -48,7 +55,7 @@ DEFAULT_OUT = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSec
 N_PT, N_PZ = 14, 16
 N = N_PT * N_PZ
 
-# Authoritative paper bin edges (bin_mapping.txt; not the cosmetic TH2D labels)
+# The analysis grid (bin_mapping.txt's printed edges). main() takes each side's widths from its own TH2D axes.
 PT_EDGES = np.array([0, 0.07, 0.15, 0.25, 0.33, 0.40, 0.47, 0.55,
                      0.70, 0.85, 1.00, 1.25, 1.50, 2.50, 4.50])
 PZ_EDGES = np.array([1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0,
@@ -68,6 +75,9 @@ def tm_to_np(tm):
 
 def fill_paper(h):
     """Paper TH2D: x=p||(16), y=pt(14). gid = (ptb-1)*16 + (pzb-1)."""
+    if (h.GetNbinsX(), h.GetNbinsY()) != (N_PZ, N_PT):
+        raise ValueError(f"{h.GetName()}: {h.GetNbinsX()} x {h.GetNbinsY()} bins, expected x = p|| ({N_PZ}), "
+                         f"y = pt ({N_PT})")
     v = np.zeros(N)
     for ix in range(1, N_PZ + 1):
         for iy in range(1, N_PT + 1):
@@ -86,23 +96,23 @@ def fill_ours(h):
     return v
 
 
-def bin_widths():
+def bin_widths(pt_edges=PT_EDGES, pz_edges=PZ_EDGES):
     """w[gid] = ΔpT * Δp||  for each (ptb, pzb) bin."""
     w = np.zeros(N)
     for ptb in range(1, N_PT + 1):
-        dpt = PT_EDGES[ptb] - PT_EDGES[ptb - 1]
+        dpt = pt_edges[ptb] - pt_edges[ptb - 1]
         for pzb in range(1, N_PZ + 1):
-            dpz = PZ_EDGES[pzb] - PZ_EDGES[pzb - 1]
+            dpz = pz_edges[pzb] - pz_edges[pzb - 1]
             w[(ptb - 1) * N_PZ + (pzb - 1)] = dpt * dpz
     return w
 
 
-def interior_mask():
+def interior_mask(pt_edges=PT_EDGES, pz_edges=PZ_EDGES):
     m = np.zeros(N, dtype=bool)
     for ptb in range(1, N_PT + 1):
-        pt_hi = PT_EDGES[ptb]
+        pt_hi = pt_edges[ptb]
         for pzb in range(1, N_PZ + 1):
-            pz_lo = PZ_EDGES[pzb - 1]
+            pz_lo = pz_edges[pzb - 1]
             m[(ptb - 1) * N_PZ + (pzb - 1)] = (pt_hi / pz_lo) <= TAN_THETA_MAX
     return m
 
@@ -129,14 +139,15 @@ def shape_jacobian(x, w, mask, total):
     return J, idx
 
 
-def shape_chi2(ours_v, paper_v, w, cov_paper, mask, tag):
+def shape_chi2(ours_v, paper_v, w, cov_paper, mask, tag, w_ours=None):
     """Compute shape chi^2 with paper covariance propagated through the
-    unit-area Jacobian. Returns (chi2, ndf, shape_ours, shape_paper,
+    unit-area Jacobian. `w` are the paper's bin areas and `w_ours` ours
+    (default `w`). Returns (chi2, ndf, shape_ours, shape_paper,
     cov_shape, idx_used).
     """
     diag = np.diag(cov_paper)
     use = mask & (diag > 0)
-    s_ours, tot_ours = normalize_shape(ours_v, w, use)
+    s_ours, tot_ours = normalize_shape(ours_v, w if w_ours is None else w_ours, use)
     s_paper, tot_paper = normalize_shape(paper_v, w, use)
 
     J, idx = shape_jacobian(paper_v, w, use, tot_paper)
@@ -144,6 +155,12 @@ def shape_chi2(ours_v, paper_v, w, cov_paper, mask, tag):
     C_shape = J @ C_block @ J.T
 
     d = (s_ours - s_paper)[idx]
+    if w_ours is not None and not np.array_equal(w_ours[idx], w[idx]):
+        # C_shape's null vector is the paper's area vector (the unit-area constraint). With our areas
+        # different, d has a component along it, which an exact pseudo-inverse ignores and a numerical
+        # one may not; drop it explicitly.
+        u = w[idx] / np.linalg.norm(w[idx])
+        d = d - (d @ u) * u
     Cinv = np.linalg.pinv(C_shape)
     chi2 = float(d @ Cinv @ d)
     ndf = max(int(use.sum()) - 1, 1)  # one DOF removed by unit-area constraint
@@ -154,10 +171,10 @@ def shape_chi2(ours_v, paper_v, w, cov_paper, mask, tag):
     return chi2, ndf, s_ours, s_paper, C_shape, idx
 
 
-def shape_to_th2d(name, title, s_vec):
-    """Pack a shape vector back into a TH2D with paper bin edges (x=pt, y=p||)."""
-    pt_edges = np.array(PT_EDGES, dtype="d")
-    pz_edges = np.array(PZ_EDGES, dtype="d")
+def shape_to_th2d(name, title, s_vec, pt_edges=PT_EDGES, pz_edges=PZ_EDGES):
+    """Pack a shape vector back into a TH2D with the given bin edges (x=pt, y=p||)."""
+    pt_edges = np.array(pt_edges, dtype="d")
+    pz_edges = np.array(pz_edges, dtype="d")
     h = ROOT.TH2D(name, title, N_PT, pt_edges, N_PZ, pz_edges)
     h.GetXaxis().SetTitle("p_{T} (GeV/c)")
     h.GetYaxis().SetTitle("p_{||} (GeV/c)")
@@ -189,7 +206,9 @@ def main():
 
     print(f"[paper] opening {ANC_DIR}/cov_ptpl_minerva_inclusive_6GeV.root")
     fp = ROOT.TFile.Open(f"{ANC_DIR}/cov_ptpl_minerva_inclusive_6GeV.root")
-    paper_v = fill_paper(fp.Get("pt_pl_cross_section"))
+    h_paper = fp.Get("pt_pl_cross_section")
+    paper_v = fill_paper(h_paper)
+    paper_pt, paper_pz = th2d_edges(h_paper)
     cov_tot = tm_to_np(fp.Get("TotalCovariance"))
     cov_sta = tm_to_np(fp.Get("StatOnlyCovariance"))
 
@@ -197,43 +216,45 @@ def main():
     fo = ROOT.TFile.Open(args.ours)
     h_ours = fo.Get("hXSec2D")
     ours_v = fill_ours(h_ours)
+    ours_pt, ours_pz = th2d_edges(h_ours)
     fo.Close()
 
-    w = bin_widths()
+    w = bin_widths(paper_pt, paper_pz)
+    w_ours = bin_widths(ours_pt, ours_pz)
     m_rep = (np.diag(cov_sta) > 0)
-    m_int = interior_mask() & m_rep
+    m_int = interior_mask(paper_pt, paper_pz) & m_rep
     print(f"[masks] reported={int(m_rep.sum())}/{N}  strict-interior={int(m_int.sum())}/{N}")
 
     # 205-bin shape: paper's own sigma_total definition
     print("\n=== shape chi^2, 205 reported bins (headline) ===")
     chi2_205, ndf_205, s_o_205, s_p_205, C_205, idx_205 = shape_chi2(
         ours_v, paper_v, w, cov_tot, m_rep,
-        "TOTAL covariance, 205-bin shape")
+        "TOTAL covariance, 205-bin shape", w_ours)
     chi2_205_stat, _, _, _, _, _ = shape_chi2(
         ours_v, paper_v, w, cov_sta, m_rep,
-        "STAT-only covariance, 205-bin shape")
+        "STAT-only covariance, 205-bin shape", w_ours)
 
     # 185-bin interior shape: secondary
     print("\n=== shape chi^2, 185 strict-interior bins (secondary) ===")
     chi2_185, ndf_185, s_o_185, s_p_185, C_185, idx_185 = shape_chi2(
         ours_v, paper_v, w, cov_tot, m_int,
-        "TOTAL covariance, 185-bin shape")
+        "TOTAL covariance, 185-bin shape", w_ours)
 
     # Sanity: shape integrals must equal 1 on the selected bins
-    for label, s, mask in [("205 ours", s_o_205, m_rep),
-                            ("205 paper", s_p_205, m_rep),
-                            ("185 ours", s_o_185, m_int),
-                            ("185 paper", s_p_185, m_int)]:
-        integral = float((s * w * mask).sum())
+    for label, s, mask, w_side in [("205 ours", s_o_205, m_rep, w_ours),
+                                    ("205 paper", s_p_205, m_rep, w),
+                                    ("185 ours", s_o_185, m_int, w_ours),
+                                    ("185 paper", s_p_185, m_int, w)]:
+        integral = float((s * w_side * mask).sum())
         print(f"  closure: shape integral on {label} = {integral:.10f}")
 
     # Save shape histograms and propagated covariances
     print(f"\n[out] writing {args.out}")
     fout = ROOT.TFile.Open(args.out, "RECREATE")
-    shape_to_th2d("hXSec2D_shape_205", "OmniFold shape, 205-bin", s_o_205).Write()
-    shape_to_th2d("hXSecPaper2D_shape_205", "Paper shape, 205-bin", s_p_205).Write()
-    shape_to_th2d("hXSec2D_shape_185", "OmniFold shape, 185-bin", s_o_185).Write()
-    shape_to_th2d("hXSecPaper2D_shape_185", "Paper shape, 185-bin", s_p_185).Write()
+    shape_to_th2d("hXSec2D_shape_205", "OmniFold shape, 205-bin", s_o_205, ours_pt, ours_pz).Write()
+    shape_to_th2d("hXSecPaper2D_shape_205", "Paper shape, 205-bin", s_p_205, paper_pt, paper_pz).Write()
+    shape_to_th2d("hXSec2D_shape_185", "OmniFold shape, 185-bin", s_o_185, ours_pt, ours_pz).Write()
+    shape_to_th2d("hXSecPaper2D_shape_185", "Paper shape, 185-bin", s_p_185, paper_pt, paper_pz).Write()
     fout.WriteObject(cov_to_tmatrix(C_205, idx_205), "CShape205_total")
     fout.WriteObject(cov_to_tmatrix(C_185, idx_185), "CShape185_total")
     # Persist scalar diagnostics
