@@ -8343,6 +8343,8 @@ docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r3-delta-co
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r3-delta-prompt.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r4-delta-codex-school-gpt-6.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r4-delta-prompt.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r5-delta-codex-school-gpt-6.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r5-delta-prompt.txt	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/codex-school-sweep.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/selection-20261124/B-SEL-DECLARATION.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
 docs/orchestration/state/ben-b-20261124/selection-20261124/BSEL-BINDING-1.md	tracked	MACHINE	state-artifact	ben-b-20261124		generated		exact-path-only	yes
