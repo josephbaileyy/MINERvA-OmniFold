@@ -78,7 +78,7 @@ def synthetic(deploy: Path, prot: Path, edges=None, tag="", n_mc=6000, n_data=40
     sel, _ = np.histogramdd(gen[pass_truth].astype(float), bins=edges, weights=w_truth[pass_truth])
     arrays = {"MCgen": gen, "MCreco": reco, "measured": measured, "pass_reco": pass_reco, "pass_truth": pass_truth,
               "w_truth": w_truth, "w_reco": w_truth * rng.uniform(0.9, 1.1, n_mc), "measured_weights": np.ones(n_data),
-              "denom_nd": sel * 1.15, "flux": np.full(shape[0], 1.5e-9), "data_pot": np.float64(1.0e20),
+              "denom_nd": sel * 1.15, "flux": np.linspace(1.2e-9, 1.8e-9, shape[0]), "data_pot": np.float64(1.0e20),
               "n_nucleons": np.float64(3.0e30), "nedges": np.int64(5)}
     arrays.update({f"edges_{i}": np.asarray(e, float) for i, e in enumerate(edges)})
     npz = prot / f"of_inputs_5d{tag}.npz"
@@ -157,7 +157,10 @@ def products(world):
     expected_c = {k: v for k, v in c.items() if k != "meta"}
     return {"t": t, "c": c, "run": run, "indep": indep, "flat_index": s5e_trace.flat_index,
             "extract": xsec_nd.extract_cross_section_nd, "meta": meta, "cj_raw": cj_raw,
-            "cjson": json.loads(cj_raw), "expected_c": expected_c}
+            "cjson": json.loads(cj_raw), "expected_c": expected_c,
+            "pins": {"fine_map": ec.FINE_MAP_SHA256, "npz": world["base"]["shared"]["npz"][1],
+                     "bkg": world["base"]["shared"]["bkg"][1], "ref": world["base"]["shared"]["ref"][1],
+                     "code_pin": ec.CODE_PIN}}
 
 
 def copy_t(t):
@@ -271,6 +274,7 @@ def test_fail_on_f(world):
     fx["repo"]["dp"] = [tec.DP_REL, hashlib.sha256(dp_bytes).hexdigest()]
     rc, out, log = run_evw(world, fx, "failf")
     assert rc == ev.RC_FAIL, log[-3000:]
+    shutil.copytree(out, world["root"] / "failf-pristine")
     done = json.loads((out / ev.DONE).read_text())
     assert done["verdict"] == "FAIL" and done["failed_controls"] == ["C-F", "C-SELF"], done["failed_controls"]
     assert done["acceptance"]["pass"] and not ev.accepted(out)
@@ -438,7 +442,8 @@ def _file(products, t=None, c=None, meta=None, cj_raw=None, wpush=None, expected
     return ev.check_file(p["t"] if t is None else t, p["c"] if c is None else c, p["indep"],
                          p["t"]["wpush"] if wpush is None else wpush,
                          p["expected_c"] if expected_c is None else expected_c, p["flat_index"],
-                         p["meta"] if meta is None else meta, p["cj_raw"] if cj_raw is None else cj_raw, p["cjson"])
+                         p["meta"] if meta is None else meta, p["cj_raw"] if cj_raw is None else cj_raw, p["cjson"],
+                         p["pins"])
 
 
 def test_check_file_passes_on_the_products(products):
@@ -900,12 +905,16 @@ def job(tmp_path):
     bin_.mkdir()
     (bin_ / "squeue").write_text("#!/bin/bash\necho 30:00\n")
     (bin_ / "squeue").chmod(0o755)
-    env = dict(os.environ, PATH=f"{bin_}:{os.environ['PATH']}", SLURM_JOB_ID="4242", SLURM_JOB_NAME="evw5d")
+    env = dict(os.environ, PATH=f"{bin_}:{os.environ['PATH']}", SLURM_JOB_ID="4242", SLURM_JOB_NAME="evw5d",
+               SLURM_JOB_NUM_NODES="1")
+    env.pop("SLURM_ARRAY_JOB_ID", None)
+    env.pop("SLURM_ARRAY_TASK_ID", None)
 
-    def run(out_arg=None, wsha_arg=None):
+    def run(out_arg=None, wsha_arg=None, extra_env=None):
         args = [str(tmp_path / "deploy"), pin, str(out if out_arg is None else out_arg), str(tmp_path / "tool"), tpin,
                 wsha if wsha_arg is None else wsha_arg]
-        return subprocess.run(["bash", str(EVW / "sbatch_evw5d.sh"), *args], capture_output=True, text=True, env=env)
+        return subprocess.run(["bash", str(EVW / "sbatch_evw5d.sh"), *args], capture_output=True, text=True,
+                              env=dict(env, **(extra_env or {})))
     return {"run": run, "out": out, "tmp": tmp_path, "wsha": wsha}
 
 
@@ -943,3 +952,242 @@ def test_job_refuses_a_failed_setup(job):
     r = job["run"]()
     done = json.loads((job["out"] / "logs" / "DONE-4242").read_text())
     assert r.returncode == 2 and "setup_salloc_env.sh returned 1" in done["refused"]
+
+
+
+def test_job_refuses_an_array_task_or_more_nodes(job):
+    r = job["run"](extra_env={"SLURM_ARRAY_JOB_ID": "77", "SLURM_ARRAY_TASK_ID": "1"})
+    done = json.loads((job["out"] / "logs" / "DONE-4242").read_text())
+    assert r.returncode == 2 and "an array task" in done["refused"]
+    (job["out"] / "logs" / "DONE-4242").unlink()
+    r = job["run"](extra_env={"SLURM_JOB_NUM_NODES": "2"})
+    done = json.loads((job["out"] / "logs" / "DONE-4242").read_text())
+    assert r.returncode == 2 and "not 1" in done["refused"]
+
+
+# ---------------------------------------------------------------------------------- unit: C-BIND
+
+
+def _bind_arrays(world):
+    _, ref = ev.read_npz(world["ref_copy"])
+    return ref
+
+
+def test_check_bind(world):
+    ref = _bind_arrays(world)
+    assert ev.check_bind(dict(ref), ref, ref["xsec_flat"])["pass"]
+    r = ev.check_bind(dict(ref, shape=ref["shape"].astype(np.float64)), ref, ref["xsec_flat"])
+    assert not r["pass"] and not r["shape_bits_equal"] and r["xsec_flat_bytes_equal"]
+    r = ev.check_bind(dict(ref, extra=np.zeros(1)), ref, ref["xsec_flat"])
+    assert not r["pass"] and not r["members_exact"]
+    x = np.array(ref["xsec_flat"], copy=True)
+    k = int(np.flatnonzero(x)[0])
+    x[k] = np.nextafter(x[k], np.inf)
+    r = ev.check_bind(dict(ref), ref, x)
+    assert not r["pass"] and not r["captured_equals_remade"] and r["xsec_flat_bytes_equal"]
+    r = ev.check_bind(dict(ref, xsec_flat=x), ref, x)
+    assert not r["pass"] and r["n_differ"] == 1
+    m = json.loads(str(ref["meta"]))
+    r = ev.check_bind(dict(ref, meta=np.array(json.dumps(dict(m, slurm_job="9")))), ref, ref["xsec_flat"])
+    assert r["pass"], "a per-run field must not matter"
+    r = ev.check_bind(dict(ref, meta=np.array("{not json")), ref, ref["xsec_flat"])
+    assert not r["pass"] and not r["meta_equal_except_per_run"]
+
+
+# ---------------------------------------------------------------------------------- unit: builder-side faults
+
+
+def _pins(world):
+    b = world["base"]["shared"]
+    return {"fine_map": ec.FINE_MAP_SHA256, "npz": b["npz"][1], "bkg": b["bkg"][1], "ref": b["ref"][1],
+            "code_pin": ec.CODE_PIN}
+
+
+def _file_p(products, world, **kw):
+    p = dict(products)
+    return ev.check_file(kw.get("t", p["t"]), kw.get("c", p["c"]), p["indep"], p["t"]["wpush"],
+                         kw.get("expected_c", p["expected_c"]), p["flat_index"], kw.get("meta", p["meta"]),
+                         kw.get("cj_raw", p["cj_raw"]), kw.get("cjson", p["cjson"]), kw.get("pins", _pins(world)))
+
+
+def test_check_file_with_pins(products, world):
+    assert _file_p(products, world)["pass"]
+    assert not _file_p(products, world, pins={})["pass"], "the pinned digests are required"
+
+
+def test_check_file_map_from_a_faulty_builder(products, world):
+    c, exp = copy_t(products["c"]), dict(products["expected_c"])
+    k = int(np.flatnonzero(c["fine_to_cell"] < 0)[0])         # an unreported fine cell joins R03: no integral moves
+    for d in (c, exp):
+        d["fine_to_cell"] = np.array(d["fine_to_cell"], copy=True)
+        d["fine_to_cell"][k] = 3
+    cj = json.loads(products["cj_raw"])
+    cj["fine_map_sha256_int32le"] = hashlib.sha256(c["fine_to_cell"].tobytes()).hexdigest()
+    raw = (json.dumps(cj, indent=1) + "\n").encode()
+    r = _file_p(products, world, c=c, expected_c=exp, cj_raw=raw, cjson=cj)
+    assert all(r["constants"].values()) and not r["constants_vs_input"]["fine_to_cell_digest"] and not r["pass"]
+
+
+@pytest.mark.parametrize("key,pin", [("input_npz_sha256", "npz"), ("bkg_dump_sha256", "bkg"),
+                                     ("result_sha256", "ref"), ("code_pin", "code_pin")])
+def test_check_file_meta_from_a_faulty_builder(products, world, key, pin):
+    meta = dict(products["meta"], **{key: "0" * 40})
+    t, c = copy_t(products["t"]), copy_t(products["c"])
+    t["meta"] = c["meta"] = np.array(json.dumps(meta))
+    cj = dict(json.loads(products["cj_raw"]), **{key: "0" * 40})
+    raw = (json.dumps(cj, indent=1) + "\n").encode()
+    r = _file_p(products, world, t=t, c=c, meta=meta, cj_raw=raw, cjson=cj)
+    assert r["meta_equal"] and r["constants_json_equal"] and not r["constants_vs_input"][f"meta_{key}"]
+    assert not r["pass"]
+
+
+@pytest.mark.parametrize("field", ["f", "flux", "pot", "edges", "units_label"])
+def test_check_file_json_from_a_faulty_builder(products, world, field):
+    cj = json.loads(products["cj_raw"])
+    if field == "f":
+        cj["f_cm2_per_nucleon"] = [x * (1 + 1e-12) for x in cj["f_cm2_per_nucleon"]]
+    elif field == "flux":
+        cj["flux_per_m2_per_POT_by_pt_bin"][0] *= 1 + 1e-12
+    elif field == "pot":
+        cj["data_pot"] *= 2
+    elif field == "edges":
+        cj["edges"]["W"][1] += 1e-9
+    else:
+        cj["flux_m2_per_POT_by_pt_bin"] = cj.pop("flux_per_m2_per_POT_by_pt_bin")
+    raw = (json.dumps(cj, indent=1) + "\n").encode()
+    r = _file_p(products, world, cj_raw=raw, cjson=cj)
+    assert r["constants_json_equal"] and not r["constants_json_vs_arrays"] and not r["pass"], field
+
+
+def test_check_self_independent_formula_with_a_wrong_extractor(products):
+    """The driver's extractor 1e-12 off, and the reference made with it: only the independent formula sees it."""
+    def wrong(*a, **k):
+        x, g = products["extract"](*a, **k)
+        return x * (1 + 1e-12), g
+    t, c = products["t"], copy_t(products["c"])
+    samp = np.column_stack([t[n] for n in ev.TRUTH_COLS])
+    d = {"edges": [c[f"edges_{i}"] for i in range(5)], "denom_nd": c["denom_nd"], "flux": c["flux"],
+         "data_pot": c["data_pot"], "n_nucleons": c["n_nucleons"]}
+    ref = ev.driver_maps(d, t["w_unfolded"], t["w_prior"], samp, wrong)["xs"].ravel(order="C")
+    c["xsec_flat"] = ref
+    f = ev.cell_integrals(ref, c["volume"], c["fine_to_cell"])
+    r = ev.check_self(t, c, ref, f, wrong, 5)
+    assert r["xsec_bit_for_bit"] and r["saved_xsec_equals_reference"] and r["f_from_file_max_rel"] <= ev.F_RTOL
+    assert r["independent_formula_max_rel"] > ev.INDEP_RTOL and not r["pass"]
+
+
+def test_contributions_use_each_pt_bins_flux():
+    fm = np.array([0, 1, 2, 3])
+    good = np.ones((2, 2), bool)
+    s, _ = ev.contributions(np.array([1.0, 1.0, 1.0, 1.0]), np.array([0, 1, 2, 3]), np.ones((2, 2)),
+                            np.array([1.0, 4.0]), 1.0, 1.0, good, fm, 2)
+    assert list(s[:4]) == [1e4, 1e4, 2.5e3, 2.5e3]
+
+
+# ---------------------------------------------------------------------------------- unit: accepted(), more
+
+
+def _done(out_copy):
+    return json.loads((out_copy / ev.DONE).read_text())
+
+
+def _write_done(out_copy, d):
+    (out_copy / ev.DONE).unlink()
+    (out_copy / ev.DONE).write_text(json.dumps(d))
+
+
+@pytest.mark.parametrize("edit", ["finding_sizes", "acceptance_field", "acceptance_not_dict", "extra_key",
+                                  "products_only", "controls_verdict_only", "failed_controls_only"])
+def test_accepted_refuses_each_marker_edit(out_copy, edit):
+    d = _done(out_copy)
+    if edit == "finding_sizes":
+        d["finding_sizes"]["C-COMPLETE"]["max_abs_c_minus_1"] = 0.0
+    elif edit == "acceptance_field":
+        d["acceptance"]["rehash_equal"] = False
+    elif edit == "acceptance_not_dict":
+        d["acceptance"] = True
+    elif edit == "extra_key":
+        d["note"] = "x"
+    elif edit == "products_only":
+        d["products"] = dict(d["products"], **{"run.json": "0" * 64})
+    elif edit == "controls_verdict_only":
+        d["controls_verdict"] = "FAIL"
+    else:
+        d["failed_controls"] = ["C-F"]
+    _write_done(out_copy, d)
+    assert not ev.accepted(out_copy), edit
+
+
+def test_accepted_linked_root(out_copy):
+    link = out_copy.parent / "linked"
+    link.symlink_to(out_copy)
+    assert ev.accepted(out_copy) and not ev.accepted(link)
+
+
+# ---------------------------------------------------------------------------------- the Mac launcher
+
+
+LAUNCH = EVW.parents[1] / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch"
+
+
+def _stubs(tmp: Path, shm: Path, remote: dict | None = None) -> dict:
+    """ssh runs its last argument locally (both hops), with /dev/shm mapped to `shm`; scp copies from `remote`."""
+    b = tmp / "stubbin"
+    b.mkdir()
+    (b / "ssh").write_text('#!/bin/bash\nlast="${@: -1}"\nexec bash -c "${last//\\/dev\\/shm/' + str(shm) + '}"\n')
+    m = json.dumps(remote or {})
+    (b / "scp").write_text("#!/bin/bash\nsrc=\"${@: -2:1}\"; dst=\"${@: -1}\"\n" + sys.executable +
+                           " -c 'import json,shutil,sys; m=json.loads(sys.argv[1]); s=sys.argv[2].split(\":\",1)[1]\n"
+                           "p=[v+s[len(k):] for k,v in m.items() if s.startswith(k)]\n"
+                           "sys.exit(1) if not p else shutil.copy(p[0], sys.argv[3])' '" + m + "' \"$src\" \"$dst\"\n")
+    for f in ("ssh", "scp"):
+        (b / f).chmod(0o755)
+    return dict(os.environ, PATH=f"{b}:{os.environ['PATH']}", EVW5D_PY=sys.executable)
+
+
+def test_launcher_propagates_a_remote_refusal(tmp_path):
+    tmp_path = Path(os.path.realpath(tmp_path))
+    ld = tmp_path / "launch"
+    ld.mkdir()
+    (ld / "evw5d_connect.sh").write_text("#!/bin/bash\necho refused >&2\nrm -f -- \"$1\"\nexit 9\n")
+    sha = hashlib.sha256((ld / "evw5d_connect.sh").read_bytes()).hexdigest()
+    (ld / "evw5d_launch.sh").write_text((LAUNCH / "evw5d_launch.sh").read_text().replace("__CONNECT_SHA256__", sha))
+    shm = tmp_path / "shm"
+    shm.mkdir()
+    env = _stubs(tmp_path, shm)
+    sess = tmp_path / "sess"
+    sess.mkdir()
+    r = subprocess.run(["bash", str(ld / "evw5d_launch.sh"), "connect", str(sess), "login27"], capture_output=True,
+                       text=True, env=env)
+    assert r.returncode == 9 and "script rc=9" in r.stdout, r.stdout + r.stderr
+    assert list(shm.iterdir()) == [], "the staged copy was left"
+    (ld / "evw5d_connect.sh").write_text("#!/bin/bash\nexit 0\n")           # not the approved bytes
+    sess2 = tmp_path / "sess2"
+    sess2.mkdir()
+    r = subprocess.run(["bash", str(ld / "evw5d_launch.sh"), "connect", str(sess2), "login27"], capture_output=True,
+                       text=True, env=env)
+    assert r.returncode == 8
+
+
+def test_launcher_fetch_products_runs_accepted(world, tmp_path):
+    tmp_path = Path(os.path.realpath(tmp_path))
+    good = world["out"]
+    h = hashlib.sha256((good / ev.SUMS).read_bytes()).hexdigest()
+    remote = {"/pscratch/sd/j/josephrb/evw5d-20261125/evw5d": str(good)}
+    env = _stubs(tmp_path, tmp_path, remote)
+    for name, bound, want in (("ok", h, 0), ("wrongbound", "0" * 64, 1)):
+        d = tmp_path / name
+        d.mkdir()
+        r = subprocess.run(["bash", str(LAUNCH / "evw5d_launch.sh"), "fetch-products", str(d), bound],
+                           capture_output=True, text=True, env=env)
+        assert r.returncode == want, (name, r.stdout + r.stderr)
+    bad = world["root"] / "failf-pristine"      # test_fail_on_f's FAIL bundle (verdict FAIL, valid checksums)
+    assert bad.is_dir(), "test_fail_on_f must run first (file order)"
+    hb = hashlib.sha256((bad / ev.SUMS).read_bytes()).hexdigest()
+    (tmp_path / "b").mkdir()
+    env = _stubs(tmp_path / "b", tmp_path, {"/pscratch/sd/j/josephrb/evw5d-20261125/evw5d": str(bad)})
+    d = tmp_path / "fail"
+    d.mkdir()
+    r = subprocess.run(["bash", str(LAUNCH / "evw5d_launch.sh"), "fetch-products", str(d), hb],
+                       capture_output=True, text=True, env=env)
+    assert r.returncode == 1 and "REFUSED" in r.stdout, r.stdout + r.stderr

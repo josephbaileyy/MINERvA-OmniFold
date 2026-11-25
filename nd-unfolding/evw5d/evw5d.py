@@ -62,6 +62,7 @@ COMPLETE_ATOL = 1e-12   # |c - 1| beyond this, where the denominator is positive
 VOLUME_RTOL = 1e-13     # the saved cell volumes against the products of the saved edges' widths
 C_ONE_LEVEL = 1e-5      # the director's ruling: "completeness is 1 to 1e-5" is stated only if every fine cell is
 PRODUCTS = ("constants.json", "constants.npz", "product/data_b-_j-.npz", "run.json", "weights.npz")
+NPZ_MEMBERS = ("meta", "shape", "xsec_flat")    # s5n_pseudo.write_product's members (@ abdc88c5)
 GATED = ("C-BIND", "C-KEY", "C-ENTRY", "C-GRID", "C-F", "C-FILE", "C-SELF", "C-FLOW", "C-PINS")
 SUMS, DONE = "SHA256SUMS", "evw5d.done"
 RC_FAIL, RC_STOP, RC_FAILED = 6, 8, 9
@@ -191,6 +192,36 @@ def build_constants(d: dict, maps: dict, vol, fm) -> dict:
 # ---------------------------------------------------------------------------------------------------- controls
 
 
+def check_bind(remade: dict, ref: dict, captured) -> dict:
+    """C-BIND, gate 1: the re-made product (parsed from the bytes hashed) against fb5cc679's: exactly the producer's
+    members, xsec_flat and shape bit for bit (dtype included), the in-memory result equal to the file, and the meta
+    equal but for the per-run fields."""
+    members = sorted(remade) == sorted(ref) == sorted(NPZ_MEMBERS)
+    out = {"members_exact": bool(members)}
+    if not members:
+        out["pass"] = False
+        return out
+    rx, fx = remade["xsec_flat"], ref["xsec_flat"]
+    out["xsec_flat_bytes_equal"] = same_bits(rx, fx)
+    out["shape_bits_equal"] = same_bits(remade["shape"], ref["shape"])
+    out["captured_equals_remade"] = same_bits(np.asarray(captured).ravel(order="C"), rx)
+    out["n_entries"] = int(np.asarray(fx).size)
+    try:
+        sm_r = ess.strip_per_run(json.loads(str(remade["meta"])))
+        sm_f = ess.strip_per_run(json.loads(str(ref["meta"])))
+    except ValueError:
+        sm_r, sm_f = {"unparsable": 1}, {"unparsable": 2}
+    out["meta_equal_except_per_run"] = sm_r == sm_f
+    out["meta_differing_keys"] = sorted(k for k in set(sm_r) | set(sm_f) if sm_r.get(k) != sm_f.get(k))
+    out["pass"] = bool(out["xsec_flat_bytes_equal"] and out["shape_bits_equal"] and out["captured_equals_remade"]
+                       and out["meta_equal_except_per_run"])
+    if not out["xsec_flat_bytes_equal"] and np.shape(rx) == np.shape(fx):
+        diff = np.asarray(rx) != np.asarray(fx)
+        out.update(n_differ=int(diff.sum()), max_abs=float(np.max(np.abs(np.asarray(rx, float) - np.asarray(fx, float))))
+                   if diff.any() else 0.0)
+    return out
+
+
 def check_key(d: dict, indep: dict, wpush) -> dict:
     """C-KEY: the arrays the unfold received are the npz's own, row for row; the key is unique and fits."""
     fields = ("MCgen", "MCreco", "pass_reco", "pass_truth", "w_truth", "w_reco", "denom_nd", "flux")
@@ -217,13 +248,14 @@ def check_entries(entry) -> dict:
 
 
 def check_file(t: dict, c: dict, indep: dict, wpush, expected_c: dict, flat_index, meta: dict, cj_raw: bytes,
-               cjson: dict) -> dict:
+               cjson: dict, pins: dict | None = None) -> dict:
     """C-FILE: the read-back columns against their sources, independently of the table that was written; the saved
     meta and constants.json against what was meant to be written."""
     out = {"columns_exact": sorted(t) == sorted(COLUMNS + ("meta",))}
     out["meta_equal"] = ("meta" in t and "meta" in c and json.loads(str(t["meta"])) == meta
                          and json.loads(str(c["meta"])) == meta)
     out["constants_json_equal"] = json.loads(cj_raw) == cjson
+    out["constants_json_vs_arrays"] = check_constants_json(json.loads(cj_raw), c, t) if "meta" in t else False
     out["constants_exact"] = sorted(k for k in c if k != "meta") == sorted(expected_c)
     if not (out["columns_exact"] and out["constants_exact"]):
         out["pass"] = False
@@ -251,11 +283,41 @@ def check_file(t: dict, c: dict, indep: dict, wpush, expected_c: dict, flat_inde
                  data_pot=same_bits(c["data_pot"], np.float64(float(indep["data_pot"]))),
                  n_nucleons=same_bits(c["n_nucleons"], np.float64(float(indep["n_nucleons"]))),
                  denom_nd=same_bits(c["denom_nd"], np.asarray(indep["denom_nd"])))
+    # pinned digests, checked on the saved bytes themselves (not on what the builder was given)
+    pins = pins or {}
+    fm = np.asarray(c["fine_to_cell"])
+    vs_in["fine_to_cell_digest"] = (fm.dtype == np.dtype("<i4") and "fine_map" in pins
+                                    and hashlib.sha256(fm.tobytes()).hexdigest() == pins["fine_map"])
+    saved_meta = json.loads(str(t["meta"]))
+    for k, pin in (("input_npz_sha256", "npz"), ("bkg_dump_sha256", "bkg"), ("result_sha256", "ref"),
+                   ("code_pin", "code_pin")):
+        vs_in[f"meta_{k}"] = pin in pins and saved_meta.get(k) == pins[pin]
+    vs_in["meta_n_rows"] = saved_meta.get("n_rows") == int(entry.size)
+    vs_in["meta_columns"] = saved_meta.get("columns") == list(COLUMNS)
     out["constants_vs_input"] = vs_in
     out["pass"] = bool(all(v for k, v in out.items() if k not in ("constants", "constants_vs_input"))
                        and all(out["constants"].values()) and len(out["constants"]) == len(expected_c)
                        and all(vs_in.values()))
     return out
+
+
+def check_constants_json(cj: dict, c: dict, t: dict) -> bool:
+    """constants.json's operands equal the saved arrays (exact float round trip), and its meta equals the npz meta."""
+    try:
+        axes = cj["truth_axes"]
+        ok = (cj["data_pot"] == float(c["data_pot"]) and cj["n_nucleons"] == float(c["n_nucleons"])
+              and cj["cm2_per_m2"] == float(c["cm2_per_m2"])
+              and cj["flux_per_m2_per_POT_by_pt_bin"] == [float(x) for x in np.asarray(c["flux"])]
+              and list(cj["edges"]) == list(axes)
+              and all(cj["edges"][ax] == [float(x) for x in c[f"edges_{i}"]] for i, ax in enumerate(axes))
+              and cj["fine_map_sha256_int32le"] == hashlib.sha256(np.asarray(c["fine_to_cell"]).tobytes()).hexdigest())
+        meta = json.loads(str(t["meta"]))
+        ok = ok and all(cj.get(k) == v for k, v in meta.items())
+        f_saved = cell_integrals(c["xsec_flat"], c["volume"], c["fine_to_cell"])
+        return bool(ok and len(cj["f_cm2_per_nucleon"]) == N_CELLS
+                    and max_rel(cj["f_cm2_per_nucleon"], f_saved) == 0.0)
+    except (KeyError, TypeError, ValueError):
+        return False
 
 
 def check_self(t: dict, c: dict, ref_xsec_flat, f_dp, extract, nd: int) -> dict:
@@ -390,12 +452,17 @@ def acceptance(out: Path, digests: dict) -> dict:
     return acc
 
 
+DONE_KEYS = ("acceptance", "controls_verdict", "failed_controls", "finding_sizes", "findings", "products", "schema",
+             "sha256sums_sha256", "verdict")
+
+
 def accepted(out: Path, expect_sums_sha256: str | None = None) -> bool:
-    """For a consumer: the acceptance re-run, a PASS done marker consistent with the hashed run.json, and, when the
-    release binding gives it, SHA256SUMS's digest equal to the bound one (which is what detects a replaced bundle)."""
+    """For a consumer: the acceptance re-run, a PASS done marker of exactly the written schema and consistent with the
+    hashed run.json (parsed from the bytes verified against SHA256SUMS), and, when the release binding gives it,
+    SHA256SUMS's digest equal to the bound one (which is what detects a replaced bundle)."""
     out = Path(out)
     try:
-        if (out / DONE).is_symlink() or (out / SUMS).is_symlink():
+        if out.is_symlink() or not out.is_dir() or (out / DONE).is_symlink() or (out / SUMS).is_symlink():
             return False
         done = json.loads((out / DONE).read_bytes())
         raw = (out / SUMS).read_bytes()
@@ -403,24 +470,30 @@ def accepted(out: Path, expect_sums_sha256: str | None = None) -> bool:
     except (OSError, ValueError, UnicodeDecodeError):
         return False
     h = hashlib.sha256(raw).hexdigest()
-    if digests is None or not isinstance(done, dict) or done.get("schema") != SCHEMA:
+    if digests is None or not isinstance(done, dict) or sorted(done) != sorted(DONE_KEYS) \
+            or done.get("schema") != SCHEMA:
         return False
     if expect_sums_sha256 is not None and h != expect_sums_sha256:
         return False
-    if not (done.get("verdict") == "PASS" and done.get("controls_verdict") == "PASS"
-            and done.get("failed_controls") == [] and done.get("sha256sums_sha256") == h
-            and done.get("products") == digests and (done.get("acceptance") or {}).get("pass") is True):
-        return False
-    if not acceptance(out, digests)["pass"]:
+    fresh = acceptance(out, digests)
+    if not (done["verdict"] == "PASS" and done["controls_verdict"] == "PASS"
+            and done["failed_controls"] == [] and done["sha256sums_sha256"] == h
+            and done["products"] == digests and done["acceptance"] == fresh and fresh["pass"]):
         return False
     try:
-        run = json.loads((out / "run.json").read_bytes())     # its bytes are the ones SHA256SUMS just verified
+        rj = (out / "run.json").read_bytes()
+        if hashlib.sha256(rj).hexdigest() != digests.get("run.json"):
+            return False
+        run = json.loads(rj)
     except (OSError, ValueError):
         return False
-    ctl = run.get("controls", {})
+    if not isinstance(run, dict) or not isinstance(run.get("controls"), dict):
+        return False
+    ctl = run["controls"]
     return bool(run.get("schema") == SCHEMA and run.get("controls_verdict") == "PASS"
-                and tuple(run.get("gated", ())) == GATED and all(ctl.get(k, {}).get("pass") is True for k in GATED)
-                and run.get("findings") == done.get("findings"))
+                and tuple(run.get("gated", ())) == GATED
+                and all(isinstance(ctl.get(k), dict) and ctl[k].get("pass") is True for k in GATED)
+                and run.get("findings") == done["findings"] and run.get("finding_sizes") == done["finding_sizes"])
 
 
 def publish_done(out: Path, record: dict) -> None:
@@ -517,26 +590,20 @@ def run(a, cfg: dict) -> int:
             if mod is None or not Path(mod.__file__).resolve().is_relative_to(deploy):
                 raise Failed(f"module {name} is not loaded from the deploy ({getattr(mod, '__file__', None)})")
 
-        # ---- GATE 1, C-BIND: the re-made xsec_flat byte for byte against fb5cc679's, and the meta
-        rx, rshape, rmeta = ess.load_npz(product)
-        fx, fshape, fmeta = ess.load_npz(copies["ref"])
-        captured = xs.ravel(order="C")
-        sm_r, sm_f = ess.strip_per_run(rmeta), ess.strip_per_run(fmeta)
-        bind = {"reference_digest": cfg["shared"]["ref"][1], "remade_digest": digests["product/data_b-_j-.npz"],
-                "xsec_flat_bytes_equal": bool(same_bits(rx, fx) and np.array_equal(rshape, fshape)),
-                "captured_equals_remade": same_bits(captured, rx), "n_entries": int(fx.size),
-                "meta_equal_except_per_run": sm_r == sm_f,
-                "meta_differing_keys": sorted(k for k in set(sm_r) | set(sm_f) if sm_r.get(k) != sm_f.get(k))}
-        bind["pass"] = bool(bind["xsec_flat_bytes_equal"] and bind["captured_equals_remade"]
-                            and bind["meta_equal_except_per_run"])
+        # ---- GATE 1, C-BIND: the re-made product against fb5cc679's, each parsed from the very bytes hashed
+        remade_digest, remade = read_npz(product)
+        ref_digest, ref = read_npz(copies["ref"])
+        if remade_digest != digests["product/data_b-_j-.npz"] or ref_digest != cfg["shared"]["ref"][1]:
+            raise Failed("a product's bytes changed between their hash and their parse")
+        bind = check_bind(remade, ref, xs)
+        bind.update(reference_digest=ref_digest, remade_digest=remade_digest)
         record["C-BIND"] = bind
         if not bind["pass"]:
-            if rx.shape == fx.shape:
-                diff = rx != fx
-                bind.update(n_differ=int(diff.sum()), max_abs=float(np.max(np.abs(rx - fx))) if diff.any() else 0.0)
             record["verdict"] = "STOP: the re-made result is not fb5cc679's; no weights are written"
             ess.write_json(out / "STOP.json", record)
             return RC_STOP
+        rx = remade["xsec_flat"]
+        captured = xs.ravel(order="C")
 
         controls = {"C-BIND": bind}
         indep = load_indep(copies["npz"])
@@ -589,11 +656,12 @@ def run(a, cfg: dict) -> int:
         write_npz(out / "weights.npz", {**table, "meta": np.array(json.dumps(meta))})
         write_npz(out / "constants.npz", {**constants, "meta": np.array(json.dumps(meta))})
         cjson = {**meta, "data_pot": float(constants["data_pot"]), "n_nucleons": float(constants["n_nucleons"]),
-                 "cm2_per_m2": 1.0e4, "flux_m2_per_POT_by_pt_bin": [float(x) for x in constants["flux"]],
+                 "cm2_per_m2": 1.0e4, "flux_per_m2_per_POT_by_pt_bin": [float(x) for x in constants["flux"]],
                  "edges": {ax: [float(x) for x in constants[f"edges_{i}"]] for i, ax in enumerate(s1.AXES)},
                  "f_cm2_per_nucleon": cf["f"], "fine_map_sha256_int32le": cfg["fine_map_sha"],
                  "formula": "d5sigma_f = 1e4 * sum_{rows in fine cell f} w_unfolded / (completeness_f * flux[pT bin "
-                            "of f] * n_nucleons * data_pot * volume_f), zero where that denominator is not > 0; "
+                            "of f] * n_nucleons * data_pot * volume_f), zero unless that denominator is finite and "
+                            "> 0 (the saved good mask); flux in m^-2/POT, data_pot in POT; "
                             "f_R = sum_{f in R} d5sigma_f * volume_f"}
         cbytes = (json.dumps(cjson, indent=1) + "\n").encode()
         with open(out / "constants.json", "xb") as fh:
@@ -603,7 +671,10 @@ def run(a, cfg: dict) -> int:
         cj_raw = (out / "constants.json").read_bytes()
         digests["constants.json"] = hashlib.sha256(cj_raw).hexdigest()
         controls["C-FILE"] = check_file(t_read, c_read, indep, wpush, constants, s5e_trace.flat_index,
-                                        meta, cj_raw, cjson)
+                                        meta, cj_raw, cjson,
+                                        {"fine_map": cfg["fine_map_sha"], "npz": cfg["shared"]["npz"][1],
+                                         "bkg": cfg["shared"]["bkg"][1], "ref": cfg["shared"]["ref"][1],
+                                         "code_pin": cfg["code_pin"]})
         controls["C-SELF"] = check_self(t_read, c_read, rx, f_dp, xsec_nd.extract_cross_section_nd, xs.ndim)
         controls["C-FLOW"] = check_flow(t_read, c_read, maps["unf"], int(np.count_nonzero(indep["pass_truth"])))
         comp = measure_completeness(maps["ofin"], d["denom_nd"])

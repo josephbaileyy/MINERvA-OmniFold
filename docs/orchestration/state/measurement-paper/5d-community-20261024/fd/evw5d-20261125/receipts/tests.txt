@@ -1,10 +1,14 @@
 python=3.11.18 1.26.4 4.6.0
-36f3d2ee2b7b4d13cdbeca746dcd9398f479639bce254261b9a0d7b098822f5d  evw5d.py
-9ef3175b7a59332f57cdc2837275a35a72b564cd915fc3c2699ffe11bd6e6a23  test_evw5d.py
-733e5c948ad9f8af42e28ed2e02c9799ffb6fdd442903cb8571a35734f461f1a  evw5d_mutation.py
-cea8ab75e4715f6c82859402c119f07be02b11e52e1cba087ed6d200308c683d  sbatch_evw5d.sh
+e9a488d1cb5f49606ea3e7562e3d618faa2df0f6289a1b470cc4c3f8599051e5  evw5d.py
+078cb45c19f93e7faf8eef0c426437e36fd3cd54a812f4e75001bf526f7fde53  test_evw5d.py
+75abb81a1ded9031fe4b928acb2c2e9ce389c6f60fa86ec0b84bf56d8d85e354  evw5d_mutation.py
+c6c8bc72c6ff412a936e2bbad1ece67dc136af068df7fed8655b1a954a7ff629  sbatch_evw5d.sh
 4755681f6ba8bd5060fe6ed4902e940b71e3b641d87c978a1f8016faaec468da  ../ess_e/ess_capture.py
 8687e85be161bfc993ea5a2c8be7b83dc92b5eb94caa13768261ea0ecbe5667e  ../ess_e/test_ess_capture.py
+cfa5166ea3f6a60bb8939bb2abe24724381a1b6e3929aacb3ab0f5bc4c6754b4  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_connect.sh
+673e6dd0b02ba9c8165e40c0e874d02f62bbbc796b5a92577a83d8580d7c5b32  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_hpss.sh
+4a1b3e16e0dc1fcdd237841b879002c7be8af3a02a0a8d758c25d6841bb76ff2  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_launch.sh
+ea7bf4a5006aec8ec8e75a003d83783e18a3d9217a813a078123e4f407d9ee55  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_post.sh
 PASSED test_evw5d.py::test_pass_run_exit
 PASSED test_evw5d.py::test_pass_run
 PASSED test_evw5d.py::test_completeness_finding_is_reported_not_failed
@@ -84,5 +88,30 @@ PASSED test_evw5d.py::test_job_refuses_an_existing_or_linked_log_file
 PASSED test_evw5d.py::test_job_refuses_a_wrong_writer_digest
 PASSED test_evw5d.py::test_job_refuses_when_git_status_fails
 PASSED test_evw5d.py::test_job_refuses_a_failed_setup
-79 passed in 59.94s
+PASSED test_evw5d.py::test_job_refuses_an_array_task_or_more_nodes
+PASSED test_evw5d.py::test_check_bind
+PASSED test_evw5d.py::test_check_file_with_pins
+PASSED test_evw5d.py::test_check_file_map_from_a_faulty_builder
+PASSED test_evw5d.py::test_check_file_meta_from_a_faulty_builder[input_npz_sha256-npz]
+PASSED test_evw5d.py::test_check_file_meta_from_a_faulty_builder[bkg_dump_sha256-bkg]
+PASSED test_evw5d.py::test_check_file_meta_from_a_faulty_builder[result_sha256-ref]
+PASSED test_evw5d.py::test_check_file_meta_from_a_faulty_builder[code_pin-code_pin]
+PASSED test_evw5d.py::test_check_file_json_from_a_faulty_builder[f]
+PASSED test_evw5d.py::test_check_file_json_from_a_faulty_builder[flux]
+PASSED test_evw5d.py::test_check_file_json_from_a_faulty_builder[pot]
+PASSED test_evw5d.py::test_check_file_json_from_a_faulty_builder[edges]
+PASSED test_evw5d.py::test_check_file_json_from_a_faulty_builder[units_label]
+PASSED test_evw5d.py::test_check_self_independent_formula_with_a_wrong_extractor
+PASSED test_evw5d.py::test_contributions_use_each_pt_bins_flux
+PASSED test_evw5d.py::test_accepted_refuses_each_marker_edit[finding_sizes]
+PASSED test_evw5d.py::test_accepted_refuses_each_marker_edit[acceptance_field]
+PASSED test_evw5d.py::test_accepted_refuses_each_marker_edit[acceptance_not_dict]
+PASSED test_evw5d.py::test_accepted_refuses_each_marker_edit[extra_key]
+PASSED test_evw5d.py::test_accepted_refuses_each_marker_edit[products_only]
+PASSED test_evw5d.py::test_accepted_refuses_each_marker_edit[controls_verdict_only]
+PASSED test_evw5d.py::test_accepted_refuses_each_marker_edit[failed_controls_only]
+PASSED test_evw5d.py::test_accepted_linked_root
+PASSED test_evw5d.py::test_launcher_propagates_a_remote_refusal
+PASSED test_evw5d.py::test_launcher_fetch_products_runs_accepted
+104 passed in 84.57s (0:01:24)
 rc=0

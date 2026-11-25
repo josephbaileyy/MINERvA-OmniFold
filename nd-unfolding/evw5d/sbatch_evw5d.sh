@@ -30,6 +30,8 @@ for f in "$L/DONE-$J" "$L/job-env-$J.log" "$L/evw5d-run-$J.log"; do
 done
 refuse() { echo "[evw5d] refusing: $*" >&2; echo "{\"rc\": 2, \"job\": \"$J\", \"refused\": \"$*\"}" > "$L/DONE-$J"; exit 2; }
 [ "$SLURM_JOB_NAME" = evw5d ] || refuse "job name $SLURM_JOB_NAME"
+[ -z "${SLURM_ARRAY_JOB_ID:-}" ] && [ -z "${SLURM_ARRAY_TASK_ID:-}" ] || refuse "an array task"
+[ "${SLURM_JOB_NUM_NODES:-}" = 1 ] || refuse "SLURM_JOB_NUM_NODES=${SLURM_JOB_NUM_NODES:-unset}, not 1"
 tl=$(squeue -h -j "$J" -o %l 2>/dev/null)
 [ "$tl" = "30:00" ] || refuse "TimeLimit $tl is not 30:00"
 clean_at() {   # clean_at <checkout> <pin>: HEAD is the pin and status succeeds with no line (each git call checked)

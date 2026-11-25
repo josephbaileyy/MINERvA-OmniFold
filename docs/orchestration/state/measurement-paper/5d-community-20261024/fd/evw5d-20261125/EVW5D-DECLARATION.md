@@ -1,4 +1,4 @@
-# EVW5D declaration: configuration (e)'s central per-event weights for the sixteen-cell result (2026-11-25, revision 2)
+# EVW5D declaration: configuration (e)'s central per-event weights for the sixteen-cell result (2026-11-25, revision 3)
 
 **By** ibu-chi, at the director's request. **Status: a draft for the reads and the director's binding. Nothing has run
 on NERSC.** It runs only under a binding and the director's GO. Publication, and where a 1.7 GB file is hosted, are
@@ -20,6 +20,9 @@ this lane's scoping report:
 **Revision 2 (2026-11-25)** takes codex-school `gpt-6.2-sol`'s first read (`receipts/reads/r1/`): NO-GO, four
 BLOCKING and two other findings, all taken (§8). It also takes the director's rulings on revision 1: no production
 C-COL arm, and the 1e-5 completeness statement (§3).
+
+**Revision 3 (2026-11-25)** takes codex-school's second read (`receipts/reads/r2/`): NO-GO, seven BLOCKING and two
+other findings, all taken (§8).
 
 The code is in [`nd-unfolding/evw5d/`](../../../../../../../nd-unfolding/evw5d/): `evw5d.py`, `sbatch_evw5d.sh`,
 `test_evw5d.py` and `evw5d_mutation.py`.
@@ -82,12 +85,12 @@ PASS `evw5d.done` is not a result; a consumer checks it with `evw5d.accepted()`.
 
 | control | what it checks | gate |
 |---|---|---|
-| **C-BIND** (gate 1) | the re-made `xsec_flat` equals fb5cc679's byte for byte, the in-memory result equals the file, and the meta equals the reference's but for the per-run fields (`ess_capture.py:PER_RUN`) | otherwise STOP: `STOP.json`, no weights, exit 8 |
+| **C-BIND** (gate 1) | each product parsed from the very bytes hashed: exactly the producer's members (`meta`, `shape`, `xsec_flat`); `xsec_flat` and `shape` bit for bit, dtype included, against fb5cc679's; the in-memory result equal to the file; the meta equal but for the per-run fields (`ess_capture.py:PER_RUN`) | otherwise STOP: `STOP.json`, no weights, exit 8 |
 | **C-KEY** | the arrays the unfold received (MCgen, MCreco, both pass flags, both weights, `denom_nd`, flux, POT, N, edges) equal an independent `allow_pickle=False` read of the staged npz bit for bit, `pass_truth` is bool, and the push weights align with its rows | otherwise no weights, exit 6 |
 | **C-ENTRY** | the key is unique: uint32 entries, strictly increasing | all |
 | **C-GRID** | ESS's mapping checks: the driver's maps recomputed from the table reproduce its result bit for bit; edges equal the fine grid; the fine map's digest; the volumes | all |
 | **C-F** (gate 2) | the sixteen f, from the result (Σ xs·vol) and from the per-row contributions (ESS's (B)), against the data product `fd_data_product_cpl.json` (`d6752d2c…`) | ≤ 1e-14 relative |
-| **C-FILE** | the products read back from the bytes hashed: exactly the declared columns and constants, each column equal to its source in the independent read (entry, truth, `w_prior`, `reco_partner`) or to the captured push weights, `w_unfolded` equal to their product, `fine_index` recomputed, the constants equal to the run's, the input constants (edges, flux, POT, N, `denom_nd`) also equal to the independent read itself, the meta and `constants.json` as written | all, bit for bit |
+| **C-FILE** | the products read back from the bytes hashed: exactly the declared columns and constants, each column equal to its source in the independent read (entry, truth, `w_prior`, `reco_partner`) or to the captured push weights, `w_unfolded` equal to their product, `fine_index` recomputed, the constants equal to the run's, the input constants (edges, flux, POT, N, `denom_nd`) also equal to the independent read itself; the saved map's int32 bytes against the pinned digest `930326a3…`; the saved meta's source digests (npz, background, result) and code pin against the verified pins; every operand in `constants.json` and its sixteen f against the saved arrays; the meta and `constants.json` as written | all, bit for bit |
 | **C-SELF** | from the read-back files alone: the result re-histogrammed and extracted bit for bit equal to fb5cc679's; the saved `ofin`, completeness and `good` mask bit for bit against the ones recomputed from the saved rows; the saved `xsec_flat` bit for bit against fb5cc679's; the saved 1e4 exactly; the saved volumes against the products of the saved edges' widths to 1e-13; an independently written formula to 1e-13; the sixteen f from the file and from its rows to 1e-14 | as stated |
 | **C-FLOW** | every truth-selected row is in the file; the in-grid rows, by `bincount` over `fine_index`, give the driver's per-cell `unf` and `ofin`; the rows outside the grid are counted with their weight | ≤ 1e-12 relative |
 | **C-PINS** | after the run, the eleven pinned modules and the staged copies equal their pins | all |
@@ -101,9 +104,12 @@ retry needs a new `--out`.
 **The consumer's check, `accepted(out, expect_sums_sha256)`.** It refuses a linked marker or manifest, reads
 `SHA256SUMS` as bytes (LF-only, the exact form written), re-runs the acceptance, and requires the marker to agree with
 the hashed `run.json`: the verdict and controls verdict PASS, no failed control, the products' digests equal to the
-manifest's, and in `run.json` every gated control passing with the same findings. A product set replaced as a whole
-can only be told from the real one by the manifest's digest recorded in the release binding, passed as
-`expect_sums_sha256`; the receipt records it.
+manifest's, and in `run.json` every gated control passing with the same findings. It also requires the marker to have
+exactly the written fields, its finding sizes to equal `run.json`'s, its acceptance record to equal a fresh one, and
+the root not to be a link; `run.json` is parsed from the bytes checked against the manifest. A product set replaced as
+a whole can only be told from the real one by the manifest's digest recorded in the release binding, passed as
+`expect_sums_sha256`; the receipt records it. **The HPSS copy and the fetch for the deposit each run `accepted()`
+with that bound digest**, so a FAIL or altered bundle is neither archived nor fetched as the result.
 
 ## 4. Binning independence, and its limit
 
@@ -130,7 +136,7 @@ flux. It does not supply that denominator.
 
 ## 5. Tests and mutants
 
-`test_evw5d.py` (pytest, 79 tests) builds a deploy at the code pin and synthetic inputs on the real fine grid, with
+`test_evw5d.py` (pytest, 104 tests) builds a deploy at the code pin and synthetic inputs on the real fine grid, with
 truth rows on the top edges and outside the grid, and a denominator 1.15 times the signal (so C-COMPLETE's finding
 fires). It reuses `test_ess_capture.py`'s helpers. Four kinds of test:
 - **end to end** through the real driver: PASS; a STOP on a one-ulp reference and on a meta difference; a FAIL on f
@@ -145,11 +151,20 @@ fires). It reuses `test_ess_capture.py`'s helpers. Four kinds of test:
   and marker re-made to match, a short or CRLF `SHA256SUMS`, a bound digest that differs;
 - **the job script's refusals**, run with a fake `squeue` and two small git repositories: a linked log directory or
   log file (nothing is written through it), a writer digest that is not the bound one, a tool clone whose `git
-  status` fails, and a setup that returns non-zero.
+  status` fails, a setup that returns non-zero, an array task, more than one node;
+- **the Mac launcher**, with stub `ssh` and `scp`: a remote refusal (rc 9) is the launcher's rc, a staged copy that is
+  not the approved bytes is refused (rc 8), and `fetch-products` accepts the PASS bundle with its bound digest and
+  refuses a wrong digest and the FAIL bundle.
+
+Not tested locally: the connect, post and HPSS scripts end to end (they need iris, Slurm, git over the network and
+hsi/htar). Their checks are by reading, and the reads cover them.
 
 `evw5d_mutation.py` applies each of its mutants (one exact span of `evw5d.py` or `sbatch_evw5d.sh`) to a copy of the directory and requires
 the full suite to fail with a named test; a control must pass. Its result is committed as
-`receipts/mutation.json`.
+`receipts/mutation.json`. **Not mutated, and disclosed:** C-PINS after the run, C-KEY's early exit in `run()`, and
+C-GRID's checks inside `run()`. None can fail on the synthetic inputs without a fault inside the pinned driver itself;
+their predicates are plain comparisons. The director accepted the first two on 2026-11-25; C-GRID is added here for
+the director's ruling.
 
 Local environment: Python 3.11.18, numpy 1.26.4, lightgbm 4.6.0 (the cluster's numpy and lightgbm; its Python is
 3.11.14). A stub ROOT module stands in off the cluster, as in ESS's test.
@@ -170,12 +185,21 @@ Local environment: Python 3.11.18, numpy 1.26.4, lightgbm 4.6.0 (the cluster's n
   so roughly 1–2 min at full size, plus the independent read of the npz.
 - The output stays on $SCRATCH with `SHA256SUMS`, is copied to HPSS, and is fetched to the laptop by sha for a
   deposit. **Nothing is written to CFS.** The scripts are in [`launch/`](launch/), adapted from ESS's:
-  `evw5d_connect.sh` (preconditions, iris bound, the two clean clones and their pinned bytes, the environment
-  pre-check including `os.O_NOATIME`, one sbatch, the TimeLimit check), `evw5d_post.sh` (sacct, the charge, the
-  products re-checked against `SHA256SUMS` in place, the small products tarred for the fetch), `evw5d_hpss.sh` (after
-  a PASS only: htar with CRC verify, hsi hashcreate/hashverify, every file retrieved and compared by sha256) and
-  `evw5d_launch.sh` (the Mac side: each script staged in `/dev/shm` and refused unless its sha256 is the approved one;
-  `fetch` and `fetch-products`, the latter checked with `shasum -c`). The tool commit and the approved digests are
+  - `evw5d_connect.sh`: preconditions; `$OUT` created with `mkdir` as the lane's exclusive claim; the iris bound; the
+    two clean clones and their pinned bytes; the environment pre-check including `os.O_NOATIME` (a failed setup or
+    git call stops it); one sbatch with every inherited `SBATCH_`/`SLURM_`/`SALLOC_` variable removed and the
+    allocation, output and error explicit (`--parsable`); then one node, no array and TimeLimit 30:00, or a cancel;
+  - `evw5d_post.sh`: sacct, the allocation's charge (JobID compared as a string), the products re-checked against
+    `SHA256SUMS` in place, the small products tarred for the fetch; its exit is 5 when the products do not verify;
+  - `evw5d_hpss.sh`: only with the bound `SHA256SUMS` digest and `accepted()` true; exactly the verified set
+    archived; htar with CRC verify, hsi hashcreate/hashverify, and every file retrieved and compared with its pinned
+    digest;
+  - `evw5d_launch.sh`: the Mac side. Each script is staged in a private `mktemp` file and refused unless its sha256 is
+    the approved one; the remote script's exit status is the launcher's; `fetch`, and `fetch-products`, which runs
+    `accepted()` with the bound digest.
+
+  Every destination these scripts write is created exclusively, under a real `$OUT` reached through no link. The job
+  script also refuses an array task or more than one node. The tool commit and the approved digests are
   filled in at the binding; until then each script refuses.
 
 ## 7. What this is not
@@ -196,6 +220,20 @@ Local environment: Python 3.11.18, numpy 1.26.4, lightgbm 4.6.0 (the cluster's n
 | 4 | BLOCKING: a linked log directory or log file could redirect a write outside `$OUT` | physical `$OUT` and logs, absent per-job files, `noclobber`; tests |
 | 5 | §4 overstated what fine-grid completeness establishes | §4 rewritten |
 | 6 | `SELF_F_FILE` is killable (volumes 5e-14 high) | the test added; the mutant moved back into the kill set |
+
+**Revision 3: codex-school r2's findings.**
+
+| # | finding (r2) | change |
+|---|---|---|
+| 1 | BLOCKING: HPSS and fetch could archive or fetch a rejected bundle; the post hid a checksum failure | both run `accepted()` with the bound digest; HPSS archives exactly the verified set and compares each retrieved file with its pinned digest; the post exits 5 when the products do not verify; launcher tests |
+| 2 | BLOCKING: the saved map, the meta's digests and `constants.json` could agree with a faulty builder | C-FILE checks the saved map's bytes against `930326a3…`, the meta against the verified pins, and every `constants.json` operand and f against the saved arrays; builder-side tests and mutants |
+| 3 | BLOCKING: the flux was labelled m²/POT | `flux_per_m2_per_POT_by_pt_bin`; the formula states the units and the finite, positive denominator rule |
+| 4 | BLOCKING: C-BIND accepted a float `shape` and parsed and hashed through separate opens | one snapshot per product; exact members; `shape` bit for bit; a C-BIND unit test |
+| 5 | BLOCKING: `accepted()` took edited marker fields | exact marker keys, finding sizes against `run.json`, the acceptance record against a fresh one, a non-dict refused, a linked root refused, `run.json` parsed from the verified bytes; a test per edit |
+| 6 | BLOCKING: inherited scheduler variables could make more than one allocation or move the logs | the connect strips them, claims `$OUT`, sets the allocation and logs explicitly and checks one node and no array; the job refuses an array task or more than one node |
+| 7 | BLOCKING: the launcher reported a remote refusal as success | the remote status is propagated; a stub-ssh test |
+| 8 | linked lane paths, unguarded tar destinations, predictable staging names, a numeric JobID match, the connect's precheck | physical `$OUT` checks and exclusive destinations in the post and HPSS; `mktemp` staging; a string JobID match; the connect stops on a failed setup or git call |
+| 9 | missing one-fault tests and a constant synthetic flux | a pT-dependent synthetic flux and a flux-per-bin unit test; one-field marker tests; an independent-formula test with a wrong extractor. Not added: an isolated C-GRID or final C-PINS failure (disclosed in §5's mutation note) |
 
 **CITABLE FOR:** what will run, what it writes and what each control checks. **NOT CITABLE FOR:** any number from the
 run, which comes from its receipt.

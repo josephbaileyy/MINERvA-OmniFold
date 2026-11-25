@@ -12,8 +12,10 @@
 #     their approved sha256;
 #   the environment pre-check (0 node-h): setup_salloc_env.sh sourced in a subshell, python3 = root_6_28's, numpy,
 #     lightgbm and ROOT import (versions printed), and os.O_NOATIME exists;
-#   one sbatch, from the plain login environment: --job-name=evw5d --time=00:30:00 sbatch_evw5d.sh; then scontrol's
-#     TimeLimit must read 00:30:00 or the job is cancelled at once.
+#   one sbatch, with every inherited SBATCH_/SLURM_/SALLOC_ variable removed and the allocation, output and error
+#     given explicitly (--nodes=1 --ntasks=1 --time=00:30:00 --parsable); then scontrol must show one node, no array
+#     and TimeLimit 00:30:00, or the job is cancelled at once.
+# $OUT itself is the lane's claim: created with mkdir (no -p), so a second connect cannot share it.
 # Writes only under $OUT (on $SCRATCH; nothing on CFS). No set -u (it kills setup_salloc_env.sh). Launched from a
 # /dev/shm copy of itself, whose path is $1; it deletes that copy at exit.
 SELF=$1
@@ -39,7 +41,8 @@ q=$(squeue --me -h -o '%j') || bail                 # fails closed
 [ "$(stat -c %s "$NPZ" 2>/dev/null)" = 1548438020 ] || bail
 [ "$(stat -c %s "$BKG" 2>/dev/null)" = 16017201 ] || bail
 [ "$(stat -c %s "$REF" 2>/dev/null)" = 95564 ] || bail
-mkdir -p "$OUT/logs" || bail
+mkdir "$OUT" || bail                               # the exclusive claim
+mkdir "$OUT/logs" || bail
 LOG=$OUT/logs/connect.log
 exec > "$LOG" 2>&1
 finish() { echo "evw5d connect rc=$1"; date -u +%FT%TZ; echo "$1" > "$OUT/logs/connect.done"; rm -f -- "$SELF"; exit "$1"; }
@@ -94,15 +97,15 @@ SUMS
 
 # ---- the environment the job will source (0 node-h)
 out=$( source "$D/setup_salloc_env.sh" > "$OUT/logs/env-precheck.log" 2>&1; rc=$?
-       echo "SOURCE_RC=$rc"
+       echo "SOURCE_RC=$rc"; [ "$rc" -eq 0 ] || exit 96
        [ "$(command -v python3)" = "$HOME/.conda/envs/root_6_28/bin/python3" ] || { echo NOT_ROOT628; exit 98; }
        PYTHONDONTWRITEBYTECODE=1 python3 -B -c "import os, sys, numpy, lightgbm, ROOT; assert hasattr(os, 'O_NOATIME'); print('python', sys.version.split()[0], 'numpy', numpy.__version__, 'lightgbm', lightgbm.__version__, 'ROOT', ROOT.gROOT.GetVersion(), 'O_NOATIME', os.O_NOATIME)" || exit 97 )
 erc=$?
 echo "$out"
 [ "$erc" -eq 0 ] || { echo "STOP: the environment pre-check failed (rc $erc; see env-precheck.log)"; finish 7; }
 for c in "$D" "$TC"; do
-  n=$(git -C "$c" status --porcelain --ignored | wc -l)
-  [ "$n" -eq 0 ] || { echo "STOP: the pre-check changed $c ($n lines)"; finish 9; }
+  st=$(git -C "$c" status --porcelain --ignored) || { echo "STOP: git status failed in $c"; finish 9; }
+  [ -z "$st" ] || { echo "STOP: the pre-check changed $c"; finish 9; }
 done
 
 # ---- the submission, from the plain login environment
@@ -110,17 +113,23 @@ q=$(squeue --me -h -o '%j') || { echo "STOP: squeue did not answer"; finish 9; }
 [ -z "$(printf '%s\n' "$q" | grep -E '^evw5d$')" ] || { echo "STOP: an evw5d job appeared"; finish 9; }
 date -u +%FT%TZ
 cd "$OUT" || finish 9
-sbatch --time=$TLIMIT --job-name=evw5d --output="$OUT/logs/%x_%j.out" \
-  "$TC/nd-unfolding/evw5d/sbatch_evw5d.sh" "$D" "$PIN" "$OUT" "$TC" "$TOOLC" "$EVW_SHA" > "$OUT/logs/submit.out" 2>&1
-rc=$?; echo "sbatch rc=$rc"; cat "$OUT/logs/submit.out"
+for v in $(env | sed -n 's/^\(\(SBATCH\|SLURM\|SALLOC\)_[A-Za-z0-9_]*\)=.*/\1/p'); do unset "$v"; done
+echo "inherited scheduler variables left: $(env | grep -cE '^(SBATCH|SLURM|SALLOC)_')"
+sbatch --parsable --nodes=1 --ntasks=1 --time=$TLIMIT --job-name=evw5d \
+  --output="$OUT/logs/%x_%j.out" --error="$OUT/logs/%x_%j.err" \
+  "$TC/nd-unfolding/evw5d/sbatch_evw5d.sh" "$D" "$PIN" "$OUT" "$TC" "$TOOLC" "$EVW_SHA" > "$OUT/logs/submit.out" 2> "$OUT/logs/submit.err"
+rc=$?; echo "sbatch rc=$rc"; cat "$OUT/logs/submit.out" "$OUT/logs/submit.err"
 [ $rc = 0 ] || { echo "STOP at sbatch (final)"; finish $rc; }
-job=$(sed -n 's/^Submitted batch job \([0-9][0-9]*\)$/\1/p' "$OUT/logs/submit.out")
-[ -n "$job" ] || { echo "STOP: no job id"; finish 9; }
+job=$(sed -n 's/^\([0-9][0-9]*\)\(;.*\)\{0,1\}$/\1/p' "$OUT/logs/submit.out")
+[ -n "$job" ] && [ "$(wc -l < "$OUT/logs/submit.out")" -eq 1 ] || { echo "STOP: not one job id"; finish 9; }
 echo "evw5d job $job"; echo "$job" > "$OUT/logs/evw5d.jobid"
-tl=$(scontrol show job "$job" | sed -n 's/.*TimeLimit=\([^ ]*\).*/\1/p' | head -1)
-echo "scontrol TimeLimit=$tl (declared $TLIMIT)"
-if [ "$tl" != "$TLIMIT" ]; then
-  scancel "$job"; echo "STOP: TimeLimit $tl is not $TLIMIT; job $job cancelled (rc $?)"; sleep 5
+sj=$(scontrol show job "$job")
+tl=$(printf '%s\n' "$sj" | sed -n 's/.*TimeLimit=\([^ ]*\).*/\1/p' | head -1)
+nn=$(printf '%s\n' "$sj" | sed -n 's/.*NumNodes=\([^ ]*\).*/\1/p' | head -1)
+arr=$(printf '%s\n' "$sj" | grep -c 'ArrayJobId=')
+echo "scontrol TimeLimit=$tl (declared $TLIMIT) NumNodes=$nn array_lines=$arr"
+if [ "$tl" != "$TLIMIT" ] || [ "$nn" != 1 ] || [ "$arr" != 0 ]; then
+  scancel "$job"; echo "STOP: the allocation is not one 30-minute node; job $job cancelled (rc $?)"; sleep 5
   sacct -j "$job" -X -n -P -o JobID,State,Elapsed; finish 6
 fi
 sleep 5

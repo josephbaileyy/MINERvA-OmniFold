@@ -22,6 +22,7 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+LAUNCH_DIR = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch"
 SRC = HERE / "evw5d.py"
 
 MUTANTS = [
@@ -79,11 +80,11 @@ MUTANTS = [
     ("ACC_MAP", '"digest_map_complete": sorted(digests) == sorted(PRODUCTS)}', '"digest_map_complete": True}'),
     ("ACC_LINKS", 'acc["no_links"] = not any((out / f).is_symlink() for f in files)', 'acc["no_links"] = True'),
     ("ACC_REHASH", "ess.sha256_file(out / p) == h for", "True for"),
-    ("ACCEPTED_VERDICT", 'if not (done.get("verdict") == "PASS" and ', 'if not (True and '),
-    ("ACCEPTED_SUMS_DIGEST", 'and done.get("sha256sums_sha256") == h', 'and True'),
+    ("ACCEPTED_VERDICT", 'if not (done["verdict"] == "PASS" and done["controls_verdict"] == "PASS"', 'if not (True and done["controls_verdict"] == "PASS"'),
+    ("ACCEPTED_SUMS_DIGEST", 'and done["sha256sums_sha256"] == h', 'and True'),
     ("ACCEPTED_SCHEMA", 'or done.get("schema") != SCHEMA:', 'or False:'),
-    ("RUN_BIND_META", 'and bind["meta_equal_except_per_run"])', ")"),
-    ("RUN_BIND_XS", 'bind["pass"] = bool(bind["xsec_flat_bytes_equal"] and ', 'bind["pass"] = bool('),
+    ("RUN_BIND_META", 'and out["meta_equal_except_per_run"])', ")"),
+    ("RUN_BIND_XS", 'out["pass"] = bool(out["xsec_flat_bytes_equal"] and out["shape_bits_equal"]', 'out["pass"] = bool(out["shape_bits_equal"]'),
     ("RUN_F_GATE", 'cf["pass"] = bool(cf["f_from_result_max_rel"] <= F_RTOL and cf["f_from_rows_max_rel"] <= F_RTOL)', 'cf["pass"] = True'),
     ("RUN_GATED_SELF", '"C-FILE", "C-SELF", "C-FLOW"', '"C-FILE", "C-FLOW"'),
     ("RUN_FINDING", 'if comp["finding"]:', "if False:"),
@@ -108,17 +109,37 @@ MUTANTS = [
     ("FILE_VS_INPUT_FLUX", 'vs_in.update(flux=same_bits(c["flux"], np.asarray(indep["flux"])),', 'vs_in.update(flux=True,'),
     ("COMPLETE_1E5", 'float(dev.max()) <= C_ONE_LEVEL)', 'float(dev.max()) <= 10 * C_ONE_LEVEL)'),
     ("PARSE_CRLF", 'if not text.endswith("\\n") or "\\r" in text:', 'if not text.endswith("\\n"):'),
-    ("ACCEPTED_LINKS", "if (out / DONE).is_symlink() or (out / SUMS).is_symlink():", "if False:"),
+    ("ACCEPTED_LINKS", "or (out / DONE).is_symlink() or (out / SUMS).is_symlink():", ":"),
     ("ACCEPTED_BOUND", "if expect_sums_sha256 is not None and h != expect_sums_sha256:", "if False:"),
-    ("ACCEPTED_CONTROLS_VERDICT", 'done.get("verdict") == "PASS" and done.get("controls_verdict") == "PASS"', 'done.get("verdict") == "PASS"'),
-    ("ACCEPTED_RUN_JSON", 'and tuple(run.get("gated", ())) == GATED and all(ctl.get(k, {}).get("pass") is True for k in GATED)', 'and True'),
-    ("ACCEPTED_PRODUCTS", 'and done.get("products") == digests and', 'and'),
+    ("ACCEPTED_CONTROLS_VERDICT", 'done["verdict"] == "PASS" and done["controls_verdict"] == "PASS"', 'done["verdict"] == "PASS"'),
+    ("ACCEPTED_RUN_JSON", 'and all(isinstance(ctl.get(k), dict) and ctl[k].get("pass") is True for k in GATED)', 'and True'),
+    ("ACCEPTED_PRODUCTS", 'and done["products"] == digests and', 'and'),
     # the job script (file sbatch_evw5d.sh)
     ("SB_LOGS_LINK", '[ -d "$L" ] && [ ! -L "$L" ] && [ "$(cd "$L" && pwd -P)" = "$L" ] ||', '[ -d "$L" ] ||', "sbatch_evw5d.sh"),
     ("SB_LOG_FILES", '  [ ! -e "$f" ] && [ ! -L "$f" ] || { echo', '  true || { echo', "sbatch_evw5d.sh"),
     ("SB_GIT_STATUS", '  st=$(git -C "$1" status --porcelain --ignored 2>/dev/null) || return 1', '  st=$(git -C "$1" status --porcelain --ignored 2>/dev/null | head -0)', "sbatch_evw5d.sh"),
     ("SB_WSHA", '[ "$wgot" = "$WSHA" ] || refuse', 'true || refuse', "sbatch_evw5d.sh"),
     ("SB_SETUP_RC", '[ "$src_rc" -eq 0 ] || refuse', 'true || refuse', "sbatch_evw5d.sh"),
+    # revision 3 (codex-school r2)
+    ("BIND_SHAPE", 'out["shape_bits_equal"] = same_bits(remade["shape"], ref["shape"])', 'out["shape_bits_equal"] = bool(np.array_equal(remade["shape"], ref["shape"]))'),
+    ("BIND_MEMBERS", "members = sorted(remade) == sorted(ref) == sorted(NPZ_MEMBERS)", "members = True"),
+    ("BIND_CAPTURED", 'out["captured_equals_remade"] = same_bits(np.asarray(captured).ravel(order="C"), rx)', 'out["captured_equals_remade"] = True'),
+    ("FILE_MAP_DIGEST", 'and hashlib.sha256(fm.tobytes()).hexdigest() == pins["fine_map"])', ')'),
+    ("FILE_META_PINS", 'vs_in[f"meta_{k}"] = pin in pins and saved_meta.get(k) == pins[pin]', 'vs_in[f"meta_{k}"] = True'),
+    ("JSON_F", 'and max_rel(cj["f_cm2_per_nucleon"], f_saved) == 0.0)', ')'),
+    ("JSON_FLUX", 'and cj["flux_per_m2_per_POT_by_pt_bin"] == [float(x) for x in np.asarray(c["flux"])]', ''),
+    ("JSON_POT", 'ok = (cj["data_pot"] == float(c["data_pot"]) and ', 'ok = ('),
+    ("JSON_EDGES", 'and all(cj["edges"][ax] == [float(x) for x in c[f"edges_{i}"]] for i, ax in enumerate(axes))', ''),
+    ("FILE_JSON_ARRAYS", 'out["constants_json_vs_arrays"] = check_constants_json(json.loads(cj_raw), c, t) if "meta" in t else False', 'out["constants_json_vs_arrays"] = True'),
+    ("ACCEPTED_DONE_KEYS", 'if digests is None or not isinstance(done, dict) or sorted(done) != sorted(DONE_KEYS) \\', 'if digests is None or not isinstance(done, dict) \\'),
+    ("ACCEPTED_FRESH", 'and done["products"] == digests and done["acceptance"] == fresh and fresh["pass"]):', 'and done["products"] == digests and fresh["pass"]):'),
+    ("ACCEPTED_FINDING_SIZES", 'and run.get("findings") == done["findings"] and run.get("finding_sizes") == done["finding_sizes"])', 'and run.get("findings") == done["findings"])'),
+    ("ACCEPTED_ROOT_LINK", "if out.is_symlink() or not out.is_dir() or (out / DONE).is_symlink()", "if not out.is_dir() or (out / DONE).is_symlink()"),
+    ("ACCEPTED_FAILED_CONTROLS", 'and done["failed_controls"] == [] and done["sha256sums_sha256"] == h', 'and done["sha256sums_sha256"] == h'),
+    ("SB_ARRAY", '[ -z "${SLURM_ARRAY_JOB_ID:-}" ] && [ -z "${SLURM_ARRAY_TASK_ID:-}" ] || refuse "an array task"', 'true || refuse "an array task"', "sbatch_evw5d.sh"),
+    ("SB_NODES", '[ "${SLURM_JOB_NUM_NODES:-}" = 1 ] || refuse', 'true || refuse', "sbatch_evw5d.sh"),
+    ("LAUNCH_RC", 'echo \\"script rc=\\$r\\"; exit \\$r"', 'echo \\"script rc=\\$r\\""', "../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_launch.sh"),
+    ("LAUNCH_FETCH_ACCEPTED", "ok = evw5d.accepted(sys.argv[2], sys.argv[3]); print('ACCEPTED' if ok else 'REFUSED'); sys.exit(0 if ok else 1)\"", "ok = True; print('ACCEPTED'); sys.exit(0)\"", "../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_launch.sh"),
 ]
 
 
@@ -139,6 +160,7 @@ def run_one(name: str, old: str | None, new: str | None, python: str, timeout: i
         base = Path(tmp) / "nd-unfolding"
         for sub in ("evw5d", "ess_e"):
             shutil.copytree(HERE.parent / sub, base / sub, ignore=shutil.ignore_patterns("__pycache__"))
+        shutil.copytree(HERE.parents[1] / LAUNCH_DIR, Path(tmp) / LAUNCH_DIR)
         src = (HERE / target).read_text()
         mutated = src if old is None else apply(src, old, new)
         (base / "evw5d" / target).write_text(mutated)
