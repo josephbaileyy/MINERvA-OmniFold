@@ -253,6 +253,25 @@ def pt_edges_that_differ() -> tuple[list[float], list[float]]:
     return [published[k] for k in i], [ours[k] for k in i]
 
 
+def pt_edges_printed_exact(printed_ours: str, printed_published: str, printed_step: str) -> tuple[bool, str]:
+    """sec3_twod.tex:11 prints our three differing pT edges, the published three and their difference. All must match
+    the records exactly, and each pair must differ by exactly the printed step in decimal arithmetic (not float)."""
+    from decimal import Decimal
+    published, ours = pt_edges_that_differ()
+    want_p = [Decimal(repr(x)) for x in published]
+    want_o = [Decimal(repr(x)) for x in ours]
+    got_o = [Decimal(x) for x in printed_ours]
+    got_p = [Decimal(x) for x in printed_published]
+    step = Decimal(printed_step)
+    ok = (got_o == want_o and got_p == want_p and all(abs(p - o) == step for p, o in zip(want_p, want_o)))
+    return ok, f"printed ours {printed_ours}, published {printed_published}, step {printed_step} | records ours {ours}, published {published}"
+
+
+EDGE_SENTENCE = (r"Three of our \$p_T\$ edges \(([0-9.]+), ([0-9.]+) and \\SI\{([0-9.]+)\}\{GeV/c\}\) differ by "
+                 r"\\SI\{([0-9.]+)\}\{GeV/c\} from the published ([0-9.]+), ([0-9.]+) and ([0-9.]+)\.")
+EDGE_STEP_SEC2 = r"with three interior \$p_T\$ edges \\SI\{([0-9.]+)\}\{GeV/c\} from the published ones"
+
+
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
     # One printed 1.04 stands for both pT edge bins, so it is bound twice: once to each bin.
@@ -366,6 +385,17 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
         else:  # below: true, and no looser than one unit of the printed precision
             good = all(float(p) - 2 * half_ulp(p) <= c < float(p) for c, p in zip(comp, printed))
         rows.append((label, good, f"printed {'/'.join(printed)} | receipt {'/'.join(f'{c:.6g}' for c in comp)} | {mode}"))
+    m = re.findall(EDGE_SENTENCE, text("sec3_twod.tex", sources))
+    if len(m) != 1:
+        rows.append(("pT edges, ours vs published (edges/root_axis.out, Binning.h)", False,
+                     f"edge sentence found {len(m)} times in sec3_twod.tex (expected 1)"))
+    else:
+        o1, o2, o3, step, p1, p2, p3 = m[0]
+        good, info = pt_edges_printed_exact([o1, o2, o3], [p1, p2, p3], step)
+        rows.append(("pT edges, ours vs published (edges/root_axis.out, Binning.h)", good, info))
+        m2 = re.findall(EDGE_STEP_SEC2, text("sec2_method.tex", sources))
+        rows.append(("pT edge step in sec2_method.tex equals sec3's, exactly", len(m2) == 1 and m2[0] == step,
+                     f"sec2 prints {m2} | sec3 step {step}"))
     for label, src, pat, fn, lo, hi in VERBAL:
         found = len(re.findall(pat, text(src, sources))) == 1
         c = fn()
@@ -375,7 +405,8 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 def load() -> dict[str, str]:
     return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec4_higherdim.tex", "sec_validation.tex",
-                                               "sec_5d.tex", "app_devhistory.tex", "primer_body.tex", "appA_methods.tex")}
+                                               "sec_5d.tex", "app_devhistory.tex", "primer_body.tex", "appA_methods.tex",
+                                               "sec2_method.tex")}
 
 
 def gzip_self_test() -> bool:
@@ -436,6 +467,24 @@ def self_test() -> int:
                     continue
                 caught += 1
                 print(f"  caught      {label}: {p} -> {bad}")
+    # The pT-edge rows (not in CHECKS): each printed edge or step, changed, must be rejected.
+    edge_labels = ("pT edges, ours vs published (edges/root_axis.out, Binning.h)",
+                   "pT edge step in sec2_method.tex equals sec3's, exactly")
+    for src, old_s, new_s, lab in (
+            ("sec3_twod.tex", "(0.07, 0.33 and", "(0.08, 0.33 and", edge_labels[0]),
+            ("sec3_twod.tex", "and \\SI{0.47}{GeV/c})", "and \\SI{0.48}{GeV/c})", edge_labels[0]),
+            ("sec3_twod.tex", "the published 0.075, 0.325 and 0.475.", "the published 0.075, 0.325 and 0.48.", edge_labels[0]),
+            ("sec3_twod.tex", "differ by \\SI{0.005}{GeV/c}", "differ by \\SI{0.006}{GeV/c}", edge_labels[0]),
+            ("sec2_method.tex", "edges \\SI{0.005}{GeV/c} from", "edges \\SI{0.006}{GeV/c} from", edge_labels[1])):
+        t = text(src, base)
+        if t.count(old_s) != 1:
+            print(f"  NOT FOUND   edge mutation {old_s!r} in {src}"); ok = False; continue
+        trial = dict(base)
+        trial[src] = t.replace(old_s, new_s)
+        if dict((r[0], r[1]) for r in evaluate(trial)).get(lab, True):
+            print(f"  NOT CAUGHT  {lab}: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      {lab}: {old_s} -> {new_s}")
     trial = dict(base)
     trial["primer_body.tex"] = text("primer_body.tex", base).replace("in about half of the", "in about a third of the")
     if dict((r[0], r[1]) for r in evaluate(trial))[VERBAL[0][0]]:
