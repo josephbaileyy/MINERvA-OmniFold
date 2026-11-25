@@ -147,13 +147,36 @@ def synth(sk):
                                                                          str(sk).startswith("string:") else sk)
 
 
+# The bound run's deploy (RE2-PARTC-REPORT.md: partc-r2 ran from a clean deploy of 903fb78b). The spec's `where` and
+# `printed` columns describe the note at that deploy: the RE-2 integration (2026-10-24) then replaced those printed
+# values, and later rounds moved or retired the cited files (sec_execsummary.tex 8e1fc41a5, paper_body.tex and
+# main_paper.tex 9fe7bae0a). So the anchors and the purity controls are checked against that tree, not the live one.
+RUN_DEPLOY = "903fb78b9"
+
+
+def deploy_tree(spec, V):
+    """A temporary tree with, at RUN_DEPLOY, every file the spec's anchors cite and every purity source it reads."""
+    d = Path(tempfile.mkdtemp(prefix="re2c-deploy-"))
+    paths = {V.SOURCES[k][0] for k in V.SOURCES if V.SOURCES[k][0]}
+    for line in Path(spec).read_text().splitlines()[1:]:
+        where = line.split("\t")[1] if line.count("\t") else ""
+        if where:
+            paths.add(where.rpartition(":")[0].replace("N/", V.N + "/", 1))
+    archive = subprocess.run(["git", "-C", str(REPO), "archive", RUN_DEPLOY, "--", *sorted(paths)],
+                             capture_output=True, check=True).stdout
+    subprocess.run(["tar", "-x", "-C", str(d)], input=archive, check=True)
+    return d
+
+
 def unresolved(spec):
     """Rows of `spec` that do not regenerate in a stand-in refined tree built from the committed key-schema fixture
-    of a real refined run (fixtures/refined_schema.json). The tree's schema must equal the fixture's."""
+    of a real refined run (fixtures/refined_schema.json). The tree's schema must equal the fixture's. Anchors and
+    purity controls run against the bound run's deploy (deploy_tree)."""
     import gzip
     import shutil
     S = load("re2c_refined_schema")
     V = load("re2c_values")
+    base = deploy_tree(spec, V)
     fx = json.loads((HERE / "fixtures" / "refined_schema.json").read_text())["sources"]
     d = Path(tempfile.mkdtemp())
     for key, rec in fx.items():
@@ -167,10 +190,11 @@ def unresolved(spec):
             assert S.mask(rec["template"]) == rec["template"], f"{key}: the template still holds values"
             f.write_text(rec["template"])
     assert {k for k, (_, ref) in V.SOURCES.items() if ref} == set(fx), "a refined source has no schema fixture"
-    rc = V.main(["--repo", str(REPO), "--spec", str(spec), "--refined-dir", str(d),
+    rc = V.main(["--repo", str(base), "--spec", str(spec), "--refined-dir", str(d),
                  "--out-tsv", str(d / "t.tsv"), "--out-json", str(d / "t.json")])
     rows = json.loads((d / "t.json").read_text())["rows"]
     shutil.rmtree(d)
+    shutil.rmtree(base)
     return rc, sorted(r["id"] for r in rows if r.get("refined_error"))
 
 
