@@ -1,0 +1,17 @@
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+{
+ "literals": {
+  "pt_lowest_2dp": 1.04,
+  "pt_highest_2dp": 1.04,
+  "pz_second_highest_2dp": 1.06,
+  "pz_highest_2dp": 0.93,
+  "max_abs_dev_other_bins": 0.024991332948156364,
+  "max_abs_dev_other_bins_pct_int": 2
+ },
+ "reproduced": {
+  "0.97 lowest pT": false,
+  "1.04 highest pT": true,
+  "1.06 and 0.93 in the two highest p||": true,
+  "within 2% elsewhere": true
+ }
+}
