@@ -1,0 +1,73 @@
+no debias: KILLED
+abs not positive part: KILLED
+family minus nominal: KILLED
+no (N-1)/N: KILLED
+trigger >=: KILLED
+trigger 2 SE: KILLED
+phi not sqrt: KILLED
+band edges: KILLED
+min modes 2: KILLED
+not centred: KILLED
+bootstrap no resample: KILLED
+n_eff unchecked: KILLED
+flux unweighted: KILLED
+stat block dropped: KILLED
+error not minus truth: KILLED
+keep rule: KILLED
+Sigma not in Tune v1 units: KILLED
+tie rule off: KILLED
+fhat over all ensembles: KILLED
+L on unkept modes: KILLED
+indefinite D passes: KILLED
+NaN C_b passes: KILLED
+X_T unchecked: KILLED
+mean err not through R: KILLED
+mean err not relative: KILLED
+L exempt: KILLED
+zero rank inf: KILLED
+V_F unchecked: KILLED
+no digests: KILLED
+NaN json allowed: KILLED
+ll5d.Refusal uncaught: KILLED
+OSError/SystemExit/LinAlg uncaught: KILLED
+existing out not 5: KILLED
+per_ens unchecked: KILLED
+zero spread refused: KILLED
+NaN D reaches solver: KILLED
+reads cal arrays: KILLED
+C_b_abs unchecked: KILLED
+toy trace not relative: KILLED
+toy trace ddof 0: KILLED
+GS absolute threshold: KILLED
+GS one pass: KILLED
+GS span unchecked: KILLED
+no sign after GS: KILLED
+A2 SE=0.5 unresolved: KILLED
+A2 reverted to absolute stop: KILLED
+A2 resolved-inactive stops: KILLED
+A2 unresolved inflates: KILLED
+phi below 1 allowed: KILLED
+C-LEAK: cells not scaled: KILLED
+C-LEAK: C_e scaled by k: KILLED
+C-LEAK: main compares a build with itself: KILLED
+C-LEAK: tolerance absorbs k: KILLED
+C-LEAK: keys unchecked: KILLED
+C-LEAK: non-numbers unchecked: KILLED
+writer: plain rename: KILLED
+writer: partial sibling left: KILLED
+writer: fallback replaces: KILLED
+writer: creates parents: KILLED
+C-LEAK: only Tune v1 scaled: KILLED
+C-LEAK: types unchecked: KILLED
+writer: staging name grows: KILLED
+C-LEAK: g not scaled: KILLED
+C-LEAK: exempt not scaled: KILLED
+C_e PSD unchecked: KILLED
+C_e indefinite accepted: KILLED
+verdict without band states: KILLED
+C-LEAK: exempt ints accepted: KILLED
+C-LEAK: None C_b_abs allowed: KILLED
+C-LEAK: None V_F refused: KILLED
+C-LEAK: list/tuple accepted: KILLED
+writer: parent sync failure is a STOP: KILLED
+C-LEAK: length unchecked: KILLED
