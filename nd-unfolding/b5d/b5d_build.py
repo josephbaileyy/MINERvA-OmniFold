@@ -342,7 +342,8 @@ def scaled_predictions(g: dict, scale: float) -> dict:
 def build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B, scale: float = 1.0) -> dict:
     """The record. For C-LEAK, scale multiplies every absolute quantity the build holds: the LL5D products (through
     cells), B-SEL's generator predictions g, and C_e (by scale^2). B-SEL's other outputs (b-hat, noise, R, the splits)
-    are relative; its closure products enter only through the ratio R."""
+    are relative; its closure products enter only through the ratio R and through B-SEL's own check that
+    closure_nuwro's xsec/xtrue - 1 reproduces its bias."""
     try:
         ABS_SCALE[0] = scale
         return _build(repo, ll5d_dir, sa, ll5d, ll5d_b, B, scale)
@@ -477,7 +478,7 @@ def check_leak(rec: dict, rec_k: dict, k: float = LEAK_SCALE) -> None:
     def walk(x, y, path):
         where = "/".join(map(str, path)) or "(record)"
         if isinstance(x, dict) or isinstance(y, dict):
-            if not (isinstance(x, dict) and isinstance(y, dict)) or set(x) != set(y):
+            if type(x) is not type(y) or set(x) != set(y):
                 raise Stop("C-LEAK", f"{where}: the scaled build's record has a different shape")
             for key in x:
                 if path + (key,) == ("fluctuation", "V_F") and x[key] is None and y[key] is None:
@@ -486,8 +487,8 @@ def check_leak(rec: dict, rec_k: dict, k: float = LEAK_SCALE) -> None:
         elif isinstance(x, (list, tuple)) or isinstance(y, (list, tuple)):
             if type(x) is not type(y) or len(x) != len(y):
                 raise Stop("C-LEAK", f"{where}: the scaled build's record has a different shape")
-            for u, v in zip(x, y):
-                walk(u, v, path)
+            for i, (u, v) in enumerate(zip(x, y)):
+                walk(u, v, path + (i,))  # the index keeps a list's items off their parent's named path
         elif type(x) is not type(y):
             raise Stop("C-LEAK", f"{where}: {x!r} becomes {y!r} (a different type) when the absolute inputs scale by {k:g}")
         elif path[:2] in LEAK_EXEMPT and not isinstance(x, float):
@@ -576,7 +577,10 @@ def write_files(out_dir: Path, files: dict) -> None:
         try:  # the record is published whole by the rename; syncing the parent's entry is best effort, never a STOP
             _fsync_dir(out_dir.parent)
         except OSError as e:
-            print(f"warning: the output is written, but its parent directory could not be synced: {e}", file=sys.stderr)
+            try:  # nor is a failure to print the warning: the output is already published
+                print(f"warning: the output is written, but its parent directory could not be synced: {e}", file=sys.stderr)
+            except OSError:
+                pass
     except BaseException:
         shutil.rmtree(tmp, ignore_errors=True)
         raise
