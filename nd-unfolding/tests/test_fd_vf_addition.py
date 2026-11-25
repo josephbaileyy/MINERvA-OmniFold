@@ -1129,10 +1129,9 @@ class Order(unittest.TestCase):
         spec = json.loads((REPO / V.CHDEFS_SPEC).read_text())
         spec[0]["sha256"] = "0" * 64
         self.calls = []
-        with mock.patch("fd_gencmp_e.load_chdefs", lambda p: spec):
-            a = V.build_args(["chain", "--run-dir", str(self.tmp / "BA"), "--run-e", str(self.tmp / "E"),
-                              "--scratch", str(self.tmp / "P")])
-            self.run_chain(None)        # starts the patches (this run passes); then the second run with the bad spec
+        a = V.build_args(["chain", "--run-dir", str(self.tmp / "BA"), "--run-e", str(self.tmp / "E"),
+                          "--scratch", str(self.tmp / "P")])
+        self.assertEqual(self.run_chain(None), 0)   # starts the patches (cleaned up at teardown) with the committed spec
         shutil.rmtree(self.tmp / "BA")
         self.calls = []
         with mock.patch("fd_gencmp_e.load_chdefs", lambda p: spec), quiet(), mock.patch("sys.stderr"):
