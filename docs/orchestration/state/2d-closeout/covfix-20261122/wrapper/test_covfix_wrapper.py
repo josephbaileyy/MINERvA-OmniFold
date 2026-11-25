@@ -168,6 +168,7 @@ STUB_ALLOC = r'''#!/bin/bash
 # stub {name}: log its argv, require --exclusive -N 1 -n 1, refuse any Slurm I/O variable that is SET (even empty),
 # drop the options up to the next command ({until}), and exec it with stdin
 printf '%s\n' "{name} $*" >> {log}
+{{ printf '== %s\n' "{name}"; env; }} >> {log}.env    # what this step and, after srun, the bound binary inherit
 [ "$1 $2 $3 $4 $5" = "--exclusive -N 1 -n 1" ] || {{ echo "stub {name}: unexpected flags $*" >&2; exit 64; }}
 for v in {io_vars}; do
     [ -z "${{!v+x}}" ] || {{ echo "stub {name}: inherited Slurm I/O setting $v" >&2; exit 65; }}
@@ -776,13 +777,14 @@ class ConfigTests(unittest.TestCase):
         s, r = argv.index(f"{rig.bin}/salloc"), argv.index(f"{rig.bin}/srun")
         self.assertEqual(argv[s + 1:s + 6], ["--exclusive", "-N", "1", "-n", "1"])
         self.assertEqual(argv[r + 1:r + 6], ["--exclusive", "-N", "1", "-n", "1"])
-        self.assertEqual(argv[s + 6:r], ["-A", "m0000", "-t", "0:30:00"])
+        self.assertEqual(argv[s + 6:r], ["-J", "covfix_pv_writer", "-A", "m0000", "-t", "0:30:00"])
         self.assertEqual(argv[r + 6:r + 8], ["bash", "-c"])
         self.assertEqual(argv[0], "env")
         self.assertEqual(argv[1:s], [x for v in cw.SLURM_IO_ENV for x in ("-u", v)])
         self.assertEqual(argv[-6:], [REF, cw.sha256_file(REF), "--role", "pv-writer", "--covfix-attempt", "a1"])
         pg = shlex.split(cw.launch_command("pg-connect", rig.cfg["roles"]["pg-connect"], []))
-        self.assertEqual(pg[:pg.index("bash")], argv[:argv.index("bash")])    # the same allocation as the PV roles
+        self.assertEqual(pg[:pg.index("bash")], [x if x != "covfix_pv_writer" else "covfix_pg_connect"
+                                                 for x in argv[:argv.index("bash")]])   # the PV roles' allocation
 
 
 # ------------------------------------------------------------------------------------------------------------
@@ -803,7 +805,8 @@ class PgConnectAllocationTests(unittest.TestCase):
             extra = ["--covfix-attempt", "a1"]
             argv = shlex.split(cw.launch_command(role, rig.cfg["roles"][role], extra))
             self.assertEqual(argv, ["env", *[x for v in cw.SLURM_IO_ENV for x in ("-u", v)],
-                                    f"{rig.bin}/salloc", "--exclusive", "-N", "1", "-n", "1", "-A", "m0000", "-t", "0:30:00",
+                                    f"{rig.bin}/salloc", "--exclusive", "-N", "1", "-n", "1", "-J", cw.JOB_NAMES[role],
+                                    "-A", "m0000", "-t", "0:30:00",
                                     f"{rig.bin}/srun", "--exclusive", "-N", "1", "-n", "1",
                                     "bash", "-c", cw.EXEC_CHECK, "covfix-exec", REF, cw.sha256_file(REF),
                                     "--role", role, *extra], role)
@@ -841,17 +844,37 @@ class PgConnectAllocationTests(unittest.TestCase):
         cmd = shlex.split(launches[0]["argv"][-1])
         head = cmd[:cmd.index("bash")]                       # everything Slurm sees, before the bound binary
         fixed = {"env", "-u", *cw.SLURM_IO_ENV, f"{rig.bin}/salloc", f"{rig.bin}/srun", "--exclusive", "-N", "-n", "1",
-                 "-A", "m0000", "-t", "0:30:00"}
+                 "-J", "covfix_pg_connect", "-A", "m0000", "-t", "0:30:00"}
         self.assertEqual(set(head) - fixed, set(), head)
-        self.assertFalse({"-J", "--job-name", "--comment"} & set(head))
+        self.assertEqual([head[i + 1] for i, t in enumerate(head) if t == "-J"], ["covfix_pg_connect"])  # once, the constant
+        self.assertFalse({"--job-name", "--comment"} & set(head))
         inputs = [rig.config_sha, rig.cfg["binding"]["commitment"], *rig.secrets()]
         for x in inputs:
             self.assertFalse(any(x in t for t in head), x[:8])
-        for line in self.alloc_log(rig):                     # what salloc and srun were actually given
-            self.assertNotIn("-J", line.split())
+        log = self.alloc_log(rig)                            # what salloc and srun were actually given
+        self.assertEqual([x.split() for x in log][0][:8], ["salloc", "--exclusive", "-N", "1", "-n", "1", "-J",
+                                                          "covfix_pg_connect"])
+        self.assertNotIn("-J", log[1].split())                # srun's step keeps the job's name
+        for line in log:
             self.assertNotIn("--comment", line)
+            self.assertNotIn("--job-name", line)
             for x in inputs:
                 self.assertNotIn(x, line)
+
+    def test_2_the_job_name_is_the_role_constant(self):
+        """Director, 2026-11-25: -J covfix_<role> from a code constant, for every role, whatever the config and inputs."""
+        self.assertEqual(cw.JOB_NAMES, {"pg-connect": "covfix_pg_connect", "pv-writer": "covfix_pv_writer",
+                                        "pv-readout": "covfix_pv_readout"})
+        rig = Rig()
+        for role in cw.ROLES:
+            for extra in ([], ["--covfix-attempt", "a1"], ["--covfix-attempt", "zz9"]):
+                rcfg = json.loads(json.dumps(rig.cfg["roles"][role]))
+                rcfg["args"] = [*rcfg["args"], "--name", "other"]
+                rcfg["binary"] = "/elsewhere/other_binary"
+                argv = shlex.split(cw.launch_command(role, rcfg, extra))
+                s = argv.index(f"{rig.bin}/salloc")
+                self.assertEqual(argv[s + 6:s + 8], ["-J", cw.JOB_NAMES[role]], (role, extra))
+                self.assertEqual(argv.count("-J"), 1)
 
     def test_3_the_frame_reaches_the_binary_only_through_srun_stdin(self):
         rig = Rig()
@@ -866,6 +889,12 @@ class PgConnectAllocationTests(unittest.TestCase):
                 self.assertFalse(any(x in v for v in e["env"].values()), "a secret in ssh's environment")
             for line in log:
                 self.assertNotIn(x, line, "a secret in salloc's or srun's argv")
+        with open(os.path.join(rig.root, "alloc.log.env")) as f:   # cov2d's review: salloc's, srun's and the child's env
+            envdump = f.read()
+        self.assertEqual([x for x in envdump.splitlines() if x.startswith("== ")], ["== salloc", "== srun"])
+        self.assertIn("PATH=", envdump)                      # a real dump, not an empty file
+        for x in (pw, base, salt):
+            self.assertNotIn(x, envdump, "a secret in salloc's, srun's or the child's environment")
         self.assertNotIn(pw, out + err)
         self.assertEqual(rig.events()[-1]["key"], rig.commitment())
 
