@@ -42,6 +42,7 @@ from compare_to_paper_fullcov import (  # noqa: E402
     N, N_PT, N_PZ, tmatrix_to_numpy, flatten_th2d, flatten_ours, ANC_DIR, DEFAULT_OURS,
 )
 from agreement_windows_receipt import bin_areas  # noqa: E402
+from reported_cells import th2d_edges  # noqa: E402  (uq/, which compare_to_paper_fullcov puts on sys.path)
 
 PT_EDGES = [0, 0.07, 0.15, 0.25, 0.33, 0.40, 0.47, 0.55, 0.70, 0.85, 1.00, 1.25, 1.50, 2.50, 4.50]
 PZ_EDGES = [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0, 60.0]
@@ -67,22 +68,25 @@ def strip_index():
     return ipt, ipz
 
 
-def interior_mask():
+def interior_mask(pt_edges=PT_EDGES, pz_edges=PZ_EDGES):
     ipt, ipz = strip_index()
-    pt_hi = np.asarray(PT_EDGES)[1:][ipt]
-    pz_lo = np.asarray(PZ_EDGES)[:-1][ipz]
+    pt_hi = np.asarray(pt_edges)[1:][ipt]
+    pz_lo = np.asarray(pz_edges)[:-1][ipz]
     return pt_hi / pz_lo <= TAN20
 
 
-def historical_factor():
+def historical_factor(pz_edges=PZ_EDGES):
     """Per-strip multiplicative gradient, log-p_par interpolation of the recorded strips."""
     c = np.array([math.sqrt(lo * hi) for lo, hi, _ in HISTORICAL_GRADIENT])
     r = np.array([x for _, _, x in HISTORICAL_GRADIENT])
-    pzc = np.sqrt(np.asarray(PZ_EDGES)[:-1] * np.asarray(PZ_EDGES)[1:])
+    pzc = np.sqrt(np.asarray(pz_edges)[:-1] * np.asarray(pz_edges)[1:])
     return np.interp(np.log(pzc), np.log(c), r)  # flat extrapolation beyond the ends
 
 
-def strips(ours_v, paper_v, area, cov, mask):
+def strips(ours_v, paper_v, area, cov, mask, area_ours=None, pz_edges=PZ_EDGES):
+    """`area` is the paper's bin-area vector, `area_ours` ours (default `area`), and `pz_edges`
+    the paper's p_par edges."""
+    area_ours = area if area_ours is None else area_ours
     _, ipz = strip_index()
     rows = []
     for j in range(N_PZ):
@@ -91,27 +95,30 @@ def strips(ours_v, paper_v, area, cov, mask):
             rows.append(None)
             continue
         a = np.where(sel, area, 0.0)
-        s_o, s_p = float(a @ ours_v), float(a @ paper_v)
+        s_o, s_p = float(np.where(sel, area_ours, 0.0) @ ours_v), float(a @ paper_v)
         sig = float(math.sqrt(max(a @ cov @ a, 0.0)))
         bo, bp = float(ours_v[sel].sum()), float(paper_v[sel].sum())
-        rows.append(dict(pz_lo=PZ_EDGES[j], pz_hi=PZ_EDGES[j + 1], n_bins=int(sel.sum()),
+        rows.append(dict(pz_lo=float(pz_edges[j]), pz_hi=float(pz_edges[j + 1]), n_bins=int(sel.sum()),
                          S_ours=s_o, S_paper=s_p, sigma_paper_total=sig,
                          R=s_o / s_p, R_sigma=sig / s_p,
                          R_bare=bo / bp))
     return rows
 
 
-def contrast(ours_v, paper_v, area, cov, mask, lo=(1.5, 2.5), hi=(20.0, 60.0)):
+def contrast(ours_v, paper_v, area, cov, mask, lo=(1.5, 2.5), hi=(20.0, 60.0), area_ours=None,
+             pz_edges=PZ_EDGES):
     """Low-strip over high-strip integral ratio, with the paper-cov error of the difference of
-    the fractional deviations propagated linearly (delta method)."""
+    the fractional deviations propagated linearly (delta method). `area` is the paper's bin-area
+    vector, `area_ours` ours (default `area`), and `pz_edges` the paper's p_par edges."""
+    area_ours = area if area_ours is None else area_ours
     _, ipz = strip_index()
-    pz_lo = np.asarray(PZ_EDGES)[:-1][ipz]
-    pz_hi = np.asarray(PZ_EDGES)[1:][ipz]
+    pz_lo = np.asarray(pz_edges)[:-1][ipz]
+    pz_hi = np.asarray(pz_edges)[1:][ipz]
     sl = mask & (pz_lo >= lo[0]) & (pz_hi <= lo[1])
     sh = mask & (pz_lo >= hi[0]) & (pz_hi <= hi[1])
     al, ah = np.where(sl, area, 0.0), np.where(sh, area, 0.0)
-    Rl = float(al @ ours_v) / float(al @ paper_v)
-    Rh = float(ah @ ours_v) / float(ah @ paper_v)
+    Rl = float(np.where(sl, area_ours, 0.0) @ ours_v) / float(al @ paper_v)
+    Rh = float(np.where(sh, area_ours, 0.0) @ ours_v) / float(ah @ paper_v)
     # d = R_l - R_h as a function of the paper vector p: grad_p = -R_l a_l/S_l + R_h a_h/S_h
     g = -Rl * al / float(al @ paper_v) + Rh * ah / float(ah @ paper_v)
     sig_d = float(math.sqrt(max(g @ cov @ g, 0.0)))
@@ -127,11 +134,30 @@ def verdict(rows, con):
                                                                        low_strips_ok=b)
 
 
-def measure(ours_v, paper_v, area, cov, mask):
-    rows = strips(ours_v, paper_v, area, cov, mask)
-    con = contrast(ours_v, paper_v, area, cov, mask)
+def measure(ours_v, paper_v, area, cov, mask, area_ours=None, pz_edges=PZ_EDGES):
+    rows = strips(ours_v, paper_v, area, cov, mask, area_ours, pz_edges)
+    con = contrast(ours_v, paper_v, area, cov, mask, area_ours=area_ours, pz_edges=pz_edges)
     v, parts = verdict(rows, con)
     return dict(strips=rows, contrast=con, verdict=v, verdict_parts=parts)
+
+
+def positive_areas(h):
+    """bin_areas(h), refusing a non-positive area rather than dividing by it later."""
+    a = bin_areas(h)
+    if not np.all(a > 0):
+        raise ValueError(f"{h.GetName()}: non-positive bin area at GlobalID {np.flatnonzero(~(a > 0)).tolist()}")
+    return a
+
+
+def same_cells(ours_edges, paper_edges):
+    """Our TH2D bins the paper's cells: p_par edges equal the release axis's, and pT edges equal
+    either our analysis grid (PT_EDGES, bin_mapping.txt's printed edges) or the release axis's."""
+    (o_pt, o_pz), (p_pt, p_pz) = ours_edges, paper_edges
+
+    def equal(a, b):
+        a, b = np.asarray(a, dtype=float), np.asarray(b, dtype=float)
+        return a.shape == b.shape and bool(np.all(np.abs(a - b) <= 1e-12))
+    return equal(o_pz, p_pz) and (equal(o_pt, PT_EDGES) or equal(o_pt, p_pt))
 
 
 def main():
@@ -154,13 +180,20 @@ def main():
     if int(reported.sum()) != 205:
         print(f"[FAIL] reported bins = {int(reported.sum())}, expected 205", file=sys.stderr)
         return 3
-    interior = reported & interior_mask()
-    # Areas from the AUTHORITATIVE paper edges (minerva_paper_anc/bin_mapping.txt, mirrored in
-    # PT_EDGES/PZ_EDGES), NOT from the paper TH2D axes, whose edges are cosmetic rounding
-    # (2D_OMNIFOLD_STUDY_STATUS.md "Paper binning"). Our TH2D is checked against these below.
+    paper_edges = th2d_edges(h_paper)
+    paper_pz = paper_edges[1]
+    interior = reported & interior_mask(*paper_edges)
+    # Paper areas from the release TH2D's own axes; ours, below, from our TH2D's axes.
+    try:
+        area = positive_areas(h_paper)
+    except ValueError as e:
+        print(f"[FAIL] {e}", file=sys.stderr)
+        return 3
+    # Recorded: the release axis's areas against those of bin_mapping.txt's printed edges
+    # (PT_EDGES/PZ_EDGES).
     ipt, ipz = strip_index()
-    area = (np.diff(PT_EDGES)[ipt] * np.diff(PZ_EDGES)[ipz]).astype(float)
-    out_paper_axis_area_maxreldev = float(np.max(np.abs(bin_areas(h_paper) / area - 1.0)))
+    printed_area = (np.diff(PT_EDGES)[ipt] * np.diff(PZ_EDGES)[ipz]).astype(float)
+    out_paper_axis_area_maxreldev = float(np.max(np.abs(area / printed_area - 1.0)))
 
     out = dict(produced_by="2d-unfolding/strip_ratio_receipt.py",
                issue="KNOWN_ISSUES #5", hostname=os.uname().nodename,
@@ -175,17 +208,24 @@ def main():
         fo = ROOT.TFile.Open(path)
         ho = fo.Get(hist)
         ours_v = flatten_ours(ho)
-        # Our TH2D must share the authoritative paper grid, so a binning mismatch cannot pass
+        # Our TH2D must bin the paper's cells (same_cells), so a binning mismatch cannot pass
         # silently.
-        a_o = bin_areas(ho)
-        if not np.allclose(a_o, area, rtol=1e-6):
-            print(f"[FAIL] {label}: bin areas differ from the paper grid", file=sys.stderr)
+        if not same_cells(th2d_edges(ho), paper_edges):
+            print(f"[FAIL] {label}: bin edges differ from the paper grid", file=sys.stderr)
+            return 3
+        try:
+            a_o = positive_areas(ho)
+        except ValueError as e:
+            print(f"[FAIL] {label}: {e}", file=sys.stderr)
             return 3
         out["inputs"][label] = dict(path=path, hist=hist, sha256=sha256(path))
-        res = {"reported_205": measure(ours_v, paper_v, area, cov, reported),
-               "interior_185": measure(ours_v, paper_v, area, cov, interior)}
-        fac = historical_factor()[strip_index()[1]]
-        ctrl = {"interior_185": measure(ours_v * fac, paper_v, area, cov, interior)}
+        reldev = float(np.max(np.abs(a_o / area - 1.0)))
+        if reldev > 0:  # recorded only when our cells' areas differ from the release axis's
+            out["inputs"][label]["area_max_reldev_vs_paper_axis"] = reldev
+        res = {"reported_205": measure(ours_v, paper_v, area, cov, reported, a_o, paper_pz),
+               "interior_185": measure(ours_v, paper_v, area, cov, interior, a_o, paper_pz)}
+        fac = historical_factor(paper_pz)[strip_index()[1]]
+        ctrl = {"interior_185": measure(ours_v * fac, paper_v, area, cov, interior, a_o, paper_pz)}
         res["power_control_historical_gradient_injected"] = ctrl
         out["results"][label] = res
         for mname in ("reported_205", "interior_185"):
