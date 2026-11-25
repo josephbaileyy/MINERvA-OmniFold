@@ -126,6 +126,10 @@ with open(os.path.join(here, "ssh-log.jsonl"), "a") as f:
 with open({remote_env!r}) as f:
     os.environ.clear()
     os.environ.update(json.load(f))                 # the remote session's own environment, as a login would give
+xp = os.path.join(here, "remote-extra-env.json")    # a test's additions to that environment (e.g. a profile's SRUN_*)
+if os.path.exists(xp):
+    with open(xp) as f:
+        os.environ.update(json.load(f))
 mp = os.path.join(here, "ssh-mode")
 mode = open(mp).read().strip() if os.path.exists(mp) else ""
 if mode == "down":
@@ -161,9 +165,13 @@ sys.exit(subprocess.run(["bash", "-c", command]).returncode)
 '''
 
 STUB_ALLOC = r'''#!/bin/bash
-# stub {name}: require --exclusive -N 1 -n 1, drop the options up to the next command ({until}), exec it with stdin
+# stub {name}: log its argv, require --exclusive -N 1 -n 1, refuse any Slurm I/O variable that is SET (even empty),
+# drop the options up to the next command ({until}), and exec it with stdin
+printf '%s\n' "{name} $*" >> {log}
 [ "$1 $2 $3 $4 $5" = "--exclusive -N 1 -n 1" ] || {{ echo "stub {name}: unexpected flags $*" >&2; exit 64; }}
-[ -z "${{SRUN_INPUT}}${{SRUN_OUTPUT}}${{SRUN_ERROR}}" ] || {{ echo "stub {name}: inherited Slurm I/O settings" >&2; exit 65; }}
+for v in {io_vars}; do
+    [ -z "${{!v+x}}" ] || {{ echo "stub {name}: inherited Slurm I/O setting $v" >&2; exit 65; }}
+done
 shift 5
 while [ $# -gt 0 ] && [ "$(basename -- "$1")" != "{until}" ]; do shift; done
 exec "$@"
@@ -196,7 +204,8 @@ class Rig:
                                     remote_env=REMOTE_ENV))
         for name, until in (("salloc", "srun"), ("srun", "bash")):
             with open(os.path.join(self.bin, name), "w") as f:
-                f.write(STUB_ALLOC.format(name=name, until=until))
+                f.write(STUB_ALLOC.format(name=name, until=until, log=shlex.quote(os.path.join(self.root, "alloc.log")),
+                                          io_vars=" ".join(cw.SLURM_IO_ENV)))
         for name in ("ssh", "salloc", "srun"):
             os.chmod(os.path.join(self.bin, name), 0o755)
         self.seal = cw.synthetic_seal(self.kc, os.path.join(self.root, "synthetic"))
@@ -205,9 +214,8 @@ class Rig:
         for role in cw.ROLES:
             roles[role] = {"binary": REF, "binary_sha256": cw.sha256_file(REF),
                            "args": ["--role", role, *flags.get(role, [])]}
-            if role != "pg-connect":
-                roles[role]["slurm"] = {"salloc": f"{self.bin}/salloc", "srun": f"{self.bin}/srun",
-                                        "account": "m0000", "time": "0:30:00"}
+            roles[role]["slurm"] = {"salloc": f"{self.bin}/salloc", "srun": f"{self.bin}/srun",   # every role, pg-connect too
+                                    "account": "m0000", "time": "0:30:00"}
         self.cfg = {
             "record_dir": os.path.join(self.root, "record"),
             "keychain_prefix": self.prefix,
@@ -774,10 +782,120 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(argv[1:s], [x for v in cw.SLURM_IO_ENV for x in ("-u", v)])
         self.assertEqual(argv[-6:], [REF, cw.sha256_file(REF), "--role", "pv-writer", "--covfix-attempt", "a1"])
         pg = shlex.split(cw.launch_command("pg-connect", rig.cfg["roles"]["pg-connect"], []))
-        self.assertEqual(pg[:2], ["bash", "-c"])
+        self.assertEqual(pg[:pg.index("bash")], argv[:argv.index("bash")])    # the same allocation as the PV roles
 
 
 # ------------------------------------------------------------------------------------------------------------
+
+class PgConnectAllocationTests(unittest.TestCase):
+    """cov2d, 2026-11-25: pg-connect had no allocation, so it would have run on the login host. Every role now launches
+    through one exclusive node, and cov2d's four constraints hold for each: (1) a fixed argv, (2) no -J or --comment,
+    and nothing derived from any input before the bound binary, (3) the frame only on srun's forwarded stdin, and (4)
+    the Slurm I/O variables unset in the child's environment. The secrets are the rig's covfix-test-* stand-ins."""
+
+    def alloc_log(self, rig):
+        p = os.path.join(rig.root, "alloc.log")
+        return open(p).read().splitlines() if os.path.exists(p) else []
+
+    def test_1_every_role_gets_exactly_the_fixed_argv(self):
+        rig = Rig()
+        for role in cw.ROLES:
+            extra = ["--covfix-attempt", "a1"]
+            argv = shlex.split(cw.launch_command(role, rig.cfg["roles"][role], extra))
+            self.assertEqual(argv, ["env", *[x for v in cw.SLURM_IO_ENV for x in ("-u", v)],
+                                    f"{rig.bin}/salloc", "--exclusive", "-N", "1", "-n", "1", "-A", "m0000", "-t", "0:30:00",
+                                    f"{rig.bin}/srun", "--exclusive", "-N", "1", "-n", "1",
+                                    "bash", "-c", cw.EXEC_CHECK, "covfix-exec", REF, cw.sha256_file(REF),
+                                    "--role", role, *extra], role)
+
+    def test_1_pg_connect_without_a_valid_slurm_block_never_launches(self):
+        rig = Rig()
+        good = json.loads(json.dumps(rig.cfg["roles"]["pg-connect"]))
+        for change in ({"slurm": None}, {"slurm": "salloc -N 1"}, {"slurm": {**good["slurm"], "salloc": "sbatch"}},
+                       {"slurm": {**good["slurm"], "srun": "/usr/bin/ssh"}}, {"slurm": {**good["slurm"], "nodes": "2"}},
+                       {"slurm": {**good["slurm"], "time": "1:00 --pty"}}):
+            cfg = {**good, **change}
+            if change.get("slurm", 0) is None:
+                del cfg["slurm"]
+            rig.cfg["roles"]["pg-connect"] = cfg
+            rig.write_config()
+            rc, _, err = rig.run("pg-connect")
+            self.assertEqual(rc, cw.ERROR, (change, err))
+        self.assertEqual(rig.events(), [])
+        self.assertEqual(rig.ssh_log(), [])
+        self.assertEqual(self.alloc_log(rig), [])
+
+    def test_2_no_job_name_or_comment_and_no_input_before_the_binary(self):
+        for key in ("job_name", "J", "-J", "comment", "name", "job-name"):
+            rig = Rig()
+            rig.cfg["roles"]["pg-connect"]["slurm"][key] = "covfix"
+            rig.write_config()
+            self.assertEqual(rig.run("pg-connect")[0], cw.ERROR, key)
+            self.assertEqual(rig.ssh_log(), [], key)
+        self.assertNotIn("-J", cw.SLURM_KEYS.values())
+        self.assertFalse({"--job-name", "--comment"} & set(cw.SLURM_KEYS.values()))
+        rig = Rig()
+        self.assertEqual(rig.run("pg-connect")[0], 0)
+        launches = [e for e in rig.ssh_log() if "covfix-hash-end" not in e["argv"][-1]]
+        self.assertEqual(len(launches), 1)
+        cmd = shlex.split(launches[0]["argv"][-1])
+        head = cmd[:cmd.index("bash")]                       # everything Slurm sees, before the bound binary
+        fixed = {"env", "-u", *cw.SLURM_IO_ENV, f"{rig.bin}/salloc", f"{rig.bin}/srun", "--exclusive", "-N", "-n", "1",
+                 "-A", "m0000", "-t", "0:30:00"}
+        self.assertEqual(set(head) - fixed, set(), head)
+        self.assertFalse({"-J", "--job-name", "--comment"} & set(head))
+        inputs = [rig.config_sha, rig.cfg["binding"]["commitment"], *rig.secrets()]
+        for x in inputs:
+            self.assertFalse(any(x in t for t in head), x[:8])
+        for line in self.alloc_log(rig):                     # what salloc and srun were actually given
+            self.assertNotIn("-J", line.split())
+            self.assertNotIn("--comment", line)
+            for x in inputs:
+                self.assertNotIn(x, line)
+
+    def test_3_the_frame_reaches_the_binary_only_through_srun_stdin(self):
+        rig = Rig()
+        pw, base, salt = rig.secrets()
+        rc, out, err = rig.run("pg-connect")
+        self.assertEqual(rc, 0, err)                         # the reference role checked the frame it read on stdin
+        log = self.alloc_log(rig)
+        self.assertEqual([x.split()[0] for x in log], ["salloc", "srun"], log)   # stdin passed salloc, then srun
+        for x in (pw, base, salt):
+            for e in rig.ssh_log():
+                self.assertFalse(any(x in a for a in e["argv"]), "a secret in ssh's argv")
+                self.assertFalse(any(x in v for v in e["env"].values()), "a secret in ssh's environment")
+            for line in log:
+                self.assertNotIn(x, line, "a secret in salloc's or srun's argv")
+        self.assertNotIn(pw, out + err)
+        self.assertEqual(rig.events()[-1]["key"], rig.commitment())
+
+    def test_4_slurm_io_variables_set_remotely_are_unset_for_the_child(self):
+        rig = Rig()                                          # one campaign: pv-readout needs the pv-writer before it
+        with open(os.path.join(rig.root, "remote-extra-env.json"), "w") as f:
+            json.dump({v: "" if i % 2 else "/tmp/leak-%j" for i, v in enumerate(cw.SLURM_IO_ENV)}, f)
+        for role in ("pg-connect", "pv-writer", "pv-readout"):
+            before = len(self.alloc_log(rig))
+            rc, _, err = rig.run(role)
+            self.assertEqual(rc, 0, (role, err))
+            self.assertEqual([x.split()[0] for x in self.alloc_log(rig)[before:]], ["salloc", "srun"], role)
+
+    def test_4_control_without_env_unset_the_stub_refuses(self):
+        """Not vacuous: the same remote variables, with the launcher's env -u removed, stop the run in the stub."""
+        rig = Rig()
+        with open(os.path.join(rig.root, "remote-extra-env.json"), "w") as f:
+            json.dump({"SRUN_INPUT": "none"}, f)
+        real = cw.launch_command
+
+        def without_unset(role, rcfg, extra):
+            argv = shlex.split(real(role, rcfg, extra))
+            s = argv.index(rcfg["slurm"]["salloc"])
+            return shlex.join(argv[s:])
+
+        with mock.patch.object(cw, "launch_command", without_unset):
+            rc, _, err = rig.run("pg-connect")
+        self.assertNotEqual(rc, 0)
+        self.assertIn("inherited Slurm I/O setting SRUN_INPUT", err + "".join(self.alloc_log(rig)) + str(rig.events()))
+
 
 class RunTests(unittest.TestCase):
     def test_writer_end_to_end_and_the_spend_precedes_the_launch(self):

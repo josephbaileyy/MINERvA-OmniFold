@@ -62,7 +62,7 @@ with plain values. The wrapper runs:
 ```
 
 That is one task on one exclusive node. The exec check runs on the compute node: it hashes the binary and execs it only
-on a match (exit 86 otherwise), leaving stdin untouched. `pg-connect` has no allocation and runs on the host.
+on a match (exit 86 otherwise), leaving stdin untouched. Every role runs this way, `pg-connect` included: its role config needs the same `slurm` block (cov2d, 2026-11-25; before, `pg-connect` had no allocation and would have run on the login host).
 
 **ssh is built by the wrapper from a closed schema (director, 2026-11-23).** The role config's `ssh` object may hold
 only these keys; any other key is refused:
