@@ -1,0 +1,12 @@
+ssh rc=0
+node login38 staged sha256 5b3cdf7be868fbfb754b9c3f1f4b47cc218d3a80fd6b4ff34eb4ef60703d787d
+detached pid 587033, output /dev/shm/ibubc.586530.sh.out
+script rc=0
+connect script rc=0 (every stop after $N exists writes the records tar first)
+fetch logs/connect-readout.log rc=0 bytes 6340
+fetch logs/connect-readout.done rc=0 bytes 2
+fetch fetch-readout.tar rc=0 bytes 5836800
+fetch-readout.tar sha256 d78ed2367dbaf37ae2957c18c6a12f9092dd7db9fee7f48cea420ae41be5f440 (the log's: d78ed2367dbaf37ae2957c18c6a12f9092dd7db9fee7f48cea420ae41be5f440)
+RECORDS.SHA256SUMS check rc=0 (19 files)
+connect done file: 0
+launcher rc=0
