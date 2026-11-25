@@ -1,0 +1,11 @@
+The 12 lines coverage.txt lists as missed (evw2d.py), each a refusal no fixture reaches:
+278  check_tree: pins not exactly four (C-BIND refuses the same config first; a test covers C-BIND's copy)
+307  load_runner: a loaded module's file outside the tree (the pinned ref_c2c1 loads from its own tree)
+397  read_signal_tree: columns of different lengths (RDataFrame returns equal lengths)
+399  read_signal_tree: entry numbers not 0..n-1 (rdfentry_ single-threaded is 0..n-1)
+633  own_hist: the histogram is missing from the run's own xsec.root
+637  own_hist: a histogram axis differs from the edges
+679-681  stage: a copy that fails with any error other than an existing partial (its own partial is removed)
+745  check_staged: the staged file changed while it was hashed (a race)
+918  run: the driver never extracted hXSec2D (the pinned driver always does)
+1155 the __main__ guard

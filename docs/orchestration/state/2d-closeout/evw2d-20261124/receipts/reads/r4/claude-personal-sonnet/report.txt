@@ -1,0 +1,96 @@
+VERDICT: GO WITH CHANGES
+
+I found no finding that could change weights.npz, denominator.npz, the constants, or C-SELF / C-EXACT-ER / C-EXACT-PAPER by a mistake or a lasting change. Every finding below is SHOULD-FIX or lower and belongs on the follow-ups list. None gates the run. Findings 1 and 2 should be settled before the first `cleanup`, because it is the only command they affect.
+
+I read the code, the declaration, the diffs, and the pinned driver and ref_c2c1. I ran nothing, and I did not see the campaign results. All paths below are in `inputs/new/`.
+
+## Round-3 disposition
+
+**Round-3 findings**
+
+1. CLOSED. `load_config` parses and hashes one buffer (`evw2d.py:152-155`), and `check_binding` compares that digest to the command line (`:167-169`). The same digest is recorded in the products (`:950`). A lane root equal to the prefix is refused (`:189`).
+2. CLOSED as specified. Job and step IDs must be all digits (`:249-255`), and `batch` and `extern` are tested. See finding 3 for a caveat on reserved numeric IDs. The 30-minute cap still rests on the bound launcher's `#SBATCH -t` (declaration `:199`, §10.4).
+3. CLOSED. Git runs with no `GIT_*` variable (`:216-221`), the tree must be its checkout's top level (`:229-233`), and each pin must be a plain file with no link on the way (`:281-282`).
+4. PARTLY, by design. The held file is hashed and its identity checked at open (`:703-726`). The independent read goes through `/proc/self/fd` (`:691-695,898`). C-STAGE checks identity and digest at the end (`:729-738`). The swap-around-the-driver's-read residual is accepted by the director (§8). See finding 5 on how the residual is worded.
+5. CLOSED. `same_bits` requires equal dtypes (`:412-419`). The denominator meta is checked (`:822`). The saved selector, grids and constants are used by the exactness gates (`:817-818,974-985`).
+6. CLOSED. The `constants.json` digest comes from the bytes that are parsed, and the `xsec.root` digest is taken before C-FLOW opens it (`:964-967`). `test_products_changed_after_their_checks_fail_acceptance` covers both files. The `MANIFEST_LATE` mutant covers the change.
+7. CLOSED. Rounding needs a bit-for-bit refill of both driver fills and of their ratio over every global bin (`:516-523`). See the C-CMAP check below.
+8. CLOSED, with finding 1. The ledger opens with `O_NOFOLLOW` before any unlink (`:1058`). The run's config digest, each staged file's identity and its digest are all checked first (`:1045-1055`).
+9. CLOSED. Partial names carry host, pid and a random token (`:656`). Only `FileExistsError` skips the unlink (`:659-660`). `test_a_partial_another_invocation_created_stays` covers it.
+10. CLOSED. Both source paths are screened and the hashed bytes are the bytes read (`make_references.py` diff).
+11. CLOSED. `as_main` is now described as in-process (declaration `:268`). "Unmodified" is defined by the digests (`:68-71`). Preflight is recorded (`evw2d.py:878`). The acceptance duration is in `evw2d.done` (`:1010-1013`). The spies still do not snapshot arguments at entry, so the claim was narrowed to match.
+
+**Round-2 PARTLY items, codex-school**
+
+1. PARTLY. This is the receipt for the full campaign on this head, which is still running. By the mutant list, each revision-4 defense has a mutant. The two gaps are in finding 7.
+2. CLOSED. Parse and hash use the same bytes (`:152-155`). The allocation gate no longer accepts the batch shell.
+3. CLOSED. See finding 3 above.
+4. PARTLY. See finding 4 above. The reference builder's two-source guard is CLOSED.
+5. PARTLY. The branch-type check in `read_signal_tree` (`:372-375`, called at `:898`) still runs after the fit. It fails closed and only wastes node time. NOTE.
+6. CLOSED by narrowing the claim (declaration `:68-71`).
+7. CLOSED. See finding 5 in the list above.
+8. CLOSED. See finding 7 in the list above.
+9. CLOSED. See finding 6 in the list above.
+10. CLOSED, with finding 1 as a caveat.
+11. CLOSED (`:467-472`).
+
+**Round-2 PARTLY items, agy**
+
+1. PARTLY. Same receipt as codex item 1.
+2. CLOSED (`:903-911`).
+3. CLOSED.
+4. PARTLY. Scratch-root equality is CLOSED (`:189`). The wall-time limit is a binding item, and the launcher is not in the package.
+5. CLOSED.
+6. PARTLY. The 11 uncovered lines are now listed (`receipt/uncovered.txt`). They are not exercised: `:381`, `:383`, `:615`, `:619`, `:661-663`, `:721`.
+7. CLOSED. The declaration names login-node staging (`:307,413`).
+
+## Checks you asked for
+
+- **C-CMAP refill against the director's condition.** It matches. The driver fills `hOFInputTruth2D` over `pass_truth` rows with `sig["w_truth"]`, in order (`re2_driver.py:1230-1233`). It fills `hOFTruthDenom2D` over every denominator row (`:1235-1237`) and then calls `Divide` (`:1244`). The refill is `fill_root_bins` over the same rows in the same order (`evw2d.py:516-521`). `np.bincount` accumulates in double, in row order. `searchsorted(..., side="right")` matches ROOT's lower-edge-in rule and sends NaN to overflow.
+  - It is the declared fallback only: `denominator.npz` plus event-level c, with the miss size in `finding_sizes` (`:919-923`).
+  - Any other failure stops. The refill is also stricter than "max miss ≤ 1e-9", which fails closed.
+  - Real-ROOT unit tests cover the fill-order miss, rows the driver did not fill, an injected 1.2e-12 map error, and a 1e-8 miss. See finding 6.
+- **Held-file read and `check_staged`.** The open, the identity comparison, the hash and the second identity comparison are ordered correctly (`:712-721`). The `/proc/self/fd` path is not seen by `tfile_guard`, because RDataFrame bypasses `TFile.Open`. It resolves into the staging root anyway. It has not run on Lustre. A failure there is a C-KEY error and STOPs, never a silent pass. NOTE for the first run.
+- **`same_bits` dtype, everywhere.** Every caller passes float64 (or int64 vs int64 for entries, bool vs bool for the masks). The real-driver tests exercise `c_key`, `c_file`, `c_complete`, `c_cmap`, `load_references` and `own_hist`. I found no caller that now fails for a bad reason.
+- **Manifest digests from the judged bytes.** CLOSED. `weights.npz` and `denominator.npz` are hashed after the write and read back separately. A replacement between the two is a race and out of scope.
+- **Cleanup ordering.** The order is binding → accepted → config digest → staged checks → ledger open → chmod → unlink. Nothing is deleted before every check, and the ledger is opened first. Rows are written in `finally`.
+
+## New findings
+
+1. **SHOULD-FIX: `cleanup` can refuse every run on the cluster (`evw2d.py:676-679,1053`).** `identity()` includes `st_dev`. The run records it on a compute node. Cleanup likely runs on a login node, because it needs the ROOT environment. On network filesystems such as Lustre, `st_dev` is a per-mount anonymous device number, so it can differ between nodes. If so, `cleanup` raises "not the file the accepted run verified" and the staged copies stay. It fails closed, but cleanup would never work.
+   - Fix: compare `ino`, `size`, `mtime_ns` and `mode` in `cleanup`. Keep `dev` for the same-node C-STAGE check.
+   - Test: run `cleanup` from a login shell after a compute-node run at the binding.
+
+2. **SHOULD-FIX: `references.npz` is hashed and then read again (`:591-594`).** This is the same two-read pattern the config had. The references feed C-EXACT-ER and C-EXACT-PAPER. Only a race exploits it, so it is out of scope for BLOCKING.
+   - Fix: read the bytes once, hash them, and pass `io.BytesIO(raw)` to `np.load`.
+
+3. **NOTE: the allocation gate only accepts what is numeric (`:249-251`).** Slurm's reserved step IDs (`0xfffffffa`–`0xfffffffd`, covering interactive, batch, extern and pending) are numeric strings. If a batch shell exports one as `SLURM_STEP_ID`, `isdigit()` passes it. Add `int(step) < 0xfffffff0`. At the binding, print `SLURM_STEP_ID` in a plain sbatch shell and in an `srun` step.
+
+4. **MINOR: `cleanup`'s ledger uses `O_NOFOLLOW`, which does not stop a hard link (`:1058`).** A hard link named `deletions.tsv` to a pinned file would still be appended to. Add an `st_nlink == 1` check on the opened fd. Out of scope as a mistake.
+
+5. **NOTE: §8's named residual is accurate but incomplete (declaration `:342-346`).**
+   - The driver also opens the flux and MC file by name. A swap there that changes the flux moves σ, which is the exactness gates' case.
+   - The independent read takes the POT scale from the driver's own recorded `get_pot_scales` (`:896,899`), and `data_pot` from the driver's extract arguments.
+   - A swapped omnifile that changes only the data POT scales `w_prior`, `w_unfolded` and the `data_pot` constant together. σ ∝ pot_scale / data_pot = 1/mc_pot stays the same, so the exactness gates would not see it. This holds if the fit is insensitive to the overall MC-to-data scale. That is not tested, so I can't say it holds.
+   - Only a hostile same-account process can do this, so it is out of scope.
+   - The same class also covers a pinned source swapped and restored around the import. The general sentence covers it, but "one residual is named" understates the class.
+   - Fix: reword §8 to say the driver opens all its inputs and its source files by name. Optionally add one cheap check that `get_pot_scales`'s output equals a POT read from the held file.
+   - I found no scenario outside the stated model that could change the weights, constants or gates.
+
+6. **MINOR: the end-to-end rounding test mocks the classification (`test_evw2d.py:1155-1169`).** Round 3 asked for this to be exercised for real. The unit-level `test_cmap` is real, and the real-run pass test asserts `refill` is all True, which covers the call wiring. I would add one end-to-end run with a real fill-order miss.
+
+7. **MINOR: two small gaps in test and mutant coverage.**
+   - No end-to-end float32-denominator tamper test exists. Round 3 asked for dtype-only and metadata-only tamper tests. Only the metadata-only one landed. `same_bits` has a unit test.
+   - No mutant covers "ledger opened before unlink", `load_config`'s single buffer, or the `held` re-check at `:720`. The `:720` line is uncovered.
+
+8. **MINOR: `accepted()` does not tie `done["findings"]` to the product set (`:1023-1033`).** It derives the expected set from the manifest itself. A consumer would pass an event-level `weights.npz` whose `denominator.npz` and manifest line were both removed, unless `SHA256SUMS` is also changed. The change would need to alter `SHA256SUMS`, which breaks the digest in `evw2d.done`, so this is not exploitable without editing that marker too. Require `denominator.npz` exactly when `findings` is non-empty.
+
+9. **MINOR: stale declaration text.**
+   - The title (declaration `:1`) still says "revision 3". There is no revision-4 paragraph in the header, even though §13 exists.
+   - §2 says all the refusals happen "before any import". The loaded-module-file check happens after the import (`:299-304`).
+
+10. **NOTE: constants are only partly tied together.** `mc_pot` and `pot_scale` are not checked against `data_pot` or against each other. The driver defines `pot_scale = data_pot / mc_pot`. `pot_scale` is validated indirectly through `w_prior`, and `data_pot` through the exactness gates. A one-line equality check would make the saved constants self-consistent.
+
+## Section 8's threat-model statement
+
+The stated model is coherent and matches the code. It covers the wrong file, a stale or concurrent copy, a changed pin, a changed product, and lasting changes of the staged inputs (C-STAGE). The named residual is correct for what it names. See finding 5 for the wording.

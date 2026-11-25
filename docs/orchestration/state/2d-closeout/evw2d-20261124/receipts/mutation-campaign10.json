@@ -1,0 +1,2562 @@
+{
+ "evw2d_sha256": "6106b23a8b6c5cb9c27acd8480329f6bc180f5c90f9af3ba82a92c9507e64887",
+ "tests_sha256": "ca81134e5edf01943648af8ab7d7633ce9889ac7052aa62847015ec9eb5bfa1d",
+ "harness_sha256": "856c3daf4262bd2981115eb855b1dab94bbc2b952e43fcdda79fe41c934dd30b",
+ "declaration_sha256": "3e825e10458501483abfb003c01a99b2b54b2b922ec4df3fee7bdc36c53020c0",
+ "driver_tree_commit": "77d76cfc2d621f8faa010b75006811868494652a",
+ "control": {
+  "name": "CONTROL",
+  "rc": 0,
+  "killed": false,
+  "kind": "none",
+  "failed_tests": [],
+  "first_error_line": "",
+  "mutant_sha256": "6106b23a8b6c5cb9c27acd8480329f6bc180f5c90f9af3ba82a92c9507e64887",
+  "tree_dirt_after": [],
+  "seconds": 814.4,
+  "tail": [
+   "........................................                                 [100%]",
+   "112 passed in 811.11s (0:13:31)"
+  ]
+ },
+ "control_pass": true,
+ "mutants": 147,
+ "run": 147,
+ "killed": 145,
+ "not_killed": [
+  {
+   "name": "CMAP_ZERO_CELLS",
+   "rc": 0,
+   "killed": false,
+   "kind": "none",
+   "failed_tests": [],
+   "first_error_line": "",
+   "mutant_sha256": "76cba4482f87e23d32d4b83a7713dc1ecb3a250508aa5c9af04d139830f9550f",
+   "tree_dirt_after": [],
+   "seconds": 1260.5,
+   "tail": [
+    "........................................                                 [100%]",
+    "112 passed in 1258.09s (0:20:58)"
+   ]
+  },
+  {
+   "name": "GIT_ENV",
+   "rc": 0,
+   "killed": false,
+   "kind": "none",
+   "failed_tests": [],
+   "first_error_line": "",
+   "mutant_sha256": "f07338acaccf19634a29631863b0a4028c80c09369514e3e7405633691cde4b8",
+   "tree_dirt_after": [],
+   "seconds": 419.2,
+   "tail": [
+    "........................................                                 [100%]",
+    "112 passed in 417.10s (0:06:57)"
+   ]
+  }
+ ],
+ "tree_clean": true,
+ "kinds": {
+  "failed": 145,
+  "error": 0,
+  "environment": 0,
+  "none": 2
+ },
+ "results": [
+  {
+   "name": "ACCEPTED_DONE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_failed_acceptance_fails_the_run"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "8d480a2c20c3bc2e6cc4539ee3703c0cfc1bb506b71e97c1d045deee0291cdd1",
+   "tree_dirt_after": [],
+   "seconds": 174.9,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 49 passed in 173.14s (0:02:53)"
+   ]
+  },
+  {
+   "name": "ACCEPT_FALLBACK",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Fallback::test_accepted_needs_the_fallback_with_findings"
+   ],
+   "first_error_line": "E       AssertionError: Tuples differ: (False, True) != (False, False)",
+   "mutant_sha256": "bb9dc00bbc10c5f0b1c8b53092587cc293fe8121f40a75f5a22f583f7c5fbec6",
+   "tree_dirt_after": [],
+   "seconds": 427.1,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 78 passed in 424.45s (0:07:04)"
+   ]
+  },
+  {
+   "name": "ACCEPT_MANIFEST",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_acceptance_needs_the_exact_product_set"
+   ],
+   "first_error_line": "E       AssertionError: Tuples differ: (True, True, True, True) != (False, True, True, True)",
+   "mutant_sha256": "f655ea6c3b68f608734b298da128fbe48f0579816f4c6f36c7bb20a6519ceb71",
+   "tree_dirt_after": [],
+   "seconds": 331.1,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 61 passed in 329.04s (0:05:29)"
+   ]
+  },
+  {
+   "name": "ACCEPT_PRESENT",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_acceptance_needs_the_exact_product_set"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "21b6202ef5e9689d6939b50ff4d9a1dc0331858cb682f60078ef63c53d1e7c7c",
+   "tree_dirt_after": [],
+   "seconds": 366.1,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 61 passed in 363.74s (0:06:03)"
+   ]
+  },
+  {
+   "name": "ALLOC_HOST",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_allocation"
+   ],
+   "first_error_line": "E               AssertionError: GateFailure not raised : ({'SLURM_JOB_ID': '123', 'SLURM_STEP_ID': '0', 'SLURM_JOB_NUM_NODES': '1'}, 'login31')",
+   "mutant_sha256": "e86360e1c49edc72ba98f2d45d15c06a968b3643aa8ae49df76195e45a380714",
+   "tree_dirt_after": [],
+   "seconds": 45.8,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 10 passed in 44.27s"
+   ]
+  },
+  {
+   "name": "ALLOC_JOB",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_allocation"
+   ],
+   "first_error_line": "E               AssertionError: GateFailure not raised : ({'SLURM_STEP_ID': '0', 'SLURM_JOB_NUM_NODES': '1'}, 'nid1')",
+   "mutant_sha256": "d48631bbcda7509bbd5f6065b18e820f13e8bb195129ecc8be627494b50f1bd2",
+   "tree_dirt_after": [],
+   "seconds": 58.0,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 10 passed in 56.21s"
+   ]
+  },
+  {
+   "name": "ALLOC_NODES",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_allocation"
+   ],
+   "first_error_line": "E               AssertionError: GateFailure not raised : ({'SLURM_JOB_ID': '123', 'SLURM_STEP_ID': '0', 'SLURM_JOB_NUM_NODES': '2'}, 'nid1')",
+   "mutant_sha256": "7e8c45123395a513792847bf0f3e0346e447d6f6ba14d67eae1e9f0796582f14",
+   "tree_dirt_after": [],
+   "seconds": 55.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 10 passed in 53.32s"
+   ]
+  },
+  {
+   "name": "ALLOC_RESERVED",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_allocation"
+   ],
+   "first_error_line": "E               AssertionError: GateFailure not raised : ({'SLURM_JOB_ID': '123', 'SLURM_STEP_ID': '4294967291', 'SLURM_JOB_NUM_NODES': '1'}, 'nid1')",
+   "mutant_sha256": "a71499a55f1820362b5702984bba7d685a2709ef572add9102ca93021a3b5d19",
+   "tree_dirt_after": [],
+   "seconds": 75.0,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 10 passed in 72.76s (0:01:12)"
+   ]
+  },
+  {
+   "name": "ALLOC_STEP",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_allocation"
+   ],
+   "first_error_line": "E               AssertionError: GateFailure not raised : ({'SLURM_JOB_ID': '123', 'SLURM_JOB_NUM_NODES': '1'}, 'nid1')",
+   "mutant_sha256": "4ef50fb71fdef30b5cc944939cbd6e7c8bd5ad5e827babd43a605fa243080b73",
+   "tree_dirt_after": [],
+   "seconds": 54.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 10 passed in 52.80s"
+   ]
+  },
+  {
+   "name": "ALLOC_STEP_NUMERIC",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_allocation"
+   ],
+   "first_error_line": "E               AssertionError: GateFailure not raised : ({'SLURM_JOB_ID': '123', 'SLURM_STEP_ID': 'batch', 'SLURM_JOB_NUM_NODES': '1'}, 'nid1')",
+   "mutant_sha256": "665b0affbfd183fd19b5209cb7cbc6c889c3a414257da3b09a6b6d16dbe09c37",
+   "tree_dirt_after": [],
+   "seconds": 46.0,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 10 passed in 44.13s"
+   ]
+  },
+  {
+   "name": "BIND_CONFIG_SHA",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_the_command_line_digest_must_be_config_jsons"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "4e63847a53f4cf60c70f65891dc02716e5a18ac8a203195f64dbdad06ca31997",
+   "tree_dirt_after": [],
+   "seconds": 49.7,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 14 passed in 48.27s"
+   ]
+  },
+  {
+   "name": "BIND_DECLARATION",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_each_gap_refuses"
+   ],
+   "first_error_line": "E           AssertionError: GateFailure not raised : 0",
+   "mutant_sha256": "630a32d7b56dfdc64e6ab48b43890e9aad71338a5ff38fba37db6642a71f7cc9",
+   "tree_dirt_after": [],
+   "seconds": 48.2,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 12 passed in 46.58s"
+   ]
+  },
+  {
+   "name": "BIND_OUT_EQUALS_LANE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_each_gap_refuses"
+   ],
+   "first_error_line": "E           AssertionError: GateFailure not raised : 23",
+   "mutant_sha256": "4ec82a5cb99ee2303184b1fec4e5a065966d5531e5c263cb5aa3f56db2b2cff3",
+   "tree_dirt_after": [],
+   "seconds": 53.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 12 passed in 51.77s"
+   ]
+  },
+  {
+   "name": "BIND_OUT_INSIDE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_each_gap_refuses"
+   ],
+   "first_error_line": "E           AssertionError: GateFailure not raised : 22",
+   "mutant_sha256": "f0c6b6e5c5f3c08cef60ac913bc889682511f7a5b20fefe83e409d25694e935b",
+   "tree_dirt_after": [],
+   "seconds": 52.9,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 12 passed in 50.80s"
+   ]
+  },
+  {
+   "name": "BIND_PLAIN_NAME",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_each_gap_refuses"
+   ],
+   "first_error_line": "E           AssertionError: GateFailure not raised : 9",
+   "mutant_sha256": "4b9ed7dd7fb9f262733fdb718ce78b3db73dac5496618357ac624d5635986145",
+   "tree_dirt_after": [],
+   "seconds": 53.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 12 passed in 51.69s"
+   ]
+  },
+  {
+   "name": "BIND_REPO_INSIDE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_this_checkout_must_be_inside_the_lane"
+   ],
+   "first_error_line": "E           AssertionError: GateFailure not raised",
+   "mutant_sha256": "a9fd4a765d77ef1cd10a58532ee59eb31925e5ae1b544cb9b642bf2f23fdaaf7",
+   "tree_dirt_after": [],
+   "seconds": 51.1,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 15 passed in 49.50s"
+   ]
+  },
+  {
+   "name": "BIND_REVIEWED",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_each_gap_refuses"
+   ],
+   "first_error_line": "E           AssertionError: GateFailure not raised : 14",
+   "mutant_sha256": "e5274b339499087f9b342e11784c493853d1c9b9a1ad2c839d3d3cff944f3361",
+   "tree_dirt_after": [],
+   "seconds": 53.8,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 12 passed in 52.25s"
+   ]
+  },
+  {
+   "name": "BIND_SCRATCH",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_each_gap_refuses"
+   ],
+   "first_error_line": "E           AssertionError: \"strictly under\" does not match \"the driver tree /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7e3f49f7-e8e4-452d-b380-399d4f6c529e/scratchpad/evw2d-trees-rxytpm5x/w0 is not inside the lane root /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/",
+   "mutant_sha256": "e4e5856cc362f905a44efe2d8772585ed28dd6287fbefacebac1b6dfe4a0654d",
+   "tree_dirt_after": [],
+   "seconds": 51.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 12 passed in 49.62s"
+   ]
+  },
+  {
+   "name": "BIND_SCRATCH_EQUAL",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_each_gap_refuses"
+   ],
+   "first_error_line": "E           AssertionError: GateFailure not raised : 4",
+   "mutant_sha256": "340eb102b9b0c96f6c2fddd85416fc5f34fb6dd128ddb265c2e81f347e13973e",
+   "tree_dirt_after": [],
+   "seconds": 49.4,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 12 passed in 47.67s"
+   ]
+  },
+  {
+   "name": "BIND_STRICT",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_each_gap_refuses"
+   ],
+   "first_error_line": "E           AssertionError: GateFailure not raised : 6",
+   "mutant_sha256": "5964bdbfd15bda2b6a61164f1c3e96b02718693fc50f6b2b119f7bdd679aee92",
+   "tree_dirt_after": [],
+   "seconds": 49.4,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 12 passed in 47.81s"
+   ]
+  },
+  {
+   "name": "BIND_UNBOUND",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_each_gap_refuses"
+   ],
+   "first_error_line": "E           TypeError: 'NoneType' object is not subscriptable",
+   "mutant_sha256": "0e35dbbf264da9a509f06cf7185dcd6586c7989092cb40e7fdd1e5ba59404941",
+   "tree_dirt_after": [],
+   "seconds": 50.4,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 12 passed in 48.91s"
+   ]
+  },
+  {
+   "name": "BIND_UNDER_LANE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_each_gap_refuses"
+   ],
+   "first_error_line": "E           AssertionError: GateFailure not raised : 5",
+   "mutant_sha256": "b47d44875b01c45da050d766d3e61db6b334108dd4af651e24e81973e6f0c488",
+   "tree_dirt_after": [],
+   "seconds": 49.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 12 passed in 47.09s"
+   ]
+  },
+  {
+   "name": "CFLUX_FINITE_ULP",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_flux_within_one_ulp_passes_and_two_ulps_fail"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "df839897a8799312e7d509f463a498f895f111297c69a0f8aaf7e18b3e450ee8",
+   "tree_dirt_after": [],
+   "seconds": 79.5,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 40 passed in 77.30s (0:01:17)"
+   ]
+  },
+  {
+   "name": "CHECKOUT_CLEAN",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_checkout"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "062194331baa3aa4c322d2310b4bd4f2d4612456bb20e82fea8d6ba6113ba4f4",
+   "tree_dirt_after": [],
+   "seconds": 59.1,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 11 passed in 57.30s"
+   ]
+  },
+  {
+   "name": "CHECKOUT_HEAD",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_checkout"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "68cc78a0e15eb328f9ecdf121e40bc7f4c6c2c5a1a4916bbd5da47d70f6661bb",
+   "tree_dirt_after": [],
+   "seconds": 55.2,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 11 passed in 52.87s"
+   ]
+  },
+  {
+   "name": "CLEANUP_ACCEPTED",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Staging::test_cleanup_refuses_an_unaccepted_product"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "bdc1cbf8ce5570a65e90ab9fc5ab31510b68064cf65ac9544d6d2e7aa01d5da6",
+   "tree_dirt_after": [],
+   "seconds": 424.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 101 passed in 422.43s (0:07:02)"
+   ]
+  },
+  {
+   "name": "CLEANUP_CONFIG",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Staging::test_cleanup_checks_the_binding_the_files_and_the_ledger_first"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "c7132086b7a5424074e83738fc279afacff0f644816ddc4399d3251df372d226",
+   "tree_dirt_after": [],
+   "seconds": 428.7,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 100 passed in 426.69s (0:07:06)"
+   ]
+  },
+  {
+   "name": "CLEANUP_FILES",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Staging::test_cleanup_checks_the_binding_the_files_and_the_ledger_first"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "7e920804841f5c3221437001a6b50bcaf3d0d18cc2e7a714dcbe6c5d0e93d1ae",
+   "tree_dirt_after": [],
+   "seconds": 431.9,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 100 passed in 429.83s (0:07:09)"
+   ]
+  },
+  {
+   "name": "CLEANUP_NODEV",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Staging::test_main_runs_end_to_end_and_cleans_up"
+   ],
+   "first_error_line": "E           AssertionError: 4 != 0",
+   "mutant_sha256": "e06887f01e52de19cec2b183f2f7d1ade32d45d0528d89bc87b1122bd3aeb6a9",
+   "tree_dirt_after": [],
+   "seconds": 463.1,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 102 passed in 461.07s (0:07:41)"
+   ]
+  },
+  {
+   "name": "CLEANUP_NOFOLLOW",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Staging::test_cleanup_checks_the_binding_the_files_and_the_ledger_first"
+   ],
+   "first_error_line": "E       AssertionError: OSError not raised",
+   "mutant_sha256": "cf45f43c0d459b8b42ff074c8c603231fdf8817fd3c32466e9244c29c1eaa62f",
+   "tree_dirt_after": [],
+   "seconds": 646.8,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 100 passed in 644.76s (0:10:44)"
+   ]
+  },
+  {
+   "name": "CLEANUP_SYMLINK",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Staging::test_cleanup_checks_the_binding_the_files_and_the_ledger_first"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "e2ad5fc5f95779d86014f47d6a7a557bf79f53b7f5ffd31b285302799eaa9d44",
+   "tree_dirt_after": [],
+   "seconds": 656.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 100 passed in 654.01s (0:10:54)"
+   ]
+  },
+  {
+   "name": "CMAP_EVENT_SKIP",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_rounding_miss_in_the_map_takes_the_fallback_and_is_recorded"
+   ],
+   "first_error_line": "E           KeyError: 'C-CMAP-EVENT'",
+   "mutant_sha256": "cfbe3ccd16f2f2c037c0aaed43b436c0a4ac6595a30cd18cd61d3f780c113cfd",
+   "tree_dirt_after": [],
+   "seconds": 273.1,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 55 passed in 270.96s (0:04:30)"
+   ]
+  },
+  {
+   "name": "CMAP_REFILL",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_cmap"
+   ],
+   "first_error_line": "E       AssertionError: Tuples differ: ('rounding', False) != ('stop', False)",
+   "mutant_sha256": "23ea57000d6f29648546e4381bae9b8fadadd90e84deffe58981a425e49e6878",
+   "tree_dirt_after": [],
+   "seconds": 115.9,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 34 passed in 113.62s (0:01:53)"
+   ]
+  },
+  {
+   "name": "CMAP_REFILL_DEN",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_cmap"
+   ],
+   "first_error_line": "E       AssertionError: Tuples differ: ('stop', True) != ('stop', False)",
+   "mutant_sha256": "8b925db16dafd61dd8e9fedf7efd2677e32253b64f75261d72a04e314ba33023",
+   "tree_dirt_after": [],
+   "seconds": 165.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 34 passed in 162.27s (0:02:42)"
+   ]
+  },
+  {
+   "name": "CMAP_REFILL_MAP",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_cmap"
+   ],
+   "first_error_line": "E       AssertionError: Tuples differ: ('rounding', True) != ('stop', False)",
+   "mutant_sha256": "b7129adbaaf3f34babac9ef1877999fa51561ce9c7cec07f095cc8d0a64541b7",
+   "tree_dirt_after": [],
+   "seconds": 93.0,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 34 passed in 90.89s (0:01:30)"
+   ]
+  },
+  {
+   "name": "CMAP_REFILL_NUM",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_cmap"
+   ],
+   "first_error_line": "E       AssertionError: Tuples differ: ('stop', True) != ('stop', False)",
+   "mutant_sha256": "0a058e6108609f7c4e33194c5cf73d6614db72c0aba31e72844e14598fb85b21",
+   "tree_dirt_after": [],
+   "seconds": 129.0,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 34 passed in 125.76s (0:02:05)"
+   ]
+  },
+  {
+   "name": "CMAP_ROUNDING_BAND",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_cmap"
+   ],
+   "first_error_line": "E       AssertionError: 'rounding' != 'stop'",
+   "mutant_sha256": "6163308c952573d33b6cdcc22ff8dea60ff2b6282c908ecf93e5035a0e47fd55",
+   "tree_dirt_after": [],
+   "seconds": 117.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 34 passed in 114.50s (0:01:54)"
+   ]
+  },
+  {
+   "name": "CMAP_SKIPPED",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_rounding_miss_in_the_map_takes_the_fallback_and_is_recorded"
+   ],
+   "first_error_line": "E       AssertionError: Lists differ: [] != ['C-CMAP']",
+   "mutant_sha256": "844c1277f0ba5d049a22a96111fb4e024e6a757f21924324d46de5318439fcac",
+   "tree_dirt_after": [],
+   "seconds": 725.5,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 55 passed in 722.71s (0:12:02)"
+   ]
+  },
+  {
+   "name": "CMAP_SOFT",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_any_other_map_failure_stops"
+   ],
+   "first_error_line": "E       AssertionError: 0 != 6",
+   "mutant_sha256": "381ccacfb4ef15d97a565b1ce953a46b7b6de4bd9c86b8ec80ad2b483066ed74",
+   "tree_dirt_after": [],
+   "seconds": 352.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 62 passed in 349.69s (0:05:49)"
+   ]
+  },
+  {
+   "name": "CMAP_TOL",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_cmap"
+   ],
+   "first_error_line": "E       AssertionError: Tuples differ: ('pass', True) != ('rounding', False)",
+   "mutant_sha256": "859375096bfea7992a3626c954b3ae63a92f3aa548fe27b8a5e4365bcff16023",
+   "tree_dirt_after": [],
+   "seconds": 211.9,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 34 passed in 209.13s (0:03:29)"
+   ]
+  },
+  {
+   "name": "CMAP_ZERO_CELLS",
+   "rc": 0,
+   "killed": false,
+   "kind": "none",
+   "failed_tests": [],
+   "first_error_line": "",
+   "mutant_sha256": "76cba4482f87e23d32d4b83a7713dc1ecb3a250508aa5c9af04d139830f9550f",
+   "tree_dirt_after": [],
+   "seconds": 1260.5,
+   "tail": [
+    "........................................                                 [100%]",
+    "112 passed in 1258.09s (0:20:58)"
+   ]
+  },
+  {
+   "name": "COMPLETE_ALL_COLUMNS",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_complete_equal_multisets_pass"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "992e76b45d118d8d8a98f36adf2bf7d57ba4e222da20649d6135e057d7cda6e3",
+   "tree_dirt_after": [],
+   "seconds": 212.2,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 35 passed in 208.67s (0:03:28)"
+   ]
+  },
+  {
+   "name": "COMPLETE_SORT",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_complete_equal_multisets_pass"
+   ],
+   "first_error_line": "E       AssertionError: False is not true",
+   "mutant_sha256": "87c04953ecc77fb17e5083442e29491240d2543595f61da92fc0982023989f0f",
+   "tree_dirt_after": [],
+   "seconds": 209.5,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 35 passed in 206.87s (0:03:26)"
+   ]
+  },
+  {
+   "name": "COMPLETE_VALUE_SORT",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_complete_sorts_by_bit_pattern"
+   ],
+   "first_error_line": "E       AssertionError: False is not true",
+   "mutant_sha256": "cd37702f256abb820fcaab0a97d7fc2b392fb071c5c52a34184a552152bc2d19",
+   "tree_dirt_after": [],
+   "seconds": 209.0,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 36 passed in 205.70s (0:03:25)"
+   ]
+  },
+  {
+   "name": "CSTAGE_RO",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Staging::test_c_stage_sees_a_replaced_name_and_a_writable_root"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "a30e8cc1bf516714de7913ed4fc80020749b52a47f2ddf873f8b31264aa243a3",
+   "tree_dirt_after": [],
+   "seconds": 482.8,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 99 passed in 480.60s (0:08:00)"
+   ]
+  },
+  {
+   "name": "CSTAGE_SAME",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_replaced_staged_input_fails_c_stage"
+   ],
+   "first_error_line": "E       AssertionError: 0 != 6",
+   "mutant_sha256": "66886c21a756befb423a39ce5cb1d5a1ac6ab77b7dd011c67d1fd80a8fe241bc",
+   "tree_dirt_after": [],
+   "seconds": 191.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 54 passed in 189.55s (0:03:09)"
+   ]
+  },
+  {
+   "name": "DENOM_META",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Fallback::test_a_wrong_denominator_meta_fails_c_file"
+   ],
+   "first_error_line": "E       AssertionError: 0 != 6",
+   "mutant_sha256": "0f864bd49b300e037e15cd9111b0606c9ae6c24396998d94f97f7040976334e4",
+   "tree_dirt_after": [],
+   "seconds": 370.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 77 passed in 368.08s (0:06:08)"
+   ]
+  },
+  {
+   "name": "DIGEST_SHAPE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Recorders::test_digest_sees_dtype_shape_and_float_bits"
+   ],
+   "first_error_line": "E       AssertionError: '61178c237acf5e7cab5459a1562297168b5d4554536d246c75f17079e1e86773' == '61178c237acf5e7cab5459a1562297168b5d4554536d246c75f17079e1e86773'",
+   "mutant_sha256": "b6b67780f78cc12194ef276014d8fb673d1803ef7f5bf09d7695462753ca46a1",
+   "tree_dirt_after": [],
+   "seconds": 56.1,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 21 passed in 54.10s"
+   ]
+  },
+  {
+   "name": "DONE_ATOMIC",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_the_done_marker_is_published_whole_or_not_at_all"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "4d08a7fc8d53df8548656a182727c58efd4c2d4ad4c508e36d85d43f0469589f",
+   "tree_dirt_after": [],
+   "seconds": 403.7,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 71 passed in 401.02s (0:06:41)"
+   ]
+  },
+  {
+   "name": "EXACT_NONEMPTY",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_exact_gate"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "fda32a8140477c9d44f9d7f35943456b650d40db6782e5054a046a50abb3a34a",
+   "tree_dirt_after": [],
+   "seconds": 158.1,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 38 passed in 154.36s (0:02:34)"
+   ]
+  },
+  {
+   "name": "EXACT_RTOL",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_exact_gate"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "f69d457d7cf149cff6cb50814006a56328db2914e499999d8af52872007ac906",
+   "tree_dirt_after": [],
+   "seconds": 131.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 38 passed in 129.20s (0:02:09)"
+   ]
+  },
+  {
+   "name": "EXACT_ZEROS",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_exact_gate"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "58d37d804141c605d3d86194cb0443a94f5f0c43a0a843fc1a5db582a5a20568",
+   "tree_dirt_after": [],
+   "seconds": 145.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 38 passed in 142.94s (0:02:22)"
+   ]
+  },
+  {
+   "name": "FILE_CONSTANTS",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_tampered_constants_json_fails_c_file"
+   ],
+   "first_error_line": "E       AssertionError: 0 != 6",
+   "mutant_sha256": "dbbfe939a0fdaddf1cdab240368c5b048dc269f14fc405b572155cf89075847a",
+   "tree_dirt_after": [],
+   "seconds": 320.0,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 58 passed in 317.97s (0:05:17)"
+   ]
+  },
+  {
+   "name": "FILE_DENOM",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Fallback::test_a_tampered_denominator_fails_c_file"
+   ],
+   "first_error_line": "E       AssertionError: 0 != 6",
+   "mutant_sha256": "e1c59af1e6ece407ff5293938efe876aeb6b6f86fbe34375dad415592f093dea",
+   "tree_dirt_after": [],
+   "seconds": 463.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 76 passed in 461.21s (0:07:41)"
+   ]
+  },
+  {
+   "name": "FILE_DTYPES",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_wrong_dtype_fails_c_file"
+   ],
+   "first_error_line": "E   AssertionError: 0 != 6",
+   "mutant_sha256": "553ebdb2dd3c2092e8b7149925956ccd0962856cf56b9da74bd3901c11f10b75",
+   "tree_dirt_after": [],
+   "seconds": 561.9,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 59 passed in 559.52s (0:09:19)"
+   ]
+  },
+  {
+   "name": "FILE_ENTRIES",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_shifted_key_fails_c_file"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "b7de0206ecc3629631391bbe9f2a429bc5acb0c7f9c3230439c58a078e449019",
+   "tree_dirt_after": [],
+   "seconds": 460.4,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 57 passed in 457.89s (0:07:37)"
+   ]
+  },
+  {
+   "name": "FILE_META",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_the_exactness_tests_use_the_saved_grids"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "1d701ef1a2d807a0798784fb37cf61546a78697f691a6695b13341f4472c4b2a",
+   "tree_dirt_after": [],
+   "seconds": 669.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 72 passed in 666.34s (0:11:06)"
+   ]
+  },
+  {
+   "name": "FILE_SAVED_SELECTOR",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Fallback::test_the_exactness_tests_use_the_saved_completeness_selector"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "6bc7d0a91f60ed4ca07688ca2a753d8fdb02f4eccebd742a7516a58595366676",
+   "tree_dirt_after": [],
+   "seconds": 384.5,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 80 passed in 382.77s (0:06:22)"
+   ]
+  },
+  {
+   "name": "FILE_TRUTH_PT",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_changed_truth_value_fails_c_file"
+   ],
+   "first_error_line": "E   AssertionError: 0 != 6",
+   "mutant_sha256": "052e9aad5a86075b71ce267c3a65a91d8721317a2d32ed0f954767f81a444606",
+   "tree_dirt_after": [],
+   "seconds": 211.0,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 47 passed in 208.78s (0:03:28)"
+   ]
+  },
+  {
+   "name": "FILE_UNFOLDED",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_changed_flow_row_fails_c_file_and_c_flow"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "1e384ea6392af6a80aafabcb88ee5349ca71148fb138bc0585d5ea0dc2f9db6f",
+   "tree_dirt_after": [],
+   "seconds": 161.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 45 passed in 159.39s (0:02:39)"
+   ]
+  },
+  {
+   "name": "FLOW_SIDE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "0b1fb1740d4d3f1376afa12ae4c7d22bb818169655a2bdd23b7fe7c1ca36b1e8",
+   "tree_dirt_after": [],
+   "seconds": 89.7,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 87.51s (0:01:27)"
+   ]
+  },
+  {
+   "name": "FLOW_TOL",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_changed_flow_row_fails_c_file_and_c_flow"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "6f1f4d32b7b64b3db450386fd2bdfa67c9ab526a7522a6c413188346699385fd",
+   "tree_dirt_after": [],
+   "seconds": 219.9,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 45 passed in 216.93s (0:03:36)"
+   ]
+  },
+  {
+   "name": "FLOW_TRUTH_HIST",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_changed_prior_on_a_flow_row_fails_c_flow"
+   ],
+   "first_error_line": "E       KeyError: 'hTruth2D'",
+   "mutant_sha256": "1bd6bdd9360b05a7bacefd68bcd496ad194623548bc0dbc7afcb64c0dbc76454",
+   "tree_dirt_after": [],
+   "seconds": 252.4,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 46 passed in 249.79s (0:04:09)"
+   ]
+  },
+  {
+   "name": "FLUX_COUNT",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_flux_within_one_ulp_passes_and_two_ulps_fail"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "b22ee850c4eed868cc1c3e24ef756ae31331a2f5eaa88dbd27564f1018c79ae2",
+   "tree_dirt_after": [],
+   "seconds": 193.7,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 40 passed in 189.62s (0:03:09)"
+   ]
+  },
+  {
+   "name": "FLUX_SCALAR_ON_FAIL",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_unequal_flux_fails_the_run"
+   ],
+   "first_error_line": "E       AssertionError: 'phi_m2_per_POT' unexpectedly found in {'analysis_pt_edges': [0.0, 0.07, 0.15, 0.25, 0.33, 0.4, 0.47, 0.55, 0.7, 0.85, 1.0, 1.25, 1.5, 2.5, 4.5], 'analysis_pz_edges': [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0, 60.0], 'cm2_per_m2': 100",
+   "mutant_sha256": "9b197a98ca31dd1e43ccd9a4dbdc5091748d56d9d0e7c846dbbebe6b9443667e",
+   "tree_dirt_after": [],
+   "seconds": 1088.8,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 74 passed in 1085.84s (0:18:05)"
+   ]
+  },
+  {
+   "name": "FLUX_ULP",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_flux_within_one_ulp_passes_and_two_ulps_fail"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "509f88d4c25c9bd1e4050bef7ff3104de29e3049d65dd3ba2f270bac574936a0",
+   "tree_dirt_after": [],
+   "seconds": 176.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 40 passed in 173.59s (0:02:53)"
+   ]
+  },
+  {
+   "name": "GIT_ENV",
+   "rc": 0,
+   "killed": false,
+   "kind": "none",
+   "failed_tests": [],
+   "first_error_line": "",
+   "mutant_sha256": "f07338acaccf19634a29631863b0a4028c80c09369514e3e7405633691cde4b8",
+   "tree_dirt_after": [],
+   "seconds": 419.2,
+   "tail": [
+    "........................................                                 [100%]",
+    "112 passed in 417.10s (0:06:57)"
+   ]
+  },
+  {
+   "name": "GIT_TOPLEVEL",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_checkout"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "57bb5fdcc3c837499ecbc9a05712895edc37ae0861edd99f036c9d1f98f9175c",
+   "tree_dirt_after": [],
+   "seconds": 47.5,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 11 passed in 45.88s"
+   ]
+  },
+  {
+   "name": "HELD_READ",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_name_swapped_and_restored_cannot_feed_the_independent_read"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "422d435aa394f1a8040d087f0e5e9e8e75d98387b743839ae599e797f1debc80",
+   "tree_dirt_after": [],
+   "seconds": 155.0,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 52 passed in 153.58s (0:02:33)"
+   ]
+  },
+  {
+   "name": "INTERP_PRELOAD",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_interpreter"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "a2e00f338488cc3f86f7eee28fefa9b21d4e06e703c5b1c8ec3e8ee03b34c8ce",
+   "tree_dirt_after": [],
+   "seconds": 51.9,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 13 passed in 50.43s"
+   ]
+  },
+  {
+   "name": "INTERP_PYCACHE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_interpreter"
+   ],
+   "first_error_line": "E               AssertionError: GateFailure not raised",
+   "mutant_sha256": "65d990fe84074e5e630b7231d15214669d2e70bd9f26a472f6df5077060be675",
+   "tree_dirt_after": [],
+   "seconds": 49.7,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 13 passed in 47.65s"
+   ]
+  },
+  {
+   "name": "KEY_BOUNDS",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "90349b36f4d920f48398a40b874dbbef94168883fad5428223f6f003f0c83529",
+   "tree_dirt_after": [],
+   "seconds": 112.4,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 109.27s (0:01:49)"
+   ]
+  },
+  {
+   "name": "KEY_DTYPE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Key::test_branch_types_are_required"
+   ],
+   "first_error_line": "E           AssertionError: GateFailure not raised : {'MC': ('f', 'F')}",
+   "mutant_sha256": "14e408244325f1ead6331f818f60254e0b3f794472542b35583d76fa619ed309",
+   "tree_dirt_after": [],
+   "seconds": 198.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 25 passed in 194.83s (0:03:14)"
+   ]
+  },
+  {
+   "name": "KEY_EARLY_STOP",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_failed_key_fails_the_run_cleanly"
+   ],
+   "first_error_line": "E           AssertionError: True is not false",
+   "mutant_sha256": "9630a1e01e6c193e00828c1fb3d5b3b26f80d883b9b21e7d07f0407d86a7804b",
+   "tree_dirt_after": [],
+   "seconds": 137.7,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 50 passed in 135.29s (0:02:15)"
+   ]
+  },
+  {
+   "name": "KEY_ENTRY_NUMBERS",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "9ca8d5c312e5cdf03ab6b9dc7d8b7f4d9a10265a2a28c15a395a2996c0c7d000",
+   "tree_dirt_after": [],
+   "seconds": 111.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 109.17s (0:01:49)"
+   ]
+  },
+  {
+   "name": "KEY_EQUAL",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Key::test_a_shorter_independent_read_fails"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "2c7d73983e87e30d822a88bfd795d8980f3e4acfe22a342fbdc07c5c07e56182",
+   "tree_dirt_after": [],
+   "seconds": 200.0,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 24 passed in 196.12s (0:03:16)"
+   ]
+  },
+  {
+   "name": "KEY_FLOAT_BITS",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Key::test_negative_zero_is_not_zero"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "9965beb26b010b9b92d21093f2cdcd02510b58e3fa1b46452f2b2c0ef640291e",
+   "tree_dirt_after": [],
+   "seconds": 183.8,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 30 passed in 180.61s (0:03:00)"
+   ]
+  },
+  {
+   "name": "KEY_IMPLICIT_MT",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Key::test_implicit_mt_refuses"
+   ],
+   "first_error_line": "E           AssertionError: GateFailure not raised",
+   "mutant_sha256": "0ff65275c4954dbf29482cc282f642e6d9850c85fea5cc05b7229e65c1db43a2",
+   "tree_dirt_after": [],
+   "seconds": 211.2,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 28 passed in 208.79s (0:03:28)"
+   ]
+  },
+  {
+   "name": "KEY_INCREASING",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Key::test_unordered_or_oversized_entries_fail"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "10dc9702acd2021b1feb100386298628a5266f612e4b7021a3443540610d1a7a",
+   "tree_dirt_after": [],
+   "seconds": 200.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 33 passed in 197.03s (0:03:17)"
+   ]
+  },
+  {
+   "name": "KEY_NO_THETA",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "3d287d58602bb33580fd591ec6a40232edcd458da7afa01ef351a9952babcd65",
+   "tree_dirt_after": [],
+   "seconds": 132.8,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 129.81s (0:02:09)"
+   ]
+  },
+  {
+   "name": "KEY_POT",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "7f70e24a5e238d62727576c28f2b9185a63358cb663ea14b231a900f67e6c7d3",
+   "tree_dirt_after": [],
+   "seconds": 95.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 93.74s (0:01:33)"
+   ]
+  },
+  {
+   "name": "KEY_RECO_NEEDS_PASS",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "786cb2dec55a2c5869d8b5baa50f9f1fc10638fc303b76d6e3a5d2b0cba40f37",
+   "tree_dirt_after": [],
+   "seconds": 100.1,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 98.03s (0:01:38)"
+   ]
+  },
+  {
+   "name": "KEY_RECO_SENTINEL",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "179f3985c718689a115dc8417a4485d24b6e9abb3c9469c9bc8481f182ebd999",
+   "tree_dirt_after": [],
+   "seconds": 98.9,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 97.11s (0:01:37)"
+   ]
+  },
+  {
+   "name": "KEY_RECO_TOP_EDGE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "4a01721d1bb2c71e8d3771fc0d493a1c4d70c85cef67c033ef90c88f249aa517",
+   "tree_dirt_after": [],
+   "seconds": 137.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 134.13s (0:02:14)"
+   ]
+  },
+  {
+   "name": "KEY_SIM_PASS_DTYPE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Key::test_branch_types_are_required"
+   ],
+   "first_error_line": "E           AssertionError: GateFailure not raised : {'sim_pass': ('i', 'I')}",
+   "mutant_sha256": "4fc9ed0e7e1a91627c9a5ee97be1d911e13b4908e2baa0118a9d89e83c28fcfc",
+   "tree_dirt_after": [],
+   "seconds": 200.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 25 passed in 196.38s (0:03:16)"
+   ]
+  },
+  {
+   "name": "KEY_TRUTH_SENTINEL",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "10b7da33241573f96c3df22a340ca9d4153c356c6d7e3f960112e1c0e9731c46",
+   "tree_dirt_after": [],
+   "seconds": 97.4,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 94.52s (0:01:34)"
+   ]
+  },
+  {
+   "name": "KEY_UINT32",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Key::test_unordered_or_oversized_entries_fail"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "8c3e95ecaf804c5be4591ce12215703b20df999f0043d6c3363058e25d70b17c",
+   "tree_dirt_after": [],
+   "seconds": 188.2,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 33 passed in 184.78s (0:03:04)"
+   ]
+  },
+  {
+   "name": "KEY_WRECO_BOUND",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "3070e73928b916cb6d378f541a6ee9999df92336599e8046cdab779421f2f5c8",
+   "tree_dirt_after": [],
+   "seconds": 132.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 129.58s (0:02:09)"
+   ]
+  },
+  {
+   "name": "KEY_WTRUTH_SIGN",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "b75586a578dc93429dbdf3c673c9255f9b00960e9cc4ddd32cd4a24b06b7f56b",
+   "tree_dirt_after": [],
+   "seconds": 131.7,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 129.68s (0:02:09)"
+   ]
+  },
+  {
+   "name": "LEDGER_NLINK",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Staging::test_cleanup_checks_the_binding_the_files_and_the_ledger_first"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "5abbb1646eb032108fe7516ce1a2b012031582dbfd2652925f3f3acb7a095962",
+   "tree_dirt_after": [],
+   "seconds": 438.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 100 passed in 436.27s (0:07:16)"
+   ]
+  },
+  {
+   "name": "MAIN_ALLOCATION",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Refusals::test_main_run_needs_the_allocation"
+   ],
+   "first_error_line": "E       AssertionError: main() ran without an allocation",
+   "mutant_sha256": "bef884d8e9c4687279f30072495cf60017288af1cbecdf31ff25b5d4fce8a317",
+   "tree_dirt_after": [],
+   "seconds": 395.7,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 93 passed in 393.61s (0:06:33)"
+   ]
+  },
+  {
+   "name": "MAIN_CHECKOUT",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Refusals::test_main_refuses_a_driver_tree_off_the_pinned_commit"
+   ],
+   "first_error_line": "E           AssertionError: 0 != 4",
+   "mutant_sha256": "c6681d26eb52551d65986edc41594b591814793c51dc0e559c11e559e8a1c432",
+   "tree_dirt_after": [],
+   "seconds": 350.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 90 passed in 348.56s (0:05:48)"
+   ]
+  },
+  {
+   "name": "MAIN_INTERPRETER",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Refusals::test_main_needs_python_b"
+   ],
+   "first_error_line": "E       AssertionError: main() reached the import without python -B",
+   "mutant_sha256": "7f423da9748f3b860a93e49c191e8de0877b9640ac5d46bef41cec3fca8e7a4d",
+   "tree_dirt_after": [],
+   "seconds": 352.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 89 passed in 350.41s (0:05:50)"
+   ]
+  },
+  {
+   "name": "MAIN_PYTHON_B",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Binding::test_interpreter"
+   ],
+   "first_error_line": "E               AssertionError: GateFailure not raised",
+   "mutant_sha256": "0deb8a615eb63427970c73cb181c7722ef5738ead79965c997287747ca29fc73",
+   "tree_dirt_after": [],
+   "seconds": 50.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 13 passed in 48.80s"
+   ]
+  },
+  {
+   "name": "MAIN_RUNNER_REFUSAL",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Refusals::test_main_catches_the_runners_own_refusal"
+   ],
+   "first_error_line": "E       ref_c2c1.GateFailure: the runner refused",
+   "mutant_sha256": "339498476ed5aadd260724059ef312d8f1849cf02466699a6a0ca0ab2b999a67",
+   "tree_dirt_after": [],
+   "seconds": 402.8,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 88 passed in 400.80s (0:06:40)"
+   ]
+  },
+  {
+   "name": "MANIFEST_LATE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_replaced_driver_output_fails_acceptance"
+   ],
+   "first_error_line": "E       AssertionError: 0 != 6",
+   "mutant_sha256": "784a569851ced16c6a0ecfdd17b1ea977ab869419307c3e72320145fda4ac3f0",
+   "tree_dirt_after": [],
+   "seconds": 181.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 53 passed in 179.51s (0:02:59)"
+   ]
+  },
+  {
+   "name": "PINS_CACHE_AFTER",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_cache_written_during_the_run_fails_c_pins"
+   ],
+   "first_error_line": "E       AssertionError: 0 != 6",
+   "mutant_sha256": "f8a7fbfb5106447ee2e15150b0f6802b0e7f07f221db892b557c2db81a018fa2",
+   "tree_dirt_after": [],
+   "seconds": 109.5,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 44 passed in 107.37s (0:01:47)"
+   ]
+  },
+  {
+   "name": "PINS_LINK",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_pin_reached_through_a_link_refuses"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "df33683a828545fb9387c1092122af1d8b511922317e95e7324e9fa84a4e13e8",
+   "tree_dirt_after": [],
+   "seconds": 43.0,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 3 passed in 41.09s"
+   ]
+  },
+  {
+   "name": "PIN_PYCACHE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_bytecode_cache_refuses"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "37e3251da8bb54e9d2dbdc4c650f95b2479c99ff9e2200946d86d168d5b5796e",
+   "tree_dirt_after": [],
+   "seconds": 8.2,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed in 6.07s"
+   ]
+  },
+  {
+   "name": "PIN_TREE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_changed_byte_refuses"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "abc9c8676c36677cf11ded2039f6763893f690ee1c0754e827ecb3117290e1bd",
+   "tree_dirt_after": [],
+   "seconds": 9.4,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 1 passed in 7.54s"
+   ]
+  },
+  {
+   "name": "REC_ARGS_UNCHANGED",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Recorders::test_a_call_that_changes_its_arguments_fails"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "b91f70b6004eb20c1feb5482ce0cebf4760b12cdaabc87fe2c49201e616fa71c",
+   "tree_dirt_after": [],
+   "seconds": 52.7,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 16 passed in 51.13s"
+   ]
+  },
+  {
+   "name": "REC_DICT_COPY",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Recorders::test_in_the_run_each_caller_receives_the_real_object"
+   ],
+   "first_error_line": "E           AssertionError: {'truth_pt': array([0.56868993, 0.54917   , 1.77046479, ..., 0.23328078, 1.28197402,",
+   "mutant_sha256": "b986933eb9c342203a4eb2be3e99b63aab6c13575ecf291e8b40ff0bff9c86ea",
+   "tree_dirt_after": [],
+   "seconds": 61.2,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 22 passed in 59.77s"
+   ]
+  },
+  {
+   "name": "REC_IDENTITY",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Recorders::test_in_the_run_each_caller_receives_the_real_object"
+   ],
+   "first_error_line": "E           AssertionError: (array([5.45308298, 1.07739354, 3.78696809, ..., 0.18273889, 2.9065364 ,",
+   "mutant_sha256": "fd5c7b8a128dbc846cc191e43e12acc2bbaab2390074a0c26e853e276ec9a21c",
+   "tree_dirt_after": [],
+   "seconds": 61.0,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 22 passed in 59.46s"
+   ]
+  },
+  {
+   "name": "REC_OUT_UNCHANGED",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Recorders::test_a_later_change_to_the_output_fails"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "224d0e56516737016684c7ff7e98c90ac058bf49445223b475eb16e8c389e42e",
+   "tree_dirt_after": [],
+   "seconds": 54.1,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 17 passed in 52.24s"
+   ]
+  },
+  {
+   "name": "REC_REQUIRE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Recorders::test_a_missing_call_fails"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "41de0a204075a2de04f0d983b568774985dbc917f7985c0863f5ac5877c272df",
+   "tree_dirt_after": [],
+   "seconds": 46.8,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 18 passed in 45.35s"
+   ]
+  },
+  {
+   "name": "REC_TWICE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Recorders::test_a_second_call_refuses"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "8a196fc839ee2fbc2b7207636aa52a1f184ec01f2d912d6442d69a725a8b64d0",
+   "tree_dirt_after": [],
+   "seconds": 62.5,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 20 passed in 60.86s (0:01:00)"
+   ]
+  },
+  {
+   "name": "REFS_ONE_BUFFER",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED References::test_the_references_judged_are_the_bytes_hashed"
+   ],
+   "first_error_line": "E       AssertionError: False is not true",
+   "mutant_sha256": "e27afc9b5e9d22fcac9920f8ea74f3d85280b993a0c0b258a0f8afad6cff19cf",
+   "tree_dirt_after": [],
+   "seconds": 521.5,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 111 passed in 518.90s (0:08:38)"
+   ]
+  },
+  {
+   "name": "REF_GRIDS",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_reference_grids_are_enforced"
+   ],
+   "first_error_line": "E           AssertionError: GateFailure not raised : er_pt_edges",
+   "mutant_sha256": "edbcac5ffa6ece1eb814446458082adeef91dfe68fa7363319d00b5114d94d7b",
+   "tree_dirt_after": [],
+   "seconds": 268.9,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 67 passed in 267.35s (0:04:27)"
+   ]
+  },
+  {
+   "name": "REF_KEYS",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED References::test_a_reference_with_a_missing_key_or_wrong_dtype_refuses"
+   ],
+   "first_error_line": "E           KeyError: 'paper'",
+   "mutant_sha256": "ae37d32518f645e72aa305619ddb20dcd788806429c9806e396925c7443e9e94",
+   "tree_dirt_after": [],
+   "seconds": 417.5,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 105 passed in 415.04s (0:06:55)"
+   ]
+  },
+  {
+   "name": "REF_PIN",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_refusals"
+   ],
+   "first_error_line": "E       KeyError: 'CV'",
+   "mutant_sha256": "38c08450f674173030486656f5a7651bd7821924a46f940c728a8fab4ec272fb",
+   "tree_dirt_after": [],
+   "seconds": 277.4,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 68 passed in 275.70s (0:04:35)"
+   ]
+  },
+  {
+   "name": "REF_VECTOR_DTYPE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED References::test_a_reference_with_a_missing_key_or_wrong_dtype_refuses"
+   ],
+   "first_error_line": "E           AssertionError: GateFailure not raised",
+   "mutant_sha256": "3fa81dcc0f059264f8e3aa98a0efe84de3a220545250b4a071792751682d0103",
+   "tree_dirt_after": [],
+   "seconds": 391.4,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 105 passed in 389.53s (0:06:29)"
+   ]
+  },
+  {
+   "name": "RUN_COMPLETE_IS_FATAL",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_rounding_miss_in_the_map_takes_the_fallback_and_is_recorded"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0 : {\"C-CMAP\": {\"cells_positive\": 200, \"kind\": \"rounding\", \"max_dev\": 3e-11, \"pass\": false, \"zero_cells_zero\": true}, \"C-CMAP-EVENT\": {\"max_rel\": 0.0, \"pass\": true}, \"C-COMPLETE\": {\"denominator_rows\": 3010, \"pass\": true, \"signal_rows\": 3010}, \"C-EXACT-ER\": {\"cells\": 163,",
+   "mutant_sha256": "cf184d4defc923ededd178e92982ba8a877dd5bebd1bae91024f566e8abf2934",
+   "tree_dirt_after": [],
+   "seconds": 447.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 55 passed in 444.91s (0:07:24)"
+   ]
+  },
+  {
+   "name": "RUN_CPUS",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_refusals"
+   ],
+   "first_error_line": "E       KeyError: 'CV'",
+   "mutant_sha256": "0eeb21d013980653e566ea4606c6a81be5b34cd79b17b5ab582e772db50a5c84",
+   "tree_dirt_after": [],
+   "seconds": 289.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 68 passed in 288.13s (0:04:48)"
+   ]
+  },
+  {
+   "name": "RUN_DONE_COMPLETE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_failed_acceptance_fails_the_run"
+   ],
+   "first_error_line": "E       AssertionError: 0 != 6",
+   "mutant_sha256": "a28ace833b421232d37b1d855cd187d6b7c37f2b3a250df1893dba93f493c2a7",
+   "tree_dirt_after": [],
+   "seconds": 117.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 49 passed in 115.90s (0:01:55)"
+   ]
+  },
+  {
+   "name": "RUN_NO_FALLBACK",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_rounding_miss_in_the_map_takes_the_fallback_and_is_recorded"
+   ],
+   "first_error_line": "E       TypeError: 'NoneType' object is not subscriptable",
+   "mutant_sha256": "6cd90a11cbbf924219b0d385a60ed7f67e17435ee4384fcd194021230c7f3fd9",
+   "tree_dirt_after": [],
+   "seconds": 499.2,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 55 passed in 495.97s (0:08:15)"
+   ]
+  },
+  {
+   "name": "RUN_OUT_EXISTS",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_refusals"
+   ],
+   "first_error_line": "E           FileExistsError: [Errno 17] File exists: '/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7e3f49f7-e8e4-452d-b380-399d4f6c529e/scratchpad/evw2d-test-swc93_6u/tmpc5se_9xk/out26'",
+   "mutant_sha256": "6ca374fcce125ef15b465058510d1a11067a367f6b7ef2095ff6fd8f9462f9d8",
+   "tree_dirt_after": [],
+   "seconds": 279.7,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 68 passed in 277.92s (0:04:37)"
+   ]
+  },
+  {
+   "name": "RUN_PAPER_EDGES",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "a5c23314ff9e16e7d912ee7b11989cc7c60dc03c9c4f84e868cdc1b4597c170d",
+   "tree_dirt_after": [],
+   "seconds": 41.0,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 39.36s"
+   ]
+  },
+  {
+   "name": "RUN_PINS_AFTER",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_c_pins_fails_when_the_pre_run_digests_differ"
+   ],
+   "first_error_line": "E       AssertionError: 0 != 6",
+   "mutant_sha256": "22925d69fda03d74788a80e3ef52ba1b20f87125087d91499c50f1d002b80b0d",
+   "tree_dirt_after": [],
+   "seconds": 51.8,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 4 passed in 50.27s"
+   ]
+  },
+  {
+   "name": "RUN_POT_META",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_meta_and_manifest"
+   ],
+   "first_error_line": "E       AssertionError: Tuples differ: (1e+20, 1e+20, 0.25) != (1e+20, 4e+20, 0.25)",
+   "mutant_sha256": "e538f4a24777736cabce8ccfd3786937b38141375aef1e9dd718a67d0101e6b9",
+   "tree_dirt_after": [],
+   "seconds": 269.4,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 65 passed in 267.77s (0:04:27)"
+   ]
+  },
+  {
+   "name": "RUN_REC_NAMES",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_clean_run_passes_every_control"
+   ],
+   "first_error_line": "E       AssertionError: Items in the second set but not the first:",
+   "mutant_sha256": "82a64dce995efd84f3c10dc66cac5f029fb40163e398ae1ec3a66df5f39be720",
+   "tree_dirt_after": [],
+   "seconds": 265.5,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 63 passed in 263.86s (0:04:23)"
+   ]
+  },
+  {
+   "name": "RUN_REQUIRE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Recorders::test_a_missing_seam_refuses"
+   ],
+   "first_error_line": "E       KeyError: 'get_pot_scales'",
+   "mutant_sha256": "ef8ab16e5baccf1024f6e9c31514c24d0175170fcc11d91e7523666e4e8001d1",
+   "tree_dirt_after": [],
+   "seconds": 54.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 19 passed in 52.42s"
+   ]
+  },
+  {
+   "name": "RUN_SAVED_CONSTANTS",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_the_exactness_tests_use_the_saved_grids"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "b3a16a9700d0f10c5436094fd4326e51e8a9da9d9e0ed8833b24f8468630c719",
+   "tree_dirt_after": [],
+   "seconds": 614.8,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 72 passed in 612.47s (0:10:12)"
+   ]
+  },
+  {
+   "name": "RUN_SAVED_GRIDS",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_the_exactness_tests_use_the_saved_grids"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "9736350cc8cc17cec6523a73f3cdf6fcaf0e4a5f0d3fafa5a12df25c613aff7d",
+   "tree_dirt_after": [],
+   "seconds": 307.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 72 passed in 305.61s (0:05:05)"
+   ]
+  },
+  {
+   "name": "RUN_SAVED_SELECTOR",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Fallback::test_the_exactness_tests_use_the_saved_completeness_selector"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "2875601fd0cdd59f86f0353b5e0896d33f78869a9df9e62631ad080c8e0b0ab8",
+   "tree_dirt_after": [],
+   "seconds": 393.9,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 80 passed in 391.81s (0:06:31)"
+   ]
+  },
+  {
+   "name": "RUN_SELF_AGAINST_ER",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_wrong_reference_fails_its_exactness_test"
+   ],
+   "first_error_line": "E           AssertionError: False is not true : er",
+   "mutant_sha256": "1a812979b14471b9a593f0d00e426000ab16e29f7a5c219d1985a0685f205edf",
+   "tree_dirt_after": [],
+   "seconds": 420.8,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 60 passed in 418.73s (0:06:58)"
+   ]
+  },
+  {
+   "name": "RUN_THREADS",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_refusals"
+   ],
+   "first_error_line": "E       KeyError: 'CV'",
+   "mutant_sha256": "2e94a551f88fe0dcd9ad774573d59765fc2da0da0824ec39a631c45de12eda31",
+   "tree_dirt_after": [],
+   "seconds": 289.5,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 68 passed in 287.79s (0:04:47)"
+   ]
+  },
+  {
+   "name": "SAMEBITS_DTYPE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_same_bits_needs_the_dtype"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "f92735d86c7403c9fabe611fd8ce2f607e6a2494c198dcfa26f2a47ead2d5585",
+   "tree_dirt_after": [],
+   "seconds": 67.2,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 41 passed in 65.50s (0:01:05)"
+   ]
+  },
+  {
+   "name": "SELF_FILE_DRIVER",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_driver_output_replaced_before_it_returns_fails_c_self"
+   ],
+   "first_error_line": "E       AssertionError: 0 != 6",
+   "mutant_sha256": "b24dacd7a0f7c27494deca62baf2eb5c2033efd45c720a18afc61d706a163f5d",
+   "tree_dirt_after": [],
+   "seconds": 115.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 48 passed in 113.40s (0:01:53)"
+   ]
+  },
+  {
+   "name": "STAGED_DIGEST",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Staging::test_stage_copies_checks_and_refuses"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "91f5f23fb845433cdeb1e534690e974fb6dd9c05de31cc7dcd370c8c3572f303",
+   "tree_dirt_after": [],
+   "seconds": 395.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 103 passed in 393.37s (0:06:33)"
+   ]
+  },
+  {
+   "name": "STAGED_HELD_OPEN",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Staging::test_a_file_replaced_at_open_refuses"
+   ],
+   "first_error_line": "E           AssertionError: \"replaced while it was opened\" does not match \"the staged MC has sha256 e40b7ae4b5a7, not its pin\"",
+   "mutant_sha256": "fa33130ba1f3a037e5fcbaa0951b61653ff252d78ee4fd7d56e3ad9b00c4825e",
+   "tree_dirt_after": [],
+   "seconds": 351.4,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 97 passed in 349.37s (0:05:49)"
+   ]
+  },
+  {
+   "name": "STAGED_LINK",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Staging::test_a_staged_name_that_is_a_link_refuses"
+   ],
+   "first_error_line": "E       AssertionError: GateFailure not raised",
+   "mutant_sha256": "9a5f02b38e2a8d3b43e91b825f56e450a5d699f7994f50c1476b2a7ba28864f4",
+   "tree_dirt_after": [],
+   "seconds": 659.6,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 98 passed in 657.35s (0:10:57)"
+   ]
+  },
+  {
+   "name": "STAGE_CLEANUP",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Refusals::test_a_failed_stage_leaves_no_file"
+   ],
+   "first_error_line": "E       AssertionError: Lists differ: ['a.root', 'a.root.partial.nid001234.90167.93f44c8[57 chars]640'] != ['a.root']",
+   "mutant_sha256": "f1566a6b1935056d2e2572acb484e3f4a32a04c4fb51135bc1532ed1a73f5b80",
+   "tree_dirt_after": [],
+   "seconds": 452.2,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 84 passed in 450.05s (0:07:30)"
+   ]
+  },
+  {
+   "name": "STAGE_DIGEST",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Refusals::test_a_failed_stage_leaves_no_file"
+   ],
+   "first_error_line": "E           AssertionError: 0 != 4",
+   "mutant_sha256": "0067d30945083964097ca279b9acd650ed0deb73e9ceaad12c4d52895d6f9fab",
+   "tree_dirt_after": [],
+   "seconds": 415.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 84 passed in 412.98s (0:06:52)"
+   ]
+  },
+  {
+   "name": "STAGE_EXISTS",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Refusals::test_a_stale_partial_or_link_refuses_and_stays"
+   ],
+   "first_error_line": "E           AssertionError: 0 != 4",
+   "mutant_sha256": "f55443b97e0f5faaa0c6b77b5bdcbb4c7efab5a2fad61a8e0f622d47c7645780",
+   "tree_dirt_after": [],
+   "seconds": 410.8,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 87 passed in 408.98s (0:06:48)"
+   ]
+  },
+  {
+   "name": "STAGE_OWN_PARTIAL",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Refusals::test_a_partial_another_invocation_created_stays"
+   ],
+   "first_error_line": "E       FileExistsError: [Errno 17] File exists: '/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7e3f49f7-e8e4-452d-b380-399d4f6c529e/scratchpad/evw2d-test-0vmaxg5b/tmptb5x22ho/stage/a.root.partial.Josephs-MacBook-Pro-9.local.92482.c0cfb0022394e3a2'",
+   "mutant_sha256": "4c9b3d00d8ab011b80dfdba51965d3979564c77ed5940903fd5700b26484eec4",
+   "tree_dirt_after": [],
+   "seconds": 453.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 85 passed in 451.29s (0:07:31)"
+   ]
+  },
+  {
+   "name": "STAGE_READ_ONLY",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Refusals::test_main_stages_once_through_partial_names"
+   ],
+   "first_error_line": "E       AssertionError: True is not false",
+   "mutant_sha256": "de22e4703417b0627d8e7810847e06954c7a1f7fec81ddaac9fb9a7b2bc2569d",
+   "tree_dirt_after": [],
+   "seconds": 447.7,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 94 passed in 445.83s (0:07:25)"
+   ]
+  },
+  {
+   "name": "STAGE_ROOT_RO",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Refusals::test_main_stages_once_through_partial_names"
+   ],
+   "first_error_line": "E       AssertionError: 493 != 365",
+   "mutant_sha256": "364bfb61d1d559368935d6b7e3ebc74dc81dd58ebf99a890e149425e793fe65f",
+   "tree_dirt_after": [],
+   "seconds": 353.2,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 94 passed in 351.23s (0:05:51)"
+   ]
+  },
+  {
+   "name": "STAGE_UNIQUE",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Refusals::test_a_partial_another_invocation_created_stays"
+   ],
+   "first_error_line": "E       AssertionError: 'Josephs-MacBook-Pro-9.local' not found in 'a.root.partial.95322'",
+   "mutant_sha256": "5fa56bd703a92582cea23fd3fcb91254f071155c6d76ff7e3200d6dd7f67fce8",
+   "tree_dirt_after": [],
+   "seconds": 444.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 85 passed in 442.55s (0:07:22)"
+   ]
+  },
+  {
+   "name": "TABLE_ENTRY",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "fa24c0a2cecfe656dccc4d99ecc0b478e881f9d6f046328f47dad93421a5eee2",
+   "tree_dirt_after": [],
+   "seconds": 94.2,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 91.33s (0:01:31)"
+   ]
+  },
+  {
+   "name": "TABLE_SWAP",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "29a02221ae3b151776e5b91d46a67dc2f019480e45b8b72320821cb14da3ba0d",
+   "tree_dirt_after": [],
+   "seconds": 62.5,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 60.33s (0:01:00)"
+   ]
+  },
+  {
+   "name": "TABLE_UNFOLDED",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "cba2584d0ed465e5b2a8fada7ef04ead038722f8a2d8b5275adc82be0cd6716c",
+   "tree_dirt_after": [],
+   "seconds": 144.9,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 141.89s (0:02:21)"
+   ]
+  },
+  {
+   "name": "XSEC_CELL_ORDER",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "0f770e3791df066b85f7ac46887ddbbd581d0277541d664514176c94721b7aa0",
+   "tree_dirt_after": [],
+   "seconds": 143.5,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 140.11s (0:02:20)"
+   ]
+  },
+  {
+   "name": "XSEC_CM2",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED PinnedBytes::test_a_full_run_leaves_the_tree_unchanged"
+   ],
+   "first_error_line": "E       AssertionError: 6 != 0",
+   "mutant_sha256": "ab1cc535d189f363dceb229ee9efda709b660e0a3ec895badb79b027da13123d",
+   "tree_dirt_after": [],
+   "seconds": 123.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 2 passed in 120.31s (0:02:00)"
+   ]
+  },
+  {
+   "name": "XSEC_EARLY",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Run::test_a_replaced_driver_output_fails_acceptance"
+   ],
+   "first_error_line": "E       AssertionError: 0 != 6",
+   "mutant_sha256": "41dfc72161a854e6d531f6a1e5fb35a2513e98fb0bcc3ef5c7534e82f9396863",
+   "tree_dirt_after": [],
+   "seconds": 233.9,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 53 passed in 231.45s (0:03:51)"
+   ]
+  },
+  {
+   "name": "XSEC_EVENT_C",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_event_level_completeness_equals_the_drivers"
+   ],
+   "first_error_line": "E           AssertionError:",
+   "mutant_sha256": "bdfe59a6708fd92578a784d3b5f0ddb29481194a1385369b99f0e6cda610e572",
+   "tree_dirt_after": [],
+   "seconds": 170.3,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 37 passed in 167.49s (0:02:47)"
+   ]
+  },
+  {
+   "name": "XSEC_FLUX_INDEX",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_xsec_equals_the_drivers_extraction"
+   ],
+   "first_error_line": "E           AssertionError: False is not true : [0, 0.07, 0.15, 0.25, 0.33, 0.4, 0.47, 0.55, 0.7, 0.85, 1.0, 1.25, 1.5, 2.5, 4.5]",
+   "mutant_sha256": "7617f98196492d6eb8fee8c0c38cb33723859ac8d65e8153d9286a0f95863876",
+   "tree_dirt_after": [],
+   "seconds": 124.8,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 43 passed in 121.62s (0:02:01)"
+   ]
+  },
+  {
+   "name": "XSEC_ZERO_FLUX",
+   "rc": 1,
+   "killed": true,
+   "kind": "failed",
+   "failed_tests": [
+    "FAILED Controls::test_xsec_equals_the_drivers_extraction"
+   ],
+   "first_error_line": "E           AssertionError: False is not true : [0, 0.07, 0.15, 0.25, 0.33, 0.4, 0.47, 0.55, 0.7, 0.85, 1.0, 1.25, 1.5, 2.5, 4.5]",
+   "mutant_sha256": "2e0e41b91e9b3eaaad3a68f85e17d417d68081c1557d411624d87bb33ef8edc8",
+   "tree_dirt_after": [],
+   "seconds": 217.5,
+   "tail": [
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed, 43 passed, 2 warnings in 213.60s (0:03:33)"
+   ]
+  }
+ ]
+}
