@@ -34,6 +34,11 @@ PZ_EDGES = [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0,
 N_PT = len(PT_EDGES) - 1  # 14
 N_PZ = len(PZ_EDGES) - 1  # 16
 
+_UQ = str(_pathlib.Path(__file__).resolve().parent / "uq")
+if _UQ not in _sys.path:
+    _sys.path.append(_UQ)
+from reported_cells import edge_label, th2d_edges  # noqa: E402
+
 
 def th2_to_slices(h2d, axis):
     """Extract 1D slices from a TH2D along one axis.
@@ -47,7 +52,7 @@ def th2_to_slices(h2d, axis):
         for ix in range(1, h2d.GetNbinsX() + 1):
             lo = h2d.GetXaxis().GetBinLowEdge(ix)
             hi = h2d.GetXaxis().GetBinUpEdge(ix)
-            label = f"{lo:.2f} < p_T < {hi:.2f}"
+            label = f"{edge_label(lo)} < p_T < {edge_label(hi)}"
             proj = h2d.ProjectionY(f"slice_pt_{ix}", ix, ix, "e")
             proj.SetDirectory(0)
             slices.append((label, proj))
@@ -263,6 +268,24 @@ def load_flux_bins_for_truth(f_result, result_path, mcfile=None,
     return flux_bins, f"{mc_path}:{flux_hist}"
 
 
+def truth_projections(h2d):
+    """The 1D projections of a 2D cross section, each summed with the widths of h2d's own axes."""
+    from unfold_2d_omnifold_unbinned import project_xsec_1d
+    pt_edges, pz_edges = (list(e) for e in th2d_edges(h2d))
+    return project_xsec_1d(h2d, "pt", pt_edges, pz_edges), project_xsec_1d(h2d, "pz", pt_edges, pz_edges)
+
+
+def efficiency_mesh(h_eff):
+    """(p_parallel edges, pT edges, efficiency array pT x p_parallel) of h_eff, on its own axes."""
+    pt_edges, pz_edges = th2d_edges(h_eff)
+    npt, npz = h_eff.GetNbinsX(), h_eff.GetNbinsY()
+    eff_arr = np.zeros((npt, npz))
+    for ix in range(1, npt + 1):
+        for iy in range(1, npz + 1):
+            eff_arr[ix - 1, iy - 1] = h_eff.GetBinContent(ix, iy)
+    return pz_edges, pt_edges, eff_arr
+
+
 def main():
     ap = argparse.ArgumentParser(
         description="Plot 2D OmniFold cross-section results.")
@@ -316,11 +339,9 @@ def main():
                                           data_pot, n_nucleons)
     hXSecTruth2D.SetDirectory(0)
 
-    # 1D truth projections
-    from unfold_2d_omnifold_unbinned import project_xsec_1d
-    hXSecTruth_pt = project_xsec_1d(hXSecTruth2D, "pt", PT_EDGES, PZ_EDGES)
+    # 1D truth projections, with the truth histogram's own widths
+    hXSecTruth_pt, hXSecTruth_pz = truth_projections(hXSecTruth2D)
     hXSecTruth_pt.SetName("hXSecTruth_pt")
-    hXSecTruth_pz = project_xsec_1d(hXSecTruth2D, "pz", PT_EDGES, PZ_EDGES)
     hXSecTruth_pz.SetName("hXSecTruth_pz")
 
     f.Close()
@@ -374,15 +395,9 @@ def main():
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots(figsize=(8, 6))
-    npt = hEff2D.GetNbinsX()
-    npz = hEff2D.GetNbinsY()
-    # Match the paper's Fig. 5 convention: p_|| on x, p_T on y.
-    eff_arr = np.zeros((npt, npz))
-    for ix in range(1, npt + 1):
-        for iy in range(1, npz + 1):
-            eff_arr[ix - 1, iy - 1] = hEff2D.GetBinContent(ix, iy)
-
-    im = ax.pcolormesh(PZ_EDGES, PT_EDGES, eff_arr, cmap="viridis",
+    # Match the paper's Fig. 5 convention: p_|| on x, p_T on y, on the map's own axes.
+    pz_edges, pt_edges, eff_arr = efficiency_mesh(hEff2D)
+    im = ax.pcolormesh(pz_edges, pt_edges, eff_arr, cmap="viridis",
                         vmin=0, vmax=1)
     fig.colorbar(im, ax=ax, label="Efficiency")
     ax.set_xlabel("p$_{||}$ (GeV/c)")

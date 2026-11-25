@@ -1015,5 +1015,186 @@ class Fig13Test(Fixture):
             m.paper_arrays(str(p))
 
 
+# main before plot_2d_cross_section.py drew on its inputs' own axes
+BASE_XS = "359ee648e6528689a77ff380cdf06313dff907d1"
+
+
+def base_module_at(sha, rel, name, d):
+    """The file at commit sha, written to directory d and imported as module `name`; None when git
+    or sha is unavailable."""
+    try:
+        src = subprocess.run(["git", "-C", str(REPO), "show", f"{sha}:{rel}"],
+                             capture_output=True, check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    path = Path(d) / f"{name}.py"
+    path.write_bytes(src)
+    spec = importlib.util.spec_from_file_location(name, path)
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
+def th1_dump(h):
+    n = h.GetNbinsX()
+    return (np.array([h.GetXaxis().GetBinLowEdge(i) for i in range(1, n + 2)]),
+            np.array([h.GetBinContent(i) for i in range(1, n + 1)]),
+            np.array([h.GetBinError(i) for i in range(1, n + 1)]))
+
+
+@unittest.skipUnless(HAVE_DEPS, "PyROOT or matplotlib unavailable")
+class CrossSectionPlotEdges(unittest.TestCase):
+    """plot_2d_cross_section.py (and plot_2d_paper_comparison.py, which imports its slices) on its
+    input's own axes: on our grid every value, string and output equals BASE_XS's; on the release's
+    grid the labels, projection widths and efficiency map follow the 0.075 / 0.325 / 0.475 axis."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.dir = Path(cls.tmp.name)
+        rng = np.random.default_rng(23)
+        cls.cont = rng.lognormal(0.0, 0.5, rc.GRID_SHAPE)
+        cls.err = 0.05 * cls.cont
+        cls.eff = rng.uniform(0.2, 0.95, rc.GRID_SHAPE)
+        for tag, pt in (("g07", OUR_PT), ("g075", PAPER_PT)):
+            cls.write_input(cls.dir / f"{tag}.root", pt, rng)
+
+    @classmethod
+    def tearDownClass(cls):
+        plt.close("all")
+        cls.tmp.cleanup()
+
+    @classmethod
+    def th2(cls, name, pt, vals, errs=None):
+        h = ROOT.TH2D(name, "", N_PT, np.asarray(pt, dtype=float), N_PZ, PZ)
+        h.Sumw2()
+        for ix in range(N_PT):
+            for iy in range(N_PZ):
+                h.SetBinContent(ix + 1, iy + 1, float(vals[ix, iy]))
+                if errs is not None:
+                    h.SetBinError(ix + 1, iy + 1, float(errs[ix, iy]))
+        h.SetDirectory(0)
+        return h
+
+    @classmethod
+    def write_input(cls, path, pt, rng):
+        """The fields main() reads, as unfold_2d_omnifold_unbinned.py writes them."""
+        f = ROOT.TFile.Open(str(path), "RECREATE")
+        cls.th2("hXSec2D", pt, 1e-39 * cls.cont, 1e-39 * cls.err).Write()
+        cls.th2("hOFTruthDenom2D", pt, 1e4 * cls.cont * (1 + 0.1 * rng.standard_normal(rc.GRID_SHAPE))).Write()
+        cls.th2("hEff2D", pt, cls.eff).Write()
+        for name, edges, n in (("hXSec_pt", pt, N_PT), ("hXSec_pz", PZ, N_PZ), ("hFlux_pt", pt, N_PT)):
+            h = ROOT.TH1D(name, "", n, np.asarray(edges, dtype=float))
+            for i in range(n):
+                h.SetBinContent(i + 1, float(1e-38 * (1 + i)) if name != "hFlux_pt" else 1e-4 * (2 + i))
+                h.SetBinError(i + 1, float(1e-40 * (1 + i)))
+            h.Write()
+        ROOT.TParameter("double")("dataPOT", 1.06e21).Write()
+        ROOT.TParameter("double")("nNucleons", 3.2e30).Write()
+        f.Close()
+
+    def modules(self, tag):
+        old = base_module_at(BASE_XS, "2d-unfolding/plot_2d_cross_section.py", f"xs_old_{tag}", self.dir)
+        if old is None:
+            self.skipTest(f"git show {BASE_XS[:12]} unavailable")
+        return old, new_module("plot_2d_cross_section.py", f"xs_new_{tag}")
+
+    def test_edge_label(self):
+        for x, want in ((0.07, "0.07"), (0.075, "0.075"), (1.5, "1.50"), (0.0, "0.00"), (0.325, "0.325"),
+                        (0.475, "0.475"), (4.5, "4.50"), (0.33, "0.33")):
+            self.assertEqual(rc.edge_label(x), want)
+        self.assertEqual(rc.edge_label(1 / 3), "0.333333333")
+        f13 = new_module("plot_2d_threeway_fig13.py", "f13_lab")
+        self.assertIs(f13.edge_label, rc.edge_label)
+
+    def test_slice_labels(self):
+        old, new = self.modules("lab")
+        for tag in ("07", "075"):
+            h = self.th2(f"hlab{tag}", OUR_PT if tag == "07" else PAPER_PT, self.cont, self.err)
+            for axis in ("pt", "pz"):
+                so, sn = old.th2_to_slices(h, axis), new.th2_to_slices(h, axis)
+                for (lo_, ho), (ln, hn) in zip(so, sn):
+                    np.testing.assert_array_equal(th1_dump(ho)[1], th1_dump(hn)[1])
+                    np.testing.assert_array_equal(th1_dump(ho)[2], th1_dump(hn)[2])
+                if tag == "07" or axis == "pz":
+                    self.assertEqual([x[0] for x in so], [x[0] for x in sn])
+            if tag == "075":
+                got = [x[0] for x in new.th2_to_slices(h, "pt")]
+                self.assertEqual(got[0], "0.00 < p_T < 0.075")
+                self.assertEqual(got[3], "0.25 < p_T < 0.325")
+                self.assertEqual(got[5], "0.40 < p_T < 0.475")
+                self.assertEqual(got[6], "0.475 < p_T < 0.55")
+                self.assertEqual([x[0] for x in old.th2_to_slices(h, "pt")][0], "0.00 < p_T < 0.07")
+
+    def test_truth_projections(self):
+        old, new = self.modules("proj")
+        import unfold_2d_omnifold_unbinned as uu
+        h07 = self.th2("hp07", OUR_PT, self.cont, self.err)
+        for a, b in zip(new.truth_projections(h07), (uu.project_xsec_1d(h07, ax, old.PT_EDGES, old.PZ_EDGES)
+                                                      for ax in ("pt", "pz"))):
+            for x, y in zip(th1_dump(a), th1_dump(b)):
+                np.testing.assert_array_equal(x, y)
+        h075 = self.th2("hp075", PAPER_PT, self.cont, self.err)
+        hpt, hpz = new.truth_projections(h075)
+        e, v, _ = th1_dump(hpt)
+        np.testing.assert_array_equal(e, PAPER_PT)
+        np.testing.assert_allclose(v, self.cont @ np.diff(PZ), rtol=1e-12)
+        e, v, _ = th1_dump(hpz)
+        np.testing.assert_array_equal(e, PZ)
+        np.testing.assert_allclose(v, np.diff(PAPER_PT) @ self.cont, rtol=1e-12)
+        self.assertFalse(np.allclose(v, np.diff(OUR_PT) @ self.cont, rtol=1e-6))
+
+    def test_efficiency_mesh(self):
+        _, new = self.modules("eff")
+        for pt in (OUR_PT, PAPER_PT):
+            pz_e, pt_e, arr = new.efficiency_mesh(self.th2("heff", pt, self.eff))
+            np.testing.assert_array_equal(pt_e, pt)
+            np.testing.assert_array_equal(pz_e, PZ)
+            np.testing.assert_array_equal(arr, self.eff)
+
+    def run_xs(self, module, infile, prefix, style):
+        argv = ["--infile", infile, "--prefix", prefix] + (["--style", "restyle-2026-10", "--print-font"] if style else [])
+        _, out = run_main(module, argv)
+        return out
+
+    def test_main_on_our_grid_equals_base(self):
+        old, new = self.modules("main")
+        for style in (False, True):
+            outs = {}
+            for tag, m in (("old", old), ("new", new)):
+                prefix = str(self.dir / f"m{int(style)}_{tag}")
+                with spy("pcolormesh") as mesh:
+                    out = self.run_xs(m, self.dir / "g07.root", prefix, style)
+                outs[tag] = (out.replace(prefix, "P"), [c[1] for c in mesh])
+            self.assertEqual(outs["old"][0], outs["new"][0])
+            for stem in ("pt_slices", "pz_slices", "proj_pt", "proj_pz", "eff_heatmap"):
+                a = (self.dir / f"m{int(style)}_old_{stem}.png").read_bytes()
+                b = (self.dir / f"m{int(style)}_new_{stem}.png").read_bytes()
+                self.assertEqual(a, b, f"{stem} style={style}")
+
+    def test_main_on_paper_grid(self):
+        _, new = self.modules("main075")
+        import unfold_2d_omnifold_unbinned as uu
+        seen = []
+        orig = uu.project_xsec_1d
+
+        def rec(h, axis, pt_edges, pz_edges):
+            seen.append((axis, np.asarray(pt_edges, dtype=float), np.asarray(pz_edges, dtype=float)))
+            return orig(h, axis, pt_edges, pz_edges)
+
+        with mock.patch.object(uu, "project_xsec_1d", rec), spy("pcolormesh") as mesh:
+            self.run_xs(new, self.dir / "g075.root", str(self.dir / "p075"), True)
+        self.assertEqual([a for a, _, _ in seen], ["pt", "pz"])
+        for _, pt, pz in seen:
+            np.testing.assert_array_equal(pt, PAPER_PT)
+            np.testing.assert_array_equal(pz, PZ)
+        np.testing.assert_array_equal(mesh[0][1], PAPER_PT)  # the map's; the colour bar draws its own after it
+
+    def test_paper_comparison_slices_use_the_label(self):
+        pc = new_module("plot_2d_paper_comparison.py", "pc_lab")
+        h = self.th2("hpc", PAPER_PT, self.cont, self.err)
+        self.assertEqual(pc.th2_to_slices(h, "pt")[6][0], "0.475 < p_T < 0.55")
+
+
 if __name__ == "__main__":
     unittest.main()
