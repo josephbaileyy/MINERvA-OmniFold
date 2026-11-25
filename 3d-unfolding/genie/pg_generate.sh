@@ -22,6 +22,7 @@ NT=7; NEV=160000; P=14; TO=5115     # F1b''s tasks, events, concurrency and per-
 PHIT=/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix
 X=/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL
 PRIV=/pscratch/sd/j/josephrb/covfix-pg/products   # slot 1's private genie_xsec (run_gevgen_v3.sh, setup_genie_v3.sh)
+PY=/usr/bin/python3.11   # the checks' interpreter outside the analysis environment (the probe's; not the node's python3)
 
 refuse() { echo "[pg] refusing: $1" >&2; exit 2; }
 W=""; SEEDS=""
@@ -33,6 +34,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 [ -n "$W" ] && [ -n "$SEEDS" ] || refuse "usage: --workdir W --seeds W/seeds.json"
+[ -x "$PY" ] || refuse "$PY is missing"
 case "$W" in /*) ;; *) refuse "W must be absolute" ;; esac
 [ -d "$W" ] || refuse "W does not exist"
 [ "$(cd "$W" && pwd -P)" = "$(pwd -P)" ] || refuse "cwd is not W"
@@ -46,7 +48,7 @@ dirty=$(git -C "$D" status --porcelain --untracked-files=no 2>/dev/null | wc -l)
 
 O="$W/out"; R="$W/run"; G="$D/3d-unfolding/genie"
 REC="$D/docs/orchestration/state/2d-closeout/covfix-20261122/pg/record"
-pin() { python3 -I -c 'import json,sys; v=json.load(open(sys.argv[1]))[sys.argv[2]]; print(v or "")' "$G/pg_pins.json" "$1"; }
+pin() { "$PY" -I -c 'import json,sys; v=json.load(open(sys.argv[1]))[sys.argv[2]]; print(v or "")' "$G/pg_pins.json" "$1"; }
 STRACE=$(pin strace_path); STRACE_SHA=$(pin strace_sha256); DBCONFIG_SHA=$(pin dbconfig_sha256)
 [ -n "$STRACE" ] && [ -n "$STRACE_SHA" ] && [ -n "$DBCONFIG_SHA" ] || refuse "pg_pins.json is not filled (R1)"
 mkdir -p "$O/logs" "$O/splines" "$O/gst" "$O/gen5d" "$O/work" "$O/traces" "$R" || refuse "cannot create W/out and W/run"
@@ -87,27 +89,27 @@ echo "[pg] start $(date -u +%FT%TZ) host=$(hostname)"
 # that descriptor and the same descriptor is executed, by the self-test here and by every traced command below.
 exec 9< "$STRACE" || need 1 "open strace"
 FDD=/proc/self/fd; [ -d "$FDD" ] || FDD=/dev/fd
-python3 -I -B "$G/pg_verify.py" tool-check --path "$FDD/9" --sha256 "$STRACE_SHA" --self-test \
+"$PY" -I -B "$G/pg_verify.py" tool-check --path "$FDD/9" --sha256 "$STRACE_SHA" --self-test \
   > "$O/tool_check_strace.json" 2> "$O/logs/tool_check_strace.log"
 need $? "strace (its pinned sha through the descriptor, and the self-test)"
 pass "strace"
-python3 -I -B "$G/pg_verify.py" members-check --root "$PRIV" --members "$REC/G2111a-members.json" \
+"$PY" -I -B "$G/pg_verify.py" members-check --root "$PRIV" --members "$REC/G2111a-members.json" \
   > "$O/members_check_G21_11a_00_000.json" 2> "$O/logs/members_check.log"
 need $? "slot 1's private product against its pinned members"
-python3 -I -B "$G/pg_verify.py" tool-check --path "$PRIV/.upsfiles/dbconfig" --sha256 "$DBCONFIG_SHA" \
+"$PY" -I -B "$G/pg_verify.py" tool-check --path "$PRIV/.upsfiles/dbconfig" --sha256 "$DBCONFIG_SHA" \
   > "$O/dbconfig_check.json" 2> "$O/logs/dbconfig_check.log"
 need $? "slot 1's UPS database file"
-pass "slot 1's private product" "$(python3 -I -c 'import json,sys; print(len(json.load(open(sys.argv[1]))["members"]))' "$REC/G2111a-members.json") members"
+pass "slot 1's private product" "$("$PY" -I -c 'import json,sys; print(len(json.load(open(sys.argv[1]))["members"]))' "$REC/G2111a-members.json") members"
 export PG_STRACE_FD=9
 xroot() { if [ "$1" = G21_11a_00_000 ]; then echo "$PRIV/genie_xsec/v3_04_00/NULL"; else echo "$X"; fi; }
 tcheck() {   # tcheck ROLE TUNE TRACE SPLINE SPLINE_SHA CWD OUT
-  python3 -I -B "$G/pg_verify.py" trace-check --trace "$3" --rc 0 --role "$1" --tune "$2" --spline "$4" \
+  "$PY" -I -B "$G/pg_verify.py" trace-check --trace "$3" --rc 0 --role "$1" --tune "$2" --spline "$4" \
     --spline-sha256 "$5" --cwd "$6" --record "$REC/PG-RECORD.json" --manifest "$REC/genie-manifest.json" \
     --private-members "$REC/G2111a-members.json" --w-root "$W" --w-pin "$O/splines/${2}_CH.xml.gz=$(reduced_sha "$2")" \
     --out "$7"
 }
-reduced_sha() { [ -s "$O/spline_check_$1.json" ] && python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["reduced"]["sha256"])' "$O/spline_check_$1.json" || echo none; }
-source_sha() { python3 -I -c 'import ast,sys
+reduced_sha() { [ -s "$O/spline_check_$1.json" ] && "$PY" -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["reduced"]["sha256"])' "$O/spline_check_$1.json" || echo none; }
+source_sha() { "$PY" -I -c 'import ast,sys
 t = ast.parse(open(sys.argv[1]).read())
 pins = next(ast.literal_eval(n.value) for n in t.body if isinstance(n, ast.Assign) and getattr(n.targets[0], "id", "") == "PG_SPLINE_PINS")
 print(pins[sys.argv[2]][0])' "$G/gen5d_v3.py" "$1"; }
@@ -121,7 +123,7 @@ pass "seeds.json" "$(wc -l < "$R/queue.txt" | tr -d ' ') tasks"
 for T in $TUNES; do   # the programs the traced steps run, as their own setup resolves them (no trace shows an exec)
   ( source "$G/setup_genie_v3.sh" "$T" "$O/splines" > /dev/null 2>&1 || exit 1; command -v gevgen && command -v gspl2root ) \
     > "$R/exe_$T.txt" 2> "$O/logs/exe_$T.log" || need 1 "resolve gevgen and gspl2root ($T)"
-  python3 -I -B "$G/pg_verify.py" exe-check --manifest "$REC/genie-manifest.json" $(sed 's/^/--path /' "$R/exe_$T.txt") \
+  "$PY" -I -B "$G/pg_verify.py" exe-check --manifest "$REC/genie-manifest.json" $(sed 's/^/--path /' "$R/exe_$T.txt") \
     > "$O/exe_check_$T.json" 2>> "$O/logs/exe_$T.log" || need 1 "gevgen and gspl2root against the manifest ($T)"
 done
 pass "gevgen and gspl2root against the manifest"

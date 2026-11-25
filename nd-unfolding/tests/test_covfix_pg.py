@@ -361,7 +361,20 @@ for f in ("config-pg.json", "f1-prep-SHA256SUMS", "ratios/L-5D-PV/ratios.json"):
 if os.environ.get("PG_STUB_WRITE_DEPLOY"):
     open(os.path.join(os.environ["PG_STUB_DEPLOY"], "stray.txt"), "w").write("x")
 '''
-STUB_ENV = '''export PATH="$PG_STUB_BIN:$PATH"\nexport TMPDIR=/tmp/elsewhere   # as setup_salloc_env.sh does\n'''
+STUB_ENV = '''export PATH="$PG_STUB_BIN:$PATH"\nexport TMPDIR=/tmp/elsewhere   # as setup_salloc_env.sh does\n''' + r'''
+SD="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+case "$PG_STUB_ENV" in        # the two build-tree setups git does not carry, as bash reports a missing source
+  tolerated|extra|conda|clobber)
+    echo "$SD/setup_salloc_env.sh: line 18: $SD/unbinned_unfolding/build/setup.sh: No such file or directory" >&2
+    echo "$SD/setup_salloc_env.sh: line 21: $SD/MINERvA101/opt/bin/setup.sh: No such file or directory" >&2 ;;
+esac
+case "$PG_STUB_ENV" in
+  extra) echo "conda: a warning nobody expected" >&2 ;;
+  missing-other) echo "$SD/setup_salloc_env.sh: line 30: $SD/other/setup.sh: No such file or directory" >&2 ;;
+  conda) export HOST=x86_64-conda-linux-gnu CC=x86_64-conda-linux-gnu-cc BUILD=x86_64-conda-linux-gnu ;;
+  clobber) PRIV=/elsewhere ;;
+esac
+'''
 PY311 = '''#!/bin/bash
 [ "$1" = "-V" ] && { echo "Python 3.11.14"; exit 0; }
 exec {py} "$@"
@@ -396,7 +409,9 @@ class Generate(unittest.TestCase):
         timev = self.bin / "timev"
         src = (GENIE / "pg_generate.sh").read_text()
         self.assertEqual(src.count("/usr/bin/time -v -o"), 1)
-        (g / "pg_generate.sh").write_text(src.replace("/usr/bin/time -v -o", f"{timev} -v -o"))
+        self.assertEqual(src.count("PY=/usr/bin/python3.11"), 1)
+        (g / "pg_generate.sh").write_text(src.replace("/usr/bin/time -v -o", f"{timev} -v -o").replace(
+            "PY=/usr/bin/python3.11", f"PY={sys.executable}"))
         shutil.copy(GENIE / "pg_lib.py", g / "pg_lib.py")
         (g / "pg_verify.py").write_text(STUB_VERIFY)
         rec = self.dep / "docs/orchestration/state/2d-closeout/covfix-20261122/pg/record"
@@ -703,7 +718,9 @@ class Replay(unittest.TestCase):
 
     def setUp(self):
         Generate.setUp(self)
-        shutil.copy(GENIE / "pg_replay.sh", self.dep / "3d-unfolding/genie/pg_replay.sh")
+        src = (GENIE / "pg_replay.sh").read_text()
+        self.assertEqual(src.count("PY=/usr/bin/python3.11"), 1)
+        (self.dep / "3d-unfolding/genie/pg_replay.sh").write_text(src.replace("PY=/usr/bin/python3.11", f"PY={sys.executable}"))
         self.R = self.tmp / "R"
         self.R.mkdir()
 
@@ -748,6 +765,44 @@ class Replay(unittest.TestCase):
                 self.assertEqual(p.returncode, 1, p.stdout)
                 self.assertIn(f"[replay] STOP: {msg}", p.stdout)
                 self.assertFalse((self.R / "replay.json").exists())
+
+    def test_the_environment_rules(self):
+        for mode, rc in (("tolerated", 0), ("conda", 0), ("extra", 1), ("clobber", 1), ("missing-other", 1)):
+            with self.subTest(mode):
+                shutil.rmtree(self.R)
+                self.R.mkdir()
+                if self.log.exists():
+                    self.log.unlink()
+                p = self.run_replay(PG_STUB_ENV=mode)
+                self.assertEqual(p.returncode, rc, p.stdout + p.stderr)
+                if rc == 0:
+                    chk = json.loads((self.R / "env_check_a.json").read_text())
+                    self.assertEqual((len(chk["tolerated"]), chk["other"]), (2, []))
+                    tmp = {ln.split(" ", 1)[1] for ln in self.log.read_text().splitlines() if ln.startswith("TMPDIR ")}
+                    self.assertEqual(tmp, {str(self.W / "tmp")})             # restored after the activation
+                else:
+                    self.assertIn("[replay] STOP: flux file or spline check", p.stdout)
+
+    def test_a_missing_interpreter_refuses(self):
+        for f in ("pg_replay.sh", "pg_generate.sh"):
+            with self.subTest(f):
+                q = self.dep / "3d-unfolding/genie" / f
+                q.write_text(q.read_text().replace(f"PY={sys.executable}", "PY=/nonexistent/python3.11"))
+                if f == "pg_replay.sh":
+                    p = self.run_replay()
+                else:
+                    p = subprocess.run(["bash", str(q), "--workdir", str(self.W), "--seeds", str(self.W / "seeds.json")],
+                                       cwd=self.W, env={"PATH": "/usr/bin:/bin", "TMPDIR": str(self.W / "tmp"),
+                                                        "PG_DEPLOY_PIN": "x"}, capture_output=True, text=True)
+                self.assertEqual(p.returncode, 2, p.stdout + p.stderr)
+                self.assertIn("/nonexistent/python3.11 is missing", p.stderr)
+
+    def test_no_driver_variable_is_one_conda_sets(self):
+        import re
+        for f in ("pg_replay.sh", "pg_generate.sh"):
+            src = (GENIE / f).read_text()
+            for v in ("HOST", "CC", "BUILD", "CFLAGS", "LDFLAGS", "CXX", "AR", "LD"):
+                self.assertFalse(re.search(rf"(\$\{{?{v}\b|^\s*{v}=)", src, re.M), (f, v))
 
     def test_a_replay_record_that_fails_stops(self):
         p = self.run_replay(PG_STUB_NO_SPLINE="1")                 # every check exits 0, but no spline open is shown

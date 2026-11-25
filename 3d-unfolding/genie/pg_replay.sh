@@ -19,6 +19,7 @@ SEED=123456789; NEV=100; TO=3600
 PHIT=/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix
 PRIV=/pscratch/sd/j/josephrb/covfix-pg/products   # slot 1's private genie_xsec (run_gevgen_v3.sh, setup_genie_v3.sh)
 REC="$D/docs/orchestration/state/2d-closeout/covfix-20261122/pg/record"
+PY=/usr/bin/python3.11   # the checks' interpreter outside the analysis environment (the probe's; not the node's python3)
 
 refuse() { echo "[replay] refusing: $1" >&2; exit 2; }
 [ "$1" = "--workdir" ] && [ $# -eq 2 ] || refuse "usage: --workdir R"
@@ -27,14 +28,36 @@ case "$R" in /*) ;; *) refuse "R must be absolute" ;; esac
 [ -d "$R" ] && [ -z "$(ls -A "$R")" ] || refuse "R must be an existing empty directory"
 [ "$(cd "$R" && pwd -P)" = "$(pwd -P)" ] || refuse "cwd is not R"
 [ -n "$TMPDIR" ] && [ -d "$TMPDIR" ] || refuse "TMPDIR must exist"
-pin() { python3 -I -c 'import json,sys; v=json.load(open(sys.argv[1]))[sys.argv[2]]; print(v or "")' "$HERE/pg_pins.json" "$1"; }
+[ -x "$PY" ] || refuse "$PY is missing"
+pin() { "$PY" -I -c 'import json,sys; v=json.load(open(sys.argv[1]))[sys.argv[2]]; print(v or "")' "$HERE/pg_pins.json" "$1"; }
 STRACE=$(pin strace_path); STRACE_SHA=$(pin strace_sha256); DBCONFIG_SHA=$(pin dbconfig_sha256)
 [ -n "$STRACE" ] && [ -n "$STRACE_SHA" ] && [ -n "$DBCONFIG_SHA" ] || refuse "pg_pins.json is not filled (R1)"
 mkdir -p "$R/logs" "$R/splines" "$R/traces" "$R/work" || refuse "cannot create R's directories"
 need() { [ "$1" -eq 0 ] || { echo "[replay] STOP: $2 rc=$1"; exit 1; }; }
 pass() { echo "[replay] $1: pass"; }
-anaenv() { source "$D/setup_salloc_env.sh" > "$R/logs/env-$1.log" 2>&1; export TMPDIR PYTHONDONTWRITEBYTECODE=1; }
-V() { python3 -I -B "$HERE/pg_verify.py" "$@"; }
+DRIVER_VARS="HERE D T Q SEED NEV TO PHIT PRIV REC R PY STRACE STRACE_SHA DBCONFIG_SHA TMPDIR"
+snap() { local v; for v in $DRIVER_VARS; do printf '%s=%s\n' "$v" "${!v}"; done; }
+anaenv() {   # the analysis environment. From a git archive, only the root_6_28 conda activation is needed; the two
+  # build-tree setups git does not carry are the only tolerated messages, matched by path (the director's condition)
+  local keep_tmp="$TMPDIR" before
+  before=$(snap)
+  source "$D/setup_salloc_env.sh" > "$R/logs/env-$1.log" 2>&1
+  export TMPDIR="$keep_tmp" PYTHONDONTWRITEBYTECODE=1      # setup_salloc_env.sh sets TMPDIR=$SCRATCH/tmp
+  [ "$(snap)" = "$before" ] || { echo "[replay] the environment changed a driver variable" >&2; return 1; }
+  "$PY" -I - "$D" "$R/logs/env-$1.log" "$R/env_check_$1.json" <<'EOF' || return 1
+import json, re, sys
+d, log, out = sys.argv[1:]
+allowed = [re.escape(f"{d}/setup_salloc_env.sh") + r": line \d+: " + re.escape(f"{d}/{p}") + ": No such file or directory"
+           for p in ("unbinned_unfolding/build/setup.sh", "MINERvA101/opt/bin/setup.sh")]
+lines = [ln for ln in open(log).read().splitlines() if ln.strip()]
+tolerated = [ln for ln in lines if any(re.fullmatch(a, ln) for a in allowed)]
+other = [ln for ln in lines if ln not in tolerated]
+ok = not other and len(tolerated) == len(set(tolerated)) <= 2
+open(out, "w").write(json.dumps({"tolerated": tolerated, "other": other, "pass": ok}, indent=1) + "\n")
+sys.exit(0 if ok else 1)
+EOF
+}
+V() { "$PY" -I -B "$HERE/pg_verify.py" "$@"; }
 echo "[replay] start $(date -u +%FT%TZ) host=$(hostname)"
 
 exec 9< "$STRACE" || need 1 "open strace"
@@ -54,7 +77,7 @@ export PG_STRACE_FD=9
 
 PG_TRACE_DIR="$R/traces" bash "$HERE/run_gevgen_v3.sh" reduce "$T" "$R/splines" > "$R/logs/reduce.log" 2>&1
 need $? "spline reduce"
-( anaenv a
+( anaenv a || exit 1
   python3 -B "$HERE/gen5d_v3.py" make-flux --phi-t-dir "$PHIT" --out "$R/flux_phi_t_0_100.root" || exit 1
   python3 -B "$HERE/gen5d_v3.py" spline-check --tune "$T" --source "$PRIV/genie_xsec/v3_04_00/NULL/$Q/data/gxspl-NUsmall.xml" \
     --reduced "$R/splines/${T}_CH.xml.gz" --readme "$PRIV/genie_xsec/v3_04_00/NULL/$Q/data/README" \
@@ -62,8 +85,8 @@ need $? "spline reduce"
 need $? "flux file or spline check"
 PG_TRACE_DIR="$R/traces" bash "$HERE/run_gevgen_v3.sh" graphs "$T" "$R/splines" "$R/graphs_$T.root" > "$R/logs/graphs.log" 2>&1
 need $? "gspl2root"
-RED=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["reduced"]["sha256"])' "$R/spline_check.json")
-SRC=$(python3 -I -c 'import ast,sys
+RED=$("$PY" -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["reduced"]["sha256"])' "$R/spline_check.json")
+SRC=$("$PY" -I -c 'import ast,sys
 t = ast.parse(open(sys.argv[1]).read())
 print(next(ast.literal_eval(n.value) for n in t.body if isinstance(n, ast.Assign) and getattr(n.targets[0], "id", "") == "PG_SPLINE_PINS")[sys.argv[2]][0])' "$HERE/gen5d_v3.py" "$T")
 tcheck() {   # tcheck ROLE TRACE SPLINE SPLINE_SHA CWD OUT
@@ -86,7 +109,7 @@ tcheck gevgen "$W1/gevgen.trace" "$R/splines/${T}_CH.xml.gz" "$RED" "$W1" "$R/tr
 pass "gevgen and its trace"
 
 # the event and status files, deleted unread: sha256 and size kept in R/deleted.json only
-python3 -I - "$W1" "$R/deleted.json" <<'EOF' || need 1 "deleting the event and status files"
+"$PY" -I - "$W1" "$R/deleted.json" <<'EOF' || need 1 "deleting the event and status files"
 import glob, hashlib, json, os, sys
 w, out = sys.argv[1], sys.argv[2]
 rec = {}
@@ -101,7 +124,7 @@ for p in sorted(glob.glob(os.path.join(w, "genie_v3.gst.root")) + glob.glob(os.p
     os.remove(p)
 open(out, "w").write(json.dumps(rec, indent=1, sort_keys=True) + "\n")
 EOF
-python3 -I - "$R" <<'EOF' > "$R/replay.json" || need 1 "the replay record"
+"$PY" -I - "$R" <<'EOF' > "$R/replay.json" || need 1 "the replay record"
 import json, os, sys
 r = sys.argv[1]
 def load(n):
@@ -120,7 +143,7 @@ rec = {"schema": "covfix-pg-replay-run/1", "tune": "G21_11a_00_000", "seed": 123
 rec["pass"] = all(rec["checks"].values()) and all(rec["spline_opened"].values())
 print(json.dumps(rec, indent=1, sort_keys=True))
 EOF
-[ "$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["pass"])' "$R/replay.json")" = True ] || need 1 "the replay"
+[ "$("$PY" -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["pass"])' "$R/replay.json")" = True ] || need 1 "the replay"
 pass "the replay"
 echo "[replay] done $(date -u +%FT%TZ)"
 exit 0

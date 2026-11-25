@@ -145,6 +145,17 @@ M = [
     (f"{G}/pg_replay.sh", '= True ] || need 1 "the replay"', '= True ] || true', "B3: a failed replay record", "generate"),
     (f"{G}/pg_replay.sh", 'PG_TRACE_DIR="$W1" timeout', 'timeout', "B3: gevgen untraced", "generate"),
     (f"{G}/pg_replay.sh", '[ -d "$R" ] && [ -z "$(ls -A "$R")" ] || refuse', 'true || refuse', "B3: a non-empty R", "generate"),
+    # B3's environment: exact warnings, no clobbered driver variable, TMPDIR restored; the checks' interpreter
+    (f"{G}/pg_replay.sh", '( anaenv a || exit 1', '( anaenv a', "B3: environment failures ignored", "generate"),
+    (f"{G}/pg_replay.sh", '  export TMPDIR="$keep_tmp" PYTHONDONTWRITEBYTECODE=1', '  export TMPDIR PYTHONDONTWRITEBYTECODE=1',
+     "B3: TMPDIR left as the environment set it", "generate"),
+    (f"{G}/pg_replay.sh", '  [ "$(snap)" = "$before" ] || {', '  true || {', "B3: a clobbered driver variable", "generate"),
+    (f"{G}/pg_replay.sh", 'ok = not other and len(tolerated) == len(set(tolerated)) <= 2', 'ok = len(tolerated) <= 2',
+     "B3: other messages tolerated", "generate"),
+    (f"{G}/pg_replay.sh", 'allowed = [re.escape(f"{d}/setup_salloc_env.sh") + r": line \\d+: " + re.escape(f"{d}/{p}") + ": No such file or directory"',
+     'allowed = [r".*: No such file or directory"', "B3: any missing source tolerated", "generate"),
+    (f"{G}/pg_replay.sh", '[ -x "$PY" ] || refuse "$PY is missing"', 'true', "B3: a missing interpreter", "generate"),
+    (PGN, '[ -x "$PY" ] || refuse "$PY is missing"', 'true', "a missing interpreter", "generate"),
     # carried from piece 2
     (LIB, "if any(b - a != 1 for a, b in zip(s, s[1:])):", "if False:", "consecutive seeds", "generate"),
     (LIB, "if out[1][2][0] - out[0][2][0] != U_STRIDE:", "if False:", "u stride", "generate"),
