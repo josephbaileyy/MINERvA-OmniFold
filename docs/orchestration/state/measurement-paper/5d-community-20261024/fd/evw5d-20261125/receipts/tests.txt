@@ -1,15 +1,19 @@
 python=3.11.18 1.26.4 4.6.0
 f6f5bbb5ea1c0c7a704dfcd64e1f214c587db1e64db3d9c9ae4e943ac01ad990  evw5d.py
-9caf260bafa139c9636240b5fc2143ee95e4a444756be5bfc943db0ddf0a042a  test_evw5d.py
-70c9f9dc29bc4ca800946e8bb5dda90b39273a38cb6f88a2a28f8fb0d2c29229  evw5d_mutation.py
+387bca3fba103dbdaceaf2241b0f4d165e95ddbe14c48035b8493cdffe3d79ee  test_evw5d.py
+20a0d4e8d3897653d300bc6bdd863580bca425d3da5d5ce46fd3a1656f93f3e8  evw5d_mutation.py
 60fd4ec26714b2ccb956bd5abec4ba07092eca4c2f80b9ee1ab85bb02fd3533a  sbatch_evw5d.sh
 4755681f6ba8bd5060fe6ed4902e940b71e3b641d87c978a1f8016faaec468da  ../ess_e/ess_capture.py
 8687e85be161bfc993ea5a2c8be7b83dc92b5eb94caa13768261ea0ecbe5667e  ../ess_e/test_ess_capture.py
-37fb741726a5e3c7583c8f6f9fe8043d7173a1ac7e61994443233b25b681e7da  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_connect.sh
-f3f0d79fd7f84ea570b4070308510a560514ac522e969ad3ad74893ce62061b0  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_hpss.sh
-b716d51087ae858b766a521fb8914fa6ffe40e3c72193291870dc92332faa5d2  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_launch.sh
-a7927177d93d25aa9aac2e417b81e162e6790f3d88aaf0f25d13cd21526109e2  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_post.sh
+edbb711912ce759c626c7fabd4d01acc1f2be414e1209208522f0b70dd35e578  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_connect.sh
+be70c69a14a4e4deab03cc05e69a86e3ff580a135d2dd1c591d4603b8ef2453c  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_hpss.sh
+d3f33b384d0e927a922c6919f748cb62f478482c800cf77d9aba7ab4870e28e9  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_launch.sh
+292c4cb99d0bc4b20dd70a12734ca308cf5c8b171779364ac8deecad8e784164  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_post.sh
 faf724f09bc61d635e5b8afd527b6e48d8dec50e240f3d77db5cec40022f7552  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/fill_pins.sh
+e81567e0b815de8b1ae0c274f84672540ad191faa13422ac075882722f103a96  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/bound/evw5d_connect.sh
+d37a0396de720d35d4c89aff51fd207cd1aba7dea1542f148026c1173235ff08  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/bound/evw5d_hpss.sh
+a7b81113c540bdd0ce425b72277e33a9641cf586131dd9328affd5262d5a2280  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/bound/evw5d_launch.sh
+292c4cb99d0bc4b20dd70a12734ca308cf5c8b171779364ac8deecad8e784164  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/bound/evw5d_post.sh
 PASSED test_evw5d.py::test_pass_run_exit
 PASSED test_evw5d.py::test_pass_run
 PASSED test_evw5d.py::test_completeness_finding_is_reported_not_failed
@@ -130,5 +134,7 @@ PASSED test_evw5d.py::test_job_setup_runs_without_noclobber
 PASSED test_evw5d.py::test_job_refuses_a_dangling_out_link
 PASSED test_evw5d.py::test_check_file_constants_json_raw_against_meant
 PASSED test_evw5d.py::test_check_self_cm2_exact_alone
-120 passed in 84.19s (0:01:24)
+PASSED test_evw5d.py::test_connect_allocation_check[template]
+PASSED test_evw5d.py::test_connect_allocation_check[bound]
+122 passed in 101.18s (0:01:41)
 rc=0

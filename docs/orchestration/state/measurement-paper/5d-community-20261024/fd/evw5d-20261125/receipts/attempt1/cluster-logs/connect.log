@@ -1,0 +1,40 @@
+node login31 nproc=244 loadavg 11.22 9.35 9.57
+2026-11-25T21:33:59Z
+connect script sha256 a002ec55c2c7701896a709ed032f5cfa3d57c4ca6af0a5401c3e47ae1f30b584
+squeue --me before:
+== the shared inputs (stat: name|bytes|atime|mtime|inode)
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz|1548438020|1794546256|1782610308|882725251803251539
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz|16017201|1794546256|1790319104|882726729389460450
+/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz|95564|1794549929|1790450957|882726721806143167
+== iris
+m3246               2620.5            10000.0     19458.7      20000.0
+balance_node_h=541.3 half=270.6 bound=0.5
+deploy HEAD abdc88c52b909cfc1eb658ae97bd9defc8f640e7; porcelain --ignored lines before: 0
+nd-unfolding/s5n_pseudo.py: OK
+nd-unfolding/s5c_pseudo.py: OK
+nd-unfolding/s5c_unfold.py: OK
+nd-unfolding/omnifold_nn_core.py: OK
+nd-unfolding/xsec_nd.py: OK
+2d-unfolding/unfold_2d_omnifold_unbinned.py: OK
+nd-unfolding/s5e_candidate.py: OK
+nd-unfolding/s5e_deform.py: OK
+nd-unfolding/s5e_trace.py: OK
+nd-unfolding/s5p_numerics.py: OK
+nd-unfolding/s5p_stage1_inspect.py: OK
+setup_salloc_env.sh: OK
+tool HEAD e01dd863787b6ed0b6ccf836ea0a9b60ed6ac3c3; porcelain --ignored lines before: 0
+nd-unfolding/evw5d/evw5d.py: OK
+nd-unfolding/evw5d/sbatch_evw5d.sh: OK
+nd-unfolding/ess_e/ess_capture.py: OK
+SOURCE_RC=0
+python 3.11.14 numpy 1.26.4 lightgbm 4.6.0 ROOT 6.28/12 O_NOATIME 262144
+2026-11-25T21:36:03Z
+inherited scheduler variables left: 0
+sbatch rc=0
+61997953
+evw5d job 61997953
+scontrol TimeLimit=00:30:00 (declared 00:30:00) NumNodes=1-1 array_lines=0
+STOP: the allocation is not one 30-minute node; job 61997953 cancelled (rc 0)
+61997953|CANCELLED by 112498|00:00:00
+evw5d connect rc=6
+2026-11-25T21:36:11Z

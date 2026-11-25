@@ -14,8 +14,8 @@
 # snapshot. Any miss makes the exit 1. Receipts under $OUT/hpss, tarred to $OUT/hpss.tar.gz. Nothing on CFS.
 SELF=$1; BOUND=$2
 EVW_SHA=__EVW5D_PY_SHA256__
-P=/pscratch/sd/j/josephrb; R=evw5d-20261125; OUT=$P/$R; E=$OUT/evw5d
-H=/home/j/josephrb/mnv-evw5d-20261125; TAR=$H/evw5d-20261125.tar
+P=/pscratch/sd/j/josephrb; R=evw5d-20261125-r2; OUT=$P/$R; E=$OUT/evw5d
+H=/home/j/josephrb/mnv-evw5d-20261125-r2; TAR=$H/evw5d-20261125-r2.tar
 O=$OUT/hpss
 set -o noclobber
 export LC_ALL=C

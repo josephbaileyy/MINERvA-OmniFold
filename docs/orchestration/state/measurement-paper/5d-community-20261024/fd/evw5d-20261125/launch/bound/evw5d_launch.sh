@@ -10,14 +10,14 @@
 #             (the products by scp, then evw5d.accepted(dir, bound) on the Mac with $EVW5D_PY, default python3)
 MODE=${1:?connect|post|hpss|fetch|fetch-products}; F=${2:?session dir}; NODE=${3:-}; BOUND=${4:-}
 HERE=$(cd "$(dirname "$0")" && pwd)
-OUT=/pscratch/sd/j/josephrb/evw5d-20261125
+OUT=/pscratch/sd/j/josephrb/evw5d-20261125-r2
 SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20)
 [ -d "$F" ] && [ -z "$(ls -A "$F")" ] || { echo "STOP: $F is not a new empty directory"; exit 9; }
 hex64() { case "$1" in *[!0-9a-f]*|"") return 1;; esac; [ ${#1} -eq 64 ]; }
 case "$MODE" in
-  connect) S="$HERE/evw5d_connect.sh"; SHA=a002ec55c2c7701896a709ed032f5cfa3d57c4ca6af0a5401c3e47ae1f30b584 ;;
-  post)    S="$HERE/evw5d_post.sh";    SHA=a7927177d93d25aa9aac2e417b81e162e6790f3d88aaf0f25d13cd21526109e2 ;;
-  hpss)    S="$HERE/evw5d_hpss.sh";    SHA=c61d9d927f7ded2179d214e34a193a061cb4fa0979002733656edbf60b5b87c2
+  connect) S="$HERE/evw5d_connect.sh"; SHA=e81567e0b815de8b1ae0c274f84672540ad191faa13422ac075882722f103a96 ;;
+  post)    S="$HERE/evw5d_post.sh";    SHA=292c4cb99d0bc4b20dd70a12734ca308cf5c8b171779364ac8deecad8e784164 ;;
+  hpss)    S="$HERE/evw5d_hpss.sh";    SHA=d37a0396de720d35d4c89aff51fd207cd1aba7dea1542f148026c1173235ff08
            hex64 "$BOUND" || { echo "STOP: hpss needs the bound SHA256SUMS sha256"; exit 9; } ;;
   fetch)
     rc=0
