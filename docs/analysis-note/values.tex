@@ -45,6 +45,7 @@
 \newcommand{\pullFrac}{68.71}        % OLD 2D "coverage" = same-ensemble pull fraction (diagnostic)
 \newcommand{\pullMeanAbs}{0.794}\newcommand{\pullGauss}{0.798}  % <|r|> vs sqrt(2/pi)
 \newcommand{\chiPaper}{2.27}          % RE-2 E_R/Q_R 2.27 (re2-integration/ledger.tsv row m-chiPaper); was 2.65: chi2/ndf vs paper covariance; 2.654, chi2_lgbm42_paperonly.txt (exact-split 3.661)
+\newcommand{\chiPaperOurEdges}{2.27}   % chi2/ndf vs the published TotalCovariance with OUR pT edges (0.07/0.33/0.47): regenA OLD P1a, 465.42/205 = 2.2703 (ibu-chi2-20261123/regenA/out/old_P1a_chi2_paperonly.log; bound by check_sec4_receipts.py). For sentences that compare \chiPaper with other estimators' distances on our edges (\chiPaperPurity, \chiPaperExact, appA's Q_R distance); director 2026-11-25
 \newcommand{\chiPaperExact}{3.66}     % the exact-split cross-check's chi2/ndf vs paper covariance (VL172; control reproduces 3.661)
 \newcommand{\chiPaperExactSeeded}{3.57} % the same estimator with random_state 1/2/3 (XR run X1): 3.565, VL174,
                                        % docs/orchestration/receipts/xr-x1-chi2-20261012/; one seed setting, not a spread
