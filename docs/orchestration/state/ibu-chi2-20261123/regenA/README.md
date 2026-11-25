@@ -64,3 +64,13 @@ relative; paths, hostnames and shas are ignored.
 `out/` holds every output: logs, reports, JSON receipts, ROOT and the figures. The fetched copy matches the remote
 listing ([`receipts/out_remote.sha256`](receipts/out_remote.sha256), 86 files, written before the P8 rerun; the P8b shas
 are above). [`SHA256SUMS`](SHA256SUMS) covers this directory.
+
+**Disclosure (2026-11-25).** Commit c908169d (the READINGS place-column fix) was replaced by 16d8947d through a force-push, done in error, to amend its message: its trailer read "Checks: 24 passed" where that run passed 21. The tree is identical. The standing rule is merge commits only, with no force-push; a wrong trailer is corrected by a new commit, as this one is.
+
+**Full precision for rounding-sensitive macros (journal-editor's request, 2026-11-25).** The P7 receipt stores
+`median_bin_ratio` rounded to 4 decimals (agreement_windows_receipt.py:214), and E's 1.0075 sits on the 3-decimal
+boundary that `\medianBinRatio` prints at. [`receipts/median_fullprec.py`](receipts/median_fullprec.py) recomputes it
+with the producer's own definition (agreement_windows_receipt.py:141-148) from the same inputs →
+[`receipts/median_fullprec.out`](receipts/median_fullprec.out). The control is that round(·, 4) equals the stored value:
+PASS for both. E's median is 1.0074806014196405, which prints as **1.007** at 3 decimals; OLD's is 1.005357659335692
+(1.005). Within 5 %: E 175/205 = 85.3659 % (85.4), OLD 178/205 = 86.8293 % (86.8). READINGS.md is unchanged.

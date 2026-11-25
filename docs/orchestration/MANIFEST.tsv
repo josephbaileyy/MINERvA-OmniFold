@@ -8913,6 +8913,8 @@ docs/orchestration/state/ibu-chi2-20261123/regenA/receipts/P8_attempt1_e_stderr.
 docs/orchestration/state/ibu-chi2-20261123/regenA/receipts/P8_attempt1_old_stderr.log	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/regenA/receipts/c_old.out	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/regenA/receipts/c_old.py	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/regenA/receipts/median_fullprec.out	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
+docs/orchestration/state/ibu-chi2-20261123/regenA/receipts/median_fullprec.py	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/regenA/receipts/out_remote.sha256	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/regenA/receipts/regenA_run.sh	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
 docs/orchestration/state/ibu-chi2-20261123/regenA/receipts/run.log	tracked	MACHINE	state-artifact	ibu-chi2-20261123		generated		exact-path-only	yes
