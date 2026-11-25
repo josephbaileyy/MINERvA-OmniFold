@@ -1,0 +1,20 @@
+## BLOCKERS
+
+- **C-LEAK remains bypassable.** A vector such as `[2e-39, 0.01]` passes because the scan uses the largest magnitude. A single absolute cross section inserted into an otherwise relative `beta` vector would reach the record. The round-2 cases involving a small matrix entry and a standalone numeric string are fixed. `b5d_build.py:464–475`
+- **C-LEAK can now reject a correct band trace.** With 299 zero toy errors and one error of one floating-point step in a cell with \(X_T=10^{-38}\), I reproduced a dimensionless toy trace of \(5.68\times10^{-35}\). The scanner rejects it as absolute and suppresses the entire record. `b5d_build.py:149–156, 469–475`
+
+## MAJORS
+
+- **The tie rule is still incomplete.** The sign fix works, but the absolute `1e-14` cutoff still discards genuine projections that COVFIX’s relative test keeps. In a valid eigensystem tied across ranks 4 and 5, a first projection of norm `1e-15` was skipped, swapping the directions across R1 and R2. Toy variance along the displaced direction then printed as zero in R1. `b5d_build.py:88–104`, `covfix_core.py:101–128`
+- **The production path still reads the cal arrays.** I traced the pinned inputs through `B.prepare` and observed all five cal sets being loaded. The direct B5D read is fixed and the cross-check is gone. The test with an unreadable cal member passes because it stubs `prepare`, bypassing the remaining read. A1’s “never” overstates the fix. `b5d_build.py:344–346`, `bsel_select.py:209–211`, `test_b5d.py:296–301`, `B5D-AMENDMENT-A1.md:29–30`
+- **The new writer can replace an existing output directory.** If another process creates an empty `--out` directory after the initial check, POSIX `rename` replaces it and the CLI reports success. A failed write under a previously absent parent can also leave the newly created parent behind. `b5d_build.py:298–310, 509–520`
+
+## Minors
+
+- **The trace test cannot detect projection and normalization in the wrong order.** Its constant \(X_T\) makes \(W\) commute with \(P\), so a mutant that normalizes before projecting passes. `test_b5d.py:354–370`
+
+The trace formulas themselves are correct and dimensionless. I independently reproduced both with nonuniform \(X_T\), including partially retained and empty bands. The round-2 exit-5 cases, partial output on serialization failure, zero-spread refusal, and contradictory unresolved fixture are fixed. A1 adds the shared-MC disclosure and removes the extra adoption-reporting commitment. The seven items otherwise match the director’s instructions, including the 29% figure.
+
+**A2.** I would preserve the absolute tolerance near unity and allow a relative tolerance for large excesses. Stop if no primary band is measured, or if every measured band has \(\mathrm{SE}_R>\max[0.5,\,0.20(\hat f_R-1)_+]\). Keep the existing three-SE activation trigger. At \(30\pm4\), the excess is resolved and its conditional SE is 14% of the excess, so suppressing \(V_F\) on absolute precision grounds loses information. A1’s declared stop remains in force.
+
+**Model:** GPT-6 (Codex). Reviewed `d763ef043` → `f0e7110dd`. Nineteen read-only tests passed. The full LL5D build was outside this recheck.

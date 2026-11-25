@@ -1,0 +1,21 @@
+Focused adversarial recheck, round 3, READ-ONLY. Never write to any file in the repository. Write nothing except your final answer.
+
+The checkout is at commit f0e7110dd (PR #1316). Your round-2 review of commit d763ef043 is at
+docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/read-r2-delta-codex-school-gpt-6.txt. This round's delta is
+`git diff d763ef043 HEAD -- nd-unfolding/b5d/ docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A1.md`.
+
+It also adds one thing the director asked for: for every band, reading and truth, the record prints the raw toy and reference
+traces on the band's kept modes, relative to T's cell integrals (band_traces), so an unresolved stop still shows the size of
+the problem. The absolute "SE > 0.5 in every band" stop is KEPT as declared (director's ruling); a relative criterion would be
+a separate amendment A2 for the director.
+
+Check strictly, and only this delta:
+A. Is each round-2 BLOCKER, MAJOR and minor fixed? Name any that is not, with the failure scenario.
+B. Is band_traces correct (tr(W P S P W) and tr(W P D P W), S = Cov(e) ddof 1, W = diag(1/X_T), P on the band's kept modes of D),
+   and is it free of an absolute cross section (C-LEAK)?
+C. Any NEW defect: a control that passes vacuously, a check that STOPs a correct build, a test that passes for the wrong
+   reason, a regression, or A1 text that departs from the director's seven items (quoted in reads/read-r2-delta-prompt.txt).
+D. For the A2 question only: give your strongest one-paragraph case for or against replacing the absolute SE stop by a
+   relative criterion, with the rule you would propose.
+
+Report BLOCKERS, then MAJORS, then minors, each with file:line and a concrete failure scenario. Under about 600 words. Name your model.

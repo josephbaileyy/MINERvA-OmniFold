@@ -26,8 +26,9 @@ fixed before the build, and nothing is tuned on its output.
   - the same clause in B5D-BINDING-1's authority line.
 - **The inputs that change use:**
   - `s1/readout/s1_assembly.json` is now read only for C-FLUX's `meta.flux_weights`;
-  - the build reads only F's members' `r_*` arrays from `fd_f0b_experiments.npz`, never a `cal_*` array. B-SEL's bound
-    `prepare`, reused unchanged, opens the same table for b̂ and the noise. The cal sets enter nothing here.
+  - B5D's own code reads only F's members' `r_*` arrays from `fd_f0b_experiments.npz`.
+  - B-SEL's bound `prepare`, reused unchanged for b̂, the noise and R, loads the whole table, cal sets included. It looks
+    up only the `r_<truth>` and `seed_<A7 truth>` arrays, so no cal value reaches any output.
 
 ## 2. The untested share of C_e is about 29%, and an active L rescales it
 <!-- absence-ok: a scoping statement: the components of C_e that the toy ensembles do not draw, by construction -->
@@ -95,10 +96,13 @@ fixed before the build, and nothing is tuned on its output.
 ## Implementation notes (within the declaration, no change of method)
 
 The code (`nd-unfolding/b5d/b5d_build.py`) implements the declaration with A1:
-- C-LEAK walks the record, exempting only C_b,abs and V_F;
+- C-LEAK walks the record, exempting only C_b,abs and V_F. It judges a matrix by its largest entry, and a vector entry,
+  a scalar or a numeric string by itself. A test checks the complement: scaling every absolute input leaves every
+  non-exempt number unchanged;
 - LL5D's toy mean error is taken relative to T's cell integral, put into Tune v1 units through R (as β = b̂ ⊙ R), and
   printed against C_b;
-- the declared Gram–Schmidt tie rule;
+- the declared Gram–Schmidt tie rule, as COVFIX's `covfix_core._canonical_tied` (null test relative to each
+  projection), then the sign rule;
 - L acts only on C_e's kept modes;
 - C-PSD refuses an indefinite D or a non-finite C_b;
 - C-FIN covers:

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """(b) part 3: the 5D bias block C_b^5D and fluctuation block V_F^5D (B5D-DECLARATION.md rev 1, sha256 676c17fc...,
-with B5D-AMENDMENT-A1.md, sha256 e1af192e...).
+with B5D-AMENDMENT-A1.md, sha256 caeb609c..., and B5D-AMENDMENT-A2.md, sha256 ffa63acc...).
 
-Implements the declaration's §3-§5 with A1 exactly. Reuses, unchanged: B-SEL's input layer (bsel_select.check_pins/prepare for
+Implements the declaration's §3-§5 with A1 and A2 exactly. Reuses, unchanged: B-SEL's input layer (bsel_select.check_pins/prepare for
 b, noise, R and the F0b/F1 tables), LL5D's naming, layout and digest (ll5d, ll5d_b), S1's matrix helpers (s1_assemble:
 EXPECT, mat_cov, functional_matrix, fine_map, flux_weights). Reads no data, no seal and no S1 product.
 
@@ -23,7 +23,8 @@ import numpy as np
 
 SCHEMA = "b5d-blocks/1"
 DECLARATION_SHA256 = "676c17fc5982a01c21f4c7feae2f6c8cd32b0b8ecdc69ec93882e5e30c0f0b1b"
-AMENDMENT_A1_SHA256 = "e1af192eea97a53259fec4b790265601b9368af409cf4ef44ff41b5339fd2e40"
+AMENDMENT_A1_SHA256 = "caeb609c8917d12f4d1e085673d866136d4cdb66c97cb469380012d93ce92239"
+AMENDMENT_A2_SHA256 = "ffa63accc146a02e31d5af8ccc058a73539d98f231b65576e2116bd4bcfc7d02"
 B5D_DIR = "docs/orchestration/state/ben-b-20261124/blocks5d-20261124"
 N_CELLS = 16
 FAMILY = ("nominal", "A7_genie_mec", "A7_nuwro", "A7_gibuu")
@@ -36,6 +37,7 @@ BOOT_N, BOOT_SEED = 2000, 9_991_000
 TRIGGER_K = 3.0
 UNRESOLVED_SE = 0.5
 KEEP_REL = 1e-12
+GS_NULL = 100.0 * np.finfo(np.float64).eps  # COVFIX's tied-space Gram-Schmidt null fraction
 TOL = 1e-12
 FD = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd"
 COMMITTED = {
@@ -47,6 +49,7 @@ COMMITTED = {
     f"{FD}/receipts-ll5d/null/node/null-ar23.json": "a0544ab9f6f0ec55c9866bee689d2563b13c9d07f4b3fdc37ce4762718a23933",
     f"{B5D_DIR}/B5D-DECLARATION.md": DECLARATION_SHA256,
     f"{B5D_DIR}/B5D-AMENDMENT-A1.md": AMENDMENT_A1_SHA256,
+    f"{B5D_DIR}/B5D-AMENDMENT-A2.md": AMENDMENT_A2_SHA256,
 }
 SELECTION_INPUTS = "docs/orchestration/state/ben-b-20261124/selection-20261124/record/selection"
 CONSTRAINT_NAME = "sorted_NuEConstraint_FHC_RHC_IMD.txt"
@@ -86,21 +89,27 @@ def eig_sorted(M: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         while j < len(w) and w[j] == w[i]:
             j += 1
         if j - i > 1:
-            P = V[:, i:j] @ V[:, i:j].T
+            U = V[:, i:j]
             basis = []
-            for k in range(len(w)):
-                v = P[:, k].copy()
-                for b in basis:
-                    v -= (b @ v) * b
-                n = np.linalg.norm(v)
-                if n > 1e-14:  # a null projection is numerical noise (~16 eps), skipped
-                    basis.append(v / n)
-                if len(basis) == j - i:
-                    break
-            B = np.column_stack(basis)
-            for c in range(B.shape[1]):  # the declared sign rule holds for the canonical vectors too
-                if B[int(np.argmax(np.abs(B[:, c]))), c] < 0:
-                    B[:, c] = -B[:, c]
+            for k in range(len(w)):  # COVFIX's covfix_core._canonical_tied, in span(U)'s own coordinates
+                c = np.array(U[k, :], dtype=np.float64)
+                n0 = float(np.linalg.norm(c))
+                if n0 == 0.0:
+                    continue
+                for _ in range(2):
+                    for bb in basis:
+                        c = c - (bb @ c) * bb
+                nc = float(np.linalg.norm(c))
+                if nc > GS_NULL * n0:  # null only relative to its own projection: a small genuine projection is kept
+                    basis.append(c / nc)
+                    if len(basis) == j - i:
+                        break
+            if len(basis) != j - i:
+                raise Stop("C-PSD", f"tied eigenspace: Gram-Schmidt spanned {len(basis)} of {j - i} dimensions")
+            B = U @ np.column_stack(basis)
+            for col in range(B.shape[1]):  # the declared sign rule holds for the canonical vectors too
+                if B[int(np.argmax(np.abs(B[:, col]))), col] < 0:
+                    B[:, col] = -B[:, col]
             V[:, i:j] = B
         i = j
     return w, V
@@ -198,13 +207,16 @@ def bootstrap_se(ensembles: dict, bands: dict, n: int = BOOT_N, seed: int = BOOT
 
 
 def trigger(f: dict, se: dict) -> dict:
+    """A2: each band is ACTIVE if f-hat - 1 > 3 SE (phi = f-hat); RESOLVED-INACTIVE if not active and SE <= 0.5;
+    UNRESOLVED if not active and SE > 0.5 (phi = 1, flagged); UNMEASURED if no primary ensemble keeps it (phi = 1)."""
     out = {}
     for r in f:
         if f[r] is None or se[r] is None:
-            out[r] = {"active": False, "phi": 1.0, "why": "band dropped"}
+            out[r] = {"active": False, "phi": 1.0, "state": "UNMEASURED"}
             continue
         active = bool(f[r] - 1.0 > TRIGGER_K * se[r])
-        out[r] = {"active": active, "phi": float(f[r]) if active else 1.0}
+        state = "ACTIVE" if active else ("RESOLVED-INACTIVE" if se[r] <= UNRESOLVED_SE else "UNRESOLVED")
+        out[r] = {"active": active, "phi": float(f[r]) if active else 1.0, "state": state}
     return out
 
 
@@ -406,14 +418,15 @@ def build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B) -> dict:
         for key in ("quad", "fraction_outside_span", "undebiased_bound"):
             if d.get(key) is not None and not np.isfinite(d[key]):
                 raise Stop("C-FIN", f"{name}: {key} is not finite")
-    # all bands dropped, or every SE above 0.5: no V_F (the declared stop short of V_F)
-    unresolved = all(s is None or s > UNRESOLVED_SE for s in se.values())
-    C_e = read_csv_matrix(repo / f"{FD}/with-cpl/data-product/fd_data_product_cpl_C_e.csv")
     trig = trigger(f, se)
+    # A2: no V_F only if every band is UNRESOLVED or UNMEASURED; an ACTIVE or RESOLVED-INACTIVE band builds it
+    unresolved = all(t["state"] in ("UNRESOLVED", "UNMEASURED") for t in trig.values())
+    C_e = read_csv_matrix(repo / f"{FD}/with-cpl/data-product/fd_data_product_cpl_C_e.csv")
     V_F, L = (None, None) if unresolved else fluctuation_block(C_e, trig)
     if V_F is not None and not (np.all(np.isfinite(V_F)) and np.all(np.isfinite(L))):
         raise Stop("C-FIN", "V_F is not finite")
     return {"schema": SCHEMA, "declaration_sha256": DECLARATION_SHA256, "amendment_a1_sha256": AMENDMENT_A1_SHA256,
+            "amendment_a2_sha256": AMENDMENT_A2_SHA256,
             "bias_block": {"family": list(FAMILY), "C_b_tune_v1_units": C_b.tolist(), "C_b_abs": C_b_abs.tolist(),
                            "rank": int(np.sum(np.linalg.eigvalsh(C_b) > KEEP_REL * max(np.linalg.eigvalsh(C_b).max(), 1e-300))),
                            "members": members, "printed_against_C_b": printed,
@@ -432,9 +445,12 @@ LEAK_FLOOR = 1e-30  # an absolute cross section is ~1e-38 cm^2/nucleon; every ot
 
 def check_leak(rec: dict) -> None:
     """§5 C-LEAK: no absolute cross section in the record, except C_b,abs and V_F (covariances in (cm^2/nucleon)^2).
-    Every number outside the exempt paths is relative, a count or a probability. An array is judged by its largest
-    magnitude (a relative matrix may hold roundoff-small entries; an absolute vector is all ~1e-38); a scalar by itself;
-    and a string that parses as a number is judged as that number."""
+    Every other number is relative, a count or a probability. A scalar or a vector entry is judged by itself, so one
+    absolute value in a relative vector refuses. A matrix (a list of lists) is judged by its largest magnitude, since a
+    relative matrix may hold roundoff-small entries. A string that parses as a number is judged as that number. A
+    relative scalar below 1e-30 (thirty orders below any quantity here) would also refuse: a false STOP, not a leak.
+    The dimensional test in test_b5d.py checks the complement: scaling every absolute input leaves every non-exempt
+    number unchanged."""
     def num(x):
         if isinstance(x, bool):
             return None
@@ -447,12 +463,10 @@ def check_leak(rec: dict) -> None:
                 return None
         return None
 
-    def leaves(x):
-        if isinstance(x, (list, tuple)):
-            for v in x:
-                yield from leaves(v)
-        else:
-            yield x
+    def small(vals, path):
+        for n in vals:
+            if n is not None and np.isfinite(n) and 0.0 < abs(n) < LEAK_FLOOR:
+                raise Stop("C-LEAK", f"{'/'.join(map(str, path))} holds {n:.3g}, an absolute scale")
 
     def walk(x, path):
         if path in LEAK_EXEMPT:
@@ -460,19 +474,21 @@ def check_leak(rec: dict) -> None:
         if isinstance(x, dict):
             for k, v in x.items():
                 walk(v, path + (k,))
-            return
-        if isinstance(x, (list, tuple)):
-            if any(isinstance(v, dict) for v in leaves(x)):
+        elif isinstance(x, (list, tuple)):
+            if any(isinstance(v, (dict, list, tuple)) for v in x) and not all(isinstance(v, (list, tuple)) for v in x):
                 for v in x:
                     walk(v, path)
-                return
-            mags = [abs(n) for n in map(num, leaves(x)) if n is not None and np.isfinite(n)]
-            biggest = max(mags, default=0.0)
+            elif x and all(isinstance(v, (list, tuple)) for v in x):  # a matrix
+                if any(isinstance(u, (dict, list, tuple)) for v in x for u in v):
+                    for v in x:
+                        walk(v, path)
+                    return
+                mags = [abs(n) for n in (num(u) for v in x for u in v) if n is not None and np.isfinite(n)]
+                small([max(mags, default=0.0)], path)
+            else:
+                small([num(v) for v in x], path)
         else:
-            n = num(x)
-            biggest = abs(n) if n is not None and np.isfinite(n) else 0.0
-        if 0.0 < biggest < LEAK_FLOOR:
-            raise Stop("C-LEAK", f"{'/'.join(map(str, path))} holds numbers of size {biggest:.3g}, an absolute scale")
+            small([num(x)], path)
     walk(rec, ())
 
 
@@ -507,16 +523,21 @@ def render_record(rec: dict) -> dict:
 
 
 def write_files(out_dir: Path, files: dict) -> None:
-    """Write into a sibling temporary directory, then rename it to out_dir: the record appears whole or not at all."""
+    """Claim out_dir by an exclusive mkdir (it must not exist; its parent must), write every file into a hidden staging
+    directory inside it, then move them up. On any failure the claimed directory is removed: the record appears whole
+    or not at all, and nothing that existed before is replaced."""
     import shutil
-    tmp = out_dir.parent / f".{out_dir.name}.partial-{os.getpid()}"
-    tmp.mkdir(parents=True)
+    out_dir.mkdir()  # exclusive: FileExistsError if anything is there; FileNotFoundError if the parent is absent
     try:
+        stage = out_dir / ".staging"
+        stage.mkdir()
         for n, b in files.items():
-            (tmp / n).write_bytes(b)
-        os.rename(tmp, out_dir)
+            (stage / n).write_bytes(b)
+        for n in files:
+            os.rename(stage / n, out_dir / n)
+        stage.rmdir()
     except BaseException:
-        shutil.rmtree(tmp, ignore_errors=True)
+        shutil.rmtree(out_dir, ignore_errors=True)
         raise
 
 
