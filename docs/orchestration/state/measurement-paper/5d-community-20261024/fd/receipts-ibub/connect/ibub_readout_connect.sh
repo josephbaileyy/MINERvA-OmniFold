@@ -27,7 +27,7 @@
 SELF=$1; WEND=$2
 set -o pipefail
 TAG=readout
-M=8cac52ee834f795558607cf488a01925b87b3d00
+M=b43a5b984b28e68b6ea478b8a63329505c8f78be
 JOB=61924744
 JOB_M=d12c4f2a38a53001eb92bbefc8b2dc6001f034dc
 N=/pscratch/sd/j/josephrb/ibub-20261124
@@ -217,7 +217,7 @@ echo "HEAD $M; porcelain --ignored before: '${gs}'"
 [ -z "$gs" ] || { echo "STOP: the deploy is not clean"; finish 9; }
 ( cd "$D/2d-unfolding/ibub" && sha256sum --strict -c ) <<SUMS || { echo "STOP: the ibub files are not the declared ones"; finish 9; }
 e8e5969f978107e45991164a16c84f1794694dee752cbf189eab00e3ddd54633  ibub_unit.py
-94faa88d4e53037b3d68ec4d802ce93dbf9d0bcfc6b82c2032361dc0ecde8bb0  ibub_readout.py
+3a1e96e7f64b8a0ba833acb560767f327c62746ca4b689ca52213a859a26d5a8  ibub_readout.py
 62591f998f6d3c907bcec460c9399a419755d8f041b40652f37066074b3ab85b  ibub_lanes.py
 507767798ed13edd7c896b0955fcf4090e5dfc0307e0067d9684df2d30c78928  ibub_overlap.py
 bf0838c67ac5c3c0ce375ca7083623d3b44c8007d7de06d30e59ac9f7a02143b  config.json

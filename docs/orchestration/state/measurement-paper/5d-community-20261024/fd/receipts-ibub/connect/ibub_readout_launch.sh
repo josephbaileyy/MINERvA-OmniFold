@@ -21,11 +21,11 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 case "$NODE" in login[0-9][0-9]) ;; *) echo "STOP: '$NODE' is not a login node name"; exit 9;; esac
 [[ "$WEND" =~ ^[0-9]{10}$ ]] || { echo "STOP: window end '$WEND'"; exit 9; }
 [ "$(date +%s)" -le "$WEND" ] || { echo "STOP: the window has ended"; exit 9; }
-S="$HERE/ibub_readout_connect.sh"; SHA=a244c90387e6a46fd59f4af8a7b4d505c479392bc38ba758be01c3d4d19d04ab
+S="$HERE/ibub_readout_connect.sh"; SHA=5b3cdf7be868fbfb754b9c3f1f4b47cc218d3a80fd6b4ff34eb4ef60703d787d
 [ "$(shasum -a 256 "$S" | cut -d' ' -f1)" = "$SHA" ] || { echo "STOP: the local connect script is not the approved one"; exit 8; }
 SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=8)
 HOP=(-o BatchMode=yes -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=8 -o StrictHostKeyChecking=yes -o UpdateHostKeys=no)
-R="f=/dev/shm/ibubc.\$\$.sh; o=\$f.out; umask 077; if [ -e \"\$f\" ] || [ -L \"\$f\" ] || [ -e \"\$o\" ] || [ -L \"\$o\" ]; then echo \"STOP: \$f or \$o exists\"; exit 8; fi; cat > \"\$f\"; h=\$(sha256sum \"\$f\" | cut -d' ' -f1); if [ \"\$h\" != $SHA ]; then rm -f -- \"\$f\"; echo \"STOP: /dev/shm copy sha256 \$h is not $SHA\"; exit 8; fi; echo \"node \$(hostname) staged sha256 \$h\"; setsid nohup bash \"\$f\" \"\$f\" $WEND > \"\$o\" 2>&1 < /dev/null & p=\$!; echo \"detached pid \$p, output \$o\"; wait \$p; r=\$?; cat \"\$o\"; rm -f -- \"\$o\"; echo \"script rc=\$r\""
+R="f=/dev/shm/ibubc.\$\$.sh; o=\$f.out; umask 077; set -o noclobber; if [ -e \"\$f\" ] || [ -L \"\$f\" ] || [ -e \"\$o\" ] || [ -L \"\$o\" ]; then echo \"STOP: \$f or \$o exists\"; exit 8; fi; cat > \"\$f\"; h=\$(sha256sum \"\$f\" | cut -d' ' -f1); if [ \"\$h\" != $SHA ]; then rm -f -- \"\$f\"; echo \"STOP: /dev/shm copy sha256 \$h is not $SHA\"; exit 8; fi; echo \"node \$(hostname) staged sha256 \$h\"; setsid nohup bash \"\$f\" \"\$f\" $WEND > \"\$o\" 2>&1 < /dev/null & p=\$!; echo \"detached pid \$p, output \$o\"; wait \$p; r=\$?; cat \"\$o\"; rm -f -- \"\$o\"; echo \"script rc=\$r\""
 ssh "${SSH[@]}" saul.nersc.gov "ssh ${HOP[*]} $NODE $(printf '%q' "$R")" < "$S" > "$F/session.out" 2> "$F/session.err"
 rc=$?
 echo "ssh rc=$rc"

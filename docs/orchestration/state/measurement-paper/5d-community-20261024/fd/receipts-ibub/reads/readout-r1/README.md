@@ -35,5 +35,5 @@ new M, `8cac52ee8`, merges main into it.
 | 6 | NOTE | the launcher's usage line named `ibub_run_launch.sh`; its `/dev/shm` target was not checked absent; the stand-in has no `CANCELLED by <uid>` variant | **fixed.** The usage line is corrected. The node now refuses (exit 8, before writing) if `ibubc.<pid>.sh` or its `.out` exists, a link included. Stand-in variant `cancelled_by` (`CANCELLED by 112498`: terminal, read). The launcher itself still has no stand-in, as for connect R. That is stated as a residual, not fixed |
 
 **After the fixes**, at M `8cac52ee8`: the tests, the 138 mutants, the trace and the 16-variant stand-in are in
-`../../code/readout/` and `../../connect/standin/readout-at-8cac52ee8/`. A second read checks the fixes
-(`../readout-r2/`).
+`../../code/readout/` as committed at `3a6c1a79f`, and in `../../connect/standin/readout-at-8cac52ee8/`. The second read
+(`../readout-r2/`) found all six fixes correct (GO). Its two NOTEs are fixed at the package's later M `b43a5b984`.

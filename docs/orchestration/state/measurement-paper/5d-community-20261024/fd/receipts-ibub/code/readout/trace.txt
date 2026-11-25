@@ -1,19 +1,19 @@
 # IBUB line trace, the readout package: coverage.py over the four modules while all test files run (167 tests, OK),
-# at commit 8cac52ee834f795558607cf488a01925b87b3d00 (the readout's M), in the same clean worktree as the mutants.
+# at commit b43a5b984b28e68b6ea478b8a63329505c8f78be (the readout's M), in the same clean worktree as the mutants.
 # The four uncovered lines are each module's `if __name__ == "__main__": sys.exit(main())`. Subprocess tests run each of them:
 #   - test_ibub_readout.AsScripts covers ibub_unit and ibub_readout;
 #   - test_ibub_job.Lanes.test_the_cli covers ibub_lanes;
 #   - test_ibub_overlap.test_it_runs_as_a_script covers ibub_overlap.
 # The job script and the connect templates are bash and outside coverage.py. They are exercised by test_ibub_job,
 # test_ibub_readout.JobRules, the mutants and the stand-ins.
-# At 86c4493f1 (not committed) this trace also missed ibub_readout.py 272 and 366, the guards against a non-object
-# toy or reference meta. bee6e5522 adds their tests; both lines are now reached.
+# At 86c4493f1 (not committed) this trace also missed the guards against a non-object toy or reference meta.
+# bee6e5522 added their tests, and the lines have been reached since.
 Name              Stmts   Miss  Cover   Missing
 -----------------------------------------------
 ibub_lanes.py        51      1    98%   79
 ibub_overlap.py      73      1    99%   134
-ibub_readout.py     573      1    99%   829
+ibub_readout.py     577      1    99%   833
 ibub_unit.py        483      1    99%   685
 -----------------------------------------------
-TOTAL              1180      4    99%
-# tests: Ran 167 tests in 362.846s; OK; tests rc=0
+TOTAL              1184      4    99%
+# tests: Ran 167 tests in 338.894s; OK; tests rc=0

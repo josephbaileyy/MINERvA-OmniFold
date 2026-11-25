@@ -1,4 +1,4 @@
-# IBUB hand mutants, the readout package: 2d-unfolding/ibub/mutants.py at commit 8cac52ee834f795558607cf488a01925b87b3d00 (the readout's M), run as
+# IBUB hand mutants, the readout package: 2d-unfolding/ibub/mutants.py at commit b43a5b984b28e68b6ea478b8a63329505c8f78be (the readout's M), run as
 # `python -B -m mutants` in a separate detached worktree at that commit (removed afterwards; its porcelain was empty
 # before and after). The interpreter is a venv over ROOT 6.40.04 with LightGBM 4.7.0, scikit-learn 1.9.1 and numpy
 # 1.26.4 (macOS).
@@ -7,25 +7,27 @@
 #   - each mutant compiles;
 #   - a kill is a named test's failure or error;
 #   - a load error, a zero-test run or a class or module setup error is a harness failure that stops the run.
-# The set has 138 mutants: M‴'s 103 (../mutants.txt, the run's receipt at d12c4f2a3, kept as it is) and 35 on the
-# readout's code (ibub_readout.py). Those 35 include the director's --records corrections (the job-PASS gate restored,
-# the terminal check dropped, the allocation from stdout alone, the inventory hash skipped) and, as 128-138, agy
-# readout read 1's fixes (../../reads/readout-r1/). It supersedes the record at 94d81351c (127/127) and the local run
-# at 86c4493f1 (136/136, not committed: its trace found the non-object meta guards unreached, fixed by 137-138).
+# The set has 141 mutants: M‴'s 103 (../mutants.txt, the run's receipt at d12c4f2a3, kept as it is) and 38 on the
+# readout's code (ibub_readout.py). Those 38 include:
+#   - the director's --records corrections: the job-PASS gate restored, the terminal check dropped, the allocation
+#     from stdout alone, and the inventory hash skipped;
+#   - as 128-138, agy readout read 1's fixes (../../reads/readout-r1/);
+#   - as 139-141, read 2's (../../reads/readout-r2/).
+# It supersedes the record at 8cac52ee8 (138/138, committed at 3a6c1a79f).
 # Connect O's template is not mutated: test_ibub_readout.JobRules ties it to the readout's TERMINAL set and flags, and
-# the stand-in (../../connect/standin/readout-at-8cac52ee8/) runs it.
+# the stand-in (../../connect/standin/readout-at-b43a5b984/) runs it.
 # Blobs at that commit:
 #   e8e5969f978107e45991164a16c84f1794694dee752cbf189eab00e3ddd54633  ibub_unit.py
-#   94faa88d4e53037b3d68ec4d802ce93dbf9d0bcfc6b82c2032361dc0ecde8bb0  ibub_readout.py
+#   3a1e96e7f64b8a0ba833acb560767f327c62746ca4b689ca52213a859a26d5a8  ibub_readout.py
 #   62591f998f6d3c907bcec460c9399a419755d8f041b40652f37066074b3ab85b  ibub_lanes.py
 #   507767798ed13edd7c896b0955fcf4090e5dfc0307e0067d9684df2d30c78928  ibub_overlap.py
 #   ab0d7387e7b63605f5091342eea2b1a976b39dda7263b31099309e85c6195518  jobs/ibub_job.sbatch
 #   bf0838c67ac5c3c0ce375ca7083623d3b44c8007d7de06d30e59ac9f7a02143b  config.json
 #   8cb7435df261729c4354f0422e461d2de303307225363fd1d65549c7a1c7cb0c  test_ibub_unit.py
-#   b62e78d1c196b0b908e193bc039ed179c1342e4c97df1317b70293da3e4d0b01  test_ibub_readout.py
+#   acb9df0329fe89c795d2c5008ebba00f8a242d1e83eb7521a5dd98075747ab81  test_ibub_readout.py
 #   d4917d37f2770cc797b0cfdc70e896634ecba508e63ccbcad8fb463e0fe7c304  test_ibub_job.py
 #   6edb2a400bb48490d11ab0c1a01038a0477f0a13b1a8fa9a59746e6a729e1c6e  test_ibub_overlap.py
-#   3ef057bca92462ad2db1c85ee09f474f888cbdc5fed7338459640e882c44c8d7  mutants.py
+#   4d768af3f4a05327be3bdcda45332d5187c2cc1254eab473b7e34ee9fe4337eb  mutants.py
 #   70ab88cac2672df3ff94cfe4ccacc44d1ed65fe210d70a8c78a4d172bcb1b427  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh (the runner's CT)
 #   c14fbc2726657f5611ca9af0c3dc48d19818e92ad7ce409c930920f88a3cdbab  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_readout_connect.template.sh (read by test_ibub_readout.JobRules; not mutated)
 BASELINE	PASS	test_ibub_job.Job
@@ -180,5 +182,8 @@ BASELINE	PASS	test_ibub_unit.Refusals
 136	KILLED	ibub_readout.py	test_ibub_readout.JobWide	a barrier whose units is not an object crashes the readout
 137	KILLED	ibub_readout.py	test_ibub_readout.EndToEnd	a toy meta that is not an object crashes the readout
 138	KILLED	ibub_readout.py	test_ibub_readout.JobWide	a reference meta that is not an object crashes the readout
-TOTAL	138/138 killed
+139	KILLED	ibub_readout.py	test_ibub_readout.JobWide	a reference whose srun_rc is JSON false reads as rc 0
+140	KILLED	ibub_readout.py	test_ibub_readout.JobWide	a symlinked reference marker is read
+141	KILLED	ibub_readout.py	test_ibub_readout.JobWide	a symlinked units/refcheck.json is read
+TOTAL	141/141 killed
 mutants rc=0
