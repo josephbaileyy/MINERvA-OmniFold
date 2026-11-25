@@ -229,6 +229,30 @@ def regen_a2_max_dev_pct() -> float:
     return dev
 
 
+def pt_edges() -> tuple[list[float], list[float]]:
+    """(published, ours) muon pT bin edges in GeV/c. Published: the release's pt_pl_cross_section TH2D axis, as read
+    in ibu-chi2-20261123/edges/root_axis.out (release sha256 6c6dce72...). Ours: MINERvA101's util/Binning.h."""
+    txt = (STATE / "ibu-chi2-20261123/edges/root_axis.out").read_text()
+    m = re.findall(r"(?m)^Y p_\{t\} \(GeV/c\) \[([0-9., ]+)\]$", txt)
+    if len(m) != 1 or "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3" not in txt:
+        raise ValueError("edges/root_axis.out: the release's pT axis (sha 6c6dce72...) not found exactly once")
+    published = [float(x) for x in m[0].split(",")]
+    h = (HERE.parents[1] / "MINERvA101/MINERvA-101-Cross-Section/util/Binning.h").read_text()
+    o = re.findall(r"ptmu_bins = \{([0-9., \n]+)\};", h)
+    if len(o) != 1:
+        raise ValueError("Binning.h: ptmu_bins not found exactly once")
+    ours = [float(x) for x in o[0].replace("\n", " ").split(",")]
+    if len(published) != 15 or len(ours) != 15:
+        raise ValueError("expected 14 pT bins on both grids")
+    return published, ours
+
+
+def pt_edges_that_differ() -> tuple[list[float], list[float]]:
+    published, ours = pt_edges()
+    i = [k for k in range(15) if abs(published[k] - ours[k]) > 1e-12]
+    return [published[k] for k in i], [ours[k] for k in i]
+
+
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
     # One printed 1.04 stands for both pT edge bins, so it is bound twice: once to each bin.
@@ -262,7 +286,10 @@ CHECKS = [
      lambda: regen_a_number("out/old_P1a_chi2_paperonly.log", r"PAPER \(stat\+syst\)\s+chi2 =\s*([0-9.]+)\s+ndf = 205") / 205,
      "round"),
     # appA_methods.tex:74's Q_R direct-inverse distance: G2R run 2's ours-only step oo_Q (re2c_run.sh; spec row oo-q).
-    # It stays on our pT edges (KNOWN_ISSUES 103), next to \\chiPaperOurEdges.
+    # It stays on our pT edges (KNOWN_ISSUES 103), next to \\chiPaperOurEdges. The RE-2 spec row oo-q
+    # (2d-unfolding/re2/partc/re2c_values_spec.tsv) still cites N/app_statmethods.tex:782 with 23.23, on purpose: the
+    # spec is the frozen input of the bound run and describes the note at its deploy, 903fb78b (test_re2c.py checks it
+    # there, #1325). The sentence prints here now, and this row is the live binding.
     ("Q_R direct-inverse distance per bin vs the published central value (G2R run 2, oo-q)", "appA_methods.tex",
      r"The direct inverse of \$Q_R\$ gives a quadratic distance of ([0-9.]+) per reported bin",
      lambda: float(re.search(r"\[universe-only\] direct inverse: chi\^2 = [0-9.]+,\s+ndf = 205,\s+chi\^2/ndf = ([0-9.]+)",
