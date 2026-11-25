@@ -1,0 +1,28 @@
+== tier2.sh tension arm 1 (normalized)
+CWD OUT
+ARG W/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/tools/capture_palette.py
+ARG CAP
+ARG W/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/tools/palette_run.py
+ARG W/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/tools/remap_anc.py
+ARG /Users/josephbailey/cov2d-work/figfetch/anc
+ARG W/2d-unfolding/diagnose_tension.py
+ARG --ours
+ARG /Users/josephbailey/cov2d-work/figfetch/er-anc/xsec.root
+ARG --out-prefix
+ARG OUT/tension
+ARG --style
+ARG restyle-2026-10
+ARG --print-font
+ENV HOME=HOME
+ENV MKL_NUM_THREADS=1
+ENV MPLCONFIGDIR=MPL
+ENV OMP_NUM_THREADS=1
+ENV OPENBLAS_NUM_THREADS=1
+ENV PATH=T/rootmpl3108/bin:/usr/bin:/bin
+ENV PWD=OUT
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONPATH=
+ENV VECLIB_MAXIMUM_THREADS=1
+TIER2-ARGV-EQUAL :: PASS
+rc=0
+real ~/cov2d-work/figrun/tension unchanged

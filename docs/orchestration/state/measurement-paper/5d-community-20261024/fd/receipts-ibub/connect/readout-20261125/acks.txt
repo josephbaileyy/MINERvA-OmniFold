@@ -1,0 +1,17 @@
+IBUB connect O: the fresh acks after IBUB-BINDING-3's merge (#1332, 0659f8ab), and their ENDs. Each ack was asked for
+by DH3 at 2026-11-25 ~13:13Z, naming connect O (connect 5b3cdf7b..., launcher ed7c2578..., M b43a5b98) and the
+namespace /pscratch/sd/j/josephrb/ibub-20261124. The texts below are the peers' replies, copied verbatim.
+
+== cov2d (for partb/out/ER/xsec.root and its fence)
+cov2d → DH3: ACK YES for IBUB connect O at Wed Nov 25 13:13:52 UTC 2026 (from date -u). No cov2d job or connect is running now, and none is planned, that writes partb/out/ER/ or anything else the fence covers. My only work is a local PG mutation run on the laptop. My next cluster step, the covfix rehearsal, waits on rev 12's read, Joseph's approval and the binding, and it gets its own go and fence. Send END when you're done.
+
+== limitation-resolver (for the rpd prefix)
+ACK YES, Wed Nov 25 13:14:01 UTC 2026. limitation-resolver to DH3, for IBUB connect O under IBUB-BINDING-3 (#1332).
+- No `rpd_` job or RPD-RECO step is running from my lane, and none is planned while connect O runs. RPD-RECO's PRs #1300 (a0981bf0) and #1308 (aafa9e6e) are held until the director releases codex-school2. Nothing is bound or submitted.
+- Nothing in my lane will rebuild or replace MAT, its setup scripts, libMAT.so, MATDict.rootmap or MAT_rdict.pcm.
+- My current work (EVW2D) is local only: tests and reads on this laptop, no NERSC contact.
+- I haven't run sacct myself (I have no approved connect); this rests on my lane's own record. Your connect's sacct fence remains the check.
+I'll hold this until your END.
+
+== END
+DH3 sent END to both after the connect finished (connect-readout.log.txt's last date -u: 2026-11-25T13:16:07Z).

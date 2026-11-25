@@ -50,19 +50,19 @@ The salt never leaves the laptop before `reveal`.
 
 `reference_role.py` does all of this.
 
-**The launch is built by the wrapper from validated fields, never from a command string.** Each PV role's `slurm`
+**The launch is built by the wrapper from validated fields, never from a command string.** Each role's `slurm`
 block may name `salloc` and `srun` (paths ending in those names) and set `account`, `qos`, `constraint` and `time`,
 with plain values. The wrapper runs:
 
 ```
 /usr/bin/ssh <the forced options> -l <user> -i <identity_file> [-o CertificateFile=...] <host> \
   'env -u SRUN_INPUT -u SRUN_OUTPUT -u SRUN_ERROR -u SLURM_STD{IN,OUT,ERR}MODE \
-   salloc --exclusive -N 1 -n 1 [-A -q -C -t] srun --exclusive -N 1 -n 1 \
+   salloc --exclusive -N 1 -n 1 -J covfix_<role> [-A -q -C -t] srun --exclusive -N 1 -n 1 \
    bash -c <exec check> covfix-exec <binary> <sha256> <args> --covfix-...'
 ```
 
 That is one task on one exclusive node. The exec check runs on the compute node: it hashes the binary and execs it only
-on a match (exit 86 otherwise), leaving stdin untouched. `pg-connect` has no allocation and runs on the host.
+on a match (exit 86 otherwise), leaving stdin untouched. The job name is a constant per role in the code (`JOB_NAMES`: covfix_pg_connect, covfix_pv_writer, covfix_pv_readout), never from config or input, so fences and sacct can recognize covfix jobs; the config cannot set `-J`. Every role runs this way, `pg-connect` included: its role config needs the same `slurm` block (cov2d, 2026-11-25; before, `pg-connect` had no allocation and would have run on the login host).
 
 **ssh is built by the wrapper from a closed schema (director, 2026-11-23).** The role config's `ssh` object may hold
 only these keys; any other key is refused:

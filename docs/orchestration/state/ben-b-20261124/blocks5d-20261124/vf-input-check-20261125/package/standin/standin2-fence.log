@@ -1,0 +1,7 @@
+# stand-in 2, case fence
+node script sha256 04dcaa18f29fef02e258343896b251fa5d95fda3bcce7e87de75fc2218de14dd
+node 669f7c239161 nproc=4 loadavg 0.16 0.03 0.05
+2026-11-25T08:39:34Z
+== fence (sacct)
+BAIL fence: a non-terminal job starts with 'cov2d':   123456  cov2d_run   RUNNING
+script rc=9

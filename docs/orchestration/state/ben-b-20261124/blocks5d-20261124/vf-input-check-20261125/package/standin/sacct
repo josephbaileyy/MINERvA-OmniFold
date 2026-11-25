@@ -1,0 +1,2 @@
+#!/bin/bash
+[ -n "$FENCEHIT" ] && echo "  123456  cov2d_run   RUNNING"; exit 0

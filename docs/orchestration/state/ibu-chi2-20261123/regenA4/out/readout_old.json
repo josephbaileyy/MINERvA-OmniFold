@@ -1,0 +1,329 @@
+{
+ "xsec": "/Users/josephbailey/cov2d-work/figfetch/er-anc/xsec.root",
+ "pt_edges": [
+  0.0,
+  0.07,
+  0.15,
+  0.25,
+  0.33,
+  0.4,
+  0.47,
+  0.55,
+  0.7,
+  0.85,
+  1.0,
+  1.25,
+  1.5,
+  2.5,
+  4.5
+ ],
+ "flux_source": "embedded hFlux_pt",
+ "n_reported": 205,
+ "modes": [
+  {
+   "panel": "a",
+   "chi2_contrib": 22.530816276299422,
+   "share_pz_ge_20": 0.8429602792644657,
+   "argmax_pz_bin": 14,
+   "argmax_pt_bin": 12
+  },
+  {
+   "panel": "b",
+   "chi2_contrib": 14.265903066326935,
+   "share_pz_ge_20": 0.9921012862769545,
+   "argmax_pz_bin": 14,
+   "argmax_pt_bin": 13
+  },
+  {
+   "panel": "c",
+   "chi2_contrib": 13.296533395875482,
+   "share_pz_ge_20": 4.182783464928289e-06,
+   "argmax_pz_bin": 9,
+   "argmax_pt_bin": 4
+  },
+  {
+   "panel": "d",
+   "chi2_contrib": 13.220680332503274,
+   "share_pz_ge_20": 0.99991681368565,
+   "argmax_pz_bin": 15,
+   "argmax_pt_bin": 13
+  },
+  {
+   "panel": "e",
+   "chi2_contrib": 13.010754053171706,
+   "share_pz_ge_20": 2.2141123185713868e-05,
+   "argmax_pz_bin": 11,
+   "argmax_pt_bin": 9
+  },
+  {
+   "panel": "f",
+   "chi2_contrib": 12.237519454660537,
+   "share_pz_ge_20": 3.1788112433573913e-06,
+   "argmax_pz_bin": 7,
+   "argmax_pt_bin": 10
+  }
+ ],
+ "modes_share_gt_half": [
+  "a",
+  "b",
+  "d"
+ ],
+ "pt_slices": {
+  "rows": [
+   {
+    "slice": 0,
+    "n_cells": 16,
+    "D_ours": 26.344707768134995,
+    "D_prior": 229.07528688013792,
+    "toward": true
+   },
+   {
+    "slice": 1,
+    "n_cells": 16,
+    "D_ours": 23.34844090622898,
+    "D_prior": 312.0919581149485,
+    "toward": true
+   },
+   {
+    "slice": 2,
+    "n_cells": 16,
+    "D_ours": 48.89128049631533,
+    "D_prior": 614.0814167175433,
+    "toward": true
+   },
+   {
+    "slice": 3,
+    "n_cells": 16,
+    "D_ours": 44.59141012126913,
+    "D_prior": 470.1092992271052,
+    "toward": true
+   },
+   {
+    "slice": 4,
+    "n_cells": 16,
+    "D_ours": 49.19615627973074,
+    "D_prior": 591.7793043591735,
+    "toward": true
+   },
+   {
+    "slice": 5,
+    "n_cells": 16,
+    "D_ours": 25.300953737509055,
+    "D_prior": 732.8836879909709,
+    "toward": true
+   },
+   {
+    "slice": 6,
+    "n_cells": 16,
+    "D_ours": 33.698530668012204,
+    "D_prior": 1112.628440459632,
+    "toward": true
+   },
+   {
+    "slice": 7,
+    "n_cells": 16,
+    "D_ours": 42.813557344354436,
+    "D_prior": 2531.8759528186224,
+    "toward": true
+   },
+   {
+    "slice": 8,
+    "n_cells": 16,
+    "D_ours": 55.44919063484102,
+    "D_prior": 2726.98907917203,
+    "toward": true
+   },
+   {
+    "slice": 9,
+    "n_cells": 15,
+    "D_ours": 25.27247797308309,
+    "D_prior": 3066.8483469336784,
+    "toward": true
+   },
+   {
+    "slice": 10,
+    "n_cells": 14,
+    "D_ours": 68.75724377342793,
+    "D_prior": 4099.817522557439,
+    "toward": true
+   },
+   {
+    "slice": 11,
+    "n_cells": 13,
+    "D_ours": 101.26168828267603,
+    "D_prior": 2109.261389518994,
+    "toward": true
+   },
+   {
+    "slice": 12,
+    "n_cells": 11,
+    "D_ours": 185.62137894397756,
+    "D_prior": 2363.520910806519,
+    "toward": true
+   },
+   {
+    "slice": 13,
+    "n_cells": 8,
+    "D_ours": 46.04434422756257,
+    "D_prior": 509.96907692024536,
+    "toward": true
+   }
+  ],
+  "toward_count": 14,
+  "n_slices": 14
+ },
+ "pz_slices": {
+  "rows": [
+   {
+    "slice": 0,
+    "n_cells": 9,
+    "D_ours": 7.8835732447797815,
+    "D_prior": 82.86649456660862,
+    "toward": true
+   },
+   {
+    "slice": 1,
+    "n_cells": 10,
+    "D_ours": 20.857935746192364,
+    "D_prior": 357.0868572203057,
+    "toward": true
+   },
+   {
+    "slice": 2,
+    "n_cells": 11,
+    "D_ours": 30.34640600508768,
+    "D_prior": 579.0563175258044,
+    "toward": true
+   },
+   {
+    "slice": 3,
+    "n_cells": 12,
+    "D_ours": 11.802101792171154,
+    "D_prior": 1486.5997429993997,
+    "toward": true
+   },
+   {
+    "slice": 4,
+    "n_cells": 12,
+    "D_ours": 28.170524063262107,
+    "D_prior": 1588.291108566129,
+    "toward": true
+   },
+   {
+    "slice": 5,
+    "n_cells": 13,
+    "D_ours": 33.1472848970557,
+    "D_prior": 1712.4685613531494,
+    "toward": true
+   },
+   {
+    "slice": 6,
+    "n_cells": 13,
+    "D_ours": 30.44673028467803,
+    "D_prior": 1509.0785473187084,
+    "toward": true
+   },
+   {
+    "slice": 7,
+    "n_cells": 13,
+    "D_ours": 72.94256190546827,
+    "D_prior": 1295.6056272500805,
+    "toward": true
+   },
+   {
+    "slice": 8,
+    "n_cells": 14,
+    "D_ours": 75.43257541742798,
+    "D_prior": 1180.8610402889447,
+    "toward": true
+   },
+   {
+    "slice": 9,
+    "n_cells": 14,
+    "D_ours": 17.484474373969206,
+    "D_prior": 1165.9519552225563,
+    "toward": true
+   },
+   {
+    "slice": 10,
+    "n_cells": 14,
+    "D_ours": 10.223227421566683,
+    "D_prior": 1402.1323848092873,
+    "toward": true
+   },
+   {
+    "slice": 11,
+    "n_cells": 14,
+    "D_ours": 29.788781144310814,
+    "D_prior": 1318.6042119879194,
+    "toward": true
+   },
+   {
+    "slice": 12,
+    "n_cells": 14,
+    "D_ours": 40.81240762402488,
+    "D_prior": 3222.516490694755,
+    "toward": true
+   },
+   {
+    "slice": 13,
+    "n_cells": 14,
+    "D_ours": 39.144788985008226,
+    "D_prior": 1695.655510313834,
+    "toward": true
+   },
+   {
+    "slice": 14,
+    "n_cells": 14,
+    "D_ours": 255.088969799048,
+    "D_prior": 1466.6689442901643,
+    "toward": true
+   },
+   {
+    "slice": 15,
+    "n_cells": 14,
+    "D_ours": 73.01901845307218,
+    "D_prior": 1407.4878780693925,
+    "toward": true
+   }
+  ],
+  "toward_count": 16,
+  "n_slices": 16
+ },
+ "printed_panel_chi2": {
+  "MEFHC_5iter_xsec_paper_pt_slices": [
+   "$\\times 10^{40}$ $\\chi^2/n=1890.6/16$",
+   "$\\times 10^{40}$ $\\chi^2/n=3404.9/16$",
+   "$\\times 10^{39}$ $\\chi^2/n=3785.0/16$",
+   "$\\times 10^{39}$ $\\chi^2/n=3947.5/16$",
+   "$\\times 10^{39}$ $\\chi^2/n=2614.2/16$",
+   "$\\times 10^{39}$ $\\chi^2/n=2819.5/16$",
+   "$\\times 10^{39}$ $\\chi^2/n=5084.1/16$",
+   "$\\times 10^{39}$ $\\chi^2/n=18265.8/16$",
+   "$\\times 10^{39}$ $\\chi^2/n=23843.0/16$",
+   "$\\times 10^{39}$ $\\chi^2/n=30062.9/15$",
+   "$\\times 10^{39}$ $\\chi^2/n=43400.5/14$",
+   "$\\times 10^{39}$ $\\chi^2/n=19383.3/13$",
+   "$\\times 10^{40}$ $\\chi^2/n=17151.3/11$",
+   "$\\times 10^{42}$ $\\chi^2/n=2847.1/8$"
+  ],
+  "MEFHC_5iter_xsec_paper_pz_slices": [
+   "$\\times 10^{39}$ $\\chi^2/n=1425.5/9$",
+   "$\\times 10^{39}$ $\\chi^2/n=4904.7/10$",
+   "$\\times 10^{39}$ $\\chi^2/n=11552.6/11$",
+   "$\\times 10^{39}$ $\\chi^2/n=20922.0/12$",
+   "$\\times 10^{39}$ $\\chi^2/n=23625.8/12$",
+   "$\\times 10^{39}$ $\\chi^2/n=20645.8/13$",
+   "$\\times 10^{39}$ $\\chi^2/n=15010.5/13$",
+   "$\\times 10^{39}$ $\\chi^2/n=17561.5/13$",
+   "$\\times 10^{39}$ $\\chi^2/n=10167.4/14$",
+   "$\\times 10^{39}$ $\\chi^2/n=7372.5/14$",
+   "$\\times 10^{40}$ $\\chi^2/n=6470.7/14$",
+   "$\\times 10^{40}$ $\\chi^2/n=5238.1/14$",
+   "$\\times 10^{40}$ $\\chi^2/n=15381.7/14$",
+   "$\\times 10^{41}$ $\\chi^2/n=7706.0/14$",
+   "$\\times 10^{41}$ $\\chi^2/n=8201.4/14$",
+   "$\\times 10^{42}$ $\\chi^2/n=2313.4/14$"
+  ]
+ }
+}

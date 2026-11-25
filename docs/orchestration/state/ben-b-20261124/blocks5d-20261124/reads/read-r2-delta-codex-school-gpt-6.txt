@@ -1,0 +1,22 @@
+## BLOCKERS
+
+- **C-LEAK still fails as a control.** The magnitude test rejects a valid dimensionless covariance off-diagonal of `1e-32`, yet accepts an absolute cross section serialized as `"2e-39"`. I reproduced both cases. The earlier missing-control blocker is only partially fixed. `b5d_build.py:401–418`
+- **The exit-5 contract still has gaps.** An existing `--out` returns 2. An all-NaN \(D\) reaches `eigh` before C-PSD checks finiteness and can raise an uncaught `LinAlgError`. B-SEL, `ll5d_b`, missing-file and helper `SystemExit` refusals now map to 5, but `ll5d.Refusal` is a separate class and is omitted. `b5d_build.py:273–294,334–352`
+- **The writer can leave a partial record.** Strict JSON validation runs after the CSVs are written, outside the STOP handler. For example, a nonfinite `C_b_abs` bypasses the leak scan and has no finiteness check. The writer emits the CSVs, then raises with no JSON record. The new writer test injects infinity and accepts the exception without checking what was written. `b5d_build.py:339–340,401–430`, `test_b5d.py:415–418`
+
+## MAJORS
+
+- **C-FIN can stop a correct build.** Constant toy errors give a finite zero spread with strictly positive retained eigenvalues and normalization denominator. The declaration permits that result. The new `v > 0` check applies to the ratio and refuses it. `b5d_build.py:140–147,372–375`
+- **The tie rule is only partially fixed.** Gram–Schmidt overwrites the sign-normalized vectors. A first projection along \((0.1,0,-\sqrt{0.99})\) returns a vector whose largest component is negative. The `1e-12` cutoff also skips a nonzero first projection of norm `1e-13`, which can swap which tied direction enters R1 versus R2. `b5d_build.py:78–99`
+- **The cal calculation is gone, but the cal arrays are still read.** A1 says they are unread. Both B5D and B-SEL’s `prepare` eagerly load every F0b member, including `r_cal_*`. The test checks only that the output key disappeared. `B5D-AMENDMENT-A1.md:27–29`, `b5d_build.py:323–325`, `bsel_select.py:209–213`, `test_b5d.py:329`
+- **A1 includes all seven approved topics, with one extra reporting commitment and one earlier omission.** Item 7 promises numbers for each alternative combination. The approval asks for the numbers and the proposed formula. Item 5 discloses fixed \(D\), but leaves the earlier shared-bank limitation implicit. The two toy streams estimate SE conditional on that bank. I found no wrong number. The full-precision trace ratio is \(0.16827698184 / 0.58039030433 = 28.99376\%\). `B5D-AMENDMENT-A1.md:31–38,66–71,84–90`, `s1_assembly.json:602–610`
+
+## Minors
+
+- **The unresolved CLI test passes with a contradictory record.** It flips `unresolved_stop` on a completed fixture while retaining \(V_F\) and \(L\). It would pass while writing `V_F.csv` and announcing “no V_F.” The separate build test does check that all bands dropping yields no matrix. `test_b5d.py:504–520,538–548`
+
+Per-ensemble keeping is correct in both the point estimate and bootstrap. \(L\) uses only \(C_e\)’s kept modes. The toy mean is divided by the central truth integral, multiplied by that truth’s F1 \(R\), and compared with \(C_b\). Successful output hashes the emitted CSV bytes. The cal-set authority supersession, spent-tune wording, and reference-block sampling disclosure are explicit.
+
+**Raise the absolute SE rule before binding.** At \(30\pm4\), the excess clears the declared trigger (\(29>12\)), yet the precision rule can suppress \(V_F\). That is faithful implementation. It needs an explicit decision on whether absolute precision should veto a clearly resolved excess. `B5D-DECLARATION.md:137–149`
+
+**Model:** GPT-6 (Codex). Reviewed `c8834fd6b` → `d763ef043`. Thirteen no-write tests passed and the committed B-SEL inputs passed their checks. The full suite and LL5D build were not run.

@@ -1,0 +1,20 @@
+Model: **Gemini 4 Hydrogen (XHigh)**
+
+**Verdict: GO; 0 BLOCKERS, 0 MAJORS, 3 minors.**  
+Observed: `PYTHONDONTWRITEBYTECODE=1 python3 -B -X pycache_prefix=/tmp/b5d_pyc -m unittest -v nd-unfolding/b5d/test_b5d.py` passed (`Ran 68 tests in 46.078s`, `OK`); all 8 `COMMITTED` SHA-256 pins verified (including `B5D-AMENDMENT-A1.md` `3d6a497d...`).
+
+Every delta change works as intended: post-rename parent `_fsync_dir` `OSError` warns instead of stopping ([b5d_build.py:576-579](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L576-L579)); `check_leak` requires exact container types and allows `None` only as whole `fluctuation/V_F` ([b5d_build.py:483-494](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L483-L494)); the spy verifies `_build` passes all of `g` at `scale` to `scaled_predictions` ([test_b5d.py:742-752](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/test_b5d.py#L742-L752)); `blocks5d.txt` renders `None` `undebiased_bound` as `n/a` ([b5d_build.py:528](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L528)).
+
+### BLOCKERS
+None.
+
+### MAJORS
+None.
+
+### minors
+1. **No test for `members` rank-0 `"n/a"` formatting** ([b5d_build.py:527-528](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L527-L528), [test_b5d.py:560-566](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/test_b5d.py#L560-L566)):
+   - *Scenario:* `test_the_record_files` sets `quad = None` only under `printed_against_C_b`, never in `members`; reverting `undebiased_bound` formatting to `None` leaves all 68 tests passing.
+2. **Minor docstring lag and strict-PSD wording** ([b5d_build.py:345,448](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L345), [B5D-AMENDMENT-A1.md:102-103,112](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A1.md#L102-L112)):
+   - *Scenario:* `build()` docstring still omits `closure_nuwro`'s bias check ([bsel_select.py:215-219](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/bsel/bsel_select.py#L215-L219)) added to A1; A1:112 says `C-PSD` refuses non-PSD `C_e`, while `w_e.max() > 0` also refuses a zero (PSD) `C_e` and allows `-1e-12 * w_e.max()`.
+3. **Generator spy discards `build()` output** ([test_b5d.py:746-752](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/test_b5d.py#L746-L752)):
+   - *Scenario:* Calling `scaled_predictions(g, scale)` in `_build` without assigning `g = ...` passes this test alone (caught separately by `test_c_leak_is_a_dimensional_check` via `C_b_abs`).

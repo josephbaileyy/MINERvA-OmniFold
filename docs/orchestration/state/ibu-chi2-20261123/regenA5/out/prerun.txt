@@ -1,0 +1,5 @@
+W 06893b0af3ff2245035f504de2c47f02bb48db0e porcelain=0; env A4_: 0
+readout old rc=0
+OLD: C5-REP True, C5-LIT rc=0
+readout e rc=0
+C-PINS: equal
