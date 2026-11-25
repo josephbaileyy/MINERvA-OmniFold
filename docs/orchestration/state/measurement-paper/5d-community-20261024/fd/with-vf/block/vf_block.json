@@ -1,9 +1,9 @@
 {
  "schema": "fd-vf-block/1",
  "labels": {
-  "block": "dF = V_F - C_e, V_F = L C_e L^T the 5D fluctuation block (blocks5d-20261124/RECEIPT.md), adopted into the reported covariance by DECISION-20261125 section 3, with A1 section 4's caveat: the factor measures the toy spread relative to LL5D's rebuilt reference block",
+  "block": "DeltaC_e = C_e^infl - C_e, the covariance increment; C_e^infl = L C_e L^T is C_e with its eigenvalue ranks 1-4, 5-8 and 9-16 rescaled by the applied variance multipliers phi_j (B5D's fluctuation block, V_F in its build records: blocks5d-20261124/RECEIPT.md), adopted into the reported covariance C_rep = C_e^infl + C_model + C_resp + C_PL,5D by DECISION-20261125 section 3, with A1 section 4's caveat: the multiplier measures the toy spread relative to LL5D's rebuilt reference block",
   "not_citable_for": [
-   "a validated size for V_F",
+   "a validated size for C_e^infl",
    "a coverage or calibration statement"
   ]
  },
@@ -34,29 +34,29 @@
  ],
  "npz": {
   "file": "vf_block.npz",
-  "sha256": "e1057f88f5d77b2dba7617982201e3a520940c32f369a938df064a8e8b7508ce",
+  "sha256": "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
   "keys": [
    "f",
    "C_e",
-   "V_F",
-   "dF",
-   "C_resp_plus_dF",
-   "C_resp_plus_C_PL5D_plus_dF",
-   "C_total_plus_C_resp_plus_dF",
-   "C_total_plus_C_resp_plus_C_PL5D_plus_dF"
+   "C_e_infl",
+   "DeltaC_e",
+   "C_resp_plus_DeltaC_e",
+   "C_resp_plus_C_PL5D_plus_DeltaC_e",
+   "C_total_plus_C_resp_plus_DeltaC_e",
+   "C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e"
   ],
   "extra_blocks": [
    {
-    "key": "dF",
-    "name": "dF"
+    "key": "DeltaC_e",
+    "name": "DeltaC_e"
    },
    {
-    "key": "C_resp_plus_dF",
-    "name": "C_resp + dF"
+    "key": "C_resp_plus_DeltaC_e",
+    "name": "C_resp + DeltaC_e"
    },
    {
-    "key": "C_resp_plus_C_PL5D_plus_dF",
-    "name": "C_resp + C_PL5D + dF"
+    "key": "C_resp_plus_C_PL5D_plus_DeltaC_e",
+    "name": "C_resp + C_PL5D + DeltaC_e"
    }
   ]
  },
@@ -79,7 +79,7 @@
    0.04872604423478862,
    0.06127090477150106
   ],
-  "V_F": [
+  "C_e_infl": [
    0.0709571870998576,
    0.06969358580173816,
    0.08334627168314625,
@@ -97,7 +97,7 @@
    0.051037018672053194,
    0.06636499988526012
   ],
-  "dF": [
+  "DeltaC_e": [
    0.021124632918093227,
    0.020525221577481274,
    0.03318526201728029,
@@ -115,7 +115,7 @@
    0.015183869340880464,
    0.02549881248709879
   ],
-  "C_resp_plus_dF": [
+  "C_resp_plus_DeltaC_e": [
    0.02958778395722153,
    0.031226961910382496,
    0.04437641749417383,
@@ -133,7 +133,7 @@
    0.023693367196376682,
    0.03031098990201572
   ],
-  "C_resp_plus_C_PL5D_plus_dF": [
+  "C_resp_plus_C_PL5D_plus_DeltaC_e": [
    0.029856836524769437,
    0.04131769240132329,
    0.045808620433324676,
@@ -151,7 +151,7 @@
    0.031865204769210516,
    0.03846834142433563
   ],
-  "C_total_plus_C_resp_plus_dF": [
+  "C_total_plus_C_resp_plus_DeltaC_e": [
    0.07404337655089252,
    0.07386309287337607,
    0.14391848952933448,
@@ -169,7 +169,7 @@
    0.05479809786425221,
    0.08340425068777879
   ],
-  "C_total_plus_C_resp_plus_C_PL5D_plus_dF": [
+  "C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e": [
    0.07415130031782889,
    0.07866247545074379,
    0.14436652972483738,
@@ -203,7 +203,7 @@
   "cpl_block_npz": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/block/cpl_block.npz"
  },
  "code_sha256": {
-  "fd_vf_addition.py": "bc0c89c78f0d7b6b7debd86be3b530efecfe436a9914c0305a0ff3fcb47925d1",
+  "fd_vf_addition.py": "da7168b22eb4a3d7ae18aa2bf430ce64d1967b6e86a637d1b95ae095b3ffc532",
   "fd_cpl_addition.py": "7c5fe70882599c1d1da0b0061397ccd162eca9c5baa2d27619c0ff5be9fd2685"
  }
 }

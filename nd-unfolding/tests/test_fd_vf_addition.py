@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import copy
 import json
+import os
 import shutil
 import sys
 import tempfile
@@ -56,16 +57,16 @@ class Block(unittest.TestCase):
         self.assertEqual(self.run_block(self.tmp / "b"), 0)
         self.assertEqual(digest(self.tmp / "b/vf_block.npz"), V.VF_BLOCK_NPZ)
         z = A.load_npz(self.tmp / "b/vf_block.npz")
-        self.assertEqual(list(z), ["f", "C_e", "V_F", "dF", "C_resp_plus_dF", "C_resp_plus_C_PL5D_plus_dF",
+        self.assertEqual(list(z), ["f", "C_e", "C_e_infl", "DeltaC_e", "C_resp_plus_DeltaC_e", "C_resp_plus_C_PL5D_plus_DeltaC_e",
                                    V.WITHOUT_F, V.REPORTED_F])
-        self.assertTrue(np.array_equal(z["dF"], z["V_F"] - z["C_e"]))
+        self.assertTrue(np.array_equal(z["DeltaC_e"], z["C_e_infl"] - z["C_e"]))
         cpl = A.load_npz(FDP / "fd/with-cpl/block/cpl_block.npz")
-        self.assertTrue(np.array_equal(z["C_resp_plus_C_PL5D_plus_dF"], cpl[A.XKEY] + z["dF"]))
-        self.assertTrue(np.array_equal(z["C_resp_plus_dF"], cpl["C_resp"] + z["dF"]))
+        self.assertTrue(np.array_equal(z["C_resp_plus_C_PL5D_plus_DeltaC_e"], cpl[A.XKEY] + z["DeltaC_e"]))
+        self.assertTrue(np.array_equal(z["C_resp_plus_DeltaC_e"], cpl["C_resp"] + z["DeltaC_e"]))
         js = json.loads((self.tmp / "b/vf_block.json").read_text())
         self.assertEqual(js["npz"]["sha256"], V.VF_BLOCK_NPZ)
         self.assertEqual(js["inputs_sha256"], V.PINS)
-        self.assertEqual([b["name"] for b in js["npz"]["extra_blocks"]], ["dF", "C_resp + dF", "C_resp + C_PL5D + dF"])
+        self.assertEqual([b["name"] for b in js["npz"]["extra_blocks"]], ["DeltaC_e", "C_resp + DeltaC_e", "C_resp + C_PL5D + DeltaC_e"])
 
     def test_the_committed_block_is_the_pinned_bytes(self):
         p = FDP / "fd/with-vf/block/vf_block.npz"
@@ -73,6 +74,7 @@ class Block(unittest.TestCase):
             self.skipTest("the block is committed with the code")
         self.assertEqual(digest(p), V.VF_BLOCK_NPZ)
 
+    @unittest.skipIf(os.environ.get("VF_MUTANT_RUN") == "1", "provenance, not behaviour: any edit of the module fails it")
     def test_the_committed_block_readout_is_what_this_code_writes(self):
         p = FDP / "fd/with-vf/block/vf_block.json"
         if not p.exists():
@@ -173,7 +175,7 @@ class Block(unittest.TestCase):
     def test_the_identity_l_gives_a_zero_df_and_the_committed_matrices(self):
         VF, L, Ce, dp, cpl = inputs()
         z = built(Ce.copy(), np.eye(16), Ce, dp, cpl)
-        self.assertEqual(float(np.abs(z["dF"]).max()), 0.0)
+        self.assertEqual(float(np.abs(z["DeltaC_e"]).max()), 0.0)
         self.assertTrue(np.array_equal(z[V.REPORTED_F], np.array(dp["matrices"][A.REPORTED])))
 
 
@@ -283,7 +285,7 @@ class Product(unittest.TestCase):
 
     def test_a_block_whose_v_f_is_not_df_plus_c_e_refuses_on_df(self):
         z = A.load_npz(self.t.npz)
-        z["V_F"] = z["V_F"] * 1.01
+        z["C_e_infl"] = z["C_e_infl"] * 1.01
         bad = self.tmp / "bad-vf.npz"
         bad.write_bytes(A.npz_bytes(z))
         js = json.loads(self.t.bj.read_text())
@@ -296,7 +298,7 @@ class Product(unittest.TestCase):
         pins = {**self.t.pins(), "block_npz": digest(bad), "block_json": digest(bj2), "g_readout": digest(self.t.g)}
         with quiet(), mock.patch("sys.stderr"), mock.patch.object(V, "report", wraps=V.report) as rep:
             self.assertEqual(V.run(a, pins=pins), 1)
-        self.assertEqual(rep.call_args_list[-1].args[1], "dF is the block's V_F - C_e, bit for bit")
+        self.assertEqual(rep.call_args_list[-1].args[1], "DeltaC_e is the block's C_e_infl - C_e, bit for bit")
 
     def test_a_stage_g_on_the_old_block_name_refuses_k1(self):
         self.t.write_g(lambda g: g["extra_block"].update(name=A.NAME))
@@ -308,7 +310,7 @@ class Product(unittest.TestCase):
 
     def test_a_block_whose_df_is_not_v_f_minus_c_e_refuses_k2(self):
         z = A.load_npz(self.t.npz)
-        z["dF"] = z["dF"] * 1.01
+        z["DeltaC_e"] = z["DeltaC_e"] * 1.01
         bad = self.tmp / "bad.npz"
         bad.write_bytes(A.npz_bytes(z))
         pins = {**self.t.pins(), "block_npz": digest(bad)}
@@ -330,6 +332,16 @@ class Product(unittest.TestCase):
         self.t.write_g(m)
         self.assertEqual(self.t.product(self.tmp / "p-k3"), 1)
 
+    def test_a_stage_g_with_a_shortened_cell_list_refuses_k3(self):
+        def m(g):
+            g["predictions"][0]["cells"] = g["predictions"][0]["cells"][:-1]
+            g["predictions"][0]["sigma_total_over_f"] = g["predictions"][0]["sigma_total_over_f"][:-1]
+        self.t.write_g(m)
+        with mock.patch.object(V, "report", wraps=V.report) as rep:
+            self.assertEqual(self.t.product(self.tmp / "p-k3c"), 1)
+        self.assertEqual(rep.call_args_list[-1].args[:2],
+                         ("K3", "Stage G's predictions are its declared five, in order, on their declared cells"))
+
     def test_a_stage_g_naming_the_old_covariance_refuses_k3(self):
         self.t.write_g(lambda g: g["predictions"][0].update(reported_covariance="C_total + C_resp + C_PL5D"))
         self.assertEqual(self.t.product(self.tmp / "p-k3b"), 1)
@@ -341,6 +353,16 @@ class Product(unittest.TestCase):
             real(path, data.replace(b"R07", b"R7 ") if path.name.endswith("_cells.csv") else data)
         with mock.patch.object(A, "write_atomic", corrupting), mock.patch.object(V, "report", wraps=V.report) as rep:
             self.assertEqual(self.t.product(self.tmp / "p-k6"), 1)
+        self.assertEqual(rep.call_args_list[-1].args[0], "K6")
+        self.assertFalse((self.tmp / "p-k6").exists(), "a refused product installs no output")
+
+    def test_cells_whose_box_edges_are_not_the_products_refuse_k6(self):
+        real = A.write_atomic
+
+        def edges(path, data):
+            real(path, data.replace(b"R00,0.0,", b"R00,0.001,", 1) if path.name.endswith("_cells.csv") else data)
+        with mock.patch.object(A, "write_atomic", edges), mock.patch.object(V, "report", wraps=V.report) as rep:
+            self.assertEqual(self.t.product(self.tmp / "p-k6b"), 1)
         self.assertEqual(rep.call_args_list[-1].args[0], "K6")
 
     def test_an_existing_output_refuses(self):
@@ -400,20 +422,20 @@ def fake_f(names, listed, z=None, m="M"):
 
 class Table(unittest.TestCase):
     def test_renaming_maps_each_v_f_key_to_the_old_spelling(self):
-        self.assertEqual(V.rename_vf("relative_sigma_plus_C_resp + C_PL5D + dF"), "relative_sigma_plus_C_resp + C_PL5D")
-        self.assertEqual(V.rename_vf("relative_sigma_plus_C_resp + dF"), "relative_sigma_plus_C_resp")
+        self.assertEqual(V.rename_vf("relative_sigma_plus_C_resp + C_PL5D + DeltaC_e"), "relative_sigma_plus_C_resp + C_PL5D")
+        self.assertEqual(V.rename_vf("relative_sigma_plus_C_resp + DeltaC_e"), "relative_sigma_plus_C_resp")
         self.assertEqual(V.rename_vf("C_total"), "C_total")
 
     def test_pairing_follows_renamed_keys(self):
         old = {"relative_sigma_plus_C_resp + C_PL5D": {"C_total": [1.0, 2.0]}, "x": 3}
-        new = {"relative_sigma_plus_C_resp + C_PL5D + dF": {"C_total": [1.5, 2.5]}, "x": 4}
+        new = {"relative_sigma_plus_C_resp + C_PL5D + DeltaC_e": {"C_total": [1.5, 2.5]}, "x": 4}
         got = list(V.paired(old, new))
         self.assertIn(("/relative_sigma_plus_C_resp + C_PL5D/C_total/0", 1.0, 1.5), got)
         self.assertIn(("/x", 3, 4), got)
 
     def test_curated_names_newly_listed_and_cleared_truths(self):
         o = fake_f(["a", "b", "c"], ["a", "b"])
-        n = fake_f(["a", "b", "c"], ["a"], m="M + dF")
+        n = fake_f(["a", "b", "c"], ["a"], m="M + DeltaC_e")
         with quiet():
             c = V.curated({"S with/f0b": o}, {"S with/f0b": n})
         self.assertEqual(c["listings"]["S with/f0b"]["cleared"], ["b"])
@@ -421,8 +443,33 @@ class Table(unittest.TestCase):
 
     def test_truths_in_another_order_refuse_t(self):
         with quiet(), self.assertRaises(V.Stop) as cm:
-            V.curated({"S with/f0b": fake_f(["a", "b"], [])}, {"S with/f0b": fake_f(["b", "a"], [], m="M + dF")})
+            V.curated({"S with/f0b": fake_f(["a", "b"], [])}, {"S with/f0b": fake_f(["b", "a"], [], m="M + DeltaC_e")})
         self.assertEqual(cm.exception.control, "T")
+
+    def test_same_bits_tells_minus_zero_and_dtype_apart(self):
+        self.assertTrue(V.same_bits(np.array([0.0, 1.0]), np.array([0.0, 1.0])))
+        self.assertFalse(V.same_bits(np.array([0.0]), np.array([-0.0])))
+        self.assertFalse(V.same_bits(np.array([1.0]), np.array([1.0], dtype=np.float32)))
+
+    def test_named_records_are_checked_in_every_readout_family_before_pairing(self):
+        rel = V.OLD_E["with"]["g_diag"][0]
+        o = json.loads((REPO / rel).read_text())
+        n = copy.deepcopy(o)
+        with quiet():
+            V.identities(o, n, "E with/g_diag")
+        n["predictions"] = n["predictions"][::-1]
+        with quiet(), self.assertRaises(V.Stop) as cm:
+            V.identities(o, n, "E with/g_diag")
+        self.assertEqual(cm.exception.control, "T")
+        o = {"modes": [{"name": "C_total + C_resp + C_PL5D + V_g", "x": 1}]}
+        n = {"modes": [{"name": "C_total + C_resp + C_PL5D + DeltaC_e + V_g", "x": 2}]}
+        with quiet():
+            V.identities(o, n, "x")
+
+    def test_a_number_against_a_string_is_listed_without_a_partner(self):
+        un = []
+        self.assertEqual(list(V.paired({"a": 1.0}, {"a": "1.0"}, "", un)), [])
+        self.assertEqual(un, ["/a (types float and str)"])
 
     def test_leaves_without_a_partner_are_listed_not_dropped(self):
         un = []
@@ -431,11 +478,11 @@ class Table(unittest.TestCase):
         self.assertEqual(sorted(un), ["/a (lengths 2 and 3)", "/b (OLD only)", "/c (V_F only)"])
 
     def test_f0s_sigma_pairs_its_base_with_the_revised_one(self):
-        o, n = fake_f(["a"], []), fake_f(["a"], [], m="M + dF")
+        o, n = fake_f(["a"], []), fake_f(["a"], [], m="M + DeltaC_e")
         o["relative_sigma"] = {"C_total": [1.0]}
         with quiet(), self.assertRaises(V.Stop):
             V.curated({"F0": o}, {"F0": n})
-        n["relative_sigma_plus_dF"] = {"C_total": [1.1]}
+        n["relative_sigma_plus_DeltaC_e"] = {"C_total": [1.1]}
         with quiet():
             c = V.curated({"F0": o}, {"F0": n})
         self.assertEqual(c["f0_sigma"], {"old": {"C_total": [1.0]}, "vf": {"C_total": [1.1]}})
@@ -443,7 +490,7 @@ class Table(unittest.TestCase):
     def test_each_side_names_its_matrix(self):
         o = fake_f(["a"], [])
         n = copy.deepcopy(o)
-        n["truths"][0]["grade_matrix"] = "M + dF"
+        n["truths"][0]["grade_matrix"] = "M + DeltaC_e"
         with quiet():
             V.curated({"S with/f0b": o}, {"S with/f0b": n})
         n["truths"][0]["grade_matrix"] = "M"
@@ -456,14 +503,14 @@ class Table(unittest.TestCase):
                                      "shape_only": {"chi2": 1.0, "p": 0.5, "ndf": 15,
                                                     "matrix": m + " + V_g + 100 f f^T (free normalization)"}}
                                     for x in names]}
-        o, n = g(["a", "b"], "C_total + C_resp + C_PL5D"), g(["a", "b"], "C_total + C_resp + C_PL5D + dF")
+        o, n = g(["a", "b"], "C_total + C_resp + C_PL5D"), g(["a", "b"], "C_total + C_resp + C_PL5D + DeltaC_e")
         with quiet():
             c = V.curated({"S with/g": o}, {"S with/g": n})
         self.assertEqual(len(c["stage_g"]["S with/g"]), 4)
         with quiet(), self.assertRaises(V.Stop):
             V.curated({"S with/g": o}, {"S with/g": g(["a", "b"], "C_total + C_resp + C_PL5D")})
         with quiet(), self.assertRaises(V.Stop):
-            V.curated({"S with/g": o}, {"S with/g": g(["b", "a"], "C_total + C_resp + C_PL5D + dF")})
+            V.curated({"S with/g": o}, {"S with/g": g(["b", "a"], "C_total + C_resp + C_PL5D + DeltaC_e")})
 
     def test_the_table_refuses_without_the_chains_pins(self):
         tmp = Path(tempfile.mkdtemp(prefix="vf-tab-"))
@@ -478,9 +525,9 @@ class Table(unittest.TestCase):
         self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
         po, pn = tmp / "o.json", tmp / "n.json"
         po.write_text(json.dumps(fake_f(["a", "b"], ["a", "b"])))
-        pn.write_text(json.dumps(fake_f(["a", "b"], ["a"], m="M + dF")))
-        o, n = fake_f(["a", "b"], ["a", "b"]), fake_f(["a", "b"], ["a"], m="M + dF")
-        o["relative_sigma"], n["relative_sigma_plus_dF"] = {"C_total": [1.0]}, {"C_total": [1.1]}
+        pn.write_text(json.dumps(fake_f(["a", "b"], ["a"], m="M + DeltaC_e")))
+        o, n = fake_f(["a", "b"], ["a", "b"]), fake_f(["a", "b"], ["a"], m="M + DeltaC_e")
+        o["relative_sigma"], n["relative_sigma_plus_DeltaC_e"] = {"C_total": [1.0]}, {"C_total": [1.1]}
         po.write_text(json.dumps(o))
         pn.write_text(json.dumps(n))
         (tmp / "pairs.json").write_text(json.dumps([["F0", str(po), digest(po), str(pn), digest(pn)]]))
@@ -537,8 +584,8 @@ class Arms(unittest.TestCase):
     def test_each_arms_block_key_name_and_file(self):
         want = {"old-with": (str(self.pS.T / "fd/with-cpl/block/cpl_block.npz"), V.PINS["cpl_block_npz"], A.XKEY, A.NAME),
                 "old-nopl": (str(self.pS.cresp), A.PINS["cresp_npz"], "C_resp", "C_resp"),
-                "vf-with": (str(self.vf["npz"]), self.vf["sha"], "C_resp_plus_C_PL5D_plus_dF", "C_resp + C_PL5D + dF"),
-                "vf-nopl": (str(self.vf["npz"]), self.vf["sha"], "C_resp_plus_dF", "C_resp + dF")}
+                "vf-with": (str(self.vf["npz"]), self.vf["sha"], "C_resp_plus_C_PL5D_plus_DeltaC_e", "C_resp + C_PL5D + DeltaC_e"),
+                "vf-nopl": (str(self.vf["npz"]), self.vf["sha"], "C_resp_plus_DeltaC_e", "C_resp + DeltaC_e")}
         for arm, (f, sha, key, name) in want.items():
             xb = V.arm_flags(self.pS, arm, self.vf)
             self.assertEqual((flag(xb, "--extra-block"), flag(xb, "--extra-block-sha256"), flag(xb, "--extra-block-key"),
@@ -554,7 +601,7 @@ class Arms(unittest.TestCase):
         old, new = c.steps[0]["argv"], c.steps[1]["argv"]
         self.assertNotIn("--extra-block", old)
         self.assertEqual(old, [*self.pS.f0(), "--out-json", flag(old, "--out-json"), "--out-npz", flag(old, "--out-npz")])
-        self.assertEqual((flag(new, "--extra-block-key"), flag(new, "--extra-block-name")), ("dF", "dF"))
+        self.assertEqual((flag(new, "--extra-block-key"), flag(new, "--extra-block-name")), ("DeltaC_e", "DeltaC_e"))
         self.assertNotIn("--extra-block-role", new)
 
     def test_f1_reads_the_committed_f0b_in_an_old_arm_and_its_own_in_a_v_f_arm(self):
@@ -573,7 +620,7 @@ class Arms(unittest.TestCase):
 
     def test_the_chdefs_set_pins_committed_upstreams_in_old_arms_and_written_ones_in_v_f_arms(self):
         f0b = (self.tmp / "f0b.json", "cd" * 32)
-        for arm, name in (("old-with", A.NAME), ("old-nopl", None), ("vf-with", "C_resp + C_PL5D + dF"),
+        for arm, name in (("old-with", A.NAME), ("old-nopl", None), ("vf-with", "C_resp + C_PL5D + DeltaC_e"),
                           ("vf-nopl", None)):
             c = Recorder(self.pE, self.BA / "chain.json", [], self.tmp / "preds.json")
             with mock.patch.object(V, "check_c", lambda *x, **k: None):
@@ -589,7 +636,7 @@ class Arms(unittest.TestCase):
             else:
                 self.assertEqual(diag["pins"]["g_readout"], res["H"]["g"], arm)
                 self.assertEqual(flag(diag["argv"], "--g-readout"), str(res["out"]["g"]), arm)
-            self.assertEqual(diag["pins"]["s5p_sums"], digest(self.pE.s5p_sums), arm)
+            self.assertEqual(diag["pins"]["s5p_sums"], V.CHDEFS_SUMS, arm)
             if side == "with":
                 fig = c.steps[5]
                 self.assertEqual(flag(fig["argv"], "--reported-block-name"), name, arm)
@@ -597,7 +644,7 @@ class Arms(unittest.TestCase):
                 self.assertEqual(flag(fig["argv"], "--prediction-set"), "gencmp-chdefs", arm)
                 self.assertEqual((flag(fig["argv"], "--f0b-readout"), fig["pins"]["f0b_readout"]), (str(f0b[0]), f0b[1]),
                                  arm)
-                self.assertIsNone(c.steps[6]["pins"], arm)
+                self.assertEqual(c.steps[6]["pins"], {}, arm)
 
     def test_a_v_f_step_is_checked_as_soon_as_it_returns(self):
         seen = []
@@ -701,10 +748,10 @@ class Checks(unittest.TestCase):
         blk = A.load_npz(t.npz)
         sig = (np.sqrt(np.diag(blk[V.REPORTED_F])) / blk["f"]).tolist()
         f0b = self.tmp / "f0b.json"
-        f0b.write_text(json.dumps({"relative_sigma_plus_C_resp + C_PL5D + dF": {"C_total": sig}}))
+        f0b.write_text(json.dumps({"relative_sigma_plus_C_resp + C_PL5D + DeltaC_e": {"C_total": sig}}))
         with quiet():
             V.check_s(self.c, "x", t.g, f0b, blk, "with")
-        f0b.write_text(json.dumps({"relative_sigma_plus_C_resp + C_PL5D + dF": {"C_total": [x * 1.001 for x in sig]}}))
+        f0b.write_text(json.dumps({"relative_sigma_plus_C_resp + C_PL5D + DeltaC_e": {"C_total": [x * 1.001 for x in sig]}}))
         with quiet(), self.assertRaises(V.Stop) as cm:
             V.check_s(self.c, "x", t.g, f0b, blk, "with")
         self.assertEqual(cm.exception.control, "S")
@@ -732,23 +779,39 @@ class Checks(unittest.TestCase):
 
     def test_c_fires_on_an_upstream_digest_that_is_not_the_written_one(self):
         p = self.tmp / "r.json"
-        argv = ["t.py", "--extra-block-sha256", "ab" * 32, "--extra-block-key", "dF", "--extra-block-name", "dF"]
+        argv = ["t.py", "--extra-block-sha256", "ab" * 32, "--extra-block-key", "DeltaC_e", "--extra-block-name", "DeltaC_e"]
         r = {"argv": argv, "inputs_sha256": {"extra_block": "ab" * 32, "g_readout": "11" * 32},
              "referenced": {"g_readout": "11" * 32}}
         p.write_text(json.dumps(r))
         with quiet():
-            V.check_c(self.c, "x", p, "ab" * 32, "dF", {"g_readout": "11" * 32}, False)
+            V.check_c(self.c, "x", p, "ab" * 32, "DeltaC_e", {"g_readout": "11" * 32}, False)
         with quiet(), self.assertRaises(V.Stop):
-            V.check_c(self.c, "x", p, "ab" * 32, "dF", {"g_readout": "22" * 32}, False)
+            V.check_c(self.c, "x", p, "ab" * 32, "DeltaC_e", {"g_readout": "22" * 32}, False)
         p.write_text(json.dumps({**r, "referenced": {"g_readout": "33" * 32}}))      # a duplicate reference differs
         with quiet(), self.assertRaises(V.Stop):
-            V.check_c(self.c, "x", p, "ab" * 32, "dF", {"g_readout": "11" * 32}, False)
+            V.check_c(self.c, "x", p, "ab" * 32, "DeltaC_e", {"g_readout": "11" * 32}, False)
         p.write_text(json.dumps({**r, "argv": [*argv, "--extra-block-sha256", "cd" * 32]}))  # argv names two digests
         with quiet(), self.assertRaises(V.Stop):
-            V.check_c(self.c, "x", p, "ab" * 32, "dF", {"g_readout": "11" * 32}, False)
+            V.check_c(self.c, "x", p, "ab" * 32, "DeltaC_e", {"g_readout": "11" * 32}, False)
         p.write_text(json.dumps({**r, "inputs_sha256": {"g_readout": "11" * 32}}))  # no digest field for the block
         with quiet(), self.assertRaises(V.Stop):
-            V.check_c(self.c, "x", p, "ab" * 32, "dF", {"g_readout": "11" * 32}, False)
+            V.check_c(self.c, "x", p, "ab" * 32, "DeltaC_e", {"g_readout": "11" * 32}, False)
+        p.write_text(json.dumps({**r, "extra_block": {"sha256": None}}))            # a null second digest
+        with quiet(), self.assertRaises(V.Stop):
+            V.check_c(self.c, "x", p, "ab" * 32, "DeltaC_e", {"g_readout": "11" * 32}, False)
+        p.write_text(json.dumps({**r, "referenced": {}}))                           # a required duplicate missing
+        with quiet():
+            V.check_c(self.c, "x", p, "ab" * 32, "DeltaC_e", {"g_readout": "11" * 32}, False)
+        with quiet(), self.assertRaises(V.Stop):
+            V.check_c(self.c, "x", p, "ab" * 32, "DeltaC_e", {"g_readout": "11" * 32}, False, required=("g_readout",))
+        g = {**r, "argv": [*argv, "--extra-block-role", "adopted"], "extra_block": {"sha256": "ab" * 32, "role": "variant"}}
+        p.write_text(json.dumps(g))                                                 # a recorded role that is not argv's
+        with quiet(), self.assertRaises(V.Stop):
+            V.check_c(self.c, "x", p, "ab" * 32, "DeltaC_e", {"g_readout": "11" * 32}, True)
+        g["extra_block"]["role"] = "adopted"
+        p.write_text(json.dumps(g))
+        with quiet():
+            V.check_c(self.c, "x", p, "ab" * 32, "DeltaC_e", {"g_readout": "11" * 32}, True)
 
 
 class Order(unittest.TestCase):
@@ -807,6 +870,8 @@ class Order(unittest.TestCase):
                                                                         {k: self.tmp for k in
                                                                          (*V.S_STEPS, "f0b_npz", "f1_npz")})[1]),
                    mock.patch.object(V, "check_table", lambda *x, **k: None),
+                   mock.patch.object(V, "check_renderer", lambda *x, **k: None),
+                   mock.patch.dict(os.environ, {}),
                    mock.patch.object(V, "CHDEFS_SUMS", sums or digest(self.tmp / "E/pred/SHA256SUMS")),
                    mock.patch.object(V, "run_e", lambda c, arm, vf, f: (self.calls.append(("E", arm)),
                                                                         {"out": {k: self.tmp for k in V.E_STEPS},
@@ -872,6 +937,26 @@ class Order(unittest.TestCase):
     def test_a_staged_manifest_that_is_not_the_recorded_one_refuses_before_any_step(self):
         self.calls = []
         self.assertEqual(self.run_chain(None, sums="0" * 64), 1)
+        self.assertEqual([c for c in self.calls if c[0] in ("f0", "S", "E")], [])
+
+    def test_matplotlib_and_temporary_files_stay_under_the_run_directory(self):
+        self.calls = []
+        self.assertEqual(self.run_chain(None), 0)
+        self.assertEqual(os.environ["MPLCONFIGDIR"], str((self.tmp / "BA" / "mpl").resolve()))
+        self.assertEqual(os.environ["TMPDIR"], str((self.tmp / "BA" / "tmp").resolve()))
+
+    def test_a_predictions_specification_that_is_not_the_committed_one_refuses_before_any_step(self):
+        spec = json.loads((REPO / V.CHDEFS_SPEC).read_text())
+        spec[0]["sha256"] = "0" * 64
+        self.calls = []
+        with mock.patch("fd_gencmp_e.load_chdefs", lambda p: spec):
+            a = V.build_args(["chain", "--run-dir", str(self.tmp / "BA"), "--run-e", str(self.tmp / "E"),
+                              "--scratch", str(self.tmp / "P")])
+            self.run_chain(None)        # starts the patches (this run passes); then the second run with the bad spec
+        shutil.rmtree(self.tmp / "BA")
+        self.calls = []
+        with mock.patch("fd_gencmp_e.load_chdefs", lambda p: spec), quiet(), mock.patch("sys.stderr"):
+            self.assertEqual(V.run(a), 1)
         self.assertEqual([c for c in self.calls if c[0] in ("f0", "S", "E")], [])
 
     def test_an_existing_logs_directory_refuses(self):
@@ -975,6 +1060,23 @@ class VfArms(unittest.TestCase):
         self.assertEqual(pairs[0][1:3], [str(REPO / V.OLD_F0[0]), V.OLD_F0[1]])
         self.assertEqual(pairs[0][4], digest(tmp / "vf-f0-f0.json"))
         self.assertEqual(run[3]["pins"][pairs[1][1]], V.OLD_S["with"]["f0b"][1])
+
+
+class OldProductDeposit(unittest.TestCase):
+    """The OLD product and deposit, run for real by their own tools on the committed inputs (all committed)."""
+
+    def test_the_committed_with_block_product_and_deposit_are_reproduced_and_checked_as_recorded(self):
+        tmp = Path(tempfile.mkdtemp(prefix="vf-oldpd-"))
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        BA = tmp / "BA"
+        for d in ("logs", "pins"):
+            (BA / d).mkdir(parents=True)
+        c = V.Chain(A.Paths(REPO, tmp / "P", BA), BA / "chain.json", [])
+        with quiet():
+            V.old_product_deposit(c, REPO, c.p, BA)
+        self.assertEqual([s["step"] for s in c.steps if "tool" in s], ["data_product", "deposit_build", "deposit_check"])
+        self.assertTrue(all(s["ok"] for s in c.steps if s.get("check")))
+        self.assertEqual(sum(1 for s in c.steps if s.get("check") and "5B receipt" in s["step"]), 5)
 
 
 class Boot(unittest.TestCase):
