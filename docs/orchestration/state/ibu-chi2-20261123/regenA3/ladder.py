@@ -38,7 +38,7 @@ def macros(ek, d_er):
 
 
 def boundary(x):  # distance to the nearest 2-decimal rounding boundary (x.xx5)
-    return abs(x * 100 - (np.floor(x * 100) + 0.5)) / 100
+    return float(abs(x * 100 - (np.floor(x * 100) + 0.5)) / 100)
 
 
 score = json.load(io.StringIO(open(a.score).read().split("\n", 1)[1]))
