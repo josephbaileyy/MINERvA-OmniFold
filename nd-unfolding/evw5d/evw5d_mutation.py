@@ -150,8 +150,6 @@ MUTANTS = [
     ("BIND_META_STRICT", 'sm_r = ess.strip_per_run(strict_json(str(remade["meta"])))', 'sm_r = ess.strip_per_run(json.loads(str(remade["meta"])))'),
     ("ACCEPTED_STRICT_DONE", 'done = strict_json((out / DONE).read_bytes())', 'done = json.loads((out / DONE).read_bytes())'),
     ("ACCEPTED_CANONICAL", 'and canonical(done["acceptance"]) == canonical(fresh) and fresh["pass"] is True):', 'and done["acceptance"] == fresh and fresh["pass"] is True):'),
-    ("FILE_KEY_TEXT", 'vs_in["meta_key_text"] = saved_meta.get("key") == KEY_TEXT', 'vs_in["meta_key_text"] = True'),
-    ("FILE_AXES", 'vs_in["meta_truth_axes"] = saved_meta.get("truth_axes") == list(AXES)', 'vs_in["meta_truth_axes"] = True'),
     ("JSON_FORMULA", 'ok = (cj["formula"] == FORMULA_TEXT and cj["key"] == KEY_TEXT and list(axes) == list(AXES)', 'ok = (cj["key"] == KEY_TEXT and list(axes) == list(AXES)'),
     ("LAUNCH_CHECKER_PIN", '[ -f "$W" ] && [ ! -L "$W" ] && [ "$(shasum -a 256 "$W" | cut -d\' \' -f1)" = "$EVW_SHA" ] || \\', '[ -f "$W" ] || \\', "../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_launch.sh"),
     ("LAUNCH_RC", 'echo \\"script rc=\\$r\\"; exit \\$r"', 'echo \\"script rc=\\$r\\""', "../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_launch.sh"),
@@ -160,7 +158,16 @@ MUTANTS = [
 
 
 # Equivalent mutants: kept out of the kill requirement, each with the reason it cannot be killed; run and reported.
-EQUIVALENT: list = []   # revision 1 listed SELF_F_FILE here; codex-school r1 showed a killing fault (volumes 5e-14 high)
+# revision 1 listed SELF_F_FILE here; codex-school r1 showed a killing fault (volumes 5e-14 high). After the final
+# campaign at e01dd8637, two are listed, each with the reason no fault can reach it alone:
+EQUIVALENT = [
+    ("FILE_KEY_TEXT", 'vs_in["meta_key_text"] = saved_meta.get("key") == KEY_TEXT', 'vs_in["meta_key_text"] = True',
+     "constants.json must carry every npz meta field unchanged (check_constants_json) and its key must equal KEY_TEXT, "
+     "so a saved meta key other than KEY_TEXT already fails C-FILE through constants_json_vs_arrays"),
+    ("FILE_AXES", 'vs_in["meta_truth_axes"] = saved_meta.get("truth_axes") == list(AXES)', 'vs_in["meta_truth_axes"] = True',
+     "the same: constants.json's truth_axes must equal the npz meta's and AXES, so a saved meta order other than AXES "
+     "already fails C-FILE through constants_json_vs_arrays"),
+]
 
 
 def apply(src: str, old: str, new: str) -> str:

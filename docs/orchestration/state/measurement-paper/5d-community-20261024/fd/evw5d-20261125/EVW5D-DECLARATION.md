@@ -148,7 +148,7 @@ flux. It does not supply that denominator.
 
 ## 5. Tests and mutants
 
-`test_evw5d.py` (pytest, 116 tests) builds a deploy at the code pin and synthetic inputs on the real fine grid, with
+`test_evw5d.py` (pytest, 120 tests) builds a deploy at the code pin and synthetic inputs on the real fine grid, with
 truth rows on the top edges and outside the grid, and a denominator 1.15 times the signal (so C-COMPLETE's finding
 fires). It reuses `test_ess_capture.py`'s helpers. Four kinds of test:
 - **end to end** through the real driver: PASS; a STOP on a one-ulp reference and on a meta difference; a FAIL on f
@@ -174,7 +174,23 @@ hsi/htar). Their checks are by reading, and the reads cover them.
 
 `evw5d_mutation.py` applies each of its mutants (one exact span of `evw5d.py` or `sbatch_evw5d.sh`) to a copy of the directory and requires
 the full suite to fail with a named test; a control must pass. Its result is committed as
-`receipts/mutation.json`. **Not mutated, and disclosed:** C-PINS after the run, C-KEY's early exit in `run()`, and
+`receipts/mutation.json.txt`.
+
+**The final campaign** ran at the tool commit e01dd8637 (`receipts/mutation.json.txt`): the control passed, and 118 of 124
+mutants were killed. Of the six left:
+- **two were test losses:** revision 5's rewrite of the fetch test had cut revision 4's two job tests (the setup
+  overwrite and the dangling `$OUT/evw5d` link) from the end of the file. They are restored verbatim;
+- **two needed sharper faults:** an extra field in `constants.json` (FILE_JSON) and the 1e4 off by 5e-14
+  (SELF_CM2_EXACT); both tests are added;
+- **two are equivalent** and listed as such in `evw5d_mutation.py` with the reason: the saved meta's key and axes
+  (FILE_KEY_TEXT, FILE_AXES) are already pinned through `constants.json`, which must carry the meta unchanged and
+  whose key and axes are checked against the same constants.
+
+The test file changed only by additions after e01dd8637, so no earlier kill can be undone; the six were rerun against
+the final tests (`receipts/mutation-subset.json.txt`). The tool's code (`evw5d.py`, `sbatch_evw5d.sh`) is unchanged since
+e01dd8637.
+
+**Not mutated, and disclosed:** C-PINS after the run, C-KEY's early exit in `run()`, and
 C-GRID's predicate inside `run()` (an end-to-end test makes C-GRID fail through a wrong map pin, but no mutant
 targets the predicate alone). The first two cannot fail on the synthetic inputs without a fault inside the pinned
 driver; their predicates are plain comparisons. The director accepted those two on 2026-11-25.

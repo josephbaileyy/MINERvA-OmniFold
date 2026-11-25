@@ -1420,3 +1420,49 @@ def test_check_self_independent_formula_isolated(products):
     assert r["xsec_bit_for_bit"] and r["saved_xsec_equals_reference"]
     assert r["f_from_file_max_rel"] <= ev.F_RTOL and r["volume_vs_edges_max_rel"] <= ev.VOLUME_RTOL
     assert r["independent_formula_max_rel"] > ev.INDEP_RTOL and not r["pass"], r
+
+
+# ---------------------------------------------------------------------------------- restored (revision 4's job tests)
+# revision 5's rewrite of the fetch test cut these two from the end of the file; the final mutation campaign at
+# e01dd8637 found it (SB_SOURCE_CLOBBER and SB_OUT_LINK survived). Restored verbatim from 292b8a8bc.
+
+
+def test_job_setup_runs_without_noclobber(job):
+    """A setup that writes over an existing file must succeed, as it would under ESS (noclobber is the job's own)."""
+    existing = job["tmp"] / "existing.txt"
+    existing.write_text("old")
+    job["setup"](f'echo new > "{existing}"\nreturn 0\n')
+    r = job["run"]()
+    done = json.loads((job["out"] / "logs" / "DONE-4242").read_text())
+    assert existing.read_text() == "new\n", "the setup's own redirect was refused"
+    assert "python3 is not root_6_28" in done["refused"], done     # it got past the setup
+
+
+def test_job_refuses_a_dangling_out_link(job):
+    (job["out"] / "evw5d").symlink_to(job["tmp"] / "nowhere")
+    r = job["run"]()
+    done = json.loads((job["out"] / "logs" / "DONE-4242").read_text())
+    assert r.returncode == 2 and "evw5d exists" in done["refused"]
+
+
+# ---------------------------------------------------------------------------------- after the final campaign
+
+
+def test_check_file_constants_json_raw_against_meant(products, world):
+    """constants.json with one extra field: every operand still equals the arrays, so only the comparison with what
+    was meant to be written sees it."""
+    cj = dict(json.loads(products["cj_raw"]), note="x")
+    raw = (json.dumps(cj, indent=1) + "\n").encode()
+    r = _file_p(products, world, cj_raw=raw)
+    assert r["constants_json_vs_arrays"] and not r["constants_json_equal"] and not r["pass"]
+
+
+def test_check_self_cm2_exact_alone(products):
+    """The saved 1e4 off by 5e-14 relative: inside the independent formula's 1e-13, outside the exact check."""
+    c = copy_t(products["c"])
+    c["cm2_per_m2"] = np.float64(1.0e4 * (1 + 5e-14))
+    assert c["cm2_per_m2"] != 1.0e4
+    r = _self(products, c=c)
+    assert r["xsec_bit_for_bit"] and r["independent_formula_max_rel"] <= ev.INDEP_RTOL
+    assert not r["cm2_per_m2_exact"] and not r["pass"]
+

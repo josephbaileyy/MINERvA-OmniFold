@@ -1,0 +1,1564 @@
+{
+ "schema": "evw5d-mutation/1",
+ "src_sha256": "f6f5bbb5ea1c0c7a704dfcd64e1f214c587db1e64db3d9c9ae4e943ac01ad990",
+ "tests_sha256": "f6d1ebe3a6b999831f50bb81063fcd7666d17ad3ae9d627646a47a1749c920c1",
+ "sbatch_sha256": "60fd4ec26714b2ccb956bd5abec4ba07092eca4c2f80b9ee1ab85bb02fd3533a",
+ "python": "/Users/josephbailey/evw5d-env/bin/python3",
+ "control": "CONTROL-PASS",
+ "subset": [],
+ "n_mutants": 124,
+ "n_killed": 118,
+ "not_killed": [
+  "FILE_JSON",
+  "SELF_CM2_EXACT",
+  "SB_SOURCE_CLOBBER",
+  "SB_OUT_LINK",
+  "FILE_KEY_TEXT",
+  "FILE_AXES"
+ ],
+ "equivalent": [],
+ "results": [
+  {
+   "name": "CONTROL",
+   "verdict": "CONTROL-PASS",
+   "rc": 0,
+   "failed": [],
+   "first_error": "",
+   "mutant_sha256": "f6f5bbb5ea1c0c7a704dfcd64e1f214c587db1e64db3d9c9ae4e943ac01ad990",
+   "seconds": 200.0,
+   "tail": ""
+  },
+  {
+   "name": "SAME_BITS_DTYPE",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_same_bits_and_max_rel"
+   ],
+   "first_error": "E       AssertionError: equal bytes, another dtype",
+   "mutant_sha256": "5a32ec04dc94e0b15ab7c2a5e5bd5af33d8d53c6d65dce795e38960f287e1f04",
+   "seconds": 203.0,
+   "tail": ""
+  },
+  {
+   "name": "MAX_REL_ZERO_REF",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_same_bits_and_max_rel"
+   ],
+   "first_error": "E       AssertionError: assert (0.0 == 0.0 and 0.0 == inf)",
+   "mutant_sha256": "30bfb366371678a3b0e00f2f7b7a3eb0b87e0297c7fd3a2b9da689bc44509119",
+   "seconds": 212.8,
+   "tail": ""
+  },
+  {
+   "name": "MAX_REL_SHAPE",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_same_bits_and_max_rel"
+   ],
+   "first_error": "E       IndexError: boolean index did not match indexed array along dimension 0; dimension is 1 but corresponding boolean dimension is 2",
+   "mutant_sha256": "f2733623370d0af162190035558a48811f2636718147a379c8000e6dc79894bc",
+   "seconds": 216.0,
+   "tail": ""
+  },
+  {
+   "name": "READ_NPZ_HASH",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_fail_on_f",
+    "test_fail_on_grid",
+    "test_launcher_fetch_products_runs_accepted",
+    "test_pass_run_exit",
+    "test_stop_on_meta",
+    "test_stop_on_one_ulp"
+   ],
+   "first_error": "E       AssertionError: {\"out\": \"data_b-_j-.npz\", \"rc\": 0, \"seconds_unfold\": 10.727}",
+   "mutant_sha256": "d212f7096e983c8799182cbb5e8d2060218499f75731380dece53bfbe2c2ff22",
+   "seconds": 190.1,
+   "tail": ""
+  },
+  {
+   "name": "CONTRIB_FACTOR",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_contributions_skip_zero_denominator_cells",
+    "test_contributions_use_each_pt_bins_flux",
+    "test_launcher_fetch_products_runs_accepted",
+    "test_pass_run_exit"
+   ],
+   "first_error": "E       AssertionError: {\"out\": \"data_b-_j-.npz\", \"rc\": 0, \"seconds_unfold\": 15.508}",
+   "mutant_sha256": "95a9d36a7bf610435967d661d8d7853678aff779aca0d84e65c6c302c84d2dea",
+   "seconds": 214.2,
+   "tail": ""
+  },
+  {
+   "name": "CONTRIB_GOOD",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_contributions_skip_zero_denominator_cells"
+   ],
+   "first_error": "E       assert (30000.0 == 10000.0)",
+   "mutant_sha256": "b69e6bfe49de0554eccc1e187cc61e720001d92fe289e9f5c37966e49d7b1bc3",
+   "seconds": 244.0,
+   "tail": ""
+  },
+  {
+   "name": "CONTRIB_ZERO_DEN_COUNT",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_contributions_skip_zero_denominator_cells"
+   ],
+   "first_error": "E       assert (10000.0 == 10000.0 and 30000.0 == 30000.0 and 0.0 == 0 and 2 == 1)",
+   "mutant_sha256": "8875283416c05b1ba65976fd0364ee12ca795089f87d137c87042787e57da16d",
+   "seconds": 237.3,
+   "tail": ""
+  },
+  {
+   "name": "TABLE_MASK_DTYPE",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_build_table_refuses_a_non_bool_mask_and_a_wide_entry"
+   ],
+   "first_error": "E       ValueError: operands could not be broadcast together with shapes (5823,) (6000,)",
+   "mutant_sha256": "9eaed2468362599815b6271ac9c7f3d9ecb27d44129fb57410f12cecdc37e318",
+   "seconds": 234.7,
+   "tail": ""
+  },
+  {
+   "name": "TABLE_UINT32",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_build_table_refuses_a_non_bool_mask_and_a_wide_entry"
+   ],
+   "first_error": "E       Failed: DID NOT RAISE Failed",
+   "mutant_sha256": "ca0c5a011bae0efd4b6939b05dff9e18320d82c16b9212542eeedf2f30256384",
+   "seconds": 245.5,
+   "tail": ""
+  },
+  {
+   "name": "TABLE_UNFOLDED_RECO",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_fail_on_f",
+    "test_launcher_fetch_products_runs_accepted",
+    "test_pass_run_exit"
+   ],
+   "first_error": "E       AssertionError: {\"out\": \"data_b-_j-.npz\", \"rc\": 0, \"seconds_unfold\": 16.334}",
+   "mutant_sha256": "8dae4aa6aae8ccbcbe395eadb5c7bfd7f2dc1569b8593df08a0792aa78ac23de",
+   "seconds": 180.4,
+   "tail": ""
+  },
+  {
+   "name": "TABLE_WPRIOR_RECO",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_fail_on_f",
+    "test_launcher_fetch_products_runs_accepted",
+    "test_pass_run_exit"
+   ],
+   "first_error": "E       AssertionError: {\"out\": \"data_b-_j-.npz\", \"rc\": 0, \"seconds_unfold\": 12.109}",
+   "mutant_sha256": "fe2e172e4d1dfeecc5d949a5b27d0562b47e1fe3239dae5af32de5c4e879c792",
+   "seconds": 178.1,
+   "tail": ""
+  },
+  {
+   "name": "TABLE_RECO_FLAG",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_fail_on_f",
+    "test_launcher_fetch_products_runs_accepted",
+    "test_pass_run_exit"
+   ],
+   "first_error": "E       AssertionError: {\"out\": \"data_b-_j-.npz\", \"rc\": 0, \"seconds_unfold\": 12.171}",
+   "mutant_sha256": "02a004bc202d61a11cabea107a774b026cc9b4223ffb63985be53bad012a86fd",
+   "seconds": 175.9,
+   "tail": ""
+  },
+  {
+   "name": "TABLE_TRUTH_ORDER",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_fail_on_f",
+    "test_launcher_fetch_products_runs_accepted",
+    "test_pass_run_exit"
+   ],
+   "first_error": "E       AssertionError: {\"out\": \"data_b-_j-.npz\", \"rc\": 0, \"seconds_unfold\": 11.982}",
+   "mutant_sha256": "17556e7dec0497c4719ddb2211cd24bd177aae77119841aa3b02490cda6432b5",
+   "seconds": 173.9,
+   "tail": ""
+  },
+  {
+   "name": "MAPS_COMPLETENESS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_fail_on_f",
+    "test_launcher_fetch_products_runs_accepted",
+    "test_pass_run_exit"
+   ],
+   "first_error": "E       AssertionError: {\"out\": \"data_b-_j-.npz\", \"rc\": 0, \"seconds_unfold\": 12.163}",
+   "mutant_sha256": "8cb51bcc0a37f39841a89b37cdd2b9a5e91e7ab3385fad98bd6b8d3a668842aa",
+   "seconds": 179.4,
+   "tail": ""
+  },
+  {
+   "name": "CONST_FLUX",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_fail_on_f",
+    "test_launcher_fetch_products_runs_accepted",
+    "test_pass_run_exit"
+   ],
+   "first_error": "E       AssertionError: {\"out\": \"data_b-_j-.npz\", \"rc\": 0, \"seconds_unfold\": 15.882}",
+   "mutant_sha256": "9db1560d3320da685859df63c5f702af5d070c936045b1eed17e187cc80106d2",
+   "seconds": 199.3,
+   "tail": ""
+  },
+  {
+   "name": "CONST_MAP_DTYPE",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_fail_on_f",
+    "test_launcher_fetch_products_runs_accepted",
+    "test_pass_run_exit"
+   ],
+   "first_error": "E       AssertionError: {\"out\": \"data_b-_j-.npz\", \"rc\": 0, \"seconds_unfold\": 16.805}",
+   "mutant_sha256": "bf909d423513c9c25c18a42a56396aa0525aa845f961f8cc20662fcd4d155162",
+   "seconds": 201.8,
+   "tail": ""
+  },
+  {
+   "name": "KEY_FIELD",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_key_each_field"
+   ],
+   "first_error": "E           AssertionError: w_reco",
+   "mutant_sha256": "1a807abd6098706bd81df9865f78d1f3b3a8f2fbb808a93d60dcd622c6cfb49f",
+   "seconds": 239.4,
+   "tail": ""
+  },
+  {
+   "name": "KEY_ALIGNED",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_key_each_field"
+   ],
+   "first_error": "E       assert not True",
+   "mutant_sha256": "33de8d5963dc3c1c65894af56d414cf1444518d8b4b3362709f09f8b2fe15368",
+   "seconds": 239.3,
+   "tail": ""
+  },
+  {
+   "name": "KEY_PASS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_key_each_field"
+   ],
+   "first_error": "E           AssertionError: MCgen",
+   "mutant_sha256": "5eb61baa5838f7b76fceb1ca5e228c7994ec120418d47f1ff1590927bfde0f78",
+   "seconds": 231.3,
+   "tail": ""
+  },
+  {
+   "name": "KEY_EDGES",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_key_each_field"
+   ],
+   "first_error": "E       assert not True",
+   "mutant_sha256": "3df977948f507f542d26fa45e00a44d138c384e36a6448fd41f1375b2d8c1298",
+   "seconds": 231.9,
+   "tail": ""
+  },
+  {
+   "name": "KEY_SCALARS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_key_each_field"
+   ],
+   "first_error": "E           AssertionError: data_pot",
+   "mutant_sha256": "bccadbcc21de8cb84407534321e7e58cc08c72334f81ad098b441d2597e43069",
+   "seconds": 228.5,
+   "tail": ""
+  },
+  {
+   "name": "ENTRIES_INCREASING",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_entries"
+   ],
+   "first_error": "E       assert (not True)",
+   "mutant_sha256": "d7e560dedbb3102e7d7ef06bebfd0514c7ff68efc447f6ef57e0904280c65ae0",
+   "seconds": 222.3,
+   "tail": ""
+  },
+  {
+   "name": "ENTRIES_DTYPE",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_entries"
+   ],
+   "first_error": "E       assert not True",
+   "mutant_sha256": "f75db1ddd3b357c5c4368cf2b2d54bad1adabe123c369e59c7b47b4f9aa563cd",
+   "seconds": 221.2,
+   "tail": ""
+  },
+  {
+   "name": "FILE_COLUMNS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_fires[extra_col]",
+    "test_check_file_fires[missing_col]"
+   ],
+   "first_error": "E       KeyError: 'reco_partner'",
+   "mutant_sha256": "5b508a33c49100274982d6c900c759954aea95aff2b4732c1df1f9dd53bb6fdc",
+   "seconds": 216.6,
+   "tail": ""
+  },
+  {
+   "name": "FILE_META",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_fires_on_meta_and_json"
+   ],
+   "first_error": "E       assert not True",
+   "mutant_sha256": "a0f90b5227deba99f80c018b0b6434be6af83fd9200136c36725e5850c134a69",
+   "seconds": 143.6,
+   "tail": ""
+  },
+  {
+   "name": "FILE_JSON",
+   "verdict": "SURVIVED",
+   "rc": 0,
+   "failed": [],
+   "first_error": "",
+   "mutant_sha256": "04691b5eea0dafb34fc7afd2a6d3d905902353c5f34893acb76aac92e8d7916f",
+   "seconds": 120.4,
+   "tail": "........................................................................ [ 62%]\n............................................                             [100%]\n116 passed in 119.85s (0:01:59)\n"
+  },
+  {
+   "name": "FILE_CONST_EXACT",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_fires_on_constants[extra]"
+   ],
+   "first_error": "E       AssertionError: extra",
+   "mutant_sha256": "f4b1fd5bb06afe1a439fab548cd3c4becb719c2d567fdf3bc7a116b5ef6a692a",
+   "seconds": 112.6,
+   "tail": ""
+  },
+  {
+   "name": "FILE_ENTRY",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_fires[shift_key]"
+   ],
+   "first_error": "E       AssertionError: shift_key",
+   "mutant_sha256": "891f1ab848e5ccfe4a63e1ffe29bb943c76189eefbcd93d542e8bfdba46c7952",
+   "seconds": 112.7,
+   "tail": ""
+  },
+  {
+   "name": "FILE_TRUTH",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_fires[dtype_truth]",
+    "test_check_file_fires[truth_ulp]"
+   ],
+   "first_error": "E       AssertionError: truth_ulp",
+   "mutant_sha256": "7ee1381bb48857d15e4fc23635bcb2216e33da4cb18c82aeee0aafdc37b0210b",
+   "seconds": 111.3,
+   "tail": ""
+  },
+  {
+   "name": "FILE_WPRIOR",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_fires[w_prior_ulp]"
+   ],
+   "first_error": "E       AssertionError: w_prior_ulp",
+   "mutant_sha256": "cb93ef9bccd2878ca1616d51679e7176b9210921261c68d0c130fc145cc7f804",
+   "seconds": 104.7,
+   "tail": ""
+  },
+  {
+   "name": "FILE_WPUSH",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_fires[wpush_ulp]"
+   ],
+   "first_error": "E       AssertionError: wpush_ulp",
+   "mutant_sha256": "41c7d80a482dda53e39e3488c0cd0a498f3d06abf81a45ba49cb55940679f434",
+   "seconds": 101.1,
+   "tail": ""
+  },
+  {
+   "name": "FILE_UNFOLDED",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_fires[flow_row_weight]",
+    "test_check_file_fires[unfolded_ulp]"
+   ],
+   "first_error": "E       AssertionError: unfolded_ulp",
+   "mutant_sha256": "011ed04eac500e49dbd798582210e69cebec49a354b98a550495b1ab7dfad7ec",
+   "seconds": 121.9,
+   "tail": ""
+  },
+  {
+   "name": "FILE_RECO",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_fires[reco_flag]"
+   ],
+   "first_error": "E       AssertionError: reco_flag",
+   "mutant_sha256": "14407de853e495602002613c83d13bceb6a3be5f06131a3819f81c812f670347",
+   "seconds": 119.8,
+   "tail": ""
+  },
+  {
+   "name": "FILE_FINE",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_fires[fine_index]"
+   ],
+   "first_error": "E       AssertionError: fine_index",
+   "mutant_sha256": "65c5933d1c7bfddef4e9ab8ba1833d83cf348145382cd9028ce2dedd110a23fb",
+   "seconds": 128.0,
+   "tail": ""
+  },
+  {
+   "name": "FILE_CONSTANTS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_fires_on_constants[completeness]",
+    "test_check_file_fires_on_constants[volume]",
+    "test_check_file_fires_on_constants[xsec]"
+   ],
+   "first_error": "E       AssertionError: completeness",
+   "mutant_sha256": "624636ffaca6b3bfd622ca25ec8acbc43f628ac753d5be4599ba53d35da0813f",
+   "seconds": 189.7,
+   "tail": ""
+  },
+  {
+   "name": "SELF_BITWISE",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_self_result_one_ulp"
+   ],
+   "first_error": "E       assert (not False and not True)",
+   "mutant_sha256": "3dde685131c764bbffc933c752135479f60248eec3c34eb356be1ad5c16829fa",
+   "seconds": 192.6,
+   "tail": ""
+  },
+  {
+   "name": "SELF_OFIN",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_self_saved_maps_alone[ofin]"
+   ],
+   "first_error": "E       assert (True and not True)",
+   "mutant_sha256": "17178788285efe654a790587a9e612227cab1d49f964a03bba686339dc3aa5a8",
+   "seconds": 195.0,
+   "tail": ""
+  },
+  {
+   "name": "SELF_COMP",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_self_saved_maps_alone[completeness]"
+   ],
+   "first_error": "E       assert (True and not True)",
+   "mutant_sha256": "56d7b21fdf6cb33b89364b2e27d79f7b984836b32ebb0bc42d115179f3c46941",
+   "seconds": 201.4,
+   "tail": ""
+  },
+  {
+   "name": "SELF_INDEP_TOL",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_self_independent_formula_isolated"
+   ],
+   "first_error": "E       AssertionError: {'xsec_bit_for_bit': True, 'ofin_bit_for_bit': True, 'completeness_bit_for_bit': True, 'good_bit_for_bit': True, ...}",
+   "mutant_sha256": "ef4128f48d9d6c8e76c1c256efd0fa45a5c72c43c4966bb8b5968a65e211d761",
+   "seconds": 196.6,
+   "tail": ""
+  },
+  {
+   "name": "SELF_CM2",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_self_independent_formula_alone"
+   ],
+   "first_error": "E       assert (True and not False and 4.440892098500626e-16 > 1e-13)",
+   "mutant_sha256": "cd6592f27733045c1dd531f94e36951b01d19c1b6640be72d692ad0615f65170",
+   "seconds": 224.0,
+   "tail": ""
+  },
+  {
+   "name": "SELF_F_ROWS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_self_rows_alone"
+   ],
+   "first_error": "E       assert (True and 0.0 <= 1e-14 and not True)",
+   "mutant_sha256": "2e1f417c98705d5a42cce23f060b8ddf094597443beaaf31b84a674d16db66f9",
+   "seconds": 228.9,
+   "tail": ""
+  },
+  {
+   "name": "FLOW_RANGE",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_flow"
+   ],
+   "first_error": "E       assert (not True)",
+   "mutant_sha256": "bd44fb14be78cfd4da1b9fd2d08523f11a8d61c66a919568df6574445d55d513",
+   "seconds": 228.4,
+   "tail": ""
+  },
+  {
+   "name": "FLOW_N",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_flow"
+   ],
+   "first_error": "E       assert not True",
+   "mutant_sha256": "c4eadfe1b4dd6df3c04192c9f4fea9461ce27c303d63014ea336e7adcd8d54fd",
+   "seconds": 233.6,
+   "tail": ""
+  },
+  {
+   "name": "FLOW_UNF_TOL",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_flow_driver_histogram"
+   ],
+   "first_error": "E       assert (not True)",
+   "mutant_sha256": "cf18f3807806dd2f0aa6086a1cf8c4dfcd271c2a0336cab84a04aa10ff8f7ccf",
+   "seconds": 234.2,
+   "tail": ""
+  },
+  {
+   "name": "FLOW_PRIOR",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_flow"
+   ],
+   "first_error": "E       assert not True",
+   "mutant_sha256": "f371aec248f08b92325b0e725454ce6ebb2a22ba40d251edafbe04c7dbf61cde",
+   "seconds": 229.1,
+   "tail": ""
+  },
+  {
+   "name": "COMPLETE_ATOL",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_measure_completeness"
+   ],
+   "first_error": "E       assert (False)",
+   "mutant_sha256": "a7be0245e2c4aa53310294d26d3f7d70d30195cf68cff3d18677803ea1250e46",
+   "seconds": 223.4,
+   "tail": ""
+  },
+  {
+   "name": "COMPLETE_NO_SIGNAL",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_measure_completeness"
+   ],
+   "first_error": "E       assert (False)",
+   "mutant_sha256": "5c5dc41347479a5f4a23845e0033a4c40d93b0f4ecba77f17fdff5f02e2619fd",
+   "seconds": 221.9,
+   "tail": ""
+  },
+  {
+   "name": "COMPLETE_EMPTY",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_measure_completeness"
+   ],
+   "first_error": "E       assert False",
+   "mutant_sha256": "9f81483fb3d7a94fa02d5aff89f8d26bb91b5beaf3f76adb197ee111f30b724f",
+   "seconds": 220.7,
+   "tail": ""
+  },
+  {
+   "name": "PARSE_HEX",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_parse_sums"
+   ],
+   "first_error": "E       AssertionError: assert {'x': 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'} is None",
+   "mutant_sha256": "ac0c1c10243f48eb080047062f82c1dad48e0ef1d75f546cd2f7b51bbac80713",
+   "seconds": 221.7,
+   "tail": ""
+  },
+  {
+   "name": "PARSE_DUP",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_parse_sums"
+   ],
+   "first_error": "E       AssertionError: assert {'x': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'} is None",
+   "mutant_sha256": "186ce7df4c1e4b89ceeab4be0d10d433c8da195bac3b5343f1062fea85d5e263",
+   "seconds": 191.6,
+   "tail": ""
+  },
+  {
+   "name": "ACC_SET",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_extra_and_missing"
+   ],
+   "first_error": "E       AssertionError: assert not True",
+   "mutant_sha256": "e5aaf406eed7332a68ecf6e3a2568a8d66553ba8bc5171ba53cf3c7e53c2d195",
+   "seconds": 191.8,
+   "tail": ""
+  },
+  {
+   "name": "ACC_MAP",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_acceptance_requires_complete_digest_map"
+   ],
+   "first_error": "E       assert (not True)",
+   "mutant_sha256": "3eb8974a48f5c3fdf2cbf5d982fa6c52e140885bd918818cda7aaf7bf12951bc",
+   "seconds": 188.1,
+   "tail": ""
+  },
+  {
+   "name": "ACC_LINKS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_link"
+   ],
+   "first_error": "E       AssertionError: assert not True",
+   "mutant_sha256": "09e75839fb06581ce47c334fe0c4aa88e3f66ec3b4204bb203ff0ce41ff5bea7",
+   "seconds": 186.4,
+   "tail": ""
+  },
+  {
+   "name": "ACC_REHASH",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_byte_change"
+   ],
+   "first_error": "E       AssertionError: assert not True",
+   "mutant_sha256": "6b28adad62a82cdd972ffcbf9d38d7b8908b84ee96dc463e6b37a90718a0bd0f",
+   "seconds": 185.7,
+   "tail": ""
+  },
+  {
+   "name": "ACCEPTED_VERDICT",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_done_marker"
+   ],
+   "first_error": "E       AssertionError: assert not True",
+   "mutant_sha256": "abad1886d9c6dac0ef3284d8134436f91eb61941a32cfa40424401eb5b485382",
+   "seconds": 172.8,
+   "tail": ""
+  },
+  {
+   "name": "ACCEPTED_SUMS_DIGEST",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_done_marker"
+   ],
+   "first_error": "E       AssertionError: assert not True",
+   "mutant_sha256": "73f232bcd260285e7b461dc1d5a57cc0b573d550b050a6507c9a96806a298e28",
+   "seconds": 178.7,
+   "tail": ""
+  },
+  {
+   "name": "ACCEPTED_SCHEMA",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_done_marker"
+   ],
+   "first_error": "E       AssertionError: assert not True",
+   "mutant_sha256": "5f24a8419cd701f4baf53540935de3440e49c007db7e93ef072be9c8db5e590a",
+   "seconds": 174.3,
+   "tail": ""
+  },
+  {
+   "name": "RUN_BIND_META",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_bind",
+    "test_check_bind_meta_is_type_strict",
+    "test_stop_on_meta"
+   ],
+   "first_error": "E       AssertionError: ature names, but LGBMClassifier was fitted with feature names",
+   "mutant_sha256": "f771efbba4e89f6ece8b94eb64e6144c2bbfefac810b370e1fe4e979d00a22e7",
+   "seconds": 169.6,
+   "tail": ""
+  },
+  {
+   "name": "RUN_BIND_XS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_bind",
+    "test_stop_on_one_ulp"
+   ],
+   "first_error": "E       AssertionError: ature names, but LGBMClassifier was fitted with feature names",
+   "mutant_sha256": "ec4180887ec64d7d937f399565dea730f8c2157db20e635b33e738a4fc27a620",
+   "seconds": 169.8,
+   "tail": ""
+  },
+  {
+   "name": "RUN_F_GATE",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_fail_on_f"
+   ],
+   "first_error": "E       AssertionError: ['C-SELF']",
+   "mutant_sha256": "35d4c82c1f7f1f4f75c54b5e9c31201b6735426cc5b56fbcf3cbad9a0d4dac3c",
+   "seconds": 165.4,
+   "tail": ""
+  },
+  {
+   "name": "RUN_GATED_SELF",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_fail_on_f",
+    "test_pass_run"
+   ],
+   "first_error": "E       AssertionError: assert {'C-BIND', 'C...'C-GRID', ...} == {'C-BIND', 'C...'C-GRID', ...}",
+   "mutant_sha256": "9e6d22324c6bc808ea00a07593a78a2b67480a9832c5b9045ddc75e735f1aa2f",
+   "seconds": 160.9,
+   "tail": ""
+  },
+  {
+   "name": "RUN_FINDING",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_refuses_each_marker_edit[finding_sizes]",
+    "test_completeness_finding_is_reported_not_failed"
+   ],
+   "first_error": "E       AssertionError: assert [] == ['C-COMPLETE']",
+   "mutant_sha256": "af9a6a3f62f224c79ee710e491e0470f27a5d8f77cab7b6531a389f4f9f48834",
+   "seconds": 164.3,
+   "tail": ""
+  },
+  {
+   "name": "MAIN_OUT_ROOT_FIRST",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_out_must_be_under_out_root"
+   ],
+   "first_error": "E       AssertionError: an --out outside --out-root was created",
+   "mutant_sha256": "3f17868a362bd7a7ef2b54655d3e06df3865491df3039296a267bb16c8325b15",
+   "seconds": 170.1,
+   "tail": ""
+  },
+  {
+   "name": "MAIN_OUT_EXISTS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_existing_out_and_slurm_refused"
+   ],
+   "first_error": "E       AssertionError: assert (2 == 2 and 'exists' in 'evw5d: --out is not under --out-root\\n')",
+   "mutant_sha256": "ae863bd90ec3546f38f34778fb80e5f851e6a3449e1b2c425ffc97d4069e90c8",
+   "seconds": 169.8,
+   "tail": ""
+  },
+  {
+   "name": "MAIN_FIXTURE_SLURM",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_existing_out_and_slurm_refused"
+   ],
+   "first_error": "E       assert (0 == 2)",
+   "mutant_sha256": "d89c1709e87ee5d034c7d7e7de17814e441f29dfbacf34ae170b7763e8ec8f10",
+   "seconds": 154.3,
+   "tail": ""
+  },
+  {
+   "name": "ESS_PIN",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_ess_tool_pin"
+   ],
+   "first_error": "E       assert (0 != 0)",
+   "mutant_sha256": "e0b34d291be942a46aac968e5ee7a605bfd80a95e498205c714a9235c5fab3ae",
+   "seconds": 137.8,
+   "tail": ""
+  },
+  {
+   "name": "CAPTURE_COUNT",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_capture_unfold_refusals"
+   ],
+   "first_error": "E       Failed: DID NOT RAISE Failed",
+   "mutant_sha256": "91701ae5dc724c0a7c416b0b233948701132bee9a72e2a44f9e0a26419fa96b0",
+   "seconds": 125.2,
+   "tail": ""
+  },
+  {
+   "name": "CAPTURE_RC",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_capture_unfold_refusals"
+   ],
+   "first_error": "E       Failed: DID NOT RAISE Failed",
+   "mutant_sha256": "aaa0e83035953b2afa90573cefb5ffab7ed94321897f734aabb6068b600f3622",
+   "seconds": 123.8,
+   "tail": ""
+  },
+  {
+   "name": "CAPTURE_RESTORE",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_capture_unfold_refusals"
+   ],
+   "first_error": "E       AssertionError: the wrappers were not removed",
+   "mutant_sha256": "83ab5ba73f86b830ebad07432f518997f88427ede2811131f65b027ecfbaa91c",
+   "seconds": 119.9,
+   "tail": ""
+  },
+  {
+   "name": "SELF_F_FILE",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_self_f_file_alone"
+   ],
+   "first_error": "E       assert (4.9960036108132044e-14 > 1e-14 and not True)",
+   "mutant_sha256": "353d9186dded049be94cc8759ac1d3f97157e64610ce09545cc0d4643a08495f",
+   "seconds": 118.6,
+   "tail": ""
+  },
+  {
+   "name": "CONST_GOOD",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_launcher_fetch_products_runs_accepted",
+    "test_pass_run_exit"
+   ],
+   "first_error": "E       AssertionError: {\"out\": \"data_b-_j-.npz\", \"rc\": 0, \"seconds_unfold\": 8.802}",
+   "mutant_sha256": "26ac8a58665cdddf55bbb632b661047e9848445e399e9d46cef1ee7f93a85956",
+   "seconds": 104.3,
+   "tail": ""
+  },
+  {
+   "name": "CONST_XSEC",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_fail_on_f",
+    "test_launcher_fetch_products_runs_accepted",
+    "test_pass_run_exit"
+   ],
+   "first_error": "E       AssertionError: {\"out\": \"data_b-_j-.npz\", \"rc\": 0, \"seconds_unfold\": 7.534}",
+   "mutant_sha256": "876d2fa7e907480135a8e8db96b4edda25619c737fae8382d84998406a7ba909",
+   "seconds": 104.5,
+   "tail": ""
+  },
+  {
+   "name": "CONST_CM2",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_fail_on_f",
+    "test_launcher_fetch_products_runs_accepted",
+    "test_pass_run_exit"
+   ],
+   "first_error": "E       AssertionError: {\"out\": \"data_b-_j-.npz\", \"rc\": 0, \"seconds_unfold\": 7.087}",
+   "mutant_sha256": "f97e61cee4f6f9760548dd7afedebe60777336ef367809c0c4fe807da8de40a8",
+   "seconds": 103.5,
+   "tail": ""
+  },
+  {
+   "name": "CONST_VOLUME",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_fail_on_f",
+    "test_launcher_fetch_products_runs_accepted",
+    "test_pass_run_exit"
+   ],
+   "first_error": "E       AssertionError: {\"out\": \"data_b-_j-.npz\", \"rc\": 0, \"seconds_unfold\": 7.702}",
+   "mutant_sha256": "23f0fa8eece60399cb64e5545176b4403461024273130432a79fdff28cd56b8d",
+   "seconds": 103.1,
+   "tail": ""
+  },
+  {
+   "name": "SELF_GOOD",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_self_saved_constants_from_the_builder[good_inverted]"
+   ],
+   "first_error": "E       AssertionError: good_inverted",
+   "mutant_sha256": "e14570951bb0a7b0412426f3e19318bc8a9e689ee1885126d301311e4f26e169",
+   "seconds": 100.8,
+   "tail": ""
+  },
+  {
+   "name": "SELF_SAVED_XS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_self_saved_constants_from_the_builder[xsec_zero]"
+   ],
+   "first_error": "E       AssertionError: xsec_zero",
+   "mutant_sha256": "761e33dc7e3e2570c28e9239cedd4f5d636aae0947d4ce05bab6eac2c98ce83b",
+   "seconds": 99.6,
+   "tail": ""
+  },
+  {
+   "name": "SELF_CM2_EXACT",
+   "verdict": "SURVIVED",
+   "rc": 0,
+   "failed": [],
+   "first_error": "",
+   "mutant_sha256": "6c59927e76cc8a7279f1274b2a0793d748b9802fef2126ef088f01e31fbfa467",
+   "seconds": 100.3,
+   "tail": "........................................................................ [ 62%]\n............................................                             [100%]\n116 passed in 99.77s (0:01:39)\n"
+  },
+  {
+   "name": "SELF_VOLUME",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_self_volume_alone"
+   ],
+   "first_error": "E       assert (4.440892098500626e-16 <= 1e-13 and not True)",
+   "mutant_sha256": "c017b9689cc2173aa912609d879b323ebd38e66a7d05953be63fdae331419914",
+   "seconds": 99.0,
+   "tail": ""
+  },
+  {
+   "name": "FILE_VS_INPUT",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_constants_against_the_input",
+    "test_check_file_map_from_a_faulty_builder",
+    "test_check_file_meta_from_a_faulty_builder[bkg_dump_sha256-bkg]",
+    "test_check_file_meta_from_a_faulty_builder[code_pin-code_pin]",
+    "test_check_file_meta_from_a_faulty_builder[input_npz_sha256-npz]",
+    "test_check_file_meta_from_a_faulty_builder[result_sha256-ref]",
+    "test_check_file_with_pins"
+   ],
+   "first_error": "E           AssertionError: denom_nd",
+   "mutant_sha256": "f0075428391f2605d1c552ec9bb51a71ff9d4256fc05f3e2a6258190c9c2599e",
+   "seconds": 99.5,
+   "tail": ""
+  },
+  {
+   "name": "FILE_VS_INPUT_FLUX",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_constants_against_the_input"
+   ],
+   "first_error": "E       AssertionError: assert (True and not True)",
+   "mutant_sha256": "4d9925d310dd4534d682bbf108ab7ce8000d15a1186f6be6b75f1d66fd34140e",
+   "seconds": 99.1,
+   "tail": ""
+  },
+  {
+   "name": "COMPLETE_1E5",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_measure_completeness"
+   ],
+   "first_error": "E       assert (True and not True)",
+   "mutant_sha256": "54ee00a071168c10437206e71528c3b87a9303c3bf1a5defa008c178deac72f0",
+   "seconds": 98.7,
+   "tail": ""
+  },
+  {
+   "name": "PARSE_CRLF",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_parse_sums"
+   ],
+   "first_error": "E       AssertionError: assert (None is None and {'x\\r': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'} is None)",
+   "mutant_sha256": "c2654832965a9badc38df8c6429478b2657d257471b5ad9a7babf1bccd11100b",
+   "seconds": 101.3,
+   "tail": ""
+  },
+  {
+   "name": "ACCEPTED_LINKS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_done_link"
+   ],
+   "first_error": "E       AssertionError: assert not True",
+   "mutant_sha256": "b1cc9c34d202883ab0b73a11115ced555d616d3280511a5dff7162bc9b670aae",
+   "seconds": 101.1,
+   "tail": ""
+  },
+  {
+   "name": "ACCEPTED_BOUND",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_bound_digest",
+    "test_launcher_fetch_products_runs_accepted"
+   ],
+   "first_error": "E       AssertionError: assert not True",
+   "mutant_sha256": "8ba3f6191b4994a13753b7863ac201e71f901df9d4f64af7a8b836aac76ac2d1",
+   "seconds": 100.7,
+   "tail": ""
+  },
+  {
+   "name": "ACCEPTED_CONTROLS_VERDICT",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_refuses_each_marker_edit[controls_verdict_only]"
+   ],
+   "first_error": "E       AssertionError: controls_verdict_only",
+   "mutant_sha256": "f8439591091111b7067cbaa4c174bb0a1b041478b34591f83acdb1db650d0fd6",
+   "seconds": 105.1,
+   "tail": ""
+  },
+  {
+   "name": "ACCEPTED_RUN_JSON",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_run_json_cross_check"
+   ],
+   "first_error": "E       AssertionError: assert (True and not True)",
+   "mutant_sha256": "d8fa3a65d6162231d735821573c8e27fac53c57e2d1303cebc8a8cb052da875b",
+   "seconds": 102.6,
+   "tail": ""
+  },
+  {
+   "name": "ACCEPTED_PRODUCTS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_refuses_each_marker_edit[products_only]"
+   ],
+   "first_error": "E       AssertionError: products_only",
+   "mutant_sha256": "e58e8aaf01e41ee32a40a07037681b1b8b44f330e44b327b37eea36f990955be",
+   "seconds": 103.3,
+   "tail": ""
+  },
+  {
+   "name": "SB_LOGS_LINK",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_job_refuses_a_linked_log_directory"
+   ],
+   "first_error": "E       AssertionError: assert (2 == 2 and 'refusing: logs' in '[evw5d] refusing: setup_salloc_env.sh returned 1\\n')",
+   "mutant_sha256": "39759741493eeae7aa17f48ee5e7df46d3138e18f8883e875c6d89624cd7448a",
+   "seconds": 100.7,
+   "tail": ""
+  },
+  {
+   "name": "SB_LOG_FILES",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_job_refuses_an_existing_or_linked_log_file"
+   ],
+   "first_error": "E       AssertionError: assert (2 == 2 and 'exists' in '[evw5d] refusing: setup_salloc_env.sh returned 1\\n')",
+   "mutant_sha256": "e74790ba2e5673b5e085194f890c93860dd527baf4440eb48ba21e55a74dc4f0",
+   "seconds": 103.5,
+   "tail": ""
+  },
+  {
+   "name": "SB_GIT_STATUS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_job_refuses_when_git_status_fails"
+   ],
+   "first_error": "E       AssertionError: assert (2 == 2 and 'tool clone is not a clean checkout' in 'setup_salloc_env.sh returned 1')",
+   "mutant_sha256": "f0ed616300cb01de85e7e5be1fc3aa660a674a68fc191dcbaeba72829ca3395e",
+   "seconds": 102.5,
+   "tail": ""
+  },
+  {
+   "name": "SB_WSHA",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_job_refuses_a_wrong_writer_digest"
+   ],
+   "first_error": "E       AssertionError: assert (2 == 2 and 'is not the bound' in 'setup_salloc_env.sh returned 1')",
+   "mutant_sha256": "a5234098c992166186b5fe22dbdbe41a06127316cba09c3520acff4e8f36380b",
+   "seconds": 102.9,
+   "tail": ""
+  },
+  {
+   "name": "SB_SETUP_RC",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_job_refuses_a_failed_setup"
+   ],
+   "first_error": "E       assert (2 == 2 and 'setup_salloc_env.sh returned 1' in \"python3 is not root_6_28's\")",
+   "mutant_sha256": "3f703966680cd89ebd2f78e810548ebd5a922c442fd6cfa88cd45aa785a14014",
+   "seconds": 103.7,
+   "tail": ""
+  },
+  {
+   "name": "BIND_SHAPE",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_bind"
+   ],
+   "first_error": "E       assert (not True)",
+   "mutant_sha256": "251ee721e2bf17e53743edc68ddcccf267c2e0ec35ec34a9f41d507e4e8f042f",
+   "seconds": 104.1,
+   "tail": ""
+  },
+  {
+   "name": "BIND_MEMBERS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_bind"
+   ],
+   "first_error": "E       assert (not True)",
+   "mutant_sha256": "046af36fac52668b66e51e688a0016203687524fab5e5a9436adf659d5ab0091",
+   "seconds": 105.1,
+   "tail": ""
+  },
+  {
+   "name": "BIND_CAPTURED",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_bind"
+   ],
+   "first_error": "E       assert (not True)",
+   "mutant_sha256": "36bebcc226c6f63fa066d49c50f48e9d34b7d6d6fcae117838ec7f4ef8a64894",
+   "seconds": 102.8,
+   "tail": ""
+  },
+  {
+   "name": "FILE_MAP_DIGEST",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_map_from_a_faulty_builder"
+   ],
+   "first_error": "E       AssertionError: assert (True and not True)",
+   "mutant_sha256": "55b39a9583d2e600a2c1364620e06a7f6437a67a51e3f7494a191052da7e9367",
+   "seconds": 103.6,
+   "tail": ""
+  },
+  {
+   "name": "FILE_META_PINS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_meta_from_a_faulty_builder[bkg_dump_sha256-bkg]",
+    "test_check_file_meta_from_a_faulty_builder[code_pin-code_pin]",
+    "test_check_file_meta_from_a_faulty_builder[input_npz_sha256-npz]",
+    "test_check_file_meta_from_a_faulty_builder[result_sha256-ref]"
+   ],
+   "first_error": "E       assert (True and True and not True)",
+   "mutant_sha256": "43980b758df353d9029817d55caeccf1a7114d121b9aa38a28feb2ee6183aea6",
+   "seconds": 102.1,
+   "tail": ""
+  },
+  {
+   "name": "JSON_F",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_json_from_a_faulty_builder[f]"
+   ],
+   "first_error": "E       AssertionError: f",
+   "mutant_sha256": "0c99a2b566ed8cc7331cc89f2fe1ff9ccbef16b4eb9c52f910dcc7185b8f0d50",
+   "seconds": 105.9,
+   "tail": ""
+  },
+  {
+   "name": "JSON_FLUX",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_json_from_a_faulty_builder[flux]",
+    "test_check_file_json_from_a_faulty_builder[units_label]"
+   ],
+   "first_error": "E       AssertionError: flux",
+   "mutant_sha256": "6fc9e6f22c583e3039674dbd91ffdf7a42126cb54cc7fad42a0ec765181158b0",
+   "seconds": 101.8,
+   "tail": ""
+  },
+  {
+   "name": "JSON_POT",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_json_from_a_faulty_builder[pot]"
+   ],
+   "first_error": "E       AssertionError: pot",
+   "mutant_sha256": "2e69cde8e2eb02ca70880e34e4ad54c064bad5eae26e61f504a54d6306fcf325",
+   "seconds": 123.1,
+   "tail": ""
+  },
+  {
+   "name": "JSON_EDGES",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_json_from_a_faulty_builder[edges]"
+   ],
+   "first_error": "E       AssertionError: edges",
+   "mutant_sha256": "d5c79563d56cdee21f997f432558855a916dca2b7272fc6eb8a0d4c03d0741b8",
+   "seconds": 124.3,
+   "tail": ""
+  },
+  {
+   "name": "FILE_JSON_ARRAYS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_json_from_a_faulty_builder[edges]",
+    "test_check_file_json_from_a_faulty_builder[f]",
+    "test_check_file_json_from_a_faulty_builder[flux]",
+    "test_check_file_json_from_a_faulty_builder[pot]",
+    "test_check_file_json_from_a_faulty_builder[units_label]",
+    "test_check_file_schema_statements_from_a_faulty_builder[formula]"
+   ],
+   "first_error": "E       AssertionError: f",
+   "mutant_sha256": "80a4f81ab5391d344b082e58583a44ba34217adc6b886b1dd4b56f370700effc",
+   "seconds": 126.6,
+   "tail": ""
+  },
+  {
+   "name": "ACCEPTED_DONE_KEYS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_refuses_each_marker_edit[extra_key]"
+   ],
+   "first_error": "E       AssertionError: extra_key",
+   "mutant_sha256": "751ab0d564c44fbc429d06a6087ce4c5312a5a0ac7e5858c6fa9b7ad40b1dac2",
+   "seconds": 128.7,
+   "tail": ""
+  },
+  {
+   "name": "ACCEPTED_FINDING_SIZES",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_refuses_each_marker_edit[finding_sizes]"
+   ],
+   "first_error": "E       AssertionError: finding_sizes",
+   "mutant_sha256": "a6025f3bf0c3475576611f712039b5791f2c42af76cbaa87d57a0cfdb01e17a4",
+   "seconds": 134.8,
+   "tail": ""
+  },
+  {
+   "name": "ACCEPTED_ROOT_LINK",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_linked_root"
+   ],
+   "first_error": "E       AssertionError: assert (True and not True)",
+   "mutant_sha256": "fa8c5511d83b7c5dcbdaa570d9c8db83d25735b06e71867fc7a0373456074580",
+   "seconds": 136.0,
+   "tail": ""
+  },
+  {
+   "name": "ACCEPTED_FAILED_CONTROLS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_refuses_each_marker_edit[failed_controls_only]"
+   ],
+   "first_error": "E       AssertionError: failed_controls_only",
+   "mutant_sha256": "d5690aad8d99c90203e3e4c315f5bac9137f895315030227ecee9ef49df959c1",
+   "seconds": 141.2,
+   "tail": ""
+  },
+  {
+   "name": "SB_ARRAY",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_job_refuses_an_array_task_or_more_nodes"
+   ],
+   "first_error": "E       AssertionError: assert (2 == 2 and 'an array task' in 'setup_salloc_env.sh returned 1')",
+   "mutant_sha256": "f16e711ee0f365243aabde7e7c588917d503df51fbc5c6f36ba0bd806fd855ec",
+   "seconds": 143.6,
+   "tail": ""
+  },
+  {
+   "name": "SB_NODES",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_job_refuses_an_array_task_or_more_nodes"
+   ],
+   "first_error": "E       AssertionError: assert (2 == 2 and 'not 1' in 'setup_salloc_env.sh returned 1')",
+   "mutant_sha256": "2186c500667c74e950d7e31e4ed37e04f7d44c9bde115d9d37debcda65535bdd",
+   "seconds": 141.4,
+   "tail": ""
+  },
+  {
+   "name": "ACCEPTED_PRODUCTION",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_bound_digest",
+    "test_launcher_fetch_products_runs_accepted"
+   ],
+   "first_error": "E       AssertionError: a fixture bundle is not a production result",
+   "mutant_sha256": "f835acb99f0f6ef338afe577bab2ab27dd52d21a26af6071495d7a843dfb89e2",
+   "seconds": 135.8,
+   "tail": ""
+  },
+  {
+   "name": "TABLE_WPRIOR_WIDEN",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_build_table_widens_a_float32_prior_exactly"
+   ],
+   "first_error": "E       AssertionError: assert (dtype('float32') == <class 'numpy.float64'>)",
+   "mutant_sha256": "970b701941d8753d21e12aab3be1d88dc2c2fe4c4e2bb38e03721212d582673e",
+   "seconds": 110.8,
+   "tail": ""
+  },
+  {
+   "name": "SB_SOURCE_CLOBBER",
+   "verdict": "SURVIVED",
+   "rc": 0,
+   "failed": [],
+   "first_error": "",
+   "mutant_sha256": "e0231b73921bea805a8e829ae403f457fd1c073ad455abfbd69095021297ce05",
+   "seconds": 108.6,
+   "tail": "........................................................................ [ 62%]\n............................................                             [100%]\n116 passed in 107.76s (0:01:47)\n"
+  },
+  {
+   "name": "SB_OUT_LINK",
+   "verdict": "SURVIVED",
+   "rc": 0,
+   "failed": [],
+   "first_error": "",
+   "mutant_sha256": "d2d333c94789c1009a23cd958a9eeef2b619c97d52d77fd85a056ba882c11ead",
+   "seconds": 103.8,
+   "tail": "........................................................................ [ 62%]\n............................................                             [100%]\n116 passed in 103.26s (0:01:43)\n"
+  },
+  {
+   "name": "GRID_PASS",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_fail_on_grid"
+   ],
+   "first_error": "E       AssertionError: assert ('C-GRID' in ['C-FILE'])",
+   "mutant_sha256": "461818d93fa007f6f411ca44f5afa54aa1a30821e7e7d412026868c2365e5d46",
+   "seconds": 102.9,
+   "tail": ""
+  },
+  {
+   "name": "READ_NPZ_DUP",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_read_npz_refuses_duplicate_members"
+   ],
+   "first_error": "E       AssertionError: Regex pattern did not match.",
+   "mutant_sha256": "0d7143ab10e414c1dec77fbd02dee501924026128e17dac2b368ce26cada9e3f",
+   "seconds": 107.3,
+   "tail": ""
+  },
+  {
+   "name": "BIND_META_CANONICAL",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_bind_meta_is_type_strict"
+   ],
+   "first_error": "E       assert (not True)",
+   "mutant_sha256": "c6a6122aafca3e0a248b4cf6d09a24ec3d6c6f0544f33878ba2aaf007ab39864",
+   "seconds": 102.8,
+   "tail": ""
+  },
+  {
+   "name": "BIND_META_STRICT",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_bind_meta_is_type_strict"
+   ],
+   "first_error": "E       AssertionError: a duplicate key in the meta",
+   "mutant_sha256": "361f1a0b75de4f44d40da870dd97471fd41ea4005293ddea3c3627c73013a79e",
+   "seconds": 101.4,
+   "tail": ""
+  },
+  {
+   "name": "ACCEPTED_STRICT_DONE",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_refuses_duplicate_keys_and_coerced_types"
+   ],
+   "first_error": "E       AssertionError: a duplicate verdict key",
+   "mutant_sha256": "d4fecb4a173c5f49975dd3845fb2375e2a504451f003a17cea9479346de15b43",
+   "seconds": 105.6,
+   "tail": ""
+  },
+  {
+   "name": "ACCEPTED_CANONICAL",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_accepted_refuses_duplicate_keys_and_coerced_types"
+   ],
+   "first_error": "E       AssertionError: an int where a bool was written",
+   "mutant_sha256": "c2774033357596a95543d8ee39c497c34b28b2522c2ab162bb7ca49413f4ab88",
+   "seconds": 101.4,
+   "tail": ""
+  },
+  {
+   "name": "FILE_KEY_TEXT",
+   "verdict": "SURVIVED",
+   "rc": 0,
+   "failed": [],
+   "first_error": "",
+   "mutant_sha256": "619bd7fed9c4cd76cf272b07a1beef219720c3993c9b55aae417f28ea22b9a9c",
+   "seconds": 103.1,
+   "tail": "........................................................................ [ 62%]\n............................................                             [100%]\n116 passed in 102.29s (0:01:42)\n"
+  },
+  {
+   "name": "FILE_AXES",
+   "verdict": "SURVIVED",
+   "rc": 0,
+   "failed": [],
+   "first_error": "",
+   "mutant_sha256": "f9091bc6ec13f3827aa200f6448d776e69f22f3e63636ab6866a1f61a2777714",
+   "seconds": 106.8,
+   "tail": "........................................................................ [ 62%]\n............................................                             [100%]\n116 passed in 106.11s (0:01:46)\n"
+  },
+  {
+   "name": "JSON_FORMULA",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_check_file_schema_statements_from_a_faulty_builder[formula]"
+   ],
+   "first_error": "E       AssertionError: formula",
+   "mutant_sha256": "231e58fe83a205b374188000d150b94b38e577d364f8a871c73a6c330a7d8ece",
+   "seconds": 109.8,
+   "tail": ""
+  },
+  {
+   "name": "LAUNCH_CHECKER_PIN",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_launcher_fetch_products_runs_accepted"
+   ],
+   "first_error": "E       AssertionError: scp weights.npz rc=0",
+   "mutant_sha256": "b032a27cfb164ec49f63fd496b0d09fb166fd04cab241bc58e6b59f8134e0914",
+   "seconds": 109.9,
+   "tail": ""
+  },
+  {
+   "name": "LAUNCH_RC",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_launcher_propagates_a_remote_refusal"
+   ],
+   "first_error": "E       AssertionError: ssh rc=0",
+   "mutant_sha256": "18cf8b8a36de4bd277b4869788f2f1d6d1d80253647fccee9f9ccaaf363e5ce3",
+   "seconds": 111.0,
+   "tail": ""
+  },
+  {
+   "name": "LAUNCH_FETCH_ACCEPTED",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_launcher_fetch_products_runs_accepted"
+   ],
+   "first_error": "E       AssertionError: assert (0 == 1)",
+   "mutant_sha256": "197cad09dbeb7a12c223c238f386a9e4cf670740c02724afc1be55bdf6f90452",
+   "seconds": 104.3,
+   "tail": ""
+  }
+ ]
+}

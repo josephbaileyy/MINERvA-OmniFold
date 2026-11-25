@@ -1,7 +1,7 @@
 python=3.11.18 1.26.4 4.6.0
 f6f5bbb5ea1c0c7a704dfcd64e1f214c587db1e64db3d9c9ae4e943ac01ad990  evw5d.py
-f6d1ebe3a6b999831f50bb81063fcd7666d17ad3ae9d627646a47a1749c920c1  test_evw5d.py
-a88bc638555ba28201a36c51bb33c78da368facaaa404f242aecc5b3b8e83dc4  evw5d_mutation.py
+9caf260bafa139c9636240b5fc2143ee95e4a444756be5bfc943db0ddf0a042a  test_evw5d.py
+70c9f9dc29bc4ca800946e8bb5dda90b39273a38cb6f88a2a28f8fb0d2c29229  evw5d_mutation.py
 60fd4ec26714b2ccb956bd5abec4ba07092eca4c2f80b9ee1ab85bb02fd3533a  sbatch_evw5d.sh
 4755681f6ba8bd5060fe6ed4902e940b71e3b641d87c978a1f8016faaec468da  ../ess_e/ess_capture.py
 8687e85be161bfc993ea5a2c8be7b83dc92b5eb94caa13768261ea0ecbe5667e  ../ess_e/test_ess_capture.py
@@ -9,6 +9,7 @@ a88bc638555ba28201a36c51bb33c78da368facaaa404f242aecc5b3b8e83dc4  evw5d_mutation
 f3f0d79fd7f84ea570b4070308510a560514ac522e969ad3ad74893ce62061b0  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_hpss.sh
 b716d51087ae858b766a521fb8914fa6ffe40e3c72193291870dc92332faa5d2  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_launch.sh
 a7927177d93d25aa9aac2e417b81e162e6790f3d88aaf0f25d13cd21526109e2  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/evw5d_post.sh
+faf724f09bc61d635e5b8afd527b6e48d8dec50e240f3d77db5cec40022f7552  ../../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/launch/fill_pins.sh
 PASSED test_evw5d.py::test_pass_run_exit
 PASSED test_evw5d.py::test_pass_run
 PASSED test_evw5d.py::test_completeness_finding_is_reported_not_failed
@@ -125,5 +126,9 @@ PASSED test_evw5d.py::test_check_file_schema_statements_from_a_faulty_builder[ke
 PASSED test_evw5d.py::test_check_file_schema_statements_from_a_faulty_builder[formula]
 PASSED test_evw5d.py::test_check_file_schema_statements_from_a_faulty_builder[axes]
 PASSED test_evw5d.py::test_check_self_independent_formula_isolated
-116 passed in 175.63s (0:02:55)
+PASSED test_evw5d.py::test_job_setup_runs_without_noclobber
+PASSED test_evw5d.py::test_job_refuses_a_dangling_out_link
+PASSED test_evw5d.py::test_check_file_constants_json_raw_against_meant
+PASSED test_evw5d.py::test_check_self_cm2_exact_alone
+120 passed in 84.19s (0:01:24)
 rc=0
