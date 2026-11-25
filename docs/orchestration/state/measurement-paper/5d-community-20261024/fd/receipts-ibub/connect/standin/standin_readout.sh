@@ -7,7 +7,8 @@
 # MAT and is tested by test_ibub_readout.py; this tests the connect around it. The job's records are fake bytes at
 # the real paths of $N.
 # Variant ($1): ok | done_absent | tune_invalid | job_preempted | job_norow | root_exists | readout_exists |
-#               cov2d_running | ibub_running | window | not_regular | readout_refused
+#               cov2d_running | ibub_running | window | not_regular | readout_refused | cancelled_by |
+#               deploy_changed | done_exists | ibub_done_dangling
 V=${1:?variant}
 git config --global --add safe.directory '*'
 U=/pscratch/sd/j/josephrb; N=$U/ibub-20261124; JOB=61924744
@@ -20,6 +21,7 @@ exec /usr/bin/git "$@"
 G
 JS=COMPLETED; C2=COMPLETED; IB=COMPLETED
 [ "$V" = job_preempted ] && JS=PREEMPTED
+[ "$V" = cancelled_by ] && JS="CANCELLED by 112498"
 [ "$V" = cov2d_running ] && C2=RUNNING
 [ "$V" = ibub_running ] && IB=PENDING
 JOBROW="$JOB|ibub_run|$JS|0:0"; [ "$V" = job_norow ] && JOBROW=""
@@ -43,6 +45,7 @@ if [ "\$1" = -c ]; then exec python3 "\$@"; fi
 T=""; O=""; prev=""; for a in "\$@"; do [ "\$prev" = --truth ] && T=\$a; [ "\$prev" = --out ] && O=\$a; prev=\$a; done
 echo "stand-in readout argv: \$*"
 rc=$TRC; [ "\$T" = G18 ] && rc=0
+[ "$V" = deploy_changed ] && [ "\$T" = AR23 ] && touch stray-in-deploy.txt   # cwd is the clone's 2d-unfolding/ibub
 if [ \$rc = 4 ]; then echo "IBUB-READOUT \$T REFUSED: stand-in"; exit 4; fi
 mkdir "\$O" && echo "{\"verdict\": \"stand-in \$T\"}" > "\$O/ibub_\$T.json" && echo npz > "\$O/ibub_\$T"_errors.npz
 v=PASS; [ \$rc = 3 ] && v=INVALID
@@ -61,6 +64,8 @@ echo '{"verdict": "PASS"}' > $N/logs/complete.json; echo "[ibub] allocation: ...
 [ "$V" = not_regular ] && { mv $N/units/refcheck.json $N/units/refcheck.real; ln -s refcheck.real $N/units/refcheck.json; }
 [ "$V" = root_exists ] && mkdir -p /dev/shm/ibub-connect
 [ "$V" = readout_exists ] && mkdir -p $N/readout
+[ "$V" = done_exists ] && ln -s /nonexistent $N/logs/connect-readout.done          # a dangling link
+[ "$V" = ibub_done_dangling ] && { rm -f $N/IBUB-DONE; ln -s /nonexistent $N/IBUB-DONE; }
 cp /connect/connect.sh /dev/shm/ibubc.1.sh
 WEND=$(( $(date +%s) + 900 )); [ "$V" = window ] && WEND=$(( $(date +%s) - 10 ))
 bash /dev/shm/ibubc.1.sh /dev/shm/ibubc.1.sh $WEND > /tmp/session.out 2>&1

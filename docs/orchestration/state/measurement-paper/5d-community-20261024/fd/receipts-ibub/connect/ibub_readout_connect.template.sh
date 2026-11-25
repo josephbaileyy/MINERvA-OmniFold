@@ -11,7 +11,8 @@
 #  2. the job: exactly one sacct row for $JOB, named ibub_run, in a terminal State (COMPLETED, FAILED, TIMEOUT,
 #     CANCELLED, OUT_OF_MEMORY, NODE_FAIL; classified here, no -s filter). Anything else is a STOP before anything
 #     of the job's is fetched or read;
-#  3. the root, config.json's readout.write_root, must not exist; it is made with mode 700; $N/readout must not exist;
+#  3. the root, config.json's readout.write_root, must not exist; it is made with mode 700; none of $N/readout,
+#     $N/fetch-readout(.tar, .list, .sums) or $N/logs/connect-readout.{log,done} may exist, even as a dangling link;
 #  4. the fetch: the job's records, read from $N by dd iflag=noatime into $R/records, with RECORDS.SHA256SUMS
 #     (the readout verifies it again and requires the records it needs);
 #  5. a fresh clone at M (clean, the ibub files at their sha256) inside the root; RPD-RECO P0's committed records are
@@ -19,6 +20,7 @@
 #  6. the MAT environment (the shared checkout's setup_salloc_env.sh, as COV2D's readouts) and a MAT preflight on one
 #     real MnvH1D;
 #  7. ibub_readout.py for G18 and then AR23, with --job, --job-m and --records; each tune's rc and verdict line;
+#     then the deploy must be unchanged (git status), or the connect STOPs before anything is published;
 #  8. the copy-out to $N/readout/<T>/, checked by sha256, then the records tar; the root is removed last.
 # Writes only the root (/dev/shm/ibub-connect), $N/readout, $N/fetch-readout(.tar) and $N/logs/connect-readout.*.
 # Nothing goes to CFS. Job states come from sacct only, and squeue is never run. No set -u. Any stop is final.
@@ -44,7 +46,9 @@ now=$(date +%s); [ "$now" -le "$WEND" ] || bail "the window ended (now $now > $W
 [[ "$JOB" =~ ^[0-9]+$ ]] && [[ "$JOB_M" =~ ^[0-9a-f]{40}$ ]] && [[ "$M" =~ ^[0-9a-f]{40}$ ]] || bail "JOB, JOB_M or M"
 [ -d "$N" ] && [ ! -L "$N" ] && [ -d "$N/units" ] && [ -d "$N/logs" ] || bail "$N is not the job's namespace"
 [ ! -e "$R" ] && [ ! -L "$R" ] || bail "$R exists"
-[ ! -e "$N/readout" ] && [ ! -e "$FR" ] && [ ! -e "$N/logs/connect-$TAG.log" ] || bail "a readout already ran in $N"
+for p in "$N/readout" "$FR" "$FR.tar" "$FR.list" "$FR.sums" "$N/logs/connect-$TAG.log" "$N/logs/connect-$TAG.done"; do
+  [ ! -e "$p" ] && [ ! -L "$p" ] || bail "a readout already ran in $N ($p exists)"   # a dangling symlink counts
+done
 [ -x "$PY" ] && [ -x "$PY310" ] || bail "no $PY or $PY310"
 
 # ---- cov2d's fence, rev 3, exactly (embedded, sha-checked), then this lane's sacct fence for every prefix
@@ -92,7 +96,9 @@ finish() {
   local rc=$1
   if [ "$RECORDED" -eq 0 ]; then RECORDED=1; records || { [ "$rc" -eq 0 ] && rc=4; }; fi
   rm -rf -- "$R"; echo "root $R removed rc=$? left=$([ -e "$R" ] && echo yes || echo no)"
-  echo "ibub $TAG rc=$rc"; date -u +%FT%TZ; ( set -o noclobber; echo "$rc" > "$N/logs/connect-$TAG.done" )
+  ( set -o noclobber; echo "$rc" > "$N/logs/connect-$TAG.done" ) \
+    || { echo "STOP: $N/logs/connect-$TAG.done could not be written"; [ "$rc" -eq 0 ] && rc=4; }
+  echo "ibub $TAG rc=$rc"; date -u +%FT%TZ
   rm -f -- "$SELF"; exit "$rc"
 }
 records() {   # the fetch, the readout's outputs and logs, copied into $FR with sums, then tarred
@@ -129,7 +135,7 @@ echo "== fetch"
 for rel in IBUB-DONE units/refcheck.json stage/stage.json "logs/scontrol-batch-$JOB.txt" logs/refcheck.log \
            logs/complete.json "slurm/ibub_run-$JOB.out" "slurm/ibub_run-$JOB.err"; do
   src="$N/$rel"
-  if [ ! -e "$src" ]; then echo "fetch: $rel absent"; continue; fi
+  if [ ! -e "$src" ] && [ ! -L "$src" ]; then echo "fetch: $rel absent"; continue; fi   # a dangling link is not absent
   [ -f "$src" ] && [ ! -L "$src" ] || { echo "STOP: $src is not a regular file"; finish 9; }
   mkdir -p "$R/records/$(dirname "$rel")" || { echo "STOP: mkdir for $rel"; finish 9; }
   dd if="$src" of="$R/records/$rel" iflag=noatime status=none || { echo "STOP: fetching $rel"; finish 9; }
@@ -195,6 +201,8 @@ PYEOF
 done
 gs=$(git -C "$D" status --porcelain --ignored) || { echo "STOP: git status failed (after)"; finish 9; }
 echo "porcelain --ignored after: '${gs}'"
+echo "readout rcs: G18 $RC_G18, AR23 $RC_AR23"
+[ -n "$gs" ] && { echo "STOP: the deploy changed: nothing is published"; finish 9; }   # before $N/readout exists
 
 # ---- the copy-out, then the records; the verdict is each tune's own (main: 0 PASS, 3 another verdict, 4 refused)
 echo "== copy-out"
@@ -206,6 +214,4 @@ for T in G18 AR23; do
     && ( cd "$N/readout/$T" && sha256sum --strict -c "$R/logs/out-$T.sha256" ) || { echo "STOP: the copy-out of $T differs"; finish 5; }
   echo "copied $T: $(tr '\n' ' ' < "$R/logs/out-$T.sha256")"
 done
-echo "readout rcs: G18 $RC_G18, AR23 $RC_AR23"
-[ -n "$gs" ] && { echo "STOP: the deploy changed"; finish 9; }
 case "$RC_G18$RC_AR23" in 00) finish 0 ;; *) finish 6 ;; esac

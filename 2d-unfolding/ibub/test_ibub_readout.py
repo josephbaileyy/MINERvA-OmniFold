@@ -172,7 +172,7 @@ class Tree:
         then the readout connect's fetch (``write_fetch``). ``done=False`` publishes no IBUB-DONE."""
         units = {}
         for u in iu.REFERENCE_UNITS:
-            meta = {"unit": u, "kind": u, "slurm_job": JOB, "deploy_head": DEPLOY,
+            meta = {"unit": u, "kind": u, "slurm_job": JOB, "deploy_head": DEPLOY, **JOB_CODE,
                     "controls": {k: {"pass": True} for k in iu.CONTROLS[u]}}
             meta.update((ref_meta or {}).get(u, {}))
             buf = io.BytesIO()
@@ -663,6 +663,13 @@ class EndToEnd(Patched):
         self.assertEqual(rec["C-COMPLETE"]["missing"], [SEEDS[1]])
         self.assertEqual(rec["C-DATA"]["problems"], [])
 
+    def fresh_tree(self) -> "Tree":
+        """A tree in its own resolved temporary directory, removed by its own cleanup, so a subtest's doCleanups
+        (which also undoes its patches) never removes a tree that a later subtest still uses."""
+        d = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, d, True)
+        return Tree(d)
+
     def rewrite_meta(self, tr, k, **change):
         """Rewrite toy k's npz with a changed meta or scan, and its marker's digest to match."""
         name = tr.units / f"toy_{T}_{SEEDS[k]}"
@@ -884,12 +891,60 @@ class EndToEnd(Patched):
         self.assertTrue(any("deploy_head" in p for p in rec["C-DATA"]["problems"]))
 
     def test_an_undeclared_extra_marker_is_invalid(self):
-        tr = Tree(self.td)
-        (tr.units / f"toy_{T}_9999999.done").write_text("{}")
-        self.patch(tr)
-        rec = self.go(tr)
-        self.assertEqual(rec["verdict"], "INVALID")
-        self.assertTrue(any("undeclared unit" in p for p in rec["C-DATA"]["problems"]))
+        for stray in (f"toy_{T}_9999999.done", "bogus.done"):     # under the tune's prefix, and under none (agy r1, 4)
+            with self.subTest(stray=stray):
+                tr = self.fresh_tree()
+                (tr.units / stray).write_text("{}")
+                self.patch(tr)
+                rec = self.go(tr)
+                self.assertEqual(rec["verdict"], "INVALID")
+                self.assertTrue(any("undeclared unit" in p for p in rec["C-DATA"]["problems"]))
+                self.doCleanups()
+
+    def test_a_failed_marker_from_another_job_is_invalid_not_incomplete(self):
+        """agy readout read 1, item 4: a marker naming another job or deploy is a problem whatever its verdict."""
+        for field, value in (("job", "61000002"), ("deploy_head", "e0" * 20)):
+            with self.subTest(field=field):
+                tr = self.fresh_tree()
+                p = tr.units / f"toy_{T}_{SEEDS[12]}.done"
+                p.write_text(json.dumps(dict(json.loads(p.read_text()), verdict="FAIL", **{field: value})))
+                self.patch(tr)
+                rec = self.go(tr)
+                self.assertEqual(rec["verdict"], "INVALID")
+                self.assertIn(SEEDS[12], rec["C-COMPLETE"]["missing"])
+                self.assertTrue(any("job/deploy" in p for p in rec["C-DATA"]["problems"]))
+                self.doCleanups()
+
+    def test_a_symlinked_toy_marker_or_product_is_invalid(self):
+        """agy readout read 1, item 4: a symlink is refused even when it points at the right bytes."""
+        for ext in ("done", "npz", "root"):
+            with self.subTest(ext=ext):
+                tr = self.fresh_tree()
+                p = tr.units / f"toy_{T}_{SEEDS[5]}.{ext}"
+                real = tr.d / f"real.{ext}"
+                real.write_bytes(p.read_bytes())
+                p.unlink()
+                p.symlink_to(real)
+                self.patch(tr)
+                rec = self.go(tr)
+                self.assertEqual(rec["verdict"], "INVALID")
+                self.assertIn(SEEDS[5], rec["C-COMPLETE"]["missing"])
+                self.assertTrue(any("symlink" in q for q in rec["C-DATA"]["problems"]))
+                self.doCleanups()
+
+    def test_a_non_object_meta_or_a_truthy_non_true_control_is_invalid(self):
+        for name, meta, why in (("a control passing as 1", {"controls": {k: {"pass": 1} for k in iu.CONTROLS["toy"]}},
+                                 "a unit control failed"),
+                                ("a control that is not an object", {"controls": {k: True for k in iu.CONTROLS["toy"]}},
+                                 "a unit control failed")):
+            with self.subTest(case=name):
+                tr = self.fresh_tree()
+                self.rewrite_meta(tr, 9, meta=meta)
+                self.patch(tr)
+                rec = self.go(tr)
+                self.assertEqual(rec["verdict"], "INVALID")
+                self.assertTrue(any(why in p for p in rec["C-DATA"]["problems"]), rec["C-DATA"]["problems"])
+                self.doCleanups()
 
     def test_a_nonfinite_cell_in_a_failed_unit_still_fires_c_cells(self):
         tr = Tree(self.td)
@@ -962,7 +1017,9 @@ class JobWide(Patched):
         barrier = [({"verdict": "STOP"}, "refcheck.json is"), ({"job": "61000002"}, "refcheck.json is"),
                    ({"deploy_head": "e0" * 20}, "refcheck.json is"), ({"runner_sha256": "0" * 64}, "refcheck.json is"),
                    ({"units": failed_ref}, "not a passing reference"), ({"units": nonzero_rc}, "not a passing reference"),
-                   ({"central_df_vs_central": {"pass": False}}, "C-REP")]
+                   ({"central_df_vs_central": {"pass": False}}, "C-REP"),
+                   ({"central_df_vs_central": [True]}, "C-REP"),
+                   ({"units": ["central"]}, "not a passing reference")]
         for change, why in barrier:
             with self.subTest(barrier=change):
                 tr = self.tree()
@@ -995,6 +1052,21 @@ class JobWide(Patched):
                  "do not fit"),
                 ("AllocTRES unreadable", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("mem=480G", "mem=lots")),
                  "not readable from AllocTRES"),
+                ("scontrol JobName", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("JobName=ibub_run",
+                                                                                       "JobName=ibub_other")),
+                 "JobName is 'ibub_other'"),
+                ("scontrol NumNodes=2", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("NumNodes=1 ", "NumNodes=2 ")),
+                 "NumNodes is '2'"),
+                ("AllocTRES cpu=128", lambda tr: tr.write_fetch(scontrol=SCONTROL.replace("cpu=256,", "cpu=128,")),
+                 "do not fit"),
+                ("the barrier's npz digest is not the marker's", lambda tr: tr.write_barrier(units=dict(
+                    json.loads((tr.units / "refcheck.json").read_text())["units"],
+                    central=dict(json.loads((tr.units / "refcheck.json").read_text())["units"]["central"],
+                                 npz_sha256="0" * 64))), "not a passing reference"),
+                ("a reference meta from another runner", lambda tr: tr.write_barrier(
+                    ref_meta={"central": {"runner_sha256": "0" * 64}}), "runner_sha256"),
+                ("a reference meta from another config", lambda tr: tr.write_barrier(
+                    ref_meta={"central_df": {"config_sha256": "1" * 64}}), "config_sha256"),
                 ("a record off its sum", lambda tr: tr.write_fetch(bad_sum="stage/stage.json"), "RECORDS.SHA256SUMS"),
                 ("a needed record unlisted", lambda tr: tr.write_fetch(drop=("stage/stage.json",)), "lacks"),
                 ("IBUB-DONE at stage refs", lambda tr: tr.write_barrier(done={"stage": "refs"}), "stage toys"),
@@ -1141,7 +1213,8 @@ class JobWide(Patched):
                                  ("only a step row", f"JobID|JobName|State|ExitCode\n{JOB}.batch|batch|COMPLETED|0:0\n",
                                   "0 rows"),
                                  ("two rows", f"{JOB}|ibub_run|COMPLETED|0:0\n{JOB}|ibub_run|RUNNING|0:0\n", "2 rows"),
-                                 ("another job name", f"{JOB}|cov2d|COMPLETED|0:0\n", "not terminal")):
+                                 ("another job name", f"{JOB}|cov2d|COMPLETED|0:0\n", "not terminal"),
+                                 ("a three-column row", f"{JOB}|ibub_run|COMPLETED\n", "1 rows")):
             with self.subTest(case=name):
                 tr = self.tree()
                 tr.write_fetch(sacct=sacct)
@@ -1167,6 +1240,9 @@ class JobWide(Patched):
         want += [tr.units / f"{u}.{e}" for u in iu.REFERENCE_UNITS for e in ("done", "npz", "root")]
         want += [tr.units / "refcheck.json", tr.run / tr.pdir / "truth_xsec.npz", tr.d / "ns/out/ER/xsec.root"]
         want += [tr.run / "out" / f"T_{T}_{s}" / "xsec.root" for s in SEEDS]
+        want += [tr.pb_path, tr.blocks_path, tr.comp_path]          # read before the audit (agy readout read 1, item 3)
+        want += [tr.fetch / "RECORDS.SHA256SUMS"] + [tr.fetch / ln.split("  ", 1)[1] for ln in
+                                                     (tr.fetch / "RECORDS.SHA256SUMS").read_text().splitlines()]
         for p in want:
             self.assertEqual(inv.get(str(p)), sha(p.read_bytes()), str(p))
         self.assertEqual(rec["C-JOB"]["records_sha256sums_sha256"], sha((tr.fetch / "RECORDS.SHA256SUMS").read_bytes()))

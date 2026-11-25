@@ -216,10 +216,11 @@ def ibu_products(run, units: Path, truth: str, shas: dict, ks_want: list, rep: n
 
     - **Absent** (missing, the tune reads INCOMPLETE): no marker, or a marker whose verdict is not PASS. This alone
       never makes the tune INVALID.
-    - **A problem** (the tune reads INVALID, and the unit is also missing): a marker that is unreadable or names
-      another unit; a product not at its marker's digest; an unreadable npz or meta; another K scan; a marker for an
-      undeclared seed; or a PASS unit naming another toy, data file, job, deploy, runner or config, or lacking or failing
-      a declared control.
+    - **A problem** (the tune reads INVALID, and the unit is also missing): a marker that is unreadable or a symlink,
+      or names another unit, job or deploy, whatever its verdict; a product that is a symlink or not at its marker's
+      digest; an unreadable npz or meta; another K scan; a marker in ``units`` for a unit that neither tune nor the
+      references declares (as ``ibub_unit.complete``'s undeclared markers); or a PASS unit naming another toy, data
+      file, job, deploy, runner or config, or lacking or failing a declared control.
     - **C-CELLS counts each artifact on its own,** as soon as that artifact verifies, whatever the unit's verdict:
       K = 10 from the ROOT hXSec2D, K = 5 from the npz row. A non-finite K = 10 npz row fails C-K10 (``max_rel`` is
       inf); it is never counted twice.
@@ -228,11 +229,16 @@ def ibu_products(run, units: Path, truth: str, shas: dict, ks_want: list, rep: n
     c2 = cfg["c2"]
     expected = {f"toy_{truth}_{s}" for s in c.TOY_SEEDS[truth]}
     missing, problems, x10, x5, k10 = [], [], [], [], []
-    present = {f[:-len(".done")] for f in os.listdir(units) if f.startswith(f"toy_{truth}_") and f.endswith(".done")}
-    problems += [f"{name}: a marker for an undeclared unit" for name in sorted(present - expected)]
+    known = {f"toy_{t}_{s}" for t in ("G18", "AR23") for s in c.TOY_SEEDS[t]} | set(iu.REFERENCE_UNITS)
+    present = {f[:-len(".done")] for f in os.listdir(units) if f.endswith(".done")}
+    problems += [f"{name}: a marker for an undeclared unit" for name in sorted(present - known)]
     nonfinite = {"K10": 0, "K5": 0}
     for s in c.TOY_SEEDS[truth]:
         name = f"toy_{truth}_{s}"
+        if any((units / f"{name}.{ext}").is_symlink() for ext in ("done", "root", "npz")):
+            missing.append(s)
+            problems.append(f"{name}: its marker or a product is a symlink")
+            continue
         try:
             marker = json.loads(read_inv(inv, units / f"{name}.done")[0])
         except OSError:
@@ -246,6 +252,11 @@ def ibu_products(run, units: Path, truth: str, shas: dict, ks_want: list, rep: n
             missing.append(s)
             problems.append(f"{name}: its done-marker names {marker.get('unit') if isinstance(marker, dict) else marker!r}")
             continue
+        if (str(marker.get("job")), marker.get("deploy_head")) != (str(bound["slurm_job"]), bound["deploy_head"]):
+            missing.append(s)                # whatever its verdict: a marker from another job or deploy is a problem
+            problems.append(f"{name}: its marker's job/deploy {marker.get('job')}/{marker.get('deploy_head')} "
+                            f"is not the bound {bound['slurm_job']}/{bound['deploy_head']}")
+            continue
         h = row10 = row5 = z = meta = root = None
         try:                                # each artifact verifies and counts on its own
             root = copy_inv(inv, run, units / f"{name}.root", marker["root_sha256"], f"{name}.root")
@@ -257,6 +268,8 @@ def ibu_products(run, units: Path, truth: str, shas: dict, ks_want: list, rep: n
             npz = copy_inv(inv, run, units / f"{name}.npz", marker["sha256"], f"{name}.npz")
             z = np.load(npz)
             meta = json.loads(str(z["meta"]))
+            if not isinstance(meta, dict):
+                raise ValueError("its meta is not a JSON object")
             if list(z["ks"]) != ks_want:
                 problems.append(f"{name}: K scan {list(z['ks'])}")
                 z = None
@@ -280,17 +293,14 @@ def ibu_products(run, units: Path, truth: str, shas: dict, ks_want: list, rep: n
         prov = rd.read_provenance(root)
         if prov.get("dataFileSha256") != shas[s]:
             problems.append(f"{name}: dataFileSha256 {prov.get('dataFileSha256')} is not toy {s}'s")
-        ctl = meta.get("controls", {})
+        ctl = meta.get("controls") if isinstance(meta.get("controls"), dict) else {}
         if set(ctl) != iu.CONTROLS["toy"]:
             problems.append(f"{name}: controls {sorted(ctl)} are not the declared {sorted(iu.CONTROLS['toy'])}")
-        if not all(v.get("pass") for v in ctl.values()):
+        if not all(isinstance(v, dict) and v.get("pass") is True for v in ctl.values()):
             problems.append(f"{name}: a unit control failed")
         for k in ("slurm_job", "runner_sha256", "config_sha256", "deploy_head"):
             if str(meta.get(k)) != str(bound[k]):
                 problems.append(f"{name}: {k} {meta.get(k)} is not the bound {bound[k]}")
-        if (str(marker.get("job")), marker.get("deploy_head")) != (str(bound["slurm_job"]), bound["deploy_head"]):
-            problems.append(f"{name}: its marker's job/deploy {marker.get('job')}/{marker.get('deploy_head')} "
-                            f"is not the bound {bound['slurm_job']}/{bound['deploy_head']}")
         k10.append(iu.max_rel(row10, h))
         x10.append(h)
         x5.append(row5)
@@ -328,11 +338,12 @@ def reference_products(run, units: Path, bound: dict, barrier: dict, inv: dict) 
     - the barrier names it passing, with srun rc 0, at the marker's digests;
     - its npz and ROOT products are not symlinks and are, as read now through O_NOATIME (``run.copy``), at those
       digests;
-    - the npz's own meta names the same unit, kind, job and deploy, and its controls are exactly the declared ones
-      (C-REP or C-REP-D, and C-SIM on central), each passing.
+    - the npz's own meta names the same unit, kind, job, deploy, runner and config, and its controls are exactly the
+      declared ones (C-REP or C-REP-D, and C-SIM on central), each passing.
     Returns None when both hold, else why."""
+    bu = barrier.get("units") if isinstance(barrier.get("units"), dict) else {}
     for u in iu.REFERENCE_UNITS:
-        r = (barrier.get("units") or {}).get(u) or {}
+        r = bu.get(u) if isinstance(bu.get(u), dict) else {}
         try:
             m = json.loads(read_inv(inv, units / f"{u}.done")[0])
         except (OSError, ValueError) as e:
@@ -351,11 +362,16 @@ def reference_products(run, units: Path, bound: dict, barrier: dict, inv: dict) 
                     raise c.Refusal(f"{src} is a symlink")
                 got[ext] = copy_inv(inv, run, src, m[key], f"ref_{u}.{ext}")
             meta = json.loads(str(np.load(got["npz"])["meta"]))
+            if not isinstance(meta, dict):
+                raise ValueError("its meta is not a JSON object")
         except (c.Refusal, OSError, KeyError, ValueError) as e:
             return f"{u}'s products are not at the barrier's digests ({e})"
         if (meta.get("unit"), meta.get("kind"), str(meta.get("slurm_job")), meta.get("deploy_head")) != \
                 (u, u, str(bound["slurm_job"]), bound["deploy_head"]):
             return f"{u}'s npz meta names {meta.get('unit')}/{meta.get('kind')}/{meta.get('slurm_job')}/{meta.get('deploy_head')}"
+        for k in ("runner_sha256", "config_sha256"):
+            if meta.get(k) != bound[k]:
+                return f"{u}'s npz meta has {k} {meta.get(k)}, not the job's {bound[k]}"
         ctl = meta.get("controls") if isinstance(meta.get("controls"), dict) else {}
         if set(ctl) != iu.CONTROLS[u] or not all(isinstance(v, dict) and v.get("pass") is True for v in ctl.values()):
             return f"{u}'s controls {sorted(ctl)} are not the declared {sorted(iu.CONTROLS[u])}, each passing"
@@ -499,6 +515,9 @@ def job_wide(run, units: Path, records: Path, bound: dict, inv: dict) -> dict:
         return {"pass": False, "why": str(e)}
     out = {"terminal": terminal_state(recs), "records": len(recs),
            "records_sha256sums_sha256": hashlib.sha256(cb.read_noatime(records / "RECORDS.SHA256SUMS")[0]).hexdigest()}
+    inv[str(records / "RECORDS.SHA256SUMS")] = out["records_sha256sums_sha256"]
+    for rel, data in recs.items():                    # every fetched record, at the digest its sums line verified
+        inv[str(records / rel)] = hashlib.sha256(data).hexdigest()
 
     def fail(why: str) -> dict:
         return {"pass": False, "why": why, **out}
@@ -527,7 +546,8 @@ def job_wide(run, units: Path, records: Path, bound: dict, inv: dict) -> dict:
     got = {k: (str(b.get(k)) if k == "job" else b.get(k)) for k in want}
     if got != want:
         return fail(f"refcheck.json is {got}, not {want}")
-    if (b.get("central_df_vs_central") or {}).get("pass") is not True:
+    cdc = b.get("central_df_vs_central")
+    if not (isinstance(cdc, dict) and cdc.get("pass") is True):
         return fail("C-REP: refcheck.json's central_df against central does not pass")
     why = reference_products(run, units, bound, b, inv)
     if why is not None:
@@ -661,6 +681,9 @@ def readout(truth: str, units: Path, out: Path, run_dir: str, job: str, job_m: s
         rec = run.rec
         rec.update(own)
         inv = rec["inventory"] = {}                     # every graded byte: path -> sha256, each from its one read
+        if pre is None:     # read before the audit by toy_shas and reported_cells, each equal to its pin or refused
+            inv[str(REPO / cfg["toys"][truth]["pseudo_b"])] = cfg["toys"][truth]["pseudo_b_sha256"]
+            inv[str(REPO / cfg["cells"]["blocks"])] = cfg["cells"]["blocks_sha256"]
 
         def invalid(why: str) -> dict:
             rec["controls_failed"].append(why)
@@ -680,7 +703,8 @@ def readout(truth: str, units: Path, out: Path, run_dir: str, job: str, job_m: s
                 if not (np.array_equal(rep, B["rep"].astype(bool)) and np.array_equal(rep, rep_cfg)):
                     return invalid("C-TRUTH: E_R's cells differ from the blocks record's or the config's")
                 flat = [int(i) for i in np.flatnonzero(rep)]
-                comp = rd.completeness(truth)
+                comp = rd.completeness(truth)               # read_pinned: equal to its pin or refused
+                inv[str(rd.COMPLETENESS[0])] = rd.COMPLETENESS[1]
                 pl = rd.plan(truth, comp)
                 if pl["toy"] != [f"T_{truth}_{s}" for s in c.TOY_SEEDS[truth]]:
                     return invalid("C-TRUTH: the OmniFold labels are not the declared seeds in order")

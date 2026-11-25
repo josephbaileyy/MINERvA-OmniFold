@@ -14,7 +14,7 @@
 # into the session directory. The tar's sha256 must equal the one the connect's log printed, and its
 # RECORDS.SHA256SUMS must hold.
 #
-# Usage: bash ibub_run_launch.sh <new empty dir> <loginNN> <window_end_epoch>
+# Usage: bash ibub_readout_launch.sh <new empty dir> <loginNN> <window_end_epoch>
 F=${1:?session dir}; NODE=${2:?loginNN}; WEND=${3:?window end epoch}
 HERE=$(cd "$(dirname "$0")" && pwd)
 [ -d "$F" ] && [ -z "$(ls -A "$F")" ] || { echo "STOP: $F is not a new empty directory"; exit 9; }
@@ -25,7 +25,7 @@ S="$HERE/ibub_readout_connect.sh"; SHA=@@CONNECT_SHA@@
 [ "$(shasum -a 256 "$S" | cut -d' ' -f1)" = "$SHA" ] || { echo "STOP: the local connect script is not the approved one"; exit 8; }
 SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=8)
 HOP=(-o BatchMode=yes -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=8 -o StrictHostKeyChecking=yes -o UpdateHostKeys=no)
-R="f=/dev/shm/ibubc.\$\$.sh; o=\$f.out; umask 077; cat > \"\$f\"; h=\$(sha256sum \"\$f\" | cut -d' ' -f1); if [ \"\$h\" != $SHA ]; then rm -f -- \"\$f\"; echo \"STOP: /dev/shm copy sha256 \$h is not $SHA\"; exit 8; fi; echo \"node \$(hostname) staged sha256 \$h\"; setsid nohup bash \"\$f\" \"\$f\" $WEND > \"\$o\" 2>&1 < /dev/null & p=\$!; echo \"detached pid \$p, output \$o\"; wait \$p; r=\$?; cat \"\$o\"; rm -f -- \"\$o\"; echo \"script rc=\$r\""
+R="f=/dev/shm/ibubc.\$\$.sh; o=\$f.out; umask 077; if [ -e \"\$f\" ] || [ -L \"\$f\" ] || [ -e \"\$o\" ] || [ -L \"\$o\" ]; then echo \"STOP: \$f or \$o exists\"; exit 8; fi; cat > \"\$f\"; h=\$(sha256sum \"\$f\" | cut -d' ' -f1); if [ \"\$h\" != $SHA ]; then rm -f -- \"\$f\"; echo \"STOP: /dev/shm copy sha256 \$h is not $SHA\"; exit 8; fi; echo \"node \$(hostname) staged sha256 \$h\"; setsid nohup bash \"\$f\" \"\$f\" $WEND > \"\$o\" 2>&1 < /dev/null & p=\$!; echo \"detached pid \$p, output \$o\"; wait \$p; r=\$?; cat \"\$o\"; rm -f -- \"\$o\"; echo \"script rc=\$r\""
 ssh "${SSH[@]}" saul.nersc.gov "ssh ${HOP[*]} $NODE $(printf '%q' "$R")" < "$S" > "$F/session.out" 2> "$F/session.err"
 rc=$?
 echo "ssh rc=$rc"
