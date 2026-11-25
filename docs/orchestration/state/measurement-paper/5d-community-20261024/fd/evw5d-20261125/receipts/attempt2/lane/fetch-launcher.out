@@ -1,0 +1,4 @@
+scp post.tar.gz rc=0
+3a4dc3cf5decc9d9ae43812b33b83356a93e5e323de9c75fcc4471b90ea8d325  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evw5d-run2/fetch/post.tar.gz
+scp hpss.tar.gz rc=1
+launcher rc=1

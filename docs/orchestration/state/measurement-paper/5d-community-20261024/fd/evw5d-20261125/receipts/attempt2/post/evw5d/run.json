@@ -1,0 +1,329 @@
+{
+ "schema": "evw5d/1",
+ "tool_digest": "f6f5bbb5ea1c0c7a704dfcd64e1f214c587db1e64db3d9c9ae4e943ac01ad990",
+ "ess_digest": "4755681f6ba8bd5060fe6ed4902e940b71e3b641d87c978a1f8016faaec468da",
+ "argv": [
+  "/pscratch/sd/j/josephrb/evw5d-20261125-r2/toolclone/nd-unfolding/evw5d/evw5d.py",
+  "--deploy",
+  "/pscratch/sd/j/josephrb/evw5d-20261125-r2/deploy",
+  "--out",
+  "/pscratch/sd/j/josephrb/evw5d-20261125-r2/evw5d",
+  "--out-root",
+  "/pscratch/sd/j/josephrb/evw5d-20261125-r2",
+  "--stage-dir",
+  "/dev/shm/evw5d-62000819"
+ ],
+ "host": "nid004178",
+ "slurm_job": "62000819",
+ "slurm_step": "0",
+ "python": "3.11.14",
+ "code_pin": "abdc88c52b909cfc1eb658ae97bd9defc8f640e7",
+ "main_pin": "025459c8f4a92d65239cecc3cc3a09cd5de13c15",
+ "findings": [
+  "C-COMPLETE"
+ ],
+ "finding_sizes": {
+  "C-COMPLETE": {
+   "max_abs_c_minus_1": 0.0004097791481952884,
+   "n_cells_beyond_atol": 32,
+   "n_signal_without_denominator": 0
+  }
+ },
+ "versions": {
+  "numpy": "1.26.4",
+  "lightgbm": "4.6.0"
+ },
+ "reads": {
+  "npz": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+   "before": {
+    "size": 1548438020,
+    "ino": 882725251803251539,
+    "mtime_ns": 1782610308000000000,
+    "atime_ns": 1794546256000000000
+   },
+   "after": {
+    "size": 1548438020,
+    "ino": 882725251803251539,
+    "mtime_ns": 1782610308000000000,
+    "atime_ns": 1794546256000000000
+   },
+   "copy_digest": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f"
+  },
+  "bkg": {
+   "path": "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+   "before": {
+    "size": 16017201,
+    "ino": 882726729389460450,
+    "mtime_ns": 1790319104000000000,
+    "atime_ns": 1794546256000000000
+   },
+   "after": {
+    "size": 16017201,
+    "ino": 882726729389460450,
+    "mtime_ns": 1790319104000000000,
+    "atime_ns": 1794546256000000000
+   },
+   "copy_digest": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955"
+  },
+  "ref": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz",
+   "before": {
+    "size": 95564,
+    "ino": 882726721806143167,
+    "mtime_ns": 1790450957000000000,
+    "atime_ns": 1794549929000000000
+   },
+   "after": {
+    "size": 95564,
+    "ino": 882726721806143167,
+    "mtime_ns": 1790450957000000000,
+    "atime_ns": 1794549929000000000
+   },
+   "copy_digest": "fb5cc6798b97b5902ad8f0fecbc49990271f7772f98d3063c1dc8596340e680c"
+  }
+ },
+ "producer_argv": [
+  "--npz",
+  "/dev/shm/evw5d-62000819/npz_of_inputs_5d.npz",
+  "--bkg",
+  "/dev/shm/evw5d-62000819/bkg_bkg_dump.npz",
+  "--expect-npz-sha256",
+  "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+  "--expect-bkg-sha256",
+  "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955",
+  "--config",
+  "R",
+  "--iters",
+  "5",
+  "--construction",
+  "data",
+  "--pairs=-:-",
+  "--tag",
+  "data",
+  "--threads",
+  "32",
+  "--out",
+  "/pscratch/sd/j/josephrb/evw5d-20261125-r2/evw5d/product"
+ ],
+ "seconds_producer": 672.421,
+ "C-BIND": {
+  "members_exact": true,
+  "xsec_flat_bytes_equal": true,
+  "shape_bits_equal": true,
+  "captured_equals_remade": true,
+  "n_entries": 65856,
+  "meta_equal_except_per_run": true,
+  "meta_differing_keys": [],
+  "pass": true,
+  "reference_digest": "fb5cc6798b97b5902ad8f0fecbc49990271f7772f98d3063c1dc8596340e680c",
+  "remade_digest": "83436d151d45a2ba01947a7d780a649fd250e1adec60e9003bf78ac351bb951a"
+ },
+ "controls": {
+  "C-BIND": {
+   "members_exact": true,
+   "xsec_flat_bytes_equal": true,
+   "shape_bits_equal": true,
+   "captured_equals_remade": true,
+   "n_entries": 65856,
+   "meta_equal_except_per_run": true,
+   "meta_differing_keys": [],
+   "pass": true,
+   "reference_digest": "fb5cc6798b97b5902ad8f0fecbc49990271f7772f98d3063c1dc8596340e680c",
+   "remade_digest": "83436d151d45a2ba01947a7d780a649fd250e1adec60e9003bf78ac351bb951a"
+  },
+  "C-KEY": {
+   "equal": {
+    "MCgen": true,
+    "MCreco": true,
+    "pass_reco": true,
+    "pass_truth": true,
+    "w_truth": true,
+    "w_reco": true,
+    "denom_nd": true,
+    "flux": true,
+    "data_pot": true,
+    "n_nucleons": true,
+    "edges": true
+   },
+   "pass_truth_bool": true,
+   "push_aligned": true,
+   "n_rows": 32849103,
+   "pass": true
+  },
+  "C-ENTRY": {
+   "dtype_uint32": true,
+   "strictly_increasing": true,
+   "unique": true,
+   "pass": true
+  },
+  "C-GRID": {
+   "recomputed_xs_bit_for_bit": true,
+   "edges_equal_fine_grid": true,
+   "fine_map_digest_equal": true,
+   "volume_equal": true,
+   "pass": true
+  },
+  "C-F": {
+   "f_from_result_max_rel": 3.3306690738754696e-16,
+   "f_from_rows_max_rel": 3.774758283725532e-15,
+   "f": [
+    3.2588494110256116e-39,
+    3.670686989951547e-39,
+    6.311285362959606e-40,
+    4.304968937170949e-40,
+    4.8995722630406644e-39,
+    9.981502501812427e-40,
+    5.5676194962464836e-40,
+    3.206324991449025e-40,
+    1.3854812161529863e-39,
+    3.9609899030236e-39,
+    7.830277107561073e-40,
+    5.612329010620665e-40,
+    2.1968322151991467e-39,
+    9.040920607196832e-40,
+    4.9632863572732144e-39,
+    1.1283323466645908e-39
+   ],
+   "rows_in_reported_cells_with_zero_denominator": 0,
+   "pass": true
+  },
+  "C-FILE": {
+   "columns_exact": true,
+   "meta_equal": true,
+   "constants_json_equal": true,
+   "constants_json_vs_arrays": true,
+   "constants_exact": true,
+   "entry": true,
+   "truth_pt": true,
+   "truth_pz": true,
+   "truth_eavail": true,
+   "truth_q3": true,
+   "truth_W": true,
+   "w_prior": true,
+   "wpush": true,
+   "w_unfolded": true,
+   "weights_float64": true,
+   "reco_partner": true,
+   "fine_index": true,
+   "constants": {
+    "edges_0": true,
+    "edges_1": true,
+    "edges_2": true,
+    "edges_3": true,
+    "edges_4": true,
+    "flux": true,
+    "data_pot": true,
+    "n_nucleons": true,
+    "cm2_per_m2": true,
+    "denom_nd": true,
+    "ofin": true,
+    "completeness": true,
+    "good": true,
+    "volume": true,
+    "fine_to_cell": true,
+    "xsec_flat": true
+   },
+   "constants_vs_input": {
+    "edges_0": true,
+    "edges_1": true,
+    "edges_2": true,
+    "edges_3": true,
+    "edges_4": true,
+    "flux": true,
+    "data_pot": true,
+    "n_nucleons": true,
+    "denom_nd": true,
+    "fine_to_cell_digest": true,
+    "meta_input_npz_sha256": true,
+    "meta_bkg_dump_sha256": true,
+    "meta_result_sha256": true,
+    "meta_code_pin": true,
+    "meta_n_rows": true,
+    "meta_columns": true,
+    "meta_key_text": true,
+    "meta_truth_axes": true
+   },
+   "pass": true
+  },
+  "C-SELF": {
+   "xsec_bit_for_bit": true,
+   "ofin_bit_for_bit": true,
+   "completeness_bit_for_bit": true,
+   "good_bit_for_bit": true,
+   "saved_xsec_equals_reference": true,
+   "cm2_per_m2_exact": true,
+   "volume_vs_edges_max_rel": 0.0,
+   "independent_formula_max_rel": 5.551115123125783e-16,
+   "f_from_file_max_rel": 3.3306690738754696e-16,
+   "f_from_rows_max_rel": 3.774758283725532e-15,
+   "rows_in_reported_cells_with_zero_denominator": 0,
+   "pass": true
+  },
+  "C-FLOW": {
+   "n_rows": 32849103,
+   "n_rows_equal_pass_truth": true,
+   "n_outside_grid": 2801,
+   "w_unfolded_outside": 651.9843394451905,
+   "w_prior_outside": 599.5574800185318,
+   "fine_index_in_range": true,
+   "unfolded_max_rel": 0.0,
+   "prior_max_rel": 0.0,
+   "pass": true
+  },
+  "C-COMPLETE": {
+   "n_fine_cells": 65856,
+   "n_denominator_positive": 10694,
+   "n_signal_without_denominator": 0,
+   "n_denominator_without_signal": 0,
+   "max_abs_c_minus_1": 0.0004097791481952884,
+   "n_cells_beyond_atol": 32,
+   "c_min": 0.9995902208518047,
+   "c_max": 1.0003674515621133,
+   "sum_ofin_over_sum_denominator": 1.0000000000000002,
+   "atol": 1e-12,
+   "c_one_to_1e-5_in_every_fine_cell": false,
+   "abs_c_minus_1_quantiles": {
+    "0.5": 1.1102230246251565e-16,
+    "0.9": 6.661338147750939e-16,
+    "0.99": 2.7755575615628914e-15
+   },
+   "finding": true
+  },
+  "C-PINS": {
+   "code": {
+    "nd-unfolding/s5n_pseudo.py": true,
+    "nd-unfolding/s5c_pseudo.py": true,
+    "nd-unfolding/s5c_unfold.py": true,
+    "nd-unfolding/omnifold_nn_core.py": true,
+    "nd-unfolding/xsec_nd.py": true,
+    "2d-unfolding/unfold_2d_omnifold_unbinned.py": true,
+    "nd-unfolding/s5e_candidate.py": true,
+    "nd-unfolding/s5e_deform.py": true,
+    "nd-unfolding/s5e_trace.py": true,
+    "nd-unfolding/s5p_numerics.py": true,
+    "nd-unfolding/s5p_stage1_inspect.py": true
+   },
+   "staged_copies": {
+    "npz": true,
+    "bkg": true,
+    "ref": true
+   },
+   "pass": true
+  }
+ },
+ "gated": [
+  "C-BIND",
+  "C-KEY",
+  "C-ENTRY",
+  "C-GRID",
+  "C-F",
+  "C-FILE",
+  "C-SELF",
+  "C-FLOW",
+  "C-PINS"
+ ],
+ "controls_verdict": "PASS",
+ "seconds_total": 748.868,
+ "peak_rss_kib": 16033816
+}

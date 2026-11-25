@@ -1,0 +1,22 @@
+node login31 2026-11-25T23:49:31Z post sha256 292c4cb99d0bc4b20dd70a12734ca308cf5c8b171779364ac8deecad8e784164
+sacct rc=0
+62000819|evw5d|COMPLETED|0:0|776|1|2026-11-25T15:34:42|2026-11-25T15:47:38|
+62000819.batch|batch|COMPLETED|0:0|776|1|2026-11-25T15:34:42|2026-11-25T15:47:38|247224K
+62000819.extern|extern|COMPLETED|0:0|776|1|2026-11-25T15:34:42|2026-11-25T15:47:38|
+62000819.0|python3|COMPLETED|0:0|755|1|2026-11-25T15:35:00|2026-11-25T15:47:35|19624652K
+charge_node_h=0.2156   (the allocation's line only: JobID compared as a string)
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz|1548438020|1794546256|1782610308|882725251803251539
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz|16017201|1794546256|1790319104|882726729389460450
+/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz|95564|1794549929|1790450957|882726721806143167
+product set exact: 1
+constants.json: OK
+constants.npz: OK
+product/data_b-_j-.npz: OK
+run.json: OK
+weights.npz: OK
+VERIFY=PASS (the products against SHA256SUMS, in place)
+SHA256SUMS sha256 31075af667c6cda13d76b0e09831a5e40180069615853a30ae34a325b8be8718   (the digest to bind)
+/pscratch/sd/j/josephrb/evw5d-20261125-r2/deploy HEAD abdc88c52b909cfc1eb658ae97bd9defc8f640e7 status rc=0 lines=0
+/pscratch/sd/j/josephrb/evw5d-20261125-r2/toolclone HEAD e01dd863787b6ed0b6ccf836ea0a9b60ed6ac3c3 status rc=0 lines=0
+files 27
+post rc=0 2026-11-25T23:49:46Z

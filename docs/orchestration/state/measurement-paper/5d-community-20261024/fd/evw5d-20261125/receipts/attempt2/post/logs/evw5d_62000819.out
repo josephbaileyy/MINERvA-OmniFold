@@ -1,0 +1,3 @@
+[evw5d] job=62000819 host=nid004178 start=2026-11-25T23:34:53Z pin=abdc88c52b909cfc1eb658ae97bd9defc8f640e7 tool=e01dd863787b6ed0b6ccf836ea0a9b60ed6ac3c3
+[evw5d] setup_salloc_env.sh rc=0 python3=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
+[evw5d] done rc=0 end=2026-11-25T23:47:38Z
