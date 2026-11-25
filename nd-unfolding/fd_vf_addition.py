@@ -122,7 +122,7 @@ def build_block(VF: np.ndarray, L: np.ndarray, Ce: np.ndarray, dp: dict, cpl: di
            float(np.abs(cpl[X_PL] - (mats["C_resp"] + mats["C_PL5D"])).max()) <= TOL * scale
            and float(np.abs(cpl[A.REPORTED] - mats["C_total_plus_C_resp_plus_C_PL5D"]).max()) <= TOL * scale)
     report("V2", "L is symmetric", symmetric(L))
-    report("V2", "V_F is L C_e L^T, to 1e-12", float(np.abs(L @ Ce @ L.T - VF).max())
+    report("V2", "C_e^infl (B5D's V_F) is L C_e L^T, to 1e-12", float(np.abs(L @ Ce @ L.T - VF).max())
            <= TOL * float(np.abs(VF).max()))
     report("V2", "L commutes with C_e, to 1e-12", float(np.abs(L @ Ce - Ce @ L).max())
            <= TOL * float(np.abs(L @ Ce).max()))
@@ -163,9 +163,10 @@ def cmd_block(a) -> int:
     report("V4", "the npz is the same bytes when written twice", data == A.npz_bytes(arrays))
     a.out_dir.mkdir(parents=True, exist_ok=True)
     A.write_atomic(out_npz, data)
-    back = A.load_npz(out_npz)
-    report("V4", "the npz reads back key by key, bit for bit", list(back) == list(arrays)
-           and all(same_bits(back[k], arrays[k]) for k in back))
+    with np.load(out_npz, allow_pickle=False) as z:                 # the members as stored: no dtype coercion
+        back = {k: np.array(z[k]) for k in z.files}
+    report("V4", "the npz reads back key by key, bit for bit (dtype, shape and bytes)", list(back) == list(arrays)
+           and all(same_bits(back[k], np.asarray(arrays[k], dtype="<f8")) for k in back))
     h = A.sha256(out_npz)
     f = arrays["f"]
     readout = {"schema": "fd-vf-block/1", "labels": LABELS, "controls_passed": ["V0", "V1", "V2", "V3", "V4"],
@@ -285,11 +286,11 @@ def cmd_product(a, pins: dict | None) -> int:
     js = json.loads(json.dumps(readout, allow_nan=False))
     for k in PRODUCT_MATRICES:
         back = F.read_matrix_csv(files[f"{PRODUCT_STEM}_{k}.csv"])
-        report("K6", f"{k}: the CSV and the JSON read back bit for bit", np.array_equal(back, p["matrices"][k])
-               and np.array_equal(np.array(js["matrices"][k]), p["matrices"][k]))
-    report("K6", "the correlation's CSV and JSON read back bit for bit", np.array_equal(
+        report("K6", f"{k}: the CSV and the JSON read back bit for bit", same_bits(back, p["matrices"][k])
+               and same_bits(np.array(js["matrices"][k]), p["matrices"][k]))
+    report("K6", "the correlation's CSV and JSON read back bit for bit", same_bits(
         F.read_matrix_csv(files[f"{PRODUCT_STEM}_corr_{REPORTED_F}.csv"]), p["correlation"])
-           and np.array_equal(np.array(js["correlation"]), p["correlation"]))
+           and same_bits(np.array(js["correlation"]), p["correlation"]))
     files[f"{PRODUCT_STEM}.json"] = json.dumps(readout, indent=1, allow_nan=False) + "\n"
     out = Path(a.out_dir).resolve()
     stage = out.with_name(out.name + ".staging")
@@ -325,8 +326,8 @@ def check_written(out: Path, files: dict, p: dict, dp: dict) -> None:
            [r["cell"] for r in rows] == CELLS and same_bits(np.array([float(r["f"]) for r in rows]), p["f"])
            and all(same_bits(np.array([float(r[f"rel_sigma_{k}"]) for r in rows]), p["relative_sigma"][k])
                    for k in PRODUCT_MATRICES))
-    report("K6", "the cells CSV's box edges are the committed product's cells", all(
-        [float(r[f"{ax}_{e}"]) for e in ("lo", "hi")] == [float(v) for v in c["box"][ax]]
+    report("K6", "the cells CSV's box edges are the committed product's cells, bit for bit", all(
+        same_bits(np.array([float(r[f"{ax}_{e}"]) for e in ("lo", "hi")]), np.array([float(v) for v in c["box"][ax]]))
         for r, c in zip(rows, dp["cells"]) for ax in c["box"]))
 
 
@@ -411,7 +412,7 @@ def listed(r: dict) -> list:
 
 
 def vf_matrix(old_name: str, stage_g: bool) -> str:
-    """The matrix a V_F readout names, from its OLD readout's: dF added to the block (Stage G: before V_g)."""
+    """The matrix a C_e^infl readout names, from its OLD readout's: DeltaC_e added to the block (Stage G: before V_g)."""
     return old_name.replace(" + V_g", " + DeltaC_e + V_g", 1) if stage_g else old_name + " + DeltaC_e"
 
 
@@ -434,7 +435,8 @@ def curated(old: dict, new: dict) -> dict:
             report("T", f"{k}: the truths are the same, in the same order, on both sides",
                    bool(o["truths"]) and [t["name"] for t in o["truths"]] == [t["name"] for t in n["truths"]])
             for to, tn in zip(o["truths"], n["truths"]):
-                report("T", f"{k} {to['name']}: the V_F grade matrix is the OLD one with dF added, on the same cells",
+                report("T", f"{k} {to['name']}: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the "
+                            "same cells",
                        tn["grade_matrix"] == vf_matrix(to["grade_matrix"], False)
                        and tn["grade"]["cells"] == to["grade"]["cells"],
                        f"{to['grade_matrix']!r} / {tn['grade_matrix']!r}")
@@ -448,17 +450,23 @@ def curated(old: dict, new: dict) -> dict:
                                  "grade_matrix": {"old": to["grade_matrix"], "vf": tn["grade_matrix"]}}
                                 for to, tn in zip(o["truths"], n["truths"])]
             if k == "F0":
-                out["f0_sigma"] = {"old": o["relative_sigma"], "vf": n.get(f"relative_sigma_plus_{BLOCKS['DeltaC_e']}")}
-                report("T", "F0: the V_F readout carries its revised sigma (relative_sigma_plus_DeltaC_e)",
-                       out["f0_sigma"]["vf"] is not None)
+                so, sn = o["relative_sigma"], n.get(f"relative_sigma_plus_{BLOCKS['DeltaC_e']}")
+                out["f0_sigma"] = {"cells": o.get("cells"), "old": so, "vf": sn}
+                report("T", "F0: the C_e^infl readout carries its revised sigma, on the same cells in the same order, "
+                            "with the same matrices, each a 16-cell vector",
+                       sn is not None and o.get("cells") == n.get("cells") == CELLS and sorted(so) == sorted(sn)
+                       and all(len(so[m]) == len(sn[m]) == N for m in so))
         elif k.endswith("/g"):
             report("T", f"{k}: the predictions are the same, in the same order, on the same cells, on both sides",
                    bool(o["predictions"]) and [(p["name"], p["cells"]) for p in o["predictions"]]
                    == [(p["name"], p["cells"]) for p in n["predictions"]])
             for po, pn in zip(o["predictions"], n["predictions"]):
                 for kind in ("total", "shape_only"):
-                    report("T", f"{k} {po['name']} {kind}: the OLD matrix is C_total + its block + V_g, and the V_F "
-                                "matrix is it with dF added",
+                    want_ndf = len(po["cells"]) - (kind == "shape_only")
+                    report("T", f"{k} {po['name']} {kind}: both sides' ndf is the declared {want_ndf}",
+                           po[kind]["ndf"] == pn[kind]["ndf"] == want_ndf, f"{po[kind]['ndf']} / {pn[kind]['ndf']}")
+                    report("T", f"{k} {po['name']} {kind}: the OLD matrix is C_total + its block + V_g, and the "
+                                "C_e^infl matrix is it with DeltaC_e added",
                            po[kind]["matrix"].startswith("C_total + ") and " + V_g" in po[kind]["matrix"]
                            and pn[kind]["matrix"] == vf_matrix(po[kind]["matrix"], True),
                            f"{po[kind]['matrix']!r} / {pn[kind]['matrix']!r}")

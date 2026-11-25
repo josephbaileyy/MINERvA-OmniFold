@@ -5,7 +5,8 @@ source is compiled first: a mutant that does not compile is INVALID, never kille
 first (the baseline, with every test), or nothing is counted. Mutants run with VF_MUTANT_RUN=1, which skips the one
 exact-provenance test (the committed vf_block.json records this file's sha256, so any textual change fails it: a
 false kill); the baseline is also run that way, and its test count N recorded. A valid mutant is KILLED only if
-the suite ran all N tests (an import failure reports "Ran 1 test") and reported a failure or an error;
+the suite ran to its summary, the test module imported (no "Failed to import test module" / _FailedTest), and it
+reported a failure or an error;
 HARNESS if it ended without a summary (an import failure or crash, counted as a failure of this receipt); TIMEOUT if
 it did not finish (also counted); and SURVIVED if it passed. One whose text is not
 found exactly once is MISSING. The file is restored and its sha256 checked after every mutant and at the end.
@@ -25,7 +26,7 @@ TARGET = REPO / "nd-unfolding/fd_vf_addition.py"
 TESTS = REPO / "nd-unfolding/tests"
 MUTANTS = [
     # V0-V4: the block
-    ("V0: the record's V_F pin unchecked", 'rec["matrices_sha256"]["V_F.csv"] == PINS["v_f_csv"])', "True)"),
+    ("V0: the record's V_F (C_e^infl) pin unchecked", 'rec["matrices_sha256"]["V_F.csv"] == PINS["v_f_csv"])', "True)"),
     ("V0: the record's V_F not compared with the CSV", "same_bits(VFj, VF))", "True)"),
     ("V1: C_e not the product's", 'same_bits(Ce, mats["C_e"]))', "True)"),
     ("V1: the cpl block's C_PL5D unchecked", 'and same_bits(cpl["C_PL5D"], mats["C_PL5D"]))', ")"),
@@ -92,7 +93,6 @@ MUTANTS = [
      "not bad,"),
     ("R figures: E-A2's receipt bytes unchecked", 'A.sha256(D / OLD_E_FIG / f"{n}{e}") == sums.get(f"{n}{e}"), f"{n}{e}")', 'True, f"{n}{e}")'),
     ("C: the argv's block digest unchecked", 'ok = (fl("--extra-block-sha256") == vf_sha and fl("--extra-block-key") == key', 'ok = (fl("--extra-block-key") == key'),
-    ("C: a readout with no block digest passes", "and bool(digests) and all(v == vf_sha for v in digests)", "and all(v == vf_sha for v in digests)"),
     ("C: the role unchecked", '(fl("--extra-block-role") == "adopted" if role else "--extra-block-role" not in a)', "True"),
     ("C: duplicate references unchecked", "and all(ref.get(f, h) == h for f, h in upstream.items()))", ")"),
     ("C: argv naming the digest twice passes", "return a[a.index(f) + 1] if a.count(f) == 1 else None", "return a[a.index(f) + 1] if f in a else None"),
@@ -103,7 +103,10 @@ MUTANTS = [
     ("K6: the files on disk not read back", '        report("K6", f"{n}: the file on disk is the bytes written", (out / n).read_bytes() == text.encode())', '        pass'),
     ("K6: the cells CSV not read back", '[r["cell"] for r in rows] == CELLS and same_bits(np.array([float(r["f"]) for r in rows]), p["f"])', "True"),
     ("T: the V_F grade matrix not checked", 'tn["grade_matrix"] == vf_matrix(to["grade_matrix"], False)', "True"),
-    ("T: F0's revised sigma not required", 'out["f0_sigma"]["vf"] is not None)', "True)"),
+    ("T: F0's revised sigma not required", "sn is not None and o.get(\"cells\") == n.get(\"cells\") == CELLS", "o.get(\"cells\") == n.get(\"cells\") == CELLS"),
+    ("T: F0's cells unchecked", 'o.get("cells") == n.get("cells") == CELLS and sorted(so) == sorted(sn)', "sorted(so) == sorted(sn)"),
+    ("T: Stage G's ndf unchecked", 'po[kind]["ndf"] == pn[kind]["ndf"] == want_ndf, f"{po[kind][\'ndf\']} / {pn[kind][\'ndf\']}")', 'True, "")'),
+    ("K6: box edges compared as numbers", 'same_bits(np.array([float(r[f"{ax}_{e}"]) for e in ("lo", "hi")]), np.array([float(v) for v in c["box"][ax]]))', '[float(r[f"{ax}_{e}"]) for e in ("lo", "hi")] == [float(v) for v in c["box"][ax]]'),
     ("T: the pairs' pins not the chain's", "pins.get(po) == ho and pins.get(pn) == hn for _, po, ho, pn, hn in pairs))", "True for _ in pairs))"),
     ("chain: OLD chdefs downstream reads fresh upstreams", '    if kind == "old":\n        src = {k: p.D / OLD_E[side][k][0] for k in E_STEPS}', '    if False:\n        src = {k: p.D / OLD_E[side][k][0] for k in E_STEPS}'),
     ("chain: figures drawn in the nopl arms", '    if side != "with":\n        return res', '    if False:\n        return res'),
@@ -136,7 +139,8 @@ MUTANTS = [
 ]
 # Not run, each with its reason: T's truth-order and Stage G cell checks in curated() are redundant with identities()
 # (named records, in order, on the same cells), which runs first; excluding /code_sha256 again from the OLD product's R
-# is equivalent while the deploy's fd_cpl_addition.py is the committed product's (its recorded sha).
+# is equivalent while the deploy's fd_cpl_addition.py is the committed product's (its recorded sha); C's "at least one
+# block digest" is implied by its structured-fields requirement (a dict sha256 or inputs_sha256.extra_block).
 
 
 def sha(p: Path) -> str:
@@ -148,8 +152,9 @@ def main() -> int:
     h0 = sha(TARGET)
     rows, bad = [], 0
     if not DRY:
+        clean = {k: v for k, v in os.environ.items() if k != "VF_MUTANT_RUN"}   # the ordinary baseline runs every test
         b = subprocess.run([sys.executable, "-B", "-m", "unittest", "-q", "test_fd_vf_addition"], cwd=TESTS,
-                           capture_output=True, text=True, timeout=1200)
+                           capture_output=True, text=True, timeout=1200, env=clean)
         print(f"baseline: the unmutated suite rc {b.returncode}", flush=True)
         if b.returncode != 0:
             print("STOP: the baseline fails; no mutant is counted", flush=True)
@@ -184,8 +189,9 @@ def main() -> int:
             r = subprocess.run([sys.executable, "-B", "-m", "unittest", "-q", "test_fd_vf_addition"], cwd=TESTS,
                                capture_output=True, text=True, timeout=1200, env={**os.environ, "VF_MUTANT_RUN": "1"})
             nr = re.search(r"^Ran (\d+) tests? in ", r.stderr, re.M)
-            ran = (nr is not None and int(nr.group(1)) == n_tests and "Failed to import test module" not in r.stderr
-                   and "_FailedTest" not in r.stderr)
+            # a fixture refused by the mutant runs fewer tests (a real kill); a module that fails to import is HARNESS
+            ran = (nr is not None and "Failed to import test module" not in r.stderr and "_FailedTest" not in r.stderr
+                   and "ModuleNotFoundError" not in r.stderr)
             if r.returncode == 0:
                 status = "SURVIVED"
             elif ran and re.search(r"^FAILED \((failures|errors)=", r.stderr, re.M):

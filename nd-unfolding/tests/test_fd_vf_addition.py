@@ -83,6 +83,22 @@ class Block(unittest.TestCase):
         self.assertEqual((self.tmp / "b/vf_block.json").read_bytes(), p.read_bytes(),
                          "vf_block.json names another fd_vf_addition.py: rebuild it with this code")
 
+    def test_a_member_stored_big_endian_refuses_v4(self):
+        import io as _io
+        import zipfile as _zf
+
+        def big(arrays):                                  # the same values, with "f" stored as >f8
+            buf = _io.BytesIO()
+            with _zf.ZipFile(buf, "w", _zf.ZIP_STORED) as z:
+                for k, v in arrays.items():
+                    b = _io.BytesIO()
+                    np.lib.format.write_array(b, np.asarray(v, dtype=">f8" if k == "f" else "<f8"), allow_pickle=False)
+                    z.writestr(f"{k}.npy", b.getvalue())
+            return buf.getvalue()
+        with mock.patch.object(A, "npz_bytes", big), mock.patch.object(V, "report", wraps=V.report) as rep:
+            self.assertEqual(self.run_block(self.tmp / "b"), 1)
+        self.assertEqual(rep.call_args_list[-1].args[0], "V4")
+
     def test_an_existing_output_refuses(self):
         (self.tmp / "b").mkdir()
         (self.tmp / "b/vf_block.json").write_text("{}")
@@ -394,7 +410,17 @@ class Product(unittest.TestCase):
             r1[1] = repr(float(r1[1]) + 0.001)
             return "\n".join([rows[0], ",".join(r1), *rows[2:]]) + "\n"
         self.assertEqual(self.cells_text_changed("p-k6e", edge),
-                         ("K6", "the cells CSV's box edges are the committed product's cells"))
+                         ("K6", "the cells CSV's box edges are the committed product's cells, bit for bit"))
+
+    def test_a_box_edge_of_minus_zero_refuses_k6_on_readback(self):
+        def mzero(text):
+            rows = text.splitlines()
+            r1 = rows[1].split(",")
+            assert r1[1] == "0.0", r1[1]
+            r1[1] = "-0.0"
+            return "\n".join([rows[0], ",".join(r1), *rows[2:]]) + "\n"
+        self.assertEqual(self.cells_text_changed("p-k6z", mzero),
+                         ("K6", "the cells CSV's box edges are the committed product's cells, bit for bit"))
 
     def test_cells_whose_box_edges_are_not_the_products_refuse_k6(self):
         real = A.write_atomic
@@ -499,15 +525,23 @@ class Table(unittest.TestCase):
         with quiet():
             V.identities(o, n, "x")
 
-    def test_f0s_sigma_pairs_its_base_with_the_revised_one(self):
+    def test_f0s_sigma_pairs_its_base_with_the_revised_one_on_the_same_cells(self):
         o, n = fake_f(["a"], []), fake_f(["a"], [], m="M + DeltaC_e")
-        o["relative_sigma"] = {"C_total": [1.0]}
+        o["cells"] = n["cells"] = V.CELLS
+        o["relative_sigma"] = {"C_total": [1.0] * 16}
         with quiet(), self.assertRaises(V.Stop):
             V.curated({"F0": o}, {"F0": n})
-        n["relative_sigma_plus_DeltaC_e"] = {"C_total": [1.1]}
+        n["relative_sigma_plus_DeltaC_e"] = {"C_total": [1.1] * 16}
         with quiet():
             c = V.curated({"F0": o}, {"F0": n})
-        self.assertEqual(c["f0_sigma"], {"old": {"C_total": [1.0]}, "vf": {"C_total": [1.1]}})
+        self.assertEqual(c["f0_sigma"], {"cells": V.CELLS, "old": {"C_total": [1.0] * 16}, "vf": {"C_total": [1.1] * 16}})
+        n["cells"] = V.CELLS[::-1]                                   # the same truths on reversed cells
+        with quiet(), self.assertRaises(V.Stop):
+            V.curated({"F0": o}, {"F0": n})
+        n["cells"] = V.CELLS
+        n["relative_sigma_plus_DeltaC_e"] = {"C_total": [1.1] * 15}  # a shortened vector
+        with quiet(), self.assertRaises(V.Stop):
+            V.curated({"F0": o}, {"F0": n})
 
     def test_curated_checks_identities_in_a_family_it_has_no_rows_for(self):
         rel = V.OLD_E["with"]["g_diag"][0]
@@ -542,6 +576,10 @@ class Table(unittest.TestCase):
             V.curated({"S with/g": o}, {"S with/g": g(["a", "b"], "C_total + C_resp + C_PL5D")})
         with quiet(), self.assertRaises(V.Stop):
             V.curated({"S with/g": o}, {"S with/g": g(["b", "a"], "C_total + C_resp + C_PL5D + DeltaC_e")})
+        n2 = g(["a", "b"], "C_total + C_resp + C_PL5D + DeltaC_e")
+        n2["predictions"][0]["shape_only"]["ndf"] = 16                # a revised shape-only grade on 16 dof
+        with quiet(), self.assertRaises(V.Stop):
+            V.curated({"S with/g": o}, {"S with/g": n2})
 
     def test_the_table_refuses_without_the_chains_pins(self):
         tmp = Path(tempfile.mkdtemp(prefix="vf-tab-"))
@@ -559,7 +597,8 @@ class Table(unittest.TestCase):
         po.write_text(json.dumps(fake_f(["a", "b"], ["a", "b"])))
         pn.write_text(json.dumps(fake_f(["a", "b"], ["a"], m="M + DeltaC_e")))
         o, n = fake_f(["a", "b"], ["a", "b"]), fake_f(["a", "b"], ["a"], m="M + DeltaC_e")
-        o["relative_sigma"], n["relative_sigma_plus_DeltaC_e"] = {"C_total": [1.0]}, {"C_total": [1.1]}
+        o["cells"] = n["cells"] = V.CELLS
+        o["relative_sigma"], n["relative_sigma_plus_DeltaC_e"] = {"C_total": [1.0] * 16}, {"C_total": [1.1] * 16}
         po.write_text(json.dumps(o))
         pn.write_text(json.dumps(n))
         (tmp / "pairs.json").write_text(json.dumps([["F0", str(po), digest(po), str(pn), digest(pn)]]))
