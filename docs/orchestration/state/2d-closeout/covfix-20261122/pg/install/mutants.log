@@ -1,5 +1,5 @@
 KILL RULE (the director, 2026-11-25): an import or collection error (unittest's _FailedTest, ImportError, ModuleNotFoundError, SyntaxError) makes a mutant INVALID; otherwise a FAIL or an ERROR with a non-zero exit kills (an error raised by the mutated code is detectable behaviour); a timeout, or a FAIL with exit 0, is INVALID; a clean pass SURVIVES. Every suite must pass clean on the unmutated copy first.
-baseline install: clean ['Ran 23 tests in 3.504s', 'OK']
+baseline install: clean ['Ran 23 tests in 2.453s', 'OK']
 M01 KILLED by test_refusals_write_nothing, test_refusals_write_nothing (error): identity not enforced [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
 M02 KILLED by test_refusals_write_nothing, test_refusals_write_nothing (error): an unfilled dbconfig pin [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
 M03 KILLED by test_refusals_write_nothing: an existing product directory [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
@@ -65,4 +65,13 @@ M62 KILLED by test_refusals_and_driver_failures: r3: coverage log hashes missing
 M63 KILLED by test_refusals_and_driver_failures: r3: a coverage log left [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
 M64 KILLED by test_scratch_is_checked_on_the_real_path: r3: an ancestor off scratch [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
 M65 KILLED by test_a_missing_or_file_upsfiles_is_a_problem: r3: a missing .upsfiles [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
-65 of 65 killed; 0 invalid; 0 survived
+M66 KILLED by test_replay_payloads: r4: the replay's identity (launcher) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
+M67 KILLED by test_refusals_and_driver_failures: r4: the replay's identity (node) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M68 KILLED by test_replay_payloads: r4: each trace's own program [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
+M69 KILLED by test_replay_payloads: r4: an unbound exec [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
+M70 KILLED by test_replay_payloads: r4: no revision values [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
+M71 KILLED by test_replay_payloads: r4: the files each trace must gate [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
+M72 KILLED by test_replay_payloads: r4: no gst schema [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
+M73 KILLED by test_replay_payloads: r4: a ROOT file not decoded [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
+M74 KILLED by test_replay_payloads: r4: the deleted gst's schema [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
+74 of 74 killed; 0 invalid; 0 survived

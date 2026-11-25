@@ -12,7 +12,10 @@
 #   2); the four real-shape checks and the three host checks; CVMFS's revision again.
 # All of it must pass here before slot 2 is generated. A trap deletes every event and status file of the public-seed
 # runs on any exit, STOP included; their sha256, size and whether they hold the public seed are kept in R/deleted.json.
-# R/replay.json holds every check's pass, the spline opens, the gated files and the coverage logs' hashes.
+# R/replay.json holds every check's pass, the spline opens, the gated files, the programs run, the revision values and
+# the coverage logs' hashes, with the gst's schema (trees, branches, streamer info) that every sealed gst must match.
+# Round 4: each public-seed ROOT file is also decoded (pg_lib.py's leak scan, inflated objects included) as the positive
+# control of the publication scan, and a deletion that fails is retried on exit and leaves a STOP.
 # Exit 0 when every step and check passes, 1 on a STOP, 2 on a refusal before any step.
 set -o pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -34,7 +37,8 @@ case "$R" in /*) ;; *) refuse "R must be absolute" ;; esac
 [ "$(cd "$R" && pwd -P)" = "$R" ] || refuse "R must be its own physical path"
 [ -n "$TMPDIR" ] && [ -d "$TMPDIR" ] || refuse "TMPDIR must exist"
 [ -x "$PY" ] || refuse "$PY is missing"
-for v in LD_PRELOAD LD_AUDIT BASH_ENV ENV PYTHONPATH PYTHONSTARTUP PYTHONUSERBASE; do   # hooks no trace attributes
+for v in LD_PRELOAD LD_AUDIT BASH_ENV ENV PYTHONPATH PYTHONSTARTUP PYTHONUSERBASE GXMLPATHS GALGCONF; do   # hooks no
+  # trace attributes, and GENIE's XML lookups other than GXMLPATH
   [ -z "${!v:-}" ] || refuse "$v is set"
 done
 pin() { "$PY" -I -c 'import json,sys; v=json.load(open(sys.argv[1]))[sys.argv[2]]; print(v or "")' "$HERE/pg_pins.json" "$1"; }
@@ -75,31 +79,54 @@ X1="$PRIV/genie_xsec/v3_04_00/NULL/$Q/data"; X2="$CVMFS_REPO/products/genie_xsec
 W1="$R/work/t0"; C1="$R/coverage/$T"; C2="$R/coverage/$T2"
 DELETED=""
 delete_events() {   # D5: on every exit, once the writers have ended (every step here runs in the foreground), the event
-  # and status files of the public-seed runs are deleted unread; R/deleted.json keeps only each file's sha256 and
-  # size, and whether its bytes hold the public seed (for the seed inventory)
+  # and status files of the public-seed runs are deleted; R/deleted.json keeps each file's sha256 and size, whether
+  # its bytes hold the public seed as text, and for a ROOT file the decoded scan and (the gst) its schema. Every file's
+  # unlink is tried even if reading it fails; any file left is a failure, and the trap tries again on exit
   [ -z "$DELETED" ] || return 0
-  DELETED=1
-  "$PY" -I - "$R/deleted.json" "$W1" "$C1" "$C2" <<'EOF'
+  "$PY" -I - "$R/deleted.json" "$HERE" "$W1" "$C1" "$C2" <<'EOF' || return 1
 import glob, hashlib, json, os, sys
-out, dirs = sys.argv[1], sys.argv[2:]
+out, here, dirs = sys.argv[1], sys.argv[2], sys.argv[3:]
+sys.path.insert(0, here)
+import pg_lib
 forms = [b"123456789", format(123456789, "x").encode(), format(123456789, "X").encode()]
-rec = {}
+pats = ("genie_v3.gst.root", "gntp.*.ghep.root", "genie-mcjob-*.status", "input-flux.root")
+rec = json.load(open(out)) if os.path.exists(out) else {}
+bad = 0
 for key, w in zip(("t0", "coverage_slot1", "coverage_slot2"), dirs):
-    got = {}
-    for p in sorted(glob.glob(os.path.join(w, "genie_v3.gst.root")) + glob.glob(os.path.join(w, "gntp.*.ghep.root"))
-                    + glob.glob(os.path.join(w, "genie-mcjob-*.status")) + glob.glob(os.path.join(w, "input-flux.root"))
-                    + (glob.glob(os.path.join(w, "gevgen.log")) if key != "t0" else [])):
-        h, seen = hashlib.sha256(), False
-        with open(p, "rb") as f:
-            data = f.read()
-        h.update(data)
-        seen = any(x in data for x in forms)
+    got = rec.setdefault(key, {})
+    for p in sorted(sum((glob.glob(os.path.join(w, x)) for x in pats + (("gevgen.log",) if key != "t0" else ())), [])):
         name = "gevgen.status" if "mcjob" in p else "gntp.ghep.root" if ".ghep.root" in p else os.path.basename(p)
-        got[name] = {"sha256": h.hexdigest(), "bytes": len(data), "holds_public_seed": seen}
-        os.remove(p)
-    rec[key] = got
+        e = {}
+        try:
+            with open(p, "rb") as f:
+                data = f.read()
+            e = {"sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data),
+                 "holds_public_seed": any(x in data for x in forms)}
+            if p.endswith(".root"):
+                try:
+                    hits, st = pg_lib.leak_scan(os.path.dirname(p), [os.path.basename(p)], [123456789])
+                    e["decoded"] = {"holds_seed": bool(hits), "int32_count": st["int32_count"], "codecs": st["codecs"],
+                                    "bytes_inflated": st["bytes_inflated"]}
+                    if name == "genie_v3.gst.root":
+                        e["schema"] = pg_lib.root_schema(p)
+                except pg_lib.Refusal as r:
+                    e["decoded"] = {"error": str(r).split(":")[0]}
+                    bad = 1
+        except OSError:
+            e, bad = {"error": "unreadable"}, 1
+        finally:
+            try:
+                os.remove(p)
+            except OSError:
+                bad = 1
+        got[name] = e
+    left = sum(len(glob.glob(os.path.join(w, x))) for x in pats)
+    if left:
+        got["_left"], bad = left, 1
 open(out, "w").write(json.dumps(rec, indent=1, sort_keys=True) + "\n")
+sys.exit(bad)
 EOF
+  DELETED=1
 }
 trap delete_events EXIT
 
@@ -152,7 +179,7 @@ tcheck() {   # tcheck ROLE TRACE SPLINE SPLINE_SHA CWD OUT [ARG ...]; TT selects
 tcheck reduce "$R/traces/reduce_$T.trace" "$X1/gxspl-NUsmall.xml" "$SRC" "$R" "$R/trace_check_reduce.json" \
   || need 1 "trace check (reduce)"
 tcheck graphs "$R/traces/graphs_$T.trace" "$R/splines/${T}_CH.xml.gz" "$RED" "$R" "$R/trace_check_graphs.json" \
-  || need 1 "trace check (graphs)"
+  --output "$R/graphs_$T.root" || need 1 "trace check (graphs)"
 pass "reduce, its completeness, spline check, flux, gspl2root, and their traces"
 
 GENIE_CFG="$CVMFS_REPO/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config"
@@ -162,8 +189,9 @@ mkdir -p "$C1"
 PG_TRACE_DIR="$C1" bash "$HERE/run_gevgen_v3.sh" coverage "$T" "$R/splines" "$C1" "$R/flux_phi_t_0_100.root" \
   "$R/Messenger_pg.xml" > "$R/logs/coverage_slot1.log" 2>&1 || need 1 "the coverage run (slot 1)"
 tcheck coverage "$C1/coverage.trace" "$R/splines/${T}_CH.xml.gz" "$RED" "$C1" "$R/trace_check_coverage.json" \
-  || need 1 "trace check (coverage)"
-V coverage-log --log "$C1/gevgen.log" > "$R/coverage_check.json" 2>> "$R/logs/coverage.log" || need 1 "spline coverage (slot 1)"
+  --messenger "$R/Messenger_pg.xml" || need 1 "trace check (coverage)"
+V coverage-log --log "$C1/gevgen.log" --script "$HERE/run_gevgen_v3.sh" --reduced "$R/splines/${T}_CH.xml.gz" \
+  > "$R/coverage_check.json" 2>> "$R/logs/coverage.log" || need 1 "spline coverage (slot 1)"
 pass "slot 1's spline coverage, before its gevgen"
 
 mkdir -p "$W1"
@@ -188,8 +216,9 @@ PG_TRACE_DIR="$C2" bash "$HERE/run_gevgen_v3.sh" coverage "$T2" "$R/splines" "$C
   "$R/Messenger_pg.xml" > "$R/logs/coverage_slot2.log" 2>&1 || need 1 "the coverage run (slot 2)"
 TT=$T2 tcheck coverage "$C2/coverage.trace" "$R/splines/${T2}_CH.xml.gz" "$RED2" "$C2" "$R/trace_check_coverage_slot2.json" \
   --w-pin "$R/splines/${T2}_CH.xml.gz=$RED2" --pin "$X2/gxspl-NUsmall.xml=$S2" --pin "$X2/README=$(spin "$T2" 1)" \
-  || need 1 "trace check (slot 2's coverage)"
-V coverage-log --log "$C2/gevgen.log" > "$R/coverage_check_slot2.json" 2>> "$R/logs/coverage.log" || need 1 "spline coverage (slot 2)"
+  --messenger "$R/Messenger_pg.xml" || need 1 "trace check (slot 2's coverage)"
+V coverage-log --log "$C2/gevgen.log" --script "$HERE/run_gevgen_v3.sh" --reduced "$R/splines/${T2}_CH.xml.gz" \
+  > "$R/coverage_check_slot2.json" 2>> "$R/logs/coverage.log" || need 1 "spline coverage (slot 2)"
 pass "slot 2's reduce at its real path, its completeness and its spline coverage"
 
 V shape-check --fd 9 --members "$REC/G2111a-members.json" --members-check "$R/members_check.json" \
@@ -202,10 +231,11 @@ V host-check --fd 9 --tmp "$R/host" --root "$CVMFS_REPO/products/genie/v3_04_00"
 need $? "the three host checks"
 V revision --repo "$CVMFS_REPO" > "$R/revision_end.json" 2>> "$R/logs/revision.log"
 need $? "the CVMFS revision (end)"
-"$PY" -I -c 'import json,sys; a, b = (json.load(open(f)) for f in sys.argv[1:]); k = ("revision", "root_hash")
-sys.exit(0 if all(a.get(x) == b.get(x) and a.get(x) for x in k) else 1)' "$R/revision_start.json" "$R/revision_end.json"
-need $? "the CVMFS revision changed during the replay"
-pass "the real-shape and host checks, and the CVMFS revision unchanged"
+tcs=(); for f in "$R"/trace_check_*.json; do [ -e "$f" ] && tcs+=(--trace-check "$f"); done
+V revision-compare --start "$R/revision_start.json" --end "$R/revision_end.json" "${tcs[@]}" > "$R/revision_compare.json" \
+  2>> "$R/logs/revision.log"
+need $? "the CVMFS revision changed and a file the replay read no longer matches its pin"
+pass "the real-shape and host checks, and the CVMFS revision (or every file read re-hashed)"
 
 delete_events || need 1 "deleting the event and status files"
 "$PY" -I - "$R" <<'EOF' > "$R/replay.json" || need 1 "the replay record"
@@ -222,17 +252,24 @@ names = ("tool_check_strace.json", "revision_start.json", "members_check.json", 
          "messenger_check.json", "trace_check_coverage.json", "coverage_check.json", "trace_check_gevgen.json",
          "trace_check_gntpc.json", "trace_check_reduce_slot2.json", "reduce_check_slot2.json",
          "trace_check_coverage_slot2.json", "coverage_check_slot2.json", "shape_check.json", "host_check.json",
-         "revision_end.json")
+         "revision_end.json", "revision_compare.json")
 checks = {n: load(n) for n in names}
 traces = [n for n in names if n.startswith("trace_check")]
-rec = {"schema": "covfix-pg-replay-run/2", "tune": "G21_11a_00_000", "slot2": "G18_02a_00_000", "seed": 123456789,
+deleted = json.load(open(os.path.join(r, "deleted.json")))
+rec = {"schema": "covfix-pg-replay-run/3", "tune": "G21_11a_00_000", "slot2": "G18_02a_00_000", "seed": 123456789,
        "events": 100, "checks": {n: c.get("pass") is True for n, c in checks.items()},
+       "execs": {n: [{k: x.get(k) for k in ("path", "real", "sha256", "bound_by")} for x in checks[n].get("execs", [])]
+                 for n in traces},
+       "revision": {w: {k: checks[f"revision_{w}.json"].get(k) for k in ("revision", "root_hash")} for w in ("start", "end")},
+       "gst_schema": deleted.get("t0", {}).get("genie_v3.gst.root", {}).get("schema"),
        "gated": {n: [{"path": g["path"], "sha256": g["sha256"], "pinned_by": g["pinned_by"]} for g in checks[n].get("gated", [])]
                  for n in traces},
        "spline_opened": {n: checks[n].get("initial_opened_spline") for n in traces if n != "trace_check_gntpc.json"},
        "real_shapes": checks["shape_check.json"].get("checks"), "host": checks["host_check.json"].get("checks"),
        "coverage_log_sha256": {n: checks[n].get("log_sha256") for n in ("coverage_check.json", "coverage_check_slot2.json")}}
 rec["pass"] = (all(rec["checks"].values()) and all(v is True for v in rec["spline_opened"].values())
+               and isinstance(rec["gst_schema"], dict) and bool(rec["gst_schema"].get("keys"))
+               and all(x["bound_by"] for v in rec["execs"].values() for x in v) and all(rec["execs"].values())
                and isinstance(rec["real_shapes"], dict) and len(rec["real_shapes"]) == 4
                and all(v is True for v in rec["real_shapes"].values())
                and isinstance(rec["host"], dict) and len(rec["host"]) == 3 and all(v is True for v in rec["host"].values()))

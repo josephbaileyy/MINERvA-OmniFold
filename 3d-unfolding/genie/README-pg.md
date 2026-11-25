@@ -12,12 +12,20 @@ tune names and the seeds changed, in F1b′'s single-wave layout (`FD-F1-DECLARA
 **Slot 1 and the checks** (`state/2d-closeout/covfix-20261122/pg/PLAN-SLOT1-PROBE.md`, approved; `RULINGS-A2.md`).
 Slot 1 is G21_11a_00_000, from a sha-pinned private copy of SciSoft's G2111a00000 product under
 `/pscratch/sd/j/josephrb/covfix-pg/products`. Slot 2 is G18_02a_00_000, from CVMFS. Before generation, in order:
-0. Both drivers refuse if LD_PRELOAD, LD_AUDIT, BASH_ENV, ENV, PYTHONPATH, PYTHONSTARTUP or PYTHONUSERBASE is set.
-   pg_generate.sh also refuses if the deploy has any untracked or ignored file, if W is not its own physical path,
-   and if pg_pins.json lacks strace's, dbconfig's or the system tools' pins.
+0. Both drivers refuse if LD_PRELOAD, LD_AUDIT, BASH_ENV, ENV, PYTHONPATH, PYTHONSTARTUP, PYTHONUSERBASE, GXMLPATHS
+   or GALGCONF is set. pg_generate.sh also refuses in these cases:
+   - the deploy has any untracked or ignored file, or a git call fails;
+   - W is not its own physical path, or W/tmp is not a real directory of the user's with mode 0700;
+   - pg_pins.json lacks strace's, dbconfig's or the system tools' pins;
+   - `record/root-schemas.json` has no gst schema. It stays unset until B3's replay records one and the director
+     confirms it.
 1. strace is opened once on fd 9. `pg_verify.py tool-check --fd 9` reads its sha256 through that inherited
    descriptor (no path is opened: `/proc/self/fd/9` is a magic link that O_NOFOLLOW refuses), and its self-test runs.
-   CVMFS's revision and root hash are recorded now and at the end, and must be equal.
+   CVMFS's revision and root hash are recorded now and at the end. If they differ, every CVMFS file the run read must
+   re-hash equal to its pin (`revision-compare`), or it is a STOP. `node-record` then records the compute node's
+   `/proc` mount options (hidepid) and the allocation's exclusivity. F1's argv carries the seed, so this is the
+   boundary on record (C3); the seed never reaches the sbatch line, the job name, `--comment`, the batch script or
+   the exported environment.
 2. The private product is checked against every pinned member. Its top level must be exactly `.upsfiles` and
    `genie_xsec`; `genie_xsec` itself is a container, not a member, and `.upsfiles` holds only a read-only dbconfig.
 3. Each tune's setup resolves `gevgen`, `gspl2root` and `awk`, and records `LD_LIBRARY_PATH` and `GXMLPATH`.
@@ -25,30 +33,49 @@ Slot 1 is G21_11a_00_000, from a sha-pinned private copy of SciSoft's G2111a0000
    - awk must be a root-owned system tool, by its own path and its real path.
    - No LD_LIBRARY_PATH entry may be empty or lie outside CVMFS and the system library directories.
 4. reduce, gspl2root, a one-event coverage run per tune, every gevgen and every gntpc run under strace (open, stat,
-   access, readlink, chdir and execve families). Their traces are checked; `pg_verify.py`'s docstring lists the rules,
-   and every refusal names a reason code. In outline:
-   - every exec is bound to the manifest or a pinned system tool;
-   - each tune's config is read at the first existing path of its search order;
-   - the pinned spline is read;
-   - nothing else under a genie_xsec data directory is read;
-   - every shared library comes from CVMFS or a system library directory;
-   - `..` paths are resolved on the node.
-5. The reduce keeps every spline, knots included, for each (probe, target) pair of F1's argv (`reduce-check`). The
-   coverage run uses the public seed, F1's argv (`argv-check`) and a messenger with only GEVGDriver at DEBUG. Before
-   any sealed seed is used, it must show that GENIE found every spline it needed in the pinned file
-   (`coverage-log`). Its outputs are then deleted, and its log's hash is kept.
-On any exit, every background step's process tree is stopped, reaped and checked for survivors under W before
-seed-named files are renamed. Every check's pass is recorded in PRODUCTS.json. `pg_lib.py publish` leak-scans every
-outgoing file for the seeds and writes the publish sums, which leave out the seed-bearing files. The required inventory
-(`pg_lib.py inventory`) is checked last.
+   access, readlink, chdir, the execve and execveat, rename, link, symlink and unlink families). Their traces are
+   checked; `pg_verify.py`'s docstring lists the rules, and every refusal names a reason code. In outline:
+   - each role starts with its own program (awk, gspl2root, gevgen, gntpc), and every exec is resolved and bound to
+     the manifest or a pinned system tool;
+   - nothing is written, renamed, linked or unlinked outside W (/dev/null aside). An open that creates a file without
+     truncating it counts as an output only at the role's expected path, after the same process found it absent or
+     unlinked it (ROOT's RECREATE);
+   - each tune's XML is found by GENIE's own search: the order is rebuilt from the trace's access probes, and the
+     first path that exists is the one read;
+   - the pinned spline is read, and the coverage run reads its pinned messenger;
+   - nothing else under a genie_xsec data directory is read, and a read that cannot be resolved is a STOP;
+   - every ROOT and GENIE library comes from CVMFS and is hashed; other shared libraries come from CVMFS or a system
+     library directory;
+   - `..` paths are resolved on the node by their full real path.
+5. The reduce keeps every spline for each (probe, target) pair of F1's argv, compared by tune, key, knot count and
+   knot values, with duplicates refused (`reduce-check`). The coverage run uses the public seed, F1's argv
+   (`argv-check`: its block sets only N, the seed and the messenger) and a messenger with only GEVGDriver at DEBUG.
+   GENIE builds every spline at initialisation, so one event covers them all. Before any sealed seed is used, the
+   log must show that GENIE found every spline of every pair in the pinned file (`coverage-log`). Its outputs are
+   then deleted, and its log's hash is kept.
+The generation runs in its own process group (setsid). On any exit, every background step's tree is stopped and
+reaped, and processes in that group or with a cwd under W are checked for survivors; this shell's own parent chain
+is spared. Survivors are drained (30 s after SIGKILL) before publication and before seed-named files are renamed; a
+failed rename is a STOP that names no path. Every check's pass is recorded in PRODUCTS.json. `pg_lib.py publish`
+then:
+- lists the outgoing set from an explicit allowlist. Any other file outside W/tmp, seed-bearing ones aside, is a STOP;
+- scans every outgoing file for the seeds in decimal, hex and int64 (both byte orders), with each ROOT object
+  inflated (ZLIB, LZMA, ZSTD, LZ4; any other codec is a STOP). int32 matches are counted against their chance
+  expectation and recorded, never a STOP;
+- checks each gst's trees, branches and streamer info against B3's schema;
+- writes `out/leak_scan.json` and the public `out/PG-PUBLISH-SHA256SUMS`, and scans both.
+A STOP after publication withdraws both files. The required inventory (`pg_lib.py inventory`) is checked last.
 
 **B3 (`pg_replay.sh`)** runs these checks for slot 1 on a login node, then:
 - slot 1's coverage run, and one 100-event public-seed gevgen and gntpc;
 - slot 2's traced reduce at its real CVMFS path, its completeness and its coverage run;
 - the four real-shape checks (`shape-check`) and three host checks (`host-check`), which must pass there before slot 2
   is generated.
-A trap deletes the public-seed event and status files on every exit. agy's and codex-school's reads, and their
-dispositions, are in `state/2d-closeout/covfix-20261122/pg/AGY-READ-A2.md`.
+A trap deletes the public-seed event and status files on every exit. Every unlink is tried even when reading the
+file fails, and any file left is a failure. `deleted.json` keeps each file's hash and size, each ROOT file's decoded
+scan and the gst's schema, which `replay.json` (`covfix-pg-replay-run/3`) carries with each trace's execs and both
+CVMFS revisions. agy's and codex-school's reads, and their dispositions, are in
+`state/2d-closeout/covfix-20261122/pg/AGY-READ-A2.md`; round 4's are in `pg/delta-read-r4/`.
 
 ## Contract
 
@@ -97,6 +124,9 @@ It needs no network, no `SLURM_*` variable, no passphrase and no GNUPGHOME: encr
 - `W/PRODUCTS.json`: per u, the tune, the truth name and the relative paths of the bridged ratio (what PV applies,
   §3.4), the pvl ratio and the prediction.
 - `W/out/PG-SHA256SUMS`: the plaintext sha256 of every product. **It is seed-bearing and must stay inside the seal.**
+- `W/out/PG-PUBLISH-SHA256SUMS` and `W/out/leak_scan.json`: the allowlisted, published files' sums and the scan's
+  counts. Both are public and both are scanned.
+- `W/out/revision_compare.json` and `W/out/node_check.json`: the CVMFS revision compare and the node record.
 
 Nothing is written into the deploy. Python runs with `-B` and `PYTHONDONTWRITEBYTECODE=1`, and the deploy's full
 `git status --ignored` is compared before the run, after the environment-using setup steps, and at the end. Any
@@ -117,8 +147,9 @@ difference is a STOP.
 - **The trace prefix:** `run_gevgen_v3.sh` runs awk, gspl2root, gevgen and gntpc under strace (execve traced) only
   when both `PG_STRACE_FD` (a descriptor above 2) and `PG_TRACE_DIR` are given. It never inherits `PG_TRACE`. With
   neither, F1's commands run byte-identically. Its `coverage` mode runs the same `gevgen_cmd` for one event at the
-  public seed 123456789 with the pinned messenger. Its bytes bf49c3ec… have the director's GO for the PG path only;
-  they run on NERSC only under a slot binding the director issues.
+  public seed 123456789 with the pinned messenger. Its bytes bf49c3ec… had the director's GO for the PG path only.
+  Round 4 extends its trace set, so its new sha goes to the director before it runs; it runs on NERSC only under a
+  slot binding the director issues.
 
 ## Tests
 

@@ -54,3 +54,37 @@ that calls GEVGDriver::CreateSplines (GEVGDriver.cxx:577) for every (ν, target)
 | C18 | major | The B3 receipt doesn't bind identity (tune, seed, N, exec records, revision values) | CONFIRMED (pg-node-launch.py:72-96) | FIX: replay.json carries tune, public seed, N, the execs per trace and revision start and end. The launcher requires them equal to the approved values, and gated to be non-empty with the expected names per role. |
 | C19 | minor | The host control compares / and /proc st_dev directly, not through the walker. The Linux test's fd 3 is not a strace | CONFIRMED (pg_verify.py:933-937) | FIX: the positive control runs the real list_rel walker into /proc and requires its refusal code. The Linux test opens a real strace. |
 | C20 | major | The kill rule differs from RULINGS-A2.md:69 and the round-3 row | DOC STALE: your 2026-11-25 ruling ("The mutrun rule: accepted … a FAIL or ERROR with a non-zero exit kills") is what mutrun implements. RULINGS:69 and AGY-READ:114 still carry the older text | FIX (docs): RULINGS-A2.md:69 records your 11-25 ruling, and the AGY-READ round-3 row is corrected. No receipt change. |
+
+## Outcome (the director's GO and rulings; cov2d's no-objection on C3 and C4)
+
+<!-- absence-ok: "no change", "cannot be reached" and "after its code" here record dispositions and this host's test coverage, not a claim that a result does not exist -->
+
+Built with failing tests first, except `node-record`, whose test came after its code. Every finding above was fixed as
+proposed, except:
+- **S2:** rejected from source, no change.
+- **S8:** no change; B3's real traces are the control.
+- **S11:** no change; the leak scan is the control.
+- **S9:** documented. The rc trace-check gets is a step's status after `need` has passed.
+- **C2:** widened by the director: a successful unlink by the same process also shows a fresh file.
+- **C3:** option (a), with Slurm's recorded surfaces kept seed-free. B1 records `/proc`'s options on its login node.
+  pg_generate's `node-record` records the allocation on the compute node.
+- **C4:** as cov2d amended it. int32 is counted only, int64 STOPs, and the gst schema must equal B3's.
+  PG-PUBLISH-SHA256SUMS is public.
+- **S7:** a changed revision passes only if every CVMFS file read re-hashes to its pin.
+- **C13:** setsid, with the survivor scan by process group and cwd, and this shell's ancestors excluded.
+
+Two guards cannot be reached on this host: reaping the job only once it is dead, and the 30 s poll after a KILL.
+Each needs a kill the kernel delays. They are recorded in RULINGS-A2.md, round 4.
+
+**Receipts (final bytes).** pytest 216 passed, 2 skipped (`tune-support/tests-local.log`); probe 59 tests OK, 1
+skipped; install 23 OK. Mutants, under the 2026-11-25 kill rule: probe 100 of 100, install 74 of 74, A2 257 of 257
+killed, none invalid. The first full run on these fixes left 8 survivors and 1 invalid mutant. Three survivors were
+earlier tests that a round-4 check now hid:
+- M182: the allowlist refused the leak fixture before the seed scan saw it. Added: an allowlisted file holding a seed.
+- M186: the reassigned TUNE also broke the coverage tail. Added: a reassignment before the tail.
+- M61 (node): the gst's new decoded-record rule hid the size check. The size cases moved to the status file.
+Five were round-4 checks with no test yet, and each now has one: M67 (identity on the node), M96 (a failed RPM dump
+that still lists the file), M99 (`/proc` recorded by `probe()`), M256 (a gst with an empty schema in B3) and M257
+(B3's revision compare given every trace check).
+M46 left an empty `try:` and did not compile. It now drops the gst from B3's deletion patterns, so it no longer
+duplicates M254.

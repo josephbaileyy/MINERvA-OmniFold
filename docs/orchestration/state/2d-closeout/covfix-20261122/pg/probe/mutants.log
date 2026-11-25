@@ -1,5 +1,5 @@
 KILL RULE (the director, 2026-11-25): an import or collection error (unittest's _FailedTest, ImportError, ModuleNotFoundError, SyntaxError) makes a mutant INVALID; otherwise a FAIL or an ERROR with a non-zero exit kills (an error raised by the mutated code is detectable behaviour); a timeout, or a FAIL with exit 0, is INVALID; a clean pass SURVIVES. Every suite must pass clean on the unmutated copy first.
-baseline probe: clean ['Ran 55 tests in 28.018s', 'OK (skipped=1)']
+baseline probe: clean ['Ran 59 tests in 27.118s', 'OK (skipped=1)']
 M01 KILLED by test_identity_failure_reads_nothing: identity not enforced [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
 M02 KILLED by test_mount_rules: a repository path through a link [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
 M03 KILLED by test_mount_rules: the repository's mount not checked [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
@@ -8,7 +8,7 @@ M05 KILLED by test_each_failure_stops: pins read on an unverified repository [do
 M06 KILLED by test_each_read_rule_on_its_own: links followed in directory components [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
 M07 KILLED by test_each_read_rule_on_its_own: a pinned file through a link [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
 M08 KILLED by test_walk_refuses_odd_paths, test_walk_refuses_odd_paths (error): odd relative paths walked [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
-M09 KILLED by test_go, test_matching_tree, test_the_genie_root_on_another_device: an absent pinned directory [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
+M09 KILLED by test_go, test_matching_tree, test_the_genie_root_on_another_device, test_the_probe_records_procs_mount: an absent pinned directory [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
 M10 KILLED by test_the_root_must_be_its_own_real_path: a genie root through a link [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
 M11 KILLED by test_each_failure_stops, test_every_difference_stops_and_records_the_node_value: file bytes not compared [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
 M12 KILLED by test_refusals: spline bytes not compared [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
@@ -38,7 +38,7 @@ M35 KILLED by test_controls_fail_on_their_own: wrong passphrase evidence [docs/o
 M36 KILLED by test_mode_700_network_parent_missing_tool_fd3: a network parent [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
 M37 KILLED by test_mode_700_network_parent_missing_tool_fd3: fd 3 clobbered [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
 M38 KILLED by test_a_closed_stdin_is_reopened: closed standard fds [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
-M39 KILLED by test_a_closed_stdin_is_reopened, test_a_verified_run_user_socket_dir_is_used_and_removed, test_honest_fake_passes, test_round_trip_and_controls, test_tamper_and_zbase32: tamper not in the MDC [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
+M39 KILLED by test_a_closed_stdin_is_reopened, test_a_verified_run_user_socket_dir_is_used_and_removed, test_honest_fake_passes, test_tamper_and_zbase32: tamper not in the MDC [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
 M40 KILLED by test_round_trip_and_controls, test_tamper_and_zbase32 (error): partial lengths [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
 M41 KILLED by test_refusals_before_ssh: sha check removed [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe-launch.py]
 M42 KILLED by test_refusals_before_ssh: output not reserved [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe-launch.py]
@@ -92,4 +92,12 @@ M89 KILLED by test_a_final_directory_on_another_device: r3: list_rel's final dir
 M90 KILLED by test_a_failed_mount_control_stops: r3: a failed mount control [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
 M91 KILLED by test_the_mount_control_refuses_somewhere: r3: a mount control that never refused [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
 M92 KILLED by test_an_incomplete_go_is_invalid: r3: the launcher ignores the mount control [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe-launch.py]
-92 of 92 killed; 0 invalid; 0 survived
+M93 KILLED by test_trace_set_is_the_pipelines: r4: the probe's trace set [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
+M94 KILLED by test_trace_completeness_codes: r4: a resumed call of another syscall [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
+M95 KILLED by test_trace_completeness_codes: r4: a pid with no exit [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
+M96 KILLED by test_a_failed_or_partial_rpm_dump_is_not_a_first_use: r4: a failed RPM dump as first use [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
+M97 KILLED by test_a_failed_or_partial_rpm_dump_is_not_a_first_use (error): r4: an owned file missing from its dump [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
+M98 KILLED by test_the_proc_mount_is_recorded: r4: hidepid's default [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
+M99 KILLED by test_the_probe_records_procs_mount (error): r4: /proc's mount not recorded [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
+M100 KILLED by test_an_incomplete_go_is_invalid: r4: the launcher without /proc's record [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe-launch.py]
+100 of 100 killed; 0 invalid; 0 survived

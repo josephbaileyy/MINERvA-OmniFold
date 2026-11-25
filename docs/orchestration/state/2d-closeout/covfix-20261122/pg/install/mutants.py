@@ -89,6 +89,16 @@ M = [(f, old, new, what, "install") for f, old, new, what in [
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py', '                or (d.startswith("coverage") and n == "gevgen.log")]', '                ]', 'r3: a coverage log left'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py', '        if os.path.realpath(a) != a or not ((a + "/").startswith(scratch) or scratch.startswith(a.rstrip("/") + "/")):', '        if False:', 'r3: an ancestor off scratch'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py', '        probs.append("upsfiles: .upsfiles is missing")', '        pass', 'r3: a missing .upsfiles'),
+    # round 4 (RULINGS-A2.md, round 4)
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py', '    p += [f"identity {k}" for k, v in IDENTITY.items() if not (type(r.get(k)) is type(v) and r.get(k) == v)]', '    p += []', "r4: the replay's identity (launcher)"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py', '    p += [f"identity {k}" for k, v in IDENTITY.items() if not (type(r.get(k)) is type(v) and r.get(k) == v)]', '    p += []', "r4: the replay's identity (node)"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py', '            and v[0]["path"].rsplit("/", 1)[-1] == PROGRAM[n] for n, v in x.items())):', '            for n, v in x.items())):', "r4: each trace's own program"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py', 'all(type(e.get(k)) is str for k in ("path", "real", "bound_by"))', 'all(type(e.get(k)) is str for k in ("path", "real"))', 'r4: an unbound exec'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py', '        p.append("revision values")', '        pass', 'r4: no revision values'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py', '    if type(g) is dict and sorted(g) == sorted(TRACES):\n        p += [f"gated {n}: {b}"', '    if False:\n        p += [f"gated {n}: {b}"', 'r4: the files each trace must gate'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py', '        p.append("gst schema")', '        pass', 'r4: no gst schema'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py', '        return (type(c) is dict and type(c.get("holds_seed")) is bool', '        return True or (type(c) is dict and type(c.get("holds_seed")) is bool', 'r4: a ROOT file not decoded'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py', '                and (n != "genie_v3.gst.root" or type(v.get("schema")) is dict))', '                )', "r4: the deleted gst's schema"),
 ]]
 
 if __name__ == "__main__":

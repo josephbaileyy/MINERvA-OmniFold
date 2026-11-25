@@ -283,6 +283,7 @@ class Trace(Tmp):
         return [f'100 execve("{g}/Linux64bit+3.10-2.17-e20-prof/bin/gevgen", ["gevgen", "-n", "1"], 0x7ffd /* 40 vars */) = 0',
                 f'100 openat(AT_FDCWD, "{self.spline}", O_RDONLY) = 3',
                 f'100 access("{self.priv}/genie_xsec/data/ModelConfiguration.xml", R_OK) = -1 ENOENT (No such file or directory)',
+                f'100 access("{g}/{C}/G21_11a/G21_11a_00_000/ModelConfiguration.xml", F_OK) = -1 ENOENT (No such file or directory)',
                 f'100 access("{g}/{C}/G21_11a/ModelConfiguration.xml", R_OK) = 0',
                 f'100 openat(AT_FDCWD, "{g}/{C}/G21_11a/ModelConfiguration.xml", O_RDONLY) = 4',
                 f'100 openat(AT_FDCWD, "{g}/{C}/G21_11a/EventGenerator.xml", O_RDONLY) = 4',
@@ -386,15 +387,18 @@ class Trace(Tmp):
         self.assert_fails(self.check(), "defining-link:")
         mc.unlink()
         mc.with_name("real.xml").rename(mc)
-        self.assertTrue(self.check([ln for ln in self.good_lines() if "TuneGeneratorList" not in ln], role="reduce")["pass"])
+        awk = os.path.realpath("/usr/bin/awk")
+        g = [ln for ln in self.good_lines() if "TuneGeneratorList" not in ln]
+        g[0] = '100 execve("/usr/bin/awk", ["awk"], 0x1 /* 3 vars */) = 0'      # the reduce role's own program
+        self.assertTrue(self.check(g, role="reduce", system_pins={awk: V.sha_path(awk)})["pass"])
 
     def test_relative_paths(self):
-        g = self.good_lines()
+        g = [ln for ln in self.good_lines() if "mcjob" not in ln]           # its cwd here is not W
         rel = os.path.relpath(self.files[f"{self.C}/G21_11a/EventGenerator.xml"], self.tmp)     # no '..'
-        self.assertIn("EventGenerator.xml", g[5])
-        g[5] = f'100 openat(AT_FDCWD, "{rel}", O_RDONLY) = 4'
+        i = next(k for k, ln in enumerate(g) if "EventGenerator.xml" in ln)
+        g[i] = f'100 openat(AT_FDCWD, "{rel}", O_RDONLY) = 4'
         self.assertTrue(self.check(g, cwd=str(self.tmp))["pass"])                 # against the initial cwd
-        g.insert(5, f'100 chdir("{self.W}") = 0')
+        g.insert(i, f'100 chdir("{self.W}") = 0')
         self.assert_fails(self.check(g, cwd=str(self.tmp)), "cwd-unknown:")      # after any chdir, relative is unknown
         g = self.good_lines()
         g.insert(1, '100 openat(7, "ModelConfiguration.xml", O_RDONLY) = 3')
@@ -656,9 +660,11 @@ class TraceGaps(Trace):
 
     def test_slot2_reduce_at_its_real_cvmfs_path(self):
         src = "/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1802a00000-k250-e1000/data/gxspl-NUsmall.xml"
-        text = f'7 openat(AT_FDCWD, "{src}", O_RDONLY) = 3\n7 +++ exited with 0 +++\n'
+        awk = os.path.realpath("/usr/bin/awk")
+        text = (f'7 execve("/usr/bin/awk", ["awk"], 0x1 /* 3 vars */) = 0\n7 openat(AT_FDCWD, "{src}", O_RDONLY) = 3\n'
+                '7 +++ exited with 0 +++\n')
         args = dict(genie_root=str(self.genie), repo="/cvmfs/larsoft.opensciencegrid.org", private_root=str(self.priv),
-                    sha=lambda p: "f" * 64 if p == src else V.sha_path(p))
+                    sha=lambda p: "f" * 64 if p == src else V.sha_path(p), system_pins={awk: V.sha_path(awk)})
         rec = V.trace_check(text, 0, "reduce", "G18_02a_00_000", src, "f" * 64, str(self.W), self.record, self.manifest,
                             {}, str(self.W), {src: "f" * 64}, **args)
         self.assertTrue(rec["pass"], rec["problems"])
@@ -899,7 +905,7 @@ class Round3(Trace):
         for extra, code in (('100 openat(AT_FDCWD, "/x", O_RDONLY', "undecodable"),
                             ('100 mmap(NULL, 4096, PROT_READ) = 0x7f', "undecodable"),
                             ('100 <... openat resumed>) = 3', "resume-mismatch"),
-                            ('100 rename("/a", "/b") = 0', "undecodable")):
+                            ('100 mkdir("/a", 0755) = 0', "undecodable")):
             with self.subTest(extra):
                 g = self.good_lines()
                 g.insert(2, extra)
@@ -924,19 +930,26 @@ class Round3(Trace):
         self.assertIn("other-spline", self.codes(self.check(g)))
 
     def test_gntpc_and_coverage_roles(self):
-        g = [ln for ln in self.good_lines() if str(self.spline) not in ln]
-        rec = V.trace_check("\n".join(g) + "\n", 0, "gntpc", "G21_11a_00_000", None, None, str(self.W), self.record,
-                            self.manifest, {}, str(self.W), {}, genie_root=str(self.genie), repo=str(self.repo),
-                            private_root=str(self.priv))
+        P = "Linux64bit+3.10-2.17-e20-prof"
+        (self.genie / P / "bin/gntpc").write_text("gntpc")
+        self.manifest[f"genie/v3_04_00/{P}/bin/gntpc"] = {"type": "file", "sha256": sha(b"gntpc")}
+        g = [f'200 execve("{self.genie}/{P}/bin/gntpc", ["gntpc"], 0x1 /* 3 vars */) = 0',     # gntpc's real shape
+             '200 openat(AT_FDCWD, "gntp.123.ghep.root", O_RDONLY) = 3',
+             '200 access("genie_v3.gst.root", F_OK) = -1 ENOENT (No such file or directory)',
+             '200 openat(AT_FDCWD, "genie_v3.gst.root", O_RDWR|O_CREAT, 0644) = 4', "200 +++ exited with 0 +++"]
+        run = lambda lines: V.trace_check("\n".join(lines) + "\n", 0, "gntpc", "G21_11a_00_000", None, None, str(self.W),
+                                          self.record, self.manifest, {}, str(self.W), {}, genie_root=str(self.genie),
+                                          repo=str(self.repo), private_root=str(self.priv))
+        rec = run(g)
         self.assertTrue(rec["pass"], rec["problems"])
-        g.insert(1, f'100 openat(AT_FDCWD, "{self.spline}", O_RDONLY) = 3')
-        rec = V.trace_check("\n".join(g) + "\n", 0, "gntpc", "G21_11a_00_000", None, None, str(self.W), self.record,
-                            self.manifest, {}, str(self.W), {}, genie_root=str(self.genie), repo=str(self.repo),
-                            private_root=str(self.priv))
-        self.assertIn("other-spline", self.codes(rec))                  # gntpc reads no spline
-        self.assertTrue(self.check(role="coverage")["pass"])
+        self.assertIn("other-spline", self.codes(run(g[:1] + [f'200 openat(AT_FDCWD, "{self.spline}", O_RDONLY) = 5'] + g[1:])))
+        msg = self.W / "Messenger_pg.xml"                                  # gntpc reads no spline; coverage its messenger
+        msg.write_bytes(V.messenger((RECORD_DIR / "Messenger_laconic.xml").read_bytes()))
+        c = self.good_lines()
+        c.insert(1, f'100 openat(AT_FDCWD, "{msg}", O_RDONLY) = 3')
+        self.assertTrue(self.check(c, role="coverage", messenger=str(msg))["pass"])
         self.assertIn("defining-not-opened", self.codes(
-            self.check([ln for ln in self.good_lines() if "TuneGeneratorList" not in ln], role="coverage")))
+            self.check([ln for ln in c if "TuneGeneratorList" not in ln], role="coverage", messenger=str(msg))))
 
     def test_root_config_bound_by_real_path_and_hash(self):
         (self.tmp / "elsewhere").mkdir()
@@ -1078,12 +1091,13 @@ class Wrappers(Tmp):
                       "--tool-check", str(bad), "--traces", str(bad), "--slot2-reduce", str(bad)],
                      ["reduce-check", "--source", str(bad), "--reduced", str(bad), "--script", str(bad)],
                      ["argv-check", "--script", str(self.tmp)],
-                     ["coverage-log", "--log", str(self.tmp)]):
+                     ["coverage-log", "--log", str(self.tmp), "--script", str(bad), "--reduced", str(bad)],
+                     ["revision-compare", "--start", str(bad), "--end", str(bad)]):
             with self.subTest(argv[0]):
                 rc, rec = self.run_main(argv)
                 self.assertEqual(rc, 1)
                 self.assertTrue(rec["problems"] and all(p.startswith(("internal-error: ", "reduce-", "argv-",
-                                                                      "coverage-")) for p in rec["problems"]),
+                                                                      "coverage-", "revision-")) for p in rec["problems"]),
                                 rec["problems"])
         rc, rec = self.run_main(["members-check", "--root", str(self.tmp), "--members", str(bad)])
         self.assertEqual(rec["problems"], ["internal-error: TypeError"])          # len(5): the exact reason
@@ -1104,6 +1118,266 @@ class Host(Tmp):
               "38 35 98:0 / /cvmfs/x rw - cvmfs2 cvmfs2 ro\n39 35 98:0 / /cvmfs/x/a\\040b rw - tmpfs t rw\n")
         self.assertEqual(V.submounts(mi, ["/cvmfs/x"]), ["/cvmfs/x/a b", "/cvmfs/x/products/genie"])
         self.assertEqual(V.submounts(mi, ["/elsewhere"]), [])
+
+
+class Round4(Trace):
+    """The round-4 rules (RULINGS-A2.md, round 4): the coverage messenger, ROOT's RECREATE outputs, each role's own
+    program, unresolved execs and reads, writes confined to W, GENIE's search list from the trace, ROOT's libraries."""
+    P = "Linux64bit+3.10-2.17-e20-prof"
+
+    def setUp(self):
+        super().setUp()
+        for name in ("gntpc", "gspl2root"):
+            f = self.genie / self.P / "bin" / name
+            f.write_text(name)
+            self.manifest[f"genie/v3_04_00/{self.P}/bin/{name}"] = {"type": "file", "sha256": sha(name.encode())}
+
+    def run_role(self, lines, role, spline="", **kw):
+        text = "\n".join(lines) + "\n"
+        return V.trace_check(text, 0, role, "G21_11a_00_000", spline, sha(b"spline") if spline else "",
+                             str(self.W), self.record, self.manifest, self.private, str(self.W), {},
+                             genie_root=str(self.genie), repo=str(self.repo), private_root=str(self.priv),
+                             gxmlpath=self.xdata, xsec_data=self.xdata, **kw)
+
+    def gntpc(self, *mid):
+        return ([f'200 execve("{self.genie}/{self.P}/bin/gntpc", ["gntpc"], 0x1 /* 3 vars */) = 0',
+                 '200 openat(AT_FDCWD, "gntp.123.ghep.root", O_RDONLY) = 3']
+                + list(mid) + ["200 +++ exited with 0 +++"])
+
+    RECREATE = ('200 access("genie_v3.gst.root", F_OK) = -1 ENOENT (No such file or directory)',
+                '200 openat(AT_FDCWD, "genie_v3.gst.root", O_RDWR|O_CREAT, 0644) = 4')
+
+    def test_the_coverage_messenger_is_pinned_in_code(self):
+        msg = self.W / "out/Messenger_pg.xml"
+        msg.parent.mkdir()
+        msg.write_bytes(V.messenger((RECORD_DIR / "Messenger_laconic.xml").read_bytes()))
+        g = self.good_lines()
+        g.insert(1, f'100 openat(AT_FDCWD, "{msg}", O_RDONLY) = 3')
+        rec = self.check(g, role="coverage", messenger=str(msg))
+        self.assertTrue(rec["pass"], rec["problems"])
+        self.assert_fails(self.check(g, role="coverage"), "messenger-none:")
+        self.assert_fails(self.check(role="coverage", messenger=str(msg)), "messenger-not-opened:")
+        self.assert_fails(self.check(g, role="gevgen", messenger=str(msg)), "messenger-role:")
+        self.assert_fails(self.check(g, role="gevgen"), "gated-mismatch:")          # the sealed run may not read it
+        msg.write_bytes(b"<other/>")
+        self.assert_fails(self.check(g, role="coverage", messenger=str(msg)), "gated-mismatch:")
+
+    def test_root_recreate_is_an_output_only_where_the_role_writes_it(self):
+        rec = self.run_role(self.gntpc(*self.RECREATE), "gntpc")
+        self.assertTrue(rec["pass"], rec["problems"])
+        self.assertFalse(rec["gated"])
+        unlinked = ('200 access("genie_v3.gst.root", F_OK) = 0', '200 unlink("genie_v3.gst.root") = 0', self.RECREATE[1])
+        self.assertTrue(self.run_role(self.gntpc(*unlinked), "gntpc")["pass"])
+        for name, mid in (("no fresh-file probe", self.RECREATE[1:]),
+                          ("the probe found it", ('200 access("genie_v3.gst.root", F_OK) = 0', self.RECREATE[1])),
+                          ("another process probed", ('201 access("genie_v3.gst.root", F_OK) = -1 ENOENT (No such file or directory)',
+                                                      self.RECREATE[1], "201 +++ exited with 0 +++")),
+                          ("not the role's output", (self.RECREATE[0].replace("genie_v3", "genie_x"),
+                                                     self.RECREATE[1].replace("genie_v3", "genie_x")))):
+            with self.subTest(name):
+                self.assert_fails(self.run_role(self.gntpc(*mid), "gntpc"), "gated-mismatch:")
+
+    def test_gntpc_reads_its_ghep_and_writes_its_gst(self):
+        g = self.gntpc(*self.RECREATE)
+        self.assert_fails(self.run_role([ln for ln in g if "ghep" not in ln], "gntpc"), "gntpc-io:")
+        self.assert_fails(self.run_role([ln for ln in g if "gst" not in ln], "gntpc"), "gntpc-io:")
+
+    def test_each_role_runs_its_own_program(self):
+        self.assert_fails(self.run_role(["200 +++ exited with 0 +++"], "gntpc"), "initial-program:")   # exit only
+        g = self.good_lines()
+        g[0] = g[0].replace("bin/gevgen", "bin/gntpc")
+        self.assert_fails(self.check(g), "initial-program:")
+        g = self.gntpc(*self.RECREATE)
+        g[0] = g[0].replace("bin/gntpc", "bin/gevgen")
+        self.assert_fails(self.run_role(g, "gntpc"), "initial-program:")
+
+    def test_an_unresolved_exec_fails(self):
+        for lines in (('100 chdir("/") = 0', '100 execve("worker", ["worker"], 0x1 /* 1 vars */) = 0'),
+                      ('100 execveat(3, "", ["x"], 0x1 /* 1 vars */, AT_EMPTY_PATH) = 0',),
+                      ('100 execveat(5, "rel", ["x"], 0x1 /* 1 vars */, 0) = 0',)):
+            with self.subTest(lines[-1]):
+                g = self.good_lines()
+                g[1:1] = list(lines)
+                rec = self.check(g)
+                self.assert_fails(rec, "exec-unresolved:")
+                self.assertFalse([p for p in rec["problems"] if p.startswith("undecodable")])
+
+    def test_an_unresolved_read_fails_whatever_its_name(self):
+        g = self.good_lines()
+        g.insert(1, '100 openat(5, "isotopes.cfg", O_RDONLY) = 6')
+        self.assert_fails(self.check(g), "dirfd-relative:")
+        g = [ln for ln in self.good_lines() if "mcjob" not in ln]
+        g[1:1] = ['100 chdir("/") = 0', '100 stat("x.txt", 0x7ffd) = -1 ENOENT (No such file or directory)']
+        self.assertTrue(self.check(g)["pass"])                         # a failed probe stays an observation
+        g.insert(3, '100 openat(AT_FDCWD, "data.txt", O_RDONLY) = 3')
+        self.assert_fails(self.check(g), "cwd-unknown:")
+
+    def test_a_final_link_under_dotdot_resolves_outside(self):
+        (self.W / "sub").mkdir()
+        out = self.tmp / "outside"
+        out.mkdir()
+        (out / "data.txt").write_text("x")
+        (self.W / "sub/data.txt").symlink_to(out / "data.txt")
+        g = self.good_lines()
+        g.insert(1, f'100 openat(AT_FDCWD, "{self.W}/sub/../sub/data.txt", O_RDONLY) = 3')
+        self.assert_fails(self.check(g), "dotdot-outside-roots:")
+
+    def test_writes_stay_in_w(self):
+        W = self.W
+        for line in ('100 openat(AT_FDCWD, "/tmp/pg-x.txt", O_WRONLY|O_CREAT|O_TRUNC, 0644) = 3',
+                     '100 openat(AT_FDCWD, "/tmp/pg-x.txt", O_RDWR) = 3',
+                     f'100 rename("{W}/a", "/tmp/pg-b") = 0', '100 unlink("/tmp/pg-c") = 0',
+                     f'100 renameat2(AT_FDCWD, "/tmp/pg-d", AT_FDCWD, "{W}/d", 0) = 0',
+                     f'100 link("/etc/hosts", "{W}/h") = 0', '100 symlink("x", "/tmp/pg-l") = 0',
+                     '100 unlinkat(AT_FDCWD, "/tmp/pg-e", 0) = 0', '100 symlinkat("x", AT_FDCWD, "/tmp/pg-f") = 0',
+                     '100 linkat(AT_FDCWD, "/etc/hosts", AT_FDCWD, "/tmp/pg-g", 0) = 0',
+                     '100 renameat(AT_FDCWD, "/tmp/pg-h", AT_FDCWD, "/tmp/pg-i") = 0'):
+            with self.subTest(line):
+                g = self.good_lines()
+                g.insert(1, line)
+                rec = self.check(g)
+                self.assert_fails(rec, "write-outside-w:")
+                self.assertFalse([p for p in rec["problems"] if p.startswith("undecodable")])
+        for line in ('100 openat(AT_FDCWD, "/dev/null", O_WRONLY) = 3', f'100 rename("{W}/a", "{W}/b") = 0',
+                     f'100 unlink("{W}/c") = 0', '100 unlink("/tmp/pg-c") = -1 ENOENT (No such file or directory)',
+                     f'100 symlink("/etc/hosts", "{W}/l") = 0'):
+            with self.subTest(line):
+                g = self.good_lines()
+                g.insert(1, line)
+                rec = self.check(g)
+                self.assertTrue(rec["pass"], rec["problems"])
+
+    def test_genies_search_list_from_the_trace(self):
+        g, C, b = self.genie, self.C, "ModelConfiguration.xml"
+        good = self.good_lines()
+        i = next(k for k, ln in enumerate(good) if f'openat(AT_FDCWD, "{g}/{C}/G21_11a/{b}"' in ln)
+        x = list(good)
+        x.insert(i, f'100 access("/evil/{b}", F_OK) = -1 ENOENT (No such file or directory)')     # GALGCONF, say
+        self.assert_fails(self.check(x), "search-path:")
+        x = [ln for ln in good if "G21_11a_00_000/ModelConfiguration" not in ln]                  # a directory skipped
+        self.assert_fails(self.check(x), "search-probes:")
+        x = list(good)
+        x.insert(i, f'100 access("{g}/{C}/G21_11a/G21_11a_00_000/{b}", F_OK) = 0')               # found earlier
+        self.assert_fails(self.check(x), "search-probes:")
+        x = [ln.replace("G21_11a_00_000/ModelConfiguration.xml\", F_OK) = -1 ENOENT (No such file or directory)",
+                        "G21_11a_00_000/ModelConfiguration.xml\", F_OK) = 0") for ln in good
+             if f'access("{g}/{C}/G21_11a/{b}"' not in ln]                       # found in the tune dir, read elsewhere
+        self.assert_fails(self.check(x), "search-probes:")
+        x = list(good)                                                     # the same lookup twice: two whole runs
+        x[i:i] = [ln for ln in good if "access(" in ln and b in ln]
+        self.assertTrue(self.check(x)["pass"], self.check(x)["problems"])
+        x = list(good)                                                     # an explicit path GENIE tried in each dir
+        mc = f"{g}/{C}/master_config.xml"
+        j = next(k for k, ln in enumerate(x) if f'"{mc}"' in ln)
+        x[j:j] = [f'100 access("{d}/{mc}", F_OK) = -1 ENOENT (No such file or directory)'
+                  for d in (self.xdata, f"{g}/{C}/G21_11a/G21_11a_00_000")]
+        self.assertTrue(self.check(x)["pass"], self.check(x)["problems"])
+
+    def test_root_and_genie_libraries_come_from_cvmfs(self):
+        g = self.good_lines()
+        g.insert(1, '100 openat(AT_FDCWD, "/usr/lib64/libCore.so", O_RDONLY|O_CLOEXEC) = 3')
+        self.assert_fails(self.check(g), "so-not-cvmfs:")
+        g = self.good_lines()
+        g.insert(1, '100 openat(AT_FDCWD, "/usr/lib64/libxml2.so.2", O_RDONLY|O_CLOEXEC) = 3')
+        self.assertTrue(self.check(g)["pass"])
+        rec = self.check()
+        lib = str(self.genie / self.P / "lib/libGFwEG.so")
+        got = {x["path"]: x for x in rec["libraries"]}
+        self.assertEqual(got[lib]["sha256"], sha((self.genie / self.P / "lib/libGFwEG-3.04.00.so").read_bytes()))
+
+
+class Round4Checks(Tmp):
+    def test_the_device_walk_refuses_another_mount(self):
+        other = "/proc" if os.path.isdir("/proc/self") else "/dev"          # another mount on either host
+        probs = V.device_walk_problems("/", only={os.path.basename(other)})
+        self.assertTrue(any(p.startswith("members-device:") for p in probs), probs)
+        self.assertEqual(V.device_walk_problems(str(self.tmp)), [])
+
+    def test_the_revision_may_change_only_with_every_cvmfs_file_rehashed(self):
+        f = self.tmp / "a.xml"
+        f.write_text("a")
+        recs = [{"gated": [{"path": str(f), "sha256": sha(b"a"), "match": True}]}]
+        same = {"revision": "5", "root_hash": "h"}
+        self.assertEqual(V.revision_problems(same, dict(same), recs, repo=str(self.tmp)), [])
+        moved = {"revision": "6", "root_hash": "k"}
+        self.assertEqual(V.revision_problems(same, moved, recs, repo=str(self.tmp)), [])
+        self.assertIn("revision-unverified", {p.split(":")[0] for p in V.revision_problems(same, moved, [], repo=str(self.tmp))})
+        f.write_text("b")
+        self.assertIn("revision-rehash", {p.split(":")[0] for p in V.revision_problems(same, moved, recs, repo=str(self.tmp))})
+        self.assertEqual(V.revision_problems(same, dict(same), recs, repo=str(self.tmp)), [])     # unchanged: no rehash
+        bad = [{"gated": [{"path": str(f), "sha256": sha(b"b"), "match": False}]}]
+        self.assertIn("revision-rehash", {p.split(":")[0] for p in V.revision_problems(same, moved, bad, repo=str(self.tmp))})
+
+
+KNOT = '<spline name="genie::X/Default/nu:{nu};tgt:{tgt};N:2112;proc:Weak[CC],QES;" nknots="2">\n{knots}</spline>\n'
+
+
+class Round4Reduce(Tmp):
+    PAIRS = {("14", "1000060120"), ("14", "1000010010")}
+
+    def write(self, name, splines, tune="G21_11a_00_000"):
+        body = (f'<genie_xsec_spline_list version="3.00" uselog="1">\n<genie_tune name="{tune}">\n'
+                + "".join(KNOT.format(nu=n, tgt=t, knots=k) for n, t, k in splines) + "</genie_tune>\n</genie_xsec_spline_list>\n")
+        p = self.tmp / name
+        p.write_text(body)
+        return str(p)
+
+    K = "<knot> <E> 1 </E> <xsec> 2 </xsec> </knot>\n<knot> <E> 3 </E> <xsec> 4 </xsec> </knot>\n"
+
+    def codes(self, src, red):
+        return {p.split(":")[0] for p in V.reduce_problems(src, red, self.PAIRS)}
+
+    def test_knot_values_tune_and_duplicates(self):
+        both = [(14, 1000060120, self.K), (14, 1000010010, self.K)]
+        src = self.write("src.xml", both + [(12, 1000060120, self.K)])
+        self.assertEqual(self.codes(src, self.write("ok.xml", both)), set())
+        self.assertIn("reduce-incomplete", self.codes(src, self.write("v.xml", [(14, 1000060120, self.K.replace("> 4 <", "> 5 <")),
+                                                                                  (14, 1000010010, self.K)])))
+        self.assertIn("reduce-incomplete", self.codes(src, self.write("t.xml", both, tune="G18_02a_00_000")))
+        self.assertIn("reduce-duplicate", self.codes(src, self.write("d.xml", both + [(14, 1000010010, self.K)])))
+
+
+class Round4Coverage(Tmp):
+    def test_every_pair_is_needed_and_every_need_is_in_the_reduced_spline(self):
+        need = lambda t: f"x : Need xsec spline for nu:14;tgt:{t};N:2112;proc:Weak[CC],QES;"
+        found = "x : Spline was found"
+        pairs = {("14", "1000060120"), ("14", "1000010010")}
+        keys = {f"nu:14;tgt:{t};N:2112;proc:Weak[CC],QES;" for t in ("1000060120", "1000010010")}
+        log = "\n".join([need("1000060120"), found, need("1000010010"), found])
+        self.assertEqual(V.coverage_problems(log, pairs, keys), [])
+        one = "\n".join([need("1000010010"), found])
+        self.assertIn("coverage-pair", {p.split(":")[0] for p in V.coverage_problems(one, pairs, keys)})
+        self.assertIn("coverage-key", {p.split(":")[0] for p in V.coverage_problems(log, pairs, keys - {min(keys)})})
+
+    def test_the_cli_takes_the_pairs_and_keys(self):
+        import contextlib
+        red = self.tmp / "red.xml"
+        red.write_text("".join(f'<spline name="genie::X/D/nu:14;tgt:{t};N:2112;proc:Weak[CC],QES;" nknots="1">\n<knot> 1 2 </knot>\n'
+                               f'</spline>\n' for t in ("1000060120", "1000010010")))
+        log = self.tmp / "g.log"
+        log.write_text("x : Need xsec spline for nu:14;tgt:1000010010;N:2112;proc:Weak[CC],QES;\nx : Spline was found\n")
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            rc = V.main(["coverage-log", "--log", str(log), "--script", str(GENIE / "run_gevgen_v3.sh"), "--reduced", str(red)])
+        self.assertEqual(rc, 1)
+        self.assertEqual([p.split(":")[0] for p in json.loads(out.getvalue())["problems"]], ["coverage-pair"])
+
+    def test_the_coverage_block_assigns_nothing_else(self):
+        s = (GENIE / "run_gevgen_v3.sh").read_text()
+        cov = '    N=1; SEED=123456789; MSG="$MSGFILE"'
+        self.assertEqual(V.argv_problems(s), [])
+        bad = s.replace(cov, cov + "\n    TUNE=G18_02a_00_000")
+        self.assertIn("argv-coverage", {p.split(":")[0] for p in V.argv_problems(bad)})
+        pos = "    TUNE=$1; SPLDIR=$2; WORK=$3; FLUX=$4; MSGFILE=$5\n"
+        early = s.replace(pos, pos + "    TUNE=G18_02a_00_000\n")                  # before the tail, which stays whole
+        self.assertNotEqual(early, s)
+        self.assertIn("argv-coverage", {p.split(":")[0] for p in V.argv_problems(early)})
+        moved = s.replace(cov + "\n    gevgen_cmd > gevgen.log 2>&1", "    gevgen_cmd > gevgen.log 2>&1\n" + cov)
+        self.assertNotEqual(moved, s)                                         # the seed set after gevgen has run
+        self.assertIn("argv-coverage", {p.split(":")[0] for p in V.argv_problems(moved)})
+        bad = s.replace('    --tune "$TUNE" \\\n', '    --tune "$TUNE" \\\n    --xml-path /evil \\\n')
+        self.assertNotEqual(bad, s)
+        self.assertIn("argv-xmlpath", {p.split(":")[0] for p in V.argv_problems(bad)})
 
 
 class CommentScan(unittest.TestCase):
@@ -1135,3 +1409,18 @@ class CommentScan(unittest.TestCase):
                      'y = f(1)   # and g(2))\n'):
             with self.subTest(text[:30]):
                 self.assertTrue(self.offenders(text), text)
+
+
+class NodeRecord(Tmp):
+    def test_the_node_record(self):
+        proc = self.tmp / "proc"
+        for pid, uid in (("1", 0), ("20", os.getuid()), ("30", 4242), ("31", 999)):
+            (proc / pid).mkdir(parents=True)
+            (proc / pid / "status").write_text(f"Name:\tx\nUid:\t{uid}\t{uid}\t{uid}\t{uid}\n")
+        mounts = "proc /proc proc rw,nosuid,nodev,noexec,relatime,hidepid=2 0 0\n/dev/sda / ext4 rw 0 0\n"
+        rec = V.node_record(mounts, {"SLURM_JOB_ID": "1", "SLURM_CPUS_ON_NODE": str(os.cpu_count())}, proc=str(proc))
+        self.assertEqual((rec["hidepid"], rec["slurm_job"], rec["all_cpus_allocated"]), ("2", True, True))
+        self.assertEqual(rec["other_user_processes"], 1 if os.getuid() != 4242 else 0)
+        rec = V.node_record("proc /proc proc rw 0 0\n", {}, proc=str(proc))
+        self.assertEqual((rec["hidepid"], rec["slurm_job"], rec["all_cpus_allocated"]), ("0", False, False))
+        self.assertTrue(rec["pass"])                                      # a record, never a gate

@@ -51,11 +51,22 @@ REPLAY_CHECKS = ("tool_check_strace.json", "revision_start.json", "members_check
                  "trace_check_graphs.json", "messenger_check.json", "trace_check_coverage.json", "coverage_check.json",
                  "trace_check_gevgen.json", "trace_check_gntpc.json", "trace_check_reduce_slot2.json",
                  "reduce_check_slot2.json", "trace_check_coverage_slot2.json", "coverage_check_slot2.json",
-                 "shape_check.json", "host_check.json", "revision_end.json")
+                 "shape_check.json", "host_check.json", "revision_end.json", "revision_compare.json")
 TRACES = tuple(n for n in REPLAY_CHECKS if n.startswith("trace_check"))
 SPLINE_TRACES = tuple(n for n in TRACES if n != "trace_check_gntpc.json")
 SHAPES = ("real_members_listing", "proc_fd_magic_link", "directory_open_recorded", "slot2_reduce_real_path")
 HOST_CHECKS = ("st_dev_final_dir", "no_submounts", "result_anchor_real_strace")
+# C18: the replay's identity, and what each trace must show: the role's own program first, and these files gated
+IDENTITY = {"schema": "covfix-pg-replay-run/3", "tune": "G21_11a_00_000", "slot2": "G18_02a_00_000", "seed": 123456789,
+            "events": 100}
+PROGRAM = {"trace_check_reduce.json": "awk", "trace_check_reduce_slot2.json": "awk", "trace_check_graphs.json": "gspl2root",
+           "trace_check_coverage.json": "gevgen", "trace_check_coverage_slot2.json": "gevgen",
+           "trace_check_gevgen.json": "gevgen", "trace_check_gntpc.json": "gntpc"}
+GATED = {"trace_check_reduce.json": ("gxspl-NUsmall.xml",), "trace_check_reduce_slot2.json": ("gxspl-NUsmall.xml",),
+         "trace_check_graphs.json": ("G21_11a_00_000_CH.xml.gz", "ModelConfiguration.xml"),
+         "trace_check_coverage.json": ("G21_11a_00_000_CH.xml.gz", "ModelConfiguration.xml", "Messenger_pg.xml"),
+         "trace_check_coverage_slot2.json": ("G18_02a_00_000_CH.xml.gz", "ModelConfiguration.xml", "Messenger_pg.xml"),
+         "trace_check_gevgen.json": ("G21_11a_00_000_CH.xml.gz", "ModelConfiguration.xml"), "trace_check_gntpc.json": ()}
 DELETABLE = {"t0": ("genie_v3.gst.root", "gevgen.status", "gntp.ghep.root", "input-flux.root"),
              "coverage_slot1": ("gevgen.log", "gevgen.status", "gntp.ghep.root", "input-flux.root"),
              "coverage_slot2": ("gevgen.log", "gevgen.status", "gntp.ghep.root", "input-flux.root")}
@@ -92,6 +103,26 @@ def _replay_problems(r):
     if not (type(c) is dict and sorted(c) == ["coverage_check.json", "coverage_check_slot2.json"]
             and all(_hex64(v) for v in c.values())):
         p.append("coverage log hashes")
+    p += [f"identity {k}" for k, v in IDENTITY.items() if not (type(r.get(k)) is type(v) and r.get(k) == v)]
+    x = r.get("execs")
+    if not (type(x) is dict and sorted(x) == sorted(TRACES) and all(
+            type(v) is list and v and all(type(e) is dict and all(type(e.get(k)) is str for k in ("path", "real", "bound_by"))
+                                          and _hex64(e.get("sha256")) for e in v)
+            and v[0]["path"].rsplit("/", 1)[-1] == PROGRAM[n] for n, v in x.items())):
+        p.append("execs")
+    rv = r.get("revision")
+    if not (type(rv) is dict and sorted(rv) == ["end", "start"] and all(
+            type(v) is dict and all(type(v.get(k)) is str and v[k].strip() for k in ("revision", "root_hash"))
+            for v in rv.values())):
+        p.append("revision values")
+    if type(g) is dict and sorted(g) == sorted(TRACES):
+        p += [f"gated {n}: {b}" for n, bs in sorted(GATED.items()) for b in bs
+              if not any(type(e) is dict and str(e.get("path", "")).rsplit("/", 1)[-1] == b for e in g[n])]
+    s = r.get("gst_schema")
+    if not (type(s) is dict and sorted(s) == ["keys", "streamer_sha256"] and type(s["keys"]) is list and s["keys"]
+            and all(type(k) is list and len(k) == 3 and all(type(y) is str for y in k) for k in s["keys"])
+            and _hex64(s["streamer_sha256"])):
+        p.append("gst schema")
     return p
 
 
@@ -100,9 +131,16 @@ def _deleted_problems(d):
     if not (type(d) is dict and sorted(d) == sorted(DELETABLE) and all(type(v) is dict for v in d.values())
             and "genie_v3.gst.root" in d["t0"] and all(set(d[k]) <= set(DELETABLE[k]) for k in d)):
         return ["names"]
+    def root_ok(n, v):   # C4's positive control: each ROOT file decoded (inflated), the gst's schema recorded
+        if not n.endswith(".root"):
+            return True
+        c = v.get("decoded")
+        return (type(c) is dict and type(c.get("holds_seed")) is bool and type(c.get("int32_count")) is int
+                and type(c.get("codecs")) is dict and type(c.get("bytes_inflated")) is int
+                and (n != "genie_v3.gst.root" or type(v.get("schema")) is dict))
     return [f"{k}/{n}" for k in sorted(d) for n, v in sorted(d[k].items())
             if not (type(v) is dict and _hex64(v.get("sha256")) and type(v.get("bytes")) is int and v["bytes"] >= 0
-                    and type(v.get("holds_public_seed")) is bool)]
+                    and type(v.get("holds_public_seed")) is bool and root_ok(n, v))]
 
 
 def script_pins(body):

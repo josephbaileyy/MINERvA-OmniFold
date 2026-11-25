@@ -67,7 +67,10 @@ director's wording, and the director's messages govern. The plan they amend is `
   re-verifies every member and STOPs on any missing or changed one, and the records note the install date.
 
 **Mutants.** Only a test-assertion failure kills. Import errors, collection errors and timeouts are INVALID, listed
-separately, and count against the receipt.
+separately, and count against the receipt. *Superseded 2026-11-25 by the director's ruling, which mutrun.RULE prints at
+the head of every receipt:* an import or collection error (`_FailedTest`, ImportError, ModuleNotFoundError,
+SyntaxError) is INVALID; otherwise a FAIL or an ERROR with a non-zero exit kills; a timeout, or a FAIL with exit 0, is
+INVALID.
 
 **Process.**
 - The scripts for B1, B2 and B3 each come to the director with their sha before they run, and nothing runs on NERSC
@@ -138,3 +141,53 @@ end. Hashing them for deleted.json is allowed.
 - a final directory on another mount, as a positive control;
 - no mount point inside a walked root;
 - the real strace format of a path holding `) = -1`.
+
+## Round 4: the director's rulings on the codex-school and Sonnet 5.5 reads of 12604016 (2026-11-25)
+
+<!-- absence-ok: "never", "untestable" and "no allocation" here state rules, this host's test coverage and a login node's setup, not a claim that a result does not exist -->
+
+The reads and their dispositions are in `delta-read-r4/`. The director gave a GO on the whole fix list, failing tests
+first, and ruled six items. cov2d gave its no-objection to C3 and C4 as built here.
+
+**C2, ROOT's RECREATE.** ROOT's RECREATE unlinks the file, then opens it `O_RDWR|O_CREAT`. Such an open counts as an
+output only at the role's exact expected output path, and only after the same process probed that path for ENOENT or
+unlinked it: gevgen's `gntp.<run>.ghep.root` and `input-flux.root`, gntpc's `genie_v3.gst.root`, the graphs' `--output`.
+Every other `O_CREAT` open without TRUNC or EXCL stays a read. `unlink` and `unlinkat` are traced for it.
+
+**C3, the seed in live argv.** Option (a). The threat model is D2's: other users are excluded by the exclusive
+allocation, and same-account processes are out of scope. F1's argv stays byte-identical.
+- B1's probe records `/proc`'s mount options and hidepid. B1 runs on a login node, which has no allocation.
+- pg_generate's `node-record` records, on the compute node, `/proc`'s options, whether it runs in a Slurm job, the
+  job's CPUs against the node's, and other users' visible processes. It is a record, never a gate.
+- The director's check: no seed may reach anything Slurm records and keeps (the sbatch line, --comment, the job name,
+  the stored batch script, the exported environment). pg_generate takes only `--workdir W --seeds W/seeds.json`,
+  reads seeds only from that file, calls no srun, sbatch or scontrol, and exports only G, O, NEV and TO
+  (`test_end_to_end` and the stubs). cov2d confirmed the same for its wrapper and binary.
+
+**C4, the publication.** The ruling as cov2d and the director amended it:
+- an explicit export allowlist: the inventory less the seed-bearing; any other file outside W/tmp is a STOP;
+- STOPs on every seed's decimal, hex (both cases) and int64 (both byte orders), over raw bytes and over every ROOT
+  object inflated (ZLIB, LZMA, ZSTD and LZ4 when their modules exist; any other codec, or a missing module, STOPs);
+- int32 forms are counted only, against their chance expectation (28 B / 2³²), because a big-endian seed near 1e9
+  reads as a float32 in the dense kinematic range;
+- each published gst's schema (its keys' class, name and title, and its streamer info's sha) equals B3's gst, which
+  `record/root-schemas.json` holds once B3 has run; pg_generate refuses at its start while it is unset;
+- out/leak_scan.json and out/PG-PUBLISH-SHA256SUMS are scanned after they are written. The sums file is public and
+  lists only allowlisted, published files (cov2d's publish_guard is amended to pass exactly those hashes).
+- B3's public-seed files are decoded the same way, as the positive control.
+
+**The trace set** adds execveat, rename, renameat, renameat2, link, linkat, symlink, symlinkat, unlink and unlinkat.
+run_gevgen_v3.sh, pg_verify.py and pg-probe.py carry it, and their new shas go to the director before anything runs.
+
+**S7, D2's revision.** A revision or root-hash change between the run's start and end passes only if every CVMFS file
+the run read (each trace check's gated files, ROOT configs, libraries and programs) re-hashes to its pin at the end.
+Both revisions are recorded; any mismatch is a STOP.
+
+**C13, process isolation.** The generation runs in its own session and process group (setsid). The survivor scan finds
+processes by that group as well as by cwd, and excludes this shell's ancestor chain (S6). The drain before
+publication KILLs any survivor and polls 30 s; a survivor then is a STOP, and a STOP withdraws the publication set.
+
+**Untestable on this host, recorded on the node:** the job reaped only once dead (a process in uninterruptible sleep),
+and the 30 s poll after KILL (a SIGKILL that does not take effect at once). Both need the kernel to delay a kill.
+S9: `--rc 0` is the status of a step that has already passed (`need`), so trace-check's rc rule is documentation.
+

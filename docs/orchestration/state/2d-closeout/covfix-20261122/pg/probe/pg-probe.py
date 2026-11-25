@@ -67,7 +67,7 @@ TOOLS = {"strace": ("/usr/bin/strace",), "gpg": ("/usr/bin/gpg", "/usr/bin/gpg2"
 RPM = ("/usr/bin/rpm", "/bin/rpm")
 LOCAL_FS = ("tmpfs", "ext4", "xfs", "btrfs", "ext3")
 TRACE_SET = ("trace=open,openat,openat2,access,faccessat,faccessat2,stat,lstat,newfstatat,statx,readlink,readlinkat,"
-             "chdir,fchdir,execve")
+             "chdir,fchdir,execve,execveat,rename,renameat,renameat2,link,linkat,symlink,symlinkat,unlink,unlinkat")
 ENCRYPT = ["--batch", "--yes", "--pinentry-mode", "loopback", "--passphrase-fd", "3", "--no-symkey-cache",
            "--symmetric", "--cipher-algo", "AES256", "--s2k-digest-algo", "SHA512", "--force-mdc"]
 DECRYPT = ["--batch", "--pinentry-mode", "loopback", "--passphrase-fd", "3", "--no-symkey-cache", "--decrypt"]
@@ -430,11 +430,15 @@ def _rpm_digest(path, rpm_run):
         raise Unverified("the RPM query failed")                 # not the same as no record
     pkg = out[1].strip().splitlines()[0]
     dump = rpm_run(["-q", "--dump", pkg])
+    if dump is None or dump[0] != 0:
+        raise Unverified("the RPM query failed")                 # an owned file whose record could not be read
     digest = None
-    for ln in (dump[1] if dump and dump[0] == 0 else "").splitlines():
+    for ln in dump[1].splitlines():
         f = ln.split()
         if len(f) >= 4 and f[0] == path:
             digest = f[3]
+    if digest is None:
+        raise Unverified("the RPM query failed")                 # owned, yet absent from its package's dump
     v = rpm_run(["-V", pkg])
     verify = [ln for ln in (v[1] if v else "").splitlines() if ln.rstrip().endswith(" " + path)]
     return pkg, digest, verify
@@ -505,6 +509,8 @@ def open_tools(tools=TOOLS, rpm_run=None):
 
 
 def trace_complete(text, rc):
+    """pg_verify.trace_problems, the same rules and codes (C16): strace's rc, a whole last line, a pid on every line,
+    every unfinished call resumed by the same syscall, an exit record for every pid, every exit 0."""
     probs = []
     if rc != 0:
         probs.append(f"strace-rc: strace exited {rc}")
@@ -512,27 +518,35 @@ def trace_complete(text, rc):
         return probs + ["empty: the trace is empty"]
     if not text.endswith("\n"):
         probs.append("truncated: the trace's last line is truncated")
-    lines = text.splitlines()
-    m = [re.match(r"^(\d+) +(.*)$", ln) for ln in lines]
-    if not all(m):
+    ms = [re.match(r"^(\d+) +(.*)$", ln) for ln in text.splitlines()]
+    if not all(ms):
         return probs + ["no-pid: a trace line has no pid"]
-    if any(x.group(2).startswith("+++ killed by") for x in m):
-        probs.append("killed: a traced process was killed")
-    exits, pending = {}, set()
-    for x in m:
-        pid, rest = x.group(1), x.group(2)
-        if rest.endswith("<unfinished ...>"):
-            pending.add(pid)
-        elif rest.startswith("<... "):
-            pending.discard(pid)
-        e = re.match(r"\+\+\+ exited with (\d+) \+\+\+", rest)
-        if e:
-            exits[pid] = int(e.group(1))
-    if exits.get(m[0].group(1)) != 0:
+    first = ms[0].group(1)
+    pending, exits, seen, killed = {}, {}, set(), set()
+    for m in ms:
+        pid, rest = m.group(1), m.group(2)
+        seen.add(pid)
+        r = re.match(r"^<\.\.\. ([a-z0-9_]+) resumed>", rest)
+        if r:
+            if pending.pop(pid, None) != r.group(1):
+                probs.append(f"resume-mismatch: process {pid} resumed {r.group(1)} without its unfinished call")
+        elif rest.endswith("<unfinished ...>"):
+            sm = re.match(r"^([a-z0-9_]+)\(", rest)
+            pending[pid] = sm.group(1) if sm else "?"
+        x = re.match(r"\+\+\+ exited with (\d+) \+\+\+", rest)
+        if x:
+            exits[pid] = int(x.group(1))
+        if rest.startswith("+++ killed by"):
+            probs.append(f"killed: process {pid} was killed")
+            killed.add(pid)
+    if exits.get(first) != 0:
         probs.append("initial-exit: the initial process did not exit 0")
-    probs += [f"child-exit: process {q} exited {v}" for q, v in sorted(exits.items()) if v != 0 and q != m[0].group(1)]
+    probs += [f"child-exit: process {q} exited {v}" for q, v in sorted(exits.items()) if q != first and v != 0]
     if pending:
-        probs.append(f"unresumed: calls left unfinished in {sorted(pending)}")
+        probs.append(f"unresumed: calls left unfinished in processes {sorted(pending)}")
+    open_ended = sorted(seen - set(exits) - killed)
+    if open_ended:
+        probs.append(f"no-terminal: processes {open_ended} have no exit record")
     return probs
 
 
@@ -563,6 +577,16 @@ def strace_self_test(fd, parent=GNUPG_PARENT):
 
 
 # ------------------------------------------------------------- rev 3's reviewed mount, OpenPGP and socket helpers
+
+def proc_mount(mounts_text):
+    """{options, hidepid}: /proc's mount, recorded (C3; the director: other users are excluded by the exclusive
+    allocation, which pg_generate records on the compute node itself; B1 runs on a login node and has none)."""
+    opts = [ln.split()[3] for ln in mounts_text.splitlines() if len(ln.split()) > 3 and ln.split()[1] == "/proc"]
+    if not opts:
+        return {"options": None, "hidepid": None}
+    hp = [o.split("=", 1)[1] for o in opts[-1].split(",") if o.startswith("hidepid=")]
+    return {"options": opts[-1], "hidepid": hp[-1] if hp else "0"}
+
 
 def mount_entry(path, mounts_text):
     """(mount point, type, device) of the longest mount point containing path, from /proc/mounts' text."""
@@ -892,6 +916,7 @@ def probe(ident=identity, repo=REPO, genie_root=GENIE_ROOT, pins=None, mounts=_m
         rec["stops"] = [f"mounts: {e}"]
         rec["verdict"] = "STOP"
         return rec
+    rec["proc_mount"] = proc_mount(mounts_text)
     rec["mount_control"] = (control or mount_control)()
     if not rec["mount_control"]["pass"]:
         stops.append("mount-control: a walk into /proc did not refuse at its final directory")

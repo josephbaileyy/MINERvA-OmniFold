@@ -215,13 +215,19 @@ class Install(unittest.TestCase):
 
 RP = load("pg_replay", HERE / "pg-replay-g2111a.py")
 EA = load("embed_archive", HERE / "embed_archive.py")
-GOOD_REPLAY = {"pass": True, "checks": {n: True for n in RP.REPLAY_CHECKS},
-               "spline_opened": {n: True for n in RP.SPLINE_TRACES},
-               "gated": {n: [{"path": "/p", "sha256": "0" * 64, "pinned_by": "genie manifest"}] for n in RP.TRACES},
-               "real_shapes": {k: True for k in RP.SHAPES}, "host": {k: True for k in RP.HOST_CHECKS},
-               "coverage_log_sha256": {"coverage_check.json": "1" * 64, "coverage_check_slot2.json": "2" * 64}}
+GOOD_REPLAY = dict(RP.IDENTITY, **{
+    "pass": True, "checks": {n: True for n in RP.REPLAY_CHECKS}, "spline_opened": {n: True for n in RP.SPLINE_TRACES},
+    "gated": {n: [{"path": f"/p/{b}", "sha256": "0" * 64, "pinned_by": "genie manifest"} for b in RP.GATED[n] or ("x.so",)]
+              for n in RP.TRACES},
+    "real_shapes": {k: True for k in RP.SHAPES}, "host": {k: True for k in RP.HOST_CHECKS},
+    "coverage_log_sha256": {"coverage_check.json": "1" * 64, "coverage_check_slot2.json": "2" * 64},
+    "execs": {n: [{"path": f"/b/{RP.PROGRAM[n]}", "real": f"/b/{RP.PROGRAM[n]}", "sha256": "3" * 64,
+                   "bound_by": "genie manifest"}] for n in RP.TRACES},
+    "revision": {"start": {"revision": "7", "root_hash": "h"}, "end": {"revision": "7", "root_hash": "h"}},
+    "gst_schema": {"keys": [["TTree", "gst", "t"]], "streamer_sha256": "4" * 64}})
 REC = {"sha256": "a" * 64, "bytes": 10, "holds_public_seed": False}
-GOOD_DELETED = {"t0": {"genie_v3.gst.root": REC, "gevgen.status": REC},
+ROOTREC = dict(REC, decoded={"holds_seed": False, "int32_count": 0, "codecs": {"ZL": 2}, "bytes_inflated": 9})
+GOOD_DELETED = {"t0": {"genie_v3.gst.root": dict(ROOTREC, schema=GOOD_REPLAY["gst_schema"]), "gevgen.status": REC},
                 "coverage_slot1": {"gevgen.log": REC}, "coverage_slot2": {"gevgen.log": REC}}
 class NodeLaunch(unittest.TestCase):
     def setUp(self):
@@ -296,10 +302,34 @@ class NodeLaunch(unittest.TestCase):
                                 ("no gated", dict(rec, replay={k: v for k, v in GOOD_REPLAY.items() if k != "gated"}),
                                  "replay gated files"),
                                 ("a bool size", dict(rec, deleted=dict(GOOD_DELETED, t0={"genie_v3.gst.root": dict(
-                                    REC, bytes=True)})), "deleted t0/genie_v3.gst.root")):
+                                    GOOD_DELETED["t0"]["genie_v3.gst.root"], bytes=True)})), "deleted t0/genie_v3.gst.root"),
+                                ("another seed", dict(rec, replay=dict(GOOD_REPLAY, seed=99)), "replay identity seed"),
+                                ("a seed as text", dict(rec, replay=dict(GOOD_REPLAY, seed="123456789")),
+                                 "replay identity seed"),
+                                ("another tune", dict(rec, replay=dict(GOOD_REPLAY, tune="G18_02a_00_000")),
+                                 "replay identity tune"),
+                                ("gntpc ran gevgen first", dict(rec, replay=dict(GOOD_REPLAY, execs=dict(
+                                    GOOD_REPLAY["execs"], **{"trace_check_gntpc.json": GOOD_REPLAY["execs"][
+                                        "trace_check_gevgen.json"]}))), "replay execs"),
+                                ("an unbound exec", dict(rec, replay=dict(GOOD_REPLAY, execs=dict(
+                                    GOOD_REPLAY["execs"], **{"trace_check_gevgen.json": [dict(
+                                        GOOD_REPLAY["execs"]["trace_check_gevgen.json"][0], bound_by=None)]}))),
+                                 "replay execs"),
+                                ("no revision", dict(rec, replay=dict(GOOD_REPLAY, revision={})), "replay revision values"),
+                                ("the messenger not gated", dict(rec, replay=dict(GOOD_REPLAY, gated=dict(
+                                    GOOD_REPLAY["gated"], **{"trace_check_coverage.json": [
+                                        x for x in GOOD_REPLAY["gated"]["trace_check_coverage.json"]
+                                        if "Messenger" not in x["path"]]}))),
+                                 "replay gated trace_check_coverage.json: Messenger_pg.xml"),
+                                ("no gst schema", dict(rec, replay=dict(GOOD_REPLAY, gst_schema=None)), "replay gst schema"),
+                                ("a gst not decoded", dict(rec, deleted=dict(GOOD_DELETED, t0={"genie_v3.gst.root": dict(
+                                    REC, schema=GOOD_REPLAY["gst_schema"])})), "deleted t0/genie_v3.gst.root"),
+                                ("no gst schema in deleted", dict(rec, deleted=dict(GOOD_DELETED, t0={
+                                    "genie_v3.gst.root": ROOTREC})), "deleted t0/genie_v3.gst.root")):
             with self.subTest(name):
                 self.assertEqual(self.L.payload_problems(bad, "covfix-pg-replay/1", pins), [want])
-        for k in ("REPLAY_CHECKS", "TRACES", "SPLINE_TRACES", "SHAPES", "HOST_CHECKS", "DELETABLE"):
+        for k in ("REPLAY_CHECKS", "TRACES", "SPLINE_TRACES", "SHAPES", "HOST_CHECKS", "DELETABLE", "IDENTITY",
+                  "PROGRAM", "GATED"):
             self.assertEqual(getattr(self.L, k), getattr(RP, k), k)                # one schema, in both places
 
     def test_refusals_and_options(self):
@@ -424,10 +454,12 @@ class Replay(unittest.TestCase):
                 ("another name deleted", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, t0=dict(
                     GOOD_DELETED["t0"], **{"x.root": REC})))}, "deleted-record"),
                 ("a run missing", {"PG_STUB_DELETED": json.dumps({"t0": GOOD_DELETED["t0"]})}, "deleted-record"),
-                ("a bool size", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, t0={"genie_v3.gst.root": dict(
-                    REC, bytes=True)}))}, "deleted-record"),
-                ("a negative size", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, t0={"genie_v3.gst.root": dict(
-                    REC, bytes=-1)}))}, "deleted-record"),
+                ("a bool size", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, t0=dict(
+                    GOOD_DELETED["t0"], **{"gevgen.status": dict(REC, bytes=True)})))}, "deleted-record"),
+                ("a negative size", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, t0=dict(
+                    GOOD_DELETED["t0"], **{"gevgen.status": dict(REC, bytes=-1)})))}, "deleted-record"),
+                ("another seed", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, seed=99))}, "replay-record"),
+                ("a seed as text", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, seed="123456789"))}, "replay-record"),
                 ("arbitrary shape names", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, real_shapes={
                     f"s{i}": True for i in range(4)}))}, "replay-record"),
                 ("a null gated record", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, gated={

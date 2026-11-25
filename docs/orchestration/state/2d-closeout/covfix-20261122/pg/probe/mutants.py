@@ -1,5 +1,6 @@
-"""Hand mutants of pg-probe.py (rev 4) and pg-probe-launch.py, under the director's kill rule (../mutrun.py): only an
-assertion FAIL in test_pg_probe.py kills; import errors, other errors and timeouts are INVALID and count against it.
+"""Hand mutants of pg-probe.py (rev 4) and pg-probe-launch.py, under the director's kill rule (../mutrun.py,
+mutrun.RULE, 2026-11-25): an import or collection error is INVALID; otherwise a FAIL or an ERROR with a non-zero exit
+in test_pg_probe.py kills; a timeout, or a FAIL with exit 0, is INVALID and counts against it.
 
 Run: python3 -B mutants.py > mutants.log   (from this directory; every mutant runs in a throwaway copy)
 """
@@ -112,9 +113,9 @@ M = [(f, old, new, what, "probe") for f, old, new, what in [
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    if bad:\n        rec["problems"].append(f"xsec-files:', '    if False:\n        rec["problems"].append(f"xsec-files:', 'a spline mismatch not a stop'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '        if got is None:\n            rec["problems"].append(f"xsec-dbconfig: {err}")', '        if False:\n            rec["problems"].append(f"xsec-dbconfig: {err}")', 'no dbconfig'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '        probs.append(f"strace-rc: strace exited {rc}")', '        pass', "strace's rc"),
-    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    if any(x.group(2).startswith("+++ killed by") for x in m):', '    if False:', 'a killed tracee'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '        if rest.startswith("+++ killed by"):\n            probs.append(f"killed: process {pid} was killed")', '        if False:\n            probs.append(f"killed: process {pid} was killed")', 'a killed tracee'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '        return probs + ["empty: the trace is empty"]', '        return probs', 'an empty trace'),
-    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    probs += [f"child-exit: process {q} exited {v}" for q, v in sorted(exits.items()) if v != 0 and q != m[0].group(1)]\n', '', "a child's non-zero exit"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    probs += [f"child-exit: process {q} exited {v}" for q, v in sorted(exits.items()) if q != first and v != 0]\n', '', "a child's non-zero exit"),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    if pending:\n        probs.append(f"unresumed:', '    if False:\n        probs.append(f"unresumed:', 'an unresumed call'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '            if os.fstat(fd).st_dev != dev:\n                raise Unverified(f"{rel}: {p} is another mount")', '            if False:\n                pass', 'a walk crossing a mount'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '            if st.st_dev != dev:\n                raise Unverified(f"{rel}/{n} is another mount")', '            if False:\n                pass', 'a listed entry on another mount'),
@@ -130,7 +131,7 @@ M = [(f, old, new, what, "probe") for f, old, new, what in [
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe-launch.py', '        elif not all(got[k].get(field) == want_[k] for k in want_):', '        elif False:', 'r3: a claimed match with another value'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe-launch.py', '            elif not ((t.get("rpm_match") is True and t.get("rpm_status") == "recorded"', '            elif False and ((t.get("rpm_match") is True and t.get("rpm_status") == "recorded"', "r3: a tool's RPM basis"),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', ' and stat.S_ISREG(os.lstat(p).st_mode)), None)', '), None)', 'r3: a linked first candidate taken'),
-    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '        raise Unverified("the RPM query failed")', '        return None, None, None', 'r3: a failed RPM query as no record'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    if out is None or out[0] != 0 or not out[1].strip():\n        raise Unverified("the RPM query failed")', '    if out is None or out[0] != 0 or not out[1].strip():\n        return None, None, None', 'r3: a failed RPM query as no record'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    if repo is not None and os.fstat(rfd).st_dev != os.stat(repo, follow_symlinks=False).st_dev:', '    if False:', 'r3: a mount at the genie product'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '         "awk": ("/usr/bin/gawk", "/bin/gawk", "/usr/bin/awk")}', '         }', 'r3: awk unpinned'),
     # the director's ruling: guards this host cannot reach by a real mount or race, tested by injection
@@ -139,6 +140,15 @@ M = [(f, old, new, what, "probe") for f, old, new, what in [
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    if not rec["mount_control"]["pass"]:', '    if False:', 'r3: a failed mount control'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '        list_rel(fd, rel)\n        return {"pass": False, "refused": None}', '        list_rel(fd, rel)\n        return {"pass": True, "refused": None}', 'r3: a mount control that never refused'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe-launch.py', '(("mount_control", "pass"), True), ', '', 'r3: the launcher ignores the mount control'),
+    # round 4 (RULINGS-A2.md, round 4)
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', 'chdir,fchdir,execve,execveat,rename', 'chdir,fchdir,execve,rename', "r4: the probe's trace set"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '            if pending.pop(pid, None) != r.group(1):', '            if False:', 'r4: a resumed call of another syscall'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    if open_ended:\n        probs.append(f"no-terminal', '    if False:\n        probs.append(f"no-terminal', 'r4: a pid with no exit'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    if dump is None or dump[0] != 0:\n        raise Unverified', '    if False:\n        raise Unverified', 'r4: a failed RPM dump as first use'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    if digest is None:\n        raise Unverified', '    if False:\n        raise Unverified', 'r4: an owned file missing from its dump'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    return {"options": opts[-1], "hidepid": hp[-1] if hp else "0"}', '    return {"options": opts[-1], "hidepid": hp[-1] if hp else None}', "r4: hidepid's default"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    rec["proc_mount"] = proc_mount(mounts_text)\n', '', "r4: /proc's mount not recorded"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe-launch.py', '        p.append("proc_mount is not recorded")', '        pass', "r4: the launcher without /proc's record"),
 ]]
 
 if __name__ == "__main__":

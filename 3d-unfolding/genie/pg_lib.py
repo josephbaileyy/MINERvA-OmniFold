@@ -12,6 +12,13 @@
            print the required inventory, [{"pattern": glob relative to W, "count": n}], in covfix_pg.py's gen-spec
            form (fnmatchcase, '*' crossing '/'). With --workdir, check that each pattern matches exactly n regular
            files under W, following no link, and exit 1 if not.
+  publish  --workdir W --seeds W/seeds.json --schemas root-schemas.json
+           the export allowlist (the inventory less the seed-bearing; any other file outside W/tmp refuses), each file
+           scanned for every seed's decimal, hex and int64 forms, raw and in every ROOT object inflated (an unknown or
+           unavailable codec refuses), int32 forms counted only; every gst's schema equal to B3's; then
+           out/leak_scan.json and out/PG-PUBLISH-SHA256SUMS, each scanned too (RULINGS-A2.md, round 4, C4).
+  leak-scan --file F --seed 123456789 [--schema]
+           B3's positive control on a public-seed file.
 
 seeds.json is {"tunes": [{"u": 0, "name": "G21_11a_00_000", "task_seeds": [7 ints]},
                          {"u": 1, "name": "G18_02a_00_000", "task_seeds": [7 ints]}]}.
@@ -26,7 +33,9 @@ import argparse
 import fnmatch
 import hashlib
 import json
+import mmap
 import os
+import struct
 import sys
 from pathlib import Path
 
@@ -133,16 +142,16 @@ def inventory(tunes=None):
         for f in ("task.time", "task.log", "gevgen.log", "gntpc.log", "genie_v3.gst.root", "input-flux.root",
                   "gevgen.status", "gevgen.trace", "trace_check.json", "gntpc.trace", "trace_check_gntpc.json"):
             add(f"out/work/u{u}/t*/{f}", N_TASKS)
-    for p in ("seeds.json", "PRODUCTS.json", "out/PG-SHA256SUMS", PUBLISH_SUMS, "out/flux_phi_t_0_100.root",
+    for p in ("seeds.json", "PRODUCTS.json", "out/PG-SHA256SUMS", PUBLISH_SUMS, LEAK_SCAN, "out/flux_phi_t_0_100.root",
               "out/argv_check.json", "out/messenger_check.json", "out/Messenger_pg.xml", "out/revision_start.json",
-              "out/revision_end.json",
+              "out/revision_end.json", "out/revision_compare.json", "out/node_check.json",
               "out/prep/config-pg.json", "out/prep/f1-prep-SHA256SUMS", f"out/prep/ratios/{RUNG}/ratios.json",
               "run/queue.txt", "run/truths.txt", "run/deploy-status-before.txt", "run/deploy-status-setup.txt",
               "run/deploy-status-after.txt") + CHECKS:
         add(p)
     for lg in ("queue", "flux_and_splines", "xargs", "flux_check", "prep", "products", "sums", "trace_check",
                "tool_check_strace", "members_check", "dbconfig_check", "inventory", "env-q", "env-a1", "env-fc",
-               "env-p", "env-w", "env-i", "env-l", "reduce_check", "coverage", "revision", "publish"):
+               "env-p", "env-w", "env-i", "env-l", "reduce_check", "coverage", "revision", "publish", "node"):
         add(f"out/logs/{lg}.log")
     return req
 
@@ -189,8 +198,8 @@ def cmd_products(a):
             ok = False
         rec["checks"][c] = ok
     # per tune: exe, the reduce, graphs and coverage traces, reduce and coverage checks, and each task's gevgen and gntpc
-    # traces; once: the argv, the messenger and the revision at the start and the end
-    if len(checks) != len(CHECKS) + (1 + len(U1)) * (6 + 2 * N_TASKS) + 4 or not all(rec["checks"].values()):
+    # traces; once: the argv, the messenger, the revision at the start and the end, and their comparison
+    if len(checks) != len(CHECKS) + (1 + len(U1)) * (6 + 2 * N_TASKS) + 5 or not all(rec["checks"].values()):
         raise Refusal("a verification step did not pass, or is missing")
     out.write_text(json.dumps(rec, indent=1) + "\n")
     print(f"[pg_lib] products: {len(rec['products'])} truths")
@@ -207,56 +216,241 @@ SEED_BEARING = ("seeds.json", "run/queue.txt", "out/PG-SHA256SUMS", "out/work/u*
                 "out/work/u*/t*/task.log", "out/work/u*/t*/task.time", "out/work/u*/t*/gevgen.status",
                 "out/work/u*/t*/gntp.ghep.root", "out/logs/*")
 PUBLISH_SUMS = "out/PG-PUBLISH-SHA256SUMS"
+LEAK_SCAN = "out/leak_scan.json"
 
 
 def seed_forms(seed):
-    """The byte strings a seed is searched as: decimal (any zero-padding contains it) and hex in both cases."""
-    return sorted({str(seed).encode(), format(seed, "x").encode(), format(seed, "X").encode()})
+    """The byte strings whose presence STOPs a publication: decimal (any zero-padding contains it), hex in both cases,
+    and the 8-byte integer in both byte orders (a chance match is about 28 B / 2**64: none)."""
+    return sorted({str(seed).encode(), format(seed, "x").encode(), format(seed, "X").encode(),
+                   struct.pack(">q", seed), struct.pack("<q", seed)})
+
+
+def seed_int32_forms(seed):
+    """The 4-byte forms, only counted (cov2d, the director): 28 patterns match random bytes about 28 B / 2**32 times,
+    and a big-endian seed near 1.0e9 reads as a float32 in the dense kinematic range, so a hit is no evidence."""
+    return sorted({struct.pack(">i", seed), struct.pack("<i", seed)})
+
+
+# ROOT files: every object a TKey stores compressed is inflated and scanned too. The keys are walked from fBEGIN to
+# fEND (a negative length is a free gap); a compressed object is a run of blocks, each a 9-byte header (a 2-byte
+# codec, the method, 3-byte little-endian compressed and uncompressed sizes) then its bytes. Any other codec, a missing
+# codec module, or a record that does not parse is a STOP: an unread object could hold a seed.
+
+def _codec(tag, body, usize):
+    import lzma
+    import zlib
+    try:
+        if tag == b"ZL":
+            return zlib.decompress(body)
+        if tag == b"XZ":
+            return lzma.decompress(body)
+        if tag == b"L4":
+            try:
+                import lz4.block
+            except ImportError:
+                raise Refusal("root-codec-unavailable: an LZ4 block and no lz4 module")
+            return lz4.block.decompress(body[8:], uncompressed_size=usize)      # an 8-byte checksum first
+        if tag == b"ZS":
+            try:
+                import zstandard
+            except ImportError:
+                raise Refusal("root-codec-unavailable: a ZSTD block and no zstandard module")
+            return zstandard.ZstdDecompressor().decompress(body, max_output_size=usize)
+    except Refusal:
+        raise
+    except Exception as e:
+        raise Refusal(f"root-block: a {tag.decode('latin-1')!r} block does not inflate ({type(e).__name__})")
+    raise Refusal(f"root-codec: a block in codec {tag.decode('latin-1')!r}, which this scan does not read")
+
+
+def _tstring(buf, o):
+    n = buf[o]
+    o += 1
+    if n == 255:
+        n = struct.unpack(">i", buf[o:o + 4])[0]
+        o += 4
+    return bytes(buf[o:o + n]).decode("latin-1"), o + n
+
+
+def root_keys(path):
+    """Yield (class, name, title, the object's bytes (inflated, or as stored), the codecs inflated: [] if stored)."""
+    with open(path, "rb") as fh:
+        size = os.fstat(fh.fileno()).st_size
+        if size < 20:
+            raise Refusal("root-header: too short for a ROOT file")
+        buf = mmap.mmap(fh.fileno(), 0, access=mmap.ACCESS_READ)
+        try:
+            if buf[:4] != b"root":
+                raise Refusal("root-header: not a ROOT file")
+            version, begin = struct.unpack(">ii", buf[4:12])
+            end = struct.unpack(">q" if version >= 1000000 else ">i", buf[12:20 if version >= 1000000 else 16])[0]
+            if not (0 < begin <= end <= size):
+                raise Refusal("root-header: its key range is outside the file")
+            pos = begin
+            while pos < end:
+                if pos + 4 > size:
+                    raise Refusal("root-key: a key runs past the file")
+                nbytes = struct.unpack(">i", buf[pos:pos + 4])[0]
+                if nbytes < 0:
+                    pos -= nbytes
+                    continue
+                if nbytes < 18 or pos + nbytes > size:
+                    raise Refusal("root-key: a key's length is impossible")
+                kv, objlen, _, keylen, _ = struct.unpack(">hiIhh", buf[pos + 4:pos + 18])
+                o = pos + 18 + (16 if kv > 1000 else 8)
+                cls, o = _tstring(buf, o)
+                name, o = _tstring(buf, o)
+                title, o = _tstring(buf, o)
+                if not (o - pos <= keylen <= nbytes) or objlen < 0:
+                    raise Refusal("root-key: a key header does not parse")
+                data, codecs = buf[pos + keylen:pos + nbytes], []
+                obj = bytes(data)
+                if objlen > len(data):                        # compressed: inflate every block
+                    parts, q, n = [], 0, 0
+                    while n < objlen:
+                        if q + 9 > len(data):
+                            raise Refusal("root-block: an object's blocks end early")
+                        tag = bytes(data[q:q + 2])
+                        csize = int.from_bytes(data[q + 3:q + 6], "little")
+                        usize = int.from_bytes(data[q + 6:q + 9], "little")
+                        if q + 9 + csize > len(data):
+                            raise Refusal("root-block: a block runs past its key")
+                        x = _codec(tag, bytes(data[q + 9:q + 9 + csize]), usize)
+                        if len(x) != usize:
+                            raise Refusal("root-block: a block inflates to the wrong size")
+                        parts.append(x)
+                        codecs.append(tag.decode("latin-1"))
+                        n += usize
+                        q += 9 + csize
+                    if n != objlen:
+                        raise Refusal("root-block: an object inflates to the wrong size")
+                    obj = b"".join(parts)
+                yield cls, name, title, obj, codecs
+                pos += nbytes
+        finally:
+            buf.close()
+
+
+def root_schema(path):
+    """{keys: sorted [class, name, title] without the file's own records, streamer_sha256}: what B3's gst fixes."""
+    keys, streamer = set(), None
+    for cls, name, title, obj, _ in root_keys(path):
+        if cls == "TFile":
+            continue
+        keys.add((cls, name, title))
+        if cls == "TList" and name == "StreamerInfo":
+            streamer = hashlib.sha256(obj).hexdigest()
+    return {"keys": [list(k) for k in sorted(keys)], "streamer_sha256": streamer}
+
+
+def schema_problems(workdir, files, schemas):
+    """[problems]: every outgoing gst has B3's gst schema (its trees, branches and streamer info), which must be set."""
+    probs = []
+    for rel in files:
+        if not rel.endswith(".gst.root"):
+            continue
+        want = (schemas or {}).get("gst")
+        if not want:
+            return ["root-schema-unset: no gst schema is recorded from B3"]
+        if root_schema(os.path.join(workdir, rel)) != want:
+            probs.append(f"root-schema: {rel} differs from B3's gst")
+    return probs
 
 
 def seed_bearing(rel):
     return any(fnmatch.fnmatchcase(rel, g) for g in SEED_BEARING)
 
 
-def leak_hits(workdir, files, seeds):
-    """[(relpath, where)]: each outgoing file whose path or bytes hold any form of any seed. Never prints a seed."""
+def _count(buf, forms):
+    return sum(buf.count(f) for f in forms)
+
+
+def leak_scan(workdir, files, seeds):
+    """([(relpath, where)], stats): each outgoing file whose path, bytes, or a ROOT object's inflated bytes hold a
+    STOP form of any seed; stats count the int32 forms against their chance expectation. Never prints a seed."""
     forms = [f for s in seeds for f in seed_forms(s)]
-    width = max(len(f) for f in forms)
-    hits = []
+    f32 = [f for s in seeds for f in seed_int32_forms(s)]
+    width = max(len(f) for f in forms + f32)
+    hits, stats = [], {"files": len(files), "bytes_raw": 0, "bytes_inflated": 0, "int32_count": 0, "codecs": {}}
     for rel in files:
         if any(f in rel.encode() for f in forms):
             hits.append((None, "path"))                    # the path itself is not repeated
             continue
-        with open(os.path.join(workdir, rel), "rb") as fh:
+        p, hit = os.path.join(workdir, rel), None
+        with open(p, "rb") as fh:
             tail = b""
             for chunk in iter(lambda: fh.read(1 << 20), b""):
                 buf = tail + chunk
-                if any(f in buf for f in forms):
-                    hits.append((rel, "bytes"))
-                    break
+                stats["bytes_raw"] += len(chunk)
+                stats["int32_count"] += _count(buf, f32) - _count(tail, f32)
+                if hit is None and any(f in buf for f in forms):
+                    hit = "bytes"
                 tail = buf[-(width - 1):]
-    return hits
+        if hit is None and rel.endswith(".root"):
+            for _, _, _, obj, codecs in root_keys(p):
+                for c in codecs:
+                    stats["codecs"][c] = stats["codecs"].get(c, 0) + 1
+                if not codecs:
+                    continue                                   # stored: its bytes were scanned raw
+                stats["bytes_inflated"] += len(obj)
+                stats["int32_count"] += _count(obj, f32)
+                if any(f in obj for f in forms):
+                    hit = "inflated"
+                    break
+        if hit:
+            hits.append((rel, hit))
+    stats["int32_patterns"] = len(f32)
+    stats["int32_expected"] = len(f32) * (stats["bytes_raw"] + stats["bytes_inflated"]) / 2 ** 32
+    return hits, stats
+
+
+def leak_hits(workdir, files, seeds):
+    return leak_scan(workdir, files, seeds)[0]
+
+
+def export_allowlist(tunes=None):
+    """The globs that may leave W: the inventory's patterns, less the seed-bearing (fnmatchcase, '*' crossing '/')."""
+    return [r["pattern"] for r in inventory(tunes)
+            if r["pattern"] not in (PUBLISH_SUMS, LEAK_SCAN) and not seed_bearing(r["pattern"])]
 
 
 def cmd_publish(a):
+    """The outgoing set is exactly the files the allowlist names (any other file outside W/tmp, seed-bearing ones
+    aside, is a STOP); each is scanned, the scan's counts are written and scanned, then the sums, and they too."""
     w = Path(a.workdir)
     out = w / PUBLISH_SUMS
-    if out.exists():
+    if out.exists() or (w / LEAK_SCAN).exists():
         raise Refusal("the publish sums already exist")
     seeds = [s for _, _, ss in load_seeds(a.seeds) for s in ss]
-    files = []
+    allow = export_allowlist()
+    files, unlisted = [], 0
     for d, dirs, names in os.walk(w, followlinks=False):
         for x in names:
             q = os.path.join(d, x)
             rel = os.path.relpath(q, w)
             if os.path.islink(q) or not os.path.isfile(q):
                 raise Refusal("a link or special file in W")
-            if not seed_bearing(rel) and rel != PUBLISH_SUMS:
+            if seed_bearing(rel) or rel.startswith("tmp/"):
+                continue
+            if any(fnmatch.fnmatchcase(rel, g) for g in allow):
                 files.append(rel)
-    hits = leak_hits(w, sorted(files), seeds)
+            else:
+                unlisted += 1
+    if unlisted:
+        raise Refusal(f"{unlisted} unlisted files in W: the export allowlist does not name them")
+    files.sort()
+    hits, stats = leak_scan(w, files, seeds)
     if hits:
         raise Refusal(f"leak scan: {len(hits)} outgoing files hold a seed ({sum(1 for r, _ in hits if r is None)} "
                       f"in their path)")
+    probs = schema_problems(w, files, json.load(open(a.schemas)))
+    if probs:
+        raise Refusal(f"{probs[0].split(':')[0]}: {len(probs)} gst files differ from B3's schema or it is unset")
+    (w / LEAK_SCAN).write_text(json.dumps(dict(stats, schema="covfix-pg-leak-scan/1"), indent=1, sort_keys=True) + "\n")
+    files.append(LEAK_SCAN)
+    if leak_scan(w, [LEAK_SCAN], seeds)[0]:
+        raise Refusal("leak scan: the scan's own record holds a seed")
     lines = []
     for rel in sorted(files):
         h = hashlib.sha256()
@@ -265,7 +459,20 @@ def cmd_publish(a):
                 h.update(b)
         lines.append(f"{h.hexdigest()}  {rel}\n")
     out.write_text("".join(lines))
+    if leak_scan(w, [PUBLISH_SUMS], seeds)[0]:
+        out.unlink()
+        raise Refusal("leak scan: the publish sums hold a seed (a hash contains one); nothing is published")
     print(f"[pg_lib] publish: {len(files)} files scanned clean; {PUBLISH_SUMS} written")
+    return 0
+
+
+def cmd_leak_scan(a):
+    """B3's positive control: one file's STOP-form hits and int32 count for a public seed (never a sealed one)."""
+    hits, stats = leak_scan(os.path.dirname(a.file) or ".", [os.path.basename(a.file)], [a.seed])
+    out = dict(stats, holds_seed=bool(hits), where=[x for _, x in hits])
+    if a.schema:
+        out["schema"] = root_schema(a.file)
+    print(json.dumps(out, sort_keys=True))
     return 0
 
 
@@ -283,10 +490,17 @@ def main(argv=None):
     b = sub.add_parser("publish")
     b.add_argument("--workdir", required=True)
     b.add_argument("--seeds", required=True)
+    b.add_argument("--schemas", required=True)
+    s = sub.add_parser("leak-scan")
+    s.add_argument("--file", required=True)
+    s.add_argument("--seed", type=int, required=True)
+    s.add_argument("--schema", action="store_true")
     a = ap.parse_args(argv)
+    if a.cmd == "leak-scan" and a.seed != 123456789:
+        ap.error("leak-scan takes only the public seed")
     try:
         return {"queue": cmd_queue, "products": cmd_products, "inventory": cmd_inventory,
-                "publish": cmd_publish}[a.cmd](a)
+                "publish": cmd_publish, "leak-scan": cmd_leak_scan}[a.cmd](a)
     except Refusal as e:
         print(f"[pg_lib] refusing: {e}", file=sys.stderr)
         return 2

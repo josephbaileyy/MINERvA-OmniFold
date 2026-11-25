@@ -1,0 +1,1 @@
+{"_comment": "The gst schema every published gst must match (pg_lib.root_schema: keys less the TFile records, and the StreamerInfo sha256). Null until B3's replay.json gst_schema is recorded here after the director's confirm; pg_generate.sh refuses until then.", "gst": null}

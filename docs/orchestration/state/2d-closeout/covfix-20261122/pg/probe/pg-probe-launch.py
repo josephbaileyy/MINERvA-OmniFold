@@ -116,6 +116,10 @@ def receipt_problems(rec, rc, pins):
             p.append(f"{section}.{kind} incomplete or not matching")
         elif not all(got[k].get(field) == want_[k] for k in want_):          # the values, not the node's claim
             p.append(f"{section}.{kind}: a reported {field} differs from the pin")
+    pm = rec.get("proc_mount")
+    if not (isinstance(pm, dict) and sorted(pm) == ["hidepid", "options"] and isinstance(pm.get("options"), str)
+            and isinstance(pm.get("hidepid"), str)):
+        p.append("proc_mount is not recorded")                         # C3: the boundary the director accepted
     q = _get(rec, "xsec", "qualifiers")
     if not isinstance(q, list) or not all(x + "/" in q for x in pins.get("required_qualifiers", [])):
         p.append("required qualifiers")

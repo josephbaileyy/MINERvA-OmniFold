@@ -768,6 +768,13 @@ class Probe(Tmp):
         self.assertEqual(r["verdict"], "GO", r["stops"])
         self.assertEqual(r["schema"], "covfix-pg-probe/4")
 
+    def test_the_probe_records_procs_mount(self):
+        s = Stub(self.tmp)
+        s.mounts += "proc /proc proc rw,nosuid,hidepid=invisible 0 0\n"
+        r = self.run_probe(s)
+        self.assertEqual(r["verdict"], "GO", r["stops"])
+        self.assertEqual(r["proc_mount"], {"options": "rw,nosuid,hidepid=invisible", "hidepid": "invisible"})
+
     def test_identity_failure_reads_nothing(self):
         called = []
         s = Stub(self.tmp)
@@ -876,7 +883,7 @@ class Launcher(Tmp):
         rec = {"schema": P.SCHEMA, "verdict": "GO", "stops": [], "identity": {"pass": True},
                "pins_sha256": sha(json.dumps(pins, sort_keys=True).encode()), "record_sha256": pins["record_sha256"],
                "repo": {"pass": True, "xattrs": {"user.fqrn": "larsoft.opensciencegrid.org"}},
-               "mount_control": {"pass": True},
+               "mount_control": {"pass": True}, "proc_mount": {"options": "rw,nosuid", "hidepid": "0"},
                "genie": {"problems": [], "files": {k: {"sha256": v, "match": True} for k, v in pins["genie_files"].items()},
                          "links": {k: {"target": v, "match": True} for k, v in pins["genie_links"].items()},
                          "listings": {k: {"names": v, "match": True} for k, v in pins["genie_listings"].items()}},
@@ -924,6 +931,8 @@ class Launcher(Tmp):
                  edit(lambda r: r.update(record_sha256="0" * 64)),
                  edit(lambda r: r["repo"]["xattrs"].update({"user.fqrn": "x"})),
                  edit(lambda r: r["mount_control"].update({"pass": False})),
+                 edit(lambda r: r.pop("proc_mount")),                               # C3: /proc's options recorded
+                 edit(lambda r: r["proc_mount"].update({"options": None})),
                  edit(lambda r: r["genie"]["files"].pop(first)),
                  edit(lambda r: r["genie"]["files"][first].update(match=False)),
                  edit(lambda r: r["genie"]["files"].update({"extra": {"match": True}})),
@@ -981,6 +990,41 @@ class Launcher(Tmp):
         self.assertEqual(rc, 3)
         self.assertEqual(sha((self.t / "stdin").read_bytes()), self.sha)
         self.assertIn(f"{sha(moved.read_bytes())}  {self.out}", self.printed)
+
+
+class ProbeRound4(Tmp):
+    """Round 4: an RPM dump that fails, or omits an owned file, is not a first use (C15); the probe's trace checks
+    carry pg_verify's completeness codes (C16); /proc's mount options are recorded (C3)."""
+
+    def tool(self):
+        a = Path(self.tmp) / "tool"
+        a.write_text("#!/bin/sh\n")
+        return str(a)
+
+    def test_a_failed_or_partial_rpm_dump_is_not_a_first_use(self):
+        a = self.tool()
+        for name, dump in (("failed", lambda: (1, "error: dump\n")), ("without the file", lambda: (0, "/other 1 0 x\n")),
+                           ("failed after listing the file", lambda: (1, f"{a} 1 0 {'e' * 64}\nerror: dump\n"))):
+            with self.subTest(name):
+                run = lambda args: (0, "strace-5\n") if args[0] == "-qf" else dump() if args[1:2] == ["--dump"] else (0, "")
+                fds, rec = P.open_tools({"strace": (a,)}, run)
+                self.addCleanup(lambda f=fds: [os.close(fd) for fd in f.values()])
+                self.assertEqual((rec["strace"]["rpm_status"], rec["strace"]["problem"]),
+                                 ("query-failed", "the RPM query failed"))
+
+    def test_trace_completeness_codes(self):
+        codes = lambda t: {p.split(":")[0] for p in P.trace_complete(t, 0)}
+        self.assertEqual(codes('9 openat(AT_FDCWD, "/x", O_RDONLY) = 3\n9 +++ exited with 0 +++\n'), set())
+        self.assertIn("resume-mismatch", codes('9 openat(AT_FDCWD, "/x", O_RDONLY <unfinished ...>\n'
+                                               '9 <... stat resumed>) = 0\n9 +++ exited with 0 +++\n'))
+        self.assertIn("no-terminal", codes('9 openat(AT_FDCWD, "/x", O_RDONLY) = 3\n10 access("/y", F_OK) = 0\n'
+                                           '9 +++ exited with 0 +++\n'))
+
+    def test_the_proc_mount_is_recorded(self):
+        self.assertEqual(P.proc_mount("proc /proc proc rw,nosuid,hidepid=invisible 0 0\n/dev/x / ext4 rw 0 0\n"),
+                         {"options": "rw,nosuid,hidepid=invisible", "hidepid": "invisible"})
+        self.assertEqual(P.proc_mount("proc /proc proc rw,nosuid 0 0\n"), {"options": "rw,nosuid", "hidepid": "0"})
+        self.assertEqual(P.proc_mount(""), {"options": None, "hidepid": None})
 
 
 if __name__ == "__main__":

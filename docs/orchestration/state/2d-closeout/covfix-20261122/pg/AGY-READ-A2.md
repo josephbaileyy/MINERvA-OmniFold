@@ -111,7 +111,7 @@ mutant covers the clause.
 | agy 13 | B2 created a directory before refusing off scratch | every existing ancestor checked before any mkdir; nothing is written |
 | agy 15, codex 15 | weak types; keys by count only; gated unchecked in the launcher | one exact, typed schema shared by B3's node script and the launcher (a test keeps them equal) |
 | agy 8, codex 16 | genie root's own device; reported values not compared; RPM failure = absent | `genie-mount`; the launcher compares hashes, targets and listings with the pins; `rpm_status` recorded / not-owned / query-failed |
-| agy 14, 19, codex 18 | FAIL+ERROR counted as KILLED; untested wrappers and codes | FAIL with any ERROR is INVALID; each CLI's crash is `internal-error: <type>`, tested; refusal tests assert codes |
+| agy 14, 19, codex 18 | FAIL+ERROR counted as KILLED; untested wrappers and codes | first ruled "FAIL with any ERROR is INVALID"; the director's 2026-11-25 ruling replaced it (mutrun.RULE: import or collection errors INVALID, else a FAIL or ERROR with a non-zero exit kills); each CLI's crash is `internal-error: <type>`, tested; refusal tests assert codes |
 | agy 16 | ignored files in the deploy | D8 |
 | agy 17 | a missing or non-directory .upsfiles in check_tree | `upsfiles:` problems, checked before listing |
 | agy 18 | octal escapes took 8 and 9 | only 0–7 |
@@ -165,3 +165,9 @@ That one is for cov2d and the director.
   - GXMLPATH being exactly the data directory;
   - the coverage log's lines.
   B3 STOPs on any surprise, and the director gets the inventory before any rule changes.
+
+## Round 4
+
+The codex-school and Sonnet 5.5 delta reads of 12604016, their dispositions and the director's rulings are in
+`delta-read-r4/DISPOSITIONS.md` and `RULINGS-A2.md` (round 4).
+

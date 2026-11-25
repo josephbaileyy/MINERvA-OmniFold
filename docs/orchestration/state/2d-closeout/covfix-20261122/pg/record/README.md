@@ -34,6 +34,12 @@ publisher's. The independent anchors are the two spent tunes: their SciSoft spli
 The product's UPS version file declares `PROD_DIR = genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000`, relative to
 its database, so it sets up from a private `PRODUCTS` directory.
 
+## root-schemas.json
+
+`root-schemas.json` holds the gst schema every published gst must match: its keys (class, name, title, less the
+file's own records) and its StreamerInfo's sha256. It is `null` until B3's replay records the schema of its 100-event
+gst (`replay.json` `gst_schema`) and the director confirms it. Until then `pg_generate.sh` refuses before any step.
+
 ## Reproducing
 
 ```

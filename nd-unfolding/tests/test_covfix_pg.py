@@ -143,11 +143,12 @@ class Seeds(unittest.TestCase):
                                         for t in PG_TUNES] + [f"out/work/u{u}/t{k}/{n}.json" for u in (0, 1)
                                                               for k in range(7) for n in ("trace_check", "trace_check_gntpc")] + [
             f"out/{c}_{t}.json" for c in ("exe_check", "reduce_check", "coverage_check") for t in PG_TUNES] + [
-            "out/argv_check.json", "out/messenger_check.json", "out/revision_start.json", "out/revision_end.json"]
+            "out/argv_check.json", "out/messenger_check.json", "out/revision_start.json", "out/revision_end.json",
+            "out/revision_compare.json"]
         for c in checks:
             (self.tmp / c).parent.mkdir(parents=True, exist_ok=True)
             (self.tmp / c).write_text('{"check": "x", "pass": true}\n' if "trace" not in c else '{\n "pass": true\n}\n')
-        self.assertEqual(len(checks), 3 + 2 * (6 + 14) + 4)
+        self.assertEqual(len(checks), 3 + 2 * (6 + 14) + 5)
         for broken in ('{"pass": false}\n', "not json\n"):          # a failed or unreadable check refuses
             (self.tmp / checks[5]).write_text(broken)
             self.assertEqual(quiet(pg_lib.main, argv)[0], 2)
@@ -156,7 +157,7 @@ class Seeds(unittest.TestCase):
         (self.tmp / checks[5]).write_text('{\n "pass": true\n}\n')
         self.assertEqual(quiet(pg_lib.main, argv)[0], 0)
         rec = json.loads((self.tmp / "PRODUCTS.json").read_text())
-        self.assertEqual(len(rec["checks"]), 47)
+        self.assertEqual(len(rec["checks"]), 48)
         self.assertTrue(all(rec["checks"].values()))
         self.assertEqual([(p["u"], p["truth"], p["bridged"]) for p in rec["products"]],
                          [(0, "genie_v3_g21", "out/prep/bridged/genie_v3_g21.json"),
@@ -313,18 +314,21 @@ echo "run_gevgen_v3 $*" >> "$PG_STUB_LOG"
 echo "trace-env $1 fd=${PG_STRACE_FD:-} dir=${PG_TRACE_DIR:+set}" >> "$PG_STUB_LOG"
 case "$1" in
   reduce) mkdir -p "$3"; echo s > "$3/$2_CH.xml.gz"; echo t > "$PG_TRACE_DIR/reduce_$2.trace" ;;
-  graphs) echo g > "$4"; echo l > "${4%.root}.log"; echo t > "$PG_TRACE_DIR/graphs_$2.trace" ;;
+  graphs) cp "$PG_STUB_ROOT" "$4"; echo l > "${4%.root}.log"; echo t > "$PG_TRACE_DIR/graphs_$2.trace" ;;
   genie) mkdir -p "$6"; cd "$6"; echo "[v3] genie $2 N=$4 seed=$5"; echo l > gevgen.log; echo l > gntpc.log
          echo t > "$PG_TRACE_DIR/gevgen.trace"; echo t > "$PG_TRACE_DIR/gntpc.trace"
          echo st > "genie-mcjob-$5.status"
          [ -z "$PG_STUB_LEAK" ] || echo x > "leak-$5.txt"
          [ -z "$PG_STUB_ORPHAN" ] || [ "$5" != "${PG_STUB_ORPHAN}" ] || { ( sleep 60 & echo $! > "$PG_STUB_ORPHAN_PID" ) ; }
+         [ -z "$PG_STUB_ORPHAN_CD" ] || [ "$5" != "$PG_STUB_ORPHAN_CD" ] || { ( cd / && exec sleep 60 ) & echo $! > "$PG_STUB_ORPHAN_PID"; }
          [ -n "$PG_STUB_SLOW" ] && { sleep "$PG_STUB_SLOW"; [ -z "$PG_STUB_MARK" ] || echo late >> "$PG_STUB_MARK"; }
          [ "$5" = "${PG_STUB_FAIL_SEED:-none}" ] && { echo ghep > "gntp.$5.ghep.root"; exit 1; }
-         [ "$5" = "${PG_STUB_NOGST_SEED:-none}" ] || echo gst > genie_v3.gst.root
-         echo f > input-flux.root ;;
+         [ "$5" = "${PG_STUB_NOGST_SEED:-none}" ] || cp "$PG_STUB_GST" genie_v3.gst.root
+         [ -z "$PG_STUB_UNREADABLE" ] || chmod 000 genie_v3.gst.root
+         cp "$PG_STUB_ROOT" input-flux.root
+         [ "$5" != "${PG_STUB_LOCK_SEED:-none}" ] || chmod 0555 . ;;
   coverage) mkdir -p "$4"; cd "$4"; echo "Need xsec spline for a" > gevgen.log; echo st > genie-mcjob-123456789.status
-         echo g > gntp.123456789.ghep.root; echo f > input-flux.root; echo t > "$PG_TRACE_DIR/coverage.trace"
+         cp "$PG_STUB_ROOT" gntp.123456789.ghep.root; cp "$PG_STUB_ROOT" input-flux.root; echo t > "$PG_TRACE_DIR/coverage.trace"
          [ -z "$PG_STUB_COVERAGE_EXTRA" ] || echo x > extra.root ;;
 esac
 '''
@@ -333,7 +337,7 @@ log = open(os.environ["PG_STUB_LOG"], "a"); log.write("gen5d_v3 " + " ".join(sys
 log.write("TMPDIR " + os.environ.get("TMPDIR", "") + "\n")
 a = sys.argv[1:]
 def arg(k): return a[a.index(k) + 1]
-if a[0] == "make-flux": open(arg("--out"), "w").write("flux")
+if a[0] == "make-flux": open(arg("--out"), "wb").write(open(os.environ["PG_STUB_ROOT"], "rb").read())
 elif a[0] == "spline-check": open(arg("--out"), "w").write(json.dumps({"reduced": {"sha256": "r" * 64}}))
 elif a[0] == "flux-check": sys.exit(int(os.environ.get("PG_STUB_FLUXCHECK_RC", "0")))
 elif a[0] == "convert":
@@ -345,7 +349,10 @@ log = open(os.environ["PG_STUB_LOG"], "a"); log.write("pg_verify " + " ".join(sy
 a = sys.argv[1:]
 if a[0] == "trace-check":
     opened = "false" if os.environ.get("PG_STUB_NO_SPLINE") else "true"
-    open(a[a.index("--out") + 1], "w").write('{"pass": true, "initial_opened_spline": %s, "gated": []}' % opened)
+    prog = {"reduce": "awk", "graphs": "gspl2root", "gntpc": "gntpc"}.get(a[a.index("--role") + 1], "gevgen")
+    ex = '[{"path": "/b/%s", "real": "/b/%s", "sha256": "%s", "bound_by": "genie manifest"}]' % (prog, prog, "3" * 64)
+    open(a[a.index("--out") + 1], "w").write('{"pass": true, "initial_opened_spline": %s, "gated": [], "execs": %s}'
+                                             % (opened, ex))
 fail = os.environ.get("PG_STUB_VERIFY_FAIL")
 if fail and fail in " ".join(a):
     print('{"pass": false}'); sys.exit(1)
@@ -355,6 +362,11 @@ if a[0] == "revision":
     n = sum(1 for ln in open(os.environ["PG_STUB_LOG"]) if ln.startswith("pg_verify revision"))
     rev = "2" if os.environ.get("PG_STUB_REVISION_CHANGE") and n >= 2 else "1"
     print('{"pass": true, "revision": "%s", "root_hash": "h"}' % rev); sys.exit(0)
+if a[0] == "revision-compare":
+    import json as _j
+    st, en = (_j.load(open(a[a.index(k) + 1])) for k in ("--start", "--end"))
+    ok = st.get("revision") == en.get("revision")
+    print('{"pass": %s}' % ("true" if ok else "false")); sys.exit(0 if ok else 1)
 if a[0] == "host-check":
     n = 2 if os.environ.get("PG_STUB_TWO_HOST") else 3
     print('{"pass": true, "checks": {%s}}' % ", ".join('"h%d": true' % i for i in range(n))); sys.exit(0)
@@ -401,7 +413,7 @@ HADD = '''#!/bin/bash
 echo "hadd $*" >> "$PG_STUB_LOG"; o=$1; shift
 case "$o" in *"${PG_STUB_HADD_FAIL:-none}"*) exit 1 ;; esac
 case "$o" in *"${PG_STUB_HADD_SLOW:-none}"*) sleep 3; echo late > "$PG_STUB_MARK" ;; esac
-cat "$@" > "$o"
+cp "$1" "$o"     # one ROOT file stands in for the merge
 '''
 TIMEOUT = '''#!/bin/bash
 echo "timeout $1" >> "$PG_STUB_LOG"; shift; exec "$@"
@@ -437,6 +449,12 @@ class Generate(unittest.TestCase):
         (rec / "G2111a-members.json").write_text(json.dumps({"members": {"genie_xsec": {"type": "dir"}}}))
         for n in ("PG-RECORD.json", "genie-manifest.json"):
             (rec / n).write_text("{}")
+        self.gst_tpl, self.root_tpl = self.tmp / "tpl.gst.root", self.tmp / "tpl.root"   # real ROOT layouts
+        self.gst_tpl.write_bytes(root_file([_key("TFile", "genie_v3.gst.root", "", b"top", codec=None),
+                                            _key("TBasket", "iev", "gst", b"pad" * 40),
+                                            _key("TTree", "gst", "GENIE Summary Event Tree", b"tree" * 30)]))
+        self.root_tpl.write_bytes(root_file([_key("TH1D", "h", "flux", b"bins" * 30)]))
+        (rec / "root-schemas.json").write_text(json.dumps({"gst": pg_lib.root_schema(str(self.gst_tpl))}))
         (g / "run_gevgen_v3.sh").write_text(STUB_RUN)
         (g / "setup_genie_v3.sh").write_text('export PATH="$PG_STUB_BIN:$PATH"\n')
         (g / "gen5d_v3.py").write_text(STUB_V3)
@@ -461,13 +479,14 @@ class Generate(unittest.TestCase):
         self.pin = subprocess.run(git[:3] + ["rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
         self.W = self.tmp / "W"
         (self.W / "tmp").mkdir(parents=True)
+        (self.W / "tmp").chmod(0o700)
         (self.W / "seeds.json").write_text(json.dumps(seeds()))
         self.log = self.tmp / "stub.log"
 
     def run_gen(self, cwd=None, args=None, **env):
         e = {"PATH": f"/usr/bin:/bin:/usr/sbin:/sbin:{self.sysbin}", "HOME": str(self.tmp), "TMPDIR": str(self.W / "tmp"),
              "PG_DEPLOY_PIN": self.pin, "PG_STUB_LOG": str(self.log), "PG_STUB_BIN": str(self.bin),
-             "PG_STUB_DEPLOY": str(self.dep)}
+             "PG_STUB_DEPLOY": str(self.dep), "PG_STUB_GST": str(self.gst_tpl), "PG_STUB_ROOT": str(self.root_tpl)}
         e.update(env)
         argv = args if args is not None else ["--workdir", str(self.W), "--seeds", str(self.W / "seeds.json")]
         return subprocess.run(["bash", str(self.dep / "3d-unfolding/genie/pg_generate.sh")] + argv,
@@ -487,7 +506,7 @@ class Generate(unittest.TestCase):
         self.assertTrue(all(ln.endswith(" fd=9 dir=set") for ln in tenv), tenv)
         self.assertEqual(pg_lib.inventory_problems(str(self.W), pg_lib.inventory()), [])
         checks = json.loads((self.W / "PRODUCTS.json").read_text())["checks"]
-        self.assertEqual(len(checks), 3 + 2 * (6 + 2 * 7) + 4)
+        self.assertEqual(len(checks), 3 + 2 * (6 + 2 * 7) + 5)
         self.assertTrue(all(checks.values()))
         self.assertIn("[pg] generation: pass (14 gst)", out)
         log = self.log.read_text().splitlines()
@@ -510,7 +529,10 @@ class Generate(unittest.TestCase):
         ver = [ln.split() for ln in log if ln.startswith("pg_verify ")]
         self.assertEqual([v[1] for v in ver[:2]], ["tool-check", "revision"])     # the CVMFS revision right after strace
         self.assertEqual([v[1] for v in ver if v[1] == "revision"], ["revision", "revision"])   # and at the end
-        ver = [v for v in ver if v[1] != "revision"]
+        self.assertEqual([v[1] for v in ver if v[1] == "node-record"], ["node-record"])
+        rc_ = next(v for v in ver if v[1] == "revision-compare")                 # the end revision against the start,
+        self.assertEqual(sum(x == "--trace-check" for x in rc_), 2 * 7 * 2 + 3 * 2)   # with every trace check's files
+        ver = [v for v in ver if v[1] not in ("revision", "node-record", "revision-compare")]
         self.assertEqual([v[1] for v in ver[:5]], ["tool-check", "members-check", "tool-check", "exe-check", "exe-check"])
         for v in ver[3:5]:                                        # the programs as each tune's setup resolves them
             self.assertEqual([v[i + 1].rsplit("/", 1)[1] for i, x in enumerate(v) if x == "--path"], ["gevgen", "gspl2root"])
@@ -534,6 +556,11 @@ class Generate(unittest.TestCase):
         cov_i = [i for i, ln in enumerate(self.log.read_text().splitlines()) if "--role coverage" in ln]
         self.assertTrue(cov_i and max(cov_i) < first_gen_i)                      # coverage before any sealed seed
         for v in tc:                                                             # GXMLPATH and the system pins, always
+            role = v[v.index("--role") + 1]
+            self.assertEqual("--messenger" in v, role == "coverage")              # the messenger is pinned in the check
+            if role == "coverage":
+                self.assertTrue(v[v.index("--messenger") + 1].endswith("/out/Messenger_pg.xml"))
+            self.assertEqual("--output" in v, role == "graphs")
             self.assertIn("--gxmlpath", v)
             self.assertEqual(v[v.index("--system-pin") + 1], "/usr/bin/gawk=" + "a" * 64)
         first_gen = next(i for i, ln in enumerate(log) if ln.startswith("run_gevgen_v3 genie"))
@@ -576,7 +603,8 @@ class Generate(unittest.TestCase):
             self.assertFalse([n for n in names if str(s) in n], f"seed {s} in a file name")
         self.assertEqual(subprocess.run(["git", "-C", str(self.dep), "status", "--porcelain", "--ignored",
                                          "--untracked-files=all"], capture_output=True, text=True).stdout, "")
-        self.assertEqual(sorted(x.name for x in self.tmp.iterdir()), ["W", "bin", "deploy", "stub.log", "sysbin"])
+        self.assertEqual(sorted(x.name for x in self.tmp.iterdir()),                # the ROOT templates are the test's
+                         ["W", "bin", "deploy", "stub.log", "sysbin", "tpl.gst.root", "tpl.root"])
 
     def refused(self, p, rc=2):
         self.assertEqual(p.returncode, rc, p.stdout + p.stderr)
@@ -645,7 +673,8 @@ class Generate(unittest.TestCase):
         import time
         e = {"PATH": f"/usr/bin:/bin:/usr/sbin:/sbin:{self.sysbin}", "HOME": str(self.tmp),
              "TMPDIR": str(self.W / "tmp"), "PG_DEPLOY_PIN": self.pin, "PG_STUB_LOG": str(self.log),
-             "PG_STUB_BIN": str(self.bin), "PG_STUB_DEPLOY": str(self.dep), "PG_STUB_SLOW": "2"}
+             "PG_STUB_BIN": str(self.bin), "PG_STUB_DEPLOY": str(self.dep), "PG_STUB_SLOW": "2",
+             "PG_STUB_GST": str(self.gst_tpl), "PG_STUB_ROOT": str(self.root_tpl)}
         proc = subprocess.Popen(["bash", str(self.dep / "3d-unfolding/genie/pg_generate.sh"), "--workdir", str(self.W),
                                  "--seeds", str(self.W / "seeds.json")], cwd=self.W, env=e, stdin=subprocess.DEVNULL,
                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -667,7 +696,8 @@ class Generate(unittest.TestCase):
         mark = self.tmp / "late-marker"
         e = {"PATH": f"/usr/bin:/bin:/usr/sbin:/sbin:{self.sysbin}", "HOME": str(self.tmp),
              "TMPDIR": str(self.W / "tmp"), "PG_DEPLOY_PIN": self.pin, "PG_STUB_LOG": str(self.log),
-             "PG_STUB_BIN": str(self.bin), "PG_STUB_DEPLOY": str(self.dep), "PG_STUB_SLOW": "3", "PG_STUB_MARK": str(mark)}
+             "PG_STUB_BIN": str(self.bin), "PG_STUB_DEPLOY": str(self.dep), "PG_STUB_SLOW": "3", "PG_STUB_MARK": str(mark),
+             "PG_STUB_GST": str(self.gst_tpl), "PG_STUB_ROOT": str(self.root_tpl)}
         out = open(self.tmp / "term.out", "w")
         proc = subprocess.Popen(["bash", str(self.dep / "3d-unfolding/genie/pg_generate.sh"), "--workdir", str(self.W),
                                  "--seeds", str(self.W / "seeds.json")], cwd=self.W, env=e, stdin=subprocess.DEVNULL,
@@ -684,8 +714,8 @@ class Generate(unittest.TestCase):
         self.no_seed_in_any_name()
 
     def test_round3_stops(self):
-        for env, msg in (({"PG_STUB_REVISION_CHANGE": "1"}, "[pg] STOP: the CVMFS revision changed during the run"),
-                         ({"PG_STUB_COVERAGE_EXTRA": "1"}, "[pg] STOP: the coverage run's outputs"),
+        for env, msg in (({"PG_STUB_REVISION_CHANGE": "1"}, "[pg] STOP: the CVMFS revision changed and a file"),
+                         ({"PG_STUB_COVERAGE_EXTRA": "1"}, "[pg] STOP: the coverage run's outputs (G21_11a_00_000): unexpected extra.root"),
                          ({"PG_STUB_LEAK": "1"}, "[pg] STOP: the publish set and its leak scan")):
             with self.subTest(msg):
                 for d in ("out", "run", "PRODUCTS.json"):
@@ -730,6 +760,79 @@ class Generate(unittest.TestCase):
         p = self.run_gen(PG_DEPLOY_PIN=pin)
         self.assertEqual(p.returncode, 2)
         self.assertIn("pg_pins.json is not filled (R1)", p.stderr)
+
+    def test_round4_refusals(self):
+        for v in ("GXMLPATHS", "GALGCONF"):                                       # GENIE's other XML lookups
+            p = self.run_gen(**{v: "/evil"})
+            self.assertEqual((p.returncode, f"refusing: {v} is set" in p.stderr), (2, True), p.stderr)
+        t = self.W / "tmp"
+        t.chmod(0o755)
+        p = self.run_gen()
+        self.assertEqual((p.returncode, "W/tmp must be a real directory" in p.stderr), (2, True), p.stderr)
+        t.chmod(0o700)
+        t.rename(self.W / "tmp-real")
+        t.symlink_to(self.W / "tmp-real")
+        p = self.run_gen()
+        self.assertEqual((p.returncode, "W/tmp must be a real directory" in p.stderr), (2, True), p.stderr)
+        t.unlink()
+        (self.W / "tmp-real").rename(t)
+        gs = self.tmp / "gitstub"                                                 # git status itself fails: its Nth call
+        gs.mkdir()
+        (gs / "git").write_text('#!/bin/bash\ncase " $* " in *" status "*) n=$(( $(cat "$PG_GIT_N" 2>/dev/null || echo 0) + 1 ))\n'
+                                '  echo $n > "$PG_GIT_N"; [ "$n" != "$PG_GIT_FAIL_AT" ] || exit 128 ;; esac\n'
+                                'exec /usr/bin/git "$@"\n')
+        (gs / "git").chmod(0o755)
+        for at, rc, where in (("1", 2, "stderr"), ("2", 2, "stderr"), ("3", 1, "stdout")):   # the check, the record, setup
+            with self.subTest(at):
+                for d in ("out", "run"):
+                    shutil.rmtree(self.W / d, ignore_errors=True)
+                (self.tmp / "git.n").unlink(missing_ok=True)
+                p = self.run_gen(PATH=f"{gs}:/usr/bin:/bin:/usr/sbin:/sbin:{self.sysbin}", PG_GIT_FAIL_AT=at,
+                                 PG_GIT_N=str(self.tmp / "git.n"))
+                self.assertEqual((p.returncode, "git status failed" in getattr(p, where)), (rc, True), p.stdout + p.stderr)
+        for d in ("out", "run"):
+            shutil.rmtree(self.W / d, ignore_errors=True)
+        rec = self.dep / "docs/orchestration/state/2d-closeout/covfix-20261122/pg/record/root-schemas.json"
+        rec.write_text('{"gst": null}')
+        git = ["git", "-C", str(self.dep), "-c", "user.name=t", "-c", "user.email=t@t"]
+        subprocess.run(git + ["commit", "-qam", "unset"], check=True)
+        pin = subprocess.run(git[:3] + ["rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+        p = self.run_gen(PG_DEPLOY_PIN=pin)
+        self.assertEqual((p.returncode, "root-schemas.json has no gst schema" in p.stderr), (2, True), p.stderr)
+
+    def test_the_scan_spares_this_shells_parents(self):
+        script = self.dep / "3d-unfolding/genie/pg_generate.sh"
+        e = {"PATH": f"/usr/bin:/bin:/usr/sbin:/sbin:{self.sysbin}", "HOME": str(self.tmp), "TMPDIR": str(self.W / "tmp"),
+             "PG_DEPLOY_PIN": self.pin, "PG_STUB_LOG": str(self.log), "PG_STUB_BIN": str(self.bin),
+             "PG_STUB_DEPLOY": str(self.dep), "PG_STUB_GST": str(self.gst_tpl), "PG_STUB_ROOT": str(self.root_tpl),
+             "PG_STUB_VERIFY_FAIL": "members-check"}
+        p = subprocess.run(["bash", "-c", f'cd "{self.W}" && bash "{script}" --workdir "{self.W}" --seeds "{self.W}/seeds.json"'
+                            '; echo "parent alive $?"'], cwd=self.tmp, env=e, stdin=subprocess.DEVNULL,
+                           capture_output=True, text=True, timeout=120)
+        self.assertIn("parent alive 1", p.stdout, p.stdout + p.stderr)      # its cwd is W, and it is not killed
+
+    def test_an_orphan_that_left_w_is_killed_by_its_group(self):
+        import time
+        pidf = self.tmp / "orphan.pid"
+        p = self.run_gen(PG_STUB_ORPHAN_CD=str(seeds()["tunes"][0]["task_seeds"][2]), PG_STUB_ORPHAN_PID=str(pidf))
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        self.assertLess(p.stdout.index("outlived their trees"), p.stdout.index("the publish set and its leak scan: pass"))
+        pid = int(pidf.read_text())
+        time.sleep(0.5)
+        alive = subprocess.run(["ps", "-o", "stat=", "-p", str(pid)], capture_output=True, text=True).stdout.strip()
+        self.assertTrue(alive in ("",) or alive.startswith("Z"), f"orphan {pid} (cwd /) still running: {alive}")
+
+    def test_a_failed_rename_stops_without_a_path(self):
+        seed = seeds()["tunes"][0]["task_seeds"][3]
+        self.addCleanup(lambda: [os.chmod(d, 0o755) for d in self.W.rglob("t*") if d.is_dir()])
+        p = self.run_gen(PG_STUB_LOCK_SEED=str(seed))
+        self.assertEqual(p.returncode, 1, p.stdout + p.stderr)
+        out = p.stdout + p.stderr
+        self.assertIn("[pg] STOP: seedfree: a seed-named file could not be renamed", p.stdout)
+        self.assertIn("[pg] STOP: seedfree could not rename every seed-named file", p.stdout)     # the trap's own
+        self.assertNotIn(str(self.W), out)
+        for t_ in seeds()["tunes"]:
+            self.assertFalse(any(str(x) in out for x in t_["task_seeds"]))
 
     def test_an_orphaned_task_process_is_killed(self):
         import time
@@ -780,6 +883,8 @@ class Generate(unittest.TestCase):
         self.assertIn("[pg] STOP: the required inventory", p.stdout)
         self.assertIn("out/gen5d/genie_v3_g21_xsec5d.meta.json: 0 files, not 1",
                       (self.W / "out/logs/inventory.log").read_text())
+        self.assertFalse((self.W / "out/PG-PUBLISH-SHA256SUMS").exists())       # a STOP after publish withdraws it
+        self.assertFalse((self.W / "out/leak_scan.json").exists())
 
     def test_inventory_rules(self):
         req = pg_lib.inventory()
@@ -873,7 +978,8 @@ class Replay(unittest.TestCase):
 
     def run_replay(self, **env):
         e = {"PATH": f"/usr/bin:/bin:/usr/sbin:/sbin:{self.sysbin}", "HOME": str(self.tmp), "TMPDIR": str(self.W / "tmp"),
-             "PG_STUB_LOG": str(self.log), "PG_STUB_BIN": str(self.bin), "PG_STUB_DEPLOY": str(self.dep)}
+             "PG_STUB_LOG": str(self.log), "PG_STUB_BIN": str(self.bin), "PG_STUB_DEPLOY": str(self.dep),
+             "PG_STUB_GST": str(self.gst_tpl), "PG_STUB_ROOT": str(self.root_tpl)}
         e.update(env)
         return subprocess.run(["bash", str(self.dep / "3d-unfolding/genie/pg_replay.sh"), "--workdir", str(self.R)],
                               cwd=self.R, env=e, stdin=subprocess.DEVNULL, capture_output=True, text=True)
@@ -889,11 +995,13 @@ class Replay(unittest.TestCase):
         tenv = [ln for ln in log if ln.startswith("trace-env ")]
         self.assertEqual(len(tenv), 6)                        # reduce x2, graphs, coverage x2, genie: all on fd 9
         self.assertTrue(all(ln.endswith(" fd=9 dir=set") for ln in tenv))
-        roles = [ln.split("--role ")[1].split()[0] for ln in log if "trace-check" in ln]
+        roles = [ln.split("--role ")[1].split()[0] for ln in log if ln.startswith("pg_verify trace-check")]
         self.assertEqual(sorted(roles), ["coverage", "coverage", "gevgen", "gntpc", "graphs", "reduce", "reduce"])
+        rc_ = next(ln.split() for ln in log if ln.startswith("pg_verify revision-compare"))
+        self.assertEqual(sum(x == "--trace-check" for x in rc_), 7)                # every file the replay read
         order = [ln.split()[1] for ln in log if ln.startswith("run_gevgen_v3 ")]
         self.assertLess(order.index("coverage"), order.index("genie"))          # coverage before the gevgen
-        s2 = [ln for ln in log if "trace-check" in ln and "--tune G18_02a_00_000" in ln]
+        s2 = [ln for ln in log if ln.startswith("pg_verify trace-check") and "--tune G18_02a_00_000" in ln]
         x2 = "/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1802a00000-k250-e1000/data"
         self.assertEqual(len(s2), 2)                                            # slot 2's reduce and coverage
         self.assertIn(f"--spline {x2}/gxspl-NUsmall.xml --spline-sha256 {'c' * 64} ", s2[0])
@@ -902,9 +1010,15 @@ class Replay(unittest.TestCase):
             self.assertIn(f"--xsec-data {x2} ", ln)
         self.assertTrue(any(ln.startswith("pg_verify tool-check --fd 9 ") for ln in log))
         self.assertTrue(any(ln.startswith("pg_verify host-check --fd 9 ") for ln in log))
+        cov = [ln for ln in log if ln.startswith("pg_verify trace-check") and "--role coverage" in ln]
+        self.assertTrue(cov and all(f"--messenger {self.R}/Messenger_pg.xml" in ln for ln in cov))   # pinned in the check
+        self.assertTrue(all("--script" in ln and "--reduced" in ln for ln in log if ln.startswith("pg_verify coverage-log")))
         rec = json.loads((self.R / "replay.json").read_text())
         self.assertTrue(rec["pass"])
-        self.assertEqual(len(rec["checks"]), 21)
+        self.assertEqual(len(rec["checks"]), 22)
+        self.assertEqual(rec["gst_schema"], pg_lib.root_schema(str(self.gst_tpl)))        # the schema every gst must match
+        self.assertEqual(sorted(rec["revision"]), ["end", "start"])
+        self.assertEqual(rec["execs"]["trace_check_gntpc.json"][0]["path"], "/b/gntpc")
         self.assertEqual((len(rec["real_shapes"]), len(rec["host"])), (4, 3))
         self.assertEqual(len(rec["spline_opened"]), 6)
         gone = json.loads((self.R / "deleted.json").read_text())
@@ -915,6 +1029,15 @@ class Replay(unittest.TestCase):
                         ("coverage/G18_02a_00_000", (".root", ".status", ".log"))):    # t0's logs stay: a public seed
             self.assertEqual([q.name for q in (self.R / d).iterdir() if q.name.endswith(ends)], [])
         self.assertNotIn("123456789", json.dumps(gone))
+        g = gone["t0"]["genie_v3.gst.root"]                                    # C4's control: the gst decoded too
+        self.assertEqual((g["decoded"]["holds_seed"], g["schema"]), (False, rec["gst_schema"]))
+
+    def test_an_unreadable_event_file_is_still_deleted(self):
+        p = self.run_replay(PG_STUB_UNREADABLE="1")
+        self.assertEqual(p.returncode, 1, p.stdout)
+        self.assertIn("[replay] STOP: deleting the event and status files", p.stdout)
+        self.assertFalse((self.R / "work/t0/genie_v3.gst.root").exists())
+        self.assertEqual(json.loads((self.R / "deleted.json").read_text())["t0"]["genie_v3.gst.root"], {"error": "unreadable"})
 
     def test_a_stop_still_deletes_the_events(self):
         p = self.run_replay(PG_STUB_VERIFY_FAIL="--role gntpc")           # after the gevgen, before the record
@@ -984,6 +1107,14 @@ class Replay(unittest.TestCase):
                 p = self.run_replay(**{k: "1"})
                 self.assertEqual(p.returncode, 1, p.stdout)
                 self.assertIn("[replay] STOP: the replay rc=1", p.stdout)
+        empty = self.tmp / "empty.gst.root"
+        empty.write_bytes(root_file([]))                                     # decodes, but its schema has no keys
+        shutil.rmtree(self.R)
+        self.R.mkdir()
+        p = self.run_replay(PG_STUB_GST=str(empty))
+        self.assertEqual(p.returncode, 1, p.stdout)
+        self.assertIn("[replay] STOP: the replay rc=1", p.stdout)
+        self.assertEqual(json.loads((self.R / "replay.json").read_text())["gst_schema"], {"keys": [], "streamer_sha256": None})
 
     def test_shape_and_slot2_failures_stop(self):
         for fail, msg in (("--role reduce --tune G18_02a_00_000", "trace check (slot 2's reduce)"),
@@ -1054,3 +1185,177 @@ class Leak(unittest.TestCase):
                         ("out/work/u0/t3/trace_check.json", False), ("out/gen5d/genie_v3_g21_xsec5d.npz", False)):
             with self.subTest(rel):
                 self.assertEqual(pg_lib.seed_bearing(rel), sb)
+
+
+def _tstr(s):
+    b = s.encode()
+    return bytes([len(b)]) + b
+
+
+def _key(cls, name, title, obj, codec=b"ZL", split=1):
+    """One ROOT TKey record (key version 4): the object compressed in `split` blocks by codec, or stored if codec None."""
+    import lzma
+    import struct
+    import zlib
+    if codec is None:
+        data = obj
+    else:
+        parts, step, data = [], max(1, -(-len(obj) // split)), b""
+        for i in range(0, len(obj), step):
+            chunk = obj[i:i + step]
+            body = {b"XZ": lambda x: lzma.compress(x), b"L4": lambda x: b"\0" * 8 + zlib.compress(x, 9),
+                    b"ZS": lambda x: __import__("zstandard").ZstdCompressor().compress(x)}.get(
+                        codec, lambda x: zlib.compress(x, 9))(chunk)            # ZL, or any other tag's stand-in
+            data += codec + b"\x01" + len(body).to_bytes(3, "little") + len(chunk).to_bytes(3, "little") + body
+    names = _tstr(cls) + _tstr(name) + _tstr(title)
+    keylen = 4 + 2 + 4 + 4 + 2 + 2 + 4 + 4 + len(names)
+    head = struct.pack(">ihiIhhii", keylen + len(data), 4, len(obj), 0, keylen, 1, 0, 0) + names
+    return head + data
+
+
+def root_file(keys, gap=False):
+    """A ROOT file (version 62206, small): its header, then the keys from fBEGIN = 100, a free gap if asked, fEND."""
+    import struct
+    body = b"".join(keys)
+    if gap:
+        body = body[:0] + struct.pack(">i", -12) + b"\0" * 8 + body
+    begin = 100
+    end = begin + len(body)
+    head = b"root" + struct.pack(">iii", 62206, begin, end)
+    return head + b"\0" * (begin - len(head)) + body
+
+
+class Leak4(unittest.TestCase):
+    """Round 4 (C4, the director and cov2d): the export allowlist, the int64 and int32 forms, ROOT's compressed
+    objects inflated, an unknown codec a STOP, the gst schema against B3's, and the sums file scanned."""
+    SEED = 1_234_567_890
+
+    def setUp(self):
+        self.tmp = Path(os.path.realpath(tempfile.mkdtemp(prefix="pg-leak4-", dir="/tmp")))
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
+
+    def put(self, rel, data):
+        p = self.tmp / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(data)
+        return rel
+
+    def test_int64_stops_and_int32_is_only_counted(self):
+        import struct
+        a = self.put("out/a.bin", b"x" + struct.pack(">q", self.SEED) + b"y")
+        b = self.put("out/b.bin", b"x" + struct.pack("<q", self.SEED))
+        c = self.put("out/c.bin", b"x" + struct.pack(">i", self.SEED) + struct.pack("<i", self.SEED))
+        hits, stats = pg_lib.leak_scan(str(self.tmp), [a, b, c], [self.SEED])
+        self.assertEqual(sorted(r for r, _ in hits), [a, b])
+        self.assertEqual(stats["int32_count"], 4)                   # each int64 form holds an int32 one too
+        self.assertGreater(stats["int32_expected"], 0)
+
+    def test_root_objects_are_inflated_and_scanned(self):
+        seed = str(self.SEED).encode()
+        for codec in (b"ZL", b"XZ", b"ZS"):
+            with self.subTest(codec):
+                f = self.put(f"out/{codec.decode()}.root", root_file([
+                    _key("TFile", "x.root", "", b"top", codec=None),
+                    _key("TBasket", "iev", "gst", b"pad" * 50 + seed + b"pad" * 50, codec=codec, split=3)], gap=True))
+                hits, stats = pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])
+                if codec != b"ZS":                                            # zstd keeps short literals verbatim
+                    self.assertNotIn(seed, (self.tmp / f).read_bytes())        # only inflated bytes show it
+                    self.assertEqual(hits, [(f, "inflated")])
+                    self.assertEqual(stats["codecs"], {codec.decode(): 3})
+                else:
+                    self.assertEqual([r for r, _ in hits], [f])
+                    self.assertEqual(len(list(pg_lib.root_keys(str(self.tmp / f)))[1][4]), 3)
+        clean = self.put("out/clean.root", root_file([_key("TBasket", "iev", "gst", b"pad" * 100)]))
+        self.assertEqual(pg_lib.leak_scan(str(self.tmp), [clean], [self.SEED])[0], [])
+
+    def test_an_unknown_codec_or_a_broken_file_stops(self):
+        for name, data, code in (
+                ("codec", root_file([_key("TBasket", "iev", "gst", b"pad" * 100, codec=b"QQ")]), "root-codec"),
+                ("truncated", root_file([_key("TBasket", "iev", "gst", b"pad" * 100)])[:-7], "root-"),
+                ("header", b"notroot" + b"\0" * 100, "root-header")):
+            with self.subTest(name):
+                f = self.put(f"out/{name}.root", data)
+                with self.assertRaises(pg_lib.Refusal) as cm:
+                    pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])
+                self.assertTrue(str(cm.exception).startswith(code), str(cm.exception))
+
+    def test_a_missing_codec_module_stops(self):
+        f = self.put("out/l4.root", root_file([_key("TBasket", "iev", "gst", b"pad" * 100, codec=b"L4")]))
+        with mock.patch.dict(sys.modules, {"lz4": None, "lz4.block": None}), self.assertRaises(pg_lib.Refusal) as cm:
+            pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])
+        self.assertTrue(str(cm.exception).startswith("root-codec-unavailable"), str(cm.exception))
+
+    def gst(self, branches=("iev", "neu"), streamer=b"streamers v1"):
+        return root_file([_key("TFile", "genie_v3.gst.root", "", b"top", codec=None)]
+                         + [_key("TBasket", b, "gst", b"pad" * 40) for b in branches]
+                         + [_key("TTree", "gst", "GENIE Summary Event Tree", b"tree" * 30),
+                            _key("TList", "StreamerInfo", "Doubly linked list", streamer)])
+
+    def test_the_gst_schema(self):
+        f = self.put("out/work/u0/t0/genie_v3.gst.root", self.gst())
+        s = pg_lib.root_schema(str(self.tmp / f))
+        self.assertIn(["TTree", "gst", "GENIE Summary Event Tree"], s["keys"])
+        self.assertIn(["TBasket", "neu", "gst"], s["keys"])
+        self.assertFalse([k for k in s["keys"] if k[0] == "TFile"])            # the file's own name is not schema
+        g = self.put("out/gst/genie_v3_g21_ALL.gst.root", self.gst())
+        self.assertEqual(pg_lib.root_schema(str(self.tmp / g)), s)
+        self.assertEqual(pg_lib.schema_problems(str(self.tmp), [f, g], {"gst": s}), [])
+        for name, data in (("a new branch", self.gst(branches=("iev", "neu", "seed"))),
+                           ("other streamers", self.gst(streamer=b"streamers v2"))):
+            with self.subTest(name):
+                self.put(f, data)
+                self.assertEqual([p.split(":")[0] for p in pg_lib.schema_problems(str(self.tmp), [f], {"gst": s})],
+                                 ["root-schema"])
+        self.assertTrue(pg_lib.schema_problems(str(self.tmp), [f], {"gst": None})[0].startswith("root-schema-unset"))
+
+    def workdir(self, base=BASE, extra=(), name="W"):
+        w = self.tmp / name
+        (w / "out/logs").mkdir(parents=True)
+        (w / "seeds.json").write_text(json.dumps(seeds(base)))
+        (w / "out/argv_check.json").write_text('{"pass": true}\n')
+        (w / "out/logs/publish.log").write_text("log\n")                    # seed-bearing: kept in W, not listed
+        for rel in extra:
+            (w / rel).write_text("x\n")
+        return w
+
+    def publish(self, w, schema=None):
+        sp = self.tmp / "schemas.json"
+        sp.write_text(json.dumps(schema or {"gst": None}))
+        return quiet(pg_lib.main, ["publish", "--workdir", str(w), "--seeds", str(w / "seeds.json"),
+                                   "--schemas", str(sp)])
+
+    def test_publish_lists_only_the_allowlist(self):
+        w = self.workdir()
+        rc, out, err = self.publish(w)
+        self.assertEqual(rc, 0, err)
+        listed = [ln.split("  ", 1)[1] for ln in (w / pg_lib.PUBLISH_SUMS).read_text().splitlines()]
+        self.assertEqual(listed, ["out/argv_check.json", "out/leak_scan.json"])
+        scan = json.loads((w / "out/leak_scan.json").read_text())
+        self.assertEqual(scan["files"], 1)
+        self.assertNotIn(str(BASE), (w / "out/leak_scan.json").read_text())
+        w2 = self.workdir(extra=("out/extra.txt",), name="W2")
+        rc, out, err = self.publish(w2)
+        self.assertEqual(rc, 2)
+        self.assertIn("unlisted", err)
+        self.assertNotIn("extra.txt", err)                                   # a name in W could hold a seed
+        self.assertFalse((w2 / pg_lib.PUBLISH_SUMS).exists())
+
+    def test_an_allowlisted_file_holding_a_seed_is_refused(self):
+        w = self.workdir()
+        (w / "out/argv_check.json").write_text(json.dumps({"pass": True, "n": BASE + 3}) + "\n")
+        rc, out, err = self.publish(w)
+        self.assertEqual(rc, 2, err)
+        self.assertIn("leak scan: 1 outgoing files hold a seed", err)
+        self.assertNotIn(str(BASE + 3), err)
+        self.assertFalse((w / pg_lib.PUBLISH_SUMS).exists() or (w / pg_lib.LEAK_SCAN).exists())
+
+    def test_the_sums_file_is_scanned(self):
+        import hashlib as h
+        body = '{"pass": true}\n'
+        d = h.sha256(body.encode()).hexdigest()
+        base = next(int(d[i:i + 8], 16) for i in range(57) if 1_000_000_000 <= int(d[i:i + 8], 16) < 1_999_990_000)
+        w = self.workdir(base=base)
+        rc, out, err = self.publish(w)
+        self.assertEqual(rc, 2, err)
+        self.assertIn("the publish sums", err)
+        self.assertFalse((w / pg_lib.PUBLISH_SUMS).exists())
