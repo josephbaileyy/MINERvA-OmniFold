@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """(b) part 3: the 5D bias block C_b^5D and fluctuation block V_F^5D (B5D-DECLARATION.md rev 1, sha256 676c17fc...,
-with B5D-AMENDMENT-A1.md, sha256 caeb609c..., and B5D-AMENDMENT-A2.md, sha256 ffa63acc...).
+with B5D-AMENDMENT-A1.md, sha256 0be1c4c4..., and B5D-AMENDMENT-A2.md, sha256 7f120dc6...).
 
 Implements the declaration's §3-§5 with A1 and A2 exactly. Reuses, unchanged: B-SEL's input layer (bsel_select.check_pins/prepare for
 b, noise, R and the F0b/F1 tables), LL5D's naming, layout and digest (ll5d, ll5d_b), S1's matrix helpers (s1_assemble:
@@ -23,8 +23,8 @@ import numpy as np
 
 SCHEMA = "b5d-blocks/1"
 DECLARATION_SHA256 = "676c17fc5982a01c21f4c7feae2f6c8cd32b0b8ecdc69ec93882e5e30c0f0b1b"
-AMENDMENT_A1_SHA256 = "caeb609c8917d12f4d1e085673d866136d4cdb66c97cb469380012d93ce92239"
-AMENDMENT_A2_SHA256 = "ffa63accc146a02e31d5af8ccc058a73539d98f231b65576e2116bd4bcfc7d02"
+AMENDMENT_A1_SHA256 = "0be1c4c4b70483fc34c46362abea5f8786f82b5bf3d90e3f6a74d0f0fe81b9ef"
+AMENDMENT_A2_SHA256 = "7f120dc64c7f64b2843f545eb2d55e0f0cc657fc30a04a4eb282cbc4db32d602"
 B5D_DIR = "docs/orchestration/state/ben-b-20261124/blocks5d-20261124"
 N_CELLS = 16
 FAMILY = ("nominal", "A7_genie_mec", "A7_nuwro", "A7_gibuu")
@@ -269,9 +269,12 @@ def check_ll5d_pins(repo: Path, ll5d_dir: Path, sa) -> None:
         raise Stop("C-PIN", "the flux constraint is not its pin")
 
 
+ABS_SCALE = [1.0]  # the C-LEAK pass scales every absolute input by LEAK_SCALE; 1 otherwise (set only by build)
+
+
 def cells(ll5d_dir: Path, U: np.ndarray, name: str, key: str = "xsec_flat") -> np.ndarray:
     with np.load(ll5d_dir / name, allow_pickle=False) as z:
-        return U @ np.asarray(z[key], float)
+        return ABS_SCALE[0] * (U @ np.asarray(z[key], float))
 
 
 def drawn_block(ll5d_dir: Path, U: np.ndarray, truth: str, reading: str, w_flux: np.ndarray, sa, ll5d_b) -> np.ndarray:
@@ -317,7 +320,7 @@ def main(argv=None) -> int:
         stops = stops + tuple(c for c in (getattr(B, "Stop", None), getattr(ll5d_b, "Refusal", None),
                                           getattr(ll5d, "Refusal", None)) if isinstance(c, type))
         out = build(a.repo, a.ll5d, sa, ll5d, ll5d_b, B)
-        check_leak(out)
+        check_leak(out, build(a.repo, a.ll5d, sa, ll5d, ll5d_b, B, scale=LEAK_SCALE))
         files = render_record(out)  # every byte is formed and checked before anything is written
         write_files(a.out, files)
     except BaseException as e:
@@ -329,7 +332,16 @@ def main(argv=None) -> int:
     return 0
 
 
-def build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B) -> dict:
+def build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B, scale: float = 1.0) -> dict:
+    """The record. scale multiplies every absolute input (U xsec, U xtrue, g_TuneV1; C_e by scale^2) for C-LEAK."""
+    ABS_SCALE[0] = scale
+    try:
+        return _build(repo, ll5d_dir, sa, ll5d, ll5d_b, B, scale)
+    finally:
+        ABS_SCALE[0] = 1.0
+
+
+def _build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B, scale: float) -> dict:
     for rel, pin in COMMITTED.items():
         if sha256_path(repo / rel) != pin:
             raise Stop("C-PIN", f"{rel} is not its pin")
@@ -369,7 +381,7 @@ def build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B) -> dict:
         raise Stop("C-PSD", "C_b is not finite")
     if np.linalg.eigvalsh(C_b).min() < -TOL * max(1e-300, abs(np.linalg.eigvalsh(C_b)).max()):
         raise Stop("C-PSD", "C_b is not positive semidefinite")
-    g_tv1 = np.asarray(g["mnvtune_v1"], float)
+    g_tv1 = scale * np.asarray(g["mnvtune_v1"], float)
     C_b_abs = np.diag(g_tv1) @ C_b @ np.diag(g_tv1)
     if not np.all(np.isfinite(C_b_abs)):
         raise Stop("C-FIN", "C_b_abs is not finite")
@@ -421,7 +433,7 @@ def build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B) -> dict:
     trig = trigger(f, se)
     # A2: no V_F only if every band is UNRESOLVED or UNMEASURED; an ACTIVE or RESOLVED-INACTIVE band builds it
     unresolved = all(t["state"] in ("UNRESOLVED", "UNMEASURED") for t in trig.values())
-    C_e = read_csv_matrix(repo / f"{FD}/with-cpl/data-product/fd_data_product_cpl_C_e.csv")
+    C_e = scale * scale * read_csv_matrix(repo / f"{FD}/with-cpl/data-product/fd_data_product_cpl_C_e.csv")
     V_F, L = (None, None) if unresolved else fluctuation_block(C_e, trig)
     if V_F is not None and not (np.all(np.isfinite(V_F)) and np.all(np.isfinite(L))):
         raise Stop("C-FIN", "V_F is not finite")
@@ -440,56 +452,36 @@ def build(repo: Path, ll5d_dir: Path, sa, ll5d, ll5d_b, B) -> dict:
 
 
 LEAK_EXEMPT = (("bias_block", "C_b_abs"), ("fluctuation", "V_F"))
-LEAK_FLOOR = 1e-30  # an absolute cross section is ~1e-38 cm^2/nucleon; every other number here is relative or a count
+LEAK_SCALE = 2.0 ** 10  # a power of two: scaling is exact in binary floating point
+LEAK_RTOL = 1e-9  # solver roundoff only; an absolute quantity moves by a factor 1024
 
 
-def check_leak(rec: dict) -> None:
-    """§5 C-LEAK: no absolute cross section in the record, except C_b,abs and V_F (covariances in (cm^2/nucleon)^2).
-    Every other number is relative, a count or a probability. A scalar or a vector entry is judged by itself, so one
-    absolute value in a relative vector refuses. A matrix (a list of lists) is judged by its largest magnitude, since a
-    relative matrix may hold roundoff-small entries. A string that parses as a number is judged as that number. A
-    relative scalar below 1e-30 (thirty orders below any quantity here) would also refuse: a false STOP, not a leak.
-    The dimensional test in test_b5d.py checks the complement: scaling every absolute input leaves every non-exempt
-    number unchanged."""
-    def num(x):
-        if isinstance(x, bool):
-            return None
-        if isinstance(x, (int, float)):
-            return float(x)
-        if isinstance(x, str):
-            try:
-                return float(x)
-            except ValueError:
-                return None
-        return None
-
-    def small(vals, path):
-        for n in vals:
-            if n is not None and np.isfinite(n) and 0.0 < abs(n) < LEAK_FLOOR:
-                raise Stop("C-LEAK", f"{'/'.join(map(str, path))} holds {n:.3g}, an absolute scale")
-
-    def walk(x, path):
-        if path in LEAK_EXEMPT:
-            return
-        if isinstance(x, dict):
-            for k, v in x.items():
-                walk(v, path + (k,))
-        elif isinstance(x, (list, tuple)):
-            if any(isinstance(v, (dict, list, tuple)) for v in x) and not all(isinstance(v, (list, tuple)) for v in x):
-                for v in x:
-                    walk(v, path)
-            elif x and all(isinstance(v, (list, tuple)) for v in x):  # a matrix
-                if any(isinstance(u, (dict, list, tuple)) for v in x for u in v):
-                    for v in x:
-                        walk(v, path)
-                    return
-                mags = [abs(n) for n in (num(u) for v in x for u in v) if n is not None and np.isfinite(n)]
-                small([max(mags, default=0.0)], path)
-            else:
-                small([num(v) for v in x], path)
-        else:
-            small([num(x)], path)
-    walk(rec, ())
+def check_leak(rec: dict, rec_k: dict, k: float = LEAK_SCALE) -> None:
+    """§5 C-LEAK, as a dimensional check: rec_k is the same build with every absolute input scaled by k (U xsec, U xtrue
+    and g_TuneV1 by k, C_e by k^2). A relative quantity is unchanged; an absolute cross section moves by k. So every
+    number outside C_b,abs and V_F must be identical, those two must scale by exactly k^2, and the two records must have
+    the same shape. Nothing depends on a magnitude cutoff."""
+    def walk(x, y, path):
+        where = "/".join(map(str, path)) or "(record)"
+        if isinstance(x, dict) or isinstance(y, dict):
+            if not (isinstance(x, dict) and isinstance(y, dict)) or set(x) != set(y):
+                raise Stop("C-LEAK", f"{where}: the scaled build's record has a different shape")
+            for key in x:
+                walk(x[key], y[key], path + (key,))
+        elif isinstance(x, (list, tuple)) or isinstance(y, (list, tuple)):
+            if not (isinstance(x, (list, tuple)) and isinstance(y, (list, tuple))) or len(x) != len(y):
+                raise Stop("C-LEAK", f"{where}: the scaled build's record has a different shape")
+            for u, v in zip(x, y):
+                walk(u, v, path)
+        elif isinstance(x, float) or isinstance(y, float):
+            want = x * k * k if path[:2] in LEAK_EXEMPT and isinstance(x, float) else x
+            if not (isinstance(x, (int, float)) and isinstance(y, (int, float))) or not (y == want or (
+                    np.isfinite(want) and abs(y - want) <= LEAK_RTOL * abs(want))):
+                raise Stop("C-LEAK", f"{where}: {x!r} becomes {y!r} when the absolute inputs scale by {k:g}"
+                                     + (" (expected exactly k^2)" if path[:2] in LEAK_EXEMPT else ": an absolute quantity"))
+        elif x != y:
+            raise Stop("C-LEAK", f"{where}: {x!r} becomes {y!r} when the absolute inputs scale by {k:g}")
+    walk(rec, rec_k, ())
 
 
 def render_record(rec: dict) -> dict:
@@ -522,22 +514,37 @@ def render_record(rec: dict) -> dict:
     return files
 
 
+def rename_noreplace(src: Path, dst: Path) -> None:
+    """Atomically rename src to dst, refusing if dst exists in any form (macOS renamex_np RENAME_EXCL, Linux renameat2
+    RENAME_NOREPLACE). On any other system, or without the call, it refuses: an OSError, which main maps to a STOP."""
+    import ctypes
+    import errno
+    libc = ctypes.CDLL(None, use_errno=True)
+    s_, d_ = os.fsencode(str(src)), os.fsencode(str(dst))
+    if sys.platform == "darwin" and hasattr(libc, "renamex_np"):
+        rc = libc.renamex_np(s_, d_, ctypes.c_uint(0x00000004))  # RENAME_EXCL
+    elif sys.platform.startswith("linux") and hasattr(libc, "renameat2"):
+        rc = libc.renameat2(-100, s_, -100, d_, ctypes.c_uint(1))  # AT_FDCWD, RENAME_NOREPLACE
+    else:
+        raise OSError(errno.ENOSYS, "no atomic no-replace rename on this system")
+    if rc != 0:
+        e = ctypes.get_errno()
+        raise OSError(e, f"{os.strerror(e)}: {dst}")
+
+
 def write_files(out_dir: Path, files: dict) -> None:
-    """Claim out_dir by an exclusive mkdir (it must not exist; its parent must), write every file into a hidden staging
-    directory inside it, then move them up. On any failure the claimed directory is removed: the record appears whole
-    or not at all, and nothing that existed before is replaced."""
+    """Write every file into a hidden sibling directory, then rename it to out_dir atomically, refusing if out_dir exists
+    in any form. The record appears whole or not at all, nothing that existed is replaced, and a parent that is absent is
+    not created (FileNotFoundError). A failure removes the sibling."""
     import shutil
-    out_dir.mkdir()  # exclusive: FileExistsError if anything is there; FileNotFoundError if the parent is absent
+    tmp = out_dir.parent / f".{out_dir.name}.partial-{os.getpid()}"
+    tmp.mkdir()  # FileNotFoundError if the parent is absent
     try:
-        stage = out_dir / ".staging"
-        stage.mkdir()
         for n, b in files.items():
-            (stage / n).write_bytes(b)
-        for n in files:
-            os.rename(stage / n, out_dir / n)
-        stage.rmdir()
+            (tmp / n).write_bytes(b)
+        rename_noreplace(tmp, out_dir)
     except BaseException:
-        shutil.rmtree(out_dir, ignore_errors=True)
+        shutil.rmtree(tmp, ignore_errors=True)
         raise
 
 

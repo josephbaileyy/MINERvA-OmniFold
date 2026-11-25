@@ -1,0 +1,17 @@
+## BLOCKERS
+
+- **C-LEAK still rejects a valid dimensionless trace.** With 299 zero toy errors and one error of one floating-point step at \(X_T=10^{-38}\), the R1 toy trace is \(5.68\times10^{-35}\). I reproduced the STOP at the `1e-30` cutoff. The CLI suppresses the entire record, including the traces A2 requires for an unresolved outcome. `b5d_build.py:154–165, 319–322, 443, 466–469`
+
+## MAJORS
+
+- **The exclusive writer fixes the competing-directory overwrite and introduces partial publication.** It creates `--out` immediately and moves files into it one by one. I observed the final path with only the first CSV and `.staging`. A kill at that point leaves a partial record and a retry refuses the existing path. A1 still describes a whole-directory rename. A fresh nested `--out` also now fails if its parent is absent. `b5d_build.py:310–311, 525–541`; `B5D-AMENDMENT-A1.md:114–116`
+- **A2 leaves conflicting written stop instructions.** Its amendment list omits Binding 1 ruling 5, which explicitly stops when every SE exceeds 0.5. With \(30\pm4\) in every measured band, A2 builds \(V_F\) and the binding’s literal rule stops. `B5D-AMENDMENT-A2.md:3–8, 30–32`; `B5D-BINDING-1.md:57–59`
+
+## Minors
+
+- **The dimensional-invariance test can miss a change in record shape.** Its `zip` silently drops unmatched rows. I ran a mutant that removed the last row of `L` only in the scaled build, and the test passed. `test_b5d.py:715–724`
+- **“Noise never inflates anything” overstates the trigger.** A band with true factor 1 can fluctuate to an observed \(1.4\pm0.1\). It becomes ACTIVE and uses \(\phi=1.4\). The guarantee applies to bands classified UNRESOLVED. `B5D-AMENDMENT-A2.md:24–27, 39`
+
+The mixed-vector leak is fixed and matrices use the requested maximum-entry rule. The COVFIX tie routine is faithfully ported. A1 now accurately describes B-SEL’s cal-array loading, and the nonuniform-\(X_T\) test distinguishes the projection order. The code implements A2’s four states, stop rule, and \(\phi\) exactly. Both numerical examples and the comparison with round 3’s relative threshold check out.
+
+**Model** GPT-6 (Codex). Reviewed `f0e7110dd` → `e6561dfb9`. Twenty unit tests and eight focused tests with in-memory fixtures passed. The fixture run used NumPy’s legacy scalar formatting. The full LL5D build was outside this recheck.

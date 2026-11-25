@@ -232,6 +232,16 @@ class Fluctuation(unittest.TestCase):
         self.assertEqual((M.PRIMARY, M.SECONDARY), ("minus2", "all"))
 
 
+def scaled(rec, k=None):
+    """The record a scale-equivariant build gives when every absolute input is scaled by k: C_b,abs and V_F by k^2."""
+    k = M.LEAK_SCALE if k is None else k
+    r = json.loads(json.dumps(rec))
+    for a, b in M.LEAK_EXEMPT:
+        if r[a][b] is not None:
+            r[a][b] = [[k * k * x for x in row] for row in r[a][b]]
+    return r
+
+
 def outlier(E):
     """One toy 300x the rest: f-hat in the hundreds with an SE as large, so every measured band is UNRESOLVED."""
     E = E.copy()
@@ -380,7 +390,7 @@ class EndToEnd(unittest.TestCase):
         me = rec["bias_block"]["ll5d_toy_mean_error_tune_v1_units"]
         self.assertEqual(set(me), {"g18/minus2", "g18/all", "ar23/minus2", "ar23/all"})
         self.assertTrue({"quad", "fraction_outside_span", "rank", "beta"} <= set(me["g18/minus2"]))
-        M.check_leak(rec)
+        M.check_leak(rec, M.build(self.repo, self.ll5d, self.sa, self.ll5d_mod, self.ll5d_b, self.B, scale=M.LEAK_SCALE))
         self.assertEqual(set(rec["fluctuation"]["per_ensemble"]), {"g18/minus2", "g18/all", "ar23/minus2", "ar23/all"})
 
 
@@ -653,7 +663,7 @@ class EndToEnd(unittest.TestCase):
                 M.toy_errors = te
             self.assertTrue(unres["fluctuation"]["unresolved_stop"])
             for r, verdict, has_vf in ((rec, "COMPLETE", True), (unres, "UNRESOLVED: no V_F", False)):
-                M.build = lambda *a, r=r: r
+                M.build = lambda *a, r=r, scale=1.0: r if scale == 1.0 else scaled(r, scale)
                 with tempfile.TemporaryDirectory() as d, contextlib.redirect_stdout(io.StringIO()) as out:
                     self.assertEqual(M.main(["--repo", d, "--ll5d", d, "--out", str(Path(d) / "o")]), 0)
                     self.assertEqual(json.loads(out.getvalue())["verdict"], verdict)
@@ -668,68 +678,53 @@ class EndToEnd(unittest.TestCase):
                 else:
                     sys.modules[k] = v
 
-    def test_c_leak_judges_arrays_by_size_and_numeric_strings(self):
+    def test_c_leak_is_a_dimensional_check(self):
         rec = self.build()
-        ok = json.loads(json.dumps(rec))
-        ok["bias_block"]["C_b_tune_v1_units"][0][1] = 1e-32  # roundoff in a relative matrix is not a leak
-        ok["fluctuation"]["rows"] = [{"ok": 0.5}, {"n": 3}]
-        ok["fluctuation"]["nested"] = [[{"a": 0.5}], [[0.1, 1e-35]]]  # deeper nesting is walked; a matrix by its max
-        M.check_leak(ok)
-        bad = json.loads(json.dumps(ok))
-        bad["fluctuation"]["nested"] = [[{"a": 2e-39}]]
-        with self.assertRaisesRegex(M.Stop, "C-LEAK.*nested/a"):
-            M.check_leak(bad)
-        bad = json.loads(json.dumps(rec))
-        bad["bias_block"]["members"]["nominal"]["note"] = "2e-39"
-        with self.assertRaisesRegex(M.Stop, "C-LEAK"):
-            M.check_leak(bad)
-        bad = json.loads(json.dumps(rec))
-        bad["fluctuation"]["xs"] = {"g18": [3e-39, 1e-39]}
-        with self.assertRaisesRegex(M.Stop, "C-LEAK"):
-            M.check_leak(bad)
-        bad = json.loads(json.dumps(rec))
-        bad["fluctuation"]["rows"] = [{"ok": 0.5}, {"x": 2e-39}]  # a list of records is walked record by record
-        with self.assertRaisesRegex(M.Stop, "C-LEAK.*rows/x"):
-            M.check_leak(bad)
-        bad = json.loads(json.dumps(rec))
-        bad["bias_block"]["printed_against_C_b"]["W1"]["beta"] = [2e-39] + [0.01] * (N - 1)  # one absolute entry
-        with self.assertRaisesRegex(M.Stop, "C-LEAK.*W1/beta"):
-            M.check_leak(bad)
+        rk = M.build(self.repo, self.ll5d, self.sa, self.ll5d_mod, self.ll5d_b, self.B, scale=M.LEAK_SCALE)
+        M.check_leak(rec, rk)
+        self.assertEqual(rk["bias_block"]["C_b_abs"], scaled(rec)["bias_block"]["C_b_abs"])  # exactly k^2
+        self.assertEqual(rk["fluctuation"]["f_hat"], rec["fluctuation"]["f_hat"])  # bit-identical
+        a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
+        a["fluctuation"]["band_traces_relative_to_T"]["g18/minus2"]["R1"]["toy"] = 5.68e-35  # tiny but relative
+        b["fluctuation"]["band_traces_relative_to_T"]["g18/minus2"]["R1"]["toy"] = 5.68e-35
+        M.check_leak(a, b)  # no magnitude cutoff: a tiny relative number is not a leak
+        cases = []
+        a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
+        a["bias_block"]["members"]["nominal"]["x_T"] = [3e-39, 0.01]
+        b["bias_block"]["members"]["nominal"]["x_T"] = [3e-39 * M.LEAK_SCALE, 0.01]
+        cases.append((a, b, "x_T.*an absolute quantity"))
+        a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
+        b["fluctuation"]["L"] = b["fluctuation"]["L"][:-1]
+        cases.append((a, b, "fluctuation/L.*different shape"))
+        a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
+        b["bias_block"]["C_b_abs"] = rec["bias_block"]["C_b_abs"]  # an exempt matrix that did not scale by k^2
+        cases.append((a, b, "C_b_abs.*exactly k\\^2"))
+        a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
+        b["fluctuation"]["extra"] = 1.0
+        cases.append((a, b, "different shape"))
+        a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
+        b["bias_block"]["family"] = ["nominal"]
+        cases.append((a, b, "family.*different shape"))
+        a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
+        b["schema"] = "x"
+        cases.append((a, b, "schema"))
+        a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
+        b["fluctuation"]["trigger"]["R1"]["phi"] = rec["fluctuation"]["trigger"]["R1"]["phi"] * (1 + 1e-6)
+        cases.append((a, b, "phi"))
+        for a, b, pat in cases:
+            with self.assertRaisesRegex(M.Stop, "C-LEAK.*" + pat):
+                M.check_leak(a, b)
 
-    def test_dimensional_invariance(self):
-        """Scale every absolute input (U*xsec, U*xtrue, g_TuneV1 by k; C_e by k^2): every non-exempt number is unchanged
-        and C_b,abs and V_F scale by k^2. Any absolute quantity in the record would move."""
-        k = 7.0
-        rec = self.build()
-        oc, orr = M.cells, M.read_csv_matrix
-        b, sig, R, sr, g = self.B.prepare(None, None, None)
-        op = self.B.prepare
-        M.cells = lambda d, U, name, key="xsec_flat": k * oc(d, U, name, key)
-        M.read_csv_matrix = lambda q: k * k * orr(q)
-        self.B.prepare = lambda *a: (b, sig, R, sr, {"mnvtune_v1": [k * x for x in g["mnvtune_v1"]]})
+    def test_c_leak_catches_a_code_path_that_drops_the_normalization(self):
+        orig = M.band_traces
+        M.band_traces = lambda E, D, V, X_T, kept, dropped: orig(E, D, V, np.ones_like(X_T), kept, dropped)  # absolute
         try:
-            rk = self.build()
+            rec = self.build()
+            rk = M.build(self.repo, self.ll5d, self.sa, self.ll5d_mod, self.ll5d_b, self.B, scale=M.LEAK_SCALE)
         finally:
-            M.cells, M.read_csv_matrix, self.B.prepare = oc, orr, op
-
-        def cmp(x, y, path):
-            if path in M.LEAK_EXEMPT:
-                np.testing.assert_allclose(np.asarray(y, float), k * k * np.asarray(x, float), rtol=1e-9, atol=0)
-            elif isinstance(x, dict):
-                self.assertEqual(set(x), set(y))
-                for key in x:
-                    cmp(x[key], y[key], path + (key,))
-            elif isinstance(x, (list, tuple)) and x and isinstance(x[0], (dict, list, tuple)):
-                for u, v in zip(x, y):
-                    cmp(u, v, path)
-            elif isinstance(x, (list, tuple)) and any(isinstance(u, str) for u in x):
-                self.assertEqual(x, y, "/".join(map(str, path)))
-            elif isinstance(x, (list, tuple, float, int)) and not isinstance(x, bool):
-                np.testing.assert_allclose(np.asarray(y, float), np.asarray(x, float), rtol=1e-9, atol=1e-300,
-                                           err_msg="/".join(map(str, path)))
-            else:
-                self.assertEqual(x, y, "/".join(map(str, path)))
-        cmp(rec, rk, ())
+            M.band_traces = orig
+        with self.assertRaisesRegex(M.Stop, "C-LEAK.*band_traces_relative_to_T.*an absolute quantity"):
+            M.check_leak(rec, rk)
 
     def test_a_nan_d_stops_before_the_solver(self):
         orig = M.drawn_block
@@ -766,6 +761,21 @@ class EndToEnd(unittest.TestCase):
                 M.write_files(Path(d) / "p" / "o", {"a.txt": b"x"})
             self.assertEqual(sorted(q.name for q in Path(d).iterdir()), ["o"])
 
+    def test_rename_noreplace(self):
+        import tempfile
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as d:
+            src = Path(d) / "s"
+            src.mkdir()
+            (Path(d) / "f").write_text("x")
+            with self.assertRaises(FileExistsError):
+                M.rename_noreplace(src, Path(d) / "f")  # a file is not replaced either
+            with mock.patch.object(M.sys, "platform", "plan9"):
+                with self.assertRaises(OSError):
+                    M.rename_noreplace(src, Path(d) / "t")  # no atomic no-replace rename: refuse
+            M.rename_noreplace(src, Path(d) / "t")
+            self.assertEqual(sorted(q.name for q in Path(d).iterdir()), ["f", "t"])
+
     def test_a_failed_write_leaves_nothing(self):
         import tempfile
         with tempfile.TemporaryDirectory() as d:
@@ -793,22 +803,6 @@ class EndToEnd(unittest.TestCase):
         self.assertTrue(fl["unresolved_stop"])
         self.assertIsNone(fl["V_F"])
         self.assertEqual(set(fl["f_hat"].values()), {None})
-
-    def test_c_leak(self):
-        rec = self.build()
-        M.check_leak(rec)  # C_b_abs (absolute) is exempt
-        self.assertLess(abs(np.asarray(rec["bias_block"]["C_b_abs"])).max(), 1e-60)
-        bad = json.loads(json.dumps(rec))
-        bad["bias_block"]["printed_against_C_b"]["W1"]["x_T"] = [2e-39] * N
-        with self.assertRaisesRegex(M.Stop, "C-LEAK"):
-            M.check_leak(bad)
-        bad = json.loads(json.dumps(rec))
-        bad["fluctuation"]["L"] = [[3e-39] * N] * N  # only V_F and C_b_abs are exempt
-        with self.assertRaisesRegex(M.Stop, "C-LEAK"):
-            M.check_leak(bad)
-        ok = json.loads(json.dumps(rec))
-        ok["fluctuation"]["V_F"] = [[3e-79] * N] * N
-        M.check_leak(ok)
 
     def test_main_maps_every_refusal_to_stop_5(self):
         import tempfile, io, contextlib
@@ -841,8 +835,10 @@ class EndToEnd(unittest.TestCase):
             with tempfile.TemporaryDirectory() as d, self.assertRaises(TypeError):
                 M.main(["--repo", d, "--ll5d", d, "--out", str(Path(d) / "o")])
             rec = orig(self.repo, self.ll5d, self.sa, self.ll5d_mod, self.ll5d_b, self.B)
+            rk = scaled(rec)
             rec["bias_block"]["members"]["nominal"]["leak"] = 1e-39
-            M.build = lambda *a: rec
+            rk["bias_block"]["members"]["nominal"]["leak"] = 1e-39 * M.LEAK_SCALE  # an absolute value moves with k
+            M.build = lambda *a, scale=1.0: rec if scale == 1.0 else rk
             with tempfile.TemporaryDirectory() as d, contextlib.redirect_stderr(io.StringIO()):
                 self.assertEqual(M.main(["--repo", d, "--ll5d", d, "--out", str(Path(d) / "o")]), 5)
                 self.assertFalse((Path(d) / "o").exists())

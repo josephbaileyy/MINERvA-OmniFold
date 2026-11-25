@@ -24,10 +24,8 @@ X_T unchecked: KILLED
 mean err not through R: KILLED
 mean err not relative: KILLED
 L exempt: KILLED
-main skips C-LEAK: KILLED
 zero rank inf: KILLED
 V_F unchecked: KILLED
-C-LEAK ignores numeric strings: KILLED
 no digests: KILLED
 NaN json allowed: KILLED
 ll5d.Refusal uncaught: KILLED
@@ -44,15 +42,21 @@ GS absolute threshold: KILLED
 GS one pass: KILLED
 GS span unchecked: KILLED
 no sign after GS: KILLED
-C-LEAK off: KILLED
-C-LEAK vector by max: KILLED
-C-LEAK matrix per entry: KILLED
-writer not exclusive: KILLED
-writer creates parents: KILLED
-partial dir left: KILLED
-staging left: KILLED
 A2 SE=0.5 unresolved: KILLED
 A2 reverted to absolute stop: KILLED
 A2 resolved-inactive stops: KILLED
 A2 unresolved inflates: KILLED
 phi below 1 allowed: KILLED
+C-LEAK: cells not scaled: KILLED
+C-LEAK: g not scaled: KILLED
+C-LEAK: C_e scaled by k: KILLED
+C-LEAK: main compares a build with itself: KILLED
+C-LEAK: exempt not scaled: KILLED
+C-LEAK: tolerance absorbs k: KILLED
+C-LEAK: length unchecked: KILLED
+C-LEAK: keys unchecked: KILLED
+C-LEAK: non-numbers unchecked: KILLED
+writer: plain rename: KILLED
+writer: partial sibling left: KILLED
+writer: fallback replaces: KILLED
+writer: creates parents: KILLED

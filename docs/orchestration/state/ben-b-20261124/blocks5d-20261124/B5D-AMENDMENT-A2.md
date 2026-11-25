@@ -3,9 +3,11 @@
 **Amends:**
 - `blocks5d-20261124/B5D-DECLARATION.md` rev 1, sha256
   `676c17fc5982a01c21f4c7feae2f6c8cd32b0b8ecdc69ec93882e5e30c0f0b1b`, §4: "If the bootstrap cannot resolve f̂";
-- A1's item 6, last rule ("If no band is measured, the build stops short of V_F").
+- A1's item 6, last rule ("If no band is measured, the build stops short of V_F");
+- `blocks5d-20261124/B5D-BINDING-1.md` ruling 5's restatement of the declared rule: "If SE > 0.5 in every band, the
+  build stops short of V_F, as declared."
 
-Both files are unchanged. Where this text differs from them, this text governs.
+All three files are unchanged. Where this text differs from them, this text governs.
 
 **Authority:**
 - **The question.** codex-school's delta reads of PR #1316 (rounds 2 and 3, under `reads/`). An absolute precision rule
@@ -36,7 +38,9 @@ The 3·SE activation trigger is unchanged. Each band R gets exactly one state:
 **What changes:**
 - **A resolved large excess builds V_F.** An example is f̂ = 30 ± 4, where 29 > 12. Under the declared rule, an SE above
   0.5 in every band suppressed V_F, however clear the excess.
-- **Noise never inflates anything.** An UNRESOLVED band has φ = 1.
+- **An UNRESOLVED band is never inflated:** φ = 1.
+- **A band with no true excess can still pass the 3·SE trigger by chance,** as under the declared rule. Its f̂ and SE are
+  printed with it.
 
 ## Why this rule, and not round 3's
 
