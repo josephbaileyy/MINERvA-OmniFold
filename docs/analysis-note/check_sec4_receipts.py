@@ -38,6 +38,7 @@ where this file sits at the repository root) the check reports SKIP and exits 0;
 from __future__ import annotations
 
 import gzip
+import hashlib
 import json
 import math
 import re
@@ -300,6 +301,15 @@ CHECKS = [
      r"\\newcommand\{\\pullRMS\}\{([0-9.]+)\}", lambda: regen_a_pull("rms"), "round"),
     ("pull RMS, prose rounding (regenA P1a)", "values.tex",
      r"\\newcommand\{\\pullRMSr\}\{([0-9.]+)\}", lambda: regen_a_pull("rms"), "round-3dp-source"),
+    # appC's IBU bias sentence (Joseph's wording, 2026-11-25), bound to IBUB's committed readouts at both held-out tunes
+    ("IBUB IBU median absolute bias, range over the tunes and K = 5, 10", "appC_supplementary.tex",
+     r"its median absolute bias is ([0-9.]+)--([0-9.]+)\\%, against", lambda: ibub_median_range("IBU"), "round"),
+    ("IBUB OmniFold median absolute bias, range over the tunes", "appC_supplementary.tex",
+     r"against ([0-9.]+)--([0-9.]+)\\% for OmniFold", lambda: ibub_median_range("OF"), "round"),
+    ("IBUB cells where IBU's bias is smaller, range, of the reported cells", "appC_supplementary.tex",
+     r"it is smaller in ([0-9]+)--([0-9]+) of the ([0-9]+) cells", lambda: ibub_smaller_cells(), "round"),
+    ("IBUB pseudo-experiments (C-COMPLETE units, both tunes)", "appC_supplementary.tex",
+     r"over the same ([0-9]+) pseudo-experiments", lambda: ibub_units(), "round"),
     ("A5 ten smallest-lambda modes' share, appC:7", "appC_supplementary.tex",
      r"The ten smallest-eigenvalue modes carry \$([0-9.]+)\\%\$ of the distance", lambda: 100 * regen_a45("5")["share10_smallest"],
      "round"),
@@ -412,6 +422,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
         rows.append(("pT edge step in sec2_method.tex equals sec3's, exactly", len(m2) == 1 and m2[0] == step,
                      f"sec2 prints {m2} | sec3 step {step}"))
     rows += mode_split_claims(sources)
+    rows += ibub_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
         found = len(re.findall(pat, text(src, sources))) == 1
         c = fn()
@@ -492,6 +503,89 @@ def mode_split_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
         rows.append((lab, good, f"printed {tword}/{word}, <~1e{e1}, the {rword} {c}e{e2} | A5 top5 "
                                 f"{a5['top5_in_smallest_tenth']}, {len(high)} high, max {hmax:.3g}, other {other}"))
     return rows
+
+
+IBUB_DIR = "measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/readout-20261125"
+IBUB_TUNES = ("G18", "AR23")
+IBUB_OVERRIDE: dict | None = None  # the self-test's planted readouts
+
+
+def ibub_verified(tune: str) -> dict:
+    """IBUB's committed readout at one held-out tune, refused unless its sha256 is the one RECORDS.SHA256SUMS.txt holds."""
+    d = STATE / IBUB_DIR
+    raw = (d / tune / f"ibub_{tune}.json").read_bytes()
+    want = [ln.split()[0] for ln in (d / "RECORDS.SHA256SUMS.txt").read_text().splitlines()
+            if ln.split()[1:] == [f"out-{tune}/ibub_{tune}.json"]]  # the fetch recorded it under out-<tune>/
+    if len(want) != 1 or hashlib.sha256(raw).hexdigest() != want[0]:
+        raise ValueError(f"IBUB readout {tune} is not the recorded file")
+    return json.loads(raw)
+
+
+def ibub() -> dict:
+    return IBUB_OVERRIDE if IBUB_OVERRIDE is not None else {t: ibub_verified(t) for t in IBUB_TUNES}
+
+
+def ibub_summaries() -> list[dict]:
+    return [r["readings"][k]["summary"] for r in ibub().values() for k in ("K5", "K10")]
+
+
+def ibub_one(values: list) -> float:
+    """A value every readout must share (the unit count, the cell count): refuse if they differ."""
+    if len(set(values)) != 1:
+        raise ValueError(f"IBUB readouts disagree: {values}")
+    return float(values[0])
+
+
+def ibub_units() -> float:
+    rs = ibub().values()
+    if any(r["C-COMPLETE"]["missing"] for r in rs):
+        raise ValueError("an IBUB readout has missing units")
+    return ibub_one([r["C-COMPLETE"]["units"] for r in rs])
+
+
+def ibub_cells() -> float:
+    return ibub_one([sum(lab.startswith("cell:") for lab in r["readings"][k]["labels"])
+                     for r in ibub().values() for k in ("K5", "K10")])
+
+
+def ibub_median_range(method: str) -> tuple[float, float]:
+    x = [s[method]["median_abs_rel_pct"] for s in ibub_summaries()]
+    return min(x), max(x)
+
+
+def ibub_smaller_cells() -> tuple[float, float, float]:
+    x = [s["cells_ibu_smaller_abs_bias"] for s in ibub_summaries()]
+    return float(min(x)), float(max(x)), ibub_cells()
+
+
+ITER_WORD = {"five": "K5", "ten": "K10"}
+IBUB_SENTENCE = (r"At (\w+) held-out GENIE v3 tunes, the method bias of binned IBU at (\w+) and (\w+) iterations (\w+ \w+) "
+                 r"from that of the refined OmniFold estimator over the same [0-9]+ pseudo-experiments\. IBU's bias is "
+                 r"somewhat (\w+) on average:")
+
+
+def ibub_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    """appC's IBUB sentence (Joseph's wording, 2026-11-25): "both" tunes are the readouts' truths, "five and ten" their
+    iterations, "differs significantly" is reading == DIFFER at each, and "smaller on average" is IBU's median absolute
+    bias below OmniFold's at each tune and iteration count."""
+    lab = "IBUB appC: tunes, iterations, DIFFER at each, IBU's median below OmniFold's"
+    m = re.findall(IBUB_SENTENCE, text("appC_supplementary.tex", sources))
+    if len(m) != 1:
+        return [(lab, False, f"sentence found {len(m)} times (expected 1)")]
+    both, w1, w2, verb, side = m[0]
+    rs = ibub()
+    ks = [ITER_WORD.get(w1), ITER_WORD.get(w2)]
+    ok_tunes = both == "both" and sorted(rs) == sorted(IBUB_TUNES) and all(rs[t]["truth"] == t for t in rs)
+    ok_k = ks == ["K5", "K10"] and all(sorted(r["readings"]) == ["K10", "K5"] for r in rs.values())
+    readings = {(t, k): rs[t]["readings"][k]["reading"] for t in rs for k in ("K5", "K10")}
+    ok_differ = verb == "differs significantly" and all(v == "DIFFER" for v in readings.values())
+    below = [rs[t]["readings"][k]["summary"]["IBU"]["median_abs_rel_pct"] < rs[t]["readings"][k]["summary"]["OF"]["median_abs_rel_pct"]
+             for t in rs for k in ("K5", "K10")]
+    ok_side = side == "smaller" and all(below)
+    ok_runs = all(r["verdict"] == "PASS" and not r["controls_failed"] and not r["stop"] for r in rs.values())
+    return [(lab, ok_tunes and ok_k and ok_differ and ok_side and ok_runs,
+             f"printed {both}/{w1},{w2}/{verb}/{side} | truths {sorted(rs)}, readings {sorted(set(readings.values()))}, "
+             f"IBU median below OF {sum(below)}/{len(below)}, runs PASS {ok_runs}")]
 
 
 def load() -> dict[str, str]:
@@ -601,6 +695,65 @@ def self_test() -> int:
             print(f"  NOT CAUGHT  mode split: {old_s} -> {new_s}"); ok = False
         else:
             caught += 1; print(f"  caught      mode split ({bad_rows[0][:24]}...): {old_s} -> {new_s}")
+    # The IBUB sentence (not in CHECKS): each word changed, and each planted readout, must be rejected.
+    global IBUB_OVERRIDE
+    for old_s, new_s in (("At both held-out GENIE v3", "At one held-out GENIE v3"),
+                         ("at five and ten iterations", "at five and twenty iterations"),
+                         ("iterations differs significantly from", "iterations differs slightly from"),
+                         ("somewhat smaller on average", "somewhat larger on average")):
+        t = text("appC_supplementary.tex", base)
+        if t.count(old_s) != 1:
+            print(f"  NOT FOUND   IBUB mutation {old_s!r}"); ok = False; continue
+        trial = dict(base)
+        trial["appC_supplementary.tex"] = t.replace(old_s, new_s)
+        if ibub_claims(trial)[0][1]:
+            print(f"  NOT CAUGHT  IBUB: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      IBUB: {old_s} -> {new_s}")
+    import copy
+
+    def plant(what, fn):
+        global IBUB_OVERRIDE
+        nonlocal ok, caught
+        data = copy.deepcopy({t: ibub_verified(t) for t in IBUB_TUNES})
+        fn(data)
+        IBUB_OVERRIDE = data
+        try:
+            rows = dict((r[0], r[1]) for r in evaluate(base))
+        except ValueError:
+            rows = {"refused": False}
+        finally:
+            IBUB_OVERRIDE = None
+        if all(rows.values()):
+            print(f"  NOT CAUGHT  IBUB planted: {what}"); ok = False
+        else:
+            caught += 1; print(f"  caught      IBUB planted: {what}")
+    plant("G18 K5 reading NOT RESOLVED APART", lambda d: d["G18"]["readings"]["K5"].__setitem__("reading", "NOT RESOLVED APART"))
+    plant("AR23 K10 IBU median above OmniFold's",
+          lambda d: d["AR23"]["readings"]["K10"]["summary"]["IBU"].__setitem__("median_abs_rel_pct", 0.9))
+    plant("AR23 K5 IBU median 0.62 (range top moves)",
+          lambda d: d["AR23"]["readings"]["K5"]["summary"]["IBU"].__setitem__("median_abs_rel_pct", 0.62))
+    plant("G18 K10 smaller-cell count 118", lambda d: d["G18"]["readings"]["K10"]["summary"].__setitem__("cells_ibu_smaller_abs_bias", 118))
+    plant("AR23 units 299", lambda d: d["AR23"]["C-COMPLETE"].__setitem__("units", 299))
+    plant("AR23 one unit missing", lambda d: d["AR23"]["C-COMPLETE"].__setitem__("missing", ["u0007"]))
+    plant("a tune's readout absent", lambda d: d.pop("AR23"))
+    plant("G18 run verdict FAIL", lambda d: d["G18"].__setitem__("verdict", "FAIL"))
+    import tempfile
+    global STATE
+    saved = STATE
+    with tempfile.TemporaryDirectory() as tmp:
+        dst = Path(tmp) / IBUB_DIR
+        (dst / "G18").mkdir(parents=True)
+        (dst / "RECORDS.SHA256SUMS.txt").write_bytes((saved / IBUB_DIR / "RECORDS.SHA256SUMS.txt").read_bytes())
+        (dst / "G18" / "ibub_G18.json").write_bytes((saved / IBUB_DIR / "G18" / "ibub_G18.json").read_bytes() + b" ")
+        STATE = Path(tmp)
+        try:
+            ibub_verified("G18")
+            print("  NOT CAUGHT  IBUB: a readout byte-changed from its recorded sha256 was read"); ok = False
+        except ValueError:
+            caught += 1; print("  caught      IBUB: a readout byte-changed from its recorded sha256 is refused")
+        finally:
+            STATE = saved
     trial = dict(base)
     trial["primer_body.tex"] = text("primer_body.tex", base).replace("in about half of the", "in about a third of the")
     if dict((r[0], r[1]) for r in evaluate(trial))[VERBAL[0][0]]:

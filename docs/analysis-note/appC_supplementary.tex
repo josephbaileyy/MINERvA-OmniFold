@@ -47,6 +47,9 @@ The distance to the publication depends on the learner and the background subtra
 
 Binned IBU gives a distance to the publication of \fvval{c2c1-dibu-mid-lo}--\fvval{c2c1-dibu-mid-hi} per bin for two to fifteen iterations, \fvval{c2c1-dibu-k20} at twenty iterations, and \fvval{c2c1-dibu-k1} at one. At fixed IBU settings, replacing the classifier-refined reconstructed target with the binwise data-minus-background histogram changes the OmniFold--IBU distance per bin from \fvval{ibusd-k5-ref} to \fvval{ibusd-k5-sig} at five iterations and from \fvval{ibusd-k10-ref} to \fvval{ibusd-k10-sig} at ten. These distances use the published covariance as a common descriptive metric for results that share data.
 
+% Joseph 2026-11-25 (relayed by the director), word for word: the IBU bias readout (IBUB, Ben's (a)), bound by check_sec4_receipts.py ibub_claims() and its rows to fd/receipts-ibub/connect/readout-20261125/{G18,AR23}/ibub_*.json (readings.K5/K10.summary and reading; C-COMPLETE units; the 205 cell labels).
+At both held-out GENIE v3 tunes, the method bias of binned IBU at five and ten iterations differs significantly from that of the refined OmniFold estimator over the same 300 pseudo-experiments. IBU's bias is somewhat smaller on average: its median absolute bias is 0.45--0.60\%, against 0.67--0.85\% for OmniFold, and it is smaller in 119--133 of the 205 cells. These comparisons are in simulation and do not indicate which method agrees better with the data.
+
 \subsection{Higher-dimensional projections and generator comparisons}
 \label{app:higher-dimensional-projections}
 \label{sec:fived16-gen-target}
