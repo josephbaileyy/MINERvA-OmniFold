@@ -1,0 +1,331 @@
+{
+ "xsec": "/Users/josephbailey/local-research/wt-ibu-chi2-a3/docs/orchestration/state/ibu-chi2-20261123/tier1/units/e/er.root",
+ "pt_edges": [
+  0.0,
+  0.075,
+  0.15,
+  0.25,
+  0.325,
+  0.4,
+  0.475,
+  0.55,
+  0.7,
+  0.85,
+  1.0,
+  1.25,
+  1.5,
+  2.5,
+  4.5
+ ],
+ "flux_source": "embedded hFlux_pt",
+ "n_reported": 205,
+ "modes": [
+  {
+   "panel": "a",
+   "chi2_contrib": 19.308392554225165,
+   "share_pz_ge_20": 0.8429602792644657,
+   "argmax_pz_bin": 14,
+   "argmax_pt_bin": 12
+  },
+  {
+   "panel": "b",
+   "chi2_contrib": 16.250509855714004,
+   "share_pz_ge_20": 4.182783464928289e-06,
+   "argmax_pz_bin": 9,
+   "argmax_pt_bin": 4
+  },
+  {
+   "panel": "c",
+   "chi2_contrib": 13.21177743879354,
+   "share_pz_ge_20": 0.9738804223791568,
+   "argmax_pz_bin": 14,
+   "argmax_pt_bin": 11
+  },
+  {
+   "panel": "d",
+   "chi2_contrib": 12.199957746776706,
+   "share_pz_ge_20": 0.9921012862769545,
+   "argmax_pz_bin": 14,
+   "argmax_pt_bin": 13
+  },
+  {
+   "panel": "e",
+   "chi2_contrib": 11.578275041053296,
+   "share_pz_ge_20": 0.9461925172363405,
+   "argmax_pz_bin": 14,
+   "argmax_pt_bin": 11
+  },
+  {
+   "panel": "f",
+   "chi2_contrib": 11.255332005059376,
+   "share_pz_ge_20": 0.99991681368565,
+   "argmax_pz_bin": 15,
+   "argmax_pt_bin": 13
+  }
+ ],
+ "modes_share_gt_half": [
+  "a",
+  "c",
+  "d",
+  "e",
+  "f"
+ ],
+ "pt_slices": {
+  "rows": [
+   {
+    "slice": 0,
+    "n_cells": 16,
+    "D_ours": 30.619262905998575,
+    "D_prior": 391.9289186490405,
+    "toward": true
+   },
+   {
+    "slice": 1,
+    "n_cells": 16,
+    "D_ours": 23.674682380957055,
+    "D_prior": 392.4468195374103,
+    "toward": true
+   },
+   {
+    "slice": 2,
+    "n_cells": 16,
+    "D_ours": 48.89128049569568,
+    "D_prior": 614.0814167175433,
+    "toward": true
+   },
+   {
+    "slice": 3,
+    "n_cells": 16,
+    "D_ours": 23.79181747894327,
+    "D_prior": 546.5656376567849,
+    "toward": true
+   },
+   {
+    "slice": 4,
+    "n_cells": 16,
+    "D_ours": 34.174388340536105,
+    "D_prior": 650.4412579586837,
+    "toward": true
+   },
+   {
+    "slice": 5,
+    "n_cells": 16,
+    "D_ours": 37.64816087405788,
+    "D_prior": 686.2306485902636,
+    "toward": true
+   },
+   {
+    "slice": 6,
+    "n_cells": 16,
+    "D_ours": 36.347410399205316,
+    "D_prior": 1057.693083875546,
+    "toward": true
+   },
+   {
+    "slice": 7,
+    "n_cells": 16,
+    "D_ours": 42.813557342063206,
+    "D_prior": 2531.8759528186224,
+    "toward": true
+   },
+   {
+    "slice": 8,
+    "n_cells": 16,
+    "D_ours": 55.44919063457533,
+    "D_prior": 2726.98907917203,
+    "toward": true
+   },
+   {
+    "slice": 9,
+    "n_cells": 15,
+    "D_ours": 25.27247797353091,
+    "D_prior": 3066.8483469336784,
+    "toward": true
+   },
+   {
+    "slice": 10,
+    "n_cells": 14,
+    "D_ours": 68.75724377428307,
+    "D_prior": 4099.817522557439,
+    "toward": true
+   },
+   {
+    "slice": 11,
+    "n_cells": 13,
+    "D_ours": 101.26168828330502,
+    "D_prior": 2109.261389518994,
+    "toward": true
+   },
+   {
+    "slice": 12,
+    "n_cells": 11,
+    "D_ours": 185.62137894398933,
+    "D_prior": 2363.520910806519,
+    "toward": true
+   },
+   {
+    "slice": 13,
+    "n_cells": 8,
+    "D_ours": 46.04434422684539,
+    "D_prior": 509.96907692024536,
+    "toward": true
+   }
+  ],
+  "toward_count": 14,
+  "n_slices": 14
+ },
+ "pz_slices": {
+  "rows": [
+   {
+    "slice": 0,
+    "n_cells": 9,
+    "D_ours": 8.789318667326587,
+    "D_prior": 89.92793656666719,
+    "toward": true
+   },
+   {
+    "slice": 1,
+    "n_cells": 10,
+    "D_ours": 19.0859881312833,
+    "D_prior": 361.67665208572174,
+    "toward": true
+   },
+   {
+    "slice": 2,
+    "n_cells": 11,
+    "D_ours": 27.302894064973923,
+    "D_prior": 580.9497215048825,
+    "toward": true
+   },
+   {
+    "slice": 3,
+    "n_cells": 12,
+    "D_ours": 11.325632237617,
+    "D_prior": 1495.6325970876928,
+    "toward": true
+   },
+   {
+    "slice": 4,
+    "n_cells": 12,
+    "D_ours": 26.880064863461087,
+    "D_prior": 1598.0451146418018,
+    "toward": true
+   },
+   {
+    "slice": 5,
+    "n_cells": 13,
+    "D_ours": 35.44633138194328,
+    "D_prior": 1734.4059262294898,
+    "toward": true
+   },
+   {
+    "slice": 6,
+    "n_cells": 13,
+    "D_ours": 24.898309318755818,
+    "D_prior": 1531.2242477110185,
+    "toward": true
+   },
+   {
+    "slice": 7,
+    "n_cells": 13,
+    "D_ours": 73.11790181231406,
+    "D_prior": 1357.8783594624324,
+    "toward": true
+   },
+   {
+    "slice": 8,
+    "n_cells": 14,
+    "D_ours": 71.91380339964564,
+    "D_prior": 1231.5767532214559,
+    "toward": true
+   },
+   {
+    "slice": 9,
+    "n_cells": 14,
+    "D_ours": 20.03528317949654,
+    "D_prior": 1212.9905413215067,
+    "toward": true
+   },
+   {
+    "slice": 10,
+    "n_cells": 14,
+    "D_ours": 12.752322073677826,
+    "D_prior": 1427.7048169885168,
+    "toward": true
+   },
+   {
+    "slice": 11,
+    "n_cells": 14,
+    "D_ours": 33.69221513147626,
+    "D_prior": 1331.2330854386378,
+    "toward": true
+   },
+   {
+    "slice": 12,
+    "n_cells": 14,
+    "D_ours": 38.60091680321764,
+    "D_prior": 3228.7457591159036,
+    "toward": true
+   },
+   {
+    "slice": 13,
+    "n_cells": 14,
+    "D_ours": 37.561555900415065,
+    "D_prior": 1695.162963103389,
+    "toward": true
+   },
+   {
+    "slice": 14,
+    "n_cells": 14,
+    "D_ours": 249.93293131700057,
+    "D_prior": 1465.186499672745,
+    "toward": true
+   },
+   {
+    "slice": 15,
+    "n_cells": 14,
+    "D_ours": 69.03141577138153,
+    "D_prior": 1405.3290875609378,
+    "toward": true
+   }
+  ],
+  "toward_count": 16,
+  "n_slices": 16
+ },
+ "printed_panel_chi2": {
+  "MEFHC_5iter_xsec_paper_pt_slices": [
+   "$\\times 10^{40}$ $\\chi^2/n=2177.2/16$",
+   "$\\times 10^{40}$ $\\chi^2/n=3183.1/16$",
+   "$\\times 10^{39}$ $\\chi^2/n=3785.0/16$",
+   "$\\times 10^{39}$ $\\chi^2/n=3727.0/16$",
+   "$\\times 10^{39}$ $\\chi^2/n=2835.2/16$",
+   "$\\times 10^{39}$ $\\chi^2/n=3063.8/16$",
+   "$\\times 10^{39}$ $\\chi^2/n=4840.5/16$",
+   "$\\times 10^{39}$ $\\chi^2/n=18265.8/16$",
+   "$\\times 10^{39}$ $\\chi^2/n=23843.0/16$",
+   "$\\times 10^{39}$ $\\chi^2/n=30062.9/15$",
+   "$\\times 10^{39}$ $\\chi^2/n=43400.5/14$",
+   "$\\times 10^{39}$ $\\chi^2/n=19383.3/13$",
+   "$\\times 10^{40}$ $\\chi^2/n=17151.3/11$",
+   "$\\times 10^{42}$ $\\chi^2/n=2847.1/8$"
+  ],
+  "MEFHC_5iter_xsec_paper_pz_slices": [
+   "$\\times 10^{39}$ $\\chi^2/n=1428.6/9$",
+   "$\\times 10^{39}$ $\\chi^2/n=4902.6/10$",
+   "$\\times 10^{39}$ $\\chi^2/n=11553.6/11$",
+   "$\\times 10^{39}$ $\\chi^2/n=20925.5/12$",
+   "$\\times 10^{39}$ $\\chi^2/n=23631.0/12$",
+   "$\\times 10^{39}$ $\\chi^2/n=20652.1/13$",
+   "$\\times 10^{39}$ $\\chi^2/n=15017.7/13$",
+   "$\\times 10^{39}$ $\\chi^2/n=17577.9/13$",
+   "$\\times 10^{39}$ $\\chi^2/n=10179.0/14$",
+   "$\\times 10^{39}$ $\\chi^2/n=7379.7/14$",
+   "$\\times 10^{40}$ $\\chi^2/n=6474.0/14$",
+   "$\\times 10^{40}$ $\\chi^2/n=5239.3/14$",
+   "$\\times 10^{40}$ $\\chi^2/n=15383.0/14$",
+   "$\\times 10^{41}$ $\\chi^2/n=7706.6/14$",
+   "$\\times 10^{41}$ $\\chi^2/n=8201.5/14$",
+   "$\\times 10^{42}$ $\\chi^2/n=2313.5/14$"
+  ]
+ }
+}
