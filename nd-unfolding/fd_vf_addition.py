@@ -390,12 +390,21 @@ def rename_vf(key: str) -> str:
 
 def identities(o: dict, n: dict, k: str) -> None:
     """T before any pairing: every list of named records (predictions, truths, comparisons, modes, ...) holds the
-    same names, in the same order, on the same cells, on both sides."""
+    same names, in the same order, on the same cells, on both sides. A list the V_F side lacks refuses."""
+    def named(x) -> bool:
+        if isinstance(x, list):
+            return bool(x) and all(isinstance(y, dict) and "name" in y for y in x) or any(named(y) for y in x)
+        return isinstance(x, dict) and any(named(y) for y in x.values())
+
     def walk(a, b, path):
         if isinstance(a, dict) and isinstance(b, dict):
+            renamed = {rename_vf(kb) for kb in b}
             for key in a:
                 if rename_vf(key) == key and key in b:
                     walk(a[key], b[key], f"{path}/{key}")
+                elif key not in renamed and named(a[key]):
+                    report("T", f"{k}{path}/{key}: the V_F readout holds the OLD readout's named records", False,
+                           "missing on the V_F side")
         elif isinstance(a, list) and isinstance(b, list) and a and all(isinstance(x, dict) and "name" in x for x in a):
             ida = [(x.get("name"), x.get("cells")) for x in a]
             idb = [(rename_vf(x["name"]) if isinstance(x.get("name"), str) else x.get("name"), x.get("cells"))

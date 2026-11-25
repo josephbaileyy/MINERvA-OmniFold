@@ -528,6 +528,15 @@ class Table(unittest.TestCase):
         n = {"modes": [{"name": "C_total + C_resp + C_PL5D + DeltaC_e + V_g", "x": 2}]}
         with quiet():
             V.identities(o, n, "x")
+        o = json.loads((REPO / rel).read_text())
+        n = copy.deepcopy(o)
+        n.pop("predictions")                                         # a named list the V_F side lost
+        with quiet(), self.assertRaises(V.Stop) as cm:
+            V.identities(o, n, "E with/g_diag")
+        self.assertEqual(cm.exception.control, "T")
+        with quiet():                                                # a key without named records may differ
+            V.identities({"a": [1, 2], "m": {"x": 1}, "s": {"C_resp": {"v": 1}}},
+                         {"m": {"x": 1}, "s": {"C_resp + DeltaC_e": {"v": 2}}}, "x")
 
     def test_f0s_sigma_pairs_its_base_with_the_revised_one_on_the_same_cells(self):
         o, n = fake_f(["a"], []), fake_f(["a"], [], m="M + DeltaC_e")
@@ -818,14 +827,22 @@ class Checks(unittest.TestCase):
         self.assertIn("E-A2's receipt bytes", cm.exception.args[0])
 
     def test_the_renderer_must_be_e_a2s(self):
+        import matplotlib
+        here = {"python": sys.version.split()[0], "numpy": np.__version__, "matplotlib": matplotlib.__version__}
+        D = self.tmp / "D"
+        side = D / V.OLD_E_FIG / "fd_g_fig_modes.json"
+        side.parent.mkdir(parents=True)
+        for k in ("python", "numpy", "matplotlib"):                  # any one version off refuses, here or at NERSC
+            side.write_text(json.dumps({"versions": {**here, k: here[k] + ".0"}}))
+            with quiet(), self.assertRaises(V.Stop) as cm:
+                V.check_renderer(self.c, D)
+            self.assertEqual(cm.exception.control, "C")
+        side.write_text(json.dumps({"versions": {}}))                # an empty record refuses
+        with quiet(), self.assertRaises(V.Stop):
+            V.check_renderer(self.c, D)
+        side.write_text(json.dumps({"versions": here}))
         with quiet():
-            have = {"python": sys.version.split()[0], "numpy": np.__version__}
-            want = json.loads((REPO / V.OLD_E_FIG / "fd_g_fig_modes.json").read_text())["versions"]
-            if all(have.get(k) == v for k, v in want.items() if k != "matplotlib"):
-                self.skipTest("this interpreter is E-A2's")
-            with self.assertRaises(V.Stop) as cm:
-                V.check_renderer(self.c, REPO)
-        self.assertEqual(cm.exception.control, "C")
+            V.check_renderer(self.c, D)
 
     def test_c_requires_each_producers_structured_fields_and_its_argv_role(self):
         p = self.tmp / "g.json"
