@@ -227,7 +227,7 @@ M = [
     ('3d-unfolding/genie/pg_generate.sh', 'need $? "the publish set and its leak scan"', 'true', 'r3: a leak not a STOP', 'generate'),
     ('3d-unfolding/genie/pg_generate.sh', '>> "$O/logs/trace_check.log" 2>&1 || need 1 "trace check (gntpc ${k})"', '>> "$O/logs/trace_check.log" 2>&1 || true', 'r3: a failed gntpc check', 'generate'),
     ('3d-unfolding/genie/pg_generate.sh', '  case "$st" in Z*|"") return 1 ;; esac', '  case "$st" in "") return 1 ;; esac', 'r3: a zombie counted alive', 'generate'),
-    ('3d-unfolding/genie/pg_generate.sh', '  left=$(survivors)\n', '  left=""\n', 'r3: survivors not scanned', 'generate'),
+    ('3d-unfolding/genie/pg_generate.sh', '  left=$(survivors)\n  [ -n "$left" ] || return 0', '  left=""\n  [ -n "$left" ] || return 0', 'r3: survivors not scanned', 'generate'),
     ('3d-unfolding/genie/pg_generate.sh', '    > "$O/coverage_check_$T.json" 2>> "$O/logs/coverage.log" || need 1 "spline coverage ($T)"', '    > "$O/coverage_check_$T.json" 2>> "$O/logs/coverage.log" || true', 'r3: a coverage failure', 'generate'),
     ('3d-unfolding/genie/pg_replay.sh', 'trap delete_events EXIT\n', '', 'r3: B3 events kept on a STOP', 'generate'),
     ('3d-unfolding/genie/pg_replay.sh', 'need $? "the three host checks"', 'true', 'r3: B3 host checks', 'generate'),
