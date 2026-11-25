@@ -534,9 +534,24 @@ class Table(unittest.TestCase):
         with quiet(), self.assertRaises(V.Stop) as cm:
             V.identities(o, n, "E with/g_diag")
         self.assertEqual(cm.exception.control, "T")
+        for bad in (None, {}, []):                                   # a named list replaced by another value
+            n = copy.deepcopy(o)
+            n["predictions"] = bad
+            with quiet(), self.assertRaises(V.Stop) as cm:
+                V.identities(o, n, "E with/g_diag")
+            self.assertEqual(cm.exception.control, "T")
         with quiet():                                                # a key without named records may differ
             V.identities({"a": [1, 2], "m": {"x": 1}, "s": {"C_resp": {"v": 1}}},
                          {"m": {"x": 1}, "s": {"C_resp + DeltaC_e": {"v": 2}}}, "x")
+        rec = [{"name": "a", "cells": ["R00"]}, {"name": "b", "cells": ["R01"]}]
+        o = {"s": {"C_resp": {"predictions": rec}}}
+        with quiet():                                                # named records under a key renamed with the block
+            V.identities(o, {"s": {"C_resp + DeltaC_e": {"predictions": rec}}}, "x")
+        for n in ({"s": {"C_resp + DeltaC_e": {"predictions": rec[::-1]}}},
+                  {"s": {"C_resp + DeltaC_e": {}}}):
+            with quiet(), self.assertRaises(V.Stop) as cm:
+                V.identities(o, n, "x")
+            self.assertEqual(cm.exception.control, "T")
 
     def test_f0s_sigma_pairs_its_base_with_the_revised_one_on_the_same_cells(self):
         o, n = fake_f(["a"], []), fake_f(["a"], [], m="M + DeltaC_e")

@@ -397,12 +397,18 @@ def identities(o: dict, n: dict, k: str) -> None:
         return isinstance(x, dict) and any(named(y) for y in x.values())
 
     def walk(a, b, path):
+        if named(a) and type(a) is not type(b):
+            report("T", f"{k}{path}: the V_F readout holds the OLD readout's named records", False,
+                   f"{type(b).__name__} on the V_F side")
         if isinstance(a, dict) and isinstance(b, dict):
-            renamed = {rename_vf(kb) for kb in b}
+            renamed = {}
+            for kb in b:                                            # an exact key wins over one renamed to it
+                renamed.setdefault(rename_vf(kb), kb)
             for key in a:
-                if rename_vf(key) == key and key in b:
-                    walk(a[key], b[key], f"{path}/{key}")
-                elif key not in renamed and named(a[key]):
+                kb = key if key in b else renamed.get(key)
+                if rename_vf(key) == key and kb is not None:
+                    walk(a[key], b[kb], f"{path}/{key}")
+                elif rename_vf(key) == key and named(a[key]):
                     report("T", f"{k}{path}/{key}: the V_F readout holds the OLD readout's named records", False,
                            "missing on the V_F side")
         elif isinstance(a, list) and isinstance(b, list) and a and all(isinstance(x, dict) and "name" in x for x in a):
