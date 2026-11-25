@@ -1,0 +1,1 @@
+{"verdict": "COMPLETE", "band_states": {"R1": "ACTIVE", "R2": "ACTIVE", "R3": "ACTIVE"}}

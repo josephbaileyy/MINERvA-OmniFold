@@ -1,0 +1,23 @@
+[paper] opening: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+[paper] reported bins: 205 / 224
+[paper] cross-section sum (reported bins): 3.6892e-37
+
+[ours] opening: /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_e/er.root
+[ours] cross-section sum (all bins): 3.7192e-37
+
+=== chi^2 comparisons (ours vs paper) ===
+  stat only                       chi2 =       956.03   ndf = 205   chi2/ndf =   4.664
+  flux only                       chi2 = 11095177161.78   ndf = 205   chi2/ndf = 54122815.423
+  muon E scale only               chi2 =         0.04   ndf = 205   chi2/ndf =   0.000
+  PAPER (stat+syst)               chi2 =       434.89   ndf = 205   chi2/ndf =   2.121
+
+wrote /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA/out/e/MEFHC_5iter_pull_full.png
+
+Summary for run log:
+  reported bins: 205
+  chi^2/ndf  stat only        : 4.664
+  chi^2/ndf  flux only        : 54122815.423
+  chi^2/ndf  muon E scale     : 0.000
+  chi^2/ndf  PAPER (full cov) : 2.121
+  pull mean / rms             : 0.133 / 0.513

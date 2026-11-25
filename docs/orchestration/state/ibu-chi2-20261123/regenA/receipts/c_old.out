@@ -1,0 +1,5 @@
+P1a chi2_paperonly       PASS  39 numbers  max_rel=0.0
+P5 model_comp_report     PASS  24 numbers  max_rel=0.0
+P4 tension_report        PASS  394 numbers  max_rel=0.0
+P6 receipt_model_chi2    PASS  187 numbers; key mismatch 0 []  max_rel=0.0
+P7 agreement_windows     PASS  20 numbers; key mismatch 0 []  max_rel=0.0
