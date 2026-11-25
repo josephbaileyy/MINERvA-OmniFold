@@ -65,6 +65,7 @@ and `/pscratch/sd/j/josephrb/`. Local runs used Python 3.11.18, ROOT 6.40.04, nu
 | 21 | [`regenA2`](regenA2/README.md) | The sec3_twod.tex:11 projection ratios, ours / published, on the paper's pT edges | C-LIT PASS (all four literals) | Lowest-pT ratio 0.97 → **1.04**; the others are unchanged at 2 decimals. |
 | 22 | [`regenA3`](regenA3/README.md) | The REF-C2C1 IBU ladder (every stored K) on the paper's pT edges | all controls PASS; one rerun after a crash | K = 2–15 range 0.83–1.59 → **0.39–1.44**; K = 20 2.16 → 1.67; K = 1 3.95 → 4.26. |
 | 23 | [`regenA4`](regenA4/README.md) | The note's figures from the published comparison, on the paper's pT edges (A4, A4b) | all controls PASS for the 8 figures; Fig. 2 via A4b at its installing commit | Mode maps: five of six modes at high p∥ (OLD: the caption's three). Slices: 14/14 and 16/16 toward the published points on both grids. Figure shas for journal-editor. |
+| 24 | [`regenA5`](regenA5/README.md) | The eigenmode numbers of appC:7 and records_r03:18 on the paper's pT edges | C5-REP and C5-LIT PASS | Ten-smallest share 9.6 % → 8.7 %; two → one of the top five in the smallest-λ tenth; three → five of the six leading at high p∥; largest |z| 4.7 → 4.4. |
 
 **Post hoc, read by no rule (`foldtest/posthoc_exclude.py`).** Dropping reco pT row 0 and the p‖ 40–60 column from the
 IBU-vs-published χ² takes it from 210 to 100 over 176 cells. Cells were dropped from a correlated covariance, so this
