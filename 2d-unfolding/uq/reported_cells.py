@@ -67,6 +67,15 @@ def _axis_edges(axis):
     return np.array([axis.GetBinLowEdge(i) for i in range(1, n + 2)])
 
 
+def edge_label(x):
+    """A bin edge with the fewest decimals, at least 2, that give it to 1e-9: 0.07 -> "0.07",
+    0.075 -> "0.075", 1.5 -> "1.50"."""
+    for nd in range(2, 10):
+        if abs(round(x, nd) - x) <= 1e-9:
+            return f"{x:.{nd}f}"
+    return f"{x:.9f}"
+
+
 def th2d_edges(h):
     """(pT edges, p_parallel edges) of a 14 x 16 TH2D, read from its own axes.
 

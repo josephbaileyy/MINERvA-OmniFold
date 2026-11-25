@@ -560,10 +560,13 @@ class EndToEnd(unittest.TestCase):
         z = json.loads(json.dumps(rec))
         for v in z["bias_block"]["printed_against_C_b"].values():
             v["quad"] = None  # a rank-0 C_b: null, never Infinity
+        for v in z["bias_block"]["members"].values():
+            v["quad"] = v["undebiased_bound"] = None
         with tempfile.TemporaryDirectory() as td:
             d = Path(td) / "o"
             M.write_record(d, z)
             self.assertIn("n/a (C_b rank 0)", (Path(d) / "blocks5d.txt").read_text())
+            self.assertIn("member nominal vs C_b: quad n/a, undebiased bound n/a", (Path(d) / "blocks5d.txt").read_text())
             rec2 = dict(rec)
             rec2["fluctuation"] = dict(rec["fluctuation"], V_F=None)
         with tempfile.TemporaryDirectory() as td:
@@ -727,6 +730,13 @@ class EndToEnd(unittest.TestCase):
         a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
         b["fluctuation"]["trigger"]["R1"]["phi"] = rec["fluctuation"]["trigger"]["R1"]["phi"] * (1 + 1e-6)
         cases.append((a, b, "phi"))
+        from collections import OrderedDict
+        a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
+        b["fluctuation"] = OrderedDict(b["fluctuation"])  # same data, another mapping type
+        cases.append((a, b, "fluctuation.*different shape"))
+        a, b = json.loads(json.dumps(rec)), json.loads(json.dumps(rk))
+        a["fluctuation"], b["fluctuation"] = [{"V_F": [[3e-39]]}], [{"V_F": [[3e-39 * M.LEAK_SCALE]]}]
+        cases.append((a, b, "fluctuation/0/V_F.*an absolute quantity"))  # a list's item is not the exempt V_F
         for a, b, pat in cases:
             with self.assertRaisesRegex(M.Stop, "C-LEAK.*" + pat):
                 M.check_leak(a, b)
@@ -750,6 +760,13 @@ class EndToEnd(unittest.TestCase):
         keys, scale, out = seen[0]
         self.assertEqual((keys, scale), ({"mnvtune_v1", "genie_cv"}, M.LEAK_SCALE))
         np.testing.assert_array_equal(out["genie_cv"], M.LEAK_SCALE * np.full(N, 3e-39))
+        base = M.build(self.repo, self.ll5d, self.sa, self.ll5d_mod, self.ll5d_b, self.B)["bias_block"]["C_b_abs"]
+        M.scaled_predictions = lambda g, scale: {n: (2.0 if n == "mnvtune_v1" else 1.0) * v for n, v in orig(g, scale).items()}
+        try:  # _build uses what the helper returns: doubling its Tune v1 entry quadruples C_b,abs
+            doubled = M.build(self.repo, self.ll5d, self.sa, self.ll5d_mod, self.ll5d_b, self.B)["bias_block"]["C_b_abs"]
+        finally:
+            M.scaled_predictions = orig
+        np.testing.assert_allclose(np.asarray(doubled), 4 * np.asarray(base), rtol=1e-12)
 
     def test_c_leak_catches_a_code_path_that_drops_the_normalization(self):
         orig = M.band_traces
@@ -834,6 +851,46 @@ class EndToEnd(unittest.TestCase):
                 M._fsync_dir = orig
             self.assertEqual((out / "a.txt").read_bytes(), b"x")
             self.assertIn("warning: the output is written", err.getvalue())
+
+    def test_the_parent_is_synced_after_the_rename(self):
+        import tempfile
+        orig = M._fsync_dir
+        calls = []
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d) / "o"
+            M._fsync_dir = lambda q: (calls.append((Path(q), out.exists())), orig(q))
+            try:
+                M.write_files(out, {"a.txt": b"x"})
+            finally:
+                M._fsync_dir = orig
+        self.assertEqual(calls[-1], (Path(d), True))  # the parent, once the output exists
+        self.assertFalse(calls[0][1])  # the staging directory, before the output exists
+        self.assertNotEqual(calls[0][0], Path(d))
+
+    def test_a_failed_warning_after_publishing_is_not_a_stop(self):
+        import tempfile
+
+        class Closed:
+            def write(self, *a):
+                raise OSError("stderr closed")
+
+            def flush(self):
+                raise OSError("stderr closed")
+        orig, err = M._fsync_dir, M.sys.stderr
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d) / "o"
+
+            def fs(q):
+                if Path(q) == Path(d):
+                    raise PermissionError("parent not readable")
+                orig(q)
+            M._fsync_dir = fs
+            M.sys.stderr = Closed()
+            try:
+                M.write_files(out, {"a.txt": b"x"})
+            finally:
+                M._fsync_dir, M.sys.stderr = orig, err
+            self.assertEqual((out / "a.txt").read_bytes(), b"x")
 
     def test_rename_noreplace(self):
         import tempfile

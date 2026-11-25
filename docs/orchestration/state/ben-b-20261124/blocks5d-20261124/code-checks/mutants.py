@@ -29,7 +29,7 @@ M = [
  ('            mean_err[(t, rd)] = E.mean(axis=0) / X_T * R[f"F1_genie_v3_{t}"]', '            mean_err[(t, rd)] = E.mean(axis=0) * R[f"F1_genie_v3_{t}"]', 'mean err not relative'),
  ('LEAK_EXEMPT = (("bias_block", "C_b_abs"), ("fluctuation", "V_F"))', 'LEAK_EXEMPT = (("bias_block", "C_b_abs"), ("fluctuation", "V_F"), ("fluctuation", "L"))', 'L exempt'),
  ('    q = float(np.sum(proj ** 2 / wk)) if keep.any() else None', "    q = float(np.sum(proj ** 2 / wk)) if keep.any() else float('inf')", 'zero rank inf'),
- ('    if V_F is not None and not (np.all(np.isfinite(V_F)) and np.all(np.isfinite(L))):', '        if False:', 'V_F unchecked'),
+ ('    if V_F is not None and not (np.all(np.isfinite(V_F)) and np.all(np.isfinite(L))):', '    if False:', 'V_F unchecked'),
  ('    rec = {**rec, "matrices_sha256": {n: hashlib.sha256(b).hexdigest() for n, b in sorted(files.items())}}\n', '', 'no digests'),
  ('json.dumps(rec, indent=1, allow_nan=False)', 'json.dumps(rec, indent=1)', 'NaN json allowed'),
  ('        stops = stops + tuple(c for c in (getattr(B, "Stop", None), getattr(ll5d_b, "Refusal", None),\n                                          getattr(ll5d, "Refusal", None)) if isinstance(c, type))', '        stops = stops + tuple(c for c in (getattr(B, "Stop", None), getattr(ll5d_b, "Refusal", None)) if isinstance(c, type))', 'll5d.Refusal uncaught'),
@@ -55,7 +55,6 @@ M = [
  ('    C_e = scale * scale * read_csv_matrix(', '    C_e = scale * read_csv_matrix(', 'C-LEAK: C_e scaled by k'),
  ('        check_leak(out, build(a.repo, a.ll5d, sa, ll5d, ll5d_b, B, scale=LEAK_SCALE))', '        check_leak(out, out)', 'C-LEAK: main compares a build with itself'),
  ('LEAK_RTOL = 1e-9', 'LEAK_RTOL = 2e3', 'C-LEAK: tolerance absorbs k'),
- ('            if not (isinstance(x, dict) and isinstance(y, dict)) or set(x) != set(y):', '            if not (isinstance(x, dict) and isinstance(y, dict)):', 'C-LEAK: keys unchecked'),
  ('        elif x != y:\n            raise Stop("C-LEAK"', '        elif False:\n            raise Stop("C-LEAK"', 'C-LEAK: non-numbers unchecked'),
  ('        rename_noreplace(tmp, out_dir)', '        os.rename(tmp, out_dir)', 'writer: plain rename'),
  ('    except BaseException:\n        shutil.rmtree(tmp, ignore_errors=True)\n        raise', '    except BaseException:\n        raise', 'writer: partial sibling left'),
@@ -75,10 +74,21 @@ M = [
  ('            if type(x) is not type(y) or len(x) != len(y):', '            if len(x) != len(y):', 'C-LEAK: list/tuple accepted'),
  ("        try:  # the record is published whole by the rename; syncing the parent's entry is best effort, never a STOP\n            _fsync_dir(out_dir.parent)\n        except OSError as e:", '        _fsync_dir(out_dir.parent)\n        if False:', 'writer: parent sync failure is a STOP'),
  ('            if type(x) is not type(y) or len(x) != len(y):', '            if type(x) is not type(y):', 'C-LEAK: length unchecked'),
+ ('            if type(x) is not type(y) or set(x) != set(y):', '            if not (isinstance(x, dict) and isinstance(y, dict)) or set(x) != set(y):', 'C-LEAK: mapping type unchecked'),
+ ('            if type(x) is not type(y) or set(x) != set(y):', '            if type(x) is not type(y):', 'C-LEAK: keys unchecked'),
+ ('                walk(u, v, path + (i,))', '                walk(u, v, path)', 'C-LEAK: list items keep the parent path'),
+ ('            except OSError:\n                pass', '            except ValueError:\n                pass', 'writer: warning failure is a STOP'),
+ ('    g = scaled_predictions(g, scale)\n', '    scaled_predictions(g, scale)\n    g = {n: scale * np.asarray(v, float) for n, v in g.items()}\n', 'C-LEAK: helper result discarded'),
 ]
 for old, new, name in M:
     assert orig.count(old) == 1, name
-    A.write_text(orig.replace(old, new))
+    mutated = orig.replace(old, new)
+    try:
+        compile(mutated, str(A), "exec")
+    except SyntaxError as e:
+        print(f"{name}: INVALID (does not compile: {e.msg})")
+        continue
+    A.write_text(mutated)
     p = subprocess.run([sys.executable, "-B", "-X", "pycache_prefix=/dev/null", "-W", "ignore", "-m", "unittest", "nd-unfolding/b5d/test_b5d.py"], cwd=D, capture_output=True, text=True)
     print(f"{name}: {'KILLED' if p.returncode else 'SURVIVED'}")
     A.write_text(orig)

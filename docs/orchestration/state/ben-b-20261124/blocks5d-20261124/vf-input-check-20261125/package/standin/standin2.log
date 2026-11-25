@@ -1,0 +1,20 @@
+# stand-in 2 (2026-11-25): debian:bookworm-slim, --read-only (no tmpfs), --user 1000:1000, named volume at /pscratch/sd/j/josephrb/t; sacct/hsi stubs; script = gen_vf_check.py on inputs-standin2.tsv
+node script sha256 04dcaa18f29fef02e258343896b251fa5d95fda3bcce7e87de75fc2218de14dd
+node da69c2aa0274 nproc=4 loadavg 0.16 0.03 0.05
+2026-11-25T08:39:33Z
+== fence (sacct)
+fence clear for: cov2d,rpd_
+phase	readout	role	path	pinned_sha256	found_sha256	size	mtime	status	note
+P1	g	s1_npz	/pscratch/sd/j/josephrb/t/a.txt	5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03	5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03	6	1795595972	EXISTS	atime unmoved
+P1	g	pred	/pscratch/sd/j/josephrb/t/b.txt	5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03	e258d248fda94c63753607f7c4494ee0fcbe92f1a76bfdac795c9d84101eb317	6	1795595972	CHANGED	atime unmoved
+dd: failed to open '/pscratch/sd/j/josephrb/t/locked.npz': Permission denied
+P1	f0	unreadable	/pscratch/sd/j/josephrb/t/locked.npz	5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03	-	7	1795595972	READ-ERROR	dd rc=1
+P2	prr	u	/pscratch/sd/j/josephrb/t/missing.npz	5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03	-	-	-	MISSING	-
+P2	xk	dir	/pscratch/sd/j/josephrb/t/dirx	NONE	-	-	1795595972	EXISTS	directory, 1 entries
+HPSS	-	archive	hpss:/home/j/josephrb/ok.tar	NONE	-	1048576	-	EXISTS	hsi ls rc=0
+HPSS	-	archive	hpss:/home/j/josephrb/gone.tar	NONE	-	-	-	MISSING	hsi ls rc=72
+P2	xk	big_same	/pscratch/sd/j/josephrb/t/big.root	5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03	-	11811160064	1795595972	EXISTS-UNHASHED	over 10 GiB: stat only; size equals the pinned 11811160064
+P2	xk	big_diff	/pscratch/sd/j/josephrb/t/big2.root	5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03	-	11811160064	1795595972	EXISTS-UNHASHED	over 10 GiB: stat only; size differs from the pinned 171117087867
+2026-11-25T08:39:33Z
+done rc=0
+script rc=0

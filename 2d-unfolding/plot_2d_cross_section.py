@@ -34,6 +34,11 @@ PZ_EDGES = [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0,
 N_PT = len(PT_EDGES) - 1  # 14
 N_PZ = len(PZ_EDGES) - 1  # 16
 
+_UQ = str(_pathlib.Path(__file__).resolve().parent / "uq")
+if _UQ not in _sys.path:
+    _sys.path.append(_UQ)
+from reported_cells import edge_label, th2d_edges  # noqa: E402
+
 
 def th2_to_slices(h2d, axis):
     """Extract 1D slices from a TH2D along one axis.
@@ -42,12 +47,13 @@ def th2_to_slices(h2d, axis):
     axis="pz": for each p_|| bin, extract the p_T distribution
     Returns list of (label, TH1D) tuples.
     """
+    require_pt_on_x(h2d)
     slices = []
     if axis == "pt":
         for ix in range(1, h2d.GetNbinsX() + 1):
             lo = h2d.GetXaxis().GetBinLowEdge(ix)
             hi = h2d.GetXaxis().GetBinUpEdge(ix)
-            label = f"{lo:.2f} < p_T < {hi:.2f}"
+            label = f"{edge_label(lo)} < p_T < {edge_label(hi)}"
             proj = h2d.ProjectionY(f"slice_pt_{ix}", ix, ix, "e")
             proj.SetDirectory(0)
             slices.append((label, proj))
@@ -237,10 +243,24 @@ def compute_truth_xsec_2d(hTruth2D, hEff2D, flux_bins, data_pot, n_nucleons):
     return hXSec
 
 
+def x_edges(h):
+    """The bin edges of h's x axis."""
+    a = h.GetXaxis()
+    return np.array([a.GetBinLowEdge(i) for i in range(1, a.GetNbins() + 1)] + [a.GetBinUpEdge(a.GetNbins())])
+
+
+def require_flux_on(h_flux, pt_edges, source):
+    if pt_edges is not None and not np.array_equal(x_edges(h_flux), np.asarray(pt_edges, dtype=float)):
+        raise RuntimeError(f"the truth-normalization flux ({source}) is not on the truth histogram's pT edges")
+
+
 def load_flux_bins_for_truth(f_result, result_path, mcfile=None,
-                             flux_hist="pTmu_reweightedflux_integrated"):
+                             flux_hist="pTmu_reweightedflux_integrated", pt_edges=None):
+    """The flux per pT bin, embedded hFlux_pt or the --mcfile fallback; with pt_edges, the flux
+    histogram must be on those edges."""
     h_embedded = f_result.Get("hFlux_pt")
     if h_embedded:
+        require_flux_on(h_embedded, pt_edges, "embedded hFlux_pt")
         return (np.asarray([h_embedded.GetBinContent(i)
                             for i in range(1, h_embedded.GetNbinsX() + 1)],
                            dtype=float),
@@ -256,11 +276,53 @@ def load_flux_bins_for_truth(f_result, result_path, mcfile=None,
     h_flux = f_mc.Get(flux_hist)
     if not h_flux:
         raise RuntimeError(f"Missing {flux_hist} in {mc_path}")
+    require_flux_on(h_flux, pt_edges, f"{mc_path}:{flux_hist}")
     flux_bins = np.asarray(
         [h_flux.GetBinContent(i) for i in range(1, h_flux.GetNbinsX() + 1)],
         dtype=float)
     f_mc.Close()
     return flux_bins, f"{mc_path}:{flux_hist}"
+
+
+def require_pt_on_x(h):
+    """Refuse a TH2D whose x axis is not pT (14 bins): the helpers below index it as x = pT."""
+    if (h.GetNbinsX(), h.GetNbinsY()) != (N_PT, N_PZ):
+        raise ValueError(f"{h.GetName()}: {h.GetNbinsX()} x {h.GetNbinsY()} bins, expected x = pT ({N_PT}), "
+                         f"y = p_parallel ({N_PZ})")
+
+
+def require_one_grid(h2ds, h_pt=None, h_pz=None):
+    """Refuse an input whose histograms are not all on one (pT, p_parallel) grid."""
+    for h in h2ds:
+        require_pt_on_x(h)
+    pt, pz = th2d_edges(h2ds[0])
+    for h in h2ds[1:]:
+        e = th2d_edges(h)
+        if not (np.array_equal(e[0], pt) and np.array_equal(e[1], pz)):
+            raise RuntimeError(f"{h.GetName()} is not on {h2ds[0].GetName()}'s grid")
+    for h, want in ((h_pt, pt), (h_pz, pz)):
+        if h is not None and not np.array_equal(x_edges(h), want):
+            raise RuntimeError(f"{h.GetName()}'s edges are not {h2ds[0].GetName()}'s")
+
+
+def truth_projections(h2d):
+    """The 1D projections of a 2D cross section, each summed with the widths of h2d's own axes."""
+    from unfold_2d_omnifold_unbinned import project_xsec_1d
+    require_pt_on_x(h2d)
+    pt_edges, pz_edges = (list(e) for e in th2d_edges(h2d))
+    return project_xsec_1d(h2d, "pt", pt_edges, pz_edges), project_xsec_1d(h2d, "pz", pt_edges, pz_edges)
+
+
+def efficiency_mesh(h_eff):
+    """(p_parallel edges, pT edges, efficiency array pT x p_parallel) of h_eff, on its own axes."""
+    require_pt_on_x(h_eff)
+    pt_edges, pz_edges = th2d_edges(h_eff)
+    npt, npz = h_eff.GetNbinsX(), h_eff.GetNbinsY()
+    eff_arr = np.zeros((npt, npz))
+    for ix in range(1, npt + 1):
+        for iy in range(1, npz + 1):
+            eff_arr[ix - 1, iy - 1] = h_eff.GetBinContent(ix, iy)
+    return pz_edges, pt_edges, eff_arr
 
 
 def main():
@@ -303,12 +365,13 @@ def main():
     # Detach from file
     for h in [hXSec2D, hTruth2D, hEff2D, hXSec_pt, hXSec_pz]:
         h.SetDirectory(0)
+    require_one_grid([hXSec2D, hTruth2D, hEff2D], hXSec_pt, hXSec_pz)
 
     # Read metadata for truth cross-section computation
     data_pot = float(f.Get("dataPOT").GetVal())
     n_nucleons = float(f.Get("nNucleons").GetVal())
     flux_bins, flux_source = load_flux_bins_for_truth(
-        f, args.infile, args.mcfile, args.flux_hist)
+        f, args.infile, args.mcfile, args.flux_hist, pt_edges=th2d_edges(hTruth2D)[0])
     print(f"[INFO] Truth-normalization flux source: {flux_source}")
 
     # Compute truth cross section for comparison
@@ -316,11 +379,9 @@ def main():
                                           data_pot, n_nucleons)
     hXSecTruth2D.SetDirectory(0)
 
-    # 1D truth projections
-    from unfold_2d_omnifold_unbinned import project_xsec_1d
-    hXSecTruth_pt = project_xsec_1d(hXSecTruth2D, "pt", PT_EDGES, PZ_EDGES)
+    # 1D truth projections, with the truth histogram's own widths
+    hXSecTruth_pt, hXSecTruth_pz = truth_projections(hXSecTruth2D)
     hXSecTruth_pt.SetName("hXSecTruth_pt")
-    hXSecTruth_pz = project_xsec_1d(hXSecTruth2D, "pz", PT_EDGES, PZ_EDGES)
     hXSecTruth_pz.SetName("hXSecTruth_pz")
 
     f.Close()
@@ -374,15 +435,9 @@ def main():
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots(figsize=(8, 6))
-    npt = hEff2D.GetNbinsX()
-    npz = hEff2D.GetNbinsY()
-    # Match the paper's Fig. 5 convention: p_|| on x, p_T on y.
-    eff_arr = np.zeros((npt, npz))
-    for ix in range(1, npt + 1):
-        for iy in range(1, npz + 1):
-            eff_arr[ix - 1, iy - 1] = hEff2D.GetBinContent(ix, iy)
-
-    im = ax.pcolormesh(PZ_EDGES, PT_EDGES, eff_arr, cmap="viridis",
+    # Match the paper's Fig. 5 convention: p_|| on x, p_T on y, on the map's own axes.
+    pz_edges, pt_edges, eff_arr = efficiency_mesh(hEff2D)
+    im = ax.pcolormesh(pz_edges, pt_edges, eff_arr, cmap="viridis",
                         vmin=0, vmax=1)
     fig.colorbar(im, ax=ax, label="Efficiency")
     ax.set_xlabel("p$_{||}$ (GeV/c)")

@@ -51,7 +51,6 @@ C-LEAK: cells not scaled: KILLED
 C-LEAK: C_e scaled by k: KILLED
 C-LEAK: main compares a build with itself: KILLED
 C-LEAK: tolerance absorbs k: KILLED
-C-LEAK: keys unchecked: KILLED
 C-LEAK: non-numbers unchecked: KILLED
 writer: plain rename: KILLED
 writer: partial sibling left: KILLED
@@ -71,3 +70,8 @@ C-LEAK: None V_F refused: KILLED
 C-LEAK: list/tuple accepted: KILLED
 writer: parent sync failure is a STOP: KILLED
 C-LEAK: length unchecked: KILLED
+C-LEAK: mapping type unchecked: KILLED
+C-LEAK: keys unchecked: KILLED
+C-LEAK: list items keep the parent path: KILLED
+writer: warning failure is a STOP: KILLED
+C-LEAK: helper result discarded: KILLED
