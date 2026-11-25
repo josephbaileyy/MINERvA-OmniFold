@@ -1,0 +1,20 @@
+#!/bin/bash
+# sacct-only watch of 61924744: logs every reading; exits when State differs from $1 (a change to report), or when
+# the certificate has expired (logged unknown; no retry).
+FROM=${1:?state to leave}; W=~/cov2d-work/ibub-run2-20261124
+H="-o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=yes -o UpdateHostKeys=no"
+CERT_END=$(cat $W/wend.txt)      # the NERSC certificate's expiry: after it, no read is tried (the director's ruling)
+while true; do
+  if [ "$(date +%s)" -ge "$CERT_END" ]; then
+    echo "$(date -u +%FT%TZ) unknown: the certificate expired at $(date -u -r $CERT_END +%FT%TZ); the watch stops" >> $W/sacct-watch.txt
+    echo "STOPPED: the certificate expired; last reading: $(grep '^61924744' $W/sacct-watch.txt | tail -1)"; exit 0
+  fi
+  out=$(ssh -o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20 saul.nersc.gov "ssh $H login38 'date -u +%FT%TZ; sacct -j 61924744 -X -n -P -o JobID,JobName,QOS,State,ExitCode,Reason,Start,End,Elapsed'" 2>>$W/watch.err); rc=$?
+  printf '%s\n' "$out" >> $W/sacct-watch.txt
+  row=$(printf '%s\n' "$out" | awk -F'|' '$1=="61924744"')
+  n=$(printf '%s\n' "$row" | grep -c .)
+  if [ "$rc" -ne 0 ] || [ "$n" -ne 1 ]; then echo "$(date -u +%FT%TZ) unknown: ssh rc=$rc rows=$n" >> $W/sacct-watch.txt; sleep 600; continue; fi
+  st=$(printf '%s\n' "$row" | cut -d'|' -f4 | awk '{print $1}')
+  if [ "$st" != "$FROM" ]; then echo "CHANGED: $row"; exit 0; fi
+  sleep 600
+done
