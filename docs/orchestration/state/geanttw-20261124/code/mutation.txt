@@ -1,0 +1,262 @@
+dumpcmp.py:33 !=->== KILLED
+dumpcmp.py:35 !=->== KILLED
+dumpcmp.py:37 ==->!= KILLED
+dumpcmp.py:39 not->del KILLED
+dumpcmp.py:39 ==->!= KILLED
+dumpcmp.py:39 and->or KILLED
+dumpcmp.py:41 !=->== KILLED
+dumpcmp.py:42 >-><= KILLED
+dumpcmp.py:61 !=->== KILLED
+dumpcmp.py:66 !=->== KILLED
+dumpcmp.py:73 not->del KILLED
+dumpcmp.py:73 and->or KILLED
+dumpcmp.py:79 not->del KILLED
+dumpcmp.py:79 and->or KILLED
+dumpcmp.py:81 and->or KILLED
+dumpcmp.py:81 or->and KILLED
+dumpcmp.py:83 "FAIL"->"PASS" KILLED
+dumpcmp.py:83 "PASS"->"FAIL" KILLED
+dumpcmp.py:102 ==->!= KILLED
+dumpcmp.py:102 "PASS"->"FAIL" KILLED
+dumpcmp.py:105 ==->!= KILLED
+p0_check.py:84 >=->< KILLED
+p0_check.py:88 and->or KILLED
+p0_check.py:90 >=->< KILLED
+p0_check.py:97 ==->!= KILLED
+p0_check.py:97 or->and KILLED
+p0_check.py:102 True->False KILLED
+p0_check.py:107 ==->!= KILLED
+p0_check.py:107 or->and KILLED
+p0_check.py:109 not->del KILLED
+p0_check.py:110 False->True KILLED
+p0_check.py:113 not->del KILLED
+p0_check.py:114 False->True KILLED
+p0_check.py:117 and->or KILLED
+p0_check.py:119 False->True KILLED
+p0_check.py:121 or->and KILLED
+p0_check.py:130 True->False KILLED
+p0_check.py:133 not->del KILLED
+p0_check.py:134 False->True KILLED
+p0_check.py:138 not->del KILLED
+p0_check.py:140 False->True KILLED
+p0_check.py:146 !=->== KILLED
+p0_check.py:148 ==->!= KILLED
+p0_check.py:149 False->True KILLED
+p0_check.py:151 not->del KILLED
+p0_check.py:151 and->or KILLED
+p0_check.py:151 >-><= KILLED
+p0_check.py:152 False->True KILLED
+p0_check.py:155 False->True KILLED
+p0_check.py:177 or->and KILLED
+p0_check.py:181 not->del KILLED
+p0_check.py:187 and->or KILLED
+p0_check.py:187 ==->!= KILLED
+p0_check.py:188 !=->== KILLED
+p0_check.py:188 "PASS"->"FAIL" KILLED
+p0_check.py:189 not->del KILLED
+p0_check.py:194 True->False KILLED
+p0_check.py:195 True->False KILLED
+p0_check.py:196 True->False KILLED
+p0_check.py:197 True->False KILLED
+p0_check.py:201 and->or KILLED
+p0_check.py:201 ==->!= KILLED
+p0_check.py:208 True->False KILLED
+p0_check.py:209 False->True KILLED
+p0_check.py:211 not->del KILLED
+p0_check.py:213 ==->!= KILLED
+p0_check.py:213 "PASS"->"FAIL" KILLED
+p0_check.py:213 and->or KILLED
+p0_check.py:213 ==->!= KILLED
+p0_check.py:214 ==->!= KILLED
+p0_check.py:220 ==->!= KILLED
+p0_check.py:220 and->or KILLED
+p0_check.py:220 ==->!= KILLED
+p0_check.py:220 "PASS"->"FAIL" KILLED
+p0_check.py:221 ==->!= KILLED
+p0_check.py:222 True->False KILLED
+p0_check.py:230 "PASS"->"FAIL" KILLED
+p0_check.py:230 "FAIL"->"PASS" KILLED
+p0_check.py:236 ==->!= KILLED
+geanttw_sacct.py:35 not->del KILLED
+geanttw_sacct.py:38 <->>= KILLED
+geanttw_sacct.py:38 or->and KILLED
+geanttw_sacct.py:38 not->del KILLED
+geanttw_sacct.py:45 not->del KILLED
+geanttw_sacct.py:45 True->False KILLED
+geanttw_sacct.py:50 and->or KILLED
+geanttw_sacct.py:55 not->del KILLED
+geanttw_sacct.py:61 not->del KILLED
+geanttw_sacct.py:66 not->del KILLED
+geanttw_sacct.py:68 not->del KILLED
+geanttw_sacct.py:69 or->and KILLED
+geanttw_sacct.py:71 not->del KILLED
+geanttw_sacct.py:75 not->del KILLED
+geanttw_sacct.py:78 not->del KILLED
+geanttw_sacct.py:78 or->and KILLED
+geanttw_sacct.py:78 not->del KILLED
+geanttw_sacct.py:80 not->del KILLED
+geanttw_sacct.py:86 <=->> KILLED
+geanttw_sacct.py:92 True->False KILLED
+geanttw_sacct.py:94 True->False KILLED
+geanttw_sacct.py:95 True->False KILLED
+geanttw_sacct.py:97 True->False KILLED
+geanttw_sacct.py:98 True->False KILLED
+geanttw_sacct.py:99 True->False KILLED
+geanttw_sacct.py:100 True->False KILLED
+geanttw_sacct.py:105 ==->!= KILLED
+geanttw_sacct.py:116 True->False KILLED
+geanttw_sacct.py:123 ==->!= KILLED
+geanttw_provenance.py:33 not->del KILLED
+geanttw_provenance.py:33 or->and KILLED
+geanttw_provenance.py:36 not->del KILLED
+geanttw_provenance.py:41 not->del KILLED
+geanttw_provenance.py:71 !=->== KILLED
+geanttw_provenance.py:76 not->del KILLED
+geanttw_provenance.py:78 !=->== KILLED
+geanttw_provenance.py:85 True->False KILLED
+geanttw_provenance.py:86 True->False KILLED
+geanttw_provenance.py:87 True->False KILLED
+geanttw_provenance.py:98 "FAIL"->"PASS" KILLED
+geanttw_provenance.py:98 "PASS"->"FAIL" KILLED
+geanttw_provenance.py:103 ==->!= KILLED
+geanttw_evloop.sbatch:27 exit 2->true KILLED
+geanttw_evloop.sbatch:27 ==->!= KILLED
+geanttw_evloop.sbatch:27 ==->!= KILLED
+geanttw_evloop.sbatch:35 exit 2->true KILLED
+geanttw_evloop.sbatch:48 exit 2->true KILLED
+geanttw_evloop.sbatch:52 ==->!= KILLED
+geanttw_evloop.sbatch:54 exit 2->true KILLED
+geanttw_evloop.sbatch:54 ==->!= KILLED
+geanttw_evloop.sbatch:56 ==->!= KILLED
+geanttw_evloop.sbatch:58 exit 2->true KILLED
+geanttw_evloop.sbatch:58 ==->!= KILLED
+geanttw_evloop.sbatch:59 exit 2->true KILLED
+geanttw_evloop.sbatch:61 exit 2->true KILLED
+geanttw_evloop.sbatch:61 ==->!= KILLED
+geanttw_evloop.sbatch:64 exit 2->true KILLED
+geanttw_evloop.sbatch:67 exit 2->true KILLED
+geanttw_evloop.sbatch:67 ==->!= KILLED
+geanttw_evloop.sbatch:88 exit 2->true KILLED
+geanttw_evloop.sbatch:88 -eq->-ne KILLED
+geanttw_evloop.sbatch:95 exit 2->true KILLED
+geanttw_evloop.sbatch:98 exit 2->true KILLED
+geanttw_evloop.sbatch:101 exit 2->true KILLED
+geanttw_evloop.sbatch:101 -eq->-ne KILLED
+geanttw_evloop.sbatch:106 exit 2->true KILLED
+geanttw_evloop.sbatch:111 exit 2->true KILLED
+geanttw_evloop.sbatch:111 ==->!= KILLED
+geanttw_evloop.sbatch:119 ==->!= KILLED
+geanttw_evloop.sbatch:120 exit 2->true KILLED
+geanttw_evloop.sbatch:128 exit 2->true KILLED
+geanttw_evloop.sbatch:156 exit 3->true KILLED
+geanttw_evloop.sbatch:163 exit 2->true KILLED
+geanttw_evloop.sbatch:166 ==->!= KILLED
+geanttw_evloop.sbatch:167 exit 2->true KILLED
+geanttw_evloop.sbatch:179 exit 2->true KILLED
+geanttw_evloop.sbatch:187 exit 2->true KILLED
+geanttw_evloop.sbatch:209 exit 4->true KILLED
+geanttw_evloop.sbatch:213 ==->!= KILLED
+geanttw_evloop.sbatch:223 exit 5->true KILLED
+geanttw_evloop.sbatch:223 -eq->-ne KILLED
+geanttw_build.sh:20 !=->== KILLED
+geanttw_build.sh:21 ==->!= KILLED
+geanttw_build.sh:22 exit 2->true KILLED
+geanttw_build.sh:25 exit 2->true KILLED
+geanttw_build.sh:28 exit 2->true KILLED
+geanttw_build.sh:52 exit 2->true KILLED
+geanttw_build.sh:59 ==->!= KILLED
+geanttw_build.sh:60 exit 2->true KILLED
+geanttw_build.sh:97 !=->== KILLED
+geanttw_build.sh:100 !=->== KILLED
+geanttw_build.sh:104 !=->== KILLED
+geanttw_build.sh:107 exit 1->true KILLED
+geanttw_build.sh:127 exit 1->true KILLED
+geanttw_build.sh:127 ==->!= KILLED
+geanttw_build.sh:229 ==->!= KILLED
+geanttw_build.sh:229 ==->!= KILLED
+geanttw_build.sh:242 ==->!= KILLED
+geanttw_build.sh:253 !=->== KILLED
+geanttw_build.sh:265 !=->== KILLED
+geanttw_build.sh:265 !=->== KILLED
+geanttw_build.sh:265 !=->== KILLED
+geanttw_build.sh:265 !=->== KILLED
+geanttw_build.sh:267 exit 1->true KILLED
+geanttw_connect.sh:34 bail->true KILLED
+geanttw_connect.sh:35 bail->true KILLED
+geanttw_connect.sh:36 bail->true KILLED
+geanttw_connect.sh:37 bail->true KILLED
+geanttw_connect.sh:38 bail->true KILLED
+geanttw_connect.sh:40 bail->true KILLED
+geanttw_connect.sh:41 stop->true KILLED
+geanttw_connect.sh:43 stop->true KILLED
+geanttw_connect.sh:44 stop->true KILLED
+geanttw_connect.sh:51 stop->true KILLED
+geanttw_connect.sh:51 -eq->-ne KILLED
+geanttw_connect.sh:54 ==->!= KILLED
+geanttw_connect.sh:58 stop->true KILLED
+geanttw_connect.sh:58 ==->!= KILLED
+geanttw_connect.sh:61 stop->true KILLED
+geanttw_connect.sh:61 -eq->-ne KILLED
+geanttw_remote.sh:47 bail->true KILLED
+geanttw_remote.sh:48 bail->true KILLED
+geanttw_remote.sh:49 bail->true KILLED
+geanttw_remote.sh:50 bail->true KILLED
+geanttw_remote.sh:51 bail->true KILLED
+geanttw_remote.sh:54 stop->true KILLED
+geanttw_remote.sh:56 stop->true KILLED
+geanttw_remote.sh:59 stop->true KILLED
+geanttw_remote.sh:61 stop->true KILLED
+geanttw_remote.sh:62 stop->true KILLED
+geanttw_remote.sh:62 ==->!= KILLED
+geanttw_remote.sh:64 stop->true KILLED
+geanttw_remote.sh:64 -eq->-ne KILLED
+geanttw_remote.sh:75 ==->!= KILLED
+geanttw_remote.sh:75 -eq->-ne KILLED
+geanttw_remote.sh:76 stop->true KILLED
+geanttw_remote.sh:77 ==->!= KILLED
+geanttw_remote.sh:77 ==->!= KILLED
+geanttw_remote.sh:78 stop->true KILLED
+geanttw_remote.sh:100 ==->!= KILLED
+geanttw_remote.sh:101 stop->true KILLED
+geanttw_remote.sh:105 stop->true KILLED
+geanttw_remote.sh:111 stop->true KILLED
+geanttw_remote.sh:111 -eq->-ne KILLED
+geanttw_remote.sh:116 bail->true KILLED
+geanttw_remote.sh:118 stop->true KILLED
+geanttw_remote.sh:119 stop->true KILLED
+geanttw_remote.sh:125 stop->true KILLED
+geanttw_remote.sh:126 stop->true KILLED
+geanttw_remote.sh:126 ==->!= KILLED
+geanttw_remote.sh:127 stop->true KILLED
+geanttw_remote.sh:132 bail->true KILLED
+geanttw_remote.sh:136 stop->true KILLED
+geanttw_remote.sh:136 -eq->-ne KILLED
+geanttw_remote.sh:141 bail->true KILLED
+geanttw_remote.sh:143 bail->true KILLED
+geanttw_remote.sh:146 stop->true KILLED
+geanttw_remote.sh:150 stop->true KILLED
+geanttw_remote.sh:152 stop->true KILLED
+geanttw_remote.sh:157 stop->true KILLED
+geanttw_remote.sh:158 stop->true KILLED
+geanttw_remote.sh:161 stop->true KILLED
+geanttw_remote.sh:166 stop->true KILLED
+geanttw_remote.sh:170 stop->true KILLED
+geanttw_remote.sh:177 stop->true KILLED
+geanttw_remote.sh:178 stop->true KILLED
+geanttw_remote.sh:186 stop->true KILLED
+geanttw_remote.sh:190 stop->true KILLED
+geanttw_remote.sh:191 stop->true KILLED
+geanttw_remote.sh:193 stop->true KILLED
+geanttw_remote.sh:210 stop->true KILLED
+geanttw_remote.sh:210 -eq->-ne KILLED
+geanttw_remote.sh:212 bail->true KILLED
+
+mutants 252; killed 252; not killed 0 (survived or timed out)
+  dumpcmp.py: 21 mutants, 21 killed
+  p0_check.py: 58 mutants, 58 killed
+  geanttw_sacct.py: 29 mutants, 29 killed
+  geanttw_provenance.py: 13 mutants, 13 killed
+  geanttw_evloop.sbatch: 39 mutants, 39 killed
+  geanttw_build.sh: 23 mutants, 23 killed
+  geanttw_connect.sh: 16 mutants, 16 killed
+  geanttw_remote.sh: 53 mutants, 53 killed

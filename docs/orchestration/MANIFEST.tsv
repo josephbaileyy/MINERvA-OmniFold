@@ -8653,6 +8653,25 @@ docs/orchestration/state/gate6-member-code-identity-split-56834281.json	tracked	
 docs/orchestration/state/gate6-member-trajectories-result-56847059.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/gate6-ml-ensemble-result-56834281.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/gate6-trajectory-array-active-56847059.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/DECLARATION.md	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/SHA256SUMS-P0	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/S0-src_base.sha256	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/dumpcmp.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/geanttw_build.sh	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/geanttw_connect.sh	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/geanttw_evloop.sbatch	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/geanttw_provenance.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/geanttw_remote.sh	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/geanttw_sacct.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/linetrace.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/linetrace.txt	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/mutation.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/mutation.txt	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/p0_check.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/tests/test_dumpcmp.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/tests/test_p0_check.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/tests/test_provenance_sacct.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/code/tests/test_shell_scripts.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
 docs/orchestration/state/gen_divergence_manifest_cstat_data_only.py	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/gen_manifest_run_bound_addendum.py	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/gpu-timing-20261023/ASSIGNMENT.md	tracked	LIVE	state-artifact	gpu-timing-20261023		open		route-only	no
