@@ -21,7 +21,12 @@
   "run_hooks": false
  },
  "roles": {
-  "pg-connect": {"binary": "<absolute cluster path>", "binary_sha256": "<64 hex>", "args": [],
+  "pg-connect": {"binary": "<absolute cluster path of covfix_pg.py>", "binary_sha256": "<64 hex>",
+                 "args": ["--workdir", "<empty cluster dir>", "--sealed", "<new cluster dir, disjoint from it>",
+                          "--gen-spec", "<absolute cluster path of the gen-spec JSON>",
+                          "--gen-spec-sha256", "<64 hex: sha256 of the gen-spec file's bytes>",
+                          "--gpg", "<absolute path>", "--gpgconf", "<absolute path>",
+                          "--gpg-sha256", "<64 hex>", "--gpgconf-sha256", "<64 hex>"],
                  "slurm": {"account": "<account>", "qos": "<qos>", "constraint": "cpu", "time": "<h:mm:ss>"}},
   "pv-writer": {"binary": "<absolute cluster path>", "binary_sha256": "<64 hex>", "args": [],
                 "slurm": {"account": "<account>", "qos": "<qos>", "constraint": "cpu", "time": "<h:mm:ss>"}},
