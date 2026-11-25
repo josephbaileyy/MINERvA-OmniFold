@@ -1,0 +1,39 @@
+[INFO] Truth-normalization flux source: embedded hFlux_pt
+[OK] Saved /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4b/a4b_old/fig2/out/_held/MEFHC_5iter_xsec_pt_slices.png
+[OK] Saved /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4b/a4b_old/fig2/out/_held/MEFHC_5iter_xsec_pz_slices.png
+[OK] Saved /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4b/a4b_old/fig2/out/_held/MEFHC_5iter_xsec_proj_pt.png
+[OK] Saved /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4b/a4b_old/fig2/out/_held/MEFHC_5iter_xsec_proj_pz.png
+[OK] Saved /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4b/a4b_old/fig2/out/_held/MEFHC_5iter_xsec_eff_heatmap.png
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+========================================================================
+THREE-WAY COMPARISON  -  ours / published data / generator model
+========================================================================
+reported bins: 205
+sigma_tot: ours/data = 1.0077
+model MINERvA_Tune_v1: sigma_tot/data = 0.9124
+
+--- chi^2 in paper TotalCov (ndf = 205) ---
+  ours vs data (sanity ~3.66)     chi2 =       465.42   ndf = 205   chi2/ndf =   2.270
+  data vs MINERvA_Tune_v1         chi2 =      6773.05   ndf = 205   chi2/ndf =  33.039
+  ours vs MINERvA_Tune_v1         chi2 =      6424.80   ndf = 205   chi2/ndf =  31.340
+
+wrote /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4b/a4b_old/fig2/out/_held/model_comp_report.txt, /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4b/a4b_old/fig2/out/_held/model_comp_projections.png, /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4b/a4b_old/fig2/out/_held/model_comp_ratio_maps.png
+[INFO] truth flux source: embedded hFlux_pt
+[OK] wrote /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4b/a4b_old/fig2/out/_held/MEFHC_5iter_fig13.png
+[INFO] Truth-normalization flux source: embedded hFlux_pt
+wrote /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4b/a4b_old/fig2/out/_held/MEFHC_5iter_xsec_paper_pt_slices.png  (chi2/ndf = 178499.6/205)
+wrote /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4b/a4b_old/fig2/out/_held/MEFHC_5iter_xsec_paper_pz_slices.png  (chi2/ndf = 178499.6/205)
+
+============================================================
+Paper Fig. 13 comparison summary (statistical errors only)
+============================================================
+input file: /Users/josephbailey/cov2d-work/figfetch/er-anc/xsec.root
+nIterations = 5
+p_T slices total chi2/ndf  = 178499.6/205  = 870.73
+p_|| slices total chi2/ndf = 178499.6/205  = 870.73
+NOTE: statistical-only chi2; paper uses full covariance.
+[compose_tier2] wrote 4 figures; mosaic panels matched 30 of 30
+[compose_fig2_edges] redrew the published prediction on the projection edges in 2 figures; edge check: failed before on that line only, passes after on both axes
+[compose_fig2_pubratio] lower panels redrawn as OmniFold / published in 2 figures
+[compose_fig2_round] 2 projections: stamp removed, one legend, print-size text
+[compose_fig2_r3] 2 projections: published prediction black dashed above the prior; legend renamed

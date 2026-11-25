@@ -1,0 +1,15 @@
+== C4b-OLD: OLD (the installing commit's code) against the installed files
+EQUAL-BUT-DATE MEFHC_5iter_xsec_proj_pt.pdf: /CreationDate (D:20261120221919-07'00') vs /CreationDate (D:20261125014915-07'00')
+EQUAL-BUT-DATE MEFHC_5iter_xsec_proj_pz.pdf: /CreationDate (D:20261120221920-07'00') vs /CreationDate (D:20261125014917-07'00')
+== C4b-PRE: the edge-fix pre-check flags only the declared line
+  OLD MEFHC_5iter_xsec_proj_pt: before ["line 'Tune v1: published prediction': steps-mid steps change or end off the bin edges"]; after {'top': [], 'ratio': []}; edges [0.0, 0.07, 0.15, 0.25, 0.33, 0.4, 0.47, 0.55]: PASS
+  OLD MEFHC_5iter_xsec_proj_pz: before ["line 'Tune v1: published prediction': steps-mid steps change or end off the bin edges"]; after {'top': [], 'ratio': []}; edges [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]: PASS
+  E MEFHC_5iter_xsec_proj_pt: before ["line 'Tune v1: published prediction': steps-mid steps change or end off the bin edges"]; after {'top': [], 'ratio': []}; edges [0.0, 0.075, 0.15, 0.25, 0.325, 0.4, 0.475, 0.55]: PASS
+  E MEFHC_5iter_xsec_proj_pz: before ["line 'Tune v1: published prediction': steps-mid steps change or end off the bin edges"]; after {'top': [], 'ratio': []}; edges [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]: PASS
+== information: E against A4's E run (not a reading there)
+EQUAL-BUT-DATE MEFHC_5iter_xsec_proj_pt.pdf: /CreationDate (D:20261125012948-07'00') vs /CreationDate (D:20261125015108-07'00')
+EQUAL-BUT-DATE MEFHC_5iter_xsec_proj_pz.pdf: /CreationDate (D:20261125012949-07'00') vs /CreationDate (D:20261125015109-07'00')
+== sha256 (installed; OLD at the installing commit; E at main)
+MEFHC_5iter_xsec_proj_pt.pdf installed d27075c220081054caf51fb6130fe3a671e9dc0dacfb1a97469b3d07829f63af old ddbd7d364f4b022906dd0e22cfdbffa8e4f331dfdd2bca2b00c38566b65b9125 e 82c0d63fc612b196d5a1abb0a187a0392f2ea791ac49011f7558ea94826cdf00
+MEFHC_5iter_xsec_proj_pz.pdf installed caa9286bfec8e7f2b6d6dd06fda6d5fc9f0b8f1c7c95d4bacc290048726b4745 old 6fa7f33117852b6a8abdcca8d66268e929451995e25575af2016f9d970f415f0 e 4d73ab9210fabf569d126d196ef205b7030257f66996a349657f5615d0a34a1d
+A4B-CONTROLS :: PASS

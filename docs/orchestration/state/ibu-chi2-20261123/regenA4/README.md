@@ -4,8 +4,9 @@
 - **Amendment:** [`AMENDMENT-A4.txt`](AMENDMENT-A4.txt), committed at 63c9ec46 before any run.
 - **GO:** the director's.
 - **The stop after OLD:** [`STOP.md`](STOP.md).
-- **This record is A4 E for the six:** pull_full, the three tension figures and the two slice figures. Fig. 2
-  (xsec_proj_pt/pz) goes to amendment A4b.
+- **Contents:** A4 E for six figures (pull_full, the three tension figures, the two slice figures), and Fig. 2
+  (xsec_proj_pt/pz) under [`AMENDMENT-A4b.txt`](AMENDMENT-A4b.txt), committed at 67fe84bd before its run. See
+  "Fig. 2 (A4b)" below.
 
 ## How it ran
 
@@ -16,6 +17,7 @@ All on this laptop, at 0 node-h, with no NERSC connection.
 4. **Step 3, E** ([`out/e/steps.log`](out/e/steps.log)): every step rc 0.
    - The runner cannot skip a step without changing its bytes, so it ran unchanged, fig2 included.
    - fig2's E output is **not a reading**. It is kept in [`out/e_fig2_not_a_reading/`](out/e_fig2_not_a_reading/).
+     **A4b's E reading supersedes it.** The two are EQUAL-BUT-DATE.
 5. **Step 4,** controls and shas ([`receipts/controls.out`](receipts/controls.out)). The script ends in A4-CONTROLS :: FAIL,
    for fig2's missing OLD files only. For the six, every control passes:
    - C-OLD: EQUAL-BUT-DATE ×4 (pull_full and tension ×3);
@@ -42,8 +44,10 @@ All on this laptop, at 0 node-h, with no NERSC connection.
 | tension_spectrum.pdf | 98d7ce2c9765275be579ef8345fde17f50a8b24b0e2f26846475d6998a163661 | f25ee7d28384cfac6f77dd35844db86ffa7ad31d5b99ab1586d48fdb3aa9772f |
 | tension_chi2_map.pdf | 4f18c35be762355f16410bb8798ceae8f303e640e33bda985c90dbfdee23236a | affa1fefae38443f12d28ea938149d57943a83f309210e20810a448966808427 |
 | tension_mode_maps.pdf | f4d8a4197aa0318fd9704ab7c0d0011c9a85425e12398966bb552a1b79c80412 | fe405d2fcab8f55e74c2ab37ff42dd83421fc0352f58db77d9c9ba1805b1869d |
+| MEFHC_5iter_xsec_proj_pt.pdf (A4b) | d27075c220081054caf51fb6130fe3a671e9dc0dacfb1a97469b3d07829f63af | 82c0d63fc612b196d5a1abb0a187a0392f2ea791ac49011f7558ea94826cdf00 |
+| MEFHC_5iter_xsec_proj_pz.pdf (A4b) | caa9286bfec8e7f2b6d6dd06fda6d5fc9f0b8f1c7c95d4bacc290048726b4745 | 4d73ab9210fabf569d126d196ef205b7030257f66996a349657f5615d0a34a1d |
 
-- **E files:** in [`out/e/`](out/e/). The slices' markers layer, before the strip, is beside them as
+- **E files:** in [`out/e/`](out/e/), and Fig. 2's in [`out/a4b/e/`](out/a4b/e/). The slices' markers layer, before the strip, is beside them as
   `*_markers_layer.pdf`.
 - **OLD reruns:** in [`out/old/`](out/old/).
 
@@ -84,9 +88,45 @@ prior"; appC:37: "In all 16 p∥ slices …").
   2614.2 → 2835.2, 2819.5 → 3063.8 and 5084.1 → 4840.5. The seven above 0.55 GeV/c are unchanged.
 - **p∥ slices:** every value moves by at most 16.4 in χ², 0.22 % at most relative. The full lists are in the readout JSON.
 
+## Fig. 2 (A4b)
+
+[`AMENDMENT-A4b.txt`](AMENDMENT-A4b.txt) runs OLD with the code that made the installed file, and E on main.
+- **The installing commit:** 434fc800b, whose parent is 177c549c2, the round's recorded base.
+- **The code:** every chain tool tree is identical there and at main. Only `2d-unfolding/` differs, through #1318 and
+  #1328.
+- **What the change combines:** the OLD-to-E change in Fig. 2 combines the pT-edge move with #1318's fix that places
+  the published points on the release axis. The installed Fig. 2 drew them at our pT bin centres. This is as in A2.
+
+**The OLD tree.** A `git archive` of 434fc800b, taken without nd-unfolding and the other orchestration records
+because the disk was at 98 %. It was extracted in the scratchpad (225 MB, tree 2a655c1a) and deleted after the run.
+- The blob check ([`receipts/a4b_tree_check.out`](receipts/a4b_tree_check.out)): 389 files in `2d-unfolding/`,
+  `technote_style.py` and the chain's tool trees, each sha256 equal to its blob, with no DIFFER.
+- A first invocation of the check, in zsh, was vacuous:
+  - the loop variable `path` is tied to `$PATH` there, so every command was "not found";
+  - every comparison was empty = empty, so every line read "ok";
+  - its output is kept as [`receipts/a4b_tree_check_attempt1_vacuous_zsh.out`](receipts/a4b_tree_check_attempt1_vacuous_zsh.out);
+  - the declared command was then run in bash, with an empty comparison counting as DIFFER. Steps 1–3 ran after it.
+
+**Run** ([`receipts/a4b_prerun.txt`](receipts/a4b_prerun.txt)):
+- A4_VENV was unset. The runner was unchanged (2d5246a1).
+- **Step 1, OLD** in the extraction, and **step 2, E** at main W 06893b0a: every step rc 0
+  ([`out/a4b/old/steps.log`](out/a4b/old/steps.log), [`out/a4b/e/steps.log`](out/a4b/e/steps.log)).
+- Only fig2's outputs are A4b's.
+- **C-PINS:** equal before and after.
+
+**Controls** ([`receipts/a4b_controls.out`](receipts/a4b_controls.out)), A4B-CONTROLS :: PASS:
+- **C4b-OLD:** xsec_proj_pt and _pz are EQUAL-BUT-DATE against the installed d27075c2 / caa9286b.
+- **C4b-PRE:** on both grids and in both projections, the edge-fix pre-check flagged exactly the declared
+  'Tune v1: published prediction' line and nothing in the ratio panel, and the check after the fix flagged nothing.
+  The edges recorded are 0.07 / 0.33 / 0.47 on OLD and 0.075 / 0.325 / 0.475 on E.
+- **Information:** E is EQUAL-BUT-DATE against A4's E run of fig2, so the draw is deterministic.
+
+**Cross-check with A2.** The figure's lower-panel ratios, ours / published, are recorded in
+`compose_fig2_pubratio.json`'s `ratio_to_published`. On each grid they equal A2's projection-ratio readout to at most
+4.4e-16. The lowest pT bin is 0.9675 on OLD and 1.041 on E; the highest is 1.0372 on both.
+
 ## Not in this record
 
-- **Fig. 2** (xsec_proj_pt/pz): amendment A4b.
 - **eavail_marginal_vs_paper_pull_full** (appC:214): in regenA/README.md's Deferred tidy-up section.
 
 [`SHA256SUMS`](SHA256SUMS) covers this directory. Files named `*.out` and `*.log` are committed with `git add -f`.
