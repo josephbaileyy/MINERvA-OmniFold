@@ -1,0 +1,25 @@
+You are a careful read-only code tracer in the MINERvA-OmniFold repository (this directory, at a fixed commit). Do not modify anything.
+
+CONTEXT. The analysis note's 16-cell 5D result has a reported covariance C_rep = C_total + C_resp + C_PL5D, where C_total = C_e + C_model_abs. A decision adopts V_F (a fluctuation-scaled replacement for C_e): the new reported covariance is C_rep_F = C_rep + dF, where dF = V_F - C_e is a 16x16 positive-definite matrix. Every note value that depends on C_rep must be recomputed. Most analysis producers accept one extra covariance block via `--extra-block <npz> --extra-block-sha256 --extra-block-key --extra-block-name [--extra-block-role adopted]`; the current runs pass the block "C_resp + C_PL5D" (key C_resp_plus_C_PL5D) from fd/with-cpl/block/cpl_block.npz (built by nd-unfolding/fd_cpl_addition.py). The plan is to pass a new block X_F = C_resp + C_PL5D + dF under a NEW key and name.
+
+FD = docs/orchestration/state/measurement-paper/5d-community-20261024
+
+READOUTS (keys of READOUTS in docs/analysis-note/make_values_fived16.py, plus V-ATLAS in docs/analysis-note/make_values_landed.py and make_supplemental.py):
+Phase 1: dp, g, g0, diag, fup, sens2, fboot, f0, f0b, f1, s1, cresp, plus the figures (fd_g_fig_ratio, fd_g_fig_modes and the headline/generator-residual figures in sec_fived16 and sec5_multidim) and make_supplemental.py.
+Phase 2: gdefs, gch, gnat, gover, cr, xk, e2, e2sens, eav, ct3b, prr, t2b, rsn, rsnregrade, e96d, refg1, V-ATLAS (valid_region.py via values_landed).
+
+FOR EACH READOUT give, with file:line evidence for every claim:
+1. OLD: the pinned file path and its pin as written in make_values_fived16.py (or make_values_landed.py).
+2. PRODUCER: the script that wrote that file, and WHERE ITS RECORDED COMMAND IS (the receipt/chain.json/connect script file:line that holds the exact argv of the run that produced the pinned bytes). Quote the argv's covariance-related flags verbatim.
+3. HOW C_rep ENTERS: exactly one of (a) via --extra-block flags (quote key/name/sha passed), (b) by loading a matrix from a committed or scratch file (name the file and the key/CSV, e.g. the with-cpl data product's C_total_plus_C_resp_plus_C_PL5D), (c) recomputed from components inside the script (name them), (d) via another readout's numbers (name it), (e) it does NOT depend on C_rep after all (say why).
+4. NAME/KEY/SHA CHECKS: does the producer (or anything it imports) compare the block's name, key, sha256 or matrix label against a hardcoded constant or a pinned sha, such that passing X_F under a new key/name/sha would STOP or require a code change? Quote each such line. Also: hardcoded pins of upstream readouts that would need replacing (e.g. a PINS dict naming the g readout's sha), and whether the producer supports pin overrides (a run(a, pins=...) entry, as fd_cpl_addition's BOOT uses).
+5. INPUTS AND WHERE IT CAN RUN: committed files only (laptop) or NERSC scratch inputs (name the --flags whose paths are under /pscratch or /global). If a step needed a compute node or HPSS staging in its recorded run, say so and give the recorded node-hours/wall time if recorded.
+6. UPSTREAM/DOWNSTREAM within this list: which readouts consume this one's output (e.g. g -> diag -> fup -> sens2), so the V_F run must chain them.
+7. DECISION RULES applied to C_rep-dependent numbers inside this producer or in the note generator (thresholds such as p<0.01, |z|>2, 2 sigma, p>=0.05, |z|<=2.5), with file:line.
+
+Then answer separately:
+A. Does any F-regrade readout (f0, f0b, f1) store enough committed numbers (per-truth bias vector, noise vector or noise covariance, grade-matrix name/components) that its grade chi2, p, z, listings and trigger counts could be recomputed EXACTLY under C_rep_F from committed files alone, without NERSC truth products? Name the fields, and state any number that could NOT be recomputed that way. Do the same for g, g0, diag, fup, sens2, fboot (do they store the predictions g, V_g, d so chi2 can be recomputed from committed files?), and for any Phase 2 readout where this is possible.
+B. List every place where make_values_fived16.py or make_values_landed.py or make_supplemental.py itself computes a C_rep-dependent number from a matrix (rather than reading a producer's number), with file:line.
+C. List any producer whose recorded run cannot be reproduced bit-for-bit (randomness without a recorded seed, missing argv, environment-dependent output), with evidence.
+
+OUTPUT: first a TSV block (one line per readout; columns: readout, phase, old_path, old_pin, producer, argv_record_file:line, crep_entry(a-e), crep_detail, name_key_checks(yes/no + file:line), pin_overrides(yes/no), run_where(laptop|login|compute|hpss), upstream, decision_rules), then the per-readout evidence, then A, B, C. Be exhaustive and precise; say "not found" rather than guess.
