@@ -76,3 +76,26 @@ PASS for both. E's median is 1.0074806014196405, which prints as **1.007** at 3 
 (1.005). Within 5 %: E 175/205 = 85.3659 % (85.4), OLD 178/205 = 86.8293 % (86.8). READINGS.md is unchanged.
 
 **Hook re-run on f65ee65c (2026-11-25).** f65ee65c was committed with `--no-verify`, after its hook had been run on the staged tree. At the director's request the hook was re-run against that commit's exact tree: a temporary worktree at its parent 16d8947d, f65ee65c applied with `cherry-pick -n`, and `git write-tree` checked equal to f65ee65c^{tree}. Result: `pre-commit: 21 checks passed`, rc 0. `--no-verify` is not used again.
+
+## Deferred tidy-up (owner: this lane)
+
+These comparisons with the published result are still on our pT edges (0.07 / 0.33 / 0.47). Joseph deferred them on
+2026-11-25, relayed by the director: "maybe list it as something to tidy up later". journal-editor's KNOWN_ISSUES row
+points here.
+- Print places come from grep over main_note.tex's `\input` closure at 7c7a3cfb.
+- Prices come from committed records only.
+
+| item | printed at | producer and input | rough price |
+|---|---|---|---|
+| `\chiPaperPurity` 2.65 (2.654) | values.tex:81; appC_supplementary.tex:42 | `compare_to_paper_fullcov.py` on E_U, the purity-subtracted LightGBM seed-42 central value. Recorded as RE-2 part C's `values_table.tsv` row `m-chiPaper`, `purity_value` | A purity re-unfold on the paper's edges. Nearest record: PV2D arm (a), a purity re-unfold, 6 runs, 4.2617 node-h (`grid-price/README.md:55`; `2d-closeout/stageF/methods/pv2d/LEDGER.tsv`) |
+| `\chiPaperExact` 3.66 (3.661) | values.tex:48; appC_supplementary.tex:42 | `compare_to_paper_fullcov.py` on E_C, the exact-split GBT central value (`2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md:88`) | An exact-split re-unfold. E_C, job 53116554: **no charge recorded**, 19.31 h elapsed (`next-preparation-20261009/speed/REPORT.md:85`) |
+| 21.96 per reported bin, the direct inverse of Q_R vs the published central value | appA_methods.tex:74 (a literal) | A Q_R covariance product. The value 21.965997… appears in `2d-closeout/covfix-20261122/p0/run/p0.json` at `profiles/G18/C_T/q[84]`. That match was found by grep and has **not been confirmed as the printed number's producer** | Waits for part B (covariance products; Joseph's path choice) |
+| `eavail_marginal_vs_paper_pull_full.pdf` and its caption's "largest positive differences near the high-p‖ edge" | appC_supplementary.tex:214 (figure) | make_figures.sh:126, `compare_to_paper_fullcov.py --ours ../3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root`: the 3D purity unfold's marginal against the published 2D | A 3D purity re-unfold on the paper's pT edges, so not 0 node-h and not in A4 (the director, 2026-11-25). No committed price |
+
+**Also found by the same grep, not on the director's list:** appC_supplementary.tex:42 prints two more purity-era
+distances on our edges.
+- "2.64--2.75 across ten LightGBM seeds" (the lgbm ML seed scan: 10 runs, **no charge recorded**, per the superseded-products table in
+  `grid-price/README.md`).
+- "$2.70\pm0.04$" for HistGBT.
+
+The director decides whether they join this list.
