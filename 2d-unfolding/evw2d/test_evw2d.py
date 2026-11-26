@@ -1677,8 +1677,10 @@ class Staging(unittest.TestCase):
             E.check_staged(cfg, R)
 
     def test_unbound_staging_refuses(self):
+        cfg = copy.deepcopy(BASE)   # the shipped config.json is bound from the binding commit on: unbind it here
+        cfg["inputs"]["staging"]["root"] = None
         with self.assertRaises(E.GateFailure):
-            E.staged(BASE)
+            E.staged(cfg)
 
     def test_main_runs_end_to_end_and_cleans_up(self):
         c = Case()  # its own fixture: cleanup deletes its staged copies

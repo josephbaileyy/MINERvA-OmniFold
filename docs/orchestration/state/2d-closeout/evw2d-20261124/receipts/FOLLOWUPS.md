@@ -45,3 +45,13 @@ None can change the published weights, the constants or the exactness gates by a
     changes only bin errors or metadata would pass (codex-school confirmation, 14:04Z). No published value or gate
     depends on them.
 17. Cleanup can delete the staged copies before a short or failed ledger write (codex-school confirmation; as 11).
+
+**From the launch set's reads (director, 2026-11-26, accepting #1367)**
+18. The launcher's `ssh -G` credential check treats a symlinked alias of the checked key as another credential
+    (codex-school r1c, MINOR). It stops the step, so it fails closed: a false STOP, never a wrong credential.
+19. `evw2d.py cleanup`, run directly, follows a linked staging root (codex-school r1c). The launch path never runs it
+    that way: `evw2d_cleanup.sh` first requires `<lane>/stage` to be a real directory and both staged names regular,
+    non-link files. evw2d.py stays byte-unchanged for EVW2D; a later revision could refuse a linked staging root
+    itself.
+20. `test_unbound_staging_refuses` read the shipped config.json, which is bound from the binding commit on; it now
+    unbinds `inputs.staging.root` itself (test-only, in the binding PR).

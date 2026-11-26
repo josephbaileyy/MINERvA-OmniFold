@@ -522,9 +522,13 @@ def _copy_tree(tmp: Path) -> Path:
     top = tmp / "top"
     rel_l = LAUNCH.relative_to(REPO)
     rel_d = "docs/orchestration/state/2d-closeout/evw2d-20261124/EVW2D-DECLARATION.md"
-    for f in ("evw2d.py", "sbatch_evw2d.sh", "config.json", "references.npz"):
+    for f in ("evw2d.py", "sbatch_evw2d.sh", "references.npz"):
         (top / "2d-unfolding/evw2d").mkdir(parents=True, exist_ok=True)
         shutil.copy(EV / f, top / "2d-unfolding/evw2d" / f)
+    # the reviewed config.json's bytes, from its merge (the working copy is bound from the binding commit on)
+    (top / "2d-unfolding/evw2d/config.json").write_bytes(subprocess.run(
+        ["git", "-C", str(REPO), "show", "4d9147f9a94c14b0c313f2e611a35e044b327704:2d-unfolding/evw2d/config.json"],
+        capture_output=True, check=True).stdout)
     (top / rel_l).mkdir(parents=True)
     for f in LAUNCH.glob("*.sh"):
         shutil.copy(f, top / rel_l / f.name)

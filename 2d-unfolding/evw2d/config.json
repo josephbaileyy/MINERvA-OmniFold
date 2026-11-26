@@ -1,12 +1,12 @@
 {
  "schema": "evw2d-config/1",
  "declaration": "docs/orchestration/state/2d-closeout/evw2d-20261124/EVW2D-DECLARATION.md",
- "declaration_sha256": null,
- "lane_root": null,
+ "declaration_sha256": "c1b0164317c531fcc15cc769fec2cbdbe9ef955db816fc00a0d0865054c89d51",
+ "lane_root": "/pscratch/sd/j/josephrb/evw2d-20261126",
  "binding_note": "declaration_sha256, lane_root, driver_tree.root and inputs.staging.root are bound at the binding, and config.json's own sha256 is passed to evw2d.py on the command line; evw2d.py refuses to stage, run or clean up until they are, keeps the driver tree, the staging root, its own checkout and --out strictly inside the lane root, itself under /pscratch/sd/j/josephrb, and requires argv, cpus, thread_env, exact_rtol, the input and reference digests, paper_pt_edges and the four pins to equal the reviewed values in evw2d.py",
  "driver_tree": {
   "commit": "77d76cfc2d621f8faa010b75006811868494652a",
-  "root": null,
+  "root": "/pscratch/sd/j/josephrb/evw2d-20261126/deploy_M",
   "code_sha256": {
    "2d-unfolding/re2/re2_driver.py": "938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b",
    "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a",
@@ -20,7 +20,7 @@
   "CV_sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
   "MC_source": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
   "MC_sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
-  "staging": {"root": null, "CV": "runEventLoopOmniFold_MEFHC.root", "MC": "runEventLoopMC_MEFHC.root"},
+  "staging": {"root": "/pscratch/sd/j/josephrb/evw2d-20261126/stage", "CV": "runEventLoopOmniFold_MEFHC.root", "MC": "runEventLoopMC_MEFHC.root"},
   "note": "REF-C2C1's inputs (ref_c2c1/config.json inputs); 'evw2d.py stage' copies each by O_NOATIME into the staging root and checks its pin; the run reads only those copies; root is bound at the binding"
  },
  "argv": ["--omnifile", "$CV", "--mcfile", "$MC", "--iters", "5", "--use-weights", "--estimator", "lgbm",
