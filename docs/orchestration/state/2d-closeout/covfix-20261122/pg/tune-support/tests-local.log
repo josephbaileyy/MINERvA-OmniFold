@@ -16,4 +16,4 @@ test_pg_verify.py::Members::test_members_check
     warnings.warn(
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-363 passed, 2 skipped, 7 warnings in 489.46s (0:08:09)
+363 passed, 2 skipped, 7 warnings in 280.42s (0:04:40)
