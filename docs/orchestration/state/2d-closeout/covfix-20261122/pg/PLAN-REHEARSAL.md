@@ -78,6 +78,14 @@ Paths below are relative to `docs/orchestration/state/2d-closeout/covfix-2026112
 ### B3, the login-node replay of slot 1 (writes NERSC scratch)
 
 - **Before it can run:**
+  - **`3d-unfolding/genie/pg_pins.json` is filled first** (added 2026-11-26, after B3's first run STOPped with
+    `pg_pins.json is not filled (R1)`; this plan had left the step out). pg_replay.sh and pg_generate.sh refuse while
+    any pin is null or `system_tools` is empty. The director confirms each value from B1's receipt:
+    - `strace_sha256`: `tools.strace.sha256`;
+    - `dbconfig_sha256`: `xsec.dbconfig.sha256`, the same as B2's pin;
+    - `system_tools`: `{tools.awk.path: tools.awk.sha256}`, the probe's gawk (RULINGS-A2.md, D1).
+    `test_pg_pins_json_is_b1s_receipt` holds the file to B1's committed receipt. pg_pins.json is inside B3's
+    archive, so the embed below is of the commit that holds the filled pins.
   - pg-replay-g2111a.py holds `COMMIT = None` and an empty archive at the head.
   - `python3 -I -B install/embed_archive.py 4735c7df97e0170de2938db0fe1f32a3adeec91f` fills in the commit, the
     archive's sha256, the blob pins and the archive itself. That commit must hold every file B3 runs, and it does: `git cat-file -e` finds all of embed_archive.py's `PATHS` at 4735c7df, and `git ls-tree -r` shows no link or submodule among them.
@@ -233,9 +241,13 @@ check cov2d's state, so each item is for the binding to confirm.
 
 1. **B1.** Then the director pins the dbconfig sha.
 2. **The B2 fill.** It is committed, and its sha goes to the director. **Then B2.**
-3. **The B3 embed** at 4735c7df. It is committed, and its sha and the archive's sha go to the director. Before it,
+3. **The pg_pins.json fill,** from B1's receipt, on the director's confirm. It is committed.
+4. **The B3 embed** of the commit that holds the filled pins. It is committed, and its sha and the archive's sha go to the director. Before it,
    optionally, a read-only `ls` of the flux directory, with its own GO. **Then B3.**
-4. **The time check** against B3's record (section 3). Then cov2d's items (section 4) are confirmed.
-5. **G,** under the binding.
+5. **The time check** against B3's record (section 3).
+6. **The root-schemas.json fill:** `gst` and `gst_merged` from B3's replay.json `gst_schema` and
+   `gst_merged_schema`, on the director's confirm. pg_generate.sh refuses while either is null. Then cov2d's items
+   (section 4) are confirmed, and G's `PG_DEPLOY_PIN` is a commit that holds both fills.
+7. **G,** under the binding.
 
 After each step, the receipt and the REHEARSAL-CHECKLIST.md rows it answers are committed.

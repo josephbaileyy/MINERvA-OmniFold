@@ -220,6 +220,25 @@ class Consistency(unittest.TestCase):
         self.assertEqual((m[d + "gxspl-NUsmall.xml"]["sha256"], m[d + "README"]["sha256"]),
                          V3.PG_SPLINE_PINS["G21_11a_00_000"][:2])
 
+    def test_pg_pins_json_is_b1s_receipt(self):
+        """pg_pins.json holds the director's pins (2026-11-26), each equal to B1's committed receipt."""
+        pins = json.loads((GENIE / "pg_pins.json").read_text())
+        res = [ln for ln in (RECORD_DIR.parent / "probe/pg-probe.out").read_text().splitlines()
+               if ln.startswith("PG-PROBE-RESULT ")]
+        self.assertEqual(len(res), 1)
+        b1 = json.loads(res[0][len("PG-PROBE-RESULT "):])
+        self.assertEqual(b1["verdict"], "GO")
+        tools = b1["tools"]
+        self.assertTrue(tools["strace"]["rpm_match"] and tools["awk"]["rpm_match"])
+        self.assertEqual(pins["strace_path"], tools["strace"]["path"])
+        self.assertEqual(pins["strace_sha256"], tools["strace"]["sha256"])
+        self.assertEqual(pins["dbconfig_sha256"], b1["xsec"]["dbconfig"]["sha256"])
+        self.assertEqual(pins["system_tools"], {tools["awk"]["path"]: tools["awk"]["sha256"]})
+        self.assertEqual((pins["strace_sha256"], pins["dbconfig_sha256"], pins["system_tools"]),
+                         ("2c77c18f0493d18f51d6fb11fad9e1a87904a2d2e1247ad2e8b11b2a4a775b87",
+                          "accaf71bb0ae10ddd1df30c2b3af8099312e0f5e59ab66d1f42cbab1f00b2950",
+                          {"/usr/bin/gawk": "bd00f0bfa560356118968c0c3fca325276e60e4b3bb76a4eee8ddbab96405101"}))
+
     def test_one_private_products_path(self):
         want = "/pscratch/sd/j/josephrb/covfix-pg/products"
         import pg_verify

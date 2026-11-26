@@ -1,7 +1,9 @@
 {
  "_comment": "COVFIX PG's tool and product pins, filled only from the director's confirm of PG's probe receipt (state/2d-closeout/covfix-20261122/pg/PLAN-SLOT1-PROBE.md, R1). pg_generate.sh and pg_replay.sh refuse while any is null or system_tools is empty. system_tools maps each exec'd system tool's real path (awk: the probe's gawk) to its sha256 (RULINGS-A2.md, round 3, D1).",
- "dbconfig_sha256": null,
+ "dbconfig_sha256": "accaf71bb0ae10ddd1df30c2b3af8099312e0f5e59ab66d1f42cbab1f00b2950",
  "strace_path": "/usr/bin/strace",
- "strace_sha256": null,
- "system_tools": {}
+ "strace_sha256": "2c77c18f0493d18f51d6fb11fad9e1a87904a2d2e1247ad2e8b11b2a4a775b87",
+ "system_tools": {
+  "/usr/bin/gawk": "bd00f0bfa560356118968c0c3fca325276e60e4b3bb76a4eee8ddbab96405101"
+ }
 }
