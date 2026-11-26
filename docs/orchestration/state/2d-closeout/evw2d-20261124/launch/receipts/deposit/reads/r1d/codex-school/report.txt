@@ -1,0 +1,17 @@
+CONFIRMATION: NOT ALL HOLD
+
+| r1c finding | Verdict |
+|---|---|
+| #4 · Receipt pins and job | **DOES NOT HOLD — SHOULD-FIX.** An extra blank pin row and a failed `head` now fail verification. The header check still accepts a malformed digest. I reproduced macOS Bash dropping a NUL inserted into `HPSS_SHA`, so an otherwise valid receipt with that corruption passes. [evw2d_deposit.sh:86](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1d/inputs/new/evw2d_deposit.sh:86) |
+| BLOCKING · Failed HTAR readback leaves final names | **HOLDS.** A failed `htar -tf` or a missing pinned member now prevents either forward rename. [evw2d_hpss.sh:159](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1d/inputs/new/evw2d_hpss.sh:159) |
+| SHOULD-FIX · Newline or backslash in the session path | **HOLDS.** Fetch hashes the snapshot through stdin, so filename escaping cannot alter the compared digest. [evw2d_deposit.sh:93](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1d/inputs/new/evw2d_deposit.sh:93) |
+| SHOULD-FIX · Stale r1b receipt passes | **HOLDS.** Fetch requires the approved script digest and both readback lines. An unmodified r1b receipt fails. [evw2d_deposit.sh:87](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1d/inputs/new/evw2d_deposit.sh:87) |
+| SHOULD-FIX · Mixed revisions and missed working-tree edits | **HOLDS.** Fill resolves `HEAD` once, reads blobs from that commit, and hashes working bytes regardless of `assume-unchanged`. [fill_deposit_pins.sh:17](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1d/inputs/new/fill_deposit_pins.sh:17) · [fill_deposit_pins.sh:37](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1d/inputs/new/fill_deposit_pins.sh:37) |
+
+**New defects**
+
+- **BLOCKING.** Rollback can leave final names behind. If the final lookup fails and the archive rollback also fails, `&&` skips the index rollback. If the archive rollback succeeds and the index rollback fails, the archive is at `.part` and the index stays final. The script performs no follow-up listing to establish where either name landed. [evw2d_hpss.sh:174](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1d/inputs/new/evw2d_hpss.sh:174)
+- **SHOULD-FIX.** The final lookup checks names only. If an operator accidentally replaces the final `.idx` with an index for another archive before that lookup, both names can list and the script returns success even though the final pair fails HTAR readback. [evw2d_hpss.sh:159](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1d/inputs/new/evw2d_hpss.sh:159) · [evw2d_hpss.sh:169](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1d/inputs/new/evw2d_hpss.sh:169)
+- **SHOULD-FIX.** Fill follows working-tree symlinks. Replacing the checker with a symlink to an identical copy lets fill succeed, while `fetch-products` rejects that same checker. The previous Git diff check detected the file-type change. [fill_deposit_pins.sh:39](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1d/inputs/new/fill_deposit_pins.sh:39) · [evw2d_deposit.sh:107](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1d/inputs/new/evw2d_deposit.sh:107)
+
+Bash syntax, bound substitutions, and supplied hashes checked out locally. Live HPSS behavior and the reported 71-test run remain unverified.

@@ -1,0 +1,19 @@
+You are an adversarial reviewer of cluster scripts (Perlmutter, HPSS). READ-ONLY: never write anywhere except your report, never touch a git checkout, no network. Do not modify inputs/.
+
+ADVISORY CONFIRMATION OF THE r1 FIXES. Your read inputs/prior/codex-r1-report.md returned NO-GO on EVW2D's HPSS copy and deposit fetch, with 5 BLOCKING and 3 SHOULD-FIX findings. The lane changed the scripts: inputs/diff/r1-to-r2.diff (full new bytes in inputs/new/, filled copies in inputs/bound/; 55 tests pass). The changes:
+1. hpss writes the archive under a part name ($R.tar.part). It re-hashes scratch against the pins before and after htar, and renames the archive and its index (hsi mv) to the final name only after every check, including the full retrieval, has passed.
+2. evw2d.done is bound by its digest (830d7d76…, inputs/records/evw2d.done). The six names must be regular files, not links.
+3. deposit resolves the directory argument once, to a physical path with CDPATH unset, and every write uses that path.
+4. fetch verifies the HPSS receipt: the bound digests and job in the log, 6 of 6 retrieved, the rename, "hpss rc=0", and the pinned list. Exit 5 if it is not verified.
+5. hpss lists the HPSS directory, which must succeed, and refuses any of $R.tar, $R.tar.idx, $R.tar.part and $R.tar.part.idx.
+6. hpss checks /dev/shm's free space before writing anything to HPSS.
+7. Both checkers execute the very bytes they hashed (no import, no .pyc). The Mac prints the composite verdict.
+8. fill requires BINDING 1's PINS.txt to be tracked, and pins evw2d.done from the committed receipts.
+Not changed, by design: the receipts tarball $LANE/hpss.tar.gz beside $LANE/hpss, as the header states.
+
+Scope: mistakes and lasting changes; a hostile same-account process is out of scope.
+
+TASKS:
+1. For each of r1's 8 findings: HOLDS or DOES NOT HOLD, with file:line, and the concrete failing scenario if it does not hold.
+2. Any NEW defect from these changes: a false PASS; a removal or change beyond what is stated; a false STOP on the real system (real htar and hsi behaviour, including the .idx naming and hsi mv of an htar archive and its index; GNU coreutils on the login node; BSD tools on the Mac). Label BLOCKING / SHOULD-FIX / MINOR.
+Be concise. Start with one line: "CONFIRMATION: ALL HOLD" or "CONFIRMATION: NOT ALL HOLD".

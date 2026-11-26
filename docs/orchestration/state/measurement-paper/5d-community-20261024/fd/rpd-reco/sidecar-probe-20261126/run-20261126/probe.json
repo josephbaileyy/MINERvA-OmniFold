@@ -1,0 +1,126 @@
+{
+ "schema": "rpd-reco-sidecar-probe/1",
+ "sidecar": {
+  "atime": "2026-11-17T17:45:29Z",
+  "atime_after": "2026-11-17T17:45:29Z",
+  "atime_unchanged": true,
+  "bytes_read": 2364943114,
+  "inode": 882727588601004051,
+  "mtime": "2026-11-17T02:57:14Z",
+  "path": "/pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/truthx_RDX_ALL.npz",
+  "purge_exposure_from": "2027-01-12T17:45:29Z",
+  "sha256": "641ba34c5ebde6d1881c705b862fab144a6fbb8a58ef3d84e59f1c8ba030a79e",
+  "sha256_matches": true,
+  "sha256_pinned": "641ba34c5ebde6d1881c705b862fab144a6fbb8a58ef3d84e59f1c8ba030a79e",
+  "size": 2364943114,
+  "size_matches_read": true
+ },
+ "started": "2026-11-26T16:24:28Z",
+ "stat_only": [
+  {
+   "atime": "2026-11-17T05:08:04Z",
+   "inode": 882727515653799093,
+   "mtime": "2026-11-15T04:24:36Z",
+   "path": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1A.root",
+   "purge_exposure_from": "2027-01-12T05:08:04Z",
+   "size": 605076305
+  },
+  {
+   "atime": "2026-11-17T05:08:05Z",
+   "inode": 882727582175370968,
+   "mtime": "2026-11-16T20:34:58Z",
+   "path": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1B.root",
+   "purge_exposure_from": "2027-01-12T05:08:05Z",
+   "size": 162097785
+  },
+  {
+   "atime": "2026-11-17T05:08:06Z",
+   "inode": 882727580917085568,
+   "mtime": "2026-11-16T21:17:10Z",
+   "path": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1C.root",
+   "purge_exposure_from": "2027-01-12T05:08:06Z",
+   "size": 310337285
+  },
+  {
+   "atime": "2026-11-17T05:08:06Z",
+   "inode": 882727580111855345,
+   "mtime": "2026-11-16T22:51:40Z",
+   "path": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1D.root",
+   "purge_exposure_from": "2027-01-12T05:08:06Z",
+   "size": 904836901
+  },
+  {
+   "atime": "2026-11-17T05:08:09Z",
+   "inode": 882727581856604920,
+   "mtime": "2026-11-16T22:31:16Z",
+   "path": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1E.root",
+   "purge_exposure_from": "2027-01-12T05:08:09Z",
+   "size": 753934165
+  },
+  {
+   "atime": "2026-11-17T05:08:11Z",
+   "inode": 882727583165203515,
+   "mtime": "2026-11-16T23:27:29Z",
+   "path": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1F.root",
+   "purge_exposure_from": "2027-01-12T05:08:11Z",
+   "size": 1048192809
+  },
+  {
+   "atime": "2026-11-17T05:08:14Z",
+   "inode": 882727583366517421,
+   "mtime": "2026-11-16T23:05:05Z",
+   "path": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1G.root",
+   "purge_exposure_from": "2027-01-12T05:08:14Z",
+   "size": 883836408
+  },
+  {
+   "atime": "2026-11-17T05:08:17Z",
+   "inode": 882727582041175724,
+   "mtime": "2026-11-16T20:46:00Z",
+   "path": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1L.root",
+   "purge_exposure_from": "2027-01-12T05:08:17Z",
+   "size": 86211914
+  },
+  {
+   "atime": "2026-11-17T05:08:17Z",
+   "inode": 882727580850027907,
+   "mtime": "2026-11-17T00:54:21Z",
+   "path": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1M.root",
+   "purge_exposure_from": "2027-01-12T05:08:17Z",
+   "size": 1318953730
+  },
+  {
+   "atime": "2026-11-17T05:08:22Z",
+   "inode": 882727581990862679,
+   "mtime": "2026-11-16T22:52:15Z",
+   "path": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1N.root",
+   "purge_exposure_from": "2027-01-12T05:08:22Z",
+   "size": 763022193
+  },
+  {
+   "atime": "2026-11-17T05:08:24Z",
+   "inode": 882727581856629661,
+   "mtime": "2026-11-16T21:31:35Z",
+   "path": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1O.root",
+   "purge_exposure_from": "2027-01-12T05:08:24Z",
+   "size": 231277653
+  },
+  {
+   "atime": "2026-11-17T05:08:24Z",
+   "inode": 882727581470798044,
+   "mtime": "2026-11-16T21:47:46Z",
+   "path": "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1P.root",
+   "purge_exposure_from": "2027-01-12T05:08:24Z",
+   "size": 305659361
+  },
+  {
+   "atime": "2026-10-30T08:53:42Z",
+   "inode": 882726959589622027,
+   "mtime": "2026-10-20T18:31:31Z",
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp1/s1/lateral/lat_zero.npz",
+   "purge_exposure_from": "2026-12-25T08:53:42Z",
+   "size": 1548311762
+  }
+ ],
+ "verdict": "PASS"
+}
