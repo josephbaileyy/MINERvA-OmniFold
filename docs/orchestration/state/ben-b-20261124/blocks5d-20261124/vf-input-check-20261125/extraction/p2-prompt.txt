@@ -1,0 +1,29 @@
+Read-only extraction task. Never write to any file in the repository. Write nothing except your final answer.
+
+Goal: list every NERSC-resident INPUT (paths under /pscratch, /global, or HPSS archive paths like /home/j/josephrb/...) that the
+producers of the following committed readouts read, with each input's PINNED sha256 (and size, where a committed record states
+it), so that a read-only existence check can be run on NERSC. FD = docs/orchestration/state/measurement-paper/5d-community-20261024/fd.
+
+Readouts (key: committed path):
+gdefs: FD/gencmp/readout/defs.json ; gch: FD/gencmp/readout/ch.json ; gnat: FD/gencmp/readout/native.json ;
+gover: FD/gencmp/readout/overlap.json ; cr: FD/receipts-cov2d/g2r/cr/run/node/g2r/overlap_refined.json ;
+xk: FD/receipts-cov2d/g2r/xk/run/node/run/k/k.json ; e2: FD/gencmp-e2/rerun1/chi2/e2.json ;
+e2sens: FD/gencmp-e2/rerun1/sens/x_e2_sens.out.txt ; eav: docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0_metric.txt ;
+ct3b: FD/readout/fd_ct_mismatch.json ; prr: FD/receipts-prr/read/cluster/readout.json ;
+t2b: FD/tier2-20261110/t2b/t2b.json ; rsn: FD/referee-sensitivity-20261111/connect-post/run-20261112/rsn_readout.json ;
+rsnregrade: FD/referee-sensitivity-20261111/connect-post/run-20261112/regrade.json ;
+e96d: FD/e96-data-20261110/receipts/a1-run-20261112/cluster/analysis/ANALYSIS.json.txt ;
+refg1: FD/receipts-ref-g1/a1-read/readout.json ;
+vatlas: the V-ATLAS valid-region readout consumed by docs/analysis-note/make_values_landed.py (around lines 150-180; find its pinned path).
+
+For each readout, find how its producer was run (argv inside the readout, or the connect/run script and SUMS/manifest files in
+the same receipt directory) and list its inputs. Skip outputs. Skip inputs that are committed in this repository (only list
+NERSC-resident ones). For a directory input that is pinned through a SHA256SUMS/manifest file, list the directory, the
+manifest's own path and pin, and say where the manifest is committed (if it is) so the check can verify each listed file.
+
+OUTPUT FORMAT, exactly, one line per input, tab-separated, no header, nothing else in that block:
+readout_key<TAB>role<TAB>nersc_path<TAB>pinned_sha256_or_NONE<TAB>size_bytes_or_NONE<TAB>committed_file_where_the_pin_appears:line
+Put that block between a line "BEGIN-TSV" and a line "END-TSV". The pinned sha256 must be the full 64-hex value copied
+verbatim from the committed file you cite (it will be checked mechanically against that file). If a readout's producer had
+no NERSC inputs (for example it ran locally from committed files), output one line with role LOCAL and path NONE.
+After END-TSV, add at most 15 short notes on anything unresolved. Name your model.

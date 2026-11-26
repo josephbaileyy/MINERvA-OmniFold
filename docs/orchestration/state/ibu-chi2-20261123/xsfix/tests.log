@@ -1,0 +1,8 @@
+........................................................................ [100%]
+=============================== warnings summary ===============================
+2d-unfolding/tests/test_published_axis_widths.py::Th2dEdgesTest::test_both_orientations_read_exactly
+2d-unfolding/tests/test_published_axis_widths.py::Th2dEdgesTest::test_both_orientations_read_exactly
+  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: h (Potential memory leak).
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+72 passed, 2 warnings in 194.18s (0:03:14)

@@ -1,0 +1,123 @@
+The full `cmd_k → k_compute` replay plus PRR and RSN needs **403 distinct pscratch files totaling 1,595,650,936 bytes**. This uses the committed copies of V0, V1, and the MINOS rescale, and shares one NuE download between XK and RSN. All 403 sizes are recorded. The only file over 1 GiB is the staged `of_inputs_5d.npz`, which is also the only fetch on the named atime watch list.
+
+### Fetch TSV
+
+Key rows are shown below. The read-only expansion immediately after the block prints all 403 rows with absolute paths, full SHA-256 pins, committed source lines, sizes, and reader lines.
+
+```tsv
+path	sha256	pin_source	size_bytes_or_NONE	reader_file_line	recompute
+/pscratch/sd/j/josephrb/gencmp-x-20261102/inputs/of_inputs_5d.npz	07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/xcov/run/hpss/files.sha256:113	1548438020	nd-unfolding/fd_xcov_steps.py:614	xk
+/pscratch/sd/j/josephrb/fd-prr-20261108/route2/route2.json	ac6b1940659c6ae4da194e2f9dbc9e43fad7ada6083f4ba8fd8ef8faf891f6e5	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/ibu/attempt3/cluster/log-ibu/SHA256SUMS:2	35655	nd-unfolding/prior_retention/prr_read.py:396	prr
+/pscratch/sd/j/josephrb/fd-prr-20261108/route2/route2.npz	759be4ab28cc10950fcdb0fcd6c6a438749ea78c7b7286f3ff02798fe77d8a68	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/ibu/attempt3/cluster/log-ibu/SHA256SUMS:1	66297	nd-unfolding/prior_retention/prr_read.py:399	prr
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt	e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/INPUTS.sha256:14	25403	nd-unfolding/fd_xcov_steps.py:595,104,nd-unfolding/rsn/rsn_regrade.py:244	xk,rsn
+```
+
+I verified the expansion against the committed pins and size receipt. It prints to stdout and makes no filesystem changes or cluster calls. The default uses the original `gencmp-x-20261102` paths verified by the November 25 receipt. Set `use_run_copy = True` to print the corresponding historical `cov2d-xk-g2r-20261116/run` paths and their `NODE-SHA256.txt` pin lines. The two sets have identical pins.
+
+```sh
+python3 -c '
+import re
+from pathlib import Path
+
+fd = Path("docs/orchestration/state/measurement-paper/5d-community-20261024/fd")
+xk = fd / "receipts-cov2d/g2r/xk"
+audit = Path("docs/orchestration/state/ben-b-20261124/blocks5d-20261124/vf-input-check-20261125")
+ps = "/pscratch/sd/j/josephrb/"
+original = ps + "gencmp-x-20261102/"
+run = ps + "cov2d-xk-g2r-20261116/run/"
+use_run_copy = False
+
+def pins(file, prefix=""):
+    out = {}
+    for line, row in enumerate(file.read_text().splitlines(), 1):
+        fields = row.split()
+        if fields and re.fullmatch("[0-9a-f]{64}", fields[0]):
+            out[prefix + fields[-1]] = (fields[0], f"{file}:{line}")
+    return out
+
+node = pins(xk / "run/node/NODE-SHA256.txt")
+archive = pins(fd / "xcov/run/hpss/files.sha256", ps)
+external = (pins(xk / "INPUTS-g2r.sha256")
+            | pins(fd / "gencmp-e/INPUTS.sha256")
+            | pins(fd / "xcov/INPUTS.sha256"))
+prr = pins(fd / "receipts-prr/ibu/attempt3/cluster/log-ibu/SHA256SUMS",
+           ps + "fd-prr-20261108/")
+steps = "nd-unfolding/fd_xcov_steps.py:"
+readers = {
+    "g2r_universes_dir": "604", "cv2d": "533", "playlist": "531",
+    "q2d": "531", "s5": "531", "s1_assembly,s1_npz": "538",
+    "flux_constraint": "595,104", "boot_native_receipt": "420",
+    "staged_flux_source": "614",
+}
+rows = []
+for row in (audit / "run/vf_inputs_check.tsv").read_text().splitlines()[1:]:
+    _, names, role, path, pin, found, size, _, status, _ = row.split("\t")
+    if path in prr:
+        source = prr[path]
+        reader = "nd-unfolding/prior_retention/prr_read.py:" + (
+            "399" if path.endswith(".npz") else "396")
+        recompute = "prr"
+    elif "xk" in names.split(",") and role not in {
+        "minos_rescaled", "v0", "v1", "universes_identity_check"
+    }:
+        recompute = "xk"
+        if path.startswith(original):
+            rel = path[len(original):]
+            assert archive[path][0] == node["run/" + rel][0] == pin
+            source = node["run/" + rel] if use_run_copy else archive[path]
+            if use_run_copy:
+                path = run + rel
+        else:
+            source = external[path]
+        if role == "boot_xcov_dir":
+            reader = steps + ("662" if path.endswith(".json") else "666,667")
+        elif role == "re2_laterals_and_replicas_dir":
+            reader = steps + ("623" if "/S3_" in path else "668")
+        else:
+            reader = steps + readers[role]
+        if role == "flux_constraint":
+            recompute = "xk,rsn"
+            reader += ",nd-unfolding/rsn/rsn_regrade.py:244"
+        if role == "s1_assembly,s1_npz":
+            recompute = "xk,rsn"
+            reader += ",nd-unfolding/rsn/rsn_regrade.py:245"
+    else:
+        continue
+    assert status == "EXISTS" and pin == found == source[0], path
+    rows.append((path, pin, source[1], size, reader, recompute))
+
+assert len(rows) == len({r[0] for r in rows}) == 403
+assert sum(int(r[3]) for r in rows) == 1595650936
+print("path\tsha256\tpin_source\tsize_bytes_or_NONE\treader_file_line\trecompute")
+for row in sorted(rows):
+    print(*row, sep="\t")
+'
+```
+
+### Totals
+
+| Fetch group | Files | Bytes |
+|---|---:|---:|
+| XK G2R vertical universe ROOT files | 175 | 11,505,591 |
+| XK RE-2 lateral and statistical replica ROOT files | 110 | 6,947,499 |
+| XK native and mapped lane JSONs, and mapped replica NPZs | 109 | 9,427,054 |
+| XK staged `of_inputs_5d.npz` | 1 | 1,548,438,020 |
+| XK remaining inputs, including the shared NuE constraint and S1 assembly | 6 | 19,230,820 |
+| **XK subtotal** | **401** | **1,595,548,984** |
+| PRR `route2.json` and `route2.npz` | 2 | 101,952 |
+| RSN additional downloads after sharing XK inputs | 0 | 0 |
+| **Total** | **403** | **1,595,650,936** |
+
+### Reader behavior and files already in Git
+
+- **XK universes and \(M\).** K reads all **175** G2R `A_<band>_<i>/xsec.root` files and all 175 corresponding committed S1 NPZs. K1 reconstructs both sides’ own blocks before K looks at `v1["bands_pass"]`. The four bounded vertical bands are `AGKYxF1pi`, `AhtBY`, `BhtBY`, and `MinosEfficiency`, each with universes `0` and `1`. Their contributions to \(M\) use the projected covariance blocks in S1 and G2R S5. Full K also reads the ten RE-2 `S3_*` laterals and their ten committed S1 counterparts. [Universe list and K1 loop](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/vfread/nd-unfolding/fd_xcov_steps.py:594)
+- **XK state and replicas.** `cmd_k` reads V0, the full V1 record, and the native lane JSON. K sees V0 pass and B0 true, reads the eight mapped lane JSONs, then reads all 100 mapped `xcov_b{b}_j{100+b}.npz` and all 100 RE-2 `S1_{b:03d}/xsec.root` for \(b=1,\ldots,100\). The statistical PSD check then fails, so route A adds the bound from the two projected own statistical blocks to \(M\). The final bound uses those blocks, while the full replay needs the replica reads to reproduce the fallback. The receipt records that exact route. [K entry and state](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/vfread/nd-unfolding/fd_xcov_steps.py:412) · [Statistical branch](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/vfread/nd-unfolding/fd_xcov_steps.py:657)
+- **XK local inputs.** Under the declaration’s directory, `fd/xcov/run/v0-a1/v0.json` and `fd/xcov/run/v1-a2/v1.json` match the run-copy pins at `NODE-SHA256.txt:237–238`. `docs/orchestration/state/2d-closeout/c04-repair/products/minos_rescaled.npz` matches `INPUTS.sha256:13` and `NODE-SHA256.txt:233`. The other local reads are the three `INPUTS*.sha256` manifests, `h2_definition.json`, `s1/readout/s1_assembly.json` and its 185 member files used by K, `cpl_block.npz`, `fd_data_product_cpl.json`, the G2R `overlap_refined.json` and `cmodel_R.json`, `cmodel_2d.json`, `cmodel_5d.json`, `fd_ct_5b_periods.json`, and `playlist_term.json`. The old G2R `k.json` is already committed for the OLD control. K can stage the fetched NuE file and the repo’s MINOS rescale under local `inputs/`. [Committed read bindings](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/vfread/nd-unfolding/fd_xcov_steps.py:43)
+- **PRR.** `route2.json` supplies `C-IBU` and the iteration list. `route2.npz` supplies the `__F_fold` and `__X_true` arrays needed for the residuals. The committed OLD PRR readout supplies the `(e)` residuals, and the committed PRR receipt records zero discrepancy between the route-2 and B0 truths. The local grade inputs are `fd_data_product_cpl.json`, `cpl_block.npz`, `cmodel_5d.json`, and `fd_f0b_readout.json`, with the Phase 1 products supplying the updated matrix. This grade replay uses the two route-2 files. The full historical `prr_read.read()` entry point additionally checks the queues, DONE and pair records, and original unfold products. [Grade inputs](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/vfread/nd-unfolding/prior_retention/prr_read.py:223) · [Route-2 reader](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/vfread/nd-unfolding/prior_retention/prr_read.py:392)
+- **RSN.** I found no tracked blob matching the 25,403-byte NuE file and its SHA-256. The RSN staged path `/pscratch/sd/j/josephrb/rsn-20261112/out/stage/sorted_NuEConstraint_FHC_RHC_IMD.txt` is a byte-identical alternative pinned at `package/inputs.tsv:9639`. The canonical fetch in the TSV serves both consumers. The committed inputs are the F1 experiment NPZ and prep sums, F1 readout, CPL block, nominal `cmodel_5d.json`, RSN arm JSON/NPZ, RSN prep and OLD readouts, and I0. A full RSN grader call can reuse XK’s fetched `s1_assembly.npz` for `C_stat`. [RSN weight and matrix reads](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/vfread/nd-unfolding/rsn/rsn_regrade.py:233)
+
+### Caveats
+
+- **Transfer and atime.** The staged `of_inputs_5d.npz` is **1,548,438,020 bytes (1.442 GiB)**. K opens the full file and extracts `flux`. The November 25 login02 check found every listed source at its pin, so the committed evidence shows **zero compute-node or HPSS stages required**. The `hpss/files.sha256` citation supplies the pin for an existing pscratch file. Present-day availability was outside this local audit. Use §4.2’s `O_NOATIME` transfer for the watched input. [Input-check receipt](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/vfread/docs/orchestration/state/ben-b-20261124/blocks5d-20261124/vf-input-check-20261125/README.md:14)
+- **Excluded cluster paths.** Keep the 171,117,087,867-byte `universes_full.root` out of both fetch and hash operations. Only V1 opens it in the producer, and the historical XK connect’s separate identity hash is outside this replay. The fetch also excludes `bkg_dump.npz`, the exact `data_b-_j-.npz` basename, V0 `maps.npz`, the native replica NPZ, and the RE-2 `U_*` universe products. `PRODUCTS["g2r"]` selects the G2R `A_*` products. [Declaration §4.2](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/vfread/docs/orchestration/state/measurement-paper/5d-community-20261024/FD-VF-ADDITION-DECLARATION.md:205)
+- **Replay scope.** This maps the full K producer replay requested. A calculation that accepts the committed route and paired crosses can form \(M\) from the projected own blocks alone. That calculation skips K1 and the statistical fallback replay. I audited the supplied detached checkout at `8a7f9f7f6`, where `fd_vf_addition.py` exposes `block`, `product`, `table`, and `chain`. The declared `p2` and `fetch-list` CLI entries are absent at that snapshot. No files were edited. [CLI](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/vfread/nd-unfolding/fd_vf_addition.py:1032)

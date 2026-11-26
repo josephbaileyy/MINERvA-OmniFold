@@ -1,0 +1,44 @@
+# regenA amendment A3 (2026-11-25, before anything runs): the REF-C2C1 IBU ladder on the paper's pT edges.
+# regenA DECLARATION.txt, AMENDMENT-A1.txt and AMENDMENT-A2.txt (PR #1323) stay unchanged. Requested by the director.
+
+What. D_IBU(K), the chi2/ndf of IBU's K-iteration cross section against the published result under its TotalCovariance,
+for every K that REF-C2C1 read-2 stores: 1, 2, 3, 4, 5, 10, 15, 20. Tier 1 scored only K = 5 and 10. The reader is ladder.py
+(committed beside this file). It calls compare_to_paper_fullcov.chi2_with_cov, as ref_c2c1_read.py:106-109 does, and
+changes no producer. No new unfold and no run: the inputs are Tier 1's committed c2_central.npz units, which hold xsec at
+every K above, so this is a local read at 0 node-h, with no NERSC connection.
+
+Printed macros (make_values_fived16.py:1758-1765, all at 2 decimals); places by grep of the tex the note builds:
+  c2c1-dibu (K = 10) and c2c1-der: sec3_twod.tex:36.
+  c2c1-dibu-mid-lo, -mid-hi (min and max over 2 <= K <= 15, i.e. K in {2,3,4,5,10,15}), -k20, -k1: appC_supplementary.tex:44.
+  c2c1-dibu-k5: defined (values_fived16.tex:107), printed nowhere.
+  (sec_results.tex:160 and the comment at records_r03_twod.tex:38 also name them; main_note.tex inputs neither file.)
+
+Inputs and pins (sha256, computed by command):
+  3986c85a3a1ee4306424cbfb32ded6fc4b35710f271284e3dbb68937292a4da2  docs/orchestration/state/ibu-chi2-20261123/tier1/units/old/c2_central.npz
+  b6cb61429b8d5a6f694147fb2ff985462eb433ab2478cda900d3ef8924ceaab0  docs/orchestration/state/ibu-chi2-20261123/tier1/units/e/c2_central.npz
+  469926b642612504e1844da8c5c34bde6fab79f4a590337ebf9771486d9e5931  docs/orchestration/state/ibu-chi2-20261123/tier1/score.out
+  0ee21301744cf04df4e1ebf7224692a00fba5188532b31af9d596be8ce69cf5a  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2/read-2/readout.json
+  7e641754515d64b0361cdfbfe17966d514485ed819ea594298a262ea2c6de6dd  2d-unfolding/compare_to_paper_fullcov.py (main at 7c7a3cfb5)
+  6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3  cov_ptpl_minerva_inclusive_6GeV.root (the release; local copy ~/cov2d-work/figfetch/er-anc/)
+D_ER for each set is Tier 1's committed reading (score.out results.<set>.D_ER), used only for c2c1-der and the two
+assertions below; it is not recomputed.
+
+Controls. Any failure of C-NDF, C-KS, C-T1 or C-R2 is a STOP, reported with no reading.
+  C-NDF: every distance has ndf = 205.  C-KS: both units store ks = [1,2,3,4,5,10,15,20].
+  C-T1: K = 5 and 10, OLD and E, equal Tier 1's score.out to <= 1e-12 relative (same npz, same arithmetic).
+  C-R2: OLD reproduces read-2's D_IBU_every_K at every K to <= 1e-6 relative, AND every printed macro (2 decimals,
+    including mid-lo/hi and c2c1-der) is identical to the one read-2 gives.
+  Why not bitwise for C-R2: Tier 1's OLD unit is a rerun of read-2's c2 central (deploy 77d76cfc), not read-2's own
+  output, which stored no per-K cross sections. score.out already shows the rerun differs from read-2 by 9.0e-9 (K = 5),
+  7.9e-9 (K = 10) and 4.8e-9 (D_ER) relative. 1e-6 is about 100 times that, and below any 2-decimal print.
+  C-BOUNDARY (descriptive): each macro's distance to its 2-decimal rounding boundary; one within 1e-6 is named as
+    rounding-sensitive.
+  C-PINS: the inputs equal the pins above, before and after.
+
+Reading (E, descriptive). D_IBU(K) at every K, the seven macros at full precision and 2 decimals, which K gives mid-lo
+and mid-hi, and rho = D_IBU(10) / D_ER. The two make_values assertions, as findings for journal-editor, not edited here:
+  - `v["c2c1-der"] == "2.27"`: on the paper's edges D_ER is 2.121 (Tier 1), so this assertion fails by design;
+  - `max(mid) < D_E_R`: evaluated on E and reported.
+
+Placement: this laptop, with ~/cov2d-work/figenv/rootmpl3108/bin/python and the module from this branch's clean tree.
+Outputs only under regenA3/out. 0 node-h, no NERSC connection.

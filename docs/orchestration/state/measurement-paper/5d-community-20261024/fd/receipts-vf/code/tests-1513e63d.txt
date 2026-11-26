@@ -1,0 +1,5 @@
+head 1513e63d9a46b4c1355b206daf5160b3b8cd0a22
+cd nd-unfolding/tests && python3 -B -m unittest -q test_fd_vf_addition test_fd_cpl_addition test_fd_gencmp_e test_fd_deposit_candidate test_fd_g_figures test_fd_data_product
+Ran 317 tests in 2838.377s
+OK
+rc=0

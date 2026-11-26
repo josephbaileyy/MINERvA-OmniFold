@@ -1,0 +1,23 @@
+# regenA amendment A1 (2026-11-25, before anything runs). DECLARATION.txt (085553b4) stays unchanged.
+
+1. Placement: login02, not the laptop.
+   - Why: the producers hard-code the release directory as ANC_DIR =
+     /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc (compare_to_paper_fullcov.py:41,
+     compare_to_paper_interior.py:35, normalize_xsec_shape.py:51; receipt_model_chi2_2d.py via MNV_REPO).
+     /pscratch does not exist on the laptop. compare_to_paper_fullcov.py is sha-pinned by the ibub, ibukt and ref_c2c1
+     runners, so it cannot be edited, and patching module constants from a wrapper is not acceptable (director).
+   - Conditions: 0 node-h; no Slurm and no srun; nothing written to CFS; inputs read with O_NOATIME. Producers run as
+     plain Python on login02. Any one taking more than about 15 minutes, or heavy memory, is a STOP.
+2. Code: a fresh clean clone of main at e766ee5290de9dfc81b490b6165565daee6fa8d5 (it contains #1318 and #1319), at
+   /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA/repo. `git status --porcelain --ignored` must be empty before
+   the run.
+3. Scope: part C's chi2_std step passes --omnifold-cov .../uq_adopted_covariance.root:hCov_Q, so it is the combined
+   chi2, a covariance product. It moves to B. P1 is therefore chi2_paperonly and pull_full.
+4. OLD input staging: an O_NOATIME `dd` copy of /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root
+   into /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA/stage/er_old.root, re-hashed to
+   a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef, then chmod a-w. This needs cov2d's ack, recorded in
+   the receipt. The E input is the lane's own /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_e/er.root,
+   re-hashed to 5171c7b8ecacda6090e242349dd622218c1c38885c60ef8b91027033a8c4b780.
+5. Outputs: only under /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA/out. They are fetched to the records
+   directory by sha. The NERSC certificate is checked by command before connecting; a run that cannot finish before
+   it expires waits, and a partial run is a STOP.

@@ -1,0 +1,94 @@
+fccca92ecbe04345cebc42d3980c4277672c9337
+baseline: the unmutated suite rc 0
+baseline in mutant mode: rc 0, 88 tests
+KILLED    V0: the record's V_F (C_e^infl) pin unchecked
+KILLED    V0: the record's V_F not compared with the CSV
+KILLED    V1: C_e not the product's
+KILLED    V1: the cpl block's C_PL5D unchecked
+KILLED    V2: V_F = L C_e L^T loose
+KILLED    V2: L's symmetry unchecked
+KILLED    V2: commutation loose
+KILLED    V3: dF's PSD unchecked
+KILLED    block: dF scaled
+KILLED    block: C_resp + DeltaC_e without dF
+KILLED    block: the reported block without dF
+KILLED    block: the reported matrix without dF
+KILLED    block: the matrix without C_PL5D, without dF
+KILLED    block: the keys of the two sides swapped
+KILLED    K0: product runs without the chain's pins
+KILLED    K0: the committed product's pin unchecked
+KILLED    K1: Stage G's block name unchecked
+KILLED    K1: Stage G's block key unchecked
+KILLED    K2: DeltaC_e not C_e_infl - C_e
+KILLED    K3: Stage G's sigma loose
+KILLED    K3: Stage G's covariance name unchecked
+KILLED    product: the reported matrix is the one without C_PL5D
+KILLED    deposit variant: the key without C_PL5D
+KILLED    T: Stage G's V_F matrix not checked
+KILLED    T: dF placed after V_g
+KILLED    T: cleared truths dropped
+KILLED    table: runs without the chain's pins
+KILLED    arms: OLD with takes the nopl block
+KILLED    F0: the V_F arm takes no block
+KILLED    F1: the V_F arm's F0b digest wrong
+KILLED    S: the nopl side checked against the reported matrix
+KILLED    chain: the chdefs OLD with arm's strings not compared
+KILLED    runner: the figures check goes through BOOT
+KILLED    S: the f0b branch dropped
+KILLED    chain: the OLD product and deposit skipped
+KILLED    chain: the V_F part before the OLD product and deposit
+KILLED    R: numbers not compared
+KILLED    R: finiteness not compared
+KILLED    R: Infinity accepted when decoding
+KILLED    R: strings never compared
+KILLED    R: the committed pin unchecked
+KILLED    R: the experiment table not the declared one
+KILLED    R figures: the PDF bytes not compared
+KILLED    R figures: E-A2's receipt bytes unchecked
+KILLED    C: the argv's block digest unchecked
+KILLED    C: the role unchecked
+KILLED    C: duplicate references unchecked
+KILLED    C: argv naming the digest twice passes
+KILLED    C: F0 not checked
+KILLED    C: a chdefs V_F step not checked
+KILLED    S: Stage G's predictions and cells unchecked
+KILLED    K3: Stage G's predictions and cells unchecked
+KILLED    K6: the files on disk not read back
+KILLED    K6: the cells CSV not read back
+KILLED    T: the V_F grade matrix not checked
+KILLED    T: F0's revised sigma not required
+KILLED    T: F0's cells unchecked
+KILLED    T: Stage G's ndf unchecked
+KILLED    K6: box edges compared as numbers
+KILLED    T: the pairs' pins not the chain's
+KILLED    chain: OLD chdefs downstream reads fresh upstreams
+KILLED    chain: figures drawn in the nopl arms
+KILLED    chain: F0's OLD control dropped
+KILLED    chain: Stage G set S OLD controls dropped
+KILLED    chain: the chdefs OLD controls dropped
+KILLED    chain: the committed block's pin unchecked
+KILLED    chain: the chdefs manifest unchecked
+KILLED    chain: an existing run directory overwritten
+KILLED    chain: matplotlib's cache left at home
+KILLED    bits: -0.0 read as 0.0
+KILLED    C: a null digest field passes
+KILLED    C: the recorded role unchecked
+KILLED    C: required references unchecked
+KILLED    T: named records not checked before pairing
+KILLED    T: block names not mapped back in identities
+KILLED    T: a named list missing on the V_F side passes
+KILLED    T: a key renamed with the block not followed
+KILLED    T: a named list replaced by another value passes
+KILLED    chdefs: the observed manifest digest pinned
+KILLED    chain: the chdefs specification unchecked
+KILLED    K6: a refusal installs the outputs
+KILLED    K6: the cells' box edges unchecked
+KILLED    R deposit: the 5B receipt's bytes unchecked
+KILLED    OLD: the deposit check not run
+KILLED    C: structured fields unchecked
+KILLED    renderer: the environment unchecked
+KILLED    T: keys not renamed in identities
+KILLED    BOOT: the variants' modules swapped
+mutants 88: KILLED 88
+target sha256 3ba320bd8f3de0f2a873e882e327a868a8a385a0a13a511f105a606cc8b77487 (restored: True)
+mut rc=0

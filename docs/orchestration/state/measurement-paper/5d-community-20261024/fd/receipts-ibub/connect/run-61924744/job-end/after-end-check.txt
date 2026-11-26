@@ -1,0 +1,97 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3116c0s17b0n0:
+
+2026-11-25T00:29:51Z
+regular file 507 2026-11-24 16:29:24.000000000 -0800 /pscratch/sd/j/josephrb/ibub-20261124/IBUB-DONE
+{"job": "61924744", "M": "d12c4f2a38a53001eb92bbefc8b2dc6001f034dc", "stage": "toys", "rc": 0, "ref_rcs": "0 0", "toy_rcs": "0 0 0 0", "completion": {"barrier_pass": true, "barrier_sha256": "784163284dec6f750a8215146fb881a3564bc0bfe6672d94aef5494a3d58e579", "barrier_why": "ok", "deploy_head": "d12c4f2a38a53001eb92bbefc8b2dc6001f034dc", "job": "61924744", "not_pass": [], "not_pass_count": 0, "schema": "ibub-complete/2", "toy_expected": 600, "toy_pass": 600, "undeclared_markers": [], "verdict": "PASS"}}
+
+de4ff5467448e765e2fd8be6c971e9121a74736c4d78e4159a7871ca7b874064  -
+61924744|ibub_run|COMPLETED|0:0|07:27:10|
+61924744.batch|batch|COMPLETED|0:0|07:27:10|8647000K
+61924744.extern|extern|COMPLETED|0:0|07:27:10|
+61924744.0|ibub_refs_l0|COMPLETED|0:0|00:03:33|10786060K
+61924744.1|ibub_refs_l1|COMPLETED|0:0|00:03:27|10757076K
+61924744.2|ibub_toys_l1_c00|COMPLETED|0:0|00:29:20|13405924K
+61924744.3|ibub_toys_l3_c00|COMPLETED|0:0|00:29:12|13255780K
+61924744.4|ibub_toys_l2_c00|COMPLETED|0:0|00:29:15|13620220K
+61924744.5|ibub_toys_l0_c00|COMPLETED|0:0|00:29:33|13767100K
+61924744.6|ibub_toys_l3_c01|COMPLETED|0:0|00:29:27|13440176K
+61924744.7|ibub_toys_l2_c01|COMPLETED|0:0|00:29:04|13391172K
+61924744.8|ibub_toys_l1_c01|COMPLETED|0:0|00:29:37|13445284K
+61924744.9|ibub_toys_l0_c01|COMPLETED|0:0|00:29:18|13364888K
+61924744.10|ibub_toys_l2_c02|COMPLETED|0:0|00:29:35|15456696K
+61924744.11|ibub_toys_l3_c02|COMPLETED|0:0|00:30:15|13225680K
+61924744.12|ibub_toys_l0_c02|COMPLETED|0:0|00:29:33|13516776K
+61924744.13|ibub_toys_l1_c02|COMPLETED|0:0|00:29:24|13289168K
+61924744.14|ibub_toys_l2_c03|COMPLETED|0:0|00:29:34|13593160K
+61924744.15|ibub_toys_l1_c03|COMPLETED|0:0|00:29:12|13474484K
+61924744.16|ibub_toys_l0_c03|COMPLETED|0:0|00:29:21|13471624K
+61924744.17|ibub_toys_l3_c03|COMPLETED|0:0|00:29:16|13142444K
+61924744.18|ibub_toys_l2_c04|COMPLETED|0:0|00:29:20|13439756K
+61924744.19|ibub_toys_l1_c04|COMPLETED|0:0|00:29:21|13392420K
+61924744.20|ibub_toys_l0_c04|COMPLETED|0:0|00:29:15|13422932K
+61924744.21|ibub_toys_l3_c04|COMPLETED|0:0|00:29:25|13204448K
+61924744.22|ibub_toys_l2_c05|COMPLETED|0:0|00:29:14|14898744K
+61924744.23|ibub_toys_l1_c05|COMPLETED|0:0|00:29:55|13363320K
+61924744.24|ibub_toys_l0_c05|COMPLETED|0:0|00:29:30|13798844K
+61924744.25|ibub_toys_l3_c05|COMPLETED|0:0|00:29:15|13579004K
+61924744.26|ibub_toys_l2_c06|COMPLETED|0:0|00:29:21|13385564K
+61924744.27|ibub_toys_l0_c06|COMPLETED|0:0|00:29:29|13411472K
+61924744.28|ibub_toys_l1_c06|COMPLETED|0:0|00:29:18|13336624K
+61924744.29|ibub_toys_l3_c06|COMPLETED|0:0|00:29:28|13081664K
+61924744.30|ibub_toys_l2_c07|COMPLETED|0:0|00:29:42|14693104K
+61924744.31|ibub_toys_l0_c07|COMPLETED|0:0|00:29:24|13327104K
+61924744.32|ibub_toys_l1_c07|COMPLETED|0:0|00:29:27|13053468K
+61924744.33|ibub_toys_l3_c07|COMPLETED|0:0|00:29:27|13195712K
+61924744.34|ibub_toys_l2_c08|COMPLETED|0:0|00:29:19|13478316K
+61924744.35|ibub_toys_l0_c08|COMPLETED|0:0|00:29:11|13374160K
+61924744.36|ibub_toys_l1_c08|COMPLETED|0:0|00:29:20|13248820K
+61924744.37|ibub_toys_l3_c08|COMPLETED|0:0|00:29:43|13362576K
+61924744.38|ibub_toys_l2_c09|COMPLETED|0:0|00:29:32|14117084K
+61924744.39|ibub_toys_l0_c09|COMPLETED|0:0|00:29:38|13670684K
+61924744.40|ibub_toys_l1_c09|COMPLETED|0:0|00:29:29|13352296K
+61924744.41|ibub_toys_l3_c09|COMPLETED|0:0|00:29:46|14339272K
+61924744.42|ibub_toys_l2_c10|COMPLETED|0:0|00:29:32|14059036K
+61924744.43|ibub_toys_l0_c10|COMPLETED|0:0|00:29:37|13255288K
+61924744.44|ibub_toys_l1_c10|COMPLETED|0:0|00:29:36|13111752K
+61924744.45|ibub_toys_l3_c10|COMPLETED|0:0|00:29:16|13219768K
+61924744.46|ibub_toys_l2_c11|COMPLETED|0:0|00:30:09|14024520K
+61924744.47|ibub_toys_l0_c11|COMPLETED|0:0|00:29:19|13665676K
+61924744.48|ibub_toys_l1_c11|COMPLETED|0:0|00:29:54|13096716K
+61924744.49|ibub_toys_l3_c11|COMPLETED|0:0|00:29:26|13379628K
+61924744.50|ibub_toys_l0_c12|COMPLETED|0:0|00:29:20|13185684K
+61924744.51|ibub_toys_l2_c12|COMPLETED|0:0|00:29:38|13347140K
+61924744.52|ibub_toys_l1_c12|COMPLETED|0:0|00:29:33|13458288K
+61924744.53|ibub_toys_l3_c12|COMPLETED|0:0|00:29:20|13402728K
+61924744.54|ibub_toys_l0_c13|COMPLETED|0:0|00:30:00|13335132K
+61924744.55|ibub_toys_l2_c13|COMPLETED|0:0|00:29:49|13425572K
+61924744.56|ibub_toys_l3_c13|COMPLETED|0:0|00:29:57|13298124K
+61924744.57|ibub_toys_l1_c13|COMPLETED|0:0|00:30:01|13313396K
+61924744.58|ibub_toys_l0_c14|COMPLETED|0:0|00:29:40|14480164K
+61924744.59|ibub_toys_l2_c14|COMPLETED|0:0|00:29:28|13812732K
+61924744.60|ibub_toys_l3_c14|COMPLETED|0:0|00:29:50|13299236K
+61924744.61|ibub_toys_l1_c14|COMPLETED|0:0|00:29:23|13223840K

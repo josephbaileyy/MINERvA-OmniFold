@@ -1,0 +1,167 @@
+{
+ "argv": [
+  "--omnifile",
+  "/pscratch/sd/j/josephrb/evw2d-20261126/stage/runEventLoopOmniFold_MEFHC.root",
+  "--mcfile",
+  "/pscratch/sd/j/josephrb/evw2d-20261126/stage/runEventLoopMC_MEFHC.root",
+  "--iters",
+  "5",
+  "--use-weights",
+  "--estimator",
+  "lgbm",
+  "--seed",
+  "42",
+  "--branch-select",
+  "all",
+  "--bkg-mode",
+  "negweight-refined",
+  "--refine-n-estimators",
+  "400",
+  "--refine-num-leaves",
+  "31"
+ ],
+ "columns": [
+  "entry",
+  "truth_pt",
+  "truth_pz",
+  "w_prior",
+  "w_unfolded"
+ ],
+ "config_sha256": "bee02d38e8141a8780ba2c838007ebdd0663af1b195f3291ba71239e3f26e7ec",
+ "constants": {
+  "analysis_pt_edges": [
+   0.0,
+   0.07,
+   0.15,
+   0.25,
+   0.33,
+   0.4,
+   0.47,
+   0.55,
+   0.7,
+   0.85,
+   1.0,
+   1.25,
+   1.5,
+   2.5,
+   4.5
+  ],
+  "analysis_pz_edges": [
+   1.5,
+   2.0,
+   2.5,
+   3.0,
+   3.5,
+   4.0,
+   4.5,
+   5.0,
+   6.0,
+   7.0,
+   8.0,
+   9.0,
+   10.0,
+   15.0,
+   20.0,
+   40.0,
+   60.0
+  ],
+  "cm2_per_m2": 10000.0,
+  "completeness": "1 on every cell with positive denominator content (C-COMPLETE, C-CMAP); cells with none are zero",
+  "data_pot": 1.057394261158926e+21,
+  "flux_bins_m2_per_POT": [
+   0.0006243343376851218,
+   0.0006243343376851218,
+   0.0006243343376851218,
+   0.0006243343376851218,
+   0.0006243343376851218,
+   0.0006243343376851218,
+   0.0006243343376851218,
+   0.0006243343376851218,
+   0.0006243343376851218,
+   0.0006243343376851218,
+   0.0006243343376851218,
+   0.0006243343376851218,
+   0.0006243343376851219,
+   0.0006243343376851219
+  ],
+  "flux_note": "the 14 values agree to one ulp (C-FLUX); each is the integrated flux Phi (m^-2/POT) by the input's provenance. Both validated grids apply them by pT-bin index; another binning applies phi_m2_per_POT to every pT bin. The file's fluxIntegral_m2_per_POT parameter is the sum of the 14 copies, about 14 Phi, and is not a flux.",
+  "formula": "d2sigma/dpT dp|| [cm^2/(GeV/c)^2/nucleon] = sum(w_unfolded) / (c Phi N data_pot dpT dp||) x 1e4",
+  "mc_pot": 4.978198462880827e+21,
+  "n_nucleons": 3.2352943296224835e+30,
+  "phase_space": {
+   "cells": "lower edge in, upper edge out; rows on the top edges are in the file and in no cell",
+   "pt": [
+    0,
+    4.5
+   ],
+   "pz": [
+    1.5,
+    60.0
+   ],
+   "theta_max_deg": 20.0
+  },
+  "phi_m2_per_POT": 0.0006243343376851218,
+  "pot_scale": 0.21240500334472884,
+  "validated_grids": {
+   "ours": [
+    0.0,
+    0.07,
+    0.15,
+    0.25,
+    0.33,
+    0.4,
+    0.47,
+    0.55,
+    0.7,
+    0.85,
+    1.0,
+    1.25,
+    1.5,
+    2.5,
+    4.5
+   ],
+   "paper": [
+    0.0,
+    0.075,
+    0.15,
+    0.25,
+    0.325,
+    0.4,
+    0.475,
+    0.55,
+    0.7,
+    0.85,
+    1.0,
+    1.25,
+    1.5,
+    2.5,
+    4.5
+   ]
+  },
+  "validity": "the central value; validated for observables of (pT, p||) only, on the two grids above"
+ },
+ "declaration_sha256": "c1b0164317c531fcc15cc769fec2cbdbe9ef955db816fc00a0d0865054c89d51",
+ "driver_tree": {
+  "code_sha256": {
+   "2d-unfolding/re2/re2_driver.py": "938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b",
+   "2d-unfolding/ref_c2c1/config.json": "9127b45a7d2db5fe5ee711628e4b2207a2dd767e2b0c2fb545114fa9fe2428d2",
+   "2d-unfolding/ref_c2c1/ref_c2c1.py": "285dd138363d090a4ce5dea3361be81fada8680bd782b918e9d95198d1b5d6ea",
+   "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+  },
+  "commit": "77d76cfc2d621f8faa010b75006811868494652a"
+ },
+ "evw2d_sha256": "6106b23a8b6c5cb9c27acd8480329f6bc180f5c90f9af3ba82a92c9507e64887",
+ "inputs_sha256": {
+  "CV": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+  "MC": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316"
+ },
+ "key": {
+  "column": "entry",
+  "meaning": "ROOT entry number in mc_signal_reco",
+  "omnifile_sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+  "tree": "mc_signal_reco"
+ },
+ "rows": 32849103,
+ "schema": "evw2d-weights/1",
+ "slurm_job": "62022231"
+}

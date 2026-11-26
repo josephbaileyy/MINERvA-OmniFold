@@ -1,0 +1,37 @@
+Read-only scoping task. Never write to any file in the repository. Write nothing except your final answer.
+
+Context: Joseph has decided that V_F (the 5D fluctuation block, docs/orchestration/state/ben-b-20261124/blocks5d-20261124/record/V_F.csv,
+sha256 763f14c6...) is adopted into the REPORTED 16-cell covariance. Today the reported covariance is
+C_rep = C_total + C_resp + C_PL5D, with C_total = C_e + C_model_abs, where C_e is
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/data-product/fd_data_product_cpl_C_e.csv and
+the deposit's docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/deposit-candidate/covariance-reported.csv
+(sha256 76730c5b...). With V_F adopted, C_e is replaced by V_F = L C_e L^T inside C_rep. We must recompute every 5D number in
+the analysis note that uses the reported 16-cell covariance (or C_e or C_total inside it).
+
+The note's 16-cell values come from docs/analysis-note/make_values_fived16.py, which pins ~60 readouts in READOUTS and writes
+docs/analysis-note/values_fived16.tex (\fvval{key}). Producers live in nd-unfolding/ (fd_g_compare.py, fd_g_diag.py,
+fd_g_followup.py, fd_flux_boot.py, fd_f0_regrade.py, fd_data_product.py, fd_cpl_addition.py, fd_deposit_candidate.py,
+fd_g_figures.py, ...). Chains that ran them are recorded under
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/ (e.g. receipts-ct/5b/addition/run/chain.json, and
+gencmp-e/rerun1/chain/...). The 5D joint tests (s5p_*, Holm) use their own fixed weighting matrix V (s5p_joint.py:323) and
+are believed unaffected: confirm or refute.
+
+Produce, as compact tables:
+1. For EVERY readout in make_values_fived16.py READOUTS: does any number make_values_fived16.py takes from it depend on
+   C_e / C_total / C_rep / the deposit covariance (or on per-cell sigma derived from them)? Answer YES / NO / PARTLY with
+   the evidence (producer file:line where the covariance enters). Be exhaustive; don't skip readouts.
+2. For each YES/PARTLY readout: its producer script and the exact chain receipt that produced the pinned bytes (path), the
+   producer's inputs, and which inputs are committed in the repo versus only on NERSC (/pscratch, /global, HPSS paths in the
+   recorded argv). Say whether the producer can rerun on a laptop from committed files alone.
+3. For each YES/PARTLY readout: the \fvval keys make_values_fived16.py derives from it, and every place each key prints in
+   docs/analysis-note/*.tex (file:line, by grep for \fvval{key}). Also any figure in the note made from these readouts
+   (fd_g_figures outputs) and where it is included.
+4. Any OTHER values file or table in docs/analysis-note (not values_fived16.tex) that prints a number depending on the
+   reported 16-cell covariance (grep for other make_values_*.py and the deposit/data-product files).
+5. Every decision rule or verdict label printed in the note that depends on the reported 16-cell covariance (e.g. a
+   p-value threshold, a SUPPORT / INCONCLUSIVE / DEFICIT / PASS / FAIL label, a Holm outcome): where it is computed and
+   where it prints.
+6. Whether the LL5D coverage readouts (receipts-ll5d), the 1B gate (receipts-1b), tier2/ensemble readouts, or the cov2d
+   (2D) readouts depend on the reported 16-cell covariance.
+
+Cite file:line for every claim. If you cannot determine something, say so; do not guess. Under about 1,500 words. Name your model.

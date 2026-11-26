@@ -1,0 +1,9 @@
+You are advising on a physics analysis note (MINERvA, unbinned OmniFold, 5D result reported as 16 cells). Read the files in in/. Do not edit anything; reply in plain prose.
+
+Context: a "fluctuation block" was built: toy pseudo-experiments scatter more than the reported systematic block C_e predicts, so C_e is inflated band by band (factors 1.09, 1.29, 2.98 on its eigen-rank bands R1-R3) to V_F = L C_e L^T (B5D-RECEIPT.md, B5D-AMENDMENT-A1.md section 4's caveat). The author has decided to adopt V_F in the reported 16-cell covariance, so it becomes V_F + C_model + C_resp + C_PL,5D instead of C_e + C_model + C_resp + C_PL,5D (FD-VF-ADDITION-DECLARATION.md). A separate "bias block" C_b is NOT adopted.
+
+Questions:
+1. sec_fived16.tex's per-cell table (tab with caption "Per-cell uncertainty by covariance group", around line 141) has six group columns that sum to C_e, then C_e, C_model and C_resp's four columns. With V_F adopted, which presentation is clearest and most defensible: (a) keep the six groups and C_e, and add a column for the added term V_F - C_e; (b) replace the C_e column with V_F; (c) keep C_e and give V_F in a footnote; or something better? Say why in a few sentences.
+2. Comment on the names of the terms and the symbols: "fluctuation block", "toy-spread", V_F, L, f-hat, the bands R1-R3, Delta F = V_F - C_e, C_b "bias block", C_rep, C_total, C_e. Are they clear to a reader of the note? Propose better names or symbols where useful, consistent with the existing notation in app_terminology.tex (tab:definitions) and sec_fived16.tex.
+3. Anything in how the inflation should be described in one or two sentences of the note that a referee would object to.
+Keep the answer under 600 words.

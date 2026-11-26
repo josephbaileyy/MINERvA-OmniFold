@@ -1,0 +1,33 @@
+Read-only extraction task. Never write to any file in the repository. Write nothing except your final answer.
+
+Goal: list every NERSC-resident INPUT (paths under /pscratch, /global, or HPSS archive paths like /home/j/josephrb/...) that the
+producers of the following committed readouts read, with each input's PINNED sha256 (and size, where a committed record states
+it), so that a read-only existence check can be run on NERSC. FD = docs/orchestration/state/measurement-paper/5d-community-20261024/fd.
+
+Readouts (key: committed path) -- PHASE 1:
+dp: FD/with-cpl/data-product/fd_data_product_cpl.json ; g: FD/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json ;
+g0: FD/with-cpl/readout/fd_g_readout.json and FD/readout/fd_g_readout.json ; diag: FD/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_diag_readout.json ;
+fup: FD/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_followup_readout.json ; sens2: FD/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_sens2_readout.json ;
+fboot: FD/gencmp-e/rerun1/chain/chdefs/with/readout/fd_flux_boot_readout.json ; f0: FD/readout/fd_f0_readout.json ;
+f0b: FD/with-cpl/readout/fd_f0b_readout.json ; f1: FD/with-cpl/readout/fd_f1_readout.json ;
+s1npz/cresp: the S1 assembly npz and C_resp npz these producers read.
+
+What is already established (verify, don't trust): each readout's argv and inputs_sha256 give most inputs; paths containing
+/deploy/ are deploy copies of files committed in this repo and are NOT to be listed; roots such as --s5p-root, --d16-dir,
+--f4-root, --stage0c-root, --pvl-products, --s5e-assess, --f1-root and --flux-dir are directories from which the producer reads
+SPECIFIC files: list those specific files (from the producer code nd-unfolding/fd_f0_regrade.py, fd_g_compare.py,
+fd_g_followup.py, fd_flux_boot.py, fd_data_product.py and the readout's own recorded per-file pins), not the whole directory.
+The s5p archive manifest docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt has 10,612 lines: list only
+the files the producers actually read, with their pins from that manifest.
+
+For each readout, find how its producer was run (argv inside the readout, or the connect/run script and SUMS/manifest files in
+the same receipt directory) and list its inputs. Skip outputs. Skip inputs that are committed in this repository (only list
+NERSC-resident ones). For a directory input that is pinned through a SHA256SUMS/manifest file, list the directory, the
+manifest's own path and pin, and say where the manifest is committed (if it is) so the check can verify each listed file.
+
+OUTPUT FORMAT, exactly, one line per input, tab-separated, no header, nothing else in that block:
+readout_key<TAB>role<TAB>nersc_path<TAB>pinned_sha256_or_NONE<TAB>size_bytes_or_NONE<TAB>committed_file_where_the_pin_appears:line
+Put that block between a line "BEGIN-TSV" and a line "END-TSV". The pinned sha256 must be the full 64-hex value copied
+verbatim from the committed file you cite (it will be checked mechanically against that file). If a readout's producer had
+no NERSC inputs (for example it ran locally from committed files), output one line with role LOCAL and path NONE.
+After END-TSV, add at most 15 short notes on anything unresolved. Name your model.

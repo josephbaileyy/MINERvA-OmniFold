@@ -1,0 +1,6 @@
+Second delta read of the V_F Phase 1 code. Your delta read of f95da53f..0f37449c (YOUR-DELTA-READ.txt here) was NO-GO: (1) the renamed-key mutant survived; (2) T missed a named list replaced by a non-list, and keys matched only via rename_vf were not descended into. Commit fccca92e addresses both.
+Review ONLY `git diff 0f37449c fccca92e` (identities() in nd-unfolding/fd_vf_addition.py, its test, three T mutants in fd/receipts-vf/code/mutants_vf_addition.py, vf_block.json's code sha), in a disposable copy if you run anything.
+1. Are both findings fixed? Re-run your probes (null/{} replacement, dropped list under a renamed parent, the renamed-key mutant).
+2. Could the new type check or the descent into renamed keys falsely refuse a real V_F readout paired with the 17 OLD readouts (OLD_F0, OLD_S, OLD_E)? Recheck as before.
+3. Run the 88 tests and the three T mutants.
+For each defect: severity, file:line, failure scenario, wrong number yes/no, failed control passes yes/no. End with exactly "VERDICT: GO" or "VERDICT: NO-GO".

@@ -1,0 +1,9 @@
+V_F readings, round 3 (after the round-2 read): targeted mutants on the minimal descriptive set, the flag lists and the
+producers' outcome scales (mutants_fixes_round3.py; same procedure as round 2; 2026-11-26)
+named not a flag list | KILLED | 1 failed, 54 passed in 107.68s (0:01:47)
+truths descriptive | KILLED | 1 failed, 54 passed in 102.50s (0:01:42)
+scale reversed | KILLED | 1 failed, 49 passed in 103.19s (0:01:43)
+verdict across arms | KILLED | 1 failed, 54 passed in 123.51s (0:02:03)
+descriptive matches all | KILLED | 1 failed, 53 passed in 119.66s (0:01:59)
+T scale missing | KILLED | 1 failed, 54 passed in 108.66s (0:01:48)
+6/6 killed

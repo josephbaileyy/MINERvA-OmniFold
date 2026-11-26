@@ -48,10 +48,11 @@ import numpy as np
 import ROOT
 
 from analyze_universes import CATEGORY_ORDER, category_for_band
-from reported_cells import read_cells, reported_indices, require_same_cells  # KI-90: cell identity
+from reported_cells import read_cells, reported_indices, require_same_cells, th2d_edges  # KI-90: cell identity
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
+# The analysis grid. The ROOT path takes each input's widths from its own TH2D axes; --from-projections draws on these.
 PT_EDGES = np.array([0, 0.07, 0.15, 0.25, 0.33, 0.40, 0.47, 0.55,
                      0.70, 0.85, 1.00, 1.25, 1.50, 2.50, 4.50])
 PZ_EDGES = np.array([1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0,
@@ -106,17 +107,21 @@ def cov_hist_to_array(h) -> np.ndarray:
     return cov
 
 
-def load_xsec(path: str) -> tuple[np.ndarray, np.ndarray]:
+def load_xsec(path: str, want_edges: bool = False):
+    """hXSec2D as a [pt, pz] array and its reported mask (xsec > 0); with want_edges, also its
+    (pT, p_parallel) edges read from its own axes."""
     rf = open_root(path)
     h = rf.Get("hXSec2D")
     if not h:
         die(f"hXSec2D missing in {path}")
     xsec = th2_to_array(h)
-    rf.Close()
     if xsec.shape != (len(PT_EDGES) - 1, len(PZ_EDGES) - 1):
+        rf.Close()
         die(f"unexpected hXSec2D shape {xsec.shape}")
+    edges = th2d_edges(h)
+    rf.Close()
     reported = xsec > 0
-    return xsec, reported
+    return (xsec, reported, edges) if want_edges else (xsec, reported)
 
 
 def check_cells(path: str, reported: np.ndarray) -> None:
@@ -171,11 +176,12 @@ def load_universe_groups(path: str, shape: tuple[int, int]) -> OrderedDict[str, 
     return groups
 
 
-def load_paper_total(paper_root: str, reported: np.ndarray):
+def load_paper_total(paper_root: str, reported: np.ndarray, want_edges: bool = False):
     """Published central values on the (pt, pz) grid + TotalCovariance
     restricted to the reported bins, in the same pt-major C order this
     script's projection uses (paper global id = ipt*N_PZ + ipz, cf.
-    compare_to_paper_fullcov.flatten_th2d)."""
+    compare_to_paper_fullcov.flatten_th2d); with want_edges, also the
+    published (pT, p_parallel) edges read from the release TH2D's own axes."""
     n_pt, n_pz = len(PT_EDGES) - 1, len(PZ_EDGES) - 1
     rf = open_root(paper_root)
     h = rf.Get("pt_pl_cross_section")
@@ -183,12 +189,18 @@ def load_paper_total(paper_root: str, reported: np.ndarray):
     if not h or not tm:
         rf.Close()
         die(f"pt_pl_cross_section / TotalCovariance missing in {paper_root}")
-    x_is_pt = h.GetNbinsX() == n_pt
+    nx, ny = h.GetNbinsX(), h.GetNbinsY()  # read before Close(), which deletes the TFile-owned histogram
+    if (nx, ny) not in ((n_pt, n_pz), (n_pz, n_pt)):
+        rf.Close()
+        die(f"pt_pl_cross_section is {nx} x {ny} bins, expected {n_pt} x {n_pz} "
+            f"in either orientation")
+    x_is_pt = nx == n_pt
     xsec = np.zeros((n_pt, n_pz), dtype=float)
     for ix in range(1, h.GetNbinsX() + 1):
         for iy in range(1, h.GetNbinsY() + 1):
             ptb, pzb = (ix, iy) if x_is_pt else (iy, ix)
             xsec[ptb - 1, pzb - 1] = h.GetBinContent(ix, iy)
+    edges = th2d_edges(h)
     n = tm.GetNrows()
     if n != n_pt * n_pz:
         rf.Close()
@@ -199,24 +211,25 @@ def load_paper_total(paper_root: str, reported: np.ndarray):
             cov[i, j] = tm(i, j)
     rf.Close()
     idx = np.flatnonzero(reported.ravel(order="C"))
-    return xsec, cov[np.ix_(idx, idx)]
+    return (xsec, cov[np.ix_(idx, idx)], edges) if want_edges else (xsec, cov[np.ix_(idx, idx)])
 
 
-def projection_matrix(axis: str, reported: np.ndarray) -> np.ndarray:
+def projection_matrix(axis: str, reported: np.ndarray,
+                      pt_edges: np.ndarray = PT_EDGES, pz_edges: np.ndarray = PZ_EDGES) -> np.ndarray:
     flat_reported = reported.ravel(order="C")
     n_reported = int(flat_reported.sum())
     if axis == "pt":
-        mat = np.zeros((len(PT_EDGES) - 1, n_reported), dtype=float)
+        mat = np.zeros((len(pt_edges) - 1, n_reported), dtype=float)
     elif axis == "pz":
-        mat = np.zeros((len(PZ_EDGES) - 1, n_reported), dtype=float)
+        mat = np.zeros((len(pz_edges) - 1, n_reported), dtype=float)
     else:
         raise ValueError(axis)
 
     col = 0
-    dpt = np.diff(PT_EDGES)
-    dpz = np.diff(PZ_EDGES)
-    for ix in range(len(PT_EDGES) - 1):
-        for iy in range(len(PZ_EDGES) - 1):
+    dpt = np.diff(pt_edges)
+    dpz = np.diff(pz_edges)
+    for ix in range(len(pt_edges) - 1):
+        for iy in range(len(pz_edges) - 1):
             if not reported[ix, iy]:
                 continue
             if axis == "pt":
@@ -228,12 +241,13 @@ def projection_matrix(axis: str, reported: np.ndarray) -> np.ndarray:
     return mat
 
 
-def central_projection(xsec: np.ndarray, reported: np.ndarray, axis: str) -> np.ndarray:
+def central_projection(xsec: np.ndarray, reported: np.ndarray, axis: str,
+                       pt_edges: np.ndarray = PT_EDGES, pz_edges: np.ndarray = PZ_EDGES) -> np.ndarray:
     masked = np.where(reported, xsec, 0.0)
     if axis == "pt":
-        return np.sum(masked * np.diff(PZ_EDGES)[None, :], axis=1)
+        return np.sum(masked * np.diff(pz_edges)[None, :], axis=1)
     if axis == "pz":
-        return np.sum(masked * np.diff(PT_EDGES)[:, None], axis=0)
+        return np.sum(masked * np.diff(pt_edges)[:, None], axis=0)
     raise ValueError(axis)
 
 
@@ -260,7 +274,9 @@ def _print_style():
 
 def draw_one(axis: str, edges: np.ndarray, curves: OrderedDict[str, np.ndarray],
              out_png: str, title: str | None, ymax: float | None,
-             ml_label: str = "ML", extra_labels: tuple[str, ...] = (), print_style: bool = False) -> None:
+             ml_label: str = "ML", extra_labels: tuple[str, ...] = (), print_style: bool = False,
+             curve_edges: dict[str, np.ndarray] | None = None) -> None:
+    """curve_edges: the edges of any curve not on `edges` (the published total on the release axis)."""
     nps = _print_style() if print_style else None
     fig, ax = plt.subplots(figsize=nps.figsize(0.49, 0.95) if print_style else (7.6, 5.0))
     order = [
@@ -285,7 +301,7 @@ def draw_one(axis: str, edges: np.ndarray, curves: OrderedDict[str, np.ndarray],
         kw = dict(style[label])
         if print_style:
             kw["linewidth"] = kw["linewidth"] * PRINT_LW
-        ax.stairs(curves[label], edges, label=label, **kw)
+        ax.stairs(curves[label], (curve_edges or {}).get(label, edges), label=label, **kw)
 
     ax.set_xlim(edges[0], edges[-1])
     if ymax is None:
@@ -369,7 +385,7 @@ def main() -> None:
 
     ROOT.gROOT.SetBatch(True)
 
-    xsec, reported = load_xsec(args.xsec_root)
+    xsec, reported, (ours_pt, ours_pz) = load_xsec(args.xsec_root, want_edges=True)
     n_reported = int(reported.sum())
     shape = (n_reported, n_reported)
     check_cells(args.universe_root, reported)
@@ -425,7 +441,7 @@ def main() -> None:
     # optional published-total overlay from the paper data release
     paper_xsec = paper_cov = None
     if args.paper_root:
-        paper_xsec, paper_cov = load_paper_total(args.paper_root, reported)
+        paper_xsec, paper_cov, (paper_pt, paper_pz) = load_paper_total(args.paper_root, reported, want_edges=True)
 
     # decide the ML line ONCE across both projections: drawing it in one
     # panel but not its twin reads as an inconsistency, not a threshold
@@ -435,21 +451,24 @@ def main() -> None:
             show_ml = True
         elif args.include_ml == "auto":
             for axis in ("pz", "pt"):
-                proj = projection_matrix(axis, reported)
-                central = central_projection(xsec, reported, axis)
+                proj = projection_matrix(axis, reported, ours_pt, ours_pz)
+                central = central_projection(xsec, reported, axis, ours_pt, ours_pz)
                 if float(np.nanmax(fractional_projection(ml_cov, proj, central))) >= args.ml_show_threshold:
                     show_ml = True
                     break
 
     full = {}
-    for axis, edges, suffix in (("pz", PZ_EDGES, "pz"), ("pt", PT_EDGES, "pt")):
-        proj = projection_matrix(axis, reported)
-        central = central_projection(xsec, reported, axis)
+    for axis, edges, suffix in (("pz", ours_pz, "pz"), ("pt", ours_pt, "pt")):
+        proj = projection_matrix(axis, reported, ours_pt, ours_pz)
+        central = central_projection(xsec, reported, axis, ours_pt, ours_pz)
         curves = OrderedDict()
         curves["Total"] = fractional_projection(total_cov, proj, central)
+        curve_edges = {}
         if paper_cov is not None:
+            curve_edges["Published total"] = paper_pz if axis == "pz" else paper_pt
             curves["Published total"] = fractional_projection(
-                paper_cov, proj, central_projection(paper_xsec, reported, axis))
+                paper_cov, projection_matrix(axis, reported, paper_pt, paper_pz),
+                central_projection(paper_xsec, reported, axis, paper_pt, paper_pz))
         for cat in CATEGORY_ORDER:
             if np.trace(groups[cat]) > 0:
                 curves[cat] = fractional_projection(groups[cat], proj, central)
@@ -460,7 +479,8 @@ def main() -> None:
         full[axis] = {k: [float(v) for v in c] for k, c in curves.items()}
 
         out_png = f"{args.out_prefix}_{suffix}.png"
-        draw_one(axis, edges, curves, out_png, title, args.ymax, args.ml_label, tuple(extras))
+        draw_one(axis, edges, curves, out_png, title, args.ymax, args.ml_label, tuple(extras),
+                 curve_edges=curve_edges)
         print(f"[wrote] {out_png}")
 
         summary_lines.append(f"{axis} projection:")

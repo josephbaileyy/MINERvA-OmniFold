@@ -1,0 +1,62 @@
+You are an independent reviewer of a small, high-stakes data-writer for a physics release. Read only; change nothing.
+
+THIS IS REVISION 4 of the code (commit 292b8a8bc). It is a confirm round: the previous reads are
+r1-codex-school-report.md (rev 1), r2-codex-school-report.md and r2-sonnet-report.md (rev 2); declaration section 8
+lists what each revision changed.
+
+WHAT IT IS. EVW5D reruns ONE existing unfold (MINERvA 5D OmniFold, "configuration (e)", the sixteen-cell result's
+central value) through its pinned driver, unchanged, and saves the per-event unfolded weights so they can be published
+as the unbinned central value. A previous run of the same unfold (the "ESS run") reproduced the published product's
+xsec_flat byte for byte, so the rerun is expected to be exact. The new code adds the save, a read-back, controls, a
+done marker and an acceptance check.
+
+FILES (all in this directory):
+- evw5d/EVW5D-DECLARATION.md  -- what will run, what is written, the controls (read first)
+- evw5d/evw5d.py              -- the writer
+- evw5d/test_evw5d.py         -- the tests (pytest; end to end through the real pinned driver on synthetic inputs)
+- evw5d/evw5d_mutation.py     -- mutation campaign (115 mutants of evw5d.py, sbatch_evw5d.sh and the launcher); its full run on this
+                                revision is in progress, so judge the mutant list and the tests themselves
+- evw5d/tests.txt             -- the suite run at the reviewed commit (109 passed)
+- launch/*.sh                 -- the cluster connect, post and HPSS scripts and the Mac launcher (pins and approved
+                                digests are placeholders until the binding; each script refuses until filled)
+- r1-/r2-*-report.md          -- the previous reads; revisions 2-4 claim to fix every BLOCKING finding (section 8)
+- evw5d/sbatch_evw5d.sh       -- the Slurm job script
+- ess_e/ess_capture.py        -- the ESS run's tool (approved, already ran); evw5d.py executes it from hashed bytes
+- ess_e/test_ess_capture.py   -- its test, whose helpers test_evw5d.py reuses
+- ess-receipt-README.md       -- the ESS run's receipt
+- pinned-abdc88c5/nd-unfolding/*.py -- the producer's code at the pinned commit (the driver the run imports)
+
+SCOPE RULE (the director's): a finding BLOCKS only if it could change the published weights, the published constants,
+or what a gate accepts (i.e. a wrong or unverified weight/constant/key could be published, or a gate could pass when
+it should fail, or fail when it should pass on the real run). Everything else is NON-BLOCKING; list it briefly.
+
+QUESTIONS TO ANSWER, with file:line evidence:
+1. Key and alignment: is (npz sha256, entry = index of the row in MCgen among pass_truth rows, in order) correct for
+   the rows whose weights the driver histograms? Can rows be reordered/filtered between the npz and the unfold on the
+   central pair (--pairs=-:-, construction data)? Does C-KEY really prove alignment?
+2. Weights: is w_unfolded exactly the driver's histogram weight (s5c_unfold.py:138)? Is wpush the right element of
+   omnifold_loop's return value? Any dtype trap (float32 MCgen, float32/float64 wpush, bool masks)?
+3. Gates: C-BIND (byte-equal xsec_flat + meta minus per-run fields) and C-F (f to 1e-14 vs the data product, from the
+   result and from per-row contributions). Could either pass wrongly or fail spuriously on the real run (e.g. summation
+   order, the meta comparison, the contributions formula vs the driver's extraction xsec_nd.py)?
+4. Read-back: do C-FILE / C-SELF / C-FLOW check the saved bytes independently of the in-memory table (the file is
+   hashed and parsed from the same bytes)? Any product written but not checked? Any constant a user needs to
+   reproduce the result or rebin that is missing or wrong (flux by pT bin, POT, N, 1e4, completeness, volume, map,
+   edges)? Is the formula in constants.json right?
+5. Binning independence (section 4): is the claim that the training sees no interior bin edge correct for this driver
+   path? Does the C-COL test prove what it says? Is the stated limit (completeness only binned on the fine grid) right?
+6. Completeness (C-COMPLETE) as a measurement: is it computed correctly, and is reporting it as a finding (not a gate)
+   safe for the published weights?
+7. Acceptance / done marker / accepted(): can a consumer be fooled into accepting a partial or altered product?
+8. The job script and read discipline: anything that could make the real run read the wrong input or write outside
+   its output root?
+9. Is each BLOCKING finding of the three previous reads actually fixed, with a test that would catch its return?
+   Did any fix introduce a new defect?
+10. The launch scripts (launch/), now with the bound-digest acceptance in HPSS and fetch: could they run the wrong code or inputs, submit more than one job, exceed the bound,
+   write to CFS or outside the lane's  root, or archive/fetch a product other than the verified one?
+11. Tests and mutants: any gate or check line that no test can make fail (a surviving or missing mutant that matters
+   under the scope rule)?
+
+OUTPUT: start with one line "VERDICT: GO" or "VERDICT: GO WITH CHANGES" or "VERDICT: NO-GO". Then numbered findings,
+each tagged BLOCKING or NON-BLOCKING, each with file:line, the concrete failure scenario, and a suggested fix. Be
+concrete; do not pad. If you checked something and it is fine, say so in one line under "Checked and fine".

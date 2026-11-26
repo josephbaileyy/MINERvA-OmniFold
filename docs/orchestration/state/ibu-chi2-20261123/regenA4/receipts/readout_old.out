@@ -1,0 +1,2 @@
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+{"modes_share_gt_half": ["a", "b", "d"], "pt_toward": 14, "pz_toward": 16}

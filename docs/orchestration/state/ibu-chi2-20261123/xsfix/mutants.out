@@ -1,0 +1,25 @@
+M1 pT label back to .2f  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_main_on_paper_grid
+M2 pz label via edge_label  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_helpers_follow_the_p_parallel_axis_too
+M3 projections on module edges  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_helpers_follow_the_p_parallel_axis_too
+M4 projections swapped  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_helpers_follow_the_p_parallel_axis_too
+M5 efficiency mesh on module edges  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_efficiency_mesh
+M6 main draws the map on module edges  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_main_on_paper_grid
+M7 efficiency values perturbed  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_efficiency_mesh
+M8 edge_label min decimals 1  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_edge_label
+M9 edge_label tolerance loose  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_edge_label
+M10 main bypasses truth_projections  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_main_on_paper_grid
+M11 require_one_grid disabled  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_transposed_or_mixed_inputs_are_refused
+M12 orientation guard disabled  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_transposed_or_mixed_inputs_are_refused
+M13 paper_comparison drops the grid check  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_transposed_or_mixed_inputs_are_refused
+M14 projections hardcode PZ_EDGES  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_helpers_follow_the_p_parallel_axis_too
+M15 efficiency mesh hardcodes PZ_EDGES  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_helpers_follow_the_p_parallel_axis_too
+M16 truth xsec uses module pT widths  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_main_on_paper_grid
+M17 main projects the data, not the truth  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_main_on_our_grid_equals_base
+M18 main skips the flux edge check  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_fallback_flux_must_be_on_the_truth_edges
+M19 fallback flux unchecked  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_fallback_flux_must_be_on_the_truth_edges
+M20 embedded flux unchecked  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_transposed_or_mixed_inputs_are_refused
+M21 paper_comparison skips the flux edge check  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_fallback_flux_must_be_on_the_truth_edges
+M22 th2_to_slices unguarded  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_transposed_or_mixed_inputs_are_refused
+M23 hXSec_pz edges unchecked  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_transposed_or_mixed_inputs_are_refused
+M24 truth not in the grid check  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_transposed_or_mixed_inputs_are_refused
+M25 paper_comparison: truth not in the grid check  ->  FAILED 2d-unfolding/tests/test_published_axis_widths.py::CrossSectionPlotEdges::test_transposed_or_mixed_inputs_are_refused

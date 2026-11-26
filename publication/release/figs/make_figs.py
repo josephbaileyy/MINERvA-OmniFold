@@ -158,8 +158,9 @@ def fig2(z, out: Path):
     fig, axs = plt.subplots(2, 1, figsize=(3.4, 5.4), gridspec_kw={"hspace": 0.32, "left": 0.17, "right": 0.86,
                                                                    "top": 0.98, "bottom": 0.08})
     vmax = float(np.ceil(np.nanmax(np.abs(diff))))
+    diff_label = "unfolded $-$ MINERvA Tune v1 per cell\n" r"($10^{-40}$ cm$^2$/nucleon)"
     spec = ((ratio, "RdBu_r", 0.5, 1.5, "unfolded / MINERvA Tune v1", "{:.2f}"),
-            (diff, "RdBu_r", -vmax, vmax, r"unfolded $-$ Tune v1 per cell ($10^{-40}$ cm$^2$/nucleon)", "{:.1f}"))
+            (diff, "RdBu_r", -vmax, vmax, diff_label, "{:.1f}"))
     for ax, (val, cmap, lo, hi, clab, fmt) in zip(axs, spec):
         im = ax.pcolormesh(np.arange(len(we)), np.arange(len(ee)), val, cmap=cmap, vmin=lo, vmax=hi, shading="flat")
         for i in range(val.shape[0]):
@@ -173,7 +174,8 @@ def fig2(z, out: Path):
         ax.set_xticks(np.arange(len(we))); ax.set_xticklabels([f"{x:g}" for x in we])
         ax.set_yticks(np.arange(len(ee))); ax.set_yticklabels([f"{x:g}" for x in ee])
         ax.set_xlabel(r"$W$ (GeV), bin edges"); ax.set_ylabel(r"$E_{\mathrm{avail}}$ (GeV), bin edges")
-        cb = fig.colorbar(im, ax=ax, pad=0.03, fraction=0.07); cb.set_label(clab, fontsize=7)
+        cb = fig.colorbar(im, ax=ax, pad=0.03, fraction=0.07)
+        cb.set_label(clab, fontsize=7, labelpad=2 if ax is axs[1] else None)
         cb.ax.tick_params(labelsize=6.5)
     fig.savefig(out / "fig2_joint_localization.pdf", metadata=PDF_META); plt.close(fig)
 

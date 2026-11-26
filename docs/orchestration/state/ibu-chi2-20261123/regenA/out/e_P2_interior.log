@@ -1,0 +1,39 @@
+/pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA/repo/2d-unfolding/compare_to_paper_interior.py:149: RuntimeWarning: invalid value encountered in divide
+  ratio = np.where(paper > 0, ours / paper, np.nan)
+/pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA/repo/2d-unfolding/compare_to_paper_interior.py:195: RuntimeWarning: invalid value encountered in divide
+  pull = np.where(sig > 0, diff / sig, 0.0)
+[paper] opening /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+[ours]  opening /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/units_e/er.root
+
+[masking]
+  bins in strict interior (pt_hi/pz_lo <= tan20):  185 / 224
+  bins reported by paper                        :  205 / 224
+  intersection                                  :  185 / 224
+
+[interior ratio ours/paper, 185 bins]
+  median       = 1.0086
+  mean         = 1.0079
+  5%  window   =  86.5%
+  10% window   =  95.1%
+  20% window   =  98.9%
+
+=== chi^2 on interior bins (strict: pt_hi/pz_lo <= tan(20)) ===
+  stat only               chi2 =     910.74   ndf = 185   chi2/ndf =  4.923
+  flux only               chi2 = 15055003224.60   ndf = 185   chi2/ndf = 81378395.809
+  muon E scale only       chi2 =       0.05   ndf = 185   chi2/ndf =  0.000
+  TOTAL (stat+syst)       chi2 =     393.48   ndf = 185   chi2/ndf =  2.127
+
+=== chi^2 on ALL reported bins (edge-inclusive, for reference) ===
+  stat only               chi2 =     956.03   ndf = 205   chi2/ndf =  4.664
+  TOTAL                   chi2 =     434.89   ndf = 205   chi2/ndf =  2.121
+
+=== chi^2 vs p||_min (strict-interior mask, paper-reported) ===
+     p|| cut    N         chi2   chi2/ndf    median    %<5%
+  p||>= 1.5  185       393.48      2.127    1.0086   86.5%
+  p||>= 2.0  179       385.29      2.152    1.0086   86.6%
+  p||>= 2.5  171       366.27      2.142    1.0087   86.0%
+  p||>= 3.0  162       349.74      2.159    1.0086   85.8%
+  p||>= 3.5  152       338.84      2.229    1.0090   85.5%
+  p||>= 4.0  141       324.63      2.302    1.0083   84.4%
+
+wrote /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA/out/e/MEFHC_5iter_pull_interior.png

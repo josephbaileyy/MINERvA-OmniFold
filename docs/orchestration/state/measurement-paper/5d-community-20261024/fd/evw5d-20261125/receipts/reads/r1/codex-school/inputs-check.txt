@@ -1,0 +1,4 @@
+The read copy after the read equals inputs.sha256 (recomputed after the read, every file).
+An earlier inputs listing (taken 10:03:49 PST) differed only in ./PROMPT.txt: the lane edited the prompt's mutation
+note at 10:03:59 PST, before the read started (started.txt, 18:04:12Z = 10:04:12 PST). The prompt the read saw is
+prompt.txt here (sha256 fe9cd5d8...). Nothing changed during the read.

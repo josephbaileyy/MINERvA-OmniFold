@@ -19,6 +19,10 @@ for _a in _pathlib.Path(__file__).resolve().parents:
     if (_a / 'technote_style.py').exists():
         _sys.path.insert(0, str(_a)); break
 import technote_style  # noqa: E402,F401  (no titles + consistent colours)
+_UQ = str(_pathlib.Path(__file__).resolve().parent / "uq")
+if _UQ not in _sys.path:
+    _sys.path.append(_UQ)
+from reported_cells import th2d_edges  # noqa: E402
 
 import argparse
 import math
@@ -35,7 +39,7 @@ DEFAULT_OUT = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/MEFHC_5iter
 N_PT, N_PZ = 14, 16
 N = N_PT * N_PZ
 
-# Paper bin edges (from bin_mapping.txt, authoritative — NOT the TH2D axis labels)
+# The analysis grid (bin_mapping.txt's printed edges). main() selects the paper's cells with its TH2D's own axes.
 PT_EDGES = [0, 0.07, 0.15, 0.25, 0.33, 0.40, 0.47, 0.55,
             0.70, 0.85, 1.00, 1.25, 1.50, 2.50, 4.50]
 PZ_EDGES = [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0,
@@ -56,6 +60,9 @@ def tm_to_np(tm):
 
 def fill_paper(h):
     """Paper TH2D: x=p||(16), y=pt(14). gid = (ptb-1)*16 + (pzb-1)."""
+    if (h.GetNbinsX(), h.GetNbinsY()) != (N_PZ, N_PT):
+        raise ValueError(f"{h.GetName()}: {h.GetNbinsX()} x {h.GetNbinsY()} bins, expected x = p|| ({N_PZ}), "
+                         f"y = pt ({N_PT})")
     v = np.zeros(N)
     for ix in range(1, N_PZ + 1):
         for iy in range(1, N_PT + 1):
@@ -74,7 +81,7 @@ def fill_ours(h):
     return v
 
 
-def interior_mask():
+def interior_mask(pt_edges=PT_EDGES, pz_edges=PZ_EDGES):
     """True for bins where pt_high / p||_low <= tan(20 deg).
 
     This is the strict-interior criterion — the WORST corner of the bin
@@ -83,9 +90,9 @@ def interior_mask():
     """
     m = np.zeros(N, dtype=bool)
     for ptb in range(1, N_PT + 1):
-        pt_hi = PT_EDGES[ptb]          # high edge of this pt bin
+        pt_hi = pt_edges[ptb]          # high edge of this pt bin
         for pzb in range(1, N_PZ + 1):
-            pz_lo = PZ_EDGES[pzb - 1]  # low edge of this p|| bin
+            pz_lo = pz_edges[pzb - 1]  # low edge of this p|| bin
             gid = (ptb - 1) * N_PZ + (pzb - 1)
             m[gid] = (pt_hi / pz_lo) <= TAN_THETA_MAX
     return m
@@ -116,7 +123,9 @@ def main():
 
     print(f"[paper] opening {ANC_DIR}/cov_ptpl_minerva_inclusive_6GeV.root")
     fp = ROOT.TFile.Open(f"{ANC_DIR}/cov_ptpl_minerva_inclusive_6GeV.root")
-    paper = fill_paper(fp.Get("pt_pl_cross_section"))
+    h_paper = fp.Get("pt_pl_cross_section")
+    paper = fill_paper(h_paper)
+    paper_pt, paper_pz = th2d_edges(h_paper)
     cov_tot = tm_to_np(fp.Get("TotalCovariance"))
     cov_sta = tm_to_np(fp.Get("StatOnlyCovariance"))
     cov_flx = tm_to_np(fp.Get("FluxCovariance"))
@@ -128,7 +137,7 @@ def main():
 
     diff = ours - paper
 
-    m_int = interior_mask()
+    m_int = interior_mask(paper_pt, paper_pz)
     m_rep = (np.diag(cov_sta) > 0)
     m_both = m_int & m_rep
     print("\n[masking]")
@@ -168,7 +177,7 @@ def main():
         m_scan = np.zeros(N, dtype=bool)
         for ptb in range(1, N_PT + 1):
             for pzb in range(pz_min_idx, N_PZ + 1):
-                if PT_EDGES[ptb] / PZ_EDGES[pzb - 1] <= TAN_THETA_MAX:
+                if paper_pt[ptb] / paper_pz[pzb - 1] <= TAN_THETA_MAX:
                     m_scan[(ptb - 1) * N_PZ + (pzb - 1)] = True
         m_scan &= m_rep
         d = diff[m_scan]
@@ -179,7 +188,7 @@ def main():
         ratios = ratios[np.isfinite(ratios)]
         med = np.median(ratios)
         w5 = (np.abs(ratios - 1) < 0.05).mean() * 100
-        print(f"  p||>={PZ_EDGES[pz_min_idx-1]:4.1f} {n:4d}   {c:10.2f}   {c/n:8.3f}   {med:7.4f}   {w5:4.1f}%")
+        print(f"  p||>={paper_pz[pz_min_idx-1]:4.1f} {n:4d}   {c:10.2f}   {c/n:8.3f}   {med:7.4f}   {w5:4.1f}%")
 
     # Pull heatmap and histogram on interior mask
     sig = np.sqrt(np.diag(cov_tot))
