@@ -206,7 +206,7 @@ def main(argv=None) -> int:
     rec = {"schema": "oofvc-mutation/1", "python": PY, "files": {p.name: sha(p) for p in sorted(HERE.glob("*.py"))
                                                                  if not p.name.startswith("oofvc_mut_")},
            "diff_sha256": sha(HERE / "oofvc_driver.diff"), "results": []}
-    ctl = one("CONTROL", None, "", "", PURE + " or JoinTool or Driver or Runner")
+    ctl = one("CONTROL", None, "", "", PURE + " or JoinTool or Driver or Runner or Shell")
     rec["results"].append(ctl)
     if ctl["verdict"] != "PASS":
         out.write_text(json.dumps(rec, indent=1) + "\n")
