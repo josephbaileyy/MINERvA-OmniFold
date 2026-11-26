@@ -107,10 +107,12 @@ def restyle(fig, stem):
     pick = dict(zip(lab, h))
     order = [t.get_text() for t in old.get_texts()]
     back = {ct.PRIOR_NEW: ct.TUNE}
+    names = {ct.PRIOR_NEW: "MINERvA Tune v1 prior"}
     kwl = {"loc": old._loc, "frameon": False, "ncol": old._ncols, **ct.palette_lib._anchor(old),
            "fontsize": old._fontsize}
     old.remove()
-    leg = fig.legend([pick[back.get(x, x)] for x in order], order, **kwl)
+    leg = fig.legend([pick[back.get(x, x)] for x in order],
+                     [names.get(x, x) for x in order], **kwl)
     if NCOLS != 4:
         place_legend(fig, leg, panels)
     if FONT_FLOOR:

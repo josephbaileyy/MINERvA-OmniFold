@@ -568,6 +568,16 @@ install_regena4_fig tension_spectrum.pdf                   e      f25ee7d28384cf
 install_regena4_fig tension_chi2_map.pdf                   e      affa1fefae38443f12d28ea938149d57943a83f309210e20810a448966808427
 install_regena4_fig tension_mode_maps.pdf                  e      fe405d2fcab8f55e74c2ab37ff42dd83421fc0352f58db77d9c9ba1805b1869d
 
+# MINERvA Tune v1 labels on the current figure recipes. See note-tune-v1-legends-20261126/README.md.
+NFR="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-tune-v1-legends-20261126/figs"
+install_current_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     846be3bd1647c14b5cb525626e129aa6753c03547681f432842c8b55afdadc5f
+install_current_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     4e9560615d51839562cdf65e1399467110db220435cebe5c4fd1256a8cee8cf2
+install_current_fig MEFHC_5iter_xsec_proj_pz.pdf             f50545b425446f4dc3b762a14f3714af8574c80778b5faf310437843bc2962ae
+install_current_fig control_plots.pdf                       65353e3acff2b22db326dd85dc766d9d981e5450d19edc2b4270d93e91be59f3
+install_current_fig generators_vs_unfolded_band_central.pdf 5757bd67f2ce7a37e53479a6c41daf9c280c96fa4e5ecf160a514ca5cee32378
+install_current_fig paper_fig2_joint.pdf                    9023625a876bd5ca6071fbc1f0b55de672f8a5b2609ff3e56a573f8e91d45fd5
+install_current_fig q3_excess_projection.pdf                c36d48dd624b3bf268cf7a19a50e0f5d4d67b74c6508f009956755dce3efb443
+
 echo
 echo "== paper-only vector crops =="
 # These are lossless crops of validated source figures, not new measurements.
