@@ -22406,6 +22406,7 @@ docs/orchestration/state/precharge-20261125/testAB/test_a.py	tracked	MACHINE	sta
 docs/orchestration/state/precharge-20261125/testAB/test_b.py	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/testAB/versions.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/testC/DECLARATION.md	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/TESTC-BINDING-1.md	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/testC/analyze.sh	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/testC/axes.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/testC/batch.sh	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
