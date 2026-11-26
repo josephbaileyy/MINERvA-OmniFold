@@ -12,7 +12,7 @@ The muon kinematics constrain the lepton side of the interaction. The recoil mea
 Available energy $E_{\mathrm{avail}}$ estimates the energy carried by visible particles in the hadronic system. The truth definition omits neutrons, and the reconstructed sum uses the energy deposited in the tracker and electromagnetic calorimeter. The separate calorimetric estimate of the energy transfer, $q_0^{\mathrm{reco}}$, combines with the muon momentum to estimate $q_3$, which distinguishes events with different momentum transfers at the same available energy. These same inputs fix reconstructed $W$ (Sec.~\ref{sec:observable-definitions}). True $W$ can still be estimated through the simulated relationship between the measured inputs and the joint truth, so its recovery can depend strongly on the simulated response and the starting distribution.
 
 \subsection{Available energy and momentum transfer}
-The 3D and 4D results use negative-weight-refined OmniFold, adding $E_{\mathrm{avail}}$ and $q_3$ in turn. We report central values only. Preserving normalization and agreeing with the lower-dimensional results in the tested projections provide consistency checks.
+The 3D and 4D unfoldings add $E_{\mathrm{avail}}$ and $q_3$ in turn. We report central values only. Preserving normalization and agreeing with the lower-dimensional results in the tested projections provide consistency checks.
 
 \label{sec:3d-spectrum}
 The 3D available-energy spectrum peaks at low recoil. It falls monotonically from $2.18\times10^{-38}\,\mathrm{cm}^2/(\mathrm{GeV}\,\text{nucleon})$ in the lowest bin to $6.7\times10^{-41}\,\mathrm{cm}^2/(\mathrm{GeV}\,\text{nucleon})$ in the wide $[3,100]~\mathrm{GeV}$ bin, with most of the cross section below about $0.8~\mathrm{GeV}$.
@@ -25,7 +25,7 @@ The standalone GENIE predictions use GENIE 2.12.10, the packaged release closest
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=\textwidth]{figures/mode_decomp_mec_eavail_central.pdf}
-  \caption{Adding the Valencia 2p2h contribution to GENIE 2.12.10 closes $52\%$ of the integrated gap between the negative-weight-refined 3D projection and the central prediction below $E_{\mathrm{avail}}=0.4~\mathrm{GeV}$. The stacked gray histograms show quasielastic, resonant, coherent, and deep-inelastic contributions to the central prediction. The orange histogram adds the Valencia meson-exchange current (MEC) contribution, which supplies two-particle--two-hole (2p2h) strength. The outline marks the difference between data and the central prediction before adding 2p2h.}
+  \caption{Adding the Valencia 2p2h contribution to GENIE 2.12.10 closes $52\%$ of the integrated gap between the unfolded 3D projection and the central prediction below $E_{\mathrm{avail}}=0.4~\mathrm{GeV}$. The stacked gray histograms show quasielastic, resonant, coherent, and deep-inelastic contributions to the central prediction. The orange histogram adds the Valencia meson-exchange current (MEC) contribution, which supplies two-particle--two-hole (2p2h) strength. The outline marks the difference between data and the central prediction before adding 2p2h.}
   \label{fig:modedecomp}
 \end{figure}
 
@@ -39,14 +39,14 @@ The joint $E_{\mathrm{avail}}$--$q_3$ projection shows how the data-to-prior rat
   \label{fig:q3excess}
 \end{figure}
 
-On the grid shared with the published MINERvA low-recoil measurement~\cite{MINERvA:2022incl}, the negative-weight-refined 4D central values are $9.2\%$ and $6.0\%$ above the published values in the $q_3$ intervals $[0.4,0.6)$ and $[0.6,1.2)~\mathrm{GeV}/c$, respectively, for $E_{\mathrm{avail}}<0.4~\mathrm{GeV}$ and $p_\parallel<20~\mathrm{GeV}/c$.
+On the grid shared with the published MINERvA low-recoil measurement~\cite{MINERvA:2022incl}, the 4D central values are $9.2\%$ and $6.0\%$ above the published values in the $q_3$ intervals $[0.4,0.6)$ and $[0.6,1.2)~\mathrm{GeV}/c$, respectively, for $E_{\mathrm{avail}}<0.4~\mathrm{GeV}$ and $p_\parallel<20~\mathrm{GeV}/c$.
 
 \label{sec:eavailw}
 
 Adding $W$ in the fine-grid purity-subtracted check gives an integral 1.0011 times that of the corresponding 4D unfolding, the median differences in the four shared one-dimensional projections range from $0.3\%$ to $1.5\%$, and its $W$ projection is finite and nonnegative in all six bins.
 
 \label{sec:eavailw-map}
-Under the simulated response, the purity-subtracted unfolding places the low-recoil excess over Tune v1 mainly at \mbox{$W<1.1~\mathrm{GeV}$} (Fig.~\ref{fig:available-energy-hadronic-mass}). Below $E_{\mathrm{avail}}=0.4~\mathrm{GeV}$ the ratios there range from 1.23 to 1.26. The unfolded yield falls below the prior at $0.2\leq E_{\mathrm{avail}}<0.8~\mathrm{GeV}$ and $1.4\leq W<1.8~\mathrm{GeV}$. For $1.5\leq E_{\mathrm{avail}}<3~\mathrm{GeV}$, the largest ratio is 1.30 at \mbox{$W<1.1~\mathrm{GeV}$}, whereas the largest cell-integrated excess is $4.1\times10^{-40}\,\mathrm{cm}^2$ per nucleon at $1.8\leq W<2.2~\mathrm{GeV}$.
+Under the simulated response, the purity-subtracted unfolding places the low-recoil excess over MINERvA Tune v1 mainly at \mbox{$W<1.1~\mathrm{GeV}$} (Fig.~\ref{fig:available-energy-hadronic-mass}). Below $E_{\mathrm{avail}}=0.4~\mathrm{GeV}$ the ratios there range from 1.23 to 1.26. The unfolded yield falls below the prior at $0.2\leq E_{\mathrm{avail}}<0.8~\mathrm{GeV}$ and $1.4\leq W<1.8~\mathrm{GeV}$. For $1.5\leq E_{\mathrm{avail}}<3~\mathrm{GeV}$, the largest ratio is 1.30 at \mbox{$W<1.1~\mathrm{GeV}$}, whereas the largest cell-integrated excess is $4.1\times10^{-40}\,\mathrm{cm}^2$ per nucleon at $1.8\leq W<2.2~\mathrm{GeV}$.
 
 \begin{figure}[tbp]
   \centering
