@@ -1,0 +1,3 @@
+total 8
+dr-xr-xr-x 2 josephrb josephrb 4096 Nov 26 01:01 .
+drwx------ 9 josephrb josephrb 4096 Nov 26 01:01 ..

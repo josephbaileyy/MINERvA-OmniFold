@@ -1,0 +1,19 @@
+## B. The 365.3 headroom (true >= 60 rows, all truth pT, data POT)
+generated (truth weights) 1416.281 = [1354.046, 62.234]; MC stat +- 17.9
+selected anywhere: truth weights 1153.514, reco weights 1139.096, reco/truth 0.98750
+reco >= 40 destinations: truth weights 1064.273, reco weights 1051.024
+as coded, generated(truth w) - reco>=40(reco w)            365.257
+  of which unselected (truth w)                            262.766
+  truth - reco weight on selected tracks                   14.418
+  selected, reco < 40 (reco w)                             41.813
+  selected, outside reco acceptance (reco w)               46.259
+truth weights on both sides                                352.007
+reco weights on both sides, generated x (reco/truth on selected) 347.554
+
+## Valencia flux: in-domain reweighting only (flux.npz has no true >= 60 or background rows)
+reco 20-40: raw MC nominal   112620.5 Valencia   122662.2 diff +10041.7 | in-grid fold nominal   134608.7 Valencia   134783.6 diff +175.0
+reco 40-60: raw MC nominal    13283.2 Valencia    14739.1 diff  +1455.9 | in-grid fold nominal    18475.7 Valencia    18539.2 diff  +63.5
+reco 60-80: raw MC nominal     1179.4 Valencia     1252.6 diff    +73.2 | in-grid fold nominal     1450.9 Valencia     1452.9 diff   +2.1
+reco  >=80: raw MC nominal      285.2 Valencia      303.3 diff    +18.0 | in-grid fold nominal      340.8 Valencia      341.8 diff   +1.0
+Fig. 2 fine-copy Tune v1 MC at reco 40-60: 15185.2; nominal gap 1902.0; closed by Valencia 1455.9 (76.5%); remaining 446.1 (2.9% of Fig. 2)
+nominal true >= 60 feed held fixed inside b: [31.2, 590.6, 411.3, 49.1]
