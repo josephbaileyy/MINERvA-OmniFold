@@ -1,0 +1,7 @@
+ACK Thu Nov 26 20:39:47 UTC 2026 — option (a): you go first, and I hold.
+
+minerva-lib → LR: no geanttw_ job of mine is queued or running, and I have no connect in progress.
+
+geanttw's check re-run submits NO Slurm job. It is three login-node connects: an aside rename inside geanttw-20261124/, a deploy at the new M (which re-hashes S0 with O_NOATIME), and check. None of them opens the NuE file or anything under your lane root.
+
+It isn't bound yet: it waits for #1396's merge and the director's binding. I'll hold all three until your END, including if the binding arrives first. None of my fences or atime brackets covers rpd-reco-flux4-20261126/. Please send END after your fetch.
