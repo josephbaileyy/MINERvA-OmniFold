@@ -303,6 +303,21 @@ class Verify(unittest.TestCase):
             self.assertIn(long, [x.name for x in tf])
         self.tar.write_bytes(bytes(bad))
         self.verify()
+        # an extension header declaring size -1 (or 0) inserted before a short-named member: tarfile reads no data
+        # and yields the listed member, so only fetch-verify's own guards can refuse it
+        with tarfile.open(fileobj=io.BytesIO(bytes(raw)), mode="r:") as tf:
+            m0 = next(x for x in tf if x.name != long)
+        for size_field in (b"\xff" * 12, b"%011o\0" % 0):
+            hdr = bytearray(tarfile.TarInfo("PaxHeader").tobuf(tarfile.USTAR_FORMAT))
+            hdr[156:157] = b"x"
+            hdr[124:136] = size_field
+            hdr[148:156] = b" " * 8
+            hdr[148:156] = b"%06o\0 " % sum(hdr)
+            bad = bytes(raw[:m0.offset]) + bytes(hdr) + bytes(raw[m0.offset:])
+            with tarfile.open(fileobj=io.BytesIO(bad), mode="r:") as tf:     # tarfile accepts it
+                self.assertIn(m0.name, [x.name for x in tf])
+            self.tar.write_bytes(bad)
+            self.verify()
         for rec in (b"5 =a\n", b"8 zz=yy\n"):             # an empty key; a key the reader never writes
             bad = bytearray(raw)
             assert size + len(rec) <= -(-size // 512) * 512

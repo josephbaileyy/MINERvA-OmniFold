@@ -1020,7 +1020,11 @@ PAX_KEYS = {b"path", b"mtime", b"size"}       # the only keys the reader's tarfi
 
 
 def pax_records(data: bytes, name: str) -> None:
-    """A PAX extension's data must be exactly a sequence of "<len> <key>=<value>\n" records covering every byte."""
+    """A PAX extension's data must be exactly a sequence of "<len> <key>=<value>\n" records covering every byte, and
+    hold a path record (the only reason the reader writes one)."""
+    if not data:
+        raise Stop(f"tar member {name!r}: an empty PAX extension")
+    keys = set()
     i = 0
     while i < len(data):
         sp = data.find(b" ", i)
@@ -1033,7 +1037,10 @@ def pax_records(data: bytes, name: str) -> None:
         key, eq, value = rec[sp - i + 1:-1].partition(b"=")
         if not eq or key not in PAX_KEYS or (key == b"path" and not value):
             raise Stop(f"tar member {name!r}: a PAX record with key {key!r} (only {sorted(PAX_KEYS)})")
+        keys.add(key)
         i += n
+    if b"path" not in keys:
+        raise Stop(f"tar member {name!r}: a PAX extension without a path record")
 
 
 def cmd_fetch_verify(a) -> int:
@@ -1064,7 +1071,7 @@ def cmd_fetch_verify(a) -> int:
             if m.offset_data - 512 != m.offset:
                 h = tarfile.TarInfo.frombuf(raw[m.offset:m.offset + 512], tarfile.ENCODING, "surrogateescape")
                 pend = m.offset + 512 + -(-h.size // 512) * 512
-                if h.type != tarfile.XHDTYPE or pend != m.offset_data - 512:
+                if h.type != tarfile.XHDTYPE or h.size <= 0 or pend != m.offset_data - 512:
                     raise Stop(f"tar member {m.name!r}: its extension is not one PAX record")
                 pax_records(raw[m.offset + 512:m.offset + 512 + h.size], m.name)
                 zero(m.offset + 512 + h.size, pend, f"after the PAX extension of {m.name!r}")
