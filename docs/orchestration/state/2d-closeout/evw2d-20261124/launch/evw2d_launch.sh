@@ -31,12 +31,22 @@ cert_ok() {   # cert_ok <seconds>: ssh-keygen succeeds; the window "Valid: from 
   [ "$b" -le "$now" ] || { echo "STOP: the certificate is not valid yet"; return 1; }
   [ $(( e - now )) -ge "$1" ] || { echo "STOP: the certificate expires too soon for this step"; return 1; }
 }
+cred_ok() {   # the resolved ssh configuration for saul offers only the checked key and certificate
+  local g bad
+  g=$(ssh -G "${SSH[@]}" saul.nersc.gov 2>&1) || { echo "STOP: ssh -G failed"; return 1; }
+  bad=$(printf '%s\n' "$g" | awk -v k="$KEY" -v c="$CERT" -v h="$HOME" '
+    $1 == "identityfile" || $1 == "certificatefile" { p = $2; sub(/^~/, h, p)
+      if (($1 == "identityfile" && p != k) || ($1 == "certificatefile" && p != c)) print $1 " " $2 }
+    $1 == "identitiesonly" && $2 != "yes" { print "identitiesonly " $2 }')
+  [ -z "$bad" ] || { echo "STOP: ssh would offer another credential: $bad"; return 1; }
+}
 case "$MODE" in
   connect) S="$HERE/evw2d_connect.sh"; SHA=__CONNECT_SHA256__; MARGIN=2700 ;;
   post)    S="$HERE/evw2d_post.sh";    SHA=__POST_SHA256__;    MARGIN=900 ;;
   cleanup) S="$HERE/evw2d_cleanup.sh"; SHA=__CLEANUP_SHA256__; MARGIN=900 ;;
   fetch)
     cert_ok 600 || exit 7
+    cred_ok || exit 7
     rc=0
     for f in post.tar.gz cleanup.tar.gz; do
       have=$(ssh "${SSH[@]}" saul.nersc.gov "if [ -f $LANE/$f ]; then echo present; else echo absent; fi" < /dev/null); r=$?
@@ -56,6 +66,7 @@ case "$SHA" in *__*) echo "STOP: the approved sha256 for $MODE is not filled in"
 case "$NODE" in login[0-9][0-9]) ;; *) echo "STOP: '$NODE' is not a login node name"; exit 9;; esac
 [ "$(shasum -a 256 "$S" | cut -d' ' -f1)" = "$SHA" ] || { echo "STOP: the local $MODE script is not the approved one"; exit 8; }
 cert_ok "$MARGIN" || exit 7
+cred_ok || exit 7
 R="umask 077; f=\$(mktemp /dev/shm/evw2d-$MODE.XXXXXXXX) || exit 8; cat > \"\$f\"; h=\$(sha256sum \"\$f\" | cut -d' ' -f1); if [ \"\$h\" != $SHA ]; then rm -f -- \"\$f\"; echo \"STOP: staged copy sha256 \$h is not $SHA\"; exit 8; fi; echo \"node \$(hostname) staged sha256 \$h\"; bash \"\$f\" \"\$f\"; r=\$?; rm -f -- \"\$f\"; echo \"script rc=\$r\"; exit \$r"
 ssh "${SSH[@]}" -o ServerAliveInterval=15 -o ServerAliveCountMax=8 saul.nersc.gov \
   "ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no $NODE $(printf '%q' "$R")" \

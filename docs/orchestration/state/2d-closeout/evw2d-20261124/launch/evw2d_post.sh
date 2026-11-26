@@ -6,7 +6,7 @@
 #     lag, or the job not ended) it stops and writes nothing, so it can simply be run again later.
 # Then, read-only outside $LANE/post: it records sacct in full, re-checks the products against their SHA256SUMS in
 # place, runs evw2d.accepted() on them (root_6_28, from deploy_C) and requires run.json's config digest to be the bound
-# one, records stat lines (atime, mtime, size) of the products and the staged copies after its last read, for the purge
+# one and its slurm_job to be this job, records stat lines (atime, mtime, size) of the products and the staged copies after its last read, for the purge
 # exposure (files unread for 8 weeks; the exposure is the atime plus 56 days, the declaration's §7), and copies the
 # job's receipts and the small products (everything but weights.npz and denominator.npz) into $LANE/post, tarred to
 # $LANE/post.tar.gz (written under a partial name, then renamed).
@@ -14,7 +14,8 @@
 # SHA256SUMS; evw2d.accepted() passing with the bound config digest; every receipt, stat line, manifest and the archive
 # written. Only then, last, it publishes $LANE/post.pass (job, config digest, the products' SHA256SUMS digest) by
 # rename; evw2d_cleanup.sh requires it. Exit 0 = PASS, 5 = not. It submits and cancels nothing. Launched from a private
-# /dev/shm copy of itself, whose path is $1; it deletes that copy at exit.
+# /dev/shm copy of itself, whose path is $1 (only read); the launcher's wrapper deletes that copy after it exits. This
+# script removes nothing.
 SELF=$1
 LANE=__LANE_ROOT__
 CFG_SHA=__CONFIG_SHA256__
@@ -24,7 +25,7 @@ DM=$LANE/deploy_M
 DC=$LANE/deploy_C
 ST=$LANE/stage
 set -o noclobber
-bail() { echo "STOP (nothing written): $*"; rm -f -- "$SELF"; exit 9; }
+bail() { echo "STOP (nothing written): $*"; exit 9; }
 case "$CFG_SHA" in *__*) bail "the config digest is not filled in";; esac
 [ -d "$LANE" ] && [ ! -L "$LANE" ] && [ "$(cd "$LANE" && pwd -P)" = "$LANE" ] || bail "$LANE is not a real directory"
 [ -s "$LANE/logs/evw2d.jobid" ] && [ ! -L "$LANE/logs" ] || bail "no evw2d.jobid"
@@ -49,7 +50,7 @@ fail=0
 need() { "$@" || { echo "FAILED: $*"; fail=1; }; }
 echo "node $(hostname) $(date -u +%FT%TZ) post sha256 $(sha256sum "$SELF" | cut -d' ' -f1)"
 need cp "$SELF" "$P/evw2d_post.sh"
-need sacct -j "$job" -n -P -o JobID,JobName,State,ExitCode,ElapsedRaw,NNodes,Start,End,MaxRSS > "$P/sacct.txt"
+sacct -j "$job" -n -P -o JobID,JobName,State,ExitCode,ElapsedRaw,NNodes,Start,End,MaxRSS > "$P/sacct.txt" || { echo "FAILED: sacct.txt"; fail=1; }
 cat "$P/sacct.txt"
 exitc=$(printf '%s' "$row" | cut -d'|' -f3); nnodes=$(printf '%s' "$row" | cut -d'|' -f4); el=$(printf '%s' "$row" | cut -d'|' -f5)
 acct_ok=false
@@ -95,13 +96,15 @@ out = Path(sys.argv[2])
 r = evw2d.accepted(out)
 r['run_config_sha256'] = json.loads((out / 'run.json').read_text()).get('config_sha256')
 r['config_bound'] = r['run_config_sha256'] == sys.argv[3]
-print(json.dumps(r, default=str)); sys.exit(0 if r['pass'] and r['config_bound'] else 1)" \
-      "$DC/2d-unfolding/evw2d" "$E" "$CFG_SHA" > "$P/accepted.json" 2> "$P/accepted.err" )
+r['run_slurm_job'] = json.loads((out / 'run.json').read_text()).get('slurm_job')
+r['job_bound'] = str(r['run_slurm_job']) == sys.argv[4]
+print(json.dumps(r, default=str)); sys.exit(0 if r['pass'] and r['config_bound'] and r['job_bound'] else 1)" \
+      "$DC/2d-unfolding/evw2d" "$E" "$CFG_SHA" "$job" > "$P/accepted.json" 2> "$P/accepted.err" )
   arc=$?; echo "evw2d.accepted rc=$arc"; [ "$arc" -eq 0 ] && acc=true
 fi
 echo "ACCEPTED=$acc"
 echo "== stat (name|bytes|atime|mtime|inode) after the last read: products and staged copies; exposure = atime + 56 days"
-if [ -d "$E" ]; then need stat -c '%n|%s|%X|%Y|%i' "$E"/* "$ST"/* > "$P/stat-post.txt"; else need stat -c '%n|%s|%X|%Y|%i' "$ST"/* > "$P/stat-post.txt"; fi
+stat -c '%n|%s|%X|%Y|%i' "$E"/* "$ST"/* > "$P/stat-post.txt" || { echo "FAILED: stat-post.txt"; fail=1; }
 cat "$P/stat-post.txt"
 for f in evw2d.done run.json constants.json xsec.root SHA256SUMS; do
   [ -f "$E/$f" ] && [ ! -L "$E/$f" ] && need cp -p "$E/$f" "$P/out/"
@@ -130,5 +133,4 @@ if [ "$pass" = true ]; then
   [ "$rc" = 0 ] && echo "published $LANE/post.pass" || echo "FAILED: post.pass"
 fi
 echo "post rc=$rc"
-rm -f -- "$SELF"
 exit $rc

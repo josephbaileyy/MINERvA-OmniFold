@@ -7,9 +7,9 @@
 # $LANE/stage/runEventLoopOmniFold_MEFHC.root and $LANE/stage/runEventLoopMC_MEFHC.root, the two names evw2d.py's
 # staged() builds from the bound config.json, each only if it is the file run.json's "staged" record verified (inode,
 # size, mtime, mode) with the pinned digest. No glob; never the products, nothing under $LANE/out, and no directory.
-# This script itself removes nothing but its own /dev/shm copy. It writes only $LANE/cleanup (created exclusively) and
-# $LANE/cleanup.tar.gz; it submits and cancels nothing. Launched from a private /dev/shm copy of itself, whose path is
-# $1; it deletes that copy at exit.
+# This script itself removes nothing. It writes only $LANE/cleanup (created exclusively) and $LANE/cleanup.tar.gz; it
+# submits and cancels nothing. Launched from a private /dev/shm copy of itself, whose path is $1 (only read); the
+# launcher's wrapper deletes that copy after it exits.
 SELF=$1
 LANE=__LANE_ROOT__
 CFG_SHA=__CONFIG_SHA256__
@@ -17,7 +17,7 @@ K=$LANE/cleanup
 DM=$LANE/deploy_M
 DC=$LANE/deploy_C
 set -o noclobber
-bail() { echo "STOP: $*"; rm -f -- "$SELF"; exit 9; }
+bail() { echo "STOP: $*"; exit 9; }
 case "$CFG_SHA" in *__*) bail "the config digest is not filled in";; esac
 [ -d "$LANE" ] && [ ! -L "$LANE" ] && [ "$(cd "$LANE" && pwd -P)" = "$LANE" ] || bail "$LANE is not a real directory"
 PP=$LANE/post.pass
@@ -27,6 +27,11 @@ case "$job" in *[!0-9]*|"") bail "jobid '$job'";; esac
 sums=$(sha256sum "$LANE/out/SHA256SUMS" 2>/dev/null | cut -d' ' -f1)
 want=$(printf 'job=%s\nconfig_sha256=%s\nproducts_SHA256SUMS_sha256=%s' "$job" "$CFG_SHA" "$sums")
 [ -n "$sums" ] && [ "$(cat "$PP")" = "$want" ] || bail "post.pass does not name this job, config and products"
+ST=$LANE/stage   # evw2d.py resolves the staging root, so this script first requires it to be the real directory
+[ -d "$ST" ] && [ ! -L "$ST" ] && [ "$(cd "$ST" && pwd -P)" = "$ST" ] || bail "$ST is not the real staging directory"
+for f in "$ST/runEventLoopOmniFold_MEFHC.root" "$ST/runEventLoopMC_MEFHC.root"; do
+  [ -f "$f" ] && [ ! -L "$f" ] || bail "$f is not a regular file at its exact path"
+done
 for f in "$K" "$LANE/cleanup.tar.gz" "$LANE/cleanup.tar.gz.partial"; do [ ! -e "$f" ] && [ ! -L "$f" ] || bail "$f exists"; done
 q=$(squeue --me -h -o '%j') || bail "squeue did not answer"
 [ -z "$(printf '%s\n' "$q" | grep -E '^evw2d$')" ] || bail "an evw2d job is queued or running"
@@ -53,5 +58,4 @@ fi
 echo "cleanup rc=$rc $(date -u +%FT%TZ)"
 tar czf "$LANE/cleanup.tar.gz.partial" -C "$LANE" cleanup && mv -- "$LANE/cleanup.tar.gz.partial" "$LANE/cleanup.tar.gz" \
   || { echo "FAILED: the archive"; [ "$rc" = 0 ] && rc=5; }
-rm -f -- "$SELF"
 exit $rc

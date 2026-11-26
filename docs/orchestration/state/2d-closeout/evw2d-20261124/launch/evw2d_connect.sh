@@ -21,10 +21,15 @@
 #   one sbatch --hold, with every inherited SBATCH_/SLURM_/SALLOC_ variable removed and the allocation, output and
 #     error given explicitly (--nodes=1 --ntasks=1 --time=00:30:00 --parsable); the job id is checked and saved; then
 #     scontrol (exit status 0, up to three tries) must show exactly one record, this job's, with TimeLimit 00:30:00,
-#     NumNodes 1 (a pending job prints 1-1) and no array token; only then is the job released. Any failure cancels it.
+#     NumNodes 1 (a pending job prints 1-1) and no array token; only then is the job released. Any failure cancels it,
+#     except a release whose reply is lost: scontrol is asked again (up to three tries); the job is kept if it is this
+#     job and is no longer held (no JobHeld* reason in any state, and a nonzero priority if PENDING, SPECIAL_EXIT or
+#     REQUEUE_HOLD), cancelled if it is still held, another record or several, and kept with exit 4 ("see sacct") if
+#     scontrol never answers with a record, since it passed the allocation check and cancelling might kill it after it
+#     started.
 # Writes only under the lane root (on $SCRATCH; nothing on CFS, which is only read, by evw2d.py's O_NOATIME copies).
-# No set -u (it kills setup_salloc_env.sh). Launched from a /dev/shm copy of itself, whose path is $1; it deletes that
-# copy at exit.
+# No set -u (it kills setup_salloc_env.sh). Launched from a /dev/shm copy of itself, whose path is $1 (only read); the
+# launcher's wrapper deletes that copy after it exits. This script removes nothing.
 SELF=$1
 LANE=__LANE_ROOT__
 DM=$LANE/deploy_M
@@ -44,7 +49,7 @@ CV=/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoo
 MC=/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root
 CV_BYTES=2144008221   # REF-C2C1's stage.json (fd/receipts-ref-c2c1/cdraw/run/stage.json)
 MC_BYTES=5143
-bail() { echo "STOP (nothing written): $*"; rm -f -- "$SELF"; exit 9; }
+bail() { echo "STOP (nothing written): $*"; exit 9; }
 LANE_PARENT=/pscratch/sd/j/josephrb
 [ -d "$LANE_PARENT" ] && [ ! -L "$LANE_PARENT" ] && [ "$(cd "$LANE_PARENT" && pwd -P)" = "$LANE_PARENT" ] || bail "$LANE_PARENT is not a real directory"
 case "$LANE" in "$LANE_PARENT"/evw2d-20[0-9][0-9][0-9][0-9][0-9][0-9]) ;; *) bail "lane root $LANE";; esac
@@ -59,7 +64,7 @@ mkdir "$L" || bail "mkdir $L"
 [ "$(cd "$LANE" && pwd -P)" = "$LANE" ] && [ "$(cd "$L" && pwd -P)" = "$L" ] || bail "the lane is reached through a link"
 LOG=$L/connect.log
 exec > "$LOG" 2>&1
-finish() { echo "evw2d connect rc=$1"; date -u +%FT%TZ; echo "$1" > "$L/connect.done"; rm -f -- "$SELF"; exit "$1"; }
+finish() { echo "evw2d connect rc=$1"; date -u +%FT%TZ; echo "$1" > "$L/connect.done"; exit "$1"; }
 echo "node $(hostname) nproc=$(nproc) loadavg $(cut -d' ' -f1-3 /proc/loadavg)"
 date -u +%FT%TZ
 echo "connect script sha256 $(sha256sum "$SELF" | cut -d' ' -f1)"
@@ -205,8 +210,26 @@ if [ "$src" -ne 0 ] || [ "$nrec" != 1 ] || [ "$id" != "$job" ] || [ "$tl" != "$T
 fi
 scontrol release "$job"; rrc=$?
 echo "scontrol release rc=$rrc"
-if [ "$rrc" -ne 0 ]; then
-  scancel "$job"; echo "STOP: the release failed; job $job cancelled (scancel rc $?)"; finish 6
+if [ "$rrc" -ne 0 ]; then   # the reply may be lost after Slurm applied it: look (up to three tries) before cancelling
+  seen=0   # an answer is exit status 0 with at least one record; anything else is asked again
+  for try in 1 2 3; do
+    sleep 5; sj2=$(scontrol -o show job "$job" 2>&1); qrc=$?; echo "after the failed release, try $try: rc=$qrc $sj2"
+    [ "$qrc" -eq 0 ] && printf '%s\n' "$sj2" | grep -q '^JobId=' && { seen=1; break; }
+  done
+  if [ "$seen" -ne 1 ]; then   # unknown: it passed the allocation check, and it may have started; keep it
+    echo "STOP: the release failed and scontrol did not answer; job $job is kept, held or released: see sacct"; finish 4
+  fi
+  st2=$(tok "$sj2" JobState); rs2=$(tok "$sj2" Reason); pr2=$(tok "$sj2" Priority)
+  echo "after the failed release: JobState=$st2 Reason=$rs2 Priority=$pr2"
+  held=0   # a JobHeld* reason in any state; or a waiting state (PENDING, SPECIAL_EXIT, REQUEUE_HOLD) with priority 0
+  [ "${rs2#JobHeld}" != "$rs2" ] && held=1
+  case "$st2" in PENDING|SPECIAL_EXIT|REQUEUE_HOLD) [ -n "$pr2" ] && [ "$pr2" != 0 ] || held=1;; esac
+  if [ "$(printf '%s\n' "$sj2" | grep -c '^JobId=')" = 1 ] && [ "$(tok "$sj2" JobId)" = "$job" ] && [ -n "$st2" ] && \
+     [ "$held" = 0 ]; then
+    echo "the job is no longer held: the release took effect"
+  else
+    scancel "$job"; echo "STOP: the release failed and the job is still held or unseen; job $job cancelled (scancel rc $?)"; finish 6
+  fi
 fi
 # ---- the allocation check (end)
 sleep 5

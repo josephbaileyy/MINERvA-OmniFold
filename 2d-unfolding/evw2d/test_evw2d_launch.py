@@ -71,7 +71,7 @@ def job(tmp_path):
     home = tmp / "home"
     py = home / ".conda/envs/root_6_28/bin"
     py.mkdir(parents=True)
-    stub(py, "python3", 'echo "python3 $*"')
+    stub(py, "python3", 'case "$*" in *sched_getaffinity*) echo "affinity=${STEP_AFFINITY-64}";; *) echo "python3 $*";; esac')
     setup_ok = f'export PATH="{py}:$PATH"\nreturn 0\n'
     m = git_repo(tmp / "deploy_M", {"setup_salloc_env.sh": setup_ok})
     w, cfg = (EV / "evw2d.py").read_bytes(), (EV / "config.json").read_bytes()
@@ -83,7 +83,7 @@ def job(tmp_path):
     (tmp / "scontrol.txt").write_text(rec + "\n")
     stub(bin_, "scontrol", f'cat "{tmp / "scontrol.txt"}"')
     stub(bin_, "sha256sum", 'shasum -a 256 "$@"')
-    stub(bin_, "nproc", 'echo "${STEP_AFFINITY-64}"')
+    stub(bin_, "nproc", 'echo 128   # GNU nproc honours OMP_NUM_THREADS; the probe must not use it')
     stub(bin_, "srun", f"""
 if [ "$6" = "bash" ]; then
   echo "$1 $2 $3 $4 $5" >> "{tmp / "srun.probe_opts"}"
@@ -258,12 +258,14 @@ def _alloc_block(path: Path) -> str:
     return text[i:j]
 
 
-def _run_alloc(tmp: Path, block: str, text: str, tlimit: str, job: str, show_rc="0", release_rc="0"):
+def _run_alloc(tmp: Path, block: str, text: str, tlimit: str, job: str, show_rc="0", release_rc="0", later=None):
     """Runs the connect's allocation block as written, with scontrol answering `text`; show_rc is a space-separated
-    list of exit statuses for successive `scontrol show job` calls (the last repeats)."""
+    list of exit statuses for successive `scontrol show job` calls (the last repeats); `later`, if given, is the text
+    of every call after the first."""
     b = tmp / "bin"
     b.mkdir(exist_ok=True)
     (tmp / "scontrol.txt").write_text(text)
+    (tmp / "scontrol-later.txt").write_text(text if later is None else later)
     (tmp / "show_rc").write_text(show_rc)
     for m in ("cancelled", "released", "show_n"):
         if (tmp / m).exists():
@@ -272,7 +274,7 @@ def _run_alloc(tmp: Path, block: str, text: str, tlimit: str, job: str, show_rc=
 if [ "$1" = release ]; then echo "$2" > "{tmp / "released"}"; exit {release_rc}; fi
 n=$(cat "{tmp / "show_n"}" 2>/dev/null || echo 0); n=$((n + 1)); echo $n > "{tmp / "show_n"}"
 set -- $(cat "{tmp / "show_rc"}"); rc=${{!n:-${{@: -1}}}}
-cat "{tmp / "scontrol.txt"}"; exit $rc""")
+if [ "$n" -gt 1 ]; then cat "{tmp / "scontrol-later.txt"}"; else cat "{tmp / "scontrol.txt"}"; fi; exit $rc""")
     stub(b, "scancel", f'echo "$1" > "{tmp / "cancelled"}"')
     stub(b, "sacct", "true")
     stub(b, "sleep", "true")
@@ -341,8 +343,38 @@ def test_connect_scontrol_status_and_release(tmp_path):
     assert ok, why
     ok, why = _cancels(tmp_path, block, p30, "00:30:00", "60912517", show_rc="1 1 1 0")  # three failures: no fourth try
     assert ok, why
-    rc, out, cancelled, released = _run_alloc(tmp_path, block, p30, "00:30:00", "60912517", release_rc="1")
-    assert rc == 6 and cancelled and "release failed" in out
+    ok, why = _accepts(tmp_path, block, p30, "00:30:00", "60912517", release_rc="1")   # reply lost, job not held
+    assert ok and "the release took effect" in why[1], why
+    held = p30.replace("Reason=Priority", "Reason=JobHeldUser")
+    rc, out, cancelled, released = _run_alloc(tmp_path, block, held, "00:30:00", "60912517", release_rc="1")
+    assert rc == 6 and cancelled and "still held" in out, out
+    admin = p30.replace("Priority=67679", "Priority=0").replace("Reason=Priority", "Reason=JobHeldAdmin")
+    rc, out, cancelled, released = _run_alloc(tmp_path, block, admin, "00:30:00", "60912517", release_rc="1")
+    assert rc == 6 and cancelled and "still held" in out, out
+    zero = p30.replace("Priority=67679", "Priority=0")                                 # held, whatever the reason
+    rc, out, cancelled, released = _run_alloc(tmp_path, block, zero, "00:30:00", "60912517", release_rc="1")
+    assert rc == 6 and cancelled, out
+    for later in (p30 + "\n" + p30, p30.replace("JobId=60912517 ", "JobId=60912518 ")):  # two records, another
+        rc, out, cancelled, released = _run_alloc(tmp_path, block, p30, "00:30:00", "60912517", release_rc="1",
+                                                  later=later)
+        assert rc == 6 and cancelled and "still held or unseen" in out, (later[:40], out)
+    rc, out, cancelled, released = _run_alloc(tmp_path, block, p30, "00:30:00", "60912517", release_rc="1",
+                                              later="")                              # rc 0, no record: not an answer
+    assert rc == 4 and not cancelled and "try 3" in out and "see sacct" in out, out
+    r30 = real_running().replace("TimeLimit=01:00:00", "TimeLimit=00:30:00")
+    sx = p30.replace("JobState=PENDING", "JobState=SPECIAL_EXIT").replace("Reason=Priority", "Reason=JobHeldUser")
+    for later in (sx, sx.replace("Reason=JobHeldUser", "Reason=None").replace("Priority=67679", "Priority=0"),
+                  r30.replace("Reason=None", "Reason=JobHeldAdmin")):               # requeue-held; any state, held
+        rc, out, cancelled, released = _run_alloc(tmp_path, block, p30, "00:30:00", "60912517", release_rc="1",
+                                                  later=later.replace("JobId=59660487 ", "JobId=60912517 "))
+        assert rc == 6 and cancelled and "still held" in out, (later[:60], out)
+    ok, why = _accepts(tmp_path, block, r30, "00:30:00", "59660487", release_rc="1")   # started at once
+    assert ok and "the release took effect" in why[1], why
+    ok, why = _accepts(tmp_path, block, p30, "00:30:00", "60912517", release_rc="1", show_rc="0 1 1 0")  # retried
+    assert ok and "try 3: rc=0" in why[1], why
+    rc, out, cancelled, released = _run_alloc(tmp_path, block, p30, "00:30:00", "60912517", release_rc="1",
+                                              show_rc="0 1 1 1 0")                   # never answers: kept
+    assert rc == 4 and not cancelled and "FINISH 4" in out and "see sacct" in out and "try 4" not in out, out
 
 
 def test_connect_submits_held_and_saves_the_id_before_the_check():
@@ -368,13 +400,15 @@ def _launcher(tmp: Path, cert_to: str, script_body: str = "#!/bin/bash\necho rem
     shm.mkdir()
     b = tmp / "stubbin"
     b.mkdir()
-    stub(b, "ssh", f'echo "ssh $*" >> "{tmp / "ssh.calls"}"\nlast="${{@: -1}}"\nexec bash -c "${{last//\\/dev\\/shm/{shm}}}"')
+    stub(b, "ssh", f'if [ "$1" = -G ]; then printf "identitiesonly yes\\nidentityfile {tmp / "key"}\\n'
+                   f'certificatefile {tmp / "key-cert.pub"}\\n${{SSH_G_EXTRA-}}"; exit 0; fi\n'
+                   f'echo "ssh $*" >> "{tmp / "ssh.calls"}"\nlast="${{@: -1}}"\nexec bash -c "${{last//\\/dev\\/shm/{shm}}}"')
     stub(b, "sha256sum", 'shasum -a 256 "$@"')
     stub(b, "ssh-keygen", f'[ "$TZ" = UTC ] || exit 3\n'
                           f'echo "        Type: ssh-rsa-cert-v01@openssh.com user certificate"\n'
                           f'echo "        Valid: from ${{CERT_FROM:-2026-01-01T00:00:00}} to {cert_to}"\n'
                           f'exit ${{KEYGEN_RC:-0}}')   # a failed ssh-keygen with a plausible window still stops
-    env = dict(os.environ, PATH=f"{b}:{os.environ['PATH']}", EVW2D_CERT=str(tmp / "cert.pub"))
+    env = dict(os.environ, PATH=f"{b}:{os.environ['PATH']}", EVW2D_CERT=str(tmp / "key-cert.pub"))
     return ld, shm, env
 
 
@@ -398,7 +432,7 @@ def test_launcher_checks_the_certificate_before_the_step(tmp_path):
 @pytest.mark.skipif(sys.platform != "darwin", reason="the launcher runs on the Mac (BSD date -j)")
 def test_launcher_runs_the_approved_bytes_and_propagates_the_status(tmp_path):
     tmp = Path(os.path.realpath(tmp_path))
-    ld, shm, env = _launcher(tmp, _local(6 * 3600), "#!/bin/bash\necho refused >&2\nrm -f -- \"$1\"\nexit 9\n")
+    ld, shm, env = _launcher(tmp, _local(6 * 3600), "#!/bin/bash\necho refused >&2\nexit 9\n")
     sess = tmp / "s1"
     sess.mkdir()
     r = subprocess.run(["bash", str(ld / "evw2d_launch.sh"), "connect", str(sess), "login27"], capture_output=True,
@@ -414,7 +448,9 @@ def test_launcher_runs_the_approved_bytes_and_propagates_the_status(tmp_path):
 
 
 @pytest.mark.skipif(sys.platform != "darwin", reason="the launcher runs on the Mac (BSD date -j)")
-@pytest.mark.parametrize("extra", [{"KEYGEN_RC": "1"}, {"CERT_FROM": "2099-01-01T00:00:00"}])
+@pytest.mark.parametrize("extra", [{"KEYGEN_RC": "1"}, {"CERT_FROM": "2099-01-01T00:00:00"},
+                                   {"SSH_G_EXTRA": "identityfile ~/.ssh/id_ed25519\\n"},
+                                   {"SSH_G_EXTRA": "certificatefile ~/.ssh/other-cert.pub\\n"}])
 def test_launcher_refuses_a_failed_or_future_certificate(tmp_path, extra):
     tmp = Path(os.path.realpath(tmp_path))
     ld, shm, env = _launcher(tmp, _local(6 * 3600))
@@ -435,7 +471,7 @@ def test_launcher_presents_the_checked_certificate(tmp_path):
                        text=True, env=env)
     assert r.returncode == 0, r.stdout + r.stderr
     first = (tmp / "ssh.calls").read_text().splitlines()[0]
-    assert f"CertificateFile={tmp / 'cert.pub'}" in first and f"IdentityFile={tmp / 'cert'}" in first
+    assert f"CertificateFile={tmp / 'key-cert.pub'} " in first and f"IdentityFile={tmp / 'key'} " in first
     assert "IdentitiesOnly=yes" in first and "ControlPath=none" in first
 
 
@@ -447,7 +483,8 @@ def test_launcher_fetch_distinguishes_absent_from_unreachable(tmp_path):
     remote.mkdir()
     (remote / "post.tar.gz").write_bytes(b"p")
     b = tmp / "stubbin"
-    stub(b, "ssh", f'cmd="${{@: -1}}"; [ -n "$SSH_RC" ] && exit "$SSH_RC"\n'
+    stub(b, "ssh", f'if [ "$1" = -G ]; then printf "identitiesonly yes\\nidentityfile {tmp / "key"}\\n"; exit 0; fi\n'
+                   f'cmd="${{@: -1}}"; [ -n "$SSH_RC" ] && exit "$SSH_RC"\n'
                    f'exec bash -c "${{cmd//\\/pscratch\\/sd\\/j\\/josephrb\\/evw2d-20261126/{remote}}}"')
     stub(b, "scp", f'src="${{@: -2:1}}"; cp "{remote}/${{src##*/}}" "${{@: -1}}"')
     def fetch(**e):
@@ -578,7 +615,15 @@ def test_fill_pins_refuses_a_lane_root_outside_the_declared_form(tmp_path, lane)
     assert r.returncode != 0 and not (top / LAUNCH.relative_to(REPO) / "bound").exists(), r.stdout + r.stderr
 
 
-def test_the_scripts_remove_nothing_but_their_own_dev_shm_copy():
+def test_the_probe_prints_its_own_affinity_line_with_no_startup_hooks():
+    """GNU nproc honours OMP_NUM_THREADS, and a startup hook could print to stdout: the affinity line comes whole from
+    os.sched_getaffinity in an isolated interpreter with no site import (r1c)."""
+    text = JOB.read_text()
+    assert text.count('python3 -B -I -S -c "import os; print(\\"affinity=%d\\" % len(os.sched_getaffinity(0)))"') == 1
+    assert "nproc" not in text.split("STEP=(", 1)[1].split("refuse", 1)[0]
+
+
+def test_the_scripts_remove_nothing_and_only_the_launcher_removes_its_staged_copy():
     """The director's condition (2026-11-25): only the two staged input copies are removed, by evw2d.py cleanup's exact
     paths; no script removes products, anything under the output, or anything by glob."""
     import re as _re
@@ -586,7 +631,7 @@ def test_the_scripts_remove_nothing_but_their_own_dev_shm_copy():
         for n, line in enumerate(f.read_text().splitlines(), 1):
             code = line.split("#", 1)[0] if not line.lstrip().startswith("R=") else line
             for m in _re.finditer(r"\b(rm|rmdir|unlink|shred|find\b.*-delete)\b[^;|&]*", code):
-                assert m.group(0).strip() in ('rm -f -- "$SELF"', 'rm -f -- \\"\\$f\\"'), (f.name, n, m.group(0))
+                assert f.name == "evw2d_launch.sh" and m.group(0).strip() == 'rm -f -- \\"\\$f\\"', (f.name, n, m.group(0))
     src = (EV / "evw2d.py").read_text()
     body = src[src.index("def cleanup("):src.index("\n\n\ndef ", src.index("def cleanup("))]
     assert body.count(".unlink(") == 1 and "for key, path in staged(cfg).items():\n                got, size = sizes[key]\n" \
@@ -627,7 +672,7 @@ def lane(tmp_path):
     csha = "c" * 64
     out = L / "out"
     out.mkdir()
-    for n, b in (("constants.json", b"{}"), ("run.json", json.dumps({"config_sha256": csha}).encode()),
+    for n, b in (("constants.json", b"{}"), ("run.json", json.dumps({"config_sha256": csha, "slurm_job": "4242"}).encode()),
                  ("weights.npz", b"w" * 100), ("xsec.root", b"x"), ("evw2d.done", b"{}")):
         (out / n).write_bytes(b)
     (out / "SHA256SUMS").write_text("".join(f"{sha(out / n)}  {n}\n" for n in
@@ -652,15 +697,21 @@ def lane(tmp_path):
 
     def run(script, **e):
         src = (LAUNCH / script).read_text().replace("__LANE_ROOT__", str(L)).replace("__CONFIG_SHA256__", csha)
-        shm = tmp / "shm"
-        shm.mkdir(exist_ok=True)
-        f = shm / f"{script}.copy"
+        shm = tmp / "dev" / "shm"
+        shm.mkdir(parents=True, exist_ok=True)
+        f = shm / f"evw2d-{script}.copy"
         f.write_text(src)
         r = subprocess.run(["bash", str(f), str(f)], capture_output=True, text=True, env=dict(env, **e))
-        assert not f.exists(), "the /dev/shm copy was left"
+        assert f.read_text() == src, "the script changed or removed its /dev/shm copy (the launcher removes it)"
         return r
 
-    return {"L": L, "run": run, "csha": csha, "bin": b}
+    def run_direct(script, arg1, **e):   # a mistaken direct run, not through the launcher
+        src = (LAUNCH / script).read_text().replace("__LANE_ROOT__", str(L)).replace("__CONFIG_SHA256__", csha)
+        f = tmp / f"direct-{script}"
+        f.write_text(src)
+        return subprocess.run(["bash", str(f), str(arg1)], capture_output=True, text=True, env=dict(env, **e))
+
+    return {"L": L, "run": run, "run_direct": run_direct, "csha": csha, "bin": b}
 
 
 def test_post_passes_and_publishes_post_pass_last(lane):
@@ -706,14 +757,14 @@ def test_post_fails_without_post_pass(lane, env):
 
 def test_post_fails_on_changed_products_wrong_config_or_a_failed_archive(lane):
     L = lane["L"]
-    (L / "out" / "run.json").write_text(json.dumps({"config_sha256": "d" * 64}))
+    (L / "out" / "run.json").write_text(json.dumps({"config_sha256": "d" * 64, "slurm_job": "4242"}))
     sums = "".join(f"{sha(L / 'out' / n)}  {n}\n" for n in ("constants.json", "run.json", "weights.npz", "xsec.root"))
     (L / "out" / "SHA256SUMS").write_text(sums)
     r = lane["run"]("evw2d_post.sh")
     assert r.returncode == 5 and not (L / "post.pass").exists()            # run.json bound to another config
     shutil.rmtree(L / "post")
     (L / "post.tar.gz").unlink()
-    (L / "out" / "run.json").write_text(json.dumps({"config_sha256": lane["csha"]}))   # now unlike its SHA256SUMS line
+    (L / "out" / "run.json").write_text(json.dumps({"config_sha256": lane["csha"], "slurm_job": "4242", "x": 1}))
     r = lane["run"]("evw2d_post.sh")
     assert r.returncode == 5 and "VERIFY=FAIL" in (L / "post" / "post.log").read_text()
     shutil.rmtree(L / "post")
@@ -752,3 +803,36 @@ def test_cleanup_runs_evw2d_cleanup_and_keeps_its_receipts(lane):
     (L / "cleanup.tar.gz").unlink()
     r = lane["run"]("evw2d_cleanup.sh", CLEAN_RC="4")
     assert r.returncode == 4 and (L / "cleanup.tar.gz").exists()
+
+
+def test_post_needs_run_json_to_name_this_job(lane):
+    L = lane["L"]
+    (L / "out" / "run.json").write_text(json.dumps({"config_sha256": lane["csha"], "slurm_job": "999"}))
+    (L / "out" / "SHA256SUMS").write_text("".join(f"{sha(L / 'out' / n)}  {n}\n" for n in
+                                                  ("constants.json", "run.json", "weights.npz", "xsec.root")))
+    r = lane["run"]("evw2d_post.sh")
+    assert r.returncode == 5 and not (L / "post.pass").exists()
+    assert json.loads((L / "post" / "accepted.json").read_text())["job_bound"] is False
+
+
+def test_cleanup_refuses_a_linked_staging_directory_or_staged_link(lane):
+    L = lane["L"]
+    assert lane["run"]("evw2d_post.sh").returncode == 0
+    (L / "stage").rename(L / "elsewhere")
+    (L / "stage").symlink_to(L / "elsewhere")
+    r = lane["run"]("evw2d_cleanup.sh")
+    assert r.returncode == 9 and "not the real staging directory" in r.stdout and not (L / "deletions.tsv").exists()
+    (L / "stage").unlink()
+    (L / "elsewhere").rename(L / "stage")
+    (L / "stage" / "runEventLoopMC_MEFHC.root").unlink()
+    (L / "stage" / "runEventLoopMC_MEFHC.root").symlink_to(L / "stage" / "runEventLoopOmniFold_MEFHC.root")
+    r = lane["run"]("evw2d_cleanup.sh")
+    assert r.returncode == 9 and "not a regular file" in r.stdout and not (L / "deletions.tsv").exists()
+
+
+@pytest.mark.parametrize("script", ["evw2d_post.sh", "evw2d_cleanup.sh", "evw2d_connect.sh"])
+def test_a_mistaken_direct_run_never_removes_its_argument(lane, script):
+    victim = lane["L"] / "out" / "run.json"
+    before = victim.read_bytes()
+    r = lane["run_direct"](script, victim)
+    assert victim.read_bytes() == before, r.stdout

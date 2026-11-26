@@ -18,7 +18,8 @@
 #   - deploy_M is a clean checkout at M and deploy_C a clean checkout at C (each git command must itself succeed);
 #   - evw2d.py and config.json in deploy_C are the bound bytes, and <lane root>/out is absent;
 #   - setup_salloc_env.sh from deploy_M returns 0 and python3 is root_6_28's;
-#   - a first, print-only srun step, with the wrapper step's own options, records the host, its CPU affinity (nproc),
+#   - a first, print-only srun step, with the wrapper step's own options and environment, records the host, its CPU
+#     affinity (len(os.sched_getaffinity(0)), the count evw2d.py checks),
 #     SLURM_JOB_NUM_NODES, SLURM_STEP_NUM_NODES and SLURM_STEP_ID in logs/probe-<job>.log; SLURM_JOB_NUM_NODES there
 #     must be exactly 1 (evw2d.py's own gate, unchanged) and the affinity 64 (evw2d.py's CPU count).
 # Then it runs evw2d.py as ONE step of 64 CPUs in E_R's thread environment (Tier 1's step: srun --exclusive -n1 -c 64).
@@ -69,8 +70,9 @@ echo "[evw2d] setup_salloc_env.sh rc=$src_rc python3=$(command -v python3)"
 [ "$src_rc" -eq 0 ] || refuse "setup_salloc_env.sh returned $src_rc"
 [ "$(command -v python3)" = "$HOME/.conda/envs/root_6_28/bin/python3" ] || refuse "python3 is not root_6_28's"
 # the print-only step: the format of the node count inside an srun step goes on record before the wrapper runs
+export OMP_NUM_THREADS=64 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 STEP=(--exclusive -n1 -c 64 --mem=200G)   # Tier 1's E_R step (64 CPUs), used by both steps
-srun "${STEP[@]}" bash -c 'echo "host=$(hostname)"; echo "affinity=$(nproc)"; for v in SLURM_JOB_NUM_NODES SLURM_STEP_NUM_NODES SLURM_STEP_ID SLURM_NNODES; do echo "$v=${!v-<unset>}"; done' \
+srun "${STEP[@]}" bash -c 'echo "host=$(hostname)"; python3 -B -I -S -c "import os; print(\"affinity=%d\" % len(os.sched_getaffinity(0)))"; for v in SLURM_JOB_NUM_NODES SLURM_STEP_NUM_NODES SLURM_STEP_ID SLURM_NNODES; do echo "$v=${!v-<unset>}"; done' \
   > "$L/probe-$J.log" 2>&1
 prc=$?
 cat "$L/probe-$J.log"
@@ -79,7 +81,6 @@ pnn=$(sed -n 's/^SLURM_JOB_NUM_NODES=//p' "$L/probe-$J.log")
 [ "$pnn" = 1 ] || refuse "the srun step's SLURM_JOB_NUM_NODES is '$pnn', not 1 (see probe-$J.log)"
 paff=$(sed -n 's/^affinity=//p' "$L/probe-$J.log")
 [ "$paff" = 64 ] || refuse "the srun step's CPU affinity is '$paff', not 64 (see probe-$J.log)"
-export OMP_NUM_THREADS=64 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 srun "${STEP[@]}" \
     python3 -B "$W" --config-sha256 "$CSHA" run --out "$LANE/out" > "$L/evw2d-run-$J.log" 2>&1
 rc=$?

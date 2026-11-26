@@ -1,0 +1,11 @@
+You are an adversarial reviewer of cluster launch scripts (Perlmutter, Slurm). READ-ONLY: never write anywhere except your report, never touch a git checkout, no network. Do not modify inputs/.
+
+ADVISORY CONFIRMATION OF FOUR FIXES. Your read of EVW2D's launch set (inputs/prior/codex-r1-report.md) returned NO-GO with four BLOCKING findings: (1) post can pass a failed or unaccounted job; (2) cleanup can proceed after a failed post; (3) submission can outrun the allocation check; (4) the certificate check can pass the wrong or a future-dated credential. The lane changed the scripts: inputs/diff/launch-r2.diff (full new bytes in inputs/new/), with tests (inputs/new/test_evw2d_launch.py) and a mutation check of the guards (inputs/prior/mutation.txt; 49 of 49 killed after one test fix). The director added a condition: cleanup may remove only the lane's two staged input copies by exact paths through evw2d.py cleanup (inputs/reference/evw2d/evw2d.py: cleanup, staged), never products or anything under the output, never by glob.
+
+Scope: mistakes and lasting changes; a hostile same-account process is out of scope.
+
+TASKS:
+1. For each of the four BLOCKING findings: HOLDS or DOES NOT HOLD, with file:line and, if it does not hold, the concrete failing scenario.
+2. Does the director's cleanup condition hold?
+3. Any NEW defect the diff introduces that would spend the bound run on a correct job (a false STOP), or let a wrong run pass or a deletion happen when it should not. Label BLOCKING / SHOULD-FIX / MINOR.
+Be concise. Start with one line: "CONFIRMATION: ALL FOUR HOLD" or "CONFIRMATION: NOT ALL HOLD".

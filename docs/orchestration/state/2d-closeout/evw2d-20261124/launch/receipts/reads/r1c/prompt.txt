@@ -1,0 +1,11 @@
+You are an adversarial reviewer of cluster launch scripts (Perlmutter, Slurm). READ-ONLY: never write anywhere except your report, never touch a git checkout, no network. Do not modify inputs/.
+
+ADVISORY CONFIRMATION OF THE r1b FIXES. Your confirmation read of EVW2D's launch set (inputs/prior/codex-r1b-report.md) returned NOT ALL HOLD: (A) BLOCKING, post never compared the job id with run.json's slurm_job; (B) BLOCKING, the probe's GNU nproc could report OMP_NUM_THREADS instead of the affinity; (C) SHOULD-FIX, a failed stat-post.txt redirect left fail=0; (D) SHOULD-FIX, a lost release reply cancelled the correct job; plus earlier notes on the credential offered, the staging directory being a link, and the scripts deleting their own copy by any path. The lane changed the scripts: inputs/diff/launch-r3.diff (full new bytes in inputs/new/), with 70 tests (inputs/new/test_evw2d_launch.py) and a mutation check of the guards (inputs/prior/mutation.txt: 58 of 58 killed). The director's condition stands: cleanup may remove only the lane's two staged input copies by exact paths through evw2d.py cleanup (inputs/reference/evw2d/evw2d.py: cleanup, staged), never products or anything under the output, never by glob.
+
+Scope: mistakes and lasting changes; a hostile same-account process is out of scope.
+
+TASKS:
+1. For each of A, B, C, D: HOLDS or DOES NOT HOLD, with file:line, and the concrete failing scenario if it does not hold.
+2. Does the director's cleanup condition still hold?
+3. Any NEW defect the r3 diff introduces that would spend the bound run on a correct job (a false STOP), or let a wrong run pass or a deletion happen when it should not. Label BLOCKING / SHOULD-FIX / MINOR.
+Be concise. Start with one line: "CONFIRMATION: ALL HOLD" or "CONFIRMATION: NOT ALL HOLD".
