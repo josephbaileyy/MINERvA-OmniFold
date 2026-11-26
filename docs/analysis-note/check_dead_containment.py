@@ -289,6 +289,7 @@ UNIT_REQUIRED = {"0.564": "%", "1.008": "%", "0.563": "%", "2.26": "%", "3.65": 
 # source text no longer occurs in its source file, or if its literal is no longer struck in any strike-carrying build.
 # test_build_all.py::ContextExemptLiteralTest checks both directions of the exemption and that this guard fires.
 # Added 2026-10-31 (the 5B text round), each verified at the source:
+#     [RETIRED 2026-11-26: under C_e^infl the pull is 1.58, so the entry below is removed]
 #     1.65  -> the live MINERvA Tune v1 pull in cell R15 under the reported covariance (values_fived16.tex
 #              g-tune-pull-R15, the note's pulls table); struck as the norm `1.65 x 10^-38 cm^2/nucleon` (the records'
 #              removed conservative-variant shift), which prints with its "x 10". Only a bare 1.65 not followed by "x"
@@ -317,7 +318,7 @@ CONTEXT_EXEMPT = {
                              (r"\newcommand{\covTwoDCTwo}{0.912}",
                               r"the two-standard-deviation score is \covTwoDCTwo{}",
                               r"Coverage is \covTwoDCOne{} and \covTwoDCTwo{}, respectively")),
-    ("main_note", "1.65"): (r"(?<![\d.])1\.65(?![\d.])(?!\s*\u00d7)", "values_fived16.tex", r"\@namedef{fv@g-tune-pull-R15}{1.65}"),
+    # ("main_note", "1.65") REMOVED 2026-11-26, C_e^infl (V_F, readings #1368): g-tune-pull-R15 is 1.58, so 1.65 no longer prints live
     ("main_note", "0.377"): (r"[\u2212-]\s*0\.377(?![\d.%])", "values_fived16.tex", r"\@namedef{fv@prr-rho-ibu200-q3}{-0.377}"),
     ("main_note", "6.86"): (r"=\s*6\.86%,\s*distance",
                             "../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json",

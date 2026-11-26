@@ -742,7 +742,7 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
                                           "& Coverage is \\covTwoDCOne{} and \\covTwoDCTwo{}, respectively. \\\\\n",
                       # 2026-11-17: the 0.377 entry (f70e1d59f, the note's currency batch A) needs its source too
                       # 2026-11-19: the 3.066 entry (DECISION-20261119g) reads its source here too
-                      "values_fived16.tex": "\\@namedef{fv@g-tune-pull-R15}{1.65}\n\\@namedef{fv@prr-rho-ibu200-q3}{-0.377}\n"
+                      "values_fived16.tex": "\\@namedef{fv@prr-rho-ibu200-q3}{-0.377}\n"
                                             "\\@namedef{fv@ibusd-k10-sig}{3.066}\n",
                       "../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json":
                           '{"sigma": 0.06855283880067227}\n'}
@@ -1079,10 +1079,11 @@ class ExemptionGuardTest(unittest.TestCase):
         self.assertIn("CONTEXT_EXEMPT[('main_note', '0.912')] is STALE: values.tex no longer contains", out)
 
     def test_a_literal_that_is_no_longer_struck_FAILS(self):
-        (self.note / "app_history.tex").write_text(r"struck $\dead{1.234}$ here and $\dead{0.377}$, $\dead{6.86}$" + "\n")
+        # 2026-11-26: the 1.65 entry is retired (C_e^infl moves g-tune-pull-R15 to 1.58); 0.377 is the literal dropped here
+        (self.note / "app_history.tex").write_text(r"struck $\dead{1.234}$ here and $\dead{6.86}$" + "\n")
         code, line, out = self._run("--source-only")
         self.assertEqual(code, 1, out)
-        self.assertIn("CONTEXT_EXEMPT[('main_note', '1.65')] is STALE: 1.65 is no longer struck", out)
+        self.assertIn("CONTEXT_EXEMPT[('main_note', '0.377')] is STALE: 0.377 is no longer struck", out)
 
 
     SIDECAR = "../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json"
