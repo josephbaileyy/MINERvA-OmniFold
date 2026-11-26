@@ -1,0 +1,178 @@
+PASS control C S does not exist (no overwrite)
+PASS control C E does not exist (no overwrite)
+PASS control C vf does not exist (no overwrite)
+PASS control C table does not exist (no overwrite)
+PASS control C logs does not exist (no overwrite)
+PASS control C pins does not exist (no overwrite)
+PASS control C mpl does not exist (no overwrite)
+PASS control C tmp does not exist (no overwrite)
+PASS control C chain.json does not exist (no overwrite)
+PASS control C C vf_block.npz: the committed block is the pinned bytes
+[chain] vf block: rc 0, 0.5 s
+PASS control C C vf_block: rebuilt in the deploy, the npz and its readout are the committed bytes
+PASS control C C the renderer: python, numpy and matplotlib are E-A2's (figures-a2), so the PDFs can match byte for byte
+PASS control C C chdefs: the staged predictions' manifest is the recorded one
+[PASS P] the chdefs set holds Stage G's five names, in order, on Stage G's cells
+[PASS P] genie_cv: the file is the recorded bytes
+[PASS P] genie_mec: the file is the recorded bytes
+[PASS P] nuwro: the file is the recorded bytes
+[PASS P] gibuu: the file is the recorded bytes
+[PASS P] mnvtune_v1: the file is the recorded bytes
+PASS control C C chdefs: the predictions' specification is the committed one
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0_readout.json: the committed file is the pinned bytes
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json: the committed file is the pinned bytes
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f1_readout.json: the committed file is the pinned bytes
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_g_readout.json: the committed file is the pinned bytes
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json: the committed file is the pinned bytes
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f1_readout.json: the committed file is the pinned bytes
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json: the committed file is the pinned bytes
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json: the committed file is the pinned bytes
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_diag_readout.json: the committed file is the pinned bytes
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_followup_readout.json: the committed file is the pinned bytes
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_sens2_readout.json: the committed file is the pinned bytes
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_flux_boot_readout.json: the committed file is the pinned bytes
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_readout.json: the committed file is the pinned bytes
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_diag_readout.json: the committed file is the pinned bytes
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_followup_readout.json: the committed file is the pinned bytes
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_sens2_readout.json: the committed file is the pinned bytes
+PASS control R R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_flux_boot_readout.json: the committed file is the pinned bytes
+[chain] old-f0 f0: rc 0, 110.5 s
+PASS control R R F0: the committed readout is the pinned bytes
+PASS control R R F0: structure, numbers and finiteness are the committed readout's
+PASS control R R old-f0 f0: the experiment table is the readout's table_sha256 and the declared table
+[chain] old-with f0b: rc 0, 49.8 s
+[chain] old-with f1: rc 0, 53.8 s
+[chain] old-with g: rc 0, 0.8 s
+PASS control R R S old-with f0b: the committed readout is the pinned bytes
+PASS control R R S old-with f0b: structure, numbers and finiteness are the committed readout's
+PASS control R R S old-with f1: the committed readout is the pinned bytes
+PASS control R R S old-with f1: structure, numbers and finiteness are the committed readout's
+PASS control R R S old-with g: the committed readout is the pinned bytes
+PASS control R R S old-with g: structure, numbers and finiteness are the committed readout's
+PASS control R R old-with f0b: the experiment table is the readout's table_sha256 and the declared table
+PASS control R R old-with f1: the experiment table is the readout's table_sha256 and the declared table
+[chain] E-old-with g: rc 0, 0.7 s
+[chain] E-old-with g_diag: rc 0, 0.6 s
+[chain] E-old-with g_followup: rc 0, 0.8 s
+[chain] E-old-with g_sens2: rc 0, 0.7 s
+[chain] E-old-with flux_boot: rc 0, 6.7 s
+[chain] E-old-with figures: rc 0, 7.4 s
+[chain] E-old-with figures_check: rc 0, 0.2 s
+PASS control R R E old-with g: the committed readout is the pinned bytes
+PASS control R R E old-with g: structure, numbers and finiteness and strings are the committed readout's
+PASS control R R E old-with g_diag: the committed readout is the pinned bytes
+PASS control R R E old-with g_diag: structure, numbers and finiteness and strings are the committed readout's
+PASS control R R E old-with g_followup: the committed readout is the pinned bytes
+PASS control R R E old-with g_followup: structure, numbers and finiteness and strings are the committed readout's
+PASS control R R E old-with g_sens2: the committed readout is the pinned bytes
+PASS control R R E old-with g_sens2: structure, numbers and finiteness and strings are the committed readout's
+PASS control R R E old-with flux_boot: the committed readout is the pinned bytes
+PASS control R R E old-with flux_boot: structure, numbers and finiteness and strings are the committed readout's
+PASS control R R E old-with figure fd_g_fig_ratio.pdf: the committed file is E-A2's receipt bytes
+PASS control R R E old-with figure fd_g_fig_ratio.json: the committed file is E-A2's receipt bytes
+PASS control R R E old-with figure fd_g_fig_ratio: the sidecar is the committed one but argv, code and versions; the PDF the same bytes
+PASS control R R E old-with figure fd_g_fig_modes.pdf: the committed file is E-A2's receipt bytes
+PASS control R R E old-with figure fd_g_fig_modes.json: the committed file is E-A2's receipt bytes
+PASS control R R E old-with figure fd_g_fig_modes: the sidecar is the committed one but argv, code and versions; the PDF the same bytes
+PASS control R R E old-with figure fd_g_fig_sens.pdf: the committed file is E-A2's receipt bytes
+PASS control R R E old-with figure fd_g_fig_sens.json: the committed file is E-A2's receipt bytes
+PASS control R R E old-with figure fd_g_fig_sens: the sidecar is the committed one but argv, code and versions; the PDF the same bytes
+[chain] old-nopl f0b: rc 0, 50.8 s
+[chain] old-nopl f1: rc 0, 50.1 s
+[chain] old-nopl g: rc 0, 0.7 s
+PASS control R R S old-nopl f0b: the committed readout is the pinned bytes
+PASS control R R S old-nopl f0b: structure, numbers and finiteness are the committed readout's
+PASS control R R S old-nopl f1: the committed readout is the pinned bytes
+PASS control R R S old-nopl f1: structure, numbers and finiteness are the committed readout's
+PASS control R R S old-nopl g: the committed readout is the pinned bytes
+PASS control R R S old-nopl g: structure, numbers and finiteness are the committed readout's
+PASS control R R old-nopl f0b: the experiment table is the readout's table_sha256 and the declared table
+PASS control R R old-nopl f1: the experiment table is the readout's table_sha256 and the declared table
+[chain] E-old-nopl g: rc 0, 0.6 s
+[chain] E-old-nopl g_diag: rc 0, 0.7 s
+[chain] E-old-nopl g_followup: rc 0, 0.7 s
+[chain] E-old-nopl g_sens2: rc 0, 0.7 s
+[chain] E-old-nopl flux_boot: rc 0, 6.2 s
+PASS control R R E old-nopl g: the committed readout is the pinned bytes
+PASS control R R E old-nopl g: structure, numbers and finiteness are the committed readout's
+PASS control R R E old-nopl g_diag: the committed readout is the pinned bytes
+PASS control R R E old-nopl g_diag: structure, numbers and finiteness are the committed readout's
+PASS control R R E old-nopl g_followup: the committed readout is the pinned bytes
+PASS control R R E old-nopl g_followup: structure, numbers and finiteness are the committed readout's
+PASS control R R E old-nopl g_sens2: the committed readout is the pinned bytes
+PASS control R R E old-nopl g_sens2: structure, numbers and finiteness are the committed readout's
+PASS control R R E old-nopl flux_boot: the committed readout is the pinned bytes
+PASS control R R E old-nopl flux_boot: structure, numbers and finiteness are the committed readout's
+[chain] old-with data_product: rc 0, 0.5 s
+PASS control R R data_product: every CSV is the committed with-block product's, byte for byte
+PASS control R R data_product: the committed product is the pinned bytes
+PASS control R R data_product: its JSON is the committed one but argv
+[chain] old-with deposit_build: rc 0, 0.6 s
+[chain] old-with deposit_check: rc 0, 0.5 s
+PASS control R R deposit cells.csv: the committed file is the 5B receipt's bytes
+PASS control R R deposit covariance.csv: the committed file is the 5B receipt's bytes
+PASS control R R deposit correlation.csv: the committed file is the 5B receipt's bytes
+PASS control R R deposit deposit.json: the committed file is the 5B receipt's bytes
+PASS control R R deposit predictions-reference.json: the committed file is the 5B receipt's bytes
+PASS control R R deposit cells.csv: the committed with-block file
+PASS control R R deposit covariance.csv: the committed with-block file
+PASS control R R deposit correlation.csv: the committed with-block file
+PASS control R R deposit deposit.json: the committed with-block file but code_sha256
+PASS control R R deposit predictions-reference.json: the committed with-block file but code_sha256
+[chain] vf-f0 f0: rc 0, 50.5 s
+PASS control C C vf-f0 f0: argv, the block's digests, key, name and role, and each upstream digest are as written
+PASS control R R vf-f0 f0: the experiment table is the readout's table_sha256 and the declared table
+[chain] vf-with f0b: rc 0, 54.0 s
+PASS control C C vf-with f0b: argv, the block's digests, key, name and role, and each upstream digest are as written
+[chain] vf-with f1: rc 0, 53.9 s
+PASS control C C vf-with f1: argv, the block's digests, key, name and role, and each upstream digest are as written
+[chain] vf-with g: rc 0, 0.8 s
+PASS control C C vf-with g: argv, the block's digests, key, name and role, and each upstream digest are as written
+PASS control R R vf-with f0b: the experiment table is the readout's table_sha256 and the declared table
+PASS control R R vf-with f1: the experiment table is the readout's table_sha256 and the declared table
+PASS control S S vf-with g: Stage G's predictions are its declared five, in order, on their declared cells
+PASS control S S vf-with g: every prediction's sigma_total_over_f is sqrt(diag(C_rep))/f
+PASS control S S vf-with f0b: its sqrt(diag(C_total + its block))/f is sqrt(diag(C_rep))/f
+[chain] E-vf-with g: rc 0, 0.6 s
+PASS control C C E vf-with g: argv, the block's digests, key, name and role, and each upstream digest are as written
+[chain] E-vf-with g_diag: rc 0, 0.6 s
+PASS control C C E vf-with g_diag: argv, the block's digests, key, name and role, and each upstream digest are as written
+[chain] E-vf-with g_followup: rc 0, 0.7 s
+PASS control C C E vf-with g_followup: argv, the block's digests, key, name and role, and each upstream digest are as written
+[chain] E-vf-with g_sens2: rc 0, 0.6 s
+PASS control C C E vf-with g_sens2: argv, the block's digests, key, name and role, and each upstream digest are as written
+[chain] E-vf-with flux_boot: rc 0, 6.0 s
+PASS control C C E vf-with flux_boot: argv, the block's digests, key, name and role, and each upstream digest are as written
+[chain] E-vf-with figures: rc 0, 6.9 s
+[chain] E-vf-with figures_check: rc 0, 0.1 s
+PASS control S S E vf-with g: Stage G's predictions are its declared five, in order, on their declared cells
+PASS control S S E vf-with g: every prediction's sigma_total_over_f is sqrt(diag(C_rep))/f
+[chain] vf-nopl f0b: rc 0, 54.5 s
+PASS control C C vf-nopl f0b: argv, the block's digests, key, name and role, and each upstream digest are as written
+[chain] vf-nopl f1: rc 0, 53.2 s
+PASS control C C vf-nopl f1: argv, the block's digests, key, name and role, and each upstream digest are as written
+[chain] vf-nopl g: rc 0, 0.7 s
+PASS control C C vf-nopl g: argv, the block's digests, key, name and role, and each upstream digest are as written
+PASS control R R vf-nopl f0b: the experiment table is the readout's table_sha256 and the declared table
+PASS control R R vf-nopl f1: the experiment table is the readout's table_sha256 and the declared table
+PASS control S S vf-nopl g: Stage G's predictions are its declared five, in order, on their declared cells
+PASS control S S vf-nopl g: every prediction's sigma_total_over_f is sqrt(diag(C_rep))/f
+PASS control S S vf-nopl f0b: its sqrt(diag(C_total + its block))/f is sqrt(diag(C_rep))/f
+[chain] E-vf-nopl g: rc 0, 0.6 s
+PASS control C C E vf-nopl g: argv, the block's digests, key, name and role, and each upstream digest are as written
+[chain] E-vf-nopl g_diag: rc 0, 0.7 s
+PASS control C C E vf-nopl g_diag: argv, the block's digests, key, name and role, and each upstream digest are as written
+[chain] E-vf-nopl g_followup: rc 0, 0.8 s
+PASS control C C E vf-nopl g_followup: argv, the block's digests, key, name and role, and each upstream digest are as written
+[chain] E-vf-nopl g_sens2: rc 0, 0.7 s
+PASS control C C E vf-nopl g_sens2: argv, the block's digests, key, name and role, and each upstream digest are as written
+[chain] E-vf-nopl flux_boot: rc 0, 6.1 s
+PASS control C C E vf-nopl flux_boot: argv, the block's digests, key, name and role, and each upstream digest are as written
+PASS control S S E vf-nopl g: Stage G's predictions are its declared five, in order, on their declared cells
+PASS control S S E vf-nopl g: every prediction's sigma_total_over_f is sqrt(diag(C_rep))/f
+[chain] vf-with data_product: rc 0, 0.6 s
+[chain] vf-with deposit_build: rc 0, 0.5 s
+[chain] vf-with deposit_check: rc 0, 0.5 s
+[chain] vf table: rc 0, 0.7 s
+[chain] done: 161 records in /pscratch/sd/j/josephrb/vf-20261125-p1/run/chain.json
+rc=0

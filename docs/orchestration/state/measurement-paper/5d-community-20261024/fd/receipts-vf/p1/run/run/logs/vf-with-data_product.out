@@ -1,0 +1,65 @@
+PASS control K0 no output exists (no overwrite)
+PASS control K0 the committed data product's pin is the declared one
+PASS control K0 data_product sha256 is the pin
+PASS control K0 block_npz sha256 is the pin
+PASS control K0 block_json sha256 is the pin
+PASS control K0 g_readout sha256 is the pin
+PASS control K1 the committed data product is the with-block product (its pin)
+PASS control K1 the block readout names this npz and the pinned inputs
+PASS control K1 Stage G's reported comparison adopted this block
+PASS control K2 the block's f and C_e are the data product's, bit for bit
+PASS control K2 DeltaC_e is the block's C_e_infl - C_e, bit for bit
+PASS control K2 the revised matrices are the committed ones + DeltaC_e, to 1e-12
+PASS control K3 Stage G's predictions are its declared five, in order, on their declared cells
+PASS control K3 genie_cv: Stage G's sigma_total_over_f is sqrt(diag(C_rep))/f to 1e-12 and its covariance is C_total + C_resp + C_PL5D + DeltaC_e
+PASS control K3 genie_mec: Stage G's sigma_total_over_f is sqrt(diag(C_rep))/f to 1e-12 and its covariance is C_total + C_resp + C_PL5D + DeltaC_e
+PASS control K3 nuwro: Stage G's sigma_total_over_f is sqrt(diag(C_rep))/f to 1e-12 and its covariance is C_total + C_resp + C_PL5D + DeltaC_e
+PASS control K3 gibuu: Stage G's sigma_total_over_f is sqrt(diag(C_rep))/f to 1e-12 and its covariance is C_total + C_resp + C_PL5D + DeltaC_e
+PASS control K3 mnvtune_v1: Stage G's sigma_total_over_f is sqrt(diag(C_rep))/f to 1e-12 and its covariance is C_total + C_resp + C_PL5D + DeltaC_e
+PASS control K4 C_e is symmetric
+PASS control K4 C_e_infl is symmetric
+PASS control K4 DeltaC_e is symmetric
+PASS control K4 C_model_abs is symmetric
+PASS control K4 C_resp is symmetric
+PASS control K4 C_PL5D is symmetric
+PASS control K4 C_total_plus_C_resp_plus_DeltaC_e is symmetric
+PASS control K4 C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e is symmetric
+PASS control K4 C_total_plus_C_resp_plus_DeltaC_e is positive definite
+PASS control K4 C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e is positive definite
+PASS control K5 the correlation is the reported matrix's, symmetric, within [-1, 1], with a unit diagonal
+PASS control K6 C_e: the CSV and the JSON read back bit for bit
+PASS control K6 C_e_infl: the CSV and the JSON read back bit for bit
+PASS control K6 DeltaC_e: the CSV and the JSON read back bit for bit
+PASS control K6 C_model_abs: the CSV and the JSON read back bit for bit
+PASS control K6 C_resp: the CSV and the JSON read back bit for bit
+PASS control K6 C_PL5D: the CSV and the JSON read back bit for bit
+PASS control K6 C_total_plus_C_resp_plus_DeltaC_e: the CSV and the JSON read back bit for bit
+PASS control K6 C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e: the CSV and the JSON read back bit for bit
+PASS control K6 the correlation's CSV and JSON read back bit for bit
+PASS control K0 neither the output directory (unless empty) nor its staging directory exists
+PASS control K6 fd_data_product_vf_cells.csv: the file on disk is the bytes written
+PASS control K6 fd_data_product_vf_C_e.csv: the file on disk is the bytes written
+PASS control K6 fd_data_product_vf_C_e_infl.csv: the file on disk is the bytes written
+PASS control K6 fd_data_product_vf_DeltaC_e.csv: the file on disk is the bytes written
+PASS control K6 fd_data_product_vf_C_model_abs.csv: the file on disk is the bytes written
+PASS control K6 fd_data_product_vf_C_resp.csv: the file on disk is the bytes written
+PASS control K6 fd_data_product_vf_C_PL5D.csv: the file on disk is the bytes written
+PASS control K6 fd_data_product_vf_C_total_plus_C_resp_plus_DeltaC_e.csv: the file on disk is the bytes written
+PASS control K6 fd_data_product_vf_C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e.csv: the file on disk is the bytes written
+PASS control K6 fd_data_product_vf_corr_C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e.csv: the file on disk is the bytes written
+PASS control K6 fd_data_product_vf.json: the file on disk is the bytes written
+PASS control K6 every CSV's sha256 is the JSON's files_sha256
+PASS control K6 the JSON's f, matrices, correlation and relative sigma read back bit for bit
+PASS control K6 the cells CSV lists R00-R15 with f and every relative sigma, bit for bit
+PASS control K6 the cells CSV's box edges are the committed product's cells, bit for bit
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_cells.csv", "sha256": "ad08a7ea7adaf85adeb1253d2323d25b169e9363c3f74e537ac8a406a015b800"}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_C_e.csv", "sha256": "222c4dd4efef0780c408b82caa8d360723bc8b73b784885789f374a624e6c715"}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_C_e_infl.csv", "sha256": "763f14c6ace6e69109fc11ded75d8654615fe55d5e53281e9911bc5318a03e93"}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_DeltaC_e.csv", "sha256": "17098c4431e8a81c3ea380661cc5da58accd31e682e50c411b302fd88793e736"}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_C_model_abs.csv", "sha256": "ad179dea32b1360083f5f69df9ae051f2486abc90354fee9b6a514736eac0e63"}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_C_resp.csv", "sha256": "35bfcb2a332b8b5aff4c9f14a14ccb63787082e49814962d2e5de0e40659cc62"}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_C_PL5D.csv", "sha256": "03babead4dff1bf19980319a867c9b830a5b7f85896792edc6f07a62c6e991c9"}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_C_total_plus_C_resp_plus_DeltaC_e.csv", "sha256": "531daa75fbcf0cac818bf0e197a1bd110cdc7aff71dcace7f3c4f80a366a3834"}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e.csv", "sha256": "6d48cb98f507772f89d6573cf2a8e2c66d38036a7be5220305a585f434993880"}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_corr_C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e.csv", "sha256": "e82dac3e1937de67d99d6e825188cd5bf67c02cb7cf398b1590476de74f64fc4"}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf.json", "sha256": "1a37b0820017f9e515f6e46dbf4009d0a76ef8f542975654d0c61e0a015d84e8"}
