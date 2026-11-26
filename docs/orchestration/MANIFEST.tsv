@@ -8922,6 +8922,23 @@ docs/orchestration/state/geanttw-20261124/code/tests/test_dumpcmp.py	tracked	MAC
 docs/orchestration/state/geanttw-20261124/code/tests/test_p0_check.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
 docs/orchestration/state/geanttw-20261124/code/tests/test_provenance_sacct.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
 docs/orchestration/state/geanttw-20261124/code/tests/test_shell_scripts.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/README.md	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/cluster/acks.log	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/cluster/build.log	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/cluster/geanttw_p0_pat_1L_62042575.out	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/cluster/geanttw_p0_pin_1L_62042572.out	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/cluster/ll5d_atime_post.txt	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/cluster/p0_check.json	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/cluster/sacct-p0-jobs.txt	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/cluster/submissions.log	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/connects/check2-aside.out	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/connects/check2-check.out	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/connects/check2-deploy.out	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/connects/p0-build.out	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/connects/p0-deploy.out	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/connects/p0-p0.out	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/connects/p0-watch1.out	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/receipts-p0/connects/preflight.out	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
 docs/orchestration/state/gen_divergence_manifest_cstat_data_only.py	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/gen_manifest_run_bound_addendum.py	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/gpu-timing-20261023/ASSIGNMENT.md	tracked	LIVE	state-artifact	gpu-timing-20261023		open		route-only	no

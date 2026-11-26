@@ -1,0 +1,28 @@
+read=1 mac_utc=2026-11-26T16:20:00Z
+host=login38 utc=2026-11-26T16:20:40Z
+62042572|geanttw_p0_pin_1L|COMPLETED|0:0|00:05:53|353
+62042575|geanttw_p0_pat_1L|COMPLETED|0:0|00:07:15|435
+sacct_rc=0
+== /pscratch/sd/j/josephrb/geanttw-20261124/run/logs/geanttw_p0_pin_1L_62042572.out
+[geanttw-evloop] NUE before utc=2026-11-26T16:13:42Z atime_ns=1795709289000000000 mtime_ns=1630424966000000000 size=25403
+[geanttw-evloop] NUE after utc=2026-11-26T16:19:16Z atime_ns=1795709645000000000 mtime_ns=1630424966000000000 size=25403
+[geanttw-evloop] rc=0 elapsed=334s
+-- tail
+0 / 39577110000 / 39577120000 / 39577130000 / 39577140000 / 39577150000 / 39577160000 / 39577170000 / 39577180000 / 39577190000 / 395771100000 / 395771110000 / 395771120000 / 395771130000 / 395771140000 / 395771150000 / 395771160000 / 395771170000 / 395771180000 / 395771190000 / 3
+Wrote unbinned unfolding inputs to runEventLoopOmniFold.root
+Success
+[geanttw-evloop] NUE after utc=2026-11-26T16:19:16Z atime_ns=1795709645000000000 mtime_ns=1630424966000000000 size=25403
+[geanttw-evloop] rc=0 elapsed=334s
+[geanttw-evloop] wrote /pscratch/sd/j/josephrb/geanttw-20261124/run/p0/pin/runEventLoopOmniFold_GEANTTW_pin_1L.root (108852307 bytes) sha256 48e34d4402b0ec6ce20bed7926df7bbf1d108bc8f3284b5493a63bc1ebbc48fc
+== /pscratch/sd/j/josephrb/geanttw-20261124/run/logs/geanttw_p0_pat_1L_62042575.out
+[geanttw-evloop] NUE before utc=2026-11-26T16:13:40Z atime_ns=1795709289000000000 mtime_ns=1630424966000000000 size=25403
+[geanttw-evloop] NUE after utc=2026-11-26T16:20:37Z atime_ns=1795709641000000000 mtime_ns=1630424966000000000 size=25403
+[geanttw-evloop] rc=0 elapsed=417s
+-- tail
+0 / 39577110000 / 39577120000 / 39577130000 / 39577140000 / 39577150000 / 39577160000 / 39577170000 / 39577180000 / 39577190000 / 395771100000 / 395771110000 / 395771120000 / 395771130000 / 395771140000 / 395771150000 / 395771160000 / 395771170000 / 395771180000 / 395771190000 / 3
+Wrote unbinned unfolding inputs to runEventLoopOmniFold.root
+Success
+[geanttw-evloop] NUE after utc=2026-11-26T16:20:37Z atime_ns=1795709641000000000 mtime_ns=1630424966000000000 size=25403
+[geanttw-evloop] rc=0 elapsed=417s
+[geanttw-evloop] wrote /pscratch/sd/j/josephrb/geanttw-20261124/run/p0/pat/runEventLoopOmniFold_GEANTTW_pat_1L.root (108991029 bytes) sha256 56112321d18b18f077befd519667611c521ba448969b7c15df167a9072891164
+ssh_rc=0
