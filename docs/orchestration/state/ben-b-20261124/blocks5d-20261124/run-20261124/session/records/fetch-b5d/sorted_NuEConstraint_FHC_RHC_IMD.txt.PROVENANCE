@@ -1,0 +1,4 @@
+sorted_NuEConstraint_FHC_RHC_IMD.txt (sha256 e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2) was fetched by
+B5D's run (blocks5d-20261124/run-20261124, fetch-b5d) from /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/
+MParamFiles/data/FluxConstraints/; it equals the pin in #1327's input check (vf_inputs_check.tsv). Committed as a
+receipt input for V_F Phase 2 (FD-VF BINDING 2b, the director's ruling 1): xk's remap and rsn read this copy.
