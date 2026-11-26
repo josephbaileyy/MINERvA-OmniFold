@@ -1,0 +1,56 @@
+VERDICT: NO-GO
+
+## Round-1 disposition
+1. R1 #1 (BLOCKING — rows/normalization validation): **CLOSED** — `inputs/new/evw2d.py:552-569,661-676`, `inputs/new/test_evw2d.py:733-864` (remaining `denominator.npz` validation gap filed afresh below).
+2. R1 #2 (C-KEY entry identity & types): **CLOSED** — `inputs/new/evw2d.py:259-329`, `inputs/new/test_evw2d.py:483-578`, `inputs/new/EVW2D-DECLARATION.md:79-82,150`.
+3. R1 #3 (recorder identity test): **CLOSED** — `inputs/new/test_evw2d.py:374-413`, `inputs/new/evw2d_mutation.py:120-121`, `inputs/new/EVW2D-DECLARATION.md:51-57`.
+4. R1 #4 (BLOCKING — missing `references.npz` / paper grid checks): **CLOSED** — `inputs/new/references.npz`, `inputs/new/evw2d.py:442-458,597`, `inputs/new/make_references.py:41-65`, `inputs/new/test_evw2d.py:879-890,1137-1179`.
+5. R1 #5 (BLOCKING — conflicting mutation receipts): **PARTLY** — `REC_IDENTITY` (`inputs/new/evw2d_mutation.py:120`), `tree_dirt` (`:158-163,229`), and the test fixes (`inputs/new/test_evw2d.py:350-354,639-640,1055-1058`) landed, but no clean full campaign receipt exists for the current bytes (`inputs/receipt/MUTATION-NOTE.txt:1-12`).
+6. R1 #6 (C-COMPLETE overstatement): **CLOSED** — `inputs/new/evw2d.py:360-383,622-625`, `inputs/new/test_evw2d.py:619-643`, `inputs/new/EVW2D-DECLARATION.md:124-127,153-154`.
+7. R1 #7 (flow rows / masked cells): **CLOSED** — `inputs/new/evw2d.py:395-401,461-478,572-584`, `inputs/new/test_evw2d.py:677-678,738-741,817-826,847-854`.
+8. R1 #8 (MINOR — conditional scalar-flux note): **CLOSED** — `inputs/new/evw2d.py:350-357,626-633,646-647`, `inputs/new/test_evw2d.py:593-604,934-943`, `inputs/new/EVW2D-DECLARATION.md:108-115`.
+9. R1 #9 (BLOCKING — binding & SCRATCH boundary): **PARTLY** — `inputs/new/evw2d.py:122-156,720-727` enforces the bound fields and 1-node allocation, but unpinned fields in `inputs/new/config.json`, `REPO` (`deploy_C`), and the 0.5 node-h Slurm time cap remain unenforced in code.
+10. R1 #10 (pins, bytecode cache, staging custody): **CLOSED** — `inputs/new/evw2d.py:169-200,496-528,678-679,717-718`, `inputs/new/EVW2D-DECLARATION.md:62-70` (minor post-run `__pycache__` symmetry item noted below).
+11. R1 #11 (exceptions / ambiguous products): **PARTLY** — `inputs/new/evw2d.py:227-230,607,692-698,723` adds seam-presence, `R.GateFailure` catching, and `evw2d.done` verification, but a `C-KEY` length mismatch still crashes `run()` with `IndexError` before writing `run.json`/`evw2d.done`.
+12. R1 #12 (narrow claims / price): **CLOSED** — `inputs/new/EVW2D-DECLARATION.md:16-19,119-120,208-222,241-244`, `inputs/new/evw2d.py:685-686`.
+
+## Findings (Round 2)
+
+1. **BLOCKING — No valid mutation receipt exists for the reviewed bytes.**
+   `inputs/receipt/MUTATION-NOTE.txt:1-12`, `inputs/receipt/mutation-superseded-run3.json:1-48`, `inputs/receipt/shas.txt:2,7`, `inputs/new/EVW2D-DECLARATION.md:204-206`.
+   `inputs/receipt/` contains only `mutation-superseded-run3.json` against the older `test_evw2d.py` (`07f50869...`), which `MUTATION-NOTE.txt` marks `SUPERSEDED and not evidence` (83/85 killed: `ALLOC_JOB` and `CMAP_TOL` survived, and 6 kills were caused by `__pycache__` left in the driver tree by `MAIN_PYTHON_B`). Run 4 on the current `test_evw2d.py` (`01445a29...`) and `evw2d_mutation.py` (`1295bcb5...`) is still absent from `inputs/receipt/`.
+   **Fix:** Supply the complete run-4 `mutation.json` showing `evw2d_sha256` `d34b842b...`, `tests_sha256` `01445a29...`, `control_pass: true`, `tree_clean: true`, and `85/85` killed by their intended tests.
+
+2. **BLOCKING — `C-KEY` row-count mismatch crashes `run()` with an uncaught `IndexError`.**
+   `inputs/new/evw2d.py:344-345,617-618`, `inputs/new/EVW2D-DECLARATION.md:143-144`, `inputs/receipt/mutation-superseded-run3.json:54,60,61`.
+   If `keep_rule` returns a different row count than `omnifold`'s `pt_mask` (or `MCgen_weights` is `None`), `controls["C-KEY"]` records `pass: false` (`:617`) and the next line calls `weight_table` (`:618`), which immediately hits `indep["entry"][pt_mask]` (`:344`) and raises `IndexError` (also wrapping `entry` if `fits_uint32` failed at `:345`). In `mutation-superseded-run3.json`, `KEY_RECO_NEEDS_PASS`, `KEY_WRECO_BOUND`, and `KEY_WTRUTH_SIGN` all died from this crash rather than exiting cleanly with `RC_CONTROL = 6` and diagnostic `FAIL` `run.json`/`evw2d.done` as `EVW2D-DECLARATION.md:143-144` promises.
+   **Fix:** Guard `weight_table` against shape/`fits_uint32`/`None` mismatches: either raise `GateFailure` cleanly when `indep["entry"].shape != pt_mask.shape` (and update `EVW2D-DECLARATION.md:143-144`), or fall back to placeholder indices / skip `weights.npz`-dependent controls when `C-KEY` fails so `run.json` and `evw2d.done` are written with verdict `FAIL` and exit code `6`.
+
+3. **SHOULD-FIX — Fallback `denominator.npz` is read back without `C-FILE` validation.**
+   `inputs/new/evw2d.py:542-546,552-569,655-664`, `inputs/new/test_evw2d.py:946-983`.
+   When `C-COMPLETE` fails, `run()` writes `denominator.npz`, reads `den_back = read_npz(out / "denominator.npz", DENOM_COLUMNS)[0]` (`:662`) discarding its `meta`, and never checks `den_back`'s `meta`, `float64` dtypes, or row-by-row bit equality against `denom` in `c_file` (`:552-569`). `C-SELF`/`C-EXACT-*` only inspect grid cell sums to `1e-8`, missing wrong `meta`, `float32` truncation below `1e-8`, or corrupted overflow rows.
+   **Fix:** Include `denominator.npz` (`meta`, `float64` dtypes, and `same_bits` against `denom` for all 3 columns) in `c_file` whenever `findings` is non-empty, and add a `Fallback` tamper test.
+
+4. **SHOULD-FIX — Unpinned `config.json` fields, `deploy_C` (`REPO`), and Slurm wall-time cap rely entirely on the binding.**
+   `inputs/new/config.json:1-41`, `inputs/new/evw2d.py:122-156,679,729`, `inputs/new/EVW2D-DECLARATION.md:148,220,226-231,261`.
+   Because `config.json` is edited at binding and is excluded from `declaration_sha256` and `driver_tree.code_sha256`, `check_binding` trusts `cfg`'s `scratch_prefix`, `slurm_nodes`, `argv`, `cpus`, `thread_env`, `exact_rtol`, `paper_pt_edges`, `inputs.{CV,MC}_sha256`, `references.sha256`, and `driver_tree.code_sha256` without cross-checking `ref_c2c1/config.json` (`9127b45a...`, already pinned at `:16`). In addition, `check_binding` does not enforce `REPO` (`deploy_C`) under `lane_root` or reject `lane_root == scratch_prefix` / `driver_tree == lane_root` / `staging_root == lane_root` (`:135-139`), and `check_allocation` (`:151-156`) never verifies the job's wall-time limit (`<= 30 min` for the `0.5` node-h cap).
+   **Fix:** At binding (`EVW2D-DECLARATION.md:261`), require and record a diff of `config.json` confirming only the 4 `null` fields changed, verify `os.O_NOATIME` on Perlmutter, keep `deploy_C` clean under `lane_root`, and submit with an explicit `--time` cap `<= 00:30:00` (optionally check `SLURM_JOB_END_TIME` / `scontrol` in `check_allocation`).
+
+5. **SHOULD-FIX — `run.json` verdict can disagree with `evw2d.done` when `complete` is false, and `complete == False` is untested.**
+   `inputs/new/evw2d.py:684,692-698`, `inputs/new/evw2d_mutation.py:110`, `inputs/new/test_evw2d.py:725-731`.
+   `run.json` records `"verdict": "PASS" if passed else "FAIL"` (`:684`) before `SHA256SUMS` and `complete` are checked (`:695`). If a file in `out/` is missing, modified, or stray at `:695`, `evw2d.done` records `FAIL` and exit code is `6`, while `run.json` on disk still says `PASS`. Moreover, no test exercises `passed=True, complete=False`: a mutant changing `passed and complete` (`:696`) to `passed` would survive the whole suite (`RUN_DONE_COMPLETE` at `evw2d_mutation.py:110` only survived/died via `passed=False`).
+   **Fix:** Verify the output directory contains only the expected files before writing `run.json` (and re-check `complete` before `evw2d.done`), and add a test with `passed=True` and a stray or altered file in `out/` before the manifest check (replacing or supplementing `RUN_DONE_COMPLETE` with `if passed` only).
+
+6. **SHOULD-FIX — Several gate/control branches have weak or missing tests.**
+   `inputs/new/test_evw2d.py:324-341,1075-1084`, `inputs/new/evw2d.py:142,199,271,273,457,468,472,678-679`, `inputs/receipt/coverage.txt:3`, `inputs/receipt/mutation-superseded-run3.json:62`.
+   - `test_main_run_needs_the_allocation` (`test_evw2d.py:1075-1084`) runs without staging inputs first; when `MAIN_ALLOCATION` drops `check_allocation`, `main()` hits `FileNotFoundError` in `check_staged` and returns `RC_GATE` anyway, caught only by the stderr substring check (`mutation-superseded-run3.json:62`).
+   - `test_each_gap_refuses` (`:324-341`) omits `inputs.staging.{CV,MC}` = `"."`, `".."`, or `""` (the `name in (".", "..")` branch of `BIND_PLAIN_NAME`, `evw2d_mutation.py:129`), and `R.read_guards` under `PROTECTED` (`(/pscratch, /global/cfs)`) is never exercised because `LANE` is in `/tmp`.
+   - Post-run `C-PINS` (`evw2d.py:678-679`) re-hashes the 4 files without re-checking `PYCACHE_DIRS` for newly created `__pycache__`, and lines `199`, `271`, `273`, `457`, `468`, `472` (`coverage.txt:3`) have no unit tests.
+   **Fix:** Stage inputs in `test_main_run_needs_the_allocation`, add `staging` `'.'`/`'..'`/`''` and `PROTECTED`-override `read_guards` tests plus `own_hist`/`load_references`/`read_signal_tree` error tests, and re-check `PYCACHE_DIRS` in post-run `C-PINS`.
+
+7. **MINOR — Small code hardening items (`c_key`, `load_references`, `stage`).**
+   `inputs/new/evw2d.py:327,453,496-515,722-726`.
+   - `c_key` (`:327`) checks `e[0] >= 0 and e[-1] < 2 ** 32` instead of `e.min()`/`e.max()`, so an unsorted out-of-range array reports `fits_uint32: True` alongside `strictly_increasing: False`.
+   - `load_references` (`:453`) casts `refs[k]` via `np.asarray(..., np.float64)` before `same_bits` instead of asserting `refs[k].dtype == np.float64` (and a missing key raises `KeyError`, not `GateFailure`).
+   - `main(["stage"])` (`:722-726`) invokes `load_runner` (importing `re2_driver`, `ROOT`, and `sklearn`) solely for `R.copy_noatime`, which prevents `stage` from running on a DTN lacking `ROOT`/`sklearn` (`EVW2D-DECLARATION.md:221`), and `stage()` (`:502`) uses `exists()`, which is `False` for broken symlinks.
+   **Fix:** Use `e.min()`/`e.max()` in `c_key`, check `refs[k].dtype == np.float64` and key presence in `load_references`, check `is_symlink()` in `stage()`, and avoid importing `re2_driver`/`ROOT` during `stage` if staging on a DTN is needed.

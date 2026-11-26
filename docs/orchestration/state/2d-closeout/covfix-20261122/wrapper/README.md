@@ -50,19 +50,19 @@ The salt never leaves the laptop before `reveal`.
 
 `reference_role.py` does all of this.
 
-**The launch is built by the wrapper from validated fields, never from a command string.** Each PV role's `slurm`
+**The launch is built by the wrapper from validated fields, never from a command string.** Each role's `slurm`
 block may name `salloc` and `srun` (paths ending in those names) and set `account`, `qos`, `constraint` and `time`,
 with plain values. The wrapper runs:
 
 ```
 /usr/bin/ssh <the forced options> -l <user> -i <identity_file> [-o CertificateFile=...] <host> \
   'env -u SRUN_INPUT -u SRUN_OUTPUT -u SRUN_ERROR -u SLURM_STD{IN,OUT,ERR}MODE \
-   salloc --exclusive -N 1 -n 1 [-A -q -C -t] srun --exclusive -N 1 -n 1 \
+   salloc --exclusive -N 1 -n 1 -J covfix_<role> [-A -q -C -t] srun --exclusive -N 1 -n 1 \
    bash -c <exec check> covfix-exec <binary> <sha256> <args> --covfix-...'
 ```
 
 That is one task on one exclusive node. The exec check runs on the compute node: it hashes the binary and execs it only
-on a match (exit 86 otherwise), leaving stdin untouched. `pg-connect` has no allocation and runs on the host.
+on a match (exit 86 otherwise), leaving stdin untouched. The job name is a constant per role in the code (`JOB_NAMES`: covfix_pg_connect, covfix_pv_writer, covfix_pv_readout), never from config or input, so fences and sacct can recognize covfix jobs; the config cannot set `-J`. Every role runs this way, `pg-connect` included: its role config needs the same `slurm` block (cov2d, 2026-11-25; before, `pg-connect` had no allocation and would have run on the login host).
 
 **ssh is built by the wrapper from a closed schema (director, 2026-11-23).** The role config's `ssh` object may hold
 only these keys; any other key is refused:
@@ -130,8 +130,13 @@ The real items (`covfix-`) use one canonical ledger, `~/director-tools/covfix`, 
 `keychain` override. At its first use the ledger writes `LEDGER.json`, recording the mirror's remote URL, branch and
 path. A config pointing elsewhere is refused, and a ledger that has records but no `LEDGER.json` is terminal. For the
 real items the mirror branch must be **`covfix-ledger`**, a dedicated branch that holds only the consumption record.
-A shallow mirror clone is refused, because its history cannot be scanned. It should be protected
-against force pushes and deletion; that repository setting is Joseph's call.
+A shallow mirror clone is refused, because its history cannot be scanned.
+
+**`covfix-ledger` is protected** by GitHub ruleset 27996874, "covfix-ledger append-only" (requested by Joseph, set 2026-11-24). It is
+active with no bypass actors, and its rules are `non_fast_forward` and `deletion`. Creation and fast-forward pushes
+are allowed, and those are the only pushes the wrapper makes: a plain `git push <remote> HEAD:refs/heads/<branch>`,
+never forced. The wrapper does not rely on the ruleset. A refused push is an uncertain spend that blocks the role, and
+a rewound or deleted branch is terminal, all before any launch (`LedgerProtectionTests`).
 
 ## Order of operations in `run --role R`
 
@@ -281,7 +286,9 @@ The tests:
   LANG and the test git settings), never the caller's whole environment;
 - run git with every inherited `GIT_*` variable removed, no global or system config, an empty template and the file
   transport only;
-- seal only synthetic truths, so no test is a launch.
+- seal only synthetic truths, so no test is a launch;
+- push only to local bare repositories, never to the real `covfix-ledger`. `LedgerProtectionTests` sets
+  `receive.denyNonFastForwards` and `receive.denyDeletes` on one to stand in for the ruleset.
 
 ## The synthetic seal and the director's rehearsal (§3.4)
 

@@ -1,0 +1,39 @@
+{
+ "schema": "evw2d-config/1",
+ "declaration": "docs/orchestration/state/2d-closeout/evw2d-20261124/EVW2D-DECLARATION.md",
+ "declaration_sha256": "c1b0164317c531fcc15cc769fec2cbdbe9ef955db816fc00a0d0865054c89d51",
+ "lane_root": "/pscratch/sd/j/josephrb/evw2d-20261126",
+ "binding_note": "declaration_sha256, lane_root, driver_tree.root and inputs.staging.root are bound at the binding, and config.json's own sha256 is passed to evw2d.py on the command line; evw2d.py refuses to stage, run or clean up until they are, keeps the driver tree, the staging root, its own checkout and --out strictly inside the lane root, itself under /pscratch/sd/j/josephrb, and requires argv, cpus, thread_env, exact_rtol, the input and reference digests, paper_pt_edges and the four pins to equal the reviewed values in evw2d.py",
+ "driver_tree": {
+  "commit": "77d76cfc2d621f8faa010b75006811868494652a",
+  "root": "/pscratch/sd/j/josephrb/evw2d-20261126/deploy_M",
+  "code_sha256": {
+   "2d-unfolding/re2/re2_driver.py": "938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b",
+   "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a",
+   "2d-unfolding/ref_c2c1/ref_c2c1.py": "285dd138363d090a4ce5dea3361be81fada8680bd782b918e9d95198d1b5d6ea",
+   "2d-unfolding/ref_c2c1/config.json": "9127b45a7d2db5fe5ee711628e4b2207a2dd767e2b0c2fb545114fa9fe2428d2"
+  },
+  "note": "a clean clone at the commit (REF-C2C1's deploy, Tier 1's M); root is bound at the binding"
+ },
+ "inputs": {
+  "CV_source": "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+  "CV_sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+  "MC_source": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+  "MC_sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+  "staging": {"root": "/pscratch/sd/j/josephrb/evw2d-20261126/stage", "CV": "runEventLoopOmniFold_MEFHC.root", "MC": "runEventLoopMC_MEFHC.root"},
+  "note": "REF-C2C1's inputs (ref_c2c1/config.json inputs); 'evw2d.py stage' copies each by O_NOATIME into the staging root and checks its pin; the run reads only those copies; root is bound at the binding"
+ },
+ "argv": ["--omnifile", "$CV", "--mcfile", "$MC", "--iters", "5", "--use-weights", "--estimator", "lgbm",
+          "--seed", "42", "--branch-select", "all", "--bkg-mode", "negweight-refined",
+          "--refine-n-estimators", "400", "--refine-num-leaves", "31"],
+ "argv_source": "E_R's argv: ref_c2c1/config.json e_r.argv (re2/run/partb_runs.tsv row ER)",
+ "cpus": 64,
+ "thread_env": {"OMP_NUM_THREADS": "64", "MKL_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1"},
+ "references": {
+  "path": "2d-unfolding/evw2d/references.npz",
+  "sha256": "1b21458283c06531c9791efdc1e15f9d685d0733e398288a715768d61b612a03"
+ },
+ "paper_pt_edges": [0, 0.075, 0.15, 0.25, 0.325, 0.40, 0.475, 0.55, 0.70, 0.85, 1.00, 1.25, 1.50, 2.50, 4.50],
+ "paper_pt_edges_source": "Tier 1's E rerun (ibu-chi2-20261123/tier1/receipts/tier1_deploy_e.diff, re2_driver.py:44) = the release TH2D's pT axis",
+ "exact_rtol": 1e-8
+}

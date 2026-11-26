@@ -1,0 +1,300 @@
+{
+ "argv": [
+  "--omnifile",
+  "/pscratch/sd/j/josephrb/evw2d-20261126/stage/runEventLoopOmniFold_MEFHC.root",
+  "--mcfile",
+  "/pscratch/sd/j/josephrb/evw2d-20261126/stage/runEventLoopMC_MEFHC.root",
+  "--iters",
+  "5",
+  "--use-weights",
+  "--estimator",
+  "lgbm",
+  "--seed",
+  "42",
+  "--branch-select",
+  "all",
+  "--bkg-mode",
+  "negweight-refined",
+  "--refine-n-estimators",
+  "400",
+  "--refine-num-leaves",
+  "31"
+ ],
+ "config_sha256": "bee02d38e8141a8780ba2c838007ebdd0663af1b195f3291ba71239e3f26e7ec",
+ "controls": {
+  "C-CMAP": {
+   "cells_positive": 205,
+   "kind": "pass",
+   "max_dev": 1.5765166949677223e-14,
+   "pass": true,
+   "refill": {
+    "denominator": true,
+    "map": true,
+    "numerator": true
+   },
+   "zero_cells_zero": true
+  },
+  "C-COMPLETE": {
+   "denominator_rows": 32849103,
+   "pass": true,
+   "signal_rows": 32849103
+  },
+  "C-EXACT-ER": {
+   "cells": 205,
+   "max_rel": 9.160672220787092e-12,
+   "pass": true,
+   "zero_cells_zero": true
+  },
+  "C-EXACT-PAPER": {
+   "cells": 205,
+   "max_rel": 5.056399743352813e-12,
+   "pass": true,
+   "zero_cells_zero": true
+  },
+  "C-FILE": {
+   "cm2_per_m2": true,
+   "constants_json": true,
+   "dtypes": true,
+   "entries": true,
+   "fallback_declared": true,
+   "meta": true,
+   "pass": true,
+   "truth_pt": true,
+   "truth_pz": true,
+   "w_prior": true,
+   "w_prior_driver": true,
+   "w_unfolded": true
+  },
+  "C-FLOW": {
+   "hTruth2D": {
+    "flow_sum": 9.313225746154785e-10,
+    "max_rel": 0.0,
+    "pass": true
+   },
+   "hUnfold2D": {
+    "flow_sum": 0.0,
+    "max_rel": 0.0,
+    "pass": true
+   },
+   "pass": true
+  },
+  "C-FLUX": {
+   "pass": true,
+   "spread": 1.0842021724855044e-19,
+   "ulp": 1.0842021724855044e-19,
+   "values": [
+    0.0006243343376851218,
+    0.0006243343376851218,
+    0.0006243343376851218,
+    0.0006243343376851218,
+    0.0006243343376851218,
+    0.0006243343376851218,
+    0.0006243343376851218,
+    0.0006243343376851218,
+    0.0006243343376851218,
+    0.0006243343376851218,
+    0.0006243343376851218,
+    0.0006243343376851218,
+    0.0006243343376851219,
+    0.0006243343376851219
+   ]
+  },
+  "C-KEY": {
+   "equal": {
+    "pass_reco": true,
+    "pass_truth": true,
+    "reco_pt": true,
+    "reco_pz": true,
+    "truth_pt": true,
+    "truth_pz": true,
+    "w_reco": true,
+    "w_truth": true
+   },
+   "fits_uint32": true,
+   "pass": true,
+   "rows": 32849103,
+   "strictly_increasing": true
+  },
+  "C-PINS": {
+   "after_run": {
+    "2d-unfolding/re2/re2_driver.py": "938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b",
+    "2d-unfolding/ref_c2c1/config.json": "9127b45a7d2db5fe5ee711628e4b2207a2dd767e2b0c2fb545114fa9fe2428d2",
+    "2d-unfolding/ref_c2c1/ref_c2c1.py": "285dd138363d090a4ce5dea3361be81fada8680bd782b918e9d95198d1b5d6ea",
+    "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   },
+   "caches_after_run": [],
+   "pass": true
+  },
+  "C-REC": {
+   "calls": {
+    "collect_truth_denom_arrays": {
+     "args_unchanged": true,
+     "called": true,
+     "out_digest": "bccdc3087d547883893e1a00d7db273f2154f1277a0a356ef24ba8f21da7d44b",
+     "out_unchanged": true,
+     "pass": true
+    },
+    "get_pot_scales": {
+     "args_unchanged": true,
+     "called": true,
+     "out_digest": "2b5c145ce93d034092f533cc870b7656230fc876e12277d4fde0868ba1a5e820",
+     "out_unchanged": true,
+     "pass": true
+    },
+    "omnifold": {
+     "args_unchanged": true,
+     "called": true,
+     "out_digest": "9c007f41f1f818aaa89a4e45b4984fde34fd2b463a4c6a01dd15d10ca8188d25",
+     "out_unchanged": true,
+     "pass": true
+    }
+   },
+   "pass": true
+  },
+  "C-SELF": {
+   "cells": 205,
+   "file_equals_driver": true,
+   "max_rel": 1.5765166949677223e-14,
+   "pass": true,
+   "zero_cells_zero": true
+  },
+  "C-STAGE": {
+   "CV": {
+    "same_file": true,
+    "sha256_again": true
+   },
+   "MC": {
+    "same_file": true,
+    "sha256_again": true
+   },
+   "pass": true,
+   "root_read_only": true
+  }
+ },
+ "controls_verdict": "PASS",
+ "cpus": 64,
+ "custody": {
+  "files": {
+   "constants.json": {
+    "atime": "2026-11-26T08:45:32+00:00",
+    "mtime": "2026-11-26T08:45:31+00:00",
+    "size": 3963
+   },
+   "weights.npz": {
+    "atime": "2026-11-26T08:45:32+00:00",
+    "mtime": "2026-11-26T08:45:30+00:00",
+    "size": 1182583158
+   },
+   "xsec.root": {
+    "atime": "2026-11-26T08:45:40+00:00",
+    "mtime": "2026-11-26T08:44:04+00:00",
+    "size": 61508
+   }
+  },
+  "purge_rule": "pscratch purges files not read for 8 weeks; exposure = atime + 56 days, to be confirmed at the binding"
+ },
+ "declaration_sha256": "c1b0164317c531fcc15cc769fec2cbdbe9ef955db816fc00a0d0865054c89d51",
+ "driver_tree": {
+  "code_sha256": {
+   "2d-unfolding/re2/re2_driver.py": "938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b",
+   "2d-unfolding/ref_c2c1/config.json": "9127b45a7d2db5fe5ee711628e4b2207a2dd767e2b0c2fb545114fa9fe2428d2",
+   "2d-unfolding/ref_c2c1/ref_c2c1.py": "285dd138363d090a4ce5dea3361be81fada8680bd782b918e9d95198d1b5d6ea",
+   "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+  },
+  "commit": "77d76cfc2d621f8faa010b75006811868494652a"
+ },
+ "evw2d_sha256": "6106b23a8b6c5cb9c27acd8480329f6bc180f5c90f9af3ba82a92c9507e64887",
+ "files_sha256": {
+  "constants.json": "1fe4449ee7ec34067f5d2a20aa841f2c97fd2f678eaa7f554ab583ad75daf2ba",
+  "weights.npz": "bf452352da52f12a2788f76c4caf9e8402600ba06d352fc99e9344d87367b108",
+  "xsec.root": "928e6f7fd434fe558bf6c35e60ef05386ad668b5bdaa11cb1309f443248c17ce"
+ },
+ "finding_sizes": {},
+ "findings": [],
+ "inputs_sha256": {
+  "CV": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+  "MC": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316"
+ },
+ "lgbm": [
+  {
+   "kind": "classifier",
+   "params": {
+    "learning_rate": 0.1,
+    "n_estimators": 400,
+    "num_leaves": 31,
+    "random_state": 45,
+    "verbose": -1
+   }
+  },
+  {
+   "kind": "classifier",
+   "params": {
+    "learning_rate": 0.1,
+    "n_estimators": 100,
+    "num_leaves": 8,
+    "random_state": 42,
+    "verbose": -1
+   }
+  },
+  {
+   "kind": "classifier",
+   "params": {
+    "learning_rate": 0.1,
+    "n_estimators": 100,
+    "num_leaves": 8,
+    "random_state": 43,
+    "verbose": -1
+   }
+  },
+  {
+   "kind": "regressor",
+   "params": {
+    "learning_rate": 0.1,
+    "n_estimators": 100,
+    "num_leaves": 8,
+    "random_state": 44,
+    "verbose": -1
+   }
+  }
+ ],
+ "peak_rss_kb": 14132296,
+ "phases_seconds": {
+  "controls": 14.011,
+  "driver": 567.36,
+  "final_verify": 1.386,
+  "key": 42.481,
+  "preflight": 21.148,
+  "write": 44.033
+ },
+ "rows": 32849103,
+ "schema": "evw2d-run/1",
+ "slurm_job": "62022231",
+ "staged": {
+  "CV": {
+   "identity": {
+    "dev": 3592384858,
+    "ino": 882727771355285004,
+    "mode": 33060,
+    "mtime_ns": 1795678002000000000,
+    "size": 2144008221
+   },
+   "sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+  },
+  "MC": {
+   "identity": {
+    "dev": 3592384858,
+    "ino": 882727771355285005,
+    "mode": 33060,
+    "mtime_ns": 1795678004000000000,
+    "size": 5143
+   },
+   "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316"
+  }
+ },
+ "thread_env": {
+  "MKL_NUM_THREADS": "1",
+  "OMP_NUM_THREADS": "64",
+  "OPENBLAS_NUM_THREADS": "1"
+ },
+ "verdict_note": "the run's verdict is evw2d.done's: the controls and the acceptance of the product set"
+}

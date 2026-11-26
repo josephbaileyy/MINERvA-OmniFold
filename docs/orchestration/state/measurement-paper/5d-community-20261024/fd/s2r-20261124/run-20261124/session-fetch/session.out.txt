@@ -1,0 +1,3 @@
+node login38 staged sha256 b5c9f5bc717ac5ad97959c17873b9b02528ba1d1e8d23ee5a76b54505444c4f3
+detached pid 1851297, output /dev/shm/s2rc.1850678.sh.out
+script rc=0

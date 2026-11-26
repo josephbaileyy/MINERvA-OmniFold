@@ -1,0 +1,33 @@
+You are an independent, adversarial reviewer of code and cluster scripts for a particle-physics analysis on NERSC Perlmutter. This is a BLOCKING read. READ-ONLY task: do not modify, create or delete any file; print one report to stdout. Never write to any git checkout.
+
+Inputs: the tree /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-readout-r1/tree, extracted by git archive from commit d3d9c6b71 (sha256 of each file in /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-readout-r1/inputs.sha256). Let F = docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub.
+- Declaration: docs/orchestration/state/measurement-paper/5d-community-20261024/IBUB-DECLARATION.md (sections 4-6 and 8 govern the readout).
+- The job already ran (Slurm job 61924744, COMPLETED 0:0, at commit d12c4f2a3, under IBUB-BINDING-2.md). Its end records: F/connect/run-61924744/job-end/.
+- Under review, the READOUT package:
+  - 2d-unfolding/ibub/ibub_readout.py (the readout), test_ibub_readout.py, mutants.py;
+  - F/connect/ibub_readout_connect.template.sh, gen_readout_connect.py, and the generated ibub_readout_connect.sh (M = 94d81351c, JOB = 61924744, JOB_M = d12c4f2a3) and ibub_readout_launch.sh;
+  - F/connect/README.md, the section "Connect O";
+  - F/connect/standin/standin_readout.sh and F/connect/standin/readout-at-94d81351c/ (a Docker stand-in, 12 variants);
+  - F/code/readout/mutants.txt (127/127 killed) and trace.txt.
+
+The director's rulings the readout must implement (2026-11-24):
+(A) Item 4: grade each tune by C-COMPLETE; there is NO job-PASS gate.
+  1. Job-wide prerequisites, from the fetched records with RECORDS.SHA256SUMS verified: stage, the allocation, the barrier, C-REP and C-SIM. If any fails, neither tune is graded.
+  2. Per tune: C-COMPLETE. A complete tune is graded; an incomplete one reads INCOMPLETE with its missing seeds.
+  3. The terminal state (sacct State/ExitCode, IBUB-DONE) is disclosed, never a gate.
+(B) The --records corrections:
+  1. A terminal sacct State is a precondition: STOP before anything is read. A missing row is never read as finished.
+  2. Re-parse the batch's scontrol record with the job's own key rule: key() { printf '%s\n' "$info" | tr ' ' '\n' | sed -n "s/^$1=//p" | head -1; }  (QOS is regular or regular_1; Perlmutter records --qos=regular as QOS=regular_1.)
+  3. Inventory every graded byte with its sha256.
+  4. The refcheck's own fields are the binding.
+  5. Tests, plus mutants: the job-PASS gate restored, the terminal check dropped, the allocation from stdout alone, the inventory hash skipped.
+
+Main task. Check against the code (file:line) whether each ruling above is implemented CORRECTLY and COMPLETELY, and say plainly if any is partial. Pay particular attention to:
+1. Can the readout grade (PASS) a tune when a job-wide prerequisite fails, when the records do not verify, or when sacct shows a non-terminal or missing row? Can it refuse or downgrade a tune only because the job's State is not COMPLETED, or because IBUB-DONE is absent or reads rc != 0 (which would be a forbidden job-PASS gate)?
+2. INCOMPLETE vs INVALID vs PASS: is the classification as declared? Could a missing unit be silently dropped from a graded tune, or a foreign/stale product be counted?
+3. The connect O script: fence order, the terminal-state check before any fetch, the dd iflag=noatime fetch and RECORDS.SHA256SUMS, the clone at M with JOB_M as ancestor and P0's records, the MAT environment, the copy-out with sha256 -c, the records tar, the exit codes (0 only if both tunes rc 0, else 6; a BAIL is 9 and writes nothing), cleanup of /dev/shm. Any write outside /dev/shm/ibub-connect, $N/readout, $N/fetch-readout(.tar), $N/logs/connect-readout.*? Anything that would read CFS or cov2d-run-20261104 without O_NOATIME?
+4. The launcher: does it bind the connect's sha256 and refuse any other?
+5. Tests and mutants: does any ruling lack a test that would fail if it were removed? Can a mutant be counted killed by a harness failure?
+6. Anything that would fail on Perlmutter (bash 4/5, GNU coreutils, Slurm sacct output, Linux semantics), or in the stand-in's stubs that hides a real-node failure.
+
+Output a numbered list of findings labelled BLOCKER, MAJOR, MINOR or NOTE, each with file:line and a concrete fix. End with exactly one line: VERDICT: GO (no BLOCKER or MAJOR) or VERDICT: REVISE.

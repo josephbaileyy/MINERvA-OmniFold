@@ -1,0 +1,1 @@
+s=$(cat; echo x); s=${s%x}; h=$(printf '%s' "$s" | sha256sum | cut -d' ' -f1); if [ "$h" != 04dcaa18f29fef02e258343896b251fa5d95fda3bcce7e87de75fc2218de14dd ]; then echo "STOP sha"; exit 8; fi; echo "node script sha256 $h"; ( set -- $WEND $FENCE; eval "$s" ) < /dev/null; r=$?; echo "script rc=$r"; exit $r

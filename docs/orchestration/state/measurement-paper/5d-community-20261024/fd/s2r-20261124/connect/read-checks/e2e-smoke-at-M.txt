@@ -1,0 +1,11 @@
+B0 nominal rc 0 product True 
+   keys ok: True s2r block: {'arm': 'B0', 'truth': 'nominal', 'iters': 5} refinement ran: True s2r_fits: 0 max round trip: 0
+S2R nominal rc 0 product True 
+   keys ok: True s2r block: {'arm': 'S2R', 'truth': 'nominal', 'iters': 20} refinement ran: True s2r_fits: 20 max round trip: 7.771561172376096e-16
+B0 q3 rc 0 product True 
+   keys ok: True s2r block: {'arm': 'B0', 'truth': 'q3', 'iters': 5} refinement ran: True s2r_fits: 0 max round trip: 0
+S2R q3 rc 0 product True 
+   keys ok: True s2r block: {'arm': 'S2R', 'truth': 'q3', 'iters': 20} refinement ran: True s2r_fits: 20 max round trip: 1.3322676295501878e-15
+nominal C-X (truth bitwise): True C-ONE max rel k=1: 2.220446049250313e-16 k=5 differs: False
+q3 C-X (truth bitwise): True C-ONE max rel k=1: 4.440892098500626e-16 k=5 differs: False
+tmp /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/s2r-e2e-ut5rofym

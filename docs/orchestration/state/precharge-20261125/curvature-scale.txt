@@ -1,0 +1,6 @@
+Curvature momentum 35–40, difference of median fractional offsets (data minus MC): 0.0362
+Curvature momentum 55–60, difference of median fractional offsets (data minus MC): 0.0360
+Held-out negative data nominal: [64059  9437  1181   192]
+Removing 3.6% of curvature momentum, projected along beam: [60468  8367   925   165]
+Nominal data minus fold: [209.5 378.  492.2  29.1]
+Varied data minus fold: [-3.3815e+03 -6.9200e+02  2.3620e+02  2.1000e+00]

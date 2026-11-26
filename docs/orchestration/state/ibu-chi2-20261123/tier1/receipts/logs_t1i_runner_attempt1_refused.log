@@ -1,0 +1,6 @@
+salloc: Granted job allocation 61928077
+salloc: Waiting for resource configuration
+salloc: Nodes nid200008 are ready for job
+[t1i] host login02 job=61928077 start 2026-11-24T17:53:45Z
+[t1i] REFUSED: on a login node
+salloc: Relinquishing job allocation 61928077

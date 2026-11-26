@@ -1,0 +1,56 @@
+Reviewer: Sonnet 5.5
+
+I read the module, tests, mutation runner, the three declaration documents and the producers it imports. I did not run the tests or mutants, because Read, Grep and Glob were the only tools. Grep also stopped working partway through (`rg` spawn EACCES). The 88 passing tests and 85 killed mutants are your reports; I only checked that the mutant anchor strings I sampled still occur once in the module at this head.
+
+## 1. My nine prior findings
+
+| # | Finding | Status | Evidence at this head |
+|---|---|---|---|
+| 1 | `figures_check` routed through BOOT | **FIXED** | `CLI_ONLY` is defined at `fd_vf_addition.py:603`. `Chain.run` runs the script directly when `pins is None or tool == CLI_ONLY` (`:617-618`). `run_e` still passes `pins={}` (`:774-776`). `Runner.test_the_figures_check_runs_as_its_cli_even_with_pins` (`test:1156`) executes the real `Chain.run`. Mutant `runner: the figures check goes through BOOT` (`mutants:79`) targets it. |
+| 2 | Control T did not assert matrix names | **FIXED** | `curated` now asserts each truth's `grade_matrix` against `vf_matrix(old, False)` and the cells (`:438-442`). For Stage G it asserts ndf and the OLD and V_F matrix names with ΔC_e before V_g (`:464-472`). F0's sigma is checked for same cells, same keys and 16 entries (`:455-458`). `identities` checks every named record list first (`:391-407`). The OLD pins are module constants (`:540-571`), verified by the chain at `:983-984`. I checked the string forms against the committed readouts: Stage G `"C_total + C_resp + C_PL5D + V_g"` with ndf 16/15 and 8/7, and `fd_f0_regrade.py:709,791` (`plus = " + {name}"`). |
+| 3 | Order tests vacuous | **FIXED** | `Order` now reaches `old_product_deposit` and `vf_arms` and asserts the order `f0,S,E,S,E,old_product_deposit,vf_arms` (`test:1044-1048`). A failing OLD product or deposit control stops before the V_F part (`:1050`). `OldProductDeposit` runs the real tools (`:1216`). `VfArms` runs the real `vf_arms` with mocked `run_f0`/`run_s`/`run_e` (`:1168`). `check_r_figures` has its own tests (`:811, 915`). |
+| 4 | Branches with no failing test | **PARTLY** | The `f0b` branch (`mutants:80`), `check_r_figures` (`:92-94`), V0's two record checks (`test:132-142`), BOOT predictions handling (`:1148`) and K1's block-json clause (`:295`) are now covered. K4 and K5 have no failing test and no mutant. K4 is the symmetry and positive-definiteness checks at `:236-239`; K5 is the correlation check at `:240-245`. |
+| 5 | Equivalent, mis-anchored and missing mutants | **FIXED** | The record pin and CSV mutants are now killable via `record_repo`. The K0 test uses a digest-consistent other product and asserts the exact check name (`test:286-293`). The K2 dF test asserts the exact last check (`:306-321`). The V2 symmetry test uses a consistent V_F (`:144-148`). Missing mutants were added for the `figures_check` route, the `f0b` branch, the figure checks, the OLD product and deposit R checks, and the order. |
+| 6 | OLD F0 reproduction unverified at the current tool | **NOT FIXED** | This cannot be fixed in code. If F0's non-block path changed, R refuses at `check_r(... "F0" ...)` (`:991`) after the NERSC connect. It fails closed. |
+| 7 | Weak C, S and K3 | **FIXED** | `check_c` (`:658-682`) checks key, name, role, structured fields, at least one block digest, the required references and the upstream digests. `check_s` (`:828-830`) and K3 (`:225-227`) require the declared five predictions on their declared cells. |
+| 8 | Pins computed from the pinned files, stale block json | **FIXED** | The chain rebuilds the block in the deploy and requires the npz and json bytes to equal the committed ones (`:969-971`). `test_the_committed_block_readout_is_what_this_code_writes` (`test:77`) covers a stale code sha. The table's OLD pins are now constants. |
+| 9 | Run-directory handling | **PARTLY** | `BA` and `--run-e` are `.resolve()`d (`:945, 956`). An existing `logs`, `S`, `E`, `vf`, `table`, `pins`, `mpl`, `tmp` or `chain.json` refuses (`:946-947`; tests `:1110, 1115`). The OLD product CSVs are tied to the pinned product JSON. The two receipt files the comparisons read are not pinned by a constant in the code: `figures-a2.sha256` (`:577`) and the 5B `chain.json` (`:882`). |
+
+## 2–3. New defects
+
+I found no BLOCKER or MAJOR. All of the following are MINOR. None can produce a wrong number or let a failed control pass.
+
+1. **Table-hash check is stricter than the declaration** (`:889-890`, applied at `:992, 999-1000, 897, 903-904`).
+   - Failure scenario: `check_table` requires every OLD and V_F arm's `table_sha256` to equal the committed readout's hash. Declaration §6 R excludes strings. If `np.savez_compressed` bytes differ at NERSC (zlib build), the first OLD control refuses.
+   - Impact: (a) no, (b) no. A false refusal is costly given the certificate expires 2026-11-26T03:28Z.
+2. **A renderer test skips in the deploy** (`test:820-828`).
+   - Failure scenario: `test_the_renderer_must_be_e_a2s` calls `skipTest` when the interpreter is E-A2's, which is the NERSC deploy. Declaration §3 requires "the test modules pass with no skip".
+   - Impact: (a) no, (b) no. It is a gate conflict.
+3. **T silently skips named lists the V_F readout lacks** (`:396-398`, `if ... key in b`).
+   - Failure scenario: an E-family readout without curated rows (g_diag, g_followup, g_sens2, flux_boot) that loses a `predictions` list passes T.
+   - Impact: (b) no. Those readouts pair no numbers in the table, and the producers' own controls apply.
+4. **The Order test's V_F check is keyed on the `vf-` prefix** (`test:1041`).
+   - Failure scenario: the V_F block rebuild runs with arm `"vf"` (`:967`) before the OLD controls. That is harmless, since it writes a pinned, byte-checked file. But the "no V_F call before the OLD controls" assertion would not see it.
+   - Impact: (a) no, (b) no.
+5. **OLD pins in `cmd_table` are circular** (`:517-518`).
+   - Failure scenario: `pins` and `pairs` both come from the chain, unlike `fd_cpl_addition.cmd_table`, which checks `COMMITTED`. The earlier loop (`:983-984`) and `A.pinned` re-hash cover it.
+   - Impact: (a) no, (b) no.
+6. **`R_EXCLUDE` adds `/code` and `/versions` for the E-with string compare** (`:582`).
+   - Failure scenario: `fd_gencmp_e.R0_EXCLUDE` excludes only `/argv`, `/code_sha256` and `/extra_block/file`, so a version-string difference would be invisible here.
+   - Impact: (a) no, (b) no. The renderer pin covers the environment.
+7. **The product's cells CSV carries `rel_sigma_DeltaC_e`** (`:189, 253`).
+   - A2 says the readings' per-cell σ table has "no ΔC_e column". This may apply only to the readings table.
+   - Impact: spec ambiguity only.
+8. **K4 and K5 have no failing test or mutant** (`:236-245`).
+   - They are redundant with V3 and K2.
+
+## Areas checked with nothing found
+
+- **Control T** (curated rows, identities on named records, matrix names): the new checks match the committed readouts' key and matrix forms and the producers' spelling.
+- **Control C**: `REQUIRED_REFS` and `STRUCTURED` match what each committed E readout records (`referenced.g_followup_readout` in g_sens2, `inputs_sha256.extra_block`, top-level `argv`).
+- **K6 readback**: `same_bits` is used for the CSV and JSON checks and the box edges, the staged files are checked before install, and a refusal leaves only the staging directory.
+- **OLD routing**: downstream OLD E steps read the committed upstreams at the declared digests, `s5p_sums` is pinned to the recorded `a45438fa…`, F1's OLD arm reads the committed F0b, and the figures are drawn in the with arms only.
+- **`check_renderer`**: `figures-a2`'s `versions` holds exactly python, numpy and matplotlib, so the key comparison is complete.
+- **Mutation runner**: KILLED requires a "Ran N tests" line, no "Failed to import test module" or `_FailedTest`, and a `FAILED (failures|errors=` summary. Loader failures are HARNESS, and the ordinary baseline runs with `VF_MUTANT_RUN` stripped. The runtime `ModuleNotFoundError` text check that CODEX-REREAD4 flagged (`mutants:191`) is no longer in the classifier.
+
+VERDICT: GO

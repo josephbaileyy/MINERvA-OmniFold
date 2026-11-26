@@ -1,0 +1,4 @@
+model=claude-sonnet-5-5 account=claude-personal (CLAUDE_CONFIG_DIR=~/.claude-personal) tools=Read,Grep,Glob strict-mcp cwd=copy commit=292b8a8bc started=2026-11-25T18:59:55Z cli=
+rc=127 ended=2026-11-25T18:59:55Z
+INPUTS-UNCHANGED
+bash: line 3: claude: command not found

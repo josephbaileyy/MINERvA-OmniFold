@@ -1,0 +1,32 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+	Command being timed: "python3 /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/scripts/rebuild.py"
+	User time (seconds): 50.33
+	System time (seconds): 5.02
+	Percent of CPU this job got: 210%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:26.28
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 7744348
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 21
+	Minor (reclaiming a frame) page faults: 551352
+	Voluntary context switches: 39760
+	Involuntary context switches: 28089
+	Swaps: 0
+	File system inputs: 3334260
+	File system outputs: 624
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

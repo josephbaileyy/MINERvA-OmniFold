@@ -1,0 +1,76 @@
+**Reviewer: Sonnet 5.5 (claude-sonnet-5-5).** I could not run the tests or mutants, because Bash was disabled in this session. Everything below is from reading the files.
+
+**Findings** (also submitted through ReportFindings):
+
+1. **MAJOR: `figures_check` will exit rc 1 on the first E arm, and no test would catch it.**
+   - `run_e` passes `pins={}` for `fd_g_figures_check` (`fd_vf_addition.py:569-571`). `Chain.run` only runs the script directly when `pins is None` (`:472-478`).
+   - `{}` is not None, so the step goes through BOOT, which calls `T.build_args` and `T.run` (`:458`). `fd_g_figures_check.py` defines only `main()` (`:297`) and imports neither.
+   - `fd_gencmp_e.Chain.run` special-cases this tool (`fd_gencmp_e.py:284-287`). The vf copy dropped that special case.
+   - The chain stops with control C after the first E arm's figures, before any V_F step. No wrong number is produced, but Phase 1 cannot complete.
+   - Fix: in `Chain.run`, run the script directly when `tool == "fd_g_figures_check"`, or pass `pins=None` from `run_e`. Add a test that inspects the real command.
+
+2. **MAJOR: control T's "each side names its matrix" is not implemented.**
+   - `curated()` (`:323-347`) checks only the order of truth names and prediction names. It records the `matrix` and `grade_matrix` strings but never asserts them.
+   - `fd_cpl_addition.cmd_table` does assert them (`fd_cpl_addition.py:562-566`).
+   - The OLD table pins are `sha256` values computed at runtime (`:732`). The only check against the declared constants is the earlier loop at `:641-642`.
+   - Fix: assert the OLD and V_F matrix strings per Stage G pair and the `grade_matrix` per F readout.
+
+3. **MAJOR (test gap): the Order tests never reach the OLD product and deposit controls or any V_F arm.**
+   - The fake deploy has no `with-cpl/data-product` directory, so `cmd_chain` dies at the "R data_product" check (`:667-669`) in every run. The "no `vf-` call" assertion is therefore vacuous after that point.
+   - Nothing tests OLD data-product R, OLD deposit R, `check_r_figures` (patched out at `test:553`), or the V_F section (`:687-732`).
+   - Fix: copy those directories into the fake deploy, add failing labels for the product and deposit R checks, and add a happy-path test that reaches the table.
+
+4. **MINOR: branches with no failing test.** Deleting any of these leaves the suite green:
+   - the `f0b` branch of `check_s` (`:599-602`);
+   - K1's block-json clause (`:187-188`);
+   - K4, K5, K6 and V4;
+   - the `curated` "/g" branch;
+   - `check_r_figures`;
+   - BOOT's predictions handling;
+   - V0's two record checks (`:133-135`).
+
+5. **MINOR: equivalent, mis-anchored and missing mutants.**
+   - Likely survivors:
+     - "V0: record's V_F pin" and "V0: record's V_F vs CSV" cannot be killed, because no test alters `blocks5d.json`.
+     - "K0: committed product's pin unchecked" is equivalent under its test, because `A.pinned` at `:249` also fires on `"0"*64`.
+     - "K2: dF not V_F − C_e" is mis-anchored. The test scales only dF, so the second K2 check (`:200-202`) still fires with the same control.
+     - "V2: L's symmetry unchecked" is mis-anchored. The asymmetric-L test also breaks the V_F = L C_e Lᵀ identity (`:106`).
+   - Missing mutants: the `figures_check` route, the `check_s` `f0b` branch, `check_r_figures`, OLD product and deposit R, and the order of V_F arms relative to those R checks.
+
+6. **MINOR (risk): the OLD F0 reproduction is unverified at the current tool.**
+   - The committed F0 readout was written by `fd_f0_regrade.py` sha `05f9161c` (`fd_f0_readout.json:3836`). F0b and F1 were last written by `37427d9d` and `0dfa722c`.
+   - The earlier chain's R reproduced F0b and F1 at the current tool. No recorded run reproduces F0 itself.
+   - The F0 argv matches the recorded one exactly (`:3840-3876`).
+   - If the non-block path changed, R on F0 refuses at the first step. That is a correct refusal, but it would only show up after the NERSC connect.
+
+7. **MINOR: weak C, S and K3 controls.**
+   - `check_c` (`:605-611`) checks only the block sha and the upstream digests, not the recorded key or name.
+   - `check_s` (`:596-598`) and K3 (`:204-208`) loop over predictions with no count or name check, so an empty list passes.
+
+8. **MINOR: some pins are computed from the files they pin, and the block json will go stale.**
+   - The block-json, V_F deposit and table pins (`:712`, `:714`, `:732`) are computed at runtime from the pinned files themselves, so they add no check.
+   - `vf_block.json` embeds the sha of `fd_vf_addition.py` (`:158`). After any fix from this review it names a stale code sha, while the npz stays valid.
+
+9. **MINOR: run-directory handling.**
+   - A relative `--run-dir` breaks, because subprocesses run with `cwd=BA`.
+   - `logs/` can pre-exist and gets overwritten silently.
+   - The OLD figure, deposit and product-CSV comparison targets have no sha pins.
+
+**Checks that hold (none found):**
+
+- **Check 1 (matrix and controls):**
+  - dF is formed as `VF − Ce` (`:110`), and the three extra blocks match the declaration (`:114`).
+  - The two revised matrices are `old + dF` (`:115-116`), and all five inputs are pinned (`:129`).
+  - V0–V4 match section 6 at the stated tolerances, and the block-rebuild check compares the npz bytes to the pin (`:633-634`).
+- **Check 2 (argv):**
+  - The OLD F0 argv matches `fd_f0_readout.json:3840`. F0b, F1 and g match `chain.json:640/697/768`. The chdefs steps match `gencmp-e chain.json:1187-1410`.
+  - The block flags, E pins and `s5p_sums` replacement are right.
+  - The only deviation is figure-flag order, which argparse ignores.
+  - All pinned OLD sha constants match the declaration table.
+- **Check 3 (control R):** every OLD comparison is routed through `Chain.check`, which raises `Stop`, and `cmd_chain` catches it. Strings are compared for the E-with arm only, as in `fd_gencmp_e` R0. The code order is right: F0, then S and E per side, then the product and deposit, then the V_F arms.
+- **Check 4 (controls C, S, K):** the code matches what section 6 describes for K3, both sides of S, and the block and upstream digests, apart from the gaps in items 2 and 7.
+- **Check 5 (data product and deposit):** the product holds both revised matrices, the correlation of the reported one, relative sigmas and the CSVs read back. `deposit_variant` uses `REPORTED_F` and the right name. BOOT maps `with-cpl` to A and `with-vf` to V.
+- **Check 6 (OLD data product and deposit):** the OLD product pins are identical to the committed product's `inputs_sha256` (`fd_data_product_cpl.json:2753-2757`). The deposit variant is A's, with the committed pins.
+- **Check 7 (platform):** everything is written under `BA`, `RUN_E`'s `pred/` and `inputs/` are used as `fd_gencmp_e` uses them, and the committed inputs exist.
+
+**Verdict:** do not bind or run until item 1 is fixed (it would kill Phase 1 at the first E arm) and items 2 and 3 are fixed (a declared control is missing, and the ordering claim is untested). No finding produces a wrong number or lets a failed OLD control through. Items 4–9 can be fixed at the same time.

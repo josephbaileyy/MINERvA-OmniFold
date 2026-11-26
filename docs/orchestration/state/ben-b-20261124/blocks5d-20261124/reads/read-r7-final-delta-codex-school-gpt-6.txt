@@ -1,0 +1,18 @@
+**Model GPT-6 (Codex).** Reviewed `93ec63dd6..289daa3ca`. Ten focused tests passed with an in-memory filesystem. Native filesystem durability and the full LL5D build were outside this recheck.
+
+## BLOCKERS
+
+None.
+
+## MAJORS
+
+- **A STOP can leave a published result.** The rename succeeds before the parent is synced. If that sync fails, the CLI returns 5, the complete output remains, and a retry refuses the existing destination. I reproduced this with an injected `PermissionError`. An output parent that permits creation but denies read access can trigger it because `_fsync_dir` opens the parent read-only. This contradicts A1’s refusal guarantee. `b5d_build.py:325–330,573–585` · `B5D-AMENDMENT-A1.md:118–122`
+
+## Minors
+
+- **C-LEAK’s type check is incomplete.** A list becoming a tuple passes, and paired `V_F=[[None]]` passes despite the float-entry requirement. The null exemption applies inside matrices and under `C_b_abs`, where it has no intended meaning. `b5d_build.py:484–496` · `B5D-AMENDMENT-A1.md:103–104`
+- **The generator regression test misses the original failure.** I restored Tune-v1-only scaling in `_build` and the new test still passed. It checks the helper separately, and its added `genie_cv` value never reaches the compared record. Production does scale all predictions. `test_b5d.py:725–734` · `b5d_build.py:377–378`
+- **The new PSD guard rejects a valid zero covariance.** Injecting zero `C_e` triggers C-PSD even though it has no kept modes and would yield zero `V_F`. The guard also accepted `diag(1,…,1,−5e−13)` and carried the negative mode into `V_F`. The pinned matrix passed. `b5d_build.py:223–233,446–450`
+- **A1 understates the closure dependency.** It says closure products enter only via `R`, but B-SEL also uses the NuWro closure’s `xsec/xtrue−1` to validate the bias. A mismatch there can STOP with `R` unchanged. `B5D-AMENDMENT-A1.md:100–102` · `bsel_select.py:214–219`
+
+The short staging name, protected `ABS_SCALE` assignment, field-specific CLI leak assertion, per-band CLI states, text diagnostics, and fixture cleanup are in place. The documented missing-parent refusal and exact-zero comparison tolerance remain.

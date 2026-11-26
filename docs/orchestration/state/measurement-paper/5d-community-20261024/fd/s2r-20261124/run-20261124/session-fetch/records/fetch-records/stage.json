@@ -1,0 +1,158 @@
+{
+ "schema": "prr-stage/1",
+ "dest": "/pscratch/sd/j/josephrb/s2r-20261124/stage",
+ "files": [
+  {
+   "role": "of_inputs_5d",
+   "src": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+   "sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+   "name": "of_inputs_5d.npz",
+   "copy": "/pscratch/sd/j/josephrb/s2r-20261124/stage/of_inputs_5d.npz",
+   "stat_before": {
+    "size": 1548438020,
+    "mtime_ns": 1782610308000000000,
+    "atime_ns": 1794546256000000000,
+    "ino": 882725251803251539
+   },
+   "stat_after": {
+    "size": 1548438020,
+    "mtime_ns": 1782610308000000000,
+    "atime_ns": 1794546256000000000,
+    "ino": 882725251803251539
+   }
+  },
+  {
+   "role": "bkg_dump",
+   "src": "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+   "sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955",
+   "name": "bkg_dump.npz",
+   "copy": "/pscratch/sd/j/josephrb/s2r-20261124/stage/bkg_dump.npz",
+   "stat_before": {
+    "size": 16017201,
+    "mtime_ns": 1790319104000000000,
+    "atime_ns": 1794546256000000000,
+    "ino": 882726729389460450
+   },
+   "stat_after": {
+    "size": 16017201,
+    "mtime_ns": 1790319104000000000,
+    "atime_ns": 1794546256000000000,
+    "ino": 882726729389460450
+   }
+  },
+  {
+   "role": "bank_cv",
+   "src": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz",
+   "sha256": "072643e1e86ed0f359fa2dc94b87eebe5c9437615c05df5fbeb65e7d89ce9e3b",
+   "name": "bank/cv.npz",
+   "copy": "/pscratch/sd/j/josephrb/s2r-20261124/stage/bank/cv.npz",
+   "stat_before": {
+    "size": 2163648810,
+    "mtime_ns": 1784034785000000000,
+    "atime_ns": 1794179841000000000,
+    "ino": 882725636068606034
+   },
+   "stat_after": {
+    "size": 2163648810,
+    "mtime_ns": 1784034785000000000,
+    "atime_ns": 1794179841000000000,
+    "ino": 882725636068606034
+   }
+  },
+  {
+   "role": "closure_ratio_nuwro",
+   "src": "/pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json",
+   "sha256": "38e47eb6b6ac63f6657022ae0cc5a2b5eaffc6a2e503735ce7222275771fea6e",
+   "name": "pvl/prep/ratios/L-5D-PV/nuwro.json",
+   "copy": "/pscratch/sd/j/josephrb/s2r-20261124/stage/pvl/prep/ratios/L-5D-PV/nuwro.json",
+   "stat_before": {
+    "size": 547429,
+    "mtime_ns": 1792832124000000000,
+    "atime_ns": 1794492598000000000,
+    "ino": 882727026430050692
+   },
+   "stat_after": {
+    "size": 547429,
+    "mtime_ns": 1792832124000000000,
+    "atime_ns": 1794492598000000000,
+    "ino": 882727026430050692
+   }
+  },
+  {
+   "role": "rho_gibuu_cv-F",
+   "src": "/pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-gibuu_cv-F.npz",
+   "sha256": "d8f52112b010e5adb6a56fa4aa3629b4c98ab62a1cea3b4190af77c3ac33491b",
+   "name": "s5p-nullsF/rho-gibuu_cv-F.npz",
+   "copy": "/pscratch/sd/j/josephrb/s2r-20261124/stage/s5p-nullsF/rho-gibuu_cv-F.npz",
+   "stat_before": {
+    "size": 39772,
+    "mtime_ns": 1790500245000000000,
+    "atime_ns": 1794937564000000000,
+    "ino": 882726774268509589
+   },
+   "stat_after": {
+    "size": 39772,
+    "mtime_ns": 1790500245000000000,
+    "atime_ns": 1794937564000000000,
+    "ino": 882726774268509589
+   }
+  },
+  {
+   "role": "prr_B0_nominal_s991000",
+   "src": "/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s991000.npz",
+   "sha256": "7ae8db0ea0163f36f8287c4ab99a1c6adc9ac38803a058c4e46db3c39665e63b",
+   "name": "fd-prr/runs/B0/nominal/prr_B0_nominal_s991000.npz",
+   "copy": "/pscratch/sd/j/josephrb/s2r-20261124/stage/fd-prr/runs/B0/nominal/prr_B0_nominal_s991000.npz",
+   "stat_before": {
+    "size": 184263,
+    "mtime_ns": 1794200695000000000,
+    "atime_ns": 1794267345000000000,
+    "ino": 882727106323153153
+   },
+   "stat_after": {
+    "size": 184263,
+    "mtime_ns": 1794200695000000000,
+    "atime_ns": 1794267345000000000,
+    "ino": 882727106323153153
+   }
+  },
+  {
+   "role": "prr_B0_A7_gibuu_s991000",
+   "src": "/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s991000.npz",
+   "sha256": "e2f2b4d4bb4dfeffef8abd996441bfc40741679ccf843675d6a1a28d9e4d258f",
+   "name": "fd-prr/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s991000.npz",
+   "copy": "/pscratch/sd/j/josephrb/s2r-20261124/stage/fd-prr/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s991000.npz",
+   "stat_before": {
+    "size": 184401,
+    "mtime_ns": 1794200647000000000,
+    "atime_ns": 1794267345000000000,
+    "ino": 882727106323153146
+   },
+   "stat_after": {
+    "size": 184401,
+    "mtime_ns": 1794200647000000000,
+    "atime_ns": 1794267345000000000,
+    "ino": 882727106323153146
+   }
+  },
+  {
+   "role": "prr_B0_q3_s991000",
+   "src": "/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/q3/prr_B0_q3_s991000.npz",
+   "sha256": "9b66541cc77ab41f3e45a42477164c8c7db9141fab71bf375d51e4c697195bb5",
+   "name": "fd-prr/runs/B0/q3/prr_B0_q3_s991000.npz",
+   "copy": "/pscratch/sd/j/josephrb/s2r-20261124/stage/fd-prr/runs/B0/q3/prr_B0_q3_s991000.npz",
+   "stat_before": {
+    "size": 184471,
+    "mtime_ns": 1794227929000000000,
+    "atime_ns": 1794267345000000000,
+    "ino": 882727304915103145
+   },
+   "stat_after": {
+    "size": 184471,
+    "mtime_ns": 1794227929000000000,
+    "atime_ns": 1794267345000000000,
+    "ino": 882727304915103145
+   }
+  }
+ ]
+}

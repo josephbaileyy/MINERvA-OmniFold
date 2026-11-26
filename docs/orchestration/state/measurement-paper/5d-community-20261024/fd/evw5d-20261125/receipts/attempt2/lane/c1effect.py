@@ -1,0 +1,11 @@
+import sys, numpy as np
+z = np.load(sys.argv[1], allow_pickle=False)
+x = z["xsec_flat"]; c = z["completeness"].ravel(); v = z["volume"]; m = z["fine_to_cell"]; g = z["good"].ravel()
+f = np.array([np.sum((x * v)[m == r]) for r in range(16)])
+x1 = np.where(g, x * c, 0.0)   # the cross section with c set to 1 (numerator unchanged)
+f1 = np.array([np.sum((x1 * v)[m == r]) for r in range(16)])
+rel = np.abs(f1 / f - 1)
+print("f max rel change if c:=1", rel.max(), "per cell", np.array2string(rel, precision=2))
+bad = np.flatnonzero(g & (np.abs(c - 1) > 1e-12))
+print("bad cells' coarse cell", m[bad].tolist())
+print("bad cells' |x*c/x - 1| max", np.abs(c[bad] - 1).max())

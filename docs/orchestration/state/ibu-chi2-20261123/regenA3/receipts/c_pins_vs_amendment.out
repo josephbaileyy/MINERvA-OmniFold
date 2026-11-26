@@ -1,0 +1,8 @@
+declared: 6 measured: 6
+PASS 3986c85a3a1ee4306424cbfb32ded6fc4b35710f271284e3dbb68937292a4da2 docs/orchestration/state/ibu-chi2-20261123/tier1/units/old/c2_central.npz | ../tier1/units/old/c2_central.npz
+PASS b6cb61429b8d5a6f694147fb2ff985462eb433ab2478cda900d3ef8924ceaab0 docs/orchestration/state/ibu-chi2-20261123/tier1/units/e/c2_central.npz | ../tier1/units/e/c2_central.npz
+PASS 469926b642612504e1844da8c5c34bde6fab79f4a590337ebf9771486d9e5931 docs/orchestration/state/ibu-chi2-20261123/tier1/score.out | ../tier1/score.out
+PASS 0ee21301744cf04df4e1ebf7224692a00fba5188532b31af9d596be8ce69cf5a docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2/read-2/readout.json | ../../measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2/read-2/readout.json
+PASS 7e641754515d64b0361cdfbfe17966d514485ed819ea594298a262ea2c6de6dd 2d-unfolding/compare_to_paper_fullcov.py | /Users/josephbailey/local-research/wt-ibu-chi2-a3/2d-unfolding/compare_to_paper_fullcov.py
+PASS 6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3 cov_ptpl_minerva_inclusive_6GeV.root | /Users/josephbailey/cov2d-work/figfetch/er-anc/cov_ptpl_minerva_inclusive_6GeV.root
+C-PINS-DECLARED: PASS

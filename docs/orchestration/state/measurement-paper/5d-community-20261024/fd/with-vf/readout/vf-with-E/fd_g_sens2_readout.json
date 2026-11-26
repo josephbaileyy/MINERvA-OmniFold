@@ -1,0 +1,7016 @@
+{
+ "schema": "fd-g-sens2-readout/1",
+ "labels": {
+  "what": "G-SENS2 (FD-G-SENS2-DECLARATION.md): flux, detector and lateral each shrunk alone, as G-SENS; numbers only, no new statistic",
+  "sens": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result: one family of S1 groups has its correlations shrunk toward the diagonal, C(alpha) = D^1/2 [(1 - alpha) rho + alpha I] D^1/2, its variances kept; no p-value",
+  "units": "relative to f: d = (f - g)/f, M = (C + V_g)/(f f^T), so sqrt(lambda) is a relative sigma (the G-DIAG ruling); chi2 and ndf are unit-free",
+  "shares": "block share of a mode = v^T B v / lambda over the shrunk matrix's own blocks (G-DIAG's: S1's seven groups, the three vertices, C_resp, V_g); the top mode is that matrix's own. alpha_0_mode_at_0.1: the alpha = 0 top mode's direction v under the alpha = 0.1 blocks, shares v^T B v / v^T M v and chi2_along = (v^T d)^2 / v^T M v (descriptive; v is not an eigenvector there); overlap_abs = |v_0 . v_0.1|; flux_ratio = v^T F v / v^T diag(F) v for the unshrunk flux block F",
+  "referenced": "interaction alone and the joint family are G-FOLLOWUP's (its readout, pinned), not recomputed; H0 recomputes two of their chi2 as an identity check",
+  "not": "no reading, claim or paper text"
+ },
+ "controls_passed": [
+  "D0",
+  "D1",
+  "D2",
+  "D3",
+  "D4",
+  "D5",
+  "H0",
+  "H1",
+  "S0",
+  "S1",
+  "S2",
+  "H2"
+ ],
+ "constants": {
+  "families": {
+   "flux": [
+    "flux"
+   ],
+   "detector": [
+    "detector"
+   ],
+   "lateral": [
+    "lateral"
+   ]
+  },
+  "role": "single group",
+  "alphas": [
+   0.0,
+   0.1,
+   0.25,
+   0.5,
+   1.0
+  ],
+  "lead": 3,
+  "fractions": [
+   0.5,
+   0.9,
+   0.99
+  ],
+  "identity": [
+   [
+    "interaction",
+    1.0,
+    "nuwro"
+   ],
+   [
+    "c_e_systematic",
+    0.25,
+    "gibuu"
+   ]
+  ],
+  "shares": [
+   "flux",
+   [
+    0.0,
+    0.1
+   ]
+  ],
+  "reproduction": 1e-10
+ },
+ "referenced": {
+  "g_followup_readout": "030b15664f2ace0869e3ec159bbae9efacf86e109f3c03608f481716821fdfe9",
+  "families": {
+   "interaction": [
+    "interaction"
+   ],
+   "c_e_systematic": [
+    "interaction",
+    "flux",
+    "detector",
+    "lateral"
+   ]
+  }
+ },
+ "identity": [
+  {
+   "family": "interaction",
+   "alpha": 1.0,
+   "prediction": "nuwro",
+   "chi2_g_followup_readout": 71.96043458753314,
+   "chi2_recomputed": 71.96043458753314,
+   "relative_difference": 0.0
+  },
+  {
+   "family": "c_e_systematic",
+   "alpha": 0.25,
+   "prediction": "gibuu",
+   "chi2_g_followup_readout": 39.03276128946861,
+   "chi2_recomputed": 39.03276128946861,
+   "relative_difference": 0.0
+  }
+ ],
+ "sens": {
+  "reported_matrix": "C_total + C_resp + C_PL5D + DeltaC_e + V_g",
+  "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+  "mode_index": "a top mode's index is its place in that matrix's own eigen-order (lambda descending); it does not name the same mode across alpha",
+  "unchanged": {
+   "flux": [
+    "stat",
+    "interaction",
+    "detector",
+    "lateral",
+    "normalization",
+    "seed",
+    "C_model:genie_mec",
+    "C_model:nuwro",
+    "C_model:gibuu",
+    "C_resp + C_PL5D + DeltaC_e",
+    "V_g"
+   ],
+   "detector": [
+    "stat",
+    "interaction",
+    "flux",
+    "lateral",
+    "normalization",
+    "seed",
+    "C_model:genie_mec",
+    "C_model:nuwro",
+    "C_model:gibuu",
+    "C_resp + C_PL5D + DeltaC_e",
+    "V_g"
+   ],
+   "lateral": [
+    "stat",
+    "interaction",
+    "flux",
+    "detector",
+    "normalization",
+    "seed",
+    "C_model:genie_mec",
+    "C_model:nuwro",
+    "C_model:gibuu",
+    "C_resp + C_PL5D + DeltaC_e",
+    "V_g"
+   ]
+  },
+  "records": [
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.0,
+    "prediction": "genie_cv",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 64.0123343280672,
+    "chi2_at_alpha_0": 64.01233432806745,
+    "chi2": 64.01233432806745,
+    "ndf": 16,
+    "condition": 660.0110677894274,
+    "lambda_min": 8.275005409071232e-05,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.04252643349136385,
+     "chi2": 15.839236113699197,
+     "fraction": 0.24744037660807808,
+     "leading_cells": [
+      {
+       "cell": "R06",
+       "loading": 0.48644693728417715
+      },
+      {
+       "cell": "R03",
+       "loading": -0.37959813165992473
+      },
+      {
+       "cell": "R14",
+       "loading": -0.34959834758258573
+      }
+     ],
+     "loadings": {
+      "R00": 0.19262726532009405,
+      "R01": -0.1597145904381131,
+      "R02": 0.11233897843924819,
+      "R03": -0.37959813165992473,
+      "R04": 0.033099610199635504,
+      "R05": -0.13999814963005774,
+      "R06": 0.48644693728417715,
+      "R07": 0.28305056993568967,
+      "R08": 0.25851161570600384,
+      "R09": -0.024786452285259174,
+      "R10": -0.16535270363950624,
+      "R11": -0.2480789652320241,
+      "R12": -0.2016202352433679,
+      "R13": 0.33910776126759096,
+      "R14": -0.34959834758258573,
+      "R15": -0.09506194655822223
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 64.01233432806738,
+     "chi2_lstsq": 64.0123343280675,
+     "rel_mode_sum_vs_cholesky": 1.110009099369071e-15,
+     "rel_lstsq_vs_cholesky": 6.660054596214426e-16,
+     "rel_ridge_vs_cholesky": 1.666970595095794e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 2.188693385676194e-07
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.1,
+    "prediction": "genie_cv",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 64.0123343280672,
+    "chi2_at_alpha_0": 64.01233432806745,
+    "chi2": 54.575605588427145,
+    "ndf": 16,
+    "condition": 261.5437383685933,
+    "lambda_min": 0.00020777103948643248,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.04392770189181859,
+     "chi2": 15.394520247077129,
+     "fraction": 0.2820769477698931,
+     "leading_cells": [
+      {
+       "cell": "R06",
+       "loading": 0.49804593212002135
+      },
+      {
+       "cell": "R03",
+       "loading": -0.3804667998504748
+      },
+      {
+       "cell": "R14",
+       "loading": -0.34967171636442784
+      }
+     ],
+     "loadings": {
+      "R00": 0.18800605986125382,
+      "R01": -0.15125978626780845,
+      "R02": 0.1183419893731956,
+      "R03": -0.3804667998504748,
+      "R04": 0.03310806787304821,
+      "R05": -0.14975378277967769,
+      "R06": 0.49804593212002135,
+      "R07": 0.27634612636124223,
+      "R08": 0.2541679958074506,
+      "R09": -0.022332958013749928,
+      "R10": -0.17275815388734894,
+      "R11": -0.24182733911923832,
+      "R12": -0.19251304510860204,
+      "R13": 0.33524481003397266,
+      "R14": -0.34967171636442784,
+      "R15": -0.09964174527626998
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 54.57560558842742,
+     "chi2_lstsq": 54.5756055884272,
+     "rel_mode_sum_vs_cholesky": 5.077573834658485e-15,
+     "rel_lstsq_vs_cholesky": 1.0415536071094329e-15,
+     "rel_ridge_vs_cholesky": 9.069193933878471e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.00011853014399862322
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.25,
+    "prediction": "genie_cv",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 64.0123343280672,
+    "chi2_at_alpha_0": 64.01233432806745,
+    "chi2": 47.53731595879198,
+    "ndf": 16,
+    "condition": 137.16276499875838,
+    "lambda_min": 0.00039422288638019153,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 7,
+     "99%": 14
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.04595267283915396,
+     "chi2": 14.793459646149842,
+     "fraction": 0.31119677978819055,
+     "leading_cells": [
+      {
+       "cell": "R06",
+       "loading": 0.5140062098367849
+      },
+      {
+       "cell": "R03",
+       "loading": -0.3813371648481802
+      },
+      {
+       "cell": "R14",
+       "loading": -0.3492767351446825
+      }
+     ],
+     "loadings": {
+      "R00": 0.18093378000618882,
+      "R01": -0.13807065119780987,
+      "R02": 0.12682566871694007,
+      "R03": -0.3813371648481802,
+      "R04": 0.033142373568721184,
+      "R05": -0.1645654479523795,
+      "R06": 0.5140062098367849,
+      "R07": 0.26641952346406983,
+      "R08": 0.24709628134242118,
+      "R09": -0.01823333870586318,
+      "R10": -0.18316635007621715,
+      "R11": -0.23270565047374114,
+      "R12": -0.17964191602238216,
+      "R13": 0.3297683858701314,
+      "R14": -0.3492767351446825,
+      "R15": -0.10597748199604905
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 47.537315958792036,
+     "chi2_lstsq": 47.53731595879195,
+     "rel_mode_sum_vs_cholesky": 1.1957641636747663e-15,
+     "rel_lstsq_vs_cholesky": 5.978820818373832e-16,
+     "rel_ridge_vs_cholesky": 5.901819585053995e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.00029180835412867355
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.5,
+    "prediction": "genie_cv",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 64.0123343280672,
+    "chi2_at_alpha_0": 64.01233432806745,
+    "chi2": 41.38653283537124,
+    "ndf": 16,
+    "condition": 76.66480970686457,
+    "lambda_min": 0.0007027620948527401,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 7,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.049151008879607994,
+     "chi2": 13.926105720732096,
+     "fraction": 0.3364888229735948,
+     "leading_cells": [
+      {
+       "cell": "R06",
+       "loading": 0.5369259598567687
+      },
+      {
+       "cell": "R03",
+       "loading": -0.38170643757014444
+      },
+      {
+       "cell": "R14",
+       "loading": -0.3471697285963253
+      }
+     ],
+     "loadings": {
+      "R00": 0.16888435370553792,
+      "R01": -0.11485878058598903,
+      "R02": 0.13967147444665023,
+      "R03": -0.38170643757014444,
+      "R04": 0.033210346186885925,
+      "R05": -0.1897995387148717,
+      "R06": 0.5369259598567687,
+      "R07": 0.25022785227864064,
+      "R08": 0.23378386595966433,
+      "R09": -0.01049221682234805,
+      "R10": -0.1988901324944447,
+      "R11": -0.21836223069757457,
+      "R12": -0.16028759762571387,
+      "R13": 0.32178228579860246,
+      "R14": -0.3471697285963253,
+      "R15": -0.11523996211832183
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 41.38653283537123,
+     "chi2_lstsq": 41.38653283537117,
+     "rel_mode_sum_vs_cholesky": 3.4336905610649784e-16,
+     "rel_lstsq_vs_cholesky": 1.7168452805324893e-15,
+     "rel_ridge_vs_cholesky": 4.0181029777129576e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.0005768661631645231
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 1.0,
+    "prediction": "genie_cv",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 64.0123343280672,
+    "chi2_at_alpha_0": 64.01233432806745,
+    "chi2": 36.764578516750746,
+    "ndf": 16,
+    "condition": 41.05143587042787,
+    "lambda_min": 0.001314486266077902,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 6,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.055024223201196786,
+     "chi2": 12.552387553806044,
+     "fraction": 0.341426124281199,
+     "leading_cells": [
+      {
+       "cell": "R06",
+       "loading": 0.569352170297923
+      },
+      {
+       "cell": "R03",
+       "loading": -0.3786852293838835
+      },
+      {
+       "cell": "R14",
+       "loading": -0.33661017093715756
+      }
+     ],
+     "loadings": {
+      "R00": 0.14465212123062676,
+      "R01": -0.06519189641642129,
+      "R02": 0.16066222142680592,
+      "R03": -0.3786852293838835,
+      "R04": 0.03288792668278378,
+      "R05": -0.24267275665709692,
+      "R06": 0.569352170297923,
+      "R07": 0.21931275069054498,
+      "R08": 0.20041745290376733,
+      "R09": 0.006784416867983619,
+      "R10": -0.22553189088831366,
+      "R11": -0.194410400805035,
+      "R12": -0.13023568368577676,
+      "R13": 0.31217762047007336,
+      "R14": -0.33661017093715756,
+      "R15": -0.12955091832568488
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 36.76457851675076,
+     "chi2_lstsq": 36.764578516750746,
+     "rel_mode_sum_vs_cholesky": 3.8653658734934846e-16,
+     "rel_lstsq_vs_cholesky": 0.0,
+     "rel_ridge_vs_cholesky": 2.6842956001158035e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.0011251784162376224
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.0,
+    "prediction": "genie_mec",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 140.3401321448855,
+    "chi2_at_alpha_0": 140.34013214488598,
+    "chi2": 140.34013214488598,
+    "ndf": 16,
+    "condition": 650.2497618838295,
+    "lambda_min": 8.399453010357433e-05,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 7,
+     "99%": 11
+    },
+    "top_mode": {
+     "mode": 13,
+     "sigma": 0.015700778470386794,
+     "chi2": 55.306891485190775,
+     "fraction": 0.39409177289424524,
+     "leading_cells": [
+      {
+       "cell": "R01",
+       "loading": 0.4336344278657577
+      },
+      {
+       "cell": "R04",
+       "loading": -0.42698890567918946
+      },
+      {
+       "cell": "R08",
+       "loading": 0.3717506270268526
+      }
+     ],
+     "loadings": {
+      "R00": -0.32124565442672787,
+      "R01": 0.4336344278657577,
+      "R02": -0.01838059252512203,
+      "R03": -0.18165806696110706,
+      "R04": -0.42698890567918946,
+      "R05": -0.1554287527932301,
+      "R06": -0.03942874218894915,
+      "R07": 0.2749174089304317,
+      "R08": 0.3717506270268526,
+      "R09": -0.3593892374627263,
+      "R10": 0.096065133794391,
+      "R11": 0.028422241229822533,
+      "R12": -0.09927895755200969,
+      "R13": 0.02841615054227372,
+      "R14": 0.32205934117839635,
+      "R15": 0.005620329651160411
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 140.34013214488598,
+     "chi2_lstsq": 140.34013214488579,
+     "rel_mode_sum_vs_cholesky": 0.0,
+     "rel_lstsq_vs_cholesky": 1.4176412902863146e-15,
+     "rel_ridge_vs_cholesky": 3.518859287259658e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 2.188693385676194e-07
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.1,
+    "prediction": "genie_mec",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 140.3401321448855,
+    "chi2_at_alpha_0": 140.34013214488598,
+    "chi2": 101.77671275130987,
+    "ndf": 16,
+    "condition": 260.02345548746837,
+    "lambda_min": 0.00020899161099754607,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 7,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 13,
+     "sigma": 0.019465974793688428,
+     "chi2": 36.172063294374674,
+     "fraction": 0.35540608766526605,
+     "leading_cells": [
+      {
+       "cell": "R01",
+       "loading": 0.4478665678739898
+      },
+      {
+       "cell": "R09",
+       "loading": -0.410075378960906
+      },
+      {
+       "cell": "R04",
+       "loading": -0.4008674598512172
+      }
+     ],
+     "loadings": {
+      "R00": -0.30281358737946784,
+      "R01": 0.4478665678739898,
+      "R02": -0.04184410885929324,
+      "R03": -0.18336506236175934,
+      "R04": -0.4008674598512172,
+      "R05": -0.14285514307594965,
+      "R06": -0.03321004662717572,
+      "R07": 0.2772755923644587,
+      "R08": 0.36274947357025866,
+      "R09": -0.410075378960906,
+      "R10": 0.0871206537344012,
+      "R11": 0.02601952227751348,
+      "R12": -0.0909743030025315,
+      "R13": 0.018837615933821748,
+      "R14": 0.3086408441426247,
+      "R15": 0.036775650138428886
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 101.77671275130997,
+     "chi2_lstsq": 101.77671275131003,
+     "rel_mode_sum_vs_cholesky": 9.77394340191379e-16,
+     "rel_lstsq_vs_cholesky": 1.5359053917293099e-15,
+     "rel_ridge_vs_cholesky": 1.6815036377547331e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.00011853014399862322
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.25,
+    "prediction": "genie_mec",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 140.3401321448855,
+    "chi2_at_alpha_0": 140.34013214488598,
+    "chi2": 78.42512031936151,
+    "ndf": 16,
+    "condition": 136.75573564437767,
+    "lambda_min": 0.0003954076076202675,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 7,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 13,
+     "sigma": 0.024003478855984195,
+     "chi2": 23.663150728320552,
+     "fraction": 0.30172922441125766,
+     "leading_cells": [
+      {
+       "cell": "R09",
+       "loading": 0.4801067997855788
+      },
+      {
+       "cell": "R01",
+       "loading": -0.46448727783461813
+      },
+      {
+       "cell": "R04",
+       "loading": 0.3665215512389935
+      }
+     ],
+     "loadings": {
+      "R00": 0.2663940961238156,
+      "R01": -0.46448727783461813,
+      "R02": 0.07942614896876196,
+      "R03": 0.1829442713589782,
+      "R04": 0.3665215512389935,
+      "R05": 0.12255592101740519,
+      "R06": 0.02146651048260137,
+      "R07": -0.27737831016979475,
+      "R08": -0.34282980942567587,
+      "R09": 0.4801067997855788,
+      "R10": -0.07417434692445382,
+      "R11": -0.020375713422125456,
+      "R12": 0.07297830102877037,
+      "R13": -0.0060189139285230595,
+      "R14": -0.2835430265058287,
+      "R15": -0.08390808600330445
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 78.42512031936164,
+     "chi2_lstsq": 78.42512031936155,
+     "rel_mode_sum_vs_cholesky": 1.6308255813442824e-15,
+     "rel_lstsq_vs_cholesky": 5.436085271147608e-16,
+     "rel_ridge_vs_cholesky": 9.867424337714276e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.00029180835412867355
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.5,
+    "prediction": "genie_mec",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 140.3401321448855,
+    "chi2_at_alpha_0": 140.34013214488598,
+    "chi2": 60.6153136972503,
+    "ndf": 16,
+    "condition": 76.5439676726212,
+    "lambda_min": 0.0007038928400172735,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 8,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.04919853777387212,
+     "chi2": 21.159835447761925,
+     "fraction": 0.349083988139482,
+     "leading_cells": [
+      {
+       "cell": "R06",
+       "loading": 0.5360807679854089
+      },
+      {
+       "cell": "R03",
+       "loading": -0.3814587257013915
+      },
+      {
+       "cell": "R14",
+       "loading": -0.3507113185816285
+      }
+     ],
+     "loadings": {
+      "R00": 0.1700384355855026,
+      "R01": -0.11216050060336702,
+      "R02": 0.13466694360580647,
+      "R03": -0.3814587257013915,
+      "R04": 0.034203684839283724,
+      "R05": -0.19269154504733887,
+      "R06": 0.5360807679854089,
+      "R07": 0.25069990265595377,
+      "R08": 0.23388319043087877,
+      "R09": -0.005950661961337513,
+      "R10": -0.19320477437101247,
+      "R11": -0.2191660300352101,
+      "R12": -0.1666691331168622,
+      "R13": 0.32112484255784424,
+      "R14": -0.3507113185816285,
+      "R15": -0.11104624577754785
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 60.61531369725036,
+     "chi2_lstsq": 60.61531369725024,
+     "rel_mode_sum_vs_cholesky": 9.377732357324517e-16,
+     "rel_lstsq_vs_cholesky": 1.0549948901990082e-15,
+     "rel_ridge_vs_cholesky": 6.06766361721078e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.0005768661631645231
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 1.0,
+    "prediction": "genie_mec",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 140.3401321448855,
+    "chi2_at_alpha_0": 140.34013214488598,
+    "chi2": 45.490741830653135,
+    "ndf": 16,
+    "condition": 41.019678793099274,
+    "lambda_min": 0.001315545954015898,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 7,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.055071670017463756,
+     "chi2": 18.98659498634214,
+     "fraction": 0.4173727273347815,
+     "leading_cells": [
+      {
+       "cell": "R06",
+       "loading": 0.5690574206817434
+      },
+      {
+       "cell": "R03",
+       "loading": -0.37845488180523124
+      },
+      {
+       "cell": "R14",
+       "loading": -0.3395406342263533
+      }
+     ],
+     "loadings": {
+      "R00": 0.14591530323751706,
+      "R01": -0.06301101674174468,
+      "R02": 0.15606713448307702,
+      "R03": -0.37845488180523124,
+      "R04": 0.0336274489679129,
+      "R05": -0.24525545124421502,
+      "R06": 0.5690574206817434,
+      "R07": 0.2195917465847301,
+      "R08": 0.20037232767335506,
+      "R09": 0.010466067570171034,
+      "R10": -0.22063473421792032,
+      "R11": -0.19522160029149535,
+      "R12": -0.13595856053104075,
+      "R13": 0.31169814051929945,
+      "R14": -0.3395406342263533,
+      "R15": -0.12588602950691846
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 45.490741830653164,
+     "chi2_lstsq": 45.49074183065308,
+     "rel_mode_sum_vs_cholesky": 6.247800824222335e-16,
+     "rel_lstsq_vs_cholesky": 1.249560164844467e-15,
+     "rel_ridge_vs_cholesky": 3.617965567639227e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.0011251784162376224
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.0,
+    "prediction": "nuwro",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 91.31980861439727,
+    "chi2_at_alpha_0": 91.31980861439703,
+    "chi2": 91.31980861439703,
+    "ndf": 16,
+    "condition": 768.09625144408,
+    "lambda_min": 7.107914525666427e-05,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 5,
+     "sigma": 0.07447487873786057,
+     "chi2": 19.940055145625415,
+     "fraction": 0.21835410573212333,
+     "leading_cells": [
+      {
+       "cell": "R08",
+       "loading": 0.6275843057546308
+      },
+      {
+       "cell": "R00",
+       "loading": 0.40652656080825617
+      },
+      {
+       "cell": "R12",
+       "loading": 0.3201617978068687
+      }
+     ],
+     "loadings": {
+      "R00": 0.40652656080825617,
+      "R01": 0.04862486217092664,
+      "R02": -0.0018022217626316069,
+      "R03": -0.1465192316579417,
+      "R04": 0.17113737543248442,
+      "R05": -0.24608106290805243,
+      "R06": -0.2957360285354841,
+      "R07": -0.2996554850533856,
+      "R08": 0.6275843057546308,
+      "R09": 0.054940300536322935,
+      "R10": 0.08902560328045017,
+      "R11": -0.11490455467650819,
+      "R12": 0.3201617978068687,
+      "R13": -0.13557435590264114,
+      "R14": 0.017430514832857204,
+      "R15": -0.06787214466097753
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 91.31980861439749,
+     "chi2_lstsq": 91.31980861439682,
+     "rel_mode_sum_vs_cholesky": 4.9797229953323714e-15,
+     "rel_lstsq_vs_cholesky": 2.3342451540620492e-15,
+     "rel_ridge_vs_cholesky": 3.572498405591089e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 2.188693385676194e-07
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.1,
+    "prediction": "nuwro",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 91.31980861439727,
+    "chi2_at_alpha_0": 91.31980861439703,
+    "chi2": 69.39884903661158,
+    "ndf": 16,
+    "condition": 277.03205440940326,
+    "lambda_min": 0.00019608122593677937,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 9,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 5,
+     "sigma": 0.07523930488242421,
+     "chi2": 20.011499401477085,
+     "fraction": 0.28835491768631394,
+     "leading_cells": [
+      {
+       "cell": "R08",
+       "loading": 0.6285401128470274
+      },
+      {
+       "cell": "R00",
+       "loading": 0.40693559538277607
+      },
+      {
+       "cell": "R12",
+       "loading": 0.3218178184560265
+      }
+     ],
+     "loadings": {
+      "R00": 0.40693559538277607,
+      "R01": 0.05317183862607102,
+      "R02": -0.0016426338275972036,
+      "R03": -0.14738368472573668,
+      "R04": 0.1730386044355607,
+      "R05": -0.24410336590716147,
+      "R06": -0.2909784211777302,
+      "R07": -0.2988759476137305,
+      "R08": 0.6285401128470274,
+      "R09": 0.060308020639552096,
+      "R10": 0.089388137209448,
+      "R11": -0.11462792191453054,
+      "R12": 0.3218178184560265,
+      "R13": -0.13537251714804863,
+      "R14": 0.020091091886275798,
+      "R15": -0.06482155102779057
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 69.39884903661167,
+     "chi2_lstsq": 69.3988490366115,
+     "rel_mode_sum_vs_cholesky": 1.2286245301594286e-15,
+     "rel_lstsq_vs_cholesky": 1.2286245301594286e-15,
+     "rel_ridge_vs_cholesky": 1.2368993163700525e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.00011853014399862322
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.25,
+    "prediction": "nuwro",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 91.31980861439727,
+    "chi2_at_alpha_0": 91.31980861439703,
+    "chi2": 58.15426441944941,
+    "ndf": 16,
+    "condition": 141.29400870344944,
+    "lambda_min": 0.0003825511394142032,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 8,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 5,
+     "sigma": 0.07632699355646576,
+     "chi2": 20.24107447276731,
+     "fraction": 0.3480583010520862,
+     "leading_cells": [
+      {
+       "cell": "R08",
+       "loading": 0.6301880722689731
+      },
+      {
+       "cell": "R00",
+       "loading": 0.4074243178255594
+      },
+      {
+       "cell": "R12",
+       "loading": 0.32481587363146647
+      }
+     ],
+     "loadings": {
+      "R00": 0.4074243178255594,
+      "R01": 0.06099562712339373,
+      "R02": -0.001287489832442465,
+      "R03": -0.14858313998050665,
+      "R04": 0.1763818931825133,
+      "R05": -0.2402825601153001,
+      "R06": -0.28313020745267087,
+      "R07": -0.29706309372205497,
+      "R08": 0.6301880722689731,
+      "R09": 0.06944515350753792,
+      "R10": 0.09012632258427283,
+      "R11": -0.11401707034745683,
+      "R12": 0.32481587363146647,
+      "R13": -0.1348697109857518,
+      "R14": 0.02457443135974624,
+      "R15": -0.0597452854004735
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 58.1542644194493,
+     "chi2_lstsq": 58.15426441944947,
+     "rel_mode_sum_vs_cholesky": 1.954918334133275e-15,
+     "rel_lstsq_vs_cholesky": 9.774591670666375e-16,
+     "rel_ridge_vs_cholesky": 6.56191064777468e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.00029180835412867355
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.5,
+    "prediction": "nuwro",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 91.31980861439727,
+    "chi2_at_alpha_0": 91.31980861439703,
+    "chi2": 50.64756750414989,
+    "ndf": 16,
+    "condition": 77.92314211719813,
+    "lambda_min": 0.0006911496856359433,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 7,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 5,
+     "sigma": 0.0779402344628237,
+     "chi2": 21.054340329849342,
+     "fraction": 0.41570289290051765,
+     "leading_cells": [
+      {
+       "cell": "R08",
+       "loading": 0.6336337162979989
+      },
+      {
+       "cell": "R00",
+       "loading": 0.40768491617586594
+      },
+      {
+       "cell": "R12",
+       "loading": 0.33162444161689586
+      }
+     ],
+     "loadings": {
+      "R00": 0.40768491617586594,
+      "R01": 0.07778440256657945,
+      "R02": -0.0002575827207350126,
+      "R03": -0.15009945434821068,
+      "R04": 0.18373475625907426,
+      "R05": -0.23079246193537697,
+      "R06": -0.2673442833807802,
+      "R07": -0.2915410127824838,
+      "R08": 0.6336337162979989,
+      "R09": 0.08868831154199619,
+      "R10": 0.09207562371011462,
+      "R11": -0.11211471299826357,
+      "R12": 0.33162444161689586,
+      "R13": -0.13325503526317747,
+      "R14": 0.033745295807341674,
+      "R15": -0.04944271518887392
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 50.64756750414985,
+     "chi2_lstsq": 50.64756750414992,
+     "rel_mode_sum_vs_cholesky": 8.417494905774664e-16,
+     "rel_lstsq_vs_cholesky": 5.611663270516443e-16,
+     "rel_ridge_vs_cholesky": 3.7375809813682305e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.0005768661631645231
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 1.0,
+    "prediction": "nuwro",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 91.31980861439727,
+    "chi2_at_alpha_0": 91.31980861439703,
+    "chi2": 48.82621085837461,
+    "ndf": 16,
+    "condition": 41.407926188129466,
+    "lambda_min": 0.001302673197142677,
+    "modes_needed": {
+     "50%": 1,
+     "90%": 7,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 5,
+     "sigma": 0.0797293364192725,
+     "chi2": 25.931356936468273,
+     "fraction": 0.5310950098438895,
+     "leading_cells": [
+      {
+       "cell": "R08",
+       "loading": 0.6430345357136398
+      },
+      {
+       "cell": "R00",
+       "loading": 0.40113865323239206
+      },
+      {
+       "cell": "R12",
+       "loading": 0.3568851189974493
+      }
+     ],
+     "loadings": {
+      "R00": 0.40113865323239206,
+      "R01": 0.14115552854112418,
+      "R02": 0.005518509540691899,
+      "R03": -0.1468273284597092,
+      "R04": 0.2110486122980505,
+      "R05": -0.18852878767469108,
+      "R06": -0.21344789905148578,
+      "R07": -0.2586317259387128,
+      "R08": 0.6430345357136398,
+      "R09": 0.1579244324486455,
+      "R10": 0.10166507952193855,
+      "R11": -0.09810227370653413,
+      "R12": 0.3568851189974493,
+      "R13": -0.1232119777626533,
+      "R14": 0.06226949387112947,
+      "R15": -0.014836745944064051
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 48.82621085837459,
+     "chi2_lstsq": 48.82621085837461,
+     "rel_mode_sum_vs_cholesky": 4.3657457128166367e-16,
+     "rel_lstsq_vs_cholesky": 0.0,
+     "rel_ridge_vs_cholesky": 2.109999828969983e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.0011251784162376224
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.0,
+    "prediction": "gibuu",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "chi2_stage_g": 41.803148133725585,
+    "chi2_at_alpha_0": 41.80314813372558,
+    "chi2": 41.80314813372558,
+    "ndf": 8,
+    "condition": 100.86780286784713,
+    "lambda_min": 0.00044223186902458636,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 4,
+     "99%": 6
+    },
+    "top_mode": {
+     "mode": 1,
+     "sigma": 0.146067515607412,
+     "chi2": 15.497486016827825,
+     "fraction": 0.37072533310774497,
+     "leading_cells": [
+      {
+       "cell": "R11",
+       "loading": 0.804161270754289
+      },
+      {
+       "cell": "R10",
+       "loading": 0.3453769812829227
+      },
+      {
+       "cell": "R00",
+       "loading": 0.261429667482082
+      }
+     ],
+     "loadings": {
+      "R00": 0.261429667482082,
+      "R01": 0.23564526081142467,
+      "R02": 0.12090213839222158,
+      "R03": 0.04286818031863324,
+      "R08": 0.23853559710933864,
+      "R09": 0.19186190970621372,
+      "R10": 0.3453769812829227,
+      "R11": 0.804161270754289
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 41.803148133725585,
+     "chi2_lstsq": 41.8031481337256,
+     "rel_mode_sum_vs_cholesky": 1.6997349900230475e-16,
+     "rel_lstsq_vs_cholesky": 5.099204970069142e-16,
+     "rel_ridge_vs_cholesky": 5.342819487514195e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 4.849675013379907e-07
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.1,
+    "prediction": "gibuu",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "chi2_stage_g": 41.803148133725585,
+    "chi2_at_alpha_0": 41.80314813372558,
+    "chi2": 40.69331077844117,
+    "ndf": 8,
+    "condition": 77.44134733893355,
+    "lambda_min": 0.0005738778565486013,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 4,
+     "99%": 6
+    },
+    "top_mode": {
+     "mode": 1,
+     "sigma": 0.14437325388128164,
+     "chi2": 16.438669265975985,
+     "fraction": 0.4039649011474637,
+     "leading_cells": [
+      {
+       "cell": "R11",
+       "loading": 0.804038629968497
+      },
+      {
+       "cell": "R10",
+       "loading": 0.3555627332457968
+      },
+      {
+       "cell": "R00",
+       "loading": 0.259776422614216
+      }
+     ],
+     "loadings": {
+      "R00": 0.259776422614216,
+      "R01": 0.22912124231717512,
+      "R02": 0.13820624576780205,
+      "R03": 0.05139555705228571,
+      "R08": 0.23238332181466703,
+      "R09": 0.17712202829233972,
+      "R10": 0.3555627332457968,
+      "R11": 0.804038629968497
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 40.693310778441116,
+     "chi2_lstsq": 40.693310778441166,
+     "rel_mode_sum_vs_cholesky": 1.3968737803197615e-15,
+     "rel_lstsq_vs_cholesky": 1.7460922253997019e-16,
+     "rel_ridge_vs_cholesky": 3.492310169439632e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.00012145902636560958
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.25,
+    "prediction": "gibuu",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "chi2_stage_g": 41.803148133725585,
+    "chi2_at_alpha_0": 41.80314813372558,
+    "chi2": 40.52498850415668,
+    "ndf": 8,
+    "condition": 57.40634310420506,
+    "lambda_min": 0.0007703695062438454,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 4,
+     "99%": 7
+    },
+    "top_mode": {
+     "mode": 1,
+     "sigma": 0.14178138724326614,
+     "chi2": 17.806336160643493,
+     "fraction": 0.43939151663959414,
+     "leading_cells": [
+      {
+       "cell": "R11",
+       "loading": 0.8044434426294332
+      },
+      {
+       "cell": "R10",
+       "loading": 0.37155204057007424
+      },
+      {
+       "cell": "R00",
+       "loading": 0.2551951329545971
+      }
+     ],
+     "loadings": {
+      "R00": 0.2551951329545971,
+      "R01": 0.21642794408078647,
+      "R02": 0.1643639051759469,
+      "R03": 0.0625896279974403,
+      "R08": 0.2210288756980355,
+      "R09": 0.15187988394151286,
+      "R10": 0.37155204057007424,
+      "R11": 0.8044434426294332
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 40.52498850415662,
+     "chi2_lstsq": 40.524988504156696,
+     "rel_mode_sum_vs_cholesky": 1.5780102247740238e-15,
+     "rel_lstsq_vs_cholesky": 3.5066893883867194e-16,
+     "rel_ridge_vs_cholesky": 2.238482897663803e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.0002943352197839244
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.5,
+    "prediction": "gibuu",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "chi2_stage_g": 41.803148133725585,
+    "chi2_at_alpha_0": 41.80314813372558,
+    "chi2": 42.30762919056706,
+    "ndf": 8,
+    "condition": 40.11850726435694,
+    "lambda_min": 0.001095096126717425,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 4,
+     "99%": 7
+    },
+    "top_mode": {
+     "mode": 1,
+     "sigma": 0.13742447606395877,
+     "chi2": 19.788547819880918,
+     "fraction": 0.4677300098936518,
+     "leading_cells": [
+      {
+       "cell": "R11",
+       "loading": 0.8060682582487625
+      },
+      {
+       "cell": "R10",
+       "loading": 0.4004630040667203
+      },
+      {
+       "cell": "R00",
+       "loading": 0.24059516805219344
+      }
+     ],
+     "loadings": {
+      "R00": 0.24059516805219344,
+      "R01": 0.1856762434892264,
+      "R02": 0.2086328023195818,
+      "R03": 0.07600437645445368,
+      "R08": 0.19545159000042703,
+      "R09": 0.1000800062634089,
+      "R10": 0.4004630040667203,
+      "R11": 0.8060682582487625
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 42.307629190567134,
+     "chi2_lstsq": 42.30762919056705,
+     "rel_mode_sum_vs_cholesky": 1.6794671536889694e-15,
+     "rel_lstsq_vs_cholesky": 3.3589343073779384e-16,
+     "rel_ridge_vs_cholesky": 1.4641006832356643e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.0005787050927234847
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 1.0,
+    "prediction": "gibuu",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "chi2_stage_g": 41.803148133725585,
+    "chi2_at_alpha_0": 41.80314813372558,
+    "chi2": 51.49740009569906,
+    "ndf": 8,
+    "condition": 25.163831742837772,
+    "lambda_min": 0.001731832075384489,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 4,
+     "99%": 7
+    },
+    "top_mode": {
+     "mode": 1,
+     "sigma": 0.12954573337188838,
+     "chi2": 20.749690749401072,
+     "fraction": 0.40292695768798703,
+     "leading_cells": [
+      {
+       "cell": "R11",
+       "loading": 0.7995201419522555
+      },
+      {
+       "cell": "R10",
+       "loading": 0.4640650831794998
+      },
+      {
+       "cell": "R02",
+       "loading": 0.29599140044385763
+      }
+     ],
+     "loadings": {
+      "R00": 0.17596468108072078,
+      "R01": 0.07758381525930436,
+      "R02": 0.29599140044385763,
+      "R03": 0.07531634572216077,
+      "R08": 0.11530295577020211,
+      "R09": -0.04301268567780925,
+      "R10": 0.4640650831794998,
+      "R11": 0.7995201419522555
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 51.49740009569906,
+     "chi2_lstsq": 51.49740009569905,
+     "rel_mode_sum_vs_cholesky": 0.0,
+     "rel_lstsq_vs_cholesky": 1.3797642879828472e-16,
+     "rel_ridge_vs_cholesky": 1.2060712808258386e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.0011251784162376224
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.0,
+    "prediction": "mnvtune_v1",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 155.78963301826715,
+    "chi2_at_alpha_0": 155.78963301826835,
+    "chi2": 155.78963301826835,
+    "ndf": 16,
+    "condition": 1024.74965276908,
+    "lambda_min": 5.3244948356824054e-05,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 6,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 13,
+     "sigma": 0.01456258604907437,
+     "chi2": 66.70588052852038,
+     "fraction": 0.4281792006063603,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.4909860060664066
+      },
+      {
+       "cell": "R01",
+       "loading": -0.37603237954176116
+      },
+      {
+       "cell": "R14",
+       "loading": -0.3757482576523994
+      }
+     ],
+     "loadings": {
+      "R00": 0.27755090426649565,
+      "R01": -0.37603237954176116,
+      "R02": -0.0717050903102735,
+      "R03": 0.22551228661274716,
+      "R04": 0.4909860060664066,
+      "R05": 0.19943222564241134,
+      "R06": 0.10060317934957275,
+      "R07": -0.3054623580117237,
+      "R08": -0.34161874106699525,
+      "R09": 0.2466449830109611,
+      "R10": -0.04196887465356173,
+      "R11": -0.06195574883720633,
+      "R12": 0.1250459977906461,
+      "R13": -0.032668060267172505,
+      "R14": -0.3757482576523994,
+      "R15": -0.016478502723611715
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 155.78963301826838,
+     "chi2_lstsq": 155.78963301826806,
+     "rel_mode_sum_vs_cholesky": 1.8243646178350772e-16,
+     "rel_lstsq_vs_cholesky": 1.8243646178350772e-15,
+     "rel_ridge_vs_cholesky": 4.105296184421255e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 2.188693385676194e-07
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.1,
+    "prediction": "mnvtune_v1",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 155.78963301826715,
+    "chi2_at_alpha_0": 155.78963301826835,
+    "chi2": 107.61878184538264,
+    "ndf": 16,
+    "condition": 304.62195120271025,
+    "lambda_min": 0.0001782137346211343,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 7,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 13,
+     "sigma": 0.01857535562441459,
+     "chi2": 39.74124525828993,
+     "fraction": 0.3692779696706362,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.45405166797687363
+      },
+      {
+       "cell": "R01",
+       "loading": -0.3968128044341839
+      },
+      {
+       "cell": "R14",
+       "loading": -0.3701732879870592
+      }
+     ],
+     "loadings": {
+      "R00": 0.2689217637686034,
+      "R01": -0.3968128044341839,
+      "R02": -0.045895853823104016,
+      "R03": 0.23086428396342412,
+      "R04": 0.45405166797687363,
+      "R05": 0.19093993324934755,
+      "R06": 0.09230166098455879,
+      "R07": -0.3139324561858422,
+      "R08": -0.33498276359457024,
+      "R09": 0.30776787295254593,
+      "R10": -0.04468533286058968,
+      "R11": -0.057465379153437926,
+      "R12": 0.11865492777738865,
+      "R13": -0.022793267055121202,
+      "R14": -0.3701732879870592,
+      "R15": -0.03551654377864859
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 107.61878184538239,
+     "chi2_lstsq": 107.61878184538253,
+     "rel_mode_sum_vs_cholesky": 2.376865640805531e-15,
+     "rel_lstsq_vs_cholesky": 1.0563847292469027e-15,
+     "rel_ridge_vs_cholesky": 1.8924179037240115e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.00011853014399862322
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.25,
+    "prediction": "mnvtune_v1",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 155.78963301826715,
+    "chi2_at_alpha_0": 155.78963301826835,
+    "chi2": 81.06529113901998,
+    "ndf": 16,
+    "condition": 148.13061050156713,
+    "lambda_min": 0.00036467176545479987,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 7,
+     "99%": 11
+    },
+    "top_mode": {
+     "mode": 13,
+     "sigma": 0.023317347186646166,
+     "chi2": 23.909178189073465,
+     "fraction": 0.2949373011943076,
+     "leading_cells": [
+      {
+       "cell": "R01",
+       "loading": 0.4235864897469739
+      },
+      {
+       "cell": "R04",
+       "loading": -0.4077527087271822
+      },
+      {
+       "cell": "R09",
+       "loading": -0.39473345034759905
+      }
+     ],
+     "loadings": {
+      "R00": -0.2453712688408688,
+      "R01": 0.4235864897469739,
+      "R02": 0.001674266605982605,
+      "R03": -0.2328594066563745,
+      "R04": -0.4077527087271822,
+      "R05": -0.17240451290485762,
+      "R06": -0.0758697722594919,
+      "R07": 0.3199856700745108,
+      "R08": 0.32061970782128424,
+      "R09": -0.39473345034759905,
+      "R10": 0.046340162322411366,
+      "R11": 0.04842068978835304,
+      "R12": -0.10198768386934016,
+      "R13": 0.009145254920658636,
+      "R14": 0.3513866163548183,
+      "R15": 0.07033729836948685
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 81.0652911390203,
+     "chi2_lstsq": 81.0652911390199,
+     "rel_mode_sum_vs_cholesky": 4.031930976342602e-15,
+     "rel_lstsq_vs_cholesky": 8.765067339875222e-16,
+     "rel_ridge_vs_cholesky": 1.0561687017866145e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.00029180835412867355
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 0.5,
+    "prediction": "mnvtune_v1",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 155.78963301826715,
+    "chi2_at_alpha_0": 155.78963301826835,
+    "chi2": 62.89112103317721,
+    "ndf": 16,
+    "condition": 79.94351708496663,
+    "lambda_min": 0.0006732646651032929,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.04843264559560222,
+     "chi2": 16.396108931895174,
+     "fraction": 0.2607062596840283,
+     "leading_cells": [
+      {
+       "cell": "R06",
+       "loading": 0.5315130485093833
+      },
+      {
+       "cell": "R03",
+       "loading": -0.37802693816815297
+      },
+      {
+       "cell": "R14",
+       "loading": -0.34120384503815315
+      }
+     ],
+     "loadings": {
+      "R00": 0.1686117694829287,
+      "R01": -0.137084046483046,
+      "R02": 0.1450650252129504,
+      "R03": -0.37802693816815297,
+      "R04": 0.032085404493428664,
+      "R05": -0.16704423904640747,
+      "R06": 0.5315130485093833,
+      "R07": 0.254089029253571,
+      "R08": 0.23956131770112865,
+      "R09": -0.020311765925508762,
+      "R10": -0.20828966184157183,
+      "R11": -0.22224877556930264,
+      "R12": -0.1580967728837451,
+      "R13": 0.32670712723343714,
+      "R14": -0.34120384503815315,
+      "R15": -0.11872534132165473
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 62.8911210331773,
+     "chi2_lstsq": 62.89112103317724,
+     "rel_mode_sum_vs_cholesky": 1.4687376235523678e-15,
+     "rel_lstsq_vs_cholesky": 5.648990859816799e-16,
+     "rel_ridge_vs_cholesky": 6.090240314666121e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.0005768661631645231
+    }
+   },
+   {
+    "family": "flux",
+    "family_role": "single group",
+    "alpha": 1.0,
+    "prediction": "mnvtune_v1",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 155.78963301826715,
+    "chi2_at_alpha_0": 155.78963301826835,
+    "chi2": 51.29023124865257,
+    "ndf": 16,
+    "condition": 41.96716365064716,
+    "lambda_min": 0.0012845079244095587,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 9,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.054355034582148035,
+     "chi2": 14.976584581094155,
+     "fraction": 0.29199682310825203,
+     "leading_cells": [
+      {
+       "cell": "R06",
+       "loading": 0.5630159148678666
+      },
+      {
+       "cell": "R03",
+       "loading": -0.37725108746236796
+      },
+      {
+       "cell": "R14",
+       "loading": -0.3359929427158585
+      }
+     ],
+     "loadings": {
+      "R00": 0.1441359929212086,
+      "R01": -0.08773105648968756,
+      "R02": 0.16638527885753324,
+      "R03": -0.37725108746236796,
+      "R04": 0.03248015559412539,
+      "R05": -0.21850184505324052,
+      "R06": 0.5630159148678666,
+      "R07": 0.22600728414196838,
+      "R08": 0.20940925881707786,
+      "R09": -0.0017305635087850966,
+      "R10": -0.2328508140077629,
+      "R11": -0.19891946017691367,
+      "R12": -0.12815356809452033,
+      "R13": 0.31636121123226024,
+      "R14": -0.3359929427158585,
+      "R15": -0.1327354786365502
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 51.2902312486526,
+     "chi2_lstsq": 51.29023124865253,
+     "rel_mode_sum_vs_cholesky": 6.926686802360309e-16,
+     "rel_lstsq_vs_cholesky": 6.926686802360309e-16,
+     "rel_ridge_vs_cholesky": 3.2611451013950944e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "flux": 0.0011251784162376224
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.0,
+    "prediction": "genie_cv",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 64.0123343280672,
+    "chi2_at_alpha_0": 64.01233432806745,
+    "chi2": 64.01233432806745,
+    "ndf": 16,
+    "condition": 660.0110677894274,
+    "lambda_min": 8.275005409071232e-05,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.04252643349136385,
+     "chi2": 15.839236113699197,
+     "fraction": 0.24744037660807808,
+     "leading_cells": [
+      {
+       "cell": "R06",
+       "loading": 0.48644693728417715
+      },
+      {
+       "cell": "R03",
+       "loading": -0.37959813165992473
+      },
+      {
+       "cell": "R14",
+       "loading": -0.34959834758258573
+      }
+     ],
+     "loadings": {
+      "R00": 0.19262726532009405,
+      "R01": -0.1597145904381131,
+      "R02": 0.11233897843924819,
+      "R03": -0.37959813165992473,
+      "R04": 0.033099610199635504,
+      "R05": -0.13999814963005774,
+      "R06": 0.48644693728417715,
+      "R07": 0.28305056993568967,
+      "R08": 0.25851161570600384,
+      "R09": -0.024786452285259174,
+      "R10": -0.16535270363950624,
+      "R11": -0.2480789652320241,
+      "R12": -0.2016202352433679,
+      "R13": 0.33910776126759096,
+      "R14": -0.34959834758258573,
+      "R15": -0.09506194655822223
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 64.01233432806738,
+     "chi2_lstsq": 64.0123343280675,
+     "rel_mode_sum_vs_cholesky": 1.110009099369071e-15,
+     "rel_lstsq_vs_cholesky": 6.660054596214426e-16,
+     "rel_ridge_vs_cholesky": 1.666970595095794e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": -2.636789878958208e-19
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.1,
+    "prediction": "genie_cv",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 64.0123343280672,
+    "chi2_at_alpha_0": 64.01233432806745,
+    "chi2": 60.037520909749794,
+    "ndf": 16,
+    "condition": 482.66189549354687,
+    "lambda_min": 0.00011307127157060748,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.04286664737498306,
+     "chi2": 15.534322087482355,
+     "fraction": 0.25874356322663705,
+     "leading_cells": [
+      {
+       "cell": "R06",
+       "loading": 0.48175043864206735
+      },
+      {
+       "cell": "R03",
+       "loading": -0.37459727637254153
+      },
+      {
+       "cell": "R13",
+       "loading": 0.3507651529027159
+      }
+     ],
+     "loadings": {
+      "R00": 0.18958026187039925,
+      "R01": -0.16319175540606065,
+      "R02": 0.11674778038501156,
+      "R03": -0.37459727637254153,
+      "R04": 0.029920512166158857,
+      "R05": -0.13452662295218595,
+      "R06": 0.48175043864206735,
+      "R07": 0.2822556507144414,
+      "R08": 0.2573604172248535,
+      "R09": -0.030627458847373917,
+      "R10": -0.1739483076513527,
+      "R11": -0.253685400070234,
+      "R12": -0.19804515425641878,
+      "R13": 0.3507651529027159,
+      "R14": -0.3447853234200639,
+      "R15": -0.0990379137929878
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 60.03752090974966,
+     "chi2_lstsq": 60.03752090974983,
+     "rel_mode_sum_vs_cholesky": 2.248645809299151e-15,
+     "rel_lstsq_vs_cholesky": 5.917488971839872e-16,
+     "rel_ridge_vs_cholesky": 1.2457126165209866e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 1.5795208760242763e-05
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.25,
+    "prediction": "genie_cv",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 64.0123343280672,
+    "chi2_at_alpha_0": 64.01233432806745,
+    "chi2": 56.15492238653548,
+    "ndf": 16,
+    "condition": 362.4731501687824,
+    "lambda_min": 0.0001504190797593742,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 7,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.04337803923479581,
+     "chi2": 15.046045052122919,
+     "fraction": 0.2679381328061556,
+     "leading_cells": [
+      {
+       "cell": "R06",
+       "loading": 0.4733841323149014
+      },
+      {
+       "cell": "R13",
+       "loading": 0.3686031420760881
+      },
+      {
+       "cell": "R03",
+       "loading": -0.36664101641645475
+      }
+     ],
+     "loadings": {
+      "R00": 0.1848715240390448,
+      "R01": -0.16813954041504792,
+      "R02": 0.12290696923543484,
+      "R03": -0.36664101641645475,
+      "R04": 0.025125911958160482,
+      "R05": -0.1261585730040749,
+      "R06": 0.4733841323149014,
+      "R07": 0.28107148931995307,
+      "R08": 0.2553621212482752,
+      "R09": -0.03908263891492614,
+      "R10": -0.18633921155233338,
+      "R11": -0.2624924453435328,
+      "R12": -0.1932839884681096,
+      "R13": 0.3686031420760881,
+      "R14": -0.33744664125198653,
+      "R15": -0.10449773785420056
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 56.154922386535546,
+     "chi2_lstsq": 56.15492238653559,
+     "rel_mode_sum_vs_cholesky": 1.1387932437734492e-15,
+     "rel_lstsq_vs_cholesky": 1.8979887396224154e-15,
+     "rel_ridge_vs_cholesky": 9.46858879413967e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 3.855433899983759e-05
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.5,
+    "prediction": "genie_cv",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 64.0123343280672,
+    "chi2_at_alpha_0": 64.01233432806745,
+    "chi2": 52.14586799397154,
+    "ndf": 16,
+    "condition": 268.72499099655016,
+    "lambda_min": 0.00020264753780400988,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 7,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.04423436221347833,
+     "chi2": 14.173465321531156,
+     "fraction": 0.2718041882660717,
+     "leading_cells": [
+      {
+       "cell": "R06",
+       "loading": 0.4564055484543889
+      },
+      {
+       "cell": "R13",
+       "loading": 0.3990610021358391
+      },
+      {
+       "cell": "R03",
+       "loading": -0.35209827486407164
+      }
+     ],
+     "loadings": {
+      "R00": 0.17656579184871518,
+      "R01": -0.17549606916117444,
+      "R02": 0.13207293354973898,
+      "R03": -0.35209827486407164,
+      "R04": 0.01703525425077495,
+      "R05": -0.11206566103869546,
+      "R06": 0.4564055484543889,
+      "R07": 0.2788083605579222,
+      "R08": 0.2512019107267343,
+      "R09": -0.05240723696799131,
+      "R10": -0.20587952543873228,
+      "R11": -0.27795449244004816,
+      "R12": -0.18659537931595552,
+      "R13": 0.3990610021358391,
+      "R14": -0.3248281999367651,
+      "R15": -0.11245123959743097
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 52.14586799397151,
+     "chi2_lstsq": 52.14586799397137,
+     "rel_mode_sum_vs_cholesky": 6.813030093220851e-16,
+     "rel_lstsq_vs_cholesky": 3.2702544447460083e-15,
+     "rel_ridge_vs_cholesky": 7.161031494746459e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 7.611266768662212e-05
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 1.0,
+    "prediction": "genie_cv",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 64.0123343280672,
+    "chi2_at_alpha_0": 64.01233432806745,
+    "chi2": 47.82349768254319,
+    "ndf": 16,
+    "condition": 184.14578916285805,
+    "lambda_min": 0.0002953434911894277,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.045965829197930505,
+     "chi2": 12.358118707123696,
+     "fraction": 0.2584110177209966,
+     "leading_cells": [
+      {
+       "cell": "R13",
+       "loading": 0.4608766375467637
+      },
+      {
+       "cell": "R06",
+       "loading": 0.41423455165063067
+      },
+      {
+       "cell": "R03",
+       "loading": -0.3181369907528767
+      }
+     ],
+     "loadings": {
+      "R00": 0.15768239360288996,
+      "R01": -0.18553763366663087,
+      "R02": 0.14693751932969812,
+      "R03": -0.3181369907528767,
+      "R04": 0.00039370556721589345,
+      "R05": -0.08543430272389099,
+      "R06": 0.41423455165063067,
+      "R07": 0.27145091090133194,
+      "R08": 0.23910245866765745,
+      "R09": -0.07605820150806436,
+      "R10": -0.24196755532511124,
+      "R11": -0.30978646876047317,
+      "R12": -0.17596983096370253,
+      "R13": 0.4608766375467637,
+      "R14": -0.29814042343161057,
+      "R15": -0.12491627407265724
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 47.823497682543135,
+     "chi2_lstsq": 47.823497682543135,
+     "rel_mode_sum_vs_cholesky": 1.1886085630570122e-15,
+     "rel_lstsq_vs_cholesky": 1.1886085630570122e-15,
+     "rel_ridge_vs_cholesky": 5.297664023801995e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 0.00014595532226925273
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.0,
+    "prediction": "genie_mec",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 140.3401321448855,
+    "chi2_at_alpha_0": 140.34013214488598,
+    "chi2": 140.34013214488598,
+    "ndf": 16,
+    "condition": 650.2497618838295,
+    "lambda_min": 8.399453010357433e-05,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 7,
+     "99%": 11
+    },
+    "top_mode": {
+     "mode": 13,
+     "sigma": 0.015700778470386794,
+     "chi2": 55.306891485190775,
+     "fraction": 0.39409177289424524,
+     "leading_cells": [
+      {
+       "cell": "R01",
+       "loading": 0.4336344278657577
+      },
+      {
+       "cell": "R04",
+       "loading": -0.42698890567918946
+      },
+      {
+       "cell": "R08",
+       "loading": 0.3717506270268526
+      }
+     ],
+     "loadings": {
+      "R00": -0.32124565442672787,
+      "R01": 0.4336344278657577,
+      "R02": -0.01838059252512203,
+      "R03": -0.18165806696110706,
+      "R04": -0.42698890567918946,
+      "R05": -0.1554287527932301,
+      "R06": -0.03942874218894915,
+      "R07": 0.2749174089304317,
+      "R08": 0.3717506270268526,
+      "R09": -0.3593892374627263,
+      "R10": 0.096065133794391,
+      "R11": 0.028422241229822533,
+      "R12": -0.09927895755200969,
+      "R13": 0.02841615054227372,
+      "R14": 0.32205934117839635,
+      "R15": 0.005620329651160411
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 140.34013214488598,
+     "chi2_lstsq": 140.34013214488579,
+     "rel_mode_sum_vs_cholesky": 0.0,
+     "rel_lstsq_vs_cholesky": 1.4176412902863146e-15,
+     "rel_ridge_vs_cholesky": 3.518859287259658e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": -2.636789878958208e-19
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.1,
+    "prediction": "genie_mec",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 140.3401321448855,
+    "chi2_at_alpha_0": 140.34013214488598,
+    "chi2": 130.3539064307993,
+    "ndf": 16,
+    "condition": 478.1274197659779,
+    "lambda_min": 0.00011414671395865809,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 7,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 13,
+     "sigma": 0.016779707957011225,
+     "chi2": 44.08889913548092,
+     "fraction": 0.3382246097771266,
+     "leading_cells": [
+      {
+       "cell": "R01",
+       "loading": 0.43007444268590767
+      },
+      {
+       "cell": "R04",
+       "loading": -0.3723845477419342
+      },
+      {
+       "cell": "R08",
+       "loading": 0.3644562167562962
+      }
+     ],
+     "loadings": {
+      "R00": -0.34619979903624204,
+      "R01": 0.43007444268590767,
+      "R02": -0.0021005141988399145,
+      "R03": -0.19132054855223682,
+      "R04": -0.3723845477419342,
+      "R05": -0.1736913805811871,
+      "R06": -0.045205467471969435,
+      "R07": 0.2838536698602627,
+      "R08": 0.3644562167562962,
+      "R09": -0.35460569628426597,
+      "R10": 0.11598995613787406,
+      "R11": 0.02790554669470722,
+      "R12": -0.11297466165547977,
+      "R13": 0.029448789181365218,
+      "R14": 0.3455632232690884,
+      "R15": -0.03560830384169837
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 130.3539064307986,
+     "chi2_lstsq": 130.3539064307989,
+     "rel_mode_sum_vs_cholesky": 5.45087412579618e-15,
+     "rel_lstsq_vs_cholesky": 3.0524895104458607e-15,
+     "rel_ridge_vs_cholesky": 2.987565893013223e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 1.5795208760242763e-05
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.25,
+    "prediction": "genie_mec",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 140.3401321448855,
+    "chi2_at_alpha_0": 140.34013214488598,
+    "chi2": 119.12189869041157,
+    "ndf": 16,
+    "condition": 360.3342817146979,
+    "lambda_min": 0.00015131607431095366,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 7,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 13,
+     "sigma": 0.01829803976355096,
+     "chi2": 31.84535770383128,
+     "fraction": 0.26733420180444556,
+     "leading_cells": [
+      {
+       "cell": "R01",
+       "loading": 0.41839403068867875
+      },
+      {
+       "cell": "R14",
+       "loading": 0.37483729775452007
+      },
+      {
+       "cell": "R00",
+       "loading": -0.37441854105328276
+      }
+     ],
+     "loadings": {
+      "R00": -0.37441854105328276,
+      "R01": 0.41839403068867875,
+      "R02": 0.020331224337994364,
+      "R03": -0.20135001732378224,
+      "R04": -0.304101076673811,
+      "R05": -0.1988572336578745,
+      "R06": -0.051123208138999204,
+      "R07": 0.29246016753671955,
+      "R08": 0.3483137906179271,
+      "R09": -0.33546380586358604,
+      "R10": 0.14754549092239316,
+      "R11": 0.02510351446328867,
+      "R12": -0.12673343498903747,
+      "R13": 0.033138978844117144,
+      "R14": 0.37483729775452007,
+      "R15": -0.09855420570461572
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 119.12189869041185,
+     "chi2_lstsq": 119.1218986904116,
+     "rel_mode_sum_vs_cholesky": 2.38593489046626e-15,
+     "rel_lstsq_vs_cholesky": 2.38593489046626e-16,
+     "rel_ridge_vs_cholesky": 2.475948459595158e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 3.855433899983759e-05
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.5,
+    "prediction": "genie_mec",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 140.3401321448855,
+    "chi2_at_alpha_0": 140.34013214488598,
+    "chi2": 106.00699906241283,
+    "ndf": 16,
+    "condition": 267.686999173957,
+    "lambda_min": 0.000203438971811566,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 15,
+     "sigma": 0.014263203420394943,
+     "chi2": 26.664757860986374,
+     "fraction": 0.251537710687265,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.8868840307142996
+      },
+      {
+       "cell": "R09",
+       "loading": -0.26163476868619384
+      },
+      {
+       "cell": "R00",
+       "loading": -0.22770436806188574
+      }
+     ],
+     "loadings": {
+      "R00": -0.22770436806188574,
+      "R01": 0.008715234505489958,
+      "R02": 0.10004364344615874,
+      "R03": -0.05212488618542885,
+      "R04": 0.8868840307142996,
+      "R05": -0.0007002132645420427,
+      "R06": -0.08597990381290299,
+      "R07": 0.005303155962677931,
+      "R08": -0.0043405382839029685,
+      "R09": -0.26163476868619384,
+      "R10": -0.1332475180784227,
+      "R11": 0.04165759902713148,
+      "R12": -0.21760599685521517,
+      "R13": -0.07592325088391982,
+      "R14": 0.014497424613095628,
+      "R15": 0.008709491394003012
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 106.00699906241285,
+     "chi2_lstsq": 106.00699906241292,
+     "rel_mode_sum_vs_cholesky": 1.3405581556775512e-16,
+     "rel_lstsq_vs_cholesky": 8.043348934065307e-16,
+     "rel_ridge_vs_cholesky": 1.944531350355097e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 7.611266768662212e-05
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 1.0,
+    "prediction": "genie_mec",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 140.3401321448855,
+    "chi2_at_alpha_0": 140.34013214488598,
+    "chi2": 90.16361559432451,
+    "ndf": 16,
+    "condition": 183.69202000977307,
+    "lambda_min": 0.0002960814782118952,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 15,
+     "sigma": 0.01720701828359275,
+     "chi2": 25.136498984458726,
+     "fraction": 0.2787876109311788,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.920989559658849
+      },
+      {
+       "cell": "R09",
+       "loading": -0.24176360100236163
+      },
+      {
+       "cell": "R12",
+       "loading": -0.1834504516567519
+      }
+     ],
+     "loadings": {
+      "R00": -0.17777585673467805,
+      "R01": -0.02922968319790656,
+      "R02": 0.06715673964505599,
+      "R03": -0.03503104436806054,
+      "R04": 0.920989559658849,
+      "R05": -0.003290988347248197,
+      "R06": -0.05233453076687235,
+      "R07": -0.011296885509691738,
+      "R08": -0.07161472592865765,
+      "R09": -0.24176360100236163,
+      "R10": -0.08377857980069252,
+      "R11": 0.012475729348548787,
+      "R12": -0.1834504516567519,
+      "R13": -0.06693526473684146,
+      "R14": -0.0050770894937145145,
+      "R15": -0.042332842847716795
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 90.16361559432386,
+     "chi2_lstsq": 90.16361559432443,
+     "rel_mode_sum_vs_cholesky": 7.250145334016977e-15,
+     "rel_lstsq_vs_cholesky": 9.456711305239536e-16,
+     "rel_ridge_vs_cholesky": 1.3795470941624594e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 0.00014595532226925273
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.0,
+    "prediction": "nuwro",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 91.31980861439727,
+    "chi2_at_alpha_0": 91.31980861439703,
+    "chi2": 91.31980861439703,
+    "ndf": 16,
+    "condition": 768.09625144408,
+    "lambda_min": 7.107914525666427e-05,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 5,
+     "sigma": 0.07447487873786057,
+     "chi2": 19.940055145625415,
+     "fraction": 0.21835410573212333,
+     "leading_cells": [
+      {
+       "cell": "R08",
+       "loading": 0.6275843057546308
+      },
+      {
+       "cell": "R00",
+       "loading": 0.40652656080825617
+      },
+      {
+       "cell": "R12",
+       "loading": 0.3201617978068687
+      }
+     ],
+     "loadings": {
+      "R00": 0.40652656080825617,
+      "R01": 0.04862486217092664,
+      "R02": -0.0018022217626316069,
+      "R03": -0.1465192316579417,
+      "R04": 0.17113737543248442,
+      "R05": -0.24608106290805243,
+      "R06": -0.2957360285354841,
+      "R07": -0.2996554850533856,
+      "R08": 0.6275843057546308,
+      "R09": 0.054940300536322935,
+      "R10": 0.08902560328045017,
+      "R11": -0.11490455467650819,
+      "R12": 0.3201617978068687,
+      "R13": -0.13557435590264114,
+      "R14": 0.017430514832857204,
+      "R15": -0.06787214466097753
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 91.31980861439749,
+     "chi2_lstsq": 91.31980861439682,
+     "rel_mode_sum_vs_cholesky": 4.9797229953323714e-15,
+     "rel_lstsq_vs_cholesky": 2.3342451540620492e-15,
+     "rel_ridge_vs_cholesky": 3.572498405591089e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": -2.636789878958208e-19
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.1,
+    "prediction": "nuwro",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 91.31980861439727,
+    "chi2_at_alpha_0": 91.31980861439703,
+    "chi2": 85.13283297492146,
+    "ndf": 16,
+    "condition": 523.165696264834,
+    "lambda_min": 0.00010427832104114249,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 5,
+     "sigma": 0.07456607654241863,
+     "chi2": 20.031501264026193,
+     "fraction": 0.23529701249254978,
+     "leading_cells": [
+      {
+       "cell": "R08",
+       "loading": 0.629006397698377
+      },
+      {
+       "cell": "R00",
+       "loading": 0.4069662357894049
+      },
+      {
+       "cell": "R12",
+       "loading": 0.3200173787702233
+      }
+     ],
+     "loadings": {
+      "R00": 0.4069662357894049,
+      "R01": 0.050071450283037514,
+      "R02": -0.0007178288461521416,
+      "R03": -0.14971083495876167,
+      "R04": 0.17214238949344401,
+      "R05": -0.24220759997930183,
+      "R06": -0.2925036956177036,
+      "R07": -0.29968390046587084,
+      "R08": 0.629006397698377,
+      "R09": 0.05563294740014578,
+      "R10": 0.08960985534416495,
+      "R11": -0.11680602123360569,
+      "R12": 0.3200173787702233,
+      "R13": -0.1346317422303292,
+      "R14": 0.01641762813727192,
+      "R15": -0.0675802805352234
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 85.13283297492123,
+     "chi2_lstsq": 85.13283297492147,
+     "rel_mode_sum_vs_cholesky": 2.6708106320179914e-15,
+     "rel_lstsq_vs_cholesky": 1.6692566450112446e-16,
+     "rel_ridge_vs_cholesky": 2.571345637865693e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 1.5795208760242763e-05
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.25,
+    "prediction": "nuwro",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 91.31980861439727,
+    "chi2_at_alpha_0": 91.31980861439703,
+    "chi2": 79.49923006948498,
+    "ndf": 16,
+    "condition": 377.02352186793956,
+    "lambda_min": 0.00014455991385908332,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 5,
+     "sigma": 0.07469859590919607,
+     "chi2": 20.170452229262942,
+     "fraction": 0.2537188374231207,
+     "leading_cells": [
+      {
+       "cell": "R08",
+       "loading": 0.6311324891572884
+      },
+      {
+       "cell": "R00",
+       "loading": 0.4076451572625906
+      },
+      {
+       "cell": "R12",
+       "loading": 0.3198042004828176
+      }
+     ],
+     "loadings": {
+      "R00": 0.4076451572625906,
+      "R01": 0.052224295500951964,
+      "R02": 0.0009211878948348698,
+      "R03": -0.15449674745555023,
+      "R04": 0.17370190801966354,
+      "R05": -0.23630217887602792,
+      "R06": -0.2875660010068269,
+      "R07": -0.2996085076578587,
+      "R08": 0.6311324891572884,
+      "R09": 0.05664018121234121,
+      "R10": 0.09046110836927043,
+      "R11": -0.11967928209480468,
+      "R12": 0.3198042004828176,
+      "R13": -0.13308762698856305,
+      "R14": 0.014845969855405927,
+      "R15": -0.06713644433862655
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 79.49923006948504,
+     "chi2_lstsq": 79.49923006948485,
+     "rel_mode_sum_vs_cholesky": 7.150184827088888e-16,
+     "rel_lstsq_vs_cholesky": 1.6087915860949996e-15,
+     "rel_ridge_vs_cholesky": 1.9096654647164177e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 3.855433899983759e-05
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.5,
+    "prediction": "nuwro",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 91.31980861439727,
+    "chi2_at_alpha_0": 91.31980861439703,
+    "chi2": 73.87808872440722,
+    "ndf": 16,
+    "condition": 274.5527544030659,
+    "lambda_min": 0.00019827161884121184,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 5,
+     "sigma": 0.07490761574149059,
+     "chi2": 20.406782502554325,
+     "fraction": 0.2762223936068412,
+     "leading_cells": [
+      {
+       "cell": "R08",
+       "loading": 0.634658136060378
+      },
+      {
+       "cell": "R00",
+       "loading": 0.4088360746835895
+      },
+      {
+       "cell": "R12",
+       "loading": 0.3194608019764047
+      }
+     ],
+     "loadings": {
+      "R00": 0.4088360746835895,
+      "R01": 0.055753920553669706,
+      "R02": 0.003687716312788556,
+      "R03": -0.16245970845871344,
+      "R04": 0.17644660495341338,
+      "R05": -0.22620054037257278,
+      "R06": -0.2790857042406774,
+      "R07": -0.299149340185371,
+      "R08": 0.634658136060378,
+      "R09": 0.058217191111687105,
+      "R10": 0.09179985107321219,
+      "R11": -0.12452389109664995,
+      "R12": 0.3194608019764047,
+      "R13": -0.13014191710339063,
+      "R14": 0.012084607402640161,
+      "R15": -0.06638371716403621
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 73.87808872440714,
+     "chi2_lstsq": 73.87808872440719,
+     "rel_mode_sum_vs_cholesky": 1.1541328391599666e-15,
+     "rel_lstsq_vs_cholesky": 3.8471094638665553e-16,
+     "rel_ridge_vs_cholesky": 1.3909241578602119e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 7.611266768662212e-05
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 1.0,
+    "prediction": "nuwro",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 91.31980861439727,
+    "chi2_at_alpha_0": 91.31980861439703,
+    "chi2": 68.20069833531336,
+    "ndf": 16,
+    "condition": 186.49558689789802,
+    "lambda_min": 0.00029151228611371156,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 7,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 5,
+     "sigma": 0.07527798598997973,
+     "chi2": 20.896852065951695,
+     "fraction": 0.3064023180996024,
+     "leading_cells": [
+      {
+       "cell": "R08",
+       "loading": 0.6416479800881081
+      },
+      {
+       "cell": "R00",
+       "loading": 0.4114963810130147
+      },
+      {
+       "cell": "R12",
+       "loading": 0.3188372756889483
+      }
+     ],
+     "loadings": {
+      "R00": 0.4114963810130147,
+      "R01": 0.06249368341810295,
+      "R02": 0.009368285910985576,
+      "R03": -0.17826818212975615,
+      "R04": 0.18253059379346592,
+      "R05": -0.20498114305753484,
+      "R06": -0.26108501699656744,
+      "R07": -0.2968433680795742,
+      "R08": 0.6416479800881081,
+      "R09": 0.06085549206179362,
+      "R10": 0.09407308425974358,
+      "R11": -0.13442719176157356,
+      "R12": 0.3188372756889483,
+      "R13": -0.12266438198131506,
+      "R14": 0.006015210920271408,
+      "R15": -0.06485385402795692
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 68.20069833531332,
+     "chi2_lstsq": 68.20069833531335,
+     "rel_mode_sum_vs_cholesky": 6.251045104553053e-16,
+     "rel_lstsq_vs_cholesky": 2.0836817015176841e-16,
+     "rel_ridge_vs_cholesky": 9.397829544911866e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 0.00014595532226925273
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.0,
+    "prediction": "gibuu",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "chi2_stage_g": 41.803148133725585,
+    "chi2_at_alpha_0": 41.80314813372558,
+    "chi2": 41.80314813372558,
+    "ndf": 8,
+    "condition": 100.86780286784713,
+    "lambda_min": 0.00044223186902458636,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 4,
+     "99%": 6
+    },
+    "top_mode": {
+     "mode": 1,
+     "sigma": 0.146067515607412,
+     "chi2": 15.497486016827825,
+     "fraction": 0.37072533310774497,
+     "leading_cells": [
+      {
+       "cell": "R11",
+       "loading": 0.804161270754289
+      },
+      {
+       "cell": "R10",
+       "loading": 0.3453769812829227
+      },
+      {
+       "cell": "R00",
+       "loading": 0.261429667482082
+      }
+     ],
+     "loadings": {
+      "R00": 0.261429667482082,
+      "R01": 0.23564526081142467,
+      "R02": 0.12090213839222158,
+      "R03": 0.04286818031863324,
+      "R08": 0.23853559710933864,
+      "R09": 0.19186190970621372,
+      "R10": 0.3453769812829227,
+      "R11": 0.804161270754289
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 41.803148133725585,
+     "chi2_lstsq": 41.8031481337256,
+     "rel_mode_sum_vs_cholesky": 1.6997349900230475e-16,
+     "rel_lstsq_vs_cholesky": 5.099204970069142e-16,
+     "rel_ridge_vs_cholesky": 5.342819487514195e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": -3.4720103634338053e-19
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.1,
+    "prediction": "gibuu",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "chi2_stage_g": 41.803148133725585,
+    "chi2_at_alpha_0": 41.80314813372558,
+    "chi2": 41.75387566874033,
+    "ndf": 8,
+    "condition": 92.34483556537107,
+    "lambda_min": 0.0004828106926449522,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 4,
+     "99%": 6
+    },
+    "top_mode": {
+     "mode": 1,
+     "sigma": 0.14543935062903304,
+     "chi2": 15.795024888159901,
+     "fraction": 0.3782888327175119,
+     "leading_cells": [
+      {
+       "cell": "R11",
+       "loading": 0.8045427511489512
+      },
+      {
+       "cell": "R10",
+       "loading": 0.34726023813891893
+      },
+      {
+       "cell": "R00",
+       "loading": 0.26222241530276025
+      }
+     ],
+     "loadings": {
+      "R00": 0.26222241530276025,
+      "R01": 0.2337011118131822,
+      "R02": 0.12580080672120542,
+      "R03": 0.04623267204024184,
+      "R08": 0.23635452203312773,
+      "R09": 0.18686283956488833,
+      "R10": 0.34726023813891893,
+      "R11": 0.8045427511489512
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 41.75387566874033,
+     "chi2_lstsq": 41.75387566874036,
+     "rel_mode_sum_vs_cholesky": 0.0,
+     "rel_lstsq_vs_cholesky": 8.508703975138514e-16,
+     "rel_ridge_vs_cholesky": 4.784272369400089e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 2.8642106976692513e-05
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.25,
+    "prediction": "gibuu",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "chi2_stage_g": 41.803148133725585,
+    "chi2_at_alpha_0": 41.80314813372558,
+    "chi2": 41.82851646907377,
+    "ndf": 8,
+    "condition": 82.00995465750964,
+    "lambda_min": 0.0005432862907877431,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 4,
+     "99%": 6
+    },
+    "top_mode": {
+     "mode": 1,
+     "sigma": 0.1444911395705975,
+     "chi2": 16.238441060049603,
+     "fraction": 0.38821460646484107,
+     "leading_cells": [
+      {
+       "cell": "R11",
+       "loading": 0.8052012219712239
+      },
+      {
+       "cell": "R10",
+       "loading": 0.3500932253893383
+      },
+      {
+       "cell": "R00",
+       "loading": 0.263284091836996
+      }
+     ],
+     "loadings": {
+      "R00": 0.263284091836996,
+      "R01": 0.23052817945205972,
+      "R02": 0.13313173536570633,
+      "R03": 0.05114810748200721,
+      "R08": 0.23287189711920914,
+      "R09": 0.17903760166023702,
+      "R10": 0.3500932253893383,
+      "R11": 0.8052012219712239
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 41.82851646907378,
+     "chi2_lstsq": 41.828516469073804,
+     "rel_mode_sum_vs_cholesky": 3.39740825513353e-16,
+     "rel_lstsq_vs_cholesky": 8.493520637833825e-16,
+     "rel_ridge_vs_cholesky": 4.1488860831988984e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 6.97989983011631e-05
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.5,
+    "prediction": "gibuu",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "chi2_stage_g": 41.803148133725585,
+    "chi2_at_alpha_0": 41.80314813372558,
+    "chi2": 42.25286419565546,
+    "ndf": 8,
+    "condition": 69.221117587333,
+    "lambda_min": 0.0006430309889739256,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 4,
+     "99%": 7
+    },
+    "top_mode": {
+     "mode": 1,
+     "sigma": 0.14289741230477532,
+     "chi2": 16.966137377875537,
+     "fraction": 0.401538160805205,
+     "leading_cells": [
+      {
+       "cell": "R11",
+       "loading": 0.8065260688585186
+      },
+      {
+       "cell": "R10",
+       "loading": 0.35485832878746026
+      },
+      {
+       "cell": "R00",
+       "loading": 0.2646821007778448
+      }
+     ],
+     "loadings": {
+      "R00": 0.2646821007778448,
+      "R01": 0.22450265218486365,
+      "R02": 0.14532427904628697,
+      "R03": 0.0589740248888046,
+      "R08": 0.2264711916712002,
+      "R09": 0.16506643838982274,
+      "R10": 0.35485832878746026,
+      "R11": 0.8065260688585186
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 42.25286419565533,
+     "chi2_lstsq": 42.2528641956555,
+     "rel_mode_sum_vs_cholesky": 3.1951235109003655e-15,
+     "rel_lstsq_vs_cholesky": 8.408219765527278e-16,
+     "rel_ridge_vs_cholesky": 3.432667490784183e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 0.00013602402345522848
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 1.0,
+    "prediction": "gibuu",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "chi2_stage_g": 41.803148133725585,
+    "chi2_at_alpha_0": 41.80314813372558,
+    "chi2": 43.907357128411995,
+    "ndf": 8,
+    "condition": 53.00417096203176,
+    "lambda_min": 0.0008385718330179088,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 4,
+     "99%": 7
+    },
+    "top_mode": {
+     "mode": 1,
+     "sigma": 0.13967948505774955,
+     "chi2": 18.347997082775745,
+     "fraction": 0.4178797878705155,
+     "leading_cells": [
+      {
+       "cell": "R11",
+       "loading": 0.8099536247237743
+      },
+      {
+       "cell": "R10",
+       "loading": 0.3647141092966457
+      },
+      {
+       "cell": "R00",
+       "loading": 0.2658201327580266
+      }
+     ],
+     "loadings": {
+      "R00": 0.2658201327580266,
+      "R01": 0.20927412033569448,
+      "R02": 0.16975360263476436,
+      "R03": 0.0731082714977297,
+      "R08": 0.21117899370630488,
+      "R09": 0.13321062834220687,
+      "R10": 0.3647141092966457,
+      "R11": 0.8099536247237743
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 43.90735712841193,
+     "chi2_lstsq": 43.90735712841202,
+     "rel_mode_sum_vs_cholesky": 1.4564494517714522e-15,
+     "rel_lstsq_vs_cholesky": 6.473108674539787e-16,
+     "rel_ridge_vs_cholesky": 2.6586562324101737e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 0.00024193930587567582
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.0,
+    "prediction": "mnvtune_v1",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 155.78963301826715,
+    "chi2_at_alpha_0": 155.78963301826835,
+    "chi2": 155.78963301826835,
+    "ndf": 16,
+    "condition": 1024.74965276908,
+    "lambda_min": 5.3244948356824054e-05,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 6,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 13,
+     "sigma": 0.01456258604907437,
+     "chi2": 66.70588052852038,
+     "fraction": 0.4281792006063603,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.4909860060664066
+      },
+      {
+       "cell": "R01",
+       "loading": -0.37603237954176116
+      },
+      {
+       "cell": "R14",
+       "loading": -0.3757482576523994
+      }
+     ],
+     "loadings": {
+      "R00": 0.27755090426649565,
+      "R01": -0.37603237954176116,
+      "R02": -0.0717050903102735,
+      "R03": 0.22551228661274716,
+      "R04": 0.4909860060664066,
+      "R05": 0.19943222564241134,
+      "R06": 0.10060317934957275,
+      "R07": -0.3054623580117237,
+      "R08": -0.34161874106699525,
+      "R09": 0.2466449830109611,
+      "R10": -0.04196887465356173,
+      "R11": -0.06195574883720633,
+      "R12": 0.1250459977906461,
+      "R13": -0.032668060267172505,
+      "R14": -0.3757482576523994,
+      "R15": -0.016478502723611715
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 155.78963301826838,
+     "chi2_lstsq": 155.78963301826806,
+     "rel_mode_sum_vs_cholesky": 1.8243646178350772e-16,
+     "rel_lstsq_vs_cholesky": 1.8243646178350772e-15,
+     "rel_ridge_vs_cholesky": 4.105296184421255e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": -2.636789878958208e-19
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.1,
+    "prediction": "mnvtune_v1",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 155.78963301826715,
+    "chi2_at_alpha_0": 155.78963301826835,
+    "chi2": 144.60910974523222,
+    "ndf": 16,
+    "condition": 606.3493239121564,
+    "lambda_min": 8.991835858585377e-05,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 7,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 13,
+     "sigma": 0.015622209350589961,
+     "chi2": 52.83976318668822,
+     "fraction": 0.365397195790637,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.4277289333511497
+      },
+      {
+       "cell": "R14",
+       "loading": -0.3992535771198831
+      },
+      {
+       "cell": "R01",
+       "loading": -0.37414969531658226
+      }
+     ],
+     "loadings": {
+      "R00": 0.30270222343881215,
+      "R01": -0.37414969531658226,
+      "R02": -0.09079888821648652,
+      "R03": 0.2379457311636475,
+      "R04": 0.4277289333511497,
+      "R05": 0.21759940361454516,
+      "R06": 0.11106878128073255,
+      "R07": -0.3162878988462057,
+      "R08": -0.3345864968787906,
+      "R09": 0.2469447929937308,
+      "R10": -0.05494322608072163,
+      "R11": -0.06361209757568188,
+      "R12": 0.141833003423459,
+      "R13": -0.031957192117805386,
+      "R14": -0.3992535771198831,
+      "R15": 0.017564645366006836
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 144.6091097452319,
+     "chi2_lstsq": 144.60910974523208,
+     "rel_mode_sum_vs_cholesky": 2.1619578758574844e-15,
+     "rel_lstsq_vs_cholesky": 9.827081253897656e-16,
+     "rel_ridge_vs_cholesky": 3.523327026954936e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 1.5795208760242763e-05
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.25,
+    "prediction": "mnvtune_v1",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 155.78963301826715,
+    "chi2_at_alpha_0": 155.78963301826835,
+    "chi2": 131.81788508601988,
+    "ndf": 16,
+    "condition": 403.2442603415072,
+    "lambda_min": 0.00013507830499701916,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 7,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 13,
+     "sigma": 0.017123428046446596,
+     "chi2": 38.01095164233751,
+     "fraction": 0.28835959261167715,
+     "leading_cells": [
+      {
+       "cell": "R14",
+       "loading": 0.42633018383103394
+      },
+      {
+       "cell": "R01",
+       "loading": 0.36572235284705656
+      },
+      {
+       "cell": "R04",
+       "loading": -0.3470345890380216
+      }
+     ],
+     "loadings": {
+      "R00": -0.330456849085894,
+      "R01": 0.36572235284705656,
+      "R02": 0.11482785826021638,
+      "R03": -0.2507280576084935,
+      "R04": -0.3470345890380216,
+      "R05": -0.24101087651818273,
+      "R06": -0.1225555308868188,
+      "R07": 0.3266121115682224,
+      "R08": 0.3189963031842476,
+      "R09": -0.23730868409730582,
+      "R10": 0.07672040328606335,
+      "R11": 0.06313635612656571,
+      "R12": -0.15900929388702856,
+      "R13": 0.03306312095717525,
+      "R14": 0.42633018383103394,
+      "R15": -0.06855679075638235
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 131.8178850860197,
+     "chi2_lstsq": 131.81788508601994,
+     "rel_mode_sum_vs_cholesky": 1.5092941741782516e-15,
+     "rel_lstsq_vs_cholesky": 4.312269069080719e-16,
+     "rel_ridge_vs_cholesky": 2.9207981602231458e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 3.855433899983759e-05
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 0.5,
+    "prediction": "mnvtune_v1",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 155.78963301826715,
+    "chi2_at_alpha_0": 155.78963301826835,
+    "chi2": 116.9799402694577,
+    "ndf": 16,
+    "condition": 284.1640000836133,
+    "lambda_min": 0.00019144941337244926,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 15,
+     "sigma": 0.013836524613227458,
+     "chi2": 30.913307375066232,
+     "fraction": 0.26426161018597744,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.8703256900806347
+      },
+      {
+       "cell": "R09",
+       "loading": -0.2512434677553065
+      },
+      {
+       "cell": "R00",
+       "loading": -0.23766308593889154
+      }
+     ],
+     "loadings": {
+      "R00": -0.23766308593889154,
+      "R01": 0.009750097372934169,
+      "R02": 0.12298975278863476,
+      "R03": -0.05944786877036352,
+      "R04": 0.8703256900806347,
+      "R05": 0.0037515304202244953,
+      "R06": -0.11038622023139799,
+      "R07": 0.010205891508204844,
+      "R08": 0.013633419928475055,
+      "R09": -0.2512434677553065,
+      "R10": -0.16434598058077432,
+      "R11": 0.05558635169451902,
+      "R12": -0.23147824184334492,
+      "R13": -0.08027609511171703,
+      "R14": 0.015422575528172652,
+      "R15": 0.03629915111928353
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 116.97994026945724,
+     "chi2_lstsq": 116.97994026945753,
+     "rel_mode_sum_vs_cholesky": 3.887395991474909e-15,
+     "rel_lstsq_vs_cholesky": 1.4577734968030909e-15,
+     "rel_ridge_vs_cholesky": 2.2775745322950103e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 7.611266768662212e-05
+    }
+   },
+   {
+    "family": "detector",
+    "family_role": "single group",
+    "alpha": 1.0,
+    "prediction": "mnvtune_v1",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 155.78963301826715,
+    "chi2_at_alpha_0": 155.78963301826835,
+    "chi2": 99.72020231323394,
+    "ndf": 16,
+    "condition": 190.23385205357704,
+    "lambda_min": 0.0002856099243752604,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 15,
+     "sigma": 0.016899997762581522,
+     "chi2": 32.16487626227273,
+     "fraction": 0.3225512535688487,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.9188464060125809
+      },
+      {
+       "cell": "R09",
+       "loading": -0.23791182590361873
+      },
+      {
+       "cell": "R12",
+       "loading": -0.1871998193846866
+      }
+     ],
+     "loadings": {
+      "R00": -0.1817102530606529,
+      "R01": -0.029008857842616684,
+      "R02": 0.07527172013852143,
+      "R03": -0.03841653651003642,
+      "R04": 0.9188464060125809,
+      "R05": -0.0029814177712067253,
+      "R06": -0.06104450816339011,
+      "R07": -0.008515470545651271,
+      "R08": -0.06770619567856241,
+      "R09": -0.23791182590361873,
+      "R10": -0.09053417031529616,
+      "R11": 0.016973889656705633,
+      "R12": -0.1871998193846866,
+      "R13": -0.06919599135919696,
+      "R14": -0.0036928373622031286,
+      "R15": -0.03735567762915969
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 99.72020231323368,
+     "chi2_lstsq": 99.72020231323378,
+     "rel_mode_sum_vs_cholesky": 2.565131026009654e-15,
+     "rel_lstsq_vs_cholesky": 1.5675800714503442e-15,
+     "rel_ridge_vs_cholesky": 1.5919314303093708e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "detector": 0.00014595532226925273
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.0,
+    "prediction": "genie_cv",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 64.0123343280672,
+    "chi2_at_alpha_0": 64.01233432806745,
+    "chi2": 64.01233432806745,
+    "ndf": 16,
+    "condition": 660.0110677894274,
+    "lambda_min": 8.275005409071232e-05,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.04252643349136385,
+     "chi2": 15.839236113699197,
+     "fraction": 0.24744037660807808,
+     "leading_cells": [
+      {
+       "cell": "R06",
+       "loading": 0.48644693728417715
+      },
+      {
+       "cell": "R03",
+       "loading": -0.37959813165992473
+      },
+      {
+       "cell": "R14",
+       "loading": -0.34959834758258573
+      }
+     ],
+     "loadings": {
+      "R00": 0.19262726532009405,
+      "R01": -0.1597145904381131,
+      "R02": 0.11233897843924819,
+      "R03": -0.37959813165992473,
+      "R04": 0.033099610199635504,
+      "R05": -0.13999814963005774,
+      "R06": 0.48644693728417715,
+      "R07": 0.28305056993568967,
+      "R08": 0.25851161570600384,
+      "R09": -0.024786452285259174,
+      "R10": -0.16535270363950624,
+      "R11": -0.2480789652320241,
+      "R12": -0.2016202352433679,
+      "R13": 0.33910776126759096,
+      "R14": -0.34959834758258573,
+      "R15": -0.09506194655822223
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 64.01233432806738,
+     "chi2_lstsq": 64.0123343280675,
+     "rel_mode_sum_vs_cholesky": 1.110009099369071e-15,
+     "rel_lstsq_vs_cholesky": 6.660054596214426e-16,
+     "rel_ridge_vs_cholesky": 1.666970595095794e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": -1.2772504070334871e-18
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.1,
+    "prediction": "genie_cv",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 64.0123343280672,
+    "chi2_at_alpha_0": 64.01233432806745,
+    "chi2": 57.01839820179977,
+    "ndf": 16,
+    "condition": 426.4617421660989,
+    "lambda_min": 0.00012698488549800366,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 7,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.04343065670615117,
+     "chi2": 14.705495422893325,
+     "fraction": 0.25790790142591374,
+     "leading_cells": [
+      {
+       "cell": "R06",
+       "loading": 0.4686321723585573
+      },
+      {
+       "cell": "R03",
+       "loading": -0.37599964396097657
+      },
+      {
+       "cell": "R13",
+       "loading": 0.36572303102290343
+      }
+     ],
+     "loadings": {
+      "R00": 0.20843613612603937,
+      "R01": -0.18703245093721574,
+      "R02": 0.14243902385963608,
+      "R03": -0.37599964396097657,
+      "R04": 0.026950684306128056,
+      "R05": -0.12700517338839565,
+      "R06": 0.4686321723585573,
+      "R07": 0.2896780943947036,
+      "R08": 0.23846688867659788,
+      "R09": -0.0463089725814915,
+      "R10": -0.20550291613415103,
+      "R11": -0.25744857404523963,
+      "R12": -0.17196842067891932,
+      "R13": 0.36572303102290343,
+      "R14": -0.3066488189686847,
+      "R15": -0.12099711080136297
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 57.01839820179997,
+     "chi2_lstsq": 57.018398201799755,
+     "rel_mode_sum_vs_cholesky": 3.4892591213926487e-15,
+     "rel_lstsq_vs_cholesky": 2.492327943851892e-16,
+     "rel_ridge_vs_cholesky": 1.040660815945199e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 3.332673147273506e-06
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.25,
+    "prediction": "genie_cv",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 64.0123343280672,
+    "chi2_at_alpha_0": 64.01233432806745,
+    "chi2": 52.09596032672668,
+    "ndf": 16,
+    "condition": 365.0147684089493,
+    "lambda_min": 0.00014661496559277974,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 6,
+     "99%": 10
+    },
+    "top_mode": {
+     "mode": 7,
+     "sigma": 0.044901137327237786,
+     "chi2": 12.532109208395047,
+     "fraction": 0.24055817629233206,
+     "leading_cells": [
+      {
+       "cell": "R06",
+       "loading": 0.42519236849188313
+      },
+      {
+       "cell": "R13",
+       "loading": 0.3983526257745768
+      },
+      {
+       "cell": "R03",
+       "loading": -0.3661190355063882
+      }
+     ],
+     "loadings": {
+      "R00": 0.23294125102562455,
+      "R01": -0.23374751267277344,
+      "R02": 0.17828844139255617,
+      "R03": -0.3661190355063882,
+      "R04": 0.018493918220682935,
+      "R05": -0.09725961077238915,
+      "R06": 0.42519236849188313,
+      "R07": 0.30342268646160997,
+      "R08": 0.20299253015827057,
+      "R09": -0.06540657479114609,
+      "R10": -0.24776615625887327,
+      "R11": -0.2720352324483041,
+      "R12": -0.13695054287934455,
+      "R13": 0.3983526257745768,
+      "R14": -0.24615017676883444,
+      "R15": -0.1539799507315323
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 52.095960326726654,
+     "chi2_lstsq": 52.095960326726576,
+     "rel_mode_sum_vs_cholesky": 5.455645553350684e-16,
+     "rel_lstsq_vs_cholesky": 2.0458670825065065e-15,
+     "rel_ridge_vs_cholesky": 7.737174701179727e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 7.515091241536353e-06
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.5,
+    "prediction": "genie_cv",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 64.0123343280672,
+    "chi2_at_alpha_0": 64.01233432806745,
+    "chi2": 48.10873616569242,
+    "ndf": 16,
+    "condition": 317.6822794894745,
+    "lambda_min": 0.00016556477120310343,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 6,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 8,
+     "sigma": 0.041772520602741746,
+     "chi2": 12.774107178686522,
+     "fraction": 0.26552572769093147,
+     "leading_cells": [
+      {
+       "cell": "R05",
+       "loading": 0.5890901069874814
+      },
+      {
+       "cell": "R01",
+       "loading": -0.5288694016350246
+      },
+      {
+       "cell": "R06",
+       "loading": -0.37730865661568813
+      }
+     ],
+     "loadings": {
+      "R00": 0.16294385457086694,
+      "R01": -0.5288694016350246,
+      "R02": -0.08158912294578582,
+      "R03": 0.18418408185305543,
+      "R04": -0.03333727931765167,
+      "R05": 0.5890901069874814,
+      "R06": -0.37730865661568813,
+      "R07": 0.00019809063249910663,
+      "R08": -0.038058465173300776,
+      "R09": -0.1448794789528125,
+      "R10": 0.08835173903858391,
+      "R11": -0.17917220570962164,
+      "R12": 0.04282322576891489,
+      "R13": 0.07310390429017202,
+      "R14": 0.3006523323234655,
+      "R15": -0.05242567728303513
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 48.10873616569246,
+     "chi2_lstsq": 48.108736165692385,
+     "rel_mode_sum_vs_cholesky": 8.86170944062513e-16,
+     "rel_lstsq_vs_cholesky": 7.384757867187608e-16,
+     "rel_ridge_vs_cholesky": 6.301304593654752e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 1.2639972308983626e-05
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 1.0,
+    "prediction": "genie_cv",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 64.0123343280672,
+    "chi2_at_alpha_0": 64.01233432806745,
+    "chi2": 45.19588764003098,
+    "ndf": 16,
+    "condition": 264.2473448379537,
+    "lambda_min": 0.00019395126629539135,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 7,
+     "99%": 11
+    },
+    "top_mode": {
+     "mode": 9,
+     "sigma": 0.046227024678357063,
+     "chi2": 11.558933032037883,
+     "fraction": 0.25575187557108336,
+     "leading_cells": [
+      {
+       "cell": "R05",
+       "loading": 0.47564680554186634
+      },
+      {
+       "cell": "R03",
+       "loading": 0.39280330632979993
+      },
+      {
+       "cell": "R01",
+       "loading": -0.36347342972394653
+      }
+     ],
+     "loadings": {
+      "R00": -0.02600898533503145,
+      "R01": -0.36347342972394653,
+      "R02": -0.2208474675752884,
+      "R03": 0.39280330632979993,
+      "R04": -0.019030825490345696,
+      "R05": 0.47564680554186634,
+      "R06": -0.2379345666482108,
+      "R07": -0.3241652384992672,
+      "R08": -0.10051314075344468,
+      "R09": -0.09322994424749673,
+      "R10": 0.0803615250760533,
+      "R11": -0.2778774389506268,
+      "R12": 0.23429946951536873,
+      "R13": 0.2294794767082299,
+      "R14": 0.2565278368870201,
+      "R15": 0.0035183615372848392
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 45.19588764003104,
+     "chi2_lstsq": 45.19588764003097,
+     "rel_mode_sum_vs_cholesky": 1.2577121908423491e-15,
+     "rel_lstsq_vs_cholesky": 3.144280477105873e-16,
+     "rel_ridge_vs_cholesky": 5.705068965374017e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 1.8760213326877552e-05
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.0,
+    "prediction": "genie_mec",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 140.3401321448855,
+    "chi2_at_alpha_0": 140.34013214488598,
+    "chi2": 140.34013214488598,
+    "ndf": 16,
+    "condition": 650.2497618838295,
+    "lambda_min": 8.399453010357433e-05,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 7,
+     "99%": 11
+    },
+    "top_mode": {
+     "mode": 13,
+     "sigma": 0.015700778470386794,
+     "chi2": 55.306891485190775,
+     "fraction": 0.39409177289424524,
+     "leading_cells": [
+      {
+       "cell": "R01",
+       "loading": 0.4336344278657577
+      },
+      {
+       "cell": "R04",
+       "loading": -0.42698890567918946
+      },
+      {
+       "cell": "R08",
+       "loading": 0.3717506270268526
+      }
+     ],
+     "loadings": {
+      "R00": -0.32124565442672787,
+      "R01": 0.4336344278657577,
+      "R02": -0.01838059252512203,
+      "R03": -0.18165806696110706,
+      "R04": -0.42698890567918946,
+      "R05": -0.1554287527932301,
+      "R06": -0.03942874218894915,
+      "R07": 0.2749174089304317,
+      "R08": 0.3717506270268526,
+      "R09": -0.3593892374627263,
+      "R10": 0.096065133794391,
+      "R11": 0.028422241229822533,
+      "R12": -0.09927895755200969,
+      "R13": 0.02841615054227372,
+      "R14": 0.32205934117839635,
+      "R15": 0.005620329651160411
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 140.34013214488598,
+     "chi2_lstsq": 140.34013214488579,
+     "rel_mode_sum_vs_cholesky": 0.0,
+     "rel_lstsq_vs_cholesky": 1.4176412902863146e-15,
+     "rel_ridge_vs_cholesky": 3.518859287259658e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": -1.2772504070334871e-18
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.1,
+    "prediction": "genie_mec",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 140.3401321448855,
+    "chi2_at_alpha_0": 140.34013214488598,
+    "chi2": 128.06667628262426,
+    "ndf": 16,
+    "condition": 423.9702457855936,
+    "lambda_min": 0.00012773457154911645,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 6,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 15,
+     "sigma": 0.011301972020365139,
+     "chi2": 37.47637598642439,
+     "fraction": 0.29263175303870476,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.8767374676014346
+      },
+      {
+       "cell": "R09",
+       "loading": -0.3293266114615239
+      },
+      {
+       "cell": "R12",
+       "loading": -0.18663089331569674
+      }
+     ],
+     "loadings": {
+      "R00": -0.16816372662094872,
+      "R01": 0.02909646224113134,
+      "R02": 0.06921649877806053,
+      "R03": -0.05642290889583528,
+      "R04": 0.8767374676014346,
+      "R05": 0.014630272647486876,
+      "R06": -0.08084661793797698,
+      "R07": 0.009582593040787311,
+      "R08": -0.020822961468760157,
+      "R09": -0.3293266114615239,
+      "R10": -0.16706150296547334,
+      "R11": 0.04562862059590989,
+      "R12": -0.18663089331569674,
+      "R13": -0.08842550469293643,
+      "R14": 0.0008569822667990317,
+      "R15": 0.07653254678295479
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 128.06667628262335,
+     "chi2_lstsq": 128.06667628262477,
+     "rel_mode_sum_vs_cholesky": 7.101728007415509e-15,
+     "rel_lstsq_vs_cholesky": 3.994722004171224e-15,
+     "rel_ridge_vs_cholesky": 3.1204995083873752e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 3.332673147273506e-06
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.25,
+    "prediction": "genie_mec",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 140.3401321448855,
+    "chi2_at_alpha_0": 140.34013214488598,
+    "chi2": 117.7769923937699,
+    "ndf": 16,
+    "condition": 363.34126065782567,
+    "lambda_min": 0.00014729424317788136,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 5,
+     "99%": 11
+    },
+    "top_mode": {
+     "mode": 15,
+     "sigma": 0.012136483970981108,
+     "chi2": 42.99464828219599,
+     "fraction": 0.3650513348010215,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.9157078233537901
+      },
+      {
+       "cell": "R09",
+       "loading": -0.33480572525549673
+      },
+      {
+       "cell": "R08",
+       "loading": -0.13716772561889456
+      }
+     ],
+     "loadings": {
+      "R00": -0.08427655081403114,
+      "R01": 0.009524474725870445,
+      "R02": 0.005547994356803313,
+      "R03": -0.04509426381553718,
+      "R04": 0.9157078233537901,
+      "R05": -0.005127697704557932,
+      "R06": -0.031018709727902435,
+      "R07": 0.009983884927793722,
+      "R08": -0.13716772561889456,
+      "R09": -0.33480572525549673,
+      "R10": -0.056121296647424435,
+      "R11": -0.0016555196351458858,
+      "R12": -0.10489024962566489,
+      "R13": -0.07563275442052335,
+      "R14": -0.008237121615816875,
+      "R15": -0.016768949545654596
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 117.77699239377137,
+     "chi2_lstsq": 117.77699239376989,
+     "rel_mode_sum_vs_cholesky": 1.2427877515942012e-14,
+     "rel_lstsq_vs_cholesky": 1.2065900500914576e-16,
+     "rel_ridge_vs_cholesky": 2.8709893233488164e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 7.515091241536353e-06
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.5,
+    "prediction": "genie_mec",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 140.3401321448855,
+    "chi2_at_alpha_0": 140.34013214488598,
+    "chi2": 107.87541203853016,
+    "ndf": 16,
+    "condition": 316.377314970848,
+    "lambda_min": 0.00016625218785682296,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 5,
+     "99%": 11
+    },
+    "top_mode": {
+     "mode": 15,
+     "sigma": 0.012893881799397067,
+     "chi2": 42.78916641767323,
+     "fraction": 0.3966535618180557,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.9208192347640954
+      },
+      {
+       "cell": "R09",
+       "loading": -0.31904288382989787
+      },
+      {
+       "cell": "R08",
+       "loading": -0.18135909636924688
+      }
+     ],
+     "loadings": {
+      "R00": -0.04678499934276325,
+      "R01": -0.0009914412204478223,
+      "R02": -0.005435545110731884,
+      "R03": -0.03246843696921428,
+      "R04": 0.9208192347640954,
+      "R05": -0.0038509085881324127,
+      "R06": -0.02592320501796234,
+      "R07": -0.002089307725440902,
+      "R08": -0.18135909636924688,
+      "R09": -0.31904288382989787,
+      "R10": -0.0468356510904607,
+      "R11": -0.016573585987208123,
+      "R12": -0.07114932010878314,
+      "R13": -0.06431040657151882,
+      "R14": -0.032565109948446413,
+      "R15": -0.026849206730636878
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 107.87541203852984,
+     "chi2_lstsq": 107.87541203853021,
+     "rel_mode_sum_vs_cholesky": 2.898147018180362e-15,
+     "rel_lstsq_vs_cholesky": 5.269358214873385e-16,
+     "rel_ridge_vs_cholesky": 2.609342057130251e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 1.2639972308983626e-05
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 1.0,
+    "prediction": "genie_mec",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 140.3401321448855,
+    "chi2_at_alpha_0": 140.34013214488598,
+    "chi2": 98.17787188096491,
+    "ndf": 16,
+    "condition": 263.2930000743962,
+    "lambda_min": 0.00019465957625205364,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 6,
+     "99%": 10
+    },
+    "top_mode": {
+     "mode": 15,
+     "sigma": 0.013952045593820774,
+     "chi2": 40.14664354106156,
+     "fraction": 0.40891743497697064,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.9219230649714143
+      },
+      {
+       "cell": "R09",
+       "loading": -0.3000208097317754
+      },
+      {
+       "cell": "R08",
+       "loading": -0.2099797598754279
+      }
+     ],
+     "loadings": {
+      "R00": -0.021138264934989843,
+      "R01": 0.0008730016163944563,
+      "R02": -0.0024193137281732944,
+      "R03": -0.01844030229706721,
+      "R04": 0.9219230649714143,
+      "R05": -0.0014101648850542393,
+      "R06": -0.03213735562603982,
+      "R07": -0.017069290215729546,
+      "R08": -0.2099797598754279,
+      "R09": -0.3000208097317754,
+      "R10": -0.059332190243221485,
+      "R11": -0.024983429159899446,
+      "R12": -0.050340510667302135,
+      "R13": -0.05131138170490164,
+      "R14": -0.06252158607515397,
+      "R15": -0.024774527572455646
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 98.17787188096426,
+     "chi2_lstsq": 98.17787188096483,
+     "rel_mode_sum_vs_cholesky": 6.658316221112079e-15,
+     "rel_lstsq_vs_cholesky": 8.68476028840706e-16,
+     "rel_ridge_vs_cholesky": 2.267891548755067e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 1.8760213326877552e-05
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.0,
+    "prediction": "nuwro",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 91.31980861439727,
+    "chi2_at_alpha_0": 91.31980861439703,
+    "chi2": 91.31980861439703,
+    "ndf": 16,
+    "condition": 768.09625144408,
+    "lambda_min": 7.107914525666427e-05,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 5,
+     "sigma": 0.07447487873786057,
+     "chi2": 19.940055145625415,
+     "fraction": 0.21835410573212333,
+     "leading_cells": [
+      {
+       "cell": "R08",
+       "loading": 0.6275843057546308
+      },
+      {
+       "cell": "R00",
+       "loading": 0.40652656080825617
+      },
+      {
+       "cell": "R12",
+       "loading": 0.3201617978068687
+      }
+     ],
+     "loadings": {
+      "R00": 0.40652656080825617,
+      "R01": 0.04862486217092664,
+      "R02": -0.0018022217626316069,
+      "R03": -0.1465192316579417,
+      "R04": 0.17113737543248442,
+      "R05": -0.24608106290805243,
+      "R06": -0.2957360285354841,
+      "R07": -0.2996554850533856,
+      "R08": 0.6275843057546308,
+      "R09": 0.054940300536322935,
+      "R10": 0.08902560328045017,
+      "R11": -0.11490455467650819,
+      "R12": 0.3201617978068687,
+      "R13": -0.13557435590264114,
+      "R14": 0.017430514832857204,
+      "R15": -0.06787214466097753
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 91.31980861439749,
+     "chi2_lstsq": 91.31980861439682,
+     "rel_mode_sum_vs_cholesky": 4.9797229953323714e-15,
+     "rel_lstsq_vs_cholesky": 2.3342451540620492e-15,
+     "rel_ridge_vs_cholesky": 3.572498405591089e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": -1.2772504070334871e-18
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.1,
+    "prediction": "nuwro",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 91.31980861439727,
+    "chi2_at_alpha_0": 91.31980861439703,
+    "chi2": 85.45215392410083,
+    "ndf": 16,
+    "condition": 443.00806164895897,
+    "lambda_min": 0.00012219603953482602,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 7,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 15,
+     "sigma": 0.011054231747834221,
+     "chi2": 22.47008678525716,
+     "fraction": 0.2629551831451229,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.8532973309609286
+      },
+      {
+       "cell": "R09",
+       "loading": -0.3138195506085542
+      },
+      {
+       "cell": "R10",
+       "loading": -0.22112060338575149
+      }
+     ],
+     "loadings": {
+      "R00": -0.17514210910991396,
+      "R01": 0.025047233895531776,
+      "R02": 0.09275242196349331,
+      "R03": -0.05459308912681225,
+      "R04": 0.8532973309609286,
+      "R05": 0.029617321152687823,
+      "R06": -0.10338208636008828,
+      "R07": 0.001144845837956765,
+      "R08": 0.0061670956472845255,
+      "R09": -0.3138195506085542,
+      "R10": -0.22112060338575149,
+      "R11": 0.062428532057030264,
+      "R12": -0.20396148135903974,
+      "R13": -0.09212284914813632,
+      "R14": -0.012601852630803188,
+      "R15": 0.1259907741397084
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 85.4521539241008,
+     "chi2_lstsq": 85.45215392410078,
+     "rel_mode_sum_vs_cholesky": 3.3260378030550707e-16,
+     "rel_lstsq_vs_cholesky": 4.989056704582607e-16,
+     "rel_ridge_vs_cholesky": 2.6123675434270824e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 3.332673147273506e-06
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.25,
+    "prediction": "nuwro",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 91.31980861439727,
+    "chi2_at_alpha_0": 91.31980861439703,
+    "chi2": 81.14723159791268,
+    "ndf": 16,
+    "condition": 374.21890494004606,
+    "lambda_min": 0.00014295433271666042,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 8,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 15,
+     "sigma": 0.01195635114559038,
+     "chi2": 20.656735094452632,
+     "fraction": 0.2545587161470591,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.91544204827539
+      },
+      {
+       "cell": "R09",
+       "loading": -0.3346068946595413
+      },
+      {
+       "cell": "R08",
+       "loading": -0.13626599635584893
+      }
+     ],
+     "loadings": {
+      "R00": -0.08452265036868138,
+      "R01": 0.009454443984668909,
+      "R02": 0.007197965493588733,
+      "R03": -0.04582491260144082,
+      "R04": 0.91544204827539,
+      "R05": -0.004351758215639521,
+      "R06": -0.03302125906687859,
+      "R07": 0.010432824645270027,
+      "R08": -0.13626599635584893,
+      "R09": -0.3346068946595413,
+      "R10": -0.05897479494669948,
+      "R11": -0.00011996983969444867,
+      "R12": -0.10569479825746603,
+      "R13": -0.07689767922124634,
+      "R14": -0.008716776073495393,
+      "R15": -0.013914403653500464
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 81.14723159791234,
+     "chi2_lstsq": 81.1472315979126,
+     "rel_mode_sum_vs_cholesky": 4.202983964441506e-15,
+     "rel_lstsq_vs_cholesky": 1.0507459911103764e-15,
+     "rel_ridge_vs_cholesky": 2.236600579368694e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 7.515091241536353e-06
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.5,
+    "prediction": "nuwro",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 91.31980861439727,
+    "chi2_at_alpha_0": 91.31980861439703,
+    "chi2": 77.0718057521424,
+    "ndf": 16,
+    "condition": 324.6223054598192,
+    "lambda_min": 0.00016196213209868651,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 9,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 15,
+     "sigma": 0.012726434382759631,
+     "chi2": 19.91123269954051,
+     "fraction": 0.2583465186163366,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.9208534761976456
+      },
+      {
+       "cell": "R09",
+       "loading": -0.3185845635110631
+      },
+      {
+       "cell": "R08",
+       "loading": -0.18156696607790127
+      }
+     ],
+     "loadings": {
+      "R00": -0.04667076256723188,
+      "R01": -0.0010811737283351781,
+      "R02": -0.004957069514741747,
+      "R03": -0.032664525939982814,
+      "R04": 0.9208534761976456,
+      "R05": -0.003311241330149375,
+      "R06": -0.02670532127574113,
+      "R07": -0.0018860065652147795,
+      "R08": -0.18156696607790127,
+      "R09": -0.3185845635110631,
+      "R10": -0.047335251520810154,
+      "R11": -0.016085495040745544,
+      "R12": -0.07091334253204638,
+      "R13": -0.06501439906109722,
+      "R14": -0.03357497466267691,
+      "R15": -0.02618009584801439
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 77.0718057521423,
+     "chi2_lstsq": 77.0718057521423,
+     "rel_mode_sum_vs_cholesky": 1.2906922581562694e-15,
+     "rel_lstsq_vs_cholesky": 1.2906922581562694e-15,
+     "rel_ridge_vs_cholesky": 1.936288597147878e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 1.2639972308983626e-05
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 1.0,
+    "prediction": "nuwro",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 91.31980861439727,
+    "chi2_at_alpha_0": 91.31980861439703,
+    "chi2": 77.98845044339089,
+    "ndf": 16,
+    "condition": 269.193918841099,
+    "lambda_min": 0.00019031109362830983,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 7,
+     "99%": 11
+    },
+    "top_mode": {
+     "mode": 15,
+     "sigma": 0.013795328688665226,
+     "chi2": 19.183842587839152,
+     "fraction": 0.24598312286976393,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.9219909596998069
+      },
+      {
+       "cell": "R09",
+       "loading": -0.2991060478651308
+      },
+      {
+       "cell": "R08",
+       "loading": -0.21012017815247727
+      }
+     ],
+     "loadings": {
+      "R00": -0.02091310275735027,
+      "R01": 0.0009682053941053956,
+      "R02": -0.001934837252155889,
+      "R03": -0.018241831865980038,
+      "R04": 0.9219909596998069,
+      "R05": -0.0005156442379725874,
+      "R06": -0.032889588291836594,
+      "R07": -0.01722625092144721,
+      "R08": -0.21012017815247727,
+      "R09": -0.2991060478651308,
+      "R10": -0.05991098804589978,
+      "R11": -0.02479795298880625,
+      "R12": -0.05013359547889983,
+      "R13": -0.05169872428643635,
+      "R14": -0.06469340561083502,
+      "R15": -0.024260626021948326
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 77.98845044339103,
+     "chi2_lstsq": 77.98845044339082,
+     "rel_mode_sum_vs_cholesky": 1.822174262266843e-15,
+     "rel_lstsq_vs_cholesky": 9.110871311334214e-16,
+     "rel_ridge_vs_cholesky": 1.604547981340937e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 1.8760213326877552e-05
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.0,
+    "prediction": "gibuu",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "chi2_stage_g": 41.803148133725585,
+    "chi2_at_alpha_0": 41.80314813372558,
+    "chi2": 41.80314813372558,
+    "ndf": 8,
+    "condition": 100.86780286784713,
+    "lambda_min": 0.00044223186902458636,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 4,
+     "99%": 6
+    },
+    "top_mode": {
+     "mode": 1,
+     "sigma": 0.146067515607412,
+     "chi2": 15.497486016827825,
+     "fraction": 0.37072533310774497,
+     "leading_cells": [
+      {
+       "cell": "R11",
+       "loading": 0.804161270754289
+      },
+      {
+       "cell": "R10",
+       "loading": 0.3453769812829227
+      },
+      {
+       "cell": "R00",
+       "loading": 0.261429667482082
+      }
+     ],
+     "loadings": {
+      "R00": 0.261429667482082,
+      "R01": 0.23564526081142467,
+      "R02": 0.12090213839222158,
+      "R03": 0.04286818031863324,
+      "R08": 0.23853559710933864,
+      "R09": 0.19186190970621372,
+      "R10": 0.3453769812829227,
+      "R11": 0.804161270754289
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 41.803148133725585,
+     "chi2_lstsq": 41.8031481337256,
+     "rel_mode_sum_vs_cholesky": 1.6997349900230475e-16,
+     "rel_lstsq_vs_cholesky": 5.099204970069142e-16,
+     "rel_ridge_vs_cholesky": 5.342819487514195e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": -7.382299987967716e-19
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.1,
+    "prediction": "gibuu",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "chi2_stage_g": 41.803148133725585,
+    "chi2_at_alpha_0": 41.80314813372558,
+    "chi2": 39.06028706967943,
+    "ndf": 8,
+    "condition": 75.4520707164718,
+    "lambda_min": 0.0005842029189178145,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 4,
+     "99%": 6
+    },
+    "top_mode": {
+     "mode": 1,
+     "sigma": 0.14635320224881482,
+     "chi2": 15.498044779072256,
+     "fraction": 0.3967724239052658,
+     "leading_cells": [
+      {
+       "cell": "R11",
+       "loading": 0.8038533001357129
+      },
+      {
+       "cell": "R10",
+       "loading": 0.3449570499203707
+      },
+      {
+       "cell": "R00",
+       "loading": 0.2626363976040062
+      }
+     ],
+     "loadings": {
+      "R00": 0.2626363976040062,
+      "R01": 0.23615734858922793,
+      "R02": 0.12261582341474714,
+      "R03": 0.043662484394461576,
+      "R08": 0.23778703948735208,
+      "R09": 0.19129193942433054,
+      "R10": 0.3449570499203707,
+      "R11": 0.8038533001357129
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 39.060287069679525,
+     "chi2_lstsq": 39.06028706967945,
+     "rel_mode_sum_vs_cholesky": 2.3648201940767535e-15,
+     "rel_lstsq_vs_cholesky": 3.638184913964236e-16,
+     "rel_ridge_vs_cholesky": 3.2665370486329617e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 5.374314520393835e-06
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.25,
+    "prediction": "gibuu",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "chi2_stage_g": 41.803148133725585,
+    "chi2_at_alpha_0": 41.80314813372558,
+    "chi2": 36.83047840833844,
+    "ndf": 8,
+    "condition": 55.37958199980966,
+    "lambda_min": 0.0007820418492864599,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 4,
+     "99%": 7
+    },
+    "top_mode": {
+     "mode": 1,
+     "sigma": 0.14678031033328556,
+     "chi2": 15.508595218263988,
+     "fraction": 0.42108047162245993,
+     "leading_cells": [
+      {
+       "cell": "R11",
+       "loading": 0.8033316857076767
+      },
+      {
+       "cell": "R10",
+       "loading": 0.3445358759842866
+      },
+      {
+       "cell": "R00",
+       "loading": 0.26433872903253547
+      }
+     ],
+     "loadings": {
+      "R00": 0.26433872903253547,
+      "R01": 0.236737805421409,
+      "R02": 0.12542506737059866,
+      "R03": 0.04498123118986097,
+      "R08": 0.23669336916135425,
+      "R09": 0.19040738175368635,
+      "R10": 0.3445358759842866,
+      "R11": 0.8033316857076767
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 36.830478408338465,
+     "chi2_lstsq": 36.83047840833843,
+     "rel_mode_sum_vs_cholesky": 5.787674500578028e-16,
+     "rel_lstsq_vs_cholesky": 3.858449667052019e-16,
+     "rel_ridge_vs_cholesky": 1.9827492473073552e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 9.156176369944142e-06
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.5,
+    "prediction": "gibuu",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "chi2_stage_g": 41.803148133725585,
+    "chi2_at_alpha_0": 41.80314813372558,
+    "chi2": 34.993213450952666,
+    "ndf": 8,
+    "condition": 39.297727675885255,
+    "lambda_min": 0.0010709413524080758,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 4,
+     "99%": 7
+    },
+    "top_mode": {
+     "mode": 1,
+     "sigma": 0.14748769183739563,
+     "chi2": 15.552026719416169,
+     "fraction": 0.44442979611501743,
+     "leading_cells": [
+      {
+       "cell": "R11",
+       "loading": 0.8023164013463326
+      },
+      {
+       "cell": "R10",
+       "loading": 0.34439442262337405
+      },
+      {
+       "cell": "R00",
+       "loading": 0.26685733133873557
+      }
+     ],
+     "loadings": {
+      "R00": 0.26685733133873557,
+      "R01": 0.23716221983159558,
+      "R02": 0.13077229353996717,
+      "R03": 0.0475242878303368,
+      "R08": 0.2349435025636228,
+      "R09": 0.1888484045565497,
+      "R10": 0.34439442262337405,
+      "R11": 0.8023164013463326
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 34.993213450952645,
+     "chi2_lstsq": 34.99321345095267,
+     "rel_mode_sum_vs_cholesky": 6.091547466105227e-16,
+     "rel_lstsq_vs_cholesky": 2.0305158220350757e-16,
+     "rel_ridge_vs_cholesky": 1.2104046951258628e-10,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 1.3441117382973698e-05
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 1.0,
+    "prediction": "gibuu",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R08",
+     "R09",
+     "R10",
+     "R11"
+    ],
+    "chi2_stage_g": 41.803148133725585,
+    "chi2_at_alpha_0": 41.80314813372558,
+    "chi2": 33.693075438118946,
+    "ndf": 8,
+    "condition": 27.808573295415016,
+    "lambda_min": 0.001434250988505977,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 4,
+     "99%": 6
+    },
+    "top_mode": {
+     "mode": 1,
+     "sigma": 0.14888125613041975,
+     "chi2": 15.732177669205813,
+     "fraction": 0.4669261403014309,
+     "leading_cells": [
+      {
+       "cell": "R11",
+       "loading": 0.7998356651843029
+      },
+      {
+       "cell": "R10",
+       "loading": 0.3461842858382781
+      },
+      {
+       "cell": "R00",
+       "loading": 0.27048626623820143
+      }
+     ],
+     "loadings": {
+      "R00": 0.27048626623820143,
+      "R01": 0.23569295975718452,
+      "R02": 0.14410555581208112,
+      "R03": 0.05389553456507773,
+      "R08": 0.23166985410826507,
+      "R09": 0.18537339687973253,
+      "R10": 0.3461842858382781,
+      "R11": 0.7998356651843029
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 33.693075438118925,
+     "chi2_lstsq": 33.693075438118974,
+     "rel_mode_sum_vs_cholesky": 6.326606222680001e-16,
+     "rel_lstsq_vs_cholesky": 8.435474963573336e-16,
+     "rel_ridge_vs_cholesky": 7.458689140166361e-11,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 1.8760213326877552e-05
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.0,
+    "prediction": "mnvtune_v1",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 155.78963301826715,
+    "chi2_at_alpha_0": 155.78963301826835,
+    "chi2": 155.78963301826835,
+    "ndf": 16,
+    "condition": 1024.74965276908,
+    "lambda_min": 5.3244948356824054e-05,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 6,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 13,
+     "sigma": 0.01456258604907437,
+     "chi2": 66.70588052852038,
+     "fraction": 0.4281792006063603,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.4909860060664066
+      },
+      {
+       "cell": "R01",
+       "loading": -0.37603237954176116
+      },
+      {
+       "cell": "R14",
+       "loading": -0.3757482576523994
+      }
+     ],
+     "loadings": {
+      "R00": 0.27755090426649565,
+      "R01": -0.37603237954176116,
+      "R02": -0.0717050903102735,
+      "R03": 0.22551228661274716,
+      "R04": 0.4909860060664066,
+      "R05": 0.19943222564241134,
+      "R06": 0.10060317934957275,
+      "R07": -0.3054623580117237,
+      "R08": -0.34161874106699525,
+      "R09": 0.2466449830109611,
+      "R10": -0.04196887465356173,
+      "R11": -0.06195574883720633,
+      "R12": 0.1250459977906461,
+      "R13": -0.032668060267172505,
+      "R14": -0.3757482576523994,
+      "R15": -0.016478502723611715
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 155.78963301826838,
+     "chi2_lstsq": 155.78963301826806,
+     "rel_mode_sum_vs_cholesky": 1.8243646178350772e-16,
+     "rel_lstsq_vs_cholesky": 1.8243646178350772e-15,
+     "rel_ridge_vs_cholesky": 4.105296184421255e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": -1.2772504070334871e-18
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.1,
+    "prediction": "mnvtune_v1",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 155.78963301826715,
+    "chi2_at_alpha_0": 155.78963301826835,
+    "chi2": 146.01132176915522,
+    "ndf": 16,
+    "condition": 477.9160445205046,
+    "lambda_min": 0.00011320168822389347,
+    "modes_needed": {
+     "50%": 3,
+     "90%": 7,
+     "99%": 13
+    },
+    "top_mode": {
+     "mode": 13,
+     "sigma": 0.017020319316388796,
+     "chi2": 38.06625748588487,
+     "fraction": 0.26070757407475703,
+     "leading_cells": [
+      {
+       "cell": "R14",
+       "loading": 0.4496243795689068
+      },
+      {
+       "cell": "R09",
+       "loading": -0.40205989467917663
+      },
+      {
+       "cell": "R01",
+       "loading": 0.35492750922253546
+      }
+     ],
+     "loadings": {
+      "R00": -0.2328609859012895,
+      "R01": 0.35492750922253546,
+      "R02": 0.04644187676112674,
+      "R03": -0.24788477122208685,
+      "R04": -0.3016338073020206,
+      "R05": -0.19391662520543707,
+      "R06": -0.10470737925710055,
+      "R07": 0.3186638192783543,
+      "R08": 0.32260465516386644,
+      "R09": -0.40205989467917663,
+      "R10": -0.015889242875831572,
+      "R11": 0.07952081357266955,
+      "R12": -0.18141683350895835,
+      "R13": -0.0041188285770306,
+      "R14": 0.4496243795689068,
+      "R15": 0.08779849252388147
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 146.01132176915388,
+     "chi2_lstsq": 146.0113217691555,
+     "rel_mode_sum_vs_cholesky": 9.148744953770971e-15,
+     "rel_lstsq_vs_cholesky": 1.9465414795257384e-15,
+     "rel_ridge_vs_cholesky": 3.895141426666075e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 3.332673147273506e-06
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.25,
+    "prediction": "mnvtune_v1",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 155.78963301826715,
+    "chi2_at_alpha_0": 155.78963301826835,
+    "chi2": 136.38615418291582,
+    "ndf": 16,
+    "condition": 389.5327808204898,
+    "lambda_min": 0.00013724966301931408,
+    "modes_needed": {
+     "50%": 2,
+     "90%": 6,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 15,
+     "sigma": 0.011715360131865946,
+     "chi2": 63.62728000520511,
+     "fraction": 0.46652301611108266,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.9145610171665048
+      },
+      {
+       "cell": "R09",
+       "loading": -0.3354191609604007
+      },
+      {
+       "cell": "R08",
+       "loading": -0.13505579375571553
+      }
+     ],
+     "loadings": {
+      "R00": -0.08482278713758692,
+      "R01": 0.01017243576261194,
+      "R02": 0.00946064427261822,
+      "R03": -0.04802686938548528,
+      "R04": 0.9145610171665048,
+      "R05": -0.004160228962576064,
+      "R06": -0.03600761719308082,
+      "R07": 0.0126038885210255,
+      "R08": -0.13505579375571553,
+      "R09": -0.3354191609604007,
+      "R10": -0.062141016307831476,
+      "R11": 0.00214032061231039,
+      "R12": -0.10677757413158875,
+      "R13": -0.07889236744083297,
+      "R14": -0.008264194119918196,
+      "R15": -0.01024907330734319
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 136.38615418291596,
+     "chi2_lstsq": 136.38615418291567,
+     "rel_mode_sum_vs_cholesky": 1.0419572866717069e-15,
+     "rel_lstsq_vs_cholesky": 1.0419572866717069e-15,
+     "rel_ridge_vs_cholesky": 3.639529919846276e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 7.515091241536353e-06
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 0.5,
+    "prediction": "mnvtune_v1",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 155.78963301826715,
+    "chi2_at_alpha_0": 155.78963301826835,
+    "chi2": 125.96394805482713,
+    "ndf": 16,
+    "condition": 335.99543735807356,
+    "lambda_min": 0.00015638169709248818,
+    "modes_needed": {
+     "50%": 1,
+     "90%": 6,
+     "99%": 11
+    },
+    "top_mode": {
+     "mode": 15,
+     "sigma": 0.012505266774143133,
+     "chi2": 63.78304182639409,
+     "fraction": 0.506359500566242,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.9208698634949495
+      },
+      {
+       "cell": "R09",
+       "loading": -0.3180918313678022
+      },
+      {
+       "cell": "R08",
+       "loading": -0.1814853585462791
+      }
+     ],
+     "loadings": {
+      "R00": -0.04657207616698434,
+      "R01": -0.0010620808770426537,
+      "R02": -0.004200827140105954,
+      "R03": -0.03305201145306925,
+      "R04": 0.9208698634949495,
+      "R05": -0.0024585743206944595,
+      "R06": -0.027843300893678806,
+      "R07": -0.0016006821927187168,
+      "R08": -0.1814853585462791,
+      "R09": -0.3180918313678022,
+      "R10": -0.048483580044915014,
+      "R11": -0.015237727803072275,
+      "R12": -0.07069386032487046,
+      "R13": -0.06615465733768995,
+      "R14": -0.035359293248543436,
+      "R15": -0.024660393358901668
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 125.96394805482669,
+     "chi2_lstsq": 125.96394805482717,
+     "rel_mode_sum_vs_cholesky": 3.4973220748806156e-15,
+     "rel_lstsq_vs_cholesky": 3.3845052337554347e-16,
+     "rel_ridge_vs_cholesky": 3.293813241793836e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 1.2639972308983626e-05
+    }
+   },
+   {
+    "family": "lateral",
+    "family_role": "single group",
+    "alpha": 1.0,
+    "prediction": "mnvtune_v1",
+    "cells": [
+     "R00",
+     "R01",
+     "R02",
+     "R03",
+     "R04",
+     "R05",
+     "R06",
+     "R07",
+     "R08",
+     "R09",
+     "R10",
+     "R11",
+     "R12",
+     "R13",
+     "R14",
+     "R15"
+    ],
+    "chi2_stage_g": 155.78963301826715,
+    "chi2_at_alpha_0": 155.78963301826835,
+    "chi2": 115.74894540811817,
+    "ndf": 16,
+    "condition": 277.29020249916726,
+    "lambda_min": 0.00018463598448770522,
+    "modes_needed": {
+     "50%": 1,
+     "90%": 6,
+     "99%": 12
+    },
+    "top_mode": {
+     "mode": 15,
+     "sigma": 0.013588082443365776,
+     "chi2": 59.28680305845596,
+     "fraction": 0.512201669306075,
+     "leading_cells": [
+      {
+       "cell": "R04",
+       "loading": 0.9221844784460538
+      },
+      {
+       "cell": "R09",
+       "loading": -0.2974272670816069
+      },
+      {
+       "cell": "R08",
+       "loading": -0.20975293675584494
+      }
+     ],
+     "loadings": {
+      "R00": -0.02061639320411741,
+      "R01": 0.0010772921053454829,
+      "R02": -0.0012052821534233966,
+      "R03": -0.017518301810867526,
+      "R04": 0.9221844784460538,
+      "R05": 0.001406922004637674,
+      "R06": -0.033656606118893255,
+      "R07": -0.018302199117061324,
+      "R08": -0.20975293675584494,
+      "R09": -0.2974272670816069,
+      "R10": -0.061397236799448994,
+      "R11": -0.0244852979558879,
+      "R12": -0.049913728878861925,
+      "R13": -0.05237273117283038,
+      "R14": -0.0691460174840659,
+      "R15": -0.022970668390897685
+     }
+    },
+    "stability": {
+     "chi2_mode_sum": 115.74894540811835,
+     "chi2_lstsq": 115.74894540811825,
+     "rel_mode_sum_vs_cholesky": 1.4732769787331792e-15,
+     "rel_lstsq_vs_cholesky": 6.138654078054913e-16,
+     "rel_ridge_vs_cholesky": 2.8085236195134992e-09,
+     "ridge_sensitive": false,
+     "methods_disagree": false,
+     "unstable": false
+    },
+    "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+    "shrunk_group_lambda_min": {
+     "lateral": 1.8760213326877552e-05
+    }
+   }
+  ]
+ },
+ "flux_top_mode_shares": {
+  "family": "flux",
+  "alphas": [
+   0.0,
+   0.1
+  ],
+  "label": "descriptive sensitivity of the reported \u03c7\u00b2, not an alternative result",
+  "predictions": {
+   "genie_cv": {
+    "0": {
+     "mode": 7,
+     "sigma": 0.04252643349136385,
+     "chi2": 15.839236113699197,
+     "fraction": 0.24744037660807808,
+     "loadings": {
+      "R00": 0.19262726532009405,
+      "R01": -0.1597145904381131,
+      "R02": 0.11233897843924819,
+      "R03": -0.37959813165992473,
+      "R04": 0.033099610199635504,
+      "R05": -0.13999814963005774,
+      "R06": 0.48644693728417715,
+      "R07": 0.28305056993568967,
+      "R08": 0.25851161570600384,
+      "R09": -0.024786452285259174,
+      "R10": -0.16535270363950624,
+      "R11": -0.2480789652320241,
+      "R12": -0.2016202352433679,
+      "R13": 0.33910776126759096,
+      "R14": -0.34959834758258573,
+      "R15": -0.09506194655822223
+     },
+     "block_shares": {
+      "stat": 0.004349713258575276,
+      "interaction": 0.11952276216554966,
+      "flux": 0.0633366397780444,
+      "detector": 0.02742815851148108,
+      "lateral": 0.07837486114794631,
+      "normalization": 0.0003725034438592043,
+      "seed": 0.0,
+      "C_model:genie_mec": 0.07976169961128318,
+      "C_model:nuwro": 0.07069421060438995,
+      "C_model:gibuu": 0.013083505518921073,
+      "C_resp + C_PL5D + DeltaC_e": 0.5052373097394581,
+      "V_g": 0.03783863622049069
+     },
+     "share_sum": 0.999999999999999,
+     "dominant": "C_resp + C_PL5D + DeltaC_e",
+     "flux_ratio": 0.08643086591130239
+    },
+    "0.1": {
+     "mode": 7,
+     "sigma": 0.04392770189181859,
+     "chi2": 15.394520247077129,
+     "fraction": 0.2820769477698931,
+     "loadings": {
+      "R00": 0.18800605986125382,
+      "R01": -0.15125978626780845,
+      "R02": 0.1183419893731956,
+      "R03": -0.3804667998504748,
+      "R04": 0.03310806787304821,
+      "R05": -0.14975378277967769,
+      "R06": 0.49804593212002135,
+      "R07": 0.27634612636124223,
+      "R08": 0.2541679958074506,
+      "R09": -0.022332958013749928,
+      "R10": -0.17275815388734894,
+      "R11": -0.24182733911923832,
+      "R12": -0.19251304510860204,
+      "R13": 0.33524481003397266,
+      "R14": -0.34967171636442784,
+      "R15": -0.09964174527626998
+     },
+     "block_shares": {
+      "stat": 0.004162373923033003,
+      "interaction": 0.11445189031114283,
+      "flux": 0.12078663117595205,
+      "detector": 0.025320428929059925,
+      "lateral": 0.06995987682443879,
+      "normalization": 0.0003295985740863483,
+      "seed": 0.0,
+      "C_model:genie_mec": 0.07716913695592696,
+      "C_model:nuwro": 0.06251554458830912,
+      "C_model:gibuu": 0.012530992633666674,
+      "C_resp + C_PL5D + DeltaC_e": 0.4769572071994952,
+      "V_g": 0.03581631888488901
+     },
+     "share_sum": 1.0,
+     "dominant": "C_resp + C_PL5D + DeltaC_e",
+     "flux_ratio": 0.0844793498641281
+    },
+    "alpha_0_mode_at_0.1": {
+     "variance_along": 0.0019295700417044617,
+     "chi2_along": 14.845389913311246,
+     "block_shares": {
+      "stat": 0.004076786839410829,
+      "interaction": 0.11202320586211367,
+      "flux": 0.12210837061890698,
+      "detector": 0.02570715562191007,
+      "lateral": 0.07345716452427828,
+      "normalization": 0.0003491304017722375,
+      "seed": 0.0,
+      "C_model:genie_mec": 0.07475698464105819,
+      "C_model:nuwro": 0.06625844286317724,
+      "C_model:gibuu": 0.012262569953948449,
+      "C_resp + C_PL5D + DeltaC_e": 0.47353576952790055,
+      "V_g": 0.03546441914552256
+     },
+     "share_sum": 0.9999999999999991,
+     "dominant": "C_resp + C_PL5D + DeltaC_e",
+     "flux_ratio": 0.08643086591130239
+    },
+    "overlap_abs": 0.9996790289466364
+   },
+   "genie_mec": {
+    "0": {
+     "mode": 13,
+     "sigma": 0.015700778470386794,
+     "chi2": 55.306891485190775,
+     "fraction": 0.39409177289424524,
+     "loadings": {
+      "R00": -0.32124565442672787,
+      "R01": 0.4336344278657577,
+      "R02": -0.01838059252512203,
+      "R03": -0.18165806696110706,
+      "R04": -0.42698890567918946,
+      "R05": -0.1554287527932301,
+      "R06": -0.03942874218894915,
+      "R07": 0.2749174089304317,
+      "R08": 0.3717506270268526,
+      "R09": -0.3593892374627263,
+      "R10": 0.096065133794391,
+      "R11": 0.028422241229822533,
+      "R12": -0.09927895755200969,
+      "R13": 0.02841615054227372,
+      "R14": 0.32205934117839635,
+      "R15": 0.005620329651160411
+     },
+     "block_shares": {
+      "stat": 0.013239116397945153,
+      "interaction": 0.23075773222784624,
+      "flux": 0.05718348963859267,
+      "detector": 0.07362386304970797,
+      "lateral": 0.04912851462226392,
+      "normalization": 0.001330888416985244,
+      "seed": 0.0,
+      "C_model:genie_mec": 0.007705012223386882,
+      "C_model:nuwro": 0.018486066238577764,
+      "C_model:gibuu": 0.0004806783180638721,
+      "C_resp + C_PL5D + DeltaC_e": 0.4220734094540625,
+      "V_g": 0.12599122941257812
+     },
+     "share_sum": 1.0000000000000102,
+     "dominant": "C_resp + C_PL5D + DeltaC_e",
+     "flux_ratio": 0.010510104323369743
+    },
+    "0.1": {
+     "mode": 13,
+     "sigma": 0.019465974793688428,
+     "chi2": 36.172063294374674,
+     "fraction": 0.35540608766526605,
+     "loadings": {
+      "R00": -0.30281358737946784,
+      "R01": 0.4478665678739898,
+      "R02": -0.04184410885929324,
+      "R03": -0.18336506236175934,
+      "R04": -0.4008674598512172,
+      "R05": -0.14285514307594965,
+      "R06": -0.03321004662717572,
+      "R07": 0.2772755923644587,
+      "R08": 0.36274947357025866,
+      "R09": -0.410075378960906,
+      "R10": 0.0871206537344012,
+      "R11": 0.02601952227751348,
+      "R12": -0.0909743030025315,
+      "R13": 0.018837615933821748,
+      "R14": 0.3086408441426247,
+      "R15": 0.036775650138428886
+     },
+     "block_shares": {
+      "stat": 0.008745679644746426,
+      "interaction": 0.15247961292050274,
+      "flux": 0.3874268640989193,
+      "detector": 0.03936939504582565,
+      "lateral": 0.03527694856381188,
+      "normalization": 0.0008576332177324269,
+      "seed": 0.0,
+      "C_model:genie_mec": 0.0048271917997908635,
+      "C_model:nuwro": 0.014711634966746531,
+      "C_model:gibuu": 0.0001989377719920065,
+      "C_resp + C_PL5D + DeltaC_e": 0.2761156177672765,
+      "V_g": 0.07999048420266537
+     },
+     "share_sum": 1.0000000000000095,
+     "dominant": "flux",
+     "flux_ratio": 0.01102945159336253
+    },
+    "alpha_0_mode_at_0.1": {
+     "variance_along": 0.0003792286354338295,
+     "chi2_along": 35.951788345594984,
+     "block_shares": {
+      "stat": 0.00860597834808828,
+      "interaction": 0.15000215932197933,
+      "flux": 0.3871299087868258,
+      "detector": 0.04785858453565268,
+      "lateral": 0.03193558545784555,
+      "normalization": 0.0008651330312402279,
+      "seed": 0.0,
+      "C_model:genie_mec": 0.005008579604037239,
+      "C_model:nuwro": 0.012016714787341738,
+      "C_model:gibuu": 0.0003124609734751811,
+      "C_resp + C_PL5D + DeltaC_e": 0.2743653363172515,
+      "V_g": 0.08189955883626507
+     },
+     "share_sum": 1.0000000000000027,
+     "dominant": "flux",
+     "flux_ratio": 0.010510104323369743
+    },
+    "overlap_abs": 0.9969861438554002
+   },
+   "nuwro": {
+    "0": {
+     "mode": 5,
+     "sigma": 0.07447487873786057,
+     "chi2": 19.940055145625415,
+     "fraction": 0.21835410573212333,
+     "loadings": {
+      "R00": 0.40652656080825617,
+      "R01": 0.04862486217092664,
+      "R02": -0.0018022217626316069,
+      "R03": -0.1465192316579417,
+      "R04": 0.17113737543248442,
+      "R05": -0.24608106290805243,
+      "R06": -0.2957360285354841,
+      "R07": -0.2996554850533856,
+      "R08": 0.6275843057546308,
+      "R09": 0.054940300536322935,
+      "R10": 0.08902560328045017,
+      "R11": -0.11490455467650819,
+      "R12": 0.3201617978068687,
+      "R13": -0.13557435590264114,
+      "R14": 0.017430514832857204,
+      "R15": -0.06787214466097753
+     },
+     "block_shares": {
+      "stat": 0.0014662418669654747,
+      "interaction": 0.20811954236969252,
+      "flux": 0.04374527051055689,
+      "detector": 0.038040718999769386,
+      "lateral": 0.010165613999424101,
+      "normalization": 0.0064517015236972355,
+      "seed": 0.0,
+      "C_model:genie_mec": 0.0039670762392395595,
+      "C_model:nuwro": 0.05342439837103688,
+      "C_model:gibuu": 0.002709920701275124,
+      "C_resp + C_PL5D + DeltaC_e": 0.6262785887243925,
+      "V_g": 0.005630926693952526
+     },
+     "share_sum": 1.0000000000000022,
+     "dominant": "C_resp + C_PL5D + DeltaC_e",
+     "flux_ratio": 0.17300088764919944
+    },
+    "0.1": {
+     "mode": 5,
+     "sigma": 0.07523930488242421,
+     "chi2": 20.011499401477085,
+     "fraction": 0.28835491768631394,
+     "loadings": {
+      "R00": 0.40693559538277607,
+      "R01": 0.05317183862607102,
+      "R02": -0.0016426338275972036,
+      "R03": -0.14738368472573668,
+      "R04": 0.1730386044355607,
+      "R05": -0.24410336590716147,
+      "R06": -0.2909784211777302,
+      "R07": -0.2988759476137305,
+      "R08": 0.6285401128470274,
+      "R09": 0.060308020639552096,
+      "R10": 0.089388137209448,
+      "R11": -0.11462792191453054,
+      "R12": 0.3218178184560265,
+      "R13": -0.13537251714804863,
+      "R14": 0.020091091886275798,
+      "R15": -0.06482155102779057
+     },
+     "block_shares": {
+      "stat": 0.0014272589994081151,
+      "interaction": 0.20402484773651908,
+      "flux": 0.0683670585985361,
+      "detector": 0.03947119391681127,
+      "lateral": 0.009872295370819182,
+      "normalization": 0.00718315134568567,
+      "seed": 0.0,
+      "C_model:genie_mec": 0.003993015774829118,
+      "C_model:nuwro": 0.05283388365392236,
+      "C_model:gibuu": 0.0026429819601227335,
+      "C_resp + C_PL5D + DeltaC_e": 0.6047244029664224,
+      "V_g": 0.00545990967692323
+     },
+     "share_sum": 0.9999999999999993,
+     "dominant": "C_resp + C_PL5D + DeltaC_e",
+     "flux_ratio": 0.19555417238853076
+    },
+    "alpha_0_mode_at_0.1": {
+     "variance_along": 0.005662494058886492,
+     "chi2_along": 19.531617255944045,
+     "block_shares": {
+      "stat": 0.0014362084127181208,
+      "interaction": 0.20385656987206738,
+      "flux": 0.06333251141124942,
+      "detector": 0.03726152000173469,
+      "lateral": 0.009957388801503769,
+      "normalization": 0.006319549464139311,
+      "seed": 0.0,
+      "C_model:genie_mec": 0.003885817474630998,
+      "C_model:nuwro": 0.05233009103994856,
+      "C_model:gibuu": 0.0026544126154474127,
+      "C_resp + C_PL5D + DeltaC_e": 0.6134503441050522,
+      "V_g": 0.005515586801508295
+     },
+     "share_sum": 1.0,
+     "dominant": "C_resp + C_PL5D + DeltaC_e",
+     "flux_ratio": 0.17300088764919944
+    },
+    "overlap_abs": 0.9999492573034974
+   },
+   "gibuu": {
+    "0": {
+     "mode": 1,
+     "sigma": 0.146067515607412,
+     "chi2": 15.497486016827825,
+     "fraction": 0.37072533310774497,
+     "loadings": {
+      "R00": 0.261429667482082,
+      "R01": 0.23564526081142467,
+      "R02": 0.12090213839222158,
+      "R03": 0.04286818031863324,
+      "R08": 0.23853559710933864,
+      "R09": 0.19186190970621372,
+      "R10": 0.3453769812829227,
+      "R11": 0.804161270754289
+     },
+     "block_shares": {
+      "stat": 0.000588028076905252,
+      "interaction": 0.1324025861079751,
+      "flux": 0.2854790012101581,
+      "detector": 0.11322715018703625,
+      "lateral": 0.003134992816413068,
+      "normalization": 0.04612619334925529,
+      "seed": 0.0,
+      "C_model:genie_mec": 0.0017538239617160458,
+      "C_model:nuwro": 0.05726422174631249,
+      "C_model:gibuu": 0.14382909399823818,
+      "C_resp + C_PL5D + DeltaC_e": 0.21140507311224196,
+      "V_g": 0.004789835433748666
+     },
+     "share_sum": 1.0000000000000004,
+     "dominant": "flux",
+     "flux_ratio": 5.110020079205065
+    },
+    "0.1": {
+     "mode": 1,
+     "sigma": 0.14437325388128164,
+     "chi2": 16.438669265975985,
+     "fraction": 0.4039649011474637,
+     "loadings": {
+      "R00": 0.259776422614216,
+      "R01": 0.22912124231717512,
+      "R02": 0.13820624576780205,
+      "R03": 0.05139555705228571,
+      "R08": 0.23238332181466703,
+      "R09": 0.17712202829233972,
+      "R10": 0.3555627332457968,
+      "R11": 0.804038629968497
+     },
+     "block_shares": {
+      "stat": 0.0006136335347380657,
+      "interaction": 0.14200758441922742,
+      "flux": 0.2703748495722968,
+      "detector": 0.11639637787784814,
+      "lateral": 0.003963711146487044,
+      "normalization": 0.04750321652778553,
+      "seed": 0.0,
+      "C_model:genie_mec": 0.0017912422477544781,
+      "C_model:nuwro": 0.06184727900322367,
+      "C_model:gibuu": 0.12927578141245502,
+      "C_resp + C_PL5D + DeltaC_e": 0.22134950221274197,
+      "V_g": 0.004876822045442342
+     },
+     "share_sum": 1.0000000000000004,
+     "dominant": "flux",
+     "flux_ratio": 5.144630608677182
+    },
+    "alpha_0_mode_at_0.1": {
+     "variance_along": 0.020845824359505546,
+     "chi2_along": 15.861690233616823,
+     "block_shares": {
+      "stat": 0.000601847241185618,
+      "interaction": 0.13551416047054796,
+      "flux": 0.26868714474640765,
+      "detector": 0.11588808535473649,
+      "lateral": 0.0032086678371294,
+      "normalization": 0.04721019846492256,
+      "seed": 0.0,
+      "C_model:genie_mec": 0.0017950403294332996,
+      "C_model:nuwro": 0.058609980084697255,
+      "C_model:gibuu": 0.14720920109910732,
+      "C_resp + C_PL5D + DeltaC_e": 0.21637327369615997,
+      "V_g": 0.004902400675672576
+     },
+     "share_sum": 1.0,
+     "dominant": "flux",
+     "flux_ratio": 5.110020079205065
+    },
+    "overlap_abs": 0.9996118382494319
+   },
+   "mnvtune_v1": {
+    "0": {
+     "mode": 13,
+     "sigma": 0.01456258604907437,
+     "chi2": 66.70588052852038,
+     "fraction": 0.4281792006063603,
+     "loadings": {
+      "R00": 0.27755090426649565,
+      "R01": -0.37603237954176116,
+      "R02": -0.0717050903102735,
+      "R03": 0.22551228661274716,
+      "R04": 0.4909860060664066,
+      "R05": 0.19943222564241134,
+      "R06": 0.10060317934957275,
+      "R07": -0.3054623580117237,
+      "R08": -0.34161874106699525,
+      "R09": 0.2466449830109611,
+      "R10": -0.04196887465356173,
+      "R11": -0.06195574883720633,
+      "R12": 0.1250459977906461,
+      "R13": -0.032668060267172505,
+      "R14": -0.3757482576523994,
+      "R15": -0.016478502723611715
+     },
+     "block_shares": {
+      "stat": 0.014029114057934756,
+      "interaction": 0.23475194647791925,
+      "flux": 0.0660274157718527,
+      "detector": 0.1161067473124356,
+      "lateral": 0.043519167297092556,
+      "normalization": 0.0016410357015759578,
+      "seed": 0.0,
+      "C_model:genie_mec": 0.0003858965144366009,
+      "C_model:nuwro": 0.017534352497826696,
+      "C_model:gibuu": 0.0005704577687291155,
+      "C_resp + C_PL5D + DeltaC_e": 0.5028435731612856,
+      "V_g": 0.002590293438907399
+     },
+     "share_sum": 0.9999999999999961,
+     "dominant": "C_resp + C_PL5D + DeltaC_e",
+     "flux_ratio": 0.010412907623293798
+    },
+    "0.1": {
+     "mode": 13,
+     "sigma": 0.01857535562441459,
+     "chi2": 39.74124525828993,
+     "fraction": 0.3692779696706362,
+     "loadings": {
+      "R00": 0.2689217637686034,
+      "R01": -0.3968128044341839,
+      "R02": -0.045895853823104016,
+      "R03": 0.23086428396342412,
+      "R04": 0.45405166797687363,
+      "R05": 0.19093993324934755,
+      "R06": 0.09230166098455879,
+      "R07": -0.3139324561858422,
+      "R08": -0.33498276359457024,
+      "R09": 0.30776787295254593,
+      "R10": -0.04468533286058968,
+      "R11": -0.057465379153437926,
+      "R12": 0.11865492777738865,
+      "R13": -0.022793267055121202,
+      "R14": -0.3701732879870592,
+      "R15": -0.03551654377864859
+     },
+     "block_shares": {
+      "stat": 0.008618345289518978,
+      "interaction": 0.14769468814802833,
+      "flux": 0.42815615262318474,
+      "detector": 0.0606559534553438,
+      "lateral": 0.029049773496051357,
+      "normalization": 0.0009663005718893811,
+      "seed": 0.0,
+      "C_model:genie_mec": 0.0002566825584588752,
+      "C_model:nuwro": 0.01367150914575865,
+      "C_model:gibuu": 0.00025109800909751826,
+      "C_resp + C_PL5D + DeltaC_e": 0.30907948805768737,
+      "V_g": 0.0016000086449830598
+     },
+     "share_sum": 1.000000000000002,
+     "dominant": "flux",
+     "flux_ratio": 0.011097857782234497
+    },
+    "alpha_0_mode_at_0.1": {
+     "variance_along": 0.00034513988022372063,
+     "chi2_along": 40.98698628407077,
+     "block_shares": {
+      "stat": 0.008620096173146049,
+      "interaction": 0.14424177799940077,
+      "flux": 0.4261267343125816,
+      "detector": 0.07134102153929583,
+      "lateral": 0.026740063978879288,
+      "normalization": 0.0010083235129983246,
+      "seed": 0.0,
+      "C_model:genie_mec": 0.00023711155626708445,
+      "C_model:nuwro": 0.010773866706117607,
+      "C_model:gibuu": 0.0003505139960268581,
+      "C_resp + C_PL5D + DeltaC_e": 0.30896890158556306,
+      "V_g": 0.001591588639727547
+     },
+     "share_sum": 1.0000000000000038,
+     "dominant": "flux",
+     "flux_ratio": 0.010412907623293798
+    },
+    "overlap_abs": 0.9964412790668148
+   }
+  }
+ },
+ "inputs_sha256": {
+  "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+  "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+  "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+  "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+  "g_readout": "7034a08ec8f4d95f3b189d6faa3bd8a24ef3672f36dd04ccce513ff25272fdad",
+  "g_followup_readout": "030b15664f2ace0869e3ec159bbae9efacf86e109f3c03608f481716821fdfe9",
+  "definition": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89",
+  "extra_block": "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+  "genie_cv": "0796848009ab3bc24984102aa2a1a4030663caf83dd70be73d1188bd1acc83a4",
+  "genie_mec": "0e86e2ef6ddb8e1f6e83c751394b73b3bdf16844765f790c4cb9835535410da8",
+  "nuwro": "b3d1b28d5b2cc365ad9d7d5a5a002795bcbf248811f07a210e542a50dcf8d6a0",
+  "gibuu": "617ce7a1f83284c03d9a8d269bd5029e7332168a97a07544187952c9333607ca",
+  "mnvtune_v1": "bf7bd27873427d4b1ff9864403b895529931f113440acec3daa28479f958466c"
+ },
+ "code_sha256": {
+  "fd_g_followup.py": "ec8cbc6880f7a3f67eea5703ddeff958acb10462053696d2cfdb64de0ee5f60d",
+  "fd_g_diag.py": "241bfd0228907e5488f13b7fd50bd490edd97a77cf283a8fb88d3dc6d8bdcc03",
+  "fd_g_compare.py": "0a3c09cdf2e27821c488c8a0d783af1537714144cce5415c6cb226ec8096df1f",
+  "s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7"
+ },
+ "argv": [
+  "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/fd_g_followup.py",
+  "--part",
+  "sens2",
+  "--definition",
+  "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+  "--s1-npz",
+  "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+  "--s1-json",
+  "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+  "--cmodel-json",
+  "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+  "--s5p-sums",
+  "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+  "--s5p-root",
+  "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+  "--g-readout",
+  "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_readout.json",
+  "--g-followup-readout",
+  "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_followup_readout.json",
+  "--extra-block",
+  "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+  "--extra-block-sha256",
+  "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+  "--extra-block-key",
+  "C_resp_plus_C_PL5D_plus_DeltaC_e",
+  "--extra-block-name",
+  "C_resp + C_PL5D + DeltaC_e",
+  "--extra-block-role",
+  "adopted",
+  "--out-json",
+  "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_sens2_readout.json"
+ ],
+ "non_finite_written_as_null": 0
+}

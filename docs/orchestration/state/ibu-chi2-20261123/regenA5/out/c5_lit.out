@@ -1,0 +1,8 @@
+PASS 9.6% (ten smallest-lambda modes' share)
+PASS two of the five largest in the smallest-lambda tenth
+PASS three of the six leading at the highest p_par
+PASS those three: lambda/lambda_max <~ 4e-9 (each <= 4e-9 at one significant figure)
+PASS the other three: lambda/lambda_max between 4e-6 and 6e-5 (one significant figure)
+PASS largest standardized component 4.7
+PASS the next nine 3.4-3.8
+C5-LIT :: PASS

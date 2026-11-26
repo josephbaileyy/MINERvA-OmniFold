@@ -1,0 +1,6 @@
+199/204 statement lines hit
+  84: """RMS over unordered pairs of (g_a - g_b)/g_TuneV1; NaN outside ``cells`` when given."""
+  105: """split_U[t]: (16, 16) per-split guarded bounds for an A7 truth. A cell flips if any one replacement changes 
+  117: """The rule on prepared inputs (Tune v1 units): beta, se per truth (16,), split_beta per A7 truth (16 splits, 
+  251: """C-LEAK: no absolute cross section (any |value| < 1e-30) and none of the given absolute vectors in the recor
+  312: sys.exit(main())

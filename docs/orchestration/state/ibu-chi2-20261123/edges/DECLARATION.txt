@@ -1,0 +1,25 @@
+# Edge test: are MINERvA's pT edges 0.075 / 0.325 / 0.475, and does that remove our low-pT deficit against Fig. 2? (declared before computing)
+
+Evidence so far.
+- The blind extraction of Figs. 4 and 5 measured drawn pT edges at 0.0760/0.0747, 0.3255/0.3241 and 0.4757/0.4764,
+  not 0.07, 0.33 and 0.47.
+- The release's bin_mapping.txt prints 0.07, 0.33 and 0.47. Printing the binary doubles 0.075, 0.325 and 0.475 with %.2f
+  gives exactly those strings.
+- Our analysis uses 0.07, 0.33 and 0.47.
+
+Hypothesis E. MINERvA's pT edges are 0, .075, .15, .25, .325, .40, .475, .55, .70, .85, 1.00, 1.25, 1.50, 2.50, 4.50.
+
+Test. Rebin our selected data (evloop merged output, tree `data`, branches measured/measured_pz, read-only on login02)
+twice: with our edges, and with the E edges. Compare each with the Fig. 2 bottom-block extraction (fig2_points.csv,
+data). Their counts are rebuilt as displayed density / factor x 1e5 x area, using the *matching* edges for the area. For
+each p|| slice s and pT row i = 0..6:
+- f_ours(s, i) = N(s, i) / N(s, all rows); f_theirs is the same.
+- X = sum of (f_ours - f_theirs)^2 / var, with var as in axis/DECLARATION.txt.
+- rho_i = pooled ratio over slices, weighted by their slice totals.
+
+Readings:
+- EDGES-CONFIRMED  with E edges, |rho_i - 1| <= 0.015 for i = 0, 1, 3, 4, 5, 6, and X_E <= 0.5 X_ours.
+- EDGES-PARTIAL    X_E < X_ours, and |rho_0 - 1| at least halves, but not CONFIRMED.
+- EDGES-NO         otherwise.
+
+Control C-REP: with our edges, the rebinned counts equal BASE_N exactly.

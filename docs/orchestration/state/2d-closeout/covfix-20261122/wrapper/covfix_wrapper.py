@@ -126,6 +126,9 @@ LITERAL_PATH = re.compile(r"/[A-Za-z0-9/._+-]+")   # absolute and literal: no ~,
 SLURM_VALUE = re.compile(r"[A-Za-z0-9_:.,=/-]{1,64}")
 SLURM_KEYS = {"account": "-A", "qos": "-q", "constraint": "-C", "time": "-t"}
 # Inherited Slurm I/O settings that could send the task's stdin or output anywhere but the wrapper's pipes.
+# The job name of each role: a literal constant, never derived from config or input (director, 2026-11-25), so fences
+# and sacct can recognize covfix jobs. The config cannot set -J (SLURM_KEYS has no job-name key).
+JOB_NAMES = {"pg-connect": "covfix_pg_connect", "pv-writer": "covfix_pv_writer", "pv-readout": "covfix_pv_readout"}
 SLURM_IO_ENV = ("SRUN_INPUT", "SRUN_OUTPUT", "SRUN_ERROR", "SLURM_STDINMODE", "SLURM_STDOUTMODE", "SLURM_STDERRMODE")
 REAL_LEDGER_BRANCH = "covfix-ledger"
 MANIFEST_CIPHERTEXT = "PG-MANIFEST.json.gpg"
@@ -600,9 +603,10 @@ class Cluster:
 
 
 def launch_command(role: str, rcfg: dict, extra_args: list) -> str:
-    """The remote command, built from the structured role config: for the PV roles one exclusive node and one task
-    (salloc and srun, both --exclusive -N 1 -n 1, with only account/qos/constraint/time added), then the
-    compute-side hash check, the bound binary, its args and the wrapper's own --covfix-* args."""
+    """The remote command, built from the structured role config: for every role, pg-connect included, one exclusive
+    node and one task (salloc and srun, both --exclusive -N 1 -n 1; salloc named by the role's constant JOB_NAMES
+    entry; only account/qos/constraint/time added; the Slurm I/O variables unset), then the compute-side hash check, the bound binary, its args and the wrapper's own
+    --covfix-* args. (cov2d, 2026-11-25: pg-connect had no allocation and would have run on the login host.)"""
     if not isinstance(rcfg, dict):
         raise Stop(ERROR, f"role config for {role} must be an object")
     binary, want = rcfg.get("binary"), rcfg.get("binary_sha256")
@@ -613,25 +617,23 @@ def launch_command(role: str, rcfg: dict, extra_args: list) -> str:
     args = str_list(rcfg.get("args", []), f"{role} args")
     if any(a.startswith("--covfix-") for a in args):
         raise Stop(ERROR, f"role config for {role}: --covfix-* arguments are the wrapper's own")
-    launcher = []
-    if role != "pg-connect":
-        slurm = rcfg.get("slurm")
-        if not isinstance(slurm, dict):
-            raise Stop(ERROR, f"{role} needs a slurm block (salloc, srun, account, qos, constraint, time)")
-        salloc, srun = slurm.get("salloc", "salloc"), slurm.get("srun", "srun")
-        if not all(isinstance(x, str) and x for x in (salloc, srun)) or \
-                os.path.basename(salloc) != "salloc" or os.path.basename(srun) != "srun":
-            raise Stop(ERROR, f"{role}: salloc and srun must name salloc and srun")
-        opts = []
-        for k, v in slurm.items():
-            if k in ("salloc", "srun"):
-                continue
-            if k not in SLURM_KEYS or not isinstance(v, str) or not SLURM_VALUE.fullmatch(v):
-                raise Stop(ERROR, f"{role}: slurm option {k!r} is not allowed or not plain")
-            opts += [SLURM_KEYS[k], v]
-        unset = [x for v in SLURM_IO_ENV for x in ("-u", v)]
-        launcher = ["env", *unset, salloc, "--exclusive", "-N", "1", "-n", "1", *opts,
-                    srun, "--exclusive", "-N", "1", "-n", "1"]
+    slurm = rcfg.get("slurm")
+    if not isinstance(slurm, dict):
+        raise Stop(ERROR, f"{role} needs a slurm block (salloc, srun, account, qos, constraint, time)")
+    salloc, srun = slurm.get("salloc", "salloc"), slurm.get("srun", "srun")
+    if not all(isinstance(x, str) and x for x in (salloc, srun)) or \
+            os.path.basename(salloc) != "salloc" or os.path.basename(srun) != "srun":
+        raise Stop(ERROR, f"{role}: salloc and srun must name salloc and srun")
+    opts = []
+    for k, v in slurm.items():
+        if k in ("salloc", "srun"):
+            continue
+        if k not in SLURM_KEYS or not isinstance(v, str) or not SLURM_VALUE.fullmatch(v):
+            raise Stop(ERROR, f"{role}: slurm option {k!r} is not allowed or not plain")
+        opts += [SLURM_KEYS[k], v]
+    unset = [x for v in SLURM_IO_ENV for x in ("-u", v)]
+    launcher = ["env", *unset, salloc, "--exclusive", "-N", "1", "-n", "1", "-J", JOB_NAMES[role], *opts,
+                srun, "--exclusive", "-N", "1", "-n", "1"]
     return shlex.join([*launcher, "bash", "-c", EXEC_CHECK, "covfix-exec", binary, want, *args, *extra_args])
 
 

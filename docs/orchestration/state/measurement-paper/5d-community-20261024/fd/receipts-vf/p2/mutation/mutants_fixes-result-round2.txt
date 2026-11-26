@@ -1,0 +1,43 @@
+V_F Phase 2 fixes: targeted mutation check, round 2 (after the fix-diff read; mutants_fixes.py; each mutant applied to the
+worktree file, the suite run with -x and VF_P2_FETCH set, the file restored and its sha256 checked; 2026-11-26)
+
+Round 2a, all 26 mutants:
+p-floor exemption without the floor | KILLED | 1 failed, 27 passed in 9.99s
+gch back to 1e-9 | KILLED | 1 failed, 28 passed in 10.35s
+prr not_replaced dropped | KILLED | 1 failed, 47 passed in 49.77s
+xk tolerance loosened | KILLED | 1 failed, 41 passed in 20.88s
+IBU tolerance loosened | KILLED | 1 failed, 45 passed in 19.73s
+remap follows symlinks | KILLED | 1 failed, 36 passed in 18.53s
+remap read unlogged | KILLED | 1 failed, 38 passed in 22.56s
+remap not restored | KILLED | 1 failed, 36 passed in 27.18s
+substitution ignored | KILLED | 1 failed, 37 passed in 18.50s
+fetched bare paths | KILLED | 1 failed, 47 passed in 59.26s
+flag direction flipped | KILLED | 1 failed, 49 passed in 59.44s
+ruling ignores path | KILLED | 1 failed, 52 passed in 49.22s
+ruling ignores its premise | KILLED | 1 failed, 51 passed in 54.01s
+lists keyed by index | KILLED | 1 failed, 48 passed in 54.59s
+stop exits 0 | KILLED | 1 failed, 54 passed in 43.44s
+weakening allowed | KILLED | 1 failed, 49 passed in 41.49s
+list gains ignored | KILLED | 1 failed, 49 passed in 53.75s
+absent reads as flagged | KILLED | 1 failed, 49 passed in 52.73s
+unclassified passes | KILLED | 1 failed, 53 passed in 42.60s
+breaks_the_prior_closure unclassed | SURVIVED | 55 passed in 50.76s
+cells_beyond_half_sigma unclassed | SURVIVED | 55 passed in 58.98s
+multi-class by order | KILLED | 1 failed, 50 passed in 36.14s
+labels not descriptive | KILLED | 1 failed, 50 passed in 33.78s
+controls skipped | SURVIVED | 55 passed in 43.57s
+q3 premise without the level check | SURVIVED | 55 passed in 60.66s (0:01:00)
+QD premise always holds | KILLED | 1 failed, 51 passed in 47.55s
+22/26 killed
+
+The four survivors were test gaps: an unclassed flag became structural, which still raises an event, so the tests
+now also assert that a clearing is no event; controls are now asserted to be swept by leaves(); the q3 premise test
+now also clears q3 at the level. Round 2b, the four survivors after the stronger tests:
+breaks_the_prior_closure unclassed | KILLED | 1 failed, 53 passed in 133.37s (0:02:13)
+cells_beyond_half_sigma unclassed | KILLED | 1 failed, 53 passed in 92.28s (0:01:32)
+controls skipped | KILLED | 1 failed, 53 passed in 110.21s (0:01:50)
+q3 premise without the level check | KILLED | 1 failed, 51 passed in 155.33s (0:02:35)
+4/4 killed (26/26 over both rounds)
+
+Not covered by an offline test: prr's f-equality assert (its inputs agree; only a fetch rerun with a perturbed product
+would reach it).

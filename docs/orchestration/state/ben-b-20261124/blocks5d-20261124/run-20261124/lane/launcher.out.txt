@@ -1,0 +1,10 @@
+ssh rc=0
+node login38 staged sha256 309d166d062c71c224a37e85aa2a7c1854107d28f587ccdc6041b5749d891e50
+detached pid 2074945, output /dev/shm/b5dc.2074262.sh.out
+script rc=0
+fetch fetch-b5d.tar rc=0 bytes 501288960
+fetch logs/connect-b5d.log rc=0 bytes 250245
+fetch logs/connect-b5d.done rc=0 bytes 2
+fetch-b5d.tar sha256 13e53ec2b40fa33787f61a8f42a4cfa79f19bd4e9ba855a65584ecc224c7cc86 (the log's: 13e53ec2b40fa33787f61a8f42a4cfa79f19bd4e9ba855a65584ecc224c7cc86)
+RECORDS.SHA256SUMS check rc=0 (1655 lines, 1655 files in the tar besides it)
+connect done file: 0

@@ -1,0 +1,44 @@
+# Regeneration A: central-value comparisons with the published result, on the paper's pT edges (declared before computing)
+
+Authority: Joseph chose option (i). The director GOed declaring A on 2026-11-25. A runs after the option-(i) follow-up PR
+merges, so the producers are final: main after #1318 plus the follow-up. A uses 0 node-h, runs locally on the laptop
+and touches no NERSC compute. B (covariance-dependent products) waits for Joseph's path choice.
+
+Inputs (each re-hashed against its pin before use):
+- OLD (control): the committed E_R central, hXSec2D on our grid. ~/cov2d-work/figfetch/er-anc/xsec.root, sha256
+  a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef.
+- E (reading): Tier 1's E_R on the paper's edges.
+  docs/orchestration/state/ibu-chi2-20261123/tier1/units/e/er.root, sha256
+  5171c7b8ecacda6090e242349dd622218c1c38885c60ef8b91027033a8c4b780. Its OLD twin reproduced E_R to 8e-12 (tier1 C-REF-OLD).
+- The release ROOT: cov_ptpl_minerva_inclusive_6GeV.root, sha256
+  6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3 (local copy at ~/cov2d-work/figfetch/er-anc/).
+- The model tables: 2d-unfolding/minerva_paper_anc/model_ptpl_*.txt, as committed.
+
+Products. The producer commands follow RE-2 part C's steps.tsv (partc_r2/partc-r2/logs/steps.tsv), with --ours / --infile
+set to OLD or E and all outputs under a fresh records dir:
+  P1 compare_to_paper_fullcov.py, steps chi2_paperonly, chi2_std and pull_full: \chiPaper, the pulls, fig:pull.
+  P2 compare_to_paper_interior.py: the interior chi2.
+  P3 normalize_xsec_shape.py: the shape chi2 (part C's about 465).
+  P4 diagnose_tension.py: the tension modes and report.
+  P5 compare_to_models.py: the model projections and model_comp_report.
+  P6 receipt_model_chi2_2d.py: ours vs data and ours vs Tune v1 chi2 (receipt_model_chi2.json).
+  P7 agreement_windows_receipt.py: the ratio windows and \ratioTot (RECEIPT-agreement-windows.json).
+  P8 strip_ratio_receipt.py: the strip ratios.
+  P9 plot_2d_threeway_fig13.py: the Fig. 13 mosaic and slices, with the prior from the same input's hTruth2D.
+  P10 the Figs. 6-7 takeaway (check_fig67_takeaway.py) on central projections. If its producer cannot make central
+      projections without Q, P10 moves to B and that is reported, not forced.
+Already measured, not rerun: c2c1-dibu 0.538, c2c1-der 2.121 and signed 0.474 (tier1, tier1/signed).
+
+Controls (any failure: STOP for that product; nothing retried without the director):
+- C-OLD: each product run on OLD reproduces its committed part C value or receipt (chi2_paperonly.txt,
+  receipt_model_chi2.json, RECEIPT-agreement-windows.json, model_comp_report.txt, tension_report.txt; for the products
+  part C did not run, the committed producer output named in IMPACT-INVENTORY.md). Numbers match to 1e-9 relative; the
+  structured parts of text reports match exactly, apart from paths and hostnames. A product with no committed reference
+  is labelled "no OLD reference" and its E value is reported as new.
+- C-AXES: before each E run, the input's hXSec2D pT axis equals the release TH2D's pT axis exactly, and its p|| axis
+  equals the release's exactly.
+- C-GRID: no product's E run prints the cross-grid shape-chi2 notice. If one does, that output is not a reading.
+- C-PINS: all input shas equal the pins above, checked before and after.
+
+Readings (descriptive): every product's value on E beside its OLD value, as a table, plus the figures. These are the
+numbers and figures that go to journal-editor for the note. The note's wording is Joseph's.

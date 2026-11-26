@@ -1,0 +1,10 @@
+Reviewed commit `636963ed5`.
+
+- **RESOLVED — READ5.** Empty and unknown PAX keys and empty `path` values are rejected. [fd_vf_p2.py:1034](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/p2read/nd-unfolding/fd_vf_p2.py:1034)
+- **RESOLVED — READ4.1.** The regression rejects nonzero PAX padding and NUL or garbage inside the declared data. `test_fd_vf_p2.py:268`
+- **RESOLVED — READ4.2.** `lstat` rejects a symlink at `BASE`, and the open uses `O_DIRECTORY|O_NOFOLLOW`. `fetch_vfp2_remote.py:42`, `test_fd_vf_p2.py:176`
+- **RESOLVED — READ4.3.** The template and wrapper hash both raw decoded payloads and pipe the raw list to the reader. `fd_vf_p2.py:985`, `fetch-vfp2.sh:11`, `test_fd_vf_p2.py:382`
+- **RESOLVED — Regeneration and earlier transfer checks.** The 403-file list and wrapper matched byte for byte. All 26 transfer tests passed using temporary Git metadata. The full suite still stops at the known EAV exact-equality check. `fd_vf_p2.py:109`, `fd_vf_p2.py:997`, `fd_vf_p2.py:185`
+- **BLOCKING — Negative PAX size.** On Python 3.12.2, `fetch-verify` returned 0 for an extension declaring size `-1`. The size arithmetic lets it reach `pax_records()` as an empty slice. `fd_vf_p2.py:1065`
+
+VERDICT: NO-GO

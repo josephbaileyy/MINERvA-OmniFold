@@ -1,0 +1,95 @@
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+{
+ "inputs": {
+  "publication_sha256": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3",
+  "er_central_sha256": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef",
+  "pub_pt_edges": [
+   0.0,
+   0.075,
+   0.15,
+   0.25,
+   0.325,
+   0.4,
+   0.475,
+   0.55,
+   0.7,
+   0.85,
+   1.0,
+   1.25,
+   1.5,
+   2.5,
+   4.5
+  ]
+ },
+ "controls": {
+  "C-REF-OLD": 7.94697641026687e-12,
+  "C-UNITS": true,
+  "C-D-OLD": {
+   "D_ER": 2.2703183899839017,
+   "D_IBU_K10": 1.0265752868764269,
+   "pass": true
+  },
+  "C-COL": {
+   "data_max_abs": 0.0,
+   "unfold_max_rel": 2.2926105458509483e-13,
+   "pass": true
+  },
+  "E_edges_equal_release_axis": true
+ },
+ "controls_pass": true,
+ "results": {
+  "old": {
+   "pt_edges": [
+    0.0,
+    0.07,
+    0.15,
+    0.25,
+    0.33,
+    0.4,
+    0.47,
+    0.55,
+    0.7,
+    0.85,
+    1.0,
+    1.25,
+    1.5,
+    2.5,
+    4.5
+   ],
+   "D_ER": 2.2703183899839017,
+   "D_IBU_K5": 0.8299468720790133,
+   "D_IBU_K10": 1.0265752868764269,
+   "verdicts": {
+    "er": "PASS",
+    "c2_central": "PASS"
+   }
+  },
+  "e": {
+   "pt_edges": [
+    0.0,
+    0.075,
+    0.15,
+    0.25,
+    0.325,
+    0.4,
+    0.475,
+    0.55,
+    0.7,
+    0.85,
+    1.0,
+    1.25,
+    1.5,
+    2.5,
+    4.5
+   ],
+   "D_ER": 2.121435918507264,
+   "D_IBU_K5": 0.39486394098611804,
+   "D_IBU_K10": 0.5380500348718454,
+   "verdicts": {
+    "er": "PASS",
+    "c2_central": "PASS"
+   }
+  }
+ },
+ "reading": "READ"
+}

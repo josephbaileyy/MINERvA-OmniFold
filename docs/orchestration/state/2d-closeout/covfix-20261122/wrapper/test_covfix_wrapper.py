@@ -126,6 +126,10 @@ with open(os.path.join(here, "ssh-log.jsonl"), "a") as f:
 with open({remote_env!r}) as f:
     os.environ.clear()
     os.environ.update(json.load(f))                 # the remote session's own environment, as a login would give
+xp = os.path.join(here, "remote-extra-env.json")    # a test's additions to that environment (e.g. a profile's SRUN_*)
+if os.path.exists(xp):
+    with open(xp) as f:
+        os.environ.update(json.load(f))
 mp = os.path.join(here, "ssh-mode")
 mode = open(mp).read().strip() if os.path.exists(mp) else ""
 if mode == "down":
@@ -161,9 +165,14 @@ sys.exit(subprocess.run(["bash", "-c", command]).returncode)
 '''
 
 STUB_ALLOC = r'''#!/bin/bash
-# stub {name}: require --exclusive -N 1 -n 1, drop the options up to the next command ({until}), exec it with stdin
+# stub {name}: log its argv, require --exclusive -N 1 -n 1, refuse any Slurm I/O variable that is SET (even empty),
+# drop the options up to the next command ({until}), and exec it with stdin
+printf '%s\n' "{name} $*" >> {log}
+{{ printf '== %s\n' "{name}"; env; }} >> {log}.env    # what this step and, after srun, the bound binary inherit
 [ "$1 $2 $3 $4 $5" = "--exclusive -N 1 -n 1" ] || {{ echo "stub {name}: unexpected flags $*" >&2; exit 64; }}
-[ -z "${{SRUN_INPUT}}${{SRUN_OUTPUT}}${{SRUN_ERROR}}" ] || {{ echo "stub {name}: inherited Slurm I/O settings" >&2; exit 65; }}
+for v in {io_vars}; do
+    [ -z "${{!v+x}}" ] || {{ echo "stub {name}: inherited Slurm I/O setting $v" >&2; exit 65; }}
+done
 shift 5
 while [ $# -gt 0 ] && [ "$(basename -- "$1")" != "{until}" ]; do shift; done
 exec "$@"
@@ -196,7 +205,8 @@ class Rig:
                                     remote_env=REMOTE_ENV))
         for name, until in (("salloc", "srun"), ("srun", "bash")):
             with open(os.path.join(self.bin, name), "w") as f:
-                f.write(STUB_ALLOC.format(name=name, until=until))
+                f.write(STUB_ALLOC.format(name=name, until=until, log=shlex.quote(os.path.join(self.root, "alloc.log")),
+                                          io_vars=" ".join(cw.SLURM_IO_ENV)))
         for name in ("ssh", "salloc", "srun"):
             os.chmod(os.path.join(self.bin, name), 0o755)
         self.seal = cw.synthetic_seal(self.kc, os.path.join(self.root, "synthetic"))
@@ -205,9 +215,8 @@ class Rig:
         for role in cw.ROLES:
             roles[role] = {"binary": REF, "binary_sha256": cw.sha256_file(REF),
                            "args": ["--role", role, *flags.get(role, [])]}
-            if role != "pg-connect":
-                roles[role]["slurm"] = {"salloc": f"{self.bin}/salloc", "srun": f"{self.bin}/srun",
-                                        "account": "m0000", "time": "0:30:00"}
+            roles[role]["slurm"] = {"salloc": f"{self.bin}/salloc", "srun": f"{self.bin}/srun",   # every role, pg-connect too
+                                    "account": "m0000", "time": "0:30:00"}
         self.cfg = {
             "record_dir": os.path.join(self.root, "record"),
             "keychain_prefix": self.prefix,
@@ -768,16 +777,154 @@ class ConfigTests(unittest.TestCase):
         s, r = argv.index(f"{rig.bin}/salloc"), argv.index(f"{rig.bin}/srun")
         self.assertEqual(argv[s + 1:s + 6], ["--exclusive", "-N", "1", "-n", "1"])
         self.assertEqual(argv[r + 1:r + 6], ["--exclusive", "-N", "1", "-n", "1"])
-        self.assertEqual(argv[s + 6:r], ["-A", "m0000", "-t", "0:30:00"])
+        self.assertEqual(argv[s + 6:r], ["-J", "covfix_pv_writer", "-A", "m0000", "-t", "0:30:00"])
         self.assertEqual(argv[r + 6:r + 8], ["bash", "-c"])
         self.assertEqual(argv[0], "env")
         self.assertEqual(argv[1:s], [x for v in cw.SLURM_IO_ENV for x in ("-u", v)])
         self.assertEqual(argv[-6:], [REF, cw.sha256_file(REF), "--role", "pv-writer", "--covfix-attempt", "a1"])
         pg = shlex.split(cw.launch_command("pg-connect", rig.cfg["roles"]["pg-connect"], []))
-        self.assertEqual(pg[:2], ["bash", "-c"])
+        self.assertEqual(pg[:pg.index("bash")], [x if x != "covfix_pv_writer" else "covfix_pg_connect"
+                                                 for x in argv[:argv.index("bash")]])   # the PV roles' allocation
 
 
 # ------------------------------------------------------------------------------------------------------------
+
+class PgConnectAllocationTests(unittest.TestCase):
+    """cov2d, 2026-11-25: pg-connect had no allocation, so it would have run on the login host. Every role now launches
+    through one exclusive node, and cov2d's four constraints hold for each: (1) a fixed argv, (2) no -J or --comment,
+    and nothing derived from any input before the bound binary, (3) the frame only on srun's forwarded stdin, and (4)
+    the Slurm I/O variables unset in the child's environment. The secrets are the rig's covfix-test-* stand-ins."""
+
+    def alloc_log(self, rig):
+        p = os.path.join(rig.root, "alloc.log")
+        return open(p).read().splitlines() if os.path.exists(p) else []
+
+    def test_1_every_role_gets_exactly_the_fixed_argv(self):
+        rig = Rig()
+        for role in cw.ROLES:
+            extra = ["--covfix-attempt", "a1"]
+            argv = shlex.split(cw.launch_command(role, rig.cfg["roles"][role], extra))
+            self.assertEqual(argv, ["env", *[x for v in cw.SLURM_IO_ENV for x in ("-u", v)],
+                                    f"{rig.bin}/salloc", "--exclusive", "-N", "1", "-n", "1", "-J", cw.JOB_NAMES[role],
+                                    "-A", "m0000", "-t", "0:30:00",
+                                    f"{rig.bin}/srun", "--exclusive", "-N", "1", "-n", "1",
+                                    "bash", "-c", cw.EXEC_CHECK, "covfix-exec", REF, cw.sha256_file(REF),
+                                    "--role", role, *extra], role)
+
+    def test_1_pg_connect_without_a_valid_slurm_block_never_launches(self):
+        rig = Rig()
+        good = json.loads(json.dumps(rig.cfg["roles"]["pg-connect"]))
+        for change in ({"slurm": None}, {"slurm": "salloc -N 1"}, {"slurm": {**good["slurm"], "salloc": "sbatch"}},
+                       {"slurm": {**good["slurm"], "srun": "/usr/bin/ssh"}}, {"slurm": {**good["slurm"], "nodes": "2"}},
+                       {"slurm": {**good["slurm"], "time": "1:00 --pty"}}):
+            cfg = {**good, **change}
+            if change.get("slurm", 0) is None:
+                del cfg["slurm"]
+            rig.cfg["roles"]["pg-connect"] = cfg
+            rig.write_config()
+            rc, _, err = rig.run("pg-connect")
+            self.assertEqual(rc, cw.ERROR, (change, err))
+        self.assertEqual(rig.events(), [])
+        self.assertEqual(rig.ssh_log(), [])
+        self.assertEqual(self.alloc_log(rig), [])
+
+    def test_2_no_job_name_or_comment_and_no_input_before_the_binary(self):
+        for key in ("job_name", "J", "-J", "comment", "name", "job-name"):
+            rig = Rig()
+            rig.cfg["roles"]["pg-connect"]["slurm"][key] = "covfix"
+            rig.write_config()
+            self.assertEqual(rig.run("pg-connect")[0], cw.ERROR, key)
+            self.assertEqual(rig.ssh_log(), [], key)
+        self.assertNotIn("-J", cw.SLURM_KEYS.values())
+        self.assertFalse({"--job-name", "--comment"} & set(cw.SLURM_KEYS.values()))
+        rig = Rig()
+        self.assertEqual(rig.run("pg-connect")[0], 0)
+        launches = [e for e in rig.ssh_log() if "covfix-hash-end" not in e["argv"][-1]]
+        self.assertEqual(len(launches), 1)
+        cmd = shlex.split(launches[0]["argv"][-1])
+        head = cmd[:cmd.index("bash")]                       # everything Slurm sees, before the bound binary
+        fixed = {"env", "-u", *cw.SLURM_IO_ENV, f"{rig.bin}/salloc", f"{rig.bin}/srun", "--exclusive", "-N", "-n", "1",
+                 "-J", "covfix_pg_connect", "-A", "m0000", "-t", "0:30:00"}
+        self.assertEqual(set(head) - fixed, set(), head)
+        self.assertEqual([head[i + 1] for i, t in enumerate(head) if t == "-J"], ["covfix_pg_connect"])  # once, the constant
+        self.assertFalse({"--job-name", "--comment"} & set(head))
+        inputs = [rig.config_sha, rig.cfg["binding"]["commitment"], *rig.secrets()]
+        for x in inputs:
+            self.assertFalse(any(x in t for t in head), x[:8])
+        log = self.alloc_log(rig)                            # what salloc and srun were actually given
+        self.assertEqual([x.split() for x in log][0][:8], ["salloc", "--exclusive", "-N", "1", "-n", "1", "-J",
+                                                          "covfix_pg_connect"])
+        self.assertNotIn("-J", log[1].split())                # srun's step keeps the job's name
+        for line in log:
+            self.assertNotIn("--comment", line)
+            self.assertNotIn("--job-name", line)
+            for x in inputs:
+                self.assertNotIn(x, line)
+
+    def test_2_the_job_name_is_the_role_constant(self):
+        """Director, 2026-11-25: -J covfix_<role> from a code constant, for every role, whatever the config and inputs."""
+        self.assertEqual(cw.JOB_NAMES, {"pg-connect": "covfix_pg_connect", "pv-writer": "covfix_pv_writer",
+                                        "pv-readout": "covfix_pv_readout"})
+        rig = Rig()
+        for role in cw.ROLES:
+            for extra in ([], ["--covfix-attempt", "a1"], ["--covfix-attempt", "zz9"]):
+                rcfg = json.loads(json.dumps(rig.cfg["roles"][role]))
+                rcfg["args"] = [*rcfg["args"], "--name", "other"]
+                rcfg["binary"] = "/elsewhere/other_binary"
+                argv = shlex.split(cw.launch_command(role, rcfg, extra))
+                s = argv.index(f"{rig.bin}/salloc")
+                self.assertEqual(argv[s + 6:s + 8], ["-J", cw.JOB_NAMES[role]], (role, extra))
+                self.assertEqual(argv.count("-J"), 1)
+
+    def test_3_the_frame_reaches_the_binary_only_through_srun_stdin(self):
+        rig = Rig()
+        pw, base, salt = rig.secrets()
+        rc, out, err = rig.run("pg-connect")
+        self.assertEqual(rc, 0, err)                         # the reference role checked the frame it read on stdin
+        log = self.alloc_log(rig)
+        self.assertEqual([x.split()[0] for x in log], ["salloc", "srun"], log)   # stdin passed salloc, then srun
+        for x in (pw, base, salt):
+            for e in rig.ssh_log():
+                self.assertFalse(any(x in a for a in e["argv"]), "a secret in ssh's argv")
+                self.assertFalse(any(x in v for v in e["env"].values()), "a secret in ssh's environment")
+            for line in log:
+                self.assertNotIn(x, line, "a secret in salloc's or srun's argv")
+        with open(os.path.join(rig.root, "alloc.log.env")) as f:   # cov2d's review: salloc's, srun's and the child's env
+            envdump = f.read()
+        self.assertEqual([x for x in envdump.splitlines() if x.startswith("== ")], ["== salloc", "== srun"])
+        self.assertIn("PATH=", envdump)                      # a real dump, not an empty file
+        for x in (pw, base, salt):
+            self.assertNotIn(x, envdump, "a secret in salloc's, srun's or the child's environment")
+        self.assertNotIn(pw, out + err)
+        self.assertEqual(rig.events()[-1]["key"], rig.commitment())
+
+    def test_4_slurm_io_variables_set_remotely_are_unset_for_the_child(self):
+        rig = Rig()                                          # one campaign: pv-readout needs the pv-writer before it
+        with open(os.path.join(rig.root, "remote-extra-env.json"), "w") as f:
+            json.dump({v: "" if i % 2 else "/tmp/leak-%j" for i, v in enumerate(cw.SLURM_IO_ENV)}, f)
+        for role in ("pg-connect", "pv-writer", "pv-readout"):
+            before = len(self.alloc_log(rig))
+            rc, _, err = rig.run(role)
+            self.assertEqual(rc, 0, (role, err))
+            self.assertEqual([x.split()[0] for x in self.alloc_log(rig)[before:]], ["salloc", "srun"], role)
+
+    def test_4_control_without_env_unset_the_stub_refuses(self):
+        """Not vacuous: the same remote variables, with the launcher's env -u removed, stop the run in the stub."""
+        rig = Rig()
+        with open(os.path.join(rig.root, "remote-extra-env.json"), "w") as f:
+            json.dump({"SRUN_INPUT": "none"}, f)
+        real = cw.launch_command
+
+        def without_unset(role, rcfg, extra):
+            argv = shlex.split(real(role, rcfg, extra))
+            s = argv.index(rcfg["slurm"]["salloc"])
+            return shlex.join(argv[s:])
+
+        with mock.patch.object(cw, "launch_command", without_unset):
+            rc, _, err = rig.run("pg-connect")
+        self.assertNotEqual(rc, 0)
+        self.assertIn("inherited Slurm I/O setting SRUN_INPUT", err + "".join(self.alloc_log(rig)) + str(rig.events()))
+
 
 class RunTests(unittest.TestCase):
     def test_writer_end_to_end_and_the_spend_precedes_the_launch(self):
@@ -2290,6 +2437,132 @@ class ConfirmBlockerTests(unittest.TestCase):
         finally:
             rec.unlock()
         self.assertEqual(rec.raw(), b"restored\n")
+
+
+def protect(bare: str) -> None:
+    """Make a local bare repo refuse what GitHub ruleset 27996874 ("covfix-ledger append-only") refuses on the real
+    ledger branch: non-fast-forward updates and deletion. Creation and fast-forward pushes stay allowed."""
+    for key in ("receive.denyNonFastForwards", "receive.denyDeletes"):
+        subprocess.run(["git", "--git-dir", bare, "config", key, "true"], check=True)
+
+
+def other_writer(rig) -> str:
+    """A second clone of the rig's remote, standing in for any other writer."""
+    d = tempfile.mkdtemp(dir=rig.root)
+    subprocess.run(["git", "clone", "-q", "-b", "covfix-consumption", rig.bare, d], check=True, capture_output=True)
+    return d
+
+
+def remote_tip(rig) -> str:
+    return subprocess.run(["git", "--git-dir", rig.bare, "rev-parse", "refs/heads/covfix-consumption"],
+                          capture_output=True, text=True, check=True).stdout.strip()
+
+
+def launches(rig) -> int:
+    """How many times ssh was asked to start a bound binary (the only path on which the frame is sent)."""
+    return sum("covfix-exec" in e["argv"][-1] for e in rig.ssh_log())
+
+
+class LedgerProtectionTests(unittest.TestCase):
+    """The wrapper under a remote that refuses non-fast-forward updates and deletion (ruleset 27996874 on
+    covfix-ledger). The wrapper only ever creates the branch and pushes fast-forward; a refused push, a deletion or a
+    rewind must fail closed with no launch, so no secret reaches a bound binary and nothing is decrypted."""
+
+    def test_under_protection_the_first_push_creates_the_branch_and_later_pushes_fast_forward(self):
+        rig = Rig()
+        protect(rig.bare)
+        subprocess.run(["git", "--git-dir", rig.bare, "update-ref", "-d", "refs/heads/covfix-consumption"], check=True)
+        rc, _, err = rig.run("pv-writer")                       # creates the branch: allowed
+        self.assertEqual(rc, 0, err)
+        first = remote_tip(rig)
+        rc, _, err = rig.run("pv-readout")                      # appends fast-forward: allowed
+        self.assertEqual(rc, 0, err)
+        second = remote_tip(rig)
+        self.assertNotEqual(first, second)
+        self.assertEqual(subprocess.run(["git", "--git-dir", rig.bare, "merge-base", "--is-ancestor", first, second])
+                         .returncode, 0)
+        self.assertEqual([(e["event"], e["role"]) for e in rig.events()],
+                         [("spent", "pv-writer"), ("completed", "pv-writer"),
+                          ("spent", "pv-readout"), ("completed", "pv-readout")])
+        self.assertEqual(rig.remote_record(), slurp(os.path.join(rig.cfg["record_dir"], "RECORD.jsonl"), "rb"))
+
+    def test_a_push_refused_as_non_fast_forward_fails_closed_before_launch(self):
+        # Another writer appends between the wrapper's fetch and its push. The wrapper's push must be refused, with
+        # or without the host's protection: it never forces.
+        for protected in (True, False):
+            with self.subTest(protected=protected):
+                rig = Rig()
+                if protected:
+                    protect(rig.bare)
+                self.assertEqual(rig.run("pv-writer")[0], 0)
+                before = launches(rig)
+                self.assertEqual(before, 1)
+                other = other_writer(rig)
+                real, raced = cw.Mirror.git, []
+
+                def mgit(self, *args, check=True, input=None):
+                    if "push" in args and not raced:
+                        raced.append(1)
+                        with open(os.path.join(other, "README"), "a") as f:
+                            f.write("another writer\n")
+                        git(other, "-c", "user.name=o", "-c", "user.email=o@o", "commit", "-q", "-am", "sibling")
+                        git(other, "push", "-q", "origin", "HEAD:refs/heads/covfix-consumption")
+                    return real(self, *args, check=check, input=input)
+
+                with mock.patch.object(cw.Mirror, "git", mgit):
+                    rc, _, err = rig.run("pv-readout")
+                self.assertTrue(raced)
+                self.assertEqual(rc, cw.TERMINAL, err)
+                self.assertIn("uncertain", err)
+                self.assertRegex(err, r"git [^:]*push failed")      # the remote refused the push itself
+                self.assertEqual(launches(rig), before)
+                self.assertEqual(remote_tip(rig), git(other, "rev-parse", "HEAD").strip())   # nothing overwritten
+                self.assertNotIn(b'"pv-readout"', rig.remote_record())
+                self.assertEqual(sorted(k for k, _, r in rig.markers() if r == "pv-readout"), ["attempt", "uncertain"])
+                rc, _, err = rig.run("pv-readout")                 # the role stays blocked
+                self.assertEqual(rc, cw.TERMINAL, err)
+                self.assertEqual(launches(rig), before)
+
+    def test_a_deletion_is_refused_and_a_bypassed_deletion_fails_closed_before_launch(self):
+        rig = Rig()
+        protect(rig.bare)
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        tip = remote_tip(rig)
+        r = subprocess.run(["git", "-C", other_writer(rig), "push", "origin", "--delete", "covfix-consumption"],
+                           capture_output=True, text=True)
+        self.assertNotEqual(r.returncode, 0)
+        self.assertIn("deletion prohibited", r.stderr)
+        self.assertEqual(remote_tip(rig), tip)
+        before = launches(rig)
+        self.assertEqual(before, 1)                              # the pv-writer run launched once
+        subprocess.run(["git", "--git-dir", rig.bare, "update-ref", "-d", "refs/heads/covfix-consumption"], check=True)
+        rc, _, err = rig.run("pv-readout")                      # as if an admin had bypassed the rule
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertIn("gone after it was published", err)
+        self.assertEqual(launches(rig), before)
+        self.assertNotIn("pv-readout", [e["role"] for e in rig.events()])
+
+    def test_a_rewind_is_refused_and_a_bypassed_rewind_fails_closed_before_launch(self):
+        rig = Rig()
+        protect(rig.bare)
+        self.assertEqual(rig.run("pv-writer")[0], 0)
+        tip = remote_tip(rig)
+        other = other_writer(rig)
+        first = git(other, "rev-list", "--max-parents=0", "HEAD").strip()
+        git(other, "reset", "-q", "--hard", first)
+        r = subprocess.run(["git", "-C", other, "push", "-f", "origin", "HEAD:refs/heads/covfix-consumption"],
+                           capture_output=True, text=True)
+        self.assertNotEqual(r.returncode, 0)
+        self.assertIn("non-fast-forward", r.stderr)
+        self.assertEqual(remote_tip(rig), tip)
+        before = launches(rig)
+        self.assertEqual(before, 1)                              # the pv-writer run launched once
+        subprocess.run(["git", "--git-dir", rig.bare, "update-ref", "refs/heads/covfix-consumption", first], check=True)
+        rc, _, err = rig.run("pv-readout")                      # as if an admin had bypassed the rule
+        self.assertEqual(rc, cw.TERMINAL, err)
+        self.assertIn("rewound", err)
+        self.assertEqual(launches(rig), before)
+        self.assertNotIn("pv-readout", [e["role"] for e in rig.events()])
 
 
 class ReferenceRoleTests(unittest.TestCase):

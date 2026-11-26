@@ -1,0 +1,19 @@
+HTAR: a   evw5d-20261125-r2/evw5d/SHA256SUMS
+HTAR: a   evw5d-20261125-r2/evw5d/constants.json
+HTAR: a   evw5d-20261125-r2/evw5d/constants.npz
+HTAR: a   evw5d-20261125-r2/evw5d/evw5d.done
+HTAR: a   evw5d-20261125-r2/evw5d/product/data_b-_j-.npz
+HTAR: a   evw5d-20261125-r2/evw5d/run.json
+HTAR: a   evw5d-20261125-r2/evw5d/weights.npz
+HTAR: a   /tmp/HTAR_CF_CHK_127073_1795653076
+HTAR Create complete for /home/j/josephrb/mnv-evw5d-20261125-r2/evw5d-20261125-r2.tar. 1744094208 bytes written for 7 member files, max threads: 7 Transfer time: 10.768 seconds (161.971 MB/s) wallclock/user/sys: 11.035 15.140 3.226 seconds
+HTAR: v evw5d-20261125-r2/evw5d/SHA256SUMS, 403 bytes, 2 media blocks
+HTAR: v evw5d-20261125-r2/evw5d/constants.json, 2603 bytes, 7 media blocks
+HTAR: v evw5d-20261125-r2/evw5d/constants.npz, 2971114 bytes, 5804 media blocks
+HTAR: v evw5d-20261125-r2/evw5d/evw5d.done, 1006 bytes, 3 media blocks
+HTAR: v evw5d-20261125-r2/evw5d/product/data_b-_j-.npz, 95565 bytes, 188 media blocks
+HTAR: v evw5d-20261125-r2/evw5d/run.json, 8592 bytes, 18 media blocks
+HTAR: v evw5d-20261125-r2/evw5d/weights.npz, 1741008257 bytes, 3400408 media blocks
+HTAR: v /tmp/HTAR_CF_CHK_127073_1795653076, 256 bytes, 2 media blocks
+HTAR: Verify complete. 0 total errors, 8 total objects (8 Files,0 Dirs,0 Hard Links,0 symlinks) wallclock/user/sys: 9.890 10.147 1.296 seconds
+HTAR: HTAR SUCCESSFUL

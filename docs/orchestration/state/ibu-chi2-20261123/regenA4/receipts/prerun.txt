@@ -1,0 +1,5 @@
+# pre-run 2026-11-25T09:17:21Z
+env | grep A4_ (empty means unset):
+[end]
+branch head 5df1890590e82579648623984dfa6b544360f20e
+W 06893b0af3ff2245035f504de2c47f02bb48db0e porcelain=0 ignored=0
