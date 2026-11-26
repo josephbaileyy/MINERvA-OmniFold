@@ -78,7 +78,7 @@ class Fake:
         self.reader = self.t / "reader.py"
         src = REMOTE.read_text().replace('BASE = "/pscratch/sd/j/josephrb/"', f'BASE = "{self.base}/"')
         if not hasattr(os, "O_NOATIME"):          # macOS: test-only, the production reader requires it (tested below)
-            src = src.replace("os.O_RDONLY | os.O_NOATIME", "os.O_RDONLY").replace(
+            src = src.replace("os.O_RDONLY | os.O_NOATIME | os.O_NOFOLLOW", "os.O_RDONLY | os.O_NOFOLLOW").replace(
                 'if not hasattr(os, "O_NOATIME"):', "if False:")
         self.reader.write_text(src)
 
@@ -93,6 +93,9 @@ class Fake:
                 size += 1
             rows.append("\t".join([f"{self.base}/{rel}", sha, "pin", str(size), "reader", "xk"]))
         return "\n".join(rows) + "\n"
+
+    def rows(self):
+        return [tuple(r.split("\t")) for r in self.list_text().splitlines()[1:]]
 
     def read(self, tamper=None):
         return subprocess.run([sys.executable, "-I", str(self.reader)], input=self.list_text(tamper).encode(),
@@ -128,6 +131,23 @@ class Reader(unittest.TestCase):
             self.assertEqual(r.returncode, 9, t)
             self.assertIn(b"STOP fetch", r.stderr)
 
+    def test_a_listed_symlink_or_an_excluded_name_stops(self):
+        rel = next(iter(self.f.files))
+        q = self.f.files[rel]
+        real = q.with_name("real.bin")
+        q.rename(real)
+        q.symlink_to(real)
+        lst = self.f.list_text().replace(f"\t{len(b'')}\t", "\t")      # sizes/shas follow the link target
+        r = subprocess.run([sys.executable, "-I", str(self.f.reader)], input=lst.encode(), capture_output=True)
+        self.assertEqual(r.returncode, 9, r.stderr)
+        self.assertIn(b"O_NOFOLLOW", r.stderr)
+        q.unlink()
+        real.rename(q)
+        bad = self.f.list_text().replace(f"{self.f.base}/d0/f0.bin", f"{self.f.base}/d0/universes_full.root")
+        r = subprocess.run([sys.executable, "-I", str(self.f.reader)], input=bad.encode(), capture_output=True)
+        self.assertEqual(r.returncode, 9)
+        self.assertIn(b"never reads", r.stderr)
+
     def test_a_path_outside_the_base_or_a_bad_header_stops(self):
         bad = self.f.list_text().replace(f"{self.f.base}/d0", "/etc/d0")
         r = subprocess.run([sys.executable, "-I", str(self.f.reader)], input=bad.encode(), capture_output=True)
@@ -137,7 +157,7 @@ class Reader(unittest.TestCase):
 
     def test_the_reader_opens_with_o_noatime_and_refuses_without_it(self):
         src = REMOTE.read_text()
-        self.assertIn("os.O_RDONLY | os.O_NOATIME", src)
+        self.assertIn("os.O_RDONLY | os.O_NOATIME | os.O_NOFOLLOW", src)
         if not hasattr(os, "O_NOATIME"):
             r = subprocess.run([sys.executable, "-I", str(REMOTE)], input=b"", capture_output=True)
             self.assertEqual(r.returncode, 2)
@@ -181,6 +201,30 @@ class Verify(unittest.TestCase):
             self.write_tar(members)
             self.verify()
 
+    def test_same_length_tampering_and_a_listed_name_symlink_refuse(self):
+        g = self.good()
+        n0, d0, _ = g[0]
+        self.write_tar([(n0, bytes([d0[0] ^ 1]) + d0[1:], "file"), g[1]])
+        self.verify()
+        self.write_tar([(n0, b"", "sym"), g[1]])
+        self.verify()
+
+    def test_a_malformed_or_concatenated_tar_refuses(self):
+        self.write_tar(self.good())
+        raw = self.tar.read_bytes()
+        last_end = max(i for i in range(0, len(raw), 512) if raw[i:i + 512] != bytes(512)) + 512
+        for bad in (raw[:last_end],                                   # no end blocks
+                    raw[:last_end] + b"garbage" + bytes(2048),        # a corrupt next header
+                    raw + raw):                                        # a second archive after the terminator
+            self.tar.write_bytes(bad)
+            self.verify()
+
+    def test_the_good_tar_is_accepted(self):
+        self.write_tar(self.good())
+        with mock.patch.object(P, "PS", f"{self.f.base}/"):
+            self.assertEqual(run(["fetch-verify", "--tar", str(self.tar), "--list", str(self.lst), "--dest",
+                                  str(self.dest)]), 0)
+
     def test_an_existing_destination_refuses(self):
         self.write_tar(self.good())
         self.dest.mkdir()
@@ -208,7 +252,7 @@ class Wrapper(unittest.TestCase):
     def wrapper(self, mutate=None):
         out = self.t / "w.sh"
         out.unlink(missing_ok=True)                       # the test's own previous wrapper
-        with mock.patch.object(P, "REMOTE_PY", self.f.reader), mock.patch.object(P, "N_ROWS", 2), \
+        with mock.patch.object(P, "REMOTE_PY", self.f.reader), mock.patch.object(P, "fetch_rows", self.f.rows), \
                 mock.patch("sys.stderr"):
             P.cmd_fetch_script(P.build_args(["fetch-script", "--list", str(self.lst), "--out", str(out)]))
         s = out.read_text().replace("/usr/bin/python3", sys.executable)
@@ -227,9 +271,15 @@ class Wrapper(unittest.TestCase):
         with tarfile.open(fileobj=io.BytesIO(r.stdout), mode="r|") as t:
             self.assertEqual(sorted(m.name for m in t), sorted(self.f.files))
 
-    def test_another_host_refuses_before_any_read(self):
-        r = self.run_w(self.wrapper(), FAKE_HOST="login37")
-        self.assertEqual((r.returncode, r.stdout), (2, b""))
+    def test_another_host_refuses_before_any_read_even_with_an_inherited_stop_rc(self):
+        for env in ({}, {"STOP_RC": "0"}):
+            r = self.run_w(self.wrapper(), FAKE_HOST="login37", **env)
+            self.assertEqual((r.returncode, r.stdout), (2, b""), env)
+
+    def test_a_list_that_is_not_fetch_lists_refuses(self):
+        self.lst.write_text(self.f.list_text().replace("\txk\n", "\tprr\n", 1))
+        with self.assertRaises(P.Stop):
+            self.wrapper()
 
     def test_a_tampered_payload_refuses(self):
         for field in ("PYB", "LISTB"):

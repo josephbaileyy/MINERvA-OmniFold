@@ -5,10 +5,12 @@
 # on the cluster; messages go to stderr only. Python 3.6 compatible (the login node's /usr/bin/python3).
 import hashlib
 import os
+import stat
 import sys
 import tarfile
 
 BASE = "/pscratch/sd/j/josephrb/"
+NEVER = ("universes_full.root", "bkg_dump.npz", "data_b-_j-.npz")   # never read (route (1); the EVW5D watch)
 FIELDS = ["path", "sha256", "pin_source", "size_bytes", "reader_file_line", "recompute"]
 
 
@@ -45,12 +47,16 @@ def main():
     for path, sha, _, size, _, _ in rows:
         if not path.startswith(BASE) or ".." in path.split("/"):
             stop("%s is not under %s" % (path, BASE))
-        try:
-            fd = os.open(path, os.O_RDONLY | os.O_NOATIME)
+        if os.path.basename(path) in NEVER or path.endswith(NEVER):
+            stop("%s is a file the fetch never reads" % path)
+        try:      # O_NOFOLLOW: a symlink is refused, so no link's own atime moves
+            fd = os.open(path, os.O_RDONLY | os.O_NOATIME | os.O_NOFOLLOW)
         except OSError as e:
-            stop("cannot open %s O_NOATIME: %s" % (path, e))
+            stop("cannot open %s O_NOATIME|O_NOFOLLOW: %s" % (path, e))
         try:
             st = os.fstat(fd)
+            if not stat.S_ISREG(st.st_mode):
+                stop("%s is not a regular file" % path)
             if st.st_size != int(size):
                 stop("%s is %d bytes, listed %s" % (path, st.st_size, size))
             ti = tarfile.TarInfo(path[len(BASE):])

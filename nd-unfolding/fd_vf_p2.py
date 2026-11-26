@@ -16,6 +16,7 @@ EXISTS record and its pin source; any disagreement refuses.
 Run: python3 -B fd_vf_p2.py fetch-list [--out FILE]"""
 import argparse
 import hashlib
+import io
 import re
 import subprocess
 import sys
@@ -834,7 +835,7 @@ WRAPPER = """#!/bin/bash
 # < fetch-vfp2.sh > vfp2.tar`. The remote reader and the bound list are embedded below as base64 (no here-document, no
 # temporary file); each is checked against its sha256 on the node; the reader streams a tar of the listed files to
 # stdout through O_NOATIME. Writes nothing on the cluster. Exit 2: refused before any read; 9: a read stopped.
-stop() {{ echo "STOP: $*" >&2; exit "${{STOP_RC:-2}}"; }}
+stop() {{ echo "STOP: $*" >&2; exit 2; }}          # a fixed code: nothing inherited can turn a refusal into 0
 h=$(hostname) && [ "$h" = login02 ] || stop "not login02 (${{h:-hostname failed}})"
 PYB='{py_b64}'
 LISTB='{list_b64}'
@@ -859,9 +860,9 @@ def cmd_fetch_script(a) -> int:
     for t in (py, lst):
         if not t.endswith("\n") or t.endswith("\n\n"):
             raise Stop("an embedded text must end with exactly one newline (the wrapper re-adds it)")
-    rows = lst.splitlines()
-    if rows[0] != "\t".join(HEADER) or len(rows) - 1 != N_ROWS:
-        raise Stop("the list is not fetch-list's")
+    expect = "\t".join(HEADER) + "\n" + "".join("\t".join(r) + "\n" for r in fetch_rows())
+    if lst != expect:
+        raise Stop("the list is not fetch-list's output, byte for byte")
     text = WRAPPER.format(py_b64=base64.b64encode(py.encode()).decode(), py_sha=hashlib.sha256(py.encode()).hexdigest(),
                           list_b64=base64.b64encode(lst.encode()).decode(),
                           list_sha=hashlib.sha256(lst.encode()).hexdigest())
@@ -881,10 +882,12 @@ def cmd_fetch_verify(a) -> int:
     want = {r[0][len(PS):]: (r[1], int(r[3])) for r in rows}
     if a.dest.exists():
         raise Stop(f"{a.dest} exists")
+    raw = Path(a.tar).read_bytes()
     a.dest.mkdir(parents=True)
-    seen = set()
-    with tarfile.open(a.tar, mode="r|") as tf:
+    seen, end = set(), 0
+    with tarfile.open(fileobj=io.BytesIO(raw), mode="r:") as tf:
         for m in tf:
+            end = m.offset_data + -(-m.size // 512) * 512
             n = m.name
             if not m.isfile() or n.startswith("/") or ".." in n.split("/") or n not in want or n in seen:
                 raise Stop(f"tar member {n!r}: not a listed regular file, or repeated")
@@ -898,6 +901,9 @@ def cmd_fetch_verify(a) -> int:
             seen.add(n)
     if seen != set(want):
         raise Stop(f"{len(set(want) - seen)} listed files missing from the tar")
+    tail = raw[end:]       # the archive must end in at least two zero blocks and hold nothing after its members
+    if len(tail) < 1024 or tail.count(0) != len(tail):
+        raise Stop(f"the tar does not end cleanly after its last member ({len(tail)} trailing bytes, not all zero)")
     print(f"fetch-verify: {len(seen)} files, each the list's size and sha256, under {a.dest}", file=sys.stderr)
     return 0
 
