@@ -39,7 +39,9 @@ def open_nofollow(path):
     on). A symlink anywhere below BASE refuses, so no link's own atime moves."""
     parts = path[len(BASE):].split("/")
     try:
-        d = os.open(BASE, os.O_RDONLY | os.O_DIRECTORY)
+        if not stat.S_ISDIR(os.lstat(BASE.rstrip("/")).st_mode):     # lstat: BASE itself must not be a symlink
+            stop("%s is not a plain directory" % BASE)
+        d = os.open(BASE.rstrip("/"), os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
     except OSError as e:
         stop("cannot open %s: %s" % (BASE, e))
     try:

@@ -157,9 +157,11 @@ class Reader(unittest.TestCase):
         real = d.with_name(d.name + "-real")
         d.rename(real)
         d.symlink_to(real)
+        before = os.lstat(d).st_atime_ns
         r = subprocess.run([sys.executable, "-I", str(self.f.reader)], input=lst.encode(), capture_output=True)
         self.assertEqual(r.returncode, 9, r.stderr)
         self.assertIn(b"not a plain directory", r.stderr)
+        self.assertEqual(os.lstat(d).st_atime_ns, before)
         d.unlink()
         real.rename(d)
         fifo = q.with_name("fifo")
@@ -170,6 +172,17 @@ class Reader(unittest.TestCase):
         self.assertEqual(r.returncode, 9, r.stderr)
         self.assertIn(b"not a regular file", r.stderr)
         fifo.unlink()
+
+    def test_a_symlinked_base_stops(self):
+        link = self.f.t / "baselink"
+        link.symlink_to(self.f.base)
+        src = self.f.reader.read_text().replace(f'BASE = "{self.f.base}/"', f'BASE = "{link}/"')
+        rd = self.f.t / "reader2.py"
+        rd.write_text(src)
+        lst = self.f.list_text().replace(f"{self.f.base}/", f"{link}/")
+        r = subprocess.run([sys.executable, "-I", str(rd)], input=lst.encode(), capture_output=True)
+        self.assertEqual(r.returncode, 9, r.stderr)
+        self.assertIn(b"not a plain directory", r.stderr)
 
     def test_a_path_outside_the_base_or_a_bad_header_stops(self):
         bad = self.f.list_text().replace(f"{self.f.base}/d0", "/etc/d0")
@@ -276,8 +289,19 @@ class Verify(unittest.TestCase):
         pos = m.offset                                    # the member's first header: its PAX extension
         self.assertEqual(raw[pos + 156:pos + 157], b"x")
         size = tarfile.TarInfo.frombuf(bytes(raw[pos:pos + 512]), tarfile.ENCODING, "surrogateescape").size
-        raw[pos + 512 + size + 1] = 1
-        self.tar.write_bytes(bytes(raw))
+        bad = bytearray(raw)
+        bad[pos + 512 + size + 1] = 1
+        self.tar.write_bytes(bytes(bad))
+        self.verify()
+        bad = bytearray(raw)                # a complete record, then a NUL and garbage inside the declared size
+        assert size + 3 <= -(-size // 512) * 512
+        bad[pos + 512 + size:pos + 512 + size + 3] = b"\0zz"
+        bad[pos + 124:pos + 136] = b"%011o\0" % (size + 3)
+        bad[pos + 148:pos + 156] = b" " * 8
+        bad[pos + 148:pos + 156] = b"%06o\0 " % sum(bad[pos:pos + 512])
+        with tarfile.open(fileobj=io.BytesIO(bytes(bad)), mode="r:") as tf:     # tarfile itself accepts it
+            self.assertIn(long, [x.name for x in tf])
+        self.tar.write_bytes(bytes(bad))
         self.verify()
 
     def test_nonzero_padding_after_a_member_refuses(self):
@@ -345,6 +369,17 @@ class Wrapper(unittest.TestCase):
         for env in ({}, {"STOP_RC": "0"}):
             r = self.run_w(self.wrapper(), FAKE_HOST="login37", **env)
             self.assertEqual((r.returncode, r.stdout), (2, b""), env)
+
+    def test_a_payload_with_an_added_trailing_byte_refuses(self):
+        import base64 as b64
+        for field in ("PYB", "LISTB"):
+            for extra in (b"\n", b"\0"):
+                def m(s, field=field, extra=extra):
+                    i = s.index(f"{field}='") + len(field) + 2
+                    j = s.index("'", i)
+                    return s[:i] + b64.b64encode(b64.b64decode(s[i:j]) + extra).decode() + s[j:]
+                r = self.run_w(self.wrapper(m))
+                self.assertEqual((r.returncode, r.stdout), (2, b""), (field, extra))
 
     def test_a_crlf_list_refuses(self):
         self.lst.write_bytes(self.f.list_text().replace("\n", "\r\n").encode())

@@ -981,13 +981,13 @@ stop() {{ echo "STOP: $*" >&2; exit 2; }}          # a fixed code: nothing inher
 h=$(hostname) && [ "$h" = login02 ] || stop "not login02 (${{h:-hostname failed}})"
 PYB='{py_b64}'
 LISTB='{list_b64}'
+# each digest is of the raw decoded stream (no command substitution, which would drop trailing newlines or NULs)
+s1=$(printf '%s' "$PYB" | base64 -d | sha256sum) && [ "${{s1%% *}}" = {py_sha} ] || stop "reader sha ${{s1%% *}}"
+s2=$(printf '%s' "$LISTB" | base64 -d | sha256sum) && [ "${{s2%% *}}" = {list_sha} ] || stop "list sha ${{s2%% *}}"
 py=$(printf '%s' "$PYB" | base64 -d) && [ -n "$py" ] || stop "decode reader"
-list=$(printf '%s' "$LISTB" | base64 -d) && [ -n "$list" ] || stop "decode list"
-s1=$(printf '%s\n' "$py" | sha256sum) && [ "${{s1%% *}}" = {py_sha} ] || stop "reader sha ${{s1%% *}}"
-s2=$(printf '%s\n' "$list" | sha256sum) && [ "${{s2%% *}}" = {list_sha} ] || stop "list sha ${{s2%% *}}"
 [ -x /usr/bin/python3 ] || stop "no /usr/bin/python3"
 echo "fetch start $(date -u +%FT%TZ) on $h; reader {py_sha}; list {list_sha}" >&2
-printf '%s\n' "$list" | /usr/bin/python3 -I -c "$py"
+printf '%s' "$LISTB" | base64 -d | /usr/bin/python3 -I -c "$py"
 rc=$?
 echo "fetch end $(date -u +%FT%TZ) rc=$rc" >&2
 exit $rc
@@ -1014,6 +1014,20 @@ def cmd_fetch_script(a) -> int:
     print(f"wrapper {a.out}: sha256 {hashlib.sha256(text.encode()).hexdigest()}; reader "
           f"{hashlib.sha256(py.encode()).hexdigest()}; list {hashlib.sha256(lst.encode()).hexdigest()}", file=sys.stderr)
     return 0
+
+
+def pax_records(data: bytes, name: str) -> None:
+    """A PAX extension's data must be exactly a sequence of "<len> <key>=<value>\n" records covering every byte."""
+    i = 0
+    while i < len(data):
+        sp = data.find(b" ", i)
+        if sp < 0 or not data[i:sp].isdigit():
+            raise Stop(f"tar member {name!r}: a malformed PAX record length")
+        n = int(data[i:sp])
+        rec = data[i:i + n]
+        if n <= sp - i + 1 or len(rec) != n or not rec.endswith(b"\n") or b"=" not in rec[sp - i + 1:] or b"\0" in rec:
+            raise Stop(f"tar member {name!r}: a malformed PAX record")
+        i += n
 
 
 def cmd_fetch_verify(a) -> int:
@@ -1046,6 +1060,7 @@ def cmd_fetch_verify(a) -> int:
                 pend = m.offset + 512 + -(-h.size // 512) * 512
                 if h.type != tarfile.XHDTYPE or pend != m.offset_data - 512:
                     raise Stop(f"tar member {m.name!r}: its extension is not one PAX record")
+                pax_records(raw[m.offset + 512:m.offset + 512 + h.size], m.name)
                 zero(m.offset + 512 + h.size, pend, f"after the PAX extension of {m.name!r}")
             end = m.offset_data + -(-m.size // 512) * 512
             zero(m.offset_data + m.size, end, f"after the data of {m.name!r}")
