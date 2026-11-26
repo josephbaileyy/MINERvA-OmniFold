@@ -1,0 +1,17 @@
+/pscratch/sd/j/josephrb/evw2d-20261126/out:
+total 1154964
+drwx------ 2 josephrb josephrb       4096 Nov 26 00:45 .
+drwx------ 8 josephrb josephrb       4096 Nov 26 00:48 ..
+-rw------- 1 josephrb josephrb       3963 Nov 26 00:45 constants.json
+-rw------- 1 josephrb josephrb        390 Nov 26 00:45 evw2d.done
+-rw------- 1 josephrb josephrb       7424 Nov 26 00:45 run.json
+-rw------- 1 josephrb josephrb        310 Nov 26 00:45 SHA256SUMS
+-rw------- 1 josephrb josephrb 1182583158 Nov 26 00:45 weights.npz
+-rw------- 1 josephrb josephrb      61508 Nov 26 00:44 xsec.root
+
+/pscratch/sd/j/josephrb/evw2d-20261126/stage:
+total 2093780
+dr-xr-xr-x 2 josephrb josephrb       4096 Nov 25 23:26 .
+drwx------ 8 josephrb josephrb       4096 Nov 26 00:48 ..
+-r--r--r-- 1 josephrb josephrb       5143 Nov 25 23:26 runEventLoopMC_MEFHC.root
+-r--r--r-- 1 josephrb josephrb 2144008221 Nov 25 23:26 runEventLoopOmniFold_MEFHC.root
