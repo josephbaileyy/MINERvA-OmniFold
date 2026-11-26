@@ -22433,6 +22433,7 @@ docs/orchestration/state/oi74-canonical-ff-20261030/run/session.txt	tracked	MACH
 docs/orchestration/state/oi74-canonical-ff-20261030/run2/session.txt	tracked	MACHINE	state-artifact	oi74-canonical-ff-20261030		generated		exact-path-only	yes
 docs/orchestration/state/oi74-canonical-ff-20261030/test_ff.sh	tracked	MACHINE	state-artifact	oi74-canonical-ff-20261030		generated		exact-path-only	yes
 docs/orchestration/state/oi74-canonical-ff-20261030/test_ff2.sh	tracked	MACHINE	state-artifact	oi74-canonical-ff-20261030		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/OOFVC-BINDING-1.md	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/OOFVC-DECLARATION.md	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/MUTATION.md	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/mutation-dbe40c6d.json.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
