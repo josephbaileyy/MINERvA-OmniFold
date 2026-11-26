@@ -277,6 +277,72 @@ EDGE_STEP_COPY = r"\$p_T\$ edges(?: \([^)]*\))?(?: differ by| shifted by)? \\SI\
 EDGE_STEP_COPIES = {"sec2_method.tex": 1, "sec3_twod.tex": 1, "appC_supplementary.tex": 2, "appD_reproducibility.tex": 1}
 EDGE_STEP_ALL = "pT edge step, all 5 printed copies (sec2, sec3, appC x2, appD) equal sec3's, exactly"
 
+# EVW5D (#1353, #1355): App. D's paragraph on the 5D per-event weights in the release (DECISION-20261125b sec. 3;
+# C-COMPLETE option (a), DECISION-20261126). Every number and claim in it is bound to EVW5D attempt 2's receipts and to
+# eavail step 0b (the denominator's tuples equal the saved rows' as multisets).
+EVW5D = "measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/attempt2"
+EVW5D_OVERRIDE = None  # the self-test plants altered receipts here
+
+
+def evw5d() -> dict:
+    """run.json, constants.json, step0b.json, and the lane's readings of constants.npz (c32.txt, c1effect.txt)."""
+    if EVW5D_OVERRIDE is not None:
+        return EVW5D_OVERRIDE
+    lane = STATE / EVW5D / "lane"
+    cells = re.findall(r"^\((\d+(?:, \d+){4})\) denom=\S+ ofin=\S+ diff=([+-][0-9.e+-]+) ", (lane / "c32.txt").read_text(),
+                       re.M)
+    c1 = re.findall(r"^f max rel change if c:=1 ([0-9.e+-]+) per cell", (lane / "c1effect.txt").read_text(), re.M)
+    if len(c1) != 1:
+        raise ValueError(f"{EVW5D}/lane/c1effect.txt: the c := 1 line matched {len(c1)} times (expected 1)")
+    return {"run": receipt(f"{EVW5D}/post/evw5d/run.json"), "constants": receipt(f"{EVW5D}/post/evw5d/constants.json"),
+            "step0b": receipt("eavail-switch-pricing-20261031/step0/step0b.json"),
+            "cells": [(tuple(int(i) for i in idx.split(", ")), float(d)) for idx, d in cells], "c1": float(c1[0])}
+
+
+def evw5d_pairs() -> int:
+    """C-COMPLETE's cells (lane/c32.txt) in pairs adjacent along one axis with equal and opposite ofin - denom. Raises
+    unless there are as many cells as run.json counts and each is in exactly one such pair."""
+    d = evw5d()
+    cells = d["cells"]
+    if len(cells) != d["run"]["controls"]["C-COMPLETE"]["n_cells_beyond_atol"]:
+        raise ValueError(f"c32.txt lists {len(cells)} cells, run.json C-COMPLETE counts "
+                         f"{d['run']['controls']['C-COMPLETE']['n_cells_beyond_atol']}")
+    left, pairs = list(range(len(cells))), 0
+    while left:
+        i = left.pop(0)
+        match = [j for j in left if cells[j][1] == -cells[i][1]
+                 and sum(abs(a - b) for a, b in zip(cells[i][0], cells[j][0])) == 1]
+        if len(match) != 1:
+            raise ValueError(f"c32.txt cell {cells[i][0]} has {len(match)} adjacent equal-and-opposite partners")
+        left.remove(match[0])
+        pairs += 1
+    return pairs
+
+
+EVW5D_CLAIMS = (
+    ("EVW5D: byte for byte (run.json C-BIND, controls PASS)",
+     "The run that wrote the weights reproduced the reported cross section byte for byte.",
+     lambda d: d["run"]["controls"]["C-BIND"]["pass"] is True and d["run"]["controls_verdict"] == "PASS"
+     and d["run"]["controls"]["C-BIND"]["xsec_flat_bytes_equal"] is True),
+    ("EVW5D: sixteen integrals from the rows to double-precision rounding (C-F, below 1e-14)",
+     "Summed with the normalization, the weights reproduce the sixteen cell integrals to double-precision rounding.",
+     lambda d: d["run"]["controls"]["C-F"]["pass"] is True and d["run"]["controls"]["C-F"]["f_from_rows_max_rel"] < 1e-14),
+    ("EVW5D: completeness 1 in any binning (step0b tuple multisets equal; no unmatched fine cell)",
+     "The completeness denominator is the deposited events themselves, so the completeness is 1 in any binning.",
+     lambda d: d["step0b"]["c_tuple_multiset_equal"] is True
+     and d["run"]["controls"]["C-COMPLETE"]["n_signal_without_denominator"] == 0
+     and d["run"]["controls"]["C-COMPLETE"]["n_denominator_without_signal"] == 0),
+    ("EVW5D: one integrated flux (constants.json, every pT bin's within 1e-15)",
+     "The flux enters as a single integrated value.",
+     lambda d: max(f := d["constants"]["flux_per_m2_per_POT_by_pt_bin"]) - min(f) <= 1e-15 * max(f)),
+)
+
+
+def evw5d_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    t, d = text("appD_reproducibility.tex", sources), evw5d()
+    return [(lab, t.count(s) == 1 and fact(d), f"sentence found {t.count(s)} time(s) | receipt {fact(d)}")
+            for lab, s, fact in EVW5D_CLAIMS]
+
 
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
@@ -386,6 +452,27 @@ CHECKS = [
      r"The lowest empirical coverage for the \$68\\%\$ intervals is ([0-9.]+)\.", tilt_coverage68_min, "round"),
     ("other fixed shapes, most affected cell (VL154)", "primer_body.tex",
      r"the effect is \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\} in the worst cell", shapes_range, "round"),
+    # EVW5D, App. D. The exponents are fixed in the patterns, so a changed exponent is not found and fails.
+    ("EVW5D rows in weights.npz (run.json C-KEY n_rows)", "appD_reproducibility.tex",
+     r"per-event OmniFold weights on the \\num\{([0-9]+)\} simulated events that pass the truth selection",
+     lambda: float(evw5d()["run"]["controls"]["C-KEY"]["n_rows"]), "round"),
+    ("EVW5D fiducial region, outer edges (constants.json edges)", "appD_reproducibility.tex",
+     r"\$p_T < \\SI\{([0-9.]+)\}\{GeV/c\}\$ and \$\\SI\{([0-9.]+)\}\{GeV/c\} \\le p_\\parallel < \\SI\{([0-9.]+)\}\{GeV/c\}\$",
+     lambda: (evw5d()["constants"]["edges"]["pt"][-1], evw5d()["constants"]["edges"]["pz"][0],
+              evw5d()["constants"]["edges"]["pz"][-1]), "round"),
+    ("EVW5D stored completeness: cells off 1, and the largest |c - 1| (run.json C-COMPLETE)", "appD_reproducibility.tex",
+     r"The stored completeness differs from 1 in ([0-9]+) fine cells, by at most \\num\{([0-9.]+)e-4\}\.",
+     lambda: (float(evw5d()["run"]["controls"]["C-COMPLETE"]["n_cells_beyond_atol"]),
+              1e4 * evw5d()["run"]["controls"]["C-COMPLETE"]["max_abs_c_minus_1"]), "round"),
+    # One event per pair is a reading ("consistent with", DECISION-20261126 sec. 1), not a count: both 16s bind to the pairs.
+    ("EVW5D adjacent equal-and-opposite pairs, and the events they are consistent with (lane/c32.txt)",
+     "appD_reproducibility.tex",
+     r"These cells form ([0-9]+) adjacent pairs with equal and opposite differences\. This pattern is consistent with "
+     r"([0-9]+) events that lie within single-precision rounding of a cell edge\.",
+     lambda: (float(evw5d_pairs()), float(evw5d_pairs())), "round"),
+    ("EVW5D sixteen integrals, change if c := 1 (lane/c1effect.txt)", "appD_reproducibility.tex",
+     r"changes the sixteen cell integrals by at most \\num\{([0-9.]+)e-6\} of their values", lambda: 1e6 * evw5d()["c1"],
+     "round"),
 ]
 VERBAL = [("about half of those cells (VL154: 20 of 42)", "primer_body.tex",
            r"smaller than the quoted uncertainty in about half of the \$\(\\Eavail,W\)\$ cells", half_of_cells, 0.40, 0.60)]
@@ -434,6 +521,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
         rows.append((EDGE_STEP_ALL, good, f"printed {found} | expected counts {EDGE_STEP_COPIES} | sec3 step {step}"))
     rows += mode_split_claims(sources)
     rows += ibub_claims(sources)
+    rows += evw5d_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
         found = len(re.findall(pat, text(src, sources))) == 1
         c = fn()
@@ -776,6 +864,49 @@ def self_test() -> int:
             caught += 1; print("  caught      IBUB: a readout byte-changed from its recorded sha256 is refused")
         finally:
             STATE = saved
+    # The EVW5D claims (not in CHECKS): each sentence reworded, and each planted receipt, must be rejected.
+    for old_s, new_s in (("cross section byte for byte.", "cross section to rounding."),
+                         ("to double-precision rounding.", "to single-precision rounding."),
+                         ("the completeness is 1 in any binning.", "the completeness is 1 in the published binning."),
+                         ("a single integrated value.", "a binned value.")):
+        t = text("appD_reproducibility.tex", base)
+        if t.count(old_s) != 1:
+            print(f"  NOT FOUND   EVW5D mutation {old_s!r}"); ok = False; continue
+        trial = dict(base)
+        trial["appD_reproducibility.tex"] = t.replace(old_s, new_s)
+        if all(r[1] for r in evw5d_claims(trial)):
+            print(f"  NOT CAUGHT  EVW5D: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      EVW5D: {old_s} -> {new_s}")
+
+    def plant5(what, fn):
+        global EVW5D_OVERRIDE
+        nonlocal ok, caught
+        data = copy.deepcopy(evw5d())
+        fn(data)
+        EVW5D_OVERRIDE = data
+        try:
+            rows = dict((r[0], r[1]) for r in evaluate(base))
+        except ValueError:
+            rows = {"refused": False}
+        finally:
+            EVW5D_OVERRIDE = None
+        if all(rows.values()):
+            print(f"  NOT CAUGHT  EVW5D planted: {what}"); ok = False
+        else:
+            caught += 1; print(f"  caught      EVW5D planted: {what}")
+    plant5("C-BIND xsec_flat bytes differ", lambda d: d["run"]["controls"]["C-BIND"].__setitem__("xsec_flat_bytes_equal", False))
+    plant5("controls verdict FAIL", lambda d: d["run"].__setitem__("controls_verdict", "FAIL"))
+    plant5("C-F from the rows 1e-12", lambda d: d["run"]["controls"]["C-F"].__setitem__("f_from_rows_max_rel", 1e-12))
+    plant5("step0b tuple multisets differ", lambda d: d["step0b"].__setitem__("c_tuple_multiset_equal", False))
+    plant5("a signal cell without denominator",
+           lambda d: d["run"]["controls"]["C-COMPLETE"].__setitem__("n_signal_without_denominator", 1))
+    plant5("one pT bin's flux 0.1% high",
+           lambda d: d["constants"]["flux_per_m2_per_POT_by_pt_bin"].__setitem__(3, 1.001 * d["constants"]["flux_per_m2_per_POT_by_pt_bin"][3]))
+    plant5("a c32 cell's difference sign flipped", lambda d: d["cells"].__setitem__(0, (d["cells"][0][0], -d["cells"][0][1])))
+    plant5("a c32 cell dropped", lambda d: d["cells"].pop())
+    plant5("c := 1 effect 4.0e-6", lambda d: d.__setitem__("c1", 4.0e-6))
+    plant5("max |c - 1| 4.2e-4", lambda d: d["run"]["controls"]["C-COMPLETE"].__setitem__("max_abs_c_minus_1", 4.2e-4))
     trial = dict(base)
     trial["primer_body.tex"] = text("primer_body.tex", base).replace("in about half of the", "in about a third of the")
     if dict((r[0], r[1]) for r in evaluate(trial))[VERBAL[0][0]]:
