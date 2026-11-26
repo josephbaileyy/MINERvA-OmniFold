@@ -2,26 +2,28 @@
 # EVW2D: write the bound copies of the HPSS and deposit-fetch scripts into launch/bound-deposit/, every pin computed by
 # command from committed files, none typed.
 #   bash fill_deposit_pins.sh <run receipts directory, relative to the checkout's top>
-# Every input is read from the commit HEAD (git show HEAD:<path>), each a regular blob in HEAD's tree (mode 100644),
-# so neither the working tree nor a symlink can supply a pin. The pins: the lane root, evw2d.py and config.json from
+# HEAD is resolved once to a commit id, and every input is read from that commit (git show <commit>:<path>), each a
+# regular blob in its tree (mode 100644), so neither the working tree nor a symlink can supply a pin. The pins: the lane root, evw2d.py and config.json from
 # EVW2D BINDING 1's bound/PINS.txt; the products' SHA256SUMS digest and the evw2d.done digest are the sha256 of the
 # receipts' post/out/SHA256SUMS and post/out/evw2d.done; the job id is the receipts' post/logs/evw2d.jobid. They must
 # agree with the receipts' post/accepted.json (pass, config and job bound, done equal to the marker, whose SHA256SUMS is
-# the bound digest) and the post log. evw2d.py and the two templates must equal HEAD's. Order: the pins ->
+# the bound digest) and the post log. The working copies of evw2d.py and the two templates must hash equal to the
+# commit's blobs. Order: the pins ->
 # evw2d_hpss.sh -> its digest -> evw2d_deposit.sh. Prints every pin, and refuses if any placeholder is left.
 set -euo pipefail
 RD=${1:?run receipts directory}
 HERE=$(cd -- "$(dirname "$0")" && pwd -P)
 TOP=$(git -C "$HERE" rev-parse --show-toplevel)
+REV=$(git -C "$TOP" rev-parse --verify 'HEAD^{commit}')
 B="$HERE/bound-deposit"
 REL=${HERE#"$TOP"/}
 PINS1="$REL/bound/PINS.txt"
 [ ! -e "$B" ] || { echo "STOP: $B exists"; exit 2; }
 blob() {   # blob <path>: a regular file in HEAD's tree; prints its bytes
   local m
-  m=$(git -C "$TOP" ls-tree HEAD -- "$1" | awk '{ print $1 " " $2 }') || return 1
+  m=$(git -C "$TOP" ls-tree "$REV" -- "$1" | awk '{ print $1 " " $2 }') || return 1
   [ "$m" = "100644 blob" ] || { echo "STOP: $1 is not a regular file in HEAD ($m)" >&2; return 1; }
-  git -C "$TOP" show "HEAD:$1"
+  git -C "$TOP" show "$REV:$1"
 }
 hblob() { blob "$1" | shasum -a 256 | cut -d' ' -f1; }
 PINS_TEXT=$(blob "$PINS1") || exit 2
@@ -33,8 +35,8 @@ for f in post/out/SHA256SUMS post/out/evw2d.done post/logs/evw2d.jobid post/acce
   blob "$RD/$f" > /dev/null || exit 2
 done
 for f in "$REL/evw2d_hpss.sh" "$REL/evw2d_deposit.sh" 2d-unfolding/evw2d/evw2d.py; do
-  blob "$f" > /dev/null || exit 2
-  git -C "$TOP" diff --quiet HEAD -- "$f" || { echo "STOP: $f differs from HEAD"; exit 2; }
+  h=$(hblob "$f") || exit 2
+  [ "$(shasum -a 256 < "$TOP/$f" | cut -d' ' -f1)" = "$h" ] || { echo "STOP: $f differs from HEAD"; exit 2; }
 done
 BOUND=$(hblob "$RD/post/out/SHA256SUMS")
 DONE=$(hblob "$RD/post/out/evw2d.done")
@@ -63,6 +65,7 @@ if grep -n '__[A-Z0-9_]*__' "$B"/*.sh; then echo "STOP: a placeholder is left"; 
 for f in "$B"/*.sh; do bash -n "$f"; done
 DEP=$(shasum -a 256 "$B/evw2d_deposit.sh" | cut -d' ' -f1)
 cat <<EOF | tee "$B/PINS.txt"
+commit             $REV
 run receipts       $RD
 lane root          $LANE
 evw2d.py           $EVW

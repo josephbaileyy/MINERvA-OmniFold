@@ -16,9 +16,10 @@
 # hashcreate and hashverify; the WHOLE archive is retrieved into a private mktemp directory in /dev/shm, every file
 # compared with its pin, the counts with the list, and the checker run on the retrieved copy; scratch is re-hashed
 # against the pins, the six names checked again as regular files, and its manifest and marker compared with the
-# snapshot. Only when every check holds are the index and then the archive renamed (hsi mv) to the final names, so the
-# final .tar never appears without its index; then both final names must list and `htar -tf` of the final archive must
-# list every pinned name. Otherwise the part names stay (or whichever names the log reports), for the director. The retrieved copy
+# snapshot, and `htar -tf` of the part archive must list every pinned name. Only when every check holds are the index
+# and then the archive renamed (hsi mv) to the final names, so the final .tar never appears without its index; then both
+# final names must list, or both are renamed back to the part name. Otherwise the part names stay (or whichever names
+# the log reports), for the director. The retrieved copy
 # is removed file by file, by the pinned names only, then its directories by rmdir (no glob, no rm -r). Nothing on
 # scratch is removed and nothing is written on CFS. Receipts in $LANE/hpss, tarred to $LANE/hpss.tar.gz (written
 # under a partial name, then renamed). Exit 0 only if the final archive is in place and verified; 9 = stopped before
@@ -154,6 +155,11 @@ for n in $NAMES; do [ -f "$E/$n" ] && [ ! -L "$E/$n" ] || { echo "$E/$n is no lo
 for f in SHA256SUMS evw2d.done; do
   cmp -s "$E/$f" "$O/snapshot/$f" || { echo "the scratch $f changed during the archive"; bad=1; }
 done
+# the part archive must read back through its index, listing every pinned name, before anything is renamed
+htar -tf "$TARP" < /dev/null > "$O/htar-tf.log" 2>&1; tr=$?; echo "htar -tf rc=$tr"
+nl=0; while IFS= read -r n; do awk -v n="$n" '$NF == n { f = 1 } END { exit !f }' "$O/htar-tf.log" && nl=$(( nl + 1 )); done < "$O/htar_files.txt"
+echo "the archive lists $nl of $nf pinned names"
+[ "$tr" -eq 0 ] && [ "$nl" -eq "$nf" ] || { echo "FAILED: the archive does not read back"; bad=1; }
 if [ "$bad" -eq 0 ]; then
   if ! hsi -q "mv ${TARP}.idx ${TAR}.idx" > "$O/hsi-mv.log" 2>&1; then
     echo "FAILED: the index rename; the archive and its index stay at the part name $TARP"; bad=1
@@ -161,13 +167,14 @@ if [ "$bad" -eq 0 ]; then
     echo "FAILED: the archive rename; the index is at ${TAR}.idx and the archive at $TARP"; bad=1
   else
     hsi -q "ls -l $TAR ${TAR}.idx" > "$O/hsi-ls-after.txt" 2>&1; la=$?; cat "$O/hsi-ls-after.txt"
-    grep -Eq "(^|[[:space:]/])$R\.tar\$" "$O/hsi-ls-after.txt" && grep -Eq "(^|[[:space:]/])$R\.tar\.idx\$" "$O/hsi-ls-after.txt" \
-      && [ "$la" -eq 0 ] || { echo "FAILED: the final names do not both list"; bad=1; }
-    htar -tf "$TAR" < /dev/null > "$O/htar-tf.log" 2>&1; tr=$?; echo "htar -tf rc=$tr"
-    nl=0; while IFS= read -r n; do awk -v n="$n" '$NF == n { f = 1 } END { exit !f }' "$O/htar-tf.log" && nl=$(( nl + 1 )); done < "$O/htar_files.txt"
-    echo "the final archive lists $nl of $nf pinned names"
-    [ "$tr" -eq 0 ] && [ "$nl" -eq "$nf" ] || { echo "FAILED: the final archive does not read back"; bad=1; }
-    [ "$bad" -eq 0 ] && echo "renamed to $TAR"
+    if [ "$la" -eq 0 ] && grep -Eq "(^|[[:space:]/])$R\.tar\$" "$O/hsi-ls-after.txt" \
+       && grep -Eq "(^|[[:space:]/])$R\.tar\.idx\$" "$O/hsi-ls-after.txt"; then
+      echo "renamed to $TAR"
+    else
+      echo "FAILED: the final names do not both list; renaming both back to the part name"; bad=1
+      hsi -q "mv $TAR $TARP" >> "$O/hsi-mv.log" 2>&1 && hsi -q "mv ${TAR}.idx ${TARP}.idx" >> "$O/hsi-mv.log" 2>&1 \
+        && echo "renamed back to $TARP" || echo "FAILED: the rename back (see hsi-mv.log)"
+    fi
   fi
 else
   echo "a check failed: the archive stays at the part name $TARP"

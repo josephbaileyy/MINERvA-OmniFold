@@ -10,10 +10,11 @@
 #          one ssh session through saul to NODE; NODE stages evw2d_hpss.sh in a private mktemp file in /dev/shm, runs
 #          it only if its sha256 is the approved one (else deletes it and exits 8), then deletes it.
 #        bash evw2d_deposit.sh fetch <new empty dir>
-#          hpss.tar.gz (an absent archive is told apart from an ssh failure), then its receipt is verified: the log names
-#          exactly the bound digests and job, 6 of 6 retrieved and equal to their pins, the rename to the final name and
-#          "hpss rc=0"; its snapshot SHA256SUMS has the bound digest and its pinned list is exactly the six rows that
-#          snapshot and the bound marker digest imply. Exit 0 only then; 5 = fetched but not verified.
+#          hpss.tar.gz (an absent archive is told apart from an ssh failure), then its receipt is verified: its first
+#          line names exactly the approved evw2d_hpss.sh, the bound digests and the job; the log shows 6 of 6 retrieved
+#          and equal to their pins, the part archive's readback (htar -tf rc 0, 6 of 6 names), the rename to the final
+#          name and "hpss rc=0"; its snapshot SHA256SUMS has the bound digest and its pinned list is byte for byte the
+#          six rows that snapshot and the bound marker digest imply. Exit 0 only then; 5 = fetched but not verified.
 #        bash evw2d_deposit.sh fetch-products <new empty dir under $HOME, outside /private/tmp and /tmp>
 #          the six product files by scp into <dir>/out, then the checker on the Mac: the local evw2d.py must be the
 #          approved bytes and is executed as the very bytes hashed (no import, no cache); evw2d.accepted(<dir>/out) must
@@ -31,12 +32,13 @@ CFG_SHA=__CONFIG_SHA256__
 BOUND=__PRODUCTS_SHA256SUMS_SHA256__
 DONE_SHA=__EVW2D_DONE_SHA256__
 JOBID=__JOB_ID__
+HPSS_SHA=__HPSS_SHA256__
 CERT=${EVW2D_CERT:-$HOME/.ssh/nersc-cert.pub}
 KEY=${CERT%-cert.pub}
 SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20 -o IdentitiesOnly=yes -o "IdentityFile=$KEY"
      -o "CertificateFile=$CERT")
 [ -d "$F" ] && [ -z "$(ls -A "$F")" ] || { echo "STOP: $F is not a new empty directory"; exit 9; }
-for v in "$LANE" "$EVW_SHA" "$CFG_SHA" "$BOUND" "$DONE_SHA" "$JOBID"; do
+for v in "$LANE" "$EVW_SHA" "$CFG_SHA" "$BOUND" "$DONE_SHA" "$JOBID" "$HPSS_SHA"; do
   case "$v" in *__*) echo "STOP: a pin is not filled in"; exit 9;; esac
 done
 cert_ok() {   # cert_ok <seconds>: ssh-keygen succeeds; the window "Valid: from A to B" (UTC) has begun and lasts that long
@@ -62,7 +64,7 @@ cred_ok() {   # the resolved ssh configuration for saul offers only the checked 
   [ -z "$bad" ] || { echo "STOP: ssh would offer another credential: $bad"; return 1; }
 }
 case "$MODE" in
-  hpss) S="$HERE/evw2d_hpss.sh"; SHA=__HPSS_SHA256__; MARGIN=3600 ;;
+  hpss) S="$HERE/evw2d_hpss.sh"; SHA=$HPSS_SHA; MARGIN=3600 ;;
   fetch)
     cert_ok 600 || exit 7
     cred_ok || exit 7
@@ -81,14 +83,17 @@ case "$MODE" in
       [ -f "$f" ] && [ ! -L "$f" ] || { echo "NOT VERIFIED: no ${f#"$F"/}"; exit 5; }
     done
     v=1
-    first=$(head -1 "$log") && case "$first" in *" bound $BOUND done $DONE_SHA job $JOBID") ;; *) v=0;; esac
+    first=$(head -1 "$log") || v=0
+    case "$first" in *" hpss sha256 $HPSS_SHA bound $BOUND done $DONE_SHA job $JOBID") ;; *) v=0;; esac
     grep -Fxq "retrieved and equal to their pins: 6 of 6; files retrieved: 6" "$log" || v=0
+    grep -Fxq "htar -tf rc=0" "$log" || v=0
+    grep -Fxq "the archive lists 6 of 6 pinned names" "$log" || v=0
     grep -Fxq "renamed to /home/j/josephrb/mnv-$R/$R.tar" "$log" || v=0
     tail -1 "$log" | grep -Eq '^hpss rc=0 ' || v=0
-    s=$(shasum -a 256 "$snap" | cut -d' ' -f1) && [ "$s" = "$BOUND" ] || v=0
-    want=$( { sed 's|^\([0-9a-f]\{64\}\)  |\1  '"$R"'/out/|' "$snap"
-              echo "$BOUND  $R/out/SHA256SUMS"; echo "$DONE_SHA  $R/out/evw2d.done"; } | LC_ALL=C sort -k2) || v=0
-    [ "$(cat "$pins")" = "$want" ] && [ "$(printf '%s\n' "$want" | grep -c .)" = 6 ] || v=0
+    s=$(shasum -a 256 < "$snap" | cut -d' ' -f1) && [ "$s" = "$BOUND" ] || v=0     # stdin: no name escaping
+    { sed 's|^\([0-9a-f]\{64\}\)  |\1  '"$R"'/out/|' "$snap"
+      echo "$BOUND  $R/out/SHA256SUMS"; echo "$DONE_SHA  $R/out/evw2d.done"; } | LC_ALL=C sort -k2 > "$F/pinned-want.sha256" || v=0
+    cmp -s "$pins" "$F/pinned-want.sha256" && [ "$(wc -l < "$F/pinned-want.sha256" | tr -d ' ')" = 6 ] || v=0
     [ "$v" = 1 ] || { echo "NOT VERIFIED: the HPSS receipt is not a passing copy bound to $BOUND and job $JOBID"; exit 5; }
     echo "VERIFIED: the HPSS copy of $R ($BOUND, job $JOBID) is in place and was verified by retrieval"
     exit 0 ;;
@@ -99,7 +104,7 @@ case "$MODE" in
     case "$dest/" in /private/tmp/*|/tmp/*|/private/var/*|/var/*) echo "STOP: $F is under a temporary root"; exit 9;; esac
     TOP=$(git -C "$HERE" rev-parse --show-toplevel) || { echo "STOP: the launcher is not in a checkout"; exit 9; }
     W="$TOP/2d-unfolding/evw2d/evw2d.py"
-    w=$(shasum -a 256 "$W" | cut -d' ' -f1) && [ -f "$W" ] && [ ! -L "$W" ] && [ "$w" = "$EVW_SHA" ] || \
+    w=$(shasum -a 256 < "$W" | cut -d' ' -f1) && [ -f "$W" ] && [ ! -L "$W" ] && [ "$w" = "$EVW_SHA" ] || \
       { echo "STOP: the local checker $W is not the approved bytes"; exit 8; }
     cert_ok 1800 || exit 7
     cred_ok || exit 7
@@ -133,7 +138,7 @@ print('ACCEPTED' if ok else 'REFUSED'); sys.exit(0 if ok else 1)" \
 esac
 case "$SHA" in *__*) echo "STOP: the approved sha256 for $MODE is not filled in"; exit 9;; esac
 case "$NODE" in login[0-9][0-9]) ;; *) echo "STOP: '$NODE' is not a login node name"; exit 9;; esac
-[ "$(shasum -a 256 "$S" | cut -d' ' -f1)" = "$SHA" ] || { echo "STOP: the local $MODE script is not the approved one"; exit 8; }
+[ "$(shasum -a 256 < "$S" | cut -d' ' -f1)" = "$SHA" ] || { echo "STOP: the local $MODE script is not the approved one"; exit 8; }
 cert_ok "$MARGIN" || exit 7
 cred_ok || exit 7
 R="umask 077; f=\$(mktemp /dev/shm/evw2d-$MODE.XXXXXXXX) || exit 8; cat > \"\$f\"; h=\$(sha256sum \"\$f\" | cut -d' ' -f1); if [ \"\$h\" != $SHA ]; then rm -f -- \"\$f\"; echo \"STOP: staged copy sha256 \$h is not $SHA\"; exit 8; fi; echo \"node \$(hostname) staged sha256 \$h\"; bash \"\$f\" \"\$f\"; r=\$?; rm -f -- \"\$f\"; echo \"script rc=\$r\"; exit \$r"

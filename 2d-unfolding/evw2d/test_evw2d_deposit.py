@@ -88,7 +88,9 @@ def hpss(tmp_path):
     m = f'map() {{ printf "%s" "${{1/#\\/home\\/j\\/josephrb/{store}}}"; }}'
     stub(b, "hsi", m + '\nc="$2"; set -- $c\ncase "$1" in\n'
                    '  mkdir) mkdir -p "$(map "$3")";;\n'
-                   '  ls) [ -n "$HSI_LS_RC" ] && exit "$HSI_LS_RC"; shift; [ "$1" = -l ] && shift\n'
+                   '  ls) [ -n "$HSI_LS_RC" ] && exit "$HSI_LS_RC"\n'
+                   '      case "$*" in *.tar.idx*) [ -n "$HSI_LS_AFTER_RC" ] && exit "$HSI_LS_AFTER_RC";; esac\n'
+                   '      shift; [ "$1" = -l ] && shift\n'
                    '      for x; do d=$(map "$x"); if [ -d "$d" ]; then echo "$x:"; ls -1 "$d"\n'
                    '      elif [ -e "$d" ]; then echo "$x"; else echo "*** $x: no such file" >&2; fi; done;;\n'
                    '  mv) [ -n "$HSI_MV_RC" ] && exit "$HSI_MV_RC"\n'
@@ -149,7 +151,8 @@ def test_hpss_archives_retrieves_and_accepts(hpss):
     assert hpss["tar"].is_file() and Path(f"{hpss['tar']}.idx").is_file()
     assert not hpss["part"].exists() and not Path(f"{hpss['part']}.idx").exists()
     assert f"renamed to /home/j/josephrb/mnv-evw2d-20261126/evw2d-20261126.tar" in log
-    assert "the final archive lists 6 of 6 pinned names" in log and "htar -tf rc=0" in log
+    assert "the archive lists 6 of 6 pinned names" in log and "htar -tf rc=0" in log
+    assert log.index("the archive lists 6 of 6") < log.index("renamed to")      # read back before the rename
     assert "retrieved and equal to their pins: 6 of 6; files retrieved: 6" in log
     assert "checker on scratch: ACCEPTED rc=0" in log and "checker on the retrieved copy: ACCEPTED rc=0" in log
     assert (hpss["lane"] / "hpss.tar.gz").is_file() and not (hpss["lane"] / "hpss.tar.gz.partial").exists()
@@ -285,10 +288,19 @@ def test_hpss_never_shows_the_final_archive_without_its_index(hpss):
     assert hpss["part"].is_file() and Path(f"{hpss['tar']}.idx").is_file() and "renamed to" not in log
 
 
-def test_hpss_fails_when_the_final_archive_does_not_read_back(hpss):
+def test_hpss_never_renames_an_archive_that_does_not_read_back(hpss):
     r = hpss["run"](HTAR_TF_RC="1")
     log = _log(hpss)
     assert r.returncode == 1 and "does not read back" in log and "renamed to" not in log and "hpss rc=1" in log
+    assert hpss["part"].is_file() and Path(f"{hpss['part']}.idx").is_file() and not hpss["tar"].exists()
+    assert not Path(f"{hpss['tar']}.idx").exists()
+
+
+def test_hpss_renames_both_back_when_the_final_names_do_not_list(hpss):
+    r = hpss["run"](HSI_LS_AFTER_RC="64")
+    log = _log(hpss)
+    assert r.returncode == 1 and "do not both list" in log and "renamed back to" in log, log
+    assert hpss["part"].is_file() and Path(f"{hpss['part']}.idx").is_file() and not hpss["tar"].exists()
 
 
 def test_hpss_fails_when_a_product_becomes_a_link_after_the_archive(hpss):
@@ -384,7 +396,8 @@ def deposit(tmp_path):
         return subprocess.run(["bash", str(ld / "evw2d_deposit.sh"), *map(str, args)], capture_output=True,
                               text=True, env=dict(env, **e))
 
-    return {"tmp": tmp, "top": top, "ld": ld, "lane": lane, "run": run, "bound": bound, "done": done, "shm": shm}
+    return {"tmp": tmp, "top": top, "ld": ld, "lane": lane, "run": run, "bound": bound, "done": done, "shm": shm,
+            "hpss_sha": sha(ld / "evw2d_hpss.sh")}
 
 
 @pytest.fixture()
@@ -517,7 +530,8 @@ def test_deposit_fetch_tells_absent_from_unreachable(deposit):
     assert r.returncode == 255 and "could not ask saul" in r.stdout
 
 
-def _hpss_receipt(lane: Path, bound: str, done: str, pin_edit=None, snap_edit=None, **over) -> None:
+def _hpss_receipt(lane: Path, bound: str, done: str, hpss_sha: str, pin_edit=None, snap_edit=None, tail="",
+                  **over) -> None:
     """A receipt bundle as evw2d_hpss.sh publishes it on a passing run (its snapshot and pins from the lane's real
     products), with optional edits."""
     w = lane.parent / "receipt-src"
@@ -532,13 +546,14 @@ def _hpss_receipt(lane: Path, bound: str, done: str, pin_edit=None, snap_edit=No
     rows.sort(key=lambda r: r.split("  ", 1)[1])
     if pin_edit:
         rows = pin_edit(rows)
-    log = [f"node n 2026-11-26T00:00:00Z hpss sha256 x bound {bound} done {done} job {JOBID}",
-           "retrieved and equal to their pins: 6 of 6; files retrieved: 6",
+    log = [f"node n 2026-11-26T00:00:00Z hpss sha256 {hpss_sha} bound {bound} done {done} job {JOBID}",
+           "retrieved and equal to their pins: 6 of 6; files retrieved: 6", "htar -tf rc=0",
+           "the archive lists 6 of 6 pinned names",
            f"renamed to /home/j/josephrb/mnv-{R}/{R}.tar", "hpss rc=0 2026-11-26T00:00:01Z"]
     for k, v in over.items():
         log = [ln.replace(k, v) for ln in log]
     (w / "hpss" / "hpss.log").write_text("\n".join(log) + "\n")
-    (w / "hpss" / "pinned.sha256").write_text("\n".join(rows) + "\n")
+    (w / "hpss" / "pinned.sha256").write_text("\n".join(rows) + "\n" + tail)
     subprocess.run(["tar", "czf", str(lane / "hpss.tar.gz"), "-C", str(w), "hpss"], check=True)
     shutil.rmtree(w)
 
@@ -549,7 +564,10 @@ def _hpss_receipt(lane: Path, bound: str, done: str, pin_edit=None, snap_edit=No
                                      ({f"job {JOBID}": f"job {JOBID}0"}, False),
                                      ({"renamed to": "a check failed: kept"}, False),
                                      ({"pin": "weights"}, False), ({"pin": "drop"}, False),
-                                     ({"pin": "snapshot"}, False)])
+                                     ({"pin": "snapshot"}, False), ({"pin": "blank"}, False),
+                                     ({"hpss sha256 ": "hpss sha256 0"}, False),
+                                     ({"the archive lists 6 of 6 pinned names": "x"}, False),
+                                     ({"htar -tf rc=0": "htar -tf rc=1"}, False)])
 def test_deposit_fetch_verifies_the_hpss_receipt(deposit, over, ok):
     edit = None
     if over.get("pin") == "weights":       # one product pin changed
@@ -563,7 +581,12 @@ def test_deposit_fetch_verifies_the_hpss_receipt(deposit, over, ok):
         snap = lambda s: "\n".join(("0" * 64 + ln[64:]) if ln.endswith("weights.npz") else ln
                                      for ln in s.splitlines()) + "\n"
         over = {}
-    _hpss_receipt(deposit["lane"], deposit["bound"], deposit["done"], pin_edit=edit, snap_edit=snap, **over)
+    tail = ""
+    if over.get("pin") == "blank":         # an extra blank row after the six
+        tail = "\n"
+        over = {}
+    _hpss_receipt(deposit["lane"], deposit["bound"], deposit["done"], deposit["hpss_sha"], pin_edit=edit,
+                  snap_edit=snap, tail=tail, **over)
     d = deposit["tmp"] / "f"
     d.mkdir()
     r = deposit["run"]("fetch", d)
@@ -636,7 +659,7 @@ def test_fill_deposit_pins_writes_every_pin_from_the_receipts(tmp_path):
     assert f"DONE_SHA={pins['evw2d.done']}\n" in (b / "evw2d_hpss.sh").read_text()
     assert pins["evw2d_hpss.sh"] == sha(b / "evw2d_hpss.sh") and pins["evw2d_deposit.sh"] == sha(b / "evw2d_deposit.sh")
     dep = (b / "evw2d_deposit.sh").read_text()
-    assert f"SHA={pins['evw2d_hpss.sh']};" in dep and f"BOUND={bound}\n" in dep and f"JOBID={JOBID}\n" in dep
+    assert f"HPSS_SHA={pins['evw2d_hpss.sh']}\n" in dep and f"BOUND={bound}\n" in dep and f"JOBID={JOBID}\n" in dep
     for f in ("evw2d_hpss.sh", "evw2d_deposit.sh"):
         assert not re.search(r"__[A-Z0-9_]*__", (b / f).read_text()), f
 
@@ -661,6 +684,17 @@ def test_fill_deposit_pins_reads_the_receipts_from_head_and_refuses_another_evw2
     assert r.returncode == 0 and f"job                {JOBID}" in r.stdout, r.stdout + r.stderr
     shutil.rmtree(ld / "bound-deposit")
     subprocess.run(["git", "-C", str(top), "checkout", "-q", "--", RD], check=True)
+    (top / "2d-unfolding/evw2d/evw2d.py").write_text("x")
+    r = subprocess.run(["bash", str(ld / "fill_deposit_pins.sh"), RD], capture_output=True, text=True)
+    assert r.returncode != 0 and "differs from HEAD" in r.stdout and not (ld / "bound-deposit").exists()
+
+
+def test_fill_deposit_pins_compares_working_bytes_even_when_git_assumes_them_unchanged(tmp_path):
+    tmp = Path(os.path.realpath(tmp_path))
+    top = _fill_tree(tmp)
+    ld = top / LAUNCH.relative_to(REPO)
+    subprocess.run(["git", "-C", str(top), "update-index", "--assume-unchanged", "2d-unfolding/evw2d/evw2d.py"],
+                   check=True)
     (top / "2d-unfolding/evw2d/evw2d.py").write_text("x")
     r = subprocess.run(["bash", str(ld / "fill_deposit_pins.sh"), RD], capture_output=True, text=True)
     assert r.returncode != 0 and "differs from HEAD" in r.stdout and not (ld / "bound-deposit").exists()
