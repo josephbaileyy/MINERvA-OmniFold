@@ -1,0 +1,15 @@
+### (a) Matrix references
+
+- The held-out-tune regrade now says it used `\CrepFiveDzero` (unscaled \(C_e\)). The reviewed text assigned the same `rg-16-full-*` values to the reported 5D covariance, `\CrepFiveD`, and the supplementary summary still calls it the “full reported covariance.” The supplied files leave the actual scoring matrix unverified. [sec5_multidim.tex:134](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/vf-r3-mech-20261126/inputs/sec5_multidim.tex:134), [appA_methods.tex:145](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/vf-r3-mech-20261126/inputs/appA_methods.tex:145), [appC_supplementary.tex:413](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/vf-r3-mech-20261126/inputs/appC_supplementary.tex:413)
+- The response-table header changes the column from \(C_e+C_{\mathrm{model}}+C_{\mathrm{resp}}\) to \(C_e^{\mathrm{infl}}+C_{\mathrm{model}}+C_{\mathrm{resp}}\). The column still uses the same `sig-C_total_resp-*` values. Their definitions are absent from the supplied files. [appC_supplementary.tex:155](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/vf-r3-mech-20261126/inputs/appC_supplementary.tex:155)
+
+### (b) Macro meanings and legacy notation
+
+No finding in the compiled text.
+
+### (c) Factual changes beyond the approvals
+
+- The held-out-tune regrade sentences in (a) change which covariance the text says was used. [sec5_multidim.tex:134](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/vf-r3-mech-20261126/inputs/sec5_multidim.tex:134), [appA_methods.tex:145](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/vf-r3-mech-20261126/inputs/appA_methods.tex:145)
+- The 2D closure paragraph drops the purity-subtracted estimator identification and the statements that the feature and alternative-universe residuals were within the descriptive 1.5% and 2% thresholds, respectively. [sec3_twod.tex:102](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/vf-r3-mech-20261126/inputs/sec3_twod.tex:102)
+- The hidden-resolution paragraph deletes the finding that the largest tested amplitude exceeded its threshold. [sec3_twod.tex:104](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/vf-r3-mech-20261126/inputs/sec3_twod.tex:104)
+- The higher-dimensional closure paragraph keeps the signal-only condition but drops the identification of the checks as purity-subtracted. [sec5_multidim.tex:91](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/vf-r3-mech-20261126/inputs/sec5_multidim.tex:91)

@@ -17511,6 +17511,11 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/naming-read-20261125/inputs.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/naming-read-20261125/prompt.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/naming-read-20261125/run-summary.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/note-pr1378/reads/codex-mech-r1/inputs.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/note-pr1378/reads/codex-mech-r1/out.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/note-pr1378/reads/codex-mech-r1/prompt.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/note-pr1378/reads/codex-mech-r1/receipt.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/note-pr1378/reads/codex-mech-r1/run.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/note-pr1378/reads/codex-naming-r1/inputs.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/note-pr1378/reads/codex-naming-r1/out.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/note-pr1378/reads/codex-naming-r1/prompt.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
