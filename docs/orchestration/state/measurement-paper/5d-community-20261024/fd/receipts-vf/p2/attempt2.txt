@@ -1,0 +1,14 @@
+V_F Phase 2 fetch, attempt 2 (FD-VF BINDING 2b, #1366): one read, rc 0 (2026-11-26)
+pre-checks: main at d9680950; local wrapper sha256 61f57c6c (fetch-vfp2.sh); list 65fb73ca (fetch-list.tsv); cert 573 min left
+acks: cov2d 05:44:20Z, director-helper-3 05:44:25Z, limitation-resolver 05:46:23Z; window to 05:59:20Z (oldest ack + 900 s, computed); LR told at about 05:47Z
+session: login02, 05:46:49Z-05:48:32Z; the wrapper's lines, verbatim:
+fetch start 2026-11-26T05:46:54Z on login02; reader 0a5e4228e4d51780432dcda3d3cc15260165d550c46c80cbdec11f8959ed8eb3; list 65fb73ca9d866ba4bd87e87e6bfe0b9d84d9a34ef02d5ebc0238b308c5cd7bcc
+pre-flight: 402 listed paths, every component a plain directory or regular file
+fetch done: 402 files, 1595625533 bytes, every size and sha256 the list's
+fetch end 2026-11-26T05:48:32Z rc=0
+ssh rc: 0
+fetch-verify: "402 files, each the list's size and sha256, under /Users/josephbailey/vf-p2-fetch-20261126", rc 0
+  (the bound list byte for byte, the exact file set, the tar layout and PAX records, every sha at its pin)
+local tar: 1595944960 bytes, sha256 69c45a5b1b87c7bc48c63d664148ca5a7a541845fed68ac28757756b5d71843e; deleted after verify
+local tree: /Users/josephbailey/vf-p2-fetch-20261126, 402 files, 1595625533 bytes; removed after these receipts merge
+END: sent to cov2d, limitation-resolver, director-helper-3

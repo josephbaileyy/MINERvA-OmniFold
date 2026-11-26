@@ -521,8 +521,16 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #:   ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json 5f542830
 #: Power-tested after the bump: one flipped hex digit in each of the two pins gives MISMATCH on that path, rc 1.
 #: Delta and controls: docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/receipts/read/binding-delta.txt.
-RECEIPT_BINDING_COUNT = 169
-RECEIPT_BINDING_SHA256 = "a9f3a844d9afb07684b5a345bd0c6276446bab70463351eefb35b081d5bad4b7"
+#: 169 -> 180, digest a9f3a844 -> 04ee3c68 (2026-11-26, the V_F Phase 2 recomputes; the director's ruling of
+#: 2026-11-26, as in PRs #1008/#1009). Each V_F copy under
+#: state/measurement-paper/5d-community-20261024/fd/with-vf/p2/ pins, in its vf_patch, the committed OLD readout it
+#: recomputes. Enumerated before the constant moved (receipt_inventory() rows with and without fd/with-vf/p2/ and
+#: fd/receipts-vf/ on the branch): eleven ADDED, nothing removed or repointed, all OK: the readouts of vatlas, eav, e2,
+#: gch, gdefs, gnat, gover, cr, xk, rsnregrade and rsn.
+#: Power-tested before the bump: one flipped hex digit in each of the eleven pins gives MISMATCH on that path, rc 1.
+#: Delta and controls: docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/p2/binding-delta.txt.
+RECEIPT_BINDING_COUNT = 180
+RECEIPT_BINDING_SHA256 = "04ee3c68444caa1248bdd49ada8fae480203a9c5b2b89fae2f98d4357d9739c6"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

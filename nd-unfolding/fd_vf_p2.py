@@ -42,7 +42,12 @@ NEVER = ("universes_full.root", "bkg_dump.npz")                          # never
 NUE_PATH = PS + "MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"
 NUE_LOCAL = ("docs/orchestration/state/ben-b-20261124/blocks5d-20261124/run-20261124/session/records/fetch-b5d/"
              "sorted_NuEConstraint_FHC_RHC_IMD.txt", "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2")
-LOCAL_COPIES = {NUE_PATH: NUE_LOCAL}
+# the MINOS rescale: never fetched (committed; fetch-list excludes its role, XK_LOCAL); K reads it through the remap, so
+# its exact /pscratch path maps to the committed copy, pinned at xcov/INPUTS.sha256:13 and NODE-SHA256.txt:233
+MINOS_PATH = PS + "2d-closeout-c04repair-20261012/build/minos_rescaled.npz"
+MINOS_LOCAL = ("docs/orchestration/state/2d-closeout/c04-repair/products/minos_rescaled.npz",
+               "8912376ef2a6cfce8bed515cc945d9d5778cf5c838154a685435c3c7ce25416d")
+LOCAL_COPIES = {NUE_PATH: NUE_LOCAL, MINOS_PATH: MINOS_LOCAL}
 N_ROWS, N_BYTES = 402, 1595650936 - 25403
 HEADER = ("path", "sha256", "pin_source", "size_bytes", "reader_file_line", "recompute")
 
@@ -168,7 +173,11 @@ def pinned_json(rel_pin):
 RTOL_ROUNDTRIP = 1e-9
 
 
-def p_control(name, reproduced, committed, rtol=0.0, scale=None):
+P_ACHIEVED = {}         # the largest achieved p difference per control, when p is checked by function identity
+P_FLOOR = 1e-30         # fd_f0_regrade.P_FLOOR: a p below it is written as 0.0 with p_below_floor true
+
+
+def p_control(name, reproduced, committed, rtol=0.0, scale=None, p_fun=None):
     """P (section 6): the producer's arithmetic on the OLD matrix reproduces every field it will replace. rtol = 0 is
     exact equality (bit-identical inputs); otherwise each float must satisfy |a - b| <= rtol * scale(path, b), where
     scale defaults to |b|. Returns the largest achieved relative difference."""
@@ -178,7 +187,18 @@ def p_control(name, reproduced, committed, rtol=0.0, scale=None):
         if isinstance(b, dict):
             if not isinstance(a, dict) or set(a) != set(b):
                 raise Stop(f"P {name}: {path} keys differ")
+            pid = p_fun is not None and {"p", "chi2", "ndf"} <= set(b)
+            if pid:            # A4 item 3: p by the producer's own function on the committed chi2, bitwise, and printed
+                pv = p_fun(b["chi2"], b["ndf"])
+                if pv != b["p"] and not (b["p"] == 0.0 and b.get("p_below_floor") and pv < P_FLOOR):
+                    raise Stop(f"P {name}: {path}: the producer's p function on the committed chi2 is not its p")
+                if printed_p(a["p"]) != printed_p(b["p"]):
+                    raise Stop(f"P {name}: {path}/p prints {printed_p(a['p'])}, committed {printed_p(b['p'])}")
+                r = abs(a["p"] - b["p"]) / abs(b["p"]) if b["p"] else abs(a["p"] - b["p"])
+                P_ACHIEVED[name] = max(P_ACHIEVED.get(name, 0.0), r)
             for k in b:
+                if pid and k == "p":
+                    continue
                 walk(a[k], b[k], f"{path}/{k}")
         elif isinstance(b, list):
             if not isinstance(a, list) or len(a) != len(b):
@@ -439,10 +459,11 @@ def printed_p(p):
     return t, tuple(sorted(MV.paper_prec("f0-x-p", t).values()))
 
 
-def p_compare_record(FG, label, old, committed):
+def p_compare_record(FG, label, old, committed, rtol_chi2=None):
     """P on one compare record: chi2 at RTOL_ROUNDTRIP (V_g round-tripped); p by function identity, exactly
     (chi2_sf(committed chi2, ndf) == committed p, bitwise), its achieved difference only recorded; every other field at
     RTOL_EXACT. Returns (chi2 achieved, p achieved)."""
+    rtol_chi2 = RTOL_ROUNDTRIP if rtol_chi2 is None else rtol_chi2
     worst = [0.0, 0.0]
     for part in ("total", "shape_only"):
         a, b = old[part], committed[part]
@@ -450,8 +471,8 @@ def p_compare_record(FG, label, old, committed):
             raise Stop(f"P {label}/{part}: chi2_sf(committed chi2) is not the committed p")
         worst[0] = max(worst[0], abs(a["chi2"] - b["chi2"]) / abs(b["chi2"]))
         worst[1] = max(worst[1], abs(a["p"] - b["p"]) / abs(b["p"]) if b["p"] else abs(a["p"] - b["p"]))
-        if worst[0] > RTOL_ROUNDTRIP:
-            raise Stop(f"P {label}/{part}: chi2 relative {worst[0]:.3g} > {RTOL_ROUNDTRIP:g}")
+        if worst[0] > rtol_chi2:
+            raise Stop(f"P {label}/{part}: chi2 relative {worst[0]:.3g} > {rtol_chi2:g}")
         if printed_p(a["p"]) != printed_p(b["p"]):           # the director's printed-value check (2026-11-26)
             raise Stop(f"P {label}/{part}: p prints {printed_p(a['p'])}, committed {printed_p(b['p'])}")
         p_control(f"{label}/{part}", {k: v for k, v in a.items() if k not in ("chi2", "p")},
@@ -461,12 +482,16 @@ def p_compare_record(FG, label, old, committed):
     return worst
 
 
+CHI2_EXACT = {"gch"}     # A4 item 1: gch's inputs are bit-identical (computed on this platform), so chi2 keeps 1e-12
+
+
 def p2_compare(name, rel_pin, vf, extra=None):
     sys.path.insert(0, str(ROOT / "nd-unfolding"))
     import fd_g_compare as FG
     committed, h = pinned_json(rel_pin)
     f, old_M, new_M = gencmp_matrices(vf)
     out = json.loads(json.dumps(committed))
+    rtol_chi2 = RTOL_EXACT if name in CHI2_EXACT else RTOL_ROUNDTRIP
     chi2_w = p_w = 0.0
     replaced = []
     for path, pair in pair_paths(committed):
@@ -475,14 +500,15 @@ def p2_compare(name, rel_pin, vf, extra=None):
             dst = dst[k]
         for k in PAIR:
             old = recompare(FG, f, pair[k], old_M[k], NAMES_OLD[k])
-            cw, pw = p_compare_record(FG, f"{name}{path}/{k}", old, pair[k])
+            cw, pw = p_compare_record(FG, f"{name}{path}/{k}", old, pair[k], rtol_chi2)
             chi2_w, p_w = max(chi2_w, cw), max(p_w, pw)
             dst[k] = recompare(FG, f, pair[k], new_M[k], NAMES_VF[k])
             replaced.append(f"{path}/{k}")
     patch = {"readout": rel_pin[0], "readout_sha256": h, "replaced": replaced, "matrices": NAMES_VF,
              "control_P": "PASS",
-             "control_P_tolerance": {"chi2": {"rtol": RTOL_ROUNDTRIP, "achieved_max": chi2_w,
-                                              "why": "V_g round-tripped from sigma_Vg/f (amendment A4)"},
+             "control_P_tolerance": {"chi2": {"rtol": rtol_chi2, "achieved_max": chi2_w,
+                                              "why": ("bit-identical inputs (amendment A4 item 1)" if rtol_chi2 == RTOL_EXACT
+                                                      else "V_g round-tripped from sigma_Vg/f (amendment A4)")},
                                      "p": {"check": "chi2_sf(committed chi2, ndf) == committed p, bitwise; the "
                                                     "reproduced p prints the committed p's strings (p_tex, paper form)",
                                            "achieved_max": p_w, "why": "derived from chi2 through chi2_sf"},
@@ -682,6 +708,8 @@ def p2_prr(vf, fetch_dir):
     import prr_ibu as RI
     committed, h = pinned_json(PRR)
     mats_old, f, _ = PR.grade_matrices(ROOT)
+    if not np.array_equal(np.asarray(vf["f"], float), np.asarray(f, float)):
+        raise Stop("prr: the V_F product's f is not the grade matrices' f")
     dFr = np.asarray(vf["matrices"]["DeltaC_e"], float) / np.outer(f, f)
     mats_new = {t: M + dFr for t, M in mats_old.items()}
     out = json.loads(json.dumps(committed))
@@ -716,8 +744,10 @@ def p2_prr(vf, fetch_dir):
     out["readings"] = json.loads(json.dumps(PR.readings(q_new, qi_new)))
     out["vf_patch"] = {"readout": PRR[0], "readout_sha256": h,
                        "replaced": ["/table/*/grade", "/ibu/*/grade", "/readings"],
+                       "not_replaced": {"/table_ii_committed_beside_B0": "OLD: the committed Table II flags beside "
+                                        "B0's OLD grades, read by nothing (prr_read.py:452, section 4.2); not a V_F value"},
                        "matrices": "each truth's F0b grade matrix (prr_read.grade_matrices) + DeltaC_e/ff",
-                       "fetched": {k: v[0] for k, v in FETCHED.items()}, "control_P": "PASS",
+                       "fetched": {k: PS + v[0] for k, v in FETCHED.items()}, "control_P": "PASS",
                        "control_P_tolerance": {"(e)": {"rtol": RTOL_EXACT, "achieved_max": w},
                                                "IBU": {"rtol": RTOL_IBU, "achieved_max": wi,
                                                        "why": "route2's truths, equal to (e)'s to 1e-12 (C-IBU)"}}}
@@ -781,13 +811,14 @@ def p2_rsn(vf, fetch_dir):
 
     f1_old, f1_vf = pinned_json(OLD_F1_WITH)[0], pinned_json(VF_F1_WITH)[0]
     old = json.loads(json.dumps(regrade(Cx / ff, f1_old)))
-    w1 = p_control("rsnregrade", old, {k: reg_c[k] for k in old}, RTOL_EXACT)
+    pf = R.chi2_sf_even                       # the producer's p function (fd_f0_regrade.grade)
+    w1 = p_control("rsnregrade", old, {k: reg_c[k] for k in old}, RTOL_EXACT, p_fun=pf)
     new = json.loads(json.dumps(regrade((Cx + np.asarray(vf["matrices"]["DeltaC_e"], float)) / ff, f1_vf)))
     prep, _ = pinned_json(RSN_PREP)
     i0 = json.loads(RR.I0.read_text())
     cmodel = json.loads(RR.CMODEL_JSON.read_text())
     rd_old = json.loads(json.dumps(RR.read(prep, cm, dict(reg_c, **old), i0, cmodel, f1_old)))
-    w2 = p_control("rsn", rd_old, read_c, RTOL_EXACT)
+    w2 = p_control("rsn", rd_old, read_c, RTOL_EXACT, p_fun=pf)
     f1_alias = json.loads(json.dumps(f1_vf))
     f1_alias[RR.SIGMA_KEY] = f1_alias["relative_sigma_plus_C_resp + C_PL5D + DeltaC_e"]
     rd_new = json.loads(json.dumps(RR.read(prep, cm, dict(reg_c, **new), i0, cmodel, f1_alias)))
@@ -796,13 +827,18 @@ def p2_rsn(vf, fetch_dir):
                            "replaced": ["/arms", "/wr_directions", "/offset_control_7"],
                            "matrices": "X_F = C_resp_plus_C_PL5D_plus_DeltaC_e (relative)",
                            "NC-R": "the nominal arm reproduces Phase 1's V_F F1 (" + VF_F1_WITH[0] + ")",
-                           "fetched": FETCHED["s1_assembly.npz"][0], "control_P": "PASS",
-                           "control_P_tolerance": {"rtol": RTOL_EXACT, "achieved_max": w1}}
+                           "fetched": PS + FETCHED["s1_assembly.npz"][0], "control_P": "PASS",
+                           "control_P_tolerance": {"rtol": RTOL_EXACT, "achieved_max": w1,
+                                                   "p": {"check": "fd_f0_regrade.chi2_sf_even(committed chi2, ndf) "
+                                                         "== committed p, bitwise; printed strings equal (A4 item 3)",
+                                                         "achieved_max": P_ACHIEVED.get("rsnregrade", 0.0)}}}
     read_out = dict(rd_new)
     read_out["vf_patch"] = {"readout": RSN_READOUT[0], "readout_sha256": hr, "replaced": ["/"],
                             "inputs": {"regrade": "rsnregrade.vf.json", "f1": VF_F1_WITH[0] + f" (its sigma under "
                                        f"{RR.SIGMA_KEY})"}, "control_P": "PASS",
-                            "control_P_tolerance": {"rtol": RTOL_EXACT, "achieved_max": w2}}
+                            "control_P_tolerance": {"rtol": RTOL_EXACT, "achieved_max": w2,
+                                                    "p": {"check": "as rsnregrade's (A4 item 3)",
+                                                          "achieved_max": P_ACHIEVED.get("rsn", 0.0)}}}
     return {"rsnregrade": reg_out, "rsn": read_out}
 
 
@@ -816,6 +852,35 @@ XK_V0 = (f"{D5}/fd/xcov/run/v0-a1/v0.json", None)
 XK_V1 = (f"{D5}/fd/xcov/run/v1-a2/v1.json", None)
 PS_PREFIX = "/pscratch/sd/j/josephrb/"
 XK_ENV_FIELDS = ("inputs", "atime_deviations")    # what records the run's paths and atimes, not a number
+# A4 (the director's ruling, 2026-11-26): bit-identical inputs; cross-platform rounding (about 1e-16 in the bounded
+# blocks, about 1e-11 in the crosses) amplified through the r = 1 bound's psd_sqrt of near-singular blocks (condition up
+# to 1.1e17). 1e-7 relative; non-float fields exact; evidence: the conditioning test (receipts-vf/p2/xk-conditioning/)
+RTOL_XK = 1e-7
+XK_GROUPS = ("shares", "crosses", "primary", "Q_R_alone", "C_PL_pair_zero", "rho_q")
+
+
+def group_stats(got: dict, want: dict) -> dict:
+    """Per top-level group: the max relative difference and the max |difference| over the group's largest magnitude."""
+    def flat(x, p_=""):
+        if isinstance(x, dict):
+            for k, v in x.items():
+                yield from flat(v, f"{p_}/{k}")
+        elif isinstance(x, list):
+            for i, v in enumerate(x):
+                yield from flat(v, f"{p_}[{i}]")
+        else:
+            yield p_, x
+    fa, fb = dict(flat(got)), dict(flat(want))
+    out = {}
+    for g in sorted({k.split("/")[1].split("[")[0] for k in fb}):
+        keys = [k for k in fb if k.split("/")[1].split("[")[0] == g and isinstance(fb[k], float)]
+        if not keys:
+            continue
+        mag = max(abs(fb[k]) for k in keys)
+        rel = max((abs(fa[k] - fb[k]) / abs(fb[k]) if fb[k] else abs(fa[k] - fb[k])) for k in keys)
+        out[g] = {"max_relative": rel, "max_over_group_magnitude": (max(abs(fa[k] - fb[k]) for k in keys) / mag) if mag
+                  else 0.0}
+    return out
 
 
 def dir_listing(d: Path) -> dict:
@@ -899,15 +964,21 @@ def p2_xk(vf, fetch_dir):
         after = dir_listing(run_dir)
         changed = sorted(k for k in before if after.get(k) != before[k])
         added = sorted(set(after) - set(before))
-        if changed or any(not k.startswith("k/") for k in added) or rc != 0:
-            raise Stop(f"xk {arm}: rc {rc}; K changed {changed} or wrote outside k/: {added}")
+        # K adds its readout under k/ and its own staging copies under inputs/ (fd_xcov_steps.stage), each of which
+        # must be the bytes of a logged remapped read, at its pin
+        logged = {Path(p_).name: s_ for p_, _, s_ in log}
+        stray = [k for k in added if not (k.startswith("k/") or (k.startswith("inputs/") and k.count("/") == 1
+                                                                  and logged.get(k[7:]) == after[k]))]
+        if changed or stray or rc != 0:
+            raise Stop(f"xk {arm}: rc {rc}; K changed {changed} or added {stray} outside k/ and its staging copies")
         out = json.loads((run_dir / "k/k.json").read_text())
         rec[arm] = {"out": out, "log": log, "calls": calls, "before": before, "added": added,
                     "subst_sha256": {k: hashlib.sha256(v).hexdigest() for k, v in subst.items()}}
         if arm == "old":
             want = {k: v for k, v in committed.items() if k not in XK_ENV_FIELDS}
             got = {k: v for k, v in out.items() if k not in XK_ENV_FIELDS}
-            rec["old"]["achieved"] = p_control("xk", got, want, RTOL_EXACT)
+            rec["old"]["achieved"] = p_control("xk", got, want, RTOL_XK)
+            rec["old"]["groups"] = group_stats(got, want)
             rec["cr_vf_bytes"] = (json.dumps(p2_overlap("cr", CR, vf), indent=1) + "\n").encode()
     lst = {r[0]: (int(r[3]), r[1]) for r in fetch_rows() if "xk" in r[5]}
     lst.update({k: ((ROOT / v[0]).stat().st_size, v[1]) for k, v in LOCAL_COPIES.items()})   # the committed copies
@@ -934,8 +1005,12 @@ def p2_xk(vf, fetch_dir):
                        "run_dir_before": {a: len(rec[a]["before"]) for a in ("old", "vf")},
                        "run_dir_added": {a: rec[a]["added"] for a in ("old", "vf")},
                        "control_P": "PASS",
-                       "control_P_tolerance": {"rtol": RTOL_EXACT, "achieved_max": rec["old"]["achieved"],
-                                               "excluded": list(XK_ENV_FIELDS)}}
+                       "control_P_tolerance": {"rtol": RTOL_XK, "achieved_max": rec["old"]["achieved"],
+                                               "by_group": rec["old"]["groups"], "excluded": list(XK_ENV_FIELDS),
+                                               "category": "A4: bit-identical inputs; cross-platform rounding "
+                                                           "amplified through the r = 1 bound's psd_sqrt of "
+                                                           "near-singular blocks (condition up to 1.1e17)",
+                                               "non_float_fields": "exact"}}
     receipt = {"remapped_reads": rec["old"]["log"], "read_committed_old": co, "read_committed_vf": cv,
                "run_dir_before": rec["old"]["before"]}
     out["vf_patch"]["receipt_sha256"] = hashlib.sha256(json.dumps(receipt, sort_keys=True).encode()).hexdigest()
@@ -943,7 +1018,8 @@ def p2_xk(vf, fetch_dir):
                                                              "replaced": []})}
 
 
-RTOL_IBU = 1e-9         # PENDING: measured after the fetch; route2's truths differ from (e)'s by <= 1e-12 (C-IBU)
+RTOL_IBU = 1e-11        # the director's ruling 2 (2026-11-26): route2's truths are recorded equal to (e)'s B0 truths at
+                        # <= 1e-12 (C-IBU), not bit-identical; outputs graded against them at 1e-11 (A4)
 P2_FETCH = {"prr": p2_prr, "rsn": p2_rsn, "xk": p2_xk}
 
 

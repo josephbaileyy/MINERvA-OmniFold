@@ -1,0 +1,277 @@
+PASS control C0 cmodel_5d.json sha256 is the pin
+PASS control C0 data product sha256 is the pin
+[PASS C0] the with-block npz is its pinned bytes
+[PASS C0] E-1's with Stage G readout is the committed one
+[PASS C0] E-1's nopl Stage G readout is the committed one
+{
+ "chi2": {
+  "with": {
+   "genie_cv": {
+    "total": {
+     "removed": 72.04080164043569,
+     "carbon": 64.01233432806721,
+     "doubled": 62.67174042504414,
+     "CH": 61.686681670514105
+    },
+    "shape_only": {
+     "removed": 68.1803210195454,
+     "carbon": 59.29781927238754,
+     "doubled": 57.813039656420244,
+     "CH": 57.04114774754457
+    }
+   },
+   "genie_mec": {
+    "total": {
+     "removed": 160.2525701627074,
+     "carbon": 140.34013214488547,
+     "doubled": 136.50808673764678,
+     "CH": 132.4097648750041
+    },
+    "shape_only": {
+     "removed": 160.12590377976176,
+     "carbon": 140.33493062576693,
+     "doubled": 136.5077379435587,
+     "CH": 132.40162865145456
+    }
+   },
+   "nuwro": {
+    "total": {
+     "removed": 94.76915054008812,
+     "carbon": 91.3198086143972,
+     "doubled": 90.81076754312707,
+     "CH": 91.47814575802968
+    },
+    "shape_only": {
+     "removed": 78.32810850115304,
+     "carbon": 75.5800074680235,
+     "doubled": 75.18691979999801,
+     "CH": 75.71125707153048
+    }
+   },
+   "gibuu": {
+    "total": {
+     "removed": 104.69429780088586,
+     "carbon": 41.80314813372556,
+     "doubled": 39.66430019279305,
+     "CH": 40.35116910365367
+    },
+    "shape_only": {
+     "removed": 82.88463941232584,
+     "carbon": 18.920570079460994,
+     "doubled": 15.86897933705734,
+     "CH": 16.808623605754022
+    }
+   }
+  },
+  "nopl": {
+   "genie_cv": {
+    "total": {
+     "removed": 73.5174319525395,
+     "carbon": 65.25625347117749,
+     "doubled": 63.913146250862596,
+     "CH": 62.5785205809356
+    },
+    "shape_only": {
+     "removed": 71.98544922824996,
+     "carbon": 63.11602929159655,
+     "doubled": 61.64319458958116,
+     "CH": 60.27123398030146
+    }
+   },
+   "genie_mec": {
+    "total": {
+     "removed": 186.6198098363719,
+     "carbon": 164.38007734306916,
+     "doubled": 160.17584904513762,
+     "CH": 153.56535104904899
+    },
+    "shape_only": {
+     "removed": 179.28346479930332,
+     "carbon": 158.8436203512045,
+     "doubled": 154.9781413868882,
+     "CH": 148.58454358174265
+    }
+   },
+   "nuwro": {
+    "total": {
+     "removed": 118.43551436525927,
+     "carbon": 115.84210627893526,
+     "doubled": 115.47488410734525,
+     "CH": 116.05320420607711
+    },
+    "shape_only": {
+     "removed": 116.6564818510944,
+     "carbon": 114.36013831122179,
+     "doubled": 114.04406428181132,
+     "CH": 114.56244532461935
+    }
+   },
+   "gibuu": {
+    "total": {
+     "removed": 110.73027515882958,
+     "carbon": 52.22470648654087,
+     "doubled": 50.0768658860178,
+     "CH": 50.39998450246272
+    },
+    "shape_only": {
+     "removed": 84.4074400802636,
+     "carbon": 20.709801541336468,
+     "doubled": 17.49002319428479,
+     "CH": 18.39421008807814
+    }
+   }
+  }
+ },
+ "sigma": {
+  "with_total": {
+   "max_abs_rel_change": 0.08872843069694625,
+   "signed": -0.08872843069694625,
+   "cell": 2,
+   "sigma_over_f_carbon": 0.14436652972483735,
+   "sigma_over_f_CH": 0.13155711409718848,
+   "per_cell_rel_change": [
+    -0.00018600919625300083,
+    -0.0014973148249824986,
+    -0.08872843069694625,
+    -0.06914413196086777,
+    -0.002625075435702673,
+    -0.018663010306154137,
+    -0.02057802641370432,
+    -0.042337648603471334,
+    -0.004567507612718069,
+    -0.009654474863025952,
+    -0.02528299649261556,
+    -0.04340194930393715,
+    0.0029082986237318753,
+    -0.014513428428610475,
+    -0.004319181143975115,
+    -0.07374688269691398
+   ]
+  },
+  "nopl_total": {
+   "max_abs_rel_change": 0.08930886301432128,
+   "signed": -0.08930886301432128,
+   "cell": 2,
+   "sigma_over_f_carbon": 0.14391848952933448,
+   "sigma_over_f_CH": 0.1310652928627311,
+   "per_cell_rel_change": [
+    -0.00018655188672878076,
+    -0.0016983885866925785,
+    -0.08930886301432128,
+    -0.07004751743188653,
+    -0.0033573116955253335,
+    -0.021674255955532074,
+    -0.0243738123479893,
+    -0.04653073620121995,
+    -0.004575813889140856,
+    -0.011451133076769038,
+    -0.02580678192123753,
+    -0.04465345530338749,
+    0.003195181266558489,
+    -0.015278792086929949,
+    -0.004973855001450089,
+    -0.07995250536993692
+   ]
+  },
+  "C_model": {
+   "max_abs_change_over_f": 0.016803829009617563,
+   "signed_change_over_f": -0.016803829009617563,
+   "cell": 2,
+   "sigma_over_f_carbon": 0.1135690354386382,
+   "sigma_over_f_CH": 0.09676520642902063,
+   "max_abs_rel_change": 0.47787043018436925,
+   "cell_rel": 12,
+   "per_cell_sigma_over_f_carbon": [
+    0.004279295077233416,
+    0.006687462715332646,
+    0.1135690354386382,
+    0.0937622900729012,
+    0.008825378408056783,
+    0.034647798022381444,
+    0.03194011996478435,
+    0.034517057870230364,
+    0.01631765767809159,
+    0.032363008389008595,
+    0.040254821969802936,
+    0.11145326042876944,
+    0.005107204788041669,
+    0.06813715773629697,
+    0.008199298364326502,
+    0.04778482136025414
+   ],
+   "per_cell_sigma_over_f_CH": [
+    0.0040332424876695135,
+    0.005119170413610194,
+    0.09676520642902063,
+    0.07981540799707791,
+    0.008062970863210688,
+    0.03051765267676777,
+    0.028287879906014713,
+    0.021397175367223537,
+    0.015068732196584013,
+    0.030865431821457977,
+    0.03471314592406229,
+    0.10341284738137779,
+    0.007547786937142811,
+    0.06508821068140963,
+    0.006118127505570051,
+    0.03486422455565566
+   ],
+   "n_cells": 16,
+   "cells_with_zero_carbon_sigma": 0
+  }
+ },
+ "controls": {
+  "S_carbon is cmodel_5d.json's S (bitwise)": true,
+  "C2: diag(f) S^T S diag(f) is C_model_abs (1e-12)": true,
+  "with genie_cv total: carbon and CH reproduce e2.json exactly": true,
+  "with genie_cv shape_only: carbon and CH reproduce e2.json exactly": true,
+  "with genie_mec total: carbon and CH reproduce e2.json exactly": true,
+  "with genie_mec shape_only: carbon and CH reproduce e2.json exactly": true,
+  "with nuwro total: carbon and CH reproduce e2.json exactly": true,
+  "with nuwro shape_only: carbon and CH reproduce e2.json exactly": true,
+  "with gibuu total: carbon and CH reproduce e2.json exactly": true,
+  "with gibuu shape_only: carbon and CH reproduce e2.json exactly": true,
+  "with: C3 (carbon S reproduces E-1, 1e-10)": true,
+  "nopl genie_cv total: carbon and CH reproduce e2.json exactly": true,
+  "nopl genie_cv shape_only: carbon and CH reproduce e2.json exactly": true,
+  "nopl genie_mec total: carbon and CH reproduce e2.json exactly": true,
+  "nopl genie_mec shape_only: carbon and CH reproduce e2.json exactly": true,
+  "nopl nuwro total: carbon and CH reproduce e2.json exactly": true,
+  "nopl nuwro shape_only: carbon and CH reproduce e2.json exactly": true,
+  "nopl gibuu total: carbon and CH reproduce e2.json exactly": true,
+  "nopl gibuu shape_only: carbon and CH reproduce e2.json exactly": true,
+  "nopl: C3 (carbon S reproduces E-1, 1e-10)": true
+ },
+ "all_pass": true,
+ "env": {
+  "python": "3.11.14",
+  "numpy": "1.26.4"
+ },
+ "vf_patch": {
+  "readout": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/rerun1/sens/x_e2_sens.out.txt",
+  "readout_sha256": "223f3f885b78b099b9e7ae34813fc94fc1830afd44e71e7c56590735d7a63f22",
+  "replaced": [
+   "/chi2",
+   "/sigma"
+  ],
+  "matrices": {
+   "with": "C_e + C_resp + C_PL5D + DeltaC_e + C_model(S)",
+   "nopl": "C_e + C_resp + DeltaC_e + C_model(S)"
+  },
+  "control_P": "PASS",
+  "control_P_tolerance": {
+   "chi2": {
+    "rtol": 1e-09,
+    "scale": "each chi2's carbon value",
+    "achieved_max": 2.527016854608941e-10,
+    "why": "amendment A4"
+   },
+   "sigma": {
+    "rtol": 1e-12,
+    "achieved_max": 0.0
+   }
+  },
+  "note": "controls and env are the committed run's; the V_F values are this recompute's"
+ }
+}
