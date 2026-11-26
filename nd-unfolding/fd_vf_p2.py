@@ -17,6 +17,7 @@ Run: python3 -B fd_vf_p2.py fetch-list [--out FILE]"""
 import argparse
 import hashlib
 import io
+import os
 import re
 import subprocess
 import sys
@@ -794,8 +795,144 @@ def p2_rsn(vf, fetch_dir):
     return {"rsnregrade": reg_out, "rsn": read_out}
 
 
+# xk: GENCMP X step K replayed through fd_xcov_steps.cmd_k (route (1); the director's rulings (i)-(iii), 2026-11-26):
+# (i) in this process fd_gencmp.read_noatime maps the exact prefix /pscratch/sd/j/josephrb/ to the verified fetch, fails
+#     closed, and logs every remapped read; (ii) K runs in a local run directory of hardlinks to the fetched run copy plus
+#     the committed V0/V1 records, its file list and shas recorded before and after; (iii) for V_F, read_committed returns
+#     the block with C_total_plus_C_resp_plus_C_PL5D := C_rep,F and cr.vf.json for CR_G2R, nothing else differing
+XK_K = (f"{D5}/fd/receipts-cov2d/g2r/xk/run/node/run/k/k.json", "204e4c89")
+XK_V0 = (f"{D5}/fd/xcov/run/v0-a1/v0.json", None)
+XK_V1 = (f"{D5}/fd/xcov/run/v1-a2/v1.json", None)
+PS_PREFIX = "/pscratch/sd/j/josephrb/"
+XK_ENV_FIELDS = ("inputs", "atime_deviations")    # what records the run's paths and atimes, not a number
+
+
+def dir_listing(d: Path) -> dict:
+    return {str(q.relative_to(d)): sha256_file(q) for q in sorted(d.rglob("*")) if q.is_file()}
+
+
+def xk_replay(XS, GC, fetch_dir: Path, run_dir: Path, subst: dict, log: list, calls: list):
+    """One cmd_k replay under the remap; subst maps a read_committed path to the bytes to return instead."""
+    import types
+    orig_read, orig_rc = GC.read_noatime, XS.read_committed
+    fetch_dir = Path(fetch_dir).resolve()
+
+    def remapped(path):
+        s_ = str(path)
+        if not s_.startswith(PS_PREFIX):
+            return orig_read(path)
+        q = fetch_dir / s_[len(PS_PREFIX):]
+        if q.is_symlink() or not q.is_file():
+            raise Stop(f"xk remap: {s_} -> {q} is missing or not a regular file")
+        data = q.read_bytes()
+        log.append((s_, len(data), hashlib.sha256(data).hexdigest()))
+        return data, True
+
+    def committed(path):
+        raw = subst[str(path)] if str(path) in subst else orig_rc(path)
+        calls.append((str(path), hashlib.sha256(raw).hexdigest()))
+        return raw
+
+    GC.read_noatime, XS.read_committed = remapped, committed
+    try:
+        rc = XS.cmd_k(types.SimpleNamespace(run_dir=run_dir, products="g2r", own_only=False))
+    finally:
+        GC.read_noatime, XS.read_committed = orig_read, orig_rc
+    return rc
+
+
+def xk_run_dir(fetch_dir: Path, dest: Path) -> dict:
+    """The local run directory: hardlinks to the fetched run copy, plus V0's and V1's committed records."""
+    src = Path(fetch_dir) / "cov2d-xk-g2r-20261116/run"
+    if dest.exists():
+        raise Stop(f"{dest} exists")
+    for q in sorted(src.rglob("*")):
+        if q.is_file():
+            t = dest / q.relative_to(src)
+            t.parent.mkdir(parents=True, exist_ok=True)
+            os.link(q, t)
+    import shutil
+    for rel_pin, sub in ((XK_V0, "v0-a1/v0.json"), (XK_V1, "v1-a2/v1.json")):
+        (dest / sub).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / rel_pin[0], dest / sub)
+    return dir_listing(dest)
+
+
+def p2_xk(vf, fetch_dir):
+    import os as _os  # noqa: F401
+    sys.path.insert(0, str(ROOT / "nd-unfolding"))
+    import fd_gencmp as GC
+    import fd_xcov_steps as XS
+    committed, h = pinned_json(XK_K)
+    node = pins(XK / "run/node/NODE-SHA256.txt")
+    for rel_pin, key in ((XK_V0, "run/v0-a1/v0.json"), (XK_V1, "run/v1-a2/v1.json")):
+        if sha256_file(ROOT / rel_pin[0]) != node[key][0]:
+            raise Stop(f"{rel_pin[0]}: not the run copy's {key} ({node[key][1]})")
+    work = Path(fetch_dir).resolve().parent / (Path(fetch_dir).name + "-xk")
+    rec = {}
+    for arm in ("old", "vf"):
+        run_dir = work / arm
+        before = xk_run_dir(fetch_dir, run_dir)
+        subst = {}
+        if arm == "vf":
+            raw = (ROOT / CPL_BLOCK[0]).read_bytes()
+            with np.load(io.BytesIO(raw), allow_pickle=False) as z:
+                arrs = {k: np.asarray(z[k]) for k in z.files}
+            arrs["C_total_plus_C_resp_plus_C_PL5D"] = np.asarray(vf["matrices"][REPORTED_F], float)
+            buf = io.BytesIO()
+            np.savez(buf, **arrs)
+            subst[str(XS.CPL_BLOCK)] = buf.getvalue()
+            subst[str(XS.CR_G2R)] = rec["cr_vf_bytes"]
+        log, calls = [], []
+        rc = xk_replay(XS, GC, fetch_dir, run_dir, subst, log, calls)
+        after = dir_listing(run_dir)
+        changed = sorted(k for k in before if after.get(k) != before[k])
+        added = sorted(set(after) - set(before))
+        if changed or any(not k.startswith("k/") for k in added) or rc != 0:
+            raise Stop(f"xk {arm}: rc {rc}; K changed {changed} or wrote outside k/: {added}")
+        out = json.loads((run_dir / "k/k.json").read_text())
+        rec[arm] = {"out": out, "log": log, "calls": calls, "before": before, "added": added,
+                    "subst_sha256": {k: hashlib.sha256(v).hexdigest() for k, v in subst.items()}}
+        if arm == "old":
+            want = {k: v for k, v in committed.items() if k not in XK_ENV_FIELDS}
+            got = {k: v for k, v in out.items() if k not in XK_ENV_FIELDS}
+            rec["old"]["achieved"] = p_control("xk", got, want, RTOL_EXACT)
+            rec["cr_vf_bytes"] = (json.dumps(p2_overlap("cr", CR, vf), indent=1) + "\n").encode()
+    lst = {r[0]: (int(r[3]), r[1]) for r in fetch_rows() if "xk" in r[5]}
+    for arm in ("old", "vf"):
+        got = {p_: (n, s_) for p_, n, s_ in rec[arm]["log"]}
+        if set(got) - set(lst) or any(got[k] != lst[k] for k in got):
+            raise Stop(f"xk {arm}: a remapped read is not a bound fetch-list entry")
+    unread = sorted(set(lst) - {p_ for p_, _, _ in rec["old"]["log"]})   # listed for xk, not read by this replay
+    # (iii): the two replays differ only in the two substituted read_committed returns
+    co, cv = rec["old"]["calls"], rec["vf"]["calls"]
+    if [c[0] for c in co] != [c[0] for c in cv]:
+        raise Stop("xk: the V_F replay's read_committed call sequence is not the OLD one")
+    differ = sorted({a[0] for a, b in zip(co, cv) if a[1] != b[1]})
+    if differ != sorted(rec["vf"]["subst_sha256"]):
+        raise Stop(f"xk: the replays differ in read_committed returns {differ}, not exactly the two substituted")
+    if sorted(rec["old"]["log"]) != sorted(rec["vf"]["log"]):
+        raise Stop("xk: the replays' remapped reads differ")
+    out = dict(rec["vf"]["out"])
+    out["vf_patch"] = {"readout": XK_K[0], "readout_sha256": h, "replaced": ["every field but " + ", ".join(XK_ENV_FIELDS)],
+                       "route": "fd_xcov_steps.cmd_k replayed (products g2r), rulings (i)-(iii)",
+                       "substituted": rec["vf"]["subst_sha256"],
+                       "remapped_reads": len(rec["old"]["log"]), "listed_xk_entries_not_read": unread,
+                       "remapped_bytes": sum(n for _, n, _ in rec["old"]["log"]),
+                       "run_dir_before": {a: len(rec[a]["before"]) for a in ("old", "vf")},
+                       "run_dir_added": {a: rec[a]["added"] for a in ("old", "vf")},
+                       "control_P": "PASS",
+                       "control_P_tolerance": {"rtol": RTOL_EXACT, "achieved_max": rec["old"]["achieved"],
+                                               "excluded": list(XK_ENV_FIELDS)}}
+    receipt = {"remapped_reads": rec["old"]["log"], "read_committed_old": co, "read_committed_vf": cv,
+               "run_dir_before": rec["old"]["before"]}
+    out["vf_patch"]["receipt_sha256"] = hashlib.sha256(json.dumps(receipt, sort_keys=True).encode()).hexdigest()
+    return {"xk": out, "xk-receipt": dict(receipt, vf_patch={"readout": "xk replay receipt", "control_P": "PASS",
+                                                             "replaced": []})}
+
+
 RTOL_IBU = 1e-9         # PENDING: measured after the fetch; route2's truths differ from (e)'s by <= 1e-12 (C-IBU)
-P2_FETCH = {"prr": p2_prr, "rsn": p2_rsn}
+P2_FETCH = {"prr": p2_prr, "rsn": p2_rsn, "xk": p2_xk}
 
 
 P2 = {"eav": p2_eav, "e2": p2_e2, "e2sens": p2_e2sens, "vatlas": p2_vatlas, "gch": lambda vf: p2_compare("gch", GCH, vf),
@@ -922,7 +1059,7 @@ def build_args(argv=None):
     v.add_argument("--dest", type=Path, required=True)
     q = sub.add_parser("p2")
     q.add_argument("--out-dir", type=Path)
-    q.add_argument("--only", nargs="+", choices=sorted(P2) + ["prr", "rsn"])
+    q.add_argument("--only", nargs="+", choices=sorted(P2) + ["prr", "rsn", "xk"])
     q.add_argument("--fetch-dir", type=Path, help="the verified fetch (fetch-verify's --dest)")
     return ap.parse_args(argv)
 

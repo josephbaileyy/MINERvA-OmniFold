@@ -32,6 +32,8 @@ The evidence that the miss is a platform effect, not an error:
    - **e2:** the chi2 of each corner prediction (carbon, CH, carbon seed 43) in both arms, where V_g = (σ_Vg/f · f)²
      comes from E-1's Stage G records. Each delta and Δ field is compared on its chi2's scale, and its delta-relative
      figure is recorded so the cancellation stays visible.
+   - **e2sens:** the removed, carbon, doubled and CH chi2 of each corner prediction in both arms, from the same Stage G
+     records. Each is compared on its carbon chi2's scale.
    - **gdefs and gnat:** the total and shape-only chi2 of every embedded `fd_g_compare.compare` record, where V_g comes
      from σ_Vg/f.
 3. **p is derived through its chi2.** The chi2 tolerance is not widened for p.
@@ -50,4 +52,32 @@ The evidence that the miss is a platform effect, not an error:
 6. **The hard limit.** Any field above 1e-9, or any field a printed value depends on at more than 1e-6 of its last
    printed digit, is a STOP to the director. Nothing is widened further.
 
-**CANNOT AUTHORIZE:** anything beyond the change above.
+## xk's local replay: three input substitutions (the director's rulings (i)–(iii), 2026-11-26)
+
+xk is GENCMP X step K, replayed through `fd_xcov_steps.cmd_k` under `--products g2r` (route (1)). No arithmetic
+changes. Only inputs are substituted, and only in the replaying process:
+
+- **(i) I/O remap.** `fd_gencmp.read_noatime` is wrapped so that only the exact prefix `/pscratch/sd/j/josephrb/`
+  maps to the verified fetch at `/Users/josephbailey/vf-p2-fetch-20261126/`.
+  - A remapped path that is missing, or not a regular file, raises. Nothing falls through to another path.
+  - Every remapped read is logged (path, size, sha256). The logged set must be a subset of the bound fetch list's xk
+    entries, at their pins; listed entries the replay never reads are named.
+  - Every pin, key and sha check is the producer's own.
+- **(ii) A local run directory.** It holds hardlinks to the fetched `cov2d-xk-g2r-20261116/run` copy, plus the
+  committed `fd/xcov/run/v0-a1/v0.json` and `v1-a2/v1.json`. Their sha256 must equal `NODE-SHA256.txt`'s run copy.
+  - The file list and shas are recorded before and after.
+  - K may only add files under `k/`.
+- **(iii) The V_F inputs.** `read_committed` returns two substituted objects, each recorded by sha256:
+  - for `CPL_BLOCK`, the block with `C_total_plus_C_resp_plus_C_PL5D` replaced by C_rep,F, so that
+    C16q = A (C + ΔC_e) Aᵀ + box variance. That is declaration §4.1's "A dF Aᵀ added to the 16-cell side";
+  - for `CR_G2R`, Phase 2's `cr.vf.json`, so that K0's own 1e-12 check holds against the V_F σ16.
+
+  The code asserts that the V_F replay differs from the OLD replay only in those two returns: the same
+  `read_committed` call sequence, the same other returns by sha, and the same remapped reads.
+- **OLD control.** The replay with only (i) and (ii) must reproduce G2R's committed `k.json` (`204e4c89`) at 1e-12 in
+  every field except `inputs` and `atime_deviations`, which record the run's paths and atimes.
+  - Anything above 1e-12 for bit-identical inputs is a STOP to the director.
+  - Round-tripped values, if K reads any, are named with their achieved differences first.
+  - The result: (to be filled in from the replay).
+
+**CANNOT AUTHORIZE:** anything beyond the changes above.
