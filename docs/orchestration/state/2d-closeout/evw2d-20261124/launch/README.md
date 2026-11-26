@@ -68,3 +68,23 @@ Two findings are left as they are:
 - `evw2d.py cleanup`, run directly, follows a linked staging root. The launch path never runs it that way:
   `evw2d_cleanup.sh` first checks that `<lane>/stage` is a real directory. evw2d.py stays byte-unchanged here, so this
   is a follow-up for evw2d.py.
+
+## The HPSS copy and the deposit fetch (for EVW2D BINDING 2)
+
+These steps follow the run accepted under BINDING 1 (job 62022231; the products' SHA256SUMS digest e60867ef;
+receipts in `../receipts/run-20261126/`). They follow EVW5D's merged hpss and fetch-products steps. BINDING 1's bound
+launcher stays as it is: these steps have their own launcher.
+
+| file | where it runs | what it does |
+|---|---|---|
+| `evw2d_hpss.sh` | a login node | Archives only if all of these hold:<ul><li>the lane and `out/` are real directories;</li><li>`post.pass` is exactly this job, the bound config digest and the bound products digest;</li><li>`out/SHA256SUMS` has the bound digest;</li><li>deploy_C's evw2d.py is the approved bytes;</li><li>the checker passes on scratch: `evw2d.accepted(out)`, SHA256SUMS's digest, and run.json's config digest and `slurm_job`.</li></ul>A private snapshot of SHA256SUMS and evw2d.done gives every pin and the file list, and `out/` must hold exactly those six files. Then:<ul><li>`htar -Hcrc -Hverify=1`, then `hsi hashcreate` and `hashverify`;</li><li>a full retrieval into a private `mktemp` directory in `/dev/shm`, with each file against its pin, the counts, and the checker on the retrieved copy;</li><li>the scratch manifest and marker compared with the snapshot.</li></ul>The retrieved copy is removed by the pinned names only, then its directories by `rmdir`. Nothing on scratch is removed. Receipts go to `<lane>/hpss` and `hpss.tar.gz`. |
+| `evw2d_deposit.sh` | the Mac | BINDING 1's certificate and credential checks, verbatim, before every step. It has three modes:<ul><li>`hpss`: runs the approved `evw2d_hpss.sh` through the `/dev/shm` stager, with a 60-minute certificate margin;</li><li>`fetch`: copies `hpss.tar.gz`, telling an absent archive apart from an ssh failure;</li><li>`fetch-products`: copies the six product files by scp into `<new dir>/out` and runs the checker on the Mac (the local evw2d.py must be the approved bytes).</li></ul>The fetch-products destination must be a new empty directory under `$HOME`, outside `/private/tmp`, `/tmp` and `/private/var`. |
+| `fill_deposit_pins.sh` | the Mac | Writes `bound-deposit/` and its `PINS.txt`. The lane, evw2d.py and config.json come from BINDING 1's `bound/PINS.txt`. The products digest and the job come from the committed run receipts, cross-checked against their `accepted.json` and post log. |
+
+Tests: `2d-unfolding/evw2d/test_evw2d_deposit.py`. It stubs hsi, htar, hpssquota, ssh, scp and ssh-keygen, uses a
+temporary HPSS directory, and runs the real `evw2d.accepted()` on a small accepted product set. The fetch-products
+tests make and remove a directory under the real `$HOME`, because the step refuses temporary roots.
+
+Some retrieval checks are layered: the pinned-sum check, the counts, `rmdir` and the checker on the retrieved copy each
+catch a corrupt or extra file. A mutant of one alone therefore survives, and those mutants are left out of the
+mutation check. The listing check repeats `accepted()`'s `present` check.
