@@ -22410,9 +22410,16 @@ docs/orchestration/state/precharge-20261125/ibu-convention/INPUTS.sha256	tracked
 docs/orchestration/state/precharge-20261125/ibu-convention/NEXT.md	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/ibu-convention/README.md	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/ibu-convention/README.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/ibu-convention/RESULTS.md	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/ibu-convention/compare.py	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/ibu-convention/local-inventory.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/ibu-convention/me1a-counts.csv	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/ibu-convention/me1a_counts.py	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/ibu-convention/replay.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/ibu-convention/report.md	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/ibu-convention/true_40_60.csv	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/ibu-convention/verify_zeroing.py	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/ibu-convention/zeroing-check.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/input-manifest-checksums.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/inputs/control/fine-results.json	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/inputs/control/fine.npz	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes

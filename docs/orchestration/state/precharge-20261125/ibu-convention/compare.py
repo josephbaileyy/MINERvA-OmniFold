@@ -20,9 +20,12 @@ def divide(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     )
 
 
-def unfold_selected(migration: np.ndarray, target: np.ndarray) -> np.ndarray:
+def unfold_selected(
+    migration: np.ndarray, target: np.ndarray, generated: np.ndarray
+) -> np.ndarray:
     """Unfold to selected events in ten iterations with the selected MC prior."""
-    prior = migration.sum(axis=0)
+    # The receipt defines no response for a truth bin with no generated events.
+    prior = np.where(generated > 0, migration.sum(axis=0), 0.0)
     response = divide(migration, prior)
     for _ in range(10):
         prior = prior * (response.T @ divide(target, response @ prior))
@@ -85,7 +88,7 @@ def compare(checkout: Path) -> None:
     in_grid = migration[:cells].sum(axis=0)
     np.testing.assert_allclose(in_grid, cross.selected_in_grid, atol=1e-7)
     baseline = divide(
-        unfold_selected(migration[:cells], (observed - background)[:cells]),
+        unfold_selected(migration[:cells], (observed - background)[:cells], gen),
         divide(in_grid, gen),
     )
     np.testing.assert_allclose(baseline, cross.unfolded_signed_K10, atol=1e-7)
@@ -124,7 +127,7 @@ def compare(checkout: Path) -> None:
         )
         accepted = selected + change.sum(axis=0)
         counted = mat[:cells].sum(axis=0)
-        signal = unfold_selected(mat[:cells], (observed - bkg)[:cells])
+        signal = unfold_selected(mat[:cells], (observed - bkg)[:cells], gen)
         for convention, numerator in (("in_grid", counted), ("anywhere", accepted)):
             counts = divide(signal, divide(numerator, gen))
             xsec = counts * weight
@@ -143,7 +146,7 @@ def compare(checkout: Path) -> None:
             print(
                 name,
                 convention,
-                "chi2/205",
+                "partial (saved scan) chi2/205",
                 distance,
                 "column ratio",
                 np.dot(high_area, xsec[high]) / reference,

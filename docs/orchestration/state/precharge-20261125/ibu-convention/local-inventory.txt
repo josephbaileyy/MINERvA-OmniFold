@@ -1,0 +1,29 @@
+Local filename and directory search. Rooted at /Users/josephbailey; no symlink traversal, home filesystem only. Excluded .git, Library and hidden application caches.
+Case-insensitive candidates: *EffPurity*.root or any ROOT file under PubProcessing_CollablJan2021_MuonEnergyScan or PubProcessing_v102_Rerun_NoBubbleConstraint_AddedStatUnc.
+Search exit 1; matching files 0
+locally unavailable /minerva/data/users/drut1186/ME_Inclusive/PubProcessing_CollablJan2021_MuonEnergyScan/Inclusive_CV
+locally unavailable /minerva/data/users/drut1186/ME_Inclusive/PubProcessing_v102_Rerun_NoBubbleConstraint_AddedStatUnc/Inclusive_CV
+../inputs/replay/release.root
+sha256 6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3
+  TotalCovariance (TMatrixT<double>)
+  StatOnlyCovariance (TMatrixT<double>)
+  FluxCovariance (TMatrixT<double>)
+  MuonEnergyScaleCovariance (TMatrixT<double>)
+  pt_pl_cross_section (TH2D)
+/Users/josephbailey/cov2d-work/original-counts-xuufbY/wiki/runEventLoopMC.root
+sha256 4f021a5eec55422c700224a88278609c47395d91e93848559ae2c1ca366b2093
+  pTmu_background_Wrong_Sign (PlotUtils::MnvH1D)
+  pTmu_background_NC (PlotUtils::MnvH1D)
+  pTmu_background_Other (PlotUtils::MnvH1D)
+  pTmu_efficiency_numerator (PlotUtils::MnvH1D)
+  pTmu_efficiency_denominator (PlotUtils::MnvH1D)
+  pTmu_migration (PlotUtils::MnvH2D)
+  pTmu_selected_signal_reco (PlotUtils::MnvH1D)
+  pTmu_data (PlotUtils::MnvH1D)
+  POTUsed (TParameter<double>)
+  pTmu_reweightedflux_integrated (PlotUtils::MnvH1D)
+  pTmu_fiducial_nucleons (TParameter<double>)
+Source of release.root: public ancillary cov_ptpl_minerva_inclusive_6GeV.root for arXiv:2106.16210v4; repository copy in inputs/replay.
+Source of runEventLoopMC.root: downloaded MinervaExpt/MINERvA-101-Cross-Section.wiki.git at 37a6f84b5087177aa7927f872a659c03ac949a7e.
+Directory-name check in the local research, downloaded-data and work directories (no symlink traversal):
+Matching production directories 0
