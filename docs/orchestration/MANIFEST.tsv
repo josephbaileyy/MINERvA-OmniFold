@@ -7132,6 +7132,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/rater-calibration/tools/hold
 docs/orchestration/state/2d-closeout/stageF/methods/rater-calibration/tools/multiset_check.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/rater-calibration/tools/runjob.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/rater-calibration/tools/stats.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/re1-integration/STATUS.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/re1-integration/check_ledger.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/re1-integration/ledger.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/re1/RE1-AMENDMENT-BINDING-F.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
