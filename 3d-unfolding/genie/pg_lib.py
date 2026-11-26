@@ -275,27 +275,94 @@ def _codec(tag, body, usize):
     raise Refusal(f"root-codec: a block in codec {tag.decode('latin-1')!r}, which this scan does not read")
 
 
+def _blocks(data, objlen):
+    """(object, [codecs], bytes used): an object's blocks from the start of data, inflated until objlen bytes are
+    out; any block that does not inflate exactly is a STOP."""
+    parts, codecs, q, n = [], [], 0, 0
+    while n < objlen:
+        if q + 9 > len(data):
+            raise Refusal("root-block: an object's blocks end early")
+        tag = bytes(data[q:q + 2])
+        csize = int.from_bytes(data[q + 3:q + 6], "little")
+        usize = int.from_bytes(data[q + 6:q + 9], "little")
+        if q + 9 + csize > len(data):
+            raise Refusal("root-block: a block runs past its key")
+        x = _codec(tag, bytes(data[q + 9:q + 9 + csize]), usize)
+        if len(x) != usize:
+            raise Refusal("root-block: a block inflates to the wrong size")
+        parts.append(x)
+        codecs.append(tag.decode("latin-1"))
+        n += usize
+        q += 9 + csize
+    if n != objlen:
+        raise Refusal("root-block: an object inflates to the wrong size")
+    return b"".join(parts), codecs, q
+
+
+TAGS = (b"ZL", b"XZ", b"L4", b"ZS")
+
+
+def _freed_record(gap, j):
+    """(class, name, title, object, codecs, end) of the freed key whose header begins at gap[j] (ROOT overwrote only
+    its 4-byte length), or None when the bytes there are not one whole key. Its blocks are read strictly: once the
+    header parses, a block that does not inflate is a STOP, as in a live key."""
+    if j + 14 > len(gap):
+        return None
+    kv, objlen, _, keylen, _ = struct.unpack(">hiIhh", gap[j:j + 14])
+    if kv not in (4, 1004) or objlen <= 0 or keylen < 26:
+        return None
+    o = j + 14 + (16 if kv > 1000 else 8)
+    try:
+        cls, o = _tstring(gap, o)
+        name, o = _tstring(gap, o)
+        title, o = _tstring(gap, o)
+    except Refusal:
+        return None
+    if o - j + 4 != keylen or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_:<>, ]*", cls):
+        return None
+    data = gap[o:]
+    if data[:2] in TAGS and len(data) >= 9 and o + 9 + int.from_bytes(data[3:6], "little") <= len(gap):
+        obj, codecs, q = _blocks(data, objlen)
+        return cls, name, title, obj, codecs, o + q
+    if objlen <= len(data):                                  # stored as it is: its bytes were scanned raw
+        return cls, name, title, bytes(data[:objlen]), [], o + objlen
+    return None
+
+
 def _gap_blocks(gap):
-    """[(codec, inflated)]: every ROOT block header in a free gap's bytes whose block inflates (a gap keeps the
-    record it replaced, so its compressed bytes are read like any object's); a header that does not inflate is not one."""
-    out, i = [], 0
+    """[(class, name, title, object, codecs)]: what a free gap still holds. A gap keeps the records it replaced:
+    each whole one (its key header intact after the overwritten length) is read like a live key, with its class;
+    in bytes that are no whole record, every ROOT block header whose block inflates is read too (a header that does
+    not inflate is not one), and a well-formed header whose codec module is missing is a STOP."""
+    out, j = [], 0
+    while j < len(gap):
+        r = _freed_record(gap, j)
+        if r is None:
+            break
+        out.append(r[:5])
+        j = r[5]
+        if j + 4 <= len(gap):                                # the next freed record keeps its own length
+            j += 4
+    rest, i = gap[j:], 0
     while True:
-        m = re.search(rb"ZL|XZ|L4|ZS", gap[i:])
+        m = re.search(rb"ZL|XZ|L4|ZS", rest[i:])
         if not m:
             return out
         q = i + m.start()
         i = q + 1
-        if q + 9 > len(gap):
+        if q + 9 > len(rest):
             continue
-        csize, usize = int.from_bytes(gap[q + 3:q + 6], "little"), int.from_bytes(gap[q + 6:q + 9], "little")
-        if not csize or q + 9 + csize > len(gap):
+        csize, usize = int.from_bytes(rest[q + 3:q + 6], "little"), int.from_bytes(rest[q + 6:q + 9], "little")
+        if not csize or not usize or q + 9 + csize > len(rest):
             continue
         try:
-            x = _codec(gap[q:q + 2], gap[q + 9:q + 9 + csize], usize)
-        except Refusal:
+            x = _codec(rest[q:q + 2], rest[q + 9:q + 9 + csize], usize)
+        except Refusal as e:
+            if str(e).startswith("root-codec-unavailable"):
+                raise
             continue
         if len(x) == usize:
-            out.append((gap[q:q + 2].decode(), x))
+            out.append(("(free)", "", "", x, [rest[q:q + 2].decode()]))
             i = q + 9 + csize
 
 
@@ -314,8 +381,9 @@ def _tstring(buf, o):
     return bytes(buf[o:o + n]).decode("latin-1"), o + n
 
 
-def root_keys(path):
-    """Yield (class, name, title, the object's bytes (inflated, or as stored), the codecs inflated: [] if stored)."""
+def root_keys(path, free=True):
+    """Yield (class, name, title, the object's bytes (inflated, or as stored), the codecs inflated: [] if stored):
+    every live key's, and with free, what each free gap still holds (its freed records, with their classes)."""
     with open(path, "rb") as fh:
         size = os.fstat(fh.fileno()).st_size
         if size < 20:
@@ -338,8 +406,8 @@ def root_keys(path):
                 if nbytes < 0:              # a free gap: what it held stays in its bytes, so its old blocks are read
                     if pos - nbytes > end:
                         raise Refusal("root-gap: a free gap runs past fEND")
-                    for tag, obj in _gap_blocks(bytes(buf[pos + 4:pos - nbytes])):
-                        yield "(free)", "", "", obj, [tag]
+                    if free:
+                        yield from _gap_blocks(bytes(buf[pos + 4:pos - nbytes]))
                     pos -= nbytes
                     continue
                 if nbytes < 18 or pos + nbytes > end:
@@ -354,25 +422,9 @@ def root_keys(path):
                 data, codecs = buf[pos + keylen:pos + nbytes], []
                 obj = bytes(data)
                 if objlen > len(data):                        # compressed: inflate every block
-                    parts, q, n = [], 0, 0
-                    while n < objlen:
-                        if q + 9 > len(data):
-                            raise Refusal("root-block: an object's blocks end early")
-                        tag = bytes(data[q:q + 2])
-                        csize = int.from_bytes(data[q + 3:q + 6], "little")
-                        usize = int.from_bytes(data[q + 6:q + 9], "little")
-                        if q + 9 + csize > len(data):
-                            raise Refusal("root-block: a block runs past its key")
-                        x = _codec(tag, bytes(data[q + 9:q + 9 + csize]), usize)
-                        if len(x) != usize:
-                            raise Refusal("root-block: a block inflates to the wrong size")
-                        parts.append(x)
-                        codecs.append(tag.decode("latin-1"))
-                        n += usize
-                        q += 9 + csize
-                    if n != objlen:
-                        raise Refusal("root-block: an object inflates to the wrong size")
-                    obj = b"".join(parts)
+                    obj, codecs, q = _blocks(data, objlen)
+                    if q != len(data):                        # fNbytes is the key's header and its blocks, exactly
+                        raise Refusal("root-block: a key holds bytes after its object's blocks")
                 yield cls, name, title, obj, codecs
                 pos += nbytes
         finally:
@@ -382,7 +434,7 @@ def root_keys(path):
 def root_schema(path):
     """{keys: sorted [class, name, title] without the file's own records, streamer_sha256}: what B3's gst fixes."""
     keys, streamer = set(), None
-    for cls, name, title, obj, _ in root_keys(path):
+    for cls, name, title, obj, _ in root_keys(path, free=False):   # live keys only: free space is no schema
         if cls == "TFile":
             continue
         keys.add((cls, name, title))
@@ -439,19 +491,22 @@ def _members(p):
     return []
 
 
-def leak_scan(workdir, files, seeds):
+def leak_scan(workdir, files, seeds, decode_all=False):
     """([(relpath or None, where)], stats): each outgoing file whose path (None, "path": the path is not repeated),
     bytes, a ROOT object's inflated bytes, or a gzip or zip member holds a STOP form of any seed. int32 forms are a
     STOP in every ROOT object but a TBasket's payload, and only counted (against their chance expectation) in
-    baskets and raw bytes. The path and the bytes are scanned apart. Never prints a seed."""
+    baskets and raw bytes. The path and the bytes are scanned apart. With decode_all (B3's positive control) a
+    ROOT file is decoded even after a raw hit, and stats["hits"] names every kind found. Never prints a seed."""
     forms = [f for s in seeds for f in seed_forms(s)]
     f32 = [f for s in seeds for f in seed_int32_forms(s)]
     width = max(len(f) for f in forms + f32)
     hits, stats = [], {"files": len(files), "bytes_raw": 0, "bytes_inflated": 0, "int32_count": 0, "codecs": {},
                        "objects_int32_checked": 0}
+    kinds = set()
     for rel in files:
         if any(f in rel.encode() for f in forms):
             hits.append((None, "path"))
+            kinds.add("path")
         p, hit = os.path.join(workdir, rel), None
         with open(p, "rb") as fh:
             tail = b""
@@ -464,21 +519,25 @@ def leak_scan(workdir, files, seeds):
                 tail = buf[-(width - 1):]
             fh.seek(0)
             is_root = fh.read(4) == b"root" or rel.endswith(".root")   # a .root that is not one refuses there
-        if hit is None and is_root:
+        if hit:
+            kinds.add(hit)
+        found = None
+        if (hit is None or decode_all) and is_root:
             for cls, _, _, obj, codecs in root_keys(p):
                 for c in codecs:
                     stats["codecs"][c] = stats["codecs"].get(c, 0) + 1
+                if codecs:                                 # inflated (a stored object's bytes were scanned raw)
+                    stats["bytes_inflated"] += len(obj)
+                    stats["int32_count"] += _count(obj, f32)
                 if cls != "TBasket":                       # a small object: a 4-byte seed there is no chance hit
                     stats["objects_int32_checked"] += 1
                     if any(f in obj for f in f32):
-                        hit = "int32-object"
+                        found = "int32-object"
                         break
                 if not codecs:
-                    continue                               # stored: its bytes were scanned raw
-                stats["bytes_inflated"] += len(obj)
-                stats["int32_count"] += _count(obj, f32)
+                    continue
                 if any(f in obj for f in forms):
-                    hit = "inflated"
+                    found = "inflated"
                     break
         elif hit is None:
             for kind, data in _members(p):
@@ -486,10 +545,14 @@ def leak_scan(workdir, files, seeds):
                 stats["bytes_inflated"] += len(data)
                 stats["int32_count"] += _count(data, f32)
                 if any(f in data for f in forms):
-                    hit = "inflated"
+                    found = "inflated"
                     break
+        if found:
+            kinds.add(found)
+        hit = hit or found
         if hit:
             hits.append((rel, hit))
+    stats["hits"] = sorted(kinds)
     stats["int32_patterns"] = len(f32)
     stats["int32_expected"] = len(f32) * (stats["bytes_raw"] + stats["bytes_inflated"]) / 2 ** 32
     return hits, stats

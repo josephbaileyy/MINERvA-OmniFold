@@ -1128,10 +1128,13 @@ class Wrappers(Tmp):
 class Host(Tmp):
     @unittest.skipUnless(os.path.isdir("/proc/self"), "untested on this host: no /proc (macOS); recorded on the node")
     def test_host_checks_on_linux(self):
-        fd = os.open(shutil.which("strace") or sys.executable, os.O_RDONLY)    # a real program on the descriptor
+        if not shutil.which("strace"):
+            self.skipTest("no strace on this host: the anchor check needs the real one")
+        fd = os.open(shutil.which("strace"), os.O_RDONLY)                   # the real strace on the descriptor
         self.addCleanup(os.close, fd)
         c, why = V.host_checks(fd, str(self.tmp), ["/cvmfs/x"], mountinfo_text="")
         self.assertTrue(c["st_dev_final_dir"], why)
+        self.assertTrue(c["result_anchor_real_strace"], why)
 
     def test_a_submount_inside_a_root_and_no_proc(self):
         if not os.path.isdir("/proc/self"):
@@ -1295,11 +1298,14 @@ class Round4(Trace):
         mc = f"{g}/{C}/master_config.xml"                                  # an explicit path, tried in each dir
         walk = self.xml(mc)[:-1]
         j = good.index(walk[0])
-        for tuned in (True, False):
+        for tuned in (False, True):          # after the tune is configured (K9), only its list
             x = list(good)
             x[j:j + len(walk)] = [f'100 access("{d}/{mc}", F_OK) = -1 ENOENT (No such file or directory)'
                                   for d in self.search_list(tuned)] + [f'100 access("{mc}", F_OK) = 0']
-            self.assertTrue(self.check(x)["pass"], self.check(x)["problems"])
+            if tuned:
+                self.assertTrue(self.check(x)["pass"], self.check(x)["problems"])
+            else:
+                self.assert_fails(self.check(x), "search-phase:")
         x[j:j + 1] = []                                                    # one directory not tried
         self.assert_fails(self.check(x), "search-probes:")
 
@@ -1645,7 +1651,7 @@ class Round5Drain(unittest.TestCase):
 
     def test_survivors_end(self):
         rec, rc, killed, _ = self.run_drain([([7], []), ([7, 8], []), ([], [])])
-        self.assertEqual((rec["own"], rec["polls"], rec["left"], rc), (1, 2, 0, 0))
+        self.assertEqual((rec["own"], rec["polls"], rec["left"], rc), (1, 3, 0, 0))   # the last poll confirms (K7)
         self.assertEqual(killed, [7, 7, 8])                                   # a new survivor is signalled too
 
     def test_the_deadline_is_monotonic_and_bounded(self):
@@ -1684,3 +1690,112 @@ class Round5Drain(unittest.TestCase):
         time.sleep(0.2)
         own, foreign = V.survivor_scan(w, lead.pid, [])
         self.assertEqual((own, foreign), ([lead.pid], [side.pid]))
+
+
+class Round6(Round5):
+    """Round 5's confirm read (delta-read-r5/confirm/DISPOSITIONS.md, the director's GO): GENIE's Messenger lookups
+    as Messenger.cxx makes them (K1), the tuned list once the tune is configured (K9), a complete call while one is
+    pending (K11), writes through a linked directory (K12), the GHEP gevgen's own (F4), every assignment form (F12)."""
+
+    def messenger(self, m, pid=100, tuned=False):
+        """Messenger::Configure: GetXMLFilePath("Messenger.xml") walks the list to the first directory with it; then
+        SetPrioritiesFromXmlFile calls GetXMLFilePath on that absolute path, which probes each directory + "/" + the
+        path (all absent) and returns it as given; libxml2 opens it (Messenger.cxx:103, :132; XmlParserUtils.cxx:107-125)."""
+        walk = self.xml(m, pid=pid, tuned=tuned, recheck=False)[:-1]
+        expl = [f'{pid} access("{d}/{m}", F_OK) = -1 ENOENT (No such file or directory)' for d in self.search_list(tuned)]
+        return walk + expl + [f'{pid} openat(AT_FDCWD, "{m}", O_RDONLY) = 4']
+
+    def test_messengers_two_lookups(self):
+        m = f"{self.genie}/{self.C}/Messenger.xml"
+        g = self.good_lines()
+        g[1:1] = self.messenger(m)
+        self.assertTrue(self.check(g)["pass"], self.check(g)["problems"])
+        g = self.good_lines()
+        w = self.messenger(m)
+        w[0] = w[0].replace(" = -1 ENOENT (No such file or directory)", " = 0")   # it found GXMLPATH's copy first
+        g[1:1] = w
+        self.assert_fails(self.check(g), "search-probes:")
+
+    def test_once_tuned_a_process_never_walks_the_untuned_list(self):
+        m = f"{self.genie}/{self.C}/Messenger.xml"
+        g = self.good_lines()
+        end = g.index("101 +++ exited with 0 +++")
+        g[end:end] = self.xml(m, tuned=True)                                # after the tune: its list
+        self.assertTrue(self.check(g)["pass"], self.check(g)["problems"])
+        g = self.good_lines()
+        g[end:end] = self.xml(m, tuned=False)                               # the tune's directories skipped
+        self.assert_fails(self.check(g), "search-phase:")
+
+    def test_a_complete_call_while_one_is_pending(self):
+        codes = lambda t: {p.split(":")[0] for p in V.trace_problems(t, 0)}
+        self.assertIn("resume-mismatch", codes('9 openat(AT_FDCWD, "/x", O_RDONLY <unfinished ...>\n'
+                                               '9 access("/y", F_OK) = 0\n9 <... openat resumed>) = 3\n'
+                                               '9 +++ exited with 0 +++\n'))
+        self.assertEqual(codes('9 openat(AT_FDCWD, "/x", O_RDONLY <unfinished ...>\n10 access("/y", F_OK) = 0\n'
+                               '9 <... openat resumed>) = 3\n10 +++ exited with 0 +++\n9 +++ exited with 0 +++\n'), set())
+
+    def test_a_write_through_a_linked_directory_leaves_w(self):
+        out = self.tmp / "elsewhere"
+        out.mkdir()
+        (self.W / "lnk").symlink_to(out)
+        W = self.W
+        for line in (f'100 mkdir("{W}/lnk/d", 0700) = 0', f'100 mknod("{W}/lnk/p", S_IFIFO|0600) = 0',
+                     f'100 truncate("{W}/lnk/f", 0) = 0',
+                     f'100 openat(AT_FDCWD, "{W}/lnk/f", O_WRONLY|O_CREAT|O_TRUNC, 0644) = 5'):
+            with self.subTest(line):
+                g = self.good_lines()
+                g.insert(1, line)
+                self.assert_fails(self.check(g), "write-outside-w:")
+        (out / "f").write_text("x")
+        (self.W / "lf").symlink_to(out / "f")                               # the last component a link: followed
+        for line in (f'100 truncate("{W}/lf", 0) = 0', f'100 openat(AT_FDCWD, "{W}/lf", O_WRONLY|O_TRUNC) = 5'):
+            with self.subTest(line):
+                g = self.good_lines()
+                g.insert(1, line)
+                self.assert_fails(self.check(g), "write-outside-w:")
+        g = self.good_lines()
+        g.insert(1, f'100 mkdir("{W}/d", 0700) = 0')                       # a real directory of W
+        self.assertTrue(self.check(g)["pass"], self.check(g)["problems"])
+
+    def test_the_ghep_is_gevgens_own(self):
+        gev = ('100 execve("/b/gevgen", ["gevgen"], 0x1 /* 1 vars */) = 0\n'
+               '101 openat(AT_FDCWD, "gntp.123.ghep.root", O_RDWR|O_CREAT|O_TRUNC, 0644) = 7\n')
+        self.assertIsNone(V.created_ghep(gev, str(self.W)))                    # a child's, not gevgen's
+        self.assertEqual(V.created_ghep(gev.replace("101 open", "100 open"), str(self.W)),
+                         str(self.W / "gntp.123.ghep.root"))
+
+    def test_every_assignment_form(self):
+        s = (GENIE / "run_gevgen_v3.sh").read_text()
+        msg = '    MSG="$GENIE/config/Messenger_laconic.xml"\n'
+        for extra in ("    TUNE[0]=G18_02a_00_000\n", "    TUNE+=x\n", "    SEED[0]=1\n"):
+            with self.subTest(extra):
+                self.assertIn("argv-genie", {p.split(":")[0] for p in V.argv_problems(s.replace(msg, msg + extra))})
+
+
+class Round6Drain(unittest.TestCase):
+    """K7: quiet means two empty scans in a row, and a process whose state cannot be read is not a zombie."""
+
+    def test_quiet_needs_two_empty_scans(self):
+        seq = iter([([5], []), ([], []), ([7], []), ([], []), ([], [])])
+        killed, t = [], [0.0]
+        rec, rc = V.drain("/w", 1, [], scan=lambda *a: next(seq), kill=lambda q, s: killed.append(q),
+                          clock=lambda: t[0], sleep=lambda d: t.__setitem__(0, t[0] + d))
+        self.assertEqual((killed, rc), ([5, 7], 0))                         # 7 came after one empty scan
+        seq2 = iter([([5], []), ([], [])])
+        t = [0.0]
+        clock = iter([0.0, 0.0, 31.0, 31.0, 31.0])
+        rec, rc = V.drain("/w", 1, [], scan=lambda *a: next(seq2), kill=lambda q, s: None,
+                          clock=lambda: next(clock), sleep=lambda d: None)
+        self.assertEqual(rc, 1)                                             # the deadline came before a second empty
+
+    def test_an_unreadable_state_is_not_a_zombie(self):
+        child = subprocess.Popen(["sleep", "30"], start_new_session=True)
+        self.addCleanup(lambda: (child.kill(), child.wait()))
+        proc = Path(tempfile.mkdtemp(prefix="pg-proc-"))
+        self.addCleanup(shutil.rmtree, proc, ignore_errors=True)
+        (proc / "self").mkdir()
+        (proc / str(child.pid)).mkdir()                                     # no stat: a read that failed
+        (proc / "99999999").mkdir()                                         # gone
+        own, foreign = V.survivor_scan("/nonexistent-w", child.pid, [], proc=str(proc))
+        self.assertEqual((own, foreign), ([child.pid], []))
+

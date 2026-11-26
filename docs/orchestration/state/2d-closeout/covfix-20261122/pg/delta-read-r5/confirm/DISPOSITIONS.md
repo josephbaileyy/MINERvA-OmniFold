@@ -58,3 +58,99 @@ schema, or what a gate accepts. A deterministic false STOP on a correct run also
 - Bytes that change: pg_verify.py, pg_lib.py, pg_replay.sh, pg-replay-g2111a.py, pg-node-launch.py, pg-probe.py
   and pg_generate.sh (the comment).
 - Unchanged: run_gevgen_v3.sh, whose sha stays 5c3fd520…
+
+## Outcome (round 6, the director's GO of 2026-11-26)
+
+**Scope.**
+- The director's blocking rule: a false STOP of a correct run, or a gate that can miss something correct producers
+  really emit.
+- Built: K1, K2, K3, K4, K6, K7, K8, K9, K11 and K12, and the hardenings F4, F12, F13, F17 and F18.
+- K5 and K10 are deferred to `../../FOLLOWUPS.md`, as are the optional gzip and zip magic checks.
+- The rejections of F15 (thread exec) and F2/B2 (the staged messenger) stand.
+- run_gevgen_v3.sh is unchanged (5c3fd520…).
+
+**Red check.** The new tests were written first and run against the code at 8f6cab162. Every new test failed:
+- verify: 8 failed;
+- covfix: 11 failed;
+- install: 8 failed;
+- probe: 1 failed.
+
+The passing tests in those runs were inherited ones.
+
+**As built.**
+- **K1:** Messenger's real sequence is a fixture: basename walk, explicit "dir//abs" walk, then the read. In the
+  explicit branch, the probes before the walk may form whole basename walks that end at the read path, or be
+  re-probes of that path.
+- **K2:**
+  - The driver's own `deleted.json` and `replay.json` from a stubbed run go through both validators.
+  - t0 has no GHEP in `DELETABLE`.
+  - B3 STOPs if the wrapper leaves `gntp.*.ghep.root` in t0.
+- **K3:**
+  - A live key must use all its bytes.
+  - A free gap's freed records are parsed by their kept key header and read strictly, keeping their class.
+  - In bytes no record covers, a well-formed header whose codec module is missing is a STOP.
+- **K4:** schemas take live keys only.
+- **K6:**
+  - B3's leak scan decodes even after a raw hit, and records every kind of hit.
+  - Both validators need each coverage GHEP's seed found in decoded bytes: `holds_seed`, `bytes_inflated > 0`, and an
+    `inflated` or `int32-object` hit.
+- **K7 and K8:**
+  - pg_verify's drain needs two empty scans in a row, 0.5 s apart, within 30 s, and an unreadable state goes to
+    `getsid`.
+  - The node runner's `quiesce` does the same.
+  - A straggler, or a session that does not empty, is a STOP before the files are swept.
+- **K9:** the search list is bound per process. Once a pid's walk has followed the tuned list, an untuned walk is
+  `search-phase`.
+- **K11:** a complete call on a pid with a pending call is `resume-mismatch`, in pg_verify and in pg-probe.
+- **K12:** a write's target is resolved against `realpath(W)`. For open and truncate this is the full path, because
+  both follow the last link; for mkdir, mknod, rename, link and unlink it is the parent.
+- **F4:** the GHEP that `created_ghep` names must be created by the trace's first process.
+- **F12:** subscripted and `+=` assignments are matched.
+- **F13:**
+  - A prior record that is not a dict of dicts is `_prior: "unreadable"`.
+  - Each save writes a temporary file, then calls `os.replace`.
+- **F17:** C19 asserts `result_anchor_real_strace`, and skips without strace.
+- **F18:** the core-file comment is reworded.
+
+**Fixture realism fixes found while building.** Each was a gap in a test fixture, not in a producer. All are fixed.
+- The gst template had no StreamerInfo, so `_schema_ok` could never pass on it.
+- The GHEP template now stores the run number as an int64, as GHEP does.
+- The install stub's run lost the driver's pid, so `quiesce` never saw its session. It now uses `RP._run`.
+
+**Behaviour that changed.**
+- Round 4's synthetic explicit lookup on the untuned list after the tune now STOPs (`search-phase`, K9).
+- The drain takes one more poll before it is quiet (K7).
+- Inflated bytes are counted before the int32-object check, so a control found as int32-object still shows its
+  inflated bytes (K6).
+
+**Mutants.**
+- Eleven earlier mutants whose code this round rewrote were retargeted onto the new lines.
+- Added this round: 24 in A2, 16 in install and 1 in probe.
+- Every anchor was re-counted against the final bytes: 0 off.
+- Install's first run left one survivor, M102 (a decode without its hits, in the launcher). A launcher test for it
+  was added: t0's `input-flux.root` decoded without `hits`. Install's mutants were then all run again.
+
+**Not testable on this host.** These are recorded in the rehearsal checklist.
+- An interruption between the temporary write and the rename.
+- `quiesce`'s /proc path on Linux. The tests use the ps fallback and injected scans.
+- Whether a real coverage GHEP holds its run number in decoded bytes. If it does not, B3 STOPs at the control. This
+  is a fail-closed check, not a pass.
+
+**Receipts on the final bytes.**
+- **Suites** (`tune-support/tests-local.log`): 333 passed, 2 skipped. The suites are test_covfix_pg, test_pg_verify
+  and test_fd_f1.
+- **Probe tests** (`probe/tests-local.log`): 63 run, OK, 1 skipped.
+- **Install tests** (`install/tests-local.log`): 29 run, OK.
+- **Mutants** (each set's `mutants.log`):
+  - probe: 108 of 108 killed;
+  - install: 106 of 106 killed;
+  - A2: 340 of 340 killed.
+
+  None were invalid. No code, test or mutant file changed after the A2 and probe runs began. Install's test file
+  changed once (M102), and install's mutants were run again after it.
+- **An unexplained run.** One earlier run of the suites reported "8 failed, 325 passed". Only its summary line was
+  kept, so the failing tests are not known, and the cause is not established. None of this lane's own runs
+  overlapped it. Another session's tests were running on this host at some point that day, at times not known. The
+  suites read none of the docs edited during that run. Every later run passed in full: one under the 8-way mutant
+  load, one alone, and the final one above. One A2 orphan test also failed once, then passed in each of six
+  concurrent reruns.

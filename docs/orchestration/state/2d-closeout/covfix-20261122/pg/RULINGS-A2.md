@@ -242,3 +242,46 @@ a STOP and is not killed. A process list that cannot be read is a STOP.
 **The gen-spec (cov2d, the director, 2026-11-25).** Six keys. pg_generate's environment is exactly env_keep's
 inherited names, env_set's pinned literals, and TMPDIR=W/tmp. publish_guard's call site is cov2d's binary. The split
 proposed for the gen-spec is in README-pg.md.
+
+## Round 6: the director's GO on round 5's confirm read of 63466b61..dc341d3f (2026-11-25)
+
+**Scope.** A finding is blocking if it makes a correct run STOP, or if a gate can miss something correct producers
+really emit. Built: K1–K4, K6–K9, K11, K12, and the hardenings F4, F12, F13, F17 and F18. K5 and K10 are deferred
+to FOLLOWUPS.md. The rejections of F15's thread-exec marker and of F2/B2's staged messenger stand.
+
+**The XML search (K1, K9).**
+- An explicit-path read may follow a complete basename walk that ended at that path. This is Messenger's own
+  sequence (Messenger.cxx:103, :132): `GetXMLFilePath("Messenger.xml")`, then `GetXMLFilePath` of the path it found.
+- Once a process has walked the tuned list, every later walk in it, basename or explicit, must use the tuned list.
+  GENIE's callers all use the default `add_tune`, and the tune stays configured.
+
+**Traces (K11, K12, F4).**
+- A complete syscall on a process whose last call is still unfinished is a `resume-mismatch`.
+- A write counts as inside W only if it is lexically inside W and also inside W with links resolved. An open or a
+  truncate resolves its last component; a mkdir, mknod, unlink or rename resolves only the directories leading to it.
+- gntpc's GHEP is the one gevgen's initial process created.
+
+**Drain and quiesce (K7, K8).**
+- Quiet means two scans in a row, 0.5 s apart, find no process in the session, within the 30 s.
+- A process whose state cannot be read counts unless getsid says it has gone.
+- The node runner KILLs the driver's session the same way. Any straggler, or a session that is not quiet by the
+  deadline, is a STOP before the event files are swept.
+
+**ROOT (K3, K4).**
+- A live key's blocks must use all of its data bytes.
+- Each whole freed record still in a free gap (its key header intact after the overwritten length) is read as
+  strictly as a live key, keeping its class.
+- In gap bytes that are no whole record, a well-formed block header whose codec module is missing is a STOP.
+- Schemas are taken from live keys only.
+
+**B3 (K2, K6, F13).**
+- t0 has no GHEP after the wrapper. The driver checks this, and both validators expect t0's three names.
+- Each coverage GHEP (the public seed is its run number) is decoded even after a raw hit. Both validators require
+  that its seed was found in decoded bytes (`inflated`, or `int32-object`, which is how an int64 run number shows)
+  and that `bytes_inflated > 0`.
+- A prior deletion record of the wrong shape is noted as `_prior: unreadable`. Each save is written to a temporary
+  file, then renamed over the record.
+
+**Q2, restated (F18).** `ulimit -c 0` suppresses ordinary core files only. A piped core handler ignores the limit.
+That route is recorded in B1 and node-record and is out of scope beyond the record. Round 5's wording above ("no
+core under W or anywhere") overstated this.

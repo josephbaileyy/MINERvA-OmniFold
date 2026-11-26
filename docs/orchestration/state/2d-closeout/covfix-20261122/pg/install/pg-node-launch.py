@@ -68,7 +68,7 @@ GATED = {"trace_check_reduce.json": ("gxspl-NUsmall.xml",), "trace_check_reduce_
          "trace_check_coverage.json": ("G21_11a_00_000_CH.xml.gz", "ModelConfiguration.xml", "Messenger_pg.xml"),
          "trace_check_coverage_slot2.json": ("G18_02a_00_000_CH.xml.gz", "ModelConfiguration.xml", "Messenger_pg.xml"),
          "trace_check_gevgen.json": ("G21_11a_00_000_CH.xml.gz", "ModelConfiguration.xml"), "trace_check_gntpc.json": ()}
-DELETABLE = {"t0": ("genie_v3.gst.root", "gevgen.status", "gntp.ghep.root", "input-flux.root"),
+DELETABLE = {"t0": ("genie_v3.gst.root", "gevgen.status", "input-flux.root"),   # the wrapper removes t0's GHEP
              "coverage_slot1": ("gevgen.log", "gevgen.status", "gntp.ghep.root", "input-flux.root"),
              "coverage_slot2": ("gevgen.log", "gevgen.status", "gntp.ghep.root", "input-flux.root"),
              "merged": ("genie_v3_g21_ALL.gst.root",)}
@@ -151,10 +151,17 @@ def _deleted_problems(d, r=None):
         c = v.get("decoded")
         return (type(c) is dict and type(c.get("holds_seed")) is bool and type(c.get("name_holds_seed")) is bool
                 and type(c.get("int32_count")) is int and type(c.get("codecs")) is dict
-                and type(c.get("bytes_inflated")) is int and (not n.endswith(".gst.root") or _schema_ok(v.get("schema"))))
-    return p + [f"{k}/{n}" for k in sorted(d) for n, v in sorted(d[k].items())
-            if not (type(v) is dict and _hex64(v.get("sha256")) and type(v.get("bytes")) is int and v["bytes"] >= 0
-                    and type(v.get("holds_public_seed")) is bool and root_ok(n, v))]
+                and type(c.get("bytes_inflated")) is int and type(c.get("hits")) is list
+                and (not n.endswith(".gst.root") or _schema_ok(v.get("schema"))))
+    bad = [f"{k}/{n}" for k in sorted(d) for n, v in sorted(d[k].items())
+           if not (type(v) is dict and _hex64(v.get("sha256")) and type(v.get("bytes")) is int and v["bytes"] >= 0
+                   and type(v.get("holds_public_seed")) is bool and root_ok(n, v))]
+    # K6, the positive control: each coverage GHEP (the public seed its run number) has the seed in decoded bytes
+    p += [f"{k}/gntp.ghep.root: the control's seed was not found decoded" for k in ("coverage_slot1", "coverage_slot2")
+          if f"{k}/gntp.ghep.root" not in bad and not (
+              d[k]["gntp.ghep.root"]["decoded"]["holds_seed"] is True and d[k]["gntp.ghep.root"]["decoded"]["bytes_inflated"] > 0
+              and {"inflated", "int32-object"} & set(d[k]["gntp.ghep.root"]["decoded"]["hits"]))]
+    return p + bad
 
 
 def script_pins(body):

@@ -1063,5 +1063,16 @@ class ProbeRound5(Tmp):
         self.assertEqual(P.TRACE_SET, v.TRACE_SET)
 
 
+
+class ProbeRound6(Tmp):
+    """K11: a complete call on a process whose last call is unfinished is impossible (one syscall per thread)."""
+
+    def test_a_complete_call_while_one_is_pending(self):
+        codes = lambda t: {p.split(":")[0] for p in P.trace_complete(t, 0)}
+        self.assertIn("resume-mismatch", codes('9 openat(AT_FDCWD, "/x", O_RDONLY <unfinished ...>\n'
+                                               '9 access("/y", F_OK) = 0\n9 <... openat resumed>) = 3\n'
+                                               '9 +++ exited with 0 +++\n'))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -116,6 +116,23 @@ M = [(f, old, new, what, "install") for f, old, new, what in [
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py', '            if left:\n                rec["stops"].append', '            if False:\n                rec["stops"].append', 'r5: files left on a failing exit'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py', '                    os.unlink(os.path.join(run_dir, d, n))', '                    pass', 'r5: files left are not removed'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py', 'EVENT_DIRS = ("work/t0", "coverage/G21_11a_00_000", "coverage/G18_02a_00_000", "gst")', 'EVENT_DIRS = ("work/t0", "coverage/G21_11a_00_000", "coverage/G18_02a_00_000")', "r5: the merged gst's directory unchecked"),
+    # round 6: round 5's confirm read (delta-read-r5/confirm/DISPOSITIONS.md, the director's GO)
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py', 'DELETABLE = {"t0": ("genie_v3.gst.root", "gevgen.status", "input-flux.root"),', 'DELETABLE = {"t0": ("genie_v3.gst.root", "gevgen.status", "gntp.ghep.root", "input-flux.root"),', "r6: t0's GHEP expected (node, K2)"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py', '          if f"{k}/gntp.ghep.root" not in bad and not (', '          if False and not (', 'r6: the control unchecked (node, K6)'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py', ' and d[k]["gntp.ghep.root"]["decoded"]["bytes_inflated"] > 0', '', "r6: the control's decode unchecked (node, K6)"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py', '              and {"inflated", "int32-object"} & set(d[k]["gntp.ghep.root"]["decoded"]["hits"]))]', '              )]', "r6: the control's decoded hit unchecked (node, K6)"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py', 'd[k]["gntp.ghep.root"]["decoded"]["holds_seed"] is True and ', '', "r6: the control's holds_seed unchecked (node, K6)"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py', ' and type(c.get("hits")) is list', '', 'r6: a decode without its hits (node, K6)'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py', 'DELETABLE = {"t0": ("genie_v3.gst.root", "gevgen.status", "input-flux.root"),', 'DELETABLE = {"t0": ("genie_v3.gst.root", "gevgen.status", "gntp.ghep.root", "input-flux.root"),', "r6: t0's GHEP expected (launcher, K2)"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py', '          if f"{k}/gntp.ghep.root" not in bad and not (', '          if False and not (', 'r6: the control unchecked (launcher, K6)'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py', ' and d[k]["gntp.ghep.root"]["decoded"]["bytes_inflated"] > 0', '', "r6: the control's decode unchecked (launcher, K6)"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py', '              and {"inflated", "int32-object"} & set(d[k]["gntp.ghep.root"]["decoded"]["hits"]))]', '              )]', "r6: the control's decoded hit unchecked (launcher, K6)"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py', 'd[k]["gntp.ghep.root"]["decoded"]["holds_seed"] is True and ', '', "r6: the control's holds_seed unchecked (launcher, K6)"),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py', ' and type(c.get("hits")) is list', '', 'r6: a decode without its hits (launcher, K6)'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py', '        if empties >= 2 or clock() >= end:\n            return len(killed), empties >= 2', '        if empties >= 1 or clock() >= end:\n            return len(killed), empties >= 1', 'r6: quiesce quiet after one scan (K8)'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py', '        if rec["quiesced"] or not rec["quiet"]:', '        if False:', 'r6: a straggler not a STOP (K8)'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py', '            killed.add(q)', '            pass', 'r6: the stragglers not counted (K8)'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py', '            if os.getsid(p) == sid:\n                out.append(p)', '            if False:\n                out.append(p)', "r6: the session's processes not found (K8)"),
 ]]
 
 if __name__ == "__main__":

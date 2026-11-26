@@ -154,7 +154,7 @@ anaenv() {
   export TMPDIR="$W/tmp" PYTHONDONTWRITEBYTECODE=1
   case "$(python3 -V 2>&1)" in *3.11*) ;; *) exit 7 ;; esac
 }
-ulimit -c 0 || refuse "cannot set the core limit to 0"   # Q2: a crash writes no core, under W or anywhere
+ulimit -c 0 || refuse "cannot set the core limit to 0"   # Q2: no core file; a piped core handler ignores the limit (recorded, out of scope)
 echo "[pg] start $(date -u +%FT%TZ) host=$(hostname)"
 
 # The first compute step (R1; the director's answer 2): strace is opened once, on fd 9. Its sha256 is read through

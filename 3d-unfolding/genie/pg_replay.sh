@@ -76,7 +76,7 @@ V() { "$PY" -I -B "$HERE/pg_verify.py" "$@"; }
 spin() { "$PY" -I -c 'import ast,sys
 t = ast.parse(open(sys.argv[1]).read())
 print(next(ast.literal_eval(n.value) for n in t.body if isinstance(n, ast.Assign) and getattr(n.targets[0], "id", "") == "PG_SPLINE_PINS")[sys.argv[2]][int(sys.argv[3])])' "$HERE/gen5d_v3.py" "$1" "$2"; }
-ulimit -c 0 || refuse "cannot set the core limit to 0"   # Q2: a crash writes no core, under R or anywhere
+ulimit -c 0 || refuse "cannot set the core limit to 0"   # Q2: no core file; a piped core handler ignores the limit (recorded, out of scope)
 echo "[replay] start $(date -u +%FT%TZ) host=$(hostname)"
 T2=G18_02a_00_000; Q2=G1802a00000-k250-e1000
 X1="$PRIV/genie_xsec/v3_04_00/NULL/$Q/data"; X2="$CVMFS_REPO/products/genie_xsec/v3_04_00/NULL/$Q2/data"
@@ -96,10 +96,16 @@ forms = [b"123456789", format(123456789, "x").encode(), format(123456789, "X").e
 pats = ("genie_v3.gst.root", "gntp.*.ghep.root", "genie-mcjob-*.status", "input-flux.root", "*_ALL.gst.root")
 try:
     rec = json.load(open(out)) if os.path.exists(out) else {}
-except Exception:                                    # a broken earlier record: start again, and say so
-    rec = {"_prior": "unreadable"}
+except Exception:
+    rec = None
+if not (type(rec) is dict and all(type(v) is dict for k, v in rec.items() if not k.startswith("_"))):
+    rec = {"_prior": "unreadable"}                   # a broken earlier record, or one of the wrong shape: say so
 bad = 0
-save = lambda: open(out, "w").write(json.dumps(rec, indent=1, sort_keys=True) + "\n")
+def save():                                          # whole or not at all: a write cut short leaves the last one
+    tmp = out + ".tmp"
+    with open(tmp, "w") as f:
+        f.write(json.dumps(rec, indent=1, sort_keys=True) + "\n")
+    os.replace(tmp, out)
 for key, w in zip(("t0", "coverage_slot1", "coverage_slot2", "merged"), dirs):
     got = rec.setdefault(key, {})
     for p in sorted(sum((glob.glob(os.path.join(w, x)) for x in pats + (("gevgen.log",) if key.startswith("cov") else ())), [])):
@@ -112,11 +118,12 @@ for key, w in zip(("t0", "coverage_slot1", "coverage_slot2", "merged"), dirs):
                  "holds_public_seed": any(x in data for x in forms)}
             if p.endswith(".root"):
                 try:
-                    hits, st = pg_lib.leak_scan(os.path.dirname(p), [os.path.basename(p)], [123456789])
+                    hits, st = pg_lib.leak_scan(os.path.dirname(p), [os.path.basename(p)], [123456789],
+                                                decode_all=True)             # decoded even after a raw hit (K6)
                     e["decoded"] = {"holds_seed": any(r is not None for r, _ in hits),       # the bytes, decoded
                                     "name_holds_seed": any(r is None for r, _ in hits),      # the name, apart
                                     "int32_count": st["int32_count"], "codecs": st["codecs"],
-                                    "bytes_inflated": st["bytes_inflated"]}
+                                    "bytes_inflated": st["bytes_inflated"], "hits": st["hits"]}
                     if name.endswith(".gst.root"):
                         e["schema"] = pg_lib.root_schema(p)
                 except pg_lib.Refusal as r:
@@ -215,6 +222,8 @@ mkdir -p "$W1"
 PG_TRACE_DIR="$W1" timeout "$TO" bash "$HERE/run_gevgen_v3.sh" genie "$T" "$R/splines" "$NEV" "$SEED" "$W1" \
   "$R/flux_phi_t_0_100.root" > "$R/logs/genie.log" 2>&1
 need $? "gevgen ($NEV events, the public seed)"
+ls "$W1"/gntp.*.ghep.root > /dev/null 2>&1 && need 1 "the wrapper left t0's GHEP"   # gntpc read it; the wrapper removes it
+pass "t0's GHEP removed by the wrapper"
 tcheck gevgen "$W1/gevgen.trace" "$R/splines/${T}_CH.xml.gz" "$RED" "$W1" "$R/trace_check_gevgen.json" \
   || need 1 "trace check (gevgen)"
 tcheck gntpc "$W1/gntpc.trace" "" "" "$W1" "$R/trace_check_gntpc.json" --ghep-from-trace "$W1/gevgen.trace" \

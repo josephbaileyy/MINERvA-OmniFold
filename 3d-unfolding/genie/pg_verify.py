@@ -257,6 +257,8 @@ def trace_problems(text, rc):
                 probs.append(f"unfinished-overwritten: process {pid} began a call before its last one resumed")
             sm = SYSCALL.match(rest)
             pending[pid] = sm.group(1) if sm else "?"
+        elif pid in pending and SYSCALL.match(rest):         # one thread, one syscall at a time
+            probs.append(f"resume-mismatch: process {pid} completed a call while its {pending[pid]} was unfinished")
         x = re.fullmatch(r"\+\+\+ exited with (\d+) \+\+\+", rest)
         if x:
             exits[pid] = int(x.group(1))                     # an exit does not complete a call left unfinished
@@ -518,13 +520,20 @@ def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest
         p = e["abs"]
         return (e["creat"] and (e["trunc"] or e["excl"] or (expected_output(p) and fresh(e))) and _under(p, w_root)
                 and not config_type(p) and not p.endswith((".xml", ".xml.gz")) and not _is_so(p))
+    w_real = os.path.realpath(w_root)
+
+    def in_w(e):             # lexically in W, and in W once links are resolved: an open or truncate follows the
+        p = e["abs"]         # last component, a mkdir, mknod, unlink or rename only the directories to it
+        if p == w_root:
+            return True
+        follows = e["call"].startswith("open") or e["call"] in ("truncate",)
+        return _under(p, w_root) and _under(os.path.realpath(p if follows else os.path.dirname(p)), w_real)
     opens = [e for e in events if e["call"].startswith("open") and e["ok"] and e["abs"]]
     for e in opens:          # every write stays in W
-        if (e["write_only"] or e["rdwr"] or e["creat"] or e["trunc"]) and not _under(e["abs"], w_root) \
-                and e["abs"] != "/dev/null":
+        if (e["write_only"] or e["rdwr"] or e["creat"] or e["trunc"]) and not in_w(e) and e["abs"] != "/dev/null":
             probs.append(f"write-outside-w: {e['call']} of {e['abs']} for writing")
     for e in events:
-        if e.get("mut") and e["ok"] and e["abs"] and not _under(e["abs"], w_root):
+        if e.get("mut") and e["ok"] and e["abs"] and not in_w(e):
             probs.append(f"write-outside-w: {e['call']} of {e['abs']}")
         if e.get("mut") and e["ok"] and e["call"] in LINKS:     # no role makes a link: one in W could lead out of it
             probs.append(f"link-made: {e['call']} of {e['path']!r}")
@@ -678,7 +687,15 @@ def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest
         searched = lambda p: (p.endswith(".xml") and p != spl and (_under(p, cfg_root) or _under(p, gnumi) or any(
             _under(p, d) for d in gx)))
         read_ids = {e["i"] for e in reads}
-        pend = {}
+        pend, tuned_pids = {}, set()
+
+        def phase(pid, fit, b, p):   # once a process's tune is configured, every list it walks is the tuned one
+            if fit == {"tuned"}:
+                tuned_pids.add(pid)
+            elif pid in tuned_pids and "tuned" not in fit:
+                probs.append(f"search-phase: {b} read at {p} on the list without the tune, after the tune was configured")
+                return False
+            return True
 
         def walks(probes):     # split a basename's probes into searches: each begins at the list's head
             out = []
@@ -712,10 +729,13 @@ def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest
                     probs.append(f"search-path: {b} probed at {odd[0]}, outside GENIE's lists")
                 if expl:
                     tried = [next(d for d in lists["tuned"] if q["abs"] == os.path.normpath(d + "/" + p)) for q in expl]
-                    if (any(q["ok"] for q in expl) or tried not in lists.values()
-                            or any(not q["ok"] or q["abs"] != p for q in walk)):
+                    if any(q["ok"] for q in expl) or tried not in lists.values():
                         probs.append(f"search-probes: {b} read at {p} as an explicit path GENIE did not try in full")
-                    continue
+                        continue
+                    phase(e["pid"], {n for n, L in lists.items() if tried == L}, b, p)
+                    if all(q["ok"] and q["abs"] == p for q in walk):   # none, or AlgConfigPool's re-probes of p
+                        continue
+                    # Messenger (Messenger.cxx:103, :132): a basename search found p, then GetXMLFilePath of p itself
                 ws = walks(walk)
                 if not ws:
                     probs.append(f"search-probes: {b} read at {p} with no search before it")
@@ -723,6 +743,8 @@ def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest
                 fits = [walk_lists(w) for w in ws]
                 if any(not f[0] for f in fits) or fits[-1][1] != p:
                     probs.append(f"search-probes: {b} read at {p} after probes that do not walk GENIE's lists to it")
+                    continue
+                if not phase(e["pid"], fits[-1][0], b, p):
                     continue
                 wants = {next((os.path.join(d, b) for d in lists[n] if exists(d, b)), None) for n in fits[-1][0]}
                 if p not in wants:
@@ -877,12 +899,12 @@ def argv_problems(script_text):
     tail = ["    pg_trace coverage", '    N=1; SEED=123456789; MSG="$MSGFILE"', "    gevgen_cmd > gevgen.log 2>&1"]
     cl = cov.group(1).splitlines() if cov else []
     inputs = {"TUNE", "FLUX", "N", "SEED", "MSG", "GENIE_SPLINES_V3", "GENIE", "PG_TRACE", "GXMLPATH"}
-    sets = [ln for ln in cl if inputs & set(re.findall(r"(?:^|[;\s])([A-Z_][A-Z0-9_]*)=", ln))]
+    sets = [ln for ln in cl if inputs & set(re.findall(r"(?:^|[;\s])([A-Z_][A-Z0-9_]*)(?:\[[^\]]*\])?\+?=", ln))]
     if not (cov and gen) or not any(cl[i:i + 3] == tail for i in range(len(cl))) or sets != [
             "    TUNE=$1; SPLDIR=$2; WORK=$3; FLUX=$4; MSGFILE=$5", tail[1]]:
         probs.append("argv-coverage: the coverage mode does not set exactly N=1, the public seed and its messenger")
     elif [ln for ln in gen.group(1).splitlines() if not ln.lstrip().startswith("echo ")
-          and inputs & set(re.findall(r"(?:^|[;\s])([A-Z_][A-Z0-9_]*)=", ln))] != [
+          and inputs & set(re.findall(r"(?:^|[;\s])([A-Z_][A-Z0-9_]*)(?:\[[^\]]*\])?\+?=", ln))] != [
             "    TUNE=$1; SPLDIR=$2; N=$3; SEED=$4; WORK=$5; FLUX=$6", '    MSG="$GENIE/config/Messenger_laconic.xml"']:
         probs.append("argv-genie: the genie mode's N, SEED or MSG is not F1's")
     return probs
@@ -1024,9 +1046,13 @@ def _kv(xs):
 
 
 def created_ghep(text, cwd):
-    """The one GHEP a gevgen trace created (an O_CREAT open of gntp.<run>.ghep.root, resolved against cwd), or None."""
+    """The one GHEP a gevgen trace's initial process created (an O_CREAT open of gntp.<run>.ghep.root, resolved
+    against cwd), or None."""
     events, _ = parse_trace(text)
-    got = {os.path.normpath(os.path.join(cwd, e["path"])) for e in events if e["call"].startswith("open") and e["ok"]
+    m = LINE.match(text.split("\n", 1)[0])
+    first = m.group(1) if m else None                       # gevgen itself: the trace's first process
+    got = {os.path.normpath(os.path.join(cwd, e["path"])) for e in events if e["pid"] == first
+           and e["call"].startswith("open") and e["ok"]
            and e.get("creat") and re.fullmatch(r"gntp\.\d+\.ghep\.root", os.path.basename(e["path"]))
            and e["dirfd"] == "AT_FDCWD"}
     return got.pop() if len(got) == 1 else None
@@ -1326,7 +1352,8 @@ def survivor_scan(w, sid, skip, proc="/proc", run=subprocess.run):
         cwd = cw.get
     own, foreign = [], []
     for p in sorted(pids):
-        if p in skip or (state(p) or "Z").startswith("Z"):
+        st = state(p)
+        if p in skip or (st or "").startswith("Z"):        # unreadable: getsid says whether it is still there
             continue
         try:
             s = os.getsid(p)
@@ -1343,29 +1370,31 @@ def survivor_scan(w, sid, skip, proc="/proc", run=subprocess.run):
 
 
 def drain(w, sid, skip, seconds=30.0, scan=survivor_scan, kill=os.kill, clock=None, sleep=None):
-    """({own, foreign, polls, left}, rc): every survivor in the generation's session is KILLed, again at each poll,
-    until none is left or `seconds` (monotonic) have passed; a process outside it with a cwd in W is reported, not
-    killed. rc: 0 none left, 1 survivors left, 3 a foreign process in W; a list that cannot be read raises Fail."""
+    """({own, foreign, polls, left, quiet}, rc): every survivor in the generation's session is KILLed, again at each
+    poll, until two scans in a row find none (quiet) or `seconds` (monotonic) have passed; a process outside it with
+    a cwd in W is reported, not killed. rc: 0 quiet, 1 not quiet by the deadline, 3 quiet with a foreign process in
+    W; a list that cannot be read raises Fail."""
     import signal
     import time
     clock, sleep = clock or time.monotonic, sleep or time.sleep
     own, foreign = scan(w, sid, skip)
-    rec = {"own": len(own), "foreign": len(foreign), "polls": 0, "left": 0}
-    end = clock() + seconds
-    while own:
+    rec = {"own": len(own), "foreign": len(foreign), "polls": 0, "left": 0, "quiet": False}
+    end, empties = clock() + seconds, 0
+    while True:
+        empties = 0 if own else empties + 1
         for q in own:
             try:
                 kill(q, signal.SIGKILL)
             except ProcessLookupError:
                 pass
-        if clock() >= end:
+        if empties >= 2 or clock() >= end:       # quiet: two scans in a row, 0.5 s apart, found none
             break
         sleep(0.5)
         rec["polls"] += 1
         own, more = scan(w, sid, skip)
         rec["foreign"] = max(rec["foreign"], len(more))
-    rec["left"] = len(own)
-    return rec, (1 if own else 3 if rec["foreign"] else 0)
+    rec["left"], rec["quiet"] = len(own), empties >= 2
+    return rec, (1 if not rec["quiet"] else 3 if rec["foreign"] else 0)
 
 
 def cmd_drain(a):

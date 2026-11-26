@@ -11,6 +11,7 @@ no path under W. Read that stdout after the rehearsal and record each answer her
 | A job reaped only once it is dead (one in uninterruptible sleep cannot hang the cleanup) | `kill_tree` | `[pg] cleanup: a job is left unreaped, still alive after KILL`, and before it `[pg] cleanup: <n> processes of a tree outlived KILL by 15 s` | every tree ended within 15 s of KILL; the guard was not needed |
 | The 30 s poll after KILL in the drain (`pg_verify.py drain`, the generation's session) | `drain` | `[pg] cleanup: <n> processes outlived their trees`, then `the survivors ended after <i> polls (0.5 s each, 30 s at most)` or `<n> survivors still alive 30 s after KILL` (a STOP) | no survivor outlived its tree; the poll was not needed |
 | A process outside the run with its cwd in W (round 5) | `drain` | `[pg] cleanup: <n> processes outside this run have a cwd in W (not killed)` (a STOP) | none was there |
+| Quiet means two empty scans in a row (round 6, K7) | `drain` | the `<i>` in `the survivors ended after <i> polls` includes the confirming scan | n/a |
 
 For each line, record the step it follows (`[pg] ...: pass` or STOP), and for the poll, the `<i>` at which the
 survivors ended.
@@ -25,3 +26,12 @@ From `W/out/pin_hash_start.json` and `pin_hash_end.json` (Q1): `files`, `links` 
 | run | head | kill_tree | drain poll | node_check |
 |---|---|---|---|---|
 | (rehearsal) | | | | |
+
+**B3 (round 6), from `run/deleted.json` and the driver's log:**
+- `[replay] t0's GHEP removed by the wrapper: pass`.
+- For each coverage GHEP: `decoded.hits` (expected to include `int32-object` or `inflated`), `bytes_inflated`, and
+  `codecs`. The test fixture puts GENIE's run number in the tree as an int64. Whether the real GHEP stores the public
+  seed (its run number) in decoded bytes is not confirmed on this host. If it does not, both validators STOP with
+  "the control's seed was not found decoded", and the control must be redesigned before the generation.
+- The node runner's `quiesced` (expected 0) and `quiet` (expected true).
+

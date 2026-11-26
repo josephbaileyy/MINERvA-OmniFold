@@ -122,7 +122,7 @@ GATED = {"trace_check_reduce.json": ("gxspl-NUsmall.xml",), "trace_check_reduce_
          "trace_check_coverage.json": ("G21_11a_00_000_CH.xml.gz", "ModelConfiguration.xml", "Messenger_pg.xml"),
          "trace_check_coverage_slot2.json": ("G18_02a_00_000_CH.xml.gz", "ModelConfiguration.xml", "Messenger_pg.xml"),
          "trace_check_gevgen.json": ("G21_11a_00_000_CH.xml.gz", "ModelConfiguration.xml"), "trace_check_gntpc.json": ()}
-DELETABLE = {"t0": ("genie_v3.gst.root", "gevgen.status", "gntp.ghep.root", "input-flux.root"),
+DELETABLE = {"t0": ("genie_v3.gst.root", "gevgen.status", "input-flux.root"),   # the wrapper removes t0's GHEP
              "coverage_slot1": ("gevgen.log", "gevgen.status", "gntp.ghep.root", "input-flux.root"),
              "coverage_slot2": ("gevgen.log", "gevgen.status", "gntp.ghep.root", "input-flux.root"),
              "merged": ("genie_v3_g21_ALL.gst.root",)}
@@ -205,10 +205,17 @@ def deleted_problems(d, r=None):
         c = v.get("decoded")
         return (type(c) is dict and type(c.get("holds_seed")) is bool and type(c.get("name_holds_seed")) is bool
                 and type(c.get("int32_count")) is int and type(c.get("codecs")) is dict
-                and type(c.get("bytes_inflated")) is int and (not n.endswith(".gst.root") or _schema_ok(v.get("schema"))))
-    return p + [f"{k}/{n}" for k in sorted(d) for n, v in sorted(d[k].items())
-            if not (type(v) is dict and _hex64(v.get("sha256")) and type(v.get("bytes")) is int and v["bytes"] >= 0
-                    and type(v.get("holds_public_seed")) is bool and root_ok(n, v))]
+                and type(c.get("bytes_inflated")) is int and type(c.get("hits")) is list
+                and (not n.endswith(".gst.root") or _schema_ok(v.get("schema"))))
+    bad = [f"{k}/{n}" for k in sorted(d) for n, v in sorted(d[k].items())
+           if not (type(v) is dict and _hex64(v.get("sha256")) and type(v.get("bytes")) is int and v["bytes"] >= 0
+                   and type(v.get("holds_public_seed")) is bool and root_ok(n, v))]
+    # K6, the positive control: each coverage GHEP (the public seed its run number) has the seed in decoded bytes
+    p += [f"{k}/gntp.ghep.root: the control's seed was not found decoded" for k in ("coverage_slot1", "coverage_slot2")
+          if f"{k}/gntp.ghep.root" not in bad and not (
+              d[k]["gntp.ghep.root"]["decoded"]["holds_seed"] is True and d[k]["gntp.ghep.root"]["decoded"]["bytes_inflated"] > 0
+              and {"inflated", "int32-object"} & set(d[k]["gntp.ghep.root"]["decoded"]["hits"]))]
+    return p + bad
 
 
 EVENT_DIRS = ("work/t0", "coverage/G21_11a_00_000", "coverage/G18_02a_00_000", "gst")
@@ -234,22 +241,57 @@ def leftovers(run_dir):
     return out
 
 
-def quiesce(sid):
-    """The number of processes still in the driver's session (its own, by start_new_session), each then KILLed:
-    GNU timeout gives the driver a process group of its own, but not a session."""
-    import signal
-    if not sid or not os.path.isdir("/proc/self"):
-        return 0
-    n = 0
-    for d in os.listdir("/proc"):
-        if d.isdigit():
+def session_pids(sid):
+    """[pid]: the live processes of session sid (zombies aside), from /proc on the node, or ps where there is none.
+    A process whose state cannot be read counts unless getsid says it is gone."""
+    if os.path.isdir("/proc/self"):
+        pids = [int(d) for d in os.listdir("/proc") if d.isdigit()]
+
+        def state(p):
             try:
-                if os.getsid(int(d)) == sid:
-                    os.kill(int(d), signal.SIGKILL)
-                    n += 1
-            except (ProcessLookupError, PermissionError):
+                return open(f"/proc/{p}/stat").read().rsplit(")", 1)[1].split()[0]
+            except (OSError, IndexError):
+                return None
+    else:
+        r = subprocess.run(["ps", "-A", "-o", "pid=,stat="], capture_output=True, text=True)
+        if r.returncode != 0:
+            raise OSError("ps failed")
+        st = {int(a): b for a, b in (ln.split()[:2] for ln in r.stdout.splitlines() if len(ln.split()) >= 2)}
+        pids, state = list(st), st.get
+    out = []
+    for p in sorted(pids):
+        if p == os.getpid() or (state(p) or "").startswith("Z"):
+            continue
+        try:
+            if os.getsid(p) == sid:
+                out.append(p)
+        except (ProcessLookupError, PermissionError):
+            pass
+    return out
+
+
+def quiesce(sid, seconds=30.0, scan=None, kill=os.kill, clock=None, sleep=None):
+    """(KILLed, quiet): the driver's session (its own, by start_new_session; GNU timeout gives it a process group,
+    not a session) KILLed until two scans in a row, 0.5 s apart, find it empty, for at most `seconds`."""
+    import signal
+    import time
+    if not sid:
+        return 0, True
+    scan = scan or (lambda: session_pids(sid))
+    clock, sleep = clock or time.monotonic, sleep or time.sleep
+    end, empties, killed = clock() + seconds, 0, set()
+    while True:
+        own = scan()
+        empties = 0 if own else empties + 1
+        for q in own:
+            killed.add(q)
+            try:
+                kill(q, signal.SIGKILL)
+            except ProcessLookupError:
                 pass
-    return n
+        if empties >= 2 or clock() >= end:
+            return len(killed), empties >= 2
+        sleep(0.5)
 
 
 def _run(argv, **k):
@@ -298,7 +340,10 @@ def replay(parent=REPLAY_PARENT, archive_b64=None, archive_sha=None, blobs=None,
                          "--workdir", os.path.join(w, "run")], cwd=os.path.join(w, "run"), env=env,
                         stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
             finally:                    # no writer outlives the driver: its session's stragglers are KILLed
-                rec["quiesced"] = quiesce(getattr(p, "pid", None))
+                rec["quiesced"], rec["quiet"] = quiesce(getattr(p, "pid", None))
+        if rec["quiesced"] or not rec["quiet"]:  # before the files are swept: a straggler could still write
+            raise Stop(f"quiesce: {rec['quiesced']} processes outlived the driver"
+                       + ("" if rec["quiet"] else ", and its session did not empty in 30 s"))
         rec["driver_rc"] = p.returncode
         with open(os.path.join(w, "driver.log"), "rb") as log:
             rec["driver_lines"] = [ln for ln in log.read().decode(errors="replace").splitlines()

@@ -157,6 +157,8 @@ M = [(f, old, new, what, "probe") for f, old, new, what in [
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '        if rest.startswith("+++ ") and not (', '        if False and not (', 'r5: the probe: a malformed exit record'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '            if pid in pending:\n                probs.append(f"unfinished-overwritten', '            if False:\n                probs.append(f"unfinished-overwritten', 'r5: the probe: an unfinished call overwritten'),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', 'unlinkat,"\n             "mkdir,mkdirat,mknod,mknodat,truncate")', 'unlinkat")', "r5: the probe's trace set without mkdir"),
+    # round 6: round 5's confirm read (delta-read-r5/confirm/DISPOSITIONS.md, the director's GO)
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '        elif pid in pending and re.match(r"^[a-z0-9_]+\\(", rest):', '        elif False:', 'r6: the probe: a complete call while one is pending (K11)'),
 ]]
 
 if __name__ == "__main__":

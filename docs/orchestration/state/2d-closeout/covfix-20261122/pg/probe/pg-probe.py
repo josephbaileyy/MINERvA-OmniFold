@@ -541,6 +541,8 @@ def trace_complete(text, rc):
                 probs.append(f"unfinished-overwritten: process {pid} began a call before its last one resumed")
             sm = re.match(r"^([a-z0-9_]+)\(", rest)
             pending[pid] = sm.group(1) if sm else "?"
+        elif pid in pending and re.match(r"^[a-z0-9_]+\(", rest):     # one thread, one syscall at a time
+            probs.append(f"resume-mismatch: process {pid} completed a call while its {pending[pid]} was unfinished")
         x = re.fullmatch(r"\+\+\+ exited with (\d+) \+\+\+", rest)
         if x:
             exits[pid] = int(x.group(1))

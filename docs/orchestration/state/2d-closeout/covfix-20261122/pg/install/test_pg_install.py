@@ -228,10 +228,13 @@ GOOD_REPLAY = dict(RP.IDENTITY, **{
     "gst_merged_schema": {"keys": [["TTree", "gst", "t"]], "streamer_sha256": "5" * 64}})
 REC = {"sha256": "a" * 64, "bytes": 10, "holds_public_seed": False}
 ROOTREC = dict(REC, decoded={"holds_seed": False, "name_holds_seed": False, "int32_count": 0, "codecs": {"ZL": 2},
-                              "bytes_inflated": 9})
-RUN = {"gevgen.status": REC, "gntp.ghep.root": ROOTREC, "input-flux.root": ROOTREC}       # every file each run makes
+                              "bytes_inflated": 9, "hits": []})
+CONTROL = dict(REC, holds_public_seed=True, decoded=dict(ROOTREC["decoded"], holds_seed=True, name_holds_seed=True,
+                                                         hits=["bytes", "inflated", "path"]))   # the seed, decoded
+RUN = {"gevgen.status": REC, "input-flux.root": ROOTREC}       # what each run leaves (t0's GHEP the wrapper removes)
+COV = dict(RUN, **{"gevgen.log": REC, "gntp.ghep.root": CONTROL})
 GOOD_DELETED = {"t0": dict(RUN, **{"genie_v3.gst.root": dict(ROOTREC, schema=GOOD_REPLAY["gst_schema"])}),
-                "coverage_slot1": dict(RUN, **{"gevgen.log": REC}), "coverage_slot2": dict(RUN, **{"gevgen.log": REC}),
+                "coverage_slot1": COV, "coverage_slot2": COV,
                 "merged": {"genie_v3_g21_ALL.gst.root": dict(ROOTREC, schema=GOOD_REPLAY["gst_merged_schema"])}}
 class NodeLaunch(unittest.TestCase):
     def setUp(self):
@@ -348,10 +351,28 @@ class NodeLaunch(unittest.TestCase):
                                 ("an unknown binding", dict(rec, replay=dict(GOOD_REPLAY, execs=dict(GOOD_REPLAY["execs"], **{
                                     "trace_check_gntpc.json": [dict(GOOD_REPLAY["execs"]["trace_check_gntpc.json"][0],
                                                                     bound_by="trust me")]}))), "replay execs"),
-                                ("the name and bytes not apart", dict(rec, deleted=dict(GOOD_DELETED, t0=dict(
-                                    GOOD_DELETED["t0"], **{"gntp.ghep.root": dict(REC, decoded={
-                                        "holds_seed": False, "int32_count": 0, "codecs": {}, "bytes_inflated": 0})}))),
-                                 "deleted t0/gntp.ghep.root"),
+                                ("the name and bytes not apart", dict(rec, deleted=dict(GOOD_DELETED, coverage_slot1=dict(
+                                    COV, **{"gntp.ghep.root": dict(REC, decoded={
+                                        "holds_seed": True, "int32_count": 0, "codecs": {}, "bytes_inflated": 9,
+                                        "hits": ["inflated"]})}))),
+                                 "deleted coverage_slot1/gntp.ghep.root"),
+                                ("a GHEP in t0", dict(rec, deleted=dict(GOOD_DELETED, t0=dict(
+                                    GOOD_DELETED["t0"], **{"gntp.ghep.root": ROOTREC}))), "deleted names"),
+                                ("the control not found", dict(rec, deleted=dict(GOOD_DELETED, coverage_slot2=dict(
+                                    COV, **{"gntp.ghep.root": ROOTREC}))),
+                                 "deleted coverage_slot2/gntp.ghep.root: the control's seed was not found decoded"),
+                                ("the control found only raw", dict(rec, deleted=dict(GOOD_DELETED, coverage_slot1=dict(
+                                    COV, **{"gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], **{"hits": ["bytes", "path"]}))}))),
+                                 "deleted coverage_slot1/gntp.ghep.root: the control's seed was not found decoded"),
+                                ("the control only in a stored object", dict(rec, deleted=dict(GOOD_DELETED, coverage_slot1=dict(
+                                    COV, **{"gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], **{"bytes_inflated": 0, "hits": ["int32-object", "path"]}))}))),
+                                 "deleted coverage_slot1/gntp.ghep.root: the control's seed was not found decoded"),
+                                ("the control decoded but not held", dict(rec, deleted=dict(GOOD_DELETED, coverage_slot1=dict(
+                                    COV, **{"gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], **{"holds_seed": False}))}))),
+                                 "deleted coverage_slot1/gntp.ghep.root: the control's seed was not found decoded"),
+                                ("a decode without its hits", dict(rec, deleted=dict(GOOD_DELETED, t0=dict(
+                                    GOOD_DELETED["t0"], **{"input-flux.root": dict(ROOTREC, decoded=dict(
+                                        ROOTREC["decoded"], hits=None))}))), "deleted t0/input-flux.root"),
                                 ("a gst not decoded", dict(rec, deleted=dict(GOOD_DELETED, t0=dict(GOOD_DELETED["t0"], **{
                                     "genie_v3.gst.root": dict(REC, schema=GOOD_REPLAY["gst_schema"])}))),
                                  "deleted t0/genie_v3.gst.root"),
@@ -383,6 +404,7 @@ echo "[replay] stub $PG_STUB_RC"
 mkdir -p "$2/work/t0" "$2/coverage/G21_11a_00_000" "$2/coverage/G18_02a_00_000" "$2/gst"
 printf '%s' "${PG_STUB_REPLAY:-$GOOD_REPLAY}" > "$2/replay.json"
 printf '%s' "${PG_STUB_DELETED:-$GOOD_DELETED}" > "$2/deleted.json"
+[ -z "$PG_STUB_STRAGGLER" ] || { sleep 30 > /dev/null 2>&1 & }
 [ -z "$PG_STUB_LEFT" ] || echo x > "$2/${PG_STUB_LEFT_DIR:-work/t0}/$PG_STUB_LEFT"
 exit ${PG_STUB_RC:-0}
 """
@@ -414,7 +436,7 @@ class Replay(unittest.TestCase):
             self.seen.append(argv)
             k["env"] = dict(k["env"], GOOD_REPLAY=json.dumps(GOOD_REPLAY), GOOD_DELETED=json.dumps(GOOD_DELETED),
                             **(env or {}))
-            return subprocess.run(argv[5:], **k)                 # without nice and timeout, which macOS lacks
+            return RP._run(argv[5:], **k)                 # without nice and timeout, which macOS lacks; the pid kept
         import datetime as dt
         self.calls = getattr(self, "calls", 0) + 1                # a distinct replay directory per call
         args = dict(now=dt.datetime(2026, 11, 25, 0, 0, self.calls, tzinfo=dt.timezone.utc),
@@ -535,10 +557,23 @@ class Replay(unittest.TestCase):
                     "gevgen.log": REC}))}, "deleted-record"),
                 ("a deleted schema unlike the record's", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, merged={
                     "genie_v3_g21_ALL.gst.root": dict(ROOTREC, schema=GOOD_REPLAY["gst_schema"])}))}, "deleted-record"),
-                ("the name and bytes not apart", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, t0=dict(
-                    GOOD_DELETED["t0"], **{"gntp.ghep.root": dict(REC, decoded={
-                        "holds_seed": False, "int32_count": 0, "codecs": {}, "bytes_inflated": 0})})))},
-                 "deleted-record")):
+                ("the name and bytes not apart", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, coverage_slot1=dict(
+                    COV, **{"gntp.ghep.root": dict(REC, decoded={
+                        "holds_seed": True, "int32_count": 0, "codecs": {}, "bytes_inflated": 9, "hits": ["inflated"]})})))},
+                 "deleted-record"),
+                ("a GHEP in t0", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, t0=dict(
+                    GOOD_DELETED["t0"], **{"gntp.ghep.root": ROOTREC})))}, "deleted-record"),
+                ("the control not found", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, coverage_slot1=dict(
+                    COV, **{"gntp.ghep.root": ROOTREC})))}, "deleted-record"),
+                ("the control found only raw", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, coverage_slot2=dict(COV, **{
+                    "gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], **{"hits": ["bytes", "path"]}))})))}, "deleted-record"),
+                ("the control only in a stored object", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, coverage_slot2=dict(COV, **{
+                    "gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], **{"bytes_inflated": 0, "hits": ["int32-object", "path"]}))})))}, "deleted-record"),
+                ("the control decoded but not held", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, coverage_slot2=dict(COV, **{
+                    "gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], **{"holds_seed": False}))})))}, "deleted-record"),
+                ("a decode without its hits", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, coverage_slot2=dict(COV, **{
+                    "gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], **{"hits": None}))})))}, "deleted-record"),
+                ("a straggler in the driver's session", {"PG_STUB_STRAGGLER": "1"}, "quiesce")):
             with self.subTest(name):
                 self.assert_stop(self.run_replay(env=env), f"Stop: {code}: ")
 
@@ -549,6 +584,36 @@ class Replay(unittest.TestCase):
         subprocess.run(git + ["commit", "-qm", "l"], check=True)
         with self.assertRaises(SystemExit):
             EA.build("HEAD", self.repo, self.paths)
+
+
+class Quiesce(unittest.TestCase):
+    """K8: the driver's session is KILLed until two scans in a row find it empty, for at most 30 s."""
+
+    def setUp(self):
+        self.RP = load("pg_replay_g2111a", HERE / "pg-replay-g2111a.py")
+
+    def test_a_straggler_is_killed_and_the_session_rescanned(self):
+        seq, killed = iter([[5], [5], [], []]), []
+        n, quiet = self.RP.quiesce(9, scan=lambda: next(seq), kill=lambda q, s: killed.append(q),
+                                   clock=lambda: 0.0, sleep=lambda d: None)
+        self.assertEqual((n, quiet, killed), (1, True, [5, 5]))
+
+    def test_a_session_that_never_empties(self):
+        t = [0.0]
+        n, quiet = self.RP.quiesce(9, scan=lambda: [5], kill=lambda q, s: None, clock=lambda: t[0],
+                                   sleep=lambda d: t.__setitem__(0, t[0] + d))
+        self.assertEqual((n, quiet), (1, False))
+
+    def test_an_empty_session_needs_two_scans(self):
+        seq = iter([[], [7], [], []])
+        n, quiet = self.RP.quiesce(9, scan=lambda: next(seq), kill=lambda q, s: None, clock=lambda: 0.0,
+                                   sleep=lambda d: None)
+        self.assertEqual((n, quiet), (1, True))
+
+    def test_the_real_scan_finds_a_session(self):
+        child = subprocess.Popen(["sleep", "30"], start_new_session=True)
+        self.addCleanup(lambda: (child.kill(), child.wait()))
+        self.assertEqual(self.RP.session_pids(child.pid), [child.pid])
 
 
 class Constants(unittest.TestCase):

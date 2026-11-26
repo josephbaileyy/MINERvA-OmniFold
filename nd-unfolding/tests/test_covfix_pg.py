@@ -324,10 +324,12 @@ case "$1" in
          [ -n "$PG_STUB_SLOW" ] && { sleep "$PG_STUB_SLOW"; [ -z "$PG_STUB_MARK" ] || echo late >> "$PG_STUB_MARK"; }
          [ "$5" = "${PG_STUB_FAIL_SEED:-none}" ] && { echo ghep > "gntp.$5.ghep.root"; exit 1; }
          [ "$5" = "${PG_STUB_NOGST_SEED:-none}" ] || cp "$PG_STUB_GST" genie_v3.gst.root
+         [ -z "$PG_STUB_KEEP_GHEP" ] || echo ghep > "gntp.$5.ghep.root"
          cp "$PG_STUB_ROOT" input-flux.root
          [ "$5" != "${PG_STUB_LOCK_SEED:-none}" ] || chmod 0555 . ;;
   coverage) mkdir -p "$4"; cd "$4"; echo "Need xsec spline for a" > gevgen.log; echo st > genie-mcjob-123456789.status
-         cp "$PG_STUB_ROOT" gntp.123456789.ghep.root; cp "$PG_STUB_ROOT" input-flux.root; echo t > "$PG_TRACE_DIR/coverage.trace"
+         cp "${PG_STUB_GHEP:-$PG_STUB_ROOT}" gntp.123456789.ghep.root; cp "$PG_STUB_ROOT" input-flux.root
+         echo t > "$PG_TRACE_DIR/coverage.trace"
          [ -z "$PG_STUB_COVERAGE_EXTRA" ] || echo x > extra.root ;;
 esac
 '''
@@ -373,6 +375,8 @@ if a[0] == "host-check":
     print('{"pass": true, "checks": {%s}}' % ", ".join('"h%d": true' % i for i in range(n))); sys.exit(0)
 if a[0] == "shape-check" and os.environ.get("PG_STUB_BAD_RECORD"):      # a broken earlier deletion record
     open(os.path.join(os.path.dirname(a[a.index("--traces") + 1]), "deleted.json"), "w").write("{")
+if a[0] == "shape-check" and os.environ.get("PG_STUB_PRIOR"):           # an earlier record of the wrong shape
+    open(os.path.join(os.path.dirname(a[a.index("--traces") + 1]), "deleted.json"), "w").write(os.environ["PG_STUB_PRIOR"])
 if a[0] == "shape-check" and os.environ.get("PG_STUB_UNREADABLE"):     # after hadd: the gst unreadable at deletion
     os.chmod(os.path.join(os.path.dirname(a[a.index("--traces") + 1]), "work/t0/genie_v3.gst.root"), 0)
 if a[0] == "shape-check":
@@ -461,8 +465,12 @@ class Generate(unittest.TestCase):
         self.gst_tpl, self.root_tpl = self.tmp / "tpl.gst.root", self.tmp / "tpl.root"   # real ROOT layouts
         self.gst_tpl.write_bytes(root_file([_key("TFile", "genie_v3.gst.root", "", b"top", codec=None),
                                             _key("TBasket", "iev", "gst", b"pad" * 40),
-                                            _key("TTree", "gst", "GENIE Summary Event Tree", b"tree" * 30)]))
+                                            _key("TTree", "gst", "GENIE Summary Event Tree", b"tree" * 30),
+                                            _key("TList", "StreamerInfo", "Doubly linked list", b"streamer" * 20)]))
         self.root_tpl.write_bytes(root_file([_key("TH1D", "h", "flux", b"bins" * 30)]))
+        self.ghep_tpl = self.tmp / "tpl.ghep.root"           # GENIE's run number (gevgen -r, the seed) in its tree
+        self.ghep_tpl.write_bytes(root_file([_key("TFile", "gntp.123456789.ghep.root", "", b"top", codec=None),
+                                             _key("TTree", "gtree", "GENIE", b"runnu" + (123456789).to_bytes(8, "big") * 12)]))
         (rec / "root-schemas.json").write_text(json.dumps({"gst": pg_lib.root_schema(str(self.gst_tpl)),
                                                            "gst_merged": pg_lib.root_schema(str(self.gst_tpl))}))
         (g / "run_gevgen_v3.sh").write_text(STUB_RUN)
@@ -629,7 +637,7 @@ class Generate(unittest.TestCase):
         self.assertEqual(subprocess.run(["git", "-C", str(self.dep), "status", "--porcelain", "--ignored",
                                          "--untracked-files=all"], capture_output=True, text=True).stdout, "")
         self.assertEqual(sorted(x.name for x in self.tmp.iterdir()),                # the ROOT templates are the test's
-                         ["W", "bin", "deploy", "stub.log", "sysbin", "tpl.gst.root", "tpl.root"])
+                         ["W", "bin", "deploy", "stub.log", "sysbin", "tpl.ghep.root", "tpl.gst.root", "tpl.root"])
 
     def refused(self, p, rc=2):
         self.assertEqual(p.returncode, rc, p.stdout + p.stderr)
@@ -1047,7 +1055,7 @@ class Replay(unittest.TestCase):
     def run_replay(self, **env):
         e = {"PATH": f"/usr/bin:/bin:/usr/sbin:/sbin:{self.sysbin}", "HOME": str(self.tmp), "TMPDIR": str(self.W / "tmp"),
              "PG_STUB_LOG": str(self.log), "PG_STUB_BIN": str(self.bin), "PG_STUB_DEPLOY": str(self.dep),
-             "PG_STUB_GST": str(self.gst_tpl), "PG_STUB_ROOT": str(self.root_tpl)}
+             "PG_STUB_GST": str(self.gst_tpl), "PG_STUB_ROOT": str(self.root_tpl), "PG_STUB_GHEP": str(self.ghep_tpl)}
         e.update(env)
         return subprocess.run(["bash", str(self.dep / "3d-unfolding/genie/pg_replay.sh"), "--workdir", str(self.R)],
                               cwd=self.R, env=e, stdin=subprocess.DEVNULL, capture_output=True, text=True)
@@ -1096,7 +1104,9 @@ class Replay(unittest.TestCase):
         dec = gone["t0"]["genie_v3.gst.root"]["decoded"]
         self.assertEqual((dec["holds_seed"], dec["name_holds_seed"]), (False, False))
         cov = gone["coverage_slot1"]["gntp.ghep.root"]["decoded"]                # gntp.123456789.ghep.root
-        self.assertEqual((cov["holds_seed"], cov["name_holds_seed"]), (False, True))
+        self.assertEqual((cov["holds_seed"], cov["name_holds_seed"]), (True, True))         # K6: the control found it
+        self.assertTrue({"inflated", "int32-object"} & set(cov["hits"]), cov["hits"])   # an int64 run number holds the int32
+        self.assertGreater(cov["bytes_inflated"], 0)
         self.assertEqual([ln for ln in log if ln.startswith("core ")], ["core 0"])        # Q2
         gntpc = next(ln for ln in log if ln.startswith("pg_verify trace-check") and "--role gntpc" in ln).split()
         self.assertEqual(gntpc[gntpc.index("--ghep-from-trace") + 1], str(self.R / "work/t0/gevgen.trace"))
@@ -1116,6 +1126,50 @@ class Replay(unittest.TestCase):
         self.assertNotIn("123456789", json.dumps(gone))
         g = gone["t0"]["genie_v3.gst.root"]                                    # C4's control: the gst decoded too
         self.assertEqual((g["decoded"]["holds_seed"], g["schema"]), (False, rec["gst_schema"]))
+
+    def install(self, name):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(name.replace("-", "_"), REPO / f"docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/{name}.py")
+        m = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(m)
+        return m
+
+    def test_the_drivers_records_pass_both_validators(self):
+        p = self.run_replay()
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        r = json.loads((self.R / "replay.json").read_text())
+        d = json.loads((self.R / "deleted.json").read_text())
+        node, launcher = self.install("pg-replay-g2111a"), self.install("pg-node-launch")
+        self.assertEqual(node.deleted_problems(d, r), [])                    # K2: t0 has no GHEP: the wrapper removed it
+        self.assertEqual(launcher._deleted_problems(d, r), [])
+        self.assertEqual(list((self.R / "work/t0").glob("gntp.*.ghep.root")), [])
+        self.assertIn("[replay] t0's GHEP removed by the wrapper: pass", p.stdout)
+
+    def test_a_control_without_the_seed_stops_at_both_validators(self):
+        p = self.run_replay(PG_STUB_GHEP=str(self.root_tpl))                 # a GHEP whose bytes lack the seed
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        r = json.loads((self.R / "replay.json").read_text())
+        d = json.loads((self.R / "deleted.json").read_text())
+        for problems in (self.install("pg-replay-g2111a").deleted_problems(d, r),
+                         self.install("pg-node-launch")._deleted_problems(d, r)):
+            self.assertTrue(problems and all("control" in x for x in problems), problems)
+
+    def test_a_left_ghep_in_t0_stops(self):
+        p = self.run_replay(PG_STUB_KEEP_GHEP="1")
+        self.assertEqual(p.returncode, 1, p.stdout)
+        self.assertIn("[replay] STOP: the wrapper left t0's GHEP", p.stdout)
+
+    def test_a_prior_record_of_the_wrong_shape(self):
+        for bad in ("[]", '{"t0": null}'):
+            with self.subTest(bad):
+                shutil.rmtree(self.R)
+                self.R.mkdir()
+                p = self.run_replay(PG_STUB_PRIOR=bad)
+                self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+                gone = json.loads((self.R / "deleted.json").read_text())
+                self.assertEqual(gone["_prior"], "unreadable")
+                self.assertIn("genie_v3.gst.root", gone["t0"])
+                self.assertFalse((self.R / "work/t0/genie_v3.gst.root").exists())
 
     def test_an_unreadable_event_file_is_still_deleted(self):
         p = self.run_replay(PG_STUB_UNREADABLE="1")
@@ -1563,3 +1617,71 @@ class Leak5(Leak4):
         import fnmatch
         for n in ("genie_v3_g21", "genie_v3_g18_02a"):
             self.assertTrue(fnmatch.fnmatchcase(f"out/gst/{n}_ALL.gst.root", "out/gst/*_ALL.gst.root"))
+
+
+class Leak6(Leak5):
+    """Round 5's confirm read (the director's GO): a key's blocks use all of its bytes; a freed record kept in a gap
+    is read as strictly as a live one, with its class; a codec missing for a gap's block is a STOP; the schema is the
+    live keys'; B3's control is decoded even when the raw bytes already hit (K3, K4, K6)."""
+
+    def test_a_keys_bytes_after_its_blocks_stop(self):
+        import struct
+        import zlib
+        key = _key("TNamed", "x", "y", b"pad" * 40)
+        z = zlib.compress(b"run %d" % self.SEED, 9)
+        extra = b"ZL\x08" + len(z).to_bytes(3, "little") + len(b"run %d" % self.SEED).to_bytes(3, "little") + z
+        key = struct.pack(">i", len(key) + len(extra)) + key[4:] + extra   # a block past the object's size
+        f = self.put("out/extra.root", root_file([key]))
+        with self.assertRaises(pg_lib.Refusal) as cm:
+            pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])
+        self.assertTrue(str(cm.exception).startswith("root-block"), str(cm.exception))
+
+    def test_a_freed_record_is_read_strictly(self):
+        old = bytearray(_key("TNamed", "old", "x", b"run " * 30))
+        old[-3] ^= 0xFF                                                     # its compressed stream broken
+        f = self.put("out/bad-gap.root", self.gap_file(bytes(old)))
+        with self.assertRaises(pg_lib.Refusal) as cm:
+            pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])
+        self.assertTrue(str(cm.exception).startswith("root-block"), str(cm.exception))
+
+    def test_a_missing_codec_in_a_gap_stops(self):
+        import struct
+        from unittest import mock
+        block = b"L4\x01" + (20).to_bytes(3, "little") + (40).to_bytes(3, "little") + b"\0" * 20
+        for name, gap in (("a freed record", self.gap_file(_key("TNamed", "old", "x", b"run " * 30, codec=b"L4"))),
+                          ("bytes that are no record", None)):
+            with self.subTest(name):
+                if gap is None:
+                    raw = b"\xff" * 20 + block
+                    live = _key("TBasket", "iev", "gst", b"pad" * 40)
+                    body = struct.pack(">i", -(4 + len(raw))) + raw + live
+                    gap = b"root" + struct.pack(">iii", 62206, 100, 100 + len(body)) + b"\0" * 84 + body
+                f = self.put("out/l4-gap.root", gap)
+                with mock.patch.dict(sys.modules, {"lz4": None, "lz4.block": None}):
+                    with self.assertRaises(pg_lib.Refusal) as cm:
+                        pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])
+                self.assertTrue(str(cm.exception).startswith("root-codec-unavailable"), str(cm.exception))
+
+    def test_a_freed_basket_keeps_its_class(self):
+        import struct
+        i32 = struct.pack(">i", self.SEED)
+        f = self.put("out/old-basket.root", self.gap_file(_key("TBasket", "E", "gst", b"\x11" * 30 + i32 + b"\x11" * 30)))
+        hits, stats = pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])
+        self.assertEqual(hits, [])                                          # a basket's payload: only counted
+        self.assertGreaterEqual(stats["int32_count"], 1)
+
+    def test_the_schema_is_the_live_keys(self):
+        live = root_file([_key("TBasket", "iev", "gst", b"pad" * 40)])
+        freed = self.gap_file(_key("TList", "StreamerInfo", "x", b"si" * 40))
+        self.assertEqual(pg_lib.root_schema(str(self.tmp / self.put("out/a.root", live))),
+                         pg_lib.root_schema(str(self.tmp / self.put("out/b.root", freed))))
+
+    def test_the_control_is_decoded_after_a_raw_hit(self):
+        f = self.put(f"out/gntp.{self.SEED}.ghep.root",
+                     root_file([_key("TFile", f"gntp.{self.SEED}.ghep.root", "", b"top", codec=None),
+                                _key("TTree", "gtree", "GENIE", b"runnu %d " % self.SEED * 20)]))
+        hits, st = pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])
+        self.assertEqual((hits, st["bytes_inflated"]), ([(None, "path"), (f, "bytes")], 0))   # production: raw STOP
+        hits, st = pg_lib.leak_scan(str(self.tmp), [f], [self.SEED], decode_all=True)
+        self.assertEqual(st["hits"], ["bytes", "inflated", "path"])
+        self.assertGreater(st["bytes_inflated"], 0)
