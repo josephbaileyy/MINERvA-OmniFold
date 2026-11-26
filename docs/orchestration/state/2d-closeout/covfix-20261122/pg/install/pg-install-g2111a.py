@@ -39,7 +39,7 @@ URL = ("https://scisoft.fnal.gov/scisoft/packages/genie_xsec/v3_04_00/"
        "genie_xsec-3.04.00-noarch-G2111a00000-k250-e1000.tar.bz2")
 TARBALL_SHA256 = "ae159887772a54891fc4bddb189ab108d74c4a48db68c13ed7166524e8797590"
 DBCONFIG_SRC = "/cvmfs/larsoft.opensciencegrid.org/products/.upsfiles/dbconfig"
-DBCONFIG_SHA256 = None            # the director's pin, from PG's probe receipt (xsec.dbconfig.sha256)
+DBCONFIG_SHA256 = "accaf71bb0ae10ddd1df30c2b3af8099312e0f5e59ab66d1f42cbab1f00b2950"   # the director's pin (2026-11-26) of B1's receipt, xsec.dbconfig.sha256
 CURL = "/usr/bin/curl"
 O_NOFOLLOW = getattr(os, "O_NOFOLLOW", 0)
 MEMBERS_JSON = r'''{

@@ -3,6 +3,14 @@
 The current list. Each item was ruled non-blocking under the director's rule: blocking means a false STOP of a
 correct run, or a gate that can miss something correct producers really emit. The source of each item is named.
 
+## From B1's receipt (probe/pg-probe.out at 040b3c70; the director, 2026-11-26)
+
+- **The strace self-test's temp directory.** `strace_self_test` removes its `/tmp/pgst*` directory with
+  `shutil.rmtree(d, ignore_errors=True)`, and the receipt records no check that it is gone (the gpg homedir's
+  absence is recorded). The director accepted B1 as run: the directory held a 3-byte test file and a 6-line trace,
+  mode 700 on tmpfs, with no secret and no seed. Deferred to the probe's next byte change: lstat the directory after
+  removal, record `selftest_dir_removed`, and STOP if it remains.
+
 ## From round 6's confirm read (delta-read-r6/confirm/DISPOSITIONS.md; the director, 2026-11-26)
 
 - **Codex 4: the 4 bytes after a whole freed record.** If no freed record follows, the header search starts 4 bytes

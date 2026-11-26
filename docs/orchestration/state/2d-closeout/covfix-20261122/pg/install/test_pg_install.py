@@ -15,6 +15,7 @@ import unittest
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+DBCONFIG_PIN = "accaf71bb0ae10ddd1df30c2b3af8099312e0f5e59ab66d1f42cbab1f00b2950"   # the director's pin of B1's receipt (2026-11-26)
 
 
 def load(name, file):
@@ -243,15 +244,15 @@ class NodeLaunch(unittest.TestCase):
         self.tmp = Path(os.path.realpath(tempfile.mkdtemp(prefix="pgl-", dir="/tmp")))
         self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
         self.L = load("pg_node_launch", HERE / "pg-node-launch.py")
-        self.script = self.tmp / "pg-install-g2111a.py"          # the real script, its dbconfig pin filled
+        self.script = self.tmp / "pg-install-g2111a.py"          # the real script, with its dbconfig pin
         src = (HERE / "pg-install-g2111a.py").read_text()
-        self.assertEqual(src.count("DBCONFIG_SHA256 = None"), 1)
-        self.script.write_text(src.replace("DBCONFIG_SHA256 = None", f"DBCONFIG_SHA256 = {'d' * 64!r}"))
+        self.assertEqual(src.count(f'DBCONFIG_SHA256 = "{DBCONFIG_PIN}"'), 1)
+        self.script.write_text(src)
         self.sha = sha(self.script.read_bytes())
         self.pins = self.L.script_pins(self.script.read_bytes())
         self.go = {"schema": "covfix-pg-install/1", "verdict": "GO", "stops": [], "root": self.pins["ROOT"],
                    "tarball_sha256_pin": self.pins["TARBALL_SHA256"], "tarball_sha256": self.pins["TARBALL_SHA256"],
-                   "n_members_pinned": len(I.MEMBERS["members"]), "dbconfig_sha256": "d" * 64, "scan_problems": [],
+                   "n_members_pinned": len(I.MEMBERS["members"]), "dbconfig_sha256": DBCONFIG_PIN, "scan_problems": [],
                    "tree_problems": [], "identity": {"pass": True}, "install_utc": "t"}
 
     def launch(self, body, sha_=None, script=None):
@@ -659,7 +660,13 @@ class Constants(unittest.TestCase):
         sys.path.insert(1, str(HERE.parents[6] / "3d-unfolding/genie"))
         import pg_verify
         self.assertEqual(I.ROOT, pg_verify.PRIVATE_PRODUCTS)
-        self.assertIsNone(I.DBCONFIG_SHA256)                       # filled only from the director's pin
+        self.assertEqual(I.DBCONFIG_SHA256, DBCONFIG_PIN)          # filled only from the director's pin
+        res = [ln for ln in (HERE.parent / "probe/pg-probe.out").read_text().splitlines()
+               if ln.startswith("PG-PROBE-RESULT ")]
+        self.assertEqual(len(res), 1)                              # B1's receipt, the pin's source
+        b1 = json.loads(res[0][len("PG-PROBE-RESULT "):])
+        self.assertEqual(b1["verdict"], "GO")
+        self.assertEqual(b1["xsec"]["dbconfig"], {"path": I.DBCONFIG_SRC, "sha256": DBCONFIG_PIN})
 
 
 class Quiesce7(Quiesce):
