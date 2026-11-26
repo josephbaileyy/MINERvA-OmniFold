@@ -1,0 +1,19 @@
+PROD /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT-MINERvA.so 2b842b145352f58e7f42bae11da881e2
+PROD /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/runEventLoopOmniFold f4f18045d74d5109dcd0f6abce9dc968
+CHECK SOURCE_PROVENANCE PASS
+SO pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib/libMATDict.so d3b0fee66e231c02df1c9ce8515ab6ffd913127e7c02989ad47b41c7509af4c8
+SO pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib/libMAT-MINERvADict.so ca8eca579793cde857e4bf0bf87f9bed8298a217ffaab1f26c1e66e8404009a6
+SO pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib/libMAT-MINERvA.so ca8eca579793cde857e4bf0bf87f9bed8298a217ffaab1f26c1e66e8404009a6
+SO pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib/libMAT.so d3b0fee66e231c02df1c9ce8515ab6ffd913127e7c02989ad47b41c7509af4c8
+BIN pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/bin/runEventLoopOmniFold d8ececeb838f088910e2f2152b0cab245ade63f9989f074bac69be60a96107ce
+SO pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/libMATDict.so d3b0fee66e231c02df1c9ce8515ab6ffd913127e7c02989ad47b41c7509af4c8
+SO pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/libMAT-MINERvADict.so 3649ea42071728ab4140cd6ff5d9d992c37d03c061af98c45168a9b53a54c588
+SO pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/libMAT-MINERvA.so 3649ea42071728ab4140cd6ff5d9d992c37d03c061af98c45168a9b53a54c588
+SO pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/libMAT.so d3b0fee66e231c02df1c9ce8515ab6ffd913127e7c02989ad47b41c7509af4c8
+BIN pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/bin/runEventLoopOmniFold aa2a3cb90bf62d49508655a64a9c93985d97b6e527e368d1bd456fa8f7bcd0d0
+RPATH pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/bin/runEventLoopOmniFold /global/homes/j/josephrb/.conda/envs/root_6_28/lib:/pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib:
+RPATH pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/bin/runEventLoopOmniFold /global/homes/j/josephrb/.conda/envs/root_6_28/lib:/pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib:
+CHECK RPATH_CLEAN PASS
+CHECK DIFF_EQUALS_UPSTREAM PASS
+CHECK LIBMAT_IDENTICAL PASS
+CHECK LIBMATMINERVA_DIFFER PASS
