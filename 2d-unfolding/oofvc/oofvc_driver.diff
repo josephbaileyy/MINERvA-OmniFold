@@ -78,7 +78,7 @@
      out = {
          "truth_pt": np.asarray(truth_pt_list, dtype=float),
          "truth_pz": np.asarray(truth_pz_list, dtype=float),
-@@ -830,9 +853,57 @@
+@@ -830,9 +853,71 @@
      if use_alt:
          out["w_truth_alt"] = np.asarray(w_truth_alt_list, dtype=float)
          out["w_reco_alt"] = np.asarray(w_reco_alt_list, dtype=float)
@@ -87,8 +87,8 @@
 +    if oofvc_rows is not None:  # OOFVC
 +        out["oofvc_outside"] = oofvc_outside
      return out
-+
-+
+ 
+ 
 +OOFVC_KEYS = ("entry", "reco_pt", "reco_pz", "true_pt", "true_pz", "w_reco", "w_truth")  # OOFVC
 +
 +
@@ -108,35 +108,49 @@
 +    if not all(np.all(np.isfinite(rows[k])) for k in OOFVC_KEYS[1:]):
 +        raise RuntimeError("[FAIL] OOFVC: a moved row has a non-finite value")
 +    return rows
- 
- 
++
++
 +def append_oofvc_rows(rows, pot_scale, pt_lo, pt_hi, pz_lo, pz_hi, lists):  # OOFVC
-+    """Append the moved rows reconstructed in the grid as selected signal (pass_reco and pass_truth true, the truth
-+    gate the rectangle only: MINERvA's numerator has no phase-space cut); return the ones reconstructed outside
-+    the grid, which are not appended, as truth (pT, p||) and POT-scaled reco weight (N's second source)."""
++    """Append the moved rows reconstructed in a cell of the grid as selected signal (pass_reco and pass_truth true;
++    the truth gate is the grid only: MINERvA's numerator has no phase-space cut). Return the ones reconstructed
++    outside it, which are not appended, as truth (pT, p||) and POT-scaled reco weight (N's second source), with the
++    counts. Cells are ROOT's: lower edges in, upper edges out, as the binned M, T and O. Weights follow the loaders'
++    own rules: an appended row needs the signal loader's 0 <= w < 1e4 on both weights, a row reconstructed outside
++    needs the background loader's 0 <= w_reco < 1e6; a row failing its rule is dropped and counted, as those loaders
++    drop theirs."""
 +    tpt, tpz, rpt, rpz, prc, ptr, wtl, wrl, sel = lists
 +    outside = {"truth_pt": [], "truth_pz": [], "w_reco": []}
++    counts = {"appended": 0, "outside": 0, "dropped_appended_weight": 0, "dropped_outside_weight": 0}
 +    for r_pt, r_pz, t_pt, t_pz, w_r, w_t in zip(rows["reco_pt"], rows["reco_pz"], rows["true_pt"],
 +                                                 rows["true_pz"], rows["w_reco"], rows["w_truth"]):
 +        r_pt, r_pz, t_pt, t_pz, w_r, w_t = map(float, (r_pt, r_pz, t_pt, t_pz, w_r, w_t))
-+        if not (pt_lo <= t_pt <= pt_hi and pz_lo <= t_pz <= pz_hi):
-+            raise RuntimeError("[FAIL] OOFVC: a moved row's true muon is outside the grid")
-+        if not (0 <= w_t < 1e4 and 0 <= w_r < 1e4):
-+            raise RuntimeError("[FAIL] OOFVC: a moved row's weight is outside the loader's range")
-+        if pt_lo <= r_pt <= pt_hi and pz_lo <= r_pz <= pz_hi:
++        if not (pt_lo <= t_pt < pt_hi and pz_lo <= t_pz < pz_hi):
++            raise RuntimeError("[FAIL] OOFVC: a moved row's true muon is outside the grid's cells")
++        if pt_lo <= r_pt < pt_hi and pz_lo <= r_pz < pz_hi:
++            if not (0 <= w_t < 1e4 and 0 <= w_r < 1e4):
++                counts["dropped_appended_weight"] += 1
++                continue
 +            tpt.append(t_pt); tpz.append(t_pz); rpt.append(r_pt); rpz.append(r_pz)
 +            prc.append(True); ptr.append(True)
 +            wtl.append(w_t * pot_scale); wrl.append(w_r * pot_scale); sel.append(True)
++            counts["appended"] += 1
 +        else:
++            if not (0 <= w_r < 1e6):
++                counts["dropped_outside_weight"] += 1
++                continue
 +            outside["truth_pt"].append(t_pt); outside["truth_pz"].append(t_pz)
 +            outside["w_reco"].append(w_r * pot_scale)
-+    return {k: np.asarray(v, dtype=float) for k, v in outside.items()}
++            counts["outside"] += 1
++    print(f"[INFO] OOFVC: {counts}")
++    out = {k: np.asarray(v, dtype=float) for k, v in outside.items()}
++    out["counts"] = counts
++    return out
 +
 +
  # ---------------------------------------------------------------------------
  # Opt-in selective branch reading (--branch-select derived)
  # ---------------------------------------------------------------------------
-@@ -1604,8 +1675,23 @@
+@@ -1604,8 +1689,24 @@
                            "The simulation trees and the POT metadata still come from --omnifile, "
                            "and the file's dataPOTUsed must equal the omnifile's. Absent, the "
                            "driver reads --omnifile's own data tree, as before.")
@@ -154,13 +168,14 @@
 +    if args.signal_convention == "minerva" and (  # OOFVC: the central CV path only
 +            args.closure or args.universe is not None or args.closure_alt_universe is not None
 +            or args.bootstrap_seed is not None or args.data_file is not None
-+            or args.bkg_mode != "negweight-refined"):
++            or args.bkg_mode != "negweight-refined" or not args.use_weights):
 +        raise SystemExit("[FAIL] --signal-convention minerva runs on the central CV path only "
-+                         "(--bkg-mode negweight-refined; no closure, universe, bootstrap or --data-file)")
++                         "(--bkg-mode negweight-refined with --use-weights; no closure, universe, bootstrap or "
++                         "--data-file)")
  
      # P1 diagnostic: the background stream is used only on the CV purity path.
      p1_on = args.bootstrap_streams in P1_STREAMS
-@@ -1859,11 +1945,17 @@
+@@ -1859,11 +1960,17 @@
      # hBkgReco2D) and the negweight injection (via the returned arrays) then track
      # the per-universe background.
      p1_kw = {"return_fill_rows": True} if p1_on else {}  # P1 diagnostic
@@ -179,7 +194,7 @@
      bkg_reco_pt, bkg_reco_pz, bkg_reco_w = bkg_out[:3]
      p1_bkg_rows = bkg_out[3] if p1_on else None
  
-@@ -1873,7 +1965,9 @@
+@@ -1873,7 +1980,9 @@
                        pot_scale, use_weights=args.use_weights,
                        verbose=args.verbose,
                        universe_branch=universe_branch,

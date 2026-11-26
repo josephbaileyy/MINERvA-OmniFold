@@ -165,20 +165,25 @@ class Join(unittest.TestCase):
 
     def test_tie_bound(self):
         L.check_tie_bound(1.0, 1000.0)
+        L.check_tie_bound(0.0, 0.0)  # no tie needs no reference (codex-school r1 #9)
         with self.assertRaises(L.JoinStop):
             L.check_tie_bound(1.0001, 1000.0)
         with self.assertRaises(L.JoinStop):
-            L.check_tie_bound(0.0, 0.0)
+            L.check_tie_bound(1.0, 0.0)
+        with self.assertRaises(L.JoinStop):
+            L.check_tie_bound(float("nan"), 1000.0)
 
 
 class Moved(unittest.TestCase):
     def test_moved_mask(self):
         pdg = np.array([14, 14, 14, -14, 12, 14, 14])
         cur = np.array([1, 1, 2, 1, 1, 1, 1])
-        pt = np.array([0.5, 4.5, 0.5, 0.5, 0.5, 4.5000001, 0.0])
-        pz = np.array([5.0, 60.0, 5.0, 5.0, 5.0, 5.0, 1.5])
+        pt = np.array([0.5, 4.5, 0.5, 0.5, 0.5, 4.4999999, 0.0, 0.5])
+        pz = np.array([5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 1.5, 60.0])
+        pdg = np.r_[pdg, 14]; cur = np.r_[cur, 1]
+        # ROOT's cells: lower edges in, upper edges out (codex-school r1 #3)
         np.testing.assert_array_equal(L.moved_mask(pdg, cur, pt, pz, PAPER_PT, PZ),
-                                      [True, True, False, False, False, False, True])
+                                      [True, False, False, False, False, True, True, False])
 
 
 class Readings(unittest.TestCase):
@@ -287,7 +292,7 @@ def fixture_rows(n=300, seed=3, outside=True):
     tp = np.clip(rp * rng.normal(1, 0.05, n), 0.01, 4.4)
     tz = np.clip(rz * rng.normal(1, 0.05, n), 1.6, 59.0)
     if outside:
-        assert np.any(~L.in_rectangle(rp, rz, PAPER_PT, PZ)), "the fixture rows need some reco outside the grid"
+        assert np.any(~L.in_bins(rp, rz, PAPER_PT, PZ)), "the fixture rows need some reco outside the grid"
     return {"entry": e, "reco_pt": rp, "reco_pz": rz, "true_pt": tp, "true_pz": tz, "w_reco": w, "w_truth": w * 1.1}
 
 
@@ -362,7 +367,7 @@ class Driver(unittest.TestCase):
         moved = np.bincount(g[g >= 0], weights=r["w_reco"][g >= 0] * pot, minlength=224)
         db = th2v(self.off, "hBkgReco2D") - th2v(self.R, "hBkgReco2D")
         np.testing.assert_allclose(db, moved, rtol=0, atol=1e-12 * max(1.0, np.abs(th2v(self.off, "hBkgReco2D")).max()))
-        inside = L.in_rectangle(r["reco_pt"], r["reco_pz"], PAPER_PT, PZ)
+        inside = L.in_bins(r["reco_pt"], r["reco_pz"], PAPER_PT, PZ)
         t = L.global_index(r["true_pt"], r["true_pz"], PAPER_PT, PZ)
         sel = inside & (t >= 0)
         gained = np.bincount(t[sel], weights=r["w_truth"][sel] * pot, minlength=224)
@@ -379,12 +384,24 @@ class Driver(unittest.TestCase):
             self.assertNotEqual(p.returncode, 0, extra)
             self.assertIn("[FAIL]", p.stdout + p.stderr, extra)
         fx, flux = write_fixture()
-        argv = [a if a != "negweight-refined" else "purity" for a in ARGV]
-        p = subprocess.run([sys.executable, "-B", str(self.patched), "--omnifile", str(fx), "--mcfile", str(flux),
-                            *argv, "--signal-convention", "minerva", "--oofvc-rows", rp, "--out",
-                            str(TD / "refused.root")], capture_output=True, text=True, cwd=str(self.patched.parent))
-        self.assertNotEqual(p.returncode, 0)
-        self.assertIn("central CV path only", p.stdout + p.stderr)
+        for argv in ([a if a != "negweight-refined" else "purity" for a in ARGV],
+                     [a for a in ARGV if a != "--use-weights"]):
+            p = subprocess.run([sys.executable, "-B", str(self.patched), "--omnifile", str(fx), "--mcfile", str(flux),
+                                *argv, "--signal-convention", "minerva", "--oofvc-rows", rp, "--out",
+                                str(TD / "refused.root")], capture_output=True, text=True, cwd=str(self.patched.parent))
+            self.assertNotEqual(p.returncode, 0, argv)
+            self.assertIn("central CV path only", p.stdout + p.stderr, argv)
+
+    def test_weight_rules_drop_and_count(self):
+        """A moved row with a truth weight outside the signal loader's rule is dropped and counted, as that loader
+        drops its own, and the run goes on (codex-school r1 #8)."""
+        r = {k: v.copy() for k, v in self.rows.items()}
+        inside = np.flatnonzero(L.in_bins(r["reco_pt"], r["reco_pz"], PAPER_PT, PZ))
+        r["w_truth"][inside[0]] = 2.0e4
+        p = run_driver(self.patched, TD / "weights.root",
+                       ["--signal-convention", "minerva", "--oofvc-rows", str(save_rows(r, "weights.npz"))])
+        self.assertIn("'dropped_appended_weight': 1", p.stdout)
+        self.assertIn(f"'appended': {inside.size - 1}", p.stdout)
 
     def test_bad_rows_fail(self):
         """A row whose reco values or weight differ from its entry's, a repeated entry, an entry the tree lacks, a true
@@ -394,7 +411,7 @@ class Driver(unittest.TestCase):
         r = {k: v.copy() for k, v in base.items()}; r["w_reco"][3] *= 1 + 1e-15; cases["weight"] = (r, "does not carry")
         r = {k: v.copy() for k, v in base.items()}; r["entry"][1] = r["entry"][0]; cases["repeat"] = (r, "distinct")
         r = {k: v.copy() for k, v in base.items()}; r["entry"][-1] = 10 ** 7; cases["absent"] = (r, "found in mc_background")
-        r = {k: v.copy() for k, v in base.items()}; r["true_pz"][2] = 61.0; cases["truth"] = (r, "outside the grid")
+        r = {k: v.copy() for k, v in base.items()}; r["true_pz"][2] = 60.0; cases["truth"] = (r, "outside the grid")
         r = {k: v for k, v in base.items() if k != "w_truth"}; cases["keys"] = (r, "keys")
         for name, (rows, msg) in cases.items():
             p = run_driver(self.patched, TD / f"bad_{name}.root",
@@ -429,7 +446,7 @@ class Runner(unittest.TestCase):
     def setUpClass(cls):
         configure_tree_for_fixture()
         cls.rows = fixture_rows(seed=5)
-        cls.rows_path = save_rows(cls.rows, "runner_rows.npz")
+        cls.rows_path = save_rows(cls.rows, "oofvc_rows.npz")  # the production file name, which the scorer requires
         import hashlib
         cls.out = TD / "units"
         # in-process, with O_NOATIME substituted as test_ref_c2c1.py does (macOS has none; O_NONBLOCK is inert on a
@@ -457,8 +474,13 @@ class Runner(unittest.TestCase):
         self.assertEqual(rec["argv"][rec["argv"].index("--oofvc-rows") + 1], str(self.rows_path))
         off = json.loads((self.out / "off" / "er.oofvc.json").read_text())
         self.assertNotIn("--signal-convention", off["argv"])
-        inside = L.in_rectangle(self.rows["reco_pt"], self.rows["reco_pz"], PAPER_PT, PZ)
+        inside = L.in_bins(self.rows["reco_pt"], self.rows["reco_pz"], PAPER_PT, PZ)
         self.assertEqual(rec["n_signal_rows"] - off["n_signal_rows"], int(inside.sum()))
+        self.assertEqual(rec["oofvc_counts"], {"appended": int(inside.sum()), "outside": int((~inside).sum()),
+                                               "dropped_appended_weight": 0, "dropped_outside_weight": 0})
+        self.assertIsNone(off["oofvc_counts"])
+        n = json.loads((self.out / "R" / "c2_central.oofvc.json").read_text())["n_controls"]
+        self.assertTrue(n["C-NMOVED"]["pass"] and n["C-NMOVED"]["sum"] > 0, n)
 
     def test_n_is_the_factor_on_the_units_trajectory(self):
         """N's saved trajectory is the unit's trajectory times sum M / (sum M + O), and O's moved part is the rows
@@ -471,7 +493,7 @@ class Runner(unittest.TestCase):
             self.assertTrue(np.all(n["factor"] <= 1) and np.all(n["factor"] > 0))
         n = np.load(self.out / "R" / "n.npz")
         r = self.rows
-        out = ~L.in_rectangle(r["reco_pt"], r["reco_pz"], PAPER_PT, PZ)
+        out = ~L.in_bins(r["reco_pt"], r["reco_pz"], PAPER_PT, PZ)
         pot = contents(self.out / "R" / "er.root")["potScale"]
         np.testing.assert_allclose(n["O_moved"], L.o_vector(r["true_pt"][out], r["true_pz"][out],
                                                             r["w_reco"][out] * pot, PAPER_PT, PZ), rtol=1e-15)
@@ -490,9 +512,10 @@ class Runner(unittest.TestCase):
 
 
     def test_scorer_controls_on_the_fixture_units(self):
-        """oofvc_score.py on the fixture's units: C-FIX and C-MOVE pass (they are properties of the R units), C-BASE
-        fails (the fixture is not Tier 1's input), the numpy-unfolder units fail C-ROO_ran, so the reading is STOP and
-        no operand is printed."""
+        """oofvc_score.py on the fixture's units: C-FIX, C-MOVE and C-KS pass, and every unit's digests, argv and
+        convention check out (properties of these units). C-BASE fails (the fixture is not Tier 1's input), and the
+        numpy-unfolder units fail the unfolder checks and C-PINS (no RooUnfold digest), so the reading is STOP and no
+        operand is printed."""
         import hashlib
         join = TD / "score_join.json"
         join.write_text(json.dumps({"verdict": "PASS", "rows_sha256": hashlib.sha256(self.rows_path.read_bytes()).hexdigest(),
@@ -505,10 +528,15 @@ class Runner(unittest.TestCase):
         c = rec["controls"]
         self.assertTrue(c["C-FIX"]["pass"], c["C-FIX"])
         self.assertTrue(c["C-MOVE"]["pass"], c["C-MOVE"])
-        self.assertTrue(c["C-PINS"]["pass"], c["C-PINS"])
+        self.assertTrue(c["C-KS"]["pass"])
         self.assertTrue(c["C-IN"]["pass"])
         self.assertFalse(c["C-BASE"]["pass"])
-        self.assertEqual(c["C-UNITS"]["verdicts"]["R/c2_C-ROO_ran"], "FAIL")
+        self.assertFalse(c["C-PINS"]["pass"])
+        for u, chk in c["C-UNITS"]["checks"].items():
+            for k in ("verdict", "npz_digest", "root_digest", "argv_recorded", "convention"):
+                self.assertTrue(chk[k], (u, k))
+            self.assertFalse(chk["not_numpy_unfolder"], u)
+        self.assertFalse(c["C-UNITS"]["checks"]["R/c2_central"]["C-ROO_ran"])
         self.assertEqual(rec["reading"], "STOP")
         self.assertNotIn("operands", rec)
 
@@ -661,7 +689,7 @@ class JoinTool(unittest.TestCase):
         self.assertEqual(rec["controls"]["C-SIGW"]["n_dump_dup_sig"], 1)
         rows = dict(np.load(out / "oofvc_rows.npz"))
         cc = (fx.lab["nu_pdg"] == 14) & (fx.lab["current"] == 1)
-        want = np.flatnonzero(cc & L.in_rectangle(fx.tpt, fx.tpz, PT_OLD, PZ))
+        want = np.flatnonzero(cc & L.in_bins(fx.tpt, fx.tpz, PT_OLD, PZ))
         np.testing.assert_array_equal(rows["entry"], want)
         np.testing.assert_array_equal(rows["w_reco"], fx.bkg["w_bkg"][want])
         np.testing.assert_array_equal(rows["true_pt"], fx.tpt[want])
@@ -705,6 +733,17 @@ class JoinTool(unittest.TestCase):
         self.assertEqual(p.returncode, 8, p.stdout + p.stderr)
         self.assertFalse(rec["controls"]["C-JOIN"]["pass"])
         self.assertIn("more than", rec["controls"]["C-JOIN"]["why"])
+
+    def test_nan_in_split_stops(self):
+        """A non-finite reference cell is a STOP, not a pass hidden by max() (codex-school r1 #9)."""
+        fx = self.fixture()
+        ref = json.loads((fx.d / "split.json").read_text())
+        ref["FAKE_VTX"][17] = float("nan")
+        (fx.d / "split.json").write_text(json.dumps(ref))
+        p, rec, out = fx.run()
+        self.assertEqual(p.returncode, 8)
+        self.assertFalse(rec["controls"]["C-LAB"]["pass"])
+        self.assertFalse(rec["controls"]["C-LAB"]["finite"])
 
     def test_labels_against_oflow(self):
         def m(r):

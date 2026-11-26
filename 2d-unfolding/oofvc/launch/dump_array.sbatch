@@ -27,5 +27,7 @@ grep -q " $MAN/${pl}_MC.txt\$" manifests.sha256 && sha256sum -c <(grep " $MAN/${
 rc=$?
 echo "[oofvc_dump] $pl rc=$rc $(tail -1 "$pl.log")"
 [ $rc = 0 ] || exit $rc
-mv "$pl.tmp.root" "$pl.root" && sha256sum "$pl.root" > "$pl.sha256" && touch "$pl.done"
+mv "$pl.tmp.root" "$pl.root" && sha256sum "$pl.root" > "$pl.sha256" && touch "$pl.done" \
+  || { echo "[oofvc_dump] $pl STOP: finalizing the output failed"; exit 4; }
 echo "[oofvc_dump] $pl done=$(date -u +%FT%TZ)"
+exit 0

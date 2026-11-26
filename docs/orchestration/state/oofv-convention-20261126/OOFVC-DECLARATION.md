@@ -149,7 +149,10 @@ option to E_R's argv and re-pins the driver.
 - **`minerva`:**
   1. Background (`fill_bkg_reco_2d`, `:263`). The listed entries are left out of the histogram and the negweight
      injection. The rest is unchanged. The list is exactly the ν_μ CC rows (`bkg_nuPDG == 14 && bkg_current == 1`, the
-     truth signal definition as `truth::IsNeutrino`, `truth::IsCC`) whose true muon is in the grid.
+     truth signal definition as `truth::IsNeutrino`, `truth::IsCC`) whose true muon is in a cell of the grid.
+     - **"In the grid" means in one of ROOT's cells** throughout this section: lower edges in, upper edges out (the
+       last edge is overflow). That is how the binned M, T, O and the histograms place a value, so no row on an
+       upper edge falls between the populations (codex-school r1 #3).
   2. Signal (`collect_signal_arrays_2d`, `:673`). The listed rows whose reco is in the grid are appended.
      - **Rows reconstructed outside the grid are not appended.** Under MINERvA's in-grid numerator they appear in
        neither the numerator nor the denominator. For IBU the choice cannot matter: the result is
@@ -162,6 +165,11 @@ option to E_R's argv and re-pins the driver.
      - `pass_truth` = the true rectangle only, with no θ_μ cut, because MINERvA's numerator has no phase-space cut;
      - weights as the signal loop sets them for its own rows: `w_reco` = `w_bkg` (reco mode, which is also the join
        key) and `w_truth` = the truth-mode weight from the dump, each × the POT scale.
+     - **The loaders' own weight rules apply** (codex-school r1 #8).
+       - An appended row needs the signal loader's 0 ≤ w < 1e4 on both weights.
+       - A row reconstructed outside the grid needs the background loader's 0 ≤ w_reco < 1e6.
+       - A row failing its rule is dropped and counted, as those loaders drop theirs, and the counts are recorded.
+       - The option also requires `--use-weights`.
   3. **Moved rows with a true muon outside the grid stay in the background** (the director's ruling 3).
      - This is an approximation to MINERvA's truth-overflow handling. MINERvA's loop fills those events into the
        numerator's and the migration's truth overflow. This grid has no true overflow bin.
@@ -229,7 +237,8 @@ wherever they reconstruct. N is applied to IBU only.
   numerator. T does not enter. REF-C2C1's C-SIM relies on the same consistency.
 - N replaces ε_j by ε^N_j = (Σ_i M_ij + O_j) / T_j. O_j is the reco-mode weight × POT scale of the selected rows whose
   true muon is in cell j and whose reco lies outside the grid. There are two sources:
-  - signal-tree rows with `sim_pass` and reco outside the grid;
+  - signal-tree rows with `sim_pass` whose reco has no cell (outside the grid, or on its upper edge, where M also
+    puts it in the overflow);
   - under R, the moved rows reconstructed outside the grid. These are taken from the join output, because they are
     not appended (§1.3 step 2).
 - So u^N_K = u_K · Σ_i M_ij / (Σ_i M_ij + O_j), per truth bin, at every K. Where Σ_i M_ij = 0 the factor is 1.
@@ -268,33 +277,52 @@ applicable", not "no change".**
   - After a STOP, route B comes back to the director priced. **C-EVL** applies under route B.
 - **C-SIGW:** the selected `mc_signal_reco` rows (`sim_pass`) join one-to-one with the dump's signal-routed rows that
   the signal loop keeps, on (`sim`, `sim_pz`, `w_reco`). The same tie rule and bound apply, the bound relative to the
-  joined weight. The kept rows exclude the key duplicates the signal loop drops (`:1201-1218`). On every pair, (`MC`,
-  `MC_pz`, `w_truth`) are bit-for-bit equal to the dump's. This shows the dump's truth-mode weight and true kinematics
-  are the signal loop's, on the population where a reference exists.
+  joined weight. The kept rows exclude the key duplicates the signal loop drops (`:1201-1218`). The dump flags them
+  as the signal loop does: the first occurrence among all phase-space entries, in entry order, before the selection.
+  On every pair, (`MC`, `MC_pz`, `w_truth`) are bit-for-bit equal to the dump's. This shows the dump's truth-mode
+  weight and true kinematics are the signal loop's, on the population where a reference exists.
+  - **The truth-tree gate.** The signal loop also requires each key to be in the truth tree's denominator (`:1201-1212`).
+    The dump does not re-evaluate that gate. Stage B's P4 census measured nG1 = 0 and nSigLoopNoTruth = 0 on this
+    omnifile's per-playlist inputs, which are E_U's and E_R's (`2d-closeout/stageB/diagnostics/REPORT.md:45-62`). So
+    the gate drops nothing here. The code comment's "~1.8%" predates that measurement, as Stage B records. Were the
+    gate to drop a row, C-SIGW would STOP: an honest refusal, not a wrong result (agy r1 #1, codex-school r1 #1).
 - **C-LAB:** the joined background's oflow categories (FAKE_PS, FAKE_VTX, OTHER), on the OLD 14×16 reco grid and
   POT-scaled, equal `oflow/split.json` cell by cell (relative 1e-9; absolute 1e-9 where split.json has 0), with equal
   counts. They are computed with oflow's own fiducial formula (`oflow/remote3.sh`) from the dump's true vertex and
   labels, so the check compares like with like. This replaces the 5D-file comparison of revision 2: the dump carries
-  the labels, and split.json is their committed record.
+  the labels, and split.json is their committed record. A non-finite cell on either side is a STOP.
 - **C-BASE:** `er_off` and `c2_off` reproduce Tier 1's committed E units (`tier1/units/e/`):
-  - hXSec2D, and c2's cross sections at every K, to ≤ 1e-8 relative (Tier 1's C-REF-OLD was 7.9e-12);
+  - hXSec2D, and c2's cross sections at every K, to ≤ 1e-8 relative (Tier 1's C-REF-OLD was 7.9e-12), with
+    exact zeros wherever Tier 1's are zero, and the same K list;
   - D_ER to 2.121436 and D_IBU(K) to regenA3's set `e` at every K, each to ≤ 1e-6 relative.
 - **C-MOVE:**
   - Per reco cell, the background removed (off minus R) equals the moved rows reconstructed in the grid, POT-scaled.
     The tolerance is 1e-12 of that cell's production background, because the difference of two sums cancels.
-  - R's signal arrays grow by exactly the number of moved rows whose reco is in the grid.
+  - R's signal arrays grow by exactly the number the driver reports appending, which is the moved rows with a reco
+    cell less those its weight rule drops.
   - By construction (`oofvc_lib.moved_mask`), every moved row is ν_μ CC, so FAKE_VTX or FAKE_PS, and no OTHER row
     moves.
-- **C-FIX:** under R, `hOFTruthDenom2D`, `hDataReco2D` and `hFlux_pt`, and the exposure, flux and nucleon parameters,
-  are bit-for-bit those of `off`.
+- **C-FIX:** under R, `hOFTruthDenom2D`, `hDataReco2D` and `hFlux_pt` (contents, errors and axis edges, overflow
+  included), and the exposure, both flux integrals and the nucleon parameters, are bit-for-bit those of `off`.
 - **C-SIM:** REF-C2C1's C-SIM, rerun under R. IBU on the MC's own folded truth returns the truth denominator's cross
   section through the full chain, to 1e-9. **C-ROO** and **C-FILL** run as in REF-C2C1. The scorer refuses a c2
   unit without C-ROO, so no numpy-unfolder test run can stand in.
 - **C-NID:** with O set to zero, u^N_K equals u_K bit for bit, in both c2 units.
 - **C-NSUM:** Σ_j (Σ_i M_ij + O_j) equals the reco-mode weight of the selected, truth-in-grid rows counted directly from
-  the signal loader's rows, plus the moved rows reconstructed outside the grid, to ≤ 1e-12 relative.
-- **C-PINS:** the inputs (43f8cc16…, d40aea69…), the library (0b34e1e3…), the driver, the runner, the lane's library and
-  the rows each match their pins before and after, in every unit process.
+  the signal loader's rows, plus the moved part recomputed from the rows file (not the driver's), to ≤ 1e-12
+  relative.
+- **C-NMOVED:** under R, the driver's moved part of O equals, cell by cell, the one recomputed from the join's rows
+  file (codex-school r1 #5).
+- **C-PINS:** each unit process records the inputs (43f8cc16…, d40aea69…), libRooUnfold.so, the driver, the runner,
+  the lane's library and the rows before and after. libRooUnfold.so is checked against its pin (0b34e1e3…) inside the
+  process before any unit. The scorer requires each record to be unchanged and equal to the expected digests: driver
+  0cbd02a1…, runner 285dd138…, the lane's files as committed, the join's rows, libRooUnfold.so 0b34e1e3…
+- **C-UNITS** (the scorer). Every unit's root and npz equal its done-marker's digests, and its recorded argv is its
+  npz's.
+  - R units carry `--signal-convention minerva --oofvc-rows …/oofvc_rows.npz`, and off units carry neither option.
+  - No unit used the numpy unfolder, and every c2 unit ran C-ROO.
+  - N's controls passed (codex-school r1 #4).
+- **C-KS:** every array the scorer reads has the same K list, which contains K = 10.
 
 ### 2.3 Operands
 
@@ -432,6 +460,20 @@ The staged copies and the dumps stay on scratch until a separate removal under i
   - the file renamed from `OOFVC-DECLARATION-DRAFT.md`;
   - after 881f4dbc and before any read: moved rows reconstructed outside the grid are not appended; T's cancellation
     from the IBU result is stated; O_j's two sources are named.
+- **Revision 4** (after r1: codex-school `gpt-6.2-sol` and agy `gemini-4-hydrogen-high`, `receipts/reads/r1/`):
+  - ROOT's cells in place of the closed rectangle;
+  - the loaders' weight rules, with drops counted;
+  - `--use-weights` required;
+  - the dump's duplicate flag taken in the signal loop's order;
+  - the dump's write checked;
+  - C-SIGW's reliance on P4 stated;
+  - O's signal part keyed on the binned reco;
+  - C-NMOVED, C-UNITS and C-KS added;
+  - C-NSUM made independent;
+  - C-PINS checked against expected digests;
+  - C-BASE's zero cells, C-FIX's edges and errors, and C-LAB's non-finite STOP;
+  - zero tie weight passes the bound;
+  - the batch scripts' exit statuses.
 - **Revision 3** (with the code, before any read):
   - the director's tie rule and bound, from 2026-11-26, in C-JOIN and C-SIGW;
   - the dump defined as built, with its one ordering departure stated;

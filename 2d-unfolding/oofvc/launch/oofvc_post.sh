@@ -5,7 +5,8 @@
 set -u
 R=/pscratch/sd/j/josephrb/oofvc-20261126
 [ ! -e "$R/post" ] && [ ! -e "$R/post.tar.gz" ] || { echo "STOP: post exists"; exit 2; }
-q=$(squeue -h -u "$USER" -o '%j' | grep -c '^oofvc_' || true)
+sq=$(squeue -h -u "$USER" -o '%j') || { echo "STOP: squeue failed"; exit 2; }
+q=$(printf '%s\n' "$sq" | grep -c '^oofvc_' || true)
 [ "$q" = 0 ] || { echo "STOP: an oofvc job is still queued or running"; exit 2; }
 mkdir -p "$R/post" || exit 2
 { echo "node $(hostname) $(date -u +%FT%TZ)"

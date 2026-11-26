@@ -1,0 +1,3 @@
+1. **BLOCKER (review access).** Automatic approval review rejected the file-read attempt because it used a code executor and included a skill file outside the review directory. I couldn’t inspect the declaration or source, so I have no verified code findings or line citations. Please attach the files or authorize commands limited to reading the review files.
+
+NO-GO — review incomplete.

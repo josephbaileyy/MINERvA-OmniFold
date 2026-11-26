@@ -45,13 +45,26 @@ def import_runner(tree: Path):
     return C
 
 
-def n_record(C, driver, cap: dict, sig: dict, outside, ks) -> dict:
+def moved_outside_direct(rows: dict, pot_scale: float, pt_e, pz_e) -> np.ndarray:
+    """N's moved part straight from the join's rows file: rows with a true cell and no reco cell, the background
+    loader's weight rule (0 <= w < 1e6), reco weight x POT scale at the true cell (C-NMOVED's reference)."""
+    t_ok = L.in_bins(rows["true_pt"], rows["true_pz"], pt_e, pz_e)
+    r_ok = L.in_bins(rows["reco_pt"], rows["reco_pz"], pt_e, pz_e)
+    w = np.asarray(rows["w_reco"], float)
+    m = t_ok & ~r_ok & (w >= 0) & (w < 1e6)
+    return L.o_vector(rows["true_pt"][m], rows["true_pz"][m], w[m] * pot_scale, pt_e, pz_e)
+
+
+def n_record(C, driver, cap: dict, sig: dict, outside, ks, rows=None, pot_scale=None) -> dict:
     """N from one c2 run: O_j, the factor, u^N_K at every K, and its cross section by the recorded extraction."""
     pt_e, pz_e = driver.PT_EDGES, driver.PZ_EDGES
     t = L.global_index(sig["truth_pt"], sig["truth_pz"], pt_e, pz_e)
-    pt_ok, pr_ok, sel = (np.asarray(sig[k], bool) for k in ("pass_truth", "pass_reco", "selected"))
+    r = L.global_index(sig["reco_pt"], sig["reco_pz"], pt_e, pz_e)
+    pt_ok, sel = np.asarray(sig["pass_truth"], bool), np.asarray(sig["selected"], bool)
     w_reco = np.asarray(sig["w_reco"], float)
-    o_rows = sel & ~pr_ok & pt_ok & (t >= 0)
+    # O's signal part: selected rows with a true cell and no reco cell (reco outside the grid, or on its upper edge,
+    # where ROOT and M put it in the overflow)
+    o_rows = sel & pt_ok & (t >= 0) & (r < 0)
     O = np.bincount(t[o_rows], weights=w_reco[o_rows], minlength=cap["T"].size)
     o_moved = np.zeros_like(O)
     if outside is not None:  # R: the moved rows reconstructed outside the grid (not appended)
@@ -61,20 +74,23 @@ def n_record(C, driver, cap: dict, sig: dict, outside, ks) -> dict:
     fac = L.n_factor(sum_m, O_all)
     traj_n = {K: cap["traj"][K] * fac for K in ks}
     nid = {K: cap["traj"][K] * L.n_factor(sum_m, np.zeros_like(O_all)) for K in ks}
-    # C-NID: with O = 0, u^N equals u bit for bit
-    c_nid = all(np.array_equal(nid[K], cap["traj"][K]) for K in ks)
-    # C-NSUM: sum_j (sum_i M_ij + O_j) equals the selected, truth-in-grid weight counted from the rows themselves
-    # (pass_truth rows; M's rows are those whose reco is also in the grid), plus the moved rows outside it
-    r = L.global_index(sig["reco_pt"], sig["reco_pz"], pt_e, pz_e)
-    direct = float(w_reco[sel & pt_ok & (t >= 0) & ((pr_ok & (r >= 0)) | ~pr_ok)].sum()) + float(o_moved.sum())
+    controls = {"C-NID": {"pass": bool(all(np.array_equal(nid[K], cap["traj"][K]) for K in ks))}}
+    # C-NSUM: sum_j (sum_i M_ij + O_j) against the selected, truth-in-grid weight counted from the loader's rows,
+    # plus the moved part recomputed from the rows file (not the driver's)
+    direct_moved = np.zeros_like(O) if rows is None else moved_outside_direct(rows, pot_scale, pt_e, pz_e)
+    direct = float(w_reco[sel & pt_ok & (t >= 0)].sum()) + float(direct_moved.sum())
     total = float(sum_m.sum() + O_all.sum())
-    c_nsum = abs(total / direct - 1) <= 1e-12 if direct > 0 else total == 0
+    controls["C-NSUM"] = {"total": total, "direct": direct,
+                          "pass": bool(abs(total / direct - 1) <= 1e-12 if direct > 0 else total == 0)}
+    # C-NMOVED: the driver's moved part equals the rows file's, cell by cell
+    dev = float(np.max(np.abs(o_moved - direct_moved))) if o_moved.size else 0.0
+    controls["C-NMOVED"] = {"max_abs": dev, "sum": float(direct_moved.sum()),
+                            "pass": bool(dev <= 1e-12 * max(1.0, float(np.abs(direct_moved).max(initial=0.0))))}
     xs_n = C.xsec_at_every_k(driver, {"traj": traj_n, "extract": cap["extract"],
                                       "real_extract": cap["real_extract"]}, ks)
     return {"O_signal": O, "O_moved": o_moved, "sum_M": sum_m, "factor": fac,
             "unfolded_N": np.array([traj_n[K] for K in ks]), "xsec_N": np.array([xs_n[K] for K in ks]),
-            "controls": {"C-NID": {"pass": bool(c_nid)},
-                         "C-NSUM": {"total": total, "direct": direct, "pass": bool(c_nsum)}}}
+            "controls": controls}
 
 
 def run(a) -> int:
@@ -93,8 +109,17 @@ def run(a) -> int:
     if not C.under(a.rows, C.staging_root(cfg)):
         print("refusing: the rows file is not under the staging root", file=sys.stderr)
         return RC_GATE
+    lib = Path(cfg["inputs"]["roounfold_lib"])
+
+    def lib_sha():
+        return "numpy unfolder" if a.numpy_unfolder else (sha256(lib) if lib.is_file() else "missing")
+    if not a.numpy_unfolder and lib_sha() != cfg["inputs"]["roounfold_lib_sha256"]:
+        print("refusing: libRooUnfold.so is not its pin", file=sys.stderr)
+        return RC_GATE
+    rows = {k: v for k, v in np.load(a.rows).items()}
     pins_before = {"driver": sha256(C.RE2), "runner": sha256(Path(C.__file__)), "oofvc_run": sha256(Path(__file__)),
-                   "oofvc_lib": sha256(HERE / "oofvc_lib.py"), "rows": sha256(a.rows), "inputs": verified}
+                   "oofvc_lib": sha256(HERE / "oofvc_lib.py"), "rows": sha256(a.rows), "inputs": verified,
+                   "roounfold_lib": lib_sha()}
     rc = 0
     for unit in a.unit:
         conv, kind = unit.split("/")
@@ -120,9 +145,16 @@ def run(a) -> int:
                              unfolder=C.dagostini if a.numpy_unfolder else None)
         rec = {"unit": unit, "rc": urc, "argv": C.resolve_argv(cfg_u, None), "numpy_unfolder": a.numpy_unfolder,
                "n_signal_rows": int(seen["sig"]["truth_pt"].size) if "sig" in seen else None}
+        outside = seen["sig"].get("oofvc_outside") if "sig" in seen else None
+        rec["oofvc_counts"] = outside["counts"] if outside is not None else None
         if kind == "c2_central" and urc == 0:
             ks = list(cfg["c2"]["iterations"]["scan"])
-            nr = n_record(C, driver, seen["cap"], seen["sig"], seen["sig"].get("oofvc_outside"), ks)
+            import ROOT
+            f = ROOT.TFile.Open(str(out / f"{kind}.root"))
+            pot = float(f.Get("potScale").GetVal())
+            f.Close()
+            nr = n_record(C, driver, seen["cap"], seen["sig"], outside, ks,
+                          rows=rows if conv == "R" else None, pot_scale=pot)
             np.savez_compressed(out / "n.npz", ks=np.array(ks), **{k: v for k, v in nr.items() if k != "controls"})
             rec["n_controls"] = nr["controls"]
             if not all(c["pass"] for c in nr["controls"].values()):
@@ -130,7 +162,8 @@ def run(a) -> int:
         (out / f"{kind}.oofvc.json").write_text(json.dumps(rec, indent=1, default=str) + "\n")
         rc = rc or urc
     pins_after = {"driver": sha256(C.RE2), "runner": sha256(Path(C.__file__)), "oofvc_run": sha256(Path(__file__)),
-                  "oofvc_lib": sha256(HERE / "oofvc_lib.py"), "rows": sha256(a.rows), "inputs": C.check_inputs(cfg)}
+                  "oofvc_lib": sha256(HERE / "oofvc_lib.py"), "rows": sha256(a.rows), "inputs": C.check_inputs(cfg),
+                  "roounfold_lib": lib_sha()}
     c_pins = pins_before == pins_after
     tag = "_".join(u.replace("/", "-") for u in a.unit)  # one pins file per process (the job runs four at once)
     (a.out / f"pins_{tag}.json").write_text(json.dumps({"units": a.unit, "before": pins_before, "after": pins_after,

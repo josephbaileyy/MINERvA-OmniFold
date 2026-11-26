@@ -13,9 +13,11 @@
 //     compare every weight bit for bit with the production trees, so a difference this makes is a STOP, not a result;
 //   - the background loop's routing, :1440-1472: a selected entry goes to mc_background unless isSignal &&
 //     isEfficiencyDenom (evaluated there in reco mode with the reco weight); no deduplication;
-//   - the signal loop's key deduplication of phase-space entries, :1201-1218 (first occurrence kept). It is applied
-//     here among selected phase-space entries: a duplicate is the same event filled twice, so its copies are
-//     selected alike.
+//   - the signal loop's key deduplication of phase-space entries, :1201-1218: the first occurrence of a key among
+//     ALL phase-space entries, selected or not, is kept (truth-mode cuts with weight 1, before the selection). The
+//     signal loop's truth-tree gate (truthAgrees) is not re-evaluated: Stage B's P4 census measured nG1 = 0 and
+//     nSigLoopNoTruth = 0 on this omnifile's per-playlist inputs (2d-closeout/stageB/diagnostics/REPORT.md:45-62), so
+//     the gate drops nothing there; were it to, C-SIGW would STOP.
 // Both routings are evaluated (reco mode as the background loop, truth mode as the signal loop) and written, so the
 // lane checks that they agree. Writes only the output file. Usage: oofvc_dump PLAYLIST MANIFEST OUT.root
 #include "event/CVUniverse.h"
@@ -143,25 +145,27 @@ int main(int argc, char** argv)
     CVUniverse::SetTruth(false);
     MichelEvent evt;
     cv->SetEntry(i);
+    // the signal loop's dedupe, over every phase-space entry in entry order, before the selection (see the header)
+    CVUniverse::SetTruth(true);
+    const bool sigT = cuts.isSignal(*cv, 1.0);
+    const bool psT = cuts.isEfficiencyDenom(*cv, 1.0);
+    bool dup = false;
+    if (sigT && psT)
+      dup = !seenSigKeys.insert(makeEventKey(cv->GetInt("mc_run"), cv->GetInt("mc_subrun"),
+                                             cv->GetInt("mc_nthEvtInFile"))).second;
+    CVUniverse::SetTruth(false);
     {
       MichelEvent sel_evt;
-      if (!cuts.isMCSelected(*cv, sel_evt, 1.0).all()) continue;  // selection first (see the header)
+      if (!cuts.isMCSelected(*cv, sel_evt, 1.0).all()) continue;  // selection before the weights (see the header)
     }
     model.SetEntry(*cv, evt);
 
     CVUniverse::SetTruth(true);
     const double wt = model.GetWeight(*cv, evt);
-    const bool sigT = cuts.isSignal(*cv, wt);
-    const bool psT = cuts.isEfficiencyDenom(*cv, wt);
     const double tpt = cv->GetMuonPTTrue(), tpz = cv->GetMuonPzTrue(), tth = cv->GetThetalepTrue();
 
     CVUniverse::SetTruth(false);
     const double wr = model.GetWeight(*cv, evt);
-
-    bool dup = false;
-    if (sigT && psT)
-      dup = !seenSigKeys.insert(makeEventKey(cv->GetInt("mc_run"), cv->GetInt("mc_subrun"),
-                                             cv->GetInt("mc_nthEvtInFile"))).second;
 
     const bool sigR = cuts.isSignal(*cv, wr);
     const bool psR = cuts.isEfficiencyDenom(*cv, wr);
@@ -180,9 +184,19 @@ int main(int argc, char** argv)
     ++nSel; nBkg += to_bkg; nSig += to_sig; nDup += (to_sig && dup);
     nDisagree += (to_bkg == to_sig);
   }
-  t.Write();
-  TParameter<long long>("n_entries", nEntries).Write();
+  // write through the output file itself: a reweighter can leave gDirectory on an auxiliary file (the event loop
+  // restores its output directory for the same reason, runEventLoopOmniFold.cpp:1997-2001)
+  out.cd();
+  if (t.GetDirectory() != &out) { std::cerr << "the rows tree is not in the output file\n"; return 6; }
+  if (out.WriteTObject(&t, "rows") <= 0) { std::cerr << "writing rows failed\n"; return 6; }
+  TParameter<long long> nPar("n_entries", nEntries);
+  if (out.WriteTObject(&nPar, "n_entries") <= 0) { std::cerr << "writing n_entries failed\n"; return 6; }
   out.Close();
+  {
+    TFile check(outPath.c_str(), "READ");
+    TTree* back = check.IsZombie() ? nullptr : dynamic_cast<TTree*>(check.Get("rows"));
+    if (!back || back->GetEntries() != nSel) { std::cerr << "the written rows do not read back\n"; return 7; }
+  }
   std::cout << "oofvc_dump " << playlist << " entries " << nEntries << " selected " << nSel << " to_bkg " << nBkg
             << " to_sig " << nSig << " dup_sig " << nDup << " routing_disagree " << nDisagree << "\n";
   return 0;

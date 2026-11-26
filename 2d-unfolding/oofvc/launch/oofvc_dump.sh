@@ -18,7 +18,8 @@ ENVSH=/pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh
 O=$R/tool/2d-unfolding/oofvc
 case "$TOOLC" in *__*) echo "STOP: the tool commit is not filled in"; exit 9;; esac
 echo "node $(hostname) $(date -u +%FT%TZ) mode $MODE tool $TOOLC"
-q=$(squeue -h -u "$USER" -o '%j' | grep -c '^oofvc_' || true)
+sq=$(squeue -h -u "$USER" -o '%j') || { echo "STOP: squeue failed"; exit 2; }
+q=$(printf '%s\n' "$sq" | grep -c '^oofvc_' || true)
 case "$MODE" in
   pilot)
     [ ! -e "$R" ] || { echo "STOP: $R exists"; exit 2; }
@@ -46,6 +47,8 @@ case "$MODE" in
     grep -q ' routing_disagree 0$' "$R/dump/1L.log" && [ -e "$R/dump/1L.done" ] || { echo "STOP: the pilot's routing"; exit 7; }
     el=${line##*|}
     FC=$R/tool/docs/orchestration/state/precharge-20261125/file-counts.txt
+    np_=$(awk -F'[ ,]+' '/_MC.log:/ {split($1,a,"_"); n[a[1]]=1} END {c=0; for (p in n) c++; print c}' "$FC")
+    [ "$np_" = 12 ] || { echo "STOP: file-counts.txt lists $np_ MC playlists, not 12"; exit 7; }
     proj=$(awk -v el="$el" -F'[ ,]+' '/_MC.log:/ {split($1,a,"_"); n[a[1]]=$(NF-1)} END {m=0; for (p in n) { t=el*n[p]/n["1L"]; printf "%s %.0f\n", p, t > "/dev/stderr"; if (t>m) m=t }; printf "%.0f", m}' "$FC")
     echo "largest projection ${proj} s"
     [ "$proj" -le 6300 ] || { echo "STOP: a projection exceeds 1.75 h; back to the director"; exit 7; }

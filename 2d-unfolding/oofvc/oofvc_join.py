@@ -102,7 +102,7 @@ def run(a) -> int:
     sig = read_tree(a.omnifile, "mc_signal_reco", ("sim", "sim_pz", "sim_pass", "w_reco", "MC", "MC_pz", "w_truth"))
 
     def stop(name, why):
-        rec["controls"][name] = {"pass": False, "why": str(why)}
+        rec["controls"].setdefault(name, {}).update({"pass": False, "why": str(why)})  # keep the measured fields
         rec["verdict"] = "STOP"
         (a.out / "join.json").write_text(json.dumps(rec, indent=1, default=float) + "\n")
         print(f"STOP {name}: {why}", flush=True)
@@ -162,16 +162,19 @@ def run(a) -> int:
     # C-LAB: oflow's categories from the joined rows against oflow/split.json
     ref = json.loads(a.split.read_text())
     got = categories(d, m, pot_scale)
-    worst, cnt_ok = 0.0, True
+    worst, cnt_ok, finite = 0.0, True, True
     for k in ("FAKE_PS", "FAKE_VTX", "OTHER"):
         r = np.asarray(ref[k], float)
+        finite &= bool(r.size == got[k].size == 224 and np.all(np.isfinite(r)) and np.all(np.isfinite(got[k])))
+        if not finite:
+            break
         nz = r != 0
-        rel = float(np.max(np.abs(got[k][nz] / r[nz] - 1))) if nz.any() else 0.0
-        worst = max(worst, rel, float(np.max(np.abs(got[k][~nz]))) if (~nz).any() else 0.0)
+        dev = np.concatenate([np.abs(got[k][nz] / r[nz] - 1), np.abs(got[k][~nz])])
+        worst = max(worst, float(dev.max(initial=0.0)))
         cnt_ok &= got[k + "_n"] == ref[k + "_n"]
-    rec["controls"]["C-LAB"] = {"max_rel": worst, "counts_equal": bool(cnt_ok),
+    rec["controls"]["C-LAB"] = {"max_rel": worst, "counts_equal": bool(cnt_ok), "finite": finite,
                                 "n": {k: got[k + "_n"] for k in ("FAKE_PS", "FAKE_VTX", "OTHER")},
-                                "pass": bool(worst <= LAB_RTOL and cnt_ok)}
+                                "pass": bool(finite and worst <= LAB_RTOL and cnt_ok)}
     if not rec["controls"]["C-LAB"]["pass"]:
         return stop("C-LAB", f"max relative {worst:.3g}, counts equal {cnt_ok}")
 
@@ -183,7 +186,7 @@ def run(a) -> int:
             "w_reco": bkg["w_bkg"][e].astype(np.float64), "w_truth": d["w_truth"][m[e]].astype(np.float64)}
     cc = L.is_numu_cc(d["nu_pdg"][m], d["current"][m])
     fid = d["fid"][m] != 0
-    reco_in = L.in_rectangle(bkg["sim_background"], bkg["sim_background_pz"], PT_OLD, PZ)
+    reco_in = L.in_bins(bkg["sim_background"], bkg["sim_background_pz"], PT_OLD, PZ)
     w = bkg["w_bkg"] * pot_scale
 
     def size(mask):

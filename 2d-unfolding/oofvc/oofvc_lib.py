@@ -21,6 +21,12 @@ def global_index(pt, pz, pt_edges, pz_edges) -> np.ndarray:
     return np.where((ip >= 0) & (iz >= 0), ip * (len(pz_edges) - 1) + iz, -1)
 
 
+def in_bins(pt, pz, pt_edges, pz_edges) -> np.ndarray:
+    """In a ROOT cell of the grid: lower edges in, upper edges out (global_index >= 0). The moved and appended sets
+    use this, so they agree with the binned M, T and O (codex-school r1 #3)."""
+    return global_index(pt, pz, pt_edges, pz_edges) >= 0
+
+
 def in_rectangle(pt, pz, pt_edges, pz_edges) -> np.ndarray:
     """The driver's closed rectangle, pt_lo <= pT <= pt_hi and pz_lo <= p|| <= pz_hi (re2_driver.in_truth_phase_space
     without its angle cut, and the reco gate of collect_signal_arrays_2d)."""
@@ -97,8 +103,10 @@ def exact_join(left_key, right_key, right_event, right_values, left_weight, *, m
 def check_tie_bound(tied_weight: float, reference_weight: float, frac: float = 1e-3) -> None:
     """The director's bound: STOP if the tied groups' weight exceeds `frac` (0.1%) of the reference (the moved weight
     for C-JOIN, the joined signal weight for C-SIGW)."""
-    if not (reference_weight > 0):
-        raise JoinStop(f"reference weight {reference_weight} is not positive")
+    if tied_weight == 0:  # no tie: nothing to bound (codex-school r1 #9)
+        return
+    if not (np.isfinite(tied_weight) and np.isfinite(reference_weight) and reference_weight > 0):
+        raise JoinStop(f"tied weight {tied_weight} against a reference weight {reference_weight}")
     if tied_weight > frac * reference_weight:
         raise JoinStop(f"tied groups carry {tied_weight:.6g}, more than {frac:g} of {reference_weight:.6g}")
 
@@ -112,9 +120,9 @@ def is_numu_cc(nu_pdg, current) -> np.ndarray:
 
 
 def moved_mask(nu_pdg, current, true_pt, true_pz, pt_edges, pz_edges) -> np.ndarray:
-    """The rows that move under R (section 1.3): nu_mu CC background rows whose true muon is in the grid (the closed
-    rectangle). nu_mu CC rows with a true muon outside the grid stay background (the director's ruling 3)."""
-    return is_numu_cc(nu_pdg, current) & in_rectangle(true_pt, true_pz, pt_edges, pz_edges)
+    """The rows that move under R (section 1.3): nu_mu CC background rows whose true muon is in a cell of the grid
+    (in_bins). nu_mu CC rows with a true muon outside it stay background (the director's ruling 3)."""
+    return is_numu_cc(nu_pdg, current) & in_bins(true_pt, true_pz, pt_edges, pz_edges)
 
 
 # ------------------------------------------------------------------------------------------------ N

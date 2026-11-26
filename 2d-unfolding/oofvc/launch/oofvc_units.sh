@@ -22,7 +22,8 @@ echo "node $(hostname) $(date -u +%FT%TZ) tool $TOOLC"
 [ "$(git -C "$R/tool" rev-parse HEAD)" = "$TOOLC" ] && [ -z "$(git -C "$R/tool" status --porcelain --ignored)" ] \
   || { echo "STOP: the tool clone is not clean at $TOOLC"; exit 3; }
 [ ! -e "$R/stage" ] && [ ! -e "$R/deploy" ] && [ ! -e "$R/logs/units.jobid" ] || { echo "STOP: step 2 has run"; exit 2; }
-q=$(squeue -h -u "$USER" -o '%j' | grep -c '^oofvc_' || true)
+sq=$(squeue -h -u "$USER" -o '%j') || { echo "STOP: squeue failed"; exit 2; }
+q=$(printf '%s\n' "$sq" | grep -c '^oofvc_' || true)
 [ "$q" = 0 ] || { echo "STOP: an oofvc job is queued"; exit 2; }
 for pl in 1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P; do
   [ -e "$R/dump/$pl.done" ] && (cd "$R/dump" && sha256sum -c "$pl.sha256" >/dev/null) \

@@ -1,0 +1,20 @@
+Read-only code review. Never write or modify any file. Never execute code, scripts or tests. Reading files with cat, sed or grep is fine. Your only output is your reply.
+
+The directory /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/oofvc-reads/r1/agy/inputs holds a scientific analysis package. Its plan is in
+docs/orchestration/state/oofv-convention-20261126/OOFVC-DECLARATION.md (read §1.3 and §2). The code is in
+2d-unfolding/oofvc/. ref/ holds the code it must mirror or patch (re2_driver_at_M_paper_edges.py, ref_c2c1.py,
+runEventLoopOmniFold.cpp, score_t1.py).
+
+Review the code for bugs that could:
+- change a reported number;
+- let a control accept a wrong result;
+- refuse (false-STOP) a correct run.
+
+Focus on:
+- oofvc_driver.diff against ref/re2_driver_at_M_paper_edges.py;
+- oofvc_dump.cpp against ref/runEventLoopOmniFold.cpp's signal loop (:1107-1300) and background loop (:1314-1500);
+- oofvc_lib.py, oofvc_join.py, oofvc_run.py (with ref/ref_c2c1.py) and oofvc_score.py (with ref/score_t1.py);
+- the launch/ scripts.
+
+List numbered findings, most severe first. Mark each BLOCKER or NONBLOCKER, with file:line and the concrete failure.
+End with GO or NO-GO. At most 1000 words.

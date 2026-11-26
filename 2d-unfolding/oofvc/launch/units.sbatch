@@ -43,3 +43,5 @@ done
 rcs=""; for p in $pids; do wait $p; rcs="$rcs $?"; done
 echo "[oofvc_units] units done $(date -u +%FT%TZ) rcs:$rcs"
 sha256sum $R/units/*/* $R/units/pins_*.json $R/join/* 2>/dev/null
+for r in $rcs; do [ "$r" = 0 ] || { echo "[oofvc_units] FAIL: a unit returned $r"; exit 6; }; done
+exit 0
