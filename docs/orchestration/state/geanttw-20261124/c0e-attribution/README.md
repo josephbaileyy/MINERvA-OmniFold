@@ -17,7 +17,7 @@ cluster before the copy. All paths are under B = `/pscratch/sd/j/josephrb/geantt
 | `run/p0/pat/strace.pat.1L` | 400554 | `ca06b2f7010e85759591e0028d8d96f0ca58ad6f8c53516fd83d3b228190b0d5` |
 | `run/p0/p0_check.json` | 29610 | `f2e8b4bcbaed5cfa9c3d7adb9f6a5bf285dddb430b63a8587ce3de3b14292663` |
 
-The logs themselves are not committed. They stay at those paths under B.
+The originals stay at those paths under B. Byte-for-byte copies are committed in `first-check/` (below).
 
 ## Method
 
@@ -59,3 +59,44 @@ The test above is the strongest one these logs support.
 - `check.txt`: the check connect's output.
 - `attribute.py` and `attribution.json`: the attribution.
 - `README.md`: this file.
+- `first-check/`: the first check's records and the script that moves them aside (below).
+
+## The first check's records, and moving them aside (`first-check/`)
+
+The director ruled that the check re-run needs a fresh deploy at a new M. The deploy step refuses on an existing
+`B/deploy`, and check rewrites `B/run/p0/p0_check.json`, so the first check's state must move aside before the
+re-run. Its records are kept here first.
+
+- **`p0_check.json`, `strace.pin.1L` and `strace.pat.1L`:** the fetched copies listed above, byte for byte, so
+  their sha256s equal the table at the top of this file. `p0_check.json` is the first check's JSON, with C0e FAIL.
+- **`build.log`:** `B/run/p0/build.log`, the build's record, holding the five CHECKs and the SO, BIN, RPATH and
+  PROD lines. `p0_check.json` names it, so the receipt carries it. It was fetched in one more read-only connect,
+  under the director's GO and cov2d's ack `cov2d-ACK-geanttw-buildlog-fetch-2026-11-26T20:22:19Z`. That connect ran
+  on login33 at 2026-11-26T20:22:34Z, and the local sha256 equals the one `sha256sum` printed on the cluster. The
+  file is committed with `git add -f`, because `*.log` is ignored. Neither the aside script nor the check re-run
+  changes it.
+- **`aside_first_check.sh M COV2D_ACK`:** one login-node connect, run from the Mac.
+  - It runs cov2d's fence (`cov2d_fence.sh` rev 3, read with `git show M:`) and STOPs on any nonzero rc.
+  - Then, in one fresh ssh, it renames inside B: `B/deploy` → `B/deploy-4fe6add5`, and `B/run/p0/p0_check.json`
+    → `B/run/p0/p0_check-4fe6add5.json`.
+  - Both renames are checked before either runs: a missing source or an existing target refuses, and nothing moves.
+  - Each rename is `mv -n`, checked afterwards. Nothing is deleted, and nothing else is written.
+  - It runs only on the director's GO, named in the binding, and with a fresh cov2d ack.
+- **`test_aside_first_check.py`:** 11 pytest cases, run with `python3 -m pytest first-check/test_aside_first_check.py`.
+  They cover:
+  - both renames, with contents kept;
+  - a fence failure;
+  - an existing target and a missing source, each of which refuses and moves nothing;
+  - bad arguments;
+  - the test-only ssh override;
+  - the fixed ssh options and root;
+  - no deletion or redirection in the remote part.
+
+| file | bytes | sha256 |
+|---|---|---|
+| `first-check/p0_check.json` | 29610 | `f2e8b4bcbaed5cfa9c3d7adb9f6a5bf285dddb430b63a8587ce3de3b14292663` |
+| `first-check/strace.pin.1L` | 403079 | `ab6f8e06286ad8df209e24c42801eb50861ca8242546dad1e42bb675fe4c07a6` |
+| `first-check/strace.pat.1L` | 400554 | `ca06b2f7010e85759591e0028d8d96f0ca58ad6f8c53516fd83d3b228190b0d5` |
+| `first-check/build.log` | 2221 | `626c4faf64686d01c095d1bf989aa8fdaf9e3f21f7fae52f373c4bfad7f79e23` |
+| `first-check/aside_first_check.sh` | 3019 | `9be3cdf3d7b5a6e551547653da8b895e4e4b1fbfe5498c4f476a0a53309c7954` |
+| `first-check/test_aside_first_check.py` | 5116 | `c78889b825b44bfcfcfb6928dbe39142dd685b5bf8dc10a83a11f45fbe2bb7f9` |
