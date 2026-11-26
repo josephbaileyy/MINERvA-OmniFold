@@ -178,7 +178,13 @@ UNRESOLVED_SHA256 = "49916d2832740f06163191d8dc960454ab85ae5bbb3aa9d5623b62b7d88
 #: read at this path by `g2r_jobs.order`. Its 12 tokens are P5 per-playlist input file names written by
 #: g2r_prepare.py run() into blocks/map.blocks; not file citations; director ruling 2026-11-13.
 G2R_PREPARE_PLAYLISTS = ("1A", "1B", "1C", "1D", "1E", "1F", "1G", "1L", "1M", "1N", "1O", "1P")
+#: 2026-11-26, the director's ruling on the EVW2D run receipts: EVW2D's run.json (job 62022231), the job's own
+#: output, names its product "weights.npz". That 1.18 GB product is deliberately untracked: it lives on scratch and
+#: goes to the deposit, and its digest bf452352... is pinned in the committed SHA256SUMS (e60867ef).
 EXEMPT_BARE = frozenset({
+    ("docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/run-20261126/post/out/run.json",
+     "445482fe642a36b1330214bd019deb6938047d932009cc2c3110aa5b192f4ade", "weights.npz"),
+} | {
     ("docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/envtest/"
      "envtest.json", "c4a0720d3a12265403d22e273e219d4594b03ba0a592afe671618ed72cbf0272", "runConfig.out"),
 } | {

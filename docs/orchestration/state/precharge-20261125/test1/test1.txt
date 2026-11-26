@@ -1,0 +1,593 @@
+Training: ['1A', '1C', '1E', '1G', '1M', '1O'] Held out: ['1B', '1D', '1F', '1L', '1N', '1P']
+
+### w(evis), form quadratic: fit on 1A,1C,1E,1G,1M,1O; predict 1B,1D,1F,1L,1N,1P
+fit deviance 342.6 / ndf 29; log w coefficients [0.116, -1.953, 5.193]
+w at evis {20: 1.123, 30: 0.937, 40: 1.043, 45: 1.226, 50: 1.549, 55: 2.104, 60: 3.072, 70: 8.127, 80: 28.695}
+-- sign -, precision all: yields
+  reco  20-40   data   64059  fold   63849.5 (d/f 1.003)  w-fold   64163.5 +-  242.0 fit +- 149.3 mc (d/wf 0.998)  pull   -0.3
+  reco  40-50   data    6820  fold    7119.8 (d/f 0.958)  w-fold   10326.2 +-  112.2 fit +-  89.8 mc (d/wf 0.660)  pull  -21.2
+  reco  50-60   data    2617  fold    1939.2 (d/f 1.350)  w-fold    5198.2 +-  125.1 fit +-  85.7 mc (d/wf 0.503)  pull  -16.1
+  reco  60-80   data    1181  fold     688.8 (d/f 1.715)  w-fold    6607.2 +-  372.6 fit +- 196.7 mc (d/wf 0.179)  pull  -12.8
+  reco  80-inf  data     192  fold     162.9 (d/f 1.178)  w-fold    4675.7 +-  360.5 fit +- 230.2 mc (d/wf 0.041)  pull  -10.5
+-- sign -, precision good: yields
+  reco  20-40   data   61047  fold   60582.0 (d/f 1.008)  w-fold   60852.1 +-  229.5 fit +- 145.9 mc (d/wf 1.003)  pull   +0.5
+  reco  40-50   data    6535  fold    6823.8 (d/f 0.958)  w-fold    9871.7 +-  106.7 fit +-  88.2 mc (d/wf 0.662)  pull  -20.8
+  reco  50-60   data    2480  fold    1775.8 (d/f 1.397)  w-fold    4725.8 +-  112.3 fit +-  80.9 mc (d/wf 0.525)  pull  -15.3
+  reco  60-80   data    1022  fold     499.9 (d/f 2.044)  w-fold    4321.8 +-  231.9 fit +- 139.9 mc (d/wf 0.236)  pull  -12.1
+  reco  80-inf  data      82  fold      48.4 (d/f 1.694)  w-fold    1389.3 +-  107.1 fit +- 111.6 mc (d/wf 0.059)  pull   -8.4
+-- sign -, precision poor: yields
+  reco  20-40   data    3012  fold    3267.6 (d/f 0.922)  w-fold    3311.4 +-   12.7 fit +-  31.8 mc (d/wf 0.910)  pull   -4.6
+  reco  40-50   data     285  fold     296.1 (d/f 0.963)  w-fold     454.5 +-    5.6 fit +-  17.0 mc (d/wf 0.627)  pull   -6.9
+  reco  50-60   data     137  fold     163.4 (d/f 0.838)  w-fold     472.4 +-   12.8 fit +-  28.3 mc (d/wf 0.290)  pull  -10.1
+  reco  60-80   data     159  fold     188.9 (d/f 0.842)  w-fold    2285.4 +-  140.8 fit +- 138.3 mc (d/wf 0.070)  pull  -10.8
+  reco  80-inf  data     110  fold     114.5 (d/f 0.960)  w-fold    3286.4 +-  253.4 fit +- 201.4 mc (d/wf 0.033)  pull   -9.8
+-- sign +, precision all: yields
+  reco  20-40   data    6187  fold    4938.7 (d/f 1.253)  w-fold    4947.0 +-   20.0 fit +-  34.0 mc (d/wf 1.251)  pull  +14.1
+  reco  40-50   data     509  fold     415.1 (d/f 1.226)  w-fold     565.8 +-    5.4 fit +-  14.8 mc (d/wf 0.900)  pull   -2.1
+  reco  50-60   data     172  fold     146.3 (d/f 1.176)  w-fold     378.7 +-    9.0 fit +-  19.9 mc (d/wf 0.454)  pull   -8.1
+  reco  60-80   data     104  fold      89.9 (d/f 1.157)  w-fold     917.9 +-   53.0 fit +-  65.0 mc (d/wf 0.113)  pull   -9.6
+  reco  80-inf  data      68  fold      54.1 (d/f 1.258)  w-fold    1551.6 +-  119.6 fit +- 107.9 mc (d/wf 0.044)  pull   -9.2
+-- sign +, precision good: yields
+  reco  20-40   data    4866  fold    3514.0 (d/f 1.385)  w-fold    3522.0 +-   14.2 fit +-  28.0 mc (d/wf 1.382)  pull  +17.6
+  reco  40-50   data     380  fold     278.7 (d/f 1.363)  w-fold     378.6 +-    3.6 fit +-  11.6 mc (d/wf 1.004)  pull   +0.1
+  reco  50-60   data     111  fold      82.8 (d/f 1.341)  w-fold     211.0 +-    4.8 fit +-  13.4 mc (d/wf 0.526)  pull   -5.6
+  reco  60-80   data      53  fold      37.4 (d/f 1.419)  w-fold     371.8 +-   21.4 fit +-  41.9 mc (d/wf 0.143)  pull   -6.7
+  reco  80-inf  data      11  fold      10.8 (d/f 1.015)  w-fold     311.0 +-   24.0 fit +-  48.5 mc (d/wf 0.035)  pull   -5.5
+-- sign +, precision poor: yields
+  reco  20-40   data    1321  fold    1424.7 (d/f 0.927)  w-fold    1424.9 +-    5.8 fit +-  19.3 mc (d/wf 0.927)  pull   -2.5
+  reco  40-50   data     129  fold     136.3 (d/f 0.946)  w-fold     187.2 +-    1.8 fit +-   9.2 mc (d/wf 0.689)  pull   -4.0
+  reco  50-60   data      61  fold      63.5 (d/f 0.960)  w-fold     167.7 +-    4.2 fit +-  14.7 mc (d/wf 0.364)  pull   -6.2
+  reco  60-80   data      51  fold      52.5 (d/f 0.971)  w-fold     546.1 +-   31.5 fit +-  49.7 mc (d/wf 0.093)  pull   -8.3
+  reco  80-inf  data      57  fold      43.2 (d/f 1.318)  w-fold    1240.6 +-   95.6 fit +-  96.4 mc (d/wf 0.046)  pull   -8.7
+-- negative, reco 20-40: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data   16562  fold   16916.6 (d/f 0.979)  w-fold   16890.8 +-   74.8 fit +-  73.1 mc (d/wf 0.981)  pull   -2.0
+  E_avail [1, 2) data   10757  fold   10763.0 (d/f 0.999)  w-fold   10617.7 +-   42.9 fit +-  55.7 mc (d/wf 1.013)  pull   +1.1
+  E_avail [2, 5) data   18004  fold   19261.3 (d/f 0.935)  w-fold   18834.3 +-   72.7 fit +-  78.5 mc (d/wf 0.956)  pull   -4.8
+  E_avail [5, 10) data   11267  fold   11546.9 (d/f 0.976)  w-fold   11440.1 +-   50.2 fit +-  65.7 mc (d/wf 0.985)  pull   -1.3
+  E_avail [10, 20) data    6037  fold    4795.4 (d/f 1.259)  w-fold    5271.6 +-   31.8 fit +-  48.1 mc (d/wf 1.145)  pull   +7.9
+  E_avail [20, inf) data    1432  fold     566.4 (d/f 2.528)  w-fold    1109.1 +-   21.8 fit +-  32.6 mc (d/wf 1.291)  pull   +5.9
+-- negative, reco 40-50: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data    1608  fold    1887.9 (d/f 0.852)  w-fold    2319.9 +-   18.2 fit +-  38.6 mc (d/wf 0.693)  pull  -12.2
+  E_avail [1, 2) data    1042  fold    1332.1 (d/f 0.782)  w-fold    1698.2 +-   14.2 fit +-  32.4 mc (d/wf 0.614)  pull  -13.7
+  E_avail [2, 5) data    2085  fold    2350.0 (d/f 0.887)  w-fold    3265.8 +-   31.7 fit +-  48.4 mc (d/wf 0.638)  pull  -16.0
+  E_avail [5, 10) data    1345  fold    1165.9 (d/f 1.154)  w-fold    1943.9 +-   25.2 fit +-  40.0 mc (d/wf 0.692)  pull  -10.0
+  E_avail [10, 20) data     643  fold     355.3 (d/f 1.810)  w-fold     902.2 +-   19.9 fit +-  32.4 mc (d/wf 0.713)  pull   -5.7
+  E_avail [20, inf) data      97  fold      28.7 (d/f 3.377)  w-fold     196.1 +-    8.9 fit +-  22.8 mc (d/wf 0.495)  pull   -3.8
+-- negative, reco 50-60: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data     667  fold     541.6 (d/f 1.231)  w-fold    1138.8 +-   20.0 fit +-  32.9 mc (d/wf 0.586)  pull  -10.2
+  E_avail [1, 2) data     449  fold     378.5 (d/f 1.186)  w-fold     840.2 +-   15.7 fit +-  28.8 mc (d/wf 0.534)  pull  -10.0
+  E_avail [2, 5) data     826  fold     633.2 (d/f 1.305)  w-fold    1634.8 +-   35.9 fit +-  44.7 mc (d/wf 0.505)  pull  -12.6
+  E_avail [5, 10) data     481  fold     302.5 (d/f 1.590)  w-fold    1021.9 +-   28.7 fit +-  40.2 mc (d/wf 0.471)  pull  -10.0
+  E_avail [10, 20) data     173  fold      79.2 (d/f 2.184)  w-fold     486.9 +-   20.7 fit +-  37.0 mc (d/wf 0.355)  pull   -7.1
+  E_avail [20, inf) data      21  fold       4.2 (d/f 5.043)  w-fold      75.6 +-    5.1 fit +-  21.3 mc (d/wf 0.278)  pull   -2.4
+-- negative, reco 60-80: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data     343  fold     227.3 (d/f 1.509)  w-fold    1736.1 +-   88.7 fit +-  99.0 mc (d/wf 0.198)  pull  -10.4
+  E_avail [1, 2) data     198  fold     130.9 (d/f 1.513)  w-fold    1110.8 +-   59.4 fit +-  72.8 mc (d/wf 0.178)  pull   -9.6
+  E_avail [2, 5) data     361  fold     206.3 (d/f 1.750)  w-fold    1948.0 +-  107.8 fit +-  99.9 mc (d/wf 0.185)  pull  -10.7
+  E_avail [5, 10) data     212  fold      97.5 (d/f 2.175)  w-fold    1282.3 +-   79.9 fit +-  95.8 mc (d/wf 0.165)  pull   -8.5
+  E_avail [10, 20) data      61  fold      26.1 (d/f 2.334)  w-fold     511.6 +-   35.6 fit +-  65.7 mc (d/wf 0.119)  pull   -6.0
+  E_avail [20, inf) data       6  fold       0.6 (d/f 9.351)  w-fold      18.4 +-    1.4 fit +-  11.0 mc (d/wf 0.326)  pull   -1.1
+-- negative, reco 80-inf: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data      80  fold      82.9 (d/f 0.965)  w-fold    2379.0 +-  183.4 fit +- 168.4 mc (d/wf 0.034)  pull   -9.2
+  E_avail [1, 2) data      34  fold      31.2 (d/f 1.088)  w-fold     896.5 +-   69.1 fit +-  98.8 mc (d/wf 0.038)  pull   -7.1
+  E_avail [2, 5) data      55  fold      32.1 (d/f 1.711)  w-fold     922.2 +-   71.1 fit +-  99.4 mc (d/wf 0.060)  pull   -7.1
+  E_avail [5, 10) data      20  fold      12.5 (d/f 1.606)  w-fold     357.3 +-   27.5 fit +-  61.5 mc (d/wf 0.056)  pull   -5.0
+  E_avail [10, 20) data       3  fold       4.2 (d/f 0.714)  w-fold     120.6 +-    9.3 fit +-  35.0 mc (d/wf 0.025)  pull   -3.2
+
+### w(evis), form cubic: fit on 1A,1C,1E,1G,1M,1O; predict 1B,1D,1F,1L,1N,1P
+fit deviance 319.8 / ndf 28; log w coefficients [0.154, -2.638, 7.822, -2.506]
+w at evis {20: 1.167, 30: 0.923, 40: 1.053, 45: 1.261, 50: 1.612, 55: 2.181, 60: 3.094, 70: 6.941, 80: 16.977}
+-- sign -, precision all: yields
+  reco  20-40   data   64059  fold   63849.5 (d/f 1.003)  w-fold   64156.9 +-  242.0 fit +- 149.0 mc (d/wf 0.998)  pull   -0.3
+  reco  40-50   data    6820  fold    7119.8 (d/f 0.958)  w-fold   10609.5 +-  130.3 fit +-  91.4 mc (d/wf 0.643)  pull  -21.1
+  reco  50-60   data    2617  fold    1939.2 (d/f 1.350)  w-fold    5193.0 +-  128.1 fit +-  82.7 mc (d/wf 0.504)  pull  -16.0
+  reco  60-80   data    1181  fold     688.8 (d/f 1.715)  w-fold    5079.5 +-  408.4 fit +- 138.0 mc (d/wf 0.233)  pull   -9.0
+  reco  80-inf  data     192  fold     162.9 (d/f 1.178)  w-fold    2766.3 +-  396.5 fit +- 136.2 mc (d/wf 0.069)  pull   -6.1
+-- sign -, precision good: yields
+  reco  20-40   data   61047  fold   60582.0 (d/f 1.008)  w-fold   60841.4 +-  229.5 fit +- 145.6 mc (d/wf 1.003)  pull   +0.6
+  reco  40-50   data    6535  fold    6823.8 (d/f 0.958)  w-fold   10144.8 +-  124.2 fit +-  89.8 mc (d/wf 0.644)  pull  -20.8
+  reco  50-60   data    2480  fold    1775.8 (d/f 1.397)  w-fold    4731.3 +-  115.6 fit +-  78.9 mc (d/wf 0.524)  pull  -15.2
+  reco  60-80   data    1022  fold     499.9 (d/f 2.044)  w-fold    3422.7 +-  253.3 fit +- 101.5 mc (d/wf 0.299)  pull   -8.7
+  reco  80-inf  data      82  fold      48.4 (d/f 1.694)  w-fold     822.0 +-  117.8 fit +-  66.0 mc (d/wf 0.100)  pull   -5.5
+-- sign -, precision poor: yields
+  reco  20-40   data    3012  fold    3267.6 (d/f 0.922)  w-fold    3315.4 +-   12.7 fit +-  31.7 mc (d/wf 0.908)  pull   -4.7
+  reco  40-50   data     285  fold     296.1 (d/f 0.963)  w-fold     464.7 +-    6.1 fit +-  16.9 mc (d/wf 0.613)  pull   -7.3
+  reco  50-60   data     137  fold     163.4 (d/f 0.838)  w-fold     461.7 +-   12.7 fit +-  24.7 mc (d/wf 0.297)  pull  -10.8
+  reco  60-80   data     159  fold     188.9 (d/f 0.842)  w-fold    1656.8 +-  155.5 fit +-  93.5 mc (d/wf 0.096)  pull   -8.2
+  reco  80-inf  data     110  fold     114.5 (d/f 0.960)  w-fold    1944.4 +-  278.7 fit +- 119.1 mc (d/wf 0.057)  pull   -6.0
+-- sign +, precision all: yields
+  reco  20-40   data    6187  fold    4938.7 (d/f 1.253)  w-fold    4957.3 +-   20.1 fit +-  34.1 mc (d/wf 1.248)  pull  +14.0
+  reco  40-50   data     509  fold     415.1 (d/f 1.226)  w-fold     582.2 +-    6.6 fit +-  15.2 mc (d/wf 0.874)  pull   -2.6
+  reco  50-60   data     172  fold     146.3 (d/f 1.176)  w-fold     377.9 +-    9.0 fit +-  18.2 mc (d/wf 0.455)  pull   -8.5
+  reco  60-80   data     104  fold      89.9 (d/f 1.157)  w-fold     695.6 +-   58.3 fit +-  45.6 mc (d/wf 0.150)  pull   -7.9
+  reco  80-inf  data      68  fold      54.1 (d/f 1.258)  w-fold     918.0 +-  131.6 fit +-  63.8 mc (d/wf 0.074)  pull   -5.8
+-- sign +, precision good: yields
+  reco  20-40   data    4866  fold    3514.0 (d/f 1.385)  w-fold    3530.6 +-   14.4 fit +-  28.1 mc (d/wf 1.378)  pull  +17.4
+  reco  40-50   data     380  fold     278.7 (d/f 1.363)  w-fold     389.8 +-    4.4 fit +-  11.9 mc (d/wf 0.975)  pull   -0.4
+  reco  50-60   data     111  fold      82.8 (d/f 1.341)  w-fold     212.6 +-    4.9 fit +-  12.9 mc (d/wf 0.522)  pull   -5.8
+  reco  60-80   data      53  fold      37.4 (d/f 1.419)  w-fold     281.6 +-   23.5 fit +-  28.4 mc (d/wf 0.188)  pull   -6.1
+  reco  80-inf  data      11  fold      10.8 (d/f 1.015)  w-fold     184.0 +-   26.4 fit +-  28.7 mc (d/wf 0.060)  pull   -4.4
+-- sign +, precision poor: yields
+  reco  20-40   data    1321  fold    1424.7 (d/f 0.927)  w-fold    1426.7 +-    5.8 fit +-  19.3 mc (d/wf 0.926)  pull   -2.5
+  reco  40-50   data     129  fold     136.3 (d/f 0.946)  w-fold     192.4 +-    2.2 fit +-   9.4 mc (d/wf 0.671)  pull   -4.3
+  reco  50-60   data      61  fold      63.5 (d/f 0.960)  w-fold     165.3 +-    4.1 fit +-  12.8 mc (d/wf 0.369)  pull   -6.7
+  reco  60-80   data      51  fold      52.5 (d/f 0.971)  w-fold     414.0 +-   34.9 fit +-  35.6 mc (d/wf 0.123)  pull   -7.2
+  reco  80-inf  data      57  fold      43.2 (d/f 1.318)  w-fold     734.0 +-  105.2 fit +-  57.0 mc (d/wf 0.078)  pull   -5.6
+-- negative, reco 20-40: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data   16562  fold   16916.6 (d/f 0.979)  w-fold   16943.6 +-   76.0 fit +-  73.4 mc (d/wf 0.977)  pull   -2.3
+  E_avail [1, 2) data   10757  fold   10763.0 (d/f 0.999)  w-fold   10609.4 +-   42.9 fit +-  55.7 mc (d/wf 1.014)  pull   +1.2
+  E_avail [2, 5) data   18004  fold   19261.3 (d/f 0.935)  w-fold   18761.1 +-   74.1 fit +-  78.3 mc (d/wf 0.960)  pull   -4.4
+  E_avail [5, 10) data   11267  fold   11546.9 (d/f 0.976)  w-fold   11412.0 +-   50.5 fit +-  65.7 mc (d/wf 0.987)  pull   -1.1
+  E_avail [10, 20) data    6037  fold    4795.4 (d/f 1.259)  w-fold    5331.4 +-   34.6 fit +-  48.8 mc (d/wf 1.132)  pull   +7.2
+  E_avail [20, inf) data    1432  fold     566.4 (d/f 2.528)  w-fold    1099.4 +-   21.2 fit +-  29.4 mc (d/wf 1.303)  pull   +6.4
+-- negative, reco 40-50: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data    1608  fold    1887.9 (d/f 0.852)  w-fold    2382.5 +-   22.9 fit +-  39.7 mc (d/wf 0.675)  pull  -12.7
+  E_avail [1, 2) data    1042  fold    1332.1 (d/f 0.782)  w-fold    1748.7 +-   18.1 fit +-  33.4 mc (d/wf 0.596)  pull  -14.2
+  E_avail [2, 5) data    2085  fold    2350.0 (d/f 0.887)  w-fold    3377.9 +-   40.5 fit +-  50.1 mc (d/wf 0.617)  pull  -16.4
+  E_avail [5, 10) data    1345  fold    1165.9 (d/f 1.154)  w-fold    2016.6 +-   30.6 fit +-  41.5 mc (d/wf 0.667)  pull  -10.6
+  E_avail [10, 20) data     643  fold     355.3 (d/f 1.810)  w-fold     914.6 +-   21.0 fit +-  32.6 mc (d/wf 0.703)  pull   -5.9
+  E_avail [20, inf) data      97  fold      28.7 (d/f 3.377)  w-fold     169.2 +-    9.8 fit +-  19.1 mc (d/wf 0.573)  pull   -3.1
+-- negative, reco 50-60: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data     667  fold     541.6 (d/f 1.231)  w-fold    1174.9 +-   22.5 fit +-  33.9 mc (d/wf 0.568)  pull  -10.5
+  E_avail [1, 2) data     449  fold     378.5 (d/f 1.186)  w-fold     864.1 +-   17.4 fit +-  29.6 mc (d/wf 0.520)  pull  -10.3
+  E_avail [2, 5) data     826  fold     633.2 (d/f 1.305)  w-fold    1662.3 +-   38.4 fit +-  45.3 mc (d/wf 0.497)  pull  -12.7
+  E_avail [5, 10) data     481  fold     302.5 (d/f 1.590)  w-fold    1008.4 +-   30.0 fit +-  39.3 mc (d/wf 0.477)  pull   -9.8
+  E_avail [10, 20) data     173  fold      79.2 (d/f 2.184)  w-fold     432.1 +-   22.5 fit +-  31.9 mc (d/wf 0.400)  pull   -6.3
+  E_avail [20, inf) data      21  fold       4.2 (d/f 5.043)  w-fold      51.1 +-    5.7 fit +-  13.9 mc (d/wf 0.411)  pull   -1.9
+-- negative, reco 60-80: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data     343  fold     227.3 (d/f 1.509)  w-fold    1410.0 +-   96.1 fit +-  72.3 mc (d/wf 0.243)  pull   -8.8
+  E_avail [1, 2) data     198  fold     130.9 (d/f 1.513)  w-fold     881.2 +-   64.7 fit +-  52.3 mc (d/wf 0.225)  pull   -8.1
+  E_avail [2, 5) data     361  fold     206.3 (d/f 1.750)  w-fold    1517.0 +-  118.4 fit +-  71.8 mc (d/wf 0.238)  pull   -8.3
+  E_avail [5, 10) data     212  fold      97.5 (d/f 2.175)  w-fold     923.6 +-   88.7 fit +-  64.1 mc (d/wf 0.230)  pull   -6.4
+  E_avail [10, 20) data      61  fold      26.1 (d/f 2.334)  w-fold     336.8 +-   39.7 fit +-  42.3 mc (d/wf 0.181)  pull   -4.7
+  E_avail [20, inf) data       6  fold       0.6 (d/f 9.351)  w-fold      10.9 +-    1.6 fit +-   6.5 mc (d/wf 0.551)  pull   -0.7
+-- negative, reco 80-inf: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data      80  fold      82.9 (d/f 0.965)  w-fold    1407.5 +-  201.8 fit +-  99.6 mc (d/wf 0.057)  pull   -5.9
+  E_avail [1, 2) data      34  fold      31.2 (d/f 1.088)  w-fold     530.4 +-   76.0 fit +-  58.5 mc (d/wf 0.064)  pull   -5.2
+  E_avail [2, 5) data      55  fold      32.1 (d/f 1.711)  w-fold     545.6 +-   78.2 fit +-  58.8 mc (d/wf 0.101)  pull   -5.0
+  E_avail [5, 10) data      20  fold      12.5 (d/f 1.606)  w-fold     211.4 +-   30.3 fit +-  36.4 mc (d/wf 0.095)  pull   -4.0
+  E_avail [10, 20) data       3  fold       4.2 (d/f 0.714)  w-fold      71.4 +-   10.2 fit +-  20.7 mc (d/wf 0.042)  pull   -3.0
+
+### w(evis), form pwlinear: fit on 1A,1C,1E,1G,1M,1O; predict 1B,1D,1F,1L,1N,1P
+fit deviance 35.5 / ndf 25; log w coefficients [0.051, -0.554, 0.268, 4.589, 0.91, -7.487, 8.469]
+w at evis {20: 1.053, 30: 0.96, 40: 0.915, 45: 1.31, 50: 1.876, 55: 2.896, 60: 4.472, 70: 3.061, 80: 8.598}
+-- sign -, precision all: yields
+  reco  20-40   data   64059  fold   63849.5 (d/f 1.003)  w-fold   64170.3 +-  242.1 fit +- 148.9 mc (d/wf 0.998)  pull   -0.3
+  reco  40-50   data    6820  fold    7119.8 (d/f 0.958)  w-fold   11798.5 +-  166.0 fit +- 103.3 mc (d/wf 0.578)  pull  -23.5
+  reco  50-60   data    2617  fold    1939.2 (d/f 1.350)  w-fold    6379.5 +-  217.1 fit +-  98.3 mc (d/wf 0.410)  pull  -15.4
+  reco  60-80   data    1181  fold     688.8 (d/f 1.715)  w-fold    3018.2 +-  326.0 fit +-  75.5 mc (d/wf 0.391)  pull   -5.5
+  reco  80-inf  data     192  fold     162.9 (d/f 1.178)  w-fold    1400.9 +-  480.3 fit +-  69.0 mc (d/wf 0.137)  pull   -2.5
+-- sign -, precision good: yields
+  reco  20-40   data   61047  fold   60582.0 (d/f 1.008)  w-fold   60847.6 +-  229.6 fit +- 145.4 mc (d/wf 1.003)  pull   +0.5
+  reco  40-50   data    6535  fold    6823.8 (d/f 0.958)  w-fold   11279.3 +-  158.6 fit +- 101.5 mc (d/wf 0.579)  pull  -23.2
+  reco  50-60   data    2480  fold    1775.8 (d/f 1.397)  w-fold    5825.6 +-  197.7 fit +-  94.5 mc (d/wf 0.426)  pull  -14.9
+  reco  60-80   data    1022  fold     499.9 (d/f 2.044)  w-fold    2105.4 +-  196.9 fit +-  58.4 mc (d/wf 0.485)  pull   -5.2
+  reco  80-inf  data      82  fold      48.4 (d/f 1.694)  w-fold     416.3 +-  142.7 fit +-  33.4 mc (d/wf 0.197)  pull   -2.3
+-- sign -, precision poor: yields
+  reco  20-40   data    3012  fold    3267.6 (d/f 0.922)  w-fold    3322.7 +-   12.7 fit +-  32.0 mc (d/wf 0.906)  pull   -4.8
+  reco  40-50   data     285  fold     296.1 (d/f 0.963)  w-fold     519.2 +-    7.6 fit +-  19.2 mc (d/wf 0.549)  pull   -8.8
+  reco  50-60   data     137  fold     163.4 (d/f 0.838)  w-fold     553.9 +-   19.5 fit +-  27.0 mc (d/wf 0.247)  pull  -11.8
+  reco  60-80   data     159  fold     188.9 (d/f 0.842)  w-fold     912.8 +-  135.7 fit +-  47.8 mc (d/wf 0.174)  pull   -5.2
+  reco  80-inf  data     110  fold     114.5 (d/f 0.960)  w-fold     984.7 +-  337.6 fit +-  60.3 mc (d/wf 0.112)  pull   -2.5
+-- sign +, precision all: yields
+  reco  20-40   data    6187  fold    4938.7 (d/f 1.253)  w-fold    4936.8 +-   20.0 fit +-  34.0 mc (d/wf 1.253)  pull  +14.2
+  reco  40-50   data     509  fold     415.1 (d/f 1.226)  w-fold     633.3 +-    8.3 fit +-  16.9 mc (d/wf 0.804)  pull   -4.2
+  reco  50-60   data     172  fold     146.3 (d/f 1.176)  w-fold     473.4 +-   16.0 fit +-  21.2 mc (d/wf 0.363)  pull  -10.2
+  reco  60-80   data     104  fold      89.9 (d/f 1.157)  w-fold     403.0 +-   47.1 fit +-  24.5 mc (d/wf 0.258)  pull   -5.5
+  reco  80-inf  data      68  fold      54.1 (d/f 1.258)  w-fold     464.9 +-  159.4 fit +-  32.3 mc (d/wf 0.146)  pull   -2.4
+-- sign +, precision good: yields
+  reco  20-40   data    4866  fold    3514.0 (d/f 1.385)  w-fold    3512.2 +-   14.3 fit +-  27.9 mc (d/wf 1.385)  pull  +17.7
+  reco  40-50   data     380  fold     278.7 (d/f 1.363)  w-fold     424.1 +-    5.7 fit +-  13.2 mc (d/wf 0.896)  pull   -1.8
+  reco  50-60   data     111  fold      82.8 (d/f 1.341)  w-fold     268.0 +-    9.1 fit +-  15.5 mc (d/wf 0.414)  pull   -7.5
+  reco  60-80   data      53  fold      37.4 (d/f 1.419)  w-fold     168.0 +-   19.3 fit +-  16.3 mc (d/wf 0.315)  pull   -4.4
+  reco  80-inf  data      11  fold      10.8 (d/f 1.015)  w-fold      93.2 +-   31.9 fit +-  14.5 mc (d/wf 0.118)  pull   -2.3
+-- sign +, precision poor: yields
+  reco  20-40   data    1321  fold    1424.7 (d/f 0.927)  w-fold    1424.6 +-    5.8 fit +-  19.3 mc (d/wf 0.927)  pull   -2.5
+  reco  40-50   data     129  fold     136.3 (d/f 0.946)  w-fold     209.2 +-    2.7 fit +-  10.6 mc (d/wf 0.617)  pull   -5.1
+  reco  50-60   data      61  fold      63.5 (d/f 0.960)  w-fold     205.4 +-    6.9 fit +-  14.4 mc (d/wf 0.297)  pull   -8.1
+  reco  60-80   data      51  fold      52.5 (d/f 0.971)  w-fold     235.0 +-   27.8 fit +-  18.3 mc (d/wf 0.217)  pull   -5.4
+  reco  80-inf  data      57  fold      43.2 (d/f 1.318)  w-fold     371.7 +-  127.4 fit +-  28.9 mc (d/wf 0.153)  pull   -2.4
+-- negative, reco 20-40: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data   16562  fold   16916.6 (d/f 0.979)  w-fold   16769.5 +-   75.3 fit +-  72.3 mc (d/wf 0.988)  pull   -1.3
+  E_avail [1, 2) data   10757  fold   10763.0 (d/f 0.999)  w-fold   10577.6 +-   43.0 fit +-  55.2 mc (d/wf 1.017)  pull   +1.4
+  E_avail [2, 5) data   18004  fold   19261.3 (d/f 0.935)  w-fold   18795.5 +-   73.9 fit +-  77.8 mc (d/wf 0.958)  pull   -4.6
+  E_avail [5, 10) data   11267  fold   11546.9 (d/f 0.976)  w-fold   11428.0 +-   51.2 fit +-  65.7 mc (d/wf 0.986)  pull   -1.2
+  E_avail [10, 20) data    6037  fold    4795.4 (d/f 1.259)  w-fold    5377.1 +-   36.8 fit +-  50.6 mc (d/wf 1.123)  pull   +6.6
+  E_avail [20, inf) data    1432  fold     566.4 (d/f 2.528)  w-fold    1222.6 +-   24.4 fit +-  31.1 mc (d/wf 1.171)  pull   +3.8
+-- negative, reco 40-50: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data    1608  fold    1887.9 (d/f 0.852)  w-fold    2455.2 +-   29.5 fit +-  41.5 mc (d/wf 0.655)  pull  -13.1
+  E_avail [1, 2) data    1042  fold    1332.1 (d/f 0.782)  w-fold    1850.4 +-   25.0 fit +-  35.8 mc (d/wf 0.563)  pull  -14.9
+  E_avail [2, 5) data    2085  fold    2350.0 (d/f 0.887)  w-fold    3766.7 +-   59.6 fit +-  56.6 mc (d/wf 0.554)  pull  -17.9
+  E_avail [5, 10) data    1345  fold    1165.9 (d/f 1.154)  w-fold    2452.0 +-   45.3 fit +-  51.2 mc (d/wf 0.549)  pull  -14.3
+  E_avail [10, 20) data     643  fold     355.3 (d/f 1.810)  w-fold    1166.3 +-   40.6 fit +-  41.2 mc (d/wf 0.551)  pull   -8.3
+  E_avail [20, inf) data      97  fold      28.7 (d/f 3.377)  w-fold     108.0 +-    8.9 fit +-  11.8 mc (d/wf 0.898)  pull   -0.6
+-- negative, reco 50-60: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data     667  fold     541.6 (d/f 1.231)  w-fold    1551.3 +-   45.5 fit +-  45.4 mc (d/wf 0.430)  pull  -12.8
+  E_avail [1, 2) data     449  fold     378.5 (d/f 1.186)  w-fold    1147.5 +-   36.8 fit +-  39.6 mc (d/wf 0.391)  pull  -12.0
+  E_avail [2, 5) data     826  fold     633.2 (d/f 1.305)  w-fold    2184.8 +-   83.2 fit +-  59.2 mc (d/wf 0.378)  pull  -12.8
+  E_avail [5, 10) data     481  fold     302.5 (d/f 1.590)  w-fold    1177.3 +-   51.1 fit +-  45.1 mc (d/wf 0.409)  pull   -9.7
+  E_avail [10, 20) data     173  fold      79.2 (d/f 2.184)  w-fold     293.8 +-   23.4 fit +-  21.2 mc (d/wf 0.589)  pull   -3.5
+  E_avail [20, inf) data      21  fold       4.2 (d/f 5.043)  w-fold      24.9 +-    5.6 fit +-   6.8 mc (d/wf 0.845)  pull   -0.4
+-- negative, reco 60-80: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data     343  fold     227.3 (d/f 1.509)  w-fold     954.4 +-   74.8 fit +-  41.7 mc (d/wf 0.359)  pull   -7.0
+  E_avail [1, 2) data     198  fold     130.9 (d/f 1.513)  w-fold     555.2 +-   50.8 fit +-  30.3 mc (d/wf 0.357)  pull   -5.9
+  E_avail [2, 5) data     361  fold     206.3 (d/f 1.750)  w-fold     875.6 +-   93.1 fit +-  39.5 mc (d/wf 0.412)  pull   -5.0
+  E_avail [5, 10) data     212  fold      97.5 (d/f 2.175)  w-fold     462.5 +-   74.9 fit +-  32.0 mc (d/wf 0.458)  pull   -3.0
+  E_avail [10, 20) data      61  fold      26.1 (d/f 2.334)  w-fold     165.0 +-   40.8 fit +-  20.8 mc (d/wf 0.370)  pull   -2.2
+  E_avail [20, inf) data       6  fold       0.6 (d/f 9.351)  w-fold       5.5 +-    1.9 fit +-   3.3 mc (d/wf 1.088)  pull   +0.1
+-- negative, reco 80-inf: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data      80  fold      82.9 (d/f 0.965)  w-fold     712.8 +-  244.4 fit +-  50.5 mc (d/wf 0.112)  pull   -2.5
+  E_avail [1, 2) data      34  fold      31.2 (d/f 1.088)  w-fold     268.6 +-   92.1 fit +-  29.6 mc (d/wf 0.127)  pull   -2.4
+  E_avail [2, 5) data      55  fold      32.1 (d/f 1.711)  w-fold     276.3 +-   94.7 fit +-  29.8 mc (d/wf 0.199)  pull   -2.2
+  E_avail [5, 10) data      20  fold      12.5 (d/f 1.606)  w-fold     107.1 +-   36.7 fit +-  18.4 mc (d/wf 0.187)  pull   -2.1
+  E_avail [10, 20) data       3  fold       4.2 (d/f 0.714)  w-fold      36.1 +-   12.4 fit +-  10.5 mc (d/wf 0.083)  pull   -2.0
+
+### w(energy), form quadratic: fit on 1A,1C,1E,1G,1M,1O; predict 1B,1D,1F,1L,1N,1P
+fit deviance 192.5 / ndf 26; log w coefficients [-0.049, 0.004, 2.227]
+w at energy {0: 0.952, 2: 0.958, 5: 0.986, 10: 1.095, 20: 1.664, 30: 3.341, 40: 8.857}
+-- sign -, precision all: yields
+  reco  20-40   data   64059  fold   63849.5 (d/f 1.003)  w-fold   64173.3 +-  242.3 fit +- 149.3 mc (d/wf 0.998)  pull   -0.3
+  reco  40-50   data    6820  fold    7119.8 (d/f 0.958)  w-fold    7029.5 +-   26.9 fit +-  58.7 mc (d/wf 0.970)  pull   -2.0
+  reco  50-60   data    2617  fold    1939.2 (d/f 1.350)  w-fold    1904.3 +-    7.4 fit +-  28.8 mc (d/wf 1.374)  pull  +12.0
+  reco  60-80   data    1181  fold     688.8 (d/f 1.715)  w-fold     673.5 +-    2.7 fit +-  15.8 mc (d/wf 1.753)  pull  +13.4
+  reco  80-inf  data     192  fold     162.9 (d/f 1.178)  w-fold     157.4 +-    0.7 fit +-   7.7 mc (d/wf 1.220)  pull   +2.2
+-- sign -, precision good: yields
+  reco  20-40   data   61047  fold   60582.0 (d/f 1.008)  w-fold   60865.4 +-  229.8 fit +- 145.8 mc (d/wf 1.003)  pull   +0.5
+  reco  40-50   data    6535  fold    6823.8 (d/f 0.958)  w-fold    6732.8 +-   25.8 fit +-  57.8 mc (d/wf 0.971)  pull   -1.9
+  reco  50-60   data    2480  fold    1775.8 (d/f 1.397)  w-fold    1742.3 +-    6.8 fit +-  27.7 mc (d/wf 1.423)  pull  +12.8
+  reco  60-80   data    1022  fold     499.9 (d/f 2.044)  w-fold     488.1 +-    1.9 fit +-  13.1 mc (d/wf 2.094)  pull  +15.4
+  reco  80-inf  data      82  fold      48.4 (d/f 1.694)  w-fold      46.8 +-    0.2 fit +-   3.8 mc (d/wf 1.753)  pull   +3.6
+-- sign -, precision poor: yields
+  reco  20-40   data    3012  fold    3267.6 (d/f 0.922)  w-fold    3307.8 +-   12.7 fit +-  32.2 mc (d/wf 0.911)  pull   -4.6
+  reco  40-50   data     285  fold     296.1 (d/f 0.963)  w-fold     296.7 +-    1.1 fit +-   9.9 mc (d/wf 0.961)  pull   -0.6
+  reco  50-60   data     137  fold     163.4 (d/f 0.838)  w-fold     162.0 +-    0.6 fit +-   7.6 mc (d/wf 0.846)  pull   -1.8
+  reco  60-80   data     159  fold     188.9 (d/f 0.842)  w-fold     185.4 +-    0.7 fit +-   8.8 mc (d/wf 0.858)  pull   -1.7
+  reco  80-inf  data     110  fold     114.5 (d/f 0.960)  w-fold     110.7 +-    0.5 fit +-   6.8 mc (d/wf 0.994)  pull   -0.1
+-- sign +, precision all: yields
+  reco  20-40   data    6187  fold    4938.7 (d/f 1.253)  w-fold    4825.2 +-   20.3 fit +-  33.3 mc (d/wf 1.282)  pull  +15.5
+  reco  40-50   data     509  fold     415.1 (d/f 1.226)  w-fold     403.9 +-    1.7 fit +-  10.1 mc (d/wf 1.260)  pull   +4.2
+  reco  50-60   data     172  fold     146.3 (d/f 1.176)  w-fold     142.2 +-    0.6 fit +-   6.3 mc (d/wf 1.209)  pull   +2.0
+  reco  60-80   data     104  fold      89.9 (d/f 1.157)  w-fold      86.8 +-    0.4 fit +-   5.0 mc (d/wf 1.198)  pull   +1.5
+  reco  80-inf  data      68  fold      54.1 (d/f 1.258)  w-fold      51.9 +-    0.3 fit +-   3.6 mc (d/wf 1.309)  pull   +1.8
+-- sign +, precision good: yields
+  reco  20-40   data    4866  fold    3514.0 (d/f 1.385)  w-fold    3431.7 +-   14.3 fit +-  27.3 mc (d/wf 1.418)  pull  +18.8
+  reco  40-50   data     380  fold     278.7 (d/f 1.363)  w-fold     271.1 +-    1.1 fit +-   8.1 mc (d/wf 1.402)  pull   +5.2
+  reco  50-60   data     111  fold      82.8 (d/f 1.341)  w-fold      80.4 +-    0.3 fit +-   4.5 mc (d/wf 1.381)  pull   +2.7
+  reco  60-80   data      53  fold      37.4 (d/f 1.419)  w-fold      36.2 +-    0.2 fit +-   3.2 mc (d/wf 1.466)  pull   +2.1
+  reco  80-inf  data      11  fold      10.8 (d/f 1.015)  w-fold      10.5 +-    0.1 fit +-   1.6 mc (d/wf 1.044)  pull   +0.1
+-- sign +, precision poor: yields
+  reco  20-40   data    1321  fold    1424.7 (d/f 0.927)  w-fold    1393.5 +-    6.1 fit +-  19.1 mc (d/wf 0.948)  pull   -1.7
+  reco  40-50   data     129  fold     136.3 (d/f 0.946)  w-fold     132.8 +-    0.6 fit +-   6.1 mc (d/wf 0.971)  pull   -0.3
+  reco  50-60   data      61  fold      63.5 (d/f 0.960)  w-fold      61.9 +-    0.3 fit +-   4.5 mc (d/wf 0.986)  pull   -0.1
+  reco  60-80   data      51  fold      52.5 (d/f 0.971)  w-fold      50.7 +-    0.2 fit +-   3.8 mc (d/wf 1.007)  pull   +0.0
+  reco  80-inf  data      57  fold      43.2 (d/f 1.318)  w-fold      41.4 +-    0.2 fit +-   3.2 mc (d/wf 1.377)  pull   +1.9
+-- negative, reco 20-40: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data   16562  fold   16916.6 (d/f 0.979)  w-fold   16114.6 +-   91.2 fit +-  69.6 mc (d/wf 1.028)  pull   +2.6
+  E_avail [1, 2) data   10757  fold   10763.0 (d/f 0.999)  w-fold   10281.7 +-   48.1 fit +-  53.9 mc (d/wf 1.046)  pull   +3.8
+  E_avail [2, 5) data   18004  fold   19261.3 (d/f 0.935)  w-fold   18643.1 +-   72.9 fit +-  77.3 mc (d/wf 0.966)  pull   -3.7
+  E_avail [5, 10) data   11267  fold   11546.9 (d/f 0.976)  w-fold   11816.6 +-   64.3 fit +-  67.0 mc (d/wf 0.953)  pull   -3.9
+  E_avail [10, 20) data    6037  fold    4795.4 (d/f 1.259)  w-fold    5919.7 +-   50.8 fit +-  53.2 mc (d/wf 1.020)  pull   +1.1
+  E_avail [20, inf) data    1432  fold     566.4 (d/f 2.528)  w-fold    1397.7 +-   30.3 fit +-  35.3 mc (d/wf 1.025)  pull   +0.6
+-- negative, reco 40-50: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data    1608  fold    1887.9 (d/f 0.852)  w-fold    1798.4 +-   10.2 fit +-  29.8 mc (d/wf 0.894)  pull   -3.7
+  E_avail [1, 2) data    1042  fold    1332.1 (d/f 0.782)  w-fold    1272.5 +-    6.0 fit +-  24.1 mc (d/wf 0.819)  pull   -5.7
+  E_avail [2, 5) data    2085  fold    2350.0 (d/f 0.887)  w-fold    2274.0 +-    8.9 fit +-  33.4 mc (d/wf 0.917)  pull   -3.3
+  E_avail [5, 10) data    1345  fold    1165.9 (d/f 1.154)  w-fold    1188.7 +-    6.3 fit +-  24.2 mc (d/wf 1.131)  pull   +3.5
+  E_avail [10, 20) data     643  fold     355.3 (d/f 1.810)  w-fold     433.8 +-    3.7 fit +-  15.1 mc (d/wf 1.482)  pull   +7.0
+  E_avail [20, inf) data      97  fold      28.7 (d/f 3.377)  w-fold      62.1 +-    1.1 fit +-   6.9 mc (d/wf 1.563)  pull   +2.9
+-- negative, reco 50-60: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data     667  fold     541.6 (d/f 1.231)  w-fold     516.0 +-    2.9 fit +-  14.6 mc (d/wf 1.293)  pull   +5.1
+  E_avail [1, 2) data     449  fold     378.5 (d/f 1.186)  w-fold     361.6 +-    1.7 fit +-  12.3 mc (d/wf 1.242)  pull   +3.6
+  E_avail [2, 5) data     826  fold     633.2 (d/f 1.305)  w-fold     612.7 +-    2.4 fit +-  16.4 mc (d/wf 1.348)  pull   +6.4
+  E_avail [5, 10) data     481  fold     302.5 (d/f 1.590)  w-fold     308.9 +-    1.7 fit +-  11.8 mc (d/wf 1.557)  pull   +6.9
+  E_avail [10, 20) data     173  fold      79.2 (d/f 2.184)  w-fold      95.7 +-    0.8 fit +-   6.8 mc (d/wf 1.807)  pull   +5.2
+  E_avail [20, inf) data      21  fold       4.2 (d/f 5.043)  w-fold       9.5 +-    0.2 fit +-   2.7 mc (d/wf 2.220)  pull   +2.2
+-- negative, reco 60-80: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data     343  fold     227.3 (d/f 1.509)  w-fold     216.5 +-    1.2 fit +-   8.8 mc (d/wf 1.584)  pull   +6.2
+  E_avail [1, 2) data     198  fold     130.9 (d/f 1.513)  w-fold     125.0 +-    0.6 fit +-   6.5 mc (d/wf 1.583)  pull   +4.7
+  E_avail [2, 5) data     361  fold     206.3 (d/f 1.750)  w-fold     199.6 +-    0.8 fit +-   8.7 mc (d/wf 1.808)  pull   +7.7
+  E_avail [5, 10) data     212  fold      97.5 (d/f 2.175)  w-fold      99.6 +-    0.5 fit +-   6.3 mc (d/wf 2.129)  pull   +7.1
+  E_avail [10, 20) data      61  fold      26.1 (d/f 2.334)  w-fold      31.5 +-    0.3 fit +-   3.9 mc (d/wf 1.938)  pull   +3.4
+  E_avail [20, inf) data       6  fold       0.6 (d/f 9.351)  w-fold       1.2 +-    0.0 fit +-   0.7 mc (d/wf 4.819)  pull   +1.9
+-- negative, reco 80-inf: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data      80  fold      82.9 (d/f 0.965)  w-fold      79.0 +-    0.5 fit +-   5.6 mc (d/wf 1.013)  pull   +0.1
+  E_avail [1, 2) data      34  fold      31.2 (d/f 1.088)  w-fold      29.8 +-    0.1 fit +-   3.3 mc (d/wf 1.139)  pull   +0.6
+  E_avail [2, 5) data      55  fold      32.1 (d/f 1.711)  w-fold      31.0 +-    0.1 fit +-   3.3 mc (d/wf 1.773)  pull   +2.9
+  E_avail [5, 10) data      20  fold      12.5 (d/f 1.606)  w-fold      12.6 +-    0.1 fit +-   2.2 mc (d/wf 1.582)  pull   +1.5
+  E_avail [10, 20) data       3  fold       4.2 (d/f 0.714)  w-fold       5.0 +-    0.0 fit +-   1.4 mc (d/wf 0.606)  pull   -0.9
+
+### w(energy), form cubic: fit on 1A,1C,1E,1G,1M,1O; predict 1B,1D,1F,1L,1N,1P
+fit deviance 49.1 / ndf 25; log w coefficients [0.006, -1.391, 7.907, -5.106]
+w at energy {0: 1.006, 2: 0.956, 5: 0.947, 10: 1.075, 20: 1.913, 30: 3.511, 40: 4.117}
+-- sign -, precision all: yields
+  reco  20-40   data   64059  fold   63849.5 (d/f 1.003)  w-fold   64373.6 +-  243.8 fit +- 149.7 mc (d/wf 0.995)  pull   -0.8
+  reco  40-50   data    6820  fold    7119.8 (d/f 0.958)  w-fold    7042.9 +-   27.0 fit +-  58.9 mc (d/wf 0.968)  pull   -2.1
+  reco  50-60   data    2617  fold    1939.2 (d/f 1.350)  w-fold    1907.9 +-    7.4 fit +-  28.8 mc (d/wf 1.372)  pull  +12.0
+  reco  60-80   data    1181  fold     688.8 (d/f 1.715)  w-fold     676.6 +-    2.7 fit +-  15.9 mc (d/wf 1.745)  pull  +13.3
+  reco  80-inf  data     192  fold     162.9 (d/f 1.178)  w-fold     160.2 +-    0.8 fit +-   7.9 mc (d/wf 1.199)  pull   +2.0
+-- sign -, precision good: yields
+  reco  20-40   data   61047  fold   60582.0 (d/f 1.008)  w-fold   61028.3 +-  230.9 fit +- 146.1 mc (d/wf 1.000)  pull   +0.1
+  reco  40-50   data    6535  fold    6823.8 (d/f 0.958)  w-fold    6743.1 +-   25.9 fit +-  58.0 mc (d/wf 0.969)  pull   -2.0
+  reco  50-60   data    2480  fold    1775.8 (d/f 1.397)  w-fold    1744.6 +-    6.8 fit +-  27.8 mc (d/wf 1.421)  pull  +12.8
+  reco  60-80   data    1022  fold     499.9 (d/f 2.044)  w-fold     489.6 +-    1.9 fit +-  13.2 mc (d/wf 2.087)  pull  +15.4
+  reco  80-inf  data      82  fold      48.4 (d/f 1.694)  w-fold      47.5 +-    0.2 fit +-   3.8 mc (d/wf 1.726)  pull   +3.5
+-- sign -, precision poor: yields
+  reco  20-40   data    3012  fold    3267.6 (d/f 0.922)  w-fold    3345.3 +-   13.3 fit +-  32.6 mc (d/wf 0.900)  pull   -5.1
+  reco  40-50   data     285  fold     296.1 (d/f 0.963)  w-fold     299.8 +-    1.2 fit +-  10.0 mc (d/wf 0.951)  pull   -0.8
+  reco  50-60   data     137  fold     163.4 (d/f 0.838)  w-fold     163.3 +-    0.7 fit +-   7.6 mc (d/wf 0.839)  pull   -1.9
+  reco  60-80   data     159  fold     188.9 (d/f 0.842)  w-fold     187.0 +-    0.8 fit +-   8.9 mc (d/wf 0.850)  pull   -1.8
+  reco  80-inf  data     110  fold     114.5 (d/f 0.960)  w-fold     112.7 +-    0.5 fit +-   6.9 mc (d/wf 0.976)  pull   -0.2
+-- sign +, precision all: yields
+  reco  20-40   data    6187  fold    4938.7 (d/f 1.253)  w-fold    4897.3 +-   21.6 fit +-  33.8 mc (d/wf 1.263)  pull  +14.6
+  reco  40-50   data     509  fold     415.1 (d/f 1.226)  w-fold     409.4 +-    1.8 fit +-  10.3 mc (d/wf 1.243)  pull   +4.0
+  reco  50-60   data     172  fold     146.3 (d/f 1.176)  w-fold     144.5 +-    0.6 fit +-   6.4 mc (d/wf 1.190)  pull   +1.9
+  reco  60-80   data     104  fold      89.9 (d/f 1.157)  w-fold      88.7 +-    0.4 fit +-   5.1 mc (d/wf 1.173)  pull   +1.3
+  reco  80-inf  data      68  fold      54.1 (d/f 1.258)  w-fold      53.4 +-    0.3 fit +-   3.7 mc (d/wf 1.272)  pull   +1.6
+-- sign +, precision good: yields
+  reco  20-40   data    4866  fold    3514.0 (d/f 1.385)  w-fold    3478.7 +-   15.0 fit +-  27.7 mc (d/wf 1.399)  pull  +18.1
+  reco  40-50   data     380  fold     278.7 (d/f 1.363)  w-fold     273.4 +-    1.1 fit +-   8.2 mc (d/wf 1.390)  pull   +5.0
+  reco  50-60   data     111  fold      82.8 (d/f 1.341)  w-fold      81.2 +-    0.3 fit +-   4.5 mc (d/wf 1.366)  pull   +2.6
+  reco  60-80   data      53  fold      37.4 (d/f 1.419)  w-fold      36.7 +-    0.2 fit +-   3.3 mc (d/wf 1.446)  pull   +2.0
+  reco  80-inf  data      11  fold      10.8 (d/f 1.015)  w-fold      10.9 +-    0.1 fit +-   1.7 mc (d/wf 1.012)  pull   +0.0
+-- sign +, precision poor: yields
+  reco  20-40   data    1321  fold    1424.7 (d/f 0.927)  w-fold    1418.6 +-    6.6 fit +-  19.3 mc (d/wf 0.931)  pull   -2.3
+  reco  40-50   data     129  fold     136.3 (d/f 0.946)  w-fold     135.9 +-    0.7 fit +-   6.2 mc (d/wf 0.949)  pull   -0.5
+  reco  50-60   data      61  fold      63.5 (d/f 0.960)  w-fold      63.2 +-    0.3 fit +-   4.6 mc (d/wf 0.965)  pull   -0.2
+  reco  60-80   data      51  fold      52.5 (d/f 0.971)  w-fold      52.0 +-    0.3 fit +-   3.9 mc (d/wf 0.980)  pull   -0.1
+  reco  80-inf  data      57  fold      43.2 (d/f 1.318)  w-fold      42.6 +-    0.2 fit +-   3.3 mc (d/wf 1.339)  pull   +1.8
+-- negative, reco 20-40: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data   16562  fold   16916.6 (d/f 0.979)  w-fold   16760.4 +-  109.1 fit +-  72.5 mc (d/wf 0.988)  pull   -1.1
+  E_avail [1, 2) data   10757  fold   10763.0 (d/f 0.999)  w-fold   10397.6 +-   49.3 fit +-  54.5 mc (d/wf 1.035)  pull   +2.8
+  E_avail [2, 5) data   18004  fold   19261.3 (d/f 0.935)  w-fold   18232.7 +-   79.4 fit +-  75.5 mc (d/wf 0.987)  pull   -1.3
+  E_avail [5, 10) data   11267  fold   11546.9 (d/f 0.976)  w-fold   11366.6 +-   72.8 fit +-  64.4 mc (d/wf 0.991)  pull   -0.7
+  E_avail [10, 20) data    6037  fold    4795.4 (d/f 1.259)  w-fold    6145.2 +-   55.8 fit +-  55.5 mc (d/wf 0.982)  pull   -1.0
+  E_avail [20, inf) data    1432  fold     566.4 (d/f 2.528)  w-fold    1471.0 +-   31.6 fit +-  35.2 mc (d/wf 0.973)  pull   -0.6
+-- negative, reco 40-50: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data    1608  fold    1887.9 (d/f 0.852)  w-fold    1870.3 +-   12.2 fit +-  31.0 mc (d/wf 0.860)  pull   -5.0
+  E_avail [1, 2) data    1042  fold    1332.1 (d/f 0.782)  w-fold    1286.8 +-    6.1 fit +-  24.4 mc (d/wf 0.810)  pull   -6.0
+  E_avail [2, 5) data    2085  fold    2350.0 (d/f 0.887)  w-fold    2224.8 +-    9.7 fit +-  32.7 mc (d/wf 0.937)  pull   -2.5
+  E_avail [5, 10) data    1345  fold    1165.9 (d/f 1.154)  w-fold    1142.7 +-    7.2 fit +-  23.3 mc (d/wf 1.177)  pull   +4.6
+  E_avail [10, 20) data     643  fold     355.3 (d/f 1.810)  w-fold     448.2 +-    4.0 fit +-  15.6 mc (d/wf 1.435)  pull   +6.5
+  E_avail [20, inf) data      97  fold      28.7 (d/f 3.377)  w-fold      70.0 +-    1.4 fit +-   7.7 mc (d/wf 1.385)  pull   +2.1
+-- negative, reco 50-60: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data     667  fold     541.6 (d/f 1.231)  w-fold     536.8 +-    3.5 fit +-  15.3 mc (d/wf 1.243)  pull   +4.3
+  E_avail [1, 2) data     449  fold     378.5 (d/f 1.186)  w-fold     365.7 +-    1.7 fit +-  12.4 mc (d/wf 1.228)  pull   +3.4
+  E_avail [2, 5) data     826  fold     633.2 (d/f 1.305)  w-fold     599.5 +-    2.6 fit +-  16.0 mc (d/wf 1.378)  pull   +6.9
+  E_avail [5, 10) data     481  fold     302.5 (d/f 1.590)  w-fold     297.0 +-    1.9 fit +-  11.4 mc (d/wf 1.619)  pull   +7.4
+  E_avail [10, 20) data     173  fold      79.2 (d/f 2.184)  w-fold      98.4 +-    0.9 fit +-   7.0 mc (d/wf 1.757)  pull   +5.0
+  E_avail [20, inf) data      21  fold       4.2 (d/f 5.043)  w-fold      10.5 +-    0.2 fit +-   2.9 mc (d/wf 2.002)  pull   +1.9
+-- negative, reco 60-80: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data     343  fold     227.3 (d/f 1.509)  w-fold     225.3 +-    1.5 fit +-   9.1 mc (d/wf 1.523)  pull   +5.7
+  E_avail [1, 2) data     198  fold     130.9 (d/f 1.513)  w-fold     126.5 +-    0.6 fit +-   6.6 mc (d/wf 1.565)  pull   +4.6
+  E_avail [2, 5) data     361  fold     206.3 (d/f 1.750)  w-fold     195.3 +-    0.8 fit +-   8.5 mc (d/wf 1.848)  pull   +8.0
+  E_avail [5, 10) data     212  fold      97.5 (d/f 2.175)  w-fold      95.8 +-    0.6 fit +-   6.1 mc (d/wf 2.214)  pull   +7.4
+  E_avail [10, 20) data      61  fold      26.1 (d/f 2.334)  w-fold      32.3 +-    0.3 fit +-   4.0 mc (d/wf 1.887)  pull   +3.3
+  E_avail [20, inf) data       6  fold       0.6 (d/f 9.351)  w-fold       1.4 +-    0.0 fit +-   0.8 mc (d/wf 4.164)  pull   +1.8
+-- negative, reco 80-inf: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data      80  fold      82.9 (d/f 0.965)  w-fold      82.4 +-    0.6 fit +-   5.8 mc (d/wf 0.971)  pull   -0.2
+  E_avail [1, 2) data      34  fold      31.2 (d/f 1.088)  w-fold      30.2 +-    0.1 fit +-   3.3 mc (d/wf 1.127)  pull   +0.6
+  E_avail [2, 5) data      55  fold      32.1 (d/f 1.711)  w-fold      30.5 +-    0.1 fit +-   3.3 mc (d/wf 1.805)  pull   +3.0
+  E_avail [5, 10) data      20  fold      12.5 (d/f 1.606)  w-fold      12.1 +-    0.1 fit +-   2.1 mc (d/wf 1.648)  pull   +1.6
+  E_avail [10, 20) data       3  fold       4.2 (d/f 0.714)  w-fold       5.0 +-    0.0 fit +-   1.5 mc (d/wf 0.597)  pull   -0.9
+
+### w(energy), form pwlinear: fit on 1A,1C,1E,1G,1M,1O; predict 1B,1D,1F,1L,1N,1P
+fit deviance 65.9 / ndf 22; log w coefficients [-0.026, -0.187, 1.782, 1.258, -0.772, -0.006, -1.137]
+w at energy {0: 0.975, 2: 0.966, 5: 0.952, 10: 1.079, 20: 1.983, 30: 3.335, 40: 4.635}
+-- sign -, precision all: yields
+  reco  20-40   data   64059  fold   63849.5 (d/f 1.003)  w-fold   64241.4 +-  242.8 fit +- 149.3 mc (d/wf 0.997)  pull   -0.5
+  reco  40-50   data    6820  fold    7119.8 (d/f 0.958)  w-fold    7032.2 +-   26.9 fit +-  58.8 mc (d/wf 0.970)  pull   -2.0
+  reco  50-60   data    2617  fold    1939.2 (d/f 1.350)  w-fold    1904.2 +-    7.4 fit +-  28.8 mc (d/wf 1.374)  pull  +12.0
+  reco  60-80   data    1181  fold     688.8 (d/f 1.715)  w-fold     674.6 +-    2.7 fit +-  15.8 mc (d/wf 1.751)  pull  +13.4
+  reco  80-inf  data     192  fold     162.9 (d/f 1.178)  w-fold     158.8 +-    0.7 fit +-   7.8 mc (d/wf 1.209)  pull   +2.1
+-- sign -, precision good: yields
+  reco  20-40   data   61047  fold   60582.0 (d/f 1.008)  w-fold   60912.1 +-  230.1 fit +- 145.8 mc (d/wf 1.002)  pull   +0.4
+  reco  40-50   data    6535  fold    6823.8 (d/f 0.958)  w-fold    6734.0 +-   25.8 fit +-  57.9 mc (d/wf 0.970)  pull   -1.9
+  reco  50-60   data    2480  fold    1775.8 (d/f 1.397)  w-fold    1741.8 +-    6.8 fit +-  27.8 mc (d/wf 1.424)  pull  +12.9
+  reco  60-80   data    1022  fold     499.9 (d/f 2.044)  w-fold     488.5 +-    1.9 fit +-  13.1 mc (d/wf 2.092)  pull  +15.4
+  reco  80-inf  data      82  fold      48.4 (d/f 1.694)  w-fold      47.1 +-    0.2 fit +-   3.8 mc (d/wf 1.740)  pull   +3.6
+-- sign -, precision poor: yields
+  reco  20-40   data    3012  fold    3267.6 (d/f 0.922)  w-fold    3329.3 +-   13.0 fit +-  32.4 mc (d/wf 0.905)  pull   -4.9
+  reco  40-50   data     285  fold     296.1 (d/f 0.963)  w-fold     298.2 +-    1.2 fit +-   9.9 mc (d/wf 0.956)  pull   -0.7
+  reco  50-60   data     137  fold     163.4 (d/f 0.838)  w-fold     162.4 +-    0.7 fit +-   7.6 mc (d/wf 0.844)  pull   -1.8
+  reco  60-80   data     159  fold     188.9 (d/f 0.842)  w-fold     186.1 +-    0.7 fit +-   8.9 mc (d/wf 0.854)  pull   -1.8
+  reco  80-inf  data     110  fold     114.5 (d/f 0.960)  w-fold     111.6 +-    0.5 fit +-   6.8 mc (d/wf 0.985)  pull   -0.1
+-- sign +, precision all: yields
+  reco  20-40   data    6187  fold    4938.7 (d/f 1.253)  w-fold    4864.3 +-   21.0 fit +-  33.5 mc (d/wf 1.272)  pull  +15.0
+  reco  40-50   data     509  fold     415.1 (d/f 1.226)  w-fold     406.7 +-    1.7 fit +-  10.2 mc (d/wf 1.251)  pull   +4.1
+  reco  50-60   data     172  fold     146.3 (d/f 1.176)  w-fold     143.4 +-    0.6 fit +-   6.4 mc (d/wf 1.199)  pull   +2.0
+  reco  60-80   data     104  fold      89.9 (d/f 1.157)  w-fold      87.8 +-    0.4 fit +-   5.1 mc (d/wf 1.184)  pull   +1.4
+  reco  80-inf  data      68  fold      54.1 (d/f 1.258)  w-fold      52.7 +-    0.3 fit +-   3.7 mc (d/wf 1.290)  pull   +1.7
+-- sign +, precision good: yields
+  reco  20-40   data    4866  fold    3514.0 (d/f 1.385)  w-fold    3457.1 +-   14.7 fit +-  27.5 mc (d/wf 1.408)  pull  +18.4
+  reco  40-50   data     380  fold     278.7 (d/f 1.363)  w-fold     272.2 +-    1.1 fit +-   8.1 mc (d/wf 1.396)  pull   +5.1
+  reco  50-60   data     111  fold      82.8 (d/f 1.341)  w-fold      80.8 +-    0.3 fit +-   4.5 mc (d/wf 1.373)  pull   +2.6
+  reco  60-80   data      53  fold      37.4 (d/f 1.419)  w-fold      36.4 +-    0.2 fit +-   3.2 mc (d/wf 1.455)  pull   +2.1
+  reco  80-inf  data      11  fold      10.8 (d/f 1.015)  w-fold      10.8 +-    0.1 fit +-   1.7 mc (d/wf 1.022)  pull   +0.1
+-- sign +, precision poor: yields
+  reco  20-40   data    1321  fold    1424.7 (d/f 0.927)  w-fold    1407.2 +-    6.4 fit +-  19.1 mc (d/wf 0.939)  pull   -2.1
+  reco  40-50   data     129  fold     136.3 (d/f 0.946)  w-fold     134.6 +-    0.6 fit +-   6.2 mc (d/wf 0.959)  pull   -0.4
+  reco  50-60   data      61  fold      63.5 (d/f 0.960)  w-fold      62.6 +-    0.3 fit +-   4.5 mc (d/wf 0.975)  pull   -0.2
+  reco  60-80   data      51  fold      52.5 (d/f 0.971)  w-fold      51.4 +-    0.3 fit +-   3.9 mc (d/wf 0.992)  pull   -0.1
+  reco  80-inf  data      57  fold      43.2 (d/f 1.318)  w-fold      42.0 +-    0.2 fit +-   3.3 mc (d/wf 1.358)  pull   +1.8
+-- negative, reco 20-40: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data   16562  fold   16916.6 (d/f 0.979)  w-fold   16449.3 +-  102.1 fit +-  71.1 mc (d/wf 1.007)  pull   +0.6
+  E_avail [1, 2) data   10757  fold   10763.0 (d/f 0.999)  w-fold   10417.1 +-   50.3 fit +-  54.6 mc (d/wf 1.033)  pull   +2.7
+  E_avail [2, 5) data   18004  fold   19261.3 (d/f 0.935)  w-fold   18485.4 +-   79.8 fit +-  76.6 mc (d/wf 0.974)  pull   -2.8
+  E_avail [5, 10) data   11267  fold   11546.9 (d/f 0.976)  w-fold   11275.1 +-   82.2 fit +-  63.9 mc (d/wf 0.999)  pull   -0.1
+  E_avail [10, 20) data    6037  fold    4795.4 (d/f 1.259)  w-fold    6156.7 +-   69.4 fit +-  55.7 mc (d/wf 0.981)  pull   -1.0
+  E_avail [20, inf) data    1432  fold     566.4 (d/f 2.528)  w-fold    1457.8 +-   34.3 fit +-  34.8 mc (d/wf 0.982)  pull   -0.4
+-- negative, reco 40-50: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data    1608  fold    1887.9 (d/f 0.852)  w-fold    1835.7 +-   11.4 fit +-  30.4 mc (d/wf 0.876)  pull   -4.4
+  E_avail [1, 2) data    1042  fold    1332.1 (d/f 0.782)  w-fold    1289.3 +-    6.2 fit +-  24.4 mc (d/wf 0.808)  pull   -6.0
+  E_avail [2, 5) data    2085  fold    2350.0 (d/f 0.887)  w-fold    2255.6 +-    9.7 fit +-  33.1 mc (d/wf 0.924)  pull   -3.0
+  E_avail [5, 10) data    1345  fold    1165.9 (d/f 1.154)  w-fold    1133.7 +-    8.3 fit +-  23.1 mc (d/wf 1.186)  pull   +4.8
+  E_avail [10, 20) data     643  fold     355.3 (d/f 1.810)  w-fold     448.6 +-    5.0 fit +-  15.6 mc (d/wf 1.433)  pull   +6.4
+  E_avail [20, inf) data      97  fold      28.7 (d/f 3.377)  w-fold      69.3 +-    1.7 fit +-   7.6 mc (d/wf 1.399)  pull   +2.2
+-- negative, reco 50-60: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data     667  fold     541.6 (d/f 1.231)  w-fold     526.7 +-    3.3 fit +-  15.0 mc (d/wf 1.266)  pull   +4.7
+  E_avail [1, 2) data     449  fold     378.5 (d/f 1.186)  w-fold     366.4 +-    1.8 fit +-  12.4 mc (d/wf 1.226)  pull   +3.4
+  E_avail [2, 5) data     826  fold     633.2 (d/f 1.305)  w-fold     607.8 +-    2.6 fit +-  16.3 mc (d/wf 1.359)  pull   +6.6
+  E_avail [5, 10) data     481  fold     302.5 (d/f 1.590)  w-fold     294.5 +-    2.2 fit +-  11.3 mc (d/wf 1.633)  pull   +7.5
+  E_avail [10, 20) data     173  fold      79.2 (d/f 2.184)  w-fold      98.4 +-    1.1 fit +-   7.0 mc (d/wf 1.758)  pull   +5.0
+  E_avail [20, inf) data      21  fold       4.2 (d/f 5.043)  w-fold      10.4 +-    0.2 fit +-   2.9 mc (d/wf 2.023)  pull   +2.0
+-- negative, reco 60-80: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data     343  fold     227.3 (d/f 1.509)  w-fold     221.0 +-    1.4 fit +-   8.9 mc (d/wf 1.552)  pull   +5.9
+  E_avail [1, 2) data     198  fold     130.9 (d/f 1.513)  w-fold     126.7 +-    0.6 fit +-   6.6 mc (d/wf 1.563)  pull   +4.6
+  E_avail [2, 5) data     361  fold     206.3 (d/f 1.750)  w-fold     198.0 +-    0.9 fit +-   8.6 mc (d/wf 1.823)  pull   +7.8
+  E_avail [5, 10) data     212  fold      97.5 (d/f 2.175)  w-fold      95.0 +-    0.7 fit +-   6.1 mc (d/wf 2.231)  pull   +7.4
+  E_avail [10, 20) data      61  fold      26.1 (d/f 2.334)  w-fold      32.3 +-    0.4 fit +-   4.0 mc (d/wf 1.888)  pull   +3.3
+  E_avail [20, inf) data       6  fold       0.6 (d/f 9.351)  w-fold       1.4 +-    0.0 fit +-   0.8 mc (d/wf 4.162)  pull   +1.8
+-- negative, reco 80-inf: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data      80  fold      82.9 (d/f 0.965)  w-fold      80.6 +-    0.5 fit +-   5.7 mc (d/wf 0.992)  pull   -0.1
+  E_avail [1, 2) data      34  fold      31.2 (d/f 1.088)  w-fold      30.2 +-    0.1 fit +-   3.3 mc (d/wf 1.125)  pull   +0.6
+  E_avail [2, 5) data      55  fold      32.1 (d/f 1.711)  w-fold      30.9 +-    0.1 fit +-   3.3 mc (d/wf 1.781)  pull   +3.0
+  E_avail [5, 10) data      20  fold      12.5 (d/f 1.606)  w-fold      12.0 +-    0.1 fit +-   2.1 mc (d/wf 1.666)  pull   +1.6
+  E_avail [10, 20) data       3  fold       4.2 (d/f 0.714)  w-fold       5.0 +-    0.1 fit +-   1.5 mc (d/wf 0.600)  pull   -0.9
+
+### w(evis), form pwlinear: fit on 1B,1D,1F,1L,1N,1P; predict 1A,1C,1E,1G,1M,1O
+fit deviance 65.6 / ndf 27; log w coefficients [0.063, -0.602, 0.197, 5.185, -1.348, 0.497, -5.959]
+w at evis {20: 1.065, 30: 0.963, 40: 0.901, 45: 1.341, 50: 1.998, 55: 2.66, 60: 3.541, 70: 6.817, 80: 4.861}
+-- sign -, precision all: yields
+  reco  20-40   data   73726  fold   73715.9 (d/f 1.000)  w-fold   74271.3 +-  300.6 fit +- 154.1 mc (d/wf 0.993)  pull   -1.3
+  reco  40-50   data    7935  fold    8158.8 (d/f 0.973)  w-fold   13658.7 +-  203.4 fit +- 105.5 mc (d/wf 0.581)  pull  -23.3
+  reco  50-60   data    2983  fold    2238.9 (d/f 1.332)  w-fold    6909.8 +-  237.1 fit +-  94.5 mc (d/wf 0.432)  pull  -15.0
+  reco  60-80   data    1314  fold     812.4 (d/f 1.617)  w-fold    4375.6 +-  404.4 fit +-  91.8 mc (d/wf 0.300)  pull   -7.4
+  reco  80-inf  data     223  fold     184.4 (d/f 1.209)  w-fold     896.4 +-  296.7 fit +-  39.9 mc (d/wf 0.249)  pull   -2.2
+-- sign -, precision good: yields
+  reco  20-40   data   70277  fold   69942.7 (d/f 1.005)  w-fold   70424.6 +-  285.1 fit +- 150.6 mc (d/wf 0.998)  pull   -0.4
+  reco  40-50   data    7607  fold    7804.3 (d/f 0.975)  w-fold   13032.5 +-  194.1 fit +- 103.6 mc (d/wf 0.584)  pull  -22.9
+  reco  50-60   data    2825  fold    2054.3 (d/f 1.375)  w-fold    6309.7 +-  216.0 fit +-  90.6 mc (d/wf 0.448)  pull  -14.5
+  reco  60-80   data    1110  fold     603.1 (d/f 1.841)  w-fold    3242.2 +-  288.1 fit +-  77.9 mc (d/wf 0.342)  pull   -7.1
+  reco  80-inf  data      92  fold      64.9 (d/f 1.417)  w-fold     315.5 +-  104.4 fit +-  21.7 mc (d/wf 0.292)  pull   -2.1
+-- sign -, precision poor: yields
+  reco  20-40   data    3449  fold    3773.1 (d/f 0.914)  w-fold    3846.7 +-   15.8 fit +-  32.9 mc (d/wf 0.897)  pull   -5.8
+  reco  40-50   data     328  fold     354.5 (d/f 0.925)  w-fold     626.2 +-    9.6 fit +-  20.3 mc (d/wf 0.524)  pull  -10.3
+  reco  50-60   data     158  fold     184.6 (d/f 0.856)  w-fold     600.0 +-   21.5 fit +-  26.8 mc (d/wf 0.263)  pull  -12.1
+  reco  60-80   data     204  fold     209.3 (d/f 0.975)  w-fold    1133.3 +-  123.3 fit +-  48.6 mc (d/wf 0.180)  pull   -7.0
+  reco  80-inf  data     131  fold     119.5 (d/f 1.096)  w-fold     581.0 +-  192.3 fit +-  33.5 mc (d/wf 0.225)  pull   -2.3
+-- sign +, precision all: yields
+  reco  20-40   data    6860  fold    5586.6 (d/f 1.228)  w-fold    5612.7 +-   24.4 fit +-  35.0 mc (d/wf 1.222)  pull  +13.4
+  reco  40-50   data     580  fold     456.4 (d/f 1.271)  w-fold     705.0 +-   10.1 fit +-  16.6 mc (d/wf 0.823)  pull   -4.0
+  reco  50-60   data     219  fold     153.6 (d/f 1.425)  w-fold     453.4 +-   14.9 fit +-  17.6 mc (d/wf 0.483)  pull   -8.5
+  reco  60-80   data     124  fold     101.5 (d/f 1.221)  w-fold     537.8 +-   51.4 fit +-  26.2 mc (d/wf 0.231)  pull   -7.0
+  reco  80-inf  data      79  fold      60.7 (d/f 1.302)  w-fold     294.9 +-   97.6 fit +-  19.2 mc (d/wf 0.268)  pull   -2.2
+-- sign +, precision good: yields
+  reco  20-40   data    5441  fold    3973.7 (d/f 1.369)  w-fold    3989.8 +-   17.4 fit +-  28.8 mc (d/wf 1.364)  pull  +17.9
+  reco  40-50   data     448  fold     304.1 (d/f 1.473)  w-fold     472.2 +-    6.8 fit +-  13.0 mc (d/wf 0.949)  pull   -0.9
+  reco  50-60   data     163  fold      86.3 (d/f 1.888)  w-fold     254.9 +-    8.4 fit +-  13.0 mc (d/wf 0.639)  pull   -4.6
+  reco  60-80   data      54  fold      36.7 (d/f 1.473)  w-fold     193.2 +-   16.8 fit +-  15.2 mc (d/wf 0.279)  pull   -5.8
+  reco  80-inf  data      11  fold      12.4 (d/f 0.887)  w-fold      60.3 +-   19.9 fit +-   9.5 mc (d/wf 0.183)  pull   -2.2
+-- sign +, precision poor: yields
+  reco  20-40   data    1419  fold    1612.9 (d/f 0.880)  w-fold    1622.9 +-    7.0 fit +-  19.9 mc (d/wf 0.874)  pull   -4.7
+  reco  40-50   data     132  fold     152.4 (d/f 0.866)  w-fold     232.9 +-    3.3 fit +-  10.2 mc (d/wf 0.567)  pull   -6.4
+  reco  50-60   data      56  fold      67.3 (d/f 0.832)  w-fold     198.5 +-    6.5 fit +-  11.9 mc (d/wf 0.282)  pull   -9.2
+  reco  60-80   data      70  fold      64.9 (d/f 1.079)  w-fold     344.6 +-   35.1 fit +-  21.3 mc (d/wf 0.203)  pull   -6.6
+  reco  80-inf  data      68  fold      48.3 (d/f 1.409)  w-fold     234.7 +-   77.7 fit +-  16.7 mc (d/wf 0.290)  pull   -2.1
+-- negative, reco 20-40: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data   18849  fold   19481.8 (d/f 0.968)  w-fold   19400.3 +-   93.5 fit +-  75.6 mc (d/wf 0.972)  pull   -3.0
+  E_avail [1, 2) data   12290  fold   12476.1 (d/f 0.985)  w-fold   12301.4 +-   53.7 fit +-  57.1 mc (d/wf 0.999)  pull   -0.1
+  E_avail [2, 5) data   20798  fold   22209.9 (d/f 0.936)  w-fold   21721.9 +-   91.6 fit +-  80.4 mc (d/wf 0.957)  pull   -4.9
+  E_avail [5, 10) data   13182  fold   13421.8 (d/f 0.982)  w-fold   13292.8 +-   63.9 fit +-  68.1 mc (d/wf 0.992)  pull   -0.7
+  E_avail [10, 20) data    6969  fold    5480.2 (d/f 1.272)  w-fold    6156.7 +-   45.5 fit +-  51.7 mc (d/wf 1.132)  pull   +7.5
+  E_avail [20, inf) data    1638  fold     646.2 (d/f 2.535)  w-fold    1398.2 +-   29.2 fit +-  31.7 mc (d/wf 1.172)  pull   +4.1
+-- negative, reco 40-50: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data    1901  fold    2198.7 (d/f 0.865)  w-fold    2919.9 +-   37.3 fit +-  42.7 mc (d/wf 0.651)  pull  -14.2
+  E_avail [1, 2) data    1269  fold    1518.7 (d/f 0.836)  w-fold    2161.0 +-   31.0 fit +-  37.7 mc (d/wf 0.587)  pull  -14.8
+  E_avail [2, 5) data    2345  fold    2674.6 (d/f 0.877)  w-fold    4378.3 +-   73.8 fit +-  58.7 mc (d/wf 0.536)  pull  -19.2
+  E_avail [5, 10) data    1617  fold    1346.6 (d/f 1.201)  w-fold    2844.3 +-   56.2 fit +-  52.1 mc (d/wf 0.569)  pull  -14.2
+  E_avail [10, 20) data     716  fold     394.4 (d/f 1.816)  w-fold    1214.2 +-   44.0 fit +-  38.6 mc (d/wf 0.590)  pull   -7.7
+  E_avail [20, inf) data      87  fold      25.7 (d/f 3.380)  w-fold     141.1 +-   12.9 fit +-  15.4 mc (d/wf 0.617)  pull   -2.4
+-- negative, reco 50-60: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data     772  fold     672.2 (d/f 1.149)  w-fold    1751.0 +-   51.6 fit +-  42.8 mc (d/wf 0.441)  pull  -13.5
+  E_avail [1, 2) data     472  fold     408.5 (d/f 1.156)  w-fold    1122.2 +-   37.6 fit +-  34.8 mc (d/wf 0.421)  pull  -11.7
+  E_avail [2, 5) data     959  fold     698.7 (d/f 1.373)  w-fold    2126.5 +-   83.8 fit +-  51.7 mc (d/wf 0.451)  pull  -11.3
+  E_avail [5, 10) data     550  fold     348.3 (d/f 1.579)  w-fold    1312.7 +-   60.0 fit +-  44.7 mc (d/wf 0.419)  pull   -9.7
+  E_avail [10, 20) data     205  fold     105.2 (d/f 1.948)  w-fold     565.3 +-   50.5 fit +-  34.1 mc (d/wf 0.363)  pull   -5.8
+  E_avail [20, inf) data      25  fold       6.1 (d/f 4.124)  w-fold      32.1 +-    7.6 fit +-   6.8 mc (d/wf 0.778)  pull   -0.6
+-- negative, reco 60-80: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data     391  fold     254.1 (d/f 1.539)  w-fold    1302.4 +-  103.1 fit +-  49.5 mc (d/wf 0.300)  pull   -7.9
+  E_avail [1, 2) data     249  fold     153.6 (d/f 1.621)  w-fold     804.3 +-   66.4 fit +-  36.9 mc (d/wf 0.310)  pull   -7.2
+  E_avail [2, 5) data     410  fold     262.1 (d/f 1.565)  w-fold    1442.8 +-  135.6 fit +-  54.2 mc (d/wf 0.284)  pull   -7.0
+  E_avail [5, 10) data     204  fold     115.5 (d/f 1.766)  w-fold     680.5 +-   81.9 fit +-  37.7 mc (d/wf 0.300)  pull   -5.2
+  E_avail [10, 20) data      53  fold      25.8 (d/f 2.051)  w-fold     139.4 +-   30.8 fit +-  15.9 mc (d/wf 0.380)  pull   -2.4
+  E_avail [20, inf) data       7  fold       1.3 (d/f 5.456)  w-fold       6.2 +-    2.1 fit +-   3.0 mc (d/wf 1.122)  pull   +0.2
+-- negative, reco 80-inf: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data      88  fold      87.3 (d/f 1.008)  w-fold     424.2 +-  140.4 fit +-  28.2 mc (d/wf 0.207)  pull   -2.3
+  E_avail [1, 2) data      41  fold      33.6 (d/f 1.220)  w-fold     163.4 +-   54.1 fit +-  15.8 mc (d/wf 0.251)  pull   -2.2
+  E_avail [2, 5) data      65  fold      43.2 (d/f 1.504)  w-fold     210.0 +-   69.5 fit +-  19.5 mc (d/wf 0.309)  pull   -2.0
+  E_avail [5, 10) data      21  fold      16.5 (d/f 1.274)  w-fold      80.1 +-   26.5 fit +-  11.9 mc (d/wf 0.262)  pull   -2.0
+  E_avail [10, 20) data       8  fold       3.8 (d/f 2.081)  w-fold      18.7 +-    6.2 fit +-   5.3 mc (d/wf 0.428)  pull   -1.2
+
+### w(energy), form pwlinear: fit on 1B,1D,1F,1L,1N,1P; predict 1A,1C,1E,1G,1M,1O
+fit deviance 56.5 / ndf 22; log w coefficients [-0.007, -0.394, 2.006, 1.2, -0.131, -2.165, 2.917]
+w at energy {0: 0.993, 2: 0.974, 5: 0.945, 10: 1.063, 20: 1.943, 30: 3.171, 40: 5.867}
+-- sign -, precision all: yields
+  reco  20-40   data   73726  fold   73715.9 (d/f 1.000)  w-fold   74339.7 +-  301.4 fit +- 154.3 mc (d/wf 0.992)  pull   -1.4
+  reco  40-50   data    7935  fold    8158.8 (d/f 0.973)  w-fold    8080.6 +-   33.3 fit +-  59.8 mc (d/wf 0.982)  pull   -1.3
+  reco  50-60   data    2983  fold    2238.9 (d/f 1.332)  w-fold    2213.8 +-    9.2 fit +-  29.6 mc (d/wf 1.347)  pull  +12.2
+  reco  60-80   data    1314  fold     812.4 (d/f 1.617)  w-fold     799.9 +-    3.4 fit +-  16.8 mc (d/wf 1.643)  pull  +12.8
+  reco  80-inf  data     223  fold     184.4 (d/f 1.209)  w-fold     181.4 +-    0.9 fit +-   8.1 mc (d/wf 1.229)  pull   +2.4
+-- sign -, precision good: yields
+  reco  20-40   data   70277  fold   69942.7 (d/f 1.005)  w-fold   70482.4 +-  285.6 fit +- 150.7 mc (d/wf 0.997)  pull   -0.5
+  reco  40-50   data    7607  fold    7804.3 (d/f 0.975)  w-fold    7722.1 +-   31.8 fit +-  58.9 mc (d/wf 0.985)  pull   -1.0
+  reco  50-60   data    2825  fold    2054.3 (d/f 1.375)  w-fold    2029.5 +-    8.4 fit +-  28.6 mc (d/wf 1.392)  pull  +13.1
+  reco  60-80   data    1110  fold     603.1 (d/f 1.841)  w-fold     593.3 +-    2.5 fit +-  14.0 mc (d/wf 1.871)  pull  +14.3
+  reco  80-inf  data      92  fold      64.9 (d/f 1.417)  w-fold      63.8 +-    0.3 fit +-   4.4 mc (d/wf 1.442)  pull   +2.7
+-- sign -, precision poor: yields
+  reco  20-40   data    3449  fold    3773.1 (d/f 0.914)  w-fold    3857.3 +-   16.1 fit +-  33.1 mc (d/wf 0.894)  pull   -5.9
+  reco  40-50   data     328  fold     354.5 (d/f 0.925)  w-fold     358.5 +-    1.5 fit +-  10.4 mc (d/wf 0.915)  pull   -1.5
+  reco  50-60   data     158  fold     184.6 (d/f 0.856)  w-fold     184.3 +-    0.8 fit +-   7.7 mc (d/wf 0.857)  pull   -1.8
+  reco  60-80   data     204  fold     209.3 (d/f 0.975)  w-fold     206.6 +-    0.9 fit +-   9.1 mc (d/wf 0.988)  pull   -0.2
+  reco  80-inf  data     131  fold     119.5 (d/f 1.096)  w-fold     117.6 +-    0.6 fit +-   6.8 mc (d/wf 1.114)  pull   +1.0
+-- sign +, precision all: yields
+  reco  20-40   data    6860  fold    5586.6 (d/f 1.228)  w-fold    5547.6 +-   25.8 fit +-  34.5 mc (d/wf 1.237)  pull  +14.1
+  reco  40-50   data     580  fold     456.4 (d/f 1.271)  w-fold     449.0 +-    2.1 fit +-  10.2 mc (d/wf 1.292)  pull   +5.0
+  reco  50-60   data     219  fold     153.6 (d/f 1.425)  w-fold     152.8 +-    0.7 fit +-   5.7 mc (d/wf 1.434)  pull   +4.2
+  reco  60-80   data     124  fold     101.5 (d/f 1.221)  w-fold     100.0 +-    0.5 fit +-   4.8 mc (d/wf 1.241)  pull   +2.0
+  reco  80-inf  data      79  fold      60.7 (d/f 1.302)  w-fold      59.9 +-    0.3 fit +-   3.9 mc (d/wf 1.318)  pull   +2.0
+-- sign +, precision good: yields
+  reco  20-40   data    5441  fold    3973.7 (d/f 1.369)  w-fold    3933.2 +-   18.0 fit +-  28.3 mc (d/wf 1.383)  pull  +18.6
+  reco  40-50   data     448  fold     304.1 (d/f 1.473)  w-fold     298.4 +-    1.3 fit +-   8.0 mc (d/wf 1.502)  pull   +6.6
+  reco  50-60   data     163  fold      86.3 (d/f 1.888)  w-fold      85.1 +-    0.4 fit +-   4.1 mc (d/wf 1.915)  pull   +5.8
+  reco  60-80   data      54  fold      36.7 (d/f 1.473)  w-fold      35.9 +-    0.2 fit +-   2.8 mc (d/wf 1.506)  pull   +2.3
+  reco  80-inf  data      11  fold      12.4 (d/f 0.887)  w-fold      12.4 +-    0.1 fit +-   2.0 mc (d/wf 0.888)  pull   -0.4
+-- sign +, precision poor: yields
+  reco  20-40   data    1419  fold    1612.9 (d/f 0.880)  w-fold    1614.4 +-    7.8 fit +-  19.8 mc (d/wf 0.879)  pull   -4.5
+  reco  40-50   data     132  fold     152.4 (d/f 0.866)  w-fold     150.6 +-    0.8 fit +-   6.3 mc (d/wf 0.876)  pull   -1.4
+  reco  50-60   data      56  fold      67.3 (d/f 0.832)  w-fold      67.6 +-    0.4 fit +-   3.9 mc (d/wf 0.828)  pull   -1.4
+  reco  60-80   data      70  fold      64.9 (d/f 1.079)  w-fold      64.1 +-    0.3 fit +-   3.9 mc (d/wf 1.092)  pull   +0.6
+  reco  80-inf  data      68  fold      48.3 (d/f 1.409)  w-fold      47.5 +-    0.3 fit +-   3.4 mc (d/wf 1.431)  pull   +2.3
+-- negative, reco 20-40: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data   18849  fold   19481.8 (d/f 0.968)  w-fold   19252.4 +-  127.8 fit +-  75.3 mc (d/wf 0.979)  pull   -2.0
+  E_avail [1, 2) data   12290  fold   12476.1 (d/f 0.985)  w-fold   12208.6 +-   63.0 fit +-  57.0 mc (d/wf 1.007)  pull   +0.6
+  E_avail [2, 5) data   20798  fold   22209.9 (d/f 0.936)  w-fold   21347.4 +-   99.3 fit +-  79.0 mc (d/wf 0.974)  pull   -2.9
+  E_avail [5, 10) data   13182  fold   13421.8 (d/f 0.982)  w-fold   12929.4 +-  101.6 fit +-  65.3 mc (d/wf 1.020)  pull   +1.5
+  E_avail [10, 20) data    6969  fold    5480.2 (d/f 1.272)  w-fold    6921.4 +-   84.0 fit +-  56.0 mc (d/wf 1.007)  pull   +0.4
+  E_avail [20, inf) data    1638  fold     646.2 (d/f 2.535)  w-fold    1680.6 +-   41.7 fit +-  35.6 mc (d/wf 0.975)  pull   -0.6
+-- negative, reco 40-50: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data    1901  fold    2198.7 (d/f 0.865)  w-fold    2172.8 +-   14.4 fit +-  31.1 mc (d/wf 0.875)  pull   -4.9
+  E_avail [1, 2) data    1269  fold    1518.7 (d/f 0.836)  w-fold    1486.2 +-    7.7 fit +-  25.3 mc (d/wf 0.854)  pull   -4.9
+  E_avail [2, 5) data    2345  fold    2674.6 (d/f 0.877)  w-fold    2571.8 +-   11.9 fit +-  33.8 mc (d/wf 0.912)  pull   -3.8
+  E_avail [5, 10) data    1617  fold    1346.6 (d/f 1.201)  w-fold    1293.8 +-   10.2 fit +-  23.4 mc (d/wf 1.250)  pull   +6.8
+  E_avail [10, 20) data     716  fold     394.4 (d/f 1.816)  w-fold     492.5 +-    5.9 fit +-  15.4 mc (d/wf 1.454)  pull   +7.1
+  E_avail [20, inf) data      87  fold      25.7 (d/f 3.380)  w-fold      63.5 +-    1.6 fit +-   6.7 mc (d/wf 1.369)  pull   +2.0
+-- negative, reco 50-60: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data     772  fold     672.2 (d/f 1.149)  w-fold     664.3 +-    4.4 fit +-  16.3 mc (d/wf 1.162)  pull   +3.3
+  E_avail [1, 2) data     472  fold     408.5 (d/f 1.156)  w-fold     399.7 +-    2.1 fit +-  12.3 mc (d/wf 1.181)  pull   +2.9
+  E_avail [2, 5) data     959  fold     698.7 (d/f 1.373)  w-fold     672.0 +-    3.1 fit +-  16.2 mc (d/wf 1.427)  pull   +8.2
+  E_avail [5, 10) data     550  fold     348.3 (d/f 1.579)  w-fold     334.1 +-    2.6 fit +-  11.3 mc (d/wf 1.646)  pull   +8.3
+  E_avail [10, 20) data     205  fold     105.2 (d/f 1.948)  w-fold     128.3 +-    1.6 fit +-   7.7 mc (d/wf 1.598)  pull   +4.7
+  E_avail [20, inf) data      25  fold       6.1 (d/f 4.124)  w-fold      15.5 +-    0.4 fit +-   3.3 mc (d/wf 1.613)  pull   +1.6
+-- negative, reco 60-80: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data     391  fold     254.1 (d/f 1.539)  w-fold     251.1 +-    1.7 fit +-   9.6 mc (d/wf 1.557)  pull   +6.4
+  E_avail [1, 2) data     249  fold     153.6 (d/f 1.621)  w-fold     150.3 +-    0.8 fit +-   6.9 mc (d/wf 1.656)  pull   +5.7
+  E_avail [2, 5) data     410  fold     262.1 (d/f 1.565)  w-fold     252.1 +-    1.2 fit +-   9.4 mc (d/wf 1.626)  pull   +7.1
+  E_avail [5, 10) data     204  fold     115.5 (d/f 1.766)  w-fold     111.0 +-    0.9 fit +-   6.1 mc (d/wf 1.838)  pull   +6.0
+  E_avail [10, 20) data      53  fold      25.8 (d/f 2.051)  w-fold      31.6 +-    0.4 fit +-   3.6 mc (d/wf 1.679)  pull   +2.6
+  E_avail [20, inf) data       7  fold       1.3 (d/f 5.456)  w-fold       3.8 +-    0.2 fit +-   1.9 mc (d/wf 1.863)  pull   +1.0
+-- negative, reco 80-inf: by E_avail [-inf, 1, 2, 5, 10, 20, inf]
+  E_avail [-inf, 1) data      88  fold      87.3 (d/f 1.008)  w-fold      86.3 +-    0.6 fit +-   5.7 mc (d/wf 1.020)  pull   +0.2
+  E_avail [1, 2) data      41  fold      33.6 (d/f 1.220)  w-fold      32.9 +-    0.2 fit +-   3.2 mc (d/wf 1.246)  pull   +1.1
+  E_avail [2, 5) data      65  fold      43.2 (d/f 1.504)  w-fold      41.5 +-    0.2 fit +-   3.8 mc (d/wf 1.564)  pull   +2.6
+  E_avail [5, 10) data      21  fold      16.5 (d/f 1.274)  w-fold      15.8 +-    0.1 fit +-   2.3 mc (d/wf 1.332)  pull   +1.0
+  E_avail [10, 20) data       8  fold       3.8 (d/f 2.081)  w-fold       4.9 +-    0.1 fit +-   1.4 mc (d/wf 1.619)  pull   +1.0

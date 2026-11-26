@@ -1,0 +1,4 @@
+node login02 2026-11-26T09:01:12Z cleanup sha256 1fde6803a4e84ad18f5bfab88f56d5fd59b9dc8f2130447d5dee18b443c27cb7
+evw2d.py cleanup rc=0
+{"deleted": 2, "ledger": "/pscratch/sd/j/josephrb/evw2d-20261126/deletions.tsv"}
+cleanup rc=0 2026-11-26T09:01:35Z
