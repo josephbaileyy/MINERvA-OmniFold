@@ -56,7 +56,8 @@ The true available energy is a sum over final-state protons, charged and neutral
   \label{eq:available-energy-true}
   \csname ltx@label\endcsname{eq:eavail-implemented}
 \end{equation}
-The sum counts proton kinetic energy and the full energy of neutral pions and photons. The charged-pion term uses the fixed \SI{135}{MeV} offset inherited from the analysis software. Neutrons and all other species outside the sum are omitted, so $E_{\mathrm{avail}}$ captures only part of the hadronic energy transfer. The reconstructed quantity uses the tracker and electromagnetic calorimeter (ECAL) deposits after removing energy attributed to the muon,
+The sum counts proton kinetic energy and the full energy of neutral pions and photons. Following the MINERvA analysis software, the charged-pion term subtracts \SI{135}{MeV}, the neutral-pion mass, rather than the charged-pion mass of \SI{139.57}{MeV}. Using the charged-pion mass instead shifts the \resSixteen{} (Sec.~\ref{sec:fived16}) by at most \fvval{eav-cellmax} standard deviations in any cell. Neutrons and all other species outside the sum are omitted, so $E_{\mathrm{avail}}$ captures only part of the hadronic energy transfer. The reconstructed quantity uses the tracker and electromagnetic calorimeter (ECAL) deposits after removing energy attributed to the muon,
+% 2026-11-25 (Joseph: phrase the pion constant and W^true alike, both MINERvA software conventions; CVUniverse.h mass_pion=135, GetTrueExperimentersW): 135 MeV is the neutral-pion mass (docs/EAVAIL_DEFINITION.md sec. 3); the cell shift is eav-cellmax (values_fived16.tex), ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md sec. 7, kept per DECISION-20261101-joseph-eavail-keep-135.md item 1.
 \begin{equation}
   E_{\mathrm{avail}}^{\mathrm{reco}} =
   1.17 \sum_d \bigl(E_{\mathrm{dep}}^d-E_{\mu,\mathrm{dep}}^d\bigr),
@@ -65,7 +66,7 @@ The sum counts proton kinetic energy and the full energy of neutral pions and ph
 \end{equation}
 where $d$ runs over the tracker and ECAL. The reconstruction retains negative values of this estimator.
 
-The true magnitude of the three-momentum transfer is $q_3^{\mathrm{true}}=\sqrt{Q^2+(E_\nu-E_\mu)^2}$, with $Q^2=-(k-k')^2$ evaluated from the generator neutrino and muon four-momenta $k$ and $k'$. \phantomsection\label{sec:eavailw-axis}For the true hadronic invariant-mass estimator we use
+The true magnitude of the three-momentum transfer is $q_3^{\mathrm{true}}=\sqrt{Q^2+(E_\nu-E_\mu)^2}$, with $Q^2=-(k-k')^2$ evaluated from the generator neutrino and muon four-momenta $k$ and $k'$. \phantomsection\label{sec:eavailw-axis}Following the MINERvA analysis software, we compute the true hadronic invariant mass from the true neutrino and muon kinematics as if the neutrino had scattered on a free nucleon at rest,
 %
 \begin{equation}
   W^{\mathrm{true}} = \bigl[
@@ -73,7 +74,7 @@ The true magnitude of the three-momentum transfer is $q_3^{\mathrm{true}}=\sqrt{
   \bigr]^{1/2},
   \label{eq:hadronic-mass-true}
 \end{equation}
-For $M$ we use the struck proton or neutron mass when identified, and otherwise the effective nucleon mass $\bar M=(1.5M_n+M_p)/2.5$, which also enters the reconstructed $W$. The last term is the analysis software's massless-muon approximation for $Q^2$. Events with a negative radicand account for $4.9\times10^{-5}$ of the simulated signal weight and are excluded from the five-observable truth sample and its normalization.
+where $M$ is the struck proton or neutron mass when identified, and otherwise the effective nucleon mass $\bar M=(1.5M_n+M_p)/2.5$ that also enters the reconstructed $W$. The last term is $Q^2$ with the muon mass neglected, unlike the exact $Q^2$ in $q_3^{\mathrm{true}}$. This $W^{\mathrm{true}}$ is therefore a function of the lepton kinematics, not the invariant mass of the produced hadrons, which nuclear motion, binding and final-state interactions also change. Events with a negative radicand account for $4.9\times10^{-5}$ of the simulated signal weight and are excluded from the five-observable truth sample and its normalization.
 
 The four detector quantities used in reconstruction are the transverse and longitudinal muon momenta $p_T$ and $p_\parallel$, the available hadronic energy $E_{\mathrm{avail}}$, and the calorimetric recoil $q_0^{\mathrm{reco}}$. The calorimetric recoil is read from a separate energy-transfer estimate and combines with the muon kinematics to give $q_3^{\mathrm{reco}}$ and $W^{\mathrm{reco}}$ through
 \begin{equation}
