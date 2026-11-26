@@ -1,0 +1,51 @@
+{
+ "tolerance": 0.001,
+ "min_generated": 100,
+ "playlists": {
+  "1L": {
+   "P1": {
+    "rows_new": 6987,
+    "rows_saved": 6987,
+    "header_ok": true,
+    "identical": true,
+    "first_mismatch_row": null
+   },
+   "P2": {
+    "cells_checked": 175,
+    "outside_grid_sumw": 86.63230561643414,
+    "duplicate_entries": 0.0,
+    "with_duplicates": {
+     "max_rel": 3.1086244689504383e-15,
+     "worst_cell": 113,
+     "total_rel": 0.0,
+     "pass": true
+    },
+    "deduplicated": {
+     "max_rel": 3.1086244689504383e-15,
+     "worst_cell": 113,
+     "total_rel": 0.0,
+     "pass": true
+    }
+   },
+   "P3": {
+    "signal": 383939,
+    "below_emu": 0,
+    "below_fraction": 0.0,
+    "reco_fidcc_bad_enu": 0,
+    "pass": true
+   }
+  }
+ },
+ "P1": {
+  "pass": true
+ },
+ "P2": {
+  "pass_with_duplicates": true,
+  "pass_deduplicated": true,
+  "version": "with_duplicates"
+ },
+ "P3": {
+  "pass": true
+ },
+ "all_pass": false
+}
