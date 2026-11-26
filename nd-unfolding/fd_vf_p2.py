@@ -541,7 +541,113 @@ def gdefs_extra(committed, out, f, old_M, new_M, patch):
     patch["seed_spread_flag_changes"] = flags
 
 
-P2 = {"eav": p2_eav, "e2": p2_e2, "gch": lambda vf: p2_compare("gch", GCH, vf),
+# e2sens: x_e2_sens.py's arithmetic (gencmp-e2/rerun1/sens/x_e2_sens.py:26-55) with fd_gencmp_e2's functions, on e2's
+# committed S arrays (its S_carbon is cmodel_5d.json's S bitwise, the script's own control) and C_rest + DeltaC_e
+E2SENS = (f"{D5}/fd/gencmp-e2/rerun1/sens/x_e2_sens.out.txt", "223f3f88")
+
+
+def e2sens_compute(E2M, readouts, f, rests, S_c, S_ch):
+    out = {"chi2": {}, "sigma": {}}
+    sig = lambda C: np.sqrt(np.diag(C))  # noqa: E731
+    Mc, Mch = E2M.model_abs(f, S_c), E2M.model_abs(f, S_ch)
+    for arm, C_rest in rests.items():
+        r1 = readouts[arm]
+        carbon, ch = E2M.chi2_rows(r1, f, C_rest, S_c), E2M.chi2_rows(r1, f, C_rest, S_ch)
+        removed = E2M.chi2_rows(r1, f, C_rest, np.zeros_like(S_c))
+        doubled = E2M.chi2_rows(r1, f, C_rest + Mc, S_c)
+        out["chi2"][arm] = {q: {k: {"removed": removed[q][k], "carbon": carbon[q][k], "doubled": doubled[q][k],
+                                    "CH": ch[q][k]} for k in ("total", "shape_only")} for q in E2M.CORNER}
+        sc, sch = sig(C_rest + Mc), sig(C_rest + Mch)
+        rel = sch / sc - 1
+        i = int(np.argmax(np.abs(rel)))
+        out["sigma"][f"{arm}_total"] = {"max_abs_rel_change": float(abs(rel[i])), "signed": float(rel[i]), "cell": i,
+                                        "sigma_over_f_carbon": float(sc[i] / f[i]),
+                                        "sigma_over_f_CH": float(sch[i] / f[i]), "per_cell_rel_change": rel.tolist()}
+    mc, mch = sig(Mc) / f, sig(Mch) / f
+    d = mch - mc
+    i, j = int(np.argmax(np.abs(d))), int(np.argmax(np.abs(mch / mc - 1)))
+    out["sigma"]["C_model"] = {"max_abs_change_over_f": float(abs(d[i])), "signed_change_over_f": float(d[i]), "cell": i,
+                               "sigma_over_f_carbon": float(mc[i]), "sigma_over_f_CH": float(mch[i]),
+                               "max_abs_rel_change": float(abs(mch[j] / mc[j] - 1)), "cell_rel": j,
+                               "per_cell_sigma_over_f_carbon": mc.tolist(), "per_cell_sigma_over_f_CH": mch.tolist(),
+                               "n_cells": int(f.size), "cells_with_zero_carbon_sigma": int((mc == 0).sum())}
+    return out
+
+
+def p2_e2sens(vf):
+    sys.path.insert(0, str(ROOT / "nd-unfolding"))
+    import fd_gencmp_e2 as E2M
+    rel, pin = E2SENS
+    raw = (ROOT / rel).read_bytes()
+    h = hashlib.sha256(raw).hexdigest()
+    if not h.startswith(pin):
+        raise Stop(f"{rel}: not its pinned bytes")
+    text = raw.decode()
+    committed = json.loads(text[text.index("\n{") + 1:])
+    e2, _ = pinned_json(E2)
+    S_c, S_ch = np.asarray(e2["S_carbon"], float), np.asarray(e2["S_CH"], float)
+    blk = npz_pinned(CPL_BLOCK)
+    dpc, _ = pinned_json(OLD_DP_CPL)
+    f = np.asarray(blk["f"], float)
+    Ce = np.asarray(dpc["matrices"]["C_e"], float)
+    Cr, Cpl = np.asarray(blk["C_resp"], float), np.asarray(blk["C_PL5D"], float)
+    rests = {"with": Ce + Cr + Cpl, "nopl": Ce + Cr}
+    old = json.loads(json.dumps(e2sens_compute(E2M, {a: pinned_json(E1_OLD[a])[0] for a in E1_OLD}, f, rests, S_c, S_ch)))
+    chi2_scale = lambda path, b: abs(committed["chi2"][path.split("/")[1]][path.split("/")[2]]  # noqa: E731
+                                     [path.split("/")[3]]["carbon"])     # path /<arm>/<prediction>/<kind>/<field>
+    w_chi2 = p_control("e2sens chi2", old["chi2"], committed["chi2"], RTOL_ROUNDTRIP, chi2_scale)
+    w_sig = p_control("e2sens sigma", old["sigma"], committed["sigma"], RTOL_EXACT)
+    dF = np.asarray(vf["matrices"]["DeltaC_e"], float)
+    new = e2sens_compute(E2M, {a: pinned_json(E1_VF[a])[0] for a in E1_VF}, f,
+                         {a: C + dF for a, C in rests.items()}, S_c, S_ch)
+    out = dict(committed, chi2=new["chi2"], sigma=new["sigma"])
+    out["vf_patch"] = {"readout": rel, "readout_sha256": h, "replaced": ["/chi2", "/sigma"],
+                       "matrices": {"with": "C_e + C_resp + C_PL5D + DeltaC_e + C_model(S)",
+                                    "nopl": "C_e + C_resp + DeltaC_e + C_model(S)"}, "control_P": "PASS",
+                       "control_P_tolerance": {"chi2": {"rtol": RTOL_ROUNDTRIP, "scale": "each chi2's carbon value",
+                                                        "achieved_max": w_chi2, "why": "amendment A4"},
+                                               "sigma": {"rtol": RTOL_EXACT, "achieved_max": w_sig}},
+                       "note": "controls and env are the committed run's; the V_F values are this recompute's"}
+    return out
+
+
+# V-ATLAS: valid_region.readings, imported unchanged, on its six inputs with I1 = Phase 1's V_F with-block F0b and I4 =
+# the V_F data product, whose reported matrix is given under valid_region's COV_KEY name in this process's copy
+VR_DIR = "docs/orchestration/state/2d-closeout/valid-region-20261107"
+VATLAS = (f"{VR_DIR}/receipts/read/readout.json", "91bb604e")
+VF_F0B_WITH = (f"{D5}/fd/with-vf/readout/vf-with-S/fd_f0b_readout.json", "432243e1")
+
+
+def p2_vatlas(vf):
+    sys.path.insert(0, str(ROOT / VR_DIR))
+    import valid_region as VR
+    committed, h = pinned_json(VATLAS)
+    pins = VR.read_pins(ROOT)
+    d = VR.load_inputs(ROOT)
+    for key, rel in VR.INPUTS.items():
+        if not sha256_file(ROOT / rel) == pins[rel] == committed["inputs_sha256"][key]:
+            raise Stop(f"V-ATLAS {key}: not the pinned input")
+    old = json.loads(json.dumps(VR.readings(d)))
+    w = p_control("V-ATLAS", old, committed["readings"], RTOL_EXACT)
+    dv = dict(d)
+    dv["I1"] = pinned_json(VF_F0B_WITH)[0]
+    i4 = json.loads(json.dumps(vf))
+    i4["matrices"][VR.COV_KEY] = i4["matrices"][REPORTED_F]
+    dv["I4"] = i4
+    out = json.loads(json.dumps(committed))
+    out["readings"] = json.loads(json.dumps(VR.readings(dv)))
+    out["vf_patch"] = {"readout": VATLAS[0], "readout_sha256": h, "replaced": ["/readings"],
+                       "inputs": {"I1": VF_F0B_WITH[0], "I4": VF_DP[0] + f" (its {REPORTED_F} under {VR.COV_KEY})"},
+                       "matrices": {"reported": REPORTED_F}, "control_P": "PASS",
+                       "control_P_tolerance": {"rtol": RTOL_EXACT, "achieved_max": w}}
+    return out
+
+
+def sha256_file(p):
+    return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+
+
+P2 = {"eav": p2_eav, "e2": p2_e2, "e2sens": p2_e2sens, "vatlas": p2_vatlas, "gch": lambda vf: p2_compare("gch", GCH, vf),
       "gdefs": lambda vf: p2_compare("gdefs", GDEFS, vf, gdefs_extra),
       "gnat": lambda vf: p2_compare("gnat", GNAT, vf), "gover": lambda vf: p2_overlap("gover", GOVER, vf),
       "cr": lambda vf: p2_overlap("cr", CR, vf)}
