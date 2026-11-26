@@ -1,0 +1,31 @@
+Read-only confirm read. Do not create, edit or delete any file. ./files/ holds:
+- DELTA.patch: one round of fixes to a verification harness (the diff from the previous head to the new head);
+- DISPOSITIONS.md: the 16 blocking defects (B1–B16) this round claims to fix, the director's answers Q1–Q3, and the
+  Outcome section;
+- copies at the new head of each changed code file;
+- genie-src/: GENIE R-3_04_00's AlgConfigPool.cxx, XmlParserUtils.cxx, RunOpt.cxx and Messenger.cxx.
+
+The harness checks, from strace traces and byte checks, which GENIE configuration, spline and binaries a run on a
+Perlmutter compute node used, and keeps a sealed random seed from leaving the work directory W.
+
+Scope: the fix diff only. For each of B1–B16 and Q1–Q3, say whether the change closes the defect as stated, citing
+lines you read. Then look only within the changed lines for new ways to:
+- PASS when it should STOP;
+- STOP a correct real run on Linux (strace 5.x, GENIE v3.04 and ROOT 6 from CVMFS, hadd from ROOT 6.28, GNU
+  coreutils timeout, bash on a Slurm compute node);
+- let a seed out of W.
+
+Treat every test and mutant as a claim to check. Check B1's search lists against genie-src/ and say where they
+differ. State your confidence in each Linux, strace, GENIE and ROOT fact you rely on, and don't quote text you
+haven't read.
+
+Severity: "blocker" only for a finding that could change a generated event, a recorded seed or schema, or what a
+gate accepts; a deterministic false STOP on a correct run counts as a blocker. Everything else is major or minor.
+
+End with:
+PER-FIX
+B1. closed|not closed|partly — one line
+...
+FINDINGS
+1. [blocker|major|minor] file:line — defect — scenario — fix
+VERDICT: <one line>
