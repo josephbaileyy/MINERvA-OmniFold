@@ -1,10 +1,10 @@
 {
- "code_sha256": "8a1f6d0c5f3b0a79d8697a04c6c4781a4ad7c105e33a97df1133314f19e6adca",
+ "code_sha256": "36c16a9a1152d59d7a934dcc9b5f5dae83314cccb4dcbe503a7c3ae10dda4d05",
  "control_D": {
   "events": [
    {
     "class": "outcome",
-    "control_D": "an outcome string changes, not toward agreement",
+    "control_D": "an outcome string changes, not up its producer's scale",
     "old": "agree",
     "path": "/quadrants/QD/2D/printed_only_without_C_PL5D/outcome",
     "readout": "gover",
@@ -14,7 +14,7 @@
    },
    {
     "class": "outcome",
-    "control_D": "an outcome string changes, not toward agreement",
+    "control_D": "an outcome string changes, not up its producer's scale",
     "old": "agree",
     "path": "/quadrants/QD/2D/printed_only_without_C_PL5D/outcome",
     "readout": "cr",
@@ -15268,7 +15268,7 @@
   },
   {
    "class": "outcome",
-   "control_D": "an outcome string changes, not toward agreement",
+   "control_D": "an outcome string changes, not up its producer's scale",
    "old": "agree",
    "path": "/quadrants/QD/2D/printed_only_without_C_PL5D/outcome",
    "readout": "gover",
@@ -15298,7 +15298,7 @@
   },
   {
    "class": "outcome",
-   "control_D": "an outcome string changes, not toward agreement",
+   "control_D": "an outcome string changes, not up its producer's scale",
    "old": "agree",
    "path": "/quadrants/QD/2D/printed_only_without_C_PL5D/outcome",
    "readout": "cr",

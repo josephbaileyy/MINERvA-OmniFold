@@ -271,33 +271,43 @@ AGREE_BOOL = {"A1", "A2", "A3", "A3_without_gibuu_family_above_pz_4.5", "B0", "C
               "positive_definite", "within_seed_variation", "both_criteria_met_at_the_four_held_out_records",
               "without_new_flags", "atime_unchanged", "complete", "compared", "graded", "b0"}       # True is agreement
 FLAG_LIST = {"cells", "cells_abs_z_gt_2", "cells_beyond_half_sigma", "cells_at_half_sigma", "listed", "listed_nominal",
-             "new_flags", "changes_at", "stops", "A7_gibuu", "q3", "in_cells"}                     # a member is a flag
+             "new_flags", "changes_at", "stops", "A7_gibuu", "q3", "in_cells", "named", "quadrants_over"}  # a member is a flag
 VALID_LIST = {"valid", "valid_cells", "controls_passed", "eavail_regions_formable"}                 # a member is a pass
 FLAG_COUNT = {"truths_p_lt_0.01", "cells_abs_z_gt_2", "cells"}                                     # a count of flags
 OUTCOME_STR = {"outcome", "class", "class_tau_1", "verdict", "reading", "decision", "result_2d", "rms_class",
                "transfer", "stability", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "F1", "F2", "F3", "F4", "B2",
                "PR-3_label", "R-ID_R-SUP_label", "pr3", "primary", "flags"}
-# Descriptive: diagnostics and bookkeeping that no decision rule reads (mode ranks and counts, block shares by matrix
-# name, file and sha records, labels naming the matrix, printed sentences).
+# Descriptive: only names that change under V_F in this sweep and that no decision rule reads, each checked by hand
+# (mode counts and ranks of the diagnostics, the dominant block's name, matrix and block names, provenance, label text,
+# E2's printed sentence, the name field of a trigger record that vanishes). Every other unclassified name is
+# structural: any change to it is a control D event.
 DESCRIPTIVE = re.compile(
-    r"^(50%|90%|99%|C_.*|mode|mode_index|modes|rank|rank_of_R04_by_abs_loading|lead|top|row|id|dominant|cell|neighbour|"
-    r"matrix|grade_matrix|reported_matrix|reported_covariance|covariance|correlation_of|label|sentence|note|why|what|"
-    r"file|sha256|code_sha256|index_sha256|table_sha256|rebuild_json_sha256|schema|numpy|python|fd_.*\.py|rsn_regrade\.py|"
-    r"s1_assemble\.py|s5p_stage1_inspect\.py|cmodel_json|s1_json|s1_npz|g_readout|g_diag_readout|g_followup_readout|"
-    r"extra_block|extra|definition|detector|flux|interaction|lateral|normalization|prediction:.*|block|shares|"
-    r"atime_deviations|paths|not_read|not_citable_for|string_members_not_json|units|route_reasons|referenced|pinned|"
-    r"seed|stat|named|variants|truths|predictions|generators|vertices|groups|axes|fields|pair|rows|bounded|"
-    r"c_e_systematic|code_files_differing_from_the_committed_vertex|h2_boxes|h2_pairs|h2_to_reporting_cell|"
-    r"matrix_size|quadrants_over|unreported_boxes|unsupported_stage1|not|unchanged|products|operand|realisation|"
-    r"replicate|search|pattern|role|family_role|own_vertex|own_vertex_left_out|offset_from|matched_on|candidate|"
-    r"identity|key|name|truth|family|group|band|side|axis|step|arm_2d|scope|rule|route|thresholds|estimator|"
-    r"percentile_method|gaussian_reference|uniform|finite_mc|n_eff|paper_uses|context_5a_5b|context_dr_pair|"
-    r"guide_item_5|check_meta|seed_spread_flag_rule|v1_source|comparison|prediction|reported|removed|shape_only|"
-    r"gibuu|gibuu_carbon_s43|gibuu_ch|nuwro_carbon_R2|nuwro_carbon_s43|nuwro_ch|f1|r04|sens|17|3|due|ended|"
-    r"simulation_only)$")
-IMPROVES = {("agree below a correlation", "agree"), ("more flagged", "unchanged"),
-            ("a fake-data conclusion changes under SM", "the fake-data conclusions survive SM"),
-            ("does not clear at these truths", "clears at these truths")}
+    r"^(50%|90%|99%|C_(resp|total|model)[ A-Za-z0-9_+:]*|block|cell|context_5a_5b|context_dr_pair|correlation_of|"
+    r"covariance|decision|detector|dominant|extra|extra_block|fd_cpl_addition\.py|fd_f0_regrade\.py|fd_vf_addition\.py|"
+    r"file|flux|g_followup_readout|grade_matrix|key|label|lateral|matrix|mode|name|not_citable_for|rank|"
+    r"rank_of_R04_by_abs_loading|removed|reported|reported_covariance|reported_matrix|schema|sentence|sha256|truth|"
+    r"unchanged|units|what)$")
+# Ordinal scales of the producers' outcome strings, best first (fd_gencmp.rule, fd_xcov's X rule, rsn_read's classes,
+# prr_read's PR-3 reading, valid_region's classes). A change down a scale, a change between strings on no common scale,
+# or a change of an unordered class (C_model size, closure ratio, PR-1 effect, B2) is a control D event.
+SCALES = [["agree", "agree below a correlation", "differ"],
+          ["agree at the sigma_16 scale (descriptive)", "differ at the sigma_16 scale (descriptive)"],
+          ["T0", "T1", "T2"], ["W0", "W1", "W2"], ["immaterial", "material"],
+          ["fewer flagged", "unchanged", "more flagged"],
+          ["clears at these truths", "does not clear at these truths"],
+          ["valid", "unresolved (noise)", "not valid"]]
+VERDICT = re.compile(r"^(the fake-data conclusions survive|a fake-data conclusion changes under) (\S+)$")
+
+
+def improves(a, b):
+    """True if outcome string b is better than a on a producer's scale (or an RSN arm verdict that comes to survive)."""
+    for sc in SCALES:
+        if a in sc and b in sc:
+            return sc.index(b) < sc.index(a)
+    ma, mb = VERDICT.match(a), VERDICT.match(b)
+    if ma and mb and ma.group(2) == mb.group(2):
+        return ma.group(1).startswith("a fake") and mb.group(1).startswith("the fake")
+    return False
 
 
 CLASSES = (("flag_bool", FLAG_BOOL, bool), ("agree_bool", AGREE_BOOL, bool), ("flag_list", FLAG_LIST, list),
@@ -408,7 +418,7 @@ def d_event(path, a, b):
     if c in ("flag_count", "flag_list") and isinstance(a, int) and isinstance(b, int) and not isinstance(a, bool):
         return "a flag count rises" if b > a else None
     if c == "outcome" and isinstance(a, str) and isinstance(b, str):
-        return None if (a, b) in IMPROVES else "an outcome string changes, not toward agreement"
+        return None if improves(a, b) else "an outcome string changes, not up its producer's scale"
     return f"'{n}' changes type or form ({type(a).__name__} -> {type(b).__name__})"
 
 

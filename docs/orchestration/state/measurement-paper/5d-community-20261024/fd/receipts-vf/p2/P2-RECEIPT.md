@@ -65,6 +65,16 @@ reports are in `reads/`. No recomputed value changed.
   - The readings' values, moved keys, guards and decision rules are unchanged. 20 p_below_floor clearings move into
     the headline.
   - Mutation, both rounds: 26/26 killed (`mutation/`).
+  - After the round-2 read (`reads/p2-fix2-*`, NO-GO on 3 findings: X's `named`/`quadrants_over` and RSN's held-out
+    `truths` count classed as descriptive; improvements off a hand-kept allowlist read as STOPs). Changes:
+    - The descriptive class is now only the names that change under V_F in this sweep, each checked by hand. Every
+      other unclassified name is structural.
+    - `named`/`quadrants_over` are flag lists.
+    - Outcome strings are judged on the producers' ordinal scales: fd_gencmp.rule, the X rule, rsn_read's T/W/deformed/
+      listed classes, PR-3, valid_region, and an arm verdict that comes to survive. An unordered class change is an
+      event.
+    - The readings are unchanged except for the event-reason wording.
+    - Mutation round 3: 6/6 killed.
 - **Reproduction.** All 14 copies were regenerated after the fixes; prr, rsn and xk came from the verified fetch. 12 are
   byte-identical, and gch and prr differ only as stated. The opt-in test (`VF_P2_FETCH`, `VF_P2_XK=1`) reproduces
   prr, rsn and xk byte for byte.

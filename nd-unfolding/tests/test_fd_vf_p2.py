@@ -775,6 +775,25 @@ class ReadingsControlD(unittest.TestCase):
         self.assertIsNone(d("/arms/WR/P5/q3/cells_beyond_half_sigma", ["R02", "R07"], ["R02"]))
         self.assertIsNone(d("/arms/WR/P8/breaks_the_prior_closure", True, False))
 
+    def test_the_round_2_probes_and_the_producers_scales(self):
+        d = self.R.d_event
+        self.assertTrue(d("/primary/named", ["QA"], ["QA", "QB"]))                       # X: a new quadrant over
+        self.assertTrue(d("/primary/quadrants_over", ["QA"], ["QA", "QB"]))
+        self.assertIsNone(d("/primary/named", ["QA", "QB"], ["QA"]))
+        self.assertTrue(d("/arms/G6/P3/by_group/held-out/truths", 4, 3))               # structural: any change
+        self.assertTrue(d("/arms/G6/P3/by_group/held-out/truths", 4, 5))
+        for a, b in (("T2", "T1"), ("T1", "T0"), ("W2", "W0"), ("differ", "agree below a correlation"),
+                     ("differ", "agree"), ("material", "immaterial"), ("more flagged", "fewer flagged"),
+                     ("does not clear at these truths", "clears at these truths"), ("not valid", "valid"),
+                     ("a fake-data conclusion changes under G6", "the fake-data conclusions survive G6")):
+            self.assertIsNone(d("/x/class" if a[0] in "TWm" else "/x/outcome", a, b), (a, b))
+            self.assertTrue(d("/x/class" if a[0] in "TWm" else "/x/outcome", b, a), (b, a))
+        self.assertTrue(d("/x/class", "C_model smaller", "C_model similar"))              # unordered: an event
+        self.assertTrue(d("/x/verdict", "a fake-data conclusion changes under G6", "the fake-data conclusions survive SM"))
+        self.assertTrue(d("/x/outcome", "agree", "agree at the sigma_16 scale (descriptive)"))   # no common scale
+        for n in ("truths", "named", "quadrants_over", "due", "ended", "simulation_only", "C0", "B0_bitwise"):
+            self.assertNotEqual(self.R.leaf_class(n), "descriptive", n)
+
     def test_rulings_check_their_premise(self):
         o, v = self.R.j(P.PRR), self.R.j(self.R.VF_WITH["prr"])
         path, old = "/readings/PR-3/C25/new_flags", o["readings"]["PR-3"]["C25"]["new_flags"]
