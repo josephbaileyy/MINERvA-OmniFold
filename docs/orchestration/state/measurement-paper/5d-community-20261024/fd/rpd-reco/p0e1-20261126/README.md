@@ -143,6 +143,10 @@ When P0's receipts merge, `/pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126` holds
 Removing it, the omnifile copies first, is a post-receipt step through the director under flux3's precedent, after
 d2-predict + step0 no longer needs P0's records there.
 
+flux4's lane, `/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126`, is on the same list. P0 reads flux4's extract, custody
+record and 12 products there in place, so it stays until P0's receipts merge. Its removal also goes through the
+director (the director, 2026-11-26, at #1403's merge `d6b0f1e8`).
+
 ## Checks on these bytes ([`tests/`](tests/))
 
 | suite | result |
