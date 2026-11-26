@@ -409,7 +409,7 @@ HIGHPZ_OVERRIDE = None  # the self-test plants altered records here
 
 def highpz() -> dict:
     """merged-comparison.csv and signed-qp.csv (reco yields), test1 (the E_vis table and the held-out fold), and the
-    readings of tests A, B and C, with the C declaration."""
+    readings of tests A, B and C."""
     if HIGHPZ_OVERRIDE is not None:
         return HIGHPZ_OVERRIDE
     import csv
@@ -423,7 +423,7 @@ def highpz() -> dict:
             "evis_readme": (base / "test1/README.md").read_text(), "test1": receipt(f"{PRECHARGE}/test1/test1.json"),
             "testb": receipt(f"{PRECHARGE}/testAB/test-b.json"), "testc": receipt(f"{PRECHARGE}/testC/test-c.json"),
             "atxt": (base / "testAB/test-a.txt").read_text(), "btxt": (base / "testAB/test-b.txt").read_text(),
-            "ctxt": (base / "testC/test-c.txt").read_text(), "cdecl": (base / "testC/DECLARATION.md").read_text()}
+            "ctxt": (base / "testC/test-c.txt").read_text()}
 
 
 def highpz_excess() -> float:
@@ -486,22 +486,19 @@ def highpz_rises(d: dict) -> bool:
 
 
 HIGHPZ_CLAIMS = (
-    ("high p_par: data/fold rises with E_avail in each reco band from 20 to 80 GeV/c (test1/evis-by-pz.txt)",
-     r"For negative tracks with well-measured curvature, in each reconstructed $p_\parallel$ band from 20 to \SI{80}{GeV/c}, "
-     r"the ratio of data to that fold rises with "
-     r"$E_{\mathrm{avail}}$.", highpz_rises),
-    ("high p_par: three explanations tested on held-out periods; A contradicts, B inconclusive, C contradicts",
-     "Three explanations were each fitted on half of the data-taking periods and tested on the other half, and none "
-     "accounts for this pattern: a recoil-energy correction that does not depend on the muon, a constant offset in the "
-     "fitted curvature,",
+    ("high p_par: data/fold rises with visible energy, reco p_par + E_avail, in each reco band from 20 to 80 GeV/c",
+     r"For negative tracks with well-measured curvature, the ratio of data to this prediction rises with visible energy, "
+     r"$p_\parallel + E_{\mathrm{avail}}$, in each reconstructed $p_\parallel$ band from 20 to 80~GeV/$c$.",
+     lambda d: highpz_rises(d) and "The fit variable is E_vis = reco p∥ + E_avail" in d["evis_readme"]),
+    ("high p_par: neither A (one muon-independent recoil function) nor C (a smooth true-E_nu rate change) reproduces it",
+     "Neither a recoil-energy correction independent of the muon nor a smooth dependence of the event rate on neutrino "
+     "energy reproduces this rise.",
      lambda d: ("primary: H_A (A1) contradicts" in d["atxt"] and "swap: H_A (A1) contradicts" in d["atxt"]
-                and "primary: H_B inconclusive" in d["btxt"] and "swap: H_B inconclusive" in d["btxt"]
                 and d["testc"]["reading"] == "contradicts"
                 and "Reading for H_C (primary form, both directions): contradicts" in d["ctxt"])),
-    ("high p_par: C is fitted at reco p_par 20-40 (testC/DECLARATION.md)",
-     r"and a smooth change of the event rate with true neutrino energy fitted at reconstructed $p_\parallel$ of "
-     r"20--\SI{40}{GeV/c}. The excess remains under study.",
-     lambda d: "The fit sample is the training playlists, reco p∥ 20–40" in d["cdecl"]),
+    ("high p_par: B, a constant curvature offset, is inconclusive (it carries part of the excess, not all)",
+     "A constant offset in the fitted curvature accounts for about",
+     lambda d: "primary: H_B inconclusive" in d["btxt"] and "swap: H_B inconclusive" in d["btxt"]),
 )
 
 
@@ -514,17 +511,16 @@ def highpz_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
     # The high-p_par open issue (precharge-20261125), sec3_twod.tex
-    ("high p_par: excess at reco p_par >= 60, both signs, before the charge requirement (merged-comparison.csv)",
-     "sec3_twod.tex", r"Before the charge requirement the excess is about \\num\{([0-9]+)\} tracks of both signs",
-     highpz_excess, "round"),
-    ("high p_par: the excess in the |q/p| >= 1/60 curvature tails at reco >= 60 (signed-qp.csv)", "sec3_twod.tex",
-     r"and about \\num\{([0-9]+)\} of them lie in the outer tails of the fitted muon curvature", highpz_tails, "round"),
-    ("high p_par: test B's share of the 50-80 excess (test-b.json epsilon S2, test1.json fold)", "sec3_twod.tex",
-     r"which carries about \\SI\{([0-9]+)\}\{\\percent\} of the excess at reconstructed \$p_\\parallel\$ of "
-     r"50--\\SI\{80\}\{GeV/c\}", highpz_b_share, "round"),
     ("high p_par: the reco edge of the excess (merged-comparison.csv rows 60-80 and >=80)", "sec3_twod.tex",
-     r"at reconstructed \$p_\\parallel\\geq\\SI\{([0-9]+)\}\{GeV/c\}\$, above the reported range",
+     r"above the reported range, at reconstructed \$p_\\parallel \\geq ([0-9]+)\$~GeV/\$c\$\.",
      lambda: 60.0 if {x["reco_p_parallel_GeV_c"] for x in highpz()["merged"]} >= {"60–80", "≥80"} else -1.0, "round"),
+    ("high p_par: the curvature-tail excess (signed-qp.csv) and the excess at reco >= 60, both signs (merged-comparison.csv)",
+     "sec3_twod.tex",
+     r"About ([0-9]+) of the roughly ([0-9]+) excess tracks, counting both charges, lie in the tails of the fitted muon curvature",
+     lambda: (highpz_tails(), highpz_excess()), "round"),
+    ("high p_par: test B's share of the 50-80 excess (test-b.json epsilon S2, test1.json fold)", "sec3_twod.tex",
+     r"A constant offset in the fitted curvature accounts for about \$([0-9]+)\\%\$ of the excess between 50 and 80~GeV/\$c\$",
+     highpz_b_share, "round"),
     # One printed 1.04 stands for both pT edge bins, so it is bound twice: once to each bin.
     ("projection ratio, lowest pT bin, and the two highest p_par bins (regenA2)", "sec3_twod.tex",
      r"the ratio is ([0-9.]+) in both the lowest and the highest \$p_T\$ bins, and ([0-9.]+) and ([0-9.]+) in the two "
@@ -906,10 +902,10 @@ def self_test() -> int:
     if not gzip_self_test():  # a reader check, reported on its own line, not counted as a perturbation
         ok = False
     # The high-p_par claims: each sentence reworded, and each planted record, must be rejected
-    for old_s, new_s in ((r"rises with $E_{\mathrm{avail}}$.", r"falls with $E_{\mathrm{avail}}$."),
-                         ("band from 20 to", "band from 20 to above"),
-                         ("and none accounts for this pattern", "and one accounts for this pattern"),
-                         (r"20--\SI{40}{GeV/c}. The excess", r"20--\SI{60}{GeV/c}. The excess")):
+    for old_s, new_s in (("rises with visible energy", "falls with visible energy"),
+                         ("band from 20 to 80~GeV", "band from 20 to 100~GeV"),
+                         ("Neither a recoil-energy correction", "Only a recoil-energy correction"),
+                         ("independent of the muon nor", "depending on the muon nor")):
         t = text("sec3_twod.tex", base)
         if t.count(old_s) != 1:
             print(f"  NOT FOUND   high p_par mutation {old_s!r}"); ok = False; continue
@@ -940,7 +936,7 @@ def self_test() -> int:
     plant_hp("test A reads supports", lambda d: d.__setitem__("atxt", d["atxt"].replace("primary: H_A (A1) contradicts", "primary: H_A (A1) supports")))
     plant_hp("test B reads supports", lambda d: d.__setitem__("btxt", d["btxt"].replace("swap: H_B inconclusive", "swap: H_B supports")))
     plant_hp("test C reads inconclusive", lambda d: d["testc"].__setitem__("reading", "inconclusive"))
-    plant_hp("C fitted at 20-60", lambda d: d.__setitem__("cdecl", d["cdecl"].replace("reco p∥ 20–40", "reco p∥ 20–60")))
+    plant_hp("E_vis defined without E_avail", lambda d: d.__setitem__("evis_readme", d["evis_readme"].replace("The fit variable is E_vis = reco p∥ + E_avail", "The fit variable is E_vis = reco p∥")))
     plant_hp("a 60-80 E_vis cell that falls", lambda d: d.__setitem__("evis", d["evis"].replace("1.78          2.12", "1.78          1.12")))
     plant_hp("a 60-80 sign row missing", lambda d: d.__setitem__("merged", [x for x in d["merged"] if not (x["reco_p_parallel_GeV_c"] == "60–80" and x["sign"] == "+")]))
     plant_hp("a tail cell without its MC row", lambda d: d.__setitem__("signed", [x for x in d["signed"] if not (x["band"] == "2" and x["qbin"] == "2" and x["sample"] == "MC")]))
