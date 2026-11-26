@@ -237,7 +237,10 @@ def paper_prec(k, x):
 # Both are E-1's with-arm figures as addendum E-A2 redrew them, from the same readouts, without the hydrogen flags on
 # the legend (FD-GENCMP-AMENDMENT-E-ADDENDUM-EA2-REPORT.md, #712; the caveat cut list's move MV07F). fd_g_fig_ratio.pdf
 # (6214ed78), which only the short paper printed, left with it on 2026-11-21 (POST_PUBLICATION_REORG_PLAN.md, "short paper").
-FIGURES = {"fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "0d6fe57c")}
+# C_e^infl (V_F, 2026-11-26): the modes figure is the V_F chain's (FD-VF-ADDITION, phase 1): fd_g_figures, unchanged, on
+# the V_F with-arm E readouts in E-A2's renderer, whose control R redrew E-A2's 0d6fe57c byte for byte in the same run
+# (fd/receipts-vf/p1/run/run/chain.json; note-vffigs-20261126/README.md).
+FIGURES = {"fd_g_fig_modes.pdf": ("fd/with-vf/figures", "889e175b")}
 # the readouts that are text receipts, not JSON
 TEXT_READOUTS = {"gprobe", "e2sens", "s1code", "ll5ddecl", "regenAp1a"}
 CELLS = [f"R{i:02d}" for i in range(16)]

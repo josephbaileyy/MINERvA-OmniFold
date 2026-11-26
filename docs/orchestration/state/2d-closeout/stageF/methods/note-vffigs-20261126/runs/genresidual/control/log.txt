@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/josephbailey/vf-figs-wt/docs/orchestration/state/2d-closeout/stageF/methods/note-genresid-20261120/tools/make_fig_fived16_genresidual.py", line 213, in <module>
+    main()
+  File "/Users/josephbailey/vf-figs-wt/docs/orchestration/state/2d-closeout/stageF/methods/note-genresid-20261120/tools/make_fig_fived16_genresidual.py", line 122, in main
+    assert f"{rec['total']['chi2']:.2f}" == printed, f"{name}: chi2 {rec['total']['chi2']} vs printed {printed}"
+AssertionError: nuwro: chi2 129.97739624397968 vs printed 92.20
