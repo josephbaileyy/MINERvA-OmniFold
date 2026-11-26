@@ -34,7 +34,7 @@ UNITS = ("off/er", "off/c2_central", "R/er", "R/c2_central")
 CV_SHA = "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
 MC_SHA = "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316"
 SPLIT_REL = "docs/orchestration/state/ibu-chi2-20261123/oflow/split.json"
-STAGE = "/pscratch/sd/j/josephrb/oofvc-20261126/stage"  # the staging root the cluster scripts use (oofvc_units.sh)
+STAGE = "/pscratch/sd/j/josephrb/oofvc-20261126-r2/stage"  # the staging root the cluster scripts use (oofvc_units.sh)
 # E_R's argv (ref_c2c1/config.json e_r.argv at M) after the two input paths (codex-school r2 #2)
 E_R_OPTIONS = ["--iters", "5", "--use-weights", "--estimator", "lgbm", "--seed", "42", "--branch-select", "all",
                "--bkg-mode", "negweight-refined", "--refine-n-estimators", "400", "--refine-num-leaves", "31"]

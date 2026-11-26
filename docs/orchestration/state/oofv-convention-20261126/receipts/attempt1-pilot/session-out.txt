@@ -1,0 +1,7 @@
+node login31 staged sha256 bb7ca6f5784ccbbb3ed9a27c6672dc101115b0b4ceaa780335e4e5aabb9b91bb
+node login31 2026-11-26T21:15:53Z mode pilot tool bbc3fc1be82572d9ad8bdd668fd51647ca1d86d9
+fence check (pilot, before any write): no live cov2d or t2a job 2026-11-26T21:15:54Z
+1579a71aa57175c497af2be36f75d1aa363f5ff30d6e6e6cf9b2a3dd2aab3540  oofvc_dump
+fence check (pilot, before the submit): no live cov2d or t2a job 2026-11-26T21:16:53Z
+pilot job 62053260
+script rc=0
