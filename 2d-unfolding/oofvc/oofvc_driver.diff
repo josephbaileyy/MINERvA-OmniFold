@@ -78,7 +78,7 @@
      out = {
          "truth_pt": np.asarray(truth_pt_list, dtype=float),
          "truth_pz": np.asarray(truth_pz_list, dtype=float),
-@@ -830,9 +853,71 @@
+@@ -830,9 +853,73 @@
      if use_alt:
          out["w_truth_alt"] = np.asarray(w_truth_alt_list, dtype=float)
          out["w_reco_alt"] = np.asarray(w_reco_alt_list, dtype=float)
@@ -105,7 +105,9 @@
 +        raise RuntimeError("[FAIL] OOFVC: the rows must be int64 entries and float64 columns of one length")
 +    if np.unique(rows["entry"]).size != n or (n and rows["entry"].min() < 0):
 +        raise RuntimeError("[FAIL] OOFVC: the entries must be distinct and non-negative")
-+    if not all(np.all(np.isfinite(rows[k])) for k in OOFVC_KEYS[1:]):
++    # w_truth is used only by rows appended to the signal, whose weight rule (0 <= w < 1e4) drops a non-finite one,
++    # as the signal loader drops its own; every other column must be finite (codex-school r2 #3)
++    if not all(np.all(np.isfinite(rows[k])) for k in OOFVC_KEYS[1:] if k != "w_truth"):
 +        raise RuntimeError("[FAIL] OOFVC: a moved row has a non-finite value")
 +    return rows
 +
@@ -150,7 +152,7 @@
  # ---------------------------------------------------------------------------
  # Opt-in selective branch reading (--branch-select derived)
  # ---------------------------------------------------------------------------
-@@ -1604,8 +1689,24 @@
+@@ -1604,8 +1691,24 @@
                            "The simulation trees and the POT metadata still come from --omnifile, "
                            "and the file's dataPOTUsed must equal the omnifile's. Absent, the "
                            "driver reads --omnifile's own data tree, as before.")
@@ -175,7 +177,7 @@
  
      # P1 diagnostic: the background stream is used only on the CV purity path.
      p1_on = args.bootstrap_streams in P1_STREAMS
-@@ -1859,11 +1960,17 @@
+@@ -1859,11 +1962,17 @@
      # hBkgReco2D) and the negweight injection (via the returned arrays) then track
      # the per-universe background.
      p1_kw = {"return_fill_rows": True} if p1_on else {}  # P1 diagnostic
@@ -194,7 +196,7 @@
      bkg_reco_pt, bkg_reco_pz, bkg_reco_w = bkg_out[:3]
      p1_bkg_rows = bkg_out[3] if p1_on else None
  
-@@ -1873,7 +1980,9 @@
+@@ -1873,7 +1982,9 @@
                        pot_scale, use_weights=args.use_weights,
                        verbose=args.verbose,
                        universe_branch=universe_branch,

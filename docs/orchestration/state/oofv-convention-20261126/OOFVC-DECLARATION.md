@@ -93,10 +93,12 @@ the 2021 publication's final production histograms has not been established.
       signal loop `w_reco`;
     - true p_T, p∥ and θ_μ and the truth-mode weight, as the signal loop computes `w_truth` (`:1131-1139`);
     - the neutrino PDG, the current, the true vertex, and MAT's vertex flag.
-  - **One departure, for time.** `isMCSelected` is evaluated first, with weight 1, since the weight enters only the
-    Cutter's statistics. The weights are then computed for selected entries only, and duplicates are flagged among
-    selected phase-space entries (the copies of one event are selected alike). C-JOIN and C-SIGW compare every weight
-    bit for bit with the production trees, so any effect of the order is a STOP, not a result.
+  - **One departure, for time.** `isMCSelected` is evaluated with weight 1, since the weight enters only the Cutter's
+    statistics, and the weights are computed for selected entries only.
+    - The duplicate flag is taken first, in the signal loop's order: the first occurrence of a key among all
+      phase-space entries, selected or not, is kept.
+    - C-JOIN and C-SIGW compare every weight bit for bit with the production trees, so any effect of the order is a
+      STOP, not a result.
   - **The model** is the same five reweighters as production (`runEventLoopOmniFold.cpp:1745-1750`).
   - **The join** is `2d-unfolding/oofvc/oofvc_join.py`, with C-ROUTE, C-JOIN, C-SIGW and C-LAB (§2.2). Its output is
     the driver's `--oofvc-rows` file and a record of the class sizes.
@@ -169,6 +171,8 @@ option to E_R's argv and re-pins the driver.
        - An appended row needs the signal loader's 0 ≤ w < 1e4 on both weights.
        - A row reconstructed outside the grid needs the background loader's 0 ≤ w_reco < 1e6.
        - A row failing its rule is dropped and counted, as those loaders drop theirs, and the counts are recorded.
+       A non-finite `w_truth` fails the signal rule. It is allowed in the rows file, because a row reconstructed
+       outside the grid never uses it; every other column must be finite.
        - The option also requires `--use-weights`.
   3. **Moved rows with a true muon outside the grid stay in the background** (the director's ruling 3).
      - This is an approximation to MINERvA's truth-overflow handling. MINERvA's loop fills those events into the
@@ -296,14 +300,16 @@ applicable", not "no change".**
     exact zeros wherever Tier 1's are zero, and the same K list;
   - D_ER to 2.121436 and D_IBU(K) to regenA3's set `e` at every K, each to ≤ 1e-6 relative.
 - **C-MOVE:**
-  - Per reco cell, the background removed (off minus R) equals the moved rows reconstructed in the grid, POT-scaled.
+  - Per reco cell, the background removed (off minus R) equals the moved rows reconstructed in the grid that the
+    background loader had filled (0 ≤ w < 1e6), POT-scaled.
     The tolerance is 1e-12 of that cell's production background, because the difference of two sums cancels.
   - R's signal arrays grow by exactly the number the driver reports appending, which is the moved rows with a reco
     cell less those its weight rule drops.
   - By construction (`oofvc_lib.moved_mask`), every moved row is ν_μ CC, so FAKE_VTX or FAKE_PS, and no OTHER row
     moves.
 - **C-FIX:** under R, `hOFTruthDenom2D`, `hDataReco2D` and `hFlux_pt` (contents, errors and axis edges, overflow
-  included), and the exposure, both flux integrals and the nucleon parameters, are bit-for-bit those of `off`.
+  included), and the exposure, both flux integrals and the nucleon parameters, are bit-for-bit those of `off`. This
+  holds for the E_R pair and the c2 pair alike.
 - **C-SIM:** REF-C2C1's C-SIM, rerun under R. IBU on the MC's own folded truth returns the truth denominator's cross
   section through the full chain, to 1e-9. **C-ROO** and **C-FILL** run as in REF-C2C1. The scorer refuses a c2
   unit without C-ROO, so no numpy-unfolder test run can stand in.
@@ -315,14 +321,21 @@ applicable", not "no change".**
   file (codex-school r1 #5).
 - **C-PINS:** each unit process records the inputs (43f8cc16…, d40aea69…), libRooUnfold.so, the driver, the runner,
   the lane's library and the rows before and after. libRooUnfold.so is checked against its pin (0b34e1e3…) inside the
-  process before any unit. The scorer requires each record to be unchanged and equal to the expected digests: driver
-  0cbd02a1…, runner 285dd138…, the lane's files as committed, the join's rows, libRooUnfold.so 0b34e1e3…
+  process before any unit. The scorer requires each record to be unchanged and equal to the expected digests:
+  - driver 9d11bd4b…, runner 285dd138…;
+  - the lane's files as the tool commit has them (`git show`, not the scorer's checkout);
+  - the join's rows, libRooUnfold.so 0b34e1e3…, and the staged inputs 43f8cc16… and d40aea69…;
+  - every file each unit wrote (done-marker, npz, root, record, and `n.npz`), whose digests its own process
+    recorded.
 - **C-UNITS** (the scorer). Every unit's root and npz equal its done-marker's digests, and its recorded argv is its
-  npz's.
+  npz's. That argv is E_R's exactly: `--omnifile …/runEventLoopOmniFold_MEFHC.root --mcfile …/runEventLoopMC_MEFHC.root`,
+  then E_R's options, so another seed or iteration count fails.
   - R units carry `--signal-convention minerva --oofvc-rows …/oofvc_rows.npz`, and off units carry neither option.
   - No unit used the numpy unfolder, and every c2 unit ran C-ROO.
   - N's controls passed (codex-school r1 #4).
 - **C-KS:** every array the scorer reads has the same K list, which contains K = 10.
+- **C-JOIN-RECORD** (the scorer). The join's record is PASS on exactly its four controls. Its rows digest is the
+  scored rows file's, its omnifile digest is 43f8cc16…, and its split.json digest is the committed file's.
 
 ### 2.3 Operands
 
@@ -460,6 +473,16 @@ The staged copies and the dumps stay on scratch until a separate removal under i
   - the file renamed from `OOFVC-DECLARATION-DRAFT.md`;
   - after 881f4dbc and before any read: moved rows reconstructed outside the grid are not appended; T's cancellation
     from the IBU result is stated; O_j's two sources are named.
+- **Revision 5** (after r2: codex-school 5 BLOCKERs, agy GO; `receipts/reads/r2/`):
+  - every unit file covered by its process's recorded digests, `n.npz` included;
+  - argv equal to E_R's;
+  - C-FIX on the c2 pair;
+  - C-MOVE counts only rows the background loader filled;
+  - a non-finite `w_truth` allowed, then dropped by the signal rule;
+  - pins against the tool commit and the staged inputs;
+  - C-JOIN-RECORD's digests;
+  - every playlist's entry count checked by name;
+  - §1.2's duplicate rule corrected.
 - **Revision 4** (after r1: codex-school `gpt-6.2-sol` and agy `gemini-4-hydrogen-high`, `receipts/reads/r1/`):
   - ROOT's cells in place of the closed rectangle;
   - the loaders' weight rules, with drops counted;

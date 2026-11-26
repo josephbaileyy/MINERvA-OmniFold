@@ -521,7 +521,8 @@ class Runner(unittest.TestCase):
         join.write_text(json.dumps({"verdict": "PASS", "rows_sha256": hashlib.sha256(self.rows_path.read_bytes()).hexdigest(),
                                     "pot_scale": contents(self.out / "R" / "er.root")["potScale"], "classes": {}}))
         p = subprocess.run([sys.executable, "-B", str(HERE / "oofvc_score.py"), "--units", str(self.out), "--join",
-                            str(join), "--rows", str(self.rows_path), "--tree", str(tree()), "--repo", str(REPO)],
+                            str(join), "--rows", str(self.rows_path), "--tree", str(tree()), "--repo", str(REPO),
+                            "--tool-commit", "HEAD"],
                            capture_output=True, text=True)
         self.assertEqual(p.returncode, 8, p.stderr[-2000:])
         rec = json.loads(p.stdout)
@@ -536,7 +537,11 @@ class Runner(unittest.TestCase):
             for k in ("verdict", "npz_digest", "root_digest", "argv_recorded", "convention"):
                 self.assertTrue(chk[k], (u, k))
             self.assertFalse(chk["not_numpy_unfolder"], u)
+            self.assertFalse(chk["argv_is_E_R"], u)  # the fixture runs two iterations on fixture files
         self.assertFalse(c["C-UNITS"]["checks"]["R/c2_central"]["C-ROO_ran"])
+        # every unit file is covered by its process's recorded digests, and a changed n.npz is caught
+        pins = [json.loads(p.read_text()) for p in self.out.glob("pins_*.json")]
+        self.assertTrue(all("n.npz" in p["outputs"][u] for p in pins for u in p["units"] if u.endswith("c2_central")))
         self.assertEqual(rec["reading"], "STOP")
         self.assertNotIn("operands", rec)
 

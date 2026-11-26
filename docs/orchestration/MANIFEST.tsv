@@ -22367,6 +22367,13 @@ docs/orchestration/state/oofv-convention-20261126/receipts/reads/r1/codex-school
 docs/orchestration/state/oofv-convention-20261126/receipts/reads/r1/inputs.sha256	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/reads/r1/prompt-agy.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/reads/r1/prompt-codex.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/reads/r2/DISPOSITION.md	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/reads/r2/agy-gemini-4-hydrogen-high-report.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/reads/r2/agy-receipt.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/reads/r2/codex-school-gpt-6.2-sol-report.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/reads/r2/codex-school-usage.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/reads/r2/inputs.sha256	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/reads/r2/prompt.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/sources/MAT-0111c79de-Cutter.cxx	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/sources/MAT-MINERvA-f790cc794-CCInclusiveSignal.h	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/sources/MINERvA-101-bb6c1634-runEventLoop.cpp	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes

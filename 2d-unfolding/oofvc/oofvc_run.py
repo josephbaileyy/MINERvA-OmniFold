@@ -121,6 +121,7 @@ def run(a) -> int:
                    "oofvc_lib": sha256(HERE / "oofvc_lib.py"), "rows": sha256(a.rows), "inputs": verified,
                    "roounfold_lib": lib_sha()}
     rc = 0
+    outputs = {}  # every file each unit wrote, by digest (codex-school r2 #1: n.npz and the records are covered)
     for unit in a.unit:
         conv, kind = unit.split("/")
         out = a.out / conv
@@ -160,6 +161,9 @@ def run(a) -> int:
             if not all(c["pass"] for c in nr["controls"].values()):
                 urc = RC_CONTROL
         (out / f"{kind}.oofvc.json").write_text(json.dumps(rec, indent=1, default=str) + "\n")
+        names = [f"{kind}.done", f"{kind}.npz", f"{kind}.root", f"{kind}.oofvc.json"] + (
+            ["n.npz"] if kind == "c2_central" and (out / "n.npz").exists() else [])
+        outputs[unit] = {n: sha256(out / n) for n in names if (out / n).exists()}
         rc = rc or urc
     pins_after = {"driver": sha256(C.RE2), "runner": sha256(Path(C.__file__)), "oofvc_run": sha256(Path(__file__)),
                   "oofvc_lib": sha256(HERE / "oofvc_lib.py"), "rows": sha256(a.rows), "inputs": C.check_inputs(cfg),
@@ -167,7 +171,7 @@ def run(a) -> int:
     c_pins = pins_before == pins_after
     tag = "_".join(u.replace("/", "-") for u in a.unit)  # one pins file per process (the job runs four at once)
     (a.out / f"pins_{tag}.json").write_text(json.dumps({"units": a.unit, "before": pins_before, "after": pins_after,
-                                                        "pass": c_pins}, indent=1) + "\n")
+                                                        "outputs": outputs, "pass": c_pins}, indent=1) + "\n")
     return rc or (0 if c_pins else RC_CONTROL)
 
 

@@ -5,7 +5,7 @@ the rulings, the controls, the readings fixed before any number, and the price. 
 
 | file | what it is |
 |---|---|
-| `oofvc_driver.diff` | the default-off `--signal-convention minerva` option on `re2_driver.py`, at M = 77d76cfc with Tier 1's edge edit. It gives the driver 0cbd02a1… |
+| `oofvc_driver.diff` | the default-off `--signal-convention minerva` option on `re2_driver.py`, at M = 77d76cfc with Tier 1's edge edit. It gives the driver 9d11bd4b… |
 | `make_tree.sh` | builds the deploy tree at M: archive mode for the tests, clone mode on the cluster. It applies the edge edit and the diff, re-pins `ref_c2c1/config.json`, and prints every digest |
 | `oofvc_dump.cpp` | route A's AnaTuple pass, one MC playlist: every selected entry with both routings, the truth and both weights |
 | `oofvc_join.py` | C-ROUTE, C-JOIN, C-SIGW and C-LAB. It writes the driver's `--oofvc-rows` file and the class sizes |

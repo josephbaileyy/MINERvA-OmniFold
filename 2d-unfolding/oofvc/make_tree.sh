@@ -11,7 +11,7 @@ set -euo pipefail
 DEST=${1:?dest}; MODE=${2:?archive|clone}; SRC=${3:?repo or url}; STAGE=${4:?staging root}
 M=77d76cfc2d621f8faa010b75006811868494652a
 EDGES_SHA=677ac75f1d171ca7d71223f62bf3426f056e41b1b6cc8bfd433d49528a1371e8
-OOFVC_SHA=0cbd02a1bf227521002906c1c8627a692bf889efb18a23f785d626ab11fb3cd6
+OOFVC_SHA=9d11bd4b1ff72f41ceabc94184220fdca26fff75a640fda43680085cd8fca396
 RUNNER_SHA=285dd138363d090a4ce5dea3361be81fada8680bd782b918e9d95198d1b5d6ea
 HERE=$(cd "$(dirname "$0")" && pwd)
 PY=${OOFVC_PY:-python3}

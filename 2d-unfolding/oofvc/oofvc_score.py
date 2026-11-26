@@ -27,10 +27,16 @@ TIER1_E = "docs/orchestration/state/ibu-chi2-20261123/tier1/units/e"
 LADDER = "docs/orchestration/state/ibu-chi2-20261123/regenA3/out/ladder.json"
 LADDER_SHA = "565d1f99a3bd702bb1bd7279e97a571eaa6786941b48310fba290c17ec85422a"
 D_ER_TIER1 = 2.121436  # tier1/score.out, to the printed precision; C-BASE compares at 1e-6 relative
-DRIVER_SHA = "0cbd02a1bf227521002906c1c8627a692bf889efb18a23f785d626ab11fb3cd6"
+DRIVER_SHA = "9d11bd4b1ff72f41ceabc94184220fdca26fff75a640fda43680085cd8fca396"
 RUNNER_SHA = "285dd138363d090a4ce5dea3361be81fada8680bd782b918e9d95198d1b5d6ea"
 LIB_SHA = "0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd"
 UNITS = ("off/er", "off/c2_central", "R/er", "R/c2_central")
+CV_SHA = "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+MC_SHA = "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316"
+SPLIT_REL = "docs/orchestration/state/ibu-chi2-20261123/oflow/split.json"
+# E_R's argv (ref_c2c1/config.json e_r.argv at M) after the two input paths (codex-school r2 #2)
+E_R_OPTIONS = ["--iters", "5", "--use-weights", "--estimator", "lgbm", "--seed", "42", "--branch-select", "all",
+               "--bkg-mode", "negweight-refined", "--refine-n-estimators", "400", "--refine-num-leaves", "31"]
 PRIMARY_K = 10
 COLUMN_40_60 = 15
 FIXED = ("hOFTruthDenom2D", "hDataReco2D", "hFlux_pt")
@@ -67,6 +73,11 @@ def unit_checks(units: Path, rows_sha: str, local: dict, expect: dict) -> dict:
         rec = json.loads((d / f"{kind}.oofvc.json").read_text())
         meta = json.loads(str(np.load(d / f"{kind}.npz", allow_pickle=True)["meta"]))
         argv = rec["argv"]
+        base = argv[:4 + len(E_R_OPTIONS)]
+        argv_e_r = (len(base) == 4 + len(E_R_OPTIONS) and base[0] == "--omnifile"
+                    and Path(base[1]).name == "runEventLoopOmniFold_MEFHC.root" and base[2] == "--mcfile"
+                    and Path(base[3]).name == "runEventLoopMC_MEFHC.root" and base[4:] == E_R_OPTIONS
+                    and len(argv) == len(base) + (4 if conv == "R" else 0))
         if conv == "R":
             conv_ok = (argv[-4:-1] == ["--signal-convention", "minerva", "--oofvc-rows"]
                        and Path(argv[-1]).name == expect["rows_name"])
@@ -74,7 +85,8 @@ def unit_checks(units: Path, rows_sha: str, local: dict, expect: dict) -> dict:
             conv_ok = "--signal-convention" not in argv and "--oofvc-rows" not in argv
         c = {"verdict": done["verdict"] == "PASS", "npz_digest": done["sha256"] == sha256(d / f"{kind}.npz"),
              "root_digest": done["root_sha256"] == sha256(d / f"{kind}.root"), "argv_recorded": meta["argv"] == argv,
-             "convention": bool(conv_ok), "not_numpy_unfolder": rec.get("numpy_unfolder") is expect["numpy_unfolder"]}
+             "convention": bool(conv_ok), "argv_is_E_R": bool(argv_e_r),
+             "not_numpy_unfolder": rec.get("numpy_unfolder") is expect["numpy_unfolder"]}
         if kind == "c2_central":
             c["C-ROO_ran"] = ("C-ROO" in meta["controls"]) is not expect["numpy_unfolder"]
             c["N_controls"] = all(x["pass"] for x in rec["n_controls"].values())
@@ -82,12 +94,21 @@ def unit_checks(units: Path, rows_sha: str, local: dict, expect: dict) -> dict:
     pins = [json.loads(p.read_text()) for p in sorted(units.glob("pins_*.json"))]
     covered = sorted(u for p in pins for u in p["units"])
 
+    def outputs_ok(p):
+        """Every file the unit wrote, by the digest its own process recorded (n.npz and the records included)."""
+        try:
+            return all(sha256(units / u.split("/")[0] / n) == h for u in p["units"] for n, h in p["outputs"][u].items())\
+                and all("n.npz" in p["outputs"][u] for u in p["units"] if u.endswith("c2_central"))
+        except (KeyError, OSError):
+            return False
+
     def pin_ok(p):
         b = p["before"]
         return bool(p["pass"] and p["before"] == p["after"] and b["driver"] == expect["driver"]
                     and b["runner"] == RUNNER_SHA and b["oofvc_run"] == local["oofvc_run"]
                     and b["oofvc_lib"] == local["oofvc_lib"] and b["rows"] == rows_sha
-                    and b["roounfold_lib"] == expect["roounfold_lib"])
+                    and b["roounfold_lib"] == expect["roounfold_lib"]
+                    and b["inputs"] == {"CV": CV_SHA, "MC": MC_SHA} and outputs_ok(p))
     out["pins"] = {"files": len(pins), "units": covered, "each": [pin_ok(p) for p in pins],
                    "pass": bool(pins) and all(pin_ok(p) for p in pins) and covered == sorted(UNITS)}
     return out
@@ -100,6 +121,7 @@ def main(argv=None) -> int:
     ap.add_argument("--rows", type=Path, required=True)
     ap.add_argument("--tree", type=Path, required=True)
     ap.add_argument("--repo", type=Path, required=True)
+    ap.add_argument("--tool-commit", required=True, help="the commit the cluster ran (the bound launcher's)")
     a = ap.parse_args(argv)
     import ROOT
     sys.path.insert(0, str(a.tree / "2d-unfolding"))
@@ -117,12 +139,22 @@ def main(argv=None) -> int:
     cov = cpf.tmatrix_to_numpy(fp.Get("TotalCovariance"))
     fp.Close()
     join = json.loads(a.join.read_text())
-    ctl["C-JOIN-RECORD"] = {"pass": join.get("verdict") == "PASS" and join.get("rows_sha256") == rows_sha}
+    split_sha = sha256(a.repo / SPLIT_REL)
+    ji = join.get("inputs", {})
+    ctl["C-JOIN-RECORD"] = {"pass": bool(join.get("verdict") == "PASS" and join.get("rows_sha256") == rows_sha
+                                         and ji.get("omnifile_sha256") == CV_SHA and ji.get("split_sha256") == split_sha
+                                         and all(c.get("pass") for c in join.get("controls", {}).values())
+                                         and sorted(join.get("controls", {})) == ["C-JOIN", "C-LAB", "C-ROUTE", "C-SIGW"])}
 
     # what the production units must show: the pinned driver and library, RooUnfold (not the tests' numpy unfolder),
     # and the join's rows file
     expect = {"driver": DRIVER_SHA, "roounfold_lib": LIB_SHA, "numpy_unfolder": False, "rows_name": "oofvc_rows.npz"}
-    local = {"oofvc_run": sha256(HERE / "oofvc_run.py"), "oofvc_lib": sha256(HERE / "oofvc_lib.py")}
+    import subprocess
+
+    def at_tool(rel):  # the lane's file as the tool commit has it, not this checkout's copy (codex-school r2 #4)
+        return hashlib.sha256(subprocess.run(["git", "-C", str(a.repo), "show", f"{a.tool_commit}:{rel}"],
+                                             check=True, capture_output=True).stdout).hexdigest()
+    local = {"oofvc_run": at_tool("2d-unfolding/oofvc/oofvc_run.py"), "oofvc_lib": at_tool("2d-unfolding/oofvc/oofvc_lib.py")}
     uc = unit_checks(a.units, rows_sha, local, expect)
     ctl["C-UNITS"] = {"checks": {u: uc[u] for u in UNITS},
                       "pass": all(all(v.values()) for u, v in uc.items() if u in UNITS)}
@@ -162,9 +194,13 @@ def main(argv=None) -> int:
                                   and np.all(er_off[~m] == 0) and np.all(z["off"]["xsec"][~xm] == 0)
                                   and abs(der_off / D_ER_TIER1 - 1) <= 1e-6)}
 
-    # C-FIX: under R the denominator, the data, the flux and the exposures are bit for bit those of off
-    fix = {k: hist_identity(f["off"], k) == hist_identity(f["R"], k) for k in FIXED}
-    fix.update({k: f["off"].Get(k).GetVal() == f["R"].Get(k).GetVal() for k in FIXED_PARAMS})
+    # C-FIX: under R the denominator, the data, the flux and the exposures are bit for bit those of off, for the E_R
+    # pair and the c2 pair alike
+    g2 = {c: ROOT.TFile.Open(str(a.units / c / "c2_central.root")) for c in ("off", "R")}
+    fix = {}
+    for tag, pair in (("er", f), ("c2", g2)):
+        fix.update({f"{tag}:{k}": hist_identity(pair["off"], k) == hist_identity(pair["R"], k) for k in FIXED})
+        fix.update({f"{tag}:{k}": pair["off"].Get(k).GetVal() == pair["R"].Get(k).GetVal() for k in FIXED_PARAMS})
     ctl["C-FIX"] = {"equal": fix, "pass": all(fix.values())}
 
     # C-MOVE: per reco cell, the background removed equals the moved rows with a reco cell, to 1e-12 of the cell's
@@ -174,7 +210,9 @@ def main(argv=None) -> int:
     pot = float(join["pot_scale"])
     g = L.global_index(rows["reco_pt"], rows["reco_pz"], pt_edges, pz_edges)
     n_cells = (len(pt_edges) - 1) * (len(pz_edges) - 1)
-    moved_cell = np.bincount(g[g >= 0], weights=rows["w_reco"][g >= 0] * pot, minlength=n_cells)
+    wr = np.asarray(rows["w_reco"], float)
+    filled = (g >= 0) & np.isfinite(wr) & (wr >= 0) & (wr < 1e6)  # rows the background loader had filled
+    moved_cell = np.bincount(g[filled], weights=wr[filled] * pot, minlength=n_cells)
     b_off, b_r = th2(f["off"], "hBkgReco2D"), th2(f["R"], "hBkgReco2D")
     dev = np.abs((b_off - b_r) - moved_cell)
     scale = np.maximum(np.abs(b_off), 1e-300)

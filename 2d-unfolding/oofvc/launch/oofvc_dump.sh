@@ -49,6 +49,9 @@ case "$MODE" in
     FC=$R/tool/docs/orchestration/state/precharge-20261125/file-counts.txt
     np_=$(awk -F'[ ,]+' '/_MC.log:/ {split($1,a,"_"); n[a[1]]=1} END {c=0; for (p in n) c++; print c}' "$FC")
     [ "$np_" = 12 ] || { echo "STOP: file-counts.txt lists $np_ MC playlists, not 12"; exit 7; }
+    for p in 1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P; do  # each playlist the array runs has a projection (codex-school r2 #5)
+      grep -q "^${p}_MC.log:complete [0-9]* files, [0-9]* entries" "$FC" || { echo "STOP: no entry count for $p"; exit 7; }
+    done
     proj=$(awk -v el="$el" -F'[ ,]+' '/_MC.log:/ {split($1,a,"_"); n[a[1]]=$(NF-1)} END {m=0; for (p in n) { t=el*n[p]/n["1L"]; printf "%s %.0f\n", p, t > "/dev/stderr"; if (t>m) m=t }; printf "%.0f", m}' "$FC")
     echo "largest projection ${proj} s"
     [ "$proj" -le 6300 ] || { echo "STOP: a projection exceeds 1.75 h; back to the director"; exit 7; }
