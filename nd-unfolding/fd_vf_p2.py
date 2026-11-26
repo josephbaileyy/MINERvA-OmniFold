@@ -377,7 +377,173 @@ def p2_overlap(name, rel_pin, vf):
     return out
 
 
-P2 = {"eav": p2_eav, "e2": p2_e2, "gover": lambda vf: p2_overlap("gover", GOVER, vf),
+# gdefs, gch, gnat: every chi2 is an embedded fd_g_compare.compare record (cells, f, g, sigma_Vg_over_f) under
+# "reported" and "without_C_PL5D"; each is recomputed by compare, imported unchanged, with V_g = (sigma_Vg_over_f f)^2 on
+# its cells and the matrices fd_gencmp.result builds (C_e + C_model_abs + C_resp [+ C_PL5D]), then + DeltaC_e
+GDEFS = (f"{D5}/fd/gencmp/readout/defs.json", "544f4f43")
+GCH = (f"{D5}/fd/gencmp/readout/ch.json", "cd111b8e")
+GNAT = (f"{D5}/fd/gencmp/readout/native.json", "df48fbeb")
+PAIR = ("reported", "without_C_PL5D")
+NAMES_OLD = {"reported": "C_total + C_resp + C_PL5D", "without_C_PL5D": "C_total + C_resp"}
+NAMES_VF = {"reported": "C_total + C_resp + C_PL5D + DeltaC_e", "without_C_PL5D": "C_total + C_resp + DeltaC_e"}
+
+
+def gencmp_matrices(vf):
+    blk = npz_pinned(CPL_BLOCK)
+    dpc, _ = pinned_json(OLD_DP_CPL)
+    f = np.asarray(blk["f"], float)
+    Ct = sum(np.asarray(dpc["matrices"][k], float) for k in ("C_e", "C_model_abs"))
+    Cr, Cpl = np.asarray(blk["C_resp"], float), np.asarray(blk["C_PL5D"], float)
+    old = {"reported": Ct + Cr + Cpl, "without_C_PL5D": Ct + Cr}
+    dF = np.asarray(vf["matrices"]["DeltaC_e"], float)
+    if not np.array_equal(np.asarray(vf["f"], float), f):
+        raise Stop("the V_F product's f is not the block's")
+    return f, old, {k: M + dF for k, M in old.items()}
+
+
+def pair_paths(x, path=""):
+    if isinstance(x, dict):
+        if all(k in x and isinstance(x[k], dict) and "sigma_Vg_over_f" in x[k] for k in PAIR):
+            yield path, x
+            return
+        for k, v in x.items():
+            yield from pair_paths(v, f"{path}/{k}")
+
+
+def recompare(FG, f, rec, M, name):
+    cells = [int(c[1:]) for c in rec["cells"]]
+    g, Vg = np.zeros(f.size), np.zeros(f.size)
+    g[cells] = rec["g"]
+    Vg[cells] = (np.asarray(rec["sigma_Vg_over_f"], float) * f[cells]) ** 2
+    return json.loads(json.dumps(FG.compare(f, g, Vg, M, cells, name)))
+
+
+def printed_p(p):
+    """p as the note prints it: make_values_fived16.p_tex (two significant figures, scientific below 1e-3) and its
+    paper form (paper_prec's "<10^k" / "=x"), both imported unchanged."""
+    sys.path.insert(0, str(ROOT / "docs/analysis-note"))
+    import make_values_fived16 as MV
+    t = MV.p_tex(p)
+    return t, tuple(sorted(MV.paper_prec("f0-x-p", t).values()))
+
+
+def p_compare_record(FG, label, old, committed):
+    """P on one compare record: chi2 at RTOL_ROUNDTRIP (V_g round-tripped); p by function identity, exactly
+    (chi2_sf(committed chi2, ndf) == committed p, bitwise), its achieved difference only recorded; every other field at
+    RTOL_EXACT. Returns (chi2 achieved, p achieved)."""
+    worst = [0.0, 0.0]
+    for part in ("total", "shape_only"):
+        a, b = old[part], committed[part]
+        if FG.chi2_sf(b["chi2"], b["ndf"]) != b["p"]:
+            raise Stop(f"P {label}/{part}: chi2_sf(committed chi2) is not the committed p")
+        worst[0] = max(worst[0], abs(a["chi2"] - b["chi2"]) / abs(b["chi2"]))
+        worst[1] = max(worst[1], abs(a["p"] - b["p"]) / abs(b["p"]) if b["p"] else abs(a["p"] - b["p"]))
+        if worst[0] > RTOL_ROUNDTRIP:
+            raise Stop(f"P {label}/{part}: chi2 relative {worst[0]:.3g} > {RTOL_ROUNDTRIP:g}")
+        if printed_p(a["p"]) != printed_p(b["p"]):           # the director's printed-value check (2026-11-26)
+            raise Stop(f"P {label}/{part}: p prints {printed_p(a['p'])}, committed {printed_p(b['p'])}")
+        p_control(f"{label}/{part}", {k: v for k, v in a.items() if k not in ("chi2", "p")},
+                  {k: v for k, v in b.items() if k not in ("chi2", "p")}, RTOL_EXACT)
+    p_control(label, {k: v for k, v in old.items() if k not in ("total", "shape_only")},
+              {k: v for k, v in committed.items() if k not in ("total", "shape_only")}, RTOL_EXACT)
+    return worst
+
+
+def p2_compare(name, rel_pin, vf, extra=None):
+    sys.path.insert(0, str(ROOT / "nd-unfolding"))
+    import fd_g_compare as FG
+    committed, h = pinned_json(rel_pin)
+    f, old_M, new_M = gencmp_matrices(vf)
+    out = json.loads(json.dumps(committed))
+    chi2_w = p_w = 0.0
+    replaced = []
+    for path, pair in pair_paths(committed):
+        dst = out
+        for k in path.strip("/").split("/"):
+            dst = dst[k]
+        for k in PAIR:
+            old = recompare(FG, f, pair[k], old_M[k], NAMES_OLD[k])
+            cw, pw = p_compare_record(FG, f"{name}{path}/{k}", old, pair[k])
+            chi2_w, p_w = max(chi2_w, cw), max(p_w, pw)
+            dst[k] = recompare(FG, f, pair[k], new_M[k], NAMES_VF[k])
+            replaced.append(f"{path}/{k}")
+    patch = {"readout": rel_pin[0], "readout_sha256": h, "replaced": replaced, "matrices": NAMES_VF,
+             "control_P": "PASS",
+             "control_P_tolerance": {"chi2": {"rtol": RTOL_ROUNDTRIP, "achieved_max": chi2_w,
+                                              "why": "V_g round-tripped from sigma_Vg/f (amendment A4)"},
+                                     "p": {"check": "chi2_sf(committed chi2, ndf) == committed p, bitwise; the "
+                                                    "reproduced p prints the committed p's strings (p_tex, paper form)",
+                                           "achieved_max": p_w, "why": "derived from chi2 through chi2_sf"},
+                                     "other_fields": {"rtol": RTOL_EXACT}}}
+    if extra:
+        extra(committed, out, f, old_M, new_M, patch)
+    out["vf_patch"] = patch
+    return out
+
+
+def gdefs_extra(committed, out, f, old_M, new_M, patch):
+    """gdefs' sigma-ratio fields (fd_gencmp.cmd_defs :337-346) and its 2 x 2 table (:369). delta_over_sigma is recomputed
+    from the embedded definitions' g; the seed spreads and the W-/axis-/mass-only ratios are rescaled by
+    sigma_old / sigma_new (their numerators are not serialized); the seed flag is re-read with SEED_SPREAD_FLAG."""
+    import fd_gencmp as GC
+    s_old, s_new = np.sqrt(np.diag(old_M["reported"])), np.sqrt(np.diag(new_M["reported"]))
+    replaced, flags = [], []
+    for gen, grec in committed["generators"].items():
+        for t, rec in grec.items():
+            if not (isinstance(rec, dict) and "delta_over_sigma" in rec):
+                continue
+            cells = [int(c[1:]) for c in rec["cells"]]
+            g0 = np.asarray(rec["generator_definitions"]["g"], float)
+            g1 = np.asarray(rec["analysis_definitions"]["g"], float)
+            p_control(f"gdefs {gen}/{t} delta_over_sigma", ((g1 - g0) / s_old[cells]).tolist(), rec["delta_over_sigma"],
+                      RTOL_EXACT)
+            dst = out["generators"][gen][t]
+            dst["delta_over_sigma"] = ((g1 - g0) / s_new[cells]).tolist()
+            ratio = s_old[cells] / s_new[cells]
+            for k in [k for k in rec if k.endswith("_delta_over_sigma")] + ["seed_spread_over_sigma"]:
+                dst[k] = (np.asarray(rec[k], float) * ratio).tolist()
+                replaced.append(f"/generators/{gen}/{t}/{k}")
+            dst["seed_spread_flag"] = bool(np.any(np.asarray(dst["seed_spread_over_sigma"]) > GC.SEED_SPREAD_FLAG))
+            if rec["seed_spread_flag"] != dst["seed_spread_flag"]:
+                flags.append(f"{gen}/{t}: {rec['seed_spread_flag']} -> {dst['seed_spread_flag']}")
+            replaced += [f"/generators/{gen}/{t}/delta_over_sigma", f"/generators/{gen}/{t}/seed_spread_flag"]
+    # Table IV's corner (CH, analysis definitions) for the four GENCMP predictions: E-1's control XC makes Stage G's chdefs
+    # chain this computation (make_values_fived16.table4 asserts it at 1e-12). Phase 1 computed the V_F Stage G on
+    # login02, so the corner takes those records, after this Mac's recompute agrees with them within A4's 1e-9
+    corner_w = 0.0
+    for mat, rel_pin in (("reported", E1_VF["with"]), ("without_C_PL5D", E1_VF["nopl"])):
+        sg = {q["name"]: q for q in pinned_json(rel_pin)[0]["predictions"]}
+        for n in ("genie_cv", "genie_mec", "nuwro", "gibuu"):
+            dst = out["generators"][n]["CH"]["analysis_definitions"]["chi2"]
+            mine, theirs = dst[mat], {k: sg[n][k] for k in dst[mat]}
+            for part in ("total", "shape_only"):
+                r = abs(mine[part]["chi2"] / theirs[part]["chi2"] - 1)
+                corner_w = max(corner_w, r)
+                if r > RTOL_ROUNDTRIP or mine[part]["matrix"] != theirs[part]["matrix"]:
+                    raise Stop(f"XC gdefs {n}/{mat}/{part}: the recompute and Phase 1's Stage G differ ({r:.3g})")
+            if not np.array_equal(mine["g"], theirs["g"]) or mine["cells"] != theirs["cells"]:
+                raise Stop(f"XC gdefs {n}/{mat}: g or cells differ from Phase 1's Stage G")
+            dst[mat] = json.loads(json.dumps(theirs))
+    patch["table_iv_corner"] = {"source": {"reported": E1_VF["with"][0], "without_C_PL5D": E1_VF["nopl"][0]},
+                                "check": "this recompute within 1e-9 of Phase 1's V_F Stage G (E-1 control XC)",
+                                "achieved_max": corner_w}
+    table = {g: {t: {dfn: GC.summary(out["generators"][g][t][dfn]["chi2"])
+                     for dfn in ("generator_definitions", "analysis_definitions")}
+                 for t in ("carbon", "CH") if t in out["generators"][g]} for g in out["generators"]}
+    old_table = {g: {t: {dfn: GC.summary(committed["generators"][g][t][dfn]["chi2"])
+                         for dfn in ("generator_definitions", "analysis_definitions")}
+                     for t in ("carbon", "CH") if t in committed["generators"][g]} for g in committed["generators"]}
+    p_control("gdefs table_2x2", old_table, committed["table_2x2"], RTOL_EXACT)
+    out["table_2x2"] = table
+    patch["replaced"] += replaced + ["/table_2x2"]
+    patch["sigma_ratio_fields"] = ("seed_spread_over_sigma and *_delta_over_sigma rescaled by sigma_old/sigma_new on "
+                                   "their cells (numerators not serialized); delta_over_sigma recomputed from g")
+    patch["seed_spread_flag_changes"] = flags
+
+
+P2 = {"eav": p2_eav, "e2": p2_e2, "gch": lambda vf: p2_compare("gch", GCH, vf),
+      "gdefs": lambda vf: p2_compare("gdefs", GDEFS, vf, gdefs_extra),
+      "gnat": lambda vf: p2_compare("gnat", GNAT, vf), "gover": lambda vf: p2_overlap("gover", GOVER, vf),
       "cr": lambda vf: p2_overlap("cr", CR, vf)}
 
 
