@@ -1,0 +1,124 @@
+{
+ "prior_level": {
+  "C_total_plus_C_resp_plus_DeltaC_e": {
+   "norm_sqrt_dCinvd": 0.3303276082240187,
+   "dCinvd": 0.10911632875500078,
+   "per_cell_over_sigma": [
+    0.0378,
+    -0.0,
+    -0.0789,
+    -0.0233,
+    0.0411,
+    -0.0,
+    -0.1865,
+    -0.036,
+    0.0758,
+    0.0,
+    -0.0778,
+    -0.0139,
+    0.0552,
+    0.0,
+    0.0,
+    -0.0881
+   ],
+   "max_abs_over_sigma": 0.18650241469358242,
+   "quadrature_of_per_cell": 0.2622329863932474
+  },
+  "C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e": {
+   "norm_sqrt_dCinvd": 0.32864359380900277,
+   "dCinvd": 0.10800661175169679,
+   "per_cell_over_sigma": [
+    0.0377,
+    -0.0,
+    -0.0786,
+    -0.0232,
+    0.0364,
+    -0.0,
+    -0.1715,
+    -0.0344,
+    0.0757,
+    0.0,
+    -0.0771,
+    -0.0137,
+    0.0527,
+    0.0,
+    0.0,
+    -0.0847
+   ],
+   "max_abs_over_sigma": 0.17153051600058283,
+   "quadrature_of_per_cell": 0.24876294256857845
+  }
+ },
+ "first_order_unfolded": {
+  "C_total_plus_C_resp_plus_DeltaC_e": {
+   "norm_sqrt_dCinvd": 0.3206114104124882,
+   "dCinvd": 0.10279167648668493,
+   "per_cell_over_sigma": [
+    0.0343,
+    0.0,
+    -0.0765,
+    -0.023,
+    0.0366,
+    0.0,
+    -0.1822,
+    -0.0352,
+    0.0723,
+    -0.0,
+    -0.0774,
+    -0.0139,
+    0.0536,
+    -0.0,
+    -0.0,
+    -0.0869
+   ],
+   "max_abs_over_sigma": 0.18219795139813552,
+   "quadrature_of_per_cell": 0.2553152007113379
+  },
+  "C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e": {
+   "norm_sqrt_dCinvd": 0.31920788405084083,
+   "dCinvd": 0.10189367324021503,
+   "per_cell_over_sigma": [
+    0.0343,
+    0.0,
+    -0.0763,
+    -0.0229,
+    0.0324,
+    0.0,
+    -0.1676,
+    -0.0336,
+    0.0723,
+    -0.0,
+    -0.0766,
+    -0.0137,
+    0.0511,
+    -0.0,
+    -0.0,
+    -0.0836
+   ],
+   "max_abs_over_sigma": 0.16757160312866826,
+   "quadrature_of_per_cell": 0.24220848214030893
+  }
+ },
+ "vf_patch": {
+  "readout": "docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0_metric.txt",
+  "readout_sha256": "3e8bd546238d477b9f8a3cf5e27e5a0d4734671bf6aaaa689bb8f94b137819e9",
+  "replaced": [
+   "/prior_level/C_total_plus_C_resp",
+   "/prior_level/C_total_plus_C_resp_plus_C_PL5D",
+   "/first_order_unfolded/C_total_plus_C_resp",
+   "/first_order_unfolded/C_total_plus_C_resp_plus_C_PL5D"
+  ],
+  "by": [
+   "/prior_level/C_total_plus_C_resp_plus_DeltaC_e",
+   "/prior_level/C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e",
+   "/first_order_unfolded/C_total_plus_C_resp_plus_DeltaC_e",
+   "/first_order_unfolded/C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e"
+  ],
+  "matrices": [
+   "C_total_plus_C_resp_plus_DeltaC_e",
+   "C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e"
+  ],
+  "control_P": "PASS",
+  "vf_data_product_sha256": "1a37b0820017f9e515f6e46dbf4009d0a76ef8f542975654d0c61e0a015d84e8"
+ }
+}

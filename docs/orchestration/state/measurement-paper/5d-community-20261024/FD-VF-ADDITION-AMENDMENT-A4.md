@@ -99,6 +99,31 @@ changes. Only inputs are substituted, and only in the replaying process:
   every field except `inputs` and `atime_deviations`, which record the run's paths and atimes.
   - Anything above 1e-12 for bit-identical inputs is a STOP to the director.
   - Round-tripped values, if K reads any, are named with their achieved differences first.
-  - The result: (to be filled in from the replay).
+  - **The result (the director's ruling, 2026-11-26).** The 1e-12 check failed: 360 floats differ from `k.json`, up to
+    1.03e-8, and no non-float field differs. The OLD control is therefore held under a named category:
+    **"bit-identical inputs; cross-platform rounding (about 1e-16 in the bounded blocks, about 1e-11 in the crosses)
+    amplified through the r = 1 bound's psd_sqrt of near-singular blocks (condition up to 1.1e17)"**.
+    - Tolerance 1e-7 relative. Every non-float field is exact, and every printed xk string must be identical in the
+      readings. Above 1e-7 is a STOP.
+    - Achieved: max 1.03e-8 at `/shares/r1/cross:bounded (r = 1)[1]`. Each group's figures are recorded in `vf_patch`,
+      as max relative / max |difference| over the group's largest magnitude: shares 1.03e-8 / 7.63e-9; primary
+      4.55e-9 / 2.44e-9; Q_R_alone 3.96e-9 / 1.65e-9; C_PL_pair_zero 3.76e-9 / 3.76e-9; rho_q 9.59e-11 / 9.57e-11;
+      crosses 1.04e-11 / 4.45e-15.
+    - **Evidence: two local tests.** Both are in `fd/receipts-vf/p2/xk-conditioning/`.
+      - Thread order: two OLD replays on this Mac with 1 and 3 BLAS threads are bitwise identical, so local summation
+        order moves nothing.
+      - Conditioning: seeded relative noise, three seeds each, at the measured levels. Noise of 1e-16 on the own blocks
+        entering `fd_xcov.bound_matrix` moves the groups by 4.0e-9 to 6.2e-9 (shares), 1.8e-9 to 2.7e-9 (primary),
+        1.5e-9 to 2.4e-9 (Q_R_alone), up to 2.5e-9 (C_PL_pair_zero) and 4.8e-11 to 6.8e-11 (rho_q). That is the k.json
+        gap within a factor of about 2 in every group. Noise of 1e-11 on the crosses moves them about 10 times less.
+        No run changes a non-float field, and the primary outcome is "agree" in all six.
+      - The bounded blocks' condition numbers reach 1.13e17 (16-cell side) and 2.08e16 (2D side). V_d at r = 1 is
+        benign: 17.7 to 217.
+    - **A statement of fact, not a rule:** these r = 1 outputs carry about 1e-8 relative numerical precision on any
+      platform, because of the near-singular square roots. Their printed two-decimal and two-significant-figure values
+      are far coarser.
+    - **The listed run-copy files** (`cov2d-xk-g2r-20261116/run/...`: boot lanes and replicas, `inputs/`) reach K
+      through the local run directory, ruling (ii), not through the remap. So they appear among the listed entries not
+      read through the remap (110).
 
 **CANNOT AUTHORIZE:** anything beyond the changes above.

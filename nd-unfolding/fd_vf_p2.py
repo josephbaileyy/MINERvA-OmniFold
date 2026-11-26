@@ -735,7 +735,7 @@ def p2_prr(vf, fetch_dir):
     out["vf_patch"] = {"readout": PRR[0], "readout_sha256": h,
                        "replaced": ["/table/*/grade", "/ibu/*/grade", "/readings"],
                        "matrices": "each truth's F0b grade matrix (prr_read.grade_matrices) + DeltaC_e/ff",
-                       "fetched": {k: v[0] for k, v in FETCHED.items()}, "control_P": "PASS",
+                       "fetched": {k: PS + v[0] for k, v in FETCHED.items()}, "control_P": "PASS",
                        "control_P_tolerance": {"(e)": {"rtol": RTOL_EXACT, "achieved_max": w},
                                                "IBU": {"rtol": RTOL_IBU, "achieved_max": wi,
                                                        "why": "route2's truths, equal to (e)'s to 1e-12 (C-IBU)"}}}
@@ -815,7 +815,7 @@ def p2_rsn(vf, fetch_dir):
                            "replaced": ["/arms", "/wr_directions", "/offset_control_7"],
                            "matrices": "X_F = C_resp_plus_C_PL5D_plus_DeltaC_e (relative)",
                            "NC-R": "the nominal arm reproduces Phase 1's V_F F1 (" + VF_F1_WITH[0] + ")",
-                           "fetched": FETCHED["s1_assembly.npz"][0], "control_P": "PASS",
+                           "fetched": PS + FETCHED["s1_assembly.npz"][0], "control_P": "PASS",
                            "control_P_tolerance": {"rtol": RTOL_EXACT, "achieved_max": w1,
                                                    "p": {"check": "fd_f0_regrade.chi2_sf_even(committed chi2, ndf) "
                                                          "== committed p, bitwise; printed strings equal (A4 item 3)",
@@ -840,6 +840,35 @@ XK_V0 = (f"{D5}/fd/xcov/run/v0-a1/v0.json", None)
 XK_V1 = (f"{D5}/fd/xcov/run/v1-a2/v1.json", None)
 PS_PREFIX = "/pscratch/sd/j/josephrb/"
 XK_ENV_FIELDS = ("inputs", "atime_deviations")    # what records the run's paths and atimes, not a number
+# A4 (the director's ruling, 2026-11-26): bit-identical inputs; cross-platform rounding (about 1e-16 in the bounded
+# blocks, about 1e-11 in the crosses) amplified through the r = 1 bound's psd_sqrt of near-singular blocks (condition up
+# to 1.1e17). 1e-7 relative; non-float fields exact; evidence: the conditioning test (receipts-vf/p2/xk-conditioning/)
+RTOL_XK = 1e-7
+XK_GROUPS = ("shares", "crosses", "primary", "Q_R_alone", "C_PL_pair_zero", "rho_q")
+
+
+def group_stats(got: dict, want: dict) -> dict:
+    """Per top-level group: the max relative difference and the max |difference| over the group's largest magnitude."""
+    def flat(x, p_=""):
+        if isinstance(x, dict):
+            for k, v in x.items():
+                yield from flat(v, f"{p_}/{k}")
+        elif isinstance(x, list):
+            for i, v in enumerate(x):
+                yield from flat(v, f"{p_}[{i}]")
+        else:
+            yield p_, x
+    fa, fb = dict(flat(got)), dict(flat(want))
+    out = {}
+    for g in sorted({k.split("/")[1].split("[")[0] for k in fb}):
+        keys = [k for k in fb if k.split("/")[1].split("[")[0] == g and isinstance(fb[k], float)]
+        if not keys:
+            continue
+        mag = max(abs(fb[k]) for k in keys)
+        rel = max((abs(fa[k] - fb[k]) / abs(fb[k]) if fb[k] else abs(fa[k] - fb[k])) for k in keys)
+        out[g] = {"max_relative": rel, "max_over_group_magnitude": (max(abs(fa[k] - fb[k]) for k in keys) / mag) if mag
+                  else 0.0}
+    return out
 
 
 def dir_listing(d: Path) -> dict:
@@ -936,7 +965,8 @@ def p2_xk(vf, fetch_dir):
         if arm == "old":
             want = {k: v for k, v in committed.items() if k not in XK_ENV_FIELDS}
             got = {k: v for k, v in out.items() if k not in XK_ENV_FIELDS}
-            rec["old"]["achieved"] = p_control("xk", got, want, RTOL_EXACT)
+            rec["old"]["achieved"] = p_control("xk", got, want, RTOL_XK)
+            rec["old"]["groups"] = group_stats(got, want)
             rec["cr_vf_bytes"] = (json.dumps(p2_overlap("cr", CR, vf), indent=1) + "\n").encode()
     lst = {r[0]: (int(r[3]), r[1]) for r in fetch_rows() if "xk" in r[5]}
     lst.update({k: ((ROOT / v[0]).stat().st_size, v[1]) for k, v in LOCAL_COPIES.items()})   # the committed copies
@@ -963,8 +993,12 @@ def p2_xk(vf, fetch_dir):
                        "run_dir_before": {a: len(rec[a]["before"]) for a in ("old", "vf")},
                        "run_dir_added": {a: rec[a]["added"] for a in ("old", "vf")},
                        "control_P": "PASS",
-                       "control_P_tolerance": {"rtol": RTOL_EXACT, "achieved_max": rec["old"]["achieved"],
-                                               "excluded": list(XK_ENV_FIELDS)}}
+                       "control_P_tolerance": {"rtol": RTOL_XK, "achieved_max": rec["old"]["achieved"],
+                                               "by_group": rec["old"]["groups"], "excluded": list(XK_ENV_FIELDS),
+                                               "category": "A4: bit-identical inputs; cross-platform rounding "
+                                                           "amplified through the r = 1 bound's psd_sqrt of "
+                                                           "near-singular blocks (condition up to 1.1e17)",
+                                               "non_float_fields": "exact"}}
     receipt = {"remapped_reads": rec["old"]["log"], "read_committed_old": co, "read_committed_vf": cv,
                "run_dir_before": rec["old"]["before"]}
     out["vf_patch"]["receipt_sha256"] = hashlib.sha256(json.dumps(receipt, sort_keys=True).encode()).hexdigest()
