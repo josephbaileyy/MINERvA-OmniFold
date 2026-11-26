@@ -25,7 +25,7 @@ REPO = HERE.parents[1]
 PY = os.environ.get("OOFVC_PY", sys.executable)
 M = "77d76cfc2d621f8faa010b75006811868494652a"
 
-PURE = "Identity or MatchesRefC2C1 or (Join and not JoinTool) or Moved or Readings"
+PURE = "Identity or MatchesRefC2C1 or (Join and not JoinTool) or Moved or Readings or ScorerArgv"
 MUTANTS = [
     # oofvc_lib.py
     ("LIB_BAND_LOWER", "oofvc_lib.py", '("LOWER", lambda r: r <= 0.80)', '("LOWER", lambda r: r <= 0.85)', "Readings"),
@@ -95,7 +95,7 @@ MUTANTS = [
      '"join_record": True, "outputs"', "Runner"),
     ("SCORE_STAGE_PATH", "oofvc_score.py",
      'and base[1] == f"{STAGE}/runEventLoopOmniFold_MEFHC.root" and base[2] == "--mcfile"',
-     'and Path(base[1]).name == "runEventLoopOmniFold_MEFHC.root" and base[2] == "--mcfile"', "Runner"),
+     'and Path(base[1]).name == "runEventLoopOmniFold_MEFHC.root" and base[2] == "--mcfile"', "ScorerArgv"),
     ("SCORE_OUTPUTS", "oofvc_score.py", '"outputs": outputs_ok(p)}', '"outputs": True}', "Runner"),
     ("SCORE_MOVE_COUNT", "oofvc_score.py", 'and grew == in_grid - counts.get("dropped_appended_weight", 0))}',
      'and grew == in_grid + 1 - counts.get("dropped_appended_weight", 0))}', "Runner"),

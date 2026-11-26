@@ -174,6 +174,28 @@ class Join(unittest.TestCase):
             L.check_tie_bound(float("nan"), 1000.0)
 
 
+class ScorerArgv(unittest.TestCase):
+    """oofvc_score.argv_is_e_r: E_R's argv with the exact staged paths (codex-school r2 #2, r3 #1)."""
+
+    def test_argv(self):
+        import oofvc_score as SC
+        st = SC.STAGE
+        off = ["--omnifile", f"{st}/runEventLoopOmniFold_MEFHC.root", "--mcfile", f"{st}/runEventLoopMC_MEFHC.root",
+               *SC.E_R_OPTIONS]
+        r = off + ["--signal-convention", "minerva", "--oofvc-rows", f"{st}/oofvc_rows.npz"]
+        self.assertTrue(SC.argv_is_e_r(off, "off"))
+        self.assertTrue(SC.argv_is_e_r(r, "R"))
+        bad = [
+            (["--omnifile", "/elsewhere/runEventLoopOmniFold_MEFHC.root"] + off[2:], "off"),  # same name, other file
+            (off[:2] + ["--mcfile", "/elsewhere/runEventLoopMC_MEFHC.root"] + off[4:], "off"),
+            ([a if a != "42" else "43" for a in off], "off"),                                    # another seed
+            (r[:-1] + ["/elsewhere/oofvc_rows.npz"], "R"),
+            (off, "R"), (r, "off"),
+        ]
+        for argv, conv in bad:
+            self.assertFalse(SC.argv_is_e_r(argv, conv), (argv, conv))
+
+
 class Moved(unittest.TestCase):
     def test_moved_mask(self):
         pdg = np.array([14, 14, 14, -14, 12, 14, 14])
@@ -190,7 +212,7 @@ class Readings(unittest.TestCase):
     def test_bands(self):
         cases = {0.80: "LOWER", 0.5: "LOWER", 1.25: "HIGHER", 2.0: "HIGHER", 0.95: "LITTLE CHANGE",
                  1 / 0.95: "LITTLE CHANGE", 1.0: "LITTLE CHANGE", 0.9: "INTERMEDIATE", 1.1: "INTERMEDIATE",
-                 0.8000001: "INTERMEDIATE", 1.2499999: "INTERMEDIATE"}
+                 0.8000001: "INTERMEDIATE", 1.2499999: "INTERMEDIATE", 1.055: "INTERMEDIATE", 0.94: "INTERMEDIATE"}
         for r, b in cases.items():
             self.assertEqual(L.band(r), b, r)
         for bad in (float("nan"), -0.1):
@@ -221,6 +243,11 @@ class Readings(unittest.TestCase):
                                places=9)
         x = np.ones(224); pub = np.full(224, 2.0)
         self.assertAlmostEqual(L.column_ratio(x, pub, PAPER_PT, PZ, 15), 0.5)
+        # area-weighted: the wide pT cells dominate (compare.py:106-107, :149)
+        x = np.zeros(224); pub = np.ones(224)
+        x[13 * 16 + 15] = 1.0  # the widest pT bin (2.5-4.5) of the 40-60 column
+        area = np.diff(PAPER_PT)
+        self.assertAlmostEqual(L.column_ratio(x, pub, PAPER_PT, PZ, 15), area[13] / area.sum())
 
 
 # ----------------------------------------------------------------------------------------------- ROOT tests
@@ -787,6 +814,18 @@ class JoinTool(unittest.TestCase):
         self.assertEqual(p.returncode, 8)
         self.assertFalse(rec["controls"]["C-LAB"]["pass"])
         self.assertFalse(rec["controls"]["C-LAB"]["finite"])
+
+    def test_lab_value_tolerance(self):
+        """A reference cell off by 1e-7 relative, counts unchanged: C-LAB's 1e-9 tolerance refuses it."""
+        fx = self.fixture()
+        ref = json.loads((fx.d / "split.json").read_text())
+        i = int(np.flatnonzero(np.asarray(ref["FAKE_VTX"]) > 0)[0])
+        ref["FAKE_VTX"][i] *= 1 + 1e-7
+        (fx.d / "split.json").write_text(json.dumps(ref))
+        p, rec, out = fx.run()
+        self.assertEqual(p.returncode, 8)
+        self.assertTrue(rec["controls"]["C-LAB"]["counts_equal"])
+        self.assertFalse(rec["controls"]["C-LAB"]["pass"])
 
     def test_labels_against_oflow(self):
         def m(r):

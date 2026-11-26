@@ -64,6 +64,17 @@ def hist_identity(f, name) -> tuple:
             np.array([h.GetBinError(i) for i in range(n)]).tobytes(), tuple(axes))
 
 
+def argv_is_e_r(argv: list, conv: str) -> bool:
+    """E_R's argv exactly: the exact staged input paths (a second file of the same name cannot stand in), then E_R's
+    options; R adds exactly the minerva suffix with the staged rows file (codex-school r2 #2, r3 #1)."""
+    base = argv[:4 + len(E_R_OPTIONS)]
+    return bool(len(base) == 4 + len(E_R_OPTIONS) and base[0] == "--omnifile"
+                and base[1] == f"{STAGE}/runEventLoopOmniFold_MEFHC.root" and base[2] == "--mcfile"
+                and base[3] == f"{STAGE}/runEventLoopMC_MEFHC.root" and base[4:] == E_R_OPTIONS
+                and len(argv) == len(base) + (4 if conv == "R" else 0)
+                and (conv != "R" or argv[-1] == f"{STAGE}/oofvc_rows.npz"))
+
+
 def unit_checks(units: Path, rows_sha: str, local: dict, expect: dict) -> dict:
     """Every unit's artifacts against its done-marker digests, its recorded argv and convention, and its pins."""
     out = {}
@@ -74,14 +85,7 @@ def unit_checks(units: Path, rows_sha: str, local: dict, expect: dict) -> dict:
         rec = json.loads((d / f"{kind}.oofvc.json").read_text())
         meta = json.loads(str(np.load(d / f"{kind}.npz", allow_pickle=True)["meta"]))
         argv = rec["argv"]
-        base = argv[:4 + len(E_R_OPTIONS)]
-        # the exact staged paths, not only their names: a second file of the same name cannot stand in
-        # (codex-school r3 #1)
-        argv_e_r = (len(base) == 4 + len(E_R_OPTIONS) and base[0] == "--omnifile"
-                    and base[1] == f"{STAGE}/runEventLoopOmniFold_MEFHC.root" and base[2] == "--mcfile"
-                    and base[3] == f"{STAGE}/runEventLoopMC_MEFHC.root" and base[4:] == E_R_OPTIONS
-                    and len(argv) == len(base) + (4 if conv == "R" else 0)
-                    and (conv != "R" or argv[-1] == f"{STAGE}/oofvc_rows.npz"))
+        argv_e_r = argv_is_e_r(argv, conv)
         if conv == "R":
             conv_ok = (argv[-4:-1] == ["--signal-convention", "minerva", "--oofvc-rows"]
                        and Path(argv[-1]).name == expect["rows_name"])
