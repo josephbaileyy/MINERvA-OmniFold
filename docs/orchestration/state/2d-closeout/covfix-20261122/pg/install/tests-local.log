@@ -1,3 +1,39 @@
-Ran 29 tests in 27.624s
+test_embedded_members_are_the_records (test_pg_install.Constants.test_embedded_members_are_the_records) ... ok
+test_a_changed_download_is_removed_and_stops (test_pg_install.Install.test_a_changed_download_is_removed_and_stops) ... ok
+test_a_member_that_differs_from_its_pin_extracts_nothing (test_pg_install.Install.test_a_member_that_differs_from_its_pin_extracts_nothing) ... ok
+test_a_missing_or_file_upsfiles_is_a_problem (test_pg_install.Install.test_a_missing_or_file_upsfiles_is_a_problem) ... ok
+test_a_root_beside_scratch_is_refused (test_pg_install.Install.test_a_root_beside_scratch_is_refused) ... ok
+test_a_stray_file_in_the_product_stops (test_pg_install.Install.test_a_stray_file_in_the_product_stops) ... ok
+test_a_writable_container_fails (test_pg_install.Install.test_a_writable_container_fails) ... ok
+test_an_unexpected_exception_is_its_own_reason (test_pg_install.Install.test_an_unexpected_exception_is_its_own_reason) ... ok
+test_check_tree_finds_changes (test_pg_install.Install.test_check_tree_finds_changes) ... ok
+test_dbconfig_must_be_the_pinned_one (test_pg_install.Install.test_dbconfig_must_be_the_pinned_one) ... ok
+test_go (test_pg_install.Install.test_go) ... ok
+test_refusals_write_nothing (test_pg_install.Install.test_refusals_write_nothing) ... ok
+test_scratch_is_checked_on_the_real_path (test_pg_install.Install.test_scratch_is_checked_on_the_real_path) ... ok
+test_the_real_listing_installs (test_pg_install.Install.test_the_real_listing_installs) ... ok
+test_upsfiles_must_hold_only_dbconfig (test_pg_install.Install.test_upsfiles_must_hold_only_dbconfig) ... ok
+test_install_payloads (test_pg_install.NodeLaunch.test_install_payloads) ... ok
+test_receipts (test_pg_install.NodeLaunch.test_receipts) ... ok
+test_refusals_and_options (test_pg_install.NodeLaunch.test_refusals_and_options) ... ok
+test_replay_payloads (test_pg_install.NodeLaunch.test_replay_payloads) ... ok
+test_a_session_that_never_empties (test_pg_install.Quiesce.test_a_session_that_never_empties) ... ok
+test_a_straggler_is_killed_and_the_session_rescanned (test_pg_install.Quiesce.test_a_straggler_is_killed_and_the_session_rescanned) ... ok
+test_an_empty_session_needs_two_scans (test_pg_install.Quiesce.test_an_empty_session_needs_two_scans) ... ok
+test_the_real_scan_finds_a_session (test_pg_install.Quiesce.test_the_real_scan_finds_a_session) ... ok
+test_a_name_that_is_not_utf8 (test_pg_install.Quiesce7.test_a_name_that_is_not_utf8) ... ok
+test_a_session_that_never_empties (test_pg_install.Quiesce7.test_a_session_that_never_empties) ... ok
+test_a_straggler_is_killed_and_the_session_rescanned (test_pg_install.Quiesce7.test_a_straggler_is_killed_and_the_session_rescanned) ... ok
+test_an_empty_session_needs_two_scans (test_pg_install.Quiesce7.test_an_empty_session_needs_two_scans) ... ok
+test_the_real_scan_finds_a_session (test_pg_install.Quiesce7.test_the_real_scan_finds_a_session) ... ok
+test_embed_refuses_links (test_pg_install.Replay.test_embed_refuses_links) ... ok
+test_files_left_on_any_exit_are_removed_and_stop (test_pg_install.Replay.test_files_left_on_any_exit_are_removed_and_stop) ... ok
+test_go (test_pg_install.Replay.test_go) ... ok
+test_refusals_and_driver_failures (test_pg_install.Replay.test_refusals_and_driver_failures) ... ok
+test_the_archive_and_the_blobs (test_pg_install.Replay.test_the_archive_and_the_blobs) ... ok
+test_the_runners_own_result_passes_the_launcher (test_pg_install.Replay.test_the_runners_own_result_passes_the_launcher) ... ok
+
+----------------------------------------------------------------------
+Ran 34 tests in 31.721s
 
 OK

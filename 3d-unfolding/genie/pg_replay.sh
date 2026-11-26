@@ -123,7 +123,8 @@ for key, w in zip(("t0", "coverage_slot1", "coverage_slot2", "merged"), dirs):
                     e["decoded"] = {"holds_seed": any(r is not None for r, _ in hits),       # the bytes, decoded
                                     "name_holds_seed": any(r is None for r, _ in hits),      # the name, apart
                                     "int32_count": st["int32_count"], "codecs": st["codecs"],
-                                    "bytes_inflated": st["bytes_inflated"], "hits": st["hits"]}
+                                    "bytes_inflated": st["bytes_inflated"], "hits": st["hits"],
+                                    "seed_objects": st["seed_objects"]}
                     if name.endswith(".gst.root"):
                         e["schema"] = pg_lib.root_schema(p)
                 except pg_lib.Refusal as r:
@@ -222,7 +223,8 @@ mkdir -p "$W1"
 PG_TRACE_DIR="$W1" timeout "$TO" bash "$HERE/run_gevgen_v3.sh" genie "$T" "$R/splines" "$NEV" "$SEED" "$W1" \
   "$R/flux_phi_t_0_100.root" > "$R/logs/genie.log" 2>&1
 need $? "gevgen ($NEV events, the public seed)"
-ls "$W1"/gntp.*.ghep.root > /dev/null 2>&1 && need 1 "the wrapper left t0's GHEP"   # gntpc read it; the wrapper removes it
+ls -A "$W1" > /dev/null 2>&1 || need 1 "t0's directory could not be listed"   # an ls error is no absence
+compgen -G "$W1/gntp.*.ghep.root" > /dev/null && need 1 "the wrapper left t0's GHEP"   # gntpc read it; the wrapper removes it
 pass "t0's GHEP removed by the wrapper"
 tcheck gevgen "$W1/gevgen.trace" "$R/splines/${T}_CH.xml.gz" "$RED" "$W1" "$R/trace_check_gevgen.json" \
   || need 1 "trace check (gevgen)"

@@ -65,3 +65,72 @@ residual that a follow-up already covers.
   - pg-replay-g2111a.py and pg-node-launch.py (R1, if the validators read the per-hit record).
 - Tests are written first, then all suites and every mutant run, with the anchors re-counted.
 - run_gevgen_v3.sh is unchanged.
+
+## Outcome (round 7, the director's ruling of 2026-11-26)
+
+**Ruling.**
+- R1–R4 are blocking, each a false STOP of a correct run. They are built as proposed.
+- Codex 10 is built with R1, since pg_replay.sh changes anyway.
+- Codex 4, 6, 7, 8, 9 and 11 go to `../../FOLLOWUPS.md`.
+- No object-local witness rule: B3's `seed_objects` record shows whether GENIE's header is stored or compressed, and
+  the director decides after that.
+- After this round there are no more codex rounds on this package.
+
+**Red check.** The final tests were run against 9222fa494's code (put in place from `git show`, then restored and
+checked by sha). Every new test failed:
+- covfix and verify: 10 failed. The 22 that passed are inherited round-5 and round-6 tests, plus
+  `test_a_live_real_basket`, a guard: the live-key reader already handled a real basket.
+- install: 3 failed (the node and launcher payload tables, and `session_pids` on a non-UTF-8 name).
+
+The end-to-end `test_the_replay` failed with `bytes_inflated` 0, which reproduces R1 in the driver itself.
+
+**As built.**
+- **R1, `pg_lib.leak_scan`:**
+  - With `decode_all`, every key is read.
+  - `stats["seed_objects"]` lists each ROOT object the seed was found in, as `{class, inflated, kind}`.
+  - In production the first hit still breaks.
+- **R1, in the driver and the validators:**
+  - `pg_replay.sh` records `seed_objects`.
+  - Both validators type-check it (class a string, inflated a bool, kind `int32-object` or `inflated`), and the
+    control needs at least one.
+- **R2:** both scanners read `/proc/PID/stat` as bytes and take the state after the last `b")"`. `session_pids`
+  gains a `proc` argument for the test, as `survivor_scan` already had.
+- **R3:** a freed `TBasket` may have `fKeylen` longer than its strings. Its payload starts at the record's start
+  plus `fKeylen`.
+- **R4:** a gap candidate counts as a header only with ROOT's method byte: `METHOD = {ZL: 8, XZ: 0, ZS: 1}`, with
+  none for L4. The checklist gains the imports, under both interpreters that run the scan.
+- **Codex 10:** the driver runs `ls -A "$W1" || STOP` before `compgen -G "$W1/gntp.*.ghep.root" && STOP`.
+
+**Fixture realism.**
+- The GHEP fixture now follows GENIE's NtpWriter: the file's key, then `genie::NtpMCTreeHeader` (the seed as
+  Long_t, twice), then the configuration and environment folders, a basket and the tree. It comes in two forms,
+  with the header stored and with it compressed. The driver's round-trip test runs both.
+- `_basket` writes ROOT's 19 bytes of basket fields inside `fKeylen`. The gst template's basket uses it.
+- An object of a few tens of bytes grows under zlib, and the reader (like ROOT) then takes it as stored. The header
+  fixture carries GENIE's directory strings, so it really compresses.
+
+**Behaviour that changed.**
+- A compressed header holding the int64 seed is listed twice in `seed_objects`, once as `int32-object` and once as
+  `inflated`: the int64 is one of the STOP forms too.
+- A stored header's int64 seed is also a raw `bytes` hit. That is the production STOP, as before.
+
+**Receipts.** Every suite run writes its full log (the director's rule of round 7): `../../tune-support/tests-local.log`,
+`../../probe/tests-local.log` and `../../install/tests-local.log`, beside each set's `mutants.log`.
+- Suites (`test_covfix_pg.py`, `test_pg_verify.py`, `test_fd_f1.py`): 363 passed, 2 skipped (the final run, after the M343/M344 test fix).
+- Probe tests: 63 run, OK (1 skipped). Install tests: 34 run, OK.
+- Mutants, with all 577 anchors re-counted against their expected match counts (0 off):
+  - probe: 108 of 108 killed; 0 invalid; 0 survived;
+  - install: 117 of 117 killed; 0 invalid; 0 survived;
+  - A2 (tune-support): 352 of 352 killed; 0 invalid; 0 survived (the final run). The run before the test fix gave 350 killed and 2 invalid (M343, M344), as below.
+
+**Fixed during the receipts runs.**
+- The end-to-end temp listing lacked `tpl-z.ghep.root`, so the A2 baseline was not clean. The listing was fixed.
+- Install M79 and M85 (the node's and the launcher's "name and bytes not apart" case) survived at first. The test
+  record carried no valid `seed_objects`, so a different check fired first and masked the one each mutant removes.
+  Both cases now carry a valid seed object, and both mutants are killed.
+- A2 M343 and M344 (R4) came back INVALID, not killed. Under each mutant the code raises the
+  `root-codec-unavailable` STOP, which is a kill. But the test mocks `zstandard` missing, Python chained that
+  `ModuleNotFoundError` into the traceback, and the runner's rule reads a line starting `ModuleNotFoundError` as a
+  collection error. The test now reports a STOP there as a plain FAIL, raised outside the exception handler, so
+  nothing is chained. Reproduced in a scratch copy: both mutants FAIL with no import line, and the unmutated test
+  passes. The suites and all A2 mutants were then run again.

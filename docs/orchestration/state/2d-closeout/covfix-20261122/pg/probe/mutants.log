@@ -1,5 +1,5 @@
 KILL RULE (the director, 2026-11-25): an import or collection error (unittest's _FailedTest, ImportError, ModuleNotFoundError, SyntaxError) makes a mutant INVALID; otherwise a FAIL or an ERROR with a non-zero exit kills (an error raised by the mutated code is detectable behaviour); a timeout, or a FAIL with exit 0, is INVALID; a clean pass SURVIVES. Every suite must pass clean on the unmutated copy first.
-baseline probe: clean ['Ran 63 tests in 27.332s', 'OK (skipped=1)']
+baseline probe: clean ['Ran 63 tests in 28.875s', 'OK (skipped=1)']
 M01 KILLED by test_identity_failure_reads_nothing: identity not enforced [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
 M02 KILLED by test_mount_rules: a repository path through a link [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]
 M03 KILLED by test_mount_rules: the repository's mount not checked [docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py]

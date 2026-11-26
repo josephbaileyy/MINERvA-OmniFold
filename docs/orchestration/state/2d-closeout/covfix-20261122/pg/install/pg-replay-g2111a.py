@@ -206,6 +206,9 @@ def deleted_problems(d, r=None):
         return (type(c) is dict and type(c.get("holds_seed")) is bool and type(c.get("name_holds_seed")) is bool
                 and type(c.get("int32_count")) is int and type(c.get("codecs")) is dict
                 and type(c.get("bytes_inflated")) is int and type(c.get("hits")) is list
+                and type(c.get("seed_objects")) is list and all(   # R1: each object the seed was found in
+                    type(o) is dict and type(o.get("class")) is str and type(o.get("inflated")) is bool
+                    and o.get("kind") in ("int32-object", "inflated") for o in c["seed_objects"])
                 and (not n.endswith(".gst.root") or _schema_ok(v.get("schema"))))
     bad = [f"{k}/{n}" for k in sorted(d) for n, v in sorted(d[k].items())
            if not (type(v) is dict and _hex64(v.get("sha256")) and type(v.get("bytes")) is int and v["bytes"] >= 0
@@ -214,7 +217,8 @@ def deleted_problems(d, r=None):
     p += [f"{k}/gntp.ghep.root: the control's seed was not found decoded" for k in ("coverage_slot1", "coverage_slot2")
           if f"{k}/gntp.ghep.root" not in bad and not (
               d[k]["gntp.ghep.root"]["decoded"]["holds_seed"] is True and d[k]["gntp.ghep.root"]["decoded"]["bytes_inflated"] > 0
-              and {"inflated", "int32-object"} & set(d[k]["gntp.ghep.root"]["decoded"]["hits"]))]
+              and {"inflated", "int32-object"} & set(d[k]["gntp.ghep.root"]["decoded"]["hits"])
+              and d[k]["gntp.ghep.root"]["decoded"]["seed_objects"] != [])]
     return p + bad
 
 
@@ -241,15 +245,16 @@ def leftovers(run_dir):
     return out
 
 
-def session_pids(sid):
+def session_pids(sid, proc="/proc"):
     """[pid]: the live processes of session sid (zombies aside), from /proc on the node, or ps where there is none.
     A process whose state cannot be read counts unless getsid says it is gone."""
-    if os.path.isdir("/proc/self"):
-        pids = [int(d) for d in os.listdir("/proc") if d.isdigit()]
+    if os.path.isdir(os.path.join(proc, "self")):
+        pids = [int(d) for d in os.listdir(proc) if d.isdigit()]
 
         def state(p):
             try:
-                return open(f"/proc/{p}/stat").read().rsplit(")", 1)[1].split()[0]
+                with open(os.path.join(proc, str(p), "stat"), "rb") as f:   # the name is raw bytes: parse after it
+                    return f.read().rsplit(b")", 1)[1].split()[0].decode("ascii", "replace")
             except (OSError, IndexError):
                 return None
     else:

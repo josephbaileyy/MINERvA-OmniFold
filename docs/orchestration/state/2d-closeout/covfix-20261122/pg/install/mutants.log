@@ -1,5 +1,5 @@
 KILL RULE (the director, 2026-11-25): an import or collection error (unittest's _FailedTest, ImportError, ModuleNotFoundError, SyntaxError) makes a mutant INVALID; otherwise a FAIL or an ERROR with a non-zero exit kills (an error raised by the mutated code is detectable behaviour); a timeout, or a FAIL with exit 0, is INVALID; a clean pass SURVIVES. Every suite must pass clean on the unmutated copy first.
-baseline install: clean ['Ran 29 tests in 28.355s', 'OK']
+baseline install: clean ['Ran 34 tests in 30.909s', 'OK']
 M01 KILLED by test_refusals_write_nothing, test_refusals_write_nothing (error): identity not enforced [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
 M02 KILLED by test_refusals_write_nothing, test_refusals_write_nothing (error): an unfilled dbconfig pin [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
 M03 KILLED by test_refusals_write_nothing: an existing product directory [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
@@ -105,5 +105,16 @@ M102 KILLED by test_replay_payloads: r6: a decode without its hits (launcher, K6
 M103 KILLED by test_an_empty_session_needs_two_scans: r6: quiesce quiet after one scan (K8) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
 M104 KILLED by test_refusals_and_driver_failures: r6: a straggler not a STOP (K8) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
 M105 KILLED by test_a_session_that_never_empties, test_a_straggler_is_killed_and_the_session_rescanned, test_an_empty_session_needs_two_scans, test_refusals_and_driver_failures: r6: the stragglers not counted (K8) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
-M106 KILLED by test_refusals_and_driver_failures, test_the_real_scan_finds_a_session: r6: the session's processes not found (K8) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
-106 of 106 killed; 0 invalid; 0 survived
+M106 KILLED by test_a_name_that_is_not_utf8, test_refusals_and_driver_failures, test_the_real_scan_finds_a_session: r6: the session's processes not found (K8) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M107 KILLED by test_refusals_and_driver_failures: r7: a seed object's class unchecked (node, R1) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M108 KILLED by test_refusals_and_driver_failures: r7: a seed object's inflation unchecked (node, R1) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M109 KILLED by test_refusals_and_driver_failures: r7: a seed object's kind unchecked (node, R1) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M110 KILLED by test_refusals_and_driver_failures: r7: the seed objects' list unchecked (node, R1) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M111 KILLED by test_refusals_and_driver_failures: r7: the control without a seed object (node, R1) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M112 KILLED by test_replay_payloads: r7: a seed object's class unchecked (launcher, R1) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
+M113 KILLED by test_replay_payloads: r7: a seed object's inflation unchecked (launcher, R1) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
+M114 KILLED by test_replay_payloads: r7: a seed object's kind unchecked (launcher, R1) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
+M115 KILLED by test_replay_payloads (error): r7: the seed objects' list unchecked (launcher, R1) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
+M116 KILLED by test_replay_payloads: r7: the control without a seed object (launcher, R1) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
+M117 KILLED by test_a_name_that_is_not_utf8 (error): r7: the node's /proc stat read as text (R2) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+117 of 117 killed; 0 invalid; 0 survived

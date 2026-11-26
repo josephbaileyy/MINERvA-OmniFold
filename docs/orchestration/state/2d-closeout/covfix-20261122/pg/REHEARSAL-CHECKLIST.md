@@ -30,8 +30,29 @@ From `W/out/pin_hash_start.json` and `pin_hash_end.json` (Q1): `files`, `links` 
 **B3 (round 6), from `run/deleted.json` and the driver's log:**
 - `[replay] t0's GHEP removed by the wrapper: pass`.
 - For each coverage GHEP: `decoded.hits` (expected to include `int32-object` or `inflated`), `bytes_inflated`, and
-  `codecs`. The test fixture puts GENIE's run number in the tree as an int64. Whether the real GHEP stores the public
-  seed (its run number) in decoded bytes is not confirmed on this host. If it does not, both validators STOP with
-  "the control's seed was not found decoded", and the control must be redesigned before the generation.
+  `codecs`. GENIE writes its run number (the public seed, as Long_t) in `NtpMCTreeHeader`, the first key after the
+  file's own (NtpWriter.cxx:117). Since round 7 the fixtures do the same, in both a stored and a compressed form.
+  Whether the real GHEP stores the public seed (its run number) in decoded bytes is not confirmed on this host. If
+  it does not, both validators STOP with "the control's seed was not found decoded", and the control must be
+  redesigned before the generation.
+- **Round 7 (R1), for the director's decision:** each coverage GHEP's `decoded.seed_objects`, as it stands. Expected:
+  `genie::NtpMCTreeHeader`, with `inflated` false if ROOT stored the header verbatim (it compresses only objects of
+  more than 256 bytes), or true if it compressed it. The director decides from this record whether a compressed
+  witness is needed.
 - The node runner's `quiesced` (expected 0) and `quiet` (expected true).
+
+**Round 7 (round 6's confirm read, the director's ruling of 2026-11-26), on the node, before B3:**
+- R4: `import zstandard, lz4.block, xxhash` exits 0 under both interpreters that run pg_lib's scan: B3's deletion
+  helper (`/usr/bin/python3.11 -I`) and production's publish (`python3` after `source setup_salloc_env.sh`, the
+  analysis environment). If it fails, a ZSTD or LZ4 block in any ROOT output that interpreter scans is a STOP
+  (`root-codec-unavailable`). Record the three versions under each.
+- Codex 9 (a follow-up, C10): W's staged inputs hold no symbolic links. Record the output of `find W -type l`, run
+  after staging and before the run (expected empty).
+
+| item | expected | recorded |
+|---|---|---|
+| `import zstandard, lz4.block, xxhash` (`/usr/bin/python3.11 -I`) | exit 0, with versions | |
+| `import zstandard, lz4.block, xxhash` (the analysis environment's `python3`) | exit 0, with versions | |
+| `find W -type l` after staging | empty | |
+| each coverage GHEP's `seed_objects` | `genie::NtpMCTreeHeader`, `inflated` true or false | |
 

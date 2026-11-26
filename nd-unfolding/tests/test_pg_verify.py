@@ -1799,3 +1799,18 @@ class Round6Drain(unittest.TestCase):
         own, foreign = V.survivor_scan("/nonexistent-w", child.pid, [], proc=str(proc))
         self.assertEqual((own, foreign), ([child.pid], []))
 
+
+class Round7Drain(unittest.TestCase):
+    """Round 6's confirm read (R2, the director's ruling): /proc/PID/stat holds the command name as raw bytes."""
+
+    def test_a_name_that_is_not_utf8(self):
+        child = subprocess.Popen(["sleep", "30"], start_new_session=True)
+        self.addCleanup(lambda: (child.kill(), child.wait()))
+        proc = Path(tempfile.mkdtemp(prefix="pg-proc-"))
+        self.addCleanup(shutil.rmtree, proc, ignore_errors=True)
+        (proc / "self").mkdir()
+        (proc / str(child.pid)).mkdir()
+        (proc / str(child.pid) / "stat").write_bytes(b"%d (\xff\xfe) x) S 1 %d %d 0" % (child.pid, child.pid, child.pid))
+        own, foreign = V.survivor_scan("/nonexistent-w", child.pid, [], proc=str(proc))
+        self.assertEqual((own, foreign), ([child.pid], []))
+

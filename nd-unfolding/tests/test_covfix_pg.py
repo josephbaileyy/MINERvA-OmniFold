@@ -326,6 +326,7 @@ case "$1" in
          [ "$5" = "${PG_STUB_NOGST_SEED:-none}" ] || cp "$PG_STUB_GST" genie_v3.gst.root
          [ -z "$PG_STUB_KEEP_GHEP" ] || echo ghep > "gntp.$5.ghep.root"
          cp "$PG_STUB_ROOT" input-flux.root
+         [ -z "$PG_STUB_UNLISTABLE" ] || chmod a-r .
          [ "$5" != "${PG_STUB_LOCK_SEED:-none}" ] || chmod 0555 . ;;
   coverage) mkdir -p "$4"; cd "$4"; echo "Need xsec spline for a" > gevgen.log; echo st > genie-mcjob-123456789.status
          cp "${PG_STUB_GHEP:-$PG_STUB_ROOT}" gntp.123456789.ghep.root; cp "$PG_STUB_ROOT" input-flux.root
@@ -464,13 +465,14 @@ class Generate(unittest.TestCase):
             (rec / n).write_text("{}")
         self.gst_tpl, self.root_tpl = self.tmp / "tpl.gst.root", self.tmp / "tpl.root"   # real ROOT layouts
         self.gst_tpl.write_bytes(root_file([_key("TFile", "genie_v3.gst.root", "", b"top", codec=None),
-                                            _key("TBasket", "iev", "gst", b"pad" * 40),
+                                            _basket("iev", "gst", b"pad" * 40),
                                             _key("TTree", "gst", "GENIE Summary Event Tree", b"tree" * 30),
                                             _key("TList", "StreamerInfo", "Doubly linked list", b"streamer" * 20)]))
         self.root_tpl.write_bytes(root_file([_key("TH1D", "h", "flux", b"bins" * 30)]))
-        self.ghep_tpl = self.tmp / "tpl.ghep.root"           # GENIE's run number (gevgen -r, the seed) in its tree
-        self.ghep_tpl.write_bytes(root_file([_key("TFile", "gntp.123456789.ghep.root", "", b"top", codec=None),
-                                             _key("TTree", "gtree", "GENIE", b"runnu" + (123456789).to_bytes(8, "big") * 12)]))
+        self.ghep_tpl = self.tmp / "tpl.ghep.root"   # GENIE's run number (gevgen -r, the seed) in its header, written first
+        self.ghep_tpl.write_bytes(_ghep(123456789, None))                   # stored: R1
+        self.ghep_tpl_z = self.tmp / "tpl-z.ghep.root"
+        self.ghep_tpl_z.write_bytes(_ghep(123456789, b"ZL"))
         (rec / "root-schemas.json").write_text(json.dumps({"gst": pg_lib.root_schema(str(self.gst_tpl)),
                                                            "gst_merged": pg_lib.root_schema(str(self.gst_tpl))}))
         (g / "run_gevgen_v3.sh").write_text(STUB_RUN)
@@ -637,7 +639,7 @@ class Generate(unittest.TestCase):
         self.assertEqual(subprocess.run(["git", "-C", str(self.dep), "status", "--porcelain", "--ignored",
                                          "--untracked-files=all"], capture_output=True, text=True).stdout, "")
         self.assertEqual(sorted(x.name for x in self.tmp.iterdir()),                # the ROOT templates are the test's
-                         ["W", "bin", "deploy", "stub.log", "sysbin", "tpl.ghep.root", "tpl.gst.root", "tpl.root"])
+                         ["W", "bin", "deploy", "stub.log", "sysbin", "tpl-z.ghep.root", "tpl.ghep.root", "tpl.gst.root", "tpl.root"])
 
     def refused(self, p, rc=2):
         self.assertEqual(p.returncode, rc, p.stdout + p.stderr)
@@ -1106,7 +1108,8 @@ class Replay(unittest.TestCase):
         cov = gone["coverage_slot1"]["gntp.ghep.root"]["decoded"]                # gntp.123456789.ghep.root
         self.assertEqual((cov["holds_seed"], cov["name_holds_seed"]), (True, True))         # K6: the control found it
         self.assertTrue({"inflated", "int32-object"} & set(cov["hits"]), cov["hits"])   # an int64 run number holds the int32
-        self.assertGreater(cov["bytes_inflated"], 0)
+        self.assertGreater(cov["bytes_inflated"], 0)                                     # R1: the keys after the header
+        self.assertEqual(cov["seed_objects"], [{"class": "genie::NtpMCTreeHeader", "inflated": False, "kind": "int32-object"}])
         self.assertEqual([ln for ln in log if ln.startswith("core ")], ["core 0"])        # Q2
         gntpc = next(ln for ln in log if ln.startswith("pg_verify trace-check") and "--role gntpc" in ln).split()
         self.assertEqual(gntpc[gntpc.index("--ghep-from-trace") + 1], str(self.R / "work/t0/gevgen.trace"))
@@ -1135,15 +1138,28 @@ class Replay(unittest.TestCase):
         return m
 
     def test_the_drivers_records_pass_both_validators(self):
-        p = self.run_replay()
-        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
-        r = json.loads((self.R / "replay.json").read_text())
-        d = json.loads((self.R / "deleted.json").read_text())
-        node, launcher = self.install("pg-replay-g2111a"), self.install("pg-node-launch")
-        self.assertEqual(node.deleted_problems(d, r), [])                    # K2: t0 has no GHEP: the wrapper removed it
-        self.assertEqual(launcher._deleted_problems(d, r), [])
-        self.assertEqual(list((self.R / "work/t0").glob("gntp.*.ghep.root")), [])
-        self.assertIn("[replay] t0's GHEP removed by the wrapper: pass", p.stdout)
+        for name, tpl, inflated in (("the header stored", self.ghep_tpl, False), ("the header compressed", self.ghep_tpl_z, True)):
+            with self.subTest(name):                                         # R1: GENIE's header, either way
+                shutil.rmtree(self.R)
+                self.R.mkdir()
+                p = self.run_replay(PG_STUB_GHEP=str(tpl))
+                self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+                r = json.loads((self.R / "replay.json").read_text())
+                d = json.loads((self.R / "deleted.json").read_text())
+                node, launcher = self.install("pg-replay-g2111a"), self.install("pg-node-launch")
+                self.assertEqual(node.deleted_problems(d, r), [])            # K2: t0 has no GHEP: the wrapper removed it
+                self.assertEqual(launcher._deleted_problems(d, r), [])
+                self.assertEqual(list((self.R / "work/t0").glob("gntp.*.ghep.root")), [])
+                self.assertIn("[replay] t0's GHEP removed by the wrapper: pass", p.stdout)
+                self.assertEqual({x["inflated"] for x in d["coverage_slot2"]["gntp.ghep.root"]["decoded"]["seed_objects"]},
+                                 {inflated})
+
+    def test_an_unlistable_t0_stops(self):
+        t0 = self.R / "work/t0"
+        self.addCleanup(lambda: t0.exists() and os.chmod(t0, 0o755))
+        p = self.run_replay(PG_STUB_UNLISTABLE="1")                          # codex 10: an ls error is no absence
+        self.assertEqual(p.returncode, 1, p.stdout)
+        self.assertIn("[replay] STOP: t0's directory could not be listed", p.stdout)
 
     def test_a_control_without_the_seed_stops_at_both_validators(self):
         p = self.run_replay(PG_STUB_GHEP=str(self.root_tpl))                 # a GHEP whose bytes lack the seed
@@ -1371,6 +1387,32 @@ def _key(cls, name, title, obj, codec=b"ZL", split=1):
     keylen = 4 + 2 + 4 + 4 + 2 + 2 + 4 + 4 + len(names)
     head = struct.pack(">ihiIhhii", keylen + len(data), 4, len(obj), 0, keylen, 1, 0, 0) + names
     return head + data
+
+
+def _basket(name, title, obj, codec=b"ZL", split=1):
+    """A TBasket record as ROOT writes it: the basket's own fields (fVersion, fBufferSize, fNevBufSize, fNevBuf,
+    fLast and a flag: 19 bytes) follow the key's strings, inside fKeylen."""
+    import struct
+    k = _key("TBasket", name, title, obj, codec=codec, split=split)
+    nbytes, keylen = struct.unpack(">i", k[:4])[0], struct.unpack(">h", k[14:16])[0]
+    ext = struct.pack(">hiiiib", 3, 32000, 8, 1, keylen + 19 + len(obj), 0)
+    return struct.pack(">ihiIhh", nbytes + 19, 4, len(obj), 0, keylen + 19, 1) + k[18:keylen] + ext + k[keylen:]
+
+
+HDR_DIRS = b"/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e26-prof/config " * 3
+
+
+def _ghep(seed, header_codec):
+    """A GHEP as GENIE's NtpWriter writes it (NtpWriter.cxx:83-125): the file's own key, then NtpMCTreeHeader (its
+    runnu and runseed, the seed as Long_t) first, then the configuration and environment folders, then the tree."""
+    s8 = seed.to_bytes(8, "big")
+    return root_file([_key("TFile", f"gntp.{seed}.ghep.root", "", b"top", codec=None),
+                      _key("genie::NtpMCTreeHeader", "header", "GENIE output tree header",
+                           b"\x00\x01fmt0cvs" + s8 + s8 + b"tune G21_11a_00_000 tuneDir " + HDR_DIRS, codec=header_codec),
+                      _key("TFolder", "gconfig", "GENIE configs", b"cfg" * 60),
+                      _key("TFolder", "genv", "GENIE user environment", b"env" * 60),
+                      _basket("gmcrec", "gtree", b"evt" * 80),
+                      _key("TTree", "gtree", "GENIE MC Truth TTree, Format: [NtpMCEventRecord]", b"tree" * 30)])
 
 
 def root_file(keys, gap=False):
@@ -1685,3 +1727,85 @@ class Leak6(Leak5):
         hits, st = pg_lib.leak_scan(str(self.tmp), [f], [self.SEED], decode_all=True)
         self.assertEqual(st["hits"], ["bytes", "inflated", "path"])
         self.assertGreater(st["bytes_inflated"], 0)
+
+
+class Leak7(Leak6):
+    """Round 6's confirm read (the director's ruling, 2026-11-26): B3's control scans every key and records each seed
+    object's class and whether it was inflated (R1); a freed TBasket, its fKeylen holding the basket's fields, keeps
+    its class (R3); a gap candidate whose method byte is not ROOT's is no header (R4)."""
+
+    def test_a_stored_header_written_first(self):
+        f = self.put("out/hdr.root", root_file([
+            _key("genie::NtpMCTreeHeader", "header", "h", b"fmt" + self.SEED.to_bytes(8, "big") * 2, codec=None),
+            _key("TFolder", "gconfig", "c", b"cfg" * 60)]))
+        hits, st = pg_lib.leak_scan(str(self.tmp), [f], [self.SEED], decode_all=True)
+        self.assertEqual(hits, [(f, "bytes")])                              # its int64 run number, raw
+        self.assertGreater(st["bytes_inflated"], 0)                         # the keys after the header were inflated
+        self.assertEqual(st["seed_objects"], [{"class": "genie::NtpMCTreeHeader", "inflated": False, "kind": "int32-object"}])
+
+    def test_a_compressed_header(self):
+        f = self.put("out/hdr-z.root", root_file([
+            _key("genie::NtpMCTreeHeader", "header", "h", b"fmt" + self.SEED.to_bytes(8, "big") * 2 + HDR_DIRS)]))
+        hits, st = pg_lib.leak_scan(str(self.tmp), [f], [self.SEED], decode_all=True)
+        self.assertEqual(st["seed_objects"], [{"class": "genie::NtpMCTreeHeader", "inflated": True, "kind": "int32-object"},
+                                              {"class": "genie::NtpMCTreeHeader", "inflated": True, "kind": "inflated"}])   # the int64: both forms
+        self.assertGreater(st["bytes_inflated"], 0)
+
+    def test_the_control_scans_every_key(self):
+        f = self.put("out/two.root", root_file([                            # both compressed: no raw hit
+            _key("genie::NtpMCTreeHeader", "header", "h", b"fmt" + self.SEED.to_bytes(8, "big") + HDR_DIRS),
+            _key("TNamed", "later", "x", b"run %d " % self.SEED * 20)]))
+        hits, st = pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])          # production: the first hit STOPs
+        self.assertEqual(hits, [(f, "int32-object")])
+        self.assertEqual(st["seed_objects"], [{"class": "genie::NtpMCTreeHeader", "inflated": True, "kind": "int32-object"},
+                                              {"class": "genie::NtpMCTreeHeader", "inflated": True, "kind": "inflated"}])
+        hits, st = pg_lib.leak_scan(str(self.tmp), [f], [self.SEED], decode_all=True)
+        self.assertEqual(st["seed_objects"], [{"class": "genie::NtpMCTreeHeader", "inflated": True, "kind": "int32-object"},
+                                              {"class": "genie::NtpMCTreeHeader", "inflated": True, "kind": "inflated"},
+                                              {"class": "TNamed", "inflated": True, "kind": "inflated"}])
+        self.assertEqual(st["hits"], ["inflated", "int32-object"])
+
+    def test_no_seed_no_seed_objects(self):
+        f = self.put("out/clean.root", root_file([_basket("iev", "gst", b"pad" * 100)]))
+        self.assertEqual(pg_lib.leak_scan(str(self.tmp), [f], [self.SEED], decode_all=True)[1]["seed_objects"], [])
+
+    def test_a_freed_real_basket_keeps_its_class(self):
+        import struct
+        i32 = struct.pack(">i", self.SEED)
+        for codec in (b"ZL", None):
+            with self.subTest(codec=codec):
+                f = self.put("out/old-real-basket.root",
+                             self.gap_file(_basket("E", "gst", b"\x11" * 30 + i32 + b"\x11" * 30, codec=codec)))
+                hits, stats = pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])
+                self.assertEqual(hits, [])                                  # a basket's payload: only counted
+                self.assertGreaterEqual(stats["int32_count"], 1)
+        f = self.put("out/old-real-basket2.root", self.gap_file(_basket("E", "gst", b"run %d" % self.SEED * 3)))
+        self.assertEqual(pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])[0], [(f, "inflated")])
+
+    def test_a_live_real_basket(self):
+        import struct
+        f = self.put("out/real-basket.root", root_file([_basket("E", "gst", b"\x11" * 30 + struct.pack(">i", self.SEED))]))
+        self.assertEqual(pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])[0], [])
+
+    def test_a_gap_candidate_without_roots_method_byte(self):
+        import struct
+        from unittest import mock
+        for method, stops in ((b"\x00", False), (b"\x01", True)):
+            with self.subTest(method=method):
+                raw = b"\xff" * 20 + b"ZS" + method + (20).to_bytes(3, "little") + (40).to_bytes(3, "little") + b"\0" * 20
+                live = _key("TBasket", "iev", "gst", b"pad" * 40)
+                body = struct.pack(">i", -(4 + len(raw))) + raw + live
+                f = self.put("out/zs-gap.root", b"root" + struct.pack(">iii", 62206, 100, 100 + len(body)) + b"\0" * 84 + body)
+                with mock.patch.dict(sys.modules, {"zstandard": None}):
+                    if stops:
+                        with self.assertRaises(pg_lib.Refusal) as cm:
+                            pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])
+                        self.assertTrue(str(cm.exception).startswith("root-codec-unavailable"), str(cm.exception))
+                    else:
+                        try:
+                            got, err = pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])[0], None
+                        except pg_lib.Refusal as e:   # failed outside the handler: no chained import error
+                            got, err = None, str(e)
+                        if err is not None:
+                            self.fail(f"a candidate without ROOT's method byte STOPped: {err}")
+                        self.assertEqual(got, [])

@@ -1327,7 +1327,8 @@ def survivor_scan(w, sid, skip, proc="/proc", run=subprocess.run):
 
         def state(p):
             try:
-                return open(os.path.join(proc, str(p), "stat")).read().rsplit(")", 1)[1].split()[0]
+                with open(os.path.join(proc, str(p), "stat"), "rb") as f:   # the name is raw bytes: parse after it
+                    return f.read().rsplit(b")", 1)[1].split()[0].decode("ascii", "replace")
             except (OSError, IndexError):
                 return None
 

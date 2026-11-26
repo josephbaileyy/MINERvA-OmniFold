@@ -285,3 +285,37 @@ to FOLLOWUPS.md. The rejections of F15's thread-exec marker and of F2/B2's stage
 **Q2, restated (F18).** `ulimit -c 0` suppresses ordinary core files only. A piped core handler ignores the limit.
 That route is recorded in B1 and node-record and is out of scope beyond the record. Round 5's wording above ("no
 core under W or anywhere") overstated this.
+
+## Round 7: round 6's confirm read (the director's ruling, 2026-11-26)
+
+The confirm read (codex-school, gpt-6.2-sol) is in `delta-read-r6/confirm/`. The director ruled R1–R4 blocking:
+each is a false STOP of a correct run. Codex 4 and 6–11 are not blocking and go to `FOLLOWUPS.md`, except codex 10,
+which is built with R1. After this round there are no more codex rounds on this package.
+
+**R1, B3's control.**
+- With `decode_all`, every key is read; nothing breaks at the first hit.
+- `seed_objects` names each ROOT object the seed was found in: its class, whether it was inflated, and the kind.
+  The scan records it in both modes, and both validators check its shape.
+- The control needs at least one seed object, as well as `holds_seed`, `bytes_inflated > 0`, and an `inflated` or
+  `int32-object` hit.
+- There is no object-local witness rule: B3's record shows whether GENIE's header was stored or compressed, and the
+  director decides then.
+- In production, the first hit is still the STOP.
+
+**R2, the session scans.** `/proc/PID/stat` is read as bytes. The state is the first field after the last `)`, so
+a command name holding any bytes, `)` included, does not break the scan. This covers pg_verify's `survivor_scan`
+and the node runner's `session_pids`.
+
+**R3, ROOT's freed baskets.** A freed record of class `TBasket` may have an `fKeylen` longer than its strings. The
+basket's own fields follow them, and its payload starts at the record's start plus `fKeylen`, as in a live key.
+
+**R4, block headers in a gap.** In gap bytes that are no whole record, a candidate counts as a header only if its
+method byte is ROOT's: ZL 8, XZ 0, ZS 1 (RZip.cxx:251–274). ROOT checks none for L4, so a missing LZ4 module
+remains a STOP there.
+
+**Codex 10.** The driver checks first that t0's directory can be listed; a listing error is a STOP. It then tests
+for a GHEP with `compgen -G`, which succeeds only on a match.
+
+**Logs.** From this round on, every suite run writes its full output to its log, not only the summary line. If the
+unexplained "8 failed, 325 passed" run recurs, that is a STOP to the director.
+

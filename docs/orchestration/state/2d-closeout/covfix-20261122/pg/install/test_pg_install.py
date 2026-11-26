@@ -228,9 +228,11 @@ GOOD_REPLAY = dict(RP.IDENTITY, **{
     "gst_merged_schema": {"keys": [["TTree", "gst", "t"]], "streamer_sha256": "5" * 64}})
 REC = {"sha256": "a" * 64, "bytes": 10, "holds_public_seed": False}
 ROOTREC = dict(REC, decoded={"holds_seed": False, "name_holds_seed": False, "int32_count": 0, "codecs": {"ZL": 2},
-                              "bytes_inflated": 9, "hits": []})
+                              "bytes_inflated": 9, "hits": [], "seed_objects": []})
+SEED_OBJ = {"class": "genie::NtpMCTreeHeader", "inflated": False, "kind": "int32-object"}   # R1: GENIE's header, stored
 CONTROL = dict(REC, holds_public_seed=True, decoded=dict(ROOTREC["decoded"], holds_seed=True, name_holds_seed=True,
-                                                         hits=["bytes", "inflated", "path"]))   # the seed, decoded
+                                                         hits=["bytes", "int32-object", "path"],
+                                                         seed_objects=[SEED_OBJ]))   # the seed, decoded
 RUN = {"gevgen.status": REC, "input-flux.root": ROOTREC}       # what each run leaves (t0's GHEP the wrapper removes)
 COV = dict(RUN, **{"gevgen.log": REC, "gntp.ghep.root": CONTROL})
 GOOD_DELETED = {"t0": dict(RUN, **{"genie_v3.gst.root": dict(ROOTREC, schema=GOOD_REPLAY["gst_schema"])}),
@@ -354,7 +356,8 @@ class NodeLaunch(unittest.TestCase):
                                 ("the name and bytes not apart", dict(rec, deleted=dict(GOOD_DELETED, coverage_slot1=dict(
                                     COV, **{"gntp.ghep.root": dict(REC, decoded={
                                         "holds_seed": True, "int32_count": 0, "codecs": {}, "bytes_inflated": 9,
-                                        "hits": ["inflated"]})}))),
+                                        "hits": ["inflated"], "seed_objects": [dict(SEED_OBJ, inflated=True, kind="inflated")]
+                                    })}))),   # only name_holds_seed missing
                                  "deleted coverage_slot1/gntp.ghep.root"),
                                 ("a GHEP in t0", dict(rec, deleted=dict(GOOD_DELETED, t0=dict(
                                     GOOD_DELETED["t0"], **{"gntp.ghep.root": ROOTREC}))), "deleted names"),
@@ -373,6 +376,21 @@ class NodeLaunch(unittest.TestCase):
                                 ("a decode without its hits", dict(rec, deleted=dict(GOOD_DELETED, t0=dict(
                                     GOOD_DELETED["t0"], **{"input-flux.root": dict(ROOTREC, decoded=dict(
                                         ROOTREC["decoded"], hits=None))}))), "deleted t0/input-flux.root"),
+                                ("a decode without its seed objects", dict(rec, deleted=dict(GOOD_DELETED, t0=dict(
+                                    GOOD_DELETED["t0"], **{"input-flux.root": dict(ROOTREC, decoded=dict(
+                                        ROOTREC["decoded"], seed_objects=None))}))), "deleted t0/input-flux.root"),
+                                ("a seed object of the wrong shape", dict(rec, deleted=dict(GOOD_DELETED, coverage_slot1=dict(
+                                    COV, **{"gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], seed_objects=[
+                                        dict(SEED_OBJ, inflated="no")]))}))), "deleted coverage_slot1/gntp.ghep.root"),
+                                ("a seed object of no kind", dict(rec, deleted=dict(GOOD_DELETED, coverage_slot1=dict(
+                                    COV, **{"gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], seed_objects=[
+                                        dict(SEED_OBJ, kind="bytes")]))}))), "deleted coverage_slot1/gntp.ghep.root"),
+                                ("a seed object without its class", dict(rec, deleted=dict(GOOD_DELETED, coverage_slot1=dict(
+                                    COV, **{"gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], seed_objects=[
+                                        {"inflated": False, "kind": "int32-object"}]))}))), "deleted coverage_slot1/gntp.ghep.root"),
+                                ("the control with no seed object", dict(rec, deleted=dict(GOOD_DELETED, coverage_slot2=dict(
+                                    COV, **{"gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], seed_objects=[]))}))),
+                                 "deleted coverage_slot2/gntp.ghep.root: the control's seed was not found decoded"),
                                 ("a gst not decoded", dict(rec, deleted=dict(GOOD_DELETED, t0=dict(GOOD_DELETED["t0"], **{
                                     "genie_v3.gst.root": dict(REC, schema=GOOD_REPLAY["gst_schema"])}))),
                                  "deleted t0/genie_v3.gst.root"),
@@ -559,7 +577,8 @@ class Replay(unittest.TestCase):
                     "genie_v3_g21_ALL.gst.root": dict(ROOTREC, schema=GOOD_REPLAY["gst_schema"])}))}, "deleted-record"),
                 ("the name and bytes not apart", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, coverage_slot1=dict(
                     COV, **{"gntp.ghep.root": dict(REC, decoded={
-                        "holds_seed": True, "int32_count": 0, "codecs": {}, "bytes_inflated": 9, "hits": ["inflated"]})})))},
+                        "holds_seed": True, "int32_count": 0, "codecs": {}, "bytes_inflated": 9, "hits": ["inflated"],
+                        "seed_objects": [dict(SEED_OBJ, inflated=True, kind="inflated")]})})))},   # only name_holds_seed missing
                  "deleted-record"),
                 ("a GHEP in t0", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, t0=dict(
                     GOOD_DELETED["t0"], **{"gntp.ghep.root": ROOTREC})))}, "deleted-record"),
@@ -573,6 +592,19 @@ class Replay(unittest.TestCase):
                     "gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], **{"holds_seed": False}))})))}, "deleted-record"),
                 ("a decode without its hits", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, coverage_slot2=dict(COV, **{
                     "gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], **{"hits": None}))})))}, "deleted-record"),
+                ("a decode without its seed objects", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, t0=dict(GOOD_DELETED["t0"], **{
+                    "input-flux.root": dict(ROOTREC, decoded=dict(ROOTREC["decoded"], seed_objects=None))})))}, "deleted-record"),
+                ("a seed object of the wrong shape", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, coverage_slot2=dict(COV, **{
+                    "gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], seed_objects=[dict(SEED_OBJ, inflated="no")]))})))},
+                 "deleted-record"),
+                ("a seed object of no kind", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, coverage_slot2=dict(COV, **{
+                    "gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], seed_objects=[dict(SEED_OBJ, kind="bytes")]))})))},
+                 "deleted-record"),
+                ("a seed object without its class", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, coverage_slot2=dict(COV, **{
+                    "gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], seed_objects=[
+                        {"inflated": False, "kind": "int32-object"}]))})))}, "deleted-record"),
+                ("the control with no seed object", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, coverage_slot2=dict(COV, **{
+                    "gntp.ghep.root": dict(CONTROL, decoded=dict(CONTROL["decoded"], seed_objects=[]))})))}, "deleted-record"),
                 ("a straggler in the driver's session", {"PG_STUB_STRAGGLER": "1"}, "quiesce")):
             with self.subTest(name):
                 self.assert_stop(self.run_replay(env=env), f"Stop: {code}: ")
@@ -628,6 +660,20 @@ class Constants(unittest.TestCase):
         import pg_verify
         self.assertEqual(I.ROOT, pg_verify.PRIVATE_PRODUCTS)
         self.assertIsNone(I.DBCONFIG_SHA256)                       # filled only from the director's pin
+
+
+class Quiesce7(Quiesce):
+    """Round 6's confirm read (R2, the director's ruling): /proc/PID/stat holds the command name as raw bytes."""
+
+    def test_a_name_that_is_not_utf8(self):
+        child = subprocess.Popen(["sleep", "30"], start_new_session=True)
+        self.addCleanup(lambda: (child.kill(), child.wait()))
+        proc = Path(tempfile.mkdtemp(prefix="pg-proc-"))
+        self.addCleanup(shutil.rmtree, proc, ignore_errors=True)
+        (proc / "self").mkdir()
+        (proc / str(child.pid)).mkdir()
+        (proc / str(child.pid) / "stat").write_bytes(b"%d (\xff\xfe) x) S 1 %d %d 0" % (child.pid, child.pid, child.pid))
+        self.assertEqual(self.RP.session_pids(child.pid, proc=str(proc)), [child.pid])
 
 
 if __name__ == "__main__":

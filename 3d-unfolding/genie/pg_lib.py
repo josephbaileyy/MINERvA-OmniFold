@@ -300,6 +300,7 @@ def _blocks(data, objlen):
 
 
 TAGS = (b"ZL", b"XZ", b"L4", b"ZS")
+METHOD = {b"ZL": 8, b"XZ": 0, b"ZS": 1}   # each tag's method byte, as ROOT checks it (RZip.cxx:251-274); L4 has none
 
 
 def _freed_record(gap, j):
@@ -318,8 +319,10 @@ def _freed_record(gap, j):
         title, o = _tstring(gap, o)
     except Refusal:
         return None
-    if o - j + 4 != keylen or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_:<>, ]*", cls):
+    if not (o - j + 4 == keylen or cls == "TBasket" and o - j + 4 < keylen) \
+            or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_:<>, ]*", cls):
         return None
+    o = j - 4 + keylen                                       # a TBasket's own fields (fVersion to its flag) end its key
     data = gap[o:]
     if data[:2] in TAGS and len(data) >= 9 and o + 9 + int.from_bytes(data[3:6], "little") <= len(gap):
         obj, codecs, q = _blocks(data, objlen)
@@ -353,7 +356,7 @@ def _gap_blocks(gap):
         if q + 9 > len(rest):
             continue
         csize, usize = int.from_bytes(rest[q + 3:q + 6], "little"), int.from_bytes(rest[q + 6:q + 9], "little")
-        if not csize or not usize or q + 9 + csize > len(rest):
+        if not csize or not usize or q + 9 + csize > len(rest) or rest[q + 2] != METHOD.get(rest[q:q + 2], rest[q + 2]):
             continue
         try:
             x = _codec(rest[q:q + 2], rest[q + 9:q + 9 + csize], usize)
@@ -496,12 +499,14 @@ def leak_scan(workdir, files, seeds, decode_all=False):
     bytes, a ROOT object's inflated bytes, or a gzip or zip member holds a STOP form of any seed. int32 forms are a
     STOP in every ROOT object but a TBasket's payload, and only counted (against their chance expectation) in
     baskets and raw bytes. The path and the bytes are scanned apart. With decode_all (B3's positive control) a
-    ROOT file is decoded even after a raw hit, and stats["hits"] names every kind found. Never prints a seed."""
+    ROOT file is decoded even after a raw hit and every key is read: stats["hits"] names every kind found. In either
+    mode, stats["seed_objects"] names each ROOT object the seed was found in (class, inflated, kind). Never prints a
+    seed."""
     forms = [f for s in seeds for f in seed_forms(s)]
     f32 = [f for s in seeds for f in seed_int32_forms(s)]
     width = max(len(f) for f in forms + f32)
     hits, stats = [], {"files": len(files), "bytes_raw": 0, "bytes_inflated": 0, "int32_count": 0, "codecs": {},
-                       "objects_int32_checked": 0}
+                       "objects_int32_checked": 0, "seed_objects": []}
     kinds = set()
     for rel in files:
         if any(f in rel.encode() for f in forms):
@@ -529,16 +534,19 @@ def leak_scan(workdir, files, seeds, decode_all=False):
                 if codecs:                                 # inflated (a stored object's bytes were scanned raw)
                     stats["bytes_inflated"] += len(obj)
                     stats["int32_count"] += _count(obj, f32)
+                got = []
                 if cls != "TBasket":                       # a small object: a 4-byte seed there is no chance hit
                     stats["objects_int32_checked"] += 1
                     if any(f in obj for f in f32):
-                        found = "int32-object"
+                        got.append("int32-object")
+                if codecs and any(f in obj for f in forms):
+                    got.append("inflated")
+                stats["seed_objects"] += [{"class": cls, "inflated": bool(codecs), "kind": k} for k in got]
+                kinds.update(got)
+                if got:
+                    found = found or got[0]
+                    if not decode_all:                     # production: the first hit is the STOP
                         break
-                if not codecs:
-                    continue
-                if any(f in obj for f in forms):
-                    found = "inflated"
-                    break
         elif hit is None:
             for kind, data in _members(p):
                 stats["codecs"][kind] = stats["codecs"].get(kind, 0) + 1

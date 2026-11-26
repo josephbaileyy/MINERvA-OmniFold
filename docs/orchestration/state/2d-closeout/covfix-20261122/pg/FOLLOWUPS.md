@@ -3,6 +3,26 @@
 The current list. Each item was ruled non-blocking under the director's rule: blocking means a false STOP of a
 correct run, or a gate that can miss something correct producers really emit. The source of each item is named.
 
+## From round 6's confirm read (delta-read-r6/confirm/DISPOSITIONS.md; the director, 2026-11-26)
+
+- **Codex 4: the 4 bytes after a whole freed record.** If no freed record follows, the header search starts 4 bytes
+  late. In ROOT's layout every record or gap in a free gap starts with its own 4-byte length, so no block header can
+  begin there. Deferred: search from the record's end when the next one does not parse.
+- **Codex 6: the order of K1's walks.** Explicit and basename probes are split without regard to trace order, and
+  the explicit walk's phase is applied first. GENIE's real order passes. Deferred: consume the walks in trace order
+  and apply the pid's phase at each completed walk.
+- **Codex 7: a tuned walk with no read.** It never binds the pid, so a later untuned read can pass. Only a wrong
+  producer emits this. Deferred: let walks that end without a read bind the phase.
+- **Codex 8: the drain's deadline.** Quiet can be accepted up to one poll past 30 s (two empty scans are still
+  required). A process that forks and exits between enumeration and inspection on two polls in a row escapes any
+  snapshot scan; that is C10's containment. After a quiesce STOP the runner still sweeps W1's public-seed files.
+  Deferred: check the deadline before accepting quiet.
+- **Codex 9: a write through a pre-existing link in W, unlinked before verification.** Links made during the run
+  are STOPs (B10). This is C10's enforcement at execution, with a checklist row that W's staged inputs hold no
+  links.
+- **Codex 11: nested bash subscripts** (`TUNE[1+arr[0]]=x`) escape F12's pattern. The wrapper's bytes are fixed by
+  its sha (5c3fd520…). Deferred: parse assignments, or refuse forms the pattern does not cover.
+
 ## From round 5's confirm read (delta-read-r5/confirm/DISPOSITIONS.md; the director, 2026-11-25)
 
 - **K5 (F7): a duplicated zip member name.** `_members` reads each name in `namelist()`, so a name stored twice is
