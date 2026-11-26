@@ -137,6 +137,8 @@ READOUTS = {
     # the C_e-era PRR readout (before C_e^infl): the note's PRR sentences state which truths were flagged when PRR and the IBU
     # control were run, under C_e; those statements bind here (the director's ruling of 2026-11-26)
     "prrce": (f"{FD}/fd/receipts-prr/read/cluster/readout.json", "9238f22b"),
+    # the C_e-era quadrant readout (before C_e^infl), for the caption's statement of QD's printed-only reading then
+    "crce": (f"{FD}/fd/receipts-cov2d/g2r/cr/run/node/g2r/overlap_refined.json", "0734cf4a"),
     # the C_e-era fake-data readouts (before C_e^infl): F0b with and without the run-period block, and F0 under C_total
     # alone. The note's listing sentences say what C_e listed; check_listed_claims' "cleared" kinds bind those clauses
     "f0bce": (f"{FD}/fd/with-cpl/readout/fd_f0b_readout.json", "5f542830"),
@@ -284,20 +286,24 @@ TRUTH_LABEL = {"nominal": ("the simulation prior", "simulation prior"),
 # declared with the "cleared" kinds and bind to the C_e-era readouts (f0bce, f0bcenopl, f0ce). Every sentence a PROPOSAL.
 LISTED_CLAIMS = [
     ("sec_q3_fived16.tex", "only the GiBUU hybrid truth meets the listing criterion ($p<", {"kind": "keys"}),
-    ("sec_q3_fived16.tex", "listed by $p$ alone under the earlier covariance $C_e$", {"kind": "cleared"}),
+    ("sec_q3_fived16.tex", "listed by $p$ alone under the baseline covariance", {"kind": "cleared"}),
     ("sec_q3_fived16.tex", "the same single truth meets it: the GiBUU", {"kind": "without"}),
-    ("sec_q3_fived16.tex", "listed without $C_{\\mathrm{PL,5D}}$ under $C_e$ by its cell R06", {"kind": "cleared-nopl"}),
+    ("sec_q3_fived16.tex", "listed without $C_{\\mathrm{PL,5D}}$ under the baseline covariance by its cell R06", {"kind": "cleared-nopl"}),
     ("sec_q3_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds", {"kind": "both"}),
     ("sec_q3_fived16.tex", "Under each of the three covariances, the fake-data bias meets", {"kind": "all"}),
     ("sec_q3_fived16.tex", "the $q_3$ tilt was also listed, and the two smaller covariances listed more truths", {"kind": "ce-more"}),
     ("sec_fived16_gen.tex", "so the GiBUU comparison carries that limitation", {"kind": "both", "family": "gibuu"}),
     ("appC_supplementary.tex", "simulated truths: the GiBUU hybrid, which uses", {"kind": "both"}),
-    ("appC_supplementary.tex", "Under the earlier covariance $C_e$, the synthetic $q_3$ tilt", {"kind": "cleared"}),
+    ("appC_supplementary.tex", "in place of $C_e^{\\mathrm{infl}}$, the synthetic $q_3$ tilt, a momentum", {"kind": "cleared"}),
     ("appC_supplementary.tex", "omitting the run-period term also flagged the separate GiBUU", {"kind": "cleared-nopl"}),
     ("appC_supplementary.tex", "the $q_3$ tilt also did.", {"kind": "cleared"}),
-    ("appA_methods.tex", "Under the earlier $C_e$, the $q_3$ tilt was also flagged.", {"kind": "cleared"}),
+    ("appA_methods.tex", "Under the baseline covariance, the $q_3$ tilt was also flagged.", {"kind": "cleared"}),
     ("sec_fived16.tex", "the fake-data bias exceeds the stated criteria at the GiBUU hybrid truth (", {"kind": "both"}),
     ("sec_validity_table.tex", "Residual bias exceeds the fake-data criteria at the GiBUU hybrid truth", {"kind": "with-ce"}),
+    # the compiled note's own fake-data and PRR sentences (Gemini read r1, finding 1)
+    ("sec5_multidim.tex", "simulated truths, the GiBUU hybrid truth, which takes", {"kind": "both"}),
+    ("sec5_multidim.tex", "the synthetic $q_3$ tilt also exceeded them", {"kind": "cleared"}),
+    ("sec5_multidim.tex", "leaves both biases above the criteria under the baseline covariance", {"kind": "both"}),
 ]
 
 
@@ -653,6 +659,8 @@ def quadrant_values(d):
     # director's named exception of 2026-11-26), which the caption states
     qd = q["QD"]["2D"]["printed_only_without_C_PL5D"]
     assert qd["outcome"] == "agree below a correlation" and 0.999 < qd["rho_star"] < 1, "QD's printed-only rho* moved"
+    qdce = d["crce"]["quadrants"]["QD"]["2D"]["printed_only_without_C_PL5D"]
+    assert qdce["outcome"] == "agree" and qdce["rho_star"] > 1, "under the baseline covariance QD's printed-only rho* lay above 1"
     # the paper: "the sums differ by -1.5 to +0.7 per cent"
     pct = [q[n]["2D"]["d_pct"] for n in Q]
     assert min(pct) < 0 < max(pct), "the paper prints a signed range of the quadrant differences"
@@ -1325,6 +1333,9 @@ def all_values(d=None, d_nopl=None):
         assert min(fall) > 0, f"a {part} chi2 rises with the block"
         v[f"pl-chi2fall-{part}-lo"], v[f"pl-chi2fall-{part}-hi"] = f"{100 * min(fall):.1f}", f"{100 * max(fall):.1f}"
     v.update(currency_values(load() if d is None else d, v))     # the note's currency UPDATEs (new keys only)
+    # appC: under C_rep the GiBUU E_avail shape's R06 |z| rises without the run-period block but stays below the threshold
+    assert float(v["f0b-stage0c_gibuu-zmax"]) < float(v["f0b-stage0c_gibuu-zmax-nopl"]) < float(v["trig-z"]), \
+        "the GiBUU E_avail shape's R06 |z| without the run-period block is no longer between its with-block value and the threshold"
     for k in sorted(k for k in v if PAPER_PREC.match(k)):
         for nk, x in paper_prec(k, v[k]).items():
             assert v.get(nk, x) == x, f"{nk}: {v[nk]!r} against the paper form {x!r}"
@@ -1505,6 +1516,22 @@ def prr_levels_values(d):
             v[f"prr-lev-{L}-rho-{tt}"] = f"{x:.3f}"
             v[f"prr-lev-{L}-d-{tt}"] = f"{x - b0:+.3f}"
             assert v[f"prr-lev-{L}-d-{tt}"] not in ("+0.000", "-0.000"), (L, tt)
+    # C_e^infl (V_F; Gemini read r1 findings 3, 5 and 13): the records' and appC's sentences give both eras. Under the
+    # baseline covariance (C_rep with C_e in place of C_e^infl) the counts are the C_e-era readout's. Under C_rep the
+    # q3 tilt, unflagged at B0, is flagged only at C25 and O2, where it is counted among the new flags (the director's
+    # reference-shift ruling, readings sec. 1). IBU at five iterations: the C_e-era count of newly flagged truths
+    rce = d["prrce"]["readings"]["PR-3"]
+    for L in ("K2", "C25", "O2"):
+        newce = {T for T in graded if tce[f"{L}/{T}/s991000"]["grade"]["flagged"]} - flagged0_ce
+        assert newce == set(rce[L]["new_flags"]), (L, newce, rce[L]["new_flags"])
+        v[f"prr-ce-lev-{L}-nnew"] = str(len(newce))
+    q3 = PRR_TRUTHS["q3"]
+    q3_levels = {L for L in levels if t[f"{L}/{q3}/s991000"]["grade"]["flagged"]}
+    assert q3_levels == {"C25", "O2"}, f"under C_rep the q3 tilt is flagged at {sorted(q3_levels)}, not at C25 and O2 only"
+    assert all(q3 in rd["PR-3"][L]["new_flags"] for L in ("C25", "O2")) and q3 not in rd["PR-3"]["K2"]["new_flags"]
+    new5ce = {T for T in graded if ibce[f"K5/{T}/s991000"]["grade"]["flagged"]} - flagged0_ce
+    assert new5ce == set(rce["IBU_K5"]["new_flags"]), (new5ce, rce["IBU_K5"]["new_flags"])
+    v["prr-ce-ibu5-nnew-word"] = PRR_NUMBER_WORDS[len(new5ce)]
     return v
 
 
@@ -2315,6 +2342,13 @@ def self_test():
             ("QD's printed-only rho* leaves the knife edge",
              lambda d: kset(d, ["cr", "quadrants", "QD", "2D", "printed_only_without_C_PL5D", "rho_star"], 0.99),
              "QD's printed-only rho* moved"),
+            ("QD's printed-only rho* lay below 1 under the baseline covariance",
+             lambda d: (kset(d, ["crce", "quadrants", "QD", "2D", "printed_only_without_C_PL5D", "rho_star"], 0.99),
+                        kset(d, ["crce", "quadrants", "QD", "2D", "printed_only_without_C_PL5D", "outcome"], "agree below a correlation")),
+             "lay above 1"),
+            ("the q3 tilt is not flagged at C25 under C_rep",
+             lambda d: (kset(d, ["prr", "table", "C25/q3/s991000", "grade", "flagged"], False),
+                        d["prr"]["readings"]["PR-3"]["C25"]["new_flags"].remove("q3")), "not at C25 and O2 only"),
             ("a B5D multiplier moves", lambda d: kset(d, ["b5d", "fluctuation", "trigger", "R3", "phi"], 3.1), "the approved factors changed"),
             ("B5D's bands are relabelled", lambda d: kset(d, ["b5d", "fluctuation", "bands"], ["R1", "R2", "R3"]), "ranks 1-4, 5-8 and 9-16"),
             ("C_e^infl's sigma is not its matrix's", lambda d: scale_rows(d, "dp", "C_e_infl", 1.01), "C_e_infl's sigma"),
@@ -2379,11 +2413,11 @@ def self_test():
              lambda t: t.replace(r"the stated thresholds at the GiBUU hybrid truth alone,", r"the stated thresholds alone,", 1)),
             ("drops a GiBUU truth of its family", "sec_fived16_gen.tex", "so the GiBUU comparison carries that limitation",
              lambda t: t.replace(r"thresholds at the GiBUU hybrid truth, with or without", r"thresholds, with or without", 1)),
-            ("names one more truth C_e listed", "sec_q3_fived16.tex", "listed by $p$ alone under the earlier covariance $C_e$",
+            ("names one more truth C_e listed", "sec_q3_fived16.tex", "listed by $p$ alone under the baseline covariance",
              lambda t: t.replace(r"The $q_3$ tilt, listed by $p$ alone", r"The $q_3$ tilt and the NuWro hybrid truth, listed by $p$ alone", 1)),
             ("adds the q3 tilt to the without-block clearing", "appC_supplementary.tex",
              "omitting the run-period term also flagged the separate GiBUU",
-             lambda t: t.replace(r"GiBUU $\Eavail$ shape through R06.", r"GiBUU $\Eavail$ shape and the $q_3$ tilt through R06.", 1)),
+             lambda t: t.replace(r"GiBUU $\Eavail$ shape through R06,", r"GiBUU $\Eavail$ shape and the $q_3$ tilt through R06,", 1)),
             ("lists the q3 tilt under every covariance", "sec_q3_fived16.tex",
              "Under each of the three covariances, the fake-data bias meets",
              lambda t: t.replace(r"at the GiBUU hybrid truth only.", r"at the GiBUU hybrid truth and the $q_3$ tilt.", 1)),
