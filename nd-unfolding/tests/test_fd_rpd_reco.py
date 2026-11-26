@@ -66,6 +66,13 @@ def _truth(count: int, seed: int) -> np.ndarray:
     return np.column_stack([pt, pz, rng.uniform(0, 1, count), q3, invariant])
 
 
+def _energy(truth: np.ndarray) -> np.ndarray:
+    """The fixtures' true energy in GeV: their own mean-mass inversion."""
+    proton, _, _ = R.reconstructed_energy(truth, R.M_PROTON)
+    neutron, _, _ = R.reconstructed_energy(truth, R.M_NEUTRON)
+    return (proton + neutron) / 2
+
+
 def _reco(count: int, rng: np.random.Generator) -> np.ndarray:
     return np.column_stack(
         [
@@ -125,6 +132,9 @@ class FluxHistogramDouble:
         return "PlotUtils::MnvH1D"
 
 
+FIXTURE_LAT_ZERO_SHA = hashlib.sha256(b"fixture lat_zero").hexdigest()
+
+
 class Fixture:
     """Twelve real NPZ pairs, three real ROOT spectra and pinned source stand-ins."""
 
@@ -149,6 +159,7 @@ class Fixture:
         self.prediction_repo.mkdir()
         _git(self.prediction_repo, "init", "-q")
         pins = []
+        self.truths: dict[str, np.ndarray] = {}
         for index, playlist in enumerate(R.PLAYLISTS):
             rng = np.random.default_rng(np.random.SeedSequence([seed, index + 1]))
             reco = _reco(rows, rng)
@@ -164,7 +175,9 @@ class Fixture:
             np.savez(
                 signal,
                 MCreco=reco,
-                MCgen=_truth(rows, seed + index),
+                MCgen=self.truths.setdefault(
+                    playlist, _truth(rows, seed + index).astype(np.float32)
+                ),
                 w_reco=np.ones(rows),
                 pass_reco=passed,
                 pass_truth=np.ones(rows, dtype=bool),
@@ -185,6 +198,7 @@ class Fixture:
             pins.extend(f"{R.digest(path)}  {path}\n" for path in (signal, background))
         self.pins = root / "INPUTS.sha256"
         self.pins.write_text("".join(pins))
+        self.build_true_energy()
         inventory = root / "candidates.tsv"
         table = ["playlist_label\trelative_path\tsha256\tbytes\truntime_status\n"]
         edges = np.array([0, 1, 2, 4, 8, 16, 32, 64, 128], dtype=float)
@@ -218,6 +232,14 @@ class Fixture:
             "flux_root": str(self.flux),
             "flux_selection": selections,
             "data_rows_estimate": rows * 12 + 66,
+            "true_energy": {
+                "path": str(self.sidecar),
+                "sha256": R.digest(self.sidecar),
+                "npz_sha256": FIXTURE_LAT_ZERO_SHA,
+                "omnifiles": {
+                    playlist: pin(path) for playlist, path in self.omnifiles.items()
+                },
+            },
             "premise": {
                 "cv_numerator_is_selected_spectrum": True,
                 "generation_denominator_is_common": True,
@@ -243,6 +265,85 @@ class Fixture:
         }
         self.config_path = root / "config.json"
         self.save_config()
+
+    def build_true_energy(self, **changes: Any) -> None:
+        """Write a real-format truthx sidecar and twelve uproot omnifiles.
+
+        The fixture's true energy is its own mean-mass inversion, stored in MeV
+        and divided by 1000 exactly as the reader does.
+        """
+        self.true_energy: dict[str, np.ndarray] = {}
+        energies, identities = [], []
+        self.omni = self.root / "omnifiles"
+        self.omni.mkdir(exist_ok=True)
+        self.omnifiles: dict[str, Path] = {}
+        for index, playlist in enumerate(R.PLAYLISTS):
+            truth = self.truths[playlist]
+            proton, _, _ = R.reconstructed_energy(truth, R.M_PROTON)
+            neutron, _, _ = R.reconstructed_energy(truth, R.M_NEUTRON)
+            # Offset by 1e-6 from the inversion, far inside C-E3's bars, so a reader
+            # that silently fell back to the inversion is caught bitwise.
+            mev = ((proton + neutron) / 2).astype(np.float64) * 1000.0 * (1 + 1e-6)
+            self.true_energy[playlist] = mev / 1000.0
+            count = len(truth)
+            ids = np.column_stack(
+                [
+                    np.full(count, index),
+                    np.full(count, 1000 + index),
+                    np.arange(count) // 10,
+                    np.arange(count),
+                ]
+            ).astype(np.int64)
+            energies.append(mev)
+            identities.append(ids)
+            order = np.random.default_rng(index).permutation(count)
+            extra = 1
+            path = self.omni / f"runEventLoopOmniFold_RDX_{playlist}.root"
+            with uproot.recreate(path) as output:
+                output["mc_signal_reco"] = {
+                    "truthx_run": np.concatenate([ids[order, 1], [9999]]).astype(np.int32),
+                    "truthx_subrun": np.concatenate([ids[order, 2], [0]]).astype(np.int32),
+                    "truthx_evt": np.concatenate([ids[order, 3], [0]]).astype(np.int32),
+                    "MC": np.concatenate([truth[order, 0], np.zeros(extra)]).astype(np.float64),
+                    "MC_pz": np.concatenate([truth[order, 1], np.zeros(extra)]).astype(np.float64),
+                    "truthx_enu": np.concatenate([mev[order], np.ones(extra)]),
+                }
+            self.omnifiles[playlist] = path
+        mev = np.concatenate(energies)
+        truthx = np.column_stack([mev, *(np.zeros((4, len(mev))))])
+        mc_id = np.concatenate(identities)
+        meta = {
+            "schema": R.SIDECAR_SCHEMA,
+            "npz_sha256": FIXTURE_LAT_ZERO_SHA,
+            "rows": len(mev),
+            "playlists": [[playlist, str(self.omnifiles[playlist])] for playlist in R.PLAYLISTS],
+        }
+        arrays: dict[str, Any] = {
+            "truthx": truthx,
+            "truthx_names": np.array(R.SIDECAR_TRUTHX),
+            "mc_id": mc_id,
+            "mc_id_names": np.array(R.SIDECAR_IDS),
+            "meta": json.dumps(meta),
+        }
+        arrays.update(changes)
+        self.sidecar = self.root / "truthx_RDX_ALL.npz"
+        self.sidecar.unlink(missing_ok=True)
+        np.savez(self.sidecar, **arrays)
+        self.fixture_join = {
+            "status": "PASS",
+            "source": {"sha256": R.digest(self.sidecar)},
+            "spots": {},
+        }
+        for index, playlist in enumerate(R.PLAYLISTS):
+            chosen = R.spot_rows(playlist, len(self.truths[playlist]))
+            ids = identities[index][chosen]
+            self.fixture_join["spots"][playlist] = {
+                "rows": chosen.tolist(),
+                "run": ids[:, 1].tolist(),
+                "subrun": ids[:, 2].tolist(),
+                "event": ids[:, 3].tolist(),
+                "energy_GeV": self.true_energy[playlist][chosen].tolist(),
+            }
 
     def save_config(self) -> None:
         if not hasattr(self, "fixture_flux_spectra"):
@@ -283,10 +384,9 @@ class Fixture:
                         archive["pass_reco"],
                         archive["w_reco"],
                     )
-                proton, _, _ = R.reconstructed_energy(truth, R.M_PROTON)
-                neutron, _, _ = R.reconstructed_energy(truth, R.M_NEUTRON)
-                energy = np.where(passed, (proton + neutron) / 2, np.nan)
-                arrays, counts = {}, {}
+                true = self.true_energy[playlist]
+                energy = np.where(passed, true, np.nan)
+                arrays, counts = {"energy": true}, {}
                 for target in ("1D", "1M"):
                     factor, outside, patterns = R.mat_flux_swap(
                         energy,
@@ -324,6 +424,7 @@ class Fixture:
             },
             "spectra": self.fixture_flux_spectra,
             "factor_products": self.fixture_factor_products,
+            "true_energy": self.fixture_join,
         }
         extracted.write_text(json.dumps(record))
         self.config["flux_extract"] = {
@@ -609,13 +710,14 @@ def test_energy_algebra_only_and_controls() -> None:
             - 4 * energy * muon * np.sin(theta / 2) ** 2
         )
         np.testing.assert_allclose(squared_mass, truth[:, 4] ** 2, rtol=0, atol=1e-9)
-    assert len(R.energy_controls(truth, np.ones(600))) == 3
+    true = _energy(truth)
+    assert len(R.energy_controls(truth, np.ones(600), true)) == 3
     with pytest.raises(R.Refused, match="C_E3"):
-        R.energy_controls(truth, np.ones(600), scale=1.01)
+        R.energy_controls(truth, np.ones(600), true, scale=1.01)
     bad = truth.copy()
     bad[:, 0] = 10
     with pytest.raises(R.Refused, match="C_E1"):
-        R.energy_controls(bad, np.ones(600))
+        R.energy_controls(bad, np.ones(600), true)
 
 
 def test_energy_controls_each_stratum_and_bars() -> None:
@@ -625,12 +727,12 @@ def test_energy_controls_each_stratum_and_bars() -> None:
         selected = (truth[:, 1] >= low) & (truth[:, 1] < high)
         bad[selected, 3] *= 1.01
         with pytest.raises(R.Refused, match="C_E3"):
-            R.energy_controls(bad, np.ones(900))
-    part = R.energy_statistics(truth, np.ones(900), truth[:, 1])
+            R.energy_controls(bad, np.ones(900), _energy(truth))
+    part = R.energy_statistics(truth, np.ones(900), truth[:, 1], _energy(truth))
     part["strata"]["1.5:8"]["error"][:] = 0.0021
     with pytest.raises(R.Refused, match="C_E3"):
         R.evaluate_energy_controls([part])
-    part = R.energy_statistics(truth, np.ones(900), truth[:, 1])
+    part = R.energy_statistics(truth, np.ones(900), truth[:, 1], _energy(truth))
     error = part["strata"]["1.5:8"]["error"]
     error[: max(2, len(error) // 20)] = 0.031
     with pytest.raises(R.Refused, match="C_E3"):
@@ -646,7 +748,7 @@ def test_flux_range_step_function_and_gate() -> None:
     np.testing.assert_array_equal(factors, [1, 3, 3.5 / 1.5, 1])
     np.testing.assert_array_equal(outside, [True, False, False, True])
     truth = _truth(1000, 13)
-    part = R.energy_statistics(truth, np.ones(1000), truth[:, 1])
+    part = R.energy_statistics(truth, np.ones(1000), truth[:, 1], _energy(truth))
     controls = {"energy_parts": [part], "pb_weight": 1000.0, "outside_weight": 1.0}
     assert R.prediction_controls(controls)["outside_fraction"] == 0.001
     controls["outside_weight"] = 1.1
@@ -987,7 +1089,7 @@ def test_empty_support_flux_layout_and_cells(fixture: Fixture) -> None:
         + (energy - muon) ** 2
     )
     with pytest.raises(R.Refused, match="CE_SUPPORT"):
-        R.energy_controls(truth, np.ones(20))
+        R.energy_controls(truth, np.ones(20), energy)
     own = FluxHistogramDouble([0, 1], [-1])
     with pytest.raises(R.Refused, match="FLUX_SUPPORT"):
         R.mat_flux_swap(np.array([0.5]), own, own, FluxHistogramDouble([0, 1], [1]))
@@ -1008,7 +1110,9 @@ def test_swap_support_and_d2_finite_guards() -> None:
     with pytest.raises(R.Refused, match="SWAP_SUPPORT"):
         R.prediction_controls(
             {
-                "energy_parts": [R.energy_statistics(truth, np.ones(100), truth[:, 1])],
+                "energy_parts": [
+                    R.energy_statistics(truth, np.ones(100), truth[:, 1], _energy(truth))
+                ],
                 "pb_weight": 0,
                 "outside_weight": 0,
             }
@@ -2497,6 +2601,8 @@ def test_constrained_extract_protocol_roundtrip(
     sources.update(
         {Path(item["original_path"]): item["sha256"] for item in selected.values()}
     )
+    sidecar = fixture.config["true_energy"]
+    sources[Path(sidecar["path"])] = sidecar["sha256"]
     copies = {
         str(path.resolve()): {
             "staged": str(inputs.copy(path, checksum)),
@@ -2602,6 +2708,11 @@ def test_constrained_extract_protocol_roundtrip(
     ]
     assert all(row["key"] != "measured" for row in result["keys_read"])
     assert len(result["factor_products"]) == 12
+    for playlist, product in result["factor_products"].items():
+        with np.load(product["path"]) as archive:
+            assert archive["energy"].tobytes() == fixture.true_energy[playlist].tobytes()
+    assert result["true_energy"]["spots"] == fixture.fixture_join["spots"]
+    assert result["true_energy"]["source"]["sha256"] == sidecar["sha256"]
     assert result["spectra"]["1D"]["integral"] == 12
     assert result["spectra"]["1D"]["raw_file_integral_descriptive_only"] == 3
     # 6 opens of the numerator protocol, plus one units read of each of the 11 other .root files in the fifteen
@@ -5741,3 +5852,502 @@ def test_negative_check_after_exit_library_custody(
     assert len(calls) == 1 and "/usr/bin/strace" == calls[0][0]
     assert dependency.read_text() == "own staged dependency"
     assert not dependency.with_name(dependency.name + ".negative-check-held").exists()
+
+
+# --- Amendment 1: true E_nu from RDX's truthx sidecar (C-JOIN, units, C-E with true E_nu) ---
+
+
+def _sidecar_arrays(fixture: Fixture) -> dict[str, Any]:
+    with np.load(fixture.sidecar, allow_pickle=False) as archive:
+        return {key: np.array(archive[key]) for key in archive.files}
+
+
+def _repin_sidecar(fixture: Fixture, arrays: dict[str, Any]) -> None:
+    fixture.sidecar.unlink()
+    np.savez(fixture.sidecar, **arrays)
+    fixture.config["true_energy"]["sha256"] = R.digest(fixture.sidecar)
+    fixture.save_config()
+
+
+def _dump_rows(fixture: Fixture) -> dict[str, int]:
+    return {playlist: len(fixture.truths[playlist]) for playlist in R.PLAYLISTS}
+
+
+def test_true_energies_pass_and_bitwise_rows(fixture: Fixture) -> None:
+    energies, join = R.true_energies(fixture.inputs(), _dump_rows(fixture))
+    for playlist in R.PLAYLISTS:
+        assert energies[playlist].dtype == np.float64
+        assert energies[playlist].tobytes() == fixture.true_energy[playlist].tobytes()
+    assert join["spots"] == fixture.fixture_join["spots"]
+    assert join["block_rows"] == _dump_rows(fixture)
+    assert join["source"]["sha256"] == fixture.config["true_energy"]["sha256"]
+    assert join["status"] == "PASS" and join["units"] == "truthx_enu (MeV) / 1000"
+    low, high = R.ENERGY_MEDIAN_BAND_GEV
+    assert low <= join["median_GeV"] <= high
+
+
+def _meta(arrays: dict[str, Any]) -> dict[str, Any]:
+    return json.loads(str(arrays["meta"]))
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        "schema",
+        "npz_sha",
+        "rows",
+        "playlist_order",
+        "names",
+        "dtype",
+        "id_names",
+        "id_dtype",
+        "extra_member",
+        "index_range",
+        "index_decreasing",
+        "block_size",
+        "nonfinite",
+        "nonpositive",
+    ],
+)
+def test_true_energies_refusals(fixture: Fixture, case: str) -> None:
+    arrays = _sidecar_arrays(fixture)
+    meta = _meta(arrays)
+    if case == "schema":
+        meta["schema"] = "rdx-truthx-sidecar/2"
+    elif case == "npz_sha":
+        meta["npz_sha256"] = "0" * 64
+    elif case == "rows":
+        meta["rows"] += 1
+    elif case == "playlist_order":
+        meta["playlists"][0], meta["playlists"][1] = meta["playlists"][1], meta["playlists"][0]
+    elif case == "names":
+        arrays["truthx_names"] = arrays["truthx_names"][::-1]
+    elif case == "dtype":
+        arrays["truthx"] = arrays["truthx"].astype(np.float32)
+    elif case == "id_names":
+        arrays["mc_id_names"] = arrays["mc_id_names"][::-1]
+    elif case == "id_dtype":
+        arrays["mc_id"] = arrays["mc_id"].astype(np.int32)
+    elif case == "extra_member":
+        arrays["extra"] = np.zeros(1)
+    elif case == "index_range":
+        arrays["mc_id"][0, 0] = -1
+    elif case == "index_decreasing":
+        boundary = len(fixture.truths["1A"])
+        arrays["mc_id"][[boundary - 1, boundary], 0] = arrays["mc_id"][[boundary, boundary - 1], 0]
+    elif case == "block_size":
+        arrays["mc_id"][len(fixture.truths["1A"]) - 1, 0] = 1
+    elif case == "nonfinite":
+        arrays["truthx"][5, 0] = np.inf
+    else:
+        arrays["truthx"][5, 0] = 0.0
+    arrays["meta"] = json.dumps(meta)
+    _repin_sidecar(fixture, arrays)
+    with pytest.raises(R.Refused, match="C_JOIN"):
+        R.true_energies(fixture.inputs(), _dump_rows(fixture))
+
+
+@pytest.mark.parametrize("factor", [1e-3, 1e3])
+def test_true_energy_units_band_refuses_wrong_scale(fixture: Fixture, factor: float) -> None:
+    """A sidecar already in GeV (divided twice) or in keV (no division) is refused."""
+    arrays = _sidecar_arrays(fixture)
+    arrays["truthx"][:, 0] *= factor
+    _repin_sidecar(fixture, arrays)
+    with pytest.raises(R.Refused, match="C_JOIN_UNITS"):
+        R.true_energies(fixture.inputs(), _dump_rows(fixture))
+
+
+def test_true_energy_sidecar_is_required_and_staged_noatime(fixture: Fixture) -> None:
+    del fixture.config["true_energy"]
+    fixture.save_config()
+    with pytest.raises(R.Refused, match="C_JOIN"):
+        R.true_energies(fixture.inputs(), _dump_rows(fixture))
+
+
+def test_true_energy_sidecar_digest_mismatch(fixture: Fixture) -> None:
+    fixture.config["true_energy"]["sha256"] = "1" * 64
+    fixture.save_config()
+    with pytest.raises(R.Refused, match="INPUT_DIGEST"):
+        R.true_energies(fixture.inputs(), _dump_rows(fixture))
+
+
+def test_true_energy_read_is_staged_copy_only(fixture: Fixture) -> None:
+    inputs = fixture.inputs()
+    R.true_energies(inputs, _dump_rows(fixture))
+    sidecar = str(fixture.sidecar.resolve())
+    assert inputs.hashes[sidecar] == fixture.config["true_energy"]["sha256"]
+    assert Path(fixture.config["true_energy"]["path"]).resolve() in inputs.roots
+    with R.read_guards(inputs.roots):
+        with pytest.raises(R.Refused, match="PLAIN_OPEN"):
+            open(fixture.sidecar, "rb").close()
+
+
+def test_spot_rows_declared_seed() -> None:
+    rows = R.spot_rows("1B", 1000)
+    sample = np.random.default_rng(np.random.SeedSequence([20261124, 17, 2])).choice(
+        1000, 64, replace=False
+    )
+    np.testing.assert_array_equal(rows, np.unique(np.concatenate([[0, 999], sample])))
+    assert rows[0] == 0 and rows[-1] == 999
+    assert not np.array_equal(R.spot_rows("1A", 1000), rows)
+    # 1A's sample at 100,000 rows holds neither end, so both ends come from the rule.
+    wide = R.spot_rows("1A", 100_000)
+    seeded = np.random.default_rng(np.random.SeedSequence([20261124, 17, 1])).choice(
+        100_000, 64, replace=False
+    )
+    assert 0 not in seeded and 99_999 not in seeded
+    assert len(wide) == 66 and wide[0] == 0 and wide[-1] == 99_999
+    with pytest.raises(R.Refused, match="C_JOIN"):
+        R.spot_rows("1A", 63)
+
+
+def _spot_inputs(fixture: Fixture) -> tuple[Any, dict[str, Any], dict[str, Any]]:
+    inputs = fixture.inputs()
+    join = json.loads(json.dumps(fixture.fixture_join))
+    products = json.loads(json.dumps(fixture.fixture_factor_products))
+    return inputs, join, products
+
+
+def test_omnifile_spot_check_pass(fixture: Fixture) -> None:
+    inputs, join, products = _spot_inputs(fixture)
+    result = R.omnifile_spot_check(inputs, join, products)
+    assert result["status"] == "PASS"
+    assert all(item["matched"] == 64 for item in result["playlists"].values())
+    staged = [inputs.copies[key] for key in inputs.copies if "omnifiles" in str(key[0])]
+    assert len(staged) == 12 and all(path.is_relative_to(fixture.run) for path in staged)
+
+
+def _reader_with(change: Any) -> Any:
+    def reader(path: Path, tree: str, branches: Any) -> dict[str, Any]:
+        data = R.uproot_tree_reader(path, tree, branches)
+        if "RDX_1C" in path.name:
+            change(data)
+        return data
+
+    return reader
+
+
+def _entry_of(fixture: Fixture, playlist: str, row: int) -> int:
+    path = fixture.omnifiles[playlist]
+    data = R.uproot_tree_reader(path, "mc_signal_reco", R.OMNIFILE_BRANCHES)
+    return int(np.flatnonzero(data["truthx_evt"] == row)[0])
+
+
+@pytest.mark.parametrize("case", ["missing", "duplicate", "energy", "mc", "mc_pz"])
+def test_omnifile_spot_check_reader_refusals(fixture: Fixture, case: str) -> None:
+    inputs, join, products = _spot_inputs(fixture)
+    row = join["spots"]["1C"]["rows"][3]
+    entry = _entry_of(fixture, "1C", row)
+
+    def change(data: dict[str, Any]) -> None:
+        if case == "missing":
+            data["truthx_evt"][entry] = 10_000
+        elif case == "duplicate":
+            for key in list(data):
+                data[key] = np.append(data[key], data[key][entry])
+        elif case == "energy":
+            data["truthx_enu"][entry] = np.nextafter(data["truthx_enu"][entry], np.inf)
+        elif case == "mc":
+            data["MC"][entry] = np.float64(
+                np.nextafter(np.float32(data["MC"][entry]), np.float32(np.inf))
+            )
+        else:
+            data["MC_pz"][entry] = np.float64(
+                np.nextafter(np.float32(data["MC_pz"][entry]), np.float32(np.inf))
+            )
+
+    with pytest.raises(R.Refused, match="C_JOIN"):
+        R.omnifile_spot_check(inputs, join, products, reader=_reader_with(change))
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        "rows",
+        "unsorted",
+        "first",
+        "last",
+        "beyond",
+        "count",
+        "lengths",
+        "type",
+        "energy",
+        "product",
+        "status",
+        "source",
+        "playlists",
+        "omnifiles",
+    ],
+)
+def test_omnifile_spot_check_record_refusals(fixture: Fixture, case: str) -> None:
+    inputs, join, products = _spot_inputs(fixture)
+    if case == "product":
+        row = join["spots"]["1D"]["rows"][2]
+        path = Path(products["1D"]["path"])
+        with np.load(path) as archive:
+            arrays = {key: np.array(archive[key]) for key in archive.files}
+        arrays["energy"][row] = np.nextafter(arrays["energy"][row], np.inf)
+        changed = fixture.root / "changed-factors-1D.npz"
+        np.savez(changed, **arrays)
+        products["1D"] = {**products["1D"], "path": str(changed), "sha256": R.digest(changed)}
+    elif case == "rows":
+        join["spots"]["1D"]["rows"][2] += 1
+    elif case == "unsorted":
+        spot = join["spots"]["1D"]
+        for key in ("rows", "run", "subrun", "event", "energy_GeV"):
+            spot[key][2], spot[key][3] = spot[key][3], spot[key][2]
+    elif case in {"first", "last"}:
+        spot = join["spots"]["1D"]
+        position = 0 if case == "first" else -1
+        for key in ("rows", "run", "subrun", "event", "energy_GeV"):
+            del spot[key][position]
+    elif case == "beyond":
+        join["spots"]["1D"]["rows"][-1] += 1
+    elif case == "count":
+        spot = join["spots"]["1D"]
+        keep = [0, 1, len(spot["rows"]) - 1]
+        for key in ("rows", "run", "subrun", "event", "energy_GeV"):
+            spot[key] = [spot[key][index] for index in keep]
+    elif case == "lengths":
+        join["spots"]["1D"]["event"].pop()
+    elif case == "type":
+        join["spots"]["1D"]["rows"][4] = float(join["spots"]["1D"]["rows"][4])
+    elif case == "energy":
+        value = join["spots"]["1D"]["energy_GeV"][2]
+        join["spots"]["1D"]["energy_GeV"][2] = float(np.nextafter(value, np.inf))
+    elif case == "status":
+        join["status"] = "STOP"
+    elif case == "source":
+        join["source"]["sha256"] = "2" * 64
+    elif case == "playlists":
+        del join["spots"]["1P"]
+    else:
+        del inputs.config["true_energy"]["omnifiles"]["1P"]
+    with pytest.raises(R.Refused, match="C_JOIN"):
+        R.omnifile_spot_check(inputs, join, products)
+
+
+def test_omnifile_spot_check_requires_float32_mcgen(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    inputs, join, products = _spot_inputs(fixture)
+    original = inputs.key
+
+    def widened(name: str, key: str) -> Any:
+        value = original(name, key)
+        return value.astype(np.float64) if key == "MCgen" else value
+
+    monkeypatch.setattr(inputs, "key", widened)
+    with pytest.raises(R.Refused, match="C_JOIN"):
+        R.omnifile_spot_check(inputs, join, products)
+
+
+def test_omnifile_digest_mismatch_refuses(fixture: Fixture) -> None:
+    inputs, join, products = _spot_inputs(fixture)
+    inputs.config["true_energy"]["omnifiles"]["1A"]["sha256"] = "3" * 64
+    with pytest.raises(R.Refused, match="INPUT_DIGEST"):
+        R.omnifile_spot_check(inputs, join, products)
+
+
+def test_p0_records_both_join_parts(fixture: Fixture) -> None:
+    fixture.execute("pins")
+    record = fixture.execute("p0")
+    join = record["result"]["C-JOIN"]
+    assert join["part1"]["status"] == "PASS" and join["part2"]["status"] == "PASS"
+    assert set(join["part2"]["playlists"]) == set(R.PLAYLISTS)
+    assert all(row["key"] != "measured" for row in record["keys_read"])
+
+
+def test_p0_stops_without_join_record(fixture: Fixture) -> None:
+    del fixture.fixture_join["status"]
+    fixture.save_config()
+    fixture.execute("pins")
+    with pytest.raises(R.Refused, match="C_JOIN"):
+        fixture.execute("p0")
+
+
+@pytest.mark.parametrize("case", ["missing", "nonfinite", "nonpositive", "float32", "length"])
+def test_pinned_factors_energy_column_refusals(fixture: Fixture, case: str) -> None:
+    inputs = fixture.inputs()
+    products = json.loads(json.dumps(fixture.fixture_factor_products))
+    path = Path(products["1A"]["path"])
+    with np.load(path) as archive:
+        arrays = {key: np.array(archive[key]) for key in archive.files}
+    if case == "missing":
+        del arrays["energy"]
+    elif case == "nonfinite":
+        arrays["energy"][3] = np.inf
+    elif case == "nonpositive":
+        arrays["energy"][3] = -1.0
+    elif case == "float32":
+        arrays["energy"] = arrays["energy"].astype(np.float32)
+    else:
+        arrays["energy"] = arrays["energy"][:-1]
+    changed = fixture.root / "changed-factors-1A.npz"
+    np.savez(changed, **arrays)
+    products["1A"] = {**products["1A"], "path": str(changed), "sha256": R.digest(changed)}
+    with pytest.raises(R.Refused, match="FLUX_FACTORS"):
+        R.pinned_flux_factors(inputs, products, "1A", 64)
+
+
+def test_true_energy_c_e1_and_c_e3_bars() -> None:
+    truth = _truth(900, 61)
+    true = _energy(truth)
+    result = R.energy_controls(truth, np.ones(900), true)
+    for stratum in ("1.5:8", "8:15", "15:60"):
+        assert result[stratum]["C-E1"] == 1.0
+        assert result[stratum]["C-E2_median_inversion_deviation"] < 1e-12
+        assert result[stratum]["C-E2_report_weight_fraction"] == 1.0
+    with pytest.raises(R.Refused, match="C_E3"):
+        R.energy_controls(truth, np.ones(900), true * 1.01)
+    muon = np.sqrt(truth[:, 0] ** 2 + truth[:, 1] ** 2 + R.M_MUON**2)
+    for low, high in ((1.5, 8), (8, 15), (15, 60)):
+        selected = np.flatnonzero((truth[:, 1] >= low) & (truth[:, 1] < high))
+        low_energy = true.copy()
+        low_energy[selected[: max(1, len(selected) // 500 + 1)]] = (
+            muon[selected[: max(1, len(selected) // 500 + 1)]] * 0.99
+        )
+        with pytest.raises(R.Refused, match="C_E1"):
+            R.energy_controls(truth, np.ones(900), low_energy)
+
+
+def test_c_e1_has_no_denominator_clause() -> None:
+    """True energy needs no inversion: a negative inversion denominator is report-only."""
+    truth = _truth(900, 62)
+    true = _energy(truth)
+    truth[:3, 0] = 8.0  # inverted denominators turn negative on these rows
+    _, denominator, muon = R.reconstructed_energy(truth, R.M_PROTON)
+    assert np.all(denominator[:3] < 0)
+    true[:3] = muon[:3] + 1.0  # physical true energy, above the muon's
+    result = R.energy_controls(truth, np.ones(900), true)
+    assert result["1.5:8"]["C-E1"] == 1.0 and result["8:15"]["C-E1"] == 1.0
+    assert result["1.5:8"]["C-E2_median_inversion_deviation"] < 1e-12
+
+
+def test_true_energy_row_count_must_match_truth() -> None:
+    truth = _truth(30, 63)
+    with pytest.raises(R.Refused, match="ARRAY_SHAPE"):
+        R.energy_statistics(truth, np.ones(30), truth[:, 1], _energy(truth)[:-1])
+
+
+def test_custody_prepare_stages_and_protects_sidecar(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    custody, run, _roots = _prepare_fixture(fixture, monkeypatch)
+    _add_prepare_platform_mapping(custody, fixture, monkeypatch)
+    prepared = custody.prepare(R, fixture.config_path, fixture.config_sha, run)
+    original = str(fixture.sidecar.resolve())
+    assert prepared["files"][original]["sha256"] == fixture.config["true_energy"]["sha256"]
+    staged = Path(prepared["files"][original]["staged"])
+    assert staged.is_relative_to(run) and R.digest(staged) == R.digest(fixture.sidecar)
+    policy = json.loads((run / "trace-policy.json").read_text())
+    assert original in policy["protected_roots"]
+
+
+def test_custody_prepare_requires_sidecar_pin(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    custody, run, _roots = _prepare_fixture(fixture, monkeypatch)
+    _add_prepare_platform_mapping(custody, fixture, monkeypatch)
+    del fixture.config["true_energy"]
+    fixture.save_config()
+    with pytest.raises(custody.CustodyRefused, match="true-energy"):
+        custody.prepare(R, fixture.config_path, fixture.config_sha, run)
+
+
+def test_d2_predict_uses_product_energy(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The C-E controls read the pinned product's true energy, not an inversion."""
+    fixture.execute("pins")
+    fixture.execute("p0")
+    original = R.pinned_flux_factors
+
+    def scaled(*arguments: Any, **keywords: Any) -> Any:
+        arrays = dict(original(*arguments, **keywords))
+        arrays["energy"] = arrays["energy"] * 1.01
+        return arrays
+
+    monkeypatch.setattr(R, "pinned_flux_factors", scaled)
+    with pytest.raises(R.Refused, match="C_E3"):
+        fixture.execute("d2-predict")
+
+
+def test_p0_runs_spot_check_against_omnifiles(fixture: Fixture) -> None:
+    fixture.config["true_energy"]["omnifiles"]["1G"]["sha256"] = "4" * 64
+    fixture.save_config()
+    fixture.execute("pins")
+    with pytest.raises(R.Refused, match="INPUT_DIGEST"):
+        fixture.execute("p0")
+
+
+def test_true_energies_block_size_refusal_wide_fixture(
+    tmp_path: Path, standin_noatime: None
+) -> None:
+    """A moved block boundary is refused by the block check itself (70-row blocks)."""
+    wide = Fixture(tmp_path, rows=70)
+    R.true_energies(wide.inputs(), _dump_rows(wide))
+    shutil.rmtree(wide.run)
+    arrays = _sidecar_arrays(wide)
+    arrays["mc_id"][len(wide.truths["1A"]) - 1, 0] = 1
+    _repin_sidecar(wide, arrays)
+    with pytest.raises(R.Refused, match="playlist blocks"):
+        R.true_energies(wide.inputs(), _dump_rows(wide))
+
+
+def test_report_quantiles_empty_is_null() -> None:
+    assert R.report_quantiles(np.array([]), np.array([])) == {
+        "median": None,
+        "q99": None,
+        "max": None,
+    }
+    assert R.report_quantiles(np.ones(3), np.zeros(3))["median"] is None
+    assert R.report_quantiles(np.array([1.0, 2.0]), np.ones(2))["max"] == 2.0
+
+
+def test_p0_spot_check_precedes_any_other_use_of_flux_output(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The director's condition: a failing C-JOIN part 2 leaves flux4's products unread."""
+    fixture.execute("pins")
+    calls: list[str] = []
+    original_factors, original_units = R.pinned_flux_factors, R.common_flux_units
+
+    def factors(*arguments: Any, **keywords: Any) -> Any:
+        calls.append("pinned_flux_factors")
+        return original_factors(*arguments, **keywords)
+
+    def units(*arguments: Any, **keywords: Any) -> Any:
+        calls.append("common_flux_units")
+        return original_units(*arguments, **keywords)
+
+    def refuse(*_arguments: Any, **_keywords: Any) -> Any:
+        calls.append("omnifile_spot_check")
+        raise R.Refused("C_JOIN", "planted part-2 failure")
+
+    monkeypatch.setattr(R, "pinned_flux_factors", factors)
+    monkeypatch.setattr(R, "common_flux_units", units)
+    monkeypatch.setattr(R, "omnifile_spot_check", refuse)
+    with pytest.raises(R.Refused, match="planted part-2 failure"):
+        fixture.execute("p0")
+    assert calls == ["omnifile_spot_check"]
+    assert not (fixture.run / "p0.json").exists()
+
+
+@pytest.mark.parametrize("case", ["first", "last"])
+def test_omnifile_spot_rows_ends_wide_fixture(
+    tmp_path: Path, standin_noatime: None, case: str
+) -> None:
+    """With 200-row dumps the spots are a strict subset, so a missing end row is refused by its own rule."""
+    wide = Fixture(tmp_path, rows=200)
+    inputs = wide.inputs()
+    join = json.loads(json.dumps(wide.fixture_join))
+    products = json.loads(json.dumps(wide.fixture_factor_products))
+    assert R.omnifile_spot_check(inputs, join, products)["status"] == "PASS"
+    spot = join["spots"]["1E"]
+    assert len(spot["rows"]) > R.SPOT_SAMPLE
+    position = 0 if case == "first" else -1
+    for key in ("rows", "run", "subrun", "event", "energy_GeV"):
+        del spot[key][position]
+    with pytest.raises(R.Refused, match="first or last"):
+        R.omnifile_spot_check(inputs, join, products)
