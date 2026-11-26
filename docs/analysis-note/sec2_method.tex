@@ -112,7 +112,7 @@ The benchmark against MINERvA uses the two-dimensional (2D) muon kinematics $(p_
 
 \begin{table}[!t]
   \centering\small
-  \caption{Principal results. $Q_R$ is the reported 2D differential cross-section covariance. $C_{\mathrm{rep}}$ is the reported covariance of the sixteen cell integrals. Appendices~\ref{app:reproducibility-definitions} and~\ref{app:algorithm-classifier-controls} give the settings and diagnostic configurations.}
+  \caption{Principal results. $\CrepTwoD$ is the reported 2D differential cross-section covariance. It does not include the prior-shape term $C_{\mathrm{model}}$, which is reported beside it. $\CrepFiveD$ is the reported covariance of the sixteen cell integrals, and it includes $C_{\mathrm{model}}$. Appendices~\ref{app:reproducibility-definitions} and~\ref{app:algorithm-classifier-controls} give the settings and diagnostic configurations.}
   \label{tab:estimators}
   \label{tab:estimators-matrix}
   \label{tab:config-key}
@@ -124,7 +124,7 @@ The benchmark against MINERvA uses the two-dimensional (2D) muon kinematics $(p_
     \midrule
     2D muon cross section &
       2D &
-      Published muon grid for the central value, our grid for the \lrval{q-ncells}-bin covariance $Q_R$ (three $p_T$ edges differ by \SI{0.005}{GeV/c}, Sec.~\ref{sec:results-xsec}). \\
+      Published muon grid for the central value, our grid for the \lrval{q-ncells}-bin covariance $\CrepTwoD$ (three $p_T$ edges differ by \SI{0.005}{GeV/c}, Sec.~\ref{sec:results-xsec}). \\
     \addlinespace
     3D and 4D central values &
       Multidimensional &
@@ -132,7 +132,7 @@ The benchmark against MINERvA uses the two-dimensional (2D) muon kinematics $(p_
     \addlinespace
     \ResSixteen{} &
       Multidimensional &
-      Merged regions with reported covariance $C_{\mathrm{rep}}$. \\
+      Merged regions with reported covariance $\CrepFiveD$. \\
     \bottomrule
   \end{tabular}
 \end{table}

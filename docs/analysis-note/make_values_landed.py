@@ -46,8 +46,10 @@ READOUTS = {  # name: (path, sha256 as the OUTCOME record states it)
                 "fe5263e904f65892ce26b75fb279441230713c38675c2a3615c59d561c4f5ce1"),
     "g18old": (f"{FD}/receipts-cov2d/readout/G18/score_G18.json",
                "849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec"),
-    "vr": (f"{ST}/valid-region-20261107/receipts/read/readout.json",
-           "91bb604e3a62e2654e611750830e225061e5c0b0255b12455a23ac9be4eec84c"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): the valid-region readout's V_F copy (fd_vf_p2.py p2). Before:
+    # f"{ST}/valid-region-20261107/receipts/read/readout.json", 91bb604e3a62e2654e611750830e225061e5c0b0255b12455a23ac9be4eec84c
+    "vr": (f"{FD}/with-vf/p2/vatlas.vf.json",
+           "380682e69408b51b8299cb473254b7a5f3ae73113aa31797d02b85a41a80472a"),
     "pp": (f"{ST}/per-period-benchmark-20261106/receipts/read/readout.json",
            "4872df322a4e2e49ef009c4fa7eb78f273b8bea75a8a97855fd57451d229dca1"),
     "p1": (f"{FD}/receipts-1b/precheck-fd/p4/records/p4/readout.json",

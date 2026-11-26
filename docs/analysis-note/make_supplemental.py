@@ -8,7 +8,7 @@ The three files are generated only from the pinned data product (make_values_fiv
 round, fd_data_product_cpl.json, the product with the run-period block), never from its CSV side files:
   supplemental/xsec16_cells.csv          the 16 cells R00-R15: the lower and upper edge of each cell on each axis
   supplemental/xsec16_cross_section.csv  each cell's cross section, its uncertainty and its relative uncertainty
-  supplemental/xsec16_covariance.csv     the reported covariance C_total + C_resp + C_PL,5D, 16 x 16
+  supplemental/xsec16_covariance.csv     the reported covariance C_rep = C_e^infl + C_model + C_resp + C_PL,5D, 16 x 16
 --check exits 0 only if:
   1. each file's sha256 equals its pin in SUPP_PINS;
   2. regenerating from the pinned data product reproduces each file byte for byte;
@@ -33,10 +33,13 @@ import make_values_fived16 as mv  # noqa: E402
 OUT = HERE / "supplemental"
 NAMES = ("xsec16_cells.csv", "xsec16_cross_section.csv", "xsec16_covariance.csv")
 # name -> sha256 prefix. Re-pinned in the 5B text round, when the reported covariance became C_total + C_resp + C_PL,5D
-# (DECISION-20261030 item 2); the pins before it were 7b0fb5fdd6453725, 8d28a06aa00d3084 and c3fcfb11f0aa3dbd
-SUPP_PINS = {"xsec16_cells.csv": "10e06b0a9643d679", "xsec16_cross_section.csv": "adfb17d7fe7baed2",
-             "xsec16_covariance.csv": "f7e25107a68f4270"}
-REPORTED = "C_total_plus_C_resp_plus_C_PL5D"     # the data product's name for the reported covariance
+# (DECISION-20261030 item 2); the pins before it were 7b0fb5fdd6453725, 8d28a06aa00d3084 and c3fcfb11f0aa3dbd. Re-pinned
+# for C_e^infl (V_F, readings #1368; the V_F product, so every header changes too); the 5B pins were 10e06b0a9643d679,
+# adfb17d7fe7baed2 and f7e25107a68f4270
+SUPP_PINS = {"xsec16_cells.csv": "a524c32a3786761b", "xsec16_cross_section.csv": "48d6ec11c450e846",
+             "xsec16_covariance.csv": "1bab31c6a1d9af6c"}
+# C_e^infl (V_F, readings #1368): the V_F product's name for C_rep (before: "C_total_plus_C_resp_plus_C_PL5D")
+REPORTED = mv.ARMS["with"]["dp"]     # the data product's name for the reported covariance
 AXES = (("pt", "p_T", "GeV/c"), ("pz", "p_parallel", "GeV/c"), ("eavail", "E_avail", "GeV"), ("q3", "q_3", "GeV/c"),
         ("W", "W", "GeV"))
 
@@ -72,7 +75,7 @@ def build(d):
     s = io.StringIO()
     s.write("\n".join(header(dp_sha, "cross section") + [
         "# xsec: the cell-integrated cross section in cm^2/nucleon; sigma: the square root of the reported covariance's",
-        "# diagonal (C_total + C_resp + C_PL,5D), in cm^2/nucleon; relative_sigma = sigma / xsec."]) + "\n")
+        "# diagonal (C_rep = C_e^infl + C_model + C_resp + C_PL,5D), in cm^2/nucleon; relative_sigma = sigma / xsec."]) + "\n")
     w = csv.writer(s, lineterminator="\n")
     w.writerow(["cell", "xsec_cm2_per_nucleon", "sigma_cm2_per_nucleon", "relative_sigma"])
     for i, c in enumerate(cells):
@@ -82,7 +85,8 @@ def build(d):
     # the covariance
     s = io.StringIO()
     s.write("\n".join(header(dp_sha, "reported covariance") + [
-        "# The reported covariance C_total + C_resp + C_PL,5D of the cell-integrated cross sections, in (cm^2/nucleon)^2;",
+        "# The reported covariance C_rep = C_e^infl + C_model + C_resp + C_PL,5D of the cell-integrated cross sections, in",
+        "# (cm^2/nucleon)^2; C_e^infl is C_e with its eigenvalue ranks 1-4, 5-8 and 9-16 rescaled, and its coverage is not validated;",
         "# rows and columns in the cell order R00-R15. C_PL,5D, the run-period block, was added after the period differences",
         "# were seen; its size and coverage have not been independently validated."]) + "\n")
     w = csv.writer(s, lineterminator="\n")

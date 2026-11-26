@@ -650,6 +650,17 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
     ):
         spec = config[key]
         copy(Path(spec["path"]), spec["sha256"])
+    # Amendment 1 §4: the true-energy sidecar is a declared input like the rest,
+    # so the extract reads only this staged copy and its original is protected.
+    true_energy = config.get("true_energy")
+    require(
+        isinstance(true_energy, dict)
+        and bool(true_energy.get("path"))
+        and bool(true_energy.get("sha256")),
+        "a pinned true-energy sidecar is required",
+        guard="TRUE_ENERGY_PIN",
+    )
+    copy(Path(true_energy["path"]), true_energy["sha256"])
     probe = r.Inputs(config_path, config_sha, run / "prepare-check")
     probe.load_pins()
     for path, checksum in probe.pins.values():
