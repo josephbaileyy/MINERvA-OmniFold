@@ -128,8 +128,9 @@ def draw(arr, out, print_style=False):
         fig, ax = plt.subplots(1, 3, figsize=(16, 4.6))
     # panel 1: 2D ratio heatmap (cap q3/eavail axes at the last finite edge for labels)
     disp = ratio_eq.copy()
+    radius = np.nanmax(np.abs(disp - 1.0))
     im = ax[0].imshow(disp, origin="lower", aspect="auto", cmap="RdBu_r",
-                      norm=TwoSlopeNorm(vcenter=1.0, vmin=np.nanmin(disp), vmax=np.nanmax(disp)))
+                      norm=TwoSlopeNorm(vcenter=1.0, vmin=1.0 - radius, vmax=1.0 + radius))
     ax[0].set_xticks(range(len(q3_e) - 1)); ax[0].set_yticks(range(len(ea_e) - 1))
     ax[0].set_xticklabels([f"{q3_e[i]:.1f}-{q3_e[i+1]:.1f}" for i in range(len(q3_e) - 1)], rotation=45, fontsize=7)
     ax[0].set_yticklabels([f"{ea_e[i]:.1f}-{ea_e[i+1]:.1f}" for i in range(len(ea_e) - 1)], fontsize=7)

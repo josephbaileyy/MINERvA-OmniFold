@@ -313,6 +313,7 @@ docs/orchestration/DECISION-20261124b-joseph-b-design-185-bias-block-old-namespa
 docs/orchestration/DECISION-20261125-joseph-v1-scope-option-i-weights-hydrogen.md	tracked	LIVE	document		20261125	open		route-only	no
 docs/orchestration/DECISION-20261125b-joseph-5d-unbinned-release-cinfl-naming-wording.md	tracked	LIVE	document		20261125	open		route-only	no
 docs/orchestration/DECISION-20261125c-joseph-zenodo-weights-purity-out-deletions.md	tracked	LIVE	document		20261125	open		route-only	no
+docs/orchestration/DECISION-20261126-joseph-evw5d-completeness-option-a-scratch-kept-sec3.md	tracked	LIVE	document		20261126	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	tracked	ARCHIVAL	document	fe-fps-campaign	20261029	terminal		exact-path-only	yes
@@ -4838,6 +4839,10 @@ docs/orchestration/state/2d-closeout/stageF/methods/note-figround3-20261121/runs
 docs/orchestration/state/2d-closeout/stageF/methods/note-figround3-20261121/tools/compose_fig2_r3.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figround3-20261121/tools/compose_fig3_r3.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figround3-20261121/tools/run_r3.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figscales-20261125/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figscales-20261125/figs/q3_excess_projection.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figscales-20261125/figs/runperiod_steps.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figscales-20261125/tools/make_fig_runperiod_steps.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/figs/MEFHC_5iter_fig13.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/figs/MEFHC_5iter_pull_full.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -17593,6 +17598,9 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/p1/run/run/vf/deposit-candidate/predictions-reference.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/p1/stage-vfp1.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/p1/test_connect_vf_p1.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/readings/phase1_readings.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/readings/vf_readings_phase1.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/readings/vf_readings_phase1.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/deploy-tests.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/deploy.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts/f0-start.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
