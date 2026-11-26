@@ -79,26 +79,27 @@ the 2021 publication's final production histograms has not been established.
 
 **Two ways to obtain the true muon kinematics** (the smallest change is A):
 - **A. An AnaTuple pass and an exact join; the omnifile is unchanged.**
-  - The program is `precharge-20261125/measure.cpp` with five changes:
-    1. no 20 GeV skip and no reco-p∥ window;
-    2. the production reco cuts exactly (`:1710-1715`), with `reco::IsNeutrino` added;
-    3. the production signal definition and phase space (`:1717-1741`);
-    4. it writes only selected ν_μ CC rows that fail the phase space;
-    5. its columns are the event key (`mc_run`, `mc_subrun`, `mc_nthEvtInFile`), reco p_T and p∥, true p_T, p∥ and
-       θ_μ, the vertex, and the MnvTune v1 weight twice:
-       - in reco mode, as the background loop computes `w_bkg` (`:1440-1445`);
-       - in truth mode, as the signal loop computes `w_truth` (`:1131-1132`, true p_T and p∥ at `:1138-1139`).
-    6. It also writes every selected ν_μ CC row inside the phase space. This is for the control C-SIGW (§2.2), not as
-       an operand.
-  - The model is the same five reweighters as production (`measure.cpp:34-39` = `runEventLoopOmniFold.cpp:1745-1750`).
-  - Its rows are joined to 43f8cc16's `mc_background` rows on the exact triple (reco p_T, reco p∥, `w_bkg`).
-  - **C-JOIN (the director's ruling 1):**
-    - The join is one-to-one on the exact key. Every ν_μ CC background row of 43f8cc16 (labelled through C-SAME)
-      matches exactly one dump row, and every dump row that fails the phase space matches exactly one such background
-      row.
-    - Any tie (a key shared by two rows on either side) or any unmatched row is a STOP.
-    - After a STOP, route B comes back to the director, priced, before it runs. The fallback is declared here, not
-      chosen after the fact.
+  - **The program** is `2d-unfolding/oofvc/oofvc_dump.cpp`, one MC playlist per task. It is built in Test C's
+    environment (`precharge-20261125/testC/build.sh`). It mirrors the 2D event loop's setup (`:1695-1750`): the same
+    MinervaUniverse settings, the same Cutter (production reco cuts, signal definition and phase space, including
+    `MaxPzMu` and `MaxPtMu`), and MnvTune v1 as the Model.
+  - **Its rows:** every reco-tree entry the event loop selects (`isMCSelected`), with:
+    - both routings:
+      - the background loop's, `!(isSignal && isEfficiencyDenom)` in reco mode (`:1453-1456`);
+      - the signal loop's, in truth mode (`:1134-1135`);
+    - the signal loop's key-duplicate flag (`:1201-1218`);
+    - the event key (`mc_run`, `mc_subrun`, `mc_nthEvtInFile`);
+    - reco p_T and p∥ and the reco-mode weight, as the background loop computes `w_bkg` (`:1440-1445`) and the
+      signal loop `w_reco`;
+    - true p_T, p∥ and θ_μ and the truth-mode weight, as the signal loop computes `w_truth` (`:1131-1139`);
+    - the neutrino PDG, the current, the true vertex, and MAT's vertex flag.
+  - **One departure, for time.** `isMCSelected` is evaluated first, with weight 1, since the weight enters only the
+    Cutter's statistics. The weights are then computed for selected entries only, and duplicates are flagged among
+    selected phase-space entries (the copies of one event are selected alike). C-JOIN and C-SIGW compare every weight
+    bit for bit with the production trees, so any effect of the order is a STOP, not a result.
+  - **The model** is the same five reweighters as production (`runEventLoopOmniFold.cpp:1745-1750`).
+  - **The join** is `2d-unfolding/oofvc/oofvc_join.py`, with C-ROUTE, C-JOIN, C-SIGW and C-LAB (§2.2). Its output is
+    the driver's `--oofvc-rows` file and a record of the class sizes.
   - **Its advantage:** flag-off runs read the very file Tier 1 read, so the baseline is Tier 1's own numbers.
 - **B. An event-loop flag.** It is new, env-gated and default off: `MNV101_DUMP_BKG_TRUTHMU`. It writes
   `bkg_mu_true_pt`, `bkg_mu_true_pz` and `bkg_mu_true_theta` on `mc_background` from the truth accessors the signal
@@ -134,17 +135,29 @@ defaults to `production`. Under `minerva` it requires `--oofvc-rows <npz>`, the 
 option to E_R's argv and re-pins the driver.
 - **The join's output** is one row per moved event:
   - its `mc_background` entry index;
-  - its true p_T and p∥;
-  - its truth-mode weight, before the POT scale.
-  Only rows whose true muon is in the grid are included (step 3).
-- **Off (default):** every line runs as now. A test requires the output to be byte-identical to the unpatched driver's
-  on the fixture omnifile.
+  - its reco and true p_T and p∥;
+  - its reco-mode weight (`w_bkg`) and its truth-mode weight, both before the POT scale.
+  Only rows whose true muon is in the grid are included (step 3). Rows reconstructed in the grid and outside it are
+  both listed.
+- **Off (default):** every line runs as now. A test requires every histogram, parameter and record of the output to be
+  bit-for-bit the unpatched driver's on the fixture omnifile. The exceptions are:
+  - the run's paths (the driver, its helper and the output, which differ because the two test runs sit in different
+    trees);
+  - the driver's digest;
+  - `runConfig`'s record of the two new options at their defaults (`signal_convention` "production", `oofvc_rows`
+    null).
 - **`minerva`:**
   1. Background (`fill_bkg_reco_2d`, `:263`). The listed entries are left out of the histogram and the negweight
      injection. The rest is unchanged. The list is exactly the ν_μ CC rows (`bkg_nuPDG == 14 && bkg_current == 1`, the
      truth signal definition as `truth::IsNeutrino`, `truth::IsCC`) whose true muon is in the grid.
-  2. Signal (`collect_signal_arrays_2d`, `:673`). Those rows are appended with:
-     - reco (p_T, p∥) and `pass_reco` = `sim_background_pass` and the reco rectangle;
+  2. Signal (`collect_signal_arrays_2d`, `:673`). The listed rows whose reco is in the grid are appended.
+     - **Rows reconstructed outside the grid are not appended.** Under MINERvA's in-grid numerator they appear in
+       neither the numerator nor the denominator. For IBU the choice cannot matter: the result is
+       s_K · denominator / Σ_i M_ij, and T cancels (§2.1). For E_R, appending them as misses would add rows that
+       MINERvA's construction does not have.
+     - Under N they enter O_j (§2.1).
+     Each appended row carries:
+     - reco (p_T, p∥), with `pass_reco` true;
      - true (p_T, p∥) from route A's join or route B's branches;
      - `pass_truth` = the true rectangle only, with no θ_μ cut, because MINERvA's numerator has no phase-space cut;
      - weights as the signal loop sets them for its own rows: `w_reco` = `w_bkg` (reco mode, which is also the join
@@ -210,20 +223,28 @@ wherever they reconstruct. N is applied to IBU only.
 - REF-C2C1's unfolder updates u ← u · Rᵀ(y / R u) / ε with R = M / T and ε_j = Σ_i M_ij / T_j (`ref_c2c1.py:262-275`).
   By induction on the iterations, its K-th result is u_K = s_K / ε, where s_K is IBU "to selected events": prior
   Σ_i M_ij, response M_ij / Σ_i M_ij, as `compare.py`'s `unfold_selected`.
-- N replaces ε_j by ε^N_j = (Σ_i M_ij + O_j) / T_j. O_j is the reco-mode weight of the selected rows (`sim_pass`)
-  whose true muon is in cell j and whose reco lies outside the grid. So u^N_K = u_K · Σ_i M_ij / (Σ_i M_ij + O_j),
-  per truth bin, at every K. Where Σ_i M_ij = 0 the factor is 1.
+- **T cancels.** The driver's extraction then divides by the completeness c_j = T_j / D_j. D is
+  `hOFTruthDenom2D`, and T is the same w_truth sum over `pass_truth` rows that the IBU's prior uses. So the IBU's
+  cross section is s_K · D / Σ_i M_ij: MINERvA's "unfolded selected / (numerator / denominator)" with the in-grid
+  numerator. T does not enter. REF-C2C1's C-SIM relies on the same consistency.
+- N replaces ε_j by ε^N_j = (Σ_i M_ij + O_j) / T_j. O_j is the reco-mode weight × POT scale of the selected rows whose
+  true muon is in cell j and whose reco lies outside the grid. There are two sources:
+  - signal-tree rows with `sim_pass` and reco outside the grid;
+  - under R, the moved rows reconstructed outside the grid. These are taken from the join output, because they are
+    not appended (§1.3 step 2).
+- So u^N_K = u_K · Σ_i M_ij / (Σ_i M_ij + O_j), per truth bin, at every K. Where Σ_i M_ij = 0 the factor is 1.
 - **This is exactly the replay's construction** (`compare.py:128-129`: unfolded selected counts divided by numerator /
   generated). The out-of-grid selected events are counted as efficient. They are not unfolded, and the data outside
   the grid are not used. A unit test checks the identity numerically against `unfold_selected` on random problems.
-- **Code.** The driver (at M) adds one key, `selected`, to `collect_signal_arrays_2d`'s returned dict: the row's
-  `sim_pass`, for every kept row. No current consumer reads it, and the flag-off byte-identity test covers it.
-- **The lane's runner `oofvc_run.py`:**
-  - captures that dict;
+- **Code.** The driver's signal loader (at M) returns one extra key, `selected` (each kept row's `sim_pass`), but only
+  when called with `record_selected=True` or with moved rows. The production call passes neither.
+- **The lane's runner, `oofvc_run.py`:**
+  - wraps the loader to pass `record_selected=True` and keep its dict;
   - forms O_j;
-  - passes REF-C2C1's runner (unchanged) its own unfolder, which records u_K and u^N_K. The driver's fill and
-    extraction use u_K, as now;
-  - re-extracts u^N_K by the recorded extraction (`ref_c2c1.xsec_at_every_k`'s method).
+  - lets REF-C2C1's `run_unit` (unchanged) run the unit. Its unfolder is RooUnfoldBayes, so C-ROO runs, and the driver's
+    fill and extraction use u_K, as now;
+  - keeps the unit's capture (M, T, the trajectory and the recorded extraction);
+  - re-extracts u^N_K by `ref_c2c1.xsec_at_every_k`'s method.
   So c2_off and c2_R each give both D^· and D^·N from one driver run.
 - **N's price is 0 node-h.**
 
@@ -233,29 +254,47 @@ applicable", not "no change".**
 
 ### 2.2 Controls (each a STOP, before any operand is read)
 
-- **C-JOIN** (route A), as in §1.2: one-to-one on the exact key (reco p_T, reco p∥, `w_bkg`). Any tie or unmatched row
-  is a STOP, and route B then goes back to the director priced. **C-EVL** applies under route B.
-- **C-SIGW** (route A). The dump's in-phase-space ν_μ CC rows join one-to-one with 43f8cc16's selected
-  `mc_signal_reco` rows on (`sim`, `sim_pz`, `w_reco`). On every joined row, (`MC`, `MC_pz`, `w_truth`) are
-  bit-for-bit equal. This shows the dump's truth-mode weight and true kinematics are the signal loop's, on the
-  population where a reference exists.
-- **C-LAB:** the dump's ν_μ CC / non-ν_μ CC split of the joined background rows equals the 5D bkgaware file's labels
-  (C-SAME alignment) on every row.
-- **C-BASE:** `er_off` and `c2_off` reproduce Tier 1's E units:
-  - hXSec2D to ≤ 1e-8 relative (Tier 1's C-REF-OLD was 7.9e-12);
+- **C-ROUTE:** every dump row is routed to exactly one tree. The reco-mode routing (the background loop's) and the
+  truth-mode routing (the signal loop's) agree on every row.
+- **C-JOIN** (route A, `oofvc_lib.exact_join`): every `mc_background` entry of 43f8cc16 joins one-to-one with the
+  dump's background-routed rows on the exact key (reco p_T, reco p∥, `w_bkg`), compared as float64 bit patterns.
+  Ties follow the director's ruling of 2026-11-26:
+  - A tie is allowed only when every row in the group carries the same dump event key (playlist, `mc_run`,
+    `mc_subrun`, `mc_nthEvtInFile`) and bit-identical values, with equal counts on both sides. That is one event
+    filled twice; all its background rows move, as production keeps them.
+  - Any other tie, any count mismatch, or any unmatched row is a STOP.
+  - So is a group of more than 2 copies, or tied groups weighing more than 0.1% of the moved weight.
+  - The group count and weight are recorded.
+  - After a STOP, route B comes back to the director priced. **C-EVL** applies under route B.
+- **C-SIGW:** the selected `mc_signal_reco` rows (`sim_pass`) join one-to-one with the dump's signal-routed rows that
+  the signal loop keeps, on (`sim`, `sim_pz`, `w_reco`). The same tie rule and bound apply, the bound relative to the
+  joined weight. The kept rows exclude the key duplicates the signal loop drops (`:1201-1218`). On every pair, (`MC`,
+  `MC_pz`, `w_truth`) are bit-for-bit equal to the dump's. This shows the dump's truth-mode weight and true kinematics
+  are the signal loop's, on the population where a reference exists.
+- **C-LAB:** the joined background's oflow categories (FAKE_PS, FAKE_VTX, OTHER), on the OLD 14×16 reco grid and
+  POT-scaled, equal `oflow/split.json` cell by cell (relative 1e-9; absolute 1e-9 where split.json has 0), with equal
+  counts. They are computed with oflow's own fiducial formula (`oflow/remote3.sh`) from the dump's true vertex and
+  labels, so the check compares like with like. This replaces the 5D-file comparison of revision 2: the dump carries
+  the labels, and split.json is their committed record.
+- **C-BASE:** `er_off` and `c2_off` reproduce Tier 1's committed E units (`tier1/units/e/`):
+  - hXSec2D, and c2's cross sections at every K, to ≤ 1e-8 relative (Tier 1's C-REF-OLD was 7.9e-12);
   - D_ER to 2.121436 and D_IBU(K) to regenA3's set `e` at every K, each to ≤ 1e-6 relative.
 - **C-MOVE:**
-  - The weight removed from the background equals the weight added to the selected signal, per reco cell, to
-    ≤ 1e-12 relative, and total selected MC per reco cell is unchanged.
-  - Every moved row is oflow FAKE_VTX or FAKE_PS, and no OTHER row moves.
-- **C-FIX:** under R, `hOFTruthDenom2D`, the data histogram and the flux bins are bit-for-bit those of `off`.
+  - Per reco cell, the background removed (off minus R) equals the moved rows reconstructed in the grid, POT-scaled.
+    The tolerance is 1e-12 of that cell's production background, because the difference of two sums cancels.
+  - R's signal arrays grow by exactly the number of moved rows whose reco is in the grid.
+  - By construction (`oofvc_lib.moved_mask`), every moved row is ν_μ CC, so FAKE_VTX or FAKE_PS, and no OTHER row
+    moves.
+- **C-FIX:** under R, `hOFTruthDenom2D`, `hDataReco2D` and `hFlux_pt`, and the exposure, flux and nucleon parameters,
+  are bit-for-bit those of `off`.
 - **C-SIM:** REF-C2C1's C-SIM, rerun under R. IBU on the MC's own folded truth returns the truth denominator's cross
-  section through the full chain, to 1e-9.
+  section through the full chain, to 1e-9. **C-ROO** and **C-FILL** run as in REF-C2C1. The scorer refuses a c2
+  unit without C-ROO, so no numpy-unfolder test run can stand in.
 - **C-NID:** with O set to zero, u^N_K equals u_K bit for bit, in both c2 units.
-- **C-NSUM:** Σ_j O_j equals the reco-mode weight of the selected, truth-in-grid, reco-outside rows counted directly
-  from the captured dict, to ≤ 1e-12 relative.
-- **C-PINS:** the inputs (43f8cc16…, d40aea69…), the library (0b34e1e3…), the driver, the runner and the dump each
-  match their pins before and after.
+- **C-NSUM:** Σ_j (Σ_i M_ij + O_j) equals the reco-mode weight of the selected, truth-in-grid rows counted directly from
+  the signal loader's rows, plus the moved rows reconstructed outside the grid, to ≤ 1e-12 relative.
+- **C-PINS:** the inputs (43f8cc16…, d40aea69…), the library (0b34e1e3…), the driver, the runner, the lane's library and
+  the rows each match their pins before and after, in every unit process.
 
 ### 2.3 Operands
 
@@ -294,6 +333,10 @@ None names a cause, and none says the analysis is or is not "MINERvA-like".
 | LOWER | LITTLE CHANGE or INTERMEDIATE | The reclassification moves the binned IBU's distance; at this scale it does not move the OmniFold central value's |
 | LITTLE CHANGE | any | At this scale the binned IBU's distance does not depend on the reclassification |
 | HIGHER (either) | any | The reclassification increases that distance |
+| INTERMEDIATE | not HIGHER | No statement; the numbers are reported |
+
+The rows are read in this order of precedence: a HIGHER for either estimator takes the HIGHER row, whatever the other
+reads.
 
 **Secondary (N, IBU only):**
 
@@ -302,6 +345,7 @@ None names a cause, and none says the analysis is or is not "MINERvA-like".
 | LOWER | any | Counting selected events in the efficiency numerator wherever they reconstruct moves the binned IBU's distance down |
 | LITTLE CHANGE | any | At this scale the binned IBU's distance does not depend on the numerator's scope |
 | HIGHER | any | The numerator's scope increases the distance |
+| INTERMEDIATE | any | No statement; the numbers are reported |
 
 - r_RN is read with the same bands and reported beside r_N.
 - **E_R under N: not applicable.** There is no OmniFold counterpart (§2.1).
@@ -332,6 +376,33 @@ Adopting a convention, and any wording in the note, are Joseph's.
 - **Cap:** 2.0 node-h in all, N included, about 0.4% of the balance.
 - **Wall time:** step 1A takes under an hour once queued; 1B's longest task took 5 h; step 2 takes about 11 minutes.
 
+**The cluster steps.** The scripts are in `2d-unfolding/oofvc/launch/`. Each remote script runs from a clean clone of
+this lane at the tool commit, and its sha256 is pinned in the bound launcher. `fill_pins.sh` writes `launch/bound/`
+by command. Everything is written under `/pscratch/sd/j/josephrb/oofvc-20261126/`, and nothing is written to CFS. The
+job names are `oofvc_dump` and `oofvc_units`, a new family, so a fence round goes out before the first submission.
+1. **`dump-pilot`** (login node):
+   - the lane root;
+   - the tool clone;
+   - the build;
+   - one array task on 1L (shared, one core, 4 GB, `-t 01:00:00`).
+2. **`dump-rest`** (login node). It runs only after the pilot is COMPLETED with `routing_disagree 0`.
+   - The other eleven playlists' times are projected as the pilot's elapsed time × their MC reco entries over 1L's
+     (`precharge-20261125/file-counts.txt`).
+   - If any projection exceeds 1.75 h, nothing is submitted, and a resized request goes to the director.
+   - Otherwise the eleven tasks go at `-t 02:00:00`.
+3. **`units`** (login node, then one node). It runs only after all twelve dumps are done.
+   - The CV omnifile and the flux file are staged from CFS by `dd iflag=noatime`, re-hashed against their pins, with
+     the sources' atime recorded (Tier 1's form).
+   - The deploy tree is built by `make_tree.sh` (clone mode), and libRooUnfold.so is checked against its pin.
+   - `units.sbatch` is submitted (regular, one node, exclusive, `-t 00:45:00`). On that node:
+     - the join runs first, and a STOP there runs no unit;
+     - then the four units run at once, each `srun --exclusive -n1 -c 64` with E_R's thread environment.
+4. **`post`** (login node): sacct, the charge, and `post.tar.gz` of the records. The staged copies and the dump ROOT
+   files are hashed but not archived.
+5. **`fetch`**, then scoring on the laptop (`oofvc_score.py`).
+
+The staged copies and the dumps stay on scratch until a separate removal under its own GO.
+
 ### 2.6 Rulings (the director, 2026-11-26) and reads
 
 1. Route A, with B as the declared fallback. C-JOIN is one-to-one on the exact key. Any tie or unmatched row is a
@@ -358,4 +429,16 @@ Adopting a convention, and any wording in the note, are Joseph's.
   - the moved rows' weights set as the signal loop sets its own;
   - the join's output defined;
   - the motivating replay figures named as re-read;
-  - the file renamed from `OOFVC-DECLARATION-DRAFT.md`.
+  - the file renamed from `OOFVC-DECLARATION-DRAFT.md`;
+  - after 881f4dbc and before any read: moved rows reconstructed outside the grid are not appended; T's cancellation
+    from the IBU result is stated; O_j's two sources are named.
+- **Revision 3** (with the code, before any read):
+  - the director's tie rule and bound, from 2026-11-26, in C-JOIN and C-SIGW;
+  - the dump defined as built, with its one ordering departure stated;
+  - C-ROUTE added;
+  - C-LAB compares the dump-derived categories with `oflow/split.json`, so no 5D file is staged;
+  - C-MOVE's tolerance is stated relative to the cell's background, with the appended count;
+  - the flag-off identity's exceptions named;
+  - the readings tables' INTERMEDIATE rows and precedence written out;
+  - C-ROO required of every c2 unit;
+  - the cluster steps.
