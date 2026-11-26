@@ -1,0 +1,33 @@
+# pg-install-g2111a.py sha256 134b36225e90139b993ff0bc627c37ae53606c400c54193317c4fe526043de0f
+# ssh -F /dev/null -o BatchMode=yes -o User=josephrb -o IdentitiesOnly=yes -o IdentityFile=/Users/josephbailey/.ssh/nersc -o CertificateFile=/Users/josephbailey/.ssh/nersc-cert.pub -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/Users/josephbailey/.ssh/known_hosts -o ForwardAgent=no -o ForwardX11=no -o ClearAllForwardings=yes -o PermitLocalCommand=no -o ControlMaster=no -o ControlPath=none -o ConnectTimeout=30 saul.nersc.gov 'env -i PATH=/usr/bin:/bin LC_ALL=C /usr/bin/python3.11 -I -S -B -'
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3116c0s19b0n0:
+
+verdict GO stops []
+PG-RESULT {"dbconfig_sha256": "accaf71bb0ae10ddd1df30c2b3af8099312e0f5e59ab66d1f42cbab1f00b2950", "identity": {"checks": {"/global/common": true, "/pscratch": true, "CVMFS products": true, "hostname login<NN>": true}, "host": "login39", "pass": true}, "install_utc": "2026-11-26T20:31:46.770367+00:00", "n_members_pinned": 17, "root": "/pscratch/sd/j/josephrb/covfix-pg/products", "scan_problems": [], "schema": "covfix-pg-install/1", "start_utc": "2026-11-26T20:29:58.666871+00:00", "stops": [], "tarball_sha256": "ae159887772a54891fc4bddb189ab108d74c4a48db68c13ed7166524e8797590", "tarball_sha256_pin": "ae159887772a54891fc4bddb189ab108d74c4a48db68c13ed7166524e8797590", "tree_problems": [], "verdict": "GO"}
+
+# rc 0; receipt valid: verdict GO
