@@ -74,3 +74,55 @@ reader's description without reproducing it.
 - C9's "drain before the first final rename": each task renames only its own directory, after its own gevgen exits,
   by design.
 - C2's EACCES (see B2), and C4's different-pid race (see B4).
+
+## Outcome (the director's GO, 2026-11-25: all 16, Q1 (c), Q2 yes, Q3 yes)
+
+<!-- absence-ok: "untestable", "not exercised", "skipped" and "no abort" here record this host's test coverage, not a claim that a result does not exist -->
+
+All 16 blocking fixes are built as proposed, with Q1 (c), Q2 and Q3. The three rejections stand (the director
+accepted them as reasoned). Where the director asked for fixtures from the real format:
+- GENIE R-3_04_00's lookups (`Trace.xml`, `search_list`) are built from XmlParserUtils.cxx and AlgConfigPool.cxx at
+  that tag. They are not a recorded trace. B3's real traces remain the check.
+- The tests' `timeout` stub calls `setpgid(0, 0)` as coreutils' timeout.c does without `--foreground`.
+- hadd's output name is read from `pg_generate.sh`. B3 now runs hadd itself.
+
+**Order.** B1's fixture rebuild came after its code. For the rest the tests were written with the code. As the
+check, every new test was run against 7415d0c4's code: the new verify, Generate, Leak5, Replay, probe and install
+tests fail there. The exception is `test_hadds_output_is_the_merged_kind`, which checks a name that did not change.
+
+**Built beyond the list, each with a test:**
+- `_tstring` refuses a key whose names run past the file, which used to be a bare IndexError.
+- An unparsable spline file is a named `spline-unparsable` Fail.
+- `root-schemas.json` holds `gst` and `gst_merged`, both null.
+
+**First receipts run: 6 survivors, each closed by a test.**
+- Probe M103–M106 (core_pattern, after-terminal, terminal-malformed, unfinished-overwritten):
+  - `ProbeRound5` sat after `if __name__ == "__main__"` in test_pg_probe.py.
+  - The mutant runner runs that file as a script, so those tests never ran there. `-m unittest` did run them, which
+    is why the suite looked green.
+  - The block is now last.
+- Install M69 (an exec's hash unchecked): no payload had an exec with a bad hash. The case "an exec without its
+  hash" now does.
+- A2 M231 (this shell's parents killed):
+  - Under drain, the parent bash is outside the run's session, so it is never killed.
+  - Without the skip, the parent counts as an outsider with its cwd in W. That is a false STOP on a correct run.
+  - The test now runs a passing run and a failing run with the parent's cwd in W. Both must leave the parent alive
+    and must not say "outside this run".
+- A scratch run of only these six killed all six. The receipts in this commit are a full second run on the final
+  bytes.
+
+**Not exercised on this host:**
+- The node runner's `quiesce` needs /proc.
+- Writing the deletion record before each unlink needs an abort to be injected between them, and none can be.
+- The Linux paths of `survivor_scan` (/proc). The tests run its ps/lsof path.
+- The C19 Linux host fixture now opens a real program (strace where installed) on its descriptor, and is skipped on
+  macOS.
+- The mutant of `survivor_scan`'s real-path W is killed only where the temp directory sits behind a link, as on macOS.
+
+**cov2d (2026-11-25).**
+- No objection to C3 and C4 as built.
+- The gen-spec has six keys: env_set and env_keep, and TMPDIR in neither list.
+- README-pg.md's table carries this lane's split: env_set PG_DEPLOY_PIN and PATH=/usr/bin:/bin (GENIE_COMPAT and
+  ROOT628_* only if used); env_keep HOME, SLURM_JOB_ID and SLURM_CPUS_ON_NODE.
+- SCRATCH is in neither list. Only setup_salloc_env.sh reads it, for an overridden TMPDIR and an unused CODEX_HOME,
+  and the driver tests run without it. cov2d's spill scan of `$SCRATCH/tmp` therefore stands as built.

@@ -35,6 +35,7 @@ import hashlib
 import json
 import mmap
 import os
+import re
 import struct
 import sys
 from pathlib import Path
@@ -144,14 +145,15 @@ def inventory(tunes=None):
             add(f"out/work/u{u}/t*/{f}", N_TASKS)
     for p in ("seeds.json", "PRODUCTS.json", "out/PG-SHA256SUMS", PUBLISH_SUMS, LEAK_SCAN, "out/flux_phi_t_0_100.root",
               "out/argv_check.json", "out/messenger_check.json", "out/Messenger_pg.xml", "out/revision_start.json",
-              "out/revision_end.json", "out/revision_compare.json", "out/node_check.json",
+              "out/revision_end.json", "out/revision_compare.json", "out/node_check.json", "out/pin_hash_start.json",
+              "out/pin_hash_end.json",
               "out/prep/config-pg.json", "out/prep/f1-prep-SHA256SUMS", f"out/prep/ratios/{RUNG}/ratios.json",
               "run/queue.txt", "run/truths.txt", "run/deploy-status-before.txt", "run/deploy-status-setup.txt",
               "run/deploy-status-after.txt") + CHECKS:
         add(p)
     for lg in ("queue", "flux_and_splines", "xargs", "flux_check", "prep", "products", "sums", "trace_check",
                "tool_check_strace", "members_check", "dbconfig_check", "inventory", "env-q", "env-a1", "env-fc",
-               "env-p", "env-w", "env-i", "env-l", "reduce_check", "coverage", "revision", "publish", "node"):
+               "env-p", "env-w", "env-i", "env-l", "reduce_check", "coverage", "revision", "publish", "node", "pin_hash"):
         add(f"out/logs/{lg}.log")
     return req
 
@@ -241,22 +243,31 @@ def _codec(tag, body, usize):
     import lzma
     import zlib
     try:
-        if tag == b"ZL":
-            return zlib.decompress(body)
-        if tag == b"XZ":
-            return lzma.decompress(body)
+        if tag in (b"ZL", b"XZ"):          # the whole block is one stream, with nothing after it
+            d = zlib.decompressobj() if tag == b"ZL" else lzma.LZMADecompressor()
+            out = d.decompress(body)
+            if not d.eof or d.unused_data:
+                raise Refusal(f"root-block: a {tag.decode()} block is not exactly one complete stream")
+            return out
         if tag == b"L4":
             try:
                 import lz4.block
+                import xxhash
             except ImportError:
-                raise Refusal("root-codec-unavailable: an LZ4 block and no lz4 module")
-            return lz4.block.decompress(body[8:], uncompressed_size=usize)      # an 8-byte checksum first
+                raise Refusal("root-codec-unavailable: an LZ4 block and no lz4 or xxhash module")
+            if xxhash.xxh64(body[8:]).digest() != body[:8]:                    # ROOT's 8-byte XXH64 of the payload
+                raise Refusal("root-block: an LZ4 block's checksum does not match")
+            return lz4.block.decompress(body[8:], uncompressed_size=usize)
         if tag == b"ZS":
             try:
                 import zstandard
             except ImportError:
                 raise Refusal("root-codec-unavailable: a ZSTD block and no zstandard module")
-            return zstandard.ZstdDecompressor().decompress(body, max_output_size=usize)
+            d = zstandard.ZstdDecompressor().decompressobj()
+            out = d.decompress(body)
+            if d.unused_data or not getattr(d, "eof", True):
+                raise Refusal("root-block: a ZS block is not exactly one complete frame")
+            return out
     except Refusal:
         raise
     except Exception as e:
@@ -264,12 +275,42 @@ def _codec(tag, body, usize):
     raise Refusal(f"root-codec: a block in codec {tag.decode('latin-1')!r}, which this scan does not read")
 
 
+def _gap_blocks(gap):
+    """[(codec, inflated)]: every ROOT block header in a free gap's bytes whose block inflates (a gap keeps the
+    record it replaced, so its compressed bytes are read like any object's); a header that does not inflate is not one."""
+    out, i = [], 0
+    while True:
+        m = re.search(rb"ZL|XZ|L4|ZS", gap[i:])
+        if not m:
+            return out
+        q = i + m.start()
+        i = q + 1
+        if q + 9 > len(gap):
+            continue
+        csize, usize = int.from_bytes(gap[q + 3:q + 6], "little"), int.from_bytes(gap[q + 6:q + 9], "little")
+        if not csize or q + 9 + csize > len(gap):
+            continue
+        try:
+            x = _codec(gap[q:q + 2], gap[q + 9:q + 9 + csize], usize)
+        except Refusal:
+            continue
+        if len(x) == usize:
+            out.append((gap[q:q + 2].decode(), x))
+            i = q + 9 + csize
+
+
 def _tstring(buf, o):
+    if o >= len(buf):
+        raise Refusal("root-key: a key's names run past the file")
     n = buf[o]
     o += 1
     if n == 255:
+        if o + 4 > len(buf):
+            raise Refusal("root-key: a key's names run past the file")
         n = struct.unpack(">i", buf[o:o + 4])[0]
         o += 4
+    if n < 0 or o + n > len(buf):
+        raise Refusal("root-key: a key's names run past the file")
     return bytes(buf[o:o + n]).decode("latin-1"), o + n
 
 
@@ -287,15 +328,21 @@ def root_keys(path):
             end = struct.unpack(">q" if version >= 1000000 else ">i", buf[12:20 if version >= 1000000 else 16])[0]
             if not (0 < begin <= end <= size):
                 raise Refusal("root-header: its key range is outside the file")
+            if end != size:
+                raise Refusal("root-tail: bytes follow the last key (fEND)")
             pos = begin
             while pos < end:
-                if pos + 4 > size:
-                    raise Refusal("root-key: a key runs past the file")
+                if pos + 4 > end:
+                    raise Refusal("root-key: a key runs past fEND")
                 nbytes = struct.unpack(">i", buf[pos:pos + 4])[0]
-                if nbytes < 0:
+                if nbytes < 0:              # a free gap: what it held stays in its bytes, so its old blocks are read
+                    if pos - nbytes > end:
+                        raise Refusal("root-gap: a free gap runs past fEND")
+                    for tag, obj in _gap_blocks(bytes(buf[pos + 4:pos - nbytes])):
+                        yield "(free)", "", "", obj, [tag]
                     pos -= nbytes
                     continue
-                if nbytes < 18 or pos + nbytes > size:
+                if nbytes < 18 or pos + nbytes > end:
                     raise Refusal("root-key: a key's length is impossible")
                 kv, objlen, _, keylen, _ = struct.unpack(">hiIhh", buf[pos + 4:pos + 18])
                 o = pos + 18 + (16 if kv > 1000 else 8)
@@ -350,11 +397,12 @@ def schema_problems(workdir, files, schemas):
     for rel in files:
         if not rel.endswith(".gst.root"):
             continue
-        want = (schemas or {}).get("gst")
+        kind = "gst_merged" if fnmatch.fnmatchcase(rel, "out/gst/*_ALL.gst.root") else "gst"   # hadd's, or gntpc's
+        want = (schemas or {}).get(kind)
         if not want:
-            return ["root-schema-unset: no gst schema is recorded from B3"]
+            return [f"root-schema-unset: no {kind} schema is recorded from B3"]
         if root_schema(os.path.join(workdir, rel)) != want:
-            probs.append(f"root-schema: {rel} differs from B3's gst")
+            probs.append(f"root-schema: {rel} differs from B3's {kind}")
     return probs
 
 
@@ -366,17 +414,44 @@ def _count(buf, forms):
     return sum(buf.count(f) for f in forms)
 
 
+CONTAINERS = {b"BZh": "bzip2", b"\xfd7zXZ\x00": "xz", b"\x28\xb5\x2f\xfd": "zstd"}
+
+
+def _members(p):
+    """[(where, inflated bytes)] of a gzip file or every member of a zip (an npz); [] for anything else; a compressed
+    container of another kind is a STOP, since its bytes cannot be read here."""
+    import gzip
+    import zipfile
+    with open(p, "rb") as fh:
+        head = fh.read(6)
+    for magic, kind in CONTAINERS.items():
+        if head.startswith(magic):
+            raise Refusal(f"container-unread: a {kind} file, which this scan does not read")
+    try:
+        if head.startswith(b"\x1f\x8b"):
+            with gzip.open(p, "rb") as f:
+                return [("gzip", f.read())]
+        if head.startswith(b"PK\x03\x04"):
+            with zipfile.ZipFile(p) as z:
+                return [("zip", z.read(n)) for n in z.namelist()]
+    except (OSError, EOFError, zipfile.BadZipFile, NotImplementedError) as e:
+        raise Refusal(f"container-unread: a compressed file does not inflate ({type(e).__name__})")
+    return []
+
+
 def leak_scan(workdir, files, seeds):
-    """([(relpath, where)], stats): each outgoing file whose path, bytes, or a ROOT object's inflated bytes hold a
-    STOP form of any seed; stats count the int32 forms against their chance expectation. Never prints a seed."""
+    """([(relpath or None, where)], stats): each outgoing file whose path (None, "path": the path is not repeated),
+    bytes, a ROOT object's inflated bytes, or a gzip or zip member holds a STOP form of any seed. int32 forms are a
+    STOP in every ROOT object but a TBasket's payload, and only counted (against their chance expectation) in
+    baskets and raw bytes. The path and the bytes are scanned apart. Never prints a seed."""
     forms = [f for s in seeds for f in seed_forms(s)]
     f32 = [f for s in seeds for f in seed_int32_forms(s)]
     width = max(len(f) for f in forms + f32)
-    hits, stats = [], {"files": len(files), "bytes_raw": 0, "bytes_inflated": 0, "int32_count": 0, "codecs": {}}
+    hits, stats = [], {"files": len(files), "bytes_raw": 0, "bytes_inflated": 0, "int32_count": 0, "codecs": {},
+                       "objects_int32_checked": 0}
     for rel in files:
         if any(f in rel.encode() for f in forms):
-            hits.append((None, "path"))                    # the path itself is not repeated
-            continue
+            hits.append((None, "path"))
         p, hit = os.path.join(workdir, rel), None
         with open(p, "rb") as fh:
             tail = b""
@@ -387,15 +462,30 @@ def leak_scan(workdir, files, seeds):
                 if hit is None and any(f in buf for f in forms):
                     hit = "bytes"
                 tail = buf[-(width - 1):]
-        if hit is None and rel.endswith(".root"):
-            for _, _, _, obj, codecs in root_keys(p):
+            fh.seek(0)
+            is_root = fh.read(4) == b"root" or rel.endswith(".root")   # a .root that is not one refuses there
+        if hit is None and is_root:
+            for cls, _, _, obj, codecs in root_keys(p):
                 for c in codecs:
                     stats["codecs"][c] = stats["codecs"].get(c, 0) + 1
+                if cls != "TBasket":                       # a small object: a 4-byte seed there is no chance hit
+                    stats["objects_int32_checked"] += 1
+                    if any(f in obj for f in f32):
+                        hit = "int32-object"
+                        break
                 if not codecs:
-                    continue                                   # stored: its bytes were scanned raw
+                    continue                               # stored: its bytes were scanned raw
                 stats["bytes_inflated"] += len(obj)
                 stats["int32_count"] += _count(obj, f32)
                 if any(f in obj for f in forms):
+                    hit = "inflated"
+                    break
+        elif hit is None:
+            for kind, data in _members(p):
+                stats["codecs"][kind] = stats["codecs"].get(kind, 0) + 1
+                stats["bytes_inflated"] += len(data)
+                stats["int32_count"] += _count(data, f32)
+                if any(f in data for f in forms):
                     hit = "inflated"
                     break
         if hit:

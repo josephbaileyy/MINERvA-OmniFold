@@ -67,7 +67,8 @@ TOOLS = {"strace": ("/usr/bin/strace",), "gpg": ("/usr/bin/gpg", "/usr/bin/gpg2"
 RPM = ("/usr/bin/rpm", "/bin/rpm")
 LOCAL_FS = ("tmpfs", "ext4", "xfs", "btrfs", "ext3")
 TRACE_SET = ("trace=open,openat,openat2,access,faccessat,faccessat2,stat,lstat,newfstatat,statx,readlink,readlinkat,"
-             "chdir,fchdir,execve,execveat,rename,renameat,renameat2,link,linkat,symlink,symlinkat,unlink,unlinkat")
+             "chdir,fchdir,execve,execveat,rename,renameat,renameat2,link,linkat,symlink,symlinkat,unlink,unlinkat,"
+             "mkdir,mkdirat,mknod,mknodat,truncate")
 ENCRYPT = ["--batch", "--yes", "--pinentry-mode", "loopback", "--passphrase-fd", "3", "--no-symkey-cache",
            "--symmetric", "--cipher-algo", "AES256", "--s2k-digest-algo", "SHA512", "--force-mdc"]
 DECRYPT = ["--batch", "--pinentry-mode", "loopback", "--passphrase-fd", "3", "--no-symkey-cache", "--decrypt"]
@@ -526,14 +527,21 @@ def trace_complete(text, rc):
     for m in ms:
         pid, rest = m.group(1), m.group(2)
         seen.add(pid)
+        if pid in exits or pid in killed:
+            probs.append(f"after-terminal: process {pid} has a record after its exit")
+        if rest.startswith("+++ ") and not (re.fullmatch(r"\+\+\+ exited with \d+ \+\+\+", rest) or
+                                            re.fullmatch(r"\+\+\+ killed by SIG[A-Z0-9]+( \(core dumped\))? \+\+\+", rest)):
+            probs.append(f"terminal-malformed: process {pid}'s exit record does not parse")
         r = re.match(r"^<\.\.\. ([a-z0-9_]+) resumed>", rest)
         if r:
             if pending.pop(pid, None) != r.group(1):
                 probs.append(f"resume-mismatch: process {pid} resumed {r.group(1)} without its unfinished call")
         elif rest.endswith("<unfinished ...>"):
+            if pid in pending:
+                probs.append(f"unfinished-overwritten: process {pid} began a call before its last one resumed")
             sm = re.match(r"^([a-z0-9_]+)\(", rest)
             pending[pid] = sm.group(1) if sm else "?"
-        x = re.match(r"\+\+\+ exited with (\d+) \+\+\+", rest)
+        x = re.fullmatch(r"\+\+\+ exited with (\d+) \+\+\+", rest)
         if x:
             exits[pid] = int(x.group(1))
         if rest.startswith("+++ killed by"):
@@ -577,6 +585,17 @@ def strace_self_test(fd, parent=GNUPG_PARENT):
 
 
 # ------------------------------------------------------------- rev 3's reviewed mount, OpenPGP and socket helpers
+
+def core_record(proc="/proc"):
+    """{core_pattern, core_limit}: where a crash's core would go on this node, and the probe's own core limit (Q2:
+    recorded; pg_generate sets the job's limit to 0 before GENIE starts)."""
+    import resource
+    try:
+        pattern = open(os.path.join(proc, "sys/kernel/core_pattern")).read().strip()
+    except OSError:
+        pattern = None
+    return {"core_pattern": pattern, "core_limit": list(resource.getrlimit(resource.RLIMIT_CORE))}
+
 
 def proc_mount(mounts_text):
     """{options, hidepid}: /proc's mount, recorded (C3; the director: other users are excluded by the exclusive
@@ -917,6 +936,7 @@ def probe(ident=identity, repo=REPO, genie_root=GENIE_ROOT, pins=None, mounts=_m
         rec["verdict"] = "STOP"
         return rec
     rec["proc_mount"] = proc_mount(mounts_text)
+    rec["core"] = core_record()
     rec["mount_control"] = (control or mount_control)()
     if not rec["mount_control"]["pass"]:
         stops.append("mount-control: a walk into /proc did not refuse at its final directory")

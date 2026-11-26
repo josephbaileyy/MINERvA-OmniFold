@@ -204,3 +204,41 @@ director accepted them as disclosed (2026-11-25). Each logs a count-only line wh
 `REHEARSAL-CHECKLIST.md` records what the first real run's log shows.
 S9: `--rc 0` is the status of a step that has already passed (`need`), so trace-check's rc rule is documentation.
 
+
+## Round 5: the director's rulings on the codex-school and Sonnet 5.5 reads of 7415d0c4 (2026-11-25)
+
+<!-- absence-ok: "never", "no core" and "not killed" here state rules, not a claim that a result does not exist -->
+
+The reads and their dispositions are in `delta-read-r5/`. The director gave a GO on all 16 blocking fixes, failing
+tests first, with fixtures from the real format for every gate that compares GENIE or cluster output. A deterministic
+false STOP of a correct run counts as blocking. The three rejections are accepted as reasoned.
+
+**Q1, the CVMFS revision.** Option (c). Every pinned CVMFS file (the genie manifest's files and links, and each CVMFS
+tune's spline and README) is hashed at the run's start, before anything is traced, and again at its end. Both must
+equal the pins, any difference is a STOP, and both hash sets are recorded (`pin_hash_start.json`,
+`pin_hash_end.json`). S7's re-hash of the files the run read stays. A gated link is re-hashed by its real path.
+
+**Q2, crash collection.** `ulimit -c 0` is set in the job before GENIE starts (pg_generate and B3), so a crash writes
+no core under W or anywhere. B1 and `node-record` record core_pattern and the core limit. Site collectors are outside
+C3's scope beyond that record: if core_pattern pipes to one, it is recorded and the run continues.
+
+**Q3, the trace set.** It adds mkdir, mkdirat, mknod, mknodat and truncate. A successful one outside W is a write
+outside W. No role makes a link, so any successful link or symlink is a STOP. run_gevgen_v3.sh's new sha goes to the
+director before it runs.
+
+**D6 revised (B9).** The generation's session (setsid), not its process group, is scanned: GNU timeout gives each
+task a process group of its own. Every survivor in the session is KILLed at each poll until none is left or 30 s
+(monotonic) have passed. A process outside the session with a cwd under W, other than this shell's parent chain, is
+a STOP and is not killed. A process list that cannot be read is a STOP.
+
+**C4 revised (B5-B7).**
+- A ROOT file's keys and free gaps must tile fBEGIN to fEND exactly, with nothing after it.
+- A free gap's old blocks are inflated and scanned, and each block must be exactly one complete stream.
+- int32 forms are a STOP in every ROOT object but a TBasket's payload.
+- gzip and zip members are inflated, and any other compressed container is a STOP.
+- A file's path and bytes are scanned apart.
+- hadd's `*_ALL.gst.root` has its own schema, `gst_merged`, recorded by B3 from its own hadd.
+
+**The gen-spec (cov2d, the director, 2026-11-25).** Six keys. pg_generate's environment is exactly env_keep's
+inherited names, env_set's pinned literals, and TMPDIR=W/tmp. publish_guard's call site is cov2d's binary. The split
+proposed for the gen-spec is in README-pg.md.

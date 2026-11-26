@@ -31,7 +31,7 @@ pg_trace() {   # pg_trace NAME: PG_TRACE for one command, tracing to $PG_TRACE_D
   local fdd=/proc/self/fd; [ -d "$fdd" ] || fdd=/dev/fd
   [ -d "$PG_TRACE_DIR" ] && [ -e "$fdd/$PG_STRACE_FD" ] || { echo "refusing: no trace directory or strace" >&2; exit 2; }
   [ ! -e "$PG_TRACE_DIR/$1.trace" ] || { echo "refusing to overwrite $PG_TRACE_DIR/$1.trace" >&2; exit 2; }
-  PG_TRACE=("$fdd/$PG_STRACE_FD" -f -q -e "trace=open,openat,openat2,access,faccessat,faccessat2,stat,lstat,newfstatat,statx,readlink,readlinkat,chdir,fchdir,execve,execveat,rename,renameat,renameat2,link,linkat,symlink,symlinkat,unlink,unlinkat" -o "$PG_TRACE_DIR/$1.trace")
+  PG_TRACE=("$fdd/$PG_STRACE_FD" -f -q -e "trace=open,openat,openat2,access,faccessat,faccessat2,stat,lstat,newfstatat,statx,readlink,readlinkat,chdir,fchdir,execve,execveat,rename,renameat,renameat2,link,linkat,symlink,symlinkat,unlink,unlinkat,mkdir,mkdirat,mknod,mknodat,truncate" -o "$PG_TRACE_DIR/$1.trace")
 }
 
 gevgen_cmd() {   # F1's gevgen argv, verbatim, from N, SEED and MSG (and FLUX, TUNE, GENIE_SPLINES_V3): the one

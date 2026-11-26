@@ -774,6 +774,7 @@ class Probe(Tmp):
         r = self.run_probe(s)
         self.assertEqual(r["verdict"], "GO", r["stops"])
         self.assertEqual(r["proc_mount"], {"options": "rw,nosuid,hidepid=invisible", "hidepid": "invisible"})
+        self.assertEqual(sorted(r["core"]), ["core_limit", "core_pattern"])            # Q2, recorded with it
 
     def test_identity_failure_reads_nothing(self):
         called = []
@@ -884,6 +885,7 @@ class Launcher(Tmp):
                "pins_sha256": sha(json.dumps(pins, sort_keys=True).encode()), "record_sha256": pins["record_sha256"],
                "repo": {"pass": True, "xattrs": {"user.fqrn": "larsoft.opensciencegrid.org"}},
                "mount_control": {"pass": True}, "proc_mount": {"options": "rw,nosuid", "hidepid": "0"},
+               "core": {"core_pattern": "|/usr/lib/systemd/systemd-coredump %P", "core_limit": [0, -1]},
                "genie": {"problems": [], "files": {k: {"sha256": v, "match": True} for k, v in pins["genie_files"].items()},
                          "links": {k: {"target": v, "match": True} for k, v in pins["genie_links"].items()},
                          "listings": {k: {"names": v, "match": True} for k, v in pins["genie_listings"].items()}},
@@ -932,6 +934,9 @@ class Launcher(Tmp):
                  edit(lambda r: r["repo"]["xattrs"].update({"user.fqrn": "x"})),
                  edit(lambda r: r["mount_control"].update({"pass": False})),
                  edit(lambda r: r.pop("proc_mount")),                               # C3: /proc's options recorded
+                 edit(lambda r: r.pop("core")),                                     # Q2: the core-dump route
+                 edit(lambda r: r["core"].update({"core_pattern": None})),
+                 edit(lambda r: r["core"].update({"core_limit": [0]})),
                  edit(lambda r: r["proc_mount"].update({"options": None})),
                  edit(lambda r: r["genie"]["files"].pop(first)),
                  edit(lambda r: r["genie"]["files"][first].update(match=False)),
@@ -1025,6 +1030,37 @@ class ProbeRound4(Tmp):
                          {"options": "rw,nosuid,hidepid=invisible", "hidepid": "invisible"})
         self.assertEqual(P.proc_mount("proc /proc proc rw,nosuid 0 0\n"), {"options": "rw,nosuid", "hidepid": "0"})
         self.assertEqual(P.proc_mount(""), {"options": None, "hidepid": None})
+
+
+
+class ProbeRound5(Tmp):
+    """Round 5: the completeness codes pg_verify gained (B15), and the core-dump route recorded (Q2)."""
+
+    def test_terminal_records_are_exact(self):
+        codes = lambda t: {p.split(":")[0] for p in P.trace_complete(t, 0)}
+        ok = '9 openat(AT_FDCWD, "/x", O_RDONLY) = 3\n9 +++ exited with 0 +++\n'
+        self.assertEqual(codes(ok), set())
+        self.assertIn("terminal-malformed", codes(ok.replace("+++\n", "+++ junk\n")))
+        self.assertIn("after-terminal", codes(ok + '9 access("/y", F_OK) = 0\n'))
+        self.assertIn("unfinished-overwritten", codes('9 openat(AT_FDCWD, "/x", O_RDONLY <unfinished ...>\n'
+                                                      '9 access("/y", F_OK <unfinished ...>\n'
+                                                      '9 <... access resumed>) = 0\n9 +++ exited with 0 +++\n'))
+
+    def test_the_core_dump_route_is_recorded(self):
+        proc = Path(self.tmp) / "proc"
+        (proc / "sys/kernel").mkdir(parents=True)
+        (proc / "sys/kernel/core_pattern").write_text("core\n")
+        rec = P.core_record(str(proc))
+        self.assertEqual(rec["core_pattern"], "core")
+        self.assertEqual(len(rec["core_limit"]), 2)
+        self.assertEqual(P.core_record(str(proc / "none"))["core_pattern"], None)
+
+    def test_the_trace_set_is_pg_verifys(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("pgv", REPO / "3d-unfolding/genie/pg_verify.py")
+        v = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(v)
+        self.assertEqual(P.TRACE_SET, v.TRACE_SET)
 
 
 if __name__ == "__main__":

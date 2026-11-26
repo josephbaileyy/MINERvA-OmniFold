@@ -85,7 +85,8 @@ O_NOFOLLOW = getattr(os, "O_NOFOLLOW", 0)
 O_DIRECTORY = getattr(os, "O_DIRECTORY", 0)
 FD_DIR = "/proc/self/fd" if os.path.isdir("/proc/self/fd") else "/dev/fd"
 TRACE_SET = ("trace=open,openat,openat2,access,faccessat,faccessat2,stat,lstat,newfstatat,statx,readlink,readlinkat,"
-             "chdir,fchdir,execve,execveat,rename,renameat,renameat2,link,linkat,symlink,symlinkat,unlink,unlinkat")
+             "chdir,fchdir,execve,execveat,rename,renameat,renameat2,link,linkat,symlink,symlinkat,unlink,unlinkat,"
+             "mkdir,mkdirat,mknod,mknodat,truncate")
 GENIE_ROOT = "/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00"
 CVMFS_REPO = "/cvmfs/larsoft.opensciencegrid.org"
 PRIVATE_PRODUCTS = "/pscratch/sd/j/josephrb/covfix-pg/products"
@@ -208,7 +209,9 @@ PATH_ARG = {"open": 0, "access": 0, "stat": 0, "lstat": 0, "readlink": 0, "chdir
 # symlink's first string is the link's content, not a name it touches
 MUTATE = {"rename": [(None, 0), (None, 1)], "renameat": [(0, 0), (2, 1)], "renameat2": [(0, 0), (2, 1)],
           "link": [(None, 0), (None, 1)], "linkat": [(0, 0), (2, 1)], "symlink": [(None, 1)], "symlinkat": [(1, 1)],
-          "unlink": [(None, 0)], "unlinkat": [(0, 0)]}
+          "unlink": [(None, 0)], "unlinkat": [(0, 0)], "mkdir": [(None, 0)], "mkdirat": [(0, 0)],
+          "mknod": [(None, 0)], "mknodat": [(0, 0)], "truncate": [(None, 0)]}
+LINKS = ("link", "linkat", "symlink", "symlinkat")
 EXECS = ("execve", "execveat")
 PROBE_CALLS = ("access", "faccessat", "faccessat2", "stat", "lstat", "newfstatat", "statx")
 ROLE_PROGRAM = {"reduce": "awk", "graphs": "gspl2root", "gevgen": "gevgen", "coverage": "gevgen", "gntpc": "gntpc"}
@@ -240,14 +243,21 @@ def trace_problems(text, rc):
     for m in ms:
         pid, rest = m.group(1), m.group(2)
         seen.add(pid)
+        if pid in exits or pid in killed:
+            probs.append(f"after-terminal: process {pid} has a record after its exit")
+        if rest.startswith("+++ ") and not (re.fullmatch(r"\+\+\+ exited with \d+ \+\+\+", rest) or
+                                            re.fullmatch(r"\+\+\+ killed by SIG[A-Z0-9]+( \(core dumped\))? \+\+\+", rest)):
+            probs.append(f"terminal-malformed: process {pid}'s exit record does not parse")
         r = RESUMED.match(rest)
         if r:
             if pending.pop(pid, None) != r.group(1):
                 probs.append(f"resume-mismatch: process {pid} resumed {r.group(1)} without its unfinished call")
         elif rest.endswith("<unfinished ...>"):
+            if pid in pending:
+                probs.append(f"unfinished-overwritten: process {pid} began a call before its last one resumed")
             sm = SYSCALL.match(rest)
             pending[pid] = sm.group(1) if sm else "?"
-        x = re.match(r"\+\+\+ exited with (\d+) \+\+\+", rest)
+        x = re.fullmatch(r"\+\+\+ exited with (\d+) \+\+\+", rest)
         if x:
             exits[pid] = int(x.group(1))                     # an exit does not complete a call left unfinished
         if rest.startswith("+++ killed by"):
@@ -395,19 +405,19 @@ def _xsec_data(p):
 
 def trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest, private, w_root, pins,
                 genie_root=GENIE_ROOT, repo=CVMFS_REPO, private_root=PRIVATE_PRODUCTS, sha=None, system_pins=None,
-                gxmlpath=None, xsec_data=None, messenger=None, outputs=None):
+                gxmlpath=None, xsec_data=None, messenger=None, outputs=None, ghep_in=None):
     """The check's record: pass, problems (each "<code>: <detail>"), the gated files read, the programs executed,
     ROOT's config files, every watched probe."""
     try:
         return _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest, private, w_root, pins,
                             genie_root, repo, private_root, sha or sha_path, system_pins or {}, gxmlpath, xsec_data,
-                            messenger, outputs or [])
+                            messenger, outputs or [], ghep_in)
     except Exception as e:                                  # fail closed, with a reason no other test expects
         return {"role": role, "tune": tune, "pass": False, "problems": [f"internal-error: {type(e).__name__}"]}
 
 
 def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest, private, w_root, pins, genie_root,
-                 repo, private_root, sha, system_pins, gxmlpath, xsec_data, messenger, outputs):
+                 repo, private_root, sha, system_pins, gxmlpath, xsec_data, messenger, outputs, ghep_in):
     probs = trace_problems(text, rc)
     events, pprobs = parse_trace(text)
     probs += pprobs
@@ -498,7 +508,8 @@ def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest
     def fresh(e):            # the same process's last word on that name: absent (ENOENT) or just unlinked
         last = None
         for q in events[:e["i"]]:
-            if q["pid"] == e["pid"] and q.get("abs") == e["abs"] and (q["call"] in PROBE_CALLS or q.get("mut")):
+            if q["pid"] == e["pid"] and q.get("abs") == e["abs"] and (q["call"] in PROBE_CALLS or q.get("mut")
+                                                                     or q["call"].startswith("open")):
                 last = q
         return last is not None and ((last["call"] in PROBE_CALLS and not last["ok"] and last["errno"] == "ENOENT")
                                      or (last["call"] in ("unlink", "unlinkat") and last["ok"]))
@@ -509,11 +520,14 @@ def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest
                 and not config_type(p) and not p.endswith((".xml", ".xml.gz")) and not _is_so(p))
     opens = [e for e in events if e["call"].startswith("open") and e["ok"] and e["abs"]]
     for e in opens:          # every write stays in W
-        if (e["write_only"] or e["rdwr"] or e["creat"]) and not _under(e["abs"], w_root) and e["abs"] != "/dev/null":
+        if (e["write_only"] or e["rdwr"] or e["creat"] or e["trunc"]) and not _under(e["abs"], w_root) \
+                and e["abs"] != "/dev/null":
             probs.append(f"write-outside-w: {e['call']} of {e['abs']} for writing")
     for e in events:
         if e.get("mut") and e["ok"] and e["abs"] and not _under(e["abs"], w_root):
             probs.append(f"write-outside-w: {e['call']} of {e['abs']}")
+        if e.get("mut") and e["ok"] and e["call"] in LINKS:     # no role makes a link: one in W could lead out of it
+            probs.append(f"link-made: {e['call']} of {e['path']!r}")
     reads = [e for e in opens if not e["write_only"] and not e["directory"] and not e["opath"] and not output(e)]
     rec["directories"] = [{"path": e["abs"], "initial": e["pid"] == first} for e in opens if e["directory"]]
     rec["directories_opened"] = len(rec["directories"])
@@ -570,8 +584,11 @@ def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest
             e["pid"] == first and e["abs"] == os.path.normpath(messenger) for e in reads):
         probs.append("messenger-not-opened: the initial process did not read the coverage messenger")
     if role == "gntpc":      # its one input, the task's GHEP, and its one output, the gst
-        ghep = any(e["pid"] == first and os.path.dirname(e["abs"]) == cwd_n
-                   and re.fullmatch(r"gntp\.\d+\.ghep\.root", os.path.basename(e["abs"])) for e in reads)
+        read_gheps = {e["abs"] for e in reads if e["abs"].endswith(".ghep.root")}
+        ghep = (ghep_in is not None and read_gheps == {os.path.normpath(ghep_in)} and any(
+            e["pid"] == first and e["abs"] == os.path.normpath(ghep_in) for e in reads))
+        if ghep_in is None:
+            probs.append("gntpc-input-unbound: no GHEP from the task's gevgen trace is given")
         gst = any(e["pid"] == first and e["abs"] == os.path.join(cwd_n, "genie_v3.gst.root") and output(e) for e in opens)
         if not (ghep and gst):
             probs.append(f"gntpc-io: the initial process {'read' if ghep else 'did not read'} the task's GHEP and "
@@ -640,7 +657,8 @@ def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest
         entries = [x for x in (gxmlpath or "").split(":")]
         if gxmlpath is None or any(not x for x in entries) or entries != [os.path.normpath(xsec_data or "")]:
             probs.append(f"gxmlpath: {gxmlpath!r} is not exactly the tune's genie_xsec data directory")
-        order = [os.path.normpath(x) for x in entries if x] + [os.path.join(genie_root, d) for d in t["search_dirs"]]
+        gx = [os.path.normpath(x) for x in entries if x]
+        order = gx + [os.path.join(genie_root, d) for d in t["search_dirs"]]
 
         def exists(d, b):
             p = os.path.join(d, b)
@@ -650,41 +668,65 @@ def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest
                 return _manifest_file(private, os.path.relpath(p, private_root))[1] is not None
             return os.path.lexists(p)
         cfg_root = os.path.join(genie_root, t["search_dirs"][-1])
-        # GENIE's own list (XmlParserUtils GetXMLPathList): the order above, then $GENIE/src/Tools/Flux/GNuMINtuple;
-        # GetXMLFilePath returns the first that access() finds, so the probes before each searched read must walk
-        # that list from its start, every one but the last absent, to the path read
-        full = [os.path.normpath(x) for x in order] + [os.path.join(os.path.dirname(cfg_root), "src/Tools/Flux/GNuMINtuple")]
-        searched = lambda p: (p.endswith(".xml") and p != spl and (_under(p, cfg_root) or _under(p, full[-1]) or any(
-            _under(p, d) for d in order[:len(order) - len(t["search_dirs"])])))
+        gnumi = os.path.join(os.path.dirname(cfg_root), "src/Tools/Flux/GNuMINtuple")
+        # GENIE's lists (XmlParserUtils GetXMLPathList): GXMLPATH, then the tune's and its CMC directory once the tune
+        # is configured, then $GENIE/config and $GENIE/src/Tools/Flux/GNuMINtuple. Before the tune is configured (the
+        # messenger's lookups) the two tune directories are absent. GetXMLFilePath probes the list in order and
+        # returns the first path access() finds; AlgConfigPool then probes that path again before parsing it.
+        lists = {"tuned": [os.path.normpath(x) for x in order] + [gnumi], "untuned": gx + [cfg_root, gnumi]}
+        dirs = set(lists["tuned"])
+        searched = lambda p: (p.endswith(".xml") and p != spl and (_under(p, cfg_root) or _under(p, gnumi) or any(
+            _under(p, d) for d in gx)))
         read_ids = {e["i"] for e in reads}
         pend = {}
+
+        def walks(probes):     # split a basename's probes into searches: each begins at the list's head
+            out = []
+            for q in probes:
+                if not out or os.path.dirname(q["abs"]) == lists["tuned"][0]:
+                    out.append([])
+                out[-1].append(q)
+            return out
+
+        def walk_lists(w):     # the lists this one search follows, from its start to its first success
+            k = next((i for i, q in enumerate(w) if q["ok"]), None)
+            head, tail = (w, []) if k is None else (w[:k + 1], w[k + 1:])
+            if any(not q["ok"] or q["abs"] != head[-1]["abs"] for q in tail):   # only re-probes of the path found
+                return set(), None
+            got = [os.path.dirname(q["abs"]) for q in head]
+            ok = {n for n, L in lists.items() if got == L[:len(got)] and (k is not None or len(got) == len(L))}
+            return ok, (head[-1]["abs"] if k is not None else None)
+
         for e in events:
             if e["call"] in ("access", "faccessat", "faccessat2") and e.get("abs"):
                 pend.setdefault((e["pid"], os.path.basename(e["abs"])), []).append(e)
             elif e["i"] in read_ids and searched(e["abs"]):
                 p, b = e["abs"], os.path.basename(e["abs"])
                 probes = pend.pop((e["pid"], b), [])
-                walk = [q for q in probes if os.path.dirname(q["abs"]) in full]
-                odd = [q["abs"] for q in probes if q not in walk
-                       and not any(q["abs"] == os.path.normpath(d + "/" + p) for d in full)]
+                # an explicit path (GetXMLFilePath of "/x/y.xml") is tried as "<dir>//x/y.xml" in each directory,
+                # all absent, and then used as given: AlgConfigPool's re-probe of it may follow
+                expl = [q for q in probes if any(q["abs"] == os.path.normpath(d + "/" + p) for d in dirs)]
+                walk = [q for q in probes if q not in expl and os.path.dirname(q["abs"]) in dirs]
+                odd = [q["abs"] for q in probes if q not in walk and q not in expl]
                 if odd:
-                    probs.append(f"search-path: {b} probed at {odd[0]}, outside GENIE's expected list")
-                runs, cur = [], []
-                for q in walk:
-                    cur.append(q)
-                    if q["ok"]:
-                        runs.append(cur)
-                        cur = []
-                bad = cur or any([os.path.dirname(q["abs"]) for q in r] != full[:len(r)] for r in runs)
-                if bad or (runs and runs[-1][-1]["abs"] != p):
-                    probs.append(f"search-probes: {b} read at {p} after probes that do not walk GENIE's list to it")
-        for e in reads:
-            p, b = e["abs"], os.path.basename(e["abs"])
-            if not p.endswith(".xml") or p == spl or not (_under(p, cfg_root) or any(_under(p, d) for d in order[:len(order) - len(t["search_dirs"])])):
-                continue
-            want = next((os.path.join(d, b) for d in order if exists(d, b)), None)
-            if p != want:
-                probs.append(f"search-order: {b} read at {p}, but the search order gives {want}")
+                    probs.append(f"search-path: {b} probed at {odd[0]}, outside GENIE's lists")
+                if expl:
+                    tried = [next(d for d in lists["tuned"] if q["abs"] == os.path.normpath(d + "/" + p)) for q in expl]
+                    if (any(q["ok"] for q in expl) or tried not in lists.values()
+                            or any(not q["ok"] or q["abs"] != p for q in walk)):
+                        probs.append(f"search-probes: {b} read at {p} as an explicit path GENIE did not try in full")
+                    continue
+                ws = walks(walk)
+                if not ws:
+                    probs.append(f"search-probes: {b} read at {p} with no search before it")
+                    continue
+                fits = [walk_lists(w) for w in ws]
+                if any(not f[0] for f in fits) or fits[-1][1] != p:
+                    probs.append(f"search-probes: {b} read at {p} after probes that do not walk GENIE's lists to it")
+                    continue
+                wants = {next((os.path.join(d, b) for d in lists[n] if exists(d, b)), None) for n in fits[-1][0]}
+                if p not in wants:
+                    probs.append(f"search-order: {b} read at {p}, but the search order gives {sorted(map(str, wants))}")
 
         want = {t["model_configuration"], t["event_generator"], t["tune_generator_list"],
                 t["model_configuration"].rsplit("/config/", 1)[0] + "/config/master_config.xml"}
@@ -839,44 +881,42 @@ def argv_problems(script_text):
     if not (cov and gen) or not any(cl[i:i + 3] == tail for i in range(len(cl))) or sets != [
             "    TUNE=$1; SPLDIR=$2; WORK=$3; FLUX=$4; MSGFILE=$5", tail[1]]:
         probs.append("argv-coverage: the coverage mode does not set exactly N=1, the public seed and its messenger")
-    elif not re.search(r"^    TUNE=\$1; SPLDIR=\$2; N=\$3; SEED=\$4; WORK=\$5; FLUX=\$6$", gen.group(1), re.M) or \
-            '    MSG="$GENIE/config/Messenger_laconic.xml"' not in gen.group(1).splitlines():
+    elif [ln for ln in gen.group(1).splitlines() if not ln.lstrip().startswith("echo ")
+          and inputs & set(re.findall(r"(?:^|[;\s])([A-Z_][A-Z0-9_]*)=", ln))] != [
+            "    TUNE=$1; SPLDIR=$2; N=$3; SEED=$4; WORK=$5; FLUX=$6", '    MSG="$GENIE/config/Messenger_laconic.xml"']:
         probs.append("argv-genie: the genie mode's N, SEED or MSG is not F1's")
     return probs
 
 
 def _spline_keys(path, pairs=None):
-    """({(nu, tgt): {(tune, spline name): (nknots, its knots' text)}}, [duplicated (tune, name)]) of a GENIE spline
-    XML (gzipped or not), streamed; with pairs, only those (nu, tgt) are kept."""
+    """({(nu, tgt): {(tune, spline name): (nknots, knots counted, the knots' (E, xsec) values)}}, [duplicated
+    (tune, name)]) of a GENIE spline XML (gzipped or not), parsed as an XML document the way GENIE's libxml2 reads it,
+    so a spline inside a comment is not one; with pairs, only those (nu, tgt) are kept."""
     import gzip
+    import xml.etree.ElementTree as ET
     op = gzip.open if path.endswith(".gz") else open
-    out, dups, tune, cur, buf = {}, [], None, None, []
-    with op(path, "rt", errors="replace") as f:
-        for ln in f:
-            t = re.search(r'<genie_tune name="([^"]*)"', ln)
-            if t:
-                tune = t.group(1)
-            if cur is None:
-                if "<spline " not in ln:
-                    continue
-                name = re.search(r'name="([^"]+)"', ln)
-                kn = re.search(r'nknots="(\d+)"', ln)
-                if not name:
-                    continue
-                fields = dict(re.findall(r"(?:^|[;/])(nu|tgt):([^;]+)", name.group(1)))   # genie::Alg/Cfg/nu:14;tgt:..
-                cur, buf = ((fields.get("nu"), fields.get("tgt")), (tune, name.group(1)), kn.group(1) if kn else None), []
-                ln = ln.split(">", 1)[1] if ">" in ln else ""
-            if "</spline>" in ln:
-                buf.append(ln.split("</spline>", 1)[0])
-                pair, key, kn = cur
-                if pairs is None or pair in pairs:
-                    d = out.setdefault(pair, {})
-                    if key in d:
-                        dups.append(key)
-                    d[key] = (kn, " ".join("".join(buf).split()))
-                cur = None
-            else:
-                buf.append(ln)
+    out, dups, tune = {}, [], None
+    norm = lambda x: " ".join((x or "").split())
+    with op(path, "rb") as f:
+      try:
+        for ev, el in ET.iterparse(f, events=("start", "end")):
+            if ev == "start" and el.tag == "genie_tune":
+                tune = el.get("name")
+            if ev != "end" or el.tag != "spline":
+                continue
+            name = el.get("name") or ""
+            fields = dict(re.findall(r"(?:^|[;/])(nu|tgt):([^;]+)", name))   # genie::Alg/Cfg/nu:14;tgt:...
+            pair, key = (fields.get("nu"), fields.get("tgt")), (tune, name)
+            knots = tuple((norm(k.findtext("E")), norm(k.findtext("xsec"))) if k.find("E") is not None
+                          else (norm(k.text), "") for k in el.findall("knot"))
+            if name and (pairs is None or pair in pairs):
+                d = out.setdefault(pair, {})
+                if key in d:
+                    dups.append(key)
+                d[key] = (el.get("nknots"), len(knots), knots)
+            el.clear()
+      except (ET.ParseError, EOFError) as e:
+        raise Fail(f"spline-unparsable: {os.path.basename(path)} is not a well-formed XML document") from e
     return out, dups
 
 
@@ -891,6 +931,8 @@ def reduce_problems(source, reduced, pairs):
     (src, sd), (red, rd) = _spline_keys(source, pairs), _spline_keys(reduced, pairs)
     probs = [f"reduce-duplicate: {w} names {k[1]} twice (tune {k[0]})" for w, ds in (("source", sd), ("reduced", rd))
              for k in sorted(set(ds), key=str)]
+    probs += [f"reduce-knots: {w} {k[1]} declares {v[0]} knots and has {v[1]}" for w, d in (("source", src), ("reduced", red))
+              for kv in d.values() for k, v in sorted(kv.items(), key=str) if v[0] != str(v[1])]
     for pair in sorted(pairs):
         s, r = src.get(pair, {}), red.get(pair, {})
         if not s:
@@ -981,14 +1023,26 @@ def _kv(xs):
     return out
 
 
+def created_ghep(text, cwd):
+    """The one GHEP a gevgen trace created (an O_CREAT open of gntp.<run>.ghep.root, resolved against cwd), or None."""
+    events, _ = parse_trace(text)
+    got = {os.path.normpath(os.path.join(cwd, e["path"])) for e in events if e["call"].startswith("open") and e["ok"]
+           and e.get("creat") and re.fullmatch(r"gntp\.\d+\.ghep\.root", os.path.basename(e["path"]))
+           and e["dirfd"] == "AT_FDCWD"}
+    return got.pop() if len(got) == 1 else None
+
+
 def cmd_trace(a):
     try:
         text = open(a.trace).read() if os.path.exists(a.trace) else ""
+        ghep = None
+        if a.ghep_from_trace:
+            ghep = created_ghep(open(a.ghep_from_trace).read(), a.cwd)
         pins = _kv((a.pin or []) + (a.w_pin or []))
         rec = trace_check(text, a.rc, a.role, a.tune, a.spline or None, a.spline_sha256, a.cwd, json.load(open(a.record)),
                           json.load(open(a.manifest))["members"], json.load(open(a.private_members))["members"],
                           os.path.normpath(a.w_root), pins, system_pins=_kv(a.system_pin), gxmlpath=a.gxmlpath,
-                          xsec_data=a.xsec_data, messenger=a.messenger, outputs=a.output)
+                          xsec_data=a.xsec_data, messenger=a.messenger, outputs=a.output, ghep_in=ghep)
     except Exception as e:
         rec = {"role": a.role, "tune": a.tune, "pass": False, "problems": [f"internal-error: {type(e).__name__}"]}
     if os.path.exists(a.out):
@@ -1035,7 +1089,7 @@ def revision_problems(start, end, records, repo=CVMFS_REPO, sha=None):
         return probs
     files = []
     for r in records:
-        files += [(x["path"], x.get("sha256"), x.get("match") is True) for x in r.get("gated") or []]
+        files += [(os.path.realpath(x["path"]), x.get("sha256"), x.get("match") is True) for x in r.get("gated") or []]
         files += [(x["real"], x.get("sha256"), x.get("sha256") is not None)
                   for k in ("root_config", "libraries", "execs") for x in r.get(k) or []]
     files = [f for f in files if _under(os.path.normpath(f[0]), repo)]
@@ -1049,6 +1103,46 @@ def revision_problems(start, end, records, repo=CVMFS_REPO, sha=None):
         if not ok or got != want:
             probs.append(f"revision-rehash: {path} no longer matches its pin")
     return probs
+
+
+def pin_hash(manifest, products, pins, sha=None):
+    """{files, links, hashes, problems}: every regular file of the genie manifest under products (CVMFS's products
+    directory) and every extra pin (path -> sha256) re-hashed now, and each manifest link's target read; all must
+    equal the pins (the director's Q1, 2026-11-25: at the run's start and its end)."""
+    sha = sha or sha_path
+    hashes, probs, links = {}, [], 0
+    want = {os.path.join(products, rel): (v.get("type"), v.get("sha256") or v.get("target")) for rel, v in manifest.items()}
+    want.update({os.path.normpath(k): ("file", v) for k, v in pins.items()})
+    for path, (typ, pin) in sorted(want.items()):
+        if typ == "symlink":
+            links += 1
+            try:
+                ok = os.readlink(path) == pin
+            except OSError:
+                ok = False
+            if not ok:
+                probs.append(f"pin-link: {path} does not point where the manifest says")
+            continue
+        if typ != "file":
+            continue
+        try:
+            got = sha(path)
+        except (OSError, Fail):
+            got = None
+        hashes[path] = got
+        if got != pin:
+            probs.append(f"pin-mismatch: {path} does not match its pin")
+    return {"check": "pin-hash", "files": len(hashes), "links": links, "hashes": hashes, "problems": probs,
+            "pass": bool(hashes) and not probs}
+
+
+def cmd_pin_hash(a):
+    try:
+        rec = pin_hash(json.load(open(a.manifest))["members"], a.products, _kv(a.pin or []))
+    except Exception as e:
+        rec = {"check": "pin-hash", "pass": False, "problems": [f"internal-error: {type(e).__name__}"]}
+    _out(rec)
+    return 0 if rec["pass"] else 1
 
 
 def cmd_revision_compare(a):
@@ -1193,6 +1287,96 @@ def host_checks(fd, tmp, roots, mountinfo_text=None, fd_dir=FD_DIR, run=subproce
     return c, why
 
 
+def survivor_scan(w, sid, skip, proc="/proc", run=subprocess.run):
+    """(own, foreign): the live pids (zombies aside, and skip, this scan and its parent) in the generation's session
+    sid, and those outside it whose cwd lies under w. GNU timeout puts each task in a process group of its own, but a
+    setsid session survives it and any reparenting. A process list that cannot be read is a Fail."""
+    skip = set(skip) | {os.getpid(), os.getppid()}
+    w = os.path.realpath(w)                  # the kernel reports cwds by their real path
+    if os.path.isdir(os.path.join(proc, "self")):
+        try:
+            pids = [int(d) for d in os.listdir(proc) if d.isdigit()]
+        except OSError as e:
+            raise Fail(f"survivors-unlisted: {proc} cannot be listed ({e.strerror})")
+
+        def state(p):
+            try:
+                return open(os.path.join(proc, str(p), "stat")).read().rsplit(")", 1)[1].split()[0]
+            except (OSError, IndexError):
+                return None
+
+        def cwd(p):
+            try:
+                return os.readlink(os.path.join(proc, str(p), "cwd"))
+            except OSError:
+                return None
+    else:                                    # macOS, for the tests: ps for the states, lsof for the cwds
+        r = run(["ps", "-A", "-o", "pid=,stat="], capture_output=True, text=True)
+        if r.returncode != 0:
+            raise Fail("survivors-unlisted: ps failed")
+        st = {int(a): b for a, b in (ln.split()[:2] for ln in r.stdout.splitlines() if len(ln.split()) >= 2)}
+        pids, state = list(st), st.get
+        r = run(["lsof", "-d", "cwd", "-Fpn"], capture_output=True, text=True)
+        cw, cur = {}, None
+        for ln in r.stdout.splitlines():
+            if ln.startswith("p"):
+                cur = int(ln[1:])
+            elif ln.startswith("n") and cur is not None:
+                cw[cur] = ln[1:]
+        cwd = cw.get
+    own, foreign = [], []
+    for p in sorted(pids):
+        if p in skip or (state(p) or "Z").startswith("Z"):
+            continue
+        try:
+            s = os.getsid(p)
+        except ProcessLookupError:
+            continue
+        except PermissionError:
+            s = None
+        c = cwd(p)
+        if sid and s == sid:
+            own.append(p)
+        elif c and (os.path.normpath(c) == w or os.path.normpath(c).startswith(w + "/")):
+            foreign.append(p)
+    return own, foreign
+
+
+def drain(w, sid, skip, seconds=30.0, scan=survivor_scan, kill=os.kill, clock=None, sleep=None):
+    """({own, foreign, polls, left}, rc): every survivor in the generation's session is KILLed, again at each poll,
+    until none is left or `seconds` (monotonic) have passed; a process outside it with a cwd in W is reported, not
+    killed. rc: 0 none left, 1 survivors left, 3 a foreign process in W; a list that cannot be read raises Fail."""
+    import signal
+    import time
+    clock, sleep = clock or time.monotonic, sleep or time.sleep
+    own, foreign = scan(w, sid, skip)
+    rec = {"own": len(own), "foreign": len(foreign), "polls": 0, "left": 0}
+    end = clock() + seconds
+    while own:
+        for q in own:
+            try:
+                kill(q, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+        if clock() >= end:
+            break
+        sleep(0.5)
+        rec["polls"] += 1
+        own, more = scan(w, sid, skip)
+        rec["foreign"] = max(rec["foreign"], len(more))
+    rec["left"] = len(own)
+    return rec, (1 if own else 3 if rec["foreign"] else 0)
+
+
+def cmd_drain(a):
+    try:
+        rec, rc = drain(a.w, a.sid, [int(x) for x in (a.skip or "").split()], a.seconds)
+    except Fail as e:
+        rec, rc = {"problems": [str(e)]}, 2
+    _out(dict(rec, check="drain", **{"pass": rc == 0}))
+    return rc
+
+
 def node_record(mounts_text=None, environ=None, proc="/proc"):
     """{...}: C3's boundary, recorded and never a gate (the director: other users are excluded by the exclusive
     allocation; same-account processes are out of scope): /proc's mount options and hidepid, whether this runs in a
@@ -1206,6 +1390,12 @@ def node_record(mounts_text=None, environ=None, proc="/proc"):
     opts = [ln.split()[3] for ln in text.splitlines() if len(ln.split()) > 3 and ln.split()[1] == "/proc"]
     rec["proc_options"] = opts[-1] if opts else None
     rec["hidepid"] = next((o.split("=", 1)[1] for o in (opts[-1].split(",") if opts else []) if o.startswith("hidepid=")), "0")
+    try:
+        rec["core_pattern"] = open(os.path.join(proc, "sys/kernel/core_pattern")).read().strip()
+    except OSError:
+        rec["core_pattern"] = None
+    import resource
+    rec["core_limit"] = list(resource.getrlimit(resource.RLIMIT_CORE))       # the job's: pg_generate sets 0 first
     rec["slurm_job"] = bool(env.get("SLURM_JOB_ID"))
     rec["cpus_on_node"], rec["cpu_count"] = env.get("SLURM_CPUS_ON_NODE"), os.cpu_count()
     rec["all_cpus_allocated"] = rec["cpus_on_node"] == str(rec["cpu_count"])
@@ -1276,6 +1466,7 @@ def main(argv=None):
     r.add_argument("--xsec-data")
     r.add_argument("--messenger")
     r.add_argument("--output", action="append")
+    r.add_argument("--ghep-from-trace")
     e = sub.add_parser("exe-check")
     e.add_argument("--manifest", required=True)
     e.add_argument("--path", action="append")
@@ -1298,6 +1489,15 @@ def main(argv=None):
     for k in ("log", "script", "reduced"):
         c.add_argument("--" + k, required=True)
     sub.add_parser("node-record")
+    dr = sub.add_parser("drain")
+    dr.add_argument("--w", required=True)
+    dr.add_argument("--sid", type=int, default=0)
+    dr.add_argument("--skip", default="")
+    dr.add_argument("--seconds", type=float, default=30.0)
+    ph = sub.add_parser("pin-hash")
+    ph.add_argument("--manifest", required=True)
+    ph.add_argument("--products", required=True)
+    ph.add_argument("--pin", action="append")
     rv = sub.add_parser("revision-compare")
     rv.add_argument("--start", required=True)
     rv.add_argument("--end", required=True)
@@ -1314,7 +1514,8 @@ def main(argv=None):
     return {"members-check": cmd_members, "tool-check": cmd_tool, "trace-check": cmd_trace, "exe-check": cmd_exe,
             "shape-check": cmd_shape, "revision": cmd_revision, "reduce-check": cmd_reduce,
             "messenger": cmd_messenger, "coverage-log": cmd_coverage, "argv-check": cmd_argv,
-            "host-check": cmd_host, "revision-compare": cmd_revision_compare, "node-record": cmd_node}[a.cmd](a)
+            "host-check": cmd_host, "revision-compare": cmd_revision_compare, "node-record": cmd_node,
+            "pin-hash": cmd_pin_hash, "drain": cmd_drain}[a.cmd](a)
 
 
 if __name__ == "__main__":

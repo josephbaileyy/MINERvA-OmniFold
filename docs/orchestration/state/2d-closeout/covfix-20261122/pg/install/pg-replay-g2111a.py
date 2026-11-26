@@ -105,13 +105,14 @@ REPLAY_CHECKS = ("tool_check_strace.json", "revision_start.json", "members_check
                  "trace_check_graphs.json", "messenger_check.json", "trace_check_coverage.json", "coverage_check.json",
                  "trace_check_gevgen.json", "trace_check_gntpc.json", "trace_check_reduce_slot2.json",
                  "reduce_check_slot2.json", "trace_check_coverage_slot2.json", "coverage_check_slot2.json",
-                 "shape_check.json", "host_check.json", "revision_end.json", "revision_compare.json")
+                 "shape_check.json", "host_check.json", "revision_end.json", "revision_compare.json",
+                 "pin_hash_start.json", "pin_hash_end.json")
 TRACES = tuple(n for n in REPLAY_CHECKS if n.startswith("trace_check"))
 SPLINE_TRACES = tuple(n for n in TRACES if n != "trace_check_gntpc.json")
 SHAPES = ("real_members_listing", "proc_fd_magic_link", "directory_open_recorded", "slot2_reduce_real_path")
 HOST_CHECKS = ("st_dev_final_dir", "no_submounts", "result_anchor_real_strace")
 # C18: the replay's identity, and what each trace must show: the role's own program first, and these files gated
-IDENTITY = {"schema": "covfix-pg-replay-run/3", "tune": "G21_11a_00_000", "slot2": "G18_02a_00_000", "seed": 123456789,
+IDENTITY = {"schema": "covfix-pg-replay-run/4", "tune": "G21_11a_00_000", "slot2": "G18_02a_00_000", "seed": 123456789,
             "events": 100}
 PROGRAM = {"trace_check_reduce.json": "awk", "trace_check_reduce_slot2.json": "awk", "trace_check_graphs.json": "gspl2root",
            "trace_check_coverage.json": "gevgen", "trace_check_coverage_slot2.json": "gevgen",
@@ -123,7 +124,16 @@ GATED = {"trace_check_reduce.json": ("gxspl-NUsmall.xml",), "trace_check_reduce_
          "trace_check_gevgen.json": ("G21_11a_00_000_CH.xml.gz", "ModelConfiguration.xml"), "trace_check_gntpc.json": ()}
 DELETABLE = {"t0": ("genie_v3.gst.root", "gevgen.status", "gntp.ghep.root", "input-flux.root"),
              "coverage_slot1": ("gevgen.log", "gevgen.status", "gntp.ghep.root", "input-flux.root"),
-             "coverage_slot2": ("gevgen.log", "gevgen.status", "gntp.ghep.root", "input-flux.root")}
+             "coverage_slot2": ("gevgen.log", "gevgen.status", "gntp.ghep.root", "input-flux.root"),
+             "merged": ("genie_v3_g21_ALL.gst.root",)}
+PINNED_BY = ("exact pin", "genie manifest", "private members")   # trace_check's own words, and no others
+BOUND_BY = ("genie manifest", "system pin")
+
+
+def _schema_ok(s):
+    return (type(s) is dict and sorted(s) == ["keys", "streamer_sha256"] and type(s["keys"]) is list and s["keys"]
+            and all(type(k) is list and len(k) == 3 and all(type(y) is str for y in k) for k in s["keys"])
+            and _hex64(s["streamer_sha256"]))
 
 
 def _hex64(x):
@@ -147,7 +157,7 @@ def replay_problems(r):
     g = r.get("gated")
     if not (type(g) is dict and sorted(g) == sorted(TRACES) and all(
             type(v) is list and v and all(type(x) is dict and type(x.get("path")) is str and _hex64(x.get("sha256"))
-                                          and type(x.get("pinned_by")) is str for x in v) for v in g.values())):
+                                          and x.get("pinned_by") in PINNED_BY for x in v) for v in g.values())):
         p.append("gated files")
     if not _all_true(r.get("real_shapes"), SHAPES):
         p.append("real shapes")
@@ -160,7 +170,8 @@ def replay_problems(r):
     p += [f"identity {k}" for k, v in IDENTITY.items() if not (type(r.get(k)) is type(v) and r.get(k) == v)]
     x = r.get("execs")
     if not (type(x) is dict and sorted(x) == sorted(TRACES) and all(
-            type(v) is list and v and all(type(e) is dict and all(type(e.get(k)) is str for k in ("path", "real", "bound_by"))
+            type(v) is list and v and all(type(e) is dict and all(type(e.get(k)) is str for k in ("path", "real"))
+                                          and e.get("bound_by") in BOUND_BY
                                           and _hex64(e.get("sha256")) for e in v)
             and v[0]["path"].rsplit("/", 1)[-1] == PROGRAM[n] for n, v in x.items())):
         p.append("execs")
@@ -172,33 +183,86 @@ def replay_problems(r):
     if type(g) is dict and sorted(g) == sorted(TRACES):
         p += [f"gated {n}: {b}" for n, bs in sorted(GATED.items()) for b in bs
               if not any(type(e) is dict and str(e.get("path", "")).rsplit("/", 1)[-1] == b for e in g[n])]
-    s = r.get("gst_schema")
-    if not (type(s) is dict and sorted(s) == ["keys", "streamer_sha256"] and type(s["keys"]) is list and s["keys"]
-            and all(type(k) is list and len(k) == 3 and all(type(y) is str for y in k) for k in s["keys"])
-            and _hex64(s["streamer_sha256"])):
+    if not _schema_ok(r.get("gst_schema")):
         p.append("gst schema")
+    if not _schema_ok(r.get("gst_merged_schema")):
+        p.append("gst merged schema")
     return p
 
 
-def deleted_problems(d):
-    """[problems] with deleted.json: the three runs, the t0 gst among them, only deletable names, typed records."""
+def deleted_problems(d, r=None):
+    """[problems] with deleted.json: each run's files, exactly the names it makes, typed records, each ROOT file
+    decoded with its name and bytes apart, and each gst's schema the one the replay record carries (r)."""
     if not (type(d) is dict and sorted(d) == sorted(DELETABLE) and all(type(v) is dict for v in d.values())
-            and "genie_v3.gst.root" in d["t0"] and all(set(d[k]) <= set(DELETABLE[k]) for k in d)):
+            and all(sorted(d[k]) == sorted(DELETABLE[k]) for k in d)):
         return ["names"]
+    r = r or {}
+    p = [f"{k}/{n}: schema differs from the record's" for k, n, f in (("t0", "genie_v3.gst.root", "gst_schema"),
+         ("merged", "genie_v3_g21_ALL.gst.root", "gst_merged_schema")) if (d[k][n] if type(d[k][n]) is dict else {}).get("schema") != r.get(f)]
     def root_ok(n, v):   # C4's positive control: each ROOT file decoded (inflated), the gst's schema recorded
         if not n.endswith(".root"):
             return True
         c = v.get("decoded")
-        return (type(c) is dict and type(c.get("holds_seed")) is bool and type(c.get("int32_count")) is int
-                and type(c.get("codecs")) is dict and type(c.get("bytes_inflated")) is int
-                and (n != "genie_v3.gst.root" or type(v.get("schema")) is dict))
-    return [f"{k}/{n}" for k in sorted(d) for n, v in sorted(d[k].items())
+        return (type(c) is dict and type(c.get("holds_seed")) is bool and type(c.get("name_holds_seed")) is bool
+                and type(c.get("int32_count")) is int and type(c.get("codecs")) is dict
+                and type(c.get("bytes_inflated")) is int and (not n.endswith(".gst.root") or _schema_ok(v.get("schema"))))
+    return p + [f"{k}/{n}" for k in sorted(d) for n, v in sorted(d[k].items())
             if not (type(v) is dict and _hex64(v.get("sha256")) and type(v.get("bytes")) is int and v["bytes"] >= 0
                     and type(v.get("holds_public_seed")) is bool and root_ok(n, v))]
 
 
+EVENT_DIRS = ("work/t0", "coverage/G21_11a_00_000", "coverage/G18_02a_00_000", "gst")
+
+
+def leftovers(run_dir):
+    """[relpath]: the public-seed event and status files still under the replay's run directory, each now unlinked
+    (an unlink that fails is still listed); a directory the driver never made is empty."""
+    out = []
+    for d in EVENT_DIRS:
+        try:
+            names = os.listdir(os.path.join(run_dir, d))
+        except FileNotFoundError:
+            continue
+        for n in names:
+            if (n.endswith((".ghep.root", ".gst.root", ".status")) or n == "input-flux.root"
+                    or (d.startswith("coverage") and n == "gevgen.log")):
+                out.append(f"{d}/{n}")
+                try:
+                    os.unlink(os.path.join(run_dir, d, n))
+                except OSError:
+                    pass
+    return out
+
+
+def quiesce(sid):
+    """The number of processes still in the driver's session (its own, by start_new_session), each then KILLed:
+    GNU timeout gives the driver a process group of its own, but not a session."""
+    import signal
+    if not sid or not os.path.isdir("/proc/self"):
+        return 0
+    n = 0
+    for d in os.listdir("/proc"):
+        if d.isdigit():
+            try:
+                if os.getsid(int(d)) == sid:
+                    os.kill(int(d), signal.SIGKILL)
+                    n += 1
+            except (ProcessLookupError, PermissionError):
+                pass
+    return n
+
+
+def _run(argv, **k):
+    """subprocess.run, keeping the child's pid: with start_new_session it is the driver's session id."""
+    child = subprocess.Popen(argv, **k)
+    child.wait()
+    done = subprocess.CompletedProcess(argv, child.returncode)
+    done.pid = child.pid
+    return done
+
+
 def replay(parent=REPLAY_PARENT, archive_b64=None, archive_sha=None, blobs=None, commit=None, ident=identity,
-           run=subprocess.run, home=None, now=None):
+           run=_run, home=None, now=None):
     archive_b64 = ARCHIVE_B64 if archive_b64 is None else archive_b64
     archive_sha = archive_sha or ARCHIVE_SHA256
     blobs = blobs if blobs is not None else json.loads(BLOBS_JSON)
@@ -228,9 +292,13 @@ def replay(parent=REPLAY_PARENT, archive_b64=None, archive_sha=None, blobs=None,
         env = {"PATH": "/usr/bin:/bin", "HOME": home or pwd.getpwuid(os.getuid()).pw_dir,
                "TMPDIR": os.path.join(w, "tmp"), "LC_ALL": "C"}
         with open(os.path.join(w, "driver.log"), "wb") as log:
-            p = run(["/usr/bin/nice", "-n", "19", "/usr/bin/timeout", str(WALL_CAP_S), "bash", driver, "--workdir",
-                     os.path.join(w, "run")], cwd=os.path.join(w, "run"), env=env, stdin=subprocess.DEVNULL,
-                    stdout=log, stderr=subprocess.STDOUT)
+            p = None
+            try:
+                p = run(["/usr/bin/nice", "-n", "19", "/usr/bin/timeout", str(WALL_CAP_S), "bash", driver,
+                         "--workdir", os.path.join(w, "run")], cwd=os.path.join(w, "run"), env=env,
+                        stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+            finally:                    # no writer outlives the driver: its session's stragglers are KILLed
+                rec["quiesced"] = quiesce(getattr(p, "pid", None))
         rec["driver_rc"] = p.returncode
         with open(os.path.join(w, "driver.log"), "rb") as log:
             rec["driver_lines"] = [ln for ln in log.read().decode(errors="replace").splitlines()
@@ -239,23 +307,24 @@ def replay(parent=REPLAY_PARENT, archive_b64=None, archive_sha=None, blobs=None,
             raise Stop(f"the replay driver exited {p.returncode}")
         with open(os.path.join(w, "run", "replay.json")) as f:
             r = json.load(f)
-        rec["replay"] = {k: r.get(k) for k in ("checks", "spline_opened", "gated", "real_shapes", "host",
-                                               "coverage_log_sha256", "pass")}
+        rec["replay"] = r                       # whole: the launcher checks the same record (B3)
         probs = replay_problems(r)
         if probs:
             raise Stop(f"replay-record: {probs}")
         with open(os.path.join(w, "run", "deleted.json")) as f:
             rec["deleted"] = json.load(f)
-        left = [n for d in ("work/t0", "coverage/G21_11a_00_000", "coverage/G18_02a_00_000")
-                for n in os.listdir(os.path.join(w, "run", d))
-                if n.endswith((".ghep.root", ".gst.root", ".status")) or n == "input-flux.root"
-                or (d.startswith("coverage") and n == "gevgen.log")]
-        if deleted_problems(rec["deleted"]) or left:
-            raise Stop(f"deleted-record: {deleted_problems(rec['deleted'])}, left {left}")
+        if deleted_problems(rec["deleted"], r):
+            raise Stop(f"deleted-record: {deleted_problems(rec['deleted'], r)}")
     except (Stop, OSError, ValueError, tarfile.TarError, subprocess.SubprocessError) as e:
         rec["stops"].append(f"{type(e).__name__}: {e}")
     except Exception as e:                  # fail closed, with a reason no other test expects
         rec["stops"].append(f"internal-error: {type(e).__name__}")
+    finally:                                # every terminal path: any public-seed event file left is removed, a STOP
+        if rec.get("replay_dir"):
+            left = leftovers(os.path.join(rec["replay_dir"], "run"))
+            rec["left"] = len(left)
+            if left:
+                rec["stops"].append(f"Stop: deleted-record: {len(left)} event or status files were left, now removed")
     rec["verdict"] = "GO" if not rec["stops"] else "STOP"
     return rec
 

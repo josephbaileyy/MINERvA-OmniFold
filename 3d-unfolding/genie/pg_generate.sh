@@ -73,8 +73,8 @@ SYSPINS=$("$PY" -I -c 'import json,sys
 v = json.load(open(sys.argv[1])).get("system_tools") or {}
 print("".join(f"--system-pin\n{k}={h}\n" for k, h in sorted(v.items()) if k and h))' "$G/pg_pins.json")
 [ -n "$STRACE" ] && [ -n "$STRACE_SHA" ] && [ -n "$DBCONFIG_SHA" ] && [ -n "$SYSPINS" ] || refuse "pg_pins.json is not filled (R1)"
-"$PY" -I -c 'import json, sys; sys.exit(0 if json.load(open(sys.argv[1])).get("gst") else 1)' "$REC/root-schemas.json" \
-  2>/dev/null || refuse "root-schemas.json has no gst schema from B3"
+"$PY" -I -c 'import json, sys; d = json.load(open(sys.argv[1])); sys.exit(0 if d.get("gst") and d.get("gst_merged") else 1)' \
+  "$REC/root-schemas.json" 2>/dev/null || refuse "root-schemas.json lacks B3's gst or gst_merged schema"
 mkdir -p "$O/logs" "$O/splines" "$O/gst" "$O/gen5d" "$O/work" "$O/traces" "$R" || refuse "cannot create W/out and W/run"
 git -C "$D" status --porcelain --untracked-files=all --ignored > "$R/deploy-status-before.txt" 2>&1 \
   || refuse "git status failed"
@@ -123,37 +123,20 @@ kill_tree() {  # kill_tree PID: end PID and every descendant, and wait (30 s at 
 }
 ANCESTORS=""; a=$PPID   # this shell's parent chain (the bound binary among it), which the scan never kills
 while [ -n "$a" ] && [ "$a" -gt 1 ] 2>/dev/null; do ANCESTORS="$ANCESTORS $a"; a=$(ps -o ppid= -p "$a" 2>/dev/null | tr -d ' '); done
-XPG=""      # the generation's process group (setsid), once started
-survivors() {  # the pids of live processes, other than this shell, its ancestors and this scan, whose cwd lies under W
-  local p me cands q skip   # (tasks run there) or that are in the generation's process group
-  me=$(exec sh -c 'echo $PPID')       # this function's own subshell (bash 3.2 has no BASHPID)
-  if [ -d /proc/self ]; then
-    cands=$(for p in /proc/[0-9]*; do c=$(readlink "$p/cwd" 2>/dev/null) || continue
-              if [ "$c" = "$W" ] || [ "${c#"$W"/}" != "$c" ]; then echo "${p#/proc/}"; fi; done)
-  else
-    cands=$(lsof -d cwd -Fpn 2>/dev/null | awk -v W="$W" '/^p/ {p=substr($0,2)} /^n/ {n=substr($0,2); if (n==W || index(n, W "/")==1) print p}')
+XSID=0      # the generation's session (setsid), once started: GNU timeout gives each task a process group of its own
+drain() {      # end every background step and its tree; then KILL the generation session's survivors until none is
+  local j out rc n   # left or 30 s (monotonic) have passed; a process outside this run with a cwd in W is a STOP,
+  for j in $(jobs -p); do kill_tree "$j"; done   # and is not killed: it may be the parent's
+  out=$("$PY" -I -B "$G/pg_verify.py" drain --w "$W" --sid "$XSID" --skip "$$ $ANCESTORS" 2>/dev/null); rc=$?
+  n() { "$PY" -I -c 'import json,sys; print(json.loads(sys.argv[1]).get(sys.argv[2], 0))' "$out" "$1" 2>/dev/null || echo 0; }
+  [ "$rc" -ne 2 ] && [ -n "$out" ] || { echo "[pg] cleanup: the process list could not be read"; return 1; }
+  [ "$(n own)" -eq 0 ] || echo "[pg] cleanup: $(n own) processes outlived their trees"   # the backstop
+  if [ "$(n own)" -gt 0 ] && [ "$(n left)" -eq 0 ]; then
+    echo "[pg] cleanup: the survivors ended after $(n polls) polls (0.5 s each, 30 s at most)"
   fi
-  [ -z "$XPG" ] || cands="$cands $(ps -A -o pid=,pgid= 2>/dev/null | awk -v g="$XPG" '$2 == g {print $1}')"
-  for p in $(printf '%s\n' $cands | sort -u); do   # the helpers that listed them have exited by now
-    skip=0; for q in $$ $me $ANCESTORS; do [ "$p" != "$q" ] || skip=1; done
-    [ "$skip" -eq 0 ] && alive "$p" && echo "$p"
-  done
-  return 0
-}
-drain() {      # end every background step and its tree; then any survivor is KILLed, and polled for 30 s
-  local j i left
-  for j in $(jobs -p); do kill_tree "$j"; done
-  left=$(survivors)
-  [ -n "$left" ] || return 0
-  echo "[pg] cleanup: $(echo $left | wc -w | tr -d ' ') processes outlived their trees"   # the backstop
-  kill -KILL $left 2>/dev/null
-  for i in $(seq 1 60); do
-    left=$(survivors)
-    [ -n "$left" ] || { echo "[pg] cleanup: the survivors ended at poll $i of 60 (0.5 s each)"; return 0; }
-    sleep 0.5
-  done
-  echo "[pg] cleanup: $(echo $left | wc -w | tr -d ' ') survivors still alive 30 s after KILL"
-  return 1
+  [ "$(n left)" -eq 0 ] || echo "[pg] cleanup: $(n left) survivors still alive 30 s after KILL"
+  [ "$(n foreign)" -eq 0 ] || echo "[pg] cleanup: $(n foreign) processes outside this run have a cwd in W (not killed)"
+  return $([ "$rc" -eq 0 ] && echo 0 || echo 1)
 }
 cleanup() {    # on every exit: end this script's background steps and everything under them, verify nothing is left
   local rc=$? ok=0   # running in W, then leave no seed in a file name (a live task could otherwise write one after
@@ -171,6 +154,7 @@ anaenv() {
   export TMPDIR="$W/tmp" PYTHONDONTWRITEBYTECODE=1
   case "$(python3 -V 2>&1)" in *3.11*) ;; *) exit 7 ;; esac
 }
+ulimit -c 0 || refuse "cannot set the core limit to 0"   # Q2: a crash writes no core, under W or anywhere
 echo "[pg] start $(date -u +%FT%TZ) host=$(hostname)"
 
 # The first compute step (R1; the director's answer 2): strace is opened once, on fd 9. Its sha256 is read through
@@ -221,6 +205,15 @@ need $? "seeds.json"
 TUNES=$(awk '{print $1}' "$R/queue.txt" | awk '!seen[$0]++' | tr '\n' ' ')
 [ "$(wc -l < "$R/queue.txt")" -eq $((2 * NT)) ] || need 1 "the task queue"
 pass "seeds.json" "$(wc -l < "$R/queue.txt" | tr -d ' ') tasks"
+pinhash() {   # Q1 (the director, 2026-11-25): every pinned CVMFS file, the genie manifest's and each CVMFS tune's
+  local xp=() l T   # spline and README, hashed at the start and the end; each must equal its pin, and both sets are kept
+  for T in $TUNES; do while IFS= read -r l; do xp+=("$l"); done < <(xpins "$T"); done
+  V pin-hash --manifest "$REC/genie-manifest.json" --products "$CVMFS_REPO/products" "${xp[@]}" \
+    > "$O/pin_hash_$1.json" 2>> "$O/logs/pin_hash.log"
+  need $? "every pinned CVMFS file against its pin ($1)"
+  pass "every pinned CVMFS file ($1)"
+}
+pinhash start
 
 for T in $TUNES; do   # the programs the traced steps run, as their own setup resolves them (no trace shows an exec)
   ( source "$G/setup_genie_v3.sh" "$T" "$O/splines" > /dev/null 2>&1 || exit 1
@@ -287,7 +280,7 @@ export G O NEV TO
     bash "$G/run_gevgen_v3.sh" genie "$0" "$O/splines" "$NEV" "$1" "$O/work/$2" "$O/flux_phi_t_0_100.root" \
     > "$O/work/$2/task.log" 2>&1; rc=$?; seedfree "$O/work/$2"; [ "$rc" -eq 0 ] || exit 255' \
     < "$R/queue.txt" > "$O/logs/xargs.log" 2>&1 &
-XP=$!; XPG=$XP      # its own session and process group, which the survivor scan also covers
+XP=$!; XSID=$XP     # its own session, which the survivor scan covers whatever process group a task is in
 wait "$XP"          # a job, not the foreground: a TERM is handled now, and cleanup can reach every task
 need $? "generation"
 seedfree || need 1 "seedfree: a seed-named file could not be renamed"
@@ -299,9 +292,11 @@ done < "$R/queue.txt"
 pass "trace check of every gevgen task" "$(wc -l < "$R/queue.txt" | tr -d ' ') tasks"
 while read -r T _ k; do   # gntpc, which writes the gst the pipeline consumes, is traced and checked too (D1)
   tcheck gntpc "$T" "$O/work/$k/gntpc.trace" "" "" "$O/work/$k" "$O/work/$k/trace_check_gntpc.json" \
+    --ghep-from-trace "$O/work/$k/gevgen.trace" \
     >> "$O/logs/trace_check.log" 2>&1 || need 1 "trace check (gntpc ${k})"
 done < "$R/queue.txt"
 pass "trace check of every gntpc task" "$(wc -l < "$R/queue.txt" | tr -d ' ') tasks"
+pinhash end
 V revision --repo "$CVMFS_REPO" > "$O/revision_end.json" 2>> "$O/logs/revision.log"
 need $? "the CVMFS revision (end)"
 tcs=(); for f in "$O"/trace_check_*.json "$O"/work/u*/t*/trace_check*.json; do [ -e "$f" ] && tcs+=(--trace-check "$f"); done
@@ -347,12 +342,15 @@ drain || need 1 "a process outlived its step before publication"   # D6/C13: not
 ( cd "$O" && find . -type f ! -path './logs/*' ! -name PG-SHA256SUMS ! -name '*.ghep.root' -print0 | sort -z \
   | xargs -0 sha256sum ) > "$O/PG-SHA256SUMS" 2> "$O/logs/sums.log"
 need $? "the sums file"
+deploy_unchanged after   # its snapshot is published, so it is taken before the publish set is listed and scanned
+pass "the deploy unchanged"
 ( anaenv l; python3 -B "$G/pg_lib.py" publish --workdir "$W" --seeds "$SEEDS" --schemas "$REC/root-schemas.json" ) \
   > "$O/logs/publish.log" 2>&1
 need $? "the publish set and its leak scan"
 pass "the publish set and its leak scan"
-deploy_unchanged after
-pass "the deploy unchanged"
+git -C "$D" status --porcelain --untracked-files=all --ignored > "$W/tmp/deploy-status-final.txt" 2>&1 \
+  || need 1 "git status failed (final)"
+cmp -s "$R/deploy-status-before.txt" "$W/tmp/deploy-status-final.txt" || need 1 "the deploy changed (publish)"
 ( anaenv i; python3 -B "$G/pg_lib.py" inventory --workdir "$W" ) > "$O/logs/inventory.log" 2>&1
 need $? "the required inventory"
 pass "the required inventory"

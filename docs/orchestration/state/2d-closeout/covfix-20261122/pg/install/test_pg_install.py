@@ -224,11 +224,15 @@ GOOD_REPLAY = dict(RP.IDENTITY, **{
     "execs": {n: [{"path": f"/b/{RP.PROGRAM[n]}", "real": f"/b/{RP.PROGRAM[n]}", "sha256": "3" * 64,
                    "bound_by": "genie manifest"}] for n in RP.TRACES},
     "revision": {"start": {"revision": "7", "root_hash": "h"}, "end": {"revision": "7", "root_hash": "h"}},
-    "gst_schema": {"keys": [["TTree", "gst", "t"]], "streamer_sha256": "4" * 64}})
+    "gst_schema": {"keys": [["TTree", "gst", "t"]], "streamer_sha256": "4" * 64},
+    "gst_merged_schema": {"keys": [["TTree", "gst", "t"]], "streamer_sha256": "5" * 64}})
 REC = {"sha256": "a" * 64, "bytes": 10, "holds_public_seed": False}
-ROOTREC = dict(REC, decoded={"holds_seed": False, "int32_count": 0, "codecs": {"ZL": 2}, "bytes_inflated": 9})
-GOOD_DELETED = {"t0": {"genie_v3.gst.root": dict(ROOTREC, schema=GOOD_REPLAY["gst_schema"]), "gevgen.status": REC},
-                "coverage_slot1": {"gevgen.log": REC}, "coverage_slot2": {"gevgen.log": REC}}
+ROOTREC = dict(REC, decoded={"holds_seed": False, "name_holds_seed": False, "int32_count": 0, "codecs": {"ZL": 2},
+                              "bytes_inflated": 9})
+RUN = {"gevgen.status": REC, "gntp.ghep.root": ROOTREC, "input-flux.root": ROOTREC}       # every file each run makes
+GOOD_DELETED = {"t0": dict(RUN, **{"genie_v3.gst.root": dict(ROOTREC, schema=GOOD_REPLAY["gst_schema"])}),
+                "coverage_slot1": dict(RUN, **{"gevgen.log": REC}), "coverage_slot2": dict(RUN, **{"gevgen.log": REC}),
+                "merged": {"genie_v3_g21_ALL.gst.root": dict(ROOTREC, schema=GOOD_REPLAY["gst_merged_schema"])}}
 class NodeLaunch(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(os.path.realpath(tempfile.mkdtemp(prefix="pgl-", dir="/tmp")))
@@ -301,8 +305,9 @@ class NodeLaunch(unittest.TestCase):
                                 ("blob count True", dict(rec, n_blobs=True), "commit, archive pin or blob count"),
                                 ("no gated", dict(rec, replay={k: v for k, v in GOOD_REPLAY.items() if k != "gated"}),
                                  "replay gated files"),
-                                ("a bool size", dict(rec, deleted=dict(GOOD_DELETED, t0={"genie_v3.gst.root": dict(
-                                    GOOD_DELETED["t0"]["genie_v3.gst.root"], bytes=True)})), "deleted t0/genie_v3.gst.root"),
+                                ("a bool size", dict(rec, deleted=dict(GOOD_DELETED, t0=dict(GOOD_DELETED["t0"], **{
+                                    "genie_v3.gst.root": dict(GOOD_DELETED["t0"]["genie_v3.gst.root"], bytes=True)}))),
+                                 "deleted t0/genie_v3.gst.root"),
                                 ("another seed", dict(rec, replay=dict(GOOD_REPLAY, seed=99)), "replay identity seed"),
                                 ("a seed as text", dict(rec, replay=dict(GOOD_REPLAY, seed="123456789")),
                                  "replay identity seed"),
@@ -315,19 +320,48 @@ class NodeLaunch(unittest.TestCase):
                                     GOOD_REPLAY["execs"], **{"trace_check_gevgen.json": [dict(
                                         GOOD_REPLAY["execs"]["trace_check_gevgen.json"][0], bound_by=None)]}))),
                                  "replay execs"),
+                                ("an exec without its hash", dict(rec, replay=dict(GOOD_REPLAY, execs=dict(
+                                    GOOD_REPLAY["execs"], **{"trace_check_gevgen.json": [dict(
+                                        GOOD_REPLAY["execs"]["trace_check_gevgen.json"][0], sha256="3" * 63)]}))),
+                                 "replay execs"),
                                 ("no revision", dict(rec, replay=dict(GOOD_REPLAY, revision={})), "replay revision values"),
                                 ("the messenger not gated", dict(rec, replay=dict(GOOD_REPLAY, gated=dict(
                                     GOOD_REPLAY["gated"], **{"trace_check_coverage.json": [
                                         x for x in GOOD_REPLAY["gated"]["trace_check_coverage.json"]
                                         if "Messenger" not in x["path"]]}))),
                                  "replay gated trace_check_coverage.json: Messenger_pg.xml"),
-                                ("no gst schema", dict(rec, replay=dict(GOOD_REPLAY, gst_schema=None)), "replay gst schema"),
-                                ("a gst not decoded", dict(rec, deleted=dict(GOOD_DELETED, t0={"genie_v3.gst.root": dict(
-                                    REC, schema=GOOD_REPLAY["gst_schema"])})), "deleted t0/genie_v3.gst.root"),
-                                ("no gst schema in deleted", dict(rec, deleted=dict(GOOD_DELETED, t0={
-                                    "genie_v3.gst.root": ROOTREC})), "deleted t0/genie_v3.gst.root")):
+                                ("no gst schema", dict(rec, replay=dict(GOOD_REPLAY, gst_schema=None)),
+                                 ["replay gst schema", "deleted t0/genie_v3.gst.root: schema differs from the record's"]),
+                                ("no merged schema", dict(rec, replay=dict(GOOD_REPLAY, gst_merged_schema=None)),
+                                 ["replay gst merged schema",
+                                  "deleted merged/genie_v3_g21_ALL.gst.root: schema differs from the record's"]),
+                                ("a schema unlike the deleted gst's", dict(rec, replay=dict(GOOD_REPLAY, gst_schema=dict(
+                                    GOOD_REPLAY["gst_schema"], streamer_sha256="6" * 64))),
+                                 "deleted t0/genie_v3.gst.root: schema differs from the record's"),
+                                ("a merged run missing", dict(rec, deleted={k: v for k, v in GOOD_DELETED.items()
+                                                                            if k != "merged"}), "deleted names"),
+                                ("a coverage file missing", dict(rec, deleted=dict(GOOD_DELETED, coverage_slot2={
+                                    "gevgen.log": REC})), "deleted names"),
+                                ("an unknown pin", dict(rec, replay=dict(GOOD_REPLAY, gated=dict(GOOD_REPLAY["gated"], **{
+                                    "trace_check_gntpc.json": [{"path": "/p/x.so", "sha256": "0" * 64,
+                                                                "pinned_by": "trust me"}]}))), "replay gated files"),
+                                ("an unknown binding", dict(rec, replay=dict(GOOD_REPLAY, execs=dict(GOOD_REPLAY["execs"], **{
+                                    "trace_check_gntpc.json": [dict(GOOD_REPLAY["execs"]["trace_check_gntpc.json"][0],
+                                                                    bound_by="trust me")]}))), "replay execs"),
+                                ("the name and bytes not apart", dict(rec, deleted=dict(GOOD_DELETED, t0=dict(
+                                    GOOD_DELETED["t0"], **{"gntp.ghep.root": dict(REC, decoded={
+                                        "holds_seed": False, "int32_count": 0, "codecs": {}, "bytes_inflated": 0})}))),
+                                 "deleted t0/gntp.ghep.root"),
+                                ("a gst not decoded", dict(rec, deleted=dict(GOOD_DELETED, t0=dict(GOOD_DELETED["t0"], **{
+                                    "genie_v3.gst.root": dict(REC, schema=GOOD_REPLAY["gst_schema"])}))),
+                                 "deleted t0/genie_v3.gst.root"),
+                                ("no gst schema in deleted", dict(rec, deleted=dict(GOOD_DELETED, t0=dict(
+                                    GOOD_DELETED["t0"], **{"genie_v3.gst.root": ROOTREC}))),
+                                 ["deleted t0/genie_v3.gst.root: schema differs from the record's",
+                                  "deleted t0/genie_v3.gst.root"])):
             with self.subTest(name):
-                self.assertEqual(self.L.payload_problems(bad, "covfix-pg-replay/1", pins), [want])
+                self.assertEqual(self.L.payload_problems(bad, "covfix-pg-replay/1", pins),
+                                 want if isinstance(want, list) else [want])
         for k in ("REPLAY_CHECKS", "TRACES", "SPLINE_TRACES", "SHAPES", "HOST_CHECKS", "DELETABLE", "IDENTITY",
                   "PROGRAM", "GATED"):
             self.assertEqual(getattr(self.L, k), getattr(RP, k), k)                # one schema, in both places
@@ -346,7 +380,7 @@ class NodeLaunch(unittest.TestCase):
 DRIVER = """#!/bin/bash
 [ "$1" = --workdir ] || exit 2
 echo "[replay] stub $PG_STUB_RC"
-mkdir -p "$2/work/t0" "$2/coverage/G21_11a_00_000" "$2/coverage/G18_02a_00_000"
+mkdir -p "$2/work/t0" "$2/coverage/G21_11a_00_000" "$2/coverage/G18_02a_00_000" "$2/gst"
 printf '%s' "${PG_STUB_REPLAY:-$GOOD_REPLAY}" > "$2/replay.json"
 printf '%s' "${PG_STUB_DELETED:-$GOOD_DELETED}" > "$2/deleted.json"
 [ -z "$PG_STUB_LEFT" ] || echo x > "$2/${PG_STUB_LEFT_DIR:-work/t0}/$PG_STUB_LEFT"
@@ -429,6 +463,24 @@ class Replay(unittest.TestCase):
         for d in (self.tmp / "scratch").iterdir():
             self.assertFalse((d / "driver.log").exists())                        # the driver never ran
 
+    def test_the_runners_own_result_passes_the_launcher(self):
+        r = self.run_replay()                                                 # B3: the record, whole, both sides
+        self.assertEqual(r["verdict"], "GO", r["stops"])
+        self.assertEqual(r["replay"], GOOD_REPLAY)
+        L = load("pg_node_launch", HERE / "pg-node-launch.py")
+        pins = {"COMMIT": self.commit, "ARCHIVE_SHA256": sha(self.data), "BLOBS_JSON": json.dumps(self.blobs)}
+        self.assertEqual(L.validate("PG-RESULT " + json.dumps(r), 0, "covfix-pg-replay/1", pins), (True, "verdict GO"))
+
+    def test_files_left_on_any_exit_are_removed_and_stop(self):
+        for env in ({"PG_STUB_RC": "4", "PG_STUB_LEFT": "gntp.123456789.ghep.root"},
+                    {"PG_STUB_LEFT": "genie_v3_g21_ALL.gst.root", "PG_STUB_LEFT_DIR": "gst"}):
+            with self.subTest(env=env):
+                r = self.run_replay(env=env)
+                self.assertEqual(r["left"], 1)
+                self.assert_stop(r, "event or status files were left, now removed")
+                d = Path(r["replay_dir"]) / "run" / env.get("PG_STUB_LEFT_DIR", "work/t0")
+                self.assertFalse((d / env["PG_STUB_LEFT"]).exists())
+
     def test_refusals_and_driver_failures(self):
         import datetime as dt
         now = dt.datetime(2026, 11, 24, 12, 0, 0, tzinfo=dt.timezone.utc)
@@ -470,7 +522,23 @@ class Replay(unittest.TestCase):
                  "replay-record"),
                 ("a coverage log left", {"PG_STUB_LEFT": "gevgen.log", "PG_STUB_LEFT_DIR": "coverage/G21_11a_00_000"},
                  "deleted-record"),
-                ("an event file left", {"PG_STUB_LEFT": "gntp.123456789.ghep.root"}, "deleted-record")):
+                ("an event file left", {"PG_STUB_LEFT": "gntp.123456789.ghep.root"}, "deleted-record"),
+                ("an unknown pin", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, gated=dict(GOOD_REPLAY["gated"], **{
+                    "trace_check_gntpc.json": [{"path": "/p/x.so", "sha256": "0" * 64, "pinned_by": "trust me"}]})))},
+                 "replay-record"),
+                ("an unknown binding", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, execs=dict(GOOD_REPLAY["execs"], **{
+                    "trace_check_gntpc.json": [dict(GOOD_REPLAY["execs"]["trace_check_gntpc.json"][0],
+                                                    bound_by="trust me")]})))}, "replay-record"),
+                ("no merged schema", {"PG_STUB_REPLAY": json.dumps(dict(GOOD_REPLAY, gst_merged_schema=None))},
+                 "replay-record"),
+                ("a coverage file missing", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, coverage_slot2={
+                    "gevgen.log": REC}))}, "deleted-record"),
+                ("a deleted schema unlike the record's", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, merged={
+                    "genie_v3_g21_ALL.gst.root": dict(ROOTREC, schema=GOOD_REPLAY["gst_schema"])}))}, "deleted-record"),
+                ("the name and bytes not apart", {"PG_STUB_DELETED": json.dumps(dict(GOOD_DELETED, t0=dict(
+                    GOOD_DELETED["t0"], **{"gntp.ghep.root": dict(REC, decoded={
+                        "holds_seed": False, "int32_count": 0, "codecs": {}, "bytes_inflated": 0})})))},
+                 "deleted-record")):
             with self.subTest(name):
                 self.assert_stop(self.run_replay(env=env), f"Stop: {code}: ")
 

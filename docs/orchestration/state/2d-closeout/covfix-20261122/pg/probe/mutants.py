@@ -149,6 +149,14 @@ M = [(f, old, new, what, "probe") for f, old, new, what in [
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    return {"options": opts[-1], "hidepid": hp[-1] if hp else "0"}', '    return {"options": opts[-1], "hidepid": hp[-1] if hp else None}', "r4: hidepid's default"),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    rec["proc_mount"] = proc_mount(mounts_text)\n', '', "r4: /proc's mount not recorded"),
     ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe-launch.py', '        p.append("proc_mount is not recorded")', '        pass', "r4: the launcher without /proc's record"),
+    # round 5 (delta-read-r5/DISPOSITIONS.md, the director's GO 2026-11-25)
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe-launch.py', 'and isinstance(c.get("core_pattern"), str)', 'and True', 'r5: the launcher without core_pattern'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '    rec["core"] = core_record()\n', '', 'r5: the core route not recorded'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '        pattern = open(os.path.join(proc, "sys/kernel/core_pattern")).read().strip()', '        pattern = None', 'r5: core_pattern not read'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '        if pid in exits or pid in killed:\n            probs.append(f"after-terminal', '        if False:\n            probs.append(f"after-terminal', 'r5: the probe: a record after an exit'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '        if rest.startswith("+++ ") and not (', '        if False and not (', 'r5: the probe: a malformed exit record'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', '            if pid in pending:\n                probs.append(f"unfinished-overwritten', '            if False:\n                probs.append(f"unfinished-overwritten', 'r5: the probe: an unfinished call overwritten'),
+    ('docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py', 'unlinkat,"\n             "mkdir,mkdirat,mknod,mknodat,truncate")', 'unlinkat")', "r5: the probe's trace set without mkdir"),
 ]]
 
 if __name__ == "__main__":

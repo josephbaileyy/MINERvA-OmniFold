@@ -36,11 +36,13 @@ its database, so it sets up from a private `PRODUCTS` directory.
 
 ## root-schemas.json
 
-`root-schemas.json` holds the gst schema every published gst must match: its keys (class, name, title, less the
-file's own records) and its StreamerInfo's sha256. It is `null` until B3's replay records the schema of its 100-event
-gst (`replay.json` `gst_schema`) and the director confirms it. Until then `pg_generate.sh` refuses before any step.
-The confirm also checks cov2d's condition (RULINGS-A2.md, round 4): for every allowlisted file type, B3's decoded scan
-gives an int32 count consistent with chance, and the gst schema has no branch or object carrying the run number.
+`root-schemas.json` holds the two schemas a published gst must match: gntpc's (`gst`), for the task gsts, and
+hadd's (`gst_merged`), for `out/gst/*_ALL.gst.root`. A schema is its keys (class, name, title, less the file's own
+records) and its StreamerInfo's sha256. Both are `null` until B3's replay records them from its 100-event gst and
+that gst's hadd (`replay.json` `gst_schema` and `gst_merged_schema`) and the director confirms them. Until then
+`pg_generate.sh` refuses before any step. The confirm also checks cov2d's condition (RULINGS-A2.md, round 4): for
+every allowlisted file type, B3's decoded scan gives an int32 count consistent with chance, and neither schema has a
+branch or object carrying the run number.
 
 ## Reproducing
 

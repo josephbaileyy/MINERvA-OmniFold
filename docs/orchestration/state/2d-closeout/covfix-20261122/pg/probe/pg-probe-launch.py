@@ -120,6 +120,11 @@ def receipt_problems(rec, rc, pins):
     if not (isinstance(pm, dict) and sorted(pm) == ["hidepid", "options"] and isinstance(pm.get("options"), str)
             and isinstance(pm.get("hidepid"), str)):
         p.append("proc_mount is not recorded")                         # C3: the boundary the director accepted
+    c = rec.get("core")
+    if not (isinstance(c, dict) and sorted(c) == ["core_limit", "core_pattern"] and isinstance(c.get("core_pattern"), str)
+            and isinstance(c.get("core_limit"), list) and len(c["core_limit"]) == 2
+            and all(type(x) is int for x in c["core_limit"])):
+        p.append("the core-dump route is not recorded")                # Q2: core_pattern and the limit, a record
     q = _get(rec, "xsec", "qualifiers")
     if not isinstance(q, list) or not all(x + "/" in q for x in pins.get("required_qualifiers", [])):
         p.append("required qualifiers")

@@ -317,14 +317,13 @@ case "$1" in
   graphs) cp "$PG_STUB_ROOT" "$4"; echo l > "${4%.root}.log"; echo t > "$PG_TRACE_DIR/graphs_$2.trace" ;;
   genie) mkdir -p "$6"; cd "$6"; echo "[v3] genie $2 N=$4 seed=$5"; echo l > gevgen.log; echo l > gntpc.log
          echo t > "$PG_TRACE_DIR/gevgen.trace"; echo t > "$PG_TRACE_DIR/gntpc.trace"
-         echo st > "genie-mcjob-$5.status"
+         echo st > "genie-mcjob-$5.status"; echo "core $(ulimit -c)" >> "$PG_STUB_LOG"
          [ -z "$PG_STUB_LEAK" ] || echo x > "leak-$5.txt"
          [ -z "$PG_STUB_ORPHAN" ] || [ "$5" != "${PG_STUB_ORPHAN}" ] || { ( sleep 60 & echo $! > "$PG_STUB_ORPHAN_PID" ) ; }
          [ -z "$PG_STUB_ORPHAN_CD" ] || [ "$5" != "$PG_STUB_ORPHAN_CD" ] || { ( cd / && exec sleep 60 ) & echo $! > "$PG_STUB_ORPHAN_PID"; }
          [ -n "$PG_STUB_SLOW" ] && { sleep "$PG_STUB_SLOW"; [ -z "$PG_STUB_MARK" ] || echo late >> "$PG_STUB_MARK"; }
          [ "$5" = "${PG_STUB_FAIL_SEED:-none}" ] && { echo ghep > "gntp.$5.ghep.root"; exit 1; }
          [ "$5" = "${PG_STUB_NOGST_SEED:-none}" ] || cp "$PG_STUB_GST" genie_v3.gst.root
-         [ -z "$PG_STUB_UNREADABLE" ] || chmod 000 genie_v3.gst.root
          cp "$PG_STUB_ROOT" input-flux.root
          [ "$5" != "${PG_STUB_LOCK_SEED:-none}" ] || chmod 0555 . ;;
   coverage) mkdir -p "$4"; cd "$4"; echo "Need xsec spline for a" > gevgen.log; echo st > genie-mcjob-123456789.status
@@ -347,6 +346,8 @@ elif a[0] == "convert":
 STUB_VERIFY = r'''import sys, os
 log = open(os.environ["PG_STUB_LOG"], "a"); log.write("pg_verify " + " ".join(sys.argv[1:]) + "\n"); log.flush()
 a = sys.argv[1:]
+if a[0] == "drain":                                   # the real scan and drain, the code under test
+    os.execv(sys.executable, [sys.executable, "-I", "-B", "{real}"] + a)
 if a[0] == "trace-check":
     opened = "false" if os.environ.get("PG_STUB_NO_SPLINE") else "true"
     prog = {"reduce": "awk", "graphs": "gspl2root", "gntpc": "gntpc"}.get(a[a.index("--role") + 1], "gevgen")
@@ -370,6 +371,10 @@ if a[0] == "revision-compare":
 if a[0] == "host-check":
     n = 2 if os.environ.get("PG_STUB_TWO_HOST") else 3
     print('{"pass": true, "checks": {%s}}' % ", ".join('"h%d": true' % i for i in range(n))); sys.exit(0)
+if a[0] == "shape-check" and os.environ.get("PG_STUB_BAD_RECORD"):      # a broken earlier deletion record
+    open(os.path.join(os.path.dirname(a[a.index("--traces") + 1]), "deleted.json"), "w").write("{")
+if a[0] == "shape-check" and os.environ.get("PG_STUB_UNREADABLE"):     # after hadd: the gst unreadable at deletion
+    os.chmod(os.path.join(os.path.dirname(a[a.index("--traces") + 1]), "work/t0/genie_v3.gst.root"), 0)
 if a[0] == "shape-check":
     n = 3 if os.environ.get("PG_STUB_THREE_SHAPES") else 4
     print('{"pass": true, "checks": {%s}}' % ", ".join('"s%d": true' % i for i in range(n))); sys.exit(0)
@@ -404,6 +409,7 @@ case "$PG_STUB_ENV" in
   conda) export HOST=x86_64-conda-linux-gnu CC=x86_64-conda-linux-gnu-cc BUILD=x86_64-conda-linux-gnu ;;
   clobber) PRIV=/elsewhere ;;
 esac
+[ -z "$PG_STUB_DIRTY_AT" ] || [ "$1" != "$PG_STUB_DIRTY_AT" ] || touch "$SD/dirty-from-$1"   # a write into the deploy
 '''
 PY311 = '''#!/bin/bash
 [ "$1" = "-V" ] && { echo "Python 3.11.14"; exit 0; }
@@ -416,7 +422,10 @@ case "$o" in *"${PG_STUB_HADD_SLOW:-none}"*) sleep 3; echo late > "$PG_STUB_MARK
 cp "$1" "$o"     # one ROOT file stands in for the merge
 '''
 TIMEOUT = '''#!/bin/bash
-echo "timeout $1" >> "$PG_STUB_LOG"; shift; exec "$@"
+# GNU timeout (coreutils timeout.c): unless --foreground, it calls setpgid(0, 0), so the command runs in a new
+# process group of its own, inside the caller's session
+echo "timeout $1" >> "$PG_STUB_LOG"; shift
+exec {py} -I -c 'import os, sys; os.setpgid(0, 0); os.execvp(sys.argv[1], sys.argv[1:])' "$@"
 '''
 TIMEV = '''#!/bin/bash
 [ "$1" = "-v" ] && [ "$2" = "-o" ] || exit 9
@@ -443,7 +452,7 @@ class Generate(unittest.TestCase):
         (g / "pg_generate.sh").write_text(src.replace("/usr/bin/time -v -o", f"{timev} -v -o").replace(
             "PY=/usr/bin/python3.11", f"PY={sys.executable}"))
         shutil.copy(GENIE / "pg_lib.py", g / "pg_lib.py")
-        (g / "pg_verify.py").write_text(STUB_VERIFY)
+        (g / "pg_verify.py").write_text(STUB_VERIFY.replace("{real}", str(GENIE / "pg_verify.py")))
         rec = self.dep / "docs/orchestration/state/2d-closeout/covfix-20261122/pg/record"
         rec.mkdir(parents=True)
         (rec / "G2111a-members.json").write_text(json.dumps({"members": {"genie_xsec": {"type": "dir"}}}))
@@ -454,7 +463,8 @@ class Generate(unittest.TestCase):
                                             _key("TBasket", "iev", "gst", b"pad" * 40),
                                             _key("TTree", "gst", "GENIE Summary Event Tree", b"tree" * 30)]))
         self.root_tpl.write_bytes(root_file([_key("TH1D", "h", "flux", b"bins" * 30)]))
-        (rec / "root-schemas.json").write_text(json.dumps({"gst": pg_lib.root_schema(str(self.gst_tpl))}))
+        (rec / "root-schemas.json").write_text(json.dumps({"gst": pg_lib.root_schema(str(self.gst_tpl)),
+                                                           "gst_merged": pg_lib.root_schema(str(self.gst_tpl))}))
         (g / "run_gevgen_v3.sh").write_text(STUB_RUN)
         (g / "setup_genie_v3.sh").write_text('export PATH="$PG_STUB_BIN:$PATH"\n')
         (g / "gen5d_v3.py").write_text(STUB_V3)
@@ -466,7 +476,7 @@ class Generate(unittest.TestCase):
             (self.bin / name).chmod(0o755)
         self.sysbin = self.tmp / "sysbin"            # what /usr/bin gives on Perlmutter and not on macOS
         self.sysbin.mkdir()
-        (self.sysbin / "timeout").write_text(TIMEOUT)
+        (self.sysbin / "timeout").write_text(TIMEOUT.replace("{py}", sys.executable))
         (self.sysbin / "timeout").chmod(0o755)
         (self.sysbin / "strace").write_text(STRACE)
         (g / "pg_pins.json").write_text(json.dumps({"strace_path": str(self.sysbin / "strace"),
@@ -532,7 +542,22 @@ class Generate(unittest.TestCase):
         self.assertEqual([v[1] for v in ver if v[1] == "node-record"], ["node-record"])
         rc_ = next(v for v in ver if v[1] == "revision-compare")                 # the end revision against the start,
         self.assertEqual(sum(x == "--trace-check" for x in rc_), 2 * 7 * 2 + 3 * 2)   # with every trace check's files
-        ver = [v for v in ver if v[1] not in ("revision", "node-record", "revision-compare")]
+        gn = [v for v in ver if v[1] == "trace-check" and v[v.index("--role") + 1] == "gntpc"]
+        self.assertEqual(len(gn), 14)
+        for v in gn:                                                             # B4: its own task's GHEP
+            self.assertEqual(v[v.index("--ghep-from-trace") + 1], v[v.index("--cwd") + 1] + "/gevgen.trace")
+        ph = [v for v in ver if v[1] == "pin-hash"]                              # Q1: every pin, at both ends
+        self.assertEqual(len(ph), 2)
+        for v in ph:
+            self.assertEqual(v[v.index("--manifest") + 1].rsplit("/", 1)[1], "genie-manifest.json")
+            self.assertEqual(v[v.index("--products") + 1], "/cvmfs/larsoft.opensciencegrid.org/products")
+            self.assertEqual(sum(x == "--pin" for x in v), 2)                    # slot 2's spline and README
+        at = [i for i, v in enumerate(ver) if v[1] == "pin-hash"]
+        tc = [i for i, v in enumerate(ver) if v[1] == "trace-check"]
+        self.assertLess(at[0], min(tc))                                          # before anything is traced,
+        self.assertGreater(at[1], max(tc))                                       # and after the last trace check
+        self.assertTrue(any(v[1] == "drain" for v in ver))
+        ver = [v for v in ver if v[1] not in ("revision", "node-record", "revision-compare", "pin-hash", "drain")]
         self.assertEqual([v[1] for v in ver[:5]], ["tool-check", "members-check", "tool-check", "exe-check", "exe-check"])
         for v in ver[3:5]:                                        # the programs as each tune's setup resolves them
             self.assertEqual([v[i + 1].rsplit("/", 1)[1] for i, x in enumerate(v) if x == "--path"], ["gevgen", "gspl2root"])
@@ -793,23 +818,64 @@ class Generate(unittest.TestCase):
         for d in ("out", "run"):
             shutil.rmtree(self.W / d, ignore_errors=True)
         rec = self.dep / "docs/orchestration/state/2d-closeout/covfix-20261122/pg/record/root-schemas.json"
-        rec.write_text('{"gst": null}')
         git = ["git", "-C", str(self.dep), "-c", "user.name=t", "-c", "user.email=t@t"]
-        subprocess.run(git + ["commit", "-qam", "unset"], check=True)
-        pin = subprocess.run(git[:3] + ["rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
-        p = self.run_gen(PG_DEPLOY_PIN=pin)
-        self.assertEqual((p.returncode, "root-schemas.json has no gst schema" in p.stderr), (2, True), p.stderr)
+        schema = json.loads(rec.read_text())["gst"]
+        for i, body in enumerate(({"gst": None, "gst_merged": None}, {"gst": schema, "gst_merged": None})):
+            rec.write_text(json.dumps(body))                                 # unset, or hadd's kind missing
+            subprocess.run(git + ["commit", "-qam", f"unset {i}"], check=True)
+            pin = subprocess.run(git[:3] + ["rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+            p = self.run_gen(PG_DEPLOY_PIN=pin)
+            self.assertEqual((p.returncode, "root-schemas.json lacks B3's gst or gst_merged schema" in p.stderr),
+                             (2, True), p.stderr)
 
     def test_the_scan_spares_this_shells_parents(self):
         script = self.dep / "3d-unfolding/genie/pg_generate.sh"
         e = {"PATH": f"/usr/bin:/bin:/usr/sbin:/sbin:{self.sysbin}", "HOME": str(self.tmp), "TMPDIR": str(self.W / "tmp"),
              "PG_DEPLOY_PIN": self.pin, "PG_STUB_LOG": str(self.log), "PG_STUB_BIN": str(self.bin),
              "PG_STUB_DEPLOY": str(self.dep), "PG_STUB_GST": str(self.gst_tpl), "PG_STUB_ROOT": str(self.root_tpl),
-             "PG_STUB_VERIFY_FAIL": "members-check"}
-        p = subprocess.run(["bash", "-c", f'cd "{self.W}" && bash "{script}" --workdir "{self.W}" --seeds "{self.W}/seeds.json"'
-                            '; echo "parent alive $?"'], cwd=self.tmp, env=e, stdin=subprocess.DEVNULL,
-                           capture_output=True, text=True, timeout=120)
-        self.assertIn("parent alive 1", p.stdout, p.stdout + p.stderr)      # its cwd is W, and it is not killed
+             }
+        for fail, rc in ((None, 0), ("members-check", 1)):
+            with self.subTest(fail=fail):
+                for x in self.W.iterdir():                                  # a fresh W for each run
+                    shutil.rmtree(x) if x.is_dir() else x.unlink() if x.name != "seeds.json" else None
+                (self.W / "tmp").mkdir(mode=0o700)
+                ev = dict(e, **({"PG_STUB_VERIFY_FAIL": fail} if fail else {}))
+                p = subprocess.run(["bash", "-c", f'cd "{self.W}" && bash "{script}" --workdir "{self.W}" --seeds '
+                                    f'"{self.W}/seeds.json"; echo "parent alive $?"'], cwd=self.tmp, env=ev,
+                                   stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=120)
+                self.assertIn(f"parent alive {rc}", p.stdout, p.stdout + p.stderr)   # its cwd is W: not killed,
+                self.assertNotIn("outside this run", p.stdout)                      # and not a false STOP
+
+    def test_a_process_outside_the_run_with_its_cwd_in_w_stops_and_lives(self):
+        sib = subprocess.Popen(["sleep", "60"], cwd=self.W)                 # the parent's tee, say: not ours to kill
+        self.addCleanup(lambda: (sib.kill(), sib.wait()))
+        p = self.run_gen()
+        self.assertEqual(p.returncode, 1, p.stdout + p.stderr)
+        self.assertIn("[pg] cleanup: 1 processes outside this run have a cwd in W (not killed)", p.stdout)
+        self.assertIn("[pg] STOP: a process outlived its step before publication", p.stdout)
+        self.assertIsNone(sib.poll())
+        self.assertFalse((self.W / "out/PG-PUBLISH-SHA256SUMS").exists())
+
+    def test_cores_off_and_the_final_snapshot_published(self):
+        import resource
+        old = resource.getrlimit(resource.RLIMIT_CORE)                      # a soft limit above 0, as a node may set
+        resource.setrlimit(resource.RLIMIT_CORE, (min(1 << 20, old[1]) if old[1] >= 0 else 1 << 20, old[1]))
+        self.addCleanup(resource.setrlimit, resource.RLIMIT_CORE, old)
+        p = self.run_gen()
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        cores = [ln for ln in self.log.read_text().splitlines() if ln.startswith("core ")]
+        self.assertEqual(sorted(set(cores)), ["core 0"])                     # Q2: every task, no core
+        self.assertEqual(len(cores), 14)
+        listed = [ln.split("  ", 1)[1] for ln in (self.W / "out/PG-PUBLISH-SHA256SUMS").read_text().splitlines()]
+        self.assertIn("run/deploy-status-after.txt", listed)                # B14: scanned and listed
+        self.assertIn("out/pin_hash_start.json", listed)
+        self.assertIn("out/pin_hash_end.json", listed)
+
+    def test_a_write_into_the_deploy_during_publication_stops(self):
+        p = self.run_gen(PG_STUB_DIRTY_AT="l")                               # the publish step's environment
+        self.assertEqual(p.returncode, 1, p.stdout + p.stderr)
+        self.assertIn("[pg] STOP: the deploy changed (publish)", p.stdout)
+        self.assertFalse((self.W / "out/PG-PUBLISH-SHA256SUMS").exists())
 
     def test_an_orphan_that_left_w_is_killed_by_its_group(self):
         import time
@@ -817,7 +883,7 @@ class Generate(unittest.TestCase):
         p = self.run_gen(PG_STUB_ORPHAN_CD=str(seeds()["tunes"][0]["task_seeds"][2]), PG_STUB_ORPHAN_PID=str(pidf))
         self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
         self.assertLess(p.stdout.index("outlived their trees"), p.stdout.index("the publish set and its leak scan: pass"))
-        self.assertRegex(p.stdout, r"\[pg\] cleanup: the survivors ended at poll [0-9]+ of 60 \(0\.5 s each\)")   # the poll, logged
+        self.assertRegex(p.stdout, r"\[pg\] cleanup: the survivors ended after [0-9]+ polls \(0\.5 s each, 30 s at most\)")
         pid = int(pidf.read_text())
         time.sleep(0.5)
         alive = subprocess.run(["ps", "-o", "stat=", "-p", str(pid)], capture_output=True, text=True).stdout.strip()
@@ -918,7 +984,8 @@ class Generate(unittest.TestCase):
         p = self.run_gen(PG_STUB_VERIFY_FAIL="--self-test")
         self.assertEqual(p.returncode, 1)
         self.assertIn("[pg] STOP: strace", p.stdout)
-        self.assertEqual([ln.split()[:2] for ln in self.log.read_text().splitlines()], [["pg_verify", "tool-check"]])
+        self.assertEqual([ln.split()[:2] for ln in self.log.read_text().splitlines()],
+                         [["pg_verify", "tool-check"], ["pg_verify", "drain"]])          # then only the cleanup's scan
 
     def test_unfilled_pins_refuse(self):
         g = self.dep / "3d-unfolding/genie"
@@ -986,6 +1053,10 @@ class Replay(unittest.TestCase):
                               cwd=self.R, env=e, stdin=subprocess.DEVNULL, capture_output=True, text=True)
 
     def test_the_replay(self):
+        import resource
+        old = resource.getrlimit(resource.RLIMIT_CORE)
+        resource.setrlimit(resource.RLIMIT_CORE, (min(1 << 20, old[1]) if old[1] >= 0 else 1 << 20, old[1]))
+        self.addCleanup(resource.setrlimit, resource.RLIMIT_CORE, old)
         p = self.run_replay()
         self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
         log = self.log.read_text().splitlines()
@@ -1016,14 +1087,27 @@ class Replay(unittest.TestCase):
         self.assertTrue(all("--script" in ln and "--reduced" in ln for ln in log if ln.startswith("pg_verify coverage-log")))
         rec = json.loads((self.R / "replay.json").read_text())
         self.assertTrue(rec["pass"])
-        self.assertEqual(len(rec["checks"]), 22)
+        self.assertEqual(len(rec["checks"]), 24)
+        self.assertEqual(rec["schema"], "covfix-pg-replay-run/4")
+        self.assertEqual(rec["gst_merged_schema"], pg_lib.root_schema(str(self.gst_tpl)))   # hadd's (B6)
+        gone = json.loads((self.R / "deleted.json").read_text())
+        self.assertEqual(sorted(gone["merged"]), ["genie_v3_g21_ALL.gst.root"])
+        self.assertFalse(list((self.R / "gst").iterdir()))
+        dec = gone["t0"]["genie_v3.gst.root"]["decoded"]
+        self.assertEqual((dec["holds_seed"], dec["name_holds_seed"]), (False, False))
+        cov = gone["coverage_slot1"]["gntp.ghep.root"]["decoded"]                # gntp.123456789.ghep.root
+        self.assertEqual((cov["holds_seed"], cov["name_holds_seed"]), (False, True))
+        self.assertEqual([ln for ln in log if ln.startswith("core ")], ["core 0"])        # Q2
+        gntpc = next(ln for ln in log if ln.startswith("pg_verify trace-check") and "--role gntpc" in ln).split()
+        self.assertEqual(gntpc[gntpc.index("--ghep-from-trace") + 1], str(self.R / "work/t0/gevgen.trace"))
+        self.assertEqual(sum(ln.startswith("pg_verify pin-hash") for ln in log), 2)          # Q1, both ends
         self.assertEqual(rec["gst_schema"], pg_lib.root_schema(str(self.gst_tpl)))        # the schema every gst must match
         self.assertEqual(sorted(rec["revision"]), ["end", "start"])
         self.assertEqual(rec["execs"]["trace_check_gntpc.json"][0]["path"], "/b/gntpc")
         self.assertEqual((len(rec["real_shapes"]), len(rec["host"])), (4, 3))
         self.assertEqual(len(rec["spline_opened"]), 6)
         gone = json.loads((self.R / "deleted.json").read_text())
-        self.assertEqual(sorted(gone), ["coverage_slot1", "coverage_slot2", "t0"])
+        self.assertEqual(sorted(gone), ["coverage_slot1", "coverage_slot2", "merged", "t0"])
         self.assertEqual(sorted(gone["t0"]), ["genie_v3.gst.root", "gevgen.status", "input-flux.root"])
         self.assertEqual(sorted(gone["coverage_slot1"]), ["gevgen.log", "gevgen.status", "gntp.ghep.root", "input-flux.root"])
         for d, ends in (("work/t0", (".root", ".status")), ("coverage/G21_11a_00_000", (".root", ".status", ".log")),
@@ -1038,7 +1122,28 @@ class Replay(unittest.TestCase):
         self.assertEqual(p.returncode, 1, p.stdout)
         self.assertIn("[replay] STOP: deleting the event and status files", p.stdout)
         self.assertFalse((self.R / "work/t0/genie_v3.gst.root").exists())
-        self.assertEqual(json.loads((self.R / "deleted.json").read_text())["t0"]["genie_v3.gst.root"], {"error": "unreadable"})
+        self.assertEqual(json.loads((self.R / "deleted.json").read_text())["t0"]["genie_v3.gst.root"],
+                         {"error": "unreadable: PermissionError"})
+
+    def test_a_broken_record_or_an_unexpected_error_still_deletes(self):
+        import struct
+        p = self.run_replay(PG_STUB_BAD_RECORD="1")
+        self.assertEqual(p.returncode, 0, p.stdout)
+        gone = json.loads((self.R / "deleted.json").read_text())
+        self.assertEqual(gone["_prior"], "unreadable")                        # kept, and the node refuses it
+        self.assertIn("genie_v3.gst.root", gone["t0"])
+        shutil.rmtree(self.R)
+        self.R.mkdir()
+        bad = self.tmp / "bad.gst.root"                                       # its last key's names run off the file
+        body = struct.pack(">ihiIhh", 18, 4, 0, 0, 18, 1)
+        bad.write_bytes(b"root" + struct.pack(">iii", 62206, 100, 100 + len(body)) + b"\0" * 84 + body)
+        p = self.run_replay(PG_STUB_GST=str(bad))
+        self.assertEqual(p.returncode, 1, p.stdout)
+        self.assertIn("[replay] STOP: deleting the event and status files", p.stdout)
+        gone = json.loads((self.R / "deleted.json").read_text())
+        self.assertEqual(gone["t0"]["genie_v3.gst.root"]["decoded"], {"error": "root-key"})   # named, not a crash
+        self.assertFalse((self.R / "work/t0/genie_v3.gst.root").exists())
+        self.assertFalse((self.R / "gst/genie_v3_g21_ALL.gst.root").exists())
 
     def test_a_stop_still_deletes_the_events(self):
         p = self.run_replay(PG_STUB_VERIFY_FAIL="--role gntpc")           # after the gevgen, before the record
@@ -1300,7 +1405,9 @@ class Leak4(unittest.TestCase):
         self.assertFalse([k for k in s["keys"] if k[0] == "TFile"])            # the file's own name is not schema
         g = self.put("out/gst/genie_v3_g21_ALL.gst.root", self.gst())
         self.assertEqual(pg_lib.root_schema(str(self.tmp / g)), s)
-        self.assertEqual(pg_lib.schema_problems(str(self.tmp), [f, g], {"gst": s}), [])
+        self.assertEqual(pg_lib.schema_problems(str(self.tmp), [f, g], {"gst": s, "gst_merged": s}), [])
+        self.assertEqual(pg_lib.schema_problems(str(self.tmp), [f, g], {"gst": s}),            # hadd's has its own
+                         ["root-schema-unset: no gst_merged schema is recorded from B3"])
         for name, data in (("a new branch", self.gst(branches=("iev", "neu", "seed"))),
                            ("other streamers", self.gst(streamer=b"streamers v2"))):
             with self.subTest(name):
@@ -1360,3 +1467,99 @@ class Leak4(unittest.TestCase):
         self.assertEqual(rc, 2, err)
         self.assertIn("the publish sums", err)
         self.assertFalse((w / pg_lib.PUBLISH_SUMS).exists())
+
+
+class Leak5(Leak4):
+    """Round 5 (B5-B7, the director's GO 2026-11-25), in ROOT's own record format: keys and free gaps tile
+    [fBEGIN, fEND) exactly with nothing after it, a gap's old compressed record is read, each codec consumes exactly
+    its block; the path and bytes are scanned apart; int32 STOPs outside basket payloads; gzip and zip are inflated."""
+
+    def gap_file(self, old_record, end_extra=0):
+        """A ROOT file whose first record was freed: ROOT overwrites only its length with the negative gap size."""
+        import struct
+        live = _key("TBasket", "iev", "gst", b"pad" * 40)
+        gap = struct.pack(">i", -len(old_record)) + old_record[4:]
+        body = gap + live
+        begin = 100
+        head = b"root" + struct.pack(">iii", 62206, begin, begin + len(body) + end_extra)
+        return head + b"\0" * (begin - len(head)) + body
+
+    def test_a_free_gap_keeps_and_is_read(self):
+        seed = str(self.SEED).encode()
+        f = self.put("out/g.root", self.gap_file(_key("TNamed", "old", "x", b"run " + seed * 3)))
+        self.assertEqual(pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])[0], [(f, "inflated")])
+        f = self.put("out/g2.root", self.gap_file(_key("TNamed", "old", "x", b"nothing here" * 3)))
+        self.assertEqual(pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])[0], [])
+
+    def test_the_records_tile_the_file(self):
+        import struct
+        ok = root_file([_key("TBasket", "iev", "gst", b"pad" * 40)])
+        for name, data, code in (("bytes after fEND", ok + b"tail", "root-tail"),
+                                 ("a gap past fEND", ok[:100] + struct.pack(">i", -10 ** 6) + ok[104:], "root-gap"),
+                                 ("a key past fEND", ok[:100] + struct.pack(">i", len(ok)) + ok[104:], "root-key")):
+            with self.subTest(name):
+                f = self.put(f"out/{name.replace(' ', '_')}.root", data)
+                with self.assertRaises(pg_lib.Refusal) as cm:
+                    pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])
+                self.assertTrue(str(cm.exception).startswith(code), str(cm.exception))
+
+    def test_a_block_is_exactly_one_stream(self):
+        import struct
+        import zlib
+        obj = b"pad" * 40
+        z = zlib.compress(obj, 9) + b"junk"                                  # a seed could ride after the stream
+        data = b"ZL\x08" + len(z).to_bytes(3, "little") + len(obj).to_bytes(3, "little") + z
+        names = _tstr("TBasket") + _tstr("iev") + _tstr("gst")
+        keylen = 26 + len(names)
+        key = struct.pack(">ihiIhhii", keylen + len(data), 4, len(obj), 0, keylen, 1, 0, 0) + names + data
+        f = self.put("out/junk.root", root_file([key]))
+        with self.assertRaises(pg_lib.Refusal) as cm:
+            pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])
+        self.assertTrue(str(cm.exception).startswith("root-block"), str(cm.exception))
+
+    def test_int32_stops_outside_basket_payloads(self):
+        import struct
+        i32 = struct.pack(">i", self.SEED)
+        small = b"\0\1" + i32 + b"\0" * 20                                    # ROOT stores what does not compress
+        for codec, obj in ((None, small), (b"ZL", small * 8)):
+            with self.subTest(codec=codec):
+                f = self.put("out/obj.root", root_file([_key("TParameter<int>", "run", "x", obj, codec=codec)]))
+                self.assertEqual(pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])[0], [(f, "int32-object")])
+        f = self.put("out/bsk.root", root_file([_key("TBasket", "E", "gst", b"\x11" * 30 + i32 + b"\x11" * 30)]))   # not an int64
+        hits, stats = pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])
+        self.assertEqual(hits, [])                                            # a float32 there is only counted
+        self.assertGreaterEqual(stats["int32_count"], 1)
+
+    def test_the_path_and_the_bytes_are_scanned_apart(self):
+        f = self.put(f"out/gntp.{self.SEED}.ghep.root", root_file([_key("TNamed", "x", "y", b"run %d " % self.SEED * 20)]))
+        hits, _ = pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])
+        self.assertEqual(hits, [(None, "path"), (f, "inflated")])
+        g = self.put(f"out/gntp.{self.SEED}.x.root", root_file([_key("TNamed", "x", "y", b"nothing")]))
+        self.assertEqual(pg_lib.leak_scan(str(self.tmp), [g], [self.SEED])[0], [(None, "path")])
+
+    def test_gzip_and_zip_are_inflated_and_other_containers_stop(self):
+        import bz2
+        import gzip
+        import io
+        import numpy as np
+        f = self.put("out/splines/G21_11a_00_000_CH.xml.gz", gzip.compress(b"<x>%d</x>" % self.SEED))
+        self.assertEqual(pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])[0], [(f, "inflated")])
+        b = io.BytesIO()
+        np.savez_compressed(b, run=np.array([self.SEED], dtype=">i8"))      # a packed int64, deflated
+        f = self.put("out/gen5d/genie_v3_g21_xsec5d.npz", b.getvalue())
+        self.assertEqual(pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])[0], [(f, "inflated")])
+        b = io.BytesIO()
+        np.savez(b, x=np.zeros(4))                                          # gen5d_v3's own np.savez: stored
+        f = self.put("out/gen5d/clean.npz", b.getvalue())
+        self.assertEqual(pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])[0], [])
+        f = self.put("out/x.json", bz2.compress(b"{}"))
+        with self.assertRaises(pg_lib.Refusal) as cm:
+            pg_lib.leak_scan(str(self.tmp), [f], [self.SEED])
+        self.assertTrue(str(cm.exception).startswith("container-unread"))
+
+    def test_hadds_output_is_the_merged_kind(self):
+        src = (GENIE / "pg_generate.sh").read_text()
+        self.assertIn('hadd "$O/gst/${N}_ALL.gst.root"', src)                 # the name pg_generate gives hadd's output
+        import fnmatch
+        for n in ("genie_v3_g21", "genie_v3_g18_02a"):
+            self.assertTrue(fnmatch.fnmatchcase(f"out/gst/{n}_ALL.gst.root", "out/gst/*_ALL.gst.root"))
