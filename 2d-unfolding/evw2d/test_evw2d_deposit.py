@@ -56,9 +56,10 @@ def products(out: Path, job: str = JOBID, cfg: str = CFG) -> str:
     return s
 
 
-def fill(text: str, lane: Path, bound: str, **extra) -> str:
+def fill(text: str, lane: Path, bound: str, done: str, **extra) -> str:
     for k, v in {"__LANE_ROOT__": str(lane), "__EVW2D_PY_SHA256__": sha(EV / "evw2d.py"), "__CONFIG_SHA256__": CFG,
-                 "__PRODUCTS_SHA256SUMS_SHA256__": bound, "__JOB_ID__": JOBID, **extra}.items():
+                 "__PRODUCTS_SHA256SUMS_SHA256__": bound, "__EVW2D_DONE_SHA256__": done, "__JOB_ID__": JOBID,
+                 **extra}.items():
         text = text.replace(k, v)
     return text
 
@@ -87,24 +88,35 @@ def hpss(tmp_path):
     m = f'map() {{ printf "%s" "${{1/#\\/home\\/j\\/josephrb/{store}}}"; }}'
     stub(b, "hsi", m + '\nc="$2"; set -- $c\ncase "$1" in\n'
                    '  mkdir) mkdir -p "$(map "$3")";;\n'
-                   '  ls) [ "$2" = -l ] && exit 0; [ -e "$(map "$2")" ];;\n'
+                   '  ls) [ -n "$HSI_LS_RC" ] && exit "$HSI_LS_RC"; shift; [ "$1" = -l ] && shift\n'
+                   '      for x; do d=$(map "$x"); if [ -d "$d" ]; then echo "$x:"; ls -1 "$d"\n'
+                   '      elif [ -e "$d" ]; then echo "$x"; else echo "*** $x: no such file" >&2; fi; done;;\n'
+                   '  mv) [ -n "$HSI_MV_RC" ] && exit "$HSI_MV_RC"; mv "$(map "$2")" "$(map "$3")";;\n'
                    '  hashcreate) exit ${HC_RC:-0};;\n'
                    '  hashverify) echo "hashverify: $2 OK"; exit ${HV_RC:-0};;\n'
                    '  *) exit 2;;\nesac')
     stub(b, "htar", m + '\nfor a; do case "$prev" in -cvf|-xf) T="$a";; -L) L="$a";; esac; prev="$a"; done\n'
                    'case " $* " in\n'
                    '  *" -cvf "*) [ -n "$HTAR_RC" ] && exit "$HTAR_RC"; tar cf "$(map "$T")" -T "$L" || exit 1\n'
-                   '     [ -n "$HTAR_TOUCH" ] && printf " " >> "$(grep evw2d.done "$L")"; exit 0;;\n'
+                   '     echo idx > "$(map "$T").idx"\n'
+                   '     [ -n "$HTAR_TOUCH" ] && printf " " >> "$(grep evw2d.done "$L")"\n'
+                   '     [ -n "$HTAR_TOUCH_PRODUCT" ] && printf " " >> "$(grep xsec.root "$L")"; exit 0;;\n'
                    '  *" -xf "*) tar xf "$(map "$T")" || exit 1\n'
                    '     [ -n "$HTAR_CORRUPT" ] && printf x >> "$(find . -name xsec.root)"\n'
                    '     [ -n "$HTAR_EXTRA" ] && mkdir -p extra && echo e > extra/file; exit 0;;\n'
                    'esac')
     stub(b, "hpssquota", 'echo "HPSS usage 1 GiB"')
+    stub(b, "stat", 'if [ "$1" = -c ] && [ "$2" = %s ]; then shift 2; exec /usr/bin/stat -f %z "$@"; fi\n'
+                    'exec /usr/bin/stat "$@"')                       # GNU stat -c %s, as on the login node
+    stub(b, "df", 'echo "Filesystem 1024-blocks Used Available Capacity Mounted on"\n'
+                  'echo "tmpfs 999999999 0 ${DF_AVAIL:-99999999} 0% /dev/shm"')
     stub(b, "sha256sum", 'a=(); for x; do [ "$x" = --strict ] || a+=("$x"); done; shasum -a 256 "${a[@]}"')
     env = dict(os.environ, PATH=f"{b}:{os.environ['PATH']}", HOME=str(home))
 
-    def run(bound_pin=bound, edit=None, **e):
-        text = fill((LAUNCH / "evw2d_hpss.sh").read_text(), lane, bound_pin)
+    done = sha(lane / "out" / "evw2d.done")
+
+    def run(bound_pin=bound, done_pin=done, edit=None, **e):
+        text = fill((LAUNCH / "evw2d_hpss.sh").read_text(), lane, bound_pin, done_pin)
         assert text.count("mktemp -d /dev/shm/jrb-evw2d-retrieve.XXXXXX") == 1
         text = text.replace("/dev/shm/", f"{shm}/")
         if edit:
@@ -113,7 +125,9 @@ def hpss(tmp_path):
         f.write_text(text)
         return subprocess.run(["bash", str(f), str(f)], capture_output=True, text=True, env=dict(env, **e))
 
-    return {"lane": lane, "run": run, "bound": bound, "store": store, "shm": shm}
+    return {"lane": lane, "run": run, "bound": bound, "store": store, "shm": shm,
+            "tar": store / "mnv-evw2d-20261126" / "evw2d-20261126.tar",
+            "part": store / "mnv-evw2d-20261126" / "evw2d-20261126.tar.part"}
 
 
 def _log(h) -> str:
@@ -125,7 +139,9 @@ def test_hpss_archives_retrieves_and_accepts(hpss):
     r = hpss["run"]()
     log = _log(hpss)
     assert r.returncode == 0, log
-    assert (hpss["store"] / "mnv-evw2d-20261126" / "evw2d-20261126.tar").is_file()
+    assert hpss["tar"].is_file() and Path(f"{hpss['tar']}.idx").is_file()
+    assert not hpss["part"].exists() and not Path(f"{hpss['part']}.idx").exists()
+    assert f"renamed to /home/j/josephrb/mnv-evw2d-20261126/evw2d-20261126.tar" in log
     assert "retrieved and equal to their pins: 6 of 6; files retrieved: 6" in log
     assert "checker on scratch: ACCEPTED rc=0" in log and "checker on the retrieved copy: ACCEPTED rc=0" in log
     assert (hpss["lane"] / "hpss.tar.gz").is_file() and not (hpss["lane"] / "hpss.tar.gz.partial").exists()
@@ -192,9 +208,9 @@ def test_hpss_refuses_products_bound_to_another_job(tmp_path, hpss):
     shutil.rmtree(lane / "out")
     bound = products(lane / "out", job="999")
     (lane / "post.pass").write_text(f"job={JOBID}\nconfig_sha256={CFG}\nproducts_SHA256SUMS_sha256={bound}\n")
-    r = hpss["run"](bound_pin=bound)
+    r = hpss["run"](bound_pin=bound, done_pin=sha(lane / "out" / "evw2d.done"))
     assert r.returncode == 1 and "checker on scratch: REFUSED" in _log(hpss)
-    assert not any(hpss["store"].rglob("*.tar"))
+    assert not any(hpss["store"].rglob("*.tar*"))
 
 
 def test_hpss_refuses_products_bound_to_another_config(hpss):
@@ -202,7 +218,7 @@ def test_hpss_refuses_products_bound_to_another_config(hpss):
     shutil.rmtree(lane / "out")
     bound = products(lane / "out", cfg="d" * 64)
     (lane / "post.pass").write_text(f"job={JOBID}\nconfig_sha256={CFG}\nproducts_SHA256SUMS_sha256={bound}\n")
-    r = hpss["run"](bound_pin=bound)
+    r = hpss["run"](bound_pin=bound, done_pin=sha(lane / "out" / "evw2d.done"))
     assert r.returncode == 1 and "checker on scratch: REFUSED" in _log(hpss)
 
 
@@ -210,15 +226,54 @@ def test_hpss_fails_when_the_scratch_marker_changes_after_the_archive(hpss):
     r = hpss["run"](HTAR_TOUCH="1")
     log = _log(hpss)
     assert r.returncode == 1 and "the scratch evw2d.done changed during the archive" in log, log
-    assert "checker on the retrieved copy: ACCEPTED" in log          # only the snapshot comparison sees it
+    assert "checker on the retrieved copy: ACCEPTED" in log          # only the scratch re-checks see it
+    assert "scratch changed during the archive" in log and not hpss["tar"].exists() and hpss["part"].is_file()
 
 
-def test_hpss_refuses_an_existing_archive_and_a_failed_htar(hpss):
-    tar = hpss["store"] / "mnv-evw2d-20261126" / "evw2d-20261126.tar"
-    tar.parent.mkdir(parents=True)
-    tar.write_text("old")
+@pytest.mark.parametrize("name", ["evw2d-20261126.tar", "evw2d-20261126.tar.idx", "evw2d-20261126.tar.part",
+                                  "evw2d-20261126.tar.part.idx"])
+def test_hpss_refuses_any_existing_archive_name(hpss, name):
+    old = hpss["store"] / "mnv-evw2d-20261126" / name
+    old.parent.mkdir(parents=True)
+    old.write_text("old")
     r = hpss["run"]()
-    assert r.returncode == 1 and "exists" in _log(hpss) and tar.read_text() == "old"
+    assert r.returncode == 1 and "already holds an archive name" in _log(hpss) and old.read_text() == "old"
+    assert sorted(p.name for p in old.parent.iterdir()) == [name]
+
+
+def test_hpss_stops_when_hsi_cannot_list_the_directory(hpss):
+    r = hpss["run"](HSI_LS_RC="64")
+    assert r.returncode == 1 and "hsi could not list" in _log(hpss) and not any(hpss["store"].rglob("*.tar*"))
+
+
+def test_hpss_stops_without_room_in_dev_shm_for_the_retrieval(hpss):
+    r = hpss["run"](DF_AVAIL="10")
+    assert r.returncode == 1 and "no room for the retrieval" in _log(hpss) and not any(hpss["store"].rglob("*.tar*"))
+
+
+def test_hpss_needs_the_bound_marker_bytes_and_regular_files(hpss):
+    done = hpss["lane"] / "out" / "evw2d.done"
+    good = done.read_bytes()
+    done.write_bytes(json.dumps(json.loads(good), indent=1).encode())     # the same content, other bytes
+    _refuses_before_writing(hpss, hpss["run"](), "evw2d.done is not the bound one")
+    done.write_bytes(good)
+    x = hpss["lane"] / "out" / "xsec.root"
+    x.rename(hpss["lane"] / "xsec.copy")
+    x.symlink_to(hpss["lane"] / "xsec.copy")
+    _refuses_before_writing(hpss, hpss["run"](), "is not a regular file")
+
+
+def test_hpss_leaves_the_part_name_when_the_rename_fails(hpss):
+    r = hpss["run"](HSI_MV_RC="1")
+    log = _log(hpss)
+    assert r.returncode == 1 and "FAILED: the rename" in log and hpss["part"].is_file() and not hpss["tar"].exists()
+
+
+def test_hpss_fails_when_a_product_changes_on_scratch_after_the_archive(hpss):
+    r = hpss["run"](HTAR_TOUCH_PRODUCT="1")
+    log = _log(hpss)
+    assert r.returncode == 1 and "scratch changed during the archive" in log, log
+    assert "the scratch evw2d.done changed" not in log and not hpss["tar"].exists() and hpss["part"].is_file()
 
 
 def test_hpss_fails_on_a_failed_htar(hpss):
@@ -233,6 +288,7 @@ def test_hpss_fails_on_a_hash_or_retrieval_miss(hpss, env, why):
     log = _log(hpss)
     assert r.returncode == 1 and why in log and "hpss rc=1" in log, log
     assert list(hpss["shm"].iterdir()) == [], "the retrieved copy was left"
+    assert not hpss["tar"].exists() and hpss["part"].is_file() and "stays at the part name" in log
 
 
 def test_hpss_reports_unexpected_retrieved_files_and_removes_only_the_pinned_names(hpss):
@@ -266,11 +322,12 @@ def deposit(tmp_path):
     git_repo(top, {"2d-unfolding/evw2d/evw2d.py": (EV / "evw2d.py").read_bytes()})
     lane = tmp / "remote" / "evw2d-20261126"
     bound = products(lane / "out")
+    done = sha(lane / "out" / "evw2d.done")
     ld = top / "launch"
     ld.mkdir()
     (ld / "evw2d_hpss.sh").write_text("#!/bin/bash\necho remote-hpss-ran\nexit 0\n")
     text = fill((LAUNCH / "evw2d_deposit.sh").read_text(), Path("/pscratch/sd/j/josephrb/evw2d-20261126"), bound,
-                __HPSS_SHA256__=sha(ld / "evw2d_hpss.sh"))
+                done, __HPSS_SHA256__=sha(ld / "evw2d_hpss.sh"))
     (ld / "evw2d_deposit.sh").write_text(text)
     shm, b = tmp / "shm", tmp / "stubbin"
     shm.mkdir()
@@ -293,7 +350,7 @@ def deposit(tmp_path):
         return subprocess.run(["bash", str(ld / "evw2d_deposit.sh"), *map(str, args)], capture_output=True,
                               text=True, env=dict(env, **e))
 
-    return {"tmp": tmp, "top": top, "ld": ld, "lane": lane, "run": run, "bound": bound, "shm": shm}
+    return {"tmp": tmp, "top": top, "ld": ld, "lane": lane, "run": run, "bound": bound, "done": done, "shm": shm}
 
 
 @pytest.fixture()
@@ -349,10 +406,19 @@ def test_fetch_products_refuses_products_of_another_job_or_config(deposit, home_
     out = deposit["lane"] / "out"
     shutil.rmtree(out)
     bound = products(out, **over)
-    text = (deposit["ld"] / "evw2d_deposit.sh").read_text().replace(deposit["bound"], bound)
-    (deposit["ld"] / "evw2d_deposit.sh").write_text(text)                     # the digest matches; the binding does not
+    text = (deposit["ld"] / "evw2d_deposit.sh").read_text().replace(deposit["bound"], bound) \
+        .replace(deposit["done"], sha(out / "evw2d.done"))
+    (deposit["ld"] / "evw2d_deposit.sh").write_text(text)                     # the digests match; the binding does not
     r = deposit["run"]("fetch-products", home_dest)
-    assert r.returncode == 1 and "REFUSED" in r.stdout and '"pass": true' in r.stdout, r.stdout
+    assert r.returncode == 1 and "REFUSED" in r.stdout and '"accepted_pass": true' in r.stdout, r.stdout
+
+
+@pytestmark_mac
+def test_fetch_products_refuses_a_reserialized_marker(deposit, home_dest):
+    done = deposit["lane"] / "out" / "evw2d.done"
+    done.write_text(json.dumps(json.loads(done.read_text()), indent=1))     # same content: accepted() still passes
+    r = deposit["run"]("fetch-products", home_dest)
+    assert r.returncode == 1 and "REFUSED" in r.stdout and '"accepted_pass": true' in r.stdout, r.stdout
 
 
 @pytestmark_mac
@@ -412,9 +478,53 @@ def test_deposit_fetch_tells_absent_from_unreachable(deposit):
     assert r.returncode == 4 and "hpss.tar.gz absent" in r.stdout
     (deposit["lane"] / "hpss.tar.gz").write_bytes(b"h")
     r, d = fetch()
-    assert r.returncode == 0 and (d / "hpss.tar.gz").read_bytes() == b"h"
+    assert r.returncode == 5 and "NOT VERIFIED" in r.stdout and (d / "hpss.tar.gz").read_bytes() == b"h"
     r, d = fetch(SSH_RC="255")
     assert r.returncode == 255 and "could not ask saul" in r.stdout
+
+
+def _hpss_receipt(lane: Path, bound: str, done: str, **over) -> None:
+    """A receipt bundle as evw2d_hpss.sh publishes it on a passing run, with optional edits."""
+    w = lane.parent / "receipt-src"
+    (w / "hpss").mkdir(parents=True)
+    R = lane.name
+    pins = [f"{bound}  {R}/out/SHA256SUMS"] + [f"{'a' * 64}  {R}/out/{n}" for n in
+                                                ("constants.json", "run.json", "weights.npz", "xsec.root")]
+    pins.insert(2, f"{done}  {R}/out/evw2d.done")
+    log = [f"node n 2026-11-26T00:00:00Z hpss sha256 x bound {bound} done {done} job {JOBID}",
+           "retrieved and equal to their pins: 6 of 6; files retrieved: 6",
+           f"renamed to /home/j/josephrb/mnv-{R}/{R}.tar", "hpss rc=0 2026-11-26T00:00:01Z"]
+    for k, v in over.items():
+        log = [ln.replace(k, v) for ln in log]
+    (w / "hpss" / "hpss.log").write_text("\n".join(log) + "\n")
+    (w / "hpss" / "pinned.sha256").write_text("\n".join(pins) + "\n")
+    subprocess.run(["tar", "czf", str(lane / "hpss.tar.gz"), "-C", str(w), "hpss"], check=True)
+    shutil.rmtree(w)
+
+
+@pytestmark_mac
+@pytest.mark.parametrize("over,ok", [({}, True), ({"hpss rc=0": "hpss rc=1"}, False),
+                                     ({"6 of 6": "5 of 6"}, False), ({f"job {JOBID}": "job 999"}, False),
+                                     ({"renamed to": "a check failed: kept"}, False)])
+def test_deposit_fetch_verifies_the_hpss_receipt(deposit, over, ok):
+    _hpss_receipt(deposit["lane"], deposit["bound"], deposit["done"], **over)
+    d = deposit["tmp"] / "f"
+    d.mkdir()
+    r = deposit["run"]("fetch", d)
+    assert (r.returncode == 0 and "VERIFIED: the HPSS copy" in r.stdout) if ok else \
+        (r.returncode == 5 and "NOT VERIFIED" in r.stdout), r.stdout
+
+
+@pytestmark_mac
+def test_fetch_products_uses_the_directory_it_checked(deposit, home_dest):
+    """A relative argument with CDPATH set: the guard and the writes must use the same directory."""
+    (home_dest / "x").mkdir()
+    (deposit["tmp"] / "x").mkdir()
+    r = subprocess.run(["bash", str(deposit["ld"] / "evw2d_deposit.sh"), "fetch-products", "x"], capture_output=True,
+                       text=True, cwd=deposit["tmp"],
+                       env=dict(os.environ, PATH=os.environ["PATH"], CDPATH=str(home_dest)))
+    assert r.returncode == 9 and f"STOP: {deposit['tmp'] / 'x'} is not" in r.stdout, r.stdout   # ./x, not CDPATH's x
+    assert not any((home_dest / "x").iterdir()) and not any((deposit["tmp"] / "x").iterdir())
 
 
 def test_deposit_refuses_unfilled_pins(tmp_path):
@@ -429,7 +539,7 @@ def test_deposit_refuses_unfilled_pins(tmp_path):
 RD = "docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/run-test"
 
 
-def _fill_tree(tmp: Path, accepted_edit=None) -> Path:
+def _fill_tree(tmp: Path, accepted_edit=None, marker_edit=None) -> Path:
     top = tmp / "top"
     rel = LAUNCH.relative_to(REPO)
     lane = "/pscratch/sd/j/josephrb/evw2d-20261126"
@@ -441,9 +551,13 @@ def _fill_tree(tmp: Path, accepted_edit=None) -> Path:
     work = tmp / "work"
     bound = products(work / "out")
     files[f"{RD}/post/out/SHA256SUMS"] = (work / "out" / "SHA256SUMS").read_bytes()
+    marker = json.loads((work / "out" / "evw2d.done").read_text())
+    if marker_edit:
+        marker_edit(marker)
+    files[f"{RD}/post/out/evw2d.done"] = json.dumps(marker) + "\n"
     files[f"{RD}/post/logs/evw2d.jobid"] = f"{JOBID}\n"
     acc = {"pass": True, "config_bound": True, "job_bound": True, "run_config_sha256": CFG, "run_slurm_job": JOBID,
-           "done": {"verdict": "PASS", "SHA256SUMS": bound}}
+           "done": dict(marker)}
     if accepted_edit:
         accepted_edit(acc)
     files[f"{RD}/post/accepted.json"] = json.dumps(acc)
@@ -462,6 +576,8 @@ def test_fill_deposit_pins_writes_every_pin_from_the_receipts(tmp_path):
     pins = dict(re.match(r"(.+?)\s{2,}(\S+)$", ln).groups() for ln in (b / "PINS.txt").read_text().splitlines())
     bound = sha(top / RD / "post/out/SHA256SUMS")
     assert pins["products SHA256SUMS"] == bound and pins["job"] == JOBID and pins["config.json"] == CFG
+    assert pins["evw2d.done"] == sha(top / RD / "post/out/evw2d.done")
+    assert f"DONE_SHA={pins['evw2d.done']}\n" in (b / "evw2d_hpss.sh").read_text()
     assert pins["evw2d_hpss.sh"] == sha(b / "evw2d_hpss.sh") and pins["evw2d_deposit.sh"] == sha(b / "evw2d_deposit.sh")
     dep = (b / "evw2d_deposit.sh").read_text()
     assert f"SHA={pins['evw2d_hpss.sh']};" in dep and f"BOUND={bound}\n" in dep and f"JOBID={JOBID}\n" in dep
@@ -470,6 +586,7 @@ def test_fill_deposit_pins_writes_every_pin_from_the_receipts(tmp_path):
 
 
 @pytest.mark.parametrize("edit", [lambda a: a.update(run_slurm_job="999"), lambda a: a.update(job_bound=False),
+                                  lambda a: a["done"].update(findings=["x"]),
                                   lambda a: a["done"].update(SHA256SUMS="0" * 64), lambda a: a.update({"pass": False})])
 def test_fill_deposit_pins_refuses_receipts_that_disagree(tmp_path, edit):
     tmp = Path(os.path.realpath(tmp_path))
@@ -490,6 +607,25 @@ def test_fill_deposit_pins_refuses_uncommitted_receipts_or_another_evw2d(tmp_pat
     (top / "2d-unfolding/evw2d/evw2d.py").write_text("x")
     r = subprocess.run(["bash", str(ld / "fill_deposit_pins.sh"), RD], capture_output=True, text=True)
     assert r.returncode != 0 and "not the bound one" in r.stdout
+
+
+def test_fill_deposit_pins_refuses_a_marker_that_names_another_manifest(tmp_path):
+    tmp = Path(os.path.realpath(tmp_path))
+    top = _fill_tree(tmp, marker_edit=lambda m: m.update(SHA256SUMS="0" * 64))   # the marker and accepted.json agree
+    ld = top / LAUNCH.relative_to(REPO)
+    r = subprocess.run(["bash", str(ld / "fill_deposit_pins.sh"), RD], capture_output=True, text=True)
+    assert r.returncode != 0 and not (ld / "bound-deposit").exists(), r.stdout + r.stderr
+
+
+def test_fill_deposit_pins_refuses_an_untracked_binding_1_pins_file(tmp_path):
+    tmp = Path(os.path.realpath(tmp_path))
+    top = _fill_tree(tmp)
+    ld = top / LAUNCH.relative_to(REPO)
+    subprocess.run(["git", "-C", str(top), "rm", "-q", "--cached", str(ld / "bound/PINS.txt")], check=True)
+    subprocess.run(["git", "-C", str(top), "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "u"],
+                   check=True)
+    r = subprocess.run(["bash", str(ld / "fill_deposit_pins.sh"), RD], capture_output=True, text=True)
+    assert r.returncode != 0 and "is not tracked" in r.stdout and not (ld / "bound-deposit").exists(), r.stdout
 
 
 def test_every_deposit_script_parses():

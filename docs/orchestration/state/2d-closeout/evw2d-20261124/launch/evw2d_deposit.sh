@@ -9,24 +9,32 @@
 # Usage: bash evw2d_deposit.sh hpss <new empty session dir> <login node, e.g. login27>
 #          one ssh session through saul to NODE; NODE stages evw2d_hpss.sh in a private mktemp file in /dev/shm, runs
 #          it only if its sha256 is the approved one (else deletes it and exits 8), then deletes it.
-#        bash evw2d_deposit.sh fetch <new empty dir>           (hpss.tar.gz; an absent archive is told apart)
+#        bash evw2d_deposit.sh fetch <new empty dir>
+#          hpss.tar.gz (an absent archive is told apart from an ssh failure), then its receipt is verified: the log names
+#          the bound digests and job, 6 of 6 retrieved and equal to their pins, the rename to the final name and
+#          "hpss rc=0", and its pinned list holds the bound digests. Exit 0 only then; 5 = fetched but not verified.
 #        bash evw2d_deposit.sh fetch-products <new empty dir under $HOME, outside /private/tmp and /tmp>
 #          the six product files by scp into <dir>/out, then the checker on the Mac: the local evw2d.py must be the
-#          approved bytes, and evw2d.accepted(<dir>/out) must pass with SHA256SUMS's digest, run.json's config digest
-#          and slurm_job the bound ones ($EVW2D_PY, default python3, with numpy).
+#          approved bytes and is executed as the very bytes hashed (no import, no cache); evw2d.accepted(<dir>/out) must
+#          pass with SHA256SUMS's and evw2d.done's digests, run.json's config digest and slurm_job the bound ones
+#          ($EVW2D_PY, default python3, with numpy).
+# The directory argument is resolved once, to a physical path (CDPATH unset), and every write uses that path.
 MODE=${1:?hpss|fetch|fetch-products}; F=${2:?session dir}; NODE=${3:-}
+unset CDPATH
+F=$(cd -- "$F" 2>/dev/null && pwd -P) || { echo "STOP: $2 is not a directory"; exit 9; }
 HERE=$(cd "$(dirname "$0")" && pwd)
 LANE=__LANE_ROOT__
 EVW_SHA=__EVW2D_PY_SHA256__
 CFG_SHA=__CONFIG_SHA256__
 BOUND=__PRODUCTS_SHA256SUMS_SHA256__
+DONE_SHA=__EVW2D_DONE_SHA256__
 JOBID=__JOB_ID__
 CERT=${EVW2D_CERT:-$HOME/.ssh/nersc-cert.pub}
 KEY=${CERT%-cert.pub}
 SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20 -o IdentitiesOnly=yes -o "IdentityFile=$KEY"
      -o "CertificateFile=$CERT")
 [ -d "$F" ] && [ -z "$(ls -A "$F")" ] || { echo "STOP: $F is not a new empty directory"; exit 9; }
-for v in "$LANE" "$EVW_SHA" "$CFG_SHA" "$BOUND" "$JOBID"; do
+for v in "$LANE" "$EVW_SHA" "$CFG_SHA" "$BOUND" "$DONE_SHA" "$JOBID"; do
   case "$v" in *__*) echo "STOP: a pin is not filled in"; exit 9;; esac
 done
 cert_ok() {   # cert_ok <seconds>: ssh-keygen succeeds; the window "Valid: from A to B" (UTC) has begun and lasts that long
@@ -65,10 +73,23 @@ case "$MODE" in
     scp "${SSH[@]}" "saul.nersc.gov:$LANE/hpss.tar.gz" "$F/" >> "$F/scp.out" 2>> "$F/scp.err"; r=$?
     echo "scp hpss.tar.gz rc=$r"; [ $r = 0 ] || exit $r
     shasum -a 256 "$F/hpss.tar.gz" || exit 3
+    mkdir "$F/receipt" && tar xzf "$F/hpss.tar.gz" -C "$F/receipt" || { echo "NOT VERIFIED: the archive does not unpack"; exit 5; }
+    log="$F/receipt/hpss/hpss.log"; pins="$F/receipt/hpss/pinned.sha256"; R=${LANE##*/}
+    [ -f "$log" ] && [ ! -L "$log" ] && [ -f "$pins" ] && [ ! -L "$pins" ] || { echo "NOT VERIFIED: no hpss.log or pinned.sha256"; exit 5; }
+    v=1
+    head -1 "$log" | grep -Fq " bound $BOUND done $DONE_SHA job $JOBID" || v=0
+    grep -Fxq "retrieved and equal to their pins: 6 of 6; files retrieved: 6" "$log" || v=0
+    grep -Fxq "renamed to /home/j/josephrb/mnv-$R/$R.tar" "$log" || v=0
+    tail -1 "$log" | grep -Eq '^hpss rc=0 ' || v=0
+    grep -Fxq "$BOUND  $R/out/SHA256SUMS" "$pins" || v=0
+    grep -Fxq "$DONE_SHA  $R/out/evw2d.done" "$pins" || v=0
+    [ "$(wc -l < "$pins" | tr -d ' ')" = 6 ] || v=0
+    [ "$v" = 1 ] || { echo "NOT VERIFIED: the HPSS receipt is not a passing copy bound to $BOUND and job $JOBID"; exit 5; }
+    echo "VERIFIED: the HPSS copy of $R ($BOUND, job $JOBID) is in place and was verified by retrieval"
     exit 0 ;;
   fetch-products)
-    home=$(cd "$HOME" && pwd -P) || { echo "STOP: no HOME"; exit 9; }
-    dest=$(cd "$F" && pwd -P) || exit 9
+    home=$(cd -- "$HOME" && pwd -P) || { echo "STOP: no HOME"; exit 9; }
+    dest=$F                                                   # already resolved to a physical path
     case "$dest/" in "$home"/?*/) ;; *) echo "STOP: $F is not a directory under \$HOME"; exit 9;; esac
     case "$dest/" in /private/tmp/*|/tmp/*|/private/var/*|/var/*) echo "STOP: $F is under a temporary root"; exit 9;; esac
     TOP=$(git -C "$HERE" rev-parse --show-toplevel) || { echo "STOP: the launcher is not in a checkout"; exit 9; }
@@ -83,19 +104,25 @@ case "$MODE" in
       echo "scp $f rc=$r"; [ $r = 0 ] || exit $r
     done
     ( cd "$F/out" && shasum -a 256 SHA256SUMS evw2d.done constants.json run.json xsec.root weights.npz )
-    "${EVW2D_PY:-python3}" -I -B -c "import hashlib, json, sys
-sys.path.insert(0, sys.argv[1]); import evw2d
+    "${EVW2D_PY:-python3}" -I -B -c "import hashlib, json, sys, types
+src = open(sys.argv[1], 'rb').read()
+if hashlib.sha256(src).hexdigest() != sys.argv[3]:
+    print('REFUSED: the checker changed'); sys.exit(1)
+evw2d = types.ModuleType('evw2d'); evw2d.__file__ = sys.argv[1]; sys.modules['evw2d'] = evw2d
+exec(compile(src, sys.argv[1], 'exec'), evw2d.__dict__)   # the very bytes hashed: no import, no cache
 from pathlib import Path
 out = Path(sys.argv[2])
 r = evw2d.accepted(out)
 run = json.loads((out / 'run.json').read_text())
 sums = hashlib.sha256((out / 'SHA256SUMS').read_bytes()).hexdigest()
-ok = (r['pass'] is True and sums == sys.argv[3] and run.get('config_sha256') == sys.argv[4]
-      and str(run.get('slurm_job')) == sys.argv[5])
-print(json.dumps({'pass': r['pass'], 'acceptance': r['acceptance'], 'sums': sums,
+done = hashlib.sha256((out / 'evw2d.done').read_bytes()).hexdigest()
+ok = (r['pass'] is True and sums == sys.argv[4] and done == sys.argv[5] and run.get('config_sha256') == sys.argv[6]
+      and str(run.get('slurm_job')) == sys.argv[7])
+print(json.dumps({'verdict': 'ACCEPTED' if ok else 'REFUSED', 'accepted_pass': r['pass'],
+                  'acceptance': r['acceptance'], 'sums': sums, 'done': done,
                   'config_sha256': run.get('config_sha256'), 'slurm_job': run.get('slurm_job')}))
 print('ACCEPTED' if ok else 'REFUSED'); sys.exit(0 if ok else 1)" \
-      "$TOP/2d-unfolding/evw2d" "$F/out" "$BOUND" "$CFG_SHA" "$JOBID"
+      "$W" "$F/out" "$EVW_SHA" "$BOUND" "$DONE_SHA" "$CFG_SHA" "$JOBID"
     r=$?; echo "checker rc=$r"; exit $r ;;
   *) echo "STOP: mode $MODE"; exit 9 ;;
 esac

@@ -20,27 +20,31 @@ LANE=$(pin "lane root")
 EVW=$(pin "evw2d.py")
 CFG=$(pin "config.json")
 D="$TOP/$RD"
-for f in post/out/SHA256SUMS post/logs/evw2d.jobid post/accepted.json post/post.log; do
+git -C "$TOP" ls-files --error-unmatch "${PINS1#"$TOP"/}" > /dev/null 2>&1 || { echo "STOP: $PINS1 is not tracked"; exit 2; }
+for f in post/out/SHA256SUMS post/out/evw2d.done post/logs/evw2d.jobid post/accepted.json post/post.log; do
   [ -f "$D/$f" ] && [ ! -L "$D/$f" ] || { echo "STOP: no $RD/$f"; exit 2; }
   git -C "$TOP" ls-files --error-unmatch "$RD/$f" > /dev/null 2>&1 || { echo "STOP: $RD/$f is not tracked"; exit 2; }
 done
 git -C "$TOP" diff --quiet HEAD -- "$RD" "$PINS1" || { echo "STOP: the receipts or PINS differ from HEAD"; exit 2; }
 BOUND=$(shasum -a 256 "$D/post/out/SHA256SUMS" | cut -d' ' -f1)
+DONE=$(shasum -a 256 "$D/post/out/evw2d.done" | cut -d' ' -f1)
 JOBID=$(cat "$D/post/logs/evw2d.jobid")
 case "$JOBID" in *[!0-9]*|"") echo "STOP: job id '$JOBID'"; exit 2;; esac
 [ "$(shasum -a 256 "$TOP/2d-unfolding/evw2d/evw2d.py" | cut -d' ' -f1)" = "$EVW" ] || { echo "STOP: evw2d.py is not the bound one"; exit 2; }
-python3 -I - "$D/post/accepted.json" "$D/post/post.log" "$BOUND" "$CFG" "$JOBID" <<'PY'
+python3 -I - "$D/post/accepted.json" "$D/post/post.log" "$BOUND" "$CFG" "$JOBID" "$D/post/out/evw2d.done" <<'PY'
 import json, sys
-acc, log, bound, cfg, job = json.load(open(sys.argv[1])), open(sys.argv[2]).read(), *sys.argv[3:]
+acc, log, bound, cfg, job = json.load(open(sys.argv[1])), open(sys.argv[2]).read(), *sys.argv[3:6]
+marker = json.load(open(sys.argv[6]))
 ok = (acc.get("pass") is True and acc.get("config_bound") is True and acc.get("job_bound") is True
       and acc.get("run_config_sha256") == cfg and str(acc.get("run_slurm_job")) == job
-      and acc.get("done", {}).get("SHA256SUMS") == bound and acc.get("done", {}).get("verdict") == "PASS"
-      and f"SHA256SUMS sha256 {bound}\n" in log and "PASS=true" in log)
+      and acc.get("done", {}).get("verdict") == "PASS"
+      and f"SHA256SUMS sha256 {bound}\n" in log and "PASS=true" in log
+      and marker == acc.get("done") and marker.get("SHA256SUMS") == bound)
 sys.exit(0 if ok else "STOP: the receipts do not show this job's accepted products with the bound digests")
 PY
 mkdir "$B"
 fill() { sed -e "s|__LANE_ROOT__|$LANE|" -e "s/__EVW2D_PY_SHA256__/$EVW/" -e "s/__CONFIG_SHA256__/$CFG/" \
-             -e "s/__PRODUCTS_SHA256SUMS_SHA256__/$BOUND/" -e "s/__JOB_ID__/$JOBID/" "$1"; }
+             -e "s/__PRODUCTS_SHA256SUMS_SHA256__/$BOUND/" -e "s/__EVW2D_DONE_SHA256__/$DONE/" -e "s/__JOB_ID__/$JOBID/" "$1"; }
 fill "$HERE/evw2d_hpss.sh" > "$B/evw2d_hpss.sh"
 HPSS=$(shasum -a 256 "$B/evw2d_hpss.sh" | cut -d' ' -f1)
 fill "$HERE/evw2d_deposit.sh" | sed -e "s/__HPSS_SHA256__/$HPSS/" > "$B/evw2d_deposit.sh"
@@ -53,6 +57,7 @@ lane root          $LANE
 evw2d.py           $EVW
 config.json        $CFG
 products SHA256SUMS  $BOUND
+evw2d.done         $DONE
 job                $JOBID
 evw2d_hpss.sh      $HPSS
 evw2d_deposit.sh   $DEP
