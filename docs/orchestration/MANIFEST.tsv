@@ -4839,6 +4839,10 @@ docs/orchestration/state/2d-closeout/stageF/methods/note-figround3-20261121/runs
 docs/orchestration/state/2d-closeout/stageF/methods/note-figround3-20261121/tools/compose_fig2_r3.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figround3-20261121/tools/compose_fig3_r3.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figround3-20261121/tools/run_r3.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figscales-20261125/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figscales-20261125/figs/q3_excess_projection.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figscales-20261125/figs/runperiod_steps.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-figscales-20261125/tools/make_fig_runperiod_steps.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/figs/MEFHC_5iter_fig13.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261113/figs/MEFHC_5iter_pull_full.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
