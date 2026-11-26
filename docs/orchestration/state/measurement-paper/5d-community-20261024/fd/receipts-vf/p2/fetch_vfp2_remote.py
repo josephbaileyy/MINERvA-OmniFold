@@ -1,0 +1,70 @@
+# V_F Phase 2's read-only fetch (FD-VF-ADDITION-DECLARATION.md section 4.2; FD-VF BINDING 2), run on login02 by
+# fetch-vfp2.sh with the bound list on stdin: each listed file, in order, is opened O_NOATIME, its size checked against
+# the list by fstat before any byte is sent, then streamed into a tar on stdout (member name = path under
+# /pscratch/sd/j/josephrb/) while hashed; a size or sha256 that is not the list's stops with exit 9. Nothing is written
+# on the cluster; messages go to stderr only. Python 3.6 compatible (the login node's /usr/bin/python3).
+import hashlib
+import os
+import sys
+import tarfile
+
+BASE = "/pscratch/sd/j/josephrb/"
+FIELDS = ["path", "sha256", "pin_source", "size_bytes", "reader_file_line", "recompute"]
+
+
+def stop(why, rc=9):
+    sys.stderr.write("STOP fetch: %s\n" % why)
+    sys.stderr.flush()
+    sys.exit(rc)
+
+
+class Hashing(object):
+    """A read-only file object that hashes what tarfile reads from it."""
+
+    def __init__(self, fd):
+        self.fd, self.h, self.n = fd, hashlib.sha256(), 0
+
+    def read(self, k=-1):
+        b = os.read(self.fd, k if k and k > 0 else 1 << 22)
+        self.h.update(b)
+        self.n += len(b)
+        return b
+
+
+def main():
+    if not hasattr(os, "O_NOATIME"):
+        stop("this platform has no O_NOATIME", 2)
+    lines = sys.stdin.read().splitlines()
+    if not lines or lines[0].split("\t") != FIELDS:
+        stop("the list's header is not the bound one")
+    rows = [ln.split("\t") for ln in lines[1:] if ln]
+    if any(len(r) != 6 for r in rows) or len(set(r[0] for r in rows)) != len(rows):
+        stop("the list is malformed or repeats a path")
+    tf = tarfile.open(fileobj=sys.stdout.buffer, mode="w|", format=tarfile.PAX_FORMAT)
+    total = 0
+    for path, sha, _, size, _, _ in rows:
+        if not path.startswith(BASE) or ".." in path.split("/"):
+            stop("%s is not under %s" % (path, BASE))
+        try:
+            fd = os.open(path, os.O_RDONLY | os.O_NOATIME)
+        except OSError as e:
+            stop("cannot open %s O_NOATIME: %s" % (path, e))
+        try:
+            st = os.fstat(fd)
+            if st.st_size != int(size):
+                stop("%s is %d bytes, listed %s" % (path, st.st_size, size))
+            ti = tarfile.TarInfo(path[len(BASE):])
+            ti.size, ti.mtime, ti.mode = st.st_size, int(st.st_mtime), 0o600
+            src = Hashing(fd)
+            tf.addfile(ti, src)
+            if src.n != st.st_size or src.h.hexdigest() != sha:
+                stop("%s: sha256 %s over %d bytes, pinned %s" % (path, src.h.hexdigest(), src.n, sha))
+        finally:
+            os.close(fd)
+        total += int(size)
+    tf.close()
+    sys.stdout.buffer.flush()
+    sys.stderr.write("fetch done: %d files, %d bytes, every size and sha256 the list's\n" % (len(rows), total))
+
+
+main()

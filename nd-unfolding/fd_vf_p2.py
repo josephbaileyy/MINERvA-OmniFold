@@ -669,11 +669,94 @@ def cmd_p2(a) -> int:
     return 0
 
 
+# ---------------------------------------------------------------- the fetch connect's script and the local check
+
+REMOTE_PY = Path(f"{D5}/fd/receipts-vf/p2/fetch_vfp2_remote.py")
+WRAPPER = """#!/bin/bash
+# V_F Phase 2 fetch (FD-VF BINDING 2), one login02 session: `ssh saul.nersc.gov "ssh -o BatchMode=yes login02 'bash -s'"
+# < fetch-vfp2.sh > vfp2.tar`. The remote reader and the bound list are embedded below as base64 (no here-document, no
+# temporary file); each is checked against its sha256 on the node; the reader streams a tar of the listed files to
+# stdout through O_NOATIME. Writes nothing on the cluster. Exit 2: refused before any read; 9: a read stopped.
+stop() {{ echo "STOP: $*" >&2; exit "${{STOP_RC:-2}}"; }}
+h=$(hostname) && [ "$h" = login02 ] || stop "not login02 (${{h:-hostname failed}})"
+PYB='{py_b64}'
+LISTB='{list_b64}'
+py=$(printf '%s' "$PYB" | base64 -d) && [ -n "$py" ] || stop "decode reader"
+list=$(printf '%s' "$LISTB" | base64 -d) && [ -n "$list" ] || stop "decode list"
+s1=$(printf '%s\n' "$py" | sha256sum) && [ "${{s1%% *}}" = {py_sha} ] || stop "reader sha ${{s1%% *}}"
+s2=$(printf '%s\n' "$list" | sha256sum) && [ "${{s2%% *}}" = {list_sha} ] || stop "list sha ${{s2%% *}}"
+[ -x /usr/bin/python3 ] || stop "no /usr/bin/python3"
+echo "fetch start $(date -u +%FT%TZ) on $h; reader {py_sha}; list {list_sha}" >&2
+printf '%s\n' "$list" | /usr/bin/python3 -I -c "$py"
+rc=$?
+echo "fetch end $(date -u +%FT%TZ) rc=$rc" >&2
+exit $rc
+"""
+
+
+def cmd_fetch_script(a) -> int:
+    """Writes the wrapper with the remote reader and the list embedded; prints its sha256."""
+    import base64
+    py = (ROOT / REMOTE_PY).read_text()
+    lst = a.list.read_text()
+    for t in (py, lst):
+        if not t.endswith("\n") or t.endswith("\n\n"):
+            raise Stop("an embedded text must end with exactly one newline (the wrapper re-adds it)")
+    rows = lst.splitlines()
+    if rows[0] != "\t".join(HEADER) or len(rows) - 1 != N_ROWS:
+        raise Stop("the list is not fetch-list's")
+    text = WRAPPER.format(py_b64=base64.b64encode(py.encode()).decode(), py_sha=hashlib.sha256(py.encode()).hexdigest(),
+                          list_b64=base64.b64encode(lst.encode()).decode(),
+                          list_sha=hashlib.sha256(lst.encode()).hexdigest())
+    if a.out.exists():
+        raise Stop(f"{a.out} exists")
+    a.out.write_text(text)
+    print(f"wrapper {a.out}: sha256 {hashlib.sha256(text.encode()).hexdigest()}; reader "
+          f"{hashlib.sha256(py.encode()).hexdigest()}; list {hashlib.sha256(lst.encode()).hexdigest()}", file=sys.stderr)
+    return 0
+
+
+def cmd_fetch_verify(a) -> int:
+    """Extracts the fetched tar into a new directory, refusing any member not in the list, a link, an absolute or ..
+    path, a size or a sha256 that is not the list's, or a listed file that is missing."""
+    import tarfile
+    rows = [r.split("\t") for r in a.list.read_text().splitlines()[1:]]
+    want = {r[0][len(PS):]: (r[1], int(r[3])) for r in rows}
+    if a.dest.exists():
+        raise Stop(f"{a.dest} exists")
+    a.dest.mkdir(parents=True)
+    seen = set()
+    with tarfile.open(a.tar, mode="r|") as tf:
+        for m in tf:
+            n = m.name
+            if not m.isfile() or n.startswith("/") or ".." in n.split("/") or n not in want or n in seen:
+                raise Stop(f"tar member {n!r}: not a listed regular file, or repeated")
+            data = tf.extractfile(m).read()
+            sha, size = want[n]
+            if len(data) != size or hashlib.sha256(data).hexdigest() != sha:
+                raise Stop(f"{n}: size {len(data)} sha256 {hashlib.sha256(data).hexdigest()[:16]}, listed {size} {sha[:16]}")
+            q = a.dest / n
+            q.parent.mkdir(parents=True, exist_ok=True)
+            q.write_bytes(data)
+            seen.add(n)
+    if seen != set(want):
+        raise Stop(f"{len(set(want) - seen)} listed files missing from the tar")
+    print(f"fetch-verify: {len(seen)} files, each the list's size and sha256, under {a.dest}", file=sys.stderr)
+    return 0
+
+
 def build_args(argv=None):
     ap = argparse.ArgumentParser(prog="fd_vf_p2.py")
     sub = ap.add_subparsers(dest="cmd", required=True)
     f = sub.add_parser("fetch-list")
     f.add_argument("--out", type=Path)
+    w = sub.add_parser("fetch-script")
+    w.add_argument("--list", type=Path, required=True)
+    w.add_argument("--out", type=Path, required=True)
+    v = sub.add_parser("fetch-verify")
+    v.add_argument("--tar", type=Path, required=True)
+    v.add_argument("--list", type=Path, required=True)
+    v.add_argument("--dest", type=Path, required=True)
     q = sub.add_parser("p2")
     q.add_argument("--out-dir", type=Path)
     q.add_argument("--only", nargs="+", choices=sorted(P2))
@@ -682,7 +765,8 @@ def build_args(argv=None):
 
 def main(argv=None) -> int:
     a = build_args(argv)
-    return {"fetch-list": cmd_fetch_list, "p2": cmd_p2}[a.cmd](a)
+    return {"fetch-list": cmd_fetch_list, "fetch-script": cmd_fetch_script, "fetch-verify": cmd_fetch_verify,
+            "p2": cmd_p2}[a.cmd](a)
 
 
 if __name__ == "__main__":
