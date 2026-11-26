@@ -992,8 +992,8 @@ exit $rc
 def cmd_fetch_script(a) -> int:
     """Writes the wrapper with the remote reader and the list embedded; prints its sha256."""
     import base64
-    py = (ROOT / REMOTE_PY).read_text()
-    lst = a.list.read_text()
+    py = (ROOT / REMOTE_PY).read_bytes().decode()
+    lst = a.list.read_bytes().decode()          # raw bytes: no newline translation (a CRLF list must refuse)
     for t in (py, lst):
         if not t.endswith("\n") or t.endswith("\n\n"):
             raise Stop("an embedded text must end with exactly one newline (the wrapper re-adds it)")
@@ -1015,7 +1015,7 @@ def cmd_fetch_verify(a) -> int:
     """Extracts the fetched tar into a new directory, refusing any member not in the list, a link, an absolute or ..
     path, a size or a sha256 that is not the list's, or a listed file that is missing."""
     import tarfile
-    rows = [r.split("\t") for r in a.list.read_text().splitlines()[1:]]
+    rows = [r.split("\t") for r in a.list.read_bytes().decode().split("\n")[1:] if r]
     want = {r[0][len(PS):]: (r[1], int(r[3])) for r in rows}
     if a.dest.exists():
         raise Stop(f"{a.dest} exists")
@@ -1025,6 +1025,8 @@ def cmd_fetch_verify(a) -> int:
     with tarfile.open(fileobj=io.BytesIO(raw), mode="r:") as tf:
         for m in tf:
             end = m.offset_data + -(-m.size // 512) * 512
+            if raw[m.offset_data + m.size:end].count(0) != end - m.offset_data - m.size:
+                raise Stop(f"tar member {m.name!r}: nonzero padding after its data")
             n = m.name
             if not m.isfile() or n.startswith("/") or ".." in n.split("/") or n not in want or n in seen:
                 raise Stop(f"tar member {n!r}: not a listed regular file, or repeated")

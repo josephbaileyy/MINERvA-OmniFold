@@ -78,7 +78,8 @@ class Fake:
         self.reader = self.t / "reader.py"
         src = REMOTE.read_text().replace('BASE = "/pscratch/sd/j/josephrb/"', f'BASE = "{self.base}/"')
         if not hasattr(os, "O_NOATIME"):          # macOS: test-only, the production reader requires it (tested below)
-            src = src.replace("os.O_RDONLY | os.O_NOATIME | os.O_NOFOLLOW", "os.O_RDONLY | os.O_NOFOLLOW").replace(
+            src = src.replace("os.O_RDONLY | os.O_NOATIME | os.O_NOFOLLOW | os.O_NONBLOCK",
+                              "os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK").replace(
                 'if not hasattr(os, "O_NOATIME"):', "if False:")
         self.reader.write_text(src)
 
@@ -148,6 +149,27 @@ class Reader(unittest.TestCase):
         self.assertEqual(r.returncode, 9)
         self.assertIn(b"never reads", r.stderr)
 
+    def test_a_symlinked_parent_directory_or_a_fifo_stops(self):
+        rel = next(iter(self.f.files))
+        q = self.f.files[rel]
+        d = q.parent
+        real = d.with_name(d.name + "-real")
+        d.rename(real)
+        d.symlink_to(real)
+        r = self.f.read()
+        self.assertEqual(r.returncode, 9, r.stderr)
+        self.assertIn(b"not a plain directory", r.stderr)
+        d.unlink()
+        real.rename(d)
+        fifo = q.with_name("fifo")
+        os.mkfifo(fifo)
+        lst = "\t".join(P.HEADER) + "\n" + "\t".join([str(fifo), "0" * 64, "pin", "0", "reader", "xk"]) + "\n"
+        r = subprocess.run([sys.executable, "-I", str(self.f.reader)], input=lst.encode(), capture_output=True,
+                           timeout=20)
+        self.assertEqual(r.returncode, 9, r.stderr)
+        self.assertIn(b"not a regular file", r.stderr)
+        fifo.unlink()
+
     def test_a_path_outside_the_base_or_a_bad_header_stops(self):
         bad = self.f.list_text().replace(f"{self.f.base}/d0", "/etc/d0")
         r = subprocess.run([sys.executable, "-I", str(self.f.reader)], input=bad.encode(), capture_output=True)
@@ -157,7 +179,8 @@ class Reader(unittest.TestCase):
 
     def test_the_reader_opens_with_o_noatime_and_refuses_without_it(self):
         src = REMOTE.read_text()
-        self.assertIn("os.O_RDONLY | os.O_NOATIME | os.O_NOFOLLOW", src)
+        self.assertIn("os.O_RDONLY | os.O_NOATIME | os.O_NOFOLLOW | os.O_NONBLOCK", src)
+        self.assertIn("os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=d", src)
         if not hasattr(os, "O_NOATIME"):
             r = subprocess.run([sys.executable, "-I", str(REMOTE)], input=b"", capture_output=True)
             self.assertEqual(r.returncode, 2)
@@ -219,6 +242,15 @@ class Verify(unittest.TestCase):
             self.tar.write_bytes(bad)
             self.verify()
 
+    def test_nonzero_padding_after_a_member_refuses(self):
+        self.write_tar(self.good())
+        raw = bytearray(self.tar.read_bytes())
+        with tarfile.open(fileobj=io.BytesIO(bytes(raw)), mode="r:") as tf:
+            last = list(tf)[-1]
+        raw[last.offset_data + last.size] = 1
+        self.tar.write_bytes(bytes(raw))
+        self.verify()
+
     def test_the_good_tar_is_accepted(self):
         self.write_tar(self.good())
         with mock.patch.object(P, "PS", f"{self.f.base}/"):
@@ -275,6 +307,11 @@ class Wrapper(unittest.TestCase):
         for env in ({}, {"STOP_RC": "0"}):
             r = self.run_w(self.wrapper(), FAKE_HOST="login37", **env)
             self.assertEqual((r.returncode, r.stdout), (2, b""), env)
+
+    def test_a_crlf_list_refuses(self):
+        self.lst.write_bytes(self.f.list_text().replace("\n", "\r\n").encode())
+        with self.assertRaises(P.Stop):
+            self.wrapper()
 
     def test_a_list_that_is_not_fetch_lists_refuses(self):
         self.lst.write_text(self.f.list_text().replace("\txk\n", "\tprr\n", 1))

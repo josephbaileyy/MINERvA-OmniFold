@@ -33,6 +33,31 @@ class Hashing(object):
         return b
 
 
+def open_nofollow(path):
+    """Opens path with no symlink in any component below BASE: each directory O_DIRECTORY|O_NOFOLLOW relative to its
+    parent's descriptor, the file O_NOATIME|O_NOFOLLOW|O_NONBLOCK (a FIFO is refused by the S_ISREG check, not waited
+    on). A symlink anywhere below BASE refuses, so no link's own atime moves."""
+    parts = path[len(BASE):].split("/")
+    try:
+        d = os.open(BASE, os.O_RDONLY | os.O_DIRECTORY)
+    except OSError as e:
+        stop("cannot open %s: %s" % (BASE, e))
+    try:
+        for comp in parts[:-1]:
+            try:
+                nd = os.open(comp, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=d)
+            except OSError as e:
+                stop("%s: directory component %r is not a plain directory: %s" % (path, comp, e))
+            os.close(d)
+            d = nd
+        try:
+            return os.open(parts[-1], os.O_RDONLY | os.O_NOATIME | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=d)
+        except OSError as e:
+            stop("cannot open %s O_NOATIME|O_NOFOLLOW: %s" % (path, e))
+    finally:
+        os.close(d)
+
+
 def main():
     if not hasattr(os, "O_NOATIME"):
         stop("this platform has no O_NOATIME", 2)
@@ -49,10 +74,7 @@ def main():
             stop("%s is not under %s" % (path, BASE))
         if os.path.basename(path) in NEVER or path.endswith(NEVER):
             stop("%s is a file the fetch never reads" % path)
-        try:      # O_NOFOLLOW: a symlink is refused, so no link's own atime moves
-            fd = os.open(path, os.O_RDONLY | os.O_NOATIME | os.O_NOFOLLOW)
-        except OSError as e:
-            stop("cannot open %s O_NOATIME|O_NOFOLLOW: %s" % (path, e))
+        fd = open_nofollow(path)
         try:
             st = os.fstat(fd)
             if not stat.S_ISREG(st.st_mode):
