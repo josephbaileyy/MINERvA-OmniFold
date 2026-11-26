@@ -22407,6 +22407,7 @@ docs/orchestration/state/precharge-20261125/display.py	tracked	MACHINE	state-art
 docs/orchestration/state/precharge-20261125/extracted-checksums.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/file-counts.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/ibu-convention/INPUTS.sha256	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/ibu-convention/NEXT.md	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/ibu-convention/README.md	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/ibu-convention/README.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/ibu-convention/compare.py	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
