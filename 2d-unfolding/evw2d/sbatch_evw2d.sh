@@ -18,8 +18,9 @@
 #   - deploy_M is a clean checkout at M and deploy_C a clean checkout at C (each git command must itself succeed);
 #   - evw2d.py and config.json in deploy_C are the bound bytes, and <lane root>/out is absent;
 #   - setup_salloc_env.sh from deploy_M returns 0 and python3 is root_6_28's;
-#   - a first, print-only srun step (1 CPU) records SLURM_JOB_NUM_NODES, SLURM_STEP_NUM_NODES, SLURM_STEP_ID and the
-#     host in logs/probe-<job>.log, and SLURM_JOB_NUM_NODES there is exactly 1 (evw2d.py's own gate, unchanged).
+#   - a first, print-only srun step, with the wrapper step's own options, records the host, its CPU affinity (nproc),
+#     SLURM_JOB_NUM_NODES, SLURM_STEP_NUM_NODES and SLURM_STEP_ID in logs/probe-<job>.log; SLURM_JOB_NUM_NODES there
+#     must be exactly 1 (evw2d.py's own gate, unchanged) and the affinity 64 (evw2d.py's CPU count).
 # Then it runs evw2d.py as ONE step of 64 CPUs in E_R's thread environment (Tier 1's step: srun --exclusive -n1 -c 64).
 # evw2d.py writes only under <lane root>/out. This script writes only logs/{job-env,probe,evw2d-run}-<job>.log and
 # logs/DONE-<job>.
@@ -35,7 +36,8 @@ TLIMIT=00:30:00
 for f in "$L/DONE-$J" "$L/job-env-$J.log" "$L/probe-$J.log" "$L/evw2d-run-$J.log"; do
   [ ! -e "$f" ] && [ ! -L "$f" ] || { echo "[evw2d] refusing: $f exists" >&2; exit 2; }
 done
-refuse() { echo "[evw2d] refusing: $*" >&2; printf '{"rc": 2, "job": "%s", "refused": "%s"}\n' "$J" "$*" > "$L/DONE-$J"; exit 2; }
+jesc() { printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | tr -d '\000-\037'; }   # a JSON string body
+refuse() { echo "[evw2d] refusing: $*" >&2; printf '{"rc": 2, "job": "%s", "refused": "%s"}\n' "$J" "$(jesc "$*")" > "$L/DONE-$J"; exit 2; }
 field() { printf '%s\n' "$1" | tr ' ' '\n' | sed -n "s/^$2=//p" | head -1; }   # one key=value token of scontrol -o
 [ "$SLURM_JOB_NAME" = evw2d ] || refuse "job name $SLURM_JOB_NAME"
 [ -z "${SLURM_ARRAY_JOB_ID:-}" ] && [ -z "${SLURM_ARRAY_TASK_ID:-}" ] || refuse "an array task"
@@ -67,20 +69,23 @@ echo "[evw2d] setup_salloc_env.sh rc=$src_rc python3=$(command -v python3)"
 [ "$src_rc" -eq 0 ] || refuse "setup_salloc_env.sh returned $src_rc"
 [ "$(command -v python3)" = "$HOME/.conda/envs/root_6_28/bin/python3" ] || refuse "python3 is not root_6_28's"
 # the print-only step: the format of the node count inside an srun step goes on record before the wrapper runs
-srun --exclusive -n1 -c 1 --mem=1G bash -c 'echo "host=$(hostname)"; for v in SLURM_JOB_NUM_NODES SLURM_STEP_NUM_NODES SLURM_STEP_ID SLURM_NNODES; do echo "$v=${!v-<unset>}"; done' \
+STEP=(--exclusive -n1 -c 64 --mem=200G)   # Tier 1's E_R step (64 CPUs), used by both steps
+srun "${STEP[@]}" bash -c 'echo "host=$(hostname)"; echo "affinity=$(nproc)"; for v in SLURM_JOB_NUM_NODES SLURM_STEP_NUM_NODES SLURM_STEP_ID SLURM_NNODES; do echo "$v=${!v-<unset>}"; done' \
   > "$L/probe-$J.log" 2>&1
 prc=$?
 cat "$L/probe-$J.log"
 [ "$prc" -eq 0 ] || refuse "the print-only step returned $prc"
 pnn=$(sed -n 's/^SLURM_JOB_NUM_NODES=//p' "$L/probe-$J.log")
 [ "$pnn" = 1 ] || refuse "the srun step's SLURM_JOB_NUM_NODES is '$pnn', not 1 (see probe-$J.log)"
+paff=$(sed -n 's/^affinity=//p' "$L/probe-$J.log")
+[ "$paff" = 64 ] || refuse "the srun step's CPU affinity is '$paff', not 64 (see probe-$J.log)"
 export OMP_NUM_THREADS=64 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
-srun --exclusive -n1 -c 64 --mem=200G \
+srun "${STEP[@]}" \
     python3 -B "$W" --config-sha256 "$CSHA" run --out "$LANE/out" > "$L/evw2d-run-$J.log" 2>&1
 rc=$?
 n=$(git -C "$DM" status --porcelain --ignored | wc -l | tr -d ' '); clean_at "$DM" "$M" || n="unclean"
 cn=$(git -C "$DC" status --porcelain --ignored | wc -l | tr -d ' '); clean_at "$DC" "$C" || cn="unclean"
 printf '{"rc": %s, "job": "%s", "deploy_M_porcelain_ignored_after": "%s", "deploy_C_porcelain_ignored_after": "%s"}\n' \
-  "$rc" "$J" "$n" "$cn" > "$L/DONE-$J"
+  "$rc" "$J" "$n" "$cn" > "$L/DONE-$J" || { echo "[evw2d] could not write DONE-$J (wrapper rc=$rc)" >&2; [ "$rc" -eq 0 ] && rc=3; }
 echo "[evw2d] done rc=$rc end=$(date -u +%FT%TZ)"
 exit $rc

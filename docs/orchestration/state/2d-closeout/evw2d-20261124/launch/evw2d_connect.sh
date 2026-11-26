@@ -18,9 +18,10 @@
 #     sources before and after;
 #   the held-file read (0 node-h): the staged omnifile opened through O_NOATIME and read by ROOT and RDataFrame through
 #     /proc/self/fd/N, as C-KEY reads it;
-#   one sbatch, with every inherited SBATCH_/SLURM_/SALLOC_ variable removed and the allocation, output and error given
-#     explicitly (--nodes=1 --ntasks=1 --time=00:30:00 --parsable); then scontrol must show TimeLimit 00:30:00,
-#     NumNodes 1 (a pending job prints 1-1) and no array, or the job is cancelled at once.
+#   one sbatch --hold, with every inherited SBATCH_/SLURM_/SALLOC_ variable removed and the allocation, output and
+#     error given explicitly (--nodes=1 --ntasks=1 --time=00:30:00 --parsable); the job id is checked and saved; then
+#     scontrol (exit status 0, up to three tries) must show exactly one record, this job's, with TimeLimit 00:30:00,
+#     NumNodes 1 (a pending job prints 1-1) and no array token; only then is the job released. Any failure cancels it.
 # Writes only under the lane root (on $SCRATCH; nothing on CFS, which is only read, by evw2d.py's O_NOATIME copies).
 # No set -u (it kills setup_salloc_env.sh). Launched from a /dev/shm copy of itself, whose path is $1; it deletes that
 # copy at exit.
@@ -43,19 +44,19 @@ CV=/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoo
 MC=/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root
 CV_BYTES=2144008221   # REF-C2C1's stage.json (fd/receipts-ref-c2c1/cdraw/run/stage.json)
 MC_BYTES=5143
-bail() { rm -f -- "$SELF"; exit 9; }                # a precondition failed: nothing written
+bail() { echo "STOP (nothing written): $*"; rm -f -- "$SELF"; exit 9; }
 LANE_PARENT=/pscratch/sd/j/josephrb
-[ -d "$LANE_PARENT" ] && [ ! -L "$LANE_PARENT" ] && [ "$(cd "$LANE_PARENT" && pwd -P)" = "$LANE_PARENT" ] || bail
-case "$LANE" in "$LANE_PARENT"/evw2d-20[0-9][0-9][0-9][0-9][0-9][0-9]) ;; *) bail;; esac
-case "$C$EVW_SHA$SBATCH_SHA$CFG_SHA$DEC_SHA" in *__*) bail;; esac
-[ ! -e "$LANE" ] && [ ! -L "$LANE" ] || bail
-q=$(squeue --me -h -o '%j') || bail                 # fails closed
-[ -z "$(printf '%s\n' "$q" | grep -E '^evw2d$')" ] || bail
-[ "$(stat -c %s "$CV" 2>/dev/null)" = "$CV_BYTES" ] || bail
-[ "$(stat -c %s "$MC" 2>/dev/null)" = "$MC_BYTES" ] || bail
-mkdir "$LANE" || bail                               # the exclusive claim
-mkdir "$L" || bail
-[ "$(cd "$LANE" && pwd -P)" = "$LANE" ] && [ "$(cd "$L" && pwd -P)" = "$L" ] || bail
+[ -d "$LANE_PARENT" ] && [ ! -L "$LANE_PARENT" ] && [ "$(cd "$LANE_PARENT" && pwd -P)" = "$LANE_PARENT" ] || bail "$LANE_PARENT is not a real directory"
+case "$LANE" in "$LANE_PARENT"/evw2d-20[0-9][0-9][0-9][0-9][0-9][0-9]) ;; *) bail "lane root $LANE";; esac
+case "$C$EVW_SHA$SBATCH_SHA$CFG_SHA$DEC_SHA" in *__*) bail "a pin is not filled in";; esac
+[ ! -e "$LANE" ] && [ ! -L "$LANE" ] || bail "$LANE exists"
+q=$(squeue --me -h -o '%j') || bail "squeue did not answer"   # fails closed
+[ -z "$(printf '%s\n' "$q" | grep -E '^evw2d$')" ] || bail "an evw2d job is queued or running"
+[ "$(stat -c %s "$CV" 2>/dev/null)" = "$CV_BYTES" ] || bail "$CV is not $CV_BYTES bytes"
+[ "$(stat -c %s "$MC" 2>/dev/null)" = "$MC_BYTES" ] || bail "$MC is not $MC_BYTES bytes"
+mkdir "$LANE" || bail "mkdir $LANE"                 # the exclusive claim
+mkdir "$L" || bail "mkdir $L"
+[ "$(cd "$LANE" && pwd -P)" = "$LANE" ] && [ "$(cd "$L" && pwd -P)" = "$L" ] || bail "the lane is reached through a link"
 LOG=$L/connect.log
 exec > "$LOG" 2>&1
 finish() { echo "evw2d connect rc=$1"; date -u +%FT%TZ; echo "$1" > "$L/connect.done"; rm -f -- "$SELF"; exit "$1"; }
@@ -65,21 +66,26 @@ echo "connect script sha256 $(sha256sum "$SELF" | cut -d' ' -f1)"
 cp "$SELF" "$L/evw2d_connect.sh"
 echo "squeue --me before:"; squeue --me -h -o "%i %j %T"
 echo "== the two inputs (stat: name|bytes|atime|mtime|inode)"
-stat -c '%n|%s|%X|%Y|%i' "$CV" "$MC" | tee "$L/stat-sources-before.txt"
+stat -c '%n|%s|%X|%Y|%i' "$CV" "$MC" > "$L/stat-sources-before.txt" || { echo "STOP: stat of the inputs"; finish 9; }
+cat "$L/stat-sources-before.txt"
 
 # ---- the balance (EVW5D's method): iris's m3246 row, Allocated - Charged
-echo "== iris"; row=$(timeout 120 iris < /dev/null 2>&1 | grep -E '^m3246 ' | head -1); echo "$row"
-bal=$(echo "$row" | awk 'NF>=5 {printf "%.1f", $5-$4}')
-[ -n "$bal" ] || { echo "STOP: could not read the m3246 balance"; finish 9; }
-echo "balance_node_h=$bal half=$(awk -v b="$bal" 'BEGIN{printf "%.1f", b/2}') bound=$BOUND"
-awk -v b="$bal" -v c=$BOUND 'BEGIN{exit !(c <= b/2)}' || { echo "STOP: the bound $BOUND is above half the balance $bal"; finish 9; }
+echo "== iris"; timeout 120 iris < /dev/null > "$L/iris.txt" 2>&1; irc=$?
+echo "iris rc=$irc"; [ "$irc" -eq 0 ] || { echo "STOP: iris failed"; finish 9; }
+rows=$(grep -E '^m3246 ' "$L/iris.txt"); echo "$rows"
+[ "$(printf '%s\n' "$rows" | grep -c .)" = 1 ] || { echo "STOP: not one m3246 row in iris"; finish 9; }
+num='^[0-9]+(\.[0-9]+)?$'
+alloc=$(echo "$rows" | awk '{print $5}'); charged=$(echo "$rows" | awk '{print $4}')
+printf '%s\n%s\n' "$alloc" "$charged" | grep -Evq "$num" && { echo "STOP: the m3246 row is not numeric"; finish 9; }
+echo "allocated=$alloc charged=$charged bound=$BOUND"
+awk -v a="$alloc" -v u="$charged" -v c=$BOUND 'BEGIN{exit !(c <= (a - u) / 2)}' || { echo "STOP: the bound $BOUND is above half the balance"; finish 9; }
 
 # ---- deploy_M: a fresh clone at M, clean, the pinned driver files and the environment script
 git clone -q https://github.com/josephbaileyy/MINERvA-OmniFold.git "$DM" > "$L/clone-M.log" 2>&1 || { echo "STOP: clone M"; finish 3; }
 git -C "$DM" -c advice.detachedHead=false checkout -q "$M" || { echo "STOP: checkout M"; finish 3; }
 [ "$(git -C "$DM" rev-parse HEAD)" = "$M" ] || { echo "STOP: deploy_M's HEAD is not M"; finish 9; }
-n=$(git -C "$DM" status --porcelain --ignored | wc -l); echo "deploy_M HEAD $M; porcelain --ignored lines: $n"
-[ "$n" -eq 0 ] || { echo "STOP: deploy_M is not clean"; finish 9; }
+st=$(git -C "$DM" status --porcelain --ignored) || { echo "STOP: git status in deploy_M"; finish 9; }
+echo "deploy_M HEAD $M; porcelain --ignored: '${st}'"; [ -z "$st" ] || { echo "STOP: deploy_M is not clean"; finish 9; }
 ( cd "$DM" && sha256sum -c ) <<SUMS || { echo "STOP: a driver file is not the pinned one"; finish 9; }
 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b  2d-unfolding/re2/re2_driver.py
 e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a  unbinned_unfolding/python/omnifold.py
@@ -92,8 +98,8 @@ SUMS
 git clone -q https://github.com/josephbaileyy/MINERvA-OmniFold.git "$DC" > "$L/clone-C.log" 2>&1 || { echo "STOP: clone C"; finish 3; }
 git -C "$DC" -c advice.detachedHead=false checkout -q "$C" || { echo "STOP: checkout C"; finish 3; }
 [ "$(git -C "$DC" rev-parse HEAD)" = "$C" ] || { echo "STOP: deploy_C's HEAD is not C"; finish 9; }
-n=$(git -C "$DC" status --porcelain --ignored | wc -l); echo "deploy_C HEAD $C; porcelain --ignored lines: $n"
-[ "$n" -eq 0 ] || { echo "STOP: deploy_C is not clean"; finish 9; }
+st=$(git -C "$DC" status --porcelain --ignored) || { echo "STOP: git status in deploy_C"; finish 9; }
+echo "deploy_C HEAD $C; porcelain --ignored: '${st}'"; [ -z "$st" ] || { echo "STOP: deploy_C is not clean"; finish 9; }
 ( cd "$DC" && sha256sum -c ) <<SUMS || { echo "STOP: deploy_C is not the bound bytes"; finish 9; }
 $EVW_SHA  2d-unfolding/evw2d/evw2d.py
 $SBATCH_SHA  2d-unfolding/evw2d/sbatch_evw2d.sh
@@ -118,6 +124,7 @@ out=$( source "$DM/setup_salloc_env.sh" > "$L/env-precheck.log" 2>&1; rc=$?
        echo "SOURCE_RC=$rc"; [ "$rc" -eq 0 ] || exit 96
        [ "$(command -v python3)" = "$HOME/.conda/envs/root_6_28/bin/python3" ] || { echo NOT_ROOT628; exit 98; }
        PYTHONDONTWRITEBYTECODE=1 python3 -B -c "import os, sys, numpy, lightgbm, ROOT
+assert not getattr(sys, 'pycache_prefix', None), 'a redirected bytecode cache is set'
 fd = os.open(sys.argv[1], os.O_RDONLY | os.O_NOATIME); os.close(fd)
 print('python', sys.version.split()[0], 'numpy', numpy.__version__, 'lightgbm', lightgbm.__version__, 'ROOT', ROOT.gROOT.GetVersion(), 'O_NOATIME', os.O_NOATIME, 'open with O_NOATIME on', sys.argv[1], 'ok')" "$L/evw2d_connect.sh" || exit 97 )
 erc=$?
@@ -133,7 +140,8 @@ date -u +%FT%TZ
 src=$?
 echo "evw2d.py stage rc=$src"; cat "$L/stage.json" "$L/stage.err"
 [ "$src" -eq 0 ] || { echo "STOP: the staging failed"; finish 7; }
-stat -c '%n|%s|%X|%Y|%i' "$CV" "$MC" | tee "$L/stat-sources-after.txt"
+stat -c '%n|%s|%X|%Y|%i' "$CV" "$MC" > "$L/stat-sources-after.txt" || { echo "STOP: stat of the inputs"; finish 9; }
+cat "$L/stat-sources-after.txt"
 [ "$(stat -c %a "$ST")" = 555 ] || { echo "STOP: the staging root is not 0555"; finish 9; }
 ls -la "$ST"
 
@@ -165,24 +173,42 @@ date -u +%FT%TZ
 cd "$LANE" || finish 9
 for v in $(env | sed -n 's/^\(\(SBATCH\|SLURM\|SALLOC\)_[A-Za-z0-9_]*\)=.*/\1/p'); do unset "$v"; done
 echo "inherited scheduler variables left: $(env | grep -cE '^(SBATCH|SLURM|SALLOC)_')"
-sbatch --parsable --nodes=1 --ntasks=1 --time=$TLIMIT --job-name=evw2d \
+sbatch --parsable --hold --nodes=1 --ntasks=1 --time=$TLIMIT --job-name=evw2d \
   --output="$L/%x_%j.out" --error="$L/%x_%j.err" \
   "$DC/2d-unfolding/evw2d/sbatch_evw2d.sh" "$LANE" "$DM" "$M" "$DC" "$C" "$EVW_SHA" "$CFG_SHA" \
   > "$L/submit.out" 2> "$L/submit.err"
 rc=$?; echo "sbatch rc=$rc"; cat "$L/submit.out" "$L/submit.err"
 [ $rc = 0 ] || { echo "STOP at sbatch (final)"; finish $rc; }
 job=$(sed -n 's/^\([0-9][0-9]*\)\(;.*\)\{0,1\}$/\1/p' "$L/submit.out")
-[ -n "$job" ] && [ "$(wc -l < "$L/submit.out")" -eq 1 ] || { echo "STOP: not one job id"; finish 9; }
-echo "evw2d job $job"; echo "$job" > "$L/evw2d.jobid"
-sj=$(scontrol -o show job "$job")
-tl=$(printf '%s\n' "$sj" | tr ' ' '\n' | sed -n 's/^TimeLimit=//p' | head -1)
-nn=$(printf '%s\n' "$sj" | tr ' ' '\n' | sed -n 's/^NumNodes=//p' | head -1)
-arr=$(printf '%s\n' "$sj" | tr ' ' '\n' | grep -c '^ArrayJobId=')
-echo "scontrol TimeLimit=$tl (declared $TLIMIT) NumNodes=$nn array_tokens=$arr"
-if [ "$tl" != "$TLIMIT" ] || ! printf '%s' "$nn" | grep -Eq '^1(-1)?$' || [ "$arr" != 0 ]; then   # pending: NumNodes=1-1
-  scancel "$job"; echo "STOP: the allocation is not one 30-minute node; job $job cancelled (rc $?)"; sleep 5
-  sacct -j "$job" -X -n -P -o JobID,State,Elapsed; finish 6
+if [ -z "$job" ] || [ "$(wc -l < "$L/submit.out")" -ne 1 ]; then   # the job is held: it cannot start
+  echo "STOP: not one job id; cancelling this user's held evw2d jobs"
+  scancel --me --name=evw2d --state=PENDING; echo "scancel rc=$?"; finish 9
 fi
+echo "evw2d job $job (held)"
+echo "$job" > "$L/evw2d.jobid" || { scancel "$job"; echo "STOP: could not save the job id; job $job cancelled (rc $?)"; finish 9; }
+# ---- the allocation check (begin)
+tok() { printf '%s\n' "$1" | tr ' ' '\n' | sed -n "s/^$2=//p" | head -1; }
+src=1
+for try in 1 2 3; do
+  sj=$(scontrol -o show job "$job" 2>&1); src=$?
+  [ "$src" -eq 0 ] && break
+  echo "scontrol try $try rc=$src: $sj"; sleep 5
+done
+nrec=$(printf '%s\n' "$sj" | grep -c '^JobId=')
+id=$(tok "$sj" JobId); tl=$(tok "$sj" TimeLimit); nn=$(tok "$sj" NumNodes)
+arr=$(printf '%s\n' "$sj" | tr ' ' '\n' | grep -c '^Array')
+echo "scontrol rc=$src records=$nrec JobId=$id TimeLimit=$tl (declared $TLIMIT) NumNodes=$nn array_tokens=$arr"
+if [ "$src" -ne 0 ] || [ "$nrec" != 1 ] || [ "$id" != "$job" ] || [ "$tl" != "$TLIMIT" ] || \
+   ! printf '%s' "$nn" | grep -Eq '^1(-1)?$' || [ "$arr" != 0 ]; then   # pending: NumNodes=1-1
+  scancel "$job"; echo "STOP: the allocation is not one 30-minute node, or scontrol did not show it; job $job cancelled (scancel rc $?)"
+  sleep 5; sacct -j "$job" -X -n -P -o JobID,State,Elapsed; finish 6
+fi
+scontrol release "$job"; rrc=$?
+echo "scontrol release rc=$rrc"
+if [ "$rrc" -ne 0 ]; then
+  scancel "$job"; echo "STOP: the release failed; job $job cancelled (scancel rc $?)"; finish 6
+fi
+# ---- the allocation check (end)
 sleep 5
-squeue -j "$job" -h -o "%i %j %T"; scontrol -o show job "$job" | tr ' ' '\n' | grep -E '^(JobState|TimeLimit|NumNodes|QOS|Account|Partition)='
+squeue -j "$job" -h -o "%i %j %T"; scontrol -o show job "$job" | tr ' ' '\n' | grep -E '^(JobState|Reason|TimeLimit|NumNodes|QOS|Account|Partition)='
 finish 0

@@ -83,8 +83,10 @@ def job(tmp_path):
     (tmp / "scontrol.txt").write_text(rec + "\n")
     stub(bin_, "scontrol", f'cat "{tmp / "scontrol.txt"}"')
     stub(bin_, "sha256sum", 'shasum -a 256 "$@"')
+    stub(bin_, "nproc", 'echo "${STEP_AFFINITY-64}"')
     stub(bin_, "srun", f"""
-if [ "$5" = "--mem=1G" ]; then
+if [ "$6" = "bash" ]; then
+  echo "$1 $2 $3 $4 $5" >> "{tmp / "srun.probe_opts"}"
   shift 5
   echo probe >> "{tmp / "srun.calls"}"
   SLURM_JOB_NUM_NODES="${{STEP_JOB_NUM_NODES-1}}" SLURM_STEP_NUM_NODES=1 SLURM_STEP_ID=0 SLURM_NNODES=1 "$@"
@@ -127,7 +129,8 @@ def test_job_runs_the_probe_then_one_64_cpu_step(job):
     assert job["done"]()["rc"] == 0
     assert job["done"]()["deploy_M_porcelain_ignored_after"] == "0"
     probe = (job["lane"] / "logs" / "probe-4242.log").read_text()
-    assert "SLURM_JOB_NUM_NODES=1\n" in probe and "SLURM_STEP_ID=0\n" in probe and "SLURM_STEP_NUM_NODES=1\n" in probe
+    assert (job["tmp"] / "srun.probe_opts").read_text() == "--exclusive -n1 -c 64 --mem=200G\n", "probe options differ"
+    assert "affinity=64\n" in probe and "SLURM_JOB_NUM_NODES=1\n" in probe and "SLURM_STEP_ID=0\n" in probe and "SLURM_STEP_NUM_NODES=1\n" in probe
     calls = job["calls"]()
     assert calls[0] == "probe" and len(calls) == 2
     w = calls[1]
@@ -143,6 +146,18 @@ def test_job_stops_before_the_wrapper_when_the_steps_node_count_is_not_1(job, va
     assert f"SLURM_JOB_NUM_NODES is '{value}', not 1" in job["done"]()["refused"]
     assert job["calls"]() == ["probe"], "the wrapper ran"
     assert f"SLURM_JOB_NUM_NODES={value}\n" in (job["lane"] / "logs" / "probe-4242.log").read_text(), "not on record"
+
+
+@pytest.mark.parametrize("value", ["32", "128", ""])
+def test_job_stops_before_the_wrapper_when_the_steps_affinity_is_not_64(job, value):
+    r = job["run"](extra_env={"STEP_AFFINITY": value})
+    assert r.returncode == 2 and f"CPU affinity is '{value}', not 64" in job["done"]()["refused"]
+    assert job["calls"]() == ["probe"]
+
+
+def test_job_refusal_receipt_is_json_with_quotes_escaped(job):
+    r = job["run"](extra_env={"SLURM_JOB_NAME": 'x"y\\z'})
+    assert r.returncode == 2 and job["done"]()["refused"] == 'job name x"y\\z'
 
 
 def test_job_stops_when_the_probe_step_fails(job):
@@ -237,26 +252,34 @@ def test_job_records_the_wrappers_status(job):
 # ------------------------------------------------------------------------------- the connect's allocation check
 
 def _alloc_block(path: Path) -> str:
-    lines = path.read_text().split("\n")
-    i = lines.index('sj=$(scontrol -o show job "$job")')
-    j = lines.index("fi", i)
-    return "\n".join(lines[i:j + 1])
+    text = path.read_text()
+    i = text.index("# ---- the allocation check (begin)")
+    j = text.index("# ---- the allocation check (end)")
+    return text[i:j]
 
 
-def _run_alloc(tmp: Path, block: str, text: str, tlimit: str) -> tuple[int, str, bool]:
+def _run_alloc(tmp: Path, block: str, text: str, tlimit: str, job: str, show_rc="0", release_rc="0"):
+    """Runs the connect's allocation block as written, with scontrol answering `text`; show_rc is a space-separated
+    list of exit statuses for successive `scontrol show job` calls (the last repeats)."""
     b = tmp / "bin"
     b.mkdir(exist_ok=True)
     (tmp / "scontrol.txt").write_text(text)
-    marker = tmp / "cancelled"
-    if marker.exists():
-        marker.unlink()
-    for name, body in (("scontrol", f'cat "{tmp / "scontrol.txt"}"'), ("scancel", f'touch "{marker}"'),
-                       ("sacct", "true"), ("sleep", "true")):
-        stub(b, name, body)
-    script = f"TLIMIT={tlimit}; job=4242\nfinish() {{ echo FINISH $1; exit $1; }}\n" + block + "\necho PASSED\n"
+    (tmp / "show_rc").write_text(show_rc)
+    for m in ("cancelled", "released", "show_n"):
+        if (tmp / m).exists():
+            (tmp / m).unlink()
+    stub(b, "scontrol", f"""
+if [ "$1" = release ]; then echo "$2" > "{tmp / "released"}"; exit {release_rc}; fi
+n=$(cat "{tmp / "show_n"}" 2>/dev/null || echo 0); n=$((n + 1)); echo $n > "{tmp / "show_n"}"
+set -- $(cat "{tmp / "show_rc"}"); rc=${{!n:-${{@: -1}}}}
+cat "{tmp / "scontrol.txt"}"; exit $rc""")
+    stub(b, "scancel", f'echo "$1" > "{tmp / "cancelled"}"')
+    stub(b, "sacct", "true")
+    stub(b, "sleep", "true")
+    script = (f"TLIMIT={tlimit}; job={job}\nfinish() {{ echo FINISH $1; exit $1; }}\n" + block + "\necho PASSED\n")
     r = subprocess.run(["bash", "-c", script], capture_output=True, text=True,
                        env=dict(os.environ, PATH=f"{b}:{os.environ['PATH']}"))
-    return r.returncode, r.stdout, marker.exists()
+    return r.returncode, r.stdout, (tmp / "cancelled").exists(), (tmp / "released").exists()
 
 
 def _connects():
@@ -266,42 +289,69 @@ def _connects():
     return out
 
 
+def _accepts(tmp, block, text, tl, job, **kw):
+    rc, out, cancelled, released = _run_alloc(tmp, block, text, tl, job, **kw)
+    return rc == 0 and "PASSED" in out and not cancelled and released, (rc, out, cancelled, released)
+
+
+def _cancels(tmp, block, text, tl, job, **kw):
+    rc, out, cancelled, released = _run_alloc(tmp, block, text, tl, job, **kw)
+    return rc == 6 and "FINISH 6" in out and cancelled and not released, (rc, out, cancelled, released)
+
+
 @pytest.mark.parametrize("path", _connects(), ids=lambda p: p.parent.name)
 def test_connect_allocation_check_on_real_records(tmp_path, path):
     block = _alloc_block(path)
     assert block == _alloc_block(LAUNCH / "evw2d_connect.sh"), "the bound check differs from the template's"
     pend, run = real_pending(), real_running()
-    # the records verbatim, at their own time limits: both accepted
-    for text, tl in ((pend, "01:19:00"), (run, "01:00:00")):
-        rc, out, cancelled = _run_alloc(tmp_path, block, text, tl)
-        assert rc == 0 and "PASSED" in out and not cancelled, (tl, out)
+    PJ, RJ = "60912517", "59660487"
+    for text, tl, j in ((pend, "01:19:00", PJ), (run, "01:00:00", RJ)):   # verbatim, at their own limits
+        ok, why = _accepts(tmp_path, block, text, tl, j)
+        assert ok, (tl, why)
     p30 = pend.replace("TimeLimit=01:19:00", "TimeLimit=00:30:00")
     r30 = run.replace("TimeLimit=01:00:00", "TimeLimit=00:30:00")
-    cases = [  # (text, accepted)
-        (p30, True),                                            # pending, NumNodes=1-1
-        (r30, True),                                            # running, NumNodes=1
-        (p30.replace("NumNodes=1-1", "NumNodes=2-2"), False),
-        (p30.replace("NumNodes=1-1", "NumNodes=1-2"), False),
-        (r30.replace("NumNodes=1 ", "NumNodes=2 "), False),
-        (r30.replace("NumNodes=1 ", "NumNodes=11 "), False),
-        (pend, False),                                          # 01:19:00 against the declared 00:30:00
-        (p30.replace("JobState=PENDING", "ArrayJobId=4242 ArrayTaskId=0 JobState=PENDING"), False),
-        ("", False),                                            # scontrol printed nothing
+    good = [(p30, PJ), (r30, RJ)]
+    bad = [
+        (p30.replace("NumNodes=1-1", "NumNodes=2-2"), PJ),
+        (p30.replace("NumNodes=1-1", "NumNodes=1-2"), PJ),
+        (r30.replace("NumNodes=1 ", "NumNodes=2 "), RJ),
+        (r30.replace("NumNodes=1 ", "NumNodes=11 "), RJ),
+        (r30.replace(" NumNodes=1 ", " "), RJ),                   # no NumNodes; NodeList and ReqNodeList do not count
+        (pend, PJ),                                               # 01:19:00 against the declared 00:30:00
+        (p30.replace("JobState=PENDING", "ArrayJobId=60912517 ArrayTaskId=0 JobState=PENDING"), PJ),
+        (p30.replace("JobState=PENDING", "ArrayTaskId=0 JobState=PENDING"), PJ),
+        (p30, RJ),                                                # another job's record
+        (p30 + "\n" + p30, PJ),                                  # two records
+        ("", PJ),                                                 # scontrol printed nothing
     ]
-    for text, ok in cases:
-        rc, out, cancelled = _run_alloc(tmp_path, block, text, "00:30:00")
-        if ok:
-            assert rc == 0 and "PASSED" in out and not cancelled, (text[:80], out)
-        else:
-            assert rc == 6 and "FINISH 6" in out and cancelled, (text[:80], out)
+    for text, j in good:
+        ok, why = _accepts(tmp_path, block, text, "00:30:00", j)
+        assert ok, (text[:60], why)
+    for text, j in bad:
+        ok, why = _cancels(tmp_path, block, text, "00:30:00", j)
+        assert ok, (text[:60], why)
 
 
-def test_connect_reads_reqnodelist_and_nodelist_not_as_numnodes(tmp_path):
-    """NodeList=, ReqNodeList= and ExcNodeList= tokens never stand in for NumNodes=."""
+def test_connect_scontrol_status_and_release(tmp_path):
     block = _alloc_block(LAUNCH / "evw2d_connect.sh")
-    text = real_running().replace("TimeLimit=01:00:00", "TimeLimit=00:30:00").replace(" NumNodes=1 ", " ")
-    rc, out, cancelled = _run_alloc(tmp_path, block, text, "00:30:00")
-    assert rc == 6 and cancelled
+    p30 = real_pending().replace("TimeLimit=01:19:00", "TimeLimit=00:30:00")
+    ok, why = _cancels(tmp_path, block, p30, "00:30:00", "60912517", show_rc="1")      # plausible text, failed command
+    assert ok, why
+    ok, why = _accepts(tmp_path, block, p30, "00:30:00", "60912517", show_rc="1 1 0")  # a transient failure, retried
+    assert ok, why
+    ok, why = _cancels(tmp_path, block, p30, "00:30:00", "60912517", show_rc="1 1 1 0")  # three failures: no fourth try
+    assert ok, why
+    rc, out, cancelled, released = _run_alloc(tmp_path, block, p30, "00:30:00", "60912517", release_rc="1")
+    assert rc == 6 and cancelled and "release failed" in out
+
+
+def test_connect_submits_held_and_saves_the_id_before_the_check():
+    text = (LAUNCH / "evw2d_connect.sh").read_text()
+    sub = text.index("sbatch --parsable --hold ")
+    saved = text.index('echo "$job" > "$L/evw2d.jobid"')
+    begin = text.index("# ---- the allocation check (begin)")
+    release = text.index('scontrol release "$job"')
+    assert sub < saved < begin < release and sum(x.startswith("sbatch ") for x in text.splitlines()) == 1
 
 
 # ---------------------------------------------------------------------------------------------- the launcher
@@ -318,17 +368,20 @@ def _launcher(tmp: Path, cert_to: str, script_body: str = "#!/bin/bash\necho rem
     shm.mkdir()
     b = tmp / "stubbin"
     b.mkdir()
-    stub(b, "ssh", f'echo ssh >> "{tmp / "ssh.calls"}"\nlast="${{@: -1}}"\nexec bash -c "${{last//\\/dev\\/shm/{shm}}}"')
+    stub(b, "ssh", f'echo "ssh $*" >> "{tmp / "ssh.calls"}"\nlast="${{@: -1}}"\nexec bash -c "${{last//\\/dev\\/shm/{shm}}}"')
     stub(b, "sha256sum", 'shasum -a 256 "$@"')
-    stub(b, "ssh-keygen", f'echo "        Type: ssh-rsa-cert-v01@openssh.com user certificate"\n'
-                          f'echo "        Valid: from 2026-01-01T00:00:00 to {cert_to}"')
+    stub(b, "ssh-keygen", f'[ "$TZ" = UTC ] || exit 3\n'
+                          f'echo "        Type: ssh-rsa-cert-v01@openssh.com user certificate"\n'
+                          f'echo "        Valid: from ${{CERT_FROM:-2026-01-01T00:00:00}} to {cert_to}"\n'
+                          f'exit ${{KEYGEN_RC:-0}}')   # a failed ssh-keygen with a plausible window still stops
     env = dict(os.environ, PATH=f"{b}:{os.environ['PATH']}", EVW2D_CERT=str(tmp / "cert.pub"))
     return ld, shm, env
 
 
 def _local(seconds: int) -> str:
+    """A UTC time `seconds` from now, as `TZ=UTC ssh-keygen -L` prints it."""
     import time
-    return time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(time.time() + seconds))
+    return time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(time.time() + seconds))
 
 
 @pytest.mark.skipif(sys.platform != "darwin", reason="the launcher runs on the Mac (BSD date -j)")
@@ -358,6 +411,57 @@ def test_launcher_runs_the_approved_bytes_and_propagates_the_status(tmp_path):
     r = subprocess.run(["bash", str(ld / "evw2d_launch.sh"), "connect", str(sess2), "login27"], capture_output=True,
                        text=True, env=env)
     assert r.returncode == 8 and "not the approved one" in r.stdout
+
+
+@pytest.mark.skipif(sys.platform != "darwin", reason="the launcher runs on the Mac (BSD date -j)")
+@pytest.mark.parametrize("extra", [{"KEYGEN_RC": "1"}, {"CERT_FROM": "2099-01-01T00:00:00"}])
+def test_launcher_refuses_a_failed_or_future_certificate(tmp_path, extra):
+    tmp = Path(os.path.realpath(tmp_path))
+    ld, shm, env = _launcher(tmp, _local(6 * 3600))
+    sess = tmp / "s1"
+    sess.mkdir()
+    r = subprocess.run(["bash", str(ld / "evw2d_launch.sh"), "connect", str(sess), "login27"], capture_output=True,
+                       text=True, env=dict(env, **extra))
+    assert r.returncode == 7 and "STOP" in r.stdout and not (tmp / "ssh.calls").exists(), r.stdout
+
+
+@pytest.mark.skipif(sys.platform != "darwin", reason="the launcher runs on the Mac (BSD date -j)")
+def test_launcher_presents_the_checked_certificate(tmp_path):
+    tmp = Path(os.path.realpath(tmp_path))
+    ld, shm, env = _launcher(tmp, _local(6 * 3600))
+    sess = tmp / "s1"
+    sess.mkdir()
+    r = subprocess.run(["bash", str(ld / "evw2d_launch.sh"), "connect", str(sess), "login27"], capture_output=True,
+                       text=True, env=env)
+    assert r.returncode == 0, r.stdout + r.stderr
+    first = (tmp / "ssh.calls").read_text().splitlines()[0]
+    assert f"CertificateFile={tmp / 'cert.pub'}" in first and f"IdentityFile={tmp / 'cert'}" in first
+    assert "IdentitiesOnly=yes" in first and "ControlPath=none" in first
+
+
+@pytest.mark.skipif(sys.platform != "darwin", reason="the launcher runs on the Mac (BSD date -j)")
+def test_launcher_fetch_distinguishes_absent_from_unreachable(tmp_path):
+    tmp = Path(os.path.realpath(tmp_path))
+    ld, shm, env = _launcher(tmp, _local(6 * 3600))
+    remote = tmp / "remote"
+    remote.mkdir()
+    (remote / "post.tar.gz").write_bytes(b"p")
+    b = tmp / "stubbin"
+    stub(b, "ssh", f'cmd="${{@: -1}}"; [ -n "$SSH_RC" ] && exit "$SSH_RC"\n'
+                   f'exec bash -c "${{cmd//\\/pscratch\\/sd\\/j\\/josephrb\\/evw2d-20261126/{remote}}}"')
+    stub(b, "scp", f'src="${{@: -2:1}}"; cp "{remote}/${{src##*/}}" "${{@: -1}}"')
+    def fetch(**e):
+        d = tmp / f"f{len(list(tmp.glob('f*')))}"
+        d.mkdir()
+        return subprocess.run(["bash", str(ld / "evw2d_launch.sh"), "fetch", str(d)], capture_output=True, text=True,
+                              env=dict(env, **e)), d
+    r, d = fetch()
+    assert r.returncode == 0 and (d / "post.tar.gz").exists() and "cleanup.tar.gz absent" in r.stdout, r.stdout
+    (remote / "post.tar.gz").unlink()
+    r, d = fetch()
+    assert r.returncode == 4 and "post.tar.gz absent" in r.stdout
+    r, d = fetch(SSH_RC="255")
+    assert r.returncode == 255 and "could not ask saul" in r.stdout
 
 
 def test_launcher_refuses_unfilled_pins_and_bad_node_names(tmp_path):
@@ -472,3 +576,179 @@ def test_fill_pins_refuses_a_lane_root_outside_the_declared_form(tmp_path, lane)
     c = _commit(top, "binding")
     r = _fill(top, c, reviewed)
     assert r.returncode != 0 and not (top / LAUNCH.relative_to(REPO) / "bound").exists(), r.stdout + r.stderr
+
+
+def test_the_scripts_remove_nothing_but_their_own_dev_shm_copy():
+    """The director's condition (2026-11-25): only the two staged input copies are removed, by evw2d.py cleanup's exact
+    paths; no script removes products, anything under the output, or anything by glob."""
+    import re as _re
+    for f in [JOB, *LAUNCH.glob("*.sh")]:
+        for n, line in enumerate(f.read_text().splitlines(), 1):
+            code = line.split("#", 1)[0] if not line.lstrip().startswith("R=") else line
+            for m in _re.finditer(r"\b(rm|rmdir|unlink|shred|find\b.*-delete)\b[^;|&]*", code):
+                assert m.group(0).strip() in ('rm -f -- "$SELF"', 'rm -f -- \\"\\$f\\"'), (f.name, n, m.group(0))
+    src = (EV / "evw2d.py").read_text()
+    body = src[src.index("def cleanup("):src.index("\n\n\ndef ", src.index("def cleanup("))]
+    assert body.count(".unlink(") == 1 and "for key, path in staged(cfg).items():\n                got, size = sizes[key]\n" \
+        "                path.unlink()" in body
+    assert "rmtree" not in body and "glob" not in body
+
+
+# ------------------------------------------------------------------------------------------- the post and cleanup
+
+FAKE_EVW2D = '''import json, os, sys
+from pathlib import Path
+
+
+def accepted(out):
+    return {"pass": os.environ.get("ACC", "1") == "1"}
+
+
+if __name__ == "__main__" and "cleanup" in sys.argv:
+    out = Path(sys.argv[sys.argv.index("--out") + 1])
+    rc = int(os.environ.get("CLEAN_RC", "0"))
+    if rc == 0:
+        with open(out.parent / "deletions.tsv", "a") as fh:
+            fh.write("t\\tstaged\\tdigest\\t1\\treason\\n")
+        print(json.dumps({"deleted": 2}))
+    sys.exit(rc)
+'''
+
+
+@pytest.fixture()
+def lane(tmp_path):
+    """A finished lane: logs with the job id, products with their SHA256SUMS, two staged copies, deploy_M (a setup that
+    selects a root_6_28 python3) and deploy_C (a stand-in evw2d with accepted() and cleanup), and scheduler stubs."""
+    tmp = Path(os.path.realpath(tmp_path))
+    L = tmp / "evw2d-20261126"
+    (L / "logs").mkdir(parents=True)
+    (L / "logs" / "evw2d.jobid").write_text("4242\n")
+    (L / "logs" / "connect.log").write_text("connect\n")
+    csha = "c" * 64
+    out = L / "out"
+    out.mkdir()
+    for n, b in (("constants.json", b"{}"), ("run.json", json.dumps({"config_sha256": csha}).encode()),
+                 ("weights.npz", b"w" * 100), ("xsec.root", b"x"), ("evw2d.done", b"{}")):
+        (out / n).write_bytes(b)
+    (out / "SHA256SUMS").write_text("".join(f"{sha(out / n)}  {n}\n" for n in
+                                            ("constants.json", "run.json", "weights.npz", "xsec.root")))
+    (L / "stage").mkdir()
+    for n in ("runEventLoopOmniFold_MEFHC.root", "runEventLoopMC_MEFHC.root"):
+        (L / "stage" / n).write_bytes(b"s")
+    home = tmp / "home"
+    py = home / ".conda/envs/root_6_28/bin"
+    py.mkdir(parents=True)
+    stub(py, "python3", f'exec "{sys.executable}" "$@"')
+    git_repo(L / "deploy_M", {"setup_salloc_env.sh": f'export PATH="{py}:$PATH"\nreturn 0\n'})
+    git_repo(L / "deploy_C", {"2d-unfolding/evw2d/evw2d.py": FAKE_EVW2D})
+    b = tmp / "bin"
+    b.mkdir()
+    stub(b, "squeue", 'printf "%b" "${SQ_OUT-}"; exit ${SQ_RC:-0}')
+    stub(b, "sacct", 'case " $* " in *" -X "*) printf "%s\\n" "${SACCT_ROW-4242|COMPLETED|0:0|1|600}"; exit ${SACCT_RC:-0};; esac\n'
+                     'echo "4242|evw2d|COMPLETED|0:0|600|1|s|e|"')
+    stub(b, "sha256sum", 'a=(); for x; do [ "$x" = --strict ] || a+=("$x"); done; shasum -a 256 "${a[@]}"')
+    stub(b, "stat", '[ -n "$STAT_RC" ] && exit "$STAT_RC"; shift 2; for f; do [ -e "$f" ] || exit 1; echo "$f|1|2|3|4"; done')
+    env = dict(os.environ, PATH=f"{b}:{os.environ['PATH']}", HOME=str(home))
+
+    def run(script, **e):
+        src = (LAUNCH / script).read_text().replace("__LANE_ROOT__", str(L)).replace("__CONFIG_SHA256__", csha)
+        shm = tmp / "shm"
+        shm.mkdir(exist_ok=True)
+        f = shm / f"{script}.copy"
+        f.write_text(src)
+        r = subprocess.run(["bash", str(f), str(f)], capture_output=True, text=True, env=dict(env, **e))
+        assert not f.exists(), "the /dev/shm copy was left"
+        return r
+
+    return {"L": L, "run": run, "csha": csha, "bin": b}
+
+
+def test_post_passes_and_publishes_post_pass_last(lane):
+    r = lane["run"]("evw2d_post.sh")
+    L = lane["L"]
+    log = (L / "post" / "post.log").read_text()
+    assert r.returncode == 0, log
+    assert (L / "post.pass").read_text() == (f"job=4242\nconfig_sha256={lane['csha']}\n"
+                                             f"products_SHA256SUMS_sha256={sha(L / 'out' / 'SHA256SUMS')}\n")
+    assert (L / "post.tar.gz").exists() and not (L / "post.tar.gz.partial").exists()
+    assert "ACCOUNTING_OK=true" in log and "VERIFY=PASS" in log and "ACCEPTED=true" in log
+    assert (L / "post" / "charge_node_h.txt").read_text().strip() == "0.1667"
+
+
+@pytest.mark.parametrize("env,why", [
+    ({"SACCT_ROW": ""}, "no single allocation row"),
+    ({"SACCT_ROW": "4242|RUNNING|0:0|1|60"}, "'RUNNING' in sacct, not a terminal state"),
+    ({"SACCT_ROW": "4242|PENDING|0:0|1|0"}, "'PENDING' in sacct"),
+    ({"SACCT_ROW": "4242|COMPLETED|0:0|1|600\n4242|COMPLETED|0:0|1|600"}, "no single allocation row"),
+    ({"SACCT_RC": "1"}, "sacct did not answer"),
+    ({"SQ_OUT": "17\\n4242\\n"}, "still queued or running"),
+    ({"SQ_RC": "1"}, "squeue did not answer"),
+])
+def test_post_writes_nothing_until_the_job_has_one_terminal_row(lane, env, why):
+    r = lane["run"]("evw2d_post.sh", **env)
+    assert r.returncode == 9 and why in r.stdout, r.stdout
+    assert not (lane["L"] / "post").exists() and not (lane["L"] / "post.pass").exists()
+
+
+@pytest.mark.parametrize("env", [
+    {"SACCT_ROW": "4242|FAILED|1:0|1|600"},
+    {"SACCT_ROW": "4242|CANCELLED by 112498|0:0|1|600"},
+    {"SACCT_ROW": "4242|TIMEOUT|0:0|1|1800"},
+    {"SACCT_ROW": "4242|COMPLETED|0:0|2|600"},
+    {"ACC": "0"},
+    {"STAT_RC": "1"},
+])
+def test_post_fails_without_post_pass(lane, env):
+    r = lane["run"]("evw2d_post.sh", **env)
+    assert r.returncode == 5, (lane["L"] / "post" / "post.log").read_text()
+    assert (lane["L"] / "post").is_dir() and not (lane["L"] / "post.pass").exists()
+
+
+def test_post_fails_on_changed_products_wrong_config_or_a_failed_archive(lane):
+    L = lane["L"]
+    (L / "out" / "run.json").write_text(json.dumps({"config_sha256": "d" * 64}))
+    sums = "".join(f"{sha(L / 'out' / n)}  {n}\n" for n in ("constants.json", "run.json", "weights.npz", "xsec.root"))
+    (L / "out" / "SHA256SUMS").write_text(sums)
+    r = lane["run"]("evw2d_post.sh")
+    assert r.returncode == 5 and not (L / "post.pass").exists()            # run.json bound to another config
+    shutil.rmtree(L / "post")
+    (L / "post.tar.gz").unlink()
+    (L / "out" / "run.json").write_text(json.dumps({"config_sha256": lane["csha"]}))   # now unlike its SHA256SUMS line
+    r = lane["run"]("evw2d_post.sh")
+    assert r.returncode == 5 and "VERIFY=FAIL" in (L / "post" / "post.log").read_text()
+    shutil.rmtree(L / "post")
+    (L / "post.tar.gz").unlink()
+    sums = "".join(f"{sha(L / 'out' / n)}  {n}\n" for n in ("constants.json", "run.json", "weights.npz", "xsec.root"))
+    (L / "out" / "SHA256SUMS").write_text(sums)
+    stub(lane["bin"], "tar", "exit 1")
+    r = lane["run"]("evw2d_post.sh")
+    assert r.returncode == 5 and not (L / "post.pass").exists() and not (L / "post.tar.gz").exists()
+
+
+def test_cleanup_needs_a_matching_post_pass(lane):
+    L = lane["L"]
+    r = lane["run"]("evw2d_cleanup.sh")
+    assert r.returncode == 9 and "no post.pass" in r.stdout and not (L / "cleanup").exists()
+    assert lane["run"]("evw2d_post.sh", ACC="0").returncode == 5          # a failed post
+    r = lane["run"]("evw2d_cleanup.sh")
+    assert r.returncode == 9 and "no post.pass" in r.stdout and not (L / "deletions.tsv").exists()
+    shutil.rmtree(L / "post")
+    (L / "post.tar.gz").unlink()
+    assert lane["run"]("evw2d_post.sh").returncode == 0
+    (L / "out" / "SHA256SUMS").write_text((L / "out" / "SHA256SUMS").read_text() + "\n")   # products changed since
+    r = lane["run"]("evw2d_cleanup.sh")
+    assert r.returncode == 9 and "does not name this job" in r.stdout and not (L / "deletions.tsv").exists()
+
+
+def test_cleanup_runs_evw2d_cleanup_and_keeps_its_receipts(lane):
+    L = lane["L"]
+    assert lane["run"]("evw2d_post.sh").returncode == 0
+    r = lane["run"]("evw2d_cleanup.sh")
+    assert r.returncode == 0, (L / "cleanup" / "cleanup.log").read_text()
+    assert (L / "cleanup" / "deletions.tsv").exists() and (L / "cleanup.tar.gz").exists()
+    assert sorted(p.name for p in (L / "out").iterdir()) == ["SHA256SUMS", "constants.json", "evw2d.done", "run.json",
+                                                             "weights.npz", "xsec.root"], "a product was touched"
+    shutil.rmtree(L / "cleanup")
+    (L / "cleanup.tar.gz").unlink()
+    r = lane["run"]("evw2d_cleanup.sh", CLEAN_RC="4")
+    assert r.returncode == 4 and (L / "cleanup.tar.gz").exists()
