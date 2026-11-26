@@ -92,4 +92,13 @@ Some checks are layered, so a mutant of one alone survives, and those mutants ar
 - on the Mac, the SHA256SUMS digest is implied by the marker digest together with `accepted()`;
 - the listing check repeats `accepted()`'s `present` check.
 
-The codex-school reads are in `receipts/deposit/reads/`.
+Reads (codex-school, gpt-6.2-sol, effort high, read-only), in `receipts/deposit/reads/`:
+
+| read | verdict | fixed in |
+|---|---|---|
+| r1, the set | NO-GO: five BLOCKING, three SHOULD-FIX | r2 |
+| r1b | NOT ALL HOLD | r3 |
+| r1c | NOT ALL HOLD | r4 |
+| r1d | NOT ALL HOLD | r5 |
+| r1e | NOT ALL HOLD (the launcher) | r6 |
+| r1f, the launcher's four changes | ALL HOLD | |

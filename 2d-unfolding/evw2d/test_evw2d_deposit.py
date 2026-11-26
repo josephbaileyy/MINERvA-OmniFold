@@ -573,7 +573,8 @@ def _hpss_receipt(lane: Path, bound: str, done: str, hpss_sha: str, pin_edit=Non
 
 @pytestmark_mac
 @pytest.mark.parametrize("over,ok", [({}, True), ({"hpss rc=0": "hpss rc=1"}, False),
-                                     ({"6 of 6": "5 of 6"}, False), ({f"job {JOBID}": "job 999"}, False),
+                                     ({"their pins: 6 of 6": "their pins: 5 of 6"}, False),   # the retrieval line only
+                                     ({f"job {JOBID}": "job 999"}, False),
                                      ({f"job {JOBID}": f"job {JOBID}0"}, False),
                                      ({"renamed to": "a check failed: kept"}, False),
                                      ({"pin": "weights"}, False), ({"pin": "drop"}, False),
