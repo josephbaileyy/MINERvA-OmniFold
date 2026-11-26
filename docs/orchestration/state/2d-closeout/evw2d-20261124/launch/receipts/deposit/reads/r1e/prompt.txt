@@ -1,0 +1,14 @@
+You are an adversarial reviewer of cluster scripts (Perlmutter, HPSS). READ-ONLY: never write anywhere except your report, never touch a git checkout, no network. Do not modify inputs/.
+
+NARROW CONFIRMATION OF THE r1d FIXES. Your read inputs/prior/codex-r1d-report.md returned NOT ALL HOLD on EVW2D's HPSS copy and deposit fetch. The lane changed the scripts: inputs/diff/r4-to-r5.diff (full new bytes in inputs/new/, filled copies in inputs/bound/; 79 tests pass). The changes:
+1. After the renames, the final pair must list AND read back (htar -tf, every pinned name). Otherwise each name is renamed back independently, both rcs are logged, and the HPSS directory is listed.
+2. Both scripts require every digest pin to be 64 lowercase hex characters and the job to be a number, before anything runs. The deposit launcher also checks the lane root's form.
+3. fill requires the working copies of evw2d.py and the two templates to be regular files, not links.
+Known and accepted, as before: if a check fails after the part archive is written, the names stay in HPSS (at the part names, or wherever the log and the final listing show) for the director, and the existing-name guard refuses a retry.
+
+Scope: mistakes and lasting changes; a hostile same-account process is out of scope.
+
+TASKS:
+1. For each of r1d's open findings (#4 the pin form; the BLOCKING rollback; the SHOULD-FIX name-only final lookup; the SHOULD-FIX working-tree symlink): HOLDS or DOES NOT HOLD, with file:line, and the concrete failing scenario if it does not hold.
+2. Any NEW defect from these changes that would give a false PASS, a removal or change beyond what is stated, or a false STOP on the real system. Label BLOCKING / SHOULD-FIX / MINOR.
+Be concise. Start with one line: "CONFIRMATION: ALL HOLD" or "CONFIRMATION: NOT ALL HOLD".

@@ -12,8 +12,8 @@
 #        bash evw2d_deposit.sh fetch <new empty dir>
 #          hpss.tar.gz (an absent archive is told apart from an ssh failure), then its receipt is verified: its first
 #          line names exactly the approved evw2d_hpss.sh, the bound digests and the job; the log shows 6 of 6 retrieved
-#          and equal to their pins, the part archive's readback (htar -tf rc 0, 6 of 6 names), the rename to the final
-#          name and "hpss rc=0"; its snapshot SHA256SUMS has the bound digest and its pinned list is byte for byte the
+#          and equal to their pins, the part and final archives' readbacks (htar -tf rc 0, 6 of 6 names each), the
+#          rename to the final name and "hpss rc=0", and no NUL byte; its snapshot SHA256SUMS has the bound digest and its pinned list is byte for byte the
 #          six rows that snapshot and the bound marker digest imply. Exit 0 only then; 5 = fetched but not verified.
 #        bash evw2d_deposit.sh fetch-products <new empty dir under $HOME, outside /private/tmp and /tmp>
 #          the six product files by scp into <dir>/out, then the checker on the Mac: the local evw2d.py must be the
@@ -22,6 +22,7 @@
 #          ($EVW2D_PY, default python3, with numpy).
 # The directory argument is resolved once, to a physical path (CDPATH unset), and every write uses that path.
 MODE=${1:?hpss|fetch|fetch-products}; F=${2:?session dir}; NODE=${3:-}
+export LC_ALL=C                 # byte semantics for every pattern and tool below (no locale collation)
 unset CDPATH
 F=$(cd -- "$F" 2>/dev/null && pwd -P && echo .) || { echo "STOP: $2 is not a directory"; exit 9; }
 F=${F%$'\n.'}                                                 # keeps a trailing newline in the name, if any
@@ -46,7 +47,7 @@ for v in "$EVW_SHA" "$CFG_SHA" "$BOUND" "$DONE_SHA" "$HPSS_SHA"; do
   hex64 "$v" || { echo "STOP: a digest pin is not 64 hex: '$v'"; exit 9; }
 done
 case "$JOBID" in *[!0-9]*|"") echo "STOP: the job pin is not a number: '$JOBID'"; exit 9;; esac
-case "${LANE##*/}" in evw2d-20[0-9][0-9][0-9][0-9][0-9][0-9]) ;; *) echo "STOP: the lane root pin '$LANE'"; exit 9;; esac
+case "$LANE" in /pscratch/sd/j/josephrb/evw2d-20[0-9][0-9][0-9][0-9][0-9][0-9]) ;; *) echo "STOP: the lane root pin '$LANE'"; exit 9;; esac
 cert_ok() {   # cert_ok <seconds>: ssh-keygen succeeds; the window "Valid: from A to B" (UTC) has begun and lasts that long
   local out from to b e now
   out=$(TZ=UTC ssh-keygen -L -f "$CERT" 2>&1) || { echo "STOP: ssh-keygen -L failed on $CERT"; return 1; }
@@ -89,11 +90,14 @@ case "$MODE" in
       [ -f "$f" ] && [ ! -L "$f" ] || { echo "NOT VERIFIED: no ${f#"$F"/}"; exit 5; }
     done
     v=1
+    tr -d '\000' < "$log" | cmp -s - "$log" || { echo "the receipt log holds a NUL byte"; v=0; }
     first=$(head -1 "$log") || v=0
     case "$first" in *" hpss sha256 $HPSS_SHA bound $BOUND done $DONE_SHA job $JOBID") ;; *) v=0;; esac
     grep -Fxq "retrieved and equal to their pins: 6 of 6; files retrieved: 6" "$log" || v=0
     grep -Fxq "htar -tf rc=0" "$log" || v=0
     grep -Fxq "the archive lists 6 of 6 pinned names" "$log" || v=0
+    grep -Fxq "htar -tf (final) rc=0" "$log" || v=0
+    grep -Fxq "the final archive lists 6 of 6 pinned names" "$log" || v=0
     grep -Fxq "renamed to /home/j/josephrb/mnv-$R/$R.tar" "$log" || v=0
     tail -1 "$log" | grep -Eq '^hpss rc=0 ' || v=0
     s=$(shasum -a 256 < "$snap" | cut -d' ' -f1) && [ "$s" = "$BOUND" ] || v=0     # stdin: no name escaping

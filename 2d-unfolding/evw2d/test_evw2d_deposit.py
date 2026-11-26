@@ -401,7 +401,8 @@ def deposit(tmp_path):
     stub(b, "ssh-keygen", f'[ "$TZ" = UTC ] || exit 3\necho "        Valid: from 2026-01-01T00:00:00 to '
                           f'${{CERT_TO:-{_local(6 * 3600)}}}"')
     env = dict(os.environ, PATH=f"{b}:{os.environ['PATH']}", EVW2D_CERT=str(tmp / "key-cert.pub"),
-               EVW2D_PY=sys.executable)
+               EVW2D_PY=sys.executable, LANG="en_US.UTF-8")   # a UTF-8 locale, as on the Mac: the guards must not
+    env.pop("LC_ALL", None)                                    # depend on the caller's locale
 
     def run(*args, **e):
         return subprocess.run(["bash", str(ld / "evw2d_deposit.sh"), *map(str, args)], capture_output=True,
@@ -559,7 +560,8 @@ def _hpss_receipt(lane: Path, bound: str, done: str, hpss_sha: str, pin_edit=Non
         rows = pin_edit(rows)
     log = [f"node n 2026-11-26T00:00:00Z hpss sha256 {hpss_sha} bound {bound} done {done} job {JOBID}",
            "retrieved and equal to their pins: 6 of 6; files retrieved: 6", "htar -tf rc=0",
-           "the archive lists 6 of 6 pinned names",
+           "the archive lists 6 of 6 pinned names", "htar -tf (final) rc=0",
+           "the final archive lists 6 of 6 pinned names",
            f"renamed to /home/j/josephrb/mnv-{R}/{R}.tar", "hpss rc=0 2026-11-26T00:00:01Z"]
     for k, v in over.items():
         log = [ln.replace(k, v) for ln in log]
@@ -578,7 +580,10 @@ def _hpss_receipt(lane: Path, bound: str, done: str, hpss_sha: str, pin_edit=Non
                                      ({"pin": "snapshot"}, False), ({"pin": "blank"}, False),
                                      ({"hpss sha256 ": "hpss sha256 0"}, False),
                                      ({"the archive lists 6 of 6 pinned names": "x"}, False),
-                                     ({"htar -tf rc=0": "htar -tf rc=1"}, False)])
+                                     ({"htar -tf rc=0": "htar -tf rc=1"}, False),
+                                     ({"htar -tf (final) rc=0": "htar -tf (final) rc=1"}, False),
+                                     ({"the final archive lists 6 of 6": "the final archive lists 5 of 6"}, False),
+                                     ({f"hpss sha256 ": "hpss sha256 \0"}, False)])
 def test_deposit_fetch_verifies_the_hpss_receipt(deposit, over, ok):
     edit = None
     if over.get("pin") == "weights":       # one product pin changed
@@ -617,14 +622,16 @@ def test_fetch_products_uses_the_directory_it_checked(deposit, home_dest):
     assert not any((home_dest / "x").iterdir()) and not any((deposit["tmp"] / "x").iterdir())
 
 
-@pytest.mark.parametrize("line,value", [("JOBID", "62022231 "), ("HPSS_SHA", "a" * 63), ("EVW_SHA", "z" * 64)])
+@pytest.mark.parametrize("line,value", [("JOBID", "62022231 "), ("HPSS_SHA", "a" * 63), ("EVW_SHA", "z" * 64),
+                                        ("HPSS_SHA", "A" * 64), ("LANE", "evw2d-20261126")])
 def test_deposit_refuses_a_malformed_pin(deposit, line, value):
     p = deposit["ld"] / "evw2d_deposit.sh"
     p.write_text(re.sub(rf"^{line}=.*$", f"{line}='{value}'", p.read_text(), count=1, flags=re.M))
     d = deposit["tmp"] / "s"
     d.mkdir()
     r = deposit["run"]("fetch", d)
-    assert r.returncode == 9 and ("not 64 hex" in r.stdout or "not a number" in r.stdout), r.stdout
+    assert r.returncode == 9 and ("not 64 hex" in r.stdout or "not a number" in r.stdout
+                                  or "the lane root pin" in r.stdout), r.stdout
     assert not (deposit["tmp"] / "ssh.calls").exists()
 
 
