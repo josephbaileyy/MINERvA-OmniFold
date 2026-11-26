@@ -75,6 +75,8 @@ reports are in `reads/`. No recomputed value changed.
       event.
     - The readings are unchanged except for the event-reason wording.
     - Mutation round 3: 6/6 killed.
+  - Round 3, the last read of this diff by the director's ruling (`reads/p2-fix3-*`): it found no missed event in
+    the present data and no wrong value. Its classifier gaps for future reruns are in `FOLLOWUPS.md`.
 - **Reproduction.** All 14 copies were regenerated after the fixes; prr, rsn and xk came from the verified fetch. 12 are
   byte-identical, and gch and prr differ only as stated. The opt-in test (`VF_P2_FETCH`, `VF_P2_XK=1`) reproduces
   prr, rsn and xk byte for byte.
