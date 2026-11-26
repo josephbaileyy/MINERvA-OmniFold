@@ -1,0 +1,81 @@
+ack: cov2d=cov2d-ACK-geanttw-p0-build-2026-11-26T15:45:39Z nue=GEANTTW-BINDING-P0:NuE-exception@2026-11-26 utc=2026-11-26T15:45:55Z
+script: 7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738 4fe6add5de54544196ddb90ac09cf033d8411515:docs/orchestration/state/2d-closeout/cov2d-fence-20261122/cov2d_fence.sh
+script: c5bf44079438d0057c8fb5d95e86e515321fc0f6f47571c9ef0ecd42d09b6d87 4fe6add5de54544196ddb90ac09cf033d8411515:docs/orchestration/state/geanttw-20261124/code/geanttw_remote.sh
+fence host=login21 utc=2026-11-26T15:45:59Z
+sacct -X -n -P -u josephrb -S 2026-11-12T07:45:59 -E now -o JobID,JobName,State 2>&1
+sacct matching rows: 14
+FENCE CLEAR
+fence: clear
+[geanttw-build] cloning MAT at 35097b65ab1680db8058f9ede18fecffdc3a1ea3
+[geanttw-build] cloning MAT-MINERvA at 50d7631416d1c93edd4db6886a2ca29da64fee60 (pin)
+[geanttw-build] creating MAT-MINERvA-pat by cherry-picking 3e411c0d3a6f598aa2072c6729790e4701e4089d
+Note: switching to '50d7631416d1c93edd4db6886a2ca29da64fee60'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+[detached HEAD 6c5a772] Turn truth weighting on for Geant Hadron weights and systematics.
+ Author: David Last <[email redacted]>
+ Date: Fri Oct 17 13:01:39 2025 -0500
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+[geanttw-build] checking that the cherry-pick's diff equals the upstream diff and touches only: universes/GeantHadronSystematics.cxx weighters/GeantNeutronCVReweighter.h
+SOURCE_PROVENANCE PASS: 46 manifest rows, 0 problem(s)
+[geanttw-build] building MAT
+[geanttw-build] building MAT-MINERvA pin
+[geanttw-build] building MAT-MINERvA pat
+[geanttw-build] building runEventLoopOmniFold (pin)
+[geanttw-build] building runEventLoopOmniFold (pat)
+[geanttw-build] build.log written to /pscratch/sd/j/josephrb/geanttw-20261124/run/p0/build.log
+PROD /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT-MINERvA.so 2b842b145352f58e7f42bae11da881e2
+PROD /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/runEventLoopOmniFold f4f18045d74d5109dcd0f6abce9dc968
+CHECK SOURCE_PROVENANCE PASS
+SO pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib/libMATDict.so d3b0fee66e231c02df1c9ce8515ab6ffd913127e7c02989ad47b41c7509af4c8
+SO pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib/libMAT-MINERvADict.so ca8eca579793cde857e4bf0bf87f9bed8298a217ffaab1f26c1e66e8404009a6
+SO pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib/libMAT-MINERvA.so ca8eca579793cde857e4bf0bf87f9bed8298a217ffaab1f26c1e66e8404009a6
+SO pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib/libMAT.so d3b0fee66e231c02df1c9ce8515ab6ffd913127e7c02989ad47b41c7509af4c8
+BIN pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/bin/runEventLoopOmniFold d8ececeb838f088910e2f2152b0cab245ade63f9989f074bac69be60a96107ce
+SO pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/libMATDict.so d3b0fee66e231c02df1c9ce8515ab6ffd913127e7c02989ad47b41c7509af4c8
+SO pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/libMAT-MINERvADict.so 3649ea42071728ab4140cd6ff5d9d992c37d03c061af98c45168a9b53a54c588
+SO pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/libMAT-MINERvA.so 3649ea42071728ab4140cd6ff5d9d992c37d03c061af98c45168a9b53a54c588
+SO pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/libMAT.so d3b0fee66e231c02df1c9ce8515ab6ffd913127e7c02989ad47b41c7509af4c8
+BIN pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/bin/runEventLoopOmniFold aa2a3cb90bf62d49508655a64a9c93985d97b6e527e368d1bd456fa8f7bcd0d0
+RPATH pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/bin/runEventLoopOmniFold /global/homes/j/josephrb/.conda/envs/root_6_28/lib:/pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib:
+RPATH pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/bin/runEventLoopOmniFold /global/homes/j/josephrb/.conda/envs/root_6_28/lib:/pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib:
+CHECK RPATH_CLEAN PASS
+CHECK DIFF_EQUALS_UPSTREAM PASS
+CHECK LIBMAT_IDENTICAL PASS
+CHECK LIBMATMINERVA_DIFFER PASS
+[geanttw-build] all CHECKs passed
+PROD /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT-MINERvA.so 2b842b145352f58e7f42bae11da881e2
+PROD /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/runEventLoopOmniFold f4f18045d74d5109dcd0f6abce9dc968
+CHECK SOURCE_PROVENANCE PASS
+SO pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib/libMATDict.so d3b0fee66e231c02df1c9ce8515ab6ffd913127e7c02989ad47b41c7509af4c8
+SO pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib/libMAT-MINERvADict.so ca8eca579793cde857e4bf0bf87f9bed8298a217ffaab1f26c1e66e8404009a6
+SO pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib/libMAT-MINERvA.so ca8eca579793cde857e4bf0bf87f9bed8298a217ffaab1f26c1e66e8404009a6
+SO pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib/libMAT.so d3b0fee66e231c02df1c9ce8515ab6ffd913127e7c02989ad47b41c7509af4c8
+BIN pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/bin/runEventLoopOmniFold d8ececeb838f088910e2f2152b0cab245ade63f9989f074bac69be60a96107ce
+SO pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/libMATDict.so d3b0fee66e231c02df1c9ce8515ab6ffd913127e7c02989ad47b41c7509af4c8
+SO pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/libMAT-MINERvADict.so 3649ea42071728ab4140cd6ff5d9d992c37d03c061af98c45168a9b53a54c588
+SO pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/libMAT-MINERvA.so 3649ea42071728ab4140cd6ff5d9d992c37d03c061af98c45168a9b53a54c588
+SO pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/libMAT.so d3b0fee66e231c02df1c9ce8515ab6ffd913127e7c02989ad47b41c7509af4c8
+BIN pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/bin/runEventLoopOmniFold aa2a3cb90bf62d49508655a64a9c93985d97b6e527e368d1bd456fa8f7bcd0d0
+RPATH pin /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/bin/runEventLoopOmniFold /global/homes/j/josephrb/.conda/envs/root_6_28/lib:/pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib:
+RPATH pat /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/bin/runEventLoopOmniFold /global/homes/j/josephrb/.conda/envs/root_6_28/lib:/pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib:
+CHECK RPATH_CLEAN PASS
+CHECK DIFF_EQUALS_UPSTREAM PASS
+CHECK LIBMAT_IDENTICAL PASS
+CHECK LIBMATMINERVA_DIFFER PASS
+== geanttw remote build rc=0 2026-11-26T15:50:21Z
+== geanttw connect build rc=0 2026-11-26T15:50:21Z
