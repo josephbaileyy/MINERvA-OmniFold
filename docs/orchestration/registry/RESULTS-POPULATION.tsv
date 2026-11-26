@@ -95,6 +95,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/p1/run/run/S/vf-with/readout/fd_f0b_readout.json	included	25	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/p1/run/run/S/vf-with/readout/fd_f1_readout.json	included	35	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/p1/run/run/S/vf-with/readout/fd_g_readout.json	included	10	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/readings/vf_readings.json	included	36	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/redump-f12i-20261112/read-20261118/rdx_readout.json	included	11	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-post/run-20261112/cmodel/rsn_cmodel.json	included	49	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-post/run-20261112/regrade.json	included	84	
@@ -108,6 +109,13 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/tier3-202611
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json	included	25	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f1_readout.json	included	35	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_g_readout.json	included	10	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/gch.vf.json	included	14	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/gdefs.vf.json	included	24	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/gnat.vf.json	included	6	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/prr.vf.json	included	6	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/rsn.vf.json	included	30	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/rsnregrade.vf.json	included	84	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/vatlas.vf.json	included	16	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/readout/vf-f0/fd_f0_readout.json	included	25	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/readout/vf-nopl-E/fd_g_readout.json	included	10	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/readout/vf-nopl-S/fd_f0b_readout.json	included	25	
