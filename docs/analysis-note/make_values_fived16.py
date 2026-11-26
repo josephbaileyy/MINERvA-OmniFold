@@ -759,6 +759,15 @@ def values(d, arm="with"):
     # C_resp's C_total_resp row, which is the C_e form.)
     M, rs = dp["matrices"], dp["relative_sigma"]
     wo_name, wi_name = ARMS["without"]["dp"], ARMS["with"]["dp"]
+    # the response term on C_rep's own subtotal (Joseph 2026-11-26, finding 8 option B; sec5_multidim): the sigma of
+    # C_e^infl + C_model + C_resp over that of C_e^infl + C_model, from the product's diagonals. The text prints the
+    # maximum as a whole percent, rounded here from the full ratio: the three-decimal 1.195 would round up to 20
+    rb = sorted((M[wo_name][i][i] / (M["C_e_infl"][i][i] + M["C_model_abs"][i][i])) ** 0.5 for i in range(16))
+    v["sigratio-infl-min"], v["sigratio-infl-med"], v["sigratio-infl-max"] = (f"{rb[0]:.3f}", f"{(rb[7] + rb[8]) / 2:.3f}",
+                                                                              f"{rb[-1]:.3f}")
+    assert abs(100 * (rb[-1] - 1) % 1 - 0.5) > 0.01, "the response term's maximum sits on a whole-percent boundary"
+    v["sigratio-infl-maxpct"] = f"{round(100 * (rb[-1] - 1)):d}"
+    assert v["sigratio-infl-maxpct"] == "19", "the approved 19% (finding 8, option B) changed"
     for name, mat in M.items():
         assert max(abs(mat[i][i] ** 0.5 / dp["f"][i] / rs[name][i] - 1) for i in range(16)) < 1e-10, f"{name}'s sigma"
     for name, parts in ((wo_name, ("C_e_infl", "C_model_abs", "C_resp")), (wi_name, (wo_name, "C_PL5D")),
@@ -2353,6 +2362,9 @@ def self_test():
              lambda d: (kset(d, ["prr", "table", "C25/q3/s991000", "grade", "flagged"], False),
                         d["prr"]["readings"]["PR-3"]["C25"]["new_flags"].remove("q3")), "not at C25 and O2 only"),
             ("a B5D multiplier moves", lambda d: kset(d, ["b5d", "fluctuation", "trigger", "R3", "phi"], 3.1), "the approved factors changed"),
+            ("the response term raises C_rep's subtotal sigma further",
+             lambda d: [r.__setitem__(i, 1.05 * r[i]) for i, r in enumerate(d["dp"]["matrices"][ARMS["without"]["dp"]])],
+             "the approved 19%"),
             ("B5D's bands are relabelled", lambda d: kset(d, ["b5d", "fluctuation", "bands"], ["R1", "R2", "R3"]), "ranks 1-4, 5-8 and 9-16"),
             ("C_e^infl's sigma is not its matrix's", lambda d: scale_rows(d, "dp", "C_e_infl", 1.01), "C_e_infl's sigma"),
             ("the V_F product's C_e is not S1's", lambda d: scale_rows(d, "s1", "C_e", 1.01) if isinstance(d["s1"]["relative_sigma"]["C_e"], list)

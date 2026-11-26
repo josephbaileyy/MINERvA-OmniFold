@@ -1,0 +1,7 @@
+reader=codex (OpenAI Codex v0.172.0), model gpt-6.2-sol, reasoning effort high, sandbox read-only
+session_id=01a21837-4f7c-7442-b016-49f5822e8984
+run_by=director (2026-11-26), for Joseph's decisions on PR #1378's finding 8 and naming
+source_dir=/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/naming-read-20261126
+inputs: the five .tex files are byte-identical to PR #1378 head 489959f83b082d9e73b94802bca5d6058da73108 (sha256 checked by journal-editor); finding8.md is the PR body's finding-8 table; inputs.sha256 lists them
+out.txt = report.md, prompt.txt = PROMPT.md, run.txt = run.log (renamed: .gitignore drops *.log)
+report.md and run.log mtime 2026-11-26T06:18:18 (local)
