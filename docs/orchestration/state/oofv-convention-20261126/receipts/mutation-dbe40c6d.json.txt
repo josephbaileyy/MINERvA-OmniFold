@@ -1,0 +1,520 @@
+{
+ "schema": "oofvc-mutation/1",
+ "python": "/Users/josephbailey/ew2d-env/bin/python3",
+ "files": {
+  "oofvc_join.py": "23e8605bd7c8ea1d15021e91d1debf2914d1fe5759a43408f33d9b6b7567bf2d",
+  "oofvc_lib.py": "bb7062c31693683842f6d2b5f189942e84d9eda81e02b31cd0a765b97da9a056",
+  "oofvc_mutation.py": "25dff6a61996bf25580e4f4b1369d651c61393438a24b9a1d0d6cac58841a41f",
+  "oofvc_run.py": "4b97bfabade3d2e0b95062935a86086739d90b38380980be5ed1c9c70ea8eb6e",
+  "oofvc_score.py": "2eeebd04f07b4b12b107c0355989aa9ff9ed38bcfafff7263de7f7accff65578",
+  "test_oofvc.py": "d5cd711ec890f3fcd308f922be578186aa5ff971f214b0868e644cfc0ec91c1d"
+ },
+ "diff_sha256": "6e836e057d4b8a8cfe14b67bb89164f939a444f3b5cfeeb86aaad8038006fce6",
+ "results": [
+  {
+   "name": "CONTROL",
+   "file": null,
+   "tests": "Identity or MatchesRefC2C1 or (Join and not JoinTool) or Moved or Readings or JoinTool or Driver or Runner or Shell",
+   "rc": 0,
+   "seconds": 114.2,
+   "verdict": "PASS",
+   "tail": ".........................................                                [100%]\n41 passed in 113.35s (0:01:53)\n"
+  },
+  {
+   "name": "LIB_BAND_LOWER",
+   "file": "oofvc_lib.py",
+   "tests": "Readings",
+   "rc": 1,
+   "seconds": 3.5,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n_____________________________ Readings.test_bands ______________________________\n\nself = <test_oofvc.Readings testMethod=test_bands>\n\n    def test_bands(self):\n        cases = {0.80: \"LOWER\", 0.5: \"LOWER\", 1.25: \"HIGHER\", 2.0: \"HIGHER\", 0.95: \"LITTLE CHANGE\",\n                 1 / 0.95: \"LITTLE CHANGE\", 1.0: \"LITTLE CHANGE\", 0.9: \"INTERMEDIATE\", 1.1: \"INTERMEDIATE\",\n                 0.8000001: \"INTERMEDIATE\", 1.2499999: \"INTERMEDIATE\"}\n        for r, b in cases.items():\n>           self.assertEqual(L.band(r), b, r)\nE           AssertionError: 'LOWER' != 'INTERMEDIATE'\nE           - LOWER\nE           + INTERMEDIATE\nE            : 0.8000001\n\ntest_oofvc.py:195: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Readings::test_bands - AssertionError: 'LOWER' != 'INTE...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 38 deselected in 2.80s\n"
+  },
+  {
+   "name": "LIB_BAND_LITTLE",
+   "file": "oofvc_lib.py",
+   "tests": "Readings",
+   "rc": 0,
+   "seconds": 2.1,
+   "verdict": "SURVIVED",
+   "tail": "...                                                                      [100%]\n3 passed, 38 deselected in 1.65s\n"
+  },
+  {
+   "name": "LIB_BAND_HIGHER",
+   "file": "oofvc_lib.py",
+   "tests": "Readings",
+   "rc": 1,
+   "seconds": 2.2,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n_____________________________ Readings.test_bands ______________________________\n\nself = <test_oofvc.Readings testMethod=test_bands>\n\n    def test_bands(self):\n        cases = {0.80: \"LOWER\", 0.5: \"LOWER\", 1.25: \"HIGHER\", 2.0: \"HIGHER\", 0.95: \"LITTLE CHANGE\",\n                 1 / 0.95: \"LITTLE CHANGE\", 1.0: \"LITTLE CHANGE\", 0.9: \"INTERMEDIATE\", 1.1: \"INTERMEDIATE\",\n                 0.8000001: \"INTERMEDIATE\", 1.2499999: \"INTERMEDIATE\"}\n        for r, b in cases.items():\n>           self.assertEqual(L.band(r), b, r)\nE           AssertionError: 'INTERMEDIATE' != 'HIGHER'\nE           - INTERMEDIATE\nE           + HIGHER\nE            : 1.25\n\ntest_oofvc.py:195: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Readings::test_bands - AssertionError: 'INTERMEDIATE' !...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 38 deselected in 1.78s\n"
+  },
+  {
+   "name": "LIB_NFACTOR",
+   "file": "oofvc_lib.py",
+   "tests": "Identity",
+   "rc": 1,
+   "seconds": 2.2,
+   "verdict": "KILLED",
+   "tail": "n_is_the_factor>\n\n    def test_ibu_is_unfold_selected_over_efficiency_and_n_is_the_factor(self):\n        rng = np.random.default_rng(1)\n        worst = 0.0\n        for _ in range(200):\n            n = int(rng.integers(3, 30))\n            M, T, y = random_problem(rng, n)\n            O = rng.random(n) * M.sum(axis=0) * 0.3\n            sM = M.sum(axis=0)\n            for K in (1, 5, 10, 20):\n                u = L.dagostini(M, T, y, [K])[K]\n                s = L.unfold_selected(M, y, K)\n                eff = np.divide(sM, T, out=np.zeros(n), where=T > 0)\n                effN = np.divide(sM + O, T, out=np.zeros(n), where=T > 0)\n                ref0 = np.divide(s, eff, out=np.zeros(n), where=eff > 0)\n                refN = np.divide(s, effN, out=np.zeros(n), where=effN > 0)\n                uN = u * L.n_factor(sM, O)\n                for a, b in ((u, ref0), (uN, refN)):\n                    worst = max(worst, float(np.max(np.abs(a - b) / np.maximum(np.abs(b), 1e-300))))\n>       self.assertLess(worst, 1e-13)  # 7.5e-15 when first measured (OOFVC-DECLARATION.md rev 2)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       AssertionError: 0.18743097093460484 not less than 1e-13\n\ntest_oofvc.py:85: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Identity::test_ibu_is_unfold_selected_over_efficiency_and_n_is_the_factor\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 38 deselected in 1.76s\n"
+  },
+  {
+   "name": "LIB_NFACTOR_ZERO",
+   "file": "oofvc_lib.py",
+   "tests": "Identity",
+   "rc": 1,
+   "seconds": 2.3,
+   "verdict": "KILLED",
+   "tail": ".F\n=================================== FAILURES ===================================\n_________________________ Identity.test_n_factor_edges _________________________\n\nself = <test_oofvc.Identity testMethod=test_n_factor_edges>\n\n    def test_n_factor_edges(self):\n>       np.testing.assert_array_equal(L.n_factor([0.0, 2.0, 3.0], [1.0, 0.0, 1.0]), [1.0, 1.0, 0.75])\n\ntest_oofvc.py:97: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = (<built-in function eq>, array([0.  , 1.  , 0.75]), [1.0, 1.0, 0.75])\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Arrays are not equal', 'strict': False}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Arrays are not equal\nE           \nE           Mismatched elements: 1 / 3 (33.3%)\nE           Max absolute difference: 1.\nE           Max relative difference: 1.\nE            x: array([0.  , 1.  , 0.75])\nE            y: array([1.  , 1.  , 0.75])\n\n../../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Identity::test_n_factor_edges - AssertionError: \n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 38 deselected in 1.87s\n"
+  },
+  {
+   "name": "LIB_JOIN_EVENTS",
+   "file": "oofvc_lib.py",
+   "tests": "Join",
+   "rc": 1,
+   "seconds": 2.4,
+   "verdict": "KILLED",
+   "tail": "...F\n=================================== FAILURES ===================================\n_________________ Join.test_tie_between_events_or_values_stops _________________\n\nself = <test_oofvc.Join testMethod=test_tie_between_events_or_values_stops>\n\n    def test_tie_between_events_or_values_stops(self):\n        a = (np.array([2.0, 2.0]),)\n        b = (np.array([2.0, 2.0]),)\n>       with self.assertRaises(L.JoinStop):\nE       AssertionError: JoinStop not raised\n\ntest_oofvc.py:156: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Join::test_tie_between_events_or_values_stops - Asserti...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 24 deselected in 1.84s\n"
+  },
+  {
+   "name": "LIB_JOIN_VALUES",
+   "file": "oofvc_lib.py",
+   "tests": "Join",
+   "rc": 1,
+   "seconds": 2.7,
+   "verdict": "KILLED",
+   "tail": "...F\n=================================== FAILURES ===================================\n_________________ Join.test_tie_between_events_or_values_stops _________________\n\nself = <test_oofvc.Join testMethod=test_tie_between_events_or_values_stops>\n\n    def test_tie_between_events_or_values_stops(self):\n        a = (np.array([2.0, 2.0]),)\n        b = (np.array([2.0, 2.0]),)\n        with self.assertRaises(L.JoinStop):\n            _join(a, b, ev=np.array([[7], [8]]), vals=np.array([[1.0], [1.0]]))\n>       with self.assertRaises(L.JoinStop):\nE       AssertionError: JoinStop not raised\n\ntest_oofvc.py:158: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Join::test_tie_between_events_or_values_stops - Asserti...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 24 deselected in 2.21s\n"
+  },
+  {
+   "name": "LIB_JOIN_COPIES",
+   "file": "oofvc_lib.py",
+   "tests": "Join",
+   "rc": 1,
+   "seconds": 2.5,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n_________________________ Join.test_three_copies_stop __________________________\n\nself = <test_oofvc.Join testMethod=test_three_copies_stop>\n\n    def test_three_copies_stop(self):\n        a = (np.array([2.0, 2.0, 2.0]),)\n>       with self.assertRaises(L.JoinStop):\nE       AssertionError: JoinStop not raised\n\ntest_oofvc.py:163: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Join::test_three_copies_stop - AssertionError: JoinStop...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 24 deselected in 1.92s\n"
+  },
+  {
+   "name": "LIB_JOIN_COUNTS",
+   "file": "oofvc_lib.py",
+   "tests": "Join",
+   "rc": 1,
+   "seconds": 2.3,
+   "verdict": "KILLED",
+   "tail": "\"\n        lk, rk = _row_keys(left_key), _row_keys(right_key)\n        nl, nr = lk.size, rk.size\n        allk = np.concatenate([lk, rk])\n        uniq, inv = np.unique(allk, return_inverse=True)\n        inv = inv.ravel()\n        cl = np.bincount(inv[:nl], minlength=uniq.size)\n        cr = np.bincount(inv[nl:], minlength=uniq.size)\n        bad = np.flatnonzero((cl == 0) | (cr == 0))\n        if bad.size:\n            raise JoinStop(f\"{bad.size} keys with unequal counts (left-only rows {int(np.maximum(cl - cr, 0).sum())}, \"\n                           f\"right-only rows {int(np.maximum(cr - cl, 0).sum())})\")\n        tied = np.flatnonzero(cl > 1)\n        if tied.size and int(cl[tied].max()) > max_copies:\n            raise JoinStop(f\"a tied group has {int(cl[tied].max())} copies (> {max_copies})\")\n        li = np.argsort(inv[:nl], kind=\"stable\")\n        ri = np.argsort(inv[nl:], kind=\"stable\")\n        right_of_left = np.empty(nl, np.int64)\n>       right_of_left[li] = ri  # the same key order on both sides; within a tied group, in order\n        ^^^^^^^^^^^^^^^^^\nE       ValueError: shape mismatch: value array of shape (3,) could not be broadcast to indexing result of shape (2,)\n\noofvc_lib.py:84: ValueError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Join::test_unmatched_and_count_mismatch_stop - ValueErr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 6 passed, 24 deselected in 1.85s\n"
+  },
+  {
+   "name": "LIB_JOIN_BITS",
+   "file": "oofvc_lib.py",
+   "tests": "Join",
+   "rc": 1,
+   "seconds": 2.3,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n_____________________________ Join.test_exact_bits _____________________________\n\nself = <test_oofvc.Join testMethod=test_exact_bits>\n\n    def test_exact_bits(self):\n>       with self.assertRaises(L.JoinStop):\nE       AssertionError: JoinStop not raised\n\ntest_oofvc.py:141: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Join::test_exact_bits - AssertionError: JoinStop not ra...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 24 deselected in 1.80s\n"
+  },
+  {
+   "name": "LIB_TIE_BOUND",
+   "file": "oofvc_lib.py",
+   "tests": "Join",
+   "rc": 1,
+   "seconds": 2.2,
+   "verdict": "KILLED",
+   "tail": "_________________________ Join.test_tie_bound ______________________________\n\nself = <test_oofvc.Join testMethod=test_tie_bound>\n\n    def test_tie_bound(self):\n>       L.check_tie_bound(1.0, 1000.0)\n\ntest_oofvc.py:167: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ntied_weight = 1.0, reference_weight = 1000.0, frac = 0.001\n\n    def check_tie_bound(tied_weight: float, reference_weight: float, frac: float = 1e-3) -> None:\n        \"\"\"The director's bound: STOP if the tied groups' weight exceeds `frac` (0.1%) of the reference (the moved weight\n        for C-JOIN, the joined signal weight for C-SIGW).\"\"\"\n        if tied_weight == 0:  # no tie: nothing to bound (codex-school r1 #9)\n            return\n        if not (np.isfinite(tied_weight) and np.isfinite(reference_weight) and reference_weight > 0):\n            raise JoinStop(f\"tied weight {tied_weight} against a reference weight {reference_weight}\")\n        if tied_weight >= frac * reference_weight:\n>           raise JoinStop(f\"tied groups carry {tied_weight:.6g}, more than {frac:g} of {reference_weight:.6g}\")\nE           oofvc_lib.JoinStop: tied groups carry 1, more than 0.001 of 1000\n\noofvc_lib.py:111: JoinStop\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Join::test_tie_bound - oofvc_lib.JoinStop: tied groups ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 24 deselected in 1.78s\n"
+  },
+  {
+   "name": "LIB_BINS_CLOSED",
+   "file": "oofvc_lib.py",
+   "tests": "Moved",
+   "rc": 1,
+   "seconds": 2.2,
+   "verdict": "KILLED",
+   "tail": ", 4.4999999, 0.0, 0.5])\n        pz = np.array([5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 1.5, 60.0])\n        pdg = np.r_[pdg, 14]; cur = np.r_[cur, 1]\n        # ROOT's cells: lower edges in, upper edges out (codex-school r1 #3)\n>       np.testing.assert_array_equal(L.moved_mask(pdg, cur, pt, pz, PAPER_PT, PZ),\n                                      [True, False, False, False, False, True, True, False])\n\ntest_oofvc.py:185: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = (<built-in function eq>, array([ True,  True, False, False, False,  True,  True,  True]), [True, False, False, False, False, True, ...])\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Arrays are not equal', 'strict': False}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Arrays are not equal\nE           \nE           Mismatched elements: 2 / 8 (25%)\nE            x: array([ True,  True, False, False, False,  True,  True,  True])\nE            y: array([ True, False, False, False, False,  True,  True, False])\n\n../../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Moved::test_moved_mask - AssertionError: \n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 40 deselected in 1.75s\n"
+  },
+  {
+   "name": "LIB_TIE_ZERO",
+   "file": "oofvc_lib.py",
+   "tests": "Join",
+   "rc": 1,
+   "seconds": 2.1,
+   "verdict": "KILLED",
+   "tail": "....F\n=================================== FAILURES ===================================\n_____________________________ Join.test_tie_bound ______________________________\n\nself = <test_oofvc.Join testMethod=test_tie_bound>\n\n    def test_tie_bound(self):\n        L.check_tie_bound(1.0, 1000.0)\n>       L.check_tie_bound(0.0, 0.0)  # no tie needs no reference (codex-school r1 #9)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ntest_oofvc.py:168: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ntied_weight = 0.0, reference_weight = 0.0, frac = 0.001\n\n    def check_tie_bound(tied_weight: float, reference_weight: float, frac: float = 1e-3) -> None:\n        \"\"\"The director's bound: STOP if the tied groups' weight exceeds `frac` (0.1%) of the reference (the moved weight\n        for C-JOIN, the joined signal weight for C-SIGW).\"\"\"\n        if not (np.isfinite(tied_weight) and np.isfinite(reference_weight) and reference_weight > 0):\n>           raise JoinStop(f\"tied weight {tied_weight} against a reference weight {reference_weight}\")\nE           oofvc_lib.JoinStop: tied weight 0.0 against a reference weight 0.0\n\noofvc_lib.py:107: JoinStop\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Join::test_tie_bound - oofvc_lib.JoinStop: tied weight ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 24 deselected in 1.66s\n"
+  },
+  {
+   "name": "LIB_NUMU_CC",
+   "file": "oofvc_lib.py",
+   "tests": "Moved",
+   "rc": 1,
+   "seconds": 2.2,
+   "verdict": "KILLED",
+   "tail": "4.4999999, 0.0, 0.5])\n        pz = np.array([5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 1.5, 60.0])\n        pdg = np.r_[pdg, 14]; cur = np.r_[cur, 1]\n        # ROOT's cells: lower edges in, upper edges out (codex-school r1 #3)\n>       np.testing.assert_array_equal(L.moved_mask(pdg, cur, pt, pz, PAPER_PT, PZ),\n                                      [True, False, False, False, False, True, True, False])\n\ntest_oofvc.py:185: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = (<built-in function eq>, array([ True, False, False,  True, False,  True,  True, False]), [True, False, False, False, False, True, ...])\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Arrays are not equal', 'strict': False}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Arrays are not equal\nE           \nE           Mismatched elements: 1 / 8 (12.5%)\nE            x: array([ True, False, False,  True, False,  True,  True, False])\nE            y: array([ True, False, False, False, False,  True,  True, False])\n\n../../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Moved::test_moved_mask - AssertionError: \n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 40 deselected in 1.72s\n"
+  },
+  {
+   "name": "LIB_HIGHER_FIRST",
+   "file": "oofvc_lib.py",
+   "tests": "Readings",
+   "rc": 1,
+   "seconds": 2.3,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n___________________________ Readings.test_statements ___________________________\n\nself = <test_oofvc.Readings testMethod=test_statements>\n\n    def test_statements(self):\n        self.assertIn(\"both central values are closer\", L.primary_statement(\"LOWER\", \"LOWER\"))\n        self.assertIn(\"does not move the OmniFold\", L.primary_statement(\"LOWER\", \"INTERMEDIATE\"))\n        self.assertIn(\"does not move the OmniFold\", L.primary_statement(\"LOWER\", \"LITTLE CHANGE\"))\n        self.assertIn(\"does not depend\", L.primary_statement(\"LITTLE CHANGE\", \"LOWER\"))\n>       self.assertIn(\"increases the OmniFold\", L.primary_statement(\"LOWER\", \"HIGHER\"))\nE       AssertionError: 'increases the OmniFold' not found in \"The reclassification moves the binned IBU's distance; at this scale it does not move the OmniFold central value's\"\n\ntest_oofvc.py:205: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Readings::test_statements - AssertionError: 'increases ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 38 deselected in 1.75s\n"
+  },
+  {
+   "name": "LIB_NDF",
+   "file": "oofvc_lib.py",
+   "tests": "Readings",
+   "rc": 1,
+   "seconds": 2.3,
+   "verdict": "KILLED",
+   "tail": ".F\n=================================== FAILURES ===================================\n______________________ Readings.test_distance_and_column _______________________\n\nself = <test_oofvc.Readings testMethod=test_distance_and_column>\n\n    def test_distance_and_column(self):\n        rng = np.random.default_rng(4)\n        A = rng.random((224, 224))\n        cov = A @ A.T + np.eye(224)\n        cov[5, :] = cov[:, 5] = 0\n        x, pub = rng.random(224), rng.random(224)\n        d, ndf = L.distance(x, pub, cov)\n        mask = np.arange(224) != 5\n        self.assertEqual(ndf, 223)\n>       self.assertAlmostEqual(d, float((x - pub)[mask] @ np.linalg.inv(cov[np.ix_(mask, mask)]) @ (x - pub)[mask]) / 223,\n                               places=9)\nE       AssertionError: 0.03455353722701366 != 0.03470848582444277 within 9 places (0.00015494859742910816 difference)\n\ntest_oofvc.py:220: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Readings::test_distance_and_column - AssertionError: 0....\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 38 deselected in 1.78s\n"
+  },
+  {
+   "name": "LIB_COLUMN_AREA",
+   "file": "oofvc_lib.py",
+   "tests": "Readings",
+   "rc": 0,
+   "seconds": 2.1,
+   "verdict": "SURVIVED",
+   "tail": "...                                                                      [100%]\n3 passed, 38 deselected in 1.67s\n"
+  },
+  {
+   "name": "JOIN_ROUTE",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 1,
+   "seconds": 21.9,
+   "verdict": "KILLED",
+   "tail": "....F\n=================================== FAILURES ===================================\n___________________ JoinTool.test_routing_disagreement_stops ___________________\n\nself = <test_oofvc.JoinTool testMethod=test_routing_disagreement_stops>\n\n    def test_routing_disagreement_stops(self):\n>       self._stop(lambda r: r[\"to_sig\"].__setitem__(30, 1), \"C-ROUTE\")\n\ntest_oofvc.py:761: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntest_oofvc.py:749: in _stop\n    self.assertFalse(rec[\"controls\"][control][\"pass\"])\nE   AssertionError: True is not false\n=========================== short test summary info ============================\nFAILED test_oofvc.py::JoinTool::test_routing_disagreement_stops - AssertionEr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 32 deselected in 21.45s\n"
+  },
+  {
+   "name": "JOIN_SIGW_TRUTH",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 1,
+   "seconds": 24.4,
+   "verdict": "KILLED",
+   "tail": ".....F\n=================================== FAILURES ===================================\n__________________ JoinTool.test_signal_truth_mismatch_stops ___________________\n\nself = <test_oofvc.JoinTool testMethod=test_signal_truth_mismatch_stops>\n\n    def test_signal_truth_mismatch_stops(self):\n        def m(r):\n            i = int(np.flatnonzero(r[\"to_sig\"] == 1)[3]); r[\"w_truth\"][i] = np.nextafter(r[\"w_truth\"][i], 9.0)\n>       self._stop(m, \"C-SIGW\")\n\ntest_oofvc.py:766: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntest_oofvc.py:747: in _stop\n    self.assertEqual(p.returncode, 8, p.stdout + p.stderr)\nE   AssertionError: 0 != 8 : {\"verdict\": \"PASS\", \"moved\": 377, \"rows_sha256\": \"9c3057d0ceaeeec0749e042b8f250f1523192240e4227e604c4588d144776f43\"}\n=========================== short test summary info ============================\nFAILED test_oofvc.py::JoinTool::test_signal_truth_mismatch_stops - AssertionE...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 passed, 32 deselected in 23.79s\n"
+  },
+  {
+   "name": "JOIN_LAB_TOL",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 0,
+   "seconds": 34.4,
+   "verdict": "SURVIVED",
+   "tail": ".........                                                                [100%]\n9 passed, 32 deselected in 33.75s\n"
+  },
+  {
+   "name": "JOIN_LAB_FINITE",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 1,
+   "seconds": 13.3,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n_______________________ JoinTool.test_nan_in_split_stops _______________________\n\nself = <test_oofvc.JoinTool testMethod=test_nan_in_split_stops>\n\n    def test_nan_in_split_stops(self):\n        \"\"\"A non-finite reference cell is a STOP, not a pass hidden by max() (codex-school r1 #9).\"\"\"\n        fx = self.fixture()\n        ref = json.loads((fx.d / \"split.json\").read_text())\n        ref[\"FAKE_VTX\"][17] = float(\"nan\")\n        (fx.d / \"split.json\").write_text(json.dumps(ref))\n        p, rec, out = fx.run()\n>       self.assertEqual(p.returncode, 8)\nE       AssertionError: 0 != 8\n\ntest_oofvc.py:787: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::JoinTool::test_nan_in_split_stops - AssertionError: 0 != 8\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 32 deselected in 12.62s\n"
+  },
+  {
+   "name": "JOIN_DUP_KEPT",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 1,
+   "seconds": 6.7,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n______________________ JoinTool.test_labels_against_oflow ______________________\n\nself = <test_oofvc.JoinTool testMethod=test_labels_against_oflow>\n\n    def test_labels_against_oflow(self):\n        def m(r):\n            r[\"nu_pdg\"][50] = 14 if r[\"nu_pdg\"][50] != 14 else -14\n        p, rec, out = self.fixture(m).run()\n        self.assertEqual(p.returncode, 8)\n>       self.assertFalse(rec[\"controls\"][\"C-LAB\"][\"pass\"])\n                         ^^^^^^^^^^^^^^^^^^^^^^^^\nE       KeyError: 'C-LAB'\n\ntest_oofvc.py:796: KeyError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::JoinTool::test_labels_against_oflow - KeyError: 'C-LAB'\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 32 deselected in 6.11s\n"
+  },
+  {
+   "name": "JOIN_MOVED_RECO",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 1,
+   "seconds": 16.9,
+   "verdict": "KILLED",
+   "tail": " _ _ _ _ _ _ _ \n\nargs = (<built-in function eq>, array([  6,   7,   8,  10,  11,  13,  17,  18,  23,  24,  26,  29,  31,\n        32,  34,  36,... 854, 855, 859, 861, 864, 866, 869, 875, 876,\n       877, 878, 879, 880, 881, 882, 883, 886, 887, 889, 890, 893, 894]))\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Arrays are not equal', 'strict': False}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Arrays are not equal\nE           \nE           (shapes (414,), (377,) mismatch)\nE            x: array([  6,   7,   8,  10,  11,  13,  17,  18,  23,  24,  26,  29,  31,\nE                   32,  34,  36,  38,  40,  50,  52,  55,  57,  61,  64,  68,  69,\nE                   71,  72,  76,  78,  79,  80,  81,  84,  86,  87,  88,  89,  90,...\nE            y: array([  4,   6,   7,   8,  10,  11,  13,  17,  18,  19,  23,  24,  26,\nE                   29,  31,  32,  34,  36,  38,  40,  52,  55,  57,  61,  64,  68,\nE                   69,  71,  76,  78,  79,  80,  81,  84,  86,  87,  88,  89,  90,...\n\n../../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::JoinTool::test_pass_and_rows - AssertionError: \n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 32 deselected in 16.32s\n"
+  },
+  {
+   "name": "JOIN_ROWS_WTRUTH",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 1,
+   "seconds": 17.3,
+   "verdict": "KILLED",
+   "tail": "5460904, 0.43388461, 1.81836571, 0.78403153,\n       1.41711413, 0.63348...748471, 1.32950878,\n       1.94585901, 0.82494574, 1.33390255, 1.19445195, 0.25790931,\n       0.73999364, 0.75723041]))\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Arrays are not equal', 'strict': False}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Arrays are not equal\nE           \nE           Mismatched elements: 377 / 377 (100%)\nE           Max absolute difference: 0.19957404\nE           Max relative difference: 0.09090909\nE            x: array([0.829894, 0.654609, 0.433885, 1.818366, 0.784032, 1.417114,\nE                  0.633487, 1.199466, 1.895695, 0.665428, 1.632707, 1.691143,\nE                  1.450784, 1.090966, 0.258705, 0.933979, 1.579049, 1.890216,...\nE            y: array([0.912883, 0.72007 , 0.477273, 2.000202, 0.862435, 1.558826,\nE                  0.696836, 1.319413, 2.085264, 0.731971, 1.795977, 1.860258,\nE                  1.595862, 1.200062, 0.284575, 1.027377, 1.736954, 2.079238,...\n\n../../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::JoinTool::test_pass_and_rows - AssertionError: \n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 32 deselected in 16.68s\n"
+  },
+  {
+   "name": "JOIN_TIE_BOUND",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 1,
+   "seconds": 28.2,
+   "verdict": "KILLED",
+   "tail": "......F\n=================================== FAILURES ===================================\n___________________ JoinTool.test_tie_above_the_bound_stops ____________________\n\nself = <test_oofvc.JoinTool testMethod=test_tie_above_the_bound_stops>\n\n    def test_tie_above_the_bound_stops(self):\n        \"\"\"The duplicated event weighing more than 0.1% of the moved weight: STOP (the director's bound).\"\"\"\n        p, rec, out = self.fixture(dup_weight=1.9).run()\n>       self.assertEqual(p.returncode, 8, p.stdout + p.stderr)\nE       AssertionError: 0 != 8 : {\"verdict\": \"PASS\", \"moved\": 377, \"rows_sha256\": \"9c3057d0ceaeeec0749e042b8f250f1523192240e4227e604c4588d144776f43\"}\n\ntest_oofvc.py:776: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::JoinTool::test_tie_above_the_bound_stops - AssertionErr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 6 passed, 32 deselected in 27.21s\n"
+  },
+  {
+   "name": "RUN_ARGV",
+   "file": "oofvc_run.py",
+   "tests": "Runner",
+   "rc": 1,
+   "seconds": 19.6,
+   "verdict": "KILLED",
+   "tail": "ral: 1501.3\n[CHECK] hUnfold2D integral: 4747.59\n[CHECK] hMeasSub2D integral: 3453.42\n[CHECK] hMeasTrain2D integral: 3453.42\n[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)\n[CHECK] hEffNum integral: 1066.12\n[CHECK] hEffDen integral: 1501.3\n[CHECK] hOFInputTruth2D integral: 1501.3\n[CHECK] hOFTruthDenom2D integral: 1501.3\n[CHECK] global completeness c = 1.0000 (expected \u2248 N(mc_signal_reco truth-pass) / N(mc_truth_denom))\n[CHECK] Total xsec from p_T projection: 2.459e-41 cm^2/nucleon\n[CHECK] Total xsec from p_|| projection: 2.459e-41 cm^2/nucleon\n[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/oofvc-test-2v09k6so/tree/2d-unfolding/re2/re2_driver.py\n[INFO] driverSha256: 9d11bd4b1ff72f41ceabc94184220fdca26fff75a640fda43680085cd8fca396\n[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/oofvc-test-2v09k6so/tree/unbinned_unfolding/python/omnifold.py\n[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a\n[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/oofvc-test-2v09k6so/units/R/c2_central.root\n{\"unit\": \"c2_central\", \"seconds\": 2.283, \"controls\": {\"C-FILL\": true, \"C-SIM\": true}}\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Runner::test_n_is_the_factor_on_the_units_trajectory - ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 34 deselected in 18.99s\n"
+  },
+  {
+   "name": "RUN_O_MOVED",
+   "file": "oofvc_run.py",
+   "tests": "Runner",
+   "rc": 1,
+   "seconds": 30.3,
+   "verdict": "KILLED",
+   "tail": ".....F\n=================================== FAILURES ===================================\n____________________________ Runner.test_units_pass ____________________________\n\nself = <test_oofvc.Runner testMethod=test_units_pass>\n\n    def test_units_pass(self):\n>       self.assertEqual(self.rc, 0)\nE       AssertionError: 6 != 0\n\ntest_oofvc.py:467: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Runner::test_units_pass - AssertionError: 6 != 0\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 passed, 34 deselected in 29.56s\n"
+  },
+  {
+   "name": "RUN_O_SIGNAL",
+   "file": "oofvc_run.py",
+   "tests": "Runner",
+   "rc": 1,
+   "seconds": 28.5,
+   "verdict": "KILLED",
+   "tail": ".....F\n=================================== FAILURES ===================================\n____________________________ Runner.test_units_pass ____________________________\n\nself = <test_oofvc.Runner testMethod=test_units_pass>\n\n    def test_units_pass(self):\n>       self.assertEqual(self.rc, 0)\nE       AssertionError: 6 != 0\n\ntest_oofvc.py:467: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Runner::test_units_pass - AssertionError: 6 != 0\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 passed, 34 deselected in 27.95s\n"
+  },
+  {
+   "name": "RUN_NMOVED",
+   "file": "oofvc_run.py",
+   "tests": "Runner",
+   "rc": 1,
+   "seconds": 20.0,
+   "verdict": "KILLED",
+   "tail": "7.8\n[CHECK] hEffDen integral: 1501.3\n[CHECK] hOFInputTruth2D integral: 1580.15\n[CHECK] hOFTruthDenom2D integral: 1501.3\n[CHECK] global completeness c = 1.0525 (expected \u2248 N(mc_signal_reco truth-pass) / N(mc_truth_denom))\n[WARN] hasTruthOnlyMisses=1 but c_global deviates from 1 by 5.25% \u2014 check event-ID matching in runEventLoopOmniFold.cpp Phase-17 path and that the Python truth-pass gate (in_truth_phase_space) matches CCInclusive2DPhaseSpace.\n[CHECK] Total xsec from p_T projection: 2.313e-41 cm^2/nucleon\n[CHECK] Total xsec from p_|| projection: 2.313e-41 cm^2/nucleon\n[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/oofvc-test-na02ifra/tree/2d-unfolding/re2/re2_driver.py\n[INFO] driverSha256: 9d11bd4b1ff72f41ceabc94184220fdca26fff75a640fda43680085cd8fca396\n[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/oofvc-test-na02ifra/tree/unbinned_unfolding/python/omnifold.py\n[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a\n[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/oofvc-test-na02ifra/units/R/c2_central.root\n{\"unit\": \"c2_central\", \"seconds\": 2.616, \"controls\": {\"C-FILL\": true, \"C-SIM\": true}}\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Runner::test_n_is_the_factor_on_the_units_trajectory - ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 34 deselected in 19.42s\n"
+  },
+  {
+   "name": "RUN_FACTOR",
+   "file": "oofvc_run.py",
+   "tests": "Runner",
+   "rc": 1,
+   "seconds": 21.0,
+   "verdict": "KILLED",
+   "tail": "7.8\n[CHECK] hEffDen integral: 1501.3\n[CHECK] hOFInputTruth2D integral: 1580.15\n[CHECK] hOFTruthDenom2D integral: 1501.3\n[CHECK] global completeness c = 1.0525 (expected \u2248 N(mc_signal_reco truth-pass) / N(mc_truth_denom))\n[WARN] hasTruthOnlyMisses=1 but c_global deviates from 1 by 5.25% \u2014 check event-ID matching in runEventLoopOmniFold.cpp Phase-17 path and that the Python truth-pass gate (in_truth_phase_space) matches CCInclusive2DPhaseSpace.\n[CHECK] Total xsec from p_T projection: 2.313e-41 cm^2/nucleon\n[CHECK] Total xsec from p_|| projection: 2.313e-41 cm^2/nucleon\n[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/oofvc-test-cnw134f3/tree/2d-unfolding/re2/re2_driver.py\n[INFO] driverSha256: 9d11bd4b1ff72f41ceabc94184220fdca26fff75a640fda43680085cd8fca396\n[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/oofvc-test-cnw134f3/tree/unbinned_unfolding/python/omnifold.py\n[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a\n[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/oofvc-test-cnw134f3/units/R/c2_central.root\n{\"unit\": \"c2_central\", \"seconds\": 2.434, \"controls\": {\"C-FILL\": true, \"C-SIM\": true}}\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Runner::test_n_is_the_factor_on_the_units_trajectory - ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 34 deselected in 20.31s\n"
+  },
+  {
+   "name": "RUN_ROWS_SHA",
+   "file": "oofvc_run.py",
+   "tests": "Runner",
+   "rc": 1,
+   "seconds": 29.1,
+   "verdict": "KILLED",
+   "tail": "......F\n=================================== FAILURES ===================================\n______________________ Runner.test_wrong_rows_sha_refused ______________________\n\nself = <test_oofvc.Runner testMethod=test_wrong_rows_sha_refused>\n\n    def test_wrong_rows_sha_refused(self):\n        import contextlib, io\n        err = io.StringIO()\n        with mock.patch.object(os, \"O_NOATIME\", os.O_NONBLOCK, create=True), contextlib.redirect_stderr(err):\n            rc = self.run_main([\"--tree\", str(tree()), \"--rows\", str(self.rows_path), \"--rows-sha256\", \"0\" * 64,\n                                \"--join-record\", str(self.join_record), \"--out\", str(TD / \"units_refused\")])\n        self.assertEqual(rc, 4)\n>       self.assertIn(\"not the join's\", err.getvalue())\nE       AssertionError: \"not the join's\" not found in 'refusing: libRooUnfold.so is not its pin\\n'\n\ntest_oofvc.py:515: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Runner::test_wrong_rows_sha_refused - AssertionError: \"...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 6 passed, 34 deselected in 28.41s\n"
+  },
+  {
+   "name": "SCORE_ROO_RAN",
+   "file": "oofvc_score.py",
+   "tests": "Runner",
+   "rc": 1,
+   "seconds": 24.1,
+   "verdict": "KILLED",
+   "tail": "mpy-unfolder units fail the unfolder checks and C-PINS (no RooUnfold digest), so the reading is STOP and no\n        operand is printed.\"\"\"\n        self.assertEqual(contents(self.out / \"R\" / \"er.root\")[\"potScale\"], 0.25)  # the stand-in record's scale\n        p = self.score(self.out)\n        self.assertEqual(p.returncode, 8, p.stderr[-2000:])\n        rec = json.loads(p.stdout)\n        c = rec[\"controls\"]\n        self.assertTrue(c[\"C-FIX\"][\"pass\"], c[\"C-FIX\"])\n        self.assertTrue(c[\"C-MOVE\"][\"pass\"], c[\"C-MOVE\"])\n        self.assertTrue(c[\"C-KS\"][\"pass\"])\n        self.assertTrue(c[\"C-IN\"][\"pass\"])\n        self.assertFalse(c[\"C-BASE\"][\"pass\"])\n        self.assertFalse(c[\"C-PINS\"][\"pass\"])\n        for u, chk in c[\"C-UNITS\"][\"checks\"].items():\n            for k in (\"verdict\", \"npz_digest\", \"root_digest\", \"argv_recorded\", \"convention\"):\n                self.assertTrue(chk[k], (u, k))\n            self.assertFalse(chk[\"not_numpy_unfolder\"], u)\n            self.assertFalse(chk[\"argv_is_E_R\"], u)  # the fixture runs two iterations on fixture files\n>       self.assertFalse(c[\"C-UNITS\"][\"checks\"][\"R/c2_central\"][\"C-ROO_ran\"])\nE       AssertionError: True is not false\n\ntest_oofvc.py:540: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Runner::test_scorer_controls_on_the_fixture_units - Ass...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 34 deselected in 23.49s\n"
+  },
+  {
+   "name": "SCORE_FIX",
+   "file": "oofvc_score.py",
+   "tests": "Runner",
+   "rc": 1,
+   "seconds": 24.2,
+   "verdict": "KILLED",
+   "tail": "gests, argv and\n        convention check out (properties of these units). C-BASE fails (the fixture is not Tier 1's input), and the\n        numpy-unfolder units fail the unfolder checks and C-PINS (no RooUnfold digest), so the reading is STOP and no\n        operand is printed.\"\"\"\n        self.assertEqual(contents(self.out / \"R\" / \"er.root\")[\"potScale\"], 0.25)  # the stand-in record's scale\n        p = self.score(self.out)\n        self.assertEqual(p.returncode, 8, p.stderr[-2000:])\n        rec = json.loads(p.stdout)\n        c = rec[\"controls\"]\n>       self.assertTrue(c[\"C-FIX\"][\"pass\"], c[\"C-FIX\"])\nE       AssertionError: False is not true : {'equal': {'er:hOFTruthDenom2D': True, 'er:hDataReco2D': True, 'er:hFlux_pt': True, 'er:hBkgReco2D': False, 'er:dataPOT': True, 'er:mcPOT': True, 'er:potScale': True, 'er:fluxIntegral_m2_per_POT': True, 'er:fluxIntegral_cm2_per_POT': True, 'er:nNucleons': True, 'c2:hOFTruthDenom2D': True, 'c2:hDataReco2D': True, 'c2:hFlux_pt': True, 'c2:hBkgReco2D': False, 'c2:dataPOT': True, 'c2:mcPOT': True, 'c2:potScale': True, 'c2:fluxIntegral_m2_per_POT': True, 'c2:fluxIntegral_cm2_per_POT': True, 'c2:nNucleons': True}, 'pass': False}\n\ntest_oofvc.py:529: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Runner::test_scorer_controls_on_the_fixture_units - Ass...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 34 deselected in 23.67s\n"
+  },
+  {
+   "name": "SCORE_MANIFEST",
+   "file": "oofvc_score.py",
+   "tests": "Runner",
+   "rc": 1,
+   "seconds": 26.5,
+   "verdict": "KILLED",
+   "tail": "e_pinned_join_record>\n\n    def test_scorer_requires_full_manifests_and_the_pinned_join_record(self):\n        \"\"\"A manifest missing one file, or a join record other than the one the units pinned: each fails its own\n        condition, and only that one (codex-school r3 #2, #3).\"\"\"\n        units = TD / \"units_manifest\"\n        if not units.exists():\n            shutil.copytree(self.out, units)\n            for p in units.glob(\"pins_*.json\"):\n                rec = json.loads(p.read_text())\n                if \"R/er\" in rec[\"units\"]:\n                    del rec[\"outputs\"][\"R/er\"][\"er.oofvc.json\"]\n                    p.write_text(json.dumps(rec))\n        det = json.loads(self.score(units).stdout)[\"controls\"][\"C-PINS\"][\"detail\"]\n        # in-process, one runner covers the four units, so there is one pins record\n>       self.assertEqual([(d[\"outputs\"], d[\"join_record\"]) for d in det], [(False, True)])\nE       AssertionError: Lists differ: [(True, True)] != [(False, True)]\nE       \nE       First differing element 0:\nE       (True, True)\nE       (False, True)\nE       \nE       - [(True, True)]\nE       ?   ^^^\nE       \nE       + [(False, True)]\nE       ?   ^^^^\n\ntest_oofvc.py:562: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Runner::test_scorer_requires_full_manifests_and_the_pinned_join_record\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 34 deselected in 25.84s\n"
+  },
+  {
+   "name": "SCORE_JOIN_PIN",
+   "file": "oofvc_score.py",
+   "tests": "Runner",
+   "rc": 1,
+   "seconds": 29.5,
+   "verdict": "KILLED",
+   "tail": "in-process, one runner covers the four units, so there is one pins record\n        self.assertEqual([(d[\"outputs\"], d[\"join_record\"]) for d in det], [(False, True)])\n        base = json.loads(self.score(self.out).stdout)[\"controls\"][\"C-PINS\"][\"detail\"]\n        self.assertTrue(all(d[\"join_record\"] and d[\"outputs\"] and d[\"rows\"] and d[\"driver\"] for d in base), base)\n        other = TD / \"other_join.json\"\n        other.write_text(self.join_record.read_text() + \"\\n\")\n        p = subprocess.run([sys.executable, \"-B\", str(HERE / \"oofvc_score.py\"), \"--units\", str(self.out), \"--join\",\n                            str(other), \"--rows\", str(self.rows_path), \"--tree\", str(tree()), \"--repo\", str(REPO),\n                            \"--tool-commit\", \"HEAD\"], capture_output=True, text=True)\n        det = json.loads(p.stdout)[\"controls\"][\"C-PINS\"][\"detail\"]\n>       self.assertTrue(all(not d[\"join_record\"] and d[\"outputs\"] for d in det), det)\nE       AssertionError: False is not true : [{'unchanged': True, 'driver': True, 'runner': True, 'oofvc_run': True, 'oofvc_lib': True, 'rows': True, 'roounfold_lib': False, 'inputs': False, 'join_record': True, 'outputs': True}]\n\ntest_oofvc.py:571: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Runner::test_scorer_requires_full_manifests_and_the_pinned_join_record\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 34 deselected in 28.85s\n"
+  },
+  {
+   "name": "SCORE_STAGE_PATH",
+   "file": "oofvc_score.py",
+   "tests": "Runner",
+   "rc": 0,
+   "seconds": 29.5,
+   "verdict": "SURVIVED",
+   "tail": ".......                                                                  [100%]\n7 passed, 34 deselected in 28.83s\n"
+  },
+  {
+   "name": "SCORE_OUTPUTS",
+   "file": "oofvc_score.py",
+   "tests": "Runner",
+   "rc": 1,
+   "seconds": 26.1,
+   "verdict": "KILLED",
+   "tail": "e_pinned_join_record>\n\n    def test_scorer_requires_full_manifests_and_the_pinned_join_record(self):\n        \"\"\"A manifest missing one file, or a join record other than the one the units pinned: each fails its own\n        condition, and only that one (codex-school r3 #2, #3).\"\"\"\n        units = TD / \"units_manifest\"\n        if not units.exists():\n            shutil.copytree(self.out, units)\n            for p in units.glob(\"pins_*.json\"):\n                rec = json.loads(p.read_text())\n                if \"R/er\" in rec[\"units\"]:\n                    del rec[\"outputs\"][\"R/er\"][\"er.oofvc.json\"]\n                    p.write_text(json.dumps(rec))\n        det = json.loads(self.score(units).stdout)[\"controls\"][\"C-PINS\"][\"detail\"]\n        # in-process, one runner covers the four units, so there is one pins record\n>       self.assertEqual([(d[\"outputs\"], d[\"join_record\"]) for d in det], [(False, True)])\nE       AssertionError: Lists differ: [(True, True)] != [(False, True)]\nE       \nE       First differing element 0:\nE       (True, True)\nE       (False, True)\nE       \nE       - [(True, True)]\nE       ?   ^^^\nE       \nE       + [(False, True)]\nE       ?   ^^^^\n\ntest_oofvc.py:562: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Runner::test_scorer_requires_full_manifests_and_the_pinned_join_record\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 34 deselected in 25.46s\n"
+  },
+  {
+   "name": "SCORE_MOVE_COUNT",
+   "file": "oofvc_score.py",
+   "tests": "Runner",
+   "rc": 1,
+   "seconds": 25.0,
+   "verdict": "KILLED",
+   "tail": "xture_units _______________\n\nself = <test_oofvc.Runner testMethod=test_scorer_controls_on_the_fixture_units>\n\n    def test_scorer_controls_on_the_fixture_units(self):\n        \"\"\"oofvc_score.py on the fixture's units: C-FIX, C-MOVE and C-KS pass, and every unit's digests, argv and\n        convention check out (properties of these units). C-BASE fails (the fixture is not Tier 1's input), and the\n        numpy-unfolder units fail the unfolder checks and C-PINS (no RooUnfold digest), so the reading is STOP and no\n        operand is printed.\"\"\"\n        self.assertEqual(contents(self.out / \"R\" / \"er.root\")[\"potScale\"], 0.25)  # the stand-in record's scale\n        p = self.score(self.out)\n        self.assertEqual(p.returncode, 8, p.stderr[-2000:])\n        rec = json.loads(p.stdout)\n        c = rec[\"controls\"]\n        self.assertTrue(c[\"C-FIX\"][\"pass\"], c[\"C-FIX\"])\n>       self.assertTrue(c[\"C-MOVE\"][\"pass\"], c[\"C-MOVE\"])\nE       AssertionError: False is not true : {'max_dev_over_cell': 3.753448485628493e-16, 'appended': 295, 'counts': {'appended': 295, 'outside': 5, 'dropped_appended_weight': 0, 'dropped_outside_weight': 0}, 'moved_reco_in_grid': 295, 'pass': False}\n\ntest_oofvc.py:530: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Runner::test_scorer_controls_on_the_fixture_units - Ass...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 34 deselected in 24.46s\n"
+  },
+  {
+   "name": "SCORE_DIGEST",
+   "file": "oofvc_score.py",
+   "tests": "Runner",
+   "rc": 1,
+   "seconds": 25.7,
+   "verdict": "KILLED",
+   "tail": "ixture's units: C-FIX, C-MOVE and C-KS pass, and every unit's digests, argv and\n        convention check out (properties of these units). C-BASE fails (the fixture is not Tier 1's input), and the\n        numpy-unfolder units fail the unfolder checks and C-PINS (no RooUnfold digest), so the reading is STOP and no\n        operand is printed.\"\"\"\n        self.assertEqual(contents(self.out / \"R\" / \"er.root\")[\"potScale\"], 0.25)  # the stand-in record's scale\n        p = self.score(self.out)\n        self.assertEqual(p.returncode, 8, p.stderr[-2000:])\n        rec = json.loads(p.stdout)\n        c = rec[\"controls\"]\n        self.assertTrue(c[\"C-FIX\"][\"pass\"], c[\"C-FIX\"])\n        self.assertTrue(c[\"C-MOVE\"][\"pass\"], c[\"C-MOVE\"])\n        self.assertTrue(c[\"C-KS\"][\"pass\"])\n        self.assertTrue(c[\"C-IN\"][\"pass\"])\n        self.assertFalse(c[\"C-BASE\"][\"pass\"])\n        self.assertFalse(c[\"C-PINS\"][\"pass\"])\n        for u, chk in c[\"C-UNITS\"][\"checks\"].items():\n            for k in (\"verdict\", \"npz_digest\", \"root_digest\", \"argv_recorded\", \"convention\"):\n>               self.assertTrue(chk[k], (u, k))\nE               AssertionError: False is not true : ('off/er', 'npz_digest')\n\ntest_oofvc.py:537: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Runner::test_scorer_controls_on_the_fixture_units - Ass...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 34 deselected in 25.01s\n"
+  },
+  {
+   "name": "SCORE_CONVENTION",
+   "file": "oofvc_score.py",
+   "tests": "Runner",
+   "rc": 1,
+   "seconds": 25.0,
+   "verdict": "KILLED",
+   "tail": "ixture's units: C-FIX, C-MOVE and C-KS pass, and every unit's digests, argv and\n        convention check out (properties of these units). C-BASE fails (the fixture is not Tier 1's input), and the\n        numpy-unfolder units fail the unfolder checks and C-PINS (no RooUnfold digest), so the reading is STOP and no\n        operand is printed.\"\"\"\n        self.assertEqual(contents(self.out / \"R\" / \"er.root\")[\"potScale\"], 0.25)  # the stand-in record's scale\n        p = self.score(self.out)\n        self.assertEqual(p.returncode, 8, p.stderr[-2000:])\n        rec = json.loads(p.stdout)\n        c = rec[\"controls\"]\n        self.assertTrue(c[\"C-FIX\"][\"pass\"], c[\"C-FIX\"])\n        self.assertTrue(c[\"C-MOVE\"][\"pass\"], c[\"C-MOVE\"])\n        self.assertTrue(c[\"C-KS\"][\"pass\"])\n        self.assertTrue(c[\"C-IN\"][\"pass\"])\n        self.assertFalse(c[\"C-BASE\"][\"pass\"])\n        self.assertFalse(c[\"C-PINS\"][\"pass\"])\n        for u, chk in c[\"C-UNITS\"][\"checks\"].items():\n            for k in (\"verdict\", \"npz_digest\", \"root_digest\", \"argv_recorded\", \"convention\"):\n>               self.assertTrue(chk[k], (u, k))\nE               AssertionError: False is not true : ('off/er', 'convention')\n\ntest_oofvc.py:537: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Runner::test_scorer_controls_on_the_fixture_units - Ass...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 34 deselected in 24.38s\n"
+  },
+  {
+   "name": "SH_FENCE_STATE",
+   "file": "launch/oofvc_dump.sh",
+   "tests": "Shell",
+   "rc": 1,
+   "seconds": 2.7,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n_________________ Shell.test_fence_is_the_same_in_every_script _________________\n\nself = <test_oofvc.Shell testMethod=test_fence_is_the_same_in_every_script>\n\n    def test_fence_is_the_same_in_every_script(self):\n        texts = {fence_text(HERE / s).replace('[oofvc_dump] STOP:', 'STOP:') for s in self.SCRIPTS}\n>       self.assertEqual(len(texts), 1)\nE       AssertionError: 2 != 1\n\ntest_oofvc.py:835: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Shell::test_fence_is_the_same_in_every_script - Asserti...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 37 deselected in 2.07s\n"
+  },
+  {
+   "name": "SH_FENCE_SACCT",
+   "file": "launch/dump_array.sbatch",
+   "tests": "Shell",
+   "rc": 1,
+   "seconds": 2.1,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n_________________ Shell.test_fence_is_the_same_in_every_script _________________\n\nself = <test_oofvc.Shell testMethod=test_fence_is_the_same_in_every_script>\n\n    def test_fence_is_the_same_in_every_script(self):\n        texts = {fence_text(HERE / s).replace('[oofvc_dump] STOP:', 'STOP:') for s in self.SCRIPTS}\n>       self.assertEqual(len(texts), 1)\nE       AssertionError: 2 != 1\n\ntest_oofvc.py:835: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Shell::test_fence_is_the_same_in_every_script - Asserti...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 37 deselected in 1.69s\n"
+  },
+  {
+   "name": "SH_GATE_PAST",
+   "file": "launch/oofvc_dump.sh",
+   "tests": "Shell",
+   "rc": 1,
+   "seconds": 9.7,
+   "verdict": "KILLED",
+   "tail": "     gnu_date = ('if [ \"$1\" = \"-u\" ] && [ \"$2\" = \"-d\" ]; then\\n'\n                    f'  \"{sys.executable}\" -c \"import sys, datetime as d; a = sys.argv[1]\\n'\n                    'if a == \\'14 days ago\\': print((d.date.today() - d.timedelta(14)).isoformat()); sys.exit(0)\\n'\n                    't = d.datetime.strptime(a, \\'%Y-%m-%dT%H:%M:%SZ\\').replace(tzinfo=d.timezone.utc)\\n'\n                    'print(int(t.timestamp()))\" \"$3\" || exit 1\\nelse /bin/date \"$@\"; fi')\n        b = stub_bin(TD / \"stub\" / \"pilot\", squeue=\"exit 0\", sacct=\"exit 0\", git=\"exit 1\", date=gnu_date)\n        env = dict(os.environ, PATH=f\"{b}:{os.environ['PATH']}\")\n        for post in (\"\", \"2026-11-26\", \"2026-11-26 12:00:00\", \"2099-01-01T00:00:00Z\"):\n            p = subprocess.run([\"bash\", str(script), str(script), \"pilot\", post], capture_output=True, text=True, env=env)\n>           self.assertEqual(p.returncode, 2, (post, p.stdout))\nE           AssertionError: 3 != 2 : ('2099-01-01T00:00:00Z', 'node Josephs-MacBook-Pro-9.local 2026-11-26T20:34:51Z mode pilot tool 0000000000000000000000000000000000000000\\nfence check (pilot, before any write): no live cov2d or t2a job 2026-11-26T20:34:52Z\\n')\n\ntest_oofvc.py:867: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Shell::test_pilot_refuses_without_a_past_atime_post - A...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 37 deselected in 9.18s\n"
+  },
+  {
+   "name": "SH_NUE_ORDER",
+   "file": "launch/dump_array.sbatch",
+   "tests": "Shell",
+   "rc": 1,
+   "seconds": 9.3,
+   "verdict": "KILLED",
+   "tail": "============================== FAILURES ===================================\n____________ Shell.test_nue_log_and_declared_path_in_the_dump_task _____________\n\nself = <test_oofvc.Shell testMethod=test_nue_log_and_declared_path_in_the_dump_task>\n\n    def test_nue_log_and_declared_path_in_the_dump_task(self):\n        \"\"\"cov2d's condition (c), by inspection of the task script: the declared path is checked, and the log is\n        written before and after the binary, with the second fence check immediately before it.\"\"\"\n        t = (HERE / \"launch\" / \"dump_array.sbatch\").read_text()\n        self.assertIn(\"NUE_DECLARED=/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/\"\n                      \"FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt\", t)\n        i_check, i_fence, i_before = (t.index('[ \"$(readlink -f \"$NUE\")\" = \"$NUE_DECLARED\" ]'),\n                                      t.index('fence_check \"immediately before the binary\"'), t.index(\"nue before\"))\n        i_bin, i_after = t.index('./oofvc_dump \"$pl\"'), t.index(\"nue after\")\n>       self.assertTrue(i_check < i_fence < i_before < i_bin < i_after)\nE       AssertionError: False is not true\n\ntest_oofvc.py:886: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Shell::test_nue_log_and_declared_path_in_the_dump_task\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 37 deselected in 8.69s\n"
+  },
+  {
+   "name": "SH_NUE_PATH",
+   "file": "launch/dump_array.sbatch",
+   "tests": "Shell",
+   "rc": 1,
+   "seconds": 9.3,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n____________ Shell.test_nue_log_and_declared_path_in_the_dump_task _____________\n\nself = <test_oofvc.Shell testMethod=test_nue_log_and_declared_path_in_the_dump_task>\n\n    def test_nue_log_and_declared_path_in_the_dump_task(self):\n        \"\"\"cov2d's condition (c), by inspection of the task script: the declared path is checked, and the log is\n        written before and after the binary, with the second fence check immediately before it.\"\"\"\n        t = (HERE / \"launch\" / \"dump_array.sbatch\").read_text()\n        self.assertIn(\"NUE_DECLARED=/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/\"\n                      \"FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt\", t)\n>       i_check, i_fence, i_before = (t.index('[ \"$(readlink -f \"$NUE\")\" = \"$NUE_DECLARED\" ]'),\n                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n                                      t.index('fence_check \"immediately before the binary\"'), t.index(\"nue before\"))\nE       ValueError: substring not found\n\ntest_oofvc.py:883: ValueError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Shell::test_nue_log_and_declared_path_in_the_dump_task\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 37 deselected in 8.77s\n"
+  },
+  {
+   "name": "DRV_SKIP_VALUES",
+   "file": "DRIVER",
+   "tests": "Driver",
+   "rc": 1,
+   "seconds": 29.2,
+   "verdict": "KILLED",
+   "tail": "\"A row whose reco values or weight differ from its entry's, a repeated entry, an entry the tree lacks, a true\n        muon outside the grid, or a wrong key set: the driver fails before unfolding.\"\"\"\n        base = self.rows\n        cases = {}\n        r = {k: v.copy() for k, v in base.items()}; r[\"w_reco\"][3] *= 1 + 1e-15; cases[\"weight\"] = (r, \"does not carry\")\n        r = {k: v.copy() for k, v in base.items()}; r[\"entry\"][1] = r[\"entry\"][0]; cases[\"repeat\"] = (r, \"distinct\")\n        r = {k: v.copy() for k, v in base.items()}; r[\"entry\"][-1] = 10 ** 7; cases[\"absent\"] = (r, \"found in mc_background\")\n        r = {k: v.copy() for k, v in base.items()}; r[\"true_pz\"][2] = 60.0; cases[\"truth\"] = (r, \"outside the grid\")\n        r = {k: v for k, v in base.items() if k != \"w_truth\"}; cases[\"keys\"] = (r, \"keys\")\n        for name, (rows, msg) in cases.items():\n            p = run_driver(self.patched, TD / f\"bad_{name}.root\",\n                           [\"--signal-convention\", \"minerva\", \"--oofvc-rows\", str(save_rows(rows, f\"bad_{name}.npz\"))],\n                           check=False)\n>           self.assertNotEqual(p.returncode, 0, name)\nE           AssertionError: 0 == 0 : weight\n\ntest_oofvc.py:420: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Driver::test_bad_rows_fail - AssertionError: 0 == 0 : w...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 35 deselected in 28.19s\n"
+  },
+  {
+   "name": "DRV_SKIP_COUNT",
+   "file": "DRIVER",
+   "tests": "Driver",
+   "rc": 1,
+   "seconds": 30.6,
+   "verdict": "KILLED",
+   "tail": "\"A row whose reco values or weight differ from its entry's, a repeated entry, an entry the tree lacks, a true\n        muon outside the grid, or a wrong key set: the driver fails before unfolding.\"\"\"\n        base = self.rows\n        cases = {}\n        r = {k: v.copy() for k, v in base.items()}; r[\"w_reco\"][3] *= 1 + 1e-15; cases[\"weight\"] = (r, \"does not carry\")\n        r = {k: v.copy() for k, v in base.items()}; r[\"entry\"][1] = r[\"entry\"][0]; cases[\"repeat\"] = (r, \"distinct\")\n        r = {k: v.copy() for k, v in base.items()}; r[\"entry\"][-1] = 10 ** 7; cases[\"absent\"] = (r, \"found in mc_background\")\n        r = {k: v.copy() for k, v in base.items()}; r[\"true_pz\"][2] = 60.0; cases[\"truth\"] = (r, \"outside the grid\")\n        r = {k: v for k, v in base.items() if k != \"w_truth\"}; cases[\"keys\"] = (r, \"keys\")\n        for name, (rows, msg) in cases.items():\n            p = run_driver(self.patched, TD / f\"bad_{name}.root\",\n                           [\"--signal-convention\", \"minerva\", \"--oofvc-rows\", str(save_rows(rows, f\"bad_{name}.npz\"))],\n                           check=False)\n>           self.assertNotEqual(p.returncode, 0, name)\nE           AssertionError: 0 == 0 : absent\n\ntest_oofvc.py:420: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Driver::test_bad_rows_fail - AssertionError: 0 == 0 : a...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 35 deselected in 29.60s\n"
+  },
+  {
+   "name": "DRV_THETA_CUT",
+   "file": "DRIVER",
+   "tests": "Driver",
+   "rc": 1,
+   "seconds": 35.2,
+   "verdict": "KILLED",
+   "tail": "  1.54242501e-01,...   0.        , 0.        , 0.        , 0.        , 0.        ,\n       0.        , 0.        , 0.        , 0.        ]))\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Not equal to tolerance rtol=0, atol=4.67932e-11', 'equal_nan': True}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Not equal to tolerance rtol=0, atol=4.67932e-11\nE           \nE           Mismatched elements: 13 / 224 (5.8%)\nE           Max absolute difference: 1.37855963\nE           Max relative difference: 1.\nE            x: array([ 0.000000e+00,  0.000000e+00,  1.542425e-01,  0.000000e+00,\nE                   0.000000e+00,  4.264080e-01,  0.000000e+00,  0.000000e+00,\nE                   0.000000e+00,  1.809666e-02,  3.563638e-01,  8.276147e-01,...\nE            y: array([0.      , 0.      , 0.154243, 0.      , 0.      , 0.426408,\nE                  0.      , 0.      , 0.      , 0.018097, 0.356364, 0.827615,\nE                  0.773642, 0.356517, 0.      , 0.      , 0.      , 0.      ,...\n\n../../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Driver::test_minerva_moves_the_rows - AssertionError: \n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 35 deselected in 34.09s\n"
+  },
+  {
+   "name": "DRV_APPEND_OUTSIDE",
+   "file": "DRIVER",
+   "tests": "Driver",
+   "rc": 1,
+   "seconds": 36.2,
+   "verdict": "KILLED",
+   "tail": ", 0.16966675, 0....   0.        , 0.        , 0.        , 0.        , 0.        ,\n       0.        , 0.        , 0.        , 0.        ]))\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Not equal to tolerance rtol=0, atol=1e-10', 'equal_nan': True}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Not equal to tolerance rtol=0, atol=1e-10\nE           \nE           Mismatched elements: 1 / 224 (0.446%)\nE           Max absolute difference: 0.13822551\nE           Max relative difference: 4.76631619e-15\nE            x: array([0.      , 0.      , 0.      , 0.169667, 0.      , 0.469049,\nE                  0.      , 0.      , 0.019906, 0.      , 0.392   , 0.515988,\nE                  1.245394, 0.392169, 0.      , 0.      , 0.138226, 0.      ,...\nE            y: array([0.      , 0.      , 0.      , 0.169667, 0.      , 0.469049,\nE                  0.      , 0.      , 0.019906, 0.      , 0.392   , 0.515988,\nE                  1.245394, 0.392169, 0.      , 0.      , 0.      , 0.      ,...\n\n../../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Driver::test_minerva_moves_the_rows - AssertionError: \n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 35 deselected in 35.13s\n"
+  },
+  {
+   "name": "DRV_TRUTH_CLOSED",
+   "file": "DRIVER",
+   "tests": "Driver",
+   "rc": 1,
+   "seconds": 35.3,
+   "verdict": "KILLED",
+   "tail": "\"\"A row whose reco values or weight differ from its entry's, a repeated entry, an entry the tree lacks, a true\n        muon outside the grid, or a wrong key set: the driver fails before unfolding.\"\"\"\n        base = self.rows\n        cases = {}\n        r = {k: v.copy() for k, v in base.items()}; r[\"w_reco\"][3] *= 1 + 1e-15; cases[\"weight\"] = (r, \"does not carry\")\n        r = {k: v.copy() for k, v in base.items()}; r[\"entry\"][1] = r[\"entry\"][0]; cases[\"repeat\"] = (r, \"distinct\")\n        r = {k: v.copy() for k, v in base.items()}; r[\"entry\"][-1] = 10 ** 7; cases[\"absent\"] = (r, \"found in mc_background\")\n        r = {k: v.copy() for k, v in base.items()}; r[\"true_pz\"][2] = 60.0; cases[\"truth\"] = (r, \"outside the grid\")\n        r = {k: v for k, v in base.items() if k != \"w_truth\"}; cases[\"keys\"] = (r, \"keys\")\n        for name, (rows, msg) in cases.items():\n            p = run_driver(self.patched, TD / f\"bad_{name}.root\",\n                           [\"--signal-convention\", \"minerva\", \"--oofvc-rows\", str(save_rows(rows, f\"bad_{name}.npz\"))],\n                           check=False)\n>           self.assertNotEqual(p.returncode, 0, name)\nE           AssertionError: 0 == 0 : truth\n\ntest_oofvc.py:420: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Driver::test_bad_rows_fail - AssertionError: 0 == 0 : t...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 35 deselected in 34.08s\n"
+  },
+  {
+   "name": "DRV_WEIGHT_ABORT",
+   "file": "DRIVER",
+   "tests": "Driver",
+   "rc": 1,
+   "seconds": 50.0,
+   "verdict": "KILLED",
+   "tail": "fdp5p263yqcm80000gn/T/oofvc-test-5x6j7wk6/tree/2d-unfolding/re2/re2_driver.py\", line 2703, in <module>\nE               main()\nE             File \"/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/oofvc-test-5x6j7wk6/tree/2d-unfolding/re2/re2_driver.py\", line 1979, in main\nE               sig = call_loader(collect_signal_arrays_2d,\nE                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE             File \"/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/oofvc-test-5x6j7wk6/tree/2d-unfolding/re2/re2_driver.py\", line 1214, in call_loader\nE               return func(tree, *args, **kwargs)\nE                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE             File \"/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/oofvc-test-5x6j7wk6/tree/2d-unfolding/re2/re2_driver.py\", line 839, in collect_signal_arrays_2d\nE               oofvc_outside = append_oofvc_rows(\nE                               ^^^^^^^^^^^^^^^^^^\nE             File \"/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/oofvc-test-5x6j7wk6/tree/2d-unfolding/re2/re2_driver.py\", line 904, in append_oofvc_rows\nE               raise RuntimeError(\"[FAIL] OOFVC: weight\")\nE           RuntimeError: [FAIL] OOFVC: weight\n\ntest_oofvc.py:251: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Driver::test_weight_rules_drop_and_count - AssertionErr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 passed, 35 deselected in 48.92s\n"
+  },
+  {
+   "name": "DRV_USE_WEIGHTS",
+   "file": "DRIVER",
+   "tests": "Driver",
+   "rc": 1,
+   "seconds": 59.0,
+   "verdict": "KILLED",
+   "tail": "ows_path)\n        for extra in ([\"--signal-convention\", \"minerva\"], [\"--oofvc-rows\", rp],\n                      [\"--signal-convention\", \"minerva\", \"--oofvc-rows\", rp, \"--closure\"]):\n            p = run_driver(self.patched, TD / \"refused.root\", extra, check=False)\n            self.assertNotEqual(p.returncode, 0, extra)\n            self.assertIn(\"[FAIL]\", p.stdout + p.stderr, extra)\n        fx, flux = write_fixture()\n        for argv in ([a if a != \"negweight-refined\" else \"purity\" for a in ARGV],\n                     [a for a in ARGV if a != \"--use-weights\"]):\n            p = subprocess.run([sys.executable, \"-B\", str(self.patched), \"--omnifile\", str(fx), \"--mcfile\", str(flux),\n                                *argv, \"--signal-convention\", \"minerva\", \"--oofvc-rows\", rp, \"--out\",\n                                str(TD / \"refused.root\")], capture_output=True, text=True, cwd=str(self.patched.parent))\n>           self.assertNotEqual(p.returncode, 0, argv)\nE           AssertionError: 0 == 0 : ['--iters', '2', '--estimator', 'lgbm', '--seed', '42', '--branch-select', 'all', '--bkg-mode', 'negweight-refined', '--refine-n-estimators', '400', '--refine-num-leaves', '31']\n\ntest_oofvc.py:392: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Driver::test_refusals - AssertionError: 0 == 0 : ['--it...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 35 deselected in 57.73s\n"
+  },
+  {
+   "name": "DRV_WTRUTH",
+   "file": "DRIVER",
+   "tests": "Driver",
+   "rc": 1,
+   "seconds": 55.9,
+   "verdict": "KILLED",
+   "tail": "   , 0.1542425 , 0....   0.        , 0.        , 0.        , 0.        , 0.        ,\n       0.        , 0.        , 0.        , 0.        ]))\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Not equal to tolerance rtol=0, atol=1e-10', 'equal_nan': True}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Not equal to tolerance rtol=0, atol=1e-10\nE           \nE           Mismatched elements: 104 / 224 (46.4%)\nE           Max absolute difference: 0.57759558\nE           Max relative difference: 0.09090909\nE            x: array([0.      , 0.      , 0.      , 0.154243, 0.      , 0.426408,\nE                  0.      , 0.      , 0.018097, 0.      , 0.356364, 0.46908 ,\nE                  1.132176, 0.356517, 0.      , 0.      , 0.      , 0.      ,...\nE            y: array([0.      , 0.      , 0.      , 0.169667, 0.      , 0.469049,\nE                  0.      , 0.      , 0.019906, 0.      , 0.392   , 0.515988,\nE                  1.245394, 0.392169, 0.      , 0.      , 0.      , 0.      ,...\n\n../../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Driver::test_minerva_moves_the_rows - AssertionError: \n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 35 deselected in 54.37s\n"
+  },
+  {
+   "name": "DRV_REFUSE_CLOSURE",
+   "file": "DRIVER",
+   "tests": "Driver",
+   "rc": 1,
+   "seconds": 48.7,
+   "verdict": "KILLED",
+   "tail": "....F\n=================================== FAILURES ===================================\n_____________________________ Driver.test_refusals _____________________________\n\nself = <test_oofvc.Driver testMethod=test_refusals>\n\n    def test_refusals(self):\n        \"\"\"--oofvc-rows only with minerva, and minerva only on the central negweight-refined path.\"\"\"\n        rp = str(self.rows_path)\n        for extra in ([\"--signal-convention\", \"minerva\"], [\"--oofvc-rows\", rp],\n                      [\"--signal-convention\", \"minerva\", \"--oofvc-rows\", rp, \"--closure\"]):\n            p = run_driver(self.patched, TD / \"refused.root\", extra, check=False)\n>           self.assertNotEqual(p.returncode, 0, extra)\nE           AssertionError: 0 == 0 : ['--signal-convention', 'minerva', '--oofvc-rows', '/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/oofvc-test-nbtdim4u/stage/rows.npz', '--closure']\n\ntest_oofvc.py:384: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Driver::test_refusals - AssertionError: 0 == 0 : ['--si...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 35 deselected in 47.53s\n"
+  },
+  {
+   "name": "DRV_DEFAULT",
+   "file": "DRIVER",
+   "tests": "Driver",
+   "rc": 1,
+   "seconds": 7.7,
+   "verdict": "KILLED",
+   "tail": "off = TD / \"patched\" / \"out.root\"  # the same file name as the plain run's, so runArgv compares\n        if not cls.off.exists():\n            cls.off.parent.mkdir(exist_ok=True)\n>           run_driver(cls.patched, cls.off)\n\ntest_oofvc.py:322: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ndriver = PosixPath('/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/oofvc-test-yrp3uvxb/tree/2d-unfolding/re2/re2_driver.py')\nout = PosixPath('/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/oofvc-test-yrp3uvxb/patched/out.root')\nextra = (), check = True\n\n    def run_driver(driver: Path, out: Path, extra=(), check=True):\n        fx, flux = write_fixture()\n        p = subprocess.run([sys.executable, \"-B\", str(driver), \"--omnifile\", str(fx), \"--mcfile\", str(flux), *ARGV,\n                            *extra, \"--out\", str(out)], capture_output=True, text=True,\n                           env=dict(os.environ, OMP_NUM_THREADS=\"1\"), cwd=str(driver.parent))\n        if check and p.returncode:\n>           raise AssertionError(p.stdout[-2000:] + p.stderr[-2000:])\nE           AssertionError: [FAIL] --oofvc-rows goes with, and only with, --signal-convention minerva\n\ntest_oofvc.py:251: AssertionError\n=========================== short test summary info ============================\nERROR test_oofvc.py::Driver::test_bad_rows_fail - AssertionError: [FAIL] --oo...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n35 deselected, 1 error in 6.54s\n"
+  }
+ ],
+ "summary": "51/55 killed"
+}
