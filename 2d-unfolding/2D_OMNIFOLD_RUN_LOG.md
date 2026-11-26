@@ -44,3 +44,5 @@ Append only committed post-2026-08-20 events here; keep the current-state summar
 ## 2026-11-25 Pre-charge MINOS count
 
 A CV scan of 2,307 upstream data and standard-MC files removed the charge predicate. Playlist 1L was the pilot and Slurm array 61999201 processed the other eleven. The held-out charge-threshold test used the existing six-playlist split. The all-selected fold is short by 1,064.5 negative and 66.9 positive tracks above 60 GeV/c in the twelve-playlist scan before the sign requirement. The combined deficit is 1,131.4 events. A change confined to assigning the charge sign at fixed reconstructed momentum cannot supply that yield. [Measurement and scope](../docs/orchestration/state/precharge-20261125/README.md)
+
+The [exact-edge replay and diagnostic handoff](../docs/orchestration/state/precharge-20261125/HANDOFF.md) now include the saved weighted inputs, full-phase-space split and held-out controls. Removing the documented 3.6% scale from the curvature component in a longitudinal-only test moves the negative 40–60 data-minus-fold residual from +378 to −692 on held-out playlists and leaves +238 at ≥60.

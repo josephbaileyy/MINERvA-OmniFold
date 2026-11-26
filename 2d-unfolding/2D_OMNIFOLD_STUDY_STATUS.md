@@ -386,3 +386,5 @@ dedicated node is unmeasured — benchmark before assuming more cores help.
 ## 2026-11-25 High-momentum charge control
 
 The all-selected fold is short by 1,064.5 negative and 66.9 positive tracks above 60 GeV/c in the twelve-playlist scan before the sign requirement. The combined deficit is 1,131.4 events. A change confined to assigning the charge sign at fixed reconstructed momentum cannot supply that yield. [Measurement and scope](../docs/orchestration/state/precharge-20261125/README.md)
+
+The [local diagnostic handoff](../docs/orchestration/state/precharge-20261125/HANDOFF.md) gives the weighted counts and a standalone replay. The first requested external comparison is the original generated denominator and Fig. 5 numerator in true 40–60 on matching transverse edges and POT.
