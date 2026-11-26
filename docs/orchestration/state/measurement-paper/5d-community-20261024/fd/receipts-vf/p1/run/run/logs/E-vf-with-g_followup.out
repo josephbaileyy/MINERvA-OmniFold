@@ -1,0 +1,97 @@
+PASS control D0 S1, definition, 3 records, the Stage G readout, the extra block and 5 predictions match their digests
+PASS control D1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control D2 S1's blocks are all present
+PASS control D2 every block maps to one of S1's seven groups
+PASS control D2 U is S1's float32 functional matrix
+PASS control D2 f is positive on every cell
+PASS control D2 f is cmodel_5d.json's x (to 1e-12)
+PASS control D2 C_e is the sum of S1's blocks
+PASS control D2 C_total = C_e + C_model_abs
+PASS control D2 C_model's vertices are GENIE+MEC, NuWro, GiBUU
+PASS control D2 C_model = S^T S, S from cmodel_5d.json
+PASS control D2 C_model_abs = diag(f) C_model diag(f)
+PASS control D2 C_total's relative sigma is the committed one
+PASS control D2 C_resp + C_PL5D + DeltaC_e is a finite 16 x 16 matrix
+PASS control D2 C_resp + C_PL5D + DeltaC_e is symmetric
+PASS control D2 C_resp + C_PL5D + DeltaC_e is positive semidefinite
+PASS control D3 GiBUU's eight cells are the p_parallel < 4.5 boxes
+PASS control D4 every prediction's integrals are positive on its cells
+PASS control D5 the Stage G readout used this extra block, key, name and role
+PASS control D5 Stage G's total and shape-only chi2 and pulls reproduce to 1e-10 relative (worst 0.0e+00)
+PASS control F0 the G-DIAG readout is pinned and ran on this Stage G readout, extra block and comparison
+PASS control R1 the listed cells are reporting cells R00-R15, reported
+PASS control R1 each cell's box is the bounding box of its H2 boxes, which fill it
+PASS control R1 the fine-bin counts are U's nonzero entries
+PASS control R1 the counts and the unreported fine bins cover the fine grid
+PASS control R2 S1's readout carries every group's and total's relative sigma and median
+PASS control R2 every group's and total's relative sigma, and item 2's median of it, is S1's committed one (worst 2.0e-16)
+PASS control R2 the three vertices' variances sum to S1's C_model variance (worst 3.7e-16)
+PASS control R2 sigma of C_total + C_resp + C_PL5D + DeltaC_e is Stage G's reported sigma_total_over_f (worst 0.0e+00)
+PASS control R3 every correlation is within [-1, 1]
+PASS control R3 the blocks rebuild the correlations of C_total + C_resp + C_PL5D + DeltaC_e (worst 3.3e-16)
+PASS control R4 every reported pull is -(g/f - 1)/sqrt(sigma_total^2 + sigma_Vg^2) (worst 9.7e-15)
+PASS control S0 alpha = 0 reproduces Stage G's reported chi2 for every family and prediction to 1e-10 (worst 7.7e-15)
+PASS control S1 every shrunk M is positive definite
+PASS control S2 every shrunk group's diagonal, and every shrunk M's, is the unshrunk one bit for bit
+PASS control S2 every shrunk group's off-diagonal is (1 - alpha) times the unshrunk one (worst 0.0e+00)
+PASS control S2 every block outside the family is unchanged bit for bit
+[G-R04] R04: 11520 fine bins; neighbours R00 (pz), R05 (q3), R06 (eavail), R07 (eavail), R12 (pt), unreported H2 box 10 (q3); sigma/f C_total + C_resp + C_PL5D + DeltaC_e 4.96 % (median 8.20 %)
+[G-R04] R00: 6912 fine bins; neighbours R01 (q3), R02 (eavail), R03 (eavail), R04 (pz), R08 (pt), R09 (pt), unreported H2 box 2 (q3); sigma/f C_total + C_resp + C_PL5D + DeltaC_e 7.42 % (median 8.20 %); rho(R04, R00) +0.493
+[G-R04] R01: 1008 fine bins; neighbours R00 (q3), R03 (q3), R05 (pz), R09 (pt), unreported H2 box 2 (W), unreported H2 box 6 (W); sigma/f C_total + C_resp + C_PL5D + DeltaC_e 7.87 % (median 8.20 %); rho(R04, R01) +0.534
+[G-R04] R07: 4320 fine bins; neighbours R03 (pz), R04 (eavail), R05 (q3), R06 (W), R15 (pt); sigma/f C_total + C_resp + C_PL5D + DeltaC_e 9.41 % (median 8.20 %); rho(R04, R07) +0.512
+[G-R04] R08: 3024 fine bins; neighbours R00 (pt), R09 (W), R10 (eavail), R11 (eavail), R12 (pz), R13 (pz), unreported H2 box 2 (pt); sigma/f C_total + C_resp + C_PL5D + DeltaC_e 6.56 % (median 8.20 %); rho(R04, R08) +0.725
+[G-R04] R09: 5292 fine bins; neighbours R00 (pt), R01 (pt), R03 (pt), R08 (W), R10 (W), R11 (W), R12 (pz), R14 (pz), R15 (pz); sigma/f C_total + C_resp + C_PL5D + DeltaC_e 7.02 % (median 8.20 %); rho(R04, R09) +0.778
+[G-R04] R10: 1944 fine bins; neighbours R02 (pt), R08 (eavail), R09 (W), R11 (q3), R15 (pz); sigma/f C_total + C_resp + C_PL5D + DeltaC_e 9.12 % (median 8.20 %); rho(R04, R10) +0.411
+[G-R04] R14: 1260 fine bins; neighbours R05 (pt), R09 (pz), R12 (q3), R13 (W), R15 (q3); sigma/f C_total + C_resp + C_PL5D + DeltaC_e 5.88 % (median 8.20 %); rho(R04, R14) +0.745
+[G-SENS] every line below: descriptive sensitivity of the reported χ², not an alternative result
+[G-SENS] interaction    alpha 0    genie_cv  : chi2 64.01/16 (alpha 0: 64.01); cond 660; modes for 50/90 % 3/8; top mode sigma 4.25 % carries 24.7 %, leading R06 +0.49, R03 -0.38, R14 -0.35
+[G-SENS] interaction    alpha 0.1  genie_cv  : chi2 58.54/16 (alpha 0: 64.01); cond 473; modes for 50/90 % 3/6; top mode sigma 3.82 % carries 22.8 %, leading R05 +0.53, R06 -0.45, R01 -0.35
+[G-SENS] interaction    alpha 0.25 genie_cv  : chi2 54.97/16 (alpha 0: 64.01); cond 422; modes for 50/90 % 3/7; top mode sigma 4.06 % carries 23.2 %, leading R13 +0.54, R06 -0.48, R03 +0.41
+[G-SENS] interaction    alpha 0.5  genie_cv  : chi2 51.74/16 (alpha 0: 64.01); cond 380; modes for 50/90 % 3/7; top mode sigma 7.24 % carries 23.4 %, leading R08 +0.62, R00 +0.39, R07 -0.30
+[G-SENS] interaction    alpha 1    genie_cv  : chi2 49.82/16 (alpha 0: 64.01); cond 351; modes for 50/90 % 2/8; top mode sigma 4.12 % carries 33.4 %, leading R06 +0.53, R05 -0.50, R12 -0.36
+[G-SENS] interaction    alpha 0    genie_mec : chi2 140.34/16 (alpha 0: 140.34); cond 650; modes for 50/90 % 2/7; top mode sigma 1.57 % carries 39.4 %, leading R01 +0.43, R04 -0.43, R08 +0.37
+[G-SENS] interaction    alpha 0.1  genie_mec : chi2 132.53/16 (alpha 0: 140.34); cond 470; modes for 50/90 % 3/5; top mode sigma 1.72 % carries 23.6 %, leading R09 +0.50, R01 -0.45, R14 -0.33
+[G-SENS] interaction    alpha 0.25 genie_mec : chi2 125.88/16 (alpha 0: 140.34); cond 420; modes for 50/90 % 2/7; top mode sigma 1.70 % carries 32.6 %, leading R08 +0.57, R00 -0.53, R01 +0.35
+[G-SENS] interaction    alpha 0.5  genie_mec : chi2 118.39/16 (alpha 0: 140.34); cond 378; modes for 50/90 % 2/6; top mode sigma 1.21 % carries 30.1 %, leading R04 +0.92, R09 -0.26, R12 -0.19
+[G-SENS] interaction    alpha 1    genie_mec : chi2 112.04/16 (alpha 0: 140.34); cond 350; modes for 50/90 % 2/6; top mode sigma 1.26 % carries 38.8 %, leading R04 +0.93, R09 -0.21, R12 -0.21
+[G-SENS] interaction    alpha 0    nuwro     : chi2 91.32/16 (alpha 0: 91.32); cond 768; modes for 50/90 % 3/8; top mode sigma 7.45 % carries 21.8 %, leading R08 +0.63, R00 +0.41, R12 +0.32
+[G-SENS] interaction    alpha 0.1  nuwro     : chi2 84.26/16 (alpha 0: 91.32); cond 491; modes for 50/90 % 3/8; top mode sigma 7.41 % carries 24.1 %, leading R08 +0.63, R00 +0.40, R12 +0.32
+[G-SENS] interaction    alpha 0.25 nuwro     : chi2 79.67/16 (alpha 0: 91.32); cond 435; modes for 50/90 % 2/8; top mode sigma 7.35 % carries 26.2 %, leading R08 +0.62, R00 +0.40, R12 +0.31
+[G-SENS] interaction    alpha 0.5  nuwro     : chi2 75.06/16 (alpha 0: 91.32); cond 390; modes for 50/90 % 2/7; top mode sigma 7.23 % carries 28.5 %, leading R08 +0.62, R00 +0.39, R07 -0.30
+[G-SENS] interaction    alpha 1    nuwro     : chi2 71.96/16 (alpha 0: 91.32); cond 360; modes for 50/90 % 3/6; top mode sigma 7.06 % carries 23.4 %, leading R07 +0.62, R03 +0.46, R11 +0.32
+[G-SENS] interaction    alpha 0    gibuu     : chi2 41.80/8 (alpha 0: 41.80); cond 101; modes for 50/90 % 2/4; top mode sigma 14.61 % carries 37.1 %, leading R11 +0.80, R10 +0.35, R00 +0.26
+[G-SENS] interaction    alpha 0.1  gibuu     : chi2 41.53/8 (alpha 0: 41.80); cond 96.6; modes for 50/90 % 2/4; top mode sigma 14.58 % carries 37.9 %, leading R11 +0.80, R10 +0.34, R00 +0.27
+[G-SENS] interaction    alpha 0.25 gibuu     : chi2 41.18/8 (alpha 0: 41.80); cond 92.7; modes for 50/90 % 2/4; top mode sigma 14.56 % carries 39.0 %, leading R11 +0.79, R10 +0.33, R00 +0.27
+[G-SENS] interaction    alpha 0.5  gibuu     : chi2 40.71/8 (alpha 0: 41.80); cond 88.4; modes for 50/90 % 2/4; top mode sigma 14.52 % carries 40.6 %, leading R11 +0.78, R10 +0.31, R00 +0.28
+[G-SENS] interaction    alpha 1    gibuu     : chi2 40.20/8 (alpha 0: 41.80); cond 83.3; modes for 50/90 % 2/4; top mode sigma 14.47 % carries 42.9 %, leading R11 +0.76, R01 +0.30, R00 +0.29
+[G-SENS] interaction    alpha 0    mnvtune_v1: chi2 155.79/16 (alpha 0: 155.79); cond 1.02e+03; modes for 50/90 % 2/6; top mode sigma 1.46 % carries 42.8 %, leading R04 +0.49, R01 -0.38, R14 -0.38
+[G-SENS] interaction    alpha 0.1  mnvtune_v1: chi2 148.71/16 (alpha 0: 155.79); cond 522; modes for 50/90 % 3/6; top mode sigma 1.61 % carries 26.2 %, leading R01 +0.43, R14 +0.42, R09 -0.40
+[G-SENS] interaction    alpha 0.25 mnvtune_v1: chi2 140.39/16 (alpha 0: 155.79); cond 456; modes for 50/90 % 2/6; top mode sigma 1.65 % carries 38.6 %, leading R08 +0.56, R00 -0.52, R01 +0.34
+[G-SENS] interaction    alpha 0.5  mnvtune_v1: chi2 129.67/16 (alpha 0: 155.79); cond 406; modes for 50/90 % 2/6; top mode sigma 1.16 % carries 35.1 %, leading R04 +0.92, R09 -0.26, R12 -0.19
+[G-SENS] interaction    alpha 1    mnvtune_v1: chi2 116.02/16 (alpha 0: 155.79); cond 374; modes for 50/90 % 2/7; top mode sigma 1.22 % carries 42.1 %, leading R04 +0.93, R12 -0.21, R09 -0.21
+[G-SENS] c_e_systematic alpha 0    genie_cv  : chi2 64.01/16 (alpha 0: 64.01); cond 660; modes for 50/90 % 3/8; top mode sigma 4.25 % carries 24.7 %, leading R06 +0.49, R03 -0.38, R14 -0.35
+[G-SENS] c_e_systematic alpha 0.1  genie_cv  : chi2 48.28/16 (alpha 0: 64.01); cond 194; modes for 50/90 % 2/5; top mode sigma 4.09 % carries 28.0 %, leading R05 +0.52, R06 -0.48, R01 -0.34
+[G-SENS] c_e_systematic alpha 0.25 genie_cv  : chi2 41.00/16 (alpha 0: 64.01); cond 104; modes for 50/90 % 3/7; top mode sigma 7.69 % carries 25.1 %, leading R08 +0.61, R00 +0.44, R12 +0.33
+[G-SENS] c_e_systematic alpha 0.5  genie_cv  : chi2 35.85/16 (alpha 0: 64.01); cond 58.7; modes for 50/90 % 3/8; top mode sigma 7.87 % carries 28.9 %, leading R08 +0.58, R00 +0.50, R12 +0.31
+[G-SENS] c_e_systematic alpha 1    genie_cv  : chi2 34.08/16 (alpha 0: 64.01); cond 31.3; modes for 50/90 % 3/7; top mode sigma 5.61 % carries 26.0 %, leading R06 +0.80, R05 -0.34, R15 -0.28
+[G-SENS] c_e_systematic alpha 0    genie_mec : chi2 140.34/16 (alpha 0: 140.34); cond 650; modes for 50/90 % 2/7; top mode sigma 1.57 % carries 39.4 %, leading R01 +0.43, R04 -0.43, R08 +0.37
+[G-SENS] c_e_systematic alpha 0.1  genie_mec : chi2 89.78/16 (alpha 0: 140.34); cond 194; modes for 50/90 % 3/6; top mode sigma 1.67 % carries 24.0 %, leading R04 +0.92, R09 -0.31, R12 -0.14
+[G-SENS] c_e_systematic alpha 0.25 genie_mec : chi2 65.54/16 (alpha 0: 140.34); cond 104; modes for 50/90 % 3/8; top mode sigma 2.26 % carries 22.0 %, leading R04 +0.93, R09 -0.27, R08 -0.17
+[G-SENS] c_e_systematic alpha 0.5  genie_mec : chi2 49.34/16 (alpha 0: 140.34); cond 58.7; modes for 50/90 % 4/10; top mode sigma 2.98 % carries 17.9 %, leading R04 +0.94, R09 -0.24, R08 -0.20
+[G-SENS] c_e_systematic alpha 1    genie_mec : chi2 37.80/16 (alpha 0: 140.34); cond 31.3; modes for 50/90 % 2/8; top mode sigma 5.62 % carries 36.0 %, leading R06 +0.80, R05 -0.33, R15 -0.28
+[G-SENS] c_e_systematic alpha 0    nuwro     : chi2 91.32/16 (alpha 0: 91.32); cond 768; modes for 50/90 % 3/8; top mode sigma 7.45 % carries 21.8 %, leading R08 +0.63, R00 +0.41, R12 +0.32
+[G-SENS] c_e_systematic alpha 0.1  nuwro     : chi2 64.76/16 (alpha 0: 91.32); cond 197; modes for 50/90 % 3/8; top mode sigma 7.55 % carries 30.9 %, leading R08 +0.62, R00 +0.42, R12 +0.32
+[G-SENS] c_e_systematic alpha 0.25 nuwro     : chi2 53.94/16 (alpha 0: 91.32); cond 105; modes for 50/90 % 3/9; top mode sigma 7.68 % carries 37.2 %, leading R08 +0.61, R00 +0.44, R12 +0.33
+[G-SENS] c_e_systematic alpha 0.5  nuwro     : chi2 48.43/16 (alpha 0: 91.32); cond 58.9; modes for 50/90 % 2/7; top mode sigma 7.87 % carries 40.9 %, leading R08 +0.58, R00 +0.50, R12 +0.31
+[G-SENS] c_e_systematic alpha 1    nuwro     : chi2 53.66/16 (alpha 0: 91.32); cond 31.4; modes for 50/90 % 3/7; top mode sigma 8.25 % carries 26.9 %, leading R13 +0.55, R03 +0.42, R10 -0.37
+[G-SENS] c_e_systematic alpha 0    gibuu     : chi2 41.80/8 (alpha 0: 41.80); cond 101; modes for 50/90 % 2/4; top mode sigma 14.61 % carries 37.1 %, leading R11 +0.80, R10 +0.35, R00 +0.26
+[G-SENS] c_e_systematic alpha 0.1  gibuu     : chi2 38.99/8 (alpha 0: 41.80); cond 56.4; modes for 50/90 % 2/4; top mode sigma 14.37 % carries 43.7 %, leading R11 +0.80, R10 +0.35, R00 +0.27
+[G-SENS] c_e_systematic alpha 0.25 gibuu     : chi2 39.03/8 (alpha 0: 41.80); cond 34.1; modes for 50/90 % 2/4; top mode sigma 14.00 % carries 49.9 %, leading R11 +0.80, R10 +0.35, R00 +0.27
+[G-SENS] c_e_systematic alpha 0.5  gibuu     : chi2 42.73/8 (alpha 0: 41.80); cond 20.8; modes for 50/90 % 1/4; top mode sigma 13.31 % carries 55.4 %, leading R11 +0.79, R10 +0.36, R00 +0.26
+[G-SENS] c_e_systematic alpha 1    gibuu     : chi2 62.49/8 (alpha 0: 41.80); cond 12.4; modes for 50/90 % 2/5; top mode sigma 11.88 % carries 43.9 %, leading R11 +0.82, R10 +0.34, R02 +0.32
+[G-SENS] c_e_systematic alpha 0    mnvtune_v1: chi2 155.79/16 (alpha 0: 155.79); cond 1.02e+03; modes for 50/90 % 2/6; top mode sigma 1.46 % carries 42.8 %, leading R04 +0.49, R01 -0.38, R14 -0.38
+[G-SENS] c_e_systematic alpha 0.1  mnvtune_v1: chi2 96.54/16 (alpha 0: 155.79); cond 201; modes for 50/90 % 2/6; top mode sigma 1.64 % carries 30.4 %, leading R04 +0.92, R09 -0.31, R12 -0.15
+[G-SENS] c_e_systematic alpha 0.25 mnvtune_v1: chi2 69.45/16 (alpha 0: 155.79); cond 106; modes for 50/90 % 3/9; top mode sigma 2.24 % carries 28.0 %, leading R04 +0.93, R09 -0.27, R08 -0.17
+[G-SENS] c_e_systematic alpha 0.5  mnvtune_v1: chi2 53.18/16 (alpha 0: 155.79); cond 59.3; modes for 50/90 % 4/10; top mode sigma 2.96 % carries 21.9 %, leading R04 +0.94, R09 -0.24, R08 -0.20
+[G-SENS] c_e_systematic alpha 1    mnvtune_v1: chi2 46.90/16 (alpha 0: 155.79); cond 31.5; modes for 50/90 % 2/7; top mode sigma 5.53 % carries 32.1 %, leading R06 +0.81, R05 -0.35, R15 -0.29
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_followup_readout.json", "sha256": "030b15664f2ace0869e3ec159bbae9efacf86e109f3c03608f481716821fdfe9"}

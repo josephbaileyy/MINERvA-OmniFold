@@ -1,0 +1,25 @@
+PASS control V0 no output exists (no overwrite)
+PASS control V0 v_f_csv sha256 is the pin
+PASS control V0 blocks5d_json sha256 is the pin
+PASS control V0 c_e_csv sha256 is the pin
+PASS control V0 data_product_cpl sha256 is the pin
+PASS control V0 cpl_block_npz sha256 is the pin
+PASS control V0 the B5D record names this V_F
+PASS control V0 the record's V_F is the CSV's, bit for bit
+PASS control V1 V_F (C_e^infl), L and C_e are finite 16 x 16 matrices; f is 16 positive cells
+PASS control V1 the C_e CSV is the with-block data product's C_e, bit for bit
+PASS control V1 the cpl block's f, C_resp and C_PL5D are the data product's, bit for bit
+PASS control V1 the cpl block's C_resp + C_PL5D and reported matrix are the data product's, to 1e-12
+PASS control V2 L is symmetric
+PASS control V2 C_e^infl (B5D's V_F) is L C_e L^T, to 1e-12
+PASS control V2 L commutes with C_e, to 1e-12
+PASS control V3 DeltaC_e is symmetric, to 1e-12
+PASS control V3 DeltaC_e is positive semidefinite
+PASS control V3 the reported matrix is C_e^infl + C_model_abs + C_resp + C_PL5D, to 1e-12
+PASS control V3 the matrix without C_PL5D is C_e^infl + C_model_abs + C_resp, to 1e-12
+PASS control V3 the revised matrix reported is positive definite
+PASS control V3 the revised matrix without C_PL5D is positive definite
+PASS control V4 the npz is the same bytes when written twice
+PASS control V4 the npz reads back key by key, bit for bit (dtype, shape and bytes)
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/block/vf_block.npz", "sha256": "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/block/vf_block.json", "sha256": "421da0e683537ad0a47b684e5e6ae42f7f3d63d6cc6038e03671dc7772edb6bd"}
