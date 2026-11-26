@@ -8830,6 +8830,7 @@ docs/orchestration/state/gate6-member-trajectories-result-56847059.json	tracked	
 docs/orchestration/state/gate6-ml-ensemble-result-56834281.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/gate6-trajectory-array-active-56847059.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/geanttw-20261124/DECLARATION.md	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/GEANTTW-BINDING-P0.md	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
 docs/orchestration/state/geanttw-20261124/SHA256SUMS-P0	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
 docs/orchestration/state/geanttw-20261124/code/S0-src_base.sha256	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
 docs/orchestration/state/geanttw-20261124/code/dumpcmp.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
@@ -9933,6 +9934,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RECO-BIN
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RECO-BINDING-2-ADDENDUM-3.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RECO-BINDING-2-ADDENDUM-4.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RECO-BINDING-2.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RECO-DECLARATION-AMENDMENT-1.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RECO-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RULINGS-20261102.txt	tracked	MACHINE	state-artifact	measurement-paper	20261102	generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-STAB-ADDENDUM-A1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
@@ -19719,6 +19721,14 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/rea
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/real-mnv-check2-20261111/survey/survey.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/real-mnv-check2-20261111/worker.stderr.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/real-mnv-check2-20261111/worker.stdout.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/sidecar-probe-20261126/README.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/sidecar-probe-20261126/build_probe.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/sidecar-probe-20261126/mutation.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/sidecar-probe-20261126/probe_mutation.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/sidecar-probe-20261126/sidecar-probe.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/sidecar-probe-20261126/sidecar_probe_remote.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/sidecar-probe-20261126/test_sidecar_probe.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/sidecar-probe-20261126/tests.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/stage-time-20261111/HAND-MUTATION.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/stage-time-20261111/MUTATIONS.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/stage-time-20261111/MUTATIONS.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
@@ -22418,6 +22428,36 @@ docs/orchestration/state/precharge-20261125/test1/test1.json	tracked	MACHINE	sta
 docs/orchestration/state/precharge-20261125/test1/test1.py	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/test1/test1.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/test1/versions.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testAB/.gitignore	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testAB/DECLARATION.md	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testAB/README.md	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testAB/common.py	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testAB/run.sh	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testAB/scan.py	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testAB/scan.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testAB/test-a.json	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testAB/test-a.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testAB/test-b.json	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testAB/test-b.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testAB/test_a.py	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testAB/test_b.py	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testAB/versions.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/DECLARATION.md	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/TESTC-BINDING-1.md	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/analyze.sh	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/axes.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/batch.sh	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/build.sh	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/closure.json	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/closure.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/controls.py	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/measure.cpp	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/run.sh	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/stage.sh	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/staged.sha256	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/test_c.py	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/truth.cpp	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/testC/versions.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/threshold.py	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/validation-all.csv	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/validation-comparison.csv	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
