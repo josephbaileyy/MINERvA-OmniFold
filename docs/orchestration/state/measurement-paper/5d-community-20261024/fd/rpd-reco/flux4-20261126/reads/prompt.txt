@@ -1,0 +1,33 @@
+READ-ONLY AUDIT. Do not modify, create or delete any file. Never write to /Users/josephbailey/local-research/MINERvA-OmniFold. No network. Report to stdout only.
+
+Under /Users/josephbailey/codex-reports/note-measurement/reads/flux4-r1/inputs:
+- flux4/ is the new RPD-RECO true-Eν flux rerun package (rpd_flux4), for the director's binding. Nothing in it has run. It holds:
+  - the generator tools/gen_flux4.py, which writes every file from flux3's committed package by counted replacements;
+  - the generated production-config.ready.json, rpd_flux4_connect.sh, rpd_flux4_fetch.sh, rpd_flux4_launch.sh and tools/fence_overlap.py;
+  - tests/ (5 suites with their outputs);
+  - price/ (the measured price);
+  - README.md.
+- flux3/ is the previous package, which ran successfully as run-61861637.
+- diff/flux3-to-flux4-normalized.diff is the scripts' diff, with roots, names and base64 blobs folded.
+- code/ is fd_rpd_reco.py, fd_rpd_reco_custody.py, fd_rpd_inputs.py and the wrapper at the clone commit S = 2415e8d6.
+- docs/ is RPD-RECO amendment 1 and docs/director-conditions.txt (the director's accepted design).
+- records/ has the sidecar probe's report and flux3's NuE evidence: protected-read.json, exception-stat-outer.txt and strace lines.
+
+Check, citing file:line:
+1. Does the package implement the director's conditions (director-conditions.txt) exactly, and nothing more? In particular:
+   - the config's leaf diff from flux3: only the two paths, plus a true_energy block in the schema the code at S reads;
+   - the 14 pins re-read at S, with only #1308's four files moved;
+   - the fetch's step 2b in place of the identity check;
+   - geanttw in the sacct fence;
+   - the three-lane ack guard;
+   - the overlap fence listing the sidecar;
+   - amendment section 8's connect stat of the sidecar (step 5b).
+2. Would any defect give a false PASS (the job runs, or the fetch reports success, with the wrong inputs or the wrong code) or a false STOP on the real system? Consider: the true_energy block versus what fd_rpd_reco.true_energies and custody prepare read at S; step 2b's checks versus what flux_extract at S actually writes into flux-extract.json and the factor products (key names, dtype, length); GNU stat output on the login node for step 5b; BSD date on the Mac for the ack guard.
+3. The NuE constraint file: is the README's account correct?
+   - where FluxReweighter enables the constraint;
+   - that only the staged copy is opened by MAT;
+   - that the original is read only by custody's stat-bracketed O_NOATIME staging;
+   - that the exception is the single allowed overlap.
+4. Do the tests and mutants test what they claim? Look for any assertion that cannot fail, any mutant that could die for the wrong reason, and any receipt claim (counts, shas) that doesn't match the files.
+5. Is the price claim supported by price/?
+First line exactly "VERDICT: GO" or "VERDICT: FIX" (FIX only for a blocking issue), then numbered findings tagged BLOCKING or NON-BLOCKING.
