@@ -1,0 +1,25 @@
+flux4's price, measured 2026-11-26 on the Mac (Apple silicon, APFS SSD), against fd_rpd_reco.py at 2415e8d6 (12f68102).
+
+The baseline, flux3 (run-61861637, the same job shape: shared QOS, 4 CPUs, 16G, --time 01:00:00):
+  sacct 61861637|rpd_flux3|COMPLETED|0:0|00:08:51|...|10|16G|01:00:00
+  531 s x AllocCPUS 10 / (3600 x 256) = 0.0058 node-h
+
+flux4 adds, measured on a synthetic sidecar of the real schema and row count (32,846,302 rows; 2,364,937,038 bytes):
+  bench_staging.py        custody-style staging: read+sha256, copy, read+sha256        17.0 s
+  bench_true_energies.py  fd_rpd_reco.true_energies itself (C-JOIN part 1), status PASS  16.2 s, peak RSS 1.37 GiB
+                          (792 spot rows; the staged copy outside the protected roots, as in the run)
+
+Budget on Perlmutter (pscratch Lustre is slower than this SSD for one stream; budget 4x the staging):
+  531 s + 4 x 17.0 s + 2 x 16.2 s ~= 632 s, round up to 700 s
+  700 s x 10 / (3600 x 256) = 0.0076 node-h  (expected; about 0.007-0.008)
+  hard ceiling at the 1 h time limit: 3600 s x 10 / (3600 x 256) = 0.039 node-h
+Memory: true_energies' 1.37 GiB peak adds to flux3's job inside the 16G limit (flux3 ran in it; MAT's own working set
+is unchanged). The synthetic files were removed after the measurement.
+
+Notes (the agy read of 2026-11-26, both non-blocking):
+- The staging benchmark does read + copy + read (three passes). The run does one O_NOATIME read of the original, one
+  copy, and two reads of the staged copy (prepare's stage_copy check and Inputs.copy's), four passes; the 4x staging
+  allowance (68 s) covers the extra pass.
+- The first benchmark's true_energies call refused (PLAIN_OPEN: its stand-in listed the staged copy's directory as a
+  protected root). bench_true_energies.py reran it with the staged copy outside the roots, as in the run. The numbers
+  above are transcribed from the two scripts' stdout; the raw stdout was not saved.
