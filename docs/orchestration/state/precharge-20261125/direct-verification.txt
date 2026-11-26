@@ -1,0 +1,2 @@
+Upstream event rows by sign and sample: {('Data', '-'): 161050, ('Data', '+'): 14902, ('MC', '-'): 553893, ('MC', '+'): 63139}
+Largest direct count difference in each band and sign: {'Data': 0, 'MC': 1.4551915228366852e-10}
