@@ -22242,6 +22242,10 @@ docs/orchestration/state/precharge-20261125/modes/projections.txt	tracked	MACHIN
 docs/orchestration/state/precharge-20261125/modes/six-modes.csv	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/negative-closure.csv	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/playlist-counts.csv	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/reads/gemini-hydrogen-high-r1/inputs.sha256	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/reads/gemini-hydrogen-high-r1/prompt.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/reads/gemini-hydrogen-high-r1/receipt.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/reads/gemini-hydrogen-high-r1/report.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/reproduce.sh	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/run.sh	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/scope.json	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
