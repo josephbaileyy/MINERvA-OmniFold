@@ -1,0 +1,162 @@
+{
+ "schema": "note-genresid-fived16/1",
+ "inputs": {
+  "dp": {
+   "path": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/data-product/fd_data_product_vf.json",
+   "bytes_digest_sha256": "1a37b0820017f9e515f6e46dbf4009d0a76ef8f542975654d0c61e0a015d84e8"
+  },
+  "g": {
+   "path": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/readout/vf-with-E/fd_g_readout.json",
+   "bytes_digest_sha256": "7034a08ec8f4d95f3b189d6faa3bd8a24ef3672f36dd04ccce513ff25272fdad"
+  },
+  "gdefs": {
+   "path": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/gdefs.vf.json",
+   "bytes_digest_sha256": "6c202b08b5d9ed0be0880bb97ad1966f102c5cca6138b949a9345ae11aa7b788"
+  }
+ },
+ "printed_values_file": {
+  "path": "docs/analysis-note/values_fived16.tex",
+  "bytes_digest_sha256": "de8d842baa44b063805fa5304af802b0ad649f725e7b1e7ca821c109bdb5fab3"
+ },
+ "covariance": "C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e",
+ "quantity": "(g_i - f_i)/f_i in percent; bar half-height 100 sqrt(C_rep,ii)/f_i",
+ "relative_sigma_reported_pct": {
+  "R00": 7.415130031782889,
+  "R01": 7.866247545074378,
+  "R02": 14.436652972483738,
+  "R03": 13.465824007633135,
+  "R04": 4.955488847552415,
+  "R05": 8.531420489694009,
+  "R06": 7.34865441846163,
+  "R07": 9.407926120628066,
+  "R08": 6.5581415476410845,
+  "R09": 7.019758732017431,
+  "R10": 9.122034942741184,
+  "R11": 14.263224315223377,
+  "R12": 7.281613378722632,
+  "R13": 11.87271168306491,
+  "R14": 5.879495858848393,
+  "R15": 8.670251562607055
+ },
+ "series": [
+  {
+   "name": "genie_cv",
+   "label": "GENIE 2.12.10 CV",
+   "source": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/readout/vf-with-E/fd_g_readout.json",
+   "residual_pct": {
+    "R00": -10.574663569727202,
+    "R01": -11.240227684571504,
+    "R02": 12.415966423779356,
+    "R03": -0.41967252078927864,
+    "R04": -8.419762960321718,
+    "R05": -14.190636322132425,
+    "R06": 15.109726690214007,
+    "R07": 1.976388635410088,
+    "R08": -17.391860402643808,
+    "R09": -6.439127166603738,
+    "R10": -7.27146306423264,
+    "R11": -3.6699757712430765,
+    "R12": -16.13137382107492,
+    "R13": -4.177738936623072,
+    "R14": -17.054194741605738,
+    "R15": -4.4269426572579
+   }
+  },
+  {
+   "name": "genie_mec",
+   "label": "GENIE 2.12.10 + Valencia MEC",
+   "source": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/readout/vf-with-E/fd_g_readout.json",
+   "residual_pct": {
+    "R00": -0.831095511299127,
+    "R01": -11.014471981505125,
+    "R02": 15.640815026114465,
+    "R03": -1.228032751676936,
+    "R04": 2.5524710777029624,
+    "R05": -17.282299887518842,
+    "R06": 19.084543438582,
+    "R07": -1.4350439499660497,
+    "R08": -13.9093913175277,
+    "R09": -6.167501603103854,
+    "R10": -6.312998663995726,
+    "R11": -3.6238389959350306,
+    "R12": -12.292587680502358,
+    "R13": -3.017818485520083,
+    "R14": -15.542010042514676,
+    "R15": -3.1155211436138046
+   }
+  },
+  {
+   "name": "nuwro",
+   "label": "NuWro 21.09 (carbon)",
+   "source": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/gdefs.vf.json",
+   "residual_pct": {
+    "R00": -13.350909082896647,
+    "R01": -6.290011792905921,
+    "R02": -10.275871213222098,
+    "R03": 8.817264831011546,
+    "R04": -9.139760053187482,
+    "R05": 4.6271206907284785,
+    "R06": -7.823002639620462,
+    "R07": 12.510284783192304,
+    "R08": -23.92521502953756,
+    "R09": -15.599395076935918,
+    "R10": -19.578774924457388,
+    "R11": -10.390987927518669,
+    "R12": -19.962632238277155,
+    "R13": -9.465180191968917,
+    "R14": -20.96600611930336,
+    "R15": -17.638751995250146
+   }
+  },
+  {
+   "name": "gibuu",
+   "label": "GiBUU 2019 (carbon)",
+   "source": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/gdefs.vf.json",
+   "residual_pct": {
+    "R00": -16.331979474599965,
+    "R01": -28.866447457730732,
+    "R02": -52.32947016213845,
+    "R03": -44.80404306808426,
+    "R08": -18.75314010873005,
+    "R09": -15.815836572024713,
+    "R10": -38.08450143959336,
+    "R11": -14.487401646804557
+   }
+  },
+  {
+   "name": "mnvtune_v1",
+   "label": "MINERvA Tune v1",
+   "source": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/readout/vf-with-E/fd_g_readout.json",
+   "residual_pct": {
+    "R00": -6.017748790576365,
+    "R01": -13.093815729174723,
+    "R02": 3.7322528129957795,
+    "R03": -15.234091193155086,
+    "R04": -2.4935358728848867,
+    "R05": -18.43331307290533,
+    "R06": 9.974264750814308,
+    "R07": -13.709588357339552,
+    "R08": -20.258536655035993,
+    "R09": -11.627565796942369,
+    "R10": -16.698161502597404,
+    "R11": -17.902086408625767,
+    "R12": -15.100231097099584,
+    "R13": -17.59587350090872,
+    "R14": -19.368212939846135,
+    "R15": -13.701622986418254
+   }
+  }
+ ],
+ "checks": {
+  "inputs_sha256_pinned": true,
+  "f_equal_across_readouts": true,
+  "relative_sigma_equals_record": true,
+  "readout_g_over_f_minus_1_equal": true,
+  "printed_gf_equal_gcv_gmec_tune": true,
+  "printed_carbon_chi2_equal_nuwro_gibuu": true,
+  "gibuu_cells_below_mid_pz": true,
+  "plotted_heights_equal": true,
+  "plotted_bars_equal": true,
+  "fonts_at_least_7pt": true
+ }
+}
