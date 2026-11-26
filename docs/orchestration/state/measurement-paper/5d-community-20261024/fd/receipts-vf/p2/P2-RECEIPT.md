@@ -56,6 +56,15 @@ reports are in `reads/`. No recomputed value changed.
   matrices' f.
 - **The readings tool** sweeps every non-float leaf of both arms. It builds section 1's headline from that sweep and
   exits 1 on any control D event that no named ruling covers. See the readings.
+  - After the fix-diff read (`reads/p2-fix-*`, NO-GO on 3 findings): every leaf name is now classified, and an
+    unclassified name is structural, so any change to it is an event (fail closed).
+  - `controls` are now swept.
+  - Each ruling checks its premise. q3: B0's q3 clears, and q3 is flagged at the level under both. QD: rho* was at or
+    above 1 and stays within 1e-3 of it.
+  - PR-3's "clears at these truths" counts as an improvement.
+  - The readings' values, moved keys, guards and decision rules are unchanged. 20 p_below_floor clearings move into
+    the headline.
+  - Mutation, both rounds: 26/26 killed (`mutation/`).
 - **Reproduction.** All 14 copies were regenerated after the fixes; prr, rsn and xk came from the verified fetch. 12 are
   byte-identical, and gch and prr differ only as stated. The opt-in test (`VF_P2_FETCH`, `VF_P2_XK=1`) reproduces
   prr, rsn and xk byte for byte.

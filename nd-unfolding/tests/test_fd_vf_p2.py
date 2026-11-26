@@ -758,6 +758,50 @@ class ReadingsControlD(unittest.TestCase):
         self.assertIsNone(d("/triggers/listed[truth=W3]/p_lt_0.01", True, None))     # a truth unlisted
         self.assertIsNone(d("/modes_by_chi2[0]/mode", 3, 9))                         # not a decision-rule leaf
 
+    def test_the_confirm_reads_probes(self):
+        d = self.R.d_event
+        self.assertTrue(d("/arms/WR/P5/q3/cells_beyond_half_sigma", ["R02"], ["R02", "R07"]))
+        self.assertTrue(d("/arms/WR/P8/breaks_the_prior_closure", False, True))
+        self.assertIsNone(d("/readings/PR-3/K10/reading", "does not clear at these truths", "clears at these truths"))
+        self.assertTrue(d("/readings/PR-3/K10/reading", "clears at these truths", "does not clear at these truths"))
+        self.assertTrue(d("/arms/G6/P1/listed", ["A7_gibuu"], ["q3", "A7_gibuu"]))      # listed as a list
+        self.assertIsNone(d("/arms/G6/P1/listed", ["q3", "A7_gibuu"], ["A7_gibuu"]))
+        self.assertTrue(d("/truths[name=q3]/listed", False, True))                      # listed as a bool
+        self.assertTrue(d("/x/some_new_decision_field", "a", "b"))                       # unclassified: fail closed
+        self.assertIsNone(d("/labels/decision", "text", None))                           # a label is descriptive
+        self.assertTrue(d("/controls/C0", "PASS", "FAIL"))                               # controls are swept
+        self.assertIn("/controls/C0", dict(self.R.leaves({"controls": {"C0": "PASS"}})))
+        # a clearing is no event, which tells a classified flag from a structural (unclassified) field
+        self.assertIsNone(d("/arms/WR/P5/q3/cells_beyond_half_sigma", ["R02", "R07"], ["R02"]))
+        self.assertIsNone(d("/arms/WR/P8/breaks_the_prior_closure", True, False))
+
+    def test_rulings_check_their_premise(self):
+        o, v = self.R.j(P.PRR), self.R.j(self.R.VF_WITH["prr"])
+        path, old = "/readings/PR-3/C25/new_flags", o["readings"]["PR-3"]["C25"]["new_flags"]
+        new = v["readings"]["PR-3"]["C25"]["new_flags"]
+        self.assertTrue(self.R.ruling_for("prr", path, old, new, o, v))
+        v2 = json.loads(json.dumps(v))
+        v2["table"]["B0/q3/s991000"]["grade"]["flagged"] = True                         # B0's q3 did not clear
+        self.assertIsNone(self.R.ruling_for("prr", path, old, new, o, v2))
+        v3 = json.loads(json.dumps(v))
+        v3["table"]["C25/q3/s991000"]["grade"]["flagged"] = False                         # q3 not flagged at C25
+        self.assertIsNone(self.R.ruling_for("prr", path, old, new, o, v3))
+        oc, vc = self.R.j(P.CR), self.R.j(self.R.VF_WITH["cr"])
+        qd = "/quadrants/QD/2D/printed_only_without_C_PL5D/outcome"
+        self.assertTrue(self.R.ruling_for("cr", qd, "agree", "agree below a correlation", oc, vc))
+        vc2 = json.loads(json.dumps(vc))
+        vc2["quadrants"]["QD"]["2D"]["printed_only_without_C_PL5D"]["rho_star"] = 0.95   # beyond the knife edge
+        self.assertIsNone(self.R.ruling_for("cr", qd, "agree", "agree below a correlation", oc, vc2))
+
+    def test_every_swept_leaf_name_is_classified(self):
+        rows = self.R.sweep()
+        self.assertFalse([r for r in rows if r["class"] == "structural"])
+        self.assertEqual(sorted((r["readout"], r["path"]) for r in rows if r["control_D"]),
+                         sorted([("cr", "/quadrants/QD/2D/printed_only_without_C_PL5D/outcome"),
+                                 ("gover", "/quadrants/QD/2D/printed_only_without_C_PL5D/outcome"),
+                                 ("prr", "/readings/PR-3/C25/new_flags"), ("prr", "/readings/PR-3/O2/new_flags")]))
+        self.assertTrue(all(r["ruling"] for r in rows if r["control_D"]))
+
     def test_a_reordered_record_list_is_no_change(self):
         a = {"listed": [{"truth": "q3", "cells": []}, {"truth": "A7", "cells": ["R02"]}]}
         b = {"listed": [{"truth": "A7", "cells": ["R02"]}, {"truth": "q3", "cells": []}]}

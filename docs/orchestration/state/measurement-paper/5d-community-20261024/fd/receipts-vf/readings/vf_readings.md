@@ -4,7 +4,7 @@ Read by `vf_readings.py`; readings go to the director first; nothing here is not
 
 ## 1. Decision-rule outcome changes (first, each on its own)
 
-**Control D:** holds, every event under a named ruling (the tool exits nonzero otherwise). Every non-float leaf of every swept readout, OLD -> V_F, both arms (`sweep()`): 2129 changes, 250 of them in decision-rule fields; 4 control D events, 4 under a named ruling.
+**Control D:** holds, every event under a named ruling (the tool exits nonzero otherwise). Every non-float leaf of every swept readout, OLD -> V_F, both arms (`sweep()`): 2129 changes, 270 of them in decision-rule fields; 4 control D events, 4 under a named ruling.
 
 **Headline: every decision-rule change, from the sweep (anything not named holds), then the derived lines:**
 
@@ -34,10 +34,12 @@ Read by `vf_readings.py`; readings go to the director first; nothing here is not
 - f0 `/truths[*]/grade/cells_abs_z_gt_2`: ["R02", "R06", "R07"] -> ["R02", "R06"] x1 (A7_gibuu)
 - f0 `/truths[*]/grade/cells_abs_z_gt_2`: ["R06"] -> [] x1 (stage0c_gibuu)
 - f0 `/truths[*]/grade/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- f0 `/truths[*]/grade/p_below_floor`: true -> false x1 (A7_gibuu)
 - f0 `/truths[*]/grade/p_lt_0.01`: true -> false x6 (P1r, P2g, P2r, W3, q3, stage0c_gibuu)
 - f0 `/truths[*]/in_sample/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
 - f0 `/truths[*]/in_sample/p_lt_0.01`: true -> false x3 (P1r, P2g, W3)
 - f0 `/truths[*]/listed`: true -> false x3 (W3, q3, stage0c_gibuu)
+- f0 `/truths[*]/p_parallel_lt_4p5/p_below_floor`: true -> false x1 (A7_gibuu)
 - f0 `/truths[*]/p_parallel_lt_4p5/p_lt_0.01`: true -> false x1 (stage0c_gibuu)
 - f0 `/truths[*]/sensitivity/p_lt_0.01`: true -> false x1 (q3)
 - f0b `/triggers/all_graded/truths_p_lt_0.01`: 2 -> 1
@@ -114,6 +116,7 @@ Read by `vf_readings.py`; readings go to the director first; nothing here is not
 - prr `/ibu/*/*/s*/grade/cells_abs_z_gt_2`: ["R06"] -> [] x2 (K10/W3/s991000, K20/W1/s991000)
 - prr `/ibu/*/*/s*/grade/cells_abs_z_gt_2`: ["R07", "R14"] -> ["R14"] x3 (K3/A7_gibuu/s994003, K3/A7_gibuu/s994004, K4/A7_gibuu/s994004)
 - prr `/ibu/*/*/s*/grade/flagged`: true -> false x18 (K1/W3/s991000, K1/q3/s991000, K10/A7_genie_cv/s991000, K10/q3/s991000, K2/q3/s991000, K2/stage0c_gibuu/s991000, K20/A7_genie_cv/s991000, K20/W1/s991000, K200/A7_genie_mec/s991000, K200/W2/s991000, K3/q3/s991000, K4/A7_nuwro/s991000, K4/W3/s991000, K4/closure_nuwro/s991000, K4/q3/s991000, K5/W3/s991000, K5/stage0c_gibuu/s991000, K50/A7_genie_mec/s991000)
+- prr `/ibu/*/*/s*/grade/p_below_floor`: true -> false x11 (K20/A7_nuwro/s991000, K20/closure_nuwro/s991000, K20/q3/s991000, K20/stage0c_gibuu/s991000, K4/A7_gibuu/s991000, K4/A7_gibuu/s994001, K4/A7_gibuu/s994002, K4/A7_gibuu/s994003, K4/A7_gibuu/s994004, K50/A7_nuwro/s991000, K50/W3/s991000)
 - prr `/readings/PR-3/IBU_K5/new_flags`: ["A7_nuwro", "W3", "closure_nuwro", "stage0c_gibuu"] -> ["A7_nuwro", "closure_nuwro"]
 - prr `/readings/PR-3/K2/new_flags`: ["A7_nuwro", "W3", "stage0c_gibuu"] -> []
 - prr `/readings/PR-3/O4/new_flags`: ["A7_nuwro"] -> []
@@ -123,6 +126,7 @@ Read by `vf_readings.py`; readings go to the director first; nothing here is not
 - prr `/table/*/*/s*/grade/cells_abs_z_gt_2`: ["R06", "R07", "R08"] -> ["R07", "R08"] x2 (C25/q3/s991000, O2/q3/s991000)
 - prr `/table/*/*/s*/grade/cells_abs_z_gt_2`: ["R06"] -> [] x1 (K2/stage0c_gibuu/s991000)
 - prr `/table/*/*/s*/grade/flagged`: true -> false x16 (B0/q3/s991000, C1000/q3/s991000, C400/q3/s991000, K10/q3/s991000, K2/A7_nuwro/s991000, K2/W3/s991000, K2/q3/s991000, K2/stage0c_gibuu/s991000, K20/q3/s991000, K50/q3/s991000, MCq/q3/s991000, O2/A7_genie_cv/s991000, O3/q3/s991000, O4/A7_nuwro/s991000, O4/q3/s991000, O4r/q3/s991000)
+- prr `/table/*/*/s*/grade/p_below_floor`: true -> false x5 (K2/A7_gibuu/s991000, O2/A7_nuwro/s991000, O2/stage0c_gibuu/s991000, O3/A7_gibuu/s991000, O4/A7_gibuu/s991000)
 - rsn `/arms/G6/P1/listed`: ["q3", "A7_gibuu"] -> ["A7_gibuu"]
 - rsn `/arms/G6/P1/listed_nominal`: ["q3", "A7_gibuu"] -> ["A7_gibuu"]
 - rsn `/arms/G6/P2/by_group/non-vertex/by_family/q3/truths_p_lt_0.01`: 1 -> 0
@@ -156,8 +160,10 @@ Read by `vf_readings.py`; readings go to the director first; nothing here is not
 - rsnregrade `/arms/SM/by_group/vertex-family/truths_p_lt_0.01`: 2 -> 1
 - rsnregrade `/arms/SM/listed`: ["q3", "A7_nuwro", "A7_gibuu"] -> ["A7_gibuu"]
 - rsnregrade `/arms/SM/records[*]/grade/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- rsnregrade `/arms/SM/records[*]/grade/p_below_floor`: true -> false x1 (A7_gibuu)
 - rsnregrade `/arms/SM/records[*]/grade/p_lt_0.01`: true -> false x5 (A7_nuwro, P1r, P2g, P2r, q3)
 - rsnregrade `/arms/SM/records[*]/in_sample/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- rsnregrade `/arms/SM/records[*]/in_sample/p_below_floor`: true -> false x1 (A7_gibuu)
 - rsnregrade `/arms/SM/records[*]/in_sample/p_lt_0.01`: true -> false x4 (A7_nuwro, P1r, P2g, P2r)
 - rsnregrade `/arms/SM/records[*]/listed`: true -> false x2 (A7_nuwro, q3)
 - rsnregrade `/arms/SM/records[*]/sensitivity/p_lt_0.01`: true -> false x1 (q3)
@@ -300,9 +306,7 @@ Read by `vf_readings.py`; readings go to the director first; nothing here is not
 | f0 | `/labels/what` | 1 |
 | f0 | `/schema` | 1 |
 | f0 | `/triggers/listed[]/truth` | 3 |
-| f0 | `/truths[]/grade/p_below_floor` | 1 |
 | f0 | `/truths[]/grade_matrix` | 18 |
-| f0 | `/truths[]/p_parallel_lt_4p5/p_below_floor` | 1 |
 | f0 | `/truths[]/sensitivity/matrix` | 2 |
 | f0b | `/extra_block/file` | 1 |
 | f0b | `/extra_block/key` | 1 |
@@ -531,27 +535,9 @@ Read by `vf_readings.py`; readings go to the director first; nothing here is not
 | gnat | `/generator_definitions/native_chi2/reported/total/matrix` | 1 |
 | gnat | `/generator_definitions/native_chi2/without_C_PL5D/shape_only/matrix` | 1 |
 | gnat | `/generator_definitions/native_chi2/without_C_PL5D/total/matrix` | 1 |
-| prr | `/ibu/K20/A7_nuwro/s991000/grade/p_below_floor` | 1 |
-| prr | `/ibu/K20/closure_nuwro/s991000/grade/p_below_floor` | 1 |
-| prr | `/ibu/K20/q3/s991000/grade/p_below_floor` | 1 |
-| prr | `/ibu/K20/stage0c_gibuu/s991000/grade/p_below_floor` | 1 |
-| prr | `/ibu/K4/A7_gibuu/s991000/grade/p_below_floor` | 1 |
-| prr | `/ibu/K4/A7_gibuu/s994001/grade/p_below_floor` | 1 |
-| prr | `/ibu/K4/A7_gibuu/s994002/grade/p_below_floor` | 1 |
-| prr | `/ibu/K4/A7_gibuu/s994003/grade/p_below_floor` | 1 |
-| prr | `/ibu/K4/A7_gibuu/s994004/grade/p_below_floor` | 1 |
-| prr | `/ibu/K50/A7_nuwro/s991000/grade/p_below_floor` | 1 |
-| prr | `/ibu/K50/W3/s991000/grade/p_below_floor` | 1 |
-| prr | `/table/K2/A7_gibuu/s991000/grade/p_below_floor` | 1 |
-| prr | `/table/O2/A7_nuwro/s991000/grade/p_below_floor` | 1 |
-| prr | `/table/O2/stage0c_gibuu/s991000/grade/p_below_floor` | 1 |
-| prr | `/table/O3/A7_gibuu/s991000/grade/p_below_floor` | 1 |
-| prr | `/table/O4/A7_gibuu/s991000/grade/p_below_floor` | 1 |
 | rsn | `/arms/WR/P6/top_directions[]/rank` | 2 |
 | rsn | `/arms/WR/P7/nuwro/change_top_directions[]/rank` | 1 |
 | rsn | `/arms/WR/P7/q3/change_top_directions[]/rank` | 2 |
-| rsnregrade | `/arms/SM/records[]/grade/p_below_floor` | 1 |
-| rsnregrade | `/arms/SM/records[]/in_sample/p_below_floor` | 1 |
 | rsnregrade | `/wr_directions/data/directions/top[]/rank` | 2 |
 | rsnregrade | `/wr_directions/nuwro/change/top[]/rank` | 1 |
 | rsnregrade | `/wr_directions/q3/change/top[]/rank` | 2 |

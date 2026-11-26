@@ -262,28 +262,91 @@ def decision_rules():
 # ---------------------------------------------------------------- the full non-float sweep and control D
 # Every non-float leaf of every swept readout, OLD -> V_F. A list of records that each carry a "truth", "name", "key" or
 # "cell" is keyed by it, so a list that only reorders shows no change (f0's triggers/listed: q3 was listed[0]).
-RULE_LEAF = re.compile(r"^(flagged|listed|listed_nominal|new_flags|cells_abs_z_gt_2|cells|p_lt_0\.01|truths_p_lt_0\.01|"
-                       r"flag|flag_[a-z_]+|[a-z_]+_flag|exceeded|outcome|class|verdict|reading|valid|A3|agree|"
-                       r"within_seed_variation|stops)$")
-FLAG_UP = re.compile(r"^(flagged|listed|p_lt_0\.01|flag|flag_[a-z_]+|[a-z_]+_flag|exceeded)$")   # True is the flag
-AGREE_UP = re.compile(r"^(valid|A3|agree|within_seed_variation)$")                             # True is agreement
-LIST_FLAGS = re.compile(r"^(listed|listed_nominal|new_flags|cells_abs_z_gt_2|cells|stops)$")      # a member is a flag
-COUNT_FLAGS = re.compile(r"^(truths_p_lt_0\.01|cells_abs_z_gt_2)$")
-# An outcome string that changes toward agreement or fewer flags; every other outcome-string change is a control D event.
+# Every leaf name is classified (fail closed): a name in no class below is STRUCTURAL, and any change to it is a control D
+# event, so a decision field this tool has not been taught cannot pass silently.
+FLAG_BOOL = {"breaks_the_prior_closure", "exceeded", "flag_equal_weights", "flag_weighted", "flagged", "listed",
+             "p_lt_0.01", "seed_spread_flag", "ill_conditioned", "methods_disagree", "negative_variance",
+             "ridge_sensitive", "unstable", "p_below_floor"}                                        # True is the flag
+AGREE_BOOL = {"A1", "A2", "A3", "A3_without_gibuu_family_above_pz_4.5", "B0", "C12", "H", "R2_bitwise", "agree", "pass",
+              "positive_definite", "within_seed_variation", "both_criteria_met_at_the_four_held_out_records",
+              "without_new_flags", "atime_unchanged", "complete", "compared", "graded", "b0"}       # True is agreement
+FLAG_LIST = {"cells", "cells_abs_z_gt_2", "cells_beyond_half_sigma", "cells_at_half_sigma", "listed", "listed_nominal",
+             "new_flags", "changes_at", "stops", "A7_gibuu", "q3", "in_cells"}                     # a member is a flag
+VALID_LIST = {"valid", "valid_cells", "controls_passed", "eavail_regions_formable"}                 # a member is a pass
+FLAG_COUNT = {"truths_p_lt_0.01", "cells_abs_z_gt_2", "cells"}                                     # a count of flags
+OUTCOME_STR = {"outcome", "class", "class_tau_1", "verdict", "reading", "decision", "result_2d", "rms_class",
+               "transfer", "stability", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "F1", "F2", "F3", "F4", "B2",
+               "PR-3_label", "R-ID_R-SUP_label", "pr3", "primary", "flags"}
+# Descriptive: diagnostics and bookkeeping that no decision rule reads (mode ranks and counts, block shares by matrix
+# name, file and sha records, labels naming the matrix, printed sentences).
+DESCRIPTIVE = re.compile(
+    r"^(50%|90%|99%|C_.*|mode|mode_index|modes|rank|rank_of_R04_by_abs_loading|lead|top|row|id|dominant|cell|neighbour|"
+    r"matrix|grade_matrix|reported_matrix|reported_covariance|covariance|correlation_of|label|sentence|note|why|what|"
+    r"file|sha256|code_sha256|index_sha256|table_sha256|rebuild_json_sha256|schema|numpy|python|fd_.*\.py|rsn_regrade\.py|"
+    r"s1_assemble\.py|s5p_stage1_inspect\.py|cmodel_json|s1_json|s1_npz|g_readout|g_diag_readout|g_followup_readout|"
+    r"extra_block|extra|definition|detector|flux|interaction|lateral|normalization|prediction:.*|block|shares|"
+    r"atime_deviations|paths|not_read|not_citable_for|string_members_not_json|units|route_reasons|referenced|pinned|"
+    r"seed|stat|named|variants|truths|predictions|generators|vertices|groups|axes|fields|pair|rows|bounded|"
+    r"c_e_systematic|code_files_differing_from_the_committed_vertex|h2_boxes|h2_pairs|h2_to_reporting_cell|"
+    r"matrix_size|quadrants_over|unreported_boxes|unsupported_stage1|not|unchanged|products|operand|realisation|"
+    r"replicate|search|pattern|role|family_role|own_vertex|own_vertex_left_out|offset_from|matched_on|candidate|"
+    r"identity|key|name|truth|family|group|band|side|axis|step|arm_2d|scope|rule|route|thresholds|estimator|"
+    r"percentile_method|gaussian_reference|uniform|finite_mc|n_eff|paper_uses|context_5a_5b|context_dr_pair|"
+    r"guide_item_5|check_meta|seed_spread_flag_rule|v1_source|comparison|prediction|reported|removed|shape_only|"
+    r"gibuu|gibuu_carbon_s43|gibuu_ch|nuwro_carbon_R2|nuwro_carbon_s43|nuwro_ch|f1|r04|sens|17|3|due|ended|"
+    r"simulation_only)$")
 IMPROVES = {("agree below a correlation", "agree"), ("more flagged", "unchanged"),
-            ("a fake-data conclusion changes under SM", "the fake-data conclusions survive SM")}
-# Control D events the director ruled on: each names the ruling. Any other event makes this tool exit nonzero.
+            ("a fake-data conclusion changes under SM", "the fake-data conclusions survive SM"),
+            ("does not clear at these truths", "clears at these truths")}
+
+
+CLASSES = (("flag_bool", FLAG_BOOL, bool), ("agree_bool", AGREE_BOOL, bool), ("flag_list", FLAG_LIST, list),
+           ("valid_list", VALID_LIST, list), ("flag_count", FLAG_COUNT, int), ("outcome", OUTCOME_STR, str))
+
+
+def leaf_class(n, value=None, path=""):
+    """The leaf's class; a name in several classes (listed: a bool per truth, a list per arm) is resolved by the type of
+    its value. Text under a labels record is descriptive."""
+    if "/labels/" in path:
+        return "descriptive"
+    hits = [(name, t) for name, cls, t in CLASSES if n in cls]
+    if len(hits) > 1 and value is not None:
+        typed = [name for name, t in hits if isinstance(value, t) and not (t is int and isinstance(value, bool))]
+        if typed:
+            return typed[0]
+    if hits:
+        return hits[0][0]
+    return "descriptive" if DESCRIPTIVE.match(n) else "structural"
+
+
+def _q3_shift(o, v, path):
+    """The PR-3 ruling's premise: B0's own q3 flag clears, and q3 is flagged at this level under both OLD and V_F."""
+    lv = path.split("/")[3]
+    b0, at = "B0/q3/s991000", f"{lv}/q3/s991000"
+    return (o["table"][b0]["grade"]["flagged"] and not v["table"][b0]["grade"]["flagged"]
+            and o["table"][at]["grade"]["flagged"] and v["table"][at]["grade"]["flagged"])
+
+
+def _qd_knife_edge(o, v, path):
+    """The QD ruling's premise: rho* was at or above 1 and stays within 1e-3 of it (the values ruled on)."""
+    a = o["quadrants"]["QD"]["2D"]["printed_only_without_C_PL5D"]["rho_star"]
+    b = v["quadrants"]["QD"]["2D"]["printed_only_without_C_PL5D"]["rho_star"]
+    return a >= 1.0 and 0.999 < b < 1.0
+
+
+# Control D events the director ruled on: each names the ruling and checks its premise. Any other event makes this tool
+# exit nonzero.
 RULINGS = [
-    {"readout": "prr", "path": re.compile(r"^/readings/PR-3/(C25|O2)/new_flags$"), "gained": ["q3"],
+    {"readout": "prr", "path": re.compile(r"^/readings/PR-3/(C25|O2)/new_flags$"), "gained": ["q3"], "premise": _q3_shift,
      "ruling": "the director, 2026-11-26: a reference shift, not a new flag (q3 is flagged at this level under both OLD "
                "and V_F; it appears new only because B0's own q3 flag clears under V_F)"},
     {"readout": r"(cr|gover)", "path": re.compile(r"^/quadrants/QD/2D/printed_only_without_C_PL5D/outcome$"),
-     "old": "agree", "new": "agree below a correlation",
+     "old": "agree", "new": "agree below a correlation", "premise": _qd_knife_edge,
      "ruling": "the director, 2026-11-26: a named, disclosed exception to control D; a weakened printed agreement label "
                "(rho* crosses 1, the knife edge); no outcome reads this sub-record; the note's printed label follows "
                "the V_F value; Joseph sees it with the readings"},
 ]
-SWEPT_SKIP = re.compile(r"(^|/)(vf_patch|argv|inputs_sha256|files_sha256|env|controls)(/|$)")
+SWEPT_SKIP = re.compile(r"(^|/)(vf_patch|argv|inputs_sha256|files_sha256)(/|$)")
 
 
 def keyed(x):
@@ -323,40 +386,40 @@ def d_event(path, a, b):
     """The control D reason this change is a weakening, or None. An absent leaf (a record that appears or vanishes, as a
     truth's trigger record does when it is listed or unlisted) reads as unflagged: False, [] or 0."""
     n = leaf_name(path)
+    c = leaf_class(n, a if a is not None else b, path)
+    if c == "descriptive":
+        return None
+    if c == "structural":
+        return f"an unclassified field '{n}' changes (classify it or rule on it)"
     if a is None or b is None:
-        proto = b if a is None else a
-        empty = False if isinstance(proto, bool) else [] if isinstance(proto, list) else 0 if isinstance(proto, int) \
-            else None
-        if empty is None:
-            return "a decision-rule field appears or vanishes" if RULE_LEAF.match(n) else None
+        if c == "outcome":
+            return "an outcome field appears or vanishes"
+        empty = {"flag_bool": False, "agree_bool": False, "flag_list": [], "valid_list": [], "flag_count": 0}[c]
         a, b = (empty, b) if a is None else (a, empty)
-    if isinstance(a, bool) and isinstance(b, bool):
-        if FLAG_UP.match(n) and not a and b:
-            return "a flag appears"
-        if AGREE_UP.match(n) and a and not b:
-            return "an agreement falls"
-    elif isinstance(a, list) and isinstance(b, list):
-        if LIST_FLAGS.match(n) and set(map(str, b)) - set(map(str, a)):
-            return f"gains {sorted(set(map(str, b)) - set(map(str, a)))}"
-        if n == "valid" and set(map(str, a)) - set(map(str, b)):
-            return f"loses valid {sorted(set(map(str, a)) - set(map(str, b)))}"
-    elif isinstance(a, int) and isinstance(b, int) and COUNT_FLAGS.match(n) and b > a:
-        return "a flag count rises"
-    elif isinstance(a, str) and isinstance(b, str) and RULE_LEAF.match(n) and (a, b) not in IMPROVES:
-        return "an outcome string changes, not toward agreement"
-    elif a != b and (a is None or b is None) and RULE_LEAF.match(n):
-        return "a decision-rule field appears or vanishes"
-    return None
+    if c == "flag_bool" and isinstance(a, bool) and isinstance(b, bool):
+        return "a flag appears" if (not a and b) else None
+    if c == "agree_bool" and isinstance(a, bool) and isinstance(b, bool):
+        return "an agreement falls" if (a and not b) else None
+    if c in ("flag_list", "valid_list") and isinstance(a, list) and isinstance(b, list):
+        gained, lost = set(map(str, b)) - set(map(str, a)), set(map(str, a)) - set(map(str, b))
+        if c == "flag_list":
+            return f"gains {sorted(gained)}" if gained else None
+        return f"loses {sorted(lost)}" if lost else None
+    if c in ("flag_count", "flag_list") and isinstance(a, int) and isinstance(b, int) and not isinstance(a, bool):
+        return "a flag count rises" if b > a else None
+    if c == "outcome" and isinstance(a, str) and isinstance(b, str):
+        return None if (a, b) in IMPROVES else "an outcome string changes, not toward agreement"
+    return f"'{n}' changes type or form ({type(a).__name__} -> {type(b).__name__})"
 
 
-def ruling_for(readout, path, a, b):
+def ruling_for(readout, path, a, b, o=None, v=None):
     for r in RULINGS:
         if not (re.fullmatch(r["readout"], readout) and r["path"].match(path)):
             continue
-        if "gained" in r and isinstance(a, list) and isinstance(b, list) \
-                and sorted(set(map(str, b)) - set(map(str, a))) == r["gained"]:
-            return r["ruling"]
-        if r.get("old") == a and r.get("new") == b:
+        hit = ("gained" in r and isinstance(a, list) and isinstance(b, list)
+               and sorted(set(map(str, b)) - set(map(str, a))) == r["gained"]) or \
+              ("old" in r and r["old"] == a and r["new"] == b)
+        if hit and (o is None or r["premise"](o, v, path)):
             return r["ruling"]
     return None
 
@@ -385,10 +448,11 @@ def sweep():
             x, y = fa.get(path), fb.get(path)
             if x == y:
                 continue
-            rule = bool(RULE_LEAF.match(leaf_name(path)))
-            ev = d_event(path, x, y) if rule else None
-            rows.append({"readout": label, "path": path, "old": x, "vf": y, "rule": rule, "control_D": ev,
-                         "ruling": ruling_for(label.replace("[nopl]", ""), path, x, y) if ev else None})
+            cls = leaf_class(leaf_name(path), x if x is not None else y, path)
+            ev = d_event(path, x, y)
+            rows.append({"readout": label, "path": path, "old": x, "vf": y, "class": cls, "rule": cls != "descriptive",
+                         "control_D": ev,
+                         "ruling": ruling_for(label.replace("[nopl]", ""), path, x, y, a, b) if ev else None})
     return rows
 
 
