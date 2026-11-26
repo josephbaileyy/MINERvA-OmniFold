@@ -495,11 +495,11 @@ HIGHPZ_CLAIMS = (
      "A recoil-energy correction independent of the muon does not reproduce this rise.",
      lambda d: "primary: H_A (A1) contradicts" in d["atxt"] and "swap: H_A (A1) contradicts" in d["atxt"]),
     # C was fitted at reco p_par 20-40 and transferred upward. Its declaration leaves open a change where that fit has
-    # no lever, such as one confined to true >= 60 (DECLARATION.md "Contradicts", README.md "What follows").
+    # no lever, such as one confined to true muon p_par >= 60 (DECLARATION.md "Contradicts", README.md "What follows").
     ("high p_par: C (a smooth true-E_nu rate change fitted at reco 20-40) does not, and a change where that fit has no "
      "lever stays open",
      r"Nor does a smooth dependence of the event rate on neutrino energy fitted at lower $p_\parallel$, although a "
-     r"change confined to the highest energies remains possible.",
+     r"change confined to the highest muon momenta remains possible.",
      lambda d: (d["testc"]["reading"] == "contradicts"
                 and "Reading for H_C (primary form, both directions): contradicts" in d["ctxt"]
                 and "The fit sample is the training playlists, reco p∥ 20–40" in d["cdecl"]
@@ -920,7 +920,8 @@ def self_test() -> int:
                          ("muon does not reproduce this rise", "muon reproduces this rise"),
                          ("Nor does a smooth dependence", "So does a smooth dependence"),
                          ("fitted at lower $p_\\parallel$", "fitted at higher $p_\\parallel$"),
-                         ("highest energies remains possible", "highest energies is excluded")):
+                         ("highest muon momenta remains possible", "highest muon momenta is excluded"),
+                         ("confined to the highest muon momenta", "confined to the highest energies")):
         t = text("sec3_twod.tex", base)
         if t.count(old_s) != 1:
             print(f"  NOT FOUND   high p_par mutation {old_s!r}"); ok = False; continue
@@ -953,6 +954,7 @@ def self_test() -> int:
     plant_hp("test C reads inconclusive", lambda d: d["testc"].__setitem__("reading", "inconclusive"))
     plant_hp("test C fitted at 20-60", lambda d: d.__setitem__("cdecl", d["cdecl"].replace("reco p∥ 20–40, negative", "reco p∥ 20–60, negative")))
     plant_hp("test C declaration leaves no region open", lambda d: d.__setitem__("cdecl", d["cdecl"].replace("where the 20–40 fit has no lever", "anywhere")))
+    plant_hp("test C's open region not in muon p_par", lambda d: d.__setitem__("cdecl", d["cdecl"].replace("confined to true ≥60", "confined to true Eν ≥ 60 GeV")))
     plant_hp("test C README leaves no region open", lambda d: d.__setitem__("creadme", d["creadme"].replace("or that are confined to where 20–40 has no lever", "and nothing else")))
     plant_hp("E_vis defined without E_avail", lambda d: d.__setitem__("evis_readme", d["evis_readme"].replace("The fit variable is E_vis = reco p∥ + E_avail", "The fit variable is E_vis = reco p∥")))
     plant_hp("a 60-80 E_vis cell that falls", lambda d: d.__setitem__("evis", d["evis"].replace("1.78          2.12", "1.78          1.12")))
