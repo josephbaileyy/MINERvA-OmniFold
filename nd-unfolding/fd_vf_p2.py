@@ -610,7 +610,8 @@ def p2_e2sens(vf):
                                                         "achieved_max": w_chi2, "why": "amendment A4"},
                                                "sigma": {"rtol": RTOL_EXACT, "achieved_max": w_sig}},
                        "note": "controls and env are the committed run's; the V_F values are this recompute's"}
-    return out
+    head = text[:text.index("\n{")]             # the receipt's form, as make_values_fived16.e2_values parses it
+    return {"_text": head + "\n" + json.dumps(out, indent=1) + "\n", "vf_patch": out["vf_patch"]}
 
 
 # V-ATLAS: valid_region.readings, imported unchanged, on its six inputs with I1 = Phase 1's V_F with-block F0b and I4 =
@@ -958,6 +959,10 @@ def cmd_p2(a) -> int:
             results[name] = P2[name](vf)
     out.mkdir(parents=True)
     for name, r in results.items():
+        if "_text" in r:                            # a text receipt keeps its form (e2sens)
+            (out / f"{name}.vf.txt").write_text(r["_text"])
+            print(f"[p2] {name}: {out / (name + '.vf.txt')}", flush=True)
+            continue
         r["vf_patch"]["vf_data_product_sha256"] = vh
         (out / f"{name}.vf.json").write_text(json.dumps(r, indent=1) + "\n")
         print(f"[p2] {name}: {out / (name + '.vf.json')}", flush=True)
@@ -1015,18 +1020,35 @@ def cmd_fetch_verify(a) -> int:
     """Extracts the fetched tar into a new directory, refusing any member not in the list, a link, an absolute or ..
     path, a size or a sha256 that is not the list's, or a listed file that is missing."""
     import tarfile
-    rows = [r.split("\t") for r in a.list.read_bytes().decode().split("\n")[1:] if r]
+    expect = "\t".join(HEADER) + "\n" + "".join("\t".join(r) + "\n" for r in fetch_rows())
+    if a.list.read_bytes() != expect.encode():
+        raise Stop("the list is not fetch-list's output, byte for byte")
+    rows = [r.split("\t") for r in expect.split("\n")[1:] if r]
     want = {r[0][len(PS):]: (r[1], int(r[3])) for r in rows}
     if a.dest.exists():
         raise Stop(f"{a.dest} exists")
     raw = Path(a.tar).read_bytes()
     a.dest.mkdir(parents=True)
     seen, end = set(), 0
+
+    def zero(a_, b_, what):
+        if raw[a_:b_].count(0) != b_ - a_:
+            raise Stop(f"tar: nonzero padding {what}")
     with tarfile.open(fileobj=io.BytesIO(raw), mode="r:") as tf:
         for m in tf:
+            # the whole layout: each member starts where the previous one ended (tarfile's offset is the first header
+            # of the member, a PAX extension's if it has one); a PAX extension is one 'x' header, its data and zero
+            # padding, ending exactly at the file's own header
+            if m.offset != end:
+                raise Stop(f"tar member {m.name!r}: unexpected bytes before it")
+            if m.offset_data - 512 != m.offset:
+                h = tarfile.TarInfo.frombuf(raw[m.offset:m.offset + 512], tarfile.ENCODING, "surrogateescape")
+                pend = m.offset + 512 + -(-h.size // 512) * 512
+                if h.type != tarfile.XHDTYPE or pend != m.offset_data - 512:
+                    raise Stop(f"tar member {m.name!r}: its extension is not one PAX record")
+                zero(m.offset + 512 + h.size, pend, f"after the PAX extension of {m.name!r}")
             end = m.offset_data + -(-m.size // 512) * 512
-            if raw[m.offset_data + m.size:end].count(0) != end - m.offset_data - m.size:
-                raise Stop(f"tar member {m.name!r}: nonzero padding after its data")
+            zero(m.offset_data + m.size, end, f"after the data of {m.name!r}")
             n = m.name
             if not m.isfile() or n.startswith("/") or ".." in n.split("/") or n not in want or n in seen:
                 raise Stop(f"tar member {n!r}: not a listed regular file, or repeated")

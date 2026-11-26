@@ -120,7 +120,7 @@ class Reader(unittest.TestCase):
         tar, lst, dest = self.f.t / "x.tar", self.f.t / "l.tsv", self.f.t / "dest"
         tar.write_bytes(r.stdout)
         lst.write_text(self.f.list_text())
-        with mock.patch.object(P, "PS", f"{self.f.base}/"):
+        with mock.patch.object(P, "PS", f"{self.f.base}/"), mock.patch.object(P, "fetch_rows", self.f.rows):
             self.assertEqual(run(["fetch-verify", "--tar", str(tar), "--list", str(lst), "--dest", str(dest)]), 0)
         for rel, q in self.f.files.items():
             self.assertEqual((dest / rel).read_bytes(), q.read_bytes())
@@ -153,10 +153,11 @@ class Reader(unittest.TestCase):
         rel = next(iter(self.f.files))
         q = self.f.files[rel]
         d = q.parent
+        lst = self.f.list_text()                          # built before the link exists: no read through it
         real = d.with_name(d.name + "-real")
         d.rename(real)
         d.symlink_to(real)
-        r = self.f.read()
+        r = subprocess.run([sys.executable, "-I", str(self.f.reader)], input=lst.encode(), capture_output=True)
         self.assertEqual(r.returncode, 9, r.stderr)
         self.assertIn(b"not a plain directory", r.stderr)
         d.unlink()
@@ -210,7 +211,8 @@ class Verify(unittest.TestCase):
         self.tar.write_bytes(buf.getvalue())
 
     def verify(self):
-        with mock.patch.object(P, "PS", f"{self.f.base}/"), self.assertRaises(P.Stop):
+        with mock.patch.object(P, "PS", f"{self.f.base}/"), mock.patch.object(P, "fetch_rows", self.f.rows), \
+                self.assertRaises(P.Stop):
             run(["fetch-verify", "--tar", str(self.tar), "--list", str(self.lst), "--dest", str(self.dest)])
         shutil.rmtree(self.dest, ignore_errors=True)
 
@@ -242,6 +244,42 @@ class Verify(unittest.TestCase):
             self.tar.write_bytes(bad)
             self.verify()
 
+    def test_a_list_that_is_not_the_bound_one_refuses(self):
+        self.write_tar(self.good())
+        good = self.lst.read_bytes()
+        for bad in (good.replace(b"\n", b"\r\n"), good + good.split(b"\n", 1)[1]):
+            self.lst.write_bytes(bad)
+            self.verify()
+        self.lst.write_bytes(good)
+
+    def test_nonzero_pax_extension_padding_refuses(self):
+        long = "d" + "x" * 120 + "/f.bin"                 # longer than 100 bytes: a PAX extension record
+        q = self.f.base / long
+        q.parent.mkdir(parents=True)
+        q.write_bytes(b"payload")
+        self.f.files[long] = q
+        self.lst.write_text(self.f.list_text())
+        buf = io.BytesIO()
+        with tarfile.open(fileobj=buf, mode="w", format=tarfile.PAX_FORMAT) as t:
+            for rel, qq in self.f.files.items():
+                ti = tarfile.TarInfo(rel)
+                ti.size = qq.stat().st_size
+                t.addfile(ti, io.BytesIO(qq.read_bytes()))
+        raw = bytearray(buf.getvalue())
+        self.tar.write_bytes(bytes(raw))
+        with mock.patch.object(P, "PS", f"{self.f.base}/"), mock.patch.object(P, "fetch_rows", self.f.rows):
+            self.assertEqual(run(["fetch-verify", "--tar", str(self.tar), "--list", str(self.lst), "--dest",
+                                  str(self.dest)]), 0)
+        shutil.rmtree(self.dest)
+        with tarfile.open(fileobj=io.BytesIO(bytes(raw)), mode="r:") as tf:
+            m = next(x for x in tf if x.name == long)
+        pos = m.offset                                    # the member's first header: its PAX extension
+        self.assertEqual(raw[pos + 156:pos + 157], b"x")
+        size = tarfile.TarInfo.frombuf(bytes(raw[pos:pos + 512]), tarfile.ENCODING, "surrogateescape").size
+        raw[pos + 512 + size + 1] = 1
+        self.tar.write_bytes(bytes(raw))
+        self.verify()
+
     def test_nonzero_padding_after_a_member_refuses(self):
         self.write_tar(self.good())
         raw = bytearray(self.tar.read_bytes())
@@ -253,7 +291,7 @@ class Verify(unittest.TestCase):
 
     def test_the_good_tar_is_accepted(self):
         self.write_tar(self.good())
-        with mock.patch.object(P, "PS", f"{self.f.base}/"):
+        with mock.patch.object(P, "PS", f"{self.f.base}/"), mock.patch.object(P, "fetch_rows", self.f.rows):
             self.assertEqual(run(["fetch-verify", "--tar", str(self.tar), "--list", str(self.lst), "--dest",
                                   str(self.dest)]), 0)
 
@@ -359,6 +397,9 @@ class Recompute(unittest.TestCase):
         with mock.patch("sys.stdout"):
             assert run(["p2", "--out-dir", str(cls.t / "out")]) == 0
         cls.out = {p.stem.split(".")[0]: json.loads(p.read_text()) for p in (cls.t / "out").glob("*.vf.json")}
+        for q in (cls.t / "out").glob("*.vf.txt"):
+            txt = q.read_text()
+            cls.out[q.stem.split(".")[0]] = json.loads(txt[txt.index("\n{") + 1:])
 
     @classmethod
     def tearDownClass(cls):
