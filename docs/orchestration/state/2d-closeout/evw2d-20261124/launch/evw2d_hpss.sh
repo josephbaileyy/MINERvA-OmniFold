@@ -18,7 +18,8 @@
 # against the pins, the six names checked again as regular files, and its manifest and marker compared with the
 # snapshot, and `htar -tf` of the part archive must list every pinned name. Only when every check holds are the index
 # and then the archive renamed (hsi mv) to the final names, so the final .tar never appears without its index; then both
-# final names must list, or both are renamed back to the part name. Otherwise the part names stay (or whichever names
+# final names must list and the final pair read back (htar -tf), or each is renamed back to the part name and the
+# directory listed. Otherwise the part names stay (or whichever names
 # the log reports), for the director. The retrieved copy
 # is removed file by file, by the pinned names only, then its directories by rmdir (no glob, no rm -r). Nothing on
 # scratch is removed and nothing is written on CFS. Receipts in $LANE/hpss, tarred to $LANE/hpss.tar.gz (written
@@ -46,6 +47,9 @@ export LC_ALL=C
 bail() { echo "STOP (nothing archived): $*"; exit 9; }
 for v in "$LANE" "$EVW_SHA" "$CFG_SHA" "$BOUND" "$DONE_SHA" "$JOBID"; do case "$v" in *__*) bail "a pin is not filled in";; esac; done
 case "$R" in evw2d-20[0-9][0-9][0-9][0-9][0-9][0-9]) ;; *) bail "the lane root $LANE is not <dir>/evw2d-<yyyymmdd>";; esac
+hex64() { case "$1" in *[!0-9a-f]*|"") return 1;; esac; [ ${#1} -eq 64 ]; }
+for v in "$EVW_SHA" "$CFG_SHA" "$BOUND" "$DONE_SHA"; do hex64 "$v" || bail "a digest pin is not 64 hex: '$v'"; done
+case "$JOBID" in *[!0-9]*|"") bail "the job pin is not a number: '$JOBID'";; esac
 for d in "$LANE" "$E"; do
   [ -d "$d" ] && [ ! -L "$d" ] && [ "$(cd "$d" && pwd -P)" = "$d" ] || bail "$d is not a real directory"
 done
@@ -167,13 +171,17 @@ if [ "$bad" -eq 0 ]; then
     echo "FAILED: the archive rename; the index is at ${TAR}.idx and the archive at $TARP"; bad=1
   else
     hsi -q "ls -l $TAR ${TAR}.idx" > "$O/hsi-ls-after.txt" 2>&1; la=$?; cat "$O/hsi-ls-after.txt"
+    htar -tf "$TAR" < /dev/null > "$O/htar-tf-final.log" 2>&1; tf=$?; echo "htar -tf (final) rc=$tf"
+    fl=0; while IFS= read -r n; do awk -v n="$n" '$NF == n { f = 1 } END { exit !f }' "$O/htar-tf-final.log" && fl=$(( fl + 1 )); done < "$O/htar_files.txt"
+    echo "the final archive lists $fl of $nf pinned names"
     if [ "$la" -eq 0 ] && grep -Eq "(^|[[:space:]/])$R\.tar\$" "$O/hsi-ls-after.txt" \
-       && grep -Eq "(^|[[:space:]/])$R\.tar\.idx\$" "$O/hsi-ls-after.txt"; then
+       && grep -Eq "(^|[[:space:]/])$R\.tar\.idx\$" "$O/hsi-ls-after.txt" && [ "$tf" -eq 0 ] && [ "$fl" -eq "$nf" ]; then
       echo "renamed to $TAR"
     else
-      echo "FAILED: the final names do not both list; renaming both back to the part name"; bad=1
-      hsi -q "mv $TAR $TARP" >> "$O/hsi-mv.log" 2>&1 && hsi -q "mv ${TAR}.idx ${TARP}.idx" >> "$O/hsi-mv.log" 2>&1 \
-        && echo "renamed back to $TARP" || echo "FAILED: the rename back (see hsi-mv.log)"
+      echo "FAILED: the final pair does not list and read back; renaming each back to the part name"; bad=1
+      hsi -q "mv $TAR $TARP" >> "$O/hsi-mv.log" 2>&1; ra=$?; echo "archive rename back rc=$ra"
+      hsi -q "mv ${TAR}.idx ${TARP}.idx" >> "$O/hsi-mv.log" 2>&1; ri=$?; echo "index rename back rc=$ri"
+      hsi -q "ls -l $H" > "$O/hsi-ls-end.txt" 2>&1; echo "listing of $H after the rename back (rc $?):"; cat "$O/hsi-ls-end.txt"
     fi
   fi
 else

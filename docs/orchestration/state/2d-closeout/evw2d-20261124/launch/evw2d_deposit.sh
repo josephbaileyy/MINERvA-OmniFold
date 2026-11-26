@@ -41,6 +41,12 @@ SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20 -o IdentitiesOnly
 for v in "$LANE" "$EVW_SHA" "$CFG_SHA" "$BOUND" "$DONE_SHA" "$JOBID" "$HPSS_SHA"; do
   case "$v" in *__*) echo "STOP: a pin is not filled in"; exit 9;; esac
 done
+hex64() { case "$1" in *[!0-9a-f]*|"") return 1;; esac; [ ${#1} -eq 64 ]; }
+for v in "$EVW_SHA" "$CFG_SHA" "$BOUND" "$DONE_SHA" "$HPSS_SHA"; do
+  hex64 "$v" || { echo "STOP: a digest pin is not 64 hex: '$v'"; exit 9; }
+done
+case "$JOBID" in *[!0-9]*|"") echo "STOP: the job pin is not a number: '$JOBID'"; exit 9;; esac
+case "${LANE##*/}" in evw2d-20[0-9][0-9][0-9][0-9][0-9][0-9]) ;; *) echo "STOP: the lane root pin '$LANE'"; exit 9;; esac
 cert_ok() {   # cert_ok <seconds>: ssh-keygen succeeds; the window "Valid: from A to B" (UTC) has begun and lasts that long
   local out from to b e now
   out=$(TZ=UTC ssh-keygen -L -f "$CERT" 2>&1) || { echo "STOP: ssh-keygen -L failed on $CERT"; return 1; }

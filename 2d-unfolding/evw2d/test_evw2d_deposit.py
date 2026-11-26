@@ -108,6 +108,7 @@ def hpss(tmp_path):
                    '     if [ -n "$HTAR_LINK" ]; then x=$(grep xsec.root "$L"); cp "$x" "$x.copy"; rm "$x"; ln -s "${x##*/}.copy" "$x"; fi\n'
                    '     exit 0;;\n'
                    '  *" -tf "*) [ -n "$HTAR_TF_RC" ] && exit "$HTAR_TF_RC"; [ -f "$(map "$T").idx" ] || exit 72\n'
+                   '     [ -n "$HTAR_TF_FINAL_RC" ] && [ "${T%.part}" = "$T" ] && exit "$HTAR_TF_FINAL_RC"\n'
                    '     tar tf "$(map "$T")" | sed "s/^/HTAR: -rw------- u\\/g 1 2026-11-26 00:45  /"; exit 0;;\n'
                    '  *" -xf "*) tar xf "$(map "$T")" || exit 1\n'
                    '     [ -n "$HTAR_CORRUPT" ] && printf x >> "$(find . -name xsec.root)"\n'
@@ -296,11 +297,21 @@ def test_hpss_never_renames_an_archive_that_does_not_read_back(hpss):
     assert not Path(f"{hpss['tar']}.idx").exists()
 
 
-def test_hpss_renames_both_back_when_the_final_names_do_not_list(hpss):
-    r = hpss["run"](HSI_LS_AFTER_RC="64")
+@pytest.mark.parametrize("env", [{"HSI_LS_AFTER_RC": "64"}, {"HTAR_TF_FINAL_RC": "1"}])
+def test_hpss_renames_each_back_when_the_final_pair_does_not_list_and_read_back(hpss, env):
+    r = hpss["run"](**env)
     log = _log(hpss)
-    assert r.returncode == 1 and "do not both list" in log and "renamed back to" in log, log
+    assert r.returncode == 1 and "does not list and read back" in log and "renamed to" not in log, log
+    assert "archive rename back rc=0" in log and "index rename back rc=0" in log and "after the rename back" in log
     assert hpss["part"].is_file() and Path(f"{hpss['part']}.idx").is_file() and not hpss["tar"].exists()
+    assert not Path(f"{hpss['tar']}.idx").exists()
+
+
+@pytest.mark.parametrize("line,value", [("JOBID", "62022231x"), ("BOUND", "abc"), ("DONE_SHA", "G" * 64)])
+def test_hpss_refuses_a_malformed_pin(hpss, line, value):
+    r = hpss["run"](edit=lambda t: re.sub(rf"^{line}=.*$", f"{line}={value}", t, count=1, flags=re.M))
+    assert r.returncode == 9 and ("not 64 hex" in r.stdout or "not a number" in r.stdout), r.stdout
+    assert not (hpss["lane"] / "hpss").exists()
 
 
 def test_hpss_fails_when_a_product_becomes_a_link_after_the_archive(hpss):
@@ -606,6 +617,17 @@ def test_fetch_products_uses_the_directory_it_checked(deposit, home_dest):
     assert not any((home_dest / "x").iterdir()) and not any((deposit["tmp"] / "x").iterdir())
 
 
+@pytest.mark.parametrize("line,value", [("JOBID", "62022231 "), ("HPSS_SHA", "a" * 63), ("EVW_SHA", "z" * 64)])
+def test_deposit_refuses_a_malformed_pin(deposit, line, value):
+    p = deposit["ld"] / "evw2d_deposit.sh"
+    p.write_text(re.sub(rf"^{line}=.*$", f"{line}='{value}'", p.read_text(), count=1, flags=re.M))
+    d = deposit["tmp"] / "s"
+    d.mkdir()
+    r = deposit["run"]("fetch", d)
+    assert r.returncode == 9 and ("not 64 hex" in r.stdout or "not a number" in r.stdout), r.stdout
+    assert not (deposit["tmp"] / "ssh.calls").exists()
+
+
 def test_deposit_refuses_unfilled_pins(tmp_path):
     d = Path(os.path.realpath(tmp_path)) / "s"
     d.mkdir()
@@ -698,6 +720,19 @@ def test_fill_deposit_pins_compares_working_bytes_even_when_git_assumes_them_unc
     (top / "2d-unfolding/evw2d/evw2d.py").write_text("x")
     r = subprocess.run(["bash", str(ld / "fill_deposit_pins.sh"), RD], capture_output=True, text=True)
     assert r.returncode != 0 and "differs from HEAD" in r.stdout and not (ld / "bound-deposit").exists()
+
+
+def test_fill_deposit_pins_refuses_a_working_tree_link_to_identical_bytes(tmp_path):
+    tmp = Path(os.path.realpath(tmp_path))
+    top = _fill_tree(tmp)
+    ld = top / LAUNCH.relative_to(REPO)
+    w = top / "2d-unfolding/evw2d/evw2d.py"
+    shutil.copy(w, top / "evw2d-copy.py")
+    w.unlink()
+    w.symlink_to(top / "evw2d-copy.py")
+    r = subprocess.run(["bash", str(ld / "fill_deposit_pins.sh"), RD], capture_output=True, text=True)
+    assert r.returncode != 0 and "not a regular file in the working tree" in r.stdout
+    assert not (ld / "bound-deposit").exists()
 
 
 def test_fill_deposit_pins_refuses_a_marker_that_names_another_manifest(tmp_path):

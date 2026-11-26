@@ -36,6 +36,7 @@ for f in post/out/SHA256SUMS post/out/evw2d.done post/logs/evw2d.jobid post/acce
 done
 for f in "$REL/evw2d_hpss.sh" "$REL/evw2d_deposit.sh" 2d-unfolding/evw2d/evw2d.py; do
   h=$(hblob "$f") || exit 2
+  [ -f "$TOP/$f" ] && [ ! -L "$TOP/$f" ] || { echo "STOP: $f is not a regular file in the working tree"; exit 2; }
   [ "$(shasum -a 256 < "$TOP/$f" | cut -d' ' -f1)" = "$h" ] || { echo "STOP: $f differs from HEAD"; exit 2; }
 done
 BOUND=$(hblob "$RD/post/out/SHA256SUMS")

@@ -1150,6 +1150,9 @@ docs/orchestration/state/2d-closeout/evw2d-20261124/launch/receipts/deposit/read
 docs/orchestration/state/2d-closeout/evw2d-20261124/launch/receipts/deposit/reads/r1c/codex-school/receipt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/launch/receipts/deposit/reads/r1c/codex-school/report.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/launch/receipts/deposit/reads/r1c/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/evw2d-20261124/launch/receipts/deposit/reads/r1d/codex-school/receipt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/evw2d-20261124/launch/receipts/deposit/reads/r1d/codex-school/report.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/evw2d-20261124/launch/receipts/deposit/reads/r1d/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/launch/receipts/deposit/tests.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/launch/receipts/launch_mutation.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/launch/receipts/mutation.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
