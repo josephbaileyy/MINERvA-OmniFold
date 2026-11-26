@@ -1,0 +1,6 @@
+- **BLOCKING** [fetch_vfp2_remote.py:77](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/p2read/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/p2/fetch_vfp2_remote.py:77) — Pre-flight follows a symlinked `BASE` while inspecting its children, before the existing guard rejects it. A local probe confirmed the traversal. It can update the symlink’s atime.
+- **OK** — The fetch list drops exactly the NuE row and checks the local copy’s full SHA-256. The xk replay remaps that exact path, logs the digest, and retains K’s own pin check.
+- **OK** — Both receipts regenerate byte for byte. The list contains 402 files totaling 1,595,625,533 bytes.
+- **OK** — All 27 requested tests passed on Python 3.12 using disposable Git metadata. Python 3.14 errored in the unchanged, out-of-scope malformed-PAX fixture at `nd-unfolding/tests/test_fd_vf_p2.py:338`.
+
+VERDICT: NO-GO

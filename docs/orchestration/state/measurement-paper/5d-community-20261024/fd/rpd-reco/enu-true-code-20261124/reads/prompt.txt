@@ -1,0 +1,15 @@
+READ-ONLY AUDIT. Do not modify, create or delete any file. Never write to /Users/josephbailey/local-research/MINERvA-OmniFold. No network. Report to stdout only.
+
+Under /Users/josephbailey/codex-reports/note-measurement/reads/rpd-code1308-aafa9e6e/inputs:
+- new/ is PR #1308's code at head aafa9e6e: fd_rpd_reco.py (12f68102), fd_rpd_reco_custody.py (6428dead), tests/test_fd_rpd_reco.py (eee5ae4c), the mutation harness fd_rpd_reco_mutation.py (8dfdeaf1), and the unchanged flux wrapper fd_rpd_reco_flux_connect.sh. old/ is the same files on main before the change (fd_rpd_reco.py 7302cc1d is the bound code). code.diff is old -> new.
+- receipt/ is the PR's receipt: README.md (what changed), tests.txt (386 passed), trace.txt (every added statement executed), mutation.txt (281/281 killed), fence-mutation.txt.
+- docs/FD-RPD-RECO-DECLARATION-AMENDMENT-1.md is the amendment this code implements (PR #1300 at a0981bf0); docs/director-conditions.txt holds the director's conditions; docs/rdx_dump.py wrote the sidecar the code reads.
+
+Check, citing file:line:
+1. Does the code implement the amendment exactly, and nothing more? true_energies (C-JOIN part 1: every clause of §4 part 1, the units band, MeV/1000, the spot rows), flux_extract (factors at true E_nu, the energy column, the join record), omnifile_spot_check (part 2: every structural rule, float32 MCgen, omnifile pins, uproot, bitwise compares), pinned_flux_factors, aggregate, energy_statistics / evaluate_energy_controls (C-E1, C-E2, C-E3 with true E_nu: are any gates changed?), and the custody prepare change.
+2. The director's placement conditions: is omnifile_spot_check the first use of flux4's output in p0(), with nothing reading the factor products or spectra before it? Are the spot rows read from flux4's record, not recomputed? Is a failure a STOP with no p0.json?
+3. Correctness: the block/offset slicing against the sidecar layout in rdx_dump.py; dtype and shape handling; memory (32.8M rows: truthx (n,5) float64 and mc_id (n,4) int64 loaded once); bitwise compares (float32 casts, MeV/1000 identical on both sides); duplicates and missing ids; read_guards and O_NOATIME staging for the sidecar and the omnifiles; anything that could misjoin rows silently.
+4. Under flux4's custody trace: does anything new open a file the trace policy would flag (uproot is used only in P0's numerical environment; true_energies in the MAT process uses numpy only)? Does custody prepare's new staging protect the sidecar original?
+5. Do the tests and mutants test what they claim? Any assertion that cannot fail, any mutant selector that could pass for the wrong reason, any receipt claim (counts, shas) not matching the files?
+
+First line exactly "VERDICT: GO" or "VERDICT: FIX" (FIX only for a blocking issue), then numbered findings tagged BLOCKING or NON-BLOCKING.

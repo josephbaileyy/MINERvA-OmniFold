@@ -1,0 +1,4 @@
+Normalization rows, width, migration probability: 16 1.23 0.03263736118658192
+Change at reco 20–40, 40–60, ≥60: [-4088.   -803.7   291.9]
+Normalization rows, width, migration probability: 17 1.24 0.03274747140195853
+Change at reco 20–40, 40–60, ≥60: [-4263.1  -846.8   301. ]

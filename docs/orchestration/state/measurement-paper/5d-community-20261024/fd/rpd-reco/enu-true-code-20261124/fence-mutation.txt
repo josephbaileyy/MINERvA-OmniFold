@@ -1,0 +1,27 @@
+# python3 -B nd-unfolding/tests/fd_rpd_reco_fence_mutation.py --out <json> (2026-11-24, laptop)
+CONTROL   unmodified copy rc=0
+KILLED    stderr-not-merged (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions
+KILLED    rc-ignored (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[named read fails-None-None-codes0-sacct failed (sacct_named)]
+KILLED    user-dropped (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions
+KILLED    named-window-dropped (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions
+KILLED    family-start-dropped (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions
+KILLED    family-end-dropped (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions
+KILLED    family-days-widened (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions
+KILLED    blank-skip-broadened (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[whitespace line-None-   \n-codes8-malformed]
+KILLED    field-count-unchecked (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[2-field row-None-61300300|cov2d-q\n-codes3-malformed]
+KILLED    jobid-unchecked (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[non-numeric JobID-None-JobID|cov2d-q|COMPLETED\n-codes5-malformed]
+KILLED    name-unchecked (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[padded job name-None-61300311| cov2d-active|RUNNING\n-codes15-malformed]
+KILLED    family-case-sensitive (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[uppercase family name-None-61300313|COV2D-UPPER|RUNNING\n-codes17-unended]
+KILLED    launch-error-uncaught (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_launch_error_keeps_the_first_read
+KILLED    jobid-unanchored (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[JobID with a digit-None-x61300302|other|COMPLETED\n-codes6-malformed]
+KILLED    state-whole-field (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions
+KILLED    family-drops-t2a (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions
+KILLED    family-check-skipped (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[cov2d RUNNING-None-61300304|cov2d-r|RUNNING\n-codes10-unended]
+KILLED    terminal-adds-pending (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[t2a PENDING-None-61300305|t2a_p|PENDING\n-codes11-unended]
+KILLED    terminal-adds-revoked (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[t2a REVOKED-None-61300307|t2a_v|REVOKED\n-codes13-unended]
+KILLED    terminal-drops-timeout (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions
+KILLED    named-count-skipped (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[named job repeated-60909280|cov2d-AR23_Tb|COMPLETED\n60911676|cov2d-AR23_Tc|FAILED\n60909280|cov2d-AR23_Tb|COMPLETED\n-None-codes19-named job]
+KILLED    named-presence-skipped (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_refuses[another job in place of a named one-60909280|cov2d-AR23_Tb|COMPLETED\n61300310|other|COMPLETED\n-None-codes21-named job]
+KILLED    named-terminal-skipped (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions
+KILLED    squeue-restored (pytest rc 1) FAILED nd-unfolding/tests/test_fd_rpd_reco.py::test_cov2d_fence_both_directions
+FENCE-MUTATION :: 24/24 killed

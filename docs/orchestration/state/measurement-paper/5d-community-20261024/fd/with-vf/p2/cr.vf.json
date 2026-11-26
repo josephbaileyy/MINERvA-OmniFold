@@ -1,0 +1,360 @@
+{
+ "schema": "fd-gencmp-overlap/1",
+ "step": "C-R (Q26)",
+ "arm_2d": "refined",
+ "result_2d": "E_R with Q_R",
+ "quadrants": {
+  "QA": {
+   "cells": [
+    "R00",
+    "R01",
+    "R02",
+    "R03"
+   ],
+   "S16": 7.991162724304507e-39,
+   "sigma16_reported": 5.69260974500458e-40,
+   "sigma16_without_C_PL5D": 5.5649447980143e-40,
+   "unreported_boxes_P5": {
+    "2": 0.0,
+    "6": 8.933142942126571e-46
+   },
+   "unreported_share_P5": 1.1178777419907999e-07,
+   "unreported_share_MnvTune": 1.08051577819826e-07,
+   "label": "includes unreported boxes at their central value, +-100%",
+   "2D": {
+    "S": 7.979906853766595e-39,
+    "sigma": 5.316975000502899e-40,
+    "d": 1.1255870537912082e-41,
+    "d_pct": 0.14105265567854186,
+    "outcome": "agree",
+    "bound_any_rho": 7.512694890033622e-41,
+    "bound_rho0": 1.557896387631654e-39,
+    "rho_star": 1.0022785869522566,
+    "z_rho0": 0.014450088757216374,
+    "primary": "the reported matrix C_total + C_resp + C_PL5D (declaration section 4)",
+    "printed_only_without_C_PL5D": {
+     "outcome": "agree",
+     "bound_any_rho": 4.959395950228011e-41,
+     "bound_rho0": 1.539335359964413e-39,
+     "rho_star": 1.00098554024677,
+     "z_rho0": 0.014624325316833234,
+     "label": "printed only, no outcome is read from it: the sixteen-cell matrix without C_PL5D against Q, which includes C_PL; not a like-for-like pair"
+    }
+   },
+   "3D": {
+    "S": 8.004564310924301e-39,
+    "d": -1.3401586619793827e-41,
+    "d_pct": -0.16742431067114927,
+    "outcome": "agree at the sigma_16 scale (descriptive)",
+    "d_over_sigma16": -0.0235420786249296,
+    "descriptive_PROJ3D": {
+     "variance": 1.7990789978053842e-79,
+     "sigma": 4.241555136745701e-40,
+     "negative_variance": false,
+     "label": "unadopted trunk projection, receiving-cells population, not paired with the 3D central value (OUTCOME-20260922 sections 4-5); descriptive only, no outcome is read from it"
+    }
+   }
+  },
+  "QB": {
+   "cells": [
+    "R04",
+    "R05",
+    "R06",
+    "R07"
+   ],
+   "S16": 6.775116961991457e-39,
+   "sigma16_reported": 3.405552432094036e-40,
+   "sigma16_without_C_PL5D": 2.962164978071701e-40,
+   "unreported_boxes_P5": {
+    "10": 0.0,
+    "14": 0.0
+   },
+   "unreported_share_P5": 0.0,
+   "unreported_share_MnvTune": 0.0,
+   "label": "includes unreported boxes at their central value, +-100%",
+   "2D": {
+    "S": 6.789868552092421e-39,
+    "sigma": 3.278576201074086e-40,
+    "d": -1.4751590100963532e-41,
+    "d_pct": -0.2172588465857328,
+    "outcome": "agree",
+    "bound_any_rho": 2.539524620399004e-41,
+    "bound_rho0": 9.454490842766942e-40,
+    "rho_star": 1.0004783869468776,
+    "z_rho0": -0.031205467002486085,
+    "primary": "the reported matrix C_total + C_resp + C_PL5D (declaration section 4)",
+    "printed_only_without_C_PL5D": {
+     "outcome": "agree",
+     "bound_any_rho": 6.328224460047702e-41,
+     "bound_rho0": 8.837077178244831e-40,
+     "rho_star": 1.004874326155548,
+     "z_rho0": -0.03338567674225837,
+     "label": "printed only, no outcome is read from it: the sixteen-cell matrix without C_PL5D against Q, which includes C_PL; not a like-for-like pair"
+    }
+   },
+   "3D": {
+    "S": 6.830842994639586e-39,
+    "d": -5.572603264812859e-41,
+    "d_pct": -0.8158002268806142,
+    "outcome": "agree at the sigma_16 scale (descriptive)",
+    "d_over_sigma16": -0.16363287237325919,
+    "descriptive_PROJ3D": {
+     "variance": 1.9523448397984346e-80,
+     "sigma": 1.3972633394598294e-40,
+     "negative_variance": false,
+     "label": "unadopted trunk projection, receiving-cells population, not paired with the 3D central value (OUTCOME-20260922 sections 4-5); descriptive only, no outcome is read from it"
+    }
+   }
+  },
+  "QC": {
+   "cells": [
+    "R08",
+    "R09",
+    "R10",
+    "R11"
+   ],
+   "S16": 6.69073173099476e-39,
+   "sigma16_reported": 3.6983605141674765e-40,
+   "sigma16_without_C_PL5D": 3.441866372020921e-40,
+   "unreported_boxes_P5": {},
+   "unreported_share_P5": 0.0,
+   "unreported_share_MnvTune": 0.0,
+   "label": "complete",
+   "2D": {
+    "S": 6.791130979018671e-39,
+    "sigma": 3.4750995007427383e-40,
+    "d": -1.00399248023911e-40,
+    "d_pct": -1.4783877432801185,
+    "outcome": "agree below a correlation",
+    "bound_any_rho": 4.465220268494764e-41,
+    "bound_rho0": 1.0149716652757465e-39,
+    "rho_star": 0.9921353852008127,
+    "z_rho0": -0.19783655339114245,
+    "primary": "the reported matrix C_total + C_resp + C_PL5D (declaration section 4)",
+    "printed_only_without_C_PL5D": {
+     "outcome": "agree below a correlation",
+     "bound_any_rho": 6.64662574436343e-42,
+     "bound_rho0": 9.782179851732615e-40,
+     "rho_star": 0.9895117720144271,
+     "z_rho0": -0.205269683333676,
+     "label": "printed only, no outcome is read from it: the sixteen-cell matrix without C_PL5D against Q, which includes C_PL; not a like-for-like pair"
+    }
+   },
+   "3D": {
+    "S": 6.741821624392943e-39,
+    "d": -5.108989339818231e-41,
+    "d_pct": -0.7578054752046759,
+    "outcome": "agree at the sigma_16 scale (descriptive)",
+    "d_over_sigma16": -0.1381420042812753,
+    "descriptive_PROJ3D": {
+     "variance": 3.734161792517832e-80,
+     "sigma": 1.932397938447936e-40,
+     "negative_variance": false,
+     "label": "unadopted trunk projection, receiving-cells population, not paired with the 3D central value (OUTCOME-20260922 sections 4-5); descriptive only, no outcome is read from it"
+    }
+   }
+  },
+  "QD": {
+   "cells": [
+    "R12",
+    "R13",
+    "R14",
+    "R15"
+   ],
+   "S16": 9.192542979856633e-39,
+   "sigma16_reported": 5.227885787751222e-40,
+   "sigma16_without_C_PL5D": 4.834144158975552e-40,
+   "unreported_boxes_P5": {},
+   "unreported_share_P5": 0.0,
+   "unreported_share_MnvTune": 0.0,
+   "label": "complete",
+   "2D": {
+    "S": 9.126475284119431e-39,
+    "sigma": 5.153270512823297e-40,
+    "d": 6.606769573720177e-41,
+    "d_pct": 0.7239125037917127,
+    "outcome": "agree below a correlation",
+    "bound_any_rho": 1.492305498558501e-41,
+    "bound_rho0": 1.4681551251568113e-39,
+    "rho_star": 0.9980780745477852,
+    "z_rho0": 0.0900009741547511,
+    "primary": "the reported matrix C_total + C_resp + C_PL5D (declaration section 4)",
+    "printed_only_without_C_PL5D": {
+     "outcome": "agree below a correlation",
+     "bound_any_rho": 6.382527076954897e-41,
+     "bound_rho0": 1.4131545807602441e-39,
+     "rho_star": 0.9998538458906719,
+     "z_rho0": 0.09350384825085291,
+     "label": "printed only, no outcome is read from it: the sixteen-cell matrix without C_PL5D against Q, which includes C_PL; not a like-for-like pair"
+    }
+   },
+   "3D": {
+    "S": 9.211348001311068e-39,
+    "d": -1.8805021454435646e-41,
+    "d_pct": -0.2041505917674491,
+    "outcome": "agree at the sigma_16 scale (descriptive)",
+    "d_over_sigma16": -0.03597060497858473,
+    "descriptive_PROJ3D": {
+     "variance": 1.1142694390392721e-79,
+     "sigma": 3.338067463427413e-40,
+     "negative_variance": false,
+     "label": "unadopted trunk projection, receiving-cells population, not paired with the 3D central value (OUTCOME-20260922 sections 4-5); descriptive only, no outcome is read from it"
+    }
+   }
+  }
+ },
+ "eavail_regions_formable": [],
+ "diagnostic_cv_over_Q_x_max_rel": 0.0,
+ "total_2d": 3.0687381668997114e-38,
+ "total_3d": 3.07885769312679e-38,
+ "rule": "agree: |d| <= 2|s16 - slow|; agree below a correlation: <= 2 sqrt(s16^2 + slow^2), rho* printed; differ otherwise (a new problem, to the director and Joseph). 3D: the sigma_16 scale only, descriptive, never a validation in either direction",
+ "inputs": {
+  "/pscratch/sd/j/josephrb/cov2d-cr-g2r-20261116/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json": {
+   "sha256": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89",
+   "pinned": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/cov2d-cr-g2r-20261116/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/block/cpl_block.npz": {
+   "sha256": "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+   "pinned": "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/cov2d-cr-g2r-20261116/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/data-product/fd_data_product_cpl.json": {
+   "sha256": "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50",
+   "pinned": "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/cov2d-cr-g2r-20261116/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json": {
+   "sha256": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+   "pinned": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz": {
+   "sha256": "e36f3b25459e068cec9dba941f7b3aea8f48c6e22c931fde7c9d315e7b1e8de2",
+   "pinned": "e36f3b25459e068cec9dba941f7b3aea8f48c6e22c931fde7c9d315e7b1e8de2",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz": {
+   "sha256": "bf7bd27873427d4b1ff9864403b895529931f113440acec3daa28479f958466c",
+   "pinned": "bf7bd27873427d4b1ff9864403b895529931f113440acec3daa28479f958466c",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root": {
+   "sha256": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef",
+   "pinned": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/cov2d-re2shapes-20261115/g2r/combination/s5_plus_playlist.npz": {
+   "sha256": "81fdd16f58a113d48870f0e42548e301545cba23b50169811ffcd2fe1e5dc8ad",
+   "pinned": "81fdd16f58a113d48870f0e42548e301545cba23b50169811ffcd2fe1e5dc8ad",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/playlist/playlist_term.npz": {
+   "sha256": "dbb067aa3c1085b2c40b89c5ace165eadb5721148d72eb1496edc14c3a5a7b1e",
+   "pinned": "dbb067aa3c1085b2c40b89c5ace165eadb5721148d72eb1496edc14c3a5a7b1e",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root": {
+   "sha256": "0dd94830821576a3b060fae2d4a20564610c535ed06046cd1eb05cd11885dd59",
+   "pinned": "0dd94830821576a3b060fae2d4a20564610c535ed06046cd1eb05cd11885dd59",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/z2m-products/PROJ3D/cov_5d_to_ptpzeavail_from_adopted_trunk.root": {
+   "sha256": "20c16e16a35a837b09d7fe39bcf6bb8ee5828d5283fc5c2f756e3a5371e1f69e",
+   "pinned": "20c16e16a35a837b09d7fe39bcf6bb8ee5828d5283fc5c2f756e3a5371e1f69e",
+   "atime_unchanged": true
+  }
+ },
+ "atime_deviations": [],
+ "code_sha256": {
+  "fd_gencmp.py": "4ebaa7cbc580a75d84ad6a95243e95fa5d301ef137ca02e6ed8a64150a148df4",
+  "fd_g_compare.py": "0a3c09cdf2e27821c488c8a0d783af1537714144cce5415c6cb226ec8096df1f",
+  "s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7",
+  "s5p_stage1_inspect.py": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71"
+ },
+ "argv": [
+  "nd-unfolding/fd_gencmp.py",
+  "overlap",
+  "--arm",
+  "refined",
+  "--inputs",
+  "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/INPUTS.sha256",
+  "--inputs",
+  "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/INPUTS.sha256",
+  "--inputs",
+  "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/cr/INPUTS-g2r.sha256",
+  "--p5",
+  "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz",
+  "--mnvtune",
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz",
+  "--cv2d",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+  "--q2d",
+  "/pscratch/sd/j/josephrb/cov2d-re2shapes-20261115/g2r/combination/s5_plus_playlist.npz",
+  "--playlist",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/playlist/playlist_term.npz",
+  "--cv3d",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root",
+  "--proj3d",
+  "/pscratch/sd/j/josephrb/z2m-products/PROJ3D/cov_5d_to_ptpzeavail_from_adopted_trunk.root",
+  "--out",
+  "/pscratch/sd/j/josephrb/cov2d-cr-g2r-20261116/g2r/overlap_refined.json"
+ ],
+ "vf_patch": {
+  "readout": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/cr/run/node/g2r/overlap_refined.json",
+  "readout_sha256": "0734cf4afa1fce4459c836f02e6362f928affac9a9f7bfcb74c76b291e80a1a0",
+  "replaced": [
+   "/quadrants/QA/sigma16_reported",
+   "/quadrants/QA/sigma16_without_C_PL5D",
+   "/quadrants/QA/2D/outcome",
+   "/quadrants/QA/2D/bound_any_rho",
+   "/quadrants/QA/2D/bound_rho0",
+   "/quadrants/QA/2D/rho_star",
+   "/quadrants/QA/2D/z_rho0",
+   "/quadrants/QA/2D/printed_only_without_C_PL5D",
+   "/quadrants/QA/3D/outcome",
+   "/quadrants/QA/3D/d_over_sigma16",
+   "/quadrants/QB/sigma16_reported",
+   "/quadrants/QB/sigma16_without_C_PL5D",
+   "/quadrants/QB/2D/outcome",
+   "/quadrants/QB/2D/bound_any_rho",
+   "/quadrants/QB/2D/bound_rho0",
+   "/quadrants/QB/2D/rho_star",
+   "/quadrants/QB/2D/z_rho0",
+   "/quadrants/QB/2D/printed_only_without_C_PL5D",
+   "/quadrants/QB/3D/outcome",
+   "/quadrants/QB/3D/d_over_sigma16",
+   "/quadrants/QC/sigma16_reported",
+   "/quadrants/QC/sigma16_without_C_PL5D",
+   "/quadrants/QC/2D/outcome",
+   "/quadrants/QC/2D/bound_any_rho",
+   "/quadrants/QC/2D/bound_rho0",
+   "/quadrants/QC/2D/rho_star",
+   "/quadrants/QC/2D/z_rho0",
+   "/quadrants/QC/2D/printed_only_without_C_PL5D",
+   "/quadrants/QC/3D/outcome",
+   "/quadrants/QC/3D/d_over_sigma16",
+   "/quadrants/QD/sigma16_reported",
+   "/quadrants/QD/sigma16_without_C_PL5D",
+   "/quadrants/QD/2D/outcome",
+   "/quadrants/QD/2D/bound_any_rho",
+   "/quadrants/QD/2D/bound_rho0",
+   "/quadrants/QD/2D/rho_star",
+   "/quadrants/QD/2D/z_rho0",
+   "/quadrants/QD/2D/printed_only_without_C_PL5D",
+   "/quadrants/QD/3D/outcome",
+   "/quadrants/QD/3D/d_over_sigma16"
+  ],
+  "matrices": {
+   "reported": "C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e",
+   "without_C_PL5D": "C_total_plus_C_resp_plus_DeltaC_e"
+  },
+  "control_P": "PASS",
+  "control_P_tolerance": {
+   "rtol": 1e-12,
+   "achieved_max": 0.0,
+   "why": "bit-identical committed inputs"
+  },
+  "vf_data_product_sha256": "1a37b0820017f9e515f6e46dbf4009d0a76ef8f542975654d0c61e0a015d84e8"
+ }
+}
