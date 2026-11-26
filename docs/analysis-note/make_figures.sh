@@ -538,6 +538,7 @@ install_redraw_fig() {  # install_redraw_fig <basename under $NRD and in $FIGDIR
 }
 install_redraw_fig paper_fig_bkg_residual.pdf               4ce60395d4136cd21959665e6ee5d65fbd746fb99795e675a8d99c0af84180aa
 install_redraw_fig paper_fig_coverage.pdf                   3d035311565d1e08f9226bf13d7553574cb178d7d6eb34be54ff0bf6f3ea826f
+# layered (2026-11-26): overridden later in this run by install_current_fig fived16_headline.pdf (7700c4d474b3857d...), the figure on C_e^infl (V_F)
 install_redraw_fig fived16_headline.pdf                     1002e7056bfe457f1f932a10b886d4a7b2996fcfb8507dee380f2bb9f5826bf6
 
 # 2026-11-25 (pT-edge option (i), Joseph 2026-11-24): the eight figures that compare with the published result, redrawn
@@ -577,6 +578,15 @@ install_current_fig control_plots.pdf                       65353e3acff2b22db326
 install_current_fig generators_vs_unfolded_band_central.pdf 5757bd67f2ce7a37e53479a6c41daf9c280c96fa4e5ecf160a514ca5cee32378
 install_current_fig paper_fig2_joint.pdf                    9023625a876bd5ca6071fbc1f0b55de672f8a5b2609ff3e56a573f8e91d45fd5
 install_current_fig q3_excess_projection.pdf                c36d48dd624b3bf268cf7a19a50e0f5d4d67b74c6508f009956755dce3efb443
+
+# 2026-11-26 (C_e^infl, V_F option C, readings #1368; the director's request): the sixteen-cell headline and generator-
+# residual figures drawn from the V_F data product and readouts by input-only copies of their producers. Record:
+# note-vffigs-20261126/README.md (tools/run.sh; each unchanged producer on the OLD records reproduces the file installed
+# before byte for byte). fived16_genresidual.pdf was committed straight to figures/ on 2026-11-20 (note-genresid-20261120)
+# and had no install line; it has one now. Installed after every earlier line.
+NFR="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-vffigs-20261126/figs"
+install_current_fig fived16_headline.pdf                    7700c4d474b3857d4485699803cbe50c1c7b23483624c1b58072797f6035e297
+install_current_fig fived16_genresidual.pdf                 4400bd70a3454b23d28e4b1c1f3885a60d2e48cdc6472f5722c5db59abb12b35
 
 echo
 echo "== paper-only vector crops =="

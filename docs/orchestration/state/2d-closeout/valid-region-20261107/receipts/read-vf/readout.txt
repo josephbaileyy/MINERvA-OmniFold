@@ -1,0 +1,91 @@
+valid-region readout (DECLARATION.md); not a measurement; no coverage claim
+
+controls: C-PIN PASS, C-CELLS PASS, C-BOX PASS, C-DOMAIN PASS, C-TRUTHS PASS, C-BIAS PASS, C-F PASS, C-GF PASS, C-COV PASS, C-FINITE PASS, C-RHO PASS
+
+cell  n_eff        stat%   A3    V-ATLAS     S_b(raw,sub)        S_g(raw,sub)        rho(min..max)   V-PRIOR
+R00      2934519   0.202  ok    valid       0.01262,0.01262    0.09399,0.09374    0.134..0.135    valid
+R01      3739551   0.230  ok    valid       0.00618,0.00616    0.10208,0.10202    0.060..0.061    valid
+R02       855718   0.327  FAIL  not valid   0.12094,0.12094    0.28734,0.28729    0.421..0.421    valid
+R03       486035   0.326  ok    valid       0.06276,0.06276    0.24503,0.24490    0.256..0.256    valid
+R04      3930993   0.139  ok    valid       0.00436,0.00435    0.07086,0.07080    0.061..0.062    valid
+R05       864734   0.368  ok    valid       0.02699,0.02698    0.14293,0.14222    0.189..0.190    valid
+R06       720780   0.332  FAIL  not valid   0.03854,0.03854    0.11634,0.11602    0.331..0.332    valid
+R07       331614   0.298  ok    valid       0.05683,0.05683    0.20384,0.20342    0.279..0.279    valid
+R08      1388929   0.215  ok    valid       0.03370,0.03369    0.06454,0.06315    0.522..0.534    not valid
+R09      4069981   0.185  ok    valid       0.00709,0.00708    0.06766,0.06756    0.105..0.105    valid
+R10       844187   0.249  ok    valid       0.07057,0.07057    0.15901,0.15880    0.444..0.444    valid
+R11       590325   0.309  ok    valid       0.03334,0.03334    0.12716,0.12686    0.262..0.263    valid
+R12      2094675   0.182  ok    valid       0.02024,0.02024    0.05979,0.05957    0.339..0.340    valid
+R13       880862   0.282  ok    valid       0.02541,0.02540    0.14347,0.14309    0.177..0.178    valid
+R14      3953897   0.163  ok    valid       0.00167,0.00164    0.04273,0.04165    0.038..0.040    valid
+R15      1138930   0.216  ok    valid       0.05530,0.05530    0.09811,0.09782    0.564..0.565    not valid
+
+reading (3): descriptive only (DECLARATION.md section 6, audit VR-1): computed after the pulls against the prior were seen (L4); no class, no sentence, not a test
+  R00: r +0.0640 sigma 0.0789 z +0.81
+  R01: r +0.1507 sigma 0.0905 z +1.66
+  R02: r -0.0360 sigma 0.1392 z -0.26
+  R03: r +0.1797 sigma 0.1589 z +1.13
+  R04: r +0.0256 sigma 0.0508 z +0.50
+  R05: r +0.2260 sigma 0.1046 z +2.16
+  R06: r -0.0907 sigma 0.0668 z -1.36
+  R07: r +0.1589 sigma 0.1090 z +1.46
+  R08: r +0.2541 sigma 0.0822 z +3.09
+  R09: r +0.1316 sigma 0.0794 z +1.66
+  R10: r +0.2005 sigma 0.1095 z +1.83
+  R11: r +0.2181 sigma 0.1737 z +1.26
+  R12: r +0.1779 sigma 0.0858 z +2.07
+  R13: r +0.2135 sigma 0.1441 z +1.48
+  R14: r +0.2402 sigma 0.0729 z +3.29
+  R15: r +0.1588 sigma 0.1005 z +1.58
+Q1 ['R00', 'R01', 'R02', 'R03']: r_Q +0.0988 sigma 0.0783 z_Q +1.26
+Q2 ['R04', 'R05', 'R06', 'R07']: r_Q +0.0455 sigma 0.0526 z_Q +0.86
+Q3 ['R08', 'R09', 'R10', 'R11']: r_Q +0.1701 sigma 0.0647 z_Q +2.63
+Q4 ['R12', 'R13', 'R14', 'R15']: r_Q +0.2118 sigma 0.0689 z_Q +3.07
+
+V-ATLAS: 18 contrasts between valid cells within a quadrant
+  Q1 valid ['R00', 'R01', 'R03']
+     R00-R01 r_i-r_j -0.0866 z -1.31 (3 sigma = 0.1991; axes eavail,q3,W)
+     R00-R03 r_i-r_j -0.1157 z -0.85 (3 sigma = 0.4091; axes eavail,W)
+     R01-R03 r_i-r_j -0.0291 z -0.19 (3 sigma = 0.4666; axes eavail,q3)
+  Q2 valid ['R04', 'R05', 'R07']
+     R04-R05 r_i-r_j -0.2004 z -2.31 (3 sigma = 0.2605; axes eavail,q3,W)
+     R04-R07 r_i-r_j -0.1333 z -1.42 (3 sigma = 0.2814; axes eavail,W)
+     R05-R07 r_i-r_j +0.0671 z +0.50 (3 sigma = 0.4048; axes eavail,q3)
+  Q3 valid ['R08', 'R09', 'R10', 'R11']
+     R08-R09 r_i-r_j +0.1225 z +1.39 (3 sigma = 0.2639; axes eavail,W)
+     R08-R10 r_i-r_j +0.0536 z +0.48 (3 sigma = 0.3333; axes eavail,q3)
+     R08-R11 r_i-r_j +0.0360 z +0.20 (3 sigma = 0.5368; axes eavail,q3)
+     R09-R10 r_i-r_j -0.0689 z -0.50 (3 sigma = 0.4129; axes eavail,q3,W)
+     R09-R11 r_i-r_j -0.0865 z -0.50 (3 sigma = 0.5145; axes eavail,q3,W)
+     R10-R11 r_i-r_j -0.0176 z -0.09 (3 sigma = 0.5662; axes q3)
+  Q4 valid ['R12', 'R13', 'R14', 'R15']
+     R12-R13 r_i-r_j -0.0357 z -0.27 (3 sigma = 0.3903; axes eavail,q3,W)
+     R12-R14 r_i-r_j -0.0623 z -0.91 (3 sigma = 0.2056; axes eavail,q3,W)
+     R12-R15 r_i-r_j +0.0191 z +0.21 (3 sigma = 0.2724; axes eavail)
+     R13-R14 r_i-r_j -0.0267 z -0.18 (3 sigma = 0.4328; axes W)
+     R13-R15 r_i-r_j +0.0548 z +0.35 (3 sigma = 0.4661; axes eavail,q3,W)
+     R14-R15 r_i-r_j +0.0814 z +0.91 (3 sigma = 0.2675; axes eavail,q3,W)
+
+V-PRIOR: 18 contrasts between valid cells within a quadrant
+  Q1 valid ['R00', 'R01', 'R02', 'R03']
+     R00-R01 r_i-r_j -0.0866 z -1.31 (3 sigma = 0.1991; axes eavail,q3,W)
+     R00-R02 r_i-r_j +0.1000 z +0.84 (3 sigma = 0.3562; axes eavail,W)
+     R00-R03 r_i-r_j -0.1157 z -0.85 (3 sigma = 0.4091; axes eavail,W)
+     R01-R02 r_i-r_j +0.1866 z +1.33 (3 sigma = 0.4210; axes eavail,q3,W)
+     R01-R03 r_i-r_j -0.0291 z -0.19 (3 sigma = 0.4666; axes eavail,q3)
+     R02-R03 r_i-r_j -0.2157 z -2.10 (3 sigma = 0.3079; axes W)
+  Q2 valid ['R04', 'R05', 'R06', 'R07']
+     R04-R05 r_i-r_j -0.2004 z -2.31 (3 sigma = 0.2605; axes eavail,q3,W)
+     R04-R06 r_i-r_j +0.1163 z +2.03 (3 sigma = 0.1722; axes eavail,W)
+     R04-R07 r_i-r_j -0.1333 z -1.42 (3 sigma = 0.2814; axes eavail,W)
+     R05-R06 r_i-r_j +0.3167 z +3.22 (3 sigma = 0.2952; axes eavail,q3,W)
+     R05-R07 r_i-r_j +0.0671 z +0.50 (3 sigma = 0.4048; axes eavail,q3)
+     R06-R07 r_i-r_j -0.2496 z -2.92 (3 sigma = 0.2564; axes W)
+  Q3 valid ['R09', 'R10', 'R11']
+     R09-R10 r_i-r_j -0.0689 z -0.50 (3 sigma = 0.4129; axes eavail,q3,W)
+     R09-R11 r_i-r_j -0.0865 z -0.50 (3 sigma = 0.5145; axes eavail,q3,W)
+     R10-R11 r_i-r_j -0.0176 z -0.09 (3 sigma = 0.5662; axes q3)
+  Q4 valid ['R12', 'R13', 'R14']
+     R12-R13 r_i-r_j -0.0357 z -0.27 (3 sigma = 0.3903; axes eavail,q3,W)
+     R12-R14 r_i-r_j -0.0623 z -0.91 (3 sigma = 0.2056; axes eavail,q3,W)
+     R13-R14 r_i-r_j -0.0267 z -0.18 (3 sigma = 0.4328; axes W)

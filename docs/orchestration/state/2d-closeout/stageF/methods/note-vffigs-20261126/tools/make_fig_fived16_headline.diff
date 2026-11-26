@@ -1,0 +1,35 @@
+--- /Users/josephbailey/vf-figs-wt/docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/tools/make_fig_fived16_headline.py	2026-11-26 02:33:03
++++ /Users/josephbailey/vf-figs-wt/docs/orchestration/state/2d-closeout/stageF/methods/note-vffigs-20261126/tools/make_fig_fived16_headline.py	2026-11-26 02:40:29
+@@ -46,6 +46,10 @@
+                labels ("hadronic energy", "momentum transfer", "hadronic mass" and their symbols) end clear of the
+                first quadrant's shaded band; asserted after drawing: every row label ends at least 0.06 in left of it.
+   All keep the identity check (horizontal bars for D) and write fived16_headline_values.json exactly as before.
++V_F COPY (note-vffigs-20261126, 2026-11-26): the round-4 copy above with only its input changed to the C_e^infl (V_F)
++data product (V_F option C, readings #1368; make_values_fived16.py READOUTS["dp"] as #1378 pins it): RECORD,
++RECORD_SHA256, COV_KEY (the reported matrix C_total + C_resp + C_PL,5D + DeltaC_e) and the schema the record must carry.
++The drawing, every check and every output are unchanged.
+ """
+ import argparse
+ import hashlib
+@@ -67,9 +71,9 @@
+ import note_palette as pal  # noqa: E402
+ import note_print_style as nps  # noqa: E402
+ 
+-RECORD = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/data-product/fd_data_product_cpl.json"
+-RECORD_SHA256 = "d6752d2c"          # the pin make_values_fived16.py READOUTS["dp"] uses for the reported arm
+-COV_KEY = "C_total_plus_C_resp_plus_C_PL5D"
++RECORD = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/data-product/fd_data_product_vf.json"
++RECORD_SHA256 = "1a37b082"          # the pin make_values_fived16.py READOUTS["dp"] uses for the reported arm (#1378)
++COV_KEY = "C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e"
+ UNIT = 1e-40                       # cm^2/nucleon; tab:fived16-cells prints f in this unit (fv@f-unit)
+ FULL = 100.0                       # an axis range [0, 100] is the whole axis (the H2 grid's open upper edge)
+ 
+@@ -102,7 +106,7 @@
+     if not digest.startswith(RECORD_SHA256):
+         raise SystemExit(f"REFUSE: {RECORD} has sha256 {digest}, not the pinned {RECORD_SHA256}")
+     d = json.loads(rec.read_text())
+-    assert d["schema"] == "fd-data-product-cpl/1" and d["correlation_of"] == COV_KEY
++    assert d["schema"] == "fd-data-product-vf/1" and d["correlation_of"] == COV_KEY
+     cells = d["cells"]
+     names = [c["cell"] for c in cells]
+     assert names == [f"R{i:02d}" for i in range(16)], names

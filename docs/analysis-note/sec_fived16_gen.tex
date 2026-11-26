@@ -6,7 +6,7 @@ All five predictions are in the analysis definitions of $W$ and of the muon angl
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption[Sixteen-cell comparison with generator predictions]{The comparison with the five generator predictions is descriptive; each $\chi^2$ is in the table. $\chi^2$ against the reported covariance plus $V_g$, $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$, where $V_g$ is the prediction's finite-sample (diagonal) covariance, with the shape-only $\chi^2$ beside it, and the same two without the run-period block, against $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$. All five predictions are in the analysis definitions, with NuWro and GiBUU on carbon, as in the methods paper. Their CH-corrected values are in Table~\ref{tab:fived16-gen-target}, with the caveats stated in the records document (\S\ref{sec:joint5d-ch}). The ndf of each block is given in its heading.}
+\caption[Sixteen-cell comparison with generator predictions]{The comparison with the five generator predictions is descriptive; each $\chi^2$ is in the table. $\chi^2$ against the reported covariance plus $V_g$, $C_{\mathrm{rep}}+V_g$, where $V_g$ is the prediction's finite-sample (diagonal) covariance, with the shape-only $\chi^2$ beside it, and the same two without the run-period block, against $C_e^{\mathrm{infl}}+C_{\mathrm{model}}+C_{\mathrm{resp}}+V_g$. All five predictions are in the analysis definitions, with NuWro and GiBUU on carbon, as in the methods paper. Their CH-corrected values are in Table~\ref{tab:fived16-gen-target}, with the caveats stated in the records document (\S\ref{sec:joint5d-ch}). The ndf of each block is given in its heading.}
 \label{tab:fived16-gen}
 \begin{tabular}{@{}lcccc@{}}
 \toprule
@@ -29,7 +29,7 @@ Table~\ref{tab:fived16-pulls} gives each cell's pull and $(g-f)/f$.
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption[Per-cell pulls of the CH-corrected comparison]{The table locates each prediction's differences from the result cell by cell. Per-cell pull $(f-g)/\sigma$ against $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ and $(g-f)/f$ (\%) for the secondary comparison with NuWro and GiBUU corrected to CH; the other predictions are those of Table~\ref{tab:fived16-gen}, and GiBUU is shown on its eight cells only.}
+\caption[Per-cell pulls of the CH-corrected comparison]{The table locates each prediction's differences from the result cell by cell. Per-cell pull $(f-g)/\sigma$ against $C_{\mathrm{rep}}+V_g$ and $(g-f)/f$ (\%) for the secondary comparison with NuWro and GiBUU corrected to CH; the other predictions are those of Table~\ref{tab:fived16-gen}, and GiBUU is shown on its eight cells only.}
 \label{tab:fived16-pulls}
 \scriptsize\setlength{\tabcolsep}{3pt} \resizebox{\textwidth}{!}{
 \begin{tabular}{@{}lrrrrrrrrrr@{}}
@@ -58,13 +58,13 @@ R15 & \fvval{g-gcv-pull-R15} & \fvval{g-gcv-gf-R15} & \fvval{g-gmec-pull-R15} & 
 }
 \end{table}
 
-The fake-data bias exceeds the stated thresholds at the GiBUU hybrid truth under the reported covariance, and also at the GiBUU $\Eavail$ shape without $C_{\mathrm{PL,5D}}$ (\S\ref{sec:fived16-fd}), so the GiBUU comparison carries that limitation.
+The fake-data bias exceeds the stated thresholds at the GiBUU hybrid truth, with or without $C_{\mathrm{PL,5D}}$ (\S\ref{sec:fived16-fd}), so the GiBUU comparison carries that limitation.
 
 The sensitivity of the reported $\chi^2$ to the correlations is probed by shrinking one group's correlations toward the diagonal by a fraction $\alpha$ of the way, with its variances kept. These are descriptive sensitivities, not alternative results. Shrinking only the flux correlations by \fvval{sens-alpha-pct}\,\% lowers the $\chi^2$ of the 16-cell predictions by \fvval{sens-flux-fall-lo}--\fvval{sens-flux-fall-hi}\,\%. Table~\ref{tab:fived16-sens} gives each group's sensitivity; the records give the shrinking procedure and flux-bootstrap diagnostics (Ref.~\cite{NoteRecords2026}).
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption[Generator $\chi^2$ under shrunk correlations]{The table shows how each $\chi^2$ depends on the correlations of one covariance group at a time. $\chi^2$ against $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ with one group's correlations shrunk by $\alpha$ toward the diagonal ($\alpha$ of the specified grid; the unshrunk $\chi^2$, at $\alpha=\fvval{sens-alpha-0}$, is the total $\chi^2$ of Table~\ref{tab:fived16-gen} for \fvval{label-gcv}, \fvval{label-gmec} and \fvval{label-tune}, and of the CH rows of Table~\ref{tab:fived16-gen-target} for NuWro and GiBUU). NuWro and GiBUU are corrected to CH, the secondary comparison. Degrees of freedom as in Table~\ref{tab:fived16-gen}.}
+\caption[Generator $\chi^2$ under shrunk correlations]{The table shows how each $\chi^2$ depends on the correlations of one covariance group at a time. $\chi^2$ against $C_{\mathrm{rep}}+V_g$ with one group's correlations shrunk by $\alpha$ toward the diagonal ($\alpha$ of the specified grid; the unshrunk $\chi^2$, at $\alpha=\fvval{sens-alpha-0}$, is the total $\chi^2$ of Table~\ref{tab:fived16-gen} for \fvval{label-gcv}, \fvval{label-gmec} and \fvval{label-tune}, and of the CH rows of Table~\ref{tab:fived16-gen-target} for NuWro and GiBUU). NuWro and GiBUU are corrected to CH, the secondary comparison. Degrees of freedom as in Table~\ref{tab:fived16-gen}.}
 \label{tab:fived16-sens}
 \begin{tabular}{@{}llrrrr@{}}
 \toprule
@@ -104,18 +104,18 @@ the four together & \fvval{label-gcv} & \fvval{sens-c_e_systematic-gcv-a0.1} & \
 \end{tabular}
 \end{table}
 
-The $\chi^2$ can be decomposed along the eigenmodes of each prediction's covariance $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ (Table~\ref{tab:fived16-diag}). Figure~\ref{fig:fived16-modes} shows the leading modes; the records give the decomposition procedure (Ref.~\cite{NoteRecords2026}).
+The $\chi^2$ can be decomposed along the eigenmodes of each prediction's covariance $C_{\mathrm{rep}}+V_g$ (Table~\ref{tab:fived16-diag}). Figure~\ref{fig:fived16-modes} shows the leading modes; the records give the decomposition procedure (Ref.~\cite{NoteRecords2026}).
 
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{figures/fd_g_fig_modes.pdf}
-\caption[Leading $\chi^2$ modes of the generator comparison]{The leading modes locate where among the sixteen cells each prediction's $\chi^2$ arises. Three leading $\chi^2$ modes (columns, ranked) for GENIE CV, GENIE + MEC, NuWro (corrected to CH, the secondary comparison) and MINERvA Tune~v1 (rows), using $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ relative to $f$. Bars: unit loadings on R00--R15, largest loading positive. Panels: $\chi^2$ share, relative $\sigma$, and distance (residual projection/$\sigma$). The residual $(f-g)/f$ makes positive distance mean data above prediction along the signed mode. GiBUU's 8-cell comparison supplies no modes here.}
+\caption[Leading $\chi^2$ modes of the generator comparison]{The leading modes locate where among the sixteen cells each prediction's $\chi^2$ arises. Three leading $\chi^2$ modes (columns, ranked) for GENIE CV, GENIE + MEC, NuWro (corrected to CH, the secondary comparison) and MINERvA Tune~v1 (rows), using $C_{\mathrm{rep}}+V_g$ relative to $f$. Bars: unit loadings on R00--R15, largest loading positive. Panels: $\chi^2$ share, relative $\sigma$, and distance (residual projection/$\sigma$). The residual $(f-g)/f$ makes positive distance mean data above prediction along the signed mode. GiBUU's 8-cell comparison supplies no modes here.}
 \label{fig:fived16-modes}
 \end{figure}
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption[Eigenmode breakdown of the generator $\chi^2$]{The table counts the modes that carry most of each $\chi^2$ and names the top mode's dominant block. Eigenmode breakdown of the $\chi^2$, with NuWro and GiBUU corrected to CH (the secondary comparison): the fewest modes, in $\chi^2$ order, carrying \fvval{diag-fractions}\,\% of it, and the top mode's share of the $\chi^2$, its relative $\sigma$ and its dominant block.}
+\caption[Eigenmode breakdown of the generator $\chi^2$]{The table counts the modes that carry most of each $\chi^2$ and names the top mode's dominant block. Eigenmode breakdown of the $\chi^2$, with NuWro and GiBUU corrected to CH (the secondary comparison): the fewest modes, in $\chi^2$ order, carrying \fvval{diag-fractions}\,\% of it, and the top mode's share of the $\chi^2$, its relative $\sigma$ and its dominant block. $\Delta C_e=C_e^{\mathrm{infl}}-C_e$ is the increment the eigenvalue rescaling adds to $C_e$ (\S\ref{sec:fived16-cov}).}
 \label{tab:fived16-diag}
 \begin{tabular}{@{}lcccrrl@{}}
 \toprule
@@ -140,7 +140,7 @@ See the records for the target and definition changes and their numerical checks
 Table~\ref{tab:fived16-gen-target} gives the CH values. The correction lowers NuWro's total $\chi^2$ and raises GiBUU's by \fvval{g-gibuu-chrise}, while GiBUU's shape-only $\chi^2$ falls. The sampling-closure check failed on its hydrogen sample. See the records for CH sensitivities and validation of the hydrogen sample (Ref.~\cite{NoteRecords2026}).
 
 
-The $C_{\mathrm{model}}$ components of the reported covariance are built from the generators' samples in their own definitions, with NuWro and GiBUU on carbon, not from the predictions of Table~\ref{tab:fived16-gen}. Table~\ref{tab:fived16-gen-cmodel} measures the effect of that target. With the CH shape ratios, GiBUU's CH total is \fvval{e2-with-gibuu-total-ch}, below its carbon value of \fvval{g-gibuu-carbon-total-chi2} with the reported covariance, so the rise described above comes from pairing the CH prediction with the carbon shape ratios. See the records for the CH-ratio covariance sensitivity (Ref.~\cite{NoteRecords2026}). Table~\ref{tab:fived16-gen-stageg}, in App.~\ref{app:devhistory}, gives the comparison as first made.
+The $C_{\mathrm{model}}$ components of the reported covariance are built from the generators' samples in their own definitions, with NuWro and GiBUU on carbon, not from the predictions of Table~\ref{tab:fived16-gen}. Table~\ref{tab:fived16-gen-cmodel} measures the effect of that target. With the CH shape ratios, GiBUU's CH total is \fvval{e2-with-gibuu-total-ch}, against its carbon value of \fvval{g-gibuu-carbon-total-chi2} with the reported covariance. Pairing the CH prediction with the carbon shape ratios therefore accounts for \fvval{e2-gibuu-pair-share}\% of the rise described above. See the records for the CH-ratio covariance sensitivity (Ref.~\cite{NoteRecords2026}). Table~\ref{tab:fived16-gen-stageg}, in App.~\ref{app:devhistory}, gives the comparison as first made.
 
 See the records for the model-block scale sensitivity and its uncalibrated size (Ref.~\cite{NoteRecords2026}).
 
