@@ -8894,6 +8894,10 @@ docs/orchestration/state/gate6-trajectory-array-active-56847059.json	tracked	MAC
 docs/orchestration/state/geanttw-20261124/DECLARATION.md	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
 docs/orchestration/state/geanttw-20261124/GEANTTW-BINDING-P0.md	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
 docs/orchestration/state/geanttw-20261124/SHA256SUMS-P0	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/c0e-attribution/README.md	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/c0e-attribution/attribute.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/c0e-attribution/attribution.json	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/c0e-attribution/check.txt	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
 docs/orchestration/state/geanttw-20261124/code/S0-src_base.sha256	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
 docs/orchestration/state/geanttw-20261124/code/dumpcmp.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
 docs/orchestration/state/geanttw-20261124/code/geanttw_build.sh	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
