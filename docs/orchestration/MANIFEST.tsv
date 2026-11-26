@@ -19562,6 +19562,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flu
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux3-20261123/tools/fence_overlap.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux3-20261123/tools/gen_flux3.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux4-20261126/README.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux4-20261126/RPD-FLUX4-BINDING.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux4-20261126/price/bench_staging.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux4-20261126/price/bench_true_energies.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/flux4-20261126/price/price.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
