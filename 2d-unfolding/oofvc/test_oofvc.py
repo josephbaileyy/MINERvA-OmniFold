@@ -890,7 +890,7 @@ class Shell(unittest.TestCase):
         past, before it writes anything (the lane root is never created here)."""
         t = (HERE / "launch" / "oofvc_dump.sh").read_text().replace("__TOOL_COMMIT__", "0" * 40)
         root = TD / "never-created-root"
-        t = t.replace("R=/pscratch/sd/j/josephrb/oofvc-20261126", f"R={root}")
+        t = t.replace("R=/pscratch/sd/j/josephrb/oofvc-20261126-r2", f"R={root}")
         script = TD / "pilot_test.sh"
         script.write_text(t)
         # GNU date's -d, which the cluster has and macOS lacks, emulated for UTC ISO times
@@ -919,11 +919,41 @@ class Shell(unittest.TestCase):
         t = (HERE / "launch" / "dump_array.sbatch").read_text()
         self.assertIn("NUE_DECLARED=/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/"
                       "FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt", t)
-        i_check, i_fence, i_before = (t.index('[ "$(readlink -f "$NUE")" = "$NUE_DECLARED" ]'),
+        i_check, i_fence, i_before = (t.index('nue_path_ok "$NUE" "$NUE_DECLARED" ||'),
                                       t.index('fence_check "immediately before the binary"'), t.index("nue before"))
         i_bin, i_after = t.index('./oofvc_dump "$pl"'), t.index("nue after")
         self.assertTrue(i_check < i_fence < i_before < i_bin < i_after)
         self.assertIn("atime_ns=%d mtime_ns=%d", t)
+        self.assertIn('NUE path declared=$NUE_DECLARED canonical=$(readlink -f "$NUE_DECLARED")', t)
+
+    def test_nue_path_check_follows_the_symlink(self):
+        """The declared path reaches the file through the MParamFiles symlink, as on the cluster (the 62053260 pilot's
+        false STOP). The same file passes through either path; a different file, a missing file or two missing paths
+        fail."""
+        t = (HERE / "launch" / "dump_array.sbatch").read_text()
+        i = t.index("nue_path_ok() {")
+        fn = t[i:t.index("\n}\n", i) + 3]
+        d = TD / "nue_fixture"
+        real = d / "minerva_large_files" / "MParamFiles" / "data" / "FluxConstraints"
+        real.mkdir(parents=True, exist_ok=True)
+        (real / "sorted_NuEConstraint_FHC_RHC_IMD.txt").write_text("nue\n")
+        (real / "other.txt").write_text("other\n")
+        etc = d / "opt" / "etc"
+        etc.mkdir(parents=True, exist_ok=True)
+        link = etc / "MParamFiles"
+        if not link.exists():
+            link.symlink_to(d / "minerva_large_files" / "MParamFiles")
+        declared = str(link / "data" / "FluxConstraints" / "sorted_NuEConstraint_FHC_RHC_IMD.txt")
+        canonical = str(real / "sorted_NuEConstraint_FHC_RHC_IMD.txt")
+
+        def ok(a, b):
+            return subprocess.run(["bash", "-c", fn + f'\nnue_path_ok "{a}" "{b}"'], capture_output=True).returncode == 0
+        self.assertTrue(ok(declared, declared))
+        self.assertTrue(ok(canonical, declared))
+        self.assertTrue(ok(declared, canonical))
+        self.assertFalse(ok(str(real / "other.txt"), declared))
+        self.assertFalse(ok(str(real / "missing.txt"), declared))
+        self.assertFalse(ok(str(real / "missing.txt"), str(real / "missing2.txt")))
 
 
 def tearDownModule():

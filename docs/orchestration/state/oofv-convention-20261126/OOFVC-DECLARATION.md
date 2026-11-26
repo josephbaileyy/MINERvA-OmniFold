@@ -422,7 +422,7 @@ Adopting a convention, and any wording in the note, are Joseph's.
 
 **The cluster steps.** The scripts are in `2d-unfolding/oofvc/launch/`. Each remote script runs from a clean clone of
 this lane at the tool commit, and its sha256 is pinned in the bound launcher. `fill_pins.sh` writes `launch/bound/`
-by command. Everything is written under `/pscratch/sd/j/josephrb/oofvc-20261126/`, and nothing is written to CFS. The
+by command. Everything is written under `/pscratch/sd/j/josephrb/oofvc-20261126-r2/`, and nothing is written to CFS. The
 job names are `oofvc_dump` and `oofvc_units`, a new family, so a fence round goes out before the first submission.
 1. **`dump-pilot`** (login node; it takes cov2d's LL5D atime-post, §2.7):
    - the lane root;
@@ -472,8 +472,14 @@ C-SIGW would STOP. OOFVC's reads were checked against cov2d's 36 protected paths
 - **(b)** cov2d's atime-snapshot connects refuse while an `oofvc_` job is queued or running. That is enforced on
   cov2d's side, once the director's announcement names `oofvc_`.
 - **(c)** Each dump task logs the NuE file's `atime_ns` and `mtime_ns`, with UTC, before and after its run, into
-  `dump/<pl>.nue.log`. The logs go into post.tar.gz and the receipt. The task first refuses unless the file the
-  environment resolves is the declared path.
+  `dump/<pl>.nue.log`. The logs go into post.tar.gz and the receipt.
+  - **The path check.** The task first refuses unless the file the environment resolves is the declared one,
+    canonical against canonical (`readlink -f` of both), with both files present.
+  - **The symlink.** The declared path reaches the file through `opt/etc/MParamFiles` ->
+    `/pscratch/sd/j/josephrb/minerva/minerva_large_files//MParamFiles`. That is why the first pilot's comparison of a
+    canonical path with the literal one false-STOPped (§3, revision 8).
+  - **The log** records the declared, canonical and resolved paths once, and then the stat bracket of the declared
+    path, which follows the link to the same file. This is cov2d's note of 2026-11-26.
 - **The other binding terms** (`RDX-BINDING-1.md:148-150`):
   - every dump task checks the fence at its start and immediately before the binary;
   - each remote step checks it before each submit, and `units` also before staging;
@@ -518,6 +524,17 @@ Mutants SH_FENCE_STATE, SH_FENCE_SACCT, SH_GATE_PAST, SH_NUE_ORDER and SH_NUE_PA
   - the file renamed from `OOFVC-DECLARATION-DRAFT.md`;
   - after 881f4dbc and before any read: moved rows reconstructed outside the grid are not appended; T's cancellation
     from the IBU result is stated; O_j's two sources are named.
+- **Revision 8** (after the first pilot, job 62053260):
+  - **What happened.** The job FAILED 2:0 in 49 s, about 0.0002 node-h, at the NuE path check. That was a false
+    STOP: the check compared the canonical path with the literal declared one, which reaches the file through the
+    MParamFiles symlink. The binary never ran, and the NuE file was not read.
+  - **The fix.** The check now compares canonical against canonical, with both files present, and the NuE log
+    records both paths. The `Shell` symlink-fixture test runs it both ways, with mutants SH_NUE_CANON and
+    SH_NUE_EXISTS.
+  - **The director's rulings.** A new namespace, `/pscratch/sd/j/josephrb/oofvc-20261126-r2/`, for every script and
+    the scorer. The first root (`oofvc-20261126/`: the tool clone, the build and the gate record) stays as it is; its
+    removal is on the post-receipt list, through the director.
+  - Receipts: `receipts/attempt1-pilot/`.
 - **Revision 7** (the director's check of 2026-11-26, before the pins): §2.7. The NuE read is declared, with cov2d's
   conditions (a)–(c) and the fence terms; the CV source's O_NOATIME staging is declared; and the launch scripts and
   their Shell tests and mutants are added. No number, control or reading changed.

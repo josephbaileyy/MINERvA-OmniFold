@@ -22498,10 +22498,16 @@ docs/orchestration/state/oi74-canonical-ff-20261030/test_ff2.sh	tracked	MACHINE	
 docs/orchestration/state/oofv-convention-20261126/OOFVC-BINDING-1.md	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/OOFVC-DECLARATION.md	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/MUTATION.md	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/attempt1-pilot/cluster-readout.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/attempt1-pilot/pilot-launcher.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/attempt1-pilot/sacct-watch.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/attempt1-pilot/session-out.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/mutation-dbe40c6d.json.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/mutation-dbe40c6d.log.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/mutation-targeted-bbc3fc1b.json.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/mutation-targeted-bbc3fc1b.log.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/mutation-targeted-d3127bd4.json.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/mutation-targeted-d3127bd4.log.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/reads/r1/DISPOSITION.md	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/reads/r1/agy-gemini-4-hydrogen-high-report.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/reads/r1/agy-receipt.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
@@ -22528,6 +22534,7 @@ docs/orchestration/state/oofv-convention-20261126/receipts/reads/r3/inputs.sha25
 docs/orchestration/state/oofv-convention-20261126/receipts/reads/r3/prompt.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/tests-b265e7cf.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/tests-bbc3fc1b.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/tests-d3127bd4.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/tests-dbe40c6d.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/sources/MAT-0111c79de-Cutter.cxx	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/sources/MAT-MINERvA-f790cc794-CCInclusiveSignal.h	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes

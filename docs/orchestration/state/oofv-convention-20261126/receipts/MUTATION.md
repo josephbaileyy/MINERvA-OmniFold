@@ -17,3 +17,10 @@
 - **Not covered:** `oofvc_dump.cpp` cannot be built here (no MAT). Its behaviour is checked on the cluster, bit for bit, by
   C-ROUTE, C-JOIN, C-SIGW and C-LAB, each a STOP.
 <!-- absence-ok: a statement about this lane's own test environment and coverage, not a claim that a result does not exist -->
+
+**After the first pilot's false STOP** (job 62053260, at d3127bd4, the canonical NuE path check and namespace r2):
+- **New mutants:** SH_NUE_CANON (the old literal comparison) and SH_NUE_EXISTS (the existence guard dropped).
+- **The targeted pass:** `mutation-targeted-d3127bd4.json.txt`. It covers every shell mutant and SCORE_STAGE_PATH.
+  The control passed, and 8 of 8 were killed.
+- **Suite:** `tests-d3127bd4.txt` (44 passed).
+- **Together, every one of the 57 mutants is killed.**

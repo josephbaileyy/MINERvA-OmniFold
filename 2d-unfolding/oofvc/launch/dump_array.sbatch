@@ -8,11 +8,11 @@
 #SBATCH --mem=4G
 #SBATCH --no-requeue
 #SBATCH -J oofvc_dump
-#SBATCH -o /pscratch/sd/j/josephrb/oofvc-20261126/logs/dump-%A_%a.log
+#SBATCH -o /pscratch/sd/j/josephrb/oofvc-20261126-r2/logs/dump-%A_%a.log
 # OOFVC step 1A: one MC playlist per task (PLS[i]). The time limit is set per submission by oofvc_dump.sh.
 # Writes only $R/dump/<pl>.{root,log,sha256,done}.
 set -u
-R=/pscratch/sd/j/josephrb/oofvc-20261126
+R=/pscratch/sd/j/josephrb/oofvc-20261126-r2
 NUE_DECLARED=/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
 # fence check (RDX-BINDING-1's terms, as geanttw applied them): no live cov2d or t2a job, read from sacct (never
 # squeue); a state outside the terminal set, or an empty one, counts as live
@@ -41,7 +41,13 @@ export OPENBLAS_NUM_THREADS=1
 # cov2d's condition (c): the NuE constraint file that SetNuEConstraint(true) makes the flux reweighter read (plainly;
 # cov2d-protected) is the declared one, and its atime_ns and mtime_ns are logged with UTC before and after the run
 NUE="${MPARAMFILESROOT:-$MINERVA_PREFIX/etc/MParamFiles}/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"
-[ "$(readlink -f "$NUE")" = "$NUE_DECLARED" ] || { echo "[oofvc_dump] STOP: the NuE file resolves to $NUE"; exit 2; }
+# the same file, canonical against canonical: the declared path reaches it through the MParamFiles symlink (the
+# 62053260 pilot's false STOP compared the canonical path with the literal one); both must exist
+nue_path_ok() {
+  [ -f "$1" ] && [ -f "$2" ] && [ -n "$(readlink -f "$1")" ] && [ "$(readlink -f "$1")" = "$(readlink -f "$2")" ]
+}
+nue_path_ok "$NUE" "$NUE_DECLARED" || { echo "[oofvc_dump] STOP: the NuE file $NUE is not the declared one"; exit 2; }
+echo "[oofvc_dump] NUE path declared=$NUE_DECLARED canonical=$(readlink -f "$NUE_DECLARED") resolved=$NUE" >> "$pl.nue.log"
 nue() {
   python3 -c "
 import os, sys, time
