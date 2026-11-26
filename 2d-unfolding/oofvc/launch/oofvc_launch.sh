@@ -2,16 +2,19 @@
 # OOFVC: the Mac-side launcher (EVW5D's evw5d_launch.sh, adapted). One ssh session per call: it enters at
 # saul.nersc.gov and hops to NODE; stdin carries the script; on NODE it is staged in a private mktemp file in /dev/shm
 # whose sha256 must equal the approved one, or NODE deletes it and exits 8 before anything runs.
-# Usage: bash oofvc_launch.sh dump-pilot|dump-rest|units|post <new empty session dir> <login node, e.g. login27>
+# Usage: bash oofvc_launch.sh dump-pilot <new empty session dir> <login node> <LL5D atime-post, YYYY-MM-DDTHH:MM:SSZ>
+#        bash oofvc_launch.sh dump-rest|units|post <new empty session dir> <login node, e.g. login27>
 #        bash oofvc_launch.sh fetch <new empty dir>      (post.tar.gz by scp; no remote script)
-MODE=${1:?dump-pilot|dump-rest|units|post|fetch}; F=${2:?session dir}; NODE=${3:-}
+MODE=${1:?dump-pilot|dump-rest|units|post|fetch}; F=${2:?session dir}; NODE=${3:-}; POST=${4:-}
 HERE=$(cd "$(dirname "$0")" && pwd)
 OUT=/pscratch/sd/j/josephrb/oofvc-20261126
 SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20)
 [ -d "$F" ] && [ -z "$(ls -A "$F")" ] || { echo "STOP: $F is not a new empty directory"; exit 9; }
 ARG=
 case "$MODE" in
-  dump-pilot) S="$HERE/oofvc_dump.sh";  SHA=__DUMP_SHA256__;  ARG=pilot ;;
+  dump-pilot) S="$HERE/oofvc_dump.sh";  SHA=__DUMP_SHA256__;  ARG=pilot
+              case "$POST" in [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9]Z) ARG="pilot $POST" ;;
+                *) echo "STOP: dump-pilot needs cov2d's LL5D atime-post (UTC) as its fourth argument"; exit 9 ;; esac ;;
   dump-rest)  S="$HERE/oofvc_dump.sh";  SHA=__DUMP_SHA256__;  ARG=rest ;;
   units)      S="$HERE/oofvc_units.sh"; SHA=__UNITS_SHA256__ ;;
   post)       S="$HERE/oofvc_post.sh";  SHA=__POST_SHA256__ ;;

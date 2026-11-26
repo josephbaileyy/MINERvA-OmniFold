@@ -796,6 +796,97 @@ class JoinTool(unittest.TestCase):
         self.assertFalse(rec["controls"]["C-LAB"]["pass"])
 
 
+# ----------------------------------------------------------------------------------------------- the launch scripts
+
+
+def fence_text(script: Path) -> str:
+    """The fence_check function as a script defines it (from its comment header to the closing brace)."""
+    t = script.read_text()
+    i = t.index("# fence check (RDX-BINDING-1's terms")
+    j = t.index("\n}\n", i) + 3
+    return t[i:j]
+
+
+def stub_bin(d: Path, **cmds) -> Path:
+    """A directory of stub commands (name -> shell body) put first on PATH."""
+    d.mkdir(parents=True, exist_ok=True)
+    for name, body in cmds.items():
+        f = d / name
+        f.write_text("#!/bin/bash\n" + body + "\n")
+        f.chmod(0o755)
+    return d
+
+
+class Shell(unittest.TestCase):
+    """The launch scripts' fence check, cov2d's condition (a) gate, and the NuE log (cov2d's protected reads)."""
+
+    SCRIPTS = ("launch/oofvc_dump.sh", "launch/oofvc_units.sh", "launch/dump_array.sbatch")
+
+    def run_fence(self, script, sacct_body):
+        d = TD / "stub" / script.replace("/", "_") / str(abs(hash(sacct_body)))
+        b = stub_bin(d, sacct=sacct_body, date='if [ "$1" = "-u" ] && [ "$2" = "-d" ]; then echo 2026-11-12; '
+                                              'else /bin/date "$@"; fi')
+        code = fence_text(HERE / script) + '\nfence_check test; echo PASSED-FENCE'
+        return subprocess.run(["bash", "-c", code], capture_output=True, text=True,
+                              env=dict(os.environ, PATH=f"{b}:{os.environ['PATH']}"))
+
+    def test_fence_is_the_same_in_every_script(self):
+        texts = {fence_text(HERE / s).replace('[oofvc_dump] STOP:', 'STOP:') for s in self.SCRIPTS}
+        self.assertEqual(len(texts), 1)
+
+    def test_fence_refuses_a_live_or_unknown_fenced_job_and_a_failed_sacct(self):
+        for script in self.SCRIPTS:
+            ok = self.run_fence(script, "echo '1|cov2d_x|COMPLETED'; echo '2|t2a_y|CANCELLED by 1'; "
+                                        "echo '3|oofvc_dump|RUNNING'; echo '4|geanttw_p2|PENDING'")
+            self.assertIn("PASSED-FENCE", ok.stdout, (script, ok.stdout, ok.stderr))
+            for body in ("echo '1|cov2d_x|RUNNING'", "echo '1|t2a_y|PENDING'", "echo '1|cov2d_x|'",
+                         "echo '1|cov2d_x|REQUEUED'", "exit 1"):
+                p = self.run_fence(script, body)
+                self.assertNotIn("PASSED-FENCE", p.stdout, (script, body))
+                self.assertIn("STOP", p.stdout, (script, body))
+                self.assertEqual(p.returncode, 2, (script, body))
+
+    def test_pilot_refuses_without_a_past_atime_post(self):
+        """cov2d's condition (a): the pilot refuses unless the LL5D atime-post is given, well formed and already
+        past, before it writes anything (the lane root is never created here)."""
+        t = (HERE / "launch" / "oofvc_dump.sh").read_text().replace("__TOOL_COMMIT__", "0" * 40)
+        root = TD / "never-created-root"
+        t = t.replace("R=/pscratch/sd/j/josephrb/oofvc-20261126", f"R={root}")
+        script = TD / "pilot_test.sh"
+        script.write_text(t)
+        # GNU date's -d, which the cluster has and macOS lacks, emulated for UTC ISO times
+        gnu_date = ('if [ "$1" = "-u" ] && [ "$2" = "-d" ]; then\n'
+                    f'  "{sys.executable}" -c "import sys, datetime as d; a = sys.argv[1]\n'
+                    'if a == \'14 days ago\': print((d.date.today() - d.timedelta(14)).isoformat()); sys.exit(0)\n'
+                    't = d.datetime.strptime(a, \'%Y-%m-%dT%H:%M:%SZ\').replace(tzinfo=d.timezone.utc)\n'
+                    'print(int(t.timestamp()))" "$3" || exit 1\nelse /bin/date "$@"; fi')
+        b = stub_bin(TD / "stub" / "pilot", squeue="exit 0", sacct="exit 0", git="exit 1", date=gnu_date)
+        env = dict(os.environ, PATH=f"{b}:{os.environ['PATH']}")
+        for post in ("", "2026-11-26", "2026-11-26 12:00:00", "2099-01-01T00:00:00Z"):
+            p = subprocess.run(["bash", str(script), str(script), "pilot", post], capture_output=True, text=True, env=env)
+            self.assertEqual(p.returncode, 2, (post, p.stdout))
+            self.assertIn("atime-post", p.stdout, post)
+            self.assertFalse(root.exists(), post)
+        # a past time passes the gate and is recorded; the stubbed git clone then stops the step (exit 3)
+        p = subprocess.run(["bash", str(script), str(script), "pilot", "2026-11-20T00:00:00Z"], capture_output=True,
+                           text=True, env=env)
+        self.assertEqual(p.returncode, 3, p.stdout + p.stderr)
+        self.assertIn("fence check (pilot, before any write)", p.stdout)
+        self.assertEqual((root / "gates" / "ll5d_atime_post.txt").read_text().strip(), "2026-11-20T00:00:00Z")
+
+    def test_nue_log_and_declared_path_in_the_dump_task(self):
+        """cov2d's condition (c), by inspection of the task script: the declared path is checked, and the log is
+        written before and after the binary, with the second fence check immediately before it."""
+        t = (HERE / "launch" / "dump_array.sbatch").read_text()
+        self.assertIn("NUE_DECLARED=/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/"
+                      "FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt", t)
+        i_check, i_fence, i_before = (t.index('[ "$(readlink -f "$NUE")" = "$NUE_DECLARED" ]'),
+                                      t.index('fence_check "immediately before the binary"'), t.index("nue before"))
+        i_bin, i_after = t.index('./oofvc_dump "$pl"'), t.index("nue after")
+        self.assertTrue(i_check < i_fence < i_before < i_bin < i_after)
+        self.assertIn("atime_ns=%d mtime_ns=%d", t)
+
+
 def tearDownModule():
     shutil.rmtree(TD, ignore_errors=True)
 

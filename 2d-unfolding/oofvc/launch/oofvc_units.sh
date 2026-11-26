@@ -18,6 +18,18 @@ LIB=/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/libRooUnfo
 LIB_SHA=0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd
 O=$R/tool/2d-unfolding/oofvc
 case "$TOOLC" in *__*) echo "STOP: the tool commit is not filled in"; exit 9;; esac
+# fence check (RDX-BINDING-1's terms, as geanttw applied them): no live cov2d or t2a job, read from sacct (never
+# squeue); a state outside the terminal set, or an empty one, counts as live
+fence_check() {
+  local since out live
+  since=$(date -u -d '14 days ago' +%F) || { echo "STOP: date failed ($1)"; exit 2; }
+  out=$(sacct -X -n -P -S "$since" -o JobID,JobName,State 2>&1) || { echo "STOP: sacct failed ($1)"; exit 2; }
+  live=$(printf '%s\n' "$out" | awk -F'|' '$2 ~ /^(cov2d|t2a)/ { split($3, s, " ");
+    if (s[1] !~ /^(COMPLETED|FAILED|CANCELLED|TIMEOUT|OUT_OF_MEMORY|NODE_FAIL|PREEMPTED|BOOT_FAIL|DEADLINE)$/) print }')
+  [ -z "$live" ] || { echo "STOP: a fenced job is live ($1): $live"; exit 2; }
+  echo "fence check ($1): no live cov2d or t2a job $(date -u +%FT%TZ)"
+}
+
 echo "node $(hostname) $(date -u +%FT%TZ) tool $TOOLC"
 [ "$(git -C "$R/tool" rev-parse HEAD)" = "$TOOLC" ] && [ -z "$(git -C "$R/tool" status --porcelain --ignored)" ] \
   || { echo "STOP: the tool clone is not clean at $TOOLC"; exit 3; }
@@ -30,6 +42,7 @@ for pl in 1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P; do
     && grep -q ' routing_disagree 0$' "$R/dump/$pl.log" || { echo "STOP: dump $pl"; exit 4; }
 done
 echo "dumps: 12 done, routing_disagree 0, digests checked"
+fence_check "before staging the CV omnifile (cov2d-protected; read with O_NOATIME)"
 mkdir "$R/stage" || exit 2
 { date -u +%FT%TZ
   for s in "$CV_SRC" "$MC_SRC"; do echo "pre  $(stat -c '%n|atime=%x' "$s")"; done
@@ -48,5 +61,6 @@ OOFVC_PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 \
 cat "$R/logs/deploy.log"
 [ "$(sha256sum < "$LIB" | cut -d' ' -f1)" = "$LIB_SHA" ] || { echo "STOP: libRooUnfold.so differs from its pin"; exit 6; }
 echo "libRooUnfold.so $LIB_SHA"
+fence_check "before the submit"
 j=$(sbatch --parsable "$O/launch/units.sbatch") || { echo "STOP: sbatch"; exit 7; }
 echo "$j" > "$R/logs/units.jobid"; echo "units job $j"

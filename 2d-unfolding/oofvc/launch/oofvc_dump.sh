@@ -8,7 +8,7 @@
 #          projection exceeds 1.75 h, nothing is submitted (a resized request goes back to the director). Otherwise
 #          the eleven tasks go at -t 02:00:00
 set -u
-MODE=${2:-}
+MODE=${2:-}; POST=${3:-}
 R=/pscratch/sd/j/josephrb/oofvc-20261126
 TOOLC=__TOOL_COMMIT__
 URL=https://github.com/josephbaileyy/MINERvA-OmniFold.git
@@ -17,6 +17,18 @@ MAN=/pscratch/sd/j/josephrb/ibuchi-evloop-20261123/manifests
 ENVSH=/pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh
 O=$R/tool/2d-unfolding/oofvc
 case "$TOOLC" in *__*) echo "STOP: the tool commit is not filled in"; exit 9;; esac
+# fence check (RDX-BINDING-1's terms, as geanttw applied them): no live cov2d or t2a job, read from sacct (never
+# squeue); a state outside the terminal set, or an empty one, counts as live
+fence_check() {
+  local since out live
+  since=$(date -u -d '14 days ago' +%F) || { echo "STOP: date failed ($1)"; exit 2; }
+  out=$(sacct -X -n -P -S "$since" -o JobID,JobName,State 2>&1) || { echo "STOP: sacct failed ($1)"; exit 2; }
+  live=$(printf '%s\n' "$out" | awk -F'|' '$2 ~ /^(cov2d|t2a)/ { split($3, s, " ");
+    if (s[1] !~ /^(COMPLETED|FAILED|CANCELLED|TIMEOUT|OUT_OF_MEMORY|NODE_FAIL|PREEMPTED|BOOT_FAIL|DEADLINE)$/) print }')
+  [ -z "$live" ] || { echo "STOP: a fenced job is live ($1): $live"; exit 2; }
+  echo "fence check ($1): no live cov2d or t2a job $(date -u +%FT%TZ)"
+}
+
 echo "node $(hostname) $(date -u +%FT%TZ) mode $MODE tool $TOOLC"
 sq=$(squeue -h -u "$USER" -o '%j') || { echo "STOP: squeue failed"; exit 2; }
 q=$(printf '%s\n' "$sq" | grep -c '^oofvc_' || true)
@@ -24,7 +36,15 @@ case "$MODE" in
   pilot)
     [ ! -e "$R" ] || { echo "STOP: $R exists"; exit 2; }
     [ "$q" = 0 ] || { echo "STOP: an oofvc job is queued"; exit 2; }
-    mkdir -p "$R/logs" "$R/dump" || exit 2
+    # cov2d's condition (a): the first oofvc_dump job starts only after cov2d's LL5D atime-post, a UTC time the
+    # director passes on; refused unless given, well formed and already past
+    case "$POST" in [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9]Z) ;;
+      *) echo "STOP: the LL5D atime-post time is missing or malformed: '$POST'"; exit 2;; esac
+    [ "$(date -u -d "$POST" +%s 2>/dev/null || echo 0)" -gt 0 ] && [ "$(date -u -d "$POST" +%s)" -lt "$(date -u +%s)" ] \
+      || { echo "STOP: the LL5D atime-post $POST is not yet past"; exit 2; }
+    fence_check "pilot, before any write"
+    mkdir -p "$R/logs" "$R/dump" "$R/gates" || exit 2
+    echo "$POST" > "$R/gates/ll5d_atime_post.txt"
     git clone -q "$URL" "$R/tool" && git -C "$R/tool" -c advice.detachedHead=false checkout -q "$TOOLC" || exit 3
     [ "$(git -C "$R/tool" rev-parse HEAD)" = "$TOOLC" ] || { echo "STOP: tool HEAD"; exit 3; }
     [ -z "$(git -C "$R/tool" status --porcelain --ignored)" ] || { echo "STOP: tool clone not clean"; exit 3; }
@@ -35,11 +55,13 @@ case "$MODE" in
         -o "$R/dump/oofvc_dump" -L"$MINERVA_PREFIX/lib" -lMAT-MINERvA -lMAT $(root-config --libs) -lGeom -lGenVector \
     ) > "$R/logs/build.log" 2>&1 || { echo "STOP: build failed"; tail -20 "$R/logs/build.log"; exit 5; }
     (cd "$R/dump" && sha256sum oofvc_dump > built.sha256); cat "$R/dump/built.sha256"
+    fence_check "pilot, before the submit"
     j=$(sbatch --parsable --array=7 -t 01:00:00 "$O/launch/dump_array.sbatch") || { echo "STOP: sbatch"; exit 6; }
     echo "$j" > "$R/logs/pilot.jobid"; echo "pilot job $j" ;;
   rest)
     [ -e "$R/logs/pilot.jobid" ] && [ ! -e "$R/logs/rest.jobid" ] || { echo "STOP: no pilot, or rest submitted"; exit 2; }
     [ "$q" = 0 ] || { echo "STOP: an oofvc job is queued"; exit 2; }
+    [ -s "$R/gates/ll5d_atime_post.txt" ] || { echo "STOP: no LL5D atime-post record"; exit 2; }
     j=$(cat "$R/logs/pilot.jobid")
     line=$(sacct -X -n -P -j "${j}_7" -o State,ElapsedRaw)
     echo "pilot sacct: $line"
@@ -56,6 +78,7 @@ case "$MODE" in
     proj=$(awk -v el="$el" -F'[ ,]+' '/_MC.log:/ {split($1,a,"_"); n[a[1]]=$(NF-1)} END {m=0; for (p in n) { t=el*n[p]/n["1L"]; printf "%s %.0f\n", p, t > "/dev/stderr"; if (t>m) m=t }; printf "%.0f", m}' "$FC")
     echo "largest projection ${proj} s"
     [ "$proj" -le 6300 ] || { echo "STOP: a projection exceeds 1.75 h; back to the director"; exit 7; }
+    fence_check "rest, before the submit"
     j2=$(sbatch --parsable --array=0-6,8-11 -t 02:00:00 "$O/launch/dump_array.sbatch") || { echo "STOP: sbatch"; exit 6; }
     echo "$j2" > "$R/logs/rest.jobid"; echo "rest job $j2" ;;
   *) echo "STOP: mode $MODE"; exit 9 ;;

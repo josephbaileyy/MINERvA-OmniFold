@@ -102,6 +102,16 @@ MUTANTS = [
     ("SCORE_DIGEST", "oofvc_score.py", '"npz_digest": done["sha256"] == sha256(d / f"{kind}.npz"),',
      '"npz_digest": done["sha256"] != sha256(d / f"{kind}.npz"),', "Runner"),
     ("SCORE_CONVENTION", "oofvc_score.py", '"convention": bool(conv_ok),', '"convention": not conv_ok,', "Runner"),
+    # the launch scripts: cov2d's protected reads (the director's request of 2026-11-26), through the Shell tests
+    ("SH_FENCE_STATE", "launch/oofvc_dump.sh", "if (s[1] !~ /^(COMPLETED|FAILED|CANCELLED|",
+     "if (s[1] !~ /^(RUNNING|COMPLETED|FAILED|CANCELLED|", "Shell"),
+    ("SH_FENCE_SACCT", "launch/dump_array.sbatch",
+     '|| { echo "[oofvc_dump] STOP: sacct failed ($1)"; exit 2; }', "|| true", "Shell"),
+    ("SH_GATE_PAST", "launch/oofvc_dump.sh", '&& [ "$(date -u -d "$POST" +%s)" -lt "$(date -u +%s)" ]', "", "Shell"),
+    ("SH_NUE_ORDER", "launch/dump_array.sbatch", 'fence_check "immediately before the binary"\nnue before',
+     'nue before\nfence_check "immediately before the binary"', "Shell"),
+    ("SH_NUE_PATH", "launch/dump_array.sbatch", '[ "$(readlink -f "$NUE")" = "$NUE_DECLARED" ] || ',
+     "true || ", "Shell"),
     # the patched driver (re2_driver.py in the tree; the diff and the pin are regenerated)
     ("DRV_SKIP_VALUES", "DRIVER", "            if not (sim_bkg_pass[0] != 0 and float(sim_bkg[0]) == ept and",
      "            if False and (sim_bkg_pass[0] != 0 and float(sim_bkg[0]) == ept and", "Driver"),

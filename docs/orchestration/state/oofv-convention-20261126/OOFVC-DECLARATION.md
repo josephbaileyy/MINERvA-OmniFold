@@ -424,7 +424,7 @@ Adopting a convention, and any wording in the note, are Joseph's.
 this lane at the tool commit, and its sha256 is pinned in the bound launcher. `fill_pins.sh` writes `launch/bound/`
 by command. Everything is written under `/pscratch/sd/j/josephrb/oofvc-20261126/`, and nothing is written to CFS. The
 job names are `oofvc_dump` and `oofvc_units`, a new family, so a fence round goes out before the first submission.
-1. **`dump-pilot`** (login node):
+1. **`dump-pilot`** (login node; it takes cov2d's LL5D atime-post, §2.7):
    - the lane root;
    - the tool clone;
    - the build;
@@ -446,6 +446,48 @@ job names are `oofvc_dump` and `oofvc_units`, a new family, so a fence round goe
 5. **`fetch`**, then scoring on the laptop (`oofvc_score.py`).
 
 The staged copies and the dumps stay on scratch until a separate removal under its own GO.
+
+### 2.7 Protected reads (the director's check of 2026-11-26)
+
+`oofvc_dump.cpp` mirrors the event loop's setup, so it calls `SetNuEConstraint(true)` (`:69`). The flux reweighter
+then opens the NuE constraint file plainly when it is constructed (MAT-MINERvA `weighters/FluxAndCVReweighter.h:32`,
+as geanttw's declaration §6 records). The call cannot be dropped: without it the flux weights differ, and C-JOIN and
+C-SIGW would STOP. OOFVC's reads were checked against cov2d's 36 protected paths
+(`fd/rpd-reco/flux2-20261122/production-config.ready.json`, `cov2d_protected_paths`).
+
+| read | protected | how it is read |
+|---|---|---|
+| `/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt` | **yes** (cov2d's first entry) | plainly, once per dump task (12 tasks), by MAT. **The exception is REQUESTED**, as RDX's was granted and geanttw's requested |
+| `/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root` (43f8cc16) | **yes** | once, by `dd iflag=noatime` into the staging root, with the source's atime recorded before and after (Tier 1's form, which had cov2d's ack) |
+| the CFS flux file (d40aea69), the 12 MC manifests, the staged MINERvA101 sources, `setup_salloc_env.sh`, libRooUnfold.so, the AnaTuples | no | as §2.5 describes |
+<!-- absence-ok: the protected-path check covers this lane's own reads against cov2d's committed list, not a claim that a result does not exist -->
+
+**The conditions, as geanttw applied RDX's** (`geanttw-20261124/DECLARATION.md` §6, quoting
+`fd/redump-f12i-20261112/RDX-DECLARATION.md:315-321`). The only change is the job prefix, `oofvc_`.
+- **(a)** The first `oofvc_dump` job starts only after cov2d has taken the LL5D gates' atime-post.
+  - `dump-pilot` takes that UTC time, as the director passes it on (the launcher's fourth argument). It refuses
+    unless the time is given, well formed and already past.
+  - It records the time in `gates/ll5d_atime_post.txt`, before any other write. `dump-rest` and every dump task
+    require that record.
+- **(b)** cov2d's atime-snapshot connects refuse while an `oofvc_` job is queued or running. That is enforced on
+  cov2d's side, once the director's announcement names `oofvc_`.
+- **(c)** Each dump task logs the NuE file's `atime_ns` and `mtime_ns`, with UTC, before and after its run, into
+  `dump/<pl>.nue.log`. The logs go into post.tar.gz and the receipt. The task first refuses unless the file the
+  environment resolves is the declared path.
+- **The other binding terms** (`RDX-BINDING-1.md:148-150`):
+  - every dump task checks the fence at its start and immediately before the binary;
+  - each remote step checks it before each submit, and `units` also before staging;
+  - the director announces `oofvc_` to the fenced lanes.
+  The fence check: no live `cov2d` or `t2a` job, read from sacct, never squeue; any non-terminal or empty state
+  counts as live.
+- **There is no GO for step 1A** until the director's ruling and cov2d's no-objection are both on record. Both
+  protected reads are named in the fence round.
+
+Tests: `Shell` checks that the three scripts' fence functions are identical. It also exercises:
+- refusal of a live, unknown-state or sacct-failed fence;
+- the atime-post gate, both directions;
+- the NuE path check and its order around the binary.
+Mutants SH_FENCE_STATE, SH_FENCE_SACCT, SH_GATE_PAST, SH_NUE_ORDER and SH_NUE_PATH target those lines.
 
 ### 2.6 Rulings (the director, 2026-11-26) and reads
 
@@ -476,6 +518,9 @@ The staged copies and the dumps stay on scratch until a separate removal under i
   - the file renamed from `OOFVC-DECLARATION-DRAFT.md`;
   - after 881f4dbc and before any read: moved rows reconstructed outside the grid are not appended; T's cancellation
     from the IBU result is stated; O_j's two sources are named.
+- **Revision 7** (the director's check of 2026-11-26, before the pins): §2.7. The NuE read is declared, with cov2d's
+  conditions (a)–(c) and the fence terms; the CV source's O_NOATIME staging is declared; and the launch scripts and
+  their Shell tests and mutants are added. No number, control or reading changed.
 - **Revision 6** (after r3, the last full round: codex-school 4 BLOCKERs, agy GO; `receipts/reads/r3/`):
   - exact staged paths in argv;
   - exact manifests;

@@ -23,7 +23,7 @@ awk -F'|' 'NR > 1 && $1 !~ /\./ && $2 == "oofvc_dump" {s += $5 * $6 / 2 / 128 / 
   > "$R/post/charge.txt"
 cat "$R/post/sacct.txt" "$R/post/charge.txt"
 (cd "$R" && sha256sum dump/*.root stage/* 2>/dev/null) > "$R/post/large.sha256"
-(cd "$R" && tar -czf "$R/post.tar.gz" logs post join units dump/built.sha256 dump/manifests.sha256 dump/*.log \
+(cd "$R" && tar -czf "$R/post.tar.gz" logs post join units gates dump/built.sha256 dump/manifests.sha256 dump/*.log \
   dump/[0-9]*.sha256 dump/*.done) || { echo "STOP: tar"; exit 3; }
 sha256sum "$R/post.tar.gz"
 echo "post rc=0 $(date -u +%FT%TZ)"
