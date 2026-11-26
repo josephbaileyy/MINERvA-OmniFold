@@ -1,0 +1,12 @@
+ok   normal: pid checked, handoff.ok written, the runner owns /dev/shm, rc 0
+ok   a delayed startup (no pid in time): the runner's group is stopped, /dev/shm removed, rc 8
+ok   runner.pid names another process: stopped, /dev/shm removed, rc 8
+ok   SIGTERM to the connect while it waits: the runner is stopped, /dev/shm removed, rc 8
+CONNECT-START-TESTS :: PASS
+KILLED   runner-not-stopped (3 cases)
+KILLED   pid-mismatch-allowed (1 cases)
+KILLED   term-untrapped (1 cases)
+KILLED   no-handoff (1 cases)
+KILLED   shm-kept (3 cases)
+KILLED   process-only-kill (2 cases)
+CONNECT-START-MUTANTS :: 6/6 killed
