@@ -423,7 +423,8 @@ def highpz() -> dict:
             "evis_readme": (base / "test1/README.md").read_text(), "test1": receipt(f"{PRECHARGE}/test1/test1.json"),
             "testb": receipt(f"{PRECHARGE}/testAB/test-b.json"), "testc": receipt(f"{PRECHARGE}/testC/test-c.json"),
             "atxt": (base / "testAB/test-a.txt").read_text(), "btxt": (base / "testAB/test-b.txt").read_text(),
-            "ctxt": (base / "testC/test-c.txt").read_text()}
+            "ctxt": (base / "testC/test-c.txt").read_text(), "cdecl": (base / "testC/DECLARATION.md").read_text(),
+            "creadme": (base / "testC/README.md").read_text()}
 
 
 def highpz_excess() -> float:
@@ -490,12 +491,23 @@ HIGHPZ_CLAIMS = (
      r"For negative tracks with well-measured curvature, the ratio of data to this prediction rises with visible energy, "
      r"$p_\parallel + E_{\mathrm{avail}}$, in each reconstructed $p_\parallel$ band from 20 to 80~GeV/$c$.",
      lambda d: highpz_rises(d) and "The fit variable is E_vis = reco p∥ + E_avail" in d["evis_readme"]),
-    ("high p_par: neither A (one muon-independent recoil function) nor C (a smooth true-E_nu rate change) reproduces it",
-     "Neither a recoil-energy correction independent of the muon nor a smooth dependence of the event rate on neutrino "
-     "energy reproduces this rise.",
-     lambda d: ("primary: H_A (A1) contradicts" in d["atxt"] and "swap: H_A (A1) contradicts" in d["atxt"]
-                and d["testc"]["reading"] == "contradicts"
-                and "Reading for H_C (primary form, both directions): contradicts" in d["ctxt"])),
+    ("high p_par: A (one muon-independent recoil function) does not reproduce it",
+     "A recoil-energy correction independent of the muon does not reproduce this rise.",
+     lambda d: "primary: H_A (A1) contradicts" in d["atxt"] and "swap: H_A (A1) contradicts" in d["atxt"]),
+    # C was fitted at reco p_par 20-40 and transferred upward. Its declaration leaves open a change where that fit has
+    # no lever, such as one confined to true >= 60 (DECLARATION.md "Contradicts", README.md "What follows").
+    ("high p_par: C (a smooth true-E_nu rate change fitted at reco 20-40) does not, and a change where that fit has no "
+     "lever stays open",
+     r"Nor does a smooth dependence of the event rate on neutrino energy fitted at lower $p_\parallel$, although a "
+     r"change confined to the highest energies remains possible.",
+     lambda d: (d["testc"]["reading"] == "contradicts"
+                and "Reading for H_C (primary form, both directions): contradicts" in d["ctxt"]
+                and "The fit sample is the training playlists, reco p∥ 20–40" in d["cdecl"]
+                and "or that live where the 20–40 fit has no lever, such as an unanchored change confined to true ≥60"
+                in d["cdecl"]
+                and "**C** contradicts a smooth Eν rate change that is fitted at 20–40 and transferred upward"
+                in d["creadme"]
+                and "or that are confined to where 20–40 has no lever" in d["creadme"])),
     ("high p_par: B, a constant curvature offset, is inconclusive (it carries part of the excess, not all)",
      "A constant offset in the fitted curvature accounts for about",
      lambda d: "primary: H_B inconclusive" in d["btxt"] and "swap: H_B inconclusive" in d["btxt"]),
@@ -904,8 +916,11 @@ def self_test() -> int:
     # The high-p_par claims: each sentence reworded, and each planted record, must be rejected
     for old_s, new_s in (("rises with visible energy", "falls with visible energy"),
                          ("band from 20 to 80~GeV", "band from 20 to 100~GeV"),
-                         ("Neither a recoil-energy correction", "Only a recoil-energy correction"),
-                         ("independent of the muon nor", "depending on the muon nor")):
+                         ("independent of the muon does not", "depending on the muon does not"),
+                         ("muon does not reproduce this rise", "muon reproduces this rise"),
+                         ("Nor does a smooth dependence", "So does a smooth dependence"),
+                         ("fitted at lower $p_\\parallel$", "fitted at higher $p_\\parallel$"),
+                         ("highest energies remains possible", "highest energies is excluded")):
         t = text("sec3_twod.tex", base)
         if t.count(old_s) != 1:
             print(f"  NOT FOUND   high p_par mutation {old_s!r}"); ok = False; continue
@@ -936,6 +951,9 @@ def self_test() -> int:
     plant_hp("test A reads supports", lambda d: d.__setitem__("atxt", d["atxt"].replace("primary: H_A (A1) contradicts", "primary: H_A (A1) supports")))
     plant_hp("test B reads supports", lambda d: d.__setitem__("btxt", d["btxt"].replace("swap: H_B inconclusive", "swap: H_B supports")))
     plant_hp("test C reads inconclusive", lambda d: d["testc"].__setitem__("reading", "inconclusive"))
+    plant_hp("test C fitted at 20-60", lambda d: d.__setitem__("cdecl", d["cdecl"].replace("reco p∥ 20–40, negative", "reco p∥ 20–60, negative")))
+    plant_hp("test C declaration leaves no region open", lambda d: d.__setitem__("cdecl", d["cdecl"].replace("where the 20–40 fit has no lever", "anywhere")))
+    plant_hp("test C README leaves no region open", lambda d: d.__setitem__("creadme", d["creadme"].replace("or that are confined to where 20–40 has no lever", "and nothing else")))
     plant_hp("E_vis defined without E_avail", lambda d: d.__setitem__("evis_readme", d["evis_readme"].replace("The fit variable is E_vis = reco p∥ + E_avail", "The fit variable is E_vis = reco p∥")))
     plant_hp("a 60-80 E_vis cell that falls", lambda d: d.__setitem__("evis", d["evis"].replace("1.78          2.12", "1.78          1.12")))
     plant_hp("a 60-80 sign row missing", lambda d: d.__setitem__("merged", [x for x in d["merged"] if not (x["reco_p_parallel_GeV_c"] == "60–80" and x["sign"] == "+")]))
