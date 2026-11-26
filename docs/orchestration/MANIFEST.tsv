@@ -1184,6 +1184,14 @@ docs/orchestration/state/2d-closeout/evw2d-20261124/launch/receipts/reads/r1e/pr
 docs/orchestration/state/2d-closeout/evw2d-20261124/launch/receipts/tests.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/FOLLOWUPS.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/coverage.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/deposit-20261126/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/deposit-20261126/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/deposit-20261126/hpss.tar.gz	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/deposit-20261126/session/fetch-products.out	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/deposit-20261126/session/fetch.out	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/deposit-20261126/session/hpss-session.err	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/deposit-20261126/session/hpss-session.out	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/deposit-20261126/session/hpss.out	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/mutation-campaign10.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/mutation-rerun11-survivors.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/reads/r1/codex-school/VERDICT.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
