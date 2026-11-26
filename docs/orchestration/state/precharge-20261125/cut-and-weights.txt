@@ -1,0 +1,27 @@
+eafc075419bda8d7474fd1db85c0fe6459daf2d6997c25e9abf4a08f583e7283  /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/PlotUtils/CCInclusiveCuts.h
+119:        return univ.GetMuonQP() < 0;
+133:      return univ.GetMuonQP() > 0;
+1bd53893971043773b7b46caa30e926b4067d12445adcaa98f27c821b9a22ea1  /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/PlotUtils/FluxAndCVReweighter.h
+008a4e49d72dd765e4328ff14cf356fb30eba0448b86936e727d4fca70a39717  /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include/PlotUtils/MINOSEfficiencyReweighter.h
+      double GetWeight(const UNIVERSE& univ, const EVENT& /*event*/) const override
+      {
+        int nu_pdg = 14;
+        if(univ.IsPlaylistME(univ.GetPlaylist())) nu_pdg = univ.GetInt("mc_incoming");
+
+        return PlotUtils::flux_reweighter(univ.GetPlaylist(), nu_pdg, univ.UseNuEConstraint(),
+                                    univ.GetNFluxUniverses()).GetFluxCVWeight(univ.GetDouble("mc_incomingE") * 1e-3, nu_pdg);
+      double GetWeight(const UNIVERSE& univ, const EVENT& /*event*/) const override
+      {
+        if(univ.IsTruth()) return 1.; // No efficiency reweigting for truth events
+        if(!univ.isFHC() && !univ.isRHC()) return 1.; // LE or nonstandard playlist.  Don't have away of dealing with this yet
+
+        if (univ.IsPlaylistME(univ.GetPlaylist())) {  // The correction factors are different
+                                      // between ME and LE
+  virtual double GetMuonQP() const {
+    return GetDouble((GetAnaToolName() + "_minos_trk_qp").c_str());
+  }
+        if (univ.IsPlaylistME(univ.GetPlaylist())) {  // The correction factors are different
+                                      // between ME and LE
+        double pmu = univ.GetPmuMinos() / 1000;  // GetCorrection expects GeV
+        return PlotUtils::MinosMuonEfficiencyCorrection::Get(univ.isFHC()).GetCorrection(pmu, univ.GetBatchPOT(), univ.isFHC());
+        } else {                       // Assume if not ME, then it's LE
