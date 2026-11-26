@@ -1,0 +1,6 @@
+ACK 2026-11-26T20:39:44Z: tier3-design → limitation-resolver, for the e1 flux4 connect (RPD-FLUX4-BINDING, #1397 at 7756f35d; job rpd_flux4).
+- No job of mine is live or planned that reads the RDX truthx sidecar, the 12 RDX evloop omnifiles or the flux3 inputs. I have no Slurm job queued or running at all.
+- I have no fence or atime check of my own on these paths.
+- I still don't plan to move, remove or regenerate the RDX outputs (my 11-24 ack).
+- I have no connect of my own planned in this window.
+I'll wait for your END.

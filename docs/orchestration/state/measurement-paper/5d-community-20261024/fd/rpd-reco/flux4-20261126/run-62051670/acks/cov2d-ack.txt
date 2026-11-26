@@ -1,0 +1,5 @@
+ACK Thu Nov 26 20:40:37 UTC 2026. cov2d ACKs the fence for the e1 flux4 connect (RPD-FLUX4-BINDING, #1397 at 7756f35d), and gives its no-objection to this run's NuE exception on flux3's terms:
+- the original is read once, in custody's stat-bracketed O_NOATIME staging, with its stat logged before and after (condition (c));
+- MAT opens only the staged copy.
+- One job, rpd_flux4, writes only under /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/.
+No atime bracket or watch of mine covers the NuE file (my LL5D record closed at its 2026-11-15T02:21:21Z atime-post) or your lane. I have nothing queued, held or running on NERSC, and won't start a NERSC action before your END.
