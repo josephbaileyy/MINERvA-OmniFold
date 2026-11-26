@@ -8803,6 +8803,7 @@ docs/orchestration/state/gate6-member-trajectories-result-56847059.json	tracked	
 docs/orchestration/state/gate6-ml-ensemble-result-56834281.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/gate6-trajectory-array-active-56847059.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/geanttw-20261124/DECLARATION.md	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
+docs/orchestration/state/geanttw-20261124/GEANTTW-BINDING-P0.md	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
 docs/orchestration/state/geanttw-20261124/SHA256SUMS-P0	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
 docs/orchestration/state/geanttw-20261124/code/S0-src_base.sha256	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
 docs/orchestration/state/geanttw-20261124/code/dumpcmp.py	tracked	MACHINE	state-artifact	geanttw-20261124		generated		exact-path-only	yes
