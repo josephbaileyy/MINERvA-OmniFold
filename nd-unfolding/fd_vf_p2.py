@@ -1016,6 +1016,9 @@ def cmd_fetch_script(a) -> int:
     return 0
 
 
+PAX_KEYS = {b"path", b"mtime", b"size"}       # the only keys the reader's tarfile.PAX_FORMAT stream can carry
+
+
 def pax_records(data: bytes, name: str) -> None:
     """A PAX extension's data must be exactly a sequence of "<len> <key>=<value>\n" records covering every byte."""
     i = 0
@@ -1025,8 +1028,11 @@ def pax_records(data: bytes, name: str) -> None:
             raise Stop(f"tar member {name!r}: a malformed PAX record length")
         n = int(data[i:sp])
         rec = data[i:i + n]
-        if n <= sp - i + 1 or len(rec) != n or not rec.endswith(b"\n") or b"=" not in rec[sp - i + 1:] or b"\0" in rec:
+        if n <= sp - i + 1 or len(rec) != n or not rec.endswith(b"\n") or b"\0" in rec:
             raise Stop(f"tar member {name!r}: a malformed PAX record")
+        key, eq, value = rec[sp - i + 1:-1].partition(b"=")
+        if not eq or key not in PAX_KEYS or (key == b"path" and not value):
+            raise Stop(f"tar member {name!r}: a PAX record with key {key!r} (only {sorted(PAX_KEYS)})")
         i += n
 
 

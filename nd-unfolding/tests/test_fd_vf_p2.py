@@ -303,6 +303,15 @@ class Verify(unittest.TestCase):
             self.assertIn(long, [x.name for x in tf])
         self.tar.write_bytes(bytes(bad))
         self.verify()
+        for rec in (b"5 =a\n", b"8 zz=yy\n"):             # an empty key; a key the reader never writes
+            bad = bytearray(raw)
+            assert size + len(rec) <= -(-size // 512) * 512
+            bad[pos + 512 + size:pos + 512 + size + len(rec)] = rec
+            bad[pos + 124:pos + 136] = b"%011o\0" % (size + len(rec))
+            bad[pos + 148:pos + 156] = b" " * 8
+            bad[pos + 148:pos + 156] = b"%06o\0 " % sum(bad[pos:pos + 512])
+            self.tar.write_bytes(bytes(bad))
+            self.verify()
 
     def test_nonzero_padding_after_a_member_refuses(self):
         self.write_tar(self.good())
