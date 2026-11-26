@@ -1,0 +1,29 @@
+You are a second reader for a physics analysis note (MINERvA OmniFold unfolding of CC inclusive neutrino data). This is a read-only task. Do not edit any file. Answer in American English. Your answer is advice to the author, who decides every wording.
+
+Files in this directory (from the note's open PR #1378, head 489959f8):
+- sec3_twod.tex: the 2D result (muon pT, p||). The covariance is defined in Eq. muon-covariance-block-sum (around line 45) and sec:uq-2d-scope (around line 93).
+- sec5_multidim.tex: the 5D / sixteen-cell result. The covariance is defined in Eq. sixteen-cell-covariance (lines 50-60).
+- appC_supplementary.tex, appA_methods.tex, sec2_method.tex: other sites that use these names. appC line 115 is the caption that defines C_e^infl, and appC line 233 defines "the baseline covariance".
+- finding8.md: a wording choice the author must make.
+
+The current naming:
+2D (205-bin differential cross section):
+- Q_R = C_syst + C_stat + C_seed + C_run is the reported covariance.
+- C_model is the starting-shape (prior) sensitivity. It is reported separately and NOT included in Q_R. The note also quotes Q_R + C_model.
+5D (sixteen cell integrals):
+- C_e is the baseline statistical and systematic covariance (stat bootstrap, flux, interaction, detector, lateral bands, normalization). The seed term is zero.
+- C_e^infl is C_e with its eigenvalues rescaled by rank-band factors from pseudo-experiment trace ratios.
+- C_model is the prior-shape term, here INCLUDED in the reported covariance.
+- C_resp is the energy-response term (proton, meson, EM, other deposits).
+- C_PL,5D is the run-period ("playlist") spread.
+- C_rep = C_e^infl + C_model + C_resp + C_PL,5D is the reported covariance.
+- C_total = C_e + C_model is called "the baseline subtotal".
+- "The baseline covariance" is C_rep with C_e in place of C_e^infl.
+- Other names: C_Z is the five-axis purity covariance, and C_EW = M C_Z M^T is its (E_avail, W) projection.
+
+Questions:
+1. Finding 8 (finding8.md). The response-term sentence at sec5_multidim.tex line 60 says how much C_resp raises the per-cell standard deviation. Option A uses the denominator C_total = C_e + C_model (22%). Option B uses C_e^infl + C_model, C_rep's own subtotal before the response term (19%). Which should the note print, and why? Is there a better phrasing than either?
+2. More generally, is the V_F framing clear to a reader: C_e -> C_e^infl, "the baseline covariance", and the fake-data listings that differ between the two? Name any sentence that a careful reader would misread.
+3. Naming convention. Should the note adopt a different covariance naming convention across 2D and 5D? Consider: the reported covariance is Q_R in 2D but C_rep in 5D; C_model means a term that is excluded in 2D but included in 5D; C_total is not the total; the run-period term is C_run in 2D but C_PL,5D in 5D; and C_stat + C_syst in 2D corresponds to C_e in 5D. If you recommend a change, give a concrete old -> new table covering every symbol above, and say which renames matter most to a reader and which are cosmetic. If the current names are acceptable, say so and name the one or two smallest changes worth making. Keep in mind that a rename touches macros, figure labels, captions, and record files, so weigh reader benefit against churn.
+
+Cite file:line for every point. Keep the answer under about 900 words.

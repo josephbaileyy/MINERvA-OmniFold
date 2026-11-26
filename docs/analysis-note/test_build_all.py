@@ -742,10 +742,9 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
                                           "& Coverage is \\covTwoDCOne{} and \\covTwoDCTwo{}, respectively. \\\\\n",
                       # 2026-11-17: the 0.377 entry (f70e1d59f, the note's currency batch A) needs its source too
                       # 2026-11-19: the 3.066 entry (DECISION-20261119g) reads its source here too
-                      "values_fived16.tex": "\\@namedef{fv@g-tune-pull-R15}{1.65}\n\\@namedef{fv@prr-rho-ibu200-q3}{-0.377}\n"
-                                            "\\@namedef{fv@ibusd-k10-sig}{3.066}\n",
-                      "../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json":
-                          '{"sigma": 0.06855283880067227}\n'}
+                      "values_fived16.tex": "\\@namedef{fv@prr-rho-ibu200-q3}{-0.377}\n"
+                                            "\\@namedef{fv@ibusd-k10-sig}{3.066}\n"}
+    # 2026-11-26: the 6.86 entry and its figure-sidecar source are retired (the V_F modes figure prints no 6.86%)
     BODY_FILES = {"main_records": "app_history", "pet_note": "app_history_pet", "main_note": "body_main_note",
                   "main_primer": "body_main_primer"}
     # What each fake PDF "renders": each strike-carrying build shows its own struck literal (its positive control).
@@ -1079,35 +1078,16 @@ class ExemptionGuardTest(unittest.TestCase):
         self.assertIn("CONTEXT_EXEMPT[('main_note', '0.912')] is STALE: values.tex no longer contains", out)
 
     def test_a_literal_that_is_no_longer_struck_FAILS(self):
-        (self.note / "app_history.tex").write_text(r"struck $\dead{1.234}$ here and $\dead{0.377}$, $\dead{6.86}$" + "\n")
+        # 2026-11-26: the 1.65 entry is retired (C_e^infl moves g-tune-pull-R15 to 1.58); 0.377 is the literal dropped here
+        (self.note / "app_history.tex").write_text(r"struck $\dead{1.234}$ here and $\dead{6.86}$" + "\n")
         code, line, out = self._run("--source-only")
         self.assertEqual(code, 1, out)
-        self.assertIn("CONTEXT_EXEMPT[('main_note', '1.65')] is STALE: 1.65 is no longer struck", out)
+        self.assertIn("CONTEXT_EXEMPT[('main_note', '0.377')] is STALE: 0.377 is no longer struck", out)
 
 
-    SIDECAR = "../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json"
-
-    def test_an_outside_source_missing_in_the_standalone_shape_SKIPS(self):
-        """The standalone note repository has no ../orchestration: the 6.86 exemption's sidecar cannot be read there,
-        so the guard says SKIP with its reason (not a false STALE), and the in-tree exemptions are still checked."""
-        (self.note / self.SIDECAR).unlink()
-        subprocess.run(["git", "init", "-q", str(self.note)], check=True)       # the note is its own checkout's top
-        code, line, out = self._run()
-        self.assertEqual(code, 0, out)
-        self.assertIn("CONTEXT_EXEMPT[('main_note', '6.86')] SKIP: its source", out)
-        self.assertNotIn("is STALE", out)
-        self.assertIn("CONTEXT_EXEMPT[('main_note', '0.912')] holds", out)
-
-    def test_an_outside_source_missing_in_the_canonical_layout_FAILS(self):
-        """In <repo>/docs/analysis-note the sidecar is required: missing, the exemption is STALE."""
-        note = self.tmp / "repo" / "docs" / "analysis-note"
-        shutil.copytree(self.note, note)
-        subprocess.run(["git", "init", "-q", str(self.tmp / "repo")], check=True)
-        self.assertFalse((note / self.SIDECAR).exists())
-        self.note = note
-        code, line, out = self._run()
-        self.assertEqual(code, 1, out)
-        self.assertIn("CONTEXT_EXEMPT[('main_note', '6.86')] is STALE", out)
+    # 2026-11-26: the two tests of an exemption whose source lies outside the note tree (the 6.86 entry's figure
+    # sidecar, SKIP in the standalone shape and STALE in the canonical layout) are removed with that entry; no live
+    # exemption has an outside source now, so check_dead_containment's outside-source branch is untested until one does.
 
 
 class PinCheckTest(unittest.TestCase):

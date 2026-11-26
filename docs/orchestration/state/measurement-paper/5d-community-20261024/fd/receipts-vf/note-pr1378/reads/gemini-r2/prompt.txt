@@ -1,0 +1,13 @@
+You are an independent reviewer. READ-ONLY: do not write, modify or delete anything except your final answer. No network. Inputs under ./inputs/:
+- r1-report.txt: your earlier review (16 findings) of an analysis-note PR that switches a 5D covariance's statistical block C_e to an inflated C_e^infl (reported matrix C_rep).
+- r1-DISPOSITIONS.md: the author's dispositions; findings 2, 4, 12 (and 8's records_r05:171 site) were judged comment-only lines that never print.
+- fix.diff: the note-source diff since the reviewed head (the author's fixes, plus a figure redraw merge).
+- PR-1378-body.md: the before/after table, including a "Round 2" section for these fixes and finding 8's two options for the author.
+- the authoritative readings (vf_readings.md / .json).
+
+TASK (narrow confirm read):
+1. For each r1 finding, say CLOSED / NOT CLOSED / ACCEPTED-AS-DISPOSED, with file:line in fix.diff. For the comment-only disposition, verify from fix.diff/context that those lines begin with '%' and so do not print.
+2. Check every sentence the fixes add or change against vf_readings (meaning, right covariance named, numbers, qualifiers kept, no implication of better agreement where only the covariance grew). Flag only what the fixes introduce or leave wrong.
+3. Check the figure captions (headline, generator residual, modes) say C_rep and are consistent with the readings.
+
+OUTPUT: first line exactly "CONFIRM: GO" or "CONFIRM: NO-GO". Then the per-finding list, then any new findings tagged BLOCKING / SHOULD-FIX / MINOR with file:line. BLOCKING means a printed sentence that is false or contradicts the readings. Your final message must be the complete report.

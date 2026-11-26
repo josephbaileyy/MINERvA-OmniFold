@@ -1,0 +1,204 @@
+[
+ {
+  "i": 0,
+  "kind": "line",
+  "axes": 0,
+  "label": "_child2",
+  "hash": "e75981fe55f808300e5ad045ef289840ebdff76f51379871bba59e1f4ec02028",
+  "dhash": "180add75e69f23abd334caff42b0d2d90a8cab450a9b4c29c06a9986e2b69c5c",
+  "xhash": "3a48819b6255d9dbfcf0626ca4893004e21c3225196561e26fdf329fb18049f3",
+  "colours": {
+   "color": [
+    "#8C8C8CFF"
+   ],
+   "mfc": [
+    "#8C8C8CFF"
+   ],
+   "mec": [
+    "#8C8C8CFF"
+   ]
+  },
+  "style": {
+   "linestyle": "-",
+   "marker": "None",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "log"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "line",
+  "axes": 0,
+  "label": "_child5",
+  "hash": "668b095698ef9071b8b98fb51969f6b28a7d3c87fc1505d72a7f16ff4604b307",
+  "dhash": "bd133aefbac15e3be8673b0c83001f299264bb697d6c6c5e8c429e5c6816ddcc",
+  "xhash": "cab401a7c78e473df4b3d8cac3d269fca2c20b306273c3947f1bfdfc225ba1b9",
+  "colours": {
+   "color": [
+    "#8C8C8CFF"
+   ],
+   "mfc": [
+    "#8C8C8CFF"
+   ],
+   "mec": [
+    "#8C8C8CFF"
+   ]
+  },
+  "style": {
+   "linestyle": "-",
+   "marker": "None",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "log"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "line",
+  "axes": 0,
+  "label": "_child7",
+  "hash": "2b8ecdaf9777fbf1a3ddabf70fc67e259314f83f15da3943d1ecdfd40e6c6749",
+  "dhash": "a8290172ee7c2b3325717af5a25cd7f378cb0670b11b65df39e6bd1f22f8df67",
+  "xhash": "db8b896cb0d815125c982272af8941b5d295f37dbdc66c437eeb45635a3d6a9e",
+  "colours": {
+   "color": [
+    "#8C8C8CFF"
+   ],
+   "mfc": [
+    "#8C8C8CFF"
+   ],
+   "mec": [
+    "#8C8C8CFF"
+   ]
+  },
+  "style": {
+   "linestyle": "-",
+   "marker": "None",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "log"
+  ]
+ },
+ {
+  "i": 3,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "19dd4ad8acc2339a9aee35727f42a938c27c5eb1a4eb492f37ca6bb32ca8a71b",
+  "dhash": "02c73d8c30a9950bde1bda2f70092eb87ee4b97f7228c0737cf9da874c9e9ff6",
+  "xhash": "08beca03ab7a47ce5b787952721ba0f8bb0becdd99b2fce2fb695461c2b399ca",
+  "colours": {
+   "color": [
+    "#C0392BFF"
+   ],
+   "mfc": [
+    "#C0392BFF"
+   ],
+   "mec": [
+    "#C0392BFF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "o",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "log"
+  ]
+ },
+ {
+  "i": 4,
+  "kind": "LineCollection",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "7ea8bfc99952d8e8181810424c3fab1f20b00c9f1c5b489156c61994ac91cdfc",
+  "dhash": "518deaa12c3f5819d78377702963eea53c052cb2908d275cf2b6c2ffb21be2ac",
+  "xhash": "518deaa12c3f5819d78377702963eea53c052cb2908d275cf2b6c2ffb21be2ac",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#C0392BFF"
+   ],
+   "cmap": "viridis"
+  },
+  "style": {},
+  "gid": null,
+  "scale": [
+   "linear",
+   "log"
+  ]
+ },
+ {
+  "i": 5,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "a8f03ac493afc4a84eec70c17053c1ba430561a534fb080bf7953f502221b3c4",
+  "dhash": "c799a6835f62a097c868e74672a49aca0789036ae0f7a37aedd44b515895ae3e",
+  "xhash": "3bcbd9a6b8ac0f4a82ebf7aa0dda7bcf15c58da8ebed919c1438b7734d78b6c8",
+  "colours": {
+   "color": [
+    "#C0392BFF"
+   ],
+   "mfc": [
+    "#C0392BFF"
+   ],
+   "mec": [
+    "#C0392BFF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "_",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "log"
+  ]
+ },
+ {
+  "i": 6,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "0e5abbcf1c3f784f3cbcd802c75e9b163655b57b2e8c3e706123f0b04c97dd34",
+  "dhash": "ea3aeeae6afa30e613da38f576db8690acd7fd157cd9d9f7a03d8da89cb8363e",
+  "xhash": "c81bc82e66e936c003ef8c328c0961efb86c6e9524adb70df4d5dc0c37599d5f",
+  "colours": {
+   "color": [
+    "#C0392BFF"
+   ],
+   "mfc": [
+    "#C0392BFF"
+   ],
+   "mec": [
+    "#C0392BFF"
+   ]
+  },
+  "style": {
+   "linestyle": "None",
+   "marker": "_",
+   "drawstyle": "default"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "log"
+  ]
+ }
+]
