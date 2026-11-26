@@ -1,0 +1,7 @@
+model=gemini-4-hydrogen-xhigh
+started=2026-11-26T10:33:17Z
+inputs_sha256=b0f59d799f7273ac1c373643334e3da0bb95743c310dad7abee175b36666555b
+source=PR #1378 head 362011d24428f848746a43fc126661708cffbbe1
+rc=0
+ended=2026-11-26T10:44:02Z
+inputs unchanged

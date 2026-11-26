@@ -1,0 +1,6 @@
+reader=codex (OpenAI Codex, codex-school), model gpt-6.2-sol, reasoning effort high: the mechanical confirm read of the renames (run by the director, 2026-11-26)
+session_id=01a21893-033b-7883-9d48-0334db0e6e59
+source_dir=/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/vf-r3-mech-20261126
+range: 489959f8..d4a7a092. The eight inputs/*.tex are byte-identical to PR #1378 head d4a7a0921cb8827243150079c549eb120981e4ad (sha256 checked by journal-editor). inputs/note.diff is the director's diff, listed with its sha256 in inputs.sha256
+out.txt = report.md, prompt.txt = PROMPT.md, run.txt = run.log (renamed: .gitignore drops *.log)
+disposition (director, 2026-11-26): (a) appC:413 "the full reported covariance" is a real miss, fixed to C_{rep,0}^{(5D)}. The regrade's matrix and the appC:155 column were verified by the director against the readings. The (c) items at sec3:102/104 and sec5:91 come from #1381 and #1384 through the main merge, not from #1378, so no action

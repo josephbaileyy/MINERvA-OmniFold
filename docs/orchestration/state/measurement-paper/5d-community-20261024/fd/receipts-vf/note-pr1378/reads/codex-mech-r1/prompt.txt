@@ -1,0 +1,13 @@
+Read-only task: do not create or modify any file. Answer in American English, in under 600 words.
+
+inputs/note.diff is the change to a physics note's compiled LaTeX sections between two reviewed versions. The other files in inputs/ are the new versions of the main files it touches. The author approved these changes:
+1. A response-term sentence now uses the denominator C_e^infl + C_model (sec5_multidim).
+2. One appendix sentence (appA_methods, near line 62) now names C_e^infl.
+3. Three clarity edits (appA_methods near line 121, sec5_multidim near lines 58 and 132).
+4. Renames, done through macros in preamble.tex: Q_R -> \CrepTwoD; C_rep -> \CrepFiveD; "the baseline covariance" -> \CrepFiveDzero (the reported 5D covariance with unscaled C_e); C_total -> \Csub; C_PL,5D and the 2D run term -> \Crun. A clause says where C_model sits in each result. A "Reported (%)" column label, a sentence naming two matrices, and an old->new map line in appD_reproducibility.
+
+This is a MECHANICAL check. Report only:
+(a) any place where a rename was applied to the wrong matrix, or where a sentence now names a different matrix than its numbers or its source describe;
+(b) any place where a macro is used with an inconsistent meaning, or where an old symbol or "baseline covariance" survives outside the appD map line;
+(c) any sentence whose factual content changed beyond items 1-4, other than pure wording.
+Cite file:line for each finding. Say "no finding" for any of (a)-(c) that has none.

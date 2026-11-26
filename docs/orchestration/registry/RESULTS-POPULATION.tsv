@@ -21,6 +21,10 @@ docs/orchestration/state/2d-closeout/stageF/methods/m4-w/probe_mad.json	included
 docs/orchestration/state/2d-closeout/stageF/methods/m4-w/probe_omni.json	included	28	
 docs/orchestration/state/2d-closeout/stageF/methods/note-figredraw-20261123/runs/round4/cov/arm1/out/m3_fig3_coverage_data.json	included	306	
 docs/orchestration/state/2d-closeout/stageF/methods/note-genresid-20261120/run/fived16_genresidual_values.json	included	72	
+docs/orchestration/state/2d-closeout/stageF/methods/note-vffigs-20261126/figs/fived16_genresidual_values.json	included	72	
+docs/orchestration/state/2d-closeout/stageF/methods/note-vffigs-20261126/runs/genresidual/control-main/out/fived16_genresidual_values.json	included	72	
+docs/orchestration/state/2d-closeout/stageF/methods/note-vffigs-20261126/runs/genresidual/vf1/out/fived16_genresidual_values.json	included	72	
+docs/orchestration/state/2d-closeout/stageF/methods/note-vffigs-20261126/runs/genresidual/vf2/out/fived16_genresidual_values.json	included	72	
 docs/orchestration/state/2d-closeout/stageF/methods/ratefail/diag_out.json	included	612	
 docs/orchestration/state/2d-closeout/stageF/methods/re1/f/fig_numbers_p5.json	included	2	
 docs/orchestration/state/2d-closeout/stageF/methods/re1/run2/readouts/c2_supplement.json	included	20	
@@ -29,6 +33,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/re
 docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/results/s3.json	included	10	
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-three-items-20261104/recheck.json	included	10	
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-figure-deformation-20261112/check-a/a_recovery.json	included	177	
+docs/orchestration/state/2d-closeout/valid-region-20261107/receipts/read-vf/readout.json	included	16	
 docs/orchestration/state/2d-closeout/valid-region-20261107/receipts/read/readout.json	included	16	
 docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/receipts/read/readout.json	included	28	
 docs/orchestration/state/GRADE-20260920-cause3-two-member.json	included	1	
