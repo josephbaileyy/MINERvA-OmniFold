@@ -68,3 +68,37 @@ Two findings are left as they are:
 - `evw2d.py cleanup`, run directly, follows a linked staging root. The launch path never runs it that way:
   `evw2d_cleanup.sh` first checks that `<lane>/stage` is a real directory. evw2d.py stays byte-unchanged here, so this
   is a follow-up for evw2d.py.
+
+## The HPSS copy and the deposit fetch (for EVW2D BINDING 2)
+
+These steps follow the run accepted under BINDING 1 (job 62022231; the products' SHA256SUMS digest e60867ef;
+receipts in `../receipts/run-20261126/`). They follow EVW5D's merged hpss and fetch-products steps. BINDING 1's bound
+launcher stays as it is: these steps have their own launcher. Every step is bound to the SHA256SUMS digest, the
+evw2d.done digest, the job and the config digest.
+
+| file | where it runs | what it does |
+|---|---|---|
+| `evw2d_hpss.sh` | a login node | Before it writes anything:<ul><li>the lane and `out/` are real directories, and the six names are regular files, not links;</li><li>`post.pass` is exactly this job, config and products digest;</li><li>SHA256SUMS and evw2d.done have their bound digests;</li><li>deploy_C's evw2d.py is the approved bytes.</li></ul>A private snapshot gives every pin and the six-file list, and the checker passes on scratch. The checker executes the very bytes it hashed, then requires `evw2d.accepted()` and the digest, config and job bindings. /dev/shm must have room for the retrieval, and the HPSS directory must list cleanly with none of the archive's four names. Scratch is re-hashed before htar. Then:<ul><li>`htar -Hcrc -Hverify=1` writes a part name, followed by `hashcreate` and `hashverify`;</li><li>a full retrieval into a private `mktemp` directory in /dev/shm, with the pins, the counts and the checker on the retrieved copy;</li><li>scratch is re-hashed again, and the six names checked again as regular files;</li><li>`htar -tf` of the part archive must list every pinned name.</li></ul>Only when every check holds is the index renamed (`hsi mv`), then the archive, so the final `.tar` never appears without its index. Both final names must then list and the final pair must read back (`htar -tf`). If not, each is renamed back to the part name and the directory is listed. Otherwise the part names stay, or the log says which names are where. Every digest pin must be 64 hex characters and the job a number, in both scripts. The launcher runs with `LC_ALL=C` and requires the lane root's full form. The retrieved copy is removed by the pinned names only, then its directories by `rmdir`. Nothing on scratch is removed. Receipts go to `<lane>/hpss` and `hpss.tar.gz`. |
+| `evw2d_deposit.sh` | the Mac | BINDING 1's certificate and credential checks, verbatim, before every step. The directory argument is resolved once to a physical path (CDPATH unset), and every write uses it. It has three modes:<ul><li>`hpss`: runs the approved `evw2d_hpss.sh` through the /dev/shm stager, with a 60-minute certificate margin;</li><li>`fetch`: copies `hpss.tar.gz`, then verifies its receipt. Its first line must name the approved `evw2d_hpss.sh`, the bound digests and the job, exactly. The log must show 6 of 6, the part and final archives' readbacks, the rename and `hpss rc=0`, with no NUL byte; its snapshot SHA256SUMS has the bound digest; and its pinned list is byte for byte the six rows that snapshot implies. Exit 5 if it is not verified;</li><li>`fetch-products`: copies the six files by scp into `<new dir>/out` and runs the checker on the Mac, which executes the approved evw2d.py's bytes.</li></ul>The fetch-products destination must be a new empty directory under `$HOME`, outside `/private/tmp`, `/tmp` and `/private/var`. |
+| `fill_deposit_pins.sh` | the Mac | Writes `bound-deposit/` and its `PINS.txt`. HEAD is resolved once to a commit, and every input is read from that commit (`git show`), each a regular blob in its tree, never a symlink. The working copies of evw2d.py and the templates must hash equal to the commit's blobs. The lane, evw2d.py and config.json come from BINDING 1's `bound/PINS.txt`. The SHA256SUMS digest, the evw2d.done digest and the job come from the committed run receipts, cross-checked against their `accepted.json`, marker and post log. |
+
+Tests: `2d-unfolding/evw2d/test_evw2d_deposit.py`. It stubs hsi, htar, hpssquota, ssh, scp, ssh-keygen, GNU stat and
+df, uses a temporary HPSS directory, and runs the real `evw2d.accepted()` on a small accepted product set. The
+fetch-products tests make and remove a directory under the real `$HOME`, because the step refuses temporary roots.
+
+Some checks are layered, so a mutant of one alone survives, and those mutants are left out of the mutation check:
+- in the retrieval, the pinned sums, the counts, `rmdir` and the checker each catch a corrupt or extra file;
+- the snapshot comparison and the scratch re-hash both catch a changed marker;
+- on the Mac, the SHA256SUMS digest is implied by the marker digest together with `accepted()`;
+- the listing check repeats `accepted()`'s `present` check.
+
+Reads (codex-school, gpt-6.2-sol, effort high, read-only), in `receipts/deposit/reads/`:
+
+| read | verdict | fixed in |
+|---|---|---|
+| r1, the set | NO-GO: five BLOCKING, three SHOULD-FIX | r2 |
+| r1b | NOT ALL HOLD | r3 |
+| r1c | NOT ALL HOLD | r4 |
+| r1d | NOT ALL HOLD | r5 |
+| r1e | NOT ALL HOLD (the launcher) | r6 |
+| r1f, the launcher's four changes | ALL HOLD | |

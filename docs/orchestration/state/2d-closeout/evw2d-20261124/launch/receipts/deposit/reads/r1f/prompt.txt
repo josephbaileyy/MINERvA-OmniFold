@@ -1,0 +1,14 @@
+You are an adversarial reviewer of cluster scripts (Perlmutter, HPSS). READ-ONLY: never write anywhere except your report, never touch a git checkout, no network. Do not modify inputs/.
+
+NARROW CONFIRMATION OF THE r1e FIXES, IN THE DEPOSIT LAUNCHER ONLY. Your read inputs/prior/codex-r1e-report.md returned NOT ALL HOLD; every open finding was in evw2d_deposit.sh. The change is inputs/diff/r5-to-r6.diff (evw2d_hpss.sh and fill_deposit_pins.sh are unchanged since your read; the full bytes are in inputs/new/, the filled copies in inputs/bound/; 84 tests pass, with the launcher fixture under en_US.UTF-8). The changes:
+1. export LC_ALL=C at the top: byte semantics for every pattern and tool.
+2. fetch fails verification if the receipt log holds a NUL byte anywhere.
+3. fetch requires the final archive's readback lines (htar -tf (final) rc=0; the final archive lists 6 of 6 pinned names) as well as the part archive's.
+4. The lane root pin must be /pscratch/sd/j/josephrb/evw2d-<yyyymmdd> in full.
+
+Scope: mistakes and lasting changes; a hostile same-account process is out of scope.
+
+TASKS:
+1. For each of r1e's open findings (#4 the NUL in the receipt; the uppercase digest under a UTF-8 locale; the missing final readback lines; the bare lane root): HOLDS or DOES NOT HOLD, with file:line, and the concrete failing scenario if it does not hold.
+2. Any NEW defect from these four changes that would give a false PASS or a false STOP on the Mac (BSD tools, macOS bash 3.2 or the bash in PATH). Label BLOCKING / SHOULD-FIX / MINOR.
+Be concise. Start with one line: "CONFIRMATION: ALL HOLD" or "CONFIRMATION: NOT ALL HOLD".
