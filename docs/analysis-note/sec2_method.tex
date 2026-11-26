@@ -15,7 +15,7 @@ The analyzed files span twelve run periods and contain $1.0574\times10^{21}$ pro
 
 \phantomsection
 \label{sec:selection}
-We set $c=1$ in kinematic formulas throughout and retain $\mathrm{GeV}/c$ when reporting momenta. The signal follows the published inclusive charged-current (CC) $\nu_\mu$ definition on hydrocarbon~\cite{MINERvA:2021owq}. The true vertex must lie within the central tracker fiducial volume, $5980<z<\SI{8422}{mm}$ and within an apothem of \SI{850}{mm}. This volume contains $3.2353\times10^{30}$ nucleons. The true muon must satisfy
+The signal follows the published inclusive charged-current (CC) $\nu_\mu$ definition on hydrocarbon~\cite{MINERvA:2021owq}. The true vertex must lie within the central tracker fiducial volume, $5980<z<\SI{8422}{mm}$ and within an apothem of \SI{850}{mm}. This volume contains $3.2353\times10^{30}$ nucleons. The true muon must satisfy
 \begin{equation}
   \theta_\mu<20^\circ,\quad
   1.5<p_\parallel<\SI{60}{GeV/c},\quad
@@ -102,17 +102,17 @@ Truth signal events without a selected reconstructed partner enter the second st
 
 For the principal results, we give each data event unit weight and append the simulated background with the negative of its exposure-scaled weights. If $D(x)$ and $B(x)$ are the selected data and background densities in reconstructed coordinates $x$, the signed measured class targets the first-step ratio $[D(x)-B(x)]/S(x)$ where the net density is positive, with $S(x)$ the current weighted density of selected simulated signal.
 
-Before the first OmniFold classifier is trained, we convert the signed sample to nonnegative weights. A separate classifier, trained with absolute event weights, estimates the probability $g(x)$ that an event in the signed sample has positive weight. The original weight $w$ is replaced by $|w|\max\{0,2g(x)-1\}$~\cite{Nachman:2025staypositive}. The absolute-weight sample has density $D+B$. In the population limit $g=D/(D+B)$, so multiplying this density by the clipped factor gives the positive part of $D-B$. The learned factor implements this prescription without a subtraction grid. We call this unfolding negative-weight-refined. The purity-subtracted checks weight data by the estimated signal fraction in each reconstructed bin (Appendix~\ref{app:negative-weight-background}).
+Before the first OmniFold classifier is trained, we convert the signed sample to nonnegative weights. A separate classifier, trained with absolute event weights, estimates the probability $g(x)$ that an event in the signed sample has positive weight. The original weight $w$ is replaced by $|w|\max\{0,2g(x)-1\}$~\cite{Nachman:2025staypositive}. The absolute-weight sample has density $D+B$. In the population limit $g=D/(D+B)$, so multiplying this density by the clipped factor gives the positive part of $D-B$. The learned factor implements this prescription without a subtraction grid. Some checks instead subtract the background with binned purity, weighting data by the estimated signal fraction in each reconstructed bin. We label these purity-subtracted (Appendix~\ref{app:negative-weight-background}).
 
 \subsection{Estimators and cross-section extraction}
 \label{sec:estimators-and-extraction}
 \label{sec:method-config}
 
-The benchmark against MINERvA uses the two-dimensional (2D) muon kinematics $(p_T,p_\parallel)$. The 3D, 4D, and 5D unfoldings add $E_{\mathrm{avail}}$, $q_3$, and $W$ in sequence at both reconstruction and truth level. Table~\ref{tab:estimators} gives the principal estimators. The 2D covariance uses the analysis edges in Sec.~\ref{sec:muon-cross-section-comparison}.
+The benchmark against MINERvA uses the two-dimensional (2D) muon kinematics $(p_T,p_\parallel)$. The 3D, 4D, and 5D unfoldings add $E_{\mathrm{avail}}$, $q_3$, and $W$ in sequence at both reconstruction and truth level. Table~\ref{tab:estimators} gives the settings for the principal results. The 2D covariance uses the analysis edges in Sec.~\ref{sec:muon-cross-section-comparison}.
 
 \begin{table}[!t]
   \centering\small
-  \caption{Principal estimators. $Q_R$ is the reported 2D differential cross-section covariance. $C_{\mathrm{rep}}$ is the reported covariance of the sixteen cell integrals. Appendices~\ref{app:reproducibility-definitions} and~\ref{app:algorithm-classifier-controls} give the settings and diagnostic configurations.}
+  \caption{Principal results. $Q_R$ is the reported 2D differential cross-section covariance. $C_{\mathrm{rep}}$ is the reported covariance of the sixteen cell integrals. Appendices~\ref{app:reproducibility-definitions} and~\ref{app:algorithm-classifier-controls} give the settings and diagnostic configurations.}
   \label{tab:estimators}
   \label{tab:estimators-matrix}
   \label{tab:config-key}
@@ -120,18 +120,18 @@ The benchmark against MINERvA uses the two-dimensional (2D) muon kinematics $(p_
                       >{\raggedright\arraybackslash}p{0.31\textwidth}
                       >{\raggedright\arraybackslash}p{0.38\textwidth}@{}}
     \toprule
-    Result & Estimator & Grid and covariance \\
+    Result & OmniFold settings & Grid and covariance \\
     \midrule
     2D muon cross section &
-      Negative-weight-refined (2D settings) &
+      2D &
       Published muon grid for the central value, our grid for the \lrval{q-ncells}-bin covariance $Q_R$ (three $p_T$ edges differ by \SI{0.005}{GeV/c}, Sec.~\ref{sec:results-xsec}). \\
     \addlinespace
     3D and 4D central values &
-      Negative-weight-refined (multidimensional settings) &
+      Multidimensional &
       Central values on fine muon and hadronic grids. \\
     \addlinespace
     \ResSixteen{} &
-      Negative-weight-refined (multidimensional settings) &
+      Multidimensional &
       Merged regions with reported covariance $C_{\mathrm{rep}}$. \\
     \bottomrule
   \end{tabular}
