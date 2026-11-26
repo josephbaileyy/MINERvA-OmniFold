@@ -1,0 +1,90 @@
+ack: cov2d=cov2d-ACK-geanttw-p0-submit-2026-11-26T15:51:36Z nue=GEANTTW-BINDING-P0:NuE-exception@2026-11-26 utc=2026-11-26T15:51:50Z
+script: 7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738 4fe6add5de54544196ddb90ac09cf033d8411515:docs/orchestration/state/2d-closeout/cov2d-fence-20261122/cov2d_fence.sh
+script: c5bf44079438d0057c8fb5d95e86e515321fc0f6f47571c9ef0ecd42d09b6d87 4fe6add5de54544196ddb90ac09cf033d8411515:docs/orchestration/state/geanttw-20261124/code/geanttw_remote.sh
+fence host=login21 utc=2026-11-26T15:51:54Z
+sacct -X -n -P -u josephrb -S 2026-11-12T07:51:54 -E now -o JobID,JobName,State 2>&1
+sacct matching rows: 14
+FENCE CLEAR
+fence: clear
+[geanttw-evloop] 21 AnaTuples checked by size and mtime; 0 differ
+[geanttw-evloop] ldd of /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/bin/runEventLoopOmniFold:
+	linux-vdso.so.1 (0x00007ffdb66ce000)
+	libCore.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libCore.so.6.28 (0x00007fab4c550000)
+	libRIO.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libRIO.so.6.28 (0x00007fab4c1c8000)
+	libHist.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libHist.so.6.28 (0x00007fab4bdad000)
+	libTree.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libTree.so.6.28 (0x00007fab4bc1d000)
+	libPhysics.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libPhysics.so.6.28 (0x00007fab4bbd1000)
+	libMAT-MINERvA.so => /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib/libMAT-MINERvA.so (0x00007fab4bb1d000)
+	libMAT.so => /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pin/lib/libMAT.so (0x00007fab4b995000)
+	libstdc++.so.6 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libstdc++.so.6 (0x00007fab4b716000)
+	libm.so.6 => /lib64/libm.so.6 (0x00007fab4b613000)
+	libgcc_s.so.1 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libgcc_s.so.1 (0x00007fab4b5e6000)
+	libpthread.so.0 => /lib64/libpthread.so.0 (0x00007fab4b5e3000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007fab4b3d0000)
+	libpcre.so.1 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libpcre.so.1 (0x00007fab4b388000)
+	liblzma.so.5 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./liblzma.so.5 (0x00007fab4b357000)
+	libxxhash.so.0 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libxxhash.so.0 (0x00007fab4b34c000)
+	liblz4.so.1 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./liblz4.so.1 (0x00007fab4b321000)
+	libz.so.1 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libz.so.1 (0x00007fab4b306000)
+	libzstd.so.1 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libzstd.so.1 (0x00007fab4b1eb000)
+	libdl.so.2 => /lib64/libdl.so.2 (0x00007fab4b1e8000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007fab4ca0b000)
+	libThread.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libThread.so.6.28 (0x00007fab4b187000)
+	libMatrix.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libMatrix.so.6.28 (0x00007fab4afed000)
+	libMathCore.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libMathCore.so.6.28 (0x00007fab4ad97000)
+	libImt.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libImt.so.6.28 (0x00007fab4ad83000)
+	libNet.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libNet.so.6.28 (0x00007fab4acb3000)
+	libGraf.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libGraf.so.6.28 (0x00007fab4ab5e000)
+	libGpad.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libGpad.so.6.28 (0x00007fab4aa8c000)
+	libtbb.so.12 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/././libtbb.so.12 (0x00007fab4aa29000)
+	libMultiProc.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/././libMultiProc.so.6.28 (0x00007fab4aa1b000)
+	libssl.so.3 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/././libssl.so.3 (0x00007fab4a91f000)
+	libcrypto.so.3 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/././libcrypto.so.3 (0x00007fab4a310000)
+	libfreetype.so.6 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libfreetype.so.6 (0x00007fab4a24d000)
+	libpng16.so.16 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/././libpng16.so.16 (0x00007fab4a20c000)
+[geanttw-evloop] smoke: checks passed for pin 1L (geanttw_p0_pin_1L, 01:00:00)
+[geanttw-evloop] env: MNV101_DUMP_UNIVERSES=GEANT_Neutron,GEANT_Pion,GEANT_Proton 
+[geanttw-evloop] 21 AnaTuples checked by size and mtime; 0 differ
+[geanttw-evloop] ldd of /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/bin/runEventLoopOmniFold:
+	linux-vdso.so.1 (0x00007ffd45eae000)
+	libCore.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libCore.so.6.28 (0x00007f1f7cbc4000)
+	libRIO.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libRIO.so.6.28 (0x00007f1f7c83c000)
+	libHist.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libHist.so.6.28 (0x00007f1f7c421000)
+	libTree.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libTree.so.6.28 (0x00007f1f7c291000)
+	libPhysics.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libPhysics.so.6.28 (0x00007f1f7c245000)
+	libMAT-MINERvA.so => /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/libMAT-MINERvA.so (0x00007f1f7c191000)
+	libMAT.so => /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/libMAT.so (0x00007f1f7c009000)
+	libstdc++.so.6 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libstdc++.so.6 (0x00007f1f7bd8a000)
+	libm.so.6 => /lib64/libm.so.6 (0x00007f1f7bc87000)
+	libgcc_s.so.1 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libgcc_s.so.1 (0x00007f1f7bc5a000)
+	libpthread.so.0 => /lib64/libpthread.so.0 (0x00007f1f7bc57000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007f1f7ba44000)
+	libpcre.so.1 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libpcre.so.1 (0x00007f1f7b9fc000)
+	liblzma.so.5 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./liblzma.so.5 (0x00007f1f7b9cb000)
+	libxxhash.so.0 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libxxhash.so.0 (0x00007f1f7b9c0000)
+	liblz4.so.1 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./liblz4.so.1 (0x00007f1f7b995000)
+	libz.so.1 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libz.so.1 (0x00007f1f7b97a000)
+	libzstd.so.1 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libzstd.so.1 (0x00007f1f7b85f000)
+	libdl.so.2 => /lib64/libdl.so.2 (0x00007f1f7b85c000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f1f7d080000)
+	libThread.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libThread.so.6.28 (0x00007f1f7b7fb000)
+	libMatrix.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libMatrix.so.6.28 (0x00007f1f7b661000)
+	libMathCore.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libMathCore.so.6.28 (0x00007f1f7b40b000)
+	libImt.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libImt.so.6.28 (0x00007f1f7b3f7000)
+	libNet.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libNet.so.6.28 (0x00007f1f7b327000)
+	libGraf.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libGraf.so.6.28 (0x00007f1f7b1d2000)
+	libGpad.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libGpad.so.6.28 (0x00007f1f7b100000)
+	libtbb.so.12 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/././libtbb.so.12 (0x00007f1f7b09d000)
+	libMultiProc.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/././libMultiProc.so.6.28 (0x00007f1f7b08f000)
+	libssl.so.3 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/././libssl.so.3 (0x00007f1f7af93000)
+	libcrypto.so.3 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/././libcrypto.so.3 (0x00007f1f7a984000)
+	libfreetype.so.6 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libfreetype.so.6 (0x00007f1f7a8c1000)
+	libpng16.so.16 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/././libpng16.so.16 (0x00007f1f7a880000)
+[geanttw-evloop] smoke: checks passed for pat 1L (geanttw_p0_pat_1L, 01:00:00)
+[geanttw-evloop] env: MNV101_DUMP_UNIVERSES=GEANT_Neutron,GEANT_Pion,GEANT_Proton 
+{"cap": 8.0, "held": 0.0, "pass": true, "spent": 0.0, "total": 0.0391, "unlisted_ids": [], "want": "geanttw_p0_pin_1L", "want_ceiling": 0.0391}
+SUBMIT id=62042572 name=geanttw_p0_pin_1L limit=01:00:00 md5=35a20fbcc7ab4c50541d8842a0f00a5e utc=2026-11-26T15:52:16Z
+{"cap": 8.0, "held": 0.0391, "pass": true, "spent": 0.0, "total": 0.0782, "unlisted_ids": ["62042572"], "want": "geanttw_p0_pat_1L", "want_ceiling": 0.0391}
+SUBMIT id=62042575 name=geanttw_p0_pat_1L limit=01:00:00 md5=2070a26f9b76b7313e902c6d5c10ea73 utc=2026-11-26T15:52:22Z
+== geanttw remote p0 rc=0 2026-11-26T15:52:22Z
+== geanttw connect p0 rc=0 2026-11-26T15:52:22Z
