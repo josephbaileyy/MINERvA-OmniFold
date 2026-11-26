@@ -1,0 +1,18 @@
+ok   no job.rc, sacct fails while printing a COMPLETED row: exit 10, cannot tell
+ok   no job.rc, sacct ok, RUNNING: exit 10, not finished
+ok   no job.rc, sacct ok, two rows for the job: exit 10, cannot tell
+ok   no job.rc, sacct ok, no row: exit 10, cannot tell
+ok   no job.rc, sacct ok, one COMPLETED row: proceeds, cleanup unverified
+ok   job.rc present, sacct fails: job.rc decides, proceeds
+ok   no job.rc, a COMPLETED row for 061900001 (job 61900001): exit 10, cannot tell
+ok   no job.rc, a short row 61900001||COMPLETED: exit 10, cannot tell
+ok   no job.rc, a full row then a blank-State duplicate: exit 10, cannot tell
+ok   no job.rc, a blank-State duplicate then a full row: exit 10, cannot tell
+ok   no job.rc, the parse prints a row but fails (rc 2): exit 10, cannot tell
+FETCH-FINISH-TESTS :: PASS
+KILLED   sacct-rc-unchecked (1 cases)
+KILLED   parse-rc-unchecked (1 cases)
+KILLED   duplicates-allowed (2 cases)
+KILLED   ids-numeric (1 cases)
+KILLED   shape-unchecked (1 cases)
+FETCH-FINISH-MUTANTS :: 5/5 killed

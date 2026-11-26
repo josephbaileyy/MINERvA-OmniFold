@@ -169,10 +169,31 @@ Four connect steps, each on its own go: `deploy`, `build`, `p0` and `check`.
      - the 1L manifests' AnaTuples, by exact path;
      - the production `opt/lib/data`, `opt/etc/MParamFiles/data` and `opt/etc/MATFluxAndReweightFiles` trees;
      - the conda ROOT env;
-     - `/usr`, `/lib`, `/lib64`, `/etc`, `/proc`, `/sys`, `/dev`.
+     - `/usr`, `/lib`, `/lib64`, `/etc`, `/proc`, `/sys`, `/dev`;
+     - since the director's C0e ruling of 2026-11-26, three environment families, each allowed only when opened the
+       way P0's jobs were seen opening it:
+       - Lmod's tree under `/opt/cray/pe/lmod`, by a child process only. The binary's own PID is the log's first
+         successful open, and its open of an Lmod file still FAILs.
+       - seven library directories (`ENV_DIRS`: darshan 3.4.6, libfabric 2.3.1, papi 7.3.0.1, and four under the
+         NVIDIA HPC SDK 26.5), as an `O_DIRECTORY` open of exactly that directory only. A regular open of the
+         directory, or any open of a file or subdirectory under it, still FAILs.
+       - two files by exact path: the SDK's `cuda/13.2/targets/x86_64-linux/include/cuda.h` (clang's CUDA detection
+         in cling) and `/var/lib/sss/mc/passwd` (NSS's user lookup).
 
      Any other path FAILs and goes to the director. Tests may replace the production and conda paths only in
      smoke mode.
+
+     **What happened at P0's check (2026-11-26).** C0e FAILED on 23 paths that the list then in force did not allow,
+     and the check STOPPED. That FAIL stands as recorded: the receipts carry it with the 23 paths verbatim. The
+     director ruled that the list may be widened only on evidence. `c0e-attribution/` holds the evidence: every one
+     of the 23, attributed from the two jobs' own strace logs to its PID, its open flags and its build. The
+     families above are exactly what that attribution showed.
+
+     **What these logs cannot show.** The jobs traced `openat` and `open` only. So they show which process opened a
+     path and with what flags, but not whether its content was read, and not which process spawned a child. The
+     director's test was this: STOP if the binary itself opens any of the 23 as a regular file (not `O_DIRECTORY`),
+     other than `cuda.h` and the SSSD cache. It found no case in either build. It is the strongest test these logs
+     support. P2–P3's package traces `read` and `stat` as well, if that stays within its price.
    - **C0f, AnaTuple content (hash-pinned).** The reference copy's sha256 equals the committed value. Then
      `dumpcmp.py reference pin` passes: the same trees and entries, every reference branch present in the pinned dump
      and bitwise equal, and the pinned dump's extras only `w_{truth,reco,bkg}_GEANT_{Neutron,Pion,Proton}_{0,1}`. This
@@ -368,7 +389,8 @@ exceptions:** outside Slurm it takes its TimeLimit from the caller (`GEANTTW_TIM
 by `geanttw_remote.sh`), not from `sacct -j`, and it stops before the second fence check, which belongs with the
 binary. It logs the NuE atime/mtime before and after, runs strace in P0, and writes the output via `.partial` with mode 0440. Its build variable is `GBUILD`, not `BUILD`: the ROOT env's conda activation exports `BUILD`, which overwrote RDX's (`fd/redump-f12i-20261112/RDX-BINDING-1.md:189-190`). |
 | `dumpcmp.py` | bitwise, branch-by-branch, entry-by-entry comparison of two dumps, at each tree's highest cycle. It takes an exempt regex (C0d) and an allowed-extras regex (C0f). No key join: C2's comes with the P2 package. |
-| `p0_check.py` | C0a–C0f and build.log's CHECKs, with the allowed read families fixed in code |
+| `p0_check.py` | C0a–C0f and build.log's CHECKs, with the allowed read families fixed in code. C0e's three environment families (§4, C0e) are judged on each open's PID and flags, read from the same strace lines. |
+| `../c0e-attribution/` | not run on the cluster. The C0e FAIL's record (`check.txt`), and the attribution of its 23 paths, which C0e's environment families rest on: `attribute.py`, `attribution.json` and a README with the fetched logs' sha256s. |
 | `tests/` | pytest. The Python half uses synthetic ROOT fixtures (uproot) and strace logs in `-f` formats. The shell half uses stubbed `sacct`/`sbatch`/`ssh`/`conda`/`ldd`/`strace`/`readelf`/`cmake`/`make` (a stub `squeue` fails if called) and local git repositories. The full run paths are executed, not grepped. Which refusals no test notices is `mutation.txt`'s to say, not this table's. Tests added for mutants the earlier runs left alive assert the refusal's own message or, where a refusal prints none, its exit code and that the step after it did not run; in the launcher (`only_refusal`) also that it is the only REFUSE, since a guard whose `exit` is removed still prints its message. |
 | `mutation.py` → `mutation.txt` | single-site planted mutants. In the Python modules these are operator, keyword and verdict-literal tokens, found by Python's tokenizer, so string text is never mutated. In the shell scripts they are each refusal's `exit` or `bail`/`stop` call (after `||`, `&&` or a `case` label), and each `==`, `!=`, `-eq` and `-ne` on a refusal, `CHECK` or `[[` line. `=~`, `<`, `>` and the unary tests are not mutated. Each mutant runs its owner's test file in a scratch copy. A mutant whose tests time out is counted as not killed. |
 | `linetrace.py` → `linetrace.txt` | line trace under the tests: coverage.py for Python, including the tests' `python3 -I` subprocesses; a DEBUG-trap trace for the shell scripts (bash 3.2 has no `BASH_XTRACEFD`). Inside a command substitution that continues over `\` lines, bash 3.2 reports the command's last line, so a hit on a continuation line counts for the line its command starts on. It lists every executable line no test reaches. |

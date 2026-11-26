@@ -1,0 +1,14 @@
+ok   step 5b is cut from rpd_flux4_connect.sh; it only stats the sidecar, without following a link
+ok   a regular file of the probe's size: falls through (rc 0)
+ok   one byte short: STOP 3 (rc 3)
+ok   a symlink: STOP 3 (rc 3)
+ok   a symlink whose size field equals the probe's: STOP 3 (rc 3)
+ok   a directory: STOP 3 (rc 3)
+ok   stat fails (purged): STOP 3 (rc 3)
+ok   stat prints a matching line but fails: STOP 3 (rc 3)
+SIDECAR-STAT-TESTS :: PASS
+KILLED   stat-rc-ignored (2 cases)
+KILLED   size-unchecked (1 cases)
+KILLED   type-unchecked (1 cases)
+KILLED   check-dropped (4 cases)
+SIDECAR-STAT-MUTANTS :: 4/4 killed

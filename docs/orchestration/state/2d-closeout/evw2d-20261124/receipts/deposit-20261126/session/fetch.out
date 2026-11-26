@@ -1,0 +1,5 @@
+certificate valid 2026-11-26T14:21:00 to 2026-11-27T14:22:19 UTC (1162 min left; this step needs 10)
+scp hpss.tar.gz rc=0
+1a262ac777ebf8ff3818f791a64bcffe8f6f9396ba6958ee2a6e9486d0624a62  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7e3f49f7-e8e4-452d-b380-399d4f6c529e/scratchpad/evw2d-b2/fetch/hpss.tar.gz
+VERIFIED: the HPSS copy of evw2d-20261126 (e60867ef66eb47172a0e90140abc7a366d780dfc3aa3f9beb426a40a48d1416e, job 62022231) is in place and was verified by retrieval
+launcher rc=0

@@ -1,0 +1,61 @@
+{
+ "schema": "oofvc-mutation/1",
+ "python": "/Users/josephbailey/ew2d-env/bin/python3",
+ "files": {
+  "oofvc_join.py": "23e8605bd7c8ea1d15021e91d1debf2914d1fe5759a43408f33d9b6b7567bf2d",
+  "oofvc_lib.py": "bb7062c31693683842f6d2b5f189942e84d9eda81e02b31cd0a765b97da9a056",
+  "oofvc_mutation.py": "24954a4773666ab11d6dcb5e5209c55b823c301430c0cdf3620f71a18a45749c",
+  "oofvc_run.py": "4b97bfabade3d2e0b95062935a86086739d90b38380980be5ed1c9c70ea8eb6e",
+  "oofvc_score.py": "d8ae840dc34b26ee0524eeefc437a50e0e7b80b35922fda57229296e6cde8bc0",
+  "test_oofvc.py": "f6b62c0b6a971e2b51d01ae9f77adba2b864c1cefd819203760ce9956f2a878c"
+ },
+ "diff_sha256": "6e836e057d4b8a8cfe14b67bb89164f939a444f3b5cfeeb86aaad8038006fce6",
+ "results": [
+  {
+   "name": "CONTROL",
+   "file": null,
+   "tests": "Identity or MatchesRefC2C1 or (Join and not JoinTool) or Moved or Readings or ScorerArgv or JoinTool or Driver or Runner or Shell",
+   "rc": 0,
+   "seconds": 118.0,
+   "verdict": "PASS",
+   "tail": "...........................................                              [100%]\n43 passed in 117.00s (0:01:56)\n"
+  },
+  {
+   "name": "LIB_BAND_LITTLE",
+   "file": "oofvc_lib.py",
+   "tests": "Readings",
+   "rc": 1,
+   "seconds": 6.0,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n_____________________________ Readings.test_bands ______________________________\n\nself = <test_oofvc.Readings testMethod=test_bands>\n\n    def test_bands(self):\n        cases = {0.80: \"LOWER\", 0.5: \"LOWER\", 1.25: \"HIGHER\", 2.0: \"HIGHER\", 0.95: \"LITTLE CHANGE\",\n                 1 / 0.95: \"LITTLE CHANGE\", 1.0: \"LITTLE CHANGE\", 0.9: \"INTERMEDIATE\", 1.1: \"INTERMEDIATE\",\n                 0.8000001: \"INTERMEDIATE\", 1.2499999: \"INTERMEDIATE\", 1.055: \"INTERMEDIATE\", 0.94: \"INTERMEDIATE\"}\n        for r, b in cases.items():\n>           self.assertEqual(L.band(r), b, r)\nE           AssertionError: 'LITTLE CHANGE' != 'INTERMEDIATE'\nE           - LITTLE CHANGE\nE           + INTERMEDIATE\nE            : 1.055\n\ntest_oofvc.py:217: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Readings::test_bands - AssertionError: 'LITTLE CHANGE' ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 40 deselected in 5.27s\n"
+  },
+  {
+   "name": "LIB_COLUMN_AREA",
+   "file": "oofvc_lib.py",
+   "tests": "Readings",
+   "rc": 1,
+   "seconds": 3.5,
+   "verdict": "KILLED",
+   "tail": "mn _______________________\n\nself = <test_oofvc.Readings testMethod=test_distance_and_column>\n\n    def test_distance_and_column(self):\n        rng = np.random.default_rng(4)\n        A = rng.random((224, 224))\n        cov = A @ A.T + np.eye(224)\n        cov[5, :] = cov[:, 5] = 0\n        x, pub = rng.random(224), rng.random(224)\n        d, ndf = L.distance(x, pub, cov)\n        mask = np.arange(224) != 5\n        self.assertEqual(ndf, 223)\n        self.assertAlmostEqual(d, float((x - pub)[mask] @ np.linalg.inv(cov[np.ix_(mask, mask)]) @ (x - pub)[mask]) / 223,\n                               places=9)\n        x = np.ones(224); pub = np.full(224, 2.0)\n        self.assertAlmostEqual(L.column_ratio(x, pub, PAPER_PT, PZ, 15), 0.5)\n        # area-weighted: the wide pT cells dominate (compare.py:106-107, :149)\n        x = np.zeros(224); pub = np.ones(224)\n        x[13 * 16 + 15] = 1.0  # the widest pT bin (2.5-4.5) of the 40-60 column\n        area = np.diff(PAPER_PT)\n>       self.assertAlmostEqual(L.column_ratio(x, pub, PAPER_PT, PZ, 15), area[13] / area.sum())\nE       AssertionError: 0.07142857142857142 != 0.4444444444444444 within 7 places (0.373015873015873 difference)\n\ntest_oofvc.py:250: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Readings::test_distance_and_column - AssertionError: 0....\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 40 deselected in 2.79s\n"
+  },
+  {
+   "name": "JOIN_LAB_TOL",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 1,
+   "seconds": 6.4,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n______________________ JoinTool.test_lab_value_tolerance _______________________\n\nself = <test_oofvc.JoinTool testMethod=test_lab_value_tolerance>\n\n    def test_lab_value_tolerance(self):\n        \"\"\"A reference cell off by 1e-7 relative, counts unchanged: C-LAB's 1e-9 tolerance refuses it.\"\"\"\n        fx = self.fixture()\n        ref = json.loads((fx.d / \"split.json\").read_text())\n        i = int(np.flatnonzero(np.asarray(ref[\"FAKE_VTX\"]) > 0)[0])\n        ref[\"FAKE_VTX\"][i] *= 1 + 1e-7\n        (fx.d / \"split.json\").write_text(json.dumps(ref))\n        p, rec, out = fx.run()\n>       self.assertEqual(p.returncode, 8)\nE       AssertionError: 0 != 8\n\ntest_oofvc.py:826: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::JoinTool::test_lab_value_tolerance - AssertionError: 0 ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 33 deselected in 5.83s\n"
+  },
+  {
+   "name": "SCORE_STAGE_PATH",
+   "file": "oofvc_score.py",
+   "tests": "ScorerArgv",
+   "rc": 1,
+   "seconds": 3.2,
+   "verdict": "KILLED",
+   "tail": "opMC_MEFHC.root\",\n               *SC.E_R_OPTIONS]\n        r = off + [\"--signal-convention\", \"minerva\", \"--oofvc-rows\", f\"{st}/oofvc_rows.npz\"]\n        self.assertTrue(SC.argv_is_e_r(off, \"off\"))\n        self.assertTrue(SC.argv_is_e_r(r, \"R\"))\n        bad = [\n            ([\"--omnifile\", \"/elsewhere/runEventLoopOmniFold_MEFHC.root\"] + off[2:], \"off\"),  # same name, other file\n            (off[:2] + [\"--mcfile\", \"/elsewhere/runEventLoopMC_MEFHC.root\"] + off[4:], \"off\"),\n            ([a if a != \"42\" else \"43\" for a in off], \"off\"),                                    # another seed\n            (r[:-1] + [\"/elsewhere/oofvc_rows.npz\"], \"R\"),\n            (off, \"R\"), (r, \"off\"),\n        ]\n        for argv, conv in bad:\n>           self.assertFalse(SC.argv_is_e_r(argv, conv), (argv, conv))\nE           AssertionError: True is not false : (['--omnifile', '/elsewhere/runEventLoopOmniFold_MEFHC.root', '--mcfile', '/pscratch/sd/j/josephrb/oofvc-20261126/stage/runEventLoopMC_MEFHC.root', '--iters', '5', '--use-weights', '--estimator', 'lgbm', '--seed', '42', '--branch-select', 'all', '--bkg-mode', 'negweight-refined', '--refine-n-estimators', '400', '--refine-num-leaves', '31'], 'off')\n\ntest_oofvc.py:196: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::ScorerArgv::test_argv - AssertionError: True is not fal...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 42 deselected in 2.55s\n"
+  }
+ ],
+ "summary": "4/4 killed"
+}
