@@ -1,0 +1,30 @@
+# removal.sh sha256 0b6c2232da274953144323aef9106edefdaa2d4a4bff6276b04fad123e32b915
+# Mac 2026-11-26T00:02:39Z; cert:        Valid: from 2026-11-25T15:18:00 to 2026-11-26T15:19:52
+removal host login14 2026-11-26T00:02:43Z user josephrb
+target /pscratch/sd/j/josephrb/evw5d-20261125
+keep   /pscratch/sd/j/josephrb/evw5d-20261125-r2
+squeue evw5d rc=0: []
+## keep before
+/pscratch/sd/j/josephrb/evw5d-20261125-r2|directory|882727765097399402|1795650586
+/pscratch/sd/j/josephrb/evw5d-20261125-r2/evw5d/weights.npz|regular file|882727630510506572|1795650434
+/pscratch/sd/j/josephrb/evw5d-20261125-r2/evw5d/SHA256SUMS|regular file|882727630510506576|1795650453
+## ls -la before
+total 88
+drwx------   5 josephrb josephrb  4096 Nov 25 13:35 .
+drwx------ 457 josephrb josephrb 69632 Nov 25 14:28 ..
+drwx------  13 josephrb josephrb  4096 Nov 25 13:34 deploy
+drwx------   2 josephrb josephrb  4096 Nov 25 13:36 logs
+drwx------  18 josephrb josephrb  4096 Nov 25 13:35 toolclone
+## du -s before
+2240572	/pscratch/sd/j/josephrb/evw5d-20261125
+## files before: 36963 entries
+rm rc=0
+## after
+ABSENT: /pscratch/sd/j/josephrb/evw5d-20261125
+drwx------    7 josephrb josephrb      4096 Nov 25 15:49 evw5d-20261125-r2
+## keep after
+/pscratch/sd/j/josephrb/evw5d-20261125-r2|directory|882727765097399402|1795650586
+/pscratch/sd/j/josephrb/evw5d-20261125-r2/evw5d/weights.npz|regular file|882727630510506572|1795650434
+/pscratch/sd/j/josephrb/evw5d-20261125-r2/evw5d/SHA256SUMS|regular file|882727630510506576|1795650453
+removal rc=0 2026-11-26T00:03:02Z
+# ssh rc=0
