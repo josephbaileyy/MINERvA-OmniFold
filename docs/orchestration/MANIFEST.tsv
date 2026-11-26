@@ -22356,6 +22356,11 @@ docs/orchestration/state/oi74-canonical-ff-20261030/run/session.txt	tracked	MACH
 docs/orchestration/state/oi74-canonical-ff-20261030/run2/session.txt	tracked	MACHINE	state-artifact	oi74-canonical-ff-20261030		generated		exact-path-only	yes
 docs/orchestration/state/oi74-canonical-ff-20261030/test_ff.sh	tracked	MACHINE	state-artifact	oi74-canonical-ff-20261030		generated		exact-path-only	yes
 docs/orchestration/state/oi74-canonical-ff-20261030/test_ff2.sh	tracked	MACHINE	state-artifact	oi74-canonical-ff-20261030		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/OOFVC-DECLARATION-DRAFT.md	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/sources/MAT-0111c79de-Cutter.cxx	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/sources/MAT-MINERvA-f790cc794-CCInclusiveSignal.h	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/sources/MINERvA-101-bb6c1634-runEventLoop.cpp	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/sources/SHA256SUMS.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/opendata-input-integrity-20260813.json	tracked	MACHINE	state-artifact		20260813	generated		exact-path-only	yes
 docs/orchestration/state/opendata-input-integrity-fullcoverage-20260813.json	tracked	MACHINE	state-artifact		20260813	generated		exact-path-only	yes
 docs/orchestration/state/p3f-hpss-to-cfs-20260818/delete_57214668.log.txt	tracked	MACHINE	state-artifact	p3f-hpss-to-cfs-20260818		generated		exact-path-only	yes
