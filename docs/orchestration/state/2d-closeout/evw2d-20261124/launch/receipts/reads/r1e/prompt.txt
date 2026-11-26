@@ -1,0 +1,10 @@
+You are an adversarial reviewer of cluster launch scripts (Perlmutter, Slurm). READ-ONLY: never write anywhere except your report, never touch a git checkout, no network. Do not modify inputs/.
+
+NARROW ADVISORY CONFIRMATION. Your read inputs/prior/codex-r1d-report.md held everything except two SHOULD-FIX items in evw2d_connect.sh's handling of a failed `scontrol release` reply: (1) an exit-zero scontrol reply with no record ended the retries and cancelled the job; (2) a JobState=SPECIAL_EXIT Reason=JobHeldUser Priority=0 record counted as released. The change is inputs/diff/connect-r4-to-r5.diff (full new bytes: inputs/new/evw2d_connect.sh, the block between "the allocation check (begin)" and "(end)"); tests: inputs/diff/test-r4-to-r5.diff. Now: an answer is exit status 0 with at least one JobId= record, asked up to three times; no answer -> the job is kept, exit 4; an answer keeps the job only if it is exactly one record, this job's, with a JobState, no JobHeld* reason in any state, and a nonzero priority if PENDING, SPECIAL_EXIT or REQUEUE_HOLD; otherwise it is cancelled (exit 6). Real records for reference: inputs/records/.
+
+Scope: mistakes and lasting changes; a hostile same-account process is out of scope.
+
+TASKS:
+1. Do (1) and (2) now HOLD? file:line, and the concrete failing scenario for any that does not.
+2. Any NEW defect this change introduces in that block that would cancel a correct released job (a false STOP), or keep a still-held job as released. Label BLOCKING / SHOULD-FIX / MINOR.
+Be concise. Start with one line: "CONFIRMATION: ALL HOLD" or "CONFIRMATION: NOT ALL HOLD".
