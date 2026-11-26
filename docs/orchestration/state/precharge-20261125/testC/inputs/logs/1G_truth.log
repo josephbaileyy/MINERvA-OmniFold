@@ -1,0 +1,26 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data/flux/flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data/flux/flux-g4numiv6-pdg14-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data/flux/flux-g4numiv6-pdg-14-minervame1M_rearrangedUniverses.root
+TH1.Print Name  = hrelratio, Entries= 1331229, Total sum= 1.33123e+06
+weightRPA: have read in ratios from file /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/Reweight//outNievesRPAratio-nu12C-20GeV-20170202.root
+weight_2p2h: 2p2h input file /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/Reweight//fit-mec-2d-noScaleDown-penalty00300-best-fit.txt
+weight_2p2h: Reading from file /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/Reweight//fit-mec-2d-noScaleDown-penalty00300-best-fit
+TH1.Print Name  = hrelratio, Entries= 1254818, Total sum= 1.25482e+06
+weightRPA: have read in ratios from file /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/Reweight//outNievesRPAratio-nu16O-20GeV-20170202.root
+processed 10 files, 5344939 entries
+processed 20 files, 10693571 entries
+processed 30 files, 16026196 entries
+processed 40 files, 21335006 entries
+processed 50 files, 26625611 entries
+processed 60 files, 31933768 entries
+complete 61 files, 32462689 entries, 3923648 signal, 0 duplicate keys, 0 with E_nu < E_mu
