@@ -297,16 +297,16 @@ LISTED_CLAIMS = [
     ("sec_q3_fived16.tex", "the $q_3$ tilt was also listed, and the two smaller covariances listed more truths", {"kind": "ce-more"}),
     ("sec_fived16_gen.tex", "so the GiBUU comparison carries that limitation", {"kind": "both", "family": "gibuu"}),
     ("appC_supplementary.tex", "simulated truths: the GiBUU hybrid, which uses", {"kind": "both"}),
-    ("appC_supplementary.tex", "in place of $C_e^{\\mathrm{infl}}$, the synthetic $q_3$ tilt, a momentum", {"kind": "cleared"}),
+    ("appC_supplementary.tex", "Under $\\CrepFiveDzero$, the synthetic $q_3$ tilt, a momentum", {"kind": "cleared"}),
     ("appC_supplementary.tex", "omitting the run-period term also flagged the separate GiBUU", {"kind": "cleared-nopl"}),
     ("appC_supplementary.tex", "the $q_3$ tilt also did.", {"kind": "cleared"}),
-    ("appA_methods.tex", "Under the baseline covariance, the $q_3$ tilt was also flagged.", {"kind": "cleared"}),
+    ("appA_methods.tex", "Under $\\CrepFiveDzero$, the $q_3$ tilt was also flagged.", {"kind": "cleared"}),
     ("sec_fived16.tex", "the fake-data bias exceeds the stated criteria at the GiBUU hybrid truth (", {"kind": "both"}),
     ("sec_validity_table.tex", "Residual bias exceeds the fake-data criteria at the GiBUU hybrid truth", {"kind": "with-ce"}),
     # the compiled note's own fake-data and PRR sentences (Gemini read r1, finding 1)
     ("sec5_multidim.tex", "simulated truths, the GiBUU hybrid truth, which takes", {"kind": "both"}),
     ("sec5_multidim.tex", "the synthetic $q_3$ tilt also exceeded them", {"kind": "cleared"}),
-    ("sec5_multidim.tex", "leaves both biases above the criteria under the baseline covariance", {"kind": "both"}),
+    ("sec5_multidim.tex", "leaves both biases above the criteria under $\\CrepFiveDzero$", {"kind": "both"}),
 ]
 
 

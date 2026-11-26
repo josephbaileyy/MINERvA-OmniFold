@@ -13,7 +13,7 @@ The correlated shape difference spans both small- and moderate-variance directio
 % the five's lam_rel <= 9.4e-9 -> <~1e-8; mode (b) 5.6e-5 -> 6e-5. A5's OLD reproduced the 9.6%, 4e-9 and 4e-6--6e-5.
 % Bound by check_sec4_receipts.py (rows "A5 ...").
 
-Comparisons that include $Q_R$ use the analysis grid, with three interior $p_T$ edges \SI{0.005}{GeV/c} from the published ones (Sec.~\ref{sec:muon-cross-section-comparison}).
+Comparisons that include $\CrepTwoD$ use the analysis grid, with three interior $p_T$ edges \SI{0.005}{GeV/c} from the published ones (Sec.~\ref{sec:muon-cross-section-comparison}).
 
 \begin{figure}[H]
   \centering
@@ -112,13 +112,13 @@ The sixteen-cell uncertainties vary substantially in composition across the repo
 
 \begin{table}[tbp]
   \centering
-  \caption{Per-cell relative standard deviations in percent from the statistical, systematic, and prior-shape terms. The statistical, flux, interaction, detector, lateral, and normalization covariances sum to $C_e$, the baseline statistical and systematic covariance. $C_e^{\mathrm{infl}}$ is $C_e$ with its eigenvalues rescaled (\S\ref{sec:fived16-cov}), and it enters the reported covariance in place of $C_e$. The training-seed contribution is zero. The cell definitions are in Table~\ref{tab:five-dimensional-regions}.}
+  \caption{Per-cell relative standard deviations in percent from the statistical, systematic, and prior-shape terms. The statistical, flux, interaction, detector, lateral, and normalization covariances sum to $C_e$, the statistical and systematic covariance. $C_e^{\mathrm{infl}}$ is $C_e$ with its eigenvalues rescaled (\S\ref{sec:fived16-cov}), and it enters the reported covariance in place of $C_e$. The training-seed contribution is zero. The cell definitions are in Table~\ref{tab:five-dimensional-regions}.}
   \label{tab:sixteen-cell-uncertainty-groups}
   \label{tab:fived16-groups}
   \small
   \begin{tabular}{@{}l*{10}{r}@{}}
     \toprule
-    Cell & Stat. & Flux & Int. & Det. & Lat. & Norm. & $C_e$ & $C_e^{\mathrm{infl}}$ & $C_{\mathrm{model}}$ & $C_{\mathrm{total}}$ \\
+    Cell & Stat. & Flux & Int. & Det. & Lat. & Norm. & $C_e$ & $C_e^{\mathrm{infl}}$ & $C_{\mathrm{model}}$ & $\Csub$ \\
     \midrule
     R00 & \fvval{sig-stat-R00} & \fvval{sig-flux-R00} & \fvval{sig-interaction-R00} & \fvval{sig-detector-R00} & \fvval{sig-lateral-R00} & \fvval{sig-normalization-R00} & \fvval{sig-C_e-R00} & \fvval{sig-C_e_infl-R00} & \fvval{sig-C_model-R00} & \fvval{sig-C_total-R00} \\
     R01 & \fvval{sig-stat-R01} & \fvval{sig-flux-R01} & \fvval{sig-interaction-R01} & \fvval{sig-detector-R01} & \fvval{sig-lateral-R01} & \fvval{sig-normalization-R01} & \fvval{sig-C_e-R01} & \fvval{sig-C_e_infl-R01} & \fvval{sig-C_model-R01} & \fvval{sig-C_total-R01} \\
@@ -147,12 +147,12 @@ The sixteen-cell uncertainties vary substantially in composition across the repo
 
 \begin{table}[tbp]
   \centering
-  \caption{Per-cell relative standard deviations in percent from the energy-response and run-period terms, and the totals. The deposit terms of $C_{\mathrm{resp}}$ are proton, meson, electromagnetic (EM), and other. The last column is the reported $C_{\mathrm{rep}}$.}
+  \caption{Per-cell relative standard deviations in percent from the energy-response and run-period terms, and the totals. The deposit terms of $C_{\mathrm{resp}}$ are proton, meson, electromagnetic (EM), and other. The last column is the reported $\CrepFiveD$.}
   \label{tab:sixteen-cell-uncertainty-response}
   \small
   \begin{tabular}{@{}l*{8}{r}@{}}
     \toprule
-    Cell & Proton & Meson & EM & Other & $C_{\mathrm{resp}}$ & $C_e^{\mathrm{infl}}{+}C_{\mathrm{model}}{+}C_{\mathrm{resp}}$ & Period & $C_{\mathrm{rep}}$ \\
+    Cell & Proton & Meson & EM & Other & $C_{\mathrm{resp}}$ & $C_e^{\mathrm{infl}}{+}C_{\mathrm{model}}{+}C_{\mathrm{resp}}$ & Period & $\CrepFiveD$ \\
     \midrule
     R00 & \fvval{sig-C_resp_proton-R00} & \fvval{sig-C_resp_meson-R00} & \fvval{sig-C_resp_em-R00} & \fvval{sig-C_resp_other-R00} & \fvval{sig-C_resp-R00} & \fvval{sig-C_total_resp-R00} & \fvval{sig-C_PL5D-R00} & \fvval{sig-reported-R00} \\
     R01 & \fvval{sig-C_resp_proton-R01} & \fvval{sig-C_resp_meson-R01} & \fvval{sig-C_resp_em-R01} & \fvval{sig-C_resp_other-R01} & \fvval{sig-C_resp-R01} & \fvval{sig-C_total_resp-R01} & \fvval{sig-C_PL5D-R01} & \fvval{sig-reported-R01} \\
@@ -181,7 +181,7 @@ The sixteen-cell uncertainties vary substantially in composition across the repo
 
 \begin{table}[tbp]
   \centering
-  \caption{Lower triangle of the correlation matrix for $C_{\mathrm{rep}}$ on the sixteen regions. The diagonal entries are unity.}
+  \caption{Lower triangle of the correlation matrix for $\CrepFiveD$ on the sixteen regions. The diagonal entries are unity.}
   \label{tab:sixteen-cell-correlations}
   \label{tab:fived16-corr}
   \setlength{\tabcolsep}{2.5pt}
@@ -218,7 +218,7 @@ The sixteen-cell generator distances are sensitive to the off-diagonal flux cova
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=0.85\linewidth]{figures/fd_g_fig_modes.pdf}
-  \caption{Several modes contribute to the descriptive distance of each full-grid prediction. The panels show the cell loadings for the three largest $\chi^2$ contributions, using the covariance of fractional residuals from $C_{\mathrm{rep}}+V_g$. The distances are descriptive, and the NuWro row uses the secondary CH comparison.}
+  \caption{Several modes contribute to the descriptive distance of each full-grid prediction. The panels show the cell loadings for the three largest $\chi^2$ contributions, using the covariance of fractional residuals from $\CrepFiveD+V_g$. The distances are descriptive, and the NuWro row uses the secondary CH comparison.}
   \label{fig:fived16-modes}
 \end{figure}
 
@@ -230,19 +230,19 @@ The low-capacity refinement fails its recovery criterion for a generator-sized t
 The sixteen-cell estimator recovers a median of $\fvval{rec-g-fmed}\%$ of the injected GiBUU-like change across supported cells of the $(E_{\mathrm{avail}},W)$ plane with injected changes larger than $2\%$ in magnitude. For three other generator-derived shapes, the median recovered fractions range from $\fvval{rec-w-fmed-lo}\%$ to $\fvval{rec-w-fmed-hi}\%$, with individual cells overshooting or moving opposite to the injected change (Appendices~\ref{app:reproducibility-definitions} and~\ref{app:choices-after-results}). In noise-free pseudo-data, raising the iteration count from five to thirty reduces the $E_{\mathrm{avail}}$ residual by $26\%$ while increasing the $q_3$ residual, and the quoted uncertainties of the \resFiveAxis{} do not include these residuals.
 
 % absence-ok: a stated property of the method, not a claim that a result does not exist: C_e^infl's size and coverage are not validated (vf_readings.md, NOT CITABLE FOR: a validated size for C_e^infl; a coverage or calibration statement)
-Under the reported covariance $C_{\mathrm{rep}}$, the sixteen-cell estimator exceeds the bias criteria set before the study at \fvval{f0b-nlisted-word} of the \fvval{f0b-all-truths} simulated truths: the GiBUU hybrid, which uses GiBUU bin integrals and the MINERvA simulation within each fine bin. Under the baseline covariance, which is $C_{\mathrm{rep}}$ with $C_e$ in place of $C_e^{\mathrm{infl}}$, the synthetic $q_3$ tilt, a momentum-transfer tilt at fixed $(E_{\mathrm{avail}},W)$, also exceeded them. The bias is the same under both covariances. The tilt clears only because $C_e^{\mathrm{infl}}$ is larger, and its size is not validated. The test compares the mean unfolded vector with the known truth and scores the same residuals with $C_{\mathrm{rep}}$ and with the baseline covariance. For truths derived from a generator in $C_{\mathrm{model}}$, it removes that generator's contribution. A truth is flagged if $p<\fvval{trig-p}$ or any cell has an absolute standardized residual $|z|>\fvval{trig-z}$ (\hyperlink{validation-sixteen-bias}{fake-data bias row} of Table~\ref{tab:validation-inventory}).
+Under the reported covariance $\CrepFiveD$, the sixteen-cell estimator exceeds the bias criteria set before the study at \fvval{f0b-nlisted-word} of the \fvval{f0b-all-truths} simulated truths: the GiBUU hybrid, which uses GiBUU bin integrals and the MINERvA simulation within each fine bin. Under $\CrepFiveDzero$, the synthetic $q_3$ tilt, a momentum-transfer tilt at fixed $(E_{\mathrm{avail}},W)$, also exceeded them. The bias is the same under both covariances. The tilt clears only because $C_e^{\mathrm{infl}}$ is larger, and its size is not validated. The test compares the mean unfolded vector with the known truth and scores the same residuals with $\CrepFiveD$ and with $\CrepFiveDzero$. For truths derived from a generator in $C_{\mathrm{model}}$, it removes that generator's contribution. A truth is flagged if $p<\fvval{trig-p}$ or any cell has an absolute standardized residual $|z|>\fvval{trig-z}$ (\hyperlink{validation-sixteen-bias}{fake-data bias row} of Table~\ref{tab:validation-inventory}).
 
-Under $C_{\mathrm{rep}}$, the GiBUU hybrid gives $\chi^2=\fvval{f0b-A7_gibuu-chi2}$ and $p=\fvval{f0b-A7_gibuu-p}$, with absolute standardized residuals $|z|>\fvval{trig-z}$ in the two low-$p_T$ cells with high available energy, low momentum transfer, and low mass (R02 and R06, Table~\ref{tab:five-dimensional-regions}). The synthetic $q_3$ tilt at fixed $(E_{\mathrm{avail}},W)$ gives $\chi^2=\fvval{f0b-q3-chi2}$ and $p=\fvval{f0b-q3-p}$ under $C_{\mathrm{rep}}$, with $|z|\leq\fvval{trig-z}$ in every cell. Under the baseline covariance, omitting the run-period term also flagged the separate GiBUU $\Eavail$ shape through R06, at the same residual. Under $C_{\mathrm{rep}}$ without the run-period term it does not. Separate Poisson and noise-free checks at two held-out GENIE v3 tunes flag neither tune, and the largest cell bias is below \fvval{f1-bsig-ceil} of its reported standard deviation.
+Under $\CrepFiveD$, the GiBUU hybrid gives $\chi^2=\fvval{f0b-A7_gibuu-chi2}$ and $p=\fvval{f0b-A7_gibuu-p}$, with absolute standardized residuals $|z|>\fvval{trig-z}$ in the two low-$p_T$ cells with high available energy, low momentum transfer, and low mass (R02 and R06, Table~\ref{tab:five-dimensional-regions}). The synthetic $q_3$ tilt at fixed $(E_{\mathrm{avail}},W)$ gives $\chi^2=\fvval{f0b-q3-chi2}$ and $p=\fvval{f0b-q3-p}$ under $\CrepFiveD$, with $|z|\leq\fvval{trig-z}$ in every cell. Under $\CrepFiveDzero$, omitting the run-period term also flagged the separate GiBUU $\Eavail$ shape through R06, at the same residual. Under $\CrepFiveD$ without the run-period term it does not. Separate Poisson and noise-free checks at two held-out GENIE v3 tunes flag neither tune, and the largest cell bias is below \fvval{f1-bsig-ceil} of its reported standard deviation.
 
-The sixteen-cell estimator recovers only part of the shift from the prior toward truth at the two truths flagged under the baseline covariance. The signed fraction $\rho$ of the shift still missing along the prior-to-truth direction is
+The sixteen-cell estimator recovers only part of the shift from the prior toward truth at the two truths flagged under $\CrepFiveDzero$. The signed fraction $\rho$ of the shift still missing along the prior-to-truth direction is
 \begin{equation}
   \rho=-\frac{\sum_i b_i d_i}{\sum_i d_i^2},
   \qquad |d_i|\geq 0.01 ,
   \label{eq:five-dimensional-retained-prior}
 \end{equation}
-where $d_i=(X_i-P_i)/P_i$ and $b_i=(\widehat X_i-X_i)/P_i$ for prior, true, and unfolded integrals $P_i$, $X_i$, and $\widehat X_i$. This gives $\rho=0$ for exact recovery, $\rho=1$ for staying at the prior, and $\rho<0$ for overshooting along that direction. On noise-free samples with background, $\rho=\fvval{prr-rho-e-gibuu}$ at the GiBUU hybrid and $\fvval{prr-rho-e-q3}$ at the $q_3$ tilt. Reducing classifier capacity or using only muon momenta increases retention at both truths. Dropping $W$ alone or dropping both $W$ and $q_3$ changes $\rho$ by less than \fvval{prr-s53-w-dmax}. None of the tested changes in iterations, capacity, training statistics, or inputs reduces retention by \fvval{prr-floor}. Under the baseline covariance, none removes either truth's bias flag. Under $C_{\mathrm{rep}}$, the GiBUU hybrid stays flagged at every tested setting, and the $q_3$ tilt is flagged only with reduced capacity or with muon momenta only. A second prespecified study on the same noise-free samples found that the retention at the GiBUU hybrid is consistent with a limit set by the weights of missed events. At the $q_3$ tilt, it is consistent with a limit set by the representation in the second, truth-level step. Both results match the pseudo-data at reconstruction level despite the residual at truth level, consistent with directions that the reconstructed inputs constrain weakly. The substitution tests below use true weights available only in simulation.
+where $d_i=(X_i-P_i)/P_i$ and $b_i=(\widehat X_i-X_i)/P_i$ for prior, true, and unfolded integrals $P_i$, $X_i$, and $\widehat X_i$. This gives $\rho=0$ for exact recovery, $\rho=1$ for staying at the prior, and $\rho<0$ for overshooting along that direction. On noise-free samples with background, $\rho=\fvval{prr-rho-e-gibuu}$ at the GiBUU hybrid and $\fvval{prr-rho-e-q3}$ at the $q_3$ tilt. Reducing classifier capacity or using only muon momenta increases retention at both truths. Dropping $W$ alone or dropping both $W$ and $q_3$ changes $\rho$ by less than \fvval{prr-s53-w-dmax}. None of the tested changes in iterations, capacity, training statistics, or inputs reduces retention by \fvval{prr-floor}. Under $\CrepFiveDzero$, none removes either truth's bias flag. Under $\CrepFiveD$, the GiBUU hybrid stays flagged at every tested setting, and the $q_3$ tilt is flagged only with reduced capacity or with muon momenta only. A second prespecified study on the same noise-free samples found that the retention at the GiBUU hybrid is consistent with a limit set by the weights of missed events. At the $q_3$ tilt, it is consistent with a limit set by the representation in the second, truth-level step. Both results match the pseudo-data at reconstruction level despite the residual at truth level, consistent with directions that the reconstructed inputs constrain weakly. The substitution tests below use true weights available only in simulation.
 
-Five-iteration binned IBU overshoots along the prior-to-truth direction, with $\rho=\fvval{prr-rho-ibu-gibuu}$ and $\fvval{prr-rho-ibu-q3}$ for the two truths. Under the baseline covariance it clears the flag for the $q_3$ tilt ($p=\fvval{prr-ce-ibu5-q3-p}$) and flags \fvval{prr-ce-ibu5-nnew-word} other truths. Under $C_{\mathrm{rep}}$ it leaves the $q_3$ tilt unflagged ($p=\fvval{prr-ibu5-q3-p}$) and flags \fvval{prr-ibu5-nnew-word} other truths. Under either covariance it retains the flag at the GiBUU hybrid. The two procedures discretize the problem differently, so the comparison also includes the effect of the chosen response grid.
+Five-iteration binned IBU overshoots along the prior-to-truth direction, with $\rho=\fvval{prr-rho-ibu-gibuu}$ and $\fvval{prr-rho-ibu-q3}$ for the two truths. Under $\CrepFiveDzero$ it clears the flag for the $q_3$ tilt ($p=\fvval{prr-ce-ibu5-q3-p}$) and flags \fvval{prr-ce-ibu5-nnew-word} other truths. Under $\CrepFiveD$ it leaves the $q_3$ tilt unflagged ($p=\fvval{prr-ibu5-q3-p}$) and flags \fvval{prr-ibu5-nnew-word} other truths. Under either covariance it retains the flag at the GiBUU hybrid. The two procedures discretize the problem differently, so the comparison also includes the effect of the chosen response grid.
 
 Coarsening the reporting grid leaves substantial dependence on the starting model. In a precision study with generator-sized departures, all three grids miss the $5\%$ model-component and $75\%$ recovery targets, including the \fvval{h2-nsupported} supported joint boxes used to define the sixteen cells. On the sixteen cells, $C_{\mathrm{model}}$ summarizes shifts on data when the prior is reweighted toward GENIE with meson-exchange currents, NuWro, or GiBUU. These shifts measure sensitivity to the chosen priors and carry no calibrated bound on the bias.
 
@@ -267,7 +267,7 @@ Recovery of injected joint structure varies across cells. The GENIE sample enter
   \label{fig:gbdt-bias-spread}
 \end{figure}
 
-The prespecified substitution study in Sec.~\ref{sec:fived16-prr} tested which parts of the procedure contribute to prior retention. The study replaced one part of the procedure at a time on the same noise-free samples, with the iterations continued to \fvval{t3-kmax}, where $\rho$ levels off. At the GiBUU hybrid the baseline $\rho$ is \fvval{t3-rho-b0-gibuu}. Giving the events that fail the selection their true weights lowers $\rho$ to \fvval{t3-rho-mo-gibuu}, about the value reached when every event receives its true weight before the second step. No data analysis has either oracle input. Letting the missed events keep their previous weights instead of the regressor's prediction, weighting the regressor, or removing the background with its refinement each changes $\rho$ by less than \fvval{t3-dmax-gibuu}, against a threshold of \fvval{prr-floor}. The retention there is consistent with a limit set by the weights of the missed events. At the $q_3$ tilt the baseline $\rho$ is \fvval{t3-rho-b0-q3}, and no replacement lowers $\rho$ by \fvval{prr-floor}. Even with true weights for every event, $\rho=\fvval{t3-rho-op-q3}$ remains after the second, truth-level step, consistent with a limit set by that step's representation. At both truths the result matches the pseudo-data at reconstruction level but not at truth level, consistent with directions the reconstructed inputs constrain weakly.
+The prespecified substitution study in Sec.~\ref{sec:fived16-prr} tested which parts of the procedure contribute to prior retention. The study replaced one part of the procedure at a time on the same noise-free samples, with the iterations continued to \fvval{t3-kmax}, where $\rho$ levels off. At the GiBUU hybrid, with no part replaced, $\rho$ is \fvval{t3-rho-b0-gibuu}. Giving the events that fail the selection their true weights lowers $\rho$ to \fvval{t3-rho-mo-gibuu}, about the value reached when every event receives its true weight before the second step. No data analysis has either oracle input. Letting the missed events keep their previous weights instead of the regressor's prediction, weighting the regressor, or removing the background with its refinement each changes $\rho$ by less than \fvval{t3-dmax-gibuu}, against a threshold of \fvval{prr-floor}. The retention there is consistent with a limit set by the weights of the missed events. At the $q_3$ tilt, with no part replaced, $\rho$ is \fvval{t3-rho-b0-q3}, and no replacement lowers $\rho$ by \fvval{prr-floor}. Even with true weights for every event, $\rho=\fvval{t3-rho-op-q3}$ remains after the second, truth-level step, consistent with a limit set by that step's representation. At both truths the result matches the pseudo-data at reconstruction level but not at truth level, consistent with directions the reconstructed inputs constrain weakly.
 % Tier 3 (Joseph 2026-11-22: DECISION-20261122 wording, then split into shorter sentences at his request the same day;
 % he asked that it not be pinned): every number
 % is a \fvval key from make_values_fived16.py t3_values(), read from the Tier 3 readout (#1241, main b4336c477;
@@ -389,7 +389,7 @@ The detector-level tree classifier shows a nearly diagonal reliability curve, wi
     \addlinespace[2pt]
     Fake-data bias (prespecified) &
     Sixteen-cell estimator &
-    GiBUU hybrid exceeds the criteria. Under the baseline covariance, the $q_3$ tilt also did. &
+    GiBUU hybrid exceeds the criteria. Under $\CrepFiveDzero$, the $q_3$ tilt also did. &
     Bias exceeds the allowed scale under the reported covariance. \\
     \addlinespace[2pt]
     Classifier-family comparison (descriptive) &
@@ -408,7 +408,7 @@ The detector-level tree classifier shows a nearly diagonal reliability curve, wi
     Coverage fails for this estimator variant. \\
     \addlinespace[2pt]
     Held-out-tune coverage (descriptive) &
-    Sixteen-cell estimator with $C_{\mathrm{total}}$ &
+    Sixteen-cell estimator with $\Csub$ &
     Joint undercoverage at both tunes. &
     Also too small with the full reported covariance. \\
     \addlinespace[2pt]
