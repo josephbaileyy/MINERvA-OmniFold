@@ -1,0 +1,7 @@
+evw5d-20261125-r2/evw5d/SHA256SUMS
+evw5d-20261125-r2/evw5d/constants.json
+evw5d-20261125-r2/evw5d/constants.npz
+evw5d-20261125-r2/evw5d/evw5d.done
+evw5d-20261125-r2/evw5d/product/data_b-_j-.npz
+evw5d-20261125-r2/evw5d/run.json
+evw5d-20261125-r2/evw5d/weights.npz
