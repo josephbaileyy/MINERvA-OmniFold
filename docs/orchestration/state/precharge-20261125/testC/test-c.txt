@@ -1,0 +1,95 @@
+Mode: declared test
+Denominators: deduplicated; generated in-grid weight 27209979.0
+Support: lo 20.0 GeV, hi 70.0 GeV (99th percentile of fold-weighted E_nu in the training fit sample 66.22)
+
+### form pwlinear, primary: fit on 1A,1C,1E,1G,1M,1O
+fit deviance 232.3/26 (deviance/ndf > 3); converged False (Desired error not necessarily achieved due to precision loss.)
+log w coefficients [1.9992, -3.425, 1.2381, 4.4026, -8.8336, 20.3972] +- [0.522, 0.9818, 1.4323, 2.5745, 5.0084, 6.2983]
+w at E_nu {20: 1.0, 30: 1.331, 40: 1.087, 50: 1.625, 60: 1.163, 80: 13.829, 100: 13.829, 120: 13.829, 150: 13.829}
+held-out chi2: C 284.9/28 p=2.41e-44 (T1 244.0, T2 19.2, T3 21.6); nominal 960.0/28 p=4e-184
+  negative reco 40-50: obs 6820.0 fold 7119.8 C 7371.2 +- 48.1 (share of excess -0.84)  Test 1 w(E_vis) 11798.5
+  negative reco 50-60: obs 2617.0 fold 1939.2 C 3791.1 +- 147.4 (share of excess +2.73)  Test 1 w(E_vis) 6379.5
+  negative reco 60-80: obs 1181.0 fold 688.8 C 2514.0 +- 158.0 (share of excess +3.71)  Test 1 w(E_vis) 3018.2
+  negative reco 80-inf: obs 192.0 fold 162.9 C 403.2 +- 22.1 (share of excess +8.27)  Test 1 w(E_vis) 1400.9
+  positive reco 40-50: obs 509.0 fold 415.1 C 413.6 +- 0.3
+  positive reco 50-60: obs 172.0 fold 146.3 C 146.3 +- 0.1
+  positive reco 60-80: obs 104.0 fold 89.9 C 91.0 +- 0.3
+  positive reco 80-inf: obs 68.0 fold 54.1 C 56.1 +- 0.2
+  20-40 transfer, negative by E_avail: [(-inf, 16562.0, 16324.9), (1, 10757.0, 10096.8), (2, 18004.0, 17625.8), (5, 11267.0, 10722.7), (10, 6037.0, 5597.8), (20, 1432.0, 1239.4)]
+
+### form pwlinear, swap: fit on 1B,1D,1F,1L,1N,1P
+fit deviance 274.8/28 (deviance/ndf > 3); converged False (Desired error not necessarily achieved due to precision loss.)
+log w coefficients [1.9304, -3.5073, 1.7633, 2.2846, -1.4473, 10.151] +- [0.5409, 1.0252, 1.479, 2.686, 4.5033, 4.9876]
+w at E_nu {20: 1.0, 30: 1.309, 40: 1.074, 50: 1.401, 60: 1.893, 80: 12.615, 100: 12.615, 120: 12.615, 150: 12.615}
+held-out chi2: C 400.2/29 p=6.68e-67 (T1 302.6, T2 45.3, T3 52.4); nominal 980.3/29 p=1.28e-187
+  negative reco 40-50: obs 7935.0 fold 8158.8 C 8276.9 +- 53.6 (share of excess -0.53)
+  negative reco 50-60: obs 2983.0 fold 2238.9 C 4470.5 +- 176.1 (share of excess +3.00)
+  negative reco 60-80: obs 1314.0 fold 812.4 C 3076.6 +- 215.0 (share of excess +4.51)
+  negative reco 80-inf: obs 223.0 fold 184.4 C 453.3 +- 26.5 (share of excess +6.97)
+  positive reco 40-50: obs 580.0 fold 456.4 C 453.9 +- 0.5
+  positive reco 50-60: obs 219.0 fold 153.6 C 153.0 +- 0.2
+  positive reco 60-80: obs 124.0 fold 101.5 C 100.3 +- 0.4
+  positive reco 80-inf: obs 79.0 fold 60.7 C 68.3 +- 1.0
+  20-40 transfer, negative by E_avail: [(-inf, 18849.0, 18859.2), (1, 12290.0, 11702.3), (2, 20798.0, 20172.6), (5, 13182.0, 12285.3), (10, 6969.0, 6437.5), (20, 1638.0, 1468.5)]
+
+### form quadratic, primary: fit on 1A,1C,1E,1G,1M,1O
+fit deviance 464.3/30 (deviance/ndf > 3); converged True (Optimization terminated successfully.)
+log w coefficients [-2.5785, 4.1261] +- [0.1081, 0.1142]
+w at E_nu {20: 1.0, 30: 0.704, 40: 0.69, 50: 0.94, 60: 1.782, 80: 4.7, 100: 4.7, 120: 4.7, 150: 4.7}
+held-out chi2: C 99.0/28 p=7.32e-10 (T1 72.7, T2 3.8, T3 22.5); nominal 960.0/28 p=4e-184
+  negative reco 40-50: obs 6820.0 fold 7119.8 C 7176.6 +- 17.8 (share of excess -0.19)  Test 1 w(E_vis) 11798.5
+  negative reco 50-60: obs 2617.0 fold 1939.2 C 2852.2 +- 40.5 (share of excess +1.35)  Test 1 w(E_vis) 6379.5
+  negative reco 60-80: obs 1181.0 fold 688.8 C 1353.2 +- 35.2 (share of excess +1.35)  Test 1 w(E_vis) 3018.2
+  negative reco 80-inf: obs 192.0 fold 162.9 C 240.9 +- 4.5 (share of excess +2.68)  Test 1 w(E_vis) 1400.9
+  positive reco 40-50: obs 509.0 fold 415.1 C 414.7 +- 0.1
+  positive reco 50-60: obs 172.0 fold 146.3 C 146.5 +- 0.0
+  positive reco 60-80: obs 104.0 fold 89.9 C 89.0 +- 0.0
+  positive reco 80-inf: obs 68.0 fold 54.1 C 55.1 +- 0.0
+  20-40 transfer, negative by E_avail: [(-inf, 16562.0, 16413.2), (1, 10757.0, 9921.7), (2, 18004.0, 17149.7), (5, 11267.0, 10872.3), (10, 6037.0, 5781.7), (20, 1432.0, 1056.7)]
+
+### form quadratic, swap: fit on 1B,1D,1F,1L,1N,1P
+fit deviance 474.8/32 (deviance/ndf > 3); converged False (Desired error not necessarily achieved due to precision loss.)
+log w coefficients [-2.742, 4.2917] +- [0.1158, 0.1226]
+w at E_nu {20: 1.0, 30: 0.686, 40: 0.664, 50: 0.905, 60: 1.739, 80: 4.71, 100: 4.71, 120: 4.71, 150: 4.71}
+held-out chi2: C 159.3/29 p=6.17e-20 (T1 102.5, T2 3.6, T3 53.3); nominal 980.3/29 p=1.28e-187
+  negative reco 40-50: obs 7935.0 fold 8158.8 C 8160.6 +- 21.5 (share of excess -0.01)
+  negative reco 50-60: obs 2983.0 fold 2238.9 C 3303.2 +- 50.5 (share of excess +1.43)
+  negative reco 60-80: obs 1314.0 fold 812.4 C 1641.9 +- 48.1 (share of excess +1.65)
+  negative reco 80-inf: obs 223.0 fold 184.4 C 279.2 +- 5.7 (share of excess +2.46)
+  positive reco 40-50: obs 580.0 fold 456.4 C 454.7 +- 0.1
+  positive reco 50-60: obs 219.0 fold 153.6 C 153.5 +- 0.0
+  positive reco 60-80: obs 124.0 fold 101.5 C 102.0 +- 0.0
+  positive reco 80-inf: obs 79.0 fold 60.7 C 62.8 +- 0.2
+  20-40 transfer, negative by E_avail: [(-inf, 18849.0, 18926.5), (1, 12290.0, 11486.3), (2, 20798.0, 19702.2), (5, 13182.0, 12523.2), (10, 6969.0, 6539.1), (20, 1638.0, 1236.5)]
+
+### form cubic, primary: fit on 1A,1C,1E,1G,1M,1O
+fit deviance 255.1/29 (deviance/ndf > 3); converged False (Desired error not necessarily achieved due to precision loss.)
+log w coefficients [2.0359, -8.0324, 8.384] +- [0.354, 0.8954, 0.6085]
+w at E_nu {20: 1.0, 30: 1.165, 40: 1.068, 50: 1.151, 60: 2.183, 80: 10.887, 100: 10.887, 120: 10.887, 150: 10.887}
+held-out chi2: C 283.5/28 p=4.61e-44 (T1 249.1, T2 12.2, T3 22.2); nominal 960.0/28 p=4e-184
+  negative reco 40-50: obs 6820.0 fold 7119.8 C 7258.6 +- 29.3 (share of excess -0.46)  Test 1 w(E_vis) 11798.5
+  negative reco 50-60: obs 2617.0 fold 1939.2 C 3691.9 +- 106.6 (share of excess +2.59)  Test 1 w(E_vis) 6379.5
+  negative reco 60-80: obs 1181.0 fold 688.8 C 2239.6 +- 110.3 (share of excess +3.15)  Test 1 w(E_vis) 3018.2
+  negative reco 80-inf: obs 192.0 fold 162.9 C 358.9 +- 14.9 (share of excess +6.74)  Test 1 w(E_vis) 1400.9
+  positive reco 40-50: obs 509.0 fold 415.1 C 413.4 +- 0.1
+  positive reco 50-60: obs 172.0 fold 146.3 C 146.6 +- 0.0
+  positive reco 60-80: obs 104.0 fold 89.9 C 90.1 +- 0.1
+  positive reco 80-inf: obs 68.0 fold 54.1 C 55.6 +- 0.1
+  20-40 transfer, negative by E_avail: [(-inf, 16562.0, 16358.9), (1, 10757.0, 10085.9), (2, 18004.0, 17547.4), (5, 11267.0, 10646.5), (10, 6037.0, 5599.9), (20, 1432.0, 1229.8)]
+
+### form cubic, swap: fit on 1B,1D,1F,1L,1N,1P
+fit deviance 282.2/31 (deviance/ndf > 3); converged False (Desired error not necessarily achieved due to precision loss.)
+log w coefficients [1.9671, -8.1722, 8.6153] +- [0.3759, 0.9543, 0.6501]
+w at E_nu {20: 1.0, 30: 1.145, 40: 1.031, 50: 1.104, 60: 2.127, 80: 11.136, 100: 11.136, 120: 11.136, 150: 11.136}
+held-out chi2: C 413.4/29 p=1.41e-69 (T1 321.9, T2 38.7, T3 52.8); nominal 980.3/29 p=1.28e-187
+  negative reco 40-50: obs 7935.0 fold 8158.8 C 8191.3 +- 33.0 (share of excess -0.15)
+  negative reco 50-60: obs 2983.0 fold 2238.9 C 4325.9 +- 136.5 (share of excess +2.80)
+  negative reco 60-80: obs 1314.0 fold 812.4 C 2838.8 +- 157.1 (share of excess +4.04)
+  negative reco 80-inf: obs 223.0 fold 184.4 C 422.3 +- 18.8 (share of excess +6.17)
+  positive reco 40-50: obs 580.0 fold 456.4 C 453.4 +- 0.1
+  positive reco 50-60: obs 219.0 fold 153.6 C 153.0 +- 0.1
+  positive reco 60-80: obs 124.0 fold 101.5 C 100.8 +- 0.1
+  positive reco 80-inf: obs 79.0 fold 60.7 C 67.3 +- 0.6
+  20-40 transfer, negative by E_avail: [(-inf, 18849.0, 18906.4), (1, 12290.0, 11700.0), (2, 20798.0, 20141.4), (5, 13182.0, 12237.4), (10, 6969.0, 6355.3), (20, 1638.0, 1465.4)]
+
+Reading for H_C (primary form, both directions): contradicts
