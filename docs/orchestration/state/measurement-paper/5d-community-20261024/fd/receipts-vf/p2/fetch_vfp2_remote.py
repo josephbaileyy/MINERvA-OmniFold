@@ -64,6 +64,12 @@ def preflight(paths):
     """Before any file is opened: lstat every component below BASE of every listed path (lstat moves no atime and no
     link is read). Any symlink, missing component, non-directory parent or non-regular final file refuses, listing
     every offender."""
+    try:                              # BASE first: its children are never stat'ed through a symlinked BASE
+        bst = os.lstat(BASE.rstrip("/"))
+    except OSError as e:
+        stop("pre-flight: %s (%s)" % (BASE, e.strerror))
+    if stat.S_ISLNK(bst.st_mode) or not stat.S_ISDIR(bst.st_mode):
+        stop("pre-flight, before any file was opened: %s is not a plain directory" % BASE)
     bad = []
     for path in paths:
         if not path.startswith(BASE):

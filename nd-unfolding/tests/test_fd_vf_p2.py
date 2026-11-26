@@ -201,9 +201,13 @@ class Reader(unittest.TestCase):
         rd = self.f.t / "reader2.py"
         rd.write_text(src)
         lst = self.f.list_text().replace(f"{self.f.base}/", f"{link}/")
+        before = os.lstat(link).st_atime_ns
         r = subprocess.run([sys.executable, "-I", str(rd)], input=lst.encode(), capture_output=True)
         self.assertEqual(r.returncode, 9, r.stderr)
+        self.assertIn(b"pre-flight, before any file was opened", r.stderr)
         self.assertIn(b"not a plain directory", r.stderr)
+        self.assertEqual(r.stdout, b"")
+        self.assertEqual(os.lstat(link).st_atime_ns, before)
 
     def test_a_path_outside_the_base_or_a_bad_header_stops(self):
         bad = self.f.list_text().replace(f"{self.f.base}/d0", "/etc/d0")
