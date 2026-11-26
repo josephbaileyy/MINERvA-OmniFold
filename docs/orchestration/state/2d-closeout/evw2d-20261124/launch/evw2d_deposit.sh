@@ -11,8 +11,9 @@
 #          it only if its sha256 is the approved one (else deletes it and exits 8), then deletes it.
 #        bash evw2d_deposit.sh fetch <new empty dir>
 #          hpss.tar.gz (an absent archive is told apart from an ssh failure), then its receipt is verified: the log names
-#          the bound digests and job, 6 of 6 retrieved and equal to their pins, the rename to the final name and
-#          "hpss rc=0", and its pinned list holds the bound digests. Exit 0 only then; 5 = fetched but not verified.
+#          exactly the bound digests and job, 6 of 6 retrieved and equal to their pins, the rename to the final name and
+#          "hpss rc=0"; its snapshot SHA256SUMS has the bound digest and its pinned list is exactly the six rows that
+#          snapshot and the bound marker digest imply. Exit 0 only then; 5 = fetched but not verified.
 #        bash evw2d_deposit.sh fetch-products <new empty dir under $HOME, outside /private/tmp and /tmp>
 #          the six product files by scp into <dir>/out, then the checker on the Mac: the local evw2d.py must be the
 #          approved bytes and is executed as the very bytes hashed (no import, no cache); evw2d.accepted(<dir>/out) must
@@ -21,7 +22,8 @@
 # The directory argument is resolved once, to a physical path (CDPATH unset), and every write uses that path.
 MODE=${1:?hpss|fetch|fetch-products}; F=${2:?session dir}; NODE=${3:-}
 unset CDPATH
-F=$(cd -- "$F" 2>/dev/null && pwd -P) || { echo "STOP: $2 is not a directory"; exit 9; }
+F=$(cd -- "$F" 2>/dev/null && pwd -P && echo .) || { echo "STOP: $2 is not a directory"; exit 9; }
+F=${F%$'\n.'}                                                 # keeps a trailing newline in the name, if any
 HERE=$(cd "$(dirname "$0")" && pwd)
 LANE=__LANE_ROOT__
 EVW_SHA=__EVW2D_PY_SHA256__
@@ -74,16 +76,19 @@ case "$MODE" in
     echo "scp hpss.tar.gz rc=$r"; [ $r = 0 ] || exit $r
     shasum -a 256 "$F/hpss.tar.gz" || exit 3
     mkdir "$F/receipt" && tar xzf "$F/hpss.tar.gz" -C "$F/receipt" || { echo "NOT VERIFIED: the archive does not unpack"; exit 5; }
-    log="$F/receipt/hpss/hpss.log"; pins="$F/receipt/hpss/pinned.sha256"; R=${LANE##*/}
-    [ -f "$log" ] && [ ! -L "$log" ] && [ -f "$pins" ] && [ ! -L "$pins" ] || { echo "NOT VERIFIED: no hpss.log or pinned.sha256"; exit 5; }
+    rd="$F/receipt/hpss"; log="$rd/hpss.log"; pins="$rd/pinned.sha256"; snap="$rd/snapshot/SHA256SUMS"; R=${LANE##*/}
+    for f in "$log" "$pins" "$snap"; do
+      [ -f "$f" ] && [ ! -L "$f" ] || { echo "NOT VERIFIED: no ${f#"$F"/}"; exit 5; }
+    done
     v=1
-    head -1 "$log" | grep -Fq " bound $BOUND done $DONE_SHA job $JOBID" || v=0
+    first=$(head -1 "$log") && case "$first" in *" bound $BOUND done $DONE_SHA job $JOBID") ;; *) v=0;; esac
     grep -Fxq "retrieved and equal to their pins: 6 of 6; files retrieved: 6" "$log" || v=0
     grep -Fxq "renamed to /home/j/josephrb/mnv-$R/$R.tar" "$log" || v=0
     tail -1 "$log" | grep -Eq '^hpss rc=0 ' || v=0
-    grep -Fxq "$BOUND  $R/out/SHA256SUMS" "$pins" || v=0
-    grep -Fxq "$DONE_SHA  $R/out/evw2d.done" "$pins" || v=0
-    [ "$(wc -l < "$pins" | tr -d ' ')" = 6 ] || v=0
+    s=$(shasum -a 256 "$snap" | cut -d' ' -f1) && [ "$s" = "$BOUND" ] || v=0
+    want=$( { sed 's|^\([0-9a-f]\{64\}\)  |\1  '"$R"'/out/|' "$snap"
+              echo "$BOUND  $R/out/SHA256SUMS"; echo "$DONE_SHA  $R/out/evw2d.done"; } | LC_ALL=C sort -k2) || v=0
+    [ "$(cat "$pins")" = "$want" ] && [ "$(printf '%s\n' "$want" | grep -c .)" = 6 ] || v=0
     [ "$v" = 1 ] || { echo "NOT VERIFIED: the HPSS receipt is not a passing copy bound to $BOUND and job $JOBID"; exit 5; }
     echo "VERIFIED: the HPSS copy of $R ($BOUND, job $JOBID) is in place and was verified by retrieval"
     exit 0 ;;
