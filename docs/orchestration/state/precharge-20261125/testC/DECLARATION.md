@@ -24,12 +24,16 @@ Joseph approved test C on 2026-11-26, as `../test1/NEXT.md` describes it. This f
 
 **Weight.** log w(Eν) uses the three bases of `../test1/test1.py` (quadratic, cubic, and piecewise linear with 5 interior knots), in t = (clip(Eν, lo, hi) − lo)/(hi − lo). w is constant outside [lo, hi]. lo = 20 GeV. hi is the 99th percentile of fold-weighted Eν in the training fit sample, rounded up to a multiple of 10 GeV. That uses MC only. The **primary form is piecewise linear**. The other two are reported as sensitivity checks.
 
+**No constant term.** log w has no constant column, so w = 1 at Eν ≤ lo. The rate below 20 GeV is therefore unchanged, and so is every in-grid cell through the anchor. The pwlinear form has 6 parameters, quadratic 2 and cubic 3. *Changed in the second commit, before any run or score.* The first version kept Test 1's constant column. The closure check of `test_c.py` found that the anchor cancels a constant in-grid, so the constant was set only by the few unanchored rows at reco 20–40 (σ ≈ 5 in log w). That inflated the held-out prediction variance (±1,470 events at 50–60), and an inflated variance would let the "supports" clause pass spuriously. With no constant term, the closure recovers the injected coefficients and the 50–60 prediction error is ±102.
+
+**Closure check (code only).** `python3 test_c.py --closure` replaces true Eν with a stand-in (true muon energy + reco E_avail). It builds stand-in denominators from the selected rows, and it replaces every observed count with the MC expectation under an injected w. It reads no Data row and no true Eν. A correct implementation recovers the injected coefficients with χ² ≈ 0 in both directions and all three forms. Its output is `closure.txt`.
+
 **Where it applies.** `../score.py` fixes three classes of simulated rows, and the reweight is set per class:
 - **In the published phase space** (fiducial ν_μ CC, true p∥ 1.5–60, p_T < 4.5, angle < 20°). Each row becomes fold × w(Eν) × G_c / G′_c. G_c is the nominal generated count in its true cell, and G′_c is the same count weighted by w. Both come from the truth tables summed over all 12 playlists, MC only, using the bin center for each 0.5 GeV Eν bin. The published cross section in every cell is therefore unchanged, and the efficiency in each cell follows the reweighted Eν mix.
 - **Other fiducial ν_μ CC rows** (true p∥ ≥ 60, p_T ≥ 4.5 or angle ≥ 20°). These become tune_weight × w(Eν), with no anchor.
 - **Every other row** (ν̄_μ, NC, non-fiducial). Unchanged.
 
-**Fit.** The fit sample is the training playlists, reco p∥ 20–40, negative tracks with good curvature (|σ(q/p)/(q/p)| < 0.30). The fit variable is E_vis in the 2 GeV bins of Test 1 (20–100), with a binned Poisson likelihood and MC scaled by each playlist's own POT. That is the Test 1 fit with E_vis replaced by Eν as the reweight variable and with the anchor added. G′ depends on the parameters, so the likelihood is minimized numerically (BFGS from w = 1). The covariance is the inverse numerical Hessian.
+**Fit.** The fit sample is the training playlists, reco p∥ 20–40, negative tracks with good curvature (|σ(q/p)/(q/p)| < 0.30). The fit variable is E_vis in the 2 GeV bins of Test 1 (20–100), with a binned Poisson likelihood and MC scaled by each playlist's own POT. That is the Test 1 fit with E_vis replaced by Eν as the reweight variable and with the anchor added. G′ depends on the parameters, so the likelihood is minimized by BFGS from w = 1 with the analytic gradient. The covariance is the inverse Fisher information at the minimum, Σ_b J_b J_bᵀ/μ_b, where J_b = ∂μ_b/∂β. That is Test 1's Xᵀ μ X generalized to the anchored model. (Also changed in the second commit, before any run: the first version said "inverse numerical Hessian".)
 
 **Directions.** The primary direction fits on training (`1A 1C 1E 1G 1M 1O`) and scores held-out (`1B 1D 1F 1L 1N 1P`). The swap is reported under the same readings.
 
@@ -40,9 +44,11 @@ Bands are reco p∥ 40–50, 50–60, 60–80 and ≥80.
 - **T2.** The good-curvature fraction of negative tracks per band (4 binomial terms).
 - **T3.** Positive tracks, all precisions, per band (4 yields, absolute, with no normalization from held-out data).
 
-**Variance.** The A/B choices, unchanged:
-- **Yields.** The variance is max(observed, 1), plus the MC sum of squared weights, plus the fit-parameter variance and a floor of (0.02 × prediction)². The parameter variance uses linear propagation with the full covariance and a numerical Jacobian.
-- **Fractions.** The variance is f(1 − f)/N from data, plus the MC statistical variance by the delta method, plus the parameter variance. There is no floor.
+**Variance.** The A/B choices (`../testAB/common.py`, `../testAB/test_b.py`), with the fit-parameter variance added to the fractions:
+- **Yields.** The variance is the predicted count μ, plus the MC sum of squared weights, plus the fit-parameter variance and a floor of (0.02 μ)². The parameter variance uses linear propagation with the full covariance and the analytic Jacobian.
+- **Fractions.** In counts, the variance is n f(1 − f) + n² (v_MC + v_par). Here n is the observed number of negative tracks in the band, f is the predicted fraction, v_MC is its MC statistical variance by the delta method (as in B), and v_par is its fit-parameter variance. There is no floor.
+
+*Correction, made before any run or score (second commit).* The first version of this paragraph used max(observed, 1) for yields and the data fraction for the binomial term, while saying it was the A/B choice. A and B use μ and the predicted f, so the paragraph now matches them. Nothing had been fitted or scored when this was changed.
 
 Only terms whose nominal held-out fold is at least 5 are scored. That is decided from MC alone. The metric is the Pearson χ² over the scored terms, with degrees of freedom equal to the number of terms. The nominal fold (w = 1) is scored the same way.
 
@@ -72,4 +78,4 @@ If the training fit deviance per degree of freedom exceeds 3, that is stated wit
 
 ## Output
 
-Results go in this folder. `test_c.py` and the control script are committed before the outputs are fetched. One `run.sh` regenerates every local output from the committed inputs, and every number comes from a committed script. The report gives the outcome against these readings, the P1–P3 results and the `sacct` charge.
+Results go in this folder. `test_c.py` and `controls.py` are committed before the outputs are fetched. One `analyze.sh` regenerates every local output from the committed inputs, and every number comes from a committed script. `controls.py` runs once on the fetched scratch outputs, whose sha256 are committed in `inputs/fetched.sha256`; its record is `controls.json`. (Changed in the second commit, before any run: the first version named the local driver `run.sh`, which is the cluster task script.) The report gives the outcome against these readings, the P1–P3 results and the `sacct` charge.
