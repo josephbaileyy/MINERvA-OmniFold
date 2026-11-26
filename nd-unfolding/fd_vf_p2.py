@@ -42,7 +42,12 @@ NEVER = ("universes_full.root", "bkg_dump.npz")                          # never
 NUE_PATH = PS + "MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"
 NUE_LOCAL = ("docs/orchestration/state/ben-b-20261124/blocks5d-20261124/run-20261124/session/records/fetch-b5d/"
              "sorted_NuEConstraint_FHC_RHC_IMD.txt", "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2")
-LOCAL_COPIES = {NUE_PATH: NUE_LOCAL}
+# the MINOS rescale: never fetched (committed; fetch-list excludes its role, XK_LOCAL); K reads it through the remap, so
+# its exact /pscratch path maps to the committed copy, pinned at xcov/INPUTS.sha256:13 and NODE-SHA256.txt:233
+MINOS_PATH = PS + "2d-closeout-c04repair-20261012/build/minos_rescaled.npz"
+MINOS_LOCAL = ("docs/orchestration/state/2d-closeout/c04-repair/products/minos_rescaled.npz",
+               "8912376ef2a6cfce8bed515cc945d9d5778cf5c838154a685435c3c7ce25416d")
+LOCAL_COPIES = {NUE_PATH: NUE_LOCAL, MINOS_PATH: MINOS_LOCAL}
 N_ROWS, N_BYTES = 402, 1595650936 - 25403
 HEADER = ("path", "sha256", "pin_source", "size_bytes", "reader_file_line", "recompute")
 
@@ -168,7 +173,10 @@ def pinned_json(rel_pin):
 RTOL_ROUNDTRIP = 1e-9
 
 
-def p_control(name, reproduced, committed, rtol=0.0, scale=None):
+P_ACHIEVED = {}         # the largest achieved p difference per control, when p is checked by function identity
+
+
+def p_control(name, reproduced, committed, rtol=0.0, scale=None, p_fun=None):
     """P (section 6): the producer's arithmetic on the OLD matrix reproduces every field it will replace. rtol = 0 is
     exact equality (bit-identical inputs); otherwise each float must satisfy |a - b| <= rtol * scale(path, b), where
     scale defaults to |b|. Returns the largest achieved relative difference."""
@@ -178,7 +186,17 @@ def p_control(name, reproduced, committed, rtol=0.0, scale=None):
         if isinstance(b, dict):
             if not isinstance(a, dict) or set(a) != set(b):
                 raise Stop(f"P {name}: {path} keys differ")
+            pid = p_fun is not None and {"p", "chi2", "ndf"} <= set(b)
+            if pid:            # A4 item 3: p by the producer's own function on the committed chi2, bitwise, and printed
+                if p_fun(b["chi2"], b["ndf"]) != b["p"] and not (b["p"] == 0.0 and b.get("p_below_floor")):
+                    raise Stop(f"P {name}: {path}: the producer's p function on the committed chi2 is not its p")
+                if printed_p(a["p"]) != printed_p(b["p"]):
+                    raise Stop(f"P {name}: {path}/p prints {printed_p(a['p'])}, committed {printed_p(b['p'])}")
+                r = abs(a["p"] - b["p"]) / abs(b["p"]) if b["p"] else abs(a["p"] - b["p"])
+                P_ACHIEVED[name] = max(P_ACHIEVED.get(name, 0.0), r)
             for k in b:
+                if pid and k == "p":
+                    continue
                 walk(a[k], b[k], f"{path}/{k}")
         elif isinstance(b, list):
             if not isinstance(a, list) or len(a) != len(b):
@@ -781,13 +799,14 @@ def p2_rsn(vf, fetch_dir):
 
     f1_old, f1_vf = pinned_json(OLD_F1_WITH)[0], pinned_json(VF_F1_WITH)[0]
     old = json.loads(json.dumps(regrade(Cx / ff, f1_old)))
-    w1 = p_control("rsnregrade", old, {k: reg_c[k] for k in old}, RTOL_EXACT)
+    pf = R.chi2_sf_even                       # the producer's p function (fd_f0_regrade.grade)
+    w1 = p_control("rsnregrade", old, {k: reg_c[k] for k in old}, RTOL_EXACT, p_fun=pf)
     new = json.loads(json.dumps(regrade((Cx + np.asarray(vf["matrices"]["DeltaC_e"], float)) / ff, f1_vf)))
     prep, _ = pinned_json(RSN_PREP)
     i0 = json.loads(RR.I0.read_text())
     cmodel = json.loads(RR.CMODEL_JSON.read_text())
     rd_old = json.loads(json.dumps(RR.read(prep, cm, dict(reg_c, **old), i0, cmodel, f1_old)))
-    w2 = p_control("rsn", rd_old, read_c, RTOL_EXACT)
+    w2 = p_control("rsn", rd_old, read_c, RTOL_EXACT, p_fun=pf)
     f1_alias = json.loads(json.dumps(f1_vf))
     f1_alias[RR.SIGMA_KEY] = f1_alias["relative_sigma_plus_C_resp + C_PL5D + DeltaC_e"]
     rd_new = json.loads(json.dumps(RR.read(prep, cm, dict(reg_c, **new), i0, cmodel, f1_alias)))
@@ -797,12 +816,17 @@ def p2_rsn(vf, fetch_dir):
                            "matrices": "X_F = C_resp_plus_C_PL5D_plus_DeltaC_e (relative)",
                            "NC-R": "the nominal arm reproduces Phase 1's V_F F1 (" + VF_F1_WITH[0] + ")",
                            "fetched": FETCHED["s1_assembly.npz"][0], "control_P": "PASS",
-                           "control_P_tolerance": {"rtol": RTOL_EXACT, "achieved_max": w1}}
+                           "control_P_tolerance": {"rtol": RTOL_EXACT, "achieved_max": w1,
+                                                   "p": {"check": "fd_f0_regrade.chi2_sf_even(committed chi2, ndf) "
+                                                         "== committed p, bitwise; printed strings equal (A4 item 3)",
+                                                         "achieved_max": P_ACHIEVED.get("rsnregrade", 0.0)}}}
     read_out = dict(rd_new)
     read_out["vf_patch"] = {"readout": RSN_READOUT[0], "readout_sha256": hr, "replaced": ["/"],
                             "inputs": {"regrade": "rsnregrade.vf.json", "f1": VF_F1_WITH[0] + f" (its sigma under "
                                        f"{RR.SIGMA_KEY})"}, "control_P": "PASS",
-                            "control_P_tolerance": {"rtol": RTOL_EXACT, "achieved_max": w2}}
+                            "control_P_tolerance": {"rtol": RTOL_EXACT, "achieved_max": w2,
+                                                    "p": {"check": "as rsnregrade's (A4 item 3)",
+                                                          "achieved_max": P_ACHIEVED.get("rsn", 0.0)}}}
     return {"rsnregrade": reg_out, "rsn": read_out}
 
 
@@ -899,8 +923,13 @@ def p2_xk(vf, fetch_dir):
         after = dir_listing(run_dir)
         changed = sorted(k for k in before if after.get(k) != before[k])
         added = sorted(set(after) - set(before))
-        if changed or any(not k.startswith("k/") for k in added) or rc != 0:
-            raise Stop(f"xk {arm}: rc {rc}; K changed {changed} or wrote outside k/: {added}")
+        # K adds its readout under k/ and its own staging copies under inputs/ (fd_xcov_steps.stage), each of which
+        # must be the bytes of a logged remapped read, at its pin
+        logged = {Path(p_).name: s_ for p_, _, s_ in log}
+        stray = [k for k in added if not (k.startswith("k/") or (k.startswith("inputs/") and k.count("/") == 1
+                                                                  and logged.get(k[7:]) == after[k]))]
+        if changed or stray or rc != 0:
+            raise Stop(f"xk {arm}: rc {rc}; K changed {changed} or added {stray} outside k/ and its staging copies")
         out = json.loads((run_dir / "k/k.json").read_text())
         rec[arm] = {"out": out, "log": log, "calls": calls, "before": before, "added": added,
                     "subst_sha256": {k: hashlib.sha256(v).hexdigest() for k, v in subst.items()}}
@@ -943,7 +972,8 @@ def p2_xk(vf, fetch_dir):
                                                              "replaced": []})}
 
 
-RTOL_IBU = 1e-9         # PENDING: measured after the fetch; route2's truths differ from (e)'s by <= 1e-12 (C-IBU)
+RTOL_IBU = 1e-11        # the director's ruling 2 (2026-11-26): route2's truths are recorded equal to (e)'s B0 truths at
+                        # <= 1e-12 (C-IBU), not bit-identical; outputs graded against them at 1e-11 (A4)
 P2_FETCH = {"prr": p2_prr, "rsn": p2_rsn, "xk": p2_xk}
 
 

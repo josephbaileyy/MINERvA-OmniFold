@@ -42,6 +42,14 @@ The evidence that the miss is a platform effect, not an error:
    - Each reproduced p must give the committed p's printed strings: `make_values_fived16.p_tex` and its paper form.
    - The reproduced p's remaining difference comes only through chi2, since d ln p/dχ² ≈ −½. It is recorded: up to
      2.18e-8 in gdefs and 1.77e-8 in gnat.
+   - **The same rule covers rsnregrade and rsn** (the director's ruling 1, 2026-11-26). There the inputs are
+     bit-identical, chi2 and z stay at 1e-12 and pass (chi2 9.06e-13, z about 4e-16), and the p function is
+     `fd_f0_regrade.chi2_sf_even`. The achieved p difference is 1.71e-11, at rsnregrade
+     nominal/records[2]/model_only/p, where p is about 1.7e-17.
+   - **prr's IBU grades** (the director's ruling 2). route2.npz's truths are recorded equal to (e)'s B0 truths at
+     ≤ 1e-12 (C-IBU), so they are not bit-identical. Outputs graded against them are held to 1e-11 (achieved
+     1.07e-12), and above 1e-11 is a STOP. The (e) records keep their own figures under the existing rules: chi2 2.1e-14,
+     p 5.5e-13.
 4. **The Table IV corner.** gdefs' "CH, analysis definitions" records for the four GENCMP predictions take Phase 1's V_F
    Stage G records, which were computed on login02.
    - E-1's control XC makes the two the same computation, and `make_values_fived16.table4` asserts their equality at
@@ -71,10 +79,15 @@ changes. Only inputs are substituted, and only in the replaying process:
     - That NERSC path runs through a symlinked directory (`MParamFiles`); the fetch's first attempt stopped on it by
       design, so the file is not fetched.
     - K's own pin check still applies, and the read is logged like every other remapped read.
+  - **A second exact-path entry: the MINOS rescale.** It was never fetched, because fetch-list excludes its role as
+    committed. `/pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/minos_rescaled.npz` maps to the committed
+    copy `docs/orchestration/state/2d-closeout/c04-repair/products/minos_rescaled.npz`, sha256 `8912376e…`. That is the
+    pin at `fd/xcov/INPUTS.sha256:13` and the run copy's `NODE-SHA256.txt:233`.
 - **(ii) A local run directory.** It holds hardlinks to the fetched `cov2d-xk-g2r-20261116/run` copy, plus the
   committed `fd/xcov/run/v0-a1/v0.json` and `v1-a2/v1.json`. Their sha256 must equal `NODE-SHA256.txt`'s run copy.
   - The file list and shas are recorded before and after.
-  - K may only add files under `k/`.
+  - K may add only its readout under `k/` and its own staging copies under `inputs/` (`fd_xcov_steps.stage`). Each
+    staging copy must be the bytes of a logged remapped read, at its pin.
 - **(iii) The V_F inputs.** `read_committed` returns two substituted objects, each recorded by sha256:
   - for `CPL_BLOCK`, the block with `C_total_plus_C_resp_plus_C_PL5D` replaced by C_rep,F, so that
     C16q = A (C + ΔC_e) Aᵀ + box variance. That is declaration §4.1's "A dF Aᵀ added to the 16-cell side";
