@@ -22406,6 +22406,12 @@ docs/orchestration/state/precharge-20261125/direct-verification.txt	tracked	MACH
 docs/orchestration/state/precharge-20261125/display.py	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/extracted-checksums.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/file-counts.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/ibu-convention/INPUTS.sha256	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/ibu-convention/README.md	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/ibu-convention/README.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/ibu-convention/compare.py	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/ibu-convention/replay.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
+docs/orchestration/state/precharge-20261125/ibu-convention/true_40_60.csv	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/input-manifest-checksums.txt	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/inputs/control/fine-results.json	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
 docs/orchestration/state/precharge-20261125/inputs/control/fine.npz	tracked	MACHINE	state-artifact	precharge-20261125		generated		exact-path-only	yes
