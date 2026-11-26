@@ -4,16 +4,175 @@ Read by `vf_readings.py`; readings go to the director first; nothing here is not
 
 ## 1. Decision-rule outcome changes (first, each on its own)
 
-**Headline (every outcome that changes; anything not named holds):**
+**Control D:** holds, every event under a named ruling (the tool exits nonzero otherwise). Every non-float leaf of every swept readout, OLD -> V_F, both arms (`sweep()`): 2129 changes, 250 of them in decision-rule fields; 4 control D events, 4 under a named ruling.
 
-- F0/F0b/F1: no longer listed ['W3', 'q3', 'stage0c_gibuu']; still listed ['A7_gibuu']; newly listed []
-- RSN SM: "a fake-data conclusion changes under SM" -> "the fake-data conclusions survive SM"
-- RSN regrade: nominal listed ['q3', 'A7_gibuu'] -> ['A7_gibuu']; G6 listed ['q3', 'A7_gibuu'] -> ['A7_gibuu']; SM listed ['q3', 'A7_nuwro', 'A7_gibuu'] -> ['A7_gibuu']
-- PRR: 34 flags cleared, 0 set
-- gover QA 2D: "agree below a correlation" -> "agree"
-- gover QB 2D: "agree below a correlation" -> "agree"
-- cr QB 2D: "agree below a correlation" -> "agree"
-- E2's largest change moves: nopl/genie_mec/shape_only -> nopl/genie_mec/total
+**Headline: every decision-rule change, from the sweep (anything not named holds), then the derived lines:**
+
+- **CONTROL D** gover `/quadrants/QD/2D/printed_only_without_C_PL5D/outcome`: "agree" -> "agree below a correlation" (an outcome string changes, not toward agreement): *named exception:* the director, 2026-11-26: a named, disclosed exception to control D; a weakened printed agreement label (rho* crosses 1, the knife edge); no outcome reads this sub-record; the note's printed label follows the V_F value; Joseph sees it with the readings
+- **CONTROL D** cr `/quadrants/QD/2D/printed_only_without_C_PL5D/outcome`: "agree" -> "agree below a correlation" (an outcome string changes, not toward agreement): *named exception:* the director, 2026-11-26: a named, disclosed exception to control D; a weakened printed agreement label (rho* crosses 1, the knife edge); no outcome reads this sub-record; the note's printed label follows the V_F value; Joseph sees it with the readings
+- **CONTROL D** prr `/readings/PR-3/C25/new_flags`: ["A7_nuwro", "W3", "stage0c_gibuu"] -> ["A7_nuwro", "W3", "q3", "stage0c_gibuu"] (gains ['q3']): *named exception:* the director, 2026-11-26: a reference shift, not a new flag (q3 is flagged at this level under both OLD and V_F; it appears new only because B0's own q3 flag clears under V_F)
+- **CONTROL D** prr `/readings/PR-3/O2/new_flags`: ["A7_genie_cv", "A7_nuwro", "W1", "W3", "closure_nuwro", "stage0c_gibuu"] -> ["A7_nuwro", "W1", "W3", "closure_nuwro", "q3", "stage0c_gibuu"] (gains ['q3']): *named exception:* the director, 2026-11-26: a reference shift, not a new flag (q3 is flagged at this level under both OLD and V_F; it appears new only because B0's own q3 flag clears under V_F)
+- cr QD 2D, the printed-only arm without C_PL5D: a weakened printed agreement label, "agree" -> "agree below a correlation"; rho* 1.00353 -> 0.999854, at the knife edge of rho* = 1; no outcome reads this sub-record (its label: "printed only, no outcome is read from it: the sixteen-cell matrix without C_PL5D against Q, which includes C_PL; not a like-for-like pair")
+- gover QD 2D, the printed-only arm without C_PL5D: a weakened printed agreement label, "agree" -> "agree below a correlation"; rho* 1.00349 -> 0.999993, at the knife edge of rho* = 1; no outcome reads this sub-record (its label: "printed only, no outcome is read from it: the sixteen-cell matrix without C_PL5D against Q, which includes C_PL; not a like-for-like pair")
+- **A printed conclusion changes (for Joseph):** RSN SM: "a fake-data conclusion changes under SM" -> "the fake-data conclusions survive SM"
+- E2's largest change moves: nopl/genie_mec/shape_only -> nopl/genie_mec/total (Delta_max 6.07 -> 10.81)
+- cr `/quadrants/QA/2D/printed_only_without_C_PL5D/outcome`: "agree below a correlation" -> "agree"
+- cr `/quadrants/QB/2D/outcome`: "agree below a correlation" -> "agree"
+- f0 `/triggers/all_graded/cells_abs_z_gt_2`: 4 -> 2
+- f0 `/triggers/all_graded/truths_p_lt_0.01`: 4 -> 1
+- f0 `/triggers/by_group/non-vertex/by_family/q3/truths_p_lt_0.01`: 1 -> 0
+- f0 `/triggers/by_group/non-vertex/truths_p_lt_0.01`: 1 -> 0
+- f0 `/triggers/by_group/vertex-family/by_family/gibuu/cells_abs_z_gt_2`: 4 -> 2
+- f0 `/triggers/by_group/vertex-family/by_family/gibuu/truths_p_lt_0.01`: 2 -> 1
+- f0 `/triggers/by_group/vertex-family/by_family/nuwro/truths_p_lt_0.01`: 1 -> 0
+- f0 `/triggers/by_group/vertex-family/cells_abs_z_gt_2`: 4 -> 2
+- f0 `/triggers/by_group/vertex-family/truths_p_lt_0.01`: 3 -> 1
+- f0 `/triggers/listed[*]/cells`: ["R02", "R06", "R07"] -> ["R02", "R06"] x1 (A7_gibuu)
+- f0 `/triggers/listed[*]/cells`: ["R06"] -> null x1 (stage0c_gibuu)
+- f0 `/triggers/listed[*]/cells`: [] -> null x2 (W3, q3)
+- f0 `/triggers/listed[*]/p_lt_0.01`: true -> null x3 (W3, q3, stage0c_gibuu)
+- f0 `/truths[*]/grade/cells_abs_z_gt_2`: ["R02", "R06", "R07"] -> ["R02", "R06"] x1 (A7_gibuu)
+- f0 `/truths[*]/grade/cells_abs_z_gt_2`: ["R06"] -> [] x1 (stage0c_gibuu)
+- f0 `/truths[*]/grade/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- f0 `/truths[*]/grade/p_lt_0.01`: true -> false x6 (P1r, P2g, P2r, W3, q3, stage0c_gibuu)
+- f0 `/truths[*]/in_sample/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- f0 `/truths[*]/in_sample/p_lt_0.01`: true -> false x3 (P1r, P2g, W3)
+- f0 `/truths[*]/listed`: true -> false x3 (W3, q3, stage0c_gibuu)
+- f0 `/truths[*]/p_parallel_lt_4p5/p_lt_0.01`: true -> false x1 (stage0c_gibuu)
+- f0 `/truths[*]/sensitivity/p_lt_0.01`: true -> false x1 (q3)
+- f0b `/triggers/all_graded/truths_p_lt_0.01`: 2 -> 1
+- f0b `/triggers/by_group/non-vertex/by_family/q3/truths_p_lt_0.01`: 1 -> 0
+- f0b `/triggers/by_group/non-vertex/truths_p_lt_0.01`: 1 -> 0
+- f0b `/triggers/listed[*]/cells`: [] -> null x1 (q3)
+- f0b `/triggers/listed[*]/p_lt_0.01`: true -> null x1 (q3)
+- f0b `/truths[*]/grade/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- f0b `/truths[*]/grade/p_lt_0.01`: true -> false x4 (P1r, P2g, P2r, q3)
+- f0b `/truths[*]/in_sample/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- f0b `/truths[*]/in_sample/p_lt_0.01`: true -> false x1 (P1r)
+- f0b `/truths[*]/listed`: true -> false x1 (q3)
+- f0b `/truths[*]/sensitivity/p_lt_0.01`: true -> false x1 (q3)
+- f0b[nopl] `/triggers/all_graded/cells_abs_z_gt_2`: 4 -> 2
+- f0b[nopl] `/triggers/all_graded/truths_p_lt_0.01`: 2 -> 1
+- f0b[nopl] `/triggers/by_group/non-vertex/by_family/q3/truths_p_lt_0.01`: 1 -> 0
+- f0b[nopl] `/triggers/by_group/non-vertex/truths_p_lt_0.01`: 1 -> 0
+- f0b[nopl] `/triggers/by_group/vertex-family/by_family/gibuu/cells_abs_z_gt_2`: 4 -> 2
+- f0b[nopl] `/triggers/by_group/vertex-family/cells_abs_z_gt_2`: 4 -> 2
+- f0b[nopl] `/triggers/listed[*]/cells`: ["R02", "R06", "R07"] -> ["R02", "R06"] x1 (A7_gibuu)
+- f0b[nopl] `/triggers/listed[*]/cells`: ["R06"] -> null x1 (stage0c_gibuu)
+- f0b[nopl] `/triggers/listed[*]/cells`: [] -> null x1 (q3)
+- f0b[nopl] `/triggers/listed[*]/p_lt_0.01`: false -> null x1 (stage0c_gibuu)
+- f0b[nopl] `/triggers/listed[*]/p_lt_0.01`: true -> null x1 (q3)
+- f0b[nopl] `/truths[*]/grade/cells_abs_z_gt_2`: ["R02", "R06", "R07"] -> ["R02", "R06"] x1 (A7_gibuu)
+- f0b[nopl] `/truths[*]/grade/cells_abs_z_gt_2`: ["R06"] -> [] x1 (stage0c_gibuu)
+- f0b[nopl] `/truths[*]/grade/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- f0b[nopl] `/truths[*]/grade/p_lt_0.01`: true -> false x4 (P1r, P2g, P2r, q3)
+- f0b[nopl] `/truths[*]/in_sample/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- f0b[nopl] `/truths[*]/in_sample/p_lt_0.01`: true -> false x1 (P1r)
+- f0b[nopl] `/truths[*]/listed`: true -> false x2 (q3, stage0c_gibuu)
+- f0b[nopl] `/truths[*]/sensitivity/p_lt_0.01`: true -> false x1 (q3)
+- f1 `/triggers/all_graded/truths_p_lt_0.01`: 2 -> 1
+- f1 `/triggers/by_group/non-vertex/by_family/q3/truths_p_lt_0.01`: 1 -> 0
+- f1 `/triggers/by_group/non-vertex/truths_p_lt_0.01`: 1 -> 0
+- f1 `/triggers/listed[*]/cells`: [] -> null x1 (q3)
+- f1 `/triggers/listed[*]/p_lt_0.01`: true -> null x1 (q3)
+- f1 `/truths[*]/grade/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- f1 `/truths[*]/grade/p_lt_0.01`: true -> false x4 (P1r, P2g, P2r, q3)
+- f1 `/truths[*]/in_sample/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- f1 `/truths[*]/in_sample/p_lt_0.01`: true -> false x1 (P1r)
+- f1 `/truths[*]/listed`: true -> false x1 (q3)
+- f1 `/truths[*]/sensitivity/p_lt_0.01`: true -> false x1 (q3)
+- f1[nopl] `/triggers/all_graded/cells_abs_z_gt_2`: 4 -> 2
+- f1[nopl] `/triggers/all_graded/truths_p_lt_0.01`: 2 -> 1
+- f1[nopl] `/triggers/by_group/non-vertex/by_family/q3/truths_p_lt_0.01`: 1 -> 0
+- f1[nopl] `/triggers/by_group/non-vertex/truths_p_lt_0.01`: 1 -> 0
+- f1[nopl] `/triggers/by_group/vertex-family/by_family/gibuu/cells_abs_z_gt_2`: 4 -> 2
+- f1[nopl] `/triggers/by_group/vertex-family/cells_abs_z_gt_2`: 4 -> 2
+- f1[nopl] `/triggers/listed[*]/cells`: ["R02", "R06", "R07"] -> ["R02", "R06"] x1 (A7_gibuu)
+- f1[nopl] `/triggers/listed[*]/cells`: ["R06"] -> null x1 (stage0c_gibuu)
+- f1[nopl] `/triggers/listed[*]/cells`: [] -> null x1 (q3)
+- f1[nopl] `/triggers/listed[*]/p_lt_0.01`: false -> null x1 (stage0c_gibuu)
+- f1[nopl] `/triggers/listed[*]/p_lt_0.01`: true -> null x1 (q3)
+- f1[nopl] `/truths[*]/grade/cells_abs_z_gt_2`: ["R02", "R06", "R07"] -> ["R02", "R06"] x1 (A7_gibuu)
+- f1[nopl] `/truths[*]/grade/cells_abs_z_gt_2`: ["R06"] -> [] x1 (stage0c_gibuu)
+- f1[nopl] `/truths[*]/grade/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- f1[nopl] `/truths[*]/grade/p_lt_0.01`: true -> false x4 (P1r, P2g, P2r, q3)
+- f1[nopl] `/truths[*]/in_sample/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- f1[nopl] `/truths[*]/in_sample/p_lt_0.01`: true -> false x1 (P1r)
+- f1[nopl] `/truths[*]/listed`: true -> false x2 (q3, stage0c_gibuu)
+- f1[nopl] `/truths[*]/sensitivity/p_lt_0.01`: true -> false x1 (q3)
+- gover `/quadrants/QA/2D/outcome`: "agree below a correlation" -> "agree"
+- gover `/quadrants/QA/2D/printed_only_without_C_PL5D/outcome`: "agree below a correlation" -> "agree"
+- gover `/quadrants/QB/2D/outcome`: "agree below a correlation" -> "agree"
+- prr `/ibu/*/*/s*/grade/cells_abs_z_gt_2`: ["R02", "R06", "R07", "R10", "R13", "R14", "R15"] -> ["R02", "R06", "R07", "R10", "R13", "R14"] x3 (K20/A7_gibuu/s994001, K20/A7_gibuu/s994003, K20/A7_gibuu/s994004)
+- prr `/ibu/*/*/s*/grade/cells_abs_z_gt_2`: ["R02", "R06", "R10", "R15"] -> ["R06", "R15"] x1 (K1/stage0c_gibuu/s991000)
+- prr `/ibu/*/*/s*/grade/cells_abs_z_gt_2`: ["R02", "R06", "R10"] -> ["R02", "R06"] x3 (K2/A7_gibuu/s991000, K2/A7_gibuu/s994002, K2/A7_gibuu/s994003)
+- prr `/ibu/*/*/s*/grade/cells_abs_z_gt_2`: ["R02", "R06"] -> ["R06"] x1 (K10/stage0c_gibuu/s991000)
+- prr `/ibu/*/*/s*/grade/cells_abs_z_gt_2`: ["R03", "R06", "R10"] -> ["R06"] x1 (K20/A7_nuwro/s991000)
+- prr `/ibu/*/*/s*/grade/cells_abs_z_gt_2`: ["R03", "R06", "R13", "R14"] -> ["R13", "R14"] x4 (K5/A7_gibuu/s991000, K5/A7_gibuu/s994001, K5/A7_gibuu/s994002, K5/A7_gibuu/s994003)
+- prr `/ibu/*/*/s*/grade/cells_abs_z_gt_2`: ["R06", "R07"] -> ["R06"] x1 (K200/W1/s991000)
+- prr `/ibu/*/*/s*/grade/cells_abs_z_gt_2`: ["R06", "R13", "R14"] -> ["R13", "R14"] x1 (K5/A7_gibuu/s994004)
+- prr `/ibu/*/*/s*/grade/cells_abs_z_gt_2`: ["R06"] -> [] x2 (K10/W3/s991000, K20/W1/s991000)
+- prr `/ibu/*/*/s*/grade/cells_abs_z_gt_2`: ["R07", "R14"] -> ["R14"] x3 (K3/A7_gibuu/s994003, K3/A7_gibuu/s994004, K4/A7_gibuu/s994004)
+- prr `/ibu/*/*/s*/grade/flagged`: true -> false x18 (K1/W3/s991000, K1/q3/s991000, K10/A7_genie_cv/s991000, K10/q3/s991000, K2/q3/s991000, K2/stage0c_gibuu/s991000, K20/A7_genie_cv/s991000, K20/W1/s991000, K200/A7_genie_mec/s991000, K200/W2/s991000, K3/q3/s991000, K4/A7_nuwro/s991000, K4/W3/s991000, K4/closure_nuwro/s991000, K4/q3/s991000, K5/W3/s991000, K5/stage0c_gibuu/s991000, K50/A7_genie_mec/s991000)
+- prr `/readings/PR-3/IBU_K5/new_flags`: ["A7_nuwro", "W3", "closure_nuwro", "stage0c_gibuu"] -> ["A7_nuwro", "closure_nuwro"]
+- prr `/readings/PR-3/K2/new_flags`: ["A7_nuwro", "W3", "stage0c_gibuu"] -> []
+- prr `/readings/PR-3/O4/new_flags`: ["A7_nuwro"] -> []
+- prr `/table/*/*/s*/grade/cells_abs_z_gt_2`: ["R02", "R06", "R07"] -> ["R02", "R06"] x6 (K20/A7_gibuu/s991000, K20/A7_gibuu/s994001, K20/A7_gibuu/s994002, K20/A7_gibuu/s994003, K20/A7_gibuu/s994004, K50/A7_gibuu/s991000)
+- prr `/table/*/*/s*/grade/cells_abs_z_gt_2`: ["R05", "R06", "R07"] -> ["R05"] x1 (O2/A7_nuwro/s991000)
+- prr `/table/*/*/s*/grade/cells_abs_z_gt_2`: ["R05", "R06", "R10"] -> ["R06"] x1 (O2/W3/s991000)
+- prr `/table/*/*/s*/grade/cells_abs_z_gt_2`: ["R06", "R07", "R08"] -> ["R07", "R08"] x2 (C25/q3/s991000, O2/q3/s991000)
+- prr `/table/*/*/s*/grade/cells_abs_z_gt_2`: ["R06"] -> [] x1 (K2/stage0c_gibuu/s991000)
+- prr `/table/*/*/s*/grade/flagged`: true -> false x16 (B0/q3/s991000, C1000/q3/s991000, C400/q3/s991000, K10/q3/s991000, K2/A7_nuwro/s991000, K2/W3/s991000, K2/q3/s991000, K2/stage0c_gibuu/s991000, K20/q3/s991000, K50/q3/s991000, MCq/q3/s991000, O2/A7_genie_cv/s991000, O3/q3/s991000, O4/A7_nuwro/s991000, O4/q3/s991000, O4r/q3/s991000)
+- rsn `/arms/G6/P1/listed`: ["q3", "A7_gibuu"] -> ["A7_gibuu"]
+- rsn `/arms/G6/P1/listed_nominal`: ["q3", "A7_gibuu"] -> ["A7_gibuu"]
+- rsn `/arms/G6/P2/by_group/non-vertex/by_family/q3/truths_p_lt_0.01`: 1 -> 0
+- rsn `/arms/G6/P2/by_group/non-vertex/truths_p_lt_0.01`: 1 -> 0
+- rsn `/arms/G6/P2/by_group_nominal/non-vertex/by_family/q3/truths_p_lt_0.01`: 1 -> 0
+- rsn `/arms/G6/P2/by_group_nominal/non-vertex/truths_p_lt_0.01`: 1 -> 0
+- rsn `/arms/SM/P1/class`: "more flagged" -> "unchanged"
+- rsn `/arms/SM/P1/listed`: ["q3", "A7_nuwro", "A7_gibuu"] -> ["A7_gibuu"]
+- rsn `/arms/SM/P1/listed_nominal`: ["q3", "A7_gibuu"] -> ["A7_gibuu"]
+- rsn `/arms/SM/P2/by_group/non-vertex/by_family/q3/truths_p_lt_0.01`: 1 -> 0
+- rsn `/arms/SM/P2/by_group/non-vertex/truths_p_lt_0.01`: 1 -> 0
+- rsn `/arms/SM/P2/by_group/vertex-family/by_family/nuwro/truths_p_lt_0.01`: 1 -> 0
+- rsn `/arms/SM/P2/by_group/vertex-family/truths_p_lt_0.01`: 2 -> 1
+- rsn `/arms/SM/P2/by_group_nominal/non-vertex/by_family/q3/truths_p_lt_0.01`: 1 -> 0
+- rsn `/arms/SM/P2/by_group_nominal/non-vertex/truths_p_lt_0.01`: 1 -> 0
+- rsn `/arms/SM/verdict`: "a fake-data conclusion changes under SM" -> "the fake-data conclusions survive SM"
+- rsn `/arms/WR/P7/q3/flag_equal_weights`: true -> false
+- rsn `/arms/WR/P7/q3/flag_weighted`: true -> false
+- rsnregrade `/arms/G6/by_group/non-vertex/by_family/q3/truths_p_lt_0.01`: 1 -> 0
+- rsnregrade `/arms/G6/by_group/non-vertex/truths_p_lt_0.01`: 1 -> 0
+- rsnregrade `/arms/G6/listed`: ["q3", "A7_gibuu"] -> ["A7_gibuu"]
+- rsnregrade `/arms/G6/records[*]/grade/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- rsnregrade `/arms/G6/records[*]/grade/p_lt_0.01`: true -> false x4 (P1r, P2g, P2r, q3)
+- rsnregrade `/arms/G6/records[*]/in_sample/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- rsnregrade `/arms/G6/records[*]/in_sample/p_lt_0.01`: true -> false x2 (P1r, P2r)
+- rsnregrade `/arms/G6/records[*]/listed`: true -> false x1 (q3)
+- rsnregrade `/arms/G6/records[*]/sensitivity/p_lt_0.01`: true -> false x1 (q3)
+- rsnregrade `/arms/SM/by_group/non-vertex/by_family/q3/truths_p_lt_0.01`: 1 -> 0
+- rsnregrade `/arms/SM/by_group/non-vertex/truths_p_lt_0.01`: 1 -> 0
+- rsnregrade `/arms/SM/by_group/vertex-family/by_family/nuwro/truths_p_lt_0.01`: 1 -> 0
+- rsnregrade `/arms/SM/by_group/vertex-family/truths_p_lt_0.01`: 2 -> 1
+- rsnregrade `/arms/SM/listed`: ["q3", "A7_nuwro", "A7_gibuu"] -> ["A7_gibuu"]
+- rsnregrade `/arms/SM/records[*]/grade/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- rsnregrade `/arms/SM/records[*]/grade/p_lt_0.01`: true -> false x5 (A7_nuwro, P1r, P2g, P2r, q3)
+- rsnregrade `/arms/SM/records[*]/in_sample/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- rsnregrade `/arms/SM/records[*]/in_sample/p_lt_0.01`: true -> false x4 (A7_nuwro, P1r, P2g, P2r)
+- rsnregrade `/arms/SM/records[*]/listed`: true -> false x2 (A7_nuwro, q3)
+- rsnregrade `/arms/SM/records[*]/sensitivity/p_lt_0.01`: true -> false x1 (q3)
+- rsnregrade `/arms/nominal/by_group/non-vertex/by_family/q3/truths_p_lt_0.01`: 1 -> 0
+- rsnregrade `/arms/nominal/by_group/non-vertex/truths_p_lt_0.01`: 1 -> 0
+- rsnregrade `/arms/nominal/listed`: ["q3", "A7_gibuu"] -> ["A7_gibuu"]
+- rsnregrade `/arms/nominal/records[*]/grade/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- rsnregrade `/arms/nominal/records[*]/grade/p_lt_0.01`: true -> false x4 (P1r, P2g, P2r, q3)
+- rsnregrade `/arms/nominal/records[*]/in_sample/cells_abs_z_gt_2`: ["R07"] -> [] x1 (P2g)
+- rsnregrade `/arms/nominal/records[*]/in_sample/p_lt_0.01`: true -> false x1 (P1r)
+- rsnregrade `/arms/nominal/records[*]/listed`: true -> false x1 (q3)
+- rsnregrade `/arms/nominal/records[*]/sensitivity/p_lt_0.01`: true -> false x1 (q3)
+- rsnregrade `/wr_directions/q3/equal_weights/p_lt_0.01`: true -> false
+- rsnregrade `/wr_directions/q3/weighted/p_lt_0.01`: true -> false
+- vatlas `/readings/V-ATLAS/per_truth/q3/p_lt_0.01`: true -> false
 
 **F0/F0b/F1 listings** (p < 0.01 or any |z| > 2): STOPs 0; changes:
 
@@ -47,9 +206,9 @@ Read by `vf_readings.py`; readings go to the director first; nothing here is not
 
 **RSN regrade** (listed truths; triggers by group):
 
-- nominal: listed ['q3', 'A7_gibuu'] -> ['A7_gibuu']
-- G6: listed ['q3', 'A7_gibuu'] -> ['A7_gibuu']
-- SM: listed ['q3', 'A7_nuwro', 'A7_gibuu'] -> ['A7_gibuu']
+- nominal: listed ['q3', 'A7_gibuu'] -> ['A7_gibuu']; trigger counts: prior p<0.01 0 -> 0; vertex-family p<0.01 1 -> 1; non-vertex p<0.01 1 -> 0; held-out p<0.01 0 -> 0
+- G6: listed ['q3', 'A7_gibuu'] -> ['A7_gibuu']; trigger counts: prior p<0.01 0 -> 0; vertex-family p<0.01 1 -> 1; non-vertex p<0.01 1 -> 0; held-out p<0.01 0 -> 0
+- SM: listed ['q3', 'A7_nuwro', 'A7_gibuu'] -> ['A7_gibuu']; trigger counts: prior p<0.01 0 -> 0; vertex-family p<0.01 2 -> 1; non-vertex p<0.01 1 -> 0; held-out p<0.01 0 -> 0
 
 **RSN conclusions and arm verdicts:**
 
@@ -70,6 +229,8 @@ Read by `vf_readings.py`; readings go to the director first; nothing here is not
 
 **gover labels:** QA 2D agree below a correlation -> agree; QB 2D agree below a correlation -> agree (3D unchanged in every quadrant)
 **cr labels:** QB 2D agree below a correlation -> agree (3D unchanged in every quadrant)
+**gover printed-only arm (2D, without C_PL5D; no outcome is read from it):** QA agree below a correlation -> agree; QD agree -> agree below a correlation
+**cr printed-only arm (2D, without C_PL5D; no outcome is read from it):** QA agree below a correlation -> agree; QD agree -> agree below a correlation
 
 **X agreement (p >= 0.05 and every |z| <= 2.50):**
 
@@ -80,6 +241,359 @@ Read by `vf_readings.py`; readings go to the director first; nothing here is not
 **E2:** within seed variation False -> False; Delta_max 6.07 -> 10.81; the 2.3 flag 5.56 (True) -> 7.93 (True); largest change at nopl/genie_mec/shape_only -> nopl/genie_mec/total.
 
 **gdefs seed flags:** unchanged in every record
+
+## 1c. The sweep's descriptive changes (not decision-rule fields; every one in vf_readings.json)
+
+| readout | path pattern | changes |
+|---|---|---|
+| diag | `/blocks/extra` | 1 |
+| diag | `/predictions[]/comparisons[]/absolute/modes_by_chi2[]/mode` | 51 |
+| diag | `/predictions[]/comparisons[]/absolute/modes_needed/50%` | 2 |
+| diag | `/predictions[]/comparisons[]/absolute/modes_needed/90%` | 3 |
+| diag | `/predictions[]/comparisons[]/absolute/modes_needed/99%` | 3 |
+| diag | `/predictions[]/comparisons[]/absolute/removed[]/removed` | 5 |
+| diag | `/predictions[]/comparisons[]/absolute/top_modes[]/dominant` | 11 |
+| diag | `/predictions[]/comparisons[]/absolute/top_modes[]/mode` | 7 |
+| diag | `/predictions[]/comparisons[]/matrix` | 5 |
+| diag | `/predictions[]/comparisons[]/relative_to_f/modes_by_chi2[]/mode` | 54 |
+| diag | `/predictions[]/comparisons[]/relative_to_f/modes_needed/50%` | 1 |
+| diag | `/predictions[]/comparisons[]/relative_to_f/modes_needed/90%` | 5 |
+| diag | `/predictions[]/comparisons[]/relative_to_f/modes_needed/99%` | 4 |
+| diag | `/predictions[]/comparisons[]/relative_to_f/removed[]/removed` | 5 |
+| diag | `/predictions[]/comparisons[]/relative_to_f/top_modes[]/dominant` | 13 |
+| diag | `/predictions[]/comparisons[]/relative_to_f/top_modes[]/mode` | 8 |
+| diag[nopl] | `/blocks/extra` | 1 |
+| diag[nopl] | `/predictions[]/comparisons[]/absolute/modes_by_chi2[]/mode` | 54 |
+| diag[nopl] | `/predictions[]/comparisons[]/absolute/modes_needed/50%` | 1 |
+| diag[nopl] | `/predictions[]/comparisons[]/absolute/modes_needed/90%` | 3 |
+| diag[nopl] | `/predictions[]/comparisons[]/absolute/modes_needed/99%` | 5 |
+| diag[nopl] | `/predictions[]/comparisons[]/absolute/removed[]/removed` | 5 |
+| diag[nopl] | `/predictions[]/comparisons[]/absolute/top_modes[]/dominant` | 9 |
+| diag[nopl] | `/predictions[]/comparisons[]/absolute/top_modes[]/mode` | 7 |
+| diag[nopl] | `/predictions[]/comparisons[]/matrix` | 5 |
+| diag[nopl] | `/predictions[]/comparisons[]/relative_to_f/modes_by_chi2[]/mode` | 50 |
+| diag[nopl] | `/predictions[]/comparisons[]/relative_to_f/modes_needed/50%` | 2 |
+| diag[nopl] | `/predictions[]/comparisons[]/relative_to_f/modes_needed/90%` | 4 |
+| diag[nopl] | `/predictions[]/comparisons[]/relative_to_f/modes_needed/99%` | 4 |
+| diag[nopl] | `/predictions[]/comparisons[]/relative_to_f/removed[]/removed` | 5 |
+| diag[nopl] | `/predictions[]/comparisons[]/relative_to_f/top_modes[]/dominant` | 14 |
+| diag[nopl] | `/predictions[]/comparisons[]/relative_to_f/top_modes[]/mode` | 8 |
+| dp | `/code_sha256/fd_cpl_addition.py` | 1 |
+| dp | `/code_sha256/fd_vf_addition.py` | 1 |
+| dp | `/correlation_of` | 1 |
+| dp | `/labels/block` | 1 |
+| dp | `/labels/context_5a_5b` | 1 |
+| dp | `/labels/context_dr_pair` | 1 |
+| dp | `/labels/covariance` | 1 |
+| dp | `/labels/decision` | 1 |
+| dp | `/labels/not_citable_for` | 1 |
+| dp | `/labels/what` | 1 |
+| dp | `/schema` | 1 |
+| e2 | `/reading/sentence` | 1 |
+| f0 | `/code_sha256/fd_f0_regrade.py` | 1 |
+| f0 | `/extra_block/file` | 1 |
+| f0 | `/extra_block/key` | 1 |
+| f0 | `/extra_block/label` | 1 |
+| f0 | `/extra_block/name` | 1 |
+| f0 | `/extra_block/sha256` | 1 |
+| f0 | `/labels/grade_matrix` | 1 |
+| f0 | `/labels/what` | 1 |
+| f0 | `/schema` | 1 |
+| f0 | `/triggers/listed[]/truth` | 3 |
+| f0 | `/truths[]/grade/p_below_floor` | 1 |
+| f0 | `/truths[]/grade_matrix` | 18 |
+| f0 | `/truths[]/p_parallel_lt_4p5/p_below_floor` | 1 |
+| f0 | `/truths[]/sensitivity/matrix` | 2 |
+| f0b | `/extra_block/file` | 1 |
+| f0b | `/extra_block/key` | 1 |
+| f0b | `/extra_block/name` | 1 |
+| f0b | `/extra_block/sha256` | 1 |
+| f0b | `/labels/grade_matrix` | 1 |
+| f0b | `/labels/what` | 1 |
+| f0b | `/triggers/listed[]/truth` | 1 |
+| f0b | `/truths[]/grade_matrix` | 18 |
+| f0b | `/truths[]/sensitivity/matrix` | 2 |
+| f0b[nopl] | `/code_sha256/fd_f0_regrade.py` | 1 |
+| f0b[nopl] | `/extra_block/file` | 1 |
+| f0b[nopl] | `/extra_block/key` | 1 |
+| f0b[nopl] | `/extra_block/name` | 1 |
+| f0b[nopl] | `/extra_block/sha256` | 1 |
+| f0b[nopl] | `/labels/grade_matrix` | 1 |
+| f0b[nopl] | `/labels/what` | 1 |
+| f0b[nopl] | `/triggers/listed[]/truth` | 2 |
+| f0b[nopl] | `/truths[]/grade_matrix` | 18 |
+| f0b[nopl] | `/truths[]/sensitivity/matrix` | 2 |
+| f1 | `/extra_block/file` | 1 |
+| f1 | `/extra_block/key` | 1 |
+| f1 | `/extra_block/name` | 1 |
+| f1 | `/extra_block/sha256` | 1 |
+| f1 | `/labels/grade_matrix` | 1 |
+| f1 | `/labels/what` | 1 |
+| f1 | `/triggers/listed[]/truth` | 1 |
+| f1 | `/truths[]/grade_matrix` | 22 |
+| f1 | `/truths[]/sensitivity/matrix` | 6 |
+| f1[nopl] | `/extra_block/file` | 1 |
+| f1[nopl] | `/extra_block/key` | 1 |
+| f1[nopl] | `/extra_block/name` | 1 |
+| f1[nopl] | `/extra_block/sha256` | 1 |
+| f1[nopl] | `/labels/grade_matrix` | 1 |
+| f1[nopl] | `/labels/what` | 1 |
+| f1[nopl] | `/triggers/listed[]/truth` | 2 |
+| f1[nopl] | `/truths[]/grade_matrix` | 22 |
+| f1[nopl] | `/truths[]/sensitivity/matrix` | 6 |
+| fboot | `/constants/reported_matrix` | 1 |
+| fboot | `/labels/units` | 1 |
+| fboot[nopl] | `/constants/reported_matrix` | 1 |
+| fboot[nopl] | `/labels/units` | 1 |
+| fup | `/r04/item3_correlation_with_R04/rank/C_resp + C_PL5D` | 1 |
+| fup | `/r04/item3_correlation_with_R04/rank/C_resp + C_PL5D + DeltaC_e` | 1 |
+| fup | `/r04/item3_correlation_with_R04/rank/C_total + C_resp + C_PL5D` | 1 |
+| fup | `/r04/item3_correlation_with_R04/rank/C_total + C_resp + C_PL5D + DeltaC_e` | 1 |
+| fup | `/r04/item3_correlation_with_R04/under_prediction/genie_cv/matrix` | 1 |
+| fup | `/r04/item3_correlation_with_R04/under_prediction/genie_mec/matrix` | 1 |
+| fup | `/r04/item3_correlation_with_R04/under_prediction/mnvtune_v1/matrix` | 1 |
+| fup | `/r04/item3_correlation_with_R04/under_prediction/nuwro/matrix` | 1 |
+| fup | `/r04/item4_stage_g/genie_cv/matrix` | 1 |
+| fup | `/r04/item4_stage_g/genie_mec/matrix` | 1 |
+| fup | `/r04/item4_stage_g/gibuu/matrix` | 1 |
+| fup | `/r04/item4_stage_g/mnvtune_v1/matrix` | 1 |
+| fup | `/r04/item4_stage_g/nuwro/matrix` | 1 |
+| fup | `/r04/item5_search/keys_searched/extra_block` | 1 |
+| fup | `/r04/provenance_g_diag_top_modes/genie_cv[]/mode` | 2 |
+| fup | `/r04/provenance_g_diag_top_modes/genie_cv[]/rank_of_R04_by_abs_loading` | 3 |
+| fup | `/r04/provenance_g_diag_top_modes/genie_mec[]/mode` | 1 |
+| fup | `/r04/provenance_g_diag_top_modes/genie_mec[]/rank_of_R04_by_abs_loading` | 3 |
+| fup | `/r04/provenance_g_diag_top_modes/mnvtune_v1[]/mode` | 2 |
+| fup | `/r04/provenance_g_diag_top_modes/mnvtune_v1[]/rank_of_R04_by_abs_loading` | 2 |
+| fup | `/r04/provenance_g_diag_top_modes/nuwro[]/mode` | 3 |
+| fup | `/r04/provenance_g_diag_top_modes/nuwro[]/rank_of_R04_by_abs_loading` | 3 |
+| fup | `/sens/records[]/modes_needed/50%` | 16 |
+| fup | `/sens/records[]/modes_needed/90%` | 31 |
+| fup | `/sens/records[]/modes_needed/99%` | 35 |
+| fup | `/sens/records[]/top_mode/leading_cells[]/cell` | 128 |
+| fup | `/sens/records[]/top_mode/mode` | 21 |
+| fup | `/sens/reported_matrix` | 1 |
+| fup | `/sens/unchanged` | 1 |
+| fup[nopl] | `/r04/item3_correlation_with_R04/rank/C_resp` | 1 |
+| fup[nopl] | `/r04/item3_correlation_with_R04/rank/C_resp + DeltaC_e` | 1 |
+| fup[nopl] | `/r04/item3_correlation_with_R04/rank/C_total + C_resp` | 1 |
+| fup[nopl] | `/r04/item3_correlation_with_R04/rank/C_total + C_resp + DeltaC_e` | 1 |
+| fup[nopl] | `/r04/item3_correlation_with_R04/under_prediction/genie_cv/matrix` | 1 |
+| fup[nopl] | `/r04/item3_correlation_with_R04/under_prediction/genie_mec/matrix` | 1 |
+| fup[nopl] | `/r04/item3_correlation_with_R04/under_prediction/mnvtune_v1/matrix` | 1 |
+| fup[nopl] | `/r04/item3_correlation_with_R04/under_prediction/nuwro/matrix` | 1 |
+| fup[nopl] | `/r04/item4_stage_g/genie_cv/matrix` | 1 |
+| fup[nopl] | `/r04/item4_stage_g/genie_mec/matrix` | 1 |
+| fup[nopl] | `/r04/item4_stage_g/gibuu/matrix` | 1 |
+| fup[nopl] | `/r04/item4_stage_g/mnvtune_v1/matrix` | 1 |
+| fup[nopl] | `/r04/item4_stage_g/nuwro/matrix` | 1 |
+| fup[nopl] | `/r04/item5_search/keys_searched/extra_block` | 1 |
+| fup[nopl] | `/r04/provenance_g_diag_top_modes/genie_cv[]/mode` | 1 |
+| fup[nopl] | `/r04/provenance_g_diag_top_modes/genie_cv[]/rank_of_R04_by_abs_loading` | 3 |
+| fup[nopl] | `/r04/provenance_g_diag_top_modes/genie_mec[]/mode` | 2 |
+| fup[nopl] | `/r04/provenance_g_diag_top_modes/genie_mec[]/rank_of_R04_by_abs_loading` | 3 |
+| fup[nopl] | `/r04/provenance_g_diag_top_modes/mnvtune_v1[]/mode` | 2 |
+| fup[nopl] | `/r04/provenance_g_diag_top_modes/mnvtune_v1[]/rank_of_R04_by_abs_loading` | 2 |
+| fup[nopl] | `/r04/provenance_g_diag_top_modes/nuwro[]/mode` | 1 |
+| fup[nopl] | `/r04/provenance_g_diag_top_modes/nuwro[]/rank_of_R04_by_abs_loading` | 2 |
+| fup[nopl] | `/sens/records[]/modes_needed/50%` | 15 |
+| fup[nopl] | `/sens/records[]/modes_needed/90%` | 34 |
+| fup[nopl] | `/sens/records[]/modes_needed/99%` | 37 |
+| fup[nopl] | `/sens/records[]/top_mode/leading_cells[]/cell` | 92 |
+| fup[nopl] | `/sens/records[]/top_mode/mode` | 14 |
+| fup[nopl] | `/sens/reported_matrix` | 1 |
+| fup[nopl] | `/sens/unchanged` | 1 |
+| g | `/extra_block/file` | 1 |
+| g | `/extra_block/key` | 1 |
+| g | `/extra_block/name` | 1 |
+| g | `/extra_block/sha256` | 1 |
+| g | `/labels/covariance` | 1 |
+| g | `/labels/reported` | 1 |
+| g | `/predictions[]/reported_covariance` | 5 |
+| g | `/predictions[]/shape_only/matrix` | 5 |
+| g | `/predictions[]/total/matrix` | 5 |
+| g | `/predictions[]/variant/label` | 5 |
+| g0 | `/extra_block/file` | 1 |
+| g0 | `/extra_block/key` | 1 |
+| g0 | `/extra_block/name` | 1 |
+| g0 | `/extra_block/sha256` | 1 |
+| g0 | `/labels/covariance` | 1 |
+| g0 | `/labels/reported` | 1 |
+| g0 | `/predictions[]/reported_covariance` | 5 |
+| g0 | `/predictions[]/shape_only/matrix` | 5 |
+| g0 | `/predictions[]/total/matrix` | 5 |
+| g0 | `/predictions[]/variant/label` | 5 |
+| g0[nopl] | `/extra_block/file` | 1 |
+| g0[nopl] | `/extra_block/key` | 1 |
+| g0[nopl] | `/extra_block/name` | 1 |
+| g0[nopl] | `/extra_block/sha256` | 1 |
+| g0[nopl] | `/labels/covariance` | 1 |
+| g0[nopl] | `/labels/reported` | 1 |
+| g0[nopl] | `/predictions[]/reported_covariance` | 5 |
+| g0[nopl] | `/predictions[]/shape_only/matrix` | 5 |
+| g0[nopl] | `/predictions[]/total/matrix` | 5 |
+| g0[nopl] | `/predictions[]/variant/label` | 5 |
+| g[nopl] | `/extra_block/file` | 1 |
+| g[nopl] | `/extra_block/key` | 1 |
+| g[nopl] | `/extra_block/name` | 1 |
+| g[nopl] | `/extra_block/sha256` | 1 |
+| g[nopl] | `/labels/covariance` | 1 |
+| g[nopl] | `/labels/reported` | 1 |
+| g[nopl] | `/predictions[]/reported_covariance` | 5 |
+| g[nopl] | `/predictions[]/shape_only/matrix` | 5 |
+| g[nopl] | `/predictions[]/total/matrix` | 5 |
+| g[nopl] | `/predictions[]/variant/label` | 5 |
+| gch | `/generators/gibuu/CH/chi2/reported/shape_only/matrix` | 1 |
+| gch | `/generators/gibuu/CH/chi2/reported/total/matrix` | 1 |
+| gch | `/generators/gibuu/CH/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gch | `/generators/gibuu/CH/chi2/without_C_PL5D/total/matrix` | 1 |
+| gch | `/generators/gibuu/CH_alt_weight/chi2/reported/shape_only/matrix` | 1 |
+| gch | `/generators/gibuu/CH_alt_weight/chi2/reported/total/matrix` | 1 |
+| gch | `/generators/gibuu/CH_alt_weight/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gch | `/generators/gibuu/CH_alt_weight/chi2/without_C_PL5D/total/matrix` | 1 |
+| gch | `/generators/gibuu/CH_genie_hydrogen/chi2/reported/shape_only/matrix` | 1 |
+| gch | `/generators/gibuu/CH_genie_hydrogen/chi2/reported/total/matrix` | 1 |
+| gch | `/generators/gibuu/CH_genie_hydrogen/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gch | `/generators/gibuu/CH_genie_hydrogen/chi2/without_C_PL5D/total/matrix` | 1 |
+| gch | `/generators/gibuu/carbon/chi2/reported/shape_only/matrix` | 1 |
+| gch | `/generators/gibuu/carbon/chi2/reported/total/matrix` | 1 |
+| gch | `/generators/gibuu/carbon/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gch | `/generators/gibuu/carbon/chi2/without_C_PL5D/total/matrix` | 1 |
+| gch | `/generators/nuwro/CH/chi2/reported/shape_only/matrix` | 1 |
+| gch | `/generators/nuwro/CH/chi2/reported/total/matrix` | 1 |
+| gch | `/generators/nuwro/CH/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gch | `/generators/nuwro/CH/chi2/without_C_PL5D/total/matrix` | 1 |
+| gch | `/generators/nuwro/CH_genie_hydrogen/chi2/reported/shape_only/matrix` | 1 |
+| gch | `/generators/nuwro/CH_genie_hydrogen/chi2/reported/total/matrix` | 1 |
+| gch | `/generators/nuwro/CH_genie_hydrogen/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gch | `/generators/nuwro/CH_genie_hydrogen/chi2/without_C_PL5D/total/matrix` | 1 |
+| gch | `/generators/nuwro/carbon/chi2/reported/shape_only/matrix` | 1 |
+| gch | `/generators/nuwro/carbon/chi2/reported/total/matrix` | 1 |
+| gch | `/generators/nuwro/carbon/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gch | `/generators/nuwro/carbon/chi2/without_C_PL5D/total/matrix` | 1 |
+| gdefs | `/generators/genie_cv/CH/analysis_definitions/chi2/reported/shape_only/matrix` | 1 |
+| gdefs | `/generators/genie_cv/CH/analysis_definitions/chi2/reported/total/matrix` | 1 |
+| gdefs | `/generators/genie_cv/CH/analysis_definitions/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gdefs | `/generators/genie_cv/CH/analysis_definitions/chi2/without_C_PL5D/total/matrix` | 1 |
+| gdefs | `/generators/genie_cv/CH/generator_definitions/chi2/reported/shape_only/matrix` | 1 |
+| gdefs | `/generators/genie_cv/CH/generator_definitions/chi2/reported/total/matrix` | 1 |
+| gdefs | `/generators/genie_cv/CH/generator_definitions/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gdefs | `/generators/genie_cv/CH/generator_definitions/chi2/without_C_PL5D/total/matrix` | 1 |
+| gdefs | `/generators/genie_mec/CH/analysis_definitions/chi2/reported/shape_only/matrix` | 1 |
+| gdefs | `/generators/genie_mec/CH/analysis_definitions/chi2/reported/total/matrix` | 1 |
+| gdefs | `/generators/genie_mec/CH/analysis_definitions/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gdefs | `/generators/genie_mec/CH/analysis_definitions/chi2/without_C_PL5D/total/matrix` | 1 |
+| gdefs | `/generators/genie_mec/CH/generator_definitions/chi2/reported/shape_only/matrix` | 1 |
+| gdefs | `/generators/genie_mec/CH/generator_definitions/chi2/reported/total/matrix` | 1 |
+| gdefs | `/generators/genie_mec/CH/generator_definitions/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gdefs | `/generators/genie_mec/CH/generator_definitions/chi2/without_C_PL5D/total/matrix` | 1 |
+| gdefs | `/generators/gibuu/CH/analysis_definitions/chi2/reported/shape_only/matrix` | 1 |
+| gdefs | `/generators/gibuu/CH/analysis_definitions/chi2/reported/total/matrix` | 1 |
+| gdefs | `/generators/gibuu/CH/analysis_definitions/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gdefs | `/generators/gibuu/CH/analysis_definitions/chi2/without_C_PL5D/total/matrix` | 1 |
+| gdefs | `/generators/gibuu/CH/generator_definitions/chi2/reported/shape_only/matrix` | 1 |
+| gdefs | `/generators/gibuu/CH/generator_definitions/chi2/reported/total/matrix` | 1 |
+| gdefs | `/generators/gibuu/CH/generator_definitions/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gdefs | `/generators/gibuu/CH/generator_definitions/chi2/without_C_PL5D/total/matrix` | 1 |
+| gdefs | `/generators/gibuu/carbon/analysis_definitions/chi2/reported/shape_only/matrix` | 1 |
+| gdefs | `/generators/gibuu/carbon/analysis_definitions/chi2/reported/total/matrix` | 1 |
+| gdefs | `/generators/gibuu/carbon/analysis_definitions/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gdefs | `/generators/gibuu/carbon/analysis_definitions/chi2/without_C_PL5D/total/matrix` | 1 |
+| gdefs | `/generators/gibuu/carbon/generator_definitions/chi2/reported/shape_only/matrix` | 1 |
+| gdefs | `/generators/gibuu/carbon/generator_definitions/chi2/reported/total/matrix` | 1 |
+| gdefs | `/generators/gibuu/carbon/generator_definitions/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gdefs | `/generators/gibuu/carbon/generator_definitions/chi2/without_C_PL5D/total/matrix` | 1 |
+| gdefs | `/generators/nuwro/CH/analysis_definitions/chi2/reported/shape_only/matrix` | 1 |
+| gdefs | `/generators/nuwro/CH/analysis_definitions/chi2/reported/total/matrix` | 1 |
+| gdefs | `/generators/nuwro/CH/analysis_definitions/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gdefs | `/generators/nuwro/CH/analysis_definitions/chi2/without_C_PL5D/total/matrix` | 1 |
+| gdefs | `/generators/nuwro/CH/generator_definitions/chi2/reported/shape_only/matrix` | 1 |
+| gdefs | `/generators/nuwro/CH/generator_definitions/chi2/reported/total/matrix` | 1 |
+| gdefs | `/generators/nuwro/CH/generator_definitions/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gdefs | `/generators/nuwro/CH/generator_definitions/chi2/without_C_PL5D/total/matrix` | 1 |
+| gdefs | `/generators/nuwro/carbon/analysis_definitions/chi2/reported/shape_only/matrix` | 1 |
+| gdefs | `/generators/nuwro/carbon/analysis_definitions/chi2/reported/total/matrix` | 1 |
+| gdefs | `/generators/nuwro/carbon/analysis_definitions/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gdefs | `/generators/nuwro/carbon/analysis_definitions/chi2/without_C_PL5D/total/matrix` | 1 |
+| gdefs | `/generators/nuwro/carbon/generator_definitions/chi2/reported/shape_only/matrix` | 1 |
+| gdefs | `/generators/nuwro/carbon/generator_definitions/chi2/reported/total/matrix` | 1 |
+| gdefs | `/generators/nuwro/carbon/generator_definitions/chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gdefs | `/generators/nuwro/carbon/generator_definitions/chi2/without_C_PL5D/total/matrix` | 1 |
+| gnat | `/analysis_definitions/native_chi2/reported/shape_only/matrix` | 1 |
+| gnat | `/analysis_definitions/native_chi2/reported/total/matrix` | 1 |
+| gnat | `/analysis_definitions/native_chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gnat | `/analysis_definitions/native_chi2/without_C_PL5D/total/matrix` | 1 |
+| gnat | `/generator_definitions/combination_chi2/reported/shape_only/matrix` | 1 |
+| gnat | `/generator_definitions/combination_chi2/reported/total/matrix` | 1 |
+| gnat | `/generator_definitions/combination_chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gnat | `/generator_definitions/combination_chi2/without_C_PL5D/total/matrix` | 1 |
+| gnat | `/generator_definitions/native_chi2/reported/shape_only/matrix` | 1 |
+| gnat | `/generator_definitions/native_chi2/reported/total/matrix` | 1 |
+| gnat | `/generator_definitions/native_chi2/without_C_PL5D/shape_only/matrix` | 1 |
+| gnat | `/generator_definitions/native_chi2/without_C_PL5D/total/matrix` | 1 |
+| prr | `/ibu/K20/A7_nuwro/s991000/grade/p_below_floor` | 1 |
+| prr | `/ibu/K20/closure_nuwro/s991000/grade/p_below_floor` | 1 |
+| prr | `/ibu/K20/q3/s991000/grade/p_below_floor` | 1 |
+| prr | `/ibu/K20/stage0c_gibuu/s991000/grade/p_below_floor` | 1 |
+| prr | `/ibu/K4/A7_gibuu/s991000/grade/p_below_floor` | 1 |
+| prr | `/ibu/K4/A7_gibuu/s994001/grade/p_below_floor` | 1 |
+| prr | `/ibu/K4/A7_gibuu/s994002/grade/p_below_floor` | 1 |
+| prr | `/ibu/K4/A7_gibuu/s994003/grade/p_below_floor` | 1 |
+| prr | `/ibu/K4/A7_gibuu/s994004/grade/p_below_floor` | 1 |
+| prr | `/ibu/K50/A7_nuwro/s991000/grade/p_below_floor` | 1 |
+| prr | `/ibu/K50/W3/s991000/grade/p_below_floor` | 1 |
+| prr | `/table/K2/A7_gibuu/s991000/grade/p_below_floor` | 1 |
+| prr | `/table/O2/A7_nuwro/s991000/grade/p_below_floor` | 1 |
+| prr | `/table/O2/stage0c_gibuu/s991000/grade/p_below_floor` | 1 |
+| prr | `/table/O3/A7_gibuu/s991000/grade/p_below_floor` | 1 |
+| prr | `/table/O4/A7_gibuu/s991000/grade/p_below_floor` | 1 |
+| rsn | `/arms/WR/P6/top_directions[]/rank` | 2 |
+| rsn | `/arms/WR/P7/nuwro/change_top_directions[]/rank` | 1 |
+| rsn | `/arms/WR/P7/q3/change_top_directions[]/rank` | 2 |
+| rsnregrade | `/arms/SM/records[]/grade/p_below_floor` | 1 |
+| rsnregrade | `/arms/SM/records[]/in_sample/p_below_floor` | 1 |
+| rsnregrade | `/wr_directions/data/directions/top[]/rank` | 2 |
+| rsnregrade | `/wr_directions/nuwro/change/top[]/rank` | 1 |
+| rsnregrade | `/wr_directions/q3/change/top[]/rank` | 2 |
+| rsnregrade | `/wr_directions/tune_v1/change/top[]/rank` | 3 |
+| sens2 | `/flux_top_mode_shares/predictions/genie_cv/0.1/dominant` | 1 |
+| sens2 | `/flux_top_mode_shares/predictions/genie_cv/0/dominant` | 1 |
+| sens2 | `/flux_top_mode_shares/predictions/genie_cv/alpha_0_mode_at_0.1/dominant` | 1 |
+| sens2 | `/flux_top_mode_shares/predictions/genie_mec/0/dominant` | 1 |
+| sens2 | `/flux_top_mode_shares/predictions/mnvtune_v1/0/dominant` | 1 |
+| sens2 | `/flux_top_mode_shares/predictions/mnvtune_v1/0/mode` | 1 |
+| sens2 | `/flux_top_mode_shares/predictions/nuwro/0.1/dominant` | 1 |
+| sens2 | `/flux_top_mode_shares/predictions/nuwro/0.1/mode` | 1 |
+| sens2 | `/flux_top_mode_shares/predictions/nuwro/0/dominant` | 1 |
+| sens2 | `/flux_top_mode_shares/predictions/nuwro/0/mode` | 1 |
+| sens2 | `/flux_top_mode_shares/predictions/nuwro/alpha_0_mode_at_0.1/dominant` | 1 |
+| sens2 | `/referenced/g_followup_readout` | 1 |
+| sens2 | `/sens/records[]/modes_needed/50%` | 23 |
+| sens2 | `/sens/records[]/modes_needed/90%` | 60 |
+| sens2 | `/sens/records[]/modes_needed/99%` | 58 |
+| sens2 | `/sens/records[]/top_mode/leading_cells[]/cell` | 162 |
+| sens2 | `/sens/records[]/top_mode/mode` | 20 |
+| sens2 | `/sens/reported_matrix` | 1 |
+| sens2 | `/sens/unchanged/detector` | 1 |
+| sens2 | `/sens/unchanged/flux` | 1 |
+| sens2 | `/sens/unchanged/lateral` | 1 |
+| sens2[nopl] | `/flux_top_mode_shares/predictions/genie_cv/0.1/dominant` | 1 |
+| sens2[nopl] | `/flux_top_mode_shares/predictions/genie_cv/0/dominant` | 1 |
+| sens2[nopl] | `/flux_top_mode_shares/predictions/genie_cv/alpha_0_mode_at_0.1/dominant` | 1 |
+| sens2[nopl] | `/flux_top_mode_shares/predictions/genie_mec/0/dominant` | 1 |
+| sens2[nopl] | `/flux_top_mode_shares/predictions/mnvtune_v1/0/dominant` | 1 |
+| sens2[nopl] | `/flux_top_mode_shares/predictions/nuwro/0.1/dominant` | 1 |
+| sens2[nopl] | `/flux_top_mode_shares/predictions/nuwro/0/dominant` | 1 |
+| sens2[nopl] | `/referenced/g_followup_readout` | 1 |
+| sens2[nopl] | `/sens/records[]/modes_needed/50%` | 24 |
+| sens2[nopl] | `/sens/records[]/modes_needed/90%` | 59 |
+| sens2[nopl] | `/sens/records[]/modes_needed/99%` | 60 |
+| sens2[nopl] | `/sens/records[]/top_mode/leading_cells[]/cell` | 130 |
+| sens2[nopl] | `/sens/records[]/top_mode/mode` | 10 |
+| sens2[nopl] | `/sens/reported_matrix` | 1 |
+| sens2[nopl] | `/sens/unchanged/detector` | 1 |
+| sens2[nopl] | `/sens/unchanged/flux` | 1 |
+| sens2[nopl] | `/sens/unchanged/lateral` | 1 |
 
 ## 1b. make_values_fived16's guards that fail under V_F (each a note-side follow-up)
 
@@ -817,7 +1331,7 @@ Moved but not printed: 1106 keys (in vf_readings.json).
 
 ## 3. The printed-xk check (A4)
 
-xk's printed strings from this Mac's OLD replay equal the committed k.json's: True (3944 xk-dependent keys compared).
+With this Mac's OLD replay in place of the committed k.json, every generated value equals its committed-k.json value: True (all 3944 generated keys compared, xk-dependent or not; 0 differ).
 
 ## 4. The S1/C_resp sigma rows both ways, and the per-cell sigma
 

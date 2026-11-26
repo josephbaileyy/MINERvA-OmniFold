@@ -16425,6 +16425,9 @@
    "/ibu/*/grade",
    "/readings"
   ],
+  "not_replaced": {
+   "/table_ii_committed_beside_B0": "OLD: the committed Table II flags beside B0's OLD grades, read by nothing (prr_read.py:452, section 4.2); not a V_F value"
+  },
   "matrices": "each truth's F0b grade matrix (prr_read.grade_matrices) + DeltaC_e/ff",
   "fetched": {
    "route2.json": "/pscratch/sd/j/josephrb/fd-prr-20261108/route2/route2.json",

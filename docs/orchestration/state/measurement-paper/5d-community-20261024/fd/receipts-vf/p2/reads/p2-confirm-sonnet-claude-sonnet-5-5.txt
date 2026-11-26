@@ -1,0 +1,51 @@
+Two BLOCKING findings, both in the prr and readings paths. I read the code and committed outputs only and ran nothing.
+
+**Findings**
+
+1. **BLOCKING: `prr.vf.json` keeps OLD-matrix grades under a V_F label.**
+   - `p2_prr` starts from a deep copy of the committed readout (`fd_vf_p2.py:705`). It then overwrites only `table/*/grade` (`:713`), `ibu/*/grade` (`:730`) and `readings` (`:734`). The `vf_patch.replaced` list names the same three (`:736`).
+   - The subtree `table_ii_committed_beside_B0.B0` is therefore still OLD. In `prr.vf.json` it holds q3 at chi2 54.88, p 3.7e-6, flagged true (`:15191-15197`).
+   - The same file's `table["B0/q3/s991000"].grade` is chi2 23.27, p 0.107, flagged false (`:512-518`).
+   - Failure scenario: anyone quoting the file's B0 grades gets the OLD q3 flag next to a V_F table that clears it. The control cannot catch this, because it never compares that subtree.
+   - I found no `.py` under `docs` that reads this key, and its own note says "read by nothing (§4.2)". The stale numbers are still recorded in a V_F artifact and not disclosed.
+   - Fix: recompute the subtree, or drop it, or list it in `vf_patch`.
+
+2. **BLOCKING (borderline): the Headline omits the PR-3 changes.**
+   - `headline()` (`vf_readings.py:263-264`) prints only "PRR: 34 flags cleared, 0 set".
+   - Section 1's PRR block (`vf_readings.md:40-46`) lists PR-3 `new_flags` changes at K2, C25, O4, O2 and IBU_K5. At C25 and O2, q3 appears as a new flag under V_F. The md itself adds a "reference shift" note there, citing the director.
+   - The `reading` string ("does not clear") holds at every level. What changes is the new-flag lists, which the Headline's "anything not named holds" implies are unchanged.
+   - Fix: add one PR-3 line to `headline()`.
+
+3. **FOLLOWUP: the xk V_F replay's `CR_G2R` bytes are not `cr.vf.json`.**
+   - The bytes come from `json.dumps(p2_overlap("cr", CR, vf))` (`fd_vf_p2.py:970`). `cmd_p2` later adds `vf_data_product_sha256` to the written file (`:1041`).
+   - So `subst_sha256` is not the sha of `cr.vf.json`, although A4 (iii) says "Phase 2's cr.vf.json". The numbers are the same.
+
+I found no wrong-matrix or wrong-arm error in prr, rsn or xk, and no tolerance looser than A4.
+
+**Checks**
+
+1. **Verified, with one assumption.**
+   - prr: the OLD run uses `mats_old` from `grade_matrices`. The V_F run adds only `DeltaC_e/ff` (`:703-704`), on the same `r`. The V_F run does not assert that `vf["f"]` equals the OLD product's f, which rsn does assert (`:783`).
+   - rsnregrade and rsn: `regrade()` is the same code in both runs. V_F changes only `Cx + DeltaC_e` and the V_F F1. NC-R checks the V_F nominal arm against Phase 1's V_F F1. The sigma alias is applied only to the `rsn_read.read` call (`:810-812`).
+   - xk: the V_F replay differs from the OLD replay in exactly two `read_committed` shas, the same call sequence and the same remapped reads (`:979-986`). If the two substitutions were missing, the `differ` check would Stop.
+   - prr IBU: the V_F run has the same coverage as the OLD one. The 40 `K5`/`K200` records match 20 experiments × 2 ks.
+
+2. **Verified.**
+   - Tolerances match A4:
+     - prr (e): `RTOL_EXACT` 1e-12.
+     - prr IBU: 1e-11.
+     - rsnregrade and rsn: 1e-12, with p checked by `chi2_sf_even` bitwise on the committed values and by printed strings on the reproduced ones.
+     - xk: 1e-7, non-float fields exact, env fields excluded.
+   - The control would fail on a differing value. `walk` requires equal key sets and list lengths, and it raises when a float exceeds the tolerance. It also raises when a non-float field differs.
+   - For p, the committed value must equal the producer's function bitwise, and the printed string must match.
+
+3. **Verified, except for the Headline gap in finding 2.**
+   - `decision_rules()` reads OLD from `MV.READOUTS` (the committed files, e.g. prr `9238f22b`, k.json `204e4c89`) and V_F from `VF_WITH` (the p2 copies).
+   - `MV.READOUTS` is not mutated, because `run_vf` modifies the separate recording module `MX`.
+   - Every other change in section 1 is in the Headline: F0/F0b/F1, RSN SM, RSN regrade, gover QA and QB, cr QB, and E2's largest change. X, V-ATLAS, gdefs seed flags and the RSN conclusions hold.
+   - `cr-QD-nopl-reading` flips from agree to agree-below-a-correlation. That field is "printed only, no outcome is read from it" (`cr.vf.json:41`), so it is not a decision-rule outcome.
+   - The SHIMS list covers every substitution in `shim()` and `run_vf()`. I found no undisclosed one.
+
+4. Not checked (hashing).
+
+VERDICT: NO-GO

@@ -1,5 +1,6 @@
 """Tests of fd_vf_p2.py: the fetch list, the fetch connect's reader and wrapper (dry runs against a local fake tree),
-the local verifier, control P, and the local recomputes end to end."""
+the local verifier, control P, the local recomputes end to end, the xk replay's remap (rulings (i)-(iii)), the
+committed prr/rsn/xk copies, and (opt-in, VF_P2_FETCH) their byte reproduction from the verified fetch."""
 import base64
 import hashlib
 import io
@@ -467,6 +468,36 @@ class Control(unittest.TestCase):
         with self.assertRaises(P.Stop), mock.patch("sys.stdout"):
             P.p_control("x", {"a": 1.0 + 2e-9}, {"a": 1.0}, 1e-9)
 
+    def test_a_p_written_as_zero_below_the_floor_needs_the_function_below_the_floor(self):
+        rec = {"chi2": 400.0, "ndf": 16, "p": 0.0, "p_below_floor": True}
+        with mock.patch("sys.stdout"):
+            P.p_control("x", dict(rec), dict(rec), P.RTOL_EXACT, p_fun=lambda c, n: 1e-40)
+            for pv in (0.02, 1e-30, 1e-12):
+                with self.assertRaises(P.Stop):
+                    P.p_control("x", dict(rec), dict(rec), P.RTOL_EXACT, p_fun=lambda c, n, pv=pv: pv)
+            with self.assertRaises(P.Stop):         # no floor flag: bitwise identity only
+                P.p_control("x", dict(rec, p_below_floor=False), dict(rec, p_below_floor=False), P.RTOL_EXACT,
+                            p_fun=lambda c, n: 1e-40)
+        sys.path.insert(0, str(REPO / "nd-unfolding"))
+        import fd_f0_regrade
+        self.assertEqual(P.P_FLOOR, fd_f0_regrade.P_FLOOR)
+
+    def test_gch_keeps_1e_12_on_chi2_and_the_round_trip_fields_1e_9(self):
+        self.assertEqual(P.CHI2_EXACT, {"gch"})
+        real = P.pinned_json
+
+        def bad(rel_pin):
+            d, h = real(rel_pin)
+            if rel_pin == P.GCH:
+                path, pair = next(iter(P.pair_paths(d)))
+                dst = d
+                for k in path.strip("/").split("/"):
+                    dst = dst[k]
+                dst["reported"]["total"]["chi2"] *= 1 + 5e-10
+            return d, h
+        with mock.patch.object(P, "pinned_json", bad), mock.patch("sys.stdout"), self.assertRaises(P.Stop):
+            P.p2_compare("gch", P.GCH, real(P.VF_DP)[0])
+
     def test_printed_p_tells_apart_what_the_note_prints(self):
         self.assertEqual(P.printed_p(1.23e-5), P.printed_p(1.2300000001e-5))
         self.assertNotEqual(P.printed_p(1.24e-5), P.printed_p(1.26e-5))
@@ -497,6 +528,9 @@ class Recompute(unittest.TestCase):
 
     def test_the_round_trip_tolerance_is_a4s_and_used_only_where_named(self):
         self.assertEqual(P.RTOL_ROUNDTRIP, 1e-9)
+        self.assertEqual(self.out["gch"]["vf_patch"]["control_P_tolerance"]["chi2"]["rtol"], 1e-12)
+        for name in ("gdefs", "gnat"):
+            self.assertEqual(self.out[name]["vf_patch"]["control_P_tolerance"]["chi2"]["rtol"], 1e-9, name)
         for name in ("eav", "gover", "cr", "vatlas"):
             tol = self.out[name]["vf_patch"].get("control_P_tolerance", {})
             self.assertNotEqual(tol.get("rtol"), 1e-9, name)
@@ -531,6 +565,230 @@ class Recompute(unittest.TestCase):
             return d, h
         with mock.patch.object(P, "pinned_json", bad), mock.patch("sys.stdout"), self.assertRaises(P.Stop):
             P.p2_overlap("gover", P.GOVER, real(P.VF_DP)[0])
+
+
+class XkReplay(unittest.TestCase):
+    """Rulings (i)-(iii) of A4 on stand-in modules: the remap, its log, the substitution and the restore."""
+
+    def setUp(self):
+        self.t = Path(tempfile.mkdtemp(prefix="vfp2-xk-"))
+        (self.t / "fetch/a").mkdir(parents=True)
+        (self.t / "fetch/a/x.bin").write_bytes(b"remote bytes")
+        self.reads, self.committed_reads = [], []
+
+    def tearDown(self):
+        shutil.rmtree(self.t, ignore_errors=True)
+
+    def fakes(self, paths, committed=("c/block.npz",)):
+        import types
+        GC, XS = types.SimpleNamespace(), types.SimpleNamespace()
+        GC.read_noatime = lambda path: (self.reads.append(str(path)) or (b"local:" + str(path).encode(), True))
+        XS.read_committed = lambda path: (self.committed_reads.append(str(path)) or b"committed:" + str(path).encode())
+
+        def cmd_k(args):
+            self.seen = [GC.read_noatime(q)[0] for q in paths] + [XS.read_committed(q) for q in committed]
+            return 0
+        XS.cmd_k = cmd_k
+        return GC, XS
+
+    def test_the_prefix_maps_to_the_fetch_and_every_read_is_logged(self):
+        GC, XS = self.fakes([P.PS_PREFIX + "a/x.bin", "/elsewhere/y"])
+        orig = (GC.read_noatime, XS.read_committed)
+        log, calls = [], []
+        self.assertEqual(P.xk_replay(XS, GC, self.t / "fetch", self.t / "run", {}, log, calls), 0)
+        self.assertEqual(self.seen[0], b"remote bytes")
+        self.assertEqual(self.seen[1], b"local:/elsewhere/y")              # outside the prefix: the original reader
+        self.assertEqual(log, [(P.PS_PREFIX + "a/x.bin", 12, hashlib.sha256(b"remote bytes").hexdigest())])
+        self.assertEqual((GC.read_noatime, XS.read_committed), orig)        # restored
+
+    def test_a_missing_or_symlinked_fetched_file_stops_and_restores(self):
+        (self.t / "fetch/a/l.bin").symlink_to(self.t / "fetch/a/x.bin")
+        for name in ("missing.bin", "l.bin"):
+            GC, XS = self.fakes([P.PS_PREFIX + "a/" + name])
+            orig = (GC.read_noatime, XS.read_committed)
+            with self.assertRaises(P.Stop):
+                P.xk_replay(XS, GC, self.t / "fetch", self.t / "run", {}, [], [])
+            self.assertEqual((GC.read_noatime, XS.read_committed), orig, name)
+
+    def test_the_two_local_copies_map_to_their_committed_files(self):
+        for remote, (rel, pin) in P.LOCAL_COPIES.items():
+            GC, XS = self.fakes([remote])
+            log = []
+            P.xk_replay(XS, GC, self.t / "fetch", self.t / "run", {}, log, [])
+            self.assertEqual(log[0][0], remote)
+            self.assertTrue(log[0][2].startswith(pin), remote)
+            self.assertEqual(self.seen[0], (REPO / rel).read_bytes())
+
+    def test_only_the_substituted_committed_reads_change(self):
+        GC, XS = self.fakes([], committed=("c/block.npz", "c/other.json"))
+        calls = []
+        P.xk_replay(XS, GC, self.t / "fetch", self.t / "run", {"c/block.npz": b"V_F"}, [], calls)
+        self.assertEqual(self.seen, [b"V_F", b"committed:c/other.json"])
+        self.assertEqual([c[0] for c in calls], ["c/block.npz", "c/other.json"])
+        self.assertEqual(calls[0][1], hashlib.sha256(b"V_F").hexdigest())
+
+    def test_the_run_directory_is_hardlinks_plus_the_committed_v0_v1_and_never_overwrites(self):
+        src = self.t / "fetch/cov2d-xk-g2r-20261116/run/boot"
+        src.mkdir(parents=True)
+        (src / "r.json").write_text("{}")
+        listing = P.xk_run_dir(self.t / "fetch", self.t / "run")
+        self.assertEqual(sorted(listing), ["boot/r.json", "v0-a1/v0.json", "v1-a2/v1.json"])
+        self.assertEqual(os.stat(self.t / "run/boot/r.json").st_ino, os.stat(src / "r.json").st_ino)
+        self.assertEqual((self.t / "run/v0-a1/v0.json").read_bytes(), (REPO / P.XK_V0[0]).read_bytes())
+        with self.assertRaises(P.Stop):
+            P.xk_run_dir(self.t / "fetch", self.t / "run")
+
+    def test_xk_tolerance_and_group_figures(self):
+        self.assertEqual(P.RTOL_XK, 1e-7)
+        want = {"shares": {"a": [2.0, 4.0]}, "crosses": {"b": 1.0}, "n": 3}
+        with mock.patch("sys.stdout"):
+            P.p_control("xk", {"shares": {"a": [2.0, 4.0 * (1 + 5e-8)]}, "crosses": {"b": 1.0}, "n": 3}, want, P.RTOL_XK)
+            for bad in ({"shares": {"a": [2.0, 4.0 * (1 + 2e-7)]}, "crosses": {"b": 1.0}, "n": 3},
+                        {"shares": {"a": [2.0, 4.0]}, "crosses": {"b": 1.0}, "n": 4}):
+                with self.assertRaises(P.Stop):
+                    P.p_control("xk", bad, want, P.RTOL_XK)
+        g = P.group_stats({"shares": {"a": [2.0, 4.0 + 4e-8]}, "crosses": {"b": 1.0}}, want)
+        self.assertAlmostEqual(g["shares"]["max_relative"], 1e-8, delta=1e-15)
+        self.assertAlmostEqual(g["shares"]["max_over_group_magnitude"], 1e-8, delta=1e-15)
+        self.assertEqual(g["crosses"]["max_relative"], 0.0)
+
+
+WITH_VF = REPO / P.D5 / "fd/with-vf/p2"
+
+
+class CommittedFetchCopies(unittest.TestCase):
+    """The committed prr, rsn and xk V_F copies: their pins, tolerances and V_F matrix are A4's."""
+
+    def load(self, name):
+        return json.loads((WITH_VF / f"{name}.vf.json").read_text())
+
+    def test_each_copy_pins_its_committed_readout(self):
+        for name, rel_pin in (("prr", P.PRR), ("rsnregrade", P.RSN_REGRADE), ("rsn", P.RSN_READOUT), ("xk", P.XK_K)):
+            vp = self.load(name)["vf_patch"]
+            self.assertEqual(vp["readout"], rel_pin[0], name)
+            self.assertEqual(vp["readout_sha256"], P.sha256_file(REPO / rel_pin[0]), name)
+            self.assertTrue(vp["readout_sha256"].startswith(rel_pin[1]), name)
+
+    def test_tolerances_are_a4s_and_achieved_within_them(self):
+        t = self.load("prr")["vf_patch"]["control_P_tolerance"]
+        self.assertEqual((t["(e)"]["rtol"], t["IBU"]["rtol"]), (P.RTOL_EXACT, P.RTOL_IBU))
+        self.assertEqual((P.RTOL_EXACT, P.RTOL_IBU), (1e-12, 1e-11))
+        self.assertLessEqual(t["(e)"]["achieved_max"], 1e-12)
+        self.assertLessEqual(t["IBU"]["achieved_max"], 1e-11)
+        for name in ("rsn", "rsnregrade"):
+            t = self.load(name)["vf_patch"]["control_P_tolerance"]
+            self.assertEqual(t["rtol"], 1e-12, name)
+            self.assertLessEqual(t["achieved_max"], 1e-12, name)
+        t = self.load("xk")["vf_patch"]["control_P_tolerance"]
+        self.assertEqual(t["rtol"], 1e-7)
+        self.assertLessEqual(t["achieved_max"], 1e-7)
+        self.assertLessEqual(set(P.XK_GROUPS), set(t["by_group"]))
+        self.assertLessEqual(max(g["max_relative"] for g in t["by_group"].values()), t["achieved_max"])
+
+    def test_xk_substitutes_exactly_the_reported_vf_block_and_cr(self):
+        vp = self.load("xk")["vf_patch"]
+        self.assertEqual(len(vp["substituted"]), 2)
+        # the CR substitute is p2_overlap("cr")'s record as K read it: cr.vf.json without the vf_data_product_sha256
+        # that cmd_p2 adds when it writes the copy; K reads only its "quadrants" (fd_xcov_steps.py:536)
+        with mock.patch("sys.stdout"):
+            rec = P.p2_overlap("cr", P.CR, P.pinned_json(P.VF_DP)[0])
+        sub = (json.dumps(rec, indent=1) + "\n").encode()
+        self.assertIn(hashlib.sha256(sub).hexdigest(), vp["substituted"].values())
+        cr = json.loads((WITH_VF / "cr.vf.json").read_text())
+        self.assertEqual(json.loads(sub)["quadrants"], cr["quadrants"])
+        cr["vf_patch"].pop("vf_data_product_sha256")
+        self.assertEqual(json.loads(sub), cr)
+
+    def test_prr_names_the_old_subtree_it_does_not_replace(self):
+        vp = self.load("prr")["vf_patch"]
+        self.assertEqual(sorted(vp["not_replaced"]), ["/table_ii_committed_beside_B0"])
+        old = P.pinned_json(P.PRR)[0]["table_ii_committed_beside_B0"]
+        self.assertEqual(self.load("prr")["table_ii_committed_beside_B0"], old)
+
+    def test_fetched_inputs_are_named_by_their_exact_remote_paths(self):
+        f = self.load("prr")["vf_patch"]["fetched"]
+        self.assertEqual(f, {k: P.PS + v[0] for k, v in P.FETCHED.items()})
+        self.assertEqual(self.load("rsnregrade")["vf_patch"]["fetched"], P.PS + P.FETCHED["s1_assembly.npz"][0])
+
+
+FETCH = os.environ.get("VF_P2_FETCH")
+
+
+@unittest.skipUnless(FETCH and Path(FETCH).is_dir(), "set VF_P2_FETCH to the verified fetch tree to rerun prr/rsn/xk")
+class FetchRecompute(unittest.TestCase):
+    """Opt-in: prr, rsn and (with VF_P2_XK=1) xk rerun from the verified fetch reproduce the committed copies byte for
+    byte."""
+
+    def test_the_committed_copies_reproduce(self):
+        only = ["prr", "rsn"] + (["xk"] if os.environ.get("VF_P2_XK") == "1" else [])
+        t = Path(tempfile.mkdtemp(prefix="vfp2-fetch-"))
+        try:
+            with mock.patch("sys.stdout"):
+                self.assertEqual(run(["p2", "--only", *only, "--fetch-dir", FETCH, "--out-dir", str(t / "out")]), 0)
+            got = sorted(q.name for q in (t / "out").iterdir())
+            self.assertTrue(got)
+            for name in got:
+                self.assertEqual((t / "out" / name).read_bytes(), (WITH_VF / name).read_bytes(), name)
+        finally:
+            shutil.rmtree(t, ignore_errors=True)
+
+
+class ReadingsControlD(unittest.TestCase):
+    """vf_readings' executable control D: which changes are events, the keyed sweep, and the named rulings."""
+
+    @classmethod
+    def setUpClass(cls):
+        sys.path.insert(0, str(REPO / P.D5 / "fd/receipts-vf/readings"))
+        import vf_readings
+        cls.R = vf_readings
+
+    def test_events_are_weakenings_only(self):
+        d = self.R.d_event
+        self.assertTrue(d("/truths[name=q3]/listed", False, True))
+        self.assertIsNone(d("/truths[name=q3]/listed", True, False))
+        self.assertTrue(d("/x/grade/cells_abs_z_gt_2", ["R02"], ["R02", "R07"]))
+        self.assertIsNone(d("/x/grade/cells_abs_z_gt_2", ["R02", "R07"], ["R02"]))
+        self.assertTrue(d("/triggers/all_graded/truths_p_lt_0.01", 1, 2))
+        self.assertTrue(d("/x/A3", True, False))
+        self.assertTrue(d("/readings/V-ATLAS/valid", ["R00", "R01"], ["R00"]))
+        self.assertTrue(d("/q/outcome", "agree", "agree below a correlation"))
+        self.assertIsNone(d("/q/outcome", "agree below a correlation", "agree"))
+        self.assertTrue(d("/q/outcome", "agree", "disagree"))
+        self.assertTrue(d("/triggers/listed[truth=W3]/p_lt_0.01", None, True))       # a truth newly listed
+        self.assertIsNone(d("/triggers/listed[truth=W3]/p_lt_0.01", True, None))     # a truth unlisted
+        self.assertIsNone(d("/modes_by_chi2[0]/mode", 3, 9))                         # not a decision-rule leaf
+
+    def test_a_reordered_record_list_is_no_change(self):
+        a = {"listed": [{"truth": "q3", "cells": []}, {"truth": "A7", "cells": ["R02"]}]}
+        b = {"listed": [{"truth": "A7", "cells": ["R02"]}, {"truth": "q3", "cells": []}]}
+        self.assertEqual(dict(self.R.leaves(a)), dict(self.R.leaves(b)))
+
+    def test_the_tool_exits_1_on_an_unruled_event_and_0_with_the_rulings(self):
+        t = Path(tempfile.mkdtemp(prefix="vfr-"))
+        saved = self.R.RULINGS
+        try:
+            with mock.patch("sys.stdout"):
+                self.assertEqual(self.R.main(["--out-dir", str(t / "a")]), 0)
+                self.R.RULINGS = saved[1:]
+                self.assertEqual(self.R.main(["--out-dir", str(t / "b")]), 1)
+            self.assertIn("STOP: 2 unruled", (t / "b/vf_readings.md").read_text())
+        finally:
+            self.R.RULINGS = saved
+            shutil.rmtree(t, ignore_errors=True)
+
+    def test_rulings_cover_only_what_they_name(self):
+        r = self.R.ruling_for
+        old = ["A7_nuwro", "W3", "stage0c_gibuu"]
+        self.assertTrue(r("prr", "/readings/PR-3/C25/new_flags", old, old + ["q3"]))
+        self.assertIsNone(r("prr", "/readings/PR-3/C25/new_flags", old, old + ["q3", "W1"]))
+        self.assertIsNone(r("prr", "/readings/PR-3/K2/new_flags", old, old + ["q3"]))
+        p = "/quadrants/QD/2D/printed_only_without_C_PL5D/outcome"
+        for name in ("cr", "gover"):
+            self.assertTrue(r(name, p, "agree", "agree below a correlation"))
+        self.assertIsNone(r("cr", p, "agree", "disagree"))
+        self.assertIsNone(r("cr", "/quadrants/QA/2D/printed_only_without_C_PL5D/outcome", "agree",
+                            "agree below a correlation"))
+        self.assertIsNone(r("cr", "/quadrants/QD/2D/outcome", "agree", "agree below a correlation"))
 
 
 if __name__ == "__main__":

@@ -14,8 +14,15 @@ note's repins, listed in the follow-ups):
   (that row's V_F form; its C_e form is the OLD value, both given in section 4);
 - the block label it parses (:700-702) is C_PL5D's, unchanged by V_F: taken from the pinned with-cpl product.
 
-Writes vf_readings.json (every key, OLD and V_F, with print sites) and vf_readings.md: decision-rule outcome changes
-first, then every moved \\fvval key, the printed-xk check, the S1/C_resp rows both ways, and the follow-ups.
+Control D (declaration section 6: no flag appears and no agreement count falls under the larger matrix) is executable:
+sweep() reads every non-float leaf of every readout with a V_F counterpart, both arms, OLD -> V_F; d_event() names each
+change that sets a flag, adds a truth or cell, raises a flag count, drops an agreement, or changes an outcome string
+other than toward agreement; RULINGS names the director's exceptions. Any event no ruling covers, any F0/F0b/F1 STOP,
+or a printed-xk difference makes the tool exit 1 (it still writes both files, with the verdict at the top of section 1).
+
+Writes vf_readings.json (every key, OLD and V_F, with print sites; the full sweep) and vf_readings.md: control D and
+every decision-rule change first (the headline is built from the sweep), then the per-rule sections, the sweep's
+descriptive changes, the guards, every moved \\fvval key, the printed-xk check, the S1/C_resp rows, the follow-ups.
 Run: python3 -B vf_readings.py --out-dir <dir>"""
 import argparse
 import copy
@@ -50,7 +57,7 @@ VF_WITH = {
     "dp": (f"{W}/data-product/fd_data_product_vf.json", "1a37b082"),
     # Phase 2's V_F copies (fd_vf_p2.py p2; each passed control P, A4)
     "gdefs": (f"{P2}/gdefs.vf.json", "6c202b08b5d9ed0b"),
-    "gch": (f"{P2}/gch.vf.json", "52ef42e9500ce62f"),
+    "gch": (f"{P2}/gch.vf.json", "968cfb876c02e102"),
     "gnat": (f"{P2}/gnat.vf.json", "3607e78c22ba00bf"),
     "gover": (f"{P2}/gover.vf.json", "879d3dca63db4c2e"),
     "cr": (f"{P2}/cr.vf.json", "f58bc91280436c83"),
@@ -58,7 +65,7 @@ VF_WITH = {
     "e2sens": (f"{P2}/e2sens.vf.txt", "e31bb03a5f3e0a0a"),
     "eav": (f"{P2}/eav.vf.json", "516b625d5d65fe8c"),
     "xk": (f"{P2}/xk.vf.json", "045eb904bbe25a8b"),
-    "prr": (f"{P2}/prr.vf.json", "118741191224815a"),
+    "prr": (f"{P2}/prr.vf.json", "fc9afee77250940d"),
     "rsn": (f"{P2}/rsn.vf.json", "8e5addb8ec0a7649"),
     "rsnregrade": (f"{P2}/rsnregrade.vf.json", "10dcdd729d2d86fe"),
 }
@@ -220,6 +227,17 @@ def decision_rules():
         out[f"{name} labels"] = {q: {"2D": (a["quadrants"][q]["2D"].get("outcome"), b["quadrants"][q]["2D"].get("outcome")),
                                      "3D": (a["quadrants"][q]["3D"]["outcome"], b["quadrants"][q]["3D"]["outcome"])}
                                  for q in a["quadrants"]}
+    out["printed-only arm, QD"] = {}
+    for name in ("cr", "gover"):
+        a, b = (j(MV.READOUTS[name])["quadrants"]["QD"]["2D"]["printed_only_without_C_PL5D"],
+                j(VF_WITH[name])["quadrants"]["QD"]["2D"]["printed_only_without_C_PL5D"])
+        out["printed-only arm, QD"][name] = {"outcome": (a["outcome"], b["outcome"]),
+                                             "rho_star": (a["rho_star"], b["rho_star"]), "label": b["label"]}
+    for name in ("gover", "cr"):
+        a, b = j(MV.READOUTS[name]), j(VF_WITH[name])
+        out[f"{name} printed-only arm"] = {q: (a["quadrants"][q]["2D"]["printed_only_without_C_PL5D"]["outcome"],
+                                               b["quadrants"][q]["2D"]["printed_only_without_C_PL5D"]["outcome"])
+                                           for q in a["quadrants"] if "printed_only_without_C_PL5D" in a["quadrants"][q]["2D"]}
     xo, xv = j(MV.READOUTS["xk"]), j(VF_WITH["xk"])
     out["X agreement"] = {fam: {"outcome": (xo[fam].get("outcome"), xv[fam].get("outcome")),
                                 **{r: {k: (xo[fam][r][k], xv[fam][r][k]) for k in ("chi2_4", "p")}
@@ -241,41 +259,192 @@ def decision_rules():
     return out
 
 
+# ---------------------------------------------------------------- the full non-float sweep and control D
+# Every non-float leaf of every swept readout, OLD -> V_F. A list of records that each carry a "truth", "name", "key" or
+# "cell" is keyed by it, so a list that only reorders shows no change (f0's triggers/listed: q3 was listed[0]).
+RULE_LEAF = re.compile(r"^(flagged|listed|listed_nominal|new_flags|cells_abs_z_gt_2|cells|p_lt_0\.01|truths_p_lt_0\.01|"
+                       r"flag|flag_[a-z_]+|[a-z_]+_flag|exceeded|outcome|class|verdict|reading|valid|A3|agree|"
+                       r"within_seed_variation|stops)$")
+FLAG_UP = re.compile(r"^(flagged|listed|p_lt_0\.01|flag|flag_[a-z_]+|[a-z_]+_flag|exceeded)$")   # True is the flag
+AGREE_UP = re.compile(r"^(valid|A3|agree|within_seed_variation)$")                             # True is agreement
+LIST_FLAGS = re.compile(r"^(listed|listed_nominal|new_flags|cells_abs_z_gt_2|cells|stops)$")      # a member is a flag
+COUNT_FLAGS = re.compile(r"^(truths_p_lt_0\.01|cells_abs_z_gt_2)$")
+# An outcome string that changes toward agreement or fewer flags; every other outcome-string change is a control D event.
+IMPROVES = {("agree below a correlation", "agree"), ("more flagged", "unchanged"),
+            ("a fake-data conclusion changes under SM", "the fake-data conclusions survive SM")}
+# Control D events the director ruled on: each names the ruling. Any other event makes this tool exit nonzero.
+RULINGS = [
+    {"readout": "prr", "path": re.compile(r"^/readings/PR-3/(C25|O2)/new_flags$"), "gained": ["q3"],
+     "ruling": "the director, 2026-11-26: a reference shift, not a new flag (q3 is flagged at this level under both OLD "
+               "and V_F; it appears new only because B0's own q3 flag clears under V_F)"},
+    {"readout": r"(cr|gover)", "path": re.compile(r"^/quadrants/QD/2D/printed_only_without_C_PL5D/outcome$"),
+     "old": "agree", "new": "agree below a correlation",
+     "ruling": "the director, 2026-11-26: a named, disclosed exception to control D; a weakened printed agreement label "
+               "(rho* crosses 1, the knife edge); no outcome reads this sub-record; the note's printed label follows "
+               "the V_F value; Joseph sees it with the readings"},
+]
+SWEPT_SKIP = re.compile(r"(^|/)(vf_patch|argv|inputs_sha256|files_sha256|env|controls)(/|$)")
+
+
+def keyed(x):
+    if isinstance(x, list) and x and all(isinstance(v, dict) for v in x):
+        for k in ("truth", "name", "key", "cell"):
+            ids = [v.get(k) for v in x]
+            if all(isinstance(i, str) for i in ids) and len(set(ids)) == len(ids):
+                return {f"[{k}={i}]": v for i, v in zip(ids, x)}
+    return None
+
+
+def leaves(x, path=""):
+    if SWEPT_SKIP.search(path):
+        return
+    if isinstance(x, dict):
+        for k, v in x.items():
+            yield from leaves(v, f"{path}/{k}")
+    elif isinstance(x, list):
+        kd = keyed(x)
+        if kd is not None:
+            for k, v in kd.items():
+                yield from leaves(v, path + k)
+        elif all(not isinstance(v, (dict, list)) for v in x) and not any(isinstance(v, float) for v in x):
+            yield path, x
+        else:
+            for i, v in enumerate(x):
+                yield from leaves(v, f"{path}[{i}]")
+    elif not isinstance(x, float):
+        yield path, x
+
+
+def leaf_name(path):
+    return re.sub(r"\[.*\]$", "", path.rsplit("/", 1)[-1])
+
+
+def d_event(path, a, b):
+    """The control D reason this change is a weakening, or None. An absent leaf (a record that appears or vanishes, as a
+    truth's trigger record does when it is listed or unlisted) reads as unflagged: False, [] or 0."""
+    n = leaf_name(path)
+    if a is None or b is None:
+        proto = b if a is None else a
+        empty = False if isinstance(proto, bool) else [] if isinstance(proto, list) else 0 if isinstance(proto, int) \
+            else None
+        if empty is None:
+            return "a decision-rule field appears or vanishes" if RULE_LEAF.match(n) else None
+        a, b = (empty, b) if a is None else (a, empty)
+    if isinstance(a, bool) and isinstance(b, bool):
+        if FLAG_UP.match(n) and not a and b:
+            return "a flag appears"
+        if AGREE_UP.match(n) and a and not b:
+            return "an agreement falls"
+    elif isinstance(a, list) and isinstance(b, list):
+        if LIST_FLAGS.match(n) and set(map(str, b)) - set(map(str, a)):
+            return f"gains {sorted(set(map(str, b)) - set(map(str, a)))}"
+        if n == "valid" and set(map(str, a)) - set(map(str, b)):
+            return f"loses valid {sorted(set(map(str, a)) - set(map(str, b)))}"
+    elif isinstance(a, int) and isinstance(b, int) and COUNT_FLAGS.match(n) and b > a:
+        return "a flag count rises"
+    elif isinstance(a, str) and isinstance(b, str) and RULE_LEAF.match(n) and (a, b) not in IMPROVES:
+        return "an outcome string changes, not toward agreement"
+    elif a != b and (a is None or b is None) and RULE_LEAF.match(n):
+        return "a decision-rule field appears or vanishes"
+    return None
+
+
+def ruling_for(readout, path, a, b):
+    for r in RULINGS:
+        if not (re.fullmatch(r["readout"], readout) and r["path"].match(path)):
+            continue
+        if "gained" in r and isinstance(a, list) and isinstance(b, list) \
+                and sorted(set(map(str, b)) - set(map(str, a))) == r["gained"]:
+            return r["ruling"]
+        if r.get("old") == a and r.get("new") == b:
+            return r["ruling"]
+    return None
+
+
+def swept_pairs():
+    """(readout label, OLD rel_pin, V_F rel_pin) for every readout with a V_F counterpart, both arms."""
+    out = []
+    for k, vf in VF_WITH.items():
+        if k in MV.READOUTS and vf[0].endswith(".json"):
+            out.append((k, MV.READOUTS[k], vf))
+    for k, vf in VF_NOPL.items():
+        if k in MV.NOPL_READOUTS and vf != VF_WITH.get(k) and vf[0].endswith(".json"):
+            out.append((f"{k}[nopl]", MV.NOPL_READOUTS[k], vf))
+    out.append(("vatlas", None, VF_VR))
+    return out
+
+
+def sweep():
+    """Every non-float change, OLD -> V_F, classified: rule (a decision-rule leaf) or descriptive; and control D."""
+    rows = []
+    for label, o, v in swept_pairs():
+        a = ML.load()["vr"] if o is None else j(o)
+        b = j(v)
+        fa, fb = dict(leaves(a)), dict(leaves(b))
+        for path in sorted(set(fa) | set(fb)):
+            x, y = fa.get(path), fb.get(path)
+            if x == y:
+                continue
+            rule = bool(RULE_LEAF.match(leaf_name(path)))
+            ev = d_event(path, x, y) if rule else None
+            rows.append({"readout": label, "path": path, "old": x, "vf": y, "rule": rule, "control_D": ev,
+                         "ruling": ruling_for(label.replace("[nopl]", ""), path, x, y) if ev else None})
+    return rows
+
+
 def e2_largest(e2):
     """(arm, generator, kind) of E2's largest |change|, the cell make_values_fived16 :443 names."""
     return list(max((abs(e2["chi2"][a][n][k]["delta"]), a, n, k) for a in ("with", "nopl")
                     for n in e2["chi2"][a] for k in ("total", "shape_only"))[1:])
 
 
-def headline(dr):
-    """The outcome changes, one line each, read from the records below (no hand-written verdicts)."""
+ID_SUBS = [(re.compile(r"\[(name|truth)=([^\]]+)\]"), "[*]"), (re.compile(r"^/(table|ibu)/([^/]+)/([^/]+)/(s\d+)"),
+                                                                  "/\\1/*/*/s*")]
+
+
+def grouped(rows):
+    """Rows grouped by (readout, path with its truth/level/seed identifiers starred, OLD, V_F): (key, ids)."""
+    g = {}
+    for r in rows:
+        pat, ids = r["path"], []
+        for rx, rep in ID_SUBS:
+            m = rx.search(pat)
+            while m:
+                ids.append("/".join(x for x in m.groups() if x not in ("name", "truth", "table", "ibu")))
+                pat = pat[:m.start()] + m.expand(rep) + pat[m.end():]
+                m = rx.search(pat, m.start() + len(m.expand(rep)))
+        k = (r["readout"], pat, json.dumps(r["old"]), json.dumps(r["vf"]))
+        g.setdefault(k, []).append("/".join(ids))
+    return sorted(g.items())
+
+
+def headline_sweep(rows):
+    """Section 1's headline: every control D event with its ruling, then every decision-rule change, grouped."""
     H = []
-    f = dr["F0/F0b/F1 listings"]["changes"]
-    unl = sorted({r["truth"] for r in f if r["listed_old"] and not r["listed_vf"]})
-    still = sorted({r["truth"] for r in f if r["listed_old"] and r["listed_vf"]})
-    H.append(f"F0/F0b/F1: no longer listed {unl}; still listed {still}; newly listed "
-             f"{sorted({r['truth'] for r in f if r['listed_vf'] and not r['listed_old']})}")
+    for r in rows:
+        if r["control_D"]:
+            H.append(f"**CONTROL D** {r['readout']} `{r['path']}`: {json.dumps(r['old'])} -> {json.dumps(r['vf'])} "
+                     f"({r['control_D']}): " + (f"*named exception:* {r['ruling']}" if r["ruling"] else "**UNRULED: STOP**"))
+    for (ro, pat, o, v), ids in grouped([r for r in rows if r["rule"] and not r["control_D"]]):
+        ids = [i for i in ids if i]
+        H.append(f"{ro} `{pat}`: {o} -> {v}" + (f" x{len(ids)} ({', '.join(ids)})" if ids else ""))
+    return H
+
+
+def headline(dr):
+    """Derived lines the sweep cannot show (it reads non-float leaves only)."""
+    H = []
+    for name, x in dr["printed-only arm, QD"].items():
+        H.append(f"{name} QD 2D, the printed-only arm without C_PL5D: a weakened printed agreement label, "
+                 f"\"{x['outcome'][0]}\" -> \"{x['outcome'][1]}\"; rho* {x['rho_star'][0]:.6g} -> {x['rho_star'][1]:.6g}, "
+                 f"at the knife edge of rho* = 1; no outcome reads this sub-record (its label: \"{x['label']}\")")
     for k, (a, b) in {**dr["RSN conclusions"], **dr["RSN arm verdicts"]}.items():
         if a != b:
-            H.append(f"RSN {k}: \"{a}\" -> \"{b}\"")
-    H.append("RSN regrade: " + "; ".join(f"{g} listed {x['listed'][0]} -> {x['listed'][1]}"
-                                          for g, x in dr["RSN regrade"].items() if x["listed"][0] != x["listed"][1]))
-    p = dr["PRR"]
-    H.append(f"PRR: {p['flags_cleared']} flags cleared, {len(p['flags_set_under_vf'])} set")
-    for name in ("gover labels", "cr labels"):
-        for q, x in dr[name].items():
-            for dim in ("2D", "3D"):
-                if x[dim][0] != x[dim][1]:
-                    H.append(f"{name.split()[0]} {q} {dim}: \"{x[dim][0]}\" -> \"{x[dim][1]}\"")
-    for fam, x in dr["X agreement"].items():
-        if x["outcome"][0] != x["outcome"][1]:
-            H.append(f"X {fam}: {x['outcome'][0]} -> {x['outcome'][1]}")
+            H.append(f"**A printed conclusion changes (for Joseph):** RSN {k}: \"{a}\" -> \"{b}\"")
     e = dr["E2"]
     if e["largest_change_at"][0] != e["largest_change_at"][1]:
-        H.append(f"E2's largest change moves: {'/'.join(e['largest_change_at'][0])} -> {'/'.join(e['largest_change_at'][1])}")
-    v = dr["V-ATLAS"]
-    if v["valid"][0] != v["valid"][1] or v["A3_fail"][0] != v["A3_fail"][1]:
-        H.append(f"V-ATLAS: valid/A3 changes")
+        H.append(f"E2's largest change moves: {'/'.join(e['largest_change_at'][0])} -> "
+                 f"{'/'.join(e['largest_change_at'][1])} (Delta_max {e['delta_max_abs'][0]:.2f} -> {e['delta_max_abs'][1]:.2f})")
     return H
 
 
@@ -284,8 +453,14 @@ def md(rec):
     L = ["# V_F (C_e^infl) readings, Phases 1 and 2: OLD -> C_e^infl", "",
          "Read by `vf_readings.py`; readings go to the director first; nothing here is note wording.", "",
          "## 1. Decision-rule outcome changes (first, each on its own)", "",
-         "**Headline (every outcome that changes; anything not named holds):**", ""]
-    L += [f"- {h}" for h in headline(dr)] + [""]
+         f"**Control D:** {rec['control_D']['verdict']}. Every non-float leaf of every swept readout, OLD -> V_F, both "
+         f"arms (`sweep()`): {rec['control_D']['n_changes']} changes, {rec['control_D']['n_rule']} of them in "
+         f"decision-rule fields; {len(rec['control_D']['events'])} control D events, "
+         f"{sum(1 for e in rec['control_D']['events'] if e['ruling'])} under a named ruling.", "",
+         "**Headline: every decision-rule change, from the sweep (anything not named holds), then the derived lines:**", ""]
+    hs = headline_sweep(rec["sweep"])
+    ev = [h for h in hs if h.startswith("**CONTROL D**")]
+    L += [f"- {h}" for h in ev] + [f"- {h}" for h in headline(dr)] + [f"- {h}" for h in hs if h not in ev] + [""]
     f = dr["F0/F0b/F1 listings"]
     L += [f"**F0/F0b/F1 listings** (p < 0.01 or any |z| > 2): STOPs {len(f['stops'])}; changes:", ""]
     L += [f"- {r['readout']} {r['truth']}: listed {r['listed_old']} -> {r['listed_vf']}; |z|>2 cells "
@@ -305,7 +480,10 @@ def md(rec):
     L += ["", "**RSN regrade** (listed truths; triggers by group):", ""]
     for a, x in dr["RSN regrade"].items():
         lo, lv_ = x["listed"]
-        L.append(f"- {a}: listed {lo} -> {lv_}")
+        go, gv = x["by_group"]
+        counts = "; ".join(f"{g} p<0.01 {go[g].get('truths_p_lt_0.01')} -> {gv[g].get('truths_p_lt_0.01')}"
+                           for g in go if isinstance(go[g], dict))
+        L.append(f"- {a}: listed {lo} -> {lv_}; trigger counts: {counts}")
     L += ["", "**RSN conclusions and arm verdicts:**", ""]
     L += [f"- {k}: {'unchanged' if a == b else f'{a} -> {b}'}" for k, (a, b) in dr["RSN conclusions"].items()]
     L += [f"- {k}: {'unchanged' if a == b else f'{a} -> {b}'}" for k, (a, b) in dr["RSN arm verdicts"].items()]
@@ -316,6 +494,9 @@ def md(rec):
         L.append(f"**{name}:** " + "; ".join(f"{q} 2D {a} -> {b}" for q, x in dr[name].items()
                                              for a, b in [x["2D"]] if a != b) + " (3D unchanged in every quadrant)"
                  if all(x["3D"][0] == x["3D"][1] for x in dr[name].values()) else f"**{name}:** {dr[name]}")
+    for name in ("gover printed-only arm", "cr printed-only arm"):
+        L.append(f"**{name} (2D, without C_PL5D; no outcome is read from it):** " + "; ".join(
+            f"{q} {a} -> {b}" for q, (a, b) in dr[name].items() if a != b))
     L += ["", "**X agreement (p >= 0.05 and every |z| <= 2.50):**", ""]
     for fam, x in dr["X agreement"].items():
         L.append(f"- {fam}: {x['outcome'][0]} -> {x['outcome'][1]}; " + "; ".join(
@@ -328,6 +509,14 @@ def md(rec):
           f"largest change at {'/'.join(e['largest_change_at'][0])} -> {'/'.join(e['largest_change_at'][1])}.",
           "", "**gdefs seed flags:** " + ("unchanged in every record" if all(a == b for _, a, b in dr["gdefs seed flags"])
                                            else str([x for x in dr["gdefs seed flags"] if x[1] != x[2]])), ""]
+    desc = {}
+    for r in rec["sweep"]:
+        if not r["rule"]:
+            k = (r["readout"], re.sub(r"\[[^\]]*\]", "[]", r["path"]))
+            desc[k] = desc.get(k, 0) + 1
+    L += ["## 1c. The sweep's descriptive changes (not decision-rule fields; every one in vf_readings.json)", "",
+          "| readout | path pattern | changes |", "|---|---|---|"]
+    L += [f"| {ro} | `{pat}` | {n} |" for (ro, pat), n in sorted(desc.items())] + [""]
     L += ["## 1b. make_values_fived16's guards that fail under V_F (each a note-side follow-up)", "",
           "The V_F run uses a copy of the module whose assert statements record instead of raise (an in-process AST "
           "rewrite; no file changed); the OLD run uses the module unchanged, every guard passing.", ""]
@@ -343,8 +532,9 @@ def md(rec):
         L.append(f"| `{k}` | {x['old']} | {x['vf']} | {', '.join(x['sites'][:3])}{' ...' if len(x['sites']) > 3 else ''} |")
     L += ["", f"Moved but not printed: {len(rec['moved']) - len(rec['moved_printed'])} keys (in vf_readings.json).", "",
           "## 3. The printed-xk check (A4)", "",
-          f"xk's printed strings from this Mac's OLD replay equal the committed k.json's: {rec['xk_print_check']['equal']} "
-          f"({rec['xk_print_check']['n_keys']} xk-dependent keys compared).", "",
+          f"With this Mac's OLD replay in place of the committed k.json, every generated value equals its committed-k.json "
+          f"value: {rec['xk_print_check']['equal']} (all {rec['xk_print_check']['n_keys']} generated keys compared, "
+          f"xk-dependent or not; {len(rec['xk_print_check']['differing_keys'])} differ).", "",
           "## 4. The S1/C_resp sigma rows both ways, and the per-cell sigma", "",
           "The C_e form is the OLD value; the C_e^infl form is from the V_F data product (phase1_readings.py, its "
           "section 3, has all sixteen cells). Joseph's open question (declaration section 4.3).", "",
@@ -372,7 +562,17 @@ def main(argv=None):
     moved = [k for k in keys if old.get(k) != vf.get(k)]
     sites = print_sites()
     moved_printed = [k for k in moved if sites.get(k.replace("landed:", ""))]
-    rec = {"schema": "fd-vf-readings/2", "shims": SHIMS, "vf_readouts": VF_WITH, "vf_nopl_readouts": VF_NOPL,
+    rows = sweep()
+    events = [r for r in rows if r["control_D"]]
+    stops_p1 = decision_rules()["F0/F0b/F1 listings"]["stops"]
+    unruled = [r for r in events if not r["ruling"]]
+    stop = bool(unruled or stops_p1 or diff_mac)
+    control_d = {"verdict": "STOP: " + "; ".join(
+                     [f"{len(unruled)} unruled event(s)"] * bool(unruled) + [f"{len(stops_p1)} F0/F0b/F1 STOP(s)"] * bool(stops_p1)
+                     + ["the printed-xk check differs"] * bool(diff_mac)) if stop else
+                 "holds, every event under a named ruling (the tool exits nonzero otherwise)",
+                 "events": events, "n_changes": len(rows), "n_rule": sum(r["rule"] for r in rows)}
+    rec = {"schema": "fd-vf-readings/3", "shims": SHIMS, "vf_readouts": VF_WITH, "vf_nopl_readouts": VF_NOPL,
            "vf_vr": VF_VR, "vf_arms": VF_ARMS,
            "code_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
            "make_values_fived16_sha256": hashlib.sha256((ROOT / "docs/analysis-note/make_values_fived16.py").read_bytes()).hexdigest(),
@@ -380,15 +580,16 @@ def main(argv=None):
            "n_keys": len(keys), "n_moved": len(moved), "moved": moved, "moved_printed": moved_printed,
            "xk_print_check": {"equal": not diff_mac, "differing_keys": diff_mac, "n_keys": len(mac)},
            "vf_guard_failures": [{"line": ln, "message": None if m is None else str(m)} for ln, m in guard_fails],
-           "decision_rules": decision_rules(),
+           "decision_rules": decision_rules(), "sweep": rows, "rulings": [r["ruling"] for r in RULINGS],
+           "control_D": control_d,
            "values": {k: {"old": old.get(k), "vf": vf.get(k), "sites": sites.get(k.replace("landed:", ""), [])}
                       for k in keys}}
     a.out_dir.mkdir(parents=True, exist_ok=True)
     (a.out_dir / "vf_readings.json").write_text(json.dumps(rec, indent=1, sort_keys=True, default=str) + "\n")
     (a.out_dir / "vf_readings.md").write_text(md(rec))
     print(f"keys {len(keys)}; moved {len(moved)} ({len(moved_printed)} printed); printed-xk check "
-          f"{'equal' if not diff_mac else diff_mac[:5]}")
-    return 0
+          f"{'equal' if not diff_mac else diff_mac[:5]}; control D: {control_d['verdict']}")
+    return 1 if stop else 0
 
 
 if __name__ == "__main__":

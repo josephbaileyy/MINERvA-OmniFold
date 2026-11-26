@@ -174,6 +174,7 @@ RTOL_ROUNDTRIP = 1e-9
 
 
 P_ACHIEVED = {}         # the largest achieved p difference per control, when p is checked by function identity
+P_FLOOR = 1e-30         # fd_f0_regrade.P_FLOOR: a p below it is written as 0.0 with p_below_floor true
 
 
 def p_control(name, reproduced, committed, rtol=0.0, scale=None, p_fun=None):
@@ -188,7 +189,8 @@ def p_control(name, reproduced, committed, rtol=0.0, scale=None, p_fun=None):
                 raise Stop(f"P {name}: {path} keys differ")
             pid = p_fun is not None and {"p", "chi2", "ndf"} <= set(b)
             if pid:            # A4 item 3: p by the producer's own function on the committed chi2, bitwise, and printed
-                if p_fun(b["chi2"], b["ndf"]) != b["p"] and not (b["p"] == 0.0 and b.get("p_below_floor")):
+                pv = p_fun(b["chi2"], b["ndf"])
+                if pv != b["p"] and not (b["p"] == 0.0 and b.get("p_below_floor") and pv < P_FLOOR):
                     raise Stop(f"P {name}: {path}: the producer's p function on the committed chi2 is not its p")
                 if printed_p(a["p"]) != printed_p(b["p"]):
                     raise Stop(f"P {name}: {path}/p prints {printed_p(a['p'])}, committed {printed_p(b['p'])}")
@@ -457,10 +459,11 @@ def printed_p(p):
     return t, tuple(sorted(MV.paper_prec("f0-x-p", t).values()))
 
 
-def p_compare_record(FG, label, old, committed):
+def p_compare_record(FG, label, old, committed, rtol_chi2=None):
     """P on one compare record: chi2 at RTOL_ROUNDTRIP (V_g round-tripped); p by function identity, exactly
     (chi2_sf(committed chi2, ndf) == committed p, bitwise), its achieved difference only recorded; every other field at
     RTOL_EXACT. Returns (chi2 achieved, p achieved)."""
+    rtol_chi2 = RTOL_ROUNDTRIP if rtol_chi2 is None else rtol_chi2
     worst = [0.0, 0.0]
     for part in ("total", "shape_only"):
         a, b = old[part], committed[part]
@@ -468,8 +471,8 @@ def p_compare_record(FG, label, old, committed):
             raise Stop(f"P {label}/{part}: chi2_sf(committed chi2) is not the committed p")
         worst[0] = max(worst[0], abs(a["chi2"] - b["chi2"]) / abs(b["chi2"]))
         worst[1] = max(worst[1], abs(a["p"] - b["p"]) / abs(b["p"]) if b["p"] else abs(a["p"] - b["p"]))
-        if worst[0] > RTOL_ROUNDTRIP:
-            raise Stop(f"P {label}/{part}: chi2 relative {worst[0]:.3g} > {RTOL_ROUNDTRIP:g}")
+        if worst[0] > rtol_chi2:
+            raise Stop(f"P {label}/{part}: chi2 relative {worst[0]:.3g} > {rtol_chi2:g}")
         if printed_p(a["p"]) != printed_p(b["p"]):           # the director's printed-value check (2026-11-26)
             raise Stop(f"P {label}/{part}: p prints {printed_p(a['p'])}, committed {printed_p(b['p'])}")
         p_control(f"{label}/{part}", {k: v for k, v in a.items() if k not in ("chi2", "p")},
@@ -479,12 +482,16 @@ def p_compare_record(FG, label, old, committed):
     return worst
 
 
+CHI2_EXACT = {"gch"}     # A4 item 1: gch's inputs are bit-identical (computed on this platform), so chi2 keeps 1e-12
+
+
 def p2_compare(name, rel_pin, vf, extra=None):
     sys.path.insert(0, str(ROOT / "nd-unfolding"))
     import fd_g_compare as FG
     committed, h = pinned_json(rel_pin)
     f, old_M, new_M = gencmp_matrices(vf)
     out = json.loads(json.dumps(committed))
+    rtol_chi2 = RTOL_EXACT if name in CHI2_EXACT else RTOL_ROUNDTRIP
     chi2_w = p_w = 0.0
     replaced = []
     for path, pair in pair_paths(committed):
@@ -493,14 +500,15 @@ def p2_compare(name, rel_pin, vf, extra=None):
             dst = dst[k]
         for k in PAIR:
             old = recompare(FG, f, pair[k], old_M[k], NAMES_OLD[k])
-            cw, pw = p_compare_record(FG, f"{name}{path}/{k}", old, pair[k])
+            cw, pw = p_compare_record(FG, f"{name}{path}/{k}", old, pair[k], rtol_chi2)
             chi2_w, p_w = max(chi2_w, cw), max(p_w, pw)
             dst[k] = recompare(FG, f, pair[k], new_M[k], NAMES_VF[k])
             replaced.append(f"{path}/{k}")
     patch = {"readout": rel_pin[0], "readout_sha256": h, "replaced": replaced, "matrices": NAMES_VF,
              "control_P": "PASS",
-             "control_P_tolerance": {"chi2": {"rtol": RTOL_ROUNDTRIP, "achieved_max": chi2_w,
-                                              "why": "V_g round-tripped from sigma_Vg/f (amendment A4)"},
+             "control_P_tolerance": {"chi2": {"rtol": rtol_chi2, "achieved_max": chi2_w,
+                                              "why": ("bit-identical inputs (amendment A4 item 1)" if rtol_chi2 == RTOL_EXACT
+                                                      else "V_g round-tripped from sigma_Vg/f (amendment A4)")},
                                      "p": {"check": "chi2_sf(committed chi2, ndf) == committed p, bitwise; the "
                                                     "reproduced p prints the committed p's strings (p_tex, paper form)",
                                            "achieved_max": p_w, "why": "derived from chi2 through chi2_sf"},
@@ -700,6 +708,8 @@ def p2_prr(vf, fetch_dir):
     import prr_ibu as RI
     committed, h = pinned_json(PRR)
     mats_old, f, _ = PR.grade_matrices(ROOT)
+    if not np.array_equal(np.asarray(vf["f"], float), np.asarray(f, float)):
+        raise Stop("prr: the V_F product's f is not the grade matrices' f")
     dFr = np.asarray(vf["matrices"]["DeltaC_e"], float) / np.outer(f, f)
     mats_new = {t: M + dFr for t, M in mats_old.items()}
     out = json.loads(json.dumps(committed))
@@ -734,6 +744,8 @@ def p2_prr(vf, fetch_dir):
     out["readings"] = json.loads(json.dumps(PR.readings(q_new, qi_new)))
     out["vf_patch"] = {"readout": PRR[0], "readout_sha256": h,
                        "replaced": ["/table/*/grade", "/ibu/*/grade", "/readings"],
+                       "not_replaced": {"/table_ii_committed_beside_B0": "OLD: the committed Table II flags beside "
+                                        "B0's OLD grades, read by nothing (prr_read.py:452, section 4.2); not a V_F value"},
                        "matrices": "each truth's F0b grade matrix (prr_read.grade_matrices) + DeltaC_e/ff",
                        "fetched": {k: PS + v[0] for k, v in FETCHED.items()}, "control_P": "PASS",
                        "control_P_tolerance": {"(e)": {"rtol": RTOL_EXACT, "achieved_max": w},

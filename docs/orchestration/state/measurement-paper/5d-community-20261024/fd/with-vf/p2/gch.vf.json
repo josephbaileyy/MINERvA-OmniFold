@@ -2183,9 +2183,9 @@
   "control_P": "PASS",
   "control_P_tolerance": {
    "chi2": {
-    "rtol": 1e-09,
+    "rtol": 1e-12,
     "achieved_max": 0.0,
-    "why": "V_g round-tripped from sigma_Vg/f (amendment A4)"
+    "why": "bit-identical inputs (amendment A4 item 1)"
    },
    "p": {
     "check": "chi2_sf(committed chi2, ndf) == committed p, bitwise; the reproduced p prints the committed p's strings (p_tex, paper form)",

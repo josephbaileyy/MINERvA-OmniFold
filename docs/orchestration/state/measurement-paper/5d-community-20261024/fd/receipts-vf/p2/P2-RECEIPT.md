@@ -26,11 +26,11 @@ Every V_F copy is in `fd/with-vf/p2/`. In each copy, `vf_patch` records control 
 | `e2.vf.json` | `7db5bd32180ce66b5ab5cdfa12770807cee28b868833b84fcf64f05c51159a73` | PASS | 1e-09 (3.24e-10) |
 | `e2sens.vf.txt` | `e31bb03a5f3e0a0a439db6d777df0dcbbe2d761dd8796e93296f5096f1d49c84` | PASS | chi2: 1e-09 (2.53e-10); sigma: 1e-12 (0) |
 | `eav.vf.json` | `516b625d5d65fe8c3cb7e5b4c967c0fd53533919e5c10f1483b297e7c23cad52` | PASS | exact equality |
-| `gch.vf.json` | `52ef42e9500ce62f1b259ced08773a6842a0d67d2ce4a8a71bd49dacce6bce51` | PASS | chi2: 1e-09 (0); p: chi2_sf(committed chi2, ndf) == committed p, bitwise; the reproduced p (0); other_fields: 1e-12 |
+| `gch.vf.json` | `968cfb876c02e1024d1977a570a49b48a0e737b4cf71c1951f7da2889694cf94` | PASS | chi2: 1e-12 (0); p: chi2_sf(committed chi2, ndf) == committed p, bitwise; the reproduced p (0); other_fields: 1e-12 |
 | `gdefs.vf.json` | `6c202b08b5d9ed0be0880bb97ad1966f102c5cca6138b949a9345ae11aa7b788` | PASS | chi2: 1e-09 (1.74e-10); p: chi2_sf(committed chi2, ndf) == committed p, bitwise; the reproduced p (2.18e-08); other_fields: 1e-12 |
 | `gnat.vf.json` | `3607e78c22ba00bf51879b763dff0324176ec785c3a5a730469da6a8a800800e` | PASS | chi2: 1e-09 (1.95e-10); p: chi2_sf(committed chi2, ndf) == committed p, bitwise; the reproduced p (1.77e-08); other_fields: 1e-12 |
 | `gover.vf.json` | `879d3dca63db4c2e88b453b2828002e9975247e3a97e52894a0f3b032558845e` | PASS | 1e-12 (0) |
-| `prr.vf.json` | `118741191224815af08ab6db672d9f5d037856e5deb332be1be7bd80526c0865` | PASS | (e): 1e-12 (5.47e-13); IBU: 1e-11 (1.07e-12) |
+| `prr.vf.json` | `fc9afee77250940de23500947230d04670a23ce9f763d21ea71b4667b4d3feb5` | PASS | (e): 1e-12 (5.47e-13); IBU: 1e-11 (1.07e-12) |
 | `rsn.vf.json` | `8e5addb8ec0a7649495fd784eed4e13f77780f654f4185d0e2824d1e2348b101` | PASS | 1e-12 (1.57e-13); p: as rsnregrade's (A4 item 3) |
 | `rsnregrade.vf.json` | `10dcdd729d2d86fe797ba4bf801647d3446f5d35aa2578523b6278c5c25f5c7c` | PASS | 1e-12 (9.06e-13); p: fd_f0_regrade.chi2_sf_even(committed chi2, ndf) == committed |
 | `vatlas.vf.json` | `380682e69408b51b8299cb473254b7a5f3ae73113aa31797d02b85a41a80472a` | PASS | 1e-12 (0) |
@@ -42,7 +42,30 @@ Every V_F copy is in `fd/with-vf/p2/`. In each copy, `vf_patch` records control 
   `xk-old-replay-k.json`. Every printed xk string is identical OLD vs the committed readout (the readings' section 3).
 - **Control D** (no flag set and no agreement count falls under V_F) holds in every readout: see the readings.
 
+## Fixes after the confirm reads (2026-11-26; the director's GO)
+
+The reads were codex-school gpt-6.2-sol and claude-personal claude-sonnet-5-5, both under the director's scope rule. Their
+reports are in `reads/`. No recomputed value changed.
+- **p by function identity.** A committed p written as 0.0 below the floor (`p_below_floor`) now also requires the
+  producer's p to be below `fd_f0_regrade.P_FLOOR` (1e-30). Before, that case skipped the identity check. rsn and
+  rsnregrade regenerate byte for byte under the tightened check.
+- **gch's chi2 tolerance** is 1e-12. A4 item 1 keeps gch at that value, as a bit-identical input; it was 1e-9. Achieved:
+  0. Only the tolerance record in `gch.vf.json` changes.
+- **prr.vf.json's `table_ii_committed_beside_B0`** keeps its OLD values. They are read by nothing (prr_read.py:452,
+  section 4.2), and `vf_patch.not_replaced` now names them. The V_F product's f is asserted equal to the grade
+  matrices' f.
+- **The readings tool** sweeps every non-float leaf of both arms. It builds section 1's headline from that sweep and
+  exits 1 on any control D event that no named ruling covers. See the readings.
+- **Reproduction.** All 14 copies were regenerated after the fixes; prr, rsn and xk came from the verified fetch. 12 are
+  byte-identical, and gch and prr differ only as stated. The opt-in test (`VF_P2_FETCH`, `VF_P2_XK=1`) reproduces
+  prr, rsn and xk byte for byte.
+
 ## Disclosures
+
+- **FOLLOWUP: xk's CR_G2R substitute** is p2_overlap("cr")'s record, without the `vf_data_product_sha256` that
+  `cmd_p2` adds when it writes `cr.vf.json`. Its sha (`xk.vf.json` vf_patch.substituted) is therefore not
+  `cr.vf.json`'s. K reads only its `quadrants` (fd_xcov_steps.py:536), and these are value-identical; a test asserts
+  equality of the whole record apart from that one field.
 
 - `nd-unfolding/prior_retention/test_prr.py::Truths::test_the_floor_seeds_are_no_campaigns` fails locally, and not
   for environmental reasons. It is a repo-wide grep that now matches newer campaigns' files (msr/msr_build.py,
