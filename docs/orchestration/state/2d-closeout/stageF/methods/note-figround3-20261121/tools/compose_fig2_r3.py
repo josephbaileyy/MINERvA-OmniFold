@@ -9,8 +9,8 @@ each projection's save, after the earlier edits:
 - the published prediction ("Tune v1: published prediction", a dashed line on the projection's edges) is drawn black,
   above the prior's solid blue histogram (z-order), as before the restyle; it was blue dashed and hard to see on the
   prior. Its data, dashes and width are kept;
-- the legend (p_par panel only) reads "Tune v1 prior (this work)" for "Tune v1: our simulation (the prior)" and
-  "Tune v1 published prediction" for "Tune v1: published prediction"; it is rebuilt in place (same location, size and
+- the legend (p_par panel only) reads "MINERvA Tune v1 prior" for "Tune v1: our simulation (the prior)" and
+  "MINERvA Tune v1 published prediction" for "Tune v1: published prediction"; it is rebuilt in place (same location, size and
   order) so that its handles show the new line colour.
 Checks (each failure stops the run): every datum unchanged; the legend covers no plotted vertex; no text overlap at
 the final draw.
@@ -32,8 +32,10 @@ from matplotlib.text import Text  # noqa: E402
 
 PROJ = ("MEFHC_5iter_xsec_proj_pt", "MEFHC_5iter_xsec_proj_pz")
 R2 = METHODS / "note-figround-20261121/tools/compose_fig2_round.py"
-RENAME = {"Tune v1: our simulation (the prior)": "Tune v1 prior (this work)",
-          "Tune v1: published prediction": "Tune v1 published prediction"}
+RENAME = {
+    ct.PRIOR_NEW: "MINERvA Tune v1 prior",
+    ct.ANC_NEW: "MINERvA Tune v1\npublished prediction",
+}
 DONE = {}
 
 

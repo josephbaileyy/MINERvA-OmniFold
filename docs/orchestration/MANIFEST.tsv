@@ -6123,6 +6123,15 @@ docs/orchestration/state/2d-closeout/stageF/methods/note-thin/changes.md	tracked
 docs/orchestration/state/2d-closeout/stageF/methods/note-thin/check_ledger.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/note-thin/citations.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/note-thin/ledger.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/note-tune-v1-legends-20261126/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-tune-v1-legends-20261126/figs/MEFHC_5iter_xsec_paper_pt_slices.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-tune-v1-legends-20261126/figs/MEFHC_5iter_xsec_paper_pz_slices.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-tune-v1-legends-20261126/figs/MEFHC_5iter_xsec_proj_pz.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-tune-v1-legends-20261126/figs/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-tune-v1-legends-20261126/figs/control_plots.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-tune-v1-legends-20261126/figs/generators_vs_unfolded_band_central.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-tune-v1-legends-20261126/figs/paper_fig2_joint.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/note-tune-v1-legends-20261126/figs/q3_excess_projection.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/paper-protections/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/paper-protections/agy/make_pairs.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/paper-protections/agy/run1/agy-control.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
