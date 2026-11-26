@@ -119,7 +119,7 @@ def run(a) -> int:
     rows = {k: v for k, v in np.load(a.rows).items()}
     pins_before = {"driver": sha256(C.RE2), "runner": sha256(Path(C.__file__)), "oofvc_run": sha256(Path(__file__)),
                    "oofvc_lib": sha256(HERE / "oofvc_lib.py"), "rows": sha256(a.rows), "inputs": verified,
-                   "roounfold_lib": lib_sha()}
+                   "roounfold_lib": lib_sha(), "join_record": sha256(a.join_record)}
     rc = 0
     outputs = {}  # every file each unit wrote, by digest (codex-school r2 #1: n.npz and the records are covered)
     for unit in a.unit:
@@ -167,7 +167,7 @@ def run(a) -> int:
         rc = rc or urc
     pins_after = {"driver": sha256(C.RE2), "runner": sha256(Path(C.__file__)), "oofvc_run": sha256(Path(__file__)),
                   "oofvc_lib": sha256(HERE / "oofvc_lib.py"), "rows": sha256(a.rows), "inputs": C.check_inputs(cfg),
-                  "roounfold_lib": lib_sha()}
+                  "roounfold_lib": lib_sha(), "join_record": sha256(a.join_record)}
     c_pins = pins_before == pins_after
     tag = "_".join(u.replace("/", "-") for u in a.unit)  # one pins file per process (the job runs four at once)
     (a.out / f"pins_{tag}.json").write_text(json.dumps({"units": a.unit, "before": pins_before, "after": pins_after,
@@ -180,6 +180,9 @@ def main(argv=None) -> int:
     ap.add_argument("--tree", type=Path, required=True)
     ap.add_argument("--rows", type=Path, required=True)
     ap.add_argument("--rows-sha256", required=True)
+    ap.add_argument("--join-record", type=Path, required=True,
+                    help="the join's join.json; its digest is pinned with the rows, so the scorer reads the record the "
+                         "units ran beside (codex-school r3 #3)")
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--unit", action="append", choices=UNITS)
     ap.add_argument("--numpy-unfolder", action="store_true",

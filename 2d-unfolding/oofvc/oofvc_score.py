@@ -34,6 +34,7 @@ UNITS = ("off/er", "off/c2_central", "R/er", "R/c2_central")
 CV_SHA = "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
 MC_SHA = "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316"
 SPLIT_REL = "docs/orchestration/state/ibu-chi2-20261123/oflow/split.json"
+STAGE = "/pscratch/sd/j/josephrb/oofvc-20261126/stage"  # the staging root the cluster scripts use (oofvc_units.sh)
 # E_R's argv (ref_c2c1/config.json e_r.argv at M) after the two input paths (codex-school r2 #2)
 E_R_OPTIONS = ["--iters", "5", "--use-weights", "--estimator", "lgbm", "--seed", "42", "--branch-select", "all",
                "--bkg-mode", "negweight-refined", "--refine-n-estimators", "400", "--refine-num-leaves", "31"]
@@ -74,10 +75,13 @@ def unit_checks(units: Path, rows_sha: str, local: dict, expect: dict) -> dict:
         meta = json.loads(str(np.load(d / f"{kind}.npz", allow_pickle=True)["meta"]))
         argv = rec["argv"]
         base = argv[:4 + len(E_R_OPTIONS)]
+        # the exact staged paths, not only their names: a second file of the same name cannot stand in
+        # (codex-school r3 #1)
         argv_e_r = (len(base) == 4 + len(E_R_OPTIONS) and base[0] == "--omnifile"
-                    and Path(base[1]).name == "runEventLoopOmniFold_MEFHC.root" and base[2] == "--mcfile"
-                    and Path(base[3]).name == "runEventLoopMC_MEFHC.root" and base[4:] == E_R_OPTIONS
-                    and len(argv) == len(base) + (4 if conv == "R" else 0))
+                    and base[1] == f"{STAGE}/runEventLoopOmniFold_MEFHC.root" and base[2] == "--mcfile"
+                    and base[3] == f"{STAGE}/runEventLoopMC_MEFHC.root" and base[4:] == E_R_OPTIONS
+                    and len(argv) == len(base) + (4 if conv == "R" else 0)
+                    and (conv != "R" or argv[-1] == f"{STAGE}/oofvc_rows.npz"))
         if conv == "R":
             conv_ok = (argv[-4:-1] == ["--signal-convention", "minerva", "--oofvc-rows"]
                        and Path(argv[-1]).name == expect["rows_name"])
@@ -95,21 +99,34 @@ def unit_checks(units: Path, rows_sha: str, local: dict, expect: dict) -> dict:
     covered = sorted(u for p in pins for u in p["units"])
 
     def outputs_ok(p):
-        """Every file the unit wrote, by the digest its own process recorded (n.npz and the records included)."""
+        """Every file the unit wrote, by the digest its own process recorded: exactly the unit's files (its done-marker,
+        npz, root and record, and n.npz for c2), no more and no fewer (codex-school r3 #2)."""
         try:
-            return all(sha256(units / u.split("/")[0] / n) == h for u in p["units"] for n, h in p["outputs"][u].items())\
-                and all("n.npz" in p["outputs"][u] for u in p["units"] if u.endswith("c2_central"))
+            for u in p["units"]:
+                kind = u.split("/")[1]
+                want = {f"{kind}.done", f"{kind}.npz", f"{kind}.root", f"{kind}.oofvc.json"} | (
+                    {"n.npz"} if kind == "c2_central" else set())
+                if set(p["outputs"][u]) != want:
+                    return False
+                if any(sha256(units / u.split("/")[0] / n) != h for n, h in p["outputs"][u].items()):
+                    return False
+            return True
         except (KeyError, OSError):
             return False
 
-    def pin_ok(p):
+    def pin_detail(p):
         b = p["before"]
-        return bool(p["pass"] and p["before"] == p["after"] and b["driver"] == expect["driver"]
-                    and b["runner"] == RUNNER_SHA and b["oofvc_run"] == local["oofvc_run"]
-                    and b["oofvc_lib"] == local["oofvc_lib"] and b["rows"] == rows_sha
-                    and b["roounfold_lib"] == expect["roounfold_lib"]
-                    and b["inputs"] == {"CV": CV_SHA, "MC": MC_SHA} and outputs_ok(p))
+        return {"unchanged": bool(p["pass"] and p["before"] == p["after"]), "driver": b["driver"] == expect["driver"],
+                "runner": b["runner"] == RUNNER_SHA, "oofvc_run": b["oofvc_run"] == local["oofvc_run"],
+                "oofvc_lib": b["oofvc_lib"] == local["oofvc_lib"], "rows": b["rows"] == rows_sha,
+                "roounfold_lib": b["roounfold_lib"] == expect["roounfold_lib"],
+                "inputs": b["inputs"] == {"CV": CV_SHA, "MC": MC_SHA},
+                "join_record": b.get("join_record") == expect["join_record"], "outputs": outputs_ok(p)}
+
+    def pin_ok(p):
+        return all(pin_detail(p).values())
     out["pins"] = {"files": len(pins), "units": covered, "each": [pin_ok(p) for p in pins],
+                   "outputs": [outputs_ok(p) for p in pins], "detail": [pin_detail(p) for p in pins],
                    "pass": bool(pins) and all(pin_ok(p) for p in pins) and covered == sorted(UNITS)}
     return out
 
@@ -139,7 +156,12 @@ def main(argv=None) -> int:
     cov = cpf.tmatrix_to_numpy(fp.Get("TotalCovariance"))
     fp.Close()
     join = json.loads(a.join.read_text())
-    split_sha = sha256(a.repo / SPLIT_REL)
+    import subprocess
+
+    def at_tool(rel):  # a file as the tool commit has it, not this checkout's copy (codex-school r2 #4, r3 #3)
+        return hashlib.sha256(subprocess.run(["git", "-C", str(a.repo), "show", f"{a.tool_commit}:{rel}"],
+                                             check=True, capture_output=True).stdout).hexdigest()
+    split_sha = at_tool(SPLIT_REL)
     ji = join.get("inputs", {})
     ctl["C-JOIN-RECORD"] = {"pass": bool(join.get("verdict") == "PASS" and join.get("rows_sha256") == rows_sha
                                          and ji.get("omnifile_sha256") == CV_SHA and ji.get("split_sha256") == split_sha
@@ -148,12 +170,8 @@ def main(argv=None) -> int:
 
     # what the production units must show: the pinned driver and library, RooUnfold (not the tests' numpy unfolder),
     # and the join's rows file
-    expect = {"driver": DRIVER_SHA, "roounfold_lib": LIB_SHA, "numpy_unfolder": False, "rows_name": "oofvc_rows.npz"}
-    import subprocess
-
-    def at_tool(rel):  # the lane's file as the tool commit has it, not this checkout's copy (codex-school r2 #4)
-        return hashlib.sha256(subprocess.run(["git", "-C", str(a.repo), "show", f"{a.tool_commit}:{rel}"],
-                                             check=True, capture_output=True).stdout).hexdigest()
+    expect = {"driver": DRIVER_SHA, "roounfold_lib": LIB_SHA, "numpy_unfolder": False, "rows_name": "oofvc_rows.npz",
+              "join_record": sha256(a.join)}  # the record the units ran beside, as each unit process pinned it
     local = {"oofvc_run": at_tool("2d-unfolding/oofvc/oofvc_run.py"), "oofvc_lib": at_tool("2d-unfolding/oofvc/oofvc_lib.py")}
     uc = unit_checks(a.units, rows_sha, local, expect)
     ctl["C-UNITS"] = {"checks": {u: uc[u] for u in UNITS},
@@ -191,7 +209,9 @@ def main(argv=None) -> int:
     ctl["C-BASE"] = {"er_hXSec2D_max_rel": base_rel, "c2_xsec_max_rel": c2_rel, "D_IBU_vs_regenA3_max_rel": lad_rel,
                      "D_ER": der_off, "D_ER_vs_tier1_rel": abs(der_off / D_ER_TIER1 - 1),
                      "pass": bool(same_ks and base_rel <= 1e-8 and c2_rel <= 1e-8 and lad_rel <= 1e-6
-                                  and np.all(er_off[~m] == 0) and np.all(z["off"]["xsec"][~xm] == 0)
+                                  and np.all(er_off[~m] == 0)
+                                  and bool(same_ks and z["off"]["xsec"].shape == t1c["xsec"].shape
+                                           and np.all(z["off"]["xsec"][~xm] == 0))
                                   and abs(der_off / D_ER_TIER1 - 1) <= 1e-6)}
 
     # C-FIX: under R the denominator, the data, the flux and the exposures are bit for bit those of off, for the E_R

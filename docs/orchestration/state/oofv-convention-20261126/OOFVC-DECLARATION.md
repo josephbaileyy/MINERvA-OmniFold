@@ -326,16 +326,19 @@ applicable", not "no change".**
   - the lane's files as the tool commit has them (`git show`, not the scorer's checkout);
   - the join's rows, libRooUnfold.so 0b34e1e3…, and the staged inputs 43f8cc16… and d40aea69…;
   - every file each unit wrote (done-marker, npz, root, record, and `n.npz`), whose digests its own process
-    recorded.
+    recorded. The manifest must list exactly those files;
+  - the join record the units ran beside (`--join-record`), whose digest each process pins and the scorer requires.
+  Each condition is reported by name.
 - **C-UNITS** (the scorer). Every unit's root and npz equal its done-marker's digests, and its recorded argv is its
-  npz's. That argv is E_R's exactly: `--omnifile …/runEventLoopOmniFold_MEFHC.root --mcfile …/runEventLoopMC_MEFHC.root`,
-  then E_R's options, so another seed or iteration count fails.
+  npz's. That argv is E_R's exactly: `--omnifile <stage>/runEventLoopOmniFold_MEFHC.root --mcfile
+  <stage>/runEventLoopMC_MEFHC.root`, with <stage> the lane's staging root, then E_R's options; R adds the rows file
+  `<stage>/oofvc_rows.npz`. So another seed, iteration count or file fails.
   - R units carry `--signal-convention minerva --oofvc-rows …/oofvc_rows.npz`, and off units carry neither option.
   - No unit used the numpy unfolder, and every c2 unit ran C-ROO.
   - N's controls passed (codex-school r1 #4).
 - **C-KS:** every array the scorer reads has the same K list, which contains K = 10.
 - **C-JOIN-RECORD** (the scorer). The join's record is PASS on exactly its four controls. Its rows digest is the
-  scored rows file's, its omnifile digest is 43f8cc16…, and its split.json digest is the committed file's.
+  scored rows file's, its omnifile digest is 43f8cc16…, and its split.json digest is the tool commit's.
 
 ### 2.3 Operands
 
@@ -473,6 +476,15 @@ The staged copies and the dumps stay on scratch until a separate removal under i
   - the file renamed from `OOFVC-DECLARATION-DRAFT.md`;
   - after 881f4dbc and before any read: moved rows reconstructed outside the grid are not appended; T's cancellation
     from the IBU result is stated; O_j's two sources are named.
+- **Revision 6** (after r3, the last full round: codex-school 4 BLOCKERs, agy GO; `receipts/reads/r3/`):
+  - exact staged paths in argv;
+  - exact manifests;
+  - the join record pinned by every unit process;
+  - split.json at the tool commit;
+  - one complete entry-count line per playlist;
+  - C-BASE guarded against a mismatched K list;
+  - each pin condition reported by name.
+  After r3, the director's scope rule governs.
 - **Revision 5** (after r2: codex-school 5 BLOCKERs, agy GO; `receipts/reads/r2/`):
   - every unit file covered by its process's recorded digests, `n.npz` included;
   - argv equal to E_R's;

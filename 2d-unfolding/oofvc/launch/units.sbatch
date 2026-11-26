@@ -36,7 +36,8 @@ pids=""
 for u in off/er off/c2_central R/er R/c2_central; do
   tag=${u/\//-}
   ( srun --exclusive -n1 -c 64 --mem=110G --job-name=$tag /usr/bin/time -v -o $R/logs/$tag.time \
-      $PY -B $O/oofvc_run.py --tree $R/deploy --rows $ROWS --rows-sha256 $SHA --out $R/units --unit $u \
+      $PY -B $O/oofvc_run.py --tree $R/deploy --rows $ROWS --rows-sha256 $SHA --join-record $R/join/join.json \
+      --out $R/units --unit $u \
       > $R/logs/$tag.log 2>&1 ) &
   pids="$pids $!"
 done

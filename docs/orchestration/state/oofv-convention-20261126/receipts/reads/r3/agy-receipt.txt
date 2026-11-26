@@ -1,0 +1,2 @@
+agy 1.5.18, --model gemini-4-hydrogen-high
+agy rc=0

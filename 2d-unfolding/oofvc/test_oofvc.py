@@ -449,14 +449,19 @@ class Runner(unittest.TestCase):
         cls.rows_path = save_rows(cls.rows, "oofvc_rows.npz")  # the production file name, which the scorer requires
         import hashlib
         cls.out = TD / "units"
+        # a stand-in for the join's record (the units pin its digest; the scorer test reads it)
+        cls.join_record = TD / "score_join.json"
+        cls.join_record.write_text(json.dumps({"verdict": "PASS",
+                                               "rows_sha256": hashlib.sha256(cls.rows_path.read_bytes()).hexdigest(),
+                                               "pot_scale": 0.25, "classes": {}}))
         # in-process, with O_NOATIME substituted as test_ref_c2c1.py does (macOS has none; O_NONBLOCK is inert on a
         # regular file's open)
         import oofvc_run
         cls.run_main = staticmethod(oofvc_run.main)
         with mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True):
             cls.rc = oofvc_run.main(["--tree", str(tree()), "--rows", str(cls.rows_path), "--rows-sha256",
-                                     hashlib.sha256(cls.rows_path.read_bytes()).hexdigest(), "--out", str(cls.out),
-                                     "--numpy-unfolder"])
+                                     hashlib.sha256(cls.rows_path.read_bytes()).hexdigest(), "--join-record",
+                                     str(cls.join_record), "--out", str(cls.out), "--numpy-unfolder"])
 
     def test_units_pass(self):
         self.assertEqual(self.rc, 0)
@@ -505,7 +510,7 @@ class Runner(unittest.TestCase):
         err = io.StringIO()
         with mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True), contextlib.redirect_stderr(err):
             rc = self.run_main(["--tree", str(tree()), "--rows", str(self.rows_path), "--rows-sha256", "0" * 64,
-                                "--out", str(TD / "units_refused")])
+                                "--join-record", str(self.join_record), "--out", str(TD / "units_refused")])
         self.assertEqual(rc, 4)
         self.assertIn("not the join's", err.getvalue())
         self.assertFalse((TD / "units_refused").exists())
@@ -516,14 +521,8 @@ class Runner(unittest.TestCase):
         convention check out (properties of these units). C-BASE fails (the fixture is not Tier 1's input), and the
         numpy-unfolder units fail the unfolder checks and C-PINS (no RooUnfold digest), so the reading is STOP and no
         operand is printed."""
-        import hashlib
-        join = TD / "score_join.json"
-        join.write_text(json.dumps({"verdict": "PASS", "rows_sha256": hashlib.sha256(self.rows_path.read_bytes()).hexdigest(),
-                                    "pot_scale": contents(self.out / "R" / "er.root")["potScale"], "classes": {}}))
-        p = subprocess.run([sys.executable, "-B", str(HERE / "oofvc_score.py"), "--units", str(self.out), "--join",
-                            str(join), "--rows", str(self.rows_path), "--tree", str(tree()), "--repo", str(REPO),
-                            "--tool-commit", "HEAD"],
-                           capture_output=True, text=True)
+        self.assertEqual(contents(self.out / "R" / "er.root")["potScale"], 0.25)  # the stand-in record's scale
+        p = self.score(self.out)
         self.assertEqual(p.returncode, 8, p.stderr[-2000:])
         rec = json.loads(p.stdout)
         c = rec["controls"]
@@ -539,9 +538,48 @@ class Runner(unittest.TestCase):
             self.assertFalse(chk["not_numpy_unfolder"], u)
             self.assertFalse(chk["argv_is_E_R"], u)  # the fixture runs two iterations on fixture files
         self.assertFalse(c["C-UNITS"]["checks"]["R/c2_central"]["C-ROO_ran"])
-        # every unit file is covered by its process's recorded digests, and a changed n.npz is caught
-        pins = [json.loads(p.read_text()) for p in self.out.glob("pins_*.json")]
-        self.assertTrue(all("n.npz" in p["outputs"][u] for p in pins for u in p["units"] if u.endswith("c2_central")))
+        # every unit file is covered by its process's recorded digests
+        self.assertTrue(all(c["C-PINS"]["outputs"]), c["C-PINS"])
+
+    def score(self, units):
+        return subprocess.run([sys.executable, "-B", str(HERE / "oofvc_score.py"), "--units", str(units), "--join",
+                               str(self.join_record), "--rows", str(self.rows_path), "--tree", str(tree()),
+                               "--repo", str(REPO), "--tool-commit", "HEAD"], capture_output=True, text=True)
+
+    def test_scorer_requires_full_manifests_and_the_pinned_join_record(self):
+        """A manifest missing one file, or a join record other than the one the units pinned: each fails its own
+        condition, and only that one (codex-school r3 #2, #3)."""
+        units = TD / "units_manifest"
+        if not units.exists():
+            shutil.copytree(self.out, units)
+            for p in units.glob("pins_*.json"):
+                rec = json.loads(p.read_text())
+                if "R/er" in rec["units"]:
+                    del rec["outputs"]["R/er"]["er.oofvc.json"]
+                    p.write_text(json.dumps(rec))
+        det = json.loads(self.score(units).stdout)["controls"]["C-PINS"]["detail"]
+        # in-process, one runner covers the four units, so there is one pins record
+        self.assertEqual([(d["outputs"], d["join_record"]) for d in det], [(False, True)])
+        base = json.loads(self.score(self.out).stdout)["controls"]["C-PINS"]["detail"]
+        self.assertTrue(all(d["join_record"] and d["outputs"] and d["rows"] and d["driver"] for d in base), base)
+        other = TD / "other_join.json"
+        other.write_text(self.join_record.read_text() + "\n")
+        p = subprocess.run([sys.executable, "-B", str(HERE / "oofvc_score.py"), "--units", str(self.out), "--join",
+                            str(other), "--rows", str(self.rows_path), "--tree", str(tree()), "--repo", str(REPO),
+                            "--tool-commit", "HEAD"], capture_output=True, text=True)
+        det = json.loads(p.stdout)["controls"]["C-PINS"]["detail"]
+        self.assertTrue(all(not d["join_record"] and d["outputs"] for d in det), det)
+
+    def test_scorer_catches_a_swapped_n_file(self):
+        """off's n.npz copied over R's: the output digests catch it (codex-school r2 #1, r3 #5)."""
+        units = TD / "units_swapped"
+        if not units.exists():
+            shutil.copytree(self.out, units)
+            shutil.copyfile(units / "off" / "n.npz", units / "R" / "n.npz")
+        rec = json.loads(self.score(units).stdout)
+        pins = rec["controls"]["C-PINS"]
+        self.assertFalse(all(pins["outputs"]), pins)
+        self.assertEqual(sorted(pins["outputs"]).count(False), 1)
         self.assertEqual(rec["reading"], "STOP")
         self.assertNotIn("operands", rec)
 
