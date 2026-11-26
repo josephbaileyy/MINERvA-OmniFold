@@ -1125,6 +1125,11 @@ docs/orchestration/state/2d-closeout/covfix-20261122/wrapper/role-config.example
 docs/orchestration/state/2d-closeout/covfix-20261122/wrapper/test_covfix_wrapper.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/EVW2D-DECLARATION.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/launch/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/evw2d-20261124/launch/bound/PINS.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/evw2d-20261124/launch/bound/evw2d_cleanup.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/evw2d-20261124/launch/bound/evw2d_connect.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/evw2d-20261124/launch/bound/evw2d_launch.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/evw2d-20261124/launch/bound/evw2d_post.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/launch/evw2d_cleanup.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/launch/evw2d_connect.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/launch/evw2d_launch.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
