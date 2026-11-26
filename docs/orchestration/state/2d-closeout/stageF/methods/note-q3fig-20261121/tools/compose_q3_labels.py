@@ -10,7 +10,7 @@ anything is written:
 (a) each in-cell value label of the ratio map takes the colour, white or black, that has the higher WCAG contrast
     against its cell's colour (relative luminance from the drawn image's own colormap and norm). Before the fix every
     label is black, which vanishes on the darkest cells. The color scale is not touched.
-(b) the two lower panels' y-axis label "unfolded / GENIE prior" reads "unfolded / Tune v1 prior", the caption's name
+(b) the two lower panels' y-axis label "unfolded / GENIE prior" reads "unfolded / MINERvA Tune v1 prior", the caption's name
     for the same prior (GENIE 2.12.6 + MINERvA Tune v1; the producer's weights w_truth).
 Checks (each failure stops the run): every label sits on one cell centre and prints that cell's value to 2 decimals;
 there is one label per finite cell; every label is black before the fix; the image's array, colormap, norm limits and
@@ -39,7 +39,7 @@ from matplotlib.colors import to_rgba  # noqa: E402
 from matplotlib.figure import Figure  # noqa: E402
 
 STEM = "q3_excess_projection"
-OLD_Y, NEW_Y = "unfolded / GENIE prior", "unfolded / Tune v1 prior"
+OLD_Y, NEW_Y = "unfolded / GENIE prior", "unfolded /\nMINERvA Tune v1 prior"
 WHITE, BLACK = "white", "black"
 
 
