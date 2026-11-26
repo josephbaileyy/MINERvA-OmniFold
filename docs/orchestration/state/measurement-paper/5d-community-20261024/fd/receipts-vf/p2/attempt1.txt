@@ -1,0 +1,7 @@
+V_F Phase 2 fetch, attempt 1 (FD-VF BINDING 2, #1364): STOP by design, terminal (director, 2026-11-26)
+session: login02, fetch start 2026-11-26T04:51:20Z on login02; reader 3ea593f5b9ed3b87b24e8c333c210fc4a979f847ef5b0fff94794f301cb1dfdc; list 92ba5b0d7c2d8063baa85ab2d978793760e42f67966199b0e15e8aebd87102d2
+STOP fetch: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt: directory component 'MParamFiles' is not a plain directory: [Errno 20] Not a directory: 'MParamFiles'
+fetch end 2026-11-26T04:51:22Z rc=9
+ssh rc: 9. Acks: cov2d 04:50:47Z, director-helper-3 04:50:51Z, limitation-resolver 04:50:52Z; window to 05:05:47Z.
+local partial tar: /Users/josephbailey/vf-p2-fetch-20261126.tar, 8516608 bytes, sha256 22ffcba3b83ebe844ac6f7d068e0edbad621dd15446fcca1abb49764487d363f, 112 members (list rows 1-112);
+never verified or extracted; deleted on the director's ruling 4 (2026-11-26).

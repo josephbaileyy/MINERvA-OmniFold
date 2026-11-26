@@ -37,7 +37,13 @@ READERS = {"g2r_universes_dir": "604", "cv2d": "533", "playlist": "531", "q2d": 
            "staged_flux_source": "614"}
 XK_LOCAL = {"minos_rescaled", "v0", "v1", "universes_identity_check"}    # committed, or never read by K
 NEVER = ("universes_full.root", "bkg_dump.npz")                          # never fetched or hashed
-N_ROWS, N_BYTES = 403, 1595650936                                        # the mapped list (codex-school, 2026-11-26)
+# the mapped list (codex-school, 2026-11-26), less the NuE constraint (FD-VF BINDING 2b, the director's ruling 1): its
+# /pscratch path runs through a symlinked directory (MParamFiles; attempt 1's STOP), and a byte-identical copy is committed
+NUE_PATH = PS + "MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"
+NUE_LOCAL = ("docs/orchestration/state/ben-b-20261124/blocks5d-20261124/run-20261124/session/records/fetch-b5d/"
+             "sorted_NuEConstraint_FHC_RHC_IMD.txt", "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2")
+LOCAL_COPIES = {NUE_PATH: NUE_LOCAL}
+N_ROWS, N_BYTES = 402, 1595650936 - 25403
 HEADER = ("path", "sha256", "pin_source", "size_bytes", "reader_file_line", "recompute")
 
 
@@ -99,6 +105,10 @@ def fetch_rows() -> list:
             raise Stop(f"{path}: not an EXISTS row equal to its pin ({status}, {size})")
         if any(path.endswith(x) for x in NEVER) or Path(path).name == "data_b-_j-.npz":
             raise Stop(f"{path}: a file the fetch never reads")
+        if path in LOCAL_COPIES:                      # held locally at its pin: not fetched
+            if pin != LOCAL_COPIES[path][1] or sha256_file(ROOT / LOCAL_COPIES[path][0]) != pin:
+                raise Stop(f"{path}: the committed copy is not its pin")
+            continue
         rows.append((path, pin, src[1], size, reader, recompute))
     rows.sort()
     if len(rows) != len({r[0] for r in rows}) or len(rows) != N_ROWS or sum(int(r[3]) for r in rows) != N_BYTES:
@@ -822,7 +832,7 @@ def xk_replay(XS, GC, fetch_dir: Path, run_dir: Path, subst: dict, log: list, ca
         s_ = str(path)
         if not s_.startswith(PS_PREFIX):
             return orig_read(path)
-        q = fetch_dir / s_[len(PS_PREFIX):]
+        q = (ROOT / LOCAL_COPIES[s_][0]) if s_ in LOCAL_COPIES else fetch_dir / s_[len(PS_PREFIX):]
         if q.is_symlink() or not q.is_file():
             raise Stop(f"xk remap: {s_} -> {q} is missing or not a regular file")
         data = q.read_bytes()
@@ -900,6 +910,7 @@ def p2_xk(vf, fetch_dir):
             rec["old"]["achieved"] = p_control("xk", got, want, RTOL_EXACT)
             rec["cr_vf_bytes"] = (json.dumps(p2_overlap("cr", CR, vf), indent=1) + "\n").encode()
     lst = {r[0]: (int(r[3]), r[1]) for r in fetch_rows() if "xk" in r[5]}
+    lst.update({k: ((ROOT / v[0]).stat().st_size, v[1]) for k, v in LOCAL_COPIES.items()})   # the committed copies
     for arm in ("old", "vf"):
         got = {p_: (n, s_) for p_, n, s_ in rec[arm]["log"]}
         if set(got) - set(lst) or any(got[k] != lst[k] for k in got):

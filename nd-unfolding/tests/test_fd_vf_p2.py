@@ -29,7 +29,9 @@ def run(argv):
 class FetchList(unittest.TestCase):
     def test_the_list_is_the_mapped_one(self):
         rows = P.fetch_rows()
-        self.assertEqual((len(rows), sum(int(r[3]) for r in rows)), (403, 1595650936))
+        self.assertEqual((len(rows), sum(int(r[3]) for r in rows)), (402, 1595625533))
+        self.assertNotIn(P.NUE_PATH, [r[0] for r in rows])                      # held locally (binding 2b)
+        self.assertEqual(P.sha256_file(REPO / P.NUE_LOCAL[0]), P.NUE_LOCAL[1])
         paths = [r[0] for r in rows]
         self.assertFalse([p for p in paths if p.endswith(("universes_full.root", "bkg_dump.npz", "data_b-_j-.npz"))])
         self.assertTrue(all(p.startswith(P.PS) for p in paths))
@@ -38,7 +40,7 @@ class FetchList(unittest.TestCase):
         self.assertIn(("/pscratch/sd/j/josephrb/fd-prr-20261108/route2/route2.npz"), paths)
 
     def test_a_changed_count_or_total_refuses(self):
-        for k, v in (("N_ROWS", 402), ("N_BYTES", 1)):
+        for k, v in (("N_ROWS", 401), ("N_BYTES", 1)):
             with mock.patch.object(P, k, v), self.assertRaises(P.Stop):
                 P.fetch_rows()
 
@@ -141,7 +143,9 @@ class Reader(unittest.TestCase):
         lst = self.f.list_text().replace(f"\t{len(b'')}\t", "\t")      # sizes/shas follow the link target
         r = subprocess.run([sys.executable, "-I", str(self.f.reader)], input=lst.encode(), capture_output=True)
         self.assertEqual(r.returncode, 9, r.stderr)
-        self.assertIn(b"O_NOFOLLOW", r.stderr)
+        self.assertIn(b"pre-flight", r.stderr)
+        self.assertIn(b"is a symlink", r.stderr)
+        self.assertEqual(r.stdout, b"")                    # refused before any byte was streamed
         q.unlink()
         real.rename(q)
         bad = self.f.list_text().replace(f"{self.f.base}/d0/f0.bin", f"{self.f.base}/d0/universes_full.root")
@@ -160,7 +164,9 @@ class Reader(unittest.TestCase):
         before = os.lstat(d).st_atime_ns
         r = subprocess.run([sys.executable, "-I", str(self.f.reader)], input=lst.encode(), capture_output=True)
         self.assertEqual(r.returncode, 9, r.stderr)
-        self.assertIn(b"not a plain directory", r.stderr)
+        self.assertIn(b"pre-flight", r.stderr)
+        self.assertIn(b"is a symlink", r.stderr)
+        self.assertEqual(r.stdout, b"")
         self.assertEqual(os.lstat(d).st_atime_ns, before)
         d.unlink()
         real.rename(d)
@@ -171,7 +177,22 @@ class Reader(unittest.TestCase):
                            timeout=20)
         self.assertEqual(r.returncode, 9, r.stderr)
         self.assertIn(b"not a regular file", r.stderr)
+        self.assertEqual(r.stdout, b"")
         fifo.unlink()
+
+    def test_the_pre_flight_lists_every_offender_before_streaming_anything(self):
+        rels = list(self.f.files)
+        lst = self.f.list_text()
+        for rel in rels[:2]:                              # two offenders: a symlinked final file, a missing file
+            q = self.f.files[rel]
+            real = q.with_name(q.name + ".real")
+            q.rename(real)
+        q0 = self.f.files[rels[0]]
+        q0.symlink_to(q0.with_name(q0.name + ".real"))
+        r = subprocess.run([sys.executable, "-I", str(self.f.reader)], input=lst.encode(), capture_output=True)
+        self.assertEqual(r.returncode, 9, r.stderr)
+        self.assertIn(b"2 offender(s)", r.stderr)
+        self.assertEqual(r.stdout, b"")
 
     def test_a_symlinked_base_stops(self):
         link = self.f.t / "baselink"
@@ -180,9 +201,13 @@ class Reader(unittest.TestCase):
         rd = self.f.t / "reader2.py"
         rd.write_text(src)
         lst = self.f.list_text().replace(f"{self.f.base}/", f"{link}/")
+        before = os.lstat(link).st_atime_ns
         r = subprocess.run([sys.executable, "-I", str(rd)], input=lst.encode(), capture_output=True)
         self.assertEqual(r.returncode, 9, r.stderr)
+        self.assertIn(b"pre-flight, before any file was opened", r.stderr)
         self.assertIn(b"not a plain directory", r.stderr)
+        self.assertEqual(r.stdout, b"")
+        self.assertEqual(os.lstat(link).st_atime_ns, before)
 
     def test_a_path_outside_the_base_or_a_bad_header_stops(self):
         bad = self.f.list_text().replace(f"{self.f.base}/d0", "/etc/d0")

@@ -60,6 +60,42 @@ def open_nofollow(path):
         os.close(d)
 
 
+def preflight(paths):
+    """Before any file is opened: lstat every component below BASE of every listed path (lstat moves no atime and no
+    link is read). Any symlink, missing component, non-directory parent or non-regular final file refuses, listing
+    every offender."""
+    try:                              # BASE first: its children are never stat'ed through a symlinked BASE
+        bst = os.lstat(BASE.rstrip("/"))
+    except OSError as e:
+        stop("pre-flight: %s (%s)" % (BASE, e.strerror))
+    if stat.S_ISLNK(bst.st_mode) or not stat.S_ISDIR(bst.st_mode):
+        stop("pre-flight, before any file was opened: %s is not a plain directory" % BASE)
+    bad = []
+    for path in paths:
+        if not path.startswith(BASE):
+            bad.append("%s: not under %s" % (path, BASE))
+            continue
+        cur = BASE.rstrip("/")
+        parts = path[len(BASE):].split("/")
+        for i, comp in enumerate(parts):
+            cur = cur + "/" + comp
+            try:
+                st = os.lstat(cur)
+            except OSError as e:
+                bad.append("%s: %s (%s)" % (path, cur, e.strerror))
+                break
+            if stat.S_ISLNK(st.st_mode):
+                bad.append("%s: %s is a symlink" % (path, cur))
+                break
+            last = i == len(parts) - 1
+            if (last and not stat.S_ISREG(st.st_mode)) or (not last and not stat.S_ISDIR(st.st_mode)):
+                bad.append("%s: %s is not a %s" % (path, cur, "regular file" if last else "directory"))
+                break
+    if bad:
+        stop("pre-flight, before any file was opened: %d offender(s):\n  %s" % (len(bad), "\n  ".join(bad)))
+    sys.stderr.write("pre-flight: %d listed paths, every component a plain directory or regular file\n" % len(paths))
+
+
 def main():
     if not hasattr(os, "O_NOATIME"):
         stop("this platform has no O_NOATIME", 2)
@@ -69,6 +105,12 @@ def main():
     rows = [ln.split("\t") for ln in lines[1:] if ln]
     if any(len(r) != 6 for r in rows) or len(set(r[0] for r in rows)) != len(rows):
         stop("the list is malformed or repeats a path")
+    for path in (r[0] for r in rows):                 # what may be listed at all, before anything is stat'ed
+        if not path.startswith(BASE) or ".." in path.split("/"):
+            stop("%s is not under %s" % (path, BASE))
+        if os.path.basename(path) in NEVER or path.endswith(NEVER):
+            stop("%s is a file the fetch never reads" % path)
+    preflight([r[0] for r in rows])
     tf = tarfile.open(fileobj=sys.stdout.buffer, mode="w|", format=tarfile.PAX_FORMAT)
     total = 0
     for path, sha, _, size, _, _ in rows:

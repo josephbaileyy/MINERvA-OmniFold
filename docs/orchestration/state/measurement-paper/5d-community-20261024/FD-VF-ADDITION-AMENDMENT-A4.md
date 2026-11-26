@@ -63,6 +63,14 @@ changes. Only inputs are substituted, and only in the replaying process:
   - Every remapped read is logged (path, size, sha256). The logged set must be a subset of the bound fetch list's xk
     entries, at their pins; listed entries the replay never reads are named.
   - Every pin, key and sha check is the producer's own.
+  - **One exact-path entry (FD-VF BINDING 2b, the director's ruling 1).** The NuE flux constraint's path,
+    `/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt`,
+    maps to the committed byte-identical copy
+    `docs/orchestration/state/ben-b-20261124/blocks5d-20261124/run-20261124/session/records/fetch-b5d/sorted_NuEConstraint_FHC_RHC_IMD.txt`
+    (B5D's fetch record; sha256 `e38ad7d2…`, equal to the pin).
+    - That NERSC path runs through a symlinked directory (`MParamFiles`); the fetch's first attempt stopped on it by
+      design, so the file is not fetched.
+    - K's own pin check still applies, and the read is logged like every other remapped read.
 - **(ii) A local run directory.** It holds hardlinks to the fetched `cov2d-xk-g2r-20261116/run` copy, plus the
   committed `fd/xcov/run/v0-a1/v0.json` and `v1-a2/v1.json`. Their sha256 must equal `NODE-SHA256.txt`'s run copy.
   - The file list and shas are recorded before and after.
