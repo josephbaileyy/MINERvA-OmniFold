@@ -647,6 +647,156 @@ def sha256_file(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 
+# prr: prr_read's grade functions, imported unchanged. Its grade matrices (grade_matrices, with its own C-CT control)
+# get + DeltaC_e/ff; the (e) records are regraded from their committed r with N = 0; the IBU records from route2.npz's
+# estimates against its own truths (C-IBU held them equal to (e)'s to 1e-12); then readings() re-reads PR-1..PR-3
+PRR = (f"{D5}/fd/receipts-prr/read/cluster/readout.json", "9238f22b")
+FETCHED = {"route2.json": ("fd-prr-20261108/route2/route2.json", "ac6b1940659c6ae4"),
+           "route2.npz": ("fd-prr-20261108/route2/route2.npz", "759be4ab28cc1095")}
+
+
+def fetched(fetch_dir, name):
+    rel, pin = FETCHED[name]
+    path = Path(fetch_dir) / rel
+    if not path.is_file() or not sha256_file(path).startswith(pin):
+        raise Stop(f"fetched {rel}: missing or not its pinned bytes")
+    return path
+
+
+def p2_prr(vf, fetch_dir):
+    sys.path.insert(0, str(ROOT / "nd-unfolding/prior_retention"))
+    import prr_read as PR
+    import prr_ibu as RI
+    committed, h = pinned_json(PRR)
+    mats_old, f, _ = PR.grade_matrices(ROOT)
+    dFr = np.asarray(vf["matrices"]["DeltaC_e"], float) / np.outer(f, f)
+    mats_new = {t: M + dFr for t, M in mats_old.items()}
+    out = json.loads(json.dumps(committed))
+    q_old, q_new, w = {}, {}, 0.0
+    for key, rec in committed["table"].items():
+        lv, t, sd = key.split("/")
+        r = np.asarray(rec["r"], float)
+        g_old = json.loads(json.dumps(PR.table_ii(r, mats_old[t])))
+        w = max(w, p_control(f"prr (e) {key}", g_old, rec["grade"], RTOL_EXACT))
+        g_new = json.loads(json.dumps(PR.table_ii(r, mats_new[t])))
+        out["table"][key]["grade"] = g_new
+        q_old[(lv, t, int(sd[1:]))] = dict(rec, grade=g_old)
+        q_new[(lv, t, int(sd[1:]))] = dict(rec, grade=g_new)
+    rec2 = json.loads(fetched(fetch_dir, "route2.json").read_text())
+    with np.load(fetched(fetch_dir, "route2.npz"), allow_pickle=False) as z:
+        arr = {k: np.asarray(z[k]) for k in z.files if k != "meta"}
+    ks = [int(k) for k in rec2["ks"]]
+    qi_old, qi_new, wi = {}, {}, 0.0
+    for t, sd in RI.experiments():
+        key = f"{t}_s{sd}"
+        F, xt = arr[f"{key}__F_{RI.VARIANT}"], np.asarray(arr[f"{key}__X_true"], float)
+        for i, k in enumerate(ks):
+            ck = f"K{k}/{t}/s{sd}"
+            r = np.asarray(F[i], float) / xt - 1
+            g_old = json.loads(json.dumps(PR.table_ii(r, mats_old[t])))
+            wi = max(wi, p_control(f"prr IBU {ck}", g_old, committed["ibu"][ck]["grade"], RTOL_IBU))
+            g_new = json.loads(json.dumps(PR.table_ii(r, mats_new[t])))
+            out["ibu"][ck]["grade"] = g_new
+            qi_old[(k, t, sd)] = dict(committed["ibu"][ck], grade=g_old)
+            qi_new[(k, t, sd)] = dict(committed["ibu"][ck], grade=g_new)
+    p_control("prr readings", json.loads(json.dumps(PR.readings(q_old, qi_old))), committed["readings"], RTOL_EXACT)
+    out["readings"] = json.loads(json.dumps(PR.readings(q_new, qi_new)))
+    out["vf_patch"] = {"readout": PRR[0], "readout_sha256": h,
+                       "replaced": ["/table/*/grade", "/ibu/*/grade", "/readings"],
+                       "matrices": "each truth's F0b grade matrix (prr_read.grade_matrices) + DeltaC_e/ff",
+                       "fetched": {k: v[0] for k, v in FETCHED.items()}, "control_P": "PASS",
+                       "control_P_tolerance": {"(e)": {"rtol": RTOL_EXACT, "achieved_max": w},
+                                               "IBU": {"rtol": RTOL_IBU, "achieved_max": wi,
+                                                       "why": "route2's truths, equal to (e)'s to 1e-12 (C-IBU)"}}}
+    return out
+
+
+# rsnregrade, rsn: rsn_regrade.run()'s composition (rsn/rsn_regrade.py:233-294) with its functions imported unchanged, X
+# then X_F = X + DeltaC_e; NC-R reproduces the committed F1 (OLD) and Phase 1's V_F F1 (V_F); then rsn_read.read, with
+# the V_F F1's sigma under rsn_read.SIGMA_KEY's name in this process's copy
+RSN_DIR = f"{D5}/fd/referee-sensitivity-20261111"
+RSN_REGRADE = (f"{RSN_DIR}/connect-post/run-20261112/regrade.json", "cb5f5d17")
+RSN_READOUT = (f"{RSN_DIR}/connect-post/run-20261112/rsn_readout.json", "6291f48d")
+RSN_CMODEL_NPZ = (f"{RSN_DIR}/connect-post/run-20261112/cmodel/rsn_cmodel.npz", "faa9d01f")
+RSN_CMODEL_JSON = (f"{RSN_DIR}/connect-post/run-20261112/cmodel/rsn_cmodel.json", "9d2d315f")
+RSN_PREP = (f"{RSN_DIR}/connect1/run-20261112/prep.json", "db61ae8c")        # inputs.tsv (#1327)
+F1_TABLE = ("docs/orchestration/state/ben-b-20261124/selection-20261124/record/selection/fd_f1_experiments.npz", "997c7dae")
+NUE = ("docs/orchestration/state/ben-b-20261124/blocks5d-20261124/run-20261124/session/records/fetch-b5d/"
+       "sorted_NuEConstraint_FHC_RHC_IMD.txt", "e38ad7d28354d071")
+VF_F1_WITH = (f"{D5}/fd/with-vf/readout/vf-with-S/fd_f1_readout.json", "bd36a2aa")
+OLD_F1_WITH = (f"{D5}/fd/with-cpl/readout/fd_f1_readout.json", "5ccc89e5")
+FETCHED["s1_assembly.npz"] = ("s1-20261024/s1_assembly.npz", "db000707780d4d6d")
+
+
+def p2_rsn(vf, fetch_dir):
+    sys.path.insert(0, str(ROOT / "nd-unfolding/rsn"))
+    import rsn_regrade as RG
+    import rsn_read as RR
+    R = RG.R
+    reg_c, hg = pinned_json(RSN_REGRADE)
+    read_c, hr = pinned_json(RSN_READOUT)
+    for rel_pin in (F1_TABLE, RSN_CMODEL_NPZ, NUE):
+        if not sha256_file(ROOT / rel_pin[0]).startswith(rel_pin[1]):
+            raise Stop(f"{rel_pin[0]}: not its pinned bytes")
+    s1p = fetched(fetch_dir, "s1_assembly.npz")
+    TR = RG.truths(RG.F1_PREP_SUMS)
+    RG.require(RG.F1_PREP_SUMS, RG.PINS["f1_prep_sums"], "f1_prep_sums")
+    with np.load(ROOT / F1_TABLE[0], allow_pickle=False) as z:
+        table = {k: z[k] for k in z.files}
+    w_all = R.sa.flux_weights(ROOT / NUE[0])
+    with np.load(s1p, allow_pickle=False) as z:
+        f = np.asarray(z["f"], float)
+        Ce, Cstat = np.asarray(z["C_e"], float), np.asarray(z["C_stat"], float)
+    with np.load(ROOT / CPL_BLOCK[0], allow_pickle=False) as z:
+        Cx = np.asarray(z[RG.EXTRA_KEY], float)
+    if not np.array_equal(np.asarray(vf["f"], float), f):
+        raise Stop("rsn: the V_F product's f is not S1's")
+    ff = np.outer(f, f)
+    Ce_rel, Cstat_rel = Ce / ff, Cstat / ff
+    S0 = np.asarray(json.loads(RG.CMODEL_JSON.read_text())["S"], float)
+    est, ctrl = RG.estimates(TR, table, w_all)
+    with np.load(ROOT / RSN_CMODEL_NPZ[0], allow_pickle=False) as z:
+        arms = {k[2:]: np.asarray(z[k], float) for k in z.files if k.startswith("S_")}
+    cm, _ = pinned_json(RSN_CMODEL_JSON)
+
+    def regrade(Cx_rel, f1):
+        out = {name: RG.grade_all(TR, est, ctrl, S, Ce_rel, Cstat_rel, Cx_rel) for name, S in arms.items()}
+        RG.reproduce(out["nominal"], ctrl, f1)                       # NC-R
+        if "G6" in out:
+            RG.invariant_g6(out["nominal"], out["G6"], S0, arms["G6"])  # C-INV
+        return {"offset_control_7": ctrl, "arms": out, "wr_directions": RG.wr_directions(cm, Ce_rel, S0, Cx_rel)}
+
+    f1_old, f1_vf = pinned_json(OLD_F1_WITH)[0], pinned_json(VF_F1_WITH)[0]
+    old = json.loads(json.dumps(regrade(Cx / ff, f1_old)))
+    w1 = p_control("rsnregrade", old, {k: reg_c[k] for k in old}, RTOL_EXACT)
+    new = json.loads(json.dumps(regrade((Cx + np.asarray(vf["matrices"]["DeltaC_e"], float)) / ff, f1_vf)))
+    prep, _ = pinned_json(RSN_PREP)
+    i0 = json.loads(RR.I0.read_text())
+    cmodel = json.loads(RR.CMODEL_JSON.read_text())
+    rd_old = json.loads(json.dumps(RR.read(prep, cm, dict(reg_c, **old), i0, cmodel, f1_old)))
+    w2 = p_control("rsn", rd_old, read_c, RTOL_EXACT)
+    f1_alias = json.loads(json.dumps(f1_vf))
+    f1_alias[RR.SIGMA_KEY] = f1_alias["relative_sigma_plus_C_resp + C_PL5D + DeltaC_e"]
+    rd_new = json.loads(json.dumps(RR.read(prep, cm, dict(reg_c, **new), i0, cmodel, f1_alias)))
+    reg_out = dict(json.loads(json.dumps(reg_c)), **new)
+    reg_out["vf_patch"] = {"readout": RSN_REGRADE[0], "readout_sha256": hg,
+                           "replaced": ["/arms", "/wr_directions", "/offset_control_7"],
+                           "matrices": "X_F = C_resp_plus_C_PL5D_plus_DeltaC_e (relative)",
+                           "NC-R": "the nominal arm reproduces Phase 1's V_F F1 (" + VF_F1_WITH[0] + ")",
+                           "fetched": FETCHED["s1_assembly.npz"][0], "control_P": "PASS",
+                           "control_P_tolerance": {"rtol": RTOL_EXACT, "achieved_max": w1}}
+    read_out = dict(rd_new)
+    read_out["vf_patch"] = {"readout": RSN_READOUT[0], "readout_sha256": hr, "replaced": ["/"],
+                            "inputs": {"regrade": "rsnregrade.vf.json", "f1": VF_F1_WITH[0] + f" (its sigma under "
+                                       f"{RR.SIGMA_KEY})"}, "control_P": "PASS",
+                            "control_P_tolerance": {"rtol": RTOL_EXACT, "achieved_max": w2}}
+    return {"rsnregrade": reg_out, "rsn": read_out}
+
+
+RTOL_IBU = 1e-9         # PENDING: measured after the fetch; route2's truths differ from (e)'s by <= 1e-12 (C-IBU)
+P2_FETCH = {"prr": p2_prr, "rsn": p2_rsn}
+
+
 P2 = {"eav": p2_eav, "e2": p2_e2, "e2sens": p2_e2sens, "vatlas": p2_vatlas, "gch": lambda vf: p2_compare("gch", GCH, vf),
       "gdefs": lambda vf: p2_compare("gdefs", GDEFS, vf, gdefs_extra),
       "gnat": lambda vf: p2_compare("gnat", GNAT, vf), "gover": lambda vf: p2_overlap("gover", GOVER, vf),
@@ -659,8 +809,15 @@ def cmd_p2(a) -> int:
     if out.exists():
         raise Stop(f"{out} exists (no overwrite)")
     results = {}
-    for name in (a.only or list(P2)):
-        results[name] = P2[name](vf)
+    names = a.only or (list(P2) + (list(P2_FETCH) if a.fetch_dir else []))
+    for name in names:
+        if name in P2_FETCH:
+            if not a.fetch_dir:
+                raise Stop(f"{name} needs --fetch-dir (the verified fetch)")
+            r = P2_FETCH[name](vf, a.fetch_dir)
+            results.update(r if "vf_patch" not in r else {name: r})
+        else:
+            results[name] = P2[name](vf)
     out.mkdir(parents=True)
     for name, r in results.items():
         r["vf_patch"]["vf_data_product_sha256"] = vh
@@ -759,7 +916,8 @@ def build_args(argv=None):
     v.add_argument("--dest", type=Path, required=True)
     q = sub.add_parser("p2")
     q.add_argument("--out-dir", type=Path)
-    q.add_argument("--only", nargs="+", choices=sorted(P2))
+    q.add_argument("--only", nargs="+", choices=sorted(P2) + ["prr", "rsn"])
+    q.add_argument("--fetch-dir", type=Path, help="the verified fetch (fetch-verify's --dest)")
     return ap.parse_args(argv)
 
 
