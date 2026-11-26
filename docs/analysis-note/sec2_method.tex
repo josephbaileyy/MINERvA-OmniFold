@@ -7,7 +7,7 @@
 \label{sec:minerva-data}
 \label{sec:experiment}
 
-MINERvA was a fine-grained scintillator detector in the NuMI beam at Fermilab, immediately upstream of the MINOS near detector~\cite{MINERvA:2013zvz}. The central scintillator tracker provides the hydrocarbon target and reconstructs the interaction vertex and outgoing charged tracks. The tracker and electromagnetic calorimeter measure energy deposited by the hadronic recoil. The downstream MINOS spectrometer measures the charge and momentum of muons matched to MINERvA tracks. We use the medium-energy neutrino-mode exposure, taken with forward horn current, for which the mean neutrino energy is about \SI{6}{GeV}~\cite{MINERvA:2016iqn}. The flux is the prediction used for the published cross section. It includes the PPFX hadron-production reweighting of the NuMI simulation and the constraint from neutrino--electron scattering~\cite{MINERvA:2016iqn,MINERvA:2021owq}.
+MINERvA was a fine-grained scintillator detector in the NuMI beam at Fermilab, immediately upstream of the MINOS near detector~\cite{MINERvA:2013zvz}. The central scintillator tracker provides the hydrocarbon target and reconstructs the interaction vertex and outgoing charged tracks. The tracker and electromagnetic calorimeter measure energy deposited by the hadronic recoil. The downstream MINOS spectrometer measures the charge and momentum of muons matched to MINERvA tracks. The exposure was taken with forward horn current. We use the published flux prediction, which includes the PPFX hadron-production reweighting of the NuMI simulation and the neutrino--electron scattering constraint~\cite{MINERvA:2016iqn,MINERvA:2021owq}.
 
 \phantomsection
 \label{sec:evloop}
@@ -15,14 +15,14 @@ The analyzed files span twelve run periods and contain $1.0574\times10^{21}$ pro
 
 \phantomsection
 \label{sec:selection}
-The signal follows the published inclusive charged-current (CC) $\nu_\mu$ definition on hydrocarbon~\cite{MINERvA:2021owq}. The true vertex must lie within the central tracker fiducial volume, $5980<z<\SI{8422}{mm}$ and within an apothem of \SI{850}{mm}. This volume contains $3.2353\times10^{30}$ nucleons. The true muon must satisfy
+We set $c=1$ in kinematic formulas throughout and retain $\mathrm{GeV}/c$ when reporting momenta. The signal follows the published inclusive charged-current (CC) $\nu_\mu$ definition on hydrocarbon~\cite{MINERvA:2021owq}. The true vertex must lie within the central tracker fiducial volume, $5980<z<\SI{8422}{mm}$ and within an apothem of \SI{850}{mm}. This volume contains $3.2353\times10^{30}$ nucleons. The true muon must satisfy
 \begin{equation}
   \theta_\mu<20^\circ,\quad
   1.5<p_\parallel<\SI{60}{GeV/c},\quad
   p_T<\SI{4.5}{GeV/c} .
   \label{eq:muon-fiducial}
 \end{equation}
-The reconstructed selection requires a vertex in the same fiducial volume and a muon at $\theta_\mu<20^\circ$ matched to a successfully fitted MINOS track. Antineutrino candidates and events overlapping detector dead time are rejected. These requirements apply at every unfolding dimension. The background template includes selected neutral-current events, other-flavor or wrong-sign CC interactions, interactions outside the fiducial volume, and CC $\nu_\mu$ events that enter the reconstructed sample from outside the true muon phase space. On the 2D reconstructed grid, the template accounts for \SI{2.91}{\percent} of the selected data yield, ranging from \SI{2.72}{\percent} to \SI{3.23}{\percent} across run periods.
+The reconstructed selection requires a vertex in the same fiducial volume and a muon at $\theta_\mu<20^\circ$ matched to a successfully fitted MINOS track. We reject antineutrino candidates and events overlapping detector dead time in every unfolding. The simulated background includes selected neutral-current events, other-flavor or wrong-sign CC interactions, interactions outside the fiducial volume, and CC $\nu_\mu$ events that enter the reconstructed sample from outside the true muon phase space. On the 2D reconstructed grid, this background accounts for \SI{2.91}{\percent} of the selected data yield, ranging from \SI{2.72}{\percent} to \SI{3.23}{\percent} across run periods.
 
 \phantomsection
 \label{sec:controlplots}
@@ -31,7 +31,7 @@ Figure~\ref{fig:control} compares data and simulation at reconstruction level. A
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{control_plots}
-  \caption{The data yield is about \SI{12}{\percent} higher than the sum of simulated signal and background at the data exposure, and the data-to-simulation ratio in $p_T$ rises from 0.88 in the lowest bin to about 1.2 above \SI{1}{GeV/c}. The panels show reconstructed $p_T$, $p_\parallel$, $E_{\mathrm{avail}}$, $q_3$, and $W$ in data and simulation. Axis breaks mark the compressed final bins in $E_{\mathrm{avail}}$, $q_3$, and $W$, each with upper edge 100 in the units shown.}
+  \caption{The data yield is about \SI{12}{\percent} higher than the sum of simulated signal and background at the data exposure, and the data-to-simulation ratio in $p_T$ rises from 0.88 in the lowest bin to about 1.2 above \SI{1}{GeV/c}. The panels show reconstructed $p_T$, $p_\parallel$, $E_{\mathrm{avail}}$, $q_3$, and $W$ before unfolding. The legend's MnvTune v1 is MINERvA Tune v1. Axis breaks mark the compressed final bins in $E_{\mathrm{avail}}$, $q_3$, and $W$, each with upper edge 100 in the units shown.}
   \label{fig:control}
 \end{figure}
 
@@ -39,7 +39,7 @@ Figure~\ref{fig:control} compares data and simulation at reconstruction level. A
 \label{sec:observable-definitions}
 \label{sec:eavailw-definitions}
 
-At truth and reconstruction level, the muon observables are $p_T=p_\mu\sin\theta_\mu$ and $p_\parallel=p_\mu\allowbreak\cos\theta_\mu$, with $\theta_\mu$ measured from the beam axis. The reconstructed values use the MINERvA--MINOS matched muon. In the remaining definitions we use units with $c=1$.
+At truth and reconstruction level, the muon observables are $p_T=p_\mu\sin\theta_\mu$ and $p_\parallel=p_\mu\allowbreak\cos\theta_\mu$, with $\theta_\mu$ measured from the beam axis. The reconstructed values use the MINERvA--MINOS matched muon.
 
 \phantomsection
 \label{sec:3d-method}
@@ -56,7 +56,8 @@ The true available energy is a sum over final-state protons, charged and neutral
   \label{eq:available-energy-true}
   \csname ltx@label\endcsname{eq:eavail-implemented}
 \end{equation}
-The sum counts proton kinetic energy and the full energy of neutral pions and photons. The charged-pion term uses a fixed \SI{135}{MeV} offset. Neutrons and all other species outside the sum are omitted, so $E_{\mathrm{avail}}$ captures only part of the hadronic energy transfer. The reconstructed quantity uses the tracker and electromagnetic calorimeter (ECAL) deposits after removing energy attributed to the muon,
+The sum counts proton kinetic energy and the full energy of neutral pions and photons. Following the MINERvA analysis software, the charged-pion term subtracts \SI{135}{MeV}, the neutral-pion mass, rather than the charged-pion mass of \SI{139.57}{MeV}. Using the charged-pion mass instead shifts the \resSixteen{} (Sec.~\ref{sec:fived16}) by at most \fvval{eav-cellmax} standard deviations in any cell. Neutrons and all other species outside the sum are omitted, so $E_{\mathrm{avail}}$ captures only part of the hadronic energy transfer. The reconstructed quantity uses the tracker and electromagnetic calorimeter (ECAL) deposits after removing energy attributed to the muon,
+% 2026-11-25 (Joseph: phrase the pion constant and W^true alike, both MINERvA software conventions; CVUniverse.h mass_pion=135, GetTrueExperimentersW): 135 MeV is the neutral-pion mass (docs/EAVAIL_DEFINITION.md sec. 3); the cell shift is eav-cellmax (values_fived16.tex), ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md sec. 7, kept per DECISION-20261101-joseph-eavail-keep-135.md item 1.
 \begin{equation}
   E_{\mathrm{avail}}^{\mathrm{reco}} =
   1.17 \sum_d \bigl(E_{\mathrm{dep}}^d-E_{\mu,\mathrm{dep}}^d\bigr),
@@ -65,7 +66,7 @@ The sum counts proton kinetic energy and the full energy of neutral pions and ph
 \end{equation}
 where $d$ runs over the tracker and ECAL. The reconstruction retains negative values of this estimator.
 
-The true magnitude of the three-momentum transfer is $q_3^{\mathrm{true}}=\sqrt{Q^2+(E_\nu-E_\mu)^2}$, with $Q^2=-(k-k')^2$ evaluated from the generator neutrino and muon four-momenta $k$ and $k'$. \phantomsection\label{sec:eavailw-axis}For the true hadronic invariant-mass estimator we use
+The true magnitude of the three-momentum transfer is $q_3^{\mathrm{true}}=\sqrt{Q^2+(E_\nu-E_\mu)^2}$, with $Q^2=-(k-k')^2$ evaluated from the generator neutrino and muon four-momenta $k$ and $k'$. \phantomsection\label{sec:eavailw-axis}Following the MINERvA analysis software, we compute the true hadronic invariant mass from the true neutrino and muon kinematics as if the neutrino had scattered on a free nucleon at rest,
 %
 \begin{equation}
   W^{\mathrm{true}} = \bigl[
@@ -73,9 +74,9 @@ The true magnitude of the three-momentum transfer is $q_3^{\mathrm{true}}=\sqrt{
   \bigr]^{1/2},
   \label{eq:hadronic-mass-true}
 \end{equation}
-where $M$ is the struck-nucleon mass and the last term uses the massless-muon approximation for $Q^2$. Events with a negative radicand account for $4.9\times10^{-5}$ of the simulated signal weight and are excluded from the five-observable truth sample and its normalization.
+where $M$ is the struck proton or neutron mass when identified, and otherwise the effective nucleon mass $\bar M=(1.5M_n+M_p)/2.5$ that also enters the reconstructed $W$. The last term is $Q^2$ with the muon mass neglected, unlike the exact $Q^2$ in $q_3^{\mathrm{true}}$. This $W^{\mathrm{true}}$ is therefore a function of the lepton kinematics, not the invariant mass of the produced hadrons, which nuclear motion, binding and final-state interactions also change. Events with a negative radicand account for $4.9\times10^{-5}$ of the simulated signal weight and are excluded from the five-observable truth sample and its normalization.
 
-The four detector quantities used in reconstruction are the transverse and longitudinal muon momenta $p_T$ and $p_\parallel$, the available hadronic energy $E_{\mathrm{avail}}$, and the calorimetric recoil $q_0^{\mathrm{reco}}$. The calorimetric recoil estimates the energy transfer without the factor 1.17 in Eq.~\eqref{eq:available-energy-reco}. It combines with the muon kinematics to give both $q_3^{\mathrm{reco}}$ and $W^{\mathrm{reco}}$ through
+The four detector quantities used in reconstruction are the transverse and longitudinal muon momenta $p_T$ and $p_\parallel$, the available hadronic energy $E_{\mathrm{avail}}$, and the calorimetric recoil $q_0^{\mathrm{reco}}$. The calorimetric recoil is read from a separate energy-transfer estimate and combines with the muon kinematics to give $q_3^{\mathrm{reco}}$ and $W^{\mathrm{reco}}$ through
 \begin{equation}
   \begin{aligned}[b]
     E_\nu^{\mathrm{reco}} &= E_\mu+q_0^{\mathrm{reco}},\\
@@ -88,7 +89,7 @@ The four detector quantities used in reconstruction are the transverse and longi
   \label{eq:transfer-mass-reco}
   \csname ltx@label\endcsname{eq:shared-reco-inputs}
 \end{equation}
-where $m_\mu$ is the muon mass and $\bar M=(1.5M_n+M_p)/2.5$ is the effective nucleon mass used in reconstruction. The inputs $(p_T,p_\parallel,q_3^{\mathrm{reco}})$ fix $W^{\mathrm{reco}}$, including its assignment to zero for \SI{1.5}{\percent} of simulated events, so $W$ adds no independent detector input.
+where $m_\mu$ is the muon mass. The inputs $(p_T,p_\parallel,q_3^{\mathrm{reco}})$ fix $W^{\mathrm{reco}}$, including its assignment to zero for \SI{1.5}{\percent} of simulated events, so $W$ adds no independent detector input.
 
 \subsection{OmniFold implementation and background subtraction}
 \label{sec:omnifold-implementation}
@@ -99,26 +100,19 @@ OmniFold estimates the truth distribution by iteratively reweighting simulated e
 
 Truth signal events without a selected reconstructed partner enter the second step. At each iteration, a regressor trained with uniform weights on matched events predicts first-step weights for missed events from their truth observables. This corrects for selection efficiency using the simulated acceptance and assumes that the weights transfer from matched to missed events at the same truth inputs. At very low simulated efficiency the regressor extrapolates from matched events. We use five OmniFold iterations, with gradient-boosted-tree classifiers and regressor. The classifiers train and evaluate on the full samples without a held-out split, cross-fitting, or early stopping. The iteration count and learner capacity regularize the weights. The final weights can be integrated on any reporting grid.
 
-Background enters the measured class in the first step. Let $D(x)$ and $B(x)$ be the selected data and exposure-scaled background densities in reconstructed coordinates $x$, with integrals $D_b$ and $B_b$ in reconstructed bin $b$. The binned purity method assigns the same weight to each data event in an occupied bin,
-\begin{equation}
-  w_{\mathrm{pur}}(b)=\frac{\max(0,D_b-B_b)}{D_b} .
-  \label{eq:purity-weight}
-\end{equation}
-The classifier still uses the continuous event coordinates. Within a bin it sees the data shape rescaled by a constant, $D(x)w_{\mathrm{pur}}(b)$.
+For the principal results, we give each data event unit weight and append the simulated background with the negative of its exposure-scaled weights. If $D(x)$ and $B(x)$ are the selected data and background densities in reconstructed coordinates $x$, the signed measured class targets the first-step ratio $[D(x)-B(x)]/S(x)$ where the net density is positive, with $S(x)$ the current weighted density of selected simulated signal.
 
-Negative-weight subtraction keeps unit weights on the data and appends the simulated background with the negative of its exposure-scaled event weights. In regions with positive net density, the target first-step ratio is $[D(x)-B(x)]/S(x)$, where $S(x)$ is the current weighted density of selected simulated signal. In the binned limit, in populated bins with $S_b>0$ and $D_b\geq B_b$, both treatments give the same target mass $D_b-B_b$. An unbinned classifier can resolve shape differences within a bin between $D(x)-B(x)$ and the purity-rescaled data.
-
-The refined estimators convert the signed sample to nonnegative weights before the first OmniFold classifier is trained. A separate classifier, trained with absolute event weights, estimates the probability $g(x)$ that an event in the signed sample has positive weight. The original weight $w$ is replaced by $|w|\max\{0,2g(x)-1\}$~\cite{Nachman:2025staypositive}. The absolute-weight sample has density $D+B$. In the population limit $g=D/(D+B)$, so multiplying this density by the clipped factor gives the positive part of $D-B$. The learned factor implements this prescription without a reconstructed subtraction grid. Appendix~\ref{app:negative-weight-background} gives the binned limit and compares the two background treatments.
+Before the first OmniFold classifier is trained, we convert the signed sample to nonnegative weights. A separate classifier, trained with absolute event weights, estimates the probability $g(x)$ that an event in the signed sample has positive weight. The original weight $w$ is replaced by $|w|\max\{0,2g(x)-1\}$~\cite{Nachman:2025staypositive}. The absolute-weight sample has density $D+B$. In the population limit $g=D/(D+B)$, so multiplying this density by the clipped factor gives the positive part of $D-B$. The learned factor implements this prescription without a subtraction grid. We call this unfolding negative-weight-refined. The purity-subtracted checks weight data by the estimated signal fraction in each reconstructed bin (Appendix~\ref{app:negative-weight-background}).
 
 \subsection{Estimators and cross-section extraction}
 \label{sec:estimators-and-extraction}
 \label{sec:method-config}
 
-The benchmark against MINERvA uses the two-dimensional (2D) muon kinematics $(p_T,p_\parallel)$. The 3D, 4D, and 5D unfoldings add $E_{\mathrm{avail}}$, $q_3$, and $W$ in sequence at both reconstruction and truth level. Table~\ref{tab:estimators} identifies the configurations for each result and diagnostic.
+The benchmark against MINERvA uses the two-dimensional (2D) muon kinematics $(p_T,p_\parallel)$. The 3D, 4D, and 5D unfoldings add $E_{\mathrm{avail}}$, $q_3$, and $W$ in sequence at both reconstruction and truth level. Table~\ref{tab:estimators} gives the principal estimators. The 2D covariance uses the analysis edges in Sec.~\ref{sec:muon-cross-section-comparison}.
 
 \begin{table}[!t]
   \centering\small
-  \caption{Estimators, reporting grids, and diagnostics. Background treatment refers to the first OmniFold step. Binned purity weighting gives data events the estimated signal fraction in their reconstructed bin. Appendix~\ref{app:reproducibility-definitions} defines the configurations.}
+  \caption{Principal estimators. $Q_R$ is the reported 2D differential cross-section covariance. $C_{\mathrm{rep}}$ is the reported covariance of the sixteen cell integrals. Appendices~\ref{app:reproducibility-definitions} and~\ref{app:algorithm-classifier-controls} give the settings and diagnostic configurations.}
   \label{tab:estimators}
   \label{tab:estimators-matrix}
   \label{tab:config-key}
@@ -126,44 +120,19 @@ The benchmark against MINERvA uses the two-dimensional (2D) muon kinematics $(p_
                       >{\raggedright\arraybackslash}p{0.31\textwidth}
                       >{\raggedright\arraybackslash}p{0.38\textwidth}@{}}
     \toprule
-    Result or diagnostic & Estimator and background treatment & Grid and covariance or test statistic \\
+    Result & Estimator & Grid and covariance \\
     \midrule
     2D muon cross section &
-      \EstTwoD{} (refined negative weights) &
-      Published muon grid with the \lrval{q-ncells}-bin muon covariance $Q_R$. \\
+      Negative-weight-refined (2D settings) &
+      Published muon grid for the central value, our grid for the \lrval{q-ncells}-bin covariance $Q_R$ (three $p_T$ edges differ by \SI{0.005}{GeV/c}, Sec.~\ref{sec:results-xsec}). \\
     \addlinespace
     3D and 4D central values &
-      \EstMultiD{} (refined negative weights) &
+      Negative-weight-refined (multidimensional settings) &
       Central values on fine muon and hadronic grids. \\
     \addlinespace
-    \ResFiveAxis{} &
-      \EstPurity{} (binned purity weights) &
-      Fine five-axis grid with diagnostic covariance $C_Z$, also projected
-      onto the $E_{\mathrm{avail}}$--$W$ plane. \\
-    \addlinespace
     \ResSixteen{} &
-      \EstMultiD{} (classifier-refined background subtraction) &
-      Merged regions with reported covariance $C_{\mathrm{rep}}$ for descriptive generator comparisons. See Sec.~\ref{sec:part-illustrative-multidimensional} for the limits on model tuning or constraints. \\
-    \addlinespace
-    \ResJoint{} &
-      Variant of the \estMultiD{} (refined negative weights) &
-      Separate coarse grid with \jtNcells{} supported cells
-      (\jtNcellsGiBUU{} for GiBUU). Calibrated quadratic distances use
-      a shrinkage-based metric. \\
-    \midrule
-    \multicolumn{3}{@{}l}{\emph{Diagnostic controls (Appendix~\ref{app:reproducibility-definitions})}} \\
-    Injected-feature closures and classifier-family cross-check &
-      \EstPurity{} (binned purity weights) & \\
-    \addlinespace
-    Background-subtraction bias and 5D coverage &
-      \EstDetPurity{} (binned purity weights) & \\
-    \addlinespace
-    Background-subtraction bias and generator-sized available-energy change &
-      \EstLowCap{} (refined negative weights) & \\
-    \addlinespace
-    2D unfolding cross-check &
-      \EstExact{} (binned purity weights) &
-      Published muon grid. \\
+      Negative-weight-refined (multidimensional settings) &
+      Merged regions with reported covariance $C_{\mathrm{rep}}$. \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -172,18 +141,18 @@ The benchmark against MINERvA uses the two-dimensional (2D) muon kinematics $(p_
 \label{sec:method-xsec}
 For a truth bin $i$, let $U_i$ be the unfolded yield. We obtain the flux-averaged, bin-integrated cross section per nucleon as
 \begin{equation}
-  \sigma_i = \frac{U_i}{\Phi_i N_{\mathrm{nuc}}N_{\mathrm{POT}}} .
+  \sigma_i = \frac{U_i}{\Phi N_{\mathrm{nuc}}N_{\mathrm{POT}}} .
   \label{eq:flux-averaged-cross-section}
 \end{equation}
-Here $N_{\mathrm{nuc}}$ is the fiducial nucleon count and $N_{\mathrm{POT}}$ is the analyzed exposure. The cross-section density is $\sigma_i$ divided by the product of its bin widths. Every extraction uses the integrated flux tabulated by $p_T$ bin and broadcast over the other axes. Integrated over $0<E_\nu<\SI{100}{GeV}$ after the constraint, it is \SI{6.243e-8}{cm^{-2}} per POT in every $p_T$ bin. The sum $U_i$ includes reweighted signal events missed by the selection, so the truth-sample completeness factor in the extraction is unity in every bin.
+Here $N_{\mathrm{nuc}}$ is the fiducial nucleon count and $N_{\mathrm{POT}}$ is the analyzed exposure. The cross-section density is $\sigma_i$ divided by the product of its bin widths. We divide every bin by the same constrained flux integral $\Phi$ over $0<E_\nu<\SI{100}{GeV}$, \SI{6.243e-8}{cm^{-2}} per POT. The sum $U_i$ includes reweighted signal events missed by the selection, so the truth-sample completeness factor in the extraction is unity in every bin.
 % Check stage (2026-11-21): nd-unfolding/xsec_nd.py (flux per p_T bin, broadcast over every other axis) and
 % docs/orchestration/state/s5p/gen5d/README-gen5d-fluxfix.md:74 (Phi_t = 6.243343e-4 m^-2/POT = hFluxCV, every p_T bin equal).
 
 \phantomsection
 \label{sec:method-binning}
-The 2D result follows the published $14\times16$ muon layout and its mapping of 205 reported bins~\cite{MINERvA:2021owq}, with three interior $p_T$ edges \SI{0.005}{GeV/c} from the published ones (Sec.~\ref{sec:muon-cross-section-comparison}). The remaining 19 cells lie in the high-$p_T$, low-$p_\parallel$ corner, with $p_T^{\mathrm{hi}}/p_\parallel^{\mathrm{lo}}>\tan20^\circ$. The higher-dimensional fine grids add seven $E_{\mathrm{avail}}$ bins, seven $q_3$ bins, and six $W$ bins, each with a wide final bin extending to 100 in its respective axis units. Appendix~\ref{app:reproducibility} gives the bin edges. A marginal cross section sums the bin integrals over the eliminated axes and divides by the retained bin widths when reported as a density. The wide bins contribute their full integrals to projections and totals.
+The 2D result follows the published $14\times16$ layout of 205 reported muon bins, with the edges specified in Sec.~\ref{sec:muon-cross-section-comparison}~\cite{MINERvA:2021owq}. The remaining 19 cells lie in the high-$p_T$, low-$p_\parallel$ corner, with $p_T^{\mathrm{hi}}/p_\parallel^{\mathrm{lo}}>\tan20^\circ$. The higher-dimensional fine grids add seven $E_{\mathrm{avail}}$ bins, seven $q_3$ bins, and six $W$ bins, each with a wide final bin extending to 100 in its respective axis units. Appendix~\ref{app:reproducibility} gives the bin edges. A marginal cross section sums the bin integrals over the eliminated axes and divides by the retained bin widths when reported as a density. The wide bins contribute their full integrals to projections and totals.
 
-The 3D and 4D results are reported as central values only. The covariance of the \resFiveAxis{} serves as a scale for diagnostics. We report the \resSixteen{} as integrated cross sections in $\mathrm{cm}^2$ per nucleon in the regions defined in Sec.~\ref{sec:five-dimensional-reporting}. The cell integrals support descriptive comparisons with generator predictions. Model tuning or constraints would require resolving the limitations in Sec.~\ref{sec:part-illustrative-multidimensional}, including the coverage shortfall seen when rescoring held-out pseudo-experiments. The \resJoint{} use a variant of the multidimensional estimator on a separate joint grid (Sec.~\ref{sec:sixteen-cell-generator-comparison}).
+The 3D and 4D results are reported as central values only. The \resSixteen{} gives cell integrals in $\mathrm{cm}^2$ per nucleon (Sec.~\ref{sec:five-dimensional-reporting}).
 
 AI language-model agents assisted with the analysis code, statistical procedures, computing campaigns, and internal reviews. The \hyperref[sec:ai-use-disclosure]{AI Use Disclosure} gives the tools and versions, the first author's role, and the verification procedure.
 % 2026-11-21 (journal-editor; Joseph via the rewrite helper and the director): the methods pointer the APS policy asks for

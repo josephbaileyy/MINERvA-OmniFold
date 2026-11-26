@@ -1,0 +1,3642 @@
+{
+ "schema": "fd-cpl-chain/1",
+ "steps": [
+  {
+   "step": "C vf_block.npz: the committed block is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz"
+  },
+  {
+   "step": "block",
+   "arm": "vf",
+   "tool": "fd_vf_addition",
+   "argv": [
+    "block",
+    "--repo",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy",
+    "--out-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/block"
+   ],
+   "pins": null,
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 0.5,
+   "start_utc": "2026-11-26T00:26:16Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/block/vf_block.npz": "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/block/vf_block.json": "421da0e683537ad0a47b684e5e6ae42f7f3d63d6cc6038e03671dc7772edb6bd"
+   }
+  },
+  {
+   "step": "C vf_block: rebuilt in the deploy, the npz and its readout are the committed bytes",
+   "check": true,
+   "ok": true,
+   "detail": null
+  },
+  {
+   "step": "C the renderer: python, numpy and matplotlib are E-A2's (figures-a2), so the PDFs can match byte for byte",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "have": {
+     "python": "3.11.14",
+     "numpy": "1.26.4",
+     "matplotlib": "3.10.8"
+    },
+    "want": {
+     "python": "3.11.14",
+     "numpy": "1.26.4",
+     "matplotlib": "3.10.8"
+    }
+   }
+  },
+  {
+   "step": "C chdefs: the staged predictions' manifest is the recorded one",
+   "check": true,
+   "ok": true,
+   "detail": "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS"
+  },
+  {
+   "step": "C chdefs: the predictions' specification is the committed one",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/pins/predictions-chdefs.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0_readout.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f1_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f1_readout.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_g_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_g_readout.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f1_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f1_readout.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_diag_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_diag_readout.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_followup_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_followup_readout.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_sens2_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_sens2_readout.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_flux_boot_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_flux_boot_readout.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_readout.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_diag_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_diag_readout.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_followup_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_followup_readout.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_sens2_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_sens2_readout.json"
+  },
+  {
+   "step": "R docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_flux_boot_readout.json: the committed file is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_flux_boot_readout.json"
+  },
+  {
+   "step": "f0",
+   "arm": "old-f0",
+   "tool": "fd_f0_regrade",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-npz",
+    "/pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--d16-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/stage3/f4",
+    "--f4-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4",
+    "--stage0-inventory",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/INVENTORY.sha256",
+    "--s5e-assess",
+    "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess",
+    "--stage0c-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/products.sha256",
+    "--stage0c-root",
+    "/pscratch/sd/j/josephrb/5d-stage0-20261023",
+    "--pvl-products",
+    "/pscratch/sd/j/josephrb/pv-ladder-20261024/products",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-f0/readout/fd_f0_readout.json",
+    "--out-npz",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-f0/fd_f0_experiments.npz"
+   ],
+   "pins": null,
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 110.5,
+   "start_utc": "2026-11-26T00:26:17Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-f0/readout/fd_f0_readout.json": "6dcd5e0065098925cfa71d42437b15659f8fd4a235fdb779c676f79d356f1fa9",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-f0/fd_f0_experiments.npz": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9"
+   }
+  },
+  {
+   "step": "R F0: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0_readout.json"
+  },
+  {
+   "step": "R F0: structure, numbers and finiteness are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R old-f0 f0: the experiment table is the readout's table_sha256 and the declared table",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "npz": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9",
+    "readout": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9",
+    "want": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9"
+   }
+  },
+  {
+   "step": "f0b",
+   "arm": "old-with",
+   "tool": "fd_f0_regrade",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-npz",
+    "/pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--d16-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/stage3/f4",
+    "--f4-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4",
+    "--stage0-inventory",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/INVENTORY.sha256",
+    "--s5e-assess",
+    "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess",
+    "--stage0c-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/products.sha256",
+    "--stage0c-root",
+    "/pscratch/sd/j/josephrb/5d-stage0-20261023",
+    "--pvl-products",
+    "/pscratch/sd/j/josephrb/pv-ladder-20261024/products",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/block/cpl_block.npz",
+    "--extra-block-sha256",
+    "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D",
+    "--extra-block-name",
+    "C_resp + C_PL5D",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/readout/fd_f0b_readout.json",
+    "--out-npz",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/fd_f0b_experiments.npz"
+   ],
+   "pins": null,
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 49.8,
+   "start_utc": "2026-11-26T00:28:07Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/readout/fd_f0b_readout.json": "1784a308bab4d68977387d65d4dec3aad500e953fd357d5ec471684dc3966eb2",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/fd_f0b_experiments.npz": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9"
+   }
+  },
+  {
+   "step": "f1",
+   "arm": "old-with",
+   "tool": "fd_f0_regrade",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-npz",
+    "/pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--d16-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/stage3/f4",
+    "--f4-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4",
+    "--stage0-inventory",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/INVENTORY.sha256",
+    "--s5e-assess",
+    "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess",
+    "--stage0c-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/products.sha256",
+    "--stage0c-root",
+    "/pscratch/sd/j/josephrb/5d-stage0-20261023",
+    "--pvl-products",
+    "/pscratch/sd/j/josephrb/pv-ladder-20261024/products",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/block/cpl_block.npz",
+    "--extra-block-sha256",
+    "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D",
+    "--extra-block-name",
+    "C_resp + C_PL5D",
+    "--f1-prep-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/f1b3/prep/f1-prep-SHA256SUMS",
+    "--f1-prep-sums-sha256",
+    "981b188b03a7e75b904489fa1bf15bd818ef4b72f93a8beba4a906eb3122a480",
+    "--f1-products-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/manifest/f1-products-SHA256SUMS",
+    "--f1-products-sums-sha256",
+    "fdb0274053e9946177376913f6145c024c24582f94607d1f5fd05271642fec09",
+    "--f1-root",
+    "/pscratch/sd/j/josephrb/fd-f1-20261027/f1c",
+    "--f0b-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json",
+    "--f0b-readout-sha256",
+    "5f542830561731b567f2b97d78e5e9677a9802a35ef9c21855828bf184e6f3d6",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/readout/fd_f1_readout.json",
+    "--out-npz",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/fd_f1_experiments.npz"
+   ],
+   "pins": null,
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 53.8,
+   "start_utc": "2026-11-26T00:28:57Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/readout/fd_f1_readout.json": "9c8f6051eeebe8abf636efd880646ceea904d47a178a4a042bbe4292f8feba7d",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/fd_f1_experiments.npz": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc"
+   }
+  },
+  {
+   "step": "g",
+   "arm": "old-with",
+   "tool": "fd_g_compare",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/block/cpl_block.npz",
+    "--extra-block-sha256",
+    "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D",
+    "--extra-block-name",
+    "C_resp + C_PL5D",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/readout/fd_g_readout.json"
+   ],
+   "pins": null,
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 0.8,
+   "start_utc": "2026-11-26T00:29:51Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/readout/fd_g_readout.json": "e3e0a6d7500bbfa38fe3c29344c275cf566faed90eca4816004c0518a7127a12"
+   }
+  },
+  {
+   "step": "R S old-with f0b: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json"
+  },
+  {
+   "step": "R S old-with f0b: structure, numbers and finiteness are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R S old-with f1: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f1_readout.json"
+  },
+  {
+   "step": "R S old-with f1: structure, numbers and finiteness are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R S old-with g: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_g_readout.json"
+  },
+  {
+   "step": "R S old-with g: structure, numbers and finiteness are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R old-with f0b: the experiment table is the readout's table_sha256 and the declared table",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "npz": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9",
+    "readout": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9",
+    "want": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9"
+   }
+  },
+  {
+   "step": "R old-with f1: the experiment table is the readout's table_sha256 and the declared table",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "npz": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc",
+    "readout": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc",
+    "want": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc"
+   }
+  },
+  {
+   "step": "g",
+   "arm": "E-old-with",
+   "tool": "fd_g_compare",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/block/cpl_block.npz",
+    "--extra-block-sha256",
+    "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D",
+    "--extra-block-name",
+    "C_resp + C_PL5D",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/readout/fd_g_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-11-26T00:29:53Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/readout/fd_g_readout.json": "4c148438bca55f99e625e8e2c609312069bc864bdd9a9739b4cae4519115e874"
+   }
+  },
+  {
+   "step": "g_diag",
+   "arm": "E-old-with",
+   "tool": "fd_g_diag",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/block/cpl_block.npz",
+    "--extra-block-sha256",
+    "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D",
+    "--extra-block-name",
+    "C_resp + C_PL5D",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/readout/fd_g_diag_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+    "g_readout": "a19009e0bd83b9bb8f9ad65fb65804e6f62c8953310103fbfe6fce5f84995875"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 0.6,
+   "start_utc": "2026-11-26T00:29:53Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/readout/fd_g_diag_readout.json": "4de41332087f316b4696d3afffb464408cc43943988f0cb2af98e3b8e8d97156"
+   }
+  },
+  {
+   "step": "g_followup",
+   "arm": "E-old-with",
+   "tool": "fd_g_followup",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json",
+    "--g-diag-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_diag_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/block/cpl_block.npz",
+    "--extra-block-sha256",
+    "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D",
+    "--extra-block-name",
+    "C_resp + C_PL5D",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/readout/fd_g_followup_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+    "g_readout": "a19009e0bd83b9bb8f9ad65fb65804e6f62c8953310103fbfe6fce5f84995875",
+    "g_diag_readout": "522bfafa3016fadbd62c72f9f34153e17cd514a3b06acf282030d550f5dc1855"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 0.8,
+   "start_utc": "2026-11-26T00:29:54Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/readout/fd_g_followup_readout.json": "3a04d24a27add6e4244f2cfd3fd3d491662928fff5c3783872d61123c41acb33"
+   }
+  },
+  {
+   "step": "g_sens2",
+   "arm": "E-old-with",
+   "tool": "fd_g_followup",
+   "argv": [
+    "--part",
+    "sens2",
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json",
+    "--g-followup-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_followup_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/block/cpl_block.npz",
+    "--extra-block-sha256",
+    "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D",
+    "--extra-block-name",
+    "C_resp + C_PL5D",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/readout/fd_g_sens2_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+    "g_readout": "a19009e0bd83b9bb8f9ad65fb65804e6f62c8953310103fbfe6fce5f84995875",
+    "g_followup_readout": "586cd74105d0837c69290d0370f6327cda75a92ee31f2d437658c626b4ab1e8f"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-11-26T00:29:55Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/readout/fd_g_sens2_readout.json": "ff6e237a9f90dad52aa5bd8501d232272965f52e590aadc9de9ae27426259156"
+   }
+  },
+  {
+   "step": "flux_boot",
+   "arm": "E-old-with",
+   "tool": "fd_flux_boot",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/block/cpl_block.npz",
+    "--extra-block-sha256",
+    "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D",
+    "--extra-block-name",
+    "C_resp + C_PL5D",
+    "--extra-block-role",
+    "adopted",
+    "--flux-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/readout/fd_flux_boot_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+    "g_readout": "a19009e0bd83b9bb8f9ad65fb65804e6f62c8953310103fbfe6fce5f84995875",
+    "constraint": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 6.7,
+   "start_utc": "2026-11-26T00:29:56Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/readout/fd_flux_boot_readout.json": "aad1c254629ee5de83555c4e840a77ff929af526858fb3be9f7b6eff4f4877a2"
+   }
+  },
+  {
+   "step": "figures",
+   "arm": "E-old-with",
+   "tool": "fd_g_figures",
+   "argv": [
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json",
+    "--g-diag-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_diag_readout.json",
+    "--g-followup-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_followup_readout.json",
+    "--g-sens2-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_sens2_readout.json",
+    "--f0b-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json",
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--figures",
+    "ratio",
+    "modes",
+    "sens",
+    "--ratio-form",
+    "data-over-prediction",
+    "--gibuu-axis",
+    "separate",
+    "--out-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/figures",
+    "--reported-block-name",
+    "C_resp + C_PL5D",
+    "--prediction-set",
+    "gencmp-chdefs"
+   ],
+   "pins": {
+    "g_readout": "a19009e0bd83b9bb8f9ad65fb65804e6f62c8953310103fbfe6fce5f84995875",
+    "g_diag_readout": "522bfafa3016fadbd62c72f9f34153e17cd514a3b06acf282030d550f5dc1855",
+    "g_followup_readout": "586cd74105d0837c69290d0370f6327cda75a92ee31f2d437658c626b4ab1e8f",
+    "g_sens2_readout": "4bc21dfda9c49762227fc4c486ee9decc349863aaea095f94347ad4b963d4513",
+    "f0b_readout": "5f542830561731b567f2b97d78e5e9677a9802a35ef9c21855828bf184e6f3d6",
+    "definition": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 7.4,
+   "start_utc": "2026-11-26T00:30:02Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/figures/fd_g_fig_ratio.pdf": "6214ed7800e9a6d0454dc376d3f100306969fa11dff83f703f134ef4d36fb0c7",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/figures/fd_g_fig_ratio.json": "4daef11b5b89a10ebb01ed6a141a565dfe125036683be033406019cdc0ba41e4",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/figures/fd_g_fig_modes.pdf": "0d6fe57c8554aa059bea52e1cbe089e88f31761a22395ddca792cb19d73716f5",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/figures/fd_g_fig_modes.json": "e504e0e1781c928a3e75a8402775ea501f22e01fd52f1a962b429887105b2093",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/figures/fd_g_fig_sens.pdf": "159ac70481e507dba0f7541a94c16369ff68ddfe4d341491a3d5a7f3585d6baa",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/figures/fd_g_fig_sens.json": "22e43e05d152c33e172c9fd73155970bef2b09eee36ddc4359c7ae82b07f7f6c"
+   }
+  },
+  {
+   "step": "figures_check",
+   "arm": "E-old-with",
+   "tool": "fd_g_figures_check",
+   "argv": [
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json",
+    "--g-diag-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_diag_readout.json",
+    "--g-followup-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_followup_readout.json",
+    "--g-sens2-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_sens2_readout.json",
+    "--f0b-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json",
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--figures-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-with/figures",
+    "--prediction-set",
+    "gencmp-chdefs"
+   ],
+   "pins": {},
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 0.2,
+   "start_utc": "2026-11-26T00:30:10Z",
+   "outputs": {}
+  },
+  {
+   "step": "R E old-with g: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json"
+  },
+  {
+   "step": "R E old-with g: structure, numbers and finiteness and strings are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R E old-with g_diag: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_diag_readout.json"
+  },
+  {
+   "step": "R E old-with g_diag: structure, numbers and finiteness and strings are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R E old-with g_followup: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_followup_readout.json"
+  },
+  {
+   "step": "R E old-with g_followup: structure, numbers and finiteness and strings are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R E old-with g_sens2: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_sens2_readout.json"
+  },
+  {
+   "step": "R E old-with g_sens2: structure, numbers and finiteness and strings are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R E old-with flux_boot: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_flux_boot_readout.json"
+  },
+  {
+   "step": "R E old-with flux_boot: structure, numbers and finiteness and strings are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R E old-with figure fd_g_fig_ratio.pdf: the committed file is E-A2's receipt bytes",
+   "check": true,
+   "ok": true,
+   "detail": "fd_g_fig_ratio.pdf"
+  },
+  {
+   "step": "R E old-with figure fd_g_fig_ratio.json: the committed file is E-A2's receipt bytes",
+   "check": true,
+   "ok": true,
+   "detail": "fd_g_fig_ratio.json"
+  },
+  {
+   "step": "R E old-with figure fd_g_fig_ratio: the sidecar is the committed one but argv, code and versions; the PDF the same bytes",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R E old-with figure fd_g_fig_modes.pdf: the committed file is E-A2's receipt bytes",
+   "check": true,
+   "ok": true,
+   "detail": "fd_g_fig_modes.pdf"
+  },
+  {
+   "step": "R E old-with figure fd_g_fig_modes.json: the committed file is E-A2's receipt bytes",
+   "check": true,
+   "ok": true,
+   "detail": "fd_g_fig_modes.json"
+  },
+  {
+   "step": "R E old-with figure fd_g_fig_modes: the sidecar is the committed one but argv, code and versions; the PDF the same bytes",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R E old-with figure fd_g_fig_sens.pdf: the committed file is E-A2's receipt bytes",
+   "check": true,
+   "ok": true,
+   "detail": "fd_g_fig_sens.pdf"
+  },
+  {
+   "step": "R E old-with figure fd_g_fig_sens.json: the committed file is E-A2's receipt bytes",
+   "check": true,
+   "ok": true,
+   "detail": "fd_g_fig_sens.json"
+  },
+  {
+   "step": "R E old-with figure fd_g_fig_sens: the sidecar is the committed one but argv, code and versions; the PDF the same bytes",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "f0b",
+   "arm": "old-nopl",
+   "tool": "fd_f0_regrade",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-npz",
+    "/pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--d16-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/stage3/f4",
+    "--f4-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4",
+    "--stage0-inventory",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/INVENTORY.sha256",
+    "--s5e-assess",
+    "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess",
+    "--stage0c-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/products.sha256",
+    "--stage0c-root",
+    "/pscratch/sd/j/josephrb/5d-stage0-20261023",
+    "--pvl-products",
+    "/pscratch/sd/j/josephrb/pv-ladder-20261024/products",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz",
+    "--extra-block-sha256",
+    "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+    "--extra-block-key",
+    "C_resp",
+    "--extra-block-name",
+    "C_resp",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-nopl/readout/fd_f0b_readout.json",
+    "--out-npz",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-nopl/fd_f0b_experiments.npz"
+   ],
+   "pins": null,
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 50.8,
+   "start_utc": "2026-11-26T00:30:10Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-nopl/readout/fd_f0b_readout.json": "27bc79497d5d906567a6ad931eca8ab68dba6a945be091ad0721d4511dfe5c80",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-nopl/fd_f0b_experiments.npz": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9"
+   }
+  },
+  {
+   "step": "f1",
+   "arm": "old-nopl",
+   "tool": "fd_f0_regrade",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-npz",
+    "/pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--d16-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/stage3/f4",
+    "--f4-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4",
+    "--stage0-inventory",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/INVENTORY.sha256",
+    "--s5e-assess",
+    "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess",
+    "--stage0c-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/products.sha256",
+    "--stage0c-root",
+    "/pscratch/sd/j/josephrb/5d-stage0-20261023",
+    "--pvl-products",
+    "/pscratch/sd/j/josephrb/pv-ladder-20261024/products",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz",
+    "--extra-block-sha256",
+    "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+    "--extra-block-key",
+    "C_resp",
+    "--extra-block-name",
+    "C_resp",
+    "--f1-prep-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/f1b3/prep/f1-prep-SHA256SUMS",
+    "--f1-prep-sums-sha256",
+    "981b188b03a7e75b904489fa1bf15bd818ef4b72f93a8beba4a906eb3122a480",
+    "--f1-products-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/manifest/f1-products-SHA256SUMS",
+    "--f1-products-sums-sha256",
+    "fdb0274053e9946177376913f6145c024c24582f94607d1f5fd05271642fec09",
+    "--f1-root",
+    "/pscratch/sd/j/josephrb/fd-f1-20261027/f1c",
+    "--f0b-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json",
+    "--f0b-readout-sha256",
+    "b9db935a3187646ba2accaf3865cf4aa26ad72676063c58e7f5e6220224ef17b",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-nopl/readout/fd_f1_readout.json",
+    "--out-npz",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-nopl/fd_f1_experiments.npz"
+   ],
+   "pins": null,
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 50.1,
+   "start_utc": "2026-11-26T00:31:01Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-nopl/readout/fd_f1_readout.json": "99385aeae292ab24fb2232ead19e468d3e08b9e38e8731de9eb0b1cd5d958192",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-nopl/fd_f1_experiments.npz": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc"
+   }
+  },
+  {
+   "step": "g",
+   "arm": "old-nopl",
+   "tool": "fd_g_compare",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz",
+    "--extra-block-sha256",
+    "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+    "--extra-block-key",
+    "C_resp",
+    "--extra-block-name",
+    "C_resp",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-nopl/readout/fd_g_readout.json"
+   ],
+   "pins": null,
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-11-26T00:31:51Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-nopl/readout/fd_g_readout.json": "3204500d43699440df3ac8bed5f050d52351f26f5316312626406d8bf49cb72c"
+   }
+  },
+  {
+   "step": "R S old-nopl f0b: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json"
+  },
+  {
+   "step": "R S old-nopl f0b: structure, numbers and finiteness are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R S old-nopl f1: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f1_readout.json"
+  },
+  {
+   "step": "R S old-nopl f1: structure, numbers and finiteness are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R S old-nopl g: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json"
+  },
+  {
+   "step": "R S old-nopl g: structure, numbers and finiteness are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R old-nopl f0b: the experiment table is the readout's table_sha256 and the declared table",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "npz": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9",
+    "readout": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9",
+    "want": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9"
+   }
+  },
+  {
+   "step": "R old-nopl f1: the experiment table is the readout's table_sha256 and the declared table",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "npz": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc",
+    "readout": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc",
+    "want": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc"
+   }
+  },
+  {
+   "step": "g",
+   "arm": "E-old-nopl",
+   "tool": "fd_g_compare",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/cresp-20261026/out/cresp.npz",
+    "--extra-block-sha256",
+    "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+    "--extra-block-key",
+    "C_resp",
+    "--extra-block-name",
+    "C_resp",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-nopl/readout/fd_g_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 0.6,
+   "start_utc": "2026-11-26T00:31:52Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-nopl/readout/fd_g_readout.json": "5dcfcf6f652c32f859630ea7670df449cf320c669c1db624da39f5d1c45a54c9"
+   }
+  },
+  {
+   "step": "g_diag",
+   "arm": "E-old-nopl",
+   "tool": "fd_g_diag",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/cresp-20261026/out/cresp.npz",
+    "--extra-block-sha256",
+    "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+    "--extra-block-key",
+    "C_resp",
+    "--extra-block-name",
+    "C_resp",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-nopl/readout/fd_g_diag_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+    "g_readout": "d9a1ce38040b8cd3c2a6deb787f8a7dc90aca5c4d3a5a8d25a60b7f8ab582ed9"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-11-26T00:31:53Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-nopl/readout/fd_g_diag_readout.json": "768ec9773decf8082ccde4d66a608e0926085eb0492d6603c1a1acab06eb879d"
+   }
+  },
+  {
+   "step": "g_followup",
+   "arm": "E-old-nopl",
+   "tool": "fd_g_followup",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_readout.json",
+    "--g-diag-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_diag_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/cresp-20261026/out/cresp.npz",
+    "--extra-block-sha256",
+    "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+    "--extra-block-key",
+    "C_resp",
+    "--extra-block-name",
+    "C_resp",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-nopl/readout/fd_g_followup_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+    "g_readout": "d9a1ce38040b8cd3c2a6deb787f8a7dc90aca5c4d3a5a8d25a60b7f8ab582ed9",
+    "g_diag_readout": "4e77966e93bd21d53ae777f2af02f00963d9eec45372997fc7af5fd45d2a099f"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-11-26T00:31:53Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-nopl/readout/fd_g_followup_readout.json": "b26724ac32b51371973bf34dacd1dd77d197a8524106334956eb95a0b7a08b61"
+   }
+  },
+  {
+   "step": "g_sens2",
+   "arm": "E-old-nopl",
+   "tool": "fd_g_followup",
+   "argv": [
+    "--part",
+    "sens2",
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_readout.json",
+    "--g-followup-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_followup_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/cresp-20261026/out/cresp.npz",
+    "--extra-block-sha256",
+    "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+    "--extra-block-key",
+    "C_resp",
+    "--extra-block-name",
+    "C_resp",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-nopl/readout/fd_g_sens2_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+    "g_readout": "d9a1ce38040b8cd3c2a6deb787f8a7dc90aca5c4d3a5a8d25a60b7f8ab582ed9",
+    "g_followup_readout": "748f3af6e7fa54f916d73295b078e5b8a768a8abe024e848a55d9b90f9a806ac"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-11-26T00:31:54Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-nopl/readout/fd_g_sens2_readout.json": "18890044e3d18d916cc9f2384c225c7f61e5ba469cd4c981d3f4ddb790b5d89e"
+   }
+  },
+  {
+   "step": "flux_boot",
+   "arm": "E-old-nopl",
+   "tool": "fd_flux_boot",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/cresp-20261026/out/cresp.npz",
+    "--extra-block-sha256",
+    "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+    "--extra-block-key",
+    "C_resp",
+    "--extra-block-name",
+    "C_resp",
+    "--extra-block-role",
+    "adopted",
+    "--flux-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-nopl/readout/fd_flux_boot_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+    "g_readout": "d9a1ce38040b8cd3c2a6deb787f8a7dc90aca5c4d3a5a8d25a60b7f8ab582ed9",
+    "constraint": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 6.2,
+   "start_utc": "2026-11-26T00:31:55Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/old-nopl/readout/fd_flux_boot_readout.json": "afd54de44aa40f2b327ae9f9a6dc082af2d39d2113111159645e99f261165672"
+   }
+  },
+  {
+   "step": "R E old-nopl g: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_readout.json"
+  },
+  {
+   "step": "R E old-nopl g: structure, numbers and finiteness are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R E old-nopl g_diag: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_diag_readout.json"
+  },
+  {
+   "step": "R E old-nopl g_diag: structure, numbers and finiteness are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R E old-nopl g_followup: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_followup_readout.json"
+  },
+  {
+   "step": "R E old-nopl g_followup: structure, numbers and finiteness are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R E old-nopl g_sens2: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_sens2_readout.json"
+  },
+  {
+   "step": "R E old-nopl g_sens2: structure, numbers and finiteness are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "R E old-nopl flux_boot: the committed readout is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_flux_boot_readout.json"
+  },
+  {
+   "step": "R E old-nopl flux_boot: structure, numbers and finiteness are the committed readout's",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "data_product",
+   "arm": "old-with",
+   "tool": "fd_cpl_addition",
+   "argv": [
+    "product",
+    "--data-product",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/data-product/fd_data_product.json",
+    "--block-npz",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/block/cpl_block.npz",
+    "--block-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/block/cpl_block.json",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_g_readout.json",
+    "--audit-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_ct_5b_audit.json",
+    "--out-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/data-product"
+   ],
+   "pins": {
+    "data_product": "b79556f0538c81942c0ddd3770ae55e5c6fe9ad53df47e470d306f727d7e7072",
+    "block_npz": "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    "block_json": "4023746e3a819e8cc8348c457d7dc1ee55df66eaa5f5f68082824b9df27cabd6",
+    "g_readout": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd",
+    "audit_json": "6d34d7f8034ea956cf22c092fb31d608f330daabdd721285302868806d50692c"
+   },
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 0.5,
+   "start_utc": "2026-11-26T00:32:01Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/data-product/fd_data_product_cpl.json": "169db2c31d3de86122c2a1c97f35d0e2c79b09462338bb9fddf854bf1f6b4e9d",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/data-product/fd_data_product_cpl_cells.csv": "b3a7d0cac19ab3ca17ecb603b5c4814fb8e072117cdd01c47383eb8f1d8cd6cd",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/data-product/fd_data_product_cpl_C_e.csv": "222c4dd4efef0780c408b82caa8d360723bc8b73b784885789f374a624e6c715",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/data-product/fd_data_product_cpl_C_model_abs.csv": "ad179dea32b1360083f5f69df9ae051f2486abc90354fee9b6a514736eac0e63",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/data-product/fd_data_product_cpl_C_resp.csv": "35bfcb2a332b8b5aff4c9f14a14ccb63787082e49814962d2e5de0e40659cc62",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/data-product/fd_data_product_cpl_C_PL5D.csv": "03babead4dff1bf19980319a867c9b830a5b7f85896792edc6f07a62c6e991c9",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/data-product/fd_data_product_cpl_C_total_plus_C_resp.csv": "20a4b9d8e41c2b53a65b20beebf7abcb2bf46d5fb4de2a30af1ca8e327361ad8",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/data-product/fd_data_product_cpl_C_total_plus_C_resp_plus_C_PL5D.csv": "76730c5b7143f8933019a502ca23eed635e45340f7d1ed5534813b2242956170",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/data-product/fd_data_product_cpl_corr_C_total_plus_C_resp_plus_C_PL5D.csv": "262e3a5b289a5620accd978938757f292315852468bdf0b7e402233e9f194b12"
+   }
+  },
+  {
+   "step": "R data_product: every CSV is the committed with-block product's, byte for byte",
+   "check": true,
+   "ok": true,
+   "detail": [
+    "fd_data_product_cpl_C_PL5D.csv",
+    "fd_data_product_cpl_C_e.csv",
+    "fd_data_product_cpl_C_model_abs.csv",
+    "fd_data_product_cpl_C_resp.csv",
+    "fd_data_product_cpl_C_total_plus_C_resp.csv",
+    "fd_data_product_cpl_C_total_plus_C_resp_plus_C_PL5D.csv",
+    "fd_data_product_cpl_cells.csv",
+    "fd_data_product_cpl_corr_C_total_plus_C_resp_plus_C_PL5D.csv"
+   ]
+  },
+  {
+   "step": "R data_product: the committed product is the pinned bytes",
+   "check": true,
+   "ok": true,
+   "detail": null
+  },
+  {
+   "step": "R data_product: its JSON is the committed one but argv",
+   "check": true,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "step": "deposit_build",
+   "arm": "old-with",
+   "tool": "fd_deposit_candidate",
+   "argv": [
+    "build",
+    "--data-product",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/data-product/fd_data_product_cpl.json",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_g_readout.json",
+    "--out-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/deposit-candidate"
+   ],
+   "pins": {
+    "data_product": "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50",
+    "g_readout": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd"
+   },
+   "variant": "with-cpl",
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 0.6,
+   "start_utc": "2026-11-26T00:32:02Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/deposit-candidate/cells.csv": "0b01400174ad99c6eba6d212b6e0f28094860d06193deeec78835a56c7b01bf8",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/deposit-candidate/covariance.csv": "76730c5b7143f8933019a502ca23eed635e45340f7d1ed5534813b2242956170",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/deposit-candidate/correlation.csv": "262e3a5b289a5620accd978938757f292315852468bdf0b7e402233e9f194b12",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/deposit-candidate/deposit.json": "67e6c22d915f4d7e64e922bbf09ef408be9221e2c13e8f4f523c831d7491f13e",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/deposit-candidate/predictions-reference.json": "cc94168ea9146d88f4bdaf8cb4b78c2b9c6299b21f1b8229f4bf227f49dcf1e4"
+   }
+  },
+  {
+   "step": "deposit_check",
+   "arm": "old-with",
+   "tool": "fd_deposit_candidate",
+   "argv": [
+    "check",
+    "--package",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/deposit-candidate",
+    "--data-product",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/data-product/fd_data_product_cpl.json",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_g_readout.json"
+   ],
+   "pins": {
+    "data_product": "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50",
+    "g_readout": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd"
+   },
+   "variant": "with-cpl",
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 0.5,
+   "start_utc": "2026-11-26T00:32:03Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/old-with/deposit-candidate/deposit.json": "67e6c22d915f4d7e64e922bbf09ef408be9221e2c13e8f4f523c831d7491f13e"
+   }
+  },
+  {
+   "step": "R deposit cells.csv: the committed file is the 5B receipt's bytes",
+   "check": true,
+   "ok": true,
+   "detail": "cells.csv"
+  },
+  {
+   "step": "R deposit covariance.csv: the committed file is the 5B receipt's bytes",
+   "check": true,
+   "ok": true,
+   "detail": "covariance.csv"
+  },
+  {
+   "step": "R deposit correlation.csv: the committed file is the 5B receipt's bytes",
+   "check": true,
+   "ok": true,
+   "detail": "correlation.csv"
+  },
+  {
+   "step": "R deposit deposit.json: the committed file is the 5B receipt's bytes",
+   "check": true,
+   "ok": true,
+   "detail": "deposit.json"
+  },
+  {
+   "step": "R deposit predictions-reference.json: the committed file is the 5B receipt's bytes",
+   "check": true,
+   "ok": true,
+   "detail": "predictions-reference.json"
+  },
+  {
+   "step": "R deposit cells.csv: the committed with-block file",
+   "check": true,
+   "ok": true,
+   "detail": "cells.csv"
+  },
+  {
+   "step": "R deposit covariance.csv: the committed with-block file",
+   "check": true,
+   "ok": true,
+   "detail": "covariance.csv"
+  },
+  {
+   "step": "R deposit correlation.csv: the committed with-block file",
+   "check": true,
+   "ok": true,
+   "detail": "correlation.csv"
+  },
+  {
+   "step": "R deposit deposit.json: the committed with-block file but code_sha256",
+   "check": true,
+   "ok": true,
+   "detail": "deposit.json"
+  },
+  {
+   "step": "R deposit predictions-reference.json: the committed with-block file but code_sha256",
+   "check": true,
+   "ok": true,
+   "detail": "predictions-reference.json"
+  },
+  {
+   "step": "f0",
+   "arm": "vf-f0",
+   "tool": "fd_f0_regrade",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-npz",
+    "/pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--d16-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/stage3/f4",
+    "--f4-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4",
+    "--stage0-inventory",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/INVENTORY.sha256",
+    "--s5e-assess",
+    "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess",
+    "--stage0c-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/products.sha256",
+    "--stage0c-root",
+    "/pscratch/sd/j/josephrb/5d-stage0-20261023",
+    "--pvl-products",
+    "/pscratch/sd/j/josephrb/pv-ladder-20261024/products",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "DeltaC_e",
+    "--extra-block-name",
+    "DeltaC_e",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-f0/readout/fd_f0_readout.json",
+    "--out-npz",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-f0/fd_f0_experiments.npz"
+   ],
+   "pins": null,
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 50.5,
+   "start_utc": "2026-11-26T00:32:03Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-f0/readout/fd_f0_readout.json": "7d7429d4624c6065abf3116ab43e3de65a5fcc4b2a420bcf964dc20ef5e8b6e1",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-f0/fd_f0_experiments.npz": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9"
+   }
+  },
+  {
+   "step": "C vf-f0 f0: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "DeltaC_e",
+     "DeltaC_e",
+     null
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {}
+   }
+  },
+  {
+   "step": "R vf-f0 f0: the experiment table is the readout's table_sha256 and the declared table",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "npz": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9",
+    "readout": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9",
+    "want": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9"
+   }
+  },
+  {
+   "step": "f0b",
+   "arm": "vf-with",
+   "tool": "fd_f0_regrade",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-npz",
+    "/pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--d16-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/stage3/f4",
+    "--f4-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4",
+    "--stage0-inventory",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/INVENTORY.sha256",
+    "--s5e-assess",
+    "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess",
+    "--stage0c-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/products.sha256",
+    "--stage0c-root",
+    "/pscratch/sd/j/josephrb/5d-stage0-20261023",
+    "--pvl-products",
+    "/pscratch/sd/j/josephrb/pv-ladder-20261024/products",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D_plus_DeltaC_e",
+    "--extra-block-name",
+    "C_resp + C_PL5D + DeltaC_e",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/readout/fd_f0b_readout.json",
+    "--out-npz",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/fd_f0b_experiments.npz"
+   ],
+   "pins": null,
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 54.0,
+   "start_utc": "2026-11-26T00:32:54Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/readout/fd_f0b_readout.json": "432243e15469bc4e120ab2bddd0ab37ae687764b76832d5d9fa6a7f28eaf90bc",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/fd_f0b_experiments.npz": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9"
+   }
+  },
+  {
+   "step": "C vf-with f0b: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "C_resp_plus_C_PL5D_plus_DeltaC_e",
+     "C_resp + C_PL5D + DeltaC_e",
+     null
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {}
+   }
+  },
+  {
+   "step": "f1",
+   "arm": "vf-with",
+   "tool": "fd_f0_regrade",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-npz",
+    "/pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--d16-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/stage3/f4",
+    "--f4-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4",
+    "--stage0-inventory",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/INVENTORY.sha256",
+    "--s5e-assess",
+    "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess",
+    "--stage0c-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/products.sha256",
+    "--stage0c-root",
+    "/pscratch/sd/j/josephrb/5d-stage0-20261023",
+    "--pvl-products",
+    "/pscratch/sd/j/josephrb/pv-ladder-20261024/products",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D_plus_DeltaC_e",
+    "--extra-block-name",
+    "C_resp + C_PL5D + DeltaC_e",
+    "--f1-prep-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/f1b3/prep/f1-prep-SHA256SUMS",
+    "--f1-prep-sums-sha256",
+    "981b188b03a7e75b904489fa1bf15bd818ef4b72f93a8beba4a906eb3122a480",
+    "--f1-products-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/manifest/f1-products-SHA256SUMS",
+    "--f1-products-sums-sha256",
+    "fdb0274053e9946177376913f6145c024c24582f94607d1f5fd05271642fec09",
+    "--f1-root",
+    "/pscratch/sd/j/josephrb/fd-f1-20261027/f1c",
+    "--f0b-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/readout/fd_f0b_readout.json",
+    "--f0b-readout-sha256",
+    "432243e15469bc4e120ab2bddd0ab37ae687764b76832d5d9fa6a7f28eaf90bc",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/readout/fd_f1_readout.json",
+    "--out-npz",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/fd_f1_experiments.npz"
+   ],
+   "pins": null,
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 53.9,
+   "start_utc": "2026-11-26T00:33:48Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/readout/fd_f1_readout.json": "bd36a2aaefec32791e8f82e539adb9e2c13308a9647dd8ce8ca52fd949837477",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/fd_f1_experiments.npz": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc"
+   }
+  },
+  {
+   "step": "C vf-with f1: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "C_resp_plus_C_PL5D_plus_DeltaC_e",
+     "C_resp + C_PL5D + DeltaC_e",
+     null
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {
+     "f0b_readout": [
+      "432243e15469bc4e120ab2bddd0ab37ae687764b76832d5d9fa6a7f28eaf90bc",
+      null
+     ]
+    }
+   }
+  },
+  {
+   "step": "g",
+   "arm": "vf-with",
+   "tool": "fd_g_compare",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D_plus_DeltaC_e",
+    "--extra-block-name",
+    "C_resp + C_PL5D + DeltaC_e",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/readout/fd_g_readout.json"
+   ],
+   "pins": null,
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 0.8,
+   "start_utc": "2026-11-26T00:34:42Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/readout/fd_g_readout.json": "c9fe9d51744ac5ba169418ab9d087f89e5413b04f15d16dfc1ce9f406fb85ae1"
+   }
+  },
+  {
+   "step": "C vf-with g: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "C_resp_plus_C_PL5D_plus_DeltaC_e",
+     "C_resp + C_PL5D + DeltaC_e",
+     "adopted"
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {}
+   }
+  },
+  {
+   "step": "R vf-with f0b: the experiment table is the readout's table_sha256 and the declared table",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "npz": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9",
+    "readout": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9",
+    "want": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9"
+   }
+  },
+  {
+   "step": "R vf-with f1: the experiment table is the readout's table_sha256 and the declared table",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "npz": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc",
+    "readout": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc",
+    "want": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc"
+   }
+  },
+  {
+   "step": "S vf-with g: Stage G's predictions are its declared five, in order, on their declared cells",
+   "check": true,
+   "ok": true,
+   "detail": [
+    [
+     "genie_cv",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15"
+     ]
+    ],
+    [
+     "genie_mec",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15"
+     ]
+    ],
+    [
+     "nuwro",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15"
+     ]
+    ],
+    [
+     "gibuu",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R08",
+      "R09",
+      "R10",
+      "R11"
+     ]
+    ],
+    [
+     "mnvtune_v1",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15"
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "S vf-with g: every prediction's sigma_total_over_f is sqrt(diag(C_rep))/f",
+   "check": true,
+   "ok": true,
+   "detail": null
+  },
+  {
+   "step": "S vf-with f0b: its sqrt(diag(C_total + its block))/f is sqrt(diag(C_rep))/f",
+   "check": true,
+   "ok": true,
+   "detail": null
+  },
+  {
+   "step": "g",
+   "arm": "E-vf-with",
+   "tool": "fd_g_compare",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D_plus_DeltaC_e",
+    "--extra-block-name",
+    "C_resp + C_PL5D + DeltaC_e",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 0.6,
+   "start_utc": "2026-11-26T00:34:43Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_readout.json": "7034a08ec8f4d95f3b189d6faa3bd8a24ef3672f36dd04ccce513ff25272fdad"
+   }
+  },
+  {
+   "step": "C E vf-with g: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "C_resp_plus_C_PL5D_plus_DeltaC_e",
+     "C_resp + C_PL5D + DeltaC_e",
+     "adopted"
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {}
+   }
+  },
+  {
+   "step": "g_diag",
+   "arm": "E-vf-with",
+   "tool": "fd_g_diag",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D_plus_DeltaC_e",
+    "--extra-block-name",
+    "C_resp + C_PL5D + DeltaC_e",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_diag_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+    "g_readout": "7034a08ec8f4d95f3b189d6faa3bd8a24ef3672f36dd04ccce513ff25272fdad"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 0.6,
+   "start_utc": "2026-11-26T00:34:43Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_diag_readout.json": "440fc379f95a4cc50a41eb114fa94394b3347b2a5179d0cd5d0e0187c7cdd632"
+   }
+  },
+  {
+   "step": "C E vf-with g_diag: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "C_resp_plus_C_PL5D_plus_DeltaC_e",
+     "C_resp + C_PL5D + DeltaC_e",
+     "adopted"
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {
+     "g_readout": [
+      "7034a08ec8f4d95f3b189d6faa3bd8a24ef3672f36dd04ccce513ff25272fdad",
+      null
+     ]
+    }
+   }
+  },
+  {
+   "step": "g_followup",
+   "arm": "E-vf-with",
+   "tool": "fd_g_followup",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_readout.json",
+    "--g-diag-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_diag_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D_plus_DeltaC_e",
+    "--extra-block-name",
+    "C_resp + C_PL5D + DeltaC_e",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_followup_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+    "g_readout": "7034a08ec8f4d95f3b189d6faa3bd8a24ef3672f36dd04ccce513ff25272fdad",
+    "g_diag_readout": "440fc379f95a4cc50a41eb114fa94394b3347b2a5179d0cd5d0e0187c7cdd632"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-11-26T00:34:44Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_followup_readout.json": "030b15664f2ace0869e3ec159bbae9efacf86e109f3c03608f481716821fdfe9"
+   }
+  },
+  {
+   "step": "C E vf-with g_followup: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "C_resp_plus_C_PL5D_plus_DeltaC_e",
+     "C_resp + C_PL5D + DeltaC_e",
+     "adopted"
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {
+     "g_readout": [
+      "7034a08ec8f4d95f3b189d6faa3bd8a24ef3672f36dd04ccce513ff25272fdad",
+      null
+     ],
+     "g_diag_readout": [
+      "440fc379f95a4cc50a41eb114fa94394b3347b2a5179d0cd5d0e0187c7cdd632",
+      null
+     ]
+    }
+   }
+  },
+  {
+   "step": "g_sens2",
+   "arm": "E-vf-with",
+   "tool": "fd_g_followup",
+   "argv": [
+    "--part",
+    "sens2",
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_readout.json",
+    "--g-followup-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_followup_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D_plus_DeltaC_e",
+    "--extra-block-name",
+    "C_resp + C_PL5D + DeltaC_e",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_sens2_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+    "g_readout": "7034a08ec8f4d95f3b189d6faa3bd8a24ef3672f36dd04ccce513ff25272fdad",
+    "g_followup_readout": "030b15664f2ace0869e3ec159bbae9efacf86e109f3c03608f481716821fdfe9"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 0.6,
+   "start_utc": "2026-11-26T00:34:45Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_sens2_readout.json": "7a618892e92db79a7878f5e663ea3f666de315da1e8431fcad3983e6a34afaf5"
+   }
+  },
+  {
+   "step": "C E vf-with g_sens2: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "C_resp_plus_C_PL5D_plus_DeltaC_e",
+     "C_resp + C_PL5D + DeltaC_e",
+     "adopted"
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {
+     "g_readout": [
+      "7034a08ec8f4d95f3b189d6faa3bd8a24ef3672f36dd04ccce513ff25272fdad",
+      null
+     ],
+     "g_followup_readout": [
+      "030b15664f2ace0869e3ec159bbae9efacf86e109f3c03608f481716821fdfe9",
+      "030b15664f2ace0869e3ec159bbae9efacf86e109f3c03608f481716821fdfe9"
+     ]
+    }
+   }
+  },
+  {
+   "step": "flux_boot",
+   "arm": "E-vf-with",
+   "tool": "fd_flux_boot",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "C_resp_plus_C_PL5D_plus_DeltaC_e",
+    "--extra-block-name",
+    "C_resp + C_PL5D + DeltaC_e",
+    "--extra-block-role",
+    "adopted",
+    "--flux-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_flux_boot_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+    "g_readout": "7034a08ec8f4d95f3b189d6faa3bd8a24ef3672f36dd04ccce513ff25272fdad",
+    "constraint": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 6.0,
+   "start_utc": "2026-11-26T00:34:45Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_flux_boot_readout.json": "9387e4951e70131c4f39d489eae1ec7a4082d80111d8bfbc4667ae304c62090c"
+   }
+  },
+  {
+   "step": "C E vf-with flux_boot: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "C_resp_plus_C_PL5D_plus_DeltaC_e",
+     "C_resp + C_PL5D + DeltaC_e",
+     "adopted"
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {
+     "g_readout": [
+      "7034a08ec8f4d95f3b189d6faa3bd8a24ef3672f36dd04ccce513ff25272fdad",
+      null
+     ]
+    }
+   }
+  },
+  {
+   "step": "figures",
+   "arm": "E-vf-with",
+   "tool": "fd_g_figures",
+   "argv": [
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_readout.json",
+    "--g-diag-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_diag_readout.json",
+    "--g-followup-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_followup_readout.json",
+    "--g-sens2-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_sens2_readout.json",
+    "--f0b-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/readout/fd_f0b_readout.json",
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--figures",
+    "ratio",
+    "modes",
+    "sens",
+    "--ratio-form",
+    "data-over-prediction",
+    "--gibuu-axis",
+    "separate",
+    "--out-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/figures",
+    "--reported-block-name",
+    "C_resp + C_PL5D + DeltaC_e",
+    "--prediction-set",
+    "gencmp-chdefs"
+   ],
+   "pins": {
+    "g_readout": "7034a08ec8f4d95f3b189d6faa3bd8a24ef3672f36dd04ccce513ff25272fdad",
+    "g_diag_readout": "440fc379f95a4cc50a41eb114fa94394b3347b2a5179d0cd5d0e0187c7cdd632",
+    "g_followup_readout": "030b15664f2ace0869e3ec159bbae9efacf86e109f3c03608f481716821fdfe9",
+    "g_sens2_readout": "7a618892e92db79a7878f5e663ea3f666de315da1e8431fcad3983e6a34afaf5",
+    "f0b_readout": "432243e15469bc4e120ab2bddd0ab37ae687764b76832d5d9fa6a7f28eaf90bc",
+    "definition": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 6.9,
+   "start_utc": "2026-11-26T00:34:51Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/figures/fd_g_fig_ratio.pdf": "135a381c3a3951a1d2a13e6c898e4ce3b6090ba0278b229053d123602a65eb1a",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/figures/fd_g_fig_ratio.json": "e8bb2b0e23aa4ae4d1ecc48ea56608ac6876159bd63c176aaec7b38f456aeed2",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/figures/fd_g_fig_modes.pdf": "889e175ba938ab5163b55b619e1ce9b3b83031dacbb0f63d106cb2aea44526cc",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/figures/fd_g_fig_modes.json": "acab1b224dfd0bd5c593bf6e3a20929ebd440dddc6a9fc9dd9027642860ee86d",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/figures/fd_g_fig_sens.pdf": "28d55b25776719d25c32b4e3435e6a648780622e74e2f78c06eb3d8b7e1e7eb1",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/figures/fd_g_fig_sens.json": "d95dfd72a126e75af6aa340e9c2a92d494a6f645edef2f15595dd562fc2aa7b3"
+   }
+  },
+  {
+   "step": "figures_check",
+   "arm": "E-vf-with",
+   "tool": "fd_g_figures_check",
+   "argv": [
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_readout.json",
+    "--g-diag-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_diag_readout.json",
+    "--g-followup-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_followup_readout.json",
+    "--g-sens2-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_sens2_readout.json",
+    "--f0b-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/readout/fd_f0b_readout.json",
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--figures-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/figures",
+    "--prediction-set",
+    "gencmp-chdefs"
+   ],
+   "pins": {},
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 0.1,
+   "start_utc": "2026-11-26T00:34:58Z",
+   "outputs": {}
+  },
+  {
+   "step": "S E vf-with g: Stage G's predictions are its declared five, in order, on their declared cells",
+   "check": true,
+   "ok": true,
+   "detail": [
+    [
+     "genie_cv",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15"
+     ]
+    ],
+    [
+     "genie_mec",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15"
+     ]
+    ],
+    [
+     "nuwro",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15"
+     ]
+    ],
+    [
+     "gibuu",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R08",
+      "R09",
+      "R10",
+      "R11"
+     ]
+    ],
+    [
+     "mnvtune_v1",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15"
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "S E vf-with g: every prediction's sigma_total_over_f is sqrt(diag(C_rep))/f",
+   "check": true,
+   "ok": true,
+   "detail": null
+  },
+  {
+   "step": "f0b",
+   "arm": "vf-nopl",
+   "tool": "fd_f0_regrade",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-npz",
+    "/pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--d16-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/stage3/f4",
+    "--f4-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4",
+    "--stage0-inventory",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/INVENTORY.sha256",
+    "--s5e-assess",
+    "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess",
+    "--stage0c-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/products.sha256",
+    "--stage0c-root",
+    "/pscratch/sd/j/josephrb/5d-stage0-20261023",
+    "--pvl-products",
+    "/pscratch/sd/j/josephrb/pv-ladder-20261024/products",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "C_resp_plus_DeltaC_e",
+    "--extra-block-name",
+    "C_resp + DeltaC_e",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-nopl/readout/fd_f0b_readout.json",
+    "--out-npz",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-nopl/fd_f0b_experiments.npz"
+   ],
+   "pins": null,
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 54.5,
+   "start_utc": "2026-11-26T00:34:58Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-nopl/readout/fd_f0b_readout.json": "7ed2482584ab12423dc62d4709c9f85cb4cd870ebeb9a2497b3310284d0becc8",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-nopl/fd_f0b_experiments.npz": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9"
+   }
+  },
+  {
+   "step": "C vf-nopl f0b: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "C_resp_plus_DeltaC_e",
+     "C_resp + DeltaC_e",
+     null
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {}
+   }
+  },
+  {
+   "step": "f1",
+   "arm": "vf-nopl",
+   "tool": "fd_f0_regrade",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-npz",
+    "/pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--d16-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/stage3/f4",
+    "--f4-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4",
+    "--stage0-inventory",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/INVENTORY.sha256",
+    "--s5e-assess",
+    "/pscratch/sd/j/josephrb/s5e-20260925/runs/cand/assess",
+    "--stage0c-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/products.sha256",
+    "--stage0c-root",
+    "/pscratch/sd/j/josephrb/5d-stage0-20261023",
+    "--pvl-products",
+    "/pscratch/sd/j/josephrb/pv-ladder-20261024/products",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "C_resp_plus_DeltaC_e",
+    "--extra-block-name",
+    "C_resp + DeltaC_e",
+    "--f1-prep-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/f1b3/prep/f1-prep-SHA256SUMS",
+    "--f1-prep-sums-sha256",
+    "981b188b03a7e75b904489fa1bf15bd818ef4b72f93a8beba4a906eb3122a480",
+    "--f1-products-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-f1/run/cluster/manifest/f1-products-SHA256SUMS",
+    "--f1-products-sums-sha256",
+    "fdb0274053e9946177376913f6145c024c24582f94607d1f5fd05271642fec09",
+    "--f1-root",
+    "/pscratch/sd/j/josephrb/fd-f1-20261027/f1c",
+    "--f0b-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-nopl/readout/fd_f0b_readout.json",
+    "--f0b-readout-sha256",
+    "7ed2482584ab12423dc62d4709c9f85cb4cd870ebeb9a2497b3310284d0becc8",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-nopl/readout/fd_f1_readout.json",
+    "--out-npz",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-nopl/fd_f1_experiments.npz"
+   ],
+   "pins": null,
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 53.2,
+   "start_utc": "2026-11-26T00:35:53Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-nopl/readout/fd_f1_readout.json": "e473f642f4255853ab809ca72d5b20bb838457e073e2a87c95ab24ededd48c58",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-nopl/fd_f1_experiments.npz": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc"
+   }
+  },
+  {
+   "step": "C vf-nopl f1: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "C_resp_plus_DeltaC_e",
+     "C_resp + DeltaC_e",
+     null
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {
+     "f0b_readout": [
+      "7ed2482584ab12423dc62d4709c9f85cb4cd870ebeb9a2497b3310284d0becc8",
+      null
+     ]
+    }
+   }
+  },
+  {
+   "step": "g",
+   "arm": "vf-nopl",
+   "tool": "fd_g_compare",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/s5p-20260926",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "C_resp_plus_DeltaC_e",
+    "--extra-block-name",
+    "C_resp + DeltaC_e",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-nopl/readout/fd_g_readout.json"
+   ],
+   "pins": null,
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-11-26T00:36:46Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-nopl/readout/fd_g_readout.json": "a0d000d0db6180972de6db998b57534393bd812272d9a35b099bcec25bf2c770"
+   }
+  },
+  {
+   "step": "C vf-nopl g: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "C_resp_plus_DeltaC_e",
+     "C_resp + DeltaC_e",
+     "adopted"
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {}
+   }
+  },
+  {
+   "step": "R vf-nopl f0b: the experiment table is the readout's table_sha256 and the declared table",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "npz": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9",
+    "readout": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9",
+    "want": "7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9"
+   }
+  },
+  {
+   "step": "R vf-nopl f1: the experiment table is the readout's table_sha256 and the declared table",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "npz": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc",
+    "readout": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc",
+    "want": "997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc"
+   }
+  },
+  {
+   "step": "S vf-nopl g: Stage G's predictions are its declared five, in order, on their declared cells",
+   "check": true,
+   "ok": true,
+   "detail": [
+    [
+     "genie_cv",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15"
+     ]
+    ],
+    [
+     "genie_mec",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15"
+     ]
+    ],
+    [
+     "nuwro",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15"
+     ]
+    ],
+    [
+     "gibuu",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R08",
+      "R09",
+      "R10",
+      "R11"
+     ]
+    ],
+    [
+     "mnvtune_v1",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15"
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "S vf-nopl g: every prediction's sigma_total_over_f is sqrt(diag(C_rep))/f",
+   "check": true,
+   "ok": true,
+   "detail": null
+  },
+  {
+   "step": "S vf-nopl f0b: its sqrt(diag(C_total + its block))/f is sqrt(diag(C_rep))/f",
+   "check": true,
+   "ok": true,
+   "detail": null
+  },
+  {
+   "step": "g",
+   "arm": "E-vf-nopl",
+   "tool": "fd_g_compare",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "C_resp_plus_DeltaC_e",
+    "--extra-block-name",
+    "C_resp + DeltaC_e",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 0.6,
+   "start_utc": "2026-11-26T00:36:47Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_readout.json": "eefe1c6d42d10ba0c4a7849d8d8a1068487a0bb4dfb5857fbce5d150c7fbbcbf"
+   }
+  },
+  {
+   "step": "C E vf-nopl g: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "C_resp_plus_DeltaC_e",
+     "C_resp + DeltaC_e",
+     "adopted"
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {}
+   }
+  },
+  {
+   "step": "g_diag",
+   "arm": "E-vf-nopl",
+   "tool": "fd_g_diag",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "C_resp_plus_DeltaC_e",
+    "--extra-block-name",
+    "C_resp + DeltaC_e",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_diag_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+    "g_readout": "eefe1c6d42d10ba0c4a7849d8d8a1068487a0bb4dfb5857fbce5d150c7fbbcbf"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-11-26T00:36:47Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_diag_readout.json": "a41e8091980eb92f2d8404c531ffcd313c15d58227e059d23e40221698ef4bdb"
+   }
+  },
+  {
+   "step": "C E vf-nopl g_diag: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "C_resp_plus_DeltaC_e",
+     "C_resp + DeltaC_e",
+     "adopted"
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {
+     "g_readout": [
+      "eefe1c6d42d10ba0c4a7849d8d8a1068487a0bb4dfb5857fbce5d150c7fbbcbf",
+      null
+     ]
+    }
+   }
+  },
+  {
+   "step": "g_followup",
+   "arm": "E-vf-nopl",
+   "tool": "fd_g_followup",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_readout.json",
+    "--g-diag-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_diag_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "C_resp_plus_DeltaC_e",
+    "--extra-block-name",
+    "C_resp + DeltaC_e",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_followup_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+    "g_readout": "eefe1c6d42d10ba0c4a7849d8d8a1068487a0bb4dfb5857fbce5d150c7fbbcbf",
+    "g_diag_readout": "a41e8091980eb92f2d8404c531ffcd313c15d58227e059d23e40221698ef4bdb"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 0.8,
+   "start_utc": "2026-11-26T00:36:48Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_followup_readout.json": "80081f0329bde53d39b9dc76bf61b14a5bb2e98b9af0c3d95c8ca8f952a5c461"
+   }
+  },
+  {
+   "step": "C E vf-nopl g_followup: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "C_resp_plus_DeltaC_e",
+     "C_resp + DeltaC_e",
+     "adopted"
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {
+     "g_readout": [
+      "eefe1c6d42d10ba0c4a7849d8d8a1068487a0bb4dfb5857fbce5d150c7fbbcbf",
+      null
+     ],
+     "g_diag_readout": [
+      "a41e8091980eb92f2d8404c531ffcd313c15d58227e059d23e40221698ef4bdb",
+      null
+     ]
+    }
+   }
+  },
+  {
+   "step": "g_sens2",
+   "arm": "E-vf-nopl",
+   "tool": "fd_g_followup",
+   "argv": [
+    "--part",
+    "sens2",
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_readout.json",
+    "--g-followup-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_followup_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "C_resp_plus_DeltaC_e",
+    "--extra-block-name",
+    "C_resp + DeltaC_e",
+    "--extra-block-role",
+    "adopted",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_sens2_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+    "g_readout": "eefe1c6d42d10ba0c4a7849d8d8a1068487a0bb4dfb5857fbce5d150c7fbbcbf",
+    "g_followup_readout": "80081f0329bde53d39b9dc76bf61b14a5bb2e98b9af0c3d95c8ca8f952a5c461"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-11-26T00:36:49Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_sens2_readout.json": "5cac1831dd8bed3648a68e9157d5ccaa96d8ac5f553da391f4818f62549d9938"
+   }
+  },
+  {
+   "step": "C E vf-nopl g_sens2: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "C_resp_plus_DeltaC_e",
+     "C_resp + DeltaC_e",
+     "adopted"
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {
+     "g_readout": [
+      "eefe1c6d42d10ba0c4a7849d8d8a1068487a0bb4dfb5857fbce5d150c7fbbcbf",
+      null
+     ],
+     "g_followup_readout": [
+      "80081f0329bde53d39b9dc76bf61b14a5bb2e98b9af0c3d95c8ca8f952a5c461",
+      "80081f0329bde53d39b9dc76bf61b14a5bb2e98b9af0c3d95c8ca8f952a5c461"
+     ]
+    }
+   }
+  },
+  {
+   "step": "flux_boot",
+   "arm": "E-vf-nopl",
+   "tool": "fd_flux_boot",
+   "argv": [
+    "--definition",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "--s1-npz",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/s1-20261024/s1_assembly.npz",
+    "--s1-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json",
+    "--cmodel-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json",
+    "--s5p-sums",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred/SHA256SUMS",
+    "--s5p-root",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_readout.json",
+    "--extra-block",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--extra-block-sha256",
+    "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "--extra-block-key",
+    "C_resp_plus_DeltaC_e",
+    "--extra-block-name",
+    "C_resp + DeltaC_e",
+    "--extra-block-role",
+    "adopted",
+    "--flux-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly",
+    "--flux-constraint",
+    "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/inputs/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "--out-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_flux_boot_readout.json"
+   ],
+   "pins": {
+    "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+    "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+    "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+    "g_readout": "eefe1c6d42d10ba0c4a7849d8d8a1068487a0bb4dfb5857fbce5d150c7fbbcbf",
+    "constraint": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2"
+   },
+   "variant": null,
+   "predictions": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/predictions-chdefs.json",
+   "rc": 0,
+   "wall_s": 6.1,
+   "start_utc": "2026-11-26T00:36:50Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_flux_boot_readout.json": "3d4af1002b10942e8f653bea255c548b6ad7519ffb6b02046c16dc6da2375704"
+   }
+  },
+  {
+   "step": "C E vf-nopl flux_boot: argv, the block's digests, key, name and role, and each upstream digest are as written",
+   "check": true,
+   "ok": true,
+   "detail": {
+    "argv_block": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+     "C_resp_plus_DeltaC_e",
+     "C_resp + DeltaC_e",
+     "adopted"
+    ],
+    "digests": [
+     "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"
+    ],
+    "upstream": {
+     "g_readout": [
+      "eefe1c6d42d10ba0c4a7849d8d8a1068487a0bb4dfb5857fbce5d150c7fbbcbf",
+      null
+     ]
+    }
+   }
+  },
+  {
+   "step": "S E vf-nopl g: Stage G's predictions are its declared five, in order, on their declared cells",
+   "check": true,
+   "ok": true,
+   "detail": [
+    [
+     "genie_cv",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15"
+     ]
+    ],
+    [
+     "genie_mec",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15"
+     ]
+    ],
+    [
+     "nuwro",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15"
+     ]
+    ],
+    [
+     "gibuu",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R08",
+      "R09",
+      "R10",
+      "R11"
+     ]
+    ],
+    [
+     "mnvtune_v1",
+     [
+      "R00",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15"
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "S E vf-nopl g: every prediction's sigma_total_over_f is sqrt(diag(C_rep))/f",
+   "check": true,
+   "ok": true,
+   "detail": null
+  },
+  {
+   "step": "data_product",
+   "arm": "vf-with",
+   "tool": "fd_vf_addition",
+   "argv": [
+    "product",
+    "--data-product",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/data-product/fd_data_product_cpl.json",
+    "--block-npz",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.npz",
+    "--block-json",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/block/vf_block.json",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/readout/fd_g_readout.json",
+    "--out-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product"
+   ],
+   "pins": {
+    "data_product": "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50",
+    "block_npz": "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b",
+    "block_json": "421da0e683537ad0a47b684e5e6ae42f7f3d63d6cc6038e03671dc7772edb6bd",
+    "g_readout": "c9fe9d51744ac5ba169418ab9d087f89e5413b04f15d16dfc1ce9f406fb85ae1"
+   },
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 0.6,
+   "start_utc": "2026-11-26T00:36:56Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf.json": "1a37b0820017f9e515f6e46dbf4009d0a76ef8f542975654d0c61e0a015d84e8",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_cells.csv": "ad08a7ea7adaf85adeb1253d2323d25b169e9363c3f74e537ac8a406a015b800",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_C_e.csv": "222c4dd4efef0780c408b82caa8d360723bc8b73b784885789f374a624e6c715",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_C_e_infl.csv": "763f14c6ace6e69109fc11ded75d8654615fe55d5e53281e9911bc5318a03e93",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_DeltaC_e.csv": "17098c4431e8a81c3ea380661cc5da58accd31e682e50c411b302fd88793e736",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_C_model_abs.csv": "ad179dea32b1360083f5f69df9ae051f2486abc90354fee9b6a514736eac0e63",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_C_resp.csv": "35bfcb2a332b8b5aff4c9f14a14ccb63787082e49814962d2e5de0e40659cc62",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_C_PL5D.csv": "03babead4dff1bf19980319a867c9b830a5b7f85896792edc6f07a62c6e991c9",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_C_total_plus_C_resp_plus_DeltaC_e.csv": "531daa75fbcf0cac818bf0e197a1bd110cdc7aff71dcace7f3c4f80a366a3834",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e.csv": "6d48cb98f507772f89d6573cf2a8e2c66d38036a7be5220305a585f434993880",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf_corr_C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e.csv": "e82dac3e1937de67d99d6e825188cd5bf67c02cb7cf398b1590476de74f64fc4"
+   }
+  },
+  {
+   "step": "deposit_build",
+   "arm": "vf-with",
+   "tool": "fd_deposit_candidate",
+   "argv": [
+    "build",
+    "--data-product",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf.json",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/readout/fd_g_readout.json",
+    "--out-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/deposit-candidate"
+   ],
+   "pins": {
+    "data_product": "1a37b0820017f9e515f6e46dbf4009d0a76ef8f542975654d0c61e0a015d84e8",
+    "g_readout": "c9fe9d51744ac5ba169418ab9d087f89e5413b04f15d16dfc1ce9f406fb85ae1"
+   },
+   "variant": "with-vf",
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 0.5,
+   "start_utc": "2026-11-26T00:36:56Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/deposit-candidate/cells.csv": "51dd7a7ec23240188d1e91b37bed8f8051a0160ddcc60e197580a78fc15a1e73",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/deposit-candidate/covariance.csv": "6d48cb98f507772f89d6573cf2a8e2c66d38036a7be5220305a585f434993880",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/deposit-candidate/correlation.csv": "e82dac3e1937de67d99d6e825188cd5bf67c02cb7cf398b1590476de74f64fc4",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/deposit-candidate/deposit.json": "615a4321ebe421f75601505f2fb70e021587298cb25b52f99c3eaa697108cf10",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/deposit-candidate/predictions-reference.json": "b27377f556c27fcf78df13eef558abf0384111d394b5ed1e72669e4950bf354e"
+   }
+  },
+  {
+   "step": "deposit_check",
+   "arm": "vf-with",
+   "tool": "fd_deposit_candidate",
+   "argv": [
+    "check",
+    "--package",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/deposit-candidate",
+    "--data-product",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/data-product/fd_data_product_vf.json",
+    "--g-readout",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/readout/fd_g_readout.json"
+   ],
+   "pins": {
+    "data_product": "1a37b0820017f9e515f6e46dbf4009d0a76ef8f542975654d0c61e0a015d84e8",
+    "g_readout": "c9fe9d51744ac5ba169418ab9d087f89e5413b04f15d16dfc1ce9f406fb85ae1"
+   },
+   "variant": "with-vf",
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 0.5,
+   "start_utc": "2026-11-26T00:36:57Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/deposit-candidate/deposit.json": "615a4321ebe421f75601505f2fb70e021587298cb25b52f99c3eaa697108cf10"
+   }
+  },
+  {
+   "step": "table",
+   "arm": "vf",
+   "tool": "fd_vf_addition",
+   "argv": [
+    "table",
+    "--pairs",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/pins/table-pairs.json",
+    "--out-dir",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/table"
+   ],
+   "pins": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0_readout.json": "6e7d718bd393dd0600e974d0ce9b5c389486890cb7112550b22289008d6d312b",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-f0/readout/fd_f0_readout.json": "7d7429d4624c6065abf3116ab43e3de65a5fcc4b2a420bcf964dc20ef5e8b6e1",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json": "5f542830561731b567f2b97d78e5e9677a9802a35ef9c21855828bf184e6f3d6",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/readout/fd_f0b_readout.json": "432243e15469bc4e120ab2bddd0ab37ae687764b76832d5d9fa6a7f28eaf90bc",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f1_readout.json": "5ccc89e58096a14ab8dc0e3e6f508ca4b2b546b629077560a09a4596cde40395",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/readout/fd_f1_readout.json": "bd36a2aaefec32791e8f82e539adb9e2c13308a9647dd8ce8ca52fd949837477",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_g_readout.json": "b55366b3fd2d35a5426351531a9aa002a4d6be4b1048bd27339491e8c400a6fd",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-with/readout/fd_g_readout.json": "c9fe9d51744ac5ba169418ab9d087f89e5413b04f15d16dfc1ce9f406fb85ae1",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json": "a19009e0bd83b9bb8f9ad65fb65804e6f62c8953310103fbfe6fce5f84995875",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_readout.json": "7034a08ec8f4d95f3b189d6faa3bd8a24ef3672f36dd04ccce513ff25272fdad",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_diag_readout.json": "522bfafa3016fadbd62c72f9f34153e17cd514a3b06acf282030d550f5dc1855",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_diag_readout.json": "440fc379f95a4cc50a41eb114fa94394b3347b2a5179d0cd5d0e0187c7cdd632",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_followup_readout.json": "586cd74105d0837c69290d0370f6327cda75a92ee31f2d437658c626b4ab1e8f",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_followup_readout.json": "030b15664f2ace0869e3ec159bbae9efacf86e109f3c03608f481716821fdfe9",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_sens2_readout.json": "4bc21dfda9c49762227fc4c486ee9decc349863aaea095f94347ad4b963d4513",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_g_sens2_readout.json": "7a618892e92db79a7878f5e663ea3f666de315da1e8431fcad3983e6a34afaf5",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_flux_boot_readout.json": "5bb475eada29d270f93bf124251b98152a437280fa684429fe20e15d940f2e5d",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_flux_boot_readout.json": "9387e4951e70131c4f39d489eae1ec7a4082d80111d8bfbc4667ae304c62090c",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json": "b9db935a3187646ba2accaf3865cf4aa26ad72676063c58e7f5e6220224ef17b",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-nopl/readout/fd_f0b_readout.json": "7ed2482584ab12423dc62d4709c9f85cb4cd870ebeb9a2497b3310284d0becc8",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f1_readout.json": "cbe411a926a7392e4aa085c7beba6e1bda45aff55d937998c53e49f27e3516c7",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-nopl/readout/fd_f1_readout.json": "e473f642f4255853ab809ca72d5b20bb838457e073e2a87c95ab24ededd48c58",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_readout.json": "75a9ddee19a7affe7e3bc10bf0cba8e5ebaa71132686e5ae116f1454d7bafcee",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/S/vf-nopl/readout/fd_g_readout.json": "a0d000d0db6180972de6db998b57534393bd812272d9a35b099bcec25bf2c770",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_readout.json": "d9a1ce38040b8cd3c2a6deb787f8a7dc90aca5c4d3a5a8d25a60b7f8ab582ed9",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_readout.json": "eefe1c6d42d10ba0c4a7849d8d8a1068487a0bb4dfb5857fbce5d150c7fbbcbf",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_diag_readout.json": "4e77966e93bd21d53ae777f2af02f00963d9eec45372997fc7af5fd45d2a099f",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_diag_readout.json": "a41e8091980eb92f2d8404c531ffcd313c15d58227e059d23e40221698ef4bdb",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_followup_readout.json": "748f3af6e7fa54f916d73295b078e5b8a768a8abe024e848a55d9b90f9a806ac",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_followup_readout.json": "80081f0329bde53d39b9dc76bf61b14a5bb2e98b9af0c3d95c8ca8f952a5c461",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_sens2_readout.json": "6626cb7347793b50a4431307244d50e3e863202c6ac920d659d10ec691e7f7e9",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_g_sens2_readout.json": "5cac1831dd8bed3648a68e9157d5ccaa96d8ac5f553da391f4818f62549d9938",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_flux_boot_readout.json": "24ff27f90067864292ef93bd018f5040548f90118368b3cf03fc3760377661ed",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-nopl/readout/fd_flux_boot_readout.json": "3d4af1002b10942e8f653bea255c548b6ad7519ffb6b02046c16dc6da2375704"
+   },
+   "variant": null,
+   "predictions": null,
+   "rc": 0,
+   "wall_s": 0.7,
+   "start_utc": "2026-11-26T00:36:57Z",
+   "outputs": {
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/table/fd_vf_table.json": "d17e3edf674027dad3a6765d3e865acc61864ab482c1b3ed1e7be8d9b6a01302",
+    "/pscratch/sd/j/josephrb/vf-20261125-p1/run/table/fd_vf_table.md": "d1bc17ecd4e86b15d7f972d39f7ed7ed8437b3dfa03267b033232cc7ca667b2a"
+   }
+  }
+ ]
+}

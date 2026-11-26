@@ -1,0 +1,13 @@
+vfp1 sha 9cda83f0730350c5e4d73921290c41b127c1299478cc8a49130c33bfe4d48e2f
+worker start 742359
+deploy ok at c0fa0d01aa05d5b6bb9793919768491d8d8a0c23: 22 blobs
+tests rc=0 PASS
+chain rc=0
+[chain] vf-with data_product: rc 0, 0.6 s
+[chain] vf-with deposit_build: rc 0, 0.5 s
+[chain] vf-with deposit_check: rc 0, 0.5 s
+[chain] vf table: rc 0, 0.7 s
+[chain] done: 161 records in /pscratch/sd/j/josephrb/vf-20261125-p1/run/chain.json
+run files hashed: 214
+porcelain after: empty
+worker exit=0
