@@ -153,11 +153,16 @@ A done-marker records the verdict and both products' sha256.
     sums the per-playlist flag over 12 playlists. "= 1" would be a false STOP.
   - **Measured on the real input** (`receipts/couple/run2/`; the director's GO; cov2d's ack; 2026-11-27T17:31–17:35Z,
     login04, 0 node-h):
-    - on 43f8cc16, read from r3's staged copy, the identity holds exactly;
+    - on 43f8cc16, read from r3's staged copy, the identity holds exactly **under the measuring script's reproduction
+      of the two loaders' row rules** (`ptmc_couple_check.py`: the finite-value, weight and rectangle rules, and the
+      20° cut evaluated with `np.arctan2`, where the driver uses `math.atan2`);
     - 32,849,103 denominator rows and 32,849,103 truth-passing signal rows, with no row dropped by either loader's rules;
     - 0 per-cell count mismatches, 0 one-sided cells and 0 deviation in pT, p∥ or w;
     - every signal tuple has an exact twin in the denominator;
     - neither tree has event-ID branches.
+  - The measurement is evidence that the gate will pass, not the gate itself. It is not claimed for the driver's own
+    arrays, since the two angle evaluations were not compared row by row. **The binding gate is C-COUPLE**, evaluated
+    on the driver's own loader arrays in `p_off_c` and `p_R_c`, and it fails closed.
   - Run 1 crashed at `import ROOT` before reading anything, because the conda environment was not activated
     (`receipts/couple/run1/`). The launcher was fixed (4cf2d915 → 584c7c8a) and re-approved before run 2.
   - If the gate fails, nothing is read, and the mismatch (cells, counts) goes to the director.
@@ -255,8 +260,10 @@ non-finite value fails, and reductions never skip a NaN.
   - **the sets, in `p_R_c`:** the rows file's 544,162 entries split into the appended set (536,518, the in-grid rows
     passing the weight rule) and the reco-outside set (7,644), which are disjoint;
   - **the sets, in every R replica:** the background fill rows and the injected entries are both disjoint from the
-    rows file's entries. The fill-row entry set equals `p_off_b1`'s minus the rows file's entries, since fill rows do
-    not depend on the seed;
+    rows file's entries.
+    - The ordered fill records (entry, p_T, p∥, w × POT scale) equal `p_off_b1`'s with the rows file's entries removed,
+      order and multiplicity preserved, since fill rows do not depend on the seed. A duplicated retained row fails.
+    - The replica's ordered injected entries equal those the driver's fiducial rule gives on that filtered reference;
   - **the removal** (`p_R_c` against `p_off_c`):
     per reco cell, the background removed equals the moved rows reconstructed in the grid that the background loader
     had filled (0 ≤ w < 1e6, POT-scaled), recomputed from the rows file. The tolerance is 1e-12 of the cell's
@@ -273,8 +280,10 @@ non-finite value fails, and reductions never skip a NaN.
   fails, nothing is read. Measured on 43f8cc16 before binding: exact (§2.2). The cell sums' agreement is printed
   beside it.
 - **C-NORM:** in every unit, the extraction's fixed arguments as consumed (the flux vector, data POT, nucleon count and
-  both edge arrays) have the same digest as `p_off_c`'s. C-FIX checks `p_off_c`'s against the CV inputs. A
-  replica cannot pass with a different normalization.
+  both edge arrays) have the same digest as `p_off_c`'s. A replica cannot pass with a different normalization.
+  - `p_off_c` itself is anchored to the CV by C-BASE, which reproduces E_R's `hXSec2D`. C-FIX ties `p_R_c` to
+    `p_off_c`.
+  - The bin widths the extraction takes from `hUnfold`'s axes are covered by C-GRID's output-axis check.
 - **C-REFINE:** in every unit, the refinement's returned weights are, bit for bit, the measured weights both methods
   received.
 - **C-FILL-IBU:** in every unit and at every K, IBU's event-level route equals its direct route, relative to 1e-9.
@@ -436,7 +445,14 @@ bars.
 - **STOP before the replicas** if the projection exceeds 11.5 node-h. The replicas also do not launch before every
   pilot control passes, C-COUPLE included.
 - **The hard cap is 12.5 node-h for the whole campaign,** pilot and retries included. No job is submitted whose node
-  count times time limit exceeds the cap left. The replica jobs' time limit is 1.5 × (10 × t_R) + o. A retry reruns only a unit that failed for a non-deterministic reason
+  count times time limit exceeds the cap left.
+- **The replica jobs' time limit** is L = min(1.5 × (10 × t_R) + o, (12.5 − node-h charged so far) / 5 nodes), rounded
+  down to the scheduler's minute. The replicas launch only if L ≥ 1.1 × (10 × t_R + o); otherwise it is a STOP to the
+  director.
+  - At the scoped timing (t_R ≈ 704 s, pilot ≈ 0.4 node-h), L is about 2 h 25 min against a runtime of about
+    1 h 57 min.
+  - The five nodes' reservations together stay within the cap left.
+- **Retries:** a retry reruns only a unit that failed for a non-deterministic reason
   (for example a node failure or a timeout); a control failure is not retried, and goes to the director.
 
 ## 8. Rulings and records
@@ -479,6 +495,9 @@ receipt is `receipts/stat-d4/` in this PR.
 - round 1, on r1 at `8040eedba`: codex-school2 5 / 8 / 3 and agy `gemini-4-hydrogen-high` 4 / 3 / 1 (blockers / major /
   minor);
 - round 2, on r2 at `783a73a10`: codex-school2 6 / 5 / 2 and agy 5 / 2 / 2;
+- the narrow confirm read of r4 at `643d1adbc` (codex-school2, the director's instruction): CONFIRMED 3 of 5, with
+  three class findings answered here (`reads/r4-confirm/`): (a) the measurement's scope; (c) the time limit against
+  the cap; (b) a duplicated retained background row;
 - round 3, on r3 at `ea1004efa`, under the scope rule: codex-school2 6 / 3 / 1 and agy 2 / 0 / 3. Both readers' blockers
   are the same two, the C-COUPLE premise and §7's lane division. codex's other four (the weighted lost-support
   trigger; a moved entry reused in a replica; a replica's normalization; the C-COUPLE float tolerance) are answered in
