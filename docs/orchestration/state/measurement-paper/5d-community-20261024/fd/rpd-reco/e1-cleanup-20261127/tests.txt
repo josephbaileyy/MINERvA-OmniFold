@@ -4,7 +4,9 @@ ok   all three roots gone, their parent kept
 ok   step 3 removes only omnifile copies
 ok   a file added after the listing: refused, nothing removed
 ok   nothing removed after a refusal
-ok   a symlink in the approved listing: refused
+ok   a symlink outside clone/ in the approved listing: refused
+ok   a clone missing one of S's symlinks: refused
+ok   a clone with an extra symlink: refused
 ok   an unended rpd* job: refused
 ok   not a login node: refused
 ok   a missing root (ROOT-NOT-A-DIRECTORY in the listing): refused

@@ -19326,6 +19326,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/e1-
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/e1-cleanup-20261127/build_remove.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/e1-cleanup-20261127/e1-list.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/e1-cleanup-20261127/e1-remove.sh.in	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/e1-cleanup-20261127/step1/list.err.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/e1-cleanup-20261127/step1/listing.txt.gz	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/e1-cleanup-20261127/test_cleanup.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/e1-cleanup-20261127/tests.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/enu-true-code-20261124/README.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes

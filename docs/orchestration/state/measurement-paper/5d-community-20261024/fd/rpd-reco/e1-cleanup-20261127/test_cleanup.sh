@@ -29,6 +29,10 @@ printf '#!/bin/bash\nprintf "%%b" "${SACCT_OUT:-1|rpd_flux4|COMPLETED\\n}"\n' > 
 printf '#!/bin/bash\necho "${HOSTNAME_STUB:-login02}"\n' > "$T/bin/hostname"
 chmod +x "$T/bin/"*
 export PATH="$T/bin:$PATH"
+REPO=$(git -C "$HERE" rev-parse --show-toplevel)
+export REPO_FOR_LINKS="$REPO"
+git -C "$REPO" ls-tree -r 2415e8d66d1a9160e724d426eaeb54d458d4b4f7 | awk -F'\t' '$1 ~ /^120000/ {print $2}' > "$T/links.txt"
+[ "$(wc -l < "$T/links.txt" | tr -d ' ')" = 241 ] || { echo "SETUP: S's symlink list is not 241"; exit 9; }
 fails=0
 check() { if [ "$2" = "$3" ] && printf '%s' "$5" | grep -qF -- "$4"; then echo "ok   $1"; else echo "FAIL $1 (rc $3, wanted $2 and '$4')"; printf '%s\n' "$5" | sed 's/^/     /' | tail -8; fails=$((fails + 1)); fi; }
 setup() {  # fresh roots and fresh script copies pointed at them
@@ -41,6 +45,11 @@ setup() {  # fresh roots and fresh script copies pointed at them
     printf 'dump' > "$P0/$d/staged/0123456789abcdef-lat_1A.npz"
   done
   printf 'p0' > "$P0/run/p0.json"; printf 'c' > "$P0/clone/x/f.py"
+  for R in "$P0" "$F4" "$D2"; do  # each clone holds exactly S's 241 committed symlinks, and a file with spaces
+    mkdir -p "$R/clone"
+    while IFS= read -r l; do mkdir -p "$R/clone/$(dirname "$l")"; ln -s target "$R/clone/$l"; done < "$T/links.txt"
+    printf 'pdf' > "$R/clone/MINERvA with OmniFold -- 3D+.pdf"
+  done
   printf 'factors' > "$F4/run/flux-factors-1A.npz"; printf 'stop' > "$D2/run/d2-predict.STOP.json"
   mkdir -p "$T/case/pkg"
   for f in e1-list.sh e1-remove.sh.in build_remove.sh; do
@@ -67,7 +76,15 @@ check "a file added after the listing: refused, nothing removed" 2 $rc "not the 
 
 setup; ln -s /etc "$D2/run/link"; list; build
 out=$(remove); rc=$?
-check "a symlink in the approved listing: refused" 2 $rc "a symlink is present" "$out"
+check "a symlink outside clone/ in the approved listing: refused" 2 $rc "a symlink outside" "$out"
+
+setup; rm "$F4/clone/$(head -1 "$T/links.txt")"; list; build
+out=$(remove); rc=$?
+check "a clone missing one of S's symlinks: refused" 2 $rc "are not the 241 committed at S" "$out"
+
+setup; ln -s target "$P0/clone/extra-link"; list; build
+out=$(remove); rc=$?
+check "a clone with an extra symlink: refused" 2 $rc "are not the 241 committed at S" "$out"
 
 setup; list; build
 out=$(SACCT_OUT='5|rpd_d2s0|RUNNING\n' remove); rc=$?

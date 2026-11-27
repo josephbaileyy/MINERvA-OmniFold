@@ -4,8 +4,9 @@
 # Built from e1-remove.sh.in by build_remove.sh, which fills APPROVED with the listing sha the director approved.
 # In order:
 #   1. refuses unless on a login node, and unless sacct shows no unended rpd* job (none can be using these roots);
-#   2. regenerates e1-list.sh's listing (the same lines) and refuses unless it hashes to APPROVED, has no symlink, no
-#      line other than "<type> <bytes> <path>" under the three roots, and no ROOT-NOT-A-DIRECTORY line;
+#   2. regenerates e1-list.sh's listing (the same lines) and refuses unless it hashes to APPROVED, has no line other than
+#      "<f|d|l> <bytes> <path>" (the path may hold spaces) under the three roots, no ROOT-NOT-A-DIRECTORY line, and no symlink except each clone's
+#      own committed ones (the git tree at S's symlink list, by sha);
 #   3. deletes the omnifile copies first: in rpd-reco-p0e1-20261126/{dry,run}/staged/, each regular file whose name
 #      ends "-runEventLoopOmniFold_RDX_<PL>.root" and is in the approved listing, by its literal path (rm -f --);
 #   4. removes each root by its literal path (rm -rf --), in the listing's order, and checks it is gone.
@@ -30,9 +31,19 @@ got=$(printf '%s\n' "$out" | sha256sum | cut -d' ' -f1)
 echo "listing_sha256 $got"
 [ "$got" = "$APPROVED" ] || stop "the listing is not the approved one"
 printf '%s\n' "$out" | grep -q '^ROOT-NOT-A-DIRECTORY' && stop "a root is not a directory"
-printf '%s\n' "$out" | awk '$1 == "l"' | grep -q . && stop "a symlink is present"
+# Symlinks are allowed only inside each root's clone/, and only the clone's own committed ones: per root, the sorted
+# relative paths of its symlinks must hash to CLONE_LINKS, the sha256 of the sorted list of symlinks in the git tree
+# at S (2415e8d6, 241 paths; build_remove.sh computes it). rm -rf removes a symlink and never follows it.
+CLONE_LINKS=@CLONE_LINKS@
+for R in $ROOTS; do
+  stray=$(printf '%s\n' "$out" | awk -v r="$R/" -v c="$R/clone/" '{ p = $0; sub(/^[^ ]+ [^ ]+ /, "", p) } $1 == "l" && index(p, r) == 1 && index(p, c) != 1')
+  [ -z "$stray" ] || stop "a symlink outside $R/clone/: $stray"
+  links=$(printf '%s\n' "$out" | awk -v c="$R/clone/" '{ p = $0; sub(/^[^ ]+ [^ ]+ /, "", p) } $1 == "l" && index(p, c) == 1 {print substr(p, length(c) + 1)}' | LC_ALL=C sort | sha256sum | cut -d' ' -f1)
+  [ "$links" = "$CLONE_LINKS" ] || stop "$R/clone/'s symlinks are not the 241 committed at S ($links)"
+done
+echo "symlinks: only the clones' committed ones (sha $CLONE_LINKS per root)"
 bad=$(printf '%s\n' "$out" | awk -v roots="$ROOTS" 'BEGIN { n = split(roots, r, " ") }
-  { ok = (NF == 3); if (ok) { under = 0; for (i = 1; i <= n; i++) if (index($3, r[i] "/") == 1) under = 1; ok = under } if (!ok) print }')
+  { p = $0; ok = sub(/^[fdl] [0-9]+ /, "", p); if (ok) { under = 0; for (i = 1; i <= n; i++) if (index(p, r[i] "/") == 1) under = 1; ok = under } if (!ok) print }')
 [ -z "$bad" ] || stop "a listing line is malformed or outside the roots: $bad"
 echo "== 3. the omnifile copies first"
 P0R=/pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126
