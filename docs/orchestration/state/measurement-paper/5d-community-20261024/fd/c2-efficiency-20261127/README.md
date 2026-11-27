@@ -63,3 +63,42 @@ The readings are in `run/c2_eff.json`. They went to the director first.
 - 18 mutants of `c2_fetch_remote.py` and `c2_fetch_verify.py`, run against `test_c2_fetch.py`'s Fetch class.
 
 The baseline passed, and **38 of 38 were killed** (`receipts/mutation.txt`, `9b63d675…`). The five source files hashed identically before and after the campaign. The wrapper `c2_fetch.sh` is not mutated: its tests need the git worktree, and it is pinned by sha and ran once.
+
+## C2-CORR: correlation structure, spectra and paired differences (follow-up)
+
+**Authority:**
+- Joseph's yes of 2026-11-27, relayed by the director: items (1) and (2), local, 0 node-h, descriptive, numbers to the director first.
+- The note figure and the headline keys follow Joseph's "can we try both the sentence and figure?" of 2026-11-27, via the director.
+- The director approved the driver change (4f1047d9) and the producer (template a7f043cb) before they ran.
+
+**CANNOT AUTHORIZE:** any note wording, the figure's placement or caption (rewrite-helper with Joseph), any change to a covariance, or any cause. The record's caveats apply:
+- the draws resample MC and background as well as data;
+- StatOnly's contents are not established;
+- the IBU is REF-C2C1's;
+- the small eigenvalues of a 300-replica sample covariance carry their own sampling noise.
+
+**The driver:** `c2_corr.py` (`4f1047d94fa8186f91a68decf7cae5e17ead9c685b14c54729ba4ed9ddca4a4c`) reads C2-EFF's verified fetch from `/Users/josephbailey/c2eff-data/c2eff-run1/`. It imports `c2_eff.py` unchanged and runs its full control set first, C-QR included. It adds these controls:
+- **C-PAIR:** on the full 224-cell vectors, with rank 75, it reproduces read-2's committed T: K10 to 4e-16 relative and K5 to 3e-15. That ties the per-replica pairing and both ensembles to the bound read.
+- **C-ID:** the trace identity, to 1e-10.
+- **C-PSD** and **C-CORR**.
+
+**What it computes,** on the 205 published bins:
+- (1) for C_IBU(K) at every K, C_OF and StatOnly: off-diagonal correlation summaries, eigenvalue spectra, top-k trace shares, participation ratios, and the principal-angle cosines between leading eigenvectors;
+- (2) per K, the paired difference covariance Cov(IBU(K) − OF) on the same draws, the cross-covariance and the per-cell correlations;
+- a flat `headline` block of 20 values a note sentence may bind. Each is copied from the record's own fields.
+
+**Tests:**
+- `test_c2_corr.py` (`c93d7300…`): 17 tests, OK (`receipts/test_c2_corr.txt`);
+- `test_c2_corr_figure.py` (`f75bb794…`): 10 tests, OK (`receipts/test_c2_corr_figure.txt`).
+
+**The run** (`run-corr/`): local, rc 0, `C2-CORR OK`, stderr empty.
+- The record is `run-corr/c2_corr.json` (`a084016f876e2faf6dd7064a95c1de8396527c4e401519058fff6f7c9a392a0d`).
+- A first run of the driver before the headline block (`e6d94347…`) gave record `5be4884f…`. With `headline` removed, this record equals that one, key for key and value for value.
+- The readings went to the director first.
+
+**The note figure:**
+- `c2_corr_figure.py` (`a8dfd306c79adf538c3d088f09e3a0b50e83e2b8f1b3d0f75c034710c3744b34`) draws `docs/analysis-note/figures/c2_corr_spectra.pdf` (`f7ac9a0e8ebd64aeaddd3da9944ba301c7d48747ff6389332695baf21537b18f`).
+- It uses the record's `figure_spectra` only, and refuses unless the record's sha256 is `a084016f…` and every control passed.
+- **Style:** the note's print style at 0.49 of the text width. OmniFold is red solid, the published covariance black dashed, and IBU bluish green #009E73 dash-dot (the note has no IBU series identity yet). The legend is the director's three strings, above the axes.
+- `run-corr/figure_choice.txt` records the two rejected legend placements. `run-corr/c2_corr_spectra_render.png` is the render the director accepted.
+- A redraw into a temporary path is byte-identical to the committed PDF (`receipts/figure_reproduction.txt`).

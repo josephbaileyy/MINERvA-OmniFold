@@ -1,0 +1,28 @@
+test_failed_control_refuses (__main__.Figure.test_failed_control_refuses) ... ok
+test_legend_strings_are_the_directors (__main__.Figure.test_legend_strings_are_the_directors) ... ok
+test_main_refuses_existing_output (__main__.Figure.test_main_refuses_existing_output) ... ok
+test_nonpositive_eigenvalue_refuses (__main__.Figure.test_nonpositive_eigenvalue_refuses) ... ok
+test_note_series_identities (__main__.Figure.test_note_series_identities) ... ok
+test_pdf_is_deterministic (__main__.Figure.test_pdf_is_deterministic) ... 'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+ok
+test_plots_the_record_values_unchanged (__main__.Figure.test_plots_the_record_values_unchanged) ... 'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+ok
+test_stop_status_refuses (__main__.Figure.test_stop_status_refuses) ... ok
+test_unsorted_or_short_spectrum_refuses (__main__.Figure.test_unsorted_or_short_spectrum_refuses) ... ok
+test_wrong_sha_refuses (__main__.Figure.test_wrong_sha_refuses) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 4.862s
+
+OK
+refusing: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/c2corrfig-1xl8562f/x.pdf exists

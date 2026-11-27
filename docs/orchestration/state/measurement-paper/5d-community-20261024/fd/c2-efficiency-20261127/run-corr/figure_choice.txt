@@ -1,0 +1,5 @@
+final: legend above the axes, one column (loc lower left, bbox_to_anchor (0, 1.01)), fontsize 6.5, handlelength 2.0
+  c2_corr_figure.py a8dfd306c79adf538c3d088f09e3a0b50e83e2b8f1b3d0f75c034710c3744b34
+  c2_corr_spectra.pdf f7ac9a0e8ebd64aeaddd3da9944ba301c7d48747ff6389332695baf21537b18f (render d80ee4b5..., pdftoppm -r 150)
+trial 1 (defect): lower-left legend at 7.0 pt, PDF 62859a87...: text past the right axis, legend over the curves at ranks 185-205
+trial 2 (rejected): upper right at 6.5 pt, PDF 02a4c6dc...: legend over the curves at ranks ~5-90
