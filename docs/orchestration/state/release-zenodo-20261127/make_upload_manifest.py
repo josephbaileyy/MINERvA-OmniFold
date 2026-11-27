@@ -42,8 +42,8 @@ REL5 = "docs/analysis-note/release-package-20260922"
 ER_PUB = "docs/orchestration/state/ibu-chi2-20261123/tier1/units/e/er.root"
 EAW = "docs/orchestration/state/2d-closeout/stageF/methods/note-figfix-20261120/runs/eavailw"
 RC9_PKG_SUMS_SHA = "630d3c0762d47aa33c56285236f670bd6486bc47b34d7a604c33b245a859fe81"
-PKG_SUMS_SHA = "d746f2e340a92e05548dfb9936529a0efd32c1f62151f931ad7be10449d0e0b2"  # package-rc10's SHA256SUMS
-RC10_SHA = "741637ec9bd5c56c82a37ce9cdbbbd4d013758e534d3f98b1fd698d730313e81"  # the RC10 replay tarball, as rc10/build_rc10.log records it
+PKG_SUMS_SHA = "1a3d905809af012c8af236a4f998044153bb33a9142a68d1e85174a9818a5790"  # package-rc10's SHA256SUMS
+RC10_SHA = "429d24655f75ef9d7c6612184ac00893bafafaa61f1ede4f0b73a681e2628edb"  # the RC10 replay tarball, as rc10/build_rc10.log records it
 RC10 = "minerva-omnifold-article-release-rc10"
 
 
@@ -142,7 +142,7 @@ def main() -> int:
     c16 = list(csv.DictReader(open(pkg / "sixteen-cell/cells.csv")))
     cells16_ok = ([float(r["integral_cm2_per_nucleon"]) for r in c16] == f.tolist()
                   and [float(r["sigma_rep_cm2_per_nucleon"]) for r in c16] == np.sqrt(np.diag(C_rep_now)).tolist())
-    readme_def = "C_rep = C_e^infl + C_model + C_resp + C_PL,5D" in (pkg / "README.md").read_text()
+    readme_def = "V^(5D) = V_stat+syst^infl + V_prior + V_resp + V_run" in (pkg / "README.md").read_text()
     stale16 = pkg_pct != printed or not (all(comp_status.values()) and npz_ok and cells16_ok and readme_def)
     if stale16:
         gaps.append("B: a sixteen-cell file in the package does not equal the V_F product, or its sigmas differ from "
@@ -298,8 +298,8 @@ def main() -> int:
     if not stale16:
         A(f"- **B.** The sixteen-cell C_rep is the V_F one, C_e^infl + C_model + C_resp + C_PL,5D, and `C_e_infl.csv` is "
       f"added. Both are re-exported from the V_F product `{vf_sha[:8]}` by `rc10/export_sixteen_vf.py` "
-      "(`rc10/export_sixteen_vf.log`: EXPORT B PASS). The package README's C_rep definition reads C_e^infl + C_model + "
-      "C_resp + C_PL,5D.")
+      "(`rc10/export_sixteen_vf.log`: EXPORT B PASS). The package README defines it in the note's symbols, V^(5D) = "
+          "V_stat+syst^infl + V_prior + V_resp + V_run, and maps each symbol to its file (`C_rep`, `C_e_infl`, ...).")
     if pe_tie and e_ok:
         A(f"- **E(a).** regenA's 2D central values on the published p_T edges are a new item (section A'), and the replay "
       f"is RC10 (`{RC10_SHA[:8]}`). RC10's 2D check recomputes all {len(checked)} printed 2D values, the four "

@@ -1,6 +1,6 @@
 deposit SHA256SUMS rc=0
 replay tarball: minerva-omnifold-article-release-rc10
-741637ec9bd5c56c82a37ce9cdbbbd4d013758e534d3f98b1fd698d730313e81  replay/minerva-omnifold-article-release-rc10.tar.gz
+429d24655f75ef9d7c6612184ac00893bafafaa61f1ede4f0b73a681e2628edb  replay/minerva-omnifold-article-release-rc10.tar.gz
 pip rc=0
 README example rc=0
 replay SHA256SUMS before rc=0
