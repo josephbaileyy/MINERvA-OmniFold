@@ -1,0 +1,134 @@
+cert valid to 2026-11-28T02:05:18Z (UTC)
+cov2d ack 2026-11-27T04:41:55Z (age 31 s)
+tier3-design ack 2026-11-27T04:42:01Z (age 25 s)
+minerva-lib ack 2026-11-27T04:42:12Z (age 14 s)
+three acks recorded byte for byte in the session as ack.txt
+ssh rc=0
+node login02 staged sha256 e1b5084b153d81bbba307f73e83231c7669ec4adeb0992f6ac5971a87db3090b
+node login02 2026-11-27T04:42:31Z; connect script sha256 e1b5084b153d81bbba307f73e83231c7669ec4adeb0992f6ac5971a87db3090b
+== 2. the fence (cov2d*, t2a*, rpd*, geanttw* refuse)
+sacct rows (14 days): 144; cov2d/t2a/rpd/geanttw rows: 19
+FENCE: clear
+== 2b. iris (read-only balance; recorded here only, not a gate)
+iris: Project      Charged(user)    Allocated(user)     Charged    Allocated
+iris: ---------  ---------------  -----------------  ----------  -----------
+iris: m3246               2621.2            10000.0     19549.0      20000.0
+iris: m3246_g             1296.2            90000.0    154568.0     180000.0
+iris rc=0
+== 3. fresh clone at 2415e8d66d1a9160e724d426eaeb54d458d4b4f7
+HEAD 2415e8d66d1a9160e724d426eaeb54d458d4b4f7; porcelain lines 0
+sha256 12f68102d38ec042d791b9edeb59ba96bdcda74c54dc37e5880c0922b0fbb9ec nd-unfolding/fd_rpd_reco.py
+sha256 6428deadb6bf6c4a5bde968d33eba2870b3e503a3a8110bfca431326c349776c nd-unfolding/fd_rpd_reco_custody.py
+sha256 6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70 nd-unfolding/fd_rpd_inputs.py
+sha256 32db52355a4811bd4bf5f8b8cc0b5c397c7b403a0996048bcafd8c8c665cc76e nd-unfolding/fd_rpd_reco_flux_connect.sh
+sha256 06360100038f0203b0d994f71c171b12cd955697edf32d1d744c4ce271ceb26d nd-unfolding/tests/fd_rpd_reco_mat_check.py
+sha256 d9704aa45c016b044284d9e3cfc8c6d5c07cda0835a445866d5f792c8ac82840 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/timing-20261106/flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root
+sha256 7638f94f56ad0471769445cffe68ff538c9b68158f48415e7c3cafa7ee95a295 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/INPUTS.sha256
+sha256 b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89 nd-unfolding/pv-ladder/readouts/h2_definition.json
+sha256 e60609e756e35fbc9846ae5983c1d848999bc17c7504e3ca876c22c9bcc0e88f docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/energy-spectrum-candidates.tsv
+sha256 900d7368d6184d503399bd99c0fd30085212df0327b8be374182495b85a3677d MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h
+sha256 b056487e592e7704c2a98c14243b26f44c82821382837a263b75c169859cce0b docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/MAT-DATA-DEPENDENCIES.json
+sha256 eee5ae4caf72b2c2a9a0fb593b2742f32705e778b9c9b5c289184c636221f794 nd-unfolding/tests/test_fd_rpd_reco.py
+sha256 138bc5b4340307788b694692ad971ea3b861260eb29b328b264efe680f6b1ff2 nd-unfolding/tests/fd_rpd_reco_fence_mutation.py
+sha256 8dfdeaf12e00e43dbc68a6e07dc27f4f3aee04bba8173111511130b4a5f405f4 nd-unfolding/tests/fd_rpd_reco_mutation.py
+== 4. the READY config
+sha256 f92d034df0db5bf487f689b0efc1eb8862396303647fa1172ad5e6eaa3f4c47a (expected f92d034df0db5bf487f689b0efc1eb8862396303647fa1172ad5e6eaa3f4c47a) production-config.ready.json
+== 5. the in-place inputs (flux4's records and products, p0e1's two records, O_NOATIME); p0e1's records staged
+sha256 06b5e7cb95c551a85738a3fc1366650f351895f528f43f454ff1b42e8a879442 (expected 06b5e7cb95c551a85738a3fc1366650f351895f528f43f454ff1b42e8a879442) tools/d2s0_checks.py
+sha256 47d7570677baaee68241d76c059312592e7c8b8a61bfc2885d98add6712a711b (expected 47d7570677baaee68241d76c059312592e7c8b8a61bfc2885d98add6712a711b) tools/d2s0_expected.json
+sha256 6ad0f68fb309a7b83adc0f65ed709e5e2412e650e115075fe41ebbc7a070134f (expected 6ad0f68fb309a7b83adc0f65ed709e5e2412e650e115075fe41ebbc7a070134f) tools/p0_supervise.py
+ok  sha256 819bb7b9775c1bfe570185881290ab229e82d3ad7ad328b9cde3215a811c78c2 (expected 819bb7b9775c1bfe570185881290ab229e82d3ad7ad328b9cde3215a811c78c2) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-custody.json
+ok  sha256 060d4401f0e1bec69a84b005e0c7ba54f69c3f894c1382f9ce2a098b7b2663c0 (expected 060d4401f0e1bec69a84b005e0c7ba54f69c3f894c1382f9ce2a098b7b2663c0) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-extract.json
+ok  sha256 8b8e3e557d4c362797842fe2829a21b53292bb334902e42fbd5f4ef3185ecdda (expected 8b8e3e557d4c362797842fe2829a21b53292bb334902e42fbd5f4ef3185ecdda) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1A.npz
+ok  sha256 baf3f3d8cd922a5a3511dab93a7f784128d0e098cb6f1ec905ae4b83c9e68a9f (expected baf3f3d8cd922a5a3511dab93a7f784128d0e098cb6f1ec905ae4b83c9e68a9f) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1B.npz
+ok  sha256 5ef5e81e490a4e7bd92f1bdf1eee706d413b653e055612b04f3b1b627d1ae6fc (expected 5ef5e81e490a4e7bd92f1bdf1eee706d413b653e055612b04f3b1b627d1ae6fc) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1C.npz
+ok  sha256 6ea8f726ea6ed619b1b2eb2aab0f34d8a41fff908c0c0515bf7194ca0fe3d131 (expected 6ea8f726ea6ed619b1b2eb2aab0f34d8a41fff908c0c0515bf7194ca0fe3d131) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1D.npz
+ok  sha256 4e8f97c179b6bbbc3c5e1fd82472c621c9bc56427e802edb464ab85627a26565 (expected 4e8f97c179b6bbbc3c5e1fd82472c621c9bc56427e802edb464ab85627a26565) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1E.npz
+ok  sha256 b607e3a8a114036391df8dd27a1e06b0ea59db7093fbd093bd84d117ef207e46 (expected b607e3a8a114036391df8dd27a1e06b0ea59db7093fbd093bd84d117ef207e46) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1F.npz
+ok  sha256 c23ef28aded4319d468c73b237d648641b204d86c5788b4c2cd58cfe063b7e5a (expected c23ef28aded4319d468c73b237d648641b204d86c5788b4c2cd58cfe063b7e5a) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1G.npz
+ok  sha256 e731f300f48d1732be0f7dc40ce6e9983947198fa886e84a93df8054afa92007 (expected e731f300f48d1732be0f7dc40ce6e9983947198fa886e84a93df8054afa92007) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1L.npz
+ok  sha256 166a2217468f8bfb392baca71c6920ffbf765bbd0dd60a68eb4b560ab6026f4b (expected 166a2217468f8bfb392baca71c6920ffbf765bbd0dd60a68eb4b560ab6026f4b) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1M.npz
+ok  sha256 739043f4f4a21734c1e256744ba11c8ac4a511542be6161404b68f2916292a21 (expected 739043f4f4a21734c1e256744ba11c8ac4a511542be6161404b68f2916292a21) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1N.npz
+ok  sha256 fd8afa1e08938e1fce4c0b1445d3713d6c8c9ab72bc900012e52b8fc54f3ac6b (expected fd8afa1e08938e1fce4c0b1445d3713d6c8c9ab72bc900012e52b8fc54f3ac6b) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1O.npz
+ok  sha256 a2db271daa6b9af500b892c8e1ba2af0e12ac4da500b8a0814c879882ee0fa9e (expected a2db271daa6b9af500b892c8e1ba2af0e12ac4da500b8a0814c879882ee0fa9e) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1P.npz
+ok  sha256 ab8d3600e7955e0afa0f0affaedeab7d394bff9010c4d1f9e7a011c9d2290c4c (expected ab8d3600e7955e0afa0f0affaedeab7d394bff9010c4d1f9e7a011c9d2290c4c) /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/p0.json
+ok  sha256 2a22bdbfc2af1891d2db13e1b49c4e53c063296002b3a2fd1e240850dad121a8 (expected 2a22bdbfc2af1891d2db13e1b49c4e53c063296002b3a2fd1e240850dad121a8) /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/pins.json
+INPUTS: PASS (16 files, 0 bad)
+inputs check rc=0
+STAGE: PASS sha256 2a22bdbfc2af1891d2db13e1b49c4e53c063296002b3a2fd1e240850dad121a8 /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/pins.json -> /pscratch/sd/j/josephrb/rpd-reco-d2s0e1-20261127/run/pins.json
+STAGE: PASS sha256 ab8d3600e7955e0afa0f0affaedeab7d394bff9010c4d1f9e7a011c9d2290c4c /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/p0.json -> /pscratch/sd/j/josephrb/rpd-reco-d2s0e1-20261127/run/p0.json
+== 6. a fresh stat of the gen2thin flux files, the dumps, the omnifiles and the sidecar (against the records)
+name|bytes|atime|mtime|inode|verdict
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A.npz|127968221|1793792304|1793782124|882727252234608689|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A_bkg.npz|2311555|1793792304|1793782124|882727252234608690|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1B.npz|33980383|1793792304|1793781979|882727252234608036|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1B_bkg.npz|638389|1793792304|1793781979|882727252234608037|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1C.npz|65471177|1793792304|1793782095|882727252234608560|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1C_bkg.npz|1194780|1793792304|1793782095|882727252234608563|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1D.npz|192006622|1793792305|1793781545|882727252234602226|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1D_bkg.npz|3448900|1793792305|1793781545|882727252234602397|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1E.npz|158814144|1793792305|1793781776|882727252234605338|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1E_bkg.npz|2888635|1793792305|1793781776|882727252234605355|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1F.npz|221027198|1793792306|1793781561|882727252234602406|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1F_bkg.npz|4027113|1793792306|1793781562|882727252234602493|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1G.npz|186899533|1793792307|1793781543|882727252234602225|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1G_bkg.npz|3360491|1793792307|1793781544|882727252234602395|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L.npz|18061361|1793792308|1793781975|882727252234608033|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L_bkg.npz|361915|1793792308|1793781975|882727252234608034|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1M.npz|274076044|1793792308|1793781581|882727252234602663|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1M_bkg.npz|5283519|1793792308|1793781581|882727252234602713|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1N.npz|159089937|1793792309|1793781796|882727252234605611|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1N_bkg.npz|3119697|1793792309|1793781796|882727252234605663|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1O.npz|47673627|1793792310|1793782089|882727252234608557|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1O_bkg.npz|997512|1793792310|1793782089|882727252234608558|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1P.npz|63445665|1793792310|1793782095|882727252234608561|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1P_bkg.npz|1316555|1793792310|1793782095|882727252234608562|same as recorded
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root|3188849|1795745694|1625676963|882722362129161251|same as recorded
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root|3187397|1795745758|1625676963|882722362129161272|same as recorded
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root|3182011|1795745759|1625676963|882722362129161271|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/truthx_RDX_ALL.npz|2364943114|1794937529|1794884234|882727588601004051|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1A.root|605076305|1794892084|1794716676|882727515653799093|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1B.root|162097785|1794892085|1794861298|882727582175370968|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1C.root|310337285|1794892086|1794863830|882727580917085568|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1D.root|904836901|1794892086|1794869500|882727580111855345|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1E.root|753934165|1794892089|1794868276|882727581856604920|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1F.root|1048192809|1794892091|1794871649|882727583165203515|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1G.root|883836408|1794892094|1794870305|882727583366517421|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1L.root|86211914|1794892097|1794861960|882727582041175724|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1M.root|1318953730|1794892097|1794876861|882727580850027907|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1N.root|763022193|1794892102|1794869535|882727581990862679|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1O.root|231277653|1794892104|1794864695|882727581856629661|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1P.root|305659361|1794892104|1794865666|882727581470798044|same as recorded
+earliest purge exposure 2026-12-30T11:38:24Z (/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A.npz, atime 2026-11-04T11:38:24Z)
+STAT: PASS (40 files, 0 missing or different)
+stat check rc=0
+== 7. the overlap fence
+sha256 6503ab07f5d2b4afe88720064d2f9ceac0dbe03aa4c1425a94805c99710fcb5a (expected 6503ab07f5d2b4afe88720064d2f9ceac0dbe03aa4c1425a94805c99710fcb5a) tools/fence_overlap.py
+FENCE protected paths 36; exception /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+FENCE staged originals 70
+FENCE allowed exception: MAT MPARAMFILES /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+FENCE OVERLAP: CLEAR (allowed 1, stops 0)
+overlap fence rc=0
+== 8. the clone to /dev/shm/limres-rpd-flux1/repo
+HEAD 2415e8d66d1a9160e724d426eaeb54d458d4b4f7; porcelain lines 0
+sha256 12f68102d38ec042d791b9edeb59ba96bdcda74c54dc37e5880c0922b0fbb9ec nd-unfolding/fd_rpd_reco.py
+sha256 6428deadb6bf6c4a5bde968d33eba2870b3e503a3a8110bfca431326c349776c nd-unfolding/fd_rpd_reco_custody.py
+sha256 6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70 nd-unfolding/fd_rpd_inputs.py
+sha256 32db52355a4811bd4bf5f8b8cc0b5c397c7b403a0996048bcafd8c8c665cc76e nd-unfolding/fd_rpd_reco_flux_connect.sh
+sha256 06360100038f0203b0d994f71c171b12cd955697edf32d1d744c4ce271ceb26d nd-unfolding/tests/fd_rpd_reco_mat_check.py
+sha256 d9704aa45c016b044284d9e3cfc8c6d5c07cda0835a445866d5f792c8ac82840 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/timing-20261106/flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root
+sha256 7638f94f56ad0471769445cffe68ff538c9b68158f48415e7c3cafa7ee95a295 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/INPUTS.sha256
+sha256 b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89 nd-unfolding/pv-ladder/readouts/h2_definition.json
+sha256 e60609e756e35fbc9846ae5983c1d848999bc17c7504e3ca876c22c9bcc0e88f docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/energy-spectrum-candidates.tsv
+sha256 900d7368d6184d503399bd99c0fd30085212df0327b8be374182495b85a3677d MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h
+sha256 b056487e592e7704c2a98c14243b26f44c82821382837a263b75c169859cce0b docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/MAT-DATA-DEPENDENCIES.json
+sha256 eee5ae4caf72b2c2a9a0fb593b2742f32705e778b9c9b5c289184c636221f794 nd-unfolding/tests/test_fd_rpd_reco.py
+sha256 138bc5b4340307788b694692ad971ea3b861260eb29b328b264efe680f6b1ff2 nd-unfolding/tests/fd_rpd_reco_fence_mutation.py
+sha256 8dfdeaf12e00e43dbc68a6e07dc27f4f3aee04bba8173111511130b4a5f405f4 nd-unfolding/tests/fd_rpd_reco_mutation.py
+config sha256 f92d034df0db5bf487f689b0efc1eb8862396303647fa1172ad5e6eaa3f4c47a
+== 9. the runner
+runner script sha256 7f7c7e1509cb56401d547d488944b2a0d5db62b97face153df5fbdf43a8b41d1
+runner pid 769517 on login02 since 2026-11-27T04:45:18Z (start ticks 72488625); /dev/shm/limres-rpd-flux1 handed over; the fetch reports it
+== rpd-d2s0-connect rc=0 2026-11-27T04:45:18Z
+script rc=0
+launch rc=0

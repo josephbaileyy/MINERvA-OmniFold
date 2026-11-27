@@ -1,0 +1,8 @@
+== rpd_d2s0 runner 769517 on login02 2026-11-27T04:45:18Z, nice 19
+handoff.ok: 769517 2026-11-27T04:45:18Z
+deadline for d2-predict (monotonic) 732086.658401342, 7200 s from now
+== d2-predict start 2026-11-27T04:45:18Z
+STOP C_E3: C_E3: q3 discrepancy 0.0009871258308031816, 0.0301471583174564 in 8:15
+d2-predict supervisor_rc=1 rc=4 signal=- deadline=0 leftover_killed=0 group_gone=1 peak_rss_bytes=2502340608 end=2026-11-27T04:52:49Z
+STOP: d2-predict rc=4
+removed /dev/shm/limres-rpd-flux1

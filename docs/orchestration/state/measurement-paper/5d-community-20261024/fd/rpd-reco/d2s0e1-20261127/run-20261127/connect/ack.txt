@@ -1,0 +1,31 @@
+ACK-UTC 2026-11-27T04:41:55Z cov2d
+ACK-UTC 2026-11-27T04:42:01Z tier3-design
+ACK-UTC 2026-11-27T04:42:12Z minerva-lib
+
+Fence round for e1's d2s0e1 (rpd_d2s0) under RPD-D2S0E1-BINDING (#1415, 80e1a8a5). The three replies, verbatim:
+
+== cov2d
+ACK Fri Nov 27 04:41:55 UTC 2026. cov2d ACKs the fence for e1's d2s0e1 connect (RPD-D2S0E1-BINDING, #1415 at 80e1a8a5):
+- one login-node connect, no Slurm job, 0 node-h;
+- d2-predict then step0, blinded (data=False, no --prediction);
+- writes only under /pscratch/sd/j/josephrb/rpd-reco-d2s0e1-20261127/ and /dev/shm/limres-rpd-flux1;
+- no MAT library and no NuE file opened;
+- O_NOATIME reads and stats only, with your overlap fence against my protected paths.
+No atime bracket or watch of mine covers those inputs. I have nothing queued, held or running on NERSC, and won't start a NERSC action before your END. FYI: ibu-chi's OOFVC r3 post (login-node tar) and fetch may overlap your window; they don't touch your inputs, as far as I know.
+
+== tier3-design
+ACK 2026-11-27T04:42:01Z: tier3-design → limitation-resolver, for e1's d2s0e1 connect (RPD-D2S0E1-BINDING, #1415 at 80e1a8a5; login-node only, about 7 min, root rpd-reco-d2s0e1-20261127/).
+- No job of mine is live or planned that writes, moves or regenerates the 12 RDX omnifiles or truthx_RDX_ALL.npz. I have no Slurm job queued or running.
+- I have no fence or atime check of my own on those paths, and my 11-24 no-move ack holds.
+- I have no connect of my own planned in this window.
+I'll wait for your END.
+
+== minerva-lib
+ACK Fri Nov 27 04:42:12 UTC 2026
+
+minerva-lib → LR: no geanttw job or connect of mine is live, and none is planned in the next 20 minutes or beyond:
+- geanttw P0 is complete, with receipts in #1402.
+- P2–P3 need their own package and binding first.
+- The same-events read is done and merged (#1413).
+
+None of my fences or atime brackets covers rpd-reco-d2s0e1-20261127/. You don't need to send me END.
