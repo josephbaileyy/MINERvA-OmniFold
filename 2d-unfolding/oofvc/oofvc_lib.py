@@ -35,6 +35,46 @@ def in_rectangle(pt, pz, pt_edges, pz_edges) -> np.ndarray:
             & (pz_edges[0] <= pz) & (pz <= pz_edges[-1]))
 
 
+# ------------------------------------------------------------------------------------------------ reading
+# ROOT 6.28's RDataFrame.AsNumpy (NERSC's root_6_28) returns a UChar_t branch as a numpy object array of one-character
+# strings ('\x00', '\x01'), not uint8; ROOT 6.40 (the local tests) returns uint8. A `!= 0` on the object array is True
+# for every row: OOFVC's units job 62065064 false-STOPped at C-ROUTE that way.
+
+
+class ReadRefusal(ValueError):
+    """A column the join cannot read as declared (an object column that is not one-character strings, or a flag
+    outside {0, 1})."""
+
+
+def as_numeric(name: str, a) -> np.ndarray:
+    """A column as numbers: an object array of one-character strings becomes uint8 by ord; any other object column is
+    refused; numeric columns pass unchanged."""
+    a = np.asarray(a)
+    if a.dtype != object:
+        return a
+    if not all(isinstance(x, (str, bytes)) and len(x) == 1 for x in a):
+        raise ReadRefusal(f"column {name}: an object column that is not one-character strings")
+    return np.fromiter((ord(x) for x in a), dtype=np.uint8, count=a.size)
+
+
+def as_flag(name: str, a) -> np.ndarray:
+    """A 0/1 flag column (after as_numeric), refused unless every value is 0 or 1 (the director's ruling)."""
+    a = as_numeric(name, a)
+    if a.size and not np.all((a == 0) | (a == 1)):
+        raise ReadRefusal(f"flag {name}: values outside {{0, 1}}")
+    return a.astype(np.uint8)
+
+
+def normalize(cols: dict, flags) -> dict:
+    """Every column through as_numeric, and the named flags through as_flag."""
+    return {k: (as_flag(k, v) if k in flags else as_numeric(k, v)) for k, v in cols.items()}
+
+
+def route_disagree(to_bkg, to_sig) -> int:
+    """C-ROUTE's count: rows routed to both trees or neither."""
+    return int(((np.asarray(to_bkg) != 0) == (np.asarray(to_sig) != 0)).sum())
+
+
 # ------------------------------------------------------------------------------------------------ the join
 
 

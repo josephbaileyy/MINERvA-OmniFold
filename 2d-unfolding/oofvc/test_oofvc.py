@@ -174,6 +174,37 @@ class Join(unittest.TestCase):
             L.check_tie_bound(float("nan"), 1000.0)
 
 
+class ReadFlags(unittest.TestCase):
+    """ROOT 6.28's AsNumpy returns UChar_t branches as object arrays of one-character strings (the cluster; the local
+    ROOT 6.40 returns uint8). The units job 62065064 false-STOPped at C-ROUTE on them."""
+
+    @staticmethod
+    def as_root628(values):
+        return np.array([chr(v) for v in values], dtype=object)
+
+    def test_object_chars_become_uint8_and_masks_work(self):
+        to_bkg, to_sig = self.as_root628([0, 1, 0, 1]), self.as_root628([1, 0, 1, 0])
+        self.assertEqual(L.route_disagree(to_bkg != 0, to_sig != 0), 4)  # the misread: every row "disagrees"
+        d = L.normalize({"to_bkg": to_bkg, "to_sig": to_sig, "w": np.array([1.0, 2.0, 3.0, 4.0])}, ("to_bkg", "to_sig"))
+        self.assertEqual(d["to_bkg"].dtype, np.uint8)
+        np.testing.assert_array_equal(d["to_bkg"], [0, 1, 0, 1])
+        self.assertEqual(L.route_disagree(d["to_bkg"] != 0, d["to_sig"] != 0), 0)
+        np.testing.assert_array_equal(d["w"], [1.0, 2.0, 3.0, 4.0])
+        sim_pass = L.normalize({"sim_pass": self.as_root628([1, 0, 0, 1])}, ("sim_pass",))["sim_pass"]
+        np.testing.assert_array_equal(np.flatnonzero(sim_pass != 0), [0, 3])  # C-SIGW's selection
+
+    def test_refusals(self):
+        with self.assertRaises(L.ReadRefusal):
+            L.normalize({"f": np.array(["ab", "c"], dtype=object)}, ())
+        with self.assertRaises(L.ReadRefusal):
+            L.normalize({"f": np.array([None, 1], dtype=object)}, ())
+        with self.assertRaises(L.ReadRefusal):
+            L.normalize({"to_bkg": self.as_root628([0, 2])}, ("to_bkg",))
+        with self.assertRaises(L.ReadRefusal):
+            L.normalize({"to_bkg": np.array([0, 1, 3], np.uint8)}, ("to_bkg",))
+        np.testing.assert_array_equal(L.normalize({"n": np.array([2, 3], np.int32)}, ())["n"], [2, 3])
+
+
 class ScorerArgv(unittest.TestCase):
     """oofvc_score.argv_is_e_r: E_R's argv with the exact staged paths (codex-school r2 #2, r3 #1)."""
 
@@ -890,7 +921,7 @@ class Shell(unittest.TestCase):
         past, before it writes anything (the lane root is never created here)."""
         t = (HERE / "launch" / "oofvc_dump.sh").read_text().replace("__TOOL_COMMIT__", "0" * 40)
         root = TD / "never-created-root"
-        t = t.replace("R=/pscratch/sd/j/josephrb/oofvc-20261126-r2", f"R={root}")
+        t = t.replace("R=/pscratch/sd/j/josephrb/oofvc-20261126-r3", f"R={root}")
         script = TD / "pilot_test.sh"
         script.write_text(t)
         # GNU date's -d, which the cluster has and macOS lacks, emulated for UTC ISO times

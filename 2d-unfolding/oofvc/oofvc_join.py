@@ -36,6 +36,9 @@ PZ = [1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 9, 10, 15, 20, 40, 60]
 DUMP_FLOAT = ("reco_pt", "reco_pz", "w_reco", "true_pt", "true_pz", "w_truth", "theta_true", "vtx_x", "vtx_y", "vtx_z")
 DUMP_INT = ("entry", "mc_run", "mc_subrun", "mc_nthEvtInFile", "nu_pdg", "current", "to_bkg", "to_sig", "dup_sig",
             "fid")
+DUMP_FLAGS = ("to_bkg", "to_sig", "dup_sig", "fid")   # UChar_t in oofvc_dump.cpp
+BKG_FLAGS = ("sim_background_pass",)                  # UChar_t in the event loop's mc_background
+SIG_FLAGS = ("sim_pass",)                             # UChar_t in mc_signal_reco
 LAB_RTOL = 1e-9
 
 
@@ -47,9 +50,12 @@ def sha256(p: Path) -> str:
     return h.hexdigest()
 
 
-def read_tree(path: Path, tree: str, cols) -> dict:
+def read_tree(path: Path, tree: str, cols, flags=()) -> dict:
+    """The columns as numbers (oofvc_lib.normalize: ROOT 6.28 returns UChar_t as one-character strings), the named
+    flags refused unless 0 or 1."""
     import ROOT
-    return {k: np.asarray(v) for k, v in ROOT.RDataFrame(tree, str(path)).AsNumpy(list(cols)).items()}
+    return L.normalize({k: np.asarray(v) for k, v in ROOT.RDataFrame(tree, str(path)).AsNumpy(list(cols)).items()},
+                       flags)
 
 
 def read_dumps(dump_dir: Path) -> tuple[dict, dict]:
@@ -57,7 +63,7 @@ def read_dumps(dump_dir: Path) -> tuple[dict, dict]:
     for pl in PLAYLISTS:
         p = dump_dir / f"{pl}.root"
         shas[pl] = sha256(p)
-        d = read_tree(p, "rows", DUMP_FLOAT + DUMP_INT)
+        d = read_tree(p, "rows", DUMP_FLOAT + DUMP_INT, DUMP_FLAGS)
         d["playlist"] = np.full(d["entry"].size, PLAYLISTS.index(pl), np.int64)
         parts.append(d)
     return {k: np.concatenate([d[k] for d in parts]) for k in parts[0]}, shas
@@ -92,15 +98,6 @@ def run(a) -> int:
     rec: dict = {"schema": "oofvc-join/1", "inputs": {}, "controls": {}}
     rec["inputs"]["omnifile_sha256"] = sha256(a.omnifile)
     rec["inputs"]["split_sha256"] = sha256(a.split)
-    d, rec["inputs"]["dump_sha256"] = read_dumps(a.dump_dir)
-    import ROOT
-    f = ROOT.TFile.Open(str(a.omnifile))
-    pot_scale = f.Get("dataPOTUsed").GetVal() / f.Get("mcPOTUsed").GetVal()
-    f.Close()
-    rec["pot_scale"] = pot_scale
-    bkg = read_tree(a.omnifile, "mc_background", ("sim_background", "sim_background_pz", "sim_background_pass", "w_bkg"))
-    sig = read_tree(a.omnifile, "mc_signal_reco", ("sim", "sim_pz", "sim_pass", "w_reco", "MC", "MC_pz", "w_truth"))
-
     def stop(name, why):
         rec["controls"].setdefault(name, {}).update({"pass": False, "why": str(why)})  # keep the measured fields
         rec["verdict"] = "STOP"
@@ -108,8 +105,26 @@ def run(a) -> int:
         print(f"STOP {name}: {why}", flush=True)
         return RC_STOP
 
+    try:
+        d, rec["inputs"]["dump_sha256"] = read_dumps(a.dump_dir)
+    except L.ReadRefusal as e:
+        return stop("C-READ", e)
+    import ROOT
+    f = ROOT.TFile.Open(str(a.omnifile))
+    pot_scale = f.Get("dataPOTUsed").GetVal() / f.Get("mcPOTUsed").GetVal()
+    f.Close()
+    rec["pot_scale"] = pot_scale
+    try:
+        bkg = read_tree(a.omnifile, "mc_background", ("sim_background", "sim_background_pz", "sim_background_pass",
+                                                      "w_bkg"), BKG_FLAGS)
+        sig = read_tree(a.omnifile, "mc_signal_reco", ("sim", "sim_pz", "sim_pass", "w_reco", "MC", "MC_pz", "w_truth"),
+                        SIG_FLAGS)
+    except L.ReadRefusal as e:
+        return stop("C-READ", e)
+    rec["controls"]["C-READ"] = {"pass": True, "note": "object one-character columns read as uint8; flags in {0, 1}"}
+
     to_bkg, to_sig, dup = d["to_bkg"] != 0, d["to_sig"] != 0, d["dup_sig"] != 0
-    n_dis = int((to_bkg == to_sig).sum())
+    n_dis = L.route_disagree(to_bkg, to_sig)
     rec["controls"]["C-ROUTE"] = {"n_rows": int(to_bkg.size), "n_disagree": n_dis, "pass": n_dis == 0}
     if n_dis:
         return stop("C-ROUTE", f"{n_dis} rows routed to both or neither tree")

@@ -22569,8 +22569,18 @@ docs/orchestration/state/oofv-convention-20261126/receipts/attempt1-pilot/cluste
 docs/orchestration/state/oofv-convention-20261126/receipts/attempt1-pilot/pilot-launcher.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/attempt1-pilot/sacct-watch.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/attempt1-pilot/session-out.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/attempt2-r2/pilot2-launcher.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/attempt2-r2/pilot2-watch.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/attempt2-r2/r2-records.tar.gz	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/attempt2-r2/rest-launcher.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/attempt2-r2/rest-readout.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/attempt2-r2/rest-watch.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/attempt2-r2/units-launcher.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/attempt2-r2/units-watch.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/mutation-dbe40c6d.json.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/mutation-dbe40c6d.log.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/mutation-targeted-b8077dfc.json.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/mutation-targeted-b8077dfc.log.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/mutation-targeted-bbc3fc1b.json.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/mutation-targeted-bbc3fc1b.log.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/mutation-targeted-d3127bd4.json.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
@@ -22600,6 +22610,7 @@ docs/orchestration/state/oofv-convention-20261126/receipts/reads/r3/codex-school
 docs/orchestration/state/oofv-convention-20261126/receipts/reads/r3/inputs.sha256	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/reads/r3/prompt.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/tests-b265e7cf.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
+docs/orchestration/state/oofv-convention-20261126/receipts/tests-b8077dfc.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/tests-bbc3fc1b.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/tests-d3127bd4.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
 docs/orchestration/state/oofv-convention-20261126/receipts/tests-dbe40c6d.txt	tracked	MACHINE	state-artifact	oofv-convention-20261126		generated		exact-path-only	yes
