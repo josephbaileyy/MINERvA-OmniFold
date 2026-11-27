@@ -73,6 +73,23 @@ class PilotPost(unittest.TestCase):
         self.assertFalse(d["rules"]["projection_within_11.5"])
         self.assertFalse((out / "PROCEED").exists())
 
+    def test_projection_rule_flag(self):
+        """A projection of about 12.0 node-h breaks the 11.5 rule itself (the floor also STOPs, being implied)."""
+        steps = {u: 830 for u in PILOT}
+        rc, d, _ = run(sacct(job_el=840, steps=steps), units_dir())
+        self.assertEqual(rc, 6)
+        self.assertGreater(d["projection_node_h"], 11.5)
+        self.assertLess(d["projection_node_h"], 12.6)
+        self.assertFalse(d["rules"]["projection_within_11.5"])
+
+    def test_central_without_its_coupling_record_stops(self):
+        d = units_dir()
+        for u in ("p_off_c", "p_R_c"):
+            np.savez(d / f"{u}.npz", meta=json.dumps({"controls": {"C-PAIR": {"pass": True}}}))
+        rc, dec, out = run(sacct(), d)
+        self.assertEqual(rc, 6)
+        self.assertFalse((out / "PROCEED").exists())
+
     def test_limit_below_the_floor_stops(self):
         steps = {u: 792 for u in PILOT}
         # o = 8 s, pilot 0.444 node-h, runtime 7928 s: projection 11.455 <= 11.5, but L = 144 min < 1.1 x 132.1 min

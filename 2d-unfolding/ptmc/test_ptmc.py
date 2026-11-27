@@ -129,6 +129,12 @@ class Completeness(unittest.TestCase):
         self.assertEqual(r["failures"], want)
         self.assertEqual(r["n_seed_cells"], sum(len(v) for v in want.values()))
         self.assertFalse(P.support(g, w, np.ones(5, bool), 4, [1], n=3)["pass"])  # the mask must end at n_orig
+        # the trigger is the weighted sum: a zero-weight row drawing a positive factor does not keep a cell supported
+        gz, wz = np.array([0, 0]), np.array([0.0, 1.0])
+        lost = {b: [0] for b in range(1, 40)
+                if np.random.default_rng(b + 10_000_000).poisson(1.0, 2)[1] == 0}
+        self.assertTrue(lost)
+        self.assertEqual(P.support(gz, wz, np.ones(2, bool), 2, range(1, 40), n=1)["failures"], lost)
         self.assertTrue(P.support(g, w, m, 4, [1], n=3)["pass"])
 
 
@@ -180,6 +186,14 @@ class Gates(unittest.TestCase):
         bad = D.copy()
         bad[3, 4] = np.nan
         self.assertFalse(P.shape_gate(D[0], bad)["pass"])
+        # full rank 50, but one leave-one-out drops to 49: the 50th mode lives in replica 0 alone
+        X = np.zeros((200, 224))
+        X[:, :49] = rng.normal(size=(200, 49))
+        X[0, 49] = 5.0
+        r = P.shape_gate(X[0], X)
+        self.assertTrue(r["full"])
+        self.assertFalse(r["pass"])
+        self.assertIn(0, r["loo_failures"])
         low = D.copy()
         low[:, 10:] = 0.0  # exact zero variance beyond 10 cells: the 50 leading eigenvalues include exact zeros
         self.assertFalse(P.shape_gate(low[0], low)["pass"])
@@ -362,12 +376,13 @@ class Driver(unittest.TestCase):
         self.assertNotEqual(p.returncode, 0)
 
     def test_refusals(self):
+        """The argument check itself refuses (its own message), before any input is read."""
         for extra in (self.R + ["--bootstrap-seed", "3"],  # default streams
                       self.R + ["--bootstrap-seed", "3", "--bootstrap-streams", "both"],
                       self.R + BOOT + ["--unit-factors"]):
             p = run_driver(self.drv, TD / "refused.root", extra, check=False)
             self.assertNotEqual(p.returncode, 0, extra)
-            self.assertIn("FAIL", p.stdout + p.stderr)
+            self.assertIn("runs on the central CV path or its three-stream bootstrap only", p.stdout + p.stderr)
 
 
 def configure_tree_for_fixture():
