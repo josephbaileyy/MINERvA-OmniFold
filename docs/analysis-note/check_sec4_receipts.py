@@ -757,7 +757,7 @@ OOFVC_CLAIMS = (
      "sec3_twod.tex", "It therefore does not account for the 2D shape difference with MINERvA.",
      lambda d, s: d["score"]["bands"]["r_ER"] == "LITTLE CHANGE" and oofvc_ok(d)),
     ("OOFVC: Sec. 6's clause (r_ER LITTLE CHANGE)", "sec6_conclusions.tex",
-     "MINERvA's signal convention does not account for the shape difference (Sec.~\\ref{sec:results-benchmarks}).",
+     "MINERvA's signal convention does not account for the 2D shape difference (Sec.~\\ref{sec:results-benchmarks}).",
      lambda d, s: d["score"]["bands"]["r_ER"] == "LITTLE CHANGE" and oofvc_ok(d)),
 )
 
@@ -1202,7 +1202,7 @@ def self_test() -> int:
                              "This convention moves the binned IBU's distance, and at this scale it also moves"),
                             ("sec3_twod.tex", "It therefore does not account for", "It therefore accounts for"),
                             ("sec3_twod.tex", "instead of \\fvval{c2c1-dibu}", "instead of 0.54"),
-                            ("sec6_conclusions.tex", "convention does not account for the shape", "convention accounts for the shape")):
+                            ("sec6_conclusions.tex", "convention does not account for the 2D shape", "convention accounts for the 2D shape")):
         t = text(f, base)
         if t.count(old_s) != 1:
             print(f"  NOT FOUND   OOFVC mutation {old_s!r}"); ok = False; continue
