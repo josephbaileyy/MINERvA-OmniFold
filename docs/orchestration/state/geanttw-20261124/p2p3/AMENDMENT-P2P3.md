@@ -58,7 +58,7 @@ mc_background [407,731, 415,551).
   - (c) each job logs atime_ns and mtime_ns, with UTC, immediately before and after the binary;
   - the fence runs at start and before the binary.
 
-## A3. P3: two slim omnifiles and the unchanged driver
+## A3. P3: three slim omnifiles and the unchanged driver
 
 **The driver** is `2d-unfolding/unfold_2d_omnifold_unbinned.py` at sha256 `74a4ed69…`, which is Stage C's
 `PROD_SHA` (`stageC/production/sbatch_prod.sh:23`). It is byte-identical on main since `c53e9c36`. It runs with
@@ -159,6 +159,17 @@ S4(ii)'s "July identity at seed 42" (`stageC/production/REPORT.md:65`). C3 tests
 - **The proxy's removal alone** is G(pinned+override) − G(pinned). It is reported separately, per cell, with the
   same formulas.
 - **C3 is unchanged.** It runs on the plain pinned slim against S5's band matrices, and gates the slim approach.
+- **The record answers "which convention, and why"** (the director's note of 2026-11-27, from App. A's review). The
+  pinned toolkit's GEANT hadron universes return 1 for truth-tree events, so they leave the efficiency denominator at
+  CV. Upstream's `3e411c0d` reweights the denominator too.
+  - The record cites upstream's own reason. That is the commit's message, "Turn truth weighting on for Geant Hadron
+    weights and systematics." (author David Last, 2025-10-17; quoted by the build's cherry-pick echo,
+    `../receipts-p0/connects/p0-build.out`), and any linked MAT-MINERvA issue, which the record names or says it
+    did not find.
+  - It states the measured effect on V^(2D)'s three GEANT band matrices, on the total covariance (T to T′) and on
+    the 13 tail cells.
+  - It says what the 2021 paper's toolkit version did only from a cited source. Otherwise it reports that as not
+    established.
 
 **A declared deviation in C2.** The declaration's C2 compares "every branch except the six targets" with the
 production dump. **This package does not.** The reason is cov2d's (C) grant, which allows UOMNI to be read for the
@@ -183,8 +194,30 @@ the commits and every hit are committed in `c4/c4.out`, part 2. **Result:**
   (`MinervaUniverse.h:62`, `MinervaUniverse.cxx:314/320`), identical in both.
 - So P2's NuE read comes only from `:1698`, which cov2d's (B) covers.
 
-## A5. Open before the package head
+## A5. The P2–P3 package
 
-- the per-playlist MC bytes, which give P2's limits;
-- the code, tests, mutants and receipts;
+All files are in `../code/`. Every step that runs is the committed bytes at the binding's M.
+
+| file | role |
+|---|---|
+| `geanttw_remote.sh` | P2–P3's login-node steps, each on its own GO and a fresh cov2d ack:<br>• `c2pre`, then `p2pilot` (the 1B pair), then `p2run` (the other 10 playlists)<br>• `c2`, then `p3slim`<br>• `p3unf pin`, then `p3extract pin`, which writes `run/p3/c3.json`<br>• `p3unf rest`, which needs `c3.json` to say PASS, then `p3extract all`<br>Each step runs `ready`, the ack, the fence and `p2_limits.py --check`. `submit()` refuses a name already submitted, re-fences, passes the cap gate, runs sbatch and logs one SUBMIT line. |
+| `geanttw_connect.sh` | the Mac side, as for P0, with the new step names |
+| `geanttw_evloop.sbatch` | P2's event loop: the trace modes (A2), the launch with `BASH_ENV` and `ENV` unset, and the `^(cov2d|t2a|covfix_)` fence |
+| `geanttw_p3.sbatch` | the C2 and P3 jobs: `c2pre`, `c2`, `slim`, `unf` and `extract pin|all`. Each checks its name and limit, runs the fence at start and before the work, and checks the deploy's scripts against their committed blobs. Modes that read UOMNI size-check it by stat and log its atime/mtime before and after. `unf` runs Stage C's universe argv, with the driver, helper, MC, flux and `setup_salloc_env.sh` checked. |
+| `geanttw_sacct.py` | the fence, and the cap gate with each job family's rate (A3) |
+| `p2_limits.py` → `p2_limits.txt` | P2's per-playlist limits (A2) |
+| `c2_check.py` | C2 and its pre-check, bitwise, on entry order, under cov2d's grant (A3) |
+| `p3_slim.py`, `slim_tparams.py` | the three slims: C1-a, the builds, C-MISS, C-SLIM and C-PATCH (A3) |
+| `p3_readout.py` | `extract` (S5's own `Cells`), `c3` and `r3` (A3, R3) |
+| `tests/` | `test_p2_limits.py`, `test_c2_check.py`, `test_p3_slim.py`, `test_p3_readout.py`, `test_p3_sbatch.py` and `test_p2p3_steps.py`, plus the P2 and family tests added to `test_shell_scripts.py` and `test_provenance_sacct.py` |
+| `mutation.py` → `mutation.txt`, `linetrace.py` → `linetrace.txt` | P0's receipts discipline, now covering every P2–P3 file |
+
+**Not run, and not to be:** nothing here runs before GEANTTW-BINDING-P2P3 and a GO for each step. Every UOMNI read
+is through an O_NOATIME file object, the stricter method cov2d's (C) amendment 2 allows, except one.
+`slim_tparams.py` opens UOMNI through ROOT, which is a plain read, to copy its four TParameters. The slim job logs
+UOMNI's atime/mtime before and after its whole run. The driver reads only the slims, never UOMNI.
+
+## A6. Open before the package head
+
+- the full receipts run (`linetrace.txt`, `mutation.txt`) on the frozen code, and `SHA256SUMS-P2P3`;
 - the codex-school2 read.

@@ -107,7 +107,7 @@ fi
 fence "immediately before the work"
 [[ "${READS_UOMNI}" -eq 1 ]] && uomni_log before
 OUT="${B}/run/p3"; P3="${B}/p3"
-mkdir -p "${OUT}" "${P3}" || exit 4
+mkdir -p "${OUT}" "${P3}" || stop "cannot make ${OUT} and ${P3}"
 DUMPS=()
 for pl in "${PLAYLISTS[@]}"; do   # P2's 11 outputs (1B's from its untraced pilot reference) and P0's patched 1L
   case "${pl}" in
@@ -142,18 +142,18 @@ case "${MODE}" in
       patov) SLIMFILE=slim-patched-override.root ;; esac
     U_OUT="${P3}/out/${SLIM}/${UNI/:/_}"
     [[ -e "${U_OUT}/xsec.root" ]] && stop "${U_OUT}/xsec.root exists"
-    mkdir -p "${U_OUT}" || exit 4
+    mkdir -p "${U_OUT}" || stop "cannot make ${U_OUT}"
+    cd "${DEPLOY}/2d-unfolding" || stop "no ${DEPLOY}/2d-unfolding"
     [[ "$(sha256sum "${SETUP}" | cut -d' ' -f1)" == "$(git -C "${DEPLOY}" show HEAD:setup_salloc_env.sh | sha256sum | cut -d' ' -f1)" ]] \
       || stop "${SETUP} is not the deploy's committed setup_salloc_env.sh"
     source "${SETUP}" >/dev/null 2>&1
     export PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 OMP_NUM_THREADS=64 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \
       NUMEXPR_NUM_THREADS=1
     unset LOKY_MAX_CPU_COUNT
-    for pair in "${PROD_SHA}:${DEPLOY}/2d-unfolding/unfold_2d_omnifold_unbinned.py" "${HELPER_SHA}:${HELPER}" \
+    for pair in "${PROD_SHA}:unfold_2d_omnifold_unbinned.py" "${HELPER_SHA}:${HELPER}" \
                 "${MCFILE_SHA}:${MCFILE}" "${FLUXU_SHA}:${FLUXU}"; do
       echo "${pair%%:*}  ${pair#*:}" | sha256sum -c - >&2 || stop "${pair#*:} is not its pinned sha256"
     done
-    cd "${DEPLOY}/2d-unfolding" || exit 4
     env -u BASH_ENV -u ENV python3 unfold_2d_omnifold_unbinned.py --omnifile "${P3}/${SLIMFILE}" \
       --flux-universe-file "${FLUXU}" --verbose --mcfile "${MCFILE}" --iters 5 --use-weights --estimator lgbm \
       --bkg-mode purity --out "${U_OUT}/xsec.root" --universe "${UNI}" --seed 42 --branch-select derived; rc=$? ;;

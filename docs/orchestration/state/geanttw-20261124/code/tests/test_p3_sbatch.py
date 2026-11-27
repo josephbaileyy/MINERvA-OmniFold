@@ -278,3 +278,25 @@ def test_a_failing_mktemp_refuses(h):
     stub(h.bin, "mktemp", "exit 1")
     r = h.smoke("c2pre")
     assert r.returncode == 2 and "mktemp failed (at start)" in r.stderr
+
+
+def test_unmakeable_output_dirs_stop(h):
+    (h.B / "run").mkdir()
+    (h.B / "run" / "p3").write_text("a file in the way\n")
+    r = h.real("c2pre")
+    assert r.returncode == 2 and "cannot make" in r.stderr and not h.calls()
+
+
+def test_an_unmakeable_unfold_dir_stops(h):
+    (h.B / "p3" / "out").mkdir(parents=True)
+    (h.B / "p3" / "out" / "pin").write_text("a file in the way\n")
+    r = h.real("unf", "pin", "GEANT_Pion:1", name="geanttw_p3_unf_pin_GEANT_Pion_1")
+    assert r.returncode == 2 and "cannot make" in r.stderr and not h.calls()
+
+
+def test_unf_stops_without_the_drivers_directory(h):
+    h.fence(("",), timelimit="00:30:00")
+    env = h.env(SLURM_JOB_ID="77", SLURM_JOB_NAME="geanttw_p3_unf_pin_GEANT_Pion_1")   # pins taken first
+    shutil.rmtree(h.deploy / "2d-unfolding")
+    r = h.run("unf", "pin", "GEANT_Pion:1", env=env)
+    assert r.returncode == 2 and f"REFUSE: no {h.deploy}/2d-unfolding" in r.stderr and not h.calls()
