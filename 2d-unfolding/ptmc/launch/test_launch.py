@@ -23,8 +23,10 @@ import ptmc_pilot_post as PP  # noqa: E402
 PILOT = PP.PILOT
 
 
-def sacct(job_el=900, nodes=2, steps=None, job_state="COMPLETED", step_state="COMPLETED"):
-    steps = steps or {u: 800 for u in PILOT}
+def sacct(job_el=756, nodes=2, steps=None, job_state="COMPLETED", step_state="COMPLETED"):
+    """The default is the scoped timing (t_R = 704 s, a 756 s pilot), which PROCEEDs, so a negative test STOPs only on
+    the defect it plants (campaign 2 found the old default STOPping on its projection whatever else was planted)."""
+    steps = steps or {**{u: 700 for u in PILOT}, "p_R_b1": 704}
     lines = [f"1|ptmc_pilot|{job_state}|0:0|{job_el}|{nodes}|s|e", "1.batch|batch|COMPLETED|0:0|900|1|s|e"]
     lines += [f"1.{i}|{u}|{step_state}|0:0|{el}|1|s|e" for i, (u, el) in enumerate(steps.items())]
     return "\n".join(lines) + "\n"
@@ -98,13 +100,17 @@ class PilotPost(unittest.TestCase):
         self.assertTrue(d["rules"]["projection_within_11.5"])
         self.assertFalse(d["rules"]["limit_covers_1.1x_runtime"])
 
+    def test_default_is_a_proceeding_baseline(self):
+        rc, d, _ = run(sacct(), units_dir())
+        self.assertEqual(rc, 0, d)
+
     def test_failed_unit_step_or_coupling_stops(self):
         for units, text in ((units_dir(ok=False), sacct()), (units_dir(coupled=False), sacct()),
                             (units_dir(), sacct(step_state="FAILED")), (units_dir(), sacct(job_state="TIMEOUT"))):
             rc, d, out = run(text, units)
             self.assertEqual(rc, 6, d)
             self.assertFalse((out / "PROCEED").exists())
-        missing = {u: 800 for u in PILOT[:-1]}
+        missing = {u: 700 for u in PILOT[:-1]}
         rc, d, _ = run(sacct(steps=missing), units_dir())
         self.assertEqual(rc, 6)
 
