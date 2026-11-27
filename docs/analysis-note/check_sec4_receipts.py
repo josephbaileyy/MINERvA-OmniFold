@@ -439,6 +439,7 @@ def evw2d() -> dict:
             "same": (STATE / "release-zenodo-20261127/same-events/same_events.out").read_text(),
             "upload": (STATE / "release-zenodo-20261127/UPLOAD-MANIFEST.md").read_text(),
             "evw5d_hpss": (STATE / "measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/attempt2-hpss/README.md").read_text(),
+            "log": (STATE / EVW2D / "receipts/run-20261126/post/logs/evw2d-run-62022231.log").read_text(),
             "config_sha256": hashlib.sha256((HERE.parents[1] / EVW2D_CODE["config"]).read_bytes()).hexdigest(),
             "config": json.loads((HERE.parents[1] / EVW2D_CODE["config"]).read_text()),
             "ref_sha256": hashlib.sha256(ref.read_bytes()).hexdigest(), "ref_meta": json.loads(_npz_text(ref, "meta")),
@@ -561,6 +562,32 @@ EVW2D_CLAIMS = (
      "The weights give central values only, so they give no uncertainty for a new binning.",
      lambda d, s: d["constants"]["constants"]["validity"].startswith("the central value;")),
 )
+
+
+# Sec. 2.3's clipping sentence (Joseph 2026-11-27): EVW2D reruns E_R's driver on the data with unchanged code and inputs
+# (EVW2D_CLAIMS above), and its committed log prints the refinement's score range and clipped count.
+def clip2d_gmin(d: dict) -> float:
+    m = re.findall(r"Stay-Positive refine: [0-9]+ pos / [0-9]+ neg events; g in \[([0-9.]+),([0-9.]+)\]; "
+                   r"clipped\(2g-1<0\) ([0-9]+) events;", d["log"])
+    if len(m) != 1:
+        raise ValueError(f"EVW2D log: {len(m)} refinement lines")
+    return float(m[0][0]) if int(m[0][2]) == 0 and float(m[0][0]) > 0.5 else -1.0
+
+
+CLIP2D_CLAIMS = (
+    ("clip 2D: the score is at least 0.53 for every event (EVW2D log: g in [0.533, ...], a rerun of E_R)",
+     "In the two-dimensional unfolding of the data, the sign classifier's score is at least 0.53 for every event,",
+     lambda d: clip2d_gmin(d) >= 0.53 and f"{clip2d_gmin(d):.2f}" == "0.53" and evw2d_pass(d)),
+    ("clip 2D: no weight is clipped (EVW2D log: clipped(2g-1<0) 0 events, clipped frac=0.0000)",
+     "so no weight is clipped.",
+     lambda d: clip2d_gmin(d) > 0.5 and d["log"].count("clipped frac=0.0000;") == 1 and evw2d_pass(d)),
+)
+
+
+def clip2d_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    t, d = text("sec2_method.tex", sources), evw2d()
+    return [(lab, t.count(s) == 1 and fact(d), f"sentence found {t.count(s)} time(s) | log {fact(d)}")
+            for lab, s, fact in CLIP2D_CLAIMS]
 
 
 def evw2d_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
@@ -894,6 +921,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     rows += ibub_claims(sources)
     rows += evw5d_claims(sources)
     rows += evw2d_claims(sources)
+    rows += clip2d_claims(sources)
     rows += highpz_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
         found = len(re.findall(pat, text(src, sources))) == 1
@@ -1406,6 +1434,9 @@ def self_test() -> int:
     plant2("same-events exact in float64 too", lambda d: d.__setitem__("same", d["same"].replace('"max_abs_delta_float64": 2.381347563584768e-07', '"max_abs_delta_float64": 0.0').replace('"max_abs_delta_float64": 1.9073474462061313e-06', '"max_abs_delta_float64": 0.0')))
     plant2("same-events on another 5D weights file", lambda d: d.__setitem__("evw5d_hpss", d["evw5d_hpss"].replace("0fceefcd", "00ceefcd")))
     plant2("same-events T4 pT line short", lambda d: d.__setitem__("same", d["same"].replace("T4 truth_pt: exact 32849103/32849103", "T4 truth_pt: exact 32849102/32849103")))
+    plant2("refinement clipped events", lambda d: d.__setitem__("log", d["log"].replace("clipped(2g-1<0) 0 events", "clipped(2g-1<0) 7 events")))
+    plant2("refinement score below 0.5", lambda d: d.__setitem__("log", d["log"].replace("g in [0.533,", "g in [0.473,")))
+    plant2("refinement score 0.54", lambda d: d.__setitem__("log", d["log"].replace("g in [0.533,", "g in [0.543,")))
     plant2("evw2d.done verdict FAIL", lambda d: d["done"].__setitem__("verdict", "FAIL"))
     plant2("a finding recorded", lambda d: d["run"].__setitem__("findings", ["C-COMPLETE"]))
     plant2("deposit copy not accepted", lambda d: d.__setitem__("deposit", d["deposit"].replace("ACCEPTED", "REFUSED")))
