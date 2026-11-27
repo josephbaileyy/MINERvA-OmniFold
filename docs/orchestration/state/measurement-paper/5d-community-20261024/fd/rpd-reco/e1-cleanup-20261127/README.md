@@ -60,6 +60,33 @@ malformed lines and 0 missing roots. The 24 omnifile copies are 14,746,873,018 b
   - rpd-reco-d2s0e1-20261127: 35,179 entries, 4,055,885,538 file bytes, 241 symlinks.
 - `list.err.txt`: NERSC's login banner.
 
+## Step 2's record ([`step2/`](step2/)): all three roots removed
+
+The director approved listing `2ac64747…` and the revised template and build (2026-11-27). `build_remove.sh` then
+wrote `e1-remove.sh`, sha256 `3b60ecc7d10c70f11116a326b932071aadc410dd6f9c02538e2bce84bd34e862`, which the director
+also approved.
+- A first build from the package directory refused: "S has 0 symlinks, not 241". Run in a subdirectory, `git ls-tree`
+  lists paths relative to that directory.
+- It was rebuilt with `REPO_FOR_LINKS` set to the repository root, the build's existing option, so no approved byte
+  changed.
+- `e1-remove.sh` differs from the template only in its two filled values (APPROVED, and CLONE_LINKS `a53113c7…`).
+- `ls-tree --full-tree` is on the tidy-up list.
+
+**The run:** one login02 session, 05:56:07Z to 05:58:41Z, ssh rc 0, after #1421's merge
+([`step2/removal.log.txt`](step2/removal.log.txt)).
+- The cert was re-read. cov2d acked at 05:45:22Z and tier3-design at 05:45:25Z, and ibu-chi was told. END followed.
+- sacct showed no unended rpd* job.
+- `listing_sha256` was `2ac64747…`, equal to the approved one.
+- The symlinks were only the clones' committed ones.
+- The 24 omnifile copies were removed first, all rc 0: 14,746,873,018 bytes.
+- Then each root:
+  - `rpd-reco-p0e1-20261126`: rc 0, gone;
+  - `rpd-reco-flux4-20261126`: rc 0, gone;
+  - `rpd-reco-d2s0e1-20261127`: rc 0, gone.
+
+**Space freed:** 31,806,400,243 bytes of files (29.62 GiB), the approved listing's per-root totals. The RDX sidecar, the
+omnifiles, lat_zero and the S1 dumps were not named and were not touched.
+
 ## Tests
 
 `test_cleanup.sh` runs the three scripts on temporary roots. GNU `find -printf`, `sha256sum`, `date -d`, `sacct` and

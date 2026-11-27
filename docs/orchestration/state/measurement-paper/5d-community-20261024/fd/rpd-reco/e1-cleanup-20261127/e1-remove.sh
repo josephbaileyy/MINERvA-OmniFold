@@ -1,0 +1,67 @@
+#!/bin/bash
+# e1 cleanup, step 2 of 2: removes the three unused e1 roots by literal path, only if the listing is the approved one.
+#   ssh saul.nersc.gov "ssh -o BatchMode=yes login02 'bash -s'" < e1-remove.sh > removal.log 2> removal.err
+# Built from e1-remove.sh.in by build_remove.sh, which fills APPROVED with the listing sha the director approved.
+# In order:
+#   1. refuses unless on a login node, and unless sacct shows no unended rpd* job (none can be using these roots);
+#   2. regenerates e1-list.sh's listing (the same lines) and refuses unless it hashes to APPROVED, has no line other than
+#      "<f|d|l> <bytes> <path>" (the path may hold spaces) under the three roots, no ROOT-NOT-A-DIRECTORY line, and no symlink except each clone's
+#      own committed ones (the git tree at S's symlink list, by sha);
+#   3. deletes the omnifile copies first: in rpd-reco-p0e1-20261126/{dry,run}/staged/, each regular file whose name
+#      ends "-runEventLoopOmniFold_RDX_<PL>.root" and is in the approved listing, by its literal path (rm -f --);
+#   4. removes each root by its literal path (rm -rf --), in the listing's order, and checks it is gone.
+# Prints what it removes and each rc. Exit 0: all three gone; 2: refused before any removal; 3: a removal failed.
+stop() { echo "STOP: $*"; exit 2; }
+APPROVED=2ac64747d2a85ad611d33c04a1649869ef57f746408dabd36fe5a7afb8be6f0a
+ROOTS="/pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126 /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126 /pscratch/sd/j/josephrb/rpd-reco-d2s0e1-20261127"
+case "$(hostname)" in login*) ;; *) stop "not a login node: $(hostname)" ;; esac
+echo "node $(hostname) $(date -u +%FT%TZ); approved listing $APPROVED"
+q=$(sacct -X -n -P -u josephrb -S "$(date -u -d '14 days ago' +%F)" -o JobID,JobName,State 2>&1) || stop "sacct failed"
+live=$(printf '%s\n' "$q" | awk -F'|' 'tolower($2) ~ /^rpd/ { split($3, w, " "); if (w[1] !~ /^(BOOT_FAIL|CANCELLED|COMPLETED|DEADLINE|FAILED|NODE_FAIL|OUT_OF_MEMORY|PREEMPTED|TIMEOUT)$/) print }')
+[ -z "$live" ] || stop "an rpd* job is unended: $live"
+echo "sacct: no unended rpd* job"
+listing() {
+  for R in $ROOTS; do
+    [ -d "$R" ] && [ ! -L "$R" ] || { echo "ROOT-NOT-A-DIRECTORY $R"; continue; }
+    find "$R" -xdev -mindepth 1 -printf "%y %s $R/%P\n"
+  done | LC_ALL=C sort
+}
+out=$(listing) || stop "listing failed"
+got=$(printf '%s\n' "$out" | sha256sum | cut -d' ' -f1)
+echo "listing_sha256 $got"
+[ "$got" = "$APPROVED" ] || stop "the listing is not the approved one"
+printf '%s\n' "$out" | grep -q '^ROOT-NOT-A-DIRECTORY' && stop "a root is not a directory"
+# Symlinks are allowed only inside each root's clone/, and only the clone's own committed ones: per root, the sorted
+# relative paths of its symlinks must hash to CLONE_LINKS, the sha256 of the sorted list of symlinks in the git tree
+# at S (2415e8d6, 241 paths; build_remove.sh computes it). rm -rf removes a symlink and never follows it.
+CLONE_LINKS=a53113c730f3922170052434e7eeab69d4cb546ebcfadd0c9f2a512f85bba727
+for R in $ROOTS; do
+  stray=$(printf '%s\n' "$out" | awk -v r="$R/" -v c="$R/clone/" '{ p = $0; sub(/^[^ ]+ [^ ]+ /, "", p) } $1 == "l" && index(p, r) == 1 && index(p, c) != 1')
+  [ -z "$stray" ] || stop "a symlink outside $R/clone/: $stray"
+  links=$(printf '%s\n' "$out" | awk -v c="$R/clone/" '{ p = $0; sub(/^[^ ]+ [^ ]+ /, "", p) } $1 == "l" && index(p, c) == 1 {print substr(p, length(c) + 1)}' | LC_ALL=C sort | sha256sum | cut -d' ' -f1)
+  [ "$links" = "$CLONE_LINKS" ] || stop "$R/clone/'s symlinks are not the 241 committed at S ($links)"
+done
+echo "symlinks: only the clones' committed ones (sha $CLONE_LINKS per root)"
+bad=$(printf '%s\n' "$out" | awk -v roots="$ROOTS" 'BEGIN { n = split(roots, r, " ") }
+  { p = $0; ok = sub(/^[fdl] [0-9]+ /, "", p); if (ok) { under = 0; for (i = 1; i <= n; i++) if (index(p, r[i] "/") == 1) under = 1; ok = under } if (!ok) print }')
+[ -z "$bad" ] || stop "a listing line is malformed or outside the roots: $bad"
+echo "== 3. the omnifile copies first"
+P0R=/pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126
+n=0
+while read -r t s p; do
+  case "$p" in
+    "$P0R"/dry/staged/*-runEventLoopOmniFold_RDX_??.root|"$P0R"/run/staged/*-runEventLoopOmniFold_RDX_??.root)
+      [ "$t" = f ] || continue
+      rm -f -- "$p"; rc=$?
+      echo "rm $p ($s bytes) rc=$rc"
+      [ $rc -eq 0 ] && [ ! -e "$p" ] || { echo "REMOVAL FAILED: $p"; exit 3; }
+      n=$((n + 1)) ;;
+  esac
+done < <(printf '%s\n' "$out")  # process substitution: no here-string temp file, and exit 3 leaves the script
+echo "omnifile copies removed: $n"
+echo "== 4. the roots"
+for R in $ROOTS; do
+  rm -rf -- "$R"; rc=$?
+  if [ $rc -eq 0 ] && [ ! -e "$R" ]; then echo "removed $R rc=$rc; gone"; else echo "REMOVAL FAILED: $R rc=$rc"; exit 3; fi
+done
+echo "== e1-remove done $(date -u +%FT%TZ)"
