@@ -514,6 +514,94 @@ HIGHPZ_CLAIMS = (
 )
 
 
+# OOFVC (#1420): the 2D distances under MINERvA's counting convention (a PROPOSAL for Joseph, 2026-11-27), bound to r3's
+# score.json and the declaration's sec. 1.1 (the conventions) and sec. 2.3-2.4 (the operands at K = 10, the readings).
+OOFVC = "oofv-convention-20261126"
+OOFVC_OVERRIDE = None  # the self-test plants altered records here
+
+
+def oofvc() -> dict:
+    if OOFVC_OVERRIDE is not None:
+        return OOFVC_OVERRIDE
+    return {"score": json.loads((STATE / OOFVC / "receipts/attempt3-r3/score.json.txt").read_text()),
+            "decl": (STATE / OOFVC / "OOFVC-DECLARATION.md").read_text()}
+
+
+def _fv(sources: dict[str, str], name: str) -> str:
+    """A values_fived16.tex macro's printed value."""
+    m = re.findall(r"\\@namedef\{fv@" + re.escape(name) + r"\}\{([^}]*)\}", sources["values_fived16.tex"])
+    return m[0] if len(m) == 1 else "<missing>"
+
+
+def oofvc_ok(d: dict) -> bool:
+    sc = d["score"]
+    return sc["controls_pass"] is True and all(c["pass"] is True for c in sc["controls"].values())
+
+
+def oofvc_before(d: dict, sources: dict[str, str]) -> bool:
+    """The printed 'instead of' values are the production distances r3 reproduced (C-BASE), as the macros print them."""
+    o = d["score"]["operands"]
+    return (oofvc_ok(d) and _fv(sources, "c2c1-dibu") == f"{o['D_IBU_0']:.2f}" and _fv(sources, "c2c1-der") == f"{o['D_ER_0']:.2f}"
+            and d["score"]["controls"]["C-BASE"]["D_IBU_vs_regenA3_max_rel"] < 1e-9
+            and d["score"]["controls"]["C-BASE"]["D_ER_vs_tier1_rel"] < 1e-6
+            and d["score"]["descriptive"]["D_IBU_every_K"]["R"]["10"] == o["D_IBU_R"]
+            and d["score"]["descriptive"]["D_IBU_every_K"]["off"]["10"] == o["D_IBU_0"]
+            and "- D_IBU^0 and D_IBU^R at K = 10;" in d["decl"])
+
+
+def oofvc_most_oof(d: dict) -> bool:
+    """Most of the moved events (POT-weighted) have a true vertex outside the fiducial volume; only events whose true muon
+    is in the grid are moved (sec. 1.3)."""
+    c = d["score"]["descriptive"]["classes"]
+    oof, fid = c["moved_out_of_fiducial"]["weight_pot"], c["moved_fiducial"]["weight_pot"]
+    return (oofvc_ok(d) and oof > fid > 0 and oof / (oof + fid) > 0.5
+            and "Only rows whose true muon is in the grid are included (step 3)." in d["decl"])
+
+
+OOFVC_CLAIMS = (
+    ("OOFVC: MINERvA's released code counts the selected nu_mu CC events failing the phase space as signal (decl. 1.1)",
+     "sec3_twod.tex",
+     "MINERvA's released comparison code counts as signal the selected $\\nu_\\mu$ charged-current events that fail the "
+     "truth phase space.",
+     lambda d, s: ("| selected ν_μ CC event failing the phase space (true vertex outside the fiducial volume, or θ_μ ≥ 20°, "
+                   "or p∥ outside 1.5–60 GeV/c, or p_T ≥ 4.5 GeV/c) |" in d["decl"]
+                   and "| **signal**: it fills the efficiency numerator at its true (p_T, p∥) and the migration |" in d["decl"]
+                   and "this is the convention of MINERvA's released comparison code" in d["decl"])),
+    ("OOFVC: those with a true muon in the reported range, most out of the fiducial volume (classes, decl. 1.3)",
+     "sec3_twod.tex",
+     "Counting in the same way those with a true muon momentum in the reported range, most of which have a true vertex "
+     "outside the fiducial volume,", lambda d, s: oofvc_most_oof(d)),
+    ("OOFVC: the 'instead of' values are the production distances (macros = score.json operands at K = 10, C-BASE)",
+     "sec3_twod.tex",
+     "ten-iteration IBU gives 0.20 per bin instead of \\fvval{c2c1-dibu}, and the two-dimensional OmniFold result gives "
+     "2.21 instead of \\fvval{c2c1-der}.", oofvc_before),
+    ("OOFVC: the declared primary statement (r_IBU LOWER, r_ER LITTLE CHANGE; decl. 2.4)",
+     "sec3_twod.tex",
+     "This convention moves the binned IBU's distance, but at this scale it does not move the OmniFold result's.",
+     lambda d, s: (oofvc_ok(d) and d["score"]["bands"]["r_IBU"] == "LOWER" and d["score"]["bands"]["r_ER"] == "LITTLE CHANGE"
+                   and d["score"]["ratios"]["r_IBU"] <= 0.80 and 0.95 <= d["score"]["ratios"]["r_ER"] <= 1 / 0.95
+                   and d["score"]["statements"]["primary"] == "The reclassification moves the binned IBU's distance; at "
+                   "this scale it does not move the OmniFold central value's"
+                   and "| LOWER | LITTLE CHANGE or INTERMEDIATE | The reclassification moves the binned IBU's distance; at "
+                   "this scale it does not move the OmniFold central value's |" in d["decl"])),
+    ("OOFVC: so it does not account for the 2D shape difference (the primary statement; no cause named)",
+     "sec3_twod.tex", "It therefore does not account for the 2D shape difference with MINERvA.",
+     lambda d, s: d["score"]["bands"]["r_ER"] == "LITTLE CHANGE" and oofvc_ok(d)),
+    ("OOFVC: Sec. 6's clause (r_ER LITTLE CHANGE)", "sec6_conclusions.tex",
+     "MINERvA's signal convention does not account for the shape difference (Sec.~\\ref{sec:results-benchmarks}).",
+     lambda d, s: d["score"]["bands"]["r_ER"] == "LITTLE CHANGE" and oofvc_ok(d)),
+)
+
+
+def oofvc_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    d = oofvc()
+    out = []
+    for lab, f, sent, fact in OOFVC_CLAIMS:
+        n = text(f, sources).count(sent)
+        out.append((lab, n == 1 and fact(d, sources), f"sentence found {n} time(s) | record {fact(d, sources)}"))
+    return out
+
+
 def highpz_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     t, d = text("sec3_twod.tex", sources), highpz()
     return [(lab, t.count(s) == 1 and fact(d), f"sentence found {t.count(s)} time(s) | record {fact(d)}")
@@ -522,6 +610,12 @@ def highpz_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
+    # OOFVC (oofv-convention-20261126, r3 score.json), sec3_twod.tex
+    ("OOFVC: D_IBU under the convention, K = 10, and D_E_R under it (score.json operands D_IBU_R, D_ER_R)", "sec3_twod.tex",
+     r"ten-iteration IBU gives ([0-9.]+) per bin instead of \\fvval\{c2c1-dibu\}, and the two-dimensional OmniFold "
+     r"result gives ([0-9.]+) instead of \\fvval\{c2c1-der\}\.",
+     lambda: (oofvc()["score"]["operands"]["D_IBU_R"], oofvc()["score"]["operands"]["D_ER_R"]) if oofvc_ok(oofvc())
+     else (-1.0, -1.0), "round"),
     # The high-p_par open issue (precharge-20261125), sec3_twod.tex
     ("high p_par: the reco edge of the excess (merged-comparison.csv rows 60-80 and >=80)", "sec3_twod.tex",
      r"above the reported range, at reconstructed \$p_\\parallel \\geq ([0-9]+)\$~GeV/\$c\$\.",
@@ -709,6 +803,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     rows += ibub_claims(sources)
     rows += evw5d_claims(sources)
     rows += highpz_claims(sources)
+    rows += oofvc_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
         found = len(re.findall(pat, text(src, sources))) == 1
         c = fn()
@@ -878,7 +973,7 @@ def load() -> dict[str, str]:
     return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec_validation.tex",
                                                "sec_5d.tex", "app_devhistory.tex", "primer_body.tex", "appA_methods.tex",
                                                "appC_supplementary.tex", "records_r03_twod.tex", "sec2_method.tex",
-                                               "appD_reproducibility.tex")}
+                                               "appD_reproducibility.tex", "sec6_conclusions.tex", "values_fived16.tex")}
 
 
 def gzip_self_test() -> bool:
@@ -914,6 +1009,62 @@ def self_test() -> int:
     if not gzip_self_test():  # a reader check, reported on its own line, not counted as a perturbation
         ok = False
     # The high-p_par claims: each sentence reworded, and each planted record, must be rejected
+    # The OOFVC claims: each sentence reworded, and each planted record, must be rejected.
+    for f, old_s, new_s in (("sec3_twod.tex", "counts as signal the selected", "counts as background the selected"),
+                            ("sec3_twod.tex", "most of which have a true vertex outside", "few of which have a true vertex outside"),
+                            ("sec3_twod.tex", "This convention moves the binned IBU's distance, but at this scale it does not move",
+                             "This convention moves the binned IBU's distance, and at this scale it also moves"),
+                            ("sec3_twod.tex", "It therefore does not account for", "It therefore accounts for"),
+                            ("sec3_twod.tex", "instead of \\fvval{c2c1-dibu}", "instead of 0.54"),
+                            ("sec6_conclusions.tex", "convention does not account for the shape", "convention accounts for the shape")):
+        t = text(f, base)
+        if t.count(old_s) != 1:
+            print(f"  NOT FOUND   OOFVC mutation {old_s!r}"); ok = False; continue
+        trial = dict(base)
+        trial[f] = t.replace(old_s, new_s)
+        if all(r[1] for r in evaluate(trial)):
+            print(f"  NOT CAUGHT  OOFVC: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      OOFVC: {old_s} -> {new_s}")
+    trial = dict(base)
+    trial["values_fived16.tex"] = base["values_fived16.tex"].replace(r"\@namedef{fv@c2c1-der}{2.12}", r"\@namedef{fv@c2c1-der}{2.13}")
+    if all(r[1] for r in evaluate(trial)):
+        print("  NOT CAUGHT  OOFVC: c2c1-der printed 2.13"); ok = False
+    else:
+        caught += 1; print("  caught      OOFVC: c2c1-der printed 2.13")
+
+    def plant_of(what, fn):
+        global OOFVC_OVERRIDE
+        nonlocal ok, caught
+        import copy as copy_mod
+        data = copy_mod.deepcopy(oofvc())
+        fn(data)
+        OOFVC_OVERRIDE = data
+        try:
+            rows = dict((r[0], r[1]) for r in evaluate(base))
+        except (ValueError, KeyError, TypeError):
+            rows = {"refused": False}
+        finally:
+            OOFVC_OVERRIDE = None
+        if all(rows.values()):
+            print(f"  NOT CAUGHT  OOFVC planted: {what}"); ok = False
+        else:
+            caught += 1; print(f"  caught      OOFVC planted: {what}")
+    sc = lambda d: d["score"]
+    plant_of("a control failing", lambda d: sc(d)["controls"]["C-MOVE"].__setitem__("pass", False))
+    plant_of("controls_pass false", lambda d: sc(d).__setitem__("controls_pass", False))
+    plant_of("r_ER INTERMEDIATE", lambda d: sc(d)["bands"].__setitem__("r_ER", "INTERMEDIATE"))
+    plant_of("r_ER 1.06", lambda d: sc(d)["ratios"].__setitem__("r_ER", 1.06))
+    plant_of("r_IBU LITTLE CHANGE", lambda d: sc(d)["bands"].__setitem__("r_IBU", "LITTLE CHANGE"))
+    plant_of("another primary statement", lambda d: sc(d)["statements"].__setitem__("primary", "No statement; the numbers are reported"))
+    plant_of("D_IBU_R 0.21", lambda d: sc(d)["operands"].__setitem__("D_IBU_R", 0.21))
+    plant_of("D_ER_R 2.22", lambda d: sc(d)["operands"].__setitem__("D_ER_R", 2.22))
+    plant_of("D_IBU_R not the K = 10 entry", lambda d: sc(d)["descriptive"]["D_IBU_every_K"]["R"].__setitem__("10", 0.3))
+    plant_of("D_ER_0 off Tier 1", lambda d: sc(d)["controls"]["C-BASE"].__setitem__("D_ER_vs_tier1_rel", 1e-3))
+    plant_of("most moved events fiducial", lambda d: sc(d)["descriptive"]["classes"]["moved_fiducial"].__setitem__("weight_pot", 2e5))
+    plant_of("MINERvA's code calls them background", lambda d: d.__setitem__("decl", d["decl"].replace("| **signal**: it fills the efficiency numerator", "| background: it fills the efficiency numerator")))
+    plant_of("the declaration's K not 10", lambda d: d.__setitem__("decl", d["decl"].replace("- D_IBU^0 and D_IBU^R at K = 10;", "- D_IBU^0 and D_IBU^R at K = 5;")))
+    plant_of("the moved rows not limited to the grid", lambda d: d.__setitem__("decl", d["decl"].replace("Only rows whose true muon is in the grid are included (step 3).", "All rows are included.")))
     for old_s, new_s in (("rises with visible energy", "falls with visible energy"),
                          ("band from 20 to 80~GeV", "band from 20 to 100~GeV"),
                          ("independent of the muon does not", "depending on the muon does not"),
