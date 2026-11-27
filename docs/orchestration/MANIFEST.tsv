@@ -19260,6 +19260,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/d2s
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/d2s0-20261124/tools/gen_d2s0.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/d2s0-20261124/tools/p0_supervise.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/d2s0e1-20261127/README.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/d2s0e1-20261127/RPD-D2S0E1-BINDING.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/d2s0e1-20261127/production-config.ready.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/d2s0e1-20261127/reads/agy/director-conditions.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/d2s0e1-20261127/reads/agy/model.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
