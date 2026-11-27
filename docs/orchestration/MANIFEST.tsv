@@ -23107,10 +23107,10 @@ docs/orchestration/state/ptmc-20261127/receipts/code/harness_remote.txt	tracked	
 docs/orchestration/state/ptmc-20261127/receipts/code/harness_sbatch.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
 docs/orchestration/state/ptmc-20261127/receipts/code/head.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
 docs/orchestration/state/ptmc-20261127/receipts/code/mutation-1-log.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
-docs/orchestration/state/ptmc-20261127/receipts/code/mutation-1.json	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
+docs/orchestration/state/ptmc-20261127/receipts/code/mutation-1.json.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
 docs/orchestration/state/ptmc-20261127/receipts/code/mutation-2-log.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
-docs/orchestration/state/ptmc-20261127/receipts/code/mutation-2.json	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
-docs/orchestration/state/ptmc-20261127/receipts/code/mutation-3.json	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
+docs/orchestration/state/ptmc-20261127/receipts/code/mutation-2.json.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
+docs/orchestration/state/ptmc-20261127/receipts/code/mutation-3.json.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
 docs/orchestration/state/ptmc-20261127/receipts/code/pytest.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
 docs/orchestration/state/ptmc-20261127/receipts/couple/README.md	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
 docs/orchestration/state/ptmc-20261127/receipts/couple/launch-v1-to-v2.diff.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
