@@ -647,8 +647,8 @@ REGRADE_VF_CLAIMS = (
      and rvf(d, "ar23", "rule_i")["B"] - rvf(d, "ar23", "rule_i")["F"] > 3 * rvf(d, "ar23", "rule_i")["se_boot"]["B_minus_F"]
      and rvf(d, "g18", "rule_i")["readings"]["bias_vs_fluctuation"] == "fluctuation larger"
      and rvf(d, "g18", "rule_i")["F"] - rvf(d, "g18", "rule_i")["B"] > 3 * rvf(d, "g18", "rule_i")["se_boot"]["B_minus_F"]),
-    ("REGRADE-VF: B falls by about two thirds at AR23 and about half at G18 (rule (i) vs before; this covariance = C_rep,0's successor)",
-     "Relative to this covariance, the offset falls by about two thirds at the first tune and by about half at the second.",
+    ("REGRADE-VF: B falls by about two thirds at AR23 and about half at G18 (rule (i) vs before, which is C_rep,0 on the same draws)",
+     "Compared with $\\CrepFiveDzero$, its contribution to the mean $\\chi^2/\\mathrm{ndf}$ falls by about two thirds at the first tune and by about half at the second.",
      lambda d, s: regrade_vf_ok(d) and 0.62 <= rvf_fall(d, "ar23") <= 0.71 and 0.45 <= rvf_fall(d, "g18") <= 0.58
      and rvf_before_is_crep0(d, s)),
     ("REGRADE-VF: circular by construction (declaration sec. 5: same draws; cannot show coverage of C_rep)",
