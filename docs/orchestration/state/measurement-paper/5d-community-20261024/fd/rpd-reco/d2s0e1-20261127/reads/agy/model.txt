@@ -1,0 +1,2 @@
+model: gemini-4-hydrogen-high (agy -p), read of the d2s0e1 package (code/rpd-d2s0e1-20261127, uncommitted; connect 51f28fad, launch 92a1e427, config f92d034d)
+After the read: the connect's DRY_RUN_SCOPE header citation (generator replacement) and two README edits; connect is now e1b5084b, launch 24739c02 (re-pinned), all else as read.
