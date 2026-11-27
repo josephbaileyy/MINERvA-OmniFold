@@ -31,10 +31,13 @@ at full rigour anyway.**
 
 | item | units | node-h |
 |---|---|---|
-| pilot: the R central, the off central, the off replica b = 1, the R replica b = 1 | 4, one node, 4 lanes | ≈ 0.2 (OOFVC's four-unit job: 756 s on one node, 0.21) |
+| pilot: the R central, the off central, the off replicas b = 1..5 (C-REPOFF, C-PROTO), the R replica b = 1 | 8, two nodes, 4 lanes each | ≈ 0.4 (OOFVC's four-unit job: 756 s on one node, 0.21) |
 | R replicas b = 2..200 | 199 | 199 × 0.0489 ≈ 9.7 |
 | the matched-baseline read and the score | login node and laptop | 0 |
-| **total** | | **≈ 9.9; cap 12.5** |
+| **total** | | **≈ 10.2; cap 12.5** |
+
+(r2: the pilot grew from 4 to 8 units, adding the off replicas b = 2..5 for C-PROTO, after the first reads. See the
+declaration's §8.)
 
 - **0.0489 node-h** is SCOPE §4's E_R replica cost, which REF-C2C1's declaration also uses.
 - **Cross-check against REF-C2C1's actual spend.** Its 350 replica units took about 10.6 node-h:
@@ -42,8 +45,8 @@ at full rigour anyway.**
   - about 0.03 node-h per unit, mixing 300 c2 units (refinement plus IBU) with 50 c1 units (refinement plus OmniFold).
 - **The cost holds only with the paired unit (§3, D3).** One driver run does one refinement and feeds both methods.
   Separate IBU and E_R units would cost about 200 × (0.049 + 0.027) ≈ 15 node-h, over the cap.
-- **STOP rule:** if the pilot's measured per-replica cost × 200 exceeds 11.5 node-h, the replicas do not launch, and it
-  goes back to the director.
+- **STOP rule:** if the pilot's charged node-h plus 199 × its measured per-replica cost exceeds 11.5 node-h, the
+  replicas do not launch, and it goes back to the director (the declaration's §7).
 
 ## 3. Decisions the draft makes, each with a recommendation; the director's call
 
