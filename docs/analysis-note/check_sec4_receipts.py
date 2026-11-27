@@ -745,33 +745,30 @@ def oofvc_before(d: dict, sources: dict[str, str]) -> bool:
             and "- D_IBU^0 and D_IBU^R at K = 10;" in d["decl"])
 
 
-def oofvc_most_oof(d: dict) -> bool:
-    """Most of the moved events (POT-weighted) have a true vertex outside the fiducial volume; only events whose true muon
-    is in the grid are moved (sec. 1.3)."""
-    c = d["score"]["descriptive"]["classes"]
-    oof, fid = c["moved_out_of_fiducial"]["weight_pot"], c["moved_fiducial"]["weight_pot"]
-    return (oofvc_ok(d) and oof > fid > 0 and oof / (oof + fid) > 0.5
-            and "Only rows whose true muon is in the grid are included (step 3)." in d["decl"])
-
-
 OOFVC_CLAIMS = (
     ("OOFVC: the new sentences follow the existing IBU distance sentence (whose 0.54 is D_IBU_0)",
      "sec3_twod.tex",
      "Relative to the published result, ten-iteration IBU gives \\fvval{c2c1-dibu} per bin using the same "
-     "published-covariance metric. The MINERvA Analysis Toolkit counts as signal", lambda d, s: oofvc_before(d, s)),
-    ("OOFVC: MINERvA's code (MAT's Cutter, decl. 1.1) counts selected nu_mu CC events outside the phase space as signal; "
-     "most of the moved ones are out of the fiducial volume (classes)",
+     "published-covariance metric. The MINERvA Analysis Toolkit counts", lambda d, s: oofvc_before(d, s)),
+    ("OOFVC: MINERvA's code (MAT's Cutter) counts selected nu_mu CC events outside the phase space as signal, and "
+     "non-nu_mu-CC events as background (decl. 1.1)",
      "sec3_twod.tex",
-     "The MINERvA Analysis Toolkit counts as signal the selected events that fall outside the truth phase space, most of "
-     "them with a true vertex outside the fiducial volume.",
+     "The MINERvA Analysis Toolkit counts the selected $\\nu_\\mu$ charged-current events that fall outside the truth "
+     "phase space as signal.",
      lambda d, s: ("| selected ν_μ CC event failing the phase space (true vertex outside the fiducial volume, or θ_μ ≥ 20°, "
                    "or p∥ outside 1.5–60 GeV/c, or p_T ≥ 4.5 GeV/c) |" in d["decl"]
                    and "| **signal**: it fills the efficiency numerator at its true (p_T, p∥) and the migration |" in d["decl"]
-                   and "1. **`MAT/PlotUtils/Cutter.cxx` @ 0111c79de**" in d["decl"] and oofvc_most_oof(d))),
-    ("OOFVC: the two distances under the convention (operands at K = 10; the 'instead of' macros are the production ones)",
+                   and "| selected event that is not ν_μ CC (NC, ν̄_μ, ν_e) | background | background |" in d["decl"]
+                   and "1. **`MAT/PlotUtils/Cutter.cxx` @ 0111c79de**" in d["decl"] and oofvc_ok(d))),
+    ("OOFVC: only those with a true muon in the reported range are counted (decl. 1.3 step 3); the two distances "
+     "(operands at K = 10; the 'instead of' macros are the production ones)",
      "sec3_twod.tex",
-     "Counting them the same way, ten-iteration IBU gives 0.20 per bin instead of \\fvval{c2c1-dibu}, and the "
-     "two-dimensional OmniFold result gives 2.21 instead of \\fvval{c2c1-der}.", oofvc_before),
+     "If we count as signal those of these events whose true muon is in the reported $p_T$--$p_\\parallel$ range, "
+     "ten-iteration IBU gives 0.20 per bin instead of \\fvval{c2c1-dibu}, and the two-dimensional OmniFold result gives "
+     "2.21 instead of \\fvval{c2c1-der}.",
+     lambda d, s: (oofvc_before(d, s)
+                   and "Only rows whose true muon is in the grid are included (step 3)." in d["decl"]
+                   and d["score"]["controls"]["C-MOVE"]["pass"] is True)),
     ("OOFVC: so it does not account for the 2D shape difference (r_IBU LOWER, r_ER LITTLE CHANGE; decl. 2.4's statement)",
      "sec3_twod.tex", "This convention therefore does not account for the 2D shape difference with the published result.",
      lambda d, s: (oofvc_ok(d) and d["score"]["bands"]["r_IBU"] == "LOWER"
@@ -1223,8 +1220,10 @@ def self_test() -> int:
         ok = False
     # The high-p_par claims: each sentence reworded, and each planted record, must be rejected
     # The OOFVC claims: each sentence reworded, and each planted record, must be rejected.
-    for f, old_s, new_s in (("sec3_twod.tex", "Toolkit counts as signal the selected", "Toolkit counts as background the selected"),
-                            ("sec3_twod.tex", "most of them with a true vertex outside", "few of them with a true vertex outside"),
+    for f, old_s, new_s in (("sec3_twod.tex", "charged-current events that fall outside the truth phase space as signal.",
+                             "charged-current events that fall outside the truth phase space as background."),
+                            ("sec3_twod.tex", "counts the selected $\\nu_\\mu$ charged-current events", "counts the selected events"),
+                            ("sec3_twod.tex", "whose true muon is in the reported", "whose true muon is anywhere outside the reported"),
                             ("sec3_twod.tex", "This convention therefore does not account for", "This convention therefore accounts for"),
                             ("sec3_twod.tex", "instead of \\fvval{c2c1-dibu}", "instead of 0.54"),
                             ("sec3_twod.tex", "per bin using the same published-covariance metric. The MINERvA",
@@ -1274,7 +1273,7 @@ def self_test() -> int:
     plant_of("D_ER_R 2.22", lambda d: sc(d)["operands"].__setitem__("D_ER_R", 2.22))
     plant_of("D_IBU_R not the K = 10 entry", lambda d: sc(d)["descriptive"]["D_IBU_every_K"]["R"].__setitem__("10", 0.3))
     plant_of("D_ER_0 off Tier 1", lambda d: sc(d)["controls"]["C-BASE"].__setitem__("D_ER_vs_tier1_rel", 1e-3))
-    plant_of("most moved events fiducial", lambda d: sc(d)["descriptive"]["classes"]["moved_fiducial"].__setitem__("weight_pot", 2e5))
+    plant_of("MINERvA's code counts non-CC events as signal", lambda d: d.__setitem__("decl", d["decl"].replace("| selected event that is not ν_μ CC (NC, ν̄_μ, ν_e) | background | background |", "| selected event that is not ν_μ CC (NC, ν̄_μ, ν_e) | background | signal |")))
     plant_of("MINERvA's code calls them background", lambda d: d.__setitem__("decl", d["decl"].replace("| **signal**: it fills the efficiency numerator", "| background: it fills the efficiency numerator")))
     plant_of("the declaration's K not 10", lambda d: d.__setitem__("decl", d["decl"].replace("- D_IBU^0 and D_IBU^R at K = 10;", "- D_IBU^0 and D_IBU^R at K = 5;")))
     plant_of("the moved rows not limited to the grid", lambda d: d.__setitem__("decl", d["decl"].replace("Only rows whose true muon is in the grid are included (step 3).", "All rows are included.")))
