@@ -132,6 +132,39 @@ class Completeness(unittest.TestCase):
         self.assertTrue(P.support(g, w, m, 4, [1], n=3)["pass"])
 
 
+class Coupling(unittest.TestCase):
+    def test_exact_multiset(self):
+        g = np.array([0, 0, 1, 2])
+        pt, pz, w = np.array([.1, .2, .3, .4]), np.array([2.0, 2.1, 3.0, 4.0]), np.array([1.0, 2.0, 0.5, 0.0])
+        perm = np.array([1, 0, 2, 3])
+        self.assertTrue(P.coupling_exact(g, pt, pz, w, g[perm], pt[perm], pz[perm], w[perm])["pass"])
+        # equal cell sums from different weights (codex r3 #1): fails
+        self.assertFalse(P.coupling_exact(g, pt, pz, np.array([0.5, 2.5, 0.5, 0]), g, pt, pz, w)["pass"])
+        # a zero-weight row on one side only is irrelevant
+        self.assertTrue(P.coupling_exact(g[:3], pt[:3], pz[:3], w[:3], g, pt, pz, w)["pass"])
+        # a missing row fails and is located
+        r = P.coupling_exact(g[1:], pt[1:], pz[1:], w[1:], g, pt, pz, w)
+        self.assertFalse(r["pass"])
+        self.assertEqual(r["cells_with_count_mismatch"], [0])
+        self.assertFalse(P.coupling_exact(g, pt, pz, np.array([1.0, np.nan, .5, 0]), g, pt, pz, w)["pass"])
+
+    def test_appended_identity(self):
+        rows = {"entry": np.array([5, 9, 12], np.int64), "reco_pt": np.array([.1, .2, .3]),
+                "reco_pz": np.array([2., 3., 4.]), "true_pt": np.array([.11, .21, .31]),
+                "true_pz": np.array([2.1, 3.1, 4.1]), "w_reco": np.array([1., 2., 3.]), "w_truth": np.array([1.1, 2.2, 3.3])}
+        app = np.array([12, 5], np.int64)
+        pot = 0.25
+        tail = {"reco_pt": np.array([.3, .1]), "reco_pz": np.array([4., 2.]), "truth_pt": np.array([.31, .11]),
+                "truth_pz": np.array([4.1, 2.1]), "w_truth": np.array([3.3, 1.1]) * pot,
+                "w_reco": np.array([3., 1.]) * pot, "pass_reco": np.array([True, True]),
+                "pass_truth": np.array([True, True])}
+        self.assertTrue(P.appended_identity(rows, app, pot, tail)["pass"])
+        bad = dict(tail, w_reco=tail["w_reco"][::-1])
+        self.assertFalse(P.appended_identity(rows, app, pot, bad)["pass"])
+        self.assertFalse(P.appended_identity(rows, np.array([12, 6]), pot, tail)["pass"])
+        self.assertFalse(P.appended_identity(rows, app, pot, dict(tail, pass_truth=np.array([True, False])))["pass"])
+
+
 class Gates(unittest.TestCase):
     def test_rel_close_zero_and_nan(self):
         self.assertTrue(P.rel_close([0.0, 2.0], [0.0, 2.0 * (1 + 1e-12)], 1e-9)["pass"])

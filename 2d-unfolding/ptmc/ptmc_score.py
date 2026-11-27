@@ -275,6 +275,22 @@ def score(a) -> dict:
     controls["C-MOVE"] = {"pass": True, "counts": counts, "max_dev_over_cell": float(np.max(np.divide(
         np.abs(removed - expect), np.abs(b_off), out=np.zeros(224), where=b_off != 0)))}
     printed["upper_edge_rows"] = edge
+    # C-NORM: the extraction's fixed arguments as consumed, equal in every unit to p_off_c's
+    ref_norm = metas["p_off_c"]["extract_args_sha256"]
+    bad = [u for u in UNITS if metas[u].get("extract_args_sha256") != ref_norm]
+    if bad:
+        raise Stop(f"C-NORM: {bad[:5]}")
+    controls["C-NORM"] = {"pass": True, "sha256": ref_norm}
+    # C-MOVE's sets in every R replica: the fill rows are p_off_b1's minus the rows file's entries
+    want_fill = np.setdiff1d(np.asarray(U["p_off_b1"]["fill_entries"], np.int64), entries)
+    if want_fill.size == 0:
+        raise Stop("C-MOVE: p_off_b1 recorded no fill rows")
+    bad = [u for u in UNITS if u.startswith("p_R_b")
+           and not np.array_equal(np.asarray(U[u]["fill_entries"], np.int64), want_fill)]
+    bad += [u for u in UNITS if u.startswith("p_R") and not metas[u]["controls"].get("C-MOVE-UNIT", {}).get("pass")]
+    if bad:
+        raise Stop(f"C-MOVE: replica sets {bad[:5]}")
+    controls["C-MOVE"]["replica_sets"] = True
     # the unit-level controls the scorer reads: C-COUPLE and C-SIM's coverage by index (C-SUPPORT is printed)
     for u in ("p_off_c", "p_R_c"):
         if not metas[u]["controls"]["C-COUPLE"]["pass"]:

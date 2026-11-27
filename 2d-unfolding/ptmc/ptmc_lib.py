@@ -103,6 +103,7 @@ def c_star(t_star_all, t_star_orig, t_cv_orig, d_cv, c_cv) -> dict:
     d_star = d_cv[live] * t_star_orig[live] / t_cv_orig[live]
     c[live] = np.divide(t_star_all[live], d_star, out=np.zeros_like(d_star), where=d_star != 0)
     return {"c_star": c, "n_keep_cv": int(keep.sum()), "n_lost_support": int(lost.sum()),
+            "n_lost_with_moved_weight": int((lost & (t_star_all > t_star_orig)).sum()),
             "finite": bool(np.all(np.isfinite(c)))}
 
 
@@ -256,3 +257,50 @@ def support(gidx_truth, w_truth_cv, mask_orig_truth, n_orig: int, seeds, n=N_CEL
             bad[int(b)] = lost.tolist()
     return {"n_seeds": len(list(seeds)), "failures": bad, "n_seed_cells": int(sum(len(v) for v in bad.values())),
             "pass": True}
+
+
+def coupling_exact(g_d, pt_d, pz_d, w_d, g_s, pt_s, pz_s, w_s) -> dict:
+    """C-COUPLE (r4): KNOWN_ISSUES 84's premise as an exact identity. Per truth cell, the multiset of (pT, p||, w_truth)
+    of the canonical denominator's rows equals that of the original truth-passing signal rows, rows with w = 0
+    excluded (they enter no sum). Equal multisets give the bijection that makes D*_j = T*_orig,j: each denominator row
+    takes the factor of its value-identical signal row. No float tolerance is involved."""
+    def key(g, pt, pz, w):
+        g, pt, pz, w = (np.asarray(x) for x in (g, pt, pz, w))
+        m = (g >= 0) & (np.asarray(w, float) != 0)
+        rec = np.rec.fromarrays([g[m].astype(np.int64), np.asarray(pt, float)[m], np.asarray(pz, float)[m],
+                                 np.asarray(w, float)[m]], names="g,pt,pz,w")
+        rec.sort(order=["g", "pt", "pz", "w"])
+        return rec
+    if not all(np.all(np.isfinite(np.asarray(x, float))) for x in (pt_d, pz_d, w_d, pt_s, pz_s, w_s)):
+        return {"pass": False, "why": "non-finite"}
+    a, b = key(g_d, pt_d, pz_d, w_d), key(g_s, pt_s, pz_s, w_s)
+    same = a.size == b.size and bool(np.array_equal(a, b))
+    out = {"n_denominator": int(a.size), "n_signal": int(b.size), "pass": same}
+    if not same:  # describe the mismatch per cell (printed with the STOP)
+        ca = np.bincount(a["g"], minlength=N_CELLS)
+        cb = np.bincount(b["g"], minlength=N_CELLS)
+        out["cells_with_count_mismatch"] = np.flatnonzero(ca != cb).tolist()[:50]
+        out["n_cells_differing"] = int(sum(1 for j in range(N_CELLS)
+                                           if not np.array_equal(a[a["g"] == j], b[b["g"] == j])))
+    return out
+
+
+def appended_identity(rows: dict, appended_entry, pot_scale: float, tail: dict) -> dict:
+    """C-DRAW-R (r4): the appended rows at the end of the signal arrays are the rows file's rows for the recorded
+    entries: coordinates exactly, weights as the driver forms them (w * pot_scale), both masks True."""
+    e = np.asarray(rows["entry"], np.int64)
+    pos = {int(x): i for i, x in enumerate(e)}
+    app = np.asarray(appended_entry, np.int64)
+    if any(int(x) not in pos for x in app):
+        return {"pass": False, "why": "an appended entry is not in the rows file"}
+    idx = np.array([pos[int(x)] for x in app], dtype=np.int64)
+    checks = {
+        "reco_pt": np.array_equal(tail["reco_pt"], np.asarray(rows["reco_pt"], float)[idx]),
+        "reco_pz": np.array_equal(tail["reco_pz"], np.asarray(rows["reco_pz"], float)[idx]),
+        "truth_pt": np.array_equal(tail["truth_pt"], np.asarray(rows["true_pt"], float)[idx]),
+        "truth_pz": np.array_equal(tail["truth_pz"], np.asarray(rows["true_pz"], float)[idx]),
+        "w_truth": np.array_equal(tail["w_truth"], np.asarray(rows["w_truth"], float)[idx] * pot_scale),
+        "w_reco": np.array_equal(tail["w_reco"], np.asarray(rows["w_reco"], float)[idx] * pot_scale),
+        "masks": bool(np.all(tail["pass_reco"]) and np.all(tail["pass_truth"])),
+    }
+    return {"checks": {k: bool(v) for k, v in checks.items()}, "pass": all(checks.values())}

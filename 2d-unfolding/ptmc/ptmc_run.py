@@ -125,7 +125,9 @@ def run_paired(C, driver, ohf, argv, out_root: Path, ks, unfolder, staging: Path
     def refine(feat, signed_w, *a, **k):
         cap["signed_w"] = np.array(signed_w, dtype=float, copy=True)
         cap["signed_feat"] = np.array(feat, dtype=float, copy=True)
-        return real["refine_stay_positive"](feat, signed_w, *a, **k)
+        out = real["refine_stay_positive"](feat, signed_w, *a, **k)
+        cap["refined_w"] = np.array(out[0], dtype=float, copy=True)
+        return out
 
     def paired(MCgen, MCreco, measured, pr, ptm, mpr, iters, MCgen_weights=None, MCreco_weights=None,
                measured_weights=None, **k):
@@ -312,6 +314,28 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
             d["appended_list"] = bool(np.array_equal(want_app, app))
         d["pass"] = bool(d["pass"] and inj_same and feat_same and d.get("appended_list", True))
         controls["C-DRAW-R"] = d
+    # C-REFINE: the refinement's return is the measured weight both methods received
+    controls["C-REFINE"] = {"pass": bool("refined_w" in cap and np.array_equal(cap["refined_w"],
+                                                                                cap["measured_weights"]))}
+    # the R units' identity checks on the moved rows (C-MOVE's sets in every R unit; C-DRAW-R's appended rows)
+    if conv == "R":
+        rows = np.load(rows_path)
+        listed = np.asarray(rows["entry"], np.int64)
+        inj_ids = cap.get("inj_entries", np.zeros(0, np.int64))
+        fill_ids = cap["fill_rows"]["entry"] if "fill_rows" in cap else np.zeros(0, np.int64)
+        n_sig = sig_cv["w_truth"].shape[0]
+        tail = {k2: np.asarray(sig_cv[k2])[n_sig - app.size:] for k2 in
+                ("reco_pt", "reco_pz", "truth_pt", "truth_pz", "w_truth", "w_reco", "pass_reco", "pass_truth")}
+        f = __import__("ROOT").TFile.Open(str(root))
+        pot = float(f.Get("potScale").GetVal())
+        f.Close()
+        ident = P.appended_identity(rows, app, pot, tail)
+        controls["C-MOVE-UNIT"] = {"skip_disjoint_from_injected": bool(np.intersect1d(listed, inj_ids).size == 0),
+                                   "skip_disjoint_from_fill_rows": bool(np.intersect1d(listed, fill_ids).size == 0),
+                                   "appended_identity": ident,
+                                   "pass": bool(np.intersect1d(listed, inj_ids).size == 0
+                                                and np.intersect1d(listed, fill_ids).size == 0 and ident["pass"])}
+    extract_args = [np.asarray(x, float) if hasattr(x, "__len__") else np.asarray([float(x)]) for x in a[1:]]
     # C-COMP, on the histogram the extraction consumed (the recorded call's second argument)
     consumed_c = C.th2_vector(a[0], nx, ny)
     d_cv = read_hist(C, driver, root, "hOFTruthDenom2D", allowed)
@@ -319,8 +343,16 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
     controls["C-COMP"] = comp_check(cap, ts, conv, b, consumed_c, d_cv)
     support_rec = None
     if b is None:
-        # C-COUPLE: KNOWN_ISSUES 84's premise, per cell, on the original rows
-        controls["C-COUPLE"] = P.coupling(ts["t_orig"], d_cv)
+        # C-COUPLE: KNOWN_ISSUES 84's premise as an exact multiset identity per cell (the sums' agreement printed)
+        if "truth_denom" not in cap:
+            controls["C-COUPLE"] = {"pass": False, "why": "the canonical denominator was not loaded"}
+        else:
+            td = cap["truth_denom"]
+            m = ts["pt_ok"] & ts["orig"]
+            controls["C-COUPLE"] = P.coupling_exact(
+                gidx(td["truth_pt"], td["truth_pz"]), td["truth_pt"], td["truth_pz"], td["w_truth"],
+                np.where(m, ts["g"], -1), sig_cv["truth_pt"], sig_cv["truth_pz"], sig_cv["w_truth"])
+            controls["C-COUPLE"]["sums"] = P.coupling(ts["t_orig"], d_cv)
         # C-SIM on the centrals, through the completeness the extraction consumed
         import ROOT
         f = ROOT.TFile.Open(str(root))
@@ -340,12 +372,14 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
             "slurm_job": os.environ.get("SLURM_JOB_ID"), "controls": controls, "runtime": runtime_versions(),
             "oofvc_counts": sig_cv.get("oofvc_outside", {}).get("counts") if conv == "R" else None,
             "ptmc_record": {k2: v for k2, v in cap["ptmc_record"].items() if k2 != "completeness"},
-            "support": support_rec,
+            "support": support_rec, "extract_args_sha256": P.digest(*extract_args),
             "seconds": round(time.time() - t0, 3)}
     passed = all(c["pass"] for c in controls.values())
     arrays = {"ks": np.array(ks), "xsec": np.array([xs[K] for K in ks]), "unfolded": np.array([cap["traj"][K] for K in ks]),
               "T": cap["T"], "M": cap["M"], "y": cap["y"], "completeness": consumed_c, "appended_entry": np.asarray(app),
-              "lgbm_params": np.array(json.dumps(cap.get("lgbm", [])))}
+              "lgbm_params": np.array(json.dumps(cap.get("lgbm", []))),
+              "fill_entries": np.sort(np.asarray(cap["fill_rows"]["entry"], np.int64)) if "fill_rows" in cap
+              else np.zeros(0, np.int64)}
     np.savez_compressed(npz, **arrays, meta=json.dumps(meta, default=str))
     marker.write_text(json.dumps({"unit": name, "verdict": "PASS" if passed else "FAIL", "sha256": sha256(npz),
                                   "root_sha256": sha256(root)}) + "\n")

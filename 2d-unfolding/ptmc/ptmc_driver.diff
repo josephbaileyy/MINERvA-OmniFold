@@ -30,7 +30,7 @@
      return out
  
  
-@@ -1330,8 +1334,67 @@
+@@ -1330,8 +1334,69 @@
          "p_{T} (GeV/c);p_{||} (GeV/c)")
      hCompleteness.Divide(hTruthDen)
      return hCompleteness, hOFInputTruth, hTruthDen
@@ -89,7 +89,9 @@
 +    for g in range(nx * ny):
 +        h_in.SetBinContent(g // ny + 1, g % ny + 1, float(t_star_all[g]))
 +    PTMC_RECORD["completeness"] = {"c_star": c_star.tolist(), "n_keep_cv": int(keep.sum()),
-+                                   "n_lost_support": int(lost.sum()), "n_appended": int(n_appended)}
++                                   "n_lost_support": int(lost.sum()),
++                                   "n_lost_with_moved_weight": int((lost & (t_star_all > t_star_orig)).sum()),
++                                   "n_appended": int(n_appended)}
 +    print(f"[INFO] PTMC: R replica completeness resampled consistently ({int(keep.sum())} cells keep c_CV, "
 +          f"{int(lost.sum())} lost their original-row support and give 0)")
 +    return h, h_in, h_den
@@ -98,7 +100,7 @@
  def closure_reweight_factor(shape, pt, pz,
                               amplitude=0.2, sigma=0.1, pt0=0.4,
                               alpha=0.1, pz_ref=5.0):
-@@ -1702,12 +1765,14 @@
+@@ -1702,12 +1767,14 @@
      args = ap.parse_args()
      if (args.signal_convention == "minerva") != (args.oofvc_rows is not None):  # OOFVC
          raise SystemExit("[FAIL] --oofvc-rows goes with, and only with, --signal-convention minerva")
@@ -117,7 +119,7 @@
                           "--data-file)")
  
      # P1 diagnostic: the background stream is used only on the CV purity path.
-@@ -2212,6 +2277,8 @@
+@@ -2212,6 +2279,8 @@
      # w_truth_cv keeps the un-resampled MC truth weights for the completeness
      # (KNOWN_ISSUES 84); it stays None on the central path.
      w_truth_cv = None
@@ -126,7 +128,7 @@
      p1_hists = []  # P1 diagnostic: D*, B* and the starred training target
      if args.bootstrap_seed is not None:
          rng_data = np.random.default_rng(args.bootstrap_seed)
-@@ -2222,7 +2289,10 @@
+@@ -2222,7 +2291,10 @@
          # aligned across modes), then apply only the requested stream(s). With
          # independent streams, Cov(both) = Cov(data-only) + Cov(mc-only).
          b_data = rng_data.poisson(1.0, size=measured_weights.shape[0]).astype(float)
@@ -138,7 +140,7 @@
          if p1_on:
              # P1 diagnostic. Third stream over every mc_background entry; data
              # and MC draws above are unchanged, so arms pair by bootstrap seed.
-@@ -2236,6 +2306,15 @@
+@@ -2236,6 +2308,15 @@
                  b_truth = np.ones_like(b_truth)
              if args.unit_factors:
                  b_bkg = np.ones_like(b_bkg)
@@ -154,7 +156,7 @@
          if p1_on and args.bkg_mode == "purity":  # RE-2: D*/B*/purity on the purity path only
              hDataRecoStar2D = make_th2d("hDataRecoStar2D", "Data reco, resampled (P1 D*)",
                                          pt_edges, pz_edges)
-@@ -2554,9 +2633,15 @@
+@@ -2554,9 +2635,15 @@
              print("[INFO] Phase-17 MC bootstrap: completeness uses the "
                    "un-resampled MC truth weights, as the central value does "
                    "(KNOWN_ISSUES 84).")
