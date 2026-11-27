@@ -24,7 +24,7 @@ The classifier uses the continuous event coordinates. Its measured-class density
 \end{equation}
 In bins with $D_b\geq B_b$, the signed target differs from the purity-weighted target by $D(x)B_b/D_b-B(x)$, with zero net change in the bin.
 
-The refinement gives the first-step classifier a nonnegative target. The sign classifier is trained on the absolute-weight sample, with density $D+B$. Its population score is $g=D/(D+B)$ wherever $D+B>0$. The factor $\max(0,2g-1)$ then gives the target $[D-B]_+$, where $[z]_+\equiv\max(0,z)$~\cite{Nachman:2025staypositive}. For a finite learner, the clipping acts on the fitted score. With histogram-based boosting in scikit-learn, the direct signed fit and the clipped refinement gave a median cross-section bin ratio of $\nwMedianBin$. With exact-split trees, the direct fit produced large excursions at low $p_T$ that the refinement removed.
+The refinement gives the first-step classifier a nonnegative target. The sign classifier is trained on the absolute-weight sample, with density $D+B$. Its population score is $g=D/(D+B)$ wherever $D+B>0$. The refinement factor $2g-1$ of Ref.~\cite{Nachman:2025staypositive} would give the signed target $D-B$. Clipped at zero, the factor $\max(0,2g-1)$ gives the target $[D-B]_+$, where $[z]_+\equiv\max(0,z)$. For a finite learner, the clipping acts on the fitted score. With histogram-based boosting in scikit-learn, the direct signed fit and the clipped refinement gave a median cross-section bin ratio of $\nwMedianBin$. With exact-split trees, the direct fit produced large excursions at low $p_T$ that the refinement removed.
 
 \subsection{Binned limit}
 \label{sec:negweight-binned}
