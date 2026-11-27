@@ -400,8 +400,139 @@ def evw5d_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
             for lab, s, fact in EVW5D_CLAIMS]
 
 
+# The high-p_par open issue in sec3_twod.tex (Joseph 2026-11-26, via the director; a PROPOSAL for his wording). Every
+# number and reading is bound to the precharge study's committed outputs (state/precharge-20261125/). The sentence states
+# no cause: the study's declarations make no cause determination.
+PRECHARGE = "precharge-20261125"
+HIGHPZ_OVERRIDE = None  # the self-test plants altered records here
+
+
+def highpz() -> dict:
+    """merged-comparison.csv and signed-qp.csv (reco yields), test1 (the E_vis table and the held-out fold), and the
+    readings of tests A, B and C."""
+    if HIGHPZ_OVERRIDE is not None:
+        return HIGHPZ_OVERRIDE
+    import csv
+    base = STATE / PRECHARGE
+
+    def rows(name):
+        with open(base / name, newline="", encoding="utf-8") as fh:
+            return list(csv.DictReader(fh))
+    return {"merged": rows("merged-comparison.csv"), "signed": rows("signed-qp.csv"),
+            "evis": (base / "test1/evis-by-pz.txt").read_text(),
+            "evis_readme": (base / "test1/README.md").read_text(), "test1": receipt(f"{PRECHARGE}/test1/test1.json"),
+            "testb": receipt(f"{PRECHARGE}/testAB/test-b.json"), "testc": receipt(f"{PRECHARGE}/testC/test-c.json"),
+            "atxt": (base / "testAB/test-a.txt").read_text(), "btxt": (base / "testAB/test-b.txt").read_text(),
+            "ctxt": (base / "testC/test-c.txt").read_text(), "cdecl": (base / "testC/DECLARATION.md").read_text(),
+            "creadme": (base / "testC/README.md").read_text()}
+
+
+def highpz_excess() -> float:
+    """Data minus the fold at reco p_par >= 60 (the 60-80 and >=80 rows), both signs, before the charge requirement."""
+    r = [x for x in highpz()["merged"] if x["reco_p_parallel_GeV_c"] in ("60–80", "≥80")]
+    if sorted((x["reco_p_parallel_GeV_c"], x["sign"]) for x in r) != sorted(
+            [("60–80", "-"), ("60–80", "+"), ("≥80", "-"), ("≥80", "+")]):
+        raise ValueError(f"{PRECHARGE}/merged-comparison.csv: the reco >= 60 rows are not the four sign rows")
+    return sum(float(x["data_minus_all_selected"]) for x in r)
+
+
+def highpz_tails() -> float:
+    """Data minus the fold in the |q/p| >= 1/60 (GeV/c)^-1 curvature cells of the reco >= 60 bands (2: 60-80, 3: >= 80)."""
+    cells = {}
+    for x in highpz()["signed"]:
+        if x["band"] in ("2", "3") and (float(x["qp_high"]) <= -1 / 60 + 1e-12 or float(x["qp_low"]) >= 1 / 60 - 1e-12):
+            cells.setdefault((x["band"], x["qbin"]), {})[x["sample"]] = float(x["fold"])
+    if not cells or any(set(v) != {"Data", "MC"} for v in cells.values()):
+        raise ValueError(f"{PRECHARGE}/signed-qp.csv: a tail cell lacks its Data or MC row")
+    return sum(v["Data"] - v["MC"] for v in cells.values())
+
+
+def highpz_b_share() -> float:
+    """Test B's primary held-out epsilon prediction at 50-60 and 60-80 (S2), as a percentage of data minus the fold there
+    (the fold from Test 1's primary held-out bands, the same six held-out playlists)."""
+    d = highpz()
+    b = [x for x in d["testb"] if x["direction"] == "primary"]
+    f = [x for x in d["test1"] if x["train"] == b[0]["train"]] if b and "train" in b[0] else \
+        [x for x in d["test1"] if x["train"] == ["1A", "1C", "1E", "1G", "1M", "1O"]]
+    if len(b) != 1 or not f:
+        raise ValueError(f"{PRECHARGE}: test B's primary direction or test 1's matching fold is missing")
+    t, bands = b[0]["epsilon"]["terms"], f[0]["bands"]
+    num = den = 0.0
+    for k, band in (("S2|50", "-|all|50-60"), ("S2|60", "-|all|60-80")):
+        data, eps = t[k][0], t[k][1]
+        if data != bands[band][0]:
+            raise ValueError(f"{PRECHARGE}: test B's {k} data {data} differs from test 1's {band} {bands[band][0]}")
+        num += eps - bands[band][1]
+        den += data - bands[band][1]
+    return 100 * num / den
+
+
+def highpz_rises(d: dict) -> bool:
+    """test1/evis-by-pz.txt's data/fold table (good negative tracks, |sigma(q/p)/(q/p)| < 0.30, all playlists): in the
+    20-40, 40-50, 50-60 and 60-80 bands, every listed cell exceeds the one before it along E_vis (at fixed p_par, rising
+    E_vis is rising E_avail)."""
+    if "(`evis_by_pz.py` → `evis-by-pz.txt`, good negative tracks, all playlists)" not in d["evis_readme"]:
+        return False
+    blk = d["evis"].split("data/fold (cells with fold >= 5)", 1)
+    if len(blk) != 2:
+        return False
+    rows = {}
+    for ln in blk[1].splitlines():
+        m = re.match(r"\[(\d+\.\d), (\d+\.\d|inf)\)\s+(.*)$", ln.strip())
+        if m:
+            vals = [float(v) for v in m.group(3).split() if v != "NaN"]
+            rows[(m.group(1), m.group(2))] = vals
+    want = [("20.0", "40.0"), ("40.0", "50.0"), ("50.0", "60.0"), ("60.0", "80.0")]
+    return all(k in rows and len(rows[k]) >= 2 and all(b > a for a, b in zip(rows[k], rows[k][1:])) for k in want)
+
+
+HIGHPZ_CLAIMS = (
+    ("high p_par: data/fold rises with visible energy, reco p_par + E_avail, in each reco band from 20 to 80 GeV/c",
+     r"For negative tracks with well-measured curvature, the ratio of data to this prediction rises with visible energy, "
+     r"$p_\parallel + E_{\mathrm{avail}}$, in each reconstructed $p_\parallel$ band from 20 to 80~GeV/$c$.",
+     lambda d: highpz_rises(d) and "The fit variable is E_vis = reco p∥ + E_avail" in d["evis_readme"]),
+    ("high p_par: A (one muon-independent recoil function) does not reproduce it",
+     "A recoil-energy correction independent of the muon does not reproduce this rise.",
+     lambda d: "primary: H_A (A1) contradicts" in d["atxt"] and "swap: H_A (A1) contradicts" in d["atxt"]),
+    # C was fitted at reco p_par 20-40 and transferred upward. Its declaration leaves open a change where that fit has
+    # no lever, such as one confined to true muon p_par >= 60 (DECLARATION.md "Contradicts", README.md "What follows").
+    ("high p_par: C (a smooth true-E_nu rate change fitted at reco 20-40) does not, and a change where that fit has no "
+     "lever stays open",
+     r"Nor does a smooth dependence of the event rate on neutrino energy fitted at lower $p_\parallel$, although a "
+     r"change confined to the highest muon momenta remains possible.",
+     lambda d: (d["testc"]["reading"] == "contradicts"
+                and "Reading for H_C (primary form, both directions): contradicts" in d["ctxt"]
+                and "The fit sample is the training playlists, reco p∥ 20–40" in d["cdecl"]
+                and "or that live where the 20–40 fit has no lever, such as an unanchored change confined to true ≥60"
+                in d["cdecl"]
+                and "**C** contradicts a smooth Eν rate change that is fitted at 20–40 and transferred upward"
+                in d["creadme"]
+                and "or that are confined to where 20–40 has no lever" in d["creadme"])),
+    ("high p_par: B, a constant curvature offset, is inconclusive (it carries part of the excess, not all)",
+     "A constant offset in the fitted curvature accounts for about",
+     lambda d: "primary: H_B inconclusive" in d["btxt"] and "swap: H_B inconclusive" in d["btxt"]),
+)
+
+
+def highpz_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    t, d = text("sec3_twod.tex", sources), highpz()
+    return [(lab, t.count(s) == 1 and fact(d), f"sentence found {t.count(s)} time(s) | record {fact(d)}")
+            for lab, s, fact in HIGHPZ_CLAIMS]
+
+
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
+    # The high-p_par open issue (precharge-20261125), sec3_twod.tex
+    ("high p_par: the reco edge of the excess (merged-comparison.csv rows 60-80 and >=80)", "sec3_twod.tex",
+     r"above the reported range, at reconstructed \$p_\\parallel \\geq ([0-9]+)\$~GeV/\$c\$\.",
+     lambda: 60.0 if {x["reco_p_parallel_GeV_c"] for x in highpz()["merged"]} >= {"60–80", "≥80"} else -1.0, "round"),
+    ("high p_par: the curvature-tail excess (signed-qp.csv) and the excess at reco >= 60, both signs (merged-comparison.csv)",
+     "sec3_twod.tex",
+     r"About ([0-9]+) of the roughly ([0-9]+) excess tracks, counting both charges, lie in the tails of the fitted muon curvature",
+     lambda: (highpz_tails(), highpz_excess()), "round"),
+    ("high p_par: test B's share of the 50-80 excess (test-b.json epsilon S2, test1.json fold)", "sec3_twod.tex",
+     r"A constant offset in the fitted curvature accounts for about \$([0-9]+)\\%\$ of the excess between 50 and 80~GeV/\$c\$",
+     highpz_b_share, "round"),
     # One printed 1.04 stands for both pT edge bins, so it is bound twice: once to each bin.
     ("projection ratio, lowest pT bin, and the two highest p_par bins (regenA2)", "sec3_twod.tex",
      r"the ratio is ([0-9.]+) in both the lowest and the highest \$p_T\$ bins, and ([0-9.]+) and ([0-9.]+) in the two "
@@ -577,6 +708,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     rows += mode_split_claims(sources)
     rows += ibub_claims(sources)
     rows += evw5d_claims(sources)
+    rows += highpz_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
         found = len(re.findall(pat, text(src, sources))) == 1
         c = fn()
@@ -781,6 +913,55 @@ def self_test() -> int:
     caught = 0
     if not gzip_self_test():  # a reader check, reported on its own line, not counted as a perturbation
         ok = False
+    # The high-p_par claims: each sentence reworded, and each planted record, must be rejected
+    for old_s, new_s in (("rises with visible energy", "falls with visible energy"),
+                         ("band from 20 to 80~GeV", "band from 20 to 100~GeV"),
+                         ("independent of the muon does not", "depending on the muon does not"),
+                         ("muon does not reproduce this rise", "muon reproduces this rise"),
+                         ("Nor does a smooth dependence", "So does a smooth dependence"),
+                         ("fitted at lower $p_\\parallel$", "fitted at higher $p_\\parallel$"),
+                         ("highest muon momenta remains possible", "highest muon momenta is excluded"),
+                         ("confined to the highest muon momenta", "confined to the highest energies")):
+        t = text("sec3_twod.tex", base)
+        if t.count(old_s) != 1:
+            print(f"  NOT FOUND   high p_par mutation {old_s!r}"); ok = False; continue
+        trial = dict(base)
+        trial["sec3_twod.tex"] = t.replace(old_s, new_s)
+        if all(r[1] for r in highpz_claims(trial)):
+            print(f"  NOT CAUGHT  high p_par: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      high p_par: {old_s} -> {new_s}")
+
+    def plant_hp(what, fn):
+        global HIGHPZ_OVERRIDE
+        nonlocal ok, caught
+        import copy as copy_mod  # self_test imports copy locally further down, so the module name is not bound yet
+        data = copy_mod.deepcopy(highpz())
+        fn(data)
+        HIGHPZ_OVERRIDE = data
+        try:
+            good = all(r[1] for r in evaluate(base))
+        except (ValueError, KeyError, IndexError):
+            good = False
+        finally:
+            HIGHPZ_OVERRIDE = None
+        if good:
+            print(f"  NOT CAUGHT  high p_par planted: {what}"); ok = False
+        else:
+            caught += 1; print(f"  caught      high p_par planted: {what}")
+    plant_hp("test A reads supports", lambda d: d.__setitem__("atxt", d["atxt"].replace("primary: H_A (A1) contradicts", "primary: H_A (A1) supports")))
+    plant_hp("test B reads supports", lambda d: d.__setitem__("btxt", d["btxt"].replace("swap: H_B inconclusive", "swap: H_B supports")))
+    plant_hp("test C reads inconclusive", lambda d: d["testc"].__setitem__("reading", "inconclusive"))
+    plant_hp("test C fitted at 20-60", lambda d: d.__setitem__("cdecl", d["cdecl"].replace("reco p∥ 20–40, negative", "reco p∥ 20–60, negative")))
+    plant_hp("test C declaration leaves no region open", lambda d: d.__setitem__("cdecl", d["cdecl"].replace("where the 20–40 fit has no lever", "anywhere")))
+    plant_hp("test C's open region not in muon p_par", lambda d: d.__setitem__("cdecl", d["cdecl"].replace("confined to true ≥60", "confined to true Eν ≥ 60 GeV")))
+    plant_hp("test C README leaves no region open", lambda d: d.__setitem__("creadme", d["creadme"].replace("or that are confined to where 20–40 has no lever", "and nothing else")))
+    plant_hp("E_vis defined without E_avail", lambda d: d.__setitem__("evis_readme", d["evis_readme"].replace("The fit variable is E_vis = reco p∥ + E_avail", "The fit variable is E_vis = reco p∥")))
+    plant_hp("a 60-80 E_vis cell that falls", lambda d: d.__setitem__("evis", d["evis"].replace("1.78          2.12", "1.78          1.12")))
+    plant_hp("a 60-80 sign row missing", lambda d: d.__setitem__("merged", [x for x in d["merged"] if not (x["reco_p_parallel_GeV_c"] == "60–80" and x["sign"] == "+")]))
+    plant_hp("a tail cell without its MC row", lambda d: d.__setitem__("signed", [x for x in d["signed"] if not (x["band"] == "2" and x["qbin"] == "2" and x["sample"] == "MC")]))
+    plant_hp("test B's S2|60 data not test 1's", lambda d: [x for x in d["testb"] if x["direction"] == "primary"][0]["epsilon"]["terms"]["S2|60"].__setitem__(0, 1180.0))
+    plant_hp("test B's epsilon S2|60 prediction 10% higher", lambda d: [x for x in d["testb"] if x["direction"] == "primary"][0]["epsilon"]["terms"]["S2|60"].__setitem__(1, 922.3))
     for idx, (label, src, pat, fn, mode) in enumerate(CHECKS):
         s = text(src, base)
         m = re.search(pat, s)
