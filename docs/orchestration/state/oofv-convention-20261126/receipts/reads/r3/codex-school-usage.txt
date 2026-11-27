@@ -1,0 +1,4 @@
+codex-school before: session 81 weekly 14
+codex rc=0
+tokens used: 135,016
+after: session 75 weekly 13

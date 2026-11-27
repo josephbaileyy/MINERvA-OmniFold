@@ -1,0 +1,53 @@
+== C-OLD: OLD against the installed files (/Users/josephbailey/local-research/wt-ibu-chi2/docs/analysis-note/figures)
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/wt-ibu-chi2/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/tools/bytes_but_date.py", line 22, in <module>
+    x, y = Path(a).read_bytes(), Path(b).read_bytes()
+                                 ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/miniconda3/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/miniconda3/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4run/old/fig2/out/MEFHC_5iter_xsec_proj_pt.pdf'
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/wt-ibu-chi2/docs/orchestration/state/2d-closeout/stageF/methods/note-figstyle-20261117/tools/bytes_but_date.py", line 22, in <module>
+    x, y = Path(a).read_bytes(), Path(b).read_bytes()
+                                 ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/miniconda3/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/miniconda3/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4run/old/fig2/out/MEFHC_5iter_xsec_proj_pz.pdf'
+EQUAL-BUT-DATE MEFHC_5iter_pull_full.pdf: /CreationDate (D:20261120221930-07'00') vs /CreationDate (D:20261125011811-07'00')
+EQUAL-BUT-DATE tension_spectrum.pdf: /CreationDate (D:20261117182827-07'00') vs /CreationDate (D:20261125011913-07'00')
+EQUAL-BUT-DATE tension_chi2_map.pdf: /CreationDate (D:20261117182828-07'00') vs /CreationDate (D:20261125011917-07'00')
+EQUAL-BUT-DATE tension_mode_maps.pdf: /CreationDate (D:20261117182828-07'00') vs /CreationDate (D:20261125011915-07'00')
+== C-SL-a: OLD's markers layer against figs-r2
+EQUAL-BUT-DATE MEFHC_5iter_xsec_paper_pt_slices.pdf: /CreationDate (D:20261119112355-07'00') vs /CreationDate (D:20261125011831-07'00')
+EQUAL-BUT-DATE MEFHC_5iter_xsec_paper_pz_slices.pdf: /CreationDate (D:20261119112358-07'00') vs /CreationDate (D:20261125011838-07'00')
+== C-SL-b: strip_stamp.py on the committed figs-r2 against the installed slices
+BYTE-EQUAL MEFHC_5iter_xsec_paper_pt_slices.pdf 58e4d16ad6bc68f7bd17bae8d315b99ece6d66b821715d403120e0d6548357a2
+BYTE-EQUAL MEFHC_5iter_xsec_paper_pz_slices.pdf 4216003cfe47d376b97a3a32575e5fa00342e7528bfb1d2e8e647e9ea9f620b0
+== figures, sha256 (installed; OLD rerun; paper's edges)
+shasum: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4run/old/fig2/out/MEFHC_5iter_xsec_proj_pt.pdf: No such file or directory
+shasum: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4run/e_not_run/fig2/out/MEFHC_5iter_xsec_proj_pt.pdf: No such file or directory
+MEFHC_5iter_xsec_proj_pt.pdf installed d27075c220081054caf51fb6130fe3a671e9dc0dacfb1a97469b3d07829f63af old  e 
+shasum: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4run/old/fig2/out/MEFHC_5iter_xsec_proj_pz.pdf: No such file or directory
+shasum: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4run/e_not_run/fig2/out/MEFHC_5iter_xsec_proj_pz.pdf: No such file or directory
+MEFHC_5iter_xsec_proj_pz.pdf installed caa9286bfec8e7f2b6d6dd06fda6d5fc9f0b8f1c7c95d4bacc290048726b4745 old  e 
+shasum: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4run/e_not_run/fig3/o/MEFHC_5iter_pull_full.pdf: No such file or directory
+MEFHC_5iter_pull_full.pdf installed 9335a3e3037320c6bb5a0e3d0ad61ac7709c693633ba9c5a1265e61c38c2501e old 959246dddf7c4ee76e6b93d071c49fc630914d48cf0df4cf221425467a9ea226 e 
+shasum: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4run/e_not_run/sl/strip/MEFHC_5iter_xsec_paper_pt_slices.pdf: No such file or directory
+MEFHC_5iter_xsec_paper_pt_slices.pdf installed 58e4d16ad6bc68f7bd17bae8d315b99ece6d66b821715d403120e0d6548357a2 old 6f5f283e21034f0d4c030a56e66f173a1b63e75beef2df3c4ce1be2bcf91c9d9 e 
+shasum: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4run/e_not_run/sl/strip/MEFHC_5iter_xsec_paper_pz_slices.pdf: No such file or directory
+MEFHC_5iter_xsec_paper_pz_slices.pdf installed 4216003cfe47d376b97a3a32575e5fa00342e7528bfb1d2e8e647e9ea9f620b0 old 8c32607be60588140581dcd2e28de731955807fdc327fd8f029c56d28d61176c e 
+shasum: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4run/e_not_run/tn/o/tension_spectrum.pdf: No such file or directory
+tension_spectrum.pdf installed 98d7ce2c9765275be579ef8345fde17f50a8b24b0e2f26846475d6998a163661 old dd02cb48e7f530d6a3e26e62f640a87c9fc6a8df3c6796c273f60350afbef7f1 e 
+shasum: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4run/e_not_run/tn/o/tension_chi2_map.pdf: No such file or directory
+tension_chi2_map.pdf installed 4f18c35be762355f16410bb8798ceae8f303e640e33bda985c90dbfdee23236a old e5e9de799f17732985a67041a4d414cb2b439241962898f23228470e41288016 e 
+shasum: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/a4run/e_not_run/tn/o/tension_mode_maps.pdf: No such file or directory
+tension_mode_maps.pdf installed f4d8a4197aa0318fd9704ab7c0d0011c9a85425e12398966bb552a1b79c80412 old 7e29acc5e7f9990872dc840d3290d95476fde66dfdcf8335a8a2590c94d5482f e 
+A4-CONTROLS :: FAIL

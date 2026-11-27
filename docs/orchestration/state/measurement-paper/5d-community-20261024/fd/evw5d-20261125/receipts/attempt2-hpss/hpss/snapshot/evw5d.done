@@ -1,0 +1,32 @@
+{
+ "schema": "evw5d/1",
+ "verdict": "PASS",
+ "controls_verdict": "PASS",
+ "failed_controls": [],
+ "findings": [
+  "C-COMPLETE"
+ ],
+ "finding_sizes": {
+  "C-COMPLETE": {
+   "max_abs_c_minus_1": 0.0004097791481952884,
+   "n_cells_beyond_atol": 32,
+   "n_signal_without_denominator": 0
+  }
+ },
+ "acceptance": {
+  "product_set_exact": true,
+  "digest_map_complete": true,
+  "sums_parse_exact": true,
+  "no_links": true,
+  "rehash_equal": true,
+  "pass": true
+ },
+ "sha256sums_sha256": "31075af667c6cda13d76b0e09831a5e40180069615853a30ae34a325b8be8718",
+ "products": {
+  "product/data_b-_j-.npz": "83436d151d45a2ba01947a7d780a649fd250e1adec60e9003bf78ac351bb951a",
+  "weights.npz": "0fceefcdcfcd5c48070453707b55f40e55787909f98481dadcdc82dd0897aba6",
+  "constants.npz": "d2aac0664f8677b29414a0be9cfdf570af54f3df80a851297ccef21ebdf98e01",
+  "constants.json": "8f009d828163161418e94997428c80a8c723fa3a015fcb63165861aa3312c3aa",
+  "run.json": "c2ec93fb529769b5b8cdb56966ac115a4e02da90880e83b8fd23513de9b500f6"
+ }
+}

@@ -1,0 +1,18 @@
+**Model** GPT-6 (Codex). Reviewed `e6561dfb9` → `93ec63dd6`.
+
+## BLOCKERS
+
+- **C-LEAK can publish an unscaled absolute value.** `B.prepare` reads absolute closure cross sections and returns absolute generator predictions. Only the local `g_tv1` copy is scaled. I injected `g["genie_cv"]` into the record and reproduced both a C-LEAK pass and its appearance in the rendered JSON. The current output expressions use the closure inputs through ratios, and the LL5D and covariance paths scale as intended. A1’s claim that *every* absolute input scales is too broad. `b5d_build.py:323–324, 368, 384, 436`; `bsel_select.py:157–172, 186–218`; `B5D-AMENDMENT-A1.md:99–104`.
+
+## MAJORS
+
+- **The round-4 missing-parent failure remains.** A fresh `--out new-parent/result` still exits 5 at staging `mkdir`. A1 now documents the restriction. The partial-publication defect is fixed: the final path appears in one rename, and a competing destination is preserved. The Darwin and Linux argument types, flags, and errno handling are correct. A process kill before rename can leave a hidden sibling. Power-loss durability is unverified because neither files nor directories are synced. `b5d_build.py:517–548`; `B5D-AMENDMENT-A1.md:118–120`.
+
+## Minors
+
+- **Staging can reject an otherwise valid destination.** A 255-byte output basename becomes a 269-byte staging basename with a four-digit PID, causing `ENAMETOOLONG` on a filesystem with a 255-byte limit. An orphaned stage also blocks retry if its PID is reused. `b5d_build.py:540–541`.
+- **`ABS_SCALE` has an unprotected assignment.** Exceptions inside `_build` reset it. I injected `KeyboardInterrupt` after assignment and before entry to `try`, leaving it at 1024. Overlapping in-process builds can also change each other’s scale. `b5d_build.py:272–277, 335–341`.
+- **Finite-precision scaling can false-STOP.** With synthetic toy errors of order \(10^{-158}\), subnormal covariance rounding changed a valid relative trace from `0.0390740808008304` to `0.03907408066547659`, exceeding tolerance. The explicit thresholds on the scaled paths are relative or sign tests. All eight activation masks passed for the pinned \(C_e\). `b5d_build.py:158–164, 397–412, 476–481`.
+- **The comparison accepts type changes and unscaled integer exemptions.** `true` versus `1.0` passes, as does `V_F=[[1]]` in both records. The CLI’s injected-leak test also accepts any exit-5 cause without checking that C-LEAK identified the injected field. `b5d_build.py:476–483`; `test_b5d.py:839–844`.
+
+The round-4 tiny-trace blocker is fixed. I reproduced the identical `5.677e-35` trace in both builds. The truncated-row test now rejects the mismatch, and A2 explicitly supersedes Binding 1 ruling 5 and corrects the noise claim. Twenty unit tests and eight in-memory fixture tests passed. I verified native Darwin `ENOENT` propagation. Successful native renames and the full LL5D build were outside this read-only verification.

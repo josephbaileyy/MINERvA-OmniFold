@@ -1,0 +1,20 @@
+READ-ONLY AUDIT. Do not modify, create or delete any file. Never write to /Users/josephbailey/local-research/MINERvA-OmniFold. No network. Report to stdout only.
+
+Under /Users/josephbailey/codex-reports/note-measurement/reads/p0e1-r1/inputs:
+- p0e1/ is the new RPD-RECO P0 package for e1, for the director's binding. Nothing in it has run. It holds:
+  - the generator tools/gen_p0e1.py, which writes every file from the bound P0 package (p0/) by counted replacements;
+  - the generated production-config.ready.json, rpd_p0_connect.sh (it embeds the config, tools and the runner as base64 or heredoc), rpd_p0_fetch.sh, rpd_p0_launch.sh, tools/p0_checks.py, tools/p0_expected.json, tools/p0_supervise.py, tools/fence_overlap.py;
+  - tests/ (8 suites with their outputs), price/ (part 2's RSS/time probe and RESULT.txt), README.md.
+- p0/ is the bound P0 package (p0-20261123), which ran successfully on 2026-11-24 (records/p0-run-20261124-README.md).
+- flux4/ is the bound flux4 package; records/run-62051670/ is flux4's accepted run (README, flux-extract.json, flux-custody.json). records/sidecar-probe.json is the 2026-11-26 sidecar probe (sizes and inodes of the sidecar and the 12 omnifiles).
+- diff/ has the scripts' diff p0 -> p0e1 (roots folded, base64 blobs masked) and the fence diff flux4 -> p0e1.
+- code/ is fd_rpd_reco.py and fd_rpd_reco_custody.py at the clone commit S = 2415e8d6.
+- docs/ is RPD-RECO amendment 1, the P0 binding (FD-RPD-RECO-BINDING-2-ADDENDUM-3.md) and director-conditions.txt (the accepted plan).
+
+Check, citing file:line:
+1. Does the package implement director-conditions.txt exactly, and nothing more? In particular: the config's leaf diff (vs flux4's and vs P0's); the 4 moved pins; p0_expected.json's 14 inputs vs run-62051670's records; the stat table (P0's 27 unchanged plus 13 from the probe); flux4's sacct block and three-lane ack guard; the overlap fence's added omnifile listing; nothing else changed in the runner, supervisor or fetch.
+2. Would any defect give a false PASS (P0 runs, or the fetch reports DONE, with the wrong inputs or code) or a false STOP on the real system? Consider: what p0 at S actually reads (code/fd_rpd_reco.py: p0, extracted_flux, omnifile_spot_check, pinned_flux_factors, Inputs.copy, the dry-run path) versus the config and expected values; whether flux4's records satisfy extracted_flux's custody check at S; the stat step's comparisons on the real files; GNU tools on the login node.
+3. C-JOIN part 2: is the README's account of omnifile_spot_check correct, and does anything in the package weaken or bypass it?
+4. Do the tests and mutants test what they claim? Look for any assertion that cannot fail, any mutant that could die for the wrong reason, and any README claim (counts, shas, line numbers) that doesn't match the files.
+5. Is the price claim (RSS upper bound vs the 8e9 B cap; time; 14.75 GB of omnifile copies because dry and run each stage) supported by price/ and the code?
+First line exactly "VERDICT: GO" or "VERDICT: FIX" (FIX only for a blocking issue), then numbered findings tagged BLOCKING or NON-BLOCKING.

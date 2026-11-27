@@ -1,0 +1,19 @@
+# The q0 extract's overlap check (the director's condition, 2026-11-24), done locally before the connect
+
+This connect reads ONE file, with O_NOATIME:
+  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root  (tree mc_signal_reco only)
+It writes only /pscratch/sd/j/josephrb/q0study-20261124 (fresh) and /dev/shm/q0study-connect (plus the launcher's
+/dev/shm/q0s.<pid>.sh staging copy). Interpreter (read-only): /global/homes/j/josephrb/.conda/envs/omnifold_py310.
+
+Active lanes, per the director (2026-11-24): Joseph's ibuchi array running; IBUB, d2s0 and COVFIX P1 not running.
+
+- ibuchi (ibu-chi-squared-issue, its reply 2026-11-24): no ibuchi job reads, stats, lists or atime-watches the omnifile
+  or nd-unfolding/; the evl array 61885471 finished 12/12, only ibuchi_ana 61908135 runs, reading only its own run root.
+  Declared read set: docs/orchestration/state/ibu-chi2-20261123/evloop/README.md:87-91 (lane/ibuchi-evloop-20261123):
+  playlist manifests, AnaTuples under minerva_large_files/{Data,MC/StandardMC}, setup_salloc_env.sh, MINERvA101/opt,
+  flux/reweight files; no atime-watch list. Write root: /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/ only.
+  Disclosed, finished: earlier ibuchi tests opened the SIBLING ..._5D_MEFHC_universes_full_bkgaware.root (not ours).
+  -> CLEAR.
+- cov2d, limitation-resolver, director-helper-3: covered by their fresh acks (taken right before the connect) and by the
+  connect's own fences (cov2d's fence rev 3 embedded; a sacct fence on the named prefixes, any unended job a BAIL).
+- No write root of ours lies under or over any lane's declared root (q0study-20261124 is new).

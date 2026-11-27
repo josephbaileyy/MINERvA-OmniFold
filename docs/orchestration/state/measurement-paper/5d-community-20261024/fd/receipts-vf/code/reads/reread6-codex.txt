@@ -1,0 +1,12 @@
+Both prior findings are fixed in `0f37449c..fccca92e`. I found no new defect in the delta.
+
+| Prior severity and defect | Recheck | Wrong number | Failed control passed before fix |
+|---|---|---|---|
+| Major — Renamed-key mutant survived. [test_fd_vf_addition.py:548](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/vfread/nd-unfolding/tests/test_fd_vf_addition.py:548) | The intact named list under `C_resp + DeltaC_e` passes with the fix. The mutant refuses it, and the suite kills the mutant. | No | No |
+| Minor — T missed a replaced list or skipped a renamed parent. [fd_vf_addition.py:400](/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/vfread/nd-unfolding/fd_vf_addition.py:400) | Replacing G-DIAG `predictions` with `null` or `{}` now refuses T. Dropping or reordering the list under a renamed parent also refuses T. | No | Yes, T |
+
+All 17 OLD readouts matched their pins. Their 11 named lists sit at fixed top-level `truths` or `predictions` keys, which the V_F producers still write as lists. The block-derived keys carry no named lists. The schema probes found no false refusal. This check used the pinned OLD payloads and producer schemas. The full V_F chain was outside this local rerun.
+
+In the disposable copy, **88 tests passed and all three T mutants were killed**. The restored source SHA-256 matched the pin in `vf_block.json`.
+
+VERDICT: GO

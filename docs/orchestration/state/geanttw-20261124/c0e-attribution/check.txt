@@ -1,0 +1,69 @@
+ack: cov2d=cov2d-ACK-geanttw-p0-check-2026-11-26T16:22:17Z nue=GEANTTW-BINDING-P0:NuE-exception@2026-11-26 utc=2026-11-26T16:22:31Z
+script: 7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738 4fe6add5de54544196ddb90ac09cf033d8411515:docs/orchestration/state/2d-closeout/cov2d-fence-20261122/cov2d_fence.sh
+script: c5bf44079438d0057c8fb5d95e86e515321fc0f6f47571c9ef0ecd42d09b6d87 4fe6add5de54544196ddb90ac09cf033d8411515:docs/orchestration/state/geanttw-20261124/code/geanttw_remote.sh
+fence host=login37 utc=2026-11-26T16:22:36Z
+sacct -X -n -P -u josephrb -S 2026-11-12T08:22:36 -E now -o JobID,JobName,State 2>&1
+sacct matching rows: 14
+FENCE CLEAR
+fence: clear
+build.log PASS CHECK DIFF_EQUALS_UPSTREAM PASS
+    CHECK SOURCE_PROVENANCE PASS
+    CHECK RPATH_CLEAN PASS
+    CHECK LIBMAT_IDENTICAL PASS
+    CHECK LIBMATMINERVA_DIFFER PASS
+C0a PASS both builds open libMAT.so and libMAT-MINERvA.so from their own prefix only
+C0b PASS mc_signal_reco: w_truth_GEANT_Neutron_0 differs in 139440/383848
+    mc_signal_reco: w_truth_GEANT_Neutron_1 differs in 139440/383848
+    mc_signal_reco: w_truth_GEANT_Pion_0 differs in 145417/383848
+    mc_signal_reco: w_truth_GEANT_Pion_1 differs in 145417/383848
+    mc_signal_reco: w_truth_GEANT_Proton_0 differs in 119805/383848
+    mc_signal_reco: w_truth_GEANT_Proton_1 differs in 119805/383848
+    mc_truth_denom: w_truth_GEANT_Neutron_0 differs in 200753/383848
+    mc_truth_denom: w_truth_GEANT_Neutron_1 differs in 200753/383848
+    mc_truth_denom: w_truth_GEANT_Pion_0 differs in 212148/383848
+    mc_truth_denom: w_truth_GEANT_Pion_1 differs in 212148/383848
+    mc_truth_denom: w_truth_GEANT_Proton_0 differs in 173391/383848
+    mc_truth_denom: w_truth_GEANT_Proton_1 differs in 173391/383848
+C0c PASS mc_signal_reco: w_truth_GEANT_Neutron_0 differs in 0/383848
+    mc_signal_reco: w_truth_GEANT_Neutron_1 differs in 0/383848
+    mc_signal_reco: w_truth_GEANT_Pion_0 differs in 0/383848
+    mc_signal_reco: w_truth_GEANT_Pion_1 differs in 0/383848
+    mc_signal_reco: w_truth_GEANT_Proton_0 differs in 0/383848
+    mc_signal_reco: w_truth_GEANT_Proton_1 differs in 0/383848
+    mc_truth_denom: w_truth_GEANT_Neutron_0 differs in 0/383848
+    mc_truth_denom: w_truth_GEANT_Neutron_1 differs in 0/383848
+    mc_truth_denom: w_truth_GEANT_Pion_0 differs in 0/383848
+    mc_truth_denom: w_truth_GEANT_Pion_1 differs in 0/383848
+    mc_truth_denom: w_truth_GEANT_Proton_0 differs in 0/383848
+    mc_truth_denom: w_truth_GEANT_Proton_1 differs in 0/383848
+C0d PASS 
+C0e FAIL 359 distinct files opened outside B
+    NOT ALLOWED /global/common/software/nersc9/darshan/3.4.6-gcc-13.2.1/lib
+    NOT ALLOWED /opt/cray/libfabric/2.3.1/lib64
+    NOT ALLOWED /opt/cray/pe/lmod/8.7.60/init/bash
+    NOT ALLOWED /opt/cray/pe/lmod/8.7.60/libexec/addto
+    NOT ALLOWED /opt/cray/pe/lmod/8.7.60/tools/BeautifulTbl.lua
+    NOT ALLOWED /opt/cray/pe/lmod/8.7.60/tools/Cosmic.lua
+    NOT ALLOWED /opt/cray/pe/lmod/8.7.60/tools/Dbg.lua
+    NOT ALLOWED /opt/cray/pe/lmod/8.7.60/tools/Optiks.lua
+    NOT ALLOWED /opt/cray/pe/lmod/8.7.60/tools/Optiks_Option.lua
+    NOT ALLOWED /opt/cray/pe/lmod/8.7.60/tools/TermWidth.lua
+    NOT ALLOWED /opt/cray/pe/lmod/8.7.60/tools/capture.lua
+    NOT ALLOWED /opt/cray/pe/lmod/8.7.60/tools/declare.lua
+    NOT ALLOWED /opt/cray/pe/lmod/8.7.60/tools/haveTermSupport.lua
+    NOT ALLOWED /opt/cray/pe/lmod/8.7.60/tools/pairsByKeys.lua
+    NOT ALLOWED /opt/cray/pe/lmod/8.7.60/tools/strict.lua
+    NOT ALLOWED /opt/cray/pe/lmod/8.7.60/tools/string_utils.lua
+    NOT ALLOWED /opt/cray/pe/papi/7.3.0.1/lib
+    NOT ALLOWED /opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/CUPTI/lib64
+    NOT ALLOWED /opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/nvvm/lib64
+    NOT ALLOWED /opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/targets/x86_64-linux/include/cuda.h
+    NOT ALLOWED /opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/targets/x86_64-linux/lib
+    NOT ALLOWED /opt/nvidia/hpc_sdk/Linux_x86_64/26.5/math_libs/13.2/targets/x86_64-linux/lib
+    NOT ALLOWED /var/lib/sss/mc/passwd
+C0f PASS reference sha256 d2b4dafc61d1756554d1c7ff3085410faaa2266cd14a260175bc0e533fe2030c == d2b4dafc61d1756554d1c7ff3085410faaa2266cd14a260175bc0e533fe2030c
+P0 FAIL
+STOP: p0_check.py exited 1
+== geanttw remote check rc=8 2026-11-26T16:22:56Z
+STOP: remote check exited 8
+== geanttw connect check rc=8 2026-11-26T16:22:56Z

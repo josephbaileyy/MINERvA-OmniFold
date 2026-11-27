@@ -1,0 +1,163 @@
+{
+ "schema": "msr-readout/1",
+ "controls": {
+  "C-OPS": {
+   "pass": true,
+   "mismatched": [],
+   "products_ok": true
+  },
+  "C-RID": {
+   "pass": true,
+   "sigma_rel_max_rel": 0.0,
+   "null_fraction_max_abs": 0.0,
+   "inf_match": true,
+   "nan_match": true,
+   "n_null_modes": [
+    1,
+    1
+   ],
+   "n_cells_grid": [
+    29,
+    29
+   ]
+  },
+  "C-DID": {
+   "pass": true,
+   "functionals_compared": 151,
+   "expected_common": 151,
+   "sigma_rel_max_rel": 7.094008813157951e-13,
+   "null_fraction_max_abs": 1.396582544372142e-16,
+   "ibu1_only": [
+    "EW_all_ones",
+    "total_integrated"
+   ],
+   "did_only": [
+    "H2_0",
+    "H2_1",
+    "H2_2",
+    "H2_3",
+    "H2_4",
+    "H2_5",
+    "H2_6",
+    "H2_7",
+    "H2_8",
+    "H2_9",
+    "H2_10",
+    "H2_11",
+    "H2_12",
+    "H2_13",
+    "H2_14",
+    "H2_15",
+    "H2_16",
+    "H2_17",
+    "H2_18",
+    "H2_19",
+    "H2_20",
+    "H2_21",
+    "H2_22",
+    "H2_23",
+    "H2_24",
+    "H2_25",
+    "H2_26",
+    "H2_27",
+    "H2_28",
+    "H2_29",
+    "H2_30",
+    "H2_31"
+   ]
+  },
+  "C-L": {
+   "pass": true,
+   "linearity_rel": 3.4986249085388037e-16,
+   "U_equals_M16": true,
+   "cells_equal_selected": true
+  },
+  "C-GRID": {
+   "pass": true,
+   "n_cells": {
+    "h2": 29,
+    "t1": 134,
+    "h2_rid": 29,
+    "h2_nonempty_coarse": 29
+   }
+  },
+  "C-T3": {
+   "pass": true,
+   "max_abs": 0.0,
+   "t3_verdict": "COMPLETE"
+  },
+  "C-F0B": {
+   "pass": true
+  },
+  "C-D": {
+   "pass": true,
+   "truths_checked": [
+    "nominal",
+    "W1",
+    "W2",
+    "W3",
+    "q3",
+    "stage0c_gibuu",
+    "A7_mnvtune",
+    "A7_genie_cv",
+    "A7_genie_mec",
+    "A7_nuwro",
+    "A7_gibuu",
+    "closure_nuwro"
+   ],
+   "printed_without_d": [
+    "P1r",
+    "P2r",
+    "P3r",
+    "P1g",
+    "P2g",
+    "P3g"
+   ]
+  },
+  "C-A2": {
+   "pass": true,
+   "max_abs": 0.0
+  },
+  "C-2D": {
+   "pass": true,
+   "M_vs_bank_ibu_response_max_abs": 0.0,
+   "R_vs_bank_ibu_response_max_abs": 53963.153672716326,
+   "T_vs_bank_ibu_prior_max_rel": 0.0,
+   "sum_b_bkg": 119132.36881367955,
+   "sum_bw_in_window": 119132.3688136796,
+   "b_known_equal": true,
+   "b_bkg_max_abs": 0.0
+  },
+  "C-MARG": {
+   "pass": true,
+   "world_shape": [
+    14,
+    16,
+    7,
+    7,
+    6
+   ],
+   "axes": [
+    "pt",
+    "pz",
+    "eavail",
+    "q3",
+    "W"
+   ]
+  },
+  "C-RANK": {
+   "pass": true
+  },
+  "C-RHO": {
+   "pass": true,
+   "max_abs": 8.077935669463161e-28
+  },
+  "C-ROUTE": {
+   "pass": false,
+   "max_excess": 0.7114204527317242
+  }
+ },
+ "stops": [
+  "C-ROUTE"
+ ]
+}

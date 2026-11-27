@@ -1,0 +1,237 @@
+PASS control T no output exists (no overwrite)
+PASS control T every pair's pins are the chain's
+PASS control T F0 OLD sha256 is the pin
+PASS control T F0 V_F sha256 is the pin
+PASS control T S with/f0b OLD sha256 is the pin
+PASS control T S with/f0b V_F sha256 is the pin
+PASS control T S with/f1 OLD sha256 is the pin
+PASS control T S with/f1 V_F sha256 is the pin
+PASS control T S with/g OLD sha256 is the pin
+PASS control T S with/g V_F sha256 is the pin
+PASS control T E with/g OLD sha256 is the pin
+PASS control T E with/g V_F sha256 is the pin
+PASS control T E with/g_diag OLD sha256 is the pin
+PASS control T E with/g_diag V_F sha256 is the pin
+PASS control T E with/g_followup OLD sha256 is the pin
+PASS control T E with/g_followup V_F sha256 is the pin
+PASS control T E with/g_sens2 OLD sha256 is the pin
+PASS control T E with/g_sens2 V_F sha256 is the pin
+PASS control T E with/flux_boot OLD sha256 is the pin
+PASS control T E with/flux_boot V_F sha256 is the pin
+PASS control T S nopl/f0b OLD sha256 is the pin
+PASS control T S nopl/f0b V_F sha256 is the pin
+PASS control T S nopl/f1 OLD sha256 is the pin
+PASS control T S nopl/f1 V_F sha256 is the pin
+PASS control T S nopl/g OLD sha256 is the pin
+PASS control T S nopl/g V_F sha256 is the pin
+PASS control T E nopl/g OLD sha256 is the pin
+PASS control T E nopl/g V_F sha256 is the pin
+PASS control T E nopl/g_diag OLD sha256 is the pin
+PASS control T E nopl/g_diag V_F sha256 is the pin
+PASS control T E nopl/g_followup OLD sha256 is the pin
+PASS control T E nopl/g_followup V_F sha256 is the pin
+PASS control T E nopl/g_sens2 OLD sha256 is the pin
+PASS control T E nopl/g_sens2 V_F sha256 is the pin
+PASS control T E nopl/flux_boot OLD sha256 is the pin
+PASS control T E nopl/flux_boot V_F sha256 is the pin
+PASS control T F0/truths: the named records are the same, in the same order, on the same cells
+PASS control T F0: the truths are the same, in the same order, on both sides
+PASS control T F0 nominal: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 W1: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 W2: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 W3: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 q3: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 stage0c_gibuu: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 closure_nuwro: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 A7_mnvtune: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 A7_genie_cv: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 A7_genie_mec: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 A7_nuwro: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 A7_gibuu: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 P1r: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 P2r: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 P3r: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 P1g: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 P2g: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0 P3g: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T F0: the C_e^infl readout carries its revised sigma, on the same cells in the same order, with the same matrices, each a 16-cell vector
+PASS control T S with/f0b/truths: the named records are the same, in the same order, on the same cells
+PASS control T S with/f0b: the truths are the same, in the same order, on both sides
+PASS control T S with/f0b nominal: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b W1: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b W2: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b W3: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b q3: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b stage0c_gibuu: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b closure_nuwro: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b A7_mnvtune: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b A7_genie_cv: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b A7_genie_mec: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b A7_nuwro: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b A7_gibuu: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b P1r: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b P2r: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b P3r: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b P1g: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b P2g: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f0b P3g: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1/truths: the named records are the same, in the same order, on the same cells
+PASS control T S with/f1: the truths are the same, in the same order, on both sides
+PASS control T S with/f1 nominal: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 W1: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 W2: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 W3: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 q3: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 stage0c_gibuu: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 closure_nuwro: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 A7_mnvtune: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 A7_genie_cv: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 A7_genie_mec: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 A7_nuwro: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 A7_gibuu: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 P1r: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 P2r: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 P3r: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 P1g: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 P2g: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 P3g: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 F1_genie_v3_g18: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 F1_closure_genie_v3_g18: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 F1_genie_v3_ar23: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/f1 F1_closure_genie_v3_ar23: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S with/g/predictions: the named records are the same, in the same order, on the same cells
+PASS control T S with/g: the predictions are the same, in the same order, on the same cells, on both sides
+PASS control T S with/g genie_cv total: both sides' ndf is the declared 16
+PASS control T S with/g genie_cv total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S with/g genie_cv shape_only: both sides' ndf is the declared 15
+PASS control T S with/g genie_cv shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S with/g genie_mec total: both sides' ndf is the declared 16
+PASS control T S with/g genie_mec total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S with/g genie_mec shape_only: both sides' ndf is the declared 15
+PASS control T S with/g genie_mec shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S with/g nuwro total: both sides' ndf is the declared 16
+PASS control T S with/g nuwro total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S with/g nuwro shape_only: both sides' ndf is the declared 15
+PASS control T S with/g nuwro shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S with/g gibuu total: both sides' ndf is the declared 8
+PASS control T S with/g gibuu total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S with/g gibuu shape_only: both sides' ndf is the declared 7
+PASS control T S with/g gibuu shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S with/g mnvtune_v1 total: both sides' ndf is the declared 16
+PASS control T S with/g mnvtune_v1 total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S with/g mnvtune_v1 shape_only: both sides' ndf is the declared 15
+PASS control T S with/g mnvtune_v1 shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E with/g/predictions: the named records are the same, in the same order, on the same cells
+PASS control T E with/g: the predictions are the same, in the same order, on the same cells, on both sides
+PASS control T E with/g genie_cv total: both sides' ndf is the declared 16
+PASS control T E with/g genie_cv total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E with/g genie_cv shape_only: both sides' ndf is the declared 15
+PASS control T E with/g genie_cv shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E with/g genie_mec total: both sides' ndf is the declared 16
+PASS control T E with/g genie_mec total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E with/g genie_mec shape_only: both sides' ndf is the declared 15
+PASS control T E with/g genie_mec shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E with/g nuwro total: both sides' ndf is the declared 16
+PASS control T E with/g nuwro total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E with/g nuwro shape_only: both sides' ndf is the declared 15
+PASS control T E with/g nuwro shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E with/g gibuu total: both sides' ndf is the declared 8
+PASS control T E with/g gibuu total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E with/g gibuu shape_only: both sides' ndf is the declared 7
+PASS control T E with/g gibuu shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E with/g mnvtune_v1 total: both sides' ndf is the declared 16
+PASS control T E with/g mnvtune_v1 total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E with/g mnvtune_v1 shape_only: both sides' ndf is the declared 15
+PASS control T E with/g mnvtune_v1 shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E with/g_diag/predictions: the named records are the same, in the same order, on the same cells
+PASS control T S nopl/f0b/truths: the named records are the same, in the same order, on the same cells
+PASS control T S nopl/f0b: the truths are the same, in the same order, on both sides
+PASS control T S nopl/f0b nominal: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b W1: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b W2: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b W3: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b q3: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b stage0c_gibuu: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b closure_nuwro: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b A7_mnvtune: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b A7_genie_cv: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b A7_genie_mec: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b A7_nuwro: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b A7_gibuu: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b P1r: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b P2r: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b P3r: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b P1g: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b P2g: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f0b P3g: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1/truths: the named records are the same, in the same order, on the same cells
+PASS control T S nopl/f1: the truths are the same, in the same order, on both sides
+PASS control T S nopl/f1 nominal: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 W1: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 W2: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 W3: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 q3: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 stage0c_gibuu: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 closure_nuwro: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 A7_mnvtune: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 A7_genie_cv: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 A7_genie_mec: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 A7_nuwro: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 A7_gibuu: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 P1r: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 P2r: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 P3r: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 P1g: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 P2g: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 P3g: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 F1_genie_v3_g18: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 F1_closure_genie_v3_g18: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 F1_genie_v3_ar23: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/f1 F1_closure_genie_v3_ar23: the C_e^infl grade matrix is the OLD one with DeltaC_e added, on the same cells
+PASS control T S nopl/g/predictions: the named records are the same, in the same order, on the same cells
+PASS control T S nopl/g: the predictions are the same, in the same order, on the same cells, on both sides
+PASS control T S nopl/g genie_cv total: both sides' ndf is the declared 16
+PASS control T S nopl/g genie_cv total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S nopl/g genie_cv shape_only: both sides' ndf is the declared 15
+PASS control T S nopl/g genie_cv shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S nopl/g genie_mec total: both sides' ndf is the declared 16
+PASS control T S nopl/g genie_mec total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S nopl/g genie_mec shape_only: both sides' ndf is the declared 15
+PASS control T S nopl/g genie_mec shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S nopl/g nuwro total: both sides' ndf is the declared 16
+PASS control T S nopl/g nuwro total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S nopl/g nuwro shape_only: both sides' ndf is the declared 15
+PASS control T S nopl/g nuwro shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S nopl/g gibuu total: both sides' ndf is the declared 8
+PASS control T S nopl/g gibuu total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S nopl/g gibuu shape_only: both sides' ndf is the declared 7
+PASS control T S nopl/g gibuu shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S nopl/g mnvtune_v1 total: both sides' ndf is the declared 16
+PASS control T S nopl/g mnvtune_v1 total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T S nopl/g mnvtune_v1 shape_only: both sides' ndf is the declared 15
+PASS control T S nopl/g mnvtune_v1 shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E nopl/g/predictions: the named records are the same, in the same order, on the same cells
+PASS control T E nopl/g: the predictions are the same, in the same order, on the same cells, on both sides
+PASS control T E nopl/g genie_cv total: both sides' ndf is the declared 16
+PASS control T E nopl/g genie_cv total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E nopl/g genie_cv shape_only: both sides' ndf is the declared 15
+PASS control T E nopl/g genie_cv shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E nopl/g genie_mec total: both sides' ndf is the declared 16
+PASS control T E nopl/g genie_mec total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E nopl/g genie_mec shape_only: both sides' ndf is the declared 15
+PASS control T E nopl/g genie_mec shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E nopl/g nuwro total: both sides' ndf is the declared 16
+PASS control T E nopl/g nuwro total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E nopl/g nuwro shape_only: both sides' ndf is the declared 15
+PASS control T E nopl/g nuwro shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E nopl/g gibuu total: both sides' ndf is the declared 8
+PASS control T E nopl/g gibuu total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E nopl/g gibuu shape_only: both sides' ndf is the declared 7
+PASS control T E nopl/g gibuu shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E nopl/g mnvtune_v1 total: both sides' ndf is the declared 16
+PASS control T E nopl/g mnvtune_v1 total: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E nopl/g mnvtune_v1 shape_only: both sides' ndf is the declared 15
+PASS control T E nopl/g mnvtune_v1 shape_only: the OLD matrix is C_total + its block + V_g, and the C_e^infl matrix is it with DeltaC_e added
+PASS control T E nopl/g_diag/predictions: the named records are the same, in the same order, on the same cells
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/table/fd_vf_table.json", "sha256": "d17e3edf674027dad3a6765d3e865acc61864ab482c1b3ed1e7be8d9b6a01302"}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/table/fd_vf_table.md", "sha256": "d1bc17ecd4e86b15d7f972d39f7ed7ed8437b3dfa03267b033232cc7ca667b2a"}

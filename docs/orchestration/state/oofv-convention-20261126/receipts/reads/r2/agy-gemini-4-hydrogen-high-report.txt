@@ -1,0 +1,21 @@
+Read-only review complete. No files were written or modified and no code, scripts, or tests were executed.
+
+### Findings
+
+1. **NONBLOCKER — All round-1 findings (`c1`–`c10`, `a1`, `a3`–`a6`) are fixed as [DISPOSITION.md] describes, with no new BLOCKERs found.**
+   - **c1 / a1 (truth-tree gate and deduplication order):** [oofvc_dump.cpp:149-160] now inserts `sigT && psT` keys into `seenSigKeys` before evaluating `isMCSelected`, matching [runEventLoopOmniFold.cpp:1200-1218]. As documented in [OOFVC-DECLARATION.md:284-288], `oofvc_dump.cpp` still omits `truthDenomIDs` because Stage B's P4 census measured `nG1 = 0` and `nSigLoopNoTruth = 0` on these inputs; if any row failed that gate, `C-SIGW` at [oofvc_join.py:143-160] would STOP rather than pass a wrong run.
+   - **c2 (dump tree write):** [oofvc_dump.cpp:189-199] restores `out.cd()`, checks `t.GetDirectory() == &out`, checks `out.WriteTObject(...) > 0`, closes `out`, and re-opens the file to assert `back->GetEntries() == nSel`.
+   - **c3 (ROOT half-open cells):** [oofvc_lib.py:24-27,122-125], [oofvc_driver.diff:127-129], [oofvc_run.py:51-52,61-67], and [oofvc_score.py:175] consistently use half-open `[lo, hi)` cell membership (`in_bins` / `global_index`).
+   - **c4 (scorer unit/K verification):** [oofvc_score.py:60-81,134-136] checks `.done` digests against `.npz` and `.root`, verifies `meta["argv"] == rec["argv"]`, enforces `--signal-convention minerva --oofvc-rows .../oofvc_rows.npz` on `R` and their absence on `off`, requires `C-ROO` on `c2_central`, requires `not numpy_unfolder`, verifies `n_controls`, and checks `C-KS` across `z["off"]`, `z["R"]`, `nz["off"]`, `nz["R"]` including `PRIMARY_K = 10`.
+   - **c5 (`C-NSUM` independence and `C-NMOVED`):** [oofvc_run.py:48-55,80-88] computes `direct_moved` independently from `oofvc_rows.npz` via `moved_outside_direct` and checks `o_moved` cell-by-cell against `direct_moved` in `C-NMOVED`.
+   - **c6 / a5 (`C-PINS`):** [oofvc_run.py:114-122,164-170] verifies and records `libRooUnfold.so` inside each unit process, and [oofvc_score.py:82-93] checks all `pins_*.json` records against expected `driver`, `runner`, `oofvc_run`, `oofvc_lib`, `rows_sha`, and `roounfold_lib` digests covering all four units.
+   - **c7 / a5 (`C-BASE` zeros and `C-FIX`):** [oofvc_score.py:49-58,150-168] enforces exact zeros on both `er_off[~m]` and `z["off"]["xsec"][~xm]`, compares bin contents, errors (including underflow/overflow), and axis edges via `hist_identity`, and includes `fluxIntegral_cm2_per_POT` in `FIXED_PARAMS`.
+   - **c8 / a3 (loader weight rules):** [oofvc_driver.diff:129-143] applies `0 <= w_t, w_r < 1e4` to in-grid appended rows and `0 <= w_r < 1e6` to outside rows, dropping and counting failures instead of aborting, and [oofvc_score.py:188-189] accounts for `dropped_appended_weight` in `C-MOVE`.
+   - **c9 (zero tie weight and non-finite `split.json`):** [oofvc_lib.py:106-107] returns early on `tied_weight == 0`, and [oofvc_join.py:105,168-179] rejects non-finite `C-LAB` cells while preserving measured control fields on `STOP`.
+   - **c10 / a6 (batch exit statuses, playlist count, `squeue`):** [units.sbatch:43-46] exits `6` if any unit fails; [dump_array.sbatch:30-31] exits `4` on finalization failure; [oofvc_dump.sh:21,49-51], [oofvc_units.sh:25], and [oofvc_post.sh:8] fail on `squeue` errors and verify 12 playlists in `file-counts.txt`.
+   - **a4 (`--use-weights`):** [oofvc_driver.diff:168-174] refuses `--signal-convention minerva` without `--use-weights`.
+
+2. **NONBLOCKER — `n.npz` is not digest-pinned by `c2_central.done` or verified in `oofvc_score.py` `C-UNITS`.**
+   - [oofvc_run.py:144-162] writes `n.npz` after `C.run_unit` writes `c2_central.done`, and [oofvc_score.py:75-80] checks `done` digests only for `c2_central.npz` and `c2_central.root` (checking `n.npz` only for `ks` agreement in `C-KS`). In normal execution via [units.sbatch] and [oofvc_post.sh], `n.npz` is produced in the same step and packaged immediately, so this does not alter a normal run.
+
+GO

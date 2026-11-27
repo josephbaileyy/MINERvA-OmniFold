@@ -1,0 +1,8 @@
+{"control": "P0", "check": "data_product sha256 is the pin", "ok": true}
+{"control": "P0", "check": "g_readout sha256 is the pin", "ok": true}
+{"control": "P0", "check": "no package file exists (no overwrite)", "ok": true}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/deposit-candidate/cells.csv", "sha256": "51dd7a7ec23240188d1e91b37bed8f8051a0160ddcc60e197580a78fc15a1e73"}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/deposit-candidate/covariance.csv", "sha256": "6d48cb98f507772f89d6573cf2a8e2c66d38036a7be5220305a585f434993880"}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/deposit-candidate/correlation.csv", "sha256": "e82dac3e1937de67d99d6e825188cd5bf67c02cb7cf398b1590476de74f64fc4"}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/deposit-candidate/deposit.json", "sha256": "615a4321ebe421f75601505f2fb70e021587298cb25b52f99c3eaa697108cf10"}
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/vf/deposit-candidate/predictions-reference.json", "sha256": "b27377f556c27fcf78df13eef558abf0384111d394b5ed1e72669e4950bf354e"}

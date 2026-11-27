@@ -1,0 +1,17 @@
+/pscratch/sd/j/josephrb/evw5d-20261125-r2/evw5d:
+total 1703148
+drwx------ 3 josephrb josephrb       4096 Nov 25 15:47 .
+drwx------ 7 josephrb josephrb       4096 Nov 25 15:49 ..
+-rw------- 1 josephrb josephrb       2603 Nov 25 15:47 constants.json
+-rw------- 1 josephrb josephrb    2971114 Nov 25 15:47 constants.npz
+-rw------- 1 josephrb josephrb       1006 Nov 25 15:47 evw5d.done
+drwx------ 2 josephrb josephrb       4096 Nov 25 15:46 product
+-rw------- 1 josephrb josephrb       8592 Nov 25 15:47 run.json
+-rw------- 1 josephrb josephrb        403 Nov 25 15:47 SHA256SUMS
+-rw------- 1 josephrb josephrb 1741008257 Nov 25 15:47 weights.npz
+
+/pscratch/sd/j/josephrb/evw5d-20261125-r2/evw5d/product:
+total 104
+drwx------ 2 josephrb josephrb  4096 Nov 25 15:46 .
+drwx------ 3 josephrb josephrb  4096 Nov 25 15:47 ..
+-rw------- 1 josephrb josephrb 95565 Nov 25 15:46 data_b-_j-.npz

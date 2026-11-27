@@ -1,0 +1,9 @@
+[evw2d] job=62022231 host=nid007023 start=2026-11-26T08:34:08Z M=77d76cfc2d621f8faa010b75006811868494652a C=462a0756f7eb20f3a99a4a05c3175ee5f3a7243b TimeLimit=00:30:00 NumNodes=1
+[evw2d] setup_salloc_env.sh rc=0 python3=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
+host=nid007023
+affinity=64
+SLURM_JOB_NUM_NODES=1
+SLURM_STEP_NUM_NODES=1
+SLURM_STEP_ID=0
+SLURM_NNODES=1
+[evw2d] done rc=0 end=2026-11-26T08:45:51Z

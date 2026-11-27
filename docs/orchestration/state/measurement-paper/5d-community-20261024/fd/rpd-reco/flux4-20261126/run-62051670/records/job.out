@@ -1,0 +1,23 @@
+== rpd_flux4 job 62051670 on nid004076 2026-11-26T20:43:57Z
+HEAD 2415e8d66d1a9160e724d426eaeb54d458d4b4f7; porcelain lines 0
+sha256 12f68102d38ec042d791b9edeb59ba96bdcda74c54dc37e5880c0922b0fbb9ec nd-unfolding/fd_rpd_reco.py
+sha256 6428deadb6bf6c4a5bde968d33eba2870b3e503a3a8110bfca431326c349776c nd-unfolding/fd_rpd_reco_custody.py
+sha256 6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70 nd-unfolding/fd_rpd_inputs.py
+sha256 32db52355a4811bd4bf5f8b8cc0b5c397c7b403a0996048bcafd8c8c665cc76e nd-unfolding/fd_rpd_reco_flux_connect.sh
+sha256 06360100038f0203b0d994f71c171b12cd955697edf32d1d744c4ce271ceb26d nd-unfolding/tests/fd_rpd_reco_mat_check.py
+sha256 d9704aa45c016b044284d9e3cfc8c6d5c07cda0835a445866d5f792c8ac82840 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/timing-20261106/flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root
+sha256 7638f94f56ad0471769445cffe68ff538c9b68158f48415e7c3cafa7ee95a295 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/INPUTS.sha256
+sha256 b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89 nd-unfolding/pv-ladder/readouts/h2_definition.json
+sha256 e60609e756e35fbc9846ae5983c1d848999bc17c7504e3ca876c22c9bcc0e88f docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/energy-spectrum-candidates.tsv
+sha256 900d7368d6184d503399bd99c0fd30085212df0327b8be374182495b85a3677d MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h
+sha256 b056487e592e7704c2a98c14243b26f44c82821382837a263b75c169859cce0b docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/MAT-DATA-DEPENDENCIES.json
+sha256 eee5ae4caf72b2c2a9a0fb593b2742f32705e778b9c9b5c289184c636221f794 nd-unfolding/tests/test_fd_rpd_reco.py
+sha256 138bc5b4340307788b694692ad971ea3b861260eb29b328b264efe680f6b1ff2 nd-unfolding/tests/fd_rpd_reco_fence_mutation.py
+sha256 8dfdeaf12e00e43dbc68a6e07dc27f4f3aee04bba8173111511130b4a5f405f4 nd-unfolding/tests/fd_rpd_reco_mutation.py
+config sha256 f53a86f6dec50965d1d45cb77bcfc904228ebd96ffa18eb9f87babeb53d1ba1d
+strace probe rc=0
+== the wrapper 2026-11-26T20:45:30Z
+wrapper pid 1019211; its process group [1019211]
+wrapper pid/pgid 1019211 (checked)
+== wrapper rc=0 2026-11-26T20:53:10Z
+removed /dev/shm/limres-rpd-flux1 rc=0

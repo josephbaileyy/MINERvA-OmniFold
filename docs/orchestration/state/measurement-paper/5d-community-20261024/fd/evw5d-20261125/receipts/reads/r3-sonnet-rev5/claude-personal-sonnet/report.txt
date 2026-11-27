@@ -1,0 +1,137 @@
+VERDICT: GO
+
+I found nothing that could change the published weights, constants or accepted gates. I read everything and ran nothing: no tests, no mutation campaign, no hashes against `tests.txt`. The items below are all NON-BLOCKING.
+
+## Findings (all NON-BLOCKING)
+
+1. **`accepted()` can raise instead of returning False.**
+   - `evw5d.py:536-540` calls `canonical()` with `allow_nan=False` on `finding_sizes`, and `:533` calls `.get("copy_digest")` on `reads[k]` without checking it is a dict.
+   - A malformed or NaN-bearing `run.json` therefore gives a traceback, not `False`.
+   - It still fails closed: the Python exits non-zero, the HPSS script's `acc` is empty and it bails, and the launcher's `accepted rc` is non-zero.
+   - Fix: wrap the final return in `try/except (ValueError, TypeError, AttributeError, KeyError)` and return `False`.
+
+2. **The production sub-conditions of `accepted()` are not tested one at a time.**
+   - These are `code_pin`, `main_pin`, `ess_digest`, the `reads[k].copy_digest` set and `--fixture` not in `argv` (`evw5d.py:530-535`).
+   - The only positive test forges all of them together (`test_evw5d.py:1247-1265`).
+   - The only negative is the fixture bundle, which fails on several at once.
+   - Only `ACCEPTED_PRODUCTION` mutates the whole block, so a mutant dropping any single clause would survive.
+   - The code is correct on reading, and the writer already refuses wrong digests before running.
+   - Fix: forge a production-shaped bundle with one field wrong, once per field.
+
+3. **No test runs the shell tail of the job or the connect, post and HPSS scripts.**
+   - The job fixture refuses before the setup is sourced (`test_evw5d.py:943-1025`), so `srun` and the DONE write never run (`sbatch_evw5d.sh:60-68`).
+   - By reading, the `srun` argv matches the `argparse` options (`evw5d.py:759-765`).
+   - A mistake here fails closed and wastes the slot. It cannot publish a wrong product.
+
+4. **A test depends on test order.**
+   - `test_evw5d.py:1296-1297` needs `failf-pristine`, which only `test_fail_on_f` creates (`:288`).
+   - Running with `-k`, or in a different order, fails it spuriously.
+   - The mutation harness runs the whole suite, so it is unaffected.
+
+5. **The checker Python puts the current directory ahead of the standard library.**
+   - `python3 -B -c` does this in `evw5d_launch.sh:43` and `evw5d_hpss.sh:45`. The scripts insert the checker directory first, but `''` still precedes stdlib and numpy.
+   - A stray `json.py` or `numpy/` in the working directory could shadow them.
+   - Fix: use `python3 -I -B -c`. The scripts' own `sys.path.insert` still works under `-I`.
+
+6. **Some check lines have no mutant, and tests would probably kill them anyway.**
+   - Examples: `weights_float64` (`evw5d.py:305`), `meta_n_rows` and `meta_columns` (`:327-328`), and the per-item `vs_in` entries for edges, POT, N and `denom_nd` (`:312-317`).
+   - `test_check_file_constants_against_the_input` (`:659-672`) probably kills the `vs_in` ones.
+   - The individual C-GRID predicates (`:673-680`) are unmutated; the declaration discloses this, and C-F, C-SELF and the volume check overlap them.
+   - `sums_parse_exact` (`:483`) is trivially true inside `accepted()`, where `digests` comes from the same parse. It is only meaningful in `run()`, and `done["products"]` covers it there.
+
+7. **`constants.json` has no axis units or reporting-cell labels.**
+   - The map is saved, so the cells are reproducible.
+   - Add GeV units and R00–R15 labels, since the H2 definition file is not shipped.
+
+8. **The C-F margin is about 2.4×, and it is deterministic.**
+   - `ess-receipt-README.md:67-68` gives 3.8e-15 for rows against the result and 3.3e-16 for the result against the data product. That is about 4.1e-15 against the 1e-14 limit.
+   - `contributions` (`evw5d.py:161-174`) is line for line the same as `ess_capture.py:371-384`.
+   - A spurious failure is not expected. If it happened it would give a FAIL marker, not a wrong publication.
+
+9. **The post and HPSS fixes are untested.**
+   - This covers the r3 #1 and #6 fixes, the HPSS checker pin, and the connect's variable stripping.
+   - The declaration and `FOLLOWUPS.md` #3 disclose it, and by reading they are correct. See Q10.
+
+## Answers to the questions
+
+1. **Key and alignment.**
+   - `entry = flatnonzero(pass_truth)` (`evw5d.py:185`) is the index of each row in `MCgen`.
+   - The driver filters with `MCgen[pass_truth]` and `w_pull[pass_truth]` in order (`omnifold_nn_core.py:210-215`), and the push is evaluated on that slice (`:266`).
+   - The central pair has no permute, bootstrap or jitter. `--pairs=-:-` gives `j is None` and passes the inputs through (`s5p_numerics.py:181-182`). `build_data` and `unf_inputs` copy the references (`s5n_pseudo.py:197-199`, `s5e_trace.py:438-442`).
+   - `main` calls `bootstrap_replica` only when `b is not None`, and there is no permute option.
+   - C-KEY (`evw5d.py:257-270`) proves the received arrays are bit-equal to an independent `allow_pickle=False` read of the same sha-pinned bytes. That rules out any reorder or filter.
+   - The pairing of `wpush[i]` with `entry[i]` rests on the code above, plus the fact that the captured object is the very array the driver histograms (`s5c_unfold.py:138`). C-KEY itself checks only the push length.
+   - A permutation inside one fine cell would not change the bit-for-bit re-histogram, but no path produces one.
+
+2. **Weights.**
+   - `w_unfolded = wpush * d["w_truth"][m]` (`evw5d.py:194`) is the same expression as `s5c_unfold.py:138`.
+   - `loops[0][1]` is the second element, `w_push` (`omnifold_nn_core.py:268`; `capture_unfold`, `evw5d.py:575`).
+   - `MCgen` is float32 (`nn_dump_inputs.py:84`), and truth columns are saved at that precision. `w_truth` is float64 (`unfold_nd_omnifold_unbinned.py:466`).
+   - LightGBM returns float64, and any widening is exact. `pass_truth` is bool (`:465`), and the writer refuses anything else.
+
+3. **Gates.**
+   - C-BIND compares each product parsed from the bytes it hashed. Members, `xsec_flat` and `shape` are compared bit for bit with dtype, and the meta is compared type-strictly minus `PER_RUN`.
+   - C-F's row formula and operand order match ESS's (B). Both the result and the row sums are compared with the data product's f.
+   - On the real run, the meta compare can only be stricter than ESS's `==` on types, and both metas come from the same code.
+   - NaN in the reference meta cannot occur. It would have shown up as a differing key in ESS's equality.
+   - `canonical()` would raise on NaN (`evw5d.py:246`), but that cannot fire for the same reason.
+
+4. **Read-back.**
+   - C-FILE, C-SELF and C-FLOW run on `read_npz` output, which hashes and parses the same bytes (`evw5d.py:138-147`).
+   - Inputs are checked against the independent read. The builder-made constants are re-derived (`good`, `xsec_flat`, 1e4, volumes), and the saved map, meta pins, key text, axes and formula are checked against fixed constants.
+   - Every product is covered: `run.json` and the marker through `accepted()`, `product/` through C-BIND, and `constants.json` through `check_constants_json`.
+   - Every constant a user needs is present: edges, flux per pT bin, POT, N, 1e4, `denom_nd`, `ofin`, completeness, `good`, volume, map and `xsec_flat`.
+   - `FORMULA_TEXT` matches `xsec_nd.py:77-83`. The unit label is correct (m⁻²/POT).
+
+5. **Binning independence.**
+   - The claim holds for this driver path. The loop gets continuous coordinates (`s5c_unfold.py:124-128`).
+   - `fid_mask` uses only `e[0]` and `e[-1]` (`s5n_pseudo.py:105-110, :189-196`). `refine` takes no edges. `cell_membership` is used only for the jitter check, which does not run here.
+   - The npz's `measured_weights` is built from fine-binned data and background (`nn_dump_inputs.py:80-82`), but the driver replaces it with the refinement output (`s5e_trace.py:441`). A short note in §4 would help.
+   - C-COL runs the real driver twice with identical random draws and different interior edges, so it proves what it states. It uses 2 threads rather than 32, but the argument is structural.
+   - The stated limit is right. `denom_nd` is `histnd` on the fine edges (`nn_dump_inputs.py:88-90`), and flux is stored only per fine pT bin.
+
+6. **Completeness.**
+   - `measure_completeness` mirrors the driver (`dn > 0`, `ofin/dn`, `s5c_unfold.py:140-143`).
+   - It is not a gate, and `w_unfolded = wpush·w_truth` does not involve completeness. The weights and C-BIND are therefore unaffected.
+   - The 1e-5 flag is conservative: an empty fine cell with a positive denominator, or signal with no denominator, sets it false.
+
+7. **Acceptance and done marker.**
+   - The bound digest binds `SHA256SUMS`, which binds every product hash.
+   - The marker has exactly the written keys. Verdict, `failed_controls`, `products`, `sha256sums_sha256`, the fresh acceptance, findings, finding sizes and the `run.json` controls are all cross-checked, and duplicate keys and links are refused.
+   - I found no way to fool it into accepting a partial or altered bundle.
+
+8. **Job script and read discipline.**
+   - `$OUT` and logs are real directories, and the per-job files are created exclusively.
+   - Reads of the three shared inputs go through O_NOATIME staging into `/dev/shm`, and are checked against their digests. Writes are only under `$OUT/evw5d` and `/dev/shm`.
+   - The audit hook blocks protected plain reads but does not constrain writes.
+   - I found no path that reads the wrong input or writes outside the root.
+
+9. **Previous blocking findings.**
+   - Each earlier BLOCKING item has a fix. The ones with a test that would catch their return are:
+     - r1 #1–#4: the accepted/FAIL-marker tests, the saved-constants tests, and the job-script refusal tests.
+     - r2 #2–#5, #7: the map and meta pin tests, units label, C-BIND and duplicate-member tests, marker edits, and the launcher rc.
+     - r3 #2–#5: the fetch checker-pin test, duplicate members, key and formula text, and strict JSON.
+     - The Sonnet r2 float32-prior fix.
+   - r2 #1, r2 #6, r3 #1 and r3 #6 are shell-only and verified by reading only (item 9).
+   - No fix introduced a new defect that I could find.
+
+10. **Launch scripts.**
+    - The only code paths are the sha-pinned script, tool clone and deploy clone, plus a submission check on `scontrol`. Exactly one `sbatch`, with no array, one node and TimeLimit 30:00.
+    - The connect's `mkdir` claim stops a second run.
+    - 30:00 on one node is exactly the 0.5 node-h bound. Overtime behaviour is `FOLLOWUPS.md` #2.
+    - Writes go to `$OUT`, `/dev/shm` and the HPSS home directory. Nothing goes to CFS.
+    - HPSS and fetch run `accepted()` with the bound digest and a checker whose bytes are checked. HPSS also snapshots the manifest and marker and compares every retrieved file with its pin.
+    - `TOP`'s eight `..` are correct.
+    - The only hazard I found is item 5.
+
+11. **Tests and mutants.** See items 2, 3 and 6. I found no gate line that no test could fail under the scope rule. The three disclosed unmutated lines (final C-PINS, C-KEY's early exit, the isolated C-GRID predicates) are redundant with C-BIND, C-SELF and C-F.
+
+## Checked and fine
+
+- `flat_index` matches `histogramdd`, including the last-edge rule and float32 coordinates promoted to float64.
+- C-SELF's independent formula differs from the driver's only in multiplication order, so it sits at about 1e-15 against the 1e-13 bound.
+- The uint32 entry guard and C-ENTRY (strictly increasing, unique) are sound.
+- `read_npz` rejects duplicate or non-`.npy` members, and `strict_json` rejects duplicate keys.
+- ESS's tool is executed from its hashed bytes (`evw5d.py:79-90`).
+- The wrappers restore the patched functions in `finally`, and the one-loop, one-unfold counts are enforced.
+- `fetch-products` hashes the downloaded bytes only after the download completes.

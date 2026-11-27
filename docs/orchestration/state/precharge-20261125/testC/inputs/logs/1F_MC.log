@@ -1,0 +1,35 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data/flux/flux-gen2thin-pdg-14-minervame1D_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data/flux/flux-g4numiv6-pdg14-minervame1D_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data/flux/flux-g4numiv6-pdg-14-minervame1D_rearrangedUniverses.root
+TH1.Print Name  = hrelratio, Entries= 1331229, Total sum= 1.33123e+06
+weightRPA: have read in ratios from file /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/Reweight//outNievesRPAratio-nu12C-20GeV-20170202.root
+weight_2p2h: 2p2h input file /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/Reweight//fit-mec-2d-noScaleDown-penalty00300-best-fit.txt
+weight_2p2h: Reading from file /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/Reweight//fit-mec-2d-noScaleDown-penalty00300-best-fit
+TH1.Print Name  = hrelratio, Entries= 1254818, Total sum= 1.25482e+06
+weightRPA: have read in ratios from file /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/Reweight//outNievesRPAratio-nu16O-20GeV-20170202.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data/flux/flux-gen2thin-pdg12-minervame1D_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data/flux/flux-gen2thin-pdg-12-minervame1D_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data/flux/flux-g4numiv6-pdg12-minervame1D_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data/flux/flux-g4numiv6-pdg-12-minervame1D_rearrangedUniverses.root
+processed 10 files, 1821814 entries
+processed 20 files, 3637689 entries
+TH1.Print Name  = hrelratio, Entries= 1942565, Total sum= 1.94257e+06
+weightRPA: have read in ratios from file /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/Reweight//outNievesRPAratio-nu208Pb-20GeV-20170202.root
+TH1.Print Name  = hrelratio, Entries= -2147483648, Total sum= 9.52233e+10
+weightRPA: have read in ratios from file /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/Reweight//outNievesRPAratio-nu56Fe-20GeV-20170202.root
+processed 30 files, 5459275 entries
+processed 40 files, 7274791 entries
+processed 50 files, 9090191 entries
+processed 60 files, 10906635 entries
+processed 70 files, 12722578 entries
+complete 71 files, 12905280 entries

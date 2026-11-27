@@ -1,0 +1,8 @@
+{
+ "s1_npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+ "s1_json": "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+ "cmodel_json": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+ "s5p_sums": "a45438fa06565d647bf496b4c2a8333a2e0dc011dd71afd4bb63f377732c9aa0",
+ "g_readout": "eefe1c6d42d10ba0c4a7849d8d8a1068487a0bb4dfb5857fbce5d150c7fbbcbf",
+ "g_diag_readout": "a41e8091980eb92f2d8404c531ffcd313c15d58227e059d23e40221698ef4bdb"
+}

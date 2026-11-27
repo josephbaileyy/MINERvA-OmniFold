@@ -1,0 +1,31 @@
+{
+ "_comment": "SHAPE ONLY. The director writes the real config at binding and pins its sha256; every path, host, digest and sha here is a placeholder.",
+ "record_dir": "~/director-tools/covfix",
+ "keychain_prefix": "covfix-",
+ "ssh": {"user": "<user>", "identity_file": "/Users/<user>/.ssh/nersc", "certificate_file": "/Users/<user>/.ssh/nersc-cert.pub"},
+ "host": "perlmutter.nersc.gov",
+ "binding": {
+  "commitment": "<64 hex: the published commitment>",
+  "seal_digest": "<64 hex: sha256 of the committed PG-SEAL.sha256 (PV binding)>",
+  "freeze_digest": "<64 hex: sha256 of the committed P2-FREEZE.sha256 (PV binding)>"
+ },
+ "seal_file": "<repo path of the committed PG-SEAL.sha256>",
+ "seal_root": "<cluster directory the PG-SEAL paths are relative to>",
+ "freeze_file": "<repo path of the committed P2-FREEZE.sha256>",
+ "freeze_root": "<cluster directory the P2-FREEZE paths are relative to>",
+ "mirror": {
+  "worktree": "<a dedicated worktree, checked out on covfix-ledger>",
+  "path": "docs/orchestration/state/2d-closeout/covfix-20261122/consumption/RECORD.jsonl",
+  "remote": "origin",
+  "branch": "covfix-ledger",
+  "run_hooks": false
+ },
+ "roles": {
+  "pg-connect": {"binary": "<absolute cluster path>", "binary_sha256": "<64 hex>", "args": [],
+                 "slurm": {"account": "<account>", "qos": "<qos>", "constraint": "cpu", "time": "<h:mm:ss>"}},
+  "pv-writer": {"binary": "<absolute cluster path>", "binary_sha256": "<64 hex>", "args": [],
+                "slurm": {"account": "<account>", "qos": "<qos>", "constraint": "cpu", "time": "<h:mm:ss>"}},
+  "pv-readout": {"binary": "<absolute cluster path>", "binary_sha256": "<64 hex>", "args": [],
+                 "slurm": {"account": "<account>", "qos": "<qos>", "constraint": "cpu", "time": "<h:mm:ss>"}}
+ }
+}

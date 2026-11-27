@@ -1,0 +1,6 @@
+BAIL source missing (purged?): /pscratch/sd/j/josephrb/ll5d-unfolds-r2/ll5d_g18_toy_minus2_4751123.npz
+=== script rc=9; /dev/shm copy left: no
+=== /pscratch/sd/j/josephrb/b5d-20261124/logs/connect-b5d.log
+=== stub calls
+sacct -X -n -P -S now-14days -o JobID,JobName,State
+=== written under /pscratch outside /pscratch/sd/j/josephrb/b5d-20261124 (newer than the planting):

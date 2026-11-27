@@ -1,0 +1,34 @@
+
+## primary: fit 1A,1C,1E,1G,1M,1O; score 1B,1D,1F,1L,1N,1P
+epsilon fit: eps = +0.0009 +- 0.0001 (GeV/c)^-1 (+6.0 sigma), k = 0.8972, training deviance 79.3/12; deviance at eps=0 100.5
+rate fit: k = 0.9329, c = -0.0052 +- 0.0389, training deviance 100.4/12
+-- epsilon model, held-out: chi2 136.3/16 p=3.74e-21
+   S1: chi2   29.2  40: obs 1608 pred 1852  50: obs 667 pred 589.2  60: obs 343 pred 264.9  80: obs 80 pred 88.19
+   S2: chi2   62.5  40: obs 6820 pred 6964  50: obs 2617 pred 2146  60: obs 1181 pred 838.4  80: obs 192 pred 183.2
+   S3: chi2    3.5  40: obs 509 pred 480.8  50: obs 172 pred 163.8  60: obs 104 pred 101.9  80: obs 68 pred 54.75
+   S4: chi2   41.2  40: obs 0.9582 pred 0.9606  50: obs 0.9476 pred 0.9294  60: obs 0.8654 pred 0.7906  80: obs 0.4271 pred 0.3485
+-- rate model, held-out: chi2 412.6/16 p=8.46e-78
+   S1: chi2   70.8  40: obs 1608 pred 1756  50: obs 667 pred 503.1  60: obs 343 pred 210.8  80: obs 80 pred 76.35
+   S2: chi2  238.7  40: obs 6820 pred 6624  50: obs 2617 pred 1801  60: obs 1181 pred 638.6  80: obs 192 pred 150.2
+   S3: chi2    0.8  40: obs 509 pred 518.6  50: obs 172 pred 182.5  60: obs 104 pred 111.9  80: obs 68 pred 66.85
+   S4: chi2  102.3  40: obs 0.9582 pred 0.9584  50: obs 0.9476 pred 0.9157  60: obs 0.8654 pred 0.7259  80: obs 0.4271 pred 0.2977
+held-out data vs unvaried fold (reference): {'S1|40': (1608.0, 1887.9), 'S1|50': (667.0, 541.6), 'S1|60': (343.0, 227.3), 'S1|80': (80.0, 82.9), 'S2|40': (6820.0, 7119.8), 'S2|50': (2617.0, 1939.2), 'S2|60': (1181.0, 688.8), 'S2|80': (192.0, 162.9), 'S3|40': (509.0, 415.1), 'S3|50': (172.0, 146.3), 'S3|60': (104.0, 89.9), 'S3|80': (68.0, 54.1)}
+
+## swap: fit 1B,1D,1F,1L,1N,1P; score 1A,1C,1E,1G,1M,1O
+epsilon fit: eps = +0.0004 +- 0.0001 (GeV/c)^-1 (+3.2 sigma), k = 0.9259, training deviance 108.3/12; deviance at eps=0 118.4
+rate fit: k = 0.9485, c = -0.0208 +- 0.0410, training deviance 118.2/12
+-- epsilon model, held-out: chi2 240.3/16 p=4.92e-42
+   S1: chi2   44.2  40: obs 1901 pred 2126  50: obs 772 pred 669.8  60: obs 391 pred 268.4  80: obs 88 pred 86.85
+   S2: chi2  137.8  40: obs 7935 pred 7906  50: obs 2983 pred 2296  60: obs 1314 pred 846.4  80: obs 223 pred 185.3
+   S3: chi2    8.7  40: obs 580 pred 549.7  50: obs 219 pred 180.3  60: obs 124 pred 113.7  80: obs 79 pred 69.39
+   S4: chi2   49.6  40: obs 0.9587 pred 0.9584  50: obs 0.947 pred 0.9244  60: obs 0.8447 pred 0.7597  80: obs 0.4126 pred 0.3886
+-- rate model, held-out: chi2 341.1/16 p=7.48e-63
+   S1: chi2   67.2  40: obs 1901 pred 2062  50: obs 772 pred 626.5  60: obs 391 pred 235  80: obs 88 pred 78.42
+   S2: chi2  198.0  40: obs 7935 pred 7651  50: obs 2983 pred 2087  60: obs 1314 pred 751.6  80: obs 223 pred 166.3
+   S3: chi2    5.0  40: obs 580 pred 554.5  50: obs 219 pred 185.5  60: obs 124 pred 121.6  80: obs 79 pred 70.41
+   S4: chi2   70.9  40: obs 0.9587 pred 0.9566  50: obs 0.947 pred 0.9176  60: obs 0.8447 pred 0.7426  80: obs 0.4126 pred 0.354
+held-out data vs unvaried fold (reference): {'S1|40': (1901.0, 2198.7), 'S1|50': (772.0, 672.2), 'S1|60': (391.0, 254.1), 'S1|80': (88.0, 87.3), 'S2|40': (7935.0, 8158.8), 'S2|50': (2983.0, 2238.9), 'S2|60': (1314.0, 812.4), 'S2|80': (223.0, 184.4), 'S3|40': (580.0, 456.4), 'S3|50': (219.0, 153.6), 'S3|60': (124.0, 101.5), 'S3|80': (79.0, 60.7)}
+
+## Readings against DECLARATION.md
+primary: H_B inconclusive [eps +0.0009 (+6.0 sigma); held-out chi2 epsilon 136.3/16 (p 3.74e-21), rate 412.6/16 (p 8.46e-78)]
+swap: H_B inconclusive [eps +0.0004 (+3.2 sigma); held-out chi2 epsilon 240.3/16 (p 4.92e-42), rate 341.1/16 (p 7.48e-63)]

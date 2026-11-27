@@ -1,0 +1,30 @@
+== part2_probe.py make (fixture: one playlist at 1M's 5,916,895 rows)
+omni.root 170993541 bytes
+lat.npz 118338164 bytes
+factors.npz 236677070 bytes
+
+== part2_probe.py run (arrays rebound per pass, as omnifile_spot_check does)
+2026-11-26T23:50:31Z darwin, python 3.12.2, numpy 1.26.4, uproot 5.6.2
+baseline after imports, peak RSS bytes 51068928
+passes 12, rows per pass 5916895, spots per pass 66
+uproot read seconds per pass: min 1.44 max 2.02
+total seconds 29.8
+peak RSS bytes 1231880192 = 1.232 GB
+
+== the reading
+- Part 2's peak RSS, upper bound: 1.232 GB on macOS, 12 passes at 1M's size with every array 8 bytes or float32 MCgen,
+  and each pass's arrays rebound rather than deleted, so two passes' arrays can coexist (the agy read's note; a first
+  run that deleted them each pass peaked at 1.108 GB). That is 15% of the runner's 8e9 B cap. P0 without part 2 peaked
+  at 0.143 GB on the node (p0-20261123 run-20261124), against a macOS estimate of 0.189 GB for that read pattern, so the
+  macOS figure ran high there.
+- Part 2's compute, upper bound: 29.8 s for the 12 passes (uproot read 1.44-2.02 s per pass). The fixture's tree holds
+  only the six branches; the real omnifiles carry other branches and trees that uproot does not read.
+- The staging copies (not in the probe): stage_copy reads, hashes and writes each omnifile.
+  - flux4 staged the 2,364,943,114-byte sidecar in 9.449 s (prestage.json's staging_utc_ns, run-62051670), 250 MB/s.
+  - The 12 omnifiles total 7,373,436,509 bytes, the sum of the sizes the sidecar probe stat'ed on 2026-11-26
+    (sidecar-probe-20261126/run-20261126/probe.json, stat_only). The largest is 1M, 1,318,953,730 bytes. The P0 connect's
+    stat step compares each one's size and inode with those values before anything runs.
+  - About 29.5 s per pass at flux4's rate. p0 --dry-run and p0 each stage their own copies (Inputs.copy into the run
+    directory's staged/), so about 59 s and 14.75 GB on pscratch in all.
+- The whole chain, upper bound: the old chain's 25 s, plus 2 x (29.5 s staging + 30 s part 2), about 2.5 min. The
+  runner's single deadline is 7200 s.

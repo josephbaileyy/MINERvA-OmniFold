@@ -1,0 +1,20 @@
+node login38 nproc=244 loadavg 112.91 100.67 89.79
+2026-11-24T21:12:11Z
+window_end_epoch 1795555587 (now 1795554730); fence prefixes cov2d,rpd_,d2s0,covfix
+connect script sha256 b5c9f5bc717ac5ad97959c17873b9b02528ba1d1e8d23ee5a76b54505444c4f3
+== fence (sacct)
+fence clear
+== the job (sacct)
+61935360|s2r_run|COMPLETED|0:0|2026-11-24T11:42:33|2026-11-24T12:13:51|1878|1
+log/DONE: {"tasks": 6, "ended": 6, "rc": 0, "job": "61935360"}
+log/SHA256SUMS: 6 lines, 6 well-formed product lines (want 6)
+log/SHA256SUMS: OK
+npz files under runs/: 6
+read/readout.json sha256 b829c3ec5e4313f7be9e08d6cf17679c2ce291271c2baefdb3e6bb41b32878ad bytes 42843
+read/readout.txt sha256 432d2fdf3db5c3f708bc3a2ceafc8e8fae28740c3a55bb56d04a81d281d611df bytes 1363
+== records
+2026-11-24T21:12:11Z
+records copied: 53 files, 175047 bytes
+fetch-records.tar sha256 bff9f7c1ccf806df1ba5ead55f2a71f278d3bafcd98c4ab32843c4081cc50c23 bytes 266240
+s2r records rc=0
+2026-11-24T21:12:13Z

@@ -1,0 +1,10 @@
+measure.cpp: OK
+truth.cpp: OK
+build.sh: OK
+run.sh: OK
+batch.sh: OK
+axes.txt: OK
+measure: OK
+truth: OK
+[testC] reco 1E node=nid004096 job=62042580 start=2026-11-26T15:57:50Z
+[testC] reco 1E done=2026-11-26T16:01:22Z

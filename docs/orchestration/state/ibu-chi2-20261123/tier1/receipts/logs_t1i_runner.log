@@ -1,0 +1,20 @@
+salloc: Granted job allocation 61928141
+salloc: Waiting for resource configuration
+salloc: Nodes nid200013 are ready for job
+[t1i] host login02 job=61928141 start 2026-11-24T17:55:06Z
+[t1i] compute node via srun: nid200013
+ecde3a27dbf3d39f34c203400f16248fbad9fea20f1889f389631bfb79df6378  scripts/rebuild.py
+54f00d401fe3712ef6c5f5edc5b559e1c00972bac3ef3756f07db3db13d371a2  scripts/rebuild.sbatch
+33d3eff3474b1cab2d118e9150142862bf6a553c106c4792c5c6bd751657bf12  scripts/t1_t1.sbatch
+938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b  tier1/deploy_old/2d-unfolding/re2/re2_driver.py
+58e96b87b7439547b234dad7438e592b4cc545f6dcb416ee79661e77ad2d3d04  tier1/deploy_old/2d-unfolding/ref_c2c1/config.json
+677ac75f1d171ca7d71223f62bf3426f056e41b1b6cc8bfd433d49528a1371e8  tier1/deploy_e/2d-unfolding/re2/re2_driver.py
+cf44267e91afe3571a84caf3a4084d0a0ac229f0bdb89e9f9d55432110ed677d  tier1/deploy_e/2d-unfolding/ref_c2c1/config.json
+[t1i] tier1 start 2026-11-24T17:55:06Z
+[t1i] tier1 rc=0 2026-11-24T18:04:58Z
+[t1i] rebuild start 2026-11-24T18:04:58Z
+[t1i] rebuild rc=0 2026-11-24T18:05:30Z
+93990a88b373704991c2d7c5a2b98fe9640244a318e73dfff00af463d2866867  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/products/rebuild/rebuild.npz
+5a2cdd6f7d78b488a13d3be0c072957f796fd5ed8d1bab0a2da6b531df4dba0e  /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/products/rebuild.json
+[t1i] end 2026-11-24T18:05:30Z
+salloc: Relinquishing job allocation 61928141

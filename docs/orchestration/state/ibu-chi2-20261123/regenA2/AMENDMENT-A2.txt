@@ -1,0 +1,42 @@
+# regenA amendment A2 (2026-11-25, before anything runs): the sec3_twod.tex:11 projection-ratio readout.
+# regenA DECLARATION.txt (085553b4) and AMENDMENT-A1.txt (077d57d5) stay unchanged. The director's GO is given.
+
+What. A readout of the per-bin ratios of the 1D projections, ours / published, as compare_to_models.project() makes
+them for fig:xsec. P5 draws these projections but prints no per-bin ratio, so no regenA output holds them. The reader is
+projratio.py (committed beside this file). It imports compare_to_models from a given clone and calls that commit's own
+flatten_th2d, flatten_ours and project, the way that commit's main() does. It changes no producer.
+
+The note's literals (sec3_twod.tex:11) and the rounding each prints at:
+  L1 "0.97 in the lowest pT bin": pt projection ratio, bin 0 (pT 0 to first edge), 2 decimals.
+  L2 "1.04 in the highest": pt projection ratio, bin 13 (pT 2.5-4.5), 2 decimals.
+  L3 "1.06 and 0.93 in the two highest p||" bins: pz projection ratio, bins 14 (20-40) and 15 (40-60), 2 decimals;
+     the pair {1.06, 0.93}, in either order, is recorded.
+  L4 "agree with the published result to within 2%, except at the edges of the phase space": over every other bin
+     (pt bins 1-12, pz bins 0-13), max |ratio - 1| at integer-percent rounding is <= 2%.
+
+Which code for which input:
+  - OLD control: E_R central on our edges (regenA/stage/er_old.root, a5c13fc3) with RE-2 part C's deploy 903fb78b's
+    compare_to_models. That code made the printed literals: its project(vec, mask, axis) uses the module's PT_EDGES and
+    PZ_EDGES (0.07 / 0.33 / 0.47) for BOTH sides.
+  - E reading: E_R on the paper's edges (tier1/units_e/er.root, 5171c7b8) with e766ee52's compare_to_models (main after
+    #1318 and #1319). Its project() uses each side's own TH2D axes, so both sides are on 0.075 / 0.325 / 0.475.
+
+The OLD-to-E difference therefore combines two changes: the pT-edge change itself, and #1318's fix taking the
+published widths from the release axis. That is the right comparison. The note's old numbers were made the OLD way
+(903fb78b, both sides on our edges); the new ones should be made the E way (both sides on the paper's edges, with the
+release axis's widths). No reading ever pairs ours-at-0.07 with published-at-0.075. In particular, e766ee52's code is
+not run on the OLD input for any reading.
+
+Control C-LIT (OLD): with 903fb78b's code, L1-L4 reproduce the printed values (0.97, 1.04, {1.06, 0.93}, <= 2%) at
+those roundings. If any one fails, STOP and report it: that would mean the note's number came from somewhere else.
+C-PINS: the inputs equal their pins before and after. C-CLONE: both clones clean (porcelain --ignored 0) before and
+after.
+
+Reading (E, descriptive): L1-L4's quantities on the paper's edges, plus every per-bin ratio.
+
+Placement: login02, plain Python, nice 19, under a 900 s timeout; 0 node-h, no Slurm or srun, nothing written to CFS.
+  - E clone: the existing clean clone at regenA/repo (e766ee52).
+  - OLD clone: a fresh clean clone at 903fb78b941a2f889bfcc5092e41ce27f5add898 in
+    /pscratch/sd/j/josephrb/ibuchi-evloop-20261123/regenA2/repo_903.
+  - Outputs: only under regenA2/out.
+  - The NERSC certificate is checked by command before connecting.

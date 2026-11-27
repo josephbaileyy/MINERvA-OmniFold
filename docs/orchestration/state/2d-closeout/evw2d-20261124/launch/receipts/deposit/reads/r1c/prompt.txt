@@ -1,0 +1,17 @@
+You are an adversarial reviewer of cluster scripts (Perlmutter, HPSS). READ-ONLY: never write anywhere except your report, never touch a git checkout, no network. Do not modify inputs/.
+
+ADVISORY CONFIRMATION OF THE r1b FIXES. Your read inputs/prior/codex-r1b-report.md returned NOT ALL HOLD on EVW2D's HPSS copy and deposit fetch. The lane changed the scripts: inputs/diff/r2-to-r3.diff (full new bytes in inputs/new/, filled copies in inputs/bound/; 65 tests pass). The changes:
+1. The index is renamed before the archive, so the final .tar never appears without its index. Then a gated readback: hsi ls of both final names, and htar -tf of the final archive listing every pinned name.
+2. The six names are checked again as regular files at the end.
+3. Fetch: the receipt's snapshot SHA256SUMS must hash to the bound digest, its pinned list must be exactly the six rows it implies, and the job must match exactly.
+4. A grep read error on the HPSS listing (rc 2) now stops the run.
+5. fill reads every input from HEAD (git show), each a regular blob (mode 100644); the templates and evw2d.py must equal HEAD.
+6. MINOR fixes: a trailing newline in the directory name is kept (sentinel); a failed stat stops cleanly.
+A known, accepted property: if a check fails after the archive is written, the part names stay in HPSS, and a retry needs the director (the existing-name guard refuses). The log says which names are where.
+
+Scope: mistakes and lasting changes; a hostile same-account process is out of scope.
+
+TASKS:
+1. For each of r1b's findings (the five DOES NOT HOLD, and the BLOCKING and MINOR regressions): HOLDS or DOES NOT HOLD, with file:line, and the concrete failing scenario if it does not hold.
+2. Any NEW defect from these changes: a false PASS; a removal or change beyond what is stated; a false STOP on the real system (real htar -tf output format on Perlmutter, hsi mv of an htar archive and its index, hsi ls output going to stderr, GNU coreutils on the login node, BSD tools on the Mac). Label BLOCKING / SHOULD-FIX / MINOR.
+Be concise. Start with one line: "CONFIRMATION: ALL HOLD" or "CONFIRMATION: NOT ALL HOLD".

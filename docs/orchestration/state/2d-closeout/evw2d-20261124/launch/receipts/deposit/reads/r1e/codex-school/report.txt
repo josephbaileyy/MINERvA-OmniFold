@@ -1,0 +1,16 @@
+CONFIRMATION: NOT ALL HOLD
+
+| r1d finding | Verdict |
+|---|---|
+| #4 · Receipt pin form | **DOES NOT HOLD — SHOULD-FIX.** A NUL inserted inside the receipt’s `HPSS_SHA` still passes. I reproduced macOS Bash dropping the byte during `$(head -1 ...)`, before the comparison. [evw2d_deposit.sh:92](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1e/inputs/new/evw2d_deposit.sh:92) |
+| Rollback | **HOLDS.** Both reverse renames are attempted independently, both return codes are logged, and the HPSS directory listing is attempted afterward. [evw2d_hpss.sh:181](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1e/inputs/new/evw2d_hpss.sh:181) |
+| Name-only final lookup | **HOLDS.** Success requires both final names, `htar -tf` status zero, and all six pinned members in its output. [evw2d_hpss.sh:173](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1e/inputs/new/evw2d_hpss.sh:173) |
+| Working-tree symlink | **HOLDS.** Fill rejects a symlink at any of the three file paths before hashing the working copy, even if its target has identical bytes. [fill_deposit_pins.sh:37](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1e/inputs/new/fill_deposit_pins.sh:37) |
+
+**New defects**
+
+- **SHOULD-FIX.** On macOS Bash under `en_US.UTF-8`, the launcher’s new digest guard accepts 64 uppercase `A`s. With that value in `HPSS_SHA`, `fetch-products` can proceed and return success because that mode never uses the pin after the guard. [evw2d_deposit.sh:44](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1e/inputs/new/evw2d_deposit.sh:44)
+- **SHOULD-FIX.** `fetch` can mark a repacked receipt `VERIFIED` even if its final readback lines are missing or report failure, provided the earlier checks and success footer survive. Both cases passed the local log check. [evw2d_deposit.sh:91](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1e/inputs/new/evw2d_deposit.sh:91)
+- **MINOR.** The new lane guard accepts bare `evw2d-20261126`. `fetch` then probes a path relative to the remote working directory and can report the receipt absent while it exists on scratch. [evw2d_deposit.sh:49](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1e/inputs/new/evw2d_deposit.sh:49)
+
+Bash syntax, bound substitutions, and input hashes checked out locally. Live HPSS behavior and the reported 79-test run remain unverified.

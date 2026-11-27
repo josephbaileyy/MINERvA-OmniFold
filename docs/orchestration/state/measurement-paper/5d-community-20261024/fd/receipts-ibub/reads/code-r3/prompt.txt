@@ -1,0 +1,18 @@
+You are an independent, adversarial reviewer of code and cluster scripts for a particle-physics analysis on NERSC Perlmutter. READ-ONLY task: do not modify, create or delete any file; print one report to stdout. Never write to any git checkout.
+
+Inputs: the tree /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree, extracted by git archive from commit d2b7a9d8c (sha256 of each file in /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/inputs.sha256). Key files:
+- docs/orchestration/state/measurement-paper/5d-community-20261024/IBUB-DECLARATION.md (rev 3, the binding design; section 8 governs the run).
+- 2d-unfolding/ibub/: ibub_unit.py, ibub_readout.py, config.json (reviewed twice before; read 2's dispositions are in .../fd/receipts-ibub/reads/code-r2/README.md), and the NEW files: ibub_lanes.py, ibub_overlap.py, jobs/ibub_job.sbatch, test_ibub_job.py, test_ibub_overlap.py.
+- .../fd/receipts-ibub/connect/: ibub_run_connect.template.sh (the login-node connect that fences, clones, checks overlap, preflights, stages and submits the one job), gen_run_connect.py, ibub_run_launch.sh.
+- References: msr_build_connect.template.sh (the connect it follows), cov2d_fence.sh (fence rev 3, embedded), nd-unfolding/msr/msr_overlap.py (imported by the overlap check), ref_c2c1.py.
+
+Standing rules this must obey: job states from sacct only, never squeue; every read of /pscratch or /global/cfs inputs through O_NOATIME (ROOT reads only staged copies); nothing written to CFS or to cov2d's namespace /pscratch/sd/j/josephrb/cov2d-run-20261104; the job's name prefix ibub_; the fence must refuse while any job named ibub_, ibuchi_, cov2d, t2a, rpd or msr is unended.
+
+Assess, citing file:line:
+1. READ 2's fixes in ibub_unit.py / ibub_readout.py: correct and complete?
+2. The JOB (ibub_job.sbatch): can a toy start before the barrier passes? Can a unit run twice or be skipped? Lane/chunk logic, exit codes, IBUB-DONE accuracy, the allocation fit, srun stdin, bash pitfalls (word splitting, subshell variable loss, wait/rc collection), and anything that would fail on Perlmutter (bash 4/5, Slurm srun --exclusive inside an exclusive allocation).
+3. The CONNECT (template + generator + launcher): fence correctness (both fences; malformed sacct output; the second fence before sbatch), the clone and sums check, the order of steps, what happens on each failure (records written? the job possibly submitted twice?), the scontrol check, the records tar, the launcher's sha gate and fetch. Any path that could submit a job without every gate having passed, or leave the operator unable to tell whether a job was submitted.
+4. The OVERLAP check: does it model the other lanes' protected sets correctly, and are the allowances exactly the declared cov2d-acked O_NOATIME reads? Could a real conflict pass?
+5. Any conflict with the declaration's section 8 (price 11:29:00 and the 11.5 node-h cap, the barrier, the re-price trigger, staging and deletion, the preflight).
+
+Output a numbered list of findings labelled BLOCKER, MAJOR, MINOR or NOTE, each with a concrete fix. End with exactly one line: VERDICT: GO (no BLOCKER or MAJOR) or VERDICT: REVISE.

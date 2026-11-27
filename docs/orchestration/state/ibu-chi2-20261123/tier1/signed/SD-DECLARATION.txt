@@ -1,0 +1,24 @@
+# signed_data on the paper's pT edges (declared before computing)
+
+Authority: Joseph ("sure it doesn't cost much lets just do it"); the director's GO is required before running.
+
+What. 2d-unfolding/ibukt/signed_data.py, the signed-target IBU study (OUTCOME-20261119-ibu-signed-data.md), rerun on the
+paper's pT edges (0.075 / 0.325 / 0.475). On a login node, at 0 allocated node-h, as the original was.
+- Implementation checkout: tier1/impl_e, a fresh clone of main f00ed54b. Diff (impl_e.diff): signed_data.py's
+  REFERENCE_DRIVER (the patched driver 677ac75f), the asserted E_R chi2 (434.8943632939891 = Tier 1 D_ER(E) x 205) and
+  the asserted refined distances (0.39, 0.54 = Tier 1 D_IBU(E) at K = 5, 10, rounded as the script does);
+  ibukt/config.json's pt_edges and the er/c2 input pins (Tier 1's units_e er.root 5171c7b8, c2_central.npz b6cb6142).
+- Reference deploy: tier1/deploy_e (Tier 1's patched driver).
+- Stage: tier1/stage_sd, six inputs with pinned shas: cv 43f8cc16, flux d40aea69, er 5171c7b8, c2 b6cb6142,
+  paper 6c6dce72, libRooUnfold 0b34e1e3.
+
+Controls (the script's own; any failure writes STOP.json, and nothing is retried without the director):
+- the replayed truth prior equals the archived T (Tier 1 E);
+- the replayed refined K = 5, 10 cross sections equal Tier 1's E c2_central to the script's tolerance;
+- E_R's published distance equals 434.894363... (rtol 1e-8);
+- the refined distances round to 0.39 and 0.54;
+- the signed target passes admissibility.
+
+Readings (descriptive): the signed-target IBU chi2/205 against the published result at K = 5 and 10 on the paper's
+edges, beside the refined values. The comparison on our edges is 0.816 / 0.961 signed against 0.830 / 1.027 refined
+(OUTCOME-20261119).

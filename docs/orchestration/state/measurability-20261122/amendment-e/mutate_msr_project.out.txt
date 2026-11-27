@@ -1,0 +1,45 @@
+killed    band_s poor edge
+killed    band_s well edge
+killed    band_z below edge
+killed    band_z resolvable edge
+killed    band_r most edge
+killed    band_r no-change edge
+killed    floor strict
+killed    Z per axis
+killed    U-infinity threshold
+killed    range cut
+killed    combined order
+killed    noise max lo>=
+killed    ddof 0
+killed    r floor off
+killed    MC projector check off
+killed    match bar off
+killed    s_poor complement
+killed    C-RID tolerance
+killed    info-limit and->or
+killed    C-T3 tolerance
+killed    conversion drops P
+killed    stop ignored
+killed    C-ROUTE ignored
+killed    count space -> theta space J
+killed    dropped-cell check off
+killed    early stop off
+killed    r N-PREC off
+killed    r route off
+killed    C-L id range off
+killed    C-DID strict rule restored
+killed    C-DID expected size off
+killed    C-2D exact M restored
+killed    C-D primary only restored
+killed    E: C's float64 formation restored (eigen route)
+killed    E: C's float64 formation restored (independent route)
+killed    E: well-block refinement off
+killed    E: production eigenbasis from eigh(F)
+killed    E: root keeps mu <= 0 rows
+killed    E: root null completion off
+killed    E: re-sort after refinement off
+killed    E: singular-Q refusal off
+killed    E: G without the 1/sqrt(lambda) scale
+killed    E: a production call drops the root
+mutants 43; killed 43; not killed 0
+rc=0

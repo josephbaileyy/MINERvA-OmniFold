@@ -1,0 +1,107 @@
+# Adversarial Review Report: IBUB Code and Cluster Scripts (Rev 3)
+
+**Target Commit:** `d2b7a9d8c`  
+**Review Scope:** `IBUB-DECLARATION.md` (rev 3), `2d-unfolding/ibub/` (`ibub_unit.py`, `ibub_readout.py`, `ibub_lanes.py`, `ibub_overlap.py`, `jobs/ibub_job.sbatch`, `config.json`, tests, mutants), and `connect/` (`ibub_run_connect.template.sh`, `gen_run_connect.py`, `ibub_run_launch.sh`).
+
+---
+
+## 1. Assessment Against Review Mandates
+
+### 1. READ 2's Fixes in `ibub_unit.py` / `ibub_readout.py`: Correct and Complete?
+- **Finding 1 (MAJOR in Read 2 — Truncated/Empty Marker Crash):** Fixed in [`ibub_readout.py:200-208`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/ibub_readout.py#L200-L208) catching `ValueError` (which encompasses `json.JSONDecodeError`) and [`ibub_readout.py:224-230`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/ibub_readout.py#L224-L230) catching `(ValueError, KeyError, OSError)` for corrupt npz metadata. The missing seed is appended to `missing` and recorded in `problems`; [`ibub_readout.py:325-327`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/ibub_readout.py#L325-L327) cleanly marks the tune `INCOMPLETE` without raising.
+- **Finding 2 (MINOR — C-TRUTH Marker Seed Verification):** Fixed in [`ibub_unit.py:319-322`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/ibub_unit.py#L319-L322) (marker embeds `unit`, `kind`, `tune`, `seed`) and checked in [`ibub_readout.py:209-212`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/ibub_readout.py#L209-L212).
+- **Finding 3 (MINOR — Surviving Mutants for `data_sha256` and `kind`/`tune`):** Fixed in [`ibub_readout.py:235-238`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/ibub_readout.py#L235-L238) and guarded by mutants 35, 36, and 37 in [`mutants.py:98-103`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/mutants.py#L98-L103).
+- **Finding 4 (MINOR — Malformed Marker Raised in `refcheck`/Rerun):** Fixed in [`ibub_unit.py:233-240`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/ibub_unit.py#L233-L240) (`read_marker` returns `{}` on error, never raising, which fails the `verdict == "PASS"` guard).
+- **Finding 5 (NOTE — Readout Refuses `--out` Under `/pscratch`):** Fixed in [`ibub_readout.py:277-280`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/ibub_readout.py#L277-L280) checking against `cb.GUARDED`.
+- **Finding 6 (NOTE — Reference `.root` Digest in Barrier):** Fixed in [`ibub_unit.py:394-395`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/ibub_unit.py#L394-L395) and tested with mutants 38 and 39.
+- **Verdict:** Correct and complete.
+
+### 2. The JOB (`jobs/ibub_job.sbatch`)
+- **Barrier Enforcement:** Reference steps run concurrently on lanes 0 and 1 ([`ibub_job.sbatch:93-98`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L93-L98)) and are strictly joined before `ibub_unit.py refcheck` executes synchronously ([`ibub_job.sbatch:101`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L101)). If either reference exits non-zero or `refcheck` exits non-zero, lines 103–106 log the failure, write `done_json refs 3`, and exit 3. Under no execution path can any toy unit start before the barrier succeeds.
+- **Unit Skipping / Duplication:** [`ibub_lanes.py:26-30`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/ibub_lanes.py#L26-L30) deterministically assigns each of the 600 unique toy seeds round-robin across 4 lanes (150 per lane). The chunking loop ([`ibub_job.sbatch:115-118`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L115-L118)) steps by `${units[@]:$i:$CHUNK}`, guaranteeing zero overlap and zero omitted indices. Within `run_unit` ([`ibub_unit.py:259-265`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/ibub_unit.py#L259-L265)), units with existing products and PASS markers are skipped (rc 0), while duplicate unit arguments raise `ValueError` ([`ibub_unit.py:438`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/ibub_unit.py#L438)).
+- **Exit Codes:** Clean run: 0; toy phase failures: 1; pre-flight/allocation/environment failures: 2; barrier failures: 3.
+- **IBUB-DONE Accuracy:** Accurate upon final exit, but exhibits a minor flaw at [`ibub_job.sbatch:125`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L125) (see Finding 1).
+- **Allocation Fit:** Verified via `scontrol show job` ([`ibub_job.sbatch:51-54`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L51-L54)), confirming 4 × 112 GB (448 GB) fits inside allocated memory (~500 GB) and 4 × 64 fits inside allocated CPUs (256).
+- **srun stdin & Bash Robustness:** [`ibub_job.sbatch:72`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L72) redirects `srun` stdin from `< /dev/null`. Process substitution `< <(...)` at line 79 prevents subshell variable loss in bash 3/4/5. Returncode collection via `wait "$p"; TOY_RCS="$TOY_RCS $?"` correctly collects lane statuses.
+- **Perlmutter Slurm Constraints:** `srun --exclusive -n1 -c 64 --mem=112G` inside an exclusive batch allocation successfully partitions cores and memory across concurrent steps under Slurm's `cons_tres` plugin on Perlmutter CPU nodes. However, the step name uses `ibub-` rather than `ibub_` (see Finding 2).
+
+### 3. The CONNECT Package (Template + Generator + Launcher)
+- **Fence Correctness:** Two-stage fence architecture:
+  1. [`ibub_run_connect.template.sh:44-50`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh#L44-L50) decodes and runs `cov2d_fence.sh` rev 3 (sha256 checked against `7e81a721...`).
+  2. [`fence_sacct`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh#L51-L66) enforces terminal states across all 6 prefixes (`ibub_`, `ibuchi_`, `cov2d`, `t2a`, `rpd`, `msr`).
+  3. Malformed sacct lines are caught by `NF != 3 || $1 !~ /^[0-9]+([_+].*)?$/` ([`line 57`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh#L57)) and refuse the fence.
+  4. Second fence check runs immediately prior to `sbatch` at [`line 137`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh#L137).
+- **Clone & Sums Verification:** Clones into `$D`, checks out commit `$M`, checks git porcelain (`n == 0`), and executes `sha256sum --strict -c` ([`lines 114-116`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh#L114-L116)) on the embedded hashes of all 6 runtime files generated by [`gen_run_connect.py:31-35`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/gen_run_connect.py#L31-L35).
+- **Gate Ordering & Double Submission Prevention:** Steps execute strictly in order (Fences -> Clone/Sums -> Overlap -> Preflight -> Stage -> Pre-sbatch Fence -> sbatch -> sacct verify -> scontrol verify -> Clean verify -> Records tar). Double submission is prevented by `$N` existence check ([`line 39`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh#L39)) and the sacct fence refusing unended `ibub_` jobs.
+- **Operator Visibility on Submission:** As soon as `sbatch` succeeds, `$jid` is persisted to `$N/logs/job.id` ([`line 143`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh#L143)). If subsequent sacct polling times out after 5 minutes, [`line 150`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh#L150) issues an explicit warning (`do not resubmit`) and records are archived with `job.id` intact.
+- **Launcher Dual Gate & Fetch:** [`ibub_run_launch.sh:25`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_launch.sh#L25) checks the local script digest against `$SHA`, and the remote command line ([`line 28`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_launch.sh#L28)) independently verifies `/dev/shm` copy before launching. Post-run fetch streams records via `dd iflag=noatime`, verifies the tar digest against `connect-run.log`, unpacks, and validates `RECORDS.SHA256SUMS`.
+
+### 4. The OVERLAP Check (`ibub_overlap.py`)
+- **Model of Protected Sets:** [`theirs()`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/ibub_overlap.py#L66-L79) accurately aggregates cov2d 36 protected paths, 12 disclosed roots, rpd write roots and staged originals, limitation-resolver extra paths, tier3 msr reads and write roots (`msr-*`, `/dev/shm/msr-connect`), and `ibuchi_` root (`/pscratch/sd/j/josephrb/ibuchi-evloop-20261123`).
+- **Allowances:** Line 99–101 strictly restricts allowances to:
+  1. `read (interpreter)` hitting another read-only interpreter.
+  2. `read (cov2d-acked)` hitting a `cov2d*` protected or disclosed root.
+- Real conflicts (any write hitting another lane's space, any plain read hitting cov2d, or any cov2d-acked read hitting non-cov2d paths) are classified as `OVERLAP HIT` and exit 3 (STOP).
+
+### 5. Alignment with Declaration Section 8
+- **Wall Time & Node-Hour Cap:** Wall time limit is set to `11:29:00` in `--time` and scontrol check ([`ibub_run_connect.template.sh:35, 139, 154`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_connect.template.sh#L35)); 11:29:00 is 11.483 node-h, strictly under the 11.5 node-h cap.
+- **Barrier & Re-Price Trigger:** Reference phase runs first; `refcheck` ([`ibub_unit.py:389, 397`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/ibub_unit.py#L389)) enforces `secs <= 1.25 * 217` (271.25 s) and validates `central_df` vs `central` to `c_rep_rtol` (1e-8) before any toy starts.
+- **Preflight & Staging:** Preflight executes on login node before submission, checking `c2_central.npz` and `k2a` via `O_NOATIME` and stat on 600 toy files. Staging copies CV, MC, and `libRooUnfold.so` under `O_NOATIME`, hashes against pins, and sets permissions read-only (`0444`).
+- **Data Deletion:** Staged per-unit data files are unlinked in the `finally` block of `run_unit` ([`ibub_unit.py:326-328`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/ibub_unit.py#L326-L328)).
+- **Standing Rules:** sacct-only job status polling; zero squeue calls; all `/pscratch` and `/global/cfs` reads through `O_NOATIME`; ROOT reads only staged copies under staging root; zero writes to CFS or to cov2d namespace.
+
+---
+
+## 2. Numbered Findings and Concrete Fixes
+
+### Finding 1: Premature write of `IBUB-DONE` with `"rc": 0` before verdict check
+- **Classification:** MINOR
+- **File & Line:** [`2d-unfolding/ibub/jobs/ibub_job.sbatch:125-130`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L125-L130)
+- **Description:** Line 125 executes `done_json toys 0 > /dev/null` solely to query `toy_pass_markers` and `porcelain_after` via Python at lines 126–127. If the batch job is abruptly terminated by Slurm (e.g. wall clock expiry or OOM) immediately following line 125, `$N/IBUB-DONE` will persist containing `"stage": "toys", "rc": 0`, giving a false indication of success prior to the verification at line 128.
+- **Fix:** Do not write `IBUB-DONE` with a speculative `0`. Instead, compute `pass` and `na` directly in shell or write to a staging file (e.g. `$N/tmp-done.json`), evaluate `ok`, and call `done_json toys $rc` exactly once:
+  ```bash
+  pass=$(ls "$U"/toy_*.done 2>/dev/null | xargs -r grep -l '"verdict": "PASS"' | wc -l)
+  na=$(git -C "$C" status --porcelain --ignored | awk 'NF && index($0, "__pycache__") == 0 { c++ } END { print c + 0 }')
+  ok=1; [ "$pass" -eq 600 ] || ok=0; [ "$na" -eq 0 ] || ok=0; [ "$(echo $TOY_RCS | tr -d ' 0')" = "" ] || ok=0
+  if [ "$ok" -eq 1 ]; then done_json toys 0; say "end PASS"; exit 0; fi
+  done_json toys 1; say "end: not every toy passed (pass markers $pass, lane rcs$TOY_RCS, porcelain $na)"; exit 1
+  ```
+
+---
+
+### Finding 2: `srun` step job-name prefix uses hyphen (`ibub-`) instead of underscore (`ibub_`)
+- **Classification:** MINOR
+- **File & Line:** [`2d-unfolding/ibub/jobs/ibub_job.sbatch:70`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L70)
+- **Description:** Line 70 sets `--job-name="ibub-$tag"`. The standing rule mandates the prefix `ibub_`. While the batch allocation itself is named `ibub_run` and `sacct -X` ignores steps, any step-level inspection or step-aware sacct query would fail to associate these steps with `PREFIXES=ibub_,...` because of the hyphen.
+- **Fix:** Replace `--job-name="ibub-$tag"` with `--job-name="ibub_$tag"`.
+
+---
+
+### Finding 3: Fragile `acpu` regex in Slurm allocation check
+- **Classification:** MINOR
+- **File & Line:** [`2d-unfolding/ibub/jobs/ibub_job.sbatch:52`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/2d-unfolding/ibub/jobs/ibub_job.sbatch#L52)
+- **Description:** Line 52 extracts CPU allocation using `AllocTRES=cpu=\([0-9][0-9]*\)`, assuming `cpu=` immediately follows `AllocTRES=`. In contrast, line 51 uses `AllocTRES=[^ ]*mem=\([0-9][0-9]*\)M`. If Slurm serializes TRES with any prefix ahead of `cpu` (such as `billing=` or custom TRES), line 52 will yield an empty string and refuse with exit code 2.
+- **Fix:** Change line 52 to match line 51's delimiter handling:
+  ```bash
+  acpu=$(scontrol show job "$SLURM_JOB_ID" | sed -n 's/.*AllocTRES=[^ ]*cpu=\([0-9][0-9]*\).*/\1/p' | head -1)
+  ```
+
+---
+
+### Finding 4: Unpopulated `SHA=@@CONNECT_SHA@@` placeholder in `ibub_run_launch.sh`
+- **Classification:** NOTE
+- **File & Line:** [`docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_launch.sh:24`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/ibub_run_launch.sh#L24)
+- **Description:** `ibub_run_launch.sh` retains `SHA=@@CONNECT_SHA@@`. [`gen_run_connect.py`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/gen_run_connect.py) generates `ibub_run_connect.sh` from the template but does not populate `ibub_run_launch.sh`. This serves as an intentional gate ensuring that `ibub_run_launch.sh` refuses to run (exit 8) until the director approves and binds the generated connect script sha256 into the launcher.
+- **Fix:** Document as part of connect binding step 3; optionally update `gen_run_connect.py` to accept `--bind-launcher` or generate `ibub_run_launch.sh` alongside the connect script when authorized.
+
+---
+
+### Finding 5: `gen_run_connect.py` CLI lacks parameter validation
+- **Classification:** NOTE
+- **File & Line:** [`docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/gen_run_connect.py:26-27`](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r3/tree/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ibub/connect/gen_run_connect.py#L26-L27)
+- **Description:** Invoking `python3 gen_run_connect.py` without arguments raises an uncaught `IndexError` rather than printing a usage message.
+- **Fix:** Add a check `if len(argv) < 1: sys.exit("usage: gen_run_connect.py M [OUT]")`.
+
+---
+
+VERDICT: GO

@@ -1,0 +1,4 @@
+# tree  n(mu_p_total>0)  n(|mad-GetPmu|>1e-6 rel)  n(mad<=0)  max|mad-GetPmu| MeV
+data 4119797 0 0 4.547473508864641e-13
+mc_background 658227 0 0 4.547473508864641e-13
+mc_signal_reco 20498013 0 0 4.547473508864641e-13

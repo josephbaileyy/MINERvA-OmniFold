@@ -1,0 +1,5 @@
+certificate valid 2026-11-25T15:18:00 to 2026-11-26T15:19:52 UTC (390 min left; this step needs 10)
+scp post.tar.gz rc=0
+b4b26dc30bad15342441713c91f355f1098e207cb01e930ed048e2471208533e  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7e3f49f7-e8e4-452d-b380-399d4f6c529e/scratchpad/evw2d-run/fetch/post.tar.gz
+cleanup.tar.gz absent
+launcher rc=0

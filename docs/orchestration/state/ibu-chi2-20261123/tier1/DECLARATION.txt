@@ -1,0 +1,29 @@
+# Tier 1 of option (i): E_R and its binned IBU on the paper's pT edges (declared before computing)
+
+Authority: Joseph chose option (i) and asked for a Tier 1 result now. The director's rulings (acks.txt) and cov2d's ack
+for the staged copies are also in acks.txt. Nothing changes shared code or products.
+
+Runs. One exclusive CPU node, job ibuchi_t1, under a 1 node-h cap. Four units of 2d-unfolding/ref_c2c1/ref_c2c1.py, each
+srun -c 64 at OMP/MKL/OPENBLAS/NUMEXPR = 64/1/1/1, exactly as REF-C2C1's centrals:
+- deploy_old, clone at M = 77d76cfc (REF-C2C1's deploy). Diff against M: config.json's staging root only. Units: er,
+  c2_central.
+- deploy_e, the same clone. Diff against M: the staging root; re2_driver.py PT_EDGES 0.07 -> 0.075, 0.33 -> 0.325 and
+  0.47 -> 0.475; config.json's re2_driver.py pin set to the patched file's sha256. Units: er, c2_central.
+Inputs: only tier1/stage/ (the CV omnifile 43f8cc16, the flux file d40aea69), and the libRooUnfold.so that config.json
+names (dlopen). E_R's argv is unchanged (config.json e_r.argv).
+
+Local readings (score_t1.py), against the published pt_pl_cross_section and TotalCovariance (sha 6c6dce72):
+- D_ER = chi2(er hXSec2D - pub)/205.
+- D_IBU(K) = chi2(c2 xsec at K - pub)/205, for K = 5 and 10.
+
+Controls (any failure: STOP, nothing retried without the director):
+- C-UNITS: all four done-markers are PASS (c2's C-FILL, C-SIM and C-ROO).
+- C-REF-OLD: deploy_old er hXSec2D equals the committed E_R central (a5c13fc3) to <= 1e-8 relative, cell by cell.
+- C-D-OLD: deploy_old D_ER = 2.270 within 5e-4, and D_IBU(10) = 1.0266 within 5e-4.
+- C-COL: the column (p||) sums of hDataReco2D are equal OLD vs E exactly, and those of er's hUnfold2D are equal to
+  <= 1e-6 relative.
+
+Readings: descriptive. D_ER and D_IBU(5, 10) on the paper's edges, beside the OLD values. The published comparison
+now uses matching cells.
+signed_data K = 5/10 is not in this package. Its mock of the refinement needs separate review, so it is offered as a
+follow-up.

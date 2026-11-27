@@ -1,0 +1,7 @@
+2026-11-26T00:32:13Z
+        Valid: from 2026-11-25T15:18:00 to 2026-11-26T15:19:52
+scp post.tar.gz rc=0
+3a4dc3cf5decc9d9ae43812b33b83356a93e5e323de9c75fcc4471b90ea8d325  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evw5d-run2/fetch2/post.tar.gz
+scp hpss.tar.gz rc=0
+3181b83e599de355da85bd8530c20c6ff32098c3b87a95e617c26050edce1e4e  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/evw5d-run2/fetch2/hpss.tar.gz
+launcher rc=0

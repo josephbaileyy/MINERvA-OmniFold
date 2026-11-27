@@ -1,0 +1,50 @@
+== variant sbatch_fails: script rc=5; session: 
+== self copy left: ls: cannot access '/dev/shm/ibubc.1.sh': No such file or directory; shm dir: ls: cannot access '/dev/shm/ibub-connect': No such file or directory
+== the connect log
+  node 4d50b63d3129 nproc=4 loadavg 1.04 0.54 0.26
+  2026-11-24T02:24:41Z
+  window_end_epoch 1795487981 (now 1795487081); fence prefixes ibub_,ibuchi_,cov2d,t2a,rpd,msr
+  connect script sha256 efcdf1c40e85825c2f0558e5a432dff88d493403d0dbd77b1cca4a1d2b03e41e
+  == cov2d fence rev 3 (7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738)
+  fence host=4d50b63d3129 utc=2026-11-24T02:24:41Z
+  sacct -X -n -P -u root -S 2026-11-10T02:24:41 -E now -o JobID,JobName,State 2>&1
+  sacct matching rows: 2
+  FENCE CLEAR
+  == fence (sacct)
+  fence clear
+  HEAD e060e2763577d1e751fd8c676eb98ed890e9ad8e; porcelain --ignored before: ''
+  ibub_unit.py: OK
+  ibub_readout.py: OK
+  ibub_lanes.py: OK
+  ibub_overlap.py: OK
+  config.json: OK
+  jobs/ibub_job.sbatch: OK
+  threads 2; nice 19; ionice idle; python 3.11.18
+  == overlap (ibub_overlap.py run)
+  OVERLAP run: ours 11; theirs 130
+  OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18/b  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/cov2d-run-20261104
+  OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/AR23-a2/b  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/cov2d-run-20261104
+  OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-2a/writer_control.root  ~  theirs cov2d disclosed root /pscratch/sd/j/josephrb/cov2d-2a
+  OVERLAP ALLOWED: ours read (cov2d-acked) /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root  ~  theirs cov2d protected (flux2 config) /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root
+  OVERLAP ALLOWED: ours read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28  ~  theirs rpd flux2 read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28
+  OVERLAP: CLEAR (pairs checked 1430, hits 0)
+  == preflight (ibub_unit.py preflight)
+  {"refs": {"c2_central": {"pass": true, "path": "/pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_central.npz", "sha256": "7c5244c473d2c9fce341ea8b090e33ae49b4ef87662b7bfd27ea0f8df3ef9615"}, "k2a": {"pass": true, "path": "/pscratch/sd/j/josephrb/cov2d-2a/writer_control.root", "sha256": "509f083832c594564f95981b2e54f978237cb6237ad91f8ae7cc30d1e3fabe4e"}}, "schema": "ibub-preflight/1", "toys": {"AR23": {"files": 300, "missing": []}, "G18": {"files": 300, "missing": []}}, "verdict": "PASS"}
+  == staging (ibub_unit.py stage)
+  2026-11-24T02:25:12Z
+  {"files": {"CV": {"pass": true, "pin": "c5e2dc7c3148abc040dec4c11a510b7fcd80a8d95a9615d12d4163fa59fd5462", "sha256": "c5e2dc7c3148abc040dec4c11a510b7fcd80a8d95a9615d12d4163fa59fd5462", "source": "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root", "staged": "/pscratch/sd/j/josephrb/ibub-20261123/stage/runEventLoopOmniFold_MEFHC.root"}, "MC": {"pass": true, "pin": "55f686034decd62cbcfe9fa13bcdd58df313f5e8b227f8d8be0eae519a0eb925", "sha256": "55f686034decd62cbcfe9fa13bcdd58df313f5e8b227f8d8be0eae519a0eb925", "source": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root", "staged": "/pscratch/sd/j/josephrb/ibub-20261123/stage/runEventLoopMC_MEFHC.root"}, "lib": {"pass": true, "pin": "b88d9c75d4ffe0910b3fff3917e5b3ea6b84c4991d8b430f2c9aa50596ae2f57", "sha256": "b88d9c75d4ffe0910b3fff3917e5b3ea6b84c4991d8b430f2c9aa50596ae2f57", "source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/libRooUnfold.so", "staged": "/pscratch/sd/j/josephrb/ibub-20261123/stage/libRooUnfold.so"}}, "schema": "ibub-stage/1", "utc": "2026-11-24T02:25:13Z", "verdict": "PASS"}
+  2026-11-24T02:25:13Z
+  == the fence again, just before the submission
+  == sbatch
+  sbatch: error: stand-in refusal
+  STOP: sbatch rc 1, id ''
+  == records
+  2026-11-24T02:25:13Z
+  records copied: 6 files, 17754 bytes
+  fetch-run.tar sha256 1bf5539a15d2a2ff6552a4e5d50834efdf6ca7b177ee445a51073893b611390c bytes 30720
+  ibub run rc=5
+  2026-11-24T02:25:13Z
+== done: 5
+== sbatch argv: --parsable --job-name=ibub_run --time=11:29:00 --output=/pscratch/sd/j/josephrb/ibub-20261123/logs/%x-%j.out /pscratch/sd/j/josephrb/ibub-20261123/deploy/2d-unfolding/ibub/jobs/ibub_job.sbatch /pscratch/sd/j/josephrb/ibub-20261123/deploy /pscratch/sd/j/josephrb/ibub-20261123 e060e2763577d1e751fd8c676eb98ed890e9ad8e 
+== stage: -r--r--r-- libRooUnfold.so -r--r--r-- runEventLoopMC_MEFHC.root -r--r--r-- runEventLoopOmniFold_MEFHC.root -rw-r--r-- stage.json 
+== records tar: 30720

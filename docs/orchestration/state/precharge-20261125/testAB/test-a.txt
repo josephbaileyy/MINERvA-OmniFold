@@ -1,0 +1,34 @@
+
+## primary: fit 1A,1C,1E,1G,1M,1O; score 1B,1D,1F,1L,1N,1P
+held-out cells scored (fold >= 5): 36 of 45
+A1 [floor 2%] separable held-out chi2 149.0/36 p=1.08e-15; interaction chi2 71.3/36 p=0.000416; delta chi2 (sep - int) +77.7
+A1 [no floor] separable held-out chi2 180.6/36 p=3.63e-21; interaction chi2 83.9/36 p=1.07e-05; delta chi2 (sep - int) +96.7
+training deviance separable 288.1/31, interaction 141.6/30; gamma +0.2165 +- 0.0177 (+12.2 sigma)
+a_i (log): [-0.0426, -0.0509, 0.2958, 0.5944, 0.3399]  b_j (log, first bin 0): [0.0, 0.0093, -0.0254, -0.0234, 0.0259, 0.114, 0.2527, 0.5315, 1.0075]
+held-out data/separable prediction by cell (fold >= 5):
+[[1.03  1.036 1.001 0.999 0.979 0.941 0.953 0.972 0.995]
+ [0.883 0.815 0.923 0.986 1.115 1.244 1.489 1.298 1.33 ]
+ [0.953 0.896 0.924 1.108 1.227 1.049 1.204 1.289   nan]
+ [1.001 0.974 1.114 1.208 1.39  1.429 0.948   nan   nan]
+ [1.138 1.063 1.496   nan   nan   nan   nan   nan   nan]]
+A2 best common s = 1.15 (training deviance 754.0/39); held-out chi2 [floor 2%] 315.8/38 p=1.75e-45; [no floor] 558.0
+A2 per-band best s_i [delta-dev<=1 range]: ['1.14 [1.14,1.14]', '1.20 [1.20,1.20]', '1.19 [1.19,1.20]', '1.10 [1.05,1.12]', '1.09 [0.99,1.15]'] ; consistency chi2 about common s 1.150: 170.6/4 (grid-step sigma floor 0.005)
+
+## swap: fit 1B,1D,1F,1L,1N,1P; score 1A,1C,1E,1G,1M,1O
+held-out cells scored (fold >= 5): 38 of 45
+A1 [floor 2%] separable held-out chi2 167.1/38 p=4.11e-18; interaction chi2 68.8/38 p=0.00163; delta chi2 (sep - int) +98.3
+A1 [no floor] separable held-out chi2 191.9/38 p=1.95e-22; interaction chi2 78.8/38 p=0.000114; delta chi2 (sep - int) +113.1
+training deviance separable 314.1/30, interaction 141.2/29; gamma +0.2517 +- 0.0189 (+13.3 sigma)
+a_i (log): [-0.0304, -0.0609, 0.3225, 0.7088, 0.5132]  b_j (log, first bin 0): [0.0, 0.0028, -0.0459, -0.0305, 0.0182, 0.0735, 0.235, 0.5202, 1.0143]
+held-out data/separable prediction by cell (fold >= 5):
+[[1.004 1.017 1.021 0.99  0.973 0.991 0.969 0.979 0.968]
+ [0.912 0.883 0.923 1.012 1.19  1.353 1.511 1.314 1.357]
+ [0.861 0.869 0.996 1.101 1.07  1.347 1.049 1.298 0.94 ]
+ [0.886 0.837 0.89  0.938 1.036 0.947 0.935   nan   nan]
+ [0.677 0.844 1.284 0.847   nan   nan   nan   nan   nan]]
+A2 best common s = 1.16 (training deviance 779.4/39); held-out chi2 [floor 2%] 284.2/40 p=1.46e-38; [no floor] 545.7
+A2 per-band best s_i [delta-dev<=1 range]: ['1.14 [1.14,1.14]', '1.20 [1.20,1.20]', '1.18 [1.18,1.20]', '1.19 [1.19,1.20]', '1.10 [1.09,1.10]'] ; consistency chi2 about common s 1.160: 264.0/4 (grid-step sigma floor 0.005)
+
+## Readings against DECLARATION.md
+primary: H_A (A1) contradicts [p_sep 1.08e-15, gamma +12.2 sigma, held-out delta chi2 +77.7]; A2 single scale contradicts [s 1.15, p 1.75e-45]
+swap: H_A (A1) contradicts [p_sep 4.11e-18, gamma +13.3 sigma, held-out delta chi2 +98.3]; A2 single scale contradicts [s 1.16, p 1.46e-38]

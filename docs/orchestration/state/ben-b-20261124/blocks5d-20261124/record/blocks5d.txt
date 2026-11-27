@@ -1,0 +1,28 @@
+B5D blocks: C_b rank 4 (family nominal, A7_genie_mec, A7_nuwro, A7_gibuu)
+R1: f_hat 1.0912132646494956, SE 0.027315590577934326, trigger {'active': True, 'phi': 1.0912132646494956, 'state': 'ACTIVE'}
+R2: f_hat 1.29239214321498, SE 0.03563441215681167, trigger {'active': True, 'phi': 1.29239214321498, 'state': 'ACTIVE'}
+R3: f_hat 2.977418559678081, SE 0.08238566276481754, trigger {'active': True, 'phi': 2.977418559678081, 'state': 'ACTIVE'}
+unresolved stop: False
+g18/minus2 band factors: R1 1.1080833248303281, R2 1.3929975203641285, R3 3.1297454381367
+g18/all band factors: R1 1.1018194989943326, R2 1.3626677009663373, R3 3.0971306522362503
+ar23/minus2 band factors: R1 1.0743432044686632, R2 1.1917867660658317, R3 2.8250916812194617
+ar23/all band factors: R1 1.0704825886754088, R2 1.1813029111447448, R3 2.7898587458586293
+member nominal vs C_b: quad 2.533, undebiased bound 1
+member A7_genie_mec vs C_b: quad 1.001, undebiased bound 1
+member A7_nuwro vs C_b: quad 1, undebiased bound 1
+member A7_gibuu vs C_b: quad 1, undebiased bound 1
+g18/minus2 traces (relative to T): R1 toy 0.03336 ref 0.03132 (4 modes); R2 toy 0.005743 ref 0.004988 (4 modes); R3 toy 0.001503 ref 0.0005687 (8 modes)
+g18/all traces (relative to T): R1 toy 0.03335 ref 0.03134 (4 modes); R2 toy 0.005752 ref 0.005032 (4 modes); R3 toy 0.001447 ref 0.0005567 (8 modes)
+ar23/minus2 traces (relative to T): R1 toy 0.03319 ref 0.03107 (4 modes); R2 toy 0.005695 ref 0.005075 (4 modes); R3 toy 0.001387 ref 0.0006173 (8 modes)
+ar23/all traces (relative to T): R1 toy 0.03292 ref 0.03107 (4 modes); R2 toy 0.005715 ref 0.005094 (4 modes); R3 toy 0.00139 ref 0.0006343 (8 modes)
+W1 vs C_b: quad 0.172, outside span 0.1321
+W2 vs C_b: quad 2.067, outside span 0.2859
+W3 vs C_b: quad 470.3, outside span 0.4572
+stage0c_gibuu vs C_b: quad 487.3, outside span 0.1664
+closure_nuwro vs C_b: quad 5.197, outside span 0.09535
+F1_genie_v3_g18 vs C_b: quad 1744, outside span 0.2649
+F1_genie_v3_ar23 vs C_b: quad 988, outside span 0.2195
+g18/minus2 vs C_b: quad 1489, outside span 0.2726
+g18/all vs C_b: quad 1231, outside span 0.2802
+ar23/minus2 vs C_b: quad 1402, outside span 0.1929
+ar23/all vs C_b: quad 1163, outside span 0.2002

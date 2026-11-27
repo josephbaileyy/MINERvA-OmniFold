@@ -1,0 +1,67 @@
+=== script rc=0; /dev/shm copy left: no
+=== /pscratch/sd/j/josephrb/s2r-20261124/logs/connect-submit.log
+node 31a2305bd813 nproc=4 loadavg 0.99 0.68 0.67
+2026-11-24T18:26:00Z
+window_end_epoch 1795545611 (now 1795544760); fence prefixes cov2d,rpd_,d2s0,covfix
+connect script sha256 fa3fbaf75a60ee5ea277240579b785909b5d468e22be76e9da263f464079b4d7
+== fence (sacct)
+fence clear
+== iris
+m3246 cpu x 0.0 1328.8
+balance_node_h=1328.8 half=664.4 cap_total=1.0
+HEAD 4017c0825444c4e88742801653bf088075c197ed
+porcelain lines (tracked+untracked) 0; ignored entries other than __pycache__/ 0
+s2r/s2r_arm.py: OK
+s2r/s2r_probe.py: OK
+s2r/s2r_read.py: OK
+s2r/s2r_rule.py: OK
+s2r/sbatch_s2r.sh: OK
+s2r/test_s2r.py: OK
+tier3/t3p_arms.py: OK
+tier3/t3p_probe.py: OK
+declaration sha256 16c7f5fb62e4b62aa9ee34dd62a16be15f49b598b8437f716bb99d51cf7970cd
+Ran 58 tests in 8.460s
+
+OK
+porcelain lines (tracked+untracked) 0; ignored entries other than __pycache__/ 0
+3a7efd52158e36e75f4f219a9cdcc624ebe8780c01baf54c13682d334ab4774e  /pscratch/sd/j/josephrb/s2r-20261124/logs/manifest-connect.json
+role	sha256_ok	stat_unmoved	size	atime_before_ns	atime_after_ns	src
+of_inputs_5d	True	True	77	1795544758977833735	1795544758977833735	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+bkg_dump	True	True	77	1795544758977833735	1795544758977833735	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+bank_cv	True	True	77	1795544758980833999	1795544758980833999	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz
+closure_ratio_nuwro	True	True	77	1795544758981834087	1795544758981834087	/pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json
+rho_gibuu_cv-F	True	True	77	1795544758983834263	1795544758983834263	/pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-gibuu_cv-F.npz
+prr_B0_nominal_s991000	True	True	77	1795544758984834350	1795544758984834350	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s991000.npz
+prr_B0_A7_gibuu_s991000	True	True	77	1795544758986834526	1795544758986834526	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s991000.npz
+prr_B0_q3_s991000	True	True	77	1795544758986834526	1795544758986834526	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/q3/prr_B0_q3_s991000.npz
+python 3.11.18 lightgbm 4.7.0 scipy 1.16.3 numpy 1.26.4
+fence.txt:
+cov2d
+rpd_
+d2s0
+covfix
+s2r_probe.py limit -> '1:00:00' (rc 0), declared 1:00:00
+== fence again (sacct)
+2026-11-24T18:27:05Z
+Slurm option variables left: 0
+sbatch rc=0
+Submitted batch job 7000001
+s2r_run job 7000001
+scontrol TimeLimit=01:00:00 (declared 01:00:00); array fields 0
+7000001|s2r_run|COMPLETED|0:0|2026-11-24T20:00:00|2026-11-24T20:40:00|2400|1|01:00:00|1|regular|m3246
+porcelain lines (tracked+untracked) 0; ignored entries other than __pycache__/ 0
+s2r submit rc=0
+2026-11-24T18:27:11Z
+=== tests.log tail
+Ran 58 tests in 8.460s
+
+OK
+=== stub calls
+sacct -X -n -P -S now-14days -o JobID,JobName,State
+sacct -X -n -P -S now-14days -o JobID,JobName,State
+sacct -X -n -P -S now-14days -o JobID,JobName,State
+sbatch --time=01:00:00 --job-name=s2r_run --output=/pscratch/sd/j/josephrb/s2r-20261124/logs/%x_%j.out /pscratch/sd/j/josephrb/s2r-20261124/deploy/nd-unfolding/s2r/sbatch_s2r.sh /pscratch/sd/j/josephrb/s2r-20261124/deploy 4017c0825444c4e88742801653bf088075c197ed /pscratch/sd/j/josephrb/s2r-20261124
+scontrol show job 7000001
+sacct -j 7000001 -X -n -P -o JobID,JobName,State,Timelimit,NNodes,QOS,Account
+=== files written under /pscratch outside /pscratch/sd/j/josephrb/s2r-20261124 (newer than the planting):
+/pscratch/sd/j/josephrb

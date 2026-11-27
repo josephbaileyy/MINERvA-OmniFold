@@ -1,0 +1,35 @@
+# run.sh (2026-11-26T10:43:04Z); worktree HEAD 362011d24428f848746a43fc126661708cffbbe1; base 362011d24428f848746a43fc126661708cffbbe1
+env /Users/josephbailey/miniconda3: python 3.12.2 matplotlib 3.10.1 numpy 1.26.4
+env /Users/josephbailey/cov2d-work/figenv/mpl3108: python 3.12.2 matplotlib 3.10.8 numpy 1.26.4
+copy tools/make_fig_fived16_headline.py sha256 bb90169f1ae596979e2983a102de785ed3ff509ffd007038861fd3902d3156fb
+copy tools/make_fig_fived16_genresidual.py sha256 a428c5659c4f7b535a7b51f255a15cc750eaa6d622125a747b71048d64cd7d7d
+== fived16_headline
+   | wrote <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-vffigs-20261126/runs/headline/control/out/fived16_headline.pdf ; record d6752d2c
+   | wrote <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-vffigs-20261126/runs/headline/vf1/out/fived16_headline.pdf ; record 1a37b082
+   | wrote <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-vffigs-20261126/runs/headline/vf2/out/fived16_headline.pdf ; record 1a37b082
+  OK   control: the unchanged producer on the OLD record = the installed PDF (1002e7056bfe457f1f932a10b886d4a7b2996fcfb8507dee380f2bb9f5826bf6)
+  OK   V_F two runs byte-equal: fived16_headline.pdf
+  OK   V_F two runs byte-equal: fived16_headline_values.json
+  OK   V_F two runs byte-equal: fived16_headline_data.json
+== fived16_genresidual
+   | Traceback (most recent call last):
+   |   File "<wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-genresid-20261120/tools/make_fig_fived16_genresidual.py", line 213, in <module>
+   |     main()
+   |   File "<wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-genresid-20261120/tools/make_fig_fived16_genresidual.py", line 122, in main
+   |     assert f"{rec['total']['chi2']:.2f}" == printed, f"{name}: chi2 {rec['total']['chi2']} vs printed {printed}"
+   | AssertionError: nuwro: chi2 129.97739624397968 vs printed 92.20
+  OK   control: the unchanged producer refuses on this branch, its printed-chi2 check firing (V_F table, C_e-era record)
+   | wrote <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-vffigs-20261126/runs/genresidual/vf1/out/fived16_genresidual.pdf ; inputs {'dp': '1a37b082', 'g': '7034a08e', 'gdefs': '6c202b08'}
+   | wrote <wt>/docs/orchestration/state/2d-closeout/stageF/methods/note-vffigs-20261126/runs/genresidual/vf2/out/fived16_genresidual.pdf ; inputs {'dp': '1a37b082', 'g': '7034a08e', 'gdefs': '6c202b08'}
+   | wrote /Users/josephbailey/vf-figs-wt/docs/orchestration/state/2d-closeout/stageF/methods/note-vffigs-20261126/runs/genresidual/control-main/out/fived16_genresidual.pdf ; inputs {'dp': 'd6752d2c', 'g': 'a19009e0', 'gdefs': '544f4f43'}
+  control-main ran at merge-base b878fd6bace337196e70e9669170f33c8a65e1e8
+  OK   control: the unchanged producer on the OLD records at main = the installed PDF (d310e8b946cb6bca02958824810acbba2abee38ab64fc61182e6e2b97c75af3a)
+  OK   V_F two runs byte-equal: fived16_genresidual.pdf
+  OK   V_F two runs byte-equal: fived16_genresidual_values.json
+== outputs
+  bb901af8109066f21c806992f9d32638db418c0ace42badd5d6f183257ed0176  fived16_genresidual_values.json
+  4400bd70a3454b23d28e4b1c1f3885a60d2e48cdc6472f5722c5db59abb12b35  fived16_genresidual.pdf
+  2083fbc5322b29c2c444e4c638906e8aa147f93eabadde3182a9739fb48faf4f  fived16_headline_data.json
+  2dcb04166c18f60052af71ebb7800483ea9d3aa6b71a6290aec3d0efa52b6ea7  fived16_headline_values.json
+  7700c4d474b3857d4485699803cbe50c1c7b23483624c1b58072797f6035e297  fived16_headline.pdf
+RUN :: PASS

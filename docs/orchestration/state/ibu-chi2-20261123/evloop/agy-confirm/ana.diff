@@ -1,0 +1,13 @@
+--- ana_old.py	2026-11-23 13:32:17
++++ ana_new.py	2026-11-23 13:32:17
+@@ -43,7 +43,9 @@
+ prod["BASE"] = build(sig["sim"], sig["sim_pz"], sp, bkg["sim_background"], bkg["sim_background_pz"], np.ones(len(bw), bool), dat["measured"], dat["measured_pz"], np.ones(len(dok), bool))
+ prod["SEL"] = build(sig["sim"], sig["sim_pz"], sp & Q(sig), bkg["sim_background"], bkg["sim_background_pz"], Q(bkg), dat["measured"], dat["measured_pz"], Q(dat))
+ ks, kb, kd = kin(sig["mu_mad_p"], sig["mu_theta"]), kin(bkg["mu_mad_p"], bkg["mu_theta"]), kin(dat["mu_mad_p"], dat["mu_theta"])
+-prod["MAD"] = build(ks[0], ks[1], sp, kb[0], kb[1], np.ones(len(bw), bool), kd[0], kd[1], np.ones(len(dok), bool))
++# Signal rows keep sim_pass set on truth-only misses, whose mu_* are -9999 (smoke, 2026-11-23); require a real
++# reco muon so -9999 MeV at a -9999 rad angle cannot land in the grid. sim itself is -9999 there, so BASE/SEL are safe.
++prod["MAD"] = build(ks[0], ks[1], sp & (sig["mu_mad_p"] > 0), kb[0], kb[1], bkg["mu_mad_p"] > 0, kd[0], kd[1], dat["mu_mad_p"] > 0)
+ # data-only scans (N only)
+ pmin, pmo, curv = dat["mu_p_total"] - dat["mu_p_minos"], dat["mu_p_minos"], dat["mu_used_curv"] == 1
+ D = np.round(np.arange(-0.03, 0.03001, 0.001), 4); scanC, scanR = [], []

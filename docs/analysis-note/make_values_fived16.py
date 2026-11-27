@@ -33,24 +33,41 @@ READOUTS = {
     "cmodel": ("nd-unfolding/pv-ladder/readouts/cmodel_5d.json", "3cfdc6a5"),
     "s1": (f"{FD}/s1/readout/s1_assembly.json", "81e5ef3f"),
     "cresp": ("docs/orchestration/state/measurement-scoping/assigned-uncertainties/cresp/cresp.json", "19bb2ee1"),
-    "f0": (f"{FD}/fd/readout/fd_f0_readout.json", "6e7d718b"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/readout/fd_f0_readout.json", "6e7d718b"
+    "f0": (f"{FD}/fd/with-vf/readout/vf-f0/fd_f0_readout.json", "7d7429d4"),
     # with the run-period block: the with arm of FD-CT-5B-ADDITION-REPORT.md section 3
-    "f0b": (f"{FD}/fd/with-cpl/readout/fd_f0b_readout.json", "5f542830"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/with-cpl/readout/fd_f0b_readout.json", "5f542830"
+    "f0b": (f"{FD}/fd/with-vf/readout/vf-with-S/fd_f0b_readout.json", "432243e1"),
     # Stage G's chain on Table IV's predictions (GENCMP amendment E, E-1 rerun1; FD-GENCMP-AMENDMENT-E-REPORT.md sec. 3.1)
-    "g": (f"{FD}/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json", "a19009e0"),
-    "diag": (f"{FD}/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_diag_readout.json", "522bfafa"),
-    "fup": (f"{FD}/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_followup_readout.json", "586cd741"),
-    "sens2": (f"{FD}/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_sens2_readout.json", "4bc21dfd"),
-    "dp": (f"{FD}/fd/with-cpl/data-product/fd_data_product_cpl.json", "d6752d2c"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json", "a19009e0"
+    "g": (f"{FD}/fd/with-vf/readout/vf-with-E/fd_g_readout.json", "7034a08e"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_diag_readout.json", "522bfafa"
+    "diag": (f"{FD}/fd/with-vf/readout/vf-with-E/fd_g_diag_readout.json", "440fc379"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_followup_readout.json", "586cd741"
+    "fup": (f"{FD}/fd/with-vf/readout/vf-with-E/fd_g_followup_readout.json", "030b1566"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_sens2_readout.json", "4bc21dfd"
+    "sens2": (f"{FD}/fd/with-vf/readout/vf-with-E/fd_g_sens2_readout.json", "7a618892"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/with-cpl/data-product/fd_data_product_cpl.json", "d6752d2c"
+    "dp": (f"{FD}/fd/with-vf/data-product/fd_data_product_vf.json", "1a37b082"),
+    # the with-cpl product the V_F product was built on (with-vf/block/vf_block.json inputs.data_product_cpl): C_PL5D's
+    # own label, which the V_F product does not carry
+    "dpcpl": (f"{FD}/fd/with-cpl/data-product/fd_data_product_cpl.json", "d6752d2c"),
+    # C_e^infl's eigenvalue-band multipliers phi_j, which the note's rescaling sentence prints (Joseph's wording, DECISION-
+    # 20261125b sec. 2): B5D's record, and the V_F block that applied them (the V_F product's inputs name it)
+    "b5d": ("docs/orchestration/state/ben-b-20261124/blocks5d-20261124/record/blocks5d.json", "c465768b"),
+    "vfblock": (f"{FD}/fd/with-vf/block/vf_block.json", "421da0e6"),
     "gagg": (f"{FD}/fd/readout/fd_gibuu_enu_aggregate.json", "66dcbd6d"),
-    "fboot": (f"{FD}/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_flux_boot_readout.json", "5bb475ea"),  # 3D (PR #438), with the block
-    "f1": (f"{FD}/fd/with-cpl/readout/fd_f1_readout.json", "5ccc89e5"),              # 1A (PR #446), with the block
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_flux_boot_readout.json", "5bb475ea"
+    "fboot": (f"{FD}/fd/with-vf/readout/vf-with-E/fd_flux_boot_readout.json", "9387e495"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/with-cpl/readout/fd_f1_readout.json", "5ccc89e5"
+    "f1": (f"{FD}/fd/with-vf/readout/vf-with-S/fd_f1_readout.json", "bd36a2aa"),
     # the two tunes' generation records, for their names; their digests are the F1c pin's f1b3-SHA256SUMS
     "f1meta-g18": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_g18_xsec5d.meta.json", "4fe333b8"),
     "f1meta-ar23": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_ar23_xsec5d.meta.json", "d7d136e5"),
     # the pion-constant departure of Eq. (1), as full-covariance norms of its first-order shift under each arm's matrix
     # (ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md section 7.3; JSON despite the suffix)
-    "eav": ("docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0_metric.txt", "3e8bd546"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, "docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0_metric.txt", "3e8bd546"
+    "eav": (f"{FD}/fd/with-vf/p2/eav.vf.json", "516b625d5d65fe8c"),
     # the same switch at prior level on the analysis's seven fine E_avail bins (that record's section 7.2)
     "eav0": ("docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0.json", "c284a6b3"),
     # the stopped 1B coverage test: gate D (FD-1B-STAGE2-REPORT.md section 4.1) and its diagnosis (FD-1B-DIAG-REPORT.md)
@@ -63,9 +80,12 @@ READOUTS = {
     # GENCMP (FD-GENCMP-REPORT.md; DECISION-20261101-joseph-gencmp-paper-adoption.md items 1-4): step B's 2 x 2 table,
     # whose corner "CH, analysis definitions" is Table IV's; step A's GENIE-hydrogen sensitivity; step D's native NuWro
     # on CH, with the probe's diagnostic (a text receipt); and step C's 3D quadrant sums (the note only)
-    "gdefs": (f"{FD}/fd/gencmp/readout/defs.json", "544f4f43"),
-    "gch": (f"{FD}/fd/gencmp/readout/ch.json", "cd111b8e"),
-    "gnat": (f"{FD}/fd/gencmp/readout/native.json", "df48fbeb"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/gencmp/readout/defs.json", "544f4f43"
+    "gdefs": (f"{FD}/fd/with-vf/p2/gdefs.vf.json", "6c202b08b5d9ed0b"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/gencmp/readout/ch.json", "cd111b8e"
+    "gch": (f"{FD}/fd/with-vf/p2/gch.vf.json", "968cfb876c02e102"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/gencmp/readout/native.json", "df48fbeb"
+    "gnat": (f"{FD}/fd/with-vf/p2/gnat.vf.json", "3607e78c22ba00bf"),
     "gprobe": (f"{FD}/fd/gencmp/receipts/d_projection.txt", "2df2a897"),
     # the code that groups S1's blocks into the per-group columns (referee round 20261104, item 2: the paper's source
     # list), at fe5d79c61; read as text and parsed, never imported
@@ -73,27 +93,33 @@ READOUTS = {
     # 3b's descriptive response-mismatch closures (FD-CT-3B-REPORT.md :79, :96-118; referee round 20261104, Joseph's
     # addition b0: printed as a bounded statement, descriptive, with no pass threshold)
     "ct3b": (f"{FD}/fd/readout/fd_ct_mismatch.json", "14399419"),
-    "gover": (f"{FD}/fd/gencmp/readout/overlap.json", "82b3528a"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/gencmp/readout/overlap.json", "82b3528a"
+    "gover": (f"{FD}/fd/with-vf/p2/gover.vf.json", "879d3dca63db4c2e"),
     # Stage G as first made, on the predictions in their generator definitions with NuWro and GiBUU on carbon (the
     # with arm of FD-CT-5B-ADDITION-REPORT.md section 3), for the note's table of that comparison only
-    "g0": (f"{FD}/fd/with-cpl/readout/fd_g_readout.json", "b55366b3"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/with-cpl/readout/fd_g_readout.json", "b55366b3"
+    "g0": (f"{FD}/fd/with-vf/readout/vf-with-S/fd_g_readout.json", "c9fe9d51"),
     # GENCMP addendum E2 (FD-GENCMP-AMENDMENT-E-ADDENDUM-E2-REPORT.md sec. 3 and 5;
     # DECISION-20261102-joseph-cmodel-keep-carbon-state-effect.md): the chi2 of Table IV's four predictions with C_model's
     # NuWro and GiBUU shape ratios from CH, and C_model removed and doubled, with the per-cell sigma (a text receipt). Each
     # holds both arms, so both arms read the same files
-    "e2": (f"{FD}/fd/gencmp-e2/rerun1/chi2/e2.json", "0aa73ebf"),
-    "e2sens": (f"{FD}/fd/gencmp-e2/rerun1/sens/x_e2_sens.out.txt", "223f3f88"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/gencmp-e2/rerun1/chi2/e2.json", "0aa73ebf"
+    "e2": (f"{FD}/fd/with-vf/p2/e2.vf.json", "7db5bd32180ce66b"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/gencmp-e2/rerun1/sens/x_e2_sens.out.txt", "223f3f88"
+    "e2sens": (f"{FD}/fd/with-vf/p2/e2sens.vf.txt", "e31bb03a5f3e0a0a"),
     # the quadrant sums against the adopted 2D result (DECISION-20261102-joseph-quadrant-sentence-sec4-and-validations.md
     # item 1): step C-R's bound rule (FD-GENCMP-AMENDMENT-E-REPORT.md sec. 3.2) and GENCMP X's cross-covariance test
     # (FD-GENCMP-X-REPORT.md sec. 1). Each is computed once, from the reported matrix, so both arms read the same files
     # cr under C_new (the director's XCOV ruling and approval of 2026-11-16): #1169's g2r arm, the same command on route A's
     # Q_R (fd/receipts-cov2d/g2r/cr/README.md; run/node/out.sha256.txt lists it). Before, GENCMP step C-R on partc-r2's
     # Q_R: fd/gencmp-e/c-r/overlap_refined.json (f1f2fb78)
-    "cr": (f"{FD}/fd/receipts-cov2d/g2r/cr/run/node/g2r/overlap_refined.json", "0734cf4a"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/receipts-cov2d/g2r/cr/run/node/g2r/overlap_refined.json", "0734cf4a"
+    "cr": (f"{FD}/fd/with-vf/p2/cr.vf.json", "f58bc91280436c83"),
     # xk under C_new (the director's XCOV ruling, 2026-11-16): #1170's `k --products g2r`, GENCMP X step K on COV2D-G2R's
     # products (fd/receipts-cov2d/g2r/xk/README.md; run/node/out.sha256.txt lists it; its control reproduced f3dc2a34 byte
     # for byte). Before, step K as it ran: fd/xcov/run/k/k.json (f3dc2a34)
-    "xk": (f"{FD}/fd/receipts-cov2d/g2r/xk/run/node/run/k/k.json", "204e4c89"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/receipts-cov2d/g2r/xk/run/node/run/k/k.json", "204e4c89"
+    "xk": (f"{FD}/fd/with-vf/p2/xk.vf.json", "045eb904bbe25a8b"),
     # the run-period diagnosis's readout (FD-RPD-DECLARATION.md sec. 5; DECISION-20261104-joseph-rpd-sentence.md item 2),
     # computed once from the per-playlist unfolds, so both arms read the same file
     "rpd": (f"{FD}/fd/receipts-rpd/run/readout/fd_rpd.json", "c0b06cfd"),
@@ -106,12 +132,28 @@ READOUTS = {
     # The note's currency UPDATEs (the currency check of 2fe070fec, U1-U15; the combined plan section 6, Joseph's
     # approval of 2026-11-17): ported from the paper branch's make_values_fived16.py at draft/methods-short-20261109
     # 5bbb9d269, same paths and pins; currency_values() below
-    "prr": (f"{FD}/fd/receipts-prr/read/cluster/readout.json", "9238f22b"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{FD}/fd/receipts-prr/read/cluster/readout.json", "9238f22b"
+    "prr": (f"{FD}/fd/with-vf/p2/prr.vf.json", "fc9afee77250940d"),
+    # the C_e-era PRR readout (before C_e^infl): the note's PRR sentences state which truths were flagged when PRR and the IBU
+    # control were run, under C_e; those statements bind here (the director's ruling of 2026-11-26)
+    "prrce": (f"{FD}/fd/receipts-prr/read/cluster/readout.json", "9238f22b"),
+    # the C_e-era quadrant readout (before C_e^infl), for the caption's statement of QD's printed-only reading then
+    "crce": (f"{FD}/fd/receipts-cov2d/g2r/cr/run/node/g2r/overlap_refined.json", "0734cf4a"),
+    # the C_e-era fake-data readouts (before C_e^infl): F0b with and without the run-period block, and F0 under C_total
+    # alone. The note's listing sentences say what C_e listed; check_listed_claims' "cleared" kinds bind those clauses
+    "f0bce": (f"{FD}/fd/with-cpl/readout/fd_f0b_readout.json", "5f542830"),
+    "f0bcenopl": (f"{FD}/fd/readout/fd_f0b_readout.json", "b9db935a"),
+    "f0ce": (f"{FD}/fd/readout/fd_f0_readout.json", "6e7d718b"),
     "vhalf": ("docs/orchestration/state/2d-closeout/valid-region-20261107/v-half/receipts/read/readout.json", "e7423390"),
     "ll5dmumax": (f"{FD}/fd/receipts-ll5d/mumax/run/node/mumax.json", "422db056"),
     "ens1s1": (f"{FD}/fd/rounding-stability-20261106/ensemble/receipts/stage1-a1-analysis/ens1_stage1.json", "7f5a9ce4"),
     "ens1s2": (f"{FD}/fd/rounding-stability-20261106/ensemble/receipts/stage2-a1-analysis/ens1_stage2.json", "c2ee701d"),
     "c2c1": (f"{FD}/fd/receipts-ref-c2c1/step2/read-2/readout.json", "0ee21301"),
+    # pT-edge option (i) (Joseph 2026-11-24): REF-C2C1's distances to the publication on the published pT edges
+    # 0.075/0.325/0.475 (regenA A3, #1329, 91d18499; its OLD set reproduces read 2, which stays the control), and the
+    # refined result's chi2 against the published covariance on those edges (regenA P1a, #1322)
+    "c2c1a3": ("docs/orchestration/state/ibu-chi2-20261123/regenA3/out/ladder.json", "565d1f99"),
+    "regenAp1a": ("docs/orchestration/state/ibu-chi2-20261123/regenA/out/e_P1a_chi2_paperonly.log", "6e827b68"),
     "refg1": (f"{FD}/fd/receipts-ref-g1/a1-read/readout.json", "4db170d3"),
     "t2b": (f"{FD}/fd/tier2-20261110/t2b/t2b.json", "0e281a61"),
     "t2aar23": (f"{FD}/fd/receipts-cov2d/g2r/t2a/run/t2a_g2r_AR23.json", "74fab014"),
@@ -128,8 +170,10 @@ READOUTS = {
     "rs1r0": (f"{FD}/fd/rounding-stability-20261106/receipts/full-a1/read/rs1_r0.json", "724f0c3a"),
     "rs1read": (f"{FD}/fd/rounding-stability-20261106/receipts/full-a1/read/rs1_read.json", "9938e168"),
     "runper": ("docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/lrows-g/g4-runperiod/runperiod_values.json", "f63074b1"),
-    "rsn": (f"{RSN}/rsn_readout.json", "6291f48d"),
-    "rsnregrade": (f"{RSN}/regrade.json", "cb5f5d17"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{RSN}/rsn_readout.json", "6291f48d"
+    "rsn": (f"{FD}/fd/with-vf/p2/rsn.vf.json", "8e5addb8ec0a7649"),
+    # C_e^infl (V_F, readings #1368 81e8fe14): before, f"{RSN}/regrade.json", "cb5f5d17"
+    "rsnregrade": (f"{FD}/fd/with-vf/p2/rsnregrade.vf.json", "10dcdd729d2d86fe"),
     "e96d": (f"{FD}/fd/e96-data-20261110/receipts/a1-run-20261112/cluster/analysis/ANALYSIS.json.txt", "b42208ef"),
     # U6: the figure referee read's check A (on main by #1213, e13d98d55)
     "recov": ("docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-figure-deformation-20261112/check-a/a_recovery.json", "75db95a1"),
@@ -145,23 +189,25 @@ READOUTS = {
     # readout, sha256 653356ae56087ea74621e61a60c829d63be9a9f15b0b35941e641b22f0be8ea3; b4_values() below
     "fdstab": (f"{FD}/fd/receipts-stab-a1r/readout/readout-2/fd_stab.json", "653356ae"),
 }
-# the committed readouts without the run-period block, for the "-nopl" keys
+# the committed readouts without the run-period block, for the "-nopl" keys; C_e^infl (V_F, readings #1368): the
+# without-C_PL5D arm's V_F readouts (vf-nopl-S, vf-nopl-E); the data product is one V_F file holding both arms
 NOPL_READOUTS = dict(READOUTS, **{
-    "f0b": (f"{FD}/fd/readout/fd_f0b_readout.json", "b9db935a"),
-    "g": (f"{FD}/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_readout.json", "d9a1ce38"),
-    "diag": (f"{FD}/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_diag_readout.json", "4e77966e"),
-    "fup": (f"{FD}/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_followup_readout.json", "748f3af6"),
-    "sens2": (f"{FD}/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_sens2_readout.json", "6626cb73"),
-    "dp": (f"{FD}/fd/data-product/fd_data_product.json", "b79556f0"),
-    "fboot": (f"{FD}/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_flux_boot_readout.json", "24ff27f9"),
-    "f1": (f"{FD}/fd/readout/fd_f1_readout.json", "cbe411a9"),
-    "g0": (f"{FD}/fd/readout/fd_g_readout.json", "75a9ddee"),
+    "f0b": (f"{FD}/fd/with-vf/readout/vf-nopl-S/fd_f0b_readout.json", "7ed24825"),
+    "f1": (f"{FD}/fd/with-vf/readout/vf-nopl-S/fd_f1_readout.json", "e473f642"),
+    "g0": (f"{FD}/fd/with-vf/readout/vf-nopl-S/fd_g_readout.json", "a0d000d0"),
+    "g": (f"{FD}/fd/with-vf/readout/vf-nopl-E/fd_g_readout.json", "eefe1c6d"),
+    "diag": (f"{FD}/fd/with-vf/readout/vf-nopl-E/fd_g_diag_readout.json", "a41e8091"),
+    "fup": (f"{FD}/fd/with-vf/readout/vf-nopl-E/fd_g_followup_readout.json", "80081f03"),
+    "sens2": (f"{FD}/fd/with-vf/readout/vf-nopl-E/fd_g_sens2_readout.json", "5cac1831"),
+    "fboot": (f"{FD}/fd/with-vf/readout/vf-nopl-E/fd_flux_boot_readout.json", "3d4af100"),
 })
-# each arm's names for its reported matrix and for the block the chain adds to C_total
-ARMS = {"with": {"dp": "C_total_plus_C_resp_plus_C_PL5D", "rep": "C_total + C_resp + C_PL5D", "x": "C_resp + C_PL5D",
-                 "f1sig": "relative_sigma_plus_C_resp + C_PL5D"},
-        "without": {"dp": "C_total_plus_C_resp", "rep": "C_total + C_resp", "x": "C_resp",
-                    "f1sig": "relative_sigma_plus_C_resp"}}
+# each arm's names for its reported matrix and for the block the chain adds to C_total; C_e^infl (V_F): every name
+# carries DeltaC_e = C_e^infl - C_e (before: "C_total_plus_C_resp_plus_C_PL5D", "C_total + C_resp + C_PL5D",
+# "C_resp + C_PL5D" and "relative_sigma_plus_C_resp + C_PL5D", and the same without C_PL5D)
+ARMS = {
+    "with": {"dp": "C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e", "rep": "C_total + C_resp + C_PL5D + DeltaC_e", "x": "C_resp + C_PL5D + DeltaC_e", "f1sig": "relative_sigma_plus_C_resp + C_PL5D + DeltaC_e"},
+    "without": {"dp": "C_total_plus_C_resp_plus_DeltaC_e", "rep": "C_total + C_resp + DeltaC_e", "x": "C_resp + DeltaC_e", "f1sig": "relative_sigma_plus_C_resp + DeltaC_e"},
+}
 # the key families whose values depend on the reported matrix; any other key must be equal in the two arms
 MATRIX_KEYS = re.compile(r"^(g-|gs-|f0b-|f1-|fb-|sens-|diag-|r04-|corr-|eav-|sig(med|min|max)?1?-(reported|C_PL5D)|trig-)")
 # the paper's precision (referee round 20261104, item 6): a fake-data chi2 as an integer, as Table IV prints its chi2
@@ -193,14 +239,21 @@ def paper_prec(k, x):
 # Both are E-1's with-arm figures as addendum E-A2 redrew them, from the same readouts, without the hydrogen flags on
 # the legend (FD-GENCMP-AMENDMENT-E-ADDENDUM-EA2-REPORT.md, #712; the caveat cut list's move MV07F). fd_g_fig_ratio.pdf
 # (6214ed78), which only the short paper printed, left with it on 2026-11-21 (POST_PUBLICATION_REORG_PLAN.md, "short paper").
-FIGURES = {"fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "0d6fe57c")}
+# C_e^infl (V_F, 2026-11-26): the modes figure is the V_F chain's (FD-VF-ADDITION, phase 1): fd_g_figures, unchanged, on
+# the V_F with-arm E readouts in E-A2's renderer, whose control R redrew E-A2's 0d6fe57c byte for byte in the same run
+# (fd/receipts-vf/p1/run/run/chain.json; note-vffigs-20261126/README.md).
+FIGURES = {"fd_g_fig_modes.pdf": ("fd/with-vf/figures", "889e175b")}
 # the readouts that are text receipts, not JSON
-TEXT_READOUTS = {"gprobe", "e2sens", "s1code", "ll5ddecl"}
+TEXT_READOUTS = {"gprobe", "e2sens", "s1code", "ll5ddecl", "regenAp1a"}
 CELLS = [f"R{i:02d}" for i in range(16)]
 BLOCK = {"stat": "statistical", "interaction": "interaction", "flux": "flux", "detector": "detector",
          "lateral": "lateral", "normalization": "normalization", "seed": "training seed", "C_resp": r"$C_{\mathrm{resp}}$",
          "V_g": r"$V_g$", "C_model:genie_mec": r"$C_{\mathrm{model}}$ (GENIE + MEC)",
-         "C_model:nuwro": r"$C_{\mathrm{model}}$ (NuWro)", "C_model:gibuu": r"$C_{\mathrm{model}}$ (GiBUU)"}
+         "C_model:nuwro": r"$C_{\mathrm{model}}$ (NuWro)", "C_model:gibuu": r"$C_{\mathrm{model}}$ (GiBUU)",
+         # C_e^infl (V_F): the block each arm adds to C_total, as a top mode's dominant component (a PROPOSAL for
+         # Joseph's wording; vf_readings printed a placeholder here)
+         "C_resp + C_PL5D + DeltaC_e": r"$C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+\Delta C_e$",
+         "C_resp + DeltaC_e": r"$C_{\mathrm{resp}}+\Delta C_e$"}
 PRED = {"genie_cv": "gcv", "genie_mec": "gmec", "nuwro": "nuwro", "gibuu": "gibuu", "mnvtune_v1": "tune"}
 # each graded fake-data truth's printed name (for the generated list) and the words a sentence uses for it (for the check)
 TRUTH_LABEL = {"nominal": ("the simulation prior", "simulation prior"),
@@ -231,11 +284,29 @@ TRUTH_LABEL = {"nominal": ("the simulation prior", "simulation prior"),
 # and at a synthetic momentum-transfer tilt find ...", re-declared in note round 1, #947) was removed by the journal-voice
 # rewrite (4b784728d, 2026-11-21); its entry was also retired on the rewrite branch at 78aa1a5e2. The sentences of
 # sec_q3_fived16.tex state the same listed truths under the "keys" and "without" rules.
+# C_e^infl (V_F, readings #1368; the director's ruling of 2026-11-26): under C_rep only the GiBUU hybrid truth is listed, with
+# or without the block and under C_total alone. The sentences that say what the earlier covariance C_e listed are
+# declared with the "cleared" kinds and bind to the C_e-era readouts (f0bce, f0bcenopl, f0ce). Every sentence a PROPOSAL.
 LISTED_CLAIMS = [
-    ("sec_q3_fived16.tex", "truths meet the listing criterion ($p<", {"kind": "keys"}),
-    ("sec_q3_fived16.tex", "truths meet it: the GiBUU", {"kind": "without"}),
+    ("sec_q3_fived16.tex", "only the GiBUU hybrid truth meets the listing criterion ($p<", {"kind": "keys"}),
+    ("sec_q3_fived16.tex", "listed by $p$ alone under the baseline covariance", {"kind": "cleared"}),
+    ("sec_q3_fived16.tex", "the same single truth meets it: the GiBUU", {"kind": "without"}),
+    ("sec_q3_fived16.tex", "listed without $C_{\\mathrm{PL,5D}}$ under the baseline covariance by its cell R06", {"kind": "cleared-nopl"}),
     ("sec_q3_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds", {"kind": "both"}),
+    ("sec_q3_fived16.tex", "Under each of the three covariances, the fake-data bias meets", {"kind": "all"}),
+    ("sec_q3_fived16.tex", "the $q_3$ tilt was also listed, and the two smaller covariances listed more truths", {"kind": "ce-more"}),
     ("sec_fived16_gen.tex", "so the GiBUU comparison carries that limitation", {"kind": "both", "family": "gibuu"}),
+    ("appC_supplementary.tex", "simulated truths: the GiBUU hybrid, which uses", {"kind": "both"}),
+    ("appC_supplementary.tex", "Under $\\CrepFiveDzero$, the synthetic $q_3$ tilt, a momentum", {"kind": "cleared"}),
+    ("appC_supplementary.tex", "omitting the run-period term also flagged the separate GiBUU", {"kind": "cleared-nopl"}),
+    ("appC_supplementary.tex", "the $q_3$ tilt also did.", {"kind": "cleared"}),
+    ("appA_methods.tex", "Under $\\CrepFiveDzero$, the $q_3$ tilt was also flagged.", {"kind": "cleared"}),
+    ("sec_fived16.tex", "the fake-data bias exceeds the stated criteria at the GiBUU hybrid truth (", {"kind": "both"}),
+    ("sec_validity_table.tex", "Residual bias exceeds the fake-data criteria at the GiBUU hybrid truth", {"kind": "with-ce"}),
+    # the compiled note's own fake-data and PRR sentences (Gemini read r1, finding 1)
+    ("sec5_multidim.tex", "simulated truths, the GiBUU hybrid truth, which takes", {"kind": "both"}),
+    ("sec5_multidim.tex", "the synthetic $q_3$ tilt also exceeded them", {"kind": "cleared"}),
+    ("sec5_multidim.tex", "leaves both biases above the criteria under $\\CrepFiveDzero$", {"kind": "both"}),
 ]
 
 
@@ -317,7 +388,8 @@ def gencmp_values(d, arm):
     # both figures, so a re-pinned readout that moves them stops here
     dmax = max(abs(x) for n in GENCMP4 for x in gd["generators"][n]["CH"]["delta_over_sigma"])
     v["gdef-dmax"], v["gdef-dmax-bound"] = f"{dmax:.3f}", f"{math.ceil(100 * dmax) / 100:.2f}"
-    assert (v["gdef-dmax"], v["gdef-dmax-bound"]) == ("0.063", "0.07"), "the method sentence's figures changed"
+    # C_e^infl (V_F, readings #1368 sec. 2): 0.063 / 0.07 -> 0.059 / 0.06 (the cell's reported sigma grows)
+    assert (v["gdef-dmax"], v["gdef-dmax-bound"]) == ("0.059", "0.06"), "the method sentence's figures changed"
     assert not any(gd["generators"][n]["CH"]["seed_spread_flag"] for n in GENCMP4)
     v["gdef-seedmax"] = f"{max(x for n in GENCMP4 for x in gd['generators'][n]['CH']['seed_spread_over_sigma']):.3f}"
     # Q08: NuWro and GiBUU on carbon in the analysis definitions (the text and the note), and the change to CH
@@ -432,11 +504,13 @@ def e2_values(d, arm):
     a = "with" if arm == "with" else "nopl"
     assert all(abs(e2["chi2"][a][n][part]["carbon"] / t4[n][part]["chi2"] - 1) < 1e-10
                for n in GENCMP4 for part in ("total", "shape_only")), "E2's carbon chi2 is not Table IV's"
-    # the largest |change| over both arms and kinds, which the note names: GENIE + MEC, shape-only, without C_PL,5D
+    # the largest |change| over both arms and kinds, which the note names: GENIE + MEC, total, without C_PL,5D. C_e^infl
+    # (V_F, readings #1368 sec. 1): it was GENIE + MEC's shape-only chi2 (6.07); under V_F the total (10.81)
     big = max(((abs(e2["chi2"][a][n][p]["delta"]), a, n, p) for a in ("with", "nopl") for n in GENCMP4
                for p in ("total", "shape_only")))
-    assert big[1:] == ("nopl", "genie_mec", "shape_only") and abs(big[0] - e2["delta_max_abs"]) < 1e-12
-    assert e2["chi2"]["nopl"]["genie_mec"]["shape_only"]["delta"] < 0, "the note prints that change as a fall"
+    assert big[1:] == ("nopl", "genie_mec", "total") and abs(big[0] - e2["delta_max_abs"]) < 1e-12, \
+        f"the note names GENIE + MEC's total chi2 without C_PL,5D as E2's largest change, not {big[1:]}"
+    assert e2["chi2"]["nopl"]["genie_mec"]["total"]["delta"] < 0, "the note prints that change as a fall"
     # removing C_model raises GiBUU's total most, in both arms (the note names it)
     assert all(max(GENCMP4, key=lambda n: s["chi2"][a][n]["total"]["removed"] - s["chi2"][a][n]["total"]["carbon"])
                == "gibuu" for a in ("with", "nopl"))
@@ -446,8 +520,14 @@ def e2_values(d, arm):
     mat = "reported" if arm == "with" else "without_C_PL5D"
     carb = d["gdefs"]["generators"]["gibuu"]["carbon"]["analysis_definitions"]["chi2"][mat]["total"]["chi2"]
     g = e2["chi2"][a]["gibuu"]["total"]
-    # the text says the rise comes from that pairing: with CH shape ratios GiBUU's CH total falls below carbon
-    assert carb < g["carbon"] and g["CH"] < carb, "GiBUU's rise no longer comes from C_model's carbon shape ratios"
+    # C_e^infl (V_F, readings #1368 sec. 1b): with CH shape ratios GiBUU's CH total no longer falls below carbon (with:
+    # 40.35 against 39.70), so the text (a PROPOSAL for Joseph) states the pairing's share of the rise instead: the rise
+    # is the CH correction's (carbon -> E2's carbon-ratio CH total), and the CH shape ratios take back this share of it
+    assert carb < g["carbon"] and g["CH"] < g["carbon"], "GiBUU's CH correction no longer raises its total, or the CH shape ratios no longer lower it"
+    share = (g["carbon"] - g["CH"]) / (g["carbon"] - carb)
+    assert share > 0.5, "the pairing is no longer most of GiBUU's rise"
+    if arm == "with":
+        v["e2-gibuu-pair-share"] = f"{100 * share:.0f}"
     v["e2-with-gibuu-total-chr1"] = f"{e2['chi2']['with']['gibuu']['total']['CH']:.1f}"
     # per-cell sigma: the whole matrix, carbon against CH, and C_model's own (sigma/f, the column norms of S)
     for a in ("with", "nopl"):
@@ -572,13 +652,18 @@ def quadrant_values(d):
         v[f"cr-{n}-nopl-reading"], v[f"cr-{n}-nopl-rhostar"] = word[o["outcome"]], f"{o['rho_star']:.4f}"
         # "agree" is |d| within the any-correlation band (rho* above 1); "agree below a correlation", rho* at most 1
         assert (t["outcome"] == "agree") == (t["rho_star"] > 1) and (o["outcome"] == "agree") == (o["rho_star"] > 1)
-    # sec_fived16.tex :47 names the readings by hand: "All four agree, QA at every rho and the others below correlations of
-    # cr-QC-rhostar (QC) to cr-QB-rhostar (QB)". Guard each named choice, so a readout that changes one stops the run
+    # sec_fived16.tex, appC and the records name the readings by hand. C_e^infl (V_F, readings #1368 sec. 1): QB moves to
+    # agree, so "QA and QB at every rho, QC and QD below correlations of cr-QC-rhostar and cr-QD-rhostar" (before: QA at
+    # every rho, the other three below). Guard each named choice, so a readout that changes one stops the run
     oc = {n: q[n]["2D"]["outcome"] for n in Q}
-    assert oc["QA"] == "agree" and all(oc[n] == "agree below a correlation" for n in ("QB", "QC", "QD")), \
-        "sec_fived16 :47's readings changed: QA at every rho, the others below a correlation"
-    rs = {n: q[n]["2D"]["rho_star"] for n in ("QB", "QC", "QD")}
-    assert min(rs, key=rs.get) == "QC" and max(rs, key=rs.get) == "QB", "sec_fived16 :47's rho* range (QC to QB) changed"
+    assert all(oc[n] == "agree" for n in ("QA", "QB")) and all(oc[n] == "agree below a correlation" for n in ("QC", "QD")), \
+        "the quadrant readings changed: QA and QB at every rho, QC and QD below a correlation"
+    # the caption's printed-only arm: QD's rho* without C_PL5D, at the knife edge just below 1 (readings sec. 1, the
+    # director's named exception of 2026-11-26), which the caption states
+    qd = q["QD"]["2D"]["printed_only_without_C_PL5D"]
+    assert qd["outcome"] == "agree below a correlation" and 0.999 < qd["rho_star"] < 1, "QD's printed-only rho* moved"
+    qdce = d["crce"]["quadrants"]["QD"]["2D"]["printed_only_without_C_PL5D"]
+    assert qdce["outcome"] == "agree" and qdce["rho_star"] > 1, "under the baseline covariance QD's printed-only rho* lay above 1"
     # the paper: "the sums differ by -1.5 to +0.7 per cent"
     pct = [q[n]["2D"]["d_pct"] for n in Q]
     assert min(pct) < 0 < max(pct), "the paper prints a signed range of the quadrant differences"
@@ -665,12 +750,51 @@ def values(d, arm="with"):
             v[f"box-{c}-{ax}"] = f"{lo:g}--{hi:g}"
     # the data product (FD-G-FIGURES-REPORT.md section 2) carries the same cells, boxes, f and reported sigma
     dp = d["dp"]
-    assert [c["cell"] for c in dp["cells"]] == CELLS and dp["correlation_of"] == A["dp"]
+    assert [c["cell"] for c in dp["cells"]] == CELLS
     assert all(c["box"] == boxes[c["cell"]] for c in dp["cells"]), "the data product's boxes differ from H2's"
     assert max(abs(x / f[c] - 1) for c, x in zip(CELLS, dp["f"])) < 1e-12, "the data product's f differs"
-    crt = d["cresp"]["relative_sigma"]["C_total_resp"]
-    crt = [crt[c] for c in CELLS] if isinstance(crt, dict) else crt
-    assert max(abs(a / b - 1) for a, b in zip(dp["relative_sigma"]["C_total_plus_C_resp"], crt)) < 1e-10
+    # C_e^infl (V_F, readings #1368): one product holds both arms' matrices. Each printed sigma is its matrix's
+    # sqrt(diag)/f; the arms are C_e^infl + C_model + C_resp, plus C_PL5D with the block; DeltaC_e = C_e^infl - C_e; and
+    # the product's C_e and C_resp are S1's and C_resp's records. (Before V_F: the without arm's sigma equalled
+    # C_resp's C_total_resp row, which is the C_e form.)
+    M, rs = dp["matrices"], dp["relative_sigma"]
+    wo_name, wi_name = ARMS["without"]["dp"], ARMS["with"]["dp"]
+    # the response term on C_rep's own subtotal (Joseph 2026-11-26, finding 8 option B; sec5_multidim): the sigma of
+    # C_e^infl + C_model + C_resp over that of C_e^infl + C_model, from the product's diagonals. The text prints the
+    # maximum as a whole percent, rounded here from the full ratio: the three-decimal 1.195 would round up to 20
+    rb = sorted((M[wo_name][i][i] / (M["C_e_infl"][i][i] + M["C_model_abs"][i][i])) ** 0.5 for i in range(16))
+    v["sigratio-infl-min"], v["sigratio-infl-med"], v["sigratio-infl-max"] = (f"{rb[0]:.3f}", f"{(rb[7] + rb[8]) / 2:.3f}",
+                                                                              f"{rb[-1]:.3f}")
+    assert abs(100 * (rb[-1] - 1) % 1 - 0.5) > 0.01, "the response term's maximum sits on a whole-percent boundary"
+    v["sigratio-infl-maxpct"] = f"{round(100 * (rb[-1] - 1)):d}"
+    assert v["sigratio-infl-maxpct"] == "19", "the approved 19% (finding 8, option B) changed"
+    for name, mat in M.items():
+        assert max(abs(mat[i][i] ** 0.5 / dp["f"][i] / rs[name][i] - 1) for i in range(16)) < 1e-10, f"{name}'s sigma"
+    for name, parts in ((wo_name, ("C_e_infl", "C_model_abs", "C_resp")), (wi_name, (wo_name, "C_PL5D")),
+                        ("DeltaC_e", ("C_e_infl",))):
+        sub = (-1 if name == "DeltaC_e" else 0)
+        for i in range(16):
+            for j in range(16):
+                x = sum(M[p][i][j] for p in parts) + sub * M["C_e"][i][j]
+                assert abs(x - M[name][i][j]) <= 1e-9 * (M[name][i][i] * M[name][j][j]) ** 0.5, f"{name} = {parts}"
+    s1e, crr = d["s1"]["relative_sigma"]["C_e"], d["cresp"]["relative_sigma"]["C_resp"]
+    for mine, theirs in ((rs["C_e"], s1e), (rs["C_resp"], crr)):
+        theirs = [theirs[c] for c in CELLS] if isinstance(theirs, dict) else theirs
+        assert max(abs(a / b - 1) for a, b in zip(mine, theirs)) < 1e-10, "the V_F product's C_e or C_resp differs"
+    # the rescaling sentence: phi_j for eigenvalue ranks 1-4, 5-8 and 9-16, from the B5D record the V_F block was built on
+    assert dp["inputs_sha256"]["block_json"].startswith(READOUTS["vfblock"][1]), "the V_F product was not built on vf_block"
+    assert d["vfblock"]["inputs_sha256"]["blocks5d_json"].startswith(READOUTS["b5d"][1]), "vf_block was not built on B5D"
+    fl = d["b5d"]["fluctuation"]
+    assert fl["bands"] == ["ranks 1-4", "ranks 5-8", "ranks 9-16"], "the sentence prints ranks 1-4, 5-8 and 9-16"
+    for jj, band in enumerate(("R1", "R2", "R3"), 1):
+        v[f"vf-phi-{jj}"] = f"{fl['trigger'][band]['phi']:.2f}"
+    assert (v["vf-phi-1"], v["vf-phi-2"], v["vf-phi-3"]) == ("1.09", "1.29", "2.98"), "the approved factors changed"
+    # the arm's correlation, from its own matrix; where the product carries it (the with arm), they agree
+    rho = [[M[A["dp"]][i][j] / (M[A["dp"]][i][i] * M[A["dp"]][j][j]) ** 0.5 for j in range(16)] for i in range(16)]
+    if dp["correlation_of"] == A["dp"]:
+        assert max(abs(rho[i][j] - dp["correlation"][i][j]) for i in range(16) for j in range(16)) < 1e-12
+    else:
+        assert arm == "without" and dp["correlation_of"] == wi_name, dp["correlation_of"]
     for grp, key in (("reported", A["dp"]),) + ((("C_PL5D", "C_PL5D"),) if arm == "with" else ()):
         vals = dp["relative_sigma"][key]                 # the reported matrix's sigma, and the block's alone
         assert len(vals) == 16
@@ -681,7 +805,7 @@ def values(d, arm="with"):
         v[f"sigmed-{grp}"], v[f"sigmin-{grp}"], v[f"sigmax-{grp}"] = pct((srt[7] + srt[8]) / 2), pct(srt[0]), pct(srt[-1])
         v[f"sigmed1-{grp}"] = pct1((srt[7] + srt[8]) / 2)
     if arm == "with":                                     # the block's effect on the reported sigma (proposal section 1)
-        wo, wi = dp["relative_sigma"]["C_total_plus_C_resp"], dp["relative_sigma"][A["dp"]]
+        wo, wi = rs[wo_name], rs[A["dp"]]
         sw, so = sorted(wi), sorted(wo)
         v["pl-medrise"] = f"{100 * ((sw[7] + sw[8]) / (so[7] + so[8]) - 1):.1f}"      # of the median, about 7.8 %
         ratio = [b / a for a, b in zip(wo, wi)]
@@ -691,13 +815,16 @@ def values(d, arm="with"):
         v["pl-cellrise-max"], v["pl-cellrise-maxcell"] = f"{100 * (ratio[i] - 1):.1f}", CELLS[i]
         share = sorted(1 - (a / b) ** 2 for a, b in zip(wo, wi))
         v["pl-share-med"], v["pl-share-max"] = f"{100 * (share[7] + share[8]) / 2:.1f}", f"{100 * share[-1]:.1f}"
-        # the block's own label, which travels with every use (FD-CT-5B-ADDITION-DECLARATION.md section 2)
+        # the block's own label, which travels with every use (FD-CT-5B-ADDITION-DECLARATION.md section 2). C_e^infl
+        # (V_F): the V_F product's label is DeltaC_e's, so C_PL5D's is read from the with-cpl product it was built on
+        # (vf_block.json inputs.data_product_cpl), pinned as "dpcpl"
+        lab = d["dpcpl"]["labels"]["block"]
+        assert d["dpcpl"]["relative_sigma"]["C_PL5D"] == rs["C_PL5D"], "C_PL5D differs from the with-cpl product's"
         m = re.search(r"68% interval on sigma_true/sigma_hat is \[([\d.]+), ([\d.]+)\]\. Noise-dominated cells: "
-                      r"((?:R\d\d(?:, )?)+)\. Rank (\d); undebiased", dp["labels"]["block"])
-        assert m and "added after the data were seen" in dp["labels"]["block"], "the block's label changed"
+                      r"((?:R\d\d(?:, )?)+)\. Rank (\d); undebiased", lab)
+        assert m and "added after the data were seen" in lab, "the block's label changed"
         v["pl-sigratio-lo"], v["pl-sigratio-hi"], v["pl-noise-cells"], v["pl-rank"] = m.groups()
         assert min(range(16), key=lambda j: wi[j]) == CELLS.index("R04"), "R04 is no longer the smallest-sigma cell"
-    rho = dp["correlation"]
     assert all(abs(rho[i][j] - rho[j][i]) < 1e-12 for i in range(16) for j in range(16))
     assert all(abs(rho[i][i] - 1) < 1e-12 for i in range(16))
     for i in range(16):                    # the correlation matrix of the reported covariance, two decimals
@@ -721,8 +848,11 @@ def values(d, arm="with"):
     v["f-unit"] = r"10^{-40}"     # f is printed in units of 10^-40 cm^2/nucleon
     # per-cell relative sigma by group, and the medians
     s1, cr = d["s1"]["relative_sigma"], d["cresp"]["relative_sigma"]
+    # C_e^infl (V_F): the C_e^infl column, and "C_total + C_resp" in its V_F form (C_total + C_resp + DeltaC_e, the
+    # without-C_PL5D arm), both from the V_F product; C_resp's own C_total_resp row is the C_e form (readings sec. 4)
+    vfs = {"C_e_infl": rs["C_e_infl"], "C_total_resp": rs[wo_name]}
     for grp, src in [(k, s1) for k in ("stat", "interaction", "flux", "detector", "lateral", "normalization", "C_e",
-                                       "C_model", "C_total")] + [(k, cr) for k in ("C_resp", "C_total_resp")]:
+                                       "C_model", "C_total")] + [("C_resp", cr)] + [(k, vfs) for k in vfs]:
         vals = src[grp]
         vals = [vals[c] for c in CELLS] if isinstance(vals, dict) else vals
         assert len(vals) == 16
@@ -823,6 +953,9 @@ def values(d, arm="with"):
         v[f"sigmed-{sp}"] = pct((srt[7] + srt[8]) / 2)
         v[f"sigmed1-{sp}"] = pct1((srt[7] + srt[8]) / 2)
     tot = [cr["C_total"][c] for c in CELLS] if isinstance(cr["C_total"], dict) else cr["C_total"]
+    # C_resp's own effect on C_total, in the C_e form: the text attributes this ratio to adding C_resp alone (sec5_multidim,
+    # sec_fived16), so it stays C_resp's C_total_resp row over C_total. (vf_readings' shim gave it C_total + C_resp +
+    # DeltaC_e, folding DeltaC_e into the response term; these three keys deliberately keep the C_e form)
     tr = [cr["C_total_resp"][c] for c in CELLS] if isinstance(cr["C_total_resp"], dict) else cr["C_total_resp"]
     rat = sorted(b / a for a, b in zip(tot, tr))
     v["sigratio-med"], v["sigratio-min"], v["sigratio-max"] = (f"{(rat[7] + rat[8]) / 2:.3f}", f"{rat[0]:.3f}",
@@ -951,6 +1084,7 @@ def values(d, arm="with"):
         ag = d[tag]["triggers"]["all_graded"]    # denominators only: the counts are read by group, never pooled
         v[f"{tag}-all-truths"], v[f"{tag}-all-cells"] = str(ag["truths"]), str(ag["cells"])
         v[f"{tag}-nlisted"] = str(len(d[tag]["triggers"]["listed"]))
+        v[f"{tag}-nlisted-word"] = ("none", "one", "two", "three", "four", "five")[len(d[tag]["triggers"]["listed"])]
         names = [TRUTH_LABEL[x["truth"]][0] for x in d[tag]["triggers"]["listed"]]
         v[f"{tag}-listed-names"] = (", ".join(names[:-1]) + " and " + names[-1]) if len(names) > 1 else "".join(names) or "none"
         v[f"{tag}-nunlisted"] = str(ag["truths"] - len(d[tag]["triggers"]["listed"]))
@@ -1211,6 +1345,9 @@ def all_values(d=None, d_nopl=None):
         assert min(fall) > 0, f"a {part} chi2 rises with the block"
         v[f"pl-chi2fall-{part}-lo"], v[f"pl-chi2fall-{part}-hi"] = f"{100 * min(fall):.1f}", f"{100 * max(fall):.1f}"
     v.update(currency_values(load() if d is None else d, v))     # the note's currency UPDATEs (new keys only)
+    # appC: under C_rep the GiBUU E_avail shape's R06 |z| rises without the run-period block but stays below the threshold
+    assert float(v["f0b-stage0c_gibuu-zmax"]) < float(v["f0b-stage0c_gibuu-zmax-nopl"]) < float(v["trig-z"]), \
+        "the GiBUU E_avail shape's R06 |z| without the run-period block is no longer between its with-block value and the threshold"
     for k in sorted(k for k in v if PAPER_PREC.match(k)):
         for nk, x in paper_prec(k, v[k]).items():
             assert v.get(nk, x) == x, f"{nk}: {v[nk]!r} against the paper form {x!r}"
@@ -1348,18 +1485,29 @@ def prr_levels_values(d):
     assert sorted(levels) == sorted(set(rd["PR-3"]) - {"B0", "IBU_K5"}), "the table's rows are PR-3's levels"
     graded = sorted({k.split("/")[1] for k in t if k.startswith("B0/") and k.endswith("/s991000")})
     flagged0 = {T for T in graded if t[f"B0/{T}/s991000"]["grade"]["flagged"]}
+    # C_e^infl (V_F, readings #1368 sec. 1): under C_rep, B0 flags only the GiBUU hybrid (the q3 tilt's flag clears).
+    # PRR and the IBU control were run at the two truths flagged under the earlier covariance C_e: the C_e-era readout
+    # (prrce) binds those statements, the V_F readout the C_rep ones
+    tce = d["prrce"]["table"]
+    flagged0_ce = {T for T in graded if tce[f"B0/{T}/s991000"]["grade"]["flagged"]}
+    assert flagged0_ce == set(PRR_TRUTHS.values()), "under C_e, B0 flags exactly the two PRR truths"
+    assert flagged0 == {PRR_TRUTHS["gibuu"]}, "under C_rep, B0 flags exactly the GiBUU hybrid"
     # Fable's fresh cold read of 7264f975a, 3.1 (the director, 2026-11-16): IBU at five iterations removes the q3-tilt
     # flag (p just above the criterion), keeps the GiBUU hybrid's, and newly flags PR-3's four other truths
-    ib = r["ibu"]
-    assert not ib[f"K5/{PRR_TRUTHS['q3']}/s991000"]["grade"]["flagged"]
-    assert ib[f"K5/{PRR_TRUTHS['gibuu']}/s991000"]["grade"]["flagged"]
+    ib, ibce = r["ibu"], d["prrce"]["ibu"]
     q3k = f"K5/{PRR_TRUTHS['q3']}/s991000"
+    for x in (ib, ibce):          # under both covariances: not flagged at the q3 tilt, flagged at the GiBUU hybrid
+        assert not x[q3k]["grade"]["flagged"]
+        assert x[f"K5/{PRR_TRUTHS['gibuu']}/s991000"]["grade"]["flagged"]
     v["prr-ibu5-q3-p"] = f"{ib[q3k]['grade']['p']:.3f}"
     assert float(v["prr-ibu5-q3-p"]) > 0.01
+    # the C_e-era sentence: under C_e, IBU at five iterations removes the q3 tilt's flag, just above the criterion
+    v["prr-ce-ibu5-q3-p"] = f"{ibce[q3k]['grade']['p']:.3f}"
+    assert float(v["prr-ce-ibu5-q3-p"]) > 0.01
     new5 = {T for T in graded if ib[f"K5/{T}/s991000"]["grade"]["flagged"]} - flagged0
     assert new5 == set(rd["PR-3"]["IBU_K5"]["new_flags"]), (new5, rd["PR-3"]["IBU_K5"]["new_flags"])
     v["prr-ibu5-nnew-word"] = PRR_NUMBER_WORDS[len(new5)]
-    assert len(graded) == 12 and flagged0 == set(PRR_TRUTHS.values()), "B0 flags exactly the two flagged truths"
+    assert len(graded) == 12, "PRR grades twelve truths"
     v["prr-lev-nother"] = str(len(graded) - len(flagged0))
     names = {"no effect": "no detected change", "increases": "increases", "reduces": "reduces", "both": "both"}
     for f in PRR_FACTOR:
@@ -1367,9 +1515,11 @@ def prr_levels_values(d):
             v[f"prr-lev-cls-{f}-{tt}"] = names[rd["PR-1"][T][f]]
     for L in levels:
         p3 = rd["PR-3"][L]
-        # the caption: no level clears either flagged truth (PR-3's "does not clear at these truths", read per truth)
+        # the caption: no level clears the GiBUU hybrid's flag under C_rep, nor either truth's under C_e (PR-3's "does
+        # not clear at these truths", read per truth)
         assert p3["reading"] == "does not clear at these truths"
-        assert all(t[f"{L}/{T}/s991000"]["grade"]["flagged"] for T in PRR_TRUTHS.values()), L
+        assert t[f"{L}/{PRR_TRUTHS['gibuu']}/s991000"]["grade"]["flagged"], f"{L} clears the GiBUU hybrid under C_rep"
+        assert all(tce[f"{L}/{T}/s991000"]["grade"]["flagged"] for T in PRR_TRUTHS.values()), f"{L} clears a flag under C_e"
         new = {T for T in graded if t[f"{L}/{T}/s991000"]["grade"]["flagged"]} - flagged0
         assert new == set(p3["new_flags"]), (L, new, p3["new_flags"])
         v[f"prr-lev-{L}-nnew"] = str(len(new))
@@ -1378,6 +1528,22 @@ def prr_levels_values(d):
             v[f"prr-lev-{L}-rho-{tt}"] = f"{x:.3f}"
             v[f"prr-lev-{L}-d-{tt}"] = f"{x - b0:+.3f}"
             assert v[f"prr-lev-{L}-d-{tt}"] not in ("+0.000", "-0.000"), (L, tt)
+    # C_e^infl (V_F; Gemini read r1 findings 3, 5 and 13): the records' and appC's sentences give both eras. Under the
+    # baseline covariance (C_rep with C_e in place of C_e^infl) the counts are the C_e-era readout's. Under C_rep the
+    # q3 tilt, unflagged at B0, is flagged only at C25 and O2, where it is counted among the new flags (the director's
+    # reference-shift ruling, readings sec. 1). IBU at five iterations: the C_e-era count of newly flagged truths
+    rce = d["prrce"]["readings"]["PR-3"]
+    for L in ("K2", "C25", "O2"):
+        newce = {T for T in graded if tce[f"{L}/{T}/s991000"]["grade"]["flagged"]} - flagged0_ce
+        assert newce == set(rce[L]["new_flags"]), (L, newce, rce[L]["new_flags"])
+        v[f"prr-ce-lev-{L}-nnew"] = str(len(newce))
+    q3 = PRR_TRUTHS["q3"]
+    q3_levels = {L for L in levels if t[f"{L}/{q3}/s991000"]["grade"]["flagged"]}
+    assert q3_levels == {"C25", "O2"}, f"under C_rep the q3 tilt is flagged at {sorted(q3_levels)}, not at C25 and O2 only"
+    assert all(q3 in rd["PR-3"][L]["new_flags"] for L in ("C25", "O2")) and q3 not in rd["PR-3"]["K2"]["new_flags"]
+    new5ce = {T for T in graded if ibce[f"K5/{T}/s991000"]["grade"]["flagged"]} - flagged0_ce
+    assert new5ce == set(rce["IBU_K5"]["new_flags"]), (new5ce, rce["IBU_K5"]["new_flags"])
+    v["prr-ce-ibu5-nnew-word"] = PRR_NUMBER_WORDS[len(new5ce)]
     return v
 
 
@@ -1602,11 +1768,14 @@ def rsn_values(d, share_nominal):
     v["rsn-sm-qlo"], v["rsn-sm-qhi"] = f"{min(sm['P4']['q']):.2g}", f"{max(sm['P4']['q']):.3g}"
     assert sm["radius"] == 2
     v["rsn-sm-radius"] = "two"
-    # the flag lists: G6 unchanged; SM adds the NuWro hybrid truth, by p alone
+    # the flag lists: G6 and SM unchanged. C_e^infl (V_F, readings #1368 sec. 1): SM no longer adds the NuWro hybrid
+    # truth (before: "more flagged", by p alone at p = 0.0049; RSN SM's verdict is now "the fake-data conclusions survive
+    # SM"), so records_r04's sentence (a PROPOSAL) says the listed truths are the same under both constructions
     assert g6["P1"]["class"] == "unchanged" and g6["P1"]["listed"] == g6["P1"]["listed_nominal"]
-    assert sm["P1"]["class"] == "more flagged" and set(sm["P1"]["listed"]) - set(sm["P1"]["listed_nominal"]) == {"A7_nuwro"}
+    assert sm["P1"]["class"] == "unchanged" and sm["P1"]["listed"] == sm["P1"]["listed_nominal"], "SM changes the listing"
+    assert sm["verdict"] == "the fake-data conclusions survive SM", sm["verdict"]
     nw = next(x for x in rg["SM"]["records"] if x["name"] == "A7_nuwro")["grade"]
-    assert nw["p_lt_0.01"] and not nw["cells_abs_z_gt_2"], "flagged by p alone, no cell beyond 2 sigma"
+    assert not nw["p_lt_0.01"] and not nw["cells_abs_z_gt_2"], "the NuWro hybrid is flagged under SM"
     v["rsn-sm-nuwro-p"] = f"{nw['p']:.2g}"
     # WR: the data shift (P6, class W1) and the four noise-free closures (P7)
     p6, p7 = wr["P6"], wr["P7"]
@@ -1622,10 +1791,12 @@ def rsn_values(d, share_nominal):
     # TR: the matched-event transfer probe's classes (T1 within half sigma, T0 within twice the floor)
     assert (tr["data"]["class"], tr["gibuu"]["class"], tr["q3"]["class"]) == ("T1", "T1", "T0")
     approved = {"rsn-g6-trace": "1.41", "rsn-g6-share": "0.923", "rsn-g6-qmed": "1.12", "rsn-g6-qlo": "0.54",
-                "rsn-g6-qhi": "1.77", "rsn-g6-sig-med": "1.002", "rsn-g6-sig-lo": "0.864", "rsn-g6-sig-hi": "1.338",
+                "rsn-g6-qhi": "1.77", "rsn-g6-sig-med": "1.002", "rsn-g6-sig-lo": "0.876", "rsn-g6-sig-hi": "1.323",
                 "rsn-sm-radius": "two", "rsn-sm-trace": "0.112", "rsn-sm-share": "0.664", "rsn-sm-qmed": "0.50",
-                "rsn-sm-qlo": "0.098", "rsn-sm-qhi": "2.23", "rsn-sm-sig-med": "0.934", "rsn-sm-sig-lo": "0.595",
-                "rsn-sm-sig-hi": "1.028", "rsn-sm-nuwro-p": "0.0049", "rsn-wr-floor-max": "2.9", "rsn-wr-sig-max": "0.09"}
+                "rsn-sm-qlo": "0.098", "rsn-sm-qhi": "2.23", "rsn-sm-sig-med": "0.938", "rsn-sm-sig-lo": "0.623",
+                "rsn-sm-sig-hi": "1.025", "rsn-sm-nuwro-p": "0.38", "rsn-wr-floor-max": "2.9", "rsn-wr-sig-max": "0.08"}
+    # C_e^infl (V_F, readings #1368 sec. 2): the seven values above moved from the approved draft's (g6 sig 0.864/1.338,
+    # sm sig 0.934/0.595/1.028, sm nuwro p 0.0049, wr sig max 0.09); every other approved value is unchanged
     assert v == approved, f"the RSN values differ from the approved draft: {sorted(k for k in v if v[k] != approved.get(k))}"
     return v
 
@@ -1755,15 +1926,28 @@ def currency_values(d, base):
     v["c2c1-nrep"] = str(k10["C2-R1"]["n_replicas"])
     v["c2c1-T"], v["c2c1-q95"], v["c2c1-max"] = (f"{k10['C2-R1'][x]:.1f}" for x in ("T", "q95", "max"))
     v["c1-T"], v["c1-q95"] = f"{c1['T']:.2f}", f"{c1['q95']:.2f}"
-    v["c2c1-dibu"], v["c2c1-dibu-k5"], v["c2c1-der"] = f"{k10['D_IBU']:.2f}", f"{c['K5']['D_IBU']:.2f}", f"{c['D_E_R']:.2f}"
-    assert abs(k10["D_IBU"] / c["D_E_R"] - k10["rho"]) < 1e-9, "D_IBU / D_E_R is the record's rho"
-    assert v["c2c1-der"] == "2.27", "D_E_R is the 2D result's chi2/ndf against the published covariance"
-    ek = {int(k): x for k, x in c["D_IBU_every_K"].items()}
-    assert sorted(ek) == [1, 2, 3, 4, 5, 10, 15, 20] and abs(ek[10] - k10["D_IBU"]) < 1e-12
+    # Read 2's distances to the publication are on our pT edges. It stays the control: regenA A3's OLD set must
+    # reproduce it (A3's C-R2 limit, 1e-6 relative). The printed distances are A3's set on the published pT edges.
+    assert abs(k10["D_IBU"] / c["D_E_R"] - k10["rho"]) < 1e-9, "D_IBU / D_E_R is read 2's rho"
+    ek2 = {int(k): x for k, x in c["D_IBU_every_K"].items()}
+    assert sorted(ek2) == [1, 2, 3, 4, 5, 10, 15, 20] and abs(ek2[10] - k10["D_IBU"]) < 1e-12
+    a3 = d["c2c1a3"]
+    assert a3["controls_pass"] is True
+    old, e = a3["sets"]["old"], a3["sets"]["e"]
+    assert all(abs(old["D_IBU_every_K"][str(k)] / ek2[k] - 1) < 1e-6 for k in ek2), "A3's OLD set is read 2"
+    assert abs(old["D_ER_from_score_out"] / c["D_E_R"] - 1) < 1e-6 and abs(old["rho_K10"] / k10["rho"] - 1) < 1e-6
+    assert e["ndf"] == [205] and e["ks"] == [1, 2, 3, 4, 5, 10, 15, 20]
+    ek = {int(k): x for k, x in e["D_IBU_every_K"].items()}
+    der = e["D_ER_from_score_out"]
+    assert abs(ek[10] / der - e["rho_K10"]) < 1e-9, "D_IBU / D_E_R is A3's rho on the published pT edges"
+    p1a = re.findall(r"PAPER \(stat\+syst\)\s+chi2 =\s*([0-9.]+)\s+ndf = 205\s", d["regenAp1a"])
+    assert len(p1a) == 1 and f"{205 * der:.2f}" == p1a[0], "D_E_R is the 2D result's chi2/ndf against the published covariance"
+    v["c2c1-dibu"], v["c2c1-dibu-k5"], v["c2c1-der"] = f"{ek[10]:.2f}", f"{ek[5]:.2f}", f"{der:.2f}"
     mid = [ek[k] for k in ek if 2 <= k <= 15]
     v["c2c1-dibu-k1"], v["c2c1-dibu-k20"] = f"{ek[1]:.2f}", f"{ek[20]:.2f}"
     v["c2c1-dibu-mid-lo"], v["c2c1-dibu-mid-hi"] = f"{min(mid):.2f}", f"{max(mid):.2f}"
-    assert max(mid) < c["D_E_R"], "IBU stays below the 2D result's distance for two to fifteen iterations"
+    assert all(v[k] == f"{x:.2f}" == e["macros_2dp"][k] for k, x in e["macros_full"].items()), "A3's own macros"
+    assert max(mid) < der, "IBU stays below the 2D result's distance for two to fifteen iterations"
     v["c1-nrep"] = str(c1["n_replicas"])
     assert c1["rank"] == c1["n_replicas"] // 4
     v["c1-rank-word"] = {12: "twelve"}[c1["rank"]]
@@ -1895,11 +2079,14 @@ def _sentence(text, anchor):
     return text[start:i + (m.start() + 1 if m else len(text) - i)]
 
 
-def check_listed_claims(f0b, texts, f0b_nopl=None, f0=None):
-    """Each LISTED_CLAIMS sentence agrees with these F0b readouts' listed truths (and a "ctotal" sentence with F0's);
-    returns the failures."""
+def check_listed_claims(f0b, texts, f0b_nopl=None, f0=None, ce=None):
+    """Each LISTED_CLAIMS sentence agrees with these F0b readouts' listed truths (and a "ctotal" sentence with F0's, a
+    "cleared" one with the C_e-era readouts'); returns the failures."""
     f0b_nopl = load(NOPL_READOUTS)["f0b"] if f0b_nopl is None else f0b_nopl
     f0 = load()["f0"] if f0 is None else f0
+    if ce is None:
+        x = load({k: READOUTS[k] for k in ("f0bce", "f0bcenopl", "f0ce")})
+        ce = {k: {y["truth"] for y in x[k]["triggers"]["listed"]} for k in x}
     listed_f0 = {x["truth"] for x in f0["triggers"]["listed"]}
     listed = {x["truth"] for x in f0b["triggers"]["listed"]}
     without = {x["truth"] for x in f0b_nopl["triggers"]["listed"]}
@@ -1926,6 +2113,16 @@ def check_listed_claims(f0b, texts, f0b_nopl=None, f0=None):
             ok = (without - listed) <= typed and (typed | keyed | keyed_nopl) <= without
         elif kind == "ctotal":
             ok = typed == listed_f0
+        elif kind == "all":         # C_e^infl: one listing under all three covariances, the one the sentence types
+            ok = typed == listed == without == listed_f0 and not (keyed - listed) and not (keyed_nopl - without)
+        elif kind == "cleared":     # listed under C_e (the reported matrix of then), not under C_rep
+            ok = typed == ce["f0bce"] - listed and bool(typed)
+        elif kind == "cleared-nopl":  # listed without the run-period block under C_e only, beyond the with-block clearings
+            ok = typed == (ce["f0bcenopl"] - without) - (ce["f0bce"] - listed) and bool(typed)
+        elif kind == "with-ce":     # the listed truth, and the truths C_e also listed (named as such in the sentence)
+            ok = typed == listed | (ce["f0bce"] - listed)
+        elif kind == "ce-more":     # under C_e, the two smaller covariances listed more truths than the reported one
+            ok = typed == ce["f0bce"] - listed and len(ce["f0bcenopl"]) > len(ce["f0bce"]) < len(ce["f0ce"])
         elif kind == "both":
             fam = (lambda t: rule["family"] in t.lower()) if "family" in rule else (lambda t: True)
             ok = typed == {t for t in listed | without if fam(t)}
@@ -1958,9 +2155,9 @@ def self_test():
         print("  ok   a wrong sha256 pin is refused")
     READOUTS[key] = (rel, pin)
     text = render(all_values())
-    stale = text.replace(r"\@namedef{fv@f0b-stage0c_gibuu-zmax}{1.76}", r"\@namedef{fv@f0b-stage0c_gibuu-zmax}{1.8}")
-    if stale == text:
-        print("  FAIL the plant did not apply (R06's z is not 1.76)"); ok = False
+    stale = text.replace(r"\@namedef{fv@f0b-stage0c_gibuu-zmax}{1.54}", r"\@namedef{fv@f0b-stage0c_gibuu-zmax}{1.6}")
+    if stale == text:                                        # C_e^infl (V_F): 1.54 (C_e: 1.76)
+        print("  FAIL the plant did not apply (R06's z is not 1.54)"); ok = False
     else:
         with tempfile.TemporaryDirectory() as tmp:          # run --check's own comparison against the stale file
             f = Path(tmp) / OUT.name
@@ -2046,10 +2243,16 @@ def self_test():
         d["e2sens"] = d["e2sens"].replace(repr(r[field]), repr(x))
         r[field] = x
         r["delta"] = r["CH"] - r["carbon"]
-    for what, plant, why in (("gives a carbon chi2 that is not Table IV's", lambda d: e2_set(d, "nuwro", "carbon", 128.0),
-                              "not Table IV's"),
+    # C_e^infl (V_F): the planted values are relative to the V_F readout's (C_e: NuWro's carbon 128.0, GiBUU's CH 46.0)
+    e2w = lambda d, n, f: d["e2"]["chi2"]["with"][n]["total"][f]
+    for what, plant, why in (("gives a carbon chi2 that is not Table IV's",
+                              lambda d: e2_set(d, "nuwro", "carbon", 1.001 * e2w(d, "nuwro", "carbon")), "not Table IV's"),
                              ("puts GiBUU's CH total with CH shape ratios above its carbon value",
-                              lambda d: e2_set(d, "gibuu", "CH", 46.0), "comes from C_model's"),
+                              lambda d: e2_set(d, "gibuu", "CH", e2w(d, "gibuu", "carbon") + 1.0),
+                              "the CH shape ratios no longer lower it"),
+                             ("makes the pairing less than half of GiBUU's rise",
+                              lambda d: e2_set(d, "gibuu", "CH", e2w(d, "gibuu", "carbon") - 0.3),
+                              "the pairing is no longer most of GiBUU's rise"),
                              ("changes GENIE + MEC's component", lambda d: d["e2"]["S_CH"][0].__setitem__(0, 0.0),
                               "only NuWro's and GiBUU's"),
                              ("leaves NuWro's component unchanged",
@@ -2087,7 +2290,8 @@ def self_test():
                              ("gives a chi2 at r = 0 that its blocks do not",
                               lambda d: d["xk"]["primary"]["r0"].update(chi2_4=1.2), "rebuilt from the blocks"),
                              ("gives a chi2 at r = 1 below that at r = 0",
-                              lambda d: d["xk"]["primary"]["r1"].update(chi2_4=1.0), "the family's largest")):
+                              lambda d: d["xk"]["primary"]["r1"].update(chi2_4=0.9 * d["xk"]["primary"]["r0"]["chi2_4"]),
+                              "the family's largest")):
         d = load()
         plant(d)
         try:
@@ -2105,7 +2309,17 @@ def self_test():
         globals()[name] = wrong
         try:
             values(load())
-            print(f"  FAIL {what} was accepted"); ok = False
+            # C_e^infl (V_F): on the pinned data the two roundings can print the same bound (chi2 0.878 -> 0.88 either
+            # way), so the guard has nothing to catch; then the mutant must equal the true bound here and break the bound
+            # property on a probe value, which the guard's expression rejects
+            xk = load()["xk"]["primary"]
+            x = xk["r1"]["chi2_4"] if name == "bound_up" else min(xk["r0"]["p"], xk["r1"]["p"])
+            probe = 1.2402 if name == "bound_up" else 0.8714
+            holds = (lambda y, b: float(b) >= y) if name == "bound_up" else (lambda y, b: float(b) <= y)
+            if wrong(x) == keep(x) and not holds(probe, wrong(probe)) and holds(probe, keep(probe)):
+                print(f"  ok   {what} prints the true bound on the pinned data and fails the bound at {probe}")
+            else:
+                print(f"  FAIL {what} was accepted"); ok = False
         except AssertionError as e:
             if "a printed bound is not a bound" in str(e):
                 print(f"  ok   {what} is refused")
@@ -2113,6 +2327,64 @@ def self_test():
                 print(f"  FAIL {what} was refused by another guard: {e}"); ok = False
         finally:
             globals()[name] = keep
+    # C_e^infl (V_F, readings #1368): each re-pinned or added guard refuses a planted readout, by its own message
+    base_v = all_values()
+    def kset(d, path, x):
+        o = d
+        for k in path[:-1]:
+            o = o[k]
+        o[path[-1]] = x
+    def scale_rows(d, key, name, f):
+        d[key]["relative_sigma"][name] = [x * f for x in d[key]["relative_sigma"][name]]
+    for what, plant, why in (
+            ("B0 flags the q3 tilt under C_rep", lambda d: kset(d, ["prr", "table", "B0/q3/s991000", "grade", "flagged"], True),
+             "under C_rep, B0 flags exactly the GiBUU hybrid"),
+            ("a level clears the GiBUU hybrid under C_rep",
+             lambda d: kset(d, ["prr", "table", "K2/A7_gibuu/s991000", "grade", "flagged"], False), "clears the GiBUU hybrid under C_rep"),
+            ("B0 does not flag the q3 tilt under C_e",
+             lambda d: kset(d, ["prrce", "table", "B0/q3/s991000", "grade", "flagged"], False), "under C_e, B0 flags exactly the two PRR truths"),
+            ("a level clears the q3 tilt under C_e",
+             lambda d: kset(d, ["prrce", "table", "K10/q3/s991000", "grade", "flagged"], False), "clears a flag under C_e"),
+            ("SM lists one more truth", lambda d: kset(d, ["rsn", "arms", "SM", "P1", "class"], "more flagged"), "SM changes the listing"),
+            ("SM's verdict changes", lambda d: kset(d, ["rsn", "arms", "SM", "verdict"], "a fake-data conclusion changes under SM"),
+             "a fake-data conclusion changes under SM"),
+            ("QB agrees only below a correlation",
+             lambda d: (kset(d, ["cr", "quadrants", "QB", "2D", "outcome"], "agree below a correlation"),
+                        kset(d, ["cr", "quadrants", "QB", "2D", "rho_star"], 0.9997)), "QA and QB at every rho"),
+            ("QD's printed-only rho* leaves the knife edge",
+             lambda d: kset(d, ["cr", "quadrants", "QD", "2D", "printed_only_without_C_PL5D", "rho_star"], 0.99),
+             "QD's printed-only rho* moved"),
+            ("QD's printed-only rho* lay below 1 under the baseline covariance",
+             lambda d: (kset(d, ["crce", "quadrants", "QD", "2D", "printed_only_without_C_PL5D", "rho_star"], 0.99),
+                        kset(d, ["crce", "quadrants", "QD", "2D", "printed_only_without_C_PL5D", "outcome"], "agree below a correlation")),
+             "lay above 1"),
+            ("the q3 tilt is not flagged at C25 under C_rep",
+             lambda d: (kset(d, ["prr", "table", "C25/q3/s991000", "grade", "flagged"], False),
+                        d["prr"]["readings"]["PR-3"]["C25"]["new_flags"].remove("q3")), "not at C25 and O2 only"),
+            ("a B5D multiplier moves", lambda d: kset(d, ["b5d", "fluctuation", "trigger", "R3", "phi"], 3.1), "the approved factors changed"),
+            ("the response term raises C_rep's subtotal sigma further",
+             lambda d: [r.__setitem__(i, 1.05 * r[i]) for i, r in enumerate(d["dp"]["matrices"][ARMS["without"]["dp"]])],
+             "the approved 19%"),
+            ("B5D's bands are relabelled", lambda d: kset(d, ["b5d", "fluctuation", "bands"], ["R1", "R2", "R3"]), "ranks 1-4, 5-8 and 9-16"),
+            ("C_e^infl's sigma is not its matrix's", lambda d: scale_rows(d, "dp", "C_e_infl", 1.01), "C_e_infl's sigma"),
+            ("the V_F product's C_e is not S1's", lambda d: scale_rows(d, "s1", "C_e", 1.01) if isinstance(d["s1"]["relative_sigma"]["C_e"], list)
+             else d["s1"]["relative_sigma"].__setitem__("C_e", {c: 1.01 * x for c, x in d["s1"]["relative_sigma"]["C_e"].items()}),
+             "C_e or C_resp differs"),
+            ("C_PL5D differs from the with-cpl product's", lambda d: scale_rows(d, "dpcpl", "C_PL5D", 1.01), "C_PL5D differs"),
+            ("the generator definitions move a cell further",
+             lambda d: [g["CH"].__setitem__("delta_over_sigma", [1.2 * x for x in g["CH"]["delta_over_sigma"]])
+                        for g in d["gdefs"]["generators"].values() if "CH" in g], "the method sentence's figures changed")):
+        d = load()
+        plant(d)
+        try:
+            values(d)
+            currency_values(d, base_v)       # PRR and RSN are currency values: values(d) never reaches them
+            print(f"  FAIL a V_F readout where {what} was accepted"); ok = False
+        except AssertionError as e:
+            if why in str(e):
+                print(f"  ok   a V_F readout where {what} is refused")
+            else:
+                print(f"  FAIL a V_F readout where {what} was refused by another guard: {e}"); ok = False
     # the listed-truth sentences: silent on the committed tree, and each plant must fail at the sentence it changed
     d, dn, texts = load(), load(NOPL_READOUTS), read_claim_texts()
     if check_listed_claims(d["f0b"], texts, dn["f0b"]):
@@ -2122,26 +2394,51 @@ def self_test():
     # the world fixture: the two arms' readouts exchanged, as a re-pin to the wrong arm would leave them. The sentences
     # that state the reported list, the without-only addition or the abstracts' single GiBUU truth must fail; the
     # sentences that name the union cannot tell the arms apart and must stay silent
+    # C_e^infl (V_F): both arms list the same single truth, so exchanging them must change no verdict
     fails = check_listed_claims(dn["f0b"], texts, d["f0b"])
-    swapped = {f"{n}: {a!r}" for n, a, r in LISTED_CLAIMS if any(b.startswith(f"{n}: {a!r}") for b in fails)}
-    want = {f"{n}: {a!r}" for n, a, r in LISTED_CLAIMS if r["kind"] not in ("both", "ctotal")}  # ctotal reads F0
-    if swapped == want:
-        print(f"  ok   the arms' readouts exchanged fail exactly the {len(want)} sentences that tell them apart")
+    if not fails:
+        print("  ok   the arms' readouts exchanged change no verdict (under C_e^infl both arms list the GiBUU hybrid)")
     else:
-        print(f"  FAIL the arms' readouts exchanged failed {sorted(swapped)}, not {sorted(want)}"); ok = False
+        print(f"  FAIL the arms' readouts exchanged failed {fails[:3]}"); ok = False
+    # the covariance-era fixture: the C_e-era readouts in the C_rep slots, as a re-pin to the wrong era would leave them.
+    # Every sentence that states the C_rep listing, or what C_e listed beyond it, must fail
+    ced = load({k: READOUTS[k] for k in ("f0bce", "f0bcenopl", "f0ce")})
+    fails = check_listed_claims(ced["f0bce"], texts, ced["f0bcenopl"], ced["f0ce"])
+    swapped = {f"{n}: {a!r}" for n, a, r in LISTED_CLAIMS if any(b.startswith(f"{n}: {a!r}") for b in fails)}
+    # the validity row ("with-ce") names both truths, so the C_e-era listing satisfies it by name: it alone stays silent
+    want = {f"{n}: {a!r}" for n, a, r in LISTED_CLAIMS if r["kind"] != "with-ce"}
+    if swapped == want:
+        print(f"  ok   the C_e-era readouts in the C_rep slots fail all {len(want)} era-specific listed-truth sentences")
+    else:
+        print(f"  FAIL the C_e-era readouts in the C_rep slots passed {sorted(want - swapped)}"); ok = False
+    ce = {k: {y["truth"] for y in ced[k]["triggers"]["listed"]} for k in ced}
+    small = dict(ce, f0bcenopl=set(list(ce["f0bce"])))               # C_e's smaller covariances listing no more truths
+    if any("(ce-more)" in b for b in check_listed_claims(d["f0b"], texts, dn["f0b"], ce=small)):
+        print("  ok   C_e-era readouts whose smaller covariance lists no more truths fail the caption's clause")
+    else:
+        print("  FAIL C_e-era readouts whose smaller covariance lists no more truths passed the caption's clause"); ok = False
     for what, name, anchor, edit in (
-            ("keys a truth the readout does not list", "sec_q3_fived16.tex", "truths meet the listing criterion ($p<",
-             lambda t: t.replace(r"by $p$ alone ($p=\fvval{f0b-q3-p}$)", r"by $p$ alone ($p=\fvval{f0b-q3-p}$, $\fvval{f0b-W3-pr}$)", 1)),
-            ("drops a listed truth's keys", "sec_q3_fived16.tex", "truths meet the listing criterion ($p<",
+            ("keys a truth the readout does not list", "sec_q3_fived16.tex", LISTED_CLAIMS[0][1],
+             lambda t: t.replace(r"by its cells \fvval{f0b-A7_gibuu-cells}.", r"by its cells \fvval{f0b-A7_gibuu-cells} and $\fvval{f0b-W3-pr}$.", 1)),
+            ("drops a listed truth's keys", "sec_q3_fived16.tex", LISTED_CLAIMS[0][1],
              lambda t: t.replace(r", by $p$ and by its cells \fvval{f0b-A7_gibuu-cells}", "", 1)),
-            ("names the wrong truth as listed only without the block", "sec_q3_fived16.tex", "truths meet it: the GiBUU",
-             lambda t: t.replace(r"the GiBUU $\Eavail$ shape is also listed", r"the NuWro $\Eavail$ shape is also listed", 1)),
-            ("drops the truth listed only without the block", "sec_q3_fived16.tex",
-             "The fake-data bias therefore exceeds the stated thresholds",
-             lambda t: t.replace(r"and also at the GiBUU $\Eavail$ shape without $C_{\mathrm{PL,5D}}$. The bias", ". The bias", 1)),
+            ("names a truth not listed without the block", "sec_q3_fived16.tex", "the same single truth meets it: the GiBUU",
+             lambda t: t.replace(r"by its cells \fvval{f0b-A7_gibuu-cells-nopl}.", r"by its cells \fvval{f0b-A7_gibuu-cells-nopl}, and the NuWro hybrid truth.", 1)),
+            ("drops the listed truth", "sec_q3_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds",
+             lambda t: t.replace(r"the stated thresholds at the GiBUU hybrid truth alone,", r"the stated thresholds alone,", 1)),
             ("drops a GiBUU truth of its family", "sec_fived16_gen.tex", "so the GiBUU comparison carries that limitation",
-             lambda t: t.replace(r"thresholds at the GiBUU hybrid truth under the reported covariance, and also",
-                                 r"thresholds under the reported covariance, and also", 1)),
+             lambda t: t.replace(r"thresholds at the GiBUU hybrid truth, with or without", r"thresholds, with or without", 1)),
+            ("names one more truth C_e listed", "sec_q3_fived16.tex", "listed by $p$ alone under the baseline covariance",
+             lambda t: t.replace(r"The $q_3$ tilt, listed by $p$ alone", r"The $q_3$ tilt and the NuWro hybrid truth, listed by $p$ alone", 1)),
+            ("adds the q3 tilt to the without-block clearing", "appC_supplementary.tex",
+             "omitting the run-period term also flagged the separate GiBUU",
+             lambda t: t.replace(r"GiBUU $\Eavail$ shape through R06,", r"GiBUU $\Eavail$ shape and the $q_3$ tilt through R06,", 1)),
+            ("lists the q3 tilt under every covariance", "sec_q3_fived16.tex",
+             "Under each of the three covariances, the fake-data bias meets",
+             lambda t: t.replace(r"at the GiBUU hybrid truth only.", r"at the GiBUU hybrid truth and the $q_3$ tilt.", 1)),
+            ("drops the C_e-era truth from the validity row", "sec_validity_table.tex",
+             "Residual bias exceeds the fake-data criteria at the GiBUU hybrid truth",
+             lambda t: t.replace(r"retains part of its prior there and at the $q_3$ tilt,", r"retains part of its prior there,", 1)),
             ("loses its anchor", "sec_q3_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds",
              lambda t: t.replace("The fake-data bias therefore exceeds", "The fake-data bias thus exceeds", 1))):
         planted = dict(texts, **{name: edit(texts[name])})
@@ -2160,8 +2457,8 @@ def self_test():
     else:
         print("  FAIL a readout that lists one more truth did not fail the enumerating sentence"); ok = False
     v = all_values()
-    if (v["f0b-listed-names"], v["f0b-listed-names-nopl"]) != (r"the synthetic $q_3$ tilt and the GiBUU hybrid truth",
-                                                                r"the synthetic $q_3$ tilt, the GiBUU $\Eavail$ shape and the GiBUU hybrid truth"):
+    # C_e^infl (V_F): one truth in each arm (C_e: the q3 tilt and the GiBUU hybrid; and the GiBUU E_avail shape without)
+    if (v["f0b-listed-names"], v["f0b-listed-names-nopl"]) != ("the GiBUU hybrid truth", "the GiBUU hybrid truth"):
         print(f"  FAIL f0b-listed-names are {v['f0b-listed-names']!r} and {v['f0b-listed-names-nopl']!r}"); ok = False
     else:
         print("  ok   f0b-listed-names name the listed truths with and without the block, in the readouts' order")
@@ -2172,6 +2469,29 @@ def self_test():
         print("  FAIL a without-block value outside the matrix-dependent families that differs was accepted"); ok = False
     except AssertionError:
         print("  ok   a without-block value outside the matrix-dependent families that differs is refused")
+    a3_mutants = (                                            # the REF-C2C1 distances on the published pT edges (A3)
+        ("A3's OLD set no longer reproducing read 2 at K = 5",
+         lambda d: d["c2c1a3"]["sets"]["old"]["D_IBU_every_K"].__setitem__("5", 0.8299468720790133 * (1 + 2e-6))),
+        ("A3's rho on the published edges off by 1e-8",
+         lambda d: d["c2c1a3"]["sets"]["e"].__setitem__("rho_K10", 0.25362540069107586 + 1e-8)),
+        ("a P1a log whose chi2 is not 205 D_E_R (434.88)",
+         lambda d: d.__setitem__("regenAp1a", d["regenAp1a"].replace("chi2 =       434.89", "chi2 =       434.88"))),
+        ("a ladder whose printed macro differs from A3's own (k20 1.68)",
+         lambda d: d["c2c1a3"]["sets"]["e"]["macros_2dp"].__setitem__("c2c1-dibu-k20", "1.68")),
+        ("a ladder whose two-to-fifteen maximum exceeds D_E_R (its own macros consistent)",
+         lambda d: (d["c2c1a3"]["sets"]["e"]["D_IBU_every_K"].__setitem__("2", 2.2),
+                    d["c2c1a3"]["sets"]["e"]["macros_full"].__setitem__("c2c1-dibu-mid-hi", 2.2),
+                    d["c2c1a3"]["sets"]["e"]["macros_2dp"].__setitem__("c2c1-dibu-mid-hi", "2.20"))),
+    )
+    base = all_values()                                      # values() does not reach the currency keys
+    for what, plant in a3_mutants:
+        d = load()
+        plant(d)
+        try:
+            currency_values(d, base)
+            print(f"  FAIL {what} was accepted"); ok = False
+        except AssertionError:
+            print(f"  ok   {what} is refused")
     name = next(iter(FIGURES))                               # a figure that is not its source must fail --check
     with tempfile.TemporaryDirectory() as tmp:
         fig = OUT.parent / "figures" / name

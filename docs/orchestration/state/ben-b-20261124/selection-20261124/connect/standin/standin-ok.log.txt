@@ -1,0 +1,24 @@
+=== script rc=0; /dev/shm copy left: no
+=== /pscratch/sd/j/josephrb/bsel-20261124/logs/connect-bsel.log
+node 6e1f60312117 nproc=4 loadavg 0.22 0.07 0.02
+2026-11-24T21:28:53Z
+window_end_epoch 1795556632 (now 1795555733); fence prefixes cov2d,rpd_,d2s0,covfix
+connect script sha256 199cc946b5a7238873f99702b55caf0872fce95ed3e253cb9fdbc67c400ad547
+== fence (sacct)
+fence clear
+== sources
+pin	sha256_ok	copy_ok	stat_unmoved	size	atime_before_s	atime_after_s	src
+7384c6518aa0f59b	true	true	true	77	1795555732.270500221	1795555732.270500221	/pscratch/sd/j/josephrb/fd-f0b-20261026/fd_f0b_experiments.npz
+997c7dae34ef9703	true	true	true	77	1795555732.272500262	1795555732.272500262	/pscratch/sd/j/josephrb/fd-f1-20261027/grade/fd_f1_experiments.npz
+198205b6466a4b7a	true	true	true	77	1795555732.274500303	1795555732.274500303	/pscratch/sd/j/josephrb/fd-f1-20261027/f1c/closure/f1_closure_genie_v3_g18.npz
+532a6ac014274e54	true	true	true	77	1795555732.277500365	1795555732.277500365	/pscratch/sd/j/josephrb/fd-f1-20261027/f1c/closure/f1_closure_genie_v3_ar23.npz
+eb3e218866dd36e0	true	true	true	77	1795555732.279500406	1795555732.279500406	/pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_closure_tune_v1.npz
+fff9030e7fd63c53	true	true	true	77	1795555732.282500468	1795555732.282500468	/pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_closure_nuwro.npz
+fetch-bsel.tar sha256 ebb124f0c5de92d6239516010a84974d76a2055fa6677eb0875eb36917607026 bytes 10240
+bsel read rc=0
+2026-11-24T21:28:53Z
+=== tar RECORDS.SHA256SUMS: OK (6 lines, 6 files)
+=== stub calls
+sacct -X -n -P -S now-14days -o JobID,JobName,State
+sacct -X -n -P -S now-14days -o JobID,JobName,State
+=== written under /pscratch outside /pscratch/sd/j/josephrb/bsel-20261124 (newer than the planting):

@@ -1,0 +1,17 @@
+V_F Phase 2: the receipt-binding inventory delta (verify_hash_bindings.RECEIPT_BINDING_COUNT/SHA256)
+Enumerated before the constant moved: receipt_inventory() rows with and without fd/with-vf/p2/, fd/receipts-vf/p2/ and fd/receipts-vf/readings/vf_readings.json on the branch.
+with: 180 04ee3c68444caa1248bdd49ada8fae480203a9c5b2b89fae2f98d4357d9739c6
+without: 169 a9f3a844d9afb07684b5a345bd0c6276446bab70463351eefb35b081d5bad4b7
+Delta: 11 ADDED, nothing removed or repointed. Each is a V_F copy's vf_patch readout/readout_sha256 pin of the committed OLD readout it recomputes; each pin equals the file's sha256 (OK):
+ADDED docs/orchestration/state/2d-closeout/valid-region-20261107/receipts/read/readout.json 91bb604e OK from ['docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/vatlas.vf.json']
+ADDED docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0_metric.txt 3e8bd546 OK from ['docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/eav.vf.json']
+ADDED docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/rerun1/chi2/e2.json 0aa73ebf OK from ['docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/e2.vf.json']
+ADDED docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/readout/ch.json cd111b8e OK from ['docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/gch.vf.json']
+ADDED docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/readout/defs.json 544f4f43 OK from ['docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/gdefs.vf.json']
+ADDED docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/readout/native.json df48fbeb OK from ['docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/gnat.vf.json']
+ADDED docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/readout/overlap.json 82b3528a OK from ['docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/gover.vf.json']
+ADDED docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/cr/run/node/g2r/overlap_refined.json 0734cf4a OK from ['docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/cr.vf.json']
+ADDED docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/xk/run/node/run/k/k.json 204e4c89 OK from ['docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/xk.vf.json']
+ADDED docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-post/run-20261112/regrade.json cb5f5d17 OK from ['docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/rsnregrade.vf.json']
+ADDED docs/orchestration/state/measurement-paper/5d-community-20261024/fd/referee-sensitivity-20261111/connect-post/run-20261112/rsn_readout.json 6291f48d OK from ['docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/rsn.vf.json']
+Power test: one flipped hex digit in each V_F copy's vf_patch readout_sha256 gives MISMATCH on each of the 11 paths (and on prr.vf.json's already-inventoried pin of fd/receipts-prr/read/cluster/readout.json), verify_hash_bindings rc 1; the files were restored byte for byte (cmp).

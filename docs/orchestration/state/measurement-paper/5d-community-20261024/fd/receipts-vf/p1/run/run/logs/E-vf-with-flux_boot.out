@@ -1,0 +1,42 @@
+PASS control D0 S1, definition, 3 records, the Stage G readout, the extra block and 5 predictions match their digests
+PASS control D1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
+PASS control D2 S1's blocks are all present
+PASS control D2 every block maps to one of S1's seven groups
+PASS control D2 U is S1's float32 functional matrix
+PASS control D2 f is positive on every cell
+PASS control D2 f is cmodel_5d.json's x (to 1e-12)
+PASS control D2 C_e is the sum of S1's blocks
+PASS control D2 C_total = C_e + C_model_abs
+PASS control D2 C_model's vertices are GENIE+MEC, NuWro, GiBUU
+PASS control D2 C_model = S^T S, S from cmodel_5d.json
+PASS control D2 C_model_abs = diag(f) C_model diag(f)
+PASS control D2 C_total's relative sigma is the committed one
+PASS control D2 C_resp + C_PL5D + DeltaC_e is a finite 16 x 16 matrix
+PASS control D2 C_resp + C_PL5D + DeltaC_e is symmetric
+PASS control D2 C_resp + C_PL5D + DeltaC_e is positive semidefinite
+PASS control D3 GiBUU's eight cells are the p_parallel < 4.5 boxes
+PASS control D4 every prediction's integrals are positive on its cells
+PASS control D5 the Stage G readout used this extra block, key, name and role
+PASS control D5 Stage G's total and shape-only chi2 and pulls reproduce to 1e-10 relative (worst 0.0e+00)
+PASS control B0 the constraint file is the pin and the one S1 recorded
+PASS control B0 the weights' sum 211.012 and n_eff 19.06 are S1's
+PASS control B0 the 100 Flux universes are S1's, by the digests its committed readout recorded, in order
+PASS control B1 the flux group is band:Flux alone, and it is rebuilt from the universes to 1e-12 relative (worst 0.0e+00)
+PASS control B2 the rebuilt block reproduces Stage G's total and shape-only chi2 for every prediction to 1e-10 (worst 0.0e+00)
+PASS control B3 the 2000 x 100 index matrix from seed 20261027 is the declared one
+PASS control B4 every replicate's flux variances are positive and every swapped matrix, the uniform one's included, is positive definite
+PASS control B5 the correlation variant keeps S1's flux variances bit for bit in every replicate
+PASS control B6 every swapped matrix, the identity, 4000 replicate variants and the uniform one, is S1's other blocks + C_model + C_resp + C_PL5D + DeltaC_e + its flux block to 1e-12 relative (worst 2.8e-16)
+[3D] every line below: estimation uncertainty, not sensitivity: the scatter of the reported chi2 when the flux correlations are re-estimated from the 100 weighted universes; not an interval for the chi2 under the true correlations
+[3D] correlation genie_cv  : chi2 64.01/16; replicates 16-84 % [62.98, 64.94], 2.5-97.5 % [61.55, 65.61], offset of the median +0.08; basic 16-84 % [63.08, 65.04]; uniform 61.14
+[3D] correlation genie_mec : chi2 140.34/16; replicates 16-84 % [137.99, 142.40], 2.5-97.5 % [134.94, 143.88], offset of the median +0.14; basic 16-84 % [138.28, 142.69]; uniform 139.13
+[3D] correlation nuwro     : chi2 91.32/16; replicates 16-84 % [91.00, 91.69], 2.5-97.5 % [90.51, 92.02], offset of the median +0.04; basic 16-84 % [90.95, 91.64]; uniform 81.07
+[3D] correlation gibuu     : chi2 41.80/8; replicates 16-84 % [41.48, 42.07], 2.5-97.5 % [40.99, 42.21], offset of the median +0.03; basic 16-84 % [41.54, 42.13]; uniform 33.35
+[3D] correlation mnvtune_v1: chi2 155.79/16; replicates 16-84 % [152.95, 158.54], 2.5-97.5 % [149.42, 160.46], offset of the median +0.34; basic 16-84 % [153.04, 158.63]; uniform 154.11
+[3D] block       genie_cv  : chi2 64.01/16; replicates 16-84 % [63.15, 66.11], 2.5-97.5 % [62.00, 67.73], offset of the median +0.42; basic 16-84 % [61.91, 64.87]; uniform 61.14
+[3D] block       genie_mec : chi2 140.34/16; replicates 16-84 % [139.36, 142.39], 2.5-97.5 % [137.65, 143.79], offset of the median +0.55; basic 16-84 % [138.29, 141.32]; uniform 139.13
+[3D] block       nuwro     : chi2 91.32/16; replicates 16-84 % [89.85, 94.58], 2.5-97.5 % [88.25, 97.86], offset of the median +0.48; basic 16-84 % [88.06, 92.79]; uniform 81.07
+[3D] block       gibuu     : chi2 41.80/8; replicates 16-84 % [40.15, 44.53], 2.5-97.5 % [38.22, 47.35], offset of the median +0.38; basic 16-84 % [39.08, 43.45]; uniform 33.35
+[3D] block       mnvtune_v1: chi2 155.79/16; replicates 16-84 % [154.67, 159.16], 2.5-97.5 % [152.57, 161.70], offset of the median +0.97; basic 16-84 % [152.42, 156.91]; uniform 154.11
+[3D] n_eff 19.06; bootstrap sd of the weighted mean over sigma_w / sqrt(n_eff), median over cells 0.945 (range 0.887-1.059)
+{"wrote": "/pscratch/sd/j/josephrb/vf-20261125-p1/run/E/vf-with/readout/fd_flux_boot_readout.json", "sha256": "9387e4951e70131c4f39d489eae1ec7a4082d80111d8bfbc4667ae304c62090c"}

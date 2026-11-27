@@ -1,0 +1,45 @@
+MSR readout (declaration rev 4). Labels and sentences are the declaration's section 5.1; nothing is chosen
+after a statistic. NOT CITABLE FOR: a cause beyond 'consistent with', an estimator change, coverage, any data
+quantity, or note wording.
+
+Controls: C-2D PASS, C-A2 PASS, C-D PASS, C-DID PASS, C-F0B PASS, C-GRID PASS, C-L PASS, C-MARG PASS, C-OPS PASS, C-RANK PASS, C-RHO PASS, C-RID PASS, C-ROUTE PASS, C-T3 PASS
+
+M1 5D-B0:
+  A7_gibuu: S_poor well-dominated; Z_well resolvable; combined: points at a resolvable component. At truth A7_gibuu, a combination the binned inputs constrain to 10 % or better carries at least two binned CR widths of bias. This points at an estimator effect that the binned data could in principle resolve; it does not show that it is fixable, or how.
+    At truth A7_gibuu (5D), at least four fifths of the bias's sum of squares lies in combinations the binned inputs constrain to 10 % or better.
+M1 5D-F0b:
+  nominal: S_poor no bias to locate; Z_well below; combined: no bias to locate.
+  W1: S_poor well-dominated; Z_well resolvable; combined: points at a resolvable component. At truth W1, a combination the binned inputs constrain to 10 % or better carries at least two binned CR widths of bias. This points at an estimator effect that the binned data could in principle resolve; it does not show that it is fixable, or how.
+    At truth W1 (5D), at least four fifths of the bias's sum of squares lies in combinations the binned inputs constrain to 10 % or better.
+  W2: S_poor MC-unresolved; Z_well MC-unresolved; combined: unresolved.
+  W3: S_poor well-dominated; Z_well resolvable; combined: points at a resolvable component. At truth W3, a combination the binned inputs constrain to 10 % or better carries at least two binned CR widths of bias. This points at an estimator effect that the binned data could in principle resolve; it does not show that it is fixable, or how.
+    At truth W3 (5D), at least four fifths of the bias's sum of squares lies in combinations the binned inputs constrain to 10 % or better.
+  q3: S_poor well-dominated; Z_well resolvable; combined: points at a resolvable component. At truth q3, a combination the binned inputs constrain to 10 % or better carries at least two binned CR widths of bias. This points at an estimator effect that the binned data could in principle resolve; it does not show that it is fixable, or how.
+    At truth q3 (5D), at least four fifths of the bias's sum of squares lies in combinations the binned inputs constrain to 10 % or better.
+  stage0c_gibuu: S_poor well-dominated; Z_well resolvable; combined: points at a resolvable component. At truth stage0c_gibuu, a combination the binned inputs constrain to 10 % or better carries at least two binned CR widths of bias. This points at an estimator effect that the binned data could in principle resolve; it does not show that it is fixable, or how.
+    At truth stage0c_gibuu (5D), at least four fifths of the bias's sum of squares lies in combinations the binned inputs constrain to 10 % or better.
+  A7_mnvtune: S_poor no bias to locate; Z_well below; combined: no bias to locate.
+  A7_genie_cv: S_poor well-dominated; Z_well resolvable; combined: points at a resolvable component. At truth A7_genie_cv, a combination the binned inputs constrain to 10 % or better carries at least two binned CR widths of bias. This points at an estimator effect that the binned data could in principle resolve; it does not show that it is fixable, or how.
+    At truth A7_genie_cv (5D), at least four fifths of the bias's sum of squares lies in combinations the binned inputs constrain to 10 % or better.
+  A7_genie_mec: S_poor well-dominated; Z_well resolvable; combined: points at a resolvable component. At truth A7_genie_mec, a combination the binned inputs constrain to 10 % or better carries at least two binned CR widths of bias. This points at an estimator effect that the binned data could in principle resolve; it does not show that it is fixable, or how.
+    At truth A7_genie_mec (5D), at least four fifths of the bias's sum of squares lies in combinations the binned inputs constrain to 10 % or better.
+  A7_nuwro: S_poor well-dominated; Z_well resolvable; combined: points at a resolvable component. At truth A7_nuwro, a combination the binned inputs constrain to 10 % or better carries at least two binned CR widths of bias. This points at an estimator effect that the binned data could in principle resolve; it does not show that it is fixable, or how.
+    At truth A7_nuwro (5D), at least four fifths of the bias's sum of squares lies in combinations the binned inputs constrain to 10 % or better.
+  A7_gibuu: S_poor well-dominated; Z_well resolvable; combined: points at a resolvable component. At truth A7_gibuu, a combination the binned inputs constrain to 10 % or better carries at least two binned CR widths of bias. This points at an estimator effect that the binned data could in principle resolve; it does not show that it is fixable, or how.
+    At truth A7_gibuu (5D), at least four fifths of the bias's sum of squares lies in combinations the binned inputs constrain to 10 % or better.
+  across truths: unresolved at W2
+M1 2D-A2:
+  nominal: S_poor MC-unresolved; Z_well MC-unresolved; combined: unresolved.
+  genie_mec: S_poor MC-unresolved; Z_well MC-unresolved; combined: unresolved.
+  nuwro: S_poor MC-unresolved; Z_well MC-unresolved; combined: unresolved.
+  across truths: unresolved at nominal, genie_mec, nuwro
+M2 MO (k = 5) against B0 (k = 5): r_poor no poorly constrained component to remove; r_well removes part
+M2 OP (k = 2) against B0 (k = 5): r_poor no poorly constrained component to remove; r_well removes most
+  At k = 2, the oracle pull, the bound on what step 2 can reach (T3 section 3.3), remove mainly the well-constrained part of B0's bias (B0 at k = 5).
+  OP is read at its only iterate, k = 2, as the bound on what step 2 can reach.
+M3 5D: with the 5D reco feature set, 16 combinations of the 16 reported cells are constrained to 10 % or better at the data exposure, 0 are constrained to worse than 10 %, and 0 are unconstrained (MC-resolved counts; 0 not MC-resolved).
+M3 4D: with the 4D reco feature set, 16 combinations of the 16 reported cells are constrained to 10 % or better at the data exposure, 0 are constrained to worse than 10 %, and 0 are unconstrained (MC-resolved counts; 0 not MC-resolved).
+M3 3D: with the 3D reco feature set, 16 combinations of the 16 reported cells are constrained to 10 % or better at the data exposure, 0 are constrained to worse than 10 %, and 0 are unconstrained (MC-resolved counts; 0 not MC-resolved).
+M4 2D: 118 of the 205 cells' combinations constrained to 10 % or better, 25 worse, MC-unresolved unconstrained (MC-resolved; 62 not MC-resolved).
+
+Secondary and printed items are in readout.json; every k = 50 line is 'k = 50, secondary; not M2'.

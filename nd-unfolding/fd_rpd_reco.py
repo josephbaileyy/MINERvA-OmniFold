@@ -106,6 +106,28 @@ TRACK_POINT = 0.75
 PARTIAL_LOWER = 0.25
 PREDICTION_P_MIN = 0.01
 CONFIDENCE_SIGMA = 2.0
+SIDECAR_SCHEMA = "rdx-truthx-sidecar/1"
+SIDECAR_FILES = frozenset({"truthx", "truthx_names", "mc_id", "mc_id_names", "meta"})
+SIDECAR_TRUTHX = (
+    "truthx_enu",
+    "truthx_vtx_x",
+    "truthx_vtx_y",
+    "truthx_vtx_z",
+    "truthx_kep_lead",
+)
+SIDECAR_IDS = ("playlist_index", "run", "subrun", "event")
+ENERGY_MEDIAN_BAND_GEV = (1.0, 50.0)
+SPOT_SAMPLE = 64
+SPOT_SEED = (20261124, 17)
+OMNIFILE_TREE = "mc_signal_reco"
+OMNIFILE_BRANCHES = (
+    "truthx_run",
+    "truthx_subrun",
+    "truthx_evt",
+    "MC",
+    "MC_pz",
+    "truthx_enu",
+)
 
 
 class Refused(RuntimeError):
@@ -460,6 +482,11 @@ class Inputs:
         for key in ("pins", "h2", "inventory", "constants", "flux_source"):
             self.roots.append(Path(self.config[key]["path"]).resolve())
         self.roots.append(Path(self.config["flux_root"]).resolve())
+        true_energy = self.config.get("true_energy")
+        if isinstance(true_energy, dict):
+            self.roots.append(Path(true_energy["path"]).resolve())
+            for spec in true_energy.get("omnifiles", {}).values():
+                self.roots.append(Path(spec["path"]).resolve())
         require(
             not any(
                 self.staged == root or root in self.staged.parents
@@ -882,17 +909,34 @@ def reconstructed_energy(
 
 
 def energy_statistics(
-    truth: FloatArray, weights: FloatArray, reco_pz: FloatArray, *, scale: float = 1.0
+    truth: FloatArray,
+    weights: FloatArray,
+    reco_pz: FloatArray,
+    energy: FloatArray,
+    *,
+    scale: float = 1.0,
 ) -> Json:
-    """Collect additive controls and quantile operands in reco p_parallel strata."""
-    proton, denominator_p, muon = reconstructed_energy(truth, M_PROTON)
-    neutron, denominator_n, _ = reconstructed_energy(truth, M_NEUTRON)
-    energy = 0.5 * (proton + neutron) * scale
+    """Collect additive controls and quantile operands in reco p_parallel strata.
+
+    ``energy`` is the true neutrino energy in GeV (amendment 1 §5). The
+    mean-mass inversion survives only as C-E2's report operands.
+    """
+    proton, _denominator_p, muon = reconstructed_energy(truth, M_PROTON)
+    neutron, _denominator_n, _ = reconstructed_energy(truth, M_NEUTRON)
+    inverted = 0.5 * (proton + neutron)
+    energy = np.asarray(energy, dtype=float) * scale
+    require(
+        energy.shape == (len(truth),),
+        "ARRAY_SHAPE",
+        "true energy rows differ from the truth rows",
+    )
     theta = np.arctan2(truth[:, 0], truth[:, 1])
     with np.errstate(invalid="ignore", divide="ignore"):
         q3 = np.sqrt(4 * energy * muon * np.sin(theta / 2) ** 2 + (energy - muon) ** 2)
         error = np.abs(q3 / truth[:, 3] - 1)
         spread = np.abs(neutron / proton - 1)
+        deviation = np.abs(inverted / energy - 1)
+    reportable = np.isfinite(spread) & np.isfinite(deviation)
     results: Json = {}
     for low, high in ((1.5, 8), (8, 15), (15, 60)):
         selected = (
@@ -901,21 +945,27 @@ def energy_statistics(
             & (weights > 0)
         )
         total = float(weights[selected].sum())
-        valid = (
-            np.isfinite(energy)
-            & (denominator_p > 0)
-            & (denominator_n > 0)
-            & (energy >= muon)
-        )
+        valid = np.isfinite(energy) & (energy >= muon)
         controlled = selected & valid
+        reported = controlled & reportable
         results[f"{low}:{high}"] = {
             "total": total,
             "valid_weight": float(weights[controlled].sum()),
             "error": error[controlled],
             "weight": weights[controlled],
-            "spread": spread[controlled],
+            "spread": spread[reported],
+            "deviation": deviation[reported],
+            "report_weight": weights[reported],
         }
     return {"strata": results, "energy": energy}
+
+
+def report_quantiles(values: FloatArray, weights: FloatArray) -> Json:
+    """Return C-E2's report-only quantiles, or nulls when nothing is reportable."""
+    if not len(values) or float(weights.sum()) <= 0:
+        return {"median": None, "q99": None, "max": None}
+    median, q99 = weighted_quantiles(values, weights, np.array([0.5, 0.99]))
+    return {"median": median, "q99": q99, "max": float(values.max())}
 
 
 def evaluate_energy_controls(parts: Sequence[Json]) -> Json:
@@ -932,6 +982,8 @@ def evaluate_energy_controls(parts: Sequence[Json]) -> Json:
         error = np.concatenate([row["error"] for row in rows])
         weight = np.concatenate([row["weight"] for row in rows])
         spread = np.concatenate([row["spread"] for row in rows])
+        deviation = np.concatenate([row["deviation"] for row in rows])
+        report_weight = np.concatenate([row["report_weight"] for row in rows])
         require(bool(np.all(np.isfinite(error))), "C_E3", "nonfinite q3 comparison")
         median, q99 = weighted_quantiles(error, weight, np.array([0.5, 0.99]))
         require(
@@ -939,24 +991,27 @@ def evaluate_energy_controls(parts: Sequence[Json]) -> Json:
             "C_E3",
             f"q3 discrepancy {median}, {q99} in {stratum}",
         )
+        spread_report = report_quantiles(spread, report_weight)
+        deviation_report = report_quantiles(deviation, report_weight)
         results[stratum] = {
             "C-E1": fraction,
             "C-E3_median": median,
             "C-E3_q99": q99,
-            "C-E2_median_spread": weighted_quantiles(spread, weight, np.array([0.5]))[
-                0
-            ],
-            "C-E2_q99_spread": weighted_quantiles(spread, weight, np.array([0.99]))[0],
-            "C-E2_max_spread": float(spread.max()),
+            "C-E2_median_spread": spread_report["median"],
+            "C-E2_q99_spread": spread_report["q99"],
+            "C-E2_max_spread": spread_report["max"],
+            "C-E2_median_inversion_deviation": deviation_report["median"],
+            "C-E2_q99_inversion_deviation": deviation_report["q99"],
+            "C-E2_report_weight_fraction": float(report_weight.sum()) / total,
         }
     return results
 
 
 def energy_controls(
-    truth: FloatArray, weights: FloatArray, *, scale: float = 1.0
+    truth: FloatArray, weights: FloatArray, energy: FloatArray, *, scale: float = 1.0
 ) -> Json:
     """Evaluate the C-E controls on a single pooled test sample."""
-    parts = energy_statistics(truth, weights, truth[:, 1], scale=scale)
+    parts = energy_statistics(truth, weights, truth[:, 1], energy, scale=scale)
     return evaluate_energy_controls([parts])
 
 
@@ -1854,6 +1909,13 @@ def flux_extract(inputs: Inputs, argv: Sequence[str]) -> Json:
     inputs.load_pins()
     spectra: Json = {}
     products: Json = {}
+    energies, join = true_energies(
+        inputs,
+        {
+            playlist: len(inputs.key(f"lat_{playlist}.npz", "pass_reco"))
+            for playlist in PLAYLISTS
+        },
+    )
     with histogram_directory_ownership(root), staged_mat_prefixes(prefixes):
         reweighters = {
             group: root.PlotUtils.FluxReweighter(
@@ -1899,15 +1961,13 @@ def flux_extract(inputs: Inputs, argv: Sequence[str]) -> Json:
             truth = np.asarray(inputs.key(name, "MCgen"), dtype=float)
             passed = np.asarray(inputs.key(name, "pass_reco"), dtype=bool)
             weights = np.asarray(inputs.key(name, "w_reco"), dtype=float)
-            proton, _, _ = reconstructed_energy(truth, M_PROTON)
-            neutron, _, _ = reconstructed_energy(truth, M_NEUTRON)
-            energy = (proton + neutron) * 0.5
+            energy = energies[playlist]
             require(
-                passed.shape == weights.shape == energy.shape,
+                passed.shape == weights.shape == energy.shape == (len(truth),),
                 "ARRAY_SHAPE",
                 "flux row layout differs",
             )
-            arrays: dict[str, NDArray[Any]] = {}
+            arrays: dict[str, NDArray[Any]] = {"energy": energy}
             counts = {}
             for target in ("1D", "1M"):
                 factor, outside, patterns = mat_flux_swap(
@@ -1960,8 +2020,9 @@ def flux_extract(inputs: Inputs, argv: Sequence[str]) -> Json:
         },
         "spectra": spectra,
         "factor_products": products,
+        "true_energy": join,
         "prestage_sha256": inputs.config["prestage"]["sha256"],
-        "formula": "w(phi_target,g_own)/w(phi_own,g_own); w=1 if n==0 or d==0; ROOT interpolation E<=75",
+        "formula": "w(phi_target,g_own)/w(phi_own,g_own) at true E_nu = truthx_enu/1000; w=1 if n==0 or d==0; ROOT interpolation E<=75",
         **inputs.execution(),
     }
     write_json(inputs.run / "flux-extract.json", record)
@@ -2053,7 +2114,14 @@ def extracted_flux(inputs: Inputs, selected: Json) -> Json:
         "FLUX_EXTRACT_IDENTITY",
         "extract selection fingerprint differs",
     )
+    require(
+        isinstance(record.get("true_energy"), dict)
+        and record["true_energy"].get("status") == "PASS",
+        "C_JOIN",
+        "flux extract carries no passing true-energy join",
+    )
     spectra["factor_products"] = record["factor_products"]
+    spectra["true_energy"] = record["true_energy"]
     return spectra
 
 
@@ -2080,7 +2148,7 @@ def pinned_flux_factors(
             f"{kind}_{group}"
             for kind in ("factor", "outside")
             for group in ("1D", "1M")
-        }
+        } | {"energy"}
         require(set(archive.files) == required, "FLUX_FACTORS", "factor keys differ")
         arrays = {key: archive[key] for key in required}
     require(
@@ -2090,11 +2158,271 @@ def pinned_flux_factors(
             np.all(np.isfinite(arrays[f"factor_{g}"]))
             and np.all(arrays[f"factor_{g}"] >= 0)
             for g in ("1D", "1M")
-        ),
+        )
+        and arrays["energy"].dtype == np.float64
+        and bool(np.all(np.isfinite(arrays["energy"])))
+        and bool(np.all(arrays["energy"] > 0)),
         "FLUX_FACTORS",
-        "invalid full-row factors",
+        "invalid full-row factors or true energy",
     )
     return arrays
+
+
+def spot_rows(playlist: str, rows: int) -> NDArray[np.int64]:
+    """Return C-JOIN's declared spot rows: first, last and a seeded sample."""
+    require(rows >= SPOT_SAMPLE, "C_JOIN", f"{playlist} has fewer than {SPOT_SAMPLE} rows")
+    generator = np.random.default_rng(
+        np.random.SeedSequence([*SPOT_SEED, PLAYLISTS.index(playlist) + 1])
+    )
+    sample = generator.choice(rows, SPOT_SAMPLE, replace=False)
+    return np.unique(np.concatenate([[0, rows - 1], sample])).astype(np.int64)
+
+
+def true_energies(
+    inputs: Inputs, rows: dict[str, int]
+) -> tuple[dict[str, FloatArray], Json]:
+    """Read RDX's truthx sidecar and run C-JOIN part 1 (amendment 1 §3-4).
+
+    Returns each playlist's true neutrino energy in GeV, row-aligned with its
+    ``lat_<PL>`` dump, and the join record with the declared spot rows.
+    """
+    spec = inputs.config.get("true_energy")
+    require(
+        isinstance(spec, dict)
+        and all(key in spec for key in ("path", "sha256", "npz_sha256")),
+        "C_JOIN",
+        "a pinned true-energy sidecar is required",
+    )
+    assert isinstance(spec, dict)
+    require(
+        set(rows) == set(PLAYLISTS),
+        "C_JOIN",
+        "row counts for all twelve dumps are required",
+    )
+    copied = inputs.copy(Path(spec["path"]), spec["sha256"])
+    with read_guards(inputs.roots), np.load(copied, allow_pickle=False) as archive:
+        require(
+            set(archive.files) == SIDECAR_FILES,
+            "C_JOIN",
+            f"sidecar members differ: {sorted(archive.files)}",
+        )
+        meta = json.loads(str(archive["meta"]))
+        names = tuple(str(name) for name in archive["truthx_names"])
+        id_names = tuple(str(name) for name in archive["mc_id_names"])
+        truthx = archive["truthx"]
+        require(
+            names == SIDECAR_TRUTHX
+            and truthx.dtype == np.float64
+            and truthx.ndim == 2
+            and truthx.shape[1] == len(SIDECAR_TRUTHX),
+            "C_JOIN",
+            "sidecar truthx columns or dtype differ",
+        )
+        energy_mev = np.array(truthx[:, SIDECAR_TRUTHX.index("truthx_enu")])
+        del truthx
+        identities = archive["mc_id"]
+        require(
+            id_names == SIDECAR_IDS
+            and identities.dtype == np.int64
+            and identities.shape == (len(energy_mev), len(SIDECAR_IDS)),
+            "C_JOIN",
+            "sidecar mc_id columns or dtype differ",
+        )
+        identities = np.array(identities)
+    index = identities[:, 0]
+    total = len(energy_mev)
+    require(
+        isinstance(meta, dict)
+        and meta.get("schema") == SIDECAR_SCHEMA
+        and meta.get("npz_sha256") == spec["npz_sha256"]
+        and meta.get("rows") == total
+        and [entry[0] for entry in meta.get("playlists", [])] == list(PLAYLISTS),
+        "C_JOIN",
+        "sidecar meta does not name the pinned lat_zero rows",
+    )
+    require(
+        bool(np.all((index >= 0) & (index < len(PLAYLISTS)))),
+        "C_JOIN",
+        "playlist index out of range",
+    )
+    require(
+        bool(np.all(np.diff(index) >= 0)),
+        "C_JOIN",
+        "playlist index decreases down the rows",
+    )
+    counts = np.bincount(index, minlength=len(PLAYLISTS))
+    expected = np.array([rows[playlist] for playlist in PLAYLISTS])
+    require(
+        bool(np.array_equal(counts, expected)),
+        "C_JOIN",
+        f"playlist blocks {counts.tolist()} differ from dump rows {expected.tolist()}",
+    )
+    require(
+        bool(np.all(np.isfinite(energy_mev)) and np.all(energy_mev > 0)),
+        "C_JOIN",
+        "nonfinite or nonpositive true energy",
+    )
+    energy = energy_mev / 1000.0
+    median = float(np.median(energy))
+    low, high = ENERGY_MEDIAN_BAND_GEV
+    require(
+        low <= median <= high,
+        "C_JOIN_UNITS",
+        f"true-energy median {median} GeV outside [{low}, {high}]",
+    )
+    offsets = np.concatenate([[0], np.cumsum(counts)])
+    energies: dict[str, FloatArray] = {}
+    spots: Json = {}
+    for position, playlist in enumerate(PLAYLISTS):
+        start, stop = int(offsets[position]), int(offsets[position + 1])
+        energies[playlist] = np.array(energy[start:stop])
+        chosen = spot_rows(playlist, stop - start)
+        ids = identities[start + chosen, 1:]
+        spots[playlist] = {
+            "rows": chosen.tolist(),
+            "run": ids[:, 0].tolist(),
+            "subrun": ids[:, 1].tolist(),
+            "event": ids[:, 2].tolist(),
+            "energy_GeV": energies[playlist][chosen].tolist(),
+        }
+    record = {
+        "source": {
+            "path": str(Path(spec["path"]).resolve()),
+            "sha256": spec["sha256"],
+            "npz_sha256": meta["npz_sha256"],
+            "schema": meta["schema"],
+            "rows": total,
+        },
+        "block_rows": dict(zip(PLAYLISTS, counts.tolist())),
+        "median_GeV": median,
+        "median_band_GeV": [low, high],
+        "units": "truthx_enu (MeV) / 1000",
+        "spot_seed": list(SPOT_SEED),
+        "spots": spots,
+        "status": "PASS",
+    }
+    return energies, record
+
+
+def omnifile_spot_check(
+    inputs: Inputs, join: Json, products: Json, *, reader: Any = None
+) -> Json:
+    """C-JOIN part 2 (amendment 1 §4): bitwise spot rows against the omnifiles."""
+    spec = inputs.config.get("true_energy")
+    require(
+        isinstance(spec, dict)
+        and isinstance(spec.get("omnifiles"), dict)
+        and set(spec["omnifiles"]) == set(PLAYLISTS),
+        "C_JOIN",
+        "twelve pinned omnifiles are required",
+    )
+    assert isinstance(spec, dict)
+    require(
+        isinstance(join, dict)
+        and join.get("status") == "PASS"
+        and join.get("source", {}).get("sha256") == spec["sha256"]
+        and set(join.get("spots", {})) == set(PLAYLISTS),
+        "C_JOIN",
+        "flux extract carries no passing join record for this sidecar",
+    )
+    if reader is None:
+        reader = uproot_tree_reader
+    checked: Json = {}
+    for playlist in PLAYLISTS:
+        name = f"lat_{playlist}.npz"
+        truth = np.asarray(inputs.key(name, "MCgen"))
+        require(
+            truth.dtype == np.float32 and truth.ndim == 2,
+            "C_JOIN",
+            f"{playlist} MCgen is not the dump's float32 layout",
+        )
+        rows = len(truth)
+        spot = join["spots"][playlist]
+        listed = spot.get("rows")
+        require(
+            isinstance(listed, list)
+            and bool(listed)
+            and all(type(row) is int for row in listed),
+            "C_JOIN",
+            f"{playlist} spot rows are not a list of row numbers",
+        )
+        chosen = np.asarray(listed, dtype=np.int64)
+        require(
+            bool(np.all(np.diff(chosen) > 0)),
+            "C_JOIN",
+            f"{playlist} spot rows are not sorted and distinct",
+        )
+        require(
+            chosen[0] == 0 and chosen[-1] == rows - 1,
+            "C_JOIN",
+            f"{playlist} spot rows miss the first or last dump row",
+        )
+        require(
+            len(chosen) >= min(SPOT_SAMPLE, rows),
+            "C_JOIN",
+            f"{playlist} has too few spot rows",
+        )
+        require(
+            all(
+                len(spot.get(key, [])) == len(chosen)
+                for key in ("run", "subrun", "event", "energy_GeV")
+            ),
+            "C_JOIN",
+            f"{playlist} spot identities or energies do not match its rows",
+        )
+        energy = np.asarray(spot["energy_GeV"], dtype=np.float64)
+        product = pinned_flux_factors(inputs, products, playlist, rows)
+        require(
+            bool(np.array_equal(product["energy"][chosen], energy)),
+            "C_JOIN",
+            f"{playlist} product energy differs from the join record",
+        )
+        omni = spec["omnifiles"][playlist]
+        copied = inputs.copy(Path(omni["path"]), omni["sha256"])
+        with read_guards(inputs.roots):
+            branches = reader(copied, OMNIFILE_TREE, OMNIFILE_BRANCHES)
+        run = np.asarray(branches["truthx_run"], dtype=np.int64)
+        subrun = np.asarray(branches["truthx_subrun"], dtype=np.int64)
+        event = np.asarray(branches["truthx_evt"], dtype=np.int64)
+        for position, row in enumerate(chosen):
+            key = (spot["run"][position], spot["subrun"][position], spot["event"][position])
+            entries = np.flatnonzero(
+                (run == key[0]) & (subrun == key[1]) & (event == key[2])
+            )
+            require(
+                len(entries) == 1,
+                "C_JOIN",
+                f"{playlist} row {row}: event {key} found {len(entries)} times",
+            )
+            entry = int(entries[0])
+            require(
+                np.float64(branches["truthx_enu"][entry]) / 1000.0 == energy[position],
+                "C_JOIN",
+                f"{playlist} row {row}: omnifile energy differs",
+            )
+            require(
+                np.float32(np.float64(branches["MC"][entry])) == truth[row, 0]
+                and np.float32(np.float64(branches["MC_pz"][entry])) == truth[row, 1],
+                "C_JOIN",
+                f"{playlist} row {row}: omnifile MC or MC_pz differs from MCgen",
+            )
+        checked[playlist] = {
+            "spot_rows": len(chosen),
+            "omnifile_sha256": omni["sha256"],
+            "matched": len(chosen),
+        }
+    return {"status": "PASS", "playlists": checked}
+
+
+def uproot_tree_reader(path: Path, tree: str, branches: Sequence[str]) -> Json:
+    """Read named branches of one tree with uproot, never ROOT."""
+    import uproot
+
+    with uproot.open(path) as handle:
+        return {
+            key: np.asarray(value)
+            for key, value in handle[tree].arrays(list(branches), library="np").items()
+        }
 
 
 def common_flux_integral_ratio(own: Json, target: Json) -> float:
@@ -2182,6 +2510,10 @@ def p0(inputs: Inputs) -> Json:
     )
     spectra = extracted_flux(inputs, selected)
     products = spectra.pop("factor_products")
+    join = spectra.pop("true_energy")
+    # Amendment 1 §4 (the director's placement conditions): C-JOIN part 2 is
+    # P0's first use of flux4's output; nothing else reads it unless this passes.
+    spot_check = omnifile_spot_check(inputs, join, products)
     units = common_flux_units(spectra)
     zero_patterns = {}
     for playlist in PLAYLISTS:
@@ -2204,6 +2536,7 @@ def p0(inputs: Inputs) -> Json:
         },
         "factor_products": products,
         "zero_patterns": zero_patterns,
+        "C-JOIN": {"part1": join, "part2": spot_check},
         "spectra": spectra,
         "environment": runtime_environment(),
         "P-F": {
@@ -2423,15 +2756,15 @@ def aggregate(
         factors = np.ones((5, count))
         if sample.kind == "signal":
             assert sample.truth is not None
+            product = pinned_flux_factors(
+                inputs, p0_record["factor_products"], sample.playlist, count
+            )
             energy_part = energy_statistics(
-                sample.truth, sample.weights, sample.values[:, 1]
+                sample.truth, sample.weights, sample.values[:, 1], product["energy"]
             )
             energy_part.pop("energy")
             controls["energy_parts"].append(energy_part)
             for target, variant_slots in (("1D", (1, 2)), ("1M", (3, 4))):
-                product = pinned_flux_factors(
-                    inputs, p0_record["factor_products"], sample.playlist, count
-                )
                 factor, outside = (
                     product[f"factor_{target}"],
                     product[f"outside_{target}"],

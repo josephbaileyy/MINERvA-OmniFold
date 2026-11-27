@@ -1,0 +1,61 @@
+1A: P1 identical=True rows 51507/51507 first mismatch None
+    P2 with_duplicates: max |rel| 3.44e-15 (cell 21), total +0.00e+00, pass=True
+    P2 deduplicated: max |rel| 3.44e-15 (cell 21), total +0.00e+00, pass=True
+    P2 cells checked 199, duplicate entries 0
+    P3 E_nu<E_mu 0/2682888, reco fid nu_mu CC bad E_nu 0, pass=True
+1B: P1 identical=True rows 13751/13751 first mismatch None
+    P2 with_duplicates: max |rel| 3.11e-15 (cell 40), total +4.44e-16, pass=True
+    P2 deduplicated: max |rel| 3.11e-15 (cell 40), total +4.44e-16, pass=True
+    P2 cells checked 187, duplicate entries 0
+    P3 E_nu<E_mu 0/721243, reco fid nu_mu CC bad E_nu 0, pass=True
+1C: P1 identical=True rows 26489/26489 first mismatch None
+    P2 with_duplicates: max |rel| 3.11e-15 (cell 69), total -2.22e-16, pass=True
+    P2 deduplicated: max |rel| 3.11e-15 (cell 69), total -2.22e-16, pass=True
+    P2 cells checked 193, duplicate entries 0
+    P3 E_nu<E_mu 0/1377159, reco fid nu_mu CC bad E_nu 0, pass=True
+1D: P1 identical=True rows 77763/77763 first mismatch None
+    P2 with_duplicates: max |rel| 2.78e-15 (cell 87), total +2.22e-16, pass=True
+    P2 deduplicated: max |rel| 2.78e-15 (cell 87), total +2.22e-16, pass=True
+    P2 cells checked 202, duplicate entries 0
+    P3 E_nu<E_mu 0/4004542, reco fid nu_mu CC bad E_nu 0, pass=True
+1E: P1 identical=True rows 64804/64804 first mismatch None
+    P2 with_duplicates: max |rel| 1.05e-03 (cell 223), total +3.82e-05, pass=False
+    P2 deduplicated: max |rel| 2.89e-15 (cell 72), total -2.22e-16, pass=True
+    P2 cells checked 200, duplicate entries 133
+    P3 E_nu<E_mu 0/3350935, reco fid nu_mu CC bad E_nu 0, pass=True
+1F: P1 identical=True rows 88295/88295 first mismatch None
+    P2 with_duplicates: max |rel| 3.77e-15 (cell 120), total -1.11e-16, pass=True
+    P2 deduplicated: max |rel| 3.77e-15 (cell 120), total -1.11e-16, pass=True
+    P2 cells checked 202, duplicate entries 0
+    P3 E_nu<E_mu 0/4661187, reco fid nu_mu CC bad E_nu 0, pass=True
+1G: P1 identical=True rows 74275/74275 first mismatch None
+    P2 with_duplicates: max |rel| 4.11e-15 (cell 87), total +0.00e+00, pass=True
+    P2 deduplicated: max |rel| 4.11e-15 (cell 87), total +0.00e+00, pass=True
+    P2 cells checked 202, duplicate entries 0
+    P3 E_nu<E_mu 0/3923648, reco fid nu_mu CC bad E_nu 0, pass=True
+1L: P1 identical=True rows 6987/6987 first mismatch None
+    P2 with_duplicates: max |rel| 3.11e-15 (cell 113), total +0.00e+00, pass=True
+    P2 deduplicated: max |rel| 3.11e-15 (cell 113), total +0.00e+00, pass=True
+    P2 cells checked 175, duplicate entries 0
+    P3 E_nu<E_mu 0/383939, reco fid nu_mu CC bad E_nu 0, pass=True
+1M: P1 identical=True rows 108796/108796 first mismatch None
+    P2 with_duplicates: max |rel| 4.55e-15 (cell 87), total -2.22e-16, pass=True
+    P2 deduplicated: max |rel| 4.55e-15 (cell 87), total -2.22e-16, pass=True
+    P2 cells checked 202, duplicate entries 0
+    P3 E_nu<E_mu 0/5918690, reco fid nu_mu CC bad E_nu 0, pass=True
+1N: P1 identical=True rows 61895/61895 first mismatch None
+    P2 with_duplicates: max |rel| 4.11e-15 (cell 151), total -1.11e-16, pass=True
+    P2 deduplicated: max |rel| 4.11e-15 (cell 151), total -1.11e-16, pass=True
+    P2 cells checked 202, duplicate entries 0
+    P3 E_nu<E_mu 0/3417025, reco fid nu_mu CC bad E_nu 0, pass=True
+1O: P1 identical=True rows 18225/18225 first mismatch None
+    P2 with_duplicates: max |rel| 2.66e-15 (cell 146), total +2.22e-16, pass=True
+    P2 deduplicated: max |rel| 2.66e-15 (cell 146), total +2.22e-16, pass=True
+    P2 cells checked 190, duplicate entries 0
+    P3 E_nu<E_mu 0/1042306, reco fid nu_mu CC bad E_nu 0, pass=True
+1P: P1 identical=True rows 24245/24245 first mismatch None
+    P2 with_duplicates: max |rel| 2.11e-15 (cell 39), total +0.00e+00, pass=True
+    P2 deduplicated: max |rel| 2.11e-15 (cell 39), total +0.00e+00, pass=True
+    P2 cells checked 192, duplicate entries 0
+    P3 E_nu<E_mu 0/1372990, reco fid nu_mu CC bad E_nu 0, pass=True
+P1 True; P2 with duplicates False, deduplicated True -> deduplicated; P3 True; all 12 playlists: True
