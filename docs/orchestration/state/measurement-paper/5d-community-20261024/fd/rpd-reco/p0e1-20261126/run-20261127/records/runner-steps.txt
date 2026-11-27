@@ -1,0 +1,4 @@
+pins-dry supervisor_rc=0 rc=0 signal=- deadline=0 leftover_killed=0 group_gone=1 peak_rss_bytes=23957504 end=2026-11-27T00:39:42Z
+p0-dry supervisor_rc=0 rc=0 signal=- deadline=0 leftover_killed=0 group_gone=1 peak_rss_bytes=1465544704 end=2026-11-27T00:40:41Z
+pins supervisor_rc=0 rc=0 signal=- deadline=0 leftover_killed=0 group_gone=1 peak_rss_bytes=31457280 end=2026-11-27T00:40:48Z
+p0 supervisor_rc=0 rc=0 signal=- deadline=0 leftover_killed=0 group_gone=1 peak_rss_bytes=1492176896 end=2026-11-27T00:41:45Z

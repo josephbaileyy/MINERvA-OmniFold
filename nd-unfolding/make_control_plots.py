@@ -186,7 +186,7 @@ def draw(arr, outdir, print_style=False, extended=False):
         h_b = A.fill_between(xs, floor, np.maximum(y_bkg, floor),
                              color=C_BKG, lw=0, label="MC background")
         h_s = A.fill_between(xs, np.maximum(y_bkg, floor), y_tot,
-                             color=C_SIG, lw=0, label="MC signal (MnvTune v1)")
+                             color=C_SIG, lw=0, label="MC signal\n(MINERvA Tune v1)")
         A.plot(xs, y_bkg, color="white", lw=LWG)      # gap between stack segments
         A.plot(xs, y_tot, color=C_EDGE, lw=LWO)       # stack outline
         h_d = A.errorbar(ctr[:nshow], dat[:nshow], yerr=derr[:nshow],

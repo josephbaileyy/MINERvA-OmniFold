@@ -1,0 +1,10 @@
+commit             47f6a3aeb2f084891bf96b5058e6722add3dd963
+run receipts       docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/run-20261126
+lane root          /pscratch/sd/j/josephrb/evw2d-20261126
+evw2d.py           6106b23a8b6c5cb9c27acd8480329f6bc180f5c90f9af3ba82a92c9507e64887
+config.json        bee02d38e8141a8780ba2c838007ebdd0663af1b195f3291ba71239e3f26e7ec
+products SHA256SUMS  e60867ef66eb47172a0e90140abc7a366d780dfc3aa3f9beb426a40a48d1416e
+evw2d.done         830d7d7641c1a5bca96fda4bde47094cf047abc8df183304aa99986414e1f133
+job                62022231
+evw2d_hpss.sh      5c674c6c00a24f460d8d7f600c3bb8c8805f6f46d4393bb6d7fd0125a1c5aa41
+evw2d_deposit.sh   91fc4e1bb20d55f0f66e73263d4c30f1388d0bc8440e40a288a443ffe6db7e69

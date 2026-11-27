@@ -1,0 +1,8 @@
+CONFIRMATION: ALL HOLD
+
+- **HOLDS** · A NUL anywhere in the receipt log causes exit 5, including inside the digest or after the footer. [evw2d_deposit.sh:93](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1f/inputs/new/evw2d_deposit.sh:93)
+- **HOLDS** · The C locale closes the UTF-8 collation bug. macOS Bash 3.2 rejected 64 uppercase `A`s and accepted lowercase hex. Explicitly enabling Bash’s `nocasematch` still bypasses the guard, as it did before r6. [evw2d_deposit.sh:25](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1f/inputs/new/evw2d_deposit.sh:25) · [digest guard:45](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1f/inputs/new/evw2d_deposit.sh:45)
+- **HOLDS** · Omission or replacement of either final readback success line causes exit 5 even when the part readback and success footer are intact. [evw2d_deposit.sh:99](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1f/inputs/new/evw2d_deposit.sh:99)
+- **HOLDS** · Bare `evw2d-20261126` exits 9 before SSH. The full bound scratch path passes the guard. [evw2d_deposit.sh:50](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1f/inputs/new/evw2d_deposit.sh:50)
+
+Read-only probes with macOS Bash 3.2 and BSD tools found no new false PASS or false STOP from the four changes.

@@ -83,5 +83,12 @@
 \newcommand{\diag}{\mathrm{diag}}
 \newcommand{\Tr}{\mathrm{Tr}}
 
+% Covariance symbols of the compiled note (Joseph 2026-11-26, via the director; #1378). One definition controls each printed symbol. The records document keeps the earlier symbols Q_R, C_rep, C_total and C_PL,5D, and App. D maps them.
+\newcommand{\CrepTwoD}{C_{\mathrm{rep}}^{(2\mathrm{D})}}
+\newcommand{\CrepFiveD}{C_{\mathrm{rep}}^{(5\mathrm{D})}}
+\newcommand{\CrepFiveDzero}{C_{\mathrm{rep},0}^{(5\mathrm{D})}}
+\newcommand{\Csub}{C_{\mathrm{subtotal}}}
+\newcommand{\Crun}{C_{\mathrm{run}}}
+
 % Note register round n2, N2-1 (director rulings 2026-10-26): \recentry{<tag>} prints a records entry's number (R1.<n>), so the posted note cites a records entry by number instead of by its internal tag. The numbers are generated from app_provenance.tex by `check_note_records.py entry-numbers`; build_all.sh fails if the file is stale (before any build or export) or if a number differs from the records build's own label (after it).
 \input{records_entry_numbers}

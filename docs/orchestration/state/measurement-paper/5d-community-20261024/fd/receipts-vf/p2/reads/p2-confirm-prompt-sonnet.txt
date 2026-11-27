@@ -1,0 +1,20 @@
+You are a read-only reviewer for a physics analysis repository at the current directory (commit a8032beb). Do not modify any file in it; scratch work only under a new temp dir.
+
+Context. Phase 2 of a covariance change ("V_F": the experimental block C_e is replaced by an inflated C_e^infl, DeltaC_e = C_e^infl - C_e) recomputes 12 committed readouts with the new matrix. For each, an OLD control ("control P") first reproduces the committed readout with the OLD matrix within a stated tolerance, then the same code runs with V_F. Then a readings tool compares OLD vs V_F decision-rule outcomes.
+
+Files in scope:
+- nd-unfolding/fd_vf_p2.py (the recomputes; focus on the prr, rsn/rsnregrade and xk paths: functions p2_prr / p2_rsn / p2_xk / xk_replay / p_control and whatever they call in this file)
+- docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/readings/vf_readings.py and its outputs vf_readings.md / vf_readings.json
+- docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/p2/P2-RECEIPT.md
+- docs/orchestration/state/measurement-paper/5d-community-20261024/FD-VF-ADDITION-AMENDMENT-A4.md (the rules: tolerances, what may be substituted)
+- docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-vf/p2/*.vf.json (outputs)
+
+SCOPE RULE (strict): report ONLY findings that could change a published/recorded number, or change what a gate/decision rule accepts. Examples that count: the V_F run uses the wrong matrix or arm somewhere; control P compares the wrong object or is vacuous (passes on empty / compares a thing to itself); a tolerance looser than A4 allows; the readings tool reads the wrong field so an outcome change is missed or misreported; the section 1 "Headline" omits an outcome change present in the per-rule sections; a substitution in the readings tool's shims changes a number beyond what its SHIMS list discloses. Do NOT report style, malformed-archive constructions, same-account races, or hardening ideas.
+
+Checks to perform (you have read-only file tools and cannot run code; reason from the code and the committed outputs):
+1. In fd_vf_p2.py, confirm for prr, rsnregrade, rsn and xk that the OLD control uses the committed OLD matrix, the V_F run uses REPORTED_F / WITHOUT_F (or the documented V_F block) and nothing else changes between the two runs.
+2. Confirm each p_control call's tolerance equals A4's for that readout and that the comparison is non-vacuous (it would fail if a value differed beyond tolerance).
+3. In vf_readings.py, confirm decision_rules() reads OLD from the committed readouts and V_F from the with-vf copies (not the same file twice), and that every changed outcome visible in section 1's per-rule lists appears in the Headline.
+4. (skip: needs hashing; say "not checked")
+
+Output: a numbered list of findings, each marked BLOCKING (in scope per the rule) or FOLLOWUP, with file:line and a concrete failure scenario; then a line per check 1-4 saying what you verified. End with exactly one line: VERDICT: GO or VERDICT: NO-GO (NO-GO only if a BLOCKING finding exists). Keep under 600 words.

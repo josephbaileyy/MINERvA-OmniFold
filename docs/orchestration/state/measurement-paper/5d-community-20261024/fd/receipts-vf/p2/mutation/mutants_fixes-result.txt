@@ -1,0 +1,22 @@
+V_F Phase 2 fixes: targeted mutation check (mutants_fixes.py; each mutant applied to the worktree file, the suite run
+with -x and VF_P2_FETCH set, the file restored and its sha256 checked; 2026-11-26)
+p-floor exemption without the floor | KILLED | 1 failed, 27 passed in 3.00s
+gch back to 1e-9 | KILLED | 1 failed, 28 passed in 2.94s
+prr not_replaced dropped | KILLED | 1 failed, 47 passed in 120.23s (0:02:00)
+xk tolerance loosened | KILLED | 1 failed, 41 passed in 23.67s
+IBU tolerance loosened | KILLED | 1 failed, 45 passed in 11.50s
+remap follows symlinks | KILLED | 1 failed, 36 passed in 9.76s
+remap read unlogged | KILLED | 1 failed, 38 passed in 9.36s
+remap not restored | KILLED | 1 failed, 36 passed in 19.17s
+substitution ignored | KILLED | 1 failed, 37 passed in 11.54s
+fetched bare paths | KILLED | 1 failed, 47 passed in 37.67s
+flag direction flipped | KILLED | 1 failed, 49 passed in 41.04s
+ruling ignores path | KILLED | 1 failed, 50 passed in 42.10s
+lists keyed by index | KILLED | 1 failed, 48 passed in 55.32s
+stop exits 0 | KILLED | 1 failed, 51 passed in 48.04s
+weakening allowed | KILLED | 1 failed, 49 passed in 41.30s
+list gains ignored | KILLED | 1 failed, 49 passed in 42.51s
+absent reads as flagged | KILLED | 1 failed, 49 passed in 45.41s
+17/17 killed
+Not covered by an offline test: prr's f-equality assert (its inputs agree; only a fetch rerun with a perturbed product
+would reach it).

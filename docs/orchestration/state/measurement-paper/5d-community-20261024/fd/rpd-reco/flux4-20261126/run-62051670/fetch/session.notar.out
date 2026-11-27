@@ -1,0 +1,411 @@
+node login02 staged sha256 4da3ee5eb10ca6465aa5649b362ca61f8107ffdf29807a316af647820417b585
+node login02 2026-11-26T20:55:48Z; fetch script sha256 4da3ee5eb10ca6465aa5649b362ca61f8107ffdf29807a316af647820417b585
+job 62051670; sacct rc=0; state [COMPLETED]
+sacct: 62051670|rpd_flux4|COMPLETED|0:0|00:09:17|2026-11-26T12:43:55|2026-11-26T12:53:12|nid004076||10|16G|01:00:00
+== job-host.txt
+jobid=62051670 host=nid004076 start=2026-11-26T20:43:57Z
+end=2026-11-26T20:53:11Z rc=0 cause=exit
+job.rc: rc=0 cause=exit end=2026-11-26T20:53:11Z
+== 1. listing of the root
+drwx------ 4096 
+-rw------- 4694 connect.log
+-rw------- 281 exception-stat-outer.txt
+-rw------- 405 fence-overlap.txt
+-rw------- 0 job.err
+-rw------- 98 job-host.txt
+-rw------- 9 job.id
+-rw------- 2343 job.out
+-rw------- 41 job.rc
+-rw------- 18509 production-config.ready.json
+-rw------- 8281 rpd_flux4_job.sh
+drwx------ 4096 .rpd-private
+drwx------ 4096 .rpd-private/70d7e91f2b5b41c7477f63906315b7b1a53ce7e59b012a61a3c3a72dfbd03203
+-rw------- 263375 .rpd-private/70d7e91f2b5b41c7477f63906315b7b1a53ce7e59b012a61a3c3a72dfbd03203/prestage.json
+drwx------ 4096 run
+-rw------- 4563 run/cov2d-fence.json
+-rw------- 20022 run/extract-config.json
+-rw------- 2759644 run/flux-custody.json
+-rw------- 536202 run/flux-extract.json
+-rw------- 604904 run/flux-extract.strace
+-rw------- 69734258 run/flux-factors-1A.npz
+-rw------- 18747660 run/flux-factors-1B.npz
+-rw------- 35795756 run/flux-factors-1C.npz
+-rw------- 104087408 run/flux-factors-1D.npz
+-rw------- 87094536 run/flux-factors-1E.npz
+-rw------- 121156018 run/flux-factors-1F.npz
+-rw------- 101984346 run/flux-factors-1G.npz
+-rw------- 9980460 run/flux-factors-1L.npz
+-rw------- 153840540 run/flux-factors-1M.npz
+-rw------- 88816178 run/flux-factors-1N.npz
+-rw------- 27093088 run/flux-factors-1O.npz
+-rw------- 35688844 run/flux-factors-1P.npz
+drwx------ 4096 run/mat-data
+drwx------ 4096 run/mat-data/MPARAMFILES
+drwx------ 4096 run/mat-data/MPARAMFILES/FluxConstraints
+-rw------- 25403 run/mat-data/MPARAMFILES/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+drwx------ 4096 run/mat-data/PLOTUTILSROOT
+drwx------ 4096 run/mat-data/PLOTUTILSROOT/data
+drwx------ 4096 run/mat-data/PLOTUTILSROOT/data/flux
+-rw------- 3130612 run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg-14-minervame1D_rearrangedUniverses.root
+-rw------- 3184947 run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg14-minervame1D_rearrangedUniverses.root
+-rw------- 3127208 run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg-14-minervame1M_rearrangedUniverses.root
+-rw------- 3185381 run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg14-minervame1M_rearrangedUniverses.root
+-rw------- 3135889 run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg-14-minervame1N_rearrangedUniverses.root
+-rw------- 3186949 run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg14-minervame1N_rearrangedUniverses.root
+-rw------- 3132419 run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg-14-minervame1D_rearrangedUniverses.root
+-rw------- 3188849 run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root
+-rw------- 3136251 run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root
+-rw------- 3187397 run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root
+-rw------- 3130100 run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg-14-minervame1N_rearrangedUniverses.root
+-rw------- 3182011 run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root
+drwx------ 4096 run/mat-data/PLOTUTILSROOT/data/flux/sys
+-rw------- 5469 run/mat-data/PLOTUTILSROOT/data/flux/sys/Muon_Energy_MnvH1D.root
+drwx------ 4096 run/mat-data/PLOTUTILSROOT/data/lowNuReweight
+-rw------- 5013 run/mat-data/PLOTUTILSROOT/data/lowNuReweight/lowNuReweight.root
+-rw------- 2131581 run/missing-dependency-check.json
+-rw------- 1895 run/missing-dependency.STOP.json
+-rw------- 463946 run/missing-dependency.strace
+-rw------- 91607 run/negative-policy.checked.json
+-rw------- 18509 run/original-config.json
+drwx------ 4096 run/original-inputs
+-rw------- 3360491 run/original-inputs/03053d12eefd54a9-lat_1G_bkg.npz
+-rw------- 3130100 run/original-inputs/08500b2e58a20f66-flux-gen2thin-pdg-14-minervame1N_rearrangedUniverses.root
+-rw------- 639 run/original-inputs/0a5c6adb429e437c-setup_UnfoldUtils.sh
+-rw------- 3000 run/original-inputs/14b0bc45cf3605e2-INPUTS.sha256
+-rw------- 630 run/original-inputs/19360bf36c1b67dd-setup_MAT.sh
+-rw------- 13738 run/original-inputs/1b2d014681c4892e-MAT-DATA-DEPENDENCIES.json
+-rw------- 2888635 run/original-inputs/1b55ce2d601762d2-lat_1E_bkg.npz
+-rw------- 3186949 run/original-inputs/1c2439cc11e2101b-flux-g4numiv6-pdg14-minervame1N_rearrangedUniverses.root
+-rw------- 1985624 run/original-inputs/1dead4f249ff3a35-libMAT.so
+-rw------- 1194780 run/original-inputs/1f6898cee4f592a7-lat_1C_bkg.npz
+-rw------- 2364943114 run/original-inputs/22898dbb05ed7d18-truthx_RDX_ALL.npz
+-rw------- 33980383 run/original-inputs/23ba7b3e4f03097e-lat_1B.npz
+-rw------- 612 run/original-inputs/2c20ac85fd963fcf-setup_MAT-MINERvA.sh
+-rw------- 3132419 run/original-inputs/325a46f9785553e4-flux-gen2thin-pdg-14-minervame1D_rearrangedUniverses.root
+-rw------- 17061 run/original-inputs/3bd5bbeda15cec00-MAT_rdict.pcm
+-rw------- 3119697 run/original-inputs/5709f1805650942f-lat_1N_bkg.npz
+-rw------- 186899533 run/original-inputs/589e8e7c32a32b9e-lat_1G.npz
+-rw------- 1407 run/original-inputs/5d205f38d4577979-setup_salloc_env.sh
+-rw------- 18061361 run/original-inputs/60dce5f309f75068-lat_1L.npz
+-rw------- 47673627 run/original-inputs/60dd95f990447c08-lat_1O.npz
+-rw------- 159089937 run/original-inputs/6408e97fafde39fd-lat_1N.npz
+-rw------- 3127208 run/original-inputs/693f7f4d9f82b8af-flux-g4numiv6-pdg-14-minervame1M_rearrangedUniverses.root
+-rw------- 638389 run/original-inputs/71033ac432cf9dd6-lat_1B_bkg.npz
+-rw------- 5469 run/original-inputs/7128515c686cb2a7-Muon_Energy_MnvH1D.root
+-rw------- 4114 run/original-inputs/7498526864f517fc-MATDict.rootmap
+-rw------- 65471177 run/original-inputs/74fa63fbf271176e-lat_1C.npz
+-rw------- 4027113 run/original-inputs/76420fe9021e8fbb-lat_1F_bkg.npz
+-rw------- 11270 run/original-inputs/7954b8ff9b67e1bf-h2_definition.json
+-rw------- 1316555 run/original-inputs/7ac5fc566723b2e4-lat_1P_bkg.npz
+-rw------- 158814144 run/original-inputs/83f24b7f787a7c47-lat_1E.npz
+-rw------- 3130612 run/original-inputs/882ab7fbaedcdf83-flux-g4numiv6-pdg-14-minervame1D_rearrangedUniverses.root
+-rw------- 5283519 run/original-inputs/8ad9727f32b0e55c-lat_1M_bkg.npz
+-rw------- 221027198 run/original-inputs/8be5eb94426af3a4-lat_1F.npz
+-rw------- 89876 run/original-inputs/8c563645b31a023e-FluxReweighter.cxx
+-rw------- 3187397 run/original-inputs/903203ab39c23eba-flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root
+-rw------- 127968221 run/original-inputs/90ba74ab9f17d469-lat_1A.npz
+-rw------- 25403 run/original-inputs/9129a33666de8e29-sorted_NuEConstraint_FHC_RHC_IMD.txt
+-rw------- 5013 run/original-inputs/93dd6519c6dcfefe-lowNuReweight.root
+-rw------- 192006622 run/original-inputs/a22a361fe047d9a5-lat_1D.npz
+-rw------- 63445665 run/original-inputs/a3536bff2d297cb8-lat_1P.npz
+-rw------- 816 run/original-inputs/a8bbdb8c6847827e-setup.sh
+-rw------- 3184947 run/original-inputs/b52e8aaa3c94ac0f-flux-g4numiv6-pdg14-minervame1D_rearrangedUniverses.root
+-rw------- 1898 run/original-inputs/bab9d8b21c5310c0-energy-spectrum-candidates.tsv
+-rw------- 2311555 run/original-inputs/c058e5c64a0e9d4a-lat_1A_bkg.npz
+-rw------- 274076044 run/original-inputs/c2364bb69fb3a8ef-lat_1M.npz
+-rw------- 361915 run/original-inputs/d05d233ebaa252cd-lat_1L_bkg.npz
+-rw------- 345 run/original-inputs/d7ce15f86e01762d-setup.sh
+-rw------- 18146 run/original-inputs/d877092f5479c1c4-CVUniverse.h
+-rw------- 997512 run/original-inputs/d9b014a27bac0e30-lat_1O_bkg.npz
+-rw------- 3448900 run/original-inputs/dc14631f127c53d2-lat_1D_bkg.npz
+-rw------- 3135889 run/original-inputs/dcee86a3be368d65-flux-g4numiv6-pdg-14-minervame1N_rearrangedUniverses.root
+-rw------- 3188849 run/original-inputs/efe4bfe8f63f0609-flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root
+-rw------- 3136251 run/original-inputs/f044d6329f826af0-flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root
+-rw------- 3182011 run/original-inputs/f1444640e8cbebc0-flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root
+-rw------- 3185381 run/original-inputs/fce6a37d72dc687e-flux-g4numiv6-pdg14-minervame1M_rearrangedUniverses.root
+drwx------ 4096 run/prepare-check
+drwx------ 4096 run/prepare-check/staged
+-rw------- 3000 run/prepare-check/staged/14b0bc45cf3605e2-INPUTS.sha256
+-rw------- 1898 run/prepare-check/staged/bab9d8b21c5310c0-energy-spectrum-candidates.tsv
+-rw------- 18509 run/prepare-check/staged/config.json
+-rw------- 254536 run/prestage.json
+-rw------- 492 run/prestage-reference.json
+drwx------ 4096 run/real-mnv-check
+-rw------- 3136251 run/real-mnv-check/non-input-probe.root
+-rw------- 4411 run/real-mnv-check/real-mnv-check.json
+-rw------- 4200 run/real-mnv-check/real-mnv-worker.json
+-rw------- 1164 run/real-mnv-check/worker.stderr.txt
+-rw------- 151 run/real-mnv-check/worker.stdout.txt
+drwx------ 4096 run/staged
+-rw------- 20022 run/staged/config.json
+-rw------- 492 run/staged/prestage-reference.json
+drwx------ 4096 run/tmp
+-rw------- 91607 run/trace-policy.checked.json
+-rw------- 91607 run/trace-policy.json
+-rw------- 5062 strace-probe.txt
+drwx------ 4096 tools
+-rw------- 4914 tools/fence_overlap.py
+sha256 aed41794b72d8b8de6580d75e0fc4467cad3bc73c5b11dfac44075783b461192 (expected aed41794b72d8b8de6580d75e0fc4467cad3bc73c5b11dfac44075783b461192) /dev/shm/limres-rpd-flux4-fetch/c3_check.py
+sha256 992be729a3604cf8bae7ea04dfab93aeae9e259b647d3a4d598fd287b2736316 (expected 992be729a3604cf8bae7ea04dfab93aeae9e259b647d3a4d598fd287b2736316) /dev/shm/limres-rpd-flux4-fetch/check_redaction.py
+sha256 309f59d46a4f200d924c98cd6beeece9a8c9a2b92cd493fb2e84f6b5693aa7f9 (expected 309f59d46a4f200d924c98cd6beeece9a8c9a2b92cd493fb2e84f6b5693aa7f9) /dev/shm/limres-rpd-flux4-fetch/protected_read.py
+== 2. the factor products (kept on pscratch)
+product 69734258 bytes sha256 8b8e3e557d4c362797842fe2829a21b53292bb334902e42fbd5f4ef3185ecdda run/flux-factors-1A.npz
+product 18747660 bytes sha256 baf3f3d8cd922a5a3511dab93a7f784128d0e098cb6f1ec905ae4b83c9e68a9f run/flux-factors-1B.npz
+product 35795756 bytes sha256 5ef5e81e490a4e7bd92f1bdf1eee706d413b653e055612b04f3b1b627d1ae6fc run/flux-factors-1C.npz
+product 104087408 bytes sha256 6ea8f726ea6ed619b1b2eb2aab0f34d8a41fff908c0c0515bf7194ca0fe3d131 run/flux-factors-1D.npz
+product 87094536 bytes sha256 4e8f97c179b6bbbc3c5e1fd82472c621c9bc56427e802edb464ab85627a26565 run/flux-factors-1E.npz
+product 121156018 bytes sha256 b607e3a8a114036391df8dd27a1e06b0ea59db7093fbd093bd84d117ef207e46 run/flux-factors-1F.npz
+product 101984346 bytes sha256 c23ef28aded4319d468c73b237d648641b204d86c5788b4c2cd58cfe063b7e5a run/flux-factors-1G.npz
+product 9980460 bytes sha256 e731f300f48d1732be0f7dc40ce6e9983947198fa886e84a93df8054afa92007 run/flux-factors-1L.npz
+product 153840540 bytes sha256 166a2217468f8bfb392baca71c6920ffbf765bbd0dd60a68eb4b560ab6026f4b run/flux-factors-1M.npz
+product 88816178 bytes sha256 739043f4f4a21734c1e256744ba11c8ac4a511542be6161404b68f2916292a21 run/flux-factors-1N.npz
+product 27093088 bytes sha256 fd8afa1e08938e1fce4c0b1445d3713d6c8c9ab72bc900012e52b8fc54f3ac6b run/flux-factors-1O.npz
+product 35688844 bytes sha256 a2db271daa6b9af500b892c8e1ba2af0e12ac4da500b8a0814c879882ee0fa9e run/flux-factors-1P.npz
+recorded 1A 8b8e3e557d4c362797842fe2829a21b53292bb334902e42fbd5f4ef3185ecdda equal /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1A.npz
+recorded 1B baf3f3d8cd922a5a3511dab93a7f784128d0e098cb6f1ec905ae4b83c9e68a9f equal /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1B.npz
+recorded 1C 5ef5e81e490a4e7bd92f1bdf1eee706d413b653e055612b04f3b1b627d1ae6fc equal /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1C.npz
+recorded 1D 6ea8f726ea6ed619b1b2eb2aab0f34d8a41fff908c0c0515bf7194ca0fe3d131 equal /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1D.npz
+recorded 1E 4e8f97c179b6bbbc3c5e1fd82472c621c9bc56427e802edb464ab85627a26565 equal /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1E.npz
+recorded 1F b607e3a8a114036391df8dd27a1e06b0ea59db7093fbd093bd84d117ef207e46 equal /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1F.npz
+recorded 1G c23ef28aded4319d468c73b237d648641b204d86c5788b4c2cd58cfe063b7e5a equal /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1G.npz
+recorded 1L e731f300f48d1732be0f7dc40ce6e9983947198fa886e84a93df8054afa92007 equal /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1L.npz
+recorded 1M 166a2217468f8bfb392baca71c6920ffbf765bbd0dd60a68eb4b560ab6026f4b equal /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1M.npz
+recorded 1N 739043f4f4a21734c1e256744ba11c8ac4a511542be6161404b68f2916292a21 equal /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1N.npz
+recorded 1O fd8afa1e08938e1fce4c0b1445d3713d6c8c9ab72bc900012e52b8fc54f3ac6b equal /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1O.npz
+recorded 1P a2db271daa6b9af500b892c8e1ba2af0e12ac4da500b8a0814c879882ee0fa9e equal /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1P.npz
+factor products recorded 12 differing 0
+== 2b. the true-energy join record (C-JOIN part 1, amendment 1; in place of flux3's product identity check)
+true-energy 1A rows 2682038 spots 66 median 6.4808 GeV
+true-energy 1B rows 721015 spots 66 median 6.4818 GeV
+true-energy 1C rows 1376711 spots 66 median 6.4798 GeV
+true-energy 1D rows 4003313 spots 66 median 6.4818 GeV
+true-energy 1E rows 3349741 spots 66 median 6.4783 GeV
+true-energy 1F rows 4659798 spots 66 median 6.4800 GeV
+true-energy 1G rows 3922426 spots 66 median 6.4801 GeV
+true-energy 1L rows 383815 spots 66 median 6.4795 GeV
+true-energy 1M rows 5916895 spots 66 median 6.4803 GeV
+true-energy 1N rows 3415958 spots 66 median 6.4799 GeV
+true-energy 1O rows 1041993 spots 66 median 6.4816 GeV
+true-energy 1P rows 1372599 spots 66 median 6.4756 GeV
+TRUE_ENERGY RECORD: PASS
+true-energy record check rc=0
+== 3. the protected read
+PROTECTED READ: PASS
+protected read rc=0
+{
+ "exception_as_listed": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+ "original_resolved": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+ "problems": [],
+ "reads": "one stat-bracketed staging, with two O_NOATIME reads (custody copy(): noatime_digest, then stage_copy)",
+ "schema": "rpd-flux1-protected-read/1",
+ "sha256_measured_by_prepare": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2",
+ "staged_copies_sha256": {
+  "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/mat-data/MPARAMFILES/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2",
+  "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/original-inputs/9129a33666de8e29-sorted_NuEConstraint_FHC_RHC_IMD.txt": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2"
+ },
+ "staged_originals": 55,
+ "staged_originals_overlapping_protected": [
+  "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"
+ ],
+ "staging_utc": {
+  "ended": "2026-11-26T20:46:21.136823+00:00",
+  "started": "2026-11-26T20:46:21.131504+00:00"
+ },
+ "staging_utc_ns": {
+  "ended": 1795725981136822728,
+  "started": 1795725981131503568
+ },
+ "stat_after": {
+  "atime_ns": 1795710429000000000,
+  "bytes": 25403,
+  "device": 3592384858,
+  "inode": 882722362129162055,
+  "mtime_ns": 1630424966000000000
+ },
+ "stat_before": {
+  "atime_ns": 1795710429000000000,
+  "bytes": 25403,
+  "device": 3592384858,
+  "inode": 882722362129162055,
+  "mtime_ns": 1630424966000000000
+ },
+ "status": "PASS"
+}
+== 4. the send list
+send 9 job.id
+send 98 job-host.txt
+send 41 job.rc
+send 2343 job.out
+send 0 job.err
+send 8281 rpd_flux4_job.sh
+send 4694 connect.log
+send 5062 strace-probe.txt
+send 405 fence-overlap.txt
+send 281 exception-stat-outer.txt
+send 1757 protected-read.json
+send 4563 run/cov2d-fence.json
+send 20022 run/extract-config.json
+send 2759644 run/flux-custody.json
+send 536202 run/flux-extract.json
+send 604904 run/flux-extract.strace
+send 2131581 run/missing-dependency-check.json
+send 1895 run/missing-dependency.STOP.json
+send 463946 run/missing-dependency.strace
+send 91607 run/negative-policy.checked.json
+send 18509 run/original-config.json
+send 254536 run/prestage.json
+send 492 run/prestage-reference.json
+send 3136251 run/real-mnv-check/non-input-probe.root
+send 4411 run/real-mnv-check/real-mnv-check.json
+send 4200 run/real-mnv-check/real-mnv-worker.json
+send 1164 run/real-mnv-check/worker.stderr.txt
+send 151 run/real-mnv-check/worker.stdout.txt
+send 91607 run/trace-policy.checked.json
+send 91607 run/trace-policy.json
+send files 30, bytes 10240263
+== 5. C3
+C3 reference schema fd-rpd-reco-private-prepare-reference/1; status PASS; prepare_name prestage; run /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run
+C3 private path /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/.rpd-private/70d7e91f2b5b41c7477f63906315b7b1a53ce7e59b012a61a3c3a72dfbd03203/prestage.json
+C3 recomputed   /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/.rpd-private/70d7e91f2b5b41c7477f63906315b7b1a53ce7e59b012a61a3c3a72dfbd03203/prestage.json
+C3 1 reference names the recomputed location: ok
+C3 2 under ROOT/.rpd-private and not under the run: ok
+C3 record mode -rw------- uid 112498; directory mode drwx------ uid 112498; this uid 112498
+C3 3 owner-only file and directory: ok
+C3 record sha256 7348291d8f16168adc699a609dd1b061eedad965690f01e34065fe301520a80e (reference 7348291d8f16168adc699a609dd1b061eedad965690f01e34065fe301520a80e); environment fingerprints 409 keys
+C3 4 digest equals the reference and the record carries the fingerprints: ok
+C3 private entry drwx------ .rpd-private/70d7e91f2b5b41c7477f63906315b7b1a53ce7e59b012a61a3c3a72dfbd03203
+C3 private entry -rw------- .rpd-private/70d7e91f2b5b41c7477f63906315b7b1a53ce7e59b012a61a3c3a72dfbd03203/prestage.json
+C3 5 .rpd-private holds exactly the one record: ok
+C3 send files examined 30; under .rpd-private or equal to the record: []
+C3 6 nothing on the send list is the record: ok
+C3 CHECK: PASS
+c3 check rc=0
+== 6. the redaction check
+CHECK: raw fingerprints 409 keys, 288 distinct values
+CHECK: view NONE (the code wrote no public prepare view)
+CHECK 1 not applicable (no view)
+CHECK 2 not applicable (no view)
+CHECK 3 job.id: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 job-host.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 job.rc: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 job.out: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 job.err: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 rpd_flux4_job.sh: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 connect.log: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 strace-probe.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 fence-overlap.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 exception-stat-outer.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 protected-read.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 cov2d-fence.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 extract-config.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 flux-custody.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 flux-extract.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 flux-extract.strace: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 missing-dependency-check.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 missing-dependency.STOP.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 missing-dependency.strace: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 negative-policy.checked.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 original-config.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 prestage.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 prestage-reference.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 non-input-probe.root: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 real-mnv-check.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 real-mnv-worker.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 worker.stderr.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 worker.stdout.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 trace-policy.checked.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 trace-policy.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 c3-check.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 4 not applicable (no view)
+CHECK 5 job.id: keys named fingerprints 0
+CHECK 5 protected-read.json: keys named fingerprints 0
+CHECK 5 cov2d-fence.json: keys named fingerprints 0
+CHECK 5 extract-config.json: keys named fingerprints 0
+CHECK 5 flux-custody.json: keys named fingerprints 0
+CHECK 5 flux-extract.json: keys named fingerprints 0
+CHECK 5 missing-dependency-check.json: keys named fingerprints 0
+CHECK 5 missing-dependency.STOP.json: keys named fingerprints 0
+CHECK 5 negative-policy.checked.json: keys named fingerprints 0
+CHECK 5 original-config.json: keys named fingerprints 0
+CHECK 5 prestage.json: keys named fingerprints 0
+CHECK 5 prestage-reference.json: keys named fingerprints 0
+CHECK 5 real-mnv-check.json: keys named fingerprints 0
+CHECK 5 real-mnv-worker.json: keys named fingerprints 0
+CHECK 5 trace-policy.checked.json: keys named fingerprints 0
+CHECK 5 trace-policy.json: keys named fingerprints 0
+REDACTION CHECK: PASS
+check rc=0
+== 7. connect.log (checked)
+{"mat_setup_scripts": 6, "mismatches": 0}
+MAT setup exit status: 0
+{"status": "PASS", "class_name": "PlotUtils::MnvH1D", "worker_exit": 0}
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg-14-minervame1D_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg14-minervame1D_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg-14-minervame1D_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg14-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg-14-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/mat-data/PLOTUTILSROOT/data/flux/flux-gen2thin-pdg-14-minervame1N_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg14-minervame1N_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/mat-data/PLOTUTILSROOT/data/flux/flux-g4numiv6-pdg-14-minervame1N_rearrangedUniverses.root
+{"dry_run": false, "status": "PASS", "step": "flux-extract"}
+== end connect.log
+sha256 ffe1645e4e96c95e86d6a20e61929c41112ae966109d65c673c3f0e9d3099371 job.id
+sha256 f3b79ec308120aba6585fe267c681d1d70b1111788764de7a35e3d73b3c02db7 job-host.txt
+sha256 8f37a911945c951821e88e85909deda563d77c230f831d60f7b4d1be186f8a24 job.rc
+sha256 09a4ba6caed8972585a9075cdfd0ee110fca1291ce8e1abb276a1866dd698a77 job.out
+sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 job.err
+sha256 2befd8c21319a9c405c0a4519e67134550b84b12499fc76fd37d6ee740ac3857 rpd_flux4_job.sh
+sha256 b695bf545b0af652d9b70ed5fd5dd85f4d5b5526551dd1d2fd5a26094946836f connect.log
+sha256 117d932e4c82c3275db41330329104a35054e157ce67d3ee9133955eeedfecc9 strace-probe.txt
+sha256 ac532ba73373e91b6069477b11410478c8e7b44571ba7a0610cfdf0ff3b46b17 fence-overlap.txt
+sha256 3cad5bd8289819df90558d74f8df96ece0469de93bef361cab66f922e4e21463 exception-stat-outer.txt
+sha256 a26a70447343f0b87de527c02b1da46a8712d3a918599fdb69b84ecf79b7db8b protected-read.json
+sha256 88c83d5d76f4b485877b345c6db38bff3c2d8e6088bc7443554801f00b05d440 run/cov2d-fence.json
+sha256 8ca399b70591eb8a22dd151063b2fd5ae1740b1a812ce3b54add41e21b810548 run/extract-config.json
+sha256 819bb7b9775c1bfe570185881290ab229e82d3ad7ad328b9cde3215a811c78c2 run/flux-custody.json
+sha256 060d4401f0e1bec69a84b005e0c7ba54f69c3f894c1382f9ce2a098b7b2663c0 run/flux-extract.json
+sha256 ab40439ebf0312b705a12f5002b3e6286bf3df77e7ea7a8f6513299a7e5f1f03 run/flux-extract.strace
+sha256 76972f7339455d59a0c9982b60dcf4fe683720f2ba778413dbe4cc2ae3006e01 run/missing-dependency-check.json
+sha256 31a73046f34bc25b0ffa3d34397f86ff4687b7fe30ab9f14c0c751ddb842ebf6 run/missing-dependency.STOP.json
+sha256 842f58375e39b7b80f58dead6498790ab0c836f8504c3930664eb393cb206cd4 run/missing-dependency.strace
+sha256 eb24454cec8405d77126806af30475b9bd8200fc31dd63fb84b60cb22a6c0b00 run/negative-policy.checked.json
+sha256 f53a86f6dec50965d1d45cb77bcfc904228ebd96ffa18eb9f87babeb53d1ba1d run/original-config.json
+sha256 6371e88ac5a6e099bdc7c3c074996a930d3b786c8a75ea2a81d5d910d110856e run/prestage.json
+sha256 dc459007fe9c7d9e28306bdae7284246b8b34defe76c3c1f4d9e96a9f91329c3 run/prestage-reference.json
+sha256 d9704aa45c016b044284d9e3cfc8c6d5c07cda0835a445866d5f792c8ac82840 run/real-mnv-check/non-input-probe.root
+sha256 ea6937a9d215bf54f3df7f0a6cc7c5beb08d9687f0ae1c30ecc7687f27a6228f run/real-mnv-check/real-mnv-check.json
+sha256 49a5a6043888a7d2ff4ba5c4329c0764b2f028112a5908406b6ab757cb8e1f44 run/real-mnv-check/real-mnv-worker.json
+sha256 c0b89ac88c4dea667785089e08266eecf07a0040aa7f8e80ebfb85caba2c12c7 run/real-mnv-check/worker.stderr.txt
+sha256 89625f3fc3737c0015c1ee00dfa7628f8f7f540aad4e081a30c9e228583df0d2 run/real-mnv-check/worker.stdout.txt
+sha256 eb24454cec8405d77126806af30475b9bd8200fc31dd63fb84b60cb22a6c0b00 run/trace-policy.checked.json
+sha256 eb24454cec8405d77126806af30475b9bd8200fc31dd63fb84b60cb22a6c0b00 run/trace-policy.json
+sha256 e2a73e714228c00fcf2e6fff29ddcdf78a9305305d86c4dcf661e43c87723fbd c3-check.txt
+sha256 7920f62735ac7175da5a8055a95e31d76e47bf37158d4a6f870c23e767a0b8aa redaction-check.txt
+== TAR BEGIN
+[base64 tar block removed: records/ holds the files; see the run README]
+== TAR END tar rc=0 base64 rc=0
+left in place for the post-merge deletion: /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126 (the factor products, the staged copies, the clone, the private record)
+== rpd-flux4-fetch rc=0 2026-11-26T20:56:05Z
+script rc=0

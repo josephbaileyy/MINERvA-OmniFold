@@ -1,0 +1,63 @@
+# OOFVC suite at d3127bd40fb48456993ee9e1fda23b81c3d74f89, 2026-11-26T21:29:48Z
+# python 3.11.18 ROOT 6.40.04 numpy 1.26.4 lightgbm 4.7.0 sklearn 1.9.1
+23e8605bd7c8ea1d15021e91d1debf2914d1fe5759a43408f33d9b6b7567bf2d  oofvc_join.py
+bb7062c31693683842f6d2b5f189942e84d9eda81e02b31cd0a765b97da9a056  oofvc_lib.py
+9412d2a6ab932e28b1397d398b579cd9ab2137733e08b6c8efe4d67cbdf0062c  oofvc_mutation.py
+4b97bfabade3d2e0b95062935a86086739d90b38380980be5ed1c9c70ea8eb6e  oofvc_run.py
+715382995a8df56628481e9f4dd1b3f57e8ef685d6da09dd6f617911e235480b  oofvc_score.py
+4eccd07a0134df9c9b2fea08ca3531b0134a330f74522dbee200808c03838952  test_oofvc.py
+a3244feae7e4c41ef7473c9a2b0aa213d4e161926f56360c30ea298891f5dba3  oofvc_dump.cpp
+6e836e057d4b8a8cfe14b67bb89164f939a444f3b5cfeeb86aaad8038006fce6  oofvc_driver.diff
+80818eef9fae9893ff8678a5019974d06b90f51260bda9a1b07feb5bec1b672b  make_tree.sh
+ade3dc328002998180228dd2dea426ba2cf4a6b2b0b091f648a526b2c722475e  launch/dump_array.sbatch
+36fe4d9cae851dfbbabe826e542bd7d044ae087c6dd9439dfb739cc4846e93ac  launch/fill_pins.sh
+31e7ae621f3077ef5b84bea4ba6ed498e40dc45386bc905fa39f1457128edc9f  launch/oofvc_dump.sh
+bdeeee99ee46f91f9a5029e2f49ff4aaae230c66ee37e860ca325a9d543be845  launch/oofvc_launch.sh
+35c699f55a60ca876e0d629f0321c18b62169b6d1ec7d5d1c8fd9dd9bb8d8565  launch/oofvc_post.sh
+ac210e3d6b20a119e911fca8b508610cd5de31dde3ac7fe1cb0ca469f04b09b8  launch/oofvc_units.sh
+438decaa4ead260c245973547d8a547b90009c70c69451c167c420ce81af49c1  launch/units.sbatch
+test_oofvc.py::Identity::test_ibu_is_unfold_selected_over_efficiency_and_n_is_the_factor PASSED [  2%]
+test_oofvc.py::Identity::test_n_factor_edges PASSED                      [  4%]
+test_oofvc.py::Identity::test_t_cancels_from_the_cross_section PASSED    [  6%]
+test_oofvc.py::MatchesRefC2C1::test_dagostini_and_binning_equal PASSED   [  9%]
+test_oofvc.py::Join::test_exact_bits PASSED                              [ 11%]
+test_oofvc.py::Join::test_one_to_one PASSED                              [ 13%]
+test_oofvc.py::Join::test_three_copies_stop PASSED                       [ 15%]
+test_oofvc.py::Join::test_tie_between_events_or_values_stops PASSED      [ 18%]
+test_oofvc.py::Join::test_tie_bound PASSED                               [ 20%]
+test_oofvc.py::Join::test_tie_of_one_event_filled_twice_is_allowed PASSED [ 22%]
+test_oofvc.py::Join::test_unmatched_and_count_mismatch_stop PASSED       [ 25%]
+test_oofvc.py::ScorerArgv::test_argv PASSED                              [ 27%]
+test_oofvc.py::Moved::test_moved_mask PASSED                             [ 29%]
+test_oofvc.py::Readings::test_bands PASSED                               [ 31%]
+test_oofvc.py::Readings::test_distance_and_column PASSED                 [ 34%]
+test_oofvc.py::Readings::test_statements PASSED                          [ 36%]
+test_oofvc.py::Driver::test_bad_rows_fail PASSED                         [ 38%]
+test_oofvc.py::Driver::test_flag_off_is_byte_identical PASSED            [ 40%]
+test_oofvc.py::Driver::test_minerva_moves_the_rows PASSED                [ 43%]
+test_oofvc.py::Driver::test_plain_is_tier1s_driver PASSED                [ 45%]
+test_oofvc.py::Driver::test_refusals PASSED                              [ 47%]
+test_oofvc.py::Driver::test_weight_rules_drop_and_count PASSED           [ 50%]
+test_oofvc.py::Runner::test_n_is_the_factor_on_the_units_trajectory PASSED [ 52%]
+test_oofvc.py::Runner::test_r_units_carry_the_option PASSED              [ 54%]
+test_oofvc.py::Runner::test_scorer_catches_a_swapped_n_file PASSED       [ 56%]
+test_oofvc.py::Runner::test_scorer_controls_on_the_fixture_units PASSED  [ 59%]
+test_oofvc.py::Runner::test_scorer_requires_full_manifests_and_the_pinned_join_record PASSED [ 61%]
+test_oofvc.py::Runner::test_units_pass PASSED                            [ 63%]
+test_oofvc.py::Runner::test_wrong_rows_sha_refused PASSED                [ 65%]
+test_oofvc.py::JoinTool::test_lab_value_tolerance PASSED                 [ 68%]
+test_oofvc.py::JoinTool::test_labels_against_oflow PASSED                [ 70%]
+test_oofvc.py::JoinTool::test_missing_background_row_stops PASSED        [ 72%]
+test_oofvc.py::JoinTool::test_nan_in_split_stops PASSED                  [ 75%]
+test_oofvc.py::JoinTool::test_pass_and_rows PASSED                       [ 77%]
+test_oofvc.py::JoinTool::test_routing_disagreement_stops PASSED          [ 79%]
+test_oofvc.py::JoinTool::test_signal_truth_mismatch_stops PASSED         [ 81%]
+test_oofvc.py::JoinTool::test_tie_above_the_bound_stops PASSED           [ 84%]
+test_oofvc.py::JoinTool::test_tie_between_two_events_stops PASSED        [ 86%]
+test_oofvc.py::JoinTool::test_weight_off_by_one_ulp_stops PASSED         [ 88%]
+test_oofvc.py::Shell::test_fence_is_the_same_in_every_script PASSED      [ 90%]
+test_oofvc.py::Shell::test_fence_refuses_a_live_or_unknown_fenced_job_and_a_failed_sacct PASSED [ 93%]
+test_oofvc.py::Shell::test_nue_log_and_declared_path_in_the_dump_task PASSED [ 95%]
+test_oofvc.py::Shell::test_nue_path_check_follows_the_symlink PASSED     [ 97%]
+test_oofvc.py::Shell::test_pilot_refuses_without_a_past_atime_post PASSED [100%]
+======================== 44 passed in 123.73s (0:02:03) ========================

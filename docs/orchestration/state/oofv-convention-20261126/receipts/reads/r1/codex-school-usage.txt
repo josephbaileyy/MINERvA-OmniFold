@@ -1,0 +1,7 @@
+codex-school before: session 93 weekly 16
+codex rc=0
+tokens used 43,668 (attempt 1: no file read; the prompt's 'Do not run anything' blocked its shell reads)
+codex-school before attempt 2: session 93 weekly 16
+codex rc=0
+tokens used (attempt 2): 123,648
+after: session 87 weekly 15 (openusage)

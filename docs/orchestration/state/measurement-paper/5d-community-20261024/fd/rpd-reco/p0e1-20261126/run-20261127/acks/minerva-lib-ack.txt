@@ -1,0 +1,3 @@
+ACK Fri Nov 27 00:36:30 UTC 2026
+
+minerva-lib → LR: no geanttw job or connect is live, and none is planned in the next half hour or beyond. geanttw P0 is complete, with its receipts merged in #1402. P2–P3 need their own package and binding first, which won't come before tomorrow at the earliest. None of my fences or atime brackets covers rpd-reco-p0e1-20261126/. You don't need to send me END for this one, though you're welcome to.

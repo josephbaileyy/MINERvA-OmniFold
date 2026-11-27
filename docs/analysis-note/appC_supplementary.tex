@@ -13,6 +13,8 @@ The correlated shape difference spans both small- and moderate-variance directio
 % the five's lam_rel <= 9.4e-9 -> <~1e-8; mode (b) 5.6e-5 -> 6e-5. A5's OLD reproduced the 9.6%, 4e-9 and 4e-6--6e-5.
 % Bound by check_sec4_receipts.py (rows "A5 ...").
 
+Comparisons that include $\CrepTwoD$ use the analysis grid, with three interior $p_T$ edges \SI{0.005}{GeV/c} from the published ones (Sec.~\ref{sec:muon-cross-section-comparison}).
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.49\textwidth]{tension_spectrum}\hfill
@@ -32,7 +34,7 @@ The correlated shape difference spans both small- and moderate-variance directio
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{MEFHC_5iter_xsec_paper_pt_slices}
-  \caption{In all 14 $p_T$ slices, the OmniFold points move toward the published values relative to the Tune~v1 prior. The panels show rescaled double-differential cross sections versus $p_\parallel$. OmniFold bars show event-weight statistics only; they alone enter the panel $\chi^2/n$, which compares OmniFold with the prior, and are neither the data's statistical uncertainty nor the reported covariance.}
+  \caption{In all 14 $p_T$ slices, the OmniFold points move toward the published values relative to the MINERvA Tune v1 prior. The panels show rescaled double-differential cross sections versus $p_\parallel$. OmniFold bars show event-weight statistics only; they alone enter the panel $\chi^2/n$, which compares OmniFold with the prior, and are neither the data's statistical uncertainty nor the reported covariance.}
   \label{fig:ptslices}
 \end{figure}
 
@@ -56,6 +58,15 @@ At both held-out GENIE v3 tunes, the method bias of binned IBU at five and ten i
 \label{sec:eavailw-band}
 \label{sec:3d-models}
 
+\phantomsection
+\label{sec:eavailw-adopted}
+The fine-grid purity covariance $C_Z$ serves as a descriptive scale only. It did not meet the requirements for inference. Two companion builds exceeded the $\sprojBound\%$ training-seed tolerance, with a largest shift of $\sprojMeasured\%$ in a projected standard deviation. The criterion was uncomputed for $C_Z$ itself. The comparison held the seed fixed for five systematic bands that carry $\pinnedBandsSqrtTr\%$ of $\sqrt{\operatorname{Tr}C_Z}$ (Appendix~\ref{app:multidimensional-statistics}).
+% Search: s_proj; M(ii); cause 3; C3; estimator-seed magnitude criterion; z-cv 3d7465f6; GRADE-20260920; VL146; L2 (computed only for 361090f9/7e4636a3, DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md:36-38; z-cv precursor undeclared so branch 3 unreachable, EVIDENCE-20260919-cause3-member-eligibility-census.md:17-19; later s_proj on other products only, VALIDATION_LEDGER.md:219, OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md:3-5) @ 0d919b1a
+
+The calibrated joint generator tests use a separate metric and give no validation of $C_Z$.
+
+The sixteen-cell quadrant sums are $\fvval{g3d-pct-lo}\%$ to $\fvval{g3d-pct-hi}\%$ below the corresponding 3D central values. The largest difference is $\fvval{g3d-zmax}$ times the reported sixteen-cell standard deviation of the relevant sum. Because the 3D result has no reported covariance, this comparison cannot quantify their statistical agreement. Changes that redistribute cross section between hadronic cells within a muon quadrant cancel in these sums.
+
 The reconstructed controls reproduce the simulated pairwise correlations to within 0.02 for all ten pairs (Fig.~\ref{fig:control-corner}). The two largest Pearson coefficients in data are 0.82 for $(E_{\mathrm{avail}},q_3)$ and 0.74 for $(E_{\mathrm{avail}},W)$. In simulated signal, migration in the muon momenta occurs mainly to the same or neighboring bins. Migration is broader for the observables that use calorimetry. The median same-bin probability across truth bins ranges from 0.58 to 0.61 on each of the five axes.
 
 \begin{figure}[H]
@@ -65,7 +76,7 @@ The reconstructed controls reproduce the simulated pairwise correlations to with
   \label{fig:control-corner}
 \end{figure}
 
-The predictions differ most visibly in available energy in the 3D projections (Fig.~\ref{fig:3dmodels}). The plotted GENIE and NuWro predictions in both comparisons use the flux correction described in Appendix~\ref{app:choices-after-results}. Integrated over $E_{\mathrm{avail}}$ without its catch bin, the predictions lie 7.2\% (GENIE CV), 9.5\% (Tune v1), 12.8\% (NuWro) and 22.3\% (GiBUU) below the 3D central value. In the \resFiveAxis{}, all four predictions in Fig.~\ref{fig:eavailWband} fall below the central value in the corner $E_{\mathrm{avail}}\geq0.8~\mathrm{GeV}$ and $W\geq1.8~\mathrm{GeV}$. The data-to-prediction ratios there are \genRatioCornerLo{} for both GENIE configurations, \genRatioCornerHi{} for NuWro, and \gibuuCorner{} for GiBUU, whose sample ends at $E_\nu=\fvval{cmodel-gibuu-enu}~\mathrm{GeV}$. GiBUU is low throughout the $E_{\mathrm{avail}}$ tail: its $W$-integrated data-to-prediction ratio is 1.59 at $0.8\leq E_{\mathrm{avail}}<1.5~\mathrm{GeV}$ and 1.37 at $1.5\leq E_{\mathrm{avail}}<3.0~\mathrm{GeV}$.
+The predictions differ most visibly in available energy in the 3D projections (Fig.~\ref{fig:3dmodels}). The plotted GENIE and NuWro predictions in both comparisons use the flux correction described in Appendix~\ref{app:choices-after-results}. Integrated over $E_{\mathrm{avail}}$ without its catch bin, the predictions lie 7.2\% (GENIE CV), 9.5\% (MINERvA Tune v1), 12.8\% (NuWro) and 22.3\% (GiBUU) below the 3D central value. In the \resFiveAxis{}, all four predictions in Fig.~\ref{fig:eavailWband} fall below the central value in the corner $E_{\mathrm{avail}}\geq0.8~\mathrm{GeV}$ and $W\geq1.8~\mathrm{GeV}$. The data-to-prediction ratios there are \genRatioCornerLo{} for both GENIE configurations, \genRatioCornerHi{} for NuWro, and \gibuuCorner{} for GiBUU, whose sample ends at $E_\nu=\fvval{cmodel-gibuu-enu}~\mathrm{GeV}$. GiBUU is low throughout the $E_{\mathrm{avail}}$ tail: its $W$-integrated data-to-prediction ratio is 1.59 at $0.8\leq E_{\mathrm{avail}}<1.5~\mathrm{GeV}$ and 1.37 at $1.5\leq E_{\mathrm{avail}}<3.0~\mathrm{GeV}$.
 % C1 (check stage; Joseph's decision, 2026-11-21, via the director): no values macro carries these. Source: the repaired
 % 3D log docs/orchestration/state/s5p/stage7/generator-context/gen3d_band_s5p_repaired-log.txt:27-32, "integrated sigma
 % (eavail axis, catch bin dropped)": -7.2%, -9.5%, -12.8%, -22.2% vs data; VALIDATION_LEDGER.md VL159. It replaces the
@@ -101,47 +112,47 @@ The sixteen-cell uncertainties vary substantially in composition across the repo
 
 \begin{table}[tbp]
   \centering
-  \caption{Per-cell relative standard deviations in percent from the statistical, systematic, and prior-shape terms. The statistical, flux, interaction, detector, lateral, and normalization covariances sum to $C_e$. The training-seed contribution is zero. The cell definitions are in Table~\ref{tab:five-dimensional-regions}.}
+  \caption{Per-cell relative standard deviations in percent from the statistical, systematic, and prior-shape terms. The statistical, flux, interaction, detector, lateral, and normalization covariances sum to $C_e$, the statistical and systematic covariance. $C_e^{\mathrm{infl}}$ is $C_e$ with its eigenvalues rescaled (\S\ref{sec:fived16-cov}), and it enters the reported covariance in place of $C_e$. The training-seed contribution is zero. The cell definitions are in Table~\ref{tab:five-dimensional-regions}.}
   \label{tab:sixteen-cell-uncertainty-groups}
   \label{tab:fived16-groups}
   \small
-  \begin{tabular}{@{}l*{9}{r}@{}}
+  \begin{tabular}{@{}l*{10}{r}@{}}
     \toprule
-    Cell & Stat. & Flux & Int. & Det. & Lat. & Norm. & $C_e$ & $C_{\mathrm{model}}$ & $C_{\mathrm{total}}$ \\
+    Cell & Stat. & Flux & Int. & Det. & Lat. & Norm. & $C_e$ & $C_e^{\mathrm{infl}}$ & $C_{\mathrm{model}}$ & $\Csub$ \\
     \midrule
-    R00 & \fvval{sig-stat-R00} & \fvval{sig-flux-R00} & \fvval{sig-interaction-R00} & \fvval{sig-detector-R00} & \fvval{sig-lateral-R00} & \fvval{sig-normalization-R00} & \fvval{sig-C_e-R00} & \fvval{sig-C_model-R00} & \fvval{sig-C_total-R00} \\
-    R01 & \fvval{sig-stat-R01} & \fvval{sig-flux-R01} & \fvval{sig-interaction-R01} & \fvval{sig-detector-R01} & \fvval{sig-lateral-R01} & \fvval{sig-normalization-R01} & \fvval{sig-C_e-R01} & \fvval{sig-C_model-R01} & \fvval{sig-C_total-R01} \\
-    R02 & \fvval{sig-stat-R02} & \fvval{sig-flux-R02} & \fvval{sig-interaction-R02} & \fvval{sig-detector-R02} & \fvval{sig-lateral-R02} & \fvval{sig-normalization-R02} & \fvval{sig-C_e-R02} & \fvval{sig-C_model-R02} & \fvval{sig-C_total-R02} \\
-    R03 & \fvval{sig-stat-R03} & \fvval{sig-flux-R03} & \fvval{sig-interaction-R03} & \fvval{sig-detector-R03} & \fvval{sig-lateral-R03} & \fvval{sig-normalization-R03} & \fvval{sig-C_e-R03} & \fvval{sig-C_model-R03} & \fvval{sig-C_total-R03} \\
+    R00 & \fvval{sig-stat-R00} & \fvval{sig-flux-R00} & \fvval{sig-interaction-R00} & \fvval{sig-detector-R00} & \fvval{sig-lateral-R00} & \fvval{sig-normalization-R00} & \fvval{sig-C_e-R00} & \fvval{sig-C_e_infl-R00} & \fvval{sig-C_model-R00} & \fvval{sig-C_total-R00} \\
+    R01 & \fvval{sig-stat-R01} & \fvval{sig-flux-R01} & \fvval{sig-interaction-R01} & \fvval{sig-detector-R01} & \fvval{sig-lateral-R01} & \fvval{sig-normalization-R01} & \fvval{sig-C_e-R01} & \fvval{sig-C_e_infl-R01} & \fvval{sig-C_model-R01} & \fvval{sig-C_total-R01} \\
+    R02 & \fvval{sig-stat-R02} & \fvval{sig-flux-R02} & \fvval{sig-interaction-R02} & \fvval{sig-detector-R02} & \fvval{sig-lateral-R02} & \fvval{sig-normalization-R02} & \fvval{sig-C_e-R02} & \fvval{sig-C_e_infl-R02} & \fvval{sig-C_model-R02} & \fvval{sig-C_total-R02} \\
+    R03 & \fvval{sig-stat-R03} & \fvval{sig-flux-R03} & \fvval{sig-interaction-R03} & \fvval{sig-detector-R03} & \fvval{sig-lateral-R03} & \fvval{sig-normalization-R03} & \fvval{sig-C_e-R03} & \fvval{sig-C_e_infl-R03} & \fvval{sig-C_model-R03} & \fvval{sig-C_total-R03} \\
     \addlinespace[2pt]
-    R04 & \fvval{sig-stat-R04} & \fvval{sig-flux-R04} & \fvval{sig-interaction-R04} & \fvval{sig-detector-R04} & \fvval{sig-lateral-R04} & \fvval{sig-normalization-R04} & \fvval{sig-C_e-R04} & \fvval{sig-C_model-R04} & \fvval{sig-C_total-R04} \\
-    R05 & \fvval{sig-stat-R05} & \fvval{sig-flux-R05} & \fvval{sig-interaction-R05} & \fvval{sig-detector-R05} & \fvval{sig-lateral-R05} & \fvval{sig-normalization-R05} & \fvval{sig-C_e-R05} & \fvval{sig-C_model-R05} & \fvval{sig-C_total-R05} \\
-    R06 & \fvval{sig-stat-R06} & \fvval{sig-flux-R06} & \fvval{sig-interaction-R06} & \fvval{sig-detector-R06} & \fvval{sig-lateral-R06} & \fvval{sig-normalization-R06} & \fvval{sig-C_e-R06} & \fvval{sig-C_model-R06} & \fvval{sig-C_total-R06} \\
-    R07 & \fvval{sig-stat-R07} & \fvval{sig-flux-R07} & \fvval{sig-interaction-R07} & \fvval{sig-detector-R07} & \fvval{sig-lateral-R07} & \fvval{sig-normalization-R07} & \fvval{sig-C_e-R07} & \fvval{sig-C_model-R07} & \fvval{sig-C_total-R07} \\
+    R04 & \fvval{sig-stat-R04} & \fvval{sig-flux-R04} & \fvval{sig-interaction-R04} & \fvval{sig-detector-R04} & \fvval{sig-lateral-R04} & \fvval{sig-normalization-R04} & \fvval{sig-C_e-R04} & \fvval{sig-C_e_infl-R04} & \fvval{sig-C_model-R04} & \fvval{sig-C_total-R04} \\
+    R05 & \fvval{sig-stat-R05} & \fvval{sig-flux-R05} & \fvval{sig-interaction-R05} & \fvval{sig-detector-R05} & \fvval{sig-lateral-R05} & \fvval{sig-normalization-R05} & \fvval{sig-C_e-R05} & \fvval{sig-C_e_infl-R05} & \fvval{sig-C_model-R05} & \fvval{sig-C_total-R05} \\
+    R06 & \fvval{sig-stat-R06} & \fvval{sig-flux-R06} & \fvval{sig-interaction-R06} & \fvval{sig-detector-R06} & \fvval{sig-lateral-R06} & \fvval{sig-normalization-R06} & \fvval{sig-C_e-R06} & \fvval{sig-C_e_infl-R06} & \fvval{sig-C_model-R06} & \fvval{sig-C_total-R06} \\
+    R07 & \fvval{sig-stat-R07} & \fvval{sig-flux-R07} & \fvval{sig-interaction-R07} & \fvval{sig-detector-R07} & \fvval{sig-lateral-R07} & \fvval{sig-normalization-R07} & \fvval{sig-C_e-R07} & \fvval{sig-C_e_infl-R07} & \fvval{sig-C_model-R07} & \fvval{sig-C_total-R07} \\
     \addlinespace[2pt]
-    R08 & \fvval{sig-stat-R08} & \fvval{sig-flux-R08} & \fvval{sig-interaction-R08} & \fvval{sig-detector-R08} & \fvval{sig-lateral-R08} & \fvval{sig-normalization-R08} & \fvval{sig-C_e-R08} & \fvval{sig-C_model-R08} & \fvval{sig-C_total-R08} \\
-    R09 & \fvval{sig-stat-R09} & \fvval{sig-flux-R09} & \fvval{sig-interaction-R09} & \fvval{sig-detector-R09} & \fvval{sig-lateral-R09} & \fvval{sig-normalization-R09} & \fvval{sig-C_e-R09} & \fvval{sig-C_model-R09} & \fvval{sig-C_total-R09} \\
-    R10 & \fvval{sig-stat-R10} & \fvval{sig-flux-R10} & \fvval{sig-interaction-R10} & \fvval{sig-detector-R10} & \fvval{sig-lateral-R10} & \fvval{sig-normalization-R10} & \fvval{sig-C_e-R10} & \fvval{sig-C_model-R10} & \fvval{sig-C_total-R10} \\
-    R11 & \fvval{sig-stat-R11} & \fvval{sig-flux-R11} & \fvval{sig-interaction-R11} & \fvval{sig-detector-R11} & \fvval{sig-lateral-R11} & \fvval{sig-normalization-R11} & \fvval{sig-C_e-R11} & \fvval{sig-C_model-R11} & \fvval{sig-C_total-R11} \\
+    R08 & \fvval{sig-stat-R08} & \fvval{sig-flux-R08} & \fvval{sig-interaction-R08} & \fvval{sig-detector-R08} & \fvval{sig-lateral-R08} & \fvval{sig-normalization-R08} & \fvval{sig-C_e-R08} & \fvval{sig-C_e_infl-R08} & \fvval{sig-C_model-R08} & \fvval{sig-C_total-R08} \\
+    R09 & \fvval{sig-stat-R09} & \fvval{sig-flux-R09} & \fvval{sig-interaction-R09} & \fvval{sig-detector-R09} & \fvval{sig-lateral-R09} & \fvval{sig-normalization-R09} & \fvval{sig-C_e-R09} & \fvval{sig-C_e_infl-R09} & \fvval{sig-C_model-R09} & \fvval{sig-C_total-R09} \\
+    R10 & \fvval{sig-stat-R10} & \fvval{sig-flux-R10} & \fvval{sig-interaction-R10} & \fvval{sig-detector-R10} & \fvval{sig-lateral-R10} & \fvval{sig-normalization-R10} & \fvval{sig-C_e-R10} & \fvval{sig-C_e_infl-R10} & \fvval{sig-C_model-R10} & \fvval{sig-C_total-R10} \\
+    R11 & \fvval{sig-stat-R11} & \fvval{sig-flux-R11} & \fvval{sig-interaction-R11} & \fvval{sig-detector-R11} & \fvval{sig-lateral-R11} & \fvval{sig-normalization-R11} & \fvval{sig-C_e-R11} & \fvval{sig-C_e_infl-R11} & \fvval{sig-C_model-R11} & \fvval{sig-C_total-R11} \\
     \addlinespace[2pt]
-    R12 & \fvval{sig-stat-R12} & \fvval{sig-flux-R12} & \fvval{sig-interaction-R12} & \fvval{sig-detector-R12} & \fvval{sig-lateral-R12} & \fvval{sig-normalization-R12} & \fvval{sig-C_e-R12} & \fvval{sig-C_model-R12} & \fvval{sig-C_total-R12} \\
-    R13 & \fvval{sig-stat-R13} & \fvval{sig-flux-R13} & \fvval{sig-interaction-R13} & \fvval{sig-detector-R13} & \fvval{sig-lateral-R13} & \fvval{sig-normalization-R13} & \fvval{sig-C_e-R13} & \fvval{sig-C_model-R13} & \fvval{sig-C_total-R13} \\
-    R14 & \fvval{sig-stat-R14} & \fvval{sig-flux-R14} & \fvval{sig-interaction-R14} & \fvval{sig-detector-R14} & \fvval{sig-lateral-R14} & \fvval{sig-normalization-R14} & \fvval{sig-C_e-R14} & \fvval{sig-C_model-R14} & \fvval{sig-C_total-R14} \\
-    R15 & \fvval{sig-stat-R15} & \fvval{sig-flux-R15} & \fvval{sig-interaction-R15} & \fvval{sig-detector-R15} & \fvval{sig-lateral-R15} & \fvval{sig-normalization-R15} & \fvval{sig-C_e-R15} & \fvval{sig-C_model-R15} & \fvval{sig-C_total-R15} \\
+    R12 & \fvval{sig-stat-R12} & \fvval{sig-flux-R12} & \fvval{sig-interaction-R12} & \fvval{sig-detector-R12} & \fvval{sig-lateral-R12} & \fvval{sig-normalization-R12} & \fvval{sig-C_e-R12} & \fvval{sig-C_e_infl-R12} & \fvval{sig-C_model-R12} & \fvval{sig-C_total-R12} \\
+    R13 & \fvval{sig-stat-R13} & \fvval{sig-flux-R13} & \fvval{sig-interaction-R13} & \fvval{sig-detector-R13} & \fvval{sig-lateral-R13} & \fvval{sig-normalization-R13} & \fvval{sig-C_e-R13} & \fvval{sig-C_e_infl-R13} & \fvval{sig-C_model-R13} & \fvval{sig-C_total-R13} \\
+    R14 & \fvval{sig-stat-R14} & \fvval{sig-flux-R14} & \fvval{sig-interaction-R14} & \fvval{sig-detector-R14} & \fvval{sig-lateral-R14} & \fvval{sig-normalization-R14} & \fvval{sig-C_e-R14} & \fvval{sig-C_e_infl-R14} & \fvval{sig-C_model-R14} & \fvval{sig-C_total-R14} \\
+    R15 & \fvval{sig-stat-R15} & \fvval{sig-flux-R15} & \fvval{sig-interaction-R15} & \fvval{sig-detector-R15} & \fvval{sig-lateral-R15} & \fvval{sig-normalization-R15} & \fvval{sig-C_e-R15} & \fvval{sig-C_e_infl-R15} & \fvval{sig-C_model-R15} & \fvval{sig-C_total-R15} \\
     \midrule
-    Median & \fvval{sigmed-stat} & \fvval{sigmed-flux} & \fvval{sigmed-interaction} & \fvval{sigmed-detector} & \fvval{sigmed-lateral} & \fvval{sigmed-normalization} & \fvval{sigmed-C_e} & \fvval{sigmed-C_model} & \fvval{sigmed-C_total} \\
+    Median & \fvval{sigmed-stat} & \fvval{sigmed-flux} & \fvval{sigmed-interaction} & \fvval{sigmed-detector} & \fvval{sigmed-lateral} & \fvval{sigmed-normalization} & \fvval{sigmed-C_e} & \fvval{sigmed-C_e_infl} & \fvval{sigmed-C_model} & \fvval{sigmed-C_total} \\
     \bottomrule
   \end{tabular}
 \end{table}
 
 \begin{table}[tbp]
   \centering
-  \caption{Per-cell relative standard deviations in percent from the energy-response and run-period terms, and the totals. The deposit terms of $C_{\mathrm{resp}}$ are proton, meson, electromagnetic (EM), and other. The last column is the reported $C_{\mathrm{rep}}$.}
+  \caption{Per-cell relative standard deviations in percent from the energy-response and run-period terms, and the totals. The deposit terms of $C_{\mathrm{resp}}$ are proton, meson, electromagnetic (EM), and other. The last column is the reported $\CrepFiveD$.}
   \label{tab:sixteen-cell-uncertainty-response}
   \small
   \begin{tabular}{@{}l*{8}{r}@{}}
     \toprule
-    Cell & Proton & Meson & EM & Other & $C_{\mathrm{resp}}$ & $C_{\mathrm{total}}{+}C_{\mathrm{resp}}$ & Period & $C_{\mathrm{rep}}$ \\
+    Cell & Proton & Meson & EM & Other & $C_{\mathrm{resp}}$ & $C_e^{\mathrm{infl}}{+}C_{\mathrm{model}}{+}C_{\mathrm{resp}}$ & Period & $\CrepFiveD$ \\
     \midrule
     R00 & \fvval{sig-C_resp_proton-R00} & \fvval{sig-C_resp_meson-R00} & \fvval{sig-C_resp_em-R00} & \fvval{sig-C_resp_other-R00} & \fvval{sig-C_resp-R00} & \fvval{sig-C_total_resp-R00} & \fvval{sig-C_PL5D-R00} & \fvval{sig-reported-R00} \\
     R01 & \fvval{sig-C_resp_proton-R01} & \fvval{sig-C_resp_meson-R01} & \fvval{sig-C_resp_em-R01} & \fvval{sig-C_resp_other-R01} & \fvval{sig-C_resp-R01} & \fvval{sig-C_total_resp-R01} & \fvval{sig-C_PL5D-R01} & \fvval{sig-reported-R01} \\
@@ -170,7 +181,7 @@ The sixteen-cell uncertainties vary substantially in composition across the repo
 
 \begin{table}[tbp]
   \centering
-  \caption{Lower triangle of the correlation matrix for $C_{\mathrm{rep}}$ on the sixteen regions. The diagonal entries are unity.}
+  \caption{Lower triangle of the correlation matrix for $\CrepFiveD$ on the sixteen regions. The diagonal entries are unity.}
   \label{tab:sixteen-cell-correlations}
   \label{tab:fived16-corr}
   \setlength{\tabcolsep}{2.5pt}
@@ -198,7 +209,7 @@ The sixteen-cell uncertainties vary substantially in composition across the repo
   \end{tabular}
 \end{table}
 
-The muon-quadrant comparison includes a cross-covariance for the shared variations in the two unfoldings. On the quadrant grid we pair \fvval{x-nbands-paired} of \fvval{x-nbands} weight-only bands universe by universe, the \fvval{x-nlat} lateral shifts, the normalization, the individual run periods, and the prior-shape shifts generator by generator. For statistics and the four remaining bands we use cross terms of the form $rS_{16}^{1/2}S_{2\mathrm D}^{1/2}$, where $S_{16}$ and $S_{2\mathrm D}$ are the corresponding quadrant covariance blocks and $0\leq r\leq1$. If $K$ is the resulting cross-covariance, the covariance of the difference is the sum of the two quadrant covariances minus $K+K^{\mathsf T}$. The implied correlations between estimates of the same quadrant are \fvval{x-QC-rho0}--\fvval{x-QA-rho0} at $r=0$ and \fvval{x-QC-rho1}--\fvval{x-QA-rho1} at $r=1$. The joint $\chi^2$ is \fvval{x-prim-chi2-r0} at $r=0$ and \fvval{x-prim-chi2-r1} at $r=1$ (four degrees of freedom). The largest $|z|$ is \fvval{x-prim-zmax}. The prespecified rule ($p\geq0.05$ and $|z|\leq2.50$) is met throughout this family, with joint $\chi^2$ at most \fvval{x-prim-chi2-r1} for four degrees of freedom. Without this constructed cross-covariance, the low-$p_T$, low-$p_\parallel$ quadrant agrees at every assumed correlation. The other quadrants agree below correlation thresholds ranging from \fvval{cr-QC-rhostar} for high $p_T$ and low $p_\parallel$ to \fvval{cr-QB-rhostar} for low $p_T$ and high $p_\parallel$.
+The muon-quadrant comparison includes a cross-covariance for the shared variations in the two unfoldings. On the quadrant grid we pair \fvval{x-nbands-paired} of \fvval{x-nbands} weight-only bands universe by universe, the \fvval{x-nlat} lateral shifts, the normalization, the individual run periods, and the prior-shape shifts generator by generator. For statistics and the four remaining bands we use cross terms of the form $rS_{16}^{1/2}S_{2\mathrm D}^{1/2}$, where $S_{16}$ and $S_{2\mathrm D}$ are the corresponding quadrant covariance blocks and $0\leq r\leq1$. If $K$ is the resulting cross-covariance, the covariance of the difference is the sum of the two quadrant covariances minus $K+K^{\mathsf T}$. The implied correlations between estimates of the same quadrant are \fvval{x-QC-rho0}--\fvval{x-QA-rho0} at $r=0$ and \fvval{x-QC-rho1}--\fvval{x-QA-rho1} at $r=1$. The joint $\chi^2$ is \fvval{x-prim-chi2-r0} at $r=0$ and \fvval{x-prim-chi2-r1} at $r=1$ (four degrees of freedom). The largest $|z|$ is \fvval{x-prim-zmax}. The prespecified rule ($p\geq0.05$ and $|z|\leq2.50$) is met throughout this family, with joint $\chi^2$ at most \fvval{x-prim-chi2-r1} for four degrees of freedom. Without this constructed cross-covariance, the two low-$p_T$ quadrants agree at every assumed correlation. The two high-$p_T$ quadrants agree below correlation thresholds of \fvval{cr-QC-rhostar} at low $p_\parallel$ and \fvval{cr-QD-rhostar} at high $p_\parallel$.
 % Check stage (Grok 3): sourced, records_compression_lr_p4.tex:413 @ e89694209: "The rule, fixed before the comparison was made,
 % is that the results agree if the joint chi2 of the four differences has p >= 0.05 and every |z| <= 2.50".
 
@@ -207,12 +218,33 @@ The sixteen-cell generator distances are sensitive to the off-diagonal flux cova
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=0.85\linewidth]{figures/fd_g_fig_modes.pdf}
-  \caption{Several modes contribute to the descriptive distance of each full-grid prediction. The panels show the cell loadings for the three largest $\chi^2$ contributions, using the covariance of fractional residuals from $C_{\mathrm{rep}}+V_g$. The distances are descriptive, and the NuWro row uses the secondary CH comparison.}
+  \caption{Several modes contribute to the descriptive distance of each full-grid prediction. The panels show the cell loadings for the three largest $\chi^2$ contributions, using the covariance of fractional residuals from $\CrepFiveD+V_g$. The distances are descriptive, and the NuWro row uses the secondary CH comparison.}
   \label{fig:fived16-modes}
 \end{figure}
 
 \subsection{Bias, prior dependence, and numerical stability}
 \label{app:bias-prior-stability}
+
+The low-capacity refinement fails its recovery criterion for a generator-sized truth change. This stress test uses a GiBUU-to-GENIE $E_{\mathrm{avail}}$ shape ratio with weights from 0.70 to 1.33 at fixed total rate. The GENIE sample for this ratio used a mismatched flux. Appendix~\ref{app:choices-after-results} documents the decision to retain the original ratio. The median absolute residual in the $(E_{\mathrm{avail}},W)$ plane is $9.7\%$ and reaches $74\%$ in the highest-$W$ column. A separate change in the conditional $q_3$ distribution, with the $(E_{\mathrm{avail}},W)$ truth held fixed, shifts the unfolded cells in that plane by up to $37\%$. Both effects persist in signal-only repeats.
+
+The sixteen-cell estimator recovers a median of $\fvval{rec-g-fmed}\%$ of the injected GiBUU-like change across supported cells of the $(E_{\mathrm{avail}},W)$ plane with injected changes larger than $2\%$ in magnitude. For three other generator-derived shapes, the median recovered fractions range from $\fvval{rec-w-fmed-lo}\%$ to $\fvval{rec-w-fmed-hi}\%$, with individual cells overshooting or moving opposite to the injected change (Appendices~\ref{app:reproducibility-definitions} and~\ref{app:choices-after-results}). In noise-free pseudo-data, raising the iteration count from five to thirty reduces the $E_{\mathrm{avail}}$ residual by $26\%$ while increasing the $q_3$ residual, and the quoted uncertainties of the \resFiveAxis{} do not include these residuals.
+
+% absence-ok: a stated property of the method, not a claim that a result does not exist: C_e^infl's size and coverage are not validated (vf_readings.md, NOT CITABLE FOR: a validated size for C_e^infl; a coverage or calibration statement)
+Under the reported covariance $\CrepFiveD$, the sixteen-cell estimator exceeds the bias criteria set before the study at \fvval{f0b-nlisted-word} of the \fvval{f0b-all-truths} simulated truths: the GiBUU hybrid, which uses GiBUU bin integrals and the MINERvA simulation within each fine bin. Under $\CrepFiveDzero$, the synthetic $q_3$ tilt, a momentum-transfer tilt at fixed $(E_{\mathrm{avail}},W)$, also exceeded them. The bias is the same under both covariances. The tilt clears only because $C_e^{\mathrm{infl}}$ is larger, and its size is not validated. The test compares the mean unfolded vector with the known truth and scores the same residuals with $\CrepFiveD$ and with $\CrepFiveDzero$. For truths derived from a generator in $C_{\mathrm{model}}$, it removes that generator's contribution. A truth is flagged if $p<\fvval{trig-p}$ or any cell has an absolute standardized residual $|z|>\fvval{trig-z}$ (Table~\ref{tab:validation-inventory}).
+
+Under $\CrepFiveD$, the GiBUU hybrid gives $\chi^2=\fvval{f0b-A7_gibuu-chi2}$ and $p=\fvval{f0b-A7_gibuu-p}$, with absolute standardized residuals $|z|>\fvval{trig-z}$ in the two low-$p_T$ cells with high available energy, low momentum transfer, and low mass (R02 and R06, Table~\ref{tab:five-dimensional-regions}). The synthetic $q_3$ tilt at fixed $(E_{\mathrm{avail}},W)$ gives $\chi^2=\fvval{f0b-q3-chi2}$ and $p=\fvval{f0b-q3-p}$ under $\CrepFiveD$, with $|z|\leq\fvval{trig-z}$ in every cell. Under $\CrepFiveDzero$, omitting the run-period term also flagged the separate GiBUU $\Eavail$ shape through R06, at the same residual. Under $\CrepFiveD$ without the run-period term it does not. Separate Poisson and noise-free checks at two held-out GENIE v3 tunes flag neither tune, and the largest cell bias is below \fvval{f1-bsig-ceil} of its reported standard deviation.
+
+The sixteen-cell estimator recovers only part of the shift from the prior toward truth at the two truths flagged under $\CrepFiveDzero$. The signed fraction $\rho$ of the shift still missing along the prior-to-truth direction is
+\begin{equation}
+  \rho=-\frac{\sum_i b_i d_i}{\sum_i d_i^2},
+  \qquad |d_i|\geq 0.01 ,
+  \label{eq:five-dimensional-retained-prior}
+\end{equation}
+where $d_i=(X_i-P_i)/P_i$ and $b_i=(\widehat X_i-X_i)/P_i$ for prior, true, and unfolded integrals $P_i$, $X_i$, and $\widehat X_i$. This gives $\rho=0$ for exact recovery, $\rho=1$ for staying at the prior, and $\rho<0$ for overshooting along that direction. On noise-free samples with background, $\rho=\fvval{prr-rho-e-gibuu}$ at the GiBUU hybrid and $\fvval{prr-rho-e-q3}$ at the $q_3$ tilt. Reducing classifier capacity or using only muon momenta increases retention at both truths. Dropping $W$ alone or dropping both $W$ and $q_3$ changes $\rho$ by less than \fvval{prr-s53-w-dmax}. None of the tested changes in iterations, capacity, training statistics, or inputs reduces retention by \fvval{prr-floor}. Under $\CrepFiveDzero$, none removes either truth's bias flag. Under $\CrepFiveD$, the GiBUU hybrid stays flagged at every tested setting, and the $q_3$ tilt is flagged only with reduced capacity or with muon momenta only. A second prespecified study on the same noise-free samples found that the retention at the GiBUU hybrid is consistent with a limit set by the weights of missed events. At the $q_3$ tilt, it is consistent with a limit set by the representation in the second, truth-level step. Both results match the pseudo-data at reconstruction level despite the residual at truth level, consistent with directions that the reconstructed inputs constrain weakly. The substitution tests below use true weights available only in simulation.
+
+Five-iteration binned IBU overshoots along the prior-to-truth direction, with $\rho=\fvval{prr-rho-ibu-gibuu}$ and $\fvval{prr-rho-ibu-q3}$ for the two truths. Under $\CrepFiveDzero$ it clears the flag for the $q_3$ tilt ($p=\fvval{prr-ce-ibu5-q3-p}$) and flags \fvval{prr-ce-ibu5-nnew-word} other truths. Under $\CrepFiveD$ it leaves the $q_3$ tilt unflagged ($p=\fvval{prr-ibu5-q3-p}$) and flags \fvval{prr-ibu5-nnew-word} other truths. Under either covariance it retains the flag at the GiBUU hybrid. The two procedures discretize the problem differently, so the comparison also includes the effect of the chosen response grid.
+
+Coarsening the reporting grid leaves substantial dependence on the starting model. In a precision study with generator-sized departures, all three grids miss the $5\%$ model-component and $75\%$ recovery targets, including the \fvval{h2-nsupported} supported joint boxes used to define the sixteen cells. On the sixteen cells, $C_{\mathrm{model}}$ summarizes shifts on data when the prior is reweighted toward GENIE with meson-exchange currents, NuWro, or GiBUU. These shifts measure sensitivity to the chosen priors and carry no calibrated bound on the bias.
 
 Integrating the 3D result over $E_{\mathrm{avail}}$ leaves a shape difference with the published 2D result. The distance per bin in the published covariance is 4.98 for the 3D purity marginal (Fig.~\ref{fig:eavail-marg}) and 4.52 for the refined 3D marginal.
 
@@ -223,9 +255,7 @@ Integrating the 3D result over $E_{\mathrm{avail}}$ leaves a shape difference wi
   \label{fig:eavail-marg}
 \end{figure}
 
-At nominal truth, the three background-subtraction configurations are compared descriptively in Sec.~\ref{sec:higher-dimensional-closure}. With the deterministic purity control, the highest-$W$ column of the $E_{\mathrm{avail}}$--$W$ plane is $3.5\%$ to $4.1\%$ low, except for the highest-energy corner, which is $1.7\%$ high. The low-capacity negative-weight refinement reduces the absolute residuals to $0.11\%$--$0.24\%$ in that column and to at most $0.39\%$ elsewhere in the plane. With 60 pseudo-experiments, residuals well below $1\%$ are significant, and many cells in the plane also exceed the criterion's threshold. The largest failures are joint cells, at up to $1.0\%$ high and up to 14 standard errors (Fig.~\ref{fig:bkg-residual-note}). Table~\ref{tab:validation-inventory} records the criteria and the separate sixteen-cell check.
-
-Recovery of injected joint structure varies across cells. The GENIE sample entering the GiBUU-to-GENIE available-energy ratio used a mismatched flux (Appendix~\ref{app:choices-after-results}), so the ratio serves as a stress test at the scale of generator differences. For the three other injected shapes in Sec.~\ref{sec:higher-dimensional-closure}, the unfolded shift has the opposite sign in up to \fvval{rec-w-opp-hi} of the supported $(E_{\mathrm{avail}},W)$ cells with an injected change above \fvval{rec-thr}\% and overshoots in \fvval{rec-w-over-lo} to \fvval{rec-w-over-hi} cells. In the sixteen-cell bias test, against the covariance without GiBUU's own prior-shape contribution, the GiBUU hybrid gives $|z|=\lrval{vr-R02-z-gibuu}$ and \lrval{vr-R06-z-gibuu} in R02 and R06. For the separate GiBUU available-energy deformation, the standardized R06 residual rises from $|z|=\fvval{f0b-stage0c_gibuu-zmax}$ to \fvval{f0b-stage0c_gibuu-zmax-nopl} when the run-period term is also removed from that covariance. Figure~\ref{fig:gbdt-bias-spread} compares the size of the bias with the repeat spread at a fixed iteration count.
+Recovery of injected joint structure varies across cells. The GENIE sample entering the GiBUU-to-GENIE available-energy ratio used a mismatched flux (Appendix~\ref{app:choices-after-results}), so the ratio serves as a stress test at the scale of generator differences. For the three other generator-derived shapes described above, the unfolded shift has the opposite sign in up to \fvval{rec-w-opp-hi} of the supported $(E_{\mathrm{avail}},W)$ cells with an injected change above \fvval{rec-thr}\% and overshoots in \fvval{rec-w-over-lo} to \fvval{rec-w-over-hi} cells. In the sixteen-cell bias test, against the covariance without GiBUU's own prior-shape contribution, the GiBUU hybrid gives $|z|=\lrval{vr-R02-z-gibuu}$ and \lrval{vr-R06-z-gibuu} in R02 and R06. For the separate GiBUU available-energy deformation, the standardized R06 residual rises from $|z|=\fvval{f0b-stage0c_gibuu-zmax}$ to \fvval{f0b-stage0c_gibuu-zmax-nopl} when the run-period term is also removed from that covariance, still below the threshold of \fvval{trig-z}. Figure~\ref{fig:gbdt-bias-spread} compares the size of the bias with the repeat spread at a fixed iteration count.
 % Check stage (codex2 confirming read, finding 3; no change of meaning): the producer, make_values_fived16.py recov_values(),
 % grades every shape (GiBUU, W1, W2, W3) over the supported (E_avail, W) cells with |injected| > rec-thr = 2%; rec-w-opp-hi and
 % rec-w-over-* come from W1-W3 under that rule. The threshold is the producer's macro, not a typed number.
@@ -233,11 +263,11 @@ Recovery of injected joint structure varies across cells. The GENIE sample enter
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=\linewidth]{figures/gbdt_bias_spread.pdf}
-  \caption{Bias can exceed the repeat spread for the refined estimator at five iterations. The panels show the repeat standard deviation versus the mean signed fractional residual at nominal truth ($n=40$), under the GENIE + MEC reweighting in available energy and hadronic mass (W2, $n=20$), and under the NuWro reweighting in the two muon momenta and available energy (W3, $n=20$). The colors identify the 109 joint cells (J) and 27 joint cells (H2). The ensembles reuse samples from the estimator studies.}
+  \caption{Bias can exceed the repeat spread at five iterations. The panels show the repeat standard deviation versus the mean signed fractional residual at nominal truth ($n=40$), under the GENIE + MEC reweighting in available energy and hadronic mass (W2, $n=20$), and under the NuWro reweighting in the two muon momenta and available energy (W3, $n=20$). The colors identify the 109 joint cells (J) and 27 joint cells (H2). The ensembles reuse samples from the estimator studies.}
   \label{fig:gbdt-bias-spread}
 \end{figure}
 
-The prespecified substitution study in Sec.~\ref{sec:fived16-prr} tested which parts of the procedure contribute to prior retention. The study replaced one part of the procedure at a time on the same noise-free samples, with the iterations continued to \fvval{t3-kmax}, where $\rho$ levels off. At the GiBUU hybrid the baseline $\rho$ is \fvval{t3-rho-b0-gibuu}. Giving the events that fail the selection their true weights lowers $\rho$ to \fvval{t3-rho-mo-gibuu}, about the value reached when every event receives its true weight before the second step. No data analysis has either oracle input. Letting the missed events keep their previous weights instead of the regressor's prediction, weighting the regressor, or removing the background with its refinement each changes $\rho$ by less than \fvval{t3-dmax-gibuu}, against a threshold of \fvval{prr-floor}. The retention there is consistent with a limit set by the weights of the missed events. At the $q_3$ tilt the baseline $\rho$ is \fvval{t3-rho-b0-q3}, and no replacement lowers $\rho$ by \fvval{prr-floor}. Even with true weights for every event, $\rho=\fvval{t3-rho-op-q3}$ remains after the second, truth-level step, consistent with a limit set by that step's representation. At both truths the result matches the pseudo-data at reconstruction level but not at truth level, consistent with directions the reconstructed inputs constrain weakly.
+The prespecified substitution study in Sec.~\ref{sec:fived16-prr} tested which parts of the procedure contribute to prior retention. The study replaced one part of the procedure at a time on the same noise-free samples, with the iterations continued to \fvval{t3-kmax}, where $\rho$ levels off. At the GiBUU hybrid, with no part replaced, $\rho$ is \fvval{t3-rho-b0-gibuu}. Giving the events that fail the selection their true weights lowers $\rho$ to \fvval{t3-rho-mo-gibuu}, about the value reached when every event receives its true weight before the second step. No data analysis has either oracle input. Letting the missed events keep their previous weights instead of the regressor's prediction, weighting the regressor, or removing the background with its refinement each changes $\rho$ by less than \fvval{t3-dmax-gibuu}, against a threshold of \fvval{prr-floor}. The retention there is consistent with a limit set by the weights of the missed events. At the $q_3$ tilt, with no part replaced, $\rho$ is \fvval{t3-rho-b0-q3}, and no replacement lowers $\rho$ by \fvval{prr-floor}. Even with true weights for every event, $\rho=\fvval{t3-rho-op-q3}$ remains after the second, truth-level step, consistent with a limit set by that step's representation. At both truths the result matches the pseudo-data at reconstruction level but not at truth level, consistent with directions the reconstructed inputs constrain weakly.
 % Tier 3 (Joseph 2026-11-22: DECISION-20261122 wording, then split into shorter sentences at his request the same day;
 % he asked that it not be pinned): every number
 % is a \fvval key from make_values_fived16.py t3_values(), read from the Tier 3 readout (#1241, main b4336c477;
@@ -265,6 +295,42 @@ The paired bootstrap diagnostic supports counting the rounding variance within t
 \subsection{Alternative algorithms and classifier controls}
 \label{app:algorithm-classifier-controls}
 
+\begin{table}[!tbp]
+  \centering\small
+  \caption{Configurations used for supporting studies and joint tests. Appendix~\ref{app:reproducibility-definitions} gives the estimator settings.}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}
+                      >{\raggedright\arraybackslash}p{0.31\textwidth}
+                      >{\raggedright\arraybackslash}p{0.38\textwidth}@{}}
+    \toprule
+    Result or diagnostic & Estimator and background treatment & Grid and covariance or test statistic \\
+    \midrule
+    \ResFiveAxis{} &
+      \EstPurity{} (binned purity weights) &
+      Fine five-axis grid with diagnostic covariance $C_Z$, also projected
+      onto the $E_{\mathrm{avail}}$--$W$ plane. \\
+    \addlinespace
+    \ResJoint{} &
+      Variant of the \estMultiD{} (refined negative weights) &
+      Separate coarse grid with \jtNcells{} supported cells
+      (\jtNcellsGiBUU{} for GiBUU). Calibrated quadratic distances use
+      a shrinkage-based metric. \\
+    \addlinespace
+    Injected-feature closures and classifier-family cross-check &
+      \EstPurity{} (binned purity weights) & \\
+    \addlinespace
+    Background-subtraction bias and 5D coverage &
+      \EstDetPurity{} (binned purity weights) & \\
+    \addlinespace
+    Background-subtraction bias and generator-sized available-energy change &
+      \EstLowCap{} (refined negative weights) & \\
+    \addlinespace
+    2D unfolding cross-check &
+      \EstExact{} (binned purity weights) &
+      Our muon grid, the published $14\times16$ layout with three $p_T$ edges shifted by \SI{0.005}{GeV/c}. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 The largest differences between \lrval{rg1-K}-iteration binned IBU and the sixteen-cell result on data are $\fvval{ibu16-dof-R11}\%$ in R11, $\fvval{ibu16-dof-R06}\%$ in R06, and $\fvval{ibu16-dof-R05}\%$ in R05, expressed relative to the OmniFold integrals. The R06 difference is \fvval{ibu16-dsig-R06} times its reported standard deviation. The paired test in Sec.~\ref{sec:fived16-ibu} establishes sensitivity to the unfolding procedure, including the response grid used by IBU.
 
 A noise-free comparison with exact binned iteration helps locate the source of closure residuals. Of 376 cell--deformation pairs with residuals above $2\%$, 144 have a diagnosis stable under changes in truth binning and response weighting. The tree approximation dominates in 15 of these 144 cases. The binned response constrains most of the retained cases weakly, consistent with regularization accounting for most residuals in this diagnostic. This reading applies to the selected cases at the simulated detector response.
@@ -281,5 +347,88 @@ The detector-level tree classifier shows a nearly diagonal reliability curve, wi
   \caption{The largest differences between the multilayer perceptron and the gradient-boosted trees occur at the sparsely populated edges of the muon spectra. The panels show absolute 3D purity-baseline projections and their ratios at five iterations. The comparison is descriptive.}
   \label{fig:calibration}
 \end{figure}
+
+\subsection{Summary of higher-dimensional validation}
+
+\begin{table}[tbp]
+  \centering
+  \linespread{1}\footnotesize
+  \caption{Summary of higher-dimensional validation tests. A criterion is prespecified if it was recorded before its outcome was read. Appendix~\ref{app:validation-inventory} gives the complete inventory.}
+  \label{tab:higher-dimensional-validation}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.213\textwidth}
+                      >{\raggedright\arraybackslash}p{0.21\textwidth}
+                      >{\raggedright\arraybackslash}p{0.25\textwidth}
+                      >{\raggedright\arraybackslash}p{0.25\textwidth}@{}}
+    \toprule
+    Test & Estimator or result & Outcome & Consequence \\
+    \midrule
+    $E_{\mathrm{avail}}$ and $q_3$ bumps (descriptive) &
+    3D and 4D purity baseline &
+    Marginal residuals $1.84\%$ and at most $1.1\%$. &
+    Recovery characterized for two smooth marginal features. \\
+    \addlinespace[2pt]
+    $W$ bump (prespecified) &
+    5D purity baseline, signal only &
+    Marginal ratio 0.180 passes the 0.20 limit. &
+    Joint peak-column cells remain up to $9.4\%$ low. \\
+    \addlinespace[2pt]
+    Nominal truth with backgrounds (descriptive) &
+    Deterministic purity control, low-capacity refinement, and sixteen-cell estimator &
+    Negative-weight treatment reduces the high-$W$ bias. &
+    Improvement established at nominal truth for the tested treatments. \\
+    \addlinespace[2pt]
+    Generator-sized recovery (prespecified) &
+    Low-capacity refinement control &
+    Fails with a median $9.7\%$ residual on the $(E_{\mathrm{avail}},W)$ plane. &
+    Large joint residuals persist with signal only. \\
+    \addlinespace[2pt]
+    Reporting-resolution precision (prespecified) &
+    Sixteen-cell estimator and its admissible settings on three diagnostic grids &
+    Prior sensitivity exceeds the $5\%$ target on all three. &
+    Coarsening leaves appreciable model dependence. \\
+    \addlinespace[2pt]
+    Fake-data bias (prespecified) &
+    Sixteen-cell estimator &
+    GiBUU hybrid exceeds the criteria. Under $\CrepFiveDzero$, the $q_3$ tilt also did. &
+    Bias exceeds the allowed scale under the reported covariance. \\
+    \addlinespace[2pt]
+    Classifier-family comparison (descriptive) &
+    3D purity baseline &
+    Median projection differences $0.7\%$--$1.4\%$. &
+    Agreement applies to the tested 3D projections. \\
+    \addlinespace[2pt]
+    Binned IBU comparison (prespecified) &
+    Sixteen-cell estimator and binned IBU &
+    Difference exceeds the calibrated thresholds. &
+    Joint cell estimates depend on the unfolding procedure. \\
+    \addlinespace[2pt]
+    End-to-end coverage (prespecified) &
+    Deterministic purity control, statistical intervals &
+    Fails the futility rule at nominal and reduced rates. &
+    Coverage fails for this estimator variant. \\
+    \addlinespace[2pt]
+    Held-out-tune coverage (descriptive) &
+    Sixteen-cell estimator with $\Csub$ &
+    Joint undercoverage at both tunes. &
+    Also too small with $\CrepFiveDzero$. \\
+    \addlinespace[2pt]
+    Rounding-level stability (prespecified) &
+    Sixteen-cell estimator &
+    Fails with shifts up to $\lrval{stab-max}$ statistical standard deviations. &
+    Central values are sensitive to rounding-level changes. \\
+    \addlinespace[2pt]
+    Covariance seed tolerance (prespecified) &
+    Companion purity covariance builds &
+    Projected shifts exceed the $\sprojBound\%$ tolerance. &
+    Part of the seed sensitivity remains unmeasured. \\
+% Search: s_proj; M(ii); cause 3; estimator-seed magnitude criterion; GRADE-20260920; VL146; L2 (the search of this section's seed paragraph at 0d919b1a, rerun; no OUTCOME, DECISION, GRADE or EVIDENCE record changes an s_proj mention since 0d919b1a) @ caae27166e85
+    \addlinespace[2pt]
+    Muon-quadrant sums (prespecified) &
+    Sixteen-cell and 2D results &
+    Passes the comparison rule. &
+    Supports consistency of the coarse muon projection. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 % PASS2: Source literals kept without a matching value macro. C.1: slice counts 14 and 16, LightGBM range 2.64--2.75 over ten seeds, and histogram-based result 2.70 +/- 0.04. C.2: 0.02, the corner edges 0.8 and 1.8 GeV, the W interval [1.4,1.8) GeV, the scan endpoints, four degrees of freedom, and the 16- and 8-cell domains. C.3: 4.98 and 4.52, the grid counts 109/27/39, the 90th percentile, envelope medians 12.0/9.6/13.4 and 11.2/4.3/9.9, percentiles 38.6/22.5/39.2, the 10% target, 11.0% and 1.4%, 153 integrals, and the paired-bootstrap values 50, 1.02, and 0.37. C.4: 376, 2%, 144, and the classifier scores 0.25 and 0.537. Additional literals with no matching value macro in the supplied set: C.1 eigenmode share 9.6% and relative eigenvalues 4e-9, 4e-6, 6e-5. C.2 data Pearson coefficients 0.82 and 0.74, migration range 0.58--0.61, quadrant thresholds 0.05 and 2.50, and the derived carbon weight 12/13. C.4 tree-dominated count 15 and classifier projection differences 1.20%, 1.36%, and 0.66%. Retained the figure/records values in the draft. All active references resolve against new-labels.md or this file. Legacy table labels for omitted tables (tab:fived16-quad-x, tab:fived16-sens, tab:fived16-gen-target) have no table here. The author cut fig:eavail and fig:ascencio. The old tab:fived16-groups label points to the first of the two uncertainty tables. Legacy section labels already assigned to the body drafts were left there to avoid duplicate definitions.

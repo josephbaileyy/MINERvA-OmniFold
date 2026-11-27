@@ -1,0 +1,34 @@
+ok   DONE: exit 0; the archive holds exactly the send list, no staged copy
+ok   DONE with no runner.pid: p0.rc is authoritative, exit 0
+ok   STOP from another node: p0.rc rc 4, exit 12
+ok   a malformed p0.rc (no end time): exit 9, nothing sent
+ok   a two-line p0.rc: exit 9
+ok   a p0.rc with a trailing blank line: exit 9
+ok   a NUL byte in p0.rc: exit 9
+ok   a cause with a space: exit 9
+ok   an impossible end time (February 30): exit 9
+ok   RUNNING: the start time and exact command line match, exit 10, nothing sent
+ok   a reused pid (another start time): gone, exit 11
+ok   another command naming the runner: gone, exit 11
+ok   a command line that only contains the runner's path: gone, exit 11
+ok   the exact command line plus an empty argument: gone, exit 11
+ok   gone without p0.rc: exit 11, cleanup unverified, /dev/shm reported, records sent
+ok   p0.rc published while the fetch probes a dead runner's /proc: the terminal record wins, DONE
+ok   p0.rc published while the fetch confirms a live runner: the terminal record wins, STOP
+ok   no p0.rc, another node: exit 9, nothing sent
+ok   no p0.rc and no runner.pid: exit 9
+ok   no root: exit 9
+FETCH-TESTS :: PASS
+KILLED   pidfile-required (2 cases)
+KILLED   no-recheck (2 cases)
+KILLED   ticks-unchecked (1 cases)
+KILLED   cmdline-unchecked (4 cases)
+KILLED   running-without-recheck (1 cases)
+KILLED   one-line-unchecked (1 cases)
+KILLED   cause-loose (1 cases)
+KILLED   date-unchecked (1 cases)
+KILLED   malformed-accepted (4 cases)
+KILLED   staged-sent (3 cases)
+KILLED   dead-is-running (5 cases)
+KILLED   nul-unchecked (1 cases)
+FETCH-MUTANTS :: 12/12 killed

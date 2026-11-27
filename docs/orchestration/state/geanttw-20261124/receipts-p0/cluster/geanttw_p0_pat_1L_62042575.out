@@ -1,0 +1,282 @@
+[geanttw-evloop] 21 AnaTuples checked by size and mtime; 0 differ
+[geanttw-evloop] ldd of /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/bin/runEventLoopOmniFold:
+	linux-vdso.so.1 (0x00007ffdd3df3000)
+	libCore.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libCore.so.6.28 (0x00007fcacc33c000)
+	libRIO.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libRIO.so.6.28 (0x00007fcacbfb4000)
+	libHist.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libHist.so.6.28 (0x00007fcacbb99000)
+	libTree.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libTree.so.6.28 (0x00007fcacba09000)
+	libPhysics.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libPhysics.so.6.28 (0x00007fcacb9bd000)
+	libMAT-MINERvA.so => /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/libMAT-MINERvA.so (0x00007fcacb909000)
+	libMAT.so => /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/libMAT.so (0x00007fcacb781000)
+	libstdc++.so.6 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libstdc++.so.6 (0x00007fcacb502000)
+	libm.so.6 => /lib64/libm.so.6 (0x00007fcacb400000)
+	libgcc_s.so.1 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libgcc_s.so.1 (0x00007fcacb3d3000)
+	libpthread.so.0 => /lib64/libpthread.so.0 (0x00007fcacb3d0000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007fcacb1bd000)
+	libpcre.so.1 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libpcre.so.1 (0x00007fcacb175000)
+	liblzma.so.5 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./liblzma.so.5 (0x00007fcacb144000)
+	libxxhash.so.0 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libxxhash.so.0 (0x00007fcacb139000)
+	liblz4.so.1 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./liblz4.so.1 (0x00007fcacb10e000)
+	libz.so.1 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libz.so.1 (0x00007fcacb0f3000)
+	libzstd.so.1 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libzstd.so.1 (0x00007fcacafd8000)
+	libdl.so.2 => /lib64/libdl.so.2 (0x00007fcacafd5000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007fcacc7f8000)
+	libThread.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libThread.so.6.28 (0x00007fcacaf74000)
+	libMatrix.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libMatrix.so.6.28 (0x00007fcacadda000)
+	libMathCore.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libMathCore.so.6.28 (0x00007fcacab84000)
+	libImt.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libImt.so.6.28 (0x00007fcacab70000)
+	libNet.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libNet.so.6.28 (0x00007fcacaaa0000)
+	libGraf.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libGraf.so.6.28 (0x00007fcaca94b000)
+	libGpad.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libGpad.so.6.28 (0x00007fcaca879000)
+	libtbb.so.12 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/././libtbb.so.12 (0x00007fcaca816000)
+	libMultiProc.so.6.28 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/././libMultiProc.so.6.28 (0x00007fcaca808000)
+	libssl.so.3 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/././libssl.so.3 (0x00007fcaca70c000)
+	libcrypto.so.3 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/././libcrypto.so.3 (0x00007fcaca0fd000)
+	libfreetype.so.6 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/./libfreetype.so.6 (0x00007fcaca03a000)
+	libpng16.so.16 => /global/homes/j/josephrb/.conda/envs/root_6_28/lib/././libpng16.so.16 (0x00007fcac9ff9000)
+[geanttw-evloop] env: MNV101_DUMP_UNIVERSES=GEANT_Neutron,GEANT_Pion,GEANT_Proton 
+[geanttw-evloop] NUE before utc=2026-11-26T16:13:40Z atime_ns=1795709289000000000 mtime_ns=1630424966000000000 size=25403
+[geanttw-evloop] pat 1L job=62042575 host=nid004113 bin=/pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/bin/runEventLoopOmniFold md5=2070a26f9b76b7313e902c6d5c10ea73 start=2026-11-26T16:13:40Z
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019168_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019169_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019172_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019173_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019174_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019175_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019176_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019177_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019178_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019179_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019180_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019181_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019182_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019183_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019184_Playlist.root
+Added 15 files from playlist /pscratch/sd/j/josephrb/geanttw-20261124/deploy/2d-unfolding/playlist_manifests/1L_Data.txt
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113000_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113001_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113002_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113003_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113004_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113005_Playlist.root
+Added 6 files from playlist /pscratch/sd/j/josephrb/geanttw-20261124/deploy/2d-unfolding/playlist_manifests/1L_MC.txt
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113000_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113001_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113002_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113003_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113004_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113005_Playlist.root
+Added 6 files from playlist /pscratch/sd/j/josephrb/geanttw-20261124/deploy/2d-unfolding/playlist_manifests/1L_MC.txt
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019168_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019169_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019172_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019173_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019174_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019175_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019176_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019177_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019178_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019179_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019180_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019181_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019182_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019183_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019184_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113000_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113001_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113002_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113003_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113004_Playlist.root
+	adding file: /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113005_Playlist.root
+Inferring playlist minervame1L from run number 113000.
+Muon Resolution Systematics created with fractional uncertainty 0.004
+Setting up branches for the MHRW.  If you haven't set branch addresses before doing this (ie. MakeClass), this can cause problems for you.
+Trying to load filename: /data/hadronReweight/cross_section_neutron_carbon.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_iron.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_lead.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_carbon.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_iron.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_lead.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_carbon.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_iron.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_lead.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_carbon.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_iron.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_lead.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_carbon.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_iron.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_lead.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_carbon.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_iron.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_lead.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_carbon.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_iron.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_lead.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_carbon.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_iron.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_lead.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_carbon.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_iron.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_lead.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/new_geant4_xsec.root, graphname: elastic_xsec
+Trying to load filename: /data/hadronReweight/new_geant4_xsec.root, graphname: inelastic_xsec
+Trying to load filename: /data/hadronReweight/new_geant4_xsec.root, graphname: total_xsec
+Using the HD XSec
+Trying to load filename: /data/hadronReweight/cross_section_neutron_carbon_hd.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_iron_hd.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_lead_hd.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_hydrogen_hd.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_carbon.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_iron.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_lead.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_carbon.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_iron.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_lead.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_carbon_hd.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_iron_hd.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_lead_hd.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_hydrogen_hd.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_carbon.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_iron.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_lead.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_carbon.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_iron.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_lead.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_carbon_hd.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_iron_hd.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_lead_hd.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_hydrogen_hd.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_carbon.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_iron.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_lead.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_carbon.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_iron.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_lead.root, graphname: totalXS
+MnvHadronReweight object initialized 
+  Project name Renorm_Kine_Truth
+ Playlist minervame1L
+ Using Elastics 1
+ Using NeutronCV 1
+ Fiducial vol 5991.29 < z < 8408.91, apothem, 850
+  Default particles (p, n, pi) being considered.
+Using the HD XSec
+Trying to load filename: /data/hadronReweight/cross_section_neutron_carbon_hd.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_iron_hd.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_lead_hd.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_hydrogen_hd.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_carbon.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_iron.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_lead.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_carbon.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_iron.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_lead.root, graphname: inelXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_carbon_hd.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_iron_hd.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_lead_hd.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_hydrogen_hd.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_carbon.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_iron.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_lead.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_carbon.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_iron.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_lead.root, graphname: elXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_carbon_hd.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_iron_hd.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_lead_hd.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_neutron_hydrogen_hd.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_carbon.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_iron.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_proton_lead.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_carbon.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_iron.root, graphname: totalXS
+Trying to load filename: /data/hadronReweight/cross_section_pion_lead.root, graphname: totalXS
+Loading file /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/data/mhrwKineRenorm/Renorm_Kine_Truth_MinervaME1L_v10_HD_withElastics_RwgtNeutronCV_z5991-8408_a850.root
+    ***Loaded renorm factors from file:*** 
+Angle Systematics created with thetaX err 0.001 and thetaY err 0.0009
+Muon Resolution Systematics created with fractional uncertainty 0.004
+Angle Systematics created with thetaX err 0.001 and thetaY err 0.0009
+GetStandardSystematics inventory (45 bands incl. cv):
+  2p2h  n=3  IsVerticalOnly=true
+  AGKYxF1pi  n=2  IsVerticalOnly=true
+  AhtBY  n=2  IsVerticalOnly=true
+  BeamAngleX  n=2  IsVerticalOnly=false
+  BeamAngleY  n=2  IsVerticalOnly=false
+  BhtBY  n=2  IsVerticalOnly=true
+  CCQEPauliSupViaKF  n=2  IsVerticalOnly=true
+  CV1uBY  n=2  IsVerticalOnly=true
+  CV2uBY  n=2  IsVerticalOnly=true
+  EtaNCEL  n=2  IsVerticalOnly=true
+  Flux  n=100  IsVerticalOnly=true
+  FrAbs_N  n=2  IsVerticalOnly=true
+  FrAbs_pi  n=2  IsVerticalOnly=true
+  FrCEx_N  n=2  IsVerticalOnly=true
+  FrCEx_pi  n=2  IsVerticalOnly=true
+  FrElas_N  n=2  IsVerticalOnly=true
+  FrElas_pi  n=2  IsVerticalOnly=true
+  FrInel_N  n=2  IsVerticalOnly=true
+  FrPiProd_N  n=2  IsVerticalOnly=true
+  FrPiProd_pi  n=2  IsVerticalOnly=true
+  GEANT_Neutron  n=2  IsVerticalOnly=true
+  GEANT_Pion  n=2  IsVerticalOnly=true
+  GEANT_Proton  n=2  IsVerticalOnly=true
+  HighQ2  n=2  IsVerticalOnly=true
+  LowQ2  n=2  IsVerticalOnly=true
+  MFP_N  n=2  IsVerticalOnly=true
+  MFP_pi  n=2  IsVerticalOnly=true
+  MaCCQE  n=2  IsVerticalOnly=true
+  MaNCEL  n=2  IsVerticalOnly=true
+  MaRES  n=2  IsVerticalOnly=true
+  MinosEfficiency  n=2  IsVerticalOnly=true
+  MuonResolution  n=2  IsVerticalOnly=false
+  Muon_Energy_MINERvA  n=2  IsVerticalOnly=false
+  Muon_Energy_MINOS  n=2  IsVerticalOnly=false
+  MvRES  n=2  IsVerticalOnly=true
+  NormDISCC  n=2  IsVerticalOnly=true
+  NormNCRES  n=2  IsVerticalOnly=true
+  RDecBR1gamma  n=2  IsVerticalOnly=true
+  Rvn1pi  n=2  IsVerticalOnly=true
+  Rvn2pi  n=2  IsVerticalOnly=true
+  Rvp1pi  n=2  IsVerticalOnly=true
+  Rvp2pi  n=2  IsVerticalOnly=true
+  Theta_Delta2Npi  n=2  IsVerticalOnly=true
+  VecFFCCQEshape  n=2  IsVerticalOnly=true
+  cv  n=1  IsVerticalOnly=false
+  Universe-weight dump enabled: 6 (band,idx) branches written to mc_truth_denom (0 lateral with shifted pT/pz).
+Starting unbinned MC truth-denom loop (Truth tree)...
+  (collecting truth-denom event IDs for reco-loop gating)
+0 / 3269023FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/data/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/data/flux/flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/data/flux/flux-g4numiv6-pdg14-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/data/flux/flux-g4numiv6-pdg-14-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/data/flux/flux-gen2thin-pdg12-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/data/flux/flux-gen2thin-pdg-12-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/data/flux/flux-g4numiv6-pdg12-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/lib/data/flux/flux-g4numiv6-pdg-12-minervame1M_rearrangedUniverses.root
+TH1.Print Name  = hrelratio, Entries= 1942565, Total sum= 1.94257e+06
+weightRPA: have read in ratios from file /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/etc/MParamFiles/data/Reweight//outNievesRPAratio-nu208Pb-20GeV-20170202.root
+TH1.Print Name  = hrelratio, Entries= 1254818, Total sum= 1.25482e+06
+weightRPA: have read in ratios from file /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/etc/MParamFiles/data/Reweight//outNievesRPAratio-nu16O-20GeV-20170202.root
+TH1.Print Name  = hrelratio, Entries= -2147483648, Total sum= 9.52233e+10
+weightRPA: have read in ratios from file /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/etc/MParamFiles/data/Reweight//outNievesRPAratio-nu56Fe-20GeV-20170202.root
+TH1.Print Name  = hrelratio, Entries= 1331229, Total sum= 1.33123e+06
+weightRPA: have read in ratios from file /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/etc/MParamFiles/data/Reweight//outNievesRPAratio-nu12C-20GeV-20170202.root
+weight_2p2h: 2p2h input file /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/etc/MParamFiles/data/Reweight//fit-mec-2d-noScaleDown-penalty00300-best-fit.txt
+weight_2p2h: Reading from file /pscratch/sd/j/josephrb/geanttw-20261124/prefix-pat/etc/MParamFiles/data/Reweight//fit-mec-2d-noScaleDown-penalty00300-best-fit
+10000 / 326902320000 / 326902330000 / 326902340000 / 326902350000 / 326902360000 / 326902370000 / 326902380000 / 326902390000 / 3269023100000 / 3269023110000 / 3269023120000 / 3269023130000 / 3269023140000 / 3269023150000 / 3269023160000 / 3269023170000 / 3269023180000 / 3269023190000 / 3269023200000 / 3269023210000 / 3269023220000 / 3269023230000 / 3269023240000 / 3269023250000 / 3269023260000 / 3269023270000 / 3269023280000 / 3269023290000 / 3269023300000 / 3269023310000 / 3269023320000 / 3269023330000 / 3269023340000 / 3269023350000 / 3269023360000 / 3269023370000 / 3269023380000 / 3269023390000 / 3269023400000 / 3269023410000 / 3269023420000 / 3269023430000 / 3269023440000 / 3269023450000 / 3269023460000 / 3269023470000 / 3269023480000 / 3269023490000 / 3269023500000 / 3269023510000 / 3269023520000 / 3269023530000 / 3269023540000 / 3269023550000 / 3269023560000 / 3269023570000 / 3269023580000 / 3269023590000 / 3269023600000 / 3269023610000 / 3269023620000 / 3269023630000 / 3269023640000 / 3269023650000 / 3269023660000 / 3269023670000 / 3269023680000 / 3269023690000 / 3269023700000 / 3269023710000 / 3269023720000 / 3269023730000 / 3269023740000 / 3269023750000 / 3269023760000 / 3269023770000 / 3269023780000 / 3269023790000 / 3269023800000 / 3269023810000 / 3269023820000 / 3269023830000 / 3269023840000 / 3269023850000 / 3269023860000 / 3269023870000 / 3269023880000 / 3269023890000 / 3269023900000 / 3269023910000 / 3269023920000 / 3269023930000 / 3269023940000 / 3269023950000 / 3269023960000 / 3269023970000 / 3269023980000 / 3269023990000 / 32690231000000 / 32690231010000 / 32690231020000 / 32690231030000 / 32690231040000 / 32690231050000 / 32690231060000 / 32690231070000 / 32690231080000 / 32690231090000 / 32690231100000 / 32690231110000 / 32690231120000 / 32690231130000 / 32690231140000 / 32690231150000 / 32690231160000 / 32690231170000 / 32690231180000 / 32690231190000 / 32690231200000 / 32690231210000 / 32690231220000 / 32690231230000 / 32690231240000 / 32690231250000 / 32690231260000 / 32690231270000 / 32690231280000 / 32690231290000 / 32690231300000 / 32690231310000 / 32690231320000 / 32690231330000 / 32690231340000 / 32690231350000 / 32690231360000 / 32690231370000 / 32690231380000 / 32690231390000 / 32690231400000 / 32690231410000 / 32690231420000 / 32690231430000 / 32690231440000 / 32690231450000 / 32690231460000 / 32690231470000 / 32690231480000 / 32690231490000 / 32690231500000 / 32690231510000 / 32690231520000 / 32690231530000 / 32690231540000 / 32690231550000 / 32690231560000 / 32690231570000 / 32690231580000 / 32690231590000 / 32690231600000 / 32690231610000 / 32690231620000 / 32690231630000 / 32690231640000 / 32690231650000 / 32690231660000 / 32690231670000 / 32690231680000 / 32690231690000 / 32690231700000 / 32690231710000 / 32690231720000 / 32690231730000 / 32690231740000 / 32690231750000 / 32690231760000 / 32690231770000 / 32690231780000 / 32690231790000 / 32690231800000 / 32690231810000 / 32690231820000 / 32690231830000 / 32690231840000 / 32690231850000 / 32690231860000 / 32690231870000 / 32690231880000 / 32690231890000 / 32690231900000 / 32690231910000 / 32690231920000 / 32690231930000 / 32690231940000 / 32690231950000 / 32690231960000 / 32690231970000 / 32690231980000 / 32690231990000 / 32690232000000 / 32690232010000 / 32690232020000 / 32690232030000 / 32690232040000 / 32690232050000 / 32690232060000 / 32690232070000 / 32690232080000 / 32690232090000 / 32690232100000 / 32690232110000 / 32690232120000 / 32690232130000 / 32690232140000 / 32690232150000 / 32690232160000 / 32690232170000 / 32690232180000 / 32690232190000 / 32690232200000 / 32690232210000 / 32690232220000 / 32690232230000 / 32690232240000 / 32690232250000 / 32690232260000 / 32690232270000 / 32690232280000 / 32690232290000 / 32690232300000 / 32690232310000 / 32690232320000 / 32690232330000 / 32690232340000 / 32690232350000 / 32690232360000 / 32690232370000 / 32690232380000 / 32690232390000 / 32690232400000 / 32690232410000 / 32690232420000 / 32690232430000 / 32690232440000 / 32690232450000 / 32690232460000 / 32690232470000 / 32690232480000 / 32690232490000 / 32690232500000 / 32690232510000 / 32690232520000 / 32690232530000 / 32690232540000 / 32690232550000 / 32690232560000 / 32690232570000 / 32690232580000 / 32690232590000 / 32690232600000 / 32690232610000 / 32690232620000 / 32690232630000 / 32690232640000 / 32690232650000 / 32690232660000 / 32690232670000 / 32690232680000 / 32690232690000 / 32690232700000 / 32690232710000 / 32690232720000 / 32690232730000 / 32690232740000 / 32690232750000 / 32690232760000 / 32690232770000 / 32690232780000 / 32690232790000 / 32690232800000 / 32690232810000 / 32690232820000 / 32690232830000 / 32690232840000 / 32690232850000 / 32690232860000 / 32690232870000 / 32690232880000 / 32690232890000 / 32690232900000 / 32690232910000 / 32690232920000 / 32690232930000 / 32690232940000 / 32690232950000 / 32690232960000 / 32690232970000 / 32690232980000 / 32690232990000 / 32690233000000 / 32690233010000 / 32690233020000 / 32690233030000 / 32690233040000 / 32690233050000 / 32690233060000 / 32690233070000 / 32690233080000 / 32690233090000 / 32690233100000 / 32690233110000 / 32690233120000 / 32690233130000 / 32690233140000 / 32690233150000 / 32690233160000 / 32690233170000 / 32690233180000 / 32690233190000 / 32690233200000 / 32690233210000 / 32690233220000 / 32690233230000 / 32690233240000 / 32690233250000 / 32690233260000 / 3269023Finished unbinned MC truth-denom loop.
+  Captured 383848 unique event IDs from mc_truth_denom.
+  Universe-weight dump enabled: 6 truth-mode + 6 reco-mode (band,idx) branches written to mc_signal_reco (0 lateral truth + 0 lateral reco with shifted pT/pz).
+Starting unbinned MC selected-signal-reco loop (reco tree)...
+0 / 105666110000 / 105666120000 / 105666130000 / 105666140000 / 105666150000 / 105666160000 / 105666170000 / 105666180000 / 105666190000 / 1056661100000 / 1056661110000 / 1056661120000 / 1056661130000 / 1056661140000 / 1056661150000 / 1056661160000 / 1056661170000 / 1056661180000 / 1056661190000 / 1056661200000 / 1056661210000 / 1056661220000 / 1056661230000 / 1056661240000 / 1056661250000 / 1056661260000 / 1056661270000 / 1056661280000 / 1056661290000 / 1056661300000 / 1056661310000 / 1056661320000 / 1056661330000 / 1056661340000 / 1056661350000 / 1056661360000 / 1056661370000 / 1056661380000 / 1056661390000 / 1056661400000 / 1056661410000 / 1056661420000 / 1056661430000 / 1056661440000 / 1056661450000 / 1056661460000 / 1056661470000 / 1056661480000 / 1056661490000 / 1056661500000 / 1056661510000 / 1056661520000 / 1056661530000 / 1056661540000 / 1056661550000 / 1056661560000 / 1056661570000 / 1056661580000 / 1056661590000 / 1056661600000 / 1056661610000 / 1056661620000 / 1056661630000 / 1056661640000 / 1056661650000 / 1056661660000 / 1056661670000 / 1056661680000 / 1056661690000 / 1056661700000 / 1056661710000 / 1056661720000 / 1056661730000 / 1056661740000 / 1056661750000 / 1056661760000 / 1056661770000 / 1056661780000 / 1056661790000 / 1056661800000 / 1056661810000 / 1056661820000 / 1056661830000 / 1056661840000 / 1056661850000 / 1056661860000 / 1056661870000 / 1056661880000 / 1056661890000 / 1056661900000 / 1056661910000 / 1056661920000 / 1056661930000 / 1056661940000 / 1056661950000 / 1056661960000 / 1056661970000 / 1056661980000 / 1056661990000 / 10566611000000 / 10566611010000 / 10566611020000 / 10566611030000 / 10566611040000 / 10566611050000 / 1056661Finished unbinned MC selected-signal-reco loop.
+  Captured 272243 unique event IDs from mc_signal_reco.
+  Miss-append: rebound 12 universe branches to CV proxies (KNOWN_ISSUES #12 fix).
+  Appended 111605 truth-only miss entries to mc_signal_reco.
+  Background universe-weight dump enabled: 6 (band,idx) branches written to mc_background (0 lateral with shifted reco pT/pz).
+Starting unbinned MC background reco loop...
+Finished unbinned MC background reco loop.
+Starting unbinned data reco loop...
+0 / 39577110000 / 39577120000 / 39577130000 / 39577140000 / 39577150000 / 39577160000 / 39577170000 / 39577180000 / 39577190000 / 395771100000 / 395771110000 / 395771120000 / 395771130000 / 395771140000 / 395771150000 / 395771160000 / 395771170000 / 395771180000 / 395771190000 / 395771200000 / 395771210000 / 395771220000 / 395771230000 / 395771240000 / 395771250000 / 395771260000 / 395771270000 / 395771280000 / 395771290000 / 395771300000 / 395771310000 / 395771320000 / 395771330000 / 395771340000 / 395771350000 / 395771360000 / 395771370000 / 395771380000 / 395771390000 / 395771Finished unbinned data reco loop.
+Wrote unbinned unfolding inputs to runEventLoopOmniFold.root
+Success
+[geanttw-evloop] NUE after utc=2026-11-26T16:20:37Z atime_ns=1795709641000000000 mtime_ns=1630424966000000000 size=25403
+[geanttw-evloop] rc=0 elapsed=417s
+[geanttw-evloop] wrote /pscratch/sd/j/josephrb/geanttw-20261124/run/p0/pat/runEventLoopOmniFold_GEANTTW_pat_1L.root (108991029 bytes) sha256 56112321d18b18f077befd519667611c521ba448969b7c15df167a9072891164

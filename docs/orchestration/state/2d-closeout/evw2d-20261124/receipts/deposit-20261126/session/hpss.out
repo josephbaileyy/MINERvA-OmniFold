@@ -1,0 +1,6 @@
+certificate valid 2026-11-26T14:21:00 to 2026-11-27T14:22:19 UTC (1164 min left; this step needs 60)
+ssh rc=0
+node login02 staged sha256 5c674c6c00a24f460d8d7f600c3bb8c8805f6f46d4393bb6d7fd0125a1c5aa41
+script rc=0
+launcher rc=0
+Thu Nov 26 18:58:32 UTC 2026

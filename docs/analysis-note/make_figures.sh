@@ -463,7 +463,7 @@ install_layout_fig() {  # install_layout_fig <basename under $NFP and in $FIGDIR
 # install_layout_fig paper_fig_coverage.pdf                   e1c3a18072270c99d89de22f2d56f08ae2992d44ed03bba9f325b3b27d2e6b59   (superseded by the figure redraw of 2026-11-23; installed below by install_redraw_fig)
 # install_layout_fig paper_fig_bkg_residual.pdf               1c6732728aecb53930d26be5f93480d821fd451c3cf868cf054c4c4b993decc1   (superseded by the figure redraw of 2026-11-23; installed below by install_redraw_fig)
 # install_layout_fig fived16_headline.pdf                     97766f5c52470b8bdc1f46b982fdbdae97d7c67aef9fde4faf9f27e680ee0f3e   (superseded by the figure redraw of 2026-11-23; installed below by install_redraw_fig)
-install_layout_fig runperiod_steps.pdf                      4496bcf824d56393e50991b1b6f70068df15ffd73eb5f7add26f738c7e1d95fb
+# install_layout_fig runperiod_steps.pdf                    4496bcf824d56393e50991b1b6f70068df15ffd73eb5f7add26f738c7e1d95fb   (updated legend in note-figscales-20261125 below)
 # install_layout_fig mode_decomp_mec_eavail_central.pdf       0b30b46b0456039d499e4bd399f9160d49ea1da42fa8d171c901099bfadadb7f   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
 # install_layout_fig MEFHC_5iter_xsec_proj_pt.pdf             f401ad1c3de18a34305f59d03fc3d4fb1a00360d9f68f8212c7b5fc564744b2c   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
 # install_layout_fig MEFHC_5iter_xsec_proj_pz.pdf             506e13cdc6eabe08a564323605bb1ed7b07fbd0327d2d1602cacc784b046b8ff   (superseded by the figure rounds of 2026-11-20/21; installed below by install_current_fig)
@@ -512,7 +512,12 @@ install_current_fig control_plots.pdf                        8910181e147c3251515
 install_current_fig eavailW_band.pdf                         9e71e493612596634584adf57993d0bd2649373c25028141882a740359655d52
 install_current_fig eavail_marginal_vs_paper_pull_full.pdf   7f272d2639db72b2cecec5ada11d4bf4e0da470703f2729189bed86c880f0cb9
 install_current_fig mode_decomp_mec_eavail_central.pdf       b56f4d90b1047b8aa8842bf47534d457848208d97c201f3fd3e60ca2f32d2f0c
-install_current_fig q3_excess_projection.pdf                 2c836ace97c0c36d811f698d9aa6652ff8f8b38867abb6ec6d149841029f8222
+# install_current_fig q3_excess_projection.pdf               2c836ace97c0c36d811f698d9aa6652ff8f8b38867abb6ec6d149841029f8222   (symmetric ratio scale in note-figscales-20261125 below)
+
+# Presentation-only redraws from the pinned inputs. See note-figscales-20261125/README.md for the producers and checks.
+NFR="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-figscales-20261125/figs"
+install_current_fig runperiod_steps.pdf                    79ebaf091fd82fc9fd384437fb0dfae6b02d50aa64dce91d9744eca0e954a821
+install_current_fig q3_excess_projection.pdf                29ec1e63c6673acf3dffbac64fb436c777e6c5850ac668148e6d089d50d2d57d
 
 # 2026-11-23 (rh/figs-b4-s3-20261123; Joseph approved each figure and caption): Figs. fig:bkg-residual-note,
 # fig:coverage-5d-paper and fig:fived16-headline redrawn, presentation only. Record: note-figredraw-20261123/README.md
@@ -533,6 +538,7 @@ install_redraw_fig() {  # install_redraw_fig <basename under $NRD and in $FIGDIR
 }
 install_redraw_fig paper_fig_bkg_residual.pdf               4ce60395d4136cd21959665e6ee5d65fbd746fb99795e675a8d99c0af84180aa
 install_redraw_fig paper_fig_coverage.pdf                   3d035311565d1e08f9226bf13d7553574cb178d7d6eb34be54ff0bf6f3ea826f
+# layered (2026-11-26): overridden later in this run by install_current_fig fived16_headline.pdf (7700c4d474b3857d...), the figure on C_e^infl (V_F)
 install_redraw_fig fived16_headline.pdf                     1002e7056bfe457f1f932a10b886d4a7b2996fcfb8507dee380f2bb9f5826bf6
 
 # 2026-11-25 (pT-edge option (i), Joseph 2026-11-24): the eight figures that compare with the published result, redrawn
@@ -562,6 +568,25 @@ install_regena4_fig MEFHC_5iter_xsec_paper_pz_slices.pdf   e      4d56eb9b5033b8
 install_regena4_fig tension_spectrum.pdf                   e      f25ee7d28384cfac6f77dd35844db86ffa7ad31d5b99ab1586d48fdb3aa9772f
 install_regena4_fig tension_chi2_map.pdf                   e      affa1fefae38443f12d28ea938149d57943a83f309210e20810a448966808427
 install_regena4_fig tension_mode_maps.pdf                  e      fe405d2fcab8f55e74c2ab37ff42dd83421fc0352f58db77d9c9ba1805b1869d
+
+# MINERvA Tune v1 labels on the current figure recipes. See note-tune-v1-legends-20261126/README.md.
+NFR="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-tune-v1-legends-20261126/figs"
+install_current_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     846be3bd1647c14b5cb525626e129aa6753c03547681f432842c8b55afdadc5f
+install_current_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     4e9560615d51839562cdf65e1399467110db220435cebe5c4fd1256a8cee8cf2
+install_current_fig MEFHC_5iter_xsec_proj_pz.pdf             f50545b425446f4dc3b762a14f3714af8574c80778b5faf310437843bc2962ae
+install_current_fig control_plots.pdf                       65353e3acff2b22db326dd85dc766d9d981e5450d19edc2b4270d93e91be59f3
+install_current_fig generators_vs_unfolded_band_central.pdf 5757bd67f2ce7a37e53479a6c41daf9c280c96fa4e5ecf160a514ca5cee32378
+install_current_fig paper_fig2_joint.pdf                    9023625a876bd5ca6071fbc1f0b55de672f8a5b2609ff3e56a573f8e91d45fd5
+install_current_fig q3_excess_projection.pdf                c36d48dd624b3bf268cf7a19a50e0f5d4d67b74c6508f009956755dce3efb443
+
+# 2026-11-26 (C_e^infl, V_F option C, readings #1368; the director's request): the sixteen-cell headline and generator-
+# residual figures drawn from the V_F data product and readouts by input-only copies of their producers. Record:
+# note-vffigs-20261126/README.md (tools/run.sh; each unchanged producer on the OLD records reproduces the file installed
+# before byte for byte). fived16_genresidual.pdf was committed straight to figures/ on 2026-11-20 (note-genresid-20261120)
+# and had no install line; it has one now. Installed after every earlier line.
+NFR="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-vffigs-20261126/figs"
+install_current_fig fived16_headline.pdf                    7700c4d474b3857d4485699803cbe50c1c7b23483624c1b58072797f6035e297
+install_current_fig fived16_genresidual.pdf                 4400bd70a3454b23d28e4b1c1f3885a60d2e48cdc6472f5722c5db59abb12b35
 
 echo
 echo "== paper-only vector crops =="

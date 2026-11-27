@@ -213,8 +213,10 @@ def main():
     record["ratio_ylim_shared"] = list(rlim)
     h, l = axs[0, 0].get_legend_handles_labels()
     order = [l.index(DATA_LABEL)] + [l.index(g) for g in GENS]
-    fig.legend([h[i] for i in order], [l[i] for i in order], loc="upper center", ncol=5, frameon=False,
-               bbox_to_anchor=(0.5, 1.0), handlelength=1.8, columnspacing=1.4)
+    names = {"Tune-v1": "MINERvA Tune v1"}
+    fig.legend([h[i] for i in order], [names.get(l[i], l[i]) for i in order],
+               loc="upper center", ncol=5, frameon=False,
+               bbox_to_anchor=(0.5, 1.0), handlelength=1.4, columnspacing=0.6)
     fig.subplots_adjust(left=0.085, right=0.99, bottom=0.115, top=0.875, hspace=0.07, wspace=0.40)
     fig.align_ylabels(axs[:, 0]); fig.align_ylabels(axs[:, 1]); fig.align_ylabels(axs[:, 2])
 

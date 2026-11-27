@@ -1,0 +1,11 @@
+You are a read-only reviewer for a physics analysis repository at the current directory (commit 2f6198de). Do not modify any file in it; scratch work only under a new temp dir.
+
+Scope: ONLY `git diff b8ebbdc61924b12f547def3933c98397452e4340 2f6198de753439a973f83601ffd22c974b22e69a -- docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/readings/vf_readings.py`. It answers your previous review (docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/p2/reads/p2-fix-codex-gpt-6.2-sol.txt: three BLOCKING findings - RSN cells_beyond_half_sigma / breaks_the_prior_closure unclassified as flags; PR-3 "clears at these truths" read as a weakening; the q3 ruling not checking its premise). The change: every leaf name is classified (FLAG_BOOL, AGREE_BOOL, FLAG_LIST, VALID_LIST, FLAG_COUNT, OUTCOME_STR, DESCRIPTIVE); an unclassified name is "structural" and any change to it is a control D event (fail closed); a name in several classes is resolved by its value's type; text under /labels/ is descriptive; controls are swept; RULINGS carry premise functions (_q3_shift, _qd_knife_edge).
+
+Control D (declaration :294): "no flag appears and no agreement count falls under the larger matrix (any such change is a STOP)".
+
+SCOPE RULE (strict): report only findings that could change a control D verdict: a weakening this sweep would still not flag (a decision field wrongly in DESCRIPTIVE, a direction error, a type-dispatch case that misroutes, an absent-leaf case read the wrong way), a false STOP on a genuine improvement, or a RULING/premise broader than its stated scope. Re-run your three earlier probes. Do NOT report style, hardening, or anything outside this diff. Pay particular attention to the DESCRIPTIVE regex: name any leaf in it that a decision rule reads.
+
+You may run `python3 -B` (the readings tool from its directory with --out-dir <tmp>; `python3 -B -m pytest -q tests/test_fd_vf_p2.py` from nd-unfolding/). Confirm the readings regenerate byte-identically to the committed files.
+
+Output: numbered findings, each BLOCKING or FOLLOWUP, with file:line and a concrete failure scenario; then one line saying what you re-probed. End with exactly one line: VERDICT: GO or VERDICT: NO-GO (NO-GO only for a BLOCKING finding). Under 450 words.

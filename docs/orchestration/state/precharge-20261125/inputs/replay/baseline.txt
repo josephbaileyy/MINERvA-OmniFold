@@ -1,0 +1,45 @@
+axes [ 1.5  2.   2.5  3.   3.5  4.   4.5  5.   6.   7.   8.   9.  10.  15.
+ 20.  40.  60. ] [0.    0.075 0.15  0.25  0.325 0.4   0.475 0.55  0.7   0.85  1.    1.25
+ 1.5   2.5   4.5  ] reported cells 205 POT(data,MC) [1.05739426e+21 4.97819846e+21] flux /cm2/POT 6.243343376851218e-08 nucleons 3.2352943296224835e+30
+signed measurable minimum 0.0 selected total 4091707.0
+reported-cell integrals signed 10 / paper: 3.0717090894446e-38 3.03901139455691e-38
+chi2/205 signed K5,K10, refined K10: 0.3798659447743265 0.473585899356942 0.5380500349581181
+literal rounded published POT, flux, targets; signed K10 chi2/205: 0.460995069139974
+20-40,40-60,60-80,>=80 rows: data, nominal MC, B, published fold, Valencia fold, all-selected interpretation, own K10 fold
+[[1.37785000e+05 1.12620509e+05 9.15329645e+03 1.34608680e+05
+  1.34783635e+05 1.37449674e+05 1.37979699e+05]
+ [2.03550000e+04 1.32831897e+04 1.45348085e+03 1.84757038e+04
+  1.85391849e+04 1.94163327e+04 2.02118407e+04]
+ [2.49500000e+03 1.17944829e+03 4.89919670e+02 1.45087499e+03
+  1.45294186e+03 1.49712792e+03 1.53496155e+03]
+ [4.15000000e+02 2.85229871e+02 6.71688311e+01 3.40813427e+02
+  3.41821756e+02 3.48381038e+02 3.55909710e+02]]
+fig2 exact-area fine-copy counts {'data': 20378.76606927649, 'mc': 15185.20218166124}
+Tune v1 shape gap at true 20-40 and 40-60 nominal/Valencia [0.1023182104744349, 0.1472476653206305] [0.006973331807905714, 0.024274907285304126]
+true 40–60: generated / selected (truth weights) / selected (reco weights) / selected in-grid / Fig5 weighted efficiency
+19485.027642465935 15677.56828478961 15481.641284061914 14559.359414623339 0.8604822930724897
+unfolded high column / paper 1.1307313080465695
+training ['1A', '1C', '1E', '1G', '1M', '1O'] validation ['1B', '1D', '1F', '1L', '1N', '1P'] fitted true >=60 factor 3.1546966389776694
+independent validation: data / nominal / fitted / (data minus nominal) / (data minus fitted)
+[[ 6.40590000e+04  6.39419230e+04  6.39291610e+04  1.17076955e+02
+   1.29838998e+02]
+ [ 9.43700000e+03  9.44821988e+03  9.45703557e+03 -1.12198791e+01
+  -2.00355652e+01]
+ [ 1.18100000e+03  7.07257526e+02  1.06771521e+03  4.73742474e+02
+   1.13284791e+02]
+ [ 1.92000000e+02  1.65768472e+02  2.09744385e+02  2.62315280e+01
+  -1.77443847e+01]]
+Nominal with in-domain flux reweighting, fixed backgrounds [122662.17191819  14739.05475464   1252.60991864    303.25136814]
+Raw in-grid totals signal, background, generated 3533843.4622543077 119132.36881367955 5779535.683846289
+True >=60 contribution to the four reco bands [ 31.23790109 590.59969226 411.28581228  49.13801159]
+Single true-tail multiplier, anchor band indices, residuals 2.5893460113392854 [1] [285.67778272   0.         344.19661261 -11.47834118]
+Single true-tail multiplier, anchor band indices, residuals 3.3119807973229043 [2, 3] [ 263.10418875 -426.78788222   46.98717767  -46.98717767]
+Impose true 40-60 Fig 5 per pT bin, data minus fold in four bands [-569.03510807 -276.79803565  936.67182718   57.31177611]
+True 40-60 selected in grid, pz overflow within pT acceptance, all other reco destinations 0.9404273841179844 0.0318542568454146 0.027718359036600804
+Truth, reco bin; in-grid conditional probability; PDF color estimate 15 15 0.5757530333465476 0.54756
+Truth, reco bin; in-grid conditional probability; PDF color estimate 15 14 0.4081459254753328 0.39777
+Truth, reco bin; in-grid conditional probability; PDF color estimate 14 15 0.0270690381033561 0.03267
+All truth pT, true 60-80 and >=80: generated [1354.04614303   62.23442726] reco 40-60/60-80/>=80 [[583.29028885 379.57947894  38.23112006]
+ [  7.30940341  31.70633334  10.90689153]]
+Fixed weights with efficiency up to unity: maximum extra events in reco >=40 from true >=60 365.2570541520977 combined all-selected residual 2003.1583046273045
+True 40-60 after Valencia reweight, in-grid / anywhere / Fig 5 with varied truth mix 0.7471688178838823 0.7945110346898121 0.8604682631000908

@@ -1,0 +1,8 @@
+ACK-UTC 2026-11-26T20:40:37Z cov2d
+ACK-UTC 2026-11-26T20:39:44Z tier3-design
+ACK-UTC 2026-11-26T20:39:47Z minerva-lib
+
+Fence round for rpd_flux4 under RPD-FLUX4-BINDING (#1397, 7756f35d). Acks as received by limitation-resolver:
+cov2d ACK 2026-11-26T20:40:37Z: fence ACK and no-objection to the NuE exception on flux3 terms (original read once in custody stat-bracketed O_NOATIME staging, stat logged before/after; MAT opens only the staged copy); no atime bracket covers the NuE file (LL5D closed 2026-11-15T02:21:21Z) or the lane; nothing queued/held/running; no NERSC action before END.
+tier3-design ACK 2026-11-26T20:39:44Z: no job live or planned reading the RDX truthx sidecar, 12 RDX evloop omnifiles or flux3 inputs; no Slurm job at all; no fence of its own on these paths; no move/remove/regenerate of RDX outputs; no connect planned; waits for END.
+minerva-lib ACK 2026-11-26T20:39:47Z: option (a), LR goes first; no geanttw_ job queued/running, no connect in progress; geanttw check re-run (no Slurm job; three login-node connects) held until LR END; no fence/atime bracket covers rpd-reco-flux4-20261126/.

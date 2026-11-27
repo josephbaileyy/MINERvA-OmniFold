@@ -1,0 +1,6 @@
+CONFIRMATION: ALL HOLD
+
+1. **Holds.** An exit-zero reply with no `JobId=` record is retried. In local stubs, an empty reply followed by the matching `RUNNING` record succeeded. Three empty replies kept the job and exited 4. [evw2d_connect.sh:214](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-launch-r1e/inputs/new/evw2d_connect.sh:214)
+2. **Holds.** `JobState=SPECIAL_EXIT Reason=JobHeldUser Priority=0` triggered cancellation and exit 6. Both the hold reason and zero priority independently trigger that result. [evw2d_connect.sh:224](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-launch-r1e/inputs/new/evw2d_connect.sh:224)
+
+No new false STOP or false release found in the revised block. Verification used local scheduler stubs and the supplied records.

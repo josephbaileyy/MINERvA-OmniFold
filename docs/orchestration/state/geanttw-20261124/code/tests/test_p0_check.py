@@ -391,6 +391,74 @@ def test_test_paths_need_smoke_mode(ws):
     assert not verdicts(rep)["C0e"]
 
 
+# ── C0e: the environment families of the director's C0e ruling (2026-11-26) ──
+# The 14 Lmod files and the opens below are as P0's jobs made them (../c0e-attribution/attribution.json): the binary
+# (pid 101, the log's first successful open) scans 7 library directories with O_DIRECTORY and opens cuda.h and the
+# SSSD cache; two child processes (102, a bash; 103, Lua running Lmod's addto) open Lmod's files.
+LMOD_SEEN = (
+    "/opt/cray/pe/lmod/8.7.60/init/bash",
+    "/opt/cray/pe/lmod/8.7.60/libexec/addto",
+    "/opt/cray/pe/lmod/8.7.60/tools/BeautifulTbl.lua",
+    "/opt/cray/pe/lmod/8.7.60/tools/Cosmic.lua",
+    "/opt/cray/pe/lmod/8.7.60/tools/Dbg.lua",
+    "/opt/cray/pe/lmod/8.7.60/tools/Optiks.lua",
+    "/opt/cray/pe/lmod/8.7.60/tools/Optiks_Option.lua",
+    "/opt/cray/pe/lmod/8.7.60/tools/TermWidth.lua",
+    "/opt/cray/pe/lmod/8.7.60/tools/capture.lua",
+    "/opt/cray/pe/lmod/8.7.60/tools/declare.lua",
+    "/opt/cray/pe/lmod/8.7.60/tools/haveTermSupport.lua",
+    "/opt/cray/pe/lmod/8.7.60/tools/pairsByKeys.lua",
+    "/opt/cray/pe/lmod/8.7.60/tools/strict.lua",
+    "/opt/cray/pe/lmod/8.7.60/tools/string_utils.lua",
+)
+DIRFLAGS = "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY"
+
+
+def env_opens():
+    lines = [f'101 openat(AT_FDCWD, "{d}", {DIRFLAGS}) = 4<{d}>' for d in pc.ENV_DIRS[1:]]
+    d0 = pc.ENV_DIRS[0]   # one directory open split across an unfinished/resumed pair: its flags must survive
+    lines += [f'101 openat(AT_FDCWD, "{d0}", {DIRFLAGS} <unfinished ...>', f'101 <... openat resumed>) = 4<{d0}>']
+    lines += [f'101 openat(AT_FDCWD, "{f}", O_RDONLY|O_CLOEXEC) = 3<{f}>' for f in pc.ENV_FILES]
+    for p in LMOD_SEEN:
+        pid = 102 if p.endswith("/init/bash") else 103
+        lines.append(f'{pid} openat(AT_FDCWD, "{p}", O_RDONLY) = 3<{p}>')
+    return lines
+
+
+def test_c0e_allows_the_attributed_environment_reads(ws):
+    """Fails on the list before the ruling (all 23 were NOT ALLOWED there); passes on the new one."""
+    for b in ("pin", "pat"):
+        ws.set_strace(b, ws.good_strace(b) + env_opens())
+    p, rep = ws.run()
+    assert p.returncode == 0, p.stdout
+    assert rep["controls"]["C0e"]["evidence"] == [f"{6 + 23} distinct files opened outside B"]
+
+
+@pytest.mark.parametrize("line", [
+    # Lmod's tree is a child's only: the binary's own open of it FAILs
+    '101 openat(AT_FDCWD, "/opt/cray/pe/lmod/8.7.60/tools/strict.lua", O_RDONLY) = 3',
+    # a child is allowed Lmod's tree, nothing else
+    '102 openat(AT_FDCWD, "/global/homes/x/.bashrc", O_RDONLY) = 3',
+    '102 openat(AT_FDCWD, "/opt/cray/pe/lmodx/init/bash", O_RDONLY) = 3',
+    # the directories are allowed as an O_DIRECTORY open only, and exactly
+    '101 openat(AT_FDCWD, "/opt/cray/pe/papi/7.3.0.1/lib", O_RDONLY|O_CLOEXEC) = 4',
+    '101 openat(AT_FDCWD, "/opt/cray/pe/papi/7.3.0.1/lib/libpapi.so", O_RDONLY|O_CLOEXEC) = 4',
+    f'101 openat(AT_FDCWD, "/opt/cray/pe/papi/7.3.0.1/lib/pkgconfig", {DIRFLAGS}) = 4',
+    f'101 openat(AT_FDCWD, "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/Debugger/lib64", {DIRFLAGS}) = 4',
+    # the two files are allowed by exact path only
+    '101 openat(AT_FDCWD, "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/targets/x86_64-linux/include/'
+    'cuda_runtime.h", O_RDONLY|O_CLOEXEC) = 3',
+    '101 openat(AT_FDCWD, "/var/lib/sss/mc/group", O_RDONLY|O_CLOEXEC) = 3',
+], ids=["binary-opens-lmod", "child-other-file", "child-lmod-sibling", "dir-regular-open", "file-under-dir",
+        "subdir-of-dir", "unlisted-dir", "other-header", "other-sssd-file"])
+def test_c0e_environment_families_are_no_wider_than_seen(ws, line):
+    ws.set_strace("pat", ws.good_strace("pat") + env_opens() + [line])
+    p, rep = ws.run()
+    only_fails(rep, "C0e")
+    bad = [e for e in rep["controls"]["C0e"]["evidence"] if e.startswith("NOT ALLOWED ")]
+    assert len(bad) == 1, bad
+
+
 # ── C0f ──
 def test_c0f_ref_sha_mismatch(ws):
     p, rep = ws.run(ref_sha="0" * 64)

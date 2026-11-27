@@ -1,0 +1,15 @@
+C3 reference schema fd-rpd-reco-private-prepare-reference/1; status PASS; prepare_name prestage; run /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run
+C3 private path /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/.rpd-private/70d7e91f2b5b41c7477f63906315b7b1a53ce7e59b012a61a3c3a72dfbd03203/prestage.json
+C3 recomputed   /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/.rpd-private/70d7e91f2b5b41c7477f63906315b7b1a53ce7e59b012a61a3c3a72dfbd03203/prestage.json
+C3 1 reference names the recomputed location: ok
+C3 2 under ROOT/.rpd-private and not under the run: ok
+C3 record mode -rw------- uid 112498; directory mode drwx------ uid 112498; this uid 112498
+C3 3 owner-only file and directory: ok
+C3 record sha256 7348291d8f16168adc699a609dd1b061eedad965690f01e34065fe301520a80e (reference 7348291d8f16168adc699a609dd1b061eedad965690f01e34065fe301520a80e); environment fingerprints 409 keys
+C3 4 digest equals the reference and the record carries the fingerprints: ok
+C3 private entry drwx------ .rpd-private/70d7e91f2b5b41c7477f63906315b7b1a53ce7e59b012a61a3c3a72dfbd03203
+C3 private entry -rw------- .rpd-private/70d7e91f2b5b41c7477f63906315b7b1a53ce7e59b012a61a3c3a72dfbd03203/prestage.json
+C3 5 .rpd-private holds exactly the one record: ok
+C3 send files examined 30; under .rpd-private or equal to the record: []
+C3 6 nothing on the send list is the record: ok
+C3 CHECK: PASS

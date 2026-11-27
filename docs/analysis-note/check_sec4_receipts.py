@@ -2,7 +2,7 @@
 """Tie the paper's Sec. IV printed values, and the note values moved from it, to their committed receipts (PRD release
 audit ea939701, G11).
 
-Each check finds one printed value in the note's values.tex, sec3_twod.tex, sec4_higherdim.tex, sec_validation.tex,
+Each check finds one printed value in the note's values.tex, sec3_twod.tex, appC_supplementary.tex, sec_validation.tex,
 sec_5d.tex or app_devhistory.tex, or in the primer's primer_body.tex, recomputes it
 from the committed receipt that backs it, and compares at the printed precision: |computed - printed| <= half a unit in
 the printed last digit ("round"), or printed - one unit <= computed < printed ("below", for "below X%": true, and tight
@@ -37,11 +37,13 @@ where this file sits at the repository root) the check reports SKIP and exits 0;
 """
 from __future__ import annotations
 
+import ast
 import gzip
 import hashlib
 import json
 import math
 import re
+import struct
 import sys
 from pathlib import Path
 
@@ -270,11 +272,267 @@ def pt_edges_printed_exact(printed_ours: str, printed_published: str, printed_st
 
 EDGE_SENTENCE = (r"Three of our \$p_T\$ edges \(([0-9.]+), ([0-9.]+) and \\SI\{([0-9.]+)\}\{GeV/c\}\) differ by "
                  r"\\SI\{([0-9.]+)\}\{GeV/c\} from the published ([0-9.]+), ([0-9.]+) and ([0-9.]+)\.")
-EDGE_STEP_SEC2 = r"with three interior \$p_T\$ edges \\SI\{([0-9.]+)\}\{GeV/c\} from the published ones"
+EDGE_STEP_APPC = r"with three interior \$p_T\$ edges \\SI\{([0-9.]+)\}\{GeV/c\} from the published ones"
+# Every printed copy of the edge step: "$p_T$ edges", an optional parenthetical (sec3's edge list), an optional
+# "differ by"/"shifted by", then the step. Pinned per file, so a reworded or dropped copy also fails.
+EDGE_STEP_COPY = r"\$p_T\$ edges(?: \([^)]*\))?(?: differ by| shifted by)? \\SI\{([0-9.]+)\}\{GeV/c\}"
+EDGE_STEP_COPIES = {"sec2_method.tex": 1, "sec3_twod.tex": 1, "appC_supplementary.tex": 2, "appD_reproducibility.tex": 1}
+EDGE_STEP_ALL = "pT edge step, all 5 printed copies (sec2, sec3, appC x2, appD) equal sec3's, exactly"
+
+# EVW5D (#1353, #1355): App. D's paragraph on the 5D per-event weights in the release (DECISION-20261125b sec. 3;
+# C-COMPLETE option (a), DECISION-20261126). Every number and claim in it is bound to EVW5D attempt 2's receipts and to
+# eavail step 0b (the denominator's tuples equal the saved rows' as multisets).
+EVW5D = "measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/attempt2"
+EVW5D_OVERRIDE = None  # the self-test plants altered receipts here
+# The sources of the two App. D claims Joseph worded on 2026-11-26: the truth selection (in_truth_phase_space and the
+# edges nn_dump_inputs.py defaults to), the command that built the input npz, the record naming it, and fine_index's rule
+EVW5D_CODE = {"u2d": "2d-unfolding/unfold_2d_omnifold_unbinned.py", "dump": "nd-unfolding/nn_dump_inputs.py",
+              "sbatch": "nd-unfolding/sbatch_nn_dump_5d.sh",
+              "inputs": "docs/orchestration/state/measurement-paper/5d-community-20261024/FD-CT-5B-INPUTS.md",
+              "decl": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/EVW5D-DECLARATION.md"}
+
+
+def evw5d() -> dict:
+    """run.json, constants.json, step0b.json, and the lane's readings of constants.npz (c32.txt, c1effect.txt)."""
+    if EVW5D_OVERRIDE is not None:
+        return EVW5D_OVERRIDE
+    lane = STATE / EVW5D / "lane"
+    cells = re.findall(r"^\((\d+(?:, \d+){4})\) denom=\S+ ofin=\S+ diff=([+-][0-9.e+-]+) ", (lane / "c32.txt").read_text(),
+                       re.M)
+    c1 = re.findall(r"^f max rel change if c:=1 ([0-9.e+-]+) per cell", (lane / "c1effect.txt").read_text(), re.M)
+    if len(c1) != 1:
+        raise ValueError(f"{EVW5D}/lane/c1effect.txt: the c := 1 line matched {len(c1)} times (expected 1)")
+    return {"run": receipt(f"{EVW5D}/post/evw5d/run.json"), "constants": receipt(f"{EVW5D}/post/evw5d/constants.json"),
+            "step0b": receipt("eavail-switch-pricing-20261031/step0/step0b.json"),
+            "cells": [(tuple(int(i) for i in idx.split(", ")), float(d)) for idx, d in cells], "c1": float(c1[0]),
+            "code": {k: (HERE.parents[1] / v).read_text() for k, v in EVW5D_CODE.items()}}
+
+
+def _edges_from_source(src: str) -> dict[str, list[float]]:
+    """PT_EDGES and PZ_EDGES as unfold_2d_omnifold_unbinned.py assigns them (read with ast, not imported)."""
+    out = {}
+    for node in ast.parse(src).body:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 and getattr(node.targets[0], "id", "") in ("PT_EDGES", "PZ_EDGES"):
+            out[node.targets[0].id] = [float(x) for x in ast.literal_eval(node.value)]
+    return out
+
+
+def evw5d_outside_axes(d: dict, sources: dict[str, str]) -> bool:
+    """The rows outside the fine grid can be outside only on E_avail, q3 or W: every row passes the truth selection
+    (C-FLOW), whose pT and p_par limits are inclusive (in_truth_phase_space) and are the default edges' ends, which are the
+    grid's outer edges (constants.json); fine_index includes the last edge, and the four edges are exact in float32."""
+    c, flow, code = d["constants"]["edges"], d["run"]["controls"]["C-FLOW"], d["code"]
+    e = _edges_from_source(code["u2d"])
+    ends = (c["pt"][0], c["pt"][-1], c["pz"][0], c["pz"][-1])
+    return (flow["pass"] is True and flow["n_rows_equal_pass_truth"] is True
+            and "if not (pt_lo <= pt <= pt_hi and pz_lo <= pz <= pz_hi):" in code["u2d"]
+            and "pt_lo, pt_hi, pz_lo, pz_hi = pt_edges[0], pt_edges[-1], pz_edges[0], pz_edges[-1]" in code["dump"]
+            and "--pt-edges" not in code["sbatch"] and "--pz-edges" not in code["sbatch"]
+            and (e["PT_EDGES"][0], e["PT_EDGES"][-1], e["PZ_EDGES"][0], e["PZ_EDGES"][-1]) == ends
+            and all(struct.unpack("f", struct.pack("f", x))[0] == x for x in ends)
+            and "last edge inclusive" in code["decl"])
+
+
+def evw5d_phase_space(d: dict, sources: dict[str, str]) -> bool:
+    """The input npz (07fccc1a) was dumped without --full-phase-space, so the Sec. 2 truth phase space applies, theta_mu
+    < 20 deg included, and Eq. (muon-fiducial) prints the grid's pT and p_par range."""
+    code, c = d["code"], d["constants"]
+    eq = (r"\theta_\mu<20^\circ,\quad 1.5<p_\parallel<\SI{60}{GeV/c},\quad p_T<\SI{4.5}{GeV/c} . \label{eq:muon-fiducial}"
+          in text("sec2_method.tex", sources))
+    return (c["input_npz_sha256"].startswith("07fccc1a")
+            and "(`07fccc1a…`) was written by `nn_dump_inputs.py`" in code["inputs"]
+            and "sbatch_nn_dump_5d.sh:13-15" in code["inputs"]
+            and "nn_dump_inputs.py" in (cited := " ".join(code["sbatch"].splitlines()[12:15]))
+            and "--axes eavail,q3,W --out of_inputs_5d.npz" in cited
+            and "--full-phase-space" not in code["sbatch"]
+            and "MAX_MUON_THETA_RAD = math.radians(20.0)" in code["u2d"]
+            and "return math.atan2(pt, pz) < MAX_MUON_THETA_RAD" in code["u2d"]
+            and eq and (c["edges"]["pz"][0], c["edges"]["pz"][-1], c["edges"]["pt"][-1]) == (1.5, 60.0, 4.5))
+
+
+def evw5d_pairs() -> int:
+    """C-COMPLETE's cells (lane/c32.txt) in pairs adjacent along one axis with equal and opposite ofin - denom. Raises
+    unless there are as many cells as run.json counts and each is in exactly one such pair."""
+    d = evw5d()
+    cells = d["cells"]
+    if len(cells) != d["run"]["controls"]["C-COMPLETE"]["n_cells_beyond_atol"]:
+        raise ValueError(f"c32.txt lists {len(cells)} cells, run.json C-COMPLETE counts "
+                         f"{d['run']['controls']['C-COMPLETE']['n_cells_beyond_atol']}")
+    left, pairs = list(range(len(cells))), 0
+    while left:
+        i = left.pop(0)
+        match = [j for j in left if cells[j][1] == -cells[i][1]
+                 and sum(abs(a - b) for a, b in zip(cells[i][0], cells[j][0])) == 1]
+        if len(match) != 1:
+            raise ValueError(f"c32.txt cell {cells[i][0]} has {len(match)} adjacent equal-and-opposite partners")
+        left.remove(match[0])
+        pairs += 1
+    return pairs
+
+
+EVW5D_CLAIMS = (
+    ("EVW5D: byte for byte (run.json C-BIND, controls PASS)",
+     "The run that wrote the weights reproduced the reported cross section byte for byte.",
+     lambda d, s: d["run"]["controls"]["C-BIND"]["pass"] is True and d["run"]["controls_verdict"] == "PASS"
+     and d["run"]["controls"]["C-BIND"]["xsec_flat_bytes_equal"] is True),
+    ("EVW5D: sixteen integrals from the rows to double-precision rounding (C-F, below 1e-14)",
+     "Summed with the normalization, the weights reproduce the sixteen cell integrals to double-precision rounding.",
+     lambda d, s: d["run"]["controls"]["C-F"]["pass"] is True and d["run"]["controls"]["C-F"]["f_from_rows_max_rel"] < 1e-14),
+    ("EVW5D: completeness 1 in any binning (step0b tuple multisets equal; no unmatched fine cell)",
+     "The completeness denominator is the deposited events themselves, so the completeness is 1 in any binning.",
+     lambda d, s: d["step0b"]["c_tuple_multiset_equal"] is True
+     and d["run"]["controls"]["C-COMPLETE"]["n_signal_without_denominator"] == 0
+     and d["run"]["controls"]["C-COMPLETE"]["n_denominator_without_signal"] == 0),
+    ("EVW5D: one integrated flux (constants.json, every pT bin's within 1e-15)",
+     "The flux enters as a single integrated value.",
+     lambda d, s: max(f := d["constants"]["flux_per_m2_per_POT_by_pt_bin"]) - min(f) <= 1e-15 * max(f)),
+    ("EVW5D: the rows outside the grid are outside on E_avail, q3 or W only (the selection's limits are the grid's edges)",
+     "lie outside the fine grid's $E_{\\mathrm{avail}}$, $q_3$ or $W$ range and enter no cell integral.", evw5d_outside_axes),
+    ("EVW5D: the Sec. 2 truth phase space applies (input npz dumped without --full-phase-space)",
+     "Readers can therefore choose any binning inside the truth phase space of Sec.~\\ref{sec:selection} "
+     "[Eq.~\\eqref{eq:muon-fiducial}], within the fine grid's range.", evw5d_phase_space),
+)
+
+
+def evw5d_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    t, d = text("appD_reproducibility.tex", sources), evw5d()
+    return [(lab, t.count(s) == 1 and fact(d, sources), f"sentence found {t.count(s)} time(s) | receipt {fact(d, sources)}")
+            for lab, s, fact in EVW5D_CLAIMS]
+
+
+# The high-p_par open issue in sec3_twod.tex (Joseph 2026-11-26, via the director; a PROPOSAL for his wording). Every
+# number and reading is bound to the precharge study's committed outputs (state/precharge-20261125/). The sentence states
+# no cause: the study's declarations make no cause determination.
+PRECHARGE = "precharge-20261125"
+HIGHPZ_OVERRIDE = None  # the self-test plants altered records here
+
+
+def highpz() -> dict:
+    """merged-comparison.csv and signed-qp.csv (reco yields), test1 (the E_vis table and the held-out fold), and the
+    readings of tests A, B and C."""
+    if HIGHPZ_OVERRIDE is not None:
+        return HIGHPZ_OVERRIDE
+    import csv
+    base = STATE / PRECHARGE
+
+    def rows(name):
+        with open(base / name, newline="", encoding="utf-8") as fh:
+            return list(csv.DictReader(fh))
+    return {"merged": rows("merged-comparison.csv"), "signed": rows("signed-qp.csv"),
+            "evis": (base / "test1/evis-by-pz.txt").read_text(),
+            "evis_readme": (base / "test1/README.md").read_text(), "test1": receipt(f"{PRECHARGE}/test1/test1.json"),
+            "testb": receipt(f"{PRECHARGE}/testAB/test-b.json"), "testc": receipt(f"{PRECHARGE}/testC/test-c.json"),
+            "atxt": (base / "testAB/test-a.txt").read_text(), "btxt": (base / "testAB/test-b.txt").read_text(),
+            "ctxt": (base / "testC/test-c.txt").read_text(), "cdecl": (base / "testC/DECLARATION.md").read_text(),
+            "creadme": (base / "testC/README.md").read_text()}
+
+
+def highpz_excess() -> float:
+    """Data minus the fold at reco p_par >= 60 (the 60-80 and >=80 rows), both signs, before the charge requirement."""
+    r = [x for x in highpz()["merged"] if x["reco_p_parallel_GeV_c"] in ("60–80", "≥80")]
+    if sorted((x["reco_p_parallel_GeV_c"], x["sign"]) for x in r) != sorted(
+            [("60–80", "-"), ("60–80", "+"), ("≥80", "-"), ("≥80", "+")]):
+        raise ValueError(f"{PRECHARGE}/merged-comparison.csv: the reco >= 60 rows are not the four sign rows")
+    return sum(float(x["data_minus_all_selected"]) for x in r)
+
+
+def highpz_tails() -> float:
+    """Data minus the fold in the |q/p| >= 1/60 (GeV/c)^-1 curvature cells of the reco >= 60 bands (2: 60-80, 3: >= 80)."""
+    cells = {}
+    for x in highpz()["signed"]:
+        if x["band"] in ("2", "3") and (float(x["qp_high"]) <= -1 / 60 + 1e-12 or float(x["qp_low"]) >= 1 / 60 - 1e-12):
+            cells.setdefault((x["band"], x["qbin"]), {})[x["sample"]] = float(x["fold"])
+    if not cells or any(set(v) != {"Data", "MC"} for v in cells.values()):
+        raise ValueError(f"{PRECHARGE}/signed-qp.csv: a tail cell lacks its Data or MC row")
+    return sum(v["Data"] - v["MC"] for v in cells.values())
+
+
+def highpz_b_share() -> float:
+    """Test B's primary held-out epsilon prediction at 50-60 and 60-80 (S2), as a percentage of data minus the fold there
+    (the fold from Test 1's primary held-out bands, the same six held-out playlists)."""
+    d = highpz()
+    b = [x for x in d["testb"] if x["direction"] == "primary"]
+    f = [x for x in d["test1"] if x["train"] == b[0]["train"]] if b and "train" in b[0] else \
+        [x for x in d["test1"] if x["train"] == ["1A", "1C", "1E", "1G", "1M", "1O"]]
+    if len(b) != 1 or not f:
+        raise ValueError(f"{PRECHARGE}: test B's primary direction or test 1's matching fold is missing")
+    t, bands = b[0]["epsilon"]["terms"], f[0]["bands"]
+    num = den = 0.0
+    for k, band in (("S2|50", "-|all|50-60"), ("S2|60", "-|all|60-80")):
+        data, eps = t[k][0], t[k][1]
+        if data != bands[band][0]:
+            raise ValueError(f"{PRECHARGE}: test B's {k} data {data} differs from test 1's {band} {bands[band][0]}")
+        num += eps - bands[band][1]
+        den += data - bands[band][1]
+    return 100 * num / den
+
+
+def highpz_rises(d: dict) -> bool:
+    """test1/evis-by-pz.txt's data/fold table (good negative tracks, |sigma(q/p)/(q/p)| < 0.30, all playlists): in the
+    20-40, 40-50, 50-60 and 60-80 bands, every listed cell exceeds the one before it along E_vis (at fixed p_par, rising
+    E_vis is rising E_avail)."""
+    if "(`evis_by_pz.py` → `evis-by-pz.txt`, good negative tracks, all playlists)" not in d["evis_readme"]:
+        return False
+    blk = d["evis"].split("data/fold (cells with fold >= 5)", 1)
+    if len(blk) != 2:
+        return False
+    rows = {}
+    for ln in blk[1].splitlines():
+        m = re.match(r"\[(\d+\.\d), (\d+\.\d|inf)\)\s+(.*)$", ln.strip())
+        if m:
+            vals = [float(v) for v in m.group(3).split() if v != "NaN"]
+            rows[(m.group(1), m.group(2))] = vals
+    want = [("20.0", "40.0"), ("40.0", "50.0"), ("50.0", "60.0"), ("60.0", "80.0")]
+    return all(k in rows and len(rows[k]) >= 2 and all(b > a for a, b in zip(rows[k], rows[k][1:])) for k in want)
+
+
+HIGHPZ_CLAIMS = (
+    ("high p_par: data/fold rises with visible energy, reco p_par + E_avail, in each reco band from 20 to 80 GeV/c",
+     r"For negative tracks with well-measured curvature, the ratio of data to this prediction rises with visible energy, "
+     r"$p_\parallel + E_{\mathrm{avail}}$, in each reconstructed $p_\parallel$ band from 20 to 80~GeV/$c$.",
+     lambda d: highpz_rises(d) and "The fit variable is E_vis = reco p∥ + E_avail" in d["evis_readme"]),
+    ("high p_par: A (one muon-independent recoil function) does not reproduce it",
+     "A recoil-energy correction independent of the muon does not reproduce this rise.",
+     lambda d: "primary: H_A (A1) contradicts" in d["atxt"] and "swap: H_A (A1) contradicts" in d["atxt"]),
+    # C was fitted at reco p_par 20-40 and transferred upward. Its declaration leaves open a change where that fit has
+    # no lever, such as one confined to true muon p_par >= 60 (DECLARATION.md "Contradicts", README.md "What follows").
+    ("high p_par: C (a smooth true-E_nu rate change fitted at reco 20-40) does not, and a change where that fit has no "
+     "lever stays open",
+     r"Nor does a smooth dependence of the event rate on neutrino energy fitted at lower $p_\parallel$, although a "
+     r"change confined to the highest muon momenta remains possible.",
+     lambda d: (d["testc"]["reading"] == "contradicts"
+                and "Reading for H_C (primary form, both directions): contradicts" in d["ctxt"]
+                and "The fit sample is the training playlists, reco p∥ 20–40" in d["cdecl"]
+                and "or that live where the 20–40 fit has no lever, such as an unanchored change confined to true ≥60"
+                in d["cdecl"]
+                and "**C** contradicts a smooth Eν rate change that is fitted at 20–40 and transferred upward"
+                in d["creadme"]
+                and "or that are confined to where 20–40 has no lever" in d["creadme"])),
+    ("high p_par: B, a constant curvature offset, is inconclusive (it carries part of the excess, not all)",
+     "A constant offset in the fitted curvature accounts for about",
+     lambda d: "primary: H_B inconclusive" in d["btxt"] and "swap: H_B inconclusive" in d["btxt"]),
+)
+
+
+def highpz_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    t, d = text("sec3_twod.tex", sources), highpz()
+    return [(lab, t.count(s) == 1 and fact(d), f"sentence found {t.count(s)} time(s) | record {fact(d)}")
+            for lab, s, fact in HIGHPZ_CLAIMS]
 
 
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
+    # The high-p_par open issue (precharge-20261125), sec3_twod.tex
+    ("high p_par: the reco edge of the excess (merged-comparison.csv rows 60-80 and >=80)", "sec3_twod.tex",
+     r"above the reported range, at reconstructed \$p_\\parallel \\geq ([0-9]+)\$~GeV/\$c\$\.",
+     lambda: 60.0 if {x["reco_p_parallel_GeV_c"] for x in highpz()["merged"]} >= {"60–80", "≥80"} else -1.0, "round"),
+    ("high p_par: the curvature-tail excess (signed-qp.csv) and the excess at reco >= 60, both signs (merged-comparison.csv)",
+     "sec3_twod.tex",
+     r"About ([0-9]+) of the roughly ([0-9]+) excess tracks, counting both charges, lie in the tails of the fitted muon curvature",
+     lambda: (highpz_tails(), highpz_excess()), "round"),
+    ("high p_par: test B's share of the 50-80 excess (test-b.json epsilon S2, test1.json fold)", "sec3_twod.tex",
+     r"A constant offset in the fitted curvature accounts for about \$([0-9]+)\\%\$ of the excess between 50 and 80~GeV/\$c\$",
+     highpz_b_share, "round"),
     # One printed 1.04 stands for both pT edge bins, so it is bound twice: once to each bin.
     ("projection ratio, lowest pT bin, and the two highest p_par bins (regenA2)", "sec3_twod.tex",
      r"the ratio is ([0-9.]+) in both the lowest and the highest \$p_T\$ bins, and ([0-9.]+) and ([0-9.]+) in the two "
@@ -335,7 +593,7 @@ CHECKS = [
     # spec is the frozen input of the bound run and describes the note at its deploy, 903fb78b (test_re2c.py checks it
     # there, #1325). The sentence prints here now, and this row is the live binding.
     ("Q_R direct-inverse distance per bin vs the published central value (G2R run 2, oo-q)", "appA_methods.tex",
-     r"The direct inverse of \$Q_R\$ gives a quadratic distance of ([0-9.]+) per reported bin",
+     r"The direct inverse of \$\\CrepTwoD\$ gives a quadratic distance of ([0-9.]+) per reported bin",
      lambda: float(re.search(r"\[universe-only\] direct inverse: chi\^2 = [0-9.]+,\s+ndf = 205,\s+chi\^2/ndf = ([0-9.]+)",
                              (STATE / "measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/re2shapes/run2/g2r/chi2/"
                               "ours_only_Q.txt").read_text()).group(1)), "round"),
@@ -373,12 +631,34 @@ CHECKS = [
      r"Some joint cells remain up to \\SI\{([0-9.]+)\}\{\\percent\} high", negweight_joint_max, "round"),
     ("treatments on data (VL152)", "sec_5d.tex", r"and at most \\SI\{([0-9.]+)\}\{\\percent\} over the reported functionals",
      data_method_diff, "round"),
-    ("regularization bias at high W (VL151)", "sec4_higherdim.tex",
+    ("regularization bias at high W (VL151)", "appC_supplementary.tex",
      r"reaches \$([0-9.]+)\\%\$ in the highest-\$W\$ column", regularization_max, "round"),
+    ("regularization bias at high W (VL151), sec_5d's copy", "sec_5d.tex",
+     r"They reach \\SI\{([0-9.]+)\}\{\\percent\} in the highest-\$W\$ column", regularization_max, "round"),
     ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "appA_methods.tex",
      r"The lowest empirical coverage for the \$68\\%\$ intervals is ([0-9.]+)\.", tilt_coverage68_min, "round"),
     ("other fixed shapes, most affected cell (VL154)", "primer_body.tex",
      r"the effect is \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\} in the worst cell", shapes_range, "round"),
+    # EVW5D, App. D. The exponents are fixed in the patterns, so a changed exponent is not found and fails.
+    ("EVW5D rows in weights.npz (run.json C-KEY n_rows)", "appD_reproducibility.tex",
+     r"per-event OmniFold weights on the \\num\{([0-9]+)\} simulated events that pass the truth selection",
+     lambda: float(evw5d()["run"]["controls"]["C-KEY"]["n_rows"]), "round"),
+    ("EVW5D rows outside the fine grid (run.json C-FLOW n_outside_grid)", "appD_reproducibility.tex",
+     r"Of these, \\num\{([0-9]+)\} lie outside the fine grid's",
+     lambda: float(evw5d()["run"]["controls"]["C-FLOW"]["n_outside_grid"]), "round"),
+    ("EVW5D stored completeness: cells off 1, and the largest |c - 1| (run.json C-COMPLETE)", "appD_reproducibility.tex",
+     r"The stored completeness differs from 1 in ([0-9]+) fine cells, by at most \\num\{([0-9.]+)e-4\}\.",
+     lambda: (float(evw5d()["run"]["controls"]["C-COMPLETE"]["n_cells_beyond_atol"]),
+              1e4 * evw5d()["run"]["controls"]["C-COMPLETE"]["max_abs_c_minus_1"]), "round"),
+    # One event per pair is a reading ("consistent with", DECISION-20261126 sec. 1), not a count: both 16s bind to the pairs.
+    ("EVW5D adjacent equal-and-opposite pairs, and the events they are consistent with (lane/c32.txt)",
+     "appD_reproducibility.tex",
+     r"These cells form ([0-9]+) adjacent pairs with equal and opposite differences\. This pattern is consistent with "
+     r"([0-9]+) events that lie within single-precision rounding of a cell edge\.",
+     lambda: (float(evw5d_pairs()), float(evw5d_pairs())), "round"),
+    ("EVW5D sixteen integrals, change if c := 1 (lane/c1effect.txt)", "appD_reproducibility.tex",
+     r"changes the sixteen cell integrals by at most \\num\{([0-9.]+)e-6\} of their values", lambda: 1e6 * evw5d()["c1"],
+     "round"),
 ]
 VERBAL = [("about half of those cells (VL154: 20 of 42)", "primer_body.tex",
            r"smaller than the quoted uncertainty in about half of the \$\(\\Eavail,W\)\$ cells", half_of_cells, 0.40, 0.60)]
@@ -418,11 +698,17 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
         o1, o2, o3, step, p1, p2, p3 = m[0]
         good, info = pt_edges_printed_exact([o1, o2, o3], [p1, p2, p3], step)
         rows.append(("pT edges, ours vs published (edges/root_axis.out, Binning.h)", good, info))
-        m2 = re.findall(EDGE_STEP_SEC2, text("sec2_method.tex", sources))
-        rows.append(("pT edge step in sec2_method.tex equals sec3's, exactly", len(m2) == 1 and m2[0] == step,
-                     f"sec2 prints {m2} | sec3 step {step}"))
+        m2 = re.findall(EDGE_STEP_APPC, text("appC_supplementary.tex", sources))
+        rows.append(("pT edge step in appC_supplementary.tex equals sec3's, exactly", len(m2) == 1 and m2[0] == step,
+                     f"appendix C prints {m2} | sec3 step {step}"))
+        found = {f: re.findall(EDGE_STEP_COPY, text(f, sources)) for f in EDGE_STEP_COPIES}
+        good = all(len(found[f]) == n for f, n in EDGE_STEP_COPIES.items()) and \
+            all(x == step for v in found.values() for x in v)
+        rows.append((EDGE_STEP_ALL, good, f"printed {found} | expected counts {EDGE_STEP_COPIES} | sec3 step {step}"))
     rows += mode_split_claims(sources)
     rows += ibub_claims(sources)
+    rows += evw5d_claims(sources)
+    rows += highpz_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
         found = len(re.findall(pat, text(src, sources))) == 1
         c = fn()
@@ -589,9 +875,10 @@ def ibub_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 
 def load() -> dict[str, str]:
-    return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec4_higherdim.tex", "sec_validation.tex",
+    return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec_validation.tex",
                                                "sec_5d.tex", "app_devhistory.tex", "primer_body.tex", "appA_methods.tex",
-                                               "sec2_method.tex", "appC_supplementary.tex", "records_r03_twod.tex")}
+                                               "appC_supplementary.tex", "records_r03_twod.tex", "sec2_method.tex",
+                                               "appD_reproducibility.tex")}
 
 
 def gzip_self_test() -> bool:
@@ -626,6 +913,55 @@ def self_test() -> int:
     caught = 0
     if not gzip_self_test():  # a reader check, reported on its own line, not counted as a perturbation
         ok = False
+    # The high-p_par claims: each sentence reworded, and each planted record, must be rejected
+    for old_s, new_s in (("rises with visible energy", "falls with visible energy"),
+                         ("band from 20 to 80~GeV", "band from 20 to 100~GeV"),
+                         ("independent of the muon does not", "depending on the muon does not"),
+                         ("muon does not reproduce this rise", "muon reproduces this rise"),
+                         ("Nor does a smooth dependence", "So does a smooth dependence"),
+                         ("fitted at lower $p_\\parallel$", "fitted at higher $p_\\parallel$"),
+                         ("highest muon momenta remains possible", "highest muon momenta is excluded"),
+                         ("confined to the highest muon momenta", "confined to the highest energies")):
+        t = text("sec3_twod.tex", base)
+        if t.count(old_s) != 1:
+            print(f"  NOT FOUND   high p_par mutation {old_s!r}"); ok = False; continue
+        trial = dict(base)
+        trial["sec3_twod.tex"] = t.replace(old_s, new_s)
+        if all(r[1] for r in highpz_claims(trial)):
+            print(f"  NOT CAUGHT  high p_par: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      high p_par: {old_s} -> {new_s}")
+
+    def plant_hp(what, fn):
+        global HIGHPZ_OVERRIDE
+        nonlocal ok, caught
+        import copy as copy_mod  # self_test imports copy locally further down, so the module name is not bound yet
+        data = copy_mod.deepcopy(highpz())
+        fn(data)
+        HIGHPZ_OVERRIDE = data
+        try:
+            good = all(r[1] for r in evaluate(base))
+        except (ValueError, KeyError, IndexError):
+            good = False
+        finally:
+            HIGHPZ_OVERRIDE = None
+        if good:
+            print(f"  NOT CAUGHT  high p_par planted: {what}"); ok = False
+        else:
+            caught += 1; print(f"  caught      high p_par planted: {what}")
+    plant_hp("test A reads supports", lambda d: d.__setitem__("atxt", d["atxt"].replace("primary: H_A (A1) contradicts", "primary: H_A (A1) supports")))
+    plant_hp("test B reads supports", lambda d: d.__setitem__("btxt", d["btxt"].replace("swap: H_B inconclusive", "swap: H_B supports")))
+    plant_hp("test C reads inconclusive", lambda d: d["testc"].__setitem__("reading", "inconclusive"))
+    plant_hp("test C fitted at 20-60", lambda d: d.__setitem__("cdecl", d["cdecl"].replace("reco p∥ 20–40, negative", "reco p∥ 20–60, negative")))
+    plant_hp("test C declaration leaves no region open", lambda d: d.__setitem__("cdecl", d["cdecl"].replace("where the 20–40 fit has no lever", "anywhere")))
+    plant_hp("test C's open region not in muon p_par", lambda d: d.__setitem__("cdecl", d["cdecl"].replace("confined to true ≥60", "confined to true Eν ≥ 60 GeV")))
+    plant_hp("test C README leaves no region open", lambda d: d.__setitem__("creadme", d["creadme"].replace("or that are confined to where 20–40 has no lever", "and nothing else")))
+    plant_hp("E_vis defined without E_avail", lambda d: d.__setitem__("evis_readme", d["evis_readme"].replace("The fit variable is E_vis = reco p∥ + E_avail", "The fit variable is E_vis = reco p∥")))
+    plant_hp("a 60-80 E_vis cell that falls", lambda d: d.__setitem__("evis", d["evis"].replace("1.78          2.12", "1.78          1.12")))
+    plant_hp("a 60-80 sign row missing", lambda d: d.__setitem__("merged", [x for x in d["merged"] if not (x["reco_p_parallel_GeV_c"] == "60–80" and x["sign"] == "+")]))
+    plant_hp("a tail cell without its MC row", lambda d: d.__setitem__("signed", [x for x in d["signed"] if not (x["band"] == "2" and x["qbin"] == "2" and x["sample"] == "MC")]))
+    plant_hp("test B's S2|60 data not test 1's", lambda d: [x for x in d["testb"] if x["direction"] == "primary"][0]["epsilon"]["terms"]["S2|60"].__setitem__(0, 1180.0))
+    plant_hp("test B's epsilon S2|60 prediction 10% higher", lambda d: [x for x in d["testb"] if x["direction"] == "primary"][0]["epsilon"]["terms"]["S2|60"].__setitem__(1, 922.3))
     for idx, (label, src, pat, fn, mode) in enumerate(CHECKS):
         s = text(src, base)
         m = re.search(pat, s)
@@ -654,13 +990,23 @@ def self_test() -> int:
                 print(f"  caught      {label}: {p} -> {bad}")
     # The pT-edge rows (not in CHECKS): each printed edge or step, changed, must be rejected.
     edge_labels = ("pT edges, ours vs published (edges/root_axis.out, Binning.h)",
-                   "pT edge step in sec2_method.tex equals sec3's, exactly")
+                   "pT edge step in appC_supplementary.tex equals sec3's, exactly")
     for src, old_s, new_s, lab in (
             ("sec3_twod.tex", "(0.07, 0.33 and", "(0.08, 0.33 and", edge_labels[0]),
             ("sec3_twod.tex", "and \\SI{0.47}{GeV/c})", "and \\SI{0.48}{GeV/c})", edge_labels[0]),
             ("sec3_twod.tex", "the published 0.075, 0.325 and 0.475.", "the published 0.075, 0.325 and 0.48.", edge_labels[0]),
             ("sec3_twod.tex", "differ by \\SI{0.005}{GeV/c}", "differ by \\SI{0.006}{GeV/c}", edge_labels[0]),
-            ("sec2_method.tex", "edges \\SI{0.005}{GeV/c} from", "edges \\SI{0.006}{GeV/c} from", edge_labels[1])):
+            ("appC_supplementary.tex", "edges \\SI{0.005}{GeV/c} from", "edges \\SI{0.006}{GeV/c} from", edge_labels[1]),
+            # each printed copy of the step, changed or reworded out of the pattern, fails the all-copies row
+            ("sec2_method.tex", "edges differ by \\SI{0.005}{GeV/c}", "edges differ by \\SI{0.006}{GeV/c}", EDGE_STEP_ALL),
+            ("sec3_twod.tex", "differ by \\SI{0.005}{GeV/c} from", "differ by \\SI{0.006}{GeV/c} from", EDGE_STEP_ALL),
+            ("appC_supplementary.tex", "edges \\SI{0.005}{GeV/c} from the published ones",
+             "edges \\SI{0.006}{GeV/c} from the published ones", EDGE_STEP_ALL),
+            ("appC_supplementary.tex", "shifted by \\SI{0.005}{GeV/c}", "shifted by \\SI{0.006}{GeV/c}", EDGE_STEP_ALL),
+            ("appD_reproducibility.tex", "edges \\SI{0.005}{GeV/c} from the published values",
+             "edges \\SI{0.006}{GeV/c} from the published values", EDGE_STEP_ALL),
+            ("appC_supplementary.tex", "edges shifted by \\SI", "edges moved by \\SI", EDGE_STEP_ALL),
+            ("appD_reproducibility.tex", "three $p_T$ edges \\SI{0.005}", "three $p_T$ bin edges \\SI{0.005}", EDGE_STEP_ALL)):
         t = text(src, base)
         if t.count(old_s) != 1:
             print(f"  NOT FOUND   edge mutation {old_s!r} in {src}"); ok = False; continue
@@ -754,6 +1100,73 @@ def self_test() -> int:
             caught += 1; print("  caught      IBUB: a readout byte-changed from its recorded sha256 is refused")
         finally:
             STATE = saved
+    # The EVW5D claims (not in CHECKS): each sentence reworded, and each planted receipt, must be rejected.
+    for old_s, new_s in (("cross section byte for byte.", "cross section to rounding."),
+                         ("to double-precision rounding.", "to single-precision rounding."),
+                         ("the completeness is 1 in any binning.", "the completeness is 1 in the published binning."),
+                         ("a single integrated value.", "a binned value."),
+                         ("$q_3$ or $W$ range and enter", "$q_3$, $W$, $p_T$ or $p_\\parallel$ range and enter"),
+                         ("the truth phase space of Sec.~\\ref{sec:selection}", "the fiducial region of Sec.~\\ref{sec:selection}")):
+        t = text("appD_reproducibility.tex", base)
+        if t.count(old_s) != 1:
+            print(f"  NOT FOUND   EVW5D mutation {old_s!r}"); ok = False; continue
+        trial = dict(base)
+        trial["appD_reproducibility.tex"] = t.replace(old_s, new_s)
+        if all(r[1] for r in evw5d_claims(trial)):
+            print(f"  NOT CAUGHT  EVW5D: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      EVW5D: {old_s} -> {new_s}")
+
+    def plant5(what, fn):
+        global EVW5D_OVERRIDE
+        nonlocal ok, caught
+        data = copy.deepcopy(evw5d())
+        fn(data)
+        EVW5D_OVERRIDE = data
+        try:
+            rows = dict((r[0], r[1]) for r in evaluate(base))
+        except ValueError:
+            rows = {"refused": False}
+        finally:
+            EVW5D_OVERRIDE = None
+        if all(rows.values()):
+            print(f"  NOT CAUGHT  EVW5D planted: {what}"); ok = False
+        else:
+            caught += 1; print(f"  caught      EVW5D planted: {what}")
+    plant5("C-BIND xsec_flat bytes differ", lambda d: d["run"]["controls"]["C-BIND"].__setitem__("xsec_flat_bytes_equal", False))
+    plant5("controls verdict FAIL", lambda d: d["run"].__setitem__("controls_verdict", "FAIL"))
+    plant5("C-F from the rows 1e-12", lambda d: d["run"]["controls"]["C-F"].__setitem__("f_from_rows_max_rel", 1e-12))
+    plant5("step0b tuple multisets differ", lambda d: d["step0b"].__setitem__("c_tuple_multiset_equal", False))
+    plant5("a signal cell without denominator",
+           lambda d: d["run"]["controls"]["C-COMPLETE"].__setitem__("n_signal_without_denominator", 1))
+    plant5("one pT bin's flux 0.1% high",
+           lambda d: d["constants"]["flux_per_m2_per_POT_by_pt_bin"].__setitem__(3, 1.001 * d["constants"]["flux_per_m2_per_POT_by_pt_bin"][3]))
+    plant5("a c32 cell's difference sign flipped", lambda d: d["cells"].__setitem__(0, (d["cells"][0][0], -d["cells"][0][1])))
+    plant5("a c32 cell dropped", lambda d: d["cells"].pop())
+    plant5("c := 1 effect 4.0e-6", lambda d: d.__setitem__("c1", 4.0e-6))
+    plant5("max |c - 1| 4.2e-4", lambda d: d["run"]["controls"]["C-COMPLETE"].__setitem__("max_abs_c_minus_1", 4.2e-4))
+    # Joseph's two sentences of 2026-11-26: the outside-grid count, the code argument for its axes, and the phase space
+    plant5("n_outside_grid 2802", lambda d: d["run"]["controls"]["C-FLOW"].__setitem__("n_outside_grid", 2802))
+    plant5("C-FLOW rows not the truth-selected set",
+           lambda d: d["run"]["controls"]["C-FLOW"].__setitem__("n_rows_equal_pass_truth", False))
+    plant5("the grid's top pT edge 4.4", lambda d: d["constants"]["edges"]["pt"].__setitem__(-1, 4.4))
+    plant5("a strict pT limit in the truth selection",
+           lambda d: d["code"].__setitem__("u2d", d["code"]["u2d"].replace("pt_lo <= pt <= pt_hi", "pt_lo <= pt < pt_hi")))
+    plant5("the dump given --pt-edges",
+           lambda d: d["code"].__setitem__("sbatch", d["code"]["sbatch"].replace("--axes eavail", "--pt-edges 0,4.4 --axes eavail")))
+    plant5("fine_index's last edge exclusive",
+           lambda d: d["code"].__setitem__("decl", d["code"]["decl"].replace("last edge inclusive", "last edge exclusive")))
+    plant5("the dump run with --full-phase-space",
+           lambda d: d["code"].__setitem__("sbatch", d["code"]["sbatch"].replace("--axes eavail", "--full-phase-space --axes eavail")))
+    plant5("another input npz", lambda d: d["constants"].__setitem__("input_npz_sha256", "00" + d["constants"]["input_npz_sha256"][2:]))
+    plant5("no theta_mu gate in the selection",
+           lambda d: d["code"].__setitem__("u2d", d["code"]["u2d"].replace("return math.atan2(pt, pz) < MAX_MUON_THETA_RAD", "return True")))
+    trial = dict(base)        # Eq. (muon-fiducial) loses the muon-angle cut: the phase-space claim must fail
+    trial["sec2_method.tex"] = base["sec2_method.tex"].replace(r"\theta_\mu<20^\circ,\quad", "")
+    if all(r[1] for r in evw5d_claims(trial)):
+        print("  NOT CAUGHT  EVW5D: Eq. (muon-fiducial) without the theta_mu cut"); ok = False
+    else:
+        caught += 1; print("  caught      EVW5D: Eq. (muon-fiducial) without the theta_mu cut")
     trial = dict(base)
     trial["primer_body.tex"] = text("primer_body.tex", base).replace("in about half of the", "in about a third of the")
     if dict((r[0], r[1]) for r in evaluate(trial))[VERBAL[0][0]]:

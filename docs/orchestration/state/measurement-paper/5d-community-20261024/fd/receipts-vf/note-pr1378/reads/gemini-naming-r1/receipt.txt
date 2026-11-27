@@ -1,0 +1,5 @@
+reader=Gemini Hydrogen via agy (run by the director, 2026-11-26), unanchored naming read for Joseph's covariance-rename decision on PR #1378
+source_dir=/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/naming-agy-20261126
+inputs: inputs/{appA_methods,appC_supplementary,sec2_method,sec3_twod,sec5_multidim}.tex are byte-identical to PR #1378 head 489959f83b082d9e73b94802bca5d6058da73108 (sha256 checked by journal-editor); inputs.sha256 lists them with prompt.txt
+out.txt = out.txt; prompt.txt = prompt.txt; err.txt was empty (0 bytes) and is not committed
+the exact model id is not recorded in the source directory
