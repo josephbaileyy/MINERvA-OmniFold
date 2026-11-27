@@ -590,6 +590,80 @@ def clip2d_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
             for lab, s, fact in CLIP2D_CLAIMS]
 
 
+# Sec. 5.3.5's REGRADE-VF sentences (Joseph 2026-11-27): the bias/fluctuation split of the sixteen-cell held-out-tune
+# closures under C_rep with C_e^infl (rule (i)) against REGRADE's C' without it ("before"), at the primary minus2
+# evaluations. The note's first tune is AR23 and its second G18. The record's sha256 is read from the run's SHA256SUMS.
+REGRADE_VF = "measurement-paper/5d-community-20261024/fd/regrade-vf-20261127"
+REGRADE_VF_OVERRIDE = None
+
+
+def regrade_vf() -> dict:
+    if REGRADE_VF_OVERRIDE is not None:
+        return REGRADE_VF_OVERRIDE
+    run = STATE / REGRADE_VF / "run"
+    sums = dict(reversed(l.split()) for l in (run / "SHA256SUMS").read_text().splitlines() if l.strip())
+    return {"sha256": hashlib.sha256((run / "regrade_vf.json").read_bytes()).hexdigest(), "sums": sums,
+            "rec": json.loads((run / "regrade_vf.json").read_text()),
+            "decl": (STATE / REGRADE_VF / "REGRADE-VF-DECLARATION.md").read_text()}
+
+
+def regrade_vf_ok(d: dict) -> bool:
+    """The record is the committed run's (SHA256SUMS, and the director's 9f0e46e7 prefix), of declaration rev 1, with
+    the two minus2 evaluations primary and every control within tolerance."""
+    r = d["rec"]
+    return (d["sha256"] == d["sums"]["regrade_vf.json"] and d["sha256"].startswith("9f0e46e7")
+            and r["declaration"] == "REGRADE-VF-DECLARATION.md rev 1"
+            and sorted(r["primary"]) == ["ar23/minus2", "g18/minus2"])
+
+
+def rvf(d: dict, tune: str, rule: str) -> dict:
+    return d["rec"]["evaluations"][f"{tune}/minus2"][rule]
+
+
+def rvf_fall(d: dict, tune: str) -> float:
+    return 1.0 - rvf(d, tune, "rule_i")["B"] / rvf(d, tune, "before")["B"]
+
+
+def rvf_resolved(e: dict) -> bool:
+    return e["readings"]["bias_resolved"] == "yes" and e["B"] > 3 * e["se_boot"]["B"]
+
+
+def rvf_before_is_crep0(d: dict, sources: dict[str, str]) -> bool:
+    """'this covariance' follows C_rep,0 on the same draws: "before"'s mean chi2/ndf at the two tunes are the printed
+    rg-16-full-min/max."""
+    v = dict(re.findall(r"\\@namedef\{fv@(rg-16-full-(?:min|max))\}\{([0-9.]+)\}", sources["values_fived16.tex"]))
+    m = sorted(rvf(d, t, "before")["M_full"] for t in ("ar23", "g18"))
+    return len(v) == 2 and f"{m[0]:.1f}" == v["rg-16-full-min"] and f"{m[1]:.1f}" == v["rg-16-full-max"]
+
+
+REGRADE_VF_CLAIMS = (
+    ("REGRADE-VF: the mean offset is still resolved at both tunes (bias_resolved yes, B > 3 SE_boot, rule (i))",
+     "With $C_e^{\\mathrm{infl}}$ in place of $C_e$, the mean offset of the cells from the truth is still clearly nonzero at both tunes.",
+     lambda d, s: regrade_vf_ok(d) and all(rvf_resolved(rvf(d, t, "rule_i")) for t in ("ar23", "g18"))),
+    ("REGRADE-VF: offset larger than scatter at AR23, smaller at G18 (bias_vs_fluctuation, rule (i), 3 SE_boot)",
+     "It makes up more of the mean $\\chi^2/\\mathrm{ndf}$ than the scatter of the draws at the first tune, and less at the second.",
+     lambda d, s: regrade_vf_ok(d)
+     and rvf(d, "ar23", "rule_i")["readings"]["bias_vs_fluctuation"] == "bias larger"
+     and rvf(d, "ar23", "rule_i")["B"] - rvf(d, "ar23", "rule_i")["F"] > 3 * rvf(d, "ar23", "rule_i")["se_boot"]["B_minus_F"]
+     and rvf(d, "g18", "rule_i")["readings"]["bias_vs_fluctuation"] == "fluctuation larger"
+     and rvf(d, "g18", "rule_i")["F"] - rvf(d, "g18", "rule_i")["B"] > 3 * rvf(d, "g18", "rule_i")["se_boot"]["B_minus_F"]),
+    ("REGRADE-VF: B falls by about two thirds at AR23 and about half at G18 (rule (i) vs before; this covariance = C_rep,0's successor)",
+     "Relative to this covariance, the offset falls by about two thirds at the first tune and by about half at the second.",
+     lambda d, s: regrade_vf_ok(d) and 0.62 <= rvf_fall(d, "ar23") <= 0.71 and 0.45 <= rvf_fall(d, "g18") <= 0.58
+     and rvf_before_is_crep0(d, s)),
+    ("REGRADE-VF: circular by construction (declaration sec. 5: same draws; cannot show coverage of C_rep)",
+     "Because the inflation was chosen using these same tunes, this is a consistency check, not a coverage test.",
+     lambda d, s: regrade_vf_ok(d) and "The draws here are the same draws C_e^infl was fitted to." in d["decl"]
+     and "- Coverage or calibration of C_rep." in d["decl"]),
+)
+
+
+def regrade_vf_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    t, d = text("sec5_multidim.tex", sources), regrade_vf()
+    return [(lab, t.count(s) == 1 and fact(d, sources), f"sentence found {t.count(s)} time(s) | record {fact(d, sources)}")
+            for lab, s, fact in REGRADE_VF_CLAIMS]
+
+
 def evw2d_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     t, d = text("appD_reproducibility.tex", sources), evw2d()
     return [(lab, t.count(s) == 1 and fact(d, sources), f"sentence found {t.count(s)} time(s) | receipt {fact(d, sources)}")
@@ -922,6 +996,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     rows += evw5d_claims(sources)
     rows += evw2d_claims(sources)
     rows += clip2d_claims(sources)
+    rows += regrade_vf_claims(sources)
     rows += highpz_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
         found = len(re.findall(pat, text(src, sources))) == 1
@@ -1092,7 +1167,7 @@ def load() -> dict[str, str]:
     return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec_validation.tex",
                                                "sec_5d.tex", "app_devhistory.tex", "primer_body.tex", "appA_methods.tex",
                                                "appC_supplementary.tex", "records_r03_twod.tex", "sec2_method.tex",
-                                               "appD_reproducibility.tex")}
+                                               "appD_reproducibility.tex", "sec5_multidim.tex", "values_fived16.tex")}
 
 
 def gzip_self_test() -> bool:
@@ -1437,6 +1512,48 @@ def self_test() -> int:
     plant2("refinement clipped events", lambda d: d.__setitem__("log", d["log"].replace("clipped(2g-1<0) 0 events", "clipped(2g-1<0) 7 events")))
     plant2("refinement score below 0.5", lambda d: d.__setitem__("log", d["log"].replace("g in [0.533,", "g in [0.473,")))
     plant2("refinement score 0.54", lambda d: d.__setitem__("log", d["log"].replace("g in [0.533,", "g in [0.543,")))
+
+    def plant3(what, fn):
+        global REGRADE_VF_OVERRIDE
+        nonlocal ok, caught
+        data = copy.deepcopy(regrade_vf())
+        fn(data)
+        REGRADE_VF_OVERRIDE = data
+        try:
+            rows = dict((r[0], r[1]) for r in evaluate(base))
+        except (ValueError, KeyError, TypeError):
+            rows = {"refused": False}
+        finally:
+            REGRADE_VF_OVERRIDE = None
+        if all(rows.values()):
+            print(f"  NOT CAUGHT  REGRADE-VF planted: {what}"); ok = False
+        else:
+            caught += 1; print(f"  caught      REGRADE-VF planted: {what}")
+    ev = lambda d, k, r: d["rec"]["evaluations"][k][r]
+    plant3("record not the committed one", lambda d: d.__setitem__("sha256", "0" * 64))
+    plant3("another declaration revision", lambda d: d["rec"].__setitem__("declaration", "REGRADE-VF-DECLARATION.md rev 2"))
+    plant3("G18 bias not resolved", lambda d: ev(d, "g18/minus2", "rule_i")["readings"].__setitem__("bias_resolved", "not resolved"))
+    plant3("AR23 bias within 3 SE", lambda d: ev(d, "ar23/minus2", "rule_i").__setitem__("B", 2.9 * ev(d, "ar23/minus2", "rule_i")["se_boot"]["B"]))
+    plant3("AR23 not separated", lambda d: ev(d, "ar23/minus2", "rule_i")["readings"].__setitem__("bias_vs_fluctuation", "not separated"))
+    plant3("G18 bias larger", lambda d: ev(d, "g18/minus2", "rule_i")["readings"].__setitem__("bias_vs_fluctuation", "bias larger"))
+    plant3("AR23 fall 0.80", lambda d: ev(d, "ar23/minus2", "rule_i").__setitem__("B", 0.20 * ev(d, "ar23/minus2", "before")["B"]))
+    plant3("G18 fall 0.30", lambda d: ev(d, "g18/minus2", "rule_i").__setitem__("B", 0.70 * ev(d, "g18/minus2", "before")["B"]))
+    plant3("before is not C_rep,0 (M_full 3.0)", lambda d: ev(d, "ar23/minus2", "before").__setitem__("M_full", 3.0))
+    plant3("declaration drops the circularity", lambda d: d.__setitem__("decl", d["decl"].replace("The draws here are the same draws C_e^infl was fitted to.", "")))
+    for old_s, new_s in (("about two thirds at the first", "about three quarters at the first"),
+                         ("by about half at the second", "by about a third at the second"),
+                         ("at the first tune, and less at the second", "at the second tune, and less at the first"),
+                         ("still clearly nonzero at both tunes", "consistent with zero at both tunes"),
+                         ("this is a consistency check, not a coverage test", "this is a coverage test")):
+        t5 = base["sec5_multidim.tex"]
+        if t5.count(old_s) != 1:
+            print(f"  NOT FOUND   REGRADE-VF mutation {old_s!r}"); ok = False; continue
+        trial = dict(base)
+        trial["sec5_multidim.tex"] = t5.replace(old_s, new_s)
+        if all(r[1] for r in evaluate(trial)):
+            print(f"  NOT CAUGHT  REGRADE-VF: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      REGRADE-VF: {old_s} -> {new_s}")
     plant2("evw2d.done verdict FAIL", lambda d: d["done"].__setitem__("verdict", "FAIL"))
     plant2("a finding recorded", lambda d: d["run"].__setitem__("findings", ["C-COMPLETE"]))
     plant2("deposit copy not accepted", lambda d: d.__setitem__("deposit", d["deposit"].replace("ACCEPTED", "REFUSED")))
