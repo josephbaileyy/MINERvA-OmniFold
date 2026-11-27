@@ -437,6 +437,7 @@ def evw2d() -> dict:
             "done": receipt(f"{out}/evw2d.done"),
             "deposit": (STATE / EVW2D / "receipts/deposit-20261126/README.md").read_text(),
             "same": (STATE / "release-zenodo-20261127/same-events/same_events.out").read_text(),
+            "upload": (STATE / "release-zenodo-20261127/UPLOAD-MANIFEST.md").read_text(),
             "evw5d_hpss": (STATE / "measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/attempt2-hpss/README.md").read_text(),
             "config_sha256": hashlib.sha256((HERE.parents[1] / EVW2D_CODE["config"]).read_bytes()).hexdigest(),
             "config": json.loads((HERE.parents[1] / EVW2D_CODE["config"]).read_text()),
@@ -498,10 +499,26 @@ def evw2d_same_rows(d: dict, sources: dict[str, str]) -> bool:
             and f"{j['files']['evw5d_weights']['sha256']}  weights.npz" in d["evw5d_hpss"])
 
 
+def evw2d_deposited(d: dict, sources: dict[str, str]) -> bool:
+    """The upload manifest (#1417) lists result_2d.npz as current, and its tie to E_R says the file's 205 central values
+    equal references.npz's er bit for bit, through the config and references this run used (evw2d_refs)."""
+    u, m = d["upload"], d["ref_meta"]
+    return (evw2d_refs(d) and evw2d_exact(d, "C-EXACT-ER")
+            and "| `package/result-products-2d/result_2d.npz` | "
+                "`9ab08a9f7d57c786f422f7f03bb7810625c243d804d588ad504bb5b77eaa2e47` | 2,696,218 | current |" in u
+            and f"`2d-unfolding/evw2d/config.json` (sha256 `{d['config_sha256']}`) pins `references.npz` at "
+                f"`{d['ref_sha256']}`;" in u
+            and f"records its `er` vector as `hXSec2D` from `xsec.root` `{m['er']['sha256']}`" in u
+            and "- `result_2d.npz` `x`, the 205 reported 2D central values, equals `er` at its 205 cells **bit for bit**: "
+                "yes (`np.array_equal`);" in u)
+
+
 EVW2D_CLAIMS = (
     ("EVW2D: the same rows, in the same order, as the 5D weights; pT and p_par exact in float32 (same_events.out)",
      "They are the same rows, in the same order, as those of the sixteen-cell weights below, and their truth $p_T$ and "
      "$p_\\parallel$ agree exactly in single precision.", evw2d_same_rows),
+    ("EVW2D: the deposited 2D refined central values are E_R bit for bit (UPLOAD-MANIFEST.md, #1417)",
+     "they reproduce the deposited 2D refined central values in every bin", evw2d_deposited),
     ("EVW2D: keyed by the entry in the one input file, whose sha256 the weights file holds (constants.json key, C-KEY)",
      "Each event is keyed by its entry number in the input file, which the weights file identifies by its SHA-256 digest.",
      lambda d, s: (d["constants"]["key"]["column"] == "entry"
@@ -814,7 +831,7 @@ CHECKS = [
      lambda: float(evw2d()["run"]["controls"]["C-KEY"]["rows"]) if evw2d()["run"]["controls"]["C-KEY"]["rows"]
      == evw2d()["run"]["rows"] == evw2d()["constants"]["rows"] else -1.0, "round"),
     ("EVW2D re-histogram on our grid against E_R (run.json C-EXACT-ER max_rel)", "appD_reproducibility.tex",
-     r"Histogrammed on our analysis grid, they reproduce the 2D refined central values in every bin to "
+     r"Histogrammed on our analysis grid, they reproduce the deposited 2D refined central values in every bin to "
      r"\\num\{([0-9.]+)e-12\} of their values\.",
      lambda: 1e12 * evw2d()["run"]["controls"]["C-EXACT-ER"]["max_rel"] if evw2d_exact(evw2d(), "C-EXACT-ER") else -1.0,
      "round"),
@@ -1338,7 +1355,8 @@ def self_test() -> int:
     else:
         caught += 1; print("  caught      EVW5D: Eq. (muon-fiducial) without the theta_mu cut")
     # The EVW2D claims: each sentence reworded, and each planted receipt, must be rejected.
-    for old_s, new_s in (("in the same order, as those of the sixteen-cell", "in another order, as those of the sixteen-cell"),
+    for old_s, new_s in (("reproduce the deposited 2D refined central values", "reproduce the deposited 2D central values"),
+                         ("in the same order, as those of the sixteen-cell", "in another order, as those of the sixteen-cell"),
                          ("agree exactly in single precision.", "agree exactly."),
                          ("They are the same rows,", "They are the same physical events,"),
                          ("keyed by its entry number in the input file", "keyed by its run and event number"),
@@ -1377,6 +1395,11 @@ def self_test() -> int:
             caught += 1; print(f"  caught      EVW2D planted: {what}")
     ctl = lambda d, k: d["run"]["controls"][k]
     plant2("controls verdict FAIL", lambda d: d["run"].__setitem__("controls_verdict", "FAIL"))
+    plant2("upload manifest: result_2d.npz stale", lambda d: d.__setitem__("upload", d["upload"].replace("| 2,696,218 | current |", "| 2,696,218 | **STALE** |")))
+    plant2("upload manifest: another result_2d.npz", lambda d: d.__setitem__("upload", d["upload"].replace("`9ab08a9f7d57c786", "`0ab08a9f7d57c786")))
+    plant2("upload manifest: x not equal to er", lambda d: d.__setitem__("upload", d["upload"].replace("**bit for bit**: yes", "**bit for bit**: no")))
+    plant2("upload manifest: er from another xsec.root", lambda d: d.__setitem__("upload", d["upload"].replace("from `xsec.root` `a5c13fc3", "from `xsec.root` `05c13fc3")))
+    plant2("upload manifest: config pins other references", lambda d: d.__setitem__("upload", d["upload"].replace("pins `references.npz` at `1b214582", "pins `references.npz` at `0b214582")))
     plant2("same-events verdict DIFFERENT", lambda d: d.__setitem__("same", d["same"].replace("VERDICT SAME-ROWS-SAME-ORDER", "VERDICT DIFFERENT")))
     plant2("same-events one row off in float32", lambda d: d.__setitem__("same", d["same"].replace('"rows_over_1_ulp": 0}}', '"rows_over_1_ulp": 1}}')))
     plant2("same-events entries differ", lambda d: d.__setitem__("same", d["same"].replace('"entries_equal": true', '"entries_equal": false')))
