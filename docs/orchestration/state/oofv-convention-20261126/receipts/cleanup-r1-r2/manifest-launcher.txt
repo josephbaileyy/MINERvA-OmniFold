@@ -1,0 +1,17 @@
+2026-11-27T04:45:00Z
+        Valid: from 2026-11-27T02:04:00 to 2026-11-28T02:05:18
+0a6b59ec3b33990c4a351fcf4ae2dd0e9cc7e0307fd22562738a8619b3270a65  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/oofvc-cleanup/bound/oofvc_cleanup.sh
+6c71deb1bd8e073e62d9d88ff290e5b76a3d2c5e92175fd3d2b2c065d18998c6  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/oofvc-cleanup/bound/oofvc_cleanup_launch.sh
+ssh rc=0
+node login31 staged sha256 0a6b59ec3b33990c4a351fcf4ae2dd0e9cc7e0307fd22562738a8619b3270a65
+node login31 2026-11-27T04:45:06Z mode manifest
+fence: no oofvc_ job in the queue 2026-11-27T04:45:06Z
+r3 before: 04aa5afb343a322012aad6aaa14e627427059488136818ce028016deb4fa14ac
+root /pscratch/sd/j/josephrb/oofvc-20261126 entries 35292 bytes 1750767300 listing_sha256 8e23b939c9b5f5445a93271d5f86618b0250b8ee4eb86c1124143b71a5d2a474
+root /pscratch/sd/j/josephrb/oofvc-20261126-r2 entries 57290 bytes 6940841849 listing_sha256 b9d870812853ed824abffbb7e30c907838e2d45f443472f6a85113b1f3b339e9
+LISTING_SHA 0d88dfb3ad567fec65addfb8ac90e0c942c434b13162c072351a0a174942c191
+== MANIFEST type|size|mtime|sha256 (- for >= 1000000000 bytes or a non-file)|path|symlink target
+== END MANIFEST
+manifest done 2026-11-27T04:58:38Z
+script rc=0
+launcher rc=0
