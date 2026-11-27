@@ -38,7 +38,7 @@ fi
 D="${B}/deploy"
 CODE_REL=docs/orchestration/state/geanttw-20261124/code
 SUMS_REL=docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/hpss-20261111/manifests/SHA256SUMS.zero_loops
-FENCE_RE='^(cov2d|t2a)'
+FENCE_RE='^(cov2d|t2a|covfix_)'
 ACK_RE='^[A-Za-z0-9._:@/+=-]{8,200}$'
 
 bail() { echo "REFUSED (nothing written): $*"; exit 9; }
