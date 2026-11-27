@@ -5,7 +5,9 @@ mutant is killed if those tests fail.
   removed.
 - Driver mutants edit the PTMC-patched driver itself; the copy's ptmc_driver.diff and make_tree.sh's pin are
   regenerated, so the tree builds and the tests see the mutant.
-- Shell mutants run the docker harnesses (debian:bookworm-slim) on the mutated copy.
+- Shell mutants run the docker harnesses (debian:bookworm-slim) on the mutated copy; the Mac launcher's mutants run
+  its local harness (stubbed ssh and scp).
+- A mutant naming several test files is killed if any of them fails.
 
   PTMC_PY=python3 python3 ptmc_mutation.py OUT.json [NAME ...]      (all mutants, or the named ones)
 A control run (no edit) must pass first. The record lists each mutant's verdict and the tests' tail.
@@ -32,6 +34,7 @@ T = "test_ptmc.py"
 S = "test_ptmc_score.py"
 LT = "launch/test_launch.py"
 HR, HS = "HARNESS:harness_remote.sh", "HARNESS:harness_sbatch.sh"
+HL = "LOCAL:harness_launch.sh"  # the Mac launcher's own harness (stubs on PATH; macOS shasum)
 MUTANTS = [
     # ptmc_lib.py (the pure tests, and the scorer's through it)
     ("LIB_SIG_OFFSET", "ptmc_lib.py", "SIG_OFFSET, BKG_OFFSET = 0, 10_000_000, 20_000_000",
@@ -60,8 +63,6 @@ MUTANTS = [
      "    if a.shape != b.shape:", T, "Gates"),
     ("LIB_SHAPE_LOO", "ptmc_lib.py", "    loo_bad = [i for i in range(n) if not ok(np.delete(D, i, axis=0))]",
      "    loo_bad = []", T, "Gates"),
-    ("LIB_SHAPE_TOP", "ptmc_lib.py", "np.all(top > 0))", "np.all(top >= 0))", T, "Gates"),
-    ("LIB_PROTO_ZEROVAR", "ptmc_lib.py", "    if np.any(diff[:, ~pos] != 0):", "    if False:", T, "Gates"),
     ("LIB_COND_FLOOR", "ptmc_lib.py", "COND_FLOOR = 1e-10", "COND_FLOOR = 1e-14", T, "Gates"),
     ("LIB_STAGED_INDEX", "ptmc_lib.py", '    return f"{int(b) + 1:03d}_xsec.root"', '    return f"{int(b):03d}_xsec.root"',
      T, "Gates"),
@@ -107,12 +108,6 @@ MUTANTS = [
     # the scorer (hand-made products)
     ("SC_ABSENT_AS_FORMED", "ptmc_score.py", '    disp = P.disposition(True, True, bool(absent), bool(mismatch), repoff)',
      '    disp = P.disposition(True, True, False, bool(mismatch), repoff)', S, "Scorer"),
-    ("SC_FILL_SETS_ONLY", "ptmc_score.py",
-     "           and not (all(np.array_equal(np.asarray(U[u][k]), want[k]) for k in want)",
-     "           and not (np.array_equal(np.unique(np.asarray(U[u][\"fill_entry\"])), np.unique(want[\"fill_entry\"]))",
-     S, "Scorer"),
-    ("SC_MISMATCH_IGNORED", "ptmc_score.py", "        if not ok:\n            mismatch.append(name)\n        else:\n            ref_c2[b] = z",
-     "        if False:\n            mismatch.append(name)\n        else:\n            ref_c2[b] = z", S, "Scorer"),
     ("SC_RANK_LITERAL", "ptmc_score.py", '        sg = P.shape_gate(delta, D, rank=CONST["RANK"], n=CONST["N"])',
      '        sg = P.shape_gate(delta, D, rank=50, n=CONST["N"])', S, "Scorer"),
     ("SC_DRAW_AGG", "ptmc_score.py", 'and st["n"]["mc"] == d["n_original"] and st["sum"]["mc"] == d["original_sum"]',
@@ -120,30 +115,156 @@ MUTANTS = [
     ("SC_WORDS", "ptmc_score.py", '"reading": RR.classify_t(t, P.WORDS),', '"reading": RR.classify_t(t, P.WORDS[::-1]),',
      S, "Scorer"),
     # the launch helpers
-    ("PP_FLOOR", "launch/ptmc_pilot_post.py", "MARGIN, FLOOR = 12.5, 11.5, 5, 10, 1.5, 1.1",
-     "MARGIN, FLOOR = 12.5, 11.5, 5, 10, 1.5, 1.0", LT, "PilotPost"),
-    ("PP_CAP_PER_NODE", "launch/ptmc_pilot_post.py", "cap_left / NODES * 3600.0)", "cap_left * 3600.0)", LT, "PilotPost"),
-    ("PP_STOP_AT", "launch/ptmc_pilot_post.py", "FLOOR = 12.5, 11.5, 5,", "FLOOR = 12.5, 12.6, 5,", LT, "PilotPost"),
-    ("PP_COUPLE", "launch/ptmc_pilot_post.py", '                ok = ok and ctl.get("C-COUPLE", {}).get("pass") is True',
-     "                ok = ok", LT, "PilotPost"),
-    ("D4_ABSENT_FAILS", "launch/ptmc_stage_d4.py",
-     '            except FileNotFoundError:\n                manifest["absent"].append(str(src))\n                continue',
-     "            except FileNotFoundError:\n                return 5", LT, "StageD4"),
     ("D4_SYMLINK_OK", "launch/ptmc_stage_d4.py", "            if not stat.S_ISREG(st.st_mode):", "            if False:",
      LT, "StageD4"),
     # the shell steps (the docker harnesses)
     ("SH_FENCE_STATE", "launch/ptmc_remote.sh", "if (s[1] !~ /^(COMPLETED|FAILED|CANCELLED|",
      "if (s[1] !~ /^(RUNNING|COMPLETED|FAILED|CANCELLED|", HR, None),
-    ("SH_COPY_PIN", "launch/ptmc_remote.sh", '  [ "$(sha_of "$2")" = "$3" ] || stop "the copy of $1 is not $3"', "  true",
-     HR, None),
     ("SH_NO_PTMC", "launch/ptmc_remote.sh", '  [ "$n" = 0 ] || stop "a ptmc job is queued or running"', "  true", HR, None),
     ("SH_LIMIT_RANGE", "launch/ptmc_remote.sh", '[ "$L" -le 600 ]', '[ "$L" -le 6000 ]', HR, None),
     ("SH_DEPLOY_CHECK", "launch/ptmc_remote.sh",
      '  (cd "$R/deploy" && sha256sum -c --quiet "$R/logs/deploy.sha256") || stop "the deploy tree differs from its digests"',
      "  true", HR, None),
     ("SH_LANE_SEEDS", "launch/replicas.sbatch", "    b=$((2 + l + 20 * k))", "    b=$((1 + l + 20 * k))", HS, None),
-    ("SH_PILOT_UNITS", "launch/pilot.sbatch", "p_off_b2 p_off_b3 p_off_b4 p_off_b5; do", "p_off_b2 p_off_b3 p_off_b4; do",
-     HS, None),
+    # ptmc_lib.py: the stale anchors, re-anchored
+    ("LIB_SHAPE_TOP", "ptmc_lib.py", "np.all(lam[top] > 0))", "np.all(lam[top] >= 0))", T, "Gates"),
+    ("LIB_PROTO_ZEROVAR", "ptmc_lib.py", '"zero_variance_cells_differing": int(np.sum(np.any(zv != 0, axis=0))),',
+     '"zero_variance_cells_differing": 0,', T, "Gates"),
+    # ptmc_lib.py: the hardening's gates
+    ("LIB_CSTAR_ONESIDED", "ptmc_lib.py", '"finite": bool(np.all(np.isfinite(c)) and not one_sided.any())}',
+     '"finite": bool(np.all(np.isfinite(c)))}', T, "Completeness"),
+    ("LIB_CSTAR_NEGATIVE", "ptmc_lib.py", " or any(np.any(x < 0) for x in ops[:4]):", ":", T, "Completeness"),
+    ("LIB_COUPLE_NEGATIVE", "ptmc_lib.py",
+     "    if np.any(np.asarray(w_d, float) < 0) or np.any(np.asarray(w_s, float) < 0):", "    if False:", T, "Coupling"),
+    ("LIB_RECEIPT_DIGEST", "ptmc_lib.py",
+     'if sha256_file(npz) != mk.get("sha256") or sha256_file(root) != mk.get("root_sha256"):',
+     'if sha256_file(npz) != mk.get("sha256"):', [LT, S], None),
+    ("LIB_RECEIPT_ARGS_FINITE", "ptmc_lib.py", '        if meta.get("extract_args_finite") is not True:',
+     "        if False:", [LT, S], None),
+    ("LIB_RECEIPT_EXTRA_CONTROL", "ptmc_lib.py",
+     '        bad += sorted(c for c, v in ctl.items() if not (isinstance(v, dict) and v.get("pass") is True))\n', "",
+     [LT, S], None),
+    ("LIB_RECEIPT_REQUIRED", "ptmc_lib.py",
+     '        bad = sorted(c for c in req if not (isinstance(ctl.get(c), dict) and ctl[c].get("pass") is True))',
+     "        bad = []", [LT, S], None),
+    ("LIB_RECEIPT_IDENTITY", "ptmc_lib.py",
+     'meta.get("convention") == conv and meta.get("bootstrap_seed") == b):', 'meta.get("convention") == conv):',
+     [LT, S], None),
+    # the runner
+    ("RUN_REUSE_DIGEST", "ptmc_run.py",
+     ' and sha256(npz) == mk.get("sha256") and sha256(root) == mk.get("root_sha256"))', ")", T, "Runner"),
+    ("RUN_ROWS_FILE_PIN", "ptmc_run.py", ' or sha256(a.rows) != PINS["rows"]', "", T, "Runner"),
+    ("RUN_DUP_UNIT", "ptmc_run.py", "    if len(set(names)) != len(names):", "    if False:", T, "Runner"),
+    ("RUN_PAIR_MASK", "ptmc_run.py", 'and y_r["pass"] and mpr_ok)}', 'and y_r["pass"])}', T, "Runner"),
+    ("RUN_REFINE_DIGEST", "ptmc_run.py", "\n                                         and P.digest(rw) == P.digest(mw_raw))}",
+     ")}", T, "Runner"),
+    ("RUN_ARGS_FINITE", "ptmc_run.py", "    passed = all(c[\"pass\"] is True for c in controls.values()) and args_finite",
+     "    passed = all(c[\"pass\"] is True for c in controls.values())", T, "Runner"),
+    ("RUN_COMP_AXES", "ptmc_run.py", 'controls["C-COMP"]["pass"] = bool(controls["C-COMP"]["pass"] and axes_ok)',
+     'controls["C-COMP"]["pass"] = bool(controls["C-COMP"]["pass"])', T, "Runner"),
+    # the scorer: the stale anchors, re-anchored
+    ("SC_FILL_SETS_ONLY", "ptmc_score.py",
+     "need(fill_ok(z) and all(np.array_equal(np.asarray(z[k]), want[k]) for k in fill_keys)",
+     'need(fill_ok(z) and np.array_equal(np.unique(np.asarray(z["fill_entry"])), np.unique(want["fill_entry"]))',
+     S, "Scorer"),
+    ("SC_MISMATCH_IGNORED", "ptmc_score.py", "            ref_c2[b] = {K: ibu(z, K) for K in scan}\n        else:\n            mismatch.append(name)",
+     "            ref_c2[b] = {K: ibu(z, K) for K in scan}\n        else:\n            ref_c2[b] = None", S, "Scorer"),
+    # the scorer: the hardening's gates
+    ("SC_INVENTORY_EXTRA", "ptmc_score.py", "    need(not extra and not missing,", "    need(not missing,", S, None),
+    ("SC_CANONICAL_ARGV", "ptmc_score.py", '        need(m["argv"] == canonical_argv(tree_cfg, conv, b, rows),',
+     "        need(True,", S, None),
+    ("SC_D4_FETCHED", "ptmc_score.py", '    need(have == set(copied) | {"manifest.json"},',
+     "    need(set(copied) <= have,", S, None),
+    ("SC_DUP_MARKER", "ptmc_score.py", "        need(f.stem not in out,", "        need(True,", S, None),
+    ("SC_SIM_COVERAGE", "ptmc_score.py", "        need(set(cells_idx.tolist()) <= cov,", "        need(True,", S, None),
+    ("SC_COND_GUARD", "ptmc_score.py", '        need(cond["pass"],', "        need(True,", S, None),
+    ("SC_EXCEPTION_STOP", "ptmc_score.py", "    except Exception as e:  # every failure is a STOP",
+     "    except Stop as e:  # every failure is a STOP", S, None),
+    # the pilot's post: the stale anchors, re-anchored
+    ("PP_FLOOR", "launch/ptmc_pilot_post.py", '600 * limit_min >= 11 * runtime', '600 * limit_min >= 10 * runtime',
+     LT, "PilotPost"),
+    ("PP_CAP_PER_NODE", "launch/ptmc_pilot_post.py", "(CAP_S - pilot_ns) // (NODES * 60))", "(CAP_S - pilot_ns) // 60)",
+     LT, "PilotPost"),
+    ("PP_STOP_AT", "launch/ptmc_pilot_post.py", "CAP_S, STOP_S = 45000, 41400", "CAP_S, STOP_S = 45000, 43200",
+     LT, "PilotPost"),
+    ("PP_RECEIPTS", "launch/ptmc_pilot_post.py",
+     '    r["every_pilot_unit_passes"] = all(v["ok"] for v in receipts.values())',
+     '    r["every_pilot_unit_passes"] = True', LT, "PilotPost"),
+    # the pilot's post: the hardening's gates
+    ("PP_JOBID", "launch/ptmc_pilot_post.py", "        if head != jobid:", "        if False:", LT, "PilotPost"),
+    ("PP_JOB_NODES", "launch/ptmc_pilot_post.py", ' and job["nodes"] == PILOT_NODES', "", LT, "PilotPost"),
+    ("PP_STEP_NODES", "launch/ptmc_pilot_post.py", 's["nodes"] == 1 and 0 < s["elapsed"] <= job["elapsed"]',
+     '0 < s["elapsed"]', LT, "PilotPost"),
+    ("PP_NO_CNORM", "launch/ptmc_pilot_post.py", '    for k in ("C-NORM", "C-FIX", "C-MOVE-seed1", "C-SUPPORT-table"):',
+     '    for k in ("C-FIX", "C-MOVE-seed1", "C-SUPPORT-table"):', LT, "PilotPost"),
+    ("PP_NO_CFIX", "launch/ptmc_pilot_post.py", '    for k in ("C-NORM", "C-FIX", "C-MOVE-seed1", "C-SUPPORT-table"):',
+     '    for k in ("C-NORM", "C-MOVE-seed1", "C-SUPPORT-table"):', LT, "PilotPost"),
+    ("PP_NO_CMOVE", "launch/ptmc_pilot_post.py", '    for k in ("C-NORM", "C-FIX", "C-MOVE-seed1", "C-SUPPORT-table"):',
+     '    for k in ("C-NORM", "C-FIX", "C-SUPPORT-table"):', LT, "PilotPost"),
+    ("PP_NO_CSUPPORT", "launch/ptmc_pilot_post.py", '    for k in ("C-NORM", "C-FIX", "C-MOVE-seed1", "C-SUPPORT-table"):',
+     '    for k in ("C-NORM", "C-FIX", "C-MOVE-seed1"):', LT, "PilotPost"),
+    ("PP_RECHECK_L", "launch/ptmc_pilot_post.py",
+     '\n                and d.get("time_limit_minutes") == prev.get("time_limit_minutes"))', ")", LT, "PilotPost"),
+    # the D4 staging
+    ("D4_ABSENT_FAILS", "launch/ptmc_stage_d4.py",
+     '                manifest["absent"].append(str(src))\n                continue', "                return 5",
+     LT, "StageD4"),
+    ("D4_MANDATORY", "launch/ptmc_stage_d4.py", "                if name in MANDATORY:", "                if False:",
+     LT, "StageD4"),
+    ("D4_PARENT_DIR", "launch/ptmc_stage_d4.py", "            if not stat.S_ISDIR(os.lstat(d).st_mode):",
+     "            if False:", LT, "StageD4"),
+    ("D4_CHANGED", "launch/ptmc_stage_d4.py", "            if ident(after) != ident(st) or", "            if False or",
+     LT, "StageD4"),
+    # ptmc_remote.sh: the stale anchor, re-anchored, and the hardening's gates
+    ("SH_COPY_PIN", "launch/ptmc_remote.sh", '  [ "$h" = "$3" ] || stop "the copy of $1 is not $3"', "  true", HR, None),
+    ("SH_STAGE_HOST", "launch/ptmc_remote.sh", 'stage:*) stop "stage runs on a DTN, not $host";;', "stage:*) ;;", HR, None),
+    ("SH_LOGIN_HOST", "launch/ptmc_remote.sh", '*:dtn*) stop "$MODE runs on a login node";;', "*:dtn*) ;;", HR, None),
+    ("SH_STAGE_AGE", "launch/ptmc_remote.sh", "[ $((t1 - t0)) -le 900 ]", "[ $((t1 - t0)) -le 9000 ]", HR, None),
+    ("SH_CLAIM", "launch/ptmc_remote.sh",
+     'claim() { mkdir "$R/claims/$1" 2>/dev/null || stop "phase $1 is already claimed (a second invocation, or it ran)"; }',
+     'claim() { mkdir -p "$R/claims/$1"; }', HR, None),
+    ("SH_AWK_STATUS", "launch/ptmc_remote.sh", '    || stop "awk failed ($1)"', "    || true", HR, None),
+    ("SH_STAGE_LS", "launch/ptmc_remote.sh", 'st=$(ls -A "$R/stage") || stop "ls of the stage failed";',
+     'st=$(ls -A "$R/stage" 2>/dev/null);', HR, None),
+    ("SH_RECHECK_L", "launch/ptmc_remote.sh",
+     '''  printf '%s' "$chk" | grep -q "\\"time_limit_minutes\\": $L}" || stop "the recheck's L is not $L"''', "  true",
+     HR, None),
+    ("SH_REPLICAS_N5", "launch/ptmc_remote.sh", 'sbatch --parsable -N 5 -t "$L"', 'sbatch --parsable -t "$L"', HR, None),
+    ("SH_PILOT_N2", "launch/ptmc_remote.sh", "sbatch --parsable -N 2 ", "sbatch --parsable ", HR, None),
+    ("SH_DEPLOY_INVENTORY", "launch/ptmc_remote.sh",
+     '  [ "$have" = "$want" ] || stop "the deploy digests do not list exactly the declared files"', "  true", HR, None),
+    ("SH_DRIVER_PIN", "launch/ptmc_remote.sh", '    || stop "the deployed driver is not $DRIVER_SHA"', "    || true",
+     HR, None),
+    ("SH_JOBID_PERSIST", "launch/ptmc_remote.sh",
+     '  echo "$2" > "$R/logs/$1.jobid" || stop "the $1 job $2 was submitted but its id could not be recorded"',
+     '  echo "$2" > "$R/logs/$1.jobid" 2>/dev/null', HR, None),
+    ("SH_POST_OTHER_JOB", "launch/ptmc_remote.sh", '      || stop "sacct for the $f job $j has a row of another job"',
+     "      || true", HR, None),
+    ("SH_SACCT_EMPTY", "launch/ptmc_remote.sh", '  [ -n "$out" ] || stop "sacct returned nothing for job $j"', "  true",
+     HR, None),
+    ("SH_THREADS", "launch/ptmc_remote.sh", "export LC_ALL=C OMP_NUM_THREADS=1 MKL_NUM_THREADS=1",
+     "export LC_ALL=C MKL_NUM_THREADS=1", HR, None),
+    ("SH_SHA_STATUS", "launch/ptmc_remote.sh", '  h=$(sha_of "$LIB") || stop "sha256 of libRooUnfold.so failed"',
+     '  h=$(sha_of "$LIB")', HR, None),
+    # the sbatch files: the stale anchor, re-anchored, and the hardening's gates
+    ("SH_PILOT_UNITS", "launch/pilot.sbatch", 'UNITS="p_off_c p_R_c p_off_b1 p_R_b1 p_off_b2 p_off_b3 p_off_b4 p_off_b5"',
+     'UNITS="p_off_c p_R_c p_off_b1 p_R_b1 p_off_b2 p_off_b3 p_off_b4"', HS, None),
+    ("SB_PILOT_NODES", "launch/pilot.sbatch", '[ "${SLURM_JOB_NUM_NODES:-}" = 2 ] ||', "true ||", HS, None),
+    ("SB_PILOT_ROWS", "launch/pilot.sbatch", '[ "$SHA" = "$ROWS_SHA" ] ||', "true ||", HS, None),
+    ("SB_PILOT_OUTCOMES", "launch/pilot.sbatch", '[ "$bad" = 0 ] && [ "$n" = 8 ] ||', "true ||", HS, None),
+    ("SB_REPS_NODES", "launch/replicas.sbatch", '[ "${SLURM_JOB_NUM_NODES:-}" = 5 ] ||', "true ||", HS, None),
+    ("SB_REPS_LIMIT", "launch/replicas.sbatch", '[ "$tm" -le "$L" ]', '[ "$tm" -le 100000 ]', HS, None),
+    ("SB_REPS_PARSE", "launch/replicas.sbatch", '  for v in "$d" "$h" "$m" "$s"; do case "$v" in \'\'|*[!0-9]*) return 1;; esac; done\n',
+     "", HS, None),
+    ("SB_REPS_ROWS", "launch/replicas.sbatch", '[ "$SHA" = "$ROWS_SHA" ] ||', "true ||", HS, None),
+    ("SB_REPS_COUNT", "launch/replicas.sbatch", '[ "$n" = 199 ] && [ "$t" = 199 ]', "true", HS, None),
+    # the Mac launcher (its local harness)
+    ("LA_STAGE_NODE", "launch/ptmc_launch.sh", '[ "$NODE" = dtn01 ] ||', "true ||", HL, None),
+    ("LA_DTN_ROUTE", "launch/ptmc_launch.sh", 'dtn01.nersc.gov "$R"', 'saul.nersc.gov "$R"', HL, None),
+    ("LA_LOGIN_NODE", "launch/ptmc_launch.sh", 'case "$NODE" in login[0-9][0-9]) ;; *)', 'case "$NODE" in *) ;; x)', HL, None),
+    ("LA_FETCH_HASH", "launch/ptmc_launch.sh", 'h=$(shasum -a 256 "$F/$f") || { echo "STOP: hashing $f failed"; r=9; continue; }',
+     'h=$(shasum -a 256 "$F/$f")', HL, None),
+    ("LA_SCRIPT_SHA", "launch/ptmc_launch.sh", '[ "$h" = "$SHA" ] ||', "true ||", HL, None),
 ]
 
 
@@ -187,7 +308,9 @@ def driver_mutant(work: Path, old: str, new: str) -> None:
 
 
 def run_tests(work: Path, test: str, k: str | None) -> tuple[int, str]:
-    if test.startswith("HARNESS:"):
+    if test.startswith("LOCAL:"):
+        p = subprocess.run(["bash", str(work / "launch" / test.split(":", 1)[1])], capture_output=True, text=True)
+    elif test.startswith("HARNESS:"):
         h = test.split(":", 1)[1]
         p = subprocess.run(["docker", "run", "--rm", "-v", f"{work / 'launch'}:/h:ro", "debian:bookworm-slim",
                             "bash", f"/h/{h}"], capture_output=True, text=True)
@@ -233,7 +356,7 @@ def main(argv=None) -> int:
     files = sorted(p for p in HERE.rglob("*") if p.is_file() and "__pycache__" not in p.parts)
     rec = {"schema": "ptmc-mutation/1", "python": PY,
            "files": {str(p.relative_to(HERE)): sha(p) for p in files}, "results": []}
-    ctl = one("CONTROL", None, "", "", [T, S, LT, HR, HS], None)
+    ctl = one("CONTROL", None, "", "", [T, S, LT, HR, HS, HL], None)
     rec["results"].append(ctl)
     out.write_text(json.dumps(rec, indent=1) + "\n")
     if ctl["verdict"] != "PASS":

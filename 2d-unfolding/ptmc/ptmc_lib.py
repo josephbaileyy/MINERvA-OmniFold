@@ -76,7 +76,9 @@ def draw_check(b, *, n_data, n_entries, appended_entry, inj_entries, inj_cv, sig
     }
     sums = {"data_sum": float(f_data.sum()), "original_sum": float(f_sig[:n_orig].sum()),
             "appended_sum": float(f_sig[n_orig:].sum()), "injected_sum": float(f_inj.sum()),
-            "appended_sha256": digest(app), "factors_sha256": digest(f_data, f_sig, f_inj)}
+            "appended_sha256": digest(app), "data_factors_sha256": digest(f_data),
+            "signal_factors_sha256": digest(f_sig[:n_orig]), "appended_factors_sha256": digest(f_sig[n_orig:]),
+            "injected_factors_sha256": digest(f_inj)}
     return {**out, **sums, "checks": checks, "pass": all(checks.values())}
 
 
@@ -95,6 +97,11 @@ def c_star(t_star_all, t_star_orig, t_cv_orig, d_cv, c_cv) -> dict:
     the extraction turns into 0, as production's replica gives there (its unfolded count is 0)."""
     t_star_all, t_star_orig, t_cv_orig, d_cv, c_cv = (np.asarray(x, float) for x in
                                                        (t_star_all, t_star_orig, t_cv_orig, d_cv, c_cv))
+    ops = (t_star_all, t_star_orig, t_cv_orig, d_cv, c_cv)
+    if not all(np.all(np.isfinite(x)) for x in ops) or any(np.any(x < 0) for x in ops[:4]):
+        return {"c_star": np.full_like(c_cv, np.nan), "n_keep_cv": 0, "n_lost_support": 0,
+                "n_lost_with_moved_weight": 0, "n_one_sided": 0, "finite": False}
+    one_sided = (t_cv_orig > 0) != (d_cv > 0)  # section 2.2's table: a STOP (finite is False)
     lost = (t_cv_orig > 0) & (t_star_orig == 0)
     keep = t_cv_orig == 0
     c = c_cv.copy()
@@ -104,7 +111,7 @@ def c_star(t_star_all, t_star_orig, t_cv_orig, d_cv, c_cv) -> dict:
     c[live] = np.divide(t_star_all[live], d_star, out=np.zeros_like(d_star), where=d_star != 0)
     return {"c_star": c, "n_keep_cv": int(keep.sum()), "n_lost_support": int(lost.sum()),
             "n_lost_with_moved_weight": int((lost & (t_star_all > t_star_orig)).sum()),
-            "finite": bool(np.all(np.isfinite(c)))}
+            "n_one_sided": int(one_sided.sum()), "finite": bool(np.all(np.isfinite(c)) and not one_sided.any())}
 
 
 def rel_close(a, b, rtol) -> dict:
@@ -133,15 +140,17 @@ def shape_gate(delta, D, rank=RANK, n=N_REPLICAS, cells=N_CELLS) -> dict:
     if not (np.all(np.isfinite(delta)) and np.all(np.isfinite(D))):
         return {"pass": False, "why": "non-finite"}
 
-    def ok(X):  # ref_c2c1_read.pinv_rank's own criterion: the `rank` leading eigenvalues are all strictly positive
+    def ok(X):  # ref_c2c1_read.pinv_rank's own computation and criterion: eigh, the `rank` leading all > 0
         Cm = np.cov(X, rowvar=False, ddof=1)
-        lam = np.linalg.eigvalsh((Cm + Cm.T) / 2)
-        top = np.sort(lam)[::-1][:rank]
-        return bool(np.all(np.isfinite(lam)) and top.size == rank and np.all(top > 0))
+        if not np.all(np.isfinite(Cm)):
+            return False
+        lam, _ = np.linalg.eigh((Cm + Cm.T) / 2)
+        top = np.argsort(lam)[::-1][:rank]
+        return bool(np.all(np.isfinite(lam)) and top.size == rank and np.all(lam[top] > 0))
     full = ok(D)
     loo_bad = [i for i in range(n) if not ok(np.delete(D, i, axis=0))]
     Cm = np.cov(D, rowvar=False, ddof=1)
-    lam = np.sort(np.linalg.eigvalsh((Cm + Cm.T) / 2))[::-1]
+    lam = np.sort(np.linalg.eigh((Cm + Cm.T) / 2)[0])[::-1]
     ratio = float(lam[rank - 1] / lam[0]) if lam[0] > 0 else float("nan")  # printed, read by nothing
     return {"pass": bool(full and not loo_bad), "full": full, "loo_failures": loo_bad[:10],
             "n_loo_failures": len(loo_bad), "lambda_ratio_rank_over_top": ratio}
@@ -159,7 +168,7 @@ def conditioning(D, rank=RANK, floor=COND_FLOOR) -> dict:
     if D.ndim != 2 or D.shape[0] < 2 or not np.all(np.isfinite(D)):
         return {"ratio": float("nan"), "pass": False}
     Cm = np.cov(D, rowvar=False, ddof=1)
-    lam = np.sort(np.linalg.eigvalsh((Cm + Cm.T) / 2))[::-1]
+    lam = np.sort(np.linalg.eigh((Cm + Cm.T) / 2)[0])[::-1]
     if not (np.all(np.isfinite(lam)) and lam[0] > 0 and lam.size >= rank):
         return {"ratio": float("nan"), "pass": False}
     ratio = float(lam[rank - 1] / lam[0])
@@ -170,18 +179,26 @@ def finite_t(t: dict) -> bool:
     return all(math.isfinite(float(t[k])) for k in ("T", "q95", "max"))
 
 
-def proto_eps(D_paired, D_B, C_B_diag) -> dict:
-    """C-PROTO: eps = max over seeds and cells with C_bb > 0 of |D_paired - D_B| / sqrt(C_bb); a zero-variance cell
-    needs an exact zero difference. Passes at eps <= 1e-3."""
+def proto_eps(D_paired, D_B, C_B_diag, delta_paired=None, delta_B=None) -> dict:
+    """C-PROTO (printed, read by nothing): over the five replicas and, when given, the centrals, eps = the maximum over
+    cells with C_bb > 0 of |paired - B| / sqrt(C_bb); differences in zero-variance cells are reported separately (a
+    count and their maximum), never folded into eps."""
     Dp, Db, c = (np.asarray(x, float) for x in (D_paired, D_B, C_B_diag))
+    rows_p, rows_b = [Dp], [Db]
+    if delta_paired is not None:
+        rows_p.append(np.asarray(delta_paired, float)[None, :])
+        rows_b.append(np.asarray(delta_B, float)[None, :])
+    Dp, Db = np.vstack(rows_p), np.vstack(rows_b)
     if Dp.shape != Db.shape or Dp.shape[-1] != c.shape[0] or not all(np.all(np.isfinite(x)) for x in (Dp, Db, c)):
-        return {"eps": math.inf, "pass": False, "why": "shapes or non-finite"}
+        return {"eps": None, "why": "shapes or non-finite"}
     diff = np.abs(Dp - Db)
     pos = c > 0
-    if np.any(diff[:, ~pos] != 0):
-        return {"eps": math.inf, "pass": False, "why": "a zero-variance cell differs"}
-    eps = float(np.max(diff[:, pos] / np.sqrt(c[pos]))) if pos.any() else 0.0
-    return {"eps": eps, "eps_per_seed": [float(np.max(d[pos] / np.sqrt(c[pos]))) for d in diff], "pass": eps <= 1e-3}
+    eps_rows = [float(np.max(d[pos] / np.sqrt(c[pos]))) if pos.any() else 0.0 for d in diff]
+    zv = diff[:, ~pos]
+    return {"eps": max(eps_rows), "eps_per_row": eps_rows, "rows": "replicas 1..5" + (", then the central"
+                                                                                       if delta_paired is not None else ""),
+            "zero_variance_cells_differing": int(np.sum(np.any(zv != 0, axis=0))),
+            "zero_variance_max_abs": float(zv.max()) if zv.size else 0.0}
 
 
 def staged_index(b: int) -> str:
@@ -296,6 +313,8 @@ def coupling_exact(g_d, pt_d, pz_d, w_d, g_s, pt_s, pz_s, w_s) -> dict:
         return rec
     if not all(np.all(np.isfinite(np.asarray(x, float))) for x in (pt_d, pz_d, w_d, pt_s, pz_s, w_s)):
         return {"pass": False, "why": "non-finite"}
+    if np.any(np.asarray(w_d, float) < 0) or np.any(np.asarray(w_s, float) < 0):
+        return {"pass": False, "why": "a negative weight"}
     a, b = key(g_d, pt_d, pz_d, w_d), key(g_s, pt_s, pz_s, w_s)
     same = a.size == b.size and bool(np.array_equal(a, b))
     out = {"n_denominator": int(a.size), "n_signal": int(b.size), "pass": same}
@@ -327,3 +346,71 @@ def appended_identity(rows: dict, appended_entry, pot_scale: float, tail: dict) 
         "masks": bool(np.all(tail["pass_reco"]) and np.all(tail["pass_truth"])),
     }
     return {"checks": {k: bool(v) for k, v in checks.items()}, "pass": all(checks.values())}
+
+
+# ------------------------------------------------------------------------------- the unit receipts (shared)
+
+SCAN = [1, 2, 3, 4, 5, 10, 15, 20]
+COMMON_CONTROLS = {"C-FILL-IBU", "C-PAIR", "C-ROO", "C-DRAW-R", "C-REFINE", "C-COMP"}
+
+
+def required_controls(conv: str, b) -> set:
+    """The unit-level controls every unit of that kind must carry, each with pass exactly True (section 3.1)."""
+    req = set(COMMON_CONTROLS)
+    if b is None:
+        req |= {"C-COUPLE", "C-SIM"}
+    if conv == "R":
+        req |= {"C-MOVE-UNIT"}
+    return req
+
+
+def unit_kind(name: str) -> tuple[str, int | None]:
+    import re
+    m = re.fullmatch(r"p_(off|R)_(c|b([1-9][0-9]{0,2}))", name)
+    if not m:
+        raise ValueError(f"unit name {name!r}")
+    return m.group(1), (int(m.group(3)) if m.group(3) else None)
+
+
+def sha256_file(p) -> str:
+    h = hashlib.sha256()
+    with open(p, "rb") as fh:
+        while block := fh.read(1 << 24):
+            h.update(block)
+    return h.hexdigest()
+
+
+def unit_receipt(units, name: str) -> dict:
+    """The strict receipt check post-pilot and the scorer share (codex r1 #3, #11). Returns {"ok", "why", "meta"}:
+    the marker names the unit with verdict PASS; both products exist and match its digests; the meta's unit,
+    convention and seed match the name; the scan is exactly SCAN as integers; the extraction's arguments were finite;
+    and every required control is present with pass exactly True."""
+    import json
+    from pathlib import Path
+    units = Path(units)
+    try:
+        conv, b = unit_kind(name)
+        mk = json.loads((units / f"{name}.done").read_text())
+        npz, root = units / f"{name}.npz", units / f"{name}.root"
+        if not (mk.get("unit") == name and mk.get("verdict") == "PASS" and npz.is_file() and root.is_file()):
+            return {"ok": False, "why": "marker or products"}
+        if sha256_file(npz) != mk.get("sha256") or sha256_file(root) != mk.get("root_sha256"):
+            return {"ok": False, "why": "a product differs from its marker"}
+        with np.load(npz, allow_pickle=False) as z:
+            meta = json.loads(str(z["meta"]))
+            ks = z["ks"]
+        if not (meta.get("unit") == name and meta.get("convention") == conv and meta.get("bootstrap_seed") == b):
+            return {"ok": False, "why": "meta identity"}
+        if ks.dtype.kind not in "iu" or ks.tolist() != SCAN or meta.get("ks") != SCAN:
+            return {"ok": False, "why": "the scan"}
+        if meta.get("extract_args_finite") is not True:
+            return {"ok": False, "why": "non-finite extraction arguments"}
+        ctl = meta.get("controls", {})
+        req = required_controls(conv, b)
+        bad = sorted(c for c in req if not (isinstance(ctl.get(c), dict) and ctl[c].get("pass") is True))
+        bad += sorted(c for c, v in ctl.items() if not (isinstance(v, dict) and v.get("pass") is True))
+        if bad:
+            return {"ok": False, "why": f"controls {sorted(set(bad))}"}
+        return {"ok": True, "why": "", "meta": meta}
+    except (OSError, ValueError, KeyError, TypeError) as e:
+        return {"ok": False, "why": f"unreadable: {type(e).__name__}: {e}"}

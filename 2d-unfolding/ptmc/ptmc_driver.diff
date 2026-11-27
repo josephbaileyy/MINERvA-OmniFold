@@ -30,15 +30,13 @@
      return out
  
  
-@@ -1330,8 +1334,69 @@
-         "p_{T} (GeV/c);p_{||} (GeV/c)")
-     hCompleteness.Divide(hTruthDen)
+@@ -1332,6 +1336,73 @@
      return hCompleteness, hOFInputTruth, hTruthDen
-+
-+
+ 
+ 
 +PTMC_RECORD = {}  # PTMC: the draw and completeness records of the last main() run (read by the paired runner)
- 
- 
++
++
 +def _ptmc_truth_vector(pt, pz, w, pt_edges, pz_edges):  # PTMC
 +    """Sum of w per truth cell, flattened [pT][p||], with a TH2D's cell rule (lower edges in, upper edges out)."""
 +    ex, ey = np.asarray(pt_edges, float), np.asarray(pz_edges, float)
@@ -72,6 +70,12 @@
 +    nx, ny = len(pt_edges) - 1, len(pz_edges) - 1
 +    d_cv = np.array([h_den.GetBinContent(ix, iy) for ix in range(1, nx + 1) for iy in range(1, ny + 1)])
 +    c_cv = np.array([h_cv.GetBinContent(ix, iy) for ix in range(1, nx + 1) for iy in range(1, ny + 1)])
++    if not (np.all(np.isfinite(t_star_all)) and np.all(np.isfinite(t_cv_orig)) and np.all(np.isfinite(d_cv))
++            and np.all(t_cv_orig >= 0) and np.all(d_cv >= 0) and np.all(t_star_orig >= 0)):
++        raise RuntimeError("[FAIL] PTMC: a non-finite or negative completeness operand")
++    one_sided = (t_cv_orig > 0) != (d_cv > 0)  # section 2.2's table: excluded by C-COUPLE; if met, a STOP
++    if one_sided.any():
++        raise RuntimeError(f"[FAIL] PTMC: {int(one_sided.sum())} cells with exactly one of T_orig,CV and D_CV zero")
 +    lost = (t_cv_orig > 0) & (t_star_orig == 0)
 +    keep = t_cv_orig == 0
 +    c_star = c_cv.copy()
@@ -100,7 +104,7 @@
  def closure_reweight_factor(shape, pt, pz,
                               amplitude=0.2, sigma=0.1, pt0=0.4,
                               alpha=0.1, pz_ref=5.0):
-@@ -1702,12 +1767,14 @@
+@@ -1702,12 +1773,14 @@
      args = ap.parse_args()
      if (args.signal_convention == "minerva") != (args.oofvc_rows is not None):  # OOFVC
          raise SystemExit("[FAIL] --oofvc-rows goes with, and only with, --signal-convention minerva")
@@ -119,7 +123,7 @@
                           "--data-file)")
  
      # P1 diagnostic: the background stream is used only on the CV purity path.
-@@ -2212,6 +2279,8 @@
+@@ -2212,6 +2285,8 @@
      # w_truth_cv keeps the un-resampled MC truth weights for the completeness
      # (KNOWN_ISSUES 84); it stays None on the central path.
      w_truth_cv = None
@@ -128,7 +132,7 @@
      p1_hists = []  # P1 diagnostic: D*, B* and the starred training target
      if args.bootstrap_seed is not None:
          rng_data = np.random.default_rng(args.bootstrap_seed)
-@@ -2222,7 +2291,10 @@
+@@ -2222,7 +2297,10 @@
          # aligned across modes), then apply only the requested stream(s). With
          # independent streams, Cov(both) = Cov(data-only) + Cov(mc-only).
          b_data = rng_data.poisson(1.0, size=measured_weights.shape[0]).astype(float)
@@ -140,7 +144,7 @@
          if p1_on:
              # P1 diagnostic. Third stream over every mc_background entry; data
              # and MC draws above are unchanged, so arms pair by bootstrap seed.
-@@ -2236,6 +2308,15 @@
+@@ -2236,6 +2314,15 @@
                  b_truth = np.ones_like(b_truth)
              if args.unit_factors:
                  b_bkg = np.ones_like(b_bkg)
@@ -156,7 +160,7 @@
          if p1_on and args.bkg_mode == "purity":  # RE-2: D*/B*/purity on the purity path only
              hDataRecoStar2D = make_th2d("hDataRecoStar2D", "Data reco, resampled (P1 D*)",
                                          pt_edges, pz_edges)
-@@ -2554,9 +2635,15 @@
+@@ -2554,9 +2641,15 @@
              print("[INFO] Phase-17 MC bootstrap: completeness uses the "
                    "un-resampled MC truth weights, as the central value does "
                    "(KNOWN_ISSUES 84).")

@@ -107,6 +107,15 @@ class Completeness(unittest.TestCase):
         self.assertEqual(r["n_lost_support"], 1)
         self.assertEqual(r["c_star"][0], 0.0)
 
+    def test_one_sided_and_negative_are_not_finite(self):
+        """codex r1 #15: T_orig,CV = 0 with D_CV = 2 is a STOP (section 2.2's table), as is a negative operand."""
+        self.assertFalse(P.c_star([1.0], [1.0], [0.0], [2.0], [0.5])["finite"])
+        self.assertFalse(P.c_star([1.0], [1.0], [2.0], [0.0], [0.0])["finite"])
+        self.assertFalse(P.c_star([1.0], [1.0], [-2.0], [2.0], [0.5])["finite"])
+        # a negative operand that trips no other rule: T*_all < 0 would give a finite, negative c* (pre-flight mutant)
+        self.assertFalse(P.c_star([-1.0], [1.0], [2.0], [2.0], [0.5])["finite"])
+        self.assertFalse(P.coupling_exact([0], [.1], [2.], [-1.0], [0], [.1], [2.], [-1.0])["pass"])
+
     def test_coupling(self):
         self.assertTrue(P.coupling([1.0, 0, 2], [1.0, 0, 2])["pass"])
         self.assertFalse(P.coupling([1.0, 1e-3], [1.0, 0])["pass"])  # one-sided
@@ -153,6 +162,11 @@ class Coupling(unittest.TestCase):
         self.assertFalse(r["pass"])
         self.assertEqual(r["cells_with_count_mismatch"], [0])
         self.assertFalse(P.coupling_exact(g, pt, pz, np.array([1.0, np.nan, .5, 0]), g, pt, pz, w)["pass"])
+        # a negative weight fails even when both sides carry it identically
+        wn = np.array([1.0, -2.0, 0.5, 0.0])
+        r = P.coupling_exact(g, pt, pz, wn, g, pt, pz, wn)
+        self.assertFalse(r["pass"])
+        self.assertEqual(r["why"], "a negative weight")
 
     def test_appended_identity(self):
         rows = {"entry": np.array([5, 9, 12], np.int64), "reco_pt": np.array([.1, .2, .3]),
@@ -222,7 +236,14 @@ class Gates(unittest.TestCase):
         c = np.array([4.0, 1.0, 0.0])
         r = P.proto_eps(np.array([[0.002, 0.0, 0.0]]), np.zeros((1, 3)), c)
         self.assertAlmostEqual(r["eps"], 0.001)
-        self.assertFalse(P.proto_eps(np.array([[0.0, 0.0, 1e-30]]), np.zeros((1, 3)), c)["pass"])
+        # codex's probe: a difference [10, 1] over the diagonal [4, 0] is eps = 5 plus one zero-variance discrepancy
+        r = P.proto_eps(np.array([[10.0, 1.0]]), np.zeros((1, 2)), np.array([4.0, 0.0]))
+        self.assertAlmostEqual(r["eps"], 5.0)
+        self.assertEqual(r["zero_variance_cells_differing"], 1)
+        r = P.proto_eps(np.zeros((1, 3)), np.zeros((1, 3)), c, delta_paired=np.array([0.0, 0.5, 0.0]),
+                        delta_B=np.zeros(3))
+        self.assertAlmostEqual(r["eps"], 0.5)
+        self.assertEqual(len(r["eps_per_row"]), 2)
 
     def test_staged_index(self):
         self.assertEqual(P.staged_index(1), "002_xsec.root")
@@ -431,7 +452,9 @@ class Runner(unittest.TestCase):
         argv = ["--tree", str(tree()), "--rows", str(cls.rows_path), "--rows-sha256",
                 hashlib.sha256(cls.rows_path.read_bytes()).hexdigest(), "--join-record", str(cls.join),
                 "--out", str(cls.out), "--numpy-unfolder"] + sum((["--unit", u] for u in cls.UNITS), [])
-        with mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True):
+        cls.pins = {"rows": hashlib.sha256(cls.rows_path.read_bytes()).hexdigest(),
+                    "join": hashlib.sha256(cls.join.read_bytes()).hexdigest()}
+        with mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True), mock.patch.dict(ptmc_run.PINS, cls.pins):
             cls.rc = ptmc_run.main(argv)
 
     def meta(self, u):
@@ -445,7 +468,7 @@ class Runner(unittest.TestCase):
         self.assertEqual(self.rc, 0)
 
     def test_controls_present(self):
-        want = {"C-FILL-IBU", "C-PAIR", "C-ROO", "C-DRAW-R", "C-COMP"}
+        want = {"C-FILL-IBU", "C-PAIR", "C-ROO", "C-DRAW-R", "C-REFINE", "C-COMP"}
         for u in self.UNITS:
             m = self.meta(u)
             got = set(m["controls"])
@@ -493,7 +516,7 @@ class Runner(unittest.TestCase):
 
     def test_rerun_skips_pass_and_refuses_unknown(self):
         import ptmc_run
-        with mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True):
+        with mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True), mock.patch.dict(ptmc_run.PINS, self.pins):
             rc = ptmc_run.main(["--tree", str(tree()), "--rows", str(self.rows_path), "--rows-sha256",
                                 hashlib.sha256(self.rows_path.read_bytes()).hexdigest(), "--join-record",
                                 str(self.join), "--out", str(self.out), "--numpy-unfolder", "--unit", "p_off_c"])
@@ -502,6 +525,30 @@ class Runner(unittest.TestCase):
                                         "x", "--out", str(self.out), "--unit", "p_off_b6"]), 2)
         self.assertEqual(ptmc_run.main(["--tree", str(tree()), "--rows", "x", "--rows-sha256", "0", "--join-record",
                                         "x", "--out", str(self.out), "--unit", "p_R_b201"]), 2)
+        self.assertEqual(ptmc_run.main(["--tree", str(tree()), "--rows", "x", "--rows-sha256", "0", "--join-record",
+                                        "x", "--out", str(self.out), "--unit", "p_R_b3", "--unit", "p_R_b3"]), 2)
+
+    def test_reuse_requires_both_products_to_match(self):
+        """codex r1 #2: a PASS marker with a missing or altered product is refused, never reused."""
+        import ptmc_run
+        tmp = Path(tempfile.mkdtemp())
+        for f in ("p_off_c.npz", "p_off_c.root", "p_off_c.done"):
+            (tmp / f).write_bytes((self.out / f).read_bytes())
+        (tmp / "p_off_c.root").write_bytes(b"altered")
+        args = ["--tree", str(tree()), "--rows", str(self.rows_path), "--rows-sha256", self.pins["rows"],
+                "--join-record", str(self.join), "--out", str(tmp), "--numpy-unfolder", "--unit", "p_off_c"]
+        with mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True), mock.patch.dict(ptmc_run.PINS, self.pins):
+            self.assertEqual(ptmc_run.main(args), ptmc_run.RC_CONTROL)
+            (tmp / "p_off_c.root").unlink()
+            self.assertEqual(ptmc_run.main(args), ptmc_run.RC_CONTROL)
+
+    def test_wrong_rows_pin_refuses(self):
+        import ptmc_run
+        with mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True):
+            rc = ptmc_run.main(["--tree", str(tree()), "--rows", str(self.rows_path), "--rows-sha256",
+                                self.pins["rows"], "--join-record", str(self.join), "--out", str(Path(tempfile.mkdtemp())),
+                                "--numpy-unfolder", "--unit", "p_off_c"])
+        self.assertEqual(rc, ptmc_run.RC_GATE)  # the module's pins are r3's, not the fixture's
 
 
 if __name__ == "__main__":

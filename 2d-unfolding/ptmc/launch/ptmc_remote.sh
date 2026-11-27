@@ -1,21 +1,24 @@
 #!/bin/bash
-# PTMC's login-node steps (PTMC-DECLARATION.md sections 1, 2.3 and 7), run through ptmc_launch.sh as
-# `bash <self> <self> MODE`, each on its own GO. Writes only under $R. Every gate fails closed: an unexpected state, or
-# a failed command, is a STOP (exit 2-9), never an empty pass. The login-node steps run at nice 19 with one thread.
-#   setup       fence; $R new; the tool clone at TOOLC; the O_NOATIME copies (CV, MC from CFS; r3's rows and join
-#               record), each re-hashed against its pin; the deploy tree (make_tree.sh, clone); libRooUnfold's pin
-#   pilot       fence; setup's digests re-checked; submit pilot.sbatch (2 nodes, the 8 pilot units)
-#   post-pilot  the pilot's sacct, its units' markers and controls, t_R, o, the projection and L (ptmc_pilot_post.py);
-#               writes pilot-post/PROCEED only if every rule of section 7 passes
-#   replicas    fence; PROCEED re-checked; submit replicas.sbatch with -t L (5 nodes)
-#   post        sacct of every PTMC job, the charge, the D4 baseline staged by O_NOATIME (ptmc_stage_d4.py), and the
-#               records tarred: post.tar.gz (units and logs) and d4.tar.gz (the staged D4 copies)
-set -u
-export LC_ALL=C
+# PTMC's login-node and DTN steps (PTMC-DECLARATION.md sections 1, 2.3 and 7; the director's binding rulings), run
+# through ptmc_launch.sh as `bash <self> <self> MODE`, each on its own GO. Writes only under $R. Every gate fails
+# closed: a failed command or an unexpected state is a STOP (exit 2-9), never an empty pass. Every phase is claimed
+# atomically (mkdir) before it acts, so a second invocation refuses. Every non-compute step runs with one thread.
+#   setup       (login) fence; $R new; the tool clone at TOOLC; the deploy tree (make_tree.sh, clone); its exact
+#               digest inventory; the driver's and libRooUnfold's pins
+#   prestage    (login) the fence for the copies, recorded with its time (repeatable until stage is claimed)
+#   stage       (dtn01, the declaration's DTN copy) within 15 minutes of prestage: the O_NOATIME copies of CV and MC
+#               (CFS) and of r3's rows and join record, each re-hashed against its pin; nothing else
+#   pilot       (login) fence; the stage and deploy re-checked; submit pilot.sbatch on exactly 2 nodes
+#   post-pilot  (login) the pilot's sacct, then ptmc_pilot_post.py; PROCEED only if every rule of section 7 passes
+#   replicas    (login) PROCEED re-derived from fresh accounting (the same L); fence; submit -N 5 -t L replicas.sbatch
+#   post        (login) sacct of each PTMC job, the charge, the D4 staging (ptmc_stage_d4.py), the two tars
+set -u -o pipefail
+export LC_ALL=C OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 umask 077
 MODE=${2:-}
 R=/pscratch/sd/j/josephrb/ptmc-20261128
 TOOLC=__TOOL_COMMIT__
+DRIVER_SHA=__DRIVER_SHA256__
 URL=https://github.com/josephbaileyy/MINERvA-OmniFold.git
 CV_SRC=/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root
 MC_SRC=/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root
@@ -29,13 +32,19 @@ LIB=/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/libRooUnfo
 LIB_SHA=0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd
 PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
 CONDA_HOOK=/global/common/software/nersc/pe/conda/24.10.0/Miniforge3-24.7.1-0/bin/conda
+DEPLOY_FILES="2d-unfolding/re2/re2_driver.py 2d-unfolding/ref_c2c1/config.json 2d-unfolding/ref_c2c1/ref_c2c1.py
+2d-unfolding/ref_c2c1/ref_c2c1_read.py unbinned_unfolding/python/omnifold.py 2d-unfolding/compare_to_paper_fullcov.py
+2d-unfolding/uq/reported_cells.py 2d-unfolding/oofvc/oofvc_lib.py"
 O=$R/tool/2d-unfolding/ptmc
 stop() { echo "STOP: $*"; exit "${STOP_RC:-7}"; }
 now() { date -u +%FT%TZ; }
-case "$TOOLC" in *__*) stop "the tool commit is not filled in";; esac
-case "$MODE" in setup|pilot|post-pilot|replicas|post) ;; *) stop "mode '$MODE'";; esac
-me=$(id -un) && [ "$me" = josephrb ] || stop "user"
-echo "node $(hostname) $(now) mode $MODE tool $TOOLC"
+case "$TOOLC$DRIVER_SHA" in *__*) stop "a pin is not filled in";; esac
+case "$MODE" in setup|prestage|stage|pilot|post-pilot|replicas|post) ;; *) stop "mode '$MODE'";; esac
+me=$(id -un) || stop "id failed"
+[ "$me" = josephrb ] || stop "user"
+host=$(hostname) || stop "hostname failed"
+case "$MODE:$host" in stage:dtn*) ;; stage:*) stop "stage runs on a DTN, not $host";; *:dtn*) stop "$MODE runs on a login node";; esac
+echo "node $host $(now) mode $MODE tool $TOOLC"
 
 # fence: no live cov2d or t2a job (sacct, never squeue; a state outside the terminal set, or an empty one, is live)
 fence_check() {
@@ -43,40 +52,72 @@ fence_check() {
   since=$(date -u -d '14 days ago' +%F) || stop "date failed ($1)"
   out=$(sacct -X -n -P -S "$since" -o JobID,JobName,State 2>&1) || stop "sacct failed ($1)"
   live=$(printf '%s\n' "$out" | awk -F'|' '$2 ~ /^(cov2d|t2a)/ { split($3, s, " ");
-    if (s[1] !~ /^(COMPLETED|FAILED|CANCELLED|TIMEOUT|OUT_OF_MEMORY|NODE_FAIL|PREEMPTED|BOOT_FAIL|DEADLINE)$/) print }')
+    if (s[1] !~ /^(COMPLETED|FAILED|CANCELLED|TIMEOUT|OUT_OF_MEMORY|NODE_FAIL|PREEMPTED|BOOT_FAIL|DEADLINE)$/) print }') \
+    || stop "awk failed ($1)"
   [ -z "$live" ] || stop "a fenced job is live ($1): $live"
   echo "fence check ($1): no live cov2d or t2a job $(now)"
 }
-# no PTMC job queued or running (a second submit, or a step run beside a live job, is refused)
 no_ptmc_job() {
   local sq n
   sq=$(squeue -h -u "$USER" -o '%j') || stop "squeue failed"
-  n=$(printf '%s\n' "$sq" | grep -c '^ptmc_' || true)
+  n=$(printf '%s\n' "$sq" | grep -c '^ptmc_') ; [ "$?" -le 1 ] || stop "grep failed"
   [ "$n" = 0 ] || stop "a ptmc job is queued or running"
 }
-sha_of() { sha256sum < "$1" | cut -d' ' -f1; }
+claim() { mkdir "$R/claims/$1" 2>/dev/null || stop "phase $1 is already claimed (a second invocation, or it ran)"; }
+stage_empty() { local st; st=$(ls -A "$R/stage") || stop "ls of the stage failed"; [ -z "$st" ] || stop "the stage is not empty"; }
+sha_of() { local h; h=$(sha256sum < "$1" | cut -d' ' -f1) || return 1; [ ${#h} = 64 ] || return 1; echo "$h"; }
 tool_ok() {
-  [ "$(git -C "$R/tool" rev-parse HEAD)" = "$TOOLC" ] || stop "the tool clone is not at $TOOLC"
-  [ -z "$(git -C "$R/tool" status --porcelain --ignored)" ] || stop "the tool clone is not clean"
+  local head st
+  head=$(git -C "$R/tool" rev-parse HEAD) || stop "git rev-parse failed"
+  [ "$head" = "$TOOLC" ] || stop "the tool clone is not at $TOOLC"
+  st=$(git -C "$R/tool" status --porcelain --ignored) || stop "git status failed"
+  [ -z "$st" ] || stop "the tool clone is not clean"
+}
+deploy_ok() {
+  local want have
+  want=$(printf '%s\n' $DEPLOY_FILES | sort) || stop "inventory"
+  have=$(cut -c67- "$R/logs/deploy.sha256" | sort) || stop "deploy.sha256 unreadable"
+  [ "$have" = "$want" ] || stop "the deploy digests do not list exactly the declared files"
+  (cd "$R/deploy" && sha256sum -c --quiet "$R/logs/deploy.sha256") || stop "the deploy tree differs from its digests"
+  [ "$(grep ' 2d-unfolding/re2/re2_driver.py$' "$R/logs/deploy.sha256" | cut -c1-64)" = "$DRIVER_SHA" ] \
+    || stop "the deployed driver is not $DRIVER_SHA"
 }
 stage_ok() {
   [ -e "$R/stage/ready" ] || stop "the stage is not ready"
-  [ "$(sha_of "$R/stage/runEventLoopOmniFold_MEFHC.root")" = "$CV_SHA" ] || stop "the staged CV differs from its pin"
-  [ "$(sha_of "$R/stage/runEventLoopMC_MEFHC.root")" = "$MC_SHA" ] || stop "the staged MC differs from its pin"
-  [ "$(sha_of "$R/stage/oofvc_rows.npz")" = "$ROWS_SHA" ] || stop "the staged rows differ from their pin"
-  [ "$(sha_of "$R/stage/join.json")" = "$JOIN_SHA" ] || stop "the staged join record differs from its pin"
+  local f h
+  for f in "runEventLoopOmniFold_MEFHC.root:$CV_SHA" "runEventLoopMC_MEFHC.root:$MC_SHA" "oofvc_rows.npz:$ROWS_SHA" \
+           "join.json:$JOIN_SHA"; do
+    h=$(sha_of "$R/stage/${f%%:*}") || stop "sha256 of ${f%%:*} failed"
+    [ "$h" = "${f#*:}" ] || stop "the staged ${f%%:*} differs from its pin"
+  done
   [ "$(cat "$R/stage/rows.sha256")" = "$ROWS_SHA" ] || stop "rows.sha256"
-  (cd "$R/deploy" && sha256sum -c --quiet "$R/logs/deploy.sha256") || stop "the deploy tree differs from its digests"
 }
 copy_noatime() {  # copy_noatime SRC DEST PIN: one O_NOATIME read, then the copy re-hashed against the pin
+  local h
   [ -f "$1" ] && [ ! -L "$1" ] || stop "$1 is absent or a symlink"
   [ ! -e "$2" ] || stop "$2 exists"
-  echo "pre  $(stat -c '%n|atime=%x' "$1")"
+  echo "pre  $(stat -c '%n|atime=%x' "$1")" || stop "stat $1"
   dd iflag=noatime if="$1" of="$2" bs=16M status=none || stop "dd $1"
-  echo "post $(stat -c '%n|atime=%x' "$1")"
-  [ "$(sha_of "$2")" = "$3" ] || stop "the copy of $1 is not $3"
+  echo "post $(stat -c '%n|atime=%x' "$1")" || stop "stat $1"
+  h=$(sha_of "$2") || stop "sha256 of $2 failed"
+  [ "$h" = "$3" ] || stop "the copy of $1 is not $3"
   chmod a-w "$2" || stop "chmod $2"
   echo "copied $(basename "$2") $3"
+}
+activate() { eval "$("$CONDA_HOOK" shell.bash hook)" && conda activate "$HOME/.conda/envs/root_6_28" || stop "conda activate"; }
+submitted() {  # submitted NAME JOBID: persist the job id; a failure prints it and STOPs (the job exists)
+  case "$2" in *[!0-9]*|'') stop "sbatch printed '$2'";; esac
+  echo "$2" > "$R/logs/$1.jobid" || stop "the $1 job $2 was submitted but its id could not be recorded"
+  echo "$1 job $2 $(now)"
+}
+pilot_sacct() {  # pilot_sacct FILE: the pilot's accounting, non-empty, from a successful sacct
+  local j out
+  j=$(cat "$R/logs/pilot.jobid") || stop "no pilot job id"
+  case "$j" in *[!0-9]*|'') stop "pilot job id '$j'";; esac
+  out=$(TZ=UTC sacct -j "$j" -n -P -o JobID,JobName,State,ExitCode,ElapsedRaw,NNodes,Start,End) || stop "sacct failed"
+  [ -n "$out" ] || stop "sacct returned nothing for job $j"
+  printf '%s\n' "$out" > "$1" || stop "write $1"
+  echo "$j"
 }
 
 case "$MODE" in
@@ -84,86 +125,120 @@ setup)
   fence_check "before setup"
   no_ptmc_job
   [ ! -e "$R" ] || stop "$R exists"
-  mkdir -p "$R/logs" "$R/stage" || stop "mkdir"
+  mkdir -p "$R/logs" "$R/stage" "$R/claims" || stop "mkdir"
+  claim setup
   git clone -q "$URL" "$R/tool" > "$R/logs/clone.log" 2>&1 || stop "git clone"
   git -C "$R/tool" -c advice.detachedHead=false checkout -q "$TOOLC" || stop "checkout $TOOLC"
   tool_ok
-  fence_check "before the CV copy (cov2d-protected; O_NOATIME)"
-  # the copies print to the session (the receipt); a STOP inside one exits here, in the open
+  PTMC_PY=$PY nice -n 19 bash "$O/make_tree.sh" "$R/deploy" clone "$URL" "$R/stage" > "$R/logs/deploy.log" 2>&1 \
+    || { cat "$R/logs/deploy.log"; stop "make_tree"; }
+  cat "$R/logs/deploy.log"
+  (cd "$R/deploy" && sha256sum $DEPLOY_FILES) > "$R/logs/deploy.sha256" || stop "deploy digests"
+  deploy_ok
+  h=$(sha_of "$LIB") || stop "sha256 of libRooUnfold.so failed"
+  [ "$h" = "$LIB_SHA" ] || stop "libRooUnfold.so differs from its pin"
+  echo "libRooUnfold.so $LIB_SHA"
+  touch "$R/logs/setup.done" || stop "setup.done"
+  echo "setup done $(now)" ;;
+prestage)  # repeatable until stage is claimed: a stale fence is refreshed, never reused
+  [ -e "$R/logs/setup.done" ] || stop "setup has not run"
+  [ ! -e "$R/claims/stage" ] || stop "stage is claimed"
+  stage_empty
+  fence_check "before the DTN copies (the CV is cov2d-protected; O_NOATIME)"
+  e=$(date -u +%s) || stop "date"
+  echo "$e" > "$R/logs/prestage.epoch" || stop "prestage.epoch"
+  echo "$e $host" >> "$R/logs/prestage.record" || stop "prestage.record"
+  echo "prestage done $(now)" ;;
+stage)
+  [ -e "$R/logs/setup.done" ] && [ -e "$R/logs/prestage.epoch" ] || stop "setup or prestage has not run"
+  t0=$(cat "$R/logs/prestage.epoch") || stop "prestage.epoch"
+  case "$t0" in *[!0-9]*|'') stop "prestage.epoch '$t0'";; esac
+  t1=$(date -u +%s) || stop "date"
+  [ $((t1 - t0)) -ge 0 ] && [ $((t1 - t0)) -le 900 ] || stop "the prestage fence is $((t1 - t0)) s old (limit 900)"
+  stage_empty
+  claim stage
   copy_noatime "$CV_SRC" "$R/stage/runEventLoopOmniFold_MEFHC.root" "$CV_SHA"
   copy_noatime "$MC_SRC" "$R/stage/runEventLoopMC_MEFHC.root" "$MC_SHA"
   copy_noatime "$ROWS_SRC" "$R/stage/oofvc_rows.npz" "$ROWS_SHA"
   copy_noatime "$JOIN_SRC" "$R/stage/join.json" "$JOIN_SHA"
-  echo "staged $(now)"
-  echo "$ROWS_SHA" > "$R/stage/rows.sha256"
-  PTMC_PY=$PY nice -n 19 bash "$O/make_tree.sh" "$R/deploy" clone "$URL" "$R/stage" > "$R/logs/deploy.log" 2>&1 \
-    || { cat "$R/logs/deploy.log"; stop "make_tree"; }
-  cat "$R/logs/deploy.log"
-  (cd "$R/deploy" && sha256sum 2d-unfolding/re2/re2_driver.py 2d-unfolding/ref_c2c1/config.json \
-     2d-unfolding/ref_c2c1/ref_c2c1.py 2d-unfolding/ref_c2c1/ref_c2c1_read.py unbinned_unfolding/python/omnifold.py \
-     2d-unfolding/compare_to_paper_fullcov.py 2d-unfolding/uq/reported_cells.py 2d-unfolding/oofvc/oofvc_lib.py) \
-     > "$R/logs/deploy.sha256" || stop "deploy digests"
-  [ "$(sha_of "$LIB")" = "$LIB_SHA" ] || stop "libRooUnfold.so differs from its pin"
-  echo "libRooUnfold.so $LIB_SHA"
+  echo "$ROWS_SHA" > "$R/stage/rows.sha256" || stop "rows.sha256"
   touch "$R/stage/ready" || stop "ready"
-  echo "setup done $(now)" ;;
+  echo "stage done $(now)" ;;
 pilot)
-  tool_ok; stage_ok
+  tool_ok; deploy_ok; stage_ok
   [ ! -e "$R/logs/pilot.jobid" ] && [ ! -e "$R/units" ] || stop "the pilot has been submitted"
   no_ptmc_job
   fence_check "before the pilot's submit"
-  j=$(sbatch --parsable "$O/launch/pilot.sbatch") || stop "sbatch"
-  case "$j" in *[!0-9]*|'') stop "sbatch printed '$j'";; esac
-  echo "$j" > "$R/logs/pilot.jobid"; echo "pilot job $j $(now)" ;;
+  claim pilot
+  j=$(sbatch --parsable -N 2 "$O/launch/pilot.sbatch") || stop "sbatch"
+  submitted pilot "$j" ;;
 post-pilot)
   tool_ok
   [ -e "$R/logs/pilot.jobid" ] || stop "no pilot job"
   [ ! -e "$R/pilot-post" ] || stop "post-pilot has run"
   no_ptmc_job
-  j=$(cat "$R/logs/pilot.jobid")
+  claim post-pilot
   mkdir "$R/pilot-post" || stop "mkdir"
-  TZ=UTC sacct -j "$j" -n -P -o JobID,JobName,State,ExitCode,ElapsedRaw,NNodes,Start,End > "$R/pilot-post/sacct.txt" 2>&1 \
-    || stop "sacct"
+  j=$(pilot_sacct "$R/pilot-post/sacct.txt") || { r=$?; echo "$j"; exit $r; }
   cat "$R/pilot-post/sacct.txt"
-  eval "$("$CONDA_HOOK" shell.bash hook)" && conda activate "$HOME/.conda/envs/root_6_28" || stop "conda activate"
-  OMP_NUM_THREADS=1 nice -n 19 "$PY" -B "$O/launch/ptmc_pilot_post.py" --sacct "$R/pilot-post/sacct.txt" \
-    --units "$R/units" --out "$R/pilot-post" ; r=$?
+  activate
+  nice -n 19 "$PY" -B "$O/launch/ptmc_pilot_post.py" --sacct "$R/pilot-post/sacct.txt" --jobid "$j" \
+    --units "$R/units" --rows "$R/stage/oofvc_rows.npz" --out "$R/pilot-post" ; r=$?
   cat "$R/pilot-post/decision.json" 2>/dev/null
   [ "$r" = 0 ] || STOP_RC=6 stop "the pilot's post did not PROCEED (rc $r)"
   [ -e "$R/pilot-post/PROCEED" ] || stop "no PROCEED file"
   echo "post-pilot PROCEED $(now)" ;;
 replicas)
-  tool_ok; stage_ok
+  tool_ok; deploy_ok; stage_ok
   [ -e "$R/pilot-post/PROCEED" ] || stop "no PROCEED"
   [ ! -e "$R/logs/replicas.jobid" ] || stop "the replicas have been submitted"
-  no_ptmc_job
   L=$(cat "$R/pilot-post/time_limit_minutes") || stop "no time limit"
   case "$L" in ''|*[!0-9]*) stop "time limit '$L'";; esac
   [ "$L" -ge 1 ] && [ "$L" -le 600 ] || stop "time limit $L minutes is outside 1..600"
+  no_ptmc_job
+  fence_check "before the replicas' claim"
+  claim replicas
+  mkdir "$R/replicas-check" || stop "mkdir"
+  j=$(pilot_sacct "$R/replicas-check/sacct.txt") || { r=$?; echo "$j"; exit $r; }
+  activate
+  chk=$(nice -n 19 "$PY" -B "$O/launch/ptmc_pilot_post.py" --sacct "$R/replicas-check/sacct.txt" --jobid "$j" \
+    --units "$R/units" --rows "$R/stage/oofvc_rows.npz" --out "$R/replicas-check" \
+    --recheck "$R/pilot-post/decision.json") || STOP_RC=6 stop "the recheck does not give the same PROCEED and L: $chk"
+  echo "recheck $chk"
+  printf '%s' "$chk" | grep -q "\"time_limit_minutes\": $L}" || stop "the recheck's L is not $L"
   fence_check "before the replicas' submit"
-  j=$(sbatch --parsable -t "$L" "$O/launch/replicas.sbatch") || stop "sbatch"
-  case "$j" in *[!0-9]*|'') stop "sbatch printed '$j'";; esac
-  echo "$j" > "$R/logs/replicas.jobid"; echo "replicas job $j, -t $L minutes $(now)" ;;
+  j=$(sbatch --parsable -N 5 -t "$L" "$O/launch/replicas.sbatch") || stop "sbatch"
+  submitted replicas "$j"
+  echo "-t $L minutes, -N 5" ;;
 post)
   tool_ok
   [ ! -e "$R/post" ] && [ ! -e "$R/post.tar.gz" ] && [ ! -e "$R/d4" ] || stop "post has run"
+  [ -e "$R/logs/pilot.jobid" ] && [ -e "$R/logs/replicas.jobid" ] || stop "a PTMC job id is missing"
   no_ptmc_job
+  claim post
   mkdir "$R/post" || stop "mkdir"
+  : > "$R/post/sacct.txt" || stop "sacct.txt"
   for f in pilot replicas; do
-    [ -e "$R/logs/$f.jobid" ] || continue
-    TZ=UTC sacct -j "$(cat "$R/logs/$f.jobid")" -n -P -o JobID,JobName,State,ExitCode,ElapsedRaw,NNodes,Start,End
-  done > "$R/post/sacct.txt" 2>&1 || stop "sacct"
-  awk -F'|' '$1 !~ /\./ {s += $5 * $6 / 3600} END {printf "charged_node_h=%.4f\n", s}' "$R/post/sacct.txt" \
-    > "$R/post/charge.txt" || stop "charge"
+    j=$(cat "$R/logs/$f.jobid") || stop "$f job id"
+    case "$j" in *[!0-9]*|'') stop "$f job id '$j'";; esac
+    out=$(TZ=UTC sacct -j "$j" -n -P -o JobID,JobName,State,ExitCode,ElapsedRaw,NNodes,Start,End) || stop "sacct $f"
+    [ -n "$out" ] || stop "sacct returned nothing for the $f job $j"
+    printf '%s\n' "$out" | awk -F'|' -v j="$j" '{split($1, a, "."); if (a[1] != j) bad = 1} END {exit bad}' \
+      || stop "sacct for the $f job $j has a row of another job"
+    printf '%s\n' "$out" | grep -q "^$j|" || stop "sacct has no allocation line for the $f job $j"
+    printf '%s\n' "$out" >> "$R/post/sacct.txt" || stop "write sacct.txt"
+  done
+  awk -F'|' '$1 !~ /\./ {s += $5 * $6 / 3600; n++} END {if (n != 2) exit 1; printf "charged_node_h=%.4f\n", s}' \
+    "$R/post/sacct.txt" > "$R/post/charge.txt" || stop "charge"
   cat "$R/post/sacct.txt" "$R/post/charge.txt"
-  eval "$("$CONDA_HOOK" shell.bash hook)" && conda activate "$HOME/.conda/envs/root_6_28" || stop "conda activate"
-  OMP_NUM_THREADS=1 nice -n 19 "$PY" -B "$O/launch/ptmc_stage_d4.py" --tree "$R/deploy" --out "$R/d4" \
-    > "$R/post/d4.log" 2>&1 || { cat "$R/post/d4.log"; stop "the D4 staging"; }
+  activate
+  nice -n 19 "$PY" -B "$O/launch/ptmc_stage_d4.py" --tree "$R/deploy" --out "$R/d4" > "$R/post/d4.log" 2>&1 \
+    || { cat "$R/post/d4.log"; stop "the D4 staging"; }
   tail -5 "$R/post/d4.log"
   (cd "$R" && sha256sum stage/* > "$R/post/stage.sha256") || stop "stage digests"
-  (cd "$R" && nice -n 19 tar -czf "$R/post.tar.gz" logs post pilot-post units) || stop "tar post"
+  (cd "$R" && nice -n 19 tar -czf "$R/post.tar.gz" logs post pilot-post replicas-check claims units) || stop "tar post"
   (cd "$R" && nice -n 19 tar -czf "$R/d4.tar.gz" d4) || stop "tar d4"
-  sha256sum "$R/post.tar.gz" "$R/d4.tar.gz"
+  sha256sum "$R/post.tar.gz" "$R/d4.tar.gz" || stop "the tars' digests"
   echo "post done $(now)" ;;
 esac
 exit 0

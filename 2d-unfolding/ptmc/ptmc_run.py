@@ -36,6 +36,10 @@ MINERVA_ARGV = ["--signal-convention", "minerva", "--oofvc-rows"]
 UNIT_RE = re.compile(r"^p_(off|R)_(c|b(\d+))$")
 SEEDS = {"off": range(1, 6), "R": range(1, 201)}
 RTOL = {"fill": 1e-9, "roo": 1e-9, "sim": 1e-9, "pair_y": 1e-9, "comp": 1e-12}
+# the declared inputs (PTMC-DECLARATION.md section 1): r3's rows file and join record, pinned here, never taken from
+# the caller (codex r1 #10); the fixture tests patch this dict
+PINS = {"rows": "cbf34bd8cad0f4978dc1aea22713eb5057bf521118dc7ce8d10b93b30defcb03",
+        "join": "13674f6d0c12bbb7c7ba133346940976bada2c765585ecb4e78593ec63521a4b"}
 
 
 def sha256(p: Path) -> str:
@@ -126,12 +130,12 @@ def run_paired(C, driver, ohf, argv, out_root: Path, ks, unfolder, staging: Path
         cap["signed_w"] = np.array(signed_w, dtype=float, copy=True)
         cap["signed_feat"] = np.array(feat, dtype=float, copy=True)
         out = real["refine_stay_positive"](feat, signed_w, *a, **k)
-        cap["refined_w"] = np.array(out[0], dtype=float, copy=True)
+        cap["refined_w"] = np.array(out[0], copy=True)  # the original dtype (C-REFINE compares digests)
         return out
 
     def paired(MCgen, MCreco, measured, pr, ptm, mpr, iters, MCgen_weights=None, MCreco_weights=None,
                measured_weights=None, **k):
-        arrays = (MCgen, MCreco, measured, pr, ptm, MCgen_weights, MCreco_weights, measured_weights)
+        arrays = (MCgen, MCreco, measured, pr, ptm, mpr, MCgen_weights, MCreco_weights, measured_weights)
         cap["digest_ibu"] = P.digest(*arrays)
         T, M, y, t = C.binned_problem(np.asarray(MCgen), np.asarray(MCreco), np.asarray(measured), pr, ptm,
                                       MCgen_weights, MCreco_weights, measured_weights, driver.PT_EDGES,
@@ -145,7 +149,11 @@ def run_paired(C, driver, ohf, argv, out_root: Path, ks, unfolder, staging: Path
         y_np, _, _ = np.histogram2d(meas[inside, 0], meas[inside, 1], bins=[pt_e, pz_e], weights=mw[inside])
         cap.update(T=T, M=M, y=y, traj=traj, tin=t[pt_mask], w_in=np.asarray(MCgen_weights, float)[pt_mask],
                    y_np=y_np.reshape(-1), w_truth_seen=np.array(MCgen_weights, float, copy=True),
-                   w_reco_seen=np.array(MCreco_weights, float, copy=True), measured_weights=mw.copy())
+                   w_reco_seen=np.array(MCreco_weights, float, copy=True), measured_weights=mw.copy(),
+                   seam={"MCgen": np.array(MCgen, copy=True), "MCreco": np.array(MCreco, copy=True),
+                         "pass_reco": np.array(pr, copy=True), "pass_truth": np.array(ptm, copy=True),
+                         "measured_pass_reco": np.array(mpr, copy=True), "n_measured": int(meas.shape[0]),
+                         "measured_weights_raw": np.array(measured_weights, copy=True)})
         cap["digest_omnifold"] = P.digest(*arrays)
         return real_omnifold(MCgen, MCreco, measured, pr, ptm, mpr, iters, MCgen_weights=MCgen_weights,
                              MCreco_weights=MCreco_weights, measured_weights=measured_weights, **k)
@@ -216,6 +224,30 @@ def comp_check(cap, ts: dict, conv: str, b: int | None, consumed_c: np.ndarray, 
     return {"mode": "cv", "max_rel": rc["max_rel"], "pass": rc["pass"]}
 
 
+def c_sim(C, driver, cap, h_comp, h_den, ks) -> dict:
+    """C-SIM through the full chain (REF-C2C1's construction, under section 3's numerical rule): IBU on the MC's own
+    reco expectation, the per-event factors, the driver's fill and the recorded extraction, against the MC's full
+    truth cross section, at every K on every covered cell; the covered cells are recorded by index (the scorer checks
+    the reported 205 are among them). Every comparison is rel_close (NaN-safe, exact zeros)."""
+    T, M, tin, w_in = cap["T"], cap["M"], cap["tin"], cap["w_in"]
+    a, k = cap["extract"]
+    nx, ny = len(driver.PT_EDGES) - 1, len(driver.PZ_EDGES) - 1
+    unit = h_comp.Clone("ptmc_csim_unit")
+    for ix in range(1, nx + 1):
+        for iy in range(1, ny + 1):
+            unit.SetBinContent(ix, iy, 1.0)
+    ref = C.th2_vector(cap["real_extract"](h_den, unit, *a[1:], **k), nx, ny)
+    covered = C.th2_vector(h_comp, nx, ny) > 0
+    traj = C.dagostini(M, T, M.sum(axis=1), ks)
+    worst, ok = 0.0, bool(covered.any())
+    for K in ks:
+        h = C.filled(driver, tin, w_in, C.event_factors(traj[K], T, tin), f"ptmc_csim_K{K}")
+        x = C.th2_vector(cap["real_extract"](h, *a, **k), nx, ny)
+        r = P.rel_close(x[covered], ref[covered], RTOL["sim"])
+        worst, ok = max(worst, r["max_rel"]), ok and r["pass"]
+    return {"max_rel": worst, "covered": np.flatnonzero(covered).tolist(), "pass": bool(ok)}
+
+
 def runtime_versions() -> dict:
     import importlib
     out = {"python": sys.version.split()[0], "numpy": np.__version__}
@@ -232,11 +264,17 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
              inputs_verified: dict, gidx) -> int:
     conv, b = parse_unit(name)
     root, npz, marker = out / f"{name}.root", out / f"{name}.npz", out / f"{name}.done"
-    if npz.exists() or root.exists():
-        verdict = json.loads(marker.read_text()).get("verdict") if marker.exists() else None
-        if verdict == "PASS":
+    if npz.exists() or root.exists() or marker.exists():
+        # a unit is reused only if its marker is PASS, names it, and both products match the marker's digests
+        try:
+            mk = json.loads(marker.read_text())
+            ok = (mk.get("verdict") == "PASS" and mk.get("unit") == name and npz.is_file() and root.is_file()
+                  and sha256(npz) == mk.get("sha256") and sha256(root) == mk.get("root_sha256"))
+        except (OSError, ValueError):
+            ok = False
+        if ok:
             return 0
-        print(f"refusing: {name} exists without a PASS done-marker (verdict {verdict})", file=sys.stderr)
+        print(f"refusing: {name} exists, and its marker and products do not agree as a PASS", file=sys.stderr)
         return RC_CONTROL
     cpus = C.cpu_count()
     threads = {k: os.environ.get(k) for k in cfg["e_r"]["thread_env"]}
@@ -270,16 +308,19 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
     controls["C-FILL-IBU"] = {"max_rel": worst, "pass": bool(fill_ok)}
     # C-PAIR: the arrays OmniFold received are the ones IBU binned; y rebuilt independently
     y_r = P.rel_close(cap["y_np"], cap["y"], RTOL["pair_y"])
+    mpr = np.asarray(cap["seam"]["measured_pass_reco"])
+    mpr_ok = bool(mpr.dtype == bool and mpr.shape == (cap["seam"]["n_measured"],) and np.all(mpr))
     controls["C-PAIR"] = {"digest": cap["digest_ibu"], "same": cap["digest_ibu"] == cap["digest_omnifold"],
-                          "y_max_rel": y_r["max_rel"],
-                          "pass": bool(cap["digest_ibu"] == cap["digest_omnifold"] and y_r["pass"])}
+                          "y_max_rel": y_r["max_rel"], "measured_mask_all_true": mpr_ok,
+                          "pass": bool(cap["digest_ibu"] == cap["digest_omnifold"] and y_r["pass"] and mpr_ok)}
     # C-ROO on every unit: the bound RooUnfoldBayes against the same update in numpy
     if lib_label == "numpy unfolder":
         controls["C-ROO"] = {"ran": False, "pass": True}
     else:
         ref = C.dagostini(cap["M"], cap["T"], cap["y"], ks)
-        w = max(float(np.max(np.abs(cap["traj"][K] - ref[K]) / np.maximum(np.abs(ref[K]), 1e-300))) for K in ks)
-        controls["C-ROO"] = {"ran": True, "max_rel": w, "pass": bool(w <= RTOL["roo"])}
+        per_k = {int(K): P.rel_close(cap["traj"][K], ref[K], RTOL["roo"]) for K in ks}  # NaN-safe, exact zeros
+        controls["C-ROO"] = {"ran": True, "max_rel": {K: r["max_rel"] for K, r in per_k.items()},
+                             "pass": bool(all(r["pass"] for r in per_k.values()))}
     # C-DRAW-R, row level, at the refinement's entry and at OmniFold's
     sig_cv = cap["sig_cv"]
     app = (np.asarray(sig_cv["oofvc_outside"]["appended_entry"], np.int64) if conv == "R"
@@ -291,15 +332,24 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
     if missing:
         controls["C-DRAW-R"] = {"pass": False, "why": f"not captured: {missing}"}
     else:
-        n_data, inj_cv = cap["data_cv"]["pt"].size, cap["bkg_cv"]["w"]
+        n_data = cap["data_cv"]["pt"].size
         if b is not None:
-            inj = P.injected_entries(cap["fill_rows"], pt_lo, pt_hi, pz_lo, pz_hi)
-            inj_same = bool(np.array_equal(inj, cap["inj_entries"]))
-        else:
+            # the injection rebuilt independently from the ordered fill records by the driver's fiducial rule: entries,
+            # coordinates and POT-scaled weights; the loader's returned arrays must equal it (codex r1 #14)
+            fr = cap["fill_rows"]
+            fpt, fpz = np.asarray(fr["pt"], float), np.asarray(fr["pz"], float)
+            keep = (fpt >= pt_lo) & (fpt <= pt_hi) & (fpz >= pz_lo) & (fpz <= pz_hi)
+            inj = np.asarray(fr["entry"], np.int64)[keep]
+            inj_pt, inj_pz, inj_cv = fpt[keep], fpz[keep], np.asarray(fr["w_pot"], float)[keep]
+            inj_same = bool(np.array_equal(inj, cap["inj_entries"])
+                            and np.array_equal(inj_pt, cap["bkg_cv"]["pt"]) and np.array_equal(inj_pz, cap["bkg_cv"]["pz"])
+                            and np.array_equal(inj_cv, cap["bkg_cv"]["w"]))
+        else:  # a central has no fill record (one stream off): the loader's arrays, at unit factors
+            inj_pt, inj_pz, inj_cv = cap["bkg_cv"]["pt"], cap["bkg_cv"]["pz"], cap["bkg_cv"]["w"]
             inj, inj_same = np.arange(inj_cv.size, dtype=np.int64), True
         feat = cap["signed_feat"]
         want_feat = np.concatenate([np.column_stack([cap["data_cv"]["pt"], cap["data_cv"]["pz"]]),
-                                    np.column_stack([cap["bkg_cv"]["pt"], cap["bkg_cv"]["pz"]])])
+                                    np.column_stack([inj_pt, inj_pz])])
         feat_same = bool(feat.shape == want_feat.shape and np.array_equal(feat, want_feat))
         d = P.draw_check(b, n_data=n_data, n_entries=cap.get("n_bkg_entries", 0), appended_entry=app,
                          inj_entries=inj, inj_cv=inj_cv, signed_w=cap["signed_w"], w_truth_cv=sig_cv["w_truth"],
@@ -315,8 +365,9 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
         d["pass"] = bool(d["pass"] and inj_same and feat_same and d.get("appended_list", True))
         controls["C-DRAW-R"] = d
     # C-REFINE: the refinement's return is the measured weight both methods received
-    controls["C-REFINE"] = {"pass": bool("refined_w" in cap and np.array_equal(cap["refined_w"],
-                                                                                cap["measured_weights"]))}
+    rw, mw_raw = cap.get("refined_w"), cap["seam"]["measured_weights_raw"]
+    controls["C-REFINE"] = {"pass": bool(rw is not None and np.all(np.isfinite(np.asarray(rw, float)))
+                                         and P.digest(rw) == P.digest(mw_raw))}
     # the R units' identity checks on the moved rows (C-MOVE's sets in every R unit; C-DRAW-R's appended rows)
     if conv == "R":
         rows = np.load(rows_path)
@@ -324,8 +375,11 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
         inj_ids = cap.get("inj_entries", np.zeros(0, np.int64))
         fill_ids = cap["fill_rows"]["entry"] if "fill_rows" in cap else np.zeros(0, np.int64)
         n_sig = sig_cv["w_truth"].shape[0]
-        tail = {k2: np.asarray(sig_cv[k2])[n_sig - app.size:] for k2 in
-                ("reco_pt", "reco_pz", "truth_pt", "truth_pz", "w_truth", "w_reco", "pass_reco", "pass_truth")}
+        sm, lo = cap["seam"], n_sig - app.size  # coordinates and masks as OmniFold and IBU received them
+        tail = {"reco_pt": np.asarray(sm["MCreco"])[lo:, 0], "reco_pz": np.asarray(sm["MCreco"])[lo:, 1],
+                "truth_pt": np.asarray(sm["MCgen"])[lo:, 0], "truth_pz": np.asarray(sm["MCgen"])[lo:, 1],
+                "pass_reco": np.asarray(sm["pass_reco"])[lo:], "pass_truth": np.asarray(sm["pass_truth"])[lo:],
+                "w_truth": np.asarray(sig_cv["w_truth"])[lo:], "w_reco": np.asarray(sig_cv["w_reco"])[lo:]}
         f = __import__("ROOT").TFile.Open(str(root))
         pot = float(f.Get("potScale").GetVal())
         f.Close()
@@ -336,11 +390,20 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
                                    "pass": bool(np.intersect1d(listed, inj_ids).size == 0
                                                 and np.intersect1d(listed, fill_ids).size == 0 and ident["pass"])}
     extract_args = [np.asarray(x, float) if hasattr(x, "__len__") else np.asarray([float(x)]) for x in a[1:]]
+    args_finite = all(np.all(np.isfinite(x)) for x in extract_args)
     # C-COMP, on the histogram the extraction consumed (the recorded call's second argument)
-    consumed_c = C.th2_vector(a[0], nx, ny)
+    hc = a[0]
+    axes_ok = (hc.GetNbinsX() == nx and hc.GetNbinsY() == ny
+               and [hc.GetXaxis().GetBinLowEdge(i) for i in range(1, nx + 2)] == [float(e) for e in driver.PT_EDGES]
+               and [hc.GetYaxis().GetBinLowEdge(i) for i in range(1, ny + 2)] == [float(e) for e in driver.PZ_EDGES])
+    consumed_c = C.th2_vector(hc, nx, ny)
     d_cv = read_hist(C, driver, root, "hOFTruthDenom2D", allowed)
     ts = truth_sums(cap, gidx, conv)
     controls["C-COMP"] = comp_check(cap, ts, conv, b, consumed_c, d_cv)
+    controls["C-COMP"]["axes"] = axes_ok
+    controls["C-COMP"]["pass"] = bool(controls["C-COMP"]["pass"] and axes_ok)
+    # section 2.2's printed counts: structural-zero cells whose moved truth weight the extraction suppresses
+    suppressed = int(np.sum((ts["t_orig"] == 0) & (d_cv == 0) & (ts["t_all"] > ts["t_orig"]))) if conv == "R" else 0
     support_rec = None
     if b is None:
         # C-COUPLE: KNOWN_ISSUES 84's premise as an exact multiset identity per cell (the sums' agreement printed)
@@ -368,9 +431,7 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
         hd = f.Get("hOFTruthDenom2D")
         hd.SetDirectory(0)
         f.Close()
-        cap["completeness"] = (a[0], None, hd)
-        controls["C-SIM"] = C.c_sim(driver, cap, C.dagostini, ks, RTOL["sim"])
-        controls["C-SIM"]["pass"] = bool(controls["C-SIM"]["pass"] and np.isfinite(controls["C-SIM"]["max_rel"]))
+        controls["C-SIM"] = c_sim(C, driver, cap, hc, hd, ks)
         if conv == "R":  # C-SUPPORT (printed): the seeds' lost-support cells, which give 0 in both conventions
             support_rec = P.support(ts["g"], sig_cv["w_truth"], ts["pt_ok"] & ts["orig"], ts["n_orig"],
                                     SEEDS["R"])
@@ -381,9 +442,12 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
             "slurm_job": os.environ.get("SLURM_JOB_ID"), "controls": controls, "runtime": runtime_versions(),
             "oofvc_counts": sig_cv.get("oofvc_outside", {}).get("counts") if conv == "R" else None,
             "ptmc_record": {k2: v for k2, v in cap["ptmc_record"].items() if k2 != "completeness"},
-            "support": support_rec, "extract_args_sha256": P.digest(*extract_args),
+            "support": support_rec, "extract_args_sha256": P.digest(*extract_args), "extract_args_finite": args_finite,
+            "completeness_counts": {k2: v for k2, v in cap["ptmc_record"].get("completeness", {}).items()
+                                    if k2 != "c_star"},
+            "suppressed_moved_support_cells": suppressed,
             "seconds": round(time.time() - t0, 3)}
-    passed = all(c["pass"] for c in controls.values())
+    passed = all(c["pass"] is True for c in controls.values()) and args_finite
     arrays = {"ks": np.array(ks), "xsec": np.array([xs[K] for K in ks]), "unfolded": np.array([cap["traj"][K] for K in ks]),
               "T": cap["T"], "M": cap["M"], "y": cap["y"], "completeness": consumed_c, "appended_entry": np.asarray(app),
               "lgbm_params": np.array(json.dumps(cap.get("lgbm", []))),
@@ -409,6 +473,9 @@ def run(a) -> int:
     except ValueError as e:
         print(f"refusing: {e}", file=sys.stderr)
         return 2
+    if len(set(names)) != len(names):
+        print("refusing: a unit is named twice", file=sys.stderr)
+        return 2
     C = import_runner(a.tree)
     cfg = json.loads(C.CONFIG.read_text())
     try:
@@ -418,8 +485,10 @@ def run(a) -> int:
     except (C.GateFailure, OSError) as e:
         print(f"refusing: {e}", file=sys.stderr)
         return RC_GATE
-    if sha256(a.rows) != a.rows_sha256 or not C.under(a.rows, C.staging_root(cfg)):
-        print("refusing: the rows file is not the join's, or not under the staging root", file=sys.stderr)
+    if (a.rows_sha256 != PINS["rows"] or sha256(a.rows) != PINS["rows"] or not C.under(a.rows, C.staging_root(cfg))
+            or sha256(a.join_record) != PINS["join"]):
+        print("refusing: the rows file or the join record is not its pin, or the rows are not under the staging "
+              "root", file=sys.stderr)
         return RC_GATE
     lib = Path(cfg["inputs"]["roounfold_lib"])
     if a.numpy_unfolder:
@@ -437,6 +506,7 @@ def run(a) -> int:
     def pins():
         return {"driver": sha256(C.RE2), "runner": sha256(Path(C.__file__)), "ptmc_run": sha256(Path(__file__)),
                 "ptmc_lib": sha256(HERE / "ptmc_lib.py"), "rows": sha256(a.rows), "join_record": sha256(a.join_record),
+                "config": sha256(C.CONFIG),
                 "inputs": C.check_inputs(cfg), "roounfold_lib": lib_label}
     before = pins()
     rc = 0

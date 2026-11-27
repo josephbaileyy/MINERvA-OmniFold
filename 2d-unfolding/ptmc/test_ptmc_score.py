@@ -103,7 +103,7 @@ class Products:
                 "reco_pz": np.array([2.2, 5.5, 12.0, 30.0]), "true_pt": np.array([0.21, 0.52, 1.1, 2.0]),
                 "true_pz": np.array([2.3, 5.4, 11.0, 29.0]), "w_reco": np.array([1.0, 2.0, 3.0, 4.0]),
                 "w_truth": np.array([1.1, 2.1, 3.1, 4.1])}
-        self.rows = self.tmp / "oofvc_rows.npz"
+        self.rows = self.tmp / "oofvc_rows.npz"  # the canonical argv names the staging root's oofvc_rows.npz
         np.savez(self.rows, **rows)
         pot = 0.5
         L = __import__("oofvc_lib", fromlist=["x"]) if False else None
@@ -146,7 +146,7 @@ class Products:
             eb = self.x_er + noise()
             st = {"streams": "three", "unit_factors": False, "bootstrap_seed": b,
                   "seed_offsets": {"data": 0, "mc": 10_000_000, "bkg": 20_000_000},
-                  "n": {"data": 10, "mc": 50, "bkg": 30}, "sum": {"data": 10.0 + b, "mc": 50.0 + b, "bkg": 30.0 + b}}
+                  "n": {"data": 10, "mc": 50, "bkg": 40}, "sum": {"data": 10.0 + b, "mc": 50.0 + b, "bkg": 30.0 + b}}
             p = self.d4 / P.staged_index(b)
             write_root(p, {"hXSec2D": eb}, {"p1Streams": st, "re2Refinement": ref})
             staged[f"/src/S1_{b:03d}"] = sha(p)
@@ -164,30 +164,33 @@ class Products:
                                                                         "D_IBU_every_K": dist_ibu}))
         # the units
         runtime = {"python": "3.11", "numpy": "1", "ROOT": "6.28", "lightgbm": "4", "sklearn": "1"}
-        pins = {"roounfold_lib_sha256": "lib", "cpus": 64, "thread_env": THREADS, "ptmc_run": "run", "ptmc_lib": "plib",
-                "code_sha256": {"x": "y"}, "inputs": {"CV": "a", "MC": "b"}, "driver": sha(self.tree / "2d-unfolding/re2/re2_driver.py"),
-                "rows": sha(self.rows), "ref_c2c1_read": sha(self.tree / "2d-unfolding/ref_c2c1/ref_c2c1_read.py"),
-                "reported_cells": sha(self.tree / "2d-unfolding/uq/reported_cells.py"),
-                "compare": sha(self.tree / "2d-unfolding/compare_to_paper_fullcov.py")}
+        import ptmc_score as S
+        tree_files = {f: sha(self.tree / f) for f in S.TREE_FILES}
+        own = {f: sha(HERE / f) for f in S.OWN_FILES}
+        pins = {"tree": tree_files, "own": own, "rows": sha(self.rows), "join": "j" * 64, "roounfold_lib_sha256": "lib"}
         self.pins = self.tmp / "pins.json"
         self.pins.write_text(json.dumps(pins))
+        tree_cfg = json.loads((self.tree / "2d-unfolding/ref_c2c1/config.json").read_text())
         delta = delta_scale * paper * rng.choice([-1.0, 1.0], 224)
 
         def unit(name, x_of, x_ibu, conv, b, root_extra=None, arrays=None, draw=None):
-            argv = list(ARGV) + (ROWS_FILE_ARGS if conv == "R" else []) + (
-                ["--bootstrap-seed", str(b), "--bootstrap-streams", "three"] if b is not None else [])
+            argv = S.canonical_argv(tree_cfg, conv, b, self.rows)
             controls = {"C-FILL-IBU": {"pass": True}, "C-PAIR": {"pass": True}, "C-ROO": {"pass": True},
                         "C-DRAW-R": {"pass": True, **(draw or {})}, "C-COMP": {"pass": True}, "C-REFINE": {"pass": True}}
             if b is None:
                 controls["C-COUPLE"] = {"pass": True}
-                controls["C-SIM"] = {"pass": True}
+                controls["C-SIM"] = {"pass": True, "covered": list(range(224))}
             if conv == "R":
                 controls["C-MOVE-UNIT"] = {"pass": True}
-            meta = {"schema": "ptmc-unit/1", "unit": name, "argv": argv, "ks": KS, "unfolder": "lib", "cpus": 64,
-                    "thread_env": THREADS, "runtime": runtime, "runner_sha256": "run", "lib_sha256": "plib",
-                    "code_sha256": {"x": "y"}, "inputs_sha256": {"CV": "a", "MC": "b"}, "controls": controls,
-                    "oofvc_counts": counts if conv == "R" else None, "extract_args_sha256": "norm",
-                    "support": {"pass": True} if name == "p_R_c" else None}
+            meta = {"schema": "ptmc-unit/1", "unit": name, "convention": conv, "bootstrap_seed": b, "argv": argv,
+                    "ks": KS, "unfolder": "lib", "cpus": 64, "thread_env": THREADS, "runtime": runtime,
+                    "runner_sha256": own["ptmc_run.py"], "lib_sha256": own["ptmc_lib.py"],
+                    "code_sha256": tree_cfg["code_sha256"],
+                    "inputs_sha256": {"CV": tree_cfg["inputs"]["CV_sha256"], "MC": tree_cfg["inputs"]["MC_sha256"]},
+                    "controls": controls, "oofvc_counts": counts if conv == "R" else None,
+                    "extract_args_sha256": "e" * 64, "extract_args_finite": True,
+                    "support": {"pass": True, "n_seeds": 200, "failures": {}} if name == "p_R_c" else None,
+                    "seconds": 1.0}
             arr = {"ks": np.array(KS), "xsec": np.tile(x_ibu, (len(KS), 1)), "completeness": np.ones(224),
                    "appended_entry": app if conv == "R" else np.zeros(0, np.int64),
                    "fill_entries": np.zeros(0, np.int64), "fill_entry": np.zeros(0, np.int64),
@@ -221,19 +224,58 @@ class Products:
                  arrays={**self.fill_r, "inj_entries": inj_r},
                  draw={"n_data": st["n"]["data"], "data_sum": st["sum"]["data"], "n_original": st["n"]["mc"],
                        "original_sum": st["sum"]["mc"], "n_appended": int(inside.sum())})
-        (self.units / "pins_all.json").write_text(json.dumps({"pass": True, "before": {"driver": pins["driver"],
-                                                                                       "rows": pins["rows"]}}))
+        before = {"driver": tree_files["2d-unfolding/re2/re2_driver.py"],
+                  "config": tree_files["2d-unfolding/ref_c2c1/config.json"],
+                  "runner": tree_files["2d-unfolding/ref_c2c1/ref_c2c1.py"], "ptmc_run": own["ptmc_run.py"],
+                  "ptmc_lib": own["ptmc_lib.py"], "rows": pins["rows"], "join_record": pins["join"],
+                  "roounfold_lib": "lib"}
+        self.write_pins = lambda: (self.units / "pins_all.json").write_text(json.dumps(
+            {"pass": True, "before": before, "after": before, "outputs": {
+                p.stem: {f"{p.stem}.npz": json.loads(p.read_text())["sha256"],
+                         f"{p.stem}.root": json.loads(p.read_text())["root_sha256"]}
+                for p in self.units.glob("p_*.done")}}))
+        self.write_pins()
+        # the D4 staging manifest: every product copied, none absent
+        man = {"schema": "ptmc-d4-stage/1", "copied": {p.name: {"sha256": sha(p)} for p in self.d4.iterdir()},
+               "absent": []}
+        (self.d4 / "manifest.json").write_text(json.dumps(man))
         self.K = {"N": N, "RANK": RANK, "N_OFF": 5, "CELLS_SHA": sha(cells_dir / "cells.root"),
                   "E_R_SHA": sha(self.d4 / "001_xsec.root"), "PUB_SHA": sha(pub), "C_PUB": c_pub,
-                  "NDF": int(rep.sum()), "COUNTS": counts, "SCAN": KS, "Q_R_SRC": "/src/S1_{b:03d}"}
+                  "NDF": int(rep.sum()), "COUNTS": counts, "SCAN": KS, "Q_R_SRC": "/src/S1_{b:03d}",
+                  "READOUT_SHA": sha(marker_dir / "read-2" / "readout.json"),
+                  "CENTRAL_MARKER_SHA": sha(marker_dir / "units-centrals" / "c2_central.done"),
+                  "ROWS_SHA": sha(self.rows)}
+
+    def mark_absent(self, name):
+        """Remove a D4 product as the staging would record a clean source absence."""
+        (self.d4 / name).unlink()
+        m = json.loads((self.d4 / "manifest.json").read_text())
+        del m["copied"][name]
+        m["absent"].append(f"/src/{name}")
+        (self.d4 / "manifest.json").write_text(json.dumps(m))
+
+    def rewrite_unit(self, name, z):
+        np.savez(self.units / f"{name}.npz", **z)
+        mk = json.loads((self.units / f"{name}.done").read_text())
+        mk["sha256"] = sha(self.units / f"{name}.npz")
+        (self.units / f"{name}.done").write_text(json.dumps(mk))
+        self.write_pins()
 
     def score(self):
         import ptmc_score as S
         out = self.tmp / f"score_{len(list(self.tmp.glob('score_*')))}.json"
         argv = ["--tree", str(self.tree), "--units", str(self.units), "--d4", str(self.d4), "--repo", str(self.repo),
                 "--rows", str(self.rows), "--rows-sha256", sha(self.rows), "--pins", str(self.pins), "--out", str(out)]
-        with mock.patch.dict(S.CONST, self.K):
-            rc = S.main(argv)
+        # the scorer runs as its own process in production: the tree's modules must resolve fresh, from the tree, and
+        # an earlier test's import (another tree, in this one process) would fail its C-PINS check
+        saved_path = list(sys.path)
+        for m in ("ref_c2c1_read", "ref_c2c1", "oofvc_lib", "reported_cells"):
+            sys.modules.pop(m, None)
+        try:
+            with mock.patch.dict(S.CONST, self.K):
+                rc = S.main(argv)
+        finally:
+            sys.path[:] = saved_path
         rec = json.loads(out.read_text()) if out.exists() else json.loads((self.tmp / "STOP.json").read_text())
         return rc, rec
 
@@ -263,7 +305,7 @@ class Scorer(unittest.TestCase):
 
     def test_absent_replica_is_unavailable_and_corrupt_marker_stops(self):
         p = Products(delta_scale=0.05)
-        (p.d4 / "c2_replica_b5.npz").unlink()
+        p.mark_absent("c2_replica_b5.npz")
         rc, rec = p.score()
         self.assertEqual(rc, 0, rec)
         self.assertEqual(rec["disposition"], "unavailable")
@@ -274,6 +316,16 @@ class Scorer(unittest.TestCase):
         rc, rec = q.score()
         self.assertEqual(rc, 3)
         self.assertTrue(rec["stopped"])
+        # staged faithfully (its staging digest agrees) but not REF's product (its marker disagrees): a mismatch, and
+        # the STOP is the disposition's, naming the mismatched product (not an incidental failure downstream)
+        m = json.loads((q.d4 / "manifest.json").read_text())
+        m["copied"]["c2_replica_b3.npz"]["sha256"] = sha(q.d4 / "c2_replica_b3.npz")
+        (q.d4 / "manifest.json").write_text(json.dumps(m))
+        (q.tmp / "STOP.json").unlink()  # the scorer refuses to run over an earlier STOP
+        rc, rec = q.score()
+        self.assertEqual(rc, 3)
+        self.assertIn("the disposition is STOP", rec["why"])
+        self.assertIn("c2_replica_b3.npz", rec["why"])
 
     def test_duplicated_retained_fill_row_stops(self):
         """The confirm read's finding 3: a replica with a retained background row filled twice must STOP."""
@@ -281,25 +333,129 @@ class Scorer(unittest.TestCase):
         z = dict(np.load(p.units / "p_R_b2.npz"))
         for k in ("fill_entry", "fill_pt", "fill_pz", "fill_w"):
             z[k] = np.concatenate([z[k], z[k][:1]])
-        np.savez(p.units / "p_R_b2.npz", **z)
-        mk = json.loads((p.units / "p_R_b2.done").read_text())
-        mk["sha256"] = sha(p.units / "p_R_b2.npz")
-        (p.units / "p_R_b2.done").write_text(json.dumps(mk))
+        p.rewrite_unit("p_R_b2", z)
         rc, rec = p.score()
         self.assertEqual(rc, 3)
         self.assertIn("C-MOVE", rec["why"])
+
+    def test_changed_retained_fill_value_stops(self):
+        """C-MOVE compares every fill array exactly, not only the entry set: one retained row's pT changed STOPs."""
+        p = Products(delta_scale=0.05)
+        z = dict(np.load(p.units / "p_R_b2.npz"))
+        z["fill_pt"] = np.asarray(z["fill_pt"]).copy()
+        z["fill_pt"][0] += 1e-3
+        p.rewrite_unit("p_R_b2", z)
+        rc, rec = p.score()
+        self.assertEqual(rc, 3)
+        self.assertIn("C-MOVE: replica sets p_R_b2", rec["why"])
 
     def test_nan_in_a_unit_stops(self):
         p = Products(delta_scale=0.05)
         z = dict(np.load(p.units / "p_R_b4.npz"))
         z["xsec"] = z["xsec"].copy()
         z["xsec"][5, 7] = np.nan
-        np.savez(p.units / "p_R_b4.npz", **z)
-        mk = json.loads((p.units / "p_R_b4.done").read_text())
-        mk["sha256"] = sha(p.units / "p_R_b4.npz")
-        (p.units / "p_R_b4.done").write_text(json.dumps(mk))
+        p.rewrite_unit("p_R_b4", z)
         rc, rec = p.score()
         self.assertEqual(rc, 3)
+
+
+@unittest.skipUnless(HAVE_ROOT, "needs PyROOT")
+class ScorerGates(unittest.TestCase):
+    """One planted defect per gate (codex r1): each must STOP, with no reading."""
+
+    def stops(self, p, frag=None):
+        rc, rec = p.score()
+        self.assertEqual(rc, 3, rec)
+        self.assertTrue(rec.get("stopped"), rec)
+        if frag:
+            self.assertIn(frag, rec["why"])
+
+    def test_pins_must_cover_every_unit(self):
+        p = Products(delta_scale=0.05)
+        d = json.loads((p.units / "pins_all.json").read_text())
+        d["outputs"].pop("p_R_b3")
+        (p.units / "pins_all.json").write_text(json.dumps(d))
+        self.stops(p, "C-PINS")
+
+    def test_extra_file_in_units(self):
+        p = Products(delta_scale=0.05)
+        (p.units / "p_R_b99.npz").write_bytes(b"x")
+        self.stops(p, "C-UNITS: inventory")
+
+    def test_non_canonical_argv(self):
+        p = Products(delta_scale=0.05)
+        z = dict(np.load(p.units / "p_R_b6.npz"))
+        m = json.loads(str(z["meta"]))
+        m["argv"] = m["argv"] + ["--iters", "7"]
+        z["meta"] = json.dumps(m)
+        p.rewrite_unit("p_R_b6", z)
+        self.stops(p, "canonical")
+
+    def test_missing_required_control(self):
+        p = Products(delta_scale=0.05)
+        z = dict(np.load(p.units / "p_R_b7.npz"))
+        m = json.loads(str(z["meta"]))
+        m["controls"].pop("C-REFINE")
+        z["meta"] = json.dumps(m)
+        p.rewrite_unit("p_R_b7", z)
+        self.stops(p, "C-REFINE")
+
+    def test_duplicate_ref_marker(self):
+        p = Products(delta_scale=0.05)
+        src = next(p.repo.rglob("c2_replica_b2.done"))
+        dup = src.parent.parent / "copy" / "c2_replica_b2.done"
+        dup.parent.mkdir(parents=True)
+        dup.write_text(src.read_text())
+        self.stops(p, "two markers")
+
+    def test_fetched_file_outside_the_manifest(self):
+        p = Products(delta_scale=0.05)
+        (p.d4 / "stray.root").write_bytes(b"x")
+        self.stops(p, "C-D4")
+
+    def test_sim_coverage_by_index(self):
+        p = Products(delta_scale=0.05)
+        z = dict(np.load(p.units / "p_R_c.npz"))
+        m = json.loads(str(z["meta"]))
+        m["controls"]["C-SIM"]["covered"] = list(range(223))
+        z["meta"] = json.dumps(m)
+        p.rewrite_unit("p_R_c", z)
+        self.stops(p, "C-SIM coverage")
+
+    def test_repoff_runs_when_another_replica_is_absent(self):
+        """codex r1 #17: an absent c2_replica_b5 must not switch off C-REPOFF on the accepted seed-1 pair."""
+        p = Products(delta_scale=0.05)
+        p.mark_absent("c2_replica_b5.npz")
+        z = dict(np.load(p.units / "p_off_b1.npz"))
+        z["xsec"] = z["xsec"] * 1.01
+        p.rewrite_unit("p_off_b1", z)
+        self.stops(p, "STOP")
+
+    def test_draw_aggregate_runs_when_b_is_unavailable(self):
+        p = Products(delta_scale=0.05)
+        p.mark_absent("c2_replica_b5.npz")
+        z = dict(np.load(p.units / "p_R_b9.npz"))
+        m = json.loads(str(z["meta"]))
+        m["controls"]["C-DRAW-R"]["data_sum"] += 1.0
+        z["meta"] = json.dumps(m)
+        p.rewrite_unit("p_R_b9", z)
+        self.stops(p, "C-DRAW-R")
+
+    def test_conditioning_guard_stops(self):
+        """The binding's guard: an arm below lambda_r/lambda_1 = 1e-10 STOPs, whatever C-SHAPE says."""
+        import ptmc_lib as PL
+        p = Products(delta_scale=0.05)
+        with mock.patch.object(PL, "conditioning", return_value={"ratio": 1e-12, "floor": 1e-10, "pass": False}):
+            self.stops(p, "the conditioning guard")
+
+    def test_unexpected_exception_is_a_stop(self):
+        p = Products(delta_scale=0.05)
+        z = dict(np.load(p.units / "p_R_c.npz"))
+        z.pop("appended_entry")
+        p.rewrite_unit("p_R_c", z)
+        rc, rec = p.score()
+        self.assertEqual(rc, 3)
+        self.assertIn("KeyError", rec["why"])
 
 
 if __name__ == "__main__":
