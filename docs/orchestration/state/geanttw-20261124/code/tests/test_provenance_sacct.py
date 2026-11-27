@@ -222,3 +222,52 @@ def test_cap_json_is_printed_with_sorted_keys(tmp_path):
     r = sacct(tmp_path, "cap", [], "--name", "geanttw_p0_pin_1L", "--limit", "01:00:00")
     keys = list(json.loads(r.stdout))
     assert keys == sorted(keys)
+
+
+# ── the cap gate's job families (p2p3/AMENDMENT-P2P3.md A2, A3) ──
+def _gs():
+    import importlib.util
+    s = importlib.util.spec_from_file_location("gs_fam", CODE / "geanttw_sacct.py")
+    gs = importlib.util.module_from_spec(s)
+    s.loader.exec_module(gs)
+    return gs
+
+
+@pytest.mark.parametrize("name,rate", [
+    ("geanttw_p0_pat_1L", 0.0391), ("geanttw_p2_1A", 0.0391), ("geanttw_p2_pilot_1B", 0.0391),
+    ("geanttw_p2_pilotref_1B", 0.0391), ("geanttw_p2_c2pre", 0.0391), ("geanttw_p3_c2", 0.0391),
+    ("geanttw_p3_slim", 0.0391), ("geanttw_p3_unf_pin_GEANT_Pion_0", 0.5), ("geanttw_p3_unf_pat_GEANT_Proton_1", 0.5),
+])
+def test_each_family_has_its_rate(name, rate):
+    gs = _gs()
+    assert gs.rate(name) == rate
+    assert gs.cap([], [], name, "02:00:00")["want_ceiling"] == pytest.approx(2 * rate)
+
+
+@pytest.mark.parametrize("name", ["geanttw_p2_1L", "geanttw_p3_unf_pin_GEANT_Pion_2", "geanttw_p3_unf_GEANT_Pion_0",
+                                  "geanttw_p3_slimx", "geanttw_p2_pilot_1L", "geanttw_p4_x"])
+def test_names_outside_every_family_are_unusable(name):
+    gs = _gs()
+    with pytest.raises(gs.Unusable):
+        gs.rate(name)
+
+
+def test_listed_and_unlisted_jobs_are_held_at_their_own_rates():
+    gs = _gs()
+    rows = ["101|geanttw_p3_unf_pin_GEANT_Pion_0|RUNNING|60|1|30", "102|geanttw_p2_1A|COMPLETED|3600|1|60"]
+    subs = ["SUBMIT id=103 name=geanttw_p3_unf_pin_GEANT_Pion_1 limit=00:30:00 utc=x"]
+    rec = gs.cap(rows, subs, "geanttw_p3_slim", "01:00:00")
+    assert rec["held"] == pytest.approx(0.5 * 0.5 + 0.5 * 0.5) and rec["spent"] == pytest.approx(0.0391)
+    assert rec["total"] == pytest.approx(0.5 + 0.0391 + 0.0391) and rec["unlisted_ids"] == ["103"]
+
+
+def test_an_unknown_geanttw_job_in_sacct_is_unusable():
+    gs = _gs()
+    with pytest.raises(gs.Unusable):
+        gs.cap(["101|geanttw_mystery|RUNNING|60|1|30"], [], "geanttw_p3_slim", "01:00:00")
+
+
+def test_a_submission_without_a_name_is_unusable():
+    gs = _gs()
+    with pytest.raises(gs.Unusable):
+        gs.cap([], ["SUBMIT id=103 limit=00:30:00"], "geanttw_p3_slim", "01:00:00")
