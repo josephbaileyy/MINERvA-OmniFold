@@ -299,7 +299,12 @@ def evaluation_controls(e: str, cap: dict, ops: dict, committed: dict) -> tuple[
     c["C_F_capture"] = frel
     E, X_T, C_T, C_eT = cap["E"], cap["X_T"], cap["C_T"], cap["C_e"]
     C_add = rc.carry_frac(ops["C_resp"], X_T, ops["f"]) + rc.carry_rel(ops["P_rel"], X_T)
-    r0 = rc.r_chi2(E, C_T, C_add)
+    if E.ndim != 2 or E.shape[0] < 2:
+        raise Stop(f"C-FINITE: E has shape {E.shape}")
+    try:
+        r0 = rc.r_chi2(E, C_T, C_add)
+    except ZeroDivisionError as ex:
+        raise Stop(f"C-FINITE: r_chi2 divided by zero at C-A0 ({ex})") from ex
     if not all(isinstance(committed.get(k), float) and math.isfinite(committed[k]) and committed[k] != 0
                and math.isfinite(r0[k]) for k in A0_FIELDS):
         raise Stop(f"C-A0: a field is missing, zero or not finite: {[(k, committed.get(k), r0[k]) for k in A0_FIELDS]}")
@@ -342,9 +347,9 @@ def run() -> dict:
         out["controls"] = {"stop": str(ex)}
         out["evaluations"] = {e: {"status": "STOP", "stop": str(ex)} for e in EVALS}
         return out
-    committed = json.loads(PINS["regrade16"][0].read_text())["evaluations"]
     for e in EVALS:
         try:
+            committed = json.loads(PINS["regrade16"][0].read_text())["evaluations"]
             out["evaluations"][e] = evaluate(e, ops, committed[e]["R_chi2"])
         except (Stop, OSError, ValueError, KeyError) as ex:
             out["evaluations"][e] = {"status": "STOP", "stop": str(ex) if isinstance(ex, Stop)

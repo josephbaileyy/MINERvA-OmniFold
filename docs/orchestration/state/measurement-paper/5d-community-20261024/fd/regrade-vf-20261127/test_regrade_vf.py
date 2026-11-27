@@ -121,6 +121,11 @@ def test_split_matches_a_direct_computation():
     assert math.isclose(s["M_prime"], s["B"] + s["F"], rel_tol=1e-12)
     assert math.isclose(s["M_full"], s["B"] + s["F"] + s["tau"], rel_tol=1e-12)
     assert math.isclose(sum(s["shares"].values()), 1.0, rel_tol=1e-12)
+    chi2 = np.einsum("si,ij,sj->s", E, A, E)
+    assert math.isclose(s["SE"], chi2.std(ddof=1) / math.sqrt(n) / ndf, rel_tol=1e-10)
+    assert s["ndf"] == 16 and s["n"] == 300
+    assert s["readings"] == rv.readings(s["B"], s["F"], s["M_full"], s["SE"], s["se_boot"])
+    assert s["R_chi2_reading_regrade"] == rv.rc.r_chi2(E, C_base, C_add)["reading"]
 
 
 def test_tau_covers_c_add_only_not_the_base_inflation():
@@ -688,3 +693,33 @@ def test_within_fails_closed(x, want):
 def test_gap_check_names_a_non_positive_edge_eigenvalue():
     with pytest.raises(Stop, match="non-positive"):
         rv.gap_check(np.diag([10, 8, 6, 4, 2, 1.5, 1.2, 1.0] + [0.0] * 8), "rank8")
+
+
+def test_evaluation_controls_refuse_a_degenerate_e():
+    cap, ops, committed, _ = synthetic_case()
+    cap = dict(cap)
+    cap["E"] = np.zeros_like(cap["E"])
+    with pytest.raises(Stop, match="C-FINITE"):
+        rv.evaluation_controls("g18/minus2", cap, ops, committed)
+
+
+def test_run_records_an_unreadable_regrade16_as_a_stop(monkeypatch):
+    monkeypatch.setattr(rv, "global_controls", lambda: ({"phi": {}}, {}))
+    monkeypatch.setitem(rv.PINS, "regrade16", (Path("/nonexistent/regrade16.json"), "0" * 64))
+    out = rv.run()
+    assert all(v["status"] == "STOP" for v in out["evaluations"].values())
+
+
+def test_split_passes_its_own_terms_to_readings(monkeypatch):
+    E, C = draws(shift=0.3)
+    C_add = 0.2 * spd(seed=5)
+    seen = {}
+    real = rv.readings
+
+    def spy(B, F, M_full, SE, se):
+        seen.update(B=B, F=F, M_full=M_full, SE=SE, se=dict(se))
+        return real(B, F, M_full, SE, se)
+    monkeypatch.setattr(rv, "readings", spy)
+    s = rv.split(E, C, C_add, np.random.default_rng(2).integers(0, 300, size=(50, 300)))
+    r = rv.rc.r_chi2(E, C, C_add)
+    assert seen == {"B": s["B"], "F": s["F"], "M_full": s["M_full"], "SE": r["SE"], "se": s["se_boot"]}

@@ -43,7 +43,7 @@ MUTANTS = [   # (name, old, new): old must occur exactly once in regrade_vf.py
     ("eig-ascending", "order = np.argsort(lam)[::-1]", "order = np.argsort(lam)"),
     ("rule-ii-no-minus", "return L @ C_eT @ L.T - C_eT", "return L @ C_eT @ L.T"),
     ("rule-i-uncarried", 'dF = {"rule_i": rc.carry_frac(ops["DeltaC_e"], X_T, ops["f"])', 'dF = {"rule_i": ops["DeltaC_e"]'),
-    ("c-add-pl-at-f", 'rc.carry_rel(ops["P_rel"], X_T)\n    r0', 'rc.carry_rel(ops["P_rel"], ops["f"])\n    r0'),
+    ("c-add-pl-at-f", 'rc.carry_rel(ops["P_rel"], X_T)', 'rc.carry_rel(ops["P_rel"], ops["f"])'),
     ("a0-off", "if not all(within(x, A0_REL) for x in a0.values()):", "if not all(within(x, 1.0) for x in a0.values()):"),
     ("cf-capture-off", 'if not within(frel, F_REL):\n        raise Stop(f"C-F: capture', 'if not within(frel, 1.0):\n        raise Stop(f"C-F: capture'),
     ("cf-blocks-off", 'if not within(frel, F_REL):\n        raise Stop(f"C-F: vf_block', 'if not within(frel, 1.0):\n        raise Stop(f"C-F: vf_block'),
@@ -99,7 +99,11 @@ MUTANTS = [   # (name, old, new): old must occur exactly once in regrade_vf.py
     ("symlink-off", "if a.out.exists() or a.out.is_symlink():", "if a.out.exists():"),
     ("run-io-uncaught", 'except (Stop, OSError, ValueError, KeyError) as ex:\n            out["evaluations"]', 'except Stop as ex:\n            out["evaluations"]'),
     ("split-E-finite-off", 'finite("E", E)', "pass"),
-    ("split-zerodiv-uncaught", "except ZeroDivisionError as ex:", "except ArithmeticError as ex:\n        raise\n    except KeyError as ex:"),
+    ("split-SE-from-boot", '"SE": r["SE"], "B_raw"', '"SE": se["B"], "B_raw"'),
+    ("split-readings-SE-arg", 'readings(B, F, M_full, r["SE"], se)', 'readings(B, F, M_full, se["B"], se)'),
+    ("split-readings-BF-swap", 'readings(B, F, M_full, r["SE"], se)', 'readings(F, B, M_full, r["SE"], se)'),
+    ("a0-zerodiv-uncaught", "except ZeroDivisionError as ex:\n        raise Stop(f\"C-FINITE: r_chi2 divided by zero at C-A0", "except KeyError as ex:\n        raise Stop(f\"C-FINITE: r_chi2 divided by zero at C-A0"),
+    ("split-zerodiv-uncaught", 'except ZeroDivisionError as ex:\n        raise Stop(f"C-FINITE: r_chi2 divided by zero ({ex})")', 'except KeyError as ex:\n        raise Stop(f"C-FINITE: r_chi2 divided by zero ({ex})")'),
 ]
 
 
