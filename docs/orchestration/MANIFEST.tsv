@@ -10574,6 +10574,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-202611
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r3/inputs.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/reads/r3/prompt.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/tests.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/fdbias-v2-scoping-20261127/SCOPING.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/figures/fd_g_fig_modes.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/figures/fd_g_fig_modes.pdf	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/figures/fd_g_fig_ratio.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
