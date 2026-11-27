@@ -1,0 +1,34 @@
+ssh rc=0
+node login04 2026-11-27T17:31:29Z staged sha256 13901cbe0bddbe27fce515c9b37ad01fec8c48e3440485f62754c56f9fe32262
+CV copy sha256 43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df
+{
+ "hasTruthOnlyMisses": 12,
+ "nTruthOnlyMisses": 8999007,
+ "id_branches": {
+  "mc_truth_denom": [],
+  "mc_signal_reco": []
+ },
+ "rows": {
+  "denominator_total": 32849103,
+  "denominator_kept": 32849103,
+  "signal_total": 32849103,
+  "signal_bad_w": 0,
+  "signal_truth_pass": 32849103
+ },
+ "multiset_exact_equal": true,
+ "n_cells_count_mismatch": 0,
+ "count_mismatch_cells": [],
+ "sum_max_rel_dev": 0.0,
+ "n_one_sided_cells": 0,
+ "equal_count_cells_with_tuple_differences": 0,
+ "differing_rows_in_those_cells": 0,
+ "sorted_pair_max_deviation": {
+  "pt": 0.0,
+  "pz": 0.0,
+  "w_rel": 0.0
+ },
+ "signal_tuples_with_exact_denominator_twin": 32849103,
+ "n_denominator_tuples": 32849103,
+ "n_signal_tuples": 32849103
+}
+check rc=0 2026-11-27T17:35:04Z

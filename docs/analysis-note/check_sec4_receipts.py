@@ -505,7 +505,7 @@ def evw2d_deposited(d: dict, sources: dict[str, str]) -> bool:
     equal references.npz's er bit for bit, through the config and references this run used (evw2d_refs)."""
     u, m = d["upload"], d["ref_meta"]
     return (evw2d_refs(d) and evw2d_exact(d, "C-EXACT-ER")
-            and "| `package/result-products-2d/result_2d.npz` | "
+            and "| `package-rc10/result-products-2d/result_2d.npz` | "
                 "`9ab08a9f7d57c786f422f7f03bb7810625c243d804d588ad504bb5b77eaa2e47` | 2,696,218 | current |" in u
             and f"`2d-unfolding/evw2d/config.json` (sha256 `{d['config_sha256']}`) pins `references.npz` at "
                 f"`{d['ref_sha256']}`;" in u
@@ -588,6 +588,81 @@ def clip2d_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     t, d = text("sec2_method.tex", sources), evw2d()
     return [(lab, t.count(s) == 1 and fact(d), f"sentence found {t.count(s)} time(s) | log {fact(d)}")
             for lab, s, fact in CLIP2D_CLAIMS]
+
+
+# Sec. 5.3.5's REGRADE-VF sentences (Joseph 2026-11-27): the bias/fluctuation split of the sixteen-cell held-out-tune
+# closures under C_rep with C_e^infl (rule (i)) against REGRADE's C' without it ("before"), at the primary minus2
+# evaluations. The note's first tune is AR23 and its second G18. The record's sha256 is read from the run's SHA256SUMS.
+REGRADE_VF = "measurement-paper/5d-community-20261024/fd/regrade-vf-20261127"
+REGRADE_VF_OVERRIDE = None
+
+
+def regrade_vf() -> dict:
+    if REGRADE_VF_OVERRIDE is not None:
+        return REGRADE_VF_OVERRIDE
+    run = STATE / REGRADE_VF / "run"
+    sums = dict(reversed(l.split()) for l in (run / "SHA256SUMS").read_text().splitlines() if l.strip())
+    return {"sha256": hashlib.sha256((run / "regrade_vf.json").read_bytes()).hexdigest(), "sums": sums,
+            "rec": json.loads((run / "regrade_vf.json").read_text()),
+            "decl": (STATE / REGRADE_VF / "REGRADE-VF-DECLARATION.md").read_text()}
+
+
+def regrade_vf_ok(d: dict) -> bool:
+    """The record is the committed run's (SHA256SUMS, and the director's 9f0e46e7 prefix), of declaration rev 1, with
+    the two minus2 evaluations primary and every control within tolerance."""
+    r = d["rec"]
+    return (d["sha256"] == d["sums"]["regrade_vf.json"] and d["sha256"].startswith("9f0e46e7")
+            and r["declaration"] == "REGRADE-VF-DECLARATION.md rev 1"
+            and sorted(r["primary"]) == ["ar23/minus2", "g18/minus2"])
+
+
+def rvf(d: dict, tune: str, rule: str) -> dict:
+    return d["rec"]["evaluations"][f"{tune}/minus2"][rule]
+
+
+def rvf_fall(d: dict, tune: str) -> float:
+    return 1.0 - rvf(d, tune, "rule_i")["B"] / rvf(d, tune, "before")["B"]
+
+
+def rvf_resolved(e: dict) -> bool:
+    return e["readings"]["bias_resolved"] == "yes" and e["B"] > 3 * e["se_boot"]["B"]
+
+
+def rvf_before_is_crep0(d: dict, sources: dict[str, str]) -> bool:
+    """'this covariance' follows C_rep,0 on the same draws: "before"'s mean chi2/ndf at the two tunes are the printed
+    rg-16-full-min/max."""
+    v = dict(re.findall(r"\\@namedef\{fv@(rg-16-full-(?:min|max))\}\{([0-9.]+)\}", sources["values_fived16.tex"]))
+    m = sorted(rvf(d, t, "before")["M_full"] for t in ("ar23", "g18"))
+    return len(v) == 2 and f"{m[0]:.1f}" == v["rg-16-full-min"] and f"{m[1]:.1f}" == v["rg-16-full-max"]
+
+
+REGRADE_VF_CLAIMS = (
+    ("REGRADE-VF: the mean offset is still resolved at both tunes (bias_resolved yes, B > 3 SE_boot, rule (i))",
+     "With $V_{\\mathrm{stat+syst}}^{\\mathrm{infl}}$ in place of $V_{\\mathrm{stat+syst}}$, the mean offset of the cells from "
+     "the truth is still clearly nonzero at both tunes.",
+     lambda d, s: regrade_vf_ok(d) and all(rvf_resolved(rvf(d, t, "rule_i")) for t in ("ar23", "g18"))),
+    ("REGRADE-VF: offset larger than scatter at AR23, smaller at G18 (bias_vs_fluctuation, rule (i), 3 SE_boot)",
+     "It makes up more of the mean $\\chi^2/\\mathrm{ndf}$ than the scatter of the draws at the first tune, and less at the second.",
+     lambda d, s: regrade_vf_ok(d)
+     and rvf(d, "ar23", "rule_i")["readings"]["bias_vs_fluctuation"] == "bias larger"
+     and rvf(d, "ar23", "rule_i")["B"] - rvf(d, "ar23", "rule_i")["F"] > 3 * rvf(d, "ar23", "rule_i")["se_boot"]["B_minus_F"]
+     and rvf(d, "g18", "rule_i")["readings"]["bias_vs_fluctuation"] == "fluctuation larger"
+     and rvf(d, "g18", "rule_i")["F"] - rvf(d, "g18", "rule_i")["B"] > 3 * rvf(d, "g18", "rule_i")["se_boot"]["B_minus_F"]),
+    ("REGRADE-VF: B falls by about two thirds at AR23 and about half at G18 (rule (i) vs before, which is C_rep,0 on the same draws)",
+     "Compared with $\\CrepFiveDzero$, its contribution to the mean $\\chi^2/\\mathrm{ndf}$ falls by about two thirds at the first tune and by about half at the second.",
+     lambda d, s: regrade_vf_ok(d) and 0.62 <= rvf_fall(d, "ar23") <= 0.71 and 0.45 <= rvf_fall(d, "g18") <= 0.58
+     and rvf_before_is_crep0(d, s)),
+    ("REGRADE-VF: circular by construction (declaration sec. 5: same draws; cannot show coverage of C_rep)",
+     "Because the inflation was chosen using these same tunes, this is a consistency check, not a coverage test.",
+     lambda d, s: regrade_vf_ok(d) and "The draws here are the same draws C_e^infl was fitted to." in d["decl"]
+     and "- Coverage or calibration of C_rep." in d["decl"]),
+)
+
+
+def regrade_vf_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    t, d = text("sec5_multidim.tex", sources), regrade_vf()
+    return [(lab, t.count(s) == 1 and fact(d, sources), f"sentence found {t.count(s)} time(s) | record {fact(d, sources)}")
+            for lab, s, fact in REGRADE_VF_CLAIMS]
 
 
 def evw2d_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
@@ -710,6 +785,90 @@ HIGHPZ_CLAIMS = (
 )
 
 
+# OOFVC (#1420): the 2D distances under MINERvA's counting convention (a PROPOSAL for Joseph, 2026-11-27), bound to r3's
+# score.json and the declaration's sec. 1.1 (the conventions) and sec. 2.3-2.4 (the operands at K = 10, the readings).
+OOFVC = "oofv-convention-20261126"
+OOFVC_OVERRIDE = None  # the self-test plants altered records here
+
+
+def oofvc() -> dict:
+    if OOFVC_OVERRIDE is not None:
+        return OOFVC_OVERRIDE
+    return {"score": json.loads((STATE / OOFVC / "receipts/attempt3-r3/score.json.txt").read_text()),
+            "decl": (STATE / OOFVC / "OOFVC-DECLARATION.md").read_text()}
+
+
+def _fv(sources: dict[str, str], name: str) -> str:
+    """A values_fived16.tex macro's printed value."""
+    m = re.findall(r"\\@namedef\{fv@" + re.escape(name) + r"\}\{([^}]*)\}", sources["values_fived16.tex"])
+    return m[0] if len(m) == 1 else "<missing>"
+
+
+def oofvc_ok(d: dict) -> bool:
+    sc = d["score"]
+    return sc["controls_pass"] is True and all(c["pass"] is True for c in sc["controls"].values())
+
+
+def oofvc_before(d: dict, sources: dict[str, str]) -> bool:
+    """The printed 'instead of' values are the production distances r3 reproduced (C-BASE), as the macros print them."""
+    o = d["score"]["operands"]
+    return (oofvc_ok(d) and _fv(sources, "c2c1-dibu") == f"{o['D_IBU_0']:.2f}" and _fv(sources, "c2c1-der") == f"{o['D_ER_0']:.2f}"
+            and d["score"]["controls"]["C-BASE"]["D_IBU_vs_regenA3_max_rel"] < 1e-9
+            and d["score"]["controls"]["C-BASE"]["D_ER_vs_tier1_rel"] < 1e-6
+            and d["score"]["descriptive"]["D_IBU_every_K"]["R"]["10"] == o["D_IBU_R"]
+            and d["score"]["descriptive"]["D_IBU_every_K"]["off"]["10"] == o["D_IBU_0"]
+            and "- D_IBU^0 and D_IBU^R at K = 10;" in d["decl"])
+
+
+OOFVC_CLAIMS = (
+    ("OOFVC: the new sentences follow the existing IBU distance sentence (whose 0.54 is D_IBU_0)",
+     "sec3_twod.tex",
+     "Relative to the published result, ten-iteration IBU gives \\fvval{c2c1-dibu} per bin using the same "
+     "published-covariance metric. The MINERvA Analysis Toolkit counts", lambda d, s: oofvc_before(d, s)),
+    ("OOFVC: MINERvA's code (MAT's Cutter) counts selected nu_mu CC events outside the phase space as signal, and "
+     "non-nu_mu-CC events as background (decl. 1.1)",
+     "sec3_twod.tex",
+     "The MINERvA Analysis Toolkit counts the selected $\\nu_\\mu$ charged-current events that fall outside the truth "
+     "phase space as signal.",
+     lambda d, s: ("| selected ν_μ CC event failing the phase space (true vertex outside the fiducial volume, or θ_μ ≥ 20°, "
+                   "or p∥ outside 1.5–60 GeV/c, or p_T ≥ 4.5 GeV/c) |" in d["decl"]
+                   and "| **signal**: it fills the efficiency numerator at its true (p_T, p∥) and the migration |" in d["decl"]
+                   and "| selected event that is not ν_μ CC (NC, ν̄_μ, ν_e) | background | background |" in d["decl"]
+                   and "1. **`MAT/PlotUtils/Cutter.cxx` @ 0111c79de**" in d["decl"] and oofvc_ok(d))),
+    ("OOFVC: only those with a true muon in the reported range are counted (decl. 1.3 step 3); the two distances "
+     "(operands at K = 10; the 'instead of' macros are the production ones)",
+     "sec3_twod.tex",
+     "If we count as signal those of these events whose true muon is in the reported $p_T$--$p_\\parallel$ range, "
+     "ten-iteration IBU gives 0.20 per bin instead of \\fvval{c2c1-dibu}, and the two-dimensional OmniFold result gives "
+     "2.21 instead of \\fvval{c2c1-der}.",
+     lambda d, s: (oofvc_before(d, s)
+                   and "Only rows whose true muon is in the grid are included (step 3)." in d["decl"]
+                   and d["score"]["controls"]["C-MOVE"]["pass"] is True)),
+    ("OOFVC: so it does not account for the 2D shape difference (r_IBU LOWER, r_ER LITTLE CHANGE; decl. 2.4's statement)",
+     "sec3_twod.tex", "This convention therefore does not account for the 2D shape difference with the published result.",
+     lambda d, s: (oofvc_ok(d) and d["score"]["bands"]["r_IBU"] == "LOWER"
+                   and d["score"]["bands"]["r_ER"] == "LITTLE CHANGE"
+                   and d["score"]["ratios"]["r_IBU"] <= 0.80 and 0.95 <= d["score"]["ratios"]["r_ER"] <= 1 / 0.95
+                   and d["score"]["statements"]["primary"] == "The reclassification moves the binned IBU's distance; at "
+                   "this scale it does not move the OmniFold central value's"
+                   and "| LOWER | LITTLE CHANGE or INTERMEDIATE | The reclassification moves the binned IBU's distance; at "
+                   "this scale it does not move the OmniFold central value's |" in d["decl"])),
+    ("OOFVC: Sec. 6's sentence (r_ER LITTLE CHANGE)", "sec6_conclusions.tex",
+     "The MINERvA Analysis Toolkit's signal convention does not account for the 2D shape difference with the published "
+     "result (Sec.~\\ref{sec:results-benchmarks}).",
+     lambda d, s: d["score"]["bands"]["r_ER"] == "LITTLE CHANGE" and oofvc_ok(d)),
+)
+
+
+def oofvc_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    d = oofvc()
+    out = []
+    for lab, f, sent, fact in OOFVC_CLAIMS:
+        n = text(f, sources).count(sent)
+        out.append((lab, n == 1 and fact(d, sources), f"sentence found {n} time(s) | record {fact(d, sources)}"))
+    return out
+
+
 def highpz_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     t, d = text("sec3_twod.tex", sources), highpz()
     return [(lab, t.count(s) == 1 and fact(d), f"sentence found {t.count(s)} time(s) | record {fact(d)}")
@@ -718,6 +877,12 @@ def highpz_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
+    # OOFVC (oofv-convention-20261126, r3 score.json), sec3_twod.tex
+    ("OOFVC: D_IBU under the convention, K = 10, and D_E_R under it (score.json operands D_IBU_R, D_ER_R)", "sec3_twod.tex",
+     r"ten-iteration IBU gives ([0-9.]+) per bin instead of \\fvval\{c2c1-dibu\}, and the two-dimensional OmniFold "
+     r"result gives ([0-9.]+) instead of \\fvval\{c2c1-der\}\.",
+     lambda: (oofvc()["score"]["operands"]["D_IBU_R"], oofvc()["score"]["operands"]["D_ER_R"]) if oofvc_ok(oofvc())
+     else (-1.0, -1.0), "round"),
     # The high-p_par open issue (precharge-20261125), sec3_twod.tex
     ("high p_par: the reco edge of the excess (merged-comparison.csv rows 60-80 and >=80)", "sec3_twod.tex",
      r"above the reported range, at reconstructed \$p_\\parallel \\geq ([0-9]+)\$~GeV/\$c\$\.",
@@ -922,7 +1087,9 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     rows += evw5d_claims(sources)
     rows += evw2d_claims(sources)
     rows += clip2d_claims(sources)
+    rows += regrade_vf_claims(sources)
     rows += highpz_claims(sources)
+    rows += oofvc_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
         found = len(re.findall(pat, text(src, sources))) == 1
         c = fn()
@@ -1092,7 +1259,7 @@ def load() -> dict[str, str]:
     return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec_validation.tex",
                                                "sec_5d.tex", "app_devhistory.tex", "primer_body.tex", "appA_methods.tex",
                                                "appC_supplementary.tex", "records_r03_twod.tex", "sec2_method.tex",
-                                               "appD_reproducibility.tex")}
+                                               "appD_reproducibility.tex", "sec5_multidim.tex", "sec6_conclusions.tex", "values_fived16.tex")}
 
 
 def gzip_self_test() -> bool:
@@ -1128,6 +1295,64 @@ def self_test() -> int:
     if not gzip_self_test():  # a reader check, reported on its own line, not counted as a perturbation
         ok = False
     # The high-p_par claims: each sentence reworded, and each planted record, must be rejected
+    # The OOFVC claims: each sentence reworded, and each planted record, must be rejected.
+    for f, old_s, new_s in (("sec3_twod.tex", "charged-current events that fall outside the truth phase space as signal.",
+                             "charged-current events that fall outside the truth phase space as background."),
+                            ("sec3_twod.tex", "counts the selected $\\nu_\\mu$ charged-current events", "counts the selected events"),
+                            ("sec3_twod.tex", "whose true muon is in the reported", "whose true muon is anywhere outside the reported"),
+                            ("sec3_twod.tex", "This convention therefore does not account for", "This convention therefore accounts for"),
+                            ("sec3_twod.tex", "instead of \\fvval{c2c1-dibu}", "instead of 0.54"),
+                            ("sec3_twod.tex", "per bin using the same published-covariance metric. The MINERvA",
+                             "per bin using the same published-covariance metric. Ten-iteration IBU gives 0.54 per bin. The MINERvA"),
+                            ("sec6_conclusions.tex", "convention does not account for the 2D shape", "convention accounts for the 2D shape")):
+        t = text(f, base)
+        if t.count(old_s) != 1:
+            print(f"  NOT FOUND   OOFVC mutation {old_s!r}"); ok = False; continue
+        trial = dict(base)
+        trial[f] = t.replace(old_s, new_s)
+        if all(r[1] for r in evaluate(trial)):
+            print(f"  NOT CAUGHT  OOFVC: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      OOFVC: {old_s} -> {new_s}")
+    trial = dict(base)
+    trial["values_fived16.tex"] = base["values_fived16.tex"].replace(r"\@namedef{fv@c2c1-der}{2.12}", r"\@namedef{fv@c2c1-der}{2.13}")
+    if all(r[1] for r in evaluate(trial)):
+        print("  NOT CAUGHT  OOFVC: c2c1-der printed 2.13"); ok = False
+    else:
+        caught += 1; print("  caught      OOFVC: c2c1-der printed 2.13")
+
+    def plant_of(what, fn):
+        global OOFVC_OVERRIDE
+        nonlocal ok, caught
+        import copy as copy_mod
+        data = copy_mod.deepcopy(oofvc())
+        fn(data)
+        OOFVC_OVERRIDE = data
+        try:
+            rows = dict((r[0], r[1]) for r in evaluate(base))
+        except (ValueError, KeyError, TypeError):
+            rows = {"refused": False}
+        finally:
+            OOFVC_OVERRIDE = None
+        if all(rows.values()):
+            print(f"  NOT CAUGHT  OOFVC planted: {what}"); ok = False
+        else:
+            caught += 1; print(f"  caught      OOFVC planted: {what}")
+    sc = lambda d: d["score"]
+    plant_of("a control failing", lambda d: sc(d)["controls"]["C-MOVE"].__setitem__("pass", False))
+    plant_of("controls_pass false", lambda d: sc(d).__setitem__("controls_pass", False))
+    plant_of("r_ER INTERMEDIATE", lambda d: sc(d)["bands"].__setitem__("r_ER", "INTERMEDIATE"))
+    plant_of("r_ER 1.06", lambda d: sc(d)["ratios"].__setitem__("r_ER", 1.06))
+    plant_of("r_IBU LITTLE CHANGE", lambda d: sc(d)["bands"].__setitem__("r_IBU", "LITTLE CHANGE"))
+    plant_of("another primary statement", lambda d: sc(d)["statements"].__setitem__("primary", "No statement; the numbers are reported"))
+    plant_of("D_IBU_R 0.21", lambda d: sc(d)["operands"].__setitem__("D_IBU_R", 0.21))
+    plant_of("D_ER_R 2.22", lambda d: sc(d)["operands"].__setitem__("D_ER_R", 2.22))
+    plant_of("D_IBU_R not the K = 10 entry", lambda d: sc(d)["descriptive"]["D_IBU_every_K"]["R"].__setitem__("10", 0.3))
+    plant_of("D_ER_0 off Tier 1", lambda d: sc(d)["controls"]["C-BASE"].__setitem__("D_ER_vs_tier1_rel", 1e-3))
+    plant_of("MINERvA's code counts non-CC events as signal", lambda d: d.__setitem__("decl", d["decl"].replace("| selected event that is not ν_μ CC (NC, ν̄_μ, ν_e) | background | background |", "| selected event that is not ν_μ CC (NC, ν̄_μ, ν_e) | background | signal |")))
+    plant_of("MINERvA's code calls them background", lambda d: d.__setitem__("decl", d["decl"].replace("| **signal**: it fills the efficiency numerator", "| background: it fills the efficiency numerator")))
+    plant_of("the declaration's K not 10", lambda d: d.__setitem__("decl", d["decl"].replace("- D_IBU^0 and D_IBU^R at K = 10;", "- D_IBU^0 and D_IBU^R at K = 5;")))
+    plant_of("the moved rows not limited to the grid", lambda d: d.__setitem__("decl", d["decl"].replace("Only rows whose true muon is in the grid are included (step 3).", "All rows are included.")))
     for old_s, new_s in (("rises with visible energy", "falls with visible energy"),
                          ("band from 20 to 80~GeV", "band from 20 to 100~GeV"),
                          ("independent of the muon does not", "depending on the muon does not"),
@@ -1437,6 +1662,48 @@ def self_test() -> int:
     plant2("refinement clipped events", lambda d: d.__setitem__("log", d["log"].replace("clipped(2g-1<0) 0 events", "clipped(2g-1<0) 7 events")))
     plant2("refinement score below 0.5", lambda d: d.__setitem__("log", d["log"].replace("g in [0.533,", "g in [0.473,")))
     plant2("refinement score 0.54", lambda d: d.__setitem__("log", d["log"].replace("g in [0.533,", "g in [0.543,")))
+
+    def plant3(what, fn):
+        global REGRADE_VF_OVERRIDE
+        nonlocal ok, caught
+        data = copy.deepcopy(regrade_vf())
+        fn(data)
+        REGRADE_VF_OVERRIDE = data
+        try:
+            rows = dict((r[0], r[1]) for r in evaluate(base))
+        except (ValueError, KeyError, TypeError):
+            rows = {"refused": False}
+        finally:
+            REGRADE_VF_OVERRIDE = None
+        if all(rows.values()):
+            print(f"  NOT CAUGHT  REGRADE-VF planted: {what}"); ok = False
+        else:
+            caught += 1; print(f"  caught      REGRADE-VF planted: {what}")
+    ev = lambda d, k, r: d["rec"]["evaluations"][k][r]
+    plant3("record not the committed one", lambda d: d.__setitem__("sha256", "0" * 64))
+    plant3("another declaration revision", lambda d: d["rec"].__setitem__("declaration", "REGRADE-VF-DECLARATION.md rev 2"))
+    plant3("G18 bias not resolved", lambda d: ev(d, "g18/minus2", "rule_i")["readings"].__setitem__("bias_resolved", "not resolved"))
+    plant3("AR23 bias within 3 SE", lambda d: ev(d, "ar23/minus2", "rule_i").__setitem__("B", 2.9 * ev(d, "ar23/minus2", "rule_i")["se_boot"]["B"]))
+    plant3("AR23 not separated", lambda d: ev(d, "ar23/minus2", "rule_i")["readings"].__setitem__("bias_vs_fluctuation", "not separated"))
+    plant3("G18 bias larger", lambda d: ev(d, "g18/minus2", "rule_i")["readings"].__setitem__("bias_vs_fluctuation", "bias larger"))
+    plant3("AR23 fall 0.80", lambda d: ev(d, "ar23/minus2", "rule_i").__setitem__("B", 0.20 * ev(d, "ar23/minus2", "before")["B"]))
+    plant3("G18 fall 0.30", lambda d: ev(d, "g18/minus2", "rule_i").__setitem__("B", 0.70 * ev(d, "g18/minus2", "before")["B"]))
+    plant3("before is not C_rep,0 (M_full 3.0)", lambda d: ev(d, "ar23/minus2", "before").__setitem__("M_full", 3.0))
+    plant3("declaration drops the circularity", lambda d: d.__setitem__("decl", d["decl"].replace("The draws here are the same draws C_e^infl was fitted to.", "")))
+    for old_s, new_s in (("about two thirds at the first", "about three quarters at the first"),
+                         ("by about half at the second", "by about a third at the second"),
+                         ("at the first tune, and less at the second", "at the second tune, and less at the first"),
+                         ("still clearly nonzero at both tunes", "consistent with zero at both tunes"),
+                         ("this is a consistency check, not a coverage test", "this is a coverage test")):
+        t5 = base["sec5_multidim.tex"]
+        if t5.count(old_s) != 1:
+            print(f"  NOT FOUND   REGRADE-VF mutation {old_s!r}"); ok = False; continue
+        trial = dict(base)
+        trial["sec5_multidim.tex"] = t5.replace(old_s, new_s)
+        if all(r[1] for r in evaluate(trial)):
+            print(f"  NOT CAUGHT  REGRADE-VF: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      REGRADE-VF: {old_s} -> {new_s}")
     plant2("evw2d.done verdict FAIL", lambda d: d["done"].__setitem__("verdict", "FAIL"))
     plant2("a finding recorded", lambda d: d["run"].__setitem__("findings", ["C-COMPLETE"]))
     plant2("deposit copy not accepted", lambda d: d.__setitem__("deposit", d["deposit"].replace("ACCEPTED", "REFUSED")))

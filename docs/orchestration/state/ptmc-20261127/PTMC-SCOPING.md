@@ -21,9 +21,9 @@ at full rigour anyway.**
 
 | day | step | depends on |
 |---|---|---|
-| 11-27 | this scoping and DRAFT declaration; declaration reads (Grok, codex-school, Sonnet); revision | the director's answers to §3 |
+| 11-27 | this scoping and DRAFT declaration; declaration reads (codex-school2 and agy `gemini-4-hydrogen-high`; Grok is unfunded); revision | the director's answers to §3 |
 | 11-28 | code: driver diff (~30 lines), paired runner (new file), scorer (imports REF-C2C1's reader); tests; mutation campaign; code reads | the declaration's audit |
-| 11-29 | binding; fence round; a 0 node-h stat connect (§3, D4); pilot (4 units); then 199 replicas, ~2–3 h wall on 5 nodes plus queue | the GO; cov2d acks |
+| 11-29 | binding; fence round; pilot (8 units: both centrals, the off replicas b = 1..5, the R replica b = 1); then 199 replicas, ~2–3 h wall on 5 nodes plus queue | the GO; cov2d acks. (D4's stat connect already ran, on 11-27: 604 of 604 present, `receipts/stat-d4/`) |
 | 11-30 | score on the laptop; receipts PR; CI; merge; the director reads it; it goes to Joseph | — |
 | 12-01 | the note text, if Joseph wants it in v1 | Joseph |
 
@@ -45,8 +45,9 @@ declaration's §8.)
   - about 0.03 node-h per unit, mixing 300 c2 units (refinement plus IBU) with 50 c1 units (refinement plus OmniFold).
 - **The cost holds only with the paired unit (§3, D3).** One driver run does one refinement and feeds both methods.
   Separate IBU and E_R units would cost about 200 × (0.049 + 0.027) ≈ 15 node-h, over the cap.
-- **STOP rule:** if the pilot's charged node-h plus 199 × its measured per-replica cost exceeds 11.5 node-h, the
-  replicas do not launch, and it goes back to the director (the declaration's §7).
+- **STOP rule:** if the pilot's charged node-h plus the projected replica layout (5 nodes × (10 × the pilot's R
+  replica step time + overhead)) exceeds 11.5 node-h, the replicas do not launch, and it goes back to the director
+  (the declaration's §7).
 
 ## 3. Decisions the draft makes, each with a recommendation; the director's call
 
@@ -78,7 +79,8 @@ declaration's §8.)
     - Stage 4 deleted only the staging root (`stage4-delete/README.txt`).
     - Nothing on main says the units or read-2 were removed, and they were last read through O_NOATIME. The purge
       window from 11-06 runs to about 2027-01-01.
-    - Their presence needs a 0 node-h stat connect after the GO.
+    - Their presence needed a 0 node-h stat connect after a GO. It ran on 11-27 and found 604 of 604 present
+      (`receipts/stat-d4/`).
   - **If they are gone,** the baseline clause drops and the reading is reported as measured (declaration §5).
 - **D5. The analysis grid,** E_R's edges: 0.07 / 0.33 / 0.47 GeV/c on p_T, at M's driver 938c53c5. It is not
   OOFVC's paper-edge grid.
