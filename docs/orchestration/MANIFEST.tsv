@@ -19752,6 +19752,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/tools/p0_expected.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0-20261123/tools/p0_supervise.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0e1-20261126/README.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0e1-20261126/RPD-P0E1-BINDING.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0e1-20261126/price/RESULT.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0e1-20261126/price/part2_probe.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/p0e1-20261126/production-config.ready.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
