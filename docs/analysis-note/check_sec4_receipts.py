@@ -954,7 +954,7 @@ CHECKS = [
     # spec is the frozen input of the bound run and describes the note at its deploy, 903fb78b (test_re2c.py checks it
     # there, #1325). The sentence prints here now, and this row is the live binding.
     ("Q_R direct-inverse distance per bin vs the published central value (G2R run 2, oo-q)", "appA_methods.tex",
-     r"The direct inverse of \$\\CrepTwoD\$ gives a quadratic distance of ([0-9.]+) per reported bin",
+     r"Its direct inverse gives a distance of ([0-9.]+) per reported bin against the published central value",
      lambda: float(re.search(r"\[universe-only\] direct inverse: chi\^2 = [0-9.]+,\s+ndf = 205,\s+chi\^2/ndf = ([0-9.]+)",
                              (STATE / "measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/re2shapes/run2/g2r/chi2/"
                               "ours_only_Q.txt").read_text()).group(1)), "round"),
