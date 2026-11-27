@@ -51,8 +51,11 @@ c = json.load(open(sys.argv[1])).get("compat_libs") or {}
 print("".join("--pin\n%s=%s\n" % (v.get("real"), v.get("sha256")) for k, v in sorted((c.get("libs") or {}).items())
               if c.get("dir") and v.get("real") and v.get("sha256")))' "$HERE/pg_pins.json")   # the shim's pinned libraries
 MINERVA_REPO=/cvmfs/minerva.opensciencegrid.org   # the compat shim libssl/libcrypto.so.10 targets' repository
+INTERP=$("$PY" -I -c 'import json,sys
+v = json.load(open(sys.argv[1])).get("interpreter_tools") or {}
+print(len([k for k, h in v.items() if k and h]) or "")' "$HERE/pg_pins.json")   # ROOT's interpreter's pinned programs
 [ -n "$STRACE" ] && [ -n "$STRACE_SHA" ] && [ -n "$DBCONFIG_SHA" ] && [ -n "$SYSPINS" ] && [ -n "$COMPAT" ] \
-  || refuse "pg_pins.json is not filled (R1)"
+  && [ -n "$INTERP" ] || refuse "pg_pins.json is not filled (R1)"
 mkdir -p "$R/logs" "$R/splines" "$R/traces" "$R/work" || refuse "cannot create R's directories"
 need() { [ "$1" -eq 0 ] || { echo "[replay] STOP: $2 rc=$1"; exit 1; }; }
 pass() { echo "[replay] $1: pass"; }

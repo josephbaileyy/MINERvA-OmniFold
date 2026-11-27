@@ -1,0 +1,285 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3114c0s5b0n0:
+
+host login12
+== 1. problems
+   365 problems: {'child-exit': 1, 'cwd-unknown': 110, 'dotdot-outside-roots': 3, 'exec-unbound': 21, 'search-probes': 230}
+   child-exit: process 1494590 exited 1
+   dotdot-outside-roots: '/..' -> /
+   dotdot-outside-roots: '/usr/lib64/gcc/x86_64-suse-linux/14/../../../../x86_64-suse-linux/lib' -> /usr/x86_64-suse-linux/lib
+   dotdot-outside-roots: '/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/../../../../../../../../../../../../usr/include/bits' -> /usr/include/bits
+   cwd-unknown: stat of 'GENIE' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Tools/Flux' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Tools/Flux' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Tools/Geometry' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Tools/Geometry' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/BeamHNL' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/BeamHNL' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/BoostedDarkMatter/EventGen' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/BoostedDarkMatter/EventGen' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/BoostedDarkMatter/XSection' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/BoostedDarkMatter/XSection' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/NNBarOscillation' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/NNBarOscillation' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/NucleonDecay' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/NucleonDecay' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/HEDIS/EventGen' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/HEDIS/EventGen' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/HEDIS/XSection' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/HEDIS/XSection' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/Strange/EventGen' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/Strange/EventGen' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/Strange/XSection' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/Strange/XSection' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/Resonance/EventGen' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/Resonance/EventGen' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/Resonance/XSection' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/Resonance/XSection' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/QuasiElastic/EventGen' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/QuasiElastic/EventGen' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/QuasiElastic/XSection' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/QuasiElastic/XSection' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/NuElectron/EventGen' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/NuElectron/EventGen' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/NuElectron/XSection' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/NuElectron/XSection' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/MuonEnergyLoss' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/MuonEnergyLoss' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/Multinucleon/EventGen' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/Multinucleon/EventGen' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/Multinucleon/XSection' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/Multinucleon/XSection' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/HadronTensors' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/HadronTensors' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/InverseBetaDecay/EventGen' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/InverseBetaDecay/EventGen' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/InverseBetaDecay/XSection' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/InverseBetaDecay/XSection' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/HELepton/EventGen' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/HELepton/EventGen' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/HELepton/XSection' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/HELepton/XSection' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/Diffractive/EventGen' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/Diffractive/EventGen' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/Diffractive/XSection' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/Diffractive/XSection' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/DeepInelastic/EventGen' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/DeepInelastic/EventGen' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/DeepInelastic/XSection' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/DeepInelastic/XSection' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/Coherent/EventGen' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/Coherent/EventGen' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/Coherent/XSection' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/Coherent/XSection' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/Charm/XSection' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/Charm/XSection' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/AnomalyMediatedNuGamma/EventGen' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/AnomalyMediatedNuGamma/EventGen' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/AnomalyMediatedNuGamma/XSection' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/AnomalyMediatedNuGamma/XSection' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/NuclearDeExcitation' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/NuclearDeExcitation' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/Hadronization' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/Hadronization' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/HadronTransport' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/HadronTransport' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/Decay' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/Decay' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/Common' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/Common' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/NuclearState' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/NuclearState' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/PartonDistributions' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/PartonDistributions' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Physics/XSectionIntegration' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Physics/XSectionIntegration' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Framework/Ntuple' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Framework/Ntuple' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Framework/EventGen' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Framework/EventGen' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Framework/ParticleData' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Framework/ParticleData' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Framework/Utils' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Framework/Utils' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Framework/Numerical' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Framework/Numerical' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Framework/GHEP' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Framework/GHEP' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Framework/Interaction' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Framework/Interaction' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Framework/Algorithm' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Framework/Algorithm' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Framework/Registry' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Framework/Registry' cannot be resolved
+   cwd-unknown: stat of 'GENIE/Framework/Messenger' cannot be resolved
+   cwd-unknown: stat of '../include/GENIE/Framework/Messenger' cannot be resolved
+   cwd-unknown: openat of '.rootmap' cannot be resolved
+   cwd-unknown: openat of '.' cannot be resolved
+   cwd-unknown: openat of '.' cannot be resolved
+   cwd-unknown: access of 'linux-vdso.so' cannot be resolved
+   exec-unbound: /bin/sh -> /usr/bin/bash
+   exec-unbound: /usr/bin/ls -> /usr/bin/ls
+   exec-unbound: /bin/sh -> /usr/bin/bash
+   exec-unbound: /usr/bin/ls -> /usr/bin/ls
+   exec-unbound: /bin/sh -> /usr/bin/bash
+   exec-unbound: /usr/bin/ls -> /usr/bin/ls
+   exec-unbound: /bin/sh -> /usr/bin/bash
+   exec-unbound: /usr/bin/ls -> /usr/bin/ls
+   exec-unbound: /bin/sh -> /usr/bin/bash
+   exec-unbound: /usr/bin/ls -> /usr/bin/ls
+   exec-unbound: /bin/sh -> /usr/bin/bash
+   exec-unbound: /usr/bin/sed -> /usr/bin/sed
+   exec-unbound: /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/g++ -> /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/g++
+   exec-unbound: /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus -> /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus
+   exec-unbound: /bin/sh -> /usr/bin/bash
+   exec-unbound: /usr/bin/ls -> /usr/bin/ls
+   exec-unbound: /bin/sh -> /usr/bin/bash
+   exec-unbound: /usr/bin/ldd -> /usr/bin/ldd
+   exec-unbound: /lib/ld-linux.so.2 -> /lib/ld-linux.so.2
+   exec-unbound: /lib64/ld-linux-x86-64.so.2 -> /lib64/ld-linux-x86-64.so.2
+   exec-unbound: /lib64/ld-linux-x86-64.so.2 -> /lib64/ld-linux-x86-64.so.2
+   search-probes kinds: {"after probes that do not walk GENIE's lists to it": 230}
+   search-probes basenames: AGCharm2019.xml AGKY2019.xml AGKYLowW2019.xml AMNuGammaGenerator.xml AMNuGammaInteractionListGenerator.xml AhrensDMELPXSec.xml AhrensNCELPXSec.xml AivazisCharmPXSecLO.xml AlamSimoAtharVacasSKPXSec2014.xml AlamSimoAtharVacasSKXSec.xml AlvarezRusoCOHPiPXSec.xml BBA03ELFormFactorsModel.xml BBA05ELFormFactorsModel.xml BBA07ELFormFactorsModel.xml BYPDF.xml BYStrucFunc.xml BardinIMDRadCorPXSec.xml BaryonResonanceDecayer.xml BeamHNLGenerator.xml BergerSehgalCOHPiPXSec2015.xml BergerSehgalFMCOHPiPXSec2015.xml BergerSehgalRESPXSec2014.xml BertuzzoDNuCOHPXSec.xml BetheBlochModel.xml BezrukovBugaevModel.xml BostedChristyEMPXSec.xml CEvNSEventGenerator.xml CEvNSInteractionListGenerator.xml CEvNSXSec.xml COHDNuEventGenerator.xml COHDNuInteractionListGenerator.xml COHDNuXSec.xml COHHadronicSystemGenerator.xml COHInteractionListGenerator.xml COHKinematicsGenerator.xml COHPrimaryLeptonGenerator.xml COHXSec.xml COHXSecAR.xml CascadeReweight.xml CollinsSpillerFragm.xml CommonDark.xml CommonDecay.xml CommonHNL.xml CommonParam.xml DFRHadronicSystemGenerator.xml DFRInteractionListGenerator.xml DFRKinematicsGenerator.xml DFRPrimaryLeptonGenerator.xml DFRXSec.xml DISHadronicSystemGenerator.xml DISInteractionListGenerator.xml DISKinematicsGenerator.xml DISPrimaryLeptonGenerator.xml DISXSec.xml DMDISInteractionListGenerator.xml DMDISKinematicsGenerator.xml DMDISOutgoingDarkGenerator.xml DMDISXSec.xml DMEInteractionListGenerator.xml DMEKinematicsGenerator.xml DMELEventGenerator.xml DMELInteractionListGenerator.xml DMELKinematicsGenerator.xml DMELOutgoingDarkGenerator.xml DMELXSec.xml DMEOutgoingDarkGenerator.xml DMETargetRemnantGenerator.xml DMElectronPXSec.xml DMElectronXSec.xml DarkSectorDecayer.xml Default.xml DipoleAxialFormFactorModel.xml DipoleELFormFactorsModel.xml EffectiveSF.xml EmpiricalMECPXSec2015.xml EngelFormFactor.xml EventGenerator.xml EventGeneratorListAssembler.xml EventLibraryInterface.xml EvtLibInteractionListGenerator.xml EvtLibPXSec.xml FGMBodekRitchie.xml FermiMomentumTables.xml FermiMover.xml GLRESGenerator.xml GLRESPXSec.xml GRV98LO.xml GSystUncertaintyTable.xml H3AMNuGammaPXSec.xml HAIntranuke.xml HAIntranuke2018.xml HEDISGenerator.xml HEDISInteractionListGenerator.xml HEDISKinematicsGenerator.xml HEDISPXSec.xml HEDISXSec.xml HELeptonInteractionListGenerator.xml HELeptonKinematicsGenerator.xml HELeptonXSec.xml HENuElGenerator.xml HENuElPXSec.xml HG4BertCascIntranuke.xml HINCLCascadeIntranuke.xml HNIntranuke2018.xml HadronTransporter.xml HybridXSecAlgorithm.xml IBDHadronicSystemGenerator.xml IBDInteractionListGenerator.xml IBDKinematicsGenerator.xml IBDPrimaryLeptonGenerator.xml IBDXSecMap.xml IMDAnnihilationPXSec.xml IMDXSec.xml InitialStateAppender.xml InteractionListAssembler.xml KLVOxygenIBDPXSec.xml KNOTunedQPMDISPXSec.xml KokoulinPetrukhinModel.xml KovalenkoQELCharmPXSec.xml KuzminLyubushkinNaumovRESPXSec2014.xml KuzminNaumov2016AxialFormFactorModel.xml LHAPDF5.xml LHAPDF6.xml LeptoHadronization.xml LocalFGM.xml LwlynSmithFFCC.xml LwlynSmithFFDeltaS.xml LwlynSmithFFNC.xml LwlynSmithQELCCPXSec.xml MECGenerator.xml MECInteractionListGenerator.xml MECScaleVsW.xml MECXSec.xml ModelConfiguration.xml NNBarOscPrimaryVtxGenerator.xml NewQELXSec.xml NievesMECHadronTensorModel.xml NievesQELCCPXSec.xml NievesSimoVacasMECPXSec2016.xml NuEInteractionListGenerator.xml NuEKinematicsGenerator.xml NuEPrimaryLeptonGenerator.xml NuETargetRemnantGenerator.xml NuElectronPXSec.xml NuElectronXSec.xml NucBindEnergyAggregator.xml NucDeExcitationSim.xml NuclearModelMap.xml NucleonDecayPrimaryVtxGenerator.xml P33PaschosLalakulichPXSec.xml PaisQELLambdaPXSec.xml PattonCEvNSPXSec.xml PauliBlocker.xml PetersonFragm.xml PetrukhinShestakovModel.xml PhotonCOHGenerator.xml PhotonCOHPXSec.xml PhotonRESGenerator.xml PhotonRESPXSec.xml PhysInteractionSelector.xml Pythia6Hadro2019.xml Pythia8Hadro2019.xml PythiaDecayer.xml QELEventGenerator.xml QELEventGeneratorSM.xml QELEventGeneratorSuSA.xml QELHadronicSystemGenerator.xml QELInteractionListGenerator.xml QELKinematicsGenerator.xml QELPrimaryLeptonGenerator.xml QELXSec.xml QPMDISPXSec.xml QPMDISStrucFunc.xml QPMDMDISPXSec.xml QvalueShifter.xml RESHadronicSystemGenerator.xml RESInteractionListGenerator.xml RESKinematicsGenerator.xml RESPrimaryLeptonGenerator.xml RESXSec.xml RSHelicityAmplModelCC.xml RSHelicityAmplModelEMn.xml RSHelicityAmplModelEMp.xml RSHelicityAmplModelNCn.xml RSHelicityAmplModelNCp.xml RSPPHadronicSystemGenerator.xml RSPPInteractionListGenerator.xml RSPPResonanceSelector.xml ReinDFRPXSec.xml ReinSehgalCOHPiPXSec.xml ReinSehgalRESPXSec.xml ReinSehgalRESXSec.xml ReinSehgalRESXSecFast.xml ReinSehgalSPPPXSec.xml ReinSehgalSPPXSec.xml RosenbluthPXSec.xml SKHadronicSystemGenerator.xml SKInteractionListGenerator.xml SKKinematicsGenerator.xml SKPrimaryLeptonGenerator.xml SRCNuclearRecoil.xml SlowRsclCharmDISPXSecLO.xml SmithMonizQELCCPXSec.xml SmithMonizQELCCXSec.xml SmithMonizUtils.xml SpectralFunc.xml SpectralFunc1d.xml SpectralFunction2p2h.xml StrumiaVissaniIBDPXSec.xml SuSAv2MECHadronTensorModel.xml SuSAv2MECPXSec.xml SuSAv2QELHadronTensorModel.xml SuSAv2QELPXSec.xml ToyInteractionSelector.xml TransverseEnhancementFFModel.xml TuneGeneratorList.xml UnstableParticleDecayer.xml VertexGenerator.xml XSecLinearCombinations.xml XSecScaleMap.xml ZExpAxialFormFactorModel.xml master_config.xml
+== 2. the trace's process events
+   bytes 5671913 lines 32117
+   1487263 execve("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gspl2root", ["gspl2root", "-f", "/pscratch/sd/j/josephrb/covfix-p"..., "--tune", "G21_11a_00_000", "-p", "14", "-t", "1000060120,1000010010", "-e", "100", "-o", "/pscratch/sd/j/josephrb/covfix-p"...], 0x7ffd3ac985c0 /* 156 vars */) = 0
+   1492898 execve("/bin/sh", ["sh", "-c", "--", "LD_DEBUG=libs LD_PRELOAD=DOESNOT"...], 0x7ffdc368dbd8 /* 156 vars */) = 0
+   1492902 execve("/usr/bin/ls", ["ls"], 0x55e9a2bded40 /* 158 vars */) = 0
+   1492905 execve("/bin/sh", ["sh", "-c", "--", "LD_DEBUG=libs LD_PRELOAD=DOESNOT"...], 0x7ffdc368dbd8 /* 156 vars */) = 0
+   1492908 execve("/usr/bin/ls", ["ls"], 0x55e71400fd40 /* 158 vars */) = 0
+   1492913 execve("/bin/sh", ["sh", "-c", "--", "LD_DEBUG=libs LD_PRELOAD=DOESNOT"...], 0x7ffdc368dbd8 /* 156 vars */) = 0
+   1492926 execve("/usr/bin/ls", ["ls"], 0x555a1547ed40 /* 158 vars */) = 0
+   1492940 execve("/bin/sh", ["sh", "-c", "--", "LD_DEBUG=libs LD_PRELOAD=DOESNOT"...], 0x7ffdc368dbd8 /* 156 vars */) = 0
+   1492947 execve("/usr/bin/ls", ["ls"], 0x56520e0e2d40 /* 158 vars */) = 0
+   1493154 execve("/bin/sh", ["sh", "-c", "--", "LD_DEBUG=libs LD_PRELOAD=DOESNOT"...], 0x7bb670 /* 157 vars */) = 0
+   1493156 execve("/usr/bin/ls", ["ls"], 0x561e9c9e1f10 /* 159 vars */) = 0
+   1493171 execve("/bin/sh", ["sh", "-c", "--", "LC_ALL=C g++  -O3  -xc++ -E -v /"...], 0x7bb670 /* 157 vars */) = 0
+   1493176 execve("/cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/g++", ["g++", "-O3", "-xc++", "-E", "-v", "/dev/null"], 0x55fe4db98e80 /* 157 vars */ <unfinished ...>
+   1493177 execve("/usr/bin/sed", ["sed", "-n", "-e", "/^.include/,${", "-e", "/^ \\/.*++/p", "-e", "}"], 0x55fe4db98e80 /* 157 vars */) = 0
+   1493178 execve("/cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/../libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus", ["/cvmfs/larsoft.opensciencegrid.o"..., "-E", "-quiet", "-v", "-iprefix", "/cvmfs/larsoft.opensciencegrid.o"..., "-D_GNU_SOURCE", "/dev/null", "-mtune=generic", "-march=x86-64", "-O3"], 0x749b60 /* 160 vars */) = 0
+   1487263 chdir("/pscratch/sd/j/josephrb/covfix-pg/replay-20261127T050508Z/run") = 0
+   1494182 execve("/bin/sh", ["sh", "-c", "--", "LD_DEBUG=libs LD_PRELOAD=DOESNOT"...], 0x7bb670 /* 157 vars */) = 0
+   1494223 execve("/usr/bin/ls", ["ls"], 0x55961de1ff10 /* 159 vars */) = 0
+   1494584 execve("/bin/sh", ["sh", "-c", "--", "ldd '/cvmfs/larsoft.openscienceg"...], 0x7bb670 /* 157 vars */) = 0
+   1494584 execve("/usr/bin/ldd", ["ldd", "/cvmfs/larsoft.opensciencegrid.o"...], 0x558179b62220 /* 157 vars */) = 0
+   1494590 execve("/lib/ld-linux.so.2", ["/lib/ld-linux.so.2", "--verify", "/cvmfs/larsoft.opensciencegrid.o"...], 0x562a5d1f9760 /* 157 vars */) = 0
+   1494590 +++ exited with 1 +++
+   1494591 execve("/lib64/ld-linux-x86-64.so.2", ["/lib64/ld-linux-x86-64.so.2", "--verify", "/cvmfs/larsoft.opensciencegrid.o"...], 0x562a5d1f9760 /* 157 vars */) = 0
+   1494594 execve("/lib64/ld-linux-x86-64.so.2", ["/lib64/ld-linux-x86-64.so.2", "/cvmfs/larsoft.opensciencegrid.o"...], 0x562a5d1fdef0 /* 161 vars */) = 0
+== 3. three config files
+-- master_config.xml
+   1487263 access("/pscratch/sd/j/josephrb/covfix-pg/products/genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data/master_config.xml", F_OK) = -1 ENOENT (No such file or directory)
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/master_config.xml", F_OK) = -1 ENOENT (No such file or directory)
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/master_config.xml", F_OK) = 0
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/master_config.xml", F_OK) = 0
+   1487263 stat("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/master_config.xml", {st_mode=S_IFREG|0644, st_size=25247, ...}) = 0
+   1487263 stat("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/master_config.xml", {st_mode=S_IFREG|0644, st_size=25247, ...}) = 0
+   1487263 stat("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/master_config.xml", {st_mode=S_IFREG|0644, st_size=25247, ...}) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/master_config.xml", O_RDONLY) = 4
+-- ModelConfiguration.xml
+   1487263 access("/pscratch/sd/j/josephrb/covfix-pg/products/genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data/ModelConfiguration.xml", F_OK) = -1 ENOENT (No such file or directory)
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/ModelConfiguration.xml", F_OK) = 0
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/ModelConfiguration.xml", F_OK) = 0
+   1487263 stat("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/ModelConfiguration.xml", {st_mode=S_IFREG|0644, st_size=6008, ...}) = 0
+   1487263 stat("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/ModelConfiguration.xml", {st_mode=S_IFREG|0644, st_size=6008, ...}) = 0
+   1487263 stat("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/ModelConfiguration.xml", {st_mode=S_IFREG|0644, st_size=6008, ...}) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/ModelConfiguration.xml", O_RDONLY) = 4
+-- AGKY2019.xml
+   1487263 access("/pscratch/sd/j/josephrb/covfix-pg/products/genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data/AGKY2019.xml", F_OK) = -1 ENOENT (No such file or directory)
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/AGKY2019.xml", F_OK) = -1 ENOENT (No such file or directory)
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AGKY2019.xml", F_OK) = 0
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AGKY2019.xml", F_OK) = 0
+   1487263 stat("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AGKY2019.xml", {st_mode=S_IFREG|0644, st_size=1377, ...}) = 0
+   1487263 stat("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AGKY2019.xml", {st_mode=S_IFREG|0644, st_size=1377, ...}) = 0
+   1487263 stat("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AGKY2019.xml", {st_mode=S_IFREG|0644, st_size=1377, ...}) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AGKY2019.xml", O_RDONLY) = 4
+== 4. rootmap and relative GENIE include lookups
+   1487263 stat("GENIE/Tools/Flux", 0x7ffdc368cae0) = -1 ENOENT (No such file or directory)
+   1487263 stat("../include/GENIE/Tools/Flux", 0x7ffdc368cae0) = -1 ENOENT (No such file or directory)
+   1487263 stat("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/include/GENIE/Tools/Flux", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+   1487263 stat("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/include/GENIE/Tools/Flux/GAtmoFlux.h", {st_mode=S_IFREG|0644, st_size=8034, ...}) = 0
+   1487263 stat("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/include/GENIE/Tools/Flux/GFlavorMixerI.h", {st_mode=S_IFREG|0644, st_size=2426, ...}) = 0
+   1487263 stat("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/include/GENIE/Tools/Flux/GFluxExposureI.h", {st_mode=S_IFREG|0644, st_size=1768, ...}) = 0
+   1487263 stat("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/include/GENIE/Tools/Flux/GFluxFileConfigI.h", {st_mode=S_IFREG|0644, st_size=3937, ...}) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/etc/system.rootmap", O_RDONLY) = -1 ENOENT (No such file or directory)
+   1487263 openat(AT_FDCWD, "/global/homes/j/josephrb/.rootmap", O_RDONLY) = -1 ENOENT (No such file or directory)
+   1487263 openat(AT_FDCWD, ".rootmap", O_RDONLY) = -1 ENOENT (No such file or directory)
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libmap2Dict.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libmap2Dict.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libforward_listDict.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libforward_listDict.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libcomplexDict.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libcomplexDict.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/liblistDict.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/liblistDict.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libmapDict.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libmapDict.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libunordered_setDict.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libunordered_setDict.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libunordered_multisetDict.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libunordered_multisetDict.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libmultisetDict.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libmultisetDict.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libmultimapDict.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libmultimapDict.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libvalarrayDict.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libvalarrayDict.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libunordered_multimapDict.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libunordered_multimapDict.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libmultimap2Dict.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libmultimap2Dict.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libunordered_mapDict.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libunordered_mapDict.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libdequeDict.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libdequeDict.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libSmatrix32.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libSmatrix32.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libGenVector32.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libGenVector32.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libvectorDict.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libvectorDict.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libsetDict.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libsetDict.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib/libGFwInt.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib/libGFwInt.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib/libGPhHELptnEG.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib/libGPhHELptnEG.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib/libGPhDISXS.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib/libGPhDISXS.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib/libGFwEG.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib/libGFwEG.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib/libGFwNum.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib/libGFwNum.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib/libGPhHadTens.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib/libGPhHadTens.rootmap", O_RDONLY) = 5
+   1487263 access("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib/libGPhStrEG.rootmap", R_OK) = 0
+   1487263 openat(AT_FDCWD, "/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib/libGPhStrEG.rootmap", O_RDONLY) = 5
+   ... 102 more
+== 5. gxmlpath
+   /pscratch/sd/j/josephrb/covfix-pg/products/genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data
+== end

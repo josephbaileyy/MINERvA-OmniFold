@@ -268,6 +268,8 @@ class Trace(Tmp):
                          for k, v in self.files.items()}
         self.manifest["genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib/libGFwEG.so"] = {
             "type": "symlink", "target": "libGFwEG-3.04.00.so"}
+        # the tune's own directory, so GENIE walks it (a custom tune's list); Round9 removes it, as for G21_11a_00_000
+        self.manifest[f"genie/v3_04_00/{C}/G21_11a/G21_11a_00_000"] = {"type": "dir", "mode": "0o755"}
         self.record = {"tunes": {"G21_11a_00_000": {
             "model_configuration": f"{C}/G21_11a/ModelConfiguration.xml", "event_generator": f"{C}/G21_11a/EventGenerator.xml",
             "tune_generator_list": f"{C}/G21_11a/TuneGeneratorList.xml",
@@ -282,7 +284,8 @@ class Trace(Tmp):
         """GENIE R-3_04_00's XML search list (XmlParserUtils GetXMLPathList): GXMLPATH, the tune's and its CMC
         directory once the tune is configured, $GENIE/config, then $GENIE/src/Tools/Flux/GNuMINtuple."""
         cfg = f"{self.genie}/{self.C}"
-        mid = [f"{cfg}/G21_11a/G21_11a_00_000", f"{cfg}/G21_11a"] if tuned else []
+        own = [f"{cfg}/G21_11a/G21_11a_00_000"] if getattr(self, "own_dir", True) else []   # only a custom tune's
+        mid = own + [f"{cfg}/G21_11a"] if tuned else []
         return [self.xdata] + mid + [cfg, f"{self.genie}/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/Tools/Flux/GNuMINtuple"]
 
     def xml(self, path, pid=100, tuned=True, recheck=True, fd=4):
@@ -1950,7 +1953,8 @@ class Round8Compat(Trace):
     def pins_file(self):
         f = self.tmp / "pg_pins.json"
         f.write_text(json.dumps({"compat_libs": {"dir": self.compat[0], "libs": {
-            n: {"real": r, "sha256": h} for n, (r, h) in self.compat[1].items()}}}))
+            n: {"real": r, "sha256": h} for n, (r, h) in self.compat[1].items()}},
+            "interpreter_tools": {"/usr/bin/ls": "3" * 64}}))
         return str(f)
 
     def test_the_cli_passes_the_compat_pins(self):
@@ -1973,6 +1977,7 @@ class Round8Compat(Trace):
         with mock.patch.object(V, "trace_check", fake), redirect_stdout(io.StringIO()):
             V.main(argv)
         self.assertEqual(seen.get("lib_pins"), self.lib_pins)
+        self.assertEqual(seen.get("interp_pins"), {"/usr/bin/ls": "3" * 64})      # round 9: the same file's family
         man = self.tmp / "man.json"
         man.write_text(json.dumps({"members": {}}))
         for pins, want in ((self.pins_file(), []), (None, ["ld-library-path"])):
@@ -2013,3 +2018,301 @@ class Round8Compat(Trace):
         self.assertEqual(m["repo"], "/cvmfs/minerva.opensciencegrid.org")
         self.assertIn(f"/cvmfs/minerva.opensciencegrid.org user.revision {m['baseline_revision']}\n", xx)
         self.assertIn(f"/cvmfs/minerva.opensciencegrid.org user.root_hash {m['baseline_root_hash']}\n", xx)
+
+
+class Round9(Round4):
+    """B3 run 3's STOP at the graphs trace check (the director's rulings, 2026-11-27; RULINGS-A2.md round 9), all 365
+    problems explained by five causes: (i) gspl2root's chdir to its own cwd made every later relative path unknown;
+    (ii) ROOT 6.22's interpreter runs sh, ls, sed, g++, cc1plus, ldd and the two loaders as child processes; (iii)
+    ldd's 32-bit loader probe exits 1; (iv) gcc and cling look at three system directories through '..'; (v) GENIE adds
+    a tune's own directory to its list only when it exists. The fixtures are run 3's own lines (b3-run3-diag2.out)."""
+    DIAG = REPO / "docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/b3-diag"
+
+    def setUp(self):
+        super().setUp()
+        from unittest import mock
+        self.gcc = self.repo / "products/gcc/v9_3_0/Linux64bit+3.10-2.17"
+        for rel in ("bin/g++", "libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus"):
+            (self.gcc / rel).parent.mkdir(parents=True, exist_ok=True)
+            (self.gcc / rel).write_text(rel)
+        self.sysd = self.tmp / "sys/include/bits"                  # a stand-in for /usr/include/bits
+        self.sysd.mkdir(parents=True)
+        for name, value in (("GCC", str(self.gcc)), ("DOTDOT_SYSTEM_DIRS", ("/", str(self.sysd)))):
+            p = mock.patch.object(V, name, value, create=True)    # create: the red check runs this on HEAD's module
+            p.start()
+            self.addCleanup(p.stop)
+        real = os.path.realpath
+        p = mock.patch("os.path.realpath", lambda q, *a, **k: "/usr/bin/bash" if q == "/bin/sh" else real(q, *a, **k))
+        p.start()
+        self.addCleanup(p.stop)
+        self.exe = str(self.genie / self.P / "bin/gspl2root")
+        self.fake = {"/usr/bin/bash": "b" * 64, "/usr/bin/ls": "c" * 64, "/usr/bin/sed": "d" * 64,
+                     "/usr/bin/ldd": "e" * 64, "/lib/ld-linux.so.2": "1" * 64, "/lib64/ld-linux-x86-64.so.2": "2" * 64,
+                     str(self.gcc / "bin/g++"): "4" * 64,
+                     str(self.gcc / "libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus"): "5" * 64}
+        self.pins = dict(self.fake)
+
+    def sha(self, p):
+        return self.fake.get(p) or V.sha_path(p)
+
+    def codes(self, rec):
+        return {p.split(":")[0] for p in rec["problems"]}
+
+    @staticmethod
+    def q(s, cut=False):
+        return '"' + s.replace("\\", "\\\\") + '"' + ("..." if cut else "")
+
+    def ex(self, pid, path, *argv):
+        """An execve line; each argv item is a string, or (string, True) for one strace cut at 32 characters."""
+        items = [self.q(*a) if isinstance(a, tuple) else self.q(a) for a in argv]
+        return f'{pid} execve({self.q(path)}, [{", ".join(items)}], 0x1 /* 9 vars */) = 0'
+
+    def family(self):
+        """Run 3's interpreter execs (b3-run3-diag2.out section 2), on this fixture's program and gcc: {pid: lines}."""
+        e32, g32 = (self.exe[:32], True), (str(self.gcc)[:32], True)
+        cc1 = f"{self.gcc}/bin/../libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus"
+        return {
+            301: [self.ex(301, "/bin/sh", "sh", "-c", "--", ("LD_DEBUG=libs LD_PRELOAD=DOESNOT", True))],
+            302: [self.ex(302, "/usr/bin/ls", "ls")],
+            303: [self.ex(303, "/bin/sh", "sh", "-c", "--", ("LC_ALL=C g++  -O3  -xc++ -E -v /", True))],
+            304: [self.ex(304, f"{self.gcc}/bin/g++", "g++", "-O3", "-xc++", "-E", "-v", "/dev/null")],
+            305: [self.ex(305, "/usr/bin/sed", "sed", "-n", "-e", "/^.include/,${", "-e", "/^ \\/.*++/p", "-e", "}")],
+            306: [self.ex(306, cc1, g32, "-E", "-quiet", "-v", "-iprefix", g32, "-D_GNU_SOURCE", "/dev/null",
+                         "-mtune=generic", "-march=x86-64")],
+            307: [self.ex(307, "/bin/sh", "sh", "-c", "--", (("ldd '" + self.exe)[:32], True)),
+                  self.ex(307, "/usr/bin/ldd", "ldd", e32)],
+            308: [self.ex(308, "/lib/ld-linux.so.2", "/lib/ld-linux.so.2", "--verify", e32)],
+            309: [self.ex(309, "/lib64/ld-linux-x86-64.so.2", "/lib64/ld-linux-x86-64.so.2", "--verify", e32)],
+            310: [self.ex(310, "/lib64/ld-linux-x86-64.so.2", "/lib64/ld-linux-x86-64.so.2", e32)]}
+
+    def graphs(self, fam=None, exits=None, first=None):
+        """A passing graphs trace (gspl2root reading its tune's files), with the family's processes before its exit."""
+        g = self.good_lines()
+        g[0] = first or f'100 execve("{self.exe}", ["gspl2root", "-f", "x"], 0x1 /* 3 vars */) = 0'
+        fam = self.family() if fam is None else fam
+        exits = {308: 1, **(exits or {})}
+        mid = [ln for pid in sorted(fam) for ln in fam[pid]] + [
+            f"{pid} +++ exited with {exits.get(pid, 0)} +++" for pid in sorted(fam)]
+        return g[:-2] + mid + g[-2:]
+
+    def chk(self, lines, role="graphs", pins="default", **kw):
+        import inspect
+        if "interp_pins" in inspect.signature(V.trace_check).parameters:      # absent on HEAD's (the red check)
+            kw["interp_pins"] = self.pins if pins == "default" else pins
+        return V.trace_check("\n".join(lines) + "\n", 0, role, "G21_11a_00_000", str(self.spline), sha(b"spline"),
+                             str(self.W), self.record, self.manifest, self.private, str(self.W),
+                             {str(self.spline): sha(b"spline")}, genie_root=str(self.genie), repo=str(self.repo),
+                             private_root=str(self.priv), gxmlpath=self.xdata, xsec_data=self.xdata, sha=self.sha,
+                             **kw)
+
+    # (ii) and (iii): the interpreter family ------------------------------------------------------------------------
+
+    def test_the_family_as_run_3_ran_it_passes(self):
+        rec = self.chk(self.graphs())
+        self.assertTrue(rec["pass"], rec["problems"])
+        bound = [x["bound_by"] for x in rec["execs"]]
+        self.assertEqual(bound, ["genie manifest"] + ["interpreter pin"] * 11, rec["execs"])
+        for role in ("gevgen", "coverage", "gntpc"):                    # the other ROOT programs' roles
+            with self.subTest(role):
+                self.assertNotIn("interp-role", self.codes(self.chk(self.graphs(), role=role)))
+
+    def test_without_the_pins_or_with_other_bytes_it_stops(self):
+        rec = self.chk(self.graphs(), pins={})
+        self.assertEqual(sum(p.startswith("exec-unbound:") for p in rec["problems"]), 11, rec["problems"])
+        self.assertIn("child-exit", self.codes(rec))                    # an unbound loader's exit 1 is not excused
+        pins = dict(self.pins, **{"/usr/bin/ls": "9" * 64})
+        rec = self.chk(self.graphs(), pins=pins)
+        self.assertEqual([p for p in rec["problems"] if p.startswith("exec-unbound")],
+                         ["exec-unbound: /usr/bin/ls -> /usr/bin/ls"])
+
+    def test_each_command_line_is_exact(self):
+        e32, g32 = (self.exe[:32], True), (str(self.gcc)[:32], True)
+        cc1 = f"{self.gcc}/bin/../libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus"
+        sh = lambda *a: [self.ex(301, "/bin/sh", *a)]
+        c32 = lambda s: (s[:32], True)                  # strace's cut: each shape below fails for its own reason
+        cases = {
+            "ls with an argument": (302, [self.ex(302, "/usr/bin/ls", "ls", "-la")]),
+            "sh -c, a short command": (301, sh("sh", "-c", "--", "ls")),
+            "sh -c, another long one": (301, sh("sh", "-c", "--", c32("rm -rf /pscratch/sd/j/josephrb/covfix-pg"))),
+            "sh as bash": (301, sh("bash", "-c", "--", ("LD_DEBUG=libs LD_PRELOAD=DOESNOT", True))),
+            "bash by its own path": (301, [self.ex(301, "/usr/bin/bash", "sh", "-c", "--",
+                                                   ("LD_DEBUG=libs LD_PRELOAD=DOESNOT", True))]),
+            "an uncut 32-character command": (301, sh("sh", "-c", "--", "LD_DEBUG=libs LD_PRELOAD=DOESNOT")),
+            "sh with a fifth argument": (301, sh("sh", "-c", "--", ("LD_DEBUG=libs LD_PRELOAD=DOESNOT", True), "x")),
+            "a cut that is not 32": (301, sh("sh", "-c", "--", ("LD_DEBUG=libs LD_PRELOAD=DOESNO", True))),
+            "sed, another script": (305, [self.ex(305, "/usr/bin/sed", "sed", "-n", "-e", "p")]),
+            "g++ with an output": (304, [self.ex(304, f"{self.gcc}/bin/g++", "g++", "-O3", "-xc++", "-E", "-v",
+                                                 "/dev/null", "-o", "x")]),
+            "cc1plus with an output": (306, [self.ex(306, cc1, g32, "-E", "-quiet", "-v", "/dev/null", "-o", "x")]),
+            "cc1plus without /dev/null": (306, [self.ex(306, cc1, g32, "-E", "-quiet", "-v", "x.cc")]),
+            "cc1plus, -iprefix elsewhere": (306, [self.ex(306, cc1, g32, "-E", "-quiet", "-v", "-iprefix",
+                                                          c32("/home/someone/elsewhere/gcc/v9_3_0/x"), "/dev/null")]),
+            "cc1plus, a cut source": (306, [self.ex(306, cc1, g32, "-E", "-quiet", "-v", g32, "/dev/null")]),
+            "cc1plus, not -E": (306, [self.ex(306, cc1, g32, "-quiet", "-v", "-E", "/dev/null")]),
+            "ldd on another program": (307, [self.ex(307, "/usr/bin/ldd", "ldd", "/usr/bin/true")]),
+            "ldd, a cut elsewhere": (307, [self.ex(307, "/usr/bin/ldd", "ldd",
+                                                   c32("/home/someone/elsewhere/bin/gspl2root"))]),
+            "ldd, a cut short of 32": (307, [self.ex(307, "/usr/bin/ldd", "ldd", (self.exe[:20], True))]),
+            "the 32-bit loader without --verify": (308, [self.ex(308, "/lib/ld-linux.so.2", "/lib/ld-linux.so.2", e32)]),
+            "the 32-bit loader, another option": (308, [self.ex(308, "/lib/ld-linux.so.2", "/lib/ld-linux.so.2",
+                                                                "--list", e32)]),
+            "the loader with an extra argument": (310, [self.ex(310, "/lib64/ld-linux-x86-64.so.2",
+                                                                "/lib64/ld-linux-x86-64.so.2", "--list", e32)]),
+            "an elided argv": (302, ['302 execve("/usr/bin/ls", ["ls", ...], 0x1 /* 9 vars */) = 0'])}
+        for name, (pid, lines) in cases.items():
+            with self.subTest(name):
+                fam = self.family()
+                fam[pid] = lines
+                self.assertIn("interp-shape", self.codes(self.chk(self.graphs(fam))))
+
+    def test_only_a_child_and_only_in_a_root_role(self):
+        first = self.ex(100, "/bin/sh", "sh", "-c", "--", ("LD_DEBUG=libs LD_PRELOAD=DOESNOT", True))
+        self.assertIn("interp-initial", self.codes(self.chk(self.graphs(first=first))))
+        self.assertIn("interp-role", self.codes(self.chk(self.graphs(), role="reduce")))
+
+    def test_only_the_32_bit_verify_probe_may_exit_1(self):
+        self.assertTrue(self.chk(self.graphs())["pass"])
+        for name, exits in (("the probe exits 2", {308: 2}), ("the 64-bit probe exits 1", {309: 1}),
+                            ("ls exits 1", {302: 1})):
+            with self.subTest(name):
+                self.assertIn("child-exit", self.codes(self.chk(self.graphs(exits=exits))))
+
+    # (i): the no-op chdir ------------------------------------------------------------------------------------------
+
+    def test_a_chdir_to_the_cwd_changes_nothing(self):
+        rel = '100 stat("GENIE/Tools/Flux", 0x7ffd) = -1 ENOENT (No such file or directory)'
+        other = self.tmp / "other"
+        other.mkdir()
+
+        def with_chdir(*lines):
+            g = self.graphs()
+            return g[:-2] + list(lines) + [rel] + g[-2:]
+        self.assertTrue(self.chk(with_chdir(f'100 chdir("{self.W}") = 0'))["pass"])
+        for name, lines in (("elsewhere", [f'100 chdir("{other}") = 0']),
+                            ("relative", ['100 chdir(".") = 0']),
+                            ("through ..", [f'100 chdir("{self.W}/../{self.W.name}") = 0']),
+                            ("back to the cwd after leaving it",
+                             [f'100 chdir("{other}") = 0', f'100 chdir("{self.W}") = 0'])):
+            with self.subTest(name):
+                self.assertIn("cwd-unknown", self.codes(self.chk(with_chdir(*lines))))
+        failed = f'100 chdir("{other}") = -1 ENOENT (No such file or directory)'
+        self.assertTrue(self.chk(with_chdir(failed))["pass"])
+
+    # (iv): '..' into a system directory ----------------------------------------------------------------------------
+
+    def test_dotdot_into_a_system_directory_only_to_look(self):
+        raw = f"{self.sysd}/x/.."
+        (self.sysd / "x").mkdir()
+        (self.sysd / "f.h").write_text("h")
+        other = self.tmp / "sys/include/other"
+        other.mkdir()
+
+        def plus(line):
+            g = self.graphs()
+            return g[:-2] + [line] + g[-2:]
+        for name, line in (("stat", f'100 stat("{raw}", {{st_mode=S_IFDIR|0755}}) = 0'),
+                           ("access", f'100 access("{raw}", R_OK) = 0'),
+                           ("the root", '100 stat("/..", {st_mode=S_IFDIR|0755}) = 0'),
+                           ("a directory open", f'100 openat(AT_FDCWD, "{raw}", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 9')):
+            with self.subTest(name):
+                rec = self.chk(plus(line))
+                self.assertTrue(rec["pass"], rec["problems"])
+                self.assertIn("system directory", [x.get("allowed") for x in rec["dotdot"]])
+        for name, line in (("an open without O_DIRECTORY", f'100 openat(AT_FDCWD, "{raw}", O_RDONLY) = 9'),
+                           ("a directory open that creates", f'100 openat(AT_FDCWD, "{raw}", O_RDONLY|O_DIRECTORY|O_CREAT, 0755) = 9'),
+                           ("another directory", f'100 stat("{other}/../other", {{st_mode=S_IFDIR|0755}}) = 0'),
+                           ("a file in it", f'100 openat(AT_FDCWD, "{self.sysd}/x/../f.h", O_RDONLY) = 9'),
+                           ("a file's metadata in it", f'100 stat("{self.sysd}/x/../f.h", {{st_mode=S_IFREG|0644}}) = 0')):
+            with self.subTest(name):
+                self.assertIn("dotdot-outside-roots", self.codes(self.chk(plus(line))))
+
+    # (v): GENIE's list without the tune's own directory ----------------------------------------------------------
+
+    def drop_own_dir(self):
+        del self.manifest[f"genie/v3_04_00/{self.C}/G21_11a/G21_11a_00_000"]
+        self.own_dir = False
+
+    def test_genies_list_has_the_tune_directory_only_where_it_exists(self):
+        self.assertTrue(self.chk(self.graphs())["pass"])               # present: GENIE walks it
+        self.drop_own_dir()
+        rec = self.chk(self.graphs())                                   # absent, and the walks skip it
+        self.assertTrue(rec["pass"], rec["problems"])
+        self.own_dir = True                                             # absent, yet a walk probes it: off the list
+        self.assertIn("search-path", self.codes(self.chk(self.graphs())))
+        self.own_dir = False
+        self.manifest[f"genie/v3_04_00/{self.C}/G21_11a/G21_11a_00_000"] = {"type": "dir"}   # present, yet skipped
+        self.assertIn("search-probes", self.codes(self.chk(self.graphs())))
+
+    def real_walks(self):
+        """Run 3's three walks (b3-run3-diag2.out section 3), moved onto this fixture: {basename: [lines]}."""
+        text = (self.DIAG / "b3-run3-diag2.out").read_text()
+        sec = text.split("== 3. three config files")[1].split("== 4.")[0]
+        sub = (("/pscratch/sd/j/josephrb/covfix-pg/products/genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data",
+                self.xdata), ("/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00", str(self.genie)),
+               ("1487263 ", "100 "))
+        out, cur = {}, None
+        for ln in sec.splitlines():
+            if ln.startswith("-- "):
+                cur = out.setdefault(ln[3:].strip(), [])
+            elif ln.strip() and cur is not None:
+                x = ln.strip()
+                for a, b in sub:
+                    x = x.replace(a, b)
+                cur.append(x)
+        return out
+
+    def test_the_model_is_run_3s_three_walks(self):
+        self.drop_own_dir()
+        walks = self.real_walks()
+        self.assertEqual(sorted(walks), ["AGKY2019.xml", "ModelConfiguration.xml", "master_config.xml"])
+        cfg = f"{self.genie}/{self.C}"
+        for b, d in (("master_config.xml", cfg), ("ModelConfiguration.xml", f"{cfg}/G21_11a"), ("AGKY2019.xml", cfg)):
+            with self.subTest(b):
+                model = [ln for ln in self.xml(f"{d}/{b}") if " access(" in ln]
+                real = [ln for ln in walks[b] if " access(" in ln]
+                self.assertEqual([re.sub(r" = .*", "", x) for x in real], [re.sub(r" = .*", "", x) for x in model])
+                self.assertEqual([x.endswith("= 0") for x in real], [x.endswith("= 0") for x in model])
+        agky = f"{self.C}/AGKY2019.xml"                                # a real walk inside a full check
+        (self.genie / agky).write_text(agky)
+        self.manifest["genie/v3_04_00/" + agky] = {"type": "file", "sha256": sha(agky.encode())}
+        g = self.graphs()
+        rec = self.chk(g[:-2] + [ln.replace(" = 4", " = 11") for ln in walks["AGKY2019.xml"]] + g[-2:])
+        self.assertTrue(rec["pass"], rec["problems"])
+
+    # the parsing and the pins --------------------------------------------------------------------------------------
+
+    def test_exec_argv(self):
+        self.assertEqual(V.exec_argv('"/bin/sh", ["sh", "-c", "abc"..., "a\\\\b"], 0x1 /* 2 vars */) = 0'),
+                         [("sh", False), ("-c", False), ("abc", True), ("a\\b", False)])
+        self.assertEqual(V.exec_argv('"/x", [], 0x1 /* 0 vars */) = 0'), [])
+        for bad in ('"/x", ["a", ...], 0x1 /* 1 vars */) = 0', '"/x", 0x1, 0x2) = 0', '"/x", ["a"'):
+            with self.subTest(bad):
+                self.assertIsNone(V.exec_argv(bad))
+
+    def test_interpreter_pins_are_read_strictly(self):
+        f = self.tmp / "pins.json"
+        for name, d in (("missing", {}), ("empty", {"interpreter_tools": {}}),
+                        ("a list", {"interpreter_tools": ["/usr/bin/ls"]}),
+                        ("relative", {"interpreter_tools": {"usr/bin/ls": "a" * 64}}),
+                        ("a short sha", {"interpreter_tools": {"/usr/bin/ls": "a" * 63}}),
+                        ("an upper-case sha", {"interpreter_tools": {"/usr/bin/ls": "A" * 64}})):
+            with self.subTest(name):
+                f.write_text(json.dumps(d))
+                with self.assertRaises(V.Fail):
+                    V.interp_pins(str(f))
+        f.write_text(json.dumps({"interpreter_tools": {"/usr/bin//ls": "a" * 64}}))
+        self.assertEqual(V.interp_pins(str(f)), {"/usr/bin/ls": "a" * 64})
+
+    def test_the_family_pins_are_the_evidence(self):
+        out = (self.DIAG / "b3-interp-pins.out").read_text()
+        rows = json.loads(next(ln for ln in out.splitlines() if ln.startswith("PINS "))[5:])
+        want = {v["real"]: v["sha256"] for v in rows.values()}
+        pins = json.loads((GENIE / "pg_pins.json").read_text())["interpreter_tools"]
+        self.assertEqual(pins, want)
+        self.assertEqual(len(pins), 8)
+        self.assertIn("/cvmfs/larsoft.opensciencegrid.org revision 1250 root_hash "
+                      "62baddee99a7b0a527fe795b86ee23f69ffbd11b\n", out)
+        tools = {os.path.basename(k) for k in pins}
+        for t in tools:                                                 # each pinned tool has a shape
+            with self.subTest(t):
+                self.assertIn(f'tool == "{t}"', (GENIE / "pg_verify.py").read_text())

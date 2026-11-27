@@ -1,0 +1,5 @@
+PG_MUTANT_JOBS 1 | A2 mutant M231 alone: r4: this shell's parents killed
+KILL RULE (the director, 2026-11-25): an import or collection error (unittest's _FailedTest, ImportError, ModuleNotFoundError, SyntaxError) makes a mutant INVALID; otherwise a FAIL or an ERROR with a non-zero exit kills (an error raised by the mutated code is detectable behaviour); a timeout, or a FAIL with exit 0, is INVALID; a clean pass SURVIVES. Every suite must pass clean on the unmutated copy first.
+baseline generate: clean ['Ran 141 tests in 246.886s', 'OK']
+M01 KILLED by test_the_scan_spares_this_shells_parents: r4: this shell's parents killed [3d-unfolding/genie/pg_generate.sh]
+1 of 1 killed; 0 invalid; 0 survived

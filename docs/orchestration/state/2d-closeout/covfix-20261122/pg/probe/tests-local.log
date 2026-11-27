@@ -45,7 +45,7 @@ test_a_failed_or_partial_rpm_dump_is_not_a_first_use (test_pg_probe.ProbeRound4.
 test_the_proc_mount_is_recorded (test_pg_probe.ProbeRound4.test_the_proc_mount_is_recorded) ... ok
 test_trace_completeness_codes (test_pg_probe.ProbeRound4.test_trace_completeness_codes) ... ok
 test_terminal_records_are_exact (test_pg_probe.ProbeRound5.test_terminal_records_are_exact) ... ok
-test_the_core_dump_route_is_recorded (test_pg_probe.ProbeRound5.test_the_core_dump_route_is_recorded) ... /Users/josephbailey/tunegen-wt/docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py:596: ResourceWarning: unclosed file <_io.TextIOWrapper name='/private/tmp/tmpmfybvhzy/proc/sys/kernel/core_pattern' mode='r' encoding='UTF-8'>
+test_the_core_dump_route_is_recorded (test_pg_probe.ProbeRound5.test_the_core_dump_route_is_recorded) ... /Users/josephbailey/tunegen-wt/docs/orchestration/state/2d-closeout/covfix-20261122/pg/probe/pg-probe.py:596: ResourceWarning: unclosed file <_io.TextIOWrapper name='/private/tmp/tmpczec994t/proc/sys/kernel/core_pattern' mode='r' encoding='UTF-8'>
   pattern = open(os.path.join(proc, "sys/kernel/core_pattern")).read().strip()
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
 ok
@@ -66,6 +66,6 @@ test_matching (test_pg_probe.Xsec.test_matching) ... ok
 test_refusals (test_pg_probe.Xsec.test_refusals) ... ok
 
 ----------------------------------------------------------------------
-Ran 63 tests in 27.786s
+Ran 63 tests in 25.616s
 
 OK (skipped=1)

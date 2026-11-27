@@ -360,3 +360,45 @@ LD_LIBRARY_PATH, and no test modelled it.
 - Tests: the four planted cases (an unpinned shim entry, a pinned name pointing elsewhere, a pinned target with other
   bytes, a minerva revision change) and the director's fifth (the conda file changed between start and end), plus the
   shim outside a gated name, the CLI wiring, the refusals, and the pins held to the b3-diag evidence. 27 mutants.
+
+## Round 9: ROOT's interpreter under gspl2root (B3 run 3's STOP; the director's rulings, 2026-11-27)
+
+**The STOP.** B3's third run (receipt install/pg-replay-g2111a.py.out, 9337eae3…) passed round 8's exe-check, ran
+reduce, make-flux and gspl2root (rc 0, graphs written), and STOPped at the graphs trace check with 365 problems.
+
+**The evidence** (read-only, install/b3-diag/, each script's sha to the director before it ran): b3-run3-diag.out and
+b3-run3-diag2.out (all 365 by code, every process event, three config walks). No problem was a read outside CVMFS,
+the system or a pin. Five causes:
+- (i) 110 cwd-unknown: the trace's only chdir is gspl2root's own, to its launch cwd, and the check treated any chdir as
+  making every later relative path unknown.
+- (ii) 21 exec-unbound: ROOT 6.22's interpreter runs `sh -c "LD_DEBUG=libs LD_PRELOAD=DOESNOT…"` then ls (six
+  times), `sh -c "LC_ALL=C g++  -O3  -xc++ -E -v /…"` with g++, sed and cc1plus, and `sh -c "ldd '<program>'"` with
+  ldd and both loaders.
+- (iii) 1 child-exit: `/lib/ld-linux.so.2 --verify <program>`, ldd's 32-bit probe, exits 1 on a 64-bit binary.
+- (iv) 3 dotdot-outside-roots: `/..`, gcc 14's lib walk and ROOT's lib/../…/usr/include/bits, resolving to `/`,
+  `/usr/x86_64-suse-linux/lib` and `/usr/include/bits`.
+- (v) 230 search-probes: GENIE adds a tune's own directory to its list only when it exists. G21_11a_00_000 has none
+  (genie-manifest.json), and its walks go GXMLPATH, config/G21_11a, config.
+
+**Rulings and as built.**
+- (i) A chdir whose path has no `..` and normalizes to the launch cwd changes nothing. Every other chdir, and fchdir,
+  fails closed as before. Full per-process cwd tracking (clone, fork and vfork in the trace set, which moves
+  run_gevgen_v3.sh's pin) is in FOLLOWUPS.md.
+- (ii) `pg_pins.json` `interpreter_tools`: the eight real paths and shas from b3-interp-pins.out (larsoft revision
+  1250, minerva 2719, both unchanged). An exec at a pinned real path with its pinned bytes is bound "interpreter pin"
+  only as a child process (`interp-initial`), only in graphs, gevgen, coverage and gntpc (`interp-role`), and only
+  with run 3's command line (`interp-shape`): sh as /bin/sh with `-c --` and one of three commands, each cut by
+  strace's 32-character limit to exactly what run 3 showed; ls with no argument; sed's and g++'s exact argv;
+  cc1plus `-E -quiet -v` on /dev/null with no `-o`, cut only in its own path and its `-iprefix` value, each inside
+  gcc's tree; ldd and the loaders on the initial program. Every other rule still applies to every process. The
+  drivers refuse while `interpreter_tools` is empty, and trace-check reads it from the same `--compat-pins` file.
+- (iii) `child-exit … exited 1` is dropped only for a process bound as the pinned ld-linux.so.2 with `--verify`.
+  Exit 1 exactly.
+- (iv) A `..` path resolving outside the roots passes only into `/`, `/usr/include/bits` or
+  `/usr/x86_64-suse-linux/lib`, and only for a probe (stat, lstat, newfstatat, statx, access) or an O_DIRECTORY open
+  that does not write, create or truncate.
+- (v) The tune's own directory joins GENIE's tuned list only if the manifest has it as a directory.
+- (vi) Before run 4, round 9's draft trace check ran from memory against run 3's own trace on a login node
+  (b3-run3-recheck.out): pass, no problems; all 21 interpreter execs bound; the three directories allowed.
+- Tests: Round9 (12), with run 3's exec lines and its three walks as the fixtures; the family's pins held to
+  b3-interp-pins.out; the two driver refusals. 48 mutants.

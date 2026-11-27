@@ -71,3 +71,13 @@ From `W/out/pin_hash_start.json` and `pin_hash_end.json` (Q1): `files`, `links` 
 | the three shim libraries in pin-hash at start and end | each matching its pin | |
 | minerva's revision at start and end | recorded; if changed, the pinned libraries re-hashed | |
 
+**Round 9 (B3 run 3's graphs trace-check STOP; the director's rulings, 2026-11-27): ROOT's interpreter.**
+- Record from each traced ROOT program's check: every exec's `bound_by`; the interpreter family's execs are children
+  bound "interpreter pin", and no other process exits nonzero. Any `interp-*`, `exec-unbound`, `child-exit` or
+  `dotdot-outside-roots` is a STOP to bring back, not to pin around.
+
+| item | expected | recorded |
+|---|---|---|
+| graphs, coverage, gevgen and gntpc trace checks | pass; the family bound "interpreter pin", children only | |
+| allowed '..' directories | only `/`, `/usr/include/bits`, `/usr/x86_64-suse-linux/lib`, probes or directory opens | |
+

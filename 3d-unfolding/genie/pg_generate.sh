@@ -77,8 +77,11 @@ c = json.load(open(sys.argv[1])).get("compat_libs") or {}
 print("".join("--pin\n%s=%s\n" % (v.get("real"), v.get("sha256")) for k, v in sorted((c.get("libs") or {}).items())
               if c.get("dir") and v.get("real") and v.get("sha256")))' "$G/pg_pins.json")   # the shim's pinned libraries
 MINERVA_REPO=/cvmfs/minerva.opensciencegrid.org   # the compat shim libssl/libcrypto.so.10 targets' repository
+INTERP=$("$PY" -I -c 'import json,sys
+v = json.load(open(sys.argv[1])).get("interpreter_tools") or {}
+print(len([k for k, h in v.items() if k and h]) or "")' "$G/pg_pins.json")   # ROOT's interpreter's pinned programs
 [ -n "$STRACE" ] && [ -n "$STRACE_SHA" ] && [ -n "$DBCONFIG_SHA" ] && [ -n "$SYSPINS" ] && [ -n "$COMPAT" ] \
-  || refuse "pg_pins.json is not filled (R1)"
+  && [ -n "$INTERP" ] || refuse "pg_pins.json is not filled (R1)"
 "$PY" -I -c 'import json, sys; d = json.load(open(sys.argv[1])); sys.exit(0 if d.get("gst") and d.get("gst_merged") else 1)' \
   "$REC/root-schemas.json" 2>/dev/null || refuse "root-schemas.json lacks B3's gst or gst_merged schema"
 mkdir -p "$O/logs" "$O/splines" "$O/gst" "$O/gen5d" "$O/work" "$O/traces" "$R" || refuse "cannot create W/out and W/run"

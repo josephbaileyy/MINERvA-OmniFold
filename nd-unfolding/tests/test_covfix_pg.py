@@ -514,7 +514,8 @@ class Generate(unittest.TestCase):
                                                     "compat_libs": {"dir": "/shim", "libs": {   # round 8: the shim
                                                         "libssl.so.10": {"real": "/m/libssl.so.1.0.1e", "sha256": "1" * 64},
                                                         "libxxhash.so.0": {"real": "/h/libxxhash.so.0.8.2",
-                                                                           "sha256": "2" * 64}}}}))
+                                                                           "sha256": "2" * 64}}},
+                                                    "interpreter_tools": {"/usr/bin/ls": "3" * 64}}))   # round 9
         git = ["git", "-C", str(self.dep), "-c", "user.name=t", "-c", "user.email=t@t"]
         subprocess.run(git[:3] + ["init", "-q"], check=True)
         subprocess.run(git + ["add", "-A"], check=True)
@@ -836,6 +837,24 @@ class Generate(unittest.TestCase):
         p = self.run_gen(PG_DEPLOY_PIN=pin)
         self.assertEqual(p.returncode, 2)
         self.assertIn("pg_pins.json is not filled (R1)", p.stderr)
+
+    def test_pins_without_the_interpreter_family_refuse(self):             # round 9: the family's pins are required
+        g = self.dep / "3d-unfolding/genie/pg_pins.json"
+        git = ["git", "-C", str(self.dep), "-c", "user.name=t", "-c", "user.email=t@t"]
+        for name, change in (("dropped", lambda d: d.pop("interpreter_tools")),
+                             ("empty", lambda d: d.update(interpreter_tools={}))):
+            with self.subTest(name):
+                keep = g.read_text()
+                d = json.loads(keep)
+                change(d)
+                g.write_text(json.dumps(d))
+                subprocess.run(git + ["commit", "-qam", name], check=True)
+                pin = subprocess.run(git[:3] + ["rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+                p = self.run_gen(PG_DEPLOY_PIN=pin)
+                g.write_text(keep)
+                subprocess.run(git + ["commit", "-qam", "restore"], check=True)
+                self.assertEqual(p.returncode, 2, p.stdout + p.stderr)
+                self.assertIn("pg_pins.json is not filled (R1)", p.stderr)
 
     def test_round4_refusals(self):
         for v in ("GXMLPATHS", "GALGCONF"):                                       # GENIE's other XML lookups
@@ -1365,6 +1384,21 @@ class Replay(unittest.TestCase):
                 else:
                     d["compat_libs"] = {"dir": "/shim", "libs": {}}
                 keep = g.read_text()
+                g.write_text(json.dumps(d))
+                p = self.run_replay()
+                g.write_text(keep)
+                self.assertEqual(p.returncode, 2, p.stdout + p.stderr)
+                self.assertIn("pg_pins.json is not filled (R1)", p.stderr)
+
+    def test_pins_without_the_interpreter_family_refuse_the_replay(self):  # round 9: the family's pins are required
+        g = self.dep / "3d-unfolding/genie/pg_pins.json"
+        for name, change in (("dropped", lambda d: d.pop("interpreter_tools")),
+                             ("empty", lambda d: d.update(interpreter_tools={})),
+                             ("a blank sha", lambda d: d.update(interpreter_tools={"/usr/bin/ls": ""}))):
+            with self.subTest(name):
+                keep = g.read_text()
+                d = json.loads(keep)
+                change(d)
                 g.write_text(json.dumps(d))
                 p = self.run_replay()
                 g.write_text(keep)

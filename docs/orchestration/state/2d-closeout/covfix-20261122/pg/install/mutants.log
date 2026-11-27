@@ -1,5 +1,5 @@
 KILL RULE (the director, 2026-11-25): an import or collection error (unittest's _FailedTest, ImportError, ModuleNotFoundError, SyntaxError) makes a mutant INVALID; otherwise a FAIL or an ERROR with a non-zero exit kills (an error raised by the mutated code is detectable behaviour); a timeout, or a FAIL with exit 0, is INVALID; a clean pass SURVIVES. Every suite must pass clean on the unmutated copy first.
-baseline install: clean ['Ran 34 tests in 27.465s', 'OK']
+baseline install: clean ['Ran 34 tests in 31.065s', 'OK']
 M01 KILLED by test_refusals_write_nothing, test_refusals_write_nothing (error): identity not enforced [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
 M02 KILLED by test_refusals_write_nothing, test_refusals_write_nothing (error): an unfilled dbconfig pin [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
 M03 KILLED by test_refusals_write_nothing: an existing product directory [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]

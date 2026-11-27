@@ -1,0 +1,64 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3115c0s5b0n0:
+
+host login22
+== /bin/sh
+   lstat /bin/sh type 0o120000 mode 0o777 size 11
+   link -> /usr/bin/sh
+   lstat /usr/bin/sh type 0o120000 mode 0o777 size 4
+   link -> bash
+   lstat /usr/bin/bash type 0o100000 mode 0o755 size 1012656
+   real /usr/bin/bash size 1012656 sha256 ef95624c7b3268a85f279afa96bd41ebcd84cc812d2805f29c91db8e27376911
+== /usr/bin/bash
+   lstat /usr/bin/bash type 0o100000 mode 0o755 size 1012656
+   real /usr/bin/bash size 1012656 sha256 ef95624c7b3268a85f279afa96bd41ebcd84cc812d2805f29c91db8e27376911
+== /usr/bin/ls
+   lstat /usr/bin/ls type 0o100000 mode 0o755 size 138992
+   real /usr/bin/ls size 138992 sha256 47e40334eb50baea3d19164170f3e7a5429d5bac78c7d54e049ad5cbb4c46516
+== /usr/bin/sed
+   lstat /usr/bin/sed type 0o100000 mode 0o755 size 187048
+   real /usr/bin/sed size 187048 sha256 375af55c3c2e8a9d7a6cebc19a13fe02df92cb3741a3e6f2c7be358f40212e59
+== /usr/bin/ldd
+   lstat /usr/bin/ldd type 0o100000 mode 0o755 size 5372
+   real /usr/bin/ldd size 5372 sha256 d89312068d0940fc9ae75eac6f81ff60ca6750318567c4dd0caa646d966f6cd9
+== /lib/ld-linux.so.2
+   lstat /lib/ld-linux.so.2 type 0o100000 mode 0o755 size 222348
+   real /lib/ld-linux.so.2 size 222348 sha256 ba68c8b73f8759f0ab66ce6aa605b35b8c5bd87dbce4f5c6d23a82f63a787be9
+== /lib64/ld-linux-x86-64.so.2
+   lstat /lib64/ld-linux-x86-64.so.2 type 0o100000 mode 0o755 size 243608
+   real /lib64/ld-linux-x86-64.so.2 size 243608 sha256 88a5fc2d32f7bc73266901e2d4ce07b92900b86a6e0cf40ab9541cb6c9b5d132
+== /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/g++
+   lstat /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/g++ type 0o100000 mode 0o755 size 6335360
+   real /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/g++ size 6335360 sha256 ef90b37fd7ef4f83a8a605feac2b29eceaa5a7e6c208691624425641dad98b4c
+== /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/../libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus
+   lstat /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/../libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus type 0o100000 mode 0o755 size 226082032
+   real /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus size 226082032 sha256 7be4fd72b91f4d503f4d9e0608498d0db0a6e942a5f3482bd2b2d31503b8668b
+== CVMFS
+   /cvmfs/larsoft.opensciencegrid.org revision 1250 root_hash 62baddee99a7b0a527fe795b86ee23f69ffbd11b
+   /cvmfs/minerva.opensciencegrid.org revision 2719 root_hash aa0fa0c99a1eec706d48443a73982f37c2056584
+PINS {"/bin/sh": {"real": "/usr/bin/bash", "sha256": "ef95624c7b3268a85f279afa96bd41ebcd84cc812d2805f29c91db8e27376911", "size": 1012656}, "/cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/../libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus": {"real": "/cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus", "sha256": "7be4fd72b91f4d503f4d9e0608498d0db0a6e942a5f3482bd2b2d31503b8668b", "size": 226082032}, "/cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/g++": {"real": "/cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/g++", "sha256": "ef90b37fd7ef4f83a8a605feac2b29eceaa5a7e6c208691624425641dad98b4c", "size": 6335360}, "/lib/ld-linux.so.2": {"real": "/lib/ld-linux.so.2", "sha256": "ba68c8b73f8759f0ab66ce6aa605b35b8c5bd87dbce4f5c6d23a82f63a787be9", "size": 222348}, "/lib64/ld-linux-x86-64.so.2": {"real": "/lib64/ld-linux-x86-64.so.2", "sha256": "88a5fc2d32f7bc73266901e2d4ce07b92900b86a6e0cf40ab9541cb6c9b5d132", "size": 243608}, "/usr/bin/bash": {"real": "/usr/bin/bash", "sha256": "ef95624c7b3268a85f279afa96bd41ebcd84cc812d2805f29c91db8e27376911", "size": 1012656}, "/usr/bin/ldd": {"real": "/usr/bin/ldd", "sha256": "d89312068d0940fc9ae75eac6f81ff60ca6750318567c4dd0caa646d966f6cd9", "size": 5372}, "/usr/bin/ls": {"real": "/usr/bin/ls", "sha256": "47e40334eb50baea3d19164170f3e7a5429d5bac78c7d54e049ad5cbb4c46516", "size": 138992}, "/usr/bin/sed": {"real": "/usr/bin/sed", "sha256": "375af55c3c2e8a9d7a6cebc19a13fe02df92cb3741a3e6f2c7be358f40212e59", "size": 187048}}
+== end

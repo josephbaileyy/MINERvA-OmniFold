@@ -1,5 +1,5 @@
 {
- "_comment": "COVFIX PG's tool and product pins, filled only from the director's confirm of PG's probe receipt (state/2d-closeout/covfix-20261122/pg/PLAN-SLOT1-PROBE.md, R1). pg_generate.sh and pg_replay.sh refuse while any is null or system_tools is empty. system_tools maps each exec'd system tool's real path (awk: the probe's gawk) to its sha256 (RULINGS-A2.md, round 3, D1). compat_libs (the director, 2026-11-26, B3 run 2's exe-check STOP): the compat-lib shim setup_genie_v3.sh puts first on LD_LIBRARY_PATH ($HOME/.genie_compatlibs, as F1), by its real path, and each library GENIE loads from it (B3's NEEDED closure, install/b3-diag/b3-libs.out) with its real target and sha256; exe-check allows the shim only so, trace-check allows each only at that real path, pin-hash hashes each at start and end. libxxhash.so.0's target is in the analysis conda env on the home filesystem, with no revision tracking (ruling (i)). minerva_repo: the libssl/libcrypto targets' CVMFS repository, revision-tracked as larsoft is; its values here are the observed baseline (install/b3-diag/b3-xxhash.out), and each run records its own start and end.",
+ "_comment": "COVFIX PG's tool and product pins, filled only from the director's confirm of PG's probe receipt (state/2d-closeout/covfix-20261122/pg/PLAN-SLOT1-PROBE.md, R1). pg_generate.sh and pg_replay.sh refuse while any is null or system_tools is empty. system_tools maps each exec'd system tool's real path (awk: the probe's gawk) to its sha256 (RULINGS-A2.md, round 3, D1). compat_libs (the director, 2026-11-26, B3 run 2's exe-check STOP): the compat-lib shim setup_genie_v3.sh puts first on LD_LIBRARY_PATH ($HOME/.genie_compatlibs, as F1), by its real path, and each library GENIE loads from it (B3's NEEDED closure, install/b3-diag/b3-libs.out) with its real target and sha256; exe-check allows the shim only so, trace-check allows each only at that real path, pin-hash hashes each at start and end. libxxhash.so.0's target is in the analysis conda env on the home filesystem, with no revision tracking (ruling (i)). minerva_repo: the libssl/libcrypto targets' CVMFS repository, revision-tracked as larsoft is; its values here are the observed baseline (install/b3-diag/b3-xxhash.out), and each run records its own start and end. interpreter_tools (round 9): {real path: sha256} of the programs ROOT 6.22's interpreter runs under a GENIE program (sh as bash, ls, sed, ldd, both loaders, CVMFS gcc v9_3_0's g++ and cc1plus), from install/b3-diag/b3-interp-pins.out; pg_verify binds each only as a child, in the ROOT roles, with B3 run 3's command lines.",
  "dbconfig_sha256": "accaf71bb0ae10ddd1df30c2b3af8099312e0f5e59ab66d1f42cbab1f00b2950",
  "strace_path": "/usr/bin/strace",
  "strace_sha256": "2c77c18f0493d18f51d6fb11fad9e1a87904a2d2e1247ad2e8b11b2a4a775b87",
@@ -27,5 +27,15 @@
   "repo": "/cvmfs/minerva.opensciencegrid.org",
   "baseline_revision": "2719",
   "baseline_root_hash": "aa0fa0c99a1eec706d48443a73982f37c2056584"
+ },
+ "interpreter_tools": {
+  "/cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/g++": "ef90b37fd7ef4f83a8a605feac2b29eceaa5a7e6c208691624425641dad98b4c",
+  "/cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus": "7be4fd72b91f4d503f4d9e0608498d0db0a6e942a5f3482bd2b2d31503b8668b",
+  "/lib/ld-linux.so.2": "ba68c8b73f8759f0ab66ce6aa605b35b8c5bd87dbce4f5c6d23a82f63a787be9",
+  "/lib64/ld-linux-x86-64.so.2": "88a5fc2d32f7bc73266901e2d4ce07b92900b86a6e0cf40ab9541cb6c9b5d132",
+  "/usr/bin/bash": "ef95624c7b3268a85f279afa96bd41ebcd84cc812d2805f29c91db8e27376911",
+  "/usr/bin/ldd": "d89312068d0940fc9ae75eac6f81ff60ca6750318567c4dd0caa646d966f6cd9",
+  "/usr/bin/ls": "47e40334eb50baea3d19164170f3e7a5429d5bac78c7d54e049ad5cbb4c46516",
+  "/usr/bin/sed": "375af55c3c2e8a9d7a6cebc19a13fe02df92cb3741a3e6f2c7be358f40212e59"
  }
 }

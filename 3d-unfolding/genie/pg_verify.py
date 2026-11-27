@@ -23,7 +23,9 @@ any check is the single reason "internal-error: <exception type>", which is a fa
         syscall, an exit record for every pid, every exit 0, no undecodable line, no openat2 with a resolve flag;
       - every successful exec: a genie-manifest file with its bytes and real path, or a pinned system tool; one that
         cannot be resolved fails; the initial process's first is the role's own program (awk, gspl2root, gevgen,
-        gntpc), so an exit-only trace fails;
+        gntpc), so an exit-only trace fails; ROOT's interpreter family (--compat-pins' interpreter_tools) binds only
+        in a child process, in a ROOT program's role, with B3 run 3's command line (interp_shape), and only ldd's
+        32-bit loader probe (ld-linux.so.2 --verify) may exit 1;
       - the initial process read S (O_PATH is not a read), whose bytes are H; nothing else under a genie_xsec data
         directory, and no other spline, is read (gntpc's role reads none);
       - every gated file read (.xml or .xml.gz, a path with genie, a genie library's name) matches its pin at its own
@@ -37,12 +39,14 @@ any check is the single reason "internal-error: <exception type>", which is a fa
         ROOT's on CVMFS are hashed, with their real path under the repository;
       - a shared library's real path is under CVMFS, a system library directory or the manifest, ROOT's and GENIE's
         under CVMFS; each is hashed and recorded;
-      - paths: relative ones against the launch cwd until any process changes directory (then unknown); fchdir, and
-        any read, write or watched name that cannot be resolved (a directory descriptor, after a chdir) fail; a '..'
-        path is resolved on the node now (its whole realpath, or its directory's if it is gone), must stay under an
-        allowed root, and is recorded raw and resolved;
+      - paths: relative ones against the launch cwd until any process changes directory (then unknown; a chdir to
+        the launch cwd itself, with no '..', changes nothing); fchdir, and any read, write or watched name that cannot
+        be resolved (a directory descriptor, after a chdir) fail; a '..' path is resolved on the node now (its whole
+        realpath, or its directory's if it is gone), must stay under an allowed root (or be a probe or a directory
+        open of one of DOTDOT_SYSTEM_DIRS), and is recorded raw and resolved;
       - for graphs, gevgen and coverage, GXMLPATH is exactly the tune's genie_xsec data directory, each config
-        basename is read at the first existing path of GXMLPATH then the record's search_dirs; the access probes
+        basename is read at the first existing path of GXMLPATH then the record's search_dirs (the tune's own
+        directory only if the manifest has it, as GENIE adds it only when it exists); the access probes
         before each searched read walk GENIE's own list (GetXMLPathList) from its start to the path read; every
         defining file is read by the initial process at its expected path, with no link on it (realpath(p) == p).
       Probes of watched names outside W are recorded (W's own names may carry the seed).
@@ -215,6 +219,17 @@ LINKS = ("link", "linkat", "symlink", "symlinkat")
 EXECS = ("execve", "execveat")
 PROBE_CALLS = ("access", "faccessat", "faccessat2", "stat", "lstat", "newfstatat", "statx")
 ROLE_PROGRAM = {"reduce": "awk", "graphs": "gspl2root", "gevgen": "gevgen", "coverage": "gevgen", "gntpc": "gntpc"}
+# ROOT 6.22's interpreter under a GENIE program (B3 run 3, b3-run3-diag2.out; RULINGS-A2.md round 9): child processes
+# only, in the ROOT programs' roles, each a pinned file (pg_pins.json interpreter_tools) run with one of these shapes.
+# strace's 32-character string limit cuts sh -c's command, so it is matched on that cut.
+ROOT_ROLES = ("graphs", "gevgen", "coverage", "gntpc")
+GCC = "/cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17"
+STRACE_STRLEN = 32
+SH_PREFIXES = ("LD_DEBUG=libs LD_PRELOAD=DOESNOT", "LC_ALL=C g++  -O3  -xc++ -E -v /")     # as the trace shows them
+SED_ARGV = ["sed", "-n", "-e", "/^.include/,${", "-e", "/^ \\/.*++/p", "-e", "}"]
+GXX_ARGV = ["g++", "-O3", "-xc++", "-E", "-v", "/dev/null"]
+# a '..' path resolving outside the roots, allowed only for metadata or a directory open: round 9, item iv
+DOTDOT_SYSTEM_DIRS = ("/", "/usr/include/bits", "/usr/x86_64-suse-linux/lib")
 ROLE_OUTPUTS = {"gevgen": r"gntp\.\d+\.ghep\.root|input-flux\.root", "coverage": r"gntp\.\d+\.ghep\.root|input-flux\.root",
                 "gntpc": r"genie_v3\.gst\.root"}
 ROOT_GENIE_LIB = re.compile(r"^lib(G(Fw|Ph|Tl|Rw)[A-Za-z0-9]*|Core|RIO|Tree[A-Za-z]*|Hist[A-Za-z]*|Math[A-Za-z]*|Matrix|"
@@ -365,7 +380,83 @@ def parse_trace(text):
                        "errno": rm.group(2) if not ok else None, "write_only": "O_WRONLY" in fl, "rdwr": "O_RDWR" in fl,
                        "creat": "O_CREAT" in fl, "trunc": "O_TRUNC" in fl, "excl": "O_EXCL" in fl,
                        "directory": "O_DIRECTORY" in fl, "opath": "O_PATH" in fl})
+        if call in EXECS:
+            events[-1]["argv"] = exec_argv(args)      # None if it does not parse: only the interpreter family needs it
     return events, probs
+
+
+ARG = re.compile(r'"((?:[^"\\]|\\.)*)"(\.\.\.)?')
+
+
+def exec_argv(args):
+    """An exec's argv as [(text, cut)], cut when strace's string limit ended it ("..." after the quote); None when the
+    array does not parse or strace elided elements of it."""
+    m = QUOTED.search(args)                                 # the program's path
+    i = args.find("[", m.end()) if m else -1
+    if i < 0:
+        return None
+    out, i = [], i + 1
+    while i < len(args):
+        c = args[i]
+        if c in " ,":
+            i += 1
+        elif c == "]":
+            return out
+        elif c == '"':
+            a = ARG.match(args, i)
+            if not a:
+                return None
+            out.append((_unescape(a.group(1)), a.group(2) is not None))
+            i = a.end()
+        else:                                               # "...]": elements elided
+            return None
+    return None
+
+
+def interp_shape(tool, path, argv, exe):
+    """Whether an interpreter-family exec has the shape B3 run 3 showed: tool is the pinned file's basename, path the
+    exec's resolved path, argv [(text, cut)], exe the initial process's program (ldd's and the loaders' argument)."""
+    if not argv or any(c and len(t) != STRACE_STRLEN for t, c in argv):
+        return False
+    texts = [t for t, _ in argv]
+    cut = [c for _, c in argv]
+
+    def is_exe(k, prefix=""):     # argv[k] names the initial program (strace may have cut it)
+        want = prefix + exe
+        return k < len(argv) and (want.startswith(texts[k]) if cut[k] else texts[k] == want)
+    if tool == "bash":
+        return (path == "/bin/sh" and texts[:3] == ["sh", "-c", "--"] and not any(cut[:3]) and len(argv) == 4
+                and cut[3] and texts[3] in SH_PREFIXES + (("ldd '" + exe)[:STRACE_STRLEN],))
+    if tool == "ls":
+        return path == "/usr/bin/ls" and argv == [("ls", False)]
+    if tool == "sed":
+        return path == "/usr/bin/sed" and texts == SED_ARGV and not any(cut)
+    if tool == "g++":
+        return path == GCC + "/bin/g++" and texts == GXX_ARGV and not any(cut)
+    if tool == "cc1plus":    # strace cuts its own path and the -iprefix directory: each must lead into gcc's tree
+        cuts_ok = all(not c or ((k == 0 or texts[k - 1] == "-iprefix") and GCC.startswith(texts[k]))
+                      for k, c in enumerate(cut))
+        return (path == GCC + "/libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus" and texts[1:4] == ["-E", "-quiet", "-v"]
+                and cuts_ok and "/dev/null" in texts and "-o" not in texts)
+    if tool == "ldd":
+        return path == "/usr/bin/ldd" and len(argv) == 2 and argv[0] == ("ldd", False) and is_exe(1)
+    if tool == "ld-linux.so.2":
+        return (path == "/lib/ld-linux.so.2" and len(argv) == 3 and texts[:2] == [path, "--verify"]
+                and not any(cut[:2]) and is_exe(2))
+    if tool == "ld-linux-x86-64.so.2":
+        return (path == "/lib64/ld-linux-x86-64.so.2" and texts[0] == path and not cut[0]
+                and ((len(argv) == 3 and argv[1] == ("--verify", False) and is_exe(2)) or (len(argv) == 2 and is_exe(1))))
+    return False
+
+
+def interp_pins(pins_json):
+    """{real path: sha256} from pg_pins.json's interpreter_tools; Fail("interp-pins: ...") on a bad shape."""
+    d = json.load(open(pins_json)).get("interpreter_tools")
+    if not isinstance(d, dict) or not d or not all(
+            isinstance(k, str) and k.startswith("/") and isinstance(v, str) and re.fullmatch(r"[0-9a-f]{64}", v)
+            for k, v in d.items()):
+        raise Fail("interp-pins: pg_pins.json's interpreter_tools is not a map of real paths to sha256")
+    return {os.path.normpath(k): v for k, v in d.items()}
 
 
 def config_type(p):
@@ -407,19 +498,21 @@ def _xsec_data(p):
 
 def trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest, private, w_root, pins,
                 genie_root=GENIE_ROOT, repo=CVMFS_REPO, private_root=PRIVATE_PRODUCTS, sha=None, system_pins=None,
-                gxmlpath=None, xsec_data=None, messenger=None, outputs=None, ghep_in=None, lib_pins=None):
+                gxmlpath=None, xsec_data=None, messenger=None, outputs=None, ghep_in=None, lib_pins=None,
+                interp_pins=None):
     """The check's record: pass, problems (each "<code>: <detail>"), the gated files read, the programs executed,
     ROOT's config files, every watched probe."""
     try:
         return _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest, private, w_root, pins,
                             genie_root, repo, private_root, sha or sha_path, system_pins or {}, gxmlpath, xsec_data,
-                            messenger, outputs or [], ghep_in, lib_pins or {})
+                            messenger, outputs or [], ghep_in, lib_pins or {}, interp_pins or {})
     except Exception as e:                                  # fail closed, with a reason no other test expects
         return {"role": role, "tune": tune, "pass": False, "problems": [f"internal-error: {type(e).__name__}"]}
 
 
 def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest, private, w_root, pins, genie_root,
-                 repo, private_root, sha, system_pins, gxmlpath, xsec_data, messenger, outputs, ghep_in, lib_pins):
+                 repo, private_root, sha, system_pins, gxmlpath, xsec_data, messenger, outputs, ghep_in, lib_pins,
+                 interp_pins):
     probs = trace_problems(text, rc)
     events, pprobs = parse_trace(text)
     probs += pprobs
@@ -485,13 +578,20 @@ def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest
                     probs.append(f"resolve-failed: {raw!r}")
                     e["abs"] = None
                 elif not any(_under(res, r) for r in allowed):
-                    probs.append(f"dotdot-outside-roots: {raw!r} -> {res}")
-                    e["abs"] = None
+                    meta = e["call"] in PROBE_CALLS or (e["call"].startswith("open") and e.get("directory") and not (
+                        e.get("write_only") or e.get("rdwr") or e.get("creat") or e.get("trunc")))
+                    if res in DOTDOT_SYSTEM_DIRS and meta:              # a system directory looked at, not read from
+                        rec["dotdot"][-1]["allowed"] = "system directory"
+                        e["abs"] = res
+                    else:
+                        probs.append(f"dotdot-outside-roots: {raw!r} -> {res}")
+                        e["abs"] = None
                 else:
                     e["abs"] = res
         else:
             e["abs"] = os.path.normpath(joined)
-        if e["call"] == "chdir" and e["ok"]:
+        if e["call"] == "chdir" and e["ok"] and not (           # a chdir to the known cwd changes no process's cwd
+                ".." not in raw.split("/") and os.path.normpath(raw) == os.path.normpath(cwd)):
             chdir_seen = True
         if watched(raw) and e.get("abs") and not _under(e["abs"], w_root):     # W's own names may hold the seed
             rec["probes"].append({"call": e["call"], "path": e["abs"], "ok": e["ok"], "errno": e["errno"],
@@ -543,6 +643,8 @@ def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest
 
     # the programs executed: each a genie-product file with the manifest's bytes, or a pinned system tool
     initial = None
+    exe = next((e["abs"] for e in events if e["call"] in EXECS and e["ok"] and e["pid"] == first and e["abs"]), "")
+    verify_pids = set()      # ldd's 32-bit loader probes, whose exit 1 is expected: round 9, item iii
     for e in events:
         if e["call"] not in EXECS or not e["ok"]:
             continue
@@ -562,13 +664,33 @@ def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest
                 got = sha(real)
                 if got == system_pins[real]:
                     bound = "system pin"
+            elif real in interp_pins:
+                got = sha(real)
+                tool = os.path.basename(real)
+                if got != interp_pins[real]:
+                    pass
+                elif role not in ROOT_ROLES:
+                    bound = False
+                    probs.append(f"interp-role: {tool} ran in the {role} role, which runs no ROOT program")
+                elif e["pid"] == first:
+                    bound = False
+                    probs.append(f"interp-initial: {tool} ran as the initial process")
+                elif not interp_shape(tool, e["abs"], e.get("argv"), exe):
+                    bound = False
+                    probs.append(f"interp-shape: {tool} ran with a command line B3 run 3 did not show: "
+                                 f"{[t for t, _ in (e.get('argv') or [])][:6]!r}"[:300])
+                else:
+                    bound = "interpreter pin"
+                    if tool == "ld-linux.so.2" and e["argv"][1][0] == "--verify":
+                        verify_pids.add(e["pid"])
         except (OSError, Fail):
             got = None
-        rec["execs"].append({"path": e["abs"], "real": real, "sha256": got, "bound_by": bound})
+        rec["execs"].append({"path": e["abs"], "real": real, "sha256": got, "bound_by": bound or None})
         if bound is None:
             probs.append(f"exec-unbound: {e['abs']} -> {real}")
         if initial is None and e["pid"] == first:
             initial = (os.path.basename(e["abs"]), bound)
+    probs = [p for p in probs if p not in {f"child-exit: process {q} exited 1" for q in verify_pids}]
     want_prog = ROLE_PROGRAM[role]
     if initial is None or initial[0] != want_prog or initial[1] is None:
         probs.append(f"initial-program: the initial process did not run the {role} role's own {want_prog} first")
@@ -679,7 +801,11 @@ def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest
         if gxmlpath is None or any(not x for x in entries) or entries != [os.path.normpath(xsec_data or "")]:
             probs.append(f"gxmlpath: {gxmlpath!r} is not exactly the tune's genie_xsec data directory")
         gx = [os.path.normpath(x) for x in entries if x]
-        order = gx + [os.path.join(genie_root, d) for d in t["search_dirs"]]
+        # GENIE adds the tune's own directory only when it exists (a custom tune): B3 run 3's walks for
+        # G21_11a_00_000 go GXMLPATH, config/G21_11a, config (b3-run3-diag2.out); the manifest says what exists
+        sd = t["search_dirs"]
+        own = (manifest.get(os.path.normpath("genie/v3_04_00/" + sd[0])) or {}).get("type") == "dir"
+        order = gx + [os.path.join(genie_root, d) for i, d in enumerate(sd) if i > 0 or own]
 
         def exists(d, b):
             p = os.path.join(d, b)
@@ -1117,7 +1243,8 @@ def cmd_trace(a):
                           json.load(open(a.manifest))["members"], json.load(open(a.private_members))["members"],
                           os.path.normpath(a.w_root), pins, system_pins=_kv(a.system_pin), gxmlpath=a.gxmlpath,
                           xsec_data=a.xsec_data, messenger=a.messenger, outputs=a.output, ghep_in=ghep,
-                          lib_pins=dict(compat_pins(a.compat_pins)[1].values()) if a.compat_pins else {})
+                          lib_pins=dict(compat_pins(a.compat_pins)[1].values()) if a.compat_pins else {},
+                          interp_pins=interp_pins(a.compat_pins) if a.compat_pins else {})
     except Exception as e:
         rec = {"role": a.role, "tune": a.tune, "pass": False, "problems": [f"internal-error: {type(e).__name__}"]}
     if os.path.exists(a.out):

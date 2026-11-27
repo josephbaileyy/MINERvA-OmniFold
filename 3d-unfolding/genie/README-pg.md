@@ -40,7 +40,10 @@ Slot 1 is G21_11a_00_000, from a sha-pinned private copy of SciSoft's G2111a0000
    families). Their traces are
    checked; `pg_verify.py`'s docstring lists the rules, and every refusal names a reason code. In outline:
    - each role starts with its own program (awk, gspl2root, gevgen, gntpc), and every exec is resolved and bound to
-     the manifest or a pinned system tool;
+     the manifest or a pinned system tool. Since round 9, ROOT 6.22's interpreter under a GENIE program may also run
+     its pinned family (`pg_pins.json` `interpreter_tools`: sh as bash, ls, sed, ldd, both loaders, CVMFS gcc v9_3_0's
+     g++ and cc1plus), only as a child process, only in the ROOT programs' roles, and only with the command lines B3
+     run 3 showed; ldd's 32-bit loader probe alone may exit 1;
    - nothing is written, truncated, renamed, created or unlinked outside W (/dev/null aside), and no link is made
      anywhere. An open that creates a file without truncating it counts as an output only at the role's expected
      path, after the same process last found it absent or unlinked it (ROOT's RECREATE); a later open is a read;
