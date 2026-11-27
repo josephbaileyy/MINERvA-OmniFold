@@ -116,7 +116,9 @@ S4(ii)'s "July identity at seed 42" (`stageC/production/REPORT.md:65`). C3 tests
      node-h and 0:20–1:00 wall. That is an ESTIMATE from the read size, until measured.
    - The unfolds are 6 universes × 3 slims = 18 jobs, `geanttw_p3_unf_<slim>_GEANT_<b>_<i>`, at Stage C's request
      (128 CPUs, 243840M, shared, billed at 0.5 node-h/h) and Stage C's 00:30:00 limit. At the limits that is
-     **4.5 node-h, a ceiling**; the declaration's P3 estimate was [1.4, 2.0]. With P0 (about 0.03), P2 (about 0.4
+     **4.5 node-h, a ceiling**. **This exceeds the declaration's P3 estimate of [1.4, 2.0] node-h.** There are two
+     reasons. The director's D2 ruling (a) adds a third slim, so there are 18 unfolds where the declaration counted 12.
+     And the figure is a ceiling, at Stage C's 00:30:00 limit for every unfold, not an estimate from measured walls. With P0 (about 0.03), P2 (about 0.4
      expected and 1.2 at the limits) and the pilot pair (about 0.02), the campaign's ceiling is about 5.8 node-h,
      inside the 8.0 cap that `geanttw_sacct.py cap` enforces. The patched and pinned+override unfolds run only after
      C3 PASSes on the pinned ones.
@@ -158,10 +160,15 @@ S4(ii)'s "July identity at seed 42" (`stageC/production/REPORT.md:65`). C3 tests
   same formulas.
 - **C3 is unchanged.** It runs on the plain pinned slim against S5's band matrices, and gates the slim approach.
 
-**C2's scope under cov2d's grant.** UOMNI is read for the slim's branches only. So the pre-check compares all 37 slim
-branches, targets included, of P0's pinned 1L dump with UOMNI's 1L slice. The full C2 compares the 25 non-target slim
-branches of P2's 12 patched dumps, in hadd order, with UOMNI. That is every branch P3 reads. It is narrower than the
-declaration's "every branch except the six targets", which would need branches cov2d has not granted.
+**A declared deviation in C2.** The declaration's C2 compares "every branch except the six targets" with the
+production dump. **This package does not.** The reason is cov2d's (C) grant, which allows UOMNI to be read for the
+slim's branches only, plus the two w_truth key branches. So:
+- the pre-check compares all 37 slim branches, targets included, of P0's pinned 1L dump with UOMNI's 1L slice;
+- the full C2 compares the 25 non-target slim branches of P2's 12 patched dumps, in hadd order, with UOMNI.
+
+C2's purpose is that P3 sees the same events, in the same order, on every branch it reads. The 25 branches,
+kinematics included, are every branch P3 reads, so the purpose still holds. The director accepted this deviation on
+2026-11-27.
 
 ## A4. The NuE grep of every bound source
 

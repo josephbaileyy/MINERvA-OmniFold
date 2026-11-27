@@ -42,6 +42,7 @@ OWNER = {
     "c2_check.py": "tests/test_c2_check.py",
     "p3_slim.py": "tests/test_p3_slim.py",
     "slim_tparams.py": "tests/test_p3_slim.py",
+    "p3_readout.py": "tests/test_p3_readout.py",
 }
 PY_OPS = [
     (r"==", "!="), (r"!=", "=="), (r"(?<![<>=!])<(?![<=])", ">="), (r"(?<![<>=!-])>(?![>=])", "<="),
