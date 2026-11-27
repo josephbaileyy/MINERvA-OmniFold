@@ -40,6 +40,7 @@
   - each xsec.root size equals read-2's committed `inputs-listing.txt`.
 - **Also:** `001_xsec.root`'s sha256 is `a5c13fc3…`, E_R's central sha256 in `2d-unfolding/ref_c2c1/config.json`.
 - **The tar** (28 MB) is not committed. Its sha256 is in `fetch.tar.sha256`, and the sha256 of each unpacked file is in `SHA256SUMS`.
+- **Where the fetched data lives:** the tar and its unpacked files are kept outside the repo at `/Users/josephbailey/c2eff-data/c2eff-run1/`. They were moved from the session scratchpad on 2026-11-27 at the director's request. After the move, fetch.tar's sha256 was 7f46eb31…, SHA256SUMS checked 903 of 903, and the tree matched the original. The scratchpad copy was then deleted.
 
 ## The analysis (`run/`)
 
@@ -54,3 +55,11 @@
 - C-FINITE.
 
 The readings are in `run/c2_eff.json`. They went to the director first.
+
+## Mutants (follow-up)
+
+`mutants_c2_eff.py` (`991ed06cf45ff7cc42d355407bd29f531c9018d4fdd83653e8884f837f3c808a`) applies one exact-text edit per mutant to a temp-dir copy, never to the files in place. Each mutant must make its suite fail:
+- 20 mutants of `c2_eff.py`, run against `test_c2_eff.py`;
+- 18 mutants of `c2_fetch_remote.py` and `c2_fetch_verify.py`, run against `test_c2_fetch.py`'s Fetch class.
+
+The baseline passed, and **38 of 38 were killed** (`receipts/mutation.txt`, `9b63d675…`). The five source files hashed identically before and after the campaign. The wrapper `c2_fetch.sh` is not mutated: its tests need the git worktree, and it is pinned by sha and ran once.
