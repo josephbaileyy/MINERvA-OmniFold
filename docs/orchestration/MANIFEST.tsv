@@ -22987,6 +22987,11 @@ docs/orchestration/state/quoted-products-digests-56760314.json	tracked	MACHINE	s
 docs/orchestration/state/r5-capture-20260910/sacct-r5-t0-to-20260910T065750Z.psv	tracked	MACHINE	state-artifact	r5-capture-20260910	20260910	generated		exact-path-only	yes
 docs/orchestration/state/r5-meter-receipt.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/regen_canonical_namespace_field_pins.py	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
+docs/orchestration/state/release-zenodo-20261127/same-events/PLAN.md	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
+docs/orchestration/state/release-zenodo-20261127/same-events/run_same_events.sh	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
+docs/orchestration/state/release-zenodo-20261127/same-events/same_events.out	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
+docs/orchestration/state/release-zenodo-20261127/same-events/same_events.py	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
+docs/orchestration/state/release-zenodo-20261127/same-events/test_same_events.py	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
 docs/orchestration/state/result-20260923-issue26-issue5/compare_3d.console.txt	tracked	MACHINE	state-artifact	result-20260923-issue26-issue5		generated		exact-path-only	yes
 docs/orchestration/state/result-20260923-issue26-issue5/compare_3d.json	tracked	MACHINE	state-artifact	result-20260923-issue26-issue5		generated		exact-path-only	yes
 docs/orchestration/state/result-20260923-issue26-issue5/compare_5d.console.txt	tracked	MACHINE	state-artifact	result-20260923-issue26-issue5		generated		exact-path-only	yes
