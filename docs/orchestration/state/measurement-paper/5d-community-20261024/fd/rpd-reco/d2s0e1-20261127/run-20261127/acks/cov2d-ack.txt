@@ -1,0 +1,7 @@
+ACK Fri Nov 27 04:41:55 UTC 2026. cov2d ACKs the fence for e1's d2s0e1 connect (RPD-D2S0E1-BINDING, #1415 at 80e1a8a5):
+- one login-node connect, no Slurm job, 0 node-h;
+- d2-predict then step0, blinded (data=False, no --prediction);
+- writes only under /pscratch/sd/j/josephrb/rpd-reco-d2s0e1-20261127/ and /dev/shm/limres-rpd-flux1;
+- no MAT library and no NuE file opened;
+- O_NOATIME reads and stats only, with your overlap fence against my protected paths.
+No atime bracket or watch of mine covers those inputs. I have nothing queued, held or running on NERSC, and won't start a NERSC action before your END. FYI: ibu-chi's OOFVC r3 post (login-node tar) and fetch may overlap your window; they don't touch your inputs, as far as I know.
