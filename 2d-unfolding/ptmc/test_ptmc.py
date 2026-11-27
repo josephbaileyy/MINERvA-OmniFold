@@ -180,8 +180,13 @@ class Gates(unittest.TestCase):
         bad = D.copy()
         bad[3, 4] = np.nan
         self.assertFalse(P.shape_gate(D[0], bad)["pass"])
-        low = rng.normal(size=(200, 10)) @ rng.normal(size=(10, 224))  # rank 10 < 50
+        low = D.copy()
+        low[:, 10:] = 0.0  # exact zero variance beyond 10 cells: the 50 leading eigenvalues include exact zeros
         self.assertFalse(P.shape_gate(low[0], low)["pass"])
+        # roundoff-level positive modes pass pinv_rank's criterion, as declared; the conditioning is printed instead
+        num = rng.normal(size=(200, 10)) @ rng.normal(size=(10, 224))
+        r = P.shape_gate(num[0], num)
+        self.assertLess(r["lambda_ratio_rank_over_top"], 1e-10)
 
     def test_finite_t(self):
         self.assertTrue(P.finite_t({"T": 1.0, "q95": 2.0, "max": 3.0}))

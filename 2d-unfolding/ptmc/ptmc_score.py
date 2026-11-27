@@ -443,6 +443,7 @@ def score(a) -> dict:
         sg = P.shape_gate(delta, D, rank=CONST["RANK"], n=CONST["N"])
         if not sg["pass"]:
             raise Stop(f"C-SHAPE: {key} {sg}")
+        printed.setdefault("lambda_ratio_rank_over_top", {})[f"{key[0]}_K{key[1]}"] = sg["lambda_ratio_rank_over_top"]
     controls["C-SHAPE"] = {"pass": True}
     readings = {}
     for (arm, K), (delta, D) in arms.items():

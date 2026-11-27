@@ -124,23 +124,27 @@ def rel_close(a, b, rtol) -> dict:
 
 
 def shape_gate(delta, D, rank=RANK, n=N_REPLICAS, cells=N_CELLS) -> dict:
-    """C-SHAPE: a finite cells-vector and a finite n x cells matrix, and at least ``rank`` strictly positive
-    eigenvalues above the pseudo-inverse's own cut in the full covariance and in every leave-one-out covariance
-    (ref_c2c1_read.pinv_rank keeps the top ``rank`` modes; a mode at or below the cut would be inverted as noise)."""
+    """C-SHAPE: a finite cells-vector and a finite n x cells matrix, and, in the full covariance and in every
+    leave-one-out covariance, the ``rank`` leading eigenvalues all strictly positive: ref_c2c1_read.pinv_rank's own
+    criterion (PTMC-DECLARATION.md C-SHAPE), checked before pinv_rank can raise."""
     delta, D = np.asarray(delta, float), np.asarray(D, float)
     if delta.shape != (cells,) or D.shape != (n, cells):
         return {"pass": False, "why": f"shapes {delta.shape} {D.shape}"}
     if not (np.all(np.isfinite(delta)) and np.all(np.isfinite(D))):
         return {"pass": False, "why": "non-finite"}
 
-    def ok(X):
-        lam = np.linalg.eigvalsh(np.cov(X, rowvar=False, ddof=1))
-        cut = lam.max() * cells * np.finfo(float).eps
-        return int(np.sum(lam > cut)) >= rank
+    def ok(X):  # ref_c2c1_read.pinv_rank's own criterion: the `rank` leading eigenvalues are all strictly positive
+        Cm = np.cov(X, rowvar=False, ddof=1)
+        lam = np.linalg.eigvalsh((Cm + Cm.T) / 2)
+        top = np.sort(lam)[::-1][:rank]
+        return bool(np.all(np.isfinite(lam)) and top.size == rank and np.all(top > 0))
     full = ok(D)
     loo_bad = [i for i in range(n) if not ok(np.delete(D, i, axis=0))]
+    Cm = np.cov(D, rowvar=False, ddof=1)
+    lam = np.sort(np.linalg.eigvalsh((Cm + Cm.T) / 2))[::-1]
+    ratio = float(lam[rank - 1] / lam[0]) if lam[0] > 0 else float("nan")  # printed, read by nothing
     return {"pass": bool(full and not loo_bad), "full": full, "loo_failures": loo_bad[:10],
-            "n_loo_failures": len(loo_bad)}
+            "n_loo_failures": len(loo_bad), "lambda_ratio_rank_over_top": ratio}
 
 
 def finite_t(t: dict) -> bool:
