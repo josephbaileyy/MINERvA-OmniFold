@@ -23096,6 +23096,11 @@ docs/orchestration/state/ptmc-20261127/reads/r3/agy-hydrogen-high-report.txt	tra
 docs/orchestration/state/ptmc-20261127/reads/r3/codex-school2-report.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
 docs/orchestration/state/ptmc-20261127/reads/r3/inputs-sha256.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
 docs/orchestration/state/ptmc-20261127/reads/r3/prompt.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
+docs/orchestration/state/ptmc-20261127/reads/r4-confirm/DISPOSITION.md	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
+docs/orchestration/state/ptmc-20261127/reads/r4-confirm/README.md	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
+docs/orchestration/state/ptmc-20261127/reads/r4-confirm/codex-school2-report.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
+docs/orchestration/state/ptmc-20261127/reads/r4-confirm/inputs-sha256.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
+docs/orchestration/state/ptmc-20261127/reads/r4-confirm/prompt.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
 docs/orchestration/state/ptmc-20261127/receipts/couple/README.md	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
 docs/orchestration/state/ptmc-20261127/receipts/couple/launch-v1-to-v2.diff.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
 docs/orchestration/state/ptmc-20261127/receipts/couple/run1/cert.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
