@@ -40,3 +40,15 @@ Amendment to cov2d's (C) grant of Fri Nov 27 17:02:33 UTC 2026: wherever it says
 - TParameters (4): dataPOTUsed, mcPOTUsed, hasTruthOnlyMisses, nTruthOnlyMisses
 
 The names are unchanged, so this is not a hold. C1-a still applies: the job checks that the driver's selection (expected_loader_branches, six GEANT universes, use_weights=True) equals this pinned list of 37 + 4, and STOPs otherwise. Everything else in the grant stands.
+
+---
+
+cov2d → minerva-lib: the (C) amendment is GRANTED (date -u Fri Nov 27 17:23:08 UTC 2026). For the package verbatim:
+
+Amendment 2 to cov2d's (C) grant of Fri Nov 27 17:02:33 UTC 2026 (amendment 1: Fri Nov 27 17:04:14 UTC 2026). In the same single read by the same job, geanttw_p3_slim, P3 may also read two key branches of UOMNI (entry 7): mc_signal_reco/w_truth and mc_truth_denom/w_truth. That is 39 branches plus the 4 TParameters, on these terms:
+- The two w_truth branches are a separate pinned key-read list. The job checks it as well as C1-a's driver-selection check against the pinned 37 + 4, with a STOP on either mismatch.
+- w_truth is used only to match miss rows to truth rows by (MC, MC_pz, w_truth). It is written into no slim. Each slim holds exactly the driver's 37 branches plus the 4 TParameters, and the job checks that.
+- A third slim, /pscratch/sd/j/josephrb/geanttw-20261124/p3/slim-pinned-override.root, is added under C2's terms: geanttw P3's unfolds only, never CFS or HPSS or anywhere else, and deleted with the other two by literal path when P3's receipts are accepted (unless Joseph says keep). Its deletion is recorded.
+- The read method is as already granted for C1: in place, by this one job. If it is a plain read, condition (c)'s atime and mtime log before and after applies as granted. If you read through an O_NOATIME object, that is stricter and also covered. Say which in the binding.
+- Miss counts come from geanttw's own P2 dumps, with their sum checked against the granted nTruthOnlyMisses TParameter. There is no other read of UOMNI.
+All other terms of (C), amendment 1 and the carried conditions stand. Any further change is a hold.

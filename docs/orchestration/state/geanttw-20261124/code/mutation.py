@@ -38,6 +38,10 @@ OWNER = {
     "geanttw_build.sh": "tests/test_shell_scripts.py",
     "geanttw_connect.sh": "tests/test_shell_scripts.py",
     "geanttw_remote.sh": "tests/test_shell_scripts.py",
+    "p2_limits.py": "tests/test_p2_limits.py",
+    "c2_check.py": "tests/test_c2_check.py",
+    "p3_slim.py": "tests/test_p3_slim.py",
+    "slim_tparams.py": "tests/test_p3_slim.py",
 }
 PY_OPS = [
     (r"==", "!="), (r"!=", "=="), (r"(?<![<>=!])<(?![<=])", ">="), (r"(?<![<>=!-])>(?![>=])", "<="),

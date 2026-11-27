@@ -76,6 +76,9 @@ def test_pre_fails_on_one_changed_value_including_a_target(ws):
     write(ws["tmp"] / "pin_1L.root", ws["parts"]["1L"])
     p, r = run(ws, "pre", "--dump", str(ws["tmp"] / "pin_1L.root"))
     assert p.returncode == 1 and r["differ"] == ["mc_truth_denom:w_truth_GEANT_Pion_0"]
+    assert r["verdict"] == "FAIL" and "C2-PRE FAIL: 36/37" in p.stdout
+    text = (ws["tmp"] / "c2.json").read_text()
+    assert text == json.dumps(json.loads(text), indent=1, sort_keys=True)   # the record's keys are sorted
 
 
 def test_pre_fails_on_a_wrong_offset(ws):
@@ -110,7 +113,29 @@ def test_full_fails_when_playlists_are_out_of_hadd_order(ws):
 
 def test_full_needs_twelve_dumps(ws):
     p, _ = run(ws, "full", "--dumps", *map(str, ws["dumps"][:11]))
-    assert p.returncode == 2 and "UNUSABLE" in p.stdout
+    assert p.returncode == 2 and "full takes --dumps with the 12 playlists' dumps" in p.stdout
+
+
+def test_full_refuses_a_dump_argument(ws):
+    p, _ = run(ws, "full", "--dump", str(ws["dumps"][0]), "--dumps", *map(str, ws["dumps"]))
+    assert p.returncode == 2 and "full takes --dumps with the 12 playlists' dumps" in p.stdout
+
+
+def test_pre_refuses_dumps(ws):
+    p, _ = run(ws, "pre", "--dump", str(ws["tmp"] / "pin_1L.root"), "--dumps", *map(str, ws["dumps"]))
+    assert p.returncode == 2 and "pre takes --dump only" in p.stdout
+
+
+def test_uomni_is_required(ws):
+    p = subprocess.run([sys.executable, "-I", str(CODE / "c2_check.py"), "pre", "--dump", "x"],
+                       capture_output=True, text=True)
+    assert p.returncode == 2 and "--uomni" in p.stderr
+
+
+@pytest.mark.parametrize("b", [np.zeros(4, dtype=np.int64), np.zeros((2, 2))])
+def test_same_bits_needs_the_same_dtype_and_shape(b):
+    assert C2.same_bits(np.zeros(4), np.zeros(4)) is True
+    assert C2.same_bits(np.zeros(4), b) is False   # the same bytes, another dtype or shape
 
 
 def test_a_dump_missing_a_branch_is_unusable(ws):

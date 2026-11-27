@@ -31,7 +31,7 @@ FAMILIES = (
     (re.compile(r"^geanttw_p0_(pin|pat)_1L$"), SHARED_RATE),
     (re.compile(r"^geanttw_p2_(pilot_|pilotref_)?" + P2_PL + r"$"), SHARED_RATE),
     (re.compile(r"^geanttw_(p2_c2pre|p3_c2|p3_slim)$"), SHARED_RATE),
-    (re.compile(r"^geanttw_p3_unf_(pin|pat)_GEANT_(Neutron|Pion|Proton)_[01]$"), UNFOLD_RATE),
+    (re.compile(r"^geanttw_p3_unf_(pin|pinov|patov)_GEANT_(Neutron|Pion|Proton)_[01]$"), UNFOLD_RATE),
 )
 
 

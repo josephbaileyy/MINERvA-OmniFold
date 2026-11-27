@@ -111,8 +111,15 @@ S4(ii)'s "July identity at seed 42" (`stageC/production/REPORT.md:65`). C3 tests
 4. **Price, an ESTIMATE until the branch sizes are read.**
    - The slims hold 37 branches out of UOMNI's 952, plus the four TParameters. **C4 measured** those branches at
      5,857,242,672 B compressed and 6,458,621,231 B uncompressed, so a slim is about 5.9 GB, and two are about 12 GB.
-   - The build is one plain ROOT read of about 5.86 GB compressed. It runs as one job, `geanttw_p3_slim`, at
-     [0.02, 0.10] node-h and 0:20–1:00 wall. That is an ESTIMATE from the read size, until measured.
+   - The build is one read of about 5.86 GB compressed, plus 2 × about 250 MB of key branches. It runs as one job,
+     `geanttw_p3_slim`, and writes three slims of about 5.9 GB each, about 18 GB in all. It costs [0.02, 0.10]
+     node-h and 0:20–1:00 wall. That is an ESTIMATE from the read size, until measured.
+   - The unfolds are 6 universes × 3 slims = 18 jobs, `geanttw_p3_unf_<slim>_GEANT_<b>_<i>`, at Stage C's request
+     (128 CPUs, 243840M, shared, billed at 0.5 node-h/h) and Stage C's 00:30:00 limit. At the limits that is
+     **4.5 node-h, a ceiling**; the declaration's P3 estimate was [1.4, 2.0]. With P0 (about 0.03), P2 (about 0.4
+     expected and 1.2 at the limits) and the pilot pair (about 0.02), the campaign's ceiling is about 5.8 node-h,
+     inside the 8.0 cap that `geanttw_sacct.py cap` enforces. The patched and pinned+override unfolds run only after
+     C3 PASSes on the pinned ones.
 5. **The patched slim** is the pinned slim with only the six `w_truth_GEANT_*` columns replaced, in
    `mc_signal_reco` and `mc_truth_denom`, by P2's values concatenated in hadd order. **Control C-PATCH:** every
    other branch, key and TParameter equals the pinned slim bitwise.
@@ -125,14 +132,36 @@ S4(ii)'s "July identity at seed 42" (`stageC/production/REPORT.md:65`). C3 tests
    It also discloses the per-playlist header reads (A1) and the C2 pre-check's read of 1L's rows. The grant text
    goes in the package.
 
-**D2: the miss rows.** The bound miss override, after `stageB/diagnostics/p5/build_miss_override.py`, carries P2's
-patched `mc_truth_denom` weights onto the patched slim's miss rows in `mc_signal_reco`. **Control C-MISS:**
-re-histogramming the override's denominator must equal P2's patched `mc_truth_denom` histogram **bitwise**. Both
-are float64 sums of the same values in the same order, so bitwise is achievable. If the order cannot be made the
-same, the tolerance is declared before the run. If the override needs the values of `hasTruthOnlyMisses` or
-`nTruthOnlyMisses`, that read is its own item under (C).
+**D2: the miss rows, and three slims (the director's ruling (a), 2026-11-27).**
+- **Why three slims.** The miss rows of `mc_signal_reco` carry the CV `w_truth` in every universe column, as a
+  proxy (`runEventLoopOmniFold.cpp:862-863`). An override replaces that proxy with the truth rows' denominator
+  weights. On the patched slim alone, that would mix the patch's effect on misses with the proxy's removal. So P3
+  builds three slims, all under `/pscratch/sd/j/josephrb/geanttw-20261124/p3/`:
+  - `slim-pinned.root`: UOMNI's columns. C3 runs on this one.
+  - `slim-pinned-override.root`: UOMNI's columns, with each playlist's misses overridden from UOMNI's own
+    `mc_truth_denom` `w_truth_GEANT_*`.
+  - `slim-patched-override.root`: P2's columns, with the misses overridden from P2's `mc_truth_denom`.
+- **The matching.** Misses are matched to truth rows by the exact key (MC, MC_pz, w_truth), as an ordered
+  subsequence per playlist (`p3_slim.py override_block`, after `build_miss_override.py`).
+  - For the pinned override, UOMNI's `w_truth` in both trees is read for the key only, under cov2d's (C)
+    amendment 2. It is written into no slim.
+  - Each playlist's block size and miss count come from P2's dumps. Their sums must equal UOMNI's entries and
+    `nTruthOnlyMisses`.
+- **Control C-MISS, exact, on both overrides.** Per playlist and universe, the multiset of (MC, MC_pz, w_truth_<u>)
+  over the overridden signal rows equals the denominator's. Any per-bin sum taken in exact arithmetic (fsum) then
+  agrees bitwise, in any order.
 
-**R3** is unchanged from the declaration.
+**R3, re-read for three slims** (the director's ruling; the declaration's R3 compares "patched" with "pinned"):
+- **The patch's effect** is G(patched+override) − G(pinned+override). In R3a and R3b, "patched" and "pinned" now
+  mean those two. T′ = T + [G(patched+override) − G(pinned+override)].
+- **The proxy's removal alone** is G(pinned+override) − G(pinned). It is reported separately, per cell, with the
+  same formulas.
+- **C3 is unchanged.** It runs on the plain pinned slim against S5's band matrices, and gates the slim approach.
+
+**C2's scope under cov2d's grant.** UOMNI is read for the slim's branches only. So the pre-check compares all 37 slim
+branches, targets included, of P0's pinned 1L dump with UOMNI's 1L slice. The full C2 compares the 25 non-target slim
+branches of P2's 12 patched dumps, in hadd order, with UOMNI. That is every branch P3 reads. It is narrower than the
+declaration's "every branch except the six targets", which would need branches cov2d has not granted.
 
 ## A4. The NuE grep of every bound source
 

@@ -236,7 +236,7 @@ def _gs():
 @pytest.mark.parametrize("name,rate", [
     ("geanttw_p0_pat_1L", 0.0391), ("geanttw_p2_1A", 0.0391), ("geanttw_p2_pilot_1B", 0.0391),
     ("geanttw_p2_pilotref_1B", 0.0391), ("geanttw_p2_c2pre", 0.0391), ("geanttw_p3_c2", 0.0391),
-    ("geanttw_p3_slim", 0.0391), ("geanttw_p3_unf_pin_GEANT_Pion_0", 0.5), ("geanttw_p3_unf_pat_GEANT_Proton_1", 0.5),
+    ("geanttw_p3_slim", 0.0391), ("geanttw_p3_unf_pin_GEANT_Pion_0", 0.5), ("geanttw_p3_unf_patov_GEANT_Proton_1", 0.5), ("geanttw_p3_unf_pinov_GEANT_Neutron_0", 0.5),
 ])
 def test_each_family_has_its_rate(name, rate):
     gs = _gs()
@@ -244,7 +244,7 @@ def test_each_family_has_its_rate(name, rate):
     assert gs.cap([], [], name, "02:00:00")["want_ceiling"] == pytest.approx(2 * rate)
 
 
-@pytest.mark.parametrize("name", ["geanttw_p2_1L", "geanttw_p3_unf_pin_GEANT_Pion_2", "geanttw_p3_unf_GEANT_Pion_0",
+@pytest.mark.parametrize("name", ["geanttw_p2_1L", "geanttw_p3_unf_pin_GEANT_Pion_2", "geanttw_p3_unf_pat_GEANT_Pion_0", "geanttw_p3_unf_GEANT_Pion_0",
                                   "geanttw_p3_slimx", "geanttw_p2_pilot_1L", "geanttw_p4_x"])
 def test_names_outside_every_family_are_unusable(name):
     gs = _gs()
