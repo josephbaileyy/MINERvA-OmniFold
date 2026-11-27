@@ -23,7 +23,7 @@ at full rigour anyway.**
 |---|---|---|
 | 11-27 | this scoping and DRAFT declaration; declaration reads (Grok, codex-school, Sonnet); revision | the director's answers to §3 |
 | 11-28 | code: driver diff (~30 lines), paired runner (new file), scorer (imports REF-C2C1's reader); tests; mutation campaign; code reads | the declaration's audit |
-| 11-29 | binding; fence round; a 0 node-h stat connect (§3, D4); pilot (4 units); then 199 replicas, ~2–3 h wall on 5 nodes plus queue | the GO; cov2d acks |
+| 11-29 | binding; fence round; pilot (8 units: both centrals, the off replicas b = 1..5, the R replica b = 1); then 199 replicas, ~2–3 h wall on 5 nodes plus queue | the GO; cov2d acks. (D4's stat connect already ran, on 11-27: 604 of 604 present, `receipts/stat-d4/`) |
 | 11-30 | score on the laptop; receipts PR; CI; merge; the director reads it; it goes to Joseph | — |
 | 12-01 | the note text, if Joseph wants it in v1 | Joseph |
 
@@ -78,7 +78,8 @@ declaration's §8.)
     - Stage 4 deleted only the staging root (`stage4-delete/README.txt`).
     - Nothing on main says the units or read-2 were removed, and they were last read through O_NOATIME. The purge
       window from 11-06 runs to about 2027-01-01.
-    - Their presence needs a 0 node-h stat connect after the GO.
+    - Their presence needed a 0 node-h stat connect after a GO. It ran on 11-27 and found 604 of 604 present
+      (`receipts/stat-d4/`).
   - **If they are gone,** the baseline clause drops and the reading is reported as measured (declaration §5).
 - **D5. The analysis grid,** E_R's edges: 0.07 / 0.33 / 0.47 GeV/c on p_T, at M's driver 938c53c5. It is not
   OOFVC's paper-edge grid.
