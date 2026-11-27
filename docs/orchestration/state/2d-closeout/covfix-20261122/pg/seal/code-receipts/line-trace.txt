@@ -1,19 +1,19 @@
 # command: coverage run --branch -m unittest test_covfix_seal.py, + coverage run -a covfix_pg.py and covfix_sealcheck.py with no arguments (the __main__ lines); coverage report -m --include (the three PG modules only)
 # python: 3.12.2 numpy 1.26.4  gpg: gpg (GnuPG) 2.4.8  host: Darwin arm64
-# 9ef4fecf4963a9824aad9abc60dd3f6e8a296482a0c3aed880a2402e08684fab  covfix_seal.py
-# bb78f47a20a981dba9ad5565f0d6fed3740440169639ad2fb88109721d2f76ab  covfix_pg.py
+# 1064f9f95e4eb8725b1095d5858a74253c6cb9c2a99d432ef7e08ec464d3c12a  covfix_seal.py
+# 23193eb1238e30f8355b995ed5d43befab550f2bf8463d37fb8c9f6b56df1ea6  covfix_pg.py
 # ed4d30ab2cea71e7aa87259adc6ffc4497a4b44d93b525b843b65a26151dba16  covfix_sealcheck.py
-# f23e926787af54ec604f197a1326184670a179b62ac911935aafccef67252416  test_covfix_seal.py
-# a235e97e010005a5adcd3b29c2e6dcb3082c42649c22db0caa9f689c9a3c2994  covfix_seal_mutation.py
-# start: 2026-11-25T02:29:27Z
+# 76cab2597f05142ba6c863193ccbe6a1f832125522ddfe2e9ba7cdeafd004992  test_covfix_seal.py
+# 628c89e4f72f106212ae728d54e5fb2a4ca3a4c8ca5e51b379f0cf5a50efb144  covfix_seal_mutation.py
+# start: 2026-11-27T00:57:00Z
 # unittest rc: 0
 # covfix_pg.py rc: 2 (2 = argparse)
 # covfix_sealcheck.py rc: 2 (2 = argparse)
 Name                  Stmts   Miss Branch BrPart  Cover   Missing
 -----------------------------------------------------------------
-covfix_pg.py            291      0     76      0   100%
-covfix_seal.py          326      4    110      0    99%   170-174
+covfix_pg.py            369      0    108      0   100%
+covfix_seal.py          416      4    146      0    99%   181-185
 covfix_sealcheck.py      30      0      4      0   100%
 -----------------------------------------------------------------
-TOTAL                   647      4    190      0    99%
+TOTAL                   815      4    258      0    99%
 # NOT TRACEABLE: covfix_seal.py's gpg_run preexec_fn body (def child: the fd-3 dup2 / set_inheritable). It runs in the forked child between fork and exec, where coverage cannot record. It is exercised behaviourally: every gpg round trip needs the passphrase on fd 3, and Gpg.test_passphrase_pipe_on_fd_3 forces the r == 3 branch.

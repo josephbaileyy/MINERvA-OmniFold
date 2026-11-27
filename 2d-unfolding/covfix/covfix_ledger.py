@@ -5,8 +5,9 @@ All accounting is in integer node-seconds.
   init        creates the ledger once (exclusively), with the bound policy as its first entry ({group: cap}, {phase:
               group}, the ceiling, the expected toy ids per (phase, arm), and the fixed lines such as the synthetic
               test's 2.0 and the u2-draw's 1.0 node-h; every amount a whole number of node-seconds), and fsyncs the file,
-              its directory and any directory it created. Every later open must name the same policy; an absent ledger
-              is refused, never re-created.
+              its directory and any directory it created. The policy carries "format": 4; a ledger of another format
+              is refused at its first line, naming both formats (no compatibility: none was ever written). Every later
+              open must name the same policy; an absent ledger is refused, never re-created.
   fixed line  held in its group from init until one intent draws on it (the intent's reservation must fit within it);
               the intent then holds and is charged in its place.
   amendment   a group's cap changed by an entry that carries the director's committed sha (40 hex), e.g. PV's re-price.
@@ -17,7 +18,9 @@ All accounting is in integer node-seconds.
               group's cap and the ceiling).
   submit      the intent is claimed before sbatch; argv is built from the ledger's stored reservation (--parsable
               --job-name --nodes --time=HH:MM:SS --qos --no-requeue, plus allowlisted extra flags only). The script is
-              read once, every #SBATCH directive in it must be on the same allowlist (no --array, --nodes, ...), and its
+              read once. Any comment line naming SBATCH or SLURM in any spelling ("#SBATCH--array", "# SBATCH",
+              "#sbatch", "#SLURM", a note) must be exactly "#SBATCH" plus single-space-separated words from the same
+              allowlist (no --array, --nodes, ...; values of a plain character set), or the script is refused. Its
               bytes go to sbatch on stdin, with every SBATCH_* and SLURM_* variable removed from sbatch's environment.
               The job ID is recorded (idempotently, so a reconcile that recorded it first is not an error), then one
               read-only `scontrol show job` is checked for TimeLimit, JobName, QOS, NumNodes, Requeue=0 and no array
@@ -29,7 +32,8 @@ All accounting is in integer node-seconds.
               terminal job's charge, NNodes x ElapsedRaw node-seconds, is recorded once, only from non-negative integer
               counters that agree across every row for that job. A zero ElapsedRaw releases the hold (charge 0) only on
               CANCELLED with Start None; any other terminal state with zero ElapsedRaw is charged the full reservation.
-              Every charge persists its sacct row as evidence. A job matched by name is recorded as "recovered" (never
+              Every charge persists its sacct row as evidence; one helper (_charge) computes a charge from a row,
+              live and in replay. A job matched by name is recorded as "recovered" (never
               verified, so none of its products can be accepted). Job IDs are canonical decimal strings. Anything
               uncertain keeps the reservation open.
   gate        atomic under the flock: reconciled charges + open reservations + the new reservation must stay within
@@ -39,9 +43,11 @@ All accounting is in integer node-seconds.
               the same phase.
   amendment   refused below the group's spent + held.
   replay      the state is rebuilt from the ledger, refusing any transition the live API would refuse: a second policy,
-              an intent or an amendment that breaks the gate, a submission without a claim, a job ID that is not a
-              canonical decimal string or is already bound, a second charge, a zero charge without its evidence, an
-              acceptance without a verified job or with a malformed sha256, and an unknown kind.
+              an intent while another has no job ID, an intent, a claim or an amendment that breaks the gate, a
+              submission without a claim, a job ID that is not a canonical decimal string or is already bound, a second
+              charge, a charge that is not what its evidence row gives (that job's row, under its own job name), an
+              acceptance without a verified job, a digest that is not a str of the right hex form (never a JSON
+              number, bool or float), and an unknown kind.
 
 MEASURES: nothing. CANNOT AUTHORIZE: a submission; it only refuses one that would not fit or does not match.
 """
@@ -64,9 +70,14 @@ PHASE = re.compile(r"[a-z0-9]{1,16}")
 JOB_NAME = re.compile(r"covfix_([a-z0-9]{1,16})_([0-9a-f]{32})")
 JOBID = re.compile(r"[0-9]+")
 UINT = re.compile(r"[0-9]+")
-EXTRA_OK = re.compile(r"--(account|constraint|output|error|cpus-per-task|ntasks-per-node|mem)=\S+|--exclusive")
+EXTRA_OK = re.compile(r"--(account|constraint|output|error|cpus-per-task|ntasks-per-node|mem)=[A-Za-z0-9_.,:%/@+-]+"
+                      r"|--exclusive")
 HEX64 = re.compile(r"[0-9a-f]{64}")
+HEX40 = re.compile(r"[0-9a-f]{40}")
 SCRUB = ("SBATCH_", "SLURM_")
+DIRECTIVE_WORD = re.compile(r"sbatch|slurm", re.IGNORECASE)
+STRICT_DIRECTIVE = re.compile(r"#SBATCH( \S+)+")
+FORMAT = 4
 
 
 def _canon_str(job) -> bool:
@@ -78,6 +89,24 @@ def _released(ev) -> bool:
     """The only evidence that releases a hold: one sacct row, CANCELLED, Start None, ElapsedRaw 0."""
     return isinstance(ev, dict) and sacct_state(str(ev.get("State", ""))) == "CANCELLED" \
         and str(ev.get("Start", "")) == "None" and str(ev.get("ElapsedRaw", "")) == "0"
+
+
+def _hex(rx: re.Pattern, v) -> bool:
+    """A digest: a str (never a JSON number, bool or float) of exactly this hex form."""
+    return type(v) is str and rx.fullmatch(v) is not None
+
+
+def _charge(row, it: dict, intent: str) -> int | None:
+    """The charge one sacct row gives an intent's job; None if the row is not a terminal row of that job and name.
+    Zero elapsed is charged 0 only on release evidence (_released); otherwise it is charged the full reservation."""
+    if not isinstance(row, dict) or not JOBID.fullmatch(str(row.get("JobID", ""))) \
+            or str(int(str(row["JobID"]))) != it["job"] or row.get("JobName") != f"covfix_{it['phase']}_{intent}":
+        return None
+    state, nn, el = sacct_state(str(row.get("State", ""))), str(row.get("NNodes", "")), str(row.get("ElapsedRaw", ""))
+    if state not in TERMINAL or not (UINT.fullmatch(nn) and UINT.fullmatch(el)) or int(nn) < 1:
+        return None
+    charge = int(nn) * int(el)
+    return it["reservation"] if charge == 0 and not _released(row) else charge
 
 
 def canon_job(job) -> str:
@@ -144,8 +173,8 @@ class Ledger:
         self.groups, self.ceiling = dict(groups), _ns(ceiling)
         self.toys = {ph: {a: list(ids) for a, ids in arms.items()} for ph, arms in toys.items()}
         self.fixed = {n: {"group": f["group"], "ns": _ns(f["node_h"])} for n, f in fixed.items()}
-        self.policy = {"caps_ns": self.caps, "groups": self.groups, "ceiling_ns": self.ceiling, "toys": self.toys,
-                       "fixed": self.fixed}
+        self.policy = {"format": FORMAT, "caps_ns": self.caps, "groups": self.groups, "ceiling_ns": self.ceiling,
+                       "toys": self.toys, "fixed": self.fixed}
 
     # ------------------------------------------------------------------------------------------------ storage
     @contextlib.contextmanager
@@ -205,6 +234,9 @@ class Ledger:
     # -------------------------------------------------------------------------------------------------- state
     def state(self) -> dict:
         es = self._entries()
+        if es and es[0].get("kind") == "policy" and es[0].get("format") != FORMAT:
+            raise Refusal(f"the ledger's policy is another format: expected format {FORMAT}, "
+                          f"found {es[0].get('format')!r}")
         if not es or es[0].get("kind") != "policy" or {k: es[0].get(k) for k in self.policy} != \
                 json.loads(json.dumps(self.policy)):
             raise Refusal("the ledger's policy is absent or is not this policy")
@@ -215,6 +247,7 @@ class Ledger:
             it = intents.get(e.get("intent"))
             fx = e.get("fixed")
             if k == "intent" and e.get("intent") not in intents and e.get("phase") in self.groups \
+                    and all(x["job"] is not None for x in intents.values()) \
                     and type(e.get("nodes")) is int and type(e.get("time_limit_s")) is int \
                     and e.get("reservation") == reservation_ns(e["nodes"], e["time_limit_s"]) \
                     and (fx is None or (fx in st["fixed_open"]
@@ -227,10 +260,11 @@ class Ledger:
                 if fx is not None:
                     st["fixed_open"].discard(fx)
             elif k == "amendment" and e.get("group") in caps and type(e.get("cap_ns")) is int and e["cap_ns"] > 0 \
-                    and re.fullmatch(r"[0-9a-f]{40}", str(e.get("director_sha", ""))) \
+                    and _hex(HEX40, e.get("director_sha")) \
                     and e["cap_ns"] >= sum(self.totals(st, e["group"]).values()):
                 caps[e["group"]] = e["cap_ns"]
-            elif k == "claimed" and it is not None and not it["claimed"] and it["job"] is None and it["stop"] is None:
+            elif k == "claimed" and it is not None and not it["claimed"] and it["job"] is None and it["stop"] is None \
+                    and self._claim_fits(st, it["phase"]):
                 it["claimed"] = True
             elif k in ("submitted", "recovered") and it is not None and it["claimed"] and it["job"] is None \
                     and _canon_str(e.get("job")) and e["job"] not in jobs:
@@ -240,14 +274,14 @@ class Ledger:
                     and not it["verified"] and it["stop"] is None:
                 it["verified"] = True
             elif k == "reconciled" and it is not None and it["job"] is not None and it["job"] == e.get("job") \
-                    and it["charge"] is None and type(e.get("charge")) is int and e["charge"] >= 0 \
-                    and (e["charge"] > 0 or _released(e.get("evidence"))):
+                    and it["charge"] is None and type(e.get("charge")) is int \
+                    and e["charge"] == _charge(e.get("evidence"), it, e["intent"]):
                 it["charge"] = e["charge"]
             elif k == "stop" and it is not None and isinstance(e.get("reason"), str):
                 it["stop"] = e["reason"]
             elif k == "accepted" and (e.get("phase"), e.get("arm"), e.get("toy")) not in toys \
                     and e.get("toy") in self.toys.get(e.get("phase"), {}).get(e.get("arm"), []) \
-                    and HEX64.fullmatch(str(e.get("sha256", ""))) and _canon_str(e.get("job")) \
+                    and _hex(HEX64, e.get("sha256")) and _canon_str(e.get("job")) \
                     and any(x["job"] == e["job"] and x["phase"] == e["phase"] and x["verified"]
                             for x in intents.values()):
                 toys[(e["phase"], e["arm"], e["toy"])] = {"sha256": e["sha256"], "job": e["job"]}
@@ -262,6 +296,12 @@ class Ledger:
         tot, gt = self.totals(st), self.totals(st, group)
         return tot["spent_ns"] + tot["held_ns"] + res - credit <= self.ceiling \
             and gt["spent_ns"] + gt["held_ns"] + res - credit <= st["caps"][group]
+
+    def _claim_fits(self, st: dict, phase: str) -> bool:
+        """The claim's recheck: spent + held (the intent's reservation among the held) within the cap and ceiling."""
+        group = self.groups[phase]
+        return sum(self.totals(st).values()) <= self.ceiling \
+            and sum(self.totals(st, group).values()) <= st["caps"][group]
 
     def totals(self, st: dict, group: str | None = None) -> dict:
         spent = held = 0
@@ -336,27 +376,24 @@ class Ledger:
                 raise Refusal("the intent is already claimed, submitted or stopped")
             if it["time_limit_s"] % 60:
                 raise Refusal("the time limit must be whole minutes, so scontrol's TimeLimit can match it exactly")
-            group = self.groups[it["phase"]]
-            tot, gt = self.totals(st), self.totals(st, group)
-            if sum(tot.values()) > self.ceiling or sum(gt.values()) > st["caps"][group]:
+            if not self._claim_fits(st, it["phase"]):
                 raise Refusal("the gate refuses at the claim: spent + held exceeds the cap or the ceiling")
             self._append({"kind": "claimed", "intent": intent})
         return it
 
     @staticmethod
     def _script(script: str) -> bytes:
-        """The job script's bytes, read once; every #SBATCH directive must be on the allowlist."""
+        """The job script's bytes, read once. A comment line that names SBATCH or SLURM in any spelling must be the
+        strict form "#SBATCH" + single-space-separated allowlisted words, or the script is refused."""
         try:
             with open(script, "rb") as fh:
                 data = fh.read()
         except OSError as e:
             raise Refusal("the job script cannot be read") from e
         for line in data.decode("utf-8", "replace").splitlines():
-            words = line.strip().split()
-            if words and words[0] == "#SBATCH":
-                bad = [w for w in words[1:] if not EXTRA_OK.fullmatch(w)]
-                if bad or len(words) == 1:
-                    raise Refusal(f"a #SBATCH directive is not allowed: {bad or line.strip()}")
+            if line.strip().startswith("#") and DIRECTIVE_WORD.search(line):
+                if not STRICT_DIRECTIVE.fullmatch(line) or not all(EXTRA_OK.fullmatch(w) for w in line.split(" ")[1:]):
+                    raise Refusal(f"a directive line is not the strict allowlisted form: {line!r}")
         return data
 
     def submit(self, intent: str, script: str, sbatch: str, scontrol: str, scancel: str, qos: str = "regular",
@@ -452,14 +489,11 @@ class Ledger:
                     if len(sigs) != 1:
                         out["open"] += 1
                         continue
-                    state, nn, el, name, start = next(iter(sigs))
-                    if state in TERMINAL and UINT.fullmatch(nn) and UINT.fullmatch(el) and int(nn) >= 1 \
-                            and name == f"covfix_{it['phase']}_{iid}":
-                        charge = int(nn) * int(el)
-                        if charge == 0 and not _released(rs[0]):
-                            charge = it["reservation"]              # zero elapsed, not shown never-started: the full hold
-                        self._append({"kind": "reconciled", "intent": iid, "job": it["job"], "state": state,
-                                      "charge": charge, "evidence": dict(rs[0])})
+                    charge = _charge(rs[0], it, iid)
+                    if charge is not None:
+                        self._append({"kind": "reconciled", "intent": iid, "job": it["job"],
+                                      "state": sacct_state(str(rs[0].get("State", ""))), "charge": charge,
+                                      "evidence": dict(rs[0])})
                         out["charged"] += 1
                     else:
                         out["open"] += 1
@@ -467,7 +501,7 @@ class Ledger:
 
     def amend_cap(self, group: str, node_h: float, director_sha: str) -> None:
         """A group's cap changed under the director's committed sha (e.g. PV's re-price)."""
-        if group not in self.caps or not re.fullmatch(r"[0-9a-f]{40}", str(director_sha)):
+        if group not in self.caps or not _hex(HEX40, director_sha):
             raise Refusal("an amendment names a known group and the director's 40-hex commit sha")
         cap = _ns(node_h)
         with self.locked():
@@ -479,7 +513,7 @@ class Ledger:
     def accept(self, phase: str, arm: str, toy: str, sha256: str, job: str) -> None:
         if toy not in self.toys.get(phase, {}).get(arm, []):
             raise Refusal(f"toy {toy!r} is not in the policy's {phase}/{arm}")
-        if not re.fullmatch(r"[0-9a-f]{64}", sha256):
+        if not _hex(HEX64, sha256):
             raise Refusal("a product sha256 is 64 lowercase hex")
         with self.locked():
             st = self.state()

@@ -1,0 +1,59 @@
+Wed Nov 25 03:20:13 UTC 2026
+9ef4fecf4963a9824aad9abc60dd3f6e8a296482a0c3aed880a2402e08684fab  covfix_seal.py
+bb78f47a20a981dba9ad5565f0d6fed3740440169639ad2fb88109721d2f76ab  covfix_pg.py
+cf6fad0accfc4aae5543eef3a647ca834b8584e78630bc3279a64fd9a96e8d56  test_covfix_seal.py
+modules = 6ba32779's
+ERROR: test_r4_8_a_held_sigterm_kills_a_stubborn_gpg_within_the_bound (test_covfix_seal.Round4Findings.test_r4_8_a_held_sigterm_kills_a_stubborn_gpg_within_the_bound)
+AttributeError: module 'covfix_seal' has no attribute 'SIGTERM_HOLD_BOUND_S'
+ERROR: test_r4_8_a_sigterm_before_gpg_starts_kills_it_at_once (test_covfix_seal.Round4Findings.test_r4_8_a_sigterm_before_gpg_starts_kills_it_at_once)
+AttributeError: module 'covfix_seal' has no attribute 'SIGTERM_HOLD_BOUND_S'
+FAIL: test_r4_7_a_run_records_the_inventory_and_has_no_receipt (test_covfix_seal.Round4Findings.test_r4_7_a_run_records_the_inventory_and_has_no_receipt)
+AssertionError: 0 != 1 : {"command_unchanged": true, "final_seal_check": true, "frame_ok": true, "generation_rc0": true, "plaintext_deleted": 11, "products_json": true, "required_products": true, "round_trip": true, "scratch_scan_errors": 0, "scratch_spills": 0, "scratch_tmp_changed": 0, "sealed_products": 11, "sealed_scan_hits": 0, "seed_alias": "task (u=0, i=0) = the seed base: present inside W only (W/seeds.json, that task's gevgen argv and logs), sealed and deleted; the spill scan treats it like every task seed", "spec_ok": true, "spills_removed": true, "step_cgroup": {"ancestors": 1, "pids": 2}, "synthetic_round_trip": true, "workdir_empty": true}
+FAIL: test_r4_7_an_ancestor_elsewhere_in_the_job_is_allowed (test_covfix_seal.Round4Findings.test_r4_7_an_ancestor_elsewhere_in_the_job_is_allowed)
+AssertionError: {'pids': 2, 'ancestors': 1} != {'pids': 3, 'ancestors': 2}
+FAIL: test_r4_7_an_unreadable_directory_or_no_job_cgroup_is_a_stop (test_covfix_seal.Round4Findings.test_r4_7_an_unreadable_directory_or_no_job_cgroup_is_a_stop)
+AssertionError: Refusal not raised
+FAIL: test_r4_7_any_other_process_anywhere_in_the_job_refuses_with_its_inventory (test_covfix_seal.Round4Findings.test_r4_7_any_other_process_anywhere_in_the_job_refuses_with_its_inventory) (where='step_0/user/task_1')
+AssertionError: Refusal not raised
+FAIL: test_r4_7_any_other_process_anywhere_in_the_job_refuses_with_its_inventory (test_covfix_seal.Round4Findings.test_r4_7_any_other_process_anywhere_in_the_job_refuses_with_its_inventory) (where='step_1/user/task_0')
+AssertionError: Refusal not raised
+FAIL: test_r4_7_any_other_process_anywhere_in_the_job_refuses_with_its_inventory (test_covfix_seal.Round4Findings.test_r4_7_any_other_process_anywhere_in_the_job_refuses_with_its_inventory) (where='step_extern/user/task_0')
+AssertionError: Refusal not raised
+FAIL: test_r4_7_any_other_process_anywhere_in_the_job_refuses_with_its_inventory (test_covfix_seal.Round4Findings.test_r4_7_any_other_process_anywhere_in_the_job_refuses_with_its_inventory) (where='step_extern')
+AssertionError: Refusal not raised
+FAIL: test_r4_7_any_other_process_anywhere_in_the_job_refuses_with_its_inventory (test_covfix_seal.Round4Findings.test_r4_7_any_other_process_anywhere_in_the_job_refuses_with_its_inventory) (where='step_0/slurm')
+AssertionError: Refusal not raised
+FAIL: test_r4_7_any_other_process_anywhere_in_the_job_refuses_with_its_inventory (test_covfix_seal.Round4Findings.test_r4_7_any_other_process_anywhere_in_the_job_refuses_with_its_inventory) (where='step_0/user/task_0/nested')
+AssertionError: Refusal not raised
+FAIL: test_r4_7_any_other_process_anywhere_in_the_job_refuses_with_its_inventory (test_covfix_seal.Round4Findings.test_r4_7_any_other_process_anywhere_in_the_job_refuses_with_its_inventory) (where='.')
+AssertionError: Refusal not raised
+Ran 6 tests in 56.497s
+FAILED (failures=10, errors=2)
+FF
+======================================================================
+FAIL: test_r4_8_a_held_sigterm_kills_a_stubborn_gpg_within_the_bound (test_covfix_seal.Round4Findings.test_r4_8_a_held_sigterm_kills_a_stubborn_gpg_within_the_bound)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/wt-covfix/2d-unfolding/covfix/test_covfix_seal.py", line 1413, in test_r4_8_a_held_sigterm_kills_a_stubborn_gpg_within_the_bound
+    self.assertLess(held, cs.SIGTERM_HOLD_BOUND_S)
+AssertionError: 19.536096875090152 not less than 15
+
+======================================================================
+FAIL: test_r4_8_a_sigterm_before_gpg_starts_kills_it_at_once (test_covfix_seal.Round4Findings.test_r4_8_a_sigterm_before_gpg_starts_kills_it_at_once)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/wt-covfix/2d-unfolding/covfix/test_covfix_seal.py", line 1438, in test_r4_8_a_sigterm_before_gpg_starts_kills_it_at_once
+    self.assertLess(held, cs.SIGTERM_HOLD_BOUND_S)
+AssertionError: 20.051322625018656 not less than 15
+
+----------------------------------------------------------------------
+Ran 2 tests in 40.139s
+
+FAILED (failures=2)
+# f8 rerun on 6ba32779's modules with SIGTERM_HOLD_BOUND_S=15, GPGCONF_TIMEOUT_S=60 injected
+# home-removal test on 6ba32779's modules
+9ef4fecf4963a9824aad9abc60dd3f6e8a296482a0c3aed880a2402e08684fab  covfix_seal.py
+FAIL: test_r4_8_the_home_goes_whatever_the_agent_shutdown_raises (test_covfix_seal.Round4Findings.test_r4_8_the_home_goes_whatever_the_agent_shutdown_raises)
+AssertionError: False is not true
+Ran 1 test in 0.973s
+FAILED (failures=1)

@@ -1,9 +1,9 @@
 # command: python3 -B -m unittest -v test_covfix_ledger.py
 # python: 3.12.2 numpy 1.26.4  gpg: gpg (GnuPG) 2.4.8  host: Darwin arm64
-# 754b1f37d10ace6907f454d627665097f9f47bf8158663640843faddb86a9fa9  covfix_ledger.py
-# 69905e5c836e291f3a836662cf7c56ac851e95e68fead425c6acc4a23f923108  test_covfix_ledger.py
-# 0e02282eecda168bd69bfeb2c72e7eb59584cfbd690faefacc6494c36fdb524f  covfix_ledger_mutation.py
-# start: 2026-11-25T02:51:44Z
+# 30f81378d4068f838fbd6835301c5f218d2ec3b4dc5d0d5793d89dfbbb4de434  covfix_ledger.py
+# 0abc5d6dfc97e8ee98fd78600ea9f3016866011b3adf17ce71824ff3072fe021  test_covfix_ledger.py
+# b51005facf90b72348b9015f2e9f71af5ee61c4ee291911acde640b8349d0a48  covfix_ledger_mutation.py
+# start: 2026-11-27T01:11:35Z
 test_a_line_is_held_only_in_its_own_group (test_covfix_ledger.FixedAndAmend.test_a_line_is_held_only_in_its_own_group) ... ok
 test_a_line_refuses_a_larger_or_unknown_draw (test_covfix_ledger.FixedAndAmend.test_a_line_refuses_a_larger_or_unknown_draw) ... ok
 test_amendment_needs_a_sha_and_moves_the_cap (test_covfix_ledger.FixedAndAmend.test_amendment_needs_a_sha_and_moves_the_cap) ... ok
@@ -48,6 +48,13 @@ test_f5_a_release_needs_cancelled_with_start_none_and_keeps_the_evidence (test_c
 test_f5_completed_zero_elapsed_unknown_start_is_charged_the_full_hold (test_covfix_ledger.Round3Findings.test_f5_completed_zero_elapsed_unknown_start_is_charged_the_full_hold) ... ok
 test_f5_only_cancelled_with_start_none_releases (test_covfix_ledger.Round3Findings.test_f5_only_cancelled_with_start_none_releases) ... ok
 test_launch_failures_are_refusals_or_stops (test_covfix_ledger.Round3Findings.test_launch_failures_are_refusals_or_stops) ... ok
+test_r4_2_any_sbatch_or_slurm_spelling_is_refused_before_sbatch (test_covfix_ledger.Round4Findings.test_r4_2_any_sbatch_or_slurm_spelling_is_refused_before_sbatch) ... ok
+test_r4_4a_replay_refuses_an_intent_while_another_has_no_job (test_covfix_ledger.Round4Findings.test_r4_4a_replay_refuses_an_intent_while_another_has_no_job) ... ok
+test_r4_4b_replay_refuses_a_claim_over_the_cap (test_covfix_ledger.Round4Findings.test_r4_4b_replay_refuses_a_claim_over_the_cap) ... ok
+test_r4_4c_live_amend_and_accept_refuse_non_str_digests (test_covfix_ledger.Round4Findings.test_r4_4c_live_amend_and_accept_refuse_non_str_digests) ... ok
+test_r4_4c_replay_refuses_digests_written_as_json_integers (test_covfix_ledger.Round4Findings.test_r4_4c_replay_refuses_digests_written_as_json_integers) ... ok
+test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge (test_covfix_ledger.Round4Findings.test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge) ... ok
+test_r4_an_older_ledger_format_is_refused_at_its_policy_line (test_covfix_ledger.Round4Findings.test_r4_an_older_ledger_format_is_refused_at_its_policy_line) ... ok
 test_a_duplicated_acceptance_line_refuses (test_covfix_ledger.Storage.test_a_duplicated_acceptance_line_refuses) ... ok
 test_corrupt_or_invalid_transitions_refuse (test_covfix_ledger.Storage.test_corrupt_or_invalid_transitions_refuse) ... ok
 test_every_append_is_fsynced (test_covfix_ledger.Storage.test_every_append_is_fsynced) ... ok
@@ -70,7 +77,7 @@ test_a_zero_charge_needs_a_never_started_job (test_covfix_ledger.ZeroAndCanon.te
 test_job_ids_are_canonical (test_covfix_ledger.ZeroAndCanon.test_job_ids_are_canonical) ... ok
 
 ----------------------------------------------------------------------
-Ran 64 tests in 8.105s
+Ran 71 tests in 14.413s
 
 OK
 # rc: 0

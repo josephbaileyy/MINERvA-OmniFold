@@ -382,6 +382,10 @@ class Storage(Base):
         r = self.submitted("w1", job="41")
         good = self.lines()
         p = self.d / "campaign" / cl.LEDGER
+        ev = {"kind": "reconciled", "intent": r["intent"], "job": "41", "charge": 3600,
+              "evidence": row(41, r["job_name"], "COMPLETED")}
+        p.write_text(good + json.dumps(ev) + "\n")                  # the control: with its own job ID it replays
+        self.assertEqual(self.L.state()["intents"][r["intent"]]["charge"], 3600)
         bad_tails = ["not json\n", json.dumps({"kind": "other"}) + "\n", good.splitlines()[1] + "\n",
                      json.dumps({"kind": "reconciled", "intent": r["intent"], "job": "41", "charge": -5}) + "\n",
                      json.dumps({"kind": "submitted", "intent": r["intent"], "job": "041"}) + "\n",
@@ -391,6 +395,7 @@ class Storage(Base):
                      json.dumps({"kind": "intent", "intent": r["intent"], "phase": "w1", "reservation": 60}) + "\n",
                      json.dumps({"kind": "submitted", "intent": r["intent"], "job": "42"}) + "\n",
                      json.dumps({"kind": "reconciled", "intent": r["intent"], "job": "99", "charge": 1}) + "\n",
+                     json.dumps(dict(ev, job="99")) + "\n",     # the job's own evidence and charge, under another job ID
                      json.dumps({"kind": "policy"}) + "\n"]
         for tail in bad_tails:
             with self.subTest(tail=tail[:40]):
@@ -540,6 +545,10 @@ class Round3Findings(SchedulerBase):
         for d in ("--array=0-3", "-a 0-3", "--nodes=4", ""):
             with self.subTest(d=d), self.assertRaises(cl.Refusal):
                 self.L.submit(it["intent"], self.script(d), sb, sc, sx)
+        bare = self.d / "bare.sbatch"                               # "#SBATCH" with no word and no trailing space
+        bare.write_text("#!/bin/bash\n#SBATCH\n#SBATCH --account=m3246\nsrun true\n")
+        with self.assertRaisesRegex(cl.Refusal, "strict allowlisted form: '#SBATCH'"):
+            self.L.submit(it["intent"], str(bare), sb, sc, sx)
         self.assertFalse(log.exists())
 
     def test_f2_sbatch_sees_no_sbatch_or_slurm_variable(self):
@@ -692,7 +701,7 @@ class Round3Findings(SchedulerBase):
         r = self.L.new_intent("w1", 1, 60)
         rec(self.L, r["intent"], "221")
         good = (self.d / "campaign" / cl.LEDGER).read_text()
-        released = {"State": "CANCELLED", "Start": "None", "ElapsedRaw": "0"}
+        released = dict(row(221, r["job_name"], "CANCELLED", 1, 0), Start="None")   # a full row (round 4)
         for e in ({"charge": 0}, {"charge": -5, "evidence": released},
                   {"charge": 0, "evidence": dict(released, Start="Unknown")},
                   {"charge": 0, "evidence": dict(released, State="COMPLETED")}):
@@ -725,6 +734,105 @@ class Round3Findings(SchedulerBase):
             self.L.submit(it["intent"], self.script(), sb, nope, nope)  # scontrol and scancel cannot launch
         self.assertIn("scancel failed", str(e.exception))
         self.assertIn("scancel failed", self.L.state()["intents"][it["intent"]]["stop"])
+
+
+class Round4Findings(SchedulerBase):
+    """codex-school2 round 4 (6ba32779), ledger items 2, 4, 5 and the old-format MAJOR: each reproduced first."""
+
+    def _raw(self, *entries):
+        with self.L.locked():
+            for e in entries:
+                self.L._append(e)
+
+    def test_r4_2_any_sbatch_or_slurm_spelling_is_refused_before_sbatch(self):
+        it = self.L.new_intent("w1", 1, 60)
+        sb, sc, sx, log = self.scheduler()
+        for line in ("#SBATCH--array=0-3", "#SLURM --array=0-3", "#sbatch --array=0-3", "  #SBATCH --array=0-3",
+                     "# SBATCH --array=0-3", "#SBATCH\t--array=0-3", "#SLURM", "#SBATCH --account=m3246#x",
+                     "## SBATCH --account=m3246", "# an sbatch note", "# see slurm docs", "#SBATCH  --exclusive",
+                     "#SBATCH --exclusive "):                            # near-misses of the strict form
+            with self.subTest(line=line):
+                p = self.d / "raw.sbatch"
+                p.write_text(f"#!/bin/bash\n{line}\nsrun true\n")
+                with self.assertRaises(cl.Refusal):
+                    self.L.submit(it["intent"], str(p), sb, sc, sx)
+        self.assertFalse(log.exists())
+        self.L.submit(it["intent"], self.script("--account=m3246", "--exclusive"), sb, sc, sx)   # the plain form
+
+    def test_r4_4a_replay_refuses_an_intent_while_another_has_no_job(self):
+        self.L.new_intent("w1", 1, 60)
+        self._raw({"kind": "intent", "intent": "f" * 32, "phase": "w1", "nodes": 1, "time_limit_s": 60,
+                   "reservation": 60, "fixed": None})
+        with self.assertRaises(cl.Refusal):
+            self.L.state()
+
+    def test_r4_4b_replay_refuses_a_claim_over_the_cap(self):
+        a = self.L.new_intent("pg", 1, H)                                 # PG cap 3 node-h
+        rec(self.L, a["intent"], "301")
+        b = self.L.new_intent("pg", 1, H)
+        self.L.reconcile([row(301, a["job_name"], "TIMEOUT", 1, int(2.5 * H))])   # spent 2.5 + held 1 > 3
+        self._raw({"kind": "claimed", "intent": b["intent"]})
+        with self.assertRaises(cl.Refusal):
+            self.L.state()
+
+    def test_r4_4c_replay_refuses_digests_written_as_json_integers(self):
+        r = self.L.new_intent("w1", 1, 60)
+        rec(self.L, r["intent"], "311")
+        good = (self.d / "campaign" / cl.LEDGER).read_text()
+        acc = {"kind": "accepted", "phase": "w1", "arm": "N1", "toy": "t1", "job": "311"}
+        amd = {"kind": "amendment", "group": "P1", "cap_ns": 400 * H}
+        for e in [dict(acc, sha256=v) for v in (int("1" * 64), True, 1.5)] + \
+                 [dict(amd, director_sha=v) for v in (int("1" * 40), False, 1.0)]:
+            with self.subTest(e=e):
+                (self.d / "campaign" / cl.LEDGER).write_text(good)
+                self._raw(e)
+                with self.assertRaises(cl.Refusal):
+                    self.L.state()
+
+    def test_r4_4c_live_amend_and_accept_refuse_non_str_digests(self):
+        r = self.L.new_intent("w1", 1, 60)
+        rec(self.L, r["intent"], "331")
+        for v in (int("1" * 40), True, 1.0):
+            with self.subTest(director_sha=v), self.assertRaises(cl.Refusal):
+                self.L.amend_cap("P1", 400.0, v)
+        for v in (int("1" * 64), True, 1.5):
+            with self.subTest(sha256=v), self.assertRaises(cl.Refusal):
+                self.L.accept("w1", "N1", "t1", v, "331")
+        self.assertEqual(self.L.state()["toys"], {})
+
+    def test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge(self):
+        r = self.L.new_intent("w1", 1, 600)
+        rec(self.L, r["intent"], "321")
+        good = (self.d / "campaign" / cl.LEDGER).read_text()
+        rel = dict(row(321, r["job_name"], "CANCELLED", 1, 0), Start="None")
+        ran = row(321, r["job_name"], "COMPLETED", 1, 300)
+        for charge, ev in ((0, dict(rel, JobID="999")),                  # another job's release
+                           (0, dict(rel, JobName="covfix_w1_" + "0" * 32)),
+                           (5, ran),                                      # a charge the row does not give
+                           (300, dict(ran, JobID="999"))):
+            with self.subTest(charge=charge, ev=ev):
+                (self.d / "campaign" / cl.LEDGER).write_text(good)
+                self._raw({"kind": "reconciled", "intent": r["intent"], "job": "321", "state": "X", "charge": charge,
+                           "evidence": ev})
+                with self.assertRaises(cl.Refusal):
+                    self.L.state()
+        for charge, ev in ((0, rel), (300, ran), (600, dict(ran, ElapsedRaw="0", Start="Unknown"))):
+            with self.subTest(ok=charge):
+                (self.d / "campaign" / cl.LEDGER).write_text(good)
+                self._raw({"kind": "reconciled", "intent": r["intent"], "job": "321", "state": "X", "charge": charge,
+                           "evidence": ev})
+                self.assertEqual(self.L.state()["intents"][r["intent"]]["charge"], charge)
+
+    def test_r4_an_older_ledger_format_is_refused_at_its_policy_line(self):
+        path = self.d / "campaign" / cl.LEDGER
+        lines = path.read_text().splitlines()
+        pol = json.loads(lines[0])
+        pol.pop("format", None)                                         # the policy line as round 3 wrote it
+        path.write_text("\n".join([json.dumps(pol, sort_keys=True)] + lines[1:]) + "\n")
+        with self.assertRaises(cl.Refusal) as e:
+            self.L.state()
+        self.assertIn("policy", str(e.exception))
+        self.assertIn("expected format 4, found None", str(e.exception))
 
 
 if __name__ == "__main__":

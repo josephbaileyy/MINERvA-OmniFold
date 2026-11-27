@@ -1,0 +1,268 @@
+Wed Nov 25 06:04:31 UTC 2026
+199ec7199a0ddc60ae9830895b6e4f96117072b09311f659d10345c81a2c4490  covfix_seal.py
+e1acebf9bda6d19eb036614cb444026e275e362ce2238aa5674280fb31c2c65a  covfix_pg.py
+0a0a53dd786fbd4f5c4c5f2832c3d9e3df7e89226ec01a2a19ad951b7250b2ab  test_covfix_seal.py
+modules = the round-4 fixes as above (uncommitted on 6ba32779), BEFORE the seed-bearing fixes; tests = the new SeedBearing class, Gpg.test_declared_flags and Seal.test_seal_layout_manifest_and_seal_file
+ERROR: test_a_gen_spec_naming_a_task_seed_is_refused_before_generation (test_covfix_seal.SeedBearing.test_a_gen_spec_naming_a_task_seed_is_refused_before_generation) [pattern]
+KeyError: 'refused'
+ERROR: test_a_gen_spec_naming_a_task_seed_is_refused_before_generation (test_covfix_seal.SeedBearing.test_a_gen_spec_naming_a_task_seed_is_refused_before_generation) [count]
+KeyError: 'refused'
+ERROR: test_a_gen_spec_naming_a_task_seed_is_refused_before_generation (test_covfix_seal.SeedBearing.test_a_gen_spec_naming_a_task_seed_is_refused_before_generation) [escaped]
+KeyError: 'refused'
+ERROR: test_a_id_order_is_independent_of_relpath_order (test_covfix_seal.SeedBearing.test_a_id_order_is_independent_of_relpath_order)
+AttributeError: module 'covfix_seal' has no attribute 'assign_ids'
+ERROR: test_a_ids_are_drawn_from_a_csprng (test_covfix_seal.SeedBearing.test_a_ids_are_drawn_from_a_csprng)
+AttributeError: module 'covfix_seal' has no attribute '_RNG'
+ERROR: test_a_seal_follows_the_permutation_and_the_manifest_holds_it (test_covfix_seal.SeedBearing.test_a_seal_follows_the_permutation_and_the_manifest_holds_it)
+AttributeError: <module 'covfix_seal' from '/Users/josephbailey/local-research/wt-covfix/2d-unfolding/covfix/covfix_seal.py'> does not have the attribute '_RNG'
+ERROR: test_m1_a_plaintext_hash_in_the_summary_is_redacted (test_covfix_seal.SeedBearing.test_m1_a_plaintext_hash_in_the_summary_is_redacted) [lower]
+KeyError: 'summary_leak_redacted'
+ERROR: test_m1_a_plaintext_hash_in_the_summary_is_redacted (test_covfix_seal.SeedBearing.test_m1_a_plaintext_hash_in_the_summary_is_redacted) [upper]
+KeyError: 'summary_leak_redacted'
+ERROR: test_m1_a_seed_in_a_strays_comm_is_redacted (test_covfix_seal.SeedBearing.test_m1_a_seed_in_a_strays_comm_is_redacted)
+KeyError: 'summary_leak_redacted'
+ERROR: test_m1_a_seed_in_a_strays_exe_is_redacted (test_covfix_seal.SeedBearing.test_m1_a_seed_in_a_strays_exe_is_redacted)
+KeyError: 'summary_leak_redacted'
+ERROR: test_m1_the_guard_unit (test_covfix_seal.SeedBearing.test_m1_the_guard_unit)
+AttributeError: module 'covfix_pg' has no attribute 'leak_guard'
+FAIL: test_b_a_fixed_width_logs_ciphertext_size_does_not_depend_on_the_seeds_digits (test_covfix_seal.SeedBearing.test_b_a_fixed_width_logs_ciphertext_size_does_not_depend_on_the_seeds_digits)
+AssertionError: 6 != 1 : {1111111111: 1111, 1000000000: 1113, 1234567890: 1117, 1987654321: 1115, 1357913579: 1116, 1999999999: 1112}
+FAIL: test_m1_an_exe_under_w_the_sealed_dir_or_scratch_is_a_fixed_token (test_covfix_seal.SeedBearing.test_m1_an_exe_under_w_the_sealed_dir_or_scratch_is_a_fixed_token) [<workdir>]
+AssertionError: Lists differ: [{'cg[30 chars]0', 'comm': 'gevgen', 'exe': '/var/folders/gn/[70 chars]500}] != [{'cg[30 chars]0', 'pid': 424500, 'comm': 'gevgen', 'exe': '<workdir>'}]
+FAIL: test_m1_an_exe_under_w_the_sealed_dir_or_scratch_is_a_fixed_token (test_covfix_seal.SeedBearing.test_m1_an_exe_under_w_the_sealed_dir_or_scratch_is_a_fixed_token) [<sealed>]
+AssertionError: Lists differ: [{'cg[30 chars]0', 'comm': 'gevgen', 'exe': '/var/folders/gn/[75 chars]500}] != [{'cg[30 chars]0', 'pid': 424500, 'comm': 'gevgen', 'exe': '<sealed>'}]
+FAIL: test_m1_an_exe_under_w_the_sealed_dir_or_scratch_is_a_fixed_token (test_covfix_seal.SeedBearing.test_m1_an_exe_under_w_the_sealed_dir_or_scratch_is_a_fixed_token) [<scratch>]
+AssertionError: Lists differ: [{'cg[30 chars]0', 'comm': 'gevgen', 'exe': '/var/folders/gn/[76 chars]500}] != [{'cg[30 chars]0', 'pid': 424500, 'comm': 'gevgen', 'exe': '<scratch>'}]
+FAIL: test_m2_a_sums_file_in_scratch_tmp_is_a_spill (test_covfix_seal.SeedBearing.test_m2_a_sums_file_in_scratch_tmp_is_a_spill)
+AssertionError: 0 != 1 : {"command_unchanged": true, "final_seal_check": true, "frame_ok": true, "generation_rc0": true, "plaintext_deleted": 11, "products_json": true, "required_products": true, "round_trip": true, "scratch_scan_errors": 0, "scratch_spills": 0, "scratch_tmp_changed": 1, "sealed_products": 11, "sealed_scan_hits": 0, "seed_alias": "task (u=0, i=0) = the seed base: present inside W 
+FAIL: test_m2_hash_text_in_a_name_or_upper_case_is_a_hit (test_covfix_seal.SeedBearing.test_m2_hash_text_in_a_name_or_upper_case_is_a_hit)
+AssertionError: Lists differ: [] != ['x-a116c9ed46d6207734a43317d30fd88f52ac86[54 chars]txt']
+FAIL: test_declared_flags (test_covfix_seal.Gpg.test_declared_flags)
+AssertionError: 'gpg [103 chars]S256 --s2k-digest-algo SHA512 --force-mdc' != 'gpg [103 chars]S256 --s2k-digest-algo SHA512 --force-mdc --compress-algo none'
+Ran 14 tests in 85.339s
+FAILED (failures=7, errors=11)
+rc=1
+# old code, stray comm: rc=1, the secret printed on stdout: True
+# old code, stray exe: rc=1, the secret printed on stdout: True
+# old code, stray hash: rc=1, the secret printed on stdout: True
+
+== Rulings 3 and 4 (SealedManifest, publish_guard) and the probe's argv: the new tests BEFORE the code
+Wed Nov 25 07:15:24 UTC 2026
+5ae4584ff3c7faf96c722b2bb5dcd8b6e89fdeea12a3eb4b84b4e36701f830ff  covfix_seal.py
+aa613cc860884a05fec3ef381aef5929d33b6c734a47e54e2566849affc01223  covfix_pg.py
+c8b7ca44afafbdd77149ebe53bb55dbc3faaa7a05b3f04e739cc2e3111b3a5bd  test_covfix_seal.py
+ERROR: test_pg_a_clean_record_and_an_epoch_pass_with_the_seed_list (test_covfix_seal.Decryptors.test_pg_a_clean_record_and_an_epoch_pass_with_the_seed_list)
+AttributeError: module 'covfix_seal' has no attribute 'publish_guard'
+ERROR: test_pg_a_manifest_hash_or_a_seed_named_path_run_is_refused (test_covfix_seal.Decryptors.test_pg_a_manifest_hash_or_a_seed_named_path_run_is_refused)
+AttributeError: module 'covfix_seal' has no attribute 'publish_guard'
+ERROR: test_pg_a_seed_in_any_form_is_refused (test_covfix_seal.Decryptors.test_pg_a_seed_in_any_form_is_refused) [1234577890]
+AttributeError: module 'covfix_seal' has no attribute 'publish_guard'
+ERROR: test_pg_a_seed_in_any_form_is_refused (test_covfix_seal.Decryptors.test_pg_a_seed_in_any_form_is_refused) [0001234577890]
+AttributeError: module 'covfix_seal' has no attribute 'publish_guard'
+ERROR: test_pg_a_seed_in_any_form_is_refused (test_covfix_seal.Decryptors.test_pg_a_seed_in_any_form_is_refused) [499629e2]
+AttributeError: module 'covfix_seal' has no attribute 'publish_guard'
+ERROR: test_pg_a_seed_in_any_form_is_refused (test_covfix_seal.Decryptors.test_pg_a_seed_in_any_form_is_refused) [499629E2]
+AttributeError: module 'covfix_seal' has no attribute 'publish_guard'
+ERROR: test_pg_a_seed_in_any_form_is_refused (test_covfix_seal.Decryptors.test_pg_a_seed_in_any_form_is_refused) [0x00499629e2]
+AttributeError: module 'covfix_seal' has no attribute 'publish_guard'
+ERROR: test_pg_a_seed_in_any_form_is_refused (test_covfix_seal.Decryptors.test_pg_a_seed_in_any_form_is_refused) [0X499629E2]
+AttributeError: module 'covfix_seal' has no attribute 'publish_guard'
+ERROR: test_pg_inputs_are_checked (test_covfix_seal.Decryptors.test_pg_inputs_are_checked)
+AttributeError: module 'covfix_seal' has no attribute 'SealedManifest'
+ERROR: test_pg_with_no_seed_list_the_seed_range_is_the_fallback (test_covfix_seal.Decryptors.test_pg_with_no_seed_list_the_seed_range_is_the_fallback)
+AttributeError: module 'covfix_seal' has no attribute 'publish_guard'
+ERROR: test_read_product_takes_only_a_sealed_manifest (test_covfix_seal.Decryptors.test_read_product_takes_only_a_sealed_manifest)
+AttributeError: module 'covfix_seal' has no attribute 'SealedManifest'
+ERROR: test_sm_access_is_explicit (test_covfix_seal.Decryptors.test_sm_access_is_explicit)
+AttributeError: module 'covfix_seal' has no attribute 'SealedManifest'
+ERROR: test_sm_cannot_be_pickled_copied_or_dumped (test_covfix_seal.Decryptors.test_sm_cannot_be_pickled_copied_or_dumped)
+AttributeError: module 'covfix_seal' has no attribute 'SealedManifest'
+ERROR: test_sm_is_read_only (test_covfix_seal.Decryptors.test_sm_is_read_only)
+AttributeError: module 'covfix_seal' has no attribute 'SealedManifest'
+ERROR: test_sm_prints_counts_only (test_covfix_seal.Decryptors.test_sm_prints_counts_only)
+AttributeError: module 'covfix_seal' has no attribute 'SealedManifest'
+ERROR: test_an_id_absent_from_the_manifest_is_refused_before_any_read (test_covfix_seal.Reader.test_an_id_absent_from_the_manifest_is_refused_before_any_read)
+AttributeError: module 'covfix_seal' has no attribute 'SealedManifest'
+ERROR: test_plaintext_not_its_manifest_hash_is_a_break (test_covfix_seal.Reader.test_plaintext_not_its_manifest_hash_is_a_break)
+AttributeError: module 'covfix_seal' has no attribute 'SealedManifest'
+ERROR: test_reads_through_the_seal (test_covfix_seal.Reader.test_reads_through_the_seal)
+AttributeError: 'dict' object has no attribute 'ids'
+Ran 20 tests in 78.402s
+FAILED (errors=18)
+# the probe-argv test passes before the code: the probe already calls cs.GPG_ENCRYPT; its mutant (sb-b-probe-argv-differs) shows it guards that
+
+=== Third section: the job check before generation (the director's ruling of 2026-11-25), run before the code
+# cov2d 2026-11-25: the pre-generation job check, reproduced before the fix
+# date -u: Wed Nov 25 17:13:13 UTC 2026
+# aa613cc860884a05fec3ef381aef5929d33b6c734a47e54e2566849affc01223  covfix_pg.py
+# 2eba1668c46744f92894109d3dbbb93a5df6a9520367acdbd9ee94a7dbc55f06  covfix_seal.py
+# 380fd7f094ee6123e478f839d3245b4f0161208f0b451df3af3bd55fa7ee96a7  test_covfix_seal.py
+# python3 -B -m unittest test_covfix_seal.Round4Findings.test_r4_7_outside_a_job_or_with_a_stray_nothing_is_generated
+FF
+======================================================================
+FAIL: test_r4_7_outside_a_job_or_with_a_stray_nothing_is_generated (test_covfix_seal.Round4Findings.test_r4_7_outside_a_job_or_with_a_stray_nothing_is_generated) (kw={'cgroup_line': '0::/user.slice/user-1.slice/session-1.scope'})
+The wrapper runs pg-connect on its host with no allocation of its own. A sealer outside a Slurm job, or
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/wt-covfix/2d-unfolding/covfix/test_covfix_seal.py", line 1441, in test_r4_7_outside_a_job_or_with_a_stray_nothing_is_generated
+    run.assert_not_called()
+  File "/Users/josephbailey/miniconda3/lib/python3.12/unittest/mock.py", line 905, in assert_not_called
+    raise AssertionError(msg)
+AssertionError: Expected 'run' to not have been called. Called 1 times.
+
+======================================================================
+FAIL: test_r4_7_outside_a_job_or_with_a_stray_nothing_is_generated (test_covfix_seal.Round4Findings.test_r4_7_outside_a_job_or_with_a_stray_nothing_is_generated) (kw={'extra_pids': (424500,)})
+The wrapper runs pg-connect on its host with no allocation of its own. A sealer outside a Slurm job, or
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/wt-covfix/2d-unfolding/covfix/test_covfix_seal.py", line 1441, in test_r4_7_outside_a_job_or_with_a_stray_nothing_is_generated
+    run.assert_not_called()
+  File "/Users/josephbailey/miniconda3/lib/python3.12/unittest/mock.py", line 905, in assert_not_called
+    raise AssertionError(msg)
+AssertionError: Expected 'run' to not have been called. Called 1 times.
+
+----------------------------------------------------------------------
+Ran 1 test in 2.528s
+
+FAILED (failures=2)
+
+=== Fourth section: publish_guard's exemption (the director's ruling of 2026-11-25), tests run before the code
+# cov2d 2026-11-25: publish_guard's exemption tests, before the code
+# date -u: Wed Nov 25 17:17:26 UTC 2026
+# 2eba1668c46744f92894109d3dbbb93a5df6a9520367acdbd9ee94a7dbc55f06  covfix_seal.py
+# 9480fec510f540140cc72c969fabe02ffdc0861a65e54ce74fcbb55484f93170  test_covfix_seal.py
+# python3 -B -m unittest test_covfix_seal.Decryptors.test_pg_an_allowlisted_published_files_hash_passes test_covfix_seal.Decryptors.test_pg_a_trace_hash_still_refuses test_covfix_seal.Decryptors.test_pg_a_hash_of_a_file_outside_the_allowlist_refuses test_covfix_seal.Decryptors.test_pg_the_exemption_is_recomputed_and_must_be_in_the_manifest test_covfix_seal.Decryptors.test_pg_the_exemption_inputs_are_checked
+ERROR: test_pg_an_allowlisted_published_files_hash_passes (test_covfix_seal.Decryptors.test_pg_an_allowlisted_published_files_hash_passes) [str]
+TypeError: publish_guard() got an unexpected keyword argument 'published'
+ERROR: test_pg_an_allowlisted_published_files_hash_passes (test_covfix_seal.Decryptors.test_pg_an_allowlisted_published_files_hash_passes) [bytes]
+TypeError: publish_guard() got an unexpected keyword argument 'published'
+ERROR: test_pg_an_allowlisted_published_files_hash_passes (test_covfix_seal.Decryptors.test_pg_an_allowlisted_published_files_hash_passes) [str]
+TypeError: publish_guard() got an unexpected keyword argument 'published'
+ERROR: test_pg_a_trace_hash_still_refuses (test_covfix_seal.Decryptors.test_pg_a_trace_hash_still_refuses) (text='ba86d  out/G21/trace/open.txt\n')
+TypeError: publish_guard() got an unexpected keyword argument 'published'
+ERROR: test_pg_a_trace_hash_still_refuses (test_covfix_seal.Decryptors.test_pg_a_trace_hash_still_refuses) (text='D1509D40ADA9BC76C8F399DE4BA86D')
+TypeError: publish_guard() got an unexpected keyword argument 'published'
+ERROR: test_pg_a_trace_hash_still_refuses (test_covfix_seal.Decryptors.test_pg_a_trace_hash_still_refuses)
+TypeError: publish_guard() got an unexpected keyword argument 'published'
+ERROR: test_pg_a_hash_of_a_file_outside_the_allowlist_refuses (test_covfix_seal.Decryptors.test_pg_a_hash_of_a_file_outside_the_allowlist_refuses) (published=['out/G21/ratio.json'])
+TypeError: publish_guard() got an unexpected keyword argument 'published'
+ERROR: test_pg_a_hash_of_a_file_outside_the_allowlist_refuses (test_covfix_seal.Decryptors.test_pg_a_hash_of_a_file_outside_the_allowlist_refuses) (published=['out/G21/extra.json', 'out/G21/ratio.json'])
+TypeError: publish_guard() got an unexpected keyword argument 'published'
+ERROR: test_pg_the_exemption_is_recomputed_and_must_be_in_the_manifest (test_covfix_seal.Decryptors.test_pg_the_exemption_is_recomputed_and_must_be_in_the_manifest) (published=['out/G21/ratio.json'])
+TypeError: publish_guard() got an unexpected keyword argument 'published'
+ERROR: test_pg_the_exemption_is_recomputed_and_must_be_in_the_manifest (test_covfix_seal.Decryptors.test_pg_the_exemption_is_recomputed_and_must_be_in_the_manifest) (published=['out/G22/ratio.json'])
+TypeError: publish_guard() got an unexpected keyword argument 'published'
+ERROR: test_pg_the_exemption_inputs_are_checked (test_covfix_seal.Decryptors.test_pg_the_exemption_inputs_are_checked) (kw=['published'])
+TypeError: publish_guard() got an unexpected keyword argument 'published'
+ERROR: test_pg_the_exemption_inputs_are_checked (test_covfix_seal.Decryptors.test_pg_the_exemption_inputs_are_checked) (kw=['allowlist'])
+TypeError: publish_guard() got an unexpected keyword argument 'allowlist'
+ERROR: test_pg_the_exemption_inputs_are_checked (test_covfix_seal.Decryptors.test_pg_the_exemption_inputs_are_checked) (kw=['allowlist', 'published'])
+TypeError: publish_guard() got an unexpected keyword argument 'published'
+ERROR: test_pg_the_exemption_inputs_are_checked (test_covfix_seal.Decryptors.test_pg_the_exemption_inputs_are_checked) (kw=['allowlist', 'published'])
+TypeError: publish_guard() got an unexpected keyword argument 'published'
+ERROR: test_pg_the_exemption_inputs_are_checked (test_covfix_seal.Decryptors.test_pg_the_exemption_inputs_are_checked) (kw=['allowlist', 'published'])
+TypeError: publish_guard() got an unexpected keyword argument 'published'
+ERROR: test_pg_the_exemption_inputs_are_checked (test_covfix_seal.Decryptors.test_pg_the_exemption_inputs_are_checked) (kw=['allowlist', 'published'])
+TypeError: publish_guard() got an unexpected keyword argument 'published'
+ERROR: test_pg_the_exemption_inputs_are_checked (test_covfix_seal.Decryptors.test_pg_the_exemption_inputs_are_checked) (kw=['allowlist', 'published'])
+TypeError: publish_guard() got an unexpected keyword argument 'published'
+Ran 5 tests in 0.006s
+FAILED (errors=17)
+
+=== Fifth section: rulings (i) env_keep and (ii) the gen-spec pin (the director's rulings of 2026-11-25), before the code
+# cov2d 2026-11-25. A direct run against the round-5 working covfix_pg.py before the fix (script below, then its output):
+#   import hashlib, json, os, sys, tempfile
+#   from pathlib import Path
+#   sys.path.insert(0, os.getcwd())
+#   import covfix_pg as pg
+#   d = Path(tempfile.mkdtemp())
+#   gen = d / "gen.sh"; gen.write_text("#!/bin/sh\n"); gen.chmod(0o755)
+#   def spec(env_keep):
+#       p = d / "spec.json"
+#       p.write_text(json.dumps({"command": [str(gen)], "command_sha256": hashlib.sha256(gen.read_bytes()).hexdigest(),
+#                                "tunes": ["G21_11a_00_000", "G18_02a_00_000"], "env_keep": env_keep,
+#                                "required": [{"pattern": "a", "count": 1}]}))
+#       return p
+#   os.environ.pop("SLURM_JOB_ID", None)
+#   for ek in (["PATH", "SLURM_JOB_ID"], ["PATH", "SLURM_JBO_ID"], ["PATH", "PATH"]):
+#       try:
+#           s = pg.load_spec(spec(ek))
+#           env = {k: os.environ[k] for k in s["env_keep"] if k in os.environ}
+#           print(f"env_keep={ek}: load_spec ACCEPTS; the generator would get {sorted(env)}")
+#       except pg.cs.Refusal as e:
+#           print(f"env_keep={ek}: refused: {e}")
+#   import argparse, io
+#   try:
+#       pg.main(["--covfix-attempt", "0" * 32, "--workdir", "w", "--sealed", "s", "--gen-spec", "x",
+#                "--gen-spec-sha256", "0" * 64, "--gpg", "/g", "--gpgconf", "/c", "--gpg-sha256", "0" * 64,
+#                "--gpgconf-sha256", "0" * 64], stdin=io.BytesIO(b""), stdout=io.StringIO())
+#   except SystemExit as e:
+#       print(f"main with --gen-spec-sha256: SystemExit {e.code} (the argument does not exist: the gen-spec file's bytes are not pinned)")
+#   print("load_spec reads:", "read_text" if "read_text()" in open("covfix_pg.py").read().split("def load_spec")[1].split("def ")[0] else "?")
+# repro on the round-5 working bytes before (i)/(ii): covfix_pg.py sha256:
+8b014f51371fd2cb18de713e2cffa7ca9ff02b9d09fbc7165ddfa4d75fb6e48d  covfix_pg.py
+Wed Nov 25 22:51:10 UTC 2026
+usage: covfix_pg.py [-h] --covfix-attempt COVFIX_ATTEMPT --workdir WORKDIR
+                    --sealed SEALED --gen-spec GEN_SPEC --gpg GPG --gpgconf
+                    GPGCONF --gpg-sha256 GPG_SHA256 --gpgconf-sha256
+                    GPGCONF_SHA256
+covfix_pg.py: error: unrecognized arguments: --gen-spec-sha256 0000000000000000000000000000000000000000000000000000000000000000
+env_keep=['PATH', 'SLURM_JOB_ID']: load_spec ACCEPTS; the generator would get ['PATH']
+env_keep=['PATH', 'SLURM_JBO_ID']: load_spec ACCEPTS; the generator would get ['PATH']
+env_keep=['PATH', 'PATH']: load_spec ACCEPTS; the generator would get ['PATH']
+main with --gen-spec-sha256: SystemExit 2 (the argument does not exist: the gen-spec file's bytes are not pinned)
+load_spec reads: read_text
+# The new tests (GenSpecPin's 6, written first in SeedBearing, plus PG.test_success with the new argument) on the same
+# covfix_pg.py: 'Ran 7 tests in 0.016s / FAILED (errors=7)', each a SystemExit 2 from argparse (--gen-spec-sha256
+# unrecognized). The test file's sha256 was not recorded at that step.
+
+=== Sixth section: ruling (iii) env_set (the director's ruling of 2026-11-25), before the code
+# env_set tests BEFORE the code; date -u: Wed Nov 25 23:22:57 UTC 2026
+# 6fa56f5118d8d6c20e429cc431d77f083bd9d2a074e4bb4b623f92338ec08a7e  covfix_pg.py
+# 2d14ff8fd357ab9454a5e9ddc835f0e393d7043b26052df7533fbf0271dca14d  test_covfix_seal.py
+# python3 -B -m unittest test_covfix_seal.GenSpecPin.test_iii_an_inherited_value_that_differs_from_env_set_is_refused_before_anything_runs test_covfix_seal.GenSpecPin.test_iii_env_set_values_reach_the_generator test_covfix_seal.PG.test_spec_validation test_covfix_seal.PG.test_success
+FAIL: test_iii_an_inherited_value_that_differs_from_env_set_is_refused_before_anything_runs (test_covfix_seal.GenSpecPin.test_iii_an_inherited_value_that_differs_from_env_set_is_refused_before_anything_runs)
+AssertionError: 'the gen-spec must have exactly its five keys' != 'an env_set variable is inherited with a different value'
+FAIL: test_iii_env_set_values_reach_the_generator (test_covfix_seal.GenSpecPin.test_iii_env_set_values_reach_the_generator) [absent]
+AssertionError: 1 != 0 : {"frame_ok": true, "refused": "the gen-spec must have exactly its five keys", "seed_alias": "task (u=0, i=0) = the seed base: present inside W only (W/seeds.json, that task's gevgen argv and logs), sealed and deleted; the spill scan treats it like every task seed", "spec_ok": false}
+FAIL: test_iii_env_set_values_reach_the_generator (test_covfix_seal.GenSpecPin.test_iii_env_set_values_reach_the_generator) [equal]
+AssertionError: 1 != 0 : {"frame_ok": true, "refused": "the gen-spec must have exactly its five keys", "seed_alias": "task (u=0, i=0) = the seed base: present inside W only (W/seeds.json, that task's gevgen argv and logs), sealed and deleted; the spill scan treats it like every task seed", "spec_ok": false}
+FAIL: test_success (test_covfix_seal.PG.test_success)
+AssertionError: 1 != 0 : {"frame_ok": true, "refused": "the gen-spec must have exactly its five keys", "seed_alias": "task (u=0, i=0) = the seed base: present inside W only (W/seeds.json, that task's gevgen argv and logs), sealed and deleted; the spill scan treats it like every task seed", "spec_ok": false}
+Ran 4 tests in 0.064s
+FAILED (failures=4)
+# direct run on the same covfix_pg.py (script, then output):
+#   import hashlib, json, os, sys, tempfile
+#   from pathlib import Path
+#   sys.path.insert(0, os.getcwd())
+#   import covfix_pg as pg
+#   d = Path(tempfile.mkdtemp())
+#   gen = d / "gen.sh"; gen.write_text("#!/bin/sh\n"); gen.chmod(0o755)
+#   p = d / "spec.json"
+#   p.write_text(json.dumps({"command": [str(gen)], "command_sha256": hashlib.sha256(gen.read_bytes()).hexdigest(),
+#                            "tunes": ["G21_11a_00_000", "G18_02a_00_000"], "env_keep": ["PG_DEPLOY_PIN"],
+#                            "required": [{"pattern": "a", "count": 1}]}))
+#   os.environ["PG_DEPLOY_PIN"] = "stale-value-from-a-dotfile"
+#   s = pg.load_spec(p, hashlib.sha256(p.read_bytes()).hexdigest())
+#   env = {k: os.environ[k] for k in s["env_keep"] if k in os.environ}
+#   print("env_keep=['PG_DEPLOY_PIN'], inherited value 'stale-value-from-a-dotfile': load_spec ACCEPTS; the generator gets",
+#         env, "- nothing in the pinned gen-spec fixes the value")
+env_keep=['PG_DEPLOY_PIN'], inherited value 'stale-value-from-a-dotfile': load_spec ACCEPTS; the generator gets {'PG_DEPLOY_PIN': 'stale-value-from-a-dotfile'} - nothing in the pinned gen-spec fixes the value
+
+# ---- seventh: W/tmp's mode (pg_generate.sh's contract), the new tests on the unfixed covfix_pg.py
+# date -u: Thu Nov 26 20:17:53 UTC 2026
+80873f94c37ac92a53cae79c941c63242b3496b75676869a4bff506ee9649529  covfix_pg.py
+76cab2597f05142ba6c863193ccbe6a1f832125522ddfe2e9ba7cdeafd004992  test_covfix_seal.py
+# python3 -B -m unittest test_covfix_seal.RehearsalContract  (covfix_pg.py unchanged since the seventh run's launch)
+ERROR: test_private_dir_is_0700_whatever_the_umask (test_covfix_seal.RehearsalContract.test_private_dir_is_0700_whatever_the_umask) (umask='0o22')
+AttributeError: module 'covfix_pg' has no attribute 'private_dir'
+ERROR: test_private_dir_is_0700_whatever_the_umask (test_covfix_seal.RehearsalContract.test_private_dir_is_0700_whatever_the_umask) (umask='0o277')
+AttributeError: module 'covfix_pg' has no attribute 'private_dir'
+ERROR: test_private_dir_is_0700_whatever_the_umask (test_covfix_seal.RehearsalContract.test_private_dir_is_0700_whatever_the_umask) (umask='0o0')
+AttributeError: module 'covfix_pg' has no attribute 'private_dir'
+ERROR: test_private_dir_is_0700_whatever_the_umask (test_covfix_seal.RehearsalContract.test_private_dir_is_0700_whatever_the_umask)
+AttributeError: module 'covfix_pg' has no attribute 'private_dir'
+FAIL: test_w_tmp_is_mode_0700_under_umask_022 (test_covfix_seal.RehearsalContract.test_w_tmp_is_mode_0700_under_umask_022)
+AssertionError: {'dir': True, 'mode': '0o755', 'own': True} != {'dir': True, 'mode': '0o700', 'own': True}
+Ran 2 tests in 17.469s
+FAILED (failures=1, errors=4)

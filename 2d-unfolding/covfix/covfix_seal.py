@@ -10,12 +10,16 @@ capture, encryption, seal check and content scan). Library; the bound binary is 
                     throwaway GNUPGHOME per call, short and node-local (/dev/shm, else /tmp; never under $SCRATCH),
                     under 80 characters, mode 700, guarded from creation: gpg-agent is killed with it and the directory
                     removed, and a removal that cannot be confirmed is a role failure. ~/.gnupg is never touched.
-                    stdout is returned only after gpg exited 0 (a non-zero exit, such as an MDC failure, is a refusal)
+                    stdout is returned only after gpg exited 0 (a non-zero exit, such as an MDC failure, is a refusal).
+                    Encryption is uncompressed (--compress-algo none), so a ciphertext's size is its plaintext's plus
+                    a constant: a fixed-width seed in a status or log text does not change it
   seal              section 4.2 steps 1-3 and 6's file: plaintext sha256 of every file under the work dir (O_NOATIME
                     where the platform has it), each encrypted to <sealed>/<id>.gpg under an opaque id (p0001, p0002,
-                    ... in sorted relpath order), the encrypted manifest PG-MANIFEST.json.gpg = {"products": {id:
-                    plaintext sha256}, "paths": {id: relpath}}, a decrypt-and-hash round trip of every product and the
-                    manifest, and the public PG-SEAL.sha256 (ciphertext sha256 by id). No work-dir relpath is published.
+                    ...) assigned over a CSPRNG permutation of the relpaths (assign_ids), so an id's position says
+                    nothing about its relpath, which can carry a seed; the encrypted manifest PG-MANIFEST.json.gpg =
+                    {"products": {id: plaintext sha256}, "paths": {id: relpath}}, a decrypt-and-hash round trip of
+                    every product and the manifest, and the public PG-SEAL.sha256 (ciphertext sha256 by id). No work-dir
+                    relpath is published.
   delete_plaintext  step 4, and the failure trap (never follows a link)
   content_scan      step 5: every regular file under the enumerated paths (or the path itself, if a file), hashed,
                     against the plaintext list; links and special files are not followed; a walk error refuses
@@ -26,7 +30,11 @@ capture, encryption, seal check and content scan). Library; the bound binary is 
   open_manifest /   checked against PG-SEAL.sha256 BEFORE any decryption. A missing listed file or different bytes is a
   read_product      Break; any other open or read error is a role failure. The manifest's full schema is checked
                     (dicts, 64-hex hashes, safe relpaths, no duplicate keys, ids equal to the seal's). A request for an
-                    id the manifest does not list is a role failure, not a break.
+                    id the manifest does not list is a role failure, not a break. open_manifest returns a
+                    SealedManifest: its paths and hashes are seed-bearing, so it shows counts only, cannot be pickled,
+                    copied or dumped, and is read through ids(), path(id) and sha256(id); read_product takes only it.
+  publish_guard     the decryptor's side of the seed-bearing rulings: PV's writers pass every output through it, and
+                    it refuses the exact seeds in any form, a manifest relpath's digit runs and any manifest hash
 
 The plaintext hashes never leave memory except inside the encrypted manifest. Nothing here prints, and no message
 names a work-dir entry.
@@ -34,11 +42,13 @@ MEASURES: nothing. CANNOT AUTHORIZE: a connect, a seal's acceptance, or any read
 """
 from __future__ import annotations
 
+import fnmatch
 import hashlib
 import json
 import os
 import re
 import resource
+import secrets
 import shutil
 import signal
 import stat
@@ -47,7 +57,8 @@ import tempfile
 from pathlib import Path
 
 GPG_ENCRYPT = ("gpg", "--batch", "--yes", "--pinentry-mode", "loopback", "--passphrase-fd", "3", "--no-symkey-cache",
-               "--symmetric", "--cipher-algo", "AES256", "--s2k-digest-algo", "SHA512", "--force-mdc")
+               "--symmetric", "--cipher-algo", "AES256", "--s2k-digest-algo", "SHA512", "--force-mdc",
+               "--compress-algo", "none")
 GPG_DECRYPT = ("gpg", "--batch", "--pinentry-mode", "loopback", "--passphrase-fd", "3", "--no-symkey-cache", "--decrypt")
 BREAK_RC = 66
 SEED_BASE_LO, SEED_BASE_HI = 1_000_000_000, 2_000_000_000      # [lo, hi): always 10 digits
@@ -175,28 +186,47 @@ def _child_fd3(r: int):
     return child
 
 
+GPGCONF_TIMEOUT_S = 10
+SIGTERM_HOLD_BOUND_S = 15      # a held SIGTERM waits for: gpg's SIGKILL, gpgconf (at most GPGCONF_TIMEOUT_S) and the
+                               # home's removal; below Slurm's default KillWait (30 s) before its SIGKILL
+
+
 def gpg_run(argv: tuple, passphrase: str, payload: bytes, tools: Tools) -> bytes:
     """Run gpg with the declared argv; the passphrase reaches it on fd 3 only. Raises Refusal on a non-zero exit or
-    on a GNUPGHOME whose removal cannot be confirmed. A SIGTERM that arrives meanwhile is held until gpg has exited
-    and the agent and the home are cleaned up, then delivered to the previous handler."""
-    pending: list = []
+    on a GNUPGHOME whose removal cannot be confirmed. A SIGTERM that arrives meanwhile is held: gpg is SIGKILLed at
+    once (or as soon as it starts), the agent and the home are cleaned up (gpgconf bounded by GPGCONF_TIMEOUT_S),
+    and the SIGTERM is then delivered to the previous handler. The hold is bounded (SIGTERM_HOLD_BOUND_S)."""
+    hold: dict | None = {"pending": [], "child": None}
+
+    def record(signum, frame):
+        hold["pending"].append(signum)
+        if hold["child"] is not None:
+            _kill(hold["child"])
+
     try:
-        old = signal.signal(signal.SIGTERM, lambda signum, frame: pending.append(signum))
+        old = signal.signal(signal.SIGTERM, record)
     except ValueError:                                 # not the main thread: no handler to hold it
-        old = None
+        old, hold = None, None
     try:
-        return _gpg_run(argv, passphrase, payload, tools)
+        return _gpg_run(argv, passphrase, payload, tools, hold)
     finally:
         if old is not None:
             signal.signal(signal.SIGTERM, old)
-            if pending:
+            if hold["pending"]:
                 if callable(old):
                     old(signal.SIGTERM, None)
                 elif old == signal.SIG_DFL:
                     os.kill(os.getpid(), signal.SIGTERM)
 
 
-def _gpg_run(argv: tuple, passphrase: str, payload: bytes, tools: Tools) -> bytes:
+def _kill(p: subprocess.Popen) -> None:
+    try:
+        p.kill()
+    except OSError:
+        pass
+
+
+def _gpg_run(argv: tuple, passphrase: str, payload: bytes, tools: Tools, hold: dict | None = None) -> bytes:
     home = new_gnupg_home()
     env = dict(GPG_ENV, GNUPGHOME=home)
     rc = None
@@ -210,6 +240,10 @@ def _gpg_run(argv: tuple, passphrase: str, payload: bytes, tools: Tools) -> byte
             p = subprocess.Popen([tools.verify(tools.gpg), *argv[1:]], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE, close_fds=True, pass_fds=(3,), preexec_fn=_child_fd3(r),
                                  env=env)
+            if hold is not None:
+                hold["child"] = p
+                if hold["pending"]:                    # a SIGTERM held before gpg started
+                    _kill(p)
         finally:
             os.close(r)
         out, _err = p.communicate(payload)
@@ -217,11 +251,13 @@ def _gpg_run(argv: tuple, passphrase: str, payload: bytes, tools: Tools) -> byte
     finally:
         agent_down = False
         try:
-            agent_down = subprocess.run([tools.verify(tools.gpgconf), "--homedir", home, "--kill", "gpg-agent"],
-                                        capture_output=True, env=env, timeout=60).returncode == 0
-        except (OSError, subprocess.SubprocessError, Refusal):
-            pass
-        shutil.rmtree(home, ignore_errors=True)
+            try:
+                agent_down = subprocess.run([tools.verify(tools.gpgconf), "--homedir", home, "--kill", "gpg-agent"],
+                                            capture_output=True, env=env, timeout=GPGCONF_TIMEOUT_S).returncode == 0
+            except (OSError, subprocess.SubprocessError, Refusal):
+                pass
+        finally:                                       # the home goes whatever the agent shutdown raised
+            shutil.rmtree(home, ignore_errors=True)
         if os.path.lexists(home):
             raise Refusal("the GNUPGHOME could not be removed")
         if not agent_down:
@@ -288,6 +324,18 @@ def product_ids(n: int) -> list[str]:
     return [f"p{i:04d}" for i in range(1, n + 1)]
 
 
+_RNG = secrets.SystemRandom()
+
+
+def assign_ids(rels: list[str]) -> dict[str, str]:
+    """{id: relpath}, the ids p0001..pN over a CSPRNG permutation of the relpaths. Sorted relpaths can carry seed
+    digits (gevgen names its outputs by the seed), and the ciphertext sizes by id are public. The mapping is written
+    only into the encrypted manifest."""
+    order = list(rels)
+    _RNG.shuffle(order)
+    return dict(zip(product_ids(len(order)), order))
+
+
 def seal(workdir: Path, sealed: Path, passphrase: str, tools: Tools) -> dict:
     """Section 4.2 steps 1-3 and 6's file. Returns {"hashes": {id: plaintext sha256}, "n_products", "seal_text"};
     the hashes are for the content scan only and are never written in plaintext. Raises Break on a round-trip
@@ -296,9 +344,9 @@ def seal(workdir: Path, sealed: Path, passphrase: str, tools: Tools) -> dict:
     rels = enumerate_files(workdir)
     if not rels:
         raise Refusal("the work dir holds no file to seal")
-    ids = product_ids(len(rels))
+    assigned = assign_ids(rels)
     hashes, paths, cipher = {}, {}, {}
-    for pid, rel in zip(ids, rels):
+    for pid, rel in assigned.items():
         plain = noatime_read(workdir / rel)
         hashes[pid], paths[pid] = hashlib.sha256(plain).hexdigest(), rel
         ct = gpg_run(GPG_ENCRYPT, passphrase, plain, tools)
@@ -309,7 +357,7 @@ def seal(workdir: Path, sealed: Path, passphrase: str, tools: Tools) -> dict:
     man_ct = gpg_run(GPG_ENCRYPT, passphrase, man_plain, tools)
     _write_new(sealed / MANIFEST_CT, man_ct)
     cipher[MANIFEST_CT] = hashlib.sha256(man_ct).hexdigest()
-    for pid in ids:                                  # step 3: the round trip, from the bytes on disk
+    for pid in assigned:                             # step 3: the round trip, from the bytes on disk
         back = gpg_run(GPG_DECRYPT, passphrase, regular_read(sealed / (pid + ".gpg")), tools)
         if hashlib.sha256(back).hexdigest() != hashes[pid]:
             raise Break(f"{pid} does not reproduce its plaintext sha256")
@@ -458,7 +506,55 @@ def _safe_rel(p) -> bool:
             and os.path.normpath(p) == p and ".." not in p.split("/"))
 
 
-def open_manifest(seal_root: Path, seal_map: dict, passphrase: str, tools: Tools) -> dict:
+class SealedManifest:
+    """The decrypted PG manifest, as open_manifest returns it. Its paths and plaintext hashes are seed-bearing: gevgen
+    names its outputs by the seed, and the seed space can be searched against a seed-bearing file's hash (the
+    director's rulings of 2026-11-25). So it never shows them: repr and str give counts only; pickling, copying,
+    json.dumps, subscripting, iteration and vars() raise TypeError; it is read-only. Access is explicit: ids(),
+    path(id) and sha256(id)."""
+    __slots__ = ("_products", "_paths")
+
+    def __init__(self, products: dict, paths: dict):
+        object.__setattr__(self, "_products", dict(products))
+        object.__setattr__(self, "_paths", dict(paths))
+
+    def __setattr__(self, name, value):
+        raise AttributeError("a SealedManifest is read-only")
+
+    def __delattr__(self, name):
+        raise AttributeError("a SealedManifest is read-only")
+
+    def __reduce_ex__(self, protocol):
+        raise TypeError("a SealedManifest is seed-bearing: it cannot be pickled or copied")
+
+    def __repr__(self) -> str:
+        return f"<SealedManifest: {len(self._products)} products>"
+
+    __str__ = __repr__
+
+    def __len__(self) -> int:
+        return len(self._products)
+
+    def __contains__(self, pid) -> bool:
+        return pid in self._products
+
+    def ids(self) -> list[str]:
+        return sorted(self._products)
+
+    def _known(self, pid: str) -> None:
+        if pid not in self._products:
+            raise Refusal("a requested id is not in the manifest")
+
+    def path(self, pid: str) -> str:
+        self._known(pid)
+        return self._paths[pid]
+
+    def sha256(self, pid: str) -> str:
+        self._known(pid)
+        return self._products[pid]
+
+
+def open_manifest(seal_root: Path, seal_map: dict, passphrase: str, tools: Tools) -> SealedManifest:
     ct = read_ciphertext(seal_root, seal_map, MANIFEST_CT)
     try:
         man = json.loads(gpg_run(GPG_DECRYPT, passphrase, ct, tools), object_pairs_hook=_no_dup_pairs)
@@ -473,14 +569,76 @@ def open_manifest(seal_root: Path, seal_map: dict, passphrase: str, tools: Tools
           and len(set(man["paths"].values())) == len(man["paths"]))
     if not ok:
         raise Break("the manifest's schema or ids are not the seal's")
-    return man
+    return SealedManifest(man["products"], man["paths"])
 
 
-def read_product(seal_root: Path, seal_map: dict, manifest: dict, pid: str, passphrase: str, tools: Tools) -> bytes:
-    if pid not in manifest["products"]:
+def read_product(seal_root: Path, seal_map: dict, manifest: SealedManifest, pid: str, passphrase: str,
+                 tools: Tools) -> bytes:
+    if not isinstance(manifest, SealedManifest):
+        raise Refusal("read_product takes the SealedManifest that open_manifest returns")
+    if pid not in manifest:
         raise Refusal("a requested id is not in the manifest")
     ct = read_ciphertext(seal_root, seal_map, pid + ".gpg")
     plain = gpg_run(GPG_DECRYPT, passphrase, ct, tools)
-    if hashlib.sha256(plain).hexdigest() != manifest["products"][pid]:
+    if hashlib.sha256(plain).hexdigest() != manifest.sha256(pid):
         raise Break(f"{pid} does not decrypt to its manifest sha256")
     return plain
+
+
+PUBLISH_REFUSAL = "publish_guard: the output carries a seed, a sealed path's digit run or a sealed hash"
+DIGIT_RUN = re.compile(r"[0-9]{10,}")
+RANGE_TOKEN = re.compile(rb"(?<![0-9])0*([1-9][0-9]{9})(?![0-9])")
+
+
+def publish_guard(data: bytes | str, manifest: SealedManifest, seeds: list[int] | None,
+                  published: dict[str, bytes] | None = None, allowlist: list[str] | None = None) -> bytes | str:
+    """Every byte PV publishes passes here first (the director's ruling 4 of 2026-11-25). Nothing publishes at PG, so
+    the caller is PV's decrypt-and-write step, which opens the manifest; none exists yet. It refuses, with a fixed
+    message that names nothing:
+      - each given seed in any form: decimal (so also zero-padded) and hex in either case (so also 0x-prefixed or
+        zero-padded);
+      - every run of 10 or more digits in a manifest relpath component (gevgen's seed-named files);
+      - every manifest plaintext hash's hex, in either case and at any offset.
+    `seeds` is the exact, non-empty list of int seeds. None selects the fallback instead: any 10-digit decimal in
+    [SEED_BASE_LO, SEED_LIMIT), zero-padded or not, which also refuses an epoch timestamp.
+    The one exemption (the director's ruling of 2026-11-25, for a published sums file): `published` maps each file
+    published alongside `data` (manifest relpath -> its bytes) and `allowlist` is the export allowlist's globs ('*'
+    crosses '/'); they come together. Each published file must match the allowlist and be in the manifest, and its
+    sha256 is recomputed here and must equal its manifest entry, or the call is refused. Only those recomputed hashes
+    may then appear in `data`; every other manifest hash still refuses. Returns `data` unchanged."""
+    if not (isinstance(data, (bytes, str)) and isinstance(manifest, SealedManifest) and (seeds is None or (
+            isinstance(seeds, list) and seeds and all(type(s) is int and s >= 0 for s in seeds)))):
+        raise Refusal("publish_guard takes bytes or str, a SealedManifest, and a non-empty list of int seeds or None")
+    exempt = set()
+    if published is not None or allowlist is not None:
+        if not (isinstance(published, dict) and published and isinstance(allowlist, list) and allowlist and
+                all(isinstance(g, str) and g for g in allowlist) and
+                all(isinstance(r, str) and isinstance(v, bytes) for r, v in published.items())):
+            raise Refusal("publish_guard takes the published files (relpath -> bytes) and the export allowlist "
+                          "together, both non-empty")
+        by_path = {manifest.path(pid): pid for pid in manifest.ids()}
+        for rel, body in published.items():
+            if not any(fnmatch.fnmatchcase(rel, g) for g in allowlist):
+                raise Refusal("publish_guard: a file published alongside is outside the export allowlist")
+            if rel not in by_path:
+                raise Refusal("publish_guard: a file published alongside is not in the manifest")
+            h = hashlib.sha256(body).hexdigest()
+            if h != manifest.sha256(by_path[rel]):
+                raise Refusal("publish_guard: a file published alongside does not hash to its manifest entry")
+            exempt.add(h)
+    b = data.encode() if isinstance(data, str) else data
+    low = b.lower()
+    needles = set()
+    for s in seeds or []:
+        needles |= {str(s).encode(), f"{s:x}".encode()}
+    for pid in manifest.ids():
+        for comp in manifest.path(pid).split("/"):
+            needles |= {m.encode() for m in DIGIT_RUN.findall(comp)}
+        if manifest.sha256(pid) not in exempt:
+            needles.add(manifest.sha256(pid).encode())
+    hit = any(n in low for n in needles)
+    if not hit and seeds is None:
+        hit = any(SEED_BASE_LO <= int(m.group(1)) < SEED_LIMIT for m in RANGE_TOKEN.finditer(b))
+    if hit:
+        raise Refusal(PUBLISH_REFUSAL)
+    return data
