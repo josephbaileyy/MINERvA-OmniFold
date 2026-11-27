@@ -3,7 +3,7 @@
 audit ea939701, G11).
 
 Each check finds one printed value in the note's values.tex, sec3_twod.tex, appC_supplementary.tex, sec_validation.tex,
-sec_5d.tex or app_devhistory.tex, or in the primer's primer_body.tex, recomputes it
+sec_5d.tex, or in the primer's primer_body.tex, recomputes it
 from the committed receipt that backs it, and compares at the printed precision: |computed - printed| <= half a unit in
 the printed last digit ("round"), or printed - one unit <= computed < printed ("below", for "below X%": true, and tight
 to one unit). "round-3dp-source" is "round" for a record that prints only 3 dp: the whole interval the record's value
@@ -16,7 +16,8 @@ Register round r18 (DECISION-20261025-joseph-r18-history-to-note.md item 1) move
 nominal of the earlier band's test in sec_validation.tex (erf(2/sqrt 2), as a fraction); the post hoc rescoring against
 the rebuilt band, in sec_validation.tex until the deep restructure (DECISION-20261118) moved it verbatim to App. I's
 app:devhistory-band in app_devhistory.tex (move rows CV-VA02..VA04; the same receipt, rescore_vl169_toys_vl170.json, as
-fractions); and the earlier
+fractions), whose check was dropped on 2026-11-27 with that file, which no built document inputs (DECISION-20261127,
+option (c)); and the earlier
 band's C2 as \\covTwoDCTwo in values.tex (the macro the note prints; the paper's percent form is no longer printed).
 The targeted round of 2026-11-03 moved the paper's background-closure paragraph (Sec. IV D) to the note, so its four
 bound values (VL149, VL151, VL152) are now found in sec_5d.tex's sec:val-negweight, with the residual of the other
@@ -659,6 +660,39 @@ REGRADE_VF_CLAIMS = (
 )
 
 
+# Sec. 5.3.5's 2D mean-offset sentence (Joseph 2026-11-27: the mean-error term, not the shares, because the 2D toys
+# lack simulation-statistics scatter). Record: T2A at G2R's C_T' (the covariance rebuilt at each tune, with the
+# prior-shape term and without the run-period term), t2a_g2r_<T>.json, the files make_values_fived16.py pins.
+T2A_G2R = "measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/t2a/run"
+T2A_OVERRIDE = None
+
+
+def t2a_g2r() -> dict:
+    if T2A_OVERRIDE is not None:
+        return T2A_OVERRIDE
+    return {t: json.loads((STATE / T2A_G2R / f"t2a_g2r_{t.upper()}.json").read_text()) for t in ("ar23", "g18")}
+
+
+T2A_SENTENCE = ("Under the covariance rebuilt at each tune, the mean offset from the truth alone gives $\\chi^2/\\mathrm{ndf}$ of "
+                "\\fvval{t2a-bias-ndf-ar23} at the first tune and \\fvval{t2a-bias-ndf-g18} at the second, so that covariance "
+                "does not describe the estimator's bias at these tunes.")
+
+
+def t2a_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    """The printed macros equal the record's e-bar' C+ e-bar / ndf at one decimal, every control passed, and the
+    mean-error term alone is far above 1 per ndf at both tunes (AR23 first, G18 second, as in the paragraph)."""
+    t, d = text("sec5_multidim.tex", sources), t2a_g2r()
+    v = dict(re.findall(r"\\@namedef\{fv@(t2a-bias-ndf-(?:ar23|g18))\}\{([0-9.]+)\}", sources["values_fived16.tex"]))
+    def fact(x, k):
+        sp = x["split"]
+        return (all(c["pass"] for c in x["controls"].values()) and f"{sp['ebar_Cplus_ebar_over_ndf']:.1f}" == v.get(k)
+                and sp["ebar_Cplus_ebar_over_ndf"] > 3)
+    good = t.count(T2A_SENTENCE) == 1 and fact(d["ar23"], "t2a-bias-ndf-ar23") and fact(d["g18"], "t2a-bias-ndf-g18")
+    return [("T2A 2D: the mean offset alone gives chi2/ndf 13.5 (AR23) and 21.8 (G18) under C_T' (t2a_g2r_<T>.json)", good,
+             f"sentence found {t.count(T2A_SENTENCE)} time(s) | macros {v} | record "
+             f"{d['ar23']['split']['ebar_Cplus_ebar_over_ndf']:.3f}/{d['g18']['split']['ebar_Cplus_ebar_over_ndf']:.3f}")]
+
+
 def regrade_vf_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     t, d = text("sec5_multidim.tex", sources), regrade_vf()
     return [(lab, t.count(s) == 1 and fact(d, sources), f"sentence found {t.count(s)} time(s) | record {fact(d, sources)}")
@@ -976,9 +1010,6 @@ CHECKS = [
     ("two-sigma nominal of the earlier band's test (note sec:coverage)", "sec_validation.tex",
      r"lies entirely below its window \(Gaussian ([0-9.]+)\)", lambda: math.erf(2.0 / math.sqrt(2.0)), "round"),
     ("statistical block median (Q_R, S1)", "sec3_twod.tex", r"Statistical bootstrap & ([0-9.]+) &", stat_median, "round"),
-    ("rescoring against the rebuilt (VL170) band, 2 and 1 sigma (note app:devhistory-band)", "app_devhistory.tex",
-     r"removes the tail undercoverage: \$C_2=([0-9.]+)\$ \$\[[0-9.,]+\]\$ and \$C_1=([0-9.]+)\$",
-     lambda: (rescore("C2") / 100.0, rescore("C1") / 100.0), "round"),
     # The background-closure values bind in the note since the targeted round (DECISION-20261103-joseph-retire-density-
     # gate.md item 3b) moved the paper's Sec. IV D closure paragraph there: sec_5d.tex sec:val-negweight prints them
     ("purity bias, highest-W cells (VL149)", "sec_5d.tex",
@@ -1088,6 +1119,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     rows += evw2d_claims(sources)
     rows += clip2d_claims(sources)
     rows += regrade_vf_claims(sources)
+    rows += t2a_claims(sources)
     rows += highpz_claims(sources)
     rows += oofvc_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
@@ -1257,7 +1289,7 @@ def ibub_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 def load() -> dict[str, str]:
     return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec_validation.tex",
-                                               "sec_5d.tex", "app_devhistory.tex", "primer_body.tex", "appA_methods.tex",
+                                               "sec_5d.tex", "primer_body.tex", "appA_methods.tex",
                                                "appC_supplementary.tex", "records_r03_twod.tex", "sec2_method.tex",
                                                "appD_reproducibility.tex", "sec5_multidim.tex", "sec6_conclusions.tex", "values_fived16.tex")}
 
@@ -1704,6 +1736,37 @@ def self_test() -> int:
             print(f"  NOT CAUGHT  REGRADE-VF: {old_s} -> {new_s}"); ok = False
         else:
             caught += 1; print(f"  caught      REGRADE-VF: {old_s} -> {new_s}")
+
+    def plant4(what, fn):
+        global T2A_OVERRIDE
+        nonlocal ok, caught
+        data = copy.deepcopy(t2a_g2r())
+        fn(data)
+        T2A_OVERRIDE = data
+        try:
+            rows = dict((r[0], r[1]) for r in evaluate(base))
+        except (ValueError, KeyError, TypeError):
+            rows = {"refused": False}
+        finally:
+            T2A_OVERRIDE = None
+        if all(rows.values()):
+            print(f"  NOT CAUGHT  T2A planted: {what}"); ok = False
+        else:
+            caught += 1; print(f"  caught      T2A planted: {what}")
+    plant4("AR23 mean-error term 13.6", lambda d: d["ar23"]["split"].__setitem__("ebar_Cplus_ebar_over_ndf", 13.6))
+    plant4("G18 mean-error term 0.9", lambda d: d["g18"]["split"].__setitem__("ebar_Cplus_ebar_over_ndf", 0.9))
+    plant4("tunes swapped", lambda d: d.update(ar23=d["g18"], g18=d["ar23"]))
+    plant4("a G18 control failed", lambda d: next(iter(d["g18"]["controls"].values())).__setitem__("pass", False))
+    for old_s, new_s in (("at the first tune and \\fvval{t2a-bias-ndf-g18} at the second", "at the second tune and \\fvval{t2a-bias-ndf-g18} at the first"),
+                         ("does not describe the estimator's bias", "describes the estimator's bias")):
+        t5 = base["sec5_multidim.tex"]
+        if t5.count(old_s) != 1:
+            print(f"  NOT FOUND   T2A mutation {old_s!r}"); ok = False; continue
+        trial = dict(base); trial["sec5_multidim.tex"] = t5.replace(old_s, new_s)
+        if all(r[1] for r in evaluate(trial)):
+            print(f"  NOT CAUGHT  T2A: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      T2A: {old_s} -> {new_s}")
     plant2("evw2d.done verdict FAIL", lambda d: d["done"].__setitem__("verdict", "FAIL"))
     plant2("a finding recorded", lambda d: d["run"].__setitem__("findings", ["C-COMPLETE"]))
     plant2("deposit copy not accepted", lambda d: d.__setitem__("deposit", d["deposit"].replace("ACCEPTED", "REFUSED")))
