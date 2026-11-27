@@ -505,7 +505,7 @@ def evw2d_deposited(d: dict, sources: dict[str, str]) -> bool:
     equal references.npz's er bit for bit, through the config and references this run used (evw2d_refs)."""
     u, m = d["upload"], d["ref_meta"]
     return (evw2d_refs(d) and evw2d_exact(d, "C-EXACT-ER")
-            and "| `package/result-products-2d/result_2d.npz` | "
+            and "| `package-rc10/result-products-2d/result_2d.npz` | "
                 "`9ab08a9f7d57c786f422f7f03bb7810625c243d804d588ad504bb5b77eaa2e47` | 2,696,218 | current |" in u
             and f"`2d-unfolding/evw2d/config.json` (sha256 `{d['config_sha256']}`) pins `references.npz` at "
                 f"`{d['ref_sha256']}`;" in u
