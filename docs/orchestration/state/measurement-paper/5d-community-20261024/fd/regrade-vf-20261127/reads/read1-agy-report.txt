@@ -1,0 +1,73 @@
+Adversarial Code Review: regrade_vf.py (REGRADE-VF-DECLARATION.md rev 1)
+
+1. [BLOCKING] regrade_vf.py:128-129 — check_psd (C-PSD) silently passes negative-definite and negative-semidefinite matrices.
+   Line 128 computes `lmin_rel = float(lam.min() / lam.max()) if lam.max() > 0 else 0.0`. Whenever `lam.max() <= 0` and `lam.min() < 0`, `lmin_rel` is set to `0.0`, so `lmin_rel < -PSD_REL` is False and C-PSD passes without raising Stop. (Unlike regrade_crep.py:165, which checks `lam[0] < -PSD_TOL * lam[-1]`.)
+   Concrete failure scenario: `check_psd(-np.eye(16), "neg")` or `check_psd(np.diag([0.0] + [-1.0] * 15), "neg_semi")` returns `{"asym_rel": 0.0, "lam_min_rel": 0.0}`. A negative-definite `dF_rule_i` (e.g., negative-definite `DeltaC_e`) or `dF_rule_ii` (e.g., `phi_R < 1` in all bands) passes C-PSD silently.
+
+2. [BLOCKING] regrade_vf.py:125-129 — check_psd (C-PSD) silently passes NaN and Inf inputs and crashes on empty matrices.
+   If `C` contains any NaN, `scale = float(np.max(np.abs(C)))` is `nan`, so `scale > 0` (line 126) is False and `asym` becomes `0.0`; `lam = np.linalg.eigvalsh((C + C.T) / 2)` contains `nan`, so `lam.max() > 0` (line 128) is False and `lmin_rel` becomes `0.0` (or if `lam.min()` is `nan`, `nan < -PSD_REL` is False). If `C` contains symmetric `+inf` (e.g., `C[0, 0] = np.inf`), `C - C.T` yields `inf - inf = nan`, `asym` becomes `nan` (`nan > SYM_REL` is False), and `lam.min() / inf` is `0.0` or `nan` (`< -PSD_REL` is False). On an empty `(0, 0)` array, `np.max` raises `ValueError` instead of `Stop`.
+   Concrete failure scenario: `check_psd` called on a 16x16 identity matrix with `C[0, 0] = np.nan`, `C[0, 1] = np.nan`, or `C[0, 0] = np.inf` returns without raising `Stop`, letting corrupted `dF`, `C_rep`, or `C_prime` matrices into `split()`.
+
+3. [BLOCKING] regrade_vf.py:250-252 — evaluation_controls (C-A0) silently passes when any compared quantity is NaN and crashes when any committed field is zero.
+   Line 251 checks `if max(a0.values()) > A0_REL:`. Two Python NaN traps combine here: first, Python's `max()` silently drops any `nan` after the first element (`max([0.0, float("nan")]) == 0.0`); second, even when `M_prime` (the first element) is `nan` so `max()` returns `nan`, `nan > A0_REL` evaluates to False. Additionally, if `committed[k] == 0.0`, line 250 raises `ZeroDivisionError` instead of `Stop`.
+   Concrete failure scenario: If `E` contains a NaN (making `r0["M_prime"]`, `r0["SE"]`, etc. `nan` while `r0["tau"]` is finite), or if a committed value like `SE` is `NaN`, or if `r0[k]` and `committed[k]` are both `inf` (`inf - inf = nan`), C-A0 passes without raising `Stop`.
+
+4. [BLOCKING] regrade_vf.py:197-213, 243-245 — C-F, C-DF, and C-L silently pass on NaN and 0/0 (zero scale or zero f), and crash on empty arrays.
+   - C-F (`regrade_vf.py:197-198, 243-244`): `frel = float(np.max(np.abs(f_vf / f_cpl - 1.0)))` (and `cap["f"] / ops["f"] - 1.0`) followed by `if frel > F_REL:`. Any NaN in `f`, or matching zeros (`0.0 / 0.0 = nan`), or matching infinities (`inf / inf = nan`), yields `frel = nan`, and `nan > F_REL` is False.
+   - C-DF (`regrade_vf.py:201-204`): `rel_max` divides by `s = float(np.max(np.abs(C_e_infl)))`, and line 204 checks `if d1 > DF_REL or d2 > DF_REL:`. Any NaN in `DeltaC_e`, `C_e_infl`, `C_e`, or `f_cpl`, or `s == 0.0` when `C_e_infl == 0` and `DeltaC_e == -C_e` (`0.0 / 0.0 = nan`), or any `f_cpl[i] == 0.0` in `carry_frac(DeltaC_e, f_cpl, f_cpl)` (`0.0 / 0.0 = nan`), yields `nan`, and `nan > DF_REL` is False.
+   - C-L (`regrade_vf.py:210-212`): `l1` and `l2` from `rel_max` are checked with `if l1 > L_REL or l2 > L_REL:`. Any NaN in `C_e_infl`, `L5`, `phi`, or `C_e`, or zero `scale` with zero numerator, yields `nan`, and `nan > L_REL` is False.
+   - Empty arrays in any of these controls raise `ValueError` in `np.max` instead of `Stop`.
+   Concrete failure scenario: Passing `f_vf = f_cpl = np.zeros(16)` or `[1.0, np.nan, ...]` passes both C-F and C-DF; passing `C_e_infl` or `L5` with a `NaN` entry passes C-DF and C-L silently.
+
+5. [BLOCKING] regrade_vf.py:144-150, 163, 169-181 — split (C-ID) silently passes on NaN/Inf in E, and empty or single-row E crashes instead of raising Stop.
+   Line 149 checks `if abs(M - (B + F)) > ID_REL * M:`. If `E` contains `NaN` (or `Inf`), `M`, `B`, and `F` become `NaN` (or `Inf`/`NaN`), so `abs(M - (B + F)) > ID_REL * M` evaluates `nan > nan` (`False`) and C-ID passes. `split()` then produces `NaN` bootstrap SEs, and `readings()` evaluates `NaN > K_SE * NaN` (`False`), silently returning `"not shown"`, `"not resolved"`, and `"not separated"`. If `E` is empty (`n == 0`) or has `n == 1`, `C-RANK` still passes (it depends only on `Cp`), and `split()` crashes with `ZeroDivisionError` at `F / n` (`regrade_vf.py:147`) or `/ (n - 1)` (`regrade_vf.py:145`) instead of raising `Stop`. Similarly, if `E` is identically zero and `C_add` is zero, `M_full == 0` causes `ZeroDivisionError` in `shares` (`regrade_vf.py:163`).
+   Concrete failure scenario: Calling `evaluate_arrays` with `E[0, 0] = np.nan` (and `committed` equal to `r0` on finite keys, since C-A0 also passes on `NaN`) produces `"status": "done"` with `NaN` metrics and `"not shown"` / `"not resolved"` / `"not separated"` readings instead of a `STOP`.
+
+6. [BLOCKING] regrade_vf.py:90-103 — ranked_eig and gap_check (C-GAP) ignore upper-triangle NaN/asymmetry, can pass with diagonal/lower-triangle NaN, and pass on zero eigenvalue lam[hi] == 0.0 emitting +inf.
+   - `ranked_eig` (`regrade_vf.py:92`) calls `np.linalg.eigh(C)` with default `UPLO='L'`, reading only the lower triangle of `C`, and neither `C_e` nor `C_e(T)` is checked for symmetry or finiteness before `gap_check` or `band_L`. Upper-triangle NaNs or asymmetry (`C[i, j]` for `i < j`) are ignored by `gap_check` and `band_L` (`C_eT` upper-triangle NaNs then propagate into `dF_rule_ii`, where C-PSD also lets NaN slip through).
+   - Even with diagonal or lower-triangle NaN (e.g., `C[0, 0] = np.nan` on a 16x16 diagonal SPD matrix), `np.linalg.eigh` returns only one/two `NaN` eigenvalues alongside finite ones; `np.argsort(lam)[::-1]` sorts `NaN` to index `0`, leaving finite eigenvalues at indices `3, 4, 7, 8`, so `gaps` are finite and `gap_check` passes.
+   - If `lam[8] == 0.0` and `lam[7] > 0.0` (e.g., a rank-8 PSD `C_e` in `vf_block`), `lam[7] / lam[8] - 1.0` produces `+inf`, which satisfies `g > GAP_MIN` (`inf > 1e-9`) and passes C-GAP while putting `inf` into the record. Smaller/empty matrices raise `IndexError` instead of `Stop`.
+   Concrete failure scenario: `gap_check` on `np.diag(np.geomspace(10, 0.01, 16))` with `C[0, 0] = np.nan` (or `C[0, 1] = np.nan`), or on `np.diag([10, 8, 6, 4, 2, 1.5, 1.2, 1.0] + [0.0] * 8)`, returns normally without raising `Stop`.
+
+7. [SHOULD-FIX] regrade_vf.py:305 — main() serializes JSON with allow_nan=True (the default).
+   Line 305 calls `json.dumps(out, indent=1, sort_keys=True)` without `allow_nan=False`. If any `NaN` or `Infinity` reaches `out` (as in Findings 2–6), `main()` writes non-standard JSON (`NaN`/`Infinity`) and exits `0` instead of failing closed.
+   Concrete failure scenario: An evaluation with `NaN` in `E` or `+inf` in `C_GAP_data` causes `main()` to write invalid JSON containing literal `NaN`/`Infinity` tokens.
+
+8. [SHOULD-FIX] regrade_vf.py:227-229 — global_controls checks truthiness of `active` and does not validate finiteness or range of `phi`.
+   Line 227 evaluates `fl["trigger"][name]["active"]` by truthiness rather than `is True`, so a non-empty string like `"false"` would pass as active. Line 229 converts `phi` without checking `math.isfinite` or `phi >= 1.0` (`B5D-DECLARATION.md` sec. 4: factors are never below 1); a negative `phi` raises `ValueError` in `math.sqrt` rather than `Stop`, and a `NaN` `phi` propagates into `L` where C-L lets `NaN` pass (Finding 4).
+   Concrete failure scenario: In a non-pinned or unit-test call with `{"active": "false", "phi": float("nan")}`, `global_controls` accepts the band as active and C-L silently passes.
+
+9. [SHOULD-FIX] test_regrade_vf.py:123, 188-206, 224-255, 270, 273-316 — Several tests are partially vacuous and miss shares, SE-key selection, C-GAP_data, evaluation-level C-PSD, tolerance thresholds, and per-evaluation STOP isolation.
+   - `test_split_matches_a_direct_computation` (`test_regrade_vf.py:123`) checks only `sum(s["shares"].values()) == 1.0`, never checking `s["shares"]["B"]`, `s["shares"]["F"]`, `s["shares"]["tau"]`, `s["SE"]`, or `s["B_raw"]`.
+   - Section 4 tests (`test_regrade_vf.py:188-206`) set `SE = {"B": 0.125, "F": 0.125, "B_minus_F": 0.125}` and pass scalar `SE = 0.125`, so all four SE values are equal (`test_evaluate_arrays_uses_each_matrix_and_the_same_resamples` only compares `rec[v]` against `rv.split()`, which calls the same `rv.readings()`).
+   - `test_evaluation_controls_pass_and_a0_reproduces_regrade16` (`test_regrade_vf.py:270`) checks only `set(c["C_PSD"]) == {...}` without any test triggering `C-PSD` or `C-GAP_T` through `evaluation_controls`.
+   - `test_global_controls_pass_on_the_committed_blocks` (`test_regrade_vf.py:224-227`) and `test_block_controls_refuse_each_perturbation` (`test_regrade_vf.py:230-254`) never check `C_GAP_data` or trigger `C-GAP` on `C_e` through `block_controls`.
+   - Perturbation tests (`test_regrade_vf.py:90-92, 180, 238, 242, 248, 277, 281`) use deviations far larger (`1e-9` to `~0.05`) than the declared thresholds (`1e-12`, `1e-10`, `1e-9`), `test_evaluation_controls_refuse_a_moved_a0_or_f` moves only `tau` out of `A0_FIELDS`, `test_constants_are_the_declarations` (`test_regrade_vf.py:310-316`) omits all control thresholds/A0_FIELDS/PINS, and no test checks `run()` leaving readings unwritten on an evaluation-level STOP (`regrade_vf.py:292-293`) or `main()` exit codes `0`/`1`.
+   Concrete failure scenario: Swapping `B` and `F` in `shares` (`regrade_vf.py:163`), using `se["F"]` instead of `se["B"]` in `readings()` (`regrade_vf.py:179`), replacing `gap_check(C_e, ...)` at `regrade_vf.py:207` with `{}`, or stubbing out all five `check_psd(...)` calls at `regrade_vf.py:258-260` with `{}` leaves every test in `test_regrade_vf.py` passing.
+
+10. [SHOULD-FIX] mutants_regrade_vf.py:26-65 — Important mutants are missing from the runner, including several that survive the current tests.
+    Missing mutants that would SURVIVE `test_regrade_vf.py` today:
+    - `gap-data-off`: replacing `gap_check(C_e, "vf_block C_e")` with `{}` (`regrade_vf.py:207`, sibling of `gap-T-off`).
+    - `eval-psd-off`: removing or stubbing `check_psd(...)` calls in `evaluation_controls` (`regrade_vf.py:258-260`).
+    - `shares-swapped`: swapping `B` and `F` in `shares` (`regrade_vf.py:163`).
+    - `readings-wrong-se`: replacing `se["B"]` with `se["F"]`, `se["B_minus_F"]` with `se["B"]`, or `SE` with `se["B"]` (`regrade_vf.py:171, 173, 178, 179`).
+    - Tolerance-loosening mutants (`A0_REL`, `F_REL`, `DF_REL`, `L_REL`, `GAP_MIN`, `SYM_REL`, `PSD_REL`, `ID_REL` relaxed by 100x–1000x rather than to `1.0` / `-1.0`).
+    - `a0-drop-field`: omitting any of `M_prime`, `SE`, `mean_error_part`, `spread_part`, or `M_full` from `A0_FIELDS` (`regrade_vf.py:74`).
+    - `eval-stop-keeps-readings`: altering `except Stop` at `regrade_vf.py:292-293` to keep partial readings instead of `{"status": "STOP", ...}`.
+    - `df-d2-off`: dropping `or d2 > DF_REL` at `regrade_vf.py:204` (sibling of `df-d1-off`).
+    - `rank-dropped-off`: dropping `or r["cut"]["C_T_kept_modes_outside_C_prime_kept_span"] != 0` at `regrade_vf.py:141`.
+    Missing specification mutants (killed by existing tests, yet omitted despite sibling mutants):
+    - `boot-ddof-0` (`std(ddof=1)` -> `std(ddof=0)` at `regrade_vf.py:159`) and `boot-F-divisor-n` (`/ (n - 1) / ndf` -> `/ n / ndf` at `regrade_vf.py:157`).
+    - `rchi2-ge` and `bvf-fluct-ge` (`>` -> `>=` at `regrade_vf.py:178, 173`, alongside `bvf-ge` and `bias-ge`).
+    - `c-add-resp-at-f` (uncarried `C_resp` at `regrade_vf.py:248`, alongside `c-add-pl-at-f`), `rule-ii-uses-C-T` (`dF_rule_ii(C_T, ...)` at `regrade_vf.py:255`), and `boot-separate-idx` (not sharing `idx` across matrices at `regrade_vf.py:269-271`).
+    Concrete failure scenario: Reporting 38/38 killed gives false assurance that `C_GAP_data`, evaluation-level `C-PSD`, `shares`, `readings` SE keys, bootstrap `ddof=1`, evaluation-level `STOP` isolation, and declared control tolerances are mutation-tested.
+
+11. [NIT] regrade_vf.py:35, 77-82, 220-221, 281-294, 301 — Import occurs before C-PIN, I/O errors crash instead of recording STOP, and `--out` existence check misses dangling symlinks.
+    `import regrade_crep as rc` executes at line 35 before `pinned("regrade_crep")` runs at line 221; missing/corrupt input files raise `FileNotFoundError`/`OSError`/`ValueError` outside `except Stop`, crashing rather than writing a STOP record; and `a.out.exists()` at line 301 returns False for a broken symlink.
+    Concrete failure scenario: A missing pinned file or dangling `--out` symlink causes an unhandled traceback instead of a clean STOP record or exit code 2 refusal.
+
+12. [NIT] test_regrade_vf.py:97-100 — test_rule_i_is_the_identity_at_f tests regrade_crep.carry_frac directly rather than regrade_vf.
+    Line 100 calls `rv.rc.carry_frac(D, f, f)` directly on the imported module without exercising `regrade_vf` (`dF["rule_i"]` carry in `evaluation_controls` is tested separately at line 265).
+    Concrete failure scenario: Removing `carry_frac` from `regrade_vf.py:255` would never fail `test_rule_i_is_the_identity_at_f` (though line 265 catches it).
+
+VERDICT: NO-GO
