@@ -755,34 +755,35 @@ def oofvc_most_oof(d: dict) -> bool:
 
 
 OOFVC_CLAIMS = (
-    ("OOFVC: 'this' is the existing IBU distance sentence, the one the convention lowers",
+    ("OOFVC: the new sentences follow the existing IBU distance sentence (whose 0.54 is D_IBU_0)",
      "sec3_twod.tex",
      "Relative to the published result, ten-iteration IBU gives \\fvval{c2c1-dibu} per bin using the same "
-     "published-covariance metric. Counting as signal,", lambda d, s: oofvc_before(d, s)),
-    ("OOFVC: MINERvA's released code counts the selected nu_mu CC events failing the phase space as signal (decl. 1.1); "
-     "only those with a true muon in the grid (1.3), mostly out of the fiducial volume (classes)",
+     "published-covariance metric. The MINERvA Analysis Toolkit counts as signal", lambda d, s: oofvc_before(d, s)),
+    ("OOFVC: MINERvA's code (MAT's Cutter, decl. 1.1) counts selected nu_mu CC events outside the phase space as signal; "
+     "most of the moved ones are out of the fiducial volume (classes)",
      "sec3_twod.tex",
-     "Counting as signal, as MINERvA's released comparison code does, selected $\\nu_\\mu$ charged-current events with a "
-     "true muon in the reported range but outside the truth phase space, mostly vertices outside the fiducial volume,",
+     "The MINERvA Analysis Toolkit counts as signal the selected events that fall outside the truth phase space, most of "
+     "them with a true vertex outside the fiducial volume.",
      lambda d, s: ("| selected ν_μ CC event failing the phase space (true vertex outside the fiducial volume, or θ_μ ≥ 20°, "
                    "or p∥ outside 1.5–60 GeV/c, or p_T ≥ 4.5 GeV/c) |" in d["decl"]
                    and "| **signal**: it fills the efficiency numerator at its true (p_T, p∥) and the migration |" in d["decl"]
-                   and "this is the convention of MINERvA's released comparison code" in d["decl"] and oofvc_most_oof(d))),
-    ("OOFVC: IBU lowered (r_IBU LOWER), OmniFold 'moves only' (r_ER LITTLE CHANGE); decl. 2.4's bands and statement",
+                   and "1. **`MAT/PlotUtils/Cutter.cxx` @ 0111c79de**" in d["decl"] and oofvc_most_oof(d))),
+    ("OOFVC: the two distances under the convention (operands at K = 10; the 'instead of' macros are the production ones)",
      "sec3_twod.tex",
-     "lowers this to 0.20, while the two-dimensional OmniFold result moves only from \\fvval{c2c1-der} to 2.21.",
-     lambda d, s: (oofvc_before(d, s) and d["score"]["bands"]["r_IBU"] == "LOWER"
+     "Counting them the same way, ten-iteration IBU gives 0.20 per bin instead of \\fvval{c2c1-dibu}, and the "
+     "two-dimensional OmniFold result gives 2.21 instead of \\fvval{c2c1-der}.", oofvc_before),
+    ("OOFVC: so it does not account for the 2D shape difference (r_IBU LOWER, r_ER LITTLE CHANGE; decl. 2.4's statement)",
+     "sec3_twod.tex", "This convention therefore does not account for the 2D shape difference with the published result.",
+     lambda d, s: (oofvc_ok(d) and d["score"]["bands"]["r_IBU"] == "LOWER"
                    and d["score"]["bands"]["r_ER"] == "LITTLE CHANGE"
                    and d["score"]["ratios"]["r_IBU"] <= 0.80 and 0.95 <= d["score"]["ratios"]["r_ER"] <= 1 / 0.95
                    and d["score"]["statements"]["primary"] == "The reclassification moves the binned IBU's distance; at "
                    "this scale it does not move the OmniFold central value's"
                    and "| LOWER | LITTLE CHANGE or INTERMEDIATE | The reclassification moves the binned IBU's distance; at "
                    "this scale it does not move the OmniFold central value's |" in d["decl"])),
-    ("OOFVC: so it does not account for the 2D shape difference (from the primary statement; no cause named)",
-     "sec3_twod.tex", "The convention therefore does not account for the 2D shape difference with MINERvA.",
-     lambda d, s: d["score"]["bands"]["r_ER"] == "LITTLE CHANGE" and oofvc_ok(d)),
-    ("OOFVC: Sec. 6's clause (r_ER LITTLE CHANGE)", "sec6_conclusions.tex",
-     "MINERvA's signal convention does not account for the 2D shape difference (Sec.~\\ref{sec:results-benchmarks}).",
+    ("OOFVC: Sec. 6's sentence (r_ER LITTLE CHANGE)", "sec6_conclusions.tex",
+     "The MINERvA Analysis Toolkit's signal convention does not account for the 2D shape difference with the published "
+     "result (Sec.~\\ref{sec:results-benchmarks}).",
      lambda d, s: d["score"]["bands"]["r_ER"] == "LITTLE CHANGE" and oofvc_ok(d)),
 )
 
@@ -806,8 +807,8 @@ def highpz_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 CHECKS = [
     # OOFVC (oofv-convention-20261126, r3 score.json), sec3_twod.tex
     ("OOFVC: D_IBU under the convention, K = 10, and D_E_R under it (score.json operands D_IBU_R, D_ER_R)", "sec3_twod.tex",
-     r"lowers this to ([0-9.]+), while the two-dimensional OmniFold result moves only from \\fvval\{c2c1-der\} to "
-     r"([0-9.]+)\.",
+     r"ten-iteration IBU gives ([0-9.]+) per bin instead of \\fvval\{c2c1-dibu\}, and the two-dimensional OmniFold "
+     r"result gives ([0-9.]+) instead of \\fvval\{c2c1-der\}\.",
      lambda: (oofvc()["score"]["operands"]["D_IBU_R"], oofvc()["score"]["operands"]["D_ER_R"]) if oofvc_ok(oofvc())
      else (-1.0, -1.0), "round"),
     # The high-p_par open issue (precharge-20261125), sec3_twod.tex
@@ -1222,14 +1223,12 @@ def self_test() -> int:
         ok = False
     # The high-p_par claims: each sentence reworded, and each planted record, must be rejected
     # The OOFVC claims: each sentence reworded, and each planted record, must be rejected.
-    for f, old_s, new_s in (("sec3_twod.tex", "Counting as signal, as MINERvA's", "Counting as background, as MINERvA's"),
-                            ("sec3_twod.tex", "mostly vertices outside the fiducial volume", "rarely vertices outside the fiducial volume"),
-                            ("sec3_twod.tex", "with a true muon in the reported range but outside", "with a true muon anywhere but outside"),
-                            ("sec3_twod.tex", "lowers this to 0.20", "raises this to 0.20"),
-                            ("sec3_twod.tex", "result moves only from", "result moves far from"),
-                            ("sec3_twod.tex", "The convention therefore does not account for", "The convention therefore accounts for"),
-                            ("sec3_twod.tex", "per bin using the same published-covariance metric. Counting as signal,",
-                             "per bin using the same published-covariance metric. Ten-iteration IBU gives 0.54 per bin. Counting as signal,"),
+    for f, old_s, new_s in (("sec3_twod.tex", "Toolkit counts as signal the selected", "Toolkit counts as background the selected"),
+                            ("sec3_twod.tex", "most of them with a true vertex outside", "few of them with a true vertex outside"),
+                            ("sec3_twod.tex", "This convention therefore does not account for", "This convention therefore accounts for"),
+                            ("sec3_twod.tex", "instead of \\fvval{c2c1-dibu}", "instead of 0.54"),
+                            ("sec3_twod.tex", "per bin using the same published-covariance metric. The MINERvA",
+                             "per bin using the same published-covariance metric. Ten-iteration IBU gives 0.54 per bin. The MINERvA"),
                             ("sec6_conclusions.tex", "convention does not account for the 2D shape", "convention accounts for the 2D shape")):
         t = text(f, base)
         if t.count(old_s) != 1:
