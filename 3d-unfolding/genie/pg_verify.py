@@ -407,19 +407,19 @@ def _xsec_data(p):
 
 def trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest, private, w_root, pins,
                 genie_root=GENIE_ROOT, repo=CVMFS_REPO, private_root=PRIVATE_PRODUCTS, sha=None, system_pins=None,
-                gxmlpath=None, xsec_data=None, messenger=None, outputs=None, ghep_in=None):
+                gxmlpath=None, xsec_data=None, messenger=None, outputs=None, ghep_in=None, lib_pins=None):
     """The check's record: pass, problems (each "<code>: <detail>"), the gated files read, the programs executed,
     ROOT's config files, every watched probe."""
     try:
         return _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest, private, w_root, pins,
                             genie_root, repo, private_root, sha or sha_path, system_pins or {}, gxmlpath, xsec_data,
-                            messenger, outputs or [], ghep_in)
+                            messenger, outputs or [], ghep_in, lib_pins or {})
     except Exception as e:                                  # fail closed, with a reason no other test expects
         return {"role": role, "tune": tune, "pass": False, "problems": [f"internal-error: {type(e).__name__}"]}
 
 
 def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest, private, w_root, pins, genie_root,
-                 repo, private_root, sha, system_pins, gxmlpath, xsec_data, messenger, outputs, ghep_in):
+                 repo, private_root, sha, system_pins, gxmlpath, xsec_data, messenger, outputs, ghep_in, lib_pins):
     probs = trace_problems(text, rc)
     events, pprobs = parse_trace(text)
     probs += pprobs
@@ -612,6 +612,9 @@ def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest
             pin, where, want_real = None, None, p
             if p in pins:
                 pin, where = pins[p], "exact pin"
+            elif os.path.realpath(p) in lib_pins:                         # a compat-shim library, at its real path
+                want_real = os.path.realpath(p)
+                pin, where = lib_pins[want_real], "library pin"
             elif _under(p, genie_root):
                 rel, m = _manifest_file(manifest, "genie/v3_04_00/" + os.path.relpath(p, genie_root))
                 pin, where = (m or {}).get("sha256"), "genie manifest"
@@ -629,7 +632,16 @@ def _trace_check(text, rc, role, tune, spline, spline_sha, cwd, record, manifest
                 probs.append(f"gated-mismatch: {p} ({where or 'no pin'})")
         if _is_so(p):
             real = os.path.realpath(p)
-            if not (any(_under(real, r) for r in (repo,) + SYSTEM_LIBS) or gated_paths.get(p, {}).get("match")):
+            pinned_lib = False
+            if real in lib_pins:                                          # allowed only at its pinned real path
+                try:
+                    pinned_lib = _lib_sha(real, sha) == lib_pins[real]
+                except (OSError, Fail):
+                    pinned_lib = False
+                if not pinned_lib:
+                    probs.append(f"so-pin-mismatch: {p} -> {real} does not match its pin")
+            if not (any(_under(real, r) for r in (repo,) + SYSTEM_LIBS) or gated_paths.get(p, {}).get("match")
+                    or pinned_lib):
                 probs.append(f"so-outside-roots: {p} -> {real}")
             elif not _under(real, repo) and (ROOT_GENIE_LIB.match(os.path.basename(p))
                                              or ROOT_GENIE_LIB.match(os.path.basename(real))):
@@ -786,7 +798,39 @@ def system_tool_problems(paths):
     return probs
 
 
-def exe_problems(paths, manifest, genie_root=GENIE_ROOT, ld_library_path=None):
+def compat_pins(pins_json):
+    """(dir, {name: (real, sha256)}) from pg_pins.json's compat_libs (the director, 2026-11-26): the compat-lib shim
+    directory's real path, and each library name GENIE loads from it with its pinned real target and sha256."""
+    c = json.load(open(pins_json)).get("compat_libs") or {}
+    d, libs = c.get("dir"), c.get("libs") or {}
+    if not (type(d) is str and os.path.isabs(d) and type(libs) is dict and libs and all(
+            type(n) is str and n and "/" not in n and type(v) is dict and type(v.get("real")) is str
+            and os.path.isabs(v["real"]) and type(v.get("sha256")) is str and re.fullmatch(r"[0-9a-f]{64}", v["sha256"])
+            for n, v in libs.items())):
+        raise Fail("compat-pins: pg_pins.json's compat_libs is not a directory with pinned libraries")
+    return os.path.normpath(d), {n: (os.path.normpath(v["real"]), v["sha256"]) for n, v in libs.items()}
+
+
+def compat_problems(entry, compat, sha=None):
+    """[problems] with the compat shim as an LD_LIBRARY_PATH entry: each pinned name in it resolves to its pinned real
+    path, whose bytes equal its pin. A name it holds that is not pinned may not load (trace-check: so-outside-roots)."""
+    sha = sha or sha_path
+    probs = []
+    for name, (real, pin) in sorted(compat[1].items()):
+        p = os.path.join(entry, name)
+        if os.path.realpath(p) != real:
+            probs.append(f"compat-target: {p} -> {os.path.realpath(p)} is not its pinned {real}")
+            continue
+        try:
+            got = sha(real)
+        except (OSError, Fail):
+            got = None
+        if got != pin:
+            probs.append(f"compat-sha: {real} does not match its pin")
+    return probs
+
+
+def exe_problems(paths, manifest, genie_root=GENIE_ROOT, ld_library_path=None, compat=None):
     """[problems]: each program a genie-product file with the manifest's bytes and real path; LD_LIBRARY_PATH's entries
     under CVMFS, the system library directories or a manifest directory, and none empty (an empty entry is the cwd)."""
     probs, real_genie = [], os.path.realpath(genie_root)
@@ -812,7 +856,11 @@ def exe_problems(paths, manifest, genie_root=GENIE_ROOT, ld_library_path=None):
             real = os.path.realpath(entry)
             in_manifest = _under(real, real_genie) and os.path.normpath(
                 "genie/v3_04_00/" + os.path.relpath(real, real_genie)) in dirs
-            if not (in_manifest or any(_under(real, r) for r in (CVMFS_REPO,) + SYSTEM_LIBS)):
+            if in_manifest or any(_under(real, r) for r in (CVMFS_REPO,) + SYSTEM_LIBS):
+                continue
+            if compat is not None and real == os.path.realpath(compat[0]):    # the pinned shim, and only it
+                probs += compat_problems(entry, compat)
+            else:
                 probs.append(f"ld-library-path: {entry} -> {real} is outside CVMFS and the system library directories")
     return probs
 
@@ -1068,7 +1116,8 @@ def cmd_trace(a):
         rec = trace_check(text, a.rc, a.role, a.tune, a.spline or None, a.spline_sha256, a.cwd, json.load(open(a.record)),
                           json.load(open(a.manifest))["members"], json.load(open(a.private_members))["members"],
                           os.path.normpath(a.w_root), pins, system_pins=_kv(a.system_pin), gxmlpath=a.gxmlpath,
-                          xsec_data=a.xsec_data, messenger=a.messenger, outputs=a.output, ghep_in=ghep)
+                          xsec_data=a.xsec_data, messenger=a.messenger, outputs=a.output, ghep_in=ghep,
+                          lib_pins=dict(compat_pins(a.compat_pins)[1].values()) if a.compat_pins else {})
     except Exception as e:
         rec = {"role": a.role, "tune": a.tune, "pass": False, "problems": [f"internal-error: {type(e).__name__}"]}
     if os.path.exists(a.out):
@@ -1084,7 +1133,8 @@ def cmd_trace(a):
 
 def cmd_exe(a):
     try:
-        probs = exe_problems(a.path or [], json.load(open(a.manifest))["members"], ld_library_path=a.ld_library_path)
+        probs = exe_problems(a.path or [], json.load(open(a.manifest))["members"], ld_library_path=a.ld_library_path,
+                             compat=compat_pins(a.compat_pins) if a.compat_pins else None)
         probs += system_tool_problems(a.system_path or [])
     except Exception as e:
         probs = [f"internal-error: {type(e).__name__}"]
@@ -1095,14 +1145,23 @@ def cmd_exe(a):
 
 
 def cmd_revision(a):
-    try:
-        rec = {k: os.getxattr(a.repo, "user." + k).decode() for k in ("revision", "root_hash")}
-        probs = [f"revision-empty: {k}" for k, v in rec.items() if not v.strip()]
-    except (OSError, AttributeError) as e:
-        rec, probs = {}, [f"revision-unreadable: {type(e).__name__}"]
-    except Exception as e:
-        rec, probs = {}, [f"internal-error: {type(e).__name__}"]
-    return _out(dict(rec, check="revision", repo=a.repo, problems=probs, **{"pass": not probs}))
+    """Each --repo's revision and root hash (larsoft first: its values are the record's own; minerva's, for the
+    compat shim's libraries, under repos)."""
+    repos, probs = {}, []
+    for repo in a.repo:
+        try:
+            r = {k: os.getxattr(repo, "user." + k).decode() for k in ("revision", "root_hash")}
+            probs += [f"revision-empty: {k}" + ("" if repo == a.repo[0] else f" ({repo})") for k, v in r.items()
+                      if not v.strip()]
+        except (OSError, AttributeError) as e:
+            r = {}
+            probs.append(f"revision-unreadable: {type(e).__name__}" + ("" if repo == a.repo[0] else f" ({repo})"))
+        except Exception as e:
+            r = {}
+            probs.append(f"internal-error: {type(e).__name__}")
+        repos[repo] = r
+    return _out(dict(repos[a.repo[0]], check="revision", repo=a.repo[0], repos=repos, problems=probs,
+                     **{"pass": not probs}))
 
 
 def revision_problems(start, end, records, repo=CVMFS_REPO, sha=None):
@@ -1179,6 +1238,14 @@ def cmd_revision_compare(a):
         rec = {"start": {k: start.get(k) for k in ("revision", "root_hash")},
                "end": {k: end.get(k) for k in ("revision", "root_hash")}}
         rec["changed"] = rec["start"] != rec["end"]
+        rec["repos"] = {}
+        for repo in a.repo or []:                     # each further repository, as larsoft's own (minerva's shim libs)
+            s, e = ((x.get("repos") or {}).get(repo) for x in (start, end))
+            if not (isinstance(s, dict) and isinstance(e, dict)):
+                probs.append(f"revision-repo-missing: {repo} is not in both the start and the end record")
+                continue
+            probs += [f"{p} ({repo})" for p in revision_problems(s, e, recs, repo=repo)]
+            rec["repos"][repo] = {"start": s, "end": e, "changed": s != e}
     except Exception as e:
         rec, probs = {}, [f"internal-error: {type(e).__name__}"]
     return _out(dict(rec, check="revision-compare", problems=probs, **{"pass": not probs}))
@@ -1497,18 +1564,20 @@ def main(argv=None):
     r.add_argument("--messenger")
     r.add_argument("--output", action="append")
     r.add_argument("--ghep-from-trace")
+    r.add_argument("--compat-pins")
     e = sub.add_parser("exe-check")
     e.add_argument("--manifest", required=True)
     e.add_argument("--path", action="append")
     e.add_argument("--ld-library-path")
     e.add_argument("--system-path", action="append")
+    e.add_argument("--compat-pins")
     s = sub.add_parser("shape-check")
     s.add_argument("--fd", type=int, required=True)
     for k in ("members", "members-check", "tool-check", "slot2-reduce"):
         s.add_argument("--" + k, required=True)
     s.add_argument("--traces", nargs="+", required=True)
     v = sub.add_parser("revision")
-    v.add_argument("--repo", required=True)
+    v.add_argument("--repo", action="append", required=True)
     d = sub.add_parser("reduce-check")
     for k in ("source", "reduced", "script"):
         d.add_argument("--" + k, required=True)
@@ -1532,6 +1601,7 @@ def main(argv=None):
     rv.add_argument("--start", required=True)
     rv.add_argument("--end", required=True)
     rv.add_argument("--trace-check", action="append")
+    rv.add_argument("--repo", action="append")
     w = sub.add_parser("argv-check")
     w.add_argument("--script", required=True)
     h = sub.add_parser("host-check")

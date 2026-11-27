@@ -133,13 +133,15 @@ Paths below are relative to `docs/orchestration/state/2d-closeout/covfix-2026112
 - **Command:** this lane does not run it.
   - cov2d's bound PG binary runs it, through the director's wrapper, as
     `cd W && TMPDIR=W/tmp pg_generate.sh --workdir W --seeds W/seeds.json < /dev/null`.
-  - pg_generate.sh: `a6cdf3df09864f1e6acd4bd162e2414f113e7cb12d2289377dfe1d0d523d0051`. The binary verifies this
-    sha.
+  - pg_generate.sh: `6bef698ee1a3cbc9463dc71c330809fe5967a732035fa430bc53eadf5ff087fa` (round 8). The binary
+    verifies this sha.
   - run_gevgen_v3.sh: `5c3fd52059a8fb344af154d1af6b9fb8d0a23fc8baf66bfa0377e1447d22890b`.
 - **What it writes:** everything is under W: `W/run/`, `W/out/`, `W/tmp/` and `W/PRODUCTS.json`.
   - I propose that the binding sets W to `/pscratch/sd/j/josephrb/covfix-pg/rehearsal-<utc>/`.
   - Nothing is written into the deploy, and nothing goes to CFS.
-  - What leaves W is decided by the parent, from `W/out/PG-PUBLISH-SHA256SUMS` (allowlisted and leak-scanned).
+  - At PG, nothing leaves W but ciphertext. The seal takes all of W, `out/` included, and empties W (the director's
+    ruling 4, 2026-11-25). There is no PG export of `W/out/PG-PUBLISH-SHA256SUMS`: the publish set (allowlisted and
+    leak-scanned in W) leaves only at PV's decrypt step, which is designed after the rehearsal.
 - **STOP conditions:**
   - Exit 2: a refusal before any step. Causes:
     - bad arguments;
@@ -217,7 +219,7 @@ Paths below are relative to `docs/orchestration/state/2d-closeout/covfix-2026112
 These are pg_generate.sh's contract with its parent (README-pg.md, "Contract" and "Environment it needs"). I can't
 check cov2d's state, so each item is for the binding to confirm.
 
-1. **The bound PG binary.** It runs pg_generate.sh as a subprocess, verifies its sha (`a6cdf3df…`) and gives it:
+1. **The bound PG binary.** It runs pg_generate.sh as a subprocess, verifies its sha (`6bef698e…`, round 8) and gives it:
    - cwd W, and `TMPDIR=W/tmp` (existing, mode 0700, the user's own);
    - stdin `/dev/null`, with stdout and stderr captured;
    - the scrubbed environment README-pg.md lists, including `PG_DEPLOY_PIN` set first, and none of `LD_PRELOAD`,
@@ -232,8 +234,9 @@ check cov2d's state, so each item is for the binding to confirm.
      `setup_salloc_env.sh`.
 4. **The director's wrapper,** installed (the memory records the 2026-11-24 reinstall from #1340's merge; the binding
    should give the current sha).
-5. **What leaves W:** the parent's export reads `W/out/PG-PUBLISH-SHA256SUMS` only. `W/out/PG-SHA256SUMS` and
-   `W/run/` are seed-bearing and stay sealed.
+5. **What leaves W:** only ciphertext. The seal takes all of W, `out/` included, and empties W (ruling 4,
+   2026-11-25). `W/out/PG-PUBLISH-SHA256SUMS` is not exported at PG; the publish set leaves only at PV's decrypt
+   step, designed after the rehearsal. `W/out/PG-SHA256SUMS` and `W/run/` are seed-bearing.
 6. **B2 must have passed** (`products/` in place and read-only). For G, B3 should pass first, both for the time
    check in section 3 and as the forecast of the binary's own pre-generation checks.
 

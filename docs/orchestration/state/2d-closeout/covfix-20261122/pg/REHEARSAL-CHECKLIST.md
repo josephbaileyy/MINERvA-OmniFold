@@ -56,3 +56,18 @@ From `W/out/pin_hash_start.json` and `pin_hash_end.json` (Q1): `files`, `links` 
 | `find W -type l` after staging | empty | |
 | each coverage GHEP's `seed_objects` | `genie::NtpMCTreeHeader`, `inflated` true or false | |
 
+**Round 8 (B3 run 2's exe-check STOP; the director's rulings, 2026-11-26): the compat-lib shim.**
+- **The home-filesystem risk.** libxxhash.so.0, which ROOT's libCore.so needs, has no provider on the node's system or on
+  CVMFS (install/b3-diag/b3-xxhash.out). It is pinned at the analysis conda env's real file
+  `/global/u2/j/josephrb/.conda/envs/root_6_28/lib/libxxhash.so.0.8.2` (sha256 69468b35…). That file is on home, not
+  revision-tracked, and `conda` can change it. A change before or during a run fails closed, at pin-hash's start or
+  end. No other lane is known to write to root_6_28; one that does must say so before the generation.
+- Record from each run: `pin_hash_start.json` and `pin_hash_end.json` with the three shim libraries hashed and
+  matching, and `revision_start.json` and `revision_end.json`'s `repos` for minerva.opensciencegrid.org (baseline
+  revision 2719, root hash aa0fa0c9…), with `revision_compare.json`'s `repos` entry.
+
+| item | expected | recorded |
+|---|---|---|
+| the three shim libraries in pin-hash at start and end | each matching its pin | |
+| minerva's revision at start and end | recorded; if changed, the pinned libraries re-hashed | |
+

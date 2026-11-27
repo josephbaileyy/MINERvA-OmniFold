@@ -510,7 +510,11 @@ class Generate(unittest.TestCase):
         (self.sysbin / "strace").write_text(STRACE)
         (g / "pg_pins.json").write_text(json.dumps({"strace_path": str(self.sysbin / "strace"),
                                                     "strace_sha256": "e" * 64, "dbconfig_sha256": "f" * 64,
-                                                    "system_tools": {"/usr/bin/gawk": "a" * 64}}))
+                                                    "system_tools": {"/usr/bin/gawk": "a" * 64},
+                                                    "compat_libs": {"dir": "/shim", "libs": {   # round 8: the shim
+                                                        "libssl.so.10": {"real": "/m/libssl.so.1.0.1e", "sha256": "1" * 64},
+                                                        "libxxhash.so.0": {"real": "/h/libxxhash.so.0.8.2",
+                                                                           "sha256": "2" * 64}}}}))
         git = ["git", "-C", str(self.dep), "-c", "user.name=t", "-c", "user.email=t@t"]
         subprocess.run(git[:3] + ["init", "-q"], check=True)
         subprocess.run(git + ["add", "-A"], check=True)
@@ -580,7 +584,13 @@ class Generate(unittest.TestCase):
         for v in ph:
             self.assertEqual(v[v.index("--manifest") + 1].rsplit("/", 1)[1], "genie-manifest.json")
             self.assertEqual(v[v.index("--products") + 1], "/cvmfs/larsoft.opensciencegrid.org/products")
-            self.assertEqual(sum(x == "--pin" for x in v), 2)                    # slot 2's spline and README
+            self.assertEqual(sum(x == "--pin" for x in v), 4)                    # slot 2's spline and README,
+            self.assertIn("/m/libssl.so.1.0.1e=" + "1" * 64, v)                  # and round 8's shim libraries:
+            self.assertIn("/h/libxxhash.so.0.8.2=" + "2" * 64, v)                # the conda one hashed at both ends
+        for v in (v for v in ver if v[1] in ("revision", "revision-compare")):   # round 8: minerva's revision too
+            self.assertIn("/cvmfs/minerva.opensciencegrid.org", v)
+        for v in (v for v in ver if v[1] in ("exe-check", "trace-check")):      # round 8: the shim's pins
+            self.assertEqual(v[v.index("--compat-pins") + 1].rsplit("/", 1)[1], "pg_pins.json")
         at = [i for i, v in enumerate(ver) if v[1] == "pin-hash"]
         tc = [i for i, v in enumerate(ver) if v[1] == "trace-check"]
         self.assertLess(at[0], min(tc))                                          # before anything is traced,
@@ -810,6 +820,18 @@ class Generate(unittest.TestCase):
         g.write_text(json.dumps(d))
         git = ["git", "-C", str(self.dep), "-c", "user.name=t", "-c", "user.email=t@t"]
         subprocess.run(git + ["commit", "-qam", "unpin"], check=True)
+        pin = subprocess.run(git[:3] + ["rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+        p = self.run_gen(PG_DEPLOY_PIN=pin)
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("pg_pins.json is not filled (R1)", p.stderr)
+
+    def test_pins_without_the_compat_shim_refuse(self):                    # round 8: the shim's pins are required
+        g = self.dep / "3d-unfolding/genie/pg_pins.json"
+        d = json.loads(g.read_text())
+        del d["compat_libs"]
+        g.write_text(json.dumps(d))
+        git = ["git", "-C", str(self.dep), "-c", "user.name=t", "-c", "user.email=t@t"]
+        subprocess.run(git + ["commit", "-qam", "no shim"], check=True)
         pin = subprocess.run(git[:3] + ["rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
         p = self.run_gen(PG_DEPLOY_PIN=pin)
         self.assertEqual(p.returncode, 2)
@@ -1100,6 +1122,13 @@ class Replay(unittest.TestCase):
         self.assertEqual(sorted(roles), ["coverage", "coverage", "gevgen", "gntpc", "graphs", "reduce", "reduce"])
         rc_ = next(ln.split() for ln in log if ln.startswith("pg_verify revision-compare"))
         self.assertEqual(sum(x == "--trace-check" for x in rc_), 7)                # every file the replay read
+        self.assertIn("/cvmfs/minerva.opensciencegrid.org", rc_)                  # round 8: minerva revision-tracked,
+        for ln in (ln for ln in log if ln.startswith(("pg_verify revision ", "pg_verify pin-hash"))):
+            self.assertIn("/cvmfs/minerva.opensciencegrid.org" if " revision " in ln else
+                          "/h/libxxhash.so.0.8.2=" + "2" * 64, ln)               # the shim's libraries at both ends
+        self.assertEqual(sum(ln.startswith("pg_verify pin-hash") for ln in log), 2)
+        for ln in (ln for ln in log if ln.startswith(("pg_verify exe-check", "pg_verify trace-check"))):
+            self.assertIn("--compat-pins ", ln)
         order = [ln.split()[1] for ln in log if ln.startswith("run_gevgen_v3 ")]
         self.assertLess(order.index("coverage"), order.index("genie"))          # coverage before the gevgen
         s2 = [ln for ln in log if ln.startswith("pg_verify trace-check") and "--tune G18_02a_00_000" in ln]
@@ -1325,6 +1354,22 @@ class Replay(unittest.TestCase):
                 p = self.run_replay(PG_STUB_VERIFY_FAIL=fail)
                 self.assertEqual(p.returncode, 1, p.stdout)
                 self.assertIn(f"[replay] STOP: {msg}", p.stdout)
+
+    def test_pins_without_the_compat_shim_refuse_the_replay(self):         # round 8: the shim's pins are required
+        g = self.dep / "3d-unfolding/genie/pg_pins.json"
+        for drop in ("compat_libs", "libs"):
+            with self.subTest(drop):
+                d = json.loads(g.read_text()) if drop == "compat_libs" else dict(json.loads(g.read_text()))
+                if drop == "compat_libs":
+                    d.pop("compat_libs")
+                else:
+                    d["compat_libs"] = {"dir": "/shim", "libs": {}}
+                keep = g.read_text()
+                g.write_text(json.dumps(d))
+                p = self.run_replay()
+                g.write_text(keep)
+                self.assertEqual(p.returncode, 2, p.stdout + p.stderr)
+                self.assertIn("pg_pins.json is not filled (R1)", p.stderr)
 
     def test_loader_and_shell_hooks_refuse(self):
         for v in ("LD_PRELOAD", "LD_AUDIT", "BASH_ENV", "ENV"):

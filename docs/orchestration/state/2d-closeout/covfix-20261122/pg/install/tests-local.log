@@ -34,6 +34,6 @@ test_the_archive_and_the_blobs (test_pg_install.Replay.test_the_archive_and_the_
 test_the_runners_own_result_passes_the_launcher (test_pg_install.Replay.test_the_runners_own_result_passes_the_launcher) ... ok
 
 ----------------------------------------------------------------------
-Ran 34 tests in 31.213s
+Ran 34 tests in 35.496s
 
 OK

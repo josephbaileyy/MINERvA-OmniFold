@@ -1814,3 +1814,202 @@ class Round7Drain(unittest.TestCase):
         own, foreign = V.survivor_scan("/nonexistent-w", child.pid, [], proc=str(proc))
         self.assertEqual((own, foreign), ([child.pid], []))
 
+
+
+class Round8Compat(Trace):
+    """B3 run 2's exe-check STOP (the director's rulings, 2026-11-26): the compat-lib shim setup_genie_v3.sh puts first on
+    LD_LIBRARY_PATH, allowed only as pinned. exe-check accepts the shim directory only at its pinned real path with each
+    pinned name resolving to its pinned target and bytes; trace-check accepts a library outside the roots only at a
+    pinned real path whose bytes match; pin-hash hashes each pinned library at the start and the end; minerva's CVMFS
+    revision is tracked as larsoft's is."""
+
+    def setUp(self):
+        super().setUp()
+        self.ext = self.tmp / "ext"                       # the targets (minerva CVMFS and the conda env on Perlmutter)
+        self.ext.mkdir()
+        self.shim = self.tmp / "home/.genie_compatlibs"
+        self.shim.mkdir(parents=True)
+        for name, target, body in (("libssl.so.10", "libssl.so.1.0.1e", b"ssl"),
+                                   ("libxxhash.so.0", "libxxhash.so.0.8.2", b"xxhash"),
+                                   ("libpcre.so.0", "libpcre.so.0.0.1", b"pcre")):       # in the shim, not pinned
+            (self.ext / target).write_bytes(body)
+            (self.shim / name).symlink_to(self.ext / target)
+        self.real = {n: os.path.realpath(self.shim / n) for n in ("libssl.so.10", "libxxhash.so.0", "libpcre.so.0")}
+        self.compat = (os.path.realpath(self.shim), {"libssl.so.10": (self.real["libssl.so.10"], sha(b"ssl")),
+                                                     "libxxhash.so.0": (self.real["libxxhash.so.0"], sha(b"xxhash"))})
+        self.lib_pins = dict(self.compat[1].values())
+
+    def codes(self, rec):
+        return {p.split(":")[0] for p in rec["problems"]}
+
+    def ld(self, compat="pinned"):
+        return V.exe_problems([], {}, ld_library_path=f"{self.shim}:/usr/lib64",
+                              compat=self.compat if compat == "pinned" else compat)
+
+    def loads(self, *names):
+        g = self.good_lines()
+        for i, n in enumerate(names):
+            g.insert(1 + i, f'100 openat(AT_FDCWD, "{self.shim}/{n}", O_RDONLY|O_CLOEXEC) = {20 + i}')
+        return g
+
+    def test_the_pinned_shim_passes(self):
+        self.assertEqual(self.ld(), [])
+        rec = self.check(self.loads("libssl.so.10", "libxxhash.so.0"), lib_pins=self.lib_pins)
+        self.assertTrue(rec["pass"], rec["problems"])
+        self.assertEqual({x["pinned_by"] for x in rec["gated"] if "genie_compatlibs" in x["path"]}, {"library pin"})
+
+    def test_the_shim_unpinned_or_another_directory_stops(self):
+        self.assertEqual([p.split(":")[0] for p in self.ld(compat=None)], ["ld-library-path"])
+        other = (str(self.ext), self.compat[1])                              # pins for another directory
+        self.assertEqual([p.split(":")[0] for p in self.ld(compat=other)], ["ld-library-path"])
+        self.assertIn("so-outside-roots", self.codes(self.check(self.loads("libssl.so.10"))))   # no library pins
+
+    def test_a_shim_entry_that_is_not_pinned_stops(self):                   # planted (1)
+        codes = self.codes(self.check(self.loads("libssl.so.10", "libpcre.so.0"), lib_pins=self.lib_pins))
+        self.assertIn("so-outside-roots", codes)
+        self.assertIn("gated-mismatch", codes)
+
+    def test_a_pinned_name_pointing_at_another_target_stops(self):          # planted (2)
+        (self.shim / "libssl.so.10").unlink()
+        (self.shim / "libssl.so.10").symlink_to(self.ext / "libpcre.so.0.0.1")
+        self.assertEqual([p.split(":")[0] for p in self.ld()], ["compat-target"])
+        self.assertIn("so-outside-roots", self.codes(self.check(self.loads("libssl.so.10"), lib_pins=self.lib_pins)))
+
+    def test_a_pinned_target_with_other_bytes_stops(self):                  # planted (3)
+        (self.ext / "libxxhash.so.0.8.2").write_bytes(b"other")
+        self.assertEqual([p.split(":")[0] for p in self.ld()], ["compat-sha"])
+        codes = self.codes(self.check(self.loads("libxxhash.so.0"), lib_pins=self.lib_pins))
+        self.assertIn("so-pin-mismatch", codes)
+        self.assertIn("so-outside-roots", codes)
+
+    def test_a_minerva_revision_change_rehashes_its_libraries(self):        # planted (4)
+        from contextlib import redirect_stdout
+        repo = str(self.ext)                                                 # minerva's place in this test
+        lab = {"revision": "1250", "root_hash": "l"}
+        tc = self.tmp / "tc.json"
+        tc.write_text(json.dumps({"libraries": [{"path": f"{self.shim}/libssl.so.10", "real": self.real["libssl.so.10"],
+                                                 "sha256": sha(b"ssl")}]}))
+
+        def compare(start, end, repos=(repo,)):
+            files = []
+            for w, r in (("start", start), ("end", end)):
+                f = self.tmp / f"rev_{w}.json"
+                f.write_text(json.dumps(dict(lab, repos=r)))
+                files.append(str(f))
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                rc = V.main(["revision-compare", "--start", files[0], "--end", files[1], "--trace-check", str(tc)]
+                            + sum((["--repo", x] for x in repos), []))
+            return rc, json.loads(buf.getvalue().strip().splitlines()[-1])
+
+        same = {repo: {"revision": "2719", "root_hash": "a"}}
+        moved = {repo: {"revision": "2720", "root_hash": "b"}}
+        self.assertEqual(compare(same, same)[0], 0)
+        rc, rec = compare(same, moved)                                       # changed, and its library re-hashes
+        self.assertEqual((rc, rec["repos"][repo]["changed"]), (0, True))
+        (self.ext / "libssl.so.1.0.1e").write_bytes(b"changed")
+        rc, rec = compare(same, moved)
+        self.assertEqual(rc, 1)
+        self.assertIn("revision-rehash", {p.split(":")[0] for p in rec["problems"]})
+        rc, rec = compare(same, {})                                          # not recorded at the end
+        self.assertEqual(rc, 1)
+        self.assertIn("revision-repo-missing", {p.split(":")[0] for p in rec["problems"]})
+
+    def test_the_conda_library_changed_between_start_and_end_stops(self):  # the director's planted test
+        pins = {self.real["libxxhash.so.0"]: sha(b"xxhash")}
+        self.assertTrue(V.pin_hash({}, str(self.tmp), pins)["pass"])          # the run's start
+        (self.ext / "libxxhash.so.0.8.2").write_bytes(b"conda changed it")
+        end = V.pin_hash({}, str(self.tmp), pins)                             # the run's end
+        self.assertFalse(end["pass"])
+        self.assertEqual([p.split(":")[0] for p in end["problems"]], ["pin-mismatch"])
+
+    def test_compat_pins_are_read_strictly(self):
+        good = {"dir": "/s", "libs": {"libssl.so.10": {"real": "/m/libssl.so.1.0.1e", "sha256": "a" * 64}}}
+        f = self.tmp / "pins.json"
+        f.write_text(json.dumps({"compat_libs": good}))
+        self.assertEqual(V.compat_pins(str(f)), ("/s", {"libssl.so.10": ("/m/libssl.so.1.0.1e", "a" * 64)}))
+        for bad in ({}, dict(good, dir="s"), dict(good, libs={}),
+                    dict(good, libs={"a/b": good["libs"]["libssl.so.10"]}),
+                    dict(good, libs={"libssl.so.10": {"real": "m", "sha256": "a" * 64}}),
+                    dict(good, libs={"libssl.so.10": {"real": "/m", "sha256": "A" * 64}})):
+            with self.subTest(bad):
+                f.write_text(json.dumps({"compat_libs": bad}))
+                with self.assertRaises(V.Fail):
+                    V.compat_pins(str(f))
+
+    def test_a_pinned_library_outside_any_gated_name(self):              # GENIE_COMPAT may name another directory
+        other = self.tmp / "compat"
+        other.mkdir()
+        (other / "libssl.so.10").symlink_to(self.ext / "libssl.so.1.0.1e")
+        g = self.good_lines()
+        g.insert(1, f'100 openat(AT_FDCWD, "{other}/libssl.so.10", O_RDONLY|O_CLOEXEC) = 20')
+        rec = self.check(g, lib_pins=self.lib_pins)
+        self.assertTrue(rec["pass"], rec["problems"])                          # its real path and bytes, and nothing else
+        self.assertIn("so-outside-roots", self.codes(self.check(g)))
+
+    def pins_file(self):
+        f = self.tmp / "pg_pins.json"
+        f.write_text(json.dumps({"compat_libs": {"dir": self.compat[0], "libs": {
+            n: {"real": r, "sha256": h} for n, (r, h) in self.compat[1].items()}}}))
+        return str(f)
+
+    def test_the_cli_passes_the_compat_pins(self):
+        from contextlib import redirect_stdout
+        from unittest import mock
+        seen = {}
+
+        def fake(*a, **kw):
+            seen.update(kw)
+            return {"pass": True, "problems": []}
+        files = {}
+        for k in ("record", "manifest", "private-members"):
+            files[k] = self.tmp / f"{k}.json"
+            files[k].write_text(json.dumps({"members": {}}))
+        argv = ["trace-check", "--trace", str(self.tmp / "none.trace"), "--rc", "0", "--role", "gevgen", "--tune", "T",
+                "--spline", "s", "--spline-sha256", "0" * 64, "--cwd", str(self.W), "--w-root", str(self.W),
+                "--out", str(self.tmp / "tc.json"), "--compat-pins", self.pins_file()]
+        for k, f in files.items():
+            argv += ["--" + k, str(f)]
+        with mock.patch.object(V, "trace_check", fake), redirect_stdout(io.StringIO()):
+            V.main(argv)
+        self.assertEqual(seen.get("lib_pins"), self.lib_pins)
+        man = self.tmp / "man.json"
+        man.write_text(json.dumps({"members": {}}))
+        for pins, want in ((self.pins_file(), []), (None, ["ld-library-path"])):
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                V.main(["exe-check", "--manifest", str(man), "--path", "/usr/bin/true", "--ld-library-path", str(self.shim)]
+                       + (["--compat-pins", pins] if pins else []))
+            probs = json.loads(buf.getvalue().strip().splitlines()[-1])["problems"]
+            self.assertEqual([p.split(":")[0] for p in probs if p.startswith("ld-") or p.startswith("compat")], want)
+
+    def test_the_revision_of_each_repository(self):
+        from contextlib import redirect_stdout
+        from unittest import mock
+        vals = {("/a", "user.revision"): b"1250", ("/a", "user.root_hash"): b"l",
+                ("/b", "user.revision"): b"2719", ("/b", "user.root_hash"): b"m"}
+        buf = io.StringIO()
+        with mock.patch.object(V.os, "getxattr", lambda p, k: vals[(p, k)], create=True), redirect_stdout(buf):
+            rc = V.main(["revision", "--repo", "/a", "--repo", "/b"])
+        rec = json.loads(buf.getvalue().strip().splitlines()[-1])
+        self.assertEqual((rc, rec["revision"], rec["root_hash"]), (0, "1250", "l"))       # larsoft's, as before
+        self.assertEqual(rec["repos"], {"/a": {"revision": "1250", "root_hash": "l"},
+                                        "/b": {"revision": "2719", "root_hash": "m"}})
+
+    def test_the_repository_pins_are_the_evidence(self):
+        """pg_pins.json's compat_libs and minerva_repo equal B3's committed library evidence (install/b3-diag)."""
+        pins = json.loads((Path(V.__file__).parent / "pg_pins.json").read_text())
+        diag = Path(V.__file__).parents[2] / "docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/b3-diag"
+        libs = (diag / "b3-libs.out").read_text()
+        self.assertEqual(pins["compat_libs"]["dir"], "/global/u2/j/josephrb/.genie_compatlibs")
+        self.assertEqual(sorted(pins["compat_libs"]["libs"]), ["libcrypto.so.10", "libssl.so.10", "libxxhash.so.0"])
+        for name, v in pins["compat_libs"]["libs"].items():                   # each a needed name, at its measured target
+            self.assertRegex(libs, rf"\('{re.escape(name)}', '[^']+', '/global/homes/j/josephrb/\.genie_compatlibs', "
+                                   rf"'{re.escape(v['real'])}'\)")
+            self.assertRegex(libs, rf"  {re.escape(name)} -> {re.escape(v['real'])} \d+ {v['sha256']}\n")
+        xx = (diag / "b3-xxhash.out").read_text()
+        self.assertIn("MATCH: soname libxxhash.so.0 = True; libCore's 3 undefined XXH symbols all defined = True", xx)
+        m = pins["minerva_repo"]
+        self.assertEqual(m["repo"], "/cvmfs/minerva.opensciencegrid.org")
+        self.assertIn(f"/cvmfs/minerva.opensciencegrid.org user.revision {m['baseline_revision']}\n", xx)
+        self.assertIn(f"/cvmfs/minerva.opensciencegrid.org user.root_hash {m['baseline_root_hash']}\n", xx)

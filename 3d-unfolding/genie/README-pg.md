@@ -80,7 +80,8 @@ then:
   counted against their chance expectation and recorded;
 - checks each gst's keys and streamer info against B3's schema of its kind: gntpc's for the task gsts, hadd's for
   `out/gst/*_ALL.gst.root`;
-- writes `out/leak_scan.json` and the public `out/PG-PUBLISH-SHA256SUMS`, and scans both.
+- writes `out/leak_scan.json` and `out/PG-PUBLISH-SHA256SUMS`, and scans both. Both stay in W and are sealed with it
+  (at PG nothing leaves W but ciphertext; the publish set leaves only at PV's decrypt step).
 The deploy's last snapshot is taken before the publish set is listed, so it is published and scanned. After
 publication the deploy is compared once more, without writing a file. A STOP after publication withdraws both files. The required inventory (`pg_lib.py inventory`) is checked last.
 
@@ -133,7 +134,7 @@ this lane's proposal for the gen-spec; its author decides.
 | `HOME` | env_keep | `setup_salloc_env.sh` activates `$HOME/.conda/envs/root_6_28`. `setup_genie_v3.sh` reads the compat-lib shim at `$HOME/.genie_compatlibs` |
 | `SLURM_JOB_ID`, `SLURM_CPUS_ON_NODE` | env_keep | read by `node-record` only. Without them, `node_check.json` records `slurm_job` and `all_cpus_allocated` false |
 | `SCRATCH` | neither | not needed: `setup_salloc_env.sh` reads it only for the TMPDIR it sets (then overridden with `W/tmp`) and a CODEX_HOME nothing here reads, and it has no `set -u`. The driver tests run without it. Left out, pg_generate cannot learn a path outside W that cov2d's spill scan (which covers `$SCRATCH/tmp`) would miss |
-| `GENIE_COMPAT` (optional) | env_set, if used | overrides the shim directory, as in F1 |
+| `GENIE_COMPAT` (optional) | env_set, if used | overrides the shim directory, as in F1. Since round 8 the shim is allowed only as pinned in `pg_pins.json` `compat_libs` (its real directory, and libssl.so.10, libcrypto.so.10 and libxxhash.so.0 at their real targets and shas): exe-check refuses any other directory, trace-check any other library outside the roots, and pin-hash hashes the three at the start and the end. **libxxhash.so.0's target is the analysis conda env's `root_6_28/lib/libxxhash.so.0.8.2` on the home filesystem, with no revision tracking**: a change by `conda` is caught only by those two hashes, which fail closed. The libssl and libcrypto targets are on minerva.opensciencegrid.org, whose revision is recorded at the start and the end like larsoft's |
 | `ROOT628_PREFIX`, `ROOT628_CONDA` (optional) | env_set, if used | override the analysis environment's location, as `setup_salloc_env.sh` allows |
 | `TMPDIR` | neither | must be `W/tmp`. It is re-exported after every environment activation, because `setup_salloc_env.sh` sets `TMPDIR=$SCRATCH/tmp` |
 
@@ -154,7 +155,8 @@ It needs no network, no passphrase and no GNUPGHOME: encryption is the parent's.
   §3.4), the pvl ratio and the prediction.
 - `W/out/PG-SHA256SUMS`: the plaintext sha256 of every product. **It is seed-bearing and must stay inside the seal.**
 - `W/out/PG-PUBLISH-SHA256SUMS` and `W/out/leak_scan.json`: the allowlisted, published files' sums and the scan's
-  counts. Both are public and both are scanned.
+  counts. Both are scanned. At PG they are sealed with the rest of W, `out/` included: nothing leaves W but
+  ciphertext, and the publish set leaves only at PV's decrypt step (the director's ruling 4, 2026-11-25).
 - `W/out/revision_compare.json` and `W/out/node_check.json`: the CVMFS revision compare and the node record.
 
 Nothing is written into the deploy. Python runs with `-B` and `PYTHONDONTWRITEBYTECODE=1`, and the deploy's full

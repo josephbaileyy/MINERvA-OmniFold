@@ -72,7 +72,13 @@ STRACE=$(pin strace_path); STRACE_SHA=$(pin strace_sha256); DBCONFIG_SHA=$(pin d
 SYSPINS=$("$PY" -I -c 'import json,sys
 v = json.load(open(sys.argv[1])).get("system_tools") or {}
 print("".join(f"--system-pin\n{k}={h}\n" for k, h in sorted(v.items()) if k and h))' "$G/pg_pins.json")
-[ -n "$STRACE" ] && [ -n "$STRACE_SHA" ] && [ -n "$DBCONFIG_SHA" ] && [ -n "$SYSPINS" ] || refuse "pg_pins.json is not filled (R1)"
+COMPAT=$("$PY" -I -c 'import json,sys
+c = json.load(open(sys.argv[1])).get("compat_libs") or {}
+print("".join("--pin\n%s=%s\n" % (v.get("real"), v.get("sha256")) for k, v in sorted((c.get("libs") or {}).items())
+              if c.get("dir") and v.get("real") and v.get("sha256")))' "$G/pg_pins.json")   # the shim's pinned libraries
+MINERVA_REPO=/cvmfs/minerva.opensciencegrid.org   # the compat shim libssl/libcrypto.so.10 targets' repository
+[ -n "$STRACE" ] && [ -n "$STRACE_SHA" ] && [ -n "$DBCONFIG_SHA" ] && [ -n "$SYSPINS" ] && [ -n "$COMPAT" ] \
+  || refuse "pg_pins.json is not filled (R1)"
 "$PY" -I -c 'import json, sys; d = json.load(open(sys.argv[1])); sys.exit(0 if d.get("gst") and d.get("gst_merged") else 1)' \
   "$REC/root-schemas.json" 2>/dev/null || refuse "root-schemas.json lacks B3's gst or gst_merged schema"
 mkdir -p "$O/logs" "$O/splines" "$O/gst" "$O/gen5d" "$O/work" "$O/traces" "$R" || refuse "cannot create W/out and W/run"
@@ -165,7 +171,7 @@ exec 9< "$STRACE" || need 1 "open strace"
 need $? "strace (its pinned sha through the descriptor, and the self-test)"
 pass "strace"
 V() { "$PY" -I -B "$G/pg_verify.py" "$@"; }
-V revision --repo "$CVMFS_REPO" > "$O/revision_start.json" 2> "$O/logs/revision.log"
+V revision --repo "$CVMFS_REPO" --repo "$MINERVA_REPO" > "$O/revision_start.json" 2> "$O/logs/revision.log"
 need $? "the CVMFS revision (start)"
 "$PY" -I -B "$G/pg_verify.py" node-record > "$O/node_check.json" 2> "$O/logs/node.log"   # C3: recorded, not a gate
 pass "the node's /proc and allocation recorded"
@@ -192,7 +198,7 @@ tcheck() {   # tcheck ROLE TUNE TRACE SPLINE SPLINE_SHA CWD OUT [--messenger M |
     --spline-sha256 "$5" --cwd "$6" --record "$REC/PG-RECORD.json" --manifest "$REC/genie-manifest.json" \
     --private-members "$REC/G2111a-members.json" --w-root "$W" --w-pin "$O/splines/${2}_CH.xml.gz=$(reduced_sha "$2")" \
     --gxmlpath "$(cat "$R/gxmlpath_$2.txt")" --xsec-data "$(xroot "$2")/$(qual "$2")/data" "${xp[@]}" "${sp[@]}" \
-    --out "$7" "${@:8}"
+    --compat-pins "$G/pg_pins.json" --out "$7" "${@:8}"
 }
 reduced_sha() { [ -s "$O/spline_check_$1.json" ] && "$PY" -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["reduced"]["sha256"])' "$O/spline_check_$1.json" || echo none; }
 source_sha() { "$PY" -I -c 'import ast,sys
@@ -208,6 +214,7 @@ pass "seeds.json" "$(wc -l < "$R/queue.txt" | tr -d ' ') tasks"
 pinhash() {   # Q1 (the director, 2026-11-25): every pinned CVMFS file, the genie manifest's and each CVMFS tune's
   local xp=() l T   # spline and README, hashed at the start and the end; each must equal its pin, and both sets are kept
   for T in $TUNES; do while IFS= read -r l; do xp+=("$l"); done < <(xpins "$T"); done
+  while IFS= read -r l; do [ -z "$l" ] || xp+=("$l"); done <<< "$COMPAT"   # the shim's libraries (one on home)
   V pin-hash --manifest "$REC/genie-manifest.json" --products "$CVMFS_REPO/products" "${xp[@]}" \
     > "$O/pin_hash_$1.json" 2>> "$O/logs/pin_hash.log"
   need $? "every pinned CVMFS file against its pin ($1)"
@@ -221,7 +228,8 @@ for T in $TUNES; do   # the programs the traced steps run, as their own setup re
     printf '%s\n' "${LD_LIBRARY_PATH-}" > "$R/ld_library_path_$T.txt"; command -v awk > "$R/awk_$T.txt"
     printf '%s\n' "${GXMLPATH-}" > "$R/gxmlpath_$T.txt" ) \
     > "$R/exe_$T.txt" 2> "$O/logs/exe_$T.log" || need 1 "resolve gevgen and gspl2root ($T)"
-  "$PY" -I -B "$G/pg_verify.py" exe-check --manifest "$REC/genie-manifest.json" $(sed 's/^/--path /' "$R/exe_$T.txt") \
+  "$PY" -I -B "$G/pg_verify.py" exe-check --manifest "$REC/genie-manifest.json" --compat-pins "$G/pg_pins.json" \
+    $(sed 's/^/--path /' "$R/exe_$T.txt") \
     --ld-library-path "$(cat "$R/ld_library_path_$T.txt")" --system-path "$(cat "$R/awk_$T.txt")" \
     > "$O/exe_check_$T.json" 2>> "$O/logs/exe_$T.log" || need 1 "gevgen, gspl2root, awk and LD_LIBRARY_PATH ($T)"
 done
@@ -297,10 +305,10 @@ while read -r T _ k; do   # gntpc, which writes the gst the pipeline consumes, i
 done < "$R/queue.txt"
 pass "trace check of every gntpc task" "$(wc -l < "$R/queue.txt" | tr -d ' ') tasks"
 pinhash end
-V revision --repo "$CVMFS_REPO" > "$O/revision_end.json" 2>> "$O/logs/revision.log"
+V revision --repo "$CVMFS_REPO" --repo "$MINERVA_REPO" > "$O/revision_end.json" 2>> "$O/logs/revision.log"
 need $? "the CVMFS revision (end)"
 tcs=(); for f in "$O"/trace_check_*.json "$O"/work/u*/t*/trace_check*.json; do [ -e "$f" ] && tcs+=(--trace-check "$f"); done
-V revision-compare --start "$O/revision_start.json" --end "$O/revision_end.json" "${tcs[@]}" \
+V revision-compare --start "$O/revision_start.json" --end "$O/revision_end.json" --repo "$MINERVA_REPO" "${tcs[@]}" \
   > "$O/revision_compare.json" 2>> "$O/logs/revision.log"
 need $? "the CVMFS revision changed and a file the run read no longer matches its pin"
 pass "the CVMFS revision, or every file read re-hashed"

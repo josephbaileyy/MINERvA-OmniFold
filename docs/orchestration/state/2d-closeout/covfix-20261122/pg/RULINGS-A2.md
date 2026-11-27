@@ -185,6 +185,8 @@ allocation, and same-account processes are out of scope. F1's argv stays byte-id
   `record/root-schemas.json` holds once B3 has run; pg_generate refuses at its start while it is unset;
 - out/leak_scan.json and out/PG-PUBLISH-SHA256SUMS are scanned after they are written. The sums file is public and
   lists only allowlisted, published files (cov2d's publish_guard is amended to pass exactly those hashes).
+  *Later (the director's ruling 4, 2026-11-25): at PG nothing leaves W but ciphertext. The seal takes all of W,
+  `out/` included, so these two files are sealed too, and the publish set leaves only at PV's decrypt step.*
 - B3's public-seed files are decoded the same way, as the positive control.
 
 **The trace set** adds execveat, rename, renameat, renameat2, link, linkat, symlink, symlinkat, unlink and unlinkat.
@@ -319,3 +321,42 @@ for a GHEP with `compgen -G`, which succeeds only on a match.
 **Logs.** From this round on, every suite run writes its full output to its log, not only the summary line. If the
 unexplained "8 failed, 325 passed" run recurs, that is a STOP to the director.
 
+
+## Round 8: the compat-lib shim (B3 run 2's exe-check STOP; the director's rulings, 2026-11-26)
+
+**The STOP.** B3's second run (receipt install/pg-replay-g2111a.py.out, e8a58f9d…) STOPped at exe-check, before any
+GENIE program. Its one problem: `ld-library-path: /global/homes/j/josephrb/.genie_compatlibs -> … is outside CVMFS and
+the system library directories` (install/b3-diag/b3-diag.out). setup_genie_v3.sh puts F1's compat-lib shim first on
+LD_LIBRARY_PATH, and no test modelled it.
+
+**The evidence** (read-only, install/b3-diag/, each script's sha to the director before it ran):
+- b3-libs.out: GENIE's NEEDED closure (125 ELF files, none unresolved) loads three of the shim's seven names:
+  libssl.so.10 and libcrypto.so.10 (ROOT's libNet.so), whose targets are on minerva CVMFS's sl6_fnal_python3, and
+  libxxhash.so.0 (ROOT's libCore.so), whose target is the conda env's. SLES 15-SP6 provides libssl and libcrypto only as
+  .so.1.0.0, .so.1.1 and .so.3, and no libxxhash, so (c), the system libraries, fails.
+- b3-xxhash.out: no larsoft product and no minerva container holds a libxxhash.so*. The conda file's SONAME is
+  libxxhash.so.0, and it defines libCore's three undefined XXH symbols.
+
+**Rulings.**
+- libssl.so.10 and libcrypto.so.10: pinned at their minerva real paths and shas, with minerva revision-tracked as
+  larsoft is (revision and root hash at start and end, the libraries re-hashed on a change). The two libpcre names are
+  neither pinned nor allowed.
+- libxxhash.so.0: (i), pinned at the conda env's real file and sha, hashed at the start and the end, allowed only at
+  that real path. It is the only provider, and it gives F1 parity with no new install step. The home-filesystem risk
+  is stated in REHEARSAL-CHECKLIST.md and README-pg.md.
+
+**As built.**
+- pg_pins.json gains `compat_libs` (the shim's real directory, each pinned name's real target and sha) and
+  `minerva_repo` (the repository, with revision 2719 and root hash aa0fa0c9… as the observed baseline). Both drivers
+  refuse without `compat_libs`.
+- exe-check (`--compat-pins`): an LD_LIBRARY_PATH entry outside the roots passes only if it is the pinned shim
+  directory and each pinned name in it resolves to its pinned target with matching bytes (`compat-target`,
+  `compat-sha`).
+- trace-check (`--compat-pins`): a library outside the roots passes only at a pinned real path whose bytes match
+  (`so-pin-mismatch`); a gated read of the shim is pinned by real path (`library pin`).
+- pin-hash: both drivers add the three pinned libraries, at the start and the end.
+- revision and revision-compare take several `--repo`: larsoft's values stay the record's own, and minerva's sit under
+  `repos`, compared with the same re-hash rule (`revision-repo-missing` if a repository is not in both records).
+- Tests: the four planted cases (an unpinned shim entry, a pinned name pointing elsewhere, a pinned target with other
+  bytes, a minerva revision change) and the director's fifth (the conda file changed between start and end), plus the
+  shim outside a gated name, the CLI wiring, the refusals, and the pins held to the b3-diag evidence. 27 mutants.
