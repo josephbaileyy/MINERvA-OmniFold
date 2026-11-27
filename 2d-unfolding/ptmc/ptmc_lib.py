@@ -147,6 +147,25 @@ def shape_gate(delta, D, rank=RANK, n=N_REPLICAS, cells=N_CELLS) -> dict:
             "n_loo_failures": len(loo_bad), "lambda_ratio_rank_over_top": ratio}
 
 
+COND_FLOOR = 1e-10  # the binding's guard (the director, 2026-11-27): lambda_r / lambda_1 >= 1e-10 in each arm
+
+
+def conditioning(D, rank=RANK, floor=COND_FLOOR) -> dict:
+    """The binding's fail-closed guard beside C-SHAPE (which stays pinv_rank's declared criterion): in the arm's
+    covariance, lambda_rank / lambda_1 must be at least ``floor``. float64 roundoff for a 224-dimensional covariance is
+    about 224 eps lambda_1 ~ 5e-14 lambda_1, so 1e-10 is four orders above it; a numerically rank-deficient covariance,
+    whose retained modes sit at roundoff, cannot pass. Below the floor is a STOP, never a classification."""
+    D = np.asarray(D, float)
+    if D.ndim != 2 or D.shape[0] < 2 or not np.all(np.isfinite(D)):
+        return {"ratio": float("nan"), "pass": False}
+    Cm = np.cov(D, rowvar=False, ddof=1)
+    lam = np.sort(np.linalg.eigvalsh((Cm + Cm.T) / 2))[::-1]
+    if not (np.all(np.isfinite(lam)) and lam[0] > 0 and lam.size >= rank):
+        return {"ratio": float("nan"), "pass": False}
+    ratio = float(lam[rank - 1] / lam[0])
+    return {"ratio": ratio, "floor": floor, "pass": bool(ratio >= floor)}
+
+
 def finite_t(t: dict) -> bool:
     return all(math.isfinite(float(t[k])) for k in ("T", "q95", "max"))
 

@@ -444,6 +444,9 @@ def score(a) -> dict:
         if not sg["pass"]:
             raise Stop(f"C-SHAPE: {key} {sg}")
         printed.setdefault("lambda_ratio_rank_over_top", {})[f"{key[0]}_K{key[1]}"] = sg["lambda_ratio_rank_over_top"]
+        cond = P.conditioning(D, rank=CONST["RANK"])  # the binding's guard: below 1e-10 is a STOP to the director
+        if not cond["pass"]:
+            raise Stop(f"the conditioning guard: {key} lambda_r/lambda_1 = {cond['ratio']:.3g} < 1e-10")
     controls["C-SHAPE"] = {"pass": True}
     readings = {}
     for (arm, K), (delta, D) in arms.items():

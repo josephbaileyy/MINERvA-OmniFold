@@ -202,6 +202,18 @@ class Gates(unittest.TestCase):
         r = P.shape_gate(num[0], num)
         self.assertLess(r["lambda_ratio_rank_over_top"], 1e-10)
 
+    def test_conditioning_guard(self):
+        """The binding's guard (the director, 2026-11-27): lambda_r / lambda_1 at 1e-13 STOPs, at 1e-6 passes."""
+        rng = np.random.default_rng(3)
+        for ratio, want in ((1e-13, False), (1e-6, True)):
+            scales = np.geomspace(1.0, ratio, 50)
+            D = np.zeros((200, 224))
+            D[:, :50] = rng.normal(size=(200, 50)) * np.sqrt(scales)
+            D[:, 50:] = rng.normal(size=(200, 174)) * np.sqrt(ratio * 1e-3)
+            c = P.conditioning(D, rank=50)
+            self.assertEqual(c["pass"], want, c)
+        self.assertFalse(P.conditioning(np.full((200, 224), np.nan))["pass"])
+
     def test_finite_t(self):
         self.assertTrue(P.finite_t({"T": 1.0, "q95": 2.0, "max": 3.0}))
         self.assertFalse(P.finite_t({"T": float("nan"), "q95": 2.0, "max": 3.0}))

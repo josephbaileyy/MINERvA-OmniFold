@@ -62,6 +62,7 @@ MUTANTS = [
      "    loo_bad = []", T, "Gates"),
     ("LIB_SHAPE_TOP", "ptmc_lib.py", "np.all(top > 0))", "np.all(top >= 0))", T, "Gates"),
     ("LIB_PROTO_ZEROVAR", "ptmc_lib.py", "    if np.any(diff[:, ~pos] != 0):", "    if False:", T, "Gates"),
+    ("LIB_COND_FLOOR", "ptmc_lib.py", "COND_FLOOR = 1e-10", "COND_FLOOR = 1e-14", T, "Gates"),
     ("LIB_STAGED_INDEX", "ptmc_lib.py", '    return f"{int(b) + 1:03d}_xsec.root"', '    return f"{int(b):03d}_xsec.root"',
      T, "Gates"),
     ("LIB_DISP_MISMATCH", "ptmc_lib.py", "    if optional_mismatch or repoff_pass is False:",
