@@ -1,0 +1,43 @@
+name|bytes|atime|mtime|inode|verdict
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A.npz|127968221|1793792304|1793782124|882727252234608689|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A_bkg.npz|2311555|1793792304|1793782124|882727252234608690|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1B.npz|33980383|1793792304|1793781979|882727252234608036|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1B_bkg.npz|638389|1793792304|1793781979|882727252234608037|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1C.npz|65471177|1793792304|1793782095|882727252234608560|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1C_bkg.npz|1194780|1793792304|1793782095|882727252234608563|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1D.npz|192006622|1793792305|1793781545|882727252234602226|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1D_bkg.npz|3448900|1793792305|1793781545|882727252234602397|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1E.npz|158814144|1793792305|1793781776|882727252234605338|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1E_bkg.npz|2888635|1793792305|1793781776|882727252234605355|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1F.npz|221027198|1793792306|1793781561|882727252234602406|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1F_bkg.npz|4027113|1793792306|1793781562|882727252234602493|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1G.npz|186899533|1793792307|1793781543|882727252234602225|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1G_bkg.npz|3360491|1793792307|1793781544|882727252234602395|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L.npz|18061361|1793792308|1793781975|882727252234608033|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L_bkg.npz|361915|1793792308|1793781975|882727252234608034|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1M.npz|274076044|1793792308|1793781581|882727252234602663|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1M_bkg.npz|5283519|1793792308|1793781581|882727252234602713|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1N.npz|159089937|1793792309|1793781796|882727252234605611|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1N_bkg.npz|3119697|1793792309|1793781796|882727252234605663|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1O.npz|47673627|1793792310|1793782089|882727252234608557|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1O_bkg.npz|997512|1793792310|1793782089|882727252234608558|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1P.npz|63445665|1793792310|1793782095|882727252234608561|same as recorded
+/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1P_bkg.npz|1316555|1793792310|1793782095|882727252234608562|same as recorded
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root|3188849|1795739589|1625676963|882722362129161251|same as recorded
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root|3187397|1795738471|1625676963|882722362129161272|same as recorded
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root|3182011|1795710429|1625676963|882722362129161271|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/truthx_RDX_ALL.npz|2364943114|1794937529|1794884234|882727588601004051|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1A.root|605076305|1794892084|1794716676|882727515653799093|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1B.root|162097785|1794892085|1794861298|882727582175370968|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1C.root|310337285|1794892086|1794863830|882727580917085568|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1D.root|904836901|1794892086|1794869500|882727580111855345|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1E.root|753934165|1794892089|1794868276|882727581856604920|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1F.root|1048192809|1794892091|1794871649|882727583165203515|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1G.root|883836408|1794892094|1794870305|882727583366517421|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1L.root|86211914|1794892097|1794861960|882727582041175724|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1M.root|1318953730|1794892097|1794876861|882727580850027907|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1N.root|763022193|1794892102|1794869535|882727581990862679|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1O.root|231277653|1794892104|1794864695|882727581856629661|same as recorded
+/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1P.root|305659361|1794892104|1794865666|882727581470798044|same as recorded
+earliest purge exposure 2026-12-30T11:38:24Z (/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A.npz, atime 2026-11-04T11:38:24Z)
+P0 STAT: PASS (40 files, 0 missing or different)
