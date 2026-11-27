@@ -1,0 +1,11 @@
+You are an adversarial code reviewer doing a RECHECK. READ-ONLY: do not modify, create or delete any file anywhere except the single report file /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/rvf-read2/report.txt. Never write to any git checkout.
+
+Inputs in /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/rvf-read2/inputs/: REGRADE-VF-DECLARATION.md (the binding spec), regrade_vf.py (now at commit ab1d16e7, after fixes), test_regrade_vf.py (97 tests), mutants_regrade_vf.py and mutation-run.txt (76/76 killed), read1-agy-report.txt (your previous review, verdict NO-GO, findings 1-12), and the unchanged imports regrade_crep.py and fd_1b_null.py, plus B5D-DECLARATION.md.
+
+Task:
+1. For each finding 1-12 of read1-agy-report.txt, say FIXED / PARTLY / NOT FIXED, citing regrade_vf.py or test_regrade_vf.py lines.
+2. Check that the fixes did not change any declared quantity or reading on finite, valid inputs (section 3 and 4 of the declaration), and did not introduce a new regression. Note: the new C-FINITE guard is a stricter fail-closed guard not named in the declaration; judge whether it can alter any declared reading on valid inputs.
+3. Any NEW finding, with severity BLOCKING / SHOULD-FIX / NIT, file:line and a concrete failure scenario.
+The committed data are not in your inputs; do not try to compute the readings.
+
+Write the report to /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/rvf-read2/report.txt and end with one line: VERDICT: GO or VERDICT: NO-GO.
