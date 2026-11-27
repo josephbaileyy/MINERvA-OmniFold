@@ -148,7 +148,18 @@ A done-marker records the verdict and both products' sha256.
     every weight must be non-negative.
   - Equal multisets give a bijection: each denominator row takes the factor of its value-identical signal row. Then
     D*_j = T*_orig,j exactly, with no float tolerance.
-  - The hunk also asserts the input's `hasTruthOnlyMisses` and the presence of the canonical denominator.
+  - The hunk also asserts that the input's `hasTruthOnlyMisses` is non-zero, as the driver reads it
+    (`bool(int(...))`), and that the canonical denominator is present. On 43f8cc16 the flag reads 12, because hadd
+    sums the per-playlist flag over 12 playlists. "= 1" would be a false STOP.
+  - **Measured on the real input** (`receipts/couple/run2/`; the director's GO; cov2d's ack; 2026-11-27T17:31–17:35Z,
+    login04, 0 node-h):
+    - on 43f8cc16, read from r3's staged copy, the identity holds exactly;
+    - 32,849,103 denominator rows and 32,849,103 truth-passing signal rows, with no row dropped by either loader's rules;
+    - 0 per-cell count mismatches, 0 one-sided cells and 0 deviation in pT, p∥ or w;
+    - every signal tuple has an exact twin in the denominator;
+    - neither tree has event-ID branches.
+  - Run 1 crashed at `import ROOT` before reading anything, because the conda environment was not activated
+    (`receipts/couple/run1/`). The launcher was fixed (4cf2d915 → 584c7c8a) and re-approved before run 2.
   - If the gate fails, nothing is read, and the mismatch (cells, counts) goes to the director.
 - **The replica completeness**, per truth cell j, with T the summed w_truth of truth-passing signal rows (the original
   rows, or all rows), * the resampled weights and CV the un-resampled ones:
@@ -258,7 +269,8 @@ non-finite value fails, and reductions never skip a NaN.
 - **C-FIX** (OOFVC's list): `hOFTruthDenom2D`, `hDataReco2D`, `hFlux_pt`, dataPOT, mcPOT, potScale, both flux integrals
   and nNucleons are equal bit for bit, with bin errors and overflow, between `p_R_c` and `p_off_c`.
 - **C-COUPLE:** §2.2's exact multiset identity, in `p_off_c` and in `p_R_c`'s original rows, with the
-  `hasTruthOnlyMisses` and denominator assertions. If it fails, nothing is read. The cell sums' agreement is printed
+  assertions that `hasTruthOnlyMisses` is non-zero (as the driver reads it) and that the denominator is present. If it
+  fails, nothing is read. Measured on 43f8cc16 before binding: exact (§2.2). The cell sums' agreement is printed
   beside it.
 - **C-NORM:** in every unit, the extraction's fixed arguments as consumed (the flux vector, data POT, nucleon count and
   both edge arrays) have the same digest as `p_off_c`'s. C-FIX checks `p_off_c`'s against the CV inputs. A
