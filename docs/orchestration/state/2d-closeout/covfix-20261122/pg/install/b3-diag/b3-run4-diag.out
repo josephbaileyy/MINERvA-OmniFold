@@ -1,0 +1,50 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3116c0s21b0n0:
+
+host login40
+== 1.
+== last 60 lines of /pscratch/sd/j/josephrb/covfix-pg/replay-20261127T194805Z/driver.log
+   [replay] start 2026-11-27T19:48:05Z host=login30
+   [replay] strace, the private product, the programs: pass
+   [replay] reduce, its completeness, spline check, flux, gspl2root, and their traces: pass
+   [replay] STOP: spline coverage (slot 1) rc=1
+== 2. coverage_check.json
+   pass False | log_sha256 c0603c9b839d626ad3a0c2fcf4ccdb0a6af9e91c022d9da0a674a5a5ccb09051 | keys ['check', 'log_sha256', 'pass', 'problems']
+   problems (3):
+   coverage-none: the log names no spline needed
+   coverage-pair: no spline needed for nu 14 on 1000010010
+   coverage-pair: no spline needed for nu 14 on 1000060120
+== 3.
+== last 80 lines of /pscratch/sd/j/josephrb/covfix-pg/replay-20261127T194805Z/run/logs/coverage.log
+== last 80 lines of /pscratch/sd/j/josephrb/covfix-pg/replay-20261127T194805Z/run/logs/coverage_slot1.log
+   [setup_genie_v3] GENIE=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator
+   [setup_genie_v3] gevgen=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gevgen
+   [setup_genie_v3] tune=G21_11a_00_000 xsec=/pscratch/sd/j/josephrb/covfix-pg/products/genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data splines=/pscratch/sd/j/josephrb/covfix-pg/replay-20261127T194805Z/run/splines/G21_11a_00_000_CH.xml.gz
+   [v3] coverage gevgen rc=0
+== 4. gevgen.log
+   unreadable: No such file or directory
+== end
