@@ -7,17 +7,17 @@
 #        bash oofvc_launch.sh fetch <new empty dir>      (post.tar.gz by scp; no remote script)
 MODE=${1:?dump-pilot|dump-rest|units|post|fetch}; F=${2:?session dir}; NODE=${3:-}; POST=${4:-}
 HERE=$(cd "$(dirname "$0")" && pwd)
-OUT=/pscratch/sd/j/josephrb/oofvc-20261126
+OUT=/pscratch/sd/j/josephrb/oofvc-20261126-r2
 SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20)
 [ -d "$F" ] && [ -z "$(ls -A "$F")" ] || { echo "STOP: $F is not a new empty directory"; exit 9; }
 ARG=
 case "$MODE" in
-  dump-pilot) S="$HERE/oofvc_dump.sh";  SHA=bb7ca6f5784ccbbb3ed9a27c6672dc101115b0b4ceaa780335e4e5aabb9b91bb;  ARG=pilot
+  dump-pilot) S="$HERE/oofvc_dump.sh";  SHA=7306001cd8a199b9d0f0efcc2562a58fd16dc5b337786e2391732a22c10ae290;  ARG=pilot
               case "$POST" in [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9]Z) ARG="pilot $POST" ;;
                 *) echo "STOP: dump-pilot needs cov2d's LL5D atime-post (UTC) as its fourth argument"; exit 9 ;; esac ;;
-  dump-rest)  S="$HERE/oofvc_dump.sh";  SHA=bb7ca6f5784ccbbb3ed9a27c6672dc101115b0b4ceaa780335e4e5aabb9b91bb;  ARG=rest ;;
-  units)      S="$HERE/oofvc_units.sh"; SHA=97c63b5ca1debc7137dd47f03fe225f399f929e674e60923099ca0c25cfe39a3 ;;
-  post)       S="$HERE/oofvc_post.sh";  SHA=23ef49772dc1af23d646ab7836cdc77bf44295964b905ab88023d9e525d92293 ;;
+  dump-rest)  S="$HERE/oofvc_dump.sh";  SHA=7306001cd8a199b9d0f0efcc2562a58fd16dc5b337786e2391732a22c10ae290;  ARG=rest ;;
+  units)      S="$HERE/oofvc_units.sh"; SHA=f5f19360af663c5afc17ecfba9164302e872344990b4d48632ce5fadff040584 ;;
+  post)       S="$HERE/oofvc_post.sh";  SHA=35c699f55a60ca876e0d629f0321c18b62169b6d1ec7d5d1c8fd9dd9bb8d8565 ;;
   fetch)
     scp "${SSH[@]}" "saul.nersc.gov:$OUT/post.tar.gz" "$F/" >> "$F/scp.out" 2>> "$F/scp.err"; r=$?
     echo "scp post.tar.gz rc=$r"; [ $r = 0 ] && shasum -a 256 "$F/post.tar.gz"; exit $r ;;

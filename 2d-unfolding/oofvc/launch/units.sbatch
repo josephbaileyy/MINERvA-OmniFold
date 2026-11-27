@@ -7,12 +7,12 @@
 #SBATCH --no-requeue
 #SBATCH -t 00:45:00
 #SBATCH -J oofvc_units
-#SBATCH -o /pscratch/sd/j/josephrb/oofvc-20261126/logs/units_%j.out
-#SBATCH -e /pscratch/sd/j/josephrb/oofvc-20261126/logs/units_%j.err
+#SBATCH -o /pscratch/sd/j/josephrb/oofvc-20261126-r2/logs/units_%j.out
+#SBATCH -e /pscratch/sd/j/josephrb/oofvc-20261126-r2/logs/units_%j.err
 # OOFVC step 2 on one node: the join (a STOP writes no rows, and no unit runs), then the four units concurrently, each
 # in its own srun step of 64 CPUs (Tier 1's t1.sbatch form, E_R's thread environment). Writes only under $R.
 set -o pipefail
-R=/pscratch/sd/j/josephrb/oofvc-20261126; O=$R/tool/2d-unfolding/oofvc
+R=/pscratch/sd/j/josephrb/oofvc-20261126-r2; O=$R/tool/2d-unfolding/oofvc
 PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
 SPLIT=$R/tool/docs/orchestration/state/ibu-chi2-20261123/oflow/split.json
 [ ! -e $R/join ] && [ ! -e $R/units ] || { echo "REFUSED: join or units exists"; exit 2; }

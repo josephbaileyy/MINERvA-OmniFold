@@ -7,8 +7,8 @@
 #   3. libRooUnfold.so against its pin;
 #   4. submit units.sbatch: one node, the join (C-ROUTE, C-JOIN, C-SIGW, C-LAB) and then the four units.
 set -u
-R=/pscratch/sd/j/josephrb/oofvc-20261126
-TOOLC=bbc3fc1be82572d9ad8bdd668fd51647ca1d86d9
+R=/pscratch/sd/j/josephrb/oofvc-20261126-r2
+TOOLC=d3127bd40fb48456993ee9e1fda23b81c3d74f89
 URL=https://github.com/josephbaileyy/MINERvA-OmniFold.git
 CV_SRC=/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root
 MC_SRC=/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root

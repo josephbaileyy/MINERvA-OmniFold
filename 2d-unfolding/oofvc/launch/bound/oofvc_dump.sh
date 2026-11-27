@@ -9,8 +9,8 @@
 #          the eleven tasks go at -t 02:00:00
 set -u
 MODE=${2:-}; POST=${3:-}
-R=/pscratch/sd/j/josephrb/oofvc-20261126
-TOOLC=bbc3fc1be82572d9ad8bdd668fd51647ca1d86d9
+R=/pscratch/sd/j/josephrb/oofvc-20261126-r2
+TOOLC=d3127bd40fb48456993ee9e1fda23b81c3d74f89
 URL=https://github.com/josephbaileyy/MINERvA-OmniFold.git
 SRC=/pscratch/sd/j/josephrb/ibuchi-evloop-20261123/src
 MAN=/pscratch/sd/j/josephrb/ibuchi-evloop-20261123/manifests
