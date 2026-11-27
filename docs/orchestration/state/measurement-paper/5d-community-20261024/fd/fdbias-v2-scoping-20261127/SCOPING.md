@@ -15,8 +15,12 @@ The `fd/` paths are under `docs/orchestration/state/measurement-paper/5d-communi
    fresh truths on NERSC), node-h from the committed F0b and F1 charges, and a calendar. It left one question open:
    how to treat the alternative truths that overlap C_model's generator families.
 2. **The reader.** An unanchored read of that pricing by codex-school2 (gpt-6.2-sol, high effort), run by the
-   director. Its recommendation is relayed in item 3. Its report is held by the director; this file records the
-   recommendation as relayed, not the report.
+   director, read at main a0c6c6bb. Its report and prompt are committed verbatim beside this file:
+   `reads/codex2-pricing-read.txt` (sha256 `a24f7dcd428cffdd9bc9a4ede583c7c53ea54f6aa6ec86fcc7145aa30a902883`) and
+   `reads/codex2-pricing-prompt.txt` (sha256 `ac5cac7e49f68c6d117103a754336cd2f80f5762daadffb01bf8f65066f4ab64`),
+   copied byte for byte from the director's scratchpad (the report was `report.md` there; it is saved as `.txt`).
+   Their bytes are unchanged, so the read's main commit is recorded here rather than in their headers. Its
+   recommendation, as the director relayed it, is item 3.
 3. **The decision.** Joseph, 2026-11-27, relayed by the director: "lets agree with the recommendation". The
    recommendation, as the director relayed it:
    - Option 1 (the second-moment block) is built as a prototype and is not added to the reported uncertainty until it
