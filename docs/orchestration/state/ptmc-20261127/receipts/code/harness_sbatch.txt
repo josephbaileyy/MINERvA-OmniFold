@@ -1,0 +1,9 @@
+ok   pilot: no ready refuses (rc 2)
+ok   pilot: the 8 units, once each
+ok   pilot: a failed unit exits 6
+ok   pilot: an existing units dir refuses
+ok   replicas: no PROCEED refuses (rc 2)
+ok   replicas: b = 2..200, 199 steps, each once
+ok   replicas: a failed unit exits 6, its lane continues, rc recorded
+pass 7 fail 0
+sbatch rc=0

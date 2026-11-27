@@ -1,0 +1,8 @@
+...........................................                              [100%]
+=============================== warnings summary ===============================
+test_ptmc.py::Runner::test_controls_present
+  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+43 passed, 1 warning in 94.84s (0:01:34)
+pytest rc=0

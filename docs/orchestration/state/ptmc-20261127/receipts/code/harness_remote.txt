@@ -1,0 +1,42 @@
+ok   setup: runs
+ok   setup: rc 0 and ready
+ok   setup: the CV copy is byte-identical
+ok   setup: the source's atime is printed before and after
+ok   setup again: STOP, R exists
+ok   setup: a live cov2d job STOPs before R is made
+ok   setup: a failed sacct STOPs
+ok   setup: a queued ptmc job STOPs
+ok   setup: a failed squeue STOPs
+ok   setup: a CV pin mismatch STOPs, no ready
+ok   setup: a symlinked source STOPs
+ok   setup: a library pin mismatch STOPs, no ready
+ok   setup: make_tree's refusal STOPs
+ok   setup: a clone at the wrong commit STOPs
+ok   setup: a dirty clone STOPs
+ok   wrong user: STOP
+ok   unknown mode: STOP
+ok   an unfilled tool commit: STOP
+ok   pilot: submitted, jobid recorded
+ok   pilot: sbatch got pilot.sbatch
+ok   pilot again: STOP
+ok   pilot: a changed deploy file STOPs
+ok   pilot: an unparsable sbatch STOPs
+ok   pilot: no ready STOPs
+ok   pilot: a live cov2d job STOPs
+ok   post-pilot: a STOP decision exits 6, no PROCEED
+ok   post-pilot: PROCEED
+ok   post-pilot again: STOP
+ok   post-pilot: a failed activation STOPs
+ok   replicas: time limit '0' STOPs
+ok   replicas: time limit 'abc' STOPs
+ok   replicas: time limit '700' STOPs
+ok   replicas: time limit '' STOPs
+ok   replicas: submitted with -t 145
+ok   replicas again: STOP
+ok   replicas: no PROCEED STOPs
+ok   post: a running ptmc job STOPs
+ok   post: a failed D4 staging STOPs, no tar
+ok   post: both tars written
+ok   post again: STOP
+pass 40 fail 0
+remote rc=0

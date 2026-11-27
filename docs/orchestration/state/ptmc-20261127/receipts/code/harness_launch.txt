@@ -1,0 +1,7 @@
+ok   an unfilled sha: STOP 9
+ok   a non-empty session dir: STOP 9
+ok   a bad node name: STOP 9
+ok   an unknown mode: STOP 9
+ok   a changed remote script: STOP 8
+pass 5 fail 0
+launch rc=0

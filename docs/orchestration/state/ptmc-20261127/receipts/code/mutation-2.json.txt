@@ -1,0 +1,769 @@
+{
+ "schema": "ptmc-mutation/1",
+ "python": "/Users/josephbailey/ew2d-env/bin/python3",
+ "files": {
+  "launch/harness_launch.sh": "85081e60863ffcde1c75ee30d5a0ab7357ae4a0d9a119debd632c0d0231b66d4",
+  "launch/harness_remote.sh": "0072c84ae86be6d3fc794ce4df27e3f729a473bfbb4efa6fce7f50573202d83f",
+  "launch/harness_sbatch.sh": "51534bfab6146d4a9e26c4739e0c1a8221473a595fb742444bb9058398dbe438",
+  "launch/pilot.sbatch": "91bc9fce5fd89431836cbcbab801828ba220dde0a709950d8d07e0e22b40c652",
+  "launch/ptmc_couple_check.py": "13901cbe0bddbe27fce515c9b37ad01fec8c48e3440485f62754c56f9fe32262",
+  "launch/ptmc_couple_launch.sh": "584c7c8a031d1e2a7d54c293be019f17c5dfa02ad2edfdb3a113b7ac962776da",
+  "launch/ptmc_launch.sh": "fd79879b338f3058cc34b47b0cad3f81705947af6daac04912975d8d0cc96b86",
+  "launch/ptmc_pilot_post.py": "17d622eb58fcf94bb2c39b95e137059e8adc2b2accd36c92cf0cdbc74fdc2624",
+  "launch/ptmc_remote.sh": "705a4492e4ae8c341097e78617949edcef8916c28a12a88607c245ec34127929",
+  "launch/ptmc_stage_d4.py": "ee83212d3bdb8da135886ab5d13cd182be379dfd33f2d440facab6c9fd63cb66",
+  "launch/ptmc_stat.sh": "6b775e313107d81b772e8bfcc6226fbafaf75a55be57c1db3bb72dd24a9e2142",
+  "launch/ptmc_stat_launch.sh": "fa76d4e55fa7ef6c8df9ce5582d5f147ec2977ebdafce3abd307a8c40b270e11",
+  "launch/replicas.sbatch": "1e1a6df9c49a37025619ba2b551b1f6dcecbf2a64bdd65c480f415c115734b22",
+  "launch/test_launch.py": "970c3b4bd7e51277fdaf1b404c27f220065ed402627330f3abe796a730a941a2",
+  "make_tree.sh": "a181dc1a942f7b7c004a8f9ab4a97114a456b89e073ecf82992f36101b1d3f45",
+  "ptmc_driver.diff": "90da4f0be29b1cf8d1a207742bfd31a948b3b64616a447c1c093b4fb63329b7a",
+  "ptmc_lib.py": "d3072695e5f2dceaee4a917ff900a44e22ff7b011919f65acd06e75fbce39c56",
+  "ptmc_mutation.py": "a37b8067b15becc8cb5dcf96fde9da6ebb0688a869c928f2d03cda5464f8d0d2",
+  "ptmc_run.py": "acd052f2cae5d15a54e2b3755ad47a49bd23b656bdb59fe5c7635e8dd34fe3bf",
+  "ptmc_score.py": "2936917407658c536881806ccc6208398f0825b61176c6ecf10e466bfea860b8",
+  "test_ptmc.py": "9af8ca0bd2738083f5ba919db75c0753230d701221384ef033b8398970b0a2a3",
+  "test_ptmc_score.py": "1cfbb1cdc04aa6a48e3a0919e897aa3551a354d38b6fd73dd71b7756ef141780"
+ },
+ "results": [
+  {
+   "name": "CONTROL",
+   "file": null,
+   "tests": [
+    [
+     "test_ptmc.py",
+     "test_ptmc_score.py",
+     "launch/test_launch.py",
+     "HARNESS:harness_remote.sh",
+     "HARNESS:harness_sbatch.sh"
+    ],
+    null
+   ],
+   "rc": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "seconds": 108.8,
+   "verdict": "PASS",
+   "tail": "ok   pilot: no ready refuses (rc 2)\nok   pilot: the 8 units, once each\nok   pilot: a failed unit exits 6\nok   pilot: an existing units dir refuses\nok   replicas: no PROCEED refuses (rc 2)\nok   replicas: b = 2..200, 199 steps, each once\nok   replicas: a failed unit exits 6, its lane continues, rc recorded\npass 7 fail 0\n"
+  },
+  {
+   "name": "LIB_SIG_OFFSET",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Draws"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.8,
+   "verdict": "KILLED",
+   "tail": " 1., 1.,...0, 2, 1, 0, 2, 1, 2, 1, 1, 0, 3, 1, 1, 0, 1, 1, 0, 2, 1, 0, 2,\n       0, 0, 0, 3, 0, 0, 0, 0, 2, 4, 2, 1, 1, 0, 0, 2]))\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Arrays are not equal', 'strict': False}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Arrays are not equal\nE           \nE           Mismatched elements: 36 / 60 (60%)\nE           Max absolute difference: 4.\nE           Max relative difference: 2.\nE            x: array([0., 0., 1., 1., 0., 2., 1., 0., 0., 3., 0., 0., 2., 1., 1., 1., 0.,\nE                  2., 1., 1., 2., 2., 2., 1., 1., 1., 0., 1., 0., 0., 2., 2., 0., 3.,\nE                  0., 1., 1., 2., 2., 0., 4., 3., 1., 0., 0., 1., 1., 3., 1., 0., 1.,\nE                  2., 2., 0., 0., 1., 1., 0., 4., 0.])\nE            y: array([2, 3, 1, 1, 0, 2, 1, 0, 1, 1, 2, 1, 0, 1, 1, 0, 0, 0, 1, 3, 2, 0,\nE                  3, 0, 2, 1, 0, 2, 1, 2, 1, 1, 0, 3, 1, 1, 0, 1, 1, 0, 2, 1, 0, 2,\nE                  0, 0, 0, 3, 0, 0, 0, 0, 2, 4, 2, 1, 1, 0, 0, 2])\n\n../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Draws::test_expected_factors_are_the_drivers_streams - A...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 24 deselected in 2.28s\n"
+  },
+  {
+   "name": "LIB_APPENDED_ORDER",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Draws"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.1,
+   "verdict": "KILLED",
+   "tail": "lf.n_orig, self.n_entries, self.app)\n        np.testing.assert_array_equal(e[\"data\"], np.random.default_rng(7).poisson(1.0, 50).astype(float))\n        np.testing.assert_array_equal(e[\"signal\"], np.random.default_rng(7 + 10_000_000).poisson(1.0, 60))\n        bkg = np.random.default_rng(7 + 20_000_000).poisson(1.0, 40)\n        np.testing.assert_array_equal(e[\"bkg\"], bkg)\n>       np.testing.assert_array_equal(e[\"appended\"], bkg[self.app])\n\ntest_ptmc.py:65: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = (<built-in function eq>, array([1., 3., 1., 0.]), array([0, 1, 3, 1]))\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Arrays are not equal', 'strict': False}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Arrays are not equal\nE           \nE           Mismatched elements: 4 / 4 (100%)\nE           Max absolute difference: 2.\nE           Max relative difference: 2.\nE            x: array([1., 3., 1., 0.])\nE            y: array([0, 1, 3, 1])\n\n../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Draws::test_expected_factors_are_the_drivers_streams - A...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 24 deselected in 1.64s\n"
+  },
+  {
+   "name": "LIB_DRAW_TRUTH",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Draws"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.1,
+   "verdict": "KILLED",
+   "tail": ".F\n=================================== FAILURES ===================================\n_____________ Draws.test_draw_check_passes_and_catches_each_defect _____________\n\nself = <test_ptmc.Draws testMethod=test_draw_check_passes_and_catches_each_defect>\n\n    def test_draw_check_passes_and_catches_each_defect(self):\n        self.assertTrue(P.draw_check(self.b, **self.kw)[\"pass\"])\n        perm = dict(self.kw, w_truth_seen=self.kw[\"w_truth_seen\"][::-1])  # a row permutation, same sum\n>       self.assertFalse(P.draw_check(self.b, **perm)[\"pass\"])\nE       AssertionError: True is not false\n\ntest_ptmc.py:70: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Draws::test_draw_check_passes_and_catches_each_defect - ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 24 deselected in 1.65s\n"
+  },
+  {
+   "name": "LIB_INJ_OPEN",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Draws"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.3,
+   "verdict": "KILLED",
+   "tail": "...F\n=================================== FAILURES ===================================\n_________________ Draws.test_injected_entries_closed_rectangle _________________\n\nself = <test_ptmc.Draws testMethod=test_injected_entries_closed_rectangle>\n\n    def test_injected_entries_closed_rectangle(self):\n        rows = {\"entry\": np.arange(6), \"pt\": np.array([0, 4.5, 4.6, 1, 1, 1.0]),\n                \"pz\": np.array([1.5, 60, 2, 1.4, 60.0, 5])}\n>       np.testing.assert_array_equal(P.injected_entries(rows, 0, 4.5, 1.5, 60), [0, 1, 4, 5])\n\ntest_ptmc.py:88: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = (<built-in function eq>, array([0, 5]), [0, 1, 4, 5])\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Arrays are not equal', 'strict': False}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Arrays are not equal\nE           \nE           (shapes (2,), (4,) mismatch)\nE            x: array([0, 5])\nE            y: array([0, 1, 4, 5])\n\n../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Draws::test_injected_entries_closed_rectangle - Assertio...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 24 deselected in 1.85s\n"
+  },
+  {
+   "name": "LIB_LOST_NOT_ZERO",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Completeness"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.0,
+   "verdict": "KILLED",
+   "tail": ".F\n=================================== FAILURES ===================================\n__________________ Completeness.test_lost_support_gives_zero ___________________\n\nself = <test_ptmc.Completeness testMethod=test_lost_support_gives_zero>\n\n    def test_lost_support_gives_zero(self):\n        r = P.c_star([1.0], [0.0], [2.0], [2.0], [1.0])\n        self.assertEqual(r[\"n_lost_support\"], 1)\n>       self.assertEqual(r[\"c_star\"][0], 0.0)\nE       AssertionError: 1.0 != 0.0\n\ntest_ptmc.py:108: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Completeness::test_lost_support_gives_zero - AssertionEr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 24 deselected in 1.56s\n"
+  },
+  {
+   "name": "LIB_DSTAR",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Completeness"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.0,
+   "verdict": "KILLED",
+   "tail": "r_orig = np.array([12.0, 4, 0, 3, 0])\n        r = P.c_star(t_star_orig + np.array([0, 2.5, 3.0, 0, 0]), t_star_orig, t_orig, d, c_cv)\n        self.assertEqual(r[\"n_lost_support\"], 0)\n>       np.testing.assert_allclose(r[\"c_star\"][[0, 3]], [1.0, 1.0], rtol=1e-15)  # nothing moved: c_CV\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ntest_ptmc.py:100: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = (<function assert_allclose.<locals>.compare at 0x300834680>, array([1.2, 1. ]), array([1., 1.]))\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Not equal to tolerance rtol=1e-15, atol=0', 'equal_nan': True}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Not equal to tolerance rtol=1e-15, atol=0\nE           \nE           Mismatched elements: 1 / 2 (50%)\nE           Max absolute difference: 0.2\nE           Max relative difference: 0.2\nE            x: array([1.2, 1. ])\nE            y: array([1., 1.])\n\n../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Completeness::test_reduces_to_c_cv_with_nothing_moved_and_handles_cells\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 24 deselected in 1.62s\n"
+  },
+  {
+   "name": "LIB_SUPPORT_UNWEIGHTED",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Completeness"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.2,
+   "verdict": "KILLED",
+   "tail": "  self.assertEqual(r[\"failures\"], want)\n        self.assertEqual(r[\"n_seed_cells\"], sum(len(v) for v in want.values()))\n        self.assertFalse(P.support(g, w, np.ones(5, bool), 4, [1], n=3)[\"pass\"])  # the mask must end at n_orig\n        # the trigger is the weighted sum: a zero-weight row drawing a positive factor does not keep a cell supported\n        gz, wz = np.array([0, 0]), np.array([0.0, 1.0])\n        lost = {b: [0] for b in range(1, 40)\n                if np.random.default_rng(b + 10_000_000).poisson(1.0, 2)[1] == 0}\n        self.assertTrue(lost)\n>       self.assertEqual(P.support(gz, wz, np.ones(2, bool), 2, range(1, 40), n=1)[\"failures\"], lost)\nE       AssertionError: {1: [0], 6: [0], 8: [0], 22: [0], 25: [0], 31: [0][14 chars] [0]} != {1: [0], 4: [0], 6: [0], 8: [0], 14: [0], 22: [0],[67 chars] [0]}\nE       - {1: [0], 6: [0], 8: [0], 22: [0], 25: [0], 31: [0], 33: [0], 39: [0]}\nE       + {1: [0],\nE       +  4: [0],\nE       +  6: [0],\nE       +  8: [0],\nE       +  14: [0],\nE       +  22: [0],\nE       +  24: [0],\nE       +  25: [0],\nE       +  28: [0],\nE       +  30: [0],\nE       +  31: [0],\nE       +  33: [0],\nE       +  36: [0],\nE       +  39: [0]}\n\ntest_ptmc.py:137: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Completeness::test_support - AssertionError: {1: [0], 6:...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 24 deselected in 1.82s\n"
+  },
+  {
+   "name": "LIB_COUPLE_ZERO_W",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Coupling"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.4,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n_________________________ Coupling.test_exact_multiset _________________________\n\nself = <test_ptmc.Coupling testMethod=test_exact_multiset>\n\n    def test_exact_multiset(self):\n        g = np.array([0, 0, 1, 2])\n        pt, pz, w = np.array([.1, .2, .3, .4]), np.array([2.0, 2.1, 3.0, 4.0]), np.array([1.0, 2.0, 0.5, 0.0])\n        perm = np.array([1, 0, 2, 3])\n        self.assertTrue(P.coupling_exact(g, pt, pz, w, g[perm], pt[perm], pz[perm], w[perm])[\"pass\"])\n        # equal cell sums from different weights (codex r3 #1): fails\n        self.assertFalse(P.coupling_exact(g, pt, pz, np.array([0.5, 2.5, 0.5, 0]), g, pt, pz, w)[\"pass\"])\n        # a zero-weight row on one side only is irrelevant\n>       self.assertTrue(P.coupling_exact(g[:3], pt[:3], pz[:3], w[:3], g, pt, pz, w)[\"pass\"])\nE       AssertionError: False is not true\n\ntest_ptmc.py:150: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Coupling::test_exact_multiset - AssertionError: False is...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 25 deselected in 1.97s\n"
+  },
+  {
+   "name": "LIB_COUPLE_COUNTS_ONLY",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Coupling"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.1,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n_________________________ Coupling.test_exact_multiset _________________________\n\nself = <test_ptmc.Coupling testMethod=test_exact_multiset>\n\n    def test_exact_multiset(self):\n        g = np.array([0, 0, 1, 2])\n        pt, pz, w = np.array([.1, .2, .3, .4]), np.array([2.0, 2.1, 3.0, 4.0]), np.array([1.0, 2.0, 0.5, 0.0])\n        perm = np.array([1, 0, 2, 3])\n        self.assertTrue(P.coupling_exact(g, pt, pz, w, g[perm], pt[perm], pz[perm], w[perm])[\"pass\"])\n        # equal cell sums from different weights (codex r3 #1): fails\n>       self.assertFalse(P.coupling_exact(g, pt, pz, np.array([0.5, 2.5, 0.5, 0]), g, pt, pz, w)[\"pass\"])\nE       AssertionError: True is not false\n\ntest_ptmc.py:148: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Coupling::test_exact_multiset - AssertionError: True is ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 25 deselected in 1.66s\n"
+  },
+  {
+   "name": "LIB_APPID_WRECO",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Coupling"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 4.4,
+   "verdict": "KILLED",
+   "tail": "ES ===================================\n_______________________ Coupling.test_appended_identity ________________________\n\nself = <test_ptmc.Coupling testMethod=test_appended_identity>\n\n    def test_appended_identity(self):\n        rows = {\"entry\": np.array([5, 9, 12], np.int64), \"reco_pt\": np.array([.1, .2, .3]),\n                \"reco_pz\": np.array([2., 3., 4.]), \"true_pt\": np.array([.11, .21, .31]),\n                \"true_pz\": np.array([2.1, 3.1, 4.1]), \"w_reco\": np.array([1., 2., 3.]), \"w_truth\": np.array([1.1, 2.2, 3.3])}\n        app = np.array([12, 5], np.int64)\n        pot = 0.25\n        tail = {\"reco_pt\": np.array([.3, .1]), \"reco_pz\": np.array([4., 2.]), \"truth_pt\": np.array([.31, .11]),\n                \"truth_pz\": np.array([4.1, 2.1]), \"w_truth\": np.array([3.3, 1.1]) * pot,\n                \"w_reco\": np.array([3., 1.]) * pot, \"pass_reco\": np.array([True, True]),\n                \"pass_truth\": np.array([True, True])}\n        self.assertTrue(P.appended_identity(rows, app, pot, tail)[\"pass\"])\n        bad = dict(tail, w_reco=tail[\"w_reco\"][::-1])\n>       self.assertFalse(P.appended_identity(rows, app, pot, bad)[\"pass\"])\nE       AssertionError: True is not false\n\ntest_ptmc.py:169: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Coupling::test_appended_identity - AssertionError: True ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 25 deselected in 3.95s\n"
+  },
+  {
+   "name": "LIB_RELCLOSE_ZERO",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Gates"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 3.0,
+   "verdict": "KILLED",
+   "tail": "...F\n=================================== FAILURES ===================================\n______________________ Gates.test_rel_close_zero_and_nan _______________________\n\nself = <test_ptmc.Gates testMethod=test_rel_close_zero_and_nan>\n\n    def test_rel_close_zero_and_nan(self):\n        self.assertTrue(P.rel_close([0.0, 2.0], [0.0, 2.0 * (1 + 1e-12)], 1e-9)[\"pass\"])\n>       self.assertFalse(P.rel_close([1e-300, 2.0], [0.0, 2.0], 1e-9)[\"pass\"])\nE       AssertionError: True is not false\n\ntest_ptmc.py:177: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Gates::test_rel_close_zero_and_nan - AssertionError: Tru...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 22 deselected in 2.50s\n"
+  },
+  {
+   "name": "LIB_RELCLOSE_NAN",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Gates"
+   ],
+   "rc": [
+    0
+   ],
+   "seconds": 3.5,
+   "verdict": "SURVIVED",
+   "tail": "......                                                                   [100%]\n6 passed, 22 deselected in 3.11s\n"
+  },
+  {
+   "name": "LIB_SHAPE_LOO",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Gates"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.0,
+   "verdict": "KILLED",
+   "tail": "....F\n=================================== FAILURES ===================================\n____________________________ Gates.test_shape_gate _____________________________\n\nself = <test_ptmc.Gates testMethod=test_shape_gate>\n\n    def test_shape_gate(self):\n        rng = np.random.default_rng(0)\n        D = rng.normal(size=(200, 224))\n        self.assertTrue(P.shape_gate(D[0], D)[\"pass\"])\n        self.assertFalse(P.shape_gate(D[0][:205], D[:, :205])[\"pass\"])\n        bad = D.copy()\n        bad[3, 4] = np.nan\n        self.assertFalse(P.shape_gate(D[0], bad)[\"pass\"])\n        # full rank 50, but one leave-one-out drops to 49: the 50th mode lives in replica 0 alone\n        X = np.zeros((200, 224))\n        X[:, :49] = rng.normal(size=(200, 49))\n        X[0, 49] = 5.0\n        r = P.shape_gate(X[0], X)\n        self.assertTrue(r[\"full\"])\n>       self.assertFalse(r[\"pass\"])\nE       AssertionError: True is not false\n\ntest_ptmc.py:195: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Gates::test_shape_gate - AssertionError: True is not false\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 22 deselected in 1.62s\n"
+  },
+  {
+   "name": "LIB_SHAPE_TOP",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Gates"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.8,
+   "verdict": "KILLED",
+   "tail": "....F\n=================================== FAILURES ===================================\n____________________________ Gates.test_shape_gate _____________________________\n\nself = <test_ptmc.Gates testMethod=test_shape_gate>\n\n    def test_shape_gate(self):\n        rng = np.random.default_rng(0)\n        D = rng.normal(size=(200, 224))\n        self.assertTrue(P.shape_gate(D[0], D)[\"pass\"])\n        self.assertFalse(P.shape_gate(D[0][:205], D[:, :205])[\"pass\"])\n        bad = D.copy()\n        bad[3, 4] = np.nan\n        self.assertFalse(P.shape_gate(D[0], bad)[\"pass\"])\n        # full rank 50, but one leave-one-out drops to 49: the 50th mode lives in replica 0 alone\n        X = np.zeros((200, 224))\n        X[:, :49] = rng.normal(size=(200, 49))\n        X[0, 49] = 5.0\n        r = P.shape_gate(X[0], X)\n        self.assertTrue(r[\"full\"])\n>       self.assertFalse(r[\"pass\"])\nE       AssertionError: True is not false\n\ntest_ptmc.py:195: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Gates::test_shape_gate - AssertionError: True is not false\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 22 deselected in 2.42s\n"
+  },
+  {
+   "name": "LIB_PROTO_ZEROVAR",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Gates"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.1,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n_____________________________ Gates.test_proto_eps _____________________________\n\nself = <test_ptmc.Gates testMethod=test_proto_eps>\n\n    def test_proto_eps(self):\n        c = np.array([4.0, 1.0, 0.0])\n        r = P.proto_eps(np.array([[0.002, 0.0, 0.0]]), np.zeros((1, 3)), c)\n        self.assertAlmostEqual(r[\"eps\"], 0.001)\n>       self.assertFalse(P.proto_eps(np.array([[0.0, 0.0, 1e-30]]), np.zeros((1, 3)), c)[\"pass\"])\nE       AssertionError: True is not false\n\ntest_ptmc.py:225: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Gates::test_proto_eps - AssertionError: True is not false\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 22 deselected in 1.65s\n"
+  },
+  {
+   "name": "LIB_COND_FLOOR",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Gates"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.0,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n________________________ Gates.test_conditioning_guard _________________________\n\nself = <test_ptmc.Gates testMethod=test_conditioning_guard>\n\n    def test_conditioning_guard(self):\n        \"\"\"The binding's guard (the director, 2026-11-27): lambda_r / lambda_1 at 1e-13 STOPs, at 1e-6 passes.\"\"\"\n        rng = np.random.default_rng(3)\n        for ratio, want in ((1e-13, False), (1e-6, True)):\n            scales = np.geomspace(1.0, ratio, 50)\n            D = np.zeros((200, 224))\n            D[:, :50] = rng.normal(size=(200, 50)) * np.sqrt(scales)\n            D[:, 50:] = rng.normal(size=(200, 174)) * np.sqrt(ratio * 1e-3)\n            c = P.conditioning(D, rank=50)\n>           self.assertEqual(c[\"pass\"], want, c)\nE           AssertionError: True != False : {'ratio': 7.160212309959886e-14, 'floor': 1e-14, 'pass': True}\n\ntest_ptmc.py:214: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Gates::test_conditioning_guard - AssertionError: True !=...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 22 deselected in 1.58s\n"
+  },
+  {
+   "name": "LIB_STAGED_INDEX",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Gates"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 3.6,
+   "verdict": "KILLED",
+   "tail": ".....F\n=================================== FAILURES ===================================\n___________________________ Gates.test_staged_index ____________________________\n\nself = <test_ptmc.Gates testMethod=test_staged_index>\n\n    def test_staged_index(self):\n>       self.assertEqual(P.staged_index(1), \"002_xsec.root\")\nE       AssertionError: '001_xsec.root' != '002_xsec.root'\nE       - 001_xsec.root\nE       ?   ^\nE       + 002_xsec.root\nE       ?   ^\n\ntest_ptmc.py:228: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Gates::test_staged_index - AssertionError: '001_xsec.roo...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 passed, 22 deselected in 3.17s\n"
+  },
+  {
+   "name": "LIB_DISP_MISMATCH",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Readings"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.1,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n_______________________ Readings.test_disposition_order ________________________\n\nself = <test_ptmc.Readings testMethod=test_disposition_order>\n\n    def test_disposition_order(self):\n        self.assertEqual(P.disposition(False, True, False, False, True), \"stop\")      # an R control failed\n        self.assertEqual(P.disposition(True, False, False, False, True), \"stop\")      # the mandatory E_R central\n>       self.assertEqual(P.disposition(True, True, True, True, None), \"stop\")         # a present product mismatched\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       AssertionError: 'unavailable' != 'stop'\nE       - unavailable\nE       + stop\n\ntest_ptmc.py:238: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Readings::test_disposition_order - AssertionError: 'unav...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 26 deselected in 1.67s\n"
+  },
+  {
+   "name": "LIB_STATEMENT_ROW3",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Readings"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.4,
+   "verdict": "KILLED",
+   "tail": ".F\n=================================== FAILURES ===================================\n______________________ Readings.test_statement_partition _______________________\n\nself = <test_ptmc.Readings testMethod=test_statement_partition>\n\n    def test_statement_partition(self):\n        rows = {}\n        for r1 in P.WORDS:\n            for b in P.WORDS:\n                t = P.statement(r1, \"formed\", b)\n                rows[(r1, b)] = t[\"row\"]\n                self.assertNotIn(\"held fixed\", t[\"text\"])\n            rows[(r1, None)] = P.statement(r1, \"unavailable\", None)[\"row\"]\n        self.assertEqual(len(rows), 12)\n        self.assertEqual(rows[(\"differ\", \"differ\")], 1)\n        self.assertEqual({rows[(\"marginal\", \"differ\")], rows[(\"agree\", \"differ\")]}, {2})\n>       self.assertEqual({rows[(r, b)] for r in P.WORDS for b in (\"agree\", \"marginal\")}, {3})\nE       AssertionError: Items in the first set but not the second:\nE       1\nE       2\n\ntest_ptmc.py:255: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Readings::test_statement_partition - AssertionError: Ite...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 26 deselected in 2.00s\n"
+  },
+  {
+   "name": "DRV_APPENDED_DRAW",
+   "file": "DRIVER",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 42.2,
+   "verdict": "KILLED",
+   "tail": "0, 'appended_sha256': 'b7e0a35f100b05672d20ebd8ad75fd0e3e13aa93fb18c676fd61bb8374a6fe3d', 'factors_sha256': 'eb2bdea61bde19be4f7c028e2a7b5662b42eedaaf21847fc729f755b78cba2e9', 'checks': {'signed': True, 'w_truth': False, 'w_reco': False}, 'pass': False, 'injected_entries_recomputed': True, 'coordinates': True, 'appended_list': True}} is not false : p_R_b1: {'C-DRAW-R': {'n_data': 4000, 'n_original': 6000, 'n_appended': 295, 'n_injected': 1908, 'data_sum': 4070.0, 'original_sum': 5844.0, 'appended_sum': 307.0, 'injected_sum': 1925.0, 'appended_sha256': 'b7e0a35f100b05672d20ebd8ad75fd0e3e13aa93fb18c676fd61bb8374a6fe3d', 'factors_sha256': 'eb2bdea61bde19be4f7c028e2a7b5662b42eedaaf21847fc729f755b78cba2e9', 'checks': {'signed': True, 'w_truth': False, 'w_reco': False}, 'pass': False, 'injected_entries_recomputed': True, 'coordinates': True, 'appended_list': True}}\n\ntest_ptmc.py:444: AssertionError\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_units_pass_with_every_control - AssertionEr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 passed, 22 deselected, 1 warning in 41.60s\n"
+  },
+  {
+   "name": "DRV_DRAW_SIZE",
+   "file": "DRIVER",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 17.8,
+   "verdict": "KILLED",
+   "tail": "um = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT\n[INFO] OOFVC: --signal-convention minerva, 300 rows from /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-1sb7a68y/stage/oofvc_rows.npz\n[INFO] OOFVC: 300 mc_background entries moved to the signal\n[INFO] OOFVC: {'appended': 295, 'outside': 5, 'dropped_appended_weight': 0, 'dropped_outside_weight': 0}\n[INFO] truth_denom events kept (in binning): 6000\n[INFO]   sum(w_truth) = 1501.3\n[INFO] Data reco entries: 4000\n[INFO] hDataReco2D integral: 4000\n[INFO] hBkgReco2D integral (incl. fakes): 474.902\n[INFO] hMeasSub2D integral: 3525.1\n[INFO] hMeasTrain2D integral: 3525.1\n[INFO] bkg-mode=negweight-refined: prepared 1908 injected background reco events (bkg-MC 1908 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).\n[INFO] PTMC: signal factors over 6295 original rows (seed+10000000) and 295 appended rows at b_bkg[entry] (seed+20000000)\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nERROR test_ptmc.py::Runner::test_controls_present - ValueError: operands coul...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n22 deselected, 1 warning, 1 error in 17.12s\n"
+  },
+  {
+   "name": "DRV_LOST_NOT_ZERO",
+   "file": "DRIVER",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 41.6,
+   "verdict": "KILLED",
+   "tail": ".....F\n=================================== FAILURES ===================================\n__________________ Runner.test_units_pass_with_every_control ___________________\n\nself = <test_ptmc.Runner testMethod=test_units_pass_with_every_control>\n\n    def test_units_pass_with_every_control(self):\n        for u in self.UNITS:\n            m = self.meta(u)\n            failed = {k: v for k, v in m[\"controls\"].items() if not v[\"pass\"]}\n>           self.assertFalse(failed, f\"{u}: {failed}\")\nE           AssertionError: {'C-COMP': {'mode': 'resampled', 'n_keep_cv': 61, 'n_lost_support': 1, 'max_rel': inf, 'pass': False}} is not false : p_R_b1: {'C-COMP': {'mode': 'resampled', 'n_keep_cv': 61, 'n_lost_support': 1, 'max_rel': inf, 'pass': False}}\n\ntest_ptmc.py:444: AssertionError\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_units_pass_with_every_control - AssertionEr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 passed, 22 deselected, 1 warning in 40.68s\n"
+  },
+  {
+   "name": "DRV_DSTAR",
+   "file": "DRIVER",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 40.2,
+   "verdict": "KILLED",
+   "tail": ".....F\n=================================== FAILURES ===================================\n__________________ Runner.test_units_pass_with_every_control ___________________\n\nself = <test_ptmc.Runner testMethod=test_units_pass_with_every_control>\n\n    def test_units_pass_with_every_control(self):\n        for u in self.UNITS:\n            m = self.meta(u)\n            failed = {k: v for k, v in m[\"controls\"].items() if not v[\"pass\"]}\n>           self.assertFalse(failed, f\"{u}: {failed}\")\nE           AssertionError: {'C-COMP': {'mode': 'resampled', 'n_keep_cv': 61, 'n_lost_support': 1, 'max_rel': 0.8210380152781558, 'pass': False}} is not false : p_R_b1: {'C-COMP': {'mode': 'resampled', 'n_keep_cv': 61, 'n_lost_support': 1, 'max_rel': 0.8210380152781558, 'pass': False}}\n\ntest_ptmc.py:444: AssertionError\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_units_pass_with_every_control - AssertionEr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 passed, 22 deselected, 1 warning in 39.41s\n"
+  },
+  {
+   "name": "DRV_APPENDED_ORDER",
+   "file": "DRIVER",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 44.6,
+   "verdict": "KILLED",
+   "tail": "rs_are_background_streams _________\n\nself = <test_ptmc.Runner testMethod=test_r_replica_appended_factors_are_background_streams>\n\n    def test_r_replica_appended_factors_are_background_streams(self):\n        m = self.meta(\"p_R_b1\")[\"controls\"][\"C-DRAW-R\"]\n>       self.assertTrue(m[\"appended_list\"] and m[\"n_appended\"] > 0, m)\nE       AssertionError: False is not true : {'n_data': 4000, 'n_original': 6000, 'n_appended': 295, 'n_injected': 1908, 'data_sum': 4070.0, 'original_sum': 5844.0, 'appended_sum': 307.0, 'injected_sum': 1925.0, 'appended_sha256': '76c3442718aa7f90dccb4e16da5fd89b1fbf47c1d6b7875800782a19f3ec3897', 'factors_sha256': 'ed7d0f4a4a234ca97d25de928e132b91c14c9b4a48a5cbfbb59081a962587e91', 'checks': {'signed': True, 'w_truth': True, 'w_reco': True}, 'pass': False, 'injected_entries_recomputed': True, 'coordinates': True, 'appended_list': False}\n\ntest_ptmc.py:474: AssertionError\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_r_replica_appended_factors_are_background_streams\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 22 deselected, 1 warning in 43.90s\n"
+  },
+  {
+   "name": "DRV_STREAMS",
+   "file": "DRIVER",
+   "tests": [
+    "test_ptmc.py",
+    "Driver"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 49.4,
+   "verdict": "KILLED",
+   "tail": ")      = 3.2352943296224835e+30\\n[INFO] Flux source: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-h4ibwi37/stage/flux.root:pTmu_reweightedflux_integrated\\n[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012\\n 0.013 0.014]\\n[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT\\n[INFO] OOFVC: --signal-convention minerva, 300 rows from /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-h4ibwi37/stage/rows.npz\\n[INFO] OOFVC: 300 mc_background entries moved to the signal\\n[INFO] OOFVC: {'appended': 299, 'outside': 1, 'dropped_appended_weight': 0, 'dropped_outside_weight': 0}\\n[INFO] truth_denom events kept (in binning): 6000\\n[INFO]   sum(w_truth) = 1501.3\\n[INFO] Data reco entries: 4000\\n[INFO] hDataReco2D integral: 4000\\n[INFO] hBkgReco2D integral (incl. fakes): 471.817\\n[INFO] hMeasSub2D integral: 3528.18\\n[INFO] hMeasTrain2D integral: 3528.18\\n[INFO] bkg-mode=negweight-refined: prepared 1904 injected background reco events (bkg-MC 1904 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).\\n[FAIL] PTMC: the R bootstrap needs the three streams and no unit factors\\n\"\n\ntest_ptmc.py:397: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Driver::test_refusals - AssertionError: 'runs on the cen...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 22 deselected in 48.66s\n"
+  },
+  {
+   "name": "DRV_UNIT_FACTORS",
+   "file": "DRIVER",
+   "tests": [
+    "test_ptmc.py",
+    "Driver"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 50.0,
+   "verdict": "KILLED",
+   "tail": ")      = 3.2352943296224835e+30\\n[INFO] Flux source: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-6ingl3et/stage/flux.root:pTmu_reweightedflux_integrated\\n[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012\\n 0.013 0.014]\\n[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT\\n[INFO] OOFVC: --signal-convention minerva, 300 rows from /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-6ingl3et/stage/rows.npz\\n[INFO] OOFVC: 300 mc_background entries moved to the signal\\n[INFO] OOFVC: {'appended': 299, 'outside': 1, 'dropped_appended_weight': 0, 'dropped_outside_weight': 0}\\n[INFO] truth_denom events kept (in binning): 6000\\n[INFO]   sum(w_truth) = 1501.3\\n[INFO] Data reco entries: 4000\\n[INFO] hDataReco2D integral: 4000\\n[INFO] hBkgReco2D integral (incl. fakes): 471.817\\n[INFO] hMeasSub2D integral: 3528.18\\n[INFO] hMeasTrain2D integral: 3528.18\\n[INFO] bkg-mode=negweight-refined: prepared 1904 injected background reco events (bkg-MC 1904 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).\\n[FAIL] PTMC: the R bootstrap needs the three streams and no unit factors\\n\"\n\ntest_ptmc.py:397: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Driver::test_refusals - AssertionError: 'runs on the cen...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 22 deselected in 49.23s\n"
+  },
+  {
+   "name": "DRV_PRODUCTION_TOO",
+   "file": "DRIVER",
+   "tests": [
+    "test_ptmc.py",
+    "Driver"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 24.6,
+   "verdict": "KILLED",
+   "tail": "6000, step2 weights: 6000\nE           [INFO] step2 sum=1.741e+04, mean=2.9017, min=0.2981, max=4.9529\nE           [CHECK] hTruth2D integral: 1508.24\nE           [CHECK] hUnfold2D integral: 4333.98\nE           [CHECK] hMeasSub2D integral: 3453.42\nE           [CHECK] hMeasTrain2D integral: 3453.42\nE           [INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)\nE           [CHECK] hEffNum integral: 1072.14\nE           [CHECK] hEffDen integral: 1501.3\nE           [INFO] Phase-17 MC bootstrap: completeness uses the un-resampled MC truth weights, as the central value does (KNOWN_ISSUES 84).\nE           Traceback (most recent call last):\nE             File \"/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-6ly06gez/tree/2d-unfolding/re2/re2_driver.py\", line 2791, in <module>\nE               main()\nE             File \"/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-6ly06gez/tree/2d-unfolding/re2/re2_driver.py\", line 2642, in main\nE               sig, w_truth_cv, sig[\"oofvc_outside\"][\"appended_entry\"].size, pt_edges, pz_edges, truth_denom)\nE                                ~~~^^^^^^^^^^^^^^^^^\nE           KeyError: 'oofvc_outside'\n\ntest_ptmc.py:297: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Driver::test_production_paths_are_byte_identical_to_oofvcs\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 22 deselected in 24.03s\n"
+  },
+  {
+   "name": "RUN_NO_MINERVA",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 16.6,
+   "verdict": "KILLED",
+   "tail": "hEffNum integral: 1066.12\n[CHECK] hEffDen integral: 1501.3\n[CHECK] hOFInputTruth2D integral: 1501.3\n[CHECK] hOFTruthDenom2D integral: 1501.3\n[CHECK] global completeness c = 1.0000 (expected \u2248 N(mc_signal_reco truth-pass) / N(mc_truth_denom))\n[CHECK] Total xsec from p_T projection: 2.23e-41 cm^2/nucleon\n[CHECK] Total xsec from p_|| projection: 2.23e-41 cm^2/nucleon\n[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-ojzciqgj/tree/2d-unfolding/re2/re2_driver.py\n[INFO] driverSha256: 8140ed8b71b159935e9e2edf0b4572d07599ed16434f0bef3e1dd0de1ea0f161\n[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-ojzciqgj/tree/unbinned_unfolding/python/omnifold.py\n[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a\n[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-ojzciqgj/units/p_R_c.root\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nERROR test_ptmc.py::Runner::test_controls_present - KeyError: 'oofvc_outside'\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n22 deselected, 1 warning, 1 error in 15.96s\n"
+  },
+  {
+   "name": "RUN_FILL_K",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 40.4,
+   "verdict": "KILLED",
+   "tail": "=================\n_______________ Runner.test_rerun_skips_pass_and_refuses_unknown _______________\n\nself = <test_ptmc.Runner testMethod=test_rerun_skips_pass_and_refuses_unknown>\n\n    def test_rerun_skips_pass_and_refuses_unknown(self):\n        import ptmc_run\n        with mock.patch.object(os, \"O_NOATIME\", os.O_NONBLOCK, create=True):\n            rc = ptmc_run.main([\"--tree\", str(tree()), \"--rows\", str(self.rows_path), \"--rows-sha256\",\n                                hashlib.sha256(self.rows_path.read_bytes()).hexdigest(), \"--join-record\",\n                                str(self.join), \"--out\", str(self.out), \"--numpy-unfolder\", \"--unit\", \"p_off_c\"])\n>       self.assertEqual(rc, 0)\nE       AssertionError: 6 != 0\n\ntest_ptmc.py:500: AssertionError\n----------------------------- Captured stderr call -----------------------------\nrefusing: p_off_c exists without a PASS done-marker (verdict FAIL)\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_rerun_skips_pass_and_refuses_unknown - Asse...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 22 deselected, 1 warning in 39.75s\n"
+  },
+  {
+   "name": "RUN_APPID_POT",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 37.7,
+   "verdict": "KILLED",
+   "tail": "ss_with_every_control>\n\n    def test_units_pass_with_every_control(self):\n        for u in self.UNITS:\n            m = self.meta(u)\n            failed = {k: v for k, v in m[\"controls\"].items() if not v[\"pass\"]}\n>           self.assertFalse(failed, f\"{u}: {failed}\")\nE           AssertionError: {'C-MOVE-UNIT': {'skip_disjoint_from_injected': True, 'skip_disjoint_from_fill_rows': True, 'appended_identity': {'checks': {'reco_pt': True, 'reco_pz': True, 'truth_pt': True, 'truth_pz': True, 'w_truth': False, 'w_reco': False, 'masks': True}, 'pass': False}, 'pass': False}} is not false : p_R_c: {'C-MOVE-UNIT': {'skip_disjoint_from_injected': True, 'skip_disjoint_from_fill_rows': True, 'appended_identity': {'checks': {'reco_pt': True, 'reco_pz': True, 'truth_pt': True, 'truth_pz': True, 'w_truth': False, 'w_reco': False, 'masks': True}, 'pass': False}, 'pass': False}}\n\ntest_ptmc.py:444: AssertionError\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_units_pass_with_every_control - AssertionEr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 passed, 22 deselected, 1 warning in 37.16s\n"
+  },
+  {
+   "name": "RUN_PAIR_DIGEST",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 38.1,
+   "verdict": "KILLED",
+   "tail": "=================\n_______________ Runner.test_rerun_skips_pass_and_refuses_unknown _______________\n\nself = <test_ptmc.Runner testMethod=test_rerun_skips_pass_and_refuses_unknown>\n\n    def test_rerun_skips_pass_and_refuses_unknown(self):\n        import ptmc_run\n        with mock.patch.object(os, \"O_NOATIME\", os.O_NONBLOCK, create=True):\n            rc = ptmc_run.main([\"--tree\", str(tree()), \"--rows\", str(self.rows_path), \"--rows-sha256\",\n                                hashlib.sha256(self.rows_path.read_bytes()).hexdigest(), \"--join-record\",\n                                str(self.join), \"--out\", str(self.out), \"--numpy-unfolder\", \"--unit\", \"p_off_c\"])\n>       self.assertEqual(rc, 0)\nE       AssertionError: 6 != 0\n\ntest_ptmc.py:500: AssertionError\n----------------------------- Captured stderr call -----------------------------\nrefusing: p_off_c exists without a PASS done-marker (verdict FAIL)\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_rerun_skips_pass_and_refuses_unknown - Asse...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 22 deselected, 1 warning in 37.56s\n"
+  },
+  {
+   "name": "RUN_INJ_STORED_REVERSED",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 38.5,
+   "verdict": "KILLED",
+   "tail": "j)\n\ntest_ptmc.py:492: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = (<built-in function eq>, array([2499, 2498, 2497, ...,    5,    4,    0]), array([   0,    4,    5, ..., 2497, 2498, 2499]))\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Arrays are not equal', 'strict': False}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Arrays are not equal\nE           \nE           Mismatched elements: 1908 / 1908 (100%)\nE           Max absolute difference: 2499\nE           Max relative difference: 623.5\nE            x: array([2499, 2498, 2497, ...,    5,    4,    0])\nE            y: array([   0,    4,    5, ..., 2497, 2498, 2499])\n\n../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_r_replica_fill_records_are_the_filtered_production_ones\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 22 deselected, 1 warning in 37.99s\n"
+  },
+  {
+   "name": "SC_ABSENT_AS_FORMED",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    "Scorer"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 3.9,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n______ Scorer.test_absent_replica_is_unavailable_and_corrupt_marker_stops ______\n\nself = <test_ptmc_score.Scorer testMethod=test_absent_replica_is_unavailable_and_corrupt_marker_stops>\n\n    def test_absent_replica_is_unavailable_and_corrupt_marker_stops(self):\n        p = Products(delta_scale=0.05)\n        (p.d4 / \"c2_replica_b5.npz\").unlink()\n        rc, rec = p.score()\n>       self.assertEqual(rc, 0, rec)\nE       AssertionError: 3 != 0 : {'schema': 'ptmc-stop/1', 'stopped': True, 'why': \"the disposition is STOP: absent ['c2_replica_b5.npz'], mismatch [], C-REPOFF None\"}\n\ntest_ptmc_score.py:268: AssertionError\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n----------------------------- Captured stderr call -----------------------------\nSTOP: the disposition is STOP: absent ['c2_replica_b5.npz'], mismatch [], C-REPOFF None\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::Scorer::test_absent_replica_is_unavailable_and_corrupt_marker_stops\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 3.40s\n"
+  },
+  {
+   "name": "SC_FILL_SETS_ONLY",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    "Scorer"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 5.8,
+   "verdict": "KILLED",
+   "tail": "...F\n=================================== FAILURES ===================================\n________________ Scorer.test_duplicated_retained_fill_row_stops ________________\n\nself = <test_ptmc_score.Scorer testMethod=test_duplicated_retained_fill_row_stops>\n\n    def test_duplicated_retained_fill_row_stops(self):\n        \"\"\"The confirm read's finding 3: a replica with a retained background row filled twice must STOP.\"\"\"\n        p = Products(delta_scale=0.05)\n        z = dict(np.load(p.units / \"p_R_b2.npz\"))\n        for k in (\"fill_entry\", \"fill_pt\", \"fill_pz\", \"fill_w\"):\n            z[k] = np.concatenate([z[k], z[k][:1]])\n        np.savez(p.units / \"p_R_b2.npz\", **z)\n        mk = json.loads((p.units / \"p_R_b2.done\").read_text())\n        mk[\"sha256\"] = sha(p.units / \"p_R_b2.npz\")\n        (p.units / \"p_R_b2.done\").write_text(json.dumps(mk))\n        rc, rec = p.score()\n>       self.assertEqual(rc, 3)\nE       AssertionError: 0 != 3\n\ntest_ptmc_score.py:289: AssertionError\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n{\"PTMC-R1\": \"differ\", \"PTMC-B\": \"differ\", \"disposition\": \"formed\"}\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::Scorer::test_duplicated_retained_fill_row_stops - ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed in 5.37s\n"
+  },
+  {
+   "name": "SC_MISMATCH_IGNORED",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    "Scorer"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 4.7,
+   "verdict": "KILLED",
+   "tail": "============= FAILURES ===================================\n______ Scorer.test_absent_replica_is_unavailable_and_corrupt_marker_stops ______\n\nself = <test_ptmc_score.Scorer testMethod=test_absent_replica_is_unavailable_and_corrupt_marker_stops>\n\n    def test_absent_replica_is_unavailable_and_corrupt_marker_stops(self):\n        p = Products(delta_scale=0.05)\n        (p.d4 / \"c2_replica_b5.npz\").unlink()\n        rc, rec = p.score()\n        self.assertEqual(rc, 0, rec)\n        self.assertEqual(rec[\"disposition\"], \"unavailable\")\n        self.assertIsNone(rec[\"PTMC-B\"])\n        self.assertEqual(rec[\"statement\"][\"row\"], 4)\n        q = Products(delta_scale=0.05)\n        np.savez(q.d4 / \"c2_replica_b3.npz\", ks=np.array(KS), xsec=np.zeros((len(KS), 224)), meta=\"{}\")\n        rc, rec = q.score()\n>       self.assertEqual(rc, 3)\nE       AssertionError: 0 != 3\n\ntest_ptmc_score.py:275: AssertionError\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n{\"PTMC-R1\": \"differ\", \"PTMC-B\": null, \"disposition\": \"unavailable\"}\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n{\"PTMC-R1\": \"differ\", \"PTMC-B\": \"agree\", \"disposition\": \"formed\"}\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::Scorer::test_absent_replica_is_unavailable_and_corrupt_marker_stops\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 4.18s\n"
+  },
+  {
+   "name": "SC_RANK_LITERAL",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    "Scorer"
+   ],
+   "rc": [
+    0
+   ],
+   "seconds": 6.4,
+   "verdict": "SURVIVED",
+   "tail": ".....                                                                    [100%]\n5 passed in 5.90s\n"
+  },
+  {
+   "name": "SC_DRAW_AGG",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    "Scorer"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 4.2,
+   "verdict": "KILLED",
+   "tail": ".F\n=================================== FAILURES ===================================\n_____________________ Scorer.test_agree_when_delta_is_zero _____________________\n\nself = <test_ptmc_score.Scorer testMethod=test_agree_when_delta_is_zero>\n\n    def test_agree_when_delta_is_zero(self):\n        p = Products(delta_scale=0.0)\n        rc, rec = p.score()\n>       self.assertEqual(rc, 0, rec)\nE       AssertionError: 3 != 0 : {'schema': 'ptmc-stop/1', 'stopped': True, 'why': \"C-DRAW-R against Q_R's p1Streams: seeds [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\"}\n\ntest_ptmc_score.py:261: AssertionError\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n----------------------------- Captured stderr call -----------------------------\nSTOP: C-DRAW-R against Q_R's p1Streams: seeds [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::Scorer::test_agree_when_delta_is_zero - AssertionE...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed in 3.73s\n"
+  },
+  {
+   "name": "SC_WORDS",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    "Scorer"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 4.4,
+   "verdict": "KILLED",
+   "tail": ".F\n=================================== FAILURES ===================================\n_____________________ Scorer.test_agree_when_delta_is_zero _____________________\n\nself = <test_ptmc_score.Scorer testMethod=test_agree_when_delta_is_zero>\n\n    def test_agree_when_delta_is_zero(self):\n        p = Products(delta_scale=0.0)\n        rc, rec = p.score()\n        self.assertEqual(rc, 0, rec)\n>       self.assertIn(rec[\"PTMC-R1\"], (\"agree\", \"marginal\"))\nE       AssertionError: 'differ' not found in ('agree', 'marginal')\n\ntest_ptmc_score.py:262: AssertionError\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n{\"PTMC-R1\": \"differ\", \"PTMC-B\": \"agree\", \"disposition\": \"formed\"}\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::Scorer::test_agree_when_delta_is_zero - AssertionE...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed in 3.96s\n"
+  },
+  {
+   "name": "PP_FLOOR",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 1.2,
+   "verdict": "KILLED",
+   "tail": "...F\n=================================== FAILURES ===================================\n__________________ PilotPost.test_limit_below_the_floor_stops __________________\n\nself = <test_launch.PilotPost testMethod=test_limit_below_the_floor_stops>\n\n    def test_limit_below_the_floor_stops(self):\n        steps = {u: 792 for u in PILOT}\n        # o = 8 s, pilot 0.444 node-h, runtime 7928 s: projection 11.455 <= 11.5, but L = 144 min < 1.1 x 132.1 min\n        rc, d, out = run(sacct(job_el=800, steps=steps), units_dir())\n>       self.assertEqual(rc, 6)\nE       AssertionError: 0 != 6\n\nlaunch/test_launch.py:97: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_limit_below_the_floor_stops - A...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 2 deselected in 0.93s\n"
+  },
+  {
+   "name": "PP_CAP_PER_NODE",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 1.2,
+   "verdict": "KILLED",
+   "tail": "...F\n=================================== FAILURES ===================================\n__________________ PilotPost.test_limit_below_the_floor_stops __________________\n\nself = <test_launch.PilotPost testMethod=test_limit_below_the_floor_stops>\n\n    def test_limit_below_the_floor_stops(self):\n        steps = {u: 792 for u in PILOT}\n        # o = 8 s, pilot 0.444 node-h, runtime 7928 s: projection 11.455 <= 11.5, but L = 144 min < 1.1 x 132.1 min\n        rc, d, out = run(sacct(job_el=800, steps=steps), units_dir())\n        self.assertEqual(rc, 6)\n        self.assertTrue(d[\"rules\"][\"projection_within_11.5\"])\n>       self.assertFalse(d[\"rules\"][\"limit_covers_1.1x_runtime\"])\nE       AssertionError: True is not false\n\nlaunch/test_launch.py:99: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_limit_below_the_floor_stops - A...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 2 deselected in 0.88s\n"
+  },
+  {
+   "name": "PP_STOP_AT",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 1.2,
+   "verdict": "KILLED",
+   "tail": ".....F\n=================================== FAILURES ===================================\n_____________________ PilotPost.test_projection_rule_flag ______________________\n\nself = <test_launch.PilotPost testMethod=test_projection_rule_flag>\n\n    def test_projection_rule_flag(self):\n        \"\"\"A projection of about 12.0 node-h breaks the 11.5 rule itself (the floor also STOPs, being implied).\"\"\"\n        steps = {u: 830 for u in PILOT}\n        rc, d, _ = run(sacct(job_el=840, steps=steps), units_dir())\n        self.assertEqual(rc, 6)\n        self.assertGreater(d[\"projection_node_h\"], 11.5)\n        self.assertLess(d[\"projection_node_h\"], 12.6)\n>       self.assertFalse(d[\"rules\"][\"projection_within_11.5\"])\nE       AssertionError: True is not false\n\nlaunch/test_launch.py:83: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_projection_rule_flag - Assertio...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 passed, 2 deselected in 0.90s\n"
+  },
+  {
+   "name": "PP_COUPLE",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    0
+   ],
+   "seconds": 1.2,
+   "verdict": "SURVIVED",
+   "tail": ".......                                                                  [100%]\n7 passed, 2 deselected in 0.93s\n"
+  },
+  {
+   "name": "D4_ABSENT_FAILS",
+   "file": "launch/ptmc_stage_d4.py",
+   "tests": [
+    "launch/test_launch.py",
+    "StageD4"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.8,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n_____________ StageD4.test_absent_is_recorded_and_a_symlink_fails ______________\n\nself = <test_launch.StageD4 testMethod=test_absent_is_recorded_and_a_symlink_fails>\n\n    def test_absent_is_recorded_and_a_symlink_fails(self):\n        (self.ref / \"units\" / \"c2_replica_b7.npz\").unlink()\n        rc, out = self.stage()\n>       self.assertEqual(rc, 0)\nE       AssertionError: 5 != 0\n\nlaunch/test_launch.py:154: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::StageD4::test_absent_is_recorded_and_a_symlink_fails\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 7 deselected in 2.46s\n"
+  },
+  {
+   "name": "D4_SYMLINK_OK",
+   "file": "launch/ptmc_stage_d4.py",
+   "tests": [
+    "launch/test_launch.py",
+    "StageD4"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.8,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n_____________ StageD4.test_absent_is_recorded_and_a_symlink_fails ______________\n\nself = <test_launch.StageD4 testMethod=test_absent_is_recorded_and_a_symlink_fails>\n\n    def test_absent_is_recorded_and_a_symlink_fails(self):\n        (self.ref / \"units\" / \"c2_replica_b7.npz\").unlink()\n        rc, out = self.stage()\n        self.assertEqual(rc, 0)\n        m = json.loads((out / \"manifest.json\").read_text())\n        self.assertEqual(m[\"absent\"], [str(self.ref / \"units\" / \"c2_replica_b7.npz\")])\n        self.assertFalse((out / \"c2_replica_b7.npz\").exists())\n        (self.ref / \"units\" / \"c2_replica_b8.npz\").unlink()\n        (self.ref / \"units\" / \"c2_replica_b8.npz\").symlink_to(self.ref / \"units\" / \"c2_replica_b9.npz\")\n        rc, out = self.stage()\n>       self.assertEqual(rc, 5)\nE       AssertionError: 0 != 5\n\nlaunch/test_launch.py:161: AssertionError\n----------------------------- Captured stdout call -----------------------------\nstaged 402 products, 1 absent\nstaged 402 products, 1 absent\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::StageD4::test_absent_is_recorded_and_a_symlink_fails\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 7 deselected in 2.41s\n"
+  },
+  {
+   "name": "SH_FENCE_STATE",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 1.6,
+   "verdict": "KILLED",
+   "tail": "ok   setup: runs\nok   setup: rc 0 and ready\nok   setup: the CV copy is byte-identical\nok   setup: the source's atime is printed before and after\nok   setup again: STOP, R exists\nFAIL setup: a live cov2d job STOPs before R is made\nok   setup: a failed sacct STOPs\nok   setup: a queued ptmc job STOPs\nok   setup: a failed squeue STOPs\nok   setup: a CV pin mismatch STOPs, no ready\nok   setup: a symlinked source STOPs\nok   setup: a library pin mismatch STOPs, no ready\nok   setup: make_tree's refusal STOPs\nok   setup: a clone at the wrong commit STOPs\nok   setup: a dirty clone STOPs\nok   wrong user: STOP\nok   unknown mode: STOP\nok   an unfilled tool commit: STOP\nok   pilot: submitted, jobid recorded\nok   pilot: sbatch got pilot.sbatch\nok   pilot again: STOP\nok   pilot: a changed deploy file STOPs\nok   pilot: an unparsable sbatch STOPs\nok   pilot: no ready STOPs\nFAIL pilot: a live cov2d job STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -t 145\nok   replicas again: STOP\nok   replicas: no PROCEED STOPs\nok   post: a running ptmc job STOPs\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written\nok   post again: STOP\npass 38 fail 2\n"
+  },
+  {
+   "name": "SH_COPY_PIN",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 1.3,
+   "verdict": "KILLED",
+   "tail": "ok   setup: runs\nok   setup: rc 0 and ready\nok   setup: the CV copy is byte-identical\nok   setup: the source's atime is printed before and after\nok   setup again: STOP, R exists\nok   setup: a live cov2d job STOPs before R is made\nok   setup: a failed sacct STOPs\nok   setup: a queued ptmc job STOPs\nok   setup: a failed squeue STOPs\nFAIL setup: a CV pin mismatch STOPs, no ready\nok   setup: a symlinked source STOPs\nok   setup: a library pin mismatch STOPs, no ready\nok   setup: make_tree's refusal STOPs\nok   setup: a clone at the wrong commit STOPs\nok   setup: a dirty clone STOPs\nok   wrong user: STOP\nok   unknown mode: STOP\nok   an unfilled tool commit: STOP\nok   pilot: submitted, jobid recorded\nok   pilot: sbatch got pilot.sbatch\nok   pilot again: STOP\nok   pilot: a changed deploy file STOPs\nok   pilot: an unparsable sbatch STOPs\nok   pilot: no ready STOPs\nok   pilot: a live cov2d job STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -t 145\nok   replicas again: STOP\nok   replicas: no PROCEED STOPs\nok   post: a running ptmc job STOPs\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written\nok   post again: STOP\npass 39 fail 1\n"
+  },
+  {
+   "name": "SH_NO_PTMC",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 1.5,
+   "verdict": "KILLED",
+   "tail": "ok   setup: runs\nok   setup: rc 0 and ready\nok   setup: the CV copy is byte-identical\nok   setup: the source's atime is printed before and after\nok   setup again: STOP, R exists\nok   setup: a live cov2d job STOPs before R is made\nok   setup: a failed sacct STOPs\nFAIL setup: a queued ptmc job STOPs\nok   setup: a failed squeue STOPs\nok   setup: a CV pin mismatch STOPs, no ready\nok   setup: a symlinked source STOPs\nok   setup: a library pin mismatch STOPs, no ready\nok   setup: make_tree's refusal STOPs\nok   setup: a clone at the wrong commit STOPs\nok   setup: a dirty clone STOPs\nok   wrong user: STOP\nok   unknown mode: STOP\nok   an unfilled tool commit: STOP\nok   pilot: submitted, jobid recorded\nok   pilot: sbatch got pilot.sbatch\nok   pilot again: STOP\nok   pilot: a changed deploy file STOPs\nok   pilot: an unparsable sbatch STOPs\nok   pilot: no ready STOPs\nok   pilot: a live cov2d job STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -t 145\nok   replicas again: STOP\nok   replicas: no PROCEED STOPs\nFAIL post: a running ptmc job STOPs\nFAIL post: a failed D4 staging STOPs, no tar\nFAIL post: both tars written\nok   post again: STOP\npass 36 fail 4\n"
+  },
+  {
+   "name": "SH_LIMIT_RANGE",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 1.3,
+   "verdict": "KILLED",
+   "tail": "ok   setup: runs\nok   setup: rc 0 and ready\nok   setup: the CV copy is byte-identical\nok   setup: the source's atime is printed before and after\nok   setup again: STOP, R exists\nok   setup: a live cov2d job STOPs before R is made\nok   setup: a failed sacct STOPs\nok   setup: a queued ptmc job STOPs\nok   setup: a failed squeue STOPs\nok   setup: a CV pin mismatch STOPs, no ready\nok   setup: a symlinked source STOPs\nok   setup: a library pin mismatch STOPs, no ready\nok   setup: make_tree's refusal STOPs\nok   setup: a clone at the wrong commit STOPs\nok   setup: a dirty clone STOPs\nok   wrong user: STOP\nok   unknown mode: STOP\nok   an unfilled tool commit: STOP\nok   pilot: submitted, jobid recorded\nok   pilot: sbatch got pilot.sbatch\nok   pilot again: STOP\nok   pilot: a changed deploy file STOPs\nok   pilot: an unparsable sbatch STOPs\nok   pilot: no ready STOPs\nok   pilot: a live cov2d job STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nFAIL replicas: time limit '700' STOPs\nFAIL replicas: time limit '' STOPs\nFAIL replicas: submitted with -t 145\nok   replicas again: STOP\nok   replicas: no PROCEED STOPs\nok   post: a running ptmc job STOPs\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written\nok   post again: STOP\npass 37 fail 3\n"
+  },
+  {
+   "name": "SH_DEPLOY_CHECK",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 1.3,
+   "verdict": "KILLED",
+   "tail": "ok   setup: runs\nok   setup: rc 0 and ready\nok   setup: the CV copy is byte-identical\nok   setup: the source's atime is printed before and after\nok   setup again: STOP, R exists\nok   setup: a live cov2d job STOPs before R is made\nok   setup: a failed sacct STOPs\nok   setup: a queued ptmc job STOPs\nok   setup: a failed squeue STOPs\nok   setup: a CV pin mismatch STOPs, no ready\nok   setup: a symlinked source STOPs\nok   setup: a library pin mismatch STOPs, no ready\nok   setup: make_tree's refusal STOPs\nok   setup: a clone at the wrong commit STOPs\nok   setup: a dirty clone STOPs\nok   wrong user: STOP\nok   unknown mode: STOP\nok   an unfilled tool commit: STOP\nok   pilot: submitted, jobid recorded\nok   pilot: sbatch got pilot.sbatch\nok   pilot again: STOP\nFAIL pilot: a changed deploy file STOPs\nok   pilot: an unparsable sbatch STOPs\nok   pilot: no ready STOPs\nok   pilot: a live cov2d job STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -t 145\nok   replicas again: STOP\nok   replicas: no PROCEED STOPs\nok   post: a running ptmc job STOPs\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written\nok   post again: STOP\npass 39 fail 1\n"
+  },
+  {
+   "name": "SH_LANE_SEEDS",
+   "file": "launch/replicas.sbatch",
+   "tests": [
+    "HARNESS:harness_sbatch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 0.6,
+   "verdict": "KILLED",
+   "tail": "ok   pilot: no ready refuses (rc 2)\nok   pilot: the 8 units, once each\nok   pilot: a failed unit exits 6\nok   pilot: an existing units dir refuses\nok   replicas: no PROCEED refuses (rc 2)\nFAIL replicas: b = 2..200, 199 steps, each once\nFAIL replicas: a failed unit exits 6, its lane continues, rc recorded\npass 5 fail 2\n"
+  },
+  {
+   "name": "SH_PILOT_UNITS",
+   "file": "launch/pilot.sbatch",
+   "tests": [
+    "HARNESS:harness_sbatch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 0.5,
+   "verdict": "KILLED",
+   "tail": "ok   pilot: no ready refuses (rc 2)\nFAIL pilot: the 8 units, once each\nok   pilot: a failed unit exits 6\nok   pilot: an existing units dir refuses\nok   replicas: no PROCEED refuses (rc 2)\nok   replicas: b = 2..200, 199 steps, each once\nok   replicas: a failed unit exits 6, its lane continues, rc recorded\npass 6 fail 1\n"
+  }
+ ],
+ "summary": "48/51 killed"
+}
