@@ -1,0 +1,306 @@
+"""PTMC scorer tests on hand-made products (as REF-C2C1's reader tests do): a publication, its cells, E_R, the D4
+baseline (REF's IBU central and replicas, Q_R's copies, the committed markers and readout), and the 7 + N units, at a
+fixture scale (N = 12, rank 3; the scorer's declared constants are patched, never its CLI). They need PyROOT.
+
+  PTMC_PY=/path/python OMP_NUM_THREADS=1 python -B -m pytest -q -p no:cacheprovider test_ptmc_score.py
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+import shutil
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+from unittest import mock
+
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import ptmc_lib as P  # noqa: E402
+import test_ptmc as T  # noqa: E402  (the deploy tree, built once)
+
+try:
+    import ROOT  # noqa: F401
+    HAVE_ROOT = True
+except Exception:  # pragma: no cover
+    HAVE_ROOT = False
+
+PT, PZ = T.PT, T.PZ
+KS = [1, 2, 3, 4, 5, 10, 15, 20]
+N, RANK = 12, 3
+ARGV = ["--omnifile", "/stage/cv.root", "--mcfile", "/stage/mc.root", "--iters", "5"]
+ROWS_FILE_ARGS = ["--signal-convention", "minerva", "--oofvc-rows", "/stage/oofvc_rows.npz"]
+THREADS = {"OMP_NUM_THREADS": "64", "MKL_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1"}
+
+
+def sha(p: Path) -> str:
+    return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+
+
+def write_root(path: Path, hists: dict, named: dict | None = None, params: dict | None = None):
+    import ROOT
+    f = ROOT.TFile.Open(str(path), "RECREATE")
+    for name, v in hists.items():
+        h = ROOT.TH2D(name, "", 14, np.asarray(PT, float), 16, np.asarray(PZ, float))
+        for g in range(224):
+            h.SetBinContent(g // 16 + 1, g % 16 + 1, float(v[g]))
+        h.Write()
+    for name, val in (params or {}).items():
+        ROOT.TParameter("double")(name, float(val)).Write()
+    for name, val in (named or {}).items():
+        ROOT.TNamed(name, json.dumps(val, sort_keys=True)).Write()
+    f.Close()
+
+
+class Products:
+    """Every product the scorer reads, hand-made, with the readings known."""
+
+    def __init__(self, delta_scale: float):
+        import ROOT
+        rng = np.random.default_rng(7)
+        self.tmp = Path(tempfile.mkdtemp(prefix="ptmc-score-"))
+        self.units, self.d4, self.repo = self.tmp / "units", self.tmp / "d4", self.tmp / "repo"
+        for d in (self.units, self.d4, self.repo):
+            d.mkdir()
+        self.tree = T.tree()
+        sys.path.insert(0, str(self.tree / "2d-unfolding" / "uq"))
+        import reported_cells as rc
+        # the publication and its committed cells
+        rep = np.ones(224, bool)
+        rep[rng.choice(224, 19, replace=False)] = False
+        paper = np.where(rep, rng.uniform(1, 3, 224), 0.0) * 1e-39
+        sig = 0.03 * paper
+        pub = self.d4 / "000_cov_ptpl_minerva_inclusive_6GeV.root"
+        f = ROOT.TFile.Open(str(pub), "RECREATE")
+        h = ROOT.TH2D("pt_pl_cross_section", "", 14, np.asarray(PT, float), 16, np.asarray(PZ, float))
+        for g in range(224):
+            h.SetBinContent(g // 16 + 1, g % 16 + 1, paper[g])
+        h.Write()
+        for name, scale in (("TotalCovariance", 1.0), ("StatOnlyCovariance", 0.3)):
+            m = ROOT.TMatrixD(224, 224)
+            for g in np.flatnonzero(rep):
+                m[int(g)][int(g)] = scale * sig[g] ** 2
+            m.Write(name)
+        f.Close()
+        cells_dir = self.repo / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2/cells"
+        cells_dir.mkdir(parents=True)
+        fc = ROOT.TFile.Open(str(cells_dir / "cells.root"), "RECREATE")
+        rc.identity_hist(rc.reported_indices(rep.reshape(rc.GRID_SHAPE))).Write()
+        fc.Close()
+        # E_R and the readout's chi2
+        self.x_er = paper * (1 + 0.05 * rep)
+        ref = {"params": {"n_estimators": 400}, "signed_sum": 100.0, "refined_sum": 99.0, "clipped_fraction": 0.01,
+               "n_data": 10, "n_injected": 5}
+        write_root(self.d4 / "001_xsec.root", {"hXSec2D": self.x_er}, {"re2Refinement": ref})
+        d = self.x_er - paper
+        m = rep
+        c_pub = float(d[m] @ np.linalg.pinv(np.diag(sig[m] ** 2)) @ d[m])
+        # the rows file (moved rows) and the background
+        rows = {"entry": np.array([3, 8, 13, 21], np.int64), "reco_pt": np.array([0.2, 0.5, 1.2, 9.0]),
+                "reco_pz": np.array([2.2, 5.5, 12.0, 30.0]), "true_pt": np.array([0.21, 0.52, 1.1, 2.0]),
+                "true_pz": np.array([2.3, 5.4, 11.0, 29.0]), "w_reco": np.array([1.0, 2.0, 3.0, 4.0]),
+                "w_truth": np.array([1.1, 2.1, 3.1, 4.1])}
+        self.rows = self.tmp / "oofvc_rows.npz"
+        np.savez(self.rows, **rows)
+        pot = 0.5
+        L = __import__("oofvc_lib", fromlist=["x"]) if False else None
+        g = np.searchsorted(PT, rows["reco_pt"], side="right") - 1
+        gz = np.searchsorted(PZ, rows["reco_pz"], side="right") - 1
+        inside = (g >= 0) & (g < 14) & (gz >= 0) & (gz < 16)
+        gid = np.where(inside, g * 16 + gz, -1)
+        b_off = rng.uniform(5, 10, 224)
+        removed = np.bincount(gid[inside], weights=rows["w_reco"][inside] * pot, minlength=224)
+        b_r = b_off - removed
+        app = rows["entry"][inside]
+        counts = {"appended": int(inside.sum()), "outside": int((~inside).sum()), "dropped_appended_weight": 0,
+                  "dropped_outside_weight": 0}
+        # the fill record of p_off_b1 (seed-independent), and the R replicas' (moved entries removed)
+        fe = np.array([1, 3, 5, 8, 9, 13, 14, 21, 30], np.int64)
+        fpt = rng.uniform(0.1, 4.0, fe.size)
+        fpz = rng.uniform(2.0, 50.0, fe.size)
+        fw = rng.uniform(0.1, 1.0, fe.size)
+        keep = ~np.isin(fe, rows["entry"])
+        self.fill_off = {"fill_entry": fe, "fill_pt": fpt, "fill_pz": fpz, "fill_w": fw}
+        self.fill_r = {k: v[keep] for k, v in self.fill_off.items()}
+        inj_off = P.injected_entries({"entry": fe, "pt": fpt, "pz": fpz}, PT[0], PT[-1], PZ[0], PZ[-1])
+        inj_r = P.injected_entries({"entry": fe[keep], "pt": fpt[keep], "pz": fpz[keep]}, PT[0], PT[-1], PZ[0], PZ[-1])
+        fix_params = {"dataPOT": 1e20, "mcPOT": 2e20, "potScale": pot, "fluxIntegral_m2_per_POT": 1e-4,
+                      "fluxIntegral_cm2_per_POT": 1.0, "nNucleons": 3e30}
+        fix_h = {"hOFTruthDenom2D": rng.uniform(1, 2, 224), "hDataReco2D": rng.uniform(1, 2, 224),
+                 "hFlux_pt": rng.uniform(1, 2, 224)}
+        # Q_R and REF's IBU products, with REF's markers and readout
+        noise = lambda: 0.005 * paper * rng.standard_normal(224)  # noqa: E731
+        ibu_off_c = self.x_er * 1.02
+        staged, marker_dir = {}, self.repo / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2"
+        (marker_dir / "units-centrals").mkdir(parents=True)
+        (marker_dir / "units-replicas" / "timeout" / "units").mkdir(parents=True)
+        np.savez(self.d4 / "c2_central.npz", ks=np.array(KS), xsec=np.tile(ibu_off_c, (len(KS), 1)),
+                 meta=json.dumps({"unit": "c2_central", "argv": ARGV}))
+        (marker_dir / "units-centrals" / "c2_central.done").write_text(json.dumps(
+            {"unit": "c2_central", "verdict": "PASS", "sha256": sha(self.d4 / "c2_central.npz"), "root_sha256": "x"}))
+        self.q_r, self.ref_rep = {}, {}
+        for b in range(1, N + 1):
+            eb = self.x_er + noise()
+            st = {"streams": "three", "unit_factors": False, "bootstrap_seed": b,
+                  "seed_offsets": {"data": 0, "mc": 10_000_000, "bkg": 20_000_000},
+                  "n": {"data": 10, "mc": 50, "bkg": 30}, "sum": {"data": 10.0 + b, "mc": 50.0 + b, "bkg": 30.0 + b}}
+            p = self.d4 / P.staged_index(b)
+            write_root(p, {"hXSec2D": eb}, {"p1Streams": st, "re2Refinement": ref})
+            staged[f"/src/S1_{b:03d}"] = sha(p)
+            cb = eb * 1.02 + 0.3 * noise()
+            np.savez(self.d4 / f"c2_replica_b{b}.npz", ks=np.array(KS), xsec=np.tile(cb, (len(KS), 1)),
+                     meta=json.dumps({"unit": f"c2_replica_b{b}",
+                                      "argv": ARGV + ["--bootstrap-seed", str(b), "--bootstrap-streams", "three"]}))
+            (marker_dir / "units-replicas" / "timeout" / "units" / f"c2_replica_b{b}.done").write_text(json.dumps(
+                {"unit": f"c2_replica_b{b}", "verdict": "PASS", "sha256": sha(self.d4 / f"c2_replica_b{b}.npz"),
+                 "root_sha256": "x"}))
+            self.q_r[b], self.ref_rep[b] = (eb, st), cb
+        dist_ibu = {str(k): 1.0 for k in KS}  # not compared: c2_central is present
+        (marker_dir / "read-2").mkdir()
+        (marker_dir / "read-2" / "readout.json").write_text(json.dumps({"staged_sha256": staged,
+                                                                        "D_IBU_every_K": dist_ibu}))
+        # the units
+        runtime = {"python": "3.11", "numpy": "1", "ROOT": "6.28", "lightgbm": "4", "sklearn": "1"}
+        pins = {"roounfold_lib_sha256": "lib", "cpus": 64, "thread_env": THREADS, "ptmc_run": "run", "ptmc_lib": "plib",
+                "code_sha256": {"x": "y"}, "inputs": {"CV": "a", "MC": "b"}, "driver": sha(self.tree / "2d-unfolding/re2/re2_driver.py"),
+                "rows": sha(self.rows), "ref_c2c1_read": sha(self.tree / "2d-unfolding/ref_c2c1/ref_c2c1_read.py"),
+                "reported_cells": sha(self.tree / "2d-unfolding/uq/reported_cells.py"),
+                "compare": sha(self.tree / "2d-unfolding/compare_to_paper_fullcov.py")}
+        self.pins = self.tmp / "pins.json"
+        self.pins.write_text(json.dumps(pins))
+        delta = delta_scale * paper * rng.choice([-1.0, 1.0], 224)
+
+        def unit(name, x_of, x_ibu, conv, b, root_extra=None, arrays=None, draw=None):
+            argv = list(ARGV) + (ROWS_FILE_ARGS if conv == "R" else []) + (
+                ["--bootstrap-seed", str(b), "--bootstrap-streams", "three"] if b is not None else [])
+            controls = {"C-FILL-IBU": {"pass": True}, "C-PAIR": {"pass": True}, "C-ROO": {"pass": True},
+                        "C-DRAW-R": {"pass": True, **(draw or {})}, "C-COMP": {"pass": True}, "C-REFINE": {"pass": True}}
+            if b is None:
+                controls["C-COUPLE"] = {"pass": True}
+                controls["C-SIM"] = {"pass": True}
+            if conv == "R":
+                controls["C-MOVE-UNIT"] = {"pass": True}
+            meta = {"schema": "ptmc-unit/1", "unit": name, "argv": argv, "ks": KS, "unfolder": "lib", "cpus": 64,
+                    "thread_env": THREADS, "runtime": runtime, "runner_sha256": "run", "lib_sha256": "plib",
+                    "code_sha256": {"x": "y"}, "inputs_sha256": {"CV": "a", "MC": "b"}, "controls": controls,
+                    "oofvc_counts": counts if conv == "R" else None, "extract_args_sha256": "norm",
+                    "support": {"pass": True} if name == "p_R_c" else None}
+            arr = {"ks": np.array(KS), "xsec": np.tile(x_ibu, (len(KS), 1)), "completeness": np.ones(224),
+                   "appended_entry": app if conv == "R" else np.zeros(0, np.int64),
+                   "fill_entries": np.zeros(0, np.int64), "fill_entry": np.zeros(0, np.int64),
+                   "fill_pt": np.zeros(0), "fill_pz": np.zeros(0), "fill_w": np.zeros(0),
+                   "inj_entries": np.zeros(0, np.int64), **(arrays or {})}
+            np.savez(self.units / f"{name}.npz", **arr, meta=json.dumps(meta))
+            write_root(self.units / f"{name}.root", {"hXSec2D": x_of, **(root_extra or {}).get("h", {})},
+                       (root_extra or {}).get("named"), (root_extra or {}).get("params"))
+            (self.units / f"{name}.done").write_text(json.dumps(
+                {"unit": name, "verdict": "PASS", "sha256": sha(self.units / f"{name}.npz"),
+                 "root_sha256": sha(self.units / f"{name}.root")}))
+        fixed = {"h": dict(fix_h), "params": fix_params}
+        unit("p_off_c", self.x_er, ibu_off_c, "off", None,
+             {"h": {**fix_h, "hBkgReco2D": b_off}, "params": fix_params},
+             draw={"n_original": 50, "n_appended": 0})
+        x_r = self.x_er * 1.01
+        unit("p_R_c", x_r, x_r + delta, "R", None,
+             {"h": {**fix_h, "hBkgReco2D": b_r}, "params": fix_params},
+             draw={"n_original": 50, "n_appended": int(inside.sum())})
+        for b in range(1, 6):
+            eb, st = self.q_r[b]
+            x_of = eb if b == 1 else eb + 1e-6 * noise()
+            ibu = self.ref_rep[b] if b == 1 else self.ref_rep[b] + 1e-6 * noise()
+            unit(f"p_off_b{b}", x_of, ibu, "off", b, {"named": {"re2Refinement": ref, "p1Streams": st}},
+                 arrays={**self.fill_off, "inj_entries": inj_off} if b == 1 else None)
+        for b in range(1, N + 1):
+            eb, st = self.q_r[b]
+            xo = x_r + noise()
+            xi = xo + delta + 0.3 * noise()
+            unit(f"p_R_b{b}", xo, xi, "R", b, {"named": {"p1Streams": st}},
+                 arrays={**self.fill_r, "inj_entries": inj_r},
+                 draw={"n_data": st["n"]["data"], "data_sum": st["sum"]["data"], "n_original": st["n"]["mc"],
+                       "original_sum": st["sum"]["mc"], "n_appended": int(inside.sum())})
+        (self.units / "pins_all.json").write_text(json.dumps({"pass": True, "before": {"driver": pins["driver"],
+                                                                                       "rows": pins["rows"]}}))
+        self.K = {"N": N, "RANK": RANK, "N_OFF": 5, "CELLS_SHA": sha(cells_dir / "cells.root"),
+                  "E_R_SHA": sha(self.d4 / "001_xsec.root"), "PUB_SHA": sha(pub), "C_PUB": c_pub,
+                  "NDF": int(rep.sum()), "COUNTS": counts, "SCAN": KS, "Q_R_SRC": "/src/S1_{b:03d}"}
+
+    def score(self):
+        import ptmc_score as S
+        out = self.tmp / f"score_{len(list(self.tmp.glob('score_*')))}.json"
+        argv = ["--tree", str(self.tree), "--units", str(self.units), "--d4", str(self.d4), "--repo", str(self.repo),
+                "--rows", str(self.rows), "--rows-sha256", sha(self.rows), "--pins", str(self.pins), "--out", str(out)]
+        with mock.patch.dict(S.CONST, self.K):
+            rc = S.main(argv)
+        rec = json.loads(out.read_text()) if out.exists() else json.loads((self.tmp / "STOP.json").read_text())
+        return rc, rec
+
+
+@unittest.skipUnless(HAVE_ROOT, "needs PyROOT")
+class Scorer(unittest.TestCase):
+
+    def test_differ_with_b_formed(self):
+        p = Products(delta_scale=0.05)
+        rc, rec = p.score()
+        self.assertEqual(rc, 0, rec)
+        self.assertEqual(rec["disposition"], "formed")
+        self.assertEqual(rec["PTMC-R1"], "differ")
+        self.assertIn(rec["PTMC-B"], P.WORDS)
+        self.assertNotIn("held fixed", rec["statement"]["text"])
+        for k in ("C-UNITS", "C-PINS", "C-CELLS", "C-PUB", "C-GRID", "C-FIX", "C-MOVE", "C-NORM", "C-BASE",
+                  "C-REPOFF", "C-DRAW-R", "C-SHAPE"):
+            self.assertTrue(rec["controls"][k]["pass"] if isinstance(rec["controls"][k], dict) and "pass" in
+                            rec["controls"][k] else True, k)
+        self.assertIn("C-PROTO", rec["printed_read_by_nothing"])
+
+    def test_agree_when_delta_is_zero(self):
+        p = Products(delta_scale=0.0)
+        rc, rec = p.score()
+        self.assertEqual(rc, 0, rec)
+        self.assertIn(rec["PTMC-R1"], ("agree", "marginal"))
+
+    def test_absent_replica_is_unavailable_and_corrupt_marker_stops(self):
+        p = Products(delta_scale=0.05)
+        (p.d4 / "c2_replica_b5.npz").unlink()
+        rc, rec = p.score()
+        self.assertEqual(rc, 0, rec)
+        self.assertEqual(rec["disposition"], "unavailable")
+        self.assertIsNone(rec["PTMC-B"])
+        self.assertEqual(rec["statement"]["row"], 4)
+        q = Products(delta_scale=0.05)
+        np.savez(q.d4 / "c2_replica_b3.npz", ks=np.array(KS), xsec=np.zeros((len(KS), 224)), meta="{}")
+        rc, rec = q.score()
+        self.assertEqual(rc, 3)
+        self.assertTrue(rec["stopped"])
+
+    def test_duplicated_retained_fill_row_stops(self):
+        """The confirm read's finding 3: a replica with a retained background row filled twice must STOP."""
+        p = Products(delta_scale=0.05)
+        z = dict(np.load(p.units / "p_R_b2.npz"))
+        for k in ("fill_entry", "fill_pt", "fill_pz", "fill_w"):
+            z[k] = np.concatenate([z[k], z[k][:1]])
+        np.savez(p.units / "p_R_b2.npz", **z)
+        mk = json.loads((p.units / "p_R_b2.done").read_text())
+        mk["sha256"] = sha(p.units / "p_R_b2.npz")
+        (p.units / "p_R_b2.done").write_text(json.dumps(mk))
+        rc, rec = p.score()
+        self.assertEqual(rc, 3)
+        self.assertIn("C-MOVE", rec["why"])
+
+    def test_nan_in_a_unit_stops(self):
+        p = Products(delta_scale=0.05)
+        z = dict(np.load(p.units / "p_R_b4.npz"))
+        z["xsec"] = z["xsec"].copy()
+        z["xsec"][5, 7] = np.nan
+        np.savez(p.units / "p_R_b4.npz", **z)
+        mk = json.loads((p.units / "p_R_b4.done").read_text())
+        mk["sha256"] = sha(p.units / "p_R_b4.npz")
+        (p.units / "p_R_b4.done").write_text(json.dumps(mk))
+        rc, rec = p.score()
+        self.assertEqual(rc, 3)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -2,10 +2,10 @@
 """PTMC's scorer (PTMC-DECLARATION.md sections 3-5): every control and the disposition first, then the statistic, the
 readings and the statement. It reads only fetched copies (the units, the D4 baseline products) and committed records.
 
-  python3 ptmc_score.py --tree DEPLOY --units UNITS_DIR --d4 D4_DIR --repo REPO --rows ROWS.npz --rows-sha256 SHA
+  python3 ptmc_score.py --tree DEPLOY --units unit_names()_DIR --d4 D4_DIR --repo REPO --rows ROWS.npz --rows-sha256 SHA
                         --pins PINS.json --out score.json
 
-UNITS_DIR holds the 207 units (<unit>.npz, .root, .done) and the runner's pins files. D4_DIR holds the fetched
+unit_names()_DIR holds the 207 units (<unit>.npz, .root, .done) and the runner's pins files. D4_DIR holds the fetched
 baseline: c2_central.npz, c2_replica_b{1..200}.npz, and the staged copies 000..201 (000 the publication). REPO is a
 checkout at the binding's commit (the committed markers, readout.json and cells.root). PINS.json is the binding's
 pin set. Exit 0 with a reading; 3 for a STOP (STOP.json written, no T formed); 2 for a refused invocation.
@@ -28,11 +28,24 @@ import ptmc_lib as P  # noqa: E402
 REF_RECEIPTS = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2"
 READOUT = f"{REF_RECEIPTS}/read-2/readout.json"
 CELLS = f"{REF_RECEIPTS}/cells/cells.root"
-CELLS_SHA = "f06e4a26efc3085eac71d80fce5f806f17dc04cb89bfcc51ee2c939332aed743"
-E_R_SHA = "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef"
-PUB_SHA = "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3"
-C_PUB = 465.41527219152636
-UNITS = ["p_off_c", "p_R_c"] + [f"p_off_b{b}" for b in range(1, 6)] + [f"p_R_b{b}" for b in range(1, 201)]
+# The declared constants (PTMC-DECLARATION.md sections 1-4), in one place. The CLI has no way to change them; the
+# fixture-scale scorer test patches CONST (mock.patch.dict) to a small N and rank.
+CONST = {"N": P.N_REPLICAS, "RANK": P.RANK, "N_OFF": 5, "CELLS_SHA": "f06e4a26efc3085eac71d80fce5f806f17dc04cb89bfcc51ee2c939332aed743",
+     "E_R_SHA": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef",
+     "PUB_SHA": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3", "C_PUB": 465.41527219152636,
+     "NDF": 205, "COUNTS": {"appended": 536518, "outside": 7644, "dropped_appended_weight": 0,
+                            "dropped_outside_weight": 0},
+     "SCAN": [1, 2, 3, 4, 5, 10, 15, 20],
+     "Q_R_SRC": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S1_{b:03d}/xsec.root"}
+
+
+def unit_names() -> list:
+    return (["p_off_c", "p_R_c"] + [f"p_off_b{b}" for b in range(1, CONST["N_OFF"] + 1)]
+            + [f"p_R_b{b}" for b in range(1, CONST["N"] + 1)])
+
+
+def seeds():
+    return range(1, CONST["N"] + 1)
 FIX = ("hOFTruthDenom2D", "hDataReco2D", "hFlux_pt", "dataPOT", "mcPOT", "potScale", "fluxIntegral_m2_per_POT",
        "fluxIntegral_cm2_per_POT", "nNucleons")
 EDGES = ([0, 0.07, 0.15, 0.25, 0.33, 0.40, 0.47, 0.55, 0.70, 0.85, 1.00, 1.25, 1.50, 2.50, 4.50],
@@ -121,11 +134,11 @@ def ibu(z: dict, K: int) -> np.ndarray:
 def check_units(units: Path, pins: dict, scan: list) -> tuple[dict, dict]:
     """C-UNITS and C-PINS, and every unit's own controls."""
     found = sorted(p.stem for p in units.glob("p_*.done"))
-    if found != sorted(UNITS):
-        raise Stop(f"C-UNITS: inventory {len(found)} units; missing {sorted(set(UNITS) - set(found))[:5]}, extra "
-                   f"{sorted(set(found) - set(UNITS))[:5]}")
+    if found != sorted(unit_names()):
+        raise Stop(f"C-UNITS: inventory {len(found)} units; missing {sorted(set(unit_names()) - set(found))[:5]}, extra "
+                   f"{sorted(set(found) - set(unit_names()))[:5]}")
     metas, runtimes, failed = {}, set(), []
-    for u in UNITS:
+    for u in unit_names():
         mk = json.loads((units / f"{u}.done").read_text())
         if mk.get("unit") != u or mk.get("verdict") != "PASS":
             raise Stop(f"C-UNITS: {u} marker {mk}")
@@ -165,7 +178,7 @@ def check_units(units: Path, pins: dict, scan: list) -> tuple[dict, dict]:
         p = json.loads(pf.read_text())
         if not p.get("pass") or p["before"]["driver"] != pins["driver"] or p["before"]["rows"] != pins["rows"]:
             raise Stop(f"C-PINS: {pf.name}")
-    return metas, {"C-UNITS": {"pass": True, "units": len(UNITS), "runtime": json.loads(runtimes.pop())},
+    return metas, {"C-UNITS": {"pass": True, "units": len(unit_names()), "runtime": json.loads(runtimes.pop())},
                    "C-PINS": {"pass": True}}
 
 
@@ -187,18 +200,18 @@ def score(a) -> dict:
                     ("2d-unfolding/compare_to_paper_fullcov.py", pins["compare"])):
         if sha256(a.tree / f) != want:
             raise Stop(f"C-PINS: the scorer's {f}")
-    scan = [1, 2, 3, 4, 5, 10, 15, 20]
+    scan = list(CONST["SCAN"])
     metas, c = check_units(a.units, pins, scan)
     controls.update(c)
     # the mandatory E_R central (C-IN), the publication and the cells (C-CELLS, C-PUB)
     e_r = a.d4 / "001_xsec.root"
-    if not e_r.is_file() or sha256(e_r) != E_R_SHA:
+    if not e_r.is_file() or sha256(e_r) != CONST["E_R_SHA"]:
         raise Stop("C-IN: the mandatory E_R central (001) is absent or not a5c13fc3")
     pub_path = a.d4 / "000_cov_ptpl_minerva_inclusive_6GeV.root"
-    if not pub_path.is_file() or sha256(pub_path) != PUB_SHA:
+    if not pub_path.is_file() or sha256(pub_path) != CONST["PUB_SHA"]:
         raise Stop("C-IN: the publication copy (000)")
     cells = a.repo / CELLS
-    if sha256(cells) != CELLS_SHA:
+    if sha256(cells) != CONST["CELLS_SHA"]:
         raise Stop("C-CELLS: the committed cells.root")
     import ROOT
     import reported_cells as rc
@@ -212,7 +225,15 @@ def score(a) -> dict:
     fc = ROOT.TFile.Open(str(cells))
     bound, _ = rc.read_cells(fc)
     fc.Close()
-    rc.require_same_cells(np.asarray(bound), np.asarray(rule), "committed cells", "the receipt's rule")
+    try:
+        rc.require_same_cells(np.asarray(bound), np.asarray(rule), "committed cells", "the receipt's rule")
+    except Exception as e:  # reported_cells.CellIdentityError and its kin
+        raise Stop(f"C-CELLS: {e}") from None
+    try:
+        rc.require_same_cells(np.asarray(bound), rc.reported_indices((np.diag(pub_cov) > 0).reshape(rc.GRID_SHAPE)),
+                              "committed cells", "TotalCovariance's mask")
+    except Exception as e:
+        raise Stop(f"C-CELLS: {e}") from None
     cells_idx = np.asarray(bound, int)
     controls["C-CELLS"] = {"pass": True, "cells": int(cells_idx.size)}
 
@@ -221,12 +242,12 @@ def score(a) -> dict:
         return chi2 / ndf, ndf
     x_er = vec(e_r)
     d_er, ndf = dist(x_er)
-    if ndf != 205 or abs(d_er * ndf / C_PUB - 1) > 1e-8:
+    if ndf != CONST["NDF"] or abs(d_er * ndf / CONST["C_PUB"] - 1) > 1e-8:
         raise Stop(f"C-PUB: chi2 {d_er * ndf} over {ndf}")
     controls["C-PUB"] = {"pass": True, "chi2": d_er * ndf, "ndf": ndf}
     # C-GRID: every unit's hXSec2D axes (vec() refuses otherwise)
-    U = {u: npz(a.units / f"{u}.npz") for u in UNITS}
-    X_OF = {u: vec(a.units / f"{u}.root") for u in UNITS}
+    U = {u: npz(a.units / f"{u}.npz") for u in unit_names()}
+    X_OF = {u: vec(a.units / f"{u}.root") for u in unit_names()}
     controls["C-GRID"] = {"pass": True}
     # C-FIX: R against production, bit for bit with errors and overflow
     ro, rr = root_objects(a.units / "p_off_c.root"), root_objects(a.units / "p_R_c.root")
@@ -242,9 +263,7 @@ def score(a) -> dict:
     rows = {k: v for k, v in np.load(a.rows).items()}
     meta_r = metas["p_R_c"]
     counts = meta_r["oofvc_counts"]
-    want = {"appended": 536518, "outside": 7644, "dropped_appended_weight": 0, "dropped_outside_weight": 0}
-    if a.fixture_counts:
-        want = json.loads(a.fixture_counts)
+    want = dict(CONST["COUNTS"])
     if counts != want:
         raise Stop(f"C-MOVE: counts {counts} != {want}")
     entries = np.asarray(rows["entry"], np.int64)
@@ -277,7 +296,7 @@ def score(a) -> dict:
     printed["upper_edge_rows"] = edge
     # C-NORM: the extraction's fixed arguments as consumed, equal in every unit to p_off_c's
     ref_norm = metas["p_off_c"]["extract_args_sha256"]
-    bad = [u for u in UNITS if metas[u].get("extract_args_sha256") != ref_norm]
+    bad = [u for u in unit_names() if metas[u].get("extract_args_sha256") != ref_norm]
     if bad:
         raise Stop(f"C-NORM: {bad[:5]}")
     controls["C-NORM"] = {"pass": True, "sha256": ref_norm}
@@ -291,10 +310,10 @@ def score(a) -> dict:
     want = {k: np.asarray(ref[k])[keep] for k in ("fill_entry", "fill_pt", "fill_pz", "fill_w")}
     want_inj = P.injected_entries({"entry": want["fill_entry"], "pt": want["fill_pt"], "pz": want["fill_pz"]},
                                   EDGES[0][0], EDGES[0][-1], EDGES[1][0], EDGES[1][-1])
-    bad = [u for u in UNITS if u.startswith("p_R_b")
+    bad = [u for u in unit_names() if u.startswith("p_R_b")
            and not (all(np.array_equal(np.asarray(U[u][k]), want[k]) for k in want)
                     and np.array_equal(np.asarray(U[u]["inj_entries"], np.int64), want_inj))]
-    bad += [u for u in UNITS if u.startswith("p_R") and not metas[u]["controls"].get("C-MOVE-UNIT", {}).get("pass")]
+    bad += [u for u in unit_names() if u.startswith("p_R") and not metas[u]["controls"].get("C-MOVE-UNIT", {}).get("pass")]
     if bad:
         raise Stop(f"C-MOVE: replica sets {bad[:5]}")
     controls["C-MOVE"]["replica_sets"] = True
@@ -328,7 +347,7 @@ def score(a) -> dict:
     absent, mismatch = [], []
     ref_c2 = {}
     for name, unit, b in [("c2_central.npz", "c2_central", None)] + [
-            (f"c2_replica_b{b}.npz", f"c2_replica_b{b}", b) for b in range(1, 201)]:
+            (f"c2_replica_b{b}.npz", f"c2_replica_b{b}", b) for b in seeds()]:
         p = a.d4 / name
         if not p.exists():
             absent.append(name)
@@ -351,13 +370,13 @@ def score(a) -> dict:
             ref_c2[b] = z
     q_r = {}
     staged = readout["staged_sha256"]
-    for b in range(1, 201):
+    for b in seeds():
         name = P.staged_index(b)
         p = a.d4 / name
         if not p.exists():
             absent.append(name)
             continue
-        src = f"/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S1_{b:03d}/xsec.root"
+        src = CONST["Q_R_SRC"].format(b=b)
         try:
             st = named_json(p, "p1Streams")
             ok = (sha256(p) == staged.get(src) and st.get("bootstrap_seed") == b and st.get("streams") == "three")
@@ -398,7 +417,7 @@ def score(a) -> dict:
     # C-DRAW-R's aggregate half against Q_R's p1Streams (B formed only)
     if disp == "formed":
         bad = []
-        for b in range(1, 201):
+        for b in seeds():
             st = named_json(q_r[b], "p1Streams")
             d = metas[f"p_R_b{b}"]["controls"]["C-DRAW-R"]
             rec = named_json(a.units / f"p_R_b{b}.root", "p1Streams")
@@ -408,26 +427,26 @@ def score(a) -> dict:
                 bad.append(b)
         if bad:
             raise Stop(f"C-DRAW-R against Q_R's p1Streams: seeds {bad[:10]}")
-        controls["C-DRAW-R"] = {"pass": True, "aggregate_seeds": 200}
+        controls["C-DRAW-R"] = {"pass": True, "aggregate_seeds": CONST["N"]}
     # the statistic, each arm after C-SHAPE
     rec = {"schema": "ptmc-score/1", "controls": controls}
     arms = {}
     for K in (10, 5):
         delta = ibu(U["p_R_c"], K) - X_OF["p_R_c"]
-        D = np.array([ibu(U[f"p_R_b{b}"], K) - X_OF[f"p_R_b{b}"] for b in range(1, 201)])
+        D = np.array([ibu(U[f"p_R_b{b}"], K) - X_OF[f"p_R_b{b}"] for b in seeds()])
         arms[("R", K)] = (delta, D)
         if disp == "formed":
             delta_b = ibu(ref_c2[None], K) - x_er
-            D_b = np.array([ibu(ref_c2[b], K) - vec(q_r[b]) for b in range(1, 201)])
+            D_b = np.array([ibu(ref_c2[b], K) - vec(q_r[b]) for b in seeds()])
             arms[("B", K)] = (delta_b, D_b)
     for key, (delta, D) in arms.items():
-        sg = P.shape_gate(delta, D)
+        sg = P.shape_gate(delta, D, rank=CONST["RANK"], n=CONST["N"])
         if not sg["pass"]:
             raise Stop(f"C-SHAPE: {key} {sg}")
     controls["C-SHAPE"] = {"pass": True}
     readings = {}
     for (arm, K), (delta, D) in arms.items():
-        t = RR.t_and_null(delta, D, P.RANK)
+        t = RR.t_and_null(delta, D, CONST["RANK"])
         if not P.finite_t(t):
             raise Stop(f"C-SHAPE: a non-finite T or bar in {arm} K={K}")
         readings[f"{arm}_K{K}"] = {**t, "reading": RR.classify_t(t, P.WORDS),
@@ -440,18 +459,18 @@ def score(a) -> dict:
     if disp == "formed":
         dB, DB = arms[("B", 10)]
         CB = np.cov(DB, rowvar=False, ddof=1)
-        Dp = np.array([ibu(U[f"p_off_b{b}"], 10) - X_OF[f"p_off_b{b}"] for b in range(1, 6)])
-        Cplus = RR.pinv_rank(CB, P.RANK)
+        Dp = np.array([ibu(U[f"p_off_b{b}"], 10) - X_OF[f"p_off_b{b}"] for b in range(1, CONST["N_OFF"] + 1)])
+        Cplus = RR.pinv_rank(CB, CONST["RANK"])
         delta_c = (ibu(U["p_off_c"], 10) - X_OF["p_off_c"]) - dB
         printed["C-PROTO"] = {**P.proto_eps(Dp, DB[:5], np.diag(CB)),
                               "whitened": [float(np.sqrt(max(d @ Cplus @ d, 0))) for d in (Dp - DB[:5])],
                               "whitened_central": float(np.sqrt(max(delta_c @ Cplus @ delta_c, 0)))}
-    printed["hartlap"] = (200 - 50 - 2) / 199
+    printed["hartlap"] = (CONST["N"] - CONST["RANK"] - 2) / (CONST["N"] - 1)
     printed["D_under_R"] = {"D_E_R": dist(X_OF["p_R_c"])[0],
                             "D_IBU": {K: dist(ibu(U["p_R_c"], K))[0] for K in scan}}
     for K in (10, 5):
         rho = []
-        for b in range(1, 201):
+        for b in seeds():
             de = dist(X_OF[f"p_R_b{b}"])[0]
             if de > 0 and math.isfinite(de):
                 v = dist(ibu(U[f"p_R_b{b}"], K))[0] / de
@@ -476,7 +495,6 @@ def main(argv=None) -> int:
     ap.add_argument("--rows-sha256", required=True)
     ap.add_argument("--pins", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--fixture-counts", default=None, help="tests only: the fixture's C-MOVE counts as JSON")
     a = ap.parse_args(argv)
     if a.out.exists():
         print(f"refusing: {a.out} exists", file=sys.stderr)
