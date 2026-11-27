@@ -1,0 +1,77 @@
+Adversarial Code Review RECHECK: regrade_vf.py (commit ab1d16e7, REGRADE-VF-DECLARATION.md rev 1)
+
+1. Status of Findings 1-12 from read1-agy-report.txt
+
+1. FIXED — regrade_vf.py:160-170, test_regrade_vf.py:358-388, mutants_regrade_vf.py:92.
+   check_psd() now checks `if not (math.isfinite(lam.max()) and lam.max() > 0)` (regrade_vf.py:165) before computing `lmin_rel = float(lam.min() / lam.max())` and verifying `math.isfinite(lmin_rel) and lmin_rel >= -PSD_REL` (regrade_vf.py:167-168). Negative-definite and negative-semidefinite matrices raise Stop, covered by `test_check_psd_fails_closed` (test_regrade_vf.py:358-374) and `test_check_psd_threshold_is_the_declarations` (test_regrade_vf.py:377-388).
+
+2. FIXED — regrade_vf.py:89-118, 160-170, test_regrade_vf.py:358-374, 682-685, mutants_regrade_vf.py:90-94.
+   `check_psd()` calls `symmetric(C, name)` (regrade_vf.py:163), which calls `finite(name, C)` (regrade_vf.py:111) to reject empty arrays and any non-finite entry anywhere in C, checks squareness (regrade_vf.py:112-113), guards `scale > 0` and finite in `rel_max` (regrade_vf.py:103-104), and checks `within(asym, SYM_REL)` (regrade_vf.py:116) via fail-closed `within()` (regrade_vf.py:89-91). Covered by `test_check_psd_fails_closed` (`nan`, `inf`, `empty`, `upper-nan`) and `test_within_fails_closed`.
+
+3. FIXED — regrade_vf.py:89-91, 303-308, test_regrade_vf.py:536-567, mutants_regrade_vf.py:90, 95.
+   `evaluation_controls()` now verifies `isinstance(committed.get(k), float) and math.isfinite(committed[k]) and committed[k] != 0 and math.isfinite(r0[k])` for every `k in A0_FIELDS` (regrade_vf.py:303-305) and checks `all(within(x, A0_REL) for x in a0.values())` (regrade_vf.py:307) rather than `max(a0.values()) > A0_REL`. Covered by `test_a0_refuses_each_field_just_over_its_tolerance`, `test_a0_refuses_a_bad_committed_field` (`nan`, `zero`, `missing`), and `test_evaluation_controls_refuse_a_nan_capture`.
+
+4. FIXED — regrade_vf.py:89-105, 243-267, 295-299, test_regrade_vf.py:478-534, 561-577, mutants_regrade_vf.py:90-91.
+   `block_controls()` calls `finite("blocks", f_cpl, f_vf, C_e, C_e_infl, DeltaC_e, L5)` (regrade_vf.py:246), enforces `np.all(np.asarray(f_cpl) > 0)` (regrade_vf.py:247-248), uses `rel_max()` (which rejects non-finite or non-positive scale at regrade_vf.py:103-104), and validates `frel`, `d1`, `d2`, `l1`, `l2` with `within()` (regrade_vf.py:250, 256, 264). `evaluation_controls()` calls `finite()` on all five capture arrays (regrade_vf.py:295) and validates `frel` with `within()` (regrade_vf.py:297). Covered by `test_block_controls_fail_closed`, `test_block_control_tolerances_are_the_declarations`, `test_evaluation_controls_refuse_a_nan_capture`, and `test_capture_f_tolerance_is_the_declarations`.
+
+5. FIXED — regrade_vf.py:174-209, test_regrade_vf.py:423-434, mutants_regrade_vf.py:101-102.
+   `split()` calls `finite("E", E)` and `finite("C", C_base, C_add)` (regrade_vf.py:177-178), rejects `E.ndim != 2 or n < 2` (regrade_vf.py:180-181), catches `ZeroDivisionError` from `rc.r_chi2` as `Stop` (regrade_vf.py:182-185), checks `math.isfinite(M) and M > 0 and within(abs(M - (B + F)), ID_REL * M)` for C-ID (regrade_vf.py:195), and validates finiteness of all returned split/bootstrap quantities plus `M_full > 0` (regrade_vf.py:207-209). Covered by `test_split_fails_closed` (`nan`, `n1`, `zero`).
+
+6. FIXED — regrade_vf.py:108-118, 129-146, test_regrade_vf.py:391-414, 688-690, mutants_regrade_vf.py:93-94.
+   Both `gap_check()` (regrade_vf.py:131) and `band_L()` (regrade_vf.py:145) now call `symmetric()` before `ranked_eig()`, catching upper-triangle and diagonal NaNs/Infs/asymmetry and wrong shapes. `gap_check()` checks `lam.shape != (BANDS[-1][2],) or not all(lam[hi] > 0 for _, _, hi in BANDS[:-1])` (regrade_vf.py:133) and `all(math.isfinite(g) and g > GAP_MIN for g in gaps.values())` (regrade_vf.py:136). Covered by `test_gap_check_fails_closed`, `test_gap_threshold_is_the_declarations`, and `test_gap_check_names_a_non_positive_edge_eigenvalue`.
+
+7. FIXED — regrade_vf.py:363, test_regrade_vf.py:639-641, mutants_regrade_vf.py:98.
+   `main()` serializes with `allow_nan=False` (regrade_vf.py:363), tested by `test_main_exit_codes_and_refuses_nan`.
+
+8. FIXED — regrade_vf.py:143-144, 279, test_regrade_vf.py:417-420, 604-612, mutants_regrade_vf.py:96-97.
+   `global_controls()` checks `fl["trigger"][name]["active"] is True` (regrade_vf.py:279), and `band_L()` enforces `math.isfinite(phi[name]) and phi[name] >= 1.0` (regrade_vf.py:143-144). Covered by `test_band_L_refuses_a_bad_phi` and `test_global_controls_refuse_a_string_active_or_bad_phi`.
+
+9. PARTLY — test_regrade_vf.py:377-690.
+   Fixed in test_regrade_vf.py: `shares` and `B_raw` (`test_split_shares_are_each_term_over_m_full`, lines 437-442); distinct SE keys in `readings()` (`test_readings_use_their_own_se_keys`, lines 445-453); `C_GAP_data` (`test_block_controls_pass_on_consistent_synthetic_blocks` and `test_block_controls_refuse_a_tie_at_the_data`, lines 464-475); evaluation-level `C-PSD` and `C_GAP_T` (`test_evaluation_controls_refuse_a_non_psd_rule_i`, `..._c_rep`, `..._c_prime`, `..._c_rep_rule_i`, `..._a_tie_at_t`, lines 579-601, 656-679); declaration tolerances and all `A0_FIELDS` (`test_check_psd_threshold_is_the_declarations`, `test_gap_threshold_is_the_declarations`, `test_block_control_tolerances_are_the_declarations`, `test_a0_refuses_each_field_just_over_its_tolerance`, `test_capture_f_tolerance_is_the_declarations`, `test_tolerances_are_the_declarations`, lines 377-388, 408-414, 501-543, 570-576, 650-653); and `run()` STOP isolation / `main()` exit codes (lines 615-641).
+   Remaining minor gaps from Finding 9: `test_split_matches_a_direct_computation` (test_regrade_vf.py:104-123) still does not assert `s["SE"]` (or `s["ndf"]`, `s["n"]`, `s["readings"]`, see New Finding N2 below), and `test_constants_are_the_declarations` (test_regrade_vf.py:310-316) still does not assert `PINS` (though `C-PIN` runs against committed files in the `committed` fixture).
+
+10. PARTLY — mutants_regrade_vf.py:64-102, mutation-run.txt:39-78.
+    22 of the 23 missing mutants from read 1 (split into finer-grained mutants where appropriate: `gap-data-off`, `eval-psd-dF-off`, `eval-psd-crep-off`, `eval-psd-cprime-off`, `shares-swapped`, `readings-se-B-wrong`, `readings-se-bvf-wrong`, `readings-SE-wrong`, `rchi2-ge`, `bvf-fluct-ge`, the eight `*-100x` tolerance mutants, `a0-drop-SE`, `eval-stop-extra-key`, `df-d2-off`, `boot-ddof-0`, `boot-F-divisor-n`, `c-add-resp-at-f`, `rule-ii-uses-C-T`, `boot-separate-idx`) plus 13 new guard mutants (`within-nan-passes` through `split-zerodiv-uncaught`) were added and all 76/76 compiled mutants are KILLED.
+    Remaining omission from Finding 10: `rank-dropped-off` (dropping `or r["cut"]["C_T_kept_modes_outside_C_prime_kept_span"] != 0` at regrade_vf.py:187) was not added separately from `rank-off` (mutants_regrade_vf.py:34), and no test mocks `C_T_kept_modes_outside_C_prime_kept_span != 0` while `ndf == 16` (note that for real 16x16 matrices with `ndf == 16`, `C_prime`'s kept span is all of R^16, so `dropped` is mathematically 0 whenever `ndf == 16`).
+
+11. FIXED — regrade_vf.py:34-39, 340-351, 359, test_regrade_vf.py:626-631, 644-647, mutants_regrade_vf.py:99-100.
+    `RC_SHA256` is verified before `import regrade_crep as rc` (regrade_vf.py:35-39); `run()` catches `(Stop, OSError, ValueError, KeyError)` in both `global_controls()` and `evaluate()` (regrade_vf.py:340, 349); and `main()` checks `a.out.exists() or a.out.is_symlink()` (regrade_vf.py:359). Covered by `test_run_records_an_io_error_as_a_stop` and `test_main_refuses_a_dangling_symlink`.
+
+12. NOT FIXED — test_regrade_vf.py:97-100.
+    `test_rule_i_is_the_identity_at_f` still tests `rv.rc.carry_frac(D, f, f)` directly without exercising `regrade_vf` (`regrade_vf`'s `carry_frac` usage is covered separately by `test_block_controls_check_carry_at_f` and `test_evaluation_controls_pass_and_a0_reproduces_regrade16`).
+
+
+2. Check of Section 3 & 4 Quantities/Readings on Valid Finite Inputs and C-FINITE Assessment
+
+- Section 2, 3, and 4 arithmetic is unchanged and matches REGRADE-VF-DECLARATION.md:
+  - Matrix construction (`C_add`, `dF["rule_i"]`, `dF["rule_ii"]` with `band_L` over descending `eigh` in `BANDS`, `C_T + dF` base passed to `r_chi2` with `C_add` as tau-only block): regrade_vf.py:122-158, 301, 311, 325-327.
+  - Split quantities (`ndf=16`, `F = sum(chi2_nonnull(E - ebar, Cp)) / (n - 1) / ndf`, `B = B_raw - F / n`, `M' = B + F`, `M_full = M' + tau`, `shares = {B, F, tau} / M_full`, whitened bootstrap over `idx` with `N_BOOT = 2000` and declared `BOOT_SEED`, `std(ddof=1)`): regrade_vf.py:65-68, 174-214, 324.
+  - Section 4 readings (`R_chi2`, `bias_resolved`, `bias_vs_fluctuation` with `K_SE = 3.0`, `carry_sensitive` comparing `rule_i` vs `rule_ii` across all three reading keys): regrade_vf.py:69, 218-234.
+- Effect of `C-FINITE` and the other fail-closed guards on finite, valid inputs:
+  - `within(x, tol)` (regrade_vf.py:89-91) is identical to `x <= tol` for finite `x`.
+  - `finite()` (regrade_vf.py:94-99) is a pure no-op on non-empty, finite arrays.
+  - `rel_max()` / `symmetric()` / `check_psd()` (regrade_vf.py:102-118, 160-170) additionally reject `scale == 0` / `lam.max() <= 0` (identically zero matrices) with `Stop`. On the declared inputs, `blocks5d.json` has all three bands ACTIVE (`phi_R > 1.09` in every band), `DeltaC_e` is non-zero, `C_e` and `C_e(T)` pass `C-GAP` (`lam_5, lam_9 > 0`), and `C_prime` / `C_rep` pass `C-RANK` (`ndf = 16`), so `scale > 0` and `lam.max() > 0` hold for every checked matrix. (Only a hypothetical valid case with all `phi_R == 1.0` / `DeltaC_e == 0` would differ from `regrade_crep.check_psd`'s `"identically zero"` skip at regrade_crep.py:160-161, which cannot occur on the declared active-band inputs.)
+  - `evaluation_controls()` C-A0 guard (regrade_vf.py:303) requires `isinstance(committed.get(k), float)` and `committed[k] != 0`, which holds on `regrade16.json`'s six non-zero float64 `R_chi2` fields.
+  - `split()` guards `n >= 2`, `M > 0`, `M_full > 0` (regrade_vf.py:180, 195, 208), all of which hold for `N = 300` non-degenerate draws and SPD `C_rep` / `C_prime`.
+- Conclusion: The fixes and `C-FINITE` cannot alter any declared quantity or reading on finite, valid declared inputs, and introduced no regression.
+
+
+3. New Findings
+
+N1. [SHOULD-FIX] regrade_vf.py:302, 349 — `evaluation_controls()` calls `rc.r_chi2` without catching `ZeroDivisionError`, and `run()` does not catch it.
+    `split()` wraps `rc.r_chi2(E, C_base, C_add)` in `try ... except ZeroDivisionError` (regrade_vf.py:182-185) so degenerate inputs raise `Stop`. However, `evaluation_controls()` runs earlier and calls `r0 = rc.r_chi2(E, C_T, C_add)` at line 302 without checking `E.shape[0] >= 2` or catching `ZeroDivisionError`, and `run()` at line 349 catches only `(Stop, OSError, ValueError, KeyError)`.
+    Concrete failure scenario: Calling `evaluation_controls`, `evaluate_arrays`, or `run()` with a finite all-zero `cap["E"] = np.zeros((300, 16))` (or constant rows across toys, or zero `C_T + C_add`) passes `finite()` at line 295 and raises an unhandled `ZeroDivisionError` inside `regrade_crep.r_chi2` (`regrade_crep.py:141`: `(M - 1.0) / se` with `se == 0.0`, or `regrade_crep.py:121` with `ndf == 0`) instead of raising/recording `Stop`. (Cannot occur on valid non-degenerate draws.)
+
+N2. [SHOULD-FIX] test_regrade_vf.py:104-123, 334-344 — `split()`'s returned `"SE"` and `"readings"` (and `"ndf"`, `"n"`, `"R_chi2_reading_regrade"`) are never verified against direct computation.
+    `test_split_matches_a_direct_computation` (test_regrade_vf.py:104-123) checks `F`, `B`, `tau`, `M_prime`, `M_full`, and `sum(shares)` (with `test_split_shares_are_each_term_over_m_full` checking individual `shares` and `B_raw`), but never asserts `s["SE"]`, `s["ndf"]`, `s["n"]`, `s["readings"]`, or `s["R_chi2_reading_regrade"]`. `test_readings_use_their_own_se_keys` (test_regrade_vf.py:445-453) calls `rv.readings()` directly, not `rv.split()`, and `test_evaluate_arrays_uses_each_matrix_and_the_same_resamples` (test_regrade_vf.py:340-342) compares `rec[v]` to `rv.split()`.
+    Concrete failure scenario: Mutating `regrade_vf.py:211` from `"SE": r["SE"]` to `"SE": se["B"]` or `regrade_vf.py:213` from `readings(B, F, M_full, r["SE"], se)` to `readings(B, F, M_full, se["B"], se)` (or swapping `B` and `F` in that call) passes all 97 tests in `test_regrade_vf.py`. (By inspection of `regrade_vf.py:210-214`, the implementation itself passes the correct arguments.)
+
+N3. [NIT] regrade_vf.py:345 — `committed = json.loads(PINS["regrade16"][0].read_text())["evaluations"]` sits outside both `try/except` blocks in `run()`.
+    If `regrade16.json` cannot be read or parsed after `global_controls()` returns (e.g., TOCTOU file deletion or a test mocking `PINS["regrade16"]` mid-run), `run()` raises an unhandled `OSError`/`ValueError`/`KeyError` instead of recording a `STOP`.
+    Concrete failure scenario: Deleting or corrupting `regrade16.json` between `global_controls()` (line 338) and line 345 crashes `run()` instead of populating `STOP` in `out["evaluations"]`.
+
+N4. [NIT] regrade_vf.py:303 — `isinstance(committed.get(k), float)` rejects an integer JSON value (e.g., `1`) even if numerically valid.
+    Using `isinstance(v, (int, float)) and not isinstance(v, bool)` avoids a spurious `C-A0` STOP if a valid non-zero JSON number lacks a decimal point.
+    Concrete failure scenario: Calling `evaluation_controls()` with `committed["M_full"] = 1` (exact integer) raises `Stop("C-A0: a field is missing, zero or not finite...")` even when `r0["M_full"] == 1.0`. (All six fields in `regrade16.json` are non-integer floats.)
+
+VERDICT: GO
