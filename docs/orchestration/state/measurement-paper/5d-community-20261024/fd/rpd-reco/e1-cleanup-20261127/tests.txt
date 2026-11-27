@@ -1,0 +1,15 @@
+ok   approved listing: removes the 4 omnifile copies first, then the 3 roots
+ok   omnifile copies come before any root
+ok   all three roots gone, their parent kept
+ok   step 3 removes only omnifile copies
+ok   a file added after the listing: refused, nothing removed
+ok   nothing removed after a refusal
+ok   a symlink outside clone/ in the approved listing: refused
+ok   a clone missing one of S's symlinks: refused
+ok   a clone with an extra symlink: refused
+ok   an unended rpd* job: refused
+ok   not a login node: refused
+ok   a missing root (ROOT-NOT-A-DIRECTORY in the listing): refused
+ok   the other roots stay
+ok   build_remove refuses a listing whose sha line does not match its lines
+E1-CLEANUP-TESTS :: PASS
