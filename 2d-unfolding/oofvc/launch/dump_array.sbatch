@@ -8,11 +8,11 @@
 #SBATCH --mem=4G
 #SBATCH --no-requeue
 #SBATCH -J oofvc_dump
-#SBATCH -o /pscratch/sd/j/josephrb/oofvc-20261126-r2/logs/dump-%A_%a.log
+#SBATCH -o /pscratch/sd/j/josephrb/oofvc-20261126-r3/logs/dump-%A_%a.log
 # OOFVC step 1A: one MC playlist per task (PLS[i]). The time limit is set per submission by oofvc_dump.sh.
 # Writes only $R/dump/<pl>.{root,log,sha256,done}.
 set -u
-R=/pscratch/sd/j/josephrb/oofvc-20261126-r2
+R=/pscratch/sd/j/josephrb/oofvc-20261126-r3
 NUE_DECLARED=/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
 # fence check (RDX-BINDING-1's terms, as geanttw applied them): no live cov2d or t2a job, read from sacct (never
 # squeue); a state outside the terminal set, or an empty one, counts as live

@@ -1,0 +1,14 @@
+2026-11-27T00:17:18Z
+        Valid: from 2026-11-26T14:21:00 to 2026-11-27T14:22:19
+c31a02e2c730861b69851695214b3449be86e918
+290ae9fd1b34b2bbb859c9f83a33fbcd25bb63546b3bd622572feeaa7b7f1dd6  oofvc_launch.sh
+7306001cd8a199b9d0f0efcc2562a58fd16dc5b337786e2391732a22c10ae290  oofvc_dump.sh
+ssh rc=0
+node login31 staged sha256 7306001cd8a199b9d0f0efcc2562a58fd16dc5b337786e2391732a22c10ae290
+node login31 2026-11-27T00:17:34Z mode rest tool d3127bd40fb48456993ee9e1fda23b81c3d74f89
+pilot sacct: COMPLETED|149
+largest projection 2301 s
+fence check (rest, before the submit): no live cov2d or t2a job 2026-11-27T00:17:35Z
+rest job 62063413
+script rc=0
+launcher rc=0
