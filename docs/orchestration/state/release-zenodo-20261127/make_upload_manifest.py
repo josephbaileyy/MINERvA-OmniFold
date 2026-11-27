@@ -143,8 +143,11 @@ def main() -> int:
             f"package gives per-cell sigmas {pkg_pct[:4]}... %, while the note prints {printed[:4]}... %. The package also has "
             "no C_e^infl file. The committed replacements are in `fd/with-vf/data-product/` (product "
             f"`{vf_sha[:8]}`): the reported matrix `fd_data_product_vf_{rep_key}.csv` and the component "
-            "`fd_data_product_vf_C_e_infl.csv` (table B). sixteen-cell/ and its README rows need rebuilding from that "
-            "product.")
+            "`fd_data_product_vf_C_e_infl.csv` (table B). C_e, C_model, C_resp, C_PL,5D and f are already current. "
+            "`cells.csv` and `sixteen_cell.npz` have no committed replacement: they need a re-export from that product, "
+            "with C_e_infl added. **Effect on App. D: none.** App. D:20 promises \"C_rep^(5D) and its components\", and "
+            "C_rep^(5D) is defined with C_e^infl, so the swap brings the deposit into line with App. D. Only the package "
+            "README's C_rep line changes. The swap changes what Joseph uploads, so it goes to him through the director.")
 
     # ---- C. generator predictions ----
     g_now = json.loads(repo.blob(f"{FD}/with-vf/readout/vf-with-E/fd_g_readout.json"))
@@ -199,8 +202,14 @@ def main() -> int:
             f"copy of values.tex) no longer matches the note in {len(changed)} values: "
             + ", ".join(f"`\\{n}` {a} -> {b}" for n, a, b in changed)
             + ". They changed with the p_T-edge option (i) on main after RC9 was built (2026-11-21). App. D says the "
-            "replay recomputes Sec. part-2d's benchmark numbers, so the replay needs a rebuild (RC10) against the current "
-            "values.tex and producers."
+            "replay recomputes Sec. part-2d's benchmark numbers \"from the deposited central values and covariance\". There "
+            "is no committed replacement: an RC10 would have to be built. **Effect on App. D: yes.** values.tex's source "
+            "comments give all four as regenA E on the published p_T edges (ibu-chi2-20261123/regenA, #1322), not E_R/Q_R "
+            "on our edges, which is what the deposit holds. So an RC10 cannot recompute them from the deposited 2D products. "
+            "Joseph's options: (a) deposit regenA's published-edge E and its covariance, and build RC10 on them; (b) narrow "
+            "App. D:8, with RC10 checking `\\chiPaperOurEdges` (2.27, still printed in App. A and App. C) in place of "
+            "`\\chiPaper`; or (c) keep RC9, with App. D:8 noting that four published-edge values are outside the replay. "
+            "This is his call, through the director."
             + (" The joint-test values (values_inference.tex) are identical." if inf_same else
                " values_inference.tex has also changed."))
 
