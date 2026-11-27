@@ -436,6 +436,8 @@ def evw2d() -> dict:
     return {"run": receipt(f"{out}/run.json"), "constants": receipt(f"{out}/constants.json"),
             "done": receipt(f"{out}/evw2d.done"),
             "deposit": (STATE / EVW2D / "receipts/deposit-20261126/README.md").read_text(),
+            "same": (STATE / "release-zenodo-20261127/same-events/same_events.out").read_text(),
+            "evw5d_hpss": (STATE / "measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/attempt2-hpss/README.md").read_text(),
             "config_sha256": hashlib.sha256((HERE.parents[1] / EVW2D_CODE["config"]).read_bytes()).hexdigest(),
             "config": json.loads((HERE.parents[1] / EVW2D_CODE["config"]).read_text()),
             "ref_sha256": hashlib.sha256(ref.read_bytes()).hexdigest(), "ref_meta": json.loads(_npz_text(ref, "meta")),
@@ -470,7 +472,36 @@ def evw2d_pass(d: dict) -> bool:
             and f"{r['files_sha256']['weights.npz']}  weights.npz" in d["deposit"])
 
 
+def evw2d_same_rows(d: dict, sources: dict[str, str]) -> bool:
+    """same_events.out (#1413): the verdict line, the T4 lines, and its JSON line; its T0 digests are the two runs'
+    weights files; rows match exactly only after a float32 cast (so the text says single precision)."""
+    lines = d["same"].splitlines()
+    js = [ln[5:] for ln in lines if ln.startswith("JSON ")]
+    if len(js) != 1:
+        return False
+    j = json.loads(js[0])
+    n = d["run"]["rows"]
+    t4 = j["T4"]
+    return (lines.count("VERDICT SAME-ROWS-SAME-ORDER") == 1 and j["verdict"] == "SAME-ROWS-SAME-ORDER"
+            and f"T4 truth_pt: exact {n}/{n} after float32 cast" in d["same"]
+            and f"T4 truth_pz: exact {n}/{n} after float32 cast" in d["same"]
+            and "T4 all rows exact in float32 (pT and p||): True" in lines
+            and j["T2"]["pass"] is True and j["T2"]["n_evw2d"] == j["T2"]["n_evw5d"] == n
+            and j["T3"]["entries_equal"] is True and j["T3"]["rows_differing"] == 0
+            and t4["all_rows_exact_float32"] is True
+            and all(t4[k]["exact_equal_float32"] == t4[k]["rows"] == n and t4[k]["rows_over_1_ulp"] == 0
+                    and t4[k]["nan_evw2d"] == t4[k]["nan_evw5d"] == 0 for k in ("truth_pt", "truth_pz"))
+            and max(t4[k]["max_abs_delta_float64"] for k in ("truth_pt", "truth_pz")) > 0
+            and j["files"]["evw2d_weights"]["sha256"] == j["files"]["evw2d_weights"]["expected"]
+            == d["run"]["files_sha256"]["weights.npz"]
+            and j["files"]["evw5d_weights"]["sha256"] == j["files"]["evw5d_weights"]["expected"]
+            and f"{j['files']['evw5d_weights']['sha256']}  weights.npz" in d["evw5d_hpss"])
+
+
 EVW2D_CLAIMS = (
+    ("EVW2D: the same rows, in the same order, as the 5D weights; pT and p_par exact in float32 (same_events.out)",
+     "They are the same rows, in the same order, as those of the sixteen-cell weights below, and their truth $p_T$ and "
+     "$p_\\parallel$ agree exactly in single precision.", evw2d_same_rows),
     ("EVW2D: keyed by the entry in the one input file, whose sha256 the weights file holds (constants.json key, C-KEY)",
      "Each event is keyed by its entry number in the input file, which the weights file identifies by its SHA-256 digest.",
      lambda d, s: (d["constants"]["key"]["column"] == "entry"
@@ -1307,7 +1338,10 @@ def self_test() -> int:
     else:
         caught += 1; print("  caught      EVW5D: Eq. (muon-fiducial) without the theta_mu cut")
     # The EVW2D claims: each sentence reworded, and each planted receipt, must be rejected.
-    for old_s, new_s in (("keyed by its entry number in the input file", "keyed by its run and event number"),
+    for old_s, new_s in (("in the same order, as those of the sixteen-cell", "in another order, as those of the sixteen-cell"),
+                         ("agree exactly in single precision.", "agree exactly."),
+                         ("They are the same rows,", "They are the same physical events,"),
+                         ("keyed by its entry number in the input file", "keyed by its run and event number"),
                          ("It also carries its prior weight.", "It also carries its uncertainty."),
                          ("with unchanged code and inputs.", "with updated code and inputs."),
                          ("so the completeness is 1 in any binning, and", "so the completeness is 1 on our grid, and"),
@@ -1343,6 +1377,12 @@ def self_test() -> int:
             caught += 1; print(f"  caught      EVW2D planted: {what}")
     ctl = lambda d, k: d["run"]["controls"][k]
     plant2("controls verdict FAIL", lambda d: d["run"].__setitem__("controls_verdict", "FAIL"))
+    plant2("same-events verdict DIFFERENT", lambda d: d.__setitem__("same", d["same"].replace("VERDICT SAME-ROWS-SAME-ORDER", "VERDICT DIFFERENT")))
+    plant2("same-events one row off in float32", lambda d: d.__setitem__("same", d["same"].replace('"rows_over_1_ulp": 0}}', '"rows_over_1_ulp": 1}}')))
+    plant2("same-events entries differ", lambda d: d.__setitem__("same", d["same"].replace('"entries_equal": true', '"entries_equal": false')))
+    plant2("same-events exact in float64 too", lambda d: d.__setitem__("same", d["same"].replace('"max_abs_delta_float64": 2.381347563584768e-07', '"max_abs_delta_float64": 0.0').replace('"max_abs_delta_float64": 1.9073474462061313e-06', '"max_abs_delta_float64": 0.0')))
+    plant2("same-events on another 5D weights file", lambda d: d.__setitem__("evw5d_hpss", d["evw5d_hpss"].replace("0fceefcd", "00ceefcd")))
+    plant2("same-events T4 pT line short", lambda d: d.__setitem__("same", d["same"].replace("T4 truth_pt: exact 32849103/32849103", "T4 truth_pt: exact 32849102/32849103")))
     plant2("evw2d.done verdict FAIL", lambda d: d["done"].__setitem__("verdict", "FAIL"))
     plant2("a finding recorded", lambda d: d["run"].__setitem__("findings", ["C-COMPLETE"]))
     plant2("deposit copy not accepted", lambda d: d.__setitem__("deposit", d["deposit"].replace("ACCEPTED", "REFUSED")))
