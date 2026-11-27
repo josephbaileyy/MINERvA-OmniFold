@@ -1,0 +1,15 @@
+ok  sha256 819bb7b9775c1bfe570185881290ab229e82d3ad7ad328b9cde3215a811c78c2 (expected 819bb7b9775c1bfe570185881290ab229e82d3ad7ad328b9cde3215a811c78c2) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-custody.json
+ok  sha256 060d4401f0e1bec69a84b005e0c7ba54f69c3f894c1382f9ce2a098b7b2663c0 (expected 060d4401f0e1bec69a84b005e0c7ba54f69c3f894c1382f9ce2a098b7b2663c0) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-extract.json
+ok  sha256 8b8e3e557d4c362797842fe2829a21b53292bb334902e42fbd5f4ef3185ecdda (expected 8b8e3e557d4c362797842fe2829a21b53292bb334902e42fbd5f4ef3185ecdda) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1A.npz
+ok  sha256 baf3f3d8cd922a5a3511dab93a7f784128d0e098cb6f1ec905ae4b83c9e68a9f (expected baf3f3d8cd922a5a3511dab93a7f784128d0e098cb6f1ec905ae4b83c9e68a9f) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1B.npz
+ok  sha256 5ef5e81e490a4e7bd92f1bdf1eee706d413b653e055612b04f3b1b627d1ae6fc (expected 5ef5e81e490a4e7bd92f1bdf1eee706d413b653e055612b04f3b1b627d1ae6fc) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1C.npz
+ok  sha256 6ea8f726ea6ed619b1b2eb2aab0f34d8a41fff908c0c0515bf7194ca0fe3d131 (expected 6ea8f726ea6ed619b1b2eb2aab0f34d8a41fff908c0c0515bf7194ca0fe3d131) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1D.npz
+ok  sha256 4e8f97c179b6bbbc3c5e1fd82472c621c9bc56427e802edb464ab85627a26565 (expected 4e8f97c179b6bbbc3c5e1fd82472c621c9bc56427e802edb464ab85627a26565) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1E.npz
+ok  sha256 b607e3a8a114036391df8dd27a1e06b0ea59db7093fbd093bd84d117ef207e46 (expected b607e3a8a114036391df8dd27a1e06b0ea59db7093fbd093bd84d117ef207e46) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1F.npz
+ok  sha256 c23ef28aded4319d468c73b237d648641b204d86c5788b4c2cd58cfe063b7e5a (expected c23ef28aded4319d468c73b237d648641b204d86c5788b4c2cd58cfe063b7e5a) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1G.npz
+ok  sha256 e731f300f48d1732be0f7dc40ce6e9983947198fa886e84a93df8054afa92007 (expected e731f300f48d1732be0f7dc40ce6e9983947198fa886e84a93df8054afa92007) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1L.npz
+ok  sha256 166a2217468f8bfb392baca71c6920ffbf765bbd0dd60a68eb4b560ab6026f4b (expected 166a2217468f8bfb392baca71c6920ffbf765bbd0dd60a68eb4b560ab6026f4b) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1M.npz
+ok  sha256 739043f4f4a21734c1e256744ba11c8ac4a511542be6161404b68f2916292a21 (expected 739043f4f4a21734c1e256744ba11c8ac4a511542be6161404b68f2916292a21) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1N.npz
+ok  sha256 fd8afa1e08938e1fce4c0b1445d3713d6c8c9ab72bc900012e52b8fc54f3ac6b (expected fd8afa1e08938e1fce4c0b1445d3713d6c8c9ab72bc900012e52b8fc54f3ac6b) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1O.npz
+ok  sha256 a2db271daa6b9af500b892c8e1ba2af0e12ac4da500b8a0814c879882ee0fa9e (expected a2db271daa6b9af500b892c8e1ba2af0e12ac4da500b8a0814c879882ee0fa9e) /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1P.npz
+P0 INPUTS: PASS (14 files, 0 bad)

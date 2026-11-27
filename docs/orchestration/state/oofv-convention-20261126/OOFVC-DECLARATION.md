@@ -267,6 +267,13 @@ applicable", not "no change".**
 
 ### 2.2 Controls (each a STOP, before any operand is read)
 
+- **C-READ:** every column read through `AsNumpy` is numeric.
+  - **The ROOT versions.** NERSC's root_6_28 (ROOT 6.28/12) returns a UChar_t branch as an object array of
+    one-character strings; the local tests run ROOT 6.40, which returns uint8. That gap let the units job 62065064
+    false-STOP (revision 9).
+  - **The conversion.** `oofvc_lib.normalize` converts such columns by `ord`, refuses any other object column, and
+    refuses a flag (the dump's `to_bkg`, `to_sig`, `dup_sig`, `fid`; `sim_pass`; `sim_background_pass`) outside
+    {0, 1}. A refusal is a C-READ STOP.
 - **C-ROUTE:** every dump row is routed to exactly one tree. The reco-mode routing (the background loop's) and the
   truth-mode routing (the signal loop's) agree on every row.
 - **C-JOIN** (route A, `oofvc_lib.exact_join`): every `mc_background` entry of 43f8cc16 joins one-to-one with the
@@ -422,7 +429,7 @@ Adopting a convention, and any wording in the note, are Joseph's.
 
 **The cluster steps.** The scripts are in `2d-unfolding/oofvc/launch/`. Each remote script runs from a clean clone of
 this lane at the tool commit, and its sha256 is pinned in the bound launcher. `fill_pins.sh` writes `launch/bound/`
-by command. Everything is written under `/pscratch/sd/j/josephrb/oofvc-20261126-r2/`, and nothing is written to CFS. The
+by command. Everything is written under `/pscratch/sd/j/josephrb/oofvc-20261126-r3/`, and nothing is written to CFS. The
 job names are `oofvc_dump` and `oofvc_units`, a new family, so a fence round goes out before the first submission.
 1. **`dump-pilot`** (login node; it takes cov2d's LL5D atime-post, §2.7):
    - the lane root;
@@ -524,6 +531,20 @@ Mutants SH_FENCE_STATE, SH_FENCE_SACCT, SH_GATE_PAST, SH_NUE_ORDER and SH_NUE_PA
   - the file renamed from `OOFVC-DECLARATION-DRAFT.md`;
   - after 881f4dbc and before any read: moved rows reconstructed outside the grid are not appended; T's cancellation
     from the IBU result is stated; O_j's two sources are named.
+- **Revision 9** (after the r2 units job 62065064):
+  - **What happened.** The job FAILED 8:0 in 114 s, about 0.032 node-h, at C-ROUTE, with "21156240 rows routed to
+    both or neither tree". That was a false STOP. ROOT 6.28's AsNumpy returned the dump's UChar_t flags as
+    one-character strings, and `!= 0` was True for every row. The dumps' own counts (routing_disagree 0 in all
+    twelve) were right.
+  - **The gap.** The local tests ran ROOT 6.40, which returns uint8; the cluster runs 6.28. That was the gap.
+  - **What did not happen.** No unit ran, and nothing was moved.
+  - **The fix.** C-READ, as in §2.2. The `ReadFlags` tests use object arrays as ROOT 6.28 returns them and run
+    C-ROUTE's and C-SIGW's masks; mutants LIB_READ_ORD, LIB_READ_REFUSE and LIB_FLAG_RANGE target it. The scorer
+    requires C-READ among the join's controls.
+  - **The director's rulings.** A new namespace, `/pscratch/sd/j/josephrb/oofvc-20261126-r3/`, in which the dumps
+    rerun. r2 and the first root stay. Their removal is Joseph's, on the post-receipt list.
+  - Receipts: `receipts/attempt2-r2/`, holding the r2 pilot, the rest, the units step's records, and `join.json` in
+    `r2-records.tar.gz`.
 - **Revision 8** (after the first pilot, job 62053260):
   - **What happened.** The job FAILED 2:0 in 49 s, about 0.0002 node-h, at the NuE path check. That was a false
     STOP: the check compared the canonical path with the literal declared one, which reaches the file through the

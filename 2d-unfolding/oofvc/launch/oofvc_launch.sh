@@ -7,7 +7,7 @@
 #        bash oofvc_launch.sh fetch <new empty dir>      (post.tar.gz by scp; no remote script)
 MODE=${1:?dump-pilot|dump-rest|units|post|fetch}; F=${2:?session dir}; NODE=${3:-}; POST=${4:-}
 HERE=$(cd "$(dirname "$0")" && pwd)
-OUT=/pscratch/sd/j/josephrb/oofvc-20261126-r2
+OUT=/pscratch/sd/j/josephrb/oofvc-20261126-r3
 SSH=(-o ControlPath=none -o BatchMode=yes -o ConnectTimeout=20)
 [ -d "$F" ] && [ -z "$(ls -A "$F")" ] || { echo "STOP: $F is not a new empty directory"; exit 9; }
 ARG=

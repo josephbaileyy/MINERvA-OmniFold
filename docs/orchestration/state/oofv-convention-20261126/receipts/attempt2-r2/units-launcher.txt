@@ -1,0 +1,33 @@
+2026-11-27T01:00:52Z
+        Valid: from 2026-11-26T14:21:00 to 2026-11-27T14:22:19
+c31a02e2c730861b69851695214b3449be86e918
+290ae9fd1b34b2bbb859c9f83a33fbcd25bb63546b3bd622572feeaa7b7f1dd6  oofvc_launch.sh
+f5f19360af663c5afc17ecfba9164302e872344990b4d48632ce5fadff040584  oofvc_units.sh
+ssh rc=0
+node login31 staged sha256 f5f19360af663c5afc17ecfba9164302e872344990b4d48632ce5fadff040584
+node login31 2026-11-27T01:00:59Z tool d3127bd40fb48456993ee9e1fda23b81c3d74f89
+dumps: 12 done, routing_disagree 0, digests checked
+fence check (before staging the CV omnifile (cov2d-protected; read with O_NOATIME)): no live cov2d or t2a job 2026-11-27T01:01:19Z
+2026-11-27T01:01:19Z
+pre  /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root|atime=2026-10-23 08:52:50.214610703 -0700
+pre  /global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root|atime=2026-07-20 21:16:41.467913000 -0700
+post /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root|atime=2026-10-23 08:52:50.214610703 -0700
+post /global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root|atime=2026-07-20 21:16:41.467913000 -0700
+43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df  runEventLoopOmniFold_MEFHC.root
+d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316  runEventLoopMC_MEFHC.root
+total 2093061
+-r-------- 1 josephrb josephrb       5143 Nov 26 17:01 runEventLoopMC_MEFHC.root
+-r-------- 1 josephrb josephrb 2144008221 Nov 26 17:01 runEventLoopOmniFold_MEFHC.root
+2026-11-27T01:01:31Z
+tree /pscratch/sd/j/josephrb/oofvc-20261126-r2/deploy (clone at 77d76cfc2d621f8faa010b75006811868494652a)
+9d11bd4b1ff72f41ceabc94184220fdca26fff75a640fda43680085cd8fca396  2d-unfolding/re2/re2_driver.py
+0dcb65fb10e190b827d33f88330d94daacfb19b81c11e3aaa285351ce9e3cb38  2d-unfolding/ref_c2c1/config.json
+285dd138363d090a4ce5dea3361be81fada8680bd782b918e9d95198d1b5d6ea  2d-unfolding/ref_c2c1/ref_c2c1.py
+e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a  unbinned_unfolding/python/omnifold.py
+1dd5ff52d0c140921a3bcc411bd4108337dbe756c43bffc2c707eb2a8f633314  2d-unfolding/compare_to_paper_fullcov.py
+510d749a2e82fa448de6172753ae2adc9ebd81a89d4f18bf76beb5faa8bb3968  nd-unfolding/s5c_unfold.py
+libRooUnfold.so 0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd
+fence check (before the submit): no live cov2d or t2a job 2026-11-27T01:02:38Z
+units job 62065064
+script rc=0
+launcher rc=0

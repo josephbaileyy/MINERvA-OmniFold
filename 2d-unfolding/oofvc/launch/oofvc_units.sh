@@ -7,7 +7,7 @@
 #   3. libRooUnfold.so against its pin;
 #   4. submit units.sbatch: one node, the join (C-ROUTE, C-JOIN, C-SIGW, C-LAB) and then the four units.
 set -u
-R=/pscratch/sd/j/josephrb/oofvc-20261126-r2
+R=/pscratch/sd/j/josephrb/oofvc-20261126-r3
 TOOLC=__TOOL_COMMIT__
 URL=https://github.com/josephbaileyy/MINERvA-OmniFold.git
 CV_SRC=/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root

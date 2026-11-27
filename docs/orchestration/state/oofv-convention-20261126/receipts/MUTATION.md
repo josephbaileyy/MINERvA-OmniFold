@@ -24,3 +24,10 @@
   The control passed, and 8 of 8 were killed.
 - **Suite:** `tests-d3127bd4.txt` (44 passed).
 - **Together, every one of the 57 mutants is killed.**
+
+**After the r2 units job's false STOP** (job 62065064, at b8077dfc, C-READ and namespace r3):
+- **New mutants:** LIB_READ_ORD, LIB_READ_REFUSE and LIB_FLAG_RANGE.
+- **The targeted pass:** `mutation-targeted-b8077dfc.json.txt`. It covers those three and every join mutant (the join's
+  read path changed). The control passed, and 11 of 11 were killed.
+- **Suite:** `tests-b8077dfc.txt` (46 passed).
+- **Together, every one of the 60 mutants is killed.**

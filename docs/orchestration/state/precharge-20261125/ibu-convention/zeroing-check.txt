@@ -1,0 +1,7 @@
+PASS: toy with positive migration in an empty truth column assigns all 20 events to supported truth.
+PASS: baseline control: 224 bins compared; maximum absolute selected-count difference 3.78e-10; unsupported columns with selected entries: []
+PASS: unchanged: 224 bins compared; maximum absolute selected-count difference 3.78e-10; unsupported columns with selected entries: []
+PASS: true40_60_only: 224 bins compared; maximum absolute selected-count difference 2.91e-10; unsupported columns with selected entries: []
+PASS: all_in_grid_true_muons: 224 bins compared; maximum absolute selected-count difference 2.69e-10; unsupported columns with selected entries: [144, 161]
+PASS: four control rows and the efficiency count summary reproduce the frozen output.
+PASS: both changed rows agree with the review to eight decimal places.

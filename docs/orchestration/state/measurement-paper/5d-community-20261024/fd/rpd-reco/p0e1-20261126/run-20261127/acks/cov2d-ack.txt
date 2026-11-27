@@ -1,0 +1,6 @@
+ACK Fri Nov 27 00:36:15 UTC 2026. cov2d ACKs the fence for e1's P0 connect (RPD-P0E1-BINDING, #1407 at 81ff0d93):
+- one login-node connect, no Slurm job, 0 node-h;
+- writes only under /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/ and /dev/shm/limres-rpd-flux1, nothing to CFS;
+- no MAT library and no NuE file opened;
+- O_NOATIME reads and stats only, with the overlap fence against my protected paths.
+No atime bracket or watch of mine covers those inputs. I have nothing queued, held or running on NERSC, and won't start a NERSC action before your END. FYI: ibu-chi's oofvc_dump array (dump-rest, 11 tasks) may be live during your window. It is not in your sacct fence's families and doesn't touch your inputs, as far as I know.

@@ -3,7 +3,7 @@
 # records (logs, the dumps' logs and digests, the join's record and rows, the units, the deploy's digests). The
 # staged copies and the dump ROOT files are not archived; their digests are. Writes only $R/post and $R/post.tar.gz.
 set -u
-R=/pscratch/sd/j/josephrb/oofvc-20261126-r2
+R=/pscratch/sd/j/josephrb/oofvc-20261126-r3
 [ ! -e "$R/post" ] && [ ! -e "$R/post.tar.gz" ] || { echo "STOP: post exists"; exit 2; }
 sq=$(squeue -h -u "$USER" -o '%j') || { echo "STOP: squeue failed"; exit 2; }
 q=$(printf '%s\n' "$sq" | grep -c '^oofvc_' || true)
