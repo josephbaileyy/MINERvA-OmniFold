@@ -1,0 +1,16 @@
+# Declared comparison for the true 40–60 GeV/c column
+
+Use one counting convention for comparison to the original histograms: the selected-anywhere numerator with saved negative νμ CC tracks of in-grid true muon kinematics and a true vertex outside the fiducial volume moved from background to selected signal. Keep the fiducial generated denominator. The added tracks have reco p∥ ≥ 20 GeV/c and p_T < 4.5 GeV/c. The convention and the fourteen true p_T bins are fixed before this run.
+
+## Original counts and local scope
+
+The MINERvA tutorial wiki names the original me1A `EffPurity_MakeFlux-1_minervame1A.root` under `PubProcessing_CollablJan2021_MuonEnergyScan/Inclusive_CV` and also recommends `PubProcessing_v102_Rerun_NoBubbleConstraint_AddedStatUnc/Inclusive_CV`. The historical file's identity with the final production must be established before a final-production comparison. The previous local inventory found neither original histogram here. The public release is a cross-section product and the tutorial example is a p_T projection. [Original histogram index](https://github.com/MinervaExpt/MINERvA-101-Cross-Section/wiki/ProjectGoals)
+
+1. Check local copies only. Search the local analysis and downloaded-data directories under the account for EffPurity filenames and the two production directory names. Inspect ROOT keys of any candidates, the saved published ROOT release and the downloaded tutorial MC example. Record the search scope, candidate provenance and keys. No cluster or remote file lookup.
+2. Tabulate our selected numerator and generated denominator separately for me1A per 10²⁰ MC POT, for each released true p_T bin at 40 ≤ true p∥ < 60. Report the selected-anywhere contribution and the addition from the saved scan. If an original me1A pair is available with verified production provenance, axes, exposure and compatible weight definitions, compare `h_pzmu_ptmu_CC` and `h_pzmu_ptmu_truth_CC` separately at that same exposure. Report differences and ratios per bin. Numerical equality means agreement to the precision of the stored counts. A difference is descriptive; the saved scan has limited reco acceptance. Agreement in the ratio alone does not establish agreement of either count. Missing inputs or unverified provenance end the original comparison as unavailable. Fig. 5 supplies no substitute counts.
+
+## Correction to the frozen exploratory replay
+
+Preserve the supplied review as `report.md`. Fix the reported zeroing order in the local replay by excluding truth columns with zero generated yield before the first IBU iteration. Repeat the six original outputs for regression verification only. Check a synthetic zero-generated column with positive migration, then compare each corrected unfolded vector with a separate implementation of the generated-denominator iteration on the saved matrices. Check that the original baseline reproduces, identify affected variants, and check the reviewed numerical corrections to their quoted precision.
+
+Label every new χ² as **partial, saved scan**. It uses the 205 reported cells of the released covariance with a partial scan intervention. It cannot establish full-acceptance agreement. Report both the histogram-availability outcome and the correction checks. This work makes no cause determination and changes no production code or note text.

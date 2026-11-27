@@ -25,7 +25,7 @@ REPO = HERE.parents[1]
 PY = os.environ.get("OOFVC_PY", sys.executable)
 M = "77d76cfc2d621f8faa010b75006811868494652a"
 
-PURE = "Identity or MatchesRefC2C1 or (Join and not JoinTool) or Moved or Readings or ScorerArgv"
+PURE = "Identity or MatchesRefC2C1 or (Join and not JoinTool) or Moved or Readings or ScorerArgv or ReadFlags"
 MUTANTS = [
     # oofvc_lib.py
     ("LIB_BAND_LOWER", "oofvc_lib.py", '("LOWER", lambda r: r <= 0.80)', '("LOWER", lambda r: r <= 0.85)', "Readings"),
@@ -56,8 +56,13 @@ MUTANTS = [
     ("LIB_NDF", "oofvc_lib.py", "return float(d @ ci @ d) / ndf, ndf", "return float(d @ ci @ d) / x.size, ndf", "Readings"),
     ("LIB_COLUMN_AREA", "oofvc_lib.py", "return float(np.dot(area, np.asarray(x, float)[idx]) / np.dot(area, np.asarray(pub, float)[idx]))",
      "return float(np.asarray(x, float)[idx].sum() / np.asarray(pub, float)[idx].sum())", "Readings"),
+    ("LIB_READ_ORD", "oofvc_lib.py", "    if a.dtype != object:\n        return a\n", "    return a\n", "ReadFlags"),
+    ("LIB_READ_REFUSE", "oofvc_lib.py",
+     '        raise ReadRefusal(f"column {name}: an object column that is not one-character strings")', "        pass",
+     "ReadFlags"),
+    ("LIB_FLAG_RANGE", "oofvc_lib.py", "    if a.size and not np.all((a == 0) | (a == 1)):", "    if False:", "ReadFlags"),
     # oofvc_join.py
-    ("JOIN_ROUTE", "oofvc_join.py", "n_dis = int((to_bkg == to_sig).sum())", "n_dis = 0", "JoinTool"),
+    ("JOIN_ROUTE", "oofvc_join.py", "n_dis = L.route_disagree(to_bkg, to_sig)", "n_dis = 0", "JoinTool"),
     ("JOIN_SIGW_TRUTH", "oofvc_join.py", '"pass": all(truth_equal.values())}', '"pass": True}\n    truth_equal = {}',
      "JoinTool"),
     ("JOIN_LAB_TOL", "oofvc_join.py", "LAB_RTOL = 1e-9", "LAB_RTOL = 1.0", "JoinTool"),
