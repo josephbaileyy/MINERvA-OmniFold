@@ -23163,6 +23163,17 @@ docs/orchestration/state/r5-meter-receipt.json	tracked	MACHINE	state-artifact			
 docs/orchestration/state/regen_canonical_namespace_field_pins.py	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/release-zenodo-20261127/UPLOAD-MANIFEST.md	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
 docs/orchestration/state/release-zenodo-20261127/make_upload_manifest.py	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
+docs/orchestration/state/release-zenodo-20261127/rc10/README.md	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
+docs/orchestration/state/release-zenodo-20261127/rc10/build_rc10.log	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
+docs/orchestration/state/release-zenodo-20261127/rc10/build_rc10.py	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
+docs/orchestration/state/release-zenodo-20261127/rc10/clean-env-rc10-steps.txt	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
+docs/orchestration/state/release-zenodo-20261127/rc10/clean-env-rc10-venv-freeze.txt	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
+docs/orchestration/state/release-zenodo-20261127/rc10/clean_env_check_rc10.sh	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
+docs/orchestration/state/release-zenodo-20261127/rc10/export_published_edges.log	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
+docs/orchestration/state/release-zenodo-20261127/rc10/export_published_edges.py	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
+docs/orchestration/state/release-zenodo-20261127/rc10/export_sixteen_vf.log	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
+docs/orchestration/state/release-zenodo-20261127/rc10/export_sixteen_vf.py	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
+docs/orchestration/state/release-zenodo-20261127/rc10/verify-rc10.out.txt	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
 docs/orchestration/state/release-zenodo-20261127/same-events/PLAN.md	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
 docs/orchestration/state/release-zenodo-20261127/same-events/run_same_events.sh	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes
 docs/orchestration/state/release-zenodo-20261127/same-events/same_events.out	tracked	MACHINE	state-artifact	release-zenodo-20261127		generated		exact-path-only	yes

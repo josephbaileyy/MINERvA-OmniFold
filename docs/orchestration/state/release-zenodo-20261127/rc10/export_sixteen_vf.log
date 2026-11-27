@@ -1,0 +1,46 @@
+ok   product sha256 starts 1a37b082
+ok   committed C_rep CSV starts 6d48cb98
+ok   committed C_e_infl CSV starts 763f14c6
+ok   cells are R00-R15 in order
+ok   C_rep = C_e_infl + C_model + C_resp + C_PL5D
+ok   C_rep symmetric to max|C-C^T|/max|C| = 2.64e-16
+ok   C_rep positive definite
+ok   f-R00: 3.258849e-39 prints 32.6
+ok   f-R01: 3.670687e-39 prints 36.7
+ok   f-R02: 6.311285e-40 prints 6.31
+ok   f-R03: 4.304969e-40 prints 4.30
+ok   f-R04: 4.899572e-39 prints 49.0
+ok   f-R05: 9.981503e-40 prints 9.98
+ok   f-R06: 5.567619e-40 prints 5.57
+ok   f-R07: 3.206325e-40 prints 3.21
+ok   f-R08: 1.385481e-39 prints 13.9
+ok   f-R09: 3.960990e-39 prints 39.6
+ok   f-R10: 7.830277e-40 prints 7.83
+ok   f-R11: 5.612329e-40 prints 5.61
+ok   f-R12: 2.196832e-39 prints 22.0
+ok   f-R13: 9.040921e-40 prints 9.04
+ok   f-R14: 4.963286e-39 prints 49.6
+ok   f-R15: 1.128332e-39 prints 11.3
+ok   f equals RC9's exported f bit for bit
+ok   sig-reported: 16 cells agree with the note's printed percent
+ok   sig-C_e: 16 cells agree with the note's printed percent
+ok   sig-C_e_infl: 16 cells agree with the note's printed percent
+ok   sig-C_model: 16 cells agree with the note's printed percent
+ok   sig-C_resp: 16 cells agree with the note's printed percent
+ok   corr: 120 lower-triangle entries agree with the note
+ok   C_rep.csv is byte-identical to the committed fd_data_product_vf_C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e.csv
+ok   C_e_infl.csv is byte-identical to the committed fd_data_product_vf_C_e_infl.csv
+ok   C_e.csv is byte-identical to the committed fd_data_product_vf_C_e.csv
+ok   C_model.csv is byte-identical to the committed fd_data_product_vf_C_model_abs.csv
+ok   C_resp.csv is byte-identical to the committed fd_data_product_vf_C_resp.csv
+ok   C_PL5D.csv is byte-identical to the committed fd_data_product_vf_C_PL5D.csv
+ok   sixteen_cell.npz reloads equal
+wrote C_PL5D.csv 03babead4dff1bf19980319a867c9b830a5b7f85896792edc6f07a62c6e991c9
+wrote C_e.csv 222c4dd4efef0780c408b82caa8d360723bc8b73b784885789f374a624e6c715
+wrote C_e_infl.csv 763f14c6ace6e69109fc11ded75d8654615fe55d5e53281e9911bc5318a03e93
+wrote C_model.csv ad179dea32b1360083f5f69df9ae051f2486abc90354fee9b6a514736eac0e63
+wrote C_rep.csv 6d48cb98f507772f89d6573cf2a8e2c66d38036a7be5220305a585f434993880
+wrote C_resp.csv 35bfcb2a332b8b5aff4c9f14a14ccb63787082e49814962d2e5de0e40659cc62
+wrote cells.csv 1cabd58dabc6261410e8682b47d96106bc5dee7ed92c181caae80f1d8b654f73
+wrote sixteen_cell.npz a84946cba8214b665f8961ad150d19b03a5cc81cc7d76f92703183ba42b6e0e6
+EXPORT B: PASS
