@@ -30,15 +30,18 @@ The salt never leaves the laptop before `reveal`.
 - then the wrapper's own `--covfix-attempt <32 hex>`;
 - for the PV roles, also `--covfix-seal-root <dir> --covfix-freeze-root <dir>`. These are the roots the wrapper just
   verified, and the binary must read from them.
-- for `pg-connect`, the config's `args` are covfix_pg's own, as COVFIX-DECLARATION rev 12 §4.2 records them:
+- for `pg-connect`, the config's `args` are covfix_pg's own, as COVFIX-DECLARATION rev 12 §4.2 (a draft until it is
+  bound) records them:
   `--workdir <empty dir> --sealed <new dir> --gen-spec <file> --gen-spec-sha256 <64 hex> --gpg <path> --gpgconf <path>
   --gpg-sha256 <64 hex> --gpgconf-sha256 <64 hex>`. The wrapper adds `--covfix-attempt`. Since the role config is
   sha-pinned in the binding, so is `--gen-spec-sha256`; covfix_pg refuses a gen-spec whose bytes do not hash to it.
   The wrapper checks only that `args` is a list of strings with no `--covfix-*` entry, so covfix_pg checks the rest.
-- covfix_pg refuses unless every `env_keep` name in the gen-spec is set in its environment. The wrapper sets no
-  variable and unsets only the six Slurm I/O variables, so what Slurm sets in the task, such as `SLURM_JOB_ID` and
-  `SLURM_CPUS_ON_NODE`, passes through. Any other listed name must already be set in the cluster account's login
-  environment.
+- covfix_pg refuses unless every `env_keep` name in the gen-spec is set in its environment, with none listed twice.
+  It also refuses if an inherited variable differs from its value in the gen-spec's `env_set`. The wrapper sets no
+  variable on the cluster and unsets only the six Slurm I/O variables, so what the login session and Slurm set in the
+  task, such as `HOME`, `SLURM_JOB_ID` and `SLURM_CPUS_ON_NODE`, passes through. `env_keep` lists only those site
+  names. A fixed value that the generator's correctness depends on, such as `PG_DEPLOY_PIN`, goes in `env_set`.
+  covfix_pg sets it, so the gen-spec's pin covers it.
 
 **stdout, last line:**
 - `covfix-receipt <attempt>` after the role's work succeeded. Without it the run is terminal, even at exit 0.

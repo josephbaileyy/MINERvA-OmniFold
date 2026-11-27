@@ -1122,6 +1122,7 @@ docs/orchestration/state/2d-closeout/covfix-20261122/wrapper/README.md	tracked	M
 docs/orchestration/state/2d-closeout/covfix-20261122/wrapper/covfix_wrapper.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/wrapper/reference_role.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/wrapper/role-config.example.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/wrapper/role-config.synth-rehearsal.DRAFT.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/wrapper/test_covfix_wrapper.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/EVW2D-BINDING-1.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/evw2d-20261124/EVW2D-BINDING-2.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes

@@ -1,0 +1,49 @@
+{
+ "_comment": "DRAFT for the director's COVFIX synthetic-seal rehearsal binding (JE, 2026-11-26). Not a bound config: every <open: ...> value is unset. The director writes the final file at binding and pins its sha256. Run every wrapper command with COVFIX_FORBID_REAL_KEYCHAIN=1 exported.",
+ "_sources": {
+  "keychain_prefix": "covfix_wrapper.py TEST_PREFIX_RE; cov2d's rehearsal terms of 2026-11-26 (synth prefix, account director)",
+  "ssh, host": "B1's receipt (tune-generator 040b3c70, pg/probe/pg-probe.out line 2): -o User=josephrb, IdentityFile and CertificateFile below, host saul.nersc.gov",
+  "gpg, gpgconf": "B1's receipt: tool gpg /usr/bin/gpg2 9622496c..., tool gpgconf /usr/bin/gpgconf 679772f4..., both rpm gpg2-2.4.4-150600.3.15.1 match True, verdict GO",
+  "pg-connect binary_sha256": "covfix_pg.py at cov2d's round-5 head b9642de9 (git show | shasum -a 256); recheck at its merge",
+  "workdir": "PLAN-REHEARSAL.md (tunegen/pg-20261123) section G: the proposed W",
+  "slurm": "account m3246 and qos regular as EVW2D's bound launch; time 02:00:00 is PLAN-REHEARSAL.md section 3's proposed bound, to be checked against B3's record first",
+  "binding": "pg-connect needs commitment (covfix_wrapper.py ROLES: pg-connect is keyed by the commitment); the PV roles are keyed by the seal (seal_digest, freeze_digest)"
+ },
+ "record_dir": "<open: a synth ledger directory, not ~/director-tools/covfix (for example ~/director-tools/covfix-synth-<tag>)>",
+ "keychain_prefix": "covfix-synth-<tag>-",
+ "ssh": {"user": "josephrb", "identity_file": "/Users/josephbailey/.ssh/nersc",
+         "certificate_file": "/Users/josephbailey/.ssh/nersc-cert.pub"},
+ "host": "saul.nersc.gov",
+ "binding": {
+  "commitment": "<open: 64 hex, printed by generate under this prefix>",
+  "seal_digest": "<open: 64 hex, sha256 of the synthetic PG-SEAL.sha256 (PV roles only)>",
+  "freeze_digest": "<open: 64 hex, sha256 of the synthetic P2-FREEZE.sha256 (PV roles only)>"
+ },
+ "seal_file": "<open: repo path of the synthetic PG-SEAL.sha256 (PV roles only)>",
+ "seal_root": "<open: cluster directory the PG-SEAL paths are relative to>",
+ "freeze_file": "<open: repo path of the synthetic P2-FREEZE.sha256 (PV roles only)>",
+ "freeze_root": "<open: cluster directory the P2-FREEZE paths are relative to>",
+ "mirror": {
+  "worktree": "<open: a dedicated worktree checked out on the branch below>",
+  "path": "docs/orchestration/state/2d-closeout/covfix-20261122/consumption/RECORD.jsonl",
+  "remote": "origin",
+  "branch": "<open: a synth branch, not covfix-ledger (for example covfix-synth-ledger-<tag>)>",
+  "run_hooks": false
+ },
+ "roles": {
+  "pg-connect": {"binary": "<open: absolute cluster path of covfix_pg.py in the deploy>",
+                 "binary_sha256": "23193eb1238e30f8355b995ed5d43befab550f2bf8463d37fb8c9f6b56df1ea6",
+                 "args": ["--workdir", "/pscratch/sd/j/josephrb/covfix-pg/rehearsal-<utc>/",
+                          "--sealed", "<open: a new cluster dir outside the workdir>",
+                          "--gen-spec", "<open: absolute cluster path of the gen-spec JSON>",
+                          "--gen-spec-sha256", "<open: 64 hex, sha256 of that file's bytes; the gen-spec is not written yet>",
+                          "--gpg", "/usr/bin/gpg2", "--gpgconf", "/usr/bin/gpgconf",
+                          "--gpg-sha256", "9622496c5bf9b6eca7263cf9567c183d4747a99d4fca2bee716f53bcba982d0a",
+                          "--gpgconf-sha256", "679772f4f9cdc41104f3dba71edf7bb5e40b7019589a96cef8efac77c726385c"],
+                 "slurm": {"account": "m3246", "qos": "regular", "constraint": "cpu", "time": "02:00:00"}},
+  "pv-writer": {"binary": "<open>", "binary_sha256": "<open>", "args": [],
+                "slurm": {"account": "m3246", "qos": "regular", "constraint": "cpu", "time": "<open>"}},
+  "pv-readout": {"binary": "<open>", "binary_sha256": "<open>", "args": [],
+                 "slurm": {"account": "m3246", "qos": "regular", "constraint": "cpu", "time": "<open>"}}
+ }
+}
