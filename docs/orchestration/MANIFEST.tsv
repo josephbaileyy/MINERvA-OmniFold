@@ -18190,6 +18190,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/regrade-crep
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/regrade-crep-20261121/run2d/stdout.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/regrade-crep-20261121/test_ll5d_regrade_capture.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/regrade-crep-20261121/test_regrade_crep.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/regrade-vf-20261127/REGRADE-VF-DECLARATION.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/AT-RISK.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/retention-20261110/cfs-1a-check-20261111/cluster/session.err.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
