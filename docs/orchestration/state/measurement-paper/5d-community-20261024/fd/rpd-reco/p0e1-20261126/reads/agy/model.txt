@@ -1,0 +1,2 @@
+model: gemini-4-hydrogen-high (agy -p), read of the p0e1 package (code/rpd-p0e1-20261126, uncommitted bytes; connect 5016f378, launch 4ffd4a59, config f92d034d)
+The read saw the generated outputs at the shas in README.md's table; after it, only README.md and price/ changed (the notes taken).
