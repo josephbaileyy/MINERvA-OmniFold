@@ -1,8 +1,10 @@
-# PTMC DECLARATION (DRAFT r3): REF-C2C1's paired test, binned IBU against 2D OmniFold, under OOFVC's R reclassification (2026-11-27)
+# PTMC DECLARATION (DRAFT r4): REF-C2C1's paired test, binned IBU against 2D OmniFold, under OOFVC's R reclassification (2026-11-27)
 
-**Status: DRAFT r3.** It is not audited and not bound, and nothing runs from it.
+**Status: DRAFT r4.** It is not audited and not bound, and nothing runs from it.
 - The director ruled on D1–D5 and on r2's two ruling-touching changes (§8).
-- r3 answers the round-2 reads (`reads/r2/`). Round 3 is the last declaration round (the director, 2026-11-27).
+- r3 answered the round-2 reads (`reads/r2/`). r4 answers round 3 (`reads/r3/`), the last declaration round, under the
+  director's scope rule: only a wrong printed number or over-reaching statement, a gate that would pass a defective
+  run, or a false STOP of a correct run blocks.
 - The scoping, price and calendar are in `PTMC-SCOPING.md`.
 
 **Asked for by** Joseph, through the director (2026-11-27). **Drafted by** ibu-chi-squared-issue, read-only on
@@ -89,12 +91,13 @@ One in-process run of E_R's driver:
   **no IBU control reads it.**
 - **IBU.** Inside that call, before OmniFold runs, IBU is solved on the identical inputs:
   - REF-C2C1's `binned_problem` on the arguments OmniFold receives;
-  - `roounfold_bayes` (the bound library) at K ∈ {1, 2, 3, 4, 5, 10, 15, 20};
-  - `xsec_at_every_k` through the driver's own recorded extraction call. That call's arguments include the
-    completeness histogram the extraction consumed.
+  - `roounfold_bayes` (the bound library) at K ∈ {1, 2, 3, 4, 5, 10, 15, 20}.
+- **IBU's cross section.** After the driver returns, IBU's cross sections come from `xsec_at_every_k`, a separate
+  extraction call with the same arguments as the driver's recorded one. Those arguments include the completeness the
+  driver's own extraction consumed.
 
 **Products.** `<unit>.root` (the driver's) and `<unit>.npz`, which holds:
-- the IBU cross section and unfolded vector per K, at the top level as `ks` and `xsec`;
+- the IBU cross section and unfolded vector per K, at the top level as `ks`, `xsec` and `unfolded`;
 - M, T and y;
 - the digests of the arrays the OmniFold call received;
 - the draw, completeness and support records of §2.2;
@@ -139,17 +142,22 @@ A done-marker records the verdict and both products' sha256.
     the same weights; then D*_j / T*_orig,j = D_CV,j / T_orig,CV,j.
   - Event identity cannot be verified from the loaded branches, and the driver's own truth gate omits the
     truth-vertex cuts that the event loop applies to mc_truth_denom (`re2_driver.py:66-79`).
-  - So the premise is **gated** by C-COUPLE (§3.1): in `p_off_c` and in `p_R_c`'s original rows, |T_orig,CV,j /
-    D_CV,j − 1| ≤ 1e-9 in every cell where either is positive, and the two vanish together. If it fails, nothing is
-    read.
+  - So the premise is **gated, exactly**, by C-COUPLE (§3.1), in `p_off_c` and in `p_R_c`'s original rows. Per truth
+    cell, the multiset of (truth p_T, truth p∥, w_truth) over the canonical denominator's rows must equal the multiset
+    over the original truth-passing signal rows. Rows with w_truth = 0 are left out because they enter no sum, and
+    every weight must be non-negative.
+  - Equal multisets give a bijection: each denominator row takes the factor of its value-identical signal row. Then
+    D*_j = T*_orig,j exactly, with no float tolerance.
+  - The hunk also asserts the input's `hasTruthOnlyMisses` and the presence of the canonical denominator.
+  - If the gate fails, nothing is read, and the mismatch (cells, counts) goes to the director.
 - **The replica completeness**, per truth cell j, with T the summed w_truth of truth-passing signal rows (the original
   rows, or all rows), * the resampled weights and CV the un-resampled ones:
 
   c*_j = (T*_all,j / T*_orig,j) · (T_orig,CV,j / D_CV,j)
 
-  This equals T*_all,j / D*_j with D*_j = D_CV,j · T*_orig,j / T_orig,CV,j: the denominator resampled with the
-  original rows' factors, under the premise. Both methods divide by the same c* in the same extraction call. The CV
-  value of the same functional is OOFVC's R completeness.
+  Under C-COUPLE's bijection, T_orig,CV,j / D_CV,j is 1 up to summation order. So this is T*_all,j / D*_j with
+  D*_j = T*_orig,j, the denominator resampled with its own rows' factors. Both methods divide by the same c* through
+  the same extraction arguments. The CV value of the same functional is OOFVC's R completeness.
 - **The cell table** (D_CV,j, T_orig,CV,j, T*_orig,j), in order:
 
   | case | rule |
@@ -157,11 +165,11 @@ A done-marker records the verdict and both products' sha256.
   | D_CV,j = 0 and T_orig,CV,j = 0 (a structural zero, e.g. a θ_μ ≥ 20° corner) | c*_j = ROOT's `Divide` value, 0, exactly as at the CV. The extraction (which gives 0 where c ≤ 0) suppresses the cell in both. Cells where moved truth weight is so suppressed are counted and printed |
   | exactly one of D_CV,j and T_orig,CV,j is 0 | excluded by C-COUPLE; if met, a **STOP** |
   | both positive, T*_orig,j > 0 | the formula |
-  | both positive, T*_orig,j = 0 (lost support: every original row in the cell drew 0) | then D*_j = 0, so the consistent value is x*_j = 0. The hunk sets c*_j = 0, and the extraction gives 0 for both methods. That is also what production's replica gives there, because its unfolded count is 0 when every row in the cell draws 0. Counted per replica and printed |
+  | both positive, T*_orig,j = 0 (lost support: the weighted sum over the cell's original rows is 0, i.e. every original row of positive weight drew 0) | then D*_j = 0, so the consistent value is x*_j = 0. The hunk sets c*_j = 0, and the extraction (c ≤ 0 gives 0) returns 0 for both methods. Production's replica also gives x*_j = 0 there, since its unfolded count is 0. Under R the unfolded count can stay positive when moved rows survive, and it is c*_j = 0 that makes x*_j = 0. Counted per replica, with the cells that keep moved weight counted separately, and printed. All seeds are kept, and no replica is conditioned on support |
 
 - **C-SUPPORT (printed, read by nothing).** In `p_R_c`, for every seed b = 1..200, the runner draws the original-row
-  signal factors and lists the lost-support cells, before any replica launches. The table shows how often the
-  last case occurs. No seed is substituted.
+  signal factors and lists the lost-support cells by the weighted sum, before any replica launches. The table shows
+  how often the last case occurs. No seed is substituted.
 - **The record per unit:**
   - the data, original-row, appended-row and injected-row factor vectors' sums and sha256;
   - the appended entry list's sha256;
@@ -232,13 +240,16 @@ non-finite value fails, and reductions never skip a NaN.
   - the CPU count is 64, the thread environment is §2.1's literals, and the runtime versions are the same across all
     units.
 - **C-PINS:** every unit and the scorer record every §1 pin, each equal to §1's.
-- **C-MOVE** (OOFVC's rule, `OOFVC-DECLARATION.md:309-314`, on M's grid, comparing `p_R_c` with `p_off_c`):
-  - **the sets:** the background loader's skip set equals the rows file's 544,162 entries. It splits into the appended
-    set (536,518, the in-grid rows passing the weight rule) and the reco-outside set (7,644), which are disjoint. The
-    whole skip set is disjoint from the injected entries;
-  - **the removal:** per reco cell, the background removed equals the moved rows reconstructed in the grid that the
-    background loader had filled (0 ≤ w < 1e6, POT-scaled), recomputed from the rows file. The tolerance is 1e-12 of
-    the cell's production background, with an exact zero where that background is zero;
+- **C-MOVE** (OOFVC's rule, `OOFVC-DECLARATION.md:309-314`, on M's grid):
+  - **the sets, in `p_R_c`:** the rows file's 544,162 entries split into the appended set (536,518, the in-grid rows
+    passing the weight rule) and the reco-outside set (7,644), which are disjoint;
+  - **the sets, in every R replica:** the background fill rows and the injected entries are both disjoint from the
+    rows file's entries. The fill-row entry set equals `p_off_b1`'s minus the rows file's entries, since fill rows do
+    not depend on the seed;
+  - **the removal** (`p_R_c` against `p_off_c`):
+    per reco cell, the background removed equals the moved rows reconstructed in the grid that the background loader
+    had filled (0 ≤ w < 1e6, POT-scaled), recomputed from the rows file. The tolerance is 1e-12 of the cell's
+    production background, with an exact zero where that background is zero;
   - **the counts:** the signal arrays grow by exactly 536,518, with `dropped_appended_weight` = 0 and
     `dropped_outside_weight` = 0;
   - **upper edges:** listed rows whose reco lies exactly on a last upper edge are counted and printed. Production's
@@ -246,7 +257,14 @@ non-finite value fails, and reductions never skip a NaN.
   - **finiteness** is required of every operand used.
 - **C-FIX** (OOFVC's list): `hOFTruthDenom2D`, `hDataReco2D`, `hFlux_pt`, dataPOT, mcPOT, potScale, both flux integrals
   and nNucleons are equal bit for bit, with bin errors and overflow, between `p_R_c` and `p_off_c`.
-- **C-COUPLE:** §2.2's premise, in `p_off_c` and in `p_R_c`'s original rows. If it fails, nothing is read.
+- **C-COUPLE:** §2.2's exact multiset identity, in `p_off_c` and in `p_R_c`'s original rows, with the
+  `hasTruthOnlyMisses` and denominator assertions. If it fails, nothing is read. The cell sums' agreement is printed
+  beside it.
+- **C-NORM:** in every unit, the extraction's fixed arguments as consumed (the flux vector, data POT, nucleon count and
+  both edge arrays) have the same digest as `p_off_c`'s. C-FIX checks `p_off_c`'s against the CV inputs. A
+  replica cannot pass with a different normalization.
+- **C-REFINE:** in every unit, the refinement's returned weights are, bit for bit, the measured weights both methods
+  received.
 - **C-FILL-IBU:** in every unit and at every K, IBU's event-level route equals its direct route, relative to 1e-9.
   - The event-level route is `ref_c2c1.filled`, then the recorded extraction; the direct route is `xsec_at_every_k`.
   - The unit's own `hXSec2D` is never compared, because it is OmniFold's.
@@ -264,7 +282,9 @@ non-finite value fails, and reductions never skip a NaN.
   - **at OmniFold's entry:** the MC truth and reco weights equal the CV weights times [b_signal; b_bkg[appended
     entries]].
 
-  The appended entry list must also equal the rows file's in-grid, weight-passing list, in order. In the scorer, for
+  The appended entry list must also equal the rows file's in-grid, weight-passing list, in order. The appended rows
+  at the end of the signal arrays must be those rows: their reco and truth coordinates exactly, their weights as the
+  driver forms them (w × POT scale), and both masks true. In the scorer, for
   every b in 1..200 whose Q_R copy C-D4 accepted, `p_R_b`'s data, original-signal and background stream lengths and
   sums must equal Q_R S1_b's `p1Streams` record exactly; these are aggregate checks.
 - **C-COMP:** in every unit, on the completeness histogram the extraction consumed (the recorded call's argument):
@@ -282,8 +302,11 @@ non-finite value fails, and reductions never skip a NaN.
   - The tolerances are prespecified acceptance targets. 1e-8 is RE-2's rule; the 9.2×10⁻¹² that C-CV measured is a
     central OmniFold refit, not a bound on IBU or on replicas. 1e-6 is OOFVC's tolerance for distances.
 - **C-CELLS, C-PUB** (REF-C2C1's):
-  - the 205 cells from the bound precision ROOT, equal by index to the committed `cells.root`;
-  - χ² = 465.41527219152636 over 205 for the mandatory E_R central, to 1e-8.
+  - the 205 cells from the bound precision ROOT, equal by index to the committed `cells.root`, against both
+    publication masks (StatOnlyCovariance's diagonal and TotalCovariance's), as REF-C2C1's reader checks;
+  - χ² = 465.41527219152636 over 205 for the mandatory E_R central, to 1e-8. The target is main's full-precision
+    `c_pub` (REF-C2C1 `config.json`, the director's ruling of 2026-11-06); REF-C2C1's read observed
+    465.4152721915331.
 - **C-SHAPE**, the scorer's gates. They run on each arm's raw operands before subtraction, and on δ and D before
   C-PROTO and before classification:
   - each operand is a finite 224-vector on §2.5's axes;
@@ -301,12 +324,12 @@ non-finite value fails, and reductions never skip a NaN.
   - its sha256 equals its independent binding;
   - an REF npz has top-level `ks` equal to the scan, and meta unit `c2_replica_b{b}` (or `c2_central`) with argv
     carrying `--bootstrap-seed b --bootstrap-streams three` (or neither);
-  - a Q_R copy's recorded bootstrap seed is b and its streams are three;
+  - a Q_R copy's recorded `p1Streams` has seed b, streams three, `unit_factors` false and the driver's offsets;
   - malformed files, copy failures, permission errors and duplicate markers fail.
 - **C-REPOFF** (formation): `p_off_b1` reproduces Q_R S1_001's `hXSec2D`, and `c2_replica_b1`'s cross section at
   K = 10 and 5, per bin relative to 1e-8.
-  - Its refinement record matches S1_001's: `signed_sum`, `n_data` and `n_injected` exactly; `refined_sum` and
-    `clipped_fraction` relative to 1e-8.
+  - Its refinement record matches S1_001's: `params`, `signed_sum`, `n_data` and `n_injected` exactly;
+    `refined_sum` and `clipped_fraction` relative to 1e-8.
   - It is seed-1 reproduction evidence of the replica path, not a bound for other seeds.
 - **C-PROTO** (a diagnostic, read by nothing), for b = 1..5 and for the centrals:
   - Δ_b = D_b,paired − D_b,B, with D_b,paired from `p_off_b`;
@@ -314,15 +337,19 @@ non-finite value fails, and reductions never skip a NaN.
   - printed: ε (the maximum over cells with C_bb,B > 0 of |Δ| / √C_bb,B, and any difference in a zero-variance cell)
     and the whitened norms (Δᵀ C_B⁺ Δ)^½ at rank 50.
 
-### 3.3 The disposition, in this order, fixed before any T
+### 3.3 The disposition, in this order
 
-Each outcome is recorded with its reason before any T is formed.
+The first stage records operand acceptance and B's availability before any T is formed. The second stage applies
+C-SHAPE's score-dependent refusals after T and the bars are computed and before any classification. Each outcome is
+recorded with its reason. A permission, staging or copy error is a failure, never a clean absence.
 1. Any R control fails, or the mandatory E_R central is absent or mismatched: **STOP**, nothing read.
 2. Any optional product present but failing C-D4, or C-REPOFF failing on an accepted seed-1 pair: **STOP**, nothing
    read.
 3. Any optional product cleanly absent, and everything present passing: **B unavailable**. The checks that need the
    absent products are skipped and listed, and R is read alone.
 4. Every optional product accepted and C-REPOFF passing: **B formed**. Both arms are read, with their protocols named.
+5. After the scores: a C-SHAPE failure in any formed arm (a non-finite T, bar or covariance) is a **STOP**, with
+   nothing classified.
 
 STOP produces no statement.
 
@@ -386,13 +413,18 @@ bars.
 ## 7. Cost and the launch rule
 
 - **A job's charged node-h** is its sacct `Elapsed` times its node count. The pilot's charge is the pilot job's.
-- **The estimate of one R replica:** per node, the maximum of the R replica lanes' step-level sacct `Elapsed`,
-  divided by the units per lane. The pilot has one R replica, so its lane's step time is the estimate. Each unit's
-  own `seconds` is recorded beside it.
-- **STOP before the replicas** if the pilot's charge plus 199 × the estimate exceeds 11.5 node-h. The replicas also do
-  not launch before every pilot control passes, C-COUPLE included.
+- **Every unit runs as its own named `srun` step**, so step-level sacct isolates it.
+- **t_R** is the step-level sacct `Elapsed` of the pilot's R replica `p_R_b1`. Each unit's own `seconds` is recorded
+  beside it.
+- **o** is the pilot's per-node overhead: its job `Elapsed` minus its longest step `Elapsed`.
+- **The replica layout is fixed:** 5 nodes, 4 lanes of 64 CPUs each, and 10 units per lane in sequence, which gives
+  200 slots for 199 replicas.
+- **The projection** is the pilot's charge plus 5 × (10 × t_R + o) node-h. At the scoped 0.0489 node-h per replica
+  (t_R ≈ 704 s with four lanes per node), that is about 10.2.
+- **STOP before the replicas** if the projection exceeds 11.5 node-h. The replicas also do not launch before every
+  pilot control passes, C-COUPLE included.
 - **The hard cap is 12.5 node-h for the whole campaign,** pilot and retries included. No job is submitted whose node
-  count times time limit exceeds the cap left. A retry reruns only a unit that failed for a non-deterministic reason
+  count times time limit exceeds the cap left. The replica jobs' time limit is 1.5 × (10 × t_R) + o. A retry reruns only a unit that failed for a non-deterministic reason
   (for example a node failure or a timeout); a control failure is not retried, and goes to the director.
 
 ## 8. Rulings and records
@@ -434,4 +466,8 @@ receipt is `receipts/stat-d4/` in this PR.
 **Reads** (verbatim, with dispositions, under `reads/`):
 - round 1, on r1 at `8040eedba`: codex-school2 5 / 8 / 3 and agy `gemini-4-hydrogen-high` 4 / 3 / 1 (blockers / major /
   minor);
-- round 2, on r2 at `783a73a10`: codex-school2 6 / 5 / 2 and agy 5 / 2 / 2.
+- round 2, on r2 at `783a73a10`: codex-school2 6 / 5 / 2 and agy 5 / 2 / 2;
+- round 3, on r3 at `ea1004efa`, under the scope rule: codex-school2 6 / 3 / 1 and agy 2 / 0 / 3. Both readers' blockers
+  are the same two, the C-COUPLE premise and §7's lane division. codex's other four (the weighted lost-support
+  trigger; a moved entry reused in a replica; a replica's normalization; the C-COUPLE float tolerance) are answered in
+  r4 (`reads/r3/DISPOSITION.md`).
