@@ -1,0 +1,35 @@
+node login02 2026-11-27T05:56:13Z; approved listing 2ac64747d2a85ad611d33c04a1649869ef57f746408dabd36fe5a7afb8be6f0a
+sacct: no unended rpd* job
+listing_sha256 2ac64747d2a85ad611d33c04a1649869ef57f746408dabd36fe5a7afb8be6f0a
+symlinks: only the clones' committed ones (sha a53113c730f3922170052434e7eeab69d4cb546ebcfadd0c9f2a512f85bba727 per root)
+== 3. the omnifile copies first
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/dry/staged/0915b7320f5330fd-runEventLoopOmniFold_RDX_1F.root (1048192809 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/staged/0915b7320f5330fd-runEventLoopOmniFold_RDX_1F.root (1048192809 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/dry/staged/35392e7dc249f93f-runEventLoopOmniFold_RDX_1M.root (1318953730 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/staged/35392e7dc249f93f-runEventLoopOmniFold_RDX_1M.root (1318953730 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/dry/staged/d721c47e0413216e-runEventLoopOmniFold_RDX_1B.root (162097785 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/staged/d721c47e0413216e-runEventLoopOmniFold_RDX_1B.root (162097785 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/dry/staged/c408602e6d0bec6f-runEventLoopOmniFold_RDX_1O.root (231277653 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/staged/c408602e6d0bec6f-runEventLoopOmniFold_RDX_1O.root (231277653 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/dry/staged/ebc1dedefab686ec-runEventLoopOmniFold_RDX_1P.root (305659361 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/staged/ebc1dedefab686ec-runEventLoopOmniFold_RDX_1P.root (305659361 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/dry/staged/661b3da5e84a25cc-runEventLoopOmniFold_RDX_1C.root (310337285 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/staged/661b3da5e84a25cc-runEventLoopOmniFold_RDX_1C.root (310337285 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/dry/staged/60abd97e8404591d-runEventLoopOmniFold_RDX_1A.root (605076305 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/staged/60abd97e8404591d-runEventLoopOmniFold_RDX_1A.root (605076305 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/dry/staged/282a273e94aa72f2-runEventLoopOmniFold_RDX_1E.root (753934165 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/staged/282a273e94aa72f2-runEventLoopOmniFold_RDX_1E.root (753934165 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/dry/staged/dfe3592d50ab18c0-runEventLoopOmniFold_RDX_1N.root (763022193 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/staged/dfe3592d50ab18c0-runEventLoopOmniFold_RDX_1N.root (763022193 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/dry/staged/186c840ef338b762-runEventLoopOmniFold_RDX_1L.root (86211914 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/staged/186c840ef338b762-runEventLoopOmniFold_RDX_1L.root (86211914 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/dry/staged/056fd28bc200ebdc-runEventLoopOmniFold_RDX_1G.root (883836408 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/staged/056fd28bc200ebdc-runEventLoopOmniFold_RDX_1G.root (883836408 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/dry/staged/e9892e8291218c2d-runEventLoopOmniFold_RDX_1D.root (904836901 bytes) rc=0
+rm /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/staged/e9892e8291218c2d-runEventLoopOmniFold_RDX_1D.root (904836901 bytes) rc=0
+omnifile copies removed: 24
+== 4. the roots
+removed /pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126 rc=0; gone
+removed /pscratch/sd/j/josephrb/rpd-reco-flux4-20261126 rc=0; gone
+removed /pscratch/sd/j/josephrb/rpd-reco-d2s0e1-20261127 rc=0; gone
+== e1-remove done 2026-11-27T05:58:41Z

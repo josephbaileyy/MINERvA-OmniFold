@@ -1,0 +1,86 @@
+== 2026-11-27T03:02:24Z
+/pscratch/sd/j/josephrb/oofvc-20261126-r3:
+deploy
+dump
+gates
+join
+logs
+stage
+tmp
+tool
+units
+
+/pscratch/sd/j/josephrb/oofvc-20261126-r3/join:
+join.json
+oofvc_rows.npz
+
+/pscratch/sd/j/josephrb/oofvc-20261126-r3/logs:
+build.log
+deploy.log
+dump-62067464_7.log
+dump-62067601_0.log
+dump-62067601_10.log
+dump-62067601_11.log
+dump-62067601_1.log
+dump-62067601_2.log
+dump-62067601_3.log
+dump-62067601_4.log
+dump-62067601_5.log
+dump-62067601_6.log
+dump-62067601_8.log
+dump-62067601_9.log
+join.log
+join.time
+off-c2_central.log
+off-c2_central.time
+off-er.log
+off-er.time
+pilot.jobid
+R-c2_central.log
+R-c2_central.time
+R-er.log
+R-er.time
+rest.jobid
+stage.log
+units_62068236.err
+units_62068236.out
+units.jobid
+== units out tail
+[oofvc_units] start 2026-11-27T02:47:37Z job=62068236 node=nid006929 nproc=64
+[oofvc_units] join rc=0 2026-11-27T02:50:04Z
+{"verdict": "PASS", "moved": 544162, "rows_sha256": "cbf34bd8cad0f4978dc1aea22713eb5057bf521118dc7ce8d10b93b30defcb03"}
+[oofvc_units] units done 2026-11-27T02:59:59Z rcs: 0 0 0 0
+64f4dc103311a6597d3bbad98d442a22cdf6e9a3ed8c415af1029f48faff1f46  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/off/c2_central.done
+cda8e5bb7838d2e1ebc7456750d4f5c009e938d6baa34ee715117559bc80243c  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/off/c2_central.npz
+fe8d564413982acdb073d2428038eb73b9d22daa67791406be034cfc0972b7b9  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/off/c2_central.oofvc.json
+b696b57720804e3288f3db3df363cf0edff3f38bc47ad496e54b15e15a66476b  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/off/c2_central.root
+83226d93ae3186d4e50fe14630ef102f8b6b9762593432f6eb81eb135ca4d8ac  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/off/er.done
+49b6b185c9179a4b7fc19fc3dce3776c02556e1599a3513467198458f1d29eb5  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/off/er.npz
+1852a56c00ace96db099910c1d085fae84d83126c6755961c3e7f15f2b4bd766  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/off/er.oofvc.json
+fb11ea427c797954cd10885fcaee195146b983523bd8fa517ebd1103a240d787  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/off/er.root
+90e07d2cd1c11af18e40cc0ca62a8afc7c47c361756815834f193f1975493760  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/off/n.npz
+4a1587f81a1ff1cb782e3740b7a899085c87c269b29583ff0104fbf0f62ab83c  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/R/c2_central.done
+65b4e5fd28e5dbc25ba8d1f080c3861496f634fbe773368c0c068922a38c6507  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/R/c2_central.npz
+b782c407880a744a19be3941dc99d5679c28f1896e891dce063a9bdd7ac06c24  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/R/c2_central.oofvc.json
+1422c9f9c581105c49b442a7e062a780f42952ca3a41c0420321a2d5cd433a86  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/R/c2_central.root
+99f734ddf3cc1119edd565baba3e8c9bc348323c2cdc7256ad3d1dadc4cf5c0c  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/R/er.done
+40e6d49ba785ef5c60a6f19712a036724ee7faeaacc5ccdc03269d397fd5c3bd  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/R/er.npz
+6e9805b611a47bc4b698b514d952d965d80993f9c75855c3c7c611f03e3470a5  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/R/er.oofvc.json
+6bc45c9ba79d176cafa2f5d1638d98717cbef3bf32c0f815e072fb08b1bfe7b5  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/R/er.root
+20467e76ba84de9cd8784a59c17d560c015de63d0ccfd8904d5f1e084ef7d21f  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/R/n.npz
+0740338cd648977493f7858af27410e96a9a603faab0376d6c6d374388a35cb8  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/pins_off-c2_central.json
+45befe26cde476a7cf50eed1b1d1acf295a77895673ad8e1f62d2cd4c02cc55f  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/pins_off-er.json
+9d8b07cb6ee00d4275b5218b559c1dd67cfa3f63e5f73438b93d42c48679b4bf  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/pins_R-c2_central.json
+84619c6957507e93f3a14c908e3b6687831529391dd596de389f6abac1d4152f  /pscratch/sd/j/josephrb/oofvc-20261126-r3/units/pins_R-er.json
+13674f6d0c12bbb7c7ba133346940976bada2c765585ecb4e78593ec63521a4b  /pscratch/sd/j/josephrb/oofvc-20261126-r3/join/join.json
+cbf34bd8cad0f4978dc1aea22713eb5057bf521118dc7ce8d10b93b30defcb03  /pscratch/sd/j/josephrb/oofvc-20261126-r3/join/oofvc_rows.npz
+== err tail
+== sacct
+62068236|oofvc_units|COMPLETED|0:0|756|256||2026-11-26T18:47:26|2026-11-26T19:00:02|nid006929
+62068236.batch|batch|COMPLETED|0:0|756|256|163652K|2026-11-26T18:47:26|2026-11-26T19:00:02|nid006929
+62068236.extern|extern|COMPLETED|0:0|761|256||2026-11-26T18:47:26|2026-11-26T19:00:07|nid006929
+62068236.0|time|COMPLETED|0:0|147|64|20170248K|2026-11-26T18:47:37|2026-11-26T18:50:04|nid006929
+62068236.1|R-c2_central|COMPLETED|0:0|207|64|10236564K|2026-11-26T18:50:05|2026-11-26T18:53:32|nid006929
+62068236.2|off-c2_central|COMPLETED|0:0|205|64|9937232K|2026-11-26T18:50:05|2026-11-26T18:53:30|nid006929
+62068236.3|off-er|COMPLETED|0:0|589|64|14078224K|2026-11-26T18:50:05|2026-11-26T18:59:54|nid006929
+62068236.4|R-er|COMPLETED|0:0|594|64|14366560K|2026-11-26T18:50:05|2026-11-26T18:59:59|nid006929

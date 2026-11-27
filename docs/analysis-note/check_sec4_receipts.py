@@ -400,6 +400,202 @@ def evw5d_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
             for lab, s, fact in EVW5D_CLAIMS]
 
 
+# EVW2D (#1377, #1393): App. D's sentences on the 2D per-event weights (a PROPOSAL for Joseph, 2026-11-26). Every number
+# and claim is bound to the run's receipts, the committed config and references it was bound to, and the records naming
+# the two references: E_R (the adopted 2D refined result) and Tier 1's e (regenA's input on the published pT edges).
+EVW2D = "2d-closeout/evw2d-20261124"
+EVW2D_OVERRIDE = None  # the self-test plants altered receipts here
+EVW2D_CODE = {"config": "2d-unfolding/evw2d/config.json",
+              "decision": "docs/orchestration/DECISION-20261024-joseph-adopt-re2-2d-refined.md",
+              "regenA": "docs/orchestration/state/ibu-chi2-20261123/regenA/README.md",
+              "decl": "docs/orchestration/state/2d-closeout/evw2d-20261124/EVW2D-DECLARATION.md"}
+
+
+def _npz_text(path: Path, name: str) -> str:
+    """A 0-d unicode array of an .npz, read with zipfile and the .npy header (this checker does not import numpy)."""
+    import zipfile
+    with zipfile.ZipFile(path) as z:
+        raw = z.read(f"{name}.npy")
+    if raw[:6] != b"\x93NUMPY":
+        raise ValueError(f"{path}:{name}.npy is not an .npy array")
+    hl = struct.unpack("<H", raw[8:10])[0] if raw[6] == 1 else struct.unpack("<I", raw[8:12])[0]
+    start = (10 if raw[6] == 1 else 12)
+    header = ast.literal_eval(raw[start:start + hl].decode("latin1"))
+    if not (header["descr"].startswith("<U") and header["shape"] == ()):
+        raise ValueError(f"{path}:{name}.npy is not a 0-d little-endian unicode array: {header}")
+    return raw[start + hl:].decode("utf-32-le").rstrip("\x00")
+
+
+def evw2d() -> dict:
+    """run.json and constants.json of the accepted run, the committed config and references.npz (its sha256 and meta),
+    the deposit receipt, and the records naming the references."""
+    if EVW2D_OVERRIDE is not None:
+        return EVW2D_OVERRIDE
+    out = f"{EVW2D}/receipts/run-20261126/post/out"
+    ref = HERE.parents[1] / "2d-unfolding/evw2d/references.npz"
+    return {"run": receipt(f"{out}/run.json"), "constants": receipt(f"{out}/constants.json"),
+            "done": receipt(f"{out}/evw2d.done"),
+            "deposit": (STATE / EVW2D / "receipts/deposit-20261126/README.md").read_text(),
+            "same": (STATE / "release-zenodo-20261127/same-events/same_events.out").read_text(),
+            "upload": (STATE / "release-zenodo-20261127/UPLOAD-MANIFEST.md").read_text(),
+            "evw5d_hpss": (STATE / "measurement-paper/5d-community-20261024/fd/evw5d-20261125/receipts/attempt2-hpss/README.md").read_text(),
+            "log": (STATE / EVW2D / "receipts/run-20261126/post/logs/evw2d-run-62022231.log").read_text(),
+            "config_sha256": hashlib.sha256((HERE.parents[1] / EVW2D_CODE["config"]).read_bytes()).hexdigest(),
+            "config": json.loads((HERE.parents[1] / EVW2D_CODE["config"]).read_text()),
+            "ref_sha256": hashlib.sha256(ref.read_bytes()).hexdigest(), "ref_meta": json.loads(_npz_text(ref, "meta")),
+            "code": {k: (HERE.parents[1] / v).read_text() for k, v in EVW2D_CODE.items()}}
+
+
+def evw2d_refs(d: dict) -> bool:
+    """The run used the committed config (by digest), which pins the committed references.npz, whose er is E_R's
+    xsec.root a5c13fc3 (adopted, DECISION-20261024; regenA's OLD input) and whose paper is Tier 1's er.root 5171c7b8
+    (regenA's E input, the unfolding on the published pT edges)."""
+    m, code = d["ref_meta"], d["code"]
+    return (d["run"]["config_sha256"] == d["config_sha256"] == d["constants"]["config_sha256"]
+            and d["config"]["references"]["sha256"] == d["ref_sha256"]
+            and m["er"]["sha256"].startswith("a5c13fc3") and m["er"]["histogram"] == "hXSec2D"
+            and m["paper"]["sha256"].startswith("5171c7b8") and m["paper"]["histogram"] == "hXSec2D"
+            and "adopt the refined 2D result E_R and Q_R" in code["decision"]
+            and "partb/out/ER/xsec.root (a5c13fc3)" in code["regenA"]
+            and "E: tier1/units_e/er.root (5171c7b8)." in code["regenA"])
+
+
+def evw2d_exact(d: dict, key: str) -> bool:
+    c = d["run"]["controls"][key]
+    return c["pass"] is True and c["cells"] == 205 and c["zero_cells_zero"] is True and evw2d_refs(d)
+
+
+def evw2d_pass(d: dict) -> bool:
+    """The run's verdict and its acceptance: every control passed, with no finding."""
+    r, done = d["run"], d["done"]
+    return (r["controls_verdict"] == "PASS" and done["verdict"] == "PASS" and done["acceptance"]["pass"] is True
+            and r["findings"] == [] and done["findings"] == [] and all(c["pass"] is True for c in r["controls"].values())
+            and len(r["controls"]) == 12 and "ACCEPTED" in d["deposit"]
+            and f"{r['files_sha256']['weights.npz']}  weights.npz" in d["deposit"])
+
+
+def evw2d_same_rows(d: dict, sources: dict[str, str]) -> bool:
+    """same_events.out (#1413): the verdict line, the T4 lines, and its JSON line; its T0 digests are the two runs'
+    weights files; rows match exactly only after a float32 cast (so the text says single precision)."""
+    lines = d["same"].splitlines()
+    js = [ln[5:] for ln in lines if ln.startswith("JSON ")]
+    if len(js) != 1:
+        return False
+    j = json.loads(js[0])
+    n = d["run"]["rows"]
+    t4 = j["T4"]
+    return (lines.count("VERDICT SAME-ROWS-SAME-ORDER") == 1 and j["verdict"] == "SAME-ROWS-SAME-ORDER"
+            and f"T4 truth_pt: exact {n}/{n} after float32 cast" in d["same"]
+            and f"T4 truth_pz: exact {n}/{n} after float32 cast" in d["same"]
+            and "T4 all rows exact in float32 (pT and p||): True" in lines
+            and j["T2"]["pass"] is True and j["T2"]["n_evw2d"] == j["T2"]["n_evw5d"] == n
+            and j["T3"]["entries_equal"] is True and j["T3"]["rows_differing"] == 0
+            and t4["all_rows_exact_float32"] is True
+            and all(t4[k]["exact_equal_float32"] == t4[k]["rows"] == n and t4[k]["rows_over_1_ulp"] == 0
+                    and t4[k]["nan_evw2d"] == t4[k]["nan_evw5d"] == 0 for k in ("truth_pt", "truth_pz"))
+            and max(t4[k]["max_abs_delta_float64"] for k in ("truth_pt", "truth_pz")) > 0
+            and j["files"]["evw2d_weights"]["sha256"] == j["files"]["evw2d_weights"]["expected"]
+            == d["run"]["files_sha256"]["weights.npz"]
+            and j["files"]["evw5d_weights"]["sha256"] == j["files"]["evw5d_weights"]["expected"]
+            and f"{j['files']['evw5d_weights']['sha256']}  weights.npz" in d["evw5d_hpss"])
+
+
+def evw2d_deposited(d: dict, sources: dict[str, str]) -> bool:
+    """The upload manifest (#1417) lists result_2d.npz as current, and its tie to E_R says the file's 205 central values
+    equal references.npz's er bit for bit, through the config and references this run used (evw2d_refs)."""
+    u, m = d["upload"], d["ref_meta"]
+    return (evw2d_refs(d) and evw2d_exact(d, "C-EXACT-ER")
+            and "| `package/result-products-2d/result_2d.npz` | "
+                "`9ab08a9f7d57c786f422f7f03bb7810625c243d804d588ad504bb5b77eaa2e47` | 2,696,218 | current |" in u
+            and f"`2d-unfolding/evw2d/config.json` (sha256 `{d['config_sha256']}`) pins `references.npz` at "
+                f"`{d['ref_sha256']}`;" in u
+            and f"records its `er` vector as `hXSec2D` from `xsec.root` `{m['er']['sha256']}`" in u
+            and "- `result_2d.npz` `x`, the 205 reported 2D central values, equals `er` at its 205 cells **bit for bit**: "
+                "yes (`np.array_equal`);" in u)
+
+
+EVW2D_CLAIMS = (
+    ("EVW2D: the same rows, in the same order, as the 5D weights; pT and p_par exact in float32 (same_events.out)",
+     "They are the same rows, in the same order, as those of the sixteen-cell weights below, and their truth $p_T$ and "
+     "$p_\\parallel$ agree exactly in single precision.", evw2d_same_rows),
+    ("EVW2D: the deposited 2D refined central values are E_R bit for bit (UPLOAD-MANIFEST.md, #1417)",
+     "they reproduce the deposited 2D refined central values in every bin", evw2d_deposited),
+    ("EVW2D: keyed by the entry in the one input file, whose sha256 the weights file holds (constants.json key, C-KEY)",
+     "Each event is keyed by its entry number in the input file, which the weights file identifies by its SHA-256 digest.",
+     lambda d, s: (d["constants"]["key"]["column"] == "entry"
+                   and d["constants"]["key"]["omnifile_sha256"] == d["run"]["inputs_sha256"]["CV"]
+                   and d["run"]["controls"]["C-KEY"]["strictly_increasing"] is True
+                   and d["run"]["controls"]["C-FILE"]["meta"] is True and evw2d_pass(d))),
+    ("EVW2D: each row carries its prior weight (constants.json columns, C-FILE w_prior)",
+     "It also carries its prior weight.",
+     lambda d, s: "w_prior" in d["constants"]["columns"] and d["run"]["controls"]["C-FILE"]["w_prior"] is True),
+    ("EVW2D: a rerun of E_R's driver, unchanged code and inputs (declaration sec. 2, C-PINS, inputs, argv)",
+     "The weights come from a rerun of the two-dimensional unfolding with unchanged code and inputs.",
+     lambda d, s: ("**One run of E_R's driver, unchanged:** E_R's argv, its 64 CPUs and thread environment, and its two "
+                   "inputs." in d["code"]["decl"]
+                   and d["run"]["controls"]["C-PINS"]["pass"] is True and d["run"]["controls"]["C-PINS"]["caches_after_run"] == []
+                   and d["run"]["inputs_sha256"]["CV"].startswith("43f8cc16") and d["run"]["inputs_sha256"]["MC"].startswith("d40aea69")
+                   and d["run"]["argv"] == d["constants"]["argv"] and evw2d_pass(d))),
+    ("EVW2D: completeness 1 in any binning, one integrated flux (C-COMPLETE multisets, C-FLUX one ulp)",
+     "Their completeness denominator is these same events, so the completeness is 1 in any binning, and the flux is a "
+     "single integrated value.",
+     lambda d, s: (d["run"]["controls"]["C-COMPLETE"]["pass"] is True
+                   and d["run"]["controls"]["C-COMPLETE"]["signal_rows"] == d["run"]["controls"]["C-COMPLETE"]["denominator_rows"]
+                   == d["run"]["rows"] and d["run"]["findings"] == []
+                   and d["run"]["controls"]["C-FLUX"]["pass"] is True
+                   and d["run"]["controls"]["C-FLUX"]["spread"] <= d["run"]["controls"]["C-FLUX"]["ulp"]
+                   and d["constants"]["constants"]["phi_m2_per_POT"] in d["constants"]["constants"]["flux_bins_m2_per_POT"])),
+    ("EVW2D: binning in pT and p_par inside the Sec. 2 truth phase space (constants.json phase_space: 0-4.5, 1.5-60, 20 deg)",
+     "Readers can therefore choose any binning in $p_T$ and $p_\\parallel$ inside the truth phase space of "
+     "Sec.~\\ref{sec:selection} [Eq.~\\eqref{eq:muon-fiducial}].",
+     lambda d, s: ((ps := d["constants"]["constants"]["phase_space"])["pt"] == [0, 4.5] and ps["pz"] == [1.5, 60.0]
+                   and ps["theta_max_deg"] == 20.0
+                   and (r"\theta_\mu<20^\circ,\quad 1.5<p_\parallel<\SI{60}{GeV/c},\quad p_T<\SI{4.5}{GeV/c} . "
+                        r"\label{eq:muon-fiducial}") in text("sec2_method.tex", s))),
+    ("EVW2D: only the two grids compared with unfoldings (constants.json validity and validated_grids)",
+     "Only these two grids were compared with full unfoldings.",
+     lambda d, s: (sorted(d["constants"]["constants"]["validated_grids"]) == ["ours", "paper"]
+                   and d["constants"]["constants"]["validity"]
+                   == "the central value; validated for observables of (pT, p||) only, on the two grids above"
+                   and [d["constants"]["constants"]["validated_grids"]["paper"][i] for i in (1, 4, 6)] == [0.075, 0.325, 0.475])),
+    ("EVW2D: central values only",
+     "The weights give central values only, so they give no uncertainty for a new binning.",
+     lambda d, s: d["constants"]["constants"]["validity"].startswith("the central value;")),
+)
+
+
+# Sec. 2.3's clipping sentence (Joseph 2026-11-27): EVW2D reruns E_R's driver on the data with unchanged code and inputs
+# (EVW2D_CLAIMS above), and its committed log prints the refinement's score range and clipped count.
+def clip2d_gmin(d: dict) -> float:
+    m = re.findall(r"Stay-Positive refine: [0-9]+ pos / [0-9]+ neg events; g in \[([0-9.]+),([0-9.]+)\]; "
+                   r"clipped\(2g-1<0\) ([0-9]+) events;", d["log"])
+    if len(m) != 1:
+        raise ValueError(f"EVW2D log: {len(m)} refinement lines")
+    return float(m[0][0]) if int(m[0][2]) == 0 and float(m[0][0]) > 0.5 else -1.0
+
+
+CLIP2D_CLAIMS = (
+    ("clip 2D: the score is at least 0.53 for every event (EVW2D log: g in [0.533, ...], a rerun of E_R)",
+     "In the two-dimensional unfolding of the data, the sign classifier's score is at least 0.53 for every event,",
+     lambda d: clip2d_gmin(d) >= 0.53 and f"{clip2d_gmin(d):.2f}" == "0.53" and evw2d_pass(d)),
+    ("clip 2D: no weight is clipped (EVW2D log: clipped(2g-1<0) 0 events, clipped frac=0.0000)",
+     "so no weight is clipped.",
+     lambda d: clip2d_gmin(d) > 0.5 and d["log"].count("clipped frac=0.0000;") == 1 and evw2d_pass(d)),
+)
+
+
+def clip2d_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    t, d = text("sec2_method.tex", sources), evw2d()
+    return [(lab, t.count(s) == 1 and fact(d), f"sentence found {t.count(s)} time(s) | log {fact(d)}")
+            for lab, s, fact in CLIP2D_CLAIMS]
+
+
+def evw2d_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    t, d = text("appD_reproducibility.tex", sources), evw2d()
+    return [(lab, t.count(s) == 1 and fact(d, sources), f"sentence found {t.count(s)} time(s) | receipt {fact(d, sources)}")
+            for lab, s, fact in EVW2D_CLAIMS]
+
+
 # The high-p_par open issue in sec3_twod.tex (Joseph 2026-11-26, via the director; a PROPOSAL for his wording). Every
 # number and reading is bound to the precharge study's committed outputs (state/precharge-20261125/). The sentence states
 # no cause: the study's declarations make no cause determination.
@@ -656,6 +852,22 @@ CHECKS = [
      r"These cells form ([0-9]+) adjacent pairs with equal and opposite differences\. This pattern is consistent with "
      r"([0-9]+) events that lie within single-precision rounding of a cell edge\.",
      lambda: (float(evw5d_pairs()), float(evw5d_pairs())), "round"),
+    # EVW2D, App. D. The exponents are fixed in the patterns, so a changed exponent is not found and fails.
+    ("EVW2D rows in weights.npz (run.json C-KEY rows, = rows = constants.json rows)", "appD_reproducibility.tex",
+     r"The weights cover the \\num\{([0-9]+)\} simulated events that pass the truth selection\.",
+     lambda: float(evw2d()["run"]["controls"]["C-KEY"]["rows"]) if evw2d()["run"]["controls"]["C-KEY"]["rows"]
+     == evw2d()["run"]["rows"] == evw2d()["constants"]["rows"] else -1.0, "round"),
+    ("EVW2D re-histogram on our grid against E_R (run.json C-EXACT-ER max_rel)", "appD_reproducibility.tex",
+     r"Histogrammed on our analysis grid, they reproduce the deposited 2D refined central values in every bin to "
+     r"\\num\{([0-9.]+)e-12\} of their values\.",
+     lambda: 1e12 * evw2d()["run"]["controls"]["C-EXACT-ER"]["max_rel"] if evw2d_exact(evw2d(), "C-EXACT-ER") else -1.0,
+     "round"),
+    ("EVW2D re-histogram on the published pT edges against Tier 1's e (run.json C-EXACT-PAPER max_rel)",
+     "appD_reproducibility.tex",
+     r"Histogrammed on MINERvA's published \$p_T\$ edges, they reproduce the unfolding on those edges that the "
+     r"central-value comparisons of Sec\.~\\ref\{sec:results-xsec\} use, to \\num\{([0-9.]+)e-12\}\.",
+     lambda: 1e12 * evw2d()["run"]["controls"]["C-EXACT-PAPER"]["max_rel"] if evw2d_exact(evw2d(), "C-EXACT-PAPER")
+     else -1.0, "round"),
     ("EVW5D sixteen integrals, change if c := 1 (lane/c1effect.txt)", "appD_reproducibility.tex",
      r"changes the sixteen cell integrals by at most \\num\{([0-9.]+)e-6\} of their values", lambda: 1e6 * evw5d()["c1"],
      "round"),
@@ -708,6 +920,8 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     rows += mode_split_claims(sources)
     rows += ibub_claims(sources)
     rows += evw5d_claims(sources)
+    rows += evw2d_claims(sources)
+    rows += clip2d_claims(sources)
     rows += highpz_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
         found = len(re.findall(pat, text(src, sources))) == 1
@@ -1104,9 +1318,10 @@ def self_test() -> int:
     for old_s, new_s in (("cross section byte for byte.", "cross section to rounding."),
                          ("to double-precision rounding.", "to single-precision rounding."),
                          ("the completeness is 1 in any binning.", "the completeness is 1 in the published binning."),
-                         ("a single integrated value.", "a binned value."),
+                         ("The flux enters as a single integrated value.", "The flux enters as a binned value."),
                          ("$q_3$ or $W$ range and enter", "$q_3$, $W$, $p_T$ or $p_\\parallel$ range and enter"),
-                         ("the truth phase space of Sec.~\\ref{sec:selection}", "the fiducial region of Sec.~\\ref{sec:selection}")):
+                         ("choose any binning inside the truth phase space of Sec.~\\ref{sec:selection}",
+                          "choose any binning inside the fiducial region of Sec.~\\ref{sec:selection}")):
         t = text("appD_reproducibility.tex", base)
         if t.count(old_s) != 1:
             print(f"  NOT FOUND   EVW5D mutation {old_s!r}"); ok = False; continue
@@ -1167,6 +1382,85 @@ def self_test() -> int:
         print("  NOT CAUGHT  EVW5D: Eq. (muon-fiducial) without the theta_mu cut"); ok = False
     else:
         caught += 1; print("  caught      EVW5D: Eq. (muon-fiducial) without the theta_mu cut")
+    # The EVW2D claims: each sentence reworded, and each planted receipt, must be rejected.
+    for old_s, new_s in (("reproduce the deposited 2D refined central values", "reproduce the deposited 2D central values"),
+                         ("in the same order, as those of the sixteen-cell", "in another order, as those of the sixteen-cell"),
+                         ("agree exactly in single precision.", "agree exactly."),
+                         ("They are the same rows,", "They are the same physical events,"),
+                         ("keyed by its entry number in the input file", "keyed by its run and event number"),
+                         ("It also carries its prior weight.", "It also carries its uncertainty."),
+                         ("with unchanged code and inputs.", "with updated code and inputs."),
+                         ("so the completeness is 1 in any binning, and", "so the completeness is 1 on our grid, and"),
+                         ("and the flux is a single integrated value.", "and the flux is binned in $p_T$."),
+                         ("any binning in $p_T$ and $p_\\parallel$ inside", "any binning in $p_T$, $p_\\parallel$ and $E_{\\mathrm{avail}}$ inside"),
+                         ("Only these two grids were compared", "Many grids were compared"),
+                         ("The weights give central values only,", "The weights give central values and uncertainties,")):
+        t = text("appD_reproducibility.tex", base)
+        if t.count(old_s) != 1:
+            print(f"  NOT FOUND   EVW2D mutation {old_s!r}"); ok = False; continue
+        trial = dict(base)
+        trial["appD_reproducibility.tex"] = t.replace(old_s, new_s)
+        if all(r[1] for r in evaluate(trial)):
+            print(f"  NOT CAUGHT  EVW2D: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      EVW2D: {old_s} -> {new_s}")
+
+    def plant2(what, fn):
+        global EVW2D_OVERRIDE
+        nonlocal ok, caught
+        data = copy.deepcopy(evw2d())
+        fn(data)
+        EVW2D_OVERRIDE = data
+        try:
+            rows = dict((r[0], r[1]) for r in evaluate(base))
+        except (ValueError, KeyError, TypeError):
+            rows = {"refused": False}
+        finally:
+            EVW2D_OVERRIDE = None
+        if all(rows.values()):
+            print(f"  NOT CAUGHT  EVW2D planted: {what}"); ok = False
+        else:
+            caught += 1; print(f"  caught      EVW2D planted: {what}")
+    ctl = lambda d, k: d["run"]["controls"][k]
+    plant2("controls verdict FAIL", lambda d: d["run"].__setitem__("controls_verdict", "FAIL"))
+    plant2("upload manifest: result_2d.npz stale", lambda d: d.__setitem__("upload", d["upload"].replace("| 2,696,218 | current |", "| 2,696,218 | **STALE** |")))
+    plant2("upload manifest: another result_2d.npz", lambda d: d.__setitem__("upload", d["upload"].replace("`9ab08a9f7d57c786", "`0ab08a9f7d57c786")))
+    plant2("upload manifest: x not equal to er", lambda d: d.__setitem__("upload", d["upload"].replace("**bit for bit**: yes", "**bit for bit**: no")))
+    plant2("upload manifest: er from another xsec.root", lambda d: d.__setitem__("upload", d["upload"].replace("from `xsec.root` `a5c13fc3", "from `xsec.root` `05c13fc3")))
+    plant2("upload manifest: config pins other references", lambda d: d.__setitem__("upload", d["upload"].replace("pins `references.npz` at `1b214582", "pins `references.npz` at `0b214582")))
+    plant2("same-events verdict DIFFERENT", lambda d: d.__setitem__("same", d["same"].replace("VERDICT SAME-ROWS-SAME-ORDER", "VERDICT DIFFERENT")))
+    plant2("same-events one row off in float32", lambda d: d.__setitem__("same", d["same"].replace('"rows_over_1_ulp": 0}}', '"rows_over_1_ulp": 1}}')))
+    plant2("same-events entries differ", lambda d: d.__setitem__("same", d["same"].replace('"entries_equal": true', '"entries_equal": false')))
+    plant2("same-events exact in float64 too", lambda d: d.__setitem__("same", d["same"].replace('"max_abs_delta_float64": 2.381347563584768e-07', '"max_abs_delta_float64": 0.0').replace('"max_abs_delta_float64": 1.9073474462061313e-06', '"max_abs_delta_float64": 0.0')))
+    plant2("same-events on another 5D weights file", lambda d: d.__setitem__("evw5d_hpss", d["evw5d_hpss"].replace("0fceefcd", "00ceefcd")))
+    plant2("same-events T4 pT line short", lambda d: d.__setitem__("same", d["same"].replace("T4 truth_pt: exact 32849103/32849103", "T4 truth_pt: exact 32849102/32849103")))
+    plant2("refinement clipped events", lambda d: d.__setitem__("log", d["log"].replace("clipped(2g-1<0) 0 events", "clipped(2g-1<0) 7 events")))
+    plant2("refinement score below 0.5", lambda d: d.__setitem__("log", d["log"].replace("g in [0.533,", "g in [0.473,")))
+    plant2("refinement score 0.54", lambda d: d.__setitem__("log", d["log"].replace("g in [0.533,", "g in [0.543,")))
+    plant2("evw2d.done verdict FAIL", lambda d: d["done"].__setitem__("verdict", "FAIL"))
+    plant2("a finding recorded", lambda d: d["run"].__setitem__("findings", ["C-COMPLETE"]))
+    plant2("deposit copy not accepted", lambda d: d.__setitem__("deposit", d["deposit"].replace("ACCEPTED", "REFUSED")))
+    plant2("another weights.npz in the deposit", lambda d: d["run"]["files_sha256"].__setitem__("weights.npz", "00" + d["run"]["files_sha256"]["weights.npz"][2:]))
+    plant2("C-KEY rows one more", lambda d: ctl(d, "C-KEY").__setitem__("rows", ctl(d, "C-KEY")["rows"] + 1))
+    plant2("key in another file", lambda d: d["constants"]["key"].__setitem__("omnifile_sha256", "00" + d["constants"]["key"]["omnifile_sha256"][2:]))
+    plant2("no w_prior column", lambda d: d["constants"].__setitem__("columns", [c for c in d["constants"]["columns"] if c != "w_prior"]))
+    plant2("a pinned file changed", lambda d: ctl(d, "C-PINS").__setitem__("pass", False))
+    plant2("another CV input", lambda d: d["run"]["inputs_sha256"].__setitem__("CV", "00" + d["run"]["inputs_sha256"]["CV"][2:]))
+    plant2("another argv", lambda d: d["run"].__setitem__("argv", d["run"]["argv"][:-2]))
+    plant2("the declaration's unchanged-driver line edited", lambda d: d["code"].__setitem__("decl", d["code"]["decl"].replace("**One run of E_R's driver, unchanged:**", "**One run of E_R's driver, modified:**")))
+    plant2("denominator rows differ", lambda d: ctl(d, "C-COMPLETE").__setitem__("denominator_rows", ctl(d, "C-COMPLETE")["denominator_rows"] - 1))
+    plant2("flux spread two ulp", lambda d: ctl(d, "C-FLUX").__setitem__("spread", 2 * ctl(d, "C-FLUX")["ulp"]))
+    plant2("phase space without the angle cut", lambda d: d["constants"]["constants"]["phase_space"].__setitem__("theta_max_deg", 90.0))
+    plant2("a third validated grid", lambda d: d["constants"]["constants"]["validated_grids"].__setitem__("other", [0.0, 4.5]))
+    plant2("validity says any grid", lambda d: d["constants"]["constants"].__setitem__("validity", "the central value; validated on any grid"))
+    plant2("C-EXACT-ER max_rel 1.2e-11", lambda d: ctl(d, "C-EXACT-ER").__setitem__("max_rel", 1.2e-11))
+    plant2("C-EXACT-PAPER on 204 cells", lambda d: ctl(d, "C-EXACT-PAPER").__setitem__("cells", 204))
+    plant2("the run under another config", lambda d: d["run"].__setitem__("config_sha256", "00" + d["run"]["config_sha256"][2:]))
+    plant2("config pins other references", lambda d: d["config"]["references"].__setitem__("sha256", "00" + d["config"]["references"]["sha256"][2:]))
+    plant2("references er not E_R", lambda d: d["ref_meta"]["er"].__setitem__("sha256", "00" + d["ref_meta"]["er"]["sha256"][2:]))
+    plant2("references paper not Tier 1's e", lambda d: d["ref_meta"]["paper"].__setitem__("sha256", "00" + d["ref_meta"]["paper"]["sha256"][2:]))
+    plant2("E_R not the adopted result", lambda d: d["code"].__setitem__("decision", d["code"]["decision"].replace("adopt the refined 2D result E_R", "keep the earlier 2D result E_U")))
+    plant2("regenA's E from another file", lambda d: d["code"].__setitem__("regenA", d["code"]["regenA"].replace("E: tier1/units_e/er.root (5171c7b8).", "E: tier1/units_e/er.root (00000000).")))
     trial = dict(base)
     trial["primer_body.tex"] = text("primer_body.tex", base).replace("in about half of the", "in about a third of the")
     if dict((r[0], r[1]) for r in evaluate(trial))[VERBAL[0][0]]:

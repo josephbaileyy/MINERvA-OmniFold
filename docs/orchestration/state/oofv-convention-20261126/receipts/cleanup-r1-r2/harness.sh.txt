@@ -1,0 +1,52 @@
+#!/bin/bash
+# Runs in a throwaway debian container. Exercises oofvc_cleanup.sh byte-identical on fake /pscratch trees.
+set -u
+S=/t/oofvc_cleanup.sh
+P=/pscratch/sd/j/josephrb
+useradd -m josephrb >/dev/null
+mkdir -p /fakebin
+pass=0; fail=0
+ok() { echo "PASS $1"; pass=$((pass+1)); }
+bad() { echo "FAIL $1"; fail=$((fail+1)); }
+setq() { printf '#!/bin/bash\n%s\n' "$1" > /fakebin/squeue; chmod 755 /fakebin/squeue; }
+build() {
+  rm -rf /pscratch; mkdir -p $P; chown josephrb $P /pscratch/sd/j /pscratch/sd /pscratch
+  su josephrb -c "mkdir -p $P/oofvc-20261126/gates $P/oofvc-20261126-r2/dump/1A $P/oofvc-20261126-r3/dump
+    echo a > $P/oofvc-20261126/gates/x; echo b > '$P/oofvc-20261126-r2/dump/1A/y z'; echo k > $P/oofvc-20261126-r3/dump/keep
+    truncate -s 1000000000 $P/oofvc-20261126-r2/dump/big.root; ln -s /etc/hostname $P/oofvc-20261126-r2/lnk"
+}
+run() { su josephrb -c "PATH=/fakebin:\$PATH bash $S $S $*"; }
+setq 'exit 0'
+build
+out=$(run manifest); rc=$?
+L=$(printf '%s\n' "$out" | sed -n 's/^LISTING_SHA //p')
+[ $rc = 0 ] && [ ${#L} = 64 ] && printf '%s\n' "$out" | grep -q '^f|1000000000|.*|-|.*big.root|' && printf '%s\n' "$out" | grep -q "^f|2|.*|$(printf 'b\n' | sha256sum | cut -d' ' -f1)|$P/oofvc-20261126-r2/dump/1A/y z|" && printf '%s\n' "$out" | grep -q '^l|.*|/etc/hostname$' && [ -d $P/oofvc-20261126 ] && ok manifest || { bad manifest; printf '%s\n' "$out"; }
+printf '%s\n' "$out" | grep -q "r3 before: [0-9a-f]\{64\}" && ok r3-state || bad r3-state
+out=$(run remove $(printf '0%.0s' $(seq 64))); rc=$?
+[ $rc = 7 ] && [ -d $P/oofvc-20261126 ] && [ -d $P/oofvc-20261126-r2 ] && ok wrong-sha || { bad wrong-sha; echo "$out"; }
+out=$(run remove); [ $? = 7 ] && [ -d $P/oofvc-20261126 ] && ok no-sha || bad no-sha
+out=$(run remove "${L}x"); [ $? = 7 ] && ok long-sha || bad long-sha
+su josephrb -c "echo c >> $P/oofvc-20261126/gates/x"
+out=$(run remove $L); [ $? = 7 ] && [ -d $P/oofvc-20261126 ] && [ -d $P/oofvc-20261126-r2 ] && ok changed-file || { bad changed-file; echo "$out"; }
+build; out=$(run manifest); L=$(printf '%s\n' "$out" | sed -n 's/^LISTING_SHA //p')
+setq 'echo "123|oofvc_dump|PENDING"'; out=$(run remove $L); [ $? = 7 ] && [ -d $P/oofvc-20261126 ] && ok fence-queue || bad fence-queue
+setq 'exit 1'; out=$(run remove $L); [ $? = 7 ] && [ -d $P/oofvc-20261126 ] && ok fence-squeue-fail || bad fence-squeue-fail
+setq 'exit 0'
+r3a=$(cd $P/oofvc-20261126-r3 && find . -printf '%y %s %T@ %p\n' | sort | sha256sum)
+out=$(run remove $L); rc=$?
+r3b=$(cd $P/oofvc-20261126-r3 && find . -printf '%y %s %T@ %p\n' | sort | sha256sum)
+[ $rc = 0 ] && [ ! -e $P/oofvc-20261126 ] && [ ! -e $P/oofvc-20261126-r2 ] && [ "$r3a" = "$r3b" ] && [ -f $P/oofvc-20261126-r3/dump/keep ] && [ -f /etc/hostname ] && printf '%s\n' "$out" | grep -q '(unchanged)' && ok remove || { bad remove; echo "$out"; }
+out=$(run remove $L); [ $? = 7 ] && printf '%s\n' "$out" | grep -q 'not a directory' && ok absent-root || bad absent-root
+build; mv $P/oofvc-20261126-r2 $P/real-r2; ln -s $P/real-r2 $P/oofvc-20261126-r2
+out=$(run manifest); [ $? = 7 ] && printf '%s\n' "$out" | grep -q 'is a symlink' && ok symlink-root || bad symlink-root
+build; su josephrb -c "ln $P/oofvc-20261126/gates/x $P/oofvc-20261126-r3/hl"
+out=$(run manifest); [ $? = 7 ] && printf '%s\n' "$out" | grep -q 'multiply-linked' && ok hardlink || bad hardlink
+build; su josephrb -c "touch $P/oofvc-20261126/'a
+b'"
+out=$(run manifest); [ $? = 7 ] && printf '%s\n' "$out" | grep -q 'newline or tab' && ok newline-name || bad newline-name
+build; chown root $P/oofvc-20261126; out=$(run manifest); [ $? = 7 ] && printf '%s\n' "$out" | grep -q 'owner' && ok owner || bad owner
+build; out=$(run bogus); [ $? = 7 ] && ok bad-mode || bad bad-mode
+out=$(run manifest extra); [ $? = 7 ] && ok manifest-arg || bad manifest-arg
+out=$(bash $S $S manifest); [ $? = 7 ] && printf '%s\n' "$out" | grep -q 'STOP: user' && ok root-user || bad root-user
+echo "pass=$pass fail=$fail"
+[ $fail = 0 ]

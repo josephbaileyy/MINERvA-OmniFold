@@ -1,0 +1,99 @@
+== 2026-11-27T02:22:32Z
+-- 1A
+done
+oofvc_dump 1A entries 7601356 selected 1789459 to_bkg 52626 to_sig 1736833 dup_sig 0 routing_disagree 0
+[oofvc_dump] NUE path PATHS
+[oofvc_dump] NUE before utc=2026-11-27T02:13:46Z atime_ns=1795745376000000000 mtime_ns=1630424966000000000 size=25403
+[oofvc_dump] NUE after utc=2026-11-27T02:15:57Z atime_ns=1795745638000000000 mtime_ns=1630424966000000000 size=25403
+d1d1475580fee6b0eb30f5f66b6bb0e6687fbe6f2d2eb5e9f275212bfeb7f86b
+-- 1B
+done
+oofvc_dump 1B entries 2050050 selected 483266 to_bkg 14182 to_sig 469084 dup_sig 0 routing_disagree 0
+[oofvc_dump] NUE path PATHS
+[oofvc_dump] NUE before utc=2026-11-27T02:13:47Z atime_ns=1795745376000000000 mtime_ns=1630424966000000000 size=25403
+[oofvc_dump] NUE after utc=2026-11-27T02:14:23Z atime_ns=1795745633000000000 mtime_ns=1630424966000000000 size=25403
+514a097ca52c8c266bbcc74c3c809de478e68ccfa0fb402b72be4c9f630acb99
+-- 1C
+done
+oofvc_dump 1C entries 3914293 selected 920925 to_bkg 26898 to_sig 894027 dup_sig 0 routing_disagree 0
+[oofvc_dump] NUE path PATHS
+[oofvc_dump] NUE before utc=2026-11-27T02:14:43Z atime_ns=1795745633000000000 mtime_ns=1630424966000000000 size=25403
+[oofvc_dump] NUE after utc=2026-11-27T02:15:53Z atime_ns=1795745694000000000 mtime_ns=1630424966000000000 size=25403
+6f53277c9d6155d220757648ef98038abe6b4f3d186c81de64f5dd5cf3b8c19e
+-- 1D
+done
+oofvc_dump 1D entries 11360928 selected 2674075 to_bkg 78987 to_sig 2595088 dup_sig 0 routing_disagree 0
+[oofvc_dump] NUE path PATHS
+[oofvc_dump] NUE before utc=2026-11-27T02:14:43Z atime_ns=1795745633000000000 mtime_ns=1630424966000000000 size=25403
+[oofvc_dump] NUE after utc=2026-11-27T02:19:04Z atime_ns=1795745702000000000 mtime_ns=1630424966000000000 size=25403
+02c176221012781e74635d0126a0e6b29c583dce7a32f64aacd8e0833a87e178
+-- 1E
+done
+oofvc_dump 1E entries 9498175 selected 2231631 to_bkg 66077 to_sig 2165554 dup_sig 0 routing_disagree 0
+[oofvc_dump] NUE path PATHS
+[oofvc_dump] NUE before utc=2026-11-27T02:14:44Z atime_ns=1795745633000000000 mtime_ns=1630424966000000000 size=25403
+[oofvc_dump] NUE after utc=2026-11-27T02:17:33Z atime_ns=1795745700000000000 mtime_ns=1630424966000000000 size=25403
+2b1c5ae6d0bdab81d482e64eb6447607a789f8084c0cd3704558b9db7ba4705c
+-- 1F
+done
+oofvc_dump 1F entries 12905280 selected 3011918 to_bkg 92219 to_sig 2919699 dup_sig 0 routing_disagree 0
+[oofvc_dump] NUE path PATHS
+[oofvc_dump] NUE before utc=2026-11-27T02:14:43Z atime_ns=1795745633000000000 mtime_ns=1630424966000000000 size=25403
+[oofvc_dump] NUE after utc=2026-11-27T02:18:23Z atime_ns=1795745759000000000 mtime_ns=1630424966000000000 size=25403
+58d6cf16e7ef3a23f0c10b2ae34ebebaf671d8086b0161309e4599f09b0c1a31
+-- 1G
+done
+oofvc_dump 1G entries 10935664 selected 2560939 to_bkg 76742 to_sig 2484197 dup_sig 0 routing_disagree 0
+[oofvc_dump] NUE path PATHS
+[oofvc_dump] NUE before utc=2026-11-27T02:15:42Z atime_ns=1795745694000000000 mtime_ns=1630424966000000000 size=25403
+[oofvc_dump] NUE after utc=2026-11-27T02:18:55Z atime_ns=1795745759000000000 mtime_ns=1630424966000000000 size=25403
+d962e171c3e8320222247d859906a108e4d4b4cd17a5862371ebd9eee035a63a
+-- 1L
+done
+oofvc_dump 1L entries 1056661 selected 239943 to_bkg 7820 to_sig 232123 dup_sig 0 routing_disagree 0
+[oofvc_dump] NUE path PATHS
+[oofvc_dump] NUE before utc=2026-11-27T02:09:23Z atime_ns=1795740833000000000 mtime_ns=1630424966000000000 size=25403
+[oofvc_dump] NUE after utc=2026-11-27T02:09:53Z atime_ns=1795745376000000000 mtime_ns=1630424966000000000 size=25403
+f753ced19391ea5e6ccc575f76844e4ef5de754ece3ec1f2dc41ab06d24fe9b9
+-- 1M
+done
+oofvc_dump 1M entries 16317862 selected 3704448 to_bkg 120642 to_sig 3583806 dup_sig 0 routing_disagree 0
+[oofvc_dump] NUE path PATHS
+[oofvc_dump] NUE before utc=2026-11-27T02:15:42Z atime_ns=1795745694000000000 mtime_ns=1630424966000000000 size=25403
+[oofvc_dump] NUE after utc=2026-11-27T02:20:59Z atime_ns=1795745764000000000 mtime_ns=1630424966000000000 size=25403
+fb0aad5412dd6439c2a3860898a03d15efefbcef2942f8300a68df8e48619af9
+-- 1N
+done
+oofvc_dump 1N entries 9333464 selected 2113007 to_bkg 70774 to_sig 2042233 dup_sig 0 routing_disagree 0
+[oofvc_dump] NUE path PATHS
+[oofvc_dump] NUE before utc=2026-11-27T02:15:44Z atime_ns=1795745694000000000 mtime_ns=1630424966000000000 size=25403
+[oofvc_dump] NUE after utc=2026-11-27T02:18:32Z atime_ns=1795745759000000000 mtime_ns=1630424966000000000 size=25403
+a30ed33bbfbc06115124234de2a86d053703a09af60e1990d47c01bd14a2f71a
+-- 1O
+done
+oofvc_dump 1O entries 2767183 selected 615397 to_bkg 22038 to_sig 593359 dup_sig 0 routing_disagree 0
+[oofvc_dump] NUE path PATHS
+[oofvc_dump] NUE before utc=2026-11-27T02:16:42Z atime_ns=1795745638000000000 mtime_ns=1630424966000000000 size=25403
+[oofvc_dump] NUE after utc=2026-11-27T02:17:30Z atime_ns=1795745810000000000 mtime_ns=1630424966000000000 size=25403
+0660b78a4a0a446159579b6f324ca6ebcb651e1738baf16c0f18dc875c80d709
+-- 1P
+done
+oofvc_dump 1P entries 3649448 selected 811232 to_bkg 29222 to_sig 782010 dup_sig 0 routing_disagree 0
+[oofvc_dump] NUE path PATHS
+[oofvc_dump] NUE before utc=2026-11-27T02:16:40Z atime_ns=1795745759000000000 mtime_ns=1630424966000000000 size=25403
+[oofvc_dump] NUE after utc=2026-11-27T02:17:46Z atime_ns=1795745809000000000 mtime_ns=1630424966000000000 size=25403
+13da91ac0d714578c2435d2266d15643de38e1fac2ad23885b2bd7e5d8b41d29
+== paths line distinct
+path declared=/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt canonical=/pscratch/sd/j/josephrb/minerva/minerva_large_files/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt resolved=/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+== sacct
+62067601_0|oofvc_dump|COMPLETED|0:0|136|4|2026-11-26T18:13:42|2026-11-26T18:15:58|nid004084
+62067601_1|oofvc_dump|COMPLETED|0:0|42|4|2026-11-26T18:13:42|2026-11-26T18:14:24|nid004126
+62067601_2|oofvc_dump|COMPLETED|0:0|77|4|2026-11-26T18:14:37|2026-11-26T18:15:54|nid004104
+62067601_3|oofvc_dump|COMPLETED|0:0|269|4|2026-11-26T18:14:37|2026-11-26T18:19:06|nid004138
+62067601_4|oofvc_dump|COMPLETED|0:0|178|4|2026-11-26T18:14:37|2026-11-26T18:17:35|nid004091
+62067601_5|oofvc_dump|COMPLETED|0:0|228|4|2026-11-26T18:14:37|2026-11-26T18:18:25|nid004092
+62067601_6|oofvc_dump|COMPLETED|0:0|198|4|2026-11-26T18:15:37|2026-11-26T18:18:55|nid004083
+62067601_8|oofvc_dump|COMPLETED|0:0|323|4|2026-11-26T18:15:37|2026-11-26T18:21:00|nid004090
+62067601_9|oofvc_dump|COMPLETED|0:0|176|4|2026-11-26T18:15:37|2026-11-26T18:18:33|nid004133
+62067601_10|oofvc_dump|COMPLETED|0:0|59|4|2026-11-26T18:16:36|2026-11-26T18:17:35|nid004084
+62067601_11|oofvc_dump|COMPLETED|0:0|74|4|2026-11-26T18:16:36|2026-11-26T18:17:50|nid004092

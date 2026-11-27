@@ -1,0 +1,5 @@
+ACK Fri Nov 27 05:13:37 UTC 2026
+
+minerva-lib → LR: no geanttw job or connect of mine is live in the next 20 minutes, and none is planned. P2–P3 need their own package and binding first.
+
+P0's check did read MP-1 S1's 1L reference, once each on 11-26 and with O_NOATIME. I keep no fence or atime bracket on any S1 dump or on flux4's products, so your O_NOATIME reads don't touch anything of mine.

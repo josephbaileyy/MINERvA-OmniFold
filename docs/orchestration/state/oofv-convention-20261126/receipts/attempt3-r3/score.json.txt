@@ -1,0 +1,320 @@
+{
+ "schema": "oofvc-score/1",
+ "controls": {
+  "C-IN": {
+   "pass": true
+  },
+  "C-JOIN-RECORD": {
+   "pass": true
+  },
+  "C-UNITS": {
+   "checks": {
+    "off/er": {
+     "verdict": true,
+     "npz_digest": true,
+     "root_digest": true,
+     "argv_recorded": true,
+     "convention": true,
+     "argv_is_E_R": true,
+     "not_numpy_unfolder": true
+    },
+    "off/c2_central": {
+     "verdict": true,
+     "npz_digest": true,
+     "root_digest": true,
+     "argv_recorded": true,
+     "convention": true,
+     "argv_is_E_R": true,
+     "not_numpy_unfolder": true,
+     "C-ROO_ran": true,
+     "N_controls": true
+    },
+    "R/er": {
+     "verdict": true,
+     "npz_digest": true,
+     "root_digest": true,
+     "argv_recorded": true,
+     "convention": true,
+     "argv_is_E_R": true,
+     "not_numpy_unfolder": true
+    },
+    "R/c2_central": {
+     "verdict": true,
+     "npz_digest": true,
+     "root_digest": true,
+     "argv_recorded": true,
+     "convention": true,
+     "argv_is_E_R": true,
+     "not_numpy_unfolder": true,
+     "C-ROO_ran": true,
+     "N_controls": true
+    }
+   },
+   "pass": true
+  },
+  "C-PINS": {
+   "files": 4,
+   "units": [
+    "R/c2_central",
+    "R/er",
+    "off/c2_central",
+    "off/er"
+   ],
+   "each": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "outputs": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "detail": [
+    {
+     "unchanged": true,
+     "driver": true,
+     "runner": true,
+     "oofvc_run": true,
+     "oofvc_lib": true,
+     "rows": true,
+     "roounfold_lib": true,
+     "inputs": true,
+     "join_record": true,
+     "outputs": true
+    },
+    {
+     "unchanged": true,
+     "driver": true,
+     "runner": true,
+     "oofvc_run": true,
+     "oofvc_lib": true,
+     "rows": true,
+     "roounfold_lib": true,
+     "inputs": true,
+     "join_record": true,
+     "outputs": true
+    },
+    {
+     "unchanged": true,
+     "driver": true,
+     "runner": true,
+     "oofvc_run": true,
+     "oofvc_lib": true,
+     "rows": true,
+     "roounfold_lib": true,
+     "inputs": true,
+     "join_record": true,
+     "outputs": true
+    },
+    {
+     "unchanged": true,
+     "driver": true,
+     "runner": true,
+     "oofvc_run": true,
+     "oofvc_lib": true,
+     "rows": true,
+     "roounfold_lib": true,
+     "inputs": true,
+     "join_record": true,
+     "outputs": true
+    }
+   ],
+   "pass": true
+  },
+  "C-KS": {
+   "ks": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    10,
+    15,
+    20
+   ],
+   "pass": true
+  },
+  "C-BASE": {
+   "er_hXSec2D_max_rel": 3.306244167333716e-13,
+   "c2_xsec_max_rel": 2.130717824400108e-11,
+   "D_IBU_vs_regenA3_max_rel": 4.899414207670816e-12,
+   "D_ER": 2.1214359185060605,
+   "D_ER_vs_tier1_rel": 3.841451712283117e-08,
+   "pass": true
+  },
+  "C-FIX": {
+   "equal": {
+    "er:hOFTruthDenom2D": true,
+    "er:hDataReco2D": true,
+    "er:hFlux_pt": true,
+    "er:dataPOT": true,
+    "er:mcPOT": true,
+    "er:potScale": true,
+    "er:fluxIntegral_m2_per_POT": true,
+    "er:fluxIntegral_cm2_per_POT": true,
+    "er:nNucleons": true,
+    "c2:hOFTruthDenom2D": true,
+    "c2:hDataReco2D": true,
+    "c2:hFlux_pt": true,
+    "c2:dataPOT": true,
+    "c2:mcPOT": true,
+    "c2:potScale": true,
+    "c2:fluxIntegral_m2_per_POT": true,
+    "c2:fluxIntegral_cm2_per_POT": true,
+    "c2:nNucleons": true
+   },
+   "pass": true
+  },
+  "C-MOVE": {
+   "max_dev_over_cell": 3.71454181467284e-15,
+   "appended": 536518,
+   "counts": {
+    "appended": 536518,
+    "outside": 7644,
+    "dropped_appended_weight": 0,
+    "dropped_outside_weight": 0
+   },
+   "moved_reco_in_grid": 536518,
+   "pass": true
+  }
+ },
+ "inputs": {
+  "publication_sha256": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3",
+  "ladder_sha256": "565d1f99a3bd702bb1bd7279e97a571eaa6786941b48310fba290c17ec85422a",
+  "rows_sha256": "cbf34bd8cad0f4978dc1aea22713eb5057bf521118dc7ce8d10b93b30defcb03",
+  "join_sha256": "13674f6d0c12bbb7c7ba133346940976bada2c765585ecb4e78593ec63521a4b"
+ },
+ "controls_pass": true,
+ "operands": {
+  "D_IBU_0": 0.5380500348740507,
+  "D_IBU_R": 0.19545146855139567,
+  "D_ER_0": 2.1214359185060605,
+  "D_ER_R": 2.2124051854128237,
+  "D_IBU_N": 0.365769574566381,
+  "D_IBU_RN": 0.20530466618808263
+ },
+ "ratios": {
+  "r_IBU": 0.363258908806033,
+  "r_ER": 1.042880987407258,
+  "r_N": 0.6798058746562521,
+  "r_RN": 0.3815716994352418
+ },
+ "bands": {
+  "r_IBU": "LOWER",
+  "r_ER": "LITTLE CHANGE",
+  "r_N": "LOWER",
+  "r_RN": "LOWER"
+ },
+ "statements": {
+  "primary": "The reclassification moves the binned IBU's distance; at this scale it does not move the OmniFold central value's",
+  "N": "Counting selected events in the efficiency numerator wherever they reconstruct moves the binned IBU's distance down",
+  "RN_band": "LOWER",
+  "E_R_under_N": "not applicable"
+ },
+ "descriptive": {
+  "D_IBU_every_K": {
+   "off": {
+    "1": 4.263317743393514,
+    "2": 1.4405994935651916,
+    "3": 0.7615215792511638,
+    "4": 0.5031647692894943,
+    "5": 0.3948639409857692,
+    "10": 0.5380500348740507,
+    "15": 1.030416914845673,
+    "20": 1.6741678876534989
+   },
+   "R": {
+    "1": 4.58259430409114,
+    "2": 1.5801265048240645,
+    "3": 0.8115632301085789,
+    "4": 0.4893921997770893,
+    "5": 0.32442988746515644,
+    "10": 0.19545146855139567,
+    "15": 0.3978728895181215,
+    "20": 0.7033848092175334
+   }
+  },
+  "D_IBU_N_every_K": {
+   "off": {
+    "1": 4.428892707607952,
+    "2": 1.5619677430573788,
+    "3": 0.8530444845022527,
+    "4": 0.5528836291309358,
+    "5": 0.3992746798978899,
+    "10": 0.365769574566381,
+    "15": 0.7627442983509047,
+    "20": 1.3519936340643337
+   },
+   "R": {
+    "1": 4.840793100037749,
+    "2": 1.8099940919477473,
+    "3": 1.0247148163544113,
+    "4": 0.6724746315660493,
+    "5": 0.4728803620126795,
+    "10": 0.20530466618808263,
+    "15": 0.3313725874769143,
+    "20": 0.5923625532511283
+   }
+  },
+  "column_40_60_ratio": {
+   "IBU_0": 1.1303282687868623,
+   "IBU_R": 1.0954325086343704,
+   "IBU_N": 1.055844646281103,
+   "IBU_RN": 1.0175974657026932,
+   "ER_0": 0.9345305844717132,
+   "ER_R": 0.9212041783411575
+  },
+  "completeness_above_1": {
+   "off": {
+    "n_cells": 0,
+    "max": 1.0000000000000158
+   },
+   "R": {
+    "n_cells": 205,
+    "max": 1.8643109178489874
+   }
+  },
+  "classes": {
+   "moved_out_of_fiducial": {
+    "rows": 509804,
+    "weight_pot": 99944.73005646415,
+    "weight_pot_reco_in_grid": 98475.38913718122
+   },
+   "moved_fiducial": {
+    "rows": 34358,
+    "weight_pot": 5825.419914597665,
+    "weight_pot_reco_in_grid": 5590.83529532065
+   },
+   "moved_reco_outside_grid": {
+    "rows": 7644,
+    "weight_pot": 1703.9255385599245,
+    "weight_pot_reco_in_grid": 0.0
+   },
+   "kept_true_muon_outside_grid_out_of_fiducial": {
+    "rows": 2951,
+    "weight_pot": 551.7753194986768,
+    "weight_pot_reco_in_grid": 385.7794723529676
+   },
+   "kept_true_muon_outside_grid_fiducial": {
+    "rows": 57833,
+    "weight_pot": 10022.677585989748,
+    "weight_pot_reco_in_grid": 6241.800773737147
+   },
+   "other": {
+    "rows": 53281,
+    "weight_pot": 9380.597637633482,
+    "weight_pot_reco_in_grid": 8438.564135087554
+   }
+  },
+  "append_counts": {
+   "appended": 536518,
+   "outside": 7644,
+   "dropped_appended_weight": 0,
+   "dropped_outside_weight": 0
+  }
+ },
+ "reading": "READ"
+}

@@ -1,0 +1,5 @@
+ACK 2026-11-27T04:42:01Z: tier3-design → limitation-resolver, for e1's d2s0e1 connect (RPD-D2S0E1-BINDING, #1415 at 80e1a8a5; login-node only, about 7 min, root rpd-reco-d2s0e1-20261127/).
+- No job of mine is live or planned that writes, moves or regenerates the 12 RDX omnifiles or truthx_RDX_ALL.npz. I have no Slurm job queued or running.
+- I have no fence or atime check of my own on those paths, and my 11-24 no-move ack holds.
+- I have no connect of my own planned in this window.
+I'll wait for your END.
