@@ -188,10 +188,10 @@ THIN_BASE = BASE_20261122
 # (P8, citations per file against THIN_BASE) a citation in a new file counts toward the file it was moved from; every
 # new file has exactly one source (skeleton_compression.py; move-manifest rows SK-01..SK-15).
 SKELETON_FILE_MOVES = {
-    "sec_fived16_gen.tex": "sec_fived16.tex", "sec_q3_fived16.tex": "sec_fived16.tex", "sec_q3_3d.tex": "sec_3d.tex",
+    "sec_q3_fived16.tex": "sec_fived16.tex", "sec_q3_3d.tex": "sec_3d.tex",
     "sec_observables.tex": "sec_eavailw.tex", "sec_q3_closure.tex": "app_statmethods.tex",
-    "sec_tension.tex": "app_statmethods.tex", "app_cov1b_gate.tex": "app_statmethods_nd.tex",
-    "sec_q3_negweight.tex": "app_negweight.tex", "app_terminology.tex": "sec_front.tex",
+    "sec_tension.tex": "app_statmethods.tex",
+    "sec_q3_negweight.tex": "app_negweight.tex",
     "sec_validity_table.tex": "sec_front.tex",
 }
 

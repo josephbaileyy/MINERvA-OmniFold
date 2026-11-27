@@ -3,7 +3,7 @@
 audit ea939701, G11).
 
 Each check finds one printed value in the note's values.tex, sec3_twod.tex, appC_supplementary.tex, sec_validation.tex,
-sec_5d.tex or app_devhistory.tex, or in the primer's primer_body.tex, recomputes it
+sec_5d.tex, or in the primer's primer_body.tex, recomputes it
 from the committed receipt that backs it, and compares at the printed precision: |computed - printed| <= half a unit in
 the printed last digit ("round"), or printed - one unit <= computed < printed ("below", for "below X%": true, and tight
 to one unit). "round-3dp-source" is "round" for a record that prints only 3 dp: the whole interval the record's value
@@ -16,7 +16,8 @@ Register round r18 (DECISION-20261025-joseph-r18-history-to-note.md item 1) move
 nominal of the earlier band's test in sec_validation.tex (erf(2/sqrt 2), as a fraction); the post hoc rescoring against
 the rebuilt band, in sec_validation.tex until the deep restructure (DECISION-20261118) moved it verbatim to App. I's
 app:devhistory-band in app_devhistory.tex (move rows CV-VA02..VA04; the same receipt, rescore_vl169_toys_vl170.json, as
-fractions); and the earlier
+fractions), whose check was dropped on 2026-11-27 with that file, which no built document inputs (DECISION-20261127,
+option (c)); and the earlier
 band's C2 as \\covTwoDCTwo in values.tex (the macro the note prints; the paper's percent form is no longer printed).
 The targeted round of 2026-11-03 moved the paper's background-closure paragraph (Sec. IV D) to the note, so its four
 bound values (VL149, VL151, VL152) are now found in sec_5d.tex's sec:val-negweight, with the residual of the other
@@ -1009,9 +1010,6 @@ CHECKS = [
     ("two-sigma nominal of the earlier band's test (note sec:coverage)", "sec_validation.tex",
      r"lies entirely below its window \(Gaussian ([0-9.]+)\)", lambda: math.erf(2.0 / math.sqrt(2.0)), "round"),
     ("statistical block median (Q_R, S1)", "sec3_twod.tex", r"Statistical bootstrap & ([0-9.]+) &", stat_median, "round"),
-    ("rescoring against the rebuilt (VL170) band, 2 and 1 sigma (note app:devhistory-band)", "app_devhistory.tex",
-     r"removes the tail undercoverage: \$C_2=([0-9.]+)\$ \$\[[0-9.,]+\]\$ and \$C_1=([0-9.]+)\$",
-     lambda: (rescore("C2") / 100.0, rescore("C1") / 100.0), "round"),
     # The background-closure values bind in the note since the targeted round (DECISION-20261103-joseph-retire-density-
     # gate.md item 3b) moved the paper's Sec. IV D closure paragraph there: sec_5d.tex sec:val-negweight prints them
     ("purity bias, highest-W cells (VL149)", "sec_5d.tex",
@@ -1291,7 +1289,7 @@ def ibub_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 def load() -> dict[str, str]:
     return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec_validation.tex",
-                                               "sec_5d.tex", "app_devhistory.tex", "primer_body.tex", "appA_methods.tex",
+                                               "sec_5d.tex", "primer_body.tex", "appA_methods.tex",
                                                "appC_supplementary.tex", "records_r03_twod.tex", "sec2_method.tex",
                                                "appD_reproducibility.tex", "sec5_multidim.tex", "sec6_conclusions.tex", "values_fived16.tex")}
 
