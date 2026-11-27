@@ -10100,6 +10100,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficienc
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127/fetch/remote.err	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127/fetch/start_utc.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127/fetch/verify.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127/mutants_c2_eff.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127/receipts/mutation.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127/receipts/test_c2_eff.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127/receipts/test_c2_fetch.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127/run/c2_eff.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
