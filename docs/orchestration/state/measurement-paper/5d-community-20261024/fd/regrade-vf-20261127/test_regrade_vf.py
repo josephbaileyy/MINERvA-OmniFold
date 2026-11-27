@@ -352,3 +352,339 @@ def test_global_controls_refuse_an_inactive_band(tmp_path, monkeypatch):
     monkeypatch.setitem(rv.PINS, "blocks5d", (p, rv.rc.sha256(p)))
     with pytest.raises(Stop, match="not ACTIVE"):
         rv.global_controls()
+
+
+# ------------------------------------------------------------------------------------------- fail-closed (read 1)
+@pytest.mark.parametrize("bad", ["negdef", "negsemi", "nan", "inf", "empty", "upper-nan"])
+def test_check_psd_fails_closed(bad):
+    C = spd()
+    if bad == "negdef":
+        C = -np.eye(16)
+    elif bad == "negsemi":
+        C = np.diag([0.0] + [-1.0] * 15)
+    elif bad == "nan":
+        C[0, 0] = np.nan
+    elif bad == "inf":
+        C[0, 0] = np.inf
+    elif bad == "empty":
+        C = np.zeros((0, 0))
+    elif bad == "upper-nan":
+        C[0, 1] = np.nan
+    with pytest.raises(Stop):
+        rv.check_psd(C, bad)
+
+
+def test_check_psd_threshold_is_the_declarations():
+    lam = np.geomspace(10.0, 0.01, 16)
+    lam[-1] = -5e-12 * lam[0]
+    with pytest.raises(Stop, match="C-PSD"):
+        rv.check_psd(spd(lam=lam), "just-negative")
+    lam[-1] = -0.5e-12 * lam[0]
+    rv.check_psd(spd(lam=lam), "within")
+    C = spd()
+    A = C.copy()
+    A[0, 1] += 5e-12 * np.abs(C).max()
+    with pytest.raises(Stop, match="C-PSD"):
+        rv.check_psd(A, "asym-just-over")
+
+
+@pytest.mark.parametrize("bad", ["diag-nan", "upper-nan", "upper-asym", "rank8", "small"])
+def test_gap_check_fails_closed(bad):
+    C = np.diag(np.geomspace(10.0, 0.01, 16))
+    if bad == "diag-nan":
+        C[0, 0] = np.nan
+    elif bad == "upper-nan":
+        C[0, 1] = np.nan
+    elif bad == "upper-asym":
+        C[0, 1] = 1e-3
+    elif bad == "rank8":
+        C = np.diag([10, 8, 6, 4, 2, 1.5, 1.2, 1.0] + [0.0] * 8)
+    elif bad == "small":
+        C = np.eye(4)
+    with pytest.raises(Stop):
+        rv.gap_check(C, bad)
+
+
+def test_gap_threshold_is_the_declarations():
+    lam = np.geomspace(10.0, 0.01, 16)
+    lam[4] = lam[3] / (1 + 5e-10)
+    with pytest.raises(Stop, match="C-GAP"):
+        rv.gap_check(spd(lam=lam), "just-tied")
+    lam[4] = lam[3] / (1 + 5e-9)
+    rv.gap_check(spd(lam=lam), "just-separated")
+
+
+@pytest.mark.parametrize("phi", [{"R1": float("nan"), "R2": 1.2, "R3": 2.0}, {"R1": 0.9, "R2": 1.2, "R3": 2.0}])
+def test_band_L_refuses_a_bad_phi(phi):
+    with pytest.raises(Stop, match="C-L"):
+        rv.band_L(spd(), phi)
+
+
+@pytest.mark.parametrize("bad", ["nan", "n1", "zero"])
+def test_split_fails_closed(bad):
+    E, C = draws()
+    Z = np.zeros((16, 16))
+    if bad == "nan":
+        E[0, 0] = np.nan
+    elif bad == "n1":
+        E = E[:1]
+    elif bad == "zero":
+        E = np.zeros_like(E)
+    with pytest.raises(Stop, match="C-FINITE"):
+        rv.split(E, C, Z, np.zeros((2, E.shape[0]), int))
+
+
+def test_split_shares_are_each_term_over_m_full():
+    E, C = draws(shift=0.3)
+    s = rv.split(E, C, 0.2 * spd(seed=5), np.random.default_rng(1).integers(0, 300, size=(50, 300)))
+    for k in ("B", "F", "tau"):
+        assert s["shares"][k] == s[k] / s["M_full"]
+    assert s["B_raw"] - s["F"] / 300 == s["B"]
+
+
+def test_readings_use_their_own_se_keys():
+    se = {"B": 0.125, "F": 100.0, "B_minus_F": 0.25}
+    r = rv.readings(0.5, 0.0, 1.25, 0.0625, se)
+    assert r["bias_resolved"] == "yes"                     # 0.5 > 3*0.125, not 3*100 or 3*0.25
+    assert r["bias_vs_fluctuation"] == "not separated"     # 0.5 < 3*0.25, though > 3*0.125
+    assert r["R_chi2"] == "under-describes on average"     # 0.25 > 3*0.0625, though < 3*0.125
+    r = rv.readings(0.7, 0.0, 1.1, 0.0625, {"B": 0.25, "F": 0.0, "B_minus_F": 0.125})
+    assert r["bias_resolved"] == "not resolved" and r["bias_vs_fluctuation"] == "bias larger"
+    assert r["R_chi2"] == "not shown"
+
+
+def synthetic_blocks(lam=None):
+    C_e = spd(seed=21, lam=lam)
+    L = rv.band_L(C_e, PHI)
+    C_i = L @ C_e @ L.T
+    f = np.linspace(1.0, 2.0, 16)
+    return f, C_e, C_i, C_i - C_e, L
+
+
+def test_block_controls_pass_on_consistent_synthetic_blocks():
+    f, C_e, C_i, D, L = synthetic_blocks()
+    ctl = rv.block_controls(f, f, C_e, C_i, D, PHI, L)
+    assert set(ctl["C_GAP_data"]) == {"l4/l5-1", "l8/l9-1"}
+
+
+def test_block_controls_refuse_a_tie_at_the_data():
+    lam = np.geomspace(10.0, 0.01, 16)
+    lam[8] = lam[7]
+    with pytest.raises(Stop, match="C-GAP"):
+        rv.block_controls(*synthetic_blocks(lam)[:1], *synthetic_blocks(lam)[:1],
+                          *synthetic_blocks(lam)[1:4], PHI, synthetic_blocks(lam)[4])
+
+
+@pytest.mark.parametrize("which", ["f-nan", "f-zero", "Ci-nan", "L5-nan", "D-nan"])
+def test_block_controls_fail_closed(which):
+    f, C_e, C_i, D, L = synthetic_blocks()
+    fv = f.copy()
+    if which == "f-nan":
+        fv[0] = np.nan
+    elif which == "f-zero":
+        f = f.copy()
+        f[0] = 0.0
+        fv = f.copy()
+    elif which == "Ci-nan":
+        C_i = C_i.copy()
+        C_i[0, 0] = np.nan
+    elif which == "L5-nan":
+        L = L.copy()
+        L[0, 0] = np.nan
+    elif which == "D-nan":
+        D = D.copy()
+        D[0, 0] = np.nan
+    with pytest.raises(Stop):
+        rv.block_controls(f, fv, C_e, C_i, D, PHI, L)
+
+
+def test_block_control_tolerances_are_the_declarations():
+    f, C_e, C_i, D, L = synthetic_blocks()
+    fv = f.copy()
+    fv[2] *= 1 + 5e-12
+    with pytest.raises(Stop, match="C-F"):
+        rv.block_controls(f, fv, C_e, C_i, D, PHI, L)
+    fv = f.copy()
+    fv[2] *= 1 + 5e-13
+    rv.block_controls(f, fv, C_e, C_i, D, PHI, L)
+    d = np.zeros((16, 16))
+    d[3, 3] = 5e-12 * np.abs(C_i).max()
+    with pytest.raises(Stop, match="C-DF"):
+        rv.block_controls(f, f, C_e, C_i, D + d, PHI, L)
+    d[3, 3] = 5e-10 * np.abs(C_i).max()
+    with pytest.raises(Stop, match="C-L: builder vs C_e_infl"):
+        rv.block_controls(f, f, C_e, C_i + d, D + d, PHI, L)
+    d[3, 3] = 5e-11 * np.abs(C_i).max()                # below L_REL: C-L holds (C-DF moves with it)
+    rv.block_controls(f, f, C_e, C_i + d, D + d, PHI, L)
+    L2 = L.copy()
+    L2[0, 0] += 5e-10 * np.abs(L).max()
+    with pytest.raises(Stop, match="C-L"):
+        rv.block_controls(f, f, C_e, C_i, D, PHI, L2)
+    L2 = L.copy()
+    L2[0, 0] += 5e-11 * np.abs(L).max()
+    rv.block_controls(f, f, C_e, C_i, D, PHI, L2)
+
+
+def test_block_controls_check_carry_at_f(monkeypatch):
+    f, C_e, C_i, D, L = synthetic_blocks()
+    real = rv.rc.carry_frac
+    monkeypatch.setattr(rv.rc, "carry_frac", lambda C, a, b: real(C, a, b) * (1 + 1e-9))
+    with pytest.raises(Stop, match="C-DF"):
+        rv.block_controls(f, f, C_e, C_i, D, PHI, L)
+
+
+@pytest.mark.parametrize("field", rv.A0_FIELDS)
+def test_a0_refuses_each_field_just_over_its_tolerance(committed, field):
+    ops, _, r16 = committed
+    cap = rv.load_capture(rv.PINS["capture_ar23_all"][0])
+    bad = dict(r16["ar23/all"]["R_chi2"])
+    bad[field] *= 1 + 5e-12
+    with pytest.raises(Stop, match="C-A0"):
+        rv.evaluation_controls("ar23/all", cap, ops, bad)
+
+
+@pytest.mark.parametrize("bad", ["nan", "zero", "missing"])
+def test_a0_refuses_a_bad_committed_field(committed, bad):
+    ops, _, r16 = committed
+    cap = rv.load_capture(rv.PINS["capture_ar23_all"][0])
+    c = dict(r16["ar23/all"]["R_chi2"])
+    if bad == "nan":
+        c["SE"] = float("nan")
+    elif bad == "zero":
+        c["tau"] = 0.0
+    else:
+        del c["M_full"]
+    with pytest.raises(Stop, match="C-A0"):
+        rv.evaluation_controls("ar23/all", cap, ops, c)
+
+
+def test_evaluation_controls_refuse_a_nan_capture(committed):
+    ops, _, r16 = committed
+    cap = dict(rv.load_capture(rv.PINS["capture_g18_all"][0]))
+    cap["E"] = cap["E"].copy()
+    cap["E"][3, 3] = np.nan
+    with pytest.raises(Stop, match="C-FINITE"):
+        rv.evaluation_controls("g18/all", cap, ops, r16["g18/all"]["R_chi2"])
+
+
+def test_capture_f_tolerance_is_the_declarations(committed):
+    ops, _, r16 = committed
+    cap = dict(rv.load_capture(rv.PINS["capture_g18_all"][0]))
+    cap["f"] = cap["f"].copy()
+    cap["f"][5] *= 1 + 5e-12
+    with pytest.raises(Stop, match="C-F"):
+        rv.evaluation_controls("g18/all", cap, ops, r16["g18/all"]["R_chi2"])
+
+
+def test_evaluation_controls_refuse_a_non_psd_rule_i():
+    cap, ops, committed, _ = synthetic_case()
+    ops = dict(ops)
+    ops["DeltaC_e"] = -ops["DeltaC_e"]
+    with pytest.raises(Stop, match="C-PSD: dF rule_i"):
+        rv.evaluation_controls("g18/minus2", cap, ops, committed)
+
+
+def test_evaluation_controls_refuse_a_non_psd_c_rep(monkeypatch):
+    cap, ops, committed, _ = synthetic_case()
+    monkeypatch.setattr(rv, "dF_rule_ii", lambda C, phi: -2.0 * cap["C_T"] - 2.0 * spd(seed=9))
+    with pytest.raises(Stop, match="C-PSD"):
+        rv.evaluation_controls("g18/minus2", cap, ops, committed)
+
+
+def test_evaluation_controls_refuse_a_tie_at_t():
+    cap, ops, committed, _ = synthetic_case()
+    lam = np.geomspace(10.0, 0.01, 16)
+    lam[4] = lam[3]
+    cap = dict(cap)
+    cap["C_e"] = spd(seed=3, lam=lam)
+    with pytest.raises(Stop, match="C-GAP"):
+        rv.evaluation_controls("g18/minus2", cap, ops, committed)
+
+
+def test_global_controls_refuse_a_string_active_or_bad_phi(tmp_path, monkeypatch):
+    for mut in ({"active": "false"}, {"phi": float("nan")}, {"phi": 0.5}):
+        b = json.loads(rv.PINS["blocks5d"][0].read_text())
+        b["fluctuation"]["trigger"]["R1"].update(mut)
+        p = tmp_path / "b.json"
+        p.write_text(json.dumps(b))
+        monkeypatch.setitem(rv.PINS, "blocks5d", (p, rv.rc.sha256(p)))
+        with pytest.raises(Stop):
+            rv.global_controls()
+
+
+def test_run_isolates_an_evaluation_stop_and_writes_no_readings(monkeypatch):
+    def fake(e, ops, committed):
+        if e == "ar23/minus2":
+            raise Stop("C-PSD: forced")
+        return {"status": "done"}
+    monkeypatch.setattr(rv, "evaluate", fake)
+    out = rv.run()
+    assert out["evaluations"]["ar23/minus2"] == {"status": "STOP", "stop": "C-PSD: forced"}
+    assert all(out["evaluations"][e] == {"status": "done"} for e in rv.EVALS if e != "ar23/minus2")
+
+
+def test_run_records_an_io_error_as_a_stop(monkeypatch):
+    def fake(e, ops, committed):
+        raise OSError("gone")
+    monkeypatch.setattr(rv, "evaluate", fake)
+    out = rv.run()
+    assert all(v["status"] == "STOP" and "OSError" in v["stop"] for v in out["evaluations"].values())
+
+
+def test_main_exit_codes_and_refuses_nan(tmp_path, monkeypatch):
+    monkeypatch.setattr(rv, "run", lambda: {"evaluations": {e: {"status": "done"} for e in rv.EVALS}})
+    assert rv.main(["--out", str(tmp_path / "a.json")]) == 0
+    monkeypatch.setattr(rv, "run", lambda: {"evaluations": {"x": {"status": "STOP"}}})
+    assert rv.main(["--out", str(tmp_path / "b.json")]) == 1
+    monkeypatch.setattr(rv, "run", lambda: {"evaluations": {"x": {"status": "done", "v": float("nan")}}})
+    with pytest.raises(ValueError):
+        rv.main(["--out", str(tmp_path / "c.json")])
+
+
+def test_main_refuses_a_dangling_symlink(tmp_path):
+    p = tmp_path / "r.json"
+    p.symlink_to(tmp_path / "nowhere.json")
+    assert rv.main(["--out", str(p)]) == 2
+
+
+def test_tolerances_are_the_declarations():
+    assert (rv.A0_REL, rv.F_REL, rv.DF_REL, rv.L_REL, rv.GAP_MIN, rv.SYM_REL, rv.PSD_REL, rv.ID_REL) == \
+        (1e-12, 1e-12, 1e-12, 1e-10, 1e-9, 1e-12, 1e-12, 1e-12)
+    assert rv.A0_FIELDS == ("M_prime", "SE", "mean_error_part", "spread_part", "tau", "M_full")
+
+
+def test_evaluation_controls_refuse_a_non_psd_c_prime(monkeypatch):
+    cap, ops, committed, C_add = synthetic_case()
+    w, U = np.linalg.eigh(cap["C_T"] + C_add)
+    u = U[:, -1]
+    cap = dict(cap)
+    cap["C_T"] = cap["C_T"] - 2.0 * w[-1] * np.outer(u, u)        # C' gets one negative mode
+    g = 4.0 * w[-1] * np.outer(u, u)                               # each dF covers it, so each C_rep is PSD
+    r = cap["X_T"] / ops["f"]
+    ops = dict(ops)
+    ops["DeltaC_e"] = g / np.outer(r, r)
+    monkeypatch.setattr(rv, "dF_rule_ii", lambda C, phi: g)
+    committed = rv.rc.r_chi2(cap["E"], cap["C_T"], C_add)
+    with pytest.raises(Stop, match="C-PSD: C'"):
+        rv.evaluation_controls("g18/minus2", cap, ops, committed)
+
+
+def test_evaluation_controls_refuse_a_non_psd_c_rep_rule_i():
+    cap, ops, committed, C_add = synthetic_case()
+    w, U = np.linalg.eigh(cap["C_T"] + C_add)
+    cap = dict(cap)
+    cap["C_T"] = cap["C_T"] - 2.0 * w[-1] * np.outer(U[:, -1], U[:, -1])   # dF stays PSD; C_rep does not
+    committed = rv.rc.r_chi2(cap["E"], cap["C_T"], C_add)
+    with pytest.raises(Stop, match="C-PSD: C_rep rule_i"):
+        rv.evaluation_controls("g18/minus2", cap, ops, committed)
+
+
+@pytest.mark.parametrize("x,want", [(0.5, True), (1.0, True), (1.5, False), (float("nan"), False),
+                                    (float("inf"), False), (float("-inf"), False)])
+def test_within_fails_closed(x, want):
+    assert rv.within(x, 1.0) is want
+
+
+def test_gap_check_names_a_non_positive_edge_eigenvalue():
+    with pytest.raises(Stop, match="non-positive"):
+        rv.gap_check(np.diag([10, 8, 6, 4, 2, 1.5, 1.2, 1.0] + [0.0] * 8), "rank8")

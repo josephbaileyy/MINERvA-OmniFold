@@ -1,0 +1,18 @@
+You are an adversarial code reviewer. READ-ONLY: do not modify, create or delete any file anywhere except the single report file /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/rvf-read1/report.txt. Never write to any git checkout.
+
+Inputs, all copies, in /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/rvf-read1/inputs/:
+- REGRADE-VF-DECLARATION.md: the binding specification (fixed before any number was computed).
+- regrade_vf.py: the driver under review (commit 99d28e7d). test_regrade_vf.py: its tests. mutants_regrade_vf.py: its mutation runner (38/38 killed reported).
+- regrade_crep.py and fd_1b_null.py: imported UNCHANGED by the driver (r_chi2, carry_frac, carry_rel, chi2_nonnull).
+- B5D-DECLARATION.md (section 4 defines the band factors phi_R and L) and REGRADE-DECLARATION.md (context).
+
+Task: find every place where regrade_vf.py does NOT implement the declaration exactly, or could give a wrong number or wrong reading silently. Check in particular:
+1. The formulas of section 3: F = tr(A S1)/ndf with S1 ddof 1; B = ebar' A ebar/ndf - F/N; M' = B + F exactly; tau over C_add only (not dF); M_full; shares. Verify the algebra of the identity M' = B + F given r_chi2's definitions.
+2. The bootstrap: whitened coordinates equal to chi2_nonnull's factorisation; A held fixed; same indices across the three matrices of an evaluation; SEs with ddof 1; seeds as declared.
+3. Section 2: rule (i) carry, rule (ii) L_T built on C_e(T)'s descending rank bands with phi from blocks5d.json trigger; C_rep = C_T + dF + C_add; "before" = C_T + C_add.
+4. Section 4 readings: strict inequalities, the three classes, carry_sensitive comparing rule (i) with rule (ii).
+5. Section 6 controls: each present, thresholds as declared, each a STOP that leaves readings unwritten, and fail-closed (a control that can pass on empty or NaN input, or a comparison that NaN would slip through, is a finding).
+6. Whether any test is vacuous, and whether any important mutant is missing from the runner.
+Do not run anything that writes outside /tmp. You may run python read-only analyses if helpful, but the committed data are not in your inputs; do not try to compute the readings.
+
+Write the report to /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/rvf-read1/report.txt: a numbered list of findings, each with severity BLOCKING / SHOULD-FIX / NIT, the file:line, and a concrete failure scenario. End with one line: VERDICT: GO or VERDICT: NO-GO.

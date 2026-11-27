@@ -17,6 +17,7 @@ coverage or calibration statement, a validated size of C_e^infl or C_rep, a caus
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -30,6 +31,9 @@ REPO = Path(os.environ["REGRADE_VF_REPO"]) if os.environ.get("REGRADE_VF_REPO") 
 FD = REPO / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd"
 STATE = REPO / "docs/orchestration/state"
 RC_DIR = FD / "regrade-crep-20261121"
+RC_SHA256 = "479e03cc51d7be8f0c275c98305b2ab731b135093afacb74f98417529c84d9ad"
+if hashlib.sha256((RC_DIR / "regrade_crep.py").read_bytes()).hexdigest() != RC_SHA256:   # C-PIN before the import
+    raise SystemExit(f"C-PIN: {RC_DIR / 'regrade_crep.py'} is not {RC_SHA256}; refusing to import it")
 if str(RC_DIR) not in sys.path:
     sys.path.insert(0, str(RC_DIR))
 import regrade_crep as rc  # noqa: E402
@@ -54,7 +58,7 @@ PINS = {   # declaration sec. 1
                  "cef8460a1dcc0db64f536af0099db1e1523ed2601d5c8ecc682afc0f9440c99b"),
     "blocks5d": (STATE / "ben-b-20261124/blocks5d-20261124/record/blocks5d.json",
                  "c465768b490acc96515c5340585b8ff1f14735254f269af605ffaf182ae521f9"),
-    "regrade_crep": (RC_DIR / "regrade_crep.py", "479e03cc51d7be8f0c275c98305b2ab731b135093afacb74f98417529c84d9ad"),
+    "regrade_crep": (RC_DIR / "regrade_crep.py", RC_SHA256),
 }
 EVALS = ("g18/minus2", "g18/all", "ar23/minus2", "ar23/all")
 PRIMARY = ("g18/minus2", "ar23/minus2")
@@ -82,8 +86,36 @@ def pinned(key: str) -> Path:
     return path
 
 
+def within(x: float, tol: float) -> bool:
+    """Fail-closed comparison: True only for a finite x at or below tol (NaN and inf fail)."""
+    return math.isfinite(x) and x <= tol
+
+
+def finite(name: str, *arrays) -> None:
+    """Every operand non-empty and finite, else a STOP (every control below assumes it)."""
+    for a in arrays:
+        a = np.asarray(a, np.float64)
+        if a.size == 0 or not np.all(np.isfinite(a)):
+            raise Stop(f"C-FINITE: {name} is empty or not finite")
+
+
 def rel_max(a: np.ndarray, b: np.ndarray, scale: float) -> float:
+    if not (math.isfinite(scale) and scale > 0):
+        raise Stop(f"C-FINITE: a comparison scale is {scale!r}")
     return float(np.max(np.abs(np.asarray(a, np.float64) - np.asarray(b, np.float64))) / scale)
+
+
+def symmetric(C: np.ndarray, name: str) -> float:
+    """Finite and symmetric within SYM_REL (eigh reads one triangle only), else a STOP. Returns the asymmetry."""
+    C = np.asarray(C, np.float64)
+    finite(name, C)
+    if C.ndim != 2 or C.shape[0] != C.shape[1]:
+        raise Stop(f"C-PSD: {name} is not square: {C.shape}")
+    scale = float(np.max(np.abs(C)))
+    asym = rel_max(C, C.T, scale)
+    if not within(asym, SYM_REL):
+        raise Stop(f"C-PSD: {name} asym {asym:.2e}")
+    return asym
 
 
 # ----------------------------------------------------------------------------------- section 2: the matrices
@@ -96,15 +128,21 @@ def ranked_eig(C: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
 
 def gap_check(C: np.ndarray, name: str) -> dict:
     """C-GAP: lambda_4/lambda_5 - 1 and lambda_8/lambda_9 - 1 above GAP_MIN, so each band's projector is unambiguous."""
+    symmetric(C, name)
     lam, _ = ranked_eig(C)
+    if lam.shape != (BANDS[-1][2],) or not all(lam[hi] > 0 for _, _, hi in BANDS[:-1]):
+        raise Stop(f"C-GAP: {name} has {lam.shape} eigenvalues or a non-positive one at a band edge")
     gaps = {f"l{hi}/l{hi + 1}-1": float(lam[hi - 1] / lam[hi] - 1.0) for _, _, hi in BANDS[:-1]}
-    if not all(g > GAP_MIN for g in gaps.values()):
+    if not all(math.isfinite(g) and g > GAP_MIN for g in gaps.values()):
         raise Stop(f"C-GAP: {name} {gaps}")
     return gaps
 
 
 def band_L(C_e: np.ndarray, phi: dict) -> np.ndarray:
     """L = I + sum_R (sqrt(phi_R) - 1) P_R over C_e's own rank bands (B5D-DECLARATION.md sec. 4)."""
+    if not all(math.isfinite(phi[name]) and phi[name] >= 1.0 for name, _, _ in BANDS):
+        raise Stop(f"C-L: phi must be finite and at least 1: {phi}")
+    symmetric(C_e, "C_e for L")
     _, U = ranked_eig(C_e)
     L = np.eye(C_e.shape[0])
     for name, lo, hi in BANDS:
@@ -122,12 +160,13 @@ def dF_rule_ii(C_eT: np.ndarray, phi: dict) -> np.ndarray:
 def check_psd(C: np.ndarray, name: str) -> dict:
     """C-PSD: symmetric within SYM_REL, smallest eigenvalue at least -PSD_REL of the largest."""
     C = np.asarray(C, np.float64)
-    scale = float(np.max(np.abs(C)))
-    asym = float(np.max(np.abs(C - C.T)) / scale) if scale > 0 else 0.0
+    asym = symmetric(C, name)
     lam = np.linalg.eigvalsh((C + C.T) / 2)
-    lmin_rel = float(lam.min() / lam.max()) if lam.max() > 0 else 0.0
-    if asym > SYM_REL or lmin_rel < -PSD_REL:
-        raise Stop(f"C-PSD: {name} asym {asym:.2e}, lam_min/lam_max {lmin_rel:.2e}")
+    if not (math.isfinite(lam.max()) and lam.max() > 0):
+        raise Stop(f"C-PSD: {name} largest eigenvalue {lam.max()!r}")
+    lmin_rel = float(lam.min() / lam.max())
+    if not (math.isfinite(lmin_rel) and lmin_rel >= -PSD_REL):
+        raise Stop(f"C-PSD: {name} lam_min/lam_max {lmin_rel:.2e}")
     return {"asym_rel": asym, "lam_min_rel": lmin_rel}
 
 
@@ -135,8 +174,15 @@ def check_psd(C: np.ndarray, name: str) -> dict:
 def split(E: np.ndarray, C_base: np.ndarray, C_add: np.ndarray, idx: np.ndarray) -> dict:
     """The declaration's B, F, tau and M_full for C = C_base + C_add, tau over C_add, with bootstrap SEs over idx."""
     E = np.asarray(E, np.float64)
+    finite("E", E)
+    finite("C", C_base, C_add)
     n = E.shape[0]
-    r = rc.r_chi2(E, C_base, C_add)
+    if E.ndim != 2 or n < 2:
+        raise Stop(f"C-FINITE: E has shape {E.shape}")
+    try:
+        r = rc.r_chi2(E, C_base, C_add)
+    except ZeroDivisionError as ex:
+        raise Stop(f"C-FINITE: r_chi2 divided by zero ({ex})") from ex
     ndf = r["ndf"]
     if ndf != NDF or r["cut"]["C_T_kept_modes_outside_C_prime_kept_span"] != 0:
         raise Stop(f"C-RANK: ndf {ndf}, dropped {r['cut']['C_T_kept_modes_outside_C_prime_kept_span']}")
@@ -146,7 +192,7 @@ def split(E: np.ndarray, C_base: np.ndarray, C_add: np.ndarray, idx: np.ndarray)
     B_raw = r["mean_error_part"]
     B = B_raw - F / n
     M = r["M_prime"]
-    if abs(M - (B + F)) > ID_REL * M:
+    if not (math.isfinite(M) and M > 0 and within(abs(M - (B + F)), ID_REL * M)):
         raise Stop(f"C-ID: M' {M!r} vs B + F {B + F!r}")
     # bootstrap in the whitened coordinates of chi2_nonnull's factorisation, A held fixed
     lam, V = np.linalg.eigh(Cp)
@@ -158,6 +204,9 @@ def split(E: np.ndarray, C_base: np.ndarray, C_add: np.ndarray, idx: np.ndarray)
     Bb = np.sum(zbar ** 2, axis=1) / ndf - Fb / n
     se = {"B": float(Bb.std(ddof=1)), "F": float(Fb.std(ddof=1)), "B_minus_F": float((Bb - Fb).std(ddof=1))}
     tau, M_full = r["tau"], r["M_full"]
+    vals = [B_raw, B, F, tau, M_full, r["SE"], *se.values()]
+    if not (all(math.isfinite(x) for x in vals) and M_full > 0):
+        raise Stop(f"C-FINITE: a split quantity is not finite or M_full <= 0: {vals}")
     return {
         "ndf": ndf, "n": n, "M_prime": M, "SE": r["SE"], "B_raw": B_raw, "B": B, "F": F, "tau": tau,
         "M_full": M_full, "shares": {"B": B / M_full, "F": F / M_full, "tau": tau / M_full},
@@ -194,14 +243,17 @@ def load_capture(path: Path) -> dict:
 def block_controls(f_cpl, f_vf, C_e, C_e_infl, DeltaC_e, phi: dict, L5) -> dict:
     """C-F (blocks), C-DF, C-GAP at the data and C-L, on arrays."""
     ctl = {}
+    finite("blocks", f_cpl, f_vf, C_e, C_e_infl, DeltaC_e, L5)
+    if not np.all(np.asarray(f_cpl) > 0):
+        raise Stop("C-F: cpl_block f has a non-positive cell")
     frel = float(np.max(np.abs(np.asarray(f_vf) / np.asarray(f_cpl) - 1.0)))
-    if frel > F_REL:
+    if not within(frel, F_REL):
         raise Stop(f"C-F: vf_block f differs from cpl_block f by {frel:.2e}")
     ctl["C_F_blocks"] = frel
     s = float(np.max(np.abs(C_e_infl)))
     d1 = rel_max(DeltaC_e, C_e_infl - C_e, s)
     d2 = rel_max(rc.carry_frac(DeltaC_e, f_cpl, f_cpl), DeltaC_e, s)
-    if d1 > DF_REL or d2 > DF_REL:
+    if not (within(d1, DF_REL) and within(d2, DF_REL)):
         raise Stop(f"C-DF: DeltaC_e vs C_e_infl - C_e {d1:.2e}, carry at f {d2:.2e}")
     ctl["C_DF"] = {"DeltaC_e_vs_difference": d1, "carry_at_f": d2}
     ctl["C_GAP_data"] = gap_check(C_e, "vf_block C_e")
@@ -209,7 +261,7 @@ def block_controls(f_cpl, f_vf, C_e, C_e_infl, DeltaC_e, phi: dict, L5) -> dict:
     L5 = np.asarray(L5, np.float64)
     l1 = rel_max(L @ C_e @ L.T, C_e_infl, s)
     l2 = rel_max(L, L5, float(np.max(np.abs(L5))))
-    if l1 > L_REL or l2 > L_REL:
+    if not (within(l1, L_REL) and within(l2, L_REL)):
         raise Stop(f"C-L: builder vs C_e_infl {l1:.2e}, vs blocks5d L {l2:.2e}")
     ctl["C_L"] = {"C_e_infl": l1, "L": l2}
     return ctl
@@ -224,7 +276,7 @@ def global_controls() -> tuple[dict, dict]:
     with np.load(PINS["vf_block"][0], allow_pickle=False) as z:
         f_vf, C_e, C_e_infl, DeltaC_e = (np.asarray(z[k], np.float64) for k in ("f", "C_e", "C_e_infl", "DeltaC_e"))
     fl = json.loads(PINS["blocks5d"][0].read_text())["fluctuation"]
-    if not all(fl["trigger"][name]["active"] for name, _, _ in BANDS):
+    if not all(fl["trigger"][name]["active"] is True for name, _, _ in BANDS):
         raise Stop(f"C-L: a band is not ACTIVE: {fl['trigger']}")
     phi = {name: float(fl["trigger"][name]["phi"]) for name, _, _ in BANDS}
     ctl = block_controls(f_cpl, f_vf, C_e, C_e_infl, DeltaC_e, phi, fl["L"])
@@ -240,15 +292,19 @@ def evaluate(e: str, ops: dict, committed: dict) -> dict:
 def evaluation_controls(e: str, cap: dict, ops: dict, committed: dict) -> tuple[dict, np.ndarray, dict]:
     """C-F (capture), C-A0, C-GAP at T and C-PSD. Returns the controls, C_add(T) and the two dF(T)."""
     c: dict = {}
+    finite(f"capture {e}", *(cap[k] for k in ("E", "X_T", "f", "C_T", "C_e")))
     frel = float(np.max(np.abs(cap["f"] / ops["f"] - 1.0)))
-    if frel > F_REL:
+    if not within(frel, F_REL):
         raise Stop(f"C-F: capture f differs from cpl_block f by {frel:.2e}")
     c["C_F_capture"] = frel
     E, X_T, C_T, C_eT = cap["E"], cap["X_T"], cap["C_T"], cap["C_e"]
     C_add = rc.carry_frac(ops["C_resp"], X_T, ops["f"]) + rc.carry_rel(ops["P_rel"], X_T)
     r0 = rc.r_chi2(E, C_T, C_add)
+    if not all(isinstance(committed.get(k), float) and math.isfinite(committed[k]) and committed[k] != 0
+               and math.isfinite(r0[k]) for k in A0_FIELDS):
+        raise Stop(f"C-A0: a field is missing, zero or not finite: {[(k, committed.get(k), r0[k]) for k in A0_FIELDS]}")
     a0 = {k: abs(r0[k] - committed[k]) / abs(committed[k]) for k in A0_FIELDS}
-    if max(a0.values()) > A0_REL:
+    if not all(within(x, A0_REL) for x in a0.values()):
         raise Stop(f"C-A0: {a0}")
     c["C_A0"] = a0
     c["C_GAP_T"] = gap_check(C_eT, f"C_e({e})")
@@ -281,7 +337,8 @@ def run() -> dict:
     try:
         ops, out["controls"] = global_controls()
         out["phi"] = ops["phi"]
-    except Stop as ex:
+    except (Stop, OSError, ValueError, KeyError) as ex:
+        ex = ex if isinstance(ex, Stop) else Stop(f"{type(ex).__name__}: {ex}")
         out["controls"] = {"stop": str(ex)}
         out["evaluations"] = {e: {"status": "STOP", "stop": str(ex)} for e in EVALS}
         return out
@@ -289,8 +346,9 @@ def run() -> dict:
     for e in EVALS:
         try:
             out["evaluations"][e] = evaluate(e, ops, committed[e]["R_chi2"])
-        except Stop as ex:
-            out["evaluations"][e] = {"status": "STOP", "stop": str(ex)}
+        except (Stop, OSError, ValueError, KeyError) as ex:
+            out["evaluations"][e] = {"status": "STOP", "stop": str(ex) if isinstance(ex, Stop)
+                                     else f"{type(ex).__name__}: {ex}"}
     return out
 
 
@@ -298,11 +356,11 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
-    if a.out.exists():
+    if a.out.exists() or a.out.is_symlink():
         print(f"refused: {a.out} exists", file=sys.stderr)
         return 2
     out = run()
-    a.out.write_text(json.dumps(out, indent=1, sort_keys=True) + "\n")
+    a.out.write_text(json.dumps(out, indent=1, sort_keys=True, allow_nan=False) + "\n")
     print(json.dumps({e: v["status"] for e, v in out["evaluations"].items()}))
     return 0 if all(v["status"] == "done" for v in out["evaluations"].values()) else 1
 
