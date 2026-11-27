@@ -659,6 +659,39 @@ REGRADE_VF_CLAIMS = (
 )
 
 
+# Sec. 5.3.5's 2D mean-offset sentence (Joseph 2026-11-27: the mean-error term, not the shares, because the 2D toys
+# lack simulation-statistics scatter). Record: T2A at G2R's C_T' (the covariance rebuilt at each tune, with the
+# prior-shape term and without the run-period term), t2a_g2r_<T>.json, the files make_values_fived16.py pins.
+T2A_G2R = "measurement-paper/5d-community-20261024/fd/receipts-cov2d/g2r/t2a/run"
+T2A_OVERRIDE = None
+
+
+def t2a_g2r() -> dict:
+    if T2A_OVERRIDE is not None:
+        return T2A_OVERRIDE
+    return {t: json.loads((STATE / T2A_G2R / f"t2a_g2r_{t.upper()}.json").read_text()) for t in ("ar23", "g18")}
+
+
+T2A_SENTENCE = ("Under the covariance rebuilt at each tune, the mean offset from the truth alone gives $\\chi^2/\\mathrm{ndf}$ of "
+                "\\fvval{t2a-bias-ndf-ar23} at the first tune and \\fvval{t2a-bias-ndf-g18} at the second, so that covariance "
+                "does not describe the estimator's bias at these tunes.")
+
+
+def t2a_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    """The printed macros equal the record's e-bar' C+ e-bar / ndf at one decimal, every control passed, and the
+    mean-error term alone is far above 1 per ndf at both tunes (AR23 first, G18 second, as in the paragraph)."""
+    t, d = text("sec5_multidim.tex", sources), t2a_g2r()
+    v = dict(re.findall(r"\\@namedef\{fv@(t2a-bias-ndf-(?:ar23|g18))\}\{([0-9.]+)\}", sources["values_fived16.tex"]))
+    def fact(x, k):
+        sp = x["split"]
+        return (all(c["pass"] for c in x["controls"].values()) and f"{sp['ebar_Cplus_ebar_over_ndf']:.1f}" == v.get(k)
+                and sp["ebar_Cplus_ebar_over_ndf"] > 3)
+    good = t.count(T2A_SENTENCE) == 1 and fact(d["ar23"], "t2a-bias-ndf-ar23") and fact(d["g18"], "t2a-bias-ndf-g18")
+    return [("T2A 2D: the mean offset alone gives chi2/ndf 13.5 (AR23) and 21.8 (G18) under C_T' (t2a_g2r_<T>.json)", good,
+             f"sentence found {t.count(T2A_SENTENCE)} time(s) | macros {v} | record "
+             f"{d['ar23']['split']['ebar_Cplus_ebar_over_ndf']:.3f}/{d['g18']['split']['ebar_Cplus_ebar_over_ndf']:.3f}")]
+
+
 def regrade_vf_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     t, d = text("sec5_multidim.tex", sources), regrade_vf()
     return [(lab, t.count(s) == 1 and fact(d, sources), f"sentence found {t.count(s)} time(s) | record {fact(d, sources)}")
@@ -1088,6 +1121,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     rows += evw2d_claims(sources)
     rows += clip2d_claims(sources)
     rows += regrade_vf_claims(sources)
+    rows += t2a_claims(sources)
     rows += highpz_claims(sources)
     rows += oofvc_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
@@ -1704,6 +1738,37 @@ def self_test() -> int:
             print(f"  NOT CAUGHT  REGRADE-VF: {old_s} -> {new_s}"); ok = False
         else:
             caught += 1; print(f"  caught      REGRADE-VF: {old_s} -> {new_s}")
+
+    def plant4(what, fn):
+        global T2A_OVERRIDE
+        nonlocal ok, caught
+        data = copy.deepcopy(t2a_g2r())
+        fn(data)
+        T2A_OVERRIDE = data
+        try:
+            rows = dict((r[0], r[1]) for r in evaluate(base))
+        except (ValueError, KeyError, TypeError):
+            rows = {"refused": False}
+        finally:
+            T2A_OVERRIDE = None
+        if all(rows.values()):
+            print(f"  NOT CAUGHT  T2A planted: {what}"); ok = False
+        else:
+            caught += 1; print(f"  caught      T2A planted: {what}")
+    plant4("AR23 mean-error term 13.6", lambda d: d["ar23"]["split"].__setitem__("ebar_Cplus_ebar_over_ndf", 13.6))
+    plant4("G18 mean-error term 0.9", lambda d: d["g18"]["split"].__setitem__("ebar_Cplus_ebar_over_ndf", 0.9))
+    plant4("tunes swapped", lambda d: d.update(ar23=d["g18"], g18=d["ar23"]))
+    plant4("a G18 control failed", lambda d: next(iter(d["g18"]["controls"].values())).__setitem__("pass", False))
+    for old_s, new_s in (("at the first tune and \\fvval{t2a-bias-ndf-g18} at the second", "at the second tune and \\fvval{t2a-bias-ndf-g18} at the first"),
+                         ("does not describe the estimator's bias", "describes the estimator's bias")):
+        t5 = base["sec5_multidim.tex"]
+        if t5.count(old_s) != 1:
+            print(f"  NOT FOUND   T2A mutation {old_s!r}"); ok = False; continue
+        trial = dict(base); trial["sec5_multidim.tex"] = t5.replace(old_s, new_s)
+        if all(r[1] for r in evaluate(trial)):
+            print(f"  NOT CAUGHT  T2A: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      T2A: {old_s} -> {new_s}")
     plant2("evw2d.done verdict FAIL", lambda d: d["done"].__setitem__("verdict", "FAIL"))
     plant2("a finding recorded", lambda d: d["run"].__setitem__("findings", ["C-COMPLETE"]))
     plant2("deposit copy not accepted", lambda d: d.__setitem__("deposit", d["deposit"].replace("ACCEPTED", "REFUSED")))
