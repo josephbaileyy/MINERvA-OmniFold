@@ -1,0 +1,386 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3113c0s9b0n0:
+
+ERROR in cling::CIFactory::createCI(): cannot extract standard library include paths!
+Invoking:
+  LC_ALL=C x86_64-conda-linux-gnu-c++  -O3 -DNDEBUG -xc++ -E -v /dev/null 2>&1 | sed -n -e '/^.include/,${' -e '/^ \/.*++/p' -e '}'
+Results was:
+With exit code 0
+error: entry with relative path at the root level is not discoverable
+{ 'name': '', 'type': 'directory',
+          ^~
+Error in modulemap.overlay!
+
+ *** Break *** segmentation violation
+
+
+
+===========================================================
+There was a crash.
+This is the entire stack trace of all threads:
+===========================================================
+#0  0x00007fba68d299c3 in wait4 () from /lib64/libc.so.6
+#1  0x00007fba68c7c6bb in do_system () from /lib64/libc.so.6
+#2  0x00007fba5c52186b in TUnixSystem::StackTrace() () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#3  0x00007fba5c5211d6 in TUnixSystem::DispatchSignals(ESignals) () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#4  <signal handler called>
+#5  0x00007fba57b3ccc2 in llvm::vfs::OverlayFileSystem::pushOverlay(llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem>) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#6  0x00007fba5367086c in (anonymous namespace)::collectModuleMaps(clang::CompilerInstance&, llvm::SmallVectorImpl<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&) [clone .constprop.0] () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#7  0x00007fba536718b7 in (anonymous namespace)::setupCxxModules(clang::CompilerInstance&) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#8  0x00007fba53676b1b in (anonymous namespace)::createCIImpl(std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer> >, cling::CompilerOptions const&, char const*, std::unique_ptr<clang::ASTConsumer, std::default_delete<clang::ASTConsumer> >, std::vector<std::shared_ptr<clang::ModuleFileExtension>, std::allocator<std::shared_ptr<clang::ModuleFileExtension> > > const&, bool, bool) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#9  0x00007fba53678362 in cling::CIFactory::createCI(llvm::StringRef, cling::InvocationOptions const&, char const*, std::unique_ptr<clang::ASTConsumer, std::default_delete<clang::ASTConsumer> >, std::vector<std::shared_ptr<clang::ModuleFileExtension>, std::allocator<std::shared_ptr<clang::ModuleFileExtension> > > const&) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#10 0x00007fba53741c10 in cling::IncrementalParser::IncrementalParser(cling::Interpreter*, char const*, std::vector<std::shared_ptr<clang::ModuleFileExtension>, std::allocator<std::shared_ptr<clang::ModuleFileExtension> > > const&) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#11 0x00007fba536c05b1 in cling::Interpreter::Interpreter(int, char const* const*, char const*, std::vector<std::shared_ptr<clang::ModuleFileExtension>, std::allocator<std::shared_ptr<clang::ModuleFileExtension> > > const&, void*, bool, cling::Interpreter const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#12 0x00007fba5360c258 in TCling::TCling(char const*, char const*, char const* const*, void*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#13 0x00007fba5360dba5 in CreateInterpreter () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#14 0x00007fba5c3ad063 in TROOT::InitInterpreter() () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#15 0x00007fba5c3ad550 in ROOT::Internal::GetROOT2() () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#16 0x00007fba5c8c0007 in __static_initialization_and_destruction_0(int, int) [clone .constprop.0] () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libcppyy_backend3_11.so.6.28
+#17 0x00007fba68f3d83e in call_init () from /lib64/ld-linux-x86-64.so.2
+#18 0x00007fba68f3d934 in _dl_init () from /lib64/ld-linux-x86-64.so.2
+#19 0x00007fba68f39b86 in _dl_catch_exception () from /lib64/ld-linux-x86-64.so.2
+#20 0x00007fba68f4446e in dl_open_worker () from /lib64/ld-linux-x86-64.so.2
+#21 0x00007fba68f39af9 in _dl_catch_exception () from /lib64/ld-linux-x86-64.so.2
+#22 0x00007fba68f44838 in _dl_open () from /lib64/ld-linux-x86-64.so.2
+#23 0x00007fba68cb6358 in dlopen_doit () from /lib64/libc.so.6
+#24 0x00007fba68f39af9 in _dl_catch_exception () from /lib64/ld-linux-x86-64.so.2
+#25 0x00007fba68f39c2f in _dl_catch_error () from /lib64/ld-linux-x86-64.so.2
+#26 0x00007fba68cb5e17 in _dlerror_run () from /lib64/libc.so.6
+#27 0x00007fba68cb6419 in dlopen
+GLIBC_2.2.5 () from /lib64/libc.so.6
+#28 0x00005580baf1e36a in _PyImport_FindSharedFuncptr (prefix=prefix
+entry=0x5580baf8018d "PyInit", shortname=shortname
+entry=0x7fba5c8355b0 "libcppyy3_11", pathname=pathname
+entry=0x7fba5c8481d0 "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/libcppyy3_11.so", fp=fp
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/dynload_shlib.c:80
+#29 0x00005580baf1cbb1 in _PyImport_LoadDynamicModuleWithSpec (spec=0x7fba5c841050, fp=0x0) at /usr/local/src/conda/python-3.11.14/Python/importdl.c:139
+#30 _imp_create_dynamic_impl (module=<optimized out>, spec=0x7fba5c841050, file=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/import.c:2397
+#31 _imp_create_dynamic (module=<optimized out>, args=<optimized out>, nargs=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/clinic/import.c.h:446
+#32 0x00005580bae529c3 in cfunction_vectorcall_FASTCALL (func=0x7fba68b46840, args=0x7fba5c8353d8, nargsf=1, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/methodobject.c:427
+#33 0x00005580bae3e275 in do_call_core (tstate=<optimized out>, func=0x7fba68b46840, callargs=0x7fba5c8353c0, kwdict=0x7fba5d18ce40, use_tracing=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7321
+#34 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fba68f2a8e8, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+#35 0x00005580baef2035 in _PyEval_EvalFrame (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, frame=0x7fba68f2a8e8, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#36 _PyEval_Vector (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, func=func
+entry=0x7fba5c82f9c0, locals=locals
+entry=0x7fba5c827b40, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#37 0x00005580baef177d in PyEval_EvalCode (co=co
+entry=0x5580bb80bf10, globals=globals
+entry=0x7fba5c827b40, locals=locals
+entry=0x7fba5c827b40) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+#38 0x00005580baf08b5d in builtin_exec_impl (module=<optimized out>, source=0x5580bb80bf10, globals=0x7fba5c827b40, locals=0x7fba5c827b40, closure=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/bltinmodule.c:1077
+#39 builtin_exec (module=<optimized out>, args=<optimized out>, nargs=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/clinic/bltinmodule.c.h:465
+#40 0x00005580bae424ff in cfunction_vectorcall_FASTCALL_KEYWORDS (func=0x7fba68b44f90, args=0x7fba5c827e58, nargsf=<optimized out>, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/cpython/methodobject.h:52
+#41 0x00005580bae3e275 in do_call_core (tstate=<optimized out>, func=0x7fba68b44f90, callargs=0x7fba5c827e40, kwdict=0x7fba5c827a80, use_tracing=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7321
+#42 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fba68f2a5f0, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+#43 0x00005580bae5c055 in _PyEval_EvalFrame (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, frame=0x7fba68f2a5f0, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#44 _PyEval_Vector (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, func=0x7fba68b0bce0, locals=0x0, args=0x7fffe92e1820, argcount=2, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#45 _PyFunction_Vectorcall (func=0x7fba68b0bce0, stack=0x7fffe92e1820, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:393
+#46 0x00005580bae4a9f6 in _PyObject_VectorcallTstate (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, callable=0x7fba68b0bce0, args=0x7fffe92e1820, nargsf=2, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_call.h:92
+#47 object_vacall (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, base=base
+entry=0x0, callable=0x7fba68b0bce0, vargs=0x7fffe92e18b0) at /usr/local/src/conda/python-3.11.14/Objects/call.c:819
+#48 0x00005580bae7aad8 in PyObject_CallMethodObjArgs (obj=0x0, name=name
+entry=0x5580bb1a7ba8 <_PyRuntime+32904>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:878
+#49 0x00005580bae7a581 in import_find_and_load (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, abs_name=0x7fba686eddb0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1748
+#50 PyImport_ImportModuleLevelObject (name=name
+entry=0x7fba686eddb0, globals=<optimized out>, locals=locals
+entry=0x7fba686e1480, fromlist=fromlist
+entry=0x5580bb18ac00 <_Py_NoneStruct>, level=0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1847
+#51 0x00005580bae3c199 in import_name (tstate=<optimized out>, frame=0x7fba68f2a588, name=0x7fba686eddb0, fromlist=0x5580bb18ac00 <_Py_NoneStruct>, level=0x5580bb19fe68 <_PyRuntime+840>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7422
+#52 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fba68f2a588, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:3946
+#53 0x00005580baef2035 in _PyEval_EvalFrame (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, frame=0x7fba68f2a588, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#54 _PyEval_Vector (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, func=func
+entry=0x7fba5c82d6c0, locals=locals
+entry=0x7fba686e1480, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#55 0x00005580baef177d in PyEval_EvalCode (co=co
+entry=0x5580bb7fe350, globals=globals
+entry=0x7fba686e1480, locals=locals
+entry=0x7fba686e1480) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+#56 0x00005580baf08b5d in builtin_exec_impl (module=<optimized out>, source=0x5580bb7fe350, globals=0x7fba686e1480, locals=0x7fba686e1480, closure=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/bltinmodule.c:1077
+#57 builtin_exec (module=<optimized out>, args=<optimized out>, nargs=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/clinic/bltinmodule.c.h:465
+#58 0x00005580bae424ff in cfunction_vectorcall_FASTCALL_KEYWORDS (func=0x7fba68b44f90, args=0x7fba68714118, nargsf=<optimized out>, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/cpython/methodobject.h:52
+#59 0x00005580bae3e275 in do_call_core (tstate=<optimized out>, func=0x7fba68b44f90, callargs=0x7fba68714100, kwdict=0x7fba6896dbc0, use_tracing=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7321
+#60 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fba68f2a290, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+#61 0x00005580bae5c055 in _PyEval_EvalFrame (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, frame=0x7fba68f2a290, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#62 _PyEval_Vector (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, func=0x7fba68b0bce0, locals=0x0, args=0x7fffe92e1f70, argcount=2, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#63 _PyFunction_Vectorcall (func=0x7fba68b0bce0, stack=0x7fffe92e1f70, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:393
+#64 0x00005580bae4a9f6 in _PyObject_VectorcallTstate (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, callable=0x7fba68b0bce0, args=0x7fffe92e1f70, nargsf=2, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_call.h:92
+#65 object_vacall (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, base=base
+entry=0x0, callable=0x7fba68b0bce0, vargs=0x7fffe92e2000) at /usr/local/src/conda/python-3.11.14/Objects/call.c:819
+#66 0x00005580bae7aad8 in PyObject_CallMethodObjArgs (obj=0x0, name=name
+entry=0x5580bb1a7ba8 <_PyRuntime+32904>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:878
+#67 0x00005580bae7a581 in import_find_and_load (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, abs_name=0x7fba6896e2f0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1748
+#68 PyImport_ImportModuleLevelObject (name=name
+entry=0x7fba6896e2f0, globals=<optimized out>, locals=locals
+entry=0x5580bb18ac00 <_Py_NoneStruct>, fromlist=fromlist
+entry=0x5580bb18ac00 <_Py_NoneStruct>, level=0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1847
+#69 0x00005580bae3c199 in import_name (tstate=<optimized out>, frame=0x7fba68f2a098, name=0x7fba6896e2f0, fromlist=0x5580bb18ac00 <_Py_NoneStruct>, level=0x5580bb19fe68 <_PyRuntime+840>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7422
+#70 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fba68f2a020, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:3946
+#71 0x00005580baef2035 in _PyEval_EvalFrame (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, frame=0x7fba68f2a020, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#72 _PyEval_Vector (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, func=func
+entry=0x7fba68b544a0, locals=locals
+entry=0x7fba6895cd40, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#73 0x00005580baef177d in PyEval_EvalCode (co=co
+entry=0x7fba68aff630, globals=globals
+entry=0x7fba6895cd40, locals=locals
+entry=0x7fba6895cd40) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+#74 0x00005580baf0f20a in run_eval_code_obj (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, co=co
+entry=0x7fba68aff630, globals=globals
+entry=0x7fba6895cd40, locals=locals
+entry=0x7fba6895cd40) at /usr/local/src/conda/python-3.11.14/Python/pythonrun.c:1741
+#75 0x00005580baf0af03 in run_mod (mod=mod
+entry=0x5580bb3ee6b0, filename=filename
+entry=0x7fba689a5570, globals=globals
+entry=0x7fba6895cd40, locals=locals
+entry=0x7fba6895cd40, flags=flags
+entry=0x7fffe92e2568, arena=arena
+entry=0x7fba689a3490) at /usr/local/src/conda/python-3.11.14/Python/pythonrun.c:1762
+#76 0x00005580baf207c0 in pyrun_file (fp=fp
+entry=0x5580bb20b370, filename=filename
+entry=0x7fba689a5570, start=start
+entry=257, globals=globals
+entry=0x7fba6895cd40, locals=locals
+entry=0x7fba6895cd40, closeit=closeit
+entry=1, flags=0x7fffe92e2568) at /usr/local/src/conda/python-3.11.14/Python/pythonrun.c:1657
+#77 0x00005580baf2014a in _PyRun_SimpleFileObject (fp=0x5580bb20b370, filename=0x7fba689a5570, closeit=1, flags=0x7fffe92e2568) at /usr/local/src/conda/python-3.11.14/Python/pythonrun.c:440
+#78 0x00005580baf1ff24 in _PyRun_AnyFileObject (fp=0x5580bb20b370, filename=filename
+entry=0x7fba689a5570, closeit=closeit
+entry=1, flags=flags
+entry=0x7fffe92e2568) at /usr/local/src/conda/python-3.11.14/Python/pythonrun.c:79
+#79 0x00005580baf1a261 in pymain_run_file_obj (program_name=0x7fba6892d8b0, filename=0x7fba689a5570, skip_source_first_line=0) at /usr/local/src/conda/python-3.11.14/Modules/main.c:360
+#80 pymain_run_file (config=0x5580bb1ae520 <_PyRuntime+59904>) at /usr/local/src/conda/python-3.11.14/Modules/main.c:379
+#81 pymain_run_python (exitcode=0x7fffe92e2560) at /usr/local/src/conda/python-3.11.14/Modules/main.c:605
+#82 Py_RunMain () at /usr/local/src/conda/python-3.11.14/Modules/main.c:684
+#83 0x00005580baee1667 in Py_BytesMain (argc=<optimized out>, argv=<optimized out>) at /usr/local/src/conda/python-3.11.14/Modules/main.c:738
+#84 0x00007fba68c54eec in __libc_start_call_main () from /lib64/libc.so.6
+#85 0x00007fba68c54fb5 in __libc_start_main_impl () from /lib64/libc.so.6
+#86 0x00005580baee14f9 in _start ()
+===========================================================
+
+
+The lines below might hint at the cause of the crash. If you see question
+marks as part of the stack trace, try to recompile with debugging information
+enabled and export CLING_DEBUG=1 environment variable before running.
+You may get help by asking at the ROOT forum https://root.cern/forum
+Only if you are really convinced it is a bug in ROOT then please submit a
+report at https://root.cern/bugs Please post the ENTIRE stack trace
+from above as an attachment in addition to anything else
+that might help us fixing this issue.
+===========================================================
+#5  0x00007fba57b3ccc2 in llvm::vfs::OverlayFileSystem::pushOverlay(llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem>) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#6  0x00007fba5367086c in (anonymous namespace)::collectModuleMaps(clang::CompilerInstance&, llvm::SmallVectorImpl<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&) [clone .constprop.0] () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#7  0x00007fba536718b7 in (anonymous namespace)::setupCxxModules(clang::CompilerInstance&) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#8  0x00007fba53676b1b in (anonymous namespace)::createCIImpl(std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer> >, cling::CompilerOptions const&, char const*, std::unique_ptr<clang::ASTConsumer, std::default_delete<clang::ASTConsumer> >, std::vector<std::shared_ptr<clang::ModuleFileExtension>, std::allocator<std::shared_ptr<clang::ModuleFileExtension> > > const&, bool, bool) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#9  0x00007fba53678362 in cling::CIFactory::createCI(llvm::StringRef, cling::InvocationOptions const&, char const*, std::unique_ptr<clang::ASTConsumer, std::default_delete<clang::ASTConsumer> >, std::vector<std::shared_ptr<clang::ModuleFileExtension>, std::allocator<std::shared_ptr<clang::ModuleFileExtension> > > const&) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#10 0x00007fba53741c10 in cling::IncrementalParser::IncrementalParser(cling::Interpreter*, char const*, std::vector<std::shared_ptr<clang::ModuleFileExtension>, std::allocator<std::shared_ptr<clang::ModuleFileExtension> > > const&) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#11 0x00007fba536c05b1 in cling::Interpreter::Interpreter(int, char const* const*, char const*, std::vector<std::shared_ptr<clang::ModuleFileExtension>, std::allocator<std::shared_ptr<clang::ModuleFileExtension> > > const&, void*, bool, cling::Interpreter const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#12 0x00007fba5360c258 in TCling::TCling(char const*, char const*, char const* const*, void*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#13 0x00007fba5360dba5 in CreateInterpreter () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libCling.so
+#14 0x00007fba5c3ad063 in TROOT::InitInterpreter() () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#15 0x00007fba5c3ad550 in ROOT::Internal::GetROOT2() () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#16 0x00007fba5c8c0007 in __static_initialization_and_destruction_0(int, int) [clone .constprop.0] () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libcppyy_backend3_11.so.6.28
+#17 0x00007fba68f3d83e in call_init () from /lib64/ld-linux-x86-64.so.2
+#18 0x00007fba68f3d934 in _dl_init () from /lib64/ld-linux-x86-64.so.2
+#19 0x00007fba68f39b86 in _dl_catch_exception () from /lib64/ld-linux-x86-64.so.2
+#20 0x00007fba68f4446e in dl_open_worker () from /lib64/ld-linux-x86-64.so.2
+#21 0x00007fba68f39af9 in _dl_catch_exception () from /lib64/ld-linux-x86-64.so.2
+#22 0x00007fba68f44838 in _dl_open () from /lib64/ld-linux-x86-64.so.2
+#23 0x00007fba68cb6358 in dlopen_doit () from /lib64/libc.so.6
+#24 0x00007fba68f39af9 in _dl_catch_exception () from /lib64/ld-linux-x86-64.so.2
+#25 0x00007fba68f39c2f in _dl_catch_error () from /lib64/ld-linux-x86-64.so.2
+#26 0x00007fba68cb5e17 in _dlerror_run () from /lib64/libc.so.6
+#27 0x00007fba68cb6419 in dlopen
+GLIBC_2.2.5 () from /lib64/libc.so.6
+#28 0x00005580baf1e36a in _PyImport_FindSharedFuncptr (prefix=prefix
+entry=0x5580baf8018d "PyInit", shortname=shortname
+entry=0x7fba5c8355b0 "libcppyy3_11", pathname=pathname
+entry=0x7fba5c8481d0 "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/libcppyy3_11.so", fp=fp
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/dynload_shlib.c:80
+#29 0x00005580baf1cbb1 in _PyImport_LoadDynamicModuleWithSpec (spec=0x7fba5c841050, fp=0x0) at /usr/local/src/conda/python-3.11.14/Python/importdl.c:139
+#30 _imp_create_dynamic_impl (module=<optimized out>, spec=0x7fba5c841050, file=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/import.c:2397
+#31 _imp_create_dynamic (module=<optimized out>, args=<optimized out>, nargs=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/clinic/import.c.h:446
+#32 0x00005580bae529c3 in cfunction_vectorcall_FASTCALL (func=0x7fba68b46840, args=0x7fba5c8353d8, nargsf=1, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/methodobject.c:427
+#33 0x00005580bae3e275 in do_call_core (tstate=<optimized out>, func=0x7fba68b46840, callargs=0x7fba5c8353c0, kwdict=0x7fba5d18ce40, use_tracing=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7321
+#34 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fba68f2a8e8, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+#35 0x00005580baef2035 in _PyEval_EvalFrame (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, frame=0x7fba68f2a8e8, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#36 _PyEval_Vector (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, func=func
+entry=0x7fba5c82f9c0, locals=locals
+entry=0x7fba5c827b40, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#37 0x00005580baef177d in PyEval_EvalCode (co=co
+entry=0x5580bb80bf10, globals=globals
+entry=0x7fba5c827b40, locals=locals
+entry=0x7fba5c827b40) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+#38 0x00005580baf08b5d in builtin_exec_impl (module=<optimized out>, source=0x5580bb80bf10, globals=0x7fba5c827b40, locals=0x7fba5c827b40, closure=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/bltinmodule.c:1077
+#39 builtin_exec (module=<optimized out>, args=<optimized out>, nargs=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/clinic/bltinmodule.c.h:465
+#40 0x00005580bae424ff in cfunction_vectorcall_FASTCALL_KEYWORDS (func=0x7fba68b44f90, args=0x7fba5c827e58, nargsf=<optimized out>, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/cpython/methodobject.h:52
+#41 0x00005580bae3e275 in do_call_core (tstate=<optimized out>, func=0x7fba68b44f90, callargs=0x7fba5c827e40, kwdict=0x7fba5c827a80, use_tracing=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7321
+#42 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fba68f2a5f0, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+#43 0x00005580bae5c055 in _PyEval_EvalFrame (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, frame=0x7fba68f2a5f0, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#44 _PyEval_Vector (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, func=0x7fba68b0bce0, locals=0x0, args=0x7fffe92e1820, argcount=2, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#45 _PyFunction_Vectorcall (func=0x7fba68b0bce0, stack=0x7fffe92e1820, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:393
+#46 0x00005580bae4a9f6 in _PyObject_VectorcallTstate (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, callable=0x7fba68b0bce0, args=0x7fffe92e1820, nargsf=2, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_call.h:92
+#47 object_vacall (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, base=base
+entry=0x0, callable=0x7fba68b0bce0, vargs=0x7fffe92e18b0) at /usr/local/src/conda/python-3.11.14/Objects/call.c:819
+#48 0x00005580bae7aad8 in PyObject_CallMethodObjArgs (obj=0x0, name=name
+entry=0x5580bb1a7ba8 <_PyRuntime+32904>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:878
+#49 0x00005580bae7a581 in import_find_and_load (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, abs_name=0x7fba686eddb0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1748
+#50 PyImport_ImportModuleLevelObject (name=name
+entry=0x7fba686eddb0, globals=<optimized out>, locals=locals
+entry=0x7fba686e1480, fromlist=fromlist
+entry=0x5580bb18ac00 <_Py_NoneStruct>, level=0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1847
+#51 0x00005580bae3c199 in import_name (tstate=<optimized out>, frame=0x7fba68f2a588, name=0x7fba686eddb0, fromlist=0x5580bb18ac00 <_Py_NoneStruct>, level=0x5580bb19fe68 <_PyRuntime+840>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7422
+#52 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fba68f2a588, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:3946
+#53 0x00005580baef2035 in _PyEval_EvalFrame (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, frame=0x7fba68f2a588, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#54 _PyEval_Vector (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, func=func
+entry=0x7fba5c82d6c0, locals=locals
+entry=0x7fba686e1480, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#55 0x00005580baef177d in PyEval_EvalCode (co=co
+entry=0x5580bb7fe350, globals=globals
+entry=0x7fba686e1480, locals=locals
+entry=0x7fba686e1480) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+#56 0x00005580baf08b5d in builtin_exec_impl (module=<optimized out>, source=0x5580bb7fe350, globals=0x7fba686e1480, locals=0x7fba686e1480, closure=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/bltinmodule.c:1077
+#57 builtin_exec (module=<optimized out>, args=<optimized out>, nargs=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/clinic/bltinmodule.c.h:465
+#58 0x00005580bae424ff in cfunction_vectorcall_FASTCALL_KEYWORDS (func=0x7fba68b44f90, args=0x7fba68714118, nargsf=<optimized out>, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/cpython/methodobject.h:52
+#59 0x00005580bae3e275 in do_call_core (tstate=<optimized out>, func=0x7fba68b44f90, callargs=0x7fba68714100, kwdict=0x7fba6896dbc0, use_tracing=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7321
+#60 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fba68f2a290, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:5376
+#61 0x00005580bae5c055 in _PyEval_EvalFrame (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, frame=0x7fba68f2a290, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#62 _PyEval_Vector (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, func=0x7fba68b0bce0, locals=0x0, args=0x7fffe92e1f70, argcount=2, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#63 _PyFunction_Vectorcall (func=0x7fba68b0bce0, stack=0x7fffe92e1f70, nargsf=<optimized out>, kwnames=<optimized out>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:393
+#64 0x00005580bae4a9f6 in _PyObject_VectorcallTstate (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, callable=0x7fba68b0bce0, args=0x7fffe92e1f70, nargsf=2, kwnames=0x0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_call.h:92
+#65 object_vacall (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, base=base
+entry=0x0, callable=0x7fba68b0bce0, vargs=0x7fffe92e2000) at /usr/local/src/conda/python-3.11.14/Objects/call.c:819
+#66 0x00005580bae7aad8 in PyObject_CallMethodObjArgs (obj=0x0, name=name
+entry=0x5580bb1a7ba8 <_PyRuntime+32904>) at /usr/local/src/conda/python-3.11.14/Objects/call.c:878
+#67 0x00005580bae7a581 in import_find_and_load (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, abs_name=0x7fba6896e2f0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1748
+#68 PyImport_ImportModuleLevelObject (name=name
+entry=0x7fba6896e2f0, globals=<optimized out>, locals=locals
+entry=0x5580bb18ac00 <_Py_NoneStruct>, fromlist=fromlist
+entry=0x5580bb18ac00 <_Py_NoneStruct>, level=0) at /usr/local/src/conda/python-3.11.14/Python/import.c:1847
+#69 0x00005580bae3c199 in import_name (tstate=<optimized out>, frame=0x7fba68f2a098, name=0x7fba6896e2f0, fromlist=0x5580bb18ac00 <_Py_NoneStruct>, level=0x5580bb19fe68 <_PyRuntime+840>) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:7422
+#70 _PyEval_EvalFrameDefault (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, frame=<optimized out>, frame
+entry=0x7fba68f2a020, throwflag=throwflag
+entry=0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:3946
+#71 0x00005580baef2035 in _PyEval_EvalFrame (tstate=0x5580bb1c84d8 <_PyRuntime+166328>, frame=0x7fba68f2a020, throwflag=0) at /usr/local/src/conda/python-3.11.14/Include/internal/pycore_ceval.h:73
+#72 _PyEval_Vector (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, func=func
+entry=0x7fba68b544a0, locals=locals
+entry=0x7fba6895cd40, args=args
+entry=0x0, argcount=argcount
+entry=0, kwnames=kwnames
+entry=0x0) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:6434
+#73 0x00005580baef177d in PyEval_EvalCode (co=co
+entry=0x7fba68aff630, globals=globals
+entry=0x7fba6895cd40, locals=locals
+entry=0x7fba6895cd40) at /usr/local/src/conda/python-3.11.14/Python/ceval.c:1148
+#74 0x00005580baf0f20a in run_eval_code_obj (tstate=tstate
+entry=0x5580bb1c84d8 <_PyRuntime+166328>, co=co
+entry=0x7fba68aff630, globals=globals
+entry=0x7fba6895cd40, locals=locals
+entry=0x7fba6895cd40) at /usr/local/src/conda/python-3.11.14/Python/pythonrun.c:1741
+#75 0x00005580baf0af03 in run_mod (mod=mod
+entry=0x5580bb3ee6b0, filename=filename
+entry=0x7fba689a5570, globals=globals
+entry=0x7fba6895cd40, locals=locals
+entry=0x7fba6895cd40, flags=flags
+entry=0x7fffe92e2568, arena=arena
+entry=0x7fba689a3490) at /usr/local/src/conda/python-3.11.14/Python/pythonrun.c:1762
+#76 0x00005580baf207c0 in pyrun_file (fp=fp
+entry=0x5580bb20b370, filename=filename
+entry=0x7fba689a5570, start=start
+entry=257, globals=globals
+entry=0x7fba6895cd40, locals=locals
+entry=0x7fba6895cd40, closeit=closeit
+entry=1, flags=0x7fffe92e2568) at /usr/local/src/conda/python-3.11.14/Python/pythonrun.c:1657
+#77 0x00005580baf2014a in _PyRun_SimpleFileObject (fp=0x5580bb20b370, filename=0x7fba689a5570, closeit=1, flags=0x7fffe92e2568) at /usr/local/src/conda/python-3.11.14/Python/pythonrun.c:440
+#78 0x00005580baf1ff24 in _PyRun_AnyFileObject (fp=0x5580bb20b370, filename=filename
+entry=0x7fba689a5570, closeit=closeit
+entry=1, flags=flags
+entry=0x7fffe92e2568) at /usr/local/src/conda/python-3.11.14/Python/pythonrun.c:79
+#79 0x00005580baf1a261 in pymain_run_file_obj (program_name=0x7fba6892d8b0, filename=0x7fba689a5570, skip_source_first_line=0) at /usr/local/src/conda/python-3.11.14/Modules/main.c:360
+#80 pymain_run_file (config=0x5580bb1ae520 <_PyRuntime+59904>) at /usr/local/src/conda/python-3.11.14/Modules/main.c:379
+#81 pymain_run_python (exitcode=0x7fffe92e2560) at /usr/local/src/conda/python-3.11.14/Modules/main.c:605
+#82 Py_RunMain () at /usr/local/src/conda/python-3.11.14/Modules/main.c:684
+#83 0x00005580baee1667 in Py_BytesMain (argc=<optimized out>, argv=<optimized out>) at /usr/local/src/conda/python-3.11.14/Modules/main.c:738
+#84 0x00007fba68c54eec in __libc_start_call_main () from /lib64/libc.so.6
+#85 0x00007fba68c54fb5 in __libc_start_main_impl () from /lib64/libc.so.6
+#86 0x00005580baee14f9 in _start ()
+===========================================================
+
+
+bash: line 1: 2001209 Segmentation fault      OMP_NUM_THREADS=1 nice -n 19 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 -B "$f" /pscratch/sd/j/josephrb/oofvc-20261126-r3/stage/runEventLoopOmniFold_MEFHC.root

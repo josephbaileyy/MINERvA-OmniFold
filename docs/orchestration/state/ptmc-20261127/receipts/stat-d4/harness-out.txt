@@ -1,0 +1,20 @@
+ok   complete: rc 0
+ok   complete: 604 present
+ok   complete: 903 c2_ entries listed
+ok   complete: non-c2 units not listed
+ok   complete: 302 inputs listed
+ok   complete: a file's atime unchanged
+ok   complete: nothing written under the root
+ok   gaps: rc 0
+ok   gaps: 3 missing
+ok   gaps: a symlink counts as missing
+ok   gaps: the symlink is listed as l
+ok   absent: rc 0
+ok   absent: ABSENT printed
+ok   absent: 604 missing
+ok   symlinked units: rc 7
+ok   symlinked units: STOP printed
+ok   symlinked units: nothing listed
+ok   wrong user: STOP
+ok   file for dir: STOP
+pass 19 fail 0
