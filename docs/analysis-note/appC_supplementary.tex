@@ -222,6 +222,28 @@ The sixteen-cell generator distances are sensitive to the off-diagonal flux cova
   \label{fig:fived16-modes}
 \end{figure}
 
+\paragraph{Generator distances.} Table~\ref{tab:sixteen-cell-model-distances} summarizes the differences as quadratic distances. See Sec.~\ref{sec:sixteen-cell-closure-tunes} for the limits of the covariance used here. For the rate-and-shape comparison the residual is $\boldsymbol{f}-\boldsymbol{g}$, with metric given by the inverse of $\CrepFiveD+V_g$, where $V_g$ is the prediction's diagonal finite-sample covariance. The shape comparison uses unit-normalized cell fractions. Normalizing reduces the distance substantially for GiBUU on its eight-cell domain and more modestly for NuWro. For the two GENIE predictions and MINERvA Tune v1, large distances persist after normalization. Of the predictions evaluated over all sixteen cells, the GENIE configuration without Valencia MEC has the smallest distance for both comparisons, even though the addition improves the agreement in several individual cells.
+
+\begin{table}[htbp]
+  \centering\footnotesize
+  \caption{Descriptive quadratic distances for the generator comparisons. The target is carbon (C) or hydrocarbon (CH). The columns retain the rate and shape together ($\chi^2_{\mathrm{tot}}$) or the shape alone ($\chi^2_{\mathrm{sh}}$). The respective dimensions are \fvval{g-gcv-total-ndf} and \fvval{g-gcv-shape_only-ndf} for the full set of cells and \fvval{g-gibuu-total-ndf} and \fvval{g-gibuu-shape_only-ndf} for the GiBUU subset.}
+  \label{tab:sixteen-cell-model-distances}
+  \label{tab:fived16-gen}
+  \begin{tabular}{@{}llrr@{}}
+    \toprule
+    Prediction & Target & Rate and shape & Shape only \\
+    \midrule
+    GENIE 2.12.10 & CH & \fvval{g-gcv-total-chi2} & \fvval{g-gcv-shape_only-chi2} \\
+    GENIE + Valencia MEC & CH & \fvval{g-gmec-total-chi2} & \fvval{g-gmec-shape_only-chi2} \\
+    NuWro 21.09 & C & \fvval{g-nuwro-carbon-total-chi2} & \fvval{g-nuwro-carbon-shape_only-chi2} \\
+    \fvval{label-tune} & CH & \fvval{g-tune-total-chi2} & \fvval{g-tune-shape_only-chi2} \\
+    GiBUU 2019 (8 cells) & C & \fvval{g-gibuu-carbon-total-chi2} & \fvval{g-gibuu-carbon-shape_only-chi2} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The distances can change substantially with the covariance. Omitting the run-period term raises the rate-and-shape distance for NuWro from \fvval{g-nuwro-carbon-total-chi2int} to \fvval{g-nuwro-carbon-total-chi2int-nopl}.
+
 \subsection{Bias, prior dependence, and numerical stability}
 \label{app:bias-prior-stability}
 
