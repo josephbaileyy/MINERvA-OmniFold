@@ -1,0 +1,51 @@
+test_a_read_that_moves_atime_is_caught (__main__.Fetch.test_a_read_that_moves_atime_is_caught) ... ok
+test_bad_argv_refuses (__main__.Fetch.test_bad_argv_refuses) ... ok
+test_central_sha_mismatch_refuses (__main__.Fetch.test_central_sha_mismatch_refuses) ... ok
+test_done_sha_mismatch_refuses (__main__.Fetch.test_done_sha_mismatch_refuses) ... /Users/josephbailey/c2eff-wt/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127/test_c2_fetch.py:227: ResourceWarning: unclosed file <_io.TextIOWrapper name='/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/c2eff-test-clybl2lg/units/c2_replica_b9.done' mode='r' encoding='UTF-8'>
+  d = json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/c2eff-wt/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127/test_c2_fetch.py:229: ResourceWarning: unclosed file <_io.TextIOWrapper name='/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/c2eff-test-clybl2lg/units/c2_replica_b9.done' mode='w' encoding='UTF-8'>
+  open(p, "w").write(json.dumps(d))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_duplicate_member_refuses (__main__.Fetch.test_duplicate_member_refuses) ... ok
+test_empty_file_refuses (__main__.Fetch.test_empty_file_refuses) ... ok
+test_existing_files_dir_refuses (__main__.Fetch.test_existing_files_dir_refuses) ... ok
+test_failed_done_marker_refuses (__main__.Fetch.test_failed_done_marker_refuses) ... /Users/josephbailey/c2eff-wt/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127/test_c2_fetch.py:217: ResourceWarning: unclosed file <_io.TextIOWrapper name='/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/c2eff-test-0jvexema/units/c2_replica_b42.done' mode='r' encoding='UTF-8'>
+  d = json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/c2eff-wt/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127/test_c2_fetch.py:219: ResourceWarning: unclosed file <_io.TextIOWrapper name='/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/c2eff-test-0jvexema/units/c2_replica_b42.done' mode='w' encoding='UTF-8'>
+  open(p, "w").write(json.dumps(d))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_good_tree_fetches_and_verifies (__main__.Fetch.test_good_tree_fetches_and_verifies) ... ok
+test_listing_size_mismatch_refuses (__main__.Fetch.test_listing_size_mismatch_refuses) ... ok
+test_missing_file_refuses_before_any_tar (__main__.Fetch.test_missing_file_refuses_before_any_tar) ... ok
+test_missing_manifest_refuses (__main__.Fetch.test_missing_manifest_refuses) ... ok
+test_moved_atime_refuses (__main__.Fetch.test_moved_atime_refuses) ... ok
+test_no_o_noatime_refuses (__main__.Fetch.test_no_o_noatime_refuses) ... ok
+test_nonfinite_xsec_refuses (__main__.Fetch.test_nonfinite_xsec_refuses) ... /Users/josephbailey/c2eff-wt/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127/test_c2_fetch.py:270: ResourceWarning: unclosed file <_io.BufferedWriter name='/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/c2eff-test-nop97wlt/units/c2_replica_b4.npz'>
+  open(os.path.join(self.t.units, n + ".npz"), "wb").write(b)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/c2eff-wt/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127/test_c2_fetch.py:271: ResourceWarning: unclosed file <_io.TextIOWrapper name='/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/c2eff-test-nop97wlt/units/c2_replica_b4.done' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.t.units, n + ".done"), "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_symlink_refuses (__main__.Fetch.test_symlink_refuses) ... ok
+test_tampered_member_refuses (__main__.Fetch.test_tampered_member_refuses) ... ok
+test_unexpected_member_refuses (__main__.Fetch.test_unexpected_member_refuses) ... ok
+test_wrong_ks_refuses (__main__.Fetch.test_wrong_ks_refuses) ... /Users/josephbailey/c2eff-wt/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127/test_c2_fetch.py:255: ResourceWarning: unclosed file <_io.BufferedWriter name='/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/c2eff-test-gez37d5o/units/c2_replica_b3.npz'>
+  open(os.path.join(self.t.units, n + ".npz"), "wb").write(b)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/c2eff-wt/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127/test_c2_fetch.py:256: ResourceWarning: unclosed file <_io.TextIOWrapper name='/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/c2eff-test-gez37d5o/units/c2_replica_b3.done' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.t.units, n + ".done"), "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_check_only_passes_local_gates_and_never_connects (__main__.Wrapper.test_check_only_passes_local_gates_and_never_connects) ... ok
+test_tampered_helper_refuses (__main__.Wrapper.test_tampered_helper_refuses) ... ok
+test_unknown_mode_refuses (__main__.Wrapper.test_unknown_mode_refuses) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 53.921s
+
+OK
