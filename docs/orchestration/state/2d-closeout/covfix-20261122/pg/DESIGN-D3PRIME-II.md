@@ -1,9 +1,14 @@
-# D3′(ii) on gevgen's flux path: a proposed replacement (for the director, then Joseph, rev 12)
+# D3′(ii) on gevgen's flux path: the replacement (rev 12)
 
-Status: PROPOSAL. No code has changed. Evidence: B3 run 4's receipt (`install/pg-replay-g2111a.py.out`, 3c88ff0e) and
-two read-only diagnostics, `install/b3-diag/b3-run4-diag.out` (1293dd12) and `b3-run4-diag2.out` (1b82fcc7). GENIE
-lines are R-3_04_00 (GENIE-MC/Generator on GitHub). The local copies of GEVGDriver.cxx and GMCJDriver.cxx compare
-byte-equal to the tag, and gEvGen.cxx is ff7bce18.
+**Status: ADOPTED.** Joseph, 2026-11-27: "okay yes I go with the recommendations". He decided after an unanchored
+codex-school2 read of this note at 6d78f54a. That read's prompt and report were at
+`/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/cx-rev12/{PROMPT.md,report.md}`,
+and are committed verbatim in `decision-read/` (PROMPT.txt d0b1690f, report.txt 3051f613). The adopted design is
+option A, with the director's tightenings (§3), and the STOP retention rule for production and the replay (§4).
+
+Evidence: B3 run 4's receipt (`install/pg-replay-g2111a.py.out`, 3c88ff0e) and two read-only diagnostics,
+`install/b3-diag/b3-run4-diag.out` (1293dd12) and `b3-run4-diag2.out` (1b82fcc7). GENIE lines are R-3_04_00
+(GENIE-MC/Generator on GitHub). The copies used compare byte-equal to the tag, and gEvGen.cxx is ff7bce18.
 
 ## 1. What run 4 showed
 
@@ -48,94 +53,126 @@ from the build environment (Make.include:587). So with a missing spline, gevgen 
 which leaned on the assert. Run 4's rc 0 shows nothing either way: its log is gone.)
 <!-- absence-ok: an inference about what a coverage run's exit status shows, from GENIE's source and the pinned binary; not a claim that a result or study is absent -->
 
-## 3. Proposed replacement for D3′(ii)'s log rule
+## 3. The adopted rule (option A, tightened)
 
-The coverage run stays one event, with the public seed and `argv-check`'s argv. `coverage_problems` changes. The log is
-read as a stream and hashed over its raw bytes, the same bytes deleted.json hashes. Records are parsed whole,
-prefix line included, and a payload line that is not inside its own record counts as damage.
+**The messenger.** Two pinned lines of Messenger_laconic.xml are raised to DEBUG: GEVGDriver (:89) and XSecSplLst
+(:201). Every other stream keeps its laconic level, `gevgen` included (:219, WARN). `MESSENGER_LINE` becomes those two
+replacements, and `MESSENGER_SHA256` becomes the new file's hash.
 
-**Scope.** These rules certify the bootstrap: the per-driver sum splines that GMCJDriver builds in `Configure`. Event
-time (interaction selection by `PhysInteractionSelector`) is not in the staged sources, and the log does not certify
-it.
+**Records.** log4cpp's BasicLayout writes each LOG message as one record. The first line is
+`<seconds> <PRIORITY> <stream> : [n] <file::function (line)> : <text>`, or `[s] <function (line)> : ` for SLOG
+(Messenger.h:84-99). Each `\n` in the message starts a continuation line. The parser splits the log into records at
+these prefix lines. It reads the log as a stream and hashes its raw bytes. The prefix form is confirmed only on real
+bytes; see the validation below.
 
-**Option A, the stronger one (recommended): raise XSecSplLst to DEBUG as well.** The messenger replaces two pinned
-lines instead of one (:89 and :201), and its pin MESSENGER_SHA256 moves. Then:
+**Phases**, in the order GMCJDriver::Configure runs them (GMCJDriver.cxx:399-447):
+- **Configure, one per driver.** It opens with GEVGDriver's NOTICE `Configuring event generation driver for initial
+  state: `nu-pdg:<nu>;tgt-pdg:<tgt>;' …` (GEVGDriver.cxx:146-156; InitialState.cxx:408-422). Inside it, `UseSplines`
+  (:524-571) looks up every interaction the driver needs. Each lookup is a `Checking for spline: K in tune: T` and a
+  `Spline found?....Y|N` record (XSecSplineList.cxx:103-104, 115-116). Those keys, in order, are **the driver's
+  required inventory I(d)**. K is `alg_name/config/interaction` (XSecSplineList.cxx:541-545), the same string as the
+  spline XML's `name`.
+- **Summation, one per driver.** It opens with INFO `Creating spline (sum-xsec = f(logE)) in E = [a, b] using N knots`
+  (GEVGDriver.cxx:449-451). It has N knot blocks. Each block opens with DEBUG `Computing the cross section sum` (:378).
+  For each interaction it then holds, in order:
+  - `Compute cross section for interaction: ` + X (:398-399);
+  - `Checking for spline: K …` and `Spline found?....Y`, from `SplineExists` (:407);
+  - `Getting spline: K in tune: T` (XSecSplineList.cxx:135-136). This is logged only inside `GetSpline`, which
+    XSecSum calls only on the Evaluate branch (GEVGDriver.cxx:408-410);
+  - `Interaction   = X` / `Cross Section *interpolated* = s cm2` (:419-423).
+  The block closes with INFO `SumXSec(…)*interpolated* = …` (:429-434).
 
-- **P1, positive, per lookup.** For each (nu, target) of F1's argv, the log has exactly 100 complete knot blocks. A
-  block runs from `Computing the cross section sum` to its `SumXSec(…)*interpolated*` line. In each block, every
-  interaction of that pair's driver has, in order: `Checking for spline: K in tune: T`, then `Spline found?....Y`, then
-  the `Interaction   = X` / `Cross Section *interpolated* = ` record. K must be a full key of the reduced spline file
-  (tune, algorithm, config and X), T must be the run's tune, and K's interaction part must equal X. Every block of a
-  pair has the same set of X. A pair is the `nu:`/`tgt:` fields of X, parsed as fields so that an optional `N:` does
-  not matter.
-- **P2.** No `*computed*` record, no `SumXSec(…)*computed*` line, no `Spline found?....N` inside a block.
-- **P3.** The X set for each pair equals the reduced spline's codes for that pair (`spline_codes`). Today's rule only
-  required that X be among them.
-- **P4.** Exactly two `Creating spline (sum-xsec = f(logE))` records. Each is bound to its pair by the blocks that
-  follow it, and no pair has two.
-- **P5, backup absences.** These print at WARN or FATAL under any messenger: `Reverting back to not using splines`,
-  `You haven't loaded any splines`, and `CreateSplines`' three markers (§2, last row). Any of them is a STOP.
+**The rules.** Pairs are F1's argv pairs. The tune is the run's. R_T is the reduced spline file's full keys
+(tune, name).
+- **P1, the inventory.** For each pair there is exactly one Configure phase whose initial state is that pair. Its
+  inventory is non-empty and has no duplicates. Every record is `found?....Y`. Every K's tune is T, its interaction
+  part has `nu:`/`tgt:` equal to the pair, and (T, K) ∈ R_T. The comparison is against the driver's inventory, not
+  against every entry of the reduced XML: the reducer filters by target, so the XML can hold entries no driver
+  needs.
+- **P2, each lookup evaluated.** For each pair there is exactly one Summation phase, with N = 100 (GMCJDriver.cxx:467).
+  It has exactly N blocks, each closed by its `SumXSec(…)*interpolated*`. In each block, the interactions' keys, in
+  order, equal I(d), and each interaction's records appear exactly in the order above. The X of `Compute`, the
+  interaction part of K in all three lookup records, and the X of `Interaction   =` are one string. Each tune field
+  is T. Each label is `*interpolated*`. **Every `Spline found?....Y` inside a block is followed by its
+  `Getting spline` for the same key before the `Interaction` record.**
+- **P3, absences anywhere in the log.** Any of these is a STOP:
+  - `Reverting back to not using splines`, `You haven't loaded any splines`, `Couldn't find spline:`,
+    `No splines for tune`, `Spline requested while CurrentTune not set`, `*computed*`;
+  - `CreateSplines`' three markers (§2);
+  - inside a phase, `Spline found?....N`.
+- **P4, damage.** Inside a Summation phase, every GEVGDriver and XSecSplLst record must be one of the types above,
+  and no line may stand outside a record. Records of other streams there are counted and kept, but not allowed
+  silently: each is a STOP until a real log shows them benign. A log cut off before the last phase closes is
+  truncated and STOPs.
 
-**Option B, the messenger unchanged.** The same rules without the `Checking for spline` and `Spline found?` lines.
-P1 then rests on the driver-wide label. That is weaker in two ways (§2): a later lookup miss with the flag still true
-would read as `*interpolated*`, and nothing binds X to the algorithm and config that the key holds, so P3 can match a
-spline of another config with the same X. The staged bootstrap code shows neither the interaction list nor the spline
-list changing between `UseSplines` and `XSecSum`, so B covers the ordinary case only.
+Scope: the bootstrap, that is the sum splines GMCJDriver builds in Configure. Event time (interaction selection) is
+outside it: lookups after the last Summation phase are not checked.
 
-Either option fails closed on a messenger that is ignored or misconfigured: P1's lines are DEBUG and would be absent.
+**Validating the parser on both tunes before it gates G.** No existing log can serve. Every earlier gevgen ran with
+Messenger_laconic.xml, with GEVGDriver and XSecSplLst at WARN (:89, :201), so none holds these DEBUG records.
+gspl2root's own logs (run_gevgen_v3.sh:116-117) run at the default Messenger.xml levels, also WARN for both streams
+(Messenger.xml:96, :207), so they can confirm only the prefix layout. Plan:
+1. Offline: fixtures built from the format strings above. Then one read-only diagnostic, for the director's GO, of
+   run 4's `run/graphs_G21_11a_00_000.log`: real GENIE records on scratch today. It confirms the BasicLayout prefix
+   and the `[n]`/`[s]` forms on real bytes. This is a read, not a run.
+2. B3 run 5, a public-seed rehearsal, not G, has a coverage run for each tune: slot 1 G21_11a_00_000 and slot 2
+   G18_02a_00_000. On every exit it keeps both coverage logs' recognized records (§4), so a pass can be reviewed
+   too. The rule gates the sealed G only after run 5 has passed on both tunes and the director has read the kept
+   records. If the real format differs, run 5 STOPs on P1, P2 or P4 with the records and the counts of unrecognized
+   records kept. In the replay, keeping on a pass is a deliberate exception for validation; production keeps only
+   on a STOP.
 
-**Cost, to be measured.** At least four physical lines per interaction per knot, six with option A, plus each block's
-two lines. That is 2 pairs × 100 knots × (interactions per driver) of them: a few hundred interactions gives
-10^5–10^6 lines. The check streams the log; today's `cmd_coverage` reads it whole. The next B3 run measures it.
+**Cost, to be measured.** Per pair, 100 knots × (interactions) × about 10 lines. XSecSplLst at DEBUG also logs each
+loaded spline's knots at INFO (XSecSplineList.cxx:461, :486), about 250 × (splines in the reduced file). Together
+that is 10^5–10^6 lines. The check streams the log. Run 5 measures it.
 
-**Tests and mutants, once ruled.** The fixtures come from the format strings above. Near misses for each rule: a
-`*computed*` record; `Spline found?....N`; a key of another config or tune; a missing or duplicate block; a block of
-99 knots; an interleaved stderr line splitting a record; a truncated log; a record of another pair; an X missing
-from the reduced spline, or one too many; three sum splines; each absence marker present; and an ignored messenger.
-Mutants for each rule, red on HEAD for its own reason. The real layout is confirmed only by a real log, so §4 keeps
-one on a STOP, and the first B3 run with the new rule is its validation, on both tunes.
+**Tests and mutants.** Fixtures for each rule and its near misses:
+- a key of another config or tune; a key outside R_T; an R_T entry no driver needs (allowed); a duplicate inventory
+  key;
+- a missing `Getting spline` after `found?....Y`; `found?....N`; a `*computed*` label;
+- 99 or 101 blocks; a block whose keys differ from I(d); a missing or extra Configure or Summation phase; a block
+  out of order; a foreign line splitting a record; a truncated log;
+- each absence marker; the old CreateSplines markers; an ignored messenger (no DEBUG records);
+- both tunes' keys.
+Mutants for each rule, red on HEAD for its own reason.
 
-## 4. Proposed runner change: keep the coverage log on a non-pass
+## 4. On a STOP: delete the public-seed files, keep the recognized records
 
-Today, on every exit (STOP included), B3 deletes the coverage logs with the public-seed event files:
-- pg_replay.sh's D5 trap `delete_events` (pg_replay.sh:94-160, installed at :161; the coverage logs at :120);
-- the runner's `leftovers()` sweep (pg-replay-g2111a.py:292-309, called in `finally`), for any that remain.
+The same in production (pg_generate.sh) and the replay (pg_replay.sh), as the director ruled:
+- **Delete.** Once every writer of a coverage directory has exited (production: after `drain`; the replay: in D5's
+  trap), its public-seed event, status, GHEP and flux files are deleted: `gntp.123456789.ghep.root`,
+  `genie-mcjob-123456789.status` and `input-flux.root`.
+- **Keep the records.** A new `pg_verify coverage-keep --log L --out K` streams gevgen.log once. It writes K (JSON)
+  with the raw log's sha256 and size, every record of the P1–P4 types in order (their texts, which carry interaction
+  codes, keys and cross sections only), and counts of every other record by stream and priority. It keeps no other
+  text, so a GHEP dump at a misconfigured level cannot be kept. Then the raw log is deleted. K is written once
+  (O_EXCL), mode 0600, beside where the log was, as `coverage_kept.json`.
+- **Independence.** Deletion runs even if `coverage-keep` fails, and so does the STOP. A failed keep is reported,
+  and the raw log is still deleted. The trap stays safe to run again.
+- **Production.** pg_generate.sh's EXIT cleanup gains this for each `O/coverage/<tune>` that exists, on any nonzero
+  exit, after `drain`. On a pass, nothing changes: the files are removed after the check (:281), and the check keeps
+  the log's hash.
+- **Replay.** D5's trap does the same for both coverage directories. During validation (run 5) it does so on every
+  exit, pass included (§3). deleted.json records the raw log as deleted, with its sha256 and size, and names K. The
+  runner's `deleted_problems` and `leftovers` accept exactly those `coverage_kept.json` files and nothing else new.
+  On a nonzero driver exit, which bypasses `deleted_problems` (pg-replay-g2111a.py:420-431), a kept-file check runs
+  in `finally` on every path.
 
-That is why run 4's log is gone; only its sha survives.
+## 5. What moves
 
-Proposal, made stricter after the read:
-
-- **When.** A log is kept only when its own coverage run ended and the messenger check passed. The messenger then
-  held `gevgen` at its laconic level (Messenger_laconic.xml:219), so the log has no GHEP dump of the public-seed
-  event. Every other non-pass deletes it as today.
-- **What and where.** Only `gevgen.log`, and only to the two exact paths `R/kept/coverage_slot1/gevgen.log` and
-  `R/kept/coverage_slot2/gevgen.log`. The move is a same-filesystem rename after the writers have ended, with
-  no-follow checks, mode 0600. The event, status, GHEP and flux files are deleted as D5 requires.
-- **Independence.** The D5 deletion and the STOP hold whether or not retention succeeds. A failed rename is reported
-  and the log is then deleted. The trap stays safe to run again.
-- **Checks.** deleted.json lists a kept log as `kept` (sha256 over raw bytes, size). A nonzero driver exit bypasses
-  `deleted_problems()` today (pg-replay-g2111a.py:420-431), so the runner gets its own kept-log check, run in
-  `finally` on every path. It requires only those two paths, regular files, the recorded sha, and nothing else under
-  `run/kept/`. `leftovers()` already ignores `run/kept/`, and the new check closes that gap. A slot whose run never
-  started (an early STOP) is simply absent.
-- **Pass.** Unchanged: the log is deleted after its check and its hash kept (D3′).
-
-**Production's STOP, stated plainly.** pg_generate.sh's coverage `rm -f` (:281) runs only after `coverage-log` passes
-(:279-280). So a STOP there keeps the log, and also the public-seed GHEP, status and flux files in `O/coverage/T`.
-`seedfree` (:96-106) covers only `work/u*/t*`. Its EXIT cleanup (:150-159) withdraws publication. This proposal
-leaves production as it is. Whether production should delete those public-seed files on a STOP is a separate
-question for the director.
-
-## 5. What moves if both are ruled in
-
-- `pg_verify.py` (`coverage_problems`, its docstring) and README-pg.md's D3′ text.
-- `pg_replay.sh` (the trap) and the runner (`leftovers`, `deleted_problems`), then a re-embed.
-- The tests, the mutants, and RULINGS-A2.md.
-- `pg_generate.sh`'s bytes don't change. It runs the new `coverage-log` through `pg_verify.py`, so any pin cov2d
-  holds on `pg_verify.py` moves.
-- `run_gevgen_v3.sh` is unchanged. The messenger is unchanged under option B. Under option A,
-  `MESSENGER_LINE` becomes two lines and `MESSENGER_SHA256` moves, so the coverage trace check's pin moves with it.
-- Then the full verification chain, with PG_MUTANT_JOBS set and recorded, and B3 run 5 on the director's GO.
+- `pg_verify.py`:
+  - `MESSENGER_LINE`, now two lines, and `MESSENGER_SHA256`, now the new file's hash;
+  - `coverage_problems`, replaced by the record parser and P1–P4;
+  - `cmd_coverage`, streaming and hashing raw bytes;
+  - the new `coverage-keep`;
+  - the docstring.
+  The coverage trace check's messenger pin moves with `MESSENGER_SHA256`.
+- `pg_generate.sh`: the EXIT cleanup's coverage step. Its sha moves; cov2d's pin goes through the director.
+- `pg_replay.sh`: D5's trap. The runner: `deleted_problems`, `leftovers` and the kept-file check. Then a re-embed.
+- README-pg.md's D3′ text, the tests, the mutants, RULINGS-A2.md and REHEARSAL-CHECKLIST.md.
+- `run_gevgen_v3.sh` is unchanged; the messenger file is generated, not edited.
+- Then the full verification chain, with PG_MUTANT_JOBS set and recorded. Then the layout diagnostic and B3 run 5,
+  each on the director's GO.
 
 ## 6. Independent read
 
@@ -147,3 +184,7 @@ are taken in above:
 2. correct the marker table, validate against real logs from both tunes, stream the log and hash its raw bytes;
 3. define when retention happens, validate kept files independently, keep D5 and the STOP independent of
    retention, and state what production keeps on a STOP.
+
+The decision read (codex-school2, 2026-11-27, at 6d78f54a, unanchored) recommended option A with the `Getting
+spline` requirement and the driver-inventory comparison. For a production STOP it recommended deleting the public-seed
+files and keeping only recognized records. The director folded both into §3 and §4.
