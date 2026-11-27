@@ -22,16 +22,12 @@ We report the inclusive charged-current $\nu_\mu$ cross section in sixteen cells
 \end{xltabular}
 \endgroup
 
-\subsection{Limitations and their mechanisms}
+\subsection{Limitations of the reported results}
 \label{sec:multidimensional-limitations}
 \label{sec:limitations}
 \label{sec:execsummary-limitations}
 
-Agreement in the total rate and marginal projections leaves recovery of the joint five-observable distribution unresolved. A shift of cross section between hadronic cells within a muon quadrant cancels in the quadrant sum. In the five-axis $W$ injection test, the $W$ marginal met its recovery criterion while the joint $(E_{\mathrm{avail}},W)$ cells in the peak interval fell below their targets.
-
-Recovery of correlations depends on how much information the measured inputs carry about truth. The other inputs fix reconstructed $W$. Separating events in true $W$ therefore relies on the simulated mapping from reconstructed variables to truth. The missed-event correction depends on simulated acceptance. It transfers weights learned on selected events to missed events at the same truth inputs and relies on extrapolation at very low acceptance (Sec.~\ref{sec:omnifold-implementation}).
-
-The sixteen-cell estimates remain sensitive to the starting distribution, the unfolding algorithm, and rounding-level input changes (Secs.~\ref{sec:higher-dimensional-prior}--\ref{sec:higher-dimensional-calibration}).
+The sixteen-cell estimates retain part of the prior at both the GiBUU-like truth and the synthetic $q_3$ tilt, and their cell integrals depend on the unfolding algorithm (Secs.~\ref{sec:higher-dimensional-prior} and~\ref{sec:fived16-ibu}). Coarsening the grid leaves appreciable prior dependence. Rounding-level changes also move the central values beyond the tolerance of the stability test (Sec.~\ref{sec:higher-dimensional-calibration}). The missed-event correction depends on simulated acceptance. It transfers weights learned on selected events to missed events at the same truth inputs and relies on extrapolation at very low acceptance (Sec.~\ref{sec:omnifold-implementation}).
 
 \phantomsection
 \label{sec:usage}\label{sec:limitations-use}
@@ -40,6 +36,8 @@ The covariances propagate the specified variations but are too small for the dev
 \subsection{Implications for multidimensional measurements}
 \label{sec:unfolding-outlook}
 \label{sec:summary}
+
+The main lesson for multidimensional measurements is that unbinned unfolding does not by itself overcome the information limits of the measured inputs. Agreement in the total rate, the muon-quadrant sums, and the marginal projections did not establish recovery of the joint cells. A shift of cross section between hadronic cells within a muon quadrant cancels in the quadrant sum, and in the five-axis $W$ injection test the $W$ marginal met its recovery criterion while the joint $(E_{\mathrm{avail}},W)$ cells in the peak interval fell below their targets. Adding an observable need not add detector information. The other inputs fix reconstructed $W$, so separating events in true $W$ relies on the simulated mapping from reconstructed variables to truth. The dependence on the prior and on the algorithm has identifiable mechanisms. In a study on noise-free samples, the prior retained at the GiBUU hybrid is consistent with a limit set by the weights of the missed events, and at the $q_3$ tilt with a limit set by the representation of the second, truth-level step (Sec.~\ref{sec:fived16-prr}). The sixteen cell integrals also differ from binned iterative Bayesian unfolding on the same inputs by more than the joint variations of the two results explain (Sec.~\ref{sec:fived16-ibu}).
 
 Validation of the reported joint distribution requires demonstrating recovery and uncertainty coverage at the reporting resolution, including tests that vary correlations (Sec.~\ref{sec:closure-interval-diagnostics}). The origins of the run-period step and the 2D shape difference with MINERvA remain unknown. So does the origin of the excess of selected tracks above the reported $p_\parallel$ range (Section~\ref{sec:muon-cross-section-comparison}). The transfer of weights to events missed by the selection still needs validation.
 
