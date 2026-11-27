@@ -14,7 +14,8 @@
 #   slim     geanttw_p3_slim      01:00:00   2 CPUs, 16G     p3_slim.py select, build x3, slim_tparams.py, check,
 #                                                            patchcheck
 #   unf      geanttw_p3_unf_<s>_GEANT_<b>_<i>  00:30:00  128 CPUs, 243840M   Stage C's universe unfold, on a slim
-#   extract  geanttw_p3_extract   00:30:00   2 CPUs, 16G     p3_readout.py extract: the 18 unfolds' cell vectors
+#   extract  geanttw_p3_extract_<pin|all>  00:30:00  2 CPUs, 16G   p3_readout.py extract (pin: the 6 pinned
+#            vectors, then c3, writing run/p3/c3.json; all: the 18 vectors)
 # Every mode:
 # - checks its job name and its Slurm TimeLimit (read from sacct, never squeue) against the mode's;
 # - refuses while any ^(cov2d|t2a|covfix_) job is live, at start and again immediately before its work;
@@ -25,7 +26,7 @@
 set -o pipefail
 MODE="${1:?mode}"; B="${2:?B}"; DEPLOY="${3:?deploy}"; shift 3
 say() { echo "[geanttw-p3] $*" >&2; }
-refuse() { say "REFUSE: $*"; exit 2; }
+stop() { say "REFUSE: $*"; exit 2; }
 CODE="${DEPLOY}/docs/orchestration/state/geanttw-20261124/code"
 UOMNI=/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root
 UOMNI_SIZE=171117087867
@@ -43,6 +44,10 @@ PLAYLISTS=(1A 1B 1C 1D 1E 1F 1G 1L 1M 1N 1O 1P)   # hadd order (sbatch_hadd_MEFH
 if [[ -n "${GEANTTW_TEST_UOMNI:-}" ]]; then   # the tests' only door
   UOMNI="${GEANTTW_TEST_UOMNI}"; UOMNI_SIZE="${GEANTTW_TEST_UOMNI_SIZE:?}"; UPY="${GEANTTW_TEST_PY:-python3}"
   SETUP="${GEANTTW_TEST_SETUP:-${SETUP}}"
+  PROD_SHA="${GEANTTW_TEST_PROD_SHA:-${PROD_SHA}}"; HELPER="${GEANTTW_TEST_HELPER:-${HELPER}}"
+  HELPER_SHA="${GEANTTW_TEST_HELPER_SHA:-${HELPER_SHA}}"; MCFILE="${GEANTTW_TEST_MCFILE:-${MCFILE}}"
+  MCFILE_SHA="${GEANTTW_TEST_MCFILE_SHA:-${MCFILE_SHA}}"; FLUXU="${GEANTTW_TEST_FLUXU:-${FLUXU}}"
+  FLUXU_SHA="${GEANTTW_TEST_FLUXU_SHA:-${FLUXU_SHA}}"
 fi
 
 # --- the mode's job name and limit ---
@@ -50,40 +55,41 @@ case "${MODE}" in
   c2pre)   WANT=geanttw_p2_c2pre; LIMIT=00:30:00; READS_UOMNI=1 ;;
   c2)      WANT=geanttw_p3_c2; LIMIT=01:00:00; READS_UOMNI=1 ;;
   slim)    WANT=geanttw_p3_slim; LIMIT=01:00:00; READS_UOMNI=1 ;;
-  extract) WANT=geanttw_p3_extract; LIMIT=00:30:00; READS_UOMNI=0 ;;
+  extract) WHICH="${1:?pin|all}"; [[ "${WHICH}" =~ ^(pin|all)$ ]] || stop "extract takes pin or all, got '${WHICH}'"
+           WANT="geanttw_p3_extract_${WHICH}"; LIMIT=00:30:00; READS_UOMNI=0 ;;
   unf)     SLIM="${1:?slim pin|pinov|patov}"; UNI="${2:?universe GEANT_<b>:<i>}"
-           [[ "${SLIM}" =~ ^(pin|pinov|patov)$ ]] || refuse "slim '${SLIM}' is not pin, pinov or patov"
-           [[ "${UNI}" =~ ^GEANT_(Neutron|Pion|Proton):[01]$ ]] || refuse "universe '${UNI}' is not GEANT_<b>:<i>"
+           [[ "${SLIM}" =~ ^(pin|pinov|patov)$ ]] || stop "slim '${SLIM}' is not pin, pinov or patov"
+           [[ "${UNI}" =~ ^GEANT_(Neutron|Pion|Proton):[01]$ ]] || stop "universe '${UNI}' is not GEANT_<b>:<i>"
            WANT="geanttw_p3_unf_${SLIM}_${UNI/:/_}"; LIMIT=00:30:00; READS_UOMNI=0 ;;
-  *) refuse "mode '${MODE}' is not c2pre, c2, slim, unf or extract" ;;
+  *) stop "mode '${MODE}' is not c2pre, c2, slim, unf or extract" ;;
 esac
 if [[ -n "${SLURM_JOB_ID:-}" ]]; then
   NAME="${SLURM_JOB_NAME}"
   TL=$(sacct -j "${SLURM_JOB_ID}" -X -n -P -o Timelimit 2>/dev/null | head -1)
 else
-  [[ -n "${GEANTTW_SMOKE:-}" ]] || refuse "not inside a Slurm job"
+  [[ -n "${GEANTTW_SMOKE:-}" ]] || stop "not inside a Slurm job"
   NAME="${GEANTTW_NAME:-}"; TL="${GEANTTW_TIMELIMIT:-}"
 fi
-[[ "${NAME}" == "${WANT}" ]] || refuse "job name '${NAME}' is not '${WANT}'"
-[[ "${TL}" == "${LIMIT}" ]] || refuse "Slurm TimeLimit '${TL}' is not ${LIMIT}"
+[[ "${NAME}" == "${WANT}" ]] || stop "job name '${NAME}' is not '${WANT}'"
+[[ "${TL}" == "${LIMIT}" ]] || stop "Slurm TimeLimit '${TL}' is not ${LIMIT}"
 
 # --- the fence: no live cov2d, t2a or covfix_ job, from sacct ---
 fence() {
   local psv since rc
-  psv=$(mktemp) || refuse "mktemp failed ($1)"
+  psv=$(mktemp) || stop "mktemp failed ($1)"
   since=$(python3 -c 'import datetime; print((datetime.date.today() - datetime.timedelta(14)).isoformat())')
   sacct -X -n -P -S "${since}" -o JobID,JobName,State,ElapsedRaw,NNodes,TimelimitRaw > "${psv}" 2>&1 \
-    || { rm -f "${psv}"; refuse "sacct failed ($1)"; }
+    || { rm -f "${psv}"; stop "sacct failed ($1)"; }
   python3 -I "${CODE}/geanttw_sacct.py" fence --sacct "${psv}" --regex '^(cov2d|t2a|covfix_)' >&2; rc=$?
   rm -f "${psv}"
-  [[ ${rc} -eq 0 ]] || refuse "fenced jobs are live, or sacct is unreadable ($1, rc ${rc})"
+  [[ ${rc} -eq 0 ]] || stop "fenced jobs are live, or sacct is unreadable ($1, rc ${rc})"
 }
 fence "at start"
 
 # --- the deploy's scripts are its committed blobs ---
 for f in c2_check.py p3_slim.py slim_tparams.py p3_readout.py geanttw_sacct.py; do
   [[ "$(sha256sum "${CODE}/${f}" | cut -d' ' -f1)" == "$(git -C "${DEPLOY}" show "HEAD:docs/orchestration/state/geanttw-20261124/code/${f}" | sha256sum | cut -d' ' -f1)" ]] \
-    || refuse "${CODE}/${f} is not the deploy's committed blob"
+    || stop "${CODE}/${f} is not the deploy's committed blob"
 done
 
 uomni_log() {   # cov2d's carried condition: UOMNI's atime and mtime, with UTC, before and after the read
@@ -94,7 +100,7 @@ print('[geanttw-p3] UOMNI %s utc=%s atime_ns=%d mtime_ns=%d size=%d' % (sys.argv
       time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), s.st_atime_ns, s.st_mtime_ns, s.st_size))" "${UOMNI}" "$1" >&2
 }
 if [[ "${READS_UOMNI}" -eq 1 ]]; then
-  [[ "$(stat -c %s "${UOMNI}")" == "${UOMNI_SIZE}" ]] || refuse "UOMNI's size is not ${UOMNI_SIZE} (C1-b)"
+  [[ "$(stat -c %s "${UOMNI}")" == "${UOMNI_SIZE}" ]] || stop "UOMNI's size is not ${UOMNI_SIZE} (C1-b)"
 fi
 
 [[ -n "${GEANTTW_SMOKE:-}" ]] && { echo "[geanttw-p3] smoke: checks passed for ${MODE} (${NAME}, ${TL})"; exit 0; }
@@ -135,25 +141,30 @@ case "${MODE}" in
     case "${SLIM}" in pin) SLIMFILE=slim-pinned.root ;; pinov) SLIMFILE=slim-pinned-override.root ;;
       patov) SLIMFILE=slim-patched-override.root ;; esac
     U_OUT="${P3}/out/${SLIM}/${UNI/:/_}"
-    [[ -e "${U_OUT}/xsec.root" ]] && refuse "${U_OUT}/xsec.root exists"
+    [[ -e "${U_OUT}/xsec.root" ]] && stop "${U_OUT}/xsec.root exists"
     mkdir -p "${U_OUT}" || exit 4
     [[ "$(sha256sum "${SETUP}" | cut -d' ' -f1)" == "$(git -C "${DEPLOY}" show HEAD:setup_salloc_env.sh | sha256sum | cut -d' ' -f1)" ]] \
-      || refuse "${SETUP} is not the deploy's committed setup_salloc_env.sh"
+      || stop "${SETUP} is not the deploy's committed setup_salloc_env.sh"
     source "${SETUP}" >/dev/null 2>&1
     export PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 OMP_NUM_THREADS=64 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \
       NUMEXPR_NUM_THREADS=1
     unset LOKY_MAX_CPU_COUNT
     for pair in "${PROD_SHA}:${DEPLOY}/2d-unfolding/unfold_2d_omnifold_unbinned.py" "${HELPER_SHA}:${HELPER}" \
                 "${MCFILE_SHA}:${MCFILE}" "${FLUXU_SHA}:${FLUXU}"; do
-      echo "${pair%%:*}  ${pair#*:}" | sha256sum -c - >&2 || refuse "${pair#*:} is not its pinned sha256"
+      echo "${pair%%:*}  ${pair#*:}" | sha256sum -c - >&2 || stop "${pair#*:} is not its pinned sha256"
     done
     cd "${DEPLOY}/2d-unfolding" || exit 4
     env -u BASH_ENV -u ENV python3 unfold_2d_omnifold_unbinned.py --omnifile "${P3}/${SLIMFILE}" \
       --flux-universe-file "${FLUXU}" --verbose --mcfile "${MCFILE}" --iters 5 --use-weights --estimator lgbm \
       --bkg-mode purity --out "${U_OUT}/xsec.root" --universe "${UNI}" --seed 42 --branch-select derived; rc=$? ;;
   extract)
+    SL=(pin pinov patov); [[ "${WHICH}" == pin ]] && SL=(pin)
     ( source "${SETUP}" >/dev/null 2>&1; python3 "${CODE}/p3_readout.py" extract --repo "${DEPLOY}" --outs "${P3}/out" \
-      --out "${OUT}/p3_vectors.npz" ) || rc=$? ;;
+      --out "${OUT}/p3_vectors_${WHICH}.npz" --slims "${SL[@]}" ) || rc=$?
+    if [[ ${rc} -eq 0 && "${WHICH}" == pin ]]; then
+      "${UPY}" -I "${CODE}/p3_readout.py" c3 --repo "${DEPLOY}" --vectors "${OUT}/p3_vectors_pin.npz" \
+        --json "${OUT}/c3.json" || rc=$?
+    fi ;;
 esac
 [[ "${READS_UOMNI}" -eq 1 ]] && uomni_log after
 say "${MODE} ${NAME} rc=${rc} end=$(date -u +%FT%TZ)"

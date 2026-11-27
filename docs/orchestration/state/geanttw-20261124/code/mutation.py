@@ -37,12 +37,13 @@ OWNER = {
     "geanttw_evloop.sbatch": "tests/test_shell_scripts.py",
     "geanttw_build.sh": "tests/test_shell_scripts.py",
     "geanttw_connect.sh": "tests/test_shell_scripts.py",
-    "geanttw_remote.sh": "tests/test_shell_scripts.py",
+    "geanttw_remote.sh": ("tests/test_shell_scripts.py", "tests/test_p2p3_steps.py"),
     "p2_limits.py": "tests/test_p2_limits.py",
     "c2_check.py": "tests/test_c2_check.py",
     "p3_slim.py": "tests/test_p3_slim.py",
     "slim_tparams.py": "tests/test_p3_slim.py",
     "p3_readout.py": "tests/test_p3_readout.py",
+    "geanttw_p3.sbatch": "tests/test_p3_sbatch.py",
 }
 PY_OPS = [
     (r"==", "!="), (r"!=", "=="), (r"(?<![<>=!])<(?![<=])", ">="), (r"(?<![<>=!-])>(?![>=])", "<="),
@@ -120,7 +121,8 @@ def run_one(mut):
         os.chmod(p, (HERE / name).stat().st_mode)
         env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
         try:
-            r = subprocess.run([sys.executable, "-m", "pytest", OWNER[name], "-q", "-x", "-p", "no:cacheprovider"],
+            owners = OWNER[name] if isinstance(OWNER[name], tuple) else (OWNER[name],)
+            r = subprocess.run([sys.executable, "-m", "pytest", *owners, "-q", "-x", "-p", "no:cacheprovider"],
                                cwd=work, env=env, capture_output=True, text=True, timeout=TIMEOUT)
             verdict = "SURVIVED" if r.returncode == 0 else "KILLED"
         except subprocess.TimeoutExpired:

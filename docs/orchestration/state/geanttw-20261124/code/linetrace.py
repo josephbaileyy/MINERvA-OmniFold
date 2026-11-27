@@ -7,7 +7,7 @@ Everything runs in a scratch copy of this directory; nothing here is modified.
 
   - Python (dumpcmp.py, p0_check.py, geanttw_sacct.py, geanttw_provenance.py): coverage.py, with `patch = subprocess`, so the tests' `python3 -I` child
     processes are measured too. The report lists every executable line that no test runs.
-  - Shell (geanttw_evloop.sbatch, geanttw_build.sh, geanttw_connect.sh, geanttw_remote.sh): in the copy, one line is inserted after
+  - Shell (geanttw_evloop.sbatch, geanttw_build.sh, geanttw_connect.sh, geanttw_remote.sh, geanttw_p3.sbatch): in the copy, one line is inserted after
     the shebang. It sets a DEBUG trap (with set -T, so functions inherit it) that writes '+<file>:<line>:' to a
     trace file. bash 3.2 on macOS has no BASH_XTRACEFD. Lines are mapped back to the original numbering (minus 1). A shell line counts as executable unless it is blank, a comment, an SBATCH
     header, a heredoc body, the inside of a multi-line quoted string, a continuation line or a case label. The report lists every executable line that never appears in the trace.
@@ -21,8 +21,9 @@ import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-PY = ["dumpcmp.py", "p0_check.py", "geanttw_sacct.py", "geanttw_provenance.py"]
-SH = ["geanttw_evloop.sbatch", "geanttw_build.sh", "geanttw_connect.sh", "geanttw_remote.sh"]
+PY = ["dumpcmp.py", "p0_check.py", "geanttw_sacct.py", "geanttw_provenance.py", "p2_limits.py", "c2_check.py",
+      "p3_slim.py", "slim_tparams.py", "p3_readout.py"]
+SH = ["geanttw_evloop.sbatch", "geanttw_build.sh", "geanttw_connect.sh", "geanttw_remote.sh", "geanttw_p3.sbatch"]
 HEREDOC = re.compile(r"<<-?\s*['\"]?([A-Za-z_]+)['\"]?")
 
 

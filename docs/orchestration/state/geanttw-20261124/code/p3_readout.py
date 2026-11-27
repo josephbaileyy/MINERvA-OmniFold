@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """geanttw P3's readout: C3 and R3 (../DECLARATION.md §4 P3; p2p3/AMENDMENT-P2P3.md A3, D2 ruling (a)).
 
-    python3 p3_readout.py extract --repo REPO --outs P3_OUT --out VECTORS.npz     (cluster, root_6_28: ROOT)
+    python3 p3_readout.py extract --repo REPO --outs P3_OUT --out VECTORS.npz [--slims pin ...]   (cluster, ROOT)
     python3 p3_readout.py c3 --repo REPO --vectors VECTORS.npz --json C3.json      (numpy only)
     python3 p3_readout.py r3 --repo REPO --vectors VECTORS.npz --c3 C3.json --json R3.json
 
@@ -94,7 +94,9 @@ def extract(a):
         raise Unusable("E_U is not S5's")
     cells = s5.Cells()
     vec = {"cells_x": cells.x, "area": cells.area}
-    for s in SLIMS:
+    if not set(a.slims) <= set(SLIMS) or not a.slims:
+        raise Unusable(f"--slims must be among {SLIMS}, got {a.slims}")
+    for s in a.slims:
         for b in BANDS:
             for i in (0, 1):
                 vec[f"{s}:{b}_{i}"] = cells.vec(Path(a.outs) / s / f"GEANT_{b}_{i}" / "xsec.root")
@@ -186,6 +188,7 @@ def main(argv=None):
     e = sub.add_parser("extract")
     for n in ("--repo", "--outs", "--out"):
         e.add_argument(n, required=True)
+    e.add_argument("--slims", nargs="+", default=list(SLIMS))
     c = sub.add_parser("c3")
     for n in ("--repo", "--vectors", "--json"):
         c.add_argument(n, required=True)

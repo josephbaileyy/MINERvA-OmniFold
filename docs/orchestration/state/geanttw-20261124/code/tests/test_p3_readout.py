@@ -150,6 +150,10 @@ def test_extract_uses_s5s_cells(tmp_path):
     assert R.main(["extract", "--repo", str(repo), "--outs", str(tmp_path / "o"), "--out", str(out)]) == 0
     v = np.load(out)
     assert len(v.files) == 2 + 18 and "patov:Proton_1" in v.files
+    out2 = tmp_path / "v2.npz"
+    assert R.main(["extract", "--repo", str(repo), "--outs", str(tmp_path / "o"), "--out", str(out2), "--slims", "pin"]) == 0
+    assert sorted(np.load(out2).files) == sorted(["cells_x", "area"] + [f"pin:{b}_{i}" for b in R.BANDS for i in (0, 1)])
+    assert R.main(["extract", "--repo", str(repo), "--outs", "o", "--out", str(tmp_path / "v3.npz"), "--slims", "pat"]) == 2
 
 
 def test_extract_refuses_another_e_u(tmp_path):

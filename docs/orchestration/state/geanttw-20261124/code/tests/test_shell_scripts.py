@@ -1174,8 +1174,15 @@ class RemoteHarness:
             '[ "$2" = "${TEST_SMOKE_REFUSES:-}" ] && exit 2\n'
             "exit 0\n")
         shutil.copy(HERE / "geanttw_sacct.py", code / "geanttw_sacct.py")
-        for f in ("dumpcmp.py", "geanttw_provenance.py"):
+        for f in ("dumpcmp.py", "geanttw_provenance.py", "c2_check.py", "p3_slim.py", "slim_tparams.py", "p3_readout.py"):
             (code / f).write_text("# stub\n")
+        (code / "geanttw_p3.sbatch").write_text("#!/bin/bash\n# stub\n")
+        (code / "p2_limits.py").write_text(
+            "import os, sys\n"
+            "open(os.environ['TEST_CALLS'], 'a').write('p2_limits ' + ' '.join(sys.argv[1:]) + '\\n')\n"
+            "sys.exit(int(os.environ.get('TEST_LIMITS_RC', '0')))\n")
+        (code / "p2_limits.txt").write_text("".join(f"{pl} 01:00:00\n" for pl in
+                                                    ("1A", "1B", "1C", "1D", "1E", "1F", "1G", "1M", "1N", "1O", "1P")))
         self.s0 = tmp_path / "s0" / "MANIFEST.sha256"   # S0's manifest, which deploy re-hashes
         self.s0.parent.mkdir()
         self.s0.write_bytes(b"S0 manifest bytes\n")
@@ -1945,7 +1952,7 @@ class TestEachRemoteStopIsItsOwn:
     def test_connect_names_each_refusal(self, tmp_path):
         h = RemoteHarness(tmp_path)
         r = h.connect("p2")
-        assert r.returncode == 9 and "REFUSED: step must be deploy, build, p0 or check, got 'p2'" in r.stdout
+        assert r.returncode == 9 and "REFUSED: step must be deploy, build, p0, check, c2pre, p2pilot, p2run, c2, p3slim, p3unf or p3extract, got 'p2'" in r.stdout
         r = h.connect("deploy", m="abc")
         assert r.returncode == 9 and "REFUSED: M 'abc' is not a 40-hex commit" in r.stdout
         r = h.connect("deploy", m="f" * 40)

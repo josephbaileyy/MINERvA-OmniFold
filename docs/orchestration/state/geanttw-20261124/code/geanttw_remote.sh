@@ -111,6 +111,102 @@ fence() {  # fence REGEX LABEL
   [[ ${rc} -eq 0 ]] || stop "the sacct fence ($2) is not clear (rc ${rc})"
 }
 
+# ---- P2-P3 steps (p2p3/AMENDMENT-P2P3.md): each needs its own GO and a fresh cov2d ack --------------------------
+P2_LIMITS="${D}/${CODE_REL}/p2_limits.txt"
+P2_PLS=(1A 1C 1D 1E 1F 1G 1M 1N 1O 1P)   # the pilot playlist 1B runs in p2pilot; 1L is P0's
+SP="${B}/run/p2p3/submissions.log"
+verdict() {   # verdict FILE: the "verdict" of a JSON record, or nothing
+  ${SYSPY} -c 'import json, sys; print(json.load(open(sys.argv[1])).get("verdict", ""))' "$1" 2>/dev/null
+}
+submitted() { [[ -s "${SP}" ]] && grep -q " name=$1 " "${SP}"; }
+submit() {    # submit NAME LIMIT SBATCH_ARGS... : fence, cap gate, sbatch, then one SUBMIT line
+  local name="$1" limit="$2" jid; shift 2
+  submitted "${name}" && stop "${name} was already submitted"
+  fence "${FENCE_RE}" "before ${name}"
+  snapshot "${B}/run/sacct.psv"
+  ${SYSPY} -I "${D}/${CODE_REL}/geanttw_sacct.py" cap --sacct "${B}/run/sacct.psv" --submissions "${SP}" \
+    --name "${name}" --limit "${limit}" || stop "the cap gate refuses ${name}"
+  jid=$(sbatch --parsable --job-name="${name}" --time="${limit}" --output="${B}/run/logs/%x_%j.out" "$@") \
+    || stop "sbatch ${name} failed"
+  echo "SUBMIT id=${jid} name=${name} limit=${limit} utc=$(date -u +%FT%TZ)" | tee -a "${SP}"
+}
+p2_prereqs() {
+  [[ "$(verdict "${B}/run/p0/p0_check.json")" == PASS ]] || stop "P0's check is not PASS"
+  [[ -s "${B}/run/gates/ll5d_atime_post.txt" ]] || stop "no LL5D atime-post record (P0's p0 step)"
+  [[ "$(verdict "${B}/run/p3/c2pre.json")" == PASS ]] || stop "the C2 pre-check is not PASS"
+}
+evloop() {    # evloop PL: sbatch arguments for P2's patched event loop on playlist PL
+  local bin="${B}/prefix-pat/bin/runEventLoopOmniFold"
+  [[ -x "${bin}" ]] || stop "no binary ${bin}"
+  local lim_sha; lim_sha=$(sha256sum "${P2_LIMITS}" | cut -d' ' -f1)
+  echo "${D}/${CODE_REL}/geanttw_evloop.sbatch ${B} pat $1 $(md5sum "${bin}" | cut -d' ' -f1) ${D} ${P2_LIMITS} ${lim_sha}"
+}
+limit_of() { awk -v p="$1" '$1 == p {print $2}' "${P2_LIMITS}"; }
+P3SB="${D}/${CODE_REL}/geanttw_p3.sbatch"
+
+case "${STEP}" in
+c2pre|p2pilot|p2run|c2|p3slim|p3unf|p3extract)
+  ready
+  ack
+  fence "${FENCE_RE}" "cov2d/t2a/covfix_"
+  mkdir -p "${B}/run/p2p3" "${B}/run/logs" || stop "mkdir run dirs"
+  ${SYSPY} -I "${D}/${CODE_REL}/p2_limits.py" --repo "${D}" --check "${P2_LIMITS}" || stop "p2_limits.txt is not the repo's"
+  ;;
+esac
+case "${STEP}" in
+c2pre)
+  [[ "$(verdict "${B}/run/p0/p0_check.json")" == PASS ]] || stop "P0's check is not PASS"
+  submit geanttw_p2_c2pre 00:30:00 -c 2 --mem=16G "${P3SB}" c2pre "${B}" "${D}"
+  exit 0 ;;
+p2pilot)
+  p2_prereqs
+  for v in pilotref pilot; do
+    # shellcheck disable=SC2046
+    submit "geanttw_p2_${v}_1B" "$(limit_of 1B)" $(evloop 1B)
+  done
+  exit 0 ;;
+p2run)
+  p2_prereqs
+  submitted geanttw_p2_pilot_1B && submitted geanttw_p2_pilotref_1B || stop "the pilot pair was not submitted"
+  for pl in "${P2_PLS[@]}"; do
+    # shellcheck disable=SC2046
+    submit "geanttw_p2_${pl}" "$(limit_of "${pl}")" $(evloop "${pl}")
+  done
+  exit 0 ;;
+c2)
+  for pl in "${P2_PLS[@]}" pilotref_1B; do
+    [[ -s "${B}/run/p2/pat/runEventLoopOmniFold_GEANTTW_pat_${pl}.root" ]] || stop "no P2 output for ${pl}"
+  done
+  fence '^geanttw_p2_' "P2 jobs still live"
+  submit geanttw_p3_c2 01:00:00 -c 2 --mem=16G "${P3SB}" c2 "${B}" "${D}"
+  exit 0 ;;
+p3slim)
+  [[ "$(verdict "${B}/run/p3/c2pre.json")" == PASS ]] || stop "the C2 pre-check is not PASS"
+  [[ "$(verdict "${B}/run/p3/c2.json")" == PASS ]] || stop "C2 is not PASS: P3's splice stops"
+  submit geanttw_p3_slim 01:00:00 -c 2 --mem=16G "${P3SB}" slim "${B}" "${D}"
+  exit 0 ;;
+p3unf)
+  case "${ARG}" in pin) slims=(pin) ;; rest) slims=(pinov patov) ;; *) bail "p3unf takes pin or rest, got '${ARG}'" ;; esac
+  for f in slim-pinned slim-pinned-override slim-patched-override; do
+    [[ -s "${B}/p3/${f}.root" ]] || stop "no ${B}/p3/${f}.root"
+  done
+  fence '^geanttw_p3_slim$' "the slim job still live"
+  if [[ "${ARG}" == rest ]]; then
+    [[ "$(verdict "${B}/run/p3/c3.json")" == PASS ]] || stop "C3 is not PASS: no override unfold runs (the director's term 1)"
+  fi
+  for s in "${slims[@]}"; do
+    for u in GEANT_Neutron:0 GEANT_Neutron:1 GEANT_Pion:0 GEANT_Pion:1 GEANT_Proton:0 GEANT_Proton:1; do
+      submit "geanttw_p3_unf_${s}_${u/:/_}" 00:30:00 -c 128 --mem=243840M "${P3SB}" unf "${B}" "${D}" "${s}" "${u}"
+    done
+  done
+  exit 0 ;;
+p3extract)
+  [[ "${ARG}" == pin || "${ARG}" == all ]] || bail "p3extract takes pin or all, got '${ARG}'"
+  fence '^geanttw_p3_unf_' "unfolds still live"
+  submit "geanttw_p3_extract_${ARG}" 00:30:00 -c 2 --mem=16G "${P3SB}" extract "${B}" "${D}" "${ARG}"
+  exit 0 ;;
+esac
+
 case "${STEP}" in
 deploy)
   [[ ! -e "${D}" ]] || bail "${D} exists"
@@ -120,7 +216,8 @@ deploy)
   clean_at_m
   echo "deploy at ${M}: clean"
   (cd "${D}/${CODE_REL}" && sha256sum geanttw_remote.sh geanttw_build.sh geanttw_evloop.sbatch geanttw_sacct.py \
-    geanttw_provenance.py dumpcmp.py p0_check.py S0-src_base.sha256)
+    geanttw_provenance.py dumpcmp.py p0_check.py S0-src_base.sha256 geanttw_p3.sbatch c2_check.py p3_slim.py \
+    slim_tparams.py p3_readout.py p2_limits.txt)
   s0_header
   s0_got=$(s0_hash "${s0_path}") || stop "the O_NOATIME re-hash of ${s0_path} failed"
   [[ "${s0_got}" == "${s0_want}" ]] || stop "${s0_path} is now ${s0_got}, not ${s0_want}: S0 changed since its read"
@@ -209,6 +306,6 @@ EOF
     --json "${B}/run/p0/p0_check.json"; rc=$?
   [[ ${rc} -eq 0 ]] || stop "p0_check.py exited ${rc}"
   ;;
-*) bail "unknown step '${STEP}' (deploy, build, p0, check; P2's steps come with their own binding)" ;;
+*) bail "unknown step '${STEP}' (deploy, build, p0, check, c2pre, p2pilot, p2run, c2, p3slim, p3unf, p3extract)" ;;
 esac
 echo "== geanttw remote ${STEP} rc=0 $(date -u +%FT%TZ)"
