@@ -1,0 +1,10 @@
+This is a MINERvA neutrino cross-section analysis note (OmniFold unfolding). The note source is in docs/analysis-note/. The fake-data studies are under docs/orchestration/state/measurement-paper/5d-community-20261024/fd/, which has readouts of the bias against alternative generator truths (fd/readout/fd_f0b_readout.json, fd/readout/fd_f1_readout.json).
+
+For a later version, we are considering adding an uncertainty term that covers the bias these fake-data studies show, in the spirit of what T2K does. Candidate constructions so far:
+(a) a second-moment block built from the truths' bias vectors, with noise subtracted;
+(b) a per-bin envelope added on the diagonal;
+(c) refitting an existing low-rank bias covariance on a broader family of truths;
+(d) one scale factor on the existing model covariance.
+Some of the alternative truths come from the same generator variations that already build the model covariance.
+
+What would you recommend: how to construct it, how to validate it, and what the pitfalls are? Is it worth doing at all? Be brief.
