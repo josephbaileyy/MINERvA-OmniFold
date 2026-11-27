@@ -447,6 +447,18 @@ class Runner(unittest.TestCase):
         self.assertEqual(self.meta("p_R_b1")["controls"]["C-DRAW-R"]["data_sum"],
                          self.meta("p_off_b1")["controls"]["C-DRAW-R"]["data_sum"])
 
+    def test_r_replica_fill_records_are_the_filtered_production_ones(self):
+        """C-MOVE in every R replica (the confirm read's finding 3): the ordered fill records are p_off_b1's with the
+        rows file's entries removed, multiplicity kept, and the injection is the fiducial rule on that reference."""
+        off, r = np.load(self.out / "p_off_b1.npz"), np.load(self.out / "p_R_b1.npz")
+        keep = ~np.isin(off["fill_entry"], self.rows["entry"])
+        self.assertTrue(keep.any() and (~keep).any())
+        for k in ("fill_entry", "fill_pt", "fill_pz", "fill_w"):
+            np.testing.assert_array_equal(r[k], off[k][keep], err_msg=k)
+        want_inj = P.injected_entries({"entry": off["fill_entry"][keep], "pt": off["fill_pt"][keep],
+                                       "pz": off["fill_pz"][keep]}, PT[0], PT[-1], PZ[0], PZ[-1])
+        np.testing.assert_array_equal(r["inj_entries"], want_inj)
+
     def test_rerun_skips_pass_and_refuses_unknown(self):
         import ptmc_run
         with mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True):

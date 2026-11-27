@@ -353,6 +353,15 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
                 gidx(td["truth_pt"], td["truth_pz"]), td["truth_pt"], td["truth_pz"], td["w_truth"],
                 np.where(m, ts["g"], -1), sig_cv["truth_pt"], sig_cv["truth_pz"], sig_cv["w_truth"])
             controls["C-COUPLE"]["sums"] = P.coupling(ts["t_orig"], d_cv)
+            # the input's hasTruthOnlyMisses, read as the driver reads it: bool(int(...)), i.e. non-zero (hadd sums the
+            # per-playlist flag: 12 on 43f8cc16, receipts/couple/run2)
+            import ROOT
+            fcv = ROOT.TFile.Open(C.staged(cfg)["CV"])
+            par = fcv.Get("hasTruthOnlyMisses")
+            flag = int(par.GetVal()) if par else 0
+            fcv.Close()
+            controls["C-COUPLE"]["hasTruthOnlyMisses"] = flag
+            controls["C-COUPLE"]["pass"] = bool(controls["C-COUPLE"]["pass"] and flag != 0)
         # C-SIM on the centrals, through the completeness the extraction consumed
         import ROOT
         f = ROOT.TFile.Open(str(root))
@@ -379,7 +388,13 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
               "T": cap["T"], "M": cap["M"], "y": cap["y"], "completeness": consumed_c, "appended_entry": np.asarray(app),
               "lgbm_params": np.array(json.dumps(cap.get("lgbm", []))),
               "fill_entries": np.sort(np.asarray(cap["fill_rows"]["entry"], np.int64)) if "fill_rows" in cap
-              else np.zeros(0, np.int64)}
+              else np.zeros(0, np.int64),
+              # the ordered fill record and the ordered injection (multiplicity preserved; the scorer's C-MOVE)
+              "fill_entry": np.asarray(cap["fill_rows"]["entry"], np.int64) if "fill_rows" in cap else np.zeros(0, np.int64),
+              "fill_pt": np.asarray(cap["fill_rows"]["pt"], float) if "fill_rows" in cap else np.zeros(0),
+              "fill_pz": np.asarray(cap["fill_rows"]["pz"], float) if "fill_rows" in cap else np.zeros(0),
+              "fill_w": np.asarray(cap["fill_rows"]["w_pot"], float) if "fill_rows" in cap else np.zeros(0),
+              "inj_entries": np.asarray(cap.get("inj_entries", np.zeros(0, np.int64)), np.int64)}
     np.savez_compressed(npz, **arrays, meta=json.dumps(meta, default=str))
     marker.write_text(json.dumps({"unit": name, "verdict": "PASS" if passed else "FAIL", "sha256": sha256(npz),
                                   "root_sha256": sha256(root)}) + "\n")

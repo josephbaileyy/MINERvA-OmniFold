@@ -281,12 +281,19 @@ def score(a) -> dict:
     if bad:
         raise Stop(f"C-NORM: {bad[:5]}")
     controls["C-NORM"] = {"pass": True, "sha256": ref_norm}
-    # C-MOVE's sets in every R replica: the fill rows are p_off_b1's minus the rows file's entries
-    want_fill = np.setdiff1d(np.asarray(U["p_off_b1"]["fill_entries"], np.int64), entries)
-    if want_fill.size == 0:
+    # C-MOVE's sets in every R replica: the ordered fill records (entry, pT, p||, w x POT) are p_off_b1's with the rows
+    # file's entries removed, order and multiplicity preserved; the ordered injection is the driver's fiducial rule on
+    # that filtered reference (a duplicated retained row fails; the confirm read's finding 3)
+    ref = U["p_off_b1"]
+    keep = ~np.isin(np.asarray(ref["fill_entry"], np.int64), entries)
+    if not keep.any():
         raise Stop("C-MOVE: p_off_b1 recorded no fill rows")
+    want = {k: np.asarray(ref[k])[keep] for k in ("fill_entry", "fill_pt", "fill_pz", "fill_w")}
+    want_inj = P.injected_entries({"entry": want["fill_entry"], "pt": want["fill_pt"], "pz": want["fill_pz"]},
+                                  EDGES[0][0], EDGES[0][-1], EDGES[1][0], EDGES[1][-1])
     bad = [u for u in UNITS if u.startswith("p_R_b")
-           and not np.array_equal(np.asarray(U[u]["fill_entries"], np.int64), want_fill)]
+           and not (all(np.array_equal(np.asarray(U[u][k]), want[k]) for k in want)
+                    and np.array_equal(np.asarray(U[u]["inj_entries"], np.int64), want_inj))]
     bad += [u for u in UNITS if u.startswith("p_R") and not metas[u]["controls"].get("C-MOVE-UNIT", {}).get("pass")]
     if bad:
         raise Stop(f"C-MOVE: replica sets {bad[:5]}")
