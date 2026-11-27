@@ -1,0 +1,38 @@
+== 2026-11-27T02:11:11Z task log
+fence check (job start): no live cov2d or t2a job 2026-11-27T02:09:18Z
+[oofvc_dump] 1L node=nid004084 job=62067464 start=2026-11-27T02:09:18Z
+oofvc_dump: OK
+/pscratch/sd/j/josephrb/ibuchi-evloop-20261123/manifests/1L_MC.txt: OK
+fence check (immediately before the binary): no live cov2d or t2a job 2026-11-27T02:09:23Z
+[oofvc_dump] NUE path declared=/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt canonical=/pscratch/sd/j/josephrb/minerva/minerva_large_files/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt resolved=/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+[oofvc_dump] NUE before utc=2026-11-27T02:09:23Z atime_ns=1795740833000000000 mtime_ns=1630424966000000000 size=25403
+[oofvc_dump] NUE after utc=2026-11-27T02:09:53Z atime_ns=1795745376000000000 mtime_ns=1630424966000000000 size=25403
+[oofvc_dump] 1L rc=0 oofvc_dump 1L entries 1056661 selected 239943 to_bkg 7820 to_sig 232123 dup_sig 0 routing_disagree 0
+[oofvc_dump] 1L done=2026-11-27T02:09:53Z
+== 1L.log tail
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data/flux/flux-gen2thin-pdg12-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data/flux/flux-gen2thin-pdg-12-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data/flux/flux-g4numiv6-pdg12-minervame1M_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data/flux/flux-g4numiv6-pdg-12-minervame1M_rearrangedUniverses.root
+oofvc_dump 1L entries 1056661 selected 239943 to_bkg 7820 to_sig 232123 dup_sig 0 routing_disagree 0
+== 1L.nue.log
+[oofvc_dump] NUE path declared=/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt canonical=/pscratch/sd/j/josephrb/minerva/minerva_large_files/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt resolved=/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+[oofvc_dump] NUE before utc=2026-11-27T02:09:23Z atime_ns=1795740833000000000 mtime_ns=1630424966000000000 size=25403
+[oofvc_dump] NUE after utc=2026-11-27T02:09:53Z atime_ns=1795745376000000000 mtime_ns=1630424966000000000 size=25403
+== digest
+f753ced19391ea5e6ccc575f76844e4ef5de754ece3ec1f2dc41ab06d24fe9b9  1L.root
+total 19088
+drwx------ 2 josephrb josephrb     4096 Nov 26 18:09 .
+drwx------ 6 josephrb josephrb     4096 Nov 26 18:07 ..
+-rw------- 1 josephrb josephrb        0 Nov 26 18:09 1L.done
+-rw------- 1 josephrb josephrb     3892 Nov 26 18:09 1L.log
+-rw------- 1 josephrb josephrb      667 Nov 26 18:09 1L.nue.log
+-rw------- 1 josephrb josephrb 19306885 Nov 26 18:09 1L.root
+-rw------- 1 josephrb josephrb       74 Nov 26 18:09 1L.sha256
+-rw------- 1 josephrb josephrb       77 Nov 26 18:08 built.sha256
+-rw------- 1 josephrb josephrb     1596 Nov 26 18:08 manifests.sha256
+-rwx------ 1 josephrb josephrb   200928 Nov 26 18:08 oofvc_dump
+== sacct
+62067464_7|oofvc_dump|COMPLETED|0:0|38|4||2026-11-26T18:09:17|2026-11-26T18:09:55|nid004084
+62067464_7.batch|batch|COMPLETED|0:0|38|4|2525412K|2026-11-26T18:09:17|2026-11-26T18:09:55|nid004084
+62067464_7.extern|extern|COMPLETED|0:0|38|4||2026-11-26T18:09:17|2026-11-26T18:09:55|nid004084
