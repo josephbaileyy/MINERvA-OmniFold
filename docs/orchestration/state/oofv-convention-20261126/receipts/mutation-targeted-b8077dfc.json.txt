@@ -1,0 +1,124 @@
+{
+ "schema": "oofvc-mutation/1",
+ "python": "/Users/josephbailey/ew2d-env/bin/python3",
+ "files": {
+  "oofvc_join.py": "92d01f96d7fdbb5a0b7ba5cb3fe8c475d171e181b714a70aa36670dc68b0e0d6",
+  "oofvc_lib.py": "a3df5569b3adfea06f544ae574238ab0d56123add2eb8d31a41a5b56558cb2b8",
+  "oofvc_mutation.py": "8c75719f5bf57a6aef9c4cc5c6cb8033fc4318893b1dc4d74c9b13684223bc4a",
+  "oofvc_run.py": "4b97bfabade3d2e0b95062935a86086739d90b38380980be5ed1c9c70ea8eb6e",
+  "oofvc_score.py": "31f436854b4cc951e3c35e445e3e0393fadbea5b8f30985b95114f3dbd88f145",
+  "test_oofvc.py": "29d36a841aabe12d6713dc29379af8730a35c13a52a9d7fd8420fd7820956a0d"
+ },
+ "diff_sha256": "6e836e057d4b8a8cfe14b67bb89164f939a444f3b5cfeeb86aaad8038006fce6",
+ "results": [
+  {
+   "name": "CONTROL",
+   "file": null,
+   "tests": "Identity or MatchesRefC2C1 or (Join and not JoinTool) or Moved or Readings or ScorerArgv or ReadFlags or JoinTool or Driver or Runner or Shell",
+   "rc": 0,
+   "seconds": 161.4,
+   "verdict": "PASS",
+   "tail": "..............................................                           [100%]\n46 passed in 160.42s (0:02:40)\n"
+  },
+  {
+   "name": "LIB_READ_ORD",
+   "file": "oofvc_lib.py",
+   "tests": "ReadFlags",
+   "rc": 1,
+   "seconds": 5.1,
+   "verdict": "KILLED",
+   "tail": "\": np.array([1.0, 2.0, 3.0, 4.0])}, (\"to_bkg\", \"to_sig\"))\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ntest_oofvc.py:188: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \noofvc_lib.py:69: in normalize\n    return {k: (as_flag(k, v) if k in flags else as_numeric(k, v)) for k, v in cols.items()}\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\noofvc_lib.py:69: in <dictcomp>\n    return {k: (as_flag(k, v) if k in flags else as_numeric(k, v)) for k, v in cols.items()}\n                ^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nname = 'to_bkg', a = array(['\\x00', '\\x01', '\\x00', '\\x01'], dtype=object)\n\n    def as_flag(name: str, a) -> np.ndarray:\n        \"\"\"A 0/1 flag column (after as_numeric), refused unless every value is 0 or 1 (the director's ruling).\"\"\"\n        a = as_numeric(name, a)\n        if a.size and not np.all((a == 0) | (a == 1)):\n>           raise ReadRefusal(f\"flag {name}: values outside {{0, 1}}\")\nE           oofvc_lib.ReadRefusal: flag to_bkg: values outside {0, 1}\n\noofvc_lib.py:63: ReadRefusal\n=========================== short test summary info ============================\nFAILED test_oofvc.py::ReadFlags::test_object_chars_become_uint8_and_masks_work\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 44 deselected in 4.25s\n"
+  },
+  {
+   "name": "LIB_READ_REFUSE",
+   "file": "oofvc_lib.py",
+   "tests": "ReadFlags",
+   "rc": 1,
+   "seconds": 2.8,
+   "verdict": "KILLED",
+   "tail": "usals ____________________________\n\nself = <test_oofvc.ReadFlags testMethod=test_refusals>\n\n    def test_refusals(self):\n        with self.assertRaises(L.ReadRefusal):\n>           L.normalize({\"f\": np.array([\"ab\", \"c\"], dtype=object)}, ())\n\ntest_oofvc.py:198: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \noofvc_lib.py:70: in normalize\n    return {k: (as_flag(k, v) if k in flags else as_numeric(k, v)) for k, v in cols.items()}\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\noofvc_lib.py:70: in <dictcomp>\n    return {k: (as_flag(k, v) if k in flags else as_numeric(k, v)) for k, v in cols.items()}\n                                                 ^^^^^^^^^^^^^^^^\noofvc_lib.py:57: in as_numeric\n    return np.fromiter((ord(x) for x in a), dtype=np.uint8, count=a.size)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n>   return np.fromiter((ord(x) for x in a), dtype=np.uint8, count=a.size)\n                        ^^^^^^\nE   TypeError: ord() expected a character, but string of length 2 found\n\noofvc_lib.py:57: TypeError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::ReadFlags::test_refusals - TypeError: ord() expected a ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 44 deselected in 2.14s\n"
+  },
+  {
+   "name": "LIB_FLAG_RANGE",
+   "file": "oofvc_lib.py",
+   "tests": "ReadFlags",
+   "rc": 1,
+   "seconds": 2.9,
+   "verdict": "KILLED",
+   "tail": ".F\n=================================== FAILURES ===================================\n___________________________ ReadFlags.test_refusals ____________________________\n\nself = <test_oofvc.ReadFlags testMethod=test_refusals>\n\n    def test_refusals(self):\n        with self.assertRaises(L.ReadRefusal):\n            L.normalize({\"f\": np.array([\"ab\", \"c\"], dtype=object)}, ())\n        with self.assertRaises(L.ReadRefusal):\n            L.normalize({\"f\": np.array([None, 1], dtype=object)}, ())\n>       with self.assertRaises(L.ReadRefusal):\nE       AssertionError: ReadRefusal not raised\n\ntest_oofvc.py:201: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::ReadFlags::test_refusals - AssertionError: ReadRefusal ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 44 deselected in 2.30s\n"
+  },
+  {
+   "name": "JOIN_ROUTE",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 1,
+   "seconds": 33.4,
+   "verdict": "KILLED",
+   "tail": ".....F\n=================================== FAILURES ===================================\n___________________ JoinTool.test_routing_disagreement_stops ___________________\n\nself = <test_oofvc.JoinTool testMethod=test_routing_disagreement_stops>\n\n    def test_routing_disagreement_stops(self):\n>       self._stop(lambda r: r[\"to_sig\"].__setitem__(30, 1), \"C-ROUTE\")\n\ntest_oofvc.py:819: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntest_oofvc.py:807: in _stop\n    self.assertFalse(rec[\"controls\"][control][\"pass\"])\nE   AssertionError: True is not false\n=========================== short test summary info ============================\nFAILED test_oofvc.py::JoinTool::test_routing_disagreement_stops - AssertionEr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 passed, 36 deselected in 32.71s\n"
+  },
+  {
+   "name": "JOIN_SIGW_TRUTH",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 1,
+   "seconds": 29.2,
+   "verdict": "KILLED",
+   "tail": "......F\n=================================== FAILURES ===================================\n__________________ JoinTool.test_signal_truth_mismatch_stops ___________________\n\nself = <test_oofvc.JoinTool testMethod=test_signal_truth_mismatch_stops>\n\n    def test_signal_truth_mismatch_stops(self):\n        def m(r):\n            i = int(np.flatnonzero(r[\"to_sig\"] == 1)[3]); r[\"w_truth\"][i] = np.nextafter(r[\"w_truth\"][i], 9.0)\n>       self._stop(m, \"C-SIGW\")\n\ntest_oofvc.py:824: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \ntest_oofvc.py:805: in _stop\n    self.assertEqual(p.returncode, 8, p.stdout + p.stderr)\nE   AssertionError: 0 != 8 : {\"verdict\": \"PASS\", \"moved\": 377, \"rows_sha256\": \"9c3057d0ceaeeec0749e042b8f250f1523192240e4227e604c4588d144776f43\"}\n=========================== short test summary info ============================\nFAILED test_oofvc.py::JoinTool::test_signal_truth_mismatch_stops - AssertionE...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 6 passed, 36 deselected in 28.54s\n"
+  },
+  {
+   "name": "JOIN_LAB_TOL",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 1,
+   "seconds": 6.4,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n______________________ JoinTool.test_lab_value_tolerance _______________________\n\nself = <test_oofvc.JoinTool testMethod=test_lab_value_tolerance>\n\n    def test_lab_value_tolerance(self):\n        \"\"\"A reference cell off by 1e-7 relative, counts unchanged: C-LAB's 1e-9 tolerance refuses it.\"\"\"\n        fx = self.fixture()\n        ref = json.loads((fx.d / \"split.json\").read_text())\n        i = int(np.flatnonzero(np.asarray(ref[\"FAKE_VTX\"]) > 0)[0])\n        ref[\"FAKE_VTX\"][i] *= 1 + 1e-7\n        (fx.d / \"split.json\").write_text(json.dumps(ref))\n        p, rec, out = fx.run()\n>       self.assertEqual(p.returncode, 8)\nE       AssertionError: 0 != 8\n\ntest_oofvc.py:857: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::JoinTool::test_lab_value_tolerance - AssertionError: 0 ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 36 deselected in 5.84s\n"
+  },
+  {
+   "name": "JOIN_LAB_FINITE",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 1,
+   "seconds": 18.4,
+   "verdict": "KILLED",
+   "tail": "...F\n=================================== FAILURES ===================================\n_______________________ JoinTool.test_nan_in_split_stops _______________________\n\nself = <test_oofvc.JoinTool testMethod=test_nan_in_split_stops>\n\n    def test_nan_in_split_stops(self):\n        \"\"\"A non-finite reference cell is a STOP, not a pass hidden by max() (codex-school r1 #9).\"\"\"\n        fx = self.fixture()\n        ref = json.loads((fx.d / \"split.json\").read_text())\n        ref[\"FAKE_VTX\"][17] = float(\"nan\")\n        (fx.d / \"split.json\").write_text(json.dumps(ref))\n        p, rec, out = fx.run()\n>       self.assertEqual(p.returncode, 8)\nE       AssertionError: 0 != 8\n\ntest_oofvc.py:845: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::JoinTool::test_nan_in_split_stops - AssertionError: 0 != 8\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 36 deselected in 17.70s\n"
+  },
+  {
+   "name": "JOIN_DUP_KEPT",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 1,
+   "seconds": 6.2,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n______________________ JoinTool.test_lab_value_tolerance _______________________\n\nself = <test_oofvc.JoinTool testMethod=test_lab_value_tolerance>\n\n    def test_lab_value_tolerance(self):\n        \"\"\"A reference cell off by 1e-7 relative, counts unchanged: C-LAB's 1e-9 tolerance refuses it.\"\"\"\n        fx = self.fixture()\n        ref = json.loads((fx.d / \"split.json\").read_text())\n        i = int(np.flatnonzero(np.asarray(ref[\"FAKE_VTX\"]) > 0)[0])\n        ref[\"FAKE_VTX\"][i] *= 1 + 1e-7\n        (fx.d / \"split.json\").write_text(json.dumps(ref))\n        p, rec, out = fx.run()\n        self.assertEqual(p.returncode, 8)\n>       self.assertTrue(rec[\"controls\"][\"C-LAB\"][\"counts_equal\"])\n                        ^^^^^^^^^^^^^^^^^^^^^^^^\nE       KeyError: 'C-LAB'\n\ntest_oofvc.py:858: KeyError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::JoinTool::test_lab_value_tolerance - KeyError: 'C-LAB'\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 36 deselected in 5.72s\n"
+  },
+  {
+   "name": "JOIN_MOVED_RECO",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 1,
+   "seconds": 19.7,
+   "verdict": "KILLED",
+   "tail": " _ _ _ _ _ _ _ \n\nargs = (<built-in function eq>, array([  6,   7,   8,  10,  11,  13,  17,  18,  23,  24,  26,  29,  31,\n        32,  34,  36,... 854, 855, 859, 861, 864, 866, 869, 875, 876,\n       877, 878, 879, 880, 881, 882, 883, 886, 887, 889, 890, 893, 894]))\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Arrays are not equal', 'strict': False}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Arrays are not equal\nE           \nE           (shapes (414,), (377,) mismatch)\nE            x: array([  6,   7,   8,  10,  11,  13,  17,  18,  23,  24,  26,  29,  31,\nE                   32,  34,  36,  38,  40,  50,  52,  55,  57,  61,  64,  68,  69,\nE                   71,  72,  76,  78,  79,  80,  81,  84,  86,  87,  88,  89,  90,...\nE            y: array([  4,   6,   7,   8,  10,  11,  13,  17,  18,  19,  23,  24,  26,\nE                   29,  31,  32,  34,  36,  38,  40,  52,  55,  57,  61,  64,  68,\nE                   69,  71,  76,  78,  79,  80,  81,  84,  86,  87,  88,  89,  90,...\n\n../../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::JoinTool::test_pass_and_rows - AssertionError: \n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 36 deselected in 19.19s\n"
+  },
+  {
+   "name": "JOIN_ROWS_WTRUTH",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 1,
+   "seconds": 21.4,
+   "verdict": "KILLED",
+   "tail": "5460904, 0.43388461, 1.81836571, 0.78403153,\n       1.41711413, 0.63348...748471, 1.32950878,\n       1.94585901, 0.82494574, 1.33390255, 1.19445195, 0.25790931,\n       0.73999364, 0.75723041]))\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Arrays are not equal', 'strict': False}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Arrays are not equal\nE           \nE           Mismatched elements: 377 / 377 (100%)\nE           Max absolute difference: 0.19957404\nE           Max relative difference: 0.09090909\nE            x: array([0.829894, 0.654609, 0.433885, 1.818366, 0.784032, 1.417114,\nE                  0.633487, 1.199466, 1.895695, 0.665428, 1.632707, 1.691143,\nE                  1.450784, 1.090966, 0.258705, 0.933979, 1.579049, 1.890216,...\nE            y: array([0.912883, 0.72007 , 0.477273, 2.000202, 0.862435, 1.558826,\nE                  0.696836, 1.319413, 2.085264, 0.731971, 1.795977, 1.860258,\nE                  1.595862, 1.200062, 0.284575, 1.027377, 1.736954, 2.079238,...\n\n../../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::JoinTool::test_pass_and_rows - AssertionError: \n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 36 deselected in 20.83s\n"
+  },
+  {
+   "name": "JOIN_TIE_BOUND",
+   "file": "oofvc_join.py",
+   "tests": "JoinTool",
+   "rc": 1,
+   "seconds": 35.7,
+   "verdict": "KILLED",
+   "tail": ".......F\n=================================== FAILURES ===================================\n___________________ JoinTool.test_tie_above_the_bound_stops ____________________\n\nself = <test_oofvc.JoinTool testMethod=test_tie_above_the_bound_stops>\n\n    def test_tie_above_the_bound_stops(self):\n        \"\"\"The duplicated event weighing more than 0.1% of the moved weight: STOP (the director's bound).\"\"\"\n        p, rec, out = self.fixture(dup_weight=1.9).run()\n>       self.assertEqual(p.returncode, 8, p.stdout + p.stderr)\nE       AssertionError: 0 != 8 : {\"verdict\": \"PASS\", \"moved\": 377, \"rows_sha256\": \"9c3057d0ceaeeec0749e042b8f250f1523192240e4227e604c4588d144776f43\"}\n\ntest_oofvc.py:834: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::JoinTool::test_tie_above_the_bound_stops - AssertionErr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 7 passed, 36 deselected in 34.98s\n"
+  }
+ ],
+ "summary": "11/11 killed"
+}
