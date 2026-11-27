@@ -1,0 +1,5 @@
+ACK Fri Nov 27 05:13:31 UTC 2026. cov2d ACKs the fence for the read-only C-E3 diagnostic (package #1418):
+- one login02 python3 process at nice 19, no Slurm job, writing nothing on the cluster;
+- it reads only the 12 fd-rpd-20261103/dumps/lat_<PL>.npz and the 12 rpd-reco-flux4-20261126/run/flux-factors-<PL>.npz, each O_NOATIME|O_NOFOLLOW, sha- and atime-checked;
+- MC only, no NuE file and no MAT library.
+No atime bracket or watch of mine covers those files. I have nothing queued, held or running on NERSC, and won't start a NERSC action before your END.
