@@ -1,0 +1,5 @@
+ok   real config: 70 originals (flux4's 58 + 12 omnifiles), CLEAR
+ok   the omnifiles' directory protected: STOP (omnifile 1M under it)
+ok   omnifile 1A equal to a protected path: STOP
+KILLED   omnifile-loop-dropped (3 cases)
+FENCE-OMNIFILES :: PASS

@@ -1,0 +1,182 @@
+{
+ "inputs": {
+  "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-custody.json": "819bb7b9775c1bfe570185881290ab229e82d3ad7ad328b9cde3215a811c78c2",
+  "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-extract.json": "060d4401f0e1bec69a84b005e0c7ba54f69c3f894c1382f9ce2a098b7b2663c0",
+  "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1A.npz": "8b8e3e557d4c362797842fe2829a21b53292bb334902e42fbd5f4ef3185ecdda",
+  "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1B.npz": "baf3f3d8cd922a5a3511dab93a7f784128d0e098cb6f1ec905ae4b83c9e68a9f",
+  "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1C.npz": "5ef5e81e490a4e7bd92f1bdf1eee706d413b653e055612b04f3b1b627d1ae6fc",
+  "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1D.npz": "6ea8f726ea6ed619b1b2eb2aab0f34d8a41fff908c0c0515bf7194ca0fe3d131",
+  "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1E.npz": "4e8f97c179b6bbbc3c5e1fd82472c621c9bc56427e802edb464ab85627a26565",
+  "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1F.npz": "b607e3a8a114036391df8dd27a1e06b0ea59db7093fbd093bd84d117ef207e46",
+  "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1G.npz": "c23ef28aded4319d468c73b237d648641b204d86c5788b4c2cd58cfe063b7e5a",
+  "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1L.npz": "e731f300f48d1732be0f7dc40ce6e9983947198fa886e84a93df8054afa92007",
+  "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1M.npz": "166a2217468f8bfb392baca71c6920ffbf765bbd0dd60a68eb4b560ab6026f4b",
+  "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1N.npz": "739043f4f4a21734c1e256744ba11c8ac4a511542be6161404b68f2916292a21",
+  "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1O.npz": "fd8afa1e08938e1fce4c0b1445d3713d6c8c9ab72bc900012e52b8fc54f3ac6b",
+  "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1P.npz": "a2db271daa6b9af500b892c8e1ba2af0e12ac4da500b8a0814c879882ee0fa9e",
+  "/pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/p0.json": "ab8d3600e7955e0afa0f0affaedeab7d394bff9010c4d1f9e7a011c9d2290c4c",
+  "/pscratch/sd/j/josephrb/rpd-reco-p0e1-20261126/run/pins.json": "2a22bdbfc2af1891d2db13e1b49c4e53c063296002b3a2fd1e240850dad121a8"
+ },
+ "stat": {
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A.npz": {
+   "bytes": 127968221,
+   "inode": 882727252234608689
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A_bkg.npz": {
+   "bytes": 2311555,
+   "inode": 882727252234608690
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1B.npz": {
+   "bytes": 33980383,
+   "inode": 882727252234608036
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1B_bkg.npz": {
+   "bytes": 638389,
+   "inode": 882727252234608037
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1C.npz": {
+   "bytes": 65471177,
+   "inode": 882727252234608560
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1C_bkg.npz": {
+   "bytes": 1194780,
+   "inode": 882727252234608563
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1D.npz": {
+   "bytes": 192006622,
+   "inode": 882727252234602226
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1D_bkg.npz": {
+   "bytes": 3448900,
+   "inode": 882727252234602397
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1E.npz": {
+   "bytes": 158814144,
+   "inode": 882727252234605338
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1E_bkg.npz": {
+   "bytes": 2888635,
+   "inode": 882727252234605355
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1F.npz": {
+   "bytes": 221027198,
+   "inode": 882727252234602406
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1F_bkg.npz": {
+   "bytes": 4027113,
+   "inode": 882727252234602493
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1G.npz": {
+   "bytes": 186899533,
+   "inode": 882727252234602225
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1G_bkg.npz": {
+   "bytes": 3360491,
+   "inode": 882727252234602395
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L.npz": {
+   "bytes": 18061361,
+   "inode": 882727252234608033
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L_bkg.npz": {
+   "bytes": 361915,
+   "inode": 882727252234608034
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1M.npz": {
+   "bytes": 274076044,
+   "inode": 882727252234602663
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1M_bkg.npz": {
+   "bytes": 5283519,
+   "inode": 882727252234602713
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1N.npz": {
+   "bytes": 159089937,
+   "inode": 882727252234605611
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1N_bkg.npz": {
+   "bytes": 3119697,
+   "inode": 882727252234605663
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1O.npz": {
+   "bytes": 47673627,
+   "inode": 882727252234608557
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1O_bkg.npz": {
+   "bytes": 997512,
+   "inode": 882727252234608558
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1P.npz": {
+   "bytes": 63445665,
+   "inode": 882727252234608561
+  },
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1P_bkg.npz": {
+   "bytes": 1316555,
+   "inode": 882727252234608562
+  },
+  "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root": {
+   "bytes": 3188849,
+   "inode": 882722362129161251
+  },
+  "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root": {
+   "bytes": 3187397,
+   "inode": 882722362129161272
+  },
+  "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root": {
+   "bytes": 3182011,
+   "inode": 882722362129161271
+  },
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/dumps/truthx_RDX_ALL.npz": {
+   "bytes": 2364943114,
+   "inode": 882727588601004051
+  },
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1A.root": {
+   "bytes": 605076305,
+   "inode": 882727515653799093
+  },
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1B.root": {
+   "bytes": 162097785,
+   "inode": 882727582175370968
+  },
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1C.root": {
+   "bytes": 310337285,
+   "inode": 882727580917085568
+  },
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1D.root": {
+   "bytes": 904836901,
+   "inode": 882727580111855345
+  },
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1E.root": {
+   "bytes": 753934165,
+   "inode": 882727581856604920
+  },
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1F.root": {
+   "bytes": 1048192809,
+   "inode": 882727583165203515
+  },
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1G.root": {
+   "bytes": 883836408,
+   "inode": 882727583366517421
+  },
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1L.root": {
+   "bytes": 86211914,
+   "inode": 882727582041175724
+  },
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1M.root": {
+   "bytes": 1318953730,
+   "inode": 882727580850027907
+  },
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1N.root": {
+   "bytes": 763022193,
+   "inode": 882727581990862679
+  },
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1O.root": {
+   "bytes": 231277653,
+   "inode": 882727581856629661
+  },
+  "/pscratch/sd/j/josephrb/rdx-20261112b/out/evloop/runEventLoopOmniFold_RDX_1P.root": {
+   "bytes": 305659361,
+   "inode": 882727581470798044
+  }
+ }
+}

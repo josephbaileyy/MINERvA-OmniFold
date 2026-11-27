@@ -1,0 +1,15 @@
+The director (2026-11-27), after accepting e1's P0 (p0e1, run-20261127, C-JOIN part 2 PASS 792/792):
+"Next for e1: d2-predict + step0, the step where C-E3 is retested with true Eν. Build its package the same way, with its
+price, and send me the shas. Keep the 12-20 target in view."
+
+"The same way" = as p0e1 was built from p0-20261123 (counted replacements from the bound package, every input asserted
+at its sha256, the declared changes only):
+1. S -> 2415e8d6; the 14 pins as p0e1's (only #1308's four move).
+2. Config: p0e1's f92d034d (require_predecessors compares it with the staged P0 records, which carry it).
+3. Inputs: p0e1's 14 (flux4's records and products, run-62051670) plus p0e1's run/pins.json and run/p0.json at the
+   committed run-20261127 values; the stage loop copies them from p0e1's root.
+4. Fences: flux4's sacct block (geanttw*), flux4's three-lane ack guard; the overlap fence as p0e1's at the new root.
+5. Retention stat as p0e1's 40 entries.
+6. Runner, supervisor, per-step 7200 s deadlines, RSS cap, iris read and fetch otherwise d2s0-20261124's.
+Then tests and mutants, an agy (gemini-4-hydrogen-high) read, and the shas to the director. No measured key may be read
+before the prediction is committed (d2s0-20261124/README.md).
