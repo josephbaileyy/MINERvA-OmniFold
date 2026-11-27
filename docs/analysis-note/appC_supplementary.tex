@@ -218,7 +218,7 @@ The sixteen-cell generator distances are sensitive to the off-diagonal flux cova
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=0.85\linewidth]{figures/fd_g_fig_modes.pdf}
-  \caption{Several modes contribute to the descriptive distance of each full-grid prediction. The panels show the cell loadings for the three largest $\chi^2$ contributions, using the covariance of fractional residuals from $\CrepFiveD+V_g$. The distances are descriptive, and the NuWro row uses the secondary CH comparison.}
+  \caption{Several modes contribute to the descriptive distance of each full-grid prediction. The panels show the cell loadings for the three largest $\chi^2$ contributions, using the covariance of fractional residuals from $\CrepFiveD+V_g$. The distances carry no calibrated significance (Table~\ref{tab:validity}), and the NuWro row uses the secondary CH comparison.}
   \label{fig:fived16-modes}
 \end{figure}
 
@@ -344,16 +344,18 @@ The detector-level tree classifier shows a nearly diagonal reliability curve, wi
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{nn_vs_gbdt_full}
-  \caption{The largest differences between the multilayer perceptron and the gradient-boosted trees occur at the sparsely populated edges of the muon spectra. The panels show absolute 3D purity-baseline projections and their ratios at five iterations. The comparison is descriptive.}
+  \caption{The largest differences between the multilayer perceptron and the gradient-boosted trees occur at the sparsely populated edges of the muon spectra. The panels show absolute 3D purity-baseline projections and their ratios at five iterations. The comparison is descriptive: no agreement threshold was set before it was read.}
   \label{fig:calibration}
 \end{figure}
 
 \subsection{Summary of higher-dimensional validation}
 
-\begin{table}[tbp]
+Table~\ref{tab:higher-dimensional-validation} collects the higher-dimensional tests whose outcomes limit how the results can be used. Table~\ref{tab:validation-inventory} gives every test.
+
+\begin{table}[H]
   \centering
   \linespread{1}\footnotesize
-  \caption{Summary of higher-dimensional validation tests. A criterion is prespecified if it was recorded before its outcome was read. Appendix~\ref{app:validation-inventory} gives the complete inventory.}
+  \caption{Higher-dimensional validation tests whose outcomes limit how the results can be used. A criterion is prespecified if it was recorded before its outcome was read. Appendix~\ref{app:validation-inventory} gives the complete inventory.}
   \label{tab:higher-dimensional-validation}
   \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.213\textwidth}
                       >{\raggedright\arraybackslash}p{0.21\textwidth}
@@ -362,20 +364,10 @@ The detector-level tree classifier shows a nearly diagonal reliability curve, wi
     \toprule
     Test & Estimator or result & Outcome & Consequence \\
     \midrule
-    $E_{\mathrm{avail}}$ and $q_3$ bumps (descriptive) &
-    3D and 4D purity baseline &
-    Marginal residuals $1.84\%$ and at most $1.1\%$. &
-    Recovery characterized for two smooth marginal features. \\
-    \addlinespace[2pt]
     $W$ bump (prespecified) &
     5D purity baseline, signal only &
     Marginal ratio 0.180 passes the 0.20 limit. &
     Joint peak-column cells remain up to $9.4\%$ low. \\
-    \addlinespace[2pt]
-    Nominal truth with backgrounds (descriptive) &
-    Deterministic purity control, low-capacity refinement, and sixteen-cell estimator &
-    Negative-weight treatment reduces the high-$W$ bias. &
-    Improvement established at nominal truth for the tested treatments. \\
     \addlinespace[2pt]
     Generator-sized recovery (prespecified) &
     Low-capacity refinement control &
@@ -392,20 +384,10 @@ The detector-level tree classifier shows a nearly diagonal reliability curve, wi
     GiBUU hybrid exceeds the criteria. Under $\CrepFiveDzero$, the $q_3$ tilt also did. &
     Bias exceeds the allowed scale under the reported covariance. \\
     \addlinespace[2pt]
-    Classifier-family comparison (descriptive) &
-    3D purity baseline &
-    Median projection differences $0.7\%$--$1.4\%$. &
-    Agreement applies to the tested 3D projections. \\
-    \addlinespace[2pt]
     Binned IBU comparison (prespecified) &
     Sixteen-cell estimator and binned IBU &
     Difference exceeds the calibrated thresholds. &
     Joint cell estimates depend on the unfolding procedure. \\
-    \addlinespace[2pt]
-    End-to-end coverage (prespecified) &
-    Deterministic purity control, statistical intervals &
-    Fails the futility rule at nominal and reduced rates. &
-    Coverage fails for this estimator variant. \\
     \addlinespace[2pt]
     Held-out-tune coverage (descriptive) &
     Sixteen-cell estimator with $\Csub$ &
@@ -416,11 +398,6 @@ The detector-level tree classifier shows a nearly diagonal reliability curve, wi
     Sixteen-cell estimator &
     Fails with shifts up to $\lrval{stab-max}$ statistical standard deviations. &
     Central values are sensitive to rounding-level changes. \\
-    \addlinespace[2pt]
-    Covariance seed tolerance (prespecified) &
-    Companion purity covariance builds &
-    Projected shifts exceed the $\sprojBound\%$ tolerance. &
-    Part of the seed sensitivity remains unmeasured. \\
 % Search: s_proj; M(ii); cause 3; estimator-seed magnitude criterion; GRADE-20260920; VL146; L2 (the search of this section's seed paragraph at 0d919b1a, rerun; no OUTCOME, DECISION, GRADE or EVIDENCE record changes an s_proj mention since 0d919b1a) @ caae27166e85
     \addlinespace[2pt]
     Muon-quadrant sums (prespecified) &
