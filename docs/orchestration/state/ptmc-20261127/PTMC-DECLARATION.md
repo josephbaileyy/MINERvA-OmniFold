@@ -1,7 +1,8 @@
 # PTMC DECLARATION (DRAFT): REF-C2C1's paired test, binned IBU against 2D OmniFold, under MINERvA's counting convention (2026-11-27)
 
-**Status: DRAFT.** It is not audited and not bound, and nothing runs from it. The scoping, price and calendar are in
-`PTMC-SCOPING.md`.
+**Status: DRAFT.** It is not audited and not bound, and nothing runs from it.
+- The director ruled on D1–D5 on 2026-11-27 (§7). The reads are pending.
+- The scoping, price and calendar are in `PTMC-SCOPING.md`.
 
 **Asked for by** Joseph, through the director (2026-11-27). **Drafted by** ibu-chi-squared-issue, read-only on
 origin/main `e726cb876`.
@@ -58,6 +59,12 @@ environment apply.
   - `xsec_at_every_k` through the driver's own recorded extraction.
 - **Products.** `<unit>.root` (the driver's) and `<unit>.npz`: the IBU cross section per K, the binned problem's
   digests, and the draw record of §2.2.
+- **The pairing is tighter than REF-C2C1's, and that is better (the director's ruling D3).**
+  - REF-C2C1 ran its IBU replicas and E_R's Q_R replicas as separate driver runs. Each refitted the refinement, and
+    LightGBM is not deterministic at 64 threads, so the two sides' w̃ agreed only to the fit's reproducibility
+    (C-REF (b), ≤ 1e-8).
+  - Here both methods consume one w̃, so δ carries no refinement-refit noise at all.
+  - It also costs one driver run per replica instead of two, which is what keeps the price under the cap.
 
 ### 2.2 The bootstrap under R (the driver hunk)
 
@@ -133,7 +140,7 @@ The null is exact agreement: "differ" says a difference is detectable at this no
     unit-tested on the fixture).
 - **C-SIM, C-ROO, C-FILL:** REF-C2C1's, on `p_R_c`, at 1e-9.
 - **C-DONE and C-CPUS:**
-  - all 204 units PASS;
+  - all 203 units PASS;
   - each ran with 64 CPUs and E_R's thread environment.
 
 ## 4. Readings, fixed before any number
@@ -178,3 +185,26 @@ The null is exact agreement: "differ" says a difference is detectable at this no
 
 - No R product becomes a reported result.
 - No follow-up run is made because of these outcomes unless a new declaration binds it.
+
+## 7. Rulings and records
+
+**The director's rulings, 2026-11-27, on the scoping's D1–D5:**
+- D1: seeds 1..200;
+- D2: a moved row keeps its own background-stream factor;
+- D3: the paired unit, with the tighter pairing stated as better (§2.1);
+- D4: the matched N = 200 baseline, whose stat connect gets its own GO;
+- D5: M's driver grid, with C-GRID, and C-MOVE against r3's counts.
+
+**The STOP rule stands:** if the pilot's measured per-replica cost × 200 exceeds 11.5 node-h, the replicas do not
+launch.
+
+**The calendar.** This goes in note v1 only if its receipt merges, with full reads, before the note's last sync.
+Otherwise it is v2. No step is shortened for the date.
+
+**The reads** are codex-school2 and agy `gemini-4-hydrogen-high`. Grok is unfunded.
+
+**D4's stat connect** ran on 2026-11-27 at 10:08:52Z on login04, on the director's GO and with cov2d's ack
+(`receipts/stat-d4/`).
+- It found 604 of the 604 expected files: c2_central and c2_replica_b1..200 (.npz and .done), the publication copy,
+  and 001..201_xsec.root.
+- The oldest file atime is 2026-11-06T07:31Z, so the purge window is about 2027-01-01.
