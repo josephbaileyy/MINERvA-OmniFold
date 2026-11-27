@@ -1,6 +1,6 @@
-# RC10 clean-environment verify (rc10/clean_env_check_rc10.sh, 2026-11-27T18:31:36Z): code/verify_rc.py on the extracted tarball,
+# RC10 clean-environment verify (rc10/clean_env_check_rc10.sh, 2026-11-27T18:43:07Z): code/verify_rc.py on the extracted tarball,
 # fresh venv, env -i, empty HOME, BLAS capped at one thread. Tarball:
-# 429d24655f75ef9d7c6612184ac00893bafafaa61f1ede4f0b73a681e2628edb  replay/minerva-omnifold-article-release-rc10.tar.gz
+# 0ecf8122b824bdde2b0bd3b16100d89a0558b47024c572b7737fd8ef0cf4ec22  replay/minerva-omnifold-article-release-rc10.tar.gz
 # stderr lines: 0
 [ok] data/frozen/inference_sufficient.npz vs expected/joint-evaluate.json: COMPARE: AGREE (0 differences)
 [ok] data/recovery-union/inference_sufficient.npz vs expected/resolved-evaluate.json: COMPARE: AGREE (0 differences)

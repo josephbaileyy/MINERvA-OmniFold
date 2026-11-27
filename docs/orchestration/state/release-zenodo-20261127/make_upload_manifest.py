@@ -42,8 +42,8 @@ REL5 = "docs/analysis-note/release-package-20260922"
 ER_PUB = "docs/orchestration/state/ibu-chi2-20261123/tier1/units/e/er.root"
 EAW = "docs/orchestration/state/2d-closeout/stageF/methods/note-figfix-20261120/runs/eavailw"
 RC9_PKG_SUMS_SHA = "630d3c0762d47aa33c56285236f670bd6486bc47b34d7a604c33b245a859fe81"
-PKG_SUMS_SHA = "1a3d905809af012c8af236a4f998044153bb33a9142a68d1e85174a9818a5790"  # package-rc10's SHA256SUMS
-RC10_SHA = "429d24655f75ef9d7c6612184ac00893bafafaa61f1ede4f0b73a681e2628edb"  # the RC10 replay tarball, as rc10/build_rc10.log records it
+PKG_SUMS_SHA = "fe13070a59f98d1910f14aee14df3be313a7597d0eb778854840a2f8d59c47a6"  # package-rc10's SHA256SUMS
+RC10_SHA = "0ecf8122b824bdde2b0bd3b16100d89a0558b47024c572b7737fd8ef0cf4ec22"  # the RC10 replay tarball, as rc10/build_rc10.log records it
 RC10 = "minerva-omnifold-article-release-rc10"
 
 
