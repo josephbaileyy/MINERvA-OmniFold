@@ -1,0 +1,16 @@
+READ-ONLY AUDIT. Do not modify, create or delete any file. Never write to /Users/josephbailey/local-research/MINERvA-OmniFold. No network. Report to stdout only.
+
+Under /Users/josephbailey/codex-reports/note-measurement/reads/d2s0e1-r1/inputs:
+- d2s0e1/ is the new RPD-RECO d2-predict + step0 package for e1, for the director's binding. Nothing in it has run. It holds the generator tools/gen_d2s0e1.py (writes every file from the bound d2s0 package by counted replacements), the generated production-config.ready.json, rpd_d2s0_connect.sh (embeds the config, tools and the runner), rpd_d2s0_fetch.sh, rpd_d2s0_launch.sh, tools/d2s0_checks.py, tools/d2s0_expected.json, tools/p0_supervise.py, tools/fence_overlap.py, tests/ (suites with outputs) and README.md.
+- d2s0/ is the bound d2s0 package (d2s0-20261124); records/d2s0-run-20261124/ is its 11-24 run (STOP at C_E3 after 6 min 42 s; README and runner.out).
+- p0e1/ is the bound e1 P0 package; records/p0e1-run-20261127/ is e1 P0's accepted run (README and records/, including run/p0.json and run/pins.json.gz).
+- diff/ has the scripts' diff d2s0 -> d2s0e1 (roots folded, base64 masked) and the fence diff p0e1 -> d2s0e1 (roots folded; empty means identical apart from the root).
+- code/fd_rpd_reco.py is the code at the clone commit S = 2415e8d6.
+- docs/ is RPD-RECO amendment 1 and director-conditions.txt.
+
+Check, citing file:line:
+1. Does the package implement director-conditions.txt exactly, and nothing more? In particular: the 4 moved pins; the config (p0e1's, unchanged); d2s0_expected.json's 16 inputs vs p0e1's expected and the committed run-20261127 records (p0.json sha, pins.json via pins.json.gz); the stage loop's source root and digests; the 40-entry stat; the sacct block and ack guard; the runner changed only by its root and config digest.
+2. Would any defect give a false PASS (d2-predict/step0 run with the wrong inputs, code or predecessors) or a false STOP on the real system? Consider require_predecessors at S (code, config, dry_run, predecessor_sha256) against p0e1's records; what d2-predict and step0 read at S (aggregate, prediction_controls, step0, Inputs.copy, pinned_flux_factors); and blinding (no measured key without --prediction).
+3. The README's account of C-E3 and of the price: is it right that d2-predict runs aggregate before prediction_controls, so the 11-24 run completed the full aggregate pass in 6 min 42 s (records/d2s0-run-20261124/runner.out)? Is the measured-price claim supported, and is the formula bound stated correctly?
+4. Do the tests and mutants test what they claim? Any assertion that cannot fail, any mutant that could die for the wrong reason, any README claim (counts, shas, line numbers) that doesn't match the files?
+First line exactly "VERDICT: GO" or "VERDICT: FIX" (FIX only for a blocking issue), then numbered findings tagged BLOCKING or NON-BLOCKING.
