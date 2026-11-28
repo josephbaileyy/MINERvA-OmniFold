@@ -33,12 +33,12 @@ test_wrong_mask_refuses (__main__.Tune.test_wrong_mask_refuses) ... ok
 test_wrong_universe_count_refuses (__main__.Tune.test_wrong_universe_count_refuses) ... ok
 
 ----------------------------------------------------------------------
-Ran 33 tests in 11.648s
+Ran 33 tests in 10.407s
 
 OK
 
   AR23: C-X0:R:AR23:mask ; C-FINITE:R:AR23 ; C-FLUX:R:AR23 ; C-ID:R:AR23 1.225053855948978e-13; C-RECON:R:AR23:C_univ 6.483669595541323e-21; C-RECON:R:AR23:C_lat 0.0; C-RECON:R:AR23:C_T_sum_of_blocks 0.0
 
   G18: C-X0:R:G18:mask ; C-FINITE:R:G18 ; C-FLUX:R:G18 ; C-ID:R:G18 2.2182802676611807e-13; C-RECON:R:G18:C_univ 5.5948896115589586e-21; C-RECON:R:G18:C_lat 0.0; C-RECON:R:G18:C_T_sum_of_blocks 0.0
-CENTER2D STOP: FileNotFoundError: [Errno 2] No such file or directory: '/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/center2d-f-jvi5ct1s/none/verify.out'
-refusing: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/center2d-f-fkahbj8e/r.json exists
+CENTER2D STOP: FileNotFoundError: [Errno 2] No such file or directory: '/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/center2d-f-uro4kj03/none/verify.out'
+refusing: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/center2d-f-qlnus2iw/r.json exists

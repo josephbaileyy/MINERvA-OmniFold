@@ -17,6 +17,8 @@ REMOTE = os.path.join(HERE, "center2d_fetch_remote.py")
 VERIFY = os.path.join(HERE, "center2d_fetch_verify.py")
 WRAPPER = os.path.join(HERE, "center2d_fetch.sh")
 DRIVER = os.path.join(HERE, "center2d.py")
+FENCE = os.path.join(HERE, "center2d_fence.py")
+FAMILIES = "cov2d t2a rpd precharge_c geanttw_ oofvc_ covfix_ ibuchi_ ptmc_ rdx_ center2d"
 INJECT = ("import os, sys; os.O_NOATIME = 0; ns = {'__name__': 'remote'}; p = %r; "
           "exec(compile(open(p).read(), p, 'exec'), ns); root = sys.argv[1]; "
           "ns['FILES'] = [(n, root + '/' + n) for n, _ in ns['FILES']]; sys.exit(ns['main'](['remote']))" % REMOTE)
@@ -235,6 +237,69 @@ class Fetch(unittest.TestCase):
         self.assertEqual(self.t.verify()[0], 9)
 
 
+class Fence(unittest.TestCase):
+    """The director's fix: sacct without -s, refusing only on a fenced family's non-terminal State; squeue as is."""
+
+    def setUp(self):
+        self.d = tempfile.mkdtemp(prefix="center2d-fence-")
+
+    def tearDown(self):
+        shutil.rmtree(self.d)
+
+    def fence(self, sacct, squeue=""):
+        a, q = os.path.join(self.d, "sacct.txt"), os.path.join(self.d, "squeue.txt")
+        with open(a, "w") as f:
+            f.write(sacct)
+        with open(q, "w") as f:
+            f.write(squeue)
+        r = subprocess.run([sys.executable, "-I", "-B", FENCE, FAMILIES, a, q], stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE)
+        return r.returncode, r.stdout.decode().strip()
+
+    def test_completed_oofvc_row_clears(self):
+        self.assertEqual(self.fence("61990001|oofvc_r2_a|COMPLETED\n"), (0, "0"))
+
+    def test_every_terminal_state_clears(self):
+        rows = "".join(f"{i}|oofvc_x|{s}\n" for i, s in enumerate(
+            ("COMPLETED", "FAILED", "CANCELLED", "CANCELLED by 12345", "TIMEOUT", "OUT_OF_MEMORY", "NODE_FAIL",
+             "PREEMPTED", "BOOT_FAIL", "DEADLINE", "REVOKED")))
+        self.assertEqual(self.fence(rows), (0, "0"))
+
+    def test_running_or_pending_refuses(self):
+        for st in ("RUNNING", "PENDING", "REQUEUED", "SUSPENDED", "COMPLETING"):
+            self.assertEqual(self.fence(f"1|oofvc_r3|{st}\n"), (0, "1"), st)
+
+    def test_unknown_state_refuses(self):
+        self.assertEqual(self.fence("1|covfix_p1|SOMETHING_NEW\n"), (0, "1"))
+
+    def test_family_match_is_case_insensitive_and_by_prefix(self):
+        self.assertEqual(self.fence("1|COV2Dg2r-AR23|RUNNING\n"), (0, "1"))
+        self.assertEqual(self.fence("1|xcov2d|RUNNING\n"), (0, "0"))
+
+    def test_other_families_do_not_refuse(self):
+        self.assertEqual(self.fence("1|evw5d_r2|RUNNING\n2|lgbm42|PENDING\n"), (0, "0"))
+
+    def test_squeue_row_of_a_family_refuses_whatever_its_state(self):
+        self.assertEqual(self.fence("", "77|ibuchi_x|PENDING\n"), (0, "1"))
+        self.assertEqual(self.fence("", "77|other|RUNNING\n"), (0, "0"))
+
+    def test_malformed_row_refuses(self):
+        self.assertEqual(self.fence("garbage\n"), (0, "1"))
+
+    def test_unreadable_input_fails_closed(self):
+        r = subprocess.run([sys.executable, "-I", "-B", FENCE, FAMILIES, os.path.join(self.d, "none"),
+                            os.path.join(self.d, "none")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.assertNotEqual(r.returncode, 0)
+        self.assertEqual(r.stdout.strip(), b"")
+
+    def test_wrapper_families_equal_the_tested_ones(self):
+        with open(WRAPPER) as f:
+            text = f.read()
+        line = [ln for ln in text.splitlines() if ln.startswith("FAMILIES=")][0]
+        self.assertEqual(line.strip(), f'FAMILIES="{FAMILIES}"')
+        self.assertNotIn(" -s ", text.split("sacct -X", 1)[1].split("\n", 1)[0])
+
+
 class Wrapper(unittest.TestCase):
     def run_w(self, *args, wrapper=WRAPPER):
         r = subprocess.run(["bash", wrapper, *args], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -257,9 +322,9 @@ class Wrapper(unittest.TestCase):
         self.assertEqual(self.run_w("/nonexistent/o", "--check-only", "x")[0], 2)
 
     def test_tampered_helper_refuses(self):
-        for name in ("center2d_fetch_remote.py", "center2d_fetch_verify.py", "center2d.py"):
+        for name in ("center2d_fetch_remote.py", "center2d_fetch_verify.py", "center2d_fence.py", "center2d.py"):
             d = tempfile.mkdtemp(prefix="center2d-w-")
-            for f in (WRAPPER, REMOTE, VERIFY, DRIVER):
+            for f in (WRAPPER, REMOTE, VERIFY, FENCE, DRIVER):
                 shutil.copy(f, d)
             with open(os.path.join(d, name), "a") as f:
                 f.write("\n# tampered\n")

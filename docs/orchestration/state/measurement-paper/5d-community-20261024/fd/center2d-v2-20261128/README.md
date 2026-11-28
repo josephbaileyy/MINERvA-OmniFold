@@ -14,14 +14,15 @@ Overleaf text, a coverage statement, a cause, and any separation of physical asy
 | file | sha256 | what |
 |---|---|---|
 | `center2d.py` | `554ee0bcd3d5335685927b9f5b9c99351d4651d08d4a6a8f9d408b032718b27d` | the driver; modes `expected`, `rehearsal` (part R), `main` (parts T and D) |
-| `center2d_fetch.sh` | `ed7464b355d2a090e638f36c0a9a916e40cf0a2c7d39a40d57cc9fb7d353809c` | the launch wrapper: local gates, cert, fence, one ssh, verifier |
+| `center2d_fetch.sh` | `b89dd3a02592bec9604c823e0bb6d63329366e2b41ae8f388234b3526b79d98a` | the launch wrapper: local gates, cert, fence, one ssh, verifier |
 | `center2d_fetch_remote.py` | `dd1215a1bdef87c046bb538eaadd61811734660bf62d3961c019faad1cbe79e6` | the remote reader, piped on stdin; the 16 paths are fixed in it |
 | `center2d_fetch_verify.py` | `e3385e8e8b869f672be9aeccc4a4cae27c355826fa82ee319e0681a18cd048b9` | the laptop verifier |
+| `center2d_fence.py` | `ee696ee63877cd2ee52719d42fa63fcfa79dee8d1b6f5c3d9c8cd7fa588db9d6` | the fence decision on the sacct and squeue rows |
 | `test_center2d.py` | `e971dd573f02bf52819da6914f39f369dc4ca65cf109121130181d162571bd43` | 33 tests, OK (`receipts/test_center2d.txt`) |
-| `test_center2d_fetch.py` | `8cf5759b1305ebd0e372d182621c527148d43bbf91a7ba49f6b169017c1015da` | 21 tests, OK (`receipts/test_center2d_fetch.txt`) |
+| `test_center2d_fetch.py` | `71f8b166f3a012e1e6fe14f8187256ec6f07f6e1875f9edd77fffa9b934203da` | 31 tests, OK (`receipts/test_center2d_fetch.txt`) |
 
 **The wrapper pins:**
-- remote `dd1215a1…`, verify `e3385e8e…` and driver `554ee0bc…`;
+- remote `dd1215a1…`, verify `e3385e8e…`, fence `ee696ee6…` and driver `554ee0bc…`;
 - the sha256 of `center2d.py expected`'s output, `5e50af9b841c0c115bb4b152bc5c6b9b64158c3d7ef37c33d1a67a11bb826fe6`.
   That output lists the 16 fetched files' digests, each taken from a committed record: G2R's `data_g2r.json` and
   `score_g2r_<T>.json`, partc-r2's `SHA256SUMS`, part B's sums, and S5_R's `s5.json`.
@@ -58,17 +59,36 @@ Every pin was computed by command.
    control STOPs as declared, and the change comes back to the director.
 3. **The fetch package goes to the director with its shas before any connect.** The shas are the table above.
 
-## Two points for the director
+## ERRATA
 
-- **A slip in the declaration's wording, §6 C-FLUX.** It says the flux-weight sum and n_eff are "`data_g2r.json`'s
-  logged" values. They are not in `data_g2r.json`. They are in the data phase's committed connect log,
+- **§6 C-FLUX of the declaration:** the "`data_g2r.json`'s logged" sum and n_eff are in
   `fd/receipts-cov2d/g2r/readout/data/connect.log.txt:14`
   (`957750e57a6bc43ac62b629d6d140cd0b9479c2db93744937b29a1555a3e21c3`):
-  `[PASS] weights_equal_vl175_build_json {'sum': 211.01200325082078, 'n_eff': 19.060534772246488}`. The code pins
-  and reads that file. The values and the check are as declared.
-- **The fence also refuses `rdx_`.** It covers ruling 5's families (cov2d*, t2a*, rpd*, precharge_c, geanttw_,
-  oofvc_, covfix_, ibuchi_, ptmc_) plus `rdx_`, which is in cov2d's condition-B list, and `center2d`. It uses sacct
-  (states PD, R, RQ, S and CG) and squeue, and job names are matched by case-insensitive prefix.
+  `[PASS] weights_equal_vl175_build_json {'sum': 211.01200325082078, 'n_eff': 19.060534772246488}`. The values and
+  the exact-equality rule are unchanged, and the code pins that line. The merged declaration is not edited (director,
+  2026-11-28).
+
+## The fetch is all or nothing
+
+The declaration's §6 C-FETCH says that if a part-D file is missing or differs, part D STOPs and the tunes continue.
+The reader is stricter.
+- Any missing, changed, symlinked, foreign-owned or empty file among the 16 makes it exit 9 before `MANIFEST.tsv` is
+  written, so the whole fetch refuses.
+- A refused fetch comes to the director. A tunes-only fetch would need a separate GO with its own file list.
+- The driver keeps the per-part C-FETCH split for a fetch that verified but holds a file with a wrong digest. That case
+  cannot pass the verifier, so the split is a second line of defence.
+
+## The fence
+
+- **Families:** ruling 5's (cov2d*, t2a*, rpd*, precharge_c, geanttw_, oofvc_, covfix_, ibuchi_, ptmc_), plus `rdx_`
+  from cov2d's condition-B list and this lane's `center2d`. Job names are matched by case-insensitive prefix.
+- **sacct:** `sacct -X -n -P -u josephrb -S now-14days -o JobID,JobName,State`, without `-s`. With `-s`, sacct
+  selects jobs that held a state at any time in the window, so it would refuse on jobs that have since ended (the
+  director's review of `ca091751`). `center2d_fence.py` refuses on a fenced-family row whose State is not terminal.
+  The terminal states are COMPLETED, FAILED, CANCELLED*, TIMEOUT, OUT_OF_MEMORY, NODE_FAIL, PREEMPTED, BOOT_FAIL,
+  DEADLINE and REVOKED. An unknown state refuses, and so does a malformed row.
+- **squeue:** `squeue -h -u josephrb -o "%i|%j|%T"`. It lists only live jobs, so any fenced-family row refuses.
+- **Unreadable fence files** make the helper exit non-zero with no count, and the wrapper refuses.
 
 ## How it reads and writes
 
