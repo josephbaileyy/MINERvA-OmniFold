@@ -281,8 +281,8 @@ EDGE_STEP_APPC = r"with three interior \$p_T\$ edges \\SI\{([0-9.]+)\}\{GeV/c\} 
 # Every printed copy of the edge step: "$p_T$ edges", an optional parenthetical (sec3's edge list), an optional
 # "differ by"/"shifted by", then the step. Pinned per file, so a reworded or dropped copy also fails.
 EDGE_STEP_COPY = r"\$p_T\$ edges(?: \([^)]*\))?(?: differ by| shifted by)? \\SI\{([0-9.]+)\}\{GeV/c\}"
-EDGE_STEP_COPIES = {"sec2_method.tex": 1, "sec3_twod.tex": 1, "appC_supplementary.tex": 2, "appD_reproducibility.tex": 1}
-EDGE_STEP_ALL = "pT edge step, all 5 printed copies (sec2, sec3, appC x2, appD) equal sec3's, exactly"
+EDGE_STEP_COPIES = {"sec2_method.tex": 2, "sec3_twod.tex": 1, "appC_supplementary.tex": 1, "appD_reproducibility.tex": 1}
+EDGE_STEP_ALL = "pT edge step, all 5 printed copies (sec2 x2, sec3, appC, appD) equal sec3's, exactly"
 
 # EVW5D (#1353, #1355): App. D's paragraph on the 5D per-event weights in the release (DECISION-20261125b sec. 3;
 # C-COMPLETE option (a), DECISION-20261126). Every number and claim in it is bound to EVW5D attempt 2's receipts and to
@@ -763,7 +763,7 @@ def evw2d_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
             for lab, s, fact in EVW2D_CLAIMS]
 
 
-# The high-p_par open issue in sec3_twod.tex (Joseph 2026-11-26, via the director; a PROPOSAL for his wording). Every
+# The high-p_par open issue in sec3_twod.tex and appC_supplementary.tex (Joseph 2026-11-26, via the director; a PROPOSAL for his wording). Every
 # number and reading is bound to the precharge study's committed outputs (state/precharge-20261125/). The sentence states
 # no cause: the study's declarations make no cause determination.
 PRECHARGE = "precharge-20261125"
@@ -962,28 +962,140 @@ def oofvc_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 
 def highpz_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
-    t, d = text("sec3_twod.tex", sources), highpz()
+    t, d = text("appC_supplementary.tex", sources), highpz()
     return [(lab, t.count(s) == 1 and fact(d), f"sentence found {t.count(s)} time(s) | record {fact(d)}")
             for lab, s, fact in HIGHPZ_CLAIMS]
 
 
+
+# Readability pass (Joseph's wording, 2026-11-28, via rewrite-helper and the director): verbal claims about the sixteen
+# cells. Each fact is computed from the values_fived16.tex macros that print Table 3 (box edges), Table 4 (f-Rxx) and the
+# H2 accounting, so a changed cell integral, box edge or count stops the build instead of leaving the words behind.
+def _cell(s: dict[str, str], k: str) -> dict[str, str]:
+    return {a: _fv(s, f"box-{k}-{a}") for a in ("pt", "pz", "eavail", "q3", "W")}
+
+
+def _f(s: dict[str, str], k: str) -> float:
+    try:
+        return float(_fv(s, f"f-{k}"))
+    except ValueError:
+        return float("nan")
+
+
+LOW_RECOIL = {"eavail": "0--0.8", "q3": "0--2"}
+HIGH_Q3_W = {"q3": "2--100", "W": "1.8--100"}
+LOW_PT, HIGH_PT, LOW_PZ, HIGH_PZ = {"pt": "0--0.7"}, {"pt": "0.7--4.5"}, {"pz": "1.5--4.5"}, {"pz": "4.5--60"}
+CELLS16 = [f"R{i:02d}" for i in range(16)]
+
+
+def _sel(s: dict[str, str], k: str, *want: dict[str, str]) -> bool:
+    c = _cell(s, k)
+    return all(c[a] == v for w in want for a, v in w.items())
+
+
+def _quadrant(s: dict[str, str], *want: dict[str, str]) -> list[str]:
+    return [k for k in CELLS16 if _sel(s, k, *want)]
+
+
+def _about_equal_pair(s: dict[str, str]) -> bool:  # R00 and R01 hold most of their quadrant, within 25% of each other
+    q = _quadrant(s, LOW_PT, LOW_PZ)
+    a, b = _f(s, "R00"), _f(s, "R01")
+    return (_sel(s, "R00", LOW_PT, LOW_PZ, LOW_RECOIL) and _sel(s, "R01", LOW_PT, LOW_PZ, HIGH_Q3_W) and len(q) == 4
+            and 0.8 <= b / a <= 1.25 and (a + b) > 0.5 * sum(_f(s, k) for k in q))
+
+
+def _five_times(s: dict[str, str]) -> bool:  # R04 is the low-recoil cell and about five times the next in its quadrant
+    q = _quadrant(s, LOW_PT, HIGH_PZ)
+    rest = [_f(s, k) for k in q if k != "R04"]
+    return _sel(s, "R04", LOW_PT, HIGH_PZ, LOW_RECOIL) and len(q) == 4 and 4.5 <= _f(s, "R04") / max(rest) <= 5.5
+
+
+def _r14_most(s: dict[str, str]) -> bool:
+    return _sel(s, "R14", HIGH_PT, HIGH_PZ, HIGH_Q3_W) and max(CELLS16, key=lambda k: _f(s, k)) == "R14"
+
+
+def _lowstab_selection(s: dict[str, str]) -> bool:  # three at low W, plus the one at any W in the high-pT, high-p_par quadrant
+    high_e_low_q3 = {"eavail": "0.8--100", "q3": "0--2"}
+    three = _quadrant(s, high_e_low_q3, {"W": "0--1.8"})
+    fourth = _quadrant(s, HIGH_PT, HIGH_PZ, high_e_low_q3)
+    named = _fv(s, "h2-lowstab-cells").replace(" and ", ", ").split(", ")
+    return (len(three) == 3 and fourth == ["R15"] and _cell(s, "R15")["W"] == "0--100"
+            and sorted(three + fourth) == sorted(named) and named[-1] == "R15")
+
+
+def _h2_words(s: dict[str, str]) -> bool:  # "one unsupported box" and "the other four"; the counts close to sixteen
+    try:
+        n = {k: int(_fv(s, f"h2-{k}")) for k in ("nboxes", "nsupported", "nmerge", "nabsorbed", "nunreported")}
+    except ValueError:
+        return False
+    return (n["nabsorbed"] == 1 and n["nunreported"] == 4 and n["nsupported"] + n["nabsorbed"] - n["nmerge"] == 16
+            and n["nboxes"] - n["nsupported"] - n["nabsorbed"] == n["nunreported"])
+
+
+def _rounding_fails(s: dict[str, str]) -> bool:  # stab-max is A3's max, and both A3 values exceed the ENS1 bars
+    a = receipt("s5e/cand/assess_receipt.json")["A3"]["data_rounding_probe_over_data_sigma"]
+    lr = re.findall(r"\\@namedef\{lr@stab-max\}\{([^}]*)\}", s["values_landed.tex"])
+    try:
+        bars = float(_fv(s, "ens1-bar-median")), float(_fv(s, "ens1-bar-max"))
+    except ValueError:
+        return False
+    return lr == [f"{a['max']:.1f}"] and a["median"] > bars[0] and a["max"] > bars[1]
+
+
+READABILITY_CLAIMS = [
+    ("cells: R00 and R01 hold most of the low-pT, low-p_par quadrant, about equally (f-R00..R03, Table 3 boxes)",
+     "sec5_multidim.tex", "most of the cross section lies about equally in two cells: low recoil (low $E_{\\mathrm{avail}}$ "
+     "and $q_3$, R00) and high momentum transfer with high hadronic mass (R01).", _about_equal_pair),
+    ("cells: R04 about five times the next cell of the low-pT, high-p_par quadrant (f-R04..R07)", "sec5_multidim.tex",
+     "the low-recoil cell (R04) dominates, with about five times the cross section of the next cell.", _five_times),
+    ("cells: R14 contributes the most overall (f-R00..R15)", "sec5_multidim.tex",
+     "the cell with high momentum transfer and high hadronic mass at high $p_T$ and high $p_\\parallel$ (R14) "
+     "contributes the most.", _r14_most),
+    ("cells: the four low-stability cells are the three high-E_avail, low-q3, low-W cells and R15 (h2-lowstab-cells)",
+     "sec4_higherdim.tex", "Three cells select high available energy, low momentum transfer, and low hadronic mass. At high "
+     "$p_T$ and high $p_\\parallel$, a fourth selects high available energy and low momentum transfer at any mass",
+     _lowstab_selection),
+    ("cells: Table 3's caption, all four select high E_avail and low q3 (h2-lowstab-cells)", "sec4_higherdim.tex",
+     "All four select high available energy and low momentum transfer. The first three also select low mass, and R15 spans "
+     "the full mass interval.", _lowstab_selection),
+    ("H2: one absorbed unsupported box and the other four omitted (h2-nabsorbed, h2-nunreported)", "sec4_higherdim.tex",
+     "the supported boxes and one unsupported box, absorbed into R09, form sixteen supported regions", _h2_words),
+    ("H2: the other four unsupported boxes (h2-nunreported)", "sec4_higherdim.tex",
+     "The other four unsupported boxes are omitted and unreported.", _h2_words),
+    ("rounding: fails both tolerances; stab-max is the A3 maximum (s5e assess_receipt A3, ens1-bar-median/max)",
+     "sec5_multidim.tex", "The sixteen-cell estimates fail both rounding-stability tolerances set before the test.",
+     _rounding_fails),
+]
+
+
+def readability_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    out = []
+    for lab, f, sent, fact in READABILITY_CLAIMS:
+        n, ok = text(f, sources).count(sent), fact(sources)
+        out.append((lab, n == 1 and ok, f"sentence found {n} time(s) | macros {ok}"))
+    return out
+
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
+    # Rounding-level stability on data (s5e assess_receipt.json A3, data_rounding_probe_over_data_sigma), sec5_multidim.tex
+    ("rounding: median data-rounding shift, statistical sigma (s5e assess_receipt A3 median)", "sec5_multidim.tex",
+     r"Rounding-level changes to data inputs shift them by ([0-9.]+) statistical standard deviations at the median",
+     lambda: receipt("s5e/cand/assess_receipt.json")["A3"]["data_rounding_probe_over_data_sigma"]["median"], "round"),
     # OOFVC (oofv-convention-20261126, r3 score.json), sec3_twod.tex
     ("OOFVC: D_IBU under the convention, K = 10, and D_E_R under it (score.json operands D_IBU_R, D_ER_R)", "sec3_twod.tex",
      r"ten-iteration IBU gives ([0-9.]+) per bin instead of \\fvval\{c2c1-dibu\}, and the two-dimensional OmniFold "
      r"result gives ([0-9.]+) instead of \\fvval\{c2c1-der\}\.",
      lambda: (oofvc()["score"]["operands"]["D_IBU_R"], oofvc()["score"]["operands"]["D_ER_R"]) if oofvc_ok(oofvc())
      else (-1.0, -1.0), "round"),
-    # The high-p_par open issue (precharge-20261125), sec3_twod.tex
+    # The high-p_par open issue (precharge-20261125), sec3_twod.tex and appC_supplementary.tex
     ("high p_par: the reco edge of the excess (merged-comparison.csv rows 60-80 and >=80)", "sec3_twod.tex",
      r"above the reported range, at reconstructed \$p_\\parallel \\geq ([0-9]+)\$~GeV/\$c\$\.",
      lambda: 60.0 if {x["reco_p_parallel_GeV_c"] for x in highpz()["merged"]} >= {"60–80", "≥80"} else -1.0, "round"),
     ("high p_par: the curvature-tail excess (signed-qp.csv) and the excess at reco >= 60, both signs (merged-comparison.csv)",
-     "sec3_twod.tex",
+     "appC_supplementary.tex",
      r"About ([0-9]+) of the roughly ([0-9]+) excess tracks, counting both charges, lie in the tails of the fitted muon curvature",
      lambda: (highpz_tails(), highpz_excess()), "round"),
-    ("high p_par: test B's share of the 50-80 excess (test-b.json epsilon S2, test1.json fold)", "sec3_twod.tex",
+    ("high p_par: test B's share of the 50-80 excess (test-b.json epsilon S2, test1.json fold)", "appC_supplementary.tex",
      r"A constant offset in the fitted curvature accounts for about \$([0-9]+)\\%\$ of the excess between 50 and 80~GeV/\$c\$",
      highpz_b_share, "round"),
     # One printed 1.04 stands for both pT edge bins, so it is bound twice: once to each bin.
@@ -1178,6 +1290,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     rows += c2_claims(sources)
     rows += highpz_claims(sources)
     rows += oofvc_claims(sources)
+    rows += readability_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
         found = len(re.findall(pat, text(src, sources))) == 1
         c = fn()
@@ -1347,7 +1460,8 @@ def load() -> dict[str, str]:
     return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "appB_negweight.tex",
                                                "primer_body.tex", "appA_methods.tex",
                                                "appC_supplementary.tex", "records_r03_twod.tex", "sec2_method.tex",
-                                               "appD_reproducibility.tex", "sec5_multidim.tex", "sec6_conclusions.tex", "values_fived16.tex")}
+                                               "appD_reproducibility.tex", "sec5_multidim.tex", "sec6_conclusions.tex", "values_fived16.tex",
+                                               "sec4_higherdim.tex", "values_landed.tex")}
 
 
 def gzip_self_test() -> bool:
@@ -1449,11 +1563,11 @@ def self_test() -> int:
                          ("fitted at lower $p_\\parallel$", "fitted at higher $p_\\parallel$"),
                          ("highest muon momenta remains possible", "highest muon momenta is excluded"),
                          ("confined to the highest muon momenta", "confined to the highest energies")):
-        t = text("sec3_twod.tex", base)
+        t = text("appC_supplementary.tex", base)
         if t.count(old_s) != 1:
             print(f"  NOT FOUND   high p_par mutation {old_s!r}"); ok = False; continue
         trial = dict(base)
-        trial["sec3_twod.tex"] = t.replace(old_s, new_s)
+        trial["appC_supplementary.tex"] = t.replace(old_s, new_s)
         if all(r[1] for r in highpz_claims(trial)):
             print(f"  NOT CAUGHT  high p_par: {old_s} -> {new_s}"); ok = False
         else:
@@ -1529,10 +1643,10 @@ def self_test() -> int:
             ("sec3_twod.tex", "differ by \\SI{0.005}{GeV/c} from", "differ by \\SI{0.006}{GeV/c} from", EDGE_STEP_ALL),
             ("appC_supplementary.tex", "edges \\SI{0.005}{GeV/c} from the published ones",
              "edges \\SI{0.006}{GeV/c} from the published ones", EDGE_STEP_ALL),
-            ("appC_supplementary.tex", "shifted by \\SI{0.005}{GeV/c}", "shifted by \\SI{0.006}{GeV/c}", EDGE_STEP_ALL),
+            ("sec2_method.tex", "shifted by \\SI{0.005}{GeV/c}", "shifted by \\SI{0.006}{GeV/c}", EDGE_STEP_ALL),
             ("appD_reproducibility.tex", "edges \\SI{0.005}{GeV/c} from the published values",
              "edges \\SI{0.006}{GeV/c} from the published values", EDGE_STEP_ALL),
-            ("appC_supplementary.tex", "edges shifted by \\SI", "edges moved by \\SI", EDGE_STEP_ALL),
+            ("sec2_method.tex", "edges shifted by \\SI", "edges moved by \\SI", EDGE_STEP_ALL),
             ("appD_reproducibility.tex", "three $p_T$ edges \\SI{0.005}", "three $p_T$ bin edges \\SI{0.005}", EDGE_STEP_ALL)):
         t = text(src, base)
         if t.count(old_s) != 1:
@@ -1889,6 +2003,31 @@ def self_test() -> int:
         print("  NOT CAUGHT  verbal phrase removal"); ok = False
     else:
         caught += 1; print("  caught      verbal phrase changed")
+    for what, lab, macro, new in (
+            ("R01 twice R00", 0, "f-R01", "65.2"), ("R05 half R04", 1, "f-R05", "24.5"), ("R04 above R14", 2, "f-R04", "52.0"),
+            ("R03 at low W", 3, "box-R03-W", "0--1.8"), ("R15 split in W", 4, "box-R15-W", "0--1.8"),
+            ("two boxes absorbed", 5, "h2-nabsorbed", "2"), ("five boxes omitted", 6, "h2-nunreported", "5"),
+            ("median bar above the shift", 7, "ens1-bar-median", "0.9")):
+        trial = dict(base)
+        pat = r"(\\@namedef\{fv@" + re.escape(macro) + r"\}\{)[^}]*(\})"
+        trial["values_fived16.tex"], n = re.subn(pat, lambda m: m[1] + new + m[2], base["values_fived16.tex"])
+        if n != 1 or dict((r[0], r[1]) for r in evaluate(trial))[READABILITY_CLAIMS[lab][0]]:
+            print(f"  NOT CAUGHT  readability claim: {what}"); ok = False
+        else:
+            caught += 1; print(f"  caught      readability claim: {what}")
+    trial = dict(base)
+    trial["values_landed.tex"], n = re.subn(r"(\\@namedef\{lr@stab-max\}\{)[^}]*(\})", lambda m: m[1] + "2.4" + m[2],
+                                            base["values_landed.tex"])
+    if n != 1 or dict((r[0], r[1]) for r in evaluate(trial))[READABILITY_CLAIMS[7][0]]:
+        print("  NOT CAUGHT  readability claim: stab-max not the A3 maximum"); ok = False
+    else:
+        caught += 1; print("  caught      readability claim: stab-max not the A3 maximum")
+    trial = dict(base)
+    trial["sec5_multidim.tex"] = base["sec5_multidim.tex"].replace("about five times", "about three times")
+    if dict((r[0], r[1]) for r in evaluate(trial))[READABILITY_CLAIMS[1][0]]:
+        print("  NOT CAUGHT  readability phrase changed"); ok = False
+    else:
+        caught += 1; print("  caught      readability phrase changed")
     print(f"SELF-TEST :: {'PASS' if ok else 'FAIL'} ({caught} perturbations rejected)")
     return 0 if ok else 1
 

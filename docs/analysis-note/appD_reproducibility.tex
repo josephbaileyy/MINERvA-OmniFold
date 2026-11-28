@@ -25,25 +25,25 @@ The deposit also provides the unbinned central value: the per-event OmniFold wei
 % EVW5D (DECISION-20261125b sec. 3; C-COMPLETE option (a), DECISION-20261126), drafted by the note lane from the director's brief and worded by Joseph on 2026-11-26 (option B, with the two changes below). Receipts under state/measurement-paper/5d-community-20261024/fd/evw5d-20261125/: receipts/attempt2/post/evw5d/run.json (n_rows 32849103; C-BIND xsec_flat_bytes_equal; C-F f_from_rows_max_rel 3.77e-15; C-COMPLETE n_cells_beyond_atol 32, max_abs_c_minus_1 4.0978e-4), constants.json (key; edges pt 0-4.5, pz 1.5-60, eavail, q3 and W 0-100; one integrated flux in every pT bin; input npz 07fccc1a). Joseph 2026-11-26 (option B, via the director): the 2,801 rows outside the grid (run.json C-FLOW n_outside_grid) lie outside on E_avail, q3 or W, because the truth selection's pT and p_par limits (in_truth_phase_space, inclusive) equal the grid's outer edges (fine_index last edge inclusive), which are exact in float32; the input npz was built without --full-phase-space (FD-CT-5B-INPUTS.md:22-24, sbatch_nn_dump_5d.sh:13-15), so the Sec. 2 truth phase space, theta_mu < 20 deg included, applies, lane/c32.txt (the 32 cells: 16 adjacent pairs, equal and opposite ofin - denom), lane/c1effect.txt (c := 1 moves the sixteen f by at most 3.27e-6). The denominator is the saved rows: state/eavail-switch-pricing-20261031/step0/step0b.json c_tuple_multiset_equal true. Purity weights left out: DECISION-20261125c sec. 2. check_sec4_receipts.py binds every number below to these files.
 For the \resSixteen{}, the deposit also provides the per-event OmniFold weights on the \num{32849103} simulated events that pass the truth selection. Of these, \num{2801} lie outside the fine grid's $E_{\mathrm{avail}}$, $q_3$ or $W$ range and enter no cell integral. Each event is keyed by the SHA-256 digest of the input file and its entry number in that file. It carries its five truth variables and its prior and unfolded weights. Separate files give the cross-section normalization and the fine-grid edges, volumes, and completeness. The run that wrote the weights reproduced the reported cross section byte for byte. Summed with the normalization, the weights reproduce the sixteen cell integrals to double-precision rounding. The completeness denominator is the deposited events themselves, so the completeness is 1 in any binning. The flux enters as a single integrated value. Readers can therefore choose any binning inside the truth phase space of Sec.~\ref{sec:selection} [Eq.~\eqref{eq:muon-fiducial}], within the fine grid's range. The stored completeness differs from 1 in 32 fine cells, by at most \num{4.1e-4}. These cells form 16 adjacent pairs with equal and opposite differences. This pattern is consistent with 16 events that lie within single-precision rounding of a cell edge. Setting the stored completeness to 1 changes the sixteen cell integrals by at most \num{3.3e-6} of their values. The release provides central values only, so it gives no uncertainty for a new binning. No per-event weights are released for the \resFiveAxis{}.
 
-\phantomsection\label{app:release-edges} Table~\ref{tab:reproducibility-bin-edges} gives the fine-grid edges. The muon grid uses the published $14\times16$ layout, with three $p_T$ edges \SI{0.005}{GeV/c} from the published values (Sec.~\ref{sec:results-xsec}). It reports \lrval{q-ncells} of its 224 cells using the published bin mapping. The last intervals in $E_{\mathrm{avail}}$, $q_3$, and $W$ collect the tails up to 100 in their respective units. The sixteen reporting regions and the coarser joint-test grid are specified in Table~\ref{tab:five-dimensional-regions} and Appendix~\ref{app:joint-generator-tests}, respectively.
+\phantomsection\label{app:release-edges} Table~\ref{tab:reproducibility-bin-edges} gives the fine-grid edges. The muon grid uses the published $14\times16$ layout, with three $p_T$ edges \SI{0.005}{GeV/c} from the published values (Sec.~\ref{sec:results-xsec}). It reports \lrval{q-ncells} of its 224 cells using the published bin mapping. The last intervals in $E_{\mathrm{avail}}$, $q_3$, and $W$ collect the tails up to 100 in their respective units. Table~\ref{tab:five-dimensional-regions} specifies the sixteen reporting regions. The bold entries in Table~\ref{tab:reproducibility-bin-edges} give the coarser grid used to score the joint generator tests (Appendix~\ref{app:joint-generator-tests}).
 
-\begin{table}[tbp]
+\begin{table}[H]
   \centering
-  \caption{Fine-grid bin edges.}
+  \caption{Fine-grid bin edges. Bold entries are the edges used to score the joint generator tests.}
   \label{tab:reproducibility-bin-edges}
   \begin{tabular}{@{}ll>{\raggedright\arraybackslash}p{0.70\textwidth}@{}}
     \toprule
     Observable & Unit & Edges \\
     \midrule
     $p_T$ & $\mathrm{GeV}/c$ &
-    $0$, $0.07$, $0.15$, $0.25$, $0.33$, $0.40$, $0.47$, $0.55$, $0.70$, $0.85$,
-    $1.00$, $1.25$, $1.50$, $2.50$, $4.50$ \\
+    $\mathbf{0}$, $0.07$, $0.15$, $0.25$, $0.33$, $0.40$, $0.47$, $\mathbf{0.55}$, $0.70$, $\mathbf{0.85}$,
+    $1.00$, $1.25$, $1.50$, $2.50$, $\mathbf{4.50}$ \\
     $p_\parallel$ & $\mathrm{GeV}/c$ &
-    $1.5$, $2$, $2.5$, $3$, $3.5$, $4$, $4.5$, $5$, $6$, $7$, $8$, $9$, $10$,
-    $15$, $20$, $40$, $60$ \\
-    $E_{\mathrm{avail}}$ & $\mathrm{GeV}$ & $0$, $0.1$, $0.2$, $0.4$, $0.8$, $1.5$, $3.0$, $100$ \\
-    $q_3$ & $\mathrm{GeV}/c$ & $0$, $0.2$, $0.4$, $0.6$, $0.8$, $1.2$, $2.0$, $100$ \\
-    $W$ & $\mathrm{GeV}$ & $0$, $1.1$, $1.4$, $1.8$, $2.2$, $3.0$, $100$ \\
+    $\mathbf{1.5}$, $2$, $2.5$, $3$, $\mathbf{3.5}$, $4$, $4.5$, $5$, $\mathbf{6}$, $7$, $8$, $9$, $10$,
+    $15$, $20$, $40$, $\mathbf{60}$ \\
+    $E_{\mathrm{avail}}$ & $\mathrm{GeV}$ & $\mathbf{0}$, $0.1$, $0.2$, $\mathbf{0.4}$, $0.8$, $\mathbf{1.5}$, $3.0$, $\mathbf{100}$ \\
+    $q_3$ & $\mathrm{GeV}/c$ & $\mathbf{0}$, $0.2$, $0.4$, $0.6$, $0.8$, $\mathbf{1.2}$, $\mathbf{2.0}$, $\mathbf{100}$ \\
+    $W$ & $\mathrm{GeV}$ & $\mathbf{0}$, $1.1$, $\mathbf{1.4}$, $1.8$, $\mathbf{2.2}$, $3.0$, $\mathbf{100}$ \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -52,14 +52,14 @@ For the \resSixteen{}, the deposit also provides the per-event OmniFold weights 
 \label{app:analysis-code}
 \label{app:codebase}
 
-The analysis code is available in the \href{https://github.com/josephbaileyy/MINERvA-OmniFold}{MINERvA OmniFold repository}. The MINERvA 101 event loop (\path{runEventLoopOmniFold.cpp}) writes per-run-period ROOT trees for data, simulated backgrounds, reconstructed signal, and fiducial true signal. These trees carry event and universe weights and are accompanied by the exposure and flux inputs. The 2D and 3D drivers (\path{unfold_2d_omnifold_unbinned.py} and \path{unfold_3d_omnifold_unbinned.py}) configure the features, selections, and normalization for their samples. The scalar 4D and 5D production code is under \path{nd-unfolding/}. The iterative reweighting is implemented in \path{unbinned_unfolding/python/omnifold.py}. The repository documents the upstream dependencies. The deposit links the release of the repository from which it was made, and its manifests record the digests of the replay package's and the five-axis products' inputs.
+The \href{https://github.com/josephbaileyy/MINERvA-OmniFold}{MINERvA OmniFold repository} provides the MINERvA 101 event loop (\path{runEventLoopOmniFold.cpp}), the 2D and 3D drivers (\path{unfold_2d_omnifold_unbinned.py}, \path{unfold_3d_omnifold_unbinned.py}), scalar 4D and 5D production code (\path{nd-unfolding/}), and iterative reweighting (\path{unbinned_unfolding/python/omnifold.py}). The repository documents the upstream dependencies. The deposit identifies the code release and its manifests record the input digests for replay and the five-axis products.
 % Cite the repository tag or commit once it exists.
 
 \begin{sloppypar}
 To replay the archived results, unpack the replay package from the deposit and run its verifier, \texttt{code/\allowbreak verify\_rc.py} (\texttt{publication/\allowbreak release/\allowbreak verify\_rc.py} in the repository), from its top directory with the pinned NumPy, SciPy, and Matplotlib requirements. A successful replay prints \verb|VERIFY: PASS|.
 \end{sloppypar}
 
-\subsection{Terminology and estimator definitions}
+\subsection{Deposit notation}
 \label{app:reproducibility-definitions}
 \label{sec:front-definitions}
 \label{app:devhistory-method}
@@ -67,9 +67,11 @@ To replay the archived results, unpack the replay package from the deposit and r
 \label{app:devhistory-5d}
 \label{app:devhistory-recovery-seeds}
 
-Table~\ref{tab:estimators} gives the settings for each principal result. The configurations use five OmniFold iterations, with 100 trees, at most eight leaves, and learning rate 0.1 in the nominal boosted-tree learners. The \estTwoD{} uses seeded LightGBM (central seed 42), as does the \estPurity{} in two dimensions. The \estMultiD{} and the two deterministic controls construct LightGBM histograms from all training rows. Both reported refined estimators use a 400-tree, 31-leaf classifier for negative-weight refinement, while the low-capacity control uses 100 trees and eight leaves for that step. The \estExact{} uses scikit-learn gradient-boosted trees with exact splits and binned purity weights. Appendix~\ref{app:joint-generator-tests} specifies the variant used for the joint generator tests. The low-capacity recovery test and the refined-estimator tests at three withheld truth shapes reuse seed sets from estimator development.
+Table~\ref{tab:estimators} gives the estimator settings and points to the joint-test variant. The low-capacity recovery test and the refined-estimator tests at three withheld truth shapes reuse seed sets from estimator development.
 
-The matrices $\CrepTwoD$, $V_Z$, and $\CrepFiveD$ refer, respectively, to the \lrval{q-ncells}-bin muon result, the \resFiveAxis{}, and the sixteen refined cell integrals. Deposit file and array names and the analysis repository's records keep the earlier symbols: $Q_R$ is $\CrepTwoD$, $C_{\mathrm{rep}}$ is $\CrepFiveD$, ``the baseline covariance'' is $\CrepFiveDzero$, $C_e$ is $V_{\mathrm{stat+syst}}$, $C_e^{\mathrm{infl}}$ is $V_{\mathrm{stat+syst}}^{\mathrm{infl}}$, $C_{\mathrm{total}}$ is $\Csub$, $C_{\mathrm{model}}$ is $V_{\mathrm{prior}}$, $C_{\mathrm{resp}}$ is $V_{\mathrm{resp}}$, $C_{\mathrm{PL,5D}}$ is the five-dimensional $\Crun$, $C_Z$ is $V_Z$, and $C_{EW}$ is $V_{EW}$. Their constructions are given in Appendixes~\ref{app:covariance-construction} and \ref{app:multidimensional-statistics}. For the exploratory $(E_{\mathrm{avail}},W)$ density projection, the deposit archives $V_{EW}=PV_ZP^{\mathsf T}$ and the matrix $P$, which sums over the three dropped axes with their bin widths, but not $V_Z$. The spectrum of $V_{EW}$ extends to the double-precision noise floor, making inversion sensitive to regularization. The projection applies the fine-grid mask and uses no additional acceptance factor at the destination binning; whether one is needed has not been decided. The deposit's README gives the array ordering and a worked projection check.
+The matrices $\CrepTwoD$, $V_Z$, and $\CrepFiveD$ refer, respectively, to the \lrval{q-ncells}-bin muon result, the \resFiveAxis{}, and the sixteen refined cell integrals. Deposit file and array names and the analysis repository's records keep the earlier symbols: $Q_R$ is $\CrepTwoD$, $C_{\mathrm{rep}}$ is $\CrepFiveD$, ``the baseline covariance'' is $\CrepFiveDzero$, $C_e$ is $V_{\mathrm{stat+syst}}$, $C_e^{\mathrm{infl}}$ is $V_{\mathrm{stat+syst}}^{\mathrm{infl}}$, $C_{\mathrm{total}}$ is $\Csub$, $C_{\mathrm{model}}$ is $V_{\mathrm{prior}}$, $C_{\mathrm{resp}}$ is $V_{\mathrm{resp}}$, $C_{\mathrm{PL,5D}}$ is the five-dimensional $\Crun$, $C_Z$ is $V_Z$, and $C_{EW}$ is $V_{EW}$. Their constructions are given in Appendixes~\ref{app:covariance-construction} and \ref{app:multidimensional-statistics}.
+
+For the exploratory $(E_{\mathrm{avail}},W)$ density projection, the deposit archives $V_{EW}=PV_ZP^{\mathsf T}$ and the matrix $P$, which sums over the three dropped axes with their bin widths, but not $V_Z$. The spectrum of $V_{EW}$ extends to the double-precision noise floor, making inversion sensitive to regularization. The projection applies the fine-grid mask and uses no additional acceptance factor at the destination binning; whether one is needed has not been decided. The deposit's README gives the array ordering and a worked projection check.
 
 \clearpage
 \subsection{Choices made after results were seen}

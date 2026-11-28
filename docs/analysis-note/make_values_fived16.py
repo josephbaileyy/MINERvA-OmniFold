@@ -283,8 +283,7 @@ LISTED_CLAIMS = [
     ("appC_supplementary.tex", "simulated truths: the GiBUU hybrid, which uses", {"kind": "both"}),
     ("appC_supplementary.tex", "Under $\\CrepFiveDzero$, the synthetic $q_3$ tilt, a momentum", {"kind": "cleared"}),
     ("appC_supplementary.tex", "omitting the run-period term also flagged the separate GiBUU", {"kind": "cleared-nopl"}),
-    ("appC_supplementary.tex", "the $q_3$ tilt also did.", {"kind": "cleared"}),
-    ("appA_methods.tex", "Under $\\CrepFiveDzero$, the $q_3$ tilt was also flagged.", {"kind": "cleared"}),
+    ("appA_methods.tex", "Under $\\CrepFiveDzero$, the $q_3$ tilt was also flagged", {"kind": "cleared"}),
     # the compiled note's own fake-data and PRR sentences (Gemini read r1, finding 1)
     ("sec5_multidim.tex", "simulated truths, the GiBUU hybrid truth, which takes", {"kind": "both"}),
     ("sec5_multidim.tex", "the synthetic $q_3$ tilt also exceeded them", {"kind": "cleared"}),
@@ -2397,7 +2396,10 @@ def self_test():
     for what, name, anchor, edit in (
             ("adds the q3 tilt to the without-block clearing", "appC_supplementary.tex",
              "omitting the run-period term also flagged the separate GiBUU",
-             lambda t: t.replace(r"GiBUU $\Eavail$ shape through R06,", r"GiBUU $\Eavail$ shape and the $q_3$ tilt through R06,", 1)),):
+             lambda t: t.replace(r"GiBUU $\Eavail$ shape through R06,", r"GiBUU $\Eavail$ shape and the $q_3$ tilt through R06,", 1)),
+            ("names an extra truth in the merged inventory", "appA_methods.tex",
+             r"Under $\CrepFiveDzero$, the $q_3$ tilt was also flagged",
+             lambda t: t.replace(r"the $q_3$ tilt was also flagged.", r"the $q_3$ tilt was also flagged, as was the NuWro hybrid truth.", 1)),):
         planted = dict(texts, **{name: edit(texts[name])})
         if planted[name] == texts[name]:
             print(f"  FAIL the plant that {what} did not apply"); ok = False
