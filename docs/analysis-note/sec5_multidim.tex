@@ -109,7 +109,7 @@ Appendix~\ref{app:algorithm-classifier-controls} and Table~\ref{tab:validation-i
 \paragraph{Numerical stability.} \phantomsection\label{sec:higher-dimensional-calibration}
 \label{sec:5d}
 
-Rounding-level changes to data inputs shift the sixteen-cell estimates by 0.8 at the median and up to \lrval{stab-max} statistical standard deviations. These shifts exceed both tolerances set before the test, \fvval{ens1-bar-median} at the median and \fvval{ens1-bar-max} at the maximum. We perturb stored inputs by up to half a single-precision unit in the last place with fine-bin membership fixed, and test the joint cells, $E_{\mathrm{avail}}$--$W$ integrals and their sum, and the total rate. Appendix~\ref{app:bias-prior-stability} gives the alternative settings and stricter pseudo-data comparison.
+The sixteen-cell estimates fail both rounding-stability tolerances set before the test. Rounding-level changes to data inputs shift them by 0.8 statistical standard deviations at the median and up to \lrval{stab-max} at the maximum, against \fvval{ens1-bar-median} and \fvval{ens1-bar-max}. We perturb stored inputs by up to half a single-precision unit in the last place with fine-bin membership fixed, and test the joint cells, $E_{\mathrm{avail}}$--$W$ integrals and their sum, and the total rate. Appendix~\ref{app:bias-prior-stability} gives the alternative settings and stricter pseudo-data comparison.
 
 \subsubsection{Coverage at held-out tunes}
 \label{sec:closure-interval-diagnostics}

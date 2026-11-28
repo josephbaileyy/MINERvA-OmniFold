@@ -1032,6 +1032,16 @@ def _h2_words(s: dict[str, str]) -> bool:  # "one unsupported box" and "the othe
             and n["nboxes"] - n["nsupported"] - n["nabsorbed"] == n["nunreported"])
 
 
+def _rounding_fails(s: dict[str, str]) -> bool:  # stab-max is A3's max, and both A3 values exceed the ENS1 bars
+    a = receipt("s5e/cand/assess_receipt.json")["A3"]["data_rounding_probe_over_data_sigma"]
+    lr = re.findall(r"\\@namedef\{lr@stab-max\}\{([^}]*)\}", s["values_landed.tex"])
+    try:
+        bars = float(_fv(s, "ens1-bar-median")), float(_fv(s, "ens1-bar-max"))
+    except ValueError:
+        return False
+    return lr == [f"{a['max']:.1f}"] and a["median"] > bars[0] and a["max"] > bars[1]
+
+
 READABILITY_CLAIMS = [
     ("cells: R00 and R01 hold most of the low-pT, low-p_par quadrant, about equally (f-R00..R03, Table 3 boxes)",
      "sec5_multidim.tex", "most of the cross section lies about equally in two cells: low recoil (low $E_{\\mathrm{avail}}$ "
@@ -1052,6 +1062,9 @@ READABILITY_CLAIMS = [
      "the supported boxes and one unsupported box, absorbed into R09, form sixteen supported regions", _h2_words),
     ("H2: the other four unsupported boxes (h2-nunreported)", "sec4_higherdim.tex",
      "The other four unsupported boxes are omitted and unreported.", _h2_words),
+    ("rounding: fails both tolerances; stab-max is the A3 maximum (s5e assess_receipt A3, ens1-bar-median/max)",
+     "sec5_multidim.tex", "The sixteen-cell estimates fail both rounding-stability tolerances set before the test.",
+     _rounding_fails),
 ]
 
 
@@ -1064,6 +1077,10 @@ def readability_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
+    # Rounding-level stability on data (s5e assess_receipt.json A3, data_rounding_probe_over_data_sigma), sec5_multidim.tex
+    ("rounding: median data-rounding shift, statistical sigma (s5e assess_receipt A3 median)", "sec5_multidim.tex",
+     r"Rounding-level changes to data inputs shift them by ([0-9.]+) statistical standard deviations at the median",
+     lambda: receipt("s5e/cand/assess_receipt.json")["A3"]["data_rounding_probe_over_data_sigma"]["median"], "round"),
     # OOFVC (oofv-convention-20261126, r3 score.json), sec3_twod.tex
     ("OOFVC: D_IBU under the convention, K = 10, and D_E_R under it (score.json operands D_IBU_R, D_ER_R)", "sec3_twod.tex",
      r"ten-iteration IBU gives ([0-9.]+) per bin instead of \\fvval\{c2c1-dibu\}, and the two-dimensional OmniFold "
@@ -1444,7 +1461,7 @@ def load() -> dict[str, str]:
                                                "primer_body.tex", "appA_methods.tex",
                                                "appC_supplementary.tex", "records_r03_twod.tex", "sec2_method.tex",
                                                "appD_reproducibility.tex", "sec5_multidim.tex", "sec6_conclusions.tex", "values_fived16.tex",
-                                               "sec4_higherdim.tex")}
+                                               "sec4_higherdim.tex", "values_landed.tex")}
 
 
 def gzip_self_test() -> bool:
@@ -1989,7 +2006,8 @@ def self_test() -> int:
     for what, lab, macro, new in (
             ("R01 twice R00", 0, "f-R01", "65.2"), ("R05 half R04", 1, "f-R05", "24.5"), ("R04 above R14", 2, "f-R04", "52.0"),
             ("R03 at low W", 3, "box-R03-W", "0--1.8"), ("R15 split in W", 4, "box-R15-W", "0--1.8"),
-            ("two boxes absorbed", 5, "h2-nabsorbed", "2"), ("five boxes omitted", 6, "h2-nunreported", "5")):
+            ("two boxes absorbed", 5, "h2-nabsorbed", "2"), ("five boxes omitted", 6, "h2-nunreported", "5"),
+            ("median bar above the shift", 7, "ens1-bar-median", "0.9")):
         trial = dict(base)
         pat = r"(\\@namedef\{fv@" + re.escape(macro) + r"\}\{)[^}]*(\})"
         trial["values_fived16.tex"], n = re.subn(pat, lambda m: m[1] + new + m[2], base["values_fived16.tex"])
@@ -1997,6 +2015,13 @@ def self_test() -> int:
             print(f"  NOT CAUGHT  readability claim: {what}"); ok = False
         else:
             caught += 1; print(f"  caught      readability claim: {what}")
+    trial = dict(base)
+    trial["values_landed.tex"], n = re.subn(r"(\\@namedef\{lr@stab-max\}\{)[^}]*(\})", lambda m: m[1] + "2.4" + m[2],
+                                            base["values_landed.tex"])
+    if n != 1 or dict((r[0], r[1]) for r in evaluate(trial))[READABILITY_CLAIMS[7][0]]:
+        print("  NOT CAUGHT  readability claim: stab-max not the A3 maximum"); ok = False
+    else:
+        caught += 1; print("  caught      readability claim: stab-max not the A3 maximum")
     trial = dict(base)
     trial["sec5_multidim.tex"] = base["sec5_multidim.tex"].replace("about five times", "about three times")
     if dict((r[0], r[1]) for r in evaluate(trial))[READABILITY_CLAIMS[1][0]]:
