@@ -1,0 +1,76 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3113c0s17b0n0:
+
+host login08
+['NAME="SLES"', 'VERSION="15-SP6"', 'VERSION_ID="15.6"']
+== (c) system files
+  /usr/lib64/libcrypto.so -> /usr/lib64/libcrypto.so.3.1.4
+  /usr/lib64/libcrypto.so.1.0.0 -> /usr/lib64/libcrypto.so.1.0.0
+  /usr/lib64/libcrypto.so.1.1 -> /usr/lib64/libcrypto.so.1.1
+  /usr/lib64/libcrypto.so.3 -> /usr/lib64/libcrypto.so.3.1.4
+  /usr/lib64/libcrypto.so.3.1.4 -> /usr/lib64/libcrypto.so.3.1.4
+  /usr/lib64/libpcre.so.1 -> /usr/lib64/libpcre.so.1.2.13
+  /usr/lib64/libpcre.so.1.2.13 -> /usr/lib64/libpcre.so.1.2.13
+  /usr/lib64/libssl.so -> /usr/lib64/libssl.so.3.1.4
+  /usr/lib64/libssl.so.1.0.0 -> /usr/lib64/libssl.so.1.0.0
+  /usr/lib64/libssl.so.1.1 -> /usr/lib64/libssl.so.1.1
+  /usr/lib64/libssl.so.3 -> /usr/lib64/libssl.so.3.1.4
+  /usr/lib64/libssl.so.3.1.4 -> /usr/lib64/libssl.so.3.1.4
+== (c) ldconfig -p
+  libssl.so.3 (libc6,x86-64) => /usr/lib64/libssl.so.3
+  libssl.so.1.1 (libc6,x86-64) => /usr/lib64/libssl.so.1.1
+  libssl.so.1.0.0 (libc6,x86-64) => /usr/lib64/libssl.so.1.0.0
+  libssl.so (libc6,x86-64) => /usr/lib64/libssl.so
+  libpcre.so.1 (libc6,x86-64) => /usr/lib64/libpcre.so.1
+  libcrypto.so.3 (libc6,x86-64) => /usr/lib64/libcrypto.so.3
+  libcrypto.so.1.1 (libc6,x86-64) => /usr/lib64/libcrypto.so.1.1
+  libcrypto.so.1.0.0 (libc6,x86-64) => /usr/lib64/libcrypto.so.1.0.0
+  libcrypto.so (libc6,x86-64) => /usr/lib64/libcrypto.so
+== readelf True
+== the NEEDED closure (search: 18 LD_LIBRARY_PATH dirs, then /lib64, /usr/lib64)
+  ELF files read: 125
+  unresolved: []
+  shim-soname NEEDED (name, needed by, providing dir, real file):
+    ('libcrypto.so.10', '/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libNet.so', '/global/homes/j/josephrb/.genie_compatlibs', '/cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libcrypto.so.1.0.1e')
+    ('libcrypto.so.10', '/global/homes/j/josephrb/.genie_compatlibs/libssl.so.10', '/global/homes/j/josephrb/.genie_compatlibs', '/cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libcrypto.so.1.0.1e')
+    ('libcrypto.so.3', '/usr/lib64/libk5crypto.so.3', '/usr/lib64', '/usr/lib64/libcrypto.so.3.1.4')
+    ('libpcre.so.1', '/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libCore.so', '/usr/lib64', '/usr/lib64/libpcre.so.1.2.13')
+    ('libssl.so.10', '/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libNet.so', '/global/homes/j/josephrb/.genie_compatlibs', '/cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libssl.so.1.0.1e')
+    ('libxxhash.so.0', '/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/libCore.so', '/global/homes/j/josephrb/.genie_compatlibs', '/global/u2/j/josephrb/.conda/envs/root_6_28/lib/libxxhash.so.0.8.2')
+== (a) shim targets
+  libcrypto.so.10 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libcrypto.so.1.0.1e 1971488 e2d490bd55499035af622d53386ea8a45601f4d62747a495a2e657df6ca73c1b
+  libpcre.so.0 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/lib64/libpcre.so.0.0.1 183080 0cb6c08afd6bfe03747eb4c42aae6c1e043fe2c11f686a287ce859d4db8ddba9
+  libpcre.so.0.0.1 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/lib64/libpcre.so.0.0.1 183080 0cb6c08afd6bfe03747eb4c42aae6c1e043fe2c11f686a287ce859d4db8ddba9
+  libpcreposix.so.0 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libpcreposix.so.0.0.0 7312 b2d1e6e50d8ce8779850b79d536cd226e8bb76b8fb80fd10d3f1316f1b0e8e7e
+  libpcreposix.so.0.0.0 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libpcreposix.so.0.0.0 7312 b2d1e6e50d8ce8779850b79d536cd226e8bb76b8fb80fd10d3f1316f1b0e8e7e
+  libssl.so.10 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libssl.so.1.0.1e 443416 09014658ec1cf8732017a140682980df6c1b864000d03785d0190b9c159e36b8
+  libxxhash.so.0 -> /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libxxhash.so.0.8.2 46880 69468b357fe1f45c70c0efe003828e11b9a130cb74307fc542e2068199d32900
+== minerva CVMFS repo
+  user.fqrn minerva.opensciencegrid.org
+  user.revision 2719
+  user.root_hash aa0fa0c99a1eec706d48443a73982f37c2056584
+== end

@@ -1,0 +1,33 @@
+# pg-replay-g2111a.py sha256 db09963d45891d428c07bcea930801d92ea4f8c07d6586eef9617f6daaca4a96
+# ssh -F /dev/null -o BatchMode=yes -o User=josephrb -o IdentitiesOnly=yes -o IdentityFile=/Users/josephbailey/.ssh/nersc -o CertificateFile=/Users/josephbailey/.ssh/nersc-cert.pub -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/Users/josephbailey/.ssh/known_hosts -o ForwardAgent=no -o ForwardX11=no -o ClearAllForwardings=yes -o PermitLocalCommand=no -o ControlMaster=no -o ControlPath=none -o ConnectTimeout=30 saul.nersc.gov 'env -i PATH=/usr/bin:/bin LC_ALL=C /usr/bin/python3.11 -I -S -B -'
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3113c0s7b0n0:
+
+verdict STOP stops ['Stop: the replay driver exited 1']
+PG-RESULT {"archive_sha256": "2ca9f1067bfe4b5d2047ce38a1beda531a7fafc04f2c3a9b8094a32663d24579", "archive_sha256_pin": "2ca9f1067bfe4b5d2047ce38a1beda531a7fafc04f2c3a9b8094a32663d24579", "commit": "5b53d30e287d9449bfb3b1c010098fea2ae840fd", "driver_lines": ["[replay] start 2026-11-27T05:05:08Z host=login03", "[replay] strace, the private product, the programs: pass", "[replay] STOP: trace check (graphs) rc=1"], "driver_rc": 1, "identity": {"checks": {"/global/common": true, "/pscratch": true, "CVMFS products": true, "hostname login<NN>": true}, "host": "login03", "pass": true}, "left": 0, "n_blobs": 63, "n_files_checked": 63, "quiesced": 0, "quiet": true, "replay_dir": "/pscratch/sd/j/josephrb/covfix-pg/replay-20261127T050508Z", "schema": "covfix-pg-replay/1", "stops": ["Stop: the replay driver exited 1"], "verdict": "STOP"}
+
+# rc 3; receipt valid: verdict STOP

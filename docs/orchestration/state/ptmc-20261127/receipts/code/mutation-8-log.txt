@@ -1,0 +1,3 @@
+PP_ALLOC_ID KILLED 28.8
+1/1 killed
+exit 0

@@ -47,7 +47,11 @@ if str(_HERE) not in sys.path:
 
 TUNES = {"G18_10a_02_11b": "GENIE v3.04.00 G18_10a_02_11b (genie_xsec v3_04_00 G1810a0211b-k250-e1000, whose README "
                             "says the splines were made by v3_02_00)",
-         "AR23_20i_00_000": "GENIE v3.04.00 AR23_20i_00_000 (genie_xsec v3_04_00 AR2320i00000-k250-e1000)"}
+         "AR23_20i_00_000": "GENIE v3.04.00 AR23_20i_00_000 (genie_xsec v3_04_00 AR2320i00000-k250-e1000)",
+         # COVFIX PG's validation tunes (state/2d-closeout/covfix-20261122/COVFIX-DECLARATION.md section 4.1)
+         "G21_11a_00_000": "GENIE v3.04.00 G21_11a_00_000 (genie_xsec v3_04_00 G2111a00000-k250-e1000, a sha-pinned "
+                           "private copy of SciSoft's tarball)",
+         "G18_02a_00_000": "GENIE v3.04.00 G18_02a_00_000 (genie_xsec v3_04_00 G1802a00000-k250-e1000)"}
 # (gxspl-NUsmall.xml sha256, README sha256, the README's version line), measured on login25 2026-10-27
 SPLINE_PINS = {
     "G18_10a_02_11b": ("1b4b0b37fc8c11acbf00884a94d0a3bda519d9c458f2c916573ef3d673a3ee35",
@@ -56,6 +60,16 @@ SPLINE_PINS = {
     "AR23_20i_00_000": ("185d7d8a4674b5df445fcadea3d17232804390c8421d563aa402c6ee743a0bbb",
                         "744cba18f82cc5fe4805cd8be120e5f7e5f7b36f657f4cc9f2118e69c803bcb2",
                         "version v3_04_00 qualifier AR2320i00000:k250:e1000")}
+# The same for COVFIX PG's tunes, from SciSoft's genie_xsec v3_04_00 tarballs as PG's offline record pins them
+# (state/2d-closeout/covfix-20261122/pg/record/PG-RECORD.json, "splines"). The node's bytes must equal them: PG's
+# probe for G18_02a_00_000 on CVMFS, and the install check for G21_11a_00_000's private copy. Kept apart from F1's.
+PG_SPLINE_PINS = {
+    "G21_11a_00_000": ("fa475f7f5066b314f177b10c4c821d76f2db072508be2734243a26544ef7ed1c",
+                       "4a2beead2f261240a4fed7f7d419d2d68c11bc1fa264faa7e129f8223a7ba7fd",
+                       "version v3_04_00 qualifier G2111a00000:k250:e1000"),
+    "G18_02a_00_000": ("f7ad710100f66e2bb9f260e328fe7fb10ac063148b4222eebe0e3b61b8bfa45a",
+                       "740bc066a9f41f67910e711ebb856be5aed61ee7b71c59895d001d83e80ab0ae",
+                       "version v3_04_00 qualifier G1802a00000:k250:e1000")}
 E_LO, E_HI = 0.0, 100.0
 PHI_T_SHA256 = "bbcbade310d90e1ae487dde9d982e85cfe16fae35bba09dbde7db2dc99274ec5"   # gen5d_fluxfix/phi_t.npz
 HFLUXCV = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root"
@@ -179,7 +193,10 @@ def cmd_spline_check(a):
         bad.append("the reduced file's splines are not exactly the source's C12 and H1 splines")
     if len(version) != 1:
         bad.append(f"the README has {len(version)} version lines")
-    pin = SPLINE_PINS[a.tune]
+    pin = {**SPLINE_PINS, **PG_SPLINE_PINS}.get(a.tune)
+    if pin is None:
+        bad.append(f"no pinned spline file, README or version line for {a.tune}")
+        pin = ("", "", "")
     if len(version) == 1 and version[0] != pin[2]:
         bad.append(f"the README's version line {version[0]!r} is not the pinned {pin[2]!r}")
     if hashlib.sha256(Path(a.source).read_bytes()).hexdigest() != pin[0]:

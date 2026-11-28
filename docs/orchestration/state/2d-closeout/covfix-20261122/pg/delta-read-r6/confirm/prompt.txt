@@ -1,0 +1,42 @@
+Read-only confirm read. Do not create, edit or delete any file.
+
+./files/ holds:
+- DELTA.patch: one round of fixes to a verification harness. It is the diff from the previous head to the new head,
+  including tests and mutants.
+- DISPOSITIONS.md: the previous read's findings, with the blocking defects K1–K12 and the hardenings F4, F12, F13,
+  F17 and F18. It ends with an Outcome section saying what was built.
+- Copies at the new head of each changed code file.
+- genie-src/: GENIE R-3_04_00's AlgConfigPool.cxx, XmlParserUtils.cxx, RunOpt.cxx and Messenger.cxx.
+
+The harness uses strace traces and byte checks to establish which GENIE configuration, spline and binaries a run on
+a Perlmutter compute node used. It also keeps a sealed random seed from leaving the work directory W.
+
+Scope: the fix diff only.
+- K5 and K10 were deferred by the director. Do not re-raise them.
+- The rejections of F15 (thread exec) and F2/B2 (staged messenger) were accepted. Do not re-raise them.
+
+For each of K1–K4, K6–K9, K11, K12, F4, F12, F13, F17 and F18, say whether the change closes the defect as
+stated, citing lines you read. Then look only within the changed lines for new ways to:
+- PASS when it should STOP;
+- STOP a correct real run on Linux (strace 5.x, GENIE v3.04 and ROOT 6 from CVMFS, hadd from ROOT 6.28, GNU
+  coreutils timeout, bash on a Slurm compute node);
+- let a seed out of W.
+
+For K1 and K9, check the accepted lookup sequences against genie-src/ (Messenger.cxx, AlgConfigPool.cxx,
+XmlParserUtils.cxx, RunOpt.cxx). Say whether a correct run's real sequence and order would pass.
+
+Treat every test and mutant as a claim to check. State your confidence in each Linux, strace, GENIE and ROOT fact
+you rely on, and don't quote text you haven't read.
+
+Severity: "blocker" only for one of these:
+- a false STOP of a correct run;
+- a gate that can miss something correct producers really emit.
+Everything else is major or minor.
+
+End with:
+PER-FIX
+K1. closed|not closed|partly — one line
+...
+FINDINGS
+1. [blocker|major|minor] file:line — defect — scenario — fix
+VERDICT: <one line>

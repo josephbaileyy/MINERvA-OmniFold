@@ -1,0 +1,49 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3113c0s21b0n0:
+
+host login10 | readelf True | nm True
+  /cvmfs/larsoft.opensciencegrid.org user.revision 1250
+  /cvmfs/minerva.opensciencegrid.org user.revision 2719
+  /cvmfs/larsoft.opensciencegrid.org user.root_hash 62baddee99a7b0a527fe795b86ee23f69ffbd11b
+  /cvmfs/minerva.opensciencegrid.org user.root_hash aa0fa0c99a1eec706d48443a73982f37c2056584
+== 1. larsoft products matching xxhash
+   []
+== 2. minerva containers
+   ['.cvmfscatalog', 'sl6_fnal_python3']
+  candidates: []
+== 4. libCore.so's needs
+  undefined XXH symbols: ['XXH64', 'XXH64_canonicalFromHash', 'XXH64_hashFromCanonical']
+  version needs naming xxhash: []
+  NEEDED: ['libxxhash.so.0']
+== 3. each candidate (real file) and the conda file
+  /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libxxhash.so.0.8.2 -> /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libxxhash.so.0.8.2
+    size 46880 sha256 69468b357fe1f45c70c0efe003828e11b9a130cb74307fc542e2068199d32900
+    SONAME ['libxxhash.so.0']
+    defined XXH: 49
+    versioned XXH: []
+    MATCH: soname libxxhash.so.0 = True; libCore's 3 undefined XXH symbols all defined = True; missing []
+== end

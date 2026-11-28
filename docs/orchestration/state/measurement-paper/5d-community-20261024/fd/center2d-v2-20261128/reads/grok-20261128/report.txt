@@ -1,0 +1,65 @@
+I'll review the driver against sections 1–6 of the declaration, read-only, and write the report to standard output. First I'm loading the authority, the driver, and the cited references.
+
+The driver is loaded. Next I’ll check the algebra and the data chain against `wcov`, `x01`, the G2R writers, and the tests.
+
+The driver matches the declaration on R1–R5, the rank bands, the label partition, the section 1 quantity, the X01 reconstruction, and both C-RECON chains. Three controls or readings do not.
+
+## (a) R6 drops cells with non-positive band variance
+
+**Class:** (a). **Where:** `center2d.py:376-380`.
+
+The code sets `pos = vmean_diag[b] > 0` and reports the median of `|b_c| / sqrt(V_mean,cc)` only on those cells. If none are positive, it stores `None`. The x0 median is a separate, non-blocking deviation (below).
+
+Section 5 says: "the median over cells of |b_c| / √(V_mean,cc) for the band."
+
+Failure: one reported cell has both universes equal to X₀, so `V_cc = 0` and `b_c = 0`. The declared ratio is `0/0`, which is NaN, and the median over the 205 cells is NaN. The code drops that cell and returns the median of the other 204. A second case: 103 cells with `V_cc = 0` and `b_c ≠ 0` (the two universes agree with each other and disagree with X₀). The declared ratios are `+inf`, so the median of 205 cells is `+inf`. The code drops them and returns a finite median of the rest. `test_center2d.py` never asserts R6. S5's centring median (`re2c_rollup.py:581`) uses the same `sb > 0` cut, but section 5 does not, and section 10 says those S5 numbers decide nothing here.
+
+## (b) C-PSD passes every matrix whose largest eigenvalue is ≤ 0
+
+**Class:** (b). **Where:** `center2d.py:292-296`.
+
+`psd` sets `low = lam.min()/lam.max()` only when `lam.max() > 0`. Otherwise it forces `low = 0.0` and accepts the matrix when the symmetry residual is within `1e-12`.
+
+Section 6 says: "C is symmetric, and its smallest eigenvalue is ≥ −1e-12 of its largest" (and the same for M).
+
+Failure: `C = -I`. It is symmetric, the eigenvalues are all `-1`, and `-1 ≥ -1e-12 × (-1) = 1e-12` is false, so C-PSD must STOP. `lam.max()` is `-1`, `low` is forced to `0`, and the control is stored as pass. `ndf` is then 0, and `eigvalsh(...).max()` on the empty whitened matrix raises `ValueError`. Part D's handler records that `ValueError` as the STOP, with `C-PSD:C:D` still pass. Part T only catches `Stop` (`center2d.py:535`), so the same `ValueError` leaves the part and `main` writes a record with no parts. `test_psd_refuses` covers an asymmetric matrix and a matrix with eigenvalues `+3` and `-1`. It does not cover a negative-definite matrix. `cov2d_blocks.psd_checks` (`cov2d_blocks.py:109-115`) divides by the largest eigenvalue with no sign guard, so this branch is not that rule either.
+
+## (b) C-ID judges a null band on another band's scale
+
+**Class:** (b). **Where:** `center2d.py:279-283` and `center2d.py:415-423`.
+
+For each band the residual is `max |V_nom − V_mean − bbᵀ|`. `scaled` divides by that band's own max entry only when that max is at least `1e-12` times the largest `|V_nom|` entry of any band. A smaller band is divided by the global max. The worst of those ratios must be `≤ 1e-12`.
+
+Section 6 says: "for every band, V_nom − V_mean − b bᵀ is zero to 1e-12 of max |V_nom|, with V_nom computed directly." The null-band exception is only in the lateral bullet: "to 1e-12 of its own largest |entry| (null bands at the total's scale, as S5's control does)".
+
+Failure: the largest `|V_nom|` entry anywhere is `2`. One band has `V_nom = 0` and `V_mean = 0` but `b = 1e-6` on a single cell, so `max |bbᵀ| = 1e-12`. Own-scale relative error is infinite. The code divides `1e-12 / 2 = 5e-13` and C-ID passes. That `b` is then added into `M`. The leakage is at most about `1e-12` of the largest band, so it moves a trace share or a rank-band mean by that order. It crosses `0.01` or `0.10` only when the decision quantity already sits within that distance of the cut.
+
+## (c)
+
+None. Sections 1–6 that were checked are implemented, including the director's empty-band rule in the README.
+
+Checked and matching:
+
+- **R1.** `tr(M)/tr(C)`, and beside it `tr(M)/tr(C_sys)`. At the data, `C_sys` is `C_univ_new` plus S5_R's five lateral blocks (`center2d.py:592`). At a tune it is `C_univ + C_lat` (`center2d.py:466`).
+- **R2.** Median, 84th percentile, maximum, and the maximizing cell. The cell id is the 0-based C-order flat index on the `(pT, p∥)` grid, the same index as `OUTLIER_CELL = 216` in `cov2d.py:51`.
+- **R3.** Retained ranks are eigenvalues strictly above `1e-12` of the largest, from `eigh`, descending (`center2d.py:299-302`, `332`). `r_k = u_kᵀ M u_k / λ_k` via the `ik,ij,jk→k` contraction. Band means use slices `(0,73)`, `(73,139)`, `(139,ndf)`. The overall mean is `mean(r_k)`, with `tr(C⁺M)/ndf` stored beside it. Max `r_k` and its rank are 1-based.
+- **R4.** `ε` is the largest eigenvalue of `Λ^{-1/2} Uᵀ M U Λ^{-1/2}` on the retained ranks. For this PSD `M` that equals G2R's spectral norm (`g2r.py:181-194`). The coupling is `‖P_⊥ M U Λ^{-1/2}‖₂`.
+- **R5.** Per-band trace shares and rank-band means, top five, and the leave-one-out range. They sum by linearity; C-ADD checks that sum to `1e-12` relative.
+- **Rank bands.** `rank_slices` (`center2d.py:305-310`) yields `None` when `lo > hi`. For `ndf < 140` the third band is stored as `[140, null]`, and `label` skips `None`. `ndf` of 205, 140, 139, 120, and 50 match the README.
+- **Labels.** APPRECIABLE if any non-empty rank-band mean is `≥ 0.10`; else NEGLIGIBLE if `s_tr < 0.01` and every non-empty mean is `< 0.10`; else INTERMEDIATE. Exact `0.10` is APPRECIABLE. Exact `s_tr = 0.01` with all means below `0.10` is INTERMEDIATE. The three outcomes are disjoint and cover every real `(s_tr, means)`. Part R stores `label: null`. Part T stores the label as `descriptive_label`. Part D stores it as `label`.
+- **Section 1.** `wcov` matches `build_repair.wcov` (`build_repair.py:127-132`): `μ = Σ w_i X_i / Σ w_i` and `Σ w_i (X_i−μ)(X_i−μ)ᵀ / Σ w_i`. `V_nom` is the same form about `X₀`. `b = μ − X₀`. Flux uses the 100 weights; every other band uses weight 1. MINOS uses `minos_x`. Normalization is not in `M`. The 38+5 split is taken from the pinned `cov2d.py` (`FLUX`, `ORDER`, `LATERAL_BANDS`, `BANDS`).
+- **X01.** `minos_x[u] = (H_u * scale[u][:, None]).ravel(order="C")[rep]` (`center2d.py:574-575`). `H_u` is `hXSec2D` with axis 0 checked against the 14 pT edges and axis 1 against the 16 p∥ edges. That is `re2c_rollup.x01`'s last line (`re2c_rollup.py:253`) and `build_repair.py:381-388` ("per pT = axis 0 of hXSec2D"). `rep` is `E_R > 0` in that same C order, which is `Cells.rep`.
+- **C-RECON data.** Sum of `band_cov` over the 38 `data_g2r` bands equals `C_univ_new`. Each lateral, MINOS through `minos_x`, equals S5_R `band_<L>`, own scale unless the band is below `1e-12` of the sum of the S5 blocks. Sum of the 43 S5 bands plus `band___Normalization_flat` equals `cov2d_Q_205.npz` `universe`. `C_univ_old` equals the sum of the 38 S5 weight bands, as `data_core` defines it (`g2r_readout.py:102-110`). `C_new` equals `Q − that sum + C_univ_new`, to `1e-12` of `max |C_new|`.
+- **C-RECON tunes.** Sum of the 38 `wcov` blocks equals `C_univ`. The five laterals, MINOS through `minos_x`, equal `C_lat`. `C_T` equals `C_univ + C_lat + C_norm + C_stat + C08 + C_model_abs`, the same six blocks as `assemble` (`cov2d_blocks.py:144`) and `c_t_prime` (`g2r.py:245`). Part T also requires `x_T`, `rep`, `w_flux`, the five lateral `band__` arrays, and `minos_x` to equal the committed blocks bit for bit.
+- **C-FLUX.** Sum and `n_eff = (Σw)²/Σw²` are compared by exact equality to the pinned `connect.log.txt` line, which is the ERRATA for section 6. The logged constants are not re-typed.
+- **No self-comparison and no swallowed `Stop`.** Part R recomputes `wcov` and compares it with the stored blocks. A `Stop` from `check` becomes `status: STOP` with no readings. A bad part-D digest after `VERIFY OK 16` stops part D and still runs the tunes. The whole-fetch refusal is the README's stricter rule, not a driver path that marks a failed part OK.
+
+## (d)
+
+- `center2d.py:377` divides by `|X₀|`. Section 5 says `|b_c| / X₀_c`. Part D's C-X0 forces `X₀ > 0`, so that reading does not change. A tune `x_T` is not sign-checked; a negative cell would change the median.
+- `center2d.py:313-318`: `all([])` is true, so `label` would call an empty set of rank-band means NEGLIGIBLE when `s_tr < 0.01`. That path is not reachable in an OK record: `ndf = 0` dies earlier inside R4.
+- `center2d.py:360-361` versus `384`: an empty third band is printed `[140, null]`, but its top-five key is `ranks_140_<ndf>` because `hi` was already replaced by `ndf`.
+- `center2d.py:91-93`: the stored NEGLIGIBLE sentence adds "Any one realization (this one, at seed 42) can fall on either side." Section 5's fixed NEGLIGIBLE paragraph does not; that sentence is in section 4.
+- `center2d.py:338` and `655-658`: a zero `C_cc` makes an R2 ratio NaN or inf. `part_data` still returns OK. `write` is outside the handler and raises `ValueError` under `allow_nan=False`, after `open(..., "x")` has created the file. No complete OK record and no STOP record.
+
+BLOCKING FINDINGS: 3

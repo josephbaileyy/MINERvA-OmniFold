@@ -1,0 +1,88 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3115c0s13b0n0:
+
+host login26
+== 1. build flags
+   /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/make/Make.config sha256 95b11fee0c87c6032ea718f0be65cbab3bb30a29bbc0661b3965b922c0455104 pin match
+   36: GOPT_WITH_CXX_DEBUG_FLAG=
+   /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/src/make/Make.include sha256 d3ff0f52219b725df6107d601917cc76cd4a699b8399a63c6cc43423e15e989f pin match
+   199: GEANT4_CFLAGS = $(shell $(GOPT_WITH_GEANT4_LIB)/../bin/geant4-config --cflags )
+   201: GEANT4_FLAGS   = $(filter-out -I%,$(GEANT4_CFLAGS))
+   202: G4_IFLAGS_ONLY = $(filter     -I%,$(GEANT4_CFLAGS))
+   270: # PROFILING / DEBUGING OPTIONS
+   313: # COMPILER OPTIONS
+   364: CXXFLAGS      = -pipe -W -Wall -Wno-long-double -fsigned-char -fno-common \
+   366: 		$(GOPT_WITH_CXX_DEBUG_FLAG) \
+   370:   CXXFLAGS += -Wno-strict-aliasing
+   373:   CXXFLAGS += -flat_namespace
+   383: FORTOPTS     := $(FFLAGS) -g -c -O -DLINUX $(F77INCS) -fno-second-underscore
+   410: CXXFLAGS      = -m64 -pipe -Wshadow -W -Wall -Woverloaded-virtual \
+   413:                 $(GOPT_WITH_CXX_DEBUG_FLAG) \
+   418:     CXXFLAGS   += -flat_namespace
+   424: 	CXXFLAGS += -stdlib=libc++ -mmacosx-version-min=10.9
+   427: 	CXXFLAGS += -stdlib=libstdc++ -mmacosx-version-min=10.6
+   431:   CXXFLAGS += -Wno-strict-aliasing
+   442: FORTOPTS     := $(FFLAGS) -g -c -O -DLINUX $(F77INCS) -fno-second-underscore
+   455: CXXFLAGS      = -W -Wall -fPIC -Wshadow \
+   457: 		$(GOPT_WITH_CXX_DEBUG_FLAG) \
+   462:   CXXFLAGS += -Wno-strict-aliasing
+   465:     CXXFLAGS += -Wno-strict-aliasing -ffriend-injection
+   468: LDFLAGS       = -g -Wl,--no-as-needed -Wl,--no-undefined
+   476: FORTOPTS     := $(FFLAGS) -g -c -O -DLINUX $(F77INCS) -fno-second-underscore
+   488: CXXFLAGS      = -W -Wall -fPIC -Wshadow \
+   490: 		$(GOPT_WITH_CXX_DEBUG_FLAG) \
+   495:   CXXFLAGS += -Wno-strict-aliasing
+   498:     CXXFLAGS += -Wno-strict-aliasing -ffriend-injection
+   501: LDFLAGS       = -g -Wl,--no-as-needed -Wl,--no-undefined
+   509: FORTOPTS     := $(FFLAGS) -g -c -O -DLINUX $(F77INCS) -fno-second-underscore
+   521: CXXFLAGS      = -W -Wall -fPIC -Wshadow \
+   523:     $(GOPT_WITH_CXX_DEBUG_FLAG) \
+   528:   CXXFLAGS += -Wno-strict-aliasing
+   531:     CXXFLAGS += -Wno-strict-aliasing -ffriend-injection
+   534: LDFLAGS       = -g -Wl,--no-as-needed -Wl,--no-undefined
+   542: FORTOPTS     := $(FFLAGS) -g -c -O -DLINUX $(F77INCS) -fno-second-underscore
+   587: CXXFLAGS := $(ENV_CXXFLAGS) $(CXXFLAGS)
+   589: CCFLAGS   = $(ROOT_DICT_GEN_INCLUDES)
+   590: CFLAGS    = -g
+   599: #	$(CXX) -c -o $@ $(CXXFLAGS) $(CCFLAGS) $<
+   602: #	$(CXX) -c -o $@ $(CXXFLAGS) $(CPPFLAGS) $<
+   605: 	$(CXX) -c $(CXXFLAGS) $(CCFLAGS) $<
+   608: 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $<
+   611: 	$(CXX) -c -o $@ $(CXXFLAGS) $(CPPFLAGS) $<
+   614: 	$(CC) -c -o $@ $(CXXFLAGS) $(CPPFLAGS) $<
+== 2. libGFwEG
+   /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib/libGFwEG-3.04.00.so sha256 17a907b15fcef1edb5731d18cd046b77161e7b2c57e3e41b1f15a82d2ba38288 pin match
+   'fUseSplines' occurrences 4
+   'Emin<Emax && Emin>0 && nk>2' occurrences 0
+   '__assert_fail' occurrences 0
+   'GEVGDriver.cxx' occurrences 4
+== 3. the coverage trace
+   bytes 6067536 lines 34563
+   write() lines 0
+   distinct write strings (digits masked) 0
+-- write() lines naming a keyword
+== end

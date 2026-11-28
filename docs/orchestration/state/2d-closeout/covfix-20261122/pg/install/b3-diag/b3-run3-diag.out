@@ -1,0 +1,260 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3113c0s17b0n0:
+
+host login08
+== last 60 lines of /pscratch/sd/j/josephrb/covfix-pg/replay-20261127T050508Z/driver.log
+[replay] start 2026-11-27T05:05:08Z host=login03
+[replay] strace, the private product, the programs: pass
+[replay] STOP: trace check (graphs) rc=1
+== trace_check_graphs.json
+  pass False | keys ['defining_files', 'directories', 'directories_opened', 'dotdot', 'execs', 'gated', 'initial_opened_spline', 'libraries', 'n_events', 'pass', 'probes', 'problems', 'role', 'root_config', 'spline', 'tune']
+   defining_files : list 9
+   directories : list 28
+   directories_opened = 28
+   dotdot : list 332
+   execs : list 22
+   gated : list 1008
+   initial_opened_spline = True
+   libraries : list 220
+   n_events = 31576
+   pass = False
+   probes : list 16706
+   problems : list 365
+   role = graphs
+   root_config : list 233
+   spline = /pscratch/sd/j/josephrb/covfix-pg/replay-20261127T050508Z/run/splines/G21_11a_00_000_CH.xml.gz
+   tune = G21_11a_00_000
+  problems (365), the first 200:
+   - child-exit: process 1494590 exited 1
+   - dotdot-outside-roots: '/..' -> /
+   - dotdot-outside-roots: '/usr/lib64/gcc/x86_64-suse-linux/14/../../../../x86_64-suse-linux/lib' -> /usr/x86_64-suse-linux/lib
+   - dotdot-outside-roots: '/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/../../../../../../../../../../../../usr/include/bits' -> /usr/include/bits
+   - cwd-unknown: stat of 'GENIE' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Tools/Flux' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Tools/Flux' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Tools/Geometry' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Tools/Geometry' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/BeamHNL' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/BeamHNL' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/BoostedDarkMatter/EventGen' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/BoostedDarkMatter/EventGen' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/BoostedDarkMatter/XSection' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/BoostedDarkMatter/XSection' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/NNBarOscillation' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/NNBarOscillation' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/NucleonDecay' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/NucleonDecay' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/HEDIS/EventGen' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/HEDIS/EventGen' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/HEDIS/XSection' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/HEDIS/XSection' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/Strange/EventGen' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/Strange/EventGen' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/Strange/XSection' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/Strange/XSection' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/Resonance/EventGen' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/Resonance/EventGen' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/Resonance/XSection' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/Resonance/XSection' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/QuasiElastic/EventGen' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/QuasiElastic/EventGen' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/QuasiElastic/XSection' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/QuasiElastic/XSection' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/NuElectron/EventGen' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/NuElectron/EventGen' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/NuElectron/XSection' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/NuElectron/XSection' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/MuonEnergyLoss' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/MuonEnergyLoss' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/Multinucleon/EventGen' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/Multinucleon/EventGen' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/Multinucleon/XSection' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/Multinucleon/XSection' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/HadronTensors' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/HadronTensors' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/InverseBetaDecay/EventGen' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/InverseBetaDecay/EventGen' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/InverseBetaDecay/XSection' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/InverseBetaDecay/XSection' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/HELepton/EventGen' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/HELepton/EventGen' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/HELepton/XSection' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/HELepton/XSection' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/Diffractive/EventGen' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/Diffractive/EventGen' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/Diffractive/XSection' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/Diffractive/XSection' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/DeepInelastic/EventGen' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/DeepInelastic/EventGen' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/DeepInelastic/XSection' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/DeepInelastic/XSection' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/Coherent/EventGen' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/Coherent/EventGen' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/Coherent/XSection' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/Coherent/XSection' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/Charm/XSection' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/Charm/XSection' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/AnomalyMediatedNuGamma/EventGen' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/AnomalyMediatedNuGamma/EventGen' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/AnomalyMediatedNuGamma/XSection' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/AnomalyMediatedNuGamma/XSection' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/NuclearDeExcitation' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/NuclearDeExcitation' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/Hadronization' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/Hadronization' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/HadronTransport' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/HadronTransport' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/Decay' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/Decay' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/Common' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/Common' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/NuclearState' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/NuclearState' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/PartonDistributions' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/PartonDistributions' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Physics/XSectionIntegration' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Physics/XSectionIntegration' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Framework/Ntuple' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Framework/Ntuple' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Framework/EventGen' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Framework/EventGen' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Framework/ParticleData' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Framework/ParticleData' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Framework/Utils' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Framework/Utils' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Framework/Numerical' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Framework/Numerical' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Framework/GHEP' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Framework/GHEP' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Framework/Interaction' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Framework/Interaction' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Framework/Algorithm' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Framework/Algorithm' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Framework/Registry' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Framework/Registry' cannot be resolved
+   - cwd-unknown: stat of 'GENIE/Framework/Messenger' cannot be resolved
+   - cwd-unknown: stat of '../include/GENIE/Framework/Messenger' cannot be resolved
+   - cwd-unknown: openat of '.rootmap' cannot be resolved
+   - cwd-unknown: openat of '.' cannot be resolved
+   - cwd-unknown: openat of '.' cannot be resolved
+   - cwd-unknown: access of 'linux-vdso.so' cannot be resolved
+   - exec-unbound: /bin/sh -> /usr/bin/bash
+   - exec-unbound: /usr/bin/ls -> /usr/bin/ls
+   - exec-unbound: /bin/sh -> /usr/bin/bash
+   - exec-unbound: /usr/bin/ls -> /usr/bin/ls
+   - exec-unbound: /bin/sh -> /usr/bin/bash
+   - exec-unbound: /usr/bin/ls -> /usr/bin/ls
+   - exec-unbound: /bin/sh -> /usr/bin/bash
+   - exec-unbound: /usr/bin/ls -> /usr/bin/ls
+   - exec-unbound: /bin/sh -> /usr/bin/bash
+   - exec-unbound: /usr/bin/ls -> /usr/bin/ls
+   - exec-unbound: /bin/sh -> /usr/bin/bash
+   - exec-unbound: /usr/bin/sed -> /usr/bin/sed
+   - exec-unbound: /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/g++ -> /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/g++
+   - exec-unbound: /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus -> /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus
+   - exec-unbound: /bin/sh -> /usr/bin/bash
+   - exec-unbound: /usr/bin/ls -> /usr/bin/ls
+   - exec-unbound: /bin/sh -> /usr/bin/bash
+   - exec-unbound: /usr/bin/ldd -> /usr/bin/ldd
+   - exec-unbound: /lib/ld-linux.so.2 -> /lib/ld-linux.so.2
+   - exec-unbound: /lib64/ld-linux-x86-64.so.2 -> /lib64/ld-linux-x86-64.so.2
+   - exec-unbound: /lib64/ld-linux-x86-64.so.2 -> /lib64/ld-linux-x86-64.so.2
+   - search-probes: ModelConfiguration.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/ModelConfiguration.xml after probes that do not walk GENIE's lists to it
+   - search-probes: master_config.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/master_config.xml after probes that do not walk GENIE's lists to it
+   - search-probes: TuneGeneratorList.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/G21_11a/TuneGeneratorList.xml after probes that do not walk GENIE's lists to it
+   - search-probes: AGCharm2019.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AGCharm2019.xml after probes that do not walk GENIE's lists to it
+   - search-probes: AGKY2019.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AGKY2019.xml after probes that do not walk GENIE's lists to it
+   - search-probes: AGKYLowW2019.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AGKYLowW2019.xml after probes that do not walk GENIE's lists to it
+   - search-probes: AMNuGammaGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AMNuGammaGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: AMNuGammaInteractionListGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AMNuGammaInteractionListGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: AhrensDMELPXSec.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AhrensDMELPXSec.xml after probes that do not walk GENIE's lists to it
+   - search-probes: AhrensNCELPXSec.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AhrensNCELPXSec.xml after probes that do not walk GENIE's lists to it
+   - search-probes: AivazisCharmPXSecLO.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AivazisCharmPXSecLO.xml after probes that do not walk GENIE's lists to it
+   - search-probes: AlamSimoAtharVacasSKPXSec2014.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AlamSimoAtharVacasSKPXSec2014.xml after probes that do not walk GENIE's lists to it
+   - search-probes: AlamSimoAtharVacasSKXSec.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AlamSimoAtharVacasSKXSec.xml after probes that do not walk GENIE's lists to it
+   - search-probes: AlvarezRusoCOHPiPXSec.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/AlvarezRusoCOHPiPXSec.xml after probes that do not walk GENIE's lists to it
+   - search-probes: BBA03ELFormFactorsModel.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/BBA03ELFormFactorsModel.xml after probes that do not walk GENIE's lists to it
+   - search-probes: BBA05ELFormFactorsModel.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/BBA05ELFormFactorsModel.xml after probes that do not walk GENIE's lists to it
+   - search-probes: BBA07ELFormFactorsModel.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/BBA07ELFormFactorsModel.xml after probes that do not walk GENIE's lists to it
+   - search-probes: BYPDF.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/BYPDF.xml after probes that do not walk GENIE's lists to it
+   - search-probes: BYStrucFunc.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/BYStrucFunc.xml after probes that do not walk GENIE's lists to it
+   - search-probes: BardinIMDRadCorPXSec.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/BardinIMDRadCorPXSec.xml after probes that do not walk GENIE's lists to it
+   - search-probes: BaryonResonanceDecayer.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/BaryonResonanceDecayer.xml after probes that do not walk GENIE's lists to it
+   - search-probes: BergerSehgalCOHPiPXSec2015.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/BergerSehgalCOHPiPXSec2015.xml after probes that do not walk GENIE's lists to it
+   - search-probes: BergerSehgalFMCOHPiPXSec2015.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/BergerSehgalFMCOHPiPXSec2015.xml after probes that do not walk GENIE's lists to it
+   - search-probes: BergerSehgalRESPXSec2014.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/BergerSehgalRESPXSec2014.xml after probes that do not walk GENIE's lists to it
+   - search-probes: BertuzzoDNuCOHPXSec.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/BertuzzoDNuCOHPXSec.xml after probes that do not walk GENIE's lists to it
+   - search-probes: BostedChristyEMPXSec.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/BostedChristyEMPXSec.xml after probes that do not walk GENIE's lists to it
+   - search-probes: CEvNSEventGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/CEvNSEventGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: CEvNSInteractionListGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/CEvNSInteractionListGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: CEvNSXSec.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/CEvNSXSec.xml after probes that do not walk GENIE's lists to it
+   - search-probes: COHDNuEventGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/COHDNuEventGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: COHDNuInteractionListGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/COHDNuInteractionListGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: COHDNuXSec.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/COHDNuXSec.xml after probes that do not walk GENIE's lists to it
+   - search-probes: COHHadronicSystemGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/COHHadronicSystemGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: COHInteractionListGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/COHInteractionListGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: COHKinematicsGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/COHKinematicsGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: COHPrimaryLeptonGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/COHPrimaryLeptonGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: COHXSec.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/COHXSec.xml after probes that do not walk GENIE's lists to it
+   - search-probes: COHXSecAR.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/COHXSecAR.xml after probes that do not walk GENIE's lists to it
+   - search-probes: CascadeReweight.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/CascadeReweight.xml after probes that do not walk GENIE's lists to it
+   - search-probes: CollinsSpillerFragm.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/CollinsSpillerFragm.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DFRHadronicSystemGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DFRHadronicSystemGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DFRInteractionListGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DFRInteractionListGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DFRKinematicsGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DFRKinematicsGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DFRPrimaryLeptonGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DFRPrimaryLeptonGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DFRXSec.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DFRXSec.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DISHadronicSystemGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DISHadronicSystemGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DISInteractionListGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DISInteractionListGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DISKinematicsGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DISKinematicsGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DISPrimaryLeptonGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DISPrimaryLeptonGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DISXSec.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DISXSec.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DMDISInteractionListGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DMDISInteractionListGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DMDISKinematicsGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DMDISKinematicsGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DMDISOutgoingDarkGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DMDISOutgoingDarkGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DMDISXSec.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DMDISXSec.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DMEInteractionListGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DMEInteractionListGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DMEKinematicsGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DMEKinematicsGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DMELEventGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DMELEventGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DMELInteractionListGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DMELInteractionListGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DMELKinematicsGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DMELKinematicsGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DMELOutgoingDarkGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DMELOutgoingDarkGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DMELXSec.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DMELXSec.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DMEOutgoingDarkGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DMEOutgoingDarkGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DMETargetRemnantGenerator.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DMETargetRemnantGenerator.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DMElectronPXSec.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DMElectronPXSec.xml after probes that do not walk GENIE's lists to it
+   - search-probes: DMElectronXSec.xml read at /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/DMElectronXSec.xml after probes that do not walk GENIE's lists to it
+== last 80 lines of /pscratch/sd/j/josephrb/covfix-pg/replay-20261127T050508Z/run/logs/trace_check.log
+{"check": "trace", "role": "reduce", "tune": "G21_11a_00_000", "pass": true, "n_problems": 0}
+{"check": "trace", "role": "graphs", "tune": "G21_11a_00_000", "pass": false, "n_problems": 365}
+== last 80 lines of /pscratch/sd/j/josephrb/covfix-pg/replay-20261127T050508Z/run/logs/graphs.log
+[setup_genie_v3] GENIE=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator
+[setup_genie_v3] gevgen=/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gevgen
+[setup_genie_v3] tune=G21_11a_00_000 xsec=/pscratch/sd/j/josephrb/covfix-pg/products/genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data splines=/pscratch/sd/j/josephrb/covfix-pg/replay-20261127T050508Z/run/splines/G21_11a_00_000_CH.xml.gz
+[v3] gspl2root rc=0 -> /pscratch/sd/j/josephrb/covfix-pg/replay-20261127T050508Z/run/graphs_G21_11a_00_000.root
+== end

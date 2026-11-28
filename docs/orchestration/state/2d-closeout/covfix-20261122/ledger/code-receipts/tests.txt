@@ -1,0 +1,84 @@
+# command: python3 -B -m unittest -v test_covfix_ledger.py
+# python: 3.12.2 numpy 1.26.4  gpg: gpg (GnuPG) 2.4.8  host: Darwin arm64
+# 2d6fbff0950585eba2b6dc0316ddf4b5096311ceea6287ba8d6af4aa21b56516  covfix_ledger.py
+# cfcaa2505f92b4d96efa2a789b97648fe485f0a72e16bb9a48a4b77f79f6ca56  test_covfix_ledger.py
+# bc67acdc59808259fe0975e45ec019c7b78d95208a5cefedaa148f99669ab06e  covfix_ledger_mutation.py
+# start: 2026-11-28T12:50:44Z
+test_a_line_is_held_only_in_its_own_group (test_covfix_ledger.FixedAndAmend.test_a_line_is_held_only_in_its_own_group) ... ok
+test_a_line_refuses_a_larger_or_unknown_draw (test_covfix_ledger.FixedAndAmend.test_a_line_refuses_a_larger_or_unknown_draw) ... ok
+test_amendment_needs_a_sha_and_moves_the_cap (test_covfix_ledger.FixedAndAmend.test_amendment_needs_a_sha_and_moves_the_cap) ... ok
+test_an_intent_draws_on_its_line_once (test_covfix_ledger.FixedAndAmend.test_an_intent_draws_on_its_line_once) ... ok
+test_fixed_lines_are_held_from_init (test_covfix_ledger.FixedAndAmend.test_fixed_lines_are_held_from_init) ... ok
+test_policy_validation_of_toys_and_fixed (test_covfix_ledger.FixedAndAmend.test_policy_validation_of_toys_and_fixed) ... ok
+test_init_once_policy_bound_and_absent_refused (test_covfix_ledger.Init.test_init_once_policy_bound_and_absent_refused) ... ok
+test_locked_needs_the_directory (test_covfix_ledger.Init.test_locked_needs_the_directory) ... ok
+test_group_cap_and_ceiling_exact_integers (test_covfix_ledger.Intents.test_group_cap_and_ceiling_exact_integers) ... ok
+test_group_totals_are_separate (test_covfix_ledger.Intents.test_group_totals_are_separate) ... ok
+test_intent_and_job_name (test_covfix_ledger.Intents.test_intent_and_job_name) ... ok
+test_no_new_intent_while_one_is_unrecorded (test_covfix_ledger.Intents.test_no_new_intent_while_one_is_unrecorded) ... ok
+test_record_submission (test_covfix_ledger.Intents.test_record_submission) ... ok
+test_unknown_phase (test_covfix_ledger.Intents.test_unknown_phase) ... ok
+test_accept_only_toys_in_the_policy (test_covfix_ledger.PolicyToys.test_accept_only_toys_in_the_policy) ... ok
+test_a_different_phase_in_the_name_does_not_match (test_covfix_ledger.Reconcile.test_a_different_phase_in_the_name_does_not_match) ... ok
+test_a_matched_job_already_used_stays_unresolved (test_covfix_ledger.Reconcile.test_a_matched_job_already_used_stays_unresolved) ... ok
+test_ambiguous_or_absent_stays_unresolved (test_covfix_ledger.Reconcile.test_ambiguous_or_absent_stays_unresolved) ... ok
+test_charge_counts_every_node (test_covfix_ledger.Reconcile.test_charge_counts_every_node) ... ok
+test_foreign_and_step_rows_are_ignored (test_covfix_ledger.Reconcile.test_foreign_and_step_rows_are_ignored) ... ok
+test_lost_id_is_matched_from_the_full_job_name (test_covfix_ledger.Reconcile.test_lost_id_is_matched_from_the_full_job_name) ... ok
+test_terminal_charge_once_and_frees_the_reservation (test_covfix_ledger.Reconcile.test_terminal_charge_once_and_frees_the_reservation) ... ok
+test_uncertain_accounting_stays_open (test_covfix_ledger.Reconcile.test_uncertain_accounting_stays_open) ... ok
+test_f1_an_amendment_below_spent_plus_held_is_refused (test_covfix_ledger.Round3Findings.test_f1_an_amendment_below_spent_plus_held_is_refused) ... ok
+test_f1_the_claim_gate_fires_after_an_overrun_charge (test_covfix_ledger.Round3Findings.test_f1_the_claim_gate_fires_after_an_overrun_charge) ... ok
+test_f1_the_claim_rechecks_the_gate (test_covfix_ledger.Round3Findings.test_f1_the_claim_rechecks_the_gate) ... ok
+test_f2_an_array_allocation_in_scontrol_is_a_stop (test_covfix_ledger.Round3Findings.test_f2_an_array_allocation_in_scontrol_is_a_stop) ... ok
+test_f2_an_array_directive_is_refused_before_sbatch (test_covfix_ledger.Round3Findings.test_f2_an_array_directive_is_refused_before_sbatch) ... ok
+test_f2_sbatch_sees_no_sbatch_or_slurm_variable (test_covfix_ledger.Round3Findings.test_f2_sbatch_sees_no_sbatch_or_slurm_variable) ... ok
+test_f2_the_script_goes_to_sbatch_on_stdin_never_by_path (test_covfix_ledger.Round3Findings.test_f2_the_script_goes_to_sbatch_on_stdin_never_by_path) ... ok
+test_f3_a_failed_scancel_is_recorded_as_failed (test_covfix_ledger.Round3Findings.test_f3_a_failed_scancel_is_recorded_as_failed) ... ok
+test_f3_a_reconcile_between_sbatch_and_record_still_verifies (test_covfix_ledger.Round3Findings.test_f3_a_reconcile_between_sbatch_and_record_still_verifies) ... ok
+test_f3_acceptance_needs_a_verified_submission (test_covfix_ledger.Round3Findings.test_f3_acceptance_needs_a_verified_submission) ... ok
+test_f4_replay_refuses_a_submission_that_was_never_claimed (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_a_submission_that_was_never_claimed) ... ok
+test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence) ... ok
+test_f4_replay_refuses_acceptance_without_verification_or_with_a_bad_sha (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_acceptance_without_verification_or_with_a_bad_sha) ... ok
+test_f4_replay_refuses_an_acceptance_with_no_job (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_an_acceptance_with_no_job) ... ok
+test_f4_replay_refuses_an_amendment_below_held (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_an_amendment_below_held) ... ok
+test_f4_replay_refuses_an_int_and_a_str_job_id_for_two_intents (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_an_int_and_a_str_job_id_for_two_intents) ... ok
+test_f4_replay_refuses_an_intent_over_the_cap (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_an_intent_over_the_cap) ... ok
+test_f5_a_release_needs_cancelled_with_start_none_and_keeps_the_evidence (test_covfix_ledger.Round3Findings.test_f5_a_release_needs_cancelled_with_start_none_and_keeps_the_evidence) ... ok
+test_f5_completed_zero_elapsed_unknown_start_is_charged_the_full_hold (test_covfix_ledger.Round3Findings.test_f5_completed_zero_elapsed_unknown_start_is_charged_the_full_hold) ... ok
+test_f5_only_cancelled_with_start_none_releases (test_covfix_ledger.Round3Findings.test_f5_only_cancelled_with_start_none_releases) ... ok
+test_launch_failures_are_refusals_or_stops (test_covfix_ledger.Round3Findings.test_launch_failures_are_refusals_or_stops) ... ok
+test_r4_2_any_sbatch_or_slurm_spelling_is_refused_before_sbatch (test_covfix_ledger.Round4Findings.test_r4_2_any_sbatch_or_slurm_spelling_is_refused_before_sbatch) ... ok
+test_r4_4a_replay_refuses_an_intent_while_another_has_no_job (test_covfix_ledger.Round4Findings.test_r4_4a_replay_refuses_an_intent_while_another_has_no_job) ... ok
+test_r4_4b_replay_refuses_a_claim_over_the_cap (test_covfix_ledger.Round4Findings.test_r4_4b_replay_refuses_a_claim_over_the_cap) ... ok
+test_r4_4c_live_amend_and_accept_refuse_non_str_digests (test_covfix_ledger.Round4Findings.test_r4_4c_live_amend_and_accept_refuse_non_str_digests) ... ok
+test_r4_4c_replay_refuses_digests_written_as_json_integers (test_covfix_ledger.Round4Findings.test_r4_4c_replay_refuses_digests_written_as_json_integers) ... ok
+test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge (test_covfix_ledger.Round4Findings.test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge) ... ok
+test_r4_an_older_ledger_format_is_refused_at_its_policy_line (test_covfix_ledger.Round4Findings.test_r4_an_older_ledger_format_is_refused_at_its_policy_line) ... ok
+test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused (test_covfix_ledger.Round5Findings.test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused) ... ok
+test_a_duplicated_acceptance_line_refuses (test_covfix_ledger.Storage.test_a_duplicated_acceptance_line_refuses) ... ok
+test_corrupt_or_invalid_transitions_refuse (test_covfix_ledger.Storage.test_corrupt_or_invalid_transitions_refuse) ... ok
+test_every_append_is_fsynced (test_covfix_ledger.Storage.test_every_append_is_fsynced) ... ok
+test_lock_is_exclusive (test_covfix_ledger.Storage.test_lock_is_exclusive) ... ok
+test_an_sbatch_that_cannot_launch_stops (test_covfix_ledger.Submit.test_an_sbatch_that_cannot_launch_stops) ... ok
+test_argv_from_the_stored_reservation_and_extra_allowlist (test_covfix_ledger.Submit.test_argv_from_the_stored_reservation_and_extra_allowlist) ... ok
+test_claim_once_before_sbatch (test_covfix_ledger.Submit.test_claim_once_before_sbatch) ... ok
+test_cluster_suffix_parsed (test_covfix_ledger.Submit.test_cluster_suffix_parsed) ... ok
+test_mismatches_scancel_and_stop (test_covfix_ledger.Submit.test_mismatches_scancel_and_stop) ... ok
+test_sbatch_failure_keeps_the_hold_and_stops (test_covfix_ledger.Submit.test_sbatch_failure_keeps_the_hold_and_stops) ... ok
+test_submit_argv_record_and_verify (test_covfix_ledger.Submit.test_submit_argv_record_and_verify) ... ok
+test_whole_minutes_required (test_covfix_ledger.Submit.test_whole_minutes_required) ... ok
+test_accept_exactly_once_tied_to_a_job_of_the_phase (test_covfix_ledger.Toys.test_accept_exactly_once_tied_to_a_job_of_the_phase) ... ok
+test_hhmmss_and_scontrol_time (test_covfix_ledger.Units.test_hhmmss_and_scontrol_time) ... ok
+test_minute_rounding_in_node_seconds (test_covfix_ledger.Units.test_minute_rounding_in_node_seconds) ... ok
+test_policy_validation (test_covfix_ledger.Units.test_policy_validation) ... ok
+test_refusals (test_covfix_ledger.Units.test_refusals) ... ok
+test_sacct_state (test_covfix_ledger.Units.test_sacct_state) ... ok
+test_a_zero_charge_needs_a_never_started_job (test_covfix_ledger.ZeroAndCanon.test_a_zero_charge_needs_a_never_started_job) ... ok
+test_job_ids_are_canonical (test_covfix_ledger.ZeroAndCanon.test_job_ids_are_canonical) ... ok
+
+----------------------------------------------------------------------
+Ran 72 tests in 21.035s
+
+OK
+# rc: 0

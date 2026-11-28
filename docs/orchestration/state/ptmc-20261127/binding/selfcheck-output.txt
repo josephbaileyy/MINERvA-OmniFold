@@ -1,0 +1,9 @@
+$ python3 docs/orchestration/state/ptmc-20261127/binding/selfcheck_pins.py --repo . --merge ace6e5552c3b822dabedc22b16be5de1b04a0d68 --tree $TMPDIR/bind-tree --pins 2d-unfolding/ptmc/launch/bound/PINS.json --pins-txt 2d-unfolding/ptmc/launch/bound/PINS.txt
+ptmc_score imported from git archive ace6e5552c3b822dabedc22b16be5de1b04a0d68 2d-unfolding/ptmc: <tmp>/2d-unfolding/ptmc/ptmc_score.py
+[ok] check_bytes on the built tree with the bound PINS.json: PASS
+[ok] one flipped tree digest (the driver): STOP: C-PINS: the deploy tree's 2d-unfolding/re2/re2_driver.py
+[ok] one flipped own digest (make_tree.sh): STOP: C-PINS: the scorer's own make_tree.sh
+[ok] PINS.json rows == M's CONST['ROWS_SHA'] (cbf34bd8); the rows clause above ran on a stand-in (r3's file is on pscratch; no local copy was used)
+[ok] PINS.txt make_tree.sh 8b531b55 == PINS.json own make_tree.sh 8b531b55
+SELF-CHECK: 5 of 5 ok
+rc=0

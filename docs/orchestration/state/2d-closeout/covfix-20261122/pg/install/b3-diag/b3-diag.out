@@ -1,0 +1,75 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3113c0s13b0n0:
+
+login06
+drwx------ 5 josephrb josephrb 4096 Nov 26 21:19 /pscratch/sd/j/josephrb/covfix-pg/replay-20261126T211924Z
+drwx------ 6 josephrb josephrb 4096 Nov 26 21:22 /pscratch/sd/j/josephrb/covfix-pg/replay-20261126T211924Z/run
+== driver.log
+[replay] start 2026-11-26T21:19:25Z host=login30
+[replay] STOP: gevgen, gspl2root, awk and LD_LIBRARY_PATH rc=1
+== exe_check.json
+{"check": "exe", "pass": false, "paths": ["/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gevgen", "/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gspl2root"], "ld_library_path": "/global/homes/j/josephrb/.genie_compatlibs:/cvmfs/larsoft.opensciencegrid.org/products/log4cpp/v1_1_3c/Linux64bit+3.10-2.17-e20-prof/lib:/cvmfs/larsoft.opensciencegrid.org/products/lhapdf/v6_3_0/Linux64bit+3.10-2.17-e20-p392-prof/lib:/cvmfs/larsoft.opensciencegrid.org/products/tbb/v2021_1_1/Linux64bit+3.10-2.17-e20/lib:/cvmfs/larsoft.opensciencegrid.org/products/xrootd/v5_1_0/Linux64bit+3.10-2.17-e20-p392-prof/lib:/cvmfs/larsoft.opensciencegrid.org/products/libxml2/v2_9_10a/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/mysql_client/v8_0_23/Linux64bit+3.10-2.17-e20/lib:/cvmfs/larsoft.opensciencegrid.org/products/postgresql/v13_2/Linux64bit+3.10-2.17-p392/lib:/cvmfs/larsoft.opensciencegrid.org/products/pythia/v6_4_28r/Linux64bit+3.10-2.17-gcc930-prof/lib:/cvmfs/larsoft.opensciencegrid.org/products/gsl/v2_6a/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/fftw/v3_3_9/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/lib64:/cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/openblas/v0_3_13/Linux64bit+3.10-2.17-e20/lib:/cvmfs/larsoft.opensciencegrid.org/products/python/v3_9_2/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/sqlite/v3_34_01_00/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib:/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib", "system_paths": ["/usr/bin/awk"], "problems": ["ld-library-path: /global/homes/j/josephrb/.genie_compatlibs -> /global/u2/j/josephrb/.genie_compatlibs is outside CVMFS and the system library directories"]}
+
+== logs/exe.log
+== exe and ld_library_path records
+-- exe_G21_11a_00_000
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gevgen
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gspl2root
+-- ld_library_path_G21_11a_00_000
+/global/homes/j/josephrb/.genie_compatlibs:/cvmfs/larsoft.opensciencegrid.org/products/log4cpp/v1_1_3c/Linux64bit+3.10-2.17-e20-prof/lib:/cvmfs/larsoft.opensciencegrid.org/products/lhapdf/v6_3_0/Linux64bit+3.10-2.17-e20-p392-prof/lib:/cvmfs/larsoft.opensciencegrid.org/products/tbb/v2021_1_1/Linux64bit+3.10-2.17-e20/lib:/cvmfs/larsoft.opensciencegrid.org/products/xrootd/v5_1_0/Linux64bit+3.10-2.17-e20-p392-prof/lib:/cvmfs/larsoft.opensciencegrid.org/products/libxml2/v2_9_10a/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/mysql_client/v8_0_23/Linux64bit+3.10-2.17-e20/lib:/cvmfs/larsoft.opensciencegrid.org/products/postgresql/v13_2/Linux64bit+3.10-2.17-p392/lib:/cvmfs/larsoft.opensciencegrid.org/products/pythia/v6_4_28r/Linux64bit+3.10-2.17-gcc930-prof/lib:/cvmfs/larsoft.opensciencegrid.org/products/gsl/v2_6a/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/fftw/v3_3_9/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/lib64:/cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/openblas/v0_3_13/Linux64bit+3.10-2.17-e20/lib:/cvmfs/larsoft.opensciencegrid.org/products/python/v3_9_2/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/sqlite/v3_34_01_00/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib:/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib
+-- awk_G21_11a_00_000
+/usr/bin/awk
+-- gxmlpath_G21_11a_00_000
+/pscratch/sd/j/josephrb/covfix-pg/products/genie_xsec/v3_04_00/NULL/G2111a00000-k250-e1000/data
+-- exe_G18_02a_00_000
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gevgen
+/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gspl2root
+-- ld_library_path_G18_02a_00_000
+/global/homes/j/josephrb/.genie_compatlibs:/cvmfs/larsoft.opensciencegrid.org/products/log4cpp/v1_1_3c/Linux64bit+3.10-2.17-e20-prof/lib:/cvmfs/larsoft.opensciencegrid.org/products/lhapdf/v6_3_0/Linux64bit+3.10-2.17-e20-p392-prof/lib:/cvmfs/larsoft.opensciencegrid.org/products/tbb/v2021_1_1/Linux64bit+3.10-2.17-e20/lib:/cvmfs/larsoft.opensciencegrid.org/products/xrootd/v5_1_0/Linux64bit+3.10-2.17-e20-p392-prof/lib:/cvmfs/larsoft.opensciencegrid.org/products/libxml2/v2_9_10a/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/mysql_client/v8_0_23/Linux64bit+3.10-2.17-e20/lib:/cvmfs/larsoft.opensciencegrid.org/products/postgresql/v13_2/Linux64bit+3.10-2.17-p392/lib:/cvmfs/larsoft.opensciencegrid.org/products/pythia/v6_4_28r/Linux64bit+3.10-2.17-gcc930-prof/lib:/cvmfs/larsoft.opensciencegrid.org/products/gsl/v2_6a/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/fftw/v3_3_9/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/lib64:/cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/openblas/v0_3_13/Linux64bit+3.10-2.17-e20/lib:/cvmfs/larsoft.opensciencegrid.org/products/python/v3_9_2/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/sqlite/v3_34_01_00/Linux64bit+3.10-2.17/lib:/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib:/cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/lib
+-- awk_G18_02a_00_000
+/usr/bin/awk
+-- gxmlpath_G18_02a_00_000
+/cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/G1802a00000-k250-e1000/data
+== compat /global/homes/j/josephrb/.genie_compatlibs
+total 79
+drwxrwx---  2 josephrb josephrb  4096 Sep 27 08:51 .
+drwx------ 53 josephrb josephrb 32768 Nov 13 09:33 ..
+lrwxrwxrwx  1 josephrb josephrb    96 Sep 27 08:51 libcrypto.so.10 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libcrypto.so.10
+lrwxrwxrwx  1 josephrb josephrb    89 Sep 27 08:51 libpcre.so.0 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/lib64/libpcre.so.0
+lrwxrwxrwx  1 josephrb josephrb    93 Sep 27 08:51 libpcre.so.0.0.1 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/lib64/libpcre.so.0.0.1
+lrwxrwxrwx  1 josephrb josephrb    98 Sep 27 08:51 libpcreposix.so.0 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libpcreposix.so.0
+lrwxrwxrwx  1 josephrb josephrb   102 Sep 27 08:51 libpcreposix.so.0.0.0 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libpcreposix.so.0.0.0
+lrwxrwxrwx  1 josephrb josephrb    93 Sep 27 08:51 libssl.so.10 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libssl.so.10
+lrwxrwxrwx  1 josephrb josephrb    65 May 31 03:58 libxxhash.so.0 -> /global/homes/j/josephrb/.conda/envs/root_6_28/lib/libxxhash.so.0
+/global/homes/j/josephrb/.genie_compatlibs/libcrypto.so.10 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libcrypto.so.1.0.1e
+/global/homes/j/josephrb/.genie_compatlibs/libpcre.so.0 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/lib64/libpcre.so.0.0.1
+/global/homes/j/josephrb/.genie_compatlibs/libpcre.so.0.0.1 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/lib64/libpcre.so.0.0.1
+/global/homes/j/josephrb/.genie_compatlibs/libpcreposix.so.0 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libpcreposix.so.0.0.0
+/global/homes/j/josephrb/.genie_compatlibs/libpcreposix.so.0.0.0 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libpcreposix.so.0.0.0
+/global/homes/j/josephrb/.genie_compatlibs/libssl.so.10 -> /cvmfs/minerva.opensciencegrid.org/minerva/containers/sl6_fnal_python3/usr/lib64/libssl.so.1.0.1e
+/global/homes/j/josephrb/.genie_compatlibs/libxxhash.so.0 -> /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libxxhash.so.0.8.2
+== end

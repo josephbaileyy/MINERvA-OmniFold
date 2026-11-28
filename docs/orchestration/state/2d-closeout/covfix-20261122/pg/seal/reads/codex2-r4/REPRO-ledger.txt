@@ -1,0 +1,20 @@
+Wed Nov 25 03:16:29 UTC 2026
+754b1f37d10ace6907f454d627665097f9f47bf8158663640843faddb86a9fa9  covfix_ledger.py
+ef31b484aa3f1b80203d01d949a75fc6c1dc5a640b9431d19762739998142832  test_covfix_ledger.py
+ERROR: test_r4_4c_live_amend_and_accept_refuse_non_str_digests (test_covfix_ledger.Round4Findings.test_r4_4c_live_amend_and_accept_refuse_non_str_digests) (sha256=1111111111111111111111111111111111111111111111111111111111111111)
+ERROR: test_r4_4c_live_amend_and_accept_refuse_non_str_digests (test_covfix_ledger.Round4Findings.test_r4_4c_live_amend_and_accept_refuse_non_str_digests) (sha256=True)
+ERROR: test_r4_4c_live_amend_and_accept_refuse_non_str_digests (test_covfix_ledger.Round4Findings.test_r4_4c_live_amend_and_accept_refuse_non_str_digests) (sha256=1.5)
+FAIL: test_r4_2_any_sbatch_or_slurm_spelling_is_refused_before_sbatch (test_covfix_ledger.Round4Findings.test_r4_2_any_sbatch_or_slurm_spelling_is_refused_before_sbatch) (line='#SBATCH--array=0-3')
+FAIL: test_r4_2_any_sbatch_or_slurm_spelling_is_refused_before_sbatch (test_covfix_ledger.Round4Findings.test_r4_2_any_sbatch_or_slurm_spelling_is_refused_before_sbatch)
+FAIL: test_r4_4a_replay_refuses_an_intent_while_another_has_no_job (test_covfix_ledger.Round4Findings.test_r4_4a_replay_refuses_an_intent_while_another_has_no_job)
+FAIL: test_r4_4b_replay_refuses_a_claim_over_the_cap (test_covfix_ledger.Round4Findings.test_r4_4b_replay_refuses_a_claim_over_the_cap)
+FAIL: test_r4_4c_live_amend_and_accept_refuse_non_str_digests (test_covfix_ledger.Round4Findings.test_r4_4c_live_amend_and_accept_refuse_non_str_digests) (director_sha=1111111111111111111111111111111111111111)
+FAIL: test_r4_4c_replay_refuses_digests_written_as_json_integers (test_covfix_ledger.Round4Findings.test_r4_4c_replay_refuses_digests_written_as_json_integers) (e={'kind': 'accepted', 'phase': 'w1', 'arm': 'N1', 'toy': 't1', 'job': '311', 'sha256': 1111111111111111111111111111111111111111111111111111111111111111})
+FAIL: test_r4_4c_replay_refuses_digests_written_as_json_integers (test_covfix_ledger.Round4Findings.test_r4_4c_replay_refuses_digests_written_as_json_integers) (e={'kind': 'amendment', 'group': 'P1', 'cap_ns': 1440000, 'director_sha': 1111111111111111111111111111111111111111})
+FAIL: test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge (test_covfix_ledger.Round4Findings.test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge) (charge=0, ev={'JobID': '999', 'JobName': 'covfix_w1_1764d4a79c6ef9be5d90befc9b7fe3a7', 'State': 'CANCELLED', 'NNodes': '1', 'ElapsedRaw': '0', 'Start': 'None'})
+FAIL: test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge (test_covfix_ledger.Round4Findings.test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge) (charge=0, ev={'JobID': '321', 'JobName': 'covfix_w1_00000000000000000000000000000000', 'State': 'CANCELLED', 'NNodes': '1', 'ElapsedRaw': '0', 'Start': 'None'})
+FAIL: test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge (test_covfix_ledger.Round4Findings.test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge) (charge=5, ev={'JobID': '321', 'JobName': 'covfix_w1_1764d4a79c6ef9be5d90befc9b7fe3a7', 'State': 'COMPLETED', 'NNodes': '1', 'ElapsedRaw': '300'})
+FAIL: test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge (test_covfix_ledger.Round4Findings.test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge) (charge=300, ev={'JobID': '999', 'JobName': 'covfix_w1_1764d4a79c6ef9be5d90befc9b7fe3a7', 'State': 'COMPLETED', 'NNodes': '1', 'ElapsedRaw': '300'})
+FAIL: test_r4_an_older_ledger_format_is_refused_at_its_policy_line (test_covfix_ledger.Round4Findings.test_r4_an_older_ledger_format_is_refused_at_its_policy_line)
+Ran 7 tests in 0.489s
+FAILED (failures=12, errors=3)

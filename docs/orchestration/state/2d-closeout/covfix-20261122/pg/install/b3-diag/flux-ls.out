@@ -1,0 +1,72 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3113c0s21b0n0:
+
+login10
+drwxrwx--- 4 josephrb josephrb 4096 Sep 27 09:23 /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix
+rc_ls_dir=0
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix|directory|4096|2026-09-27 09:23:02.000000000 +0000|2026-11-23 19:31:34.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code|directory|4096|2026-09-27 09:17:46.000000000 +0000|2026-11-23 19:31:34.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gen5d-fluxfix-2.json|regular file|47690|2026-09-27 09:04:49.000000000 +0000|2026-10-23 21:32:39.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gen5d-fluxfix-3.json|regular file|22769|2026-09-27 09:23:02.000000000 +0000|2026-10-23 21:32:39.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gen5d-fluxfix.json|regular file|70193|2026-09-27 09:04:49.000000000 +0000|2026-10-24 21:02:10.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gen5d_fluxfix_marginals.json|regular file|39730|2026-09-27 08:30:24.000000000 +0000|2026-10-23 21:35:32.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gen5d_fluxfix_marginals.npz|regular file|203382|2026-09-27 08:30:24.000000000 +0000|2026-10-25 16:46:59.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_checks.json|regular file|6153|2026-09-27 08:29:26.000000000 +0000|2026-10-23 21:32:39.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_full.log|regular file|5314|2026-09-27 09:03:16.000000000 +0000|2026-10-23 21:32:39.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d.log|regular file|3289|2026-09-27 08:29:26.000000000 +0000|2026-10-23 21:32:39.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d.meta.json|regular file|16693|2026-09-27 08:29:26.000000000 +0000|2026-10-27 19:21:22.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d.npz|regular file|1640728|2026-09-27 08:29:26.000000000 +0000|2026-10-25 16:46:59.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.meta.json|regular file|12550|2026-09-27 09:03:16.000000000 +0000|2026-10-27 19:21:22.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz|regular file|1627680|2026-09-27 09:03:16.000000000 +0000|2026-11-26 00:36:47.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_checks.json|regular file|11933|2026-09-27 08:29:56.000000000 +0000|2026-10-23 21:32:39.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_full.log|regular file|5434|2026-09-27 09:03:50.000000000 +0000|2026-10-23 21:32:39.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d.log|regular file|3749|2026-09-27 08:29:57.000000000 +0000|2026-10-23 21:32:39.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d.meta.json|regular file|23133|2026-09-27 08:29:57.000000000 +0000|2026-10-27 19:21:22.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d.npz|regular file|1660240|2026-09-27 08:29:57.000000000 +0000|2026-10-25 16:47:00.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.meta.json|regular file|14068|2026-09-27 09:03:50.000000000 +0000|2026-10-27 19:21:22.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz|regular file|1632624|2026-09-27 09:03:50.000000000 +0000|2026-11-26 00:36:47.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.meta.json|regular file|39323|2026-09-27 09:04:46.000000000 +0000|2026-10-23 21:32:39.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz|regular file|1720180|2026-09-27 09:04:46.000000000 +0000|2026-11-26 00:36:47.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_flux_check.json|regular file|14853|2026-09-27 08:30:22.000000000 +0000|2026-10-23 21:32:39.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_flux_check.log|regular file|3166|2026-09-27 08:30:22.000000000 +0000|2026-10-23 21:32:43.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_fluxfix.log|regular file|4584|2026-09-27 09:04:46.000000000 +0000|2026-10-23 21:32:39.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/graphs_check.json|regular file|3197|2026-09-27 09:04:48.000000000 +0000|2026-10-23 21:32:43.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/graphs_check.log|regular file|3877|2026-09-27 09:04:48.000000000 +0000|2026-10-23 21:32:39.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/marginals.log|regular file|5441|2026-09-27 08:30:24.000000000 +0000|2026-10-23 21:32:43.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_checks.json|regular file|17540|2026-09-27 08:30:13.000000000 +0000|2026-10-23 21:32:43.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_full.log|regular file|5260|2026-09-27 09:04:05.000000000 +0000|2026-10-23 21:32:39.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d.log|regular file|3400|2026-09-27 08:30:13.000000000 +0000|2026-10-23 21:32:39.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d.meta.json|regular file|32897|2026-09-27 08:30:13.000000000 +0000|2026-10-27 19:21:22.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d.npz|regular file|1690928|2026-09-27 08:30:13.000000000 +0000|2026-10-25 16:47:00.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.meta.json|regular file|15594|2026-09-27 09:04:05.000000000 +0000|2026-10-27 19:21:22.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz|regular file|1637412|2026-09-27 09:04:05.000000000 +0000|2026-11-26 00:36:47.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/phi_t.json|regular file|23748|2026-09-27 08:28:56.000000000 +0000|2026-10-28 01:13:09.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/phi_t.log|regular file|11085|2026-09-27 08:28:56.000000000 +0000|2026-10-23 21:32:39.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/phi_t.npz|regular file|21414|2026-09-27 08:28:56.000000000 +0000|2026-10-28 10:33:36.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/receipt.log|regular file|70|2026-09-27 08:30:24.000000000 +0000|2026-10-23 21:32:43.000000000 +0000
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp|directory|4096|2026-09-27 08:58:10.000000000 +0000|2026-11-23 19:31:34.000000000 +0000
+rc_stat=0
