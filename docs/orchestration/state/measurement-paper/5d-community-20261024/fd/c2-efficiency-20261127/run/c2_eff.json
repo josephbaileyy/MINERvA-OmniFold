@@ -1,0 +1,128 @@
+{
+ "schema": "c2-eff/1",
+ "fetch_dir": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/c2eff-run1",
+ "pins": {
+  "2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV_stat.txt": "e3b368cd9fd2cca2bc6af83f1a34cf7f8e3f2343",
+  "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2/cells/cells.root": "4f5ac5cbcc3bbfa590af5d18d8713bb3dbd011fb",
+  "docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/values_table.tsv": "49b397410c55c2351552ee8637c073409cf78f43"
+ },
+ "config_commit": "77d76cfc",
+ "what": "descriptive: bootstrap widths on the same draws (data Poisson, signal MC, background), 205 cells",
+ "caveats": [
+  "the draws resample data, signal MC and background MC together; MINERvA's StatOnly contents are not established (item 3a), so r_b compares unlike source sets as far as is known",
+  "IBU K=10 here is REF-C2C1's binned IBU on E_R's inputs, not MINERvA's analysis code",
+  "pairing for the jackknife is b -> read-2 inputs (b+1):03d, as read-2's staging records"
+ ],
+ "cells": 205,
+ "n_replicas": 300,
+ "sqrt_tr_statonly": 4.638597716588652e-40,
+ "sqrt_tr_of": 1.8863523521459933e-40,
+ "r_of_over_statonly": 0.40666435578148535,
+ "median_sigma_ratio_of_over_statonly": 0.4251518110491058,
+ "controls": {
+  "C-STAT": {
+   "rel": 3.788302782581354e-09,
+   "tol": 1e-06,
+   "pass": true
+  },
+  "C-QR": {
+   "rel": 3.788302782581354e-09,
+   "tol": 1e-06,
+   "pass": true
+  },
+  "C-CELLS": {
+   "pass": true
+  },
+  "C-FINITE": {
+   "pass": true
+  },
+  "C-PIN": {
+   "pass": true
+  },
+  "C-FETCH": {
+   "pass": true
+  },
+  "C-META": {
+   "pass": true
+  },
+  "C-AXES": {
+   "pass": true
+  }
+ },
+ "primary_K": 10,
+ "per_K": {
+  "1": {
+   "sqrt_tr_ibu": 1.469799739765529e-40,
+   "r_a_ibu_over_of": 0.7791756074062322,
+   "r_a_jackknife_se": 0.006602693124563155,
+   "r_b_ibu_over_statonly": 0.316862946426503,
+   "r_b_jackknife_se": 0.002291194830356221,
+   "median_sigma_ratio_ibu_over_of": 0.8326325543749824,
+   "median_sigma_ratio_ibu_over_statonly": 0.3338708540749219
+  },
+  "2": {
+   "sqrt_tr_ibu": 2.1341012528141064e-40,
+   "r_a_ibu_over_of": 1.131337552279808,
+   "r_a_jackknife_se": 0.009955129533099035,
+   "r_b_ibu_over_statonly": 0.4600746568692706,
+   "r_b_jackknife_se": 0.003213149921119732,
+   "median_sigma_ratio_ibu_over_of": 1.1218453227962943,
+   "median_sigma_ratio_ibu_over_statonly": 0.45397841419249485
+  },
+  "3": {
+   "sqrt_tr_ibu": 2.6607926154867455e-40,
+   "r_a_ibu_over_of": 1.4105491015290523,
+   "r_a_jackknife_se": 0.01300991019200436,
+   "r_b_ibu_over_statonly": 0.5736200416714651,
+   "r_b_jackknife_se": 0.003825755780275981,
+   "median_sigma_ratio_ibu_over_of": 1.3595356255903712,
+   "median_sigma_ratio_ibu_over_statonly": 0.561545325376822
+  },
+  "4": {
+   "sqrt_tr_ibu": 3.094259621478679e-40,
+   "r_a_ibu_over_of": 1.6403402142545214,
+   "r_a_jackknife_se": 0.015704174828716458,
+   "r_b_ibu_over_statonly": 0.6670678964922786,
+   "r_b_jackknife_se": 0.004324210556978944,
+   "median_sigma_ratio_ibu_over_of": 1.5582208666180195,
+   "median_sigma_ratio_ibu_over_statonly": 0.6523340084218483
+  },
+  "5": {
+   "sqrt_tr_ibu": 3.461895249286201e-40,
+   "r_a_ibu_over_of": 1.8352325562866365,
+   "r_a_jackknife_se": 0.018072545669974526,
+   "r_b_ibu_over_statonly": 0.7463236652115136,
+   "r_b_jackknife_se": 0.004760873241003082,
+   "median_sigma_ratio_ibu_over_of": 1.750989861178939,
+   "median_sigma_ratio_ibu_over_statonly": 0.7355970028981084
+  },
+  "10": {
+   "sqrt_tr_ibu": 4.737591478987695e-40,
+   "r_a_ibu_over_of": 2.511509301853396,
+   "r_a_jackknife_se": 0.02649797610999175,
+   "r_b_ibu_over_statonly": 1.0213413122774193,
+   "r_b_jackknife_se": 0.0063751408322876395,
+   "median_sigma_ratio_ibu_over_of": 2.460791502638618,
+   "median_sigma_ratio_ibu_over_statonly": 1.0505112621364905
+  },
+  "15": {
+   "sqrt_tr_ibu": 5.5261902902847875e-40,
+   "r_a_ibu_over_of": 2.929564184548005,
+   "r_a_jackknife_se": 0.03166789934784691,
+   "r_b_ibu_over_statonly": 1.1913493318297268,
+   "r_b_jackknife_se": 0.007384580743337979,
+   "median_sigma_ratio_ibu_over_of": 2.9431836690049216,
+   "median_sigma_ratio_ibu_over_statonly": 1.2685838894261374
+  },
+  "20": {
+   "sqrt_tr_ibu": 6.073043626210612e-40,
+   "r_a_ibu_over_of": 3.2194640727124306,
+   "r_a_jackknife_se": 0.03519395051794228,
+   "r_b_ibu_over_statonly": 1.3092412830912377,
+   "r_b_jackknife_se": 0.008056704968902985,
+   "median_sigma_ratio_ibu_over_of": 3.332494954053653,
+   "median_sigma_ratio_ibu_over_statonly": 1.4415988142110494
+  }
+ },
+ "status": "OK"
+}

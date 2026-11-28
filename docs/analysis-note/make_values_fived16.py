@@ -246,14 +246,6 @@ FIGURES = {"fd_g_fig_modes.pdf": ("fd/with-vf/figures", "889e175b")}
 # the readouts that are text receipts, not JSON
 TEXT_READOUTS = {"gprobe", "e2sens", "s1code", "ll5ddecl", "regenAp1a"}
 CELLS = [f"R{i:02d}" for i in range(16)]
-BLOCK = {"stat": "statistical", "interaction": "interaction", "flux": "flux", "detector": "detector",
-         "lateral": "lateral", "normalization": "normalization", "seed": "training seed", "C_resp": r"$C_{\mathrm{resp}}$",
-         "V_g": r"$V_g$", "C_model:genie_mec": r"$C_{\mathrm{model}}$ (GENIE + MEC)",
-         "C_model:nuwro": r"$C_{\mathrm{model}}$ (NuWro)", "C_model:gibuu": r"$C_{\mathrm{model}}$ (GiBUU)",
-         # C_e^infl (V_F): the block each arm adds to C_total, as a top mode's dominant component (a PROPOSAL for
-         # Joseph's wording; vf_readings printed a placeholder here)
-         "C_resp + C_PL5D + DeltaC_e": r"$C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+\Delta C_e$",
-         "C_resp + DeltaC_e": r"$C_{\mathrm{resp}}+\Delta C_e$"}
 PRED = {"genie_cv": "gcv", "genie_mec": "gmec", "nuwro": "nuwro", "gibuu": "gibuu", "mnvtune_v1": "tune"}
 # each graded fake-data truth's printed name (for the generated list) and the words a sentence uses for it (for the check)
 TRUTH_LABEL = {"nominal": ("the simulation prior", "simulation prior"),
@@ -295,7 +287,6 @@ LISTED_CLAIMS = [
     ("sec_q3_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds", {"kind": "both"}),
     ("sec_q3_fived16.tex", "Under each of the three covariances, the fake-data bias meets", {"kind": "all"}),
     ("sec_q3_fived16.tex", "the $q_3$ tilt was also listed, and the two smaller covariances listed more truths", {"kind": "ce-more"}),
-    ("sec_fived16_gen.tex", "so the GiBUU comparison carries that limitation", {"kind": "both", "family": "gibuu"}),
     ("appC_supplementary.tex", "simulated truths: the GiBUU hybrid, which uses", {"kind": "both"}),
     ("appC_supplementary.tex", "Under $\\CrepFiveDzero$, the synthetic $q_3$ tilt, a momentum", {"kind": "cleared"}),
     ("appC_supplementary.tex", "omitting the run-period term also flagged the separate GiBUU", {"kind": "cleared-nopl"}),
@@ -1099,7 +1090,6 @@ def values(d, arm="with"):
             top = rel["top_modes"][0]
             v[f"{k}-top-share"] = f"{100 * top['fraction']:.1f}"
             v[f"{k}-top-sigma"] = f"{100 * top['sigma']:.2f}"
-            v[f"{k}-top-block"] = BLOCK[top["dominant"]]
     # the R04 look
     r04 = d["fup"]["r04"]
     rs = r04["item2_relative_sigma"]["R04"]
@@ -2426,8 +2416,6 @@ def self_test():
              lambda t: t.replace(r"by its cells \fvval{f0b-A7_gibuu-cells-nopl}.", r"by its cells \fvval{f0b-A7_gibuu-cells-nopl}, and the NuWro hybrid truth.", 1)),
             ("drops the listed truth", "sec_q3_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds",
              lambda t: t.replace(r"the stated thresholds at the GiBUU hybrid truth alone,", r"the stated thresholds alone,", 1)),
-            ("drops a GiBUU truth of its family", "sec_fived16_gen.tex", "so the GiBUU comparison carries that limitation",
-             lambda t: t.replace(r"thresholds at the GiBUU hybrid truth, with or without", r"thresholds, with or without", 1)),
             ("names one more truth C_e listed", "sec_q3_fived16.tex", "listed by $p$ alone under the baseline covariance",
              lambda t: t.replace(r"The $q_3$ tilt, listed by $p$ alone", r"The $q_3$ tilt and the NuWro hybrid truth, listed by $p$ alone", 1)),
             ("adds the q3 tilt to the without-block clearing", "appC_supplementary.tex",
