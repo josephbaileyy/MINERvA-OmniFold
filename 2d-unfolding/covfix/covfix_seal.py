@@ -119,8 +119,8 @@ def task_seeds(base: int, tunes: list[str]) -> dict:
 class Tools:
     """gpg and gpgconf, pinned by sha256 in PG's binding (the director's ruling R1). Each path must be absolute, fully
     resolved (no link) and an executable regular file. Each binary is hashed through a file descriptor opened without
-    following a link, at construction and again immediately before every exec; a mismatch is a STOP and a rebinding,
-    never a fallback. RESIDUAL WINDOW (disclosed): the exec is by path, after the hash, so a write by this same account
+    following a link, at construction and again at the start of every gpg_run, before its SIGTERM hold begins (so
+    nothing is hashed while a SIGTERM waits); a mismatch is a STOP and a rebinding, never a fallback. RESIDUAL WINDOW (disclosed): the exec is by path, after the hash, so a write by this same account
     between the two would not be seen; section 4.2's cooperative assumption covers that account."""
 
     def __init__(self, gpg: str, gpgconf: str, gpg_sha256: str, gpgconf_sha256: str):
@@ -196,6 +196,7 @@ def gpg_run(argv: tuple, passphrase: str, payload: bytes, tools: Tools) -> bytes
     on a GNUPGHOME whose removal cannot be confirmed. A SIGTERM that arrives meanwhile is held: gpg is SIGKILLed at
     once (or as soon as it starts), the agent and the home are cleaned up (gpgconf bounded by GPGCONF_TIMEOUT_S),
     and the SIGTERM is then delivered to the previous handler. The hold is bounded (SIGTERM_HOLD_BOUND_S)."""
+    exe = (tools.verify(tools.gpg), tools.verify(tools.gpgconf))   # hashed before the hold: never under a SIGTERM
     hold: dict | None = {"pending": [], "child": None}
 
     def record(signum, frame):
@@ -208,7 +209,7 @@ def gpg_run(argv: tuple, passphrase: str, payload: bytes, tools: Tools) -> bytes
     except ValueError:                                 # not the main thread: no handler to hold it
         old, hold = None, None
     try:
-        return _gpg_run(argv, passphrase, payload, tools, hold)
+        return _gpg_run(argv, passphrase, payload, exe, hold)
     finally:
         if old is not None:
             signal.signal(signal.SIGTERM, old)
@@ -226,7 +227,8 @@ def _kill(p: subprocess.Popen) -> None:
         pass
 
 
-def _gpg_run(argv: tuple, passphrase: str, payload: bytes, tools: Tools, hold: dict | None = None) -> bytes:
+def _gpg_run(argv: tuple, passphrase: str, payload: bytes, exe: tuple[str, str], hold: dict | None = None) -> bytes:
+    """exe: gpg's and gpgconf's paths, already verified against their pins by gpg_run."""
     home = new_gnupg_home()
     env = dict(GPG_ENV, GNUPGHOME=home)
     rc = None
@@ -237,7 +239,7 @@ def _gpg_run(argv: tuple, passphrase: str, payload: bytes, tools: Tools, hold: d
                 os.write(w, passphrase.encode("ascii") + b"\n")
             finally:
                 os.close(w)
-            p = subprocess.Popen([tools.verify(tools.gpg), *argv[1:]], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+            p = subprocess.Popen([exe[0], *argv[1:]], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE, close_fds=True, pass_fds=(3,), preexec_fn=_child_fd3(r),
                                  env=env)
             if hold is not None:
@@ -252,7 +254,7 @@ def _gpg_run(argv: tuple, passphrase: str, payload: bytes, tools: Tools, hold: d
         agent_down = False
         try:
             try:
-                agent_down = subprocess.run([tools.verify(tools.gpgconf), "--homedir", home, "--kill", "gpg-agent"],
+                agent_down = subprocess.run([exe[1], "--homedir", home, "--kill", "gpg-agent"],
                                             capture_output=True, env=env, timeout=GPGCONF_TIMEOUT_S).returncode == 0
             except (OSError, subprocess.SubprocessError, Refusal):
                 pass
@@ -605,7 +607,9 @@ def publish_guard(data: bytes | str, manifest: SealedManifest, seeds: list[int] 
     published alongside `data` (manifest relpath -> its bytes) and `allowlist` is the export allowlist's globs ('*'
     crosses '/'); they come together. Each published file must match the allowlist and be in the manifest, and its
     sha256 is recomputed here and must equal its manifest entry, or the call is refused. Only those recomputed hashes
-    may then appear in `data`; every other manifest hash still refuses. Returns `data` unchanged."""
+    may then appear in `data`; every other manifest hash still refuses. Each such digest, where it stands as a whole
+    64-hex token, is also not scanned for a seed's hex or a digit run (a digest can contain one by chance: the
+    director's ruling of 2026-11-27); everything else in `data` still is. Returns `data` unchanged."""
     if not (isinstance(data, (bytes, str)) and isinstance(manifest, SealedManifest) and (seeds is None or (
             isinstance(seeds, list) and seeds and all(type(s) is int and s >= 0 for s in seeds)))):
         raise Refusal("publish_guard takes bytes or str, a SealedManifest, and a non-empty list of int seeds or None")
@@ -628,6 +632,9 @@ def publish_guard(data: bytes | str, manifest: SealedManifest, seeds: list[int] 
             exempt.add(h)
     b = data.encode() if isinstance(data, str) else data
     low = b.lower()
+    for h in exempt:                                   # a verified digest token is not scanned for seeds or digit runs
+        low = re.sub(rb"(?<![0-9a-f])" + h.encode() + rb"(?![0-9a-f])", b"-" * 64, low)
+    b = low if exempt else b
     needles = set()
     for s in seeds or []:
         needles |= {str(s).encode(), f"{s:x}".encode()}

@@ -96,6 +96,7 @@ MUTANTS = [
     ('claim-ceiling-off', '        return sum(self.totals(st).values()) <= self.ceiling \\\n            and', '        return True \\\n            and'),
     ('directive-unchecked', '                if not STRICT_DIRECTIVE.fullmatch(line) or not all(', '                if False and not all('),
     ('directive-bare-ok', 'STRICT_DIRECTIVE = re.compile(r"#SBATCH( \\S+)+")', 'STRICT_DIRECTIVE = re.compile(r"#SBATCH( \\S+)*")'),
+    ('r5-directive-splitlines', '.split("\\n"):    # Slurm', '.splitlines():    # Slurm'),   # round 6: \\v, \\r ... split a line
     ('script-by-path', 'r = subprocess.run(argv, capture_output=True, input=body, env=env, timeout=300)', 'r = subprocess.run(argv + [script], capture_output=True, input=b"", env=env, timeout=300)'),
     ('env-not-scrubbed', 'env = {k: v for k, v in os.environ.items() if not k.startswith(SCRUB)}', 'env = dict(os.environ)'),
     ('env-slurm-kept', 'SCRUB = ("SBATCH_", "SLURM_")', 'SCRUB = ("SBATCH_",)'),

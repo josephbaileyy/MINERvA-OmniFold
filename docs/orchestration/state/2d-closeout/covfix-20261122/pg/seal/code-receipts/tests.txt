@@ -1,11 +1,11 @@
 # command: python3 -B -m unittest -v test_covfix_seal.py
 # python: 3.12.2 numpy 1.26.4  gpg: gpg (GnuPG) 2.4.8  host: Darwin arm64
-# 1064f9f95e4eb8725b1095d5858a74253c6cb9c2a99d432ef7e08ec464d3c12a  covfix_seal.py
-# 23193eb1238e30f8355b995ed5d43befab550f2bf8463d37fb8c9f6b56df1ea6  covfix_pg.py
+# b04b8fa9279638625af14e92aae0fcd294369c9eae272a77351951f9090bc7c3  covfix_seal.py
+# f3a293fa720ec03b2b6e9f029e6900d2fb775a1c74c79232c4a648336104cc38  covfix_pg.py
 # ed4d30ab2cea71e7aa87259adc6ffc4497a4b44d93b525b843b65a26151dba16  covfix_sealcheck.py
-# 76cab2597f05142ba6c863193ccbe6a1f832125522ddfe2e9ba7cdeafd004992  test_covfix_seal.py
-# 628c89e4f72f106212ae728d54e5fb2a4ca3a4c8ca5e51b379f0cf5a50efb144  covfix_seal_mutation.py
-# start: 2026-11-27T00:42:58Z
+# ecc06ce6810b9f63ae1d6744472a19e1bb515102643a9771bc90fd610a0f1c38  test_covfix_seal.py
+# 47b316143ed5e33bced7ba058d059c9b75aa42fa0ae39fd8bc9b4d01246ac8fa  covfix_seal_mutation.py
+# start: 2026-11-28T12:19:09Z
 test_pg_a_clean_record_and_an_epoch_pass_with_the_seed_list (test_covfix_seal.Decryptors.test_pg_a_clean_record_and_an_epoch_pass_with_the_seed_list) ... ok
 test_pg_a_hash_of_a_file_outside_the_allowlist_refuses (test_covfix_seal.Decryptors.test_pg_a_hash_of_a_file_outside_the_allowlist_refuses) ... ok
 test_pg_a_manifest_hash_or_a_seed_named_path_run_is_refused (test_covfix_seal.Decryptors.test_pg_a_manifest_hash_or_a_seed_named_path_run_is_refused) ... ok
@@ -17,6 +17,7 @@ test_pg_the_exemption_inputs_are_checked (test_covfix_seal.Decryptors.test_pg_th
 test_pg_the_exemption_is_recomputed_and_must_be_in_the_manifest (test_covfix_seal.Decryptors.test_pg_the_exemption_is_recomputed_and_must_be_in_the_manifest) ... ok
 test_pg_with_no_seed_list_the_seed_range_is_the_fallback (test_covfix_seal.Decryptors.test_pg_with_no_seed_list_the_seed_range_is_the_fallback)
 Fallback only: any 10-digit decimal in the seed range is refused, which refuses an epoch too. ... ok
+test_r5_8_a_verified_digest_that_contains_a_seeds_hex_passes (test_covfix_seal.Decryptors.test_r5_8_a_verified_digest_that_contains_a_seeds_hex_passes) ... ok
 test_read_product_takes_only_a_sealed_manifest (test_covfix_seal.Decryptors.test_read_product_takes_only_a_sealed_manifest) ... ok
 test_sm_access_is_explicit (test_covfix_seal.Decryptors.test_sm_access_is_explicit) ... ok
 test_sm_cannot_be_pickled_copied_or_dumped (test_covfix_seal.Decryptors.test_sm_cannot_be_pickled_copied_or_dumped) ... ok
@@ -130,6 +131,12 @@ test_r4_8_a_held_sigterm_kills_a_stubborn_gpg_within_the_bound (test_covfix_seal
 test_r4_8_a_sigterm_before_gpg_starts_kills_it_at_once (test_covfix_seal.Round4Findings.test_r4_8_a_sigterm_before_gpg_starts_kills_it_at_once) ... ok
 test_r4_8_killing_a_child_that_is_already_gone_is_quiet (test_covfix_seal.Round4Findings.test_r4_8_killing_a_child_that_is_already_gone_is_quiet) ... ok
 test_r4_8_the_home_goes_whatever_the_agent_shutdown_raises (test_covfix_seal.Round4Findings.test_r4_8_the_home_goes_whatever_the_agent_shutdown_raises) ... ok
+test_r5_3_an_undecodable_comm_keeps_the_inventory (test_covfix_seal.Round5Findings.test_r5_3_an_undecodable_comm_keeps_the_inventory) ... ok
+test_r5_4_nothing_is_hashed_while_a_sigterm_is_held (test_covfix_seal.Round5Findings.test_r5_4_nothing_is_hashed_while_a_sigterm_is_held) ... ok
+test_r5_5_one_unreadable_file_does_not_stop_the_trap (test_covfix_seal.Round5Findings.test_r5_5_one_unreadable_file_does_not_stop_the_trap) ... ok
+test_r5_5_with_an_unreadable_file_the_inventory_keeps_only_its_count (test_covfix_seal.Round5Findings.test_r5_5_with_an_unreadable_file_the_inventory_keeps_only_its_count) ... ok
+test_r5_6_a_duplicate_key_at_any_depth_is_refused (test_covfix_seal.Round5Findings.test_r5_6_a_duplicate_key_at_any_depth_is_refused) ... ok
+test_r5_9_scratch_is_in_neither_list (test_covfix_seal.Round5Findings.test_r5_9_scratch_is_in_neither_list) ... ok
 test_a_product_named_like_the_manifest_is_just_an_id (test_covfix_seal.Seal.test_a_product_named_like_the_manifest_is_just_an_id) ... ok
 test_break_on_a_product_round_trip_alone (test_covfix_seal.Seal.test_break_on_a_product_round_trip_alone) ... ok
 test_break_on_manifest_mismatch (test_covfix_seal.Seal.test_break_on_manifest_mismatch) ... ok
@@ -167,7 +174,7 @@ test_formula_and_alias (test_covfix_seal.Seeds.test_formula_and_alias) ... ok
 test_limit_refused (test_covfix_seal.Seeds.test_limit_refused) ... ok
 
 ----------------------------------------------------------------------
-Ran 149 tests in 841.307s
+Ran 156 tests in 1005.735s
 
 OK (skipped=1)
 # rc: 0

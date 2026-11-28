@@ -835,5 +835,24 @@ class Round4Findings(SchedulerBase):
         self.assertIn("expected format 4, found None", str(e.exception))
 
 
+
+class Round5Findings(SchedulerBase):
+    """codex-school2 round 5 (b9642de9), ledger item 2: reproduced first."""
+
+    def test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused(self):
+        # str.splitlines breaks a line at each of these; Slurm's directive parser splits lines only at \n and treats
+        # them as whitespace, so "--array" after one would reach sbatch on the "#SBATCH" line.
+        it = self.L.new_intent("w1", 1, 60)
+        sb, sc, sx, log = self.scheduler()
+        for sep in ("\r", "\v", "\f", "\x1c", "\x1d", "\x1e", "\x85", "\u2028", "\u2029"):
+            with self.subTest(sep=repr(sep)):
+                p = self.d / "sep.sbatch"
+                p.write_bytes(f"#!/bin/bash\n#SBATCH --account=m3246{sep}--array=0-3\nsrun true\n".encode())
+                with self.assertRaisesRegex(cl.Refusal, "not the strict allowlisted form"):   # by this rule only
+                    self.L.submit(it["intent"], str(p), sb, sc, sx)
+        self.assertFalse(log.exists())
+        self.L.submit(it["intent"], self.script("--account=m3246"), sb, sc, sx)       # the plain form still passes
+
+
 if __name__ == "__main__":
     unittest.main()

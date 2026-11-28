@@ -1,4 +1,4 @@
-"""COVFIX PG's bound binary (COVFIX-DECLARATION.md rev 11.4 section 4.2; COVFIX-BINDING-1 ruling 4). It runs on one
+"""COVFIX PG's bound binary (COVFIX-DECLARATION.md rev 12 section 4.2; COVFIX-BINDING-1 ruling 4). It runs on one
 exclusive node under the director's wrapper (JE's round-3 contract), and is the only PG code that touches the
 passphrase, which it hands to gpg on fd 3.
 
@@ -25,10 +25,12 @@ passphrase, which it hands to gpg on fd 3.
               env_set may name neither TMPDIR nor an env_keep name. env_keep holds only what must come from the
               site (the Slurm names, HOME). Each failure, like any malformed value, refuses before the job check,
               with W untouched.
-  gpg         gpg and gpgconf are pinned by sha256 (the binding) and hashed before every exec (ruling R1)
-  job check   the step check below, run once before anything else runs: the wrapper runs pg-connect on its host with
-              no allocation of its own, so a sealer outside a Slurm job, or with another process already in its
-              job, is refused before the generator starts and writes nothing to W (step_cgroup_pre)
+  gpg         gpg and gpgconf are pinned by sha256 (the binding) and hashed at the start of every gpg call (ruling
+              R1), before its SIGTERM hold begins, so nothing is hashed while a SIGTERM waits
+  job check   the step check below, run once before anything else runs: the wrapper gives pg-connect an exclusive
+              salloc node, and this check makes sure of it, so a sealer launched outside a Slurm job, or with another
+              process already in its job, is refused before the generator starts and writes nothing to W
+              (step_cgroup_pre)
   before      a synthetic gpg round trip with the pinned gpg and the real passphrase
   generation  <resolved command...> --workdir W --seeds W/seeds.json, with cwd W, stdin /dev/null, stdout and stderr
               into W/capture/, a scrubbed environment (env_keep's variables, env_set's values, TMPDIR = W/tmp at
@@ -115,6 +117,19 @@ def file_sha256(path: str) -> str:
         raise cs.Refusal("the generator command cannot be read") from e
 
 
+class _DuplicateKey(ValueError):
+    pass
+
+
+def _no_duplicate_keys(pairs: list) -> dict:
+    d = {}
+    for k, v in pairs:
+        if k in d:
+            raise _DuplicateKey(k)
+        d[k] = v
+    return d
+
+
 def load_spec(path: Path, sha256: str) -> dict:
     try:
         raw = Path(path).read_bytes()                # read once: the bytes hashed are the bytes parsed
@@ -123,7 +138,9 @@ def load_spec(path: Path, sha256: str) -> dict:
     if hashlib.sha256(raw).hexdigest() != sha256:
         raise cs.Refusal("the gen-spec's sha256 is not its pin")
     try:
-        spec = json.loads(raw)
+        spec = json.loads(raw, object_pairs_hook=_no_duplicate_keys)     # json would keep the last of two keys
+    except _DuplicateKey as e:
+        raise cs.Refusal("the gen-spec has a duplicate key") from e
     except ValueError as e:
         raise cs.Refusal("the gen-spec cannot be read") from e
     if not isinstance(spec, dict) or set(spec) != SPEC_KEYS:
@@ -134,11 +151,11 @@ def load_spec(path: Path, sha256: str) -> dict:
           and isinstance(spec["tunes"], list) and len(spec["tunes"]) == 2
           and all(isinstance(t, str) and t for t in spec["tunes"])
           and isinstance(spec["env_keep"], list) and all(isinstance(v, str) for v in spec["env_keep"])
-          and "TMPDIR" not in spec["env_keep"] and _required_ok(spec["required"])
+          and not {"TMPDIR", "SCRATCH"} & set(spec["env_keep"]) and _required_ok(spec["required"])
           and isinstance(spec["env_set"], dict)
           and all(ENV_NAME.fullmatch(k) for k in spec["env_set"])
           and all(isinstance(v, str) and "\0" not in v for v in spec["env_set"].values())
-          and "TMPDIR" not in spec["env_set"] and not set(spec["env_set"]) & set(spec["env_keep"]))
+          and not {"TMPDIR", "SCRATCH"} & set(spec["env_set"]) and not set(spec["env_set"]) & set(spec["env_keep"]))
     if not ok:
         raise cs.Refusal("the gen-spec's values are malformed")
     if len(set(spec["env_keep"])) != len(spec["env_keep"]):
@@ -189,7 +206,7 @@ class StepRefusal(cs.Refusal):
 def _proc_field(pid: int, name: str) -> str | None:
     try:
         p = Path(PROC, str(pid), name)
-        return os.readlink(p) if name == "exe" else p.read_text().strip()
+        return os.readlink(p) if name == "exe" else p.read_bytes().decode("utf-8", "backslashreplace").strip()
     except OSError:
         return None
 
@@ -334,9 +351,16 @@ def remove_verified(root: Path, hits: list) -> bool:
     return ok and not any(os.path.lexists(root / rel) for rel, _, _ in hits)
 
 
-def plaintext_hashes(workdir: Path) -> set[str]:
-    """For the trap: the hashes of W's regular files, never following or refusing on a link (the trap must not stop)."""
-    return {hashlib.sha256(cs.noatime_read(p)).hexdigest() for p in cs._regular_files(workdir)}
+def plaintext_hashes(workdir: Path) -> tuple[set[str], int]:
+    """For the trap: the hashes of W's regular files (never following a link), file by file, and the count of files
+    it could not read. One unreadable file costs only its own hash; the trap must not stop."""
+    hashes, unreadable = set(), 0
+    for p in cs._regular_files(workdir):
+        try:
+            hashes.add(hashlib.sha256(cs.noatime_read(p)).hexdigest())
+        except OSError:
+            unreadable += 1
+    return hashes, unreadable
 
 
 # ---------------------------------------------------------------------------------------------------- generation
@@ -439,8 +463,12 @@ def leak_guard(rc: int, summary: dict, seeds: list[bytes], hashes: set[str]) -> 
 def run(workdir: Path, sealed: Path, spec_path: Path, spec_sha256: str, frame: bytes,
         tools: cs.Tools) -> tuple[int, dict]:
     """(exit code, summary). The summary holds fixed codes, booleans and counts only, and passes the leak guard."""
-    seen: dict = {"seeds": [], "hashes": set()}
+    seen: dict = {"seeds": [], "hashes": set(), "unreadable": 0}
     rc, summary = _run(workdir, sealed, spec_path, spec_sha256, frame, tools, seen)
+    if seen["unreadable"]:                             # a hash the guard cannot know: fail, and keep no free text
+        rc = rc if rc == cs.BREAK_RC else 1
+        if isinstance(summary.get("step_cgroup_inventory"), list):
+            summary["step_cgroup_inventory"] = len(summary["step_cgroup_inventory"])
     return leak_guard(rc, summary, seen["seeds"], seen["hashes"])
 
 
@@ -514,7 +542,14 @@ def _run(workdir: Path, sealed: Path, spec_path: Path, spec_sha256: str, frame: 
             summary["group_ended"] = "failed"           # only on a failure path: the exit is already 1
         if started and workdir.is_dir():               # the trap: no plaintext and no spill left behind
             try:
-                seen["hashes"] |= plaintext_hashes(workdir)
+                hashes, seen["unreadable"] = plaintext_hashes(workdir)
+                seen["hashes"] |= hashes
+                if seen["unreadable"]:
+                    summary["trap_unreadable"] = seen["unreadable"]
+            except (OSError, cs.Refusal):                  # W itself cannot be walked: still scan with what is known
+                seen["unreadable"] = max(seen["unreadable"], 1)
+                summary["trap_unreadable"] = "failed"
+            try:                                       # the scratch scan runs whatever the hashing found
                 hits = spill_hits(stmp, changed(stmp, before, []), seen["hashes"], seeds_b)
                 summary["trap_spills_removed"] = remove_verified(stmp, hits)
             except (OSError, cs.Refusal):

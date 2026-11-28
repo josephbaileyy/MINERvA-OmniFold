@@ -390,7 +390,7 @@ class Ledger:
                 data = fh.read()
         except OSError as e:
             raise Refusal("the job script cannot be read") from e
-        for line in data.decode("utf-8", "replace").splitlines():
+        for line in data.decode("utf-8", "replace").split("\n"):    # Slurm's lines end only at \n (not \v, \r, ...)
             if line.strip().startswith("#") and DIRECTIVE_WORD.search(line):
                 if not STRICT_DIRECTIVE.fullmatch(line) or not all(EXTRA_OK.fullmatch(w) for w in line.split(" ")[1:]):
                     raise Refusal(f"a directive line is not the strict allowlisted form: {line!r}")

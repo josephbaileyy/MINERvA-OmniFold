@@ -55,10 +55,10 @@ The command runs with:
   `step_cgroup` with counts only; a refusal also records `step_cgroup_inventory`, each other process's cgroup path
   under the job, pid, comm and exe. An exe under W, the sealed dir or $SCRATCH is recorded as a fixed token
   (`<workdir>`, `<sealed>`, `<scratch>`), never its path.
-- **the same check before anything runs** (`step_cgroup_pre`). The wrapper runs pg-connect on its host with no
-  allocation of its own (the director has JE give pg-connect a slurm block, as the PV roles have). So a sealer outside
-  a Slurm job, or with another process already in its job, is refused before the synthetic round trip and before the
-  generator starts, and W stays empty. Without it, a launch outside a job would have generated and only then refused
+- **the same check before anything runs** (`step_cgroup_pre`). The wrapper gives pg-connect an exclusive salloc node
+  (#1340, JE's slurm block), and this check makes sure of it: a sealer launched outside a Slurm job, or with another
+  process already in its job, is refused before the synthetic round trip and before the generator starts, and W stays
+  empty. Without it, a launch outside a job would have generated and only then refused
   to seal, leaving seed-bearing plaintext in W.
 
 `seeds.json` is:
@@ -80,6 +80,9 @@ The command must:
   - A file's change includes its ctime, so restoring mtime does not hide an overwrite.
   - An unreadable file is a spill. A directory that cannot be listed fails the run. Neither stops the scan.
   - The trap stays armed until every removal is verified.
+  - On a failure, the trap hashes W's files one by one, so an unreadable file costs only its own hash; the scratch
+    scan runs with every hash it has. Any unreadable file is counted (`trap_unreadable`), fails the run, and reduces the
+    step-check inventory to its count, since the leak guard cannot know that file's hash (round 6).
 - **write W/PRODUCTS.json:** a non-empty JSON list of distinct, safe relative paths of regular files under W, naming
   the physics products PV will read. PG's own files are not products: no entry may lie under `capture/` or `tmp/`, or
   be `seeds.json` or `PRODUCTS.json`.
@@ -96,8 +99,9 @@ The gen-spec is a JSON object with exactly six keys:
  "required": [{"pattern": "<glob relative to W>", "count": <n>}, ...]}
 ```
 
-`env_keep` may not list TMPDIR. `env_set` maps names (letters, digits and `_`, not starting with a digit) to string
-values with no NUL. It may be empty, and it may name neither TMPDIR nor an `env_keep` name. `required` is a non-empty list of distinct patterns. Each is relative, with no `..`,
+`env_keep` may list neither TMPDIR nor SCRATCH. `env_set` maps names (letters, digits and `_`, not starting with a
+digit) to string values with no NUL. It may be empty, and it may name neither TMPDIR, SCRATCH nor an `env_keep` name.
+A key repeated anywhere in the file (JSON would keep only the last) refuses the gen-spec. `required` is a non-empty list of distinct patterns. Each is relative, with no `..`,
 and is matched with fnmatchcase, where `*` crosses `/`. Each count is an integer ≥ 1. tune-generator's
 `pg_lib.py inventory` prints the same format.
 
@@ -164,7 +168,9 @@ so W's raw traces, logs and file names carry seeds. The binary is W's boundary, 
     alongside (manifest relpath -> its bytes), and `allowlist` is the export allowlist's globs; they come together.
     Each published file must match the allowlist and be in the manifest, and the guard recomputes its sha256, which
     must equal its manifest entry, or the call is refused. Only those recomputed hashes may then appear in `data`.
-    Every other manifest hash (a trace's, a file outside the allowlist's) still refuses.
+    Every other manifest hash (a trace's, a file outside the allowlist's) still refuses. Where one of those digests
+    stands as a whole 64-hex token, it is not scanned for a seed's hex or a digit run, since a digest can contain one
+    by chance (round 6); everything else in `data` still is.
 - **The probe** (the synthetic round trip before generation) uses exactly the seal's argv, so it exercises the
   uncompressed flags.
 
@@ -197,8 +203,8 @@ The passphrase is passed on fd 3 only, and gpg is left with exactly fds 0–3 an
 dumps off.
 
 **gpg and gpgconf are pinned (the director's ruling R1).** PG's binding records both binaries' sha256. Both paths
-must be absolute and fully resolved. Each binary is hashed through a file descriptor when PG starts and again
-immediately before every exec. A mismatch, for example after a NERSC update, is a STOP and a rebinding, never a
+must be absolute and fully resolved. Each binary is hashed through a file descriptor when PG starts and again at
+the start of every gpg call, before its SIGTERM hold begins, so nothing is hashed while a SIGTERM waits (round 6). A mismatch, for example after a NERSC update, is a STOP and a rebinding, never a
 fallback. The exec is by path after the hash, the same residual window as above.
 
 Each call gets a fresh GNUPGHOME under /dev/shm: under 80 characters, mode 700, and never under $SCRATCH. The binary

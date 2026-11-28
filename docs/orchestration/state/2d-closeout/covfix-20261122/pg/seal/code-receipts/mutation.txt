@@ -1,16 +1,16 @@
-# PG mutation receipt: ONE full run of all 219 mutants against the files hashed below, unchanged since before the run.
-#   Latest mtime among these files: 2026-11-26T12:18:53-0800 covfix_seal_mutation.py
-#   The run started at Thu Nov 26 20:38:45 UTC 2026 (date -u, written just before launch).
+# PG mutation receipt: ONE full run of all 229 mutants against the files hashed below, unchanged since before the run.
+#   Latest mtime among these files: 2026-11-26T21:39:01-0800 test_covfix_seal.py
+#   The run started at Fri Nov 27 21:22:02 UTC 2026 (date -u, written just before launch).
 #   The harness runs unittest with -f (failfast) and counts a TIMEOUT as a survivor, never a kill.
 # command: the files as now
 # python: 3.12.2 numpy 1.26.4  gpg: gpg (GnuPG) 2.4.8  host: Darwin arm64
-# 1064f9f95e4eb8725b1095d5858a74253c6cb9c2a99d432ef7e08ec464d3c12a  covfix_seal.py
-# 23193eb1238e30f8355b995ed5d43befab550f2bf8463d37fb8c9f6b56df1ea6  covfix_pg.py
+# b04b8fa9279638625af14e92aae0fcd294369c9eae272a77351951f9090bc7c3  covfix_seal.py
+# f3a293fa720ec03b2b6e9f029e6900d2fb775a1c74c79232c4a648336104cc38  covfix_pg.py
 # ed4d30ab2cea71e7aa87259adc6ffc4497a4b44d93b525b843b65a26151dba16  covfix_sealcheck.py
-# 76cab2597f05142ba6c863193ccbe6a1f832125522ddfe2e9ba7cdeafd004992  test_covfix_seal.py
-# 628c89e4f72f106212ae728d54e5fb2a4ca3a4c8ca5e51b379f0cf5a50efb144  covfix_seal_mutation.py
-# start: 2026-11-27T01:11:35Z
-# ---- full run: python3 -B covfix_seal_mutation.py --jobs 6
+# ecc06ce6810b9f63ae1d6744472a19e1bb515102643a9771bc90fd610a0f1c38  test_covfix_seal.py
+# 47b316143ed5e33bced7ba058d059c9b75aa42fa0ae39fd8bc9b4d01246ac8fa  covfix_seal_mutation.py
+# start: 2026-11-28T12:50:44Z
+# ---- full run: python3 -B covfix_seal_mutation.py --jobs 3
 baseline pass OK (skipped=1)
 frame-uppercase: killed FAIL: test_pg_frame_refusals (test_covfix_seal.Frame.test_pg_frame_refusals) (bad='AA\n1234567890\n')
 seed-lo-raised: killed FAIL: test_pg_with_no_seed_list_the_seed_range_is_the_fallback (test_covfix_seal.Decryptors.test_pg_with_no_seed_list_the_seed_range_is_the_fallback)
@@ -32,7 +32,7 @@ home-not-removed: killed ERROR: test_read_product_takes_only_a_sealed_manifest (
 removal-unverified: killed FAIL: test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails (test_covfix_seal.Gpg.test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails)
 gpgconf-error-skips-removal: killed ERROR: test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails (test_covfix_seal.Gpg.test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails)
 symlink-allowed: killed FAIL: test_symlink_from_generator_is_refused_and_trapped (test_covfix_seal.PG.test_symlink_from_generator_is_refused_and_trapped)
-walk-errors-ignored: killed FAIL: test_walk_errors_refuse (test_covfix_seal.Seal.test_walk_errors_refuse) (f=<function enumerate_files at 0x104372660>)
+walk-errors-ignored: killed FAIL: test_walk_errors_refuse (test_covfix_seal.Seal.test_walk_errors_refuse) (f=<function enumerate_files at 0x1044225c0>)
 ids-from-zero: killed ERROR: test_read_product_takes_only_a_sealed_manifest (test_covfix_seal.Decryptors.test_read_product_takes_only_a_sealed_manifest)
 max-products: killed FAIL: test_refusals (test_covfix_seal.Seal.test_refusals)
 manifest-no-paths: killed ERROR: test_read_product_takes_only_a_sealed_manifest (test_covfix_seal.Decryptors.test_read_product_takes_only_a_sealed_manifest)
@@ -104,7 +104,7 @@ chmod-failure-leaves-home: killed ERROR: test_a_chmod_failure_still_removes_the_
 pin-unchecked: killed FAIL: test_tools_are_pinned_and_verified_before_every_exec (test_covfix_seal.Gpg.test_tools_are_pinned_and_verified_before_every_exec)
 gpg-unverified-at-exec: killed FAIL: test_tools_are_pinned_and_verified_before_every_exec (test_covfix_seal.Gpg.test_tools_are_pinned_and_verified_before_every_exec)
 gpgconf-unverified-at-exec: killed FAIL: test_tools_are_pinned_and_verified_before_every_exec (test_covfix_seal.Gpg.test_tools_are_pinned_and_verified_before_every_exec)
-unresolved-tool-ok: killed FAIL: test_tools_must_be_absolute_executables (test_covfix_seal.Gpg.test_tools_must_be_absolute_executables) (g='/private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpy4nxsiku/bin-link/gpg')
+unresolved-tool-ok: killed FAIL: test_tools_must_be_absolute_executables (test_covfix_seal.Gpg.test_tools_must_be_absolute_executables) (g='/private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmps4n5ably/bin-link/gpg')
 same-file-tools-ok: killed FAIL: test_tools_are_pinned_and_verified_before_every_exec (test_covfix_seal.Gpg.test_tools_are_pinned_and_verified_before_every_exec)
 sealcheck-pin-optional: killed FAIL: test_cli (test_covfix_seal.SealCheck.test_cli)
 group-not-ended: killed FAIL: test_an_orphan_of_the_generator_is_killed_before_the_seal (test_covfix_seal.PG.test_an_orphan_of_the_generator_is_killed_before_the_seal)
@@ -131,7 +131,7 @@ required-dotdot-ok: killed FAIL: test_f9_the_required_inventory_is_validated (te
 required-abs-ok: killed FAIL: test_f9_the_required_inventory_is_validated (test_covfix_seal.Round3Findings.test_f9_the_required_inventory_is_validated) (req=[{'pattern': '/abs', 'count': 1}])
 required-count-zero-ok: killed FAIL: test_f9_the_required_inventory_is_validated (test_covfix_seal.Round3Findings.test_f9_the_required_inventory_is_validated) (req=[{'pattern': 'a', 'count': 0}])
 required-keys-loose: killed ERROR: test_f9_the_required_inventory_is_validated (test_covfix_seal.Round3Findings.test_f9_the_required_inventory_is_validated) (req=[{'pattern': 'a'}])
-cgroup-check-skipped: killed FAIL: test_m1_a_plaintext_hash_in_the_summary_is_redacted (test_covfix_seal.SeedBearing.test_m1_a_plaintext_hash_in_the_summary_is_redacted) [lower]
+cgroup-check-skipped: killed ERROR: test_r5_5_with_an_unreadable_file_the_inventory_keeps_only_its_count (test_covfix_seal.Round5Findings.test_r5_5_with_an_unreadable_file_the_inventory_keeps_only_its_count)
 cgroup-extra-ok: killed FAIL: test_f7_a_run_with_an_escaped_process_has_no_receipt (test_covfix_seal.Round3Findings.test_f7_a_run_with_an_escaped_process_has_no_receipt)
 cgroup-v1-ok: killed FAIL: test_f7_detector_an_unreadable_or_v1_cgroup_is_a_stop (test_covfix_seal.Round3Findings.test_f7_detector_an_unreadable_or_v1_cgroup_is_a_stop) (kw={'cgroup_line': '4:memory:/slurm/job_1'})
 cgroup-unreadable-ok: killed FAIL: test_f7_detector_an_unreadable_or_v1_cgroup_is_a_stop (test_covfix_seal.Round3Findings.test_f7_detector_an_unreadable_or_v1_cgroup_is_a_stop) (kw={'readable': False})
@@ -174,7 +174,7 @@ sb-m1-exe-token-off: killed FAIL: test_m1_an_exe_under_w_the_sealed_dir_or_scrat
 sb-m1-token-no-workdir: killed FAIL: test_m1_an_exe_under_w_the_sealed_dir_or_scratch_is_a_fixed_token (test_covfix_seal.SeedBearing.test_m1_an_exe_under_w_the_sealed_dir_or_scratch_is_a_fixed_token) [<workdir>]
 sb-m1-token-no-sealed: killed FAIL: test_m1_an_exe_under_w_the_sealed_dir_or_scratch_is_a_fixed_token (test_covfix_seal.SeedBearing.test_m1_an_exe_under_w_the_sealed_dir_or_scratch_is_a_fixed_token) [<sealed>]
 sb-m1-token-no-scratch: killed FAIL: test_m1_an_exe_under_w_the_sealed_dir_or_scratch_is_a_fixed_token (test_covfix_seal.SeedBearing.test_m1_an_exe_under_w_the_sealed_dir_or_scratch_is_a_fixed_token) [<scratch>]
-sb-m2-sums-file-missed: killed FAIL: test_m2_a_sums_file_in_scratch_tmp_is_a_spill (test_covfix_seal.SeedBearing.test_m2_a_sums_file_in_scratch_tmp_is_a_spill)
+sb-m2-sums-file-missed: killed FAIL: test_r5_5_one_unreadable_file_does_not_stop_the_trap (test_covfix_seal.Round5Findings.test_r5_5_one_unreadable_file_does_not_stop_the_trap)
 sb-m2-name-hash-missed: killed FAIL: test_m2_hash_text_in_a_name_or_upper_case_is_a_hit (test_covfix_seal.SeedBearing.test_m2_hash_text_in_a_name_or_upper_case_is_a_hit)
 sb-m2-hex-lower-case-only: killed ERROR: test_m1_a_plaintext_hash_in_the_summary_is_redacted (test_covfix_seal.SeedBearing.test_m1_a_plaintext_hash_in_the_summary_is_redacted) [upper]
 sb-m2-hex-not-lowered: killed ERROR: test_m1_a_plaintext_hash_in_the_summary_is_redacted (test_covfix_seal.SeedBearing.test_m1_a_plaintext_hash_in_the_summary_is_redacted) [upper]
@@ -231,5 +231,14 @@ envset-nul-ok: killed FAIL: test_spec_validation (test_covfix_seal.PG.test_spec_
 envset-not-dict-ok: killed ERROR: test_spec_validation (test_covfix_seal.PG.test_spec_validation) (bad="{'command': ['/var/folders/gn/_qj5k2lj0c")
 tmp-plain-mkdir: killed FAIL: test_w_tmp_is_mode_0700_under_umask_022 (test_covfix_seal.RehearsalContract.test_w_tmp_is_mode_0700_under_umask_022)
 tmp-chmod-off: killed FAIL: test_private_dir_is_0700_whatever_the_umask (test_covfix_seal.RehearsalContract.test_private_dir_is_0700_whatever_the_umask) (umask='0o277')
-219/219 killed; survived, harness or not applied: []
-rc=0
+r5-verify-under-hold: killed FAIL: test_r5_4_nothing_is_hashed_while_a_sigterm_is_held (test_covfix_seal.Round5Findings.test_r5_4_nothing_is_hashed_while_a_sigterm_is_held)
+r5-comm-strict-decode: killed ERROR: test_r5_3_an_undecodable_comm_keeps_the_inventory (test_covfix_seal.Round5Findings.test_r5_3_an_undecodable_comm_keeps_the_inventory)
+r5-hash-file-error-raises: killed FAIL: test_r5_5_one_unreadable_file_does_not_stop_the_trap (test_covfix_seal.Round5Findings.test_r5_5_one_unreadable_file_does_not_stop_the_trap)
+r5-unreadable-not-counted: killed ERROR: test_r5_5_one_unreadable_file_does_not_stop_the_trap (test_covfix_seal.Round5Findings.test_r5_5_one_unreadable_file_does_not_stop_the_trap)
+r5-inventory-kept-when-unreadable: killed FAIL: test_r5_5_with_an_unreadable_file_the_inventory_keeps_only_its_count (test_covfix_seal.Round5Findings.test_r5_5_with_an_unreadable_file_the_inventory_keeps_only_its_count)
+r5-duplicate-keys-allowed: killed FAIL: test_r5_6_a_duplicate_key_at_any_depth_is_refused (test_covfix_seal.Round5Findings.test_r5_6_a_duplicate_key_at_any_depth_is_refused) (bad='{"command": ["/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn')
+r5-scratch-keepable: killed FAIL: test_r5_9_scratch_is_in_neither_list (test_covfix_seal.Round5Findings.test_r5_9_scratch_is_in_neither_list) (kw=['env_keep'])
+r5-scratch-settable: killed FAIL: test_r5_9_scratch_is_in_neither_list (test_covfix_seal.Round5Findings.test_r5_9_scratch_is_in_neither_list) (kw=['env_set'])
+r5-digest-token-not-exempt: killed ERROR: test_r5_8_a_verified_digest_that_contains_a_seeds_hex_passes (test_covfix_seal.Decryptors.test_r5_8_a_verified_digest_that_contains_a_seeds_hex_passes) [str]
+r5-digest-substring-exempt: killed FAIL: test_r5_8_a_verified_digest_that_contains_a_seeds_hex_passes (test_covfix_seal.Decryptors.test_r5_8_a_verified_digest_that_contains_a_seeds_hex_passes) (bad='b9d  out/G21/ratio.json\n')
+229/229 killed; survived, harness or not applied: []

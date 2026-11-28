@@ -80,6 +80,13 @@ if mode == "tmpmode":                  # pg_generate.sh's own check (lines 59-61
     st = os.lstat(os.environ["TMPDIR"])
     open(os.path.join(w, "tmpmode.json"), "w").write(json.dumps({{"dir": stat.S_ISDIR(st.st_mode),
         "mode": oct(stat.S_IMODE(st.st_mode)), "own": st.st_uid == os.getuid()}}))
+if mode == "unreadable_w":             # the trap must still hash what it can and clean the spill
+    import hashlib
+    h = hashlib.sha256(open(os.path.join(w, "out", "G21", "ratio.json"), "rb").read()).hexdigest()
+    open(os.path.join(tmp, "sums.txt"), "w").write(h + "  out/G21/ratio.json\n")
+    open(os.path.join(w, "out", "locked.bin"), "w").write("unreadable")
+    os.chmod(os.path.join(w, "out", "locked.bin"), 0)
+    sys.exit(3)
 if mode == "envset":
     open(os.path.join(w, "envset.json"), "w").write(json.dumps({{k: os.environ.get(k) for k in ("PG_DEPLOY_PIN", "COVFIX_TEST_SET")}}))
 if mode == "mutate":
@@ -285,8 +292,8 @@ class Gpg(unittest.TestCase):
         t = tools(gpgconf=c)
         Path(c).write_text(Path(c).read_text() + "# changed\n")
         with self.assertRaises(cs.Refusal) as e:
-            cs.gpg_run(cs.GPG_ENCRYPT, PW, b"x", t)                       # gpgconf too: shutdown not confirmed
-        self.assertIn("shutdown", str(e.exception))
+            cs.gpg_run(cs.GPG_ENCRYPT, PW, b"x", t)                       # gpgconf too, before gpg runs (round 6)
+        self.assertIn("pinned", str(e.exception))
 
     def test_round_trip_and_wrong_passphrase(self):
         ct = cs.gpg_run(cs.GPG_ENCRYPT, PW, b"payload", TOOLS)
@@ -1909,6 +1916,95 @@ class RehearsalContract(PGBase):
             pg.private_dir(self.d / "priv0")
 
 
+class Round5Findings(PGBase):
+    """codex-school2 round 5 (b9642de9), as the director folded them into round 6 (2026-11-27): each reproduced
+    first. The publish_guard item is in Decryptors (it needs that class's manifest)."""
+
+    def test_r5_3_an_undecodable_comm_keeps_the_inventory(self):
+        proc, cg = fake_step(self.d / "u", extra_pids=(424242,))
+        (proc / "424242" / "comm").write_bytes(b"ab\xe2\x82\n")             # comm truncated inside a UTF-8 character
+        with mock.patch.object(pg, "PROC", str(proc)), mock.patch.object(pg, "CGROUP_ROOT", str(cg)), \
+                self.assertRaises(pg.StepRefusal) as e:
+            pg.step_cgroup_check()
+        self.assertEqual(e.exception.inventory, [{"cgroup": "step_0/user/task_0", "pid": 424242,
+                                                  "comm": "ab\\xe2\\x82", "exe": "/fake/bin/gevgen"}])
+
+    def test_r5_4_nothing_is_hashed_while_a_sigterm_is_held(self):
+        import threading
+        t = cs.Tools(GPG, GPGCONF, fsha(GPG), fsha(GPGCONF))
+        homes, real_home, real_popen = [], cs.new_gnupg_home, cs.subprocess.Popen
+
+        def spy_home():
+            homes.append(real_home())
+            return homes[-1]
+
+        def stall(path):                                                # a filesystem read that stalls
+            time.sleep(cs.SIGTERM_HOLD_BOUND_S + 5)
+            return path
+
+        main = threading.main_thread().ident
+        timer = threading.Timer(0.5, signal.pthread_kill, (main, signal.SIGTERM))
+        old = signal.signal(signal.SIGTERM, pg._term)
+        try:
+            with mock.patch.object(cs, "new_gnupg_home", spy_home), mock.patch.object(t, "verify", stall), \
+                    mock.patch.object(cs.subprocess, "Popen", Round4Findings._stubborn(self, real_popen)), \
+                    self.assertRaises(SystemExit):
+                t0 = time.monotonic()
+                timer.start()
+                cs.gpg_run(cs.GPG_ENCRYPT, PW, b"x", t)
+            held = time.monotonic() - t0 - 0.5
+        finally:
+            timer.cancel()
+            signal.signal(signal.SIGTERM, old)
+        self.assertLess(held, cs.SIGTERM_HOLD_BOUND_S)
+        self.assertFalse(any(os.path.lexists(h) for h in homes))
+
+    def test_r5_5_one_unreadable_file_does_not_stop_the_trap(self):
+        rc, out = self.go(mode="unreadable_w")
+        s = self.summary(out)
+        self.assertEqual(rc, 1, out)
+        self.assertEqual(s["trap_unreadable"], 1, s)
+        self.assertIs(s["trap_spills_removed"], True, s)
+        self.assertFalse(os.path.lexists(self.scratch / "tmp" / "sums.txt"))
+        self.assertEqual(list(self.w.iterdir()), [])
+
+    def test_r5_5_with_an_unreadable_file_the_inventory_keeps_only_its_count(self):
+        # a hash the leak guard cannot know: the inventory's free text (comm, exe) is reduced to its count
+        stray = [{"cgroup": "step_0/user/task_1", "pid": 4242, "comm": "gevgen", "exe": "/fake/bin/gevgen"}]
+        with mock.patch.object(pg, "step_cgroup_check",
+                               side_effect=[{"pids": 2, "ancestors": 1}, pg.StepRefusal("a stray", stray)]):
+            rc, out = self.go(mode="unreadable_w")
+        s = self.summary(out)
+        self.assertEqual(rc, 1, out)
+        self.assertEqual((s["trap_unreadable"], s["step_cgroup_inventory"]), (1, 1), s)
+
+    def test_r5_6_a_duplicate_key_at_any_depth_is_refused(self):
+        gen = write_gen(self.d)
+        good = write_spec(self.d, gen).read_text()
+        env = {"FAKE_MODE": "ok", "SPILL_ROOT": "x"}
+        with mock.patch.dict(os.environ, env):
+            p = self.d / "ok.json"
+            p.write_text(good)
+            pg.load_spec(p, fsha(p))                                    # the control loads
+            for bad in (good.replace('"tunes":', '"tunes": ["1234567890", "x"], "tunes":', 1),
+                        good.replace('"env_set": {}', '"env_set": {"PG_X": "1234567890", "PG_X": "clean"}', 1),
+                        good.replace('"count": 1', '"count": 1, "count": 1', 1)):
+                with self.subTest(bad=bad[:60]):
+                    self.assertNotEqual(bad, good)
+                    p = self.d / "dup.json"
+                    p.write_text(bad)
+                    with self.assertRaisesRegex(cs.Refusal, "duplicate key"):
+                        pg.load_spec(p, fsha(p))
+
+    def test_r5_9_scratch_is_in_neither_list(self):
+        gen = write_gen(self.d)
+        with mock.patch.dict(os.environ, {"FAKE_MODE": "ok", "SPILL_ROOT": "x", "SCRATCH": "/s"}):
+            for kw in ({"env_keep": ("FAKE_MODE", "PATH", "SPILL_ROOT", "SCRATCH")}, {"env_set": {"SCRATCH": "/s"}}):
+                spec = write_spec(self.d, gen, **kw)                    # one file, rewritten for each case
+                with self.subTest(kw=sorted(kw)), self.assertRaisesRegex(cs.Refusal, "malformed"):
+                    pg.load_spec(spec, fsha(spec))
+
+
 class Decryptors(Base):
     """The director's rulings 3 and 4 of 2026-11-25: the decrypted manifest is seed-bearing (its paths and plaintext
     hashes), so it never prints, and PV's writers pass every output through publish_guard."""
@@ -2070,6 +2166,23 @@ class Decryptors(Base):
                    {"published": pub, "allowlist": [""]}):
             with self.subTest(kw=sorted(kw)), self.assertRaises(cs.Refusal):
                 cs.publish_guard("clean", self.man2(), self.SEEDS, **kw)
+
+
+    def test_r5_8_a_verified_digest_that_contains_a_seeds_hex_passes(self):
+        h = hashlib.sha256(self.RATIO).hexdigest()
+        seed = int("6bd2c85c", 16)                                       # the reader's example: inside this digest
+        self.assertIn(f"{seed:x}", h)
+        self.assertTrue(cs.SEED_BASE_LO <= seed < cs.SEED_LIMIT)
+        ok = {"published": {"out/G21/ratio.json": self.RATIO}, "allowlist": self.ALLOW}
+        text = self.sums((self.RATIO, "out/G21/ratio.json"))
+        for data in (text, text.encode(), text.upper()):
+            with self.subTest(type(data).__name__):
+                self.assertEqual(cs.publish_guard(data, self.man2(), [seed], **ok), data)
+        for bad in (text + f"seed {seed:x}\n",                          # the seed's hex elsewhere still refuses
+                    "a" + text,                                         # inside a longer hex run: not the token
+                    text + str(seed)):                                  # and its decimal
+            with self.subTest(bad=bad[-24:]), self.assertRaises(cs.Refusal):
+                cs.publish_guard(bad, self.man2(), [seed], **ok)
 
 
 @unittest.skipUnless(hasattr(os, "O_NOATIME"), "O_NOATIME is Linux-only")

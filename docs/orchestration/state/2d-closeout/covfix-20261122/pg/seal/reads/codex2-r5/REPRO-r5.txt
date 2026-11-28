@@ -1,0 +1,100 @@
+# Round 6's new tests, run on b9642de9's unchanged modules before any fix (each must fail first).
+# date -u: Fri Nov 27 05:09:03 UTC 2026
+# modules unchanged since b9642de9:
+1064f9f95e4eb8725b1095d5858a74253c6cb9c2a99d432ef7e08ec464d3c12a  covfix_seal.py
+23193eb1238e30f8355b995ed5d43befab550f2bf8463d37fb8c9f6b56df1ea6  covfix_pg.py
+30f81378d4068f838fbd6835301c5f218d2ec3b4dc5d0d5793d89dfbbb4de434  covfix_ledger.py
+8ed25c1d9e07c619f6b80ad12c7874cbfe4e9e8767a69ded1f7c16e32d8426b5  test_covfix_seal.py
+cfcaa2505f92b4d96efa2a789b97648fe485f0a72e16bb9a48a4b77f79f6ca56  test_covfix_ledger.py
+# python3 -B -m unittest test_covfix_seal.Round5Findings test_covfix_seal.Decryptors.test_r5_8_a_verified_digest_that_contains_a_seeds_hex_passes test_covfix_ledger.Round5Findings
+ERROR: test_r5_3_an_undecodable_comm_keeps_the_inventory (test_covfix_seal.Round5Findings.test_r5_3_an_undecodable_comm_keeps_the_inventory)
+UnicodeDecodeError: 'utf-8' codec can't decode bytes in position 2-3: invalid continuation byte
+ERROR: test_r5_5_one_unreadable_file_does_not_stop_the_trap (test_covfix_seal.Round5Findings.test_r5_5_one_unreadable_file_does_not_stop_the_trap)
+KeyError: 'trap_unreadable'
+ERROR: test_r5_8_a_verified_digest_that_contains_a_seeds_hex_passes (test_covfix_seal.Decryptors.test_r5_8_a_verified_digest_that_contains_a_seeds_hex_passes) [str]
+ERROR: test_r5_8_a_verified_digest_that_contains_a_seeds_hex_passes (test_covfix_seal.Decryptors.test_r5_8_a_verified_digest_that_contains_a_seeds_hex_passes) [bytes]
+ERROR: test_r5_8_a_verified_digest_that_contains_a_seeds_hex_passes (test_covfix_seal.Decryptors.test_r5_8_a_verified_digest_that_contains_a_seeds_hex_passes) [str]
+FAIL: test_r5_4_nothing_is_hashed_while_a_sigterm_is_held (test_covfix_seal.Round5Findings.test_r5_4_nothing_is_hashed_while_a_sigterm_is_held)
+AssertionError: 39.71550829196349 not less than 15
+FAIL: test_r5_6_a_duplicate_key_at_any_depth_is_refused (test_covfix_seal.Round5Findings.test_r5_6_a_duplicate_key_at_any_depth_is_refused) (bad='{"command": ["<tmp>
+AssertionError: Refusal not raised
+FAIL: test_r5_6_a_duplicate_key_at_any_depth_is_refused (test_covfix_seal.Round5Findings.test_r5_6_a_duplicate_key_at_any_depth_is_refused) (bad='{"command": ["<tmp>
+AssertionError: Refusal not raised
+FAIL: test_r5_6_a_duplicate_key_at_any_depth_is_refused (test_covfix_seal.Round5Findings.test_r5_6_a_duplicate_key_at_any_depth_is_refused) (bad='{"command": ["<tmp>
+AssertionError: Refusal not raised
+FAIL: test_r5_9_scratch_is_in_neither_list (test_covfix_seal.Round5Findings.test_r5_9_scratch_is_in_neither_list) (kw=['env_keep'])
+AssertionError: Refusal not raised
+FAIL: test_r5_9_scratch_is_in_neither_list (test_covfix_seal.Round5Findings.test_r5_9_scratch_is_in_neither_list) (kw=['env_set'])
+AssertionError: Refusal not raised
+FAIL: test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused (test_covfix_ledger.Round5Findings.test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused) (sep="'\\r'")
+AssertionError: Refusal not raised
+FAIL: test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused (test_covfix_ledger.Round5Findings.test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused) (sep="'\\x0b'")
+AssertionError: "not the strict allowlisted form" does not match "the intent is already claimed, submitted or stopped"
+FAIL: test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused (test_covfix_ledger.Round5Findings.test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused) (sep="'\\x0c'")
+AssertionError: "not the strict allowlisted form" does not match "the intent is already claimed, submitted or stopped"
+FAIL: test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused (test_covfix_ledger.Round5Findings.test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused) (sep="'\\x1c'")
+AssertionError: "not the strict allowlisted form" does not match "the intent is already claimed, submitted or stopped"
+FAIL: test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused (test_covfix_ledger.Round5Findings.test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused) (sep="'\\x1d'")
+AssertionError: "not the strict allowlisted form" does not match "the intent is already claimed, submitted or stopped"
+FAIL: test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused (test_covfix_ledger.Round5Findings.test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused) (sep="'\\x1e'")
+AssertionError: "not the strict allowlisted form" does not match "the intent is already claimed, submitted or stopped"
+FAIL: test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused (test_covfix_ledger.Round5Findings.test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused) (sep="'\\x85'")
+AssertionError: "not the strict allowlisted form" does not match "the intent is already claimed, submitted or stopped"
+FAIL: test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused (test_covfix_ledger.Round5Findings.test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused) (sep="'\\u2028'")
+AssertionError: "not the strict allowlisted form" does not match "the intent is already claimed, submitted or stopped"
+FAIL: test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused (test_covfix_ledger.Round5Findings.test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused) (sep="'\\u2029'")
+AssertionError: "not the strict allowlisted form" does not match "the intent is already claimed, submitted or stopped"
+FAIL: test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused (test_covfix_ledger.Round5Findings.test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused)
+AssertionError: True is not false
+Ran 7 tests in 50.885s
+FAILED (failures=16, errors=5)
+
+# ---- two tests written after the fixes (the inventory reduction, and gpgconf's earlier refusal), run on b9642de9's
+# modules in a scratch copy with round 6's test file: date -u Fri Nov 27 05:16:22 UTC 2026
+1064f9f95e4eb8725b1095d5858a74253c6cb9c2a99d432ef7e08ec464d3c12a  covfix_seal.py
+23193eb1238e30f8355b995ed5d43befab550f2bf8463d37fb8c9f6b56df1ea6  covfix_pg.py
+ed5d1718130c00f65377814432ff654157f7413bb9366ff55beca9ef89ec7a79  test_covfix_seal.py
+ERROR: test_r5_5_with_an_unreadable_file_the_inventory_keeps_only_its_count (test_covfix_seal.Round5Findings.test_r5_5_with_an_unreadable_file_the_inventory_keeps_only_its_count)
+KeyError: 'trap_unreadable'
+FAIL: test_tools_are_pinned_and_verified_before_every_exec (test_covfix_seal.Gpg.test_tools_are_pinned_and_verified_before_every_exec)
+AssertionError: 'pinned' not found in 'the gpg-agent shutdown could not be confirmed'
+Ran 2 tests in 2.352s
+FAILED (failures=1, errors=1)
+
+# ---- note: after these runs the fake generator's new mode was renamed "unreadable" -> "unreadable_w"; the name
+# collided with round 3's f6 mode of the same name (the targeted check's baseline caught it). The new block ran
+# first and exited, so the round-6 tests above behaved the same; only f6's own test had changed.
+
+# ---- after the receipt run: the one PG branch the line trace leaves untraced (covfix_pg.py 549-551, the trap's
+# "W itself cannot be walked" except). An out-of-tree check, not a receipt and not a mutant: the script below imports
+# round 6's unchanged test_covfix_seal.py and covfix_pg.py (shasum -c of all 8 files OK before and after) and makes
+# plaintext_hashes raise OSError inside the trap. date -u Sat Nov 28 13:14:38 UTC 2026
+# script sha256 3aa1590c7b8fa17033ee5529548ba0fea519348e27b81988e9cc61fa6229f457
+#   """Out-of-tree check (not a receipt): covfix_pg.py's trap branch at 549-551, when W itself cannot be walked."""
+#   import sys, unittest
+#   from unittest import mock
+#   sys.path.insert(0, "/Users/josephbailey/local-research/wt-covfix/2d-unfolding/covfix")
+#   import test_covfix_seal as t
+#   
+#   class WalkFails(t.Round5Findings):
+#       def test_walk_failure_in_the_trap_fails_the_run_and_still_scans(self):
+#           with mock.patch.object(t.pg, "plaintext_hashes", side_effect=OSError("cannot walk W")) as ph:
+#               rc, out = self.go(mode="unreadable_w")
+#           s = self.summary(out)
+#           print("rc", rc, "trap_unreadable", s.get("trap_unreadable"), "spills_removed", s.get("trap_spills_removed"),
+#                 "plaintext_hashes calls", ph.call_count, file=sys.stderr)
+#           self.assertGreaterEqual(ph.call_count, 1)
+#           self.assertEqual(rc, 1, out)
+#           self.assertEqual(s["trap_unreadable"], "failed", s)
+#           self.assertIn("trap_spills_removed", s)            # the scratch scan still ran after the walk failed
+#   
+#   if __name__ == "__main__":
+#       unittest.main(argv=["x", "WalkFails.test_walk_failure_in_the_trap_fails_the_run_and_still_scans"], verbosity=2)
+# output:
+test_walk_failure_in_the_trap_fails_the_run_and_still_scans (__main__.WalkFails.test_walk_failure_in_the_trap_fails_the_run_and_still_scans) ... rc 1 trap_unreadable failed spills_removed True plaintext_hashes calls 1
+ok
+
+----------------------------------------------------------------------
+Ran 1 test in 2.123s
+
+OK

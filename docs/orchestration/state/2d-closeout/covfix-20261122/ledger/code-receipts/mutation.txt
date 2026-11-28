@@ -1,9 +1,9 @@
 # command: python3 -B covfix_ledger_mutation.py
 # python: 3.12.2 numpy 1.26.4  gpg: gpg (GnuPG) 2.4.8  host: Darwin arm64
-# 30f81378d4068f838fbd6835301c5f218d2ec3b4dc5d0d5793d89dfbbb4de434  covfix_ledger.py
-# 0abc5d6dfc97e8ee98fd78600ea9f3016866011b3adf17ce71824ff3072fe021  test_covfix_ledger.py
-# b51005facf90b72348b9015f2e9f71af5ee61c4ee291911acde640b8349d0a48  covfix_ledger_mutation.py
-# start: 2026-11-27T01:12:06Z
+# 2d6fbff0950585eba2b6dc0316ddf4b5096311ceea6287ba8d6af4aa21b56516  covfix_ledger.py
+# cfcaa2505f92b4d96efa2a789b97648fe485f0a72e16bb9a48a4b77f79f6ca56  test_covfix_ledger.py
+# bc67acdc59808259fe0975e45ec019c7b78d95208a5cefedaa148f99669ab06e  covfix_ledger_mutation.py
+# start: 2026-11-28T12:51:25Z
 baseline rc 0 OK
 no-minute-rounding: killed FAIL: test_minute_rounding_in_node_seconds (test_covfix_ledger.Units.test_minute_rounding_in_node_seconds)
 bool-nodes-ok: killed FAIL: test_refusals (test_covfix_ledger.Units.test_refusals) (n=True, t=60)
@@ -16,8 +16,8 @@ policy-reopen-ok: killed FAIL: test_init_once_policy_bound_and_absent_refused (t
 init-overwrite: killed FAIL: test_init_once_policy_bound_and_absent_refused (test_covfix_ledger.Init.test_init_once_policy_bound_and_absent_refused)
 init-no-dir-fsync: killed FAIL: test_init_once_policy_bound_and_absent_refused (test_covfix_ledger.Init.test_init_once_policy_bound_and_absent_refused)
 no-fsync: killed FAIL: test_every_append_is_fsynced (test_covfix_ledger.Storage.test_every_append_is_fsynced)
-dup-intent-ok: killed FAIL: test_corrupt_or_invalid_transitions_refuse (test_covfix_ledger.Storage.test_corrupt_or_invalid_transitions_refuse) (tail='{"fixed": null, "intent": "28d6980e082cc')
-double-submit-replay-ok: killed FAIL: test_corrupt_or_invalid_transitions_refuse (test_covfix_ledger.Storage.test_corrupt_or_invalid_transitions_refuse) (tail='{"kind": "submitted", "intent": "38278bd')
+dup-intent-ok: killed FAIL: test_corrupt_or_invalid_transitions_refuse (test_covfix_ledger.Storage.test_corrupt_or_invalid_transitions_refuse) (tail='{"fixed": null, "intent": "eac36bc9a7925')
+double-submit-replay-ok: killed FAIL: test_corrupt_or_invalid_transitions_refuse (test_covfix_ledger.Storage.test_corrupt_or_invalid_transitions_refuse) (tail='{"kind": "submitted", "intent": "66e6a29')
 double-charge-replay-ok: killed FAIL: test_corrupt_or_invalid_transitions_refuse (test_covfix_ledger.Storage.test_corrupt_or_invalid_transitions_refuse)
 dup-accept-replay-ok: killed FAIL: test_a_duplicated_acceptance_line_refuses (test_covfix_ledger.Storage.test_a_duplicated_acceptance_line_refuses)
 unknown-kind-ok: killed FAIL: test_f1_the_claim_rechecks_the_gate (test_covfix_ledger.Round3Findings.test_f1_the_claim_rechecks_the_gate)
@@ -46,10 +46,10 @@ lost-id-phase-ignored: killed FAIL: test_a_different_phase_in_the_name_does_not_
 ambiguous-matched: killed FAIL: test_ambiguous_or_absent_stays_unresolved (test_covfix_ledger.Reconcile.test_ambiguous_or_absent_stays_unresolved)
 used-job-matched: killed FAIL: test_a_matched_job_already_used_stays_unresolved (test_covfix_ledger.Reconcile.test_a_matched_job_already_used_stays_unresolved)
 step-rows-matched: killed ERROR: test_foreign_and_step_rows_are_ignored (test_covfix_ledger.Reconcile.test_foreign_and_step_rows_are_ignored)
-conflicting-rows-ok: killed FAIL: test_uncertain_accounting_stays_open (test_covfix_ledger.Reconcile.test_uncertain_accounting_stays_open) (rows="[{'JobID': '3', 'JobName': 'covfix_w1_77959ee4e67aa404863d52")
+conflicting-rows-ok: killed FAIL: test_uncertain_accounting_stays_open (test_covfix_ledger.Reconcile.test_uncertain_accounting_stays_open) (rows="[{'JobID': '3', 'JobName': 'covfix_w1_5f82ccc308733aad14297f")
 running-charged: killed FAIL: test_lost_id_is_matched_from_the_full_job_name (test_covfix_ledger.Reconcile.test_lost_id_is_matched_from_the_full_job_name)
-negative-ok: killed FAIL: test_uncertain_accounting_stays_open (test_covfix_ledger.Reconcile.test_uncertain_accounting_stays_open) (rows="[{'JobID': '3', 'JobName': 'covfix_w1_08ad1e7a094a68e1d9e351")
-nnodes-zero-ok: killed FAIL: test_uncertain_accounting_stays_open (test_covfix_ledger.Reconcile.test_uncertain_accounting_stays_open) (rows="[{'JobID': '3', 'JobName': 'covfix_w1_460a22f81fdfa4aef1ce8c")
+negative-ok: killed FAIL: test_uncertain_accounting_stays_open (test_covfix_ledger.Reconcile.test_uncertain_accounting_stays_open) (rows="[{'JobID': '3', 'JobName': 'covfix_w1_b74884f3a01bd20b996b70")
+nnodes-zero-ok: killed FAIL: test_uncertain_accounting_stays_open (test_covfix_ledger.Reconcile.test_uncertain_accounting_stays_open) (rows="[{'JobID': '3', 'JobName': 'covfix_w1_a9a5bff8bd00e52eac971e")
 recorded-name-unchecked: killed FAIL: test_uncertain_accounting_stays_open (test_covfix_ledger.Reconcile.test_uncertain_accounting_stays_open) (rows="[{'JobID': '3', 'JobName': 'someone_else', 'State': 'COMPLET")
 charge-twice: killed FAIL: test_terminal_charge_once_and_frees_the_reservation (test_covfix_ledger.Reconcile.test_terminal_charge_once_and_frees_the_reservation)
 charge-nodes-ignored: killed FAIL: test_charge_counts_every_node (test_covfix_ledger.Reconcile.test_charge_counts_every_node)
@@ -66,8 +66,8 @@ requeue-unchecked: killed FAIL: test_mismatches_scancel_and_stop (test_covfix_le
 zero-uncorroborated: killed ERROR: test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge (test_covfix_ledger.Round4Findings.test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge) (ok=600)
 job-not-canonical: killed ERROR: test_record_submission (test_covfix_ledger.Intents.test_record_submission)
 row-job-not-canonical: killed FAIL: test_job_ids_are_canonical (test_covfix_ledger.ZeroAndCanon.test_job_ids_are_canonical)
-negative-replay-ok: killed FAIL: test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence) (e={'charge': -5, 'evidence': {'JobID': '221', 'JobName': 'covfix_w1_786c44f48720660080c329372657231e', 'State': 'CANCELLED', 'NNodes': '1', 'ElapsedRaw': '0', 'Start': 'None'}})
-reconciled-without-job-ok: killed FAIL: test_corrupt_or_invalid_transitions_refuse (test_covfix_ledger.Storage.test_corrupt_or_invalid_transitions_refuse) (tail='{"kind": "reconciled", "intent": "19813a')
+negative-replay-ok: killed FAIL: test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence) (e={'charge': -5, 'evidence': {'JobID': '221', 'JobName': 'covfix_w1_8f512423d24630772ab54b03024bf00d', 'State': 'CANCELLED', 'NNodes': '1', 'ElapsedRaw': '0', 'Start': 'None'}})
+reconciled-without-job-ok: killed FAIL: test_corrupt_or_invalid_transitions_refuse (test_covfix_ledger.Storage.test_corrupt_or_invalid_transitions_refuse) (tail='{"kind": "reconciled", "intent": "780c39')
 init-parent-unsynced: killed FAIL: test_init_once_policy_bound_and_absent_refused (test_covfix_ledger.Init.test_init_once_policy_bound_and_absent_refused)
 fixed-not-held: killed FAIL: test_a_line_is_held_only_in_its_own_group (test_covfix_ledger.FixedAndAmend.test_a_line_is_held_only_in_its_own_group)
 fixed-credit-zero: killed FAIL: test_an_intent_draws_on_its_line_once (test_covfix_ledger.FixedAndAmend.test_an_intent_draws_on_its_line_once)
@@ -83,6 +83,7 @@ claim-gate-off: killed FAIL: test_f1_the_claim_gate_fires_after_an_overrun_charg
 claim-ceiling-off: killed FAIL: test_f1_the_claim_gate_fires_after_an_overrun_charge (test_covfix_ledger.Round3Findings.test_f1_the_claim_gate_fires_after_an_overrun_charge)
 directive-unchecked: killed FAIL: test_f2_an_array_directive_is_refused_before_sbatch (test_covfix_ledger.Round3Findings.test_f2_an_array_directive_is_refused_before_sbatch) (d='--array=0-3')
 directive-bare-ok: killed FAIL: test_f2_an_array_directive_is_refused_before_sbatch (test_covfix_ledger.Round3Findings.test_f2_an_array_directive_is_refused_before_sbatch)
+r5-directive-splitlines: killed FAIL: test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused (test_covfix_ledger.Round5Findings.test_r5_1_a_separator_python_splits_on_but_slurm_reads_as_space_is_refused) (sep="'\\r'")
 script-by-path: killed FAIL: test_f2_the_script_goes_to_sbatch_on_stdin_never_by_path (test_covfix_ledger.Round3Findings.test_f2_the_script_goes_to_sbatch_on_stdin_never_by_path)
 env-not-scrubbed: killed FAIL: test_f2_sbatch_sees_no_sbatch_or_slurm_variable (test_covfix_ledger.Round3Findings.test_f2_sbatch_sees_no_sbatch_or_slurm_variable)
 env-slurm-kept: killed FAIL: test_f2_sbatch_sees_no_sbatch_or_slurm_variable (test_covfix_ledger.Round3Findings.test_f2_sbatch_sees_no_sbatch_or_slurm_variable)
@@ -93,11 +94,11 @@ scancel-rc-ignored: killed FAIL: test_f3_a_failed_scancel_is_recorded_as_failed 
 verified-not-recorded: killed FAIL: test_f3_a_reconcile_between_sbatch_and_record_still_verifies (test_covfix_ledger.Round3Findings.test_f3_a_reconcile_between_sbatch_and_record_still_verifies)
 replay-verified-unchecked: killed FAIL: test_f4_replay_refuses_acceptance_without_verification_or_with_a_bad_sha (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_acceptance_without_verification_or_with_a_bad_sha) (tail="{'kind': 'accepted', 'phase': 'w1', 'arm': 'N1', '")
 replay-job-type-loose: killed FAIL: test_f4_replay_refuses_an_int_and_a_str_job_id_for_two_intents (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_an_int_and_a_str_job_id_for_two_intents)
-replay-sha-unchecked: killed FAIL: test_f4_replay_refuses_acceptance_without_verification_or_with_a_bad_sha (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_acceptance_without_verification_or_with_a_bad_sha) (tail="[{'kind': 'verified', 'intent': 'd5f7a61feb2c31532")
+replay-sha-unchecked: killed FAIL: test_f4_replay_refuses_acceptance_without_verification_or_with_a_bad_sha (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_acceptance_without_verification_or_with_a_bad_sha) (tail="[{'kind': 'verified', 'intent': '963333f6fe43028df")
 replay-unclaimed-submit-ok: killed FAIL: test_f4_replay_refuses_a_submission_that_was_never_claimed (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_a_submission_that_was_never_claimed)
 replay-zero-unevidenced: killed ERROR: test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge (test_covfix_ledger.Round4Findings.test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge) (ok=600)
-release-start-unknown-ok: killed FAIL: test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence) (e={'charge': 0, 'evidence': {'JobID': '221', 'JobName': 'covfix_w1_cda923e47812dac62ef7a1d33b694050', 'State': 'CANCELLED', 'NNodes': '1', 'ElapsedRaw': '0', 'Start': 'Unknown'}})
-release-any-state: killed FAIL: test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence) (e={'charge': 0, 'evidence': {'JobID': '221', 'JobName': 'covfix_w1_b6c75b0dd9aa9ae9d6f043dcfaf1983e', 'State': 'COMPLETED', 'NNodes': '1', 'ElapsedRaw': '0', 'Start': 'None'}})
+release-start-unknown-ok: killed FAIL: test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence) (e={'charge': 0, 'evidence': {'JobID': '221', 'JobName': 'covfix_w1_83cac70cc160c588eed69f8b38c330b7', 'State': 'CANCELLED', 'NNodes': '1', 'ElapsedRaw': '0', 'Start': 'Unknown'}})
+release-any-state: killed FAIL: test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence) (e={'charge': 0, 'evidence': {'JobID': '221', 'JobName': 'covfix_w1_67572f1df4432f1b781c0ce521382d71', 'State': 'COMPLETED', 'NNodes': '1', 'ElapsedRaw': '0', 'Start': 'None'}})
 evidence-dropped: killed ERROR: test_an_intent_draws_on_its_line_once (test_covfix_ledger.FixedAndAmend.test_an_intent_draws_on_its_line_once)
 recover-unclaimed: killed FAIL: test_lost_id_is_matched_from_the_full_job_name (test_covfix_ledger.Reconcile.test_lost_id_is_matched_from_the_full_job_name)
 recovered-as-submitted: killed FAIL: test_lost_id_is_matched_from_the_full_job_name (test_covfix_ledger.Reconcile.test_lost_id_is_matched_from_the_full_job_name)
@@ -116,8 +117,8 @@ r4-live-amend-sha-type-dropped: killed ERROR: test_r4_4c_live_amend_and_accept_r
 r4-live-accept-sha-type-dropped: killed ERROR: test_r4_4c_live_amend_and_accept_refuse_non_str_digests (test_covfix_ledger.Round4Findings.test_r4_4c_live_amend_and_accept_refuse_non_str_digests)
 r4-replay-intent-while-unrecorded: killed FAIL: test_r4_4a_replay_refuses_an_intent_while_another_has_no_job (test_covfix_ledger.Round4Findings.test_r4_4a_replay_refuses_an_intent_while_another_has_no_job)
 r4-replay-claim-unchecked: killed FAIL: test_r4_4b_replay_refuses_a_claim_over_the_cap (test_covfix_ledger.Round4Findings.test_r4_4b_replay_refuses_a_claim_over_the_cap)
-r4-evidence-other-job: killed FAIL: test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge (test_covfix_ledger.Round4Findings.test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge) (charge=0, ev={'JobID': '999', 'JobName': 'covfix_w1_4b1f47a0a3d9f32696132154b177aa99', 'State': 'CANCELLED', 'NNodes': '1', 'ElapsedRaw': '0', 'Start': 'None'})
-r4-replay-charge-unchecked: killed FAIL: test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence) (e={'charge': -5, 'evidence': {'JobID': '221', 'JobName': 'covfix_w1_9d1b3a3eda34cbf660c9a6d290434c1f', 'State': 'CANCELLED', 'NNodes': '1', 'ElapsedRaw': '0', 'Start': 'None'}})
+r4-evidence-other-job: killed FAIL: test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge (test_covfix_ledger.Round4Findings.test_r4_5_replay_checks_the_evidence_is_this_jobs_and_gives_the_charge) (charge=0, ev={'JobID': '999', 'JobName': 'covfix_w1_29543778f1f5b9ae2a0bf4c4c5fb6d2a', 'State': 'CANCELLED', 'NNodes': '1', 'ElapsedRaw': '0', 'Start': 'None'})
+r4-replay-charge-unchecked: killed FAIL: test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence (test_covfix_ledger.Round3Findings.test_f4_replay_refuses_a_zero_or_negative_charge_without_release_evidence) (e={'charge': -5, 'evidence': {'JobID': '221', 'JobName': 'covfix_w1_4607e03a43e57c2b5444d09ac3d30705', 'State': 'CANCELLED', 'NNodes': '1', 'ElapsedRaw': '0', 'Start': 'None'}})
 r4-format-unchecked: killed FAIL: test_r4_an_older_ledger_format_is_refused_at_its_policy_line (test_covfix_ledger.Round4Findings.test_r4_an_older_ledger_format_is_refused_at_its_policy_line)
-114/114 killed; survived, harness or not applied: []
+115/115 killed; survived, harness or not applied: []
 # rc: 0
