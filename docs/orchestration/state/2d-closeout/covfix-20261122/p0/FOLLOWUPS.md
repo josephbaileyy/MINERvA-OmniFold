@@ -31,3 +31,19 @@ P2/PV code chain, with its own test and mutant, or explicitly kept with a reason
    - mutation tracebacks kept, so a named fixture error can be told apart from a detection. (codex r4 NB5)
 8. **Digests from receipts.** Consider parsing laptop-copy digests from their receipt files rather than repeating them
    as literals. (agy r3 NB1, r4 NB2)
+
+## From the director's acceptance of P0 (2026-11-23, after #1268 merged at 7868a1f15)
+
+9. **A band-wise subspace angle,** printed and read by nothing, in the P2/PV readout. P0 found the declared all-span
+   reading trivially 0° at both tunes, because K0 carried and C_T each keep all 205 modes. The declared all-span angle
+   stays as defined.
+10. **The carry disclosure in the PV readout's §7 sentences.** P0 measured the carry approximation as material at the
+    spent tunes:
+
+    | tune | M under K0 carried | M under remade C_T |
+    |---|---|---|
+    | G18 | 21.7 | 24.2 |
+    | AR23 | 19.1 | 16.5 |
+
+    The R1 eigenvalue ratios average 1.6–1.7. Every §7 sentence the PV readout prints must carry §2's disclosure, that
+    COVFIX tests "the reported covariance carried in relative form", not COV2D's remake.
