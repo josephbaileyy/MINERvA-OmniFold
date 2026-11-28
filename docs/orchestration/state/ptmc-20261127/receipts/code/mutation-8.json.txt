@@ -1,0 +1,72 @@
+{
+ "schema": "ptmc-mutation/1",
+ "python": "/Users/josephbailey/ew2d-env/bin/python",
+ "files": {
+  "launch/fill_pins.sh": "2bc3dd4cb529acc6cfd55fb97ac09a42b13df84d2c3db6d87c820f96032d1267",
+  "launch/harness_launch.sh": "5cd82070df308b0fe2a300dd3282db8d89973c2d70b888ce93b2cc1c1c7bd1e4",
+  "launch/harness_remote.sh": "020352e791cf571261fd72b4d3310fb4e67198011b4360a6e4e5c7400b916239",
+  "launch/harness_sbatch.sh": "9a62c1e0a2903ef38032b617e6485a225d53c69550b82c3c3223415129c3e33c",
+  "launch/pilot.sbatch": "09fa3217741ca738bde4f133b3757ffa97e6ad7062695e4d3c00fbb153567056",
+  "launch/ptmc_couple_check.py": "13901cbe0bddbe27fce515c9b37ad01fec8c48e3440485f62754c56f9fe32262",
+  "launch/ptmc_couple_launch.sh": "584c7c8a031d1e2a7d54c293be019f17c5dfa02ad2edfdb3a113b7ac962776da",
+  "launch/ptmc_launch.sh": "eb5006bac97636156cba8067221d5d8cda0b2e12020bdac8aa0bc08517eb336f",
+  "launch/ptmc_pilot_post.py": "a5bcb0dd08c9bae9651ed6380beef95b9363b0b3e57b378a2ba39094201e375a",
+  "launch/ptmc_remote.sh": "70b20bed8bb07a7c1ea8434b8770f92b081ad16aea80fe98e1cf53d6d74e1eb5",
+  "launch/ptmc_stage_d4.py": "e4ee170b078bd09ec0289fe017ce084291cf2408dbd95328b3fad2a6650f10d5",
+  "launch/ptmc_stat.sh": "6b775e313107d81b772e8bfcc6226fbafaf75a55be57c1db3bb72dd24a9e2142",
+  "launch/ptmc_stat_launch.sh": "fa76d4e55fa7ef6c8df9ce5582d5f147ec2977ebdafce3abd307a8c40b270e11",
+  "launch/replicas.sbatch": "3ab6ff59705c75bddbe369fd3f6526de47309d0a334f5fd90f418cd0cc7a855a",
+  "launch/test_launch.py": "b83ca416dbc82ad757ee2872b82315bd02187ae3fe0ff8fbb9240423c66634c7",
+  "make_tree.sh": "8b531b55e6262b56a67848fd79568dfac5dcbf91cd8e8e08f3a0a765286dcf67",
+  "ptmc_driver.diff": "d1f7072ea06503e7cef2d9da286cfcc5f9ba899b19e019f94b6d3019ef45ff5f",
+  "ptmc_lib.py": "2d4006886afb4dbae8263d914e619134d391e01dd72c8e497250a4a54c9a83a4",
+  "ptmc_mutation.py": "0ccbc4cc1b703aa9cdc4cf0d210bc9944f5fb49516012a4a804f8252f34e2ed7",
+  "ptmc_run.py": "707ad53e6706843331ce6e67dbd8742c89e96f292caa12fac28ae6c9e2f720b6",
+  "ptmc_score.py": "268f97cac0505c9a6e7ff17395f2bf267ce2b4c476015518c2bdfd11c98aa211",
+  "test_ptmc.py": "395c84f1a02a127d8304327771ebf33c614ad4062db37986340a5ee2953f35da",
+  "test_ptmc_score.py": "e5c16dfce9e002a231355cec36b88475ead065e9fc0945c03d1682476f02fa23"
+ },
+ "results": [
+  {
+   "name": "CONTROL",
+   "file": null,
+   "tests": [
+    [
+     "test_ptmc.py",
+     "test_ptmc_score.py",
+     "launch/test_launch.py",
+     "HARNESS:harness_remote.sh",
+     "HARNESS:harness_sbatch.sh",
+     "LOCAL:harness_launch.sh"
+    ],
+    null
+   ],
+   "rc": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "seconds": 606.1,
+   "verdict": "PASS",
+   "tail": "ok   an unfilled sha: STOP 9\nok   a non-empty session dir: STOP 9\nok   a missing session dir: STOP 9\nok   a bad node name: STOP 9\nok   a login mode on dtn01: STOP 9\nok   stage on a login node: STOP 9\nok   stage with no node: STOP 9\nok   an unknown mode: STOP 9\nok   stage: direct ssh to dtn01.nersc.gov, no saul hop\nok   prestage: through saul to the login node\nok   fetch: both tars, hashed\nok   fetch: a failed scp fails\nok   fetch: a failed hash fails\nok   fetch: a tar unequal to the remote digest fails\nok   a changed remote script: STOP 8\nok   a failed hash of the remote script: STOP 9\npass 16 fail 0\n"
+  },
+  {
+   "name": "PP_ALLOC_ID",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 28.8,
+   "verdict": "KILLED",
+   "tail": "................F\n=================================== FAILURES ===================================\n__________________ PilotPost.test_the_allocation_id_is_exact ___________________\n\nself = <test_launch.PilotPost testMethod=test_the_allocation_id_is_exact>\n\n    def test_the_allocation_id_is_exact(self):\n        \"\"\"B4: parse_sacct itself refuses \"4242.\" as the allocation id (the pilot's job-id check would also catch it\n        later; this is the gate's own case).\"\"\"\n>       with self.assertRaisesRegex(ValueError, \"malformed allocation id\"):\nE       AssertionError: ValueError not raised\n\nlaunch/test_launch.py:286: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_the_allocation_id_is_exact - As...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 16 passed, 8 deselected in 27.10s\n"
+  }
+ ],
+ "summary": "1/1 killed"
+}

@@ -71,6 +71,7 @@ ok   replicas: time limit '700' STOPs
 ok   replicas: time limit '' STOPs
 ok   replicas: submitted with -N 5 -t 145
 ok   replicas: the recheck ran on fresh accounting
+ok   replicas: the recheck recorded for replicas.sbatch (B1)
 ok   replicas again: STOP
 ok   replicas: a DIFFERS recheck exits 6, no sbatch
 ok   replicas: a recheck at another L STOPs
@@ -80,15 +81,18 @@ ok   replicas: no PROCEED STOPs
 ok   replicas: a queued ptmc job STOPs
 ok   post: accounting without the job's own line STOPs
 ok   post: a row of another job STOPs
+ok   post: a row whose id only equals the job's as a number STOPs
 ok   post: empty accounting STOPs
 ok   post: a failed sacct STOPs
 ok   post: no replicas job id STOPs
 ok   post: a running ptmc job STOPs before the claim
 ok   post: a failed D4 staging STOPs, no tar
+ok   post: the pilot's id as the replicas' STOPs, no double charge
+ok   post: a replicas allocation of the wrong name or size STOPs
 ok   post: a malformed elapsed time STOPs the charge
 ok   post: both tars written, the charge from both allocation lines
 ok   post: tars.sha256 holds both tars' digests
 ok   post: the tar carries the claims and the recheck
 ok   post again: STOP
-pass 92 fail 0
+pass 96 fail 0
 rc=0

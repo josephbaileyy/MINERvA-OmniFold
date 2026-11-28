@@ -1,15 +1,15 @@
 # PTMC code: the tests, harnesses and mutation campaigns (2026-11-27/28)
 
 All of this ran on the Mac and none of it touched NERSC. The tests and harnesses ran at the code branch's commit
-`d43c670b1` (`head.txt`), before main was merged in. Each mutation run names its own commit below.
+`4cb747866` (`head.txt`), before main was merged in. Each mutation run names its own commit below.
 
 ## Tests and harnesses, on the final files
 
 | record | what | result |
 |---|---|---|
-| `pytest.txt` | `test_ptmc.py` (pure, driver and runner tests on RE-2's fixture), `test_ptmc_score.py` (the scorer end to end on hand-made products) and `launch/test_launch.py` (the pilot's post and the D4 staging), with PyROOT 6.40 | 95 passed, rc 0 |
-| `harness_remote.txt` | `launch/harness_remote.sh` in debian:bookworm-slim: every gate of `ptmc_remote.sh`, run against stubs with real dd, sha256sum, stat and tar | 92/92 |
-| `harness_sbatch.txt` | `launch/harness_sbatch.sh`: the two sbatch files' unit coverage, failure propagation and refusals, one case per gate | 26/26 |
+| `pytest.txt` | `test_ptmc.py` (pure, driver and runner tests on RE-2's fixture), `test_ptmc_score.py` (the scorer end to end on hand-made products) and `launch/test_launch.py` (the pilot's post and the D4 staging), with PyROOT 6.40 | 99 passed, rc 0 |
+| `harness_remote.txt` | `launch/harness_remote.sh` in debian:bookworm-slim: every gate of `ptmc_remote.sh`, run against stubs with real dd, sha256sum, stat and tar | 96/96 |
+| `harness_sbatch.txt` | `launch/harness_sbatch.sh`: the two sbatch files' unit coverage, failure propagation and refusals, one case per gate | 28/28 |
 | `harness_launch.txt` | `launch/harness_launch.sh`: the Mac launcher's STOP paths, the stage mode's dtn01 route, and the fetch's hashes against the remote digests | 16/16 |
 
 ## Mutation campaigns (`ptmc_mutation.py`)
@@ -26,6 +26,8 @@ make_tree's pin. Shell mutants run the docker harnesses.
 | 4, `mutation-4.json.txt` (`mutation-4-log.txt`) | committed at `c6b4e434e`, after code-read-1's hardening: the fresh full campaign with one mutant per gate. Digests unchanged after | CONTROL PASS; 105/113 killed |
 | 5, `mutation-5.json.txt` (`mutation-5-log.txt`) | committed at `7859775b9`, run 4's eight survivors after their tests. Digests unchanged after | CONTROL PASS; 6/8 killed, each by its own new test; the two survivors are the equivalents below |
 | 6, `mutation-6.json.txt` (`mutation-6-log.txt`) | committed at `d43c670b1` (code-confirm-1's fixes), 2026-11-28 08:34:30Z to 09:13:03Z UTC: the 41 new mutants (one per new gate) and the 5 earlier mutants whose anchors the fixes changed. Digests unchanged after | CONTROL PASS; 45/46 killed, each by its own test; the survivor `SB_LANES_20` is an equivalent (below) |
+| 7, `mutation-7.json.txt` (`mutation-7-log.txt`) | committed at `f0df1b727` (code-confirm-2's fixes), 2026-11-28 10:16:35Z to 10:36:46Z UTC: the 17 new mutants and the 3 earlier ones whose anchors moved. Digests unchanged after | CONTROL PASS; 19/20 killed, each by its own test; the survivor `PP_ALLOC_ID` got its own test (next row) |
+| 8, `mutation-8.json.txt` (`mutation-8-log.txt`) | committed at `4cb747866`, 10:39:50Z to 10:50:25Z UTC: `PP_ALLOC_ID` after its test. Digests unchanged after | CONTROL PASS; 1/1 killed, by `test_the_allocation_id_is_exact` |
 
 **Run 1's eight survivors:**
 
@@ -90,8 +92,26 @@ with 16 p∥ × 14 pT finite, increasing bins.
 
 | survivor | why | what was done |
 |---|---|---|
-| `SB_LANES_20` | **equivalent** | it removes `replicas.sbatch`'s final requirement of exactly 20 successful lane records. The check sits behind `bad=1`: a lane that returns non-zero, or whose record line cannot be written, already fails the job. The lane list is now a literal (no `seq`, so no lane can be left out, which `SB_LANES_LITERAL`'s test kills). So no reachable run has all 199 unit outcomes 0 with fewer than 20 lane records. The check is kept as defence in depth |
+| `SB_LANES_20` | **equivalent under the wait/write model** | it removes `replicas.sbatch`'s final requirement of exactly 20 successful lane records. The check sits behind `bad=1`: a lane that returns non-zero, or whose record line cannot be written, already fails the job. The lane list is now a literal (no `seq`, so no lane can be left out, which `SB_LANES_LITERAL`'s test kills). So no reachable run has all 199 unit outcomes 0 with fewer than 20 lane records. The check is kept as defence in depth. code-confirm-2 notes it would also catch a lane summary that shrank after its writes succeeded, which no step of the job does; the equivalence holds only under that model |
 
 Two harness kills (`SH_STAT_STATUS`, `SH_PILOT_T60`) have their failing line cut from the record's 1,500-character
 tail. Re-applied to copies outside the repository, each failed exactly its own case: "stage: a failed stat of a source
 STOPs" and "pilot: submitted on -N 2 -t 60, jobid recorded".
+
+## code-confirm-2 (codex-school2) and its fixes
+
+The confirm read of `6750c0f5e` (the same codex-school2 session, resumed) found 18 of 27 fixed and 9 blockers: eight
+B findings partly fixed and one new class (a) finding. Commit `f0df1b727` fixes them, each with one test and one
+mutant (run 7). By the director's ruling, one part is an accepted residual:
+
+- **B9, a signed-zero axis edge.** C-FIX compares histogram edges as numbers, so +0.0 and −0.0 compare equal. The two
+  describe the same bin, and no step of the pipeline produces such a mismatch.
+
+The class (a) finding was that post could charge the pilot twice if `replicas.jobid` held the pilot's id. Writing its
+harness case turned up a related fault: Debian's `mawk` compares `$1 == j` as numbers. The step row `12346.0` then
+counted as job 12346's allocation, and the earlier "row of another job" check would pass a row `012346.1`. Both now
+compare as strings.
+
+**Run 7's survivor.** `PP_ALLOC_ID` removes `parse_sacct`'s exact-allocation-id gate. The accounting test's `4242.`
+case still STOPped, because the pilot's job-id check (each unit's `slurm_job` against the parsed id) fails later. The
+gate now has its own test, which calls `parse_sacct` directly, and run 8 killed the mutant with it.

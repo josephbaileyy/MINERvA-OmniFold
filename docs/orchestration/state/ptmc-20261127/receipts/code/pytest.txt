@@ -1,5 +1,5 @@
-........................................................................ [ 75%]
-.......................                                                  [100%]
+........................................................................ [ 72%]
+...........................                                              [100%]
 =============================== warnings summary ===============================
 test_ptmc.py::Runner::test_a_replicas_suppressed_count_uses_its_own_weights
   TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).
@@ -17,7 +17,7 @@ _________ Runner.test_a_replicas_suppressed_count_uses_its_own_weights _________
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/stage/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -52,18 +52,18 @@ Starting iteration 1
 [CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
 [CHECK] Total xsec from p_T projection: 2.23e-41 cm^2/nucleon
 [CHECK] Total xsec from p_|| projection: 2.23e-41 cm^2/nucleon
-[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/2d-unfolding/re2/re2_driver.py
 [INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
-[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/units/p_off_c.root
-{"unit": "p_off_c", "seconds": 12.446, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": true, "C-COUPLE": true, "C-SIM": true}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/units/p_off_c.root
+{"unit": "p_off_c", "seconds": 17.156, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": true, "C-COUPLE": true, "C-SIM": true}}
 [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
 [INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/stage/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -100,22 +100,22 @@ Starting iteration 1
 [CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
 [CHECK] Total xsec from p_T projection: 2.308e-41 cm^2/nucleon
 [CHECK] Total xsec from p_|| projection: 2.308e-41 cm^2/nucleon
-[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/2d-unfolding/re2/re2_driver.py
 [INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
-[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/units/p_off_b1.root
-{"unit": "p_off_b1", "seconds": 7.911, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": true}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/units/p_off_b1.root
+{"unit": "p_off_b1", "seconds": 20.269, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": true}}
 [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
 [INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/stage/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
-[INFO] OOFVC: --signal-convention minerva, 300 rows from /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/stage/oofvc_rows.npz
+[INFO] OOFVC: --signal-convention minerva, 300 rows from /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/stage/oofvc_rows.npz
 [INFO] OOFVC: 300 mc_background entries moved to the signal
 [INFO] OOFVC: {'appended': 295, 'outside': 5, 'dropped_appended_weight': 0, 'dropped_outside_weight': 0}
 [INFO] truth_denom events kept (in binning): 6000
@@ -150,22 +150,22 @@ Starting iteration 1
 [WARN] hasTruthOnlyMisses=1 but c_global deviates from 1 by 5.25% — check event-ID matching in runEventLoopOmniFold.cpp Phase-17 path and that the Python truth-pass gate (in_truth_phase_space) matches CCInclusive2DPhaseSpace.
 [CHECK] Total xsec from p_T projection: 2.151e-41 cm^2/nucleon
 [CHECK] Total xsec from p_|| projection: 2.151e-41 cm^2/nucleon
-[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/2d-unfolding/re2/re2_driver.py
 [INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
-[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/units/p_R_c.root
-{"unit": "p_R_c", "seconds": 10.001, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-MOVE-UNIT": true, "C-COMP": true, "C-COUPLE": true, "C-SIM": true}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/units/p_R_c.root
+{"unit": "p_R_c", "seconds": 14.247, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-MOVE-UNIT": true, "C-COMP": true, "C-COUPLE": true, "C-SIM": true}}
 [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
 [INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/stage/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
-[INFO] OOFVC: --signal-convention minerva, 300 rows from /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/stage/oofvc_rows.npz
+[INFO] OOFVC: --signal-convention minerva, 300 rows from /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/stage/oofvc_rows.npz
 [INFO] OOFVC: 300 mc_background entries moved to the signal
 [INFO] OOFVC: {'appended': 295, 'outside': 5, 'dropped_appended_weight': 0, 'dropped_outside_weight': 0}
 [INFO] truth_denom events kept (in binning): 6000
@@ -204,23 +204,23 @@ Starting iteration 1
 [WARN] hasTruthOnlyMisses=1 but c_global deviates from 1 by 3.30% — check event-ID matching in runEventLoopOmniFold.cpp Phase-17 path and that the Python truth-pass gate (in_truth_phase_space) matches CCInclusive2DPhaseSpace.
 [CHECK] Total xsec from p_T projection: 2.19e-41 cm^2/nucleon
 [CHECK] Total xsec from p_|| projection: 2.19e-41 cm^2/nucleon
-[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/2d-unfolding/re2/re2_driver.py
 [INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
-[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/units/p_R_b1.root
-{"unit": "p_R_b1", "seconds": 6.633, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-MOVE-UNIT": true, "C-COMP": true}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/units/p_R_b1.root
+{"unit": "p_R_b1", "seconds": 17.36, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-MOVE-UNIT": true, "C-COMP": true}}
 ----------------------------- Captured stdout call -----------------------------
 [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
 [INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/stage/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
-[INFO] OOFVC: --signal-convention minerva, 300 rows from /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/stage/oofvc_rows.npz
+[INFO] OOFVC: --signal-convention minerva, 300 rows from /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/stage/oofvc_rows.npz
 [INFO] OOFVC: 300 mc_background entries moved to the signal
 [INFO] OOFVC: {'appended': 295, 'outside': 5, 'dropped_appended_weight': 0, 'dropped_outside_weight': 0}
 [INFO] truth_denom events kept (in binning): 6000
@@ -259,12 +259,12 @@ Starting iteration 1
 [WARN] hasTruthOnlyMisses=1 but c_global deviates from 1 by 3.30% — check event-ID matching in runEventLoopOmniFold.cpp Phase-17 path and that the Python truth-pass gate (in_truth_phase_space) matches CCInclusive2DPhaseSpace.
 [CHECK] Total xsec from p_T projection: 2.19e-41 cm^2/nucleon
 [CHECK] Total xsec from p_|| projection: 2.19e-41 cm^2/nucleon
-[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/2d-unfolding/re2/re2_driver.py
 [INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
-[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp6on8fkgj/p_R_b1.root
-{"unit": "p_R_b1", "seconds": 8.822, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": false, "C-REFINE": true, "C-MOVE-UNIT": true, "C-COMP": false}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp0mve4e1o/p_R_b1.root
+{"unit": "p_R_b1", "seconds": 15.473, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": false, "C-REFINE": true, "C-MOVE-UNIT": true, "C-COMP": false}}
 __________________ Runner.test_a_running_unit_holds_its_claim __________________
 ----------------------------- Captured stdout call -----------------------------
 [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
@@ -272,7 +272,7 @@ __________________ Runner.test_a_running_unit_holds_its_claim __________________
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/stage/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -309,12 +309,12 @@ Starting iteration 1
 [CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
 [CHECK] Total xsec from p_T projection: 2.27e-41 cm^2/nucleon
 [CHECK] Total xsec from p_|| projection: 2.27e-41 cm^2/nucleon
-[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/2d-unfolding/re2/re2_driver.py
 [INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
-[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmptan2o42a/p_off_b2.root
-{"unit": "p_off_b2", "seconds": 9.906, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": true}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpwj7hr2a9/p_off_b2.root
+{"unit": "p_off_b2", "seconds": 18.71, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": true}}
 _______________ Runner.test_completeness_axes_not_the_grid_fail ________________
 ----------------------------- Captured stdout call -----------------------------
 [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
@@ -322,7 +322,7 @@ _______________ Runner.test_completeness_axes_not_the_grid_fail ________________
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/stage/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -359,12 +359,12 @@ Starting iteration 1
 [CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
 [CHECK] Total xsec from p_T projection: 2.308e-41 cm^2/nucleon
 [CHECK] Total xsec from p_|| projection: 2.308e-41 cm^2/nucleon
-[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/2d-unfolding/re2/re2_driver.py
 [INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
-[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmprf1n3nxf/p_off_b1.root
-{"unit": "p_off_b1", "seconds": 7.328, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": false}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmppske5o5v/p_off_b1.root
+{"unit": "p_off_b1", "seconds": 20.357, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": false}}
 ________________ Runner.test_coupling_sums_are_part_of_c_couple ________________
 ----------------------------- Captured stdout call -----------------------------
 [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
@@ -372,7 +372,7 @@ ________________ Runner.test_coupling_sums_are_part_of_c_couple ________________
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/stage/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -407,12 +407,12 @@ Starting iteration 1
 [CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
 [CHECK] Total xsec from p_T projection: 2.23e-41 cm^2/nucleon
 [CHECK] Total xsec from p_|| projection: 2.23e-41 cm^2/nucleon
-[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/2d-unfolding/re2/re2_driver.py
 [INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
-[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpj_651iru/p_off_c.root
-{"unit": "p_off_c", "seconds": 7.305, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": false, "C-COUPLE": false, "C-SIM": true}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpigjcibz0/p_off_c.root
+{"unit": "p_off_c", "seconds": 22.51, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": false, "C-COUPLE": false, "C-SIM": true}}
 _____________ Runner.test_deploy_modules_are_checked_before_import _____________
 ----------------------------- Captured stderr call -----------------------------
 refusing: 2d-unfolding/ref_c2c1/ref_c2c1.py in the deploy tree is not its pin 00000000
@@ -424,7 +424,7 @@ _______________ Runner.test_non_finite_extraction_argument_fails _______________
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/stage/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -461,12 +461,12 @@ Starting iteration 1
 [CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
 [CHECK] Total xsec from p_T projection: 2.308e-41 cm^2/nucleon
 [CHECK] Total xsec from p_|| projection: 2.308e-41 cm^2/nucleon
-[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/2d-unfolding/re2/re2_driver.py
 [INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
-[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpjdzzljdj/p_off_b1.root
-{"unit": "p_off_b1", "seconds": 8.637, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": true}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpoe29bk4x/p_off_b1.root
+{"unit": "p_off_b1", "seconds": 16.9, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": true}}
 ______________________ Runner.test_one_spelling_per_unit _______________________
 ----------------------------- Captured stderr call -----------------------------
 refusing: unit 'p_R_b01' is not the canonical spelling
@@ -477,7 +477,7 @@ _________________ Runner.test_pair_measured_mask_defect_fails __________________
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/stage/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -514,12 +514,12 @@ Starting iteration 1
 [CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
 [CHECK] Total xsec from p_T projection: 2.308e-41 cm^2/nucleon
 [CHECK] Total xsec from p_|| projection: 2.308e-41 cm^2/nucleon
-[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/2d-unfolding/re2/re2_driver.py
 [INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
-[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp_uazffdi/p_off_b1.root
-{"unit": "p_off_b1", "seconds": 13.27, "controls": {"C-FILL-IBU": true, "C-PAIR": false, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": true}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpmg_twl3h/p_off_b1.root
+{"unit": "p_off_b1", "seconds": 15.669, "controls": {"C-FILL-IBU": true, "C-PAIR": false, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": true}}
 ___________ Runner.test_refined_weight_not_the_measured_weight_fails ___________
 ----------------------------- Captured stdout call -----------------------------
 [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
@@ -527,7 +527,7 @@ ___________ Runner.test_refined_weight_not_the_measured_weight_fails ___________
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/stage/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -564,12 +564,12 @@ Starting iteration 1
 [CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
 [CHECK] Total xsec from p_T projection: 2.308e-41 cm^2/nucleon
 [CHECK] Total xsec from p_|| projection: 2.308e-41 cm^2/nucleon
-[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/2d-unfolding/re2/re2_driver.py
 [INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
-[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0dbzjwdn/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-pjszgcbs/tree/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpvkprw_2i/p_off_b1.root
-{"unit": "p_off_b1", "seconds": 8.549, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": false, "C-COMP": true}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp1nh219iv/p_off_b1.root
+{"unit": "p_off_b1", "seconds": 14.836, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": false, "C-COMP": true}}
 _______________ Runner.test_rerun_skips_pass_and_refuses_unknown _______________
 ----------------------------- Captured stderr call -----------------------------
 refusing: unit p_off_b6: seed 6 is outside the declared set for off
@@ -581,6 +581,7 @@ refusing: p_off_c exists, and its marker and products do not agree as a PASS
 refusing: p_off_c exists, and its marker and products do not agree as a PASS
 ________________ Runner.test_reuse_requires_this_bindings_code _________________
 ----------------------------- Captured stderr call -----------------------------
+refusing: p_off_c exists, and its marker and products do not agree as a PASS
 refusing: p_off_c exists, and its marker and products do not agree as a PASS
 __________________ Runner.test_rows_file_not_its_pin_refuses ___________________
 ----------------------------- Captured stderr call -----------------------------
@@ -694,36 +695,607 @@ _______________ ScorerGates.test_unexpected_exception_is_a_stop ________________
 [paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
 ----------------------------- Captured stderr call -----------------------------
 STOP: KeyError: 'appended_entry is not a file in the archive'
+___________________ PilotPost.test_codex_float_case_proceeds ___________________
+----------------------------- Captured stdout call -----------------------------
+{
+ "decision": {
+  "job": {
+   "id": "4242",
+   "name": "ptmc_pilot",
+   "state": "COMPLETED",
+   "exit": "0:0",
+   "elapsed": 1500,
+   "nodes": 2
+  },
+  "steps": {
+   "p_off_c": {
+    "id": "4242.0",
+    "name": "p_off_c",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 1364,
+    "nodes": 1
+   },
+   "p_R_c": {
+    "id": "4242.1",
+    "name": "p_R_c",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 1364,
+    "nodes": 1
+   },
+   "p_off_b1": {
+    "id": "4242.2",
+    "name": "p_off_b1",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 1364,
+    "nodes": 1
+   },
+   "p_R_b1": {
+    "id": "4242.3",
+    "name": "p_R_b1",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 750,
+    "nodes": 1
+   },
+   "p_off_b2": {
+    "id": "4242.4",
+    "name": "p_off_b2",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 1364,
+    "nodes": 1
+   },
+   "p_off_b3": {
+    "id": "4242.5",
+    "name": "p_off_b3",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 1364,
+    "nodes": 1
+   },
+   "p_off_b4": {
+    "id": "4242.6",
+    "name": "p_off_b4",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 1364,
+    "nodes": 1
+   },
+   "p_off_b5": {
+    "id": "4242.7",
+    "name": "p_off_b5",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 1364,
+    "nodes": 1
+   }
+  },
+  "rules": {
+   "job_completed": true,
+   "every_pilot_step_completed": true,
+   "pilot_files_and_pins_receipts": true,
+   "every_pilot_unit_passes": true,
+   "C-NORM": true,
+   "C-FIX": true,
+   "C-MOVE-seed1": true,
+   "C-SUPPORT-table": true,
+   "o_nonnegative": true,
+   "projection_within_11.5": true,
+   "limit_positive": true,
+   "limit_covers_1.1x_runtime": true,
+   "reservation_within_cap_left": true
+  },
+  "files": {
+   "files_exactly_the_pilot's": true,
+   "pins_receipts_and_job": true
+  },
+  "units": {
+   "p_off_c": true,
+   "p_R_c": true,
+   "p_off_b1": true,
+   "p_R_b1": true,
+   "p_off_b2": true,
+   "p_off_b3": true,
+   "p_off_b4": true,
+   "p_off_b5": true
+  },
+  "cross_unit": {
+   "C-NORM": true,
+   "C-FIX": true,
+   "C-MOVE-seed1": true,
+   "C-SUPPORT-table": true,
+   "seconds": {
+    "p_off_c": 1.0,
+    "p_R_c": 1.0,
+    "p_off_b1": 1.0,
+    "p_R_b1": 1.0,
+    "p_off_b2": 1.0,
+    "p_off_b3": 1.0,
+    "p_off_b4": 1.0,
+    "p_off_b5": 1.0
+   }
+  },
+  "C-SUPPORT": {
+   "pass": true,
+   "n_seeds": 200,
+   "failures": {},
+   "n_seed_cells": 0
+  },
+  "t_R_s": 750,
+  "o_s": 136,
+  "pilot_node_s": 3000,
+  "pilot_node_h": 0.8333333333333334,
+  "runtime_s": 7636,
+  "projection_node_s": 41180,
+  "projection_node_h": 11.438888888888888,
+  "cap_left_node_s": 42000,
+  "time_limit_minutes": 140,
+  "reservation_node_s": 42000,
+  "verdict": "PROCEED"
+ }
+}
+__________ PilotPost.test_proceed_only_after_the_decision_is_printed ___________
+----------------------------- Captured stderr call -----------------------------
+STOP: printing the decision failed: broken pipe
 ________________ PilotPost.test_recheck_requires_the_same_limit ________________
 ----------------------------- Captured stdout call -----------------------------
+{
+ "decision": {
+  "job": {
+   "id": "4242",
+   "name": "ptmc_pilot",
+   "state": "COMPLETED",
+   "exit": "0:0",
+   "elapsed": 756,
+   "nodes": 2
+  },
+  "steps": {
+   "p_off_c": {
+    "id": "4242.0",
+    "name": "p_off_c",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_R_c": {
+    "id": "4242.1",
+    "name": "p_R_c",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_off_b1": {
+    "id": "4242.2",
+    "name": "p_off_b1",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_R_b1": {
+    "id": "4242.3",
+    "name": "p_R_b1",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 704,
+    "nodes": 1
+   },
+   "p_off_b2": {
+    "id": "4242.4",
+    "name": "p_off_b2",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_off_b3": {
+    "id": "4242.5",
+    "name": "p_off_b3",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_off_b4": {
+    "id": "4242.6",
+    "name": "p_off_b4",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_off_b5": {
+    "id": "4242.7",
+    "name": "p_off_b5",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   }
+  },
+  "rules": {
+   "job_completed": true,
+   "every_pilot_step_completed": true,
+   "pilot_files_and_pins_receipts": true,
+   "every_pilot_unit_passes": true,
+   "C-NORM": true,
+   "C-FIX": true,
+   "C-MOVE-seed1": true,
+   "C-SUPPORT-table": true,
+   "o_nonnegative": true,
+   "projection_within_11.5": true,
+   "limit_positive": true,
+   "limit_covers_1.1x_runtime": true,
+   "reservation_within_cap_left": true
+  },
+  "files": {
+   "files_exactly_the_pilot's": true,
+   "pins_receipts_and_job": true
+  },
+  "units": {
+   "p_off_c": true,
+   "p_R_c": true,
+   "p_off_b1": true,
+   "p_R_b1": true,
+   "p_off_b2": true,
+   "p_off_b3": true,
+   "p_off_b4": true,
+   "p_off_b5": true
+  },
+  "cross_unit": {
+   "C-NORM": true,
+   "C-FIX": true,
+   "C-MOVE-seed1": true,
+   "C-SUPPORT-table": true,
+   "seconds": {
+    "p_off_c": 1.0,
+    "p_R_c": 1.0,
+    "p_off_b1": 1.0,
+    "p_R_b1": 1.0,
+    "p_off_b2": 1.0,
+    "p_off_b3": 1.0,
+    "p_off_b4": 1.0,
+    "p_off_b5": 1.0
+   }
+  },
+  "C-SUPPORT": {
+   "pass": true,
+   "n_seeds": 200,
+   "failures": {},
+   "n_seed_cells": 0
+  },
+  "t_R_s": 704,
+  "o_s": 52,
+  "pilot_node_s": 1512,
+  "pilot_node_h": 0.42,
+  "runtime_s": 7092,
+  "projection_node_s": 36972,
+  "projection_node_h": 10.27,
+  "cap_left_node_s": 43488,
+  "time_limit_minutes": 144,
+  "reservation_node_s": 43200,
+  "verdict": "PROCEED"
+ }
+}
 {"recheck": "SAME", "time_limit_minutes": 144}
 {"recheck": "DIFFERS", "time_limit_minutes": 143}
 _________________________ PilotPost.test_rerun_refuses _________________________
+----------------------------- Captured stdout call -----------------------------
+{
+ "decision": {
+  "job": {
+   "id": "4242",
+   "name": "ptmc_pilot",
+   "state": "COMPLETED",
+   "exit": "0:0",
+   "elapsed": 756,
+   "nodes": 2
+  },
+  "steps": {
+   "p_off_c": {
+    "id": "4242.0",
+    "name": "p_off_c",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_R_c": {
+    "id": "4242.1",
+    "name": "p_R_c",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_off_b1": {
+    "id": "4242.2",
+    "name": "p_off_b1",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_R_b1": {
+    "id": "4242.3",
+    "name": "p_R_b1",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 704,
+    "nodes": 1
+   },
+   "p_off_b2": {
+    "id": "4242.4",
+    "name": "p_off_b2",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_off_b3": {
+    "id": "4242.5",
+    "name": "p_off_b3",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_off_b4": {
+    "id": "4242.6",
+    "name": "p_off_b4",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_off_b5": {
+    "id": "4242.7",
+    "name": "p_off_b5",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   }
+  },
+  "rules": {
+   "job_completed": true,
+   "every_pilot_step_completed": true,
+   "pilot_files_and_pins_receipts": true,
+   "every_pilot_unit_passes": true,
+   "C-NORM": true,
+   "C-FIX": true,
+   "C-MOVE-seed1": true,
+   "C-SUPPORT-table": true,
+   "o_nonnegative": true,
+   "projection_within_11.5": true,
+   "limit_positive": true,
+   "limit_covers_1.1x_runtime": true,
+   "reservation_within_cap_left": true
+  },
+  "files": {
+   "files_exactly_the_pilot's": true,
+   "pins_receipts_and_job": true
+  },
+  "units": {
+   "p_off_c": true,
+   "p_R_c": true,
+   "p_off_b1": true,
+   "p_R_b1": true,
+   "p_off_b2": true,
+   "p_off_b3": true,
+   "p_off_b4": true,
+   "p_off_b5": true
+  },
+  "cross_unit": {
+   "C-NORM": true,
+   "C-FIX": true,
+   "C-MOVE-seed1": true,
+   "C-SUPPORT-table": true,
+   "seconds": {
+    "p_off_c": 1.0,
+    "p_R_c": 1.0,
+    "p_off_b1": 1.0,
+    "p_R_b1": 1.0,
+    "p_off_b2": 1.0,
+    "p_off_b3": 1.0,
+    "p_off_b4": 1.0,
+    "p_off_b5": 1.0
+   }
+  },
+  "C-SUPPORT": {
+   "pass": true,
+   "n_seeds": 200,
+   "failures": {},
+   "n_seed_cells": 0
+  },
+  "t_R_s": 704,
+  "o_s": 52,
+  "pilot_node_s": 1512,
+  "pilot_node_h": 0.42,
+  "runtime_s": 7092,
+  "projection_node_s": 36972,
+  "projection_node_h": 10.27,
+  "cap_left_node_s": 43488,
+  "time_limit_minutes": 144,
+  "reservation_node_s": 43200,
+  "verdict": "PROCEED"
+ }
+}
 ----------------------------- Captured stderr call -----------------------------
 refusing: a decision exists
+_________ PilotPost.test_scoped_timing_proceeds_with_the_capped_limit __________
+----------------------------- Captured stdout call -----------------------------
+{
+ "decision": {
+  "job": {
+   "id": "4242",
+   "name": "ptmc_pilot",
+   "state": "COMPLETED",
+   "exit": "0:0",
+   "elapsed": 756,
+   "nodes": 2
+  },
+  "steps": {
+   "p_off_c": {
+    "id": "4242.0",
+    "name": "p_off_c",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_R_c": {
+    "id": "4242.1",
+    "name": "p_R_c",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_off_b1": {
+    "id": "4242.2",
+    "name": "p_off_b1",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_R_b1": {
+    "id": "4242.3",
+    "name": "p_R_b1",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 704,
+    "nodes": 1
+   },
+   "p_off_b2": {
+    "id": "4242.4",
+    "name": "p_off_b2",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_off_b3": {
+    "id": "4242.5",
+    "name": "p_off_b3",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_off_b4": {
+    "id": "4242.6",
+    "name": "p_off_b4",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   },
+   "p_off_b5": {
+    "id": "4242.7",
+    "name": "p_off_b5",
+    "state": "COMPLETED",
+    "exit": "0:0",
+    "elapsed": 700,
+    "nodes": 1
+   }
+  },
+  "rules": {
+   "job_completed": true,
+   "every_pilot_step_completed": true,
+   "pilot_files_and_pins_receipts": true,
+   "every_pilot_unit_passes": true,
+   "C-NORM": true,
+   "C-FIX": true,
+   "C-MOVE-seed1": true,
+   "C-SUPPORT-table": true,
+   "o_nonnegative": true,
+   "projection_within_11.5": true,
+   "limit_positive": true,
+   "limit_covers_1.1x_runtime": true,
+   "reservation_within_cap_left": true
+  },
+  "files": {
+   "files_exactly_the_pilot's": true,
+   "pins_receipts_and_job": true
+  },
+  "units": {
+   "p_off_c": true,
+   "p_R_c": true,
+   "p_off_b1": true,
+   "p_R_b1": true,
+   "p_off_b2": true,
+   "p_off_b3": true,
+   "p_off_b4": true,
+   "p_off_b5": true
+  },
+  "cross_unit": {
+   "C-NORM": true,
+   "C-FIX": true,
+   "C-MOVE-seed1": true,
+   "C-SUPPORT-table": true,
+   "seconds": {
+    "p_off_c": 1.0,
+    "p_R_c": 1.0,
+    "p_off_b1": 1.0,
+    "p_R_b1": 1.0,
+    "p_off_b2": 1.0,
+    "p_off_b3": 1.0,
+    "p_off_b4": 1.0,
+    "p_off_b5": 1.0
+   }
+  },
+  "C-SUPPORT": {
+   "pass": true,
+   "n_seeds": 200,
+   "failures": {},
+   "n_seed_cells": 0
+  },
+  "t_R_s": 704,
+  "o_s": 52,
+  "pilot_node_s": 1512,
+  "pilot_node_h": 0.42,
+  "runtime_s": 7092,
+  "projection_node_s": 36972,
+  "projection_node_h": 10.27,
+  "cap_left_node_s": 43488,
+  "time_limit_minutes": 144,
+  "reservation_node_s": 43200,
+  "verdict": "PROCEED"
+ }
+}
 __________________ StageD4.test_a_fifo_fails_before_any_copy ___________________
 ----------------------------- Captured stderr call -----------------------------
-FAIL: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmplqsacpd0/units/c2_replica_b11.npz is not a regular file
+FAIL: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp2pt14xbd/units/c2_replica_b11.npz is not a regular file
 _____________ StageD4.test_a_source_changed_during_its_copy_fails ______________
 ----------------------------- Captured stderr call -----------------------------
-FAIL: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp0kxt04mr/units/c2_replica_b9.npz changed during its copy
+FAIL: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp5slglgku/units/c2_replica_b9.npz changed during its copy
 _____________ StageD4.test_absent_is_recorded_and_a_symlink_fails ______________
 ----------------------------- Captured stdout call -----------------------------
 staged 402 products, 1 absent
 ----------------------------- Captured stderr call -----------------------------
-FAIL: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpxbso1ubn/units/c2_replica_b8.npz is not a regular file
+FAIL: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp94mlptqk/units/c2_replica_b8.npz is not a regular file
 _____ StageD4.test_an_absent_units_directory_is_an_absence_of_its_products _____
 ----------------------------- Captured stdout call -----------------------------
 staged 202 products, 201 absent
 ----------------------------- Captured stderr call -----------------------------
-FAIL: lstat /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpuhc1eege/read-2/inputs: [Errno 2] No such file or directory: '/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpuhc1eege/read-2/inputs'
+FAIL: lstat /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpj9rskrb7/read-2/inputs: [Errno 2] No such file or directory: '/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpj9rskrb7/read-2/inputs'
 ____________________________ StageD4.test_complete _____________________________
 ----------------------------- Captured stdout call -----------------------------
 staged 403 products, 0 absent
 ___________ StageD4.test_mandatory_absent_and_symlinked_parent_fail ____________
 ----------------------------- Captured stderr call -----------------------------
-FAIL: the mandatory /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp9qvt8044/read-2/inputs/001_xsec.root is absent
-FAIL: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpp6yec0qg/units is not a real directory
+FAIL: the mandatory /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp_g7lqjht/read-2/inputs/001_xsec.root is absent
+FAIL: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmplyfteeu5/units is not a real directory
+_______ StageD4.test_the_deploy_trees_ref_c2c1_is_checked_before_import ________
+----------------------------- Captured stderr call -----------------------------
+FAIL: the deploy tree's 2d-unfolding/ref_c2c1/ref_c2c1.py is not its pin
 =========================== short test summary info ============================
 PASSED test_ptmc.py::Draws::test_central_has_unit_factors
 PASSED test_ptmc.py::Draws::test_draw_check_passes_and_catches_each_defect
@@ -804,14 +1376,17 @@ PASSED launch/test_launch.py::PilotPost::test_codex_float_case_proceeds
 PASSED launch/test_launch.py::PilotPost::test_cross_unit_defects_stop
 PASSED launch/test_launch.py::PilotPost::test_limit_below_the_floor_stops
 PASSED launch/test_launch.py::PilotPost::test_pilot_files_and_job_defects_stop
+PASSED launch/test_launch.py::PilotPost::test_proceed_only_after_the_decision_is_printed
 PASSED launch/test_launch.py::PilotPost::test_projection_rule_flag
 PASSED launch/test_launch.py::PilotPost::test_receipt_defects_stop
 PASSED launch/test_launch.py::PilotPost::test_recheck_requires_the_same_limit
 PASSED launch/test_launch.py::PilotPost::test_rerun_refuses
 PASSED launch/test_launch.py::PilotPost::test_scoped_timing_proceeds_with_the_capped_limit
 PASSED launch/test_launch.py::PilotPost::test_seed1_fill_duplicate_stops
+PASSED launch/test_launch.py::PilotPost::test_seed1_float_injection_stops
 PASSED launch/test_launch.py::PilotPost::test_seed1_injection_defect_stops
 PASSED launch/test_launch.py::PilotPost::test_support_table_defects_stop
+PASSED launch/test_launch.py::PilotPost::test_the_allocation_id_is_exact
 PASSED launch/test_launch.py::PilotPost::test_unit_defects_stop
 PASSED launch/test_launch.py::StageD4::test_a_fifo_fails_before_any_copy
 PASSED launch/test_launch.py::StageD4::test_a_source_changed_during_its_copy_fails
@@ -819,6 +1394,7 @@ PASSED launch/test_launch.py::StageD4::test_absent_is_recorded_and_a_symlink_fai
 PASSED launch/test_launch.py::StageD4::test_an_absent_units_directory_is_an_absence_of_its_products
 PASSED launch/test_launch.py::StageD4::test_complete
 PASSED launch/test_launch.py::StageD4::test_mandatory_absent_and_symlinked_parent_fail
+PASSED launch/test_launch.py::StageD4::test_the_deploy_trees_ref_c2c1_is_checked_before_import
 PASSED launch/test_launch.py::StageD4::test_the_scorer_names_the_stagers_sources
-95 passed, 3 warnings in 363.83s (0:06:03)
+99 passed, 3 warnings in 522.08s (0:08:42)
 pytest rc=0
