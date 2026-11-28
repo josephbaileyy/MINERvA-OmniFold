@@ -1,0 +1,25 @@
+test_c2_eff_controls_still_apply (__main__.Core.test_c2_eff_controls_still_apply) ... ok
+test_c_pair_refuses_a_shuffled_pairing (__main__.Core.test_c_pair_refuses_a_shuffled_pairing) ... ok
+test_c_pair_refuses_a_wrong_value (__main__.Core.test_c_pair_refuses_a_wrong_value) ... ok
+test_c_pair_uses_the_rank_75_rule (__main__.Core.test_c_pair_uses_the_rank_75_rule) ... ok
+test_corr_refuses_zero_variance (__main__.Core.test_corr_refuses_zero_variance) ... ok
+test_correlation_summary_signs (__main__.Core.test_correlation_summary_signs) ... ok
+test_diagonal_matrix_structure (__main__.Core.test_diagonal_matrix_structure) ... ok
+test_end_to_end_synthetic (__main__.Core.test_end_to_end_synthetic) ... ok
+test_headline_copies_the_record_fields (__main__.Core.test_headline_copies_the_record_fields) ... ok
+test_neighbours_on_the_grid (__main__.Core.test_neighbours_on_the_grid) ... ok
+test_paired_identity_and_values (__main__.Core.test_paired_identity_and_values) ... ok
+test_principal_cosines (__main__.Core.test_principal_cosines) ... ok
+test_psd_refuses (__main__.Core.test_psd_refuses) ... ok
+test_row_end_is_not_a_neighbour (__main__.Core.test_row_end_is_not_a_neighbour) ... ok
+test_main_refuses_existing_outputs (__main__.Files.test_main_refuses_existing_outputs) ... ok
+test_plot_writes_a_png (__main__.Files.test_plot_writes_a_png) ... ok
+test_stop_is_recorded (__main__.Files.test_stop_is_recorded) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 25.376s
+
+OK
+refusing: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/c2corr-t-vbbn__d3/r.json exists
+refusing: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/c2corr-t-vbbn__d3/s.png exists
+C2-CORR STOP: FileNotFoundError: [Errno 2] No such file or directory: '/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/c2corr-t-y9r7d0i_/none/SHA256SUMS'

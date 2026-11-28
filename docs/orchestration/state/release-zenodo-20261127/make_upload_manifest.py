@@ -3,8 +3,10 @@
 
 usage: python3 -I -B make_upload_manifest.py REPO PACKAGE [--check]
   REPO     a checkout of this repository; committed files are read at REF through `git show`, never the working tree.
-  PACKAGE  the RC9 deposit package, ~/codex-reports/note-measurement/zenodo-draft/package (32 files, its SHA256SUMS
-           630d3c07...). It is read, never written.
+  PACKAGE  the RC10 deposit package, ~/codex-reports/note-measurement/zenodo-draft/package-rc10 (its SHA256SUMS is
+           pinned below as PKG_SUMS_SHA). It is read, never written. RC10 is RC9's package (SHA256SUMS 630d3c07...) with
+           changes B and E(a) (Joseph, 2026-11-27), built by rc10/: export_sixteen_vf.py, export_published_edges.py and
+           build_rc10.py, with their logs.
 
 Every sha256 and size below is computed here from the bytes it names, or parsed from the committed receipt that
 records it. Nothing is typed. Joseph's deposit copies (~/evw2d-deposit-20261126/, ~/evw5d-deposit-20261125-r2/) are not
@@ -15,6 +17,7 @@ disk must equal the one this run writes.
 
 from __future__ import annotations
 
+import csv
 import gzip
 import hashlib
 import io
@@ -36,9 +39,12 @@ EVW2D = "docs/orchestration/state/2d-closeout/evw2d-20261124"
 EVW5D = f"{FD}/evw5d-20261125/receipts"
 G1 = f"{FD}/receipts-cov2d/g2r/re2shapes/run2/g2r"
 REL5 = "docs/analysis-note/release-package-20260922"
+ER_PUB = "docs/orchestration/state/ibu-chi2-20261123/tier1/units/e/er.root"
 EAW = "docs/orchestration/state/2d-closeout/stageF/methods/note-figfix-20261120/runs/eavailw"
-PKG_SUMS_SHA = "630d3c0762d47aa33c56285236f670bd6486bc47b34d7a604c33b245a859fe81"
-RC9_SHA = "c06dab214baaa5300a05f3fe30b6f85b1a77231f82808e5eb1975d51107284b7"
+RC9_PKG_SUMS_SHA = "630d3c0762d47aa33c56285236f670bd6486bc47b34d7a604c33b245a859fe81"
+PKG_SUMS_SHA = "fe13070a59f98d1910f14aee14df3be313a7597d0eb778854840a2f8d59c47a6"  # package-rc10's SHA256SUMS
+RC10_SHA = "0ecf8122b824bdde2b0bd3b16100d89a0558b47024c572b7737fd8ef0cf4ec22"  # the RC10 replay tarball, as rc10/build_rc10.log records it
+RC10 = "minerva-omnifold-article-release-rc10"
 
 
 def sha(b: bytes) -> str:
@@ -66,7 +72,8 @@ def main() -> int:
     repo, pkg = Repo(Path(sys.argv[1])), Path(sys.argv[2])
     check = "--check" in sys.argv[3:]
     sums_bytes = (pkg / "SHA256SUMS").read_bytes()
-    assert sha(sums_bytes) == PKG_SUMS_SHA, "the package is not RC9's 630d3c07 manifest"
+    assert not PKG_SUMS_SHA.startswith("@") and not RC10_SHA.startswith("@"), "the RC10 pins are not filled"
+    assert sha(sums_bytes) == PKG_SUMS_SHA, "the package is not RC10's pinned manifest"
     listed = {}
     for line in sums_bytes.decode().splitlines():
         h, name = line.split("  ", 1)
@@ -82,7 +89,7 @@ def main() -> int:
 
     def pkgrow(name: str, status: str, record: str) -> str:
         h, n = files[name]
-        return row([f"`package/{name}`", f"`{h}`", f"{n:,}", status, record])
+        return row([f"`package-rc10/{name}`", f"`{h}`", f"{n:,}", status, record])
 
     # ---- A. 2D refined central values, C_rep^(2D) (Q_R) and its blocks, the 2D C_model ----
     refs_b = repo.blob("2d-unfolding/evw2d/references.npz")
@@ -123,36 +130,36 @@ def main() -> int:
     pkg_pct = [round(100 * float(np.sqrt(s16["C_rep"][i, i]) / s16["f"][i]), 2) for i in range(16)]
     assert now_pct == printed, "the V_F product's reported covariance does not give the note's printed sigmas"
     f_same = bool(np.array_equal(s16["f"], f))
-    comp_map = {"sixteen-cell/C_e.csv": "fd_data_product_vf_C_e.csv", "sixteen-cell/C_model.csv":
+    comp_map = {"sixteen-cell/C_rep.csv": f"fd_data_product_vf_{rep_key}.csv",
+                "sixteen-cell/C_e_infl.csv": "fd_data_product_vf_C_e_infl.csv",
+                "sixteen-cell/C_e.csv": "fd_data_product_vf_C_e.csv", "sixteen-cell/C_model.csv":
                 "fd_data_product_vf_C_model_abs.csv", "sixteen-cell/C_resp.csv": "fd_data_product_vf_C_resp.csv",
                 "sixteen-cell/C_PL5D.csv": "fd_data_product_vf_C_PL5D.csv"}
-    comp_status = {}
-    for p, c in comp_map.items():
-        comp_status[p] = files[p][0] == sha(repo.blob(f"{VF}/{c}"))
-    new_files = {}
-    for c in (f"fd_data_product_vf_{rep_key}.csv", "fd_data_product_vf_C_e_infl.csv", "fd_data_product_vf_DeltaC_e.csv",
-              "fd_data_product_vf_cells.csv"):
-        b = repo.blob(f"{VF}/{c}")
-        new_files[c] = (sha(b), len(b))
-    stale16 = pkg_pct != printed
+    comp_status = {p: files[p][0] == sha(repo.blob(f"{VF}/{c}")) for p, c in comp_map.items()}
+    npz_keys = {"C_rep": rep_key, "C_e_infl": "C_e_infl", "C_e": "C_e", "C_model": "C_model_abs", "C_resp": "C_resp",
+                "C_PL5D": "C_PL5D"}
+    npz_ok = f_same and all(np.array_equal(s16[k], np.array(vf["matrices"][m])) for k, m in npz_keys.items())
+    c16 = list(csv.DictReader(open(pkg / "sixteen-cell/cells.csv")))
+    cells16_ok = ([float(r["integral_cm2_per_nucleon"]) for r in c16] == f.tolist()
+                  and [float(r["sigma_rep_cm2_per_nucleon"]) for r in c16] == np.sqrt(np.diag(C_rep_now)).tolist())
+    readme_def = "V^(5D) = V_stat+syst^infl + V_prior + V_resp + V_run" in (pkg / "README.md").read_text()
+    stale16 = pkg_pct != printed or not (all(comp_status.values()) and npz_ok and cells16_ok and readme_def)
     if stale16:
-        gaps.append(
-            "B (STALE): the package's sixteen-cell C_rep (`sixteen-cell/C_rep.csv`, and C_rep in `sixteen_cell.npz` and the "
-            "sigma column of `cells.csv`) is C_e + C_model + C_resp + C_PL,5D, built on 2026-11-21 from the pre-V_F product. "
-            "The note's C_rep^(5D) is C_e^infl + C_model + C_resp + C_run (sec5_multidim.tex:54, merged in #1378). The "
-            f"package gives per-cell sigmas {pkg_pct[:4]}... %, while the note prints {printed[:4]}... %. The package also has "
-            "no C_e^infl file. The committed replacements are in `fd/with-vf/data-product/` (product "
-            f"`{vf_sha[:8]}`): the reported matrix `fd_data_product_vf_{rep_key}.csv` and the component "
-            "`fd_data_product_vf_C_e_infl.csv` (table B). C_e, C_model, C_resp, C_PL,5D and f are already current. "
-            "`cells.csv` and `sixteen_cell.npz` have no committed replacement: they need a re-export from that product, "
-            "with C_e_infl added. **Effect on App. D: none.** App. D:20 promises \"C_rep^(5D) and its components\", and "
-            "C_rep^(5D) is defined with C_e^infl, so the swap brings the deposit into line with App. D. Only the package "
-            "README's C_rep line changes. The swap changes what Joseph uploads, so it goes to him through the director.")
+        gaps.append("B: a sixteen-cell file in the package does not equal the V_F product, or its sigmas differ from "
+                    "the note's (section B).")
+
+    # ---- A'. 2D central values on the published p_T edges (E(a)) ----
+    pe = np.load(pkg / "result-products-2d-published-edges/result_2d_published_edges.npz", allow_pickle=False)
+    er_pub_sha = sha(repo.blob(ER_PUB))
+    pe_tie = (bool(np.array_equal(pe["cells"], cells)) and bool(np.array_equal(pe["x"], np.asarray(refs["paper"])[cells]))
+              and bool(np.array_equal(pe["pt_edges"], refs["paper_pt_edges"]))
+              and bool(np.array_equal(pe["ppar_edges"], refs["paper_pz_edges"])) and meta["paper"]["sha256"] == er_pub_sha)
+    if not pe_tie:
+        gaps.append("E(a): the published-edge central values do not tie to regenA's E (section A').")
 
     # ---- C. generator predictions ----
     g_now = json.loads(repo.blob(f"{FD}/with-vf/readout/vf-with-E/fd_g_readout.json"))
     g_sha = sha(repo.blob(f"{FD}/with-vf/readout/vf-with-E/fd_g_readout.json"))
-    import csv
     rows = list(csv.DictReader(open(pkg / "generator-predictions/sixteen_cell_predictions.csv")))
     gmap = {p["name"]: p for p in g_now["predictions"]}
     g_ok, n_g = True, 0
@@ -183,35 +190,38 @@ def main() -> int:
     if not all(five.values()):
         gaps.append("D: a five-axis file differs from its committed copy in release-package-20260922.")
 
-    # ---- E. replay package (RC9) ----
-    assert files["replay/minerva-omnifold-article-release-rc9.tar.gz"][0] == RC9_SHA
-    with tarfile.open(pkg / "replay/minerva-omnifold-article-release-rc9.tar.gz") as t:
-        base = "minerva-omnifold-article-release-rc9"
-        rc9_values = t.extractfile(f"{base}/expected/values.tex").read().decode()
-        rc9_inf = t.extractfile(f"{base}/expected/values_inference.tex").read().decode()
-        twod_code = t.extractfile(f"{base}/code/twod_numbers.py").read().decode()
-    rc9_mac = dict(re.findall(r"\\newcommand\{\\(\w+)\}\{([^}]*)\}", rc9_values))
-    checked = sorted({n for n in re.findall(r'"([A-Za-z]{3,})"', twod_code) if n in rc9_mac})
-    changed = [(n, rc9_mac[n], values.get(n)) for n in checked if rc9_mac[n] != values.get(n)]
+    # ---- E. replay package (RC10) ----
+    tb = f"replay/{RC10}.tar.gz"
+    assert files[tb][0] == RC10_SHA, "the package's replay tarball is not the pinned RC10"
+    with tarfile.open(pkg / tb) as t:
+        rc_values = t.extractfile(f"{RC10}/expected/values.tex").read().decode()
+        rc_inf = t.extractfile(f"{RC10}/expected/values_inference.tex").read().decode()
+        twod_code = t.extractfile(f"{RC10}/code/twod_numbers.py").read().decode()
+        pub_in_tar = t.extractfile(f"{RC10}/data/twod/result_2d_published_edges.npz").read()
+        figs = np.load(io.BytesIO(t.extractfile(f"{RC10}/data/figs/fig_arrays.npz").read()), allow_pickle=False)
+    rc_mac = dict(re.findall(r"\\newcommand\{\\(\w+)\}\{([^}]*)\}", rc_values))
+    checked = sorted({n for n in re.findall(r'"([A-Za-z]{3,})"', twod_code) if n in rc_mac})
+    changed = [(n, rc_mac[n], values.get(n)) for n in checked if rc_mac[n] != values.get(n)]
+    values_same = rc_values == repo.blob("docs/analysis-note/values.tex").decode()
     inf_now = repo.blob("docs/analysis-note/values_inference.tex").decode()
-    pat = re.compile(r"\\newcommand\{\\[A-Za-z]*\}\{[^}]*\}")
-    inf_same = sorted(pat.findall(rc9_inf)) == sorted(pat.findall(inf_now))
-    if changed:
-        gaps.append(
-            f"E (STALE): RC9's 2D replay check (`code/twod_numbers.py`, {len(checked)} printed 2D values against its own "
-            f"copy of values.tex) no longer matches the note in {len(changed)} values: "
-            + ", ".join(f"`\\{n}` {a} -> {b}" for n, a, b in changed)
-            + ". They changed with the p_T-edge option (i) on main after RC9 was built (2026-11-21). App. D says the "
-            "replay recomputes Sec. part-2d's benchmark numbers \"from the deposited central values and covariance\". There "
-            "is no committed replacement: an RC10 would have to be built. **Effect on App. D: yes.** values.tex's source "
-            "comments give all four as regenA E on the published p_T edges (ibu-chi2-20261123/regenA, #1322), not E_R/Q_R "
-            "on our edges, which is what the deposit holds. So an RC10 cannot recompute them from the deposited 2D products. "
-            "Joseph's options: (a) deposit regenA's published-edge E and its covariance, and build RC10 on them; (b) narrow "
-            "App. D:8, with RC10 checking `\\chiPaperOurEdges` (2.27, still printed in App. A and App. C) in place of "
-            "`\\chiPaper`; or (c) keep RC9, with App. D:8 noting that four published-edge values are outside the replay. "
-            "This is his call, through the director."
-            + (" The joint-test values (values_inference.tex) are identical." if inf_same else
-               " values_inference.tex has also changed."))
+    inf_same = rc_inf == inf_now
+    pub_same = sha(pub_in_tar) == files["result-products-2d-published-edges/result_2d_published_edges.npz"][0]
+    # the four published-edge comparisons, recomputed here from the deposited values and the published covariance
+    Cp = figs["cov_total"][np.ix_(cells, cells)]
+    dpe = pe["x"] - figs["paper_v"][cells]
+    chi2 = float(dpe @ np.linalg.pinv(Cp) @ dpe)
+    pulls = dpe / np.sqrt(np.diag(Cp))
+    w5 = int(np.sum(np.abs(pe["x"] / figs["paper_v"][cells] - 1) < 0.05))
+    pub4 = {"chiPaper": f"{chi2 / len(cells):.2f}", "pullMean": f"{pulls.mean():.3f}", "pullRMS": f"{pulls.std():.3f}",
+            "binsFive": f"{100 * w5 / len(cells):.1f}"}
+    pub4_ok = all(values.get(k) == v for k, v in pub4.items())
+    vlog = HERE / "rc10/verify-rc10.out.txt"
+    vtxt = vlog.read_text() if vlog.exists() else ""
+    verify_ok = RC10_SHA in vtxt and vtxt.rstrip().endswith("VERIFY: PASS")
+    e_ok = not changed and values_same and inf_same and pub_same and pub4_ok and verify_ok
+    if not e_ok:
+        gaps.append("E: the RC10 replay does not match the note at the current main, or its verify did not pass "
+                    "(section E).")
 
     # ---- F. AnaTuple identities ----
     ana_repo = repo.blob("publication/release/preservation/anatuple-checksums/ANATUPLE-SHA256.tsv")
@@ -269,9 +279,11 @@ def main() -> int:
       "input-file identities (`:20`); and the 2D and 5D per-event weights (`:23`, `:26`).")
     A("")
     A("**Two sources:**")
-    A(f"- the RC9 deposit package, `~/codex-reports/note-measurement/zenodo-draft/package/`, 32 files. Its "
-      f"`SHA256SUMS` is `{PKG_SUMS_SHA}`, and its clean-environment check passed on 2026-11-21 "
-      "(`zenodo-draft/READY-FOR-UPLOAD.txt`). Each of its files is checked here against the current committed products;")
+    A(f"- the RC10 deposit package, `~/codex-reports/note-measurement/zenodo-draft/package-rc10/`, {len(listed)} files. "
+      f"Its `SHA256SUMS` is `{PKG_SUMS_SHA}`. It is the RC9 package (`SHA256SUMS` `{RC9_PKG_SUMS_SHA}`, "
+      "clean-environment check passed on 2026-11-21, `zenodo-draft/READY-FOR-UPLOAD.txt`) with Joseph's changes B and "
+      "E(a) of 2026-11-27, built by the tools in [`rc10/`](rc10/). RC9's `package/` is unchanged. Each file is checked "
+      "here against the current committed products;")
     A("- the two weight deposits, at Joseph's copies. Each is tied to its committed run and deposit receipts.")
     A("")
     A(f"## Gaps ({len(gaps)})")
@@ -282,10 +294,21 @@ def main() -> int:
     else:
         A("None.")
     A("")
-    A("Everything else below is current and tied. The package's `README.md` will need the matching edits when items "
-      "are rebuilt: the sixteen-cell C_rep definition, the replay's name and digest, and a section on the two weight "
-      "deposits. The holds already listed in `zenodo-draft/HANDOFF-for-upload.md` also stay open: ORCIDs, Ben's "
-      "approval, and the release commit for the README's \"[fixed release commit]\".")
+    A("**Resolved in RC10** (Joseph, 2026-11-27). Each bullet is printed only when its checks below pass:")
+    if not stale16:
+        A(f"- **B.** The sixteen-cell C_rep is the V_F one, C_e^infl + C_model + C_resp + C_PL,5D, and `C_e_infl.csv` is "
+      f"added. Both are re-exported from the V_F product `{vf_sha[:8]}` by `rc10/export_sixteen_vf.py` "
+      "(`rc10/export_sixteen_vf.log`: EXPORT B PASS). The package README defines it in the note's symbols, V^(5D) = "
+          "V_stat+syst^infl + V_prior + V_resp + V_run, and maps each symbol to its file (`C_rep`, `C_e_infl`, ...).")
+    if pe_tie and e_ok:
+        A(f"- **E(a).** regenA's 2D central values on the published p_T edges are a new item (section A'), and the replay "
+      f"is RC10 (`{RC10_SHA[:8]}`). RC10's 2D check recomputes all {len(checked)} printed 2D values, the four "
+      "published-edge comparisons from that item. Its joint-test values are recomputed from the deposited files. Every "
+      "value equals values.tex at main (section E).")
+    A("")
+    A("Everything else below is current and tied. Still open: the package `README.md` has no section on the two "
+      "weight deposits. The holds already listed in `zenodo-draft/HANDOFF-for-upload.md` also stay open: ORCIDs, "
+      "Ben's approval, and the release commit for the README's \"[fixed release commit]\".")
     A("")
     H = row(["path", "sha256", "bytes", "status", "tied by"])
     S = row(["---", "---", "---:", "---", "---"])
@@ -323,20 +346,37 @@ def main() -> int:
     A("")
     A(H)
     A(S)
-    for n in ("sixteen-cell/cells.csv", "sixteen-cell/sixteen_cell.npz", "sixteen-cell/C_rep.csv"):
-        A(pkgrow(n, "**STALE** (gap B)" if stale16 else "current",
-                 f"pre-V_F product `{FD}/with-cpl/data-product/fd_data_product_cpl.json` `d6752d2c`"
-                 + ("; f equals the V_F product's f" if n != "sixteen-cell/C_rep.csv" and f_same else "")))
-    for p, ok in comp_status.items():
-        A(pkgrow(p, "current" if ok else "**DIFFERS**", f"byte-identical to `{VF}/{comp_map[p]}`" if ok else "-"))
-    for c, (h, n) in new_files.items():
-        A(row([f"`{VF}/{c}`", f"`{h}`", f"{n:,}",
-               "**to add** (gap B)" if stale16 and ("C_e_infl" in c or rep_key in c) else "committed",
-               f"V_F product `{VF}/fd_data_product_vf.json` `{vf_sha[:8]}`, which make_values_fived16.py pins"]))
+    for n in sorted(k for k in listed if k.startswith("sixteen-cell/")):
+        if n in comp_map:
+            A(pkgrow(n, "current" if comp_status[n] else "**DIFFERS**",
+                     f"byte-identical to `{VF}/{comp_map[n]}`" if comp_status[n] else "-"))
+        else:
+            ok = npz_ok if n.endswith(".npz") else cells16_ok
+            A(pkgrow(n, "current" if ok else "**DIFFERS**",
+                     f"re-exported from the V_F product `{VF}/fd_data_product_vf.json` `{vf_sha[:8]}` by "
+                     "`rc10/export_sixteen_vf.py`; "
+                     + ("f and the six matrices equal the product's bit for bit" if n.endswith(".npz") else
+                        "the integrals equal f and the sigmas equal sqrt(diag C_rep) bit for bit")))
     A("")
-    A(f"`{VF}/fd_data_product_vf_{rep_key}.csv` is C_rep^(5D) = C_e^infl + C_model + C_resp + C_PL,5D. Its per-cell "
-      f"sigmas equal the note's `sig-reported-R00..R15` for all sixteen cells (computed here). The package's C_rep "
-      f"gives {pkg_pct[:4]}... %, the note {printed[:4]}... %.")
+    A(f"`C_rep.csv` is C_rep^(5D) = C_e^infl + C_model + C_resp + C_PL,5D. Its per-cell sigmas equal the note's "
+      f"`sig-reported-R00..R15` for all sixteen cells (computed here): {pkg_pct[:4]}... %, the note "
+      f"{printed[:4]}... %. f is unchanged by V_F: it equals RC9's exported f bit for bit "
+      "(`rc10/export_sixteen_vf.log`). `C_e.csv` stays, as the unscaled component that App. C's table also prints.")
+    A("")
+    A("## A'. 2D central values on the published p_T edges (E(a))")
+    A("")
+    A(H)
+    A(S)
+    for n in sorted(k for k in listed if k.startswith("result-products-2d-published-edges/")):
+        A(pkgrow(n, "current" if pe_tie else "**DIFFERS**",
+                 f"regenA's E (ibu-chi2-20261123/regenA, #1322): `{ER_PUB}` `{er_pub_sha[:8]}`, exported by "
+                 "`rc10/export_published_edges.py` (`rc10/export_published_edges.log`: EXPORT E(a) PASS)"))
+    A("")
+    A(f"Central values only, for the same {len(cells)} cells on the published p_T edges (0.075, 0.325, 0.475 GeV/c where "
+      "ours are 0.07, 0.33, 0.47). The note gives our uncertainties only on our grid, so no covariance on these edges "
+      "is deposited; comparisons use the published covariance. The tie, checked here: `x` equals `references.npz`'s "
+      f"`paper` vector at the {len(cells)} cells bit for bit, its edges equal `paper_pt_edges`/`paper_pz_edges`, and "
+      f"`references.npz` records `er.root` `{er_pub_sha[:8]}` as that vector's source: {'yes' if pe_tie else 'NO'}.")
     A("")
     A("## C. Generator predictions (sixteen cells and the (E_avail, W) grid)")
     A("")
@@ -364,14 +404,20 @@ def main() -> int:
     A("")
     A(H)
     A(S)
-    for n in ("replay/minerva-omnifold-article-release-rc9.tar.gz", "replay/RC9-SHA256SUMS.txt"):
-        A(pkgrow(n, "**STALE** (gap E)" if changed else "current",
-                 "App. D:9 source comment (RC9 `c06dab21`); `zenodo-draft/READY-FOR-UPLOAD.txt` (clean-environment "
-                 "VERIFY: PASS, 2026-11-21)"))
+    for n in (tb, "replay/RC10-SHA256SUMS.txt"):
+        A(pkgrow(n, "current" if e_ok else "**CHECK** (gap E)",
+                 "`rc10/build_rc10.py` from RC9 `c06dab21` (`rc10/build_rc10.log`: two builds byte-identical); "
+                 "`rc10/verify-rc10.out.txt` (VERIFY: PASS on the extracted tarball)"))
     A("")
-    A(f"RC9's 2D check covers {len(checked)} printed values. Changed since RC9: "
-      + (", ".join(f"`\\{n}`" for n, _, _ in changed) if changed else "none") + ". values_inference.tex: "
-      + ("identical" if inf_same else "changed") + ".")
+    A(f"RC10's `expected/values.tex` equals `docs/analysis-note/values.tex` at `{repo.head[:8]}`: "
+      f"{'yes' if values_same else 'NO'}. Its `expected/values_inference.tex` equals main's: "
+      f"{'yes' if inf_same else 'NO'}. Its 2D check covers {len(checked)} printed values, and against main "
+      + ("none differ" if not changed else "these differ: " + ", ".join(f"`\\{n}`" for n, _, _ in changed)) + ". "
+      f"The tarball's `data/twod/result_2d_published_edges.npz` is the deposited item: {'yes' if pub_same else 'NO'}. "
+      "Recomputed here from the deposited published-edge values and the published covariance in RC10's "
+      "`fig_arrays.npz`: " + ", ".join(f"`\\{k}` {v}" for k, v in pub4.items())
+      + f"; equal to values.tex: {'yes' if pub4_ok else 'NO'}. The verify log names the tarball's sha256 and ends "
+      f"VERIFY: PASS: {'yes' if verify_ok else 'NO'}.")
     A("")
     A("## F. Input-file identities")
     A("")
@@ -411,8 +457,8 @@ def main() -> int:
     A(H)
     A(S)
     for n in ("README.md", "licenses/LICENSE-MIT.txt", "SHA256SUMS"):
-        A(pkgrow(n, "update with the rebuilt items" if n != "licenses/LICENSE-MIT.txt" else "current",
-                 "the package itself"))
+        A(pkgrow(n, "current", "the package itself" + ("; RC10's changes are in its rows for `sixteen-cell/`, "
+                 "`result-products-2d-published-edges/` and `replay/`" if n == "README.md" else "")))
     A("")
     A("**NOT CITABLE FOR:** any physics number, or note wording. This is an inventory for Joseph's upload.")
     text = "\n".join(L) + "\n"

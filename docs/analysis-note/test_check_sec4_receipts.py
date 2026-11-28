@@ -37,18 +37,14 @@ def test_self_test_rejects_every_perturbation():
     # Since the short paper's retirement (2026-11-21) the paper's values bind in the note's Table tab:uq and in the primer
     ("sec3_twod.tex", r"Statistical bootstrap & 0.676 &", r"Statistical bootstrap & 0.686 &",
      "statistical block median (Q_R, S1)"),
-    # The rebuilt-band 2-sigma rescore (97.7%) binds in the note since r18 moved it there: $C_2=0.977$; since the deep
-    # restructure (DECISION-20261118, CV-VA02) it prints in App. I's app:devhistory-band.
-    ("app_devhistory.tex", r"$C_2=0.977$", r"$C_2=0.967$",
-     "rescoring against the rebuilt (VL170) band, 2 and 1 sigma (note app:devhistory-band)"),
     # The background-closure values bind in the note since the targeted round moved the paper's paragraph there
-    ("sec_5d.tex", r"column to \SIrange{0.11}{0.24}{\percent}", r"column to \SIrange{0.11}{0.26}{\percent}",
+    ("appB_negweight.tex", r"residuals to $0.11\%$--$0.24\%$ in", r"residuals to $0.11\%$--$0.26\%$ in",
      "negative-weight residual, highest-W cells (VL151)"),
     ("primer_body.tex", r"\SIrange{16}{31}{\percent}", r"\SIrange{16}{33}{\percent}",
      "other fixed shapes, most affected cell (VL154)"),
-    ("sec_5d.tex", r"cell to at most \SI{0.39}{\percent}", r"cell to at most \SI{0.49}{\percent}",  # true but loose
+    ("appB_negweight.tex", r"to at most $0.39\%$", r"to at most $0.49\%$",  # true but loose
      "negative-weight residual, other (E_avail, W) cells (VL151)"),
-    ("sec_5d.tex", r"\SIrange{3.5}{4.1}{\percent} low", r"\SIrange{3.5}{4.3}{\percent} low",
+    ("appB_negweight.tex", r"plane is $3.5\%$ to $4.1\%$ low", r"plane is $3.5\%$ to $4.3\%$ low",
      "purity bias, highest-W cells (VL149)"),
 ])
 @needs_receipts
@@ -65,7 +61,7 @@ def test_a_wrong_printed_value_fails(name, old, new, label):
     assert sum(not good for good in rows.values()) == 1, "only the perturbed value's check fails"
 
 
-NOTE = "sec_5d.tex"  # where the treatments-on-data value prints since the targeted round
+NOTE = "appB_negweight.tex"  # where the treatments-on-data value prints (App. B) since sec_5d.tex left the build
 PHRASE = r"and\s+at\s+most"  # the printed phrase before it, across any line wrap
 
 
@@ -73,7 +69,7 @@ PHRASE = r"and\s+at\s+most"  # the printed phrase before it, across any line wra
 def test_a_missing_value_fails():
     src = chk.load()
     # The phrase may wrap across a source line (it does since register round r12), so match any whitespace.
-    src[NOTE] = re.sub(PHRASE + r"\s+\\SI\{1\.4\}", "and by a little", src[NOTE])
+    src[NOTE] = re.sub(PHRASE + r"\s+\$1\.4\\%\$", "and by a little", src[NOTE])
     rows = dict((label, good) for label, good, _ in chk.evaluate(src))
     assert rows["treatments on data (VL152)"] is False
 
@@ -81,7 +77,7 @@ def test_a_missing_value_fails():
 @needs_receipts
 def test_a_value_kept_only_in_a_latex_comment_is_not_found():
     src = chk.load()
-    anchored = PHRASE + r"(?=\s+\\SI\{1\.4\}\{\\percent\}\s+over)"
+    anchored = PHRASE + r"(?=\s+\$1\.4\\%\$)"
     assert len(re.findall(anchored, src[NOTE])) == 1
     src[NOTE] = re.sub(anchored, "\n% and at most", src[NOTE])
     rows = dict((label, good) for label, good, _ in chk.evaluate(src))
@@ -114,7 +110,7 @@ def test_a_standalone_layout_skips():
 def test_the_self_test_fails_cleanly_when_a_printed_value_is_missing(monkeypatch, capsys):
     """Review cycle 2: it crashed (AttributeError) on a missing value; it must report it and fail."""
     original = chk.load()
-    original[NOTE] = re.sub(PHRASE + r"(?=\s+\\SI\{1\.4\}\{\\percent\}\s+over)", "and roughly", original[NOTE])
+    original[NOTE] = re.sub(PHRASE + r"(?=\s+\$1\.4\\%\$)", "and roughly", original[NOTE])
     monkeypatch.setattr(chk, "load", lambda: dict(original))
     assert chk.self_test() == 1
     assert "NOT FOUND   treatments on data (VL152)" in capsys.readouterr().out

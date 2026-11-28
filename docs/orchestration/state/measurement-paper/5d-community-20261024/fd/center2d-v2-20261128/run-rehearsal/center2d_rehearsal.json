@@ -1,0 +1,2514 @@
+{
+ "code_sha256": "1dc764e7bea23dfa53cad37a733729d672f2543d120f82af033ce09cf351c8e1",
+ "declaration": "CENTER2D-DECLARATION.md (#1446)",
+ "mode": "rehearsal",
+ "noise_statement": "E_R, all 175 universes and all 10 laterals share estimator seed 42 (declaration section 4), so the training-noise term is not separable from these records. With b = b_bar + n (b_bar the seed average, E[n] = 0), E_seed[b b^T] = b_bar b_bar^T + Cov_seed(b), so the raw M is, in expectation over training seeds, at least the seed-averaged term. Any one realization (this one, at seed 42) can fall on either side. D11's X03 (seed SD of six Stage C universes' shifts, median 1.24-1.33 sigma_ML) is the only measurement of this noise; it is cited, not used.",
+ "noise_term": "not separable, disclosed",
+ "partb_sums_concat_sha256": "d3e89361695bd95735bd918008a741377782bf7f3635f146e76b567e1cac77d9",
+ "parts": {
+  "R:AR23": {
+   "controls": {
+    "C-ADD:R:AR23": {
+     "pass": true,
+     "rank_band_rel": [
+      0.0,
+      7.092552760341252e-16,
+      1.188256057616677e-16
+     ],
+     "trace_rel": 1.3625853327006414e-16
+    },
+    "C-FINITE:R:AR23": {
+     "bands": 43,
+     "pass": true
+    },
+    "C-FLUX:R:AR23": {
+     "logged_n_eff": 19.060534772246488,
+     "logged_sum": 211.01200325082078,
+     "n_eff": 19.060534772246488,
+     "pass": true,
+     "sum": 211.01200325082078
+    },
+    "C-ID:R:AR23": {
+     "pass": true,
+     "tol": 1e-12,
+     "worst_rel": 1.225053855948978e-13
+    },
+    "C-PIN:R:AR23": {
+     "pass": true
+    },
+    "C-PSD:C:R:AR23": {
+     "max_eig": 4.4561747488365935e-78,
+     "min_diag": 1.3919831537775963e-89,
+     "min_eig": 4.450602422020056e-90,
+     "pass": true,
+     "symmetry": 7.115463862085986e-17
+    },
+    "C-PSD:M:R:AR23": {
+     "max_eig": 4.7979528467796806e-80,
+     "min_diag": 2.5803484764636076e-91,
+     "min_eig": -4.932438634459804e-96,
+     "pass": true,
+     "symmetry": 0.0
+    },
+    "C-RECON:R:AR23:C_T_sum_of_blocks": {
+     "pass": true,
+     "rel": 0.0,
+     "tol": 1e-12
+    },
+    "C-RECON:R:AR23:C_lat": {
+     "pass": true,
+     "rel": 0.0,
+     "tol": 1e-12
+    },
+    "C-RECON:R:AR23:C_univ": {
+     "pass": true,
+     "rel": 6.483669595541323e-21,
+     "tol": 1e-12
+    },
+    "C-X0:R:AR23:mask": {
+     "cells": 205,
+     "pass": true
+    }
+   },
+   "label": null,
+   "readings": {
+    "R1": {
+     "trace_share": 0.012731118076389306,
+     "trace_share_of_C_sys": 0.017705075556032186
+    },
+    "R2": {
+     "max": 0.2890704627804308,
+     "max_cell_globalid": 29,
+     "median": 0.019735785760558032,
+     "p84": 0.07186986488298092
+    },
+    "R3": {
+     "max_r": 16.407671538155757,
+     "max_r_rank": 190,
+     "overall_mean": 2.6084748344448654,
+     "overall_mean_via_pinv": 2.6084748344448654,
+     "rank_band_means": [
+      1.697309726891757,
+      2.504538068906494,
+      3.7373191325511654
+     ]
+    },
+    "R4": {
+     "coupling_to_discarded": 2.197216307600916e-44,
+     "epsilon": 233.77769831067184
+    },
+    "R5": {
+     "leave_one_band_out": {
+      "2p2h": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6625282134689772,
+        2.466159697239826,
+        3.6670441679882306
+       ],
+       "trace_share": 0.01264538371055562
+      },
+      "AGKYxF1pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.68362865152886,
+        2.4880141807587908,
+        3.71549613686143
+       ],
+       "trace_share": 0.012663963741707225
+      },
+      "AhtBY": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6787291468975438,
+        2.478087241447683,
+        3.7109925967397843
+       ],
+       "trace_share": 0.012657437771999496
+      },
+      "BeamAngleX": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.687327304051005,
+        2.4898489158172787,
+        3.7152802250629526
+       ],
+       "trace_share": 0.01268896152118116
+      },
+      "BeamAngleY": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6867621955610492,
+        2.4936365463539354,
+        3.7268845833878292
+       ],
+       "trace_share": 0.012670869532709229
+      },
+      "BhtBY": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6423203381014146,
+        2.44577389747792,
+        3.65282621486348
+       ],
+       "trace_share": 0.012470721213864755
+      },
+      "CCQEPauliSupViaKF": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.668006015725785,
+        2.427984190255274,
+        3.6707287448414614
+       ],
+       "trace_share": 0.01256721709575318
+      },
+      "CV1uBY": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6761245764412853,
+        2.48069187320626,
+        3.709057315619478
+       ],
+       "trace_share": 0.012623711132538032
+      },
+      "CV2uBY": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.680088840242565,
+        2.4834715381094408,
+        3.710958034728998
+       ],
+       "trace_share": 0.01261722902816563
+      },
+      "EtaNCEL": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.695144146774701,
+        2.502821767667609,
+        3.7358684131838746
+       ],
+       "trace_share": 0.012716870439213856
+      },
+      "Flux": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6194327770520605,
+        2.3963483386325652,
+        3.4473526376846015
+       ],
+       "trace_share": 0.01163142105853819
+      },
+      "FrAbs_N": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6887811483926771,
+        2.494367070413626,
+        3.7184517302020197
+       ],
+       "trace_share": 0.012680561880068915
+      },
+      "FrAbs_pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.69168397957857,
+        2.4960520741257692,
+        3.7279742858737066
+       ],
+       "trace_share": 0.012694374019642948
+      },
+      "FrCEx_N": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6883791343027241,
+        2.4927323962310726,
+        3.726652755163459
+       ],
+       "trace_share": 0.01268442070672448
+      },
+      "FrCEx_pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6887187017463565,
+        2.494601926190707,
+        3.727337322240837
+       ],
+       "trace_share": 0.012693683202023846
+      },
+      "FrElas_N": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.688054262732097,
+        2.4916174602414696,
+        3.7208535709035093
+       ],
+       "trace_share": 0.012693797085042481
+      },
+      "FrElas_pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6907412567484408,
+        2.4966243047683983,
+        3.7260189425952976
+       ],
+       "trace_share": 0.012690023346810615
+      },
+      "FrInel_N": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6877438172454755,
+        2.492508767606216,
+        3.7278384039523313
+       ],
+       "trace_share": 0.012679807689541439
+      },
+      "FrPiProd_N": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6922047451535298,
+        2.49352124001686,
+        3.7270254145283888
+       ],
+       "trace_share": 0.012705008472867076
+      },
+      "FrPiProd_pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6903298686029946,
+        2.4902235498305387,
+        3.7264982826299407
+       ],
+       "trace_share": 0.012696593875926455
+      },
+      "GEANT_Neutron": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6899680074846666,
+        2.4934024406190556,
+        3.7266389630007106
+       ],
+       "trace_share": 0.012661679756685314
+      },
+      "GEANT_Pion": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6597686182154383,
+        2.4442083911503705,
+        3.654584748918789
+       ],
+       "trace_share": 0.012541808859139126
+      },
+      "GEANT_Proton": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.690214121474937,
+        2.4943167257061623,
+        3.7224398347872283
+       ],
+       "trace_share": 0.012675412982390506
+      },
+      "HighQ2": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6721189459720414,
+        2.4649676348222944,
+        3.6946941206910004
+       ],
+       "trace_share": 0.012619663683246988
+      },
+      "LowQ2": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6810090676066527,
+        2.4655774589823736,
+        3.714131645247989
+       ],
+       "trace_share": 0.01266383760107313
+      },
+      "MFP_N": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6891540975514705,
+        2.485365405436421,
+        3.7192151623110186
+       ],
+       "trace_share": 0.012698398889603014
+      },
+      "MFP_pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6769124851889308,
+        2.4700048375546095,
+        3.691460052391166
+       ],
+       "trace_share": 0.012635898809305691
+      },
+      "MaCCQE": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.5870695292643089,
+        2.3213488431015374,
+        3.497306005605163
+       ],
+       "trace_share": 0.011945324747761117
+      },
+      "MaNCEL": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.688144791515844,
+        2.494737779725508,
+        3.727357491123956
+       ],
+       "trace_share": 0.012678907035275445
+      },
+      "MaRES": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.4311881066338716,
+        2.1304629851863996,
+        2.7011436362040975
+       ],
+       "trace_share": 0.01078480563573209
+      },
+      "MinosEfficiency": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6681025983953033,
+        2.469562061232496,
+        3.7081976435534783
+       ],
+       "trace_share": 0.012472115317917252
+      },
+      "MuonResolution": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6850483406435222,
+        2.4894557398357353,
+        3.710684874257269
+       ],
+       "trace_share": 0.012662671350676826
+      },
+      "Muon_Energy_MINERvA": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.4005109608130701,
+        2.268711433958088,
+        3.4346412774472856
+       ],
+       "trace_share": 0.010564641375931648
+      },
+      "Muon_Energy_MINOS": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.4020125373963093,
+        1.900484449400758,
+        3.056468168422561
+       ],
+       "trace_share": 0.00960708197083496
+      },
+      "MvRES": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6288776784431829,
+        2.3873815556379707,
+        3.516416787482253
+       ],
+       "trace_share": 0.01206541168788474
+      },
+      "NormDISCC": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.697309726891757,
+        2.504538068906494,
+        3.7373191325511654
+       ],
+       "trace_share": 0.012731118076389306
+      },
+      "NormNCRES": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6879415658228354,
+        2.4901472334563044,
+        3.725001361122767
+       ],
+       "trace_share": 0.012677415234567224
+      },
+      "RDecBR1gamma": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6892558536878095,
+        2.4943571348148024,
+        3.726298249598158
+       ],
+       "trace_share": 0.012680467845011222
+      },
+      "Rvn1pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6858137628241665,
+        2.4881298334240656,
+        3.724526133275424
+       ],
+       "trace_share": 0.012665756799262788
+      },
+      "Rvn2pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6609278462146675,
+        2.4426097584101667,
+        3.676170210775013
+       ],
+       "trace_share": 0.01253447002639441
+      },
+      "Rvp2pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.662209158747797,
+        2.42925353745627,
+        3.6799434194006344
+       ],
+       "trace_share": 0.012610961333253727
+      },
+      "Theta_Delta2Npi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6824244776889232,
+        2.4785436832260297,
+        3.7137507088963604
+       ],
+       "trace_share": 0.012668640063750741
+      },
+      "VecFFCCQEshape": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.6842971306281742,
+        2.4879449256375965,
+        3.717874161033851
+       ],
+       "trace_share": 0.012688413601388955
+      }
+     },
+     "leave_one_band_out_range": {
+      "labels": [
+       "APPRECIABLE"
+      ],
+      "rank_band_means": [
+       [
+        1.4005109608130701,
+        1.697309726891757
+       ],
+       [
+        1.900484449400758,
+        2.504538068906494
+       ],
+       [
+        2.7011436362040975,
+        3.7373191325511654
+       ]
+      ],
+      "trace_share": [
+       0.00960708197083496,
+       0.012731118076389306
+      ]
+     },
+     "per_band": {
+      "2p2h": {
+       "rank_band_means": [
+        0.03478151342277991,
+        0.03837837166666806,
+        0.07027496456293471
+       ],
+       "trace_share": 8.573436583368736e-05
+      },
+      "AGKYxF1pi": {
+       "rank_band_means": [
+        0.013681075362896849,
+        0.016523888147703326,
+        0.021822995689735218
+       ],
+       "trace_share": 6.71543346820805e-05
+      },
+      "AhtBY": {
+       "rank_band_means": [
+        0.01858057999421318,
+        0.02645082745881104,
+        0.02632653581138094
+       ],
+       "trace_share": 7.368030438980938e-05
+      },
+      "BeamAngleX": {
+       "rank_band_means": [
+        0.009982422840751947,
+        0.01468915308921534,
+        0.02203890748821262
+       ],
+       "trace_share": 4.2156555208145945e-05
+      },
+      "BeamAngleY": {
+       "rank_band_means": [
+        0.01054753133070777,
+        0.010901522552558782,
+        0.010434549163336339
+       ],
+       "trace_share": 6.024854368007811e-05
+      },
+      "BhtBY": {
+       "rank_band_means": [
+        0.05498938879034229,
+        0.058764171428574,
+        0.08449291768768563
+       ],
+       "trace_share": 0.0002603968625245513
+      },
+      "CCQEPauliSupViaKF": {
+       "rank_band_means": [
+        0.029303711165971864,
+        0.07655387865121965,
+        0.06659038770970423
+       ],
+       "trace_share": 0.00016390098063612674
+      },
+      "CV1uBY": {
+       "rank_band_means": [
+        0.02118515045047172,
+        0.023846195700234215,
+        0.02826181693168741
+       ],
+       "trace_share": 0.00010740694385127342
+      },
+      "CV2uBY": {
+       "rank_band_means": [
+        0.017220886649191892,
+        0.021066530797053146,
+        0.02636109782216715
+       ],
+       "trace_share": 0.00011388904822367631
+      },
+      "EtaNCEL": {
+       "rank_band_means": [
+        0.002165580117055857,
+        0.0017163012388849018,
+        0.001450719367290662
+       ],
+       "trace_share": 1.4247637175449028e-05
+      },
+      "Flux": {
+       "rank_band_means": [
+        0.07787694983969655,
+        0.10818973027392863,
+        0.28996649486656406
+       ],
+       "trace_share": 0.001099697017851117
+      },
+      "FrAbs_N": {
+       "rank_band_means": [
+        0.008528578499079774,
+        0.01017099849286775,
+        0.01886740234914574
+       ],
+       "trace_share": 5.0556196320389865e-05
+      },
+      "FrAbs_pi": {
+       "rank_band_means": [
+        0.005625747313186889,
+        0.008485994780724785,
+        0.009344846677459008
+       ],
+       "trace_share": 3.674405674635684e-05
+      },
+      "FrCEx_N": {
+       "rank_band_means": [
+        0.008930592589032758,
+        0.01180567267542143,
+        0.010666377387706554
+       ],
+       "trace_share": 4.669736966482692e-05
+      },
+      "FrCEx_pi": {
+       "rank_band_means": [
+        0.008591025145400511,
+        0.009936142715786826,
+        0.009981810310328522
+       ],
+       "trace_share": 3.743487436545909e-05
+      },
+      "FrElas_N": {
+       "rank_band_means": [
+        0.009255464159660063,
+        0.01292060866502458,
+        0.016465561647656248
+       ],
+       "trace_share": 3.732099134682529e-05
+      },
+      "FrElas_pi": {
+       "rank_band_means": [
+        0.006568470143316191,
+        0.007913764138095828,
+        0.011300189955867616
+       ],
+       "trace_share": 4.109472957869024e-05
+      },
+      "FrInel_N": {
+       "rank_band_means": [
+        0.00956590964628138,
+        0.012029301300278204,
+        0.009480728598834068
+       ],
+       "trace_share": 5.131038684786726e-05
+      },
+      "FrPiProd_N": {
+       "rank_band_means": [
+        0.005104981738227167,
+        0.011016828889633934,
+        0.01029371802277684
+       ],
+       "trace_share": 2.610960352223099e-05
+      },
+      "FrPiProd_pi": {
+       "rank_band_means": [
+        0.006979858288762292,
+        0.01431451907595548,
+        0.010820849921224925
+       ],
+       "trace_share": 3.452420046285059e-05
+      },
+      "GEANT_Neutron": {
+       "rank_band_means": [
+        0.007341719407090378,
+        0.011135628287438389,
+        0.010680169550454654
+       ],
+       "trace_share": 6.94383197039931e-05
+      },
+      "GEANT_Pion": {
+       "rank_band_means": [
+        0.03754110867631862,
+        0.06032967775612334,
+        0.08273438363237648
+       ],
+       "trace_share": 0.00018930921725017954
+      },
+      "GEANT_Proton": {
+       "rank_band_means": [
+        0.007095605416819896,
+        0.01022134320033195,
+        0.014879297763937323
+       ],
+       "trace_share": 5.570509399879927e-05
+      },
+      "HighQ2": {
+       "rank_band_means": [
+        0.0251907809197156,
+        0.039570434084199704,
+        0.042625011860165145
+       ],
+       "trace_share": 0.00011145439314231743
+      },
+      "LowQ2": {
+       "rank_band_means": [
+        0.01630065928510432,
+        0.03896060992412029,
+        0.023187487303176334
+       ],
+       "trace_share": 6.728047531617609e-05
+      },
+      "MFP_N": {
+       "rank_band_means": [
+        0.00815562934028655,
+        0.01917266347007286,
+        0.018103970240147052
+       ],
+       "trace_share": 3.2719186786292186e-05
+      },
+      "MFP_pi": {
+       "rank_band_means": [
+        0.020397241702826193,
+        0.03453323135188435,
+        0.045859080159999524
+       ],
+       "trace_share": 9.521926708361384e-05
+      },
+      "MaCCQE": {
+       "rank_band_means": [
+        0.11024019762744805,
+        0.18318922580495636,
+        0.24001312694600258
+       ],
+       "trace_share": 0.0007857933286281888
+      },
+      "MaNCEL": {
+       "rank_band_means": [
+        0.009164935375912835,
+        0.009800289180986063,
+        0.009961641427209102
+       ],
+       "trace_share": 5.221104111386098e-05
+      },
+      "MaRES": {
+       "rank_band_means": [
+        0.2661216202578852,
+        0.37407508372009435,
+        1.036175496347068
+       ],
+       "trace_share": 0.0019463124406572168
+      },
+      "MinosEfficiency": {
+       "rank_band_means": [
+        0.029207128496453766,
+        0.03497600767399789,
+        0.029121488997687253
+       ],
+       "trace_share": 0.00025900275847205305
+      },
+      "MuonResolution": {
+       "rank_band_means": [
+        0.01226138624823479,
+        0.015082329070758725,
+        0.026634258293896654
+       ],
+       "trace_share": 6.844672571247948e-05
+      },
+      "Muon_Energy_MINERvA": {
+       "rank_band_means": [
+        0.2967987660786868,
+        0.23582663494840614,
+        0.3026778551038796
+       ],
+       "trace_share": 0.002166476700457658
+      },
+      "Muon_Energy_MINOS": {
+       "rank_band_means": [
+        0.2952971894954477,
+        0.6040536195057359,
+        0.6808509641286046
+       ],
+       "trace_share": 0.0031240361055543463
+      },
+      "MvRES": {
+       "rank_band_means": [
+        0.06843204844857399,
+        0.11715651326852339,
+        0.22090234506891238
+       ],
+       "trace_share": 0.0006657063885045659
+      },
+      "NormDISCC": {
+       "rank_band_means": [
+        7.101103119136674e-23,
+        7.992806318453754e-23,
+        5.683125745484869e-22
+       ],
+       "trace_share": 1.0142446406396698e-24
+      },
+      "NormNCRES": {
+       "rank_band_means": [
+        0.009368161068921561,
+        0.0143908354501894,
+        0.012317771428398266
+       ],
+       "trace_share": 5.370284182208202e-05
+      },
+      "RDecBR1gamma": {
+       "rank_band_means": [
+        0.008053873203947404,
+        0.010180934091691646,
+        0.0110208829530076
+       ],
+       "trace_share": 5.065023137808488e-05
+      },
+      "Rvn1pi": {
+       "rank_band_means": [
+        0.011495964067590361,
+        0.016408235482428465,
+        0.01279299927574152
+       ],
+       "trace_share": 6.536127712651705e-05
+      },
+      "Rvn2pi": {
+       "rank_band_means": [
+        0.03638188067708942,
+        0.0619283104963272,
+        0.06114892177615269
+       ],
+       "trace_share": 0.00019664804999489584
+      },
+      "Rvp2pi": {
+       "rank_band_means": [
+        0.03510056814396,
+        0.07528453145022408,
+        0.057375713150531166
+       ],
+       "trace_share": 0.00012015674313557877
+      },
+      "Theta_Delta2Npi": {
+       "rank_band_means": [
+        0.014885249202833796,
+        0.025994385680464104,
+        0.02356842365480487
+       ],
+       "trace_share": 6.247801263856425e-05
+      },
+      "VecFFCCQEshape": {
+       "rank_band_means": [
+        0.013012596263582782,
+        0.016593143268897683,
+        0.01944497151731454
+       ],
+       "trace_share": 4.27044750003509e-05
+      }
+     },
+     "top5": {
+      "ranks_140_ndf": [
+       "MaRES",
+       "Muon_Energy_MINOS",
+       "Muon_Energy_MINERvA",
+       "Flux",
+       "MaCCQE"
+      ],
+      "ranks_1_73": [
+       "Muon_Energy_MINERvA",
+       "Muon_Energy_MINOS",
+       "MaRES",
+       "MaCCQE",
+       "Flux"
+      ],
+      "ranks_74_139": [
+       "Muon_Energy_MINOS",
+       "MaRES",
+       "Muon_Energy_MINERvA",
+       "MaCCQE",
+       "MvRES"
+      ],
+      "trace_share": [
+       "Muon_Energy_MINOS",
+       "Muon_Energy_MINERvA",
+       "MaRES",
+       "Flux",
+       "MaCCQE"
+      ]
+     }
+    },
+    "R6": {
+     "2p2h": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.5625364673990921,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.5625364673990921,
+      "median_abs_b_over_x0": 0.0006186211383319608,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "AGKYxF1pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.0765283194365753,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.0765283194365753,
+      "median_abs_b_over_x0": 0.0006903937208722488,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "AhtBY": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.0426425481262886,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.0426425481262886,
+      "median_abs_b_over_x0": 0.0006604995703994869,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "BeamAngleX": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.5752317291948936,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.5752317291948936,
+      "median_abs_b_over_x0": 0.0005290945937743567,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "BeamAngleY": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.8989811979262908,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.8989811979262908,
+      "median_abs_b_over_x0": 0.0005136580913664753,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "BhtBY": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.8044938636826428,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.8044938636826428,
+      "median_abs_b_over_x0": 0.0008102963186868256,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "CCQEPauliSupViaKF": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.9693332442961367,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.9693332442961367,
+      "median_abs_b_over_x0": 0.0009577623497549671,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "CV1uBY": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.6349695030821768,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.6349695030821768,
+      "median_abs_b_over_x0": 0.000685220269121532,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "CV2uBY": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.5779580403350564,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.5779580403350564,
+      "median_abs_b_over_x0": 0.0006157002656135188,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "EtaNCEL": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.9999990074905061,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.9999990074905061,
+      "median_abs_b_over_x0": 0.0001784759341620666,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "Flux": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.0658801655045972,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.0658801655045972,
+      "median_abs_b_over_x0": 0.0025075306396965856,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrAbs_N": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.2504686655728985,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.2504686655728985,
+      "median_abs_b_over_x0": 0.0003621783988253,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrAbs_pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.7040288303975475,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.7040288303975475,
+      "median_abs_b_over_x0": 0.0003900899587403466,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrCEx_N": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.9501300450036045,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.9501300450036045,
+      "median_abs_b_over_x0": 0.0004246939933553764,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrCEx_pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.1286817970831768,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.1286817970831768,
+      "median_abs_b_over_x0": 0.0004604883568857147,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrElas_N": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.6070925154196528,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.6070925154196528,
+      "median_abs_b_over_x0": 0.0004133422104989104,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrElas_pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.4303774181887854,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.4303774181887854,
+      "median_abs_b_over_x0": 0.00037926437801468626,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrInel_N": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.9954110506650866,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.9954110506650866,
+      "median_abs_b_over_x0": 0.0004476806097001618,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrPiProd_N": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.8086306373394256,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.8086306373394256,
+      "median_abs_b_over_x0": 0.00038396194917560513,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrPiProd_pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.798323018323509,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.798323018323509,
+      "median_abs_b_over_x0": 0.0003486185858650777,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "GEANT_Neutron": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.6816442206996723,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.6816442206996723,
+      "median_abs_b_over_x0": 0.0005025296678870133,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "GEANT_Pion": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.3670182065176614,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.3670182065176614,
+      "median_abs_b_over_x0": 0.0012127254426584878,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "GEANT_Proton": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.8270048883331076,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.8270048883331076,
+      "median_abs_b_over_x0": 0.0004781708751215144,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "HighQ2": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.9085418472751473,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.9085418472751473,
+      "median_abs_b_over_x0": 0.0008934142215786981,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "LowQ2": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.6402387993730541,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.6402387993730541,
+      "median_abs_b_over_x0": 0.0005814875262262246,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "MFP_N": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.5371416944994345,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.5371416944994345,
+      "median_abs_b_over_x0": 0.00045699243531109927,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "MFP_pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.44408311576950193,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.44408311576950193,
+      "median_abs_b_over_x0": 0.0008068609209767193,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "MaCCQE": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.7749412095280506,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.7749412095280506,
+      "median_abs_b_over_x0": 0.001839066325683903,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "MaNCEL": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.7883620694399223,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.7883620694399223,
+      "median_abs_b_over_x0": 0.0003920168088981724,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "MaRES": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.9331119678325314,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.9331119678325314,
+      "median_abs_b_over_x0": 0.002793557301021101,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "MinosEfficiency": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.04144769860555386,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.04144769860555386,
+      "median_abs_b_over_x0": 0.0006847830789189991,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "MuonResolution": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.9619612514987584,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.9619612514987584,
+      "median_abs_b_over_x0": 0.000620132774412267,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "Muon_Energy_MINERvA": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.1674213875867635,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.1674213875867635,
+      "median_abs_b_over_x0": 0.002664359476541703,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "Muon_Energy_MINOS": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.192222074358187,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.192222074358187,
+      "median_abs_b_over_x0": 0.004652400212093531,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "MvRES": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.6457642240395183,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.6457642240395183,
+      "median_abs_b_over_x0": 0.0012248699489932635,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "NormDISCC": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 2.211451360237096,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 2.211451360237096,
+      "median_abs_b_over_x0": 7.803642759750314e-14,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "NormNCRES": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.644117792070639,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.644117792070639,
+      "median_abs_b_over_x0": 0.00045459982346630586,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "RDecBR1gamma": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 2.383884282266028,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 2.383884282266028,
+      "median_abs_b_over_x0": 0.00045873518484443006,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "Rvn1pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.7935566649181967,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.7935566649181967,
+      "median_abs_b_over_x0": 0.00043919215431704306,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "Rvn2pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.8085091093948236,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.8085091093948236,
+      "median_abs_b_over_x0": 0.0010439148639180976,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "Rvp2pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.8441426211319599,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.8441426211319599,
+      "median_abs_b_over_x0": 0.0009225664250502774,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "Theta_Delta2Npi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.7221645728400329,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.7221645728400329,
+      "median_abs_b_over_x0": 0.0007040770517052821,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "VecFFCCQEshape": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.7347297571656367,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.7347297571656367,
+      "median_abs_b_over_x0": 0.0005102754621149795,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     }
+    },
+    "ndf": 204,
+    "rank_bands": [
+     [
+      1,
+      73
+     ],
+     [
+      74,
+      139
+     ],
+     [
+      140,
+      204
+     ]
+    ]
+   },
+   "status": "OK"
+  },
+  "R:G18": {
+   "controls": {
+    "C-ADD:R:G18": {
+     "pass": true,
+     "rank_band_rel": [
+      3.962672249321895e-16,
+      6.224131897321419e-16,
+      0.0
+     ],
+     "trace_rel": 1.7769968830581588e-16
+    },
+    "C-FINITE:R:G18": {
+     "bands": 43,
+     "pass": true
+    },
+    "C-FLUX:R:G18": {
+     "logged_n_eff": 19.060534772246488,
+     "logged_sum": 211.01200325082078,
+     "n_eff": 19.060534772246488,
+     "pass": true,
+     "sum": 211.01200325082078
+    },
+    "C-ID:R:G18": {
+     "pass": true,
+     "tol": 1e-12,
+     "worst_rel": 2.2182802676611807e-13
+    },
+    "C-PIN:R:G18": {
+     "pass": true
+    },
+    "C-PSD:C:R:G18": {
+     "max_eig": 4.482389897238389e-78,
+     "min_diag": 1.5013474628593777e-89,
+     "min_eig": 4.720289677108848e-90,
+     "pass": true,
+     "symmetry": 7.018326582438462e-17
+    },
+    "C-PSD:M:R:G18": {
+     "max_eig": 8.813194817404137e-80,
+     "min_diag": 7.638753465748563e-92,
+     "min_eig": -2.281224472913966e-95,
+     "pass": true,
+     "symmetry": 0.0
+    },
+    "C-RECON:R:G18:C_T_sum_of_blocks": {
+     "pass": true,
+     "rel": 0.0,
+     "tol": 1e-12
+    },
+    "C-RECON:R:G18:C_lat": {
+     "pass": true,
+     "rel": 0.0,
+     "tol": 1e-12
+    },
+    "C-RECON:R:G18:C_univ": {
+     "pass": true,
+     "rel": 5.5948896115589586e-21,
+     "tol": 1e-12
+    },
+    "C-X0:R:G18:mask": {
+     "cells": 205,
+     "pass": true
+    }
+   },
+   "label": null,
+   "readings": {
+    "R1": {
+     "trace_share": 0.019524215180292265,
+     "trace_share_of_C_sys": 0.027111383747850628
+    },
+    "R2": {
+     "max": 0.3591669105589766,
+     "max_cell_globalid": 13,
+     "median": 0.022411895694096313,
+     "p84": 0.057510128161172604
+    },
+    "R3": {
+     "max_r": 21.00492267092192,
+     "max_r_rank": 201,
+     "overall_mean": 3.8602696050959397,
+     "overall_mean_via_pinv": 3.860269605095941,
+     "rank_band_means": [
+      2.2413623025525595,
+      3.567479105328554,
+      5.943669697070397
+     ]
+    },
+    "R4": {
+     "coupling_to_discarded": 8.355302107161232e-54,
+     "epsilon": 420.519326888259
+    },
+    "R5": {
+     "leave_one_band_out": {
+      "2p2h": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.2024527685060113,
+        3.5062443948098907,
+        5.880861071355978
+       ],
+       "trace_share": 0.019128768667204334
+      },
+      "AGKYxF1pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.22324074663562,
+        3.538713111886985,
+        5.906457808199551
+       ],
+       "trace_share": 0.019432140156275892
+      },
+      "AhtBY": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.2025592777198457,
+        3.5276737919663734,
+        5.889155619164986
+       ],
+       "trace_share": 0.01931377743208658
+      },
+      "BeamAngleX": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.211797031553967,
+        3.5284218193451706,
+        5.905427190359994
+       ],
+       "trace_share": 0.01923648064571747
+      },
+      "BeamAngleY": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.216914600086365,
+        3.5467470417207805,
+        5.9147822229138365
+       ],
+       "trace_share": 0.019367160805954013
+      },
+      "BhtBY": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.175568913274863,
+        3.5036352702757174,
+        5.864558287149528
+       ],
+       "trace_share": 0.019214880030371424
+      },
+      "CCQEPauliSupViaKF": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.2093743614105317,
+        3.4975127057104736,
+        5.865762214112414
+       ],
+       "trace_share": 0.019226411295195756
+      },
+      "CV1uBY": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.1920076962081567,
+        3.5308710479305487,
+        5.864007778334017
+       ],
+       "trace_share": 0.019304754419444556
+      },
+      "CV2uBY": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.205816638359255,
+        3.5365359822841036,
+        5.891639160031927
+       ],
+       "trace_share": 0.019345082818479145
+      },
+      "EtaNCEL": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.2331345702725405,
+        3.551100566775975,
+        5.9247051056111815
+       ],
+       "trace_share": 0.019487003146657633
+      },
+      "Flux": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.1451713560178454,
+        3.424548729641236,
+        5.45765152919458
+       ],
+       "trace_share": 0.01803211098490746
+      },
+      "FrAbs_N": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.226375956915221,
+        3.553856026269714,
+        5.924155572093559
+       ],
+       "trace_share": 0.01946873342896151
+      },
+      "FrAbs_pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.227258645147182,
+        3.5492230715897737,
+        5.915459831025275
+       ],
+       "trace_share": 0.019463904663049644
+      },
+      "FrCEx_N": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.229303334433234,
+        3.558500272035572,
+        5.931211457074599
+       ],
+       "trace_share": 0.019466457571185015
+      },
+      "FrCEx_pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.229142851214293,
+        3.5555994217213427,
+        5.927692038342456
+       ],
+       "trace_share": 0.019471602129778328
+      },
+      "FrElas_N": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.2292256363081457,
+        3.5452316598485916,
+        5.911490685031279
+       ],
+       "trace_share": 0.01947672722340476
+      },
+      "FrElas_pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.231302671213616,
+        3.5549087627830116,
+        5.923054330236675
+       ],
+       "trace_share": 0.019479492739573716
+      },
+      "FrInel_N": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.2295711388628714,
+        3.550957556376889,
+        5.923827193632119
+       ],
+       "trace_share": 0.019438766774203614
+      },
+      "FrPiProd_N": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.229524804585775,
+        3.5474687422659104,
+        5.923083847202017
+       ],
+       "trace_share": 0.019479563102860357
+      },
+      "FrPiProd_pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.229282171002768,
+        3.555075557358175,
+        5.92944450996248
+       ],
+       "trace_share": 0.01945527518219136
+      },
+      "GEANT_Neutron": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.2272732789324405,
+        3.550794173472712,
+        5.9198164372546405
+       ],
+       "trace_share": 0.01943523009735402
+      },
+      "GEANT_Pion": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.2165104738207497,
+        3.4927660458882452,
+        5.84746075128346
+       ],
+       "trace_share": 0.019298853461610147
+      },
+      "GEANT_Proton": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.2206996380492403,
+        3.5531850770745543,
+        5.916379088223163
+       ],
+       "trace_share": 0.01944158384133813
+      },
+      "HighQ2": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.1980097088338804,
+        3.5091611247577936,
+        5.878196298762344
+       ],
+       "trace_share": 0.019290133674608134
+      },
+      "LowQ2": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.22634493139136,
+        3.542261509622652,
+        5.910303649713924
+       ],
+       "trace_share": 0.01941217410794262
+      },
+      "MFP_N": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.2292697950783733,
+        3.543720014510525,
+        5.91986256941554
+       ],
+       "trace_share": 0.019477027061502762
+      },
+      "MFP_pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.201603922859871,
+        3.4989899957048802,
+        5.840192436995839
+       ],
+       "trace_share": 0.01921171589542973
+      },
+      "MaCCQE": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.0033297852547065,
+        3.274429532806896,
+        5.453189865458368
+       ],
+       "trace_share": 0.017730650960360292
+      },
+      "MaNCEL": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.2328584689824553,
+        3.5569880238047618,
+        5.929262105987707
+       ],
+       "trace_share": 0.01948556454345532
+      },
+      "MaRES": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        1.8807042726450005,
+        2.777517218682854,
+        4.8178094756240935
+       ],
+       "trace_share": 0.017131814975829572
+      },
+      "MinosEfficiency": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.1871470024316206,
+        3.501584097873724,
+        5.863709382802765
+       ],
+       "trace_share": 0.019220052072333908
+      },
+      "MuonResolution": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.2236983729293494,
+        3.5417159940832965,
+        5.919680304365492
+       ],
+       "trace_share": 0.01934949659863287
+      },
+      "Muon_Energy_MINERvA": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.00565063882799,
+        3.2029641413238625,
+        5.251933171381332
+       ],
+       "trace_share": 0.016472433648620534
+      },
+      "Muon_Energy_MINOS": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.0180597699421803,
+        3.162389596892315,
+        4.827334440231703
+       ],
+       "trace_share": 0.015718195343362634
+      },
+      "MvRES": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.043255131230955,
+        3.163557922877747,
+        5.46122227621938
+       ],
+       "trace_share": 0.017778969270629216
+      },
+      "NormDISCC": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.2413623025525595,
+        3.567479105328554,
+        5.943669697070397
+       ],
+       "trace_share": 0.019524215180292265
+      },
+      "NormNCRES": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.229811175849743,
+        3.555968708686916,
+        5.926107742286389
+       ],
+       "trace_share": 0.019448491199822296
+      },
+      "RDecBR1gamma": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.224277750338226,
+        3.5497443310815466,
+        5.923144532939188
+       ],
+       "trace_share": 0.019452652417473813
+      },
+      "Rvn1pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.2302655420036315,
+        3.5485057230439763,
+        5.921505968247094
+       ],
+       "trace_share": 0.019461573686247968
+      },
+      "Rvn2pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.205168112953904,
+        3.49266333644043,
+        5.853619178777847
+       ],
+       "trace_share": 0.019326920782681327
+      },
+      "Rvp2pi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.184092690448169,
+        3.509859434174097,
+        5.8510623850723515
+       ],
+       "trace_share": 0.01926913897816639
+      },
+      "Theta_Delta2Npi": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.2098232694052657,
+        3.537164662413357,
+        5.881984861874868
+       ],
+       "trace_share": 0.01937478481062993
+      },
+      "VecFFCCQEshape": {
+       "label": "APPRECIABLE",
+       "rank_band_means": [
+        2.218975502717721,
+        3.5378871206573335,
+        5.9022532059403305
+       ],
+       "trace_share": 0.019416271746448676
+      }
+     },
+     "leave_one_band_out_range": {
+      "labels": [
+       "APPRECIABLE"
+      ],
+      "rank_band_means": [
+       [
+        1.8807042726450005,
+        2.2413623025525595
+       ],
+       [
+        2.777517218682854,
+        3.567479105328554
+       ],
+       [
+        4.8178094756240935,
+        5.943669697070397
+       ]
+      ],
+      "trace_share": [
+       0.015718195343362634,
+       0.019524215180292265
+      ]
+     },
+     "per_band": {
+      "2p2h": {
+       "rank_band_means": [
+        0.03890953404654821,
+        0.061234710518663166,
+        0.06280862571441853
+       ],
+       "trace_share": 0.00039544651308793134
+      },
+      "AGKYxF1pi": {
+       "rank_band_means": [
+        0.018121555916939414,
+        0.02876599344156874,
+        0.037211888870845665
+       ],
+       "trace_share": 9.207502401637373e-05
+      },
+      "AhtBY": {
+       "rank_band_means": [
+        0.038803024832713875,
+        0.03980531336218042,
+        0.0545140779054113
+       ],
+       "trace_share": 0.0002104377482056841
+      },
+      "BeamAngleX": {
+       "rank_band_means": [
+        0.029565270998592765,
+        0.03905728598338337,
+        0.03824250671040269
+       ],
+       "trace_share": 0.00028773453457479474
+      },
+      "BeamAngleY": {
+       "rank_band_means": [
+        0.024447702466194432,
+        0.020732063607773667,
+        0.028887474156560525
+       ],
+       "trace_share": 0.000157054374338252
+      },
+      "BhtBY": {
+       "rank_band_means": [
+        0.06579338927769635,
+        0.06384383505283649,
+        0.07911140992086928
+       ],
+       "trace_share": 0.0003093351499208395
+      },
+      "CCQEPauliSupViaKF": {
+       "rank_band_means": [
+        0.03198794114202805,
+        0.06996639961808028,
+        0.07790748295798242
+       ],
+       "trace_share": 0.00029780388509650907
+      },
+      "CV1uBY": {
+       "rank_band_means": [
+        0.049354606344402877,
+        0.03660805739800535,
+        0.07966191873637975
+       ],
+       "trace_share": 0.00021946076084771
+      },
+      "CV2uBY": {
+       "rank_band_means": [
+        0.03554566419330496,
+        0.030943123044450408,
+        0.052030537038470326
+       ],
+       "trace_share": 0.0001791323618131207
+      },
+      "EtaNCEL": {
+       "rank_band_means": [
+        0.00822773228001918,
+        0.016378538552579074,
+        0.018964591459215724
+       ],
+       "trace_share": 3.721203363463326e-05
+      },
+      "Flux": {
+       "rank_band_means": [
+        0.09619094653471418,
+        0.14293037568731798,
+        0.4860181678758164
+       ],
+       "trace_share": 0.0014921041953848031
+      },
+      "FrAbs_N": {
+       "rank_band_means": [
+        0.014986345637338475,
+        0.013623079058839895,
+        0.01951412497683782
+       ],
+       "trace_share": 5.54817513307545e-05
+      },
+      "FrAbs_pi": {
+       "rank_band_means": [
+        0.014103657405377711,
+        0.01825603373878013,
+        0.028209866045122607
+       ],
+       "trace_share": 6.031051724262103e-05
+      },
+      "FrCEx_N": {
+       "rank_band_means": [
+        0.012058968119325712,
+        0.008978833292981991,
+        0.012458239995798214
+       ],
+       "trace_share": 5.7757609107248976e-05
+      },
+      "FrCEx_pi": {
+       "rank_band_means": [
+        0.012219451338266525,
+        0.011879683607211302,
+        0.01597765872794073
+       ],
+       "trace_share": 5.261305051393633e-05
+      },
+      "FrElas_N": {
+       "rank_band_means": [
+        0.012136666244413756,
+        0.02224744547996227,
+        0.03217901203911777
+       ],
+       "trace_share": 4.7487956887505404e-05
+      },
+      "FrElas_pi": {
+       "rank_band_means": [
+        0.01005963133894345,
+        0.01257034254554255,
+        0.020615366833722143
+       ],
+       "trace_share": 4.472244071854955e-05
+      },
+      "FrInel_N": {
+       "rank_band_means": [
+        0.011791163689688263,
+        0.016521548951664848,
+        0.019842503438277637
+       ],
+       "trace_share": 8.544840608865143e-05
+      },
+      "FrPiProd_N": {
+       "rank_band_means": [
+        0.011837497966784594,
+        0.0200103630626438,
+        0.020585849868379677
+       ],
+       "trace_share": 4.4652077431906954e-05
+      },
+      "FrPiProd_pi": {
+       "rank_band_means": [
+        0.012080131549791527,
+        0.012403547970378848,
+        0.014225187107916168
+       ],
+       "trace_share": 6.893999810090516e-05
+      },
+      "GEANT_Neutron": {
+       "rank_band_means": [
+        0.0140890236201191,
+        0.016684931855842175,
+        0.02385325981575659
+       ],
+       "trace_share": 8.898508293824677e-05
+      },
+      "GEANT_Pion": {
+       "rank_band_means": [
+        0.024851828731809734,
+        0.07471305944030876,
+        0.09620894578693669
+       ],
+       "trace_share": 0.0002253617186821177
+      },
+      "GEANT_Proton": {
+       "rank_band_means": [
+        0.020662664503319276,
+        0.01429402825399946,
+        0.027290608847234197
+       ],
+       "trace_share": 8.263133895413528e-05
+      },
+      "HighQ2": {
+       "rank_band_means": [
+        0.04335259371867917,
+        0.058317980570760326,
+        0.06547339830805282
+       ],
+       "trace_share": 0.00023408150568413042
+      },
+      "LowQ2": {
+       "rank_band_means": [
+        0.01501737116119932,
+        0.02521759570590204,
+        0.033366047356472785
+       ],
+       "trace_share": 0.00011204107234964421
+      },
+      "MFP_N": {
+       "rank_band_means": [
+        0.01209250747418635,
+        0.02375909081802862,
+        0.023807127654857357
+       ],
+       "trace_share": 4.7188118789501466e-05
+      },
+      "MFP_pi": {
+       "rank_band_means": [
+        0.039758379692688334,
+        0.06848910962367391,
+        0.10347726007455808
+       ],
+       "trace_share": 0.00031249928486253465
+      },
+      "MaCCQE": {
+       "rank_band_means": [
+        0.2380325172978532,
+        0.2930495725216581,
+        0.49047983161202885
+       ],
+       "trace_share": 0.0017935642199319714
+      },
+      "MaNCEL": {
+       "rank_band_means": [
+        0.00850383357010435,
+        0.010491081523792176,
+        0.014407591082689481
+       ],
+       "trace_share": 3.865063683694386e-05
+      },
+      "MaRES": {
+       "rank_band_means": [
+        0.36065802990755913,
+        0.7899618866457,
+        1.125860221446303
+       ],
+       "trace_share": 0.002392400204462692
+      },
+      "MinosEfficiency": {
+       "rank_band_means": [
+        0.05421530012093877,
+        0.06589500745483001,
+        0.07996031426763199
+       ],
+       "trace_share": 0.0003041631079583587
+      },
+      "MuonResolution": {
+       "rank_band_means": [
+        0.01766392962321012,
+        0.025763111245257323,
+        0.02398939270490456
+       ],
+       "trace_share": 0.00017471858165939483
+      },
+      "Muon_Energy_MINERvA": {
+       "rank_band_means": [
+        0.23571166372456945,
+        0.3645149640046916,
+        0.6917365256890644
+       ],
+       "trace_share": 0.003051781531671731
+      },
+      "Muon_Energy_MINOS": {
+       "rank_band_means": [
+        0.2233025326103791,
+        0.40508950843623914,
+        1.116335256838694
+       ],
+       "trace_share": 0.0038060198369296292
+      },
+      "MvRES": {
+       "rank_band_means": [
+        0.19810717132160466,
+        0.4039211824508069,
+        0.4824474208510165
+       ],
+       "trace_share": 0.0017452459096630477
+      },
+      "NormDISCC": {
+       "rank_band_means": [
+        4.044977903441252e-22,
+        1.4287908014797143e-21,
+        1.4660015705985606e-20
+       ],
+       "trace_share": 2.4288825880941215e-24
+      },
+      "NormNCRES": {
+       "rank_band_means": [
+        0.011551126702816722,
+        0.011510396641638138,
+        0.017561954784008054
+       ],
+       "trace_share": 7.57239804699679e-05
+      },
+      "RDecBR1gamma": {
+       "rank_band_means": [
+        0.017084552214333394,
+        0.017734774247007524,
+        0.02052516413120881
+       ],
+       "trace_share": 7.156276281845127e-05
+      },
+      "Rvn1pi": {
+       "rank_band_means": [
+        0.011096760548927852,
+        0.018973382284577584,
+        0.0221637288233027
+       ],
+       "trace_share": 6.264149404429847e-05
+      },
+      "Rvn2pi": {
+       "rank_band_means": [
+        0.0361941895986556,
+        0.07481576888812373,
+        0.0900505182925498
+       ],
+       "trace_share": 0.00019729439761093925
+      },
+      "Rvp2pi": {
+       "rank_band_means": [
+        0.05726961210439069,
+        0.05761967115445666,
+        0.0926073119980456
+       ],
+       "trace_share": 0.00025507620212587335
+      },
+      "Theta_Delta2Npi": {
+       "rank_band_means": [
+        0.03153903314729359,
+        0.030314442915197224,
+        0.0616848351955292
+       ],
+       "trace_share": 0.0001494303696623348
+      },
+      "VecFFCCQEshape": {
+       "rank_band_means": [
+        0.022386799834838392,
+        0.02959198467122037,
+        0.04141649113006627
+       ],
+       "trace_share": 0.00010794343384358742
+      }
+     },
+     "top5": {
+      "ranks_140_ndf": [
+       "MaRES",
+       "Muon_Energy_MINOS",
+       "Muon_Energy_MINERvA",
+       "MaCCQE",
+       "Flux"
+      ],
+      "ranks_1_73": [
+       "MaRES",
+       "MaCCQE",
+       "Muon_Energy_MINERvA",
+       "Muon_Energy_MINOS",
+       "MvRES"
+      ],
+      "ranks_74_139": [
+       "MaRES",
+       "Muon_Energy_MINOS",
+       "MvRES",
+       "Muon_Energy_MINERvA",
+       "MaCCQE"
+      ],
+      "trace_share": [
+       "Muon_Energy_MINOS",
+       "Muon_Energy_MINERvA",
+       "MaRES",
+       "MaCCQE",
+       "MvRES"
+      ]
+     }
+    },
+    "R6": {
+     "2p2h": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.6279582679307976,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.6279582679307976,
+      "median_abs_b_over_x0": 0.000600377494835645,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "AGKYxF1pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.3941703336440014,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.3941703336440014,
+      "median_abs_b_over_x0": 0.0006846112782675694,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "AhtBY": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.6710400628487881,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.6710400628487881,
+      "median_abs_b_over_x0": 0.000698274516387313,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "BeamAngleX": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.8156569806471802,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.8156569806471802,
+      "median_abs_b_over_x0": 0.0007481350553576421,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "BeamAngleY": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.0340249626348341,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.0340249626348341,
+      "median_abs_b_over_x0": 0.0005003115139337148,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "BhtBY": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.5017732287047537,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.5017732287047537,
+      "median_abs_b_over_x0": 0.0006452375026471557,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "CCQEPauliSupViaKF": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.003063341025791,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.003063341025791,
+      "median_abs_b_over_x0": 0.00061434949458913,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "CV1uBY": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.5799460915515864,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.5799460915515864,
+      "median_abs_b_over_x0": 0.0007645250620674621,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "CV2uBY": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.4277709926579847,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.4277709926579847,
+      "median_abs_b_over_x0": 0.0006745355995520943,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "EtaNCEL": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.2616635215591572,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.2616635215591572,
+      "median_abs_b_over_x0": 0.00032775896252548774,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "Flux": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.08075844421605788,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.08075844421605788,
+      "median_abs_b_over_x0": 0.003191358158588497,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrAbs_N": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.0684271343605112,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.0684271343605112,
+      "median_abs_b_over_x0": 0.00047602291487971343,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrAbs_pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.7010649603095555,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.7010649603095555,
+      "median_abs_b_over_x0": 0.0003536519064251107,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrCEx_N": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.7739831719369743,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.7739831719369743,
+      "median_abs_b_over_x0": 0.0003147861662152953,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrCEx_pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.8097473491257101,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.8097473491257101,
+      "median_abs_b_over_x0": 0.00036800436890455394,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrElas_N": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.8218117196703674,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.8218117196703674,
+      "median_abs_b_over_x0": 0.00040881081820618413,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrElas_pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.740535111557194,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.740535111557194,
+      "median_abs_b_over_x0": 0.0004455866074698154,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrInel_N": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.7995743286229124,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.7995743286229124,
+      "median_abs_b_over_x0": 0.0003794155222850352,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrPiProd_N": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.53025575152133,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.53025575152133,
+      "median_abs_b_over_x0": 0.00038342548754229225,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "FrPiProd_pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.5382833041895807,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.5382833041895807,
+      "median_abs_b_over_x0": 0.0004535200386953138,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "GEANT_Neutron": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.6410403762546645,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.6410403762546645,
+      "median_abs_b_over_x0": 0.0004851336586809195,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "GEANT_Pion": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.31897495961444405,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.31897495961444405,
+      "median_abs_b_over_x0": 0.001095154848672244,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "GEANT_Proton": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.6925030728626864,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.6925030728626864,
+      "median_abs_b_over_x0": 0.0003952180756194167,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "HighQ2": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.8315801824862489,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.8315801824862489,
+      "median_abs_b_over_x0": 0.001002056506479604,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "LowQ2": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.7714829066028773,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.7714829066028773,
+      "median_abs_b_over_x0": 0.0005065385075859122,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "MFP_N": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.4848682073945359,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.4848682073945359,
+      "median_abs_b_over_x0": 0.00045207653701620883,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "MFP_pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.4513823994134742,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.4513823994134742,
+      "median_abs_b_over_x0": 0.000846874683782363,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "MaCCQE": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.8101706709572998,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.8101706709572998,
+      "median_abs_b_over_x0": 0.002419977055690259,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "MaNCEL": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 2.291087533683159,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 2.291087533683159,
+      "median_abs_b_over_x0": 0.0004887604642640933,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "MaRES": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.7882670345010437,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.7882670345010437,
+      "median_abs_b_over_x0": 0.002851792566122078,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "MinosEfficiency": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.04626437384000357,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.04626437384000357,
+      "median_abs_b_over_x0": 0.0007210389366558754,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "MuonResolution": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.8354299728840906,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.8354299728840906,
+      "median_abs_b_over_x0": 0.0005401137701714818,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "Muon_Energy_MINERvA": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.17313753466520468,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.17313753466520468,
+      "median_abs_b_over_x0": 0.002288175653567886,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "Muon_Energy_MINOS": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.18794336560377425,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.18794336560377425,
+      "median_abs_b_over_x0": 0.004267597669534541,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "MvRES": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.8391404067259779,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.8391404067259779,
+      "median_abs_b_over_x0": 0.0018587484275360438,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "NormDISCC": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 4.565217391304348,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 4.565217391304348,
+      "median_abs_b_over_x0": 1.453361048786532e-13,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "NormNCRES": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.7784585550567813,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.7784585550567813,
+      "median_abs_b_over_x0": 0.0003714346156921427,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "RDecBR1gamma": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.9235378792277418,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.9235378792277418,
+      "median_abs_b_over_x0": 0.00048307474358296723,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "Rvn1pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 1.080515903210146,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 1.080515903210146,
+      "median_abs_b_over_x0": 0.00046694050656901205,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "Rvn2pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.6099715705607195,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.6099715705607195,
+      "median_abs_b_over_x0": 0.0009109748879298725,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "Rvp2pi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.6834485709890237,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.6834485709890237,
+      "median_abs_b_over_x0": 0.0010868876382107344,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "Theta_Delta2Npi": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.6291605871279884,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.6291605871279884,
+      "median_abs_b_over_x0": 0.0006045242626806627,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     },
+     "VecFFCCQEshape": {
+      "cells_with_zero_band_variance": 0,
+      "median_abs_b_over_sigma_band": 0.7521534092789603,
+      "median_abs_b_over_sigma_band_positive_variance_cells_only": 0.7521534092789603,
+      "median_abs_b_over_x0": 0.000708555929735223,
+      "of_which_b_is_nonzero": 0,
+      "of_which_b_is_zero": 0
+     }
+    },
+    "ndf": 205,
+    "rank_bands": [
+     [
+      1,
+      73
+     ],
+     [
+      74,
+      139
+     ],
+     [
+      140,
+      205
+     ]
+    ]
+   },
+   "status": "OK"
+  }
+ },
+ "pins": {
+  "blocks_AR23": "abaebaeae6c9cb075dcb974a420dbf148809d01b2cabc8deda31f318bf6715ee",
+  "blocks_G18": "7eb657b82ae953bdf0584eda27264c52a64bcb48baea52dfc194f5efe440ea3d",
+  "cov2d_py": "76cbceba395bc6bbf8fc5cce9cf44fc0f21354dff8591cbdee578e0fddcaf8ed",
+  "data_connect_log": "957750e57a6bc43ac62b629d6d140cd0b9479c2db93744937b29a1555a3e21c3",
+  "data_g2r_json": "cd975b64402325da489ae608277faf5f6d7a7cbebe4974465f90b07c336e083f",
+  "partc_sums": "bf259be46ef1c4ddf8e6a18bfd49e1626b04f9a284e42a4024403e66ed60e25b",
+  "s5r_json_gz": "5c489837f999ea4bf8ea416be7d67fa5ba9e3107acf32cfc18f74545a1ee705e",
+  "score_AR23": "fb6d1f7fddfa18124bf097087a2f895582ef0991f9888c5ab1ce16cefbbe3079",
+  "score_G18": "27374aab74793444ee20561ced1066247b225a40067092d7d181e186128b9ec2"
+ },
+ "schema": "center2d/1",
+ "status": "OK",
+ "stopped_parts": []
+}
