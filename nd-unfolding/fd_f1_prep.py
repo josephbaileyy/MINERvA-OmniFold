@@ -14,6 +14,10 @@ pv-ladder ratios, and the same ratios in ratio_nd's format.
 
 Refuses to write into an existing --out, and refuses a prediction whose sha256 is not the one given.
 
+--truth-set pg runs the same steps for COVFIX PG's two validation truths (state/2d-closeout/covfix-20261122/
+COVFIX-DECLARATION.md section 4.2), PG_TRUTHS: genie_v3_g21 and genie_v3_g18_02a. The config
+is then config-pg.json. The default, f1, is F1's unchanged.
+
 MEASURES: the truths' reweights. CANNOT AUTHORIZE: anything.
 """
 from __future__ import annotations
@@ -34,6 +38,13 @@ import pvl_ratios  # noqa: E402
 RUNG = "L-5D-PV"
 TRUTHS = {"genie_v3_g18": "GENIE v3.04.00 G18_10a_02_11b, phi_t-sampled 5D (E_nu < 100 GeV)",
           "genie_v3_ar23": "GENIE v3.04.00 AR23_20i_00_000, phi_t-sampled 5D (E_nu < 100 GeV)"}
+# COVFIX PG's two validation truths (state/2d-closeout/covfix-20261122/COVFIX-DECLARATION.md section 4.1): u0 is
+# G21_11a_00_000 and u1 is G18_02a_00_000 (COVFIX rev 12's amendment, pending; the declared 02b, 02a_02_11b and
+# 11b are not in the product).
+PG_U0 = "genie_v3_g21"
+PG_U1 = ("genie_v3_g18_02a",)
+PG_TRUTHS = {"genie_v3_g21": "GENIE v3.04.00 G21_11a_00_000, phi_t-sampled 5D (E_nu < 100 GeV)",
+             "genie_v3_g18_02a": "GENIE v3.04.00 G18_02a_00_000, phi_t-sampled 5D (E_nu < 100 GeV)"}
 BRIDGE_DEFINITION = ("shape_ratio = the pvl-ratio/1 file's r per fine cell (C order on pt, pz, eavail, q3, W): the "
                      "gated shape ratio to GENIE 2.12 CV, k-normalised over the assigned cells, 1 elsewhere")
 
@@ -42,13 +53,25 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def f1_config(base: dict, preds: dict[str, tuple[str, str]]) -> dict:
-    if set(preds) != set(TRUTHS):
-        raise SystemExit(f"[FAIL] the F1 truths are {sorted(TRUTHS)}, got {sorted(preds)}")
+def f1_config(base: dict, preds: dict[str, tuple[str, str]], truth_set: str = "f1") -> dict:
+    if truth_set == "pg":
+        names = PG_TRUTHS
+        if len(preds) != 2 or PG_U0 not in preds or len(set(preds) & set(PG_U1)) != 1:
+            raise SystemExit(f"[FAIL] the PG truths are {PG_U0} and one of {list(PG_U1)}, got {sorted(preds)}")
+    elif truth_set == "f1":
+        names = TRUTHS
+        if set(preds) != set(TRUTHS):
+            raise SystemExit(f"[FAIL] the F1 truths are {sorted(TRUTHS)}, got {sorted(preds)}")
+    else:
+        raise SystemExit(f"[FAIL] unknown truth set {truth_set}")
     cfg = json.loads(json.dumps(base))
-    cfg["vertices"] = {k: {"label": TRUTHS[k], "path": p, "sha256": s} for k, (p, s) in sorted(preds.items())}
+    cfg["vertices"] = {k: {"label": names[k], "path": p, "sha256": s} for k, (p, s) in sorted(preds.items())}
     cfg["pc_vertex"] = None
-    cfg["f1"] = "FD-F1-DECLARATION.md: the committed pv-ladder config with the vertices replaced by the F1 truths"
+    if truth_set == "pg":
+        cfg["pg"] = ("COVFIX-DECLARATION.md section 4.2: the committed pv-ladder config with the vertices replaced by "
+                     "the PG truths")
+    else:
+        cfg["f1"] = "FD-F1-DECLARATION.md: the committed pv-ladder config with the vertices replaced by the F1 truths"
     return cfg
 
 
@@ -75,6 +98,8 @@ def main(argv=None) -> int:
     ap.add_argument("--pvl-config", type=Path, default=_ND / "pv-ladder" / "config.json")
     ap.add_argument("--pred", action="append", required=True, metavar="NAME=PATH=SHA256")
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--truth-set", choices=("f1", "pg"), default="f1",
+                    help="f1 (default): F1's two truths; pg: COVFIX PG's two validation truths")
     a = ap.parse_args(argv)
     if a.out.exists():
         raise SystemExit(f"[FAIL] refusing to write into the existing {a.out}")
@@ -85,15 +110,15 @@ def main(argv=None) -> int:
         if got != want:
             raise SystemExit(f"[FAIL] {name}: {path} sha256 {got} != {want}")
         preds[name] = (path, want)
-    cfg = f1_config(json.loads(a.pvl_config.read_text()), preds)
+    cfg = f1_config(json.loads(a.pvl_config.read_text()), preds, a.truth_set)
     a.out.mkdir(parents=True)
-    cfg_path = a.out / "config-f1.json"
+    cfg_path = a.out / f"config-{a.truth_set}.json"
     cfg_path.write_text(json.dumps(cfg, indent=1) + "\n")
     rc = pvl_ratios.main(["--config", str(cfg_path), "--rung", RUNG, "--out", str(a.out / "ratios")])
     if rc:
         return rc
     (a.out / "bridged").mkdir()
-    for name in sorted(TRUTHS):
+    for name in sorted(preds):
         src = a.out / "ratios" / RUNG / f"{name}.json"
         out = a.out / "bridged" / f"{name}.json"
         out.write_text(json.dumps(bridge(json.loads(src.read_text()), src), indent=1) + "\n")

@@ -1,0 +1,90 @@
+<!-- absence-ok: a reader's verbatim report or the dispositions of one; its "absent", "no" and "never" describe code under review, not a claim that a result does not exist -->
+
+# Round 4 dispositions (delta read of 12604016), proposals for the director
+
+Reader A: claude-personal, model claude-sonnet-5-5 (from its JSON modelUsage), --restricted --strict-mcp-config
+--tools Read,Grep,Glob, cwd = the copy dir, stdin closed. 16 turns, 42.7k output tokens, $0.83 list.
+Reader B: codex-school gpt-6.2-sol, effort high, --sandbox read-only (below).
+
+## Sonnet 5.5
+
+| # | Sev | Claim | Verified? | Proposed disposition |
+|---|-----|-------|-----------|----------------------|
+| S1 | blocker | Coverage's `--message-thresholds W/out/Messenger_pg.xml` is an `.xml` under W, so it's gated. No pin covers it, so every correct coverage trace check STOPs with `gated-mismatch` | CONFIRMED in code: pg_verify.py:455-476 gates it, and tcheck pins only the reduced spline (pg_generate.sh:174, pg_replay.sh:149). The stub coverage trace never opens it (`test_gntpc_and_coverage_roles`) | FIX: trace_check takes `--messenger PATH` for role coverage only and pins it IN CODE to MESSENGER_SHA256. The initial pid must read it (`messenger-not-opened`). `--messenger` with any other role is a refusal, so a sealed gevgen that reads Messenger_pg.xml still STOPs as `gated-mismatch`. Add a real-shape test whose coverage trace opens it, and mutants. |
+| S2 | major | gspl2root may not read the defining files, so `graphs` STOPs `defining-not-opened` | REJECTED from source: gSplineXml2Root.cxx:166 calls `RunOpt::Instance()->BuildTune()`, and :200-210 calls `GEVGDriver::Configure(init_state)`. That builds the full generator configuration (ModelConfiguration, the generator list, the CCQE and 2p2h registries via AlgConfigPool), as gevgen does | No change. B3's real gspl2root trace is the control, and a `defining-not-opened` there comes back to the director. |
+| S3 | major | A successful execve with `abs is None` (relative after a chdir, or a dirfd) is skipped. `./helper` is not watched. `execveat` isn't traced | CONFIRMED: pg_verify.py:419-420 `continue`s on `not e["abs"]`, and watched() (353-356) is false for `./helper` | FIX (no run_gevgen bytes): a successful execve whose path can't be resolved is `exec-unresolved`. Tests and a mutant. PROPOSE: add `execveat` to TRACE_SET. That changes run_gevgen_v3.sh, pg_verify, pg-probe and the probe self-test, so those bytes come back to you first. GENIE/ROOT don't fexecve to my knowledge (medium confidence), but this fails closed. |
+| S4 | major | The leak scan and `holds_public_seed` see only ASCII decimal and hex. A seed stored as a binary int in zlib-compressed ROOT baskets (published gst.root) can't be seen | CONFIRMED that the scan is byte-only (pg_lib.py:212-238), and per-task gst.root files are published (not in SEED_BEARING). UNVERIFIED whether gntpc's gst stores the run number (I have no gntpc source here) | PROPOSE (a seal change, yours and cov2d's): a ROOT-aware leak scan that inflates every ROOT compressed block (ZL by zlib, XZ by lzma). Any other algorithm (L4, ZS, CS) is a STOP, so it fails closed. Search the inflated and raw bytes for decimal, hex, and int32/int64 in both byte orders. B3's public-seed gst is the positive control: record whether 123456789 appears decompressed. Until then, `holds_public_seed: false` means "no ASCII form", and I'll word it that way. |
+| S5 | minor | The backstop waits `sleep 15` after KILL, but D6 says 30 s | CONFIRMED: pg_generate.sh:127 against RULINGS-A2.md:127-128 | FIX: poll up to 30 s after the KILL, then STOP. Adjust the test. |
+| S6 | minor→major | survivors() KILLs any live process with cwd under W except this shell and its scan. pg_generate runs with cwd W (header), so the bound binary or wrapper may share it | CONFIRMED in code (pg_generate.sh:107-120). Whether cov2d's parent has cwd W is cov2d's | FIX: exclude this shell's ancestor chain (`ps -o ppid=` walk, or /proc/<p>/stat) from survivors. Test with a parent whose cwd is W. I'm raising it to major: a kill of the binary ends the seal. |
+| S7 | minor (rule) | D2's revision equality over an 85+ min run can STOP a correct run when larsoft publishes | Not testable here. A plausible operational risk | YOUR RULE. Option: accept a revision change if every CVMFS file the run read re-hashes equal at the end (each is already pinned). Otherwise keep it as is and treat a revision STOP as re-runnable. |
+| S8 | minor | search-order over the whole config/ tree may misjudge a file read by explicit path in an unsearched subdir | Plausible (~50% by the reader). The rule is correct for GENIE's searched lookups | No change. B3's real traces show whether GENIE reads any config file outside the search, and a `search-order` hit there comes back to you. |
+| S9 | minor | `--rc 0` is hard-coded, so `strace-rc` is decorative | CONFIRMED. The exit status is enforced by `|| need` on run_gevgen's own status (set -e) | FIX (doc): drop the claim that trace-check enforces rc, or pass the step's real status. I'll pass "$?" from the step. |
+| S10 | minor | Coverage's `ls -A == coverage.trace` STOPs on any unexpected output | By design (fail closed) | FIX (message only): name the unexpected entries in the STOP. Coverage holds only the public seed. |
+| S11 | minor | A failed trace check's problem text may carry a W path, and task trace_check*.json isn't seed-bearing | Partly. Task dirs are u*/t* (no seed). A seed-named path reaches problem text only if it's watched, and publish leak-scans every outgoing byte, and a STOP publishes nothing | No change. The leak scan is the control, and it fails closed. |
+
+Rule notes from Sonnet: D3′(ii)'s one-event coverage proves full spline use only if GEVGDriver loads every needed spline at
+init. GEVGDriver.cxx:646-657 is the per-process "Need xsec spline for" check in `CreateSplines`/init, so it runs at
+Configure, not lazily. I'll quote the lines in the reply.
+
+D3′(ii) laziness, CHECKED in source: GMCJDriver::Configure (GMCJDriver.cxx:399) calls BootstrapXSecSplines (:428), and
+that calls GEVGDriver::CreateSplines (GEVGDriver.cxx:577) for every (ν, target) pair. Every interaction's
+"Need xsec spline for" check runs at init, before the first event, so the one-event run covers every needed spline.
+
+## codex-school gpt-6.2-sol (high, read-only; 227,004 tokens; inputs re-hashed unchanged after both reads)
+
+| # | Sev | Claim (short) | Verified | Proposed disposition |
+|---|-----|---------------|----------|----------------------|
+| C1 | blocker | Messenger_pg.xml is unpinned, so coverage STOPs | CONFIRMED (= S1) | FIX as S1 (the pin in code, opened by the initial pid). |
+| C2 | blocker | ROOT `RECREATE` = unlink, then `open(O_RDWR\|O_CREAT)` with no TRUNC or EXCL. genie_v3.gst.root ("genie") is gated as an input, so every gntpc STOPs | CONFIRMED in our rule (pg_verify.py:408-411). The ROOT flag fact is codex's, with cited TFile.cxx 6.22 and 6.28. It matches my memory (TFile: Unlink, then SysOpen(O_RDWR\|O_CREAT)), and Sonnet's O_EXCL guess was wrong | NEEDS YOUR RULING (it amends round-3's output rule). Proposal: an `O_CREAT` open without TRUNC or EXCL is an output only at the role's exact expected output path (gntpc: `<task>/genie_v3.gst.root`; gevgen: `gntp.<run>.ghep.root`, `input-flux.root`; graphs: its named .root). The same pid must have probed that path with an `access`/`stat` returning ENOENT first, i.e. a fresh file. Any other O_CREAT stays a read. Tests use the real ROOT sequence. |
+| C3 | blocker | The seed is in live argv (`/proc/<pid>/cmdline`: bash task, time, timeout, strace, gevgen) | CONFIRMED (F1's argv passes `--seed`/`-r`). The node's hidepid and process accounting are unverified | SEAL DESIGN, yours and cov2d's. D1 keeps F1's argv verbatim. Options: (a) B1 records the node's `/proc` mount options (hidepid) and that the allocation is exclusive, and you rule whether that boundary suffices; (b) change the seed handoff, which breaks F1 byte-identity. I can add (a) to the probe now. |
+| C4 | blocker | The publication scan is a denylist with raw text forms only. Compressed or packed seeds pass. The sums file isn't scanned | CONFIRMED (pg_lib.py:241-268). codex did NOT establish a run-seed field in stock gst (`-c` copies metadata, and F1 doesn't pass it) | FIX: an explicit export ALLOWLIST (by glob, from the inventory). Anything else in W is not published, and an unknown file is a STOP. Scan the written sums file. Plus the S4 proposal: inflate ROOT blocks, refuse unknown codecs, search int32/int64 in both byte orders, with B3's public-seed gst as the decoded positive control. The schema validation of exported ROOT products is yours to scope. |
+| C5 | blocker | An exit-only trace passes. A relative execve after a chdir is skipped. execveat is untraced. The gntpc fixture execs gevgen | CONFIRMED (= S3, plus the fixture) | FIX: every role requires the initial pid's first execve to be the role's own program, bound by manifest (gevgen, gntpc, gspl2root) or system pin (awk for reduce); an unresolved successful exec is `exec-unresolved`; fix the gntpc fixture. gntpc's GHEP input and GST output are bound by path. PROPOSE `execveat` in TRACE_SET (changes run_gevgen and pg-probe bytes, so it comes back to you first). |
+| C6 | major | A dirfd-relative read with an unwatched name (isotopes.cfg) passes. One chdir taints every pid. D7 resolves only the parent, so a final symlink escapes | CONFIRMED in code (pg_verify.py:370-400) | FIX: any successful dirfd-relative or cwd-unknown READ is a STOP whatever its name, fail closed. A successful lookup resolves the full path (realpath, not only the dirname). Failed probes stay lexical observations, as now. The per-pid cwd stays conservative: clone isn't traced, so inheritance is unknown. B3 shows whether it STOPs a real run. |
+| C7 | major | No write confinement: a write-only open outside W passes. A symlinked W/tmp is accepted. rename and link are untraced | CONFIRMED (write_only is dropped before any location check; pg_generate.sh:52 checks only `-d`) | FIX: any successful write-capable open (WRONLY, RDWR or CREAT) outside W, except /dev/null, is `write-outside-w`. W/tmp must be a real directory with mode 0700. PROPOSE rename, renameat, renameat2, link, linkat, symlink and symlinkat in TRACE_SET, batched with execveat. |
+| C8 | major | D4 ≠ GENIE's lookup (--xml-path, GXMLPATH, GXMLPATHS, GALGCONF, tune, CMC, default, then GNuMINtuple; `:;,` separators; access-probe selection; basename fallback). A separate setup's GXMLPATH is used | CONFIRMED from source, XmlParserUtils.cxx:53-125 | FIX: check the ORDER FROM THE TRACE. For each searched config read, that pid's preceding `access` probes of the basename must be exactly the expected directory prefix (each ENOENT) and end at the read path. Refuse GXMLPATHS, GALGCONF and --xml-path in the env and argv. A bare-basename read lands under W, so it's gated with no pin and STOPs. This replaces the separate-setup GXMLPATH as evidence. |
+| C9 | major | reduce compares the declared nknots, not the knot values. Duplicate names collapse. The tune is ignored | CONFIRMED (pg_verify.py:673-690) | FIX: compare (tune, key) → the full knot list (E, xsec) parsed. Duplicates in either file are a STOP. Tests change one knot value. |
+| C10 | major | One Need line satisfies coverage across both targets. A coverage-only `TUNE=` reassignment passes argv-check | CONFIRMED (pg_verify.py:616-671) | FIX: every argv (ν, target) pair needs ≥1 Need line, each Need key must be in the reduced spline's keys for its pair, and the coverage block may hold only the one N/SEED/MSG line. Any other assignment is `argv-coverage`. Already narrow: BUILT is "The spline wasn't loaded at initialization", a per-interaction line, so summation is not caught. |
+| C11 | major | ROOT libs under a system lib dir pass unhashed | CONFIRMED (so-outside-roots allows SYSTEM_LIBS; repo .so files are unhashed) | FIX: ROOT's and GENIE's libraries (libCore, libRIO, libTree, …, libGFw*, by the setup's ROOTSYS/GENIE lib dir) must resolve under the CVMFS repo. Record the sha256 of every loaded .so in the trace record, with the revision. |
+| C12 | major | A failed `mv` in seedfree prints a seed-named path to the captured stderr and still returns success | CONFIRMED (pg_generate.sh:74-79) | FIX: `mv 2>/dev/null`, count failures, STOP "seedfree: N renames failed" with no path, and recheck that no seed-named file remains. |
+| C13 | major | D6 is unbounded (`wait` after KILL), waits 15 s where D6 says 30 s, runs after publish sums exist, and a pid that left W escapes | CONFIRMED | FIX: the bounded drain (wait only for non-alive pids), a 30 s poll, and an explicit cleanup step BEFORE publish, so a STOP on the trap path deletes PG-PUBLISH-SHA256SUMS. PROPOSE (yours): run tasks in their own process group (setsid), so the scan is by pgid as well as cwd. A cgroup isn't available to us. |
+| C14 | major | B3's delete helper sets DELETED before acting. One read error aborts the loop, and leftovers are checked only on rc 0 | CONFIRMED (pg_replay.sh:76-100) | FIX: per file try, hash, then unlink in `finally`, so every unlink is tried. Afterwards no matching file may remain, or deleted.json records the STOP. The launcher checks leftovers on every exit. |
+| C15 | major | `rpm -qf` OK but `--dump` failing → `first use: no RPM record` | CONFIRMED (pg-probe.py:424-438) | FIX: a dump failure, or an owned file missing from a successful dump, is Unverified. |
+| C16 | major | The probe's trace_complete lacks no-terminal and resume-mismatch | CONFIRMED (pg-probe.py:507-538). My round-3 note overstated it | FIX: the probe carries the same completeness codes as pg_verify, with the same malformed-trace tests in both. |
+| C17 | major | `dirty=$(git status … \| wc -l)`: a git failure reads as clean | CONFIRMED (pg_generate.sh:56) | FIX: capture git status with its own exit check, then count. Same for rev-parse and deploy_unchanged. |
+| C18 | major | The B3 receipt doesn't bind identity (tune, seed, N, exec records, revision values) | CONFIRMED (pg-node-launch.py:72-96) | FIX: replay.json carries tune, public seed, N, the execs per trace and revision start and end. The launcher requires them equal to the approved values, and gated to be non-empty with the expected names per role. |
+| C19 | minor | The host control compares / and /proc st_dev directly, not through the walker. The Linux test's fd 3 is not a strace | CONFIRMED (pg_verify.py:933-937) | FIX: the positive control runs the real list_rel walker into /proc and requires its refusal code. The Linux test opens a real strace. |
+| C20 | major | The kill rule differs from RULINGS-A2.md:69 and the round-3 row | DOC STALE: your 2026-11-25 ruling ("The mutrun rule: accepted … a FAIL or ERROR with a non-zero exit kills") is what mutrun implements. RULINGS:69 and AGY-READ:114 still carry the older text | FIX (docs): RULINGS-A2.md:69 records your 11-25 ruling, and the AGY-READ round-3 row is corrected. No receipt change. |
+
+## Outcome (the director's GO and rulings; cov2d's no-objection on C3 and C4)
+
+<!-- absence-ok: "no change", "cannot be reached" and "after its code" here record dispositions and this host's test coverage, not a claim that a result does not exist -->
+
+Built with failing tests first, except `node-record`, whose test came after its code. Every finding above was fixed as
+proposed, except:
+- **S2:** rejected from source, no change.
+- **S8:** no change; B3's real traces are the control.
+- **S11:** no change; the leak scan is the control.
+- **S9:** documented. The rc trace-check gets is a step's status after `need` has passed.
+- **C2:** widened by the director: a successful unlink by the same process also shows a fresh file.
+- **C3:** option (a), with Slurm's recorded surfaces kept seed-free. B1 records `/proc`'s options on its login node.
+  pg_generate's `node-record` records the allocation on the compute node.
+- **C4:** as cov2d amended it. int32 is counted only, int64 STOPs, and the gst schema must equal B3's.
+  PG-PUBLISH-SHA256SUMS is public.
+- **S7:** a changed revision passes only if every CVMFS file read re-hashes to its pin.
+- **C13:** setsid, with the survivor scan by process group and cwd, and this shell's ancestors excluded.
+
+Two guards cannot be reached on this host: reaping the job only once it is dead, and the 30 s poll after a KILL.
+Each needs a kill the kernel delays. They are recorded in RULINGS-A2.md, round 4.
+
+**Receipts (final bytes).** pytest 216 passed, 2 skipped (`tune-support/tests-local.log`); probe 59 tests OK, 1
+skipped; install 23 OK. Mutants, under the 2026-11-25 kill rule: probe 100 of 100, install 74 of 74, A2 257 of 257
+killed, none invalid. The first full run on these fixes left 8 survivors and 1 invalid mutant. Three survivors were
+earlier tests that a round-4 check now hid:
+- M182: the allowlist refused the leak fixture before the seed scan saw it. Added: an allowlisted file holding a seed.
+- M186: the reassigned TUNE also broke the coverage tail. Added: a reassignment before the tail.
+- M61 (node): the gst's new decoded-record rule hid the size check. The size cases moved to the status file.
+Five were round-4 checks with no test yet, and each now has one: M67 (identity on the node), M96 (a failed RPM dump
+that still lists the file), M99 (`/proc` recorded by `probe()`), M256 (a gst with an empty schema in B3) and M257
+(B3's revision compare given every trace check).
+M46 left an empty `try:` and did not compile. It now drops the gst from B3's deletion patterns, so it no longer
+duplicates M254.

@@ -1,0 +1,58 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3115c0s13b0n0:
+
+host login26 | pg_verify 406c6da2849b30ae8ba937e6dba577842f014366b81769b53f1d570137e32682 | pg_pins f36b43887726ac324401a71a541a3747f2edf0e15a47ee0bfd0e21b9061e8dc7
+== pass True | problems 0 {}
+== execs
+   genie manifest /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/bin/gspl2root
+   interpreter pin /usr/bin/bash
+   interpreter pin /usr/bin/ls
+   interpreter pin /usr/bin/bash
+   interpreter pin /usr/bin/ls
+   interpreter pin /usr/bin/bash
+   interpreter pin /usr/bin/ls
+   interpreter pin /usr/bin/bash
+   interpreter pin /usr/bin/ls
+   interpreter pin /usr/bin/bash
+   interpreter pin /usr/bin/ls
+   interpreter pin /usr/bin/bash
+   interpreter pin /usr/bin/sed
+   interpreter pin /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/bin/g++
+   interpreter pin /cvmfs/larsoft.opensciencegrid.org/products/gcc/v9_3_0/Linux64bit+3.10-2.17/libexec/gcc/x86_64-pc-linux-gnu/9.3.0/cc1plus
+   interpreter pin /usr/bin/bash
+   interpreter pin /usr/bin/ls
+   interpreter pin /usr/bin/bash
+   interpreter pin /usr/bin/ldd
+   interpreter pin /lib/ld-linux.so.2
+   interpreter pin /lib64/ld-linux-x86-64.so.2
+   interpreter pin /lib64/ld-linux-x86-64.so.2
+== dotdot (allowed ones)
+   {'raw': '/..', 'resolved': '/', 'allowed': 'system directory'}
+   {'raw': '/usr/lib64/gcc/x86_64-suse-linux/14/../../../../x86_64-suse-linux/lib', 'resolved': '/usr/x86_64-suse-linux/lib', 'allowed': 'system directory'}
+   {'raw': '/cvmfs/larsoft.opensciencegrid.org/products/root/v6_22_08d/Linux64bit+3.10-2.17-e20-p392-prof/lib/../../../../../../../../../../../../usr/include/bits', 'resolved': '/usr/include/bits', 'allowed': 'system directory'}
+== counts {'gated': 1008, 'root_config': 233, 'probes': 16759, 'execs': 22, 'dotdot': 332, 'directories': 30, 'libraries': 220, 'defining_files': 9, 'problems': 0}
+== end

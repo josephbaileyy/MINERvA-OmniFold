@@ -1,0 +1,16 @@
+You are an independent reviewer. Read ONLY files inside this directory. Change nothing.
+
+DESIGN-D3PRIME-II.md proposes how a GENIE event-generation verifier should check that a run's cross-section splines
+were all loaded and used (spline coverage), and what a failed run should keep on disk. Sources: genie-R-3_04_00/
+(GENIE R-3_04_00), lane/ (the verifier, drivers, messenger config, replay runner), evidence/ (a failed run and two
+diagnostics).
+
+Two decisions are open. For each, give your recommendation and why, with file:line evidence, and name any option the
+note doesn't list that you think is better.
+
+1. The note's §3 offers OPTION A and OPTION B for the coverage check. Which should be adopted?
+2. When a PRODUCTION run (lane/pg_generate.sh) STOPs, what should happen to the public-seed coverage files it leaves
+   on disk (the event, status, GHEP and flux outputs, and the log)? Should they be deleted, as the replay does, or
+   kept?
+
+Be brief.

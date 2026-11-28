@@ -1,0 +1,16 @@
+Reading additional input from stdin...
+OpenAI Codex v0.172.0
+--------
+workdir: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/5447c307-85c6-4c72-aefa-4a094583cd14/scratchpad/r5
+model: gpt-6.2-sol
+provider: openai
+approval: on-request
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 01a214ce-2def-7112-9c94-a992a446fee9
+--------
+user
+...
+tokens used
+206,061

@@ -1,0 +1,526 @@
+[
+ {
+  "pattern": "out/splines/G21_11a_00_000_CH.xml.gz",
+  "count": 1
+ },
+ {
+  "pattern": "out/spline_check_G21_11a_00_000.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/graphs_G21_11a_00_000.root",
+  "count": 1
+ },
+ {
+  "pattern": "out/graphs_G21_11a_00_000.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/gst/genie_v3_g21_ALL.gst.root",
+  "count": 1
+ },
+ {
+  "pattern": "out/gen5d/genie_v3_g21_xsec5d.npz",
+  "count": 1
+ },
+ {
+  "pattern": "out/gen5d/genie_v3_g21_xsec5d.meta.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/prep/bridged/genie_v3_g21.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/prep/ratios/L-5D-PV/genie_v3_g21.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/reduce_G21_11a_00_000.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/graphs_G21_11a_00_000.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/hadd_u0.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/convert_u0.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/env-c_u0.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/traces/reduce_G21_11a_00_000.trace",
+  "count": 1
+ },
+ {
+  "pattern": "out/traces/graphs_G21_11a_00_000.trace",
+  "count": 1
+ },
+ {
+  "pattern": "out/trace_check_reduce_G21_11a_00_000.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/trace_check_graphs_G21_11a_00_000.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/exe_check_G21_11a_00_000.json",
+  "count": 1
+ },
+ {
+  "pattern": "run/exe_G21_11a_00_000.txt",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/exe_G21_11a_00_000.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/reduce_check_G21_11a_00_000.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/coverage_check_G21_11a_00_000.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/trace_check_coverage_G21_11a_00_000.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/coverage/G21_11a_00_000/coverage.trace",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/coverage_G21_11a_00_000.log",
+  "count": 1
+ },
+ {
+  "pattern": "run/gxmlpath_G21_11a_00_000.txt",
+  "count": 1
+ },
+ {
+  "pattern": "run/ld_library_path_G21_11a_00_000.txt",
+  "count": 1
+ },
+ {
+  "pattern": "run/awk_G21_11a_00_000.txt",
+  "count": 1
+ },
+ {
+  "pattern": "out/work/u0/t*/task.time",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u0/t*/task.log",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u0/t*/gevgen.log",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u0/t*/gntpc.log",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u0/t*/genie_v3.gst.root",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u0/t*/input-flux.root",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u0/t*/gevgen.status",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u0/t*/gevgen.trace",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u0/t*/trace_check.json",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u0/t*/gntpc.trace",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u0/t*/trace_check_gntpc.json",
+  "count": 7
+ },
+ {
+  "pattern": "out/splines/G18_02a_00_000_CH.xml.gz",
+  "count": 1
+ },
+ {
+  "pattern": "out/spline_check_G18_02a_00_000.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/graphs_G18_02a_00_000.root",
+  "count": 1
+ },
+ {
+  "pattern": "out/graphs_G18_02a_00_000.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/gst/genie_v3_g18_02a_ALL.gst.root",
+  "count": 1
+ },
+ {
+  "pattern": "out/gen5d/genie_v3_g18_02a_xsec5d.npz",
+  "count": 1
+ },
+ {
+  "pattern": "out/gen5d/genie_v3_g18_02a_xsec5d.meta.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/prep/bridged/genie_v3_g18_02a.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/prep/ratios/L-5D-PV/genie_v3_g18_02a.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/reduce_G18_02a_00_000.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/graphs_G18_02a_00_000.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/hadd_u1.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/convert_u1.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/env-c_u1.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/traces/reduce_G18_02a_00_000.trace",
+  "count": 1
+ },
+ {
+  "pattern": "out/traces/graphs_G18_02a_00_000.trace",
+  "count": 1
+ },
+ {
+  "pattern": "out/trace_check_reduce_G18_02a_00_000.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/trace_check_graphs_G18_02a_00_000.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/exe_check_G18_02a_00_000.json",
+  "count": 1
+ },
+ {
+  "pattern": "run/exe_G18_02a_00_000.txt",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/exe_G18_02a_00_000.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/reduce_check_G18_02a_00_000.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/coverage_check_G18_02a_00_000.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/trace_check_coverage_G18_02a_00_000.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/coverage/G18_02a_00_000/coverage.trace",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/coverage_G18_02a_00_000.log",
+  "count": 1
+ },
+ {
+  "pattern": "run/gxmlpath_G18_02a_00_000.txt",
+  "count": 1
+ },
+ {
+  "pattern": "run/ld_library_path_G18_02a_00_000.txt",
+  "count": 1
+ },
+ {
+  "pattern": "run/awk_G18_02a_00_000.txt",
+  "count": 1
+ },
+ {
+  "pattern": "out/work/u1/t*/task.time",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u1/t*/task.log",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u1/t*/gevgen.log",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u1/t*/gntpc.log",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u1/t*/genie_v3.gst.root",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u1/t*/input-flux.root",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u1/t*/gevgen.status",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u1/t*/gevgen.trace",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u1/t*/trace_check.json",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u1/t*/gntpc.trace",
+  "count": 7
+ },
+ {
+  "pattern": "out/work/u1/t*/trace_check_gntpc.json",
+  "count": 7
+ },
+ {
+  "pattern": "seeds.json",
+  "count": 1
+ },
+ {
+  "pattern": "PRODUCTS.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/PG-SHA256SUMS",
+  "count": 1
+ },
+ {
+  "pattern": "out/PG-PUBLISH-SHA256SUMS",
+  "count": 1
+ },
+ {
+  "pattern": "out/leak_scan.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/flux_phi_t_0_100.root",
+  "count": 1
+ },
+ {
+  "pattern": "out/argv_check.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/messenger_check.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/Messenger_pg.xml",
+  "count": 1
+ },
+ {
+  "pattern": "out/revision_start.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/revision_end.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/revision_compare.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/node_check.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/pin_hash_start.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/pin_hash_end.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/prep/config-pg.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/prep/f1-prep-SHA256SUMS",
+  "count": 1
+ },
+ {
+  "pattern": "out/prep/ratios/L-5D-PV/ratios.json",
+  "count": 1
+ },
+ {
+  "pattern": "run/queue.txt",
+  "count": 1
+ },
+ {
+  "pattern": "run/truths.txt",
+  "count": 1
+ },
+ {
+  "pattern": "run/deploy-status-before.txt",
+  "count": 1
+ },
+ {
+  "pattern": "run/deploy-status-setup.txt",
+  "count": 1
+ },
+ {
+  "pattern": "run/deploy-status-after.txt",
+  "count": 1
+ },
+ {
+  "pattern": "out/tool_check_strace.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/members_check_G21_11a_00_000.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/dbconfig_check.json",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/queue.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/flux_and_splines.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/xargs.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/flux_check.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/prep.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/products.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/sums.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/trace_check.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/tool_check_strace.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/members_check.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/dbconfig_check.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/inventory.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/env-q.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/env-a1.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/env-fc.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/env-p.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/env-w.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/env-i.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/env-l.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/reduce_check.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/coverage.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/revision.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/publish.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/node.log",
+  "count": 1
+ },
+ {
+  "pattern": "out/logs/pin_hash.log",
+  "count": 1
+ }
+]
