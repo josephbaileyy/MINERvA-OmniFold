@@ -181,7 +181,13 @@ G2R_PREPARE_PLAYLISTS = ("1A", "1B", "1C", "1D", "1E", "1F", "1G", "1L", "1M", "
 #: 2026-11-26, the director's ruling on the EVW2D run receipts: EVW2D's run.json (job 62022231), the job's own
 #: output, names its product "weights.npz". That 1.18 GB product is deliberately untracked: it lives on scratch and
 #: goes to the deposit, and its digest bf452352... is pinned in the committed SHA256SUMS (e60867ef).
+#: 2026-11-28, director's ruling 2026-11-28, CENTER2D T/D receipt: the bound driver's C-X0 note in run/center2d.json
+#: names a fetched input, "cov2d_Q_205.npz", that is deliberately untracked (the director's retention rule for the 16
+#: fetched files); its digest 7153b194... is pinned in the receipt's committed fetch/SHA256SUMS.
 EXEMPT_BARE = frozenset({
+    ("docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/run/center2d.json",
+     "b90070e12e544cc160ef8b9e44c21052f331b1e074f926e44a59543977684344", "cov2d_Q_205.npz"),
+} | {
     ("docs/orchestration/state/2d-closeout/evw2d-20261124/receipts/run-20261126/post/out/run.json",
      "445482fe642a36b1330214bd019deb6938047d932009cc2c3110aa5b192f4ade", "weights.npz"),
 } | {
