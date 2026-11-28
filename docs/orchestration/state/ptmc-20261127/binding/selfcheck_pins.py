@@ -5,7 +5,7 @@ and one flipped own digest must each STOP with C-PINS. Also: PINS.txt's make_tre
 
   python3 selfcheck_pins.py --repo REPO --merge M --tree BUILT_TREE --pins PINS.json --pins-txt PINS.txt [--rows ROWS]
 
-check_bytes also hashes the rows file. r3's rows file lives on pscratch. Without --rows, that one clause runs on a
+check_bytes also hashes the rows file. r3's rows file is on pscratch; no local copy was used. Without --rows, that one clause runs on a
 stand-in file whose digest temporarily replaces CONST["ROWS_SHA"] and the copy's "rows". It is labelled as such, and
 the PINS.json rows value is checked statically against CONST["ROWS_SHA"] instead.
 """
@@ -48,7 +48,7 @@ def main() -> int:
             args, ctx = SimpleNamespace(tree=a.tree, rows=a.rows, rows_sha256=p["rows"]), mock.patch.dict(S.CONST, {})
         else:
             stand = tmp / "rows-standin.npz"
-            stand.write_bytes(b"stand-in for r3's oofvc_rows.npz (not on this machine)\n")
+            stand.write_bytes(b"stand-in for r3's oofvc_rows.npz (on pscratch; no local copy was used)\n")
             d = hashlib.sha256(stand.read_bytes()).hexdigest()
             p = dict(p, rows=d)
             args, ctx = SimpleNamespace(tree=a.tree, rows=stand, rows_sha256=d), mock.patch.dict(S.CONST, {"ROWS_SHA": d})
@@ -72,7 +72,7 @@ def main() -> int:
     rows_static = pins["rows"] == S.CONST["ROWS_SHA"]
     results.append(rows_static)
     print(f"[{'ok' if rows_static else 'FAIL'}] PINS.json rows == M's CONST['ROWS_SHA'] ({S.CONST['ROWS_SHA'][:8]})"
-          + ("" if a.rows is not None else "; the rows clause above ran on a stand-in (r3's file is on pscratch)"))
+          + ("" if a.rows is not None else "; the rows clause above ran on a stand-in (r3's file is on pscratch; no local copy was used)"))
     txt = {ln.split()[0]: ln.split()[-1] for ln in a.pins_txt.read_text().splitlines() if ln.strip()}
     same = txt.get("make_tree.sh") == pins["own"]["make_tree.sh"]
     results.append(same)

@@ -47,7 +47,7 @@ tree built at M with this PINS.json, the results were:
 - A flipped driver digest STOPs with "C-PINS: the deploy tree's 2d-unfolding/re2/re2_driver.py".
 - A flipped `make_tree.sh` digest STOPs with "C-PINS: the scorer's own make_tree.sh".
 - `PINS.txt`'s `make_tree.sh` value equals PINS.json's `own["make_tree.sh"]`.
-- **One limitation.** `check_bytes` also hashes the rows file, and r3's `oofvc_rows.npz` lives on pscratch, not on
-  this machine. That clause therefore ran on a labelled stand-in, whose digest temporarily replaced
+- **One limitation.** `check_bytes` also hashes the rows file, and r3's `oofvc_rows.npz` is on pscratch; no local
+  copy was used. That clause therefore ran on a labelled stand-in, whose digest temporarily replaced
   `CONST["ROWS_SHA"]`. The PINS.json rows value was checked statically against M's `CONST["ROWS_SHA"]`, which also
   equals the runner's and the remote's rows pins.
