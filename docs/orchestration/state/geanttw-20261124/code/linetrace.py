@@ -29,6 +29,8 @@ HEREDOC = re.compile(r"<<-?\s*['\"]?([A-Za-z_]+)['\"]?")
 
 
 CASE_LABEL = re.compile(r"^[A-Za-z0-9_|*.-]+\)$")
+SQ_OPEN = re.compile(r"\s-c '\s*$")  # a `python3 -c '` whose body runs over the next lines
+TRAIL = re.compile(r"\s+#.*$")
 
 
 def shell_executable(text):
@@ -37,7 +39,7 @@ def shell_executable(text):
     block keyword. bash's DEBUG trap fires once per simple command, usually on its first line; inside a command
     substitution that continues over `\\` lines, bash 3.2 reports the last line instead. So the second value maps every
     continuation line to the line its command starts on, and a hit there counts for that line."""
-    lines, out, term, in_str, cont = text.splitlines(), set(), None, False, False
+    lines, out, term, in_str, cont = text.splitlines(), set(), None, None, False
     owner, start = {}, None
     for i, ln in enumerate(lines, 1):
         s = ln.strip()
@@ -46,8 +48,8 @@ def shell_executable(text):
                 term = None
             continue
         if in_str:
-            if ln.count('"') % 2 == 1:
-                in_str = False
+            if ln.count(in_str) % 2 == 1:
+                in_str = None
             continue
         was_cont, cont = cont, ln.rstrip().endswith("\\")
         if not was_cont:
@@ -55,8 +57,10 @@ def shell_executable(text):
         elif start is not None:
             owner[i] = start
         if not s.startswith("#") and ln.count('"') % 2 == 1:
-            in_str = True
-        if was_cont or CASE_LABEL.match(s):
+            in_str = '"'
+        elif not s.startswith("#") and SQ_OPEN.search(ln):
+            in_str = "'"
+        if was_cont or CASE_LABEL.match(TRAIL.sub("", s)):
             continue
         m = HEREDOC.search(ln)
         if m and not s.startswith("#"):
@@ -105,7 +109,7 @@ def main():
         hit = {}
         if trace.exists():
             for ln in trace.read_text(errors="replace").splitlines():
-                m = re.match(r"^\++([A-Za-z_.]+):(\d+):", ln)
+                m = re.match(r"^\++([A-Za-z0-9_.]+):(\d+):", ln)
                 if m:
                     hit.setdefault(m.group(1), set()).add(int(m.group(2)) - 1)
         report.append("")
@@ -116,8 +120,12 @@ def main():
             miss = sorted(exe - got)
             report.append(f"{name}: {len(got)}/{len(exe)} executable lines traced; not traced: "
                           f"{', '.join(map(str, miss)) if miss else 'none'}")
+        dark = [n for n in SH if not hit.get(n)]
     Path(args.out).write_text("\n".join(report) + "\n")
     print("\n".join(report))
+    if dark:  # a script with no trace at all is a broken trace, not an untested script
+        print(f"LINETRACE FAILED: no trace lines for {', '.join(dark)}")
+        sys.exit(1)
     if r.returncode != 0:   # a trace of a failing suite is not a receipt
         print(f"LINETRACE FAILED: pytest under trace rc={r.returncode}")
         sys.exit(1)

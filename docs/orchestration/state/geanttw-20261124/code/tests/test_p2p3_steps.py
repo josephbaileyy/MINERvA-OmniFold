@@ -51,8 +51,18 @@ class S:
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(json.dumps({"verdict": verdict}))
 
+    def p0_jobs(self, pin="COMPLETED", pat="COMPLETED"):
+        """P0's two jobs, in P0's own submissions.log and in sacct (they ran 2026-11-26, COMPLETED 0:0)."""
+        sp = self.B / "run" / "p0" / "submissions.log"
+        sp.parent.mkdir(parents=True, exist_ok=True)
+        sp.write_text("SUBMIT id=62042572 name=geanttw_p0_pin_1L limit=01:00:00 md5=a utc=x\n"
+                      "SUBMIT id=62042575 name=geanttw_p0_pat_1L limit=01:00:00 md5=b utc=x\n")
+        self.done_rows += [f"62042572|geanttw_p0_pin_1L|{pin}|353|1|60", f"62042575|geanttw_p0_pat_1L|{pat}|435|1|60"]
+        self._sacct()
+
     def p0_done(self):
         self.record("run/p0/p0_check.json", "PASS")
+        self.p0_jobs()
         g = self.B / "run" / "gates" / "ll5d_atime_post.txt"
         g.parent.mkdir(parents=True, exist_ok=True)
         g.write_text("ll5d_atime_post_utc=2026-11-15T02:21:21Z\n")
@@ -125,6 +135,31 @@ def test_c2pre_submits_one_job(st):
     assert "SUBMIT id=" in r.stdout and "name=geanttw_p2_c2pre limit=00:30:00" in r.stdout
     r2 = st.step("c2pre")
     assert r2.returncode == 8 and "geanttw_p2_c2pre was already submitted" in r2.stdout
+
+
+@pytest.mark.parametrize("pin,pat", [("FAILED", "COMPLETED"), ("COMPLETED", "FAILED")])
+def test_c2pre_and_p3slim_need_their_p0_job_completed(st, pin, pat):
+    st.record("run/p0/p0_check.json", "PASS")
+    st.p0_jobs(pin=pin, pat=pat)
+    if pin == "FAILED":
+        r = st.step("c2pre")
+        assert r.returncode == 8 and "geanttw_p0_pin_1L is FAILED, not COMPLETED" in r.stdout and not st.sbatches()
+        return
+    st.c2pre_ok()
+    st.p2_outputs()
+    st.done(*[f"geanttw_p2_{pl}" for pl in P2_PLS], "geanttw_p2_pilotref_1B")
+    r = st.step("p3slim")
+    assert r.returncode == 8 and "geanttw_p0_pat_1L is FAILED, not COMPLETED" in r.stdout
+    assert not any("geanttw_p3_slim" in s for s in st.sbatches())
+
+
+def test_p3slim_needs_the_c2pre_job_completed(st):
+    st.p0_jobs()
+    st.record("run/p3/c2pre.json", "PASS")   # a PASS left by a c2pre that then exited 20
+    st.p2_outputs()
+    st.done(*[f"geanttw_p2_{pl}" for pl in P2_PLS], "geanttw_p2_pilotref_1B")
+    r = st.step("p3slim")
+    assert r.returncode == 8 and "geanttw_p2_c2pre has 0 submissions.log lines" in r.stdout and not st.sbatches()
 
 
 def test_c2pre_needs_p0_pass(st):
@@ -214,6 +249,7 @@ def test_p3slim_needs_the_pre_check_every_dump_and_no_live_p2_job(st):
 
 
 def test_p3slim_submits_one_pass(st):
+    st.p0_jobs()
     st.c2pre_ok()
     st.p2_outputs()
     st.done(*[f"geanttw_p2_{pl}" for pl in P2_PLS if pl != "1M"], "geanttw_p2_pilotref_1B")
@@ -318,7 +354,8 @@ def test_p3extract_waits_for_the_unfolds(st):
 
 def test_the_cap_gate_refuses_over_eight_node_hours(st):
     st.p0_done()
-    st.h.sacct.write_text("100|geanttw_p3_unf_pin_GEANT_Pion_0|RUNNING|0|1|960\n")   # 16 h held at 0.5 node-h/h
+    st.live_rows = ["100|geanttw_p3_unf_pin_GEANT_Pion_0|RUNNING|0|1|960"]   # 16 h held at 0.5 node-h/h
+    st._sacct()   # beside P0's COMPLETED rows, which c2pre now needs
     r = st.step("c2pre")
     assert r.returncode == 8 and "the cap gate refuses geanttw_p2_c2pre" in r.stdout and not st.sbatches()
 

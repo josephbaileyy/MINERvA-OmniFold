@@ -145,8 +145,11 @@ submit() {    # submit NAME LIMIT SBATCH_ARGS... : fence, cap gate, sbatch, then
 }
 need_completed() {   # need_completed NAME...: each predecessor submitted once and COMPLETED in sacct, so an output
                      # left by a job that exited nonzero (20: a failed after-stamp) is never consumed
+  need_completed_in "${SP}" "$@"
+}
+need_completed_in() {   # need_completed_in SUBMISSIONS NAME...: the same, for jobs another step's log recorded (P0)
   snapshot "${B}/run/sacct.psv"
-  ${SYSPY} -I "${D}/${CODE_REL}/geanttw_sacct.py" completed --sacct "${B}/run/sacct.psv" --submissions "${SP}" "$@" \
+  ${SYSPY} -I "${D}/${CODE_REL}/geanttw_sacct.py" completed --sacct "${B}/run/sacct.psv" --submissions "$1" "${@:2}" \
     > "${B}/run/p2p3/completed.json" || stop "a predecessor is not COMPLETED in sacct: $(cat "${B}/run/p2p3/completed.json")"
 }
 UNIS=(GEANT_Neutron_0 GEANT_Neutron_1 GEANT_Pion_0 GEANT_Pion_1 GEANT_Proton_0 GEANT_Proton_1)
@@ -178,6 +181,7 @@ esac
 case "${STEP}" in
 c2pre)
   [[ "$(verdict "${B}/run/p0/p0_check.json")" == PASS ]] || stop "P0's check is not PASS"
+  need_completed_in "${B}/run/p0/submissions.log" geanttw_p0_pin_1L   # c2pre reads its dump
   submit geanttw_p2_c2pre 00:30:00 -c 2 --mem=16G "${P3SB}" c2pre "${B}" "${D}"
   exit 0 ;;
 p2pilot)
@@ -205,7 +209,8 @@ p3slim)   # one pass over UOMNI: the full C2, the three slims and their read-bac
   done
   [[ -s "${B}/run/p0/pat/runEventLoopOmniFold_GEANTTW_pat_1L.root" ]] || stop "no P0 patched output for 1L"
   fence '^geanttw_p2_' "P2 jobs still live"
-  need_completed $(printf 'geanttw_p2_%s ' "${P2_PLS[@]}") geanttw_p2_pilotref_1B
+  need_completed geanttw_p2_c2pre $(printf 'geanttw_p2_%s ' "${P2_PLS[@]}") geanttw_p2_pilotref_1B
+  need_completed_in "${B}/run/p0/submissions.log" geanttw_p0_pat_1L   # the slim reads its dump
   submit geanttw_p3_slim 02:00:00 -c 2 --mem=32G "${P3SB}" slim "${B}" "${D}"
   exit 0 ;;
 p3unf)
