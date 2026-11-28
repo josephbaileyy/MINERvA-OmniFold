@@ -2,12 +2,14 @@
 import importlib.util
 import subprocess
 import sys
+import os
 from pathlib import Path
 
 import pytest
 
 CODE = Path(__file__).resolve().parents[1]
-REPO = CODE.parents[4]
+REPO = Path(os.environ.get("GEANTTW_REPO") or CODE.parents[4])   # a copy of code/ is told the repo
+assert (REPO / "2d-unfolding").is_dir(), f"no repository at {REPO}: set GEANTTW_REPO"
 _s = importlib.util.spec_from_file_location("p2l", CODE / "p2_limits.py")
 L = importlib.util.module_from_spec(_s)
 _s.loader.exec_module(L)
@@ -65,3 +67,9 @@ def test_an_empty_manifest_refuses(tmp_path):
 def test_it_prints_the_limits(tmp_path):
     p = run("--repo", fake_repo(tmp_path, {}))
     assert p.returncode == 0 and p.stdout.count("\n") == 11
+
+
+def test_repo_is_required(capsys):
+    with pytest.raises(SystemExit) as e:
+        L.main([])
+    assert e.value.code == 2 and "--repo" in capsys.readouterr().err

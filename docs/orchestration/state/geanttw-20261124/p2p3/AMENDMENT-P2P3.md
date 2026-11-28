@@ -36,8 +36,16 @@ mc_background [407,731, 415,551).
     `strace -f -y`.
   - read/pread64 are traced on **one pilot playlist only**, and that playlist's overhead is measured against an
     untraced run of the same playlist.
-  - The extra cost is **[0.05, 0.15] node-h, an ESTIMATE** that the pilot's measurement replaces. If the pilot's
-    overhead exceeds it, P2 stops and reports before tracing more.
+  - The extra cost of the read trace is **at most 0.027 node-h at the limit**: 1B's 00:42:00 at 0.0391 node-h/h.
+    An earlier "[0.05, 0.15] node-h" estimate could never be reached at that limit. The director replaced it on
+    2026-11-27 with the ratio bound below.
+  - The pilot playlist is **1B** only. The job names, the cap gate's family and the event-loop job all refuse a
+    pilot on any other playlist.
+  - **The pilot gate** (`geanttw_sacct.py pilot`, run by `p2run` before any other playlist is submitted):
+    - both pilots, by the ids their SUBMIT lines name, are COMPLETED in sacct;
+    - ElapsedRaw(pilot) / ElapsedRaw(pilotref) ≤ 3, the factor P2's limits already assume (the director's ruling,
+      2026-11-27). The measured extra cost is recorded too.
+    Otherwise `p2run` STOPs to the director. Either way it writes `run/p2p3/pilot.json`.
   - C0e's revised families (#1394) apply to every traced playlist.
 - **Job names** are `geanttw_p2_<PL>`, plus `geanttw_p2_pilot_<PL>` and `geanttw_p2_pilotref_<PL>` for the pilot
   pair.
@@ -55,7 +63,11 @@ mc_background [407,731, 415,551).
   by cov2d's grant (B) of 2026-11-27, verbatim in `cov2d-grants-20261127.md`, on P0's terms:
   - (a) the atime-post is 2026-11-15T02:21:21Z;
   - (b) cov2d's connects refuse while any geanttw_ job is live;
-  - (c) each job logs atime_ns and mtime_ns, with UTC, immediately before and after the binary;
+  - (c) each job logs atime_ns and mtime_ns, with UTC, immediately before and after the binary. Under cov2d's (C)
+    amendment 3, this is fail-closed and covers UOMNI too. The event-loop job stamps the NuE file and UOMNI by stat,
+    with `ino=` showing which file the prefix's symlinked path reached (`geanttw_build.sh:140`). It refuses before
+    the binary if a stamp cannot be taken, and exits 20 if the after-stamps cannot be written. The fence's scratch
+    file is made under `B/run`;
   - the fence runs at start and before the binary.
 
 ## A3. P3: three slim omnifiles and the unchanged driver
@@ -67,14 +79,38 @@ Stage C's universe argv (`sbatch_prod.sh:83-84, 116`):
     --omnifile SLIM --flux-universe-file FLUXU --verbose --mcfile MCFILE --iters 5 --use-weights
     --estimator lgbm --bkg-mode purity --out OUT --universe GEANT_<b>:<i> --seed 42 --branch-select derived
 
-The pinned inputs are MCFILE `d40aea69…`, FLUXU `5eecae84…` and helper `e9623412…`.
+The pinned inputs are MCFILE `d40aea69…` and helper `e9623412…`. Both MCFILE and FLUXU are under `baseline_flux`,
+cov2d's protected entry 6, and cov2d's (C) amendment 3 sets the terms for them:
+- **MCFILE** is read in place, plainly, by the driver in each of the 18 unfolds. It is hashed exactly once, by the
+  slim job, which records its sha256, size and mtime in `run/p3/slim.json`. Each unfold STOPs before the driver
+  unless MCFILE's size and mtime_ns are that record's.
+- **FLUXU** (`flux_integral_universes_MEFHC.root`) is in the argv only, as in Stage C. No geanttw step reads or
+  hashes it. In the driver, the guard `if universe_branch is not None and universe_branch[0] == "Flux":` is at
+  `unfold_2d_omnifold_unbinned.py:1709`. Inside it, `:1710-1711` call `load_flux_universe_bins` (`:148`), the
+  only function that opens the file, and `:1715` only builds a string. Outside that branch, the path appears only
+  as a string in the output's `runConfig` metadata (`:1340`). So a GEANT universe never opens the file.
+- Each unfold logs the atime_ns and mtime_ns of UOMNI, the NuE file, MCFILE and FLUXU, by stat, before and after
+  the driver. It exits 21, a deviation to report to cov2d, if FLUXU's atime or mtime moves or MCFILE's mtime moves.
+  MCFILE's atime is not checked, because the grant allows the driver's plain read of it, and that read can move it.
+  cov2d confirmed this reading of condition 1-a on 2026-11-27 (22:26:12Z, verbatim in `cov2d-grant-C-20261127.md`).
 
 **The seed.** S5's July GEANT unfolds (`sweeps.json` `15b57de9…`, `pn/GEANT_*`) record no seed. Seed 42 comes from
 S4(ii)'s "July identity at seed 42" (`stageC/production/REPORT.md:65`). C3 tests it.
 
 **The slims, under the director's terms.**
-1. **C3 gates the slim approach.** C3 runs on the pinned slim. If it does not reproduce S5's three GEANT band
-   matrices to C3's tolerance, that is a STOP before any patched run. The slim is never adjusted to make C3 pass.
+1. **C3 gates the slim approach.** C3 runs on the six pinned-slim unfolds. It PASSes only if both of these hold,
+   each at rel = max|a − b| / max|b| ≤ 1e-10:
+   - each pinned universe vector equals S5's own July unfold of that universe (`sweeps.json` `pn/GEANT_*`, under
+     `2d-unfolding/uq/`, not a protected path). `sweeps.json` and each July file are sha-checked through O_NOATIME.
+     Their histograms are then read by S5's own `Cells` through ROOT, a plain read, as for every `xsec.root`.
+   - each band's `build_repair.wcov` over the pinned pair equals `production_cov.npz`'s `band_GEANT_<b>`.
+   A band covariance cannot see a common shift or a swapped pair, so the per-universe comparison is required too.
+   Anything else is a STOP before any patched run, and the slim is never adjusted to make C3 pass. On PASS, `c3.json`
+   records the sha256 of each pinned `xsec.root`. Each override unfold and `extract all`, in both
+   `geanttw_remote.sh` and the job itself, refuses unless `c3.json` is PASS and those six outputs still hash to
+   it. A missing file or a missing recorded hash never matches. R3 refuses unless the extracted vectors' six pinned
+   outputs are the ones C3 recorded. R3 has no "not reproduced" path, and it STOPs on any override band that is not
+   finite and PSD.
 2. **What the driver reads.** With `--branch-select derived`, the four loaders read exactly
    `expected_loader_branches` (`unfold_2d_omnifold_unbinned.py:991-1030`). A run refuses if the access-derived
    list differs from that rule (`:1044-1053`) or if a selected branch has no address (`:960-972`). For a GEANT
@@ -103,28 +139,54 @@ S4(ii)'s "July identity at seed 42" (`stageC/production/REPORT.md:65`). C3 tests
    - every name the driver probes with `GetBranch` or `FindObject` for these six universes to be present in the
      slim exactly when it is present in UOMNI.
 
-   A test runs the unchanged driver on a slim missing one branch and requires it to refuse.
-3. **Location and lifetime.** The slims are written only under `/pscratch/sd/j/josephrb/geanttw-20261124/p3/`, as
-   `slim-pinned.root` and `slim-patched.root`, and never to CFS. Each one's size is checked against the estimate
-   derived from its branches' header sizes. They are deleted once P3's receipts are accepted, unless Joseph says
-   to keep them.
+   No test runs the driver on a slim. A slim missing a selected branch is caught twice. C1-a and `verify` require
+   each tree's branch set to be exactly the 37, and the driver itself refuses a selected branch with no address
+   (`:960-972`). The lateral names the driver probes for these universes (`_universe_kine_branches`) are checked
+   absent in UOMNI (C1-a) and in every slim (`verify`). The top-level `pTmu_fiducial_nucleons` is checked absent
+   in UOMNI (C1-a), and each slim's top-level key set must be exactly the four trees and four TParameters.
+3. **Location and lifetime.** The slims are exactly `/pscratch/sd/j/josephrb/geanttw-20261124/p3/slim-pinned.root`,
+   `slim-pinned-override.root` and `slim-patched.root` (cov2d's (C) amendment 3), never on CFS or HPSS. They are
+   deleted by literal path once P3's receipts are accepted, unless Joseph says to keep them.
 4. **Price, an ESTIMATE until the branch sizes are read.**
    - The slims hold 37 branches out of UOMNI's 952, plus the four TParameters. **C4 measured** those branches at
      5,857,242,672 B compressed and 6,458,621,231 B uncompressed, so a slim is about 5.9 GB, and two are about 12 GB.
-   - The build is one read of about 5.86 GB compressed, plus 2 × about 250 MB of key branches. It runs as one job,
-     `geanttw_p3_slim`, and writes three slims of about 5.9 GB each, about 18 GB in all. It costs [0.02, 0.10]
-     node-h and 0:20–1:00 wall. That is an ESTIMATE from the read size, until measured.
+   - **One open, one pass** (cov2d's (C) amendment 3, (2)). In the slim job, `geanttw_p3_slim`, only
+     `p3_slim.py build` opens UOMNI, once. In that open it runs C1-a on the headers and records each TParameter's
+     class and value and each slim branch's typename. It then walks UOMNI once, playlist block by playlist block in
+     hadd order. It reads the 37 + 2 granted branches (about 5.86 GB compressed, plus 2 × about
+     250 MB of key branches) and the 12 dumps in step. From memory, it runs the full C2, the tail checks and both
+     overrides, and writes the three slims, about 18 GB in all. Every UOMNI read goes through one function that
+     refuses a branch outside the 37 + 2 (condition 2-a). That list is written out in `p3_slim.py`, not derived
+     from the slim list. The job records the branches it read and fails unless they are exactly those 39.
+   - **Read-back without re-reading UOMNI.** The build records the sha256 of every array it writes, per slim, tree,
+     branch and playlist block. `slim_tparams.py` writes each slim's TParameters from build's record, with
+     UOMNI's class and value, and never opens UOMNI. `verify` reads each slim back, never UOMNI, and recomputes
+     those digests. Against build's record, it also checks the key set, each TParameter's class and value, the
+     branch sets, the typenames, the entry counts and the absent lateral probes. Only on success does it write `run/p3/slim.json`
+     (PASS, each slim's sha256 and size, MCFILE's sha256, size and mtime). No unfold runs without that file.
+   - **Memory.** Each block is held whole, so the job is sized from the largest, 1M's 5,917,406 signal rows. It
+     asks for 2 CPUs and 32G and refuses before reading if any C4 block exceeds 6,500,000 rows. The 32G request is
+     twice the 16G one, so the cap gate charges it 0.0782 node-h/h (twice 0.0391). Its limit is 02:00:00, a
+     ceiling of 0.16 node-h. The wall is an ESTIMATE of 0:30–1:30 until measured.
    - The unfolds are 6 universes × 3 slims = 18 jobs, `geanttw_p3_unf_<slim>_GEANT_<b>_<i>`, at Stage C's request
      (128 CPUs, 243840M, shared, billed at 0.5 node-h/h) and Stage C's 00:30:00 limit. At the limits that is
      **4.5 node-h, a ceiling**. **This exceeds the declaration's P3 estimate of [1.4, 2.0] node-h.** There are two
      reasons. The director's D2 ruling (a) adds a third slim, so there are 18 unfolds where the declaration counted 12.
-     And the figure is a ceiling, at Stage C's 00:30:00 limit for every unfold, not an estimate from measured walls. With P0 (about 0.03), P2 (about 0.4
-     expected and 1.2 at the limits) and the pilot pair (about 0.02), the campaign's ceiling is about 5.8 node-h,
-     inside the 8.0 cap that `geanttw_sacct.py cap` enforces. The patched and pinned+override unfolds run only after
+     And the figure is a ceiling, at Stage C's 00:30:00 limit for every unfold, not an estimate from measured walls. From the code's own rates and
+     limits, the P2–P3 ceiling is 5.93 node-h:
+     - P2's 10 playlists at their limits, 1.16;
+     - the pilot pair, 0.05;
+     - the C2 pre-check, 0.02;
+     - the slim job, 0.16;
+     - the two extracts, 0.04;
+     - the 18 unfolds, 4.5.
+     With P0's spent 0.0086 (`../receipts-p0/README.md:58`), the campaign's ceiling is about 5.94 node-h. That is inside the 8.0 cap that
+     `geanttw_sacct.py cap` enforces. The patched and pinned+override unfolds run only after
      C3 PASSes on the pinned ones.
-5. **The patched slim** is the pinned slim with only the six `w_truth_GEANT_*` columns replaced, in
-   `mc_signal_reco` and `mc_truth_denom`, by P2's values concatenated in hadd order. **Control C-PATCH:** every
-   other branch, key and TParameter equals the pinned slim bitwise.
+5. **The patched slim** is UOMNI's columns with only the six `w_truth_GEANT_*` columns replaced, in `mc_signal_reco`
+   and `mc_truth_denom`, by P2's values in hadd order, with the misses then overridden (D2). **Control C-PATCH:**
+   every other branch is UOMNI's array as read, written once to each slim. The per-block digests show it read back
+   unchanged in all three slims. The keys and TParameters are checked as for C-SLIM.
 6. **cov2d's (C)** is asked fresh, on exactly these terms:
    - an in-place, plain ROOT read of UOMNI's branches listed above;
    - a slim copy of that protected content, written to geanttw's root;
@@ -142,15 +204,21 @@ S4(ii)'s "July identity at seed 42" (`stageC/production/REPORT.md:65`). C3 tests
   - `slim-pinned.root`: UOMNI's columns. C3 runs on this one.
   - `slim-pinned-override.root`: UOMNI's columns, with each playlist's misses overridden from UOMNI's own
     `mc_truth_denom` `w_truth_GEANT_*`.
-  - `slim-patched-override.root`: P2's columns, with the misses overridden from P2's `mc_truth_denom`.
+  - `slim-patched.root`: P2's columns, with the misses overridden from P2's `mc_truth_denom`.
 - **The matching.** Misses are matched to truth rows by the exact key (MC, MC_pz, w_truth), as an ordered
   subsequence per playlist (`p3_slim.py override_block`, after `build_miss_override.py`).
   - For the pinned override, UOMNI's `w_truth` in both trees is read for the key only, under cov2d's (C)
     amendment 2. It is written into no slim.
-  - Each playlist's block size and miss count come from P2's dumps. Their sums must equal UOMNI's entries and
-    `nTruthOnlyMisses`.
-- **Control C-MISS, exact, on both overrides.** Per playlist and universe, the multiset of (MC, MC_pz, w_truth_<u>)
-  over the overridden signal rows equals the denominator's. Any per-bin sum taken in exact arithmetic (fsum) then
+  - Each playlist's block sizes are C4's per-playlist counts (`c4/c4.out`). Each dump must have exactly those, and
+    their sums must be UOMNI's entries. Each playlist's miss count is its dump's `nTruthOnlyMisses`. The counts must
+    sum to UOMNI's `nTruthOnlyMisses`, and `hasTruthOnlyMisses` must agree.
+  - **The tail check**, on UOMNI's block and on the dump's (`build_miss_override.py:94-100`): the block's last
+    n_miss signal rows have `sim_pass` 0, `sim` −9999, and every `w_truth_GEANT_*` equal to `w_truth`, the CV
+    proxy. The row before them must not have `sim` −9999, so n_miss is the whole run of misses. This assumes
+    that no reco-matched row carries the −9999 sentinel. If one does, the build STOPs on the cluster. The pinned
+    override therefore uses UOMNI's own blocks, with the miss counts checked against UOMNI's rows.
+- **Control C-MISS, exact, on both overrides.** Per playlist and universe, the multiset of
+  (MC, MC_pz, w_truth, w_truth_<u>) over the overridden signal rows equals the denominator's. Any per-bin sum taken in exact arithmetic (fsum) then
   agrees bitwise, in any order.
 
 **R3, re-read for three slims** (the director's ruling; the declaration's R3 compares "patched" with "pinned"):
@@ -158,7 +226,8 @@ S4(ii)'s "July identity at seed 42" (`stageC/production/REPORT.md:65`). C3 tests
   mean those two. T′ = T + [G(patched+override) − G(pinned+override)].
 - **The proxy's removal alone** is G(pinned+override) − G(pinned). It is reported separately, per cell, with the
   same formulas.
-- **C3 is unchanged.** It runs on the plain pinned slim against S5's band matrices, and gates the slim approach.
+- **C3** runs on the plain pinned slim, against S5's July unfolds and band matrices (A3, term 1), and gates the
+  slim approach.
 - **The record answers "which convention, and why"** (the director's note of 2026-11-27, from App. A's review). The
   pinned toolkit's GEANT hadron universes return 1 for truth-tree events, so they leave the efficiency denominator at
   CV. Upstream's `3e411c0d` reweights the denominator too.
@@ -174,8 +243,11 @@ S4(ii)'s "July identity at seed 42" (`stageC/production/REPORT.md:65`). C3 tests
 **A declared deviation in C2.** The declaration's C2 compares "every branch except the six targets" with the
 production dump. **This package does not.** The reason is cov2d's (C) grant, which allows UOMNI to be read for the
 slim's branches only, plus the two w_truth key branches. So:
-- the pre-check compares all 37 slim branches, targets included, of P0's pinned 1L dump with UOMNI's 1L slice;
-- the full C2 compares the 25 non-target slim branches of P2's 12 patched dumps, in hadd order, with UOMNI.
+- the pre-check compares all 37 slim branches, targets included, of P0's pinned 1L dump with UOMNI's 1L slice. Each of
+  the dump's trees must first have exactly C4's 1L count, so the read is exactly the granted slice;
+- the full C2 compares the 25 non-target slim branches of P2's 12 patched dumps, in hadd order, with UOMNI. It runs
+  inside the slim job's one pass, from memory, before any slim is written. A difference writes `run/p3/c2.json`
+  FAIL and stops the job. There is no separate C2 job.
 
 C2's purpose is that P3 sees the same events, in the same order, on every branch it reads. The 25 branches,
 kinematics included, are every branch P3 reads, so the purpose still holds. The director accepted this deviation on
@@ -200,22 +272,29 @@ All files are in `../code/`. Every step that runs is the committed bytes at the 
 
 | file | role |
 |---|---|
-| `geanttw_remote.sh` | P2–P3's login-node steps, each on its own GO and a fresh cov2d ack:<br>• `c2pre`, then `p2pilot` (the 1B pair), then `p2run` (the other 10 playlists)<br>• `c2`, then `p3slim`<br>• `p3unf pin`, then `p3extract pin`, which writes `run/p3/c3.json`<br>• `p3unf rest`, which needs `c3.json` to say PASS, then `p3extract all`<br>Each step runs `ready`, the ack, the fence and `p2_limits.py --check`. `submit()` refuses a name already submitted, re-fences, passes the cap gate, runs sbatch and logs one SUBMIT line. |
+| `geanttw_remote.sh` | P2–P3's login-node steps, each on its own GO and a fresh cov2d ack:<br>• `c2pre`, then `p2pilot` (the 1B pair), then `p2run` (the other 10 playlists)<br>• `p3slim`, after every P2 output and with no P2 job live<br>• `p3unf pin`, which needs `slim.json` PASS, then `p3extract pin`, which writes `run/p3/c3.json`<br>• `p3unf rest`, which needs `c3.json` PASS, then `p3extract all`, which needs it too<br>`p2run` first runs the pilot gate (A2).<br>Each step runs `ready`, the ack, the fence and `p2_limits.py --check`. `submit()` refuses a name already submitted, re-fences, passes the cap gate, runs sbatch and logs one SUBMIT line. |
 | `geanttw_connect.sh` | the Mac side, as for P0, with the new step names |
 | `geanttw_evloop.sbatch` | P2's event loop: the trace modes (A2), the launch with `BASH_ENV` and `ENV` unset, and the `^(cov2d|t2a|covfix_)` fence |
-| `geanttw_p3.sbatch` | the C2 and P3 jobs: `c2pre`, `c2`, `slim`, `unf` and `extract pin|all`. Each checks its name and limit, runs the fence at start and before the work, and checks the deploy's scripts against their committed blobs. Modes that read UOMNI size-check it by stat and log its atime/mtime before and after. `unf` runs Stage C's universe argv, with the driver, helper, MC, flux and `setup_salloc_env.sh` checked. |
-| `geanttw_sacct.py` | the fence, and the cap gate with each job family's rate (A3) |
+| `geanttw_p3.sbatch` | the C2 pre-check and the P3 jobs: `c2pre`, `slim`, `unf` and `extract pin|all`. Each checks its name and limit, runs the fence at start and before the work (its scratch file under B), and checks the deploy's scripts against their committed blobs. Every mode stamps UOMNI and the NuE file before and after, plus MCFILE in `slim` and MCFILE and FLUXU in `unf`, and stops if a stamp cannot be written. `c2pre` and `slim` size-check UOMNI by stat. `unf` runs Stage C's universe argv after the slim.json and C3 checks (A3), with the driver, helper and `setup_salloc_env.sh` hashed. Each sourcing of the ROOT setup resets `TMPDIR` to `B/run/tmp`, because `setup_salloc_env.sh:24` points it outside B. |
+| `geanttw_sacct.py` | the fence; the cap gate, charging each job the larger of its family's rate and its sacct AllocTRES billing / 256 (the director's ruling), with both totals reported; the pilot gate (A2); and `completed`, which every step uses to require its predecessor jobs COMPLETED in sacct, so an output left by a job that exited nonzero is never consumed |
 | `p2_limits.py` → `p2_limits.txt` | P2's per-playlist limits (A2) |
-| `c2_check.py` | C2 and its pre-check, bitwise, on entry order, under cov2d's grant (A3) |
-| `p3_slim.py`, `slim_tparams.py` | the three slims: C1-a, the builds, C-MISS, C-SLIM and C-PATCH (A3) |
-| `p3_readout.py` | `extract` (S5's own `Cells`), `c3` and `r3` (A3, R3) |
+| `c2_check.py` | C2's pre-check, bitwise, on entry order; and the slim lists and `same_bits` the full C2 uses (A3) |
+| `p3_slim.py`, `slim_tparams.py` | `build`, UOMNI's one open (C1-a, the metadata record, the one pass: C2, the tail checks, C-MISS, the three slims and their digests); `slim_tparams.py` from the record; `verify` from the record and the slims (C-SLIM, C-PATCH, `slim.json`) (A3, D2) |
+| `p3_readout.py` | `extract` (S5's own `Cells`; with `pin`, also S5's July unfolds), `c3` and `r3` (A3, R3) |
 | `tests/` | `test_p2_limits.py`, `test_c2_check.py`, `test_p3_slim.py`, `test_p3_readout.py`, `test_p3_sbatch.py` and `test_p2p3_steps.py`, plus the P2 and family tests added to `test_shell_scripts.py` and `test_provenance_sacct.py` |
 | `mutation.py` → `mutation.txt`, `linetrace.py` → `linetrace.txt` | P0's receipts discipline, now covering every P2–P3 file |
 
 **Not run, and not to be:** nothing here runs before GEANTTW-BINDING-P2P3 and a GO for each step. Every UOMNI read
-is through an O_NOATIME file object, the stricter method cov2d's (C) amendment 2 allows, except one.
-`slim_tparams.py` opens UOMNI through ROOT, which is a plain read, to copy its four TParameters. The slim job logs
-UOMNI's atime/mtime before and after its whole run. The driver reads only the slims, never UOMNI.
+is through an O_NOATIME file object, the stricter method cov2d's (C) amendment 2 allows. There are two: the C2
+pre-check's 1L slice, and the slim build's one open. The slim job stamps UOMNI, the NuE file and MCFILE before and
+after its whole run. The driver reads only the slims, never UOMNI.
+
+**Rates.** SHARED_RATE 0.0391 is 10/256. P0's two jobs had AllocCPUS 10 for a 2-CPU request, so the declaration's
+rate already charges the allocated CPUs.
+
+**The readout's own bindings.** `extract` records the sha256 of its npz in the sidecar. `c3` and `r3` refuse an npz
+that is not the one its sidecar names. `extract` refuses any override slim unless `--c3` names a PASSing c3.json
+whose six pinned hashes are the live outputs'. R3 also STOPs on a negative variance in T′.
 
 ## A6. Open before the package head
 

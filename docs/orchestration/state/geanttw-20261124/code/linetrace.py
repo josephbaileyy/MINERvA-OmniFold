@@ -13,6 +13,7 @@ Everything runs in a scratch copy of this directory; nothing here is modified.
     header, a heredoc body, the inside of a multi-line quoted string, a continuation line or a case label. The report lists every executable line that never appears in the trace.
 """
 import argparse
+import os
 import re
 import shutil
 import subprocess
@@ -90,7 +91,8 @@ def main():
                       f"source = {work}\n")
         env_cmd = [sys.executable, "-m", "coverage", "run", f"--rcfile={rc}", "-m", "pytest", "tests", "-q",
                    "-p", "no:cacheprovider"]
-        r = subprocess.run(env_cmd, cwd=work, capture_output=True, text=True)
+        r = subprocess.run(env_cmd, cwd=work, capture_output=True, text=True,
+                           env=dict(os.environ, GEANTTW_REPO=str(HERE.parents[4])))
         report.append(f"pytest under trace: rc={r.returncode}; {r.stdout.strip().splitlines()[-1] if r.stdout else ''}")
         subprocess.run([sys.executable, "-m", "coverage", "combine", f"--rcfile={rc}"], cwd=work,
                        capture_output=True, text=True)
@@ -116,6 +118,9 @@ def main():
                           f"{', '.join(map(str, miss)) if miss else 'none'}")
     Path(args.out).write_text("\n".join(report) + "\n")
     print("\n".join(report))
+    if r.returncode != 0:   # a trace of a failing suite is not a receipt
+        print(f"LINETRACE FAILED: pytest under trace rc={r.returncode}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

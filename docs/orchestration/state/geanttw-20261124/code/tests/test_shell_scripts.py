@@ -253,6 +253,9 @@ fi
         e["GEANTTW_NAME"] = overrides.pop("name", self.job_name)
         e["GEANTTW_TIMELIMIT"] = overrides.pop("timelimit", "01:00:00" if self.phase == "p0" else "01:00:00")
         e["GEANTTW_ANATUPLE_ROOT"] = str(self.anatuple_root) + "/"
+        uomni = self.B.parent / "uomni_stamp.root"
+        uomni.exists() or uomni.write_bytes(b"u")
+        e["GEANTTW_TEST_UOMNI"] = str(uomni)
         e["ROOT628_CONDA"] = str(self.bindir / "conda")
         e["ROOT628_PREFIX"] = str(self.conda_env)
         e.pop("CONDA_PREFIX", None)
@@ -846,13 +849,33 @@ exec "$@"
         assert env_seen == ["MNV101_DUMP_UNIVERSES=GEANT_Neutron,GEANT_Pion,GEANT_Proton"]
         assert (h.B / "run" / "p0" / h.build / "binary_conda.txt").read_text().strip() == str(h.conda_env)
 
-    def test_nue_logged_before_and_after(self, tmp_path):
+    def test_nue_and_uomni_logged_before_and_after(self, tmp_path):
         h, r, _ = self.run(tmp_path)
         assert r.returncode == 0, r.stderr
-        lines = [ln for ln in r.stdout.splitlines() if "] NUE " in ln]
-        assert [ln.split()[2] for ln in lines] == ["before", "after"], r.stdout
+        lines = [ln for ln in r.stdout.splitlines() if "] NUE " in ln or "] UOMNI " in ln]
+        assert [ln.split()[1:3] for ln in lines] == [["NUE", "before"], ["UOMNI", "before"], ["NUE", "after"],
+                                                      ["UOMNI", "after"]], r.stdout
         for ln in lines:
-            assert "atime_ns=" in ln and "mtime_ns=" in ln and "utc=" in ln
+            assert "atime_ns=" in ln and "mtime_ns=" in ln and "utc=" in ln and "ino=" in ln
+
+    def test_a_stamp_that_cannot_be_taken_refuses_before_the_binary(self, tmp_path):
+        h, r, _ = self.run(tmp_path, GEANTTW_TEST_UOMNI=str(tmp_path / "absent.root"))
+        assert r.returncode == 2 and "cannot log the stamps before the binary" in r.stderr
+
+    def test_an_unmakeable_run_dir_refuses(self, tmp_path):
+        h = EvloopHarness(tmp_path)
+        h.slurm_stubs()
+        shutil.rmtree(h.B / "run")
+        (h.B / "run").write_text("a file in the way\n")
+        r = h.run_full()
+        assert r.returncode == 2 and f"REFUSE: cannot make {h.B}/run" in r.stderr
+
+    def test_the_fences_file_stays_under_b(self, tmp_path):
+        h = EvloopHarness(tmp_path)
+        h.slurm_stubs()
+        _write_stub(h.bindir, "mktemp", f'echo "MKTEMP $*" >> "{tmp_path}/mktemp.log"; exec /usr/bin/mktemp "$@"')
+        assert h.run_full().returncode == 0
+        assert set((tmp_path / "mktemp.log").read_text().splitlines()) == {f"MKTEMP -p {h.B}/run"}
 
     def test_p0_runs_under_strace(self, tmp_path):
         h, r, seen = self.run(tmp_path)
@@ -912,9 +935,14 @@ exec "$@"
         assert (h.B / "run" / "p2" / "pat" / "runEventLoopOmniFold_GEANTTW_pat_pilotref_1B.root").exists()
         assert not list((h.B / "run" / "p2" / "pat").glob("strace.*"))
 
-    @pytest.mark.parametrize("name", ["geanttw_p2_1A", "geanttw_p2_pilotref_1A"])
-    def test_the_binary_runs_without_bash_env_or_env(self, tmp_path, name):
-        h, r, _ = self.p2_run(tmp_path, name, BASH_ENV="/opt/cray/pe/lmod/lmod/init/bash", ENV="/etc/profile")
+    @pytest.mark.parametrize("name", ["geanttw_p2_pilot_1A", "geanttw_p2_pilotref_1C"])
+    def test_the_pilot_pair_runs_on_1b_only(self, tmp_path, name):
+        h, r, _ = self.p2_run(tmp_path, name, pl=name[-2:])
+        assert r.returncode == 2 and f"REFUSE: the pilot pair runs on 1B only, got '{name[-2:]}'" in r.stderr
+
+    @pytest.mark.parametrize("name,pl", [("geanttw_p2_1A", "1A"), ("geanttw_p2_pilotref_1B", "1B")])
+    def test_the_binary_runs_without_bash_env_or_env(self, tmp_path, name, pl):
+        h, r, _ = self.p2_run(tmp_path, name, pl=pl, BASH_ENV="/opt/cray/pe/lmod/lmod/init/bash", ENV="/etc/profile")
         assert r.returncode == 0, r.stderr
         assert (h.B / "run" / "p2" / "pat" / "binary_shellenv.txt").read_text() == "BASH_ENV=unset ENV=unset\n"
         assert "launch env: BASH_ENV and ENV unset" in r.stderr
@@ -1952,7 +1980,7 @@ class TestEachRemoteStopIsItsOwn:
     def test_connect_names_each_refusal(self, tmp_path):
         h = RemoteHarness(tmp_path)
         r = h.connect("p2")
-        assert r.returncode == 9 and "REFUSED: step must be deploy, build, p0, check, c2pre, p2pilot, p2run, c2, p3slim, p3unf or p3extract, got 'p2'" in r.stdout
+        assert r.returncode == 9 and "REFUSED: step must be deploy, build, p0, check, c2pre, p2pilot, p2run, p3slim, p3unf or p3extract, got 'p2'" in r.stdout
         r = h.connect("deploy", m="abc")
         assert r.returncode == 9 and "REFUSED: M 'abc' is not a 40-hex commit" in r.stdout
         r = h.connect("deploy", m="f" * 40)

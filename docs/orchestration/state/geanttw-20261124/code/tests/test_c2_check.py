@@ -54,7 +54,7 @@ def ws(tmp_path):
 def run(ws, *args, door=True):
     env = {k: v for k, v in os.environ.items() if not k.startswith("C2_TEST")}
     if door:
-        env.update(C2_TEST="1", C2_TEST_OFFSET=json.dumps(ws["off"]))
+        env.update(C2_TEST="1", C2_TEST_OFFSET=json.dumps(ws["off"]), C2_TEST_N=json.dumps({t: N["1L"] for t in C2.TREES}))
     out = ws["tmp"] / "c2.json"
     p = subprocess.run([sys.executable, "-I", str(CODE / "c2_check.py"), *args, "--uomni", str(ws["tmp"] / "uomni.root"),
                         "--json", str(out)], capture_output=True, text=True, env=env)
@@ -88,42 +88,26 @@ def test_pre_fails_on_a_wrong_offset(ws):
     assert {"mc_signal_reco:MC", "mc_truth_denom:MC_pz", "data:measured"} <= set(r["differ"])
 
 
-def test_full_passes_on_the_non_target_branches(ws):
-    p, r = run(ws, "full", "--dumps", *map(str, ws["dumps"]))
-    assert p.returncode == 0, p.stdout + p.stderr
-    assert "C2-FULL PASS: 25/25" in p.stdout
 
 
-def test_full_fails_on_a_changed_non_target_value(ws):
-    pl = "1M"
-    ws["parts"][pl]["mc_signal_reco"]["sim_pz"][0] = -1.0
-    i = PLS.index(pl)
-    write(ws["dumps"][i], {t: {b: (v * 1.5 if b in C2.TARGETS.get(t, []) else v) for b, v in ws["parts"][pl][t].items()}
-                           for t in C2.TREES})
-    p, r = run(ws, "full", "--dumps", *map(str, ws["dumps"]))
-    assert p.returncode == 1 and r["differ"] == ["mc_signal_reco:sim_pz"]
 
 
-def test_full_fails_when_playlists_are_out_of_hadd_order(ws):
-    d = list(ws["dumps"])
-    d[0], d[1] = d[1], d[0]
-    p, r = run(ws, "full", "--dumps", *map(str, d))
-    assert p.returncode in (1, 2)
 
 
-def test_full_needs_twelve_dumps(ws):
-    p, _ = run(ws, "full", "--dumps", *map(str, ws["dumps"][:11]))
-    assert p.returncode == 2 and "full takes --dumps with the 12 playlists' dumps" in p.stdout
 
 
-def test_full_refuses_a_dump_argument(ws):
-    p, _ = run(ws, "full", "--dump", str(ws["dumps"][0]), "--dumps", *map(str, ws["dumps"]))
-    assert p.returncode == 2 and "full takes --dumps with the 12 playlists' dumps" in p.stdout
 
 
-def test_pre_refuses_dumps(ws):
-    p, _ = run(ws, "pre", "--dump", str(ws["tmp"] / "pin_1L.root"), "--dumps", *map(str, ws["dumps"]))
-    assert p.returncode == 2 and "pre takes --dump only" in p.stdout
+
+
+def test_full_is_no_longer_a_mode(ws):
+    p, _ = run(ws, "full", "--dump", str(ws["tmp"] / "pin_1L.root"))
+    assert p.returncode == 2 and "invalid choice" in p.stderr
+
+
+def test_pre_needs_a_dump(ws):
+    p, _ = run(ws, "pre")
+    assert p.returncode == 2 and "pre takes --dump" in p.stdout
 
 
 def test_uomni_is_required(ws):
@@ -155,3 +139,21 @@ def test_outside_the_tests_no_noatime_is_unusable(ws):
 def test_the_pinned_offset_is_c4s():
     s = (CODE / "c2_check.py").read_text()
     assert 'OFFSET_1L = {"data": 2778489, "mc_background": 407731, "mc_truth_denom": 20716792, "mc_signal_reco": 20716792}' in s
+
+
+
+@pytest.mark.parametrize("cut", [1, -1])
+def test_pre_refuses_a_dump_that_is_not_1ls_size(ws, cut):
+    """An oversized dump would read past the granted 1L slice; a truncated one could pass on a matching prefix."""
+    part = ws["parts"]["1L"]
+    if cut > 0:
+        part = {t: {b: np.r_[v, v[:1]] for b, v in c.items()} for t, c in part.items()}
+    else:
+        part = {t: {b: v[:-1] for b, v in c.items()} for t, c in part.items()}
+    write(ws["tmp"] / "pin_1L.root", part)
+    p, _ = run(ws, "pre", "--dump", str(ws["tmp"] / "pin_1L.root"))
+    assert p.returncode == 2 and "not C4's 1L count" in p.stdout
+
+
+def test_the_real_1l_counts_are_c4s():
+    assert C2.N_1L == {"data": 49872, "mc_background": 7820, "mc_truth_denom": 383848, "mc_signal_reco": 383848}

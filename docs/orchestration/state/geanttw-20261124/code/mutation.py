@@ -107,6 +107,9 @@ def mutants():
     return out
 
 
+REPO = HERE.parents[4]
+
+
 def run_one(mut):
     name, line, a, b, rep, op = mut
     with tempfile.TemporaryDirectory(prefix="geanttw-mut-") as td:
@@ -119,7 +122,7 @@ def run_one(mut):
         lines[line - 1] = ln[:a] + rep + ln[b:]
         p.write_text("".join(lines))
         os.chmod(p, (HERE / name).stat().st_mode)
-        env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
+        env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1", GEANTTW_REPO=str(REPO))
         try:
             owners = OWNER[name] if isinstance(OWNER[name], tuple) else (OWNER[name],)
             r = subprocess.run([sys.executable, "-m", "pytest", *owners, "-q", "-x", "-p", "no:cacheprovider"],
@@ -137,6 +140,13 @@ def main():
     ap.add_argument("--only", help="restrict to one source file name")
     args = ap.parse_args()
     ms = [m for m in mutants() if not args.only or m[0] == args.only]
+    # The positive control: each owner's tests must pass on an unmutated copy, run exactly as the mutants are.
+    # Without it, a test that cannot run in the copy "kills" every mutant (a copy that could not find the repo did).
+    for name in sorted({m[0] for m in ms}):
+        n, _l, _o, v = run_one((name, 1, 0, 0, "", "control"))
+        if v != "SURVIVED":
+            print(f"CONTROL FAILED: {name}'s tests do not pass on an unmutated copy ({v}); no mutant is scored")
+            sys.exit(2)
     results = []
     with cf.ThreadPoolExecutor(max_workers=args.jobs) as ex:
         for res in ex.map(run_one, ms):

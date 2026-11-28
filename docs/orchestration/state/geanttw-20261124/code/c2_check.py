@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""geanttw C2 and its pre-check (p2p3/AMENDMENT-P2P3.md A1, A3): our dumps against UOMNI, bitwise, on entry order.
+"""geanttw C2's pre-check (p2p3/AMENDMENT-P2P3.md A1, A3; cov2d's (C3)): P0's pinned 1L dump against UOMNI's 1L slice.
 
-    python3 -I c2_check.py pre  --uomni UOMNI --dump P0_PINNED_1L.root [--json OUT]
-    python3 -I c2_check.py full --uomni UOMNI --dumps D_1A ... D_1P (hadd order) [--json OUT]
+    python3 -I c2_check.py pre --uomni UOMNI --dump P0_PINNED_1L.root [--json OUT]
 
-pre:  P0's pinned 1L dump against UOMNI's 1L slice: rows [OFFSET_1L[t], OFFSET_1L[t] + n) of each tree, for all 37
-      slim branches. Both sides are pinned semantics, so the six GEANT truth targets are compared too.
-full: the 12 patched dumps, concatenated in hadd order, against UOMNI's whole trees, for the 25 non-target slim
-      branches: the 37 minus the six w_truth_GEANT_* in mc_signal_reco and in mc_truth_denom.
+pre:  rows [OFFSET_1L[t], OFFSET_1L[t] + N_1L[t]) of each tree (C4's 1L block; the dump must have exactly N_1L[t]), for all 37 slim branches, bitwise, on entry order. Both
+      sides are pinned semantics, so the six GEANT truth targets are compared too. The full C2 runs inside the slim
+      job's single pass over UOMNI (p3_slim.py build, cov2d's (C) amendment 3); this module gives it SLIM,
+      NON_TARGET and same_bits.
 
 The branch lists are cov2d's (C) grant: UOMNI is read for these branches only (c4/c4_header.py's SLIM). UOMNI is
 read through an O_NOATIME file object, so a Python without O_NOATIME refuses. Values are compared as raw bytes
@@ -32,10 +31,12 @@ SLIM = {
 TARGETS = {t: [f"w_truth_{g}" for g in G] for t in ("mc_truth_denom", "mc_signal_reco")}
 NON_TARGET = {t: [b for b in SLIM[t] if b not in TARGETS.get(t, [])] for t in TREES}
 OFFSET_1L = {"data": 2778489, "mc_background": 407731, "mc_truth_denom": 20716792, "mc_signal_reco": 20716792}  # c4.out
+N_1L = {"data": 49872, "mc_background": 7820, "mc_truth_denom": 383848, "mc_signal_reco": 383848}   # c4.out, 1L's blocks
 NOATIME_OPTIONAL = False
 if os.environ.get("C2_TEST"):   # the tests' only door: no O_NOATIME needed, and a small 1L offset
     NOATIME_OPTIONAL = True
     OFFSET_1L = json.loads(os.environ["C2_TEST_OFFSET"])
+    N_1L = json.loads(os.environ["C2_TEST_N"])
 
 
 class Unusable(Exception):
@@ -56,11 +57,16 @@ def same_bits(a, b):
 
 
 def compare(uomni, ours, branches, start):
-    """{tree: {branch: verdict}} for UOMNI rows [start[t], start[t] + len(ours[t])) against our arrays."""
+    """{tree: {branch: verdict}} for UOMNI rows [start[t], start[t] + N_1L[t]) against our arrays. Every tree of the
+    dump must have exactly C4's 1L count before any UOMNI row is read, so the read is the granted 1L slice and
+    nothing past it, and a truncated dump cannot pass on a matching prefix."""
+    for t in branches:
+        got = {len(v) for v in ours[t].values()}
+        if got != {N_1L[t]}:
+            raise Unusable(f"{t}: the dump has {sorted(got)} rows, not C4's 1L count {N_1L[t]}")
     res, bad = {}, []
     for t, names in branches.items():
-        n = len(next(iter(ours[t].values())))
-        stop = start[t] + n
+        stop = start[t] + N_1L[t]
         if stop > uomni[t].num_entries:
             raise Unusable(f"{t}: rows [{start[t]}, {stop}) exceed UOMNI's {uomni[t].num_entries}")
         res[t] = {}
@@ -86,35 +92,19 @@ def read_dump(path, branches):
     return out
 
 
-def concat(parts, branches):
-    return {t: {b: np.concatenate([p[t][b] for p in parts]) for b in names} for t, names in branches.items()}
-
-
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("mode", choices=("pre", "full"))
+    ap.add_argument("mode", choices=("pre",))
     ap.add_argument("--uomni", required=True)
     ap.add_argument("--dump")
-    ap.add_argument("--dumps", nargs="+")
     ap.add_argument("--json")
     a = ap.parse_args(argv)
     try:
-        if a.mode == "pre":
-            if not a.dump or a.dumps:
-                raise Unusable("pre takes --dump only")
-            branches, start = SLIM, OFFSET_1L
-            ours = read_dump(a.dump, branches)
-        else:
-            if a.dump or not a.dumps or len(a.dumps) != 12:
-                raise Unusable("full takes --dumps with the 12 playlists' dumps, in hadd order")
-            branches, start = NON_TARGET, {t: 0 for t in TREES}
-            ours = concat([read_dump(d, branches) for d in a.dumps], branches)
+        branches, start = SLIM, OFFSET_1L
+        ours = read_dump(a.dump, branches) if a.dump else None
+        if ours is None:
+            raise Unusable("pre takes --dump")
         uomni = open_uomni(a.uomni)
-        if a.mode == "full":
-            short = {t: (len(next(iter(ours[t].values()))), uomni[t].num_entries) for t in TREES
-                     if len(next(iter(ours[t].values()))) != uomni[t].num_entries}
-            if short:
-                raise Unusable(f"entry counts differ from UOMNI's: {short}")
         res, bad = compare(uomni, ours, branches, start)
     except Unusable as e:
         print(f"C2-{a.mode.upper()} UNUSABLE: {e}")

@@ -32,8 +32,8 @@ bail() { echo "REFUSED: $*"; exit 9; }
 stop() { echo "STOP: $*"; echo "== geanttw connect ${STEP} rc=8 $(date -u +%FT%TZ)"; exit 8; }
 
 [[ -z "${GEANTTW_SSH:-}" || -n "${GEANTTW_TEST_B:-}" ]] || bail "GEANTTW_SSH is honoured only by the tests"
-case "${STEP}" in deploy|build|p0|check|c2pre|p2pilot|p2run|c2|p3slim|p3unf|p3extract) ;;
-  *) bail "step must be deploy, build, p0, check, c2pre, p2pilot, p2run, c2, p3slim, p3unf or p3extract, got '${STEP}'" ;; esac
+case "${STEP}" in deploy|build|p0|check|c2pre|p2pilot|p2run|p3slim|p3unf|p3extract) ;;
+  *) bail "step must be deploy, build, p0, check, c2pre, p2pilot, p2run, p3slim, p3unf or p3extract, got '${STEP}'" ;; esac
 [[ "${M}" =~ ^[0-9a-f]{40}$ ]] || bail "M '${M}' is not a 40-hex commit"
 [[ "${COV2D_ACK}" =~ ${ACK_RE} ]] || bail "a fresh cov2d ack (a token) is required for every connect"
 [[ "${NUE_ACK}" =~ ${ACK_RE} ]] || bail "the NuE exception's ack (a token) is required for every connect"

@@ -61,6 +61,7 @@ elif [[ "${PHASE}" == p2 ]]; then
   [[ "${NAME}" == "geanttw_p2_pilot_${PL}" ]] && { VARIANT=pilot_; TRACE=read; }
   [[ "${NAME}" == "geanttw_p2_pilotref_${PL}" ]] && { VARIANT=pilotref_; TRACE=none; }
   WANT="geanttw_p2_${VARIANT}${PL}"
+  [[ -z "${VARIANT}" || "${PL}" == 1B ]] || { say "REFUSE: the pilot pair runs on 1B only, got '${PL}'"; exit 2; }
   [[ "${GBUILD}" == pat ]] || { say "REFUSE: p2 requires build=pat, got '${GBUILD}'"; exit 2; }
   [[ "${PL}" != 1L ]] || { say "REFUSE: p2 reuses P0's 1L output; it does not run 1L"; exit 2; }
   [[ -n "${P2_LIMITS}" && -n "${P2_LIMITS_SHA}" ]] || { say "REFUSE: p2 requires a limits file and its sha256"; exit 2; }
@@ -99,7 +100,7 @@ trc=$?
 CODE="${DEPLOY}/docs/orchestration/state/geanttw-20261124/code"
 fence_check() {
   local label="$1" psv since rc
-  psv=$(mktemp) || { say "REFUSE: mktemp failed (${label})"; exit 2; }
+  psv=$(mktemp -p "${B}/run") || { say "REFUSE: mktemp failed (${label})"; exit 2; }   # its file stays under B
   since=$(python3 -c 'import datetime; print((datetime.date.today() - datetime.timedelta(14)).isoformat())')
   sacct -X -n -P -S "${since}" -o JobID,JobName,State,ElapsedRaw,NNodes,TimelimitRaw > "${psv}" 2>&1 \
     || { say "REFUSE: sacct failed (${label})"; rm -f "${psv}"; exit 2; }
@@ -107,6 +108,7 @@ fence_check() {
   rm -f "${psv}"
   [[ ${rc} -eq 0 ]] || { say "REFUSE: fenced jobs are live, or sacct is unreadable (${label}, rc ${rc})"; exit 2; }
 }
+mkdir -p "${B}/run" || { say "REFUSE: cannot make ${B}/run"; exit 2; }
 fence_check "at start"
 
 # --- refuse if MNV101_DUMP_POINTCLOUD is set ---
@@ -192,13 +194,16 @@ export MNV101_DUMP_UNIVERSES=GEANT_Neutron,GEANT_Pion,GEANT_Proton
 # --- NuE file logging ---
 NUE="${B}/prefix-${GBUILD}/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"
 [[ -f "${NUE}" ]] || { say "REFUSE: the NuE file ${NUE} is missing"; exit 2; }
-nue() {
+UOMNI="${GEANTTW_TEST_UOMNI:-/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root}"
+stamps() {   # cov2d's carried conditions, fail-closed (amendment 3): the NuE file's and UOMNI's atime_ns and mtime_ns,
+             # by stat (never an open), with UTC; ino shows which file a symlinked path reached
   python3 -c "
 import os,sys,time
-s=os.stat(sys.argv[1])
-print('[geanttw-evloop] NUE %s utc=%s atime_ns=%d mtime_ns=%d size=%d' % (
-    sys.argv[2], time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
-    s.st_atime_ns, s.st_mtime_ns, s.st_size))" "${NUE}" "$1"
+utc = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+st = [(n, os.stat(p)) for n, p in (('NUE', sys.argv[1]), ('UOMNI', sys.argv[2]))]
+for n, s in st:
+    print('[geanttw-evloop] %s %s utc=%s atime_ns=%d mtime_ns=%d size=%d ino=%d' % (
+        n, sys.argv[3], utc, s.st_atime_ns, s.st_mtime_ns, s.st_size, s.st_ino))" "${NUE}" "${UOMNI}" "$1"
 }
 
 say "env: $(env | grep '^MNV101_' | sort | tr '\n' ' ')"
@@ -215,7 +220,7 @@ say "launch env: BASH_ENV and ENV unset"
 # --- second fence check immediately before the binary ---
 fence_check "immediately before the binary"
 
-nue before
+stamps before || { say "REFUSE: cannot log the stamps before the binary"; exit 2; }
 
 mkdir -p "$(dirname "${OUT}")"
 WORK="${B}/run/${PHASE}/${GBUILD}/work_${VARIANT:-}${PL}_$$"
@@ -237,7 +242,7 @@ else
   "${LAUNCH[@]}" "${BIN}" "${DATA}" "${MC}"; rc=$?
 fi
 
-nue after
+stamps after || { say "the stamps after the binary cannot be written"; exit 20; }
 
 say "rc=${rc} elapsed=$(( $(date +%s) - t0 ))s"
 [[ ${rc} -eq 0 && -s runEventLoopOmniFold.root ]] || exit 5

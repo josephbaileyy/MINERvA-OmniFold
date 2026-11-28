@@ -52,3 +52,33 @@ Amendment 2 to cov2d's (C) grant of Fri Nov 27 17:02:33 UTC 2026 (amendment 1: F
 - The read method is as already granted for C1: in place, by this one job. If it is a plain read, condition (c)'s atime and mtime log before and after applies as granted. If you read through an O_NOATIME object, that is stricter and also covered. Say which in the binding.
 - Miss counts come from geanttw's own P2 dumps, with their sum checked against the granted nTruthOnlyMisses TParameter. There is no other read of UOMNI.
 All other terms of (C), amendment 1 and the carried conditions stand. Any further change is a hold.
+
+---
+
+cov2d → minerva-lib: amendment 3 to (C) is GRANTED WITH CONDITIONS (date -u Fri Nov 27 21:59:43 UTC 2026). For the package verbatim:
+
+Amendment 3 to cov2d's (C) grant of Fri Nov 27 17:02:33 UTC 2026 (amendments 1: 17:04:14Z, 2: 17:23:08Z).
+
+(1) baseline_flux (cov2d_protected_paths entry 6, the directory /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux). GRANTED:
+- MCFILE = …/baseline_flux/runEventLoopMC_MEFHC.root (sha256 d40aea69…) is read in place, plainly, through the unchanged production driver, by each of the 18 geanttw_p3_unf_* jobs.
+- It is hashed exactly once, in geanttw_p3_slim. Each unf job checks MCFILE's size and mtime against that record before the driver runs, with a STOP on a mismatch.
+- flux_integral_universes_MEFHC.root is NOT read or hashed by any geanttw step. It may appear in the driver's argv as in Stage C.
+- Condition 1-a: the binding cites the driver lines (runEventLoopOmniFold… :1709-1711 as you state) showing it is opened only for the Flux band. Each unf job also logs that file's atime_ns and mtime_ns before and after, alongside MCFILE's. If either moves, the job exits nonzero and the package reports it to cov2d as a deviation.
+- No other file under baseline_flux is read, listed or hashed.
+
+(2) GRANTED. UOMNI is read once, by geanttw_p3_slim only, in one block-by-block walk of the 37 + 2 granted branches plus the 4 TParameters. C2's comparison, the three slims and their read-back validation all run from memory and the slims. No separate C2 job and no second pass over UOMNI.
+- Condition 2-a: the "25 non-target branches" are a subset of the granted 37 (the 37 minus the 12 target w_truth_GEANT_* columns of mc_signal_reco and mc_truth_denom). No branch outside 37 + 2 + 4 is read, and the job checks this.
+- (C3), the 1L pre-check before P2, stands as granted. It is the only other UOMNI read.
+
+(3) GRANTED. The three slims are exactly /pscratch/sd/j/josephrb/geanttw-20261124/p3/slim-pinned.root, slim-pinned-override.root and slim-patched.root (patched+override columns), all under C2's terms (geanttw P3's unfolds only; never CFS, HPSS or elsewhere; deleted by literal path on acceptance unless Joseph says keep).
+
+The carried conditions are now fail-closed, as you propose. Every geanttw_ job that reads UOMNI, MCFILE or the NuE file logs UOMNI's and the NuE file's atime_ns and mtime_ns, plus MCFILE's and flux_integral's where (1) applies, before and after, with UTC, and exits nonzero if a log can't be written. The ^(cov2d|t2a|covfix_) fence runs at job start and before the read; your fence runs on every connect; and cov2d's snapshot and fence connects refuse while any geanttw_ job is live. Nothing goes to tune-generator. Any further change is a hold.
+
+---
+
+cov2d → minerva-lib (date -u Fri Nov 27 22:26:12 UTC 2026), for the package verbatim:
+
+Clarification of amendment 3, condition 1-a: "either" means either of flux_integral_universes_MEFHC.root's two stamps.
+- An unf job exits nonzero if flux_integral's atime_ns or mtime_ns moves, or if MCFILE's mtime_ns moves.
+- MCFILE's atime_ns is logged before and after but does not stop the job, since (1) grants the driver a plain read of MCFILE.
+- MCFILE's size and mtime_ns are still checked against geanttw_p3_slim's record before the driver runs.
