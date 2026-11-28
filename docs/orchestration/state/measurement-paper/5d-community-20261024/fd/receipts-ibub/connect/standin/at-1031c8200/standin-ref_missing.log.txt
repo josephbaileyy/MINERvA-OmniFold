@@ -1,0 +1,44 @@
+== variant ref_missing: script rc=9; session: 
+== self copy left: ls: cannot access '/dev/shm/ibubc.1.sh': No such file or directory; shm dir: ls: cannot access '/dev/shm/ibub-connect': No such file or directory
+== the connect log
+  node 1c9864be2751 nproc=4 loadavg 0.69 0.21 0.15
+  2026-11-24T07:28:26Z
+  window_end_epoch 1795506206 (now 1795505306); fence prefixes ibub_,ibuchi_,cov2d,t2a,rpd,msr
+  connect script sha256 9e76a561fbb9f6e0c43d65885bad79f1c64ef93c9bc3bdea10672eaf85ca24d3
+  == cov2d fence rev 3 (7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738)
+  fence host=1c9864be2751 utc=2026-11-24T07:28:26Z
+  sacct -X -n -P -u root -S 2026-11-10T07:28:26 -E now -o JobID,JobName,State 2>&1
+  sacct matching rows: 2
+  FENCE CLEAR
+  == fence (sacct)
+  fence clear
+  HEAD 892c7320206bf7d1e15fb37e60f462271e974c79; porcelain --ignored before: ''
+  ibub_unit.py: OK
+  ibub_readout.py: OK
+  ibub_lanes.py: OK
+  ibub_overlap.py: OK
+  config.json: OK
+  jobs/ibub_job.sbatch: OK
+  threads 2; nice 19; ionice idle; python 3.11.18
+  == overlap (ibub_overlap.py run)
+  OVERLAP run: ours 11; theirs 130
+  OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18/b  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/cov2d-run-20261104
+  OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/AR23-a2/b  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/cov2d-run-20261104
+  OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-2a/writer_control.root  ~  theirs cov2d disclosed root /pscratch/sd/j/josephrb/cov2d-2a
+  OVERLAP ALLOWED: ours read (cov2d-acked) /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root  ~  theirs cov2d protected (flux2 config) /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root
+  OVERLAP ALLOWED: ours read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28  ~  theirs rpd flux2 read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28
+  OVERLAP: CLEAR (pairs checked 1430, hits 0)
+  == preflight (ibub_unit.py preflight)
+  {"refs": {"c2_central": {"pass": false, "path": "/pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_central.npz", "sha256": "unreadable: No such file or directory"}, "k2a": {"pass": true, "path": "/pscratch/sd/j/josephrb/cov2d-2a/writer_control.root", "sha256": "509f083832c594564f95981b2e54f978237cb6237ad91f8ae7cc30d1e3fabe4e"}}, "schema": "ibub-preflight/1", "toys": {"AR23": {"files": 300, "missing": []}, "G18": {"files": 300, "missing": []}}, "verdict": "STOP"}
+  STOP: preflight rc 3
+  == records
+  2026-11-24T07:29:08Z
+  records copied: 3 files, 14977 bytes
+  fetch-run.tar sha256 be4fa1aa11262e741207a233a3a80053663fcae7d102671608467125b34e190b bytes 20480
+  ibub run rc=9
+  2026-11-24T07:29:08Z
+== done: 9
+/connect/standin.sh: line 72: /tmp/sbatch.argv: No such file or directory
+== sbatch argv: 
+== stage: 
+== records tar: 20480

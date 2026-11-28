@@ -1,0 +1,26 @@
+removed 2026-11-27T03:09:25Z by literal-path rm, rc=0; each file's sha256 matched origin/main:docs/orchestration/state/precharge-20261125/inputs/events/<name> immediately before (bvRAlb-manifest.tsv, status match)
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1A_Data.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1A_MC.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1B_Data.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1B_MC.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1C_Data.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1C_MC.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1D_Data.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1D_MC.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1E_Data.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1E_MC.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1F_Data.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1F_MC.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1G_Data.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1G_MC.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1L_Data.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1L_MC.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1M_Data.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1M_MC.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1N_Data.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1N_MC.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1O_Data.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1O_MC.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1P_Data.csv.gz
+removed  /Users/josephbailey/cov2d-work/precharge-bvRAlb/1P_MC.csv.gz
+after: 82 files remain (all status not-an-event-table in the manifest), 1.8M

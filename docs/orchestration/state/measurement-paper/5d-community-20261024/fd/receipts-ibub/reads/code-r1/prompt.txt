@@ -1,0 +1,17 @@
+You are an independent, adversarial code reviewer for a particle-physics analysis. READ-ONLY task: do not modify, create or delete any file anywhere; print your single report to stdout. Never write to any git checkout.
+
+Inputs (all in /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r1/inputs):
+- IBUB-DECLARATION.md (revision 3, accepted): the pre-registered design. Sections 2-6 and 8 bind the code.
+- ibub_unit.py + config.json: the IBU units (runs E_R's driver with binned IBU in the OmniFold seam, via ref_c2c1.py imported unchanged), staging, preflight and the reference barrier (refcheck).
+- ibub_readout.py: the per-tune readout (controls C-OF, C-TRUTH, C-COMPLETE, C-DATA, C-K10, C-CELLS; the section-4 statistics; section-6 descriptives). It uses cov2d_readout.Run (open audit, O_NOATIME copies) and imports cov2d_score / cov2d_readouts unchanged.
+- test_ibub_unit.py, test_ibub_readout.py: the tests (60 pass); mutants.py: 29 hand mutants (all killed).
+- ref_c2c1.py, cov2d_readout.py, cov2d_readouts.py, cov2d_score.py, cov2d_blocks_open_audit_excerpt.py: the imported code.
+
+Assess, citing file:line for every point:
+1. CORRECTNESS: any bug in ibub_unit.py or ibub_readout.py: wrong indexing (224 vs 205 cells, GlobalID order pT*16+pz), wrong pairing of toys/truths/IBU units, bootstrap errors, band integrals, z*, the reading rule, exit codes, exception paths that could leave a data copy behind or write a PASS marker wrongly, the barrier.
+2. FIDELITY to the declaration: does every control and reading in sections 4-6 exist in code exactly as declared? List anything declared but missing, or coded but not declared.
+3. GUARDS: can the unit read anything under /pscratch or /global/cfs without O_NOATIME, or can ROOT open anything outside the staging root? Can the readout open anything guarded plainly? Does the readout write anything under a guarded tree?
+4. TESTS: which plausible defect would pass all tests? Propose a concrete mutant that would survive, if any.
+5. Anything a referee would demand before this runs on the 600 real toys.
+
+Output a numbered list of findings, each labelled BLOCKER, MAJOR, MINOR or NOTE, with a concrete fix. End with exactly one line: VERDICT: GO (no BLOCKER or MAJOR) or VERDICT: REVISE.

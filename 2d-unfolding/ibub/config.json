@@ -1,0 +1,143 @@
+{
+ "schema": "ibub-config/1",
+ "declaration": "docs/orchestration/state/measurement-paper/5d-community-20261024/IBUB-DECLARATION.md",
+ "declaration_sha256": "3aaf07f12b2ebfc747220704d675b752490dc64d42013324f0a42ff45e345262",
+ "code_sha256": {
+  "2d-unfolding/re2/re2_driver.py": "e226daf3f51954c7079cc7b3ab509e464865502f5dbde4acf11876409971dd67",
+  "2d-unfolding/ref_c2c1/ref_c2c1.py": "285dd138363d090a4ce5dea3361be81fada8680bd782b918e9d95198d1b5d6ea",
+  "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a",
+  "nd-unfolding/s5c_unfold.py": "510d749a2e82fa448de6172753ae2adc9ebd81a89d4f18bf76beb5faa8bb3968",
+  "2d-unfolding/compare_to_paper_fullcov.py": "7e641754515d64b0361cdfbfe17966d514485ed819ea594298a262ea2c6de6dd"
+ },
+ "g2r_forbidden_options": [
+  "--miss-map"
+ ],
+ "g2r_note": "the options COV2D-G2R amendment 1 added to re2_driver.py (0f57c22a, 62864b16); C-G2R refuses any of them (IBUB-DECLARATION.md section 3)",
+ "inputs": {
+  "CV_source": "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+  "CV_sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+  "MC_source": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+  "MC_sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+  "lib_source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/libRooUnfold.so",
+  "lib_sha256": "0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd"
+ },
+ "staging": {
+  "root": "/pscratch/sd/j/josephrb/ibub-20261124/stage",
+  "CV": "runEventLoopOmniFold_MEFHC.root",
+  "MC": "runEventLoopMC_MEFHC.root",
+  "lib": "libRooUnfold.so",
+  "data": "data"
+ },
+ "e_r": {
+  "argv": [
+   "--omnifile",
+   "$CV",
+   "--mcfile",
+   "$MC",
+   "--iters",
+   "5",
+   "--use-weights",
+   "--estimator",
+   "lgbm",
+   "--seed",
+   "42",
+   "--branch-select",
+   "all",
+   "--bkg-mode",
+   "negweight-refined",
+   "--refine-n-estimators",
+   "400",
+   "--refine-num-leaves",
+   "31"
+  ],
+  "cpus": 64,
+  "thread_env": {
+   "OMP_NUM_THREADS": "64",
+   "MKL_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "NUMEXPR_NUM_THREADS": "1"
+  },
+  "source": "ref_c2c1/config.json e_r.argv, which equals cov2d_jobs.argv('toy', ...) without --data-file; the thread environment is cov2d_env.sh's four variables"
+ },
+ "c2": {
+  "scan": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   10,
+   15,
+   20
+  ],
+  "primary": 10,
+  "second": 5,
+  "c_fill_rtol": 1e-09,
+  "c_roo_rtol": 1e-09,
+  "c_sim_rtol": 1e-09,
+  "c_rep_rtol": 1e-08
+ },
+ "toys": {
+  "G18": {
+   "dir": "/pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18/b",
+   "pseudo_b": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/pseudo/G18/pseudo_b.json",
+   "pseudo_b_sha256": "230f6918f65d5bcf7d766bdb47eb7ac0513d998017b877777b5fd49089a54296"
+  },
+  "AR23": {
+   "dir": "/pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/AR23-a2/b",
+   "pseudo_b": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/pseudo/AR23/pseudo_b.json",
+   "pseudo_b_sha256": "d50ef13af16adf26e25794ebdda41b23d6cfd7ecec2332173c237a340e682bb5"
+  }
+ },
+ "refs": {
+  "c2_central": {
+   "path": "/pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_central.npz",
+   "sha256": "929d0e78011ead72e9677a05bad06eec80e914e181c8d02f94bbdea1c43b76f4",
+   "source": "fd/receipts-ref-c2c1/step2/units-centrals/c2_central.done"
+  },
+  "k2a": {
+   "path": "/pscratch/sd/j/josephrb/cov2d-2a/writer_control.root",
+   "sha256": "7eb39088a42844b48ec1f8e1b6b586b8d8d4363611d68b726112f9f75c99b9db",
+   "source": "2d-unfolding/cov2d/jobs/cov2d_jobs.py PINS['$K2A']"
+  }
+ },
+ "cells": {
+  "blocks": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/readout/G18/blocks_G18.npz",
+  "blocks_sha256": "7eb657b82ae953bdf0584eda27264c52a64bcb48baea52dfc194f5efe440ea3d"
+ },
+ "price": {
+  "unit_s": 217,
+  "reprice_factor": 1.25
+ },
+ "cov2d_records": {
+  "G18": {
+   "blocks": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/readout/G18/blocks_G18.npz",
+   "blocks_sha256": "7eb657b82ae953bdf0584eda27264c52a64bcb48baea52dfc194f5efe440ea3d",
+   "score": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/readout/G18/score_G18.json",
+   "score_sha256": "849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec",
+   "truth_xsec_sha256": "8bf3f0c868bfbe7ec5b9330f7bcd5472bac11450ad9ef361a1cb92bd26ba2cd7",
+   "truth_xsec_source": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/readout/G18/null_G18.json inventory.truth_xsec_npz"
+  },
+  "AR23": {
+   "blocks": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/readout/AR23/blocks_AR23.npz",
+   "blocks_sha256": "abaebaeae6c9cb075dcb974a420dbf148809d01b2cabc8deda31f318bf6715ee",
+   "score": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/readout/AR23/score_AR23.json",
+   "score_sha256": "fe5263e904f65892ce26b75fb279441230713c38675c2a3615c59d561c4f5ce1",
+   "truth_xsec_sha256": "b3895fbb4a0d5f2f4d4c6a4b385379f35089c1dd9fc47d146317558bb454dca1",
+   "truth_xsec_source": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/readout/AR23/null_AR23.json inventory.truth_xsec_npz"
+  }
+ },
+ "readout": {
+  "bootstrap_B": 10000,
+  "bootstrap_seed": 5760000,
+  "tune_index": {
+   "G18": 0,
+   "AR23": 1
+  },
+  "alpha": 0.05,
+  "tests": 236,
+  "k10_vs_root_rtol": 1e-09,
+  "write_root": "/dev/shm/ibub-connect"
+ },
+ "namespace": "/pscratch/sd/j/josephrb/ibub-20261124"
+}

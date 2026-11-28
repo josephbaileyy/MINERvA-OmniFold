@@ -1,0 +1,10 @@
+CONFIRMATION: FIX 1 DOES NOT HOLD
+
+1. **DOES NOT HOLD — C-SELF.** The earlier hash catches a lasting replacement during the independent read. The driver closes `xsec.root` and prints before returning, so an accidental stale copy in that interval can still become the first hashed version. If its flow histograms match and its `hXSec2D` is within tolerance, C-SELF and acceptance both pass. Capture the extraction result in memory and verify the persisted histogram against it bit for bit. `test_a_replaced_driver_output_fails_acceptance` and `XSEC_EARLY` cover the old window. `inputs/pinned/re2_driver.py:2588–2589`, `inputs/new/evw2d.py:896–897,973,989,1016–1019`, `inputs/new/test_evw2d.py:1252`, `inputs/new/evw2d_mutation.py:154`.
+2. **HOLDS — Exactness references.** The loader hashes one byte buffer and loads both vectors from it. An in-memory probe confirmed that a replacement at load time leaves the head using the pinned vector and makes `REFS_ONE_BUFFER` use the replacement. The supplied test is `test_the_references_judged_are_the_bytes_hashed`. `inputs/new/evw2d.py:589–594,990–992`, `inputs/new/test_evw2d.py:1792`, `inputs/new/evw2d_mutation.py:153`.
+
+**Other scientific defects introduced by the diff:** None found.
+
+- **SHOULD-FIX** — Cleanup can delete staged inputs before a short or failed ledger write. `inputs/new/evw2d.py:1080–1087`.
+- **MINOR** — The end-to-end C-CMAP fallback test still mocks the classification. Add a real fill-order miss using nonnegative weights. `inputs/new/test_evw2d.py:1164`.
+- **NOTE** — Verification used source inspection and in-memory probes. The ROOT suite and full mutation campaign require filesystem writes and were left unrun.

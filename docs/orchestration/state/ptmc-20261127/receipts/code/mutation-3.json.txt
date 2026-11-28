@@ -1,0 +1,111 @@
+{
+ "schema": "ptmc-mutation/1",
+ "python": "/Users/josephbailey/ew2d-env/bin/python3",
+ "files": {
+  "launch/harness_launch.sh": "85081e60863ffcde1c75ee30d5a0ab7357ae4a0d9a119debd632c0d0231b66d4",
+  "launch/harness_remote.sh": "0072c84ae86be6d3fc794ce4df27e3f729a473bfbb4efa6fce7f50573202d83f",
+  "launch/harness_sbatch.sh": "51534bfab6146d4a9e26c4739e0c1a8221473a595fb742444bb9058398dbe438",
+  "launch/pilot.sbatch": "91bc9fce5fd89431836cbcbab801828ba220dde0a709950d8d07e0e22b40c652",
+  "launch/ptmc_couple_check.py": "13901cbe0bddbe27fce515c9b37ad01fec8c48e3440485f62754c56f9fe32262",
+  "launch/ptmc_couple_launch.sh": "584c7c8a031d1e2a7d54c293be019f17c5dfa02ad2edfdb3a113b7ac962776da",
+  "launch/ptmc_launch.sh": "fd79879b338f3058cc34b47b0cad3f81705947af6daac04912975d8d0cc96b86",
+  "launch/ptmc_pilot_post.py": "17d622eb58fcf94bb2c39b95e137059e8adc2b2accd36c92cf0cdbc74fdc2624",
+  "launch/ptmc_remote.sh": "705a4492e4ae8c341097e78617949edcef8916c28a12a88607c245ec34127929",
+  "launch/ptmc_stage_d4.py": "ee83212d3bdb8da135886ab5d13cd182be379dfd33f2d440facab6c9fd63cb66",
+  "launch/ptmc_stat.sh": "6b775e313107d81b772e8bfcc6226fbafaf75a55be57c1db3bb72dd24a9e2142",
+  "launch/ptmc_stat_launch.sh": "fa76d4e55fa7ef6c8df9ce5582d5f147ec2977ebdafce3abd307a8c40b270e11",
+  "launch/replicas.sbatch": "1e1a6df9c49a37025619ba2b551b1f6dcecbf2a64bdd65c480f415c115734b22",
+  "launch/test_launch.py": "65bf8e7a330b83c3e00f8a6bcf195fbeffbdc87508e2e28f0b325b144417e07b",
+  "make_tree.sh": "a181dc1a942f7b7c004a8f9ab4a97114a456b89e073ecf82992f36101b1d3f45",
+  "ptmc_driver.diff": "90da4f0be29b1cf8d1a207742bfd31a948b3b64616a447c1c093b4fb63329b7a",
+  "ptmc_lib.py": "d3072695e5f2dceaee4a917ff900a44e22ff7b011919f65acd06e75fbce39c56",
+  "ptmc_mutation.py": "a37b8067b15becc8cb5dcf96fde9da6ebb0688a869c928f2d03cda5464f8d0d2",
+  "ptmc_run.py": "acd052f2cae5d15a54e2b3755ad47a49bd23b656bdb59fe5c7635e8dd34fe3bf",
+  "ptmc_score.py": "2936917407658c536881806ccc6208398f0825b61176c6ecf10e466bfea860b8",
+  "test_ptmc.py": "9af8ca0bd2738083f5ba919db75c0753230d701221384ef033b8398970b0a2a3",
+  "test_ptmc_score.py": "1cfbb1cdc04aa6a48e3a0919e897aa3551a354d38b6fd73dd71b7756ef141780"
+ },
+ "results": [
+  {
+   "name": "CONTROL",
+   "file": null,
+   "tests": [
+    [
+     "test_ptmc.py",
+     "test_ptmc_score.py",
+     "launch/test_launch.py",
+     "HARNESS:harness_remote.sh",
+     "HARNESS:harness_sbatch.sh"
+    ],
+    null
+   ],
+   "rc": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "seconds": 105.7,
+   "verdict": "PASS",
+   "tail": "ok   pilot: no ready refuses (rc 2)\nok   pilot: the 8 units, once each\nok   pilot: a failed unit exits 6\nok   pilot: an existing units dir refuses\nok   replicas: no PROCEED refuses (rc 2)\nok   replicas: b = 2..200, 199 steps, each once\nok   replicas: a failed unit exits 6, its lane continues, rc recorded\npass 7 fail 0\n"
+  },
+  {
+   "name": "PP_FLOOR",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 1.9,
+   "verdict": "KILLED",
+   "tail": "....F\n=================================== FAILURES ===================================\n__________________ PilotPost.test_limit_below_the_floor_stops __________________\n\nself = <test_launch.PilotPost testMethod=test_limit_below_the_floor_stops>\n\n    def test_limit_below_the_floor_stops(self):\n        steps = {u: 792 for u in PILOT}\n        # o = 8 s, pilot 0.444 node-h, runtime 7928 s: projection 11.455 <= 11.5, but L = 144 min < 1.1 x 132.1 min\n        rc, d, out = run(sacct(job_el=800, steps=steps), units_dir())\n>       self.assertEqual(rc, 6)\nE       AssertionError: 0 != 6\n\nlaunch/test_launch.py:99: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_limit_below_the_floor_stops - A...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 2 deselected in 1.55s\n"
+  },
+  {
+   "name": "PP_CAP_PER_NODE",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 1.1,
+   "verdict": "KILLED",
+   "tail": ", 'exit': '0:0', 'elapsed': 700, 'nodes': 1}, 'p_R_b1': {'id': '1.3', 'name': 'p_R_b1', 'state': 'COMPLETED', 'exit': '0:0', 'elapsed': 704, 'nodes': 1}, 'p_off_b2': {'id': '1.4', 'name': 'p_off_b2', 'state': 'COMPLETED', 'exit': '0:0', 'elapsed': 700, 'nodes': 1}, 'p_off_b3': {'id': '1.5', 'name': 'p_off_b3', 'state': 'COMPLETED', 'exit': '0:0', 'elapsed': 700, 'nodes': 1}, 'p_off_b4': {'id': '1.6', 'name': 'p_off_b4', 'state': 'COMPLETED', 'exit': '0:0', 'elapsed': 700, 'nodes': 1}, 'p_off_b5': {'id': '1.7', 'name': 'p_off_b5', 'state': 'COMPLETED', 'exit': '0:0', 'elapsed': 700, 'nodes': 1}}, 'units': {'p_off_c': True, 'p_R_c': True, 'p_off_b1': True, 'p_R_b1': True, 'p_off_b2': True, 'p_off_b3': True, 'p_off_b4': True, 'p_off_b5': True}, 'rules': {'job_completed': True, 'every_pilot_step_completed': True, 'every_pilot_unit_passes': True, 'projection_within_11.5': True, 'limit_covers_1.1x_runtime': True, 'reservation_within_cap_left': False}, 't_R_s': 704.0, 'o_s': 52.0, 'pilot_node_h': 0.42, 'projection_node_h': 10.27, 'cap_left_node_h': 12.08, 'time_limit_minutes': 176, 'runtime_s': 7092.0, 'reservation_node_h': 14.666666666666666, 'verdict': 'STOP'}\n\nlaunch/test_launch.py:105: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_default_is_a_proceeding_baseline\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 2 deselected in 0.84s\n"
+  },
+  {
+   "name": "PP_STOP_AT",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 1.2,
+   "verdict": "KILLED",
+   "tail": "......F\n=================================== FAILURES ===================================\n_____________________ PilotPost.test_projection_rule_flag ______________________\n\nself = <test_launch.PilotPost testMethod=test_projection_rule_flag>\n\n    def test_projection_rule_flag(self):\n        \"\"\"A projection of about 12.0 node-h breaks the 11.5 rule itself (the floor also STOPs, being implied).\"\"\"\n        steps = {u: 830 for u in PILOT}\n        rc, d, _ = run(sacct(job_el=840, steps=steps), units_dir())\n        self.assertEqual(rc, 6)\n        self.assertGreater(d[\"projection_node_h\"], 11.5)\n        self.assertLess(d[\"projection_node_h\"], 12.6)\n>       self.assertFalse(d[\"rules\"][\"projection_within_11.5\"])\nE       AssertionError: True is not false\n\nlaunch/test_launch.py:85: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_projection_rule_flag - Assertio...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 6 passed, 2 deselected in 0.86s\n"
+  },
+  {
+   "name": "PP_COUPLE",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 1.1,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n___________ PilotPost.test_central_without_its_coupling_record_stops ___________\n\nself = <test_launch.PilotPost testMethod=test_central_without_its_coupling_record_stops>\n\n    def test_central_without_its_coupling_record_stops(self):\n        d = units_dir()\n        for u in (\"p_off_c\", \"p_R_c\"):\n            np.savez(d / f\"{u}.npz\", meta=json.dumps({\"controls\": {\"C-PAIR\": {\"pass\": True}}}))\n        rc, dec, out = run(sacct(), d)\n>       self.assertEqual(rc, 6)\nE       AssertionError: 0 != 6\n\nlaunch/test_launch.py:92: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_central_without_its_coupling_record_stops\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 deselected in 0.84s\n"
+  }
+ ],
+ "summary": "4/4 killed"
+}

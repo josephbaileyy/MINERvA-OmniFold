@@ -1,0 +1,82 @@
+{
+  "argv": [
+    "d2-predict",
+    "--config",
+    "/dev/shm/limres-rpd-flux1/production-config.ready.json",
+    "--config-sha256",
+    "f92d034df0db5bf487f689b0efc1eb8862396303647fa1172ad5e6eaa3f4c47a",
+    "--run",
+    "/pscratch/sd/j/josephrb/rpd-reco-d2s0e1-20261127/run"
+  ],
+  "code_sha256": "12f68102d38ec042d791b9edeb59ba96bdcda74c54dc37e5880c0922b0fbb9ec",
+  "config_sha256": "f92d034df0db5bf487f689b0efc1eb8862396303647fa1172ad5e6eaa3f4c47a",
+  "details": {
+    "execution": {
+      "estimate_status": "available",
+      "measured_seconds_per_draw": null,
+      "planned_seconds": 2414.6175178967555,
+      "planning_factor": 10.0,
+      "priced_wall_seconds": null,
+      "scheduler_request": {
+        "SLURM_CPUS_PER_TASK": null,
+        "SLURM_JOB_CPUS_PER_NODE": null,
+        "SLURM_JOB_ID": null,
+        "SLURM_JOB_QOS": null,
+        "SLURM_MEM_PER_CPU": null,
+        "SLURM_MEM_PER_NODE": null,
+        "SLURM_QOS": null
+      },
+      "step_estimate": {
+        "factor": 10.0,
+        "planned_seconds": 2414.6175178967555,
+        "poisson_draws": 6693569800,
+        "seconds_per_draw": 3.607368848079773e-08,
+        "step": "d2-predict",
+        "unmeasured_costs": [
+          "input staging and decompression",
+          "weighted-quantile sorting",
+          "output writing"
+        ]
+      },
+      "timing_chunk_shape": null,
+      "timing_source": null,
+      "wall_budget_seconds": 7200
+    }
+  },
+  "estimate_status": "available",
+  "guard": "C_E3",
+  "input_sha256": {},
+  "measured_seconds_per_draw": null,
+  "message": "C_E3: q3 discrepancy 0.0009871258308031816, 0.0301471583174564 in 8:15",
+  "planned_seconds": 2414.6175178967555,
+  "planning_factor": 10.0,
+  "priced_wall_seconds": null,
+  "readings": null,
+  "scheduler_request": {
+    "SLURM_CPUS_PER_TASK": null,
+    "SLURM_JOB_CPUS_PER_NODE": null,
+    "SLURM_JOB_ID": null,
+    "SLURM_JOB_QOS": null,
+    "SLURM_MEM_PER_CPU": null,
+    "SLURM_MEM_PER_NODE": null,
+    "SLURM_QOS": null
+  },
+  "schema": "fd-rpd-reco-stop/1",
+  "status": "STOP",
+  "step": "d2-predict",
+  "step_estimate": {
+    "factor": 10.0,
+    "planned_seconds": 2414.6175178967555,
+    "poisson_draws": 6693569800,
+    "seconds_per_draw": 3.607368848079773e-08,
+    "step": "d2-predict",
+    "unmeasured_costs": [
+      "input staging and decompression",
+      "weighted-quantile sorting",
+      "output writing"
+    ]
+  },
+  "timing_chunk_shape": null,
+  "timing_source": null,
+  "wall_budget_seconds": 7200
+}

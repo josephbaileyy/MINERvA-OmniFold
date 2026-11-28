@@ -1,0 +1,1 @@
+model: gemini-4-hydrogen-high (agy -p), read of the flux4 package (code/rpd-flux4-20261126, uncommitted bytes at gen_flux4 de229683)

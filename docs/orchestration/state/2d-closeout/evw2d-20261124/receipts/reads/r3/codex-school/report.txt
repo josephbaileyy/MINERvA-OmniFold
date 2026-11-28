@@ -1,0 +1,55 @@
+VERDICT: NO-GO
+
+### Round-2 dispositions
+
+Paths in this section are relative to `inputs/new/`.
+
+**Codex-school**
+
+1. **PARTLY** — Campaign 6 is credible and the survivor follow-up checks out. The full final-head receipt is pending. `evw2d_mutation.py:254–295`
+2. **PARTLY** — Reviewed values and a config digest are checked. Parsing and hashing use separate reads, and the allocation gate accepts batch steps. `evw2d.py:150–193,223–231,971–989`
+3. **PARTLY** — Four pins, HEAD, cache and preload checks are in place. Git environment overrides and resolved source escapes remain possible. `evw2d.py:196–277`
+4. **PARTLY** — No-clobber staging and final rehashing catch lasting replacements. A temporary directory swap can evade both checks, and the reference builder guards only one source path. `evw2d.py:594–651,798–806`; `make_references.py:61–66`
+5. **PARTLY** — C-FILE checks saved entries and unfolded weights against their sources, and the swap mutant dies. The branch-type check still follows the fit. `evw2d.py:337–348,717–727,798–806`; `evw2d_mutation.py:137`
+6. **PARTLY** — Spies verify argument identity, call counts and return identity. They do not snapshot argument content at entry on both sides. `test_evw2d.py:474–521`
+7. **PARTLY** — The two constants copies and denominator values are checked. Denominator dtype and metadata can still be wrong, and reconstruction takes the grids and fallback selector outside the saved metadata. `evw2d.py:713–732,869–887`
+8. **PARTLY** — The declared fallback and miss reporting are wired correctly. A non-rounding map error can still qualify. `evw2d.py:462–476,750–759,823–831,863–887,899–917`
+9. **PARTLY** — Fixed filenames, manifest checks and atomic marker publication landed. `constants.json` and `xsec.root` can be hashed after their validated contents change. `evw2d.py:677–700,869–917`
+10. **PARTLY** — Phase, custody and deletion records exist. Preflight time is omitted, acceptance time appears only in the marker, and cleanup has custody gaps. `evw2d.py:762–791,897–917,940–959,989–993`
+11. **CLOSED** — C-FLUX requires shape `(14,)` and a finite ULP. `evw2d.py:435–444`
+
+**agy**
+
+1. **PARTLY** — Campaign 6 and the final-head probe are verified. The full final-head receipt is pending. `evw2d_mutation.py:254–295`
+2. **CLOSED** — Row-count and value mismatches reach the C-KEY FAIL record before table construction. `evw2d.py:809–820`; `test_evw2d.py:1033–1047`
+3. **PARTLY** — Denominator values are checked, but dtype and metadata remain unchecked. `evw2d.py:730–731,863–872`
+4. **PARTLY** — Reviewed settings and `deploy_C` containment are checked. Scratch-root equality still passes, and the wrapper does not establish the step or wall-time limit. `evw2d.py:162–193,223–231`; `EVW2D-DECLARATION.md:328–331`
+5. **CLOSED** — The records distinguish controls from acceptance, and the test exercises passing controls with failed acceptance. `evw2d.py:899–917`; `test_evw2d.py:1049–1072`
+6. **PARTLY** — Allocation, staged names, references and post-run caches have stronger tests. The protected-root guard and several requested error branches remain unexercised. `test_evw2d.py:366–396,1123–1138,1335–1350`; `evw2d.py:354–356,566–570,991–993`
+7. **PARTLY** — Entry bounds, reference keys and dtypes, and dangling-symlink refusal are fixed. The price section still lists DTN staging despite the ROOT-dependent login-node procedure. `evw2d.py:403–407,538–556,601–612,979–984`; `EVW2D-DECLARATION.md:279–281,369`
+
+### Findings
+
+1. **BLOCKING — C-BIND can authenticate a different config from the one it executes.** A replacement between `read_text()` and `sha256(CONFIG)` lets an unbound staging or driver root execute under the approved digest. Parse and hash one byte buffer, carry its digest into the record, and reject `lane_root == SCRATCH_PREFIX`. `inputs/new/evw2d.py:159–186,854–859,971–976`
+
+2. **BLOCKING — The allocation gate accepts the batch shell.** An in-memory probe with `SLURM_STEP_ID=batch`, one node and a `nid` host passed. A 64-CPU batch shell can proceed to fitting. Require a scheduler-backed numeric step in the bound CPU allocation and enforce the 30-minute cap through the approved launcher. `inputs/new/evw2d.py:223–231,774–781,989–993`
+
+3. **BLOCKING — C-PINS can check one checkout and import from another location.** Inherited `GIT_DIR` and `GIT_WORK_TREE` can point the Git checks at a clean checkout while bound source paths resolve through symlinks. Comparing two resolved paths to the same external target passes the module check. Clear Git overrides, verify the worktree top level, require resolved containment before import, and execute the verified source bytes. `inputs/new/evw2d.py:208–220,244–277`
+
+4. **BLOCKING — The stage directory can be swapped and restored around both reads.** Mode `0555` leaves its name replaceable from a writable parent. A substitute omnifile differing only in unused ROOT metadata can feed both readers, then the original can be restored before C-STAGE. The output receives the original digest. Bind both readers to the same verified immutable snapshot and test a swap followed by restoration. `inputs/new/evw2d.py:616–651,798–806,890–895`
+
+5. **BLOCKING — A float32 denominator with false metadata can receive PASS.** An in-memory C-FILE probe passed with exactly representable float32 denominator columns. `same_bits` falls back to value equality, and the caller discards denominator metadata. Require float64 before bit comparison and validate the saved schema and table metadata. Add dtype-only and metadata-only tamper tests. `inputs/new/evw2d.py:385–391,730–731,863–872`
+
+6. **BLOCKING — Acceptance can seal bytes that the controls never checked.** Replace `constants.json` after C-FILE or `xsec.root` after the histogram checks. Their first recorded hashes then describe the replacements, and acceptance rehashes them successfully. Bind the manifest to the bytes read by validation and test replacement between validation and acceptance. `inputs/new/evw2d.py:869–898,910–917`
+
+7. **BLOCKING — C-CMAP can soften a non-rounding error.** The fallback correctly writes the denominator, uses event-level completeness on both grids and records the miss in both records. But an in-memory equal-multiset probe rebuilt a true miss of `5.00e-13`. A corrupted map with a miss of `1.20e-12` was classified as rounding and passed C-CMAP-EVENT. Require the ordered row reconstruction itself to cross the rounding threshold and reproduce the pinned ROOT map. Exercise a real fill-order miss and an injected map error. The current end-to-end test mocks the classification. `inputs/new/evw2d.py:462–476,750–759,823–831`; `inputs/new/test_evw2d.py:1085–1104`
+
+8. **BLOCKING — Cleanup can append to a pinned file.** A `deletions.tsv` symlink targeting the pinned driver passes the pre-cleanup pin check, then the ledger append changes the driver. Cleanup also hashes staged files without comparing them to the accepted run before unlinking. Open the ledger without following links and verify both staged identities, digests and the run’s binding before deleting either file. `inputs/new/evw2d.py:940–959,979–988`
+
+9. **SHOULD-FIX — Staging can remove another invocation’s partial.** PIDs can coincide across login hosts. If two invocations pass the listing check and one loses the exclusive create, its `finally` can unlink the winner’s partial. Reserve a unique temporary name and unlink only a file owned by that invocation. `inputs/new/evw2d.py:602–614`
+
+10. **SHOULD-FIX — The reference builder can read a protected paper source.** The E_R argument is screened, but a paper path resolving into NERSC storage is opened normally. Check both resolved source paths and hash the same bytes passed to the ROOT reader. `inputs/new/make_references.py:45–54,61–66`
+
+11. **MINOR — Test and timing claims exceed the receipts.** `as_main()` invokes `E.main()` in-process, and recorder spies could miss an argument mutation restored before return. Correct the process claim or add a subprocess test, and snapshot arguments on spy entry. Record preflight and acceptance timing where the declaration says they appear, or describe the existing split. `inputs/new/test_evw2d.py:187–205,480–484,1413–1419`; `inputs/new/EVW2D-DECLARATION.md:251–252,275–277`
+
+12. **NOTE — Campaign 6 and the two survivor dispositions check out.** The control exited 0 and every recorded tree-dirt list is empty. All 115 kills have plausible named test-body failures from their first error lines. All 117 mutant digests reproduce. The recorded digests match `shas-campaign6.txt`, including the harness after applying the supplied temp-directory edit to the older copy. All final-head file digests match, and the final probe kills `MAIN_CHECKOUT` with `0 != 4`. Removing `STAGE_SYMLINK` preserves refusal for dangling and live symlinks because directory listing sees both and hard-link publication cannot clobber a late arrival. All 116 remaining spans compile. Attach the full final-head receipt when available. `inputs/receipt/mutation-campaign6.json:2–64`; `inputs/receipt/mutation-probe-final.json:2–45`; `inputs/new/evw2d.py:601–614`

@@ -50,12 +50,41 @@ and `/pscratch/sd/j/josephrb/`. Local runs used Python 3.11.18, ROOT 6.40.04, nu
 | 6 | `lattest` | Do the standard lateral shifts of our response close either region? | 40–60 × Muon_Energy_MINOS **CLOSES-3**; all others **NO-EFFECT** | The 40–60 shape excess is +10.0 % at CV and +4.6 % at the +1σ shift, which raises MC reco momentum. A zero is reached at σ* = 2.007, just past the declared 2σ bar. MuonResolution, Muon_Energy_MINERvA and the beam angles have no effect on 40–60, and no band moves the low-pT row past its bar. |
 | 7 | `wstest` S | Does one MINOS momentum scale fit the whole p‖ profile? | **TOP-ONLY** | σ = 0.056 [0.029, 0.083] from p‖ < 20, against 1.43 [1.25, 1.62] from p‖ ≥ 20. |
 | 8 | `wstest` W | Do the shipped model's weights, applied per event in (E_ν, Q²), explain it? | **WEIGHT-MODEL-INADEQUATE** (inconclusive) | The fit matched the 40–60 truth (17.9 % → 0.2 %) but left +3.3 % in the lowest pT row, against a 2 % bar. Reported, not licensed: the 40–60 reco misfit goes 10.0 → 8.8 %, low pT −6.4 → −6.5 %, IBU K=10 0.961 → 1.186. |
+| 9 | [`evloop`](evloop/results/README.md) | Do the official MINOS cuts, MasterAnaDev's momentum, a data-only MINOS scale or a data-only beam-angle offset fit the published result to our reco data? | **NONE** of the tested | Controls pass. MasterAnaDev `muon_P` equals `GetPmu` on every row, so that variant had no power. Removing the 40–60 excess needs a −2.7 % curvature scale, at fold χ² 4,522 against 395. |
+| 10 | [`fig2`](fig2/README.md) | Do our selected data and MC match MINERvA's Fig. 2 in the two regions? | **UNRESOLVED** (both) | Descriptive: at 40–60 our data match theirs (+0.2 %) and our MC is 11 % low. At pT 0–0.07 our data and MC are both about 7 % low, with equal data/MC. |
+| 11 | [`variants`](variants/README.md) | Is the truth difference already there against shipped bare GENIE? | **UPSTREAM**, against our *tuned* truth | Bare GENIE is +12.0 % in shape at 40–60 (Tune v1 +14.7 %). The test cannot separate an upstream difference from our tune weights without our own bare-GENIE truth. |
+| 12 | [`flux`](flux/README.md) (first) | Does our constrained flux differ in shape from Valencia 2019's? | **not read**: wrong histogram | The first reconstruction used MAT's generation flux. The runtime flux is 0.996 of Valencia's in total and 4–11 % lower above 20 GeV in shape. |
+| 13 | [`flux/fluxrw`](flux/README.md) | How much of the truth gap does that flux tail explain? | **FLUX-MAJOR** at truth p‖ 40–60; **FLUX-MINOR** at low pT | Reweighting by Valencia/MAT in E_ν closes 84 % of the shipped-vs-ours shape gap at 40–60 (93 % at 20–40). Reco S_COL moves only 0.100 → 0.095. |
+| 14 | [`resp`](resp/README.md) | Do our p‖ migration and efficiency match the paper's Figs. 3 and 5? | **EFF-DIFF** | Migrations agree within 0.03. Our efficiency at true p‖ 40–60 is 0.747 against 0.861. Reco overflow (6 %) explains about half of the gap (descriptive). |
+| 15 | [`axis`](axis/README.md) | Does a common beam-axis rotation explain the low-pT rows against Fig. 2? | **EDGE: AXIS-NO** | The deficit is largest at low p‖, the opposite of what a rotation predicts. Explained by test 16. |
+| 16 | [`edges`](edges/README.md) | Are the paper's pT edges 0.075 / 0.325 / 0.475? | **EDGES-CONFIRMED** | The release's own TH2D axis stores them. Rebinning our data with them against Fig. 2 takes X from 104.9 to 19.4, and every affected row lands within 1.5 %. Our analysis uses 0.07 / 0.33 / 0.47; see the impact inventory. |
+| 17 | [`rebuild`](rebuild/README.md) | This lane's IBU on the paper's pT edges; a reco-anywhere efficiency arm | **ROW-CLOSED**; **OVERFLOW-PARTIAL** | IBU χ²/205 0.961 → 0.474. The low-pT fold residual goes −6.4 % → −0.6 %. The reco-anywhere efficiency reproduces 57 % of the 40–60 column residual. |
+| 18 | [`tier1`](tier1/README.md) | E_R and its binned IBU (REF-C2C1) on the paper's pT edges | controls pass | **IBU χ²/205 vs published 1.027 → 0.538 at K = 10** (0.830 → 0.395 at K = 5). D_ER 2.270 → 2.121. |
+| 19 | [`tier1/signed`](tier1/signed/README.md) | The signed-target IBU (`ibukt/signed_data`) on the paper's pT edges | PASS (reproduces Tier 1) | IBU χ²/205 vs published, signed target: 0.961 → **0.474** at K = 10 (0.816 → 0.380 at K = 5). |
+| 20 | [`regenA`](regenA/README.md) | The note's central-value comparisons with the published result, on the paper's pT edges | C-OLD PASS (6 products exact); P8 rerun once | χ²/205 vs published 2.270 → **2.121**; 185-cell shape 2.568 → 2.092; readings for journal-editor in `regenA/READINGS.md`. |
+| 21 | [`regenA2`](regenA2/README.md) | The sec3_twod.tex:11 projection ratios, ours / published, on the paper's pT edges | C-LIT PASS (all four literals) | Lowest-pT ratio 0.97 → **1.04**; the others are unchanged at 2 decimals. |
+| 22 | [`regenA3`](regenA3/README.md) | The REF-C2C1 IBU ladder (every stored K) on the paper's pT edges | all controls PASS; one rerun after a crash | K = 2–15 range 0.83–1.59 → **0.39–1.44**; K = 20 2.16 → 1.67; K = 1 3.95 → 4.26. |
+| 23 | [`regenA4`](regenA4/README.md) | The note's figures from the published comparison, on the paper's pT edges (A4, A4b) | all controls PASS for the 8 figures; Fig. 2 via A4b at its installing commit | Mode maps: five of six modes at high p∥ (OLD: the caption's three). Slices: 14/14 and 16/16 toward the published points on both grids. Figure shas for journal-editor. |
+| 24 | [`regenA5`](regenA5/README.md) | The eigenmode numbers of appC:7 and records_r03:18 on the paper's pT edges | C5-REP and C5-LIT PASS | Ten-smallest share 9.6 % → 8.7 %; two → one of the top five in the smallest-λ tenth; three → five of the six leading at high p∥; largest |z| 4.7 → 4.4. |
 
 **Post hoc, read by no rule (`foldtest/posthoc_exclude.py`).** Dropping reco pT row 0 and the p‖ 40–60 column from the
 IBU-vs-published χ² takes it from 210 to 100 over 176 cells. Cells were dropped from a correlated covariance, so this
 is not an attribution.
 
 ## What the chain is consistent with
+
+**Correction, 2026-11-24.** In the list below, "a reco effect confined to high-momentum, curvature-measured muons"
+overreaches: the fold locates the disagreement in reco space, not its mechanism. "Beam angle" in the low-pT item means a
+*data-only* angle offset; a difference common to data and MC, which test 10 suggests, was not tested. Tests 9–11 above
+update the picture.
+<!-- absence-ok: scoped to this lane's test chain; it names what these tests covered, not whether a study exists elsewhere -->
+
+**Correction, 2026-11-24 (test 16).** The paper's pT edges are 0.075, 0.325 and 0.475; ours are 0.07, 0.33 and 0.47.
+Every comparison above with the published cross section, or with the shipped models, in pT rows 0, 1, 3, 4, 5 and 6
+therefore compares densities over different bins. That covers tests 1–3, 5–9, 11, 13 and 14. In particular, the low-pT
+row findings (fold ROW −5.4 %, the truth test's +6–9 % lowest-pT row, and the fig2 low-pT deficit) are at least partly an
+edge artefact. The 40–60 column is a p‖ bin and is unaffected by the pT edges as a whole column, but its per-cell values
+in the affected rows are not. No test here has been rerun with the corrected edges.
 
 - Our MC truth differs from MINERvA's shipped Tune v1 prediction beyond rounding and MC statistics. The events are the
   same public ones, so this is consistent with different event weights (flux or tune). It is not consistent with

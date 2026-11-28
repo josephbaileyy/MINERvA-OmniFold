@@ -1,0 +1,80 @@
+# regenA amendment A4b (2026-11-25, before anything runs): Fig. 2 (xsec_proj_pt/pz) on the paper's pT edges.
+# AMENDMENT-A4.txt and its records (STOP.md; README.md, A4 E for the six) stay unchanged. The director chose this
+# route after A4's stop.
+
+Why. A4's OLD run of Fig. 2 on main stopped in the edge-fix layer's pre-check (STOP.md). Since #1318, Fig. 13's
+producer places the published points on the release axis. That is off OLD's projection grid, so main cannot
+reproduce the installed Fig. 2. A4b follows the A2 pattern instead:
+  - OLD runs the code that made the installed file;
+  - E runs main's.
+The OLD-to-E change in Fig. 2 therefore combines two changes:
+  - the pT-edge move (0.07/0.33/0.47 -> 0.075/0.325/0.475);
+  - #1318's fix that places the published points on the release axis. The installed Fig. 2 drew them at our pT bin
+    centres.
+No reading pairs ours-at-0.07 with published-at-0.075.
+
+The installing commit, from the round's own record:
+  - note-figround3-20261121/runs/fig2/CHECKS.txt:1-2 records "bash tools/run_r3.sh <wt> HEAD", with
+    compose_fig2_r3.py e17b6521... and compose_fig2_round.py 3ffd1215...;
+  - README.md:3 gives the base: "rewrite/journal-voice-20261121 at 177c549c2";
+  - note-figpins-20261122/README.md's table says d27075c2 and caa9286b were "installed by 434fc800b";
+  - 434fc800b's parent is 177c549c2, and 2d-unfolding/ is identical in the two commits (git diff: 0 files);
+  - 434fc800b holds both tools at the CHECKS shas.
+  434fc800b = 434fc800b70a75794318757ae42dfe0aa4bf9691, parent 177c549c23a92589965f246b132e61ff4dc8446a.
+  Every tool tree the chain uses is identical at 434fc800b and at main 06893b0a (git rev-parse <commit>:<path>/tools):
+    4e4bbe7d24523c6a110b522331eb90ffce232c8f  note-figfix-20261120/tools
+    48ded141058d5f56887c7e4f4381a4a79ed8aea8  note-stepedges-20261121/tools
+    077ebd7e4b30386ab3f7628b9b6ec9ac1ae6940b  note-fig23-20261121/tools
+    62f93f263485c89ef92d3c4502bee4ca221dda15  note-figround-20261121/tools
+    14b004d81fb0d4dd8bcda44a150595743d4a187a  note-figround3-20261121/tools
+    80d03827c0132dde6fe65da150d83f64fe527a79  note-figpass-20261119/tools
+    6081bff7b3ef74db84d4641bcf42b543dbf63a4e  note-figstyle-20261117/tools
+    3602d5b1f9095416a48bcfcce65b8af22192d42e  fig-restyle-20261031/tools
+  So the OLD-to-main difference in Fig. 2's code is in 2d-unfolding/ only (#1318, #1328).
+
+Code trees.
+  OLD: WO = <scratch>/w434, made by
+       git archive 434fc800b -- . ':(exclude)nd-unfolding' ':(exclude)docs/orchestration' | tar -x -C WO
+       git archive 434fc800b -- docs/orchestration/state/2d-closeout/stageF/methods | tar -x -C WO
+       This is a clean copy of that commit's files, without nd-unfolding and the other orchestration records, because
+       the disk is at 98 % (10 GiB free) and a worktree is about 1 GB. WO is not a git repository, so the runner's
+       "W=" line is empty there. The extraction's identity is checked by command: for 2d-unfolding/ and the chain's
+       tool trees, the sha256 of every extracted file equals its blob at 434fc800b (receipts/a4b_tree_check.out).
+       The check command, run after the extraction (git ls-tree's recorded mode and path; git cat-file for each blob):
+         git ls-tree -r 434fc800b -- 2d-unfolding technote_style.py <methods>/{note-figfix-20261120,note-stepedges-20261121,
+           note-fig23-20261121,note-figround-20261121,note-figround3-20261121,note-figpass-20261119,
+           note-figstyle-20261117,fig-restyle-20261031}/tools | while read mode type blob path; do
+           [ "$(git cat-file blob $blob | shasum -a 256 | cut -c1-64)" = "$(shasum -a 256 WO/$path | cut -c1-64)" ] \
+           && echo "ok $path" || echo "DIFFER $path"; done > receipts/a4b_tree_check.out
+         Any DIFFER is a STOP before step 1.
+  E: W = ~/local-research/wt-ibu-chi2 at 06893b0a, as in A4.
+
+Runs, with receipts/regenA4_run.sh unchanged (2d5246a1...) and A4_VENV unset (refused if set, recorded):
+  1. regenA4_run.sh WO old ~/cov2d-work/figfetch/er-anc/xsec.root <scratch>/a4b_old
+  2. regenA4_run.sh W  e  <tree>/docs/orchestration/state/ibu-chi2-20261123/tier1/units/e/er.root <scratch>/a4b_e
+  3. receipts/a4b_controls.sh W <scratch>/a4b_old <scratch>/a4b_e <A4's E run dir> > receipts/a4b_controls.out
+Only fig2's outputs are A4b's. The runner's other steps run too, because it cannot skip one without a byte change.
+Their outputs are not readings: in step 1 they are the installing commit's code; in step 2 they repeat A4's E run.
+
+Controls. Any failure is a STOP, with no reading.
+  C4b-OLD: step 1's xsec_proj_pt/pz are EQUAL-BUT-DATE against the installed d27075c2 / caa9286b (bytes_but_date.py
+    a315cd90...).
+  C4b-PRE: in both steps, compose_fig2_edges.json shows that the pre-check flagged exactly one line in each
+    projection's upper panel, the declared 'Tune v1: published prediction', and nothing in the ratio panel, and that
+    the check after the fix flagged nothing. On E, a pre-check that flags anything beyond that line is a STOP.
+  C-RUN: fig2 exits 0 in both steps.
+  C-PINS: A4's pins, equal before and after.
+Information, not a control: step 2's projections against A4's E run, which is EQUAL-BUT-DATE if the run is
+deterministic.
+
+Reading (E): the two projections' sha256 and the PDFs, for journal-editor. Also, from compose_fig2_edges.json, the
+published points' drawn x on each grid, which is where #1318's placement shows. The sec3_twod.tex:11 ratios are A2's
+and are not re-read here.
+
+Pins (sha256 by command):
+  2d5246a1441ab8e3266e3f4ba385bcc8eafcaef9dd2d77983b2662c07f578cd0  receipts/regenA4_run.sh
+  baea0882c8d2aed9e0e1de6ac697b97172f9d0b04bce7ea89e89399788daf522  receipts/a4b_controls.sh
+  a315cd90ec7685ec880964fffd9ca7e24a08d42b2e322a935c8ae37d3c974297  methods/note-figstyle-20261117/tools/bytes_but_date.py
+  d27075c220081054caf51fb6130fe3a671e9dc0dacfb1a97469b3d07829f63af  MEFHC_5iter_xsec_proj_pt.pdf at 434fc800b (= installed at main: d27075c220081054)
+  caa9286bfec8e7f2b6d6dd06fda6d5fc9f0b8f1c7c95d4bacc290048726b4745  MEFHC_5iter_xsec_proj_pz.pdf at 434fc800b (= installed at main: caa9286bfec8e7f2)
+Environment: as AMENDMENT-A4.txt. Laptop, 0 node-h, no NERSC connection.

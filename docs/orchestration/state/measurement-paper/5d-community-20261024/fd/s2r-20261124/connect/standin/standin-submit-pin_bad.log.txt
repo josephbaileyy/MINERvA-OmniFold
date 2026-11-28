@@ -1,0 +1,48 @@
+=== script rc=4; /dev/shm copy left: no
+=== /pscratch/sd/j/josephrb/s2r-20261124/logs/connect-submit.log
+node 105e4ad38872 nproc=4 loadavg 1.13 0.97 0.79
+2026-11-24T18:28:53Z
+window_end_epoch 1795545810 (now 1795544933); fence prefixes cov2d,rpd_,d2s0,covfix
+connect script sha256 fa3fbaf75a60ee5ea277240579b785909b5d468e22be76e9da263f464079b4d7
+== fence (sacct)
+fence clear
+== iris
+m3246 cpu x 0.0 1328.8
+balance_node_h=1328.8 half=664.4 cap_total=1.0
+HEAD 4017c0825444c4e88742801653bf088075c197ed
+porcelain lines (tracked+untracked) 0; ignored entries other than __pycache__/ 0
+s2r/s2r_arm.py: OK
+s2r/s2r_probe.py: OK
+s2r/s2r_read.py: OK
+s2r/s2r_rule.py: OK
+s2r/sbatch_s2r.sh: OK
+s2r/test_s2r.py: OK
+tier3/t3p_arms.py: OK
+tier3/t3p_probe.py: OK
+declaration sha256 16c7f5fb62e4b62aa9ee34dd62a16be15f49b598b8437f716bb99d51cf7970cd
+Ran 58 tests in 6.624s
+
+OK
+porcelain lines (tracked+untracked) 0; ignored entries other than __pycache__/ 0
+3a7efd52158e36e75f4f219a9cdcc624ebe8780c01baf54c13682d334ab4774e  /pscratch/sd/j/josephrb/s2r-20261124/logs/manifest-connect.json
+STOP: the pins check did not pass (logs/pins.tsv)
+role	sha256_ok	stat_unmoved	size	atime_before_ns	atime_after_ns	src
+of_inputs_5d	True	True	77	1795544932409625997	1795544932409625997	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+bkg_dump	False	True	77	1795544932409625997	1795544932409625997	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+bank_cv	True	True	77	1795544932409625997	1795544932409625997	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz
+closure_ratio_nuwro	True	True	77	1795544932409625997	1795544932409625997	/pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json
+rho_gibuu_cv-F	True	True	77	1795544932409625997	1795544932409625997	/pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF/rho-gibuu_cv-F.npz
+prr_B0_nominal_s991000	True	True	77	1795544932409625997	1795544932409625997	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/nominal/prr_B0_nominal_s991000.npz
+prr_B0_A7_gibuu_s991000	True	True	77	1795544932410626100	1795544932410626100	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/A7_gibuu/prr_B0_A7_gibuu_s991000.npz
+prr_B0_q3_s991000	True	True	77	1795544932410626100	1795544932410626100	/pscratch/sd/j/josephrb/fd-prr-20261108/runs/B0/q3/prr_B0_q3_s991000.npz
+s2r submit rc=4
+2026-11-24T18:29:28Z
+=== tests.log tail
+Ran 58 tests in 6.624s
+
+OK
+=== stub calls
+sacct -X -n -P -S now-14days -o JobID,JobName,State
+sacct -X -n -P -S now-14days -o JobID,JobName,State
+=== files written under /pscratch outside /pscratch/sd/j/josephrb/s2r-20261124 (newer than the planting):
+/pscratch/sd/j/josephrb

@@ -1,0 +1,11 @@
+main commit c720db69b9975443344b93bd6d5619f388ccf77f
+input docs/orchestration/state/2d-closeout/c04-repair/products/budget.json sha256 aab8a24ebd61df54e7277999d49300c3bdaa045710835bfa05adf3bfc71dd8fa bytes 26269
+input docs/orchestration/state/2d-closeout/stageF/rebuild/outputs/recompute/recompute_results.json sha256 35e00182ec934d678c32185d4fde6406daf406bdd9dca01b5d0110f451a58e03 bytes 7982
+full_GEANT_Neutron: median_pct 0.125545  integral_sigma_pct 0.020422
+full_GEANT_Pion: median_pct 0.259702  integral_sigma_pct 0.040644
+full_GEANT_Proton: median_pct 0.088865  integral_sigma_pct 0.018279
+Q: median 6.447900  integral 4.754980
+GEANT quadrature: median 0.301834  integral 0.049021
+variance fraction of Q: median 0.002191  integral 0.00010628
+remove all three: median 6.447900 -> 6.440832  integral 4.754980 -> 4.754727
+double all three: median 6.447900 -> 6.469059  integral 4.754980 -> 4.755738

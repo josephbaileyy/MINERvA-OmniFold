@@ -1,0 +1,7 @@
+    OVERLAP run: ours 11; theirs 130
+    OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18/b  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/cov2d-run-20261104
+    OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/AR23-a2/b  ~  theirs cov2d protected (flux2 config) /pscratch/sd/j/josephrb/cov2d-run-20261104
+    OVERLAP ALLOWED: ours read (cov2d-acked) /pscratch/sd/j/josephrb/cov2d-2a/writer_control.root  ~  theirs cov2d disclosed root /pscratch/sd/j/josephrb/cov2d-2a
+    OVERLAP ALLOWED: ours read (cov2d-acked) /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root  ~  theirs cov2d protected (flux2 config) /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root
+    OVERLAP ALLOWED: ours read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28  ~  theirs rpd flux2 read (interpreter) /global/homes/j/josephrb/.conda/envs/root_6_28
+    OVERLAP: CLEAR (pairs checked 1430, hits 0)

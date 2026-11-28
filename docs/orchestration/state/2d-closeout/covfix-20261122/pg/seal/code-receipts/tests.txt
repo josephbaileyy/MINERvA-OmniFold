@@ -1,0 +1,180 @@
+# command: python3 -B -m unittest -v test_covfix_seal.py
+# python: 3.12.2 numpy 1.26.4  gpg: gpg (GnuPG) 2.4.8  host: Darwin arm64
+# b04b8fa9279638625af14e92aae0fcd294369c9eae272a77351951f9090bc7c3  covfix_seal.py
+# f3a293fa720ec03b2b6e9f029e6900d2fb775a1c74c79232c4a648336104cc38  covfix_pg.py
+# ed4d30ab2cea71e7aa87259adc6ffc4497a4b44d93b525b843b65a26151dba16  covfix_sealcheck.py
+# ecc06ce6810b9f63ae1d6744472a19e1bb515102643a9771bc90fd610a0f1c38  test_covfix_seal.py
+# 47b316143ed5e33bced7ba058d059c9b75aa42fa0ae39fd8bc9b4d01246ac8fa  covfix_seal_mutation.py
+# start: 2026-11-28T12:19:09Z
+test_pg_a_clean_record_and_an_epoch_pass_with_the_seed_list (test_covfix_seal.Decryptors.test_pg_a_clean_record_and_an_epoch_pass_with_the_seed_list) ... ok
+test_pg_a_hash_of_a_file_outside_the_allowlist_refuses (test_covfix_seal.Decryptors.test_pg_a_hash_of_a_file_outside_the_allowlist_refuses) ... ok
+test_pg_a_manifest_hash_or_a_seed_named_path_run_is_refused (test_covfix_seal.Decryptors.test_pg_a_manifest_hash_or_a_seed_named_path_run_is_refused) ... ok
+test_pg_a_seed_in_any_form_is_refused (test_covfix_seal.Decryptors.test_pg_a_seed_in_any_form_is_refused) ... ok
+test_pg_a_trace_hash_still_refuses (test_covfix_seal.Decryptors.test_pg_a_trace_hash_still_refuses) ... ok
+test_pg_an_allowlisted_published_files_hash_passes (test_covfix_seal.Decryptors.test_pg_an_allowlisted_published_files_hash_passes) ... ok
+test_pg_inputs_are_checked (test_covfix_seal.Decryptors.test_pg_inputs_are_checked) ... ok
+test_pg_the_exemption_inputs_are_checked (test_covfix_seal.Decryptors.test_pg_the_exemption_inputs_are_checked) ... ok
+test_pg_the_exemption_is_recomputed_and_must_be_in_the_manifest (test_covfix_seal.Decryptors.test_pg_the_exemption_is_recomputed_and_must_be_in_the_manifest) ... ok
+test_pg_with_no_seed_list_the_seed_range_is_the_fallback (test_covfix_seal.Decryptors.test_pg_with_no_seed_list_the_seed_range_is_the_fallback)
+Fallback only: any 10-digit decimal in the seed range is refused, which refuses an epoch too. ... ok
+test_r5_8_a_verified_digest_that_contains_a_seeds_hex_passes (test_covfix_seal.Decryptors.test_r5_8_a_verified_digest_that_contains_a_seeds_hex_passes) ... ok
+test_read_product_takes_only_a_sealed_manifest (test_covfix_seal.Decryptors.test_read_product_takes_only_a_sealed_manifest) ... ok
+test_sm_access_is_explicit (test_covfix_seal.Decryptors.test_sm_access_is_explicit) ... ok
+test_sm_cannot_be_pickled_copied_or_dumped (test_covfix_seal.Decryptors.test_sm_cannot_be_pickled_copied_or_dumped) ... ok
+test_sm_is_read_only (test_covfix_seal.Decryptors.test_sm_is_read_only) ... ok
+test_sm_prints_counts_only (test_covfix_seal.Decryptors.test_sm_prints_counts_only) ... ok
+test_pg_frame (test_covfix_seal.Frame.test_pg_frame) ... ok
+test_pg_frame_refusals (test_covfix_seal.Frame.test_pg_frame_refusals) ... ok
+test_pv_frame (test_covfix_seal.Frame.test_pv_frame) ... ok
+test_seed_range_edges (test_covfix_seal.Frame.test_seed_range_edges) ... ok
+test_i_a_listed_env_keep_name_that_is_not_set_is_refused_before_anything_runs (test_covfix_seal.GenSpecPin.test_i_a_listed_env_keep_name_that_is_not_set_is_refused_before_anything_runs) ... ok
+test_i_an_env_keep_name_listed_twice_is_refused (test_covfix_seal.GenSpecPin.test_i_an_env_keep_name_listed_twice_is_refused) ... ok
+test_i_set_slurm_names_pass_and_reach_the_generator (test_covfix_seal.GenSpecPin.test_i_set_slurm_names_pass_and_reach_the_generator) ... ok
+test_ii_a_gen_spec_off_its_pin_is_refused_before_anything_runs (test_covfix_seal.GenSpecPin.test_ii_a_gen_spec_off_its_pin_is_refused_before_anything_runs) ... ok
+test_ii_the_pin_must_be_64_lowercase_hex (test_covfix_seal.GenSpecPin.test_ii_the_pin_must_be_64_lowercase_hex) ... usage: covfix_pg.py [-h] --covfix-attempt COVFIX_ATTEMPT --workdir WORKDIR
+                    --sealed SEALED --gen-spec GEN_SPEC --gen-spec-sha256
+                    GEN_SPEC_SHA256 --gpg GPG --gpgconf GPGCONF --gpg-sha256
+                    GPG_SHA256 --gpgconf-sha256 GPGCONF_SHA256
+covfix_pg.py: error: the following arguments are required: --gen-spec-sha256
+ok
+test_ii_the_spec_is_parsed_from_the_bytes_it_hashed (test_covfix_seal.GenSpecPin.test_ii_the_spec_is_parsed_from_the_bytes_it_hashed) ... ok
+test_iii_an_inherited_value_that_differs_from_env_set_is_refused_before_anything_runs (test_covfix_seal.GenSpecPin.test_iii_an_inherited_value_that_differs_from_env_set_is_refused_before_anything_runs) ... ok
+test_iii_env_set_values_reach_the_generator (test_covfix_seal.GenSpecPin.test_iii_env_set_values_reach_the_generator) ... ok
+test_a_chmod_failure_still_removes_the_home (test_covfix_seal.Gpg.test_a_chmod_failure_still_removes_the_home) ... ok
+test_an_unreadable_tool_is_refused (test_covfix_seal.Gpg.test_an_unreadable_tool_is_refused) ... ok
+test_child_sees_exactly_fds_0_to_3_no_core_and_minimal_env (test_covfix_seal.Gpg.test_child_sees_exactly_fds_0_to_3_no_core_and_minimal_env) ... ok
+test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails (test_covfix_seal.Gpg.test_cleanup_survives_a_gpgconf_failure_and_unconfirmed_shutdown_or_removal_fails) ... ok
+test_declared_flags (test_covfix_seal.Gpg.test_declared_flags) ... ok
+test_gnupg_home_short_node_local_and_removed (test_covfix_seal.Gpg.test_gnupg_home_short_node_local_and_removed) ... ok
+test_home_under_scratch_refused (test_covfix_seal.Gpg.test_home_under_scratch_refused) ... ok
+test_long_home_refused (test_covfix_seal.Gpg.test_long_home_refused) ... ok
+test_passphrase_pipe_on_fd_3 (test_covfix_seal.Gpg.test_passphrase_pipe_on_fd_3) ... ok
+test_round_trip_and_wrong_passphrase (test_covfix_seal.Gpg.test_round_trip_and_wrong_passphrase) ... ok
+test_tampered_ciphertext_refused (test_covfix_seal.Gpg.test_tampered_ciphertext_refused) ... ok
+test_tools_are_pinned_and_verified_before_every_exec (test_covfix_seal.Gpg.test_tools_are_pinned_and_verified_before_every_exec) ... ok
+test_tools_must_be_absolute_executables (test_covfix_seal.Gpg.test_tools_must_be_absolute_executables) ... ok
+test_product_reads_use_o_noatime (test_covfix_seal.NoAtime.test_product_reads_use_o_noatime) ... skipped 'O_NOATIME is Linux-only'
+test_a_benign_scratch_change_is_scanned_but_not_a_spill (test_covfix_seal.PG.test_a_benign_scratch_change_is_scanned_but_not_a_spill) ... ok
+test_a_group_that_will_not_end_is_refused (test_covfix_seal.PG.test_a_group_that_will_not_end_is_refused) ... ok
+test_a_missing_published_index_is_a_break (test_covfix_seal.PG.test_a_missing_published_index_is_a_break) ... ok
+test_a_pg_owned_file_is_not_a_product (test_covfix_seal.PG.test_a_pg_owned_file_is_not_a_product) ... ok
+test_a_seed_in_a_link_target_is_caught_and_removed (test_covfix_seal.PG.test_a_seed_in_a_link_target_is_caught_and_removed) ... ok
+test_a_seed_in_a_new_directory_name_is_caught_and_removed (test_covfix_seal.PG.test_a_seed_in_a_new_directory_name_is_caught_and_removed) ... ok
+test_an_orphan_of_the_generator_is_killed_before_the_seal (test_covfix_seal.PG.test_an_orphan_of_the_generator_is_killed_before_the_seal) ... ok
+test_an_unconfirmed_group_end_fails_the_run (test_covfix_seal.PG.test_an_unconfirmed_group_end_fails_the_run) ... ok
+test_break_exit_and_line (test_covfix_seal.PG.test_break_exit_and_line) ... ok
+test_command_changed_during_the_run (test_covfix_seal.PG.test_command_changed_during_the_run) ... ok
+test_command_sha_mismatch_or_relative_does_not_run (test_covfix_seal.PG.test_command_sha_mismatch_or_relative_does_not_run) ... ok
+test_dirs_refused (test_covfix_seal.PG.test_dirs_refused) ... ok
+test_final_seal_check_is_a_break (test_covfix_seal.PG.test_final_seal_check_is_a_break) ... ok
+test_frame_attempt_and_tools_refusals (test_covfix_seal.PG.test_frame_attempt_and_tools_refusals) ... ok
+test_generation_failure_still_seals (test_covfix_seal.PG.test_generation_failure_still_seals) ... ok
+test_generator_process_group_is_killed (test_covfix_seal.PG.test_generator_process_group_is_killed) ... ok
+test_plaintext_spill_is_caught_and_removed (test_covfix_seal.PG.test_plaintext_spill_is_caught_and_removed) ... ok
+test_products_json_validated (test_covfix_seal.PG.test_products_json_validated) ... ok
+test_products_not_regular (test_covfix_seal.PG.test_products_not_regular) ... ok
+test_scan_hit_in_sealed_fails (test_covfix_seal.PG.test_scan_hit_in_sealed_fails) ... ok
+test_scratch_required (test_covfix_seal.PG.test_scratch_required) ... ok
+test_seed_spill_at_depth_is_caught_and_removed (test_covfix_seal.PG.test_seed_spill_at_depth_is_caught_and_removed) ... ok
+test_sigterm_handler_is_installed_during_the_run (test_covfix_seal.PG.test_sigterm_handler_is_installed_during_the_run) ... ok
+test_sigterm_handler_raises (test_covfix_seal.PG.test_sigterm_handler_raises) ... ok
+test_snapshot_edge_cases (test_covfix_seal.PG.test_snapshot_edge_cases) ... ok
+test_spec_validation (test_covfix_seal.PG.test_spec_validation) ... ok
+test_success (test_covfix_seal.PG.test_success) ... ok
+test_symlink_from_generator_is_refused_and_trapped (test_covfix_seal.PG.test_symlink_from_generator_is_refused_and_trapped) ... ok
+test_synthetic_round_trip_failure_stops_before_generation (test_covfix_seal.PG.test_synthetic_round_trip_failure_stops_before_generation) ... ok
+test_termination_and_internal_error_use_fixed_codes (test_covfix_seal.PG.test_termination_and_internal_error_use_fixed_codes) ... ok
+test_the_trap_stays_armed_through_the_scan (test_covfix_seal.PG.test_the_trap_stays_armed_through_the_scan) ... ok
+test_trap_failure_is_recorded (test_covfix_seal.PG.test_trap_failure_is_recorded) ... ok
+test_trap_removes_spills_on_failure (test_covfix_seal.PG.test_trap_removes_spills_on_failure) ... ok
+test_trap_spill_failure_still_deletes (test_covfix_seal.PG.test_trap_spill_failure_still_deletes) ... ok
+test_workdir_left_nonempty_fails (test_covfix_seal.PG.test_workdir_left_nonempty_fails) ... ok
+test_a_linked_seal_root_or_a_path_name_is_refused (test_covfix_seal.Reader.test_a_linked_seal_root_or_a_path_name_is_refused) ... ok
+test_an_id_absent_from_the_manifest_is_refused_before_any_read (test_covfix_seal.Reader.test_an_id_absent_from_the_manifest_is_refused_before_any_read) ... ok
+test_duplicate_manifest_paths_break (test_covfix_seal.Reader.test_duplicate_manifest_paths_break) ... ok
+test_manifest_schema (test_covfix_seal.Reader.test_manifest_schema) ... ok
+test_missing_is_a_break_unreadable_or_linked_is_a_role_failure (test_covfix_seal.Reader.test_missing_is_a_break_unreadable_or_linked_is_a_role_failure) ... ok
+test_plaintext_not_its_manifest_hash_is_a_break (test_covfix_seal.Reader.test_plaintext_not_its_manifest_hash_is_a_break) ... ok
+test_reads_through_the_seal (test_covfix_seal.Reader.test_reads_through_the_seal) ... ok
+test_requests_outside_the_seal_or_manifest_are_role_failures (test_covfix_seal.Reader.test_requests_outside_the_seal_or_manifest_are_role_failures) ... ok
+test_tampered_bytes_break_before_any_decrypt (test_covfix_seal.Reader.test_tampered_bytes_break_before_any_decrypt) ... ok
+test_private_dir_is_0700_whatever_the_umask (test_covfix_seal.RehearsalContract.test_private_dir_is_0700_whatever_the_umask) ... ok
+test_w_tmp_is_mode_0700_under_umask_022 (test_covfix_seal.RehearsalContract.test_w_tmp_is_mode_0700_under_umask_022) ... ok
+test_f6_a_removal_that_returns_false_keeps_the_trap_armed (test_covfix_seal.Round3Findings.test_f6_a_removal_that_returns_false_keeps_the_trap_armed) ... ok
+test_f6_an_equal_length_overwrite_with_mtime_kept_is_a_spill (test_covfix_seal.Round3Findings.test_f6_an_equal_length_overwrite_with_mtime_kept_is_a_spill) ... ok
+test_f6_an_lstat_error_is_collected_not_raised (test_covfix_seal.Round3Findings.test_f6_an_lstat_error_is_collected_not_raised) ... ok
+test_f6_an_unlistable_directory_fails_the_run_but_the_scan_goes_on (test_covfix_seal.Round3Findings.test_f6_an_unlistable_directory_fails_the_run_but_the_scan_goes_on) ... ok
+test_f6_an_unreadable_entry_does_not_stop_the_scan_or_the_cleanup (test_covfix_seal.Round3Findings.test_f6_an_unreadable_entry_does_not_stop_the_scan_or_the_cleanup) ... ok
+test_f6_scan_errors_alone_fail_the_run (test_covfix_seal.Round3Findings.test_f6_scan_errors_alone_fail_the_run) ... ok
+test_f6_the_trap_rescan_tolerates_an_unlistable_directory (test_covfix_seal.Round3Findings.test_f6_the_trap_rescan_tolerates_an_unlistable_directory) ... ok
+test_f7_a_run_with_an_escaped_process_has_no_receipt (test_covfix_seal.Round3Findings.test_f7_a_run_with_an_escaped_process_has_no_receipt) ... ok
+test_f7_detector_a_clean_step_passes (test_covfix_seal.Round3Findings.test_f7_detector_a_clean_step_passes) ... ok
+test_f7_detector_a_reparented_escapee_is_caught (test_covfix_seal.Round3Findings.test_f7_detector_a_reparented_escapee_is_caught) ... ok
+test_f7_detector_an_extra_pid_in_the_step_refuses (test_covfix_seal.Round3Findings.test_f7_detector_an_extra_pid_in_the_step_refuses) ... ok
+test_f7_detector_an_unreadable_or_v1_cgroup_is_a_stop (test_covfix_seal.Round3Findings.test_f7_detector_an_unreadable_or_v1_cgroup_is_a_stop) ... ok
+test_f7_detector_the_ancestor_chain_stops_at_the_first_gap (test_covfix_seal.Round3Findings.test_f7_detector_the_ancestor_chain_stops_at_the_first_gap) ... ok
+test_f8_a_gpg_run_installs_its_own_recorder_and_restores_the_handler (test_covfix_seal.Round3Findings.test_f8_a_gpg_run_installs_its_own_recorder_and_restores_the_handler) ... ok
+test_f8_a_sigterm_during_the_agent_shutdown_still_removes_the_home (test_covfix_seal.Round3Findings.test_f8_a_sigterm_during_the_agent_shutdown_still_removes_the_home) ... ok
+test_f8_off_the_main_thread_and_under_the_default_handler (test_covfix_seal.Round3Findings.test_f8_off_the_main_thread_and_under_the_default_handler) ... ok
+test_f9_a_missing_required_product_fails_the_run (test_covfix_seal.Round3Findings.test_f9_a_missing_required_product_fails_the_run) ... ok
+test_f9_the_required_inventory_is_validated (test_covfix_seal.Round3Findings.test_f9_the_required_inventory_is_validated) ... ok
+test_r4_7_a_run_records_the_inventory_and_has_no_receipt (test_covfix_seal.Round4Findings.test_r4_7_a_run_records_the_inventory_and_has_no_receipt) ... ok
+test_r4_7_an_ancestor_elsewhere_in_the_job_is_allowed (test_covfix_seal.Round4Findings.test_r4_7_an_ancestor_elsewhere_in_the_job_is_allowed)
+A slurmstepd in step_0/slurm that is the wrapper's parent is in the contiguous ancestor chain. ... ok
+test_r4_7_an_unreadable_comm_or_exe_is_none_in_the_inventory (test_covfix_seal.Round4Findings.test_r4_7_an_unreadable_comm_or_exe_is_none_in_the_inventory) ... ok
+test_r4_7_an_unreadable_directory_or_no_job_cgroup_is_a_stop (test_covfix_seal.Round4Findings.test_r4_7_an_unreadable_directory_or_no_job_cgroup_is_a_stop) ... ok
+test_r4_7_any_other_process_anywhere_in_the_job_refuses_with_its_inventory (test_covfix_seal.Round4Findings.test_r4_7_any_other_process_anywhere_in_the_job_refuses_with_its_inventory) ... ok
+test_r4_7_outside_a_job_or_with_a_stray_nothing_is_generated (test_covfix_seal.Round4Findings.test_r4_7_outside_a_job_or_with_a_stray_nothing_is_generated)
+The wrapper runs pg-connect on its host with no allocation of its own. A sealer outside a Slurm job, or ... ok
+test_r4_7_the_sealer_must_be_in_its_jobs_cgroups (test_covfix_seal.Round4Findings.test_r4_7_the_sealer_must_be_in_its_jobs_cgroups) ... ok
+test_r4_8_a_held_sigterm_kills_a_stubborn_gpg_within_the_bound (test_covfix_seal.Round4Findings.test_r4_8_a_held_sigterm_kills_a_stubborn_gpg_within_the_bound) ... ok
+test_r4_8_a_sigterm_before_gpg_starts_kills_it_at_once (test_covfix_seal.Round4Findings.test_r4_8_a_sigterm_before_gpg_starts_kills_it_at_once) ... ok
+test_r4_8_killing_a_child_that_is_already_gone_is_quiet (test_covfix_seal.Round4Findings.test_r4_8_killing_a_child_that_is_already_gone_is_quiet) ... ok
+test_r4_8_the_home_goes_whatever_the_agent_shutdown_raises (test_covfix_seal.Round4Findings.test_r4_8_the_home_goes_whatever_the_agent_shutdown_raises) ... ok
+test_r5_3_an_undecodable_comm_keeps_the_inventory (test_covfix_seal.Round5Findings.test_r5_3_an_undecodable_comm_keeps_the_inventory) ... ok
+test_r5_4_nothing_is_hashed_while_a_sigterm_is_held (test_covfix_seal.Round5Findings.test_r5_4_nothing_is_hashed_while_a_sigterm_is_held) ... ok
+test_r5_5_one_unreadable_file_does_not_stop_the_trap (test_covfix_seal.Round5Findings.test_r5_5_one_unreadable_file_does_not_stop_the_trap) ... ok
+test_r5_5_with_an_unreadable_file_the_inventory_keeps_only_its_count (test_covfix_seal.Round5Findings.test_r5_5_with_an_unreadable_file_the_inventory_keeps_only_its_count) ... ok
+test_r5_6_a_duplicate_key_at_any_depth_is_refused (test_covfix_seal.Round5Findings.test_r5_6_a_duplicate_key_at_any_depth_is_refused) ... ok
+test_r5_9_scratch_is_in_neither_list (test_covfix_seal.Round5Findings.test_r5_9_scratch_is_in_neither_list) ... ok
+test_a_product_named_like_the_manifest_is_just_an_id (test_covfix_seal.Seal.test_a_product_named_like_the_manifest_is_just_an_id) ... ok
+test_break_on_a_product_round_trip_alone (test_covfix_seal.Seal.test_break_on_a_product_round_trip_alone) ... ok
+test_break_on_manifest_mismatch (test_covfix_seal.Seal.test_break_on_manifest_mismatch) ... ok
+test_content_scan (test_covfix_seal.Seal.test_content_scan) ... ok
+test_content_scan_skips_a_special_root (test_covfix_seal.Seal.test_content_scan_skips_a_special_root) ... ok
+test_delete_plaintext (test_covfix_seal.Seal.test_delete_plaintext) ... ok
+test_existing_ciphertext_not_overwritten (test_covfix_seal.Seal.test_existing_ciphertext_not_overwritten) ... ok
+test_nothing_published_names_a_path_or_a_seed (test_covfix_seal.Seal.test_nothing_published_names_a_path_or_a_seed) ... ok
+test_refusals (test_covfix_seal.Seal.test_refusals) ... ok
+test_regular_read_refuses_a_directory (test_covfix_seal.Seal.test_regular_read_refuses_a_directory) ... ok
+test_seal_layout_manifest_and_seal_file (test_covfix_seal.Seal.test_seal_layout_manifest_and_seal_file) ... ok
+test_walk_errors_refuse (test_covfix_seal.Seal.test_walk_errors_refuse) ... ok
+test_canonical_seal (test_covfix_seal.SealCheck.test_canonical_seal) ... ok
+test_cli (test_covfix_seal.SealCheck.test_cli) ... ok
+test_ok_missing_extra_mismatched (test_covfix_seal.SealCheck.test_ok_missing_extra_mismatched) ... ok
+test_symlinked_or_non_file_entries_fail (test_covfix_seal.SealCheck.test_symlinked_or_non_file_entries_fail) ... ok
+test_the_on_disk_index_must_be_the_seal (test_covfix_seal.SealCheck.test_the_on_disk_index_must_be_the_seal) ... ok
+test_a_gen_spec_naming_a_task_seed_is_refused_before_generation (test_covfix_seal.SeedBearing.test_a_gen_spec_naming_a_task_seed_is_refused_before_generation) ... ok
+test_a_id_order_is_independent_of_relpath_order (test_covfix_seal.SeedBearing.test_a_id_order_is_independent_of_relpath_order) ... ok
+test_a_ids_are_drawn_from_a_csprng (test_covfix_seal.SeedBearing.test_a_ids_are_drawn_from_a_csprng) ... ok
+test_a_seal_follows_the_permutation_and_the_manifest_holds_it (test_covfix_seal.SeedBearing.test_a_seal_follows_the_permutation_and_the_manifest_holds_it) ... ok
+test_b_a_fixed_width_logs_ciphertext_size_does_not_depend_on_the_seeds_digits (test_covfix_seal.SeedBearing.test_b_a_fixed_width_logs_ciphertext_size_does_not_depend_on_the_seeds_digits) ... ok
+test_b_the_probe_round_trip_uses_the_seal_argv (test_covfix_seal.SeedBearing.test_b_the_probe_round_trip_uses_the_seal_argv)
+Every encryption in a PG run, the synthetic round trip included, uses exactly cs.GPG_ENCRYPT. ... ok
+test_m1_a_plaintext_hash_in_the_summary_is_redacted (test_covfix_seal.SeedBearing.test_m1_a_plaintext_hash_in_the_summary_is_redacted)
+The step check runs before the seal, so the hash comes from the trap's hashes of W's files. ... ok
+test_m1_a_seed_in_a_strays_comm_is_redacted (test_covfix_seal.SeedBearing.test_m1_a_seed_in_a_strays_comm_is_redacted) ... ok
+test_m1_a_seed_in_a_strays_exe_is_redacted (test_covfix_seal.SeedBearing.test_m1_a_seed_in_a_strays_exe_is_redacted) ... ok
+test_m1_an_exe_under_w_the_sealed_dir_or_scratch_is_a_fixed_token (test_covfix_seal.SeedBearing.test_m1_an_exe_under_w_the_sealed_dir_or_scratch_is_a_fixed_token) ... ok
+test_m1_the_guard_unit (test_covfix_seal.SeedBearing.test_m1_the_guard_unit) ... ok
+test_m2_a_sums_file_in_scratch_tmp_is_a_spill (test_covfix_seal.SeedBearing.test_m2_a_sums_file_in_scratch_tmp_is_a_spill) ... ok
+test_m2_hash_text_in_a_name_or_upper_case_is_a_hit (test_covfix_seal.SeedBearing.test_m2_hash_text_in_a_name_or_upper_case_is_a_hit) ... ok
+test_declared_maximum_is_below_the_limit (test_covfix_seal.Seeds.test_declared_maximum_is_below_the_limit) ... ok
+test_formula_and_alias (test_covfix_seal.Seeds.test_formula_and_alias) ... ok
+test_limit_refused (test_covfix_seal.Seeds.test_limit_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 156 tests in 1005.735s
+
+OK (skipped=1)
+# rc: 0

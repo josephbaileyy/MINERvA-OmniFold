@@ -1,0 +1,106 @@
+# Review of `change.diff` (`plot_2d_cross_section.py` Input-Axis Update)
+
+Review performed statically from `inputs/change.diff` and all files in `inputs/2d-unfolding/`. Note: tests were not executed (this snapshot lacks `technote_style.py` and the git history for `BASE_XS`).
+
+---
+
+## 1. Correctness Bugs
+
+1. **`truth_projections` and `efficiency_mesh` call `th2d_edges` (which accepts `(16, 14)` transposed histograms) while assuming `(X = p_T, Y = p_||)` (`(14, 16)`).**
+   - **Locations:**
+     - `2d-unfolding/uq/reported_cells.py:79-94` (`th2d_edges`)
+     - `2d-unfolding/plot_2d_cross_section.py:271-275` (`truth_projections`)
+     - `2d-unfolding/plot_2d_cross_section.py:278-286` (`efficiency_mesh`)
+     - `2d-unfolding/unfold_2d_omnifold_unbinned.py:1276-1308` (`project_xsec_1d`)
+   - **Details:** `th2d_edges(h)` explicitly accepts both `(14, 16)` and `(16, 14)` histograms and returns `(pt_edges, pz_edges)` in both cases. However:
+     - `efficiency_mesh(h_eff)` assigns `npt, npz = h_eff.GetNbinsX(), h_eff.GetNbinsY()` (`plot_2d_cross_section.py:281`) and builds `eff_arr` of shape `(nx, ny)`. On a `(16, 14)` input (`X = p_||, Y = p_T`), `pt_edges` has 15 edges (14 bins) and `pz_edges` has 17 edges (16 bins), while `eff_arr` has shape `(16, 14)` instead of the documented `(14, 16)` `[pT, p_parallel]`. Passing `(pz_edges, pt_edges, eff_arr)` to `ax.pcolormesh` (`plot_2d_cross_section.py:400`) raises a shape-mismatch error.
+     - `truth_projections(h2d)` passes `(pt_edges, pz_edges)` from `th2d_edges(h2d)` to `project_xsec_1d` (`unfold_2d_omnifold_unbinned.py:1283-1308`). `project_xsec_1d` always loops `ix = 1..GetNbinsX()` for `"pt"` (multiplying by `GetYaxis().GetBinWidth(iy)`) and `iy = 1..GetNbinsY()` for `"pz"` (multiplying by `GetXaxis().GetBinWidth(ix)`). On a `(16, 14)` input, `"pt"` loops `ix = 1..16` into a 14-bin `TH1D` (bins 15–16 write into ROOT overflow/out-of-range bins) using `p_T` widths instead of `p_||` widths, and `"pz"` loops `iy = 1..14` into a 16-bin `TH1D` (leaving bins 15–16 at 0) using `p_||` widths instead of `p_T` widths.
+   - **Impact:** Standard `unfold_2d_omnifold_unbinned.py` outputs are `(14, 16)`, where this does not trigger; any caller passing a `(16, 14)` `TH2D` (such as a release-oriented histogram) directly to `efficiency_mesh` or `truth_projections` hits a crash or silent bin corruption instead of either transposing or rejecting `(16, 14)`.
+   - **Certainty:** Certain.
+
+2. **No consistency check across histograms in `main()`, `plot_1d_projection`, `plot_panel_grid`, or `load_flux_bins_for_truth` (pre-existing, interacts with multi-grid inputs).**
+   - **Locations:**
+     - `2d-unfolding/plot_2d_cross_section.py:93-118` (`plot_panel_grid`)
+     - `2d-unfolding/plot_2d_cross_section.py:166-178` (`_plot_1d_projection`)
+     - `2d-unfolding/plot_2d_cross_section.py:245-268, 333-340` (`load_flux_bins_for_truth`, `main`)
+   - **Details:**
+     - `_plot_1d_projection` reads `edges` only from `h_xsec` (`hXSec_pt`/`hXSec_pz`) and reads only `GetBinContent` from `h_truth` (`hXSecTruth_pt`/`hXSecTruth_pz`). Even though `truth_projections` now gives `hXSecTruth_pt` the truth histogram's edges, any mismatch between `hXSec_pt` and `hTruth2D` (or `hXSec2D`) is silently drawn at `h_xsec`'s bin edges.
+     - `plot_panel_grid` takes slice titles, `centers`, and `widths` from `h_xsec` (`hXSec2D`) and `edges`/`xlim` from `h_truth` (`hXSecTruth2D`) without verifying their axes match.
+     - `load_flux_bins_for_truth` reads `hFlux_pt` (or the `--mcfile` fallback histogram) by bin index without checking its `p_T` bin edges against `hTruth2D`. If an input on the new grid lacks `hFlux_pt` and falls back to an old-grid `runEventLoopMC.root`, `compute_truth_xsec_2d` silently divides the new-grid truth bins by old-grid flux bins.
+   - **Certainty:** Certain (note: pre-existing design assumption that all objects in one `--infile` share one grid).
+
+---
+
+## 2. Ways Output Could Be Altered on the Old Grid
+
+On a standard `TH2D` input on the old `14 x 16` grid (`PT_EDGES` on X, `PZ_EDGES` on Y), **no values, strings, or output figures are altered**:
+- `edge_label(x)` (`2d-unfolding/uq/reported_cells.py:70-76`) produces the exact same `"0.00"`..`"4.50"` 2-decimal strings as `f"{x:.2f}"` for every edge in `PT_EDGES`, because `abs(round(x, 2) - x) == 0.0 <= 1e-9` in `float64`.
+- `th2d_edges(hXSecTruth2D)` (`2d-unfolding/uq/reported_cells.py:79-94`) returns the exact `float64` bin edges of `PT_EDGES` and `PZ_EDGES` stored on `hXSecTruth2D`, so `truth_projections(hXSecTruth2D)` passes identical edges to `project_xsec_1d` (`2d-unfolding/plot_2d_cross_section.py:274-275`).
+- `efficiency_mesh(hEff2D)` (`2d-unfolding/plot_2d_cross_section.py:278-286`) extracts the same `eff_arr` values and `PZ_EDGES` / `PT_EDGES` arrays for `pcolormesh`.
+- `2d-unfolding/plot_2d_threeway_fig13.py:43` imports the exact same `edge_label` definition moved to `uq/reported_cells.py`.
+
+Only edge-case departures from standard old-grid `TH2D` inputs could change behavior relative to `BASE_XS`:
+- **Non-`14 x 16` inputs:** `truth_projections` and `efficiency_mesh` now reject non-`(14, 16)`/`(16, 14)` `TH2D`s with `CellIdentityError` via `th2d_edges` (`2d-unfolding/uq/reported_cells.py:94`) instead of letting `project_xsec_1d` silently truncate/overflow. (Not an issue for the 14 x 16 analysis grid.)
+- **`TH2F` (32-bit float) axes on the old grid:** If a `TH2F` (rather than `TH2D`) were passed to `th2_to_slices`, `float32(0.33)` is `0.33000001311302185` (`diff = 1.31e-8 > 1e-9`), so `edge_label` (`2d-unfolding/uq/reported_cells.py:73-76`) would format it as `"0.330000013"` instead of `"0.33"`.
+- **`sys.path` import resolution (`2d-unfolding/plot_2d_cross_section.py:37-40`):** `_sys.path.append(_UQ)` puts `2d-unfolding/uq` at the end of `sys.path`; if an environment already has a different `reported_cells` earlier on `sys.path`, that module would shadow `uq/reported_cells.py`.
+- **Certainty:** High (by code inspection; tests not executed locally).
+
+---
+
+## 3. Anything Still Tied to the Old Edges (or Grid Assumptions)
+
+1. **`p_||` slice label format hardcoded to `:.1f`** (`2d-unfolding/plot_2d_cross_section.py:63`):
+   - `th2_to_slices(h2d, "pz")` formats `label = f"{lo:.1f} < p_|| < {hi:.1f}"`.
+   - This matches the old grid and the `0.075/0.325/0.475` grid (which only alters `p_T` and keeps `PZ_EDGES` at multiples of `0.5`), so it is correct for the target grid. However, if `p_||` edges ever gained 2+ decimal places (e.g., `1.75`), `:.1f` would round them (note `edge_label` has a 2-decimal minimum and cannot be used here without altering `"1.5 < p_|| < 2.0"` on the old grid).
+   - **Certainty:** Certain.
+
+2. **Module constants `PT_EDGES`, `PZ_EDGES`, `N_PT`, `N_PZ`** (`2d-unfolding/plot_2d_cross_section.py:29-35`):
+   - Still defined at module level with the `0.07/0.33/0.47` edges, though no longer referenced inside `plot_2d_cross_section.py`. Kept because `2d-unfolding/plot_2d_threeway_fig13.py:33-38` imports `PT_EDGES` and `PZ_EDGES` from `plot_2d_cross_section`.
+   - **Certainty:** Certain.
+
+3. **Fixed `14 x 16` bin count in `th2d_edges`** (`2d-unfolding/uq/reported_cells.py:27, 79-94`):
+   - Tied to `GRID_SHAPE = (14, 16)` (not the old edge values; matches the `14 p_T x 16 p_parallel` analysis specification).
+   - **Certainty:** Certain.
+
+4. **Unchanged sibling/imported modules outside `plot_2d_cross_section.py`'s plotting scope:**
+   - `2d-unfolding/unfold_2d_omnifold_unbinned.py:32-36, 1634-1635` defines and unfolds on the old `PT_EDGES`/`PZ_EDGES` (`project_xsec_1d` at `:1276-1310` is parameterized by `pt_edges, pz_edges`).
+   - `2d-unfolding/uq/reported_cells.py:23-26, 97-140` (`grid_hist_to_array`, `identity_hist`, `read_cells`) are tied to the old `PT_EDGES`, but are not called by `plot_2d_cross_section.py`.
+   - `2d-unfolding/plot_2d_threeway_fig13.py:33-48, 266, 309` uses `PT_EDGES, PZ_EDGES` as defaults in `plot_pt_slices` / `plot_pz_slices`, overridden by `main()` via `load_result(..., want_edges=True)`.
+   - **Certainty:** Certain.
+
+---
+
+## 4. Gaps in the Tests (`2d-unfolding/tests/test_published_axis_widths.py`)
+
+In `CrossSectionPlotEdges` (`2d-unfolding/tests/test_published_axis_widths.py:1045-1197`), the following wrong implementations would pass all existing tests:
+
+1. **`test_main_on_paper_grid` (`2d-unfolding/tests/test_published_axis_widths.py:1175-1192`) never checks rendered plots, slice labels/widths, `eff_arr`, or `pz_edges` on the `0.075` grid.**
+   - It only records `uu.project_xsec_1d`'s `(axis, pt_edges, pz_edges)` arguments (ignoring the histogram `h` passed in) and `mesh[0][1]` from `spy("pcolormesh")` (which at `:148-149` records only the 2nd positional arg `pt_edges` and discards `a[0]`=`pz_edges` and `a[2]`=`eff_arr`).
+   - Wrong implementations that still pass all tests in `CrossSectionPlotEdges`:
+     - Calling `truth_projections(hXSecTruth2D)` in `main()` (satisfying the `uu.project_xsec_1d` spy) and then passing `hXSec2D` instead, or discarding the return values and plotting wrong `h_truth` / wrong `edges` in `plot_1d_projection`. (`test_main_on_our_grid_equals_base` only checks `g07.root`; `p075_proj_pt.png` and `p075_proj_pz.png` are never checked.)
+     - Hardcoding `PT_EDGES` widths inside `compute_truth_xsec_2d` (`plot_2d_cross_section.py:231`): `test_truth_projections` never calls `compute_truth_xsec_2d`, `test_main_on_our_grid_equals_base` passes because `OUR_PT == PT_EDGES`, and `test_main_on_paper_grid` never inspects `hXSecTruth2D`'s bin contents or the output plots on `g075.root`.
+     - Using `PZ_EDGES` directly or distorting `eff_arr` (when on `PAPER_PT`) at `ax.pcolormesh(..., ...)` (`plot_2d_cross_section.py:400`), because `spy("pcolormesh")` never inspects `a[0]` or `a[2]` and `p075_eff_heatmap.png` is never checked.
+     - Hardcoding slice titles or `PT_EDGES` bin positions inside `plot_panel_grid` when `edges != OUR_PT`: `test_slice_labels` tests `th2_to_slices` in isolation, while `test_main_on_paper_grid` never inspects `p075_pt_slices.png` or `p075_pz_slices.png` (or `Axes.set_title`/`errorbar`/`stairs`).
+     - Breaking `plot_2d_cross_section.main()` on `g075.root` with default `--style` off (`test_main_on_paper_grid` only runs `style=True`).
+   - **Certainty:** Certain.
+
+2. **No test in `CrossSectionPlotEdges` varies the `p_||` (`PZ`) axis (`2d-unfolding/tests/test_published_axis_widths.py:1059, 1086, 1110-1192`).**
+   - Every test uses `PZ` (`== PZ_EDGES`) for `p_||`.
+   - Wrong implementations that still pass:
+     - Hardcoding `PZ_EDGES` in `truth_projections` (`project_xsec_1d(h2d, ..., pt_edges, list(PZ_EDGES))`), in `efficiency_mesh` (`return np.asarray(PZ_EDGES), pt_edges, eff_arr`), or in `th2_to_slices(h2d, "pz")`.
+     - Rounding non-0.1-multiple `p_||` edges via `:.1f` at `plot_2d_cross_section.py:63`.
+   - **Certainty:** Certain.
+
+3. **`plot_2d_paper_comparison.main()` is never tested (`2d-unfolding/tests/test_published_axis_widths.py:1193-1196`).**
+   - Despite the class docstring (`:1047-1049`), `test_paper_comparison_slices_use_the_label` only checks `pc.th2_to_slices(h, "pt")[6][0] == "0.475 < p_T < 0.55"`. It never runs `plot_2d_paper_comparison.main()` on `g07.root` against `BASE_XS` or on `g075.root` (with or without `--style restyle-2026-10`).
+   - **Certainty:** Certain.
+
+4. **No test passes a transposed `(16, 14)` `TH2D` to `truth_projections`, `efficiency_mesh`, or `th2_to_slices`.**
+   - Despite `Th2dEdgesTest` (`2d-unfolding/tests/test_published_axis_widths.py:264-270`) testing `(16, 14)` support in `th2d_edges`, `CrossSectionPlotEdges` never passes a `(16, 14)` histogram to `plot_2d_cross_section.py`, leaving Bug #1 undetected.
+   - **Certainty:** Certain.
+
+5. **Other minor test gaps / test-hygiene issues in `CrossSectionPlotEdges`:**
+   - **Unconditional skip on missing `BASE_XS`:** `test_efficiency_mesh` (`:1148`) and `test_main_on_paper_grid` (`:1176`) call `_, new = self.modules(...)` (`:1096-1100`), skipping both tests whenever `git show BASE_XS` is unavailable even though neither uses `old`.
+   - **Fallback paths untested:** `write_input` (`:1080-1094`) always writes `hOFTruthDenom2D` and `hFlux_pt`, so neither the `hTruth2D` fallback (`plot_2d_cross_section.py:314-318`) nor the `--mcfile` fallback flux path (`plot_2d_cross_section.py:254-268`) is covered.
+   - **Unused spy result:** `test_main_on_our_grid_equals_base` (`:1168, 1172`) stores `[c[1] for c in mesh]` into `outs[tag][1]` and never asserts on it (though the `eff_heatmap` PNG byte comparison covers the rendered output).
+   - **Certainty:** Certain.

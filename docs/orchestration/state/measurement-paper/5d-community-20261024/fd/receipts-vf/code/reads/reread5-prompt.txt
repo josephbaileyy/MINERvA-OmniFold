@@ -1,0 +1,7 @@
+Delta read of the V_F Phase 1 code. Your fourth re-read was GO at f95da53f. Since then: f6288ff9 (your two minors: the runner classifier and the big-endian fixture), a merge of origin/main (no nd-unfolding change besides these files), and 0f37449c (minors from the Sonnet second reader's re-read, GO; its text is SONNET-REREAD.txt in this directory, uncommitted).
+Review ONLY `git diff f95da53f 0f37449c -- nd-unfolding docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-vf/code` (plus vf_block.json's code sha), in a disposable copy if you run anything:
+1. identities() (nd-unfolding/fd_vf_addition.py): an OLD key holding named records, with no V_F key equal to it or renamed to it by rename_vf, now refuses T. Could this falsely refuse on a real V_F readout from these producers (fd_f0_regrade, fd_cpl_addition / fd_g_* with --extra-block-*, fd_gencmp_e's chdefs steps)? Check against the committed OLD readouts the chain pairs (OLD_F0, OLD_S, OLD_E in the module) and how each producer names keys when an extra block is given. Could it miss a dropped list?
+2. test_the_renderer_must_be_e_a2s: now skip-free; is it correct on E-A2's interpreter (python 3.11.14, numpy 1.26.4, matplotlib 3.10.8)?
+3. The runner classifier and the big-endian fixture as fixed.
+4. Run the 88 tests and the two new mutants if you can.
+For each defect: severity, file:line, failure scenario, wrong number yes/no, failed control passes yes/no. End with exactly "VERDICT: GO" or "VERDICT: NO-GO".

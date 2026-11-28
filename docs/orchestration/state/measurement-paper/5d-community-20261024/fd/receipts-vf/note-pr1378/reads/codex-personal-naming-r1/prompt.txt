@@ -1,0 +1,2 @@
+Read-only task: do not create or modify any file. The files in /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/naming-cxp-20261126/inputs are sections of a physics analysis note. The note reports a 2D covariance and a 5D covariance (see sec3_twod.tex around line 45 and sec5_multidim.tex around line 54).
+Would a reader find the covariance naming confusing anywhere? Would you change any names, and if so how? Cite file:line. Keep the answer under 400 words.

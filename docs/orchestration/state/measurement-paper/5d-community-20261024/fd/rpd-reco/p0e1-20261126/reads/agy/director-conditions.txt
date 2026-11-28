@@ -1,0 +1,21 @@
+The director's acceptance of the p0e1 plan (2026-11-26), with the plan as proposed by limitation-resolver:
+
+Plan: p0e1-20261126, generated from p0-20261123's bound outputs by counted replacements (gen_p0e1.py), with these
+declared changes:
+1. S -> 2415e8d6 and the 14 pins -> flux4's (reco 12f68102, custody 6428dead, test eee5ae4c, mutation 8dfdeaf1).
+2. Config: flux4's f53a86f6 with exactly two leaves filled, flux_extract/sha256 = 060d4401 and
+   flux_custody/sha256 = 819bb7b9, both at flux4's root. The true_energy block, with its 12 omnifile pins, is already in it.
+3. Inputs (p0_expected.json): flux4's extract, custody record and 12 products from run-62051670, read in place with
+   O_NOATIME. S1's 27-file stat table is unchanged.
+4. Fences: flux4's sacct block (geanttw* added); flux4's three-lane ack guard (cov2d, tier3-design, minerva-lib); the
+   overlap fence at the new root. Runner, supervisor, 7200 s deadline and 8e9 B RSS cap unchanged.
+5. Part 2 copies the 12 omnifiles (O_NOATIME, pinned at c2's shas) into the P0 run and reads 6 branches with uproot.
+   Price part 2's RSS and time against the 8e9 B cap before the binding (login nodes are shared: say if near the cap).
+   The omnifile copies on pscratch are fine; list their removal in the README as a post-receipt step through the
+   director.
+6. Tests and mutants in flux4's pattern, then an agy (gemini-4-hydrogen-high) read.
+
+Defaults accepted:
+(a) The retention stat also stats, never opens, the 12 omnifiles and the sidecar, with its own test. (Later: the
+    sidecar probe's probe.json records each one's size and inode, so all 13 are compared like S1's 27.)
+(b) ibu-chi is messaged before the P0 connect but is not added to the ack file (P0 opens no MAT or NuE file).

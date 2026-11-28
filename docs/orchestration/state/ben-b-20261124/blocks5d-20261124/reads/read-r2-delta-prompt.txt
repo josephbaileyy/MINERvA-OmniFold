@@ -1,0 +1,25 @@
+Focused adversarial recheck, READ-ONLY. Never write to any file in the repository. Write nothing except your final answer.
+
+The checkout at the current directory is at commit d763ef043 (PR #1316). An earlier review of commit c8834fd6b found defects
+in nd-unfolding/b5d/b5d_build.py and in its declaration. This PR answers them with:
+- an amendment, docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A1.md, which governs where it differs from B5D-DECLARATION.md (rev 1, unchanged);
+- code fixes in nd-unfolding/b5d/b5d_build.py and tests in nd-unfolding/b5d/test_b5d.py.
+The code delta is `git diff c8834fd6b HEAD -- nd-unfolding/b5d/` (also saved as .delta-c8834fd6-to-head.diff at the checkout root). The earlier reviews are under docs/orchestration/state/ben-b-20261124/blocks5d-20261124/reads/.
+
+The director approved A1's seven items in these words:
+1. Drop the cal-set cross-check entirely. That supersedes ruling (a)'s cal-set clause and B5D-BINDING-1's authority line. Say so in A1.
+2. Correct to about 29% of C_e's trace, and state that an active L also rescales untested parts.
+3. Ruling (a) uses the spent tunes, the factors are fit on the only two available GENIE v3 tunes, and the held-out truths are named only as "PV's sealed truths".
+4. f-hat is "the toy spread relative to LL5D's rebuilt reference block", with the sampling mismatch disclosed.
+5. The fixed-D bootstrap, with the denominator's own variance not in SE, disclosed as in COVFIX.
+6. Per-ensemble band keeping, with phi_R = 1 when no ensemble keeps band R.
+7. The adoption caveat on C_b next to C_model goes to Joseph with the numbers, naming the formula.
+
+Check, strictly, and only the delta:
+A. Is every BLOCKER and MAJOR in the two earlier reviews fixed, or explicitly answered by A1? Name any that is not.
+B. Does A1 say exactly the seven items, no more and no less in substance? Is any number in it wrong? (Recompute the 29% from s1/readout/s1_assembly.json trace_share under docs/orchestration/state/measurement-paper/5d-community-20261024/.)
+C. Does the code implement the declaration plus A1 exactly? In particular: per-ensemble band keeping in fhat and in the bootstrap; L restricted to C_e's kept modes; the tie rule; LL5D's toy mean error divided by T's cell integral and then multiplied by R for the F1 tune of that truth (declaration section 3: "divided by the Tune v1 cell integral through R"); C-LEAK; C-PSD and C-FIN; main's mapping of every refusal to exit 5 with nothing written; the record's CSV sha256.
+D. Any NEW defect the delta introduced: a control that can pass vacuously, a check that can STOP a correct build, a test that passes for the wrong reason, a regression.
+E. One design question, answer briefly: the declared unresolved rule (SE > 0.5 in every band stops short of V_F) uses an absolute SE. A very large true inflation (f-hat about 30, SE about 4) would then stop short of V_F. Is that a defect worth raising before binding, or acceptable as declared?
+
+Report BLOCKERS, then MAJORS, then minors, each with file:line and a concrete failure scenario. Keep it under about 700 words. Name your model.

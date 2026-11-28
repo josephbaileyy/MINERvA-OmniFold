@@ -1,0 +1,8 @@
+# regenA4 e (2026-11-25T09:50:52Z): W=06893b0af3ff2245035f504de2c47f02bb48db0e X=/Users/josephbailey/local-research/wt-ibu-chi2-a3/docs/orchestration/state/ibu-chi2-20261123/tier1/units/e/er.root
+fig2 rc=0
+fig3 rc=0
+slices markers rc=0
+strip MEFHC_5iter_xsec_paper_pt_slices rc=0
+strip MEFHC_5iter_xsec_paper_pz_slices rc=0
+tension rc=0
+# done e (2026-11-25T09:52:30Z) rc_all=0

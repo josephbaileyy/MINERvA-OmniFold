@@ -1,0 +1,7 @@
+model=gemini-4-hydrogen-high
+started=2026-11-26T08:30:34Z
+inputs_sha256=350f1c5712029da82ba6df822a4a0fc3fed7e3f13c97213f7d4be2bcc2fad345
+source=72675723ddf6801743ac415bc3f11cb3c53e2dac:docs/orchestration/state/precharge-20261125
+rc=0
+ended=2026-11-26T08:43:00Z
+inputs unchanged

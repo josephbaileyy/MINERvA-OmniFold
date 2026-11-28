@@ -1,0 +1,170 @@
+{
+ "schema": "ptmc-mutation/1",
+ "python": "/Users/josephbailey/ew2d-env/bin/python",
+ "files": {
+  "launch/fill_pins.sh": "2bc3dd4cb529acc6cfd55fb97ac09a42b13df84d2c3db6d87c820f96032d1267",
+  "launch/harness_launch.sh": "9aee1a9c0e90a5d64c2ccc4d165249d0c051e263f6bcafd66a6d22492c0b9c52",
+  "launch/harness_remote.sh": "16cc74898e776f6306c48975f591857211377e42e1a13ec5d7aff40315b8c15a",
+  "launch/harness_sbatch.sh": "c078112b0758d261cb7b688a8e969e3bfa0213e18bae85f96eef2a0433987d0e",
+  "launch/pilot.sbatch": "38aa6bd487027b7bcd9481869c5a245bd0f7481e2a814cd4fb54dc0c3dd10df2",
+  "launch/ptmc_couple_check.py": "13901cbe0bddbe27fce515c9b37ad01fec8c48e3440485f62754c56f9fe32262",
+  "launch/ptmc_couple_launch.sh": "584c7c8a031d1e2a7d54c293be019f17c5dfa02ad2edfdb3a113b7ac962776da",
+  "launch/ptmc_launch.sh": "953ce9982f8058a9d2b32ff4a99a7a617373a6ada7b9dc384b659ac28ae909dd",
+  "launch/ptmc_pilot_post.py": "8326980a949b1db2cf3f7b12dec721ddfb9bb8eb8ce9b8898e6c9344b8dcb3fa",
+  "launch/ptmc_remote.sh": "cdc10111e5c0ed9209d0ebe570fa038b69f980ee155a6ce941b9e34b4df04d7c",
+  "launch/ptmc_stage_d4.py": "cecd17f6826f0f7f96310820147c0fc9de0934c1eb512fb474a3c9d8716b8e1e",
+  "launch/ptmc_stat.sh": "6b775e313107d81b772e8bfcc6226fbafaf75a55be57c1db3bb72dd24a9e2142",
+  "launch/ptmc_stat_launch.sh": "fa76d4e55fa7ef6c8df9ce5582d5f147ec2977ebdafce3abd307a8c40b270e11",
+  "launch/replicas.sbatch": "df0870f8a1823f717dfc4dd8cbfba10fd5d31bf1012c38309c02e1142265dcf2",
+  "launch/test_launch.py": "752044d218ee7236d8d2d79ac9bbbb941f915b7568bd78072c40b5e2cac1e72a",
+  "make_tree.sh": "8b531b55e6262b56a67848fd79568dfac5dcbf91cd8e8e08f3a0a765286dcf67",
+  "ptmc_driver.diff": "d1f7072ea06503e7cef2d9da286cfcc5f9ba899b19e019f94b6d3019ef45ff5f",
+  "ptmc_lib.py": "43ee87c13f148d699da4e92c9bcfaa88ccf64ec46c27909fcd53db3faab9f85d",
+  "ptmc_mutation.py": "bd4d9dea51425008d81b24a2945c465cbbdef08ed74bf3a4e4e69d17906d952d",
+  "ptmc_run.py": "2c242d1160bc3f3f19c08ad7f2fb9c476c772e921a3e88bb3d802aa81a1e9114",
+  "ptmc_score.py": "c544aea251f601ca5c4bea0217a050f78a527301fb6a01be3d50fe50ccfd299e",
+  "test_ptmc.py": "86d1e8690f3c69a61872e0b1f47c3842803a32526eaba8254daf956766768175",
+  "test_ptmc_score.py": "e292baa779ee494c89d0a758245f522f22a0b2e84ab84a66faaa3e21c9c7d445"
+ },
+ "results": [
+  {
+   "name": "CONTROL",
+   "file": null,
+   "tests": [
+    [
+     "test_ptmc.py",
+     "test_ptmc_score.py",
+     "launch/test_launch.py",
+     "HARNESS:harness_remote.sh",
+     "HARNESS:harness_sbatch.sh",
+     "LOCAL:harness_launch.sh"
+    ],
+    null
+   ],
+   "rc": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "seconds": 598.3,
+   "verdict": "PASS",
+   "tail": "ok   an unfilled sha: STOP 9\nok   a non-empty session dir: STOP 9\nok   a missing session dir: STOP 9\nok   a bad node name: STOP 9\nok   a login mode on dtn01: STOP 9\nok   stage on a login node: STOP 9\nok   stage with no node: STOP 9\nok   an unknown mode: STOP 9\nok   stage: direct ssh to dtn01.nersc.gov, no saul hop\nok   prestage: through saul to the login node\nok   fetch: both tars, hashed\nok   fetch: a failed scp fails\nok   fetch: a failed hash fails\nok   a changed remote script: STOP 8\nok   a failed hash of the remote script: STOP 9\npass 15 fail 0\n"
+  },
+  {
+   "name": "LIB_RELCLOSE_NAN",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Gates"
+   ],
+   "rc": [
+    0
+   ],
+   "seconds": 25.1,
+   "verdict": "SURVIVED",
+   "tail": "......                                                                   [100%]\n6 passed, 30 deselected in 22.92s\n"
+  },
+  {
+   "name": "SC_RANK_LITERAL",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    "Scorer"
+   ],
+   "rc": [
+    0
+   ],
+   "seconds": 27.6,
+   "verdict": "SURVIVED",
+   "tail": ".................                                                        [100%]\n17 passed in 26.06s\n"
+  },
+  {
+   "name": "D4_SYMLINK_OK",
+   "file": "launch/ptmc_stage_d4.py",
+   "tests": [
+    "launch/test_launch.py",
+    "StageD4"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 11.8,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n__________________ StageD4.test_a_fifo_fails_before_any_copy ___________________\n\nself = <test_launch.StageD4 testMethod=test_a_fifo_fails_before_any_copy>\n\n    def test_a_fifo_fails_before_any_copy(self):\n        \"\"\"A non-regular source fails at its lstat: a FIFO would otherwise copy as an empty file (no writer).\"\"\"\n        f = self.ref / \"units\" / \"c2_replica_b11.npz\"\n        f.unlink()\n        os.mkfifo(f)\n        rc, out = self.stage()\n>       self.assertEqual(rc, 5)\nE       AssertionError: 0 != 5\n\nlaunch/test_launch.py:259: AssertionError\n----------------------------- Captured stdout call -----------------------------\nstaged 403 products, 0 absent\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::StageD4::test_a_fifo_fails_before_any_copy - As...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 11 deselected in 10.46s\n"
+  },
+  {
+   "name": "RUN_ROWS_FILE_PIN",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 311.6,
+   "verdict": "KILLED",
+   "tail": "2/nucleon\n[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0i25_s3w/tree/2d-unfolding/re2/re2_driver.py\n[INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55\n[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-0i25_s3w/tree/unbinned_unfolding/python/omnifold.py\n[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a\n[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpaibosrju/p_off_b2.root\n{\"unit\": \"p_off_b2\", \"seconds\": 15.519, \"controls\": {\"C-FILL-IBU\": true, \"C-PAIR\": true, \"C-ROO\": true, \"C-DRAW-R\": true, \"C-REFINE\": true, \"C-COMP\": true}}\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_completeness_axes_not_the_grid_fail\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\ntest_ptmc.py::Runner::test_completeness_axes_not_the_grid_fail\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: hOFInputTruth2D (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_rows_file_not_its_pin_refuses - AssertionEr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 10 passed, 23 deselected, 2 warnings in 309.50s (0:05:09)\n"
+  },
+  {
+   "name": "RUN_PAIR_MASK",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 236.3,
+   "verdict": "KILLED",
+   "tail": "^2/nucleon\n[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-sjwnd6s4/tree/2d-unfolding/re2/re2_driver.py\n[INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55\n[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-sjwnd6s4/tree/unbinned_unfolding/python/omnifold.py\n[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a\n[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpoemijf_z/p_off_b1.root\n{\"unit\": \"p_off_b1\", \"seconds\": 10.697, \"controls\": {\"C-FILL-IBU\": true, \"C-PAIR\": true, \"C-ROO\": true, \"C-DRAW-R\": true, \"C-REFINE\": true, \"C-COMP\": true}}\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_completeness_axes_not_the_grid_fail\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\ntest_ptmc.py::Runner::test_completeness_axes_not_the_grid_fail\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: hOFInputTruth2D (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_pair_measured_mask_defect_fails - Assertion...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 23 deselected, 2 warnings in 234.53s (0:03:54)\n"
+  },
+  {
+   "name": "RUN_REFINE_DIGEST",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 161.1,
+   "verdict": "KILLED",
+   "tail": " cm^2/nucleon\n[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-7956kwtz/tree/2d-unfolding/re2/re2_driver.py\n[INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55\n[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-7956kwtz/tree/unbinned_unfolding/python/omnifold.py\n[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a\n[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpx2dqa67v/p_off_b1.root\n{\"unit\": \"p_off_b1\", \"seconds\": 7.921, \"controls\": {\"C-FILL-IBU\": true, \"C-PAIR\": true, \"C-ROO\": true, \"C-DRAW-R\": true, \"C-REFINE\": true, \"C-COMP\": true}}\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_completeness_axes_not_the_grid_fail\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\ntest_ptmc.py::Runner::test_completeness_axes_not_the_grid_fail\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: hOFInputTruth2D (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_refined_weight_not_the_measured_weight_fails\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 7 passed, 23 deselected, 2 warnings in 159.50s (0:02:39)\n"
+  },
+  {
+   "name": "RUN_ARGS_FINITE",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 118.2,
+   "verdict": "KILLED",
+   "tail": "m^2/nucleon\n[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-p818i4ao/tree/2d-unfolding/re2/re2_driver.py\n[INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55\n[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-p818i4ao/tree/unbinned_unfolding/python/omnifold.py\n[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a\n[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp_r688bkl/p_off_b1.root\n{\"unit\": \"p_off_b1\", \"seconds\": 8.993, \"controls\": {\"C-FILL-IBU\": true, \"C-PAIR\": true, \"C-ROO\": true, \"C-DRAW-R\": true, \"C-REFINE\": true, \"C-COMP\": true}}\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_completeness_axes_not_the_grid_fail\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\ntest_ptmc.py::Runner::test_completeness_axes_not_the_grid_fail\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: hOFInputTruth2D (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_non_finite_extraction_argument_fails - Asse...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 23 deselected, 2 warnings in 116.89s (0:01:56)\n"
+  },
+  {
+   "name": "RUN_COMP_AXES",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 87.3,
+   "verdict": "KILLED",
+   "tail": ".308e-41 cm^2/nucleon\n[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-2c5hm38u/tree/2d-unfolding/re2/re2_driver.py\n[INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55\n[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-2c5hm38u/tree/unbinned_unfolding/python/omnifold.py\n[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a\n[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpwfc6vrqg/p_off_b1.root\n{\"unit\": \"p_off_b1\", \"seconds\": 11.824, \"controls\": {\"C-FILL-IBU\": true, \"C-PAIR\": true, \"C-ROO\": true, \"C-DRAW-R\": true, \"C-REFINE\": true, \"C-COMP\": true}}\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_completeness_axes_not_the_grid_fail\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\ntest_ptmc.py::Runner::test_completeness_axes_not_the_grid_fail\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: hOFInputTruth2D (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_completeness_axes_not_the_grid_fail - Asser...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 23 deselected, 2 warnings in 86.03s (0:01:26)\n"
+  }
+ ],
+ "summary": "6/8 killed"
+}

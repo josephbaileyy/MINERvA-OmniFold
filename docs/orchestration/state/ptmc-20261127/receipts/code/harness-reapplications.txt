@@ -1,0 +1,17 @@
+# hand re-application of the harness kills whose failing line the mutation record's tail cut
+# commit bb9e526a4b49072a0094c2206569bdd14a3bf133, 2026-11-28T12:47:34Z
+
+$ bash reapply_harness_mutant.sh 2d-unfolding/ptmc SH_STAT_STATUS
+mutant SH_STAT_STATUS applied to ptmc_remote.sh
+FAIL stage: a failed stat of a source STOPs
+pass 97 fail 1
+
+$ bash reapply_harness_mutant.sh 2d-unfolding/ptmc SH_PILOT_T60
+mutant SH_PILOT_T60 applied to ptmc_remote.sh
+FAIL pilot: submitted on -N 2 -t 60, jobid recorded
+pass 97 fail 1
+
+$ bash reapply_harness_mutant.sh 2d-unfolding/ptmc SH_LIB_SHA_ARG
+mutant SH_LIB_SHA_ARG applied to ptmc_remote.sh
+FAIL post-pilot: passes --jobid, --rows and the bound --lib-sha (B11)
+pass 97 fail 1

@@ -1,0 +1,51 @@
+{
+ "schema": "evw5d-mutation/1",
+ "src_sha256": "f6f5bbb5ea1c0c7a704dfcd64e1f214c587db1e64db3d9c9ae4e943ac01ad990",
+ "tests_sha256": "387bca3fba103dbdaceaf2241b0f4d165e95ddbe14c48035b8493cdffe3d79ee",
+ "sbatch_sha256": "60fd4ec26714b2ccb956bd5abec4ba07092eca4c2f80b9ee1ab85bb02fd3533a",
+ "python": "/Users/josephbailey/evw5d-env/bin/python3",
+ "control": "CONTROL-PASS",
+ "subset": [
+  "CONNECT_NUMNODES"
+ ],
+ "n_mutants": 1,
+ "n_killed": 1,
+ "not_killed": [],
+ "equivalent": [
+  {
+   "name": "FILE_KEY_TEXT",
+   "reason": "constants.json must carry every npz meta field unchanged (check_constants_json) and its key must equal KEY_TEXT, so a saved meta key other than KEY_TEXT already fails C-FILE through constants_json_vs_arrays",
+   "verdict": null
+  },
+  {
+   "name": "FILE_AXES",
+   "reason": "the same: constants.json's truth_axes must equal the npz meta's and AXES, so a saved meta order other than AXES already fails C-FILE through constants_json_vs_arrays",
+   "verdict": null
+  }
+ ],
+ "results": [
+  {
+   "name": "CONTROL",
+   "verdict": "CONTROL-PASS",
+   "rc": 0,
+   "failed": [],
+   "first_error": "",
+   "mutant_sha256": "f6f5bbb5ea1c0c7a704dfcd64e1f214c587db1e64db3d9c9ae4e943ac01ad990",
+   "seconds": 154.6,
+   "tail": ""
+  },
+  {
+   "name": "CONNECT_NUMNODES",
+   "verdict": "KILLED",
+   "rc": 1,
+   "failed": [
+    "test_connect_allocation_check[bound]",
+    "test_connect_allocation_check[template]"
+   ],
+   "first_error": "E               AssertionError: ('00:30:00', '1-1', '', 'scontrol TimeLimit=00:30:00 (declared 00:30:00) NumNodes=1-1 array_lines=0",
+   "mutant_sha256": "db781320c32ca5c40c4259094ed477edd2e0c2464fd53f40255331ae42035f8b",
+   "seconds": 159.3,
+   "tail": ""
+  }
+ ]
+}

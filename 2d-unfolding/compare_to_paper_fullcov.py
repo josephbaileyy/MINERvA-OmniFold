@@ -326,6 +326,18 @@ def main():
 
     fig.suptitle("Full-stats 2D OmniFold vs arXiv:2106.16210 Fig. 13", fontsize=11)
     fig.tight_layout()
+    # Keep the equal-width cells and label the displayed boundaries in GeV/c.
+    pt_ticks = (0, 5, 10, N_PT)
+    pz_ticks = range(0, N_PZ + 1, 2)
+    pt_axis, pz_axis = h_ours.GetXaxis(), h_ours.GetYaxis()
+    axs[0].set_xticks(
+        pt_ticks, [f"{pt_axis.GetBinLowEdge(i + 1):g}" for i in pt_ticks]
+    )
+    axs[0].set_yticks(
+        pz_ticks, [f"{pz_axis.GetBinLowEdge(i + 1):g}" for i in pz_ticks]
+    )
+    axs[0].set_xlabel(r"$p_T$ (GeV/c)")
+    axs[0].set_ylabel(r"$p_\parallel$ (GeV/c)")
     technote_style.minerva_tag(fig)
     if restyled:
         rs.size_tag(fig, 14.5)

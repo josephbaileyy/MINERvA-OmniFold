@@ -1,0 +1,24 @@
+Read-only review, round 3 (the last full round). You may run read-only shell commands (cat, sed -n, grep, ls, wc) on files in the current
+directory to read them. Do not execute any code, script or test, do not write any file, and do not open skill files
+or anything outside this directory.
+
+The task: OOFVC asks what the 2D central values give when selected nu_mu CC events that fail the phase space count as
+signal (MINERvA's 2021 code), not as background. It covers binned IBU (REF-C2C1's c2 unit) and the OmniFold driver
+(E_R).
+- The plan, controls and readings are in docs/orchestration/state/oofv-convention-20261126/OOFVC-DECLARATION.md
+  (revision 5).
+- The code is in 2d-unfolding/oofvc/.
+- ref/ holds the code it mirrors.
+- Rounds 1 and 2 (reports and the lane's dispositions) are in
+  docs/orchestration/state/oofv-convention-20261126/receipts/reads/r1/ and r2/ (DISPOSITION.md in each).
+
+Two questions:
+1. Is each round-1 and round-2 finding fixed as the DISPOSITION.md files say?
+2. Is there any new defect that could change a reported number, make a control accept a wrong run, or false-STOP a
+   correct run?
+Defects of any other kind are NONBLOCKERs.
+
+Output: numbered findings, most severe first. Mark each BLOCKER or NONBLOCKER, with file:line and a concrete failure.
+Then one line: GO or NO-GO. At most 900 words.
+
+After this round, only findings that could change a printed number, a gate's acceptance, or cause a false STOP of a correct run block (the director's scope rule).

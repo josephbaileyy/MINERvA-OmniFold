@@ -1,0 +1,6 @@
+$ python3 docs/orchestration/state/ptmc-20261127/binding/write_pins_json.py --repo . --merge ace6e5552c3b822dabedc22b16be5de1b04a0d68 --tree $TMPDIR/bind-tree --make-tree-log make_tree.log --out PINS.json
+merge commit ace6e5552c3b822dabedc22b16be5de1b04a0d68
+OWN_FILES ['ptmc_lib.py', 'ptmc_score.py', 'ptmc_run.py', 'make_tree.sh']; TREE_FILES 8 files; ptmc_remote.sh R=/pscratch/sd/j/josephrb/ptmc-20261128
+checks passed: tree = make_tree's listing (8/8); driver = PTMC_SHA b5c1c9f0; config staging root /pscratch/sd/j/josephrb/ptmc-20261128/stage; roounfold = LIB_SHA 0b34e1e3; rows = CONST = ptmc_run = ptmc_remote; join = ptmc_run = ptmc_remote
+wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/PINS-recheck.json sha256 bf7a95afa62f21236c62ae219e02a911425bba84ccab3469267148d85407fc68
+rc=0

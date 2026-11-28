@@ -1,0 +1,22 @@
+{
+  "mc_qp_threshold_inverse_GeV_c": 0.02507825382053855,
+  "training_negative_40_60": 10918,
+  "negative_nominal": 10397.707547949409,
+  "negative_at_threshold": 10918.08248366985,
+  "training": [
+    "1A",
+    "1C",
+    "1E",
+    "1G",
+    "1M",
+    "1O"
+  ],
+  "validation": [
+    "1B",
+    "1D",
+    "1F",
+    "1L",
+    "1N",
+    "1P"
+  ]
+}

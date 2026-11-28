@@ -1,0 +1,13 @@
+diff --git a/2d-unfolding/ref_c2c1/config.json b/2d-unfolding/ref_c2c1/config.json
+index 96dbbaa22..64d331c3a 100644
+--- a/2d-unfolding/ref_c2c1/config.json
++++ b/2d-unfolding/ref_c2c1/config.json
+@@ -13,7 +13,7 @@
+   "CV_sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+   "MC_source": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "MC_sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+-  "staging": {"root": "/pscratch/sd/j/josephrb/ref-c2c1-20261106/stage", "CV": "runEventLoopOmniFold_MEFHC.root", "MC": "runEventLoopMC_MEFHC.root"},
++  "staging": {"root": "/pscratch/sd/j/josephrb/ibuchi-evloop-20261123/tier1/stage", "CV": "runEventLoopOmniFold_MEFHC.root", "MC": "runEventLoopMC_MEFHC.root"},
+   "staging_note": "the director's ruling (2026-11-05): a DTN step copies CV_source and MC_source (the CFS copies; the pscratch $MC is not read) by O_NOATIME read into the run's staging root and re-reads each against its digest; the units read only those copies, and every file the driver opens for reading must lie under the root; the root is bound at step two; the copies are deleted after the run with a B9-form ledger row",
+   "roounfold_lib": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/libRooUnfold.so",
+   "roounfold_lib_sha256": "0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd",

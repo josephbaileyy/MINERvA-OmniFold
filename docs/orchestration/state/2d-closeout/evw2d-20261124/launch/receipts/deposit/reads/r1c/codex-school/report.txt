@@ -1,0 +1,21 @@
+CONFIRMATION: NOT ALL HOLD
+
+| r1b finding | Verdict |
+|---|---|
+| #1 · Archive exposed before its index | **HOLDS.** The index move must return success before the archive move runs. [evw2d_hpss.sh:158](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1c/inputs/new/evw2d_hpss.sh:158) |
+| #2 · Product replaced by a symlink | **HOLDS.** The final scratch check rejects the identical-byte `xsec.root` symlink from r1b. [evw2d_hpss.sh:152](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1c/inputs/new/evw2d_hpss.sh:152) |
+| #4 · Receipt pins and job | **DOES NOT HOLD.** A changed product digest and job `620222310` are rejected. An extra blank pin row still passes, and a transient `head` read error skips the job check while leaving the verdict eligible to pass. [evw2d_deposit.sh:84](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1c/inputs/new/evw2d_deposit.sh:84) · [evw2d_deposit.sh:91](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1c/inputs/new/evw2d_deposit.sh:91) |
+| #5 · Listing read error | **HOLDS.** Only grep status 1 permits archive creation. Status 2 stops it. [evw2d_hpss.sh:125](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1c/inputs/new/evw2d_hpss.sh:125) |
+| #8 · Committed pin symlink | **HOLDS.** A mode `120000` pin is rejected and the pin bytes come from Git. [fill_deposit_pins.sh:20](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1c/inputs/new/fill_deposit_pins.sh:20) |
+| BLOCKING · Informational final lookup | **HOLDS.** A failed lookup, missing name, or failed HTAR listing now prevents `rc=0`. Both output streams are captured. [evw2d_hpss.sh:163](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1c/inputs/new/evw2d_hpss.sh:163) |
+| MINOR · Trailing newline lost | **HOLDS** for path resolution. The sentinel preserves the newline. Fetch has a separate false stop below. [evw2d_deposit.sh:25](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1c/inputs/new/evw2d_deposit.sh:25) |
+| MINOR · Failed `stat` | **HOLDS.** A failed GNU `stat` goes through receipt packaging before arithmetic. [evw2d_hpss.sh:112](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1c/inputs/new/evw2d_hpss.sh:112) |
+
+**New defects**
+
+- **BLOCKING.** If both moves succeed and `htar -tf` fails, the script leaves the rejected archive and index under their **final** names. The failed receipt does not restore staging. [evw2d_hpss.sh:158](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1c/inputs/new/evw2d_hpss.sh:158)
+- **SHOULD-FIX.** On macOS, `shasum` prefixes the digest with `\` when the filename contains a newline or backslash. Either character in the session path makes an intact receipt fail the new snapshot check. [evw2d_deposit.sh:88](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1c/inputs/new/evw2d_deposit.sh:88)
+- **SHOULD-FIX.** Fetch can certify a same-binding r1b receipt even if r1b’s final lookup reported a missing index. The new verifier requires the old rename and success lines, with no evidence that the final readback ran. [evw2d_deposit.sh:84](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1c/inputs/new/evw2d_deposit.sh:84)
+- **SHOULD-FIX.** `git diff --quiet` can miss working-tree byte differences, for example on an edited `assume-unchanged` checker. Separate `HEAD` lookups can also mix revisions if HEAD moves during fill. [fill_deposit_pins.sh:22](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1c/inputs/new/fill_deposit_pins.sh:22) · [fill_deposit_pins.sh:37](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1c/inputs/new/fill_deposit_pins.sh:37)
+
+Bash syntax, bound substitutions, and supplied hashes checked out locally. The packet stubs HSI moves and HTAR listing format, so Perlmutter rename behavior and the assumption that the member path is the last field remain unverified. [test_evw2d_deposit.py:89](/Users/josephbailey/codex-reports/note-measurement/reads/evw2d-deposit-r1c/inputs/new/test_evw2d_deposit.py:89)

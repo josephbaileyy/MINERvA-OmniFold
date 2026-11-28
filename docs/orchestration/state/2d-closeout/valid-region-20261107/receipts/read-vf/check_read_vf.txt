@@ -1,0 +1,5 @@
+OK   every control passes
+OK   six inputs, each the V_F pin and the file's digest
+OK   code_sha256 is valid_region_vf.py's
+OK   readings present
+OK   readings equal vatlas.vf.json's exactly

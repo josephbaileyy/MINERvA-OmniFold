@@ -1,0 +1,97 @@
+{
+ "schema": "oofvc-mutation/1",
+ "python": "/Users/josephbailey/ew2d-env/bin/python3",
+ "files": {
+  "oofvc_join.py": "23e8605bd7c8ea1d15021e91d1debf2914d1fe5759a43408f33d9b6b7567bf2d",
+  "oofvc_lib.py": "bb7062c31693683842f6d2b5f189942e84d9eda81e02b31cd0a765b97da9a056",
+  "oofvc_mutation.py": "9412d2a6ab932e28b1397d398b579cd9ab2137733e08b6c8efe4d67cbdf0062c",
+  "oofvc_run.py": "4b97bfabade3d2e0b95062935a86086739d90b38380980be5ed1c9c70ea8eb6e",
+  "oofvc_score.py": "715382995a8df56628481e9f4dd1b3f57e8ef685d6da09dd6f617911e235480b",
+  "test_oofvc.py": "4eccd07a0134df9c9b2fea08ca3531b0134a330f74522dbee200808c03838952"
+ },
+ "diff_sha256": "6e836e057d4b8a8cfe14b67bb89164f939a444f3b5cfeeb86aaad8038006fce6",
+ "results": [
+  {
+   "name": "CONTROL",
+   "file": null,
+   "tests": "Identity or MatchesRefC2C1 or (Join and not JoinTool) or Moved or Readings or ScorerArgv or JoinTool or Driver or Runner or Shell",
+   "rc": 0,
+   "seconds": 113.5,
+   "verdict": "PASS",
+   "tail": "............................................                             [100%]\n44 passed in 112.91s (0:01:52)\n"
+  },
+  {
+   "name": "SCORE_STAGE_PATH",
+   "file": "oofvc_score.py",
+   "tests": "ScorerArgv",
+   "rc": 1,
+   "seconds": 3.0,
+   "verdict": "KILLED",
+   "tail": "C_MEFHC.root\",\n               *SC.E_R_OPTIONS]\n        r = off + [\"--signal-convention\", \"minerva\", \"--oofvc-rows\", f\"{st}/oofvc_rows.npz\"]\n        self.assertTrue(SC.argv_is_e_r(off, \"off\"))\n        self.assertTrue(SC.argv_is_e_r(r, \"R\"))\n        bad = [\n            ([\"--omnifile\", \"/elsewhere/runEventLoopOmniFold_MEFHC.root\"] + off[2:], \"off\"),  # same name, other file\n            (off[:2] + [\"--mcfile\", \"/elsewhere/runEventLoopMC_MEFHC.root\"] + off[4:], \"off\"),\n            ([a if a != \"42\" else \"43\" for a in off], \"off\"),                                    # another seed\n            (r[:-1] + [\"/elsewhere/oofvc_rows.npz\"], \"R\"),\n            (off, \"R\"), (r, \"off\"),\n        ]\n        for argv, conv in bad:\n>           self.assertFalse(SC.argv_is_e_r(argv, conv), (argv, conv))\nE           AssertionError: True is not false : (['--omnifile', '/elsewhere/runEventLoopOmniFold_MEFHC.root', '--mcfile', '/pscratch/sd/j/josephrb/oofvc-20261126-r2/stage/runEventLoopMC_MEFHC.root', '--iters', '5', '--use-weights', '--estimator', 'lgbm', '--seed', '42', '--branch-select', 'all', '--bkg-mode', 'negweight-refined', '--refine-n-estimators', '400', '--refine-num-leaves', '31'], 'off')\n\ntest_oofvc.py:196: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::ScorerArgv::test_argv - AssertionError: True is not fal...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 43 deselected in 2.44s\n"
+  },
+  {
+   "name": "SH_FENCE_STATE",
+   "file": "launch/oofvc_dump.sh",
+   "tests": "Shell",
+   "rc": 1,
+   "seconds": 2.0,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n_________________ Shell.test_fence_is_the_same_in_every_script _________________\n\nself = <test_oofvc.Shell testMethod=test_fence_is_the_same_in_every_script>\n\n    def test_fence_is_the_same_in_every_script(self):\n        texts = {fence_text(HERE / s).replace('[oofvc_dump] STOP:', 'STOP:') for s in self.SCRIPTS}\n>       self.assertEqual(len(texts), 1)\nE       AssertionError: 2 != 1\n\ntest_oofvc.py:874: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Shell::test_fence_is_the_same_in_every_script - Asserti...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 39 deselected in 1.60s\n"
+  },
+  {
+   "name": "SH_FENCE_SACCT",
+   "file": "launch/dump_array.sbatch",
+   "tests": "Shell",
+   "rc": 1,
+   "seconds": 2.2,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n_________________ Shell.test_fence_is_the_same_in_every_script _________________\n\nself = <test_oofvc.Shell testMethod=test_fence_is_the_same_in_every_script>\n\n    def test_fence_is_the_same_in_every_script(self):\n        texts = {fence_text(HERE / s).replace('[oofvc_dump] STOP:', 'STOP:') for s in self.SCRIPTS}\n>       self.assertEqual(len(texts), 1)\nE       AssertionError: 2 != 1\n\ntest_oofvc.py:874: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Shell::test_fence_is_the_same_in_every_script - Asserti...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 39 deselected in 1.76s\n"
+  },
+  {
+   "name": "SH_GATE_PAST",
+   "file": "launch/oofvc_dump.sh",
+   "tests": "Shell",
+   "rc": 1,
+   "seconds": 8.7,
+   "verdict": "KILLED",
+   "tail": "     gnu_date = ('if [ \"$1\" = \"-u\" ] && [ \"$2\" = \"-d\" ]; then\\n'\n                    f'  \"{sys.executable}\" -c \"import sys, datetime as d; a = sys.argv[1]\\n'\n                    'if a == \\'14 days ago\\': print((d.date.today() - d.timedelta(14)).isoformat()); sys.exit(0)\\n'\n                    't = d.datetime.strptime(a, \\'%Y-%m-%dT%H:%M:%SZ\\').replace(tzinfo=d.timezone.utc)\\n'\n                    'print(int(t.timestamp()))\" \"$3\" || exit 1\\nelse /bin/date \"$@\"; fi')\n        b = stub_bin(TD / \"stub\" / \"pilot\", squeue=\"exit 0\", sacct=\"exit 0\", git=\"exit 1\", date=gnu_date)\n        env = dict(os.environ, PATH=f\"{b}:{os.environ['PATH']}\")\n        for post in (\"\", \"2026-11-26\", \"2026-11-26 12:00:00\", \"2099-01-01T00:00:00Z\"):\n            p = subprocess.run([\"bash\", str(script), str(script), \"pilot\", post], capture_output=True, text=True, env=env)\n>           self.assertEqual(p.returncode, 2, (post, p.stdout))\nE           AssertionError: 3 != 2 : ('2099-01-01T00:00:00Z', 'node Josephs-MacBook-Pro-9.local 2026-11-26T21:34:09Z mode pilot tool 0000000000000000000000000000000000000000\\nfence check (pilot, before any write): no live cov2d or t2a job 2026-11-26T21:34:09Z\\n')\n\ntest_oofvc.py:906: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Shell::test_pilot_refuses_without_a_past_atime_post - A...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 39 deselected in 8.25s\n"
+  },
+  {
+   "name": "SH_NUE_ORDER",
+   "file": "launch/dump_array.sbatch",
+   "tests": "Shell",
+   "rc": 1,
+   "seconds": 8.3,
+   "verdict": "KILLED",
+   "tail": ".F\n=================================== FAILURES ===================================\n____________ Shell.test_nue_log_and_declared_path_in_the_dump_task _____________\n\nself = <test_oofvc.Shell testMethod=test_nue_log_and_declared_path_in_the_dump_task>\n\n    def test_nue_log_and_declared_path_in_the_dump_task(self):\n        \"\"\"cov2d's condition (c), by inspection of the task script: the declared path is checked, and the log is\n        written before and after the binary, with the second fence check immediately before it.\"\"\"\n        t = (HERE / \"launch\" / \"dump_array.sbatch\").read_text()\n        self.assertIn(\"NUE_DECLARED=/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/\"\n                      \"FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt\", t)\n        i_check, i_fence, i_before = (t.index('nue_path_ok \"$NUE\" \"$NUE_DECLARED\" ||'),\n                                      t.index('fence_check \"immediately before the binary\"'), t.index(\"nue before\"))\n        i_bin, i_after = t.index('./oofvc_dump \"$pl\"'), t.index(\"nue after\")\n>       self.assertTrue(i_check < i_fence < i_before < i_bin < i_after)\nE       AssertionError: False is not true\n\ntest_oofvc.py:925: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Shell::test_nue_log_and_declared_path_in_the_dump_task\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 39 deselected in 7.82s\n"
+  },
+  {
+   "name": "SH_NUE_PATH",
+   "file": "launch/dump_array.sbatch",
+   "tests": "Shell",
+   "rc": 1,
+   "seconds": 8.0,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n____________ Shell.test_nue_log_and_declared_path_in_the_dump_task _____________\n\nself = <test_oofvc.Shell testMethod=test_nue_log_and_declared_path_in_the_dump_task>\n\n    def test_nue_log_and_declared_path_in_the_dump_task(self):\n        \"\"\"cov2d's condition (c), by inspection of the task script: the declared path is checked, and the log is\n        written before and after the binary, with the second fence check immediately before it.\"\"\"\n        t = (HERE / \"launch\" / \"dump_array.sbatch\").read_text()\n        self.assertIn(\"NUE_DECLARED=/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/\"\n                      \"FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt\", t)\n>       i_check, i_fence, i_before = (t.index('nue_path_ok \"$NUE\" \"$NUE_DECLARED\" ||'),\n                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n                                      t.index('fence_check \"immediately before the binary\"'), t.index(\"nue before\"))\nE       ValueError: substring not found\n\ntest_oofvc.py:922: ValueError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Shell::test_nue_log_and_declared_path_in_the_dump_task\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 39 deselected in 7.49s\n"
+  },
+  {
+   "name": "SH_NUE_CANON",
+   "file": "launch/dump_array.sbatch",
+   "tests": "Shell",
+   "rc": 1,
+   "seconds": 7.6,
+   "verdict": "KILLED",
+   "tail": "OP). The same file passes through either path; a different file, a missing file or two missing paths\n        fail.\"\"\"\n        t = (HERE / \"launch\" / \"dump_array.sbatch\").read_text()\n        i = t.index(\"nue_path_ok() {\")\n        fn = t[i:t.index(\"\\n}\\n\", i) + 3]\n        d = TD / \"nue_fixture\"\n        real = d / \"minerva_large_files\" / \"MParamFiles\" / \"data\" / \"FluxConstraints\"\n        real.mkdir(parents=True, exist_ok=True)\n        (real / \"sorted_NuEConstraint_FHC_RHC_IMD.txt\").write_text(\"nue\\n\")\n        (real / \"other.txt\").write_text(\"other\\n\")\n        etc = d / \"opt\" / \"etc\"\n        etc.mkdir(parents=True, exist_ok=True)\n        link = etc / \"MParamFiles\"\n        if not link.exists():\n            link.symlink_to(d / \"minerva_large_files\" / \"MParamFiles\")\n        declared = str(link / \"data\" / \"FluxConstraints\" / \"sorted_NuEConstraint_FHC_RHC_IMD.txt\")\n        canonical = str(real / \"sorted_NuEConstraint_FHC_RHC_IMD.txt\")\n    \n        def ok(a, b):\n            return subprocess.run([\"bash\", \"-c\", fn + f'\\nnue_path_ok \"{a}\" \"{b}\"'], capture_output=True).returncode == 0\n>       self.assertTrue(ok(declared, declared))\nE       AssertionError: False is not true\n\ntest_oofvc.py:951: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Shell::test_nue_path_check_follows_the_symlink - Assert...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 39 deselected in 7.22s\n"
+  },
+  {
+   "name": "SH_NUE_EXISTS",
+   "file": "launch/dump_array.sbatch",
+   "tests": "Shell",
+   "rc": 1,
+   "seconds": 8.6,
+   "verdict": "KILLED",
+   "tail": " \"minerva_large_files\" / \"MParamFiles\" / \"data\" / \"FluxConstraints\"\n        real.mkdir(parents=True, exist_ok=True)\n        (real / \"sorted_NuEConstraint_FHC_RHC_IMD.txt\").write_text(\"nue\\n\")\n        (real / \"other.txt\").write_text(\"other\\n\")\n        etc = d / \"opt\" / \"etc\"\n        etc.mkdir(parents=True, exist_ok=True)\n        link = etc / \"MParamFiles\"\n        if not link.exists():\n            link.symlink_to(d / \"minerva_large_files\" / \"MParamFiles\")\n        declared = str(link / \"data\" / \"FluxConstraints\" / \"sorted_NuEConstraint_FHC_RHC_IMD.txt\")\n        canonical = str(real / \"sorted_NuEConstraint_FHC_RHC_IMD.txt\")\n    \n        def ok(a, b):\n            return subprocess.run([\"bash\", \"-c\", fn + f'\\nnue_path_ok \"{a}\" \"{b}\"'], capture_output=True).returncode == 0\n        self.assertTrue(ok(declared, declared))\n        self.assertTrue(ok(canonical, declared))\n        self.assertTrue(ok(declared, canonical))\n        self.assertFalse(ok(str(real / \"other.txt\"), declared))\n        self.assertFalse(ok(str(real / \"missing.txt\"), declared))\n>       self.assertFalse(ok(str(real / \"missing.txt\"), str(real / \"missing2.txt\")))\nE       AssertionError: True is not false\n\ntest_oofvc.py:956: AssertionError\n=========================== short test summary info ============================\nFAILED test_oofvc.py::Shell::test_nue_path_check_follows_the_symlink - Assert...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 39 deselected in 8.15s\n"
+  }
+ ],
+ "summary": "8/8 killed"
+}

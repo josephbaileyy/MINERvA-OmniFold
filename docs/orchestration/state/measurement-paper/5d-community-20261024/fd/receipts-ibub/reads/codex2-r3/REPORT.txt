@@ -1,0 +1,29 @@
+**ROUND 2 ITEMS:**
+
+1. **CORRECT.** The job checks the listing, waited statuses, and completion write, and exits 0 only after `IBUB-DONE` is published and read back. `ibub/jobs/ibub_job.sbatch:72,134,184`
+2. **BLOCKING.** Unit skips and job completion verify both product digests. The readout still accepts reference receipts without checking the reference files. `ibub/ibub_unit.py:312,573,598`, `ibub/ibub_readout.py:305`
+3. **BLOCKING.** The readout can create staging outside its root, and the job checks scheduler stdout after Slurm opens it. `ibub/ibub_readout.py:355`, `ibub/jobs/ibub_job.sbatch:85,92`
+4. **CORRECT.** C-SIM checks finiteness at every K, and C-CELLS counts ROOT K=10 and NPZ K=5 independently. `ibub/ibub_unit.py:341,420`, `ibub/ibub_readout.py:224`
+5. **CORRECT.** The readout writes and hashes the errors NPZ before publishing it with the final JSON in one rename. `ibub/ibub_readout.py:366,477`
+6. **BLOCKING.** The missing-truth case records INVALID. A job that fails solely for missing or failed toys still produces INVALID at readout because the terminal job gate requires PASS. `ibub/ibub_readout.py:294,404,422,434`, `ibub/ibub_unit.py:617`
+7. **CORRECT.** The director assigned P0 serialization to the separately reviewed readout connect, whose preconditions specify both checks. `receipts/reads/codex2-r2-README.md:24`, `connect/README.md:29`
+8. **CORRECT.** Setup errors and zero-test runs are harness failures. The receipt records 92 kills and covers the real barrier and completion chain. `ibub/mutants.py:240`, `ibub/test_ibub_job.py:415`, `receipts/code/mutants.txt:116`
+
+**BLOCKING:**
+
+1. **Readout PASS with missing reference products.** The new check compares digest strings in receipts. It accepts PASS with all four reference product files absent. Verify marker identity and hash the actual NPZ and ROOT files through `O_NOATIME` against the bound barrier. `ibub/ibub_readout.py:305`, `ibub/test_ibub_readout.py:161`
+2. **New staging write outside the declared root.** With `--out` equal to the absent `/dev/shm/ibub-connect` root, `mkdtemp` creates a sibling in `/dev/shm` before the check rejects it. Resolving the configured root also accepts a symlink to another off-tree directory. Require the configured root to be a real directory at its declared path, validate `out.parent` before creating staging, and default temporary files to that root. `ibub/ibub_readout.py:330,355`
+3. **Batch write containment remains incomplete.** The `scontrol` log redirection can follow a planted symlink before `noclobber`, and the stdout check runs after Slurm opens the destination. Use exclusive, no-follow log creation and submit with stdout in a fresh, validated private log directory. `ibub/jobs/ibub_job.sbatch:85,92,113`, `connect/ibub_run_connect.sh:205`
+4. **Incomplete jobs and input failures can lose the declared verdict.** Preserve `INCOMPLETE` with missing seeds when toy completeness is the sole failure, while keeping terminal PASS mandatory for grading. Route pinned-input failures through the diagnostic path, including failure to read `C2_RECORD`. `IBUB-DECLARATION.md:270`, `ibub/ibub_readout.py:422,434,462,474`
+
+**CONNECT:**
+
+- Verified byte-for-byte reconstruction with M `1031c8200b3b66e0ddbc9d895f5ecc369351ac41`, the pinned fence, and all six local file sums. `connect/ibub_run_connect.sh:26,175`, `connect/gen_run_connect.py:33`
+- The stand-in receipt records exactly two changed lines, M and the `config.json` sum. That comparison is receipt-backed because the bundle contains only the production script. `connect/standin-at-1031c8200-README.md:10`
+- The launcher matches its template and checks the exact connect SHA-256 locally and remotely, `5e792c8eed6ae8739bc2df6be54ce83f106468c7823161eb1837436ab78d64da`. `connect/ibub_run_launch.sh:24,28`
+
+**NON-BLOCKING:**
+
+1. All nine changed blobs match the patch. All 11 receipt hashes match, and all 92 mutation sites parse in memory. Test outcomes come from the supplied receipts. `receipts/code/mutants.txt:11,126`, `receipts/code/trace.txt:1`
+
+VERDICT: NO-GO

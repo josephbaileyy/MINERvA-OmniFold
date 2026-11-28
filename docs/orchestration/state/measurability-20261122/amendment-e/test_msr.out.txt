@@ -1,0 +1,90 @@
+test_a_root_with_fewer_rows_than_parameters_is_completed (test_msr.AmendmentE.test_a_root_with_fewer_rows_than_parameters_is_completed) ... ok
+test_a_singular_c_q_on_q_is_refused (test_msr.AmendmentE.test_a_singular_c_q_on_q_is_refused) ... ok
+test_both_routes_meet_the_50_digit_reference_on_the_ill_conditioned_fixture (test_msr.AmendmentE.test_both_routes_meet_the_50_digit_reference_on_the_ill_conditioned_fixture) ... ok
+test_eigenbasis_from_the_root_matches_eigh_where_eigh_is_accurate (test_msr.AmendmentE.test_eigenbasis_from_the_root_matches_eigh_where_eigh_is_accurate) ... ok
+test_every_production_decomposition_gets_the_root (test_msr.AmendmentE.test_every_production_decomposition_gets_the_root) ... ok
+test_fisher_root_squares_to_did_fisher (test_msr.AmendmentE.test_fisher_root_squares_to_did_fisher) ... ok
+test_the_eigen_route_widths_meet_the_reference (test_msr.AmendmentE.test_the_eigen_route_widths_meet_the_reference) ... ok
+test_the_fixture_passes_c_rank_as_production_requires (test_msr.AmendmentE.test_the_fixture_passes_c_rank_as_production_requires) ... ok
+test_the_independent_route_never_forms_c (test_msr.AmendmentE.test_the_independent_route_never_forms_c)
+A well direction orthogonal (in exact arithmetic) to a 1e8 width: C = G G^T rounds at ~1 against s^2 = 1e-6, ... ok
+test_the_routes_agree_to_the_c_route_bar (test_msr.AmendmentE.test_the_routes_agree_to_the_c_route_bar) ... ok
+test_widths_stay_ascending_and_aligned_when_refinement_reorders (test_msr.AmendmentE.test_widths_stay_ascending_and_aligned_when_refinement_reorders) ... ok
+test_across_truths (test_msr.Bands.test_across_truths) ... ok
+test_combined_order (test_msr.Bands.test_combined_order) ... ok
+test_floor_three_branches (test_msr.Bands.test_floor_three_branches) ... ok
+test_interval_rule (test_msr.Bands.test_interval_rule) ... ok
+test_noise_maximum_rule_three_cases (test_msr.Bands.test_noise_maximum_rule_three_cases) ... ok
+test_r_edges (test_msr.Bands.test_r_edges) ... ok
+test_s_edges (test_msr.Bands.test_s_edges) ... ok
+test_z_edges (test_msr.Bands.test_z_edges) ... ok
+test_dropped_cells_differ_is_mc_unresolved (test_msr.Branches.test_dropped_cells_differ_is_mc_unresolved) ... ok
+test_everything_unconstrained (test_msr.Branches.test_everything_unconstrained) ... ok
+test_matching_with_an_empty_basis (test_msr.Branches.test_matching_with_an_empty_basis) ... ok
+test_nprec_failure_branches (test_msr.Branches.test_nprec_failure_branches) ... ok
+test_r_independent_route_and_m2_sentences (test_msr.Branches.test_r_independent_route_and_m2_sentences) ... ok
+test_r_split_failing_its_floor (test_msr.Branches.test_r_split_failing_its_floor) ... ok
+test_a_tiny_null_component_is_still_unconstrained (test_msr.Decomposition.test_a_tiny_null_component_is_still_unconstrained) ... ok
+test_count_space_case_r11_t0_1e7 (test_msr.Decomposition.test_count_space_case_r11_t0_1e7) ... ok
+test_duplicated_column_goes_to_u_infinity (test_msr.Decomposition.test_duplicated_column_goes_to_u_infinity) ... ok
+test_poor_and_well_spans (test_msr.Decomposition.test_poor_and_well_spans) ... ok
+test_route_independent_agrees (test_msr.Decomposition.test_route_independent_agrees) ... ok
+test_two_drivers_agree_on_a_planted_case (test_msr.Decomposition.test_two_drivers_agree_on_a_planted_case) ... ok
+test_z_is_the_span_maximum_not_the_axis_maximum (test_msr.Decomposition.test_z_is_the_span_maximum_not_the_axis_maximum) ... ok
+test_a_c_rho_failure_stops_after_the_decompositions (test_msr.EndToEnd.test_a_c_rho_failure_stops_after_the_decompositions) ... ok
+test_a_changed_operand_fails_c_ops (test_msr.EndToEnd.test_a_changed_operand_fails_c_ops) ... ok
+test_a_failed_stop_control_computes_no_reading (test_msr.EndToEnd.test_a_failed_stop_control_computes_no_reading) ... ok
+test_a_t3_mismatch_fails_c_t3 (test_msr.EndToEnd.test_a_t3_mismatch_fails_c_t3) ... ok
+test_c_2d_takes_the_declared_relative_bar (test_msr.EndToEnd.test_c_2d_takes_the_declared_relative_bar) ... ok
+test_c_d_covers_the_secondary_truth_converted_with_d (test_msr.EndToEnd.test_c_d_covers_the_secondary_truth_converted_with_d) ... ok
+test_c_did_reads_the_declared_intersection (test_msr.EndToEnd.test_c_did_reads_the_declared_intersection) ... ok
+test_c_did_stops_when_the_intersection_is_not_the_expected_size (test_msr.EndToEnd.test_c_did_stops_when_the_intersection_is_not_the_expected_size) ... ok
+test_c_l_rejects_out_of_range_ids (test_msr.EndToEnd.test_c_l_rejects_out_of_range_ids) ... ok
+test_c_route_failure_stops (test_msr.EndToEnd.test_c_route_failure_stops) ... ok
+test_controls_pass_and_the_readout_is_written (test_msr.EndToEnd.test_controls_pass_and_the_readout_is_written) ... ok
+test_m2_r_numerically_unresolved_and_route_mismatch (test_msr.EndToEnd.test_m2_r_numerically_unresolved_and_route_mismatch) ... ok
+test_main_refuses_a_changed_code_pin (test_msr.EndToEnd.test_main_refuses_a_changed_code_pin) ... REFUSED: did.py is not at its pin
+ok
+test_main_runs_with_pins (test_msr.EndToEnd.test_main_runs_with_pins) ... ok
+test_numerically_and_mc_unresolved_relabel (test_msr.EndToEnd.test_numerically_and_mc_unresolved_relabel) ... ok
+test_the_module_entry_point (test_msr.EndToEnd.test_the_module_entry_point)
+The __main__ line runs: with no subcommand argparse exits 2, before anything is read. ... usage: msr_project.py [-h] {run} ...
+msr_project.py: error: the following arguments are required: cmd
+ok
+test_a_rotated_basis_below_the_overlap_bar_is_not_matched (test_msr.MCRule.test_a_rotated_basis_below_the_overlap_bar_is_not_matched) ... ok
+test_crossing_widths_are_not_counted (test_msr.MCRule.test_crossing_widths_are_not_counted) ... ok
+test_hungarian_matching_on_a_permuted_sign_flipped_basis (test_msr.MCRule.test_hungarian_matching_on_a_permuted_sign_flipped_basis) ... ok
+test_partition_rule (test_msr.MCRule.test_partition_rule) ... ok
+test_summing_reco_axes_equals_direct_binning (test_msr.Marginal.test_summing_reco_axes_equals_direct_binning) ... ok
+test_the_recorded_c_did_expectation (test_msr.Pins.test_the_recorded_c_did_expectation) ... ok
+test_2d_gradient_selects_the_cells_in_order (test_msr.Problems.test_2d_gradient_selects_the_cells_in_order) ... ok
+test_5d_gradient_is_the_count_space_one (test_msr.Problems.test_5d_gradient_is_the_count_space_one)
+Section 3.3: J = diag(1/f0) L (count space, the gradient widths_from_eig uses), f0 = L t0. ... ok
+test_equal_passes (test_msr.RID.test_equal_passes) ... ok
+test_failures (test_msr.RID.test_failures) ... ok
+test_evaluate_kinds (test_msr.Statistics.test_evaluate_kinds) ... ok
+test_intervals (test_msr.Statistics.test_intervals) ... ok
+test_r_pair_floors_and_values (test_msr.Statistics.test_r_pair_floors_and_values) ... ok
+test_sentinel_when_no_well_combination (test_msr.Statistics.test_sentinel_when_no_well_combination) ... ok
+
+----------------------------------------------------------------------
+Ran 62 tests in 88.569s
+
+OK
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp46bacsuj/out/readout.json"}
+{"stops": ["C-RHO"]}
+{"stops": ["C-OPS"]}
+{"stops": ["C-RID"]}
+{"stops": ["C-T3"]}
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmprvcbnwmt/out/readout.json"}
+{"stops": ["C-2D"]}
+{"stops": ["C-D"]}
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp7rtoqefa/out/readout.json"}
+{"stops": ["C-DID"]}
+{"stops": ["C-L"]}
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp7zwet6ab/out/readout.json"}
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpt0z0dx29/o1/readout.json"}
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp1bz4k0zn/o2/readout.json"}
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpf5flr9kd/o1/readout.json"}
+{"stops": [], "readout": "/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpf5flr9kd/o2/readout.json"}
+rc=0

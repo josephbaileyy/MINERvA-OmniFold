@@ -1,0 +1,10 @@
+measure.cpp: OK
+truth.cpp: OK
+build.sh: OK
+run.sh: OK
+batch.sh: OK
+axes.txt: OK
+measure: OK
+truth: OK
+[testC] truth 1F node=nid004092 job=62042776 start=2026-11-26T16:07:53Z
+[testC] truth 1F done=2026-11-26T16:09:50Z

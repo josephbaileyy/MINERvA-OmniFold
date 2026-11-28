@@ -1,0 +1,14 @@
+2026-11-26T00:32:52Z
+        Valid: from 2026-11-25T15:18:00 to 2026-11-26T15:19:52
+9b8dd322936cb0610143758a8fd1bf409e5ca5d5
+scp weights.npz rc=0
+scp constants.npz rc=0
+scp constants.json rc=0
+scp run.json rc=0
+scp SHA256SUMS rc=0
+scp evw5d.done rc=0
+scp product/data_b-_j-.npz rc=0
+ACCEPTED
+accepted rc=0
+launcher rc=0
+2026-11-26T00:34:19Z

@@ -1,0 +1,10 @@
+OVERLAP bsel: ours 8; theirs 152 (IBUB's own entries: 19); added 3: s2r, rdx
+OURS read /pscratch/sd/j/josephrb/fd-f0b-20261026/fd_f0b_experiments.npz
+OURS read /pscratch/sd/j/josephrb/fd-f1-20261027/grade/fd_f1_experiments.npz
+OURS read /pscratch/sd/j/josephrb/fd-f1-20261027/f1c/closure/f1_closure_genie_v3_g18.npz
+OURS read /pscratch/sd/j/josephrb/fd-f1-20261027/f1c/closure/f1_closure_genie_v3_ar23.npz
+OURS read /pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_closure_tune_v1.npz
+OURS read /pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_closure_nuwro.npz
+OURS write /pscratch/sd/j/josephrb/bsel-20261124
+OURS write /dev/shm/bselc.
+OVERLAP: CLEAR (pairs checked 1216, hits 0)

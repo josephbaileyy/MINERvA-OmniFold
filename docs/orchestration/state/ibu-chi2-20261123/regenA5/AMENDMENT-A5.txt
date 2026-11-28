@@ -1,0 +1,48 @@
+# regenA amendment A5 (2026-11-25, before anything runs): the eigenmode numbers of appC_supplementary.tex:7 and
+# records_r03_twod.tex:18, on the paper's pT edges. Requested by journal-editor; the director's GO for its scope.
+
+What. A read of the published-covariance eigen-decomposition of our residual, on OLD (control) and E (reading). The
+inputs are A4's tension inputs. The reader, a5_readout.py, repeats diagnose_tension.py:110-171's decomposition. It is
+tied to that producer's own committed output: C5-REP requires every value the producer printed in regenA's P4
+tension_report.txt for the same input (the 15-row mode table, the top-five fraction, the ten-smallest share) to be
+reproduced at its printed precision. Per input it reads out:
+  - the six leading contributors: each mode's lambda/lambda_max, lam_rank, chi2 contribution and Sigma u^2 share at
+    p_par >= 20 GeV/c, and the split into high-p_par (share > 1/2) and lower-p_par modes;
+  - the share of the distance in the ten smallest-eigenvalue modes;
+  - how many of the five largest contributors lie in the smallest-lambda tenth (lam_rank < 0.1 n, n = 205);
+  - the largest standardized component |c_k|/sqrt(lambda_k) and the next nine.
+
+The 4.7 (records_r03_twod.tex:18, its comment citing per-period-benchmark-20261106/receipts/read/readout.json:61
+abs_z 4.7467) is this residual's own quantity, not a different benchmark statistic.
+  - per_period_benchmark.py:415-420 computes abs_z = |U[:, r] . d_er| / sqrt(lam[r]), with d_er = E_R minus published.
+  - That is diagnose_tension's eigpull on the same input.
+  - The benchmark's control re-derived the declared 4.75 and 3.78 for lam_rank 23 and 9, which are rows 0 and 1 of
+    OLD's tension_report.
+So it is in A5.
+
+Control C5-LIT (OLD; a5_literals.py). Every literal printed now must be reproduced at its printed rounding:
+  9.6 % (ten smallest, 1 decimal in percent); "two" of the five largest in the smallest-lambda tenth; "three" of the six
+  leading at the highest p_par and three lower; those three with lambda/lambda_max <~ 4x10^-9 (each <= 4e-9 at one
+  significant figure); the other three between 4x10^-6 and 6x10^-5 (one significant figure; the smallest rounds to
+  4e-6 and the largest to 6e-5); the largest standardized component 4.7 (1 decimal); the next nine 3.4-3.8 (min and
+  max at 1 decimal).
+A miss is a STOP and goes to the director: it would mean the text came from somewhere else.
+C5-REP: OLD and E, as above. A miss is a STOP. C-PINS: inputs and scripts equal before and after.
+
+Reading (E, descriptive): the same quantities on the paper's edges, for journal-editor. The wording is Joseph's.
+
+Placement: the laptop, figenv/rootmpl3108 (as AMENDMENT-A4.txt). Module 2d-unfolding at the producer worktree
+~/local-research/wt-ibu-chi2, 06893b0a (diagnose_tension.py and compare_to_paper_fullcov.py are the same at main
+91d18499). 0 node-h; no NERSC connection.
+Command, in bash: bash receipts/a5_run.sh <this tree> ~/local-research/wt-ibu-chi2 <this tree>/docs/orchestration/state/ibu-chi2-20261123/regenA5/out
+
+Pins (sha256 by command):
+  a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef  ~/cov2d-work/figfetch/er-anc/xsec.root
+  5171c7b8ecacda6090e242349dd622218c1c38885c60ef8b91027033a8c4b780  ~/local-research/wt-ibu-chi2-a3/docs/orchestration/state/ibu-chi2-20261123/tier1/units/e/er.root
+  6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3  ~/cov2d-work/figfetch/anc/cov_ptpl_minerva_inclusive_6GeV.root
+  2bf07a2612fc975e0e90dedfb9c2012b68f6bec8ef0bb95f90ee8833baf0d803  ~/local-research/wt-ibu-chi2-a3/docs/orchestration/state/ibu-chi2-20261123/regenA/out/old/tension_report.txt
+  7989960616de838a81effa391b7398c1556e8623ddc64bdc277bac87b9f813d5  ~/local-research/wt-ibu-chi2-a3/docs/orchestration/state/ibu-chi2-20261123/regenA/out/e/tension_report.txt
+  68329408639303ca64eec15c055ce264e6ace42d6cc6380ddc7b6f38dae3a0ad  ~/local-research/wt-ibu-chi2-a3/docs/orchestration/state/ibu-chi2-20261123/regenA5/a5_readout.py
+  eab5e286d7f112d195792e2b719a6a2fded85742fac70c3bac2cae023d633d35  ~/local-research/wt-ibu-chi2-a3/docs/orchestration/state/ibu-chi2-20261123/regenA5/a5_literals.py
+  21857634f2029fd2fd12f0b91fb2e4cad6a5ca5b2bf151c7acf0eac7e510e1b2  ~/local-research/wt-ibu-chi2-a3/docs/orchestration/state/ibu-chi2-20261123/regenA5/receipts/a5_run.sh
+  diagnose_tension.py at 06893b0a and at 91d18499: 48f0b524a3e950b98405201945fb1655cfe77aa3 / 48f0b524a3e950b98405201945fb1655cfe77aa3 (blob ids)

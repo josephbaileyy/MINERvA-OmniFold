@@ -1,0 +1,31 @@
+ok   pilot: 3 nodes refuses
+ok   pilot: a time limit other than ptmc_remote.sh's 60 refuses
+ok   pilot: a failed squeue refuses
+ok   pilot: no ready refuses
+ok   pilot: an existing units dir refuses
+ok   pilot: a wrong rows pin refuses
+ok   pilot: no rows.sha256 refuses
+ok   pilot: a failed conda hook refuses
+ok   pilot: an existing record dir refuses
+ok   pilot: the 8 units, once each, 8 outcomes recorded
+ok   pilot: a failed unit exits 6, every outcome recorded
+ok   replicas: 4 nodes refuses
+ok   replicas: no PROCEED refuses
+ok   replicas: no L refuses
+ok   replicas: a malformed L refuses
+ok   replicas: no recheck record refuses (B1)
+ok   replicas: a recheck claimed by another job refuses, no lane started (confirm-3 B1)
+ok   replicas: a stale L file the recheck did not authorize refuses (B1)
+ok   replicas: a failed squeue refuses
+ok   replicas: an UNLIMITED time limit refuses
+ok   replicas: a limit that bash arithmetic would evaluate refuses
+ok   replicas: a limit one second over L refuses
+ok   replicas: a day-form limit over L refuses
+ok   replicas: a wrong rows pin refuses
+ok   replicas: a failed conda hook refuses
+ok   replicas: an existing record dir refuses
+ok   replicas: a limit below L refuses (it must be exactly L)
+ok   replicas: b = 2..200, 199 steps, each once, 199 outcomes, 20 lanes (no seq), lane 0 takes b22
+ok   replicas: a failed unit exits 6, its lane continues, its outcome recorded
+pass 29 fail 0
+rc=0

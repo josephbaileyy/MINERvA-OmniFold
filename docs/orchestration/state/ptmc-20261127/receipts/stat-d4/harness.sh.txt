@@ -1,0 +1,52 @@
+#!/bin/bash
+# Harness for ptmc_stat.sh in debian: the script with ROOT and the user substituted (no other change).
+set -u
+cd /h
+mk() { sed -e "s#^ROOT=/pscratch/sd/j/josephrb/ref-c2c1-20261106#ROOT=$1#" -e 's/\[ "\$me" = josephrb \]/[ "$me" = root ]/' ptmc_stat.sh > /tmp/s.sh; }
+pass=0; fail=0
+ok() { if [ "$1" = 0 ]; then pass=$((pass+1)); echo "ok   $2"; else fail=$((fail+1)); echo "FAIL $2"; fi; }
+# case 1: complete tree
+R=/tmp/c1; mkdir -p $R/units $R/read-2/inputs
+for s in npz done root; do : > $R/units/c2_central.$s; done
+for b in $(seq 1 300); do for s in npz done root; do : > $R/units/c2_replica_b$b.$s; done; done
+: > $R/units/er.root; : > $R/units/c1_central.root
+: > $R/read-2/inputs/000_cov_ptpl_minerva_inclusive_6GeV.root
+for k in $(seq 1 301); do : > $R/read-2/inputs/$(printf %03d $k)_xsec.root; done
+touch -a -d '2026-11-06 00:00' $R/units/c2_replica_b7.npz; a0=$(stat -c %X $R/units/c2_replica_b7.npz)
+mk $R; out=$(bash /tmp/s.sh /tmp/s.sh); rc=$?
+ok $rc "complete: rc 0"
+echo "$out" | grep -q '^expected present 604 missing 0 (of 604)$'; ok $? "complete: 604 present"
+[ "$(echo "$out" | grep -c '|/tmp/c1/units/c2_')" = 903 ]; ok $? "complete: 903 c2_ entries listed"
+! echo "$out" | grep -q 'units/er.root\|c1_central'; ok $? "complete: non-c2 units not listed"
+[ "$(echo "$out" | grep -c '|/tmp/c1/read-2/inputs/')" = 302 ]; ok $? "complete: 302 inputs listed"
+[ "$(stat -c %X $R/units/c2_replica_b7.npz)" = "$a0" ]; ok $? "complete: a file's atime unchanged"
+[ -z "$(find $R -newer /tmp/s.sh -type f)" ]; ok $? "complete: nothing written under the root"
+# case 2: one replica missing, one input missing, one a symlink
+R=/tmp/c2; cp -a /tmp/c1 $R; rm $R/units/c2_replica_b200.done $R/read-2/inputs/150_xsec.root
+rm $R/units/c2_replica_b9.npz; ln -s /tmp/c1/units/c2_replica_b9.npz $R/units/c2_replica_b9.npz
+mk $R; out=$(bash /tmp/s.sh /tmp/s.sh); rc=$?
+ok $rc "gaps: rc 0"
+echo "$out" | grep -q '^expected present 601 missing 3 (of 604)$'; ok $? "gaps: 3 missing"
+echo "$out" | grep -q "^MISSING $R/units/c2_replica_b9.npz$"; ok $? "gaps: a symlink counts as missing"
+echo "$out" | grep -q "^l|.*|$R/units/c2_replica_b9.npz$"; ok $? "gaps: the symlink is listed as l"
+# case 3: absent root
+R=/tmp/c3; mk $R; out=$(bash /tmp/s.sh /tmp/s.sh); rc=$?
+ok $rc "absent: rc 0"
+echo "$out" | grep -q "^ABSENT $R$"; ok $? "absent: ABSENT printed"
+echo "$out" | grep -q '^expected present 0 missing 604 (of 604)$'; ok $? "absent: 604 missing"
+# case 4: the units dir a symlink -> STOP
+R=/tmp/c4; mkdir -p $R/read-2/inputs; ln -s /tmp/c1/units $R/units
+mk $R; out=$(bash /tmp/s.sh /tmp/s.sh); rc=$?
+[ "$rc" = 7 ]; ok $? "symlinked units: rc 7"
+echo "$out" | grep -q "^STOP: $R/units is a symlink$"; ok $? "symlinked units: STOP printed"
+! echo "$out" | grep -q '^== UNITS'; ok $? "symlinked units: nothing listed"
+# case 5: wrong user -> STOP
+sed -e "s#^ROOT=/pscratch/sd/j/josephrb/ref-c2c1-20261106#ROOT=/tmp/c1#" ptmc_stat.sh > /tmp/u.sh
+out=$(bash /tmp/u.sh /tmp/u.sh); rc=$?
+[ "$rc" = 7 ] && echo "$out" | grep -q '^STOP: user$'; ok $? "wrong user: STOP"
+# case 6: a file where a dir should be -> STOP
+R=/tmp/c6; mkdir -p $R/read-2; : > $R/units
+mk $R; out=$(bash /tmp/s.sh /tmp/s.sh); rc=$?
+[ "$rc" = 7 ] && echo "$out" | grep -q "^STOP: $R/units is not a directory$"; ok $? "file for dir: STOP"
+echo "pass $pass fail $fail"
+[ "$fail" = 0 ]

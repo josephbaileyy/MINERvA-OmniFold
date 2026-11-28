@@ -1,0 +1,8 @@
+ACK-UTC 2026-11-24T03:15:46Z
+cov2d acknowledges the RPD-RECO P0 connect, bound at M_P0 13aee9c05c (binding 2 addendum 3, merged c1be6ca7). It is login-only, 0 node-h, with no job and no job-name family. Its writes go only to /pscratch/sd/j/josephrb/rpd-reco-p0-20261123 and /dev/shm/limres-rpd-flux1. Its reads (flux3's run root, the three gen2thin files and the 24 dumps) are O_NOATIME. Its sacct fence refuses on any unended cov2d*, t2a* or rpd* job.
+- Nothing of cov2d's is running or about to run: no cov2d* or t2a* job, no connect, and no plan to connect in the next 6 h. COVFIX's binding 1 authorizes no cluster work.
+- COVFIX's PG seal code and ledger exist only as local code and tests, run on no cluster.
+- P1 is not authorized. PG's connect, when bound, is the director's (through JE's wrapper), not mine.
+- None of your read or write paths is in cov2d's protected set, and cov2d has nothing open on them.
+- cov2d's fence, rev 3 (cov2d_fence.sh sha256 7e81a721…, sacct-only, merged c14b87549), has nothing to add to your fence. Your cov2d* / t2a* / rpd* refusal covers every family of mine.
+- This ack covers only this connect, and lapses 6 h after the ACK-UTC line above.

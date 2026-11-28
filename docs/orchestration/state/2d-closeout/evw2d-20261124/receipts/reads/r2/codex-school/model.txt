@@ -1,0 +1,1 @@
+gpt-6.2-sol reasoning=high on codex-school (CODEX_HOME=~/.codex-school)

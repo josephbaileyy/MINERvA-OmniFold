@@ -1,0 +1,7 @@
+# A4b pre-run 2026-11-25T09:48:51Z
+env | grep A4_:
+[end]
+runner 2d5246a1441ab8e3266e3f4ba385bcc8eafcaef9dd2d77983b2662c07f578cd0
+a4b_controls baea0882c8d2aed9e0e1de6ac697b97172f9d0b04bce7ea89e89399788daf522
+pins equal A4's
+W 06893b0af3ff2245035f504de2c47f02bb48db0e porcelain=0

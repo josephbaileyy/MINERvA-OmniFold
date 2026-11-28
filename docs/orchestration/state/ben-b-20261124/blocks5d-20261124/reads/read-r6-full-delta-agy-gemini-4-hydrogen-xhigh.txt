@@ -1,0 +1,49 @@
+Model: **Gemini 4 Hydrogen (XHigh)** (read-only adversarial review of `c8834fd6b..93ec63dd6`).
+
+**Verdict: GO (conditional on inspecting per-band states at build output); 0 BLOCKERS, 0 MAJORS, 4 minors.**  
+Observed checks on `93ec63dd6`: `python3 -B -X pycache_prefix=/tmp/b5d_pyc -m unittest -v nd-unfolding/b5d/test_b5d.py` passed (`Ran 64 tests in 11.239s`); committed SHA-256 pins, `B.check_pins`/`B.prepare`, `U == M16` (`max_diff = 0.0`), `C_b`, `s1_assembly.json` trace shares, and `2**20`-scaled `eig_sorted(C_e)` (`0.0` diff) verified read-only on repo inputs. Fetched `/pscratch` LL5D products, `mutants.py` execution (cancelled in `/tmp`), and Linux `renameat2` were not run locally.
+
+---
+
+### BLOCKERS
+None.
+
+### MAJORS
+None.
+
+---
+
+### minors
+
+1. **Mixed `COMPLETE` verdict with an `UNRESOLVED` band ([B5D-AMENDMENT-A2.md:28-36](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A2.md#L28-L36), [b5d_build.py:331, 434-437](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L331)).**
+   - *Scenario:* If `R1` is `RESOLVED-INACTIVE` (`SE <= 0.5`) while `R2` is `UNRESOLVED` (e.g., `f_hat = 2.4 ± 0.6`), `unresolved_stop` is `False`, `V_F` is built with `phi = 1.0` on `R2`, and stdout prints `{"verdict": "COMPLETE"}`. Faithful to A2, so Joseph's adoption decision must read per-band `trigger` states and `band_traces_relative_to_T`, not only `verdict`.
+
+2. **`check_leak` exact-zero sensitivity & Python `bool` edge case ([b5d_build.py:476-481](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L476-L481)).**
+   - *Scenario:* `abs(y - want) <= LEAK_RTOL * abs(want)` has zero absolute slack when `want == 0.0`; if BLAS `eigh` on another host produced `~1e-16` roundoff on an identically-zero entry under `scale = 2**10` (verified `0.0` diff on `C_e` here), `check_leak` would false-STOP a valid build. Also `isinstance(x, (int, float))` matches `bool`.
+
+3. **Unchecked `C_e` sign/PSD assumption inside `fluctuation_block` ([b5d_build.py:224-225](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L224-L225)).**
+   - *Scenario:* `keep = w > KEEP_REL * w[0]` assumes `w[0] >= 0` (true for pinned `fd_data_product_cpl_C_e.csv`, where `w_min / w_max = 5.00e-5` and max rel asymmetry is `2.51e-16`), but would mark `(-1e-12 |w[0]|, 0]` modes as kept if ever called on a negative-definite matrix.
+
+4. **`blocks5d.txt` summary omissions and residual mock/cruft in tests ([b5d_build.py:500-514](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L500-L514), [test_b5d.py:289, 322, 340, 666](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/test_b5d.py#L666)).**
+   - *Scenario:* `blocks5d.txt` omits `members` (`quad`, `undebiased_bound`) and `per_ensemble` (`all` vs `minus2`), though `blocks5d.json` carries them. `test_main_writes_the_record_and_says_so` stubs `M.build` instead of executing `EndToEnd`'s real `build()` via `main()`; `EndToEnd.setUp` leaves unused `fdir`/`saved_manifest_n` and plants pickle-blocked `r_cal_A7_nuwro` while stubbing `B.prepare` (real `B.prepare` loads `fd_f0b_experiments.npz` without forwarding cal values, as A1 accurately states).
+
+---
+
+### Answers to Review Questions
+
+1. **Resolution of `read-r1-agy-gemini-4-hydrogen-xhigh.txt` BLOCKERS and MAJORS:** Every BLOCKER and MAJOR is fixed or answered by A1/A2:
+   - *Blocker 1 (`C-LEAK`):* Fixed via dimensional scaling in `check_leak` ([b5d_build.py:323, 454-485](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L454-L485)).
+   - *Blocker 2 (`ll5d_toy_mean_error` frame/comparison):* Fixed via `E.mean(axis=0) / X_T * R[f"F1_genie_v3_{t}"]` passed to `against(..., C_b)` ([b5d_build.py:411, 428](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L411)).
+   - *Blocker 3 (`exit 5` / atomic write):* Fixed in `main`, `render_record`, `write_files`, and `rename_noreplace` ([b5d_build.py:311-330, 487-553](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L311-L330)).
+   - *Blocker 4 (declaration misstatements):* Answered by [B5D-AMENDMENT-A1.md:14-54](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A1.md#L14-L54) (cal-set cross-check dropped; `0.2899` ≈ 29% untested `C_e` share; spent-tune/PV wording).
+   - *Major 1 (tie rule):* Fixed via COVFIX's `_canonical_tied` in `eig_sorted` ([b5d_build.py:74-115](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L74-L115)).
+   - *Major 2 (`L` on `C_e` kept modes):* Fixed ([b5d_build.py:225-233](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L225-L233)).
+   - *Major 3 (`C-PIN`/`C-PSD`/`C-FIN`):* Fixed ([b5d_build.py:258-269, 380-439](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/nd-unfolding/b5d/b5d_build.py#L380-L439)).
+   - *Major 4 (per-ensemble `fhat`/bootstrap + SE/reference disclosures):* Implemented in `fhat`/`bootstrap_se` and disclosed in [B5D-AMENDMENT-A1.md:56-86](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A1.md#L56-L86).
+   - *Major 5 (tests):* Covered by the 64 passing unit/end-to-end/pin tests (`test_b5d.py`) plus our real-repo verification of `B.check_pins` and `B.prepare`.
+
+2. **A1 and A2 accuracy for Joseph's adoption decision:** Both accurately state what `b5d_build.py` does, and [B5D-AMENDMENT-A2.md:3-10](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a2dcbe62-b017-4025-a124-a6659ca362f5/scratchpad/b5d-a1-at/docs/orchestration/state/ben-b-20261124/blocks5d-20261124/B5D-AMENDMENT-A2.md#L3-L10) now cleanly amends `B5D-DECLARATION.md`, A1 item 6, and `B5D-BINDING-1.md` ruling 5. All arithmetic checks out (`(0.140642+0.027635)/0.580390 = 0.2899`; `30±4`, `4±0.9`, `5·SE`). Note minor 1 for mixed `RESOLVED-INACTIVE`/`UNRESOLVED` outcomes and A1 item 7's double-counting warning on `C_b` + `C_model` (plus the real `C_b` 4th eigenvalue `3.4e-7`, giving `F1_genie_v3_g18` `quad = 1744.47`).
+
+3. **Exact implementation:** `C_b` (`bias_block`), `D` (`drawn_block`), raw/centred `e` (`toy_errors`), per-ensemble `bands_kept`/`fhat`/`bootstrap_se`, A2's 4-state `trigger` & stop rule (`[ACTIVE, RESOLVED-INACTIVE, UNRESOLVED, UNMEASURED]`), `L` on `C_e`'s kept modes (`fluctuation_block`), `mean_err` in Tune v1 units, `band_traces` (`tr(W P S P W)` & `tr(W P D P W)`), all 8 controls, and the atomic no-replace writer (`render_record` + `write_files` + `rename_noreplace`) match declaration + A1 + A2.
+
+4. **New defects from the delta:** None beyond minors 1–4 above; all earlier round 2–4 defects (including `C-LEAK` cutoff/shape checks, zero-spread `C-FIN`, `B.prepare` cal-array wording, whole-directory atomic rename, and A2/Binding-1 conflict) are resolved.

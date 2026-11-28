@@ -1,0 +1,12 @@
+You are a NARROW confirming reader of a DRAFT statistical-analysis declaration (PTMC). This is the final, confirm-only read. READ-ONLY: never modify, create or delete any file except where your harness writes your final message; never run git commands that write; do not contact any network service.
+
+Inputs (./inputs/): PTMC-DECLARATION-r4.md (the document under confirmation), PTMC-DECLARATION-r3.md (the previous draft), r3-to-r4.diff (their diff, with the scoping's), r3-codex-school2-report.txt and r3-agy-hydrogen-high-report.txt (the round-3 reads of r3), r3-DISPOSITION.md (how r4 answers them), couple-README.md and couple-run2-session-out.txt (a read-only measurement of C-COUPLE's identity on the real input), ptmc_couple_check.py (the measuring script), runEventLoopOmniFold.cpp (the event loop that wrote the input's trees), and sources: re2_driver_at_M.py, oofvc_driver.diff, ref_c2c1.py, ref_c2c1_read.py, OOFVC-DECLARATION.md, REF-C2C1-DECLARATION.md, PTMC-SCOPING.md.
+
+YOUR SCOPE IS ONLY THIS (the director's instruction):
+1. Are r4's fixes for these round-3 blockers CORRECT and COMPLETE?
+   (i) the exact C-COUPLE multiset identity (agy #2 / codex #1 and #2), including whether the measurement script reproduces the driver's two loaders' row rules faithfully (check against re2_driver_at_M.py collect_truth_denom_arrays and collect_signal_arrays_2d) so that its "exact" result transfers to the driver's arrays, and whether "hasTruthOnlyMisses non-zero, as the driver reads it" is right;
+   (ii) §7's projection (agy #1 / codex #4): is pilot + 5 x (10 t_R + o) a correct, non-false-STOP projection for the declared layout, and the time limit sane;
+   (iii) codex #3 (weighted lost-support trigger, x*=0 via c*=0 under R), #5 (moved-entry reuse in a replica: the C-MOVE replica sets, appended identity, C-REFINE), #6 (replica normalization: C-NORM).
+2. NEW findings count ONLY if they are: (a) a wrong printed number or an over-reaching licensed statement; (b) a gate that would PASS a defective run; (c) a FALSE STOP of a correct run. Do not report anything else as a blocker; list other observations, if any, as NOTES in one short list.
+
+OUTPUT: for each of (i), (ii), (iii)-#3, #5, #6: CONFIRMED / NOT CONFIRMED, with evidence (file:line). Then any class-(a)-(c) findings, each with location, evidence and a concrete fix. Then NOTES. End with one line: VERDICT: CONFIRMED n of 5, BLOCKERS n.

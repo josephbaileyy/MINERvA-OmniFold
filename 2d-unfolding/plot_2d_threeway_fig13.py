@@ -37,6 +37,11 @@ from plot_2d_cross_section import (  # noqa: E402
     load_flux_bins_for_truth,
 )
 
+_UQ = str(_pathlib.Path(__file__).resolve().parent / "uq")
+if _UQ not in _sys.path:
+    _sys.path.append(_UQ)
+from reported_cells import edge_label, th2d_edges  # noqa: E402
+
 
 N_PT = len(PT_EDGES) - 1
 N_PZ = len(PZ_EDGES) - 1
@@ -66,10 +71,6 @@ def cumulative_display_edges(physical_edges):
     return np.concatenate([[0.0], np.cumsum(np.sqrt(widths))])
 
 
-PT_DISP_EDGES = cumulative_display_edges(PT_EDGES)
-PZ_DISP_EDGES = cumulative_display_edges(PZ_EDGES)
-
-
 def tmatrix_to_numpy(tm):
     arr = np.empty((tm.GetNrows(), tm.GetNcols()), dtype=float)
     for i in range(tm.GetNrows()):
@@ -78,12 +79,17 @@ def tmatrix_to_numpy(tm):
     return arr
 
 
-def paper_arrays(paper_file):
-    """Return paper central values/errors in our TH2 convention: pt x pz."""
+def paper_arrays(paper_file, want_edges=False):
+    """Return paper central values/errors in our TH2 convention: pt x pz; with want_edges, also
+    the release TH2D's (pT, p_parallel) edges, read from its own axes."""
     f = ROOT.TFile.Open(paper_file, "READ")
     if not f or f.IsZombie():
         raise RuntimeError(f"Could not open {paper_file}")
     h = f.Get("pt_pl_cross_section")
+    if (h.GetNbinsX(), h.GetNbinsY()) != (N_PZ, N_PT):
+        raise RuntimeError(f"{paper_file}: pt_pl_cross_section is {h.GetNbinsX()} x {h.GetNbinsY()} bins, "
+                           f"expected x = p|| ({N_PZ}), y = pT ({N_PT})")
+    edges = th2d_edges(h)
     cov_stat = tmatrix_to_numpy(f.Get("StatOnlyCovariance"))
     vals = np.zeros((N_PT, N_PZ), dtype=float)
     errs = np.zeros((N_PT, N_PZ), dtype=float)
@@ -99,7 +105,7 @@ def paper_arrays(paper_file):
                 errs[ipt, ipz] = np.sqrt(cov_stat[gid, gid])
                 reported[ipt, ipz] = True
     f.Close()
-    return vals, errs, reported
+    return (vals, errs, reported, edges) if want_edges else (vals, errs, reported)
 
 
 def th2_to_array(h):
@@ -112,7 +118,9 @@ def th2_to_array(h):
     return vals, errs
 
 
-def load_result(result_file, mcfile=None, flux_hist="pTmu_reweightedflux_integrated"):
+def load_result(result_file, mcfile=None, flux_hist="pTmu_reweightedflux_integrated", want_edges=False):
+    """Our result, its error and the MC-truth cross section; with want_edges, also hXSec2D's
+    (pT, p_parallel) edges, read from its own axes."""
     f = ROOT.TFile.Open(result_file, "READ")
     if not f or f.IsZombie():
         raise RuntimeError(f"Could not open {result_file}")
@@ -145,6 +153,8 @@ def load_result(result_file, mcfile=None, flux_hist="pTmu_reweightedflux_integra
 
     omni, omni_err = th2_to_array(h_xsec)
     truth, _ = th2_to_array(h_truth_xsec)
+    if want_edges:
+        return omni, omni_err, truth, flux_source, th2d_edges(h_xsec)
     return omni, omni_err, truth, flux_source
 
 
@@ -199,18 +209,22 @@ def setup_paper_axes(ax, row, col, nrows, ncols, xlim, ylim=(0, 4.2),
 
 
 def draw_panel(ax, log_edges, paper_y, paper_err, omni_y, omni_err, truth_y,
-               title, scale):
+               title, scale, paper_log_edges=None):
+    """Ours and the truth on `log_edges`; the published points on `paper_log_edges` (default the same)."""
     x_plot_edges = np.asarray(log_edges, dtype=float)
     centers = 0.5 * (x_plot_edges[:-1] + x_plot_edges[1:])
     half_widths = 0.5 * (x_plot_edges[1:] - x_plot_edges[:-1])
+    p_edges = x_plot_edges if paper_log_edges is None else np.asarray(paper_log_edges, dtype=float)
+    p_centers = 0.5 * (p_edges[:-1] + p_edges[1:])
+    p_half_widths = 0.5 * (p_edges[1:] - p_edges[:-1])
     factor = 1.0e39 * scale
 
     sx, sy = stair_xy(x_plot_edges, truth_y * factor)
     ax.plot(sx, sy, color="red" if not RESTYLE else rs.PALETTE["tune"], lw=_fs(1.6, 0.8),
             label="GENIE 2.12.6 + MnvTune v1" if not RESTYLE else rs.NAMES["tune"])
 
-    ax.errorbar(centers, paper_y * factor, yerr=paper_err * factor,
-                xerr=half_widths, fmt="s", ms=_fs(2.5, 1.2), color="black",
+    ax.errorbar(p_centers, paper_y * factor, yerr=paper_err * factor,
+                xerr=p_half_widths, fmt="s", ms=_fs(2.5, 1.2), color="black",
                 ecolor="black", elinewidth=_fs(0.8, 0.4), capsize=_fs(1.5, 0.7),
                 label="Published (PRD 104, 092007)" if not RESTYLE else rs.NAMES["published"], zorder=3)
     ax.errorbar(centers, omni_y * factor, yerr=omni_err * factor,
@@ -249,8 +263,11 @@ def _ticklabels(labs, idx, n_panels, ncols=4):
 
 
 def plot_pt_slices(fig, outer, paper, paper_err, reported,
-                   omni, omni_err, truth):
-
+                   omni, omni_err, truth, pt_edges=PT_EDGES, pz_edges=PZ_EDGES, paper_edges=None):
+    """p_T slices. Titles and the p_parallel display axis come from our result's edges; the
+    published points sit at the release's (paper_edges = (pT, p_parallel), default ours) on that axis."""
+    pz_disp = cumulative_display_edges(pz_edges)
+    paper_pz_disp = tick_positions(pz_edges if paper_edges is None else paper_edges[1], pz_edges, pz_disp)
     gs = outer.subgridspec(4, 4, wspace=0.0, hspace=0.0)
     handles = labels = None
     axes = []
@@ -270,15 +287,15 @@ def plot_pt_slices(fig, outer, paper, paper_err, reported,
         mask = reported[ipt, :]
         vals_for_scale = np.r_[paper[ipt, mask], omni[ipt, :], truth[ipt, :]]
         scale = rounded_scale(vals_for_scale, target=3.4)
-        title = f"{PT_EDGES[ipt]:.2f} < p_T < {PT_EDGES[ipt + 1]:.2f}"
-        draw_panel(ax, PZ_DISP_EDGES, paper[ipt, :], paper_err[ipt, :],
+        title = f"{edge_label(pt_edges[ipt])} < p_T < {edge_label(pt_edges[ipt + 1])}"
+        draw_panel(ax, pz_disp, paper[ipt, :], paper_err[ipt, :],
                    omni[ipt, :], omni_err[ipt, :], truth[ipt, :],
-                   title, scale)
+                   title, scale, paper_pz_disp)
         setup_paper_axes(ax, row, col, 4, 4,
-                         (PZ_DISP_EDGES[0], PZ_DISP_EDGES[-1]),
+                         (pz_disp[0], pz_disp[-1]),
                          ylim=(0, 4.8), yticks=[0, 2, 4])
         tick_labs = [4, 10, 20, 40, 60]
-        ax.set_xticks(tick_positions(tick_labs, PZ_EDGES, PZ_DISP_EDGES))
+        ax.set_xticks(tick_positions(tick_labs, pz_edges, pz_disp))
         ax.set_xticklabels([str(x) for x in tick_labs])
         if RESTYLE:
             ax.set_xticklabels([] if _inner_row(ipt, N_PT) else _ticklabels(tick_labs, ipt, N_PT))
@@ -289,8 +306,11 @@ def plot_pt_slices(fig, outer, paper, paper_err, reported,
 
 
 def plot_pz_slices(fig, outer, paper, paper_err, reported,
-                   omni, omni_err, truth):
-
+                   omni, omni_err, truth, pt_edges=PT_EDGES, pz_edges=PZ_EDGES, paper_edges=None):
+    """p_parallel slices. Titles and the p_T display axis come from our result's edges; the
+    published points sit at the release's (paper_edges = (pT, p_parallel), default ours) on that axis."""
+    pt_disp = cumulative_display_edges(pt_edges)
+    paper_pt_disp = tick_positions(pt_edges if paper_edges is None else paper_edges[0], pt_edges, pt_disp)
     gs = outer.subgridspec(4, 4, wspace=0.0, hspace=0.0)
     axes = []
     for ipz in range(N_PZ):
@@ -300,16 +320,16 @@ def plot_pz_slices(fig, outer, paper, paper_err, reported,
         mask = reported[:, ipz]
         vals_for_scale = np.r_[paper[mask, ipz], omni[:, ipz], truth[:, ipz]]
         scale = rounded_scale(vals_for_scale, target=1.7)
-        title = f"{PZ_EDGES[ipz]:.2f} < p_|| < {PZ_EDGES[ipz + 1]:.2f}"
-        draw_panel(ax, PT_DISP_EDGES, paper[:, ipz], paper_err[:, ipz],
+        title = f"{edge_label(pz_edges[ipz])} < p_|| < {edge_label(pz_edges[ipz + 1])}"
+        draw_panel(ax, pt_disp, paper[:, ipz], paper_err[:, ipz],
                    omni[:, ipz], omni_err[:, ipz], truth[:, ipz],
-                   title, scale)
+                   title, scale, paper_pt_disp)
         setup_paper_axes(ax, row, col, 4, 4,
-                         (PT_DISP_EDGES[0], PT_DISP_EDGES[-1]),
+                         (pt_disp[0], pt_disp[-1]),
                          ylim=(0, 2.4) if not RESTYLE else (0, 3.0), yticks=[0, 1, 2])
         # amendment 1 (Joseph, #591): headroom so that every slice label clears the data (tools/overlap.py)
         tick_labs = [0.4, 1.0, 1.5, 2.5, 4.5]
-        ax.set_xticks(tick_positions(tick_labs, PT_EDGES, PT_DISP_EDGES))
+        ax.set_xticks(tick_positions(tick_labs, pt_edges, pt_disp))
         ax.set_xticklabels([str(x) for x in tick_labs])
         if RESTYLE:
             ax.set_xticklabels([] if _inner_row(ipz, N_PZ) else _ticklabels(tick_labs, ipz, N_PZ))
@@ -338,9 +358,9 @@ def main():
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    paper, paper_err, reported = paper_arrays(args.paper)
-    omni, omni_err, truth, flux_source = load_result(
-        args.infile, args.mcfile, args.flux_hist)
+    paper, paper_err, reported, paper_edges = paper_arrays(args.paper, want_edges=True)
+    omni, omni_err, truth, flux_source, (pt_edges, pz_edges) = load_result(
+        args.infile, args.mcfile, args.flux_hist, want_edges=True)
     print(f"[INFO] truth flux source: {flux_source}")
 
     if args.pt_only:
@@ -350,7 +370,7 @@ def main():
         outer = fig.add_gridspec(1, 1, left=0.072, right=0.985,
                                  bottom=0.115, top=0.955)
         plot_pt_slices(fig, outer[0], paper, paper_err, reported,
-                       omni, omni_err, truth)
+                       omni, omni_err, truth, pt_edges, pz_edges, paper_edges)
         fig.text(0.53, 0.035, "Muon Longitudinal Momentum (GeV/c)",
                  ha="center", va="center", fontsize=15)
         fig.text(0.021, 0.535,
@@ -367,9 +387,9 @@ def main():
                              left=0.11, right=0.98, bottom=0.07, top=0.95)
 
     plot_pt_slices(fig, outer[0], paper, paper_err, reported,
-                   omni, omni_err, truth)
+                   omni, omni_err, truth, pt_edges, pz_edges, paper_edges)
     plot_pz_slices(fig, outer[1], paper, paper_err, reported,
-                   omni, omni_err, truth)
+                   omni, omni_err, truth, pt_edges, pz_edges, paper_edges)
 
     # Match the gap between each grid and its x-axis label. Top grid's
     # bottom edge is at y~0.581 (bottom=0.07, hspace=0.28, two equal

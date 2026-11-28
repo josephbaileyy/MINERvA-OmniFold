@@ -1,0 +1,114 @@
+# regenA amendment A4 (2026-11-25, before anything runs): the note's figures on the paper's pT edges.
+# regenA DECLARATION.txt, AMENDMENT-A1.txt, AMENDMENT-A2.txt and AMENDMENT-A3.txt stay unchanged. Requested by the director.
+
+What. For each figure the note prints from the 2D published comparison (journal-editor's list, main_note's \input
+closure), the layer make_figures.sh installs is run again on two inputs:
+  OLD  E_R central on our pT edges (~/cov2d-work/figfetch/er-anc/xsec.root), the control;
+  E    E_R central on the paper's pT edges (docs/orchestration/state/ibu-chi2-20261123/tier1/units/e/er.root), the reading.
+The figures and their installed layers (make_figures.sh line, its install function, the layer's record):
+  MEFHC_5iter_xsec_proj_pt.pdf, _proj_pz.pdf   :497-498 install_current_fig; note-figround3-20261121 Fig. 2, arm 1
+                                               (tools/run_r3.sh:21, compose_fig2_r3.py)
+  MEFHC_5iter_pull_full.pdf                    :496 install_current_fig; note-figround3-20261121 Fig. 3, arm 1
+                                               (run_r3.sh:74-78, compose_fig3_r3.py over palette_run.py,
+                                               compare_to_paper_fullcov.py --sd-label)
+  MEFHC_5iter_xsec_paper_pt_slices.pdf, _pz_   :500-501 install_current_fig; note-figround-20261121's stamp strip
+                                               (tools/strip_stamp.py) of note-figpass-20261119/figs-r2's files, which
+                                               chunk E drew (compose_slices_markers.py --pt-ncols 3 --logx --font-floor 7
+                                               --pz-top-hundredths 30 --pub-size-percent 100 --pub-edge-hundredths 40;
+                                               runs/markers/CHECKS.txt:1)
+  tension_spectrum.pdf, _chi2_map.pdf,         :403-405 install_palette_fig; note-figstyle-20261117 tier 2, arm 1:
+  _mode_maps.pdf                               arms.sh's arm-1 command for ~/cov2d-work/figrun/tier2.sh's tension step
+                                               (palette_run.py over diagnose_tension.py, under env -i)
+Not in A4: eavail_marginal_vs_paper_pull_full.pdf (appC:214; a 3D purity re-unfold, in regenA/README.md's Deferred
+tidy-up); MEFHC_5iter_fig13 and model_comp_* (not in main_note's closure).
+
+The runner is receipts/regenA4_run.sh (committed beside this file); the controls are receipts/a4_controls.sh; the
+caption numbers are a4_readout.py. tier2.sh was never committed: receipts/tier2.sh is that file, unchanged, and
+receipts/tier2_argv_equal.sh shows that the runner's tension command equals tier2.sh's arm 1 (argv, environment and
+working directory, with the run-specific roots named; against a stub interpreter that records and draws nothing).
+Producers: 2d-unfolding/ of the producer worktree below, main with #1328 (the producers read their inputs' own axes).
+Producer worktree: /Users/josephbailey/local-research/wt-ibu-chi2 at 06893b0af3ff2245035f504de2c47f02bb48db0e (detached; git status --porcelain empty before and after).
+
+Pins (sha256 by command; equal before and after, C-PINS):
+  a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef  ~/cov2d-work/figfetch/er-anc/xsec.root
+  5171c7b8ecacda6090e242349dd622218c1c38885c60ef8b91027033a8c4b780  ~/local-research/wt-ibu-chi2-a3/docs/orchestration/state/ibu-chi2-20261123/tier1/units/e/er.root
+  d21a41eb746fea64e5c37a69b87bff93318e7997252686b8880e10b35bf4e12a  ~/cov2d-work/figfetch/anc/bin_mapping.txt
+  de434a568d6947755a0ce111f532be9496c3f8cb8cc04f16de69dbbd443f785c  ~/cov2d-work/figfetch/anc/cov_ptpl_minerva_inclusive_6GeV_energyscale.txt
+  a2ba53fd152143703d81c3cc7a177d472e2d0b7e8c31467adacd74bf289ca13d  ~/cov2d-work/figfetch/anc/cov_ptpl_minerva_inclusive_6GeV_flux.txt
+  83f7e22a9d1e2890a3334130e3ff3c0413fc8ed3473032e264a30fcf911fd74b  ~/cov2d-work/figfetch/anc/cov_ptpl_minerva_inclusive_6GeV_stat.txt
+  39ef5b72117d65392ff9c7b323261b0ea55cd0e355188344a8d282afdda83a38  ~/cov2d-work/figfetch/anc/cov_ptpl_minerva_inclusive_6GeV_total.txt
+  6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3  ~/cov2d-work/figfetch/anc/cov_ptpl_minerva_inclusive_6GeV.root
+  02153e7af054a98254ddfc42cce65fc7520f95032c544dbc33555ac60376c2f3  ~/cov2d-work/figfetch/anc/data_result_ptpl_2D_minerva_inclusive_6GeV.txt
+  222317522662b7001e8d4fcc155c1ec0b28b85f2cd868ab10206a7e7f6bf8240  ~/cov2d-work/figfetch/anc/model_ptpl_minerva_inclusive_6GeV_MINERvA_Tune_v1.txt
+  2d5246a1441ab8e3266e3f4ba385bcc8eafcaef9dd2d77983b2662c07f578cd0  receipts/regenA4_run.sh
+  9749bb5caf4043090c12e62447445163806a5ba3ef5393244ab379a632852fea  receipts/a4_controls.sh
+  40e7b0fa04edc5c4e667d76cc92b9d102368d8d0f7c81b724ff1bae258b6ef25  receipts/tier2.sh
+  d51e6e7015cf7b185a84c52ee905025bd8ddb9cfa4a1a323effa2123d446ef2e  receipts/tier2_argv_equal.sh
+  6fd2b4feca0f0bf8fd7cd4631df5ae1aef27d067abae18f2c668632a0a90d4b2  a4_readout.py
+Tool trees at the producer commit (git rev-parse <commit>:<path>):
+  3d44e61ccb22f3eb2a3385066a65d3388b8139f9  methods/note-figstyle-20261117
+  58dad1dc7905de2ea35aa3e89f17293554253aa0  methods/note-figround-20261121
+  b1cf17a1eb333e1e9cdd11f2bd15c58ab920f8e3  methods/note-figround3-20261121
+  d80557bbc44aa3311aca4d1aabb17cc1a45ccf3f  methods/note-fig23-20261121
+  376a76dfa57567f35473a6a59af3951e72ad5360  methods/note-figpass-20261119
+  b4609cc56b99b97d025caf5e3ca8bfafb56c7fed  2d-unfolding
+  a315cd90ec7685ec880964fffd9ca7e24a08d42b2e322a935c8ae37d3c974297  methods/note-figstyle-20261117/tools/bytes_but_date.py (the comparator)
+Installed references at the producer commit:
+  d27075c220081054caf51fb6130fe3a671e9dc0dacfb1a97469b3d07829f63af  docs/analysis-note/figures/MEFHC_5iter_xsec_proj_pt.pdf
+  caa9286bfec8e7f2b6d6dd06fda6d5fc9f0b8f1c7c95d4bacc290048726b4745  docs/analysis-note/figures/MEFHC_5iter_xsec_proj_pz.pdf
+  9335a3e3037320c6bb5a0e3d0ad61ac7709c693633ba9c5a1265e61c38c2501e  docs/analysis-note/figures/MEFHC_5iter_pull_full.pdf
+  58e4d16ad6bc68f7bd17bae8d315b99ece6d66b821715d403120e0d6548357a2  docs/analysis-note/figures/MEFHC_5iter_xsec_paper_pt_slices.pdf
+  4216003cfe47d376b97a3a32575e5fa00342e7528bfb1d2e8e647e9ea9f620b0  docs/analysis-note/figures/MEFHC_5iter_xsec_paper_pz_slices.pdf
+  98d7ce2c9765275be579ef8345fde17f50a8b24b0e2f26846475d6998a163661  docs/analysis-note/figures/tension_spectrum.pdf
+  4f18c35be762355f16410bb8798ceae8f303e640e33bda985c90dbfdee23236a  docs/analysis-note/figures/tension_chi2_map.pdf
+  f4d8a4197aa0318fd9704ab7c0d0011c9a85425e12398966bb552a1b79c80412  docs/analysis-note/figures/tension_mode_maps.pdf
+  a71c3853afa683ad4f12945eda39e6c2f1118c27b7f21ffaf57c452b2e13faca  methods/note-figpass-20261119/figs-r2/MEFHC_5iter_xsec_paper_pt_slices.pdf
+  0a50c6eeb7ca63250bd2627d4b5ff047b655602130cfbd5806e76fcea23f5725  methods/note-figpass-20261119/figs-r2/MEFHC_5iter_xsec_paper_pz_slices.pdf
+
+Environment:
+  figenv/rootmpl3108: /Users/josephbailey/cov2d-work/figenv/rootmpl3108/bin/python3 python 3.11.18 ROOT 6.40.04 matplotlib 3.10.8 numpy 1.26.4
+    interpreter /Users/josephbailey/cov2d-work/figenv/rootmpl3108/bin/python3.11 sha256 ce14b17b53911eb3dda146c0bd6f00071a0a9b7c7a4db154b35fc3da8d008c8e
+  pdfedit: /Users/josephbailey/cov2d-work/figenv/pdfedit/bin/python python 3.12.2 pikepdf 9.4.2
+    interpreter /Users/josephbailey/miniconda3/bin/python3.12 sha256 f7e21a60d711b4c4a71e5d624bb323e31be433b8a7e56a7228b05bfb0e09f406
+  poppler: pdftotext version 25.06.0; comparator interpreter ~/miniconda3/bin/python3 (Python 3.12.2)
+
+Controls. Any failure is a STOP, reported with no reading.
+  C-TIER2: receipts/tier2_argv_equal.sh :: PASS, run before the figures.
+  C-OLD: OLD's xsec_proj_pt/pz, pull_full and the three tension PDFs are each EQUAL-BUT-DATE against the installed file
+    (bytes_but_date.py: same length, byte-equal once /CreationDate is masked).
+  C-SL-a: OLD's markers-layer slices are EQUAL-BUT-DATE against note-figpass-20261119/figs-r2's.
+  C-SL-b: strip_stamp.py on the committed figs-r2 slices reproduces the installed slices byte for byte (sha256).
+    Why two parts: strip_stamp saves with pikepdf deterministic_id=True, so the trailer /ID is a hash of the content,
+    /CreationDate included. A rerun's stripped file therefore differs from the installed one in /ID as well as the date
+    and cannot be EQUAL-BUT-DATE. (a) and (b) together show the chain reproduces: (a) the layer before the strip, up to
+    the date; (b) the strip is a deterministic function of its input bytes.
+  C-RUN: every step exits 0 on both inputs. The compose tools' own checks (Fig. 13's line equal to the projection's,
+    the mosaic panels matched, no legend on a vertex, no text overlap at the final draw) stop a step that fails them;
+    a failure on E is reported as a STOP, not worked around.
+  C-PINS, C-CLONE: as above.
+
+Reading (E, descriptive):
+  - each figure's sha256 on both grids (receipts/controls.out), and the E PDFs themselves, for journal-editor to
+    install by hash;
+  - the caption numbers (a4_readout.py, both inputs): (1) tension_mode_maps, appC:22-23 ("three of the six ...
+    eigenvectors with the largest contributions, in panels (a), (b), and (d), concentrate at the highest p_par"):
+    per panel, the share of sum u^2 in p_par >= 20 GeV/c and the p_par bin of the largest |u|; (2) appC:30 and :37
+    ("In all 14 pT slices, the OmniFold points move toward the published values relative to the Tune v1 prior"; "In
+    all 16 p_par slices, the unfolding draws the central values toward the published points"): per slice, D_ours
+    and D_prior against the published points in published statistical standard deviations, and the count with
+    D_ours < D_prior; (3) each slice panel's printed chi2/n (ours against the prior), read from the drawn texts.
+  These are numbers for journal-editor; the caption wording is Joseph's.
+
+Placement: this laptop, in the environments above; 0 node-h, no NERSC connection, nothing to CFS. Scratch outputs
+under the session scratchpad; the PDFs, records, logs and readouts that the receipt needs are copied into regenA4/.
+Order: tier2_argv_equal.sh; regenA4_run.sh on OLD, then on E; a4_controls.sh; a4_readout.py on both inputs.
+
+Commands (W = ~/local-research/wt-ibu-chi2 at the producer commit; S = a new scratch directory; PY = figenv/rootmpl3108's):
+  1. bash receipts/tier2_argv_equal.sh <this branch's tree> S/t2eq
+  2. bash receipts/regenA4_run.sh W old ~/cov2d-work/figfetch/er-anc/xsec.root S/old
+  3. bash receipts/regenA4_run.sh W e <this tree>/docs/orchestration/state/ibu-chi2-20261123/tier1/units/e/er.root S/e
+  4. bash receipts/a4_controls.sh W S/old S/e S/stripctl > receipts/controls.out
+  5. PY a4_readout.py --module-dir W/2d-unfolding --anc ~/cov2d-work/figfetch/anc --xsec <input> --captures S/<set>/cap
+     --out out/readout_<set>.json, for set old and e
+Pins and W's cleanliness are recorded before step 1 and after step 5. A step that fails ends the run there. receipts/
+files named *.out or *.log are committed with git add -f (.gitignore matches them).

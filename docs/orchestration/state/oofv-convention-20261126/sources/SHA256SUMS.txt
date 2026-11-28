@@ -1,0 +1,7 @@
+# Fetched 2026-11-26 by curl from raw.githubusercontent.com (public MinervaExpt repositories), byte for byte:
+#   MinervaExpt/MAT@0111c79de PlotUtils/Cutter.cxx
+#   MinervaExpt/MAT-MINERvA@f790cc794 calculators/CCInclusiveSignal.h
+#   MinervaExpt/MINERvA-101-Cross-Section@bb6c1634d0aa2f1f3456c9a6be1fedb0492d6686 runEventLoop.cpp
+5c672d869ae0901913328f0332fdb19349d977ec0fe5f9dcae22874d7ff6c303  MAT-0111c79de-Cutter.cxx
+2fcac4041d4364805932859f80ca4df90bc4dadc189a873449b63ba812161f58  MAT-MINERvA-f790cc794-CCInclusiveSignal.h
+edda04b6a11ba998715d64e3207e71745b9d034cd794ce85f386aa4a7acffc9f  MINERvA-101-bb6c1634-runEventLoop.cpp

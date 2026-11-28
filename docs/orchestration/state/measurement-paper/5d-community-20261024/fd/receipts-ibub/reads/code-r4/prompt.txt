@@ -1,0 +1,17 @@
+You are an independent, adversarial reviewer of code and cluster scripts for a particle-physics analysis on NERSC Perlmutter. READ-ONLY task: do not modify, create or delete any file; print one report to stdout. Never write to any git checkout.
+
+Inputs: the tree /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/tree, extracted by git archive from commit d547fa1fa (sha256 of each file in /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a4ec4b9a-c277-4847-8576-4e2ef26708b1/scratchpad/agy-code-r4/inputs.sha256).
+- The declaration: docs/orchestration/state/measurement-paper/5d-community-20261024/IBUB-DECLARATION.md (rev 3).
+- The code: 2d-unfolding/ibub/ (ibub_unit.py, ibub_readout.py, ibub_lanes.py, ibub_overlap.py, config.json, jobs/ibub_job.sbatch, tests, mutants.py).
+- The connect: .../fd/receipts-ibub/connect/ (ibub_run_connect.template.sh, gen_run_connect.py, ibub_run_launch.template.sh).
+- The previous reads and their dispositions: .../fd/receipts-ibub/reads/codex2-r1/ (REPORT.txt: a NO-GO with 8 blockers; README.md: how each was fixed) and reads/code-r3/README.md.
+
+Your main task: for EACH of codex2-r1's 8 blockers (B1-B8) and its non-blocking items NB1, NB3 and NB4, check against the code at d547fa1fa whether the fix is CORRECT and COMPLETE, citing file:line, and say plainly if any is only partly fixed. Then look for NEW defects the fixes introduced, especially in:
+- the job's scontrol key parsing (key(), AllocTRES split, StdOut realpath; would it work on real Perlmutter scontrol output?);
+- the binding (SLURM_JOB_ID, IBUB_M, deploy_head) across unit, refcheck, complete and readout: can any path accept another job's or deploy's product?;
+- namespace containment (inside(), symlinks, macOS vs Linux realpath);
+- the readout's publish-after-finish (can a STOP or INVALID record still carry readings? can a PASS record lose them?);
+- mutants.py's new runner (baseline, harness detection, kill rule).
+Also: anything that would make the job or the connect fail on Perlmutter (bash 4/5, GNU coreutils, Slurm).
+
+Output a numbered list of findings labelled BLOCKER, MAJOR, MINOR or NOTE, each with file:line and a concrete fix. End with exactly one line: VERDICT: GO (no BLOCKER or MAJOR) or VERDICT: REVISE.

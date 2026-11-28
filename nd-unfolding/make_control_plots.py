@@ -173,6 +173,7 @@ def draw(arr, outdir, print_style=False, extended=False):
         sig, serr = arr[f"{k}sig_{ax}"], arr[f"{k}serr_{ax}"]
         bkg, berr = arr[f"{k}bkg_{ax}"], arr[f"{k}berr_{ax}"]
         if extended and ax in CATCH_DISPLAY:  # draw the catch bin, compressed to its display width
+            final_interval = f"{e[-2]:g}\N{EN DASH}{e[-1]:g}"
             e = np.array(e, float); e[-1] = CATCH_DISPLAY[ax]; nshow = len(e) - 1
         mc = (sig + bkg) * pot_scale
         summary[ax] = (dat.sum(), mc.sum())
@@ -186,7 +187,7 @@ def draw(arr, outdir, print_style=False, extended=False):
         h_b = A.fill_between(xs, floor, np.maximum(y_bkg, floor),
                              color=C_BKG, lw=0, label="MC background")
         h_s = A.fill_between(xs, np.maximum(y_bkg, floor), y_tot,
-                             color=C_SIG, lw=0, label="MC signal (MnvTune v1)")
+                             color=C_SIG, lw=0, label="MC signal\n(MINERvA Tune v1)")
         A.plot(xs, y_bkg, color="white", lw=LWG)      # gap between stack segments
         A.plot(xs, y_tot, color=C_EDGE, lw=LWO)       # stack outline
         h_d = A.errorbar(ctr[:nshow], dat[:nshow], yerr=derr[:nshow],
@@ -215,12 +216,12 @@ def draw(arr, outdir, print_style=False, extended=False):
                    fmt="o", color="k", ms=MS, elinewidth=ELW, zorder=5)
         R.set_ylim(0.77, 1.30)
         R.set_yticks([0.8, 1.0, 1.2])
-        if extended and ax in CATCH_DISPLAY:  # the catch bin's "100" tick and break mark
+        if extended and ax in CATCH_DISPLAY:
             tk = EXT_TICKS[ax] + [CATCH_DISPLAY[ax]]
             lab = [f"{t:g}" for t in EXT_TICKS[ax]]
-            if print_style and ax in ("q3", "W"):  # at the printed size the last resolved label runs into "100"
+            if print_style and ax in ("q3", "W"):
                 lab[-1] = ""
-            R.set_xticks(tk, lab + ["100"])
+            R.set_xticks(tk, lab + [final_interval])
             R.text(0.5 * (e[-2] + e[-1]), 0.77, r"$/\!/$", ha="center", va="center", fontsize=FS_TICK - 1)
         R.set_xlabel(LABELS[ax], fontsize=FS_LAB)
         R.tick_params(axis="both", which="major", labelsize=FS_TICK)
@@ -238,7 +239,7 @@ def draw(arr, outdir, print_style=False, extended=False):
     ax_leg.text(0.5, 0.13, r"MINERvA ME FHC, $1.06\times10^{21}$ POT",
                 transform=ax_leg.transAxes, ha="center", va="center",
                 fontsize=FS_TAG, color="0.25")
-    ax_leg.text(0.5, 0.02, "wide catch bin compressed to 100 at right" if extended else "wide catch bins not drawn",
+    ax_leg.text(0.5, 0.02, "Wide final intervals are compressed" if extended else "wide catch bins not drawn",
                 transform=ax_leg.transAxes, ha="center", va="center",
                 fontsize=FS_NOTE, color="0.45")
     out1 = os.path.join(outdir, "control_plots.png")

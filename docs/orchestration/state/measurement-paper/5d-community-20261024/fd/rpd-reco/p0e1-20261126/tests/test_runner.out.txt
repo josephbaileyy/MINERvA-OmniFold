@@ -1,0 +1,49 @@
+ok   all pass: dry then real, in order, at nice 19, rc 0, /dev/shm removed
+ok   pins-dry fails: STOP rc 4 before the next step, /dev/shm removed
+ok   p0-dry fails: STOP rc 4 before the next step, /dev/shm removed
+ok   pins fails: STOP rc 4 before the next step, /dev/shm removed
+ok   p0 fails: STOP rc 4 before the next step, /dev/shm removed
+ok   p0-dry killed by SIGKILL from outside the supervisor: killed-p0-dry, rc 4
+ok   pins leaves a process in its group: killed, leftover-pins, rc 4
+ok   peak RSS over the cap (a 1000 B cap): rss-cap, rc 4, after the first step
+ok   the wall cap (3 s, the supervisor's TERM lead 30 s): wall-cap, rc 7, no step finished
+ok   no handoff.ok from the connect: no-handoff, rc 8, no step run, /dev/shm removed
+ok   not at nice 19: STOP rc 9, no step run
+ok   TERM to the runner mid-step: forwarded to the step's group, rc 143, worker gone, /dev/shm removed
+ok   SIGINT to a runner started by the connect's wrapper: trapped and forwarded, rc 130, worker gone
+ok   the supervisor killed mid-step: no record, the step's group killed from its pgid file, rc 4
+ok   a record with past_deadline (no deadline signal): wall-cap, rc 7
+ok   a record whose group survived: group-survived-p0-dry, rc 4
+ok   the last step ends after the deadline (a 6 s chain, a 7 s last step): the final check STOPs, wall-cap, rc 7
+ok   no record and the step's group still alive after KILL (a forced kill -0): /dev/shm kept, rc 4
+ok   no record and kill -0 answering EPERM on Linux (a member it cannot signal): /dev/shm kept, rc 4
+ok   no record and an unexpected kill -0 error on macOS: alive, /dev/shm kept, rc 4
+ok   the supervisor exits 2 without a record after the deadline passed: wall-cap, rc 7
+ok   the deadline probe itself fails (a bogus deadline): its own STOP, clock-check, rc 4, not a wall cap
+ok   a clean run whose UTC time cannot be read: p0.rc not published, rc 6
+ok   a clean run that cannot publish p0.rc: reported, rc 6
+ok   a clean run whose /dev/shm cannot be removed: rc 6, cleanup-failed
+RUNNER-TESTS :: PASS
+KILLED   deadline-ignored (2 cases)
+KILLED   outside-kill-ignored (1 cases)
+KILLED   rc-ignored (4 cases)
+KILLED   leftover-ignored (1 cases)
+KILLED   rss-cap-ignored (1 cases)
+KILLED   cleanup-unchecked (1 cases)
+KILLED   handoff-skipped (1 cases)
+KILLED   nice-unchecked (1 cases)
+KILLED   forward-dropped (2 cases)
+KILLED   eperm-is-gone (1 cases)
+KILLED   darwin-any-error (1 cases)
+KILLED   expired-no-record-as-rc4 (1 cases)
+KILLED   probe-failure-as-not-passed (1 cases)
+KILLED   survivor-tree-removed (3 cases)
+KILLED   time-unchecked (1 cases)
+KILLED   past-deadline-ignored (1 cases)
+KILLED   gone-ignored (1 cases)
+KILLED   final-deadline-dropped (1 cases)
+KILLED   orphan-group-kept (1 cases)
+KILLED   publish-unchecked (2 cases)
+KILLED   shm-kept (11 cases)
+KILLED   dry-skipped (14 cases)
+RUNNER-MUTANTS :: 22/22 killed

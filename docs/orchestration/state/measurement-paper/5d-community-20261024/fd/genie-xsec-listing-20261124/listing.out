@@ -1,0 +1,62 @@
+utc 2026-11-24T11:14:42Z
+node login05
+== 1. ls -la /cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/v3_04_00/NULL/
+total 4
+drwxr-xr-x 7 cvmfs trusted 159 Mar 22  2023 .
+drwxr-xr-x 3 cvmfs trusted  39 Mar 22  2023 ..
+drwxr-xr-x 4 cvmfs trusted  29 Mar 17  2023 AR2320i00000-k250-e1000
+drwxr-xr-x 4 cvmfs trusted  29 Mar 12  2023 G1802a00000-k250-e1000
+drwxr-xr-x 4 cvmfs trusted  29 Mar 11  2022 G1810a0211a-k250-e1000
+drwxr-xr-x 4 cvmfs trusted  29 Mar 18  2022 G1810a0211b-k250-e1000
+drwxr-xr-x 4 cvmfs trusted  29 Oct 10  2022 GDNu2001a00000-k120-e200
+rc=0
+== 2. ls -la /cvmfs/larsoft.opensciencegrid.org/products/genie_xsec/
+total 128
+drwxr-xr-x  32 cvmfs trusted 4096 Jan 27  2026 .
+drwxr-xr-x 203 cvmfs trusted 4096 Nov 19 16:48 ..
+drwxr-xr-x   3 cvmfs trusted 4096 Mar  9  2018 R-2_8_0
+drwxr-xr-x   2 cvmfs trusted 4096 Apr  3  2013 R-2_8_0.version
+drwxrwxr-x   3 cvmfs trusted 4096 Mar 12  2018 v2_10_2
+drwxrwxr-x   2 cvmfs trusted 4096 Dec  4  2015 v2_10_2.version
+drwxr-xr-x   3 cvmfs trusted 4096 Mar 12  2018 v2_10_6a
+drwxr-xr-x   2 cvmfs trusted 4096 May  9  2016 v2_10_6a.version
+drwxrwxr-x   3 cvmfs trusted 4096 Mar 13  2018 v2_12_0
+drwxrwxr-x   2 cvmfs trusted 4096 Oct 29  2016 v2_12_0.version
+drwxr-xr-x   3 cvmfs trusted 4096 Feb 28  2018 v2_12_10
+drwxr-xr-x   2 cvmfs trusted 4096 Feb 28  2018 v2_12_10.version
+drwxrwxr-x   3 cvmfs trusted 4096 Mar 14  2018 v2_12_8
+drwxrwxr-x   2 cvmfs trusted 4096 Oct 30  2017 v2_12_8.version
+drwxr-xr-x   3 cvmfs trusted 4096 Jan  3  2019 v3_00_02
+drwxr-xr-x   2 cvmfs trusted 4096 Dec 11  2018 v3_00_02.version
+drwxr-xr-x   3 cvmfs trusted 4096 Apr 15  2019 v3_00_04
+drwxr-xr-x   3 cvmfs trusted 4096 Jun 27  2019 v3_00_04a
+drwxr-xr-x   2 cvmfs trusted 4096 Jun 27  2019 v3_00_04a.version
+drwxr-xr-x   3 cvmfs trusted 4096 Mar 14  2020 v3_00_04_ub2
+drwxr-xr-x   2 cvmfs trusted 4096 Mar  6  2020 v3_00_04_ub2.version
+drwxr-xr-x   2 cvmfs trusted 4096 Apr 14  2019 v3_00_04.version
+drwxr-xr-x   3 cvmfs trusted   18 Mar 18  2022 v3_02_00
+drwxr-xr-x   2 cvmfs trusted   76 Mar 18  2022 v3_02_00.version
+drwxr-xr-x   3 cvmfs trusted   39 Mar 22  2023 v3_04_00
+drwxr-xr-x   2 cvmfs trusted  184 Mar 22  2023 v3_04_00.version
+drwxr-xr-x   3 cvmfs trusted 4096 Jun 14  2025 v3_06_00
+drwxr-xr-x   2 cvmfs trusted 4096 Jan 19  2025 v3_06_00.version
+drwxr-xr-x   3 cvmfs trusted 4096 Dec  1  2025 v3_06_02_sbn1
+drwxr-xr-x   2 cvmfs trusted 4096 Nov 10  2025 v3_06_02_sbn1.version
+drwxr-xr-x   3 cvmfs trusted 4096 Jan 29  2026 v3_06_02_sbn2
+drwxr-xr-x   2 cvmfs trusted 4096 Jan 27  2026 v3_06_02_sbn2.version
+rc=0
+== 3. repository attributes
+using getfattr
+getfattr: Removing leading '/' from absolute path names
+# file: cvmfs/larsoft.opensciencegrid.org
+user.root_hash="ea35e3340c01bfaaf1eb70be6d1bed654dedb642"
+
+rc=0
+== 4. ls /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/
+Linux64bit+3.10-2.17-c7-debug
+Linux64bit+3.10-2.17-c7-prof
+Linux64bit+3.10-2.17-e20-debug
+Linux64bit+3.10-2.17-e20-prof
+ups
+rc=0
+utc-end 2026-11-24T11:14:43Z

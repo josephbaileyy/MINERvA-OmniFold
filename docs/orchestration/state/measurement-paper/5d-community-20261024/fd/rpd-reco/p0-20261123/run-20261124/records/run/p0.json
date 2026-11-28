@@ -1,0 +1,5786 @@
+{
+  "argv": [
+    "p0",
+    "--config",
+    "/dev/shm/limres-rpd-flux1/production-config.ready.json",
+    "--config-sha256",
+    "3b2afde495d630cc44df730e3e1acf12e0c332953e9fa298fa979f2e2e39b057",
+    "--run",
+    "/pscratch/sd/j/josephrb/rpd-reco-p0-20261123/run"
+  ],
+  "code_sha256": "7302cc1df71758cfae6bdcfba031d37cc78902beaf454b29e12f3e053d44f141",
+  "config_sha256": "3b2afde495d630cc44df730e3e1acf12e0c332953e9fa298fa979f2e2e39b057",
+  "does_not_license": [
+    "which period or flux is correct",
+    "correction or exclusion",
+    "change to estimator or covariance",
+    "validation or coverage",
+    "removing the unknown-cause clause",
+    "paper use without Joseph's decision"
+  ],
+  "dry_run": false,
+  "estimate_status": "available",
+  "input_sha256": {
+    "/dev/shm/limres-rpd-flux1/production-config.ready.json": "3b2afde495d630cc44df730e3e1acf12e0c332953e9fa298fa979f2e2e39b057",
+    "/dev/shm/limres-rpd-flux1/repo/MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h": "900d7368d6184d503399bd99c0fd30085212df0327b8be374182495b85a3677d",
+    "/dev/shm/limres-rpd-flux1/repo/docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/energy-spectrum-candidates.tsv": "e60609e756e35fbc9846ae5983c1d848999bc17c7504e3ca876c22c9bcc0e88f",
+    "/dev/shm/limres-rpd-flux1/repo/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/INPUTS.sha256": "7638f94f56ad0471769445cffe68ff538c9b68158f48415e7c3cafa7ee95a295",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT/PlotUtils/FluxReweighter.cxx": "4576346db5e7a9e3673253bfc89f38bd2ca1dc260f24ebe66df055069990bbbc",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A.npz": "ed08f44d02a1b5c8219c91864924d7d6251925ba1e13884d8dae478c7b0403d7",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A_bkg.npz": "2739ddf5871680325cf0899556b3dd59acd90624cf91fb208cf2cc6e2884f3a2",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1B.npz": "1ec638e3ab8b37c11f2bdb49a41f17a4edd60fa213ddd27a4aef72c2bc14123e",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1B_bkg.npz": "a645662bda5bd9a96222ad5b304adeddfec88cdc40bd32b73d094196b82f849d",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1C.npz": "26b91bd5fd7531c0cc2d2ef5045e2c21d0d059c4e34a0d67f3938d400f2b70ba",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1C_bkg.npz": "92b1e44674bfbfb23710dd2c2ea669551f279e191f3728e95f35dd71dfc94418",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1D.npz": "7bc329ef93fce3e9eedf92ed9e4ac084e92e6ee73ffebb2d2055282b7b85c3c6",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1D_bkg.npz": "79ba1de90d6545b5917b8e12edb219c1df2d1752ad591c0b55b9f9b39f36648d",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1E.npz": "edd17efb72766f7550ce08267db0bf1de36ebd743d2458de071f119300a76350",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1E_bkg.npz": "3828fed6042c88af5f48a9f7ee4c1e2c1755c09b186e87574dbfab3b3714931a",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1F.npz": "96b4a02cb173c3c549e06f5662d8e2afea997db6b74157689f8a37691c39cf17",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1F_bkg.npz": "a076752ba529de69f627f8cba88cd27179bc1487594cb4e950fd9ab8f46b84cb",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1G.npz": "eed27d58cdf2078c2d96712542967033ed139448d8cf18ef74c342926eb9fdbd",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1G_bkg.npz": "82e2cf0f08c505f5b0090aa15381cd4b9a32ff6e1708a1df7621ee89ff7eca8a",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L.npz": "65ab4446b66524a2993fb5542d5a14aeda5584bbfc5cbcfb7ce22d112c584412",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L_bkg.npz": "6839edd4c6fe0563e6167a0e4bda83638d88d2afdbf4a620e0c7de55028fe69f",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1M.npz": "0bb7d5ff27ab19cc6fdfdc20a4fe7b798d343d41cfa5b51960334e327f9d1f41",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1M_bkg.npz": "a6bf0de714c5ad170884894ddf3eff9c85db7b75352ecc3452442d8bc85cd0bd",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1N.npz": "3d40b0296878c4540de0c19d1615ab6fa970dca81e16bf97229724046c49c3ee",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1N_bkg.npz": "7bd73380d6b2289dca7586a47c4f48ce4723e008d6d49d2994edb8acdabd84a8",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1O.npz": "2022cc9deddff0412c94e7347f1dfbdaca894b66b4bddf0ba0935c1ce9423690",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1O_bkg.npz": "74a3977290b893984669a21019ff7eba6bfd45aed57c4b60481ce1457938d433",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1P.npz": "82b9a5195293a88b8bcf7310652fa24477fb3cf9b2a6aee0b0d578a75ba6c96f",
+    "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1P_bkg.npz": "709d7c195923a4fe5646bbf35b0c0326c1d5e5ca34a3ec559f1b4c35a1261359",
+    "/pscratch/sd/j/josephrb/rpd-reco-flux3-20261123/run/flux-custody.json": "226c7a68d4be002f17a0500c5452ca4521550cc0cfd725788bb16ebe59dcd266",
+    "/pscratch/sd/j/josephrb/rpd-reco-flux3-20261123/run/flux-extract.json": "90445ece147213fae5ffa08ed93d91f3e781e6983991a352241c2585b478a659"
+  },
+  "keys_read": [
+    {
+      "file": "lat_1A.npz",
+      "key": "pass_reco"
+    },
+    {
+      "file": "lat_1B.npz",
+      "key": "pass_reco"
+    },
+    {
+      "file": "lat_1C.npz",
+      "key": "pass_reco"
+    },
+    {
+      "file": "lat_1D.npz",
+      "key": "pass_reco"
+    },
+    {
+      "file": "lat_1E.npz",
+      "key": "pass_reco"
+    },
+    {
+      "file": "lat_1F.npz",
+      "key": "pass_reco"
+    },
+    {
+      "file": "lat_1G.npz",
+      "key": "pass_reco"
+    },
+    {
+      "file": "lat_1L.npz",
+      "key": "pass_reco"
+    },
+    {
+      "file": "lat_1M.npz",
+      "key": "pass_reco"
+    },
+    {
+      "file": "lat_1N.npz",
+      "key": "pass_reco"
+    },
+    {
+      "file": "lat_1O.npz",
+      "key": "pass_reco"
+    },
+    {
+      "file": "lat_1P.npz",
+      "key": "pass_reco"
+    },
+    {
+      "file": "lat_1A.npz",
+      "key": "w_reco"
+    },
+    {
+      "file": "lat_1A_bkg.npz",
+      "key": "bkg_w"
+    },
+    {
+      "file": "lat_1B.npz",
+      "key": "w_reco"
+    },
+    {
+      "file": "lat_1B_bkg.npz",
+      "key": "bkg_w"
+    },
+    {
+      "file": "lat_1C.npz",
+      "key": "w_reco"
+    },
+    {
+      "file": "lat_1C_bkg.npz",
+      "key": "bkg_w"
+    },
+    {
+      "file": "lat_1D.npz",
+      "key": "w_reco"
+    },
+    {
+      "file": "lat_1D_bkg.npz",
+      "key": "bkg_w"
+    },
+    {
+      "file": "lat_1E.npz",
+      "key": "w_reco"
+    },
+    {
+      "file": "lat_1E_bkg.npz",
+      "key": "bkg_w"
+    },
+    {
+      "file": "lat_1F.npz",
+      "key": "w_reco"
+    },
+    {
+      "file": "lat_1F_bkg.npz",
+      "key": "bkg_w"
+    },
+    {
+      "file": "lat_1G.npz",
+      "key": "w_reco"
+    },
+    {
+      "file": "lat_1G_bkg.npz",
+      "key": "bkg_w"
+    },
+    {
+      "file": "lat_1L.npz",
+      "key": "w_reco"
+    },
+    {
+      "file": "lat_1L_bkg.npz",
+      "key": "bkg_w"
+    },
+    {
+      "file": "lat_1M.npz",
+      "key": "w_reco"
+    },
+    {
+      "file": "lat_1M_bkg.npz",
+      "key": "bkg_w"
+    },
+    {
+      "file": "lat_1N.npz",
+      "key": "w_reco"
+    },
+    {
+      "file": "lat_1N_bkg.npz",
+      "key": "bkg_w"
+    },
+    {
+      "file": "lat_1O.npz",
+      "key": "w_reco"
+    },
+    {
+      "file": "lat_1O_bkg.npz",
+      "key": "bkg_w"
+    },
+    {
+      "file": "lat_1P.npz",
+      "key": "w_reco"
+    },
+    {
+      "file": "lat_1P_bkg.npz",
+      "key": "bkg_w"
+    }
+  ],
+  "measured_seconds_per_draw": null,
+  "planned_seconds": 0.0,
+  "planning_factor": 10.0,
+  "predecessor_sha256": "52fc41f41cf17954ceddab8c581aa327a62d160c059cbee8bf2941c1880e5c8a",
+  "priced_wall_seconds": null,
+  "result": {
+    "P-F": {
+      "common_units": {
+        "absolute_per_POT_per_GeV_normalization_claim": false,
+        "binning_absolute_tolerance": 1e-12,
+        "declared_units_byte_equal": true,
+        "identical_binning": true,
+        "observed": {
+          "1D": {
+            "axis_titles": {
+              "x": "",
+              "y": ""
+            },
+            "file_units_metadata": {},
+            "title": "h_flux_reference"
+          },
+          "1M": {
+            "axis_titles": {
+              "x": "",
+              "y": ""
+            },
+            "file_units_metadata": {},
+            "title": "h_flux_reference"
+          },
+          "1N": {
+            "axis_titles": {
+              "x": "",
+              "y": ""
+            },
+            "file_units_metadata": {},
+            "title": "h_flux_reference"
+          }
+        }
+      },
+      "evidence": {
+        "common_generation_denominator": {
+          "lines": [
+            977,
+            992
+          ],
+          "sha256": "397bef038910e1b86c2b4c701f237753d29af4838d82c4b108b4daa94f1d32d8",
+          "text": "  double FluxReweighter::GetFluxCVWeight( double Enu, int nuPDG )\n  {\n    MnvH1D* genFlux = nuPDG > 0 ? m_fluxGenNu      : m_fluxGenNubar;\n    MnvH1D* newFlux = nuPDG > 0 ? m_fluxReweightNu : m_fluxReweightNubar;\n\n    double num = newFlux->Interpolate( Enu );\n    double dem = genFlux->Interpolate( Enu );\n    if(Enu>75.){//Condition to avoid the large slope at large Enu which causes crazy weights. Slope in that region is 10^-22 or so\n      num = newFlux->GetBinContent(newFlux->FindBin(Enu));\n      dem = genFlux->GetBinContent(genFlux->FindBin(Enu));\n    }\n    if (num ==0 ||dem ==0) {\n      return 1;\n    }\n    return  num/dem;\n  }"
+        },
+        "common_units_convention": {
+          "lines": [
+            883,
+            945
+          ],
+          "sha256": "bf59c2d480e01c37da472ca8ee1c898f8533d1d15aad7729a43fb4edc9941432",
+          "text": "  MnvH1D* FluxReweighter::GetFluxMnvH1D(int nuPDG,\n      enum EPlaylist playlist,\n      enum EFluxVersion fluxVersion,\n      enum EG4NumiVersion g4NumiVersion,\n      bool useGen  /*=false*/)\n  {\n    const char* plotutils=gSystem->Getenv(\"PLOTUTILSROOT\");\n    if (!plotutils || !strlen(plotutils)) {\n      std::cout << \"$PLOTUTILSROOT is not set. Can't find flux histograms\" << std::endl;\n      std::exit(1);\n    }\n\n    if(m_applyNuEConstraint&&IsCustomFlux(fluxVersion)){\n      std::cout << \"Application of the nu-e constraint is incompapitable with using a non-PPFX flux!! I'm exiting.\" << std::endl;\n      std::exit(1);\n    }\n\n    const char* constraintString;\n    int iplaylist = LeOrMe(playlist);\n    // Timebeing 1 = LE; 2 = ME (ALL Playlist)\n    if (iplaylist==1) {\n      constraintString =  \"\";\n    }\n    //This is the nu+e\n    if(iplaylist==2 or iplaylist==3)constraintString = m_applyNuEConstraint ? \"_rearrangedUniverses\" : \"\";\n    //This is the IMD method\n    //    if(iplaylist==2 or iplaylist==3)constraintString = m_applyNuEConstraint ? \"\" : \"\";\n\n    TString filename;\n    const char* histName;\n\n    // If using lowNu or highNu flux, use different prescription to fetch it\n    // For the reweighted flux\n    if(IsCustomFlux(fluxVersion)&&!useGen){\n      histName = fluxForSystematicsHistName(fluxVersion);\n      filename = TString::Format(\"%s/data/flux/sys/%s.root\",\n            plotutils,\n            histName);\n    }\n    // For the generated flux\n    else if(IsCustomFlux(fluxVersion)&&useGen){\n      histName = \"genFlux_coarseBinning_MnvH1D\";\n      filename = TString::Format(\"%s/data/flux/sys/genFlux_coarseBinning_MnvH1D.root\",\n            plotutils);\n    }\n    // Default prescription for assembling file and hist names\n    else{\n      const char* fluxString;\n      fluxString = useGen ? g4NumiVersionString(g4NumiVersion) : fluxVersionString(fluxVersion);\n\n      filename = TString::Format(\"%s/data/flux/flux-%s-pdg%d-%s%s.root\",\n            plotutils,\n            fluxString,\n            nuPDG,\n            playlistString(playlist),\n            constraintString);\n\n      histName = useGen ? \"flux_E_unweighted\" : \"flux_E_cvweighted\";\n    }\n\n    std::cout << \"FRW: this is the flux file I'm using: \" << filename << std::endl;\n    return GetMnvH1D(filename, histName);\n  }"
+        },
+        "cv_numerator": {
+          "lines": [
+            396,
+            406
+          ],
+          "sha256": "2d4aa43c38cc1d40c38c200f913d088e68874f995c783c6030ce0814394893a0",
+          "text": "    m_fluxReweightNu    = GetFluxMnvH1D(abs(nuPDG),    playlist, fluxVersion, g4NumiVersion);\n    m_fluxReweightNubar = GetFluxMnvH1D(-1*abs(nuPDG), playlist, fluxVersion, g4NumiVersion);\n\n    if (applyNuEConstraint) {\n      //std::cout << \"Applying flux constraint to nu histogram\" << std::endl;\n      m_fluxReweightNu =\n          Constrainer().ConstrainHisto<MnvH1D, MnvVertErrorBand>( m_fluxReweightNu );\n      //std::cout << \"Applying flux constraint to nubar histogram\" << std::endl;\n      m_fluxReweightNubar =\n          Constrainer().ConstrainHisto<MnvH1D, MnvVertErrorBand>( m_fluxReweightNubar );\n    }"
+        },
+        "playlist_mapping": {
+          "lines": [
+            1938,
+            1990
+          ],
+          "sha256": "662a127db7033267012cbe50af93601036b7c8dca10cd6d449891b755720e2fd",
+          "text": "    switch(p) {\n      case minerva1:\n        return \"minerva1\";\n      case minerva5:\n        return \"minerva5\";\n      case minerva7:\n        return \"minerva1\";\n      case minerva9:\n        return \"minerva1\";\n      case minerva13:\n        return \"minerva13\";\n      case minerva2p2h:\n        return \"minerva13\";\n      case minervaLE_FHC:\n        return \"minervaLE-FHC\";\n      case minervame1A:\n        return \"minervame1D\";\n      case minervame1B:\n        return \"minervame1D\";\n      case minervame1C:\n        return \"minervame1D\";\n      case minervame1D:\n        return \"minervame1D\";\n      case minervame1E:\n        return \"minervame1D\";\n      case minervame1F:\n        return \"minervame1D\";\n      case minervame1N:\n        return \"minervame1N\";\n      case minervame1O:\n        return \"minervame1N\";\n      case minervame1P:\n        return \"minervame1N\";\n      case minervame1G:\n        return \"minervame1M\";\n      case minervame1L:\n        return \"minervame1M\";\n      case minervame1M:\n        return \"minervame1M\";\n      case minervame1D1M1NWeightedAve:\n        return \"minervame1D1M1NWeightedAve\";\n      case minervame5A:\n        return \"minervame5A\";\n      case minervame6A:\n        return \"minervame6A\";\n      case minervame6B:\n        return \"minervame6B\";\n      case minervame6C:\n        return \"minervame6C\";\n      case minervame6D:\n        return \"minervame6D\";\n      case minervame6E:\n        return \"minervame6E\";"
+        }
+      },
+      "generated_flux_premise": true,
+      "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3",
+      "pass": true,
+      "source_sha256": "4576346db5e7a9e3673253bfc89f38bd2ca1dc260f24ebe66df055069990bbbc"
+    },
+    "background_scale": {
+      "1D": {
+        "1D": 1.0,
+        "1M": 1.009869454266803
+      },
+      "1M": {
+        "1D": 0.9902269999106286,
+        "1M": 1.0
+      },
+      "1N": {
+        "1D": 1.004236130067196,
+        "1M": 1.0141473926259654
+      }
+    },
+    "constants_GeV": {
+      "M_n": 0.93956536,
+      "M_p": 0.938272013
+    },
+    "environment": {
+      "interpreter": "/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python3",
+      "numpy": "2.2.6",
+      "python": "3.10.19",
+      "resolved_interpreter": "/global/u2/j/josephrb/.conda/envs/omnifold_py310/bin/python3.10",
+      "scipy": "1.15.3",
+      "uproot": "5.6.9"
+    },
+    "factor_products": {
+      "1A": {
+        "path": "/pscratch/sd/j/josephrb/rpd-reco-flux3-20261123/run/flux-factors-1A.npz",
+        "rows": 2682038,
+        "sha256": "c1e8a8d4409cbc1a776070f8cd2a370c5e96c7e196e4a2f09ca3ea0e08d98d97",
+        "signal_sha256": "ed08f44d02a1b5c8219c91864924d7d6251925ba1e13884d8dae478c7b0403d7",
+        "zero_patterns": {
+          "1D": {
+            "0": {
+              "count": 1728905,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 1.0,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            }
+          },
+          "1M": {
+            "0": {
+              "count": 1728905,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 1.0,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            }
+          }
+        }
+      },
+      "1B": {
+        "path": "/pscratch/sd/j/josephrb/rpd-reco-flux3-20261123/run/flux-factors-1B.npz",
+        "rows": 721015,
+        "sha256": "81f47d7872bf6e587053e7f7a152f59d6f802474d3768221a50522a90af4fb52",
+        "signal_sha256": "1ec638e3ab8b37c11f2bdb49a41f17a4edd60fa213ddd27a4aef72c2bc14123e",
+        "zero_patterns": {
+          "1D": {
+            "0": {
+              "count": 466977,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.9999973911318959,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 1,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 2.6088681039258186e-06,
+              "target_zero": true
+            }
+          },
+          "1M": {
+            "0": {
+              "count": 466977,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.9999973911318959,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 1,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 2.6088681039258186e-06,
+              "target_zero": true
+            }
+          }
+        }
+      },
+      "1C": {
+        "path": "/pscratch/sd/j/josephrb/rpd-reco-flux3-20261123/run/flux-factors-1C.npz",
+        "rows": 1376711,
+        "sha256": "4c48513a1202e56041df7d19d4eb3f3e7c29893a28a15ddb7853726b70511e5e",
+        "signal_sha256": "26b91bd5fd7531c0cc2d2ef5045e2c21d0d059c4e34a0d67f3938d400f2b70ba",
+        "zero_patterns": {
+          "1D": {
+            "0": {
+              "count": 890047,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 1.0,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            }
+          },
+          "1M": {
+            "0": {
+              "count": 890047,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 1.0,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            }
+          }
+        }
+      },
+      "1D": {
+        "path": "/pscratch/sd/j/josephrb/rpd-reco-flux3-20261123/run/flux-factors-1D.npz",
+        "rows": 4003313,
+        "sha256": "9698326beee3ee6400ae4ab88e642b1ec36f723c8da113c79052008eb464bd0a",
+        "signal_sha256": "7bc329ef93fce3e9eedf92ed9e4ac084e92e6ee73ffebb2d2055282b7b85c3c6",
+        "zero_patterns": {
+          "1D": {
+            "0": {
+              "count": 2583499,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 1.0,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            }
+          },
+          "1M": {
+            "0": {
+              "count": 2583499,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 1.0,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            }
+          }
+        }
+      },
+      "1E": {
+        "path": "/pscratch/sd/j/josephrb/rpd-reco-flux3-20261123/run/flux-factors-1E.npz",
+        "rows": 3349741,
+        "sha256": "8179d743ffd8c616b68c42774a5de35cc6f2a36f953d710e52b75bdf6c2f35f3",
+        "signal_sha256": "edd17efb72766f7550ce08267db0bf1de36ebd743d2458de071f119300a76350",
+        "zero_patterns": {
+          "1D": {
+            "0": {
+              "count": 2155965,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.9999988695892533,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 2,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 1.1304107461092243e-06,
+              "target_zero": true
+            }
+          },
+          "1M": {
+            "0": {
+              "count": 2155965,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.9999988695892533,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 2,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 1.1304107461092243e-06,
+              "target_zero": true
+            }
+          }
+        }
+      },
+      "1F": {
+        "path": "/pscratch/sd/j/josephrb/rpd-reco-flux3-20261123/run/flux-factors-1F.npz",
+        "rows": 4659798,
+        "sha256": "63bfed31354af43fa75494268009d2dee5501f923ee5bf178c8b70f32d98082c",
+        "signal_sha256": "96b4a02cb173c3c549e06f5662d8e2afea997db6b74157689f8a37691c39cf17",
+        "zero_patterns": {
+          "1D": {
+            "0": {
+              "count": 2905995,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 1.0,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            }
+          },
+          "1M": {
+            "0": {
+              "count": 2905995,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 1.0,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            }
+          }
+        }
+      },
+      "1G": {
+        "path": "/pscratch/sd/j/josephrb/rpd-reco-flux3-20261123/run/flux-factors-1G.npz",
+        "rows": 3922426,
+        "sha256": "45bc479b03b43534b36ff5b4f2b9edfc45537c98d338c7c122c5f6c803fb38b4",
+        "signal_sha256": "eed27d58cdf2078c2d96712542967033ed139448d8cf18ef74c342926eb9fdbd",
+        "zero_patterns": {
+          "1D": {
+            "0": {
+              "count": 2472825,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.999999519122954,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 1,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 4.808770453301602e-07,
+              "target_zero": true
+            }
+          },
+          "1M": {
+            "0": {
+              "count": 2472825,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.999999519122954,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 1,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 4.808770453301602e-07,
+              "target_zero": true
+            }
+          }
+        }
+      },
+      "1L": {
+        "path": "/pscratch/sd/j/josephrb/rpd-reco-flux3-20261123/run/flux-factors-1L.npz",
+        "rows": 383815,
+        "sha256": "a5e728830c92560a96233e5261981d0e38034b2edea23e45ce43a29dbfb5d4b1",
+        "signal_sha256": "65ab4446b66524a2993fb5542d5a14aeda5584bbfc5cbcfb7ce22d112c584412",
+        "zero_patterns": {
+          "1D": {
+            "0": {
+              "count": 231003,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 1.0,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            }
+          },
+          "1M": {
+            "0": {
+              "count": 231003,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 1.0,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            }
+          }
+        }
+      },
+      "1M": {
+        "path": "/pscratch/sd/j/josephrb/rpd-reco-flux3-20261123/run/flux-factors-1M.npz",
+        "rows": 5916895,
+        "sha256": "7270690d1873181a2fc674ca9fb4414f9c00efbe86b333478959541638ace116",
+        "signal_sha256": "0bb7d5ff27ab19cc6fdfdc20a4fe7b798d343d41cfa5b51960334e327f9d1f41",
+        "zero_patterns": {
+          "1D": {
+            "0": {
+              "count": 3566414,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 1.0,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            }
+          },
+          "1M": {
+            "0": {
+              "count": 3566414,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 1.0,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            }
+          }
+        }
+      },
+      "1N": {
+        "path": "/pscratch/sd/j/josephrb/rpd-reco-flux3-20261123/run/flux-factors-1N.npz",
+        "rows": 3415958,
+        "sha256": "3806840598eaa1b75b7c7f66b3880c56ed94c9f71fa5bcd37c049f5d72eeb8aa",
+        "signal_sha256": "3d40b0296878c4540de0c19d1615ab6fa970dca81e16bf97229724046c49c3ee",
+        "zero_patterns": {
+          "1D": {
+            "0": {
+              "count": 2032497,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 1.0,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            }
+          },
+          "1M": {
+            "0": {
+              "count": 2032497,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 1.0,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            }
+          }
+        }
+      },
+      "1O": {
+        "path": "/pscratch/sd/j/josephrb/rpd-reco-flux3-20261123/run/flux-factors-1O.npz",
+        "rows": 1041993,
+        "sha256": "0090a6c671bcd750d2bf1227ede1ced84d29a4c32edcd1b8c55778f1d1063159",
+        "signal_sha256": "2022cc9deddff0412c94e7347f1dfbdaca894b66b4bddf0ba0935c1ce9423690",
+        "zero_patterns": {
+          "1D": {
+            "0": {
+              "count": 590350,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.9999979238116717,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 1,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 2.076188328222381e-06,
+              "target_zero": true
+            }
+          },
+          "1M": {
+            "0": {
+              "count": 590350,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.9999979238116717,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 1,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 2.076188328222381e-06,
+              "target_zero": true
+            }
+          }
+        }
+      },
+      "1P": {
+        "path": "/pscratch/sd/j/josephrb/rpd-reco-flux3-20261123/run/flux-factors-1P.npz",
+        "rows": 1372599,
+        "sha256": "641e25557a4ef1659dea047bd115416a9839ee740169dfe340d9879942ed292a",
+        "signal_sha256": "82b9a5195293a88b8bcf7310652fa24477fb3cf9b2a6aee0b0d578a75ba6c96f",
+        "zero_patterns": {
+          "1D": {
+            "0": {
+              "count": 778054,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.9999984241824246,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 1,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 1.5758175760950075e-06,
+              "target_zero": true
+            }
+          },
+          "1M": {
+            "0": {
+              "count": 778054,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.9999984241824246,
+              "target_zero": false
+            },
+            "1": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "2": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "3": {
+              "count": 0,
+              "generated_zero": false,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "4": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "5": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": false
+            },
+            "6": {
+              "count": 0,
+              "generated_zero": true,
+              "own_zero": false,
+              "pass_reco_weight_share": 0.0,
+              "target_zero": true
+            },
+            "7": {
+              "count": 1,
+              "generated_zero": true,
+              "own_zero": true,
+              "pass_reco_weight_share": 1.5758175760950075e-06,
+              "target_zero": true
+            }
+          }
+        }
+      }
+    },
+    "keys_read": [],
+    "runtime_estimate": {
+      "data_rows_estimate_not_read": 4091707,
+      "exceeds_two_hours": true,
+      "mc_background_rows": 33467849,
+      "needs_director_price": true,
+      "node_hours_authorized": 0,
+      "planning_seconds_with_factor_10": 52840.035986032155,
+      "poisson_draws": 164443705000,
+      "poisson_only_seconds": 5284.003598603215,
+      "steps": {
+        "c0": {
+          "planning_seconds_with_factor_10": 50689.218056534526,
+          "poisson_draws": 157750135200,
+          "poisson_only_seconds": 5068.921805653453
+        },
+        "d1": {
+          "planning_seconds_with_factor_10": 0.0,
+          "poisson_draws": 0,
+          "poisson_only_seconds": 0.0
+        },
+        "d2": {
+          "planning_seconds_with_factor_10": 0.0,
+          "poisson_draws": 0,
+          "poisson_only_seconds": 0.0
+        },
+        "d2-predict": {
+          "planning_seconds_with_factor_10": 2150.8179294976235,
+          "poisson_draws": 6693569800,
+          "poisson_only_seconds": 215.08179294976236
+        },
+        "p0": {
+          "planning_seconds_with_factor_10": 0.0,
+          "poisson_draws": 0,
+          "poisson_only_seconds": 0.0
+        },
+        "pins": {
+          "planning_seconds_with_factor_10": 0.0,
+          "poisson_draws": 0,
+          "poisson_only_seconds": 0.0
+        },
+        "step0": {
+          "planning_seconds_with_factor_10": 0.0,
+          "poisson_draws": 0,
+          "poisson_only_seconds": 0.0
+        }
+      },
+      "summary_only": "campaign total; admission compares each step's own estimate",
+      "timing_sample_draws": 262144,
+      "timing_seconds": 0.008423367980867624,
+      "unmeasured_costs": [
+        "NPZ decompression",
+        "histogramming",
+        "sorting weighted quantiles"
+      ],
+      "wall_budget_seconds": 7200
+    },
+    "spectra": {
+      "1D": {
+        "axis_titles": {
+          "x": "",
+          "y": ""
+        },
+        "bytes": 3188849,
+        "class_name": "PlotUtils::MnvH1D",
+        "edges": [
+          0.0,
+          0.5,
+          1.0,
+          1.5,
+          1.6,
+          1.7,
+          1.8,
+          1.9,
+          2.0,
+          2.1,
+          2.2,
+          2.3,
+          2.4,
+          2.5,
+          2.6,
+          2.7,
+          2.8,
+          2.9000000000000004,
+          3.0,
+          3.1,
+          3.2,
+          3.3,
+          3.4000000000000004,
+          3.5,
+          3.6,
+          3.7,
+          3.8000000000000003,
+          3.9000000000000004,
+          4.0,
+          4.1,
+          4.2,
+          4.300000000000001,
+          4.4,
+          4.5,
+          4.6,
+          4.7,
+          4.800000000000001,
+          4.9,
+          5.0,
+          5.1,
+          5.2,
+          5.300000000000001,
+          5.4,
+          5.5,
+          5.6000000000000005,
+          5.7,
+          5.8,
+          5.9,
+          6.0,
+          6.1000000000000005,
+          6.2,
+          6.300000000000001,
+          6.4,
+          6.5,
+          6.6000000000000005,
+          6.7,
+          6.800000000000001,
+          6.9,
+          7.0,
+          7.1000000000000005,
+          7.2,
+          7.300000000000001,
+          7.4,
+          7.5,
+          7.6000000000000005,
+          7.7,
+          7.800000000000001,
+          7.9,
+          8.0,
+          8.100000000000001,
+          8.2,
+          8.3,
+          8.4,
+          8.5,
+          8.600000000000001,
+          8.7,
+          8.8,
+          8.9,
+          9.0,
+          9.100000000000001,
+          9.2,
+          9.3,
+          9.4,
+          9.5,
+          9.6,
+          9.700000000000001,
+          9.8,
+          9.9,
+          10.0,
+          10.5,
+          11.0,
+          11.5,
+          12.0,
+          12.5,
+          13.0,
+          13.5,
+          14.0,
+          14.5,
+          15.0,
+          15.5,
+          16.0,
+          16.5,
+          17.0,
+          17.5,
+          18.0,
+          18.5,
+          19.0,
+          19.5,
+          20.0,
+          21.0,
+          22.0,
+          23.0,
+          24.0,
+          25.0,
+          26.0,
+          27.0,
+          28.0,
+          29.0,
+          30.0,
+          35.0,
+          40.0,
+          45.0,
+          50.0,
+          55.0,
+          60.0,
+          70.0,
+          80.0,
+          90.0,
+          100.0
+        ],
+        "error_convention": "constrained MnvH1D base CV GetBinError",
+        "errors": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "extract_path_opened": "/pscratch/sd/j/josephrb/rpd-reco-p0-20261123/run/staged/flux-extract-input.json",
+        "extract_sha256": "90445ece147213fae5ffa08ed93d91f3e781e6983991a352241c2585b478a659",
+        "file_units_metadata": {},
+        "flow_errors": [
+          0.0,
+          0.0
+        ],
+        "flow_values": [
+          0.0,
+          0.0
+        ],
+        "generated_spectrum": {
+          "axis_titles": {
+            "x": "",
+            "y": ""
+          },
+          "class_name": "PlotUtils::MnvH1D",
+          "edges": [
+            0.0,
+            0.5,
+            1.0,
+            1.5,
+            1.6,
+            1.7,
+            1.8,
+            1.9,
+            2.0,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7,
+            2.8,
+            2.9000000000000004,
+            3.0,
+            3.1,
+            3.2,
+            3.3,
+            3.4000000000000004,
+            3.5,
+            3.6,
+            3.7,
+            3.8000000000000003,
+            3.9000000000000004,
+            4.0,
+            4.1,
+            4.2,
+            4.300000000000001,
+            4.4,
+            4.5,
+            4.6,
+            4.7,
+            4.800000000000001,
+            4.9,
+            5.0,
+            5.1,
+            5.2,
+            5.300000000000001,
+            5.4,
+            5.5,
+            5.6000000000000005,
+            5.7,
+            5.8,
+            5.9,
+            6.0,
+            6.1000000000000005,
+            6.2,
+            6.300000000000001,
+            6.4,
+            6.5,
+            6.6000000000000005,
+            6.7,
+            6.800000000000001,
+            6.9,
+            7.0,
+            7.1000000000000005,
+            7.2,
+            7.300000000000001,
+            7.4,
+            7.5,
+            7.6000000000000005,
+            7.7,
+            7.800000000000001,
+            7.9,
+            8.0,
+            8.100000000000001,
+            8.2,
+            8.3,
+            8.4,
+            8.5,
+            8.600000000000001,
+            8.7,
+            8.8,
+            8.9,
+            9.0,
+            9.100000000000001,
+            9.2,
+            9.3,
+            9.4,
+            9.5,
+            9.6,
+            9.700000000000001,
+            9.8,
+            9.9,
+            10.0,
+            10.5,
+            11.0,
+            11.5,
+            12.0,
+            12.5,
+            13.0,
+            13.5,
+            14.0,
+            14.5,
+            15.0,
+            15.5,
+            16.0,
+            16.5,
+            17.0,
+            17.5,
+            18.0,
+            18.5,
+            19.0,
+            19.5,
+            20.0,
+            21.0,
+            22.0,
+            23.0,
+            24.0,
+            25.0,
+            26.0,
+            27.0,
+            28.0,
+            29.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            50.0,
+            55.0,
+            60.0,
+            70.0,
+            80.0,
+            90.0,
+            100.0
+          ],
+          "error_convention": "constrained MnvH1D base CV GetBinError",
+          "errors": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "flow_errors": [
+            0.0,
+            0.0
+          ],
+          "flow_values": [
+            0.0,
+            0.0
+          ],
+          "integral": 0.0007428748008535123,
+          "title": "h_flux_reference",
+          "values": [
+            5.609715938963144e-06,
+            9.503960288416753e-06,
+            9.105041299136405e-06,
+            1.2304901007169088e-05,
+            1.4946002645794205e-05,
+            1.7914446599085128e-05,
+            2.1897306408654184e-05,
+            2.6134692479027896e-05,
+            3.0574295685476594e-05,
+            3.547630429280153e-05,
+            4.2260013758736634e-05,
+            4.849096000462582e-05,
+            5.5531042340128136e-05,
+            6.170089206526277e-05,
+            6.661079775218658e-05,
+            7.404125272370003e-05,
+            7.922655947215357e-05,
+            8.411093486396252e-05,
+            8.781187680687213e-05,
+            9.251190890210557e-05,
+            9.583243595817586e-05,
+            9.874869659871464e-05,
+            0.000100864425037345,
+            0.00010325974110818216,
+            0.00010479066689201479,
+            0.00010583383898771651,
+            0.00010823529443360137,
+            0.00010983208310551585,
+            0.00011250754750924164,
+            0.00011475416043541392,
+            0.00011732887056793522,
+            0.00012019116837375527,
+            0.00012334714889774626,
+            0.00012644007562631537,
+            0.0001288919002732136,
+            0.00013213400538484056,
+            0.00013432585443359232,
+            0.00013739686777300647,
+            0.00013918193963075474,
+            0.0001417642217033586,
+            0.00014428757259811893,
+            0.00014663949730850796,
+            0.00014643739458964283,
+            0.00014787156198726577,
+            0.00014812444115050018,
+            0.00014824409154287407,
+            0.000147456718015023,
+            0.00014676493551774603,
+            0.00014442982412558538,
+            0.00014229243330076804,
+            0.0001401981374776883,
+            0.00013635710252636114,
+            0.0001328325831654635,
+            0.00012877629868571607,
+            0.00012415213793382635,
+            0.00011977995089921349,
+            0.00011435735716850616,
+            0.00010928936988864963,
+            0.00010366448037677956,
+            9.753202781891899e-05,
+            9.20322186238949e-05,
+            8.656671460565106e-05,
+            8.145361365129455e-05,
+            7.677087463397963e-05,
+            7.111282602063268e-05,
+            6.613333472966392e-05,
+            6.191230522558416e-05,
+            5.7214228828546184e-05,
+            5.3247672626619015e-05,
+            4.883514171710221e-05,
+            4.5582442008577626e-05,
+            4.187515886103796e-05,
+            3.8848106119282806e-05,
+            3.5248595692311666e-05,
+            3.2693380150061976e-05,
+            3.009180752629721e-05,
+            2.7603102915854007e-05,
+            2.4930163393074095e-05,
+            2.3157883811948305e-05,
+            2.1342466752845277e-05,
+            1.9246222625447413e-05,
+            1.775549917008371e-05,
+            1.6302932050663375e-05,
+            1.5104100719066931e-05,
+            1.3854840556310427e-05,
+            1.2886975201292706e-05,
+            1.1733336541746783e-05,
+            1.0614611832857343e-05,
+            8.751967634134421e-06,
+            6.238895997752878e-06,
+            4.6814031929623585e-06,
+            3.714488029000396e-06,
+            3.0998791040655343e-06,
+            2.590202972118446e-06,
+            2.203067378835643e-06,
+            1.9644255195871435e-06,
+            1.7002799892566954e-06,
+            1.5206231838051887e-06,
+            1.3788992387469563e-06,
+            1.2626033434622195e-06,
+            1.1644875119582341e-06,
+            1.0646392374822998e-06,
+            1.0087368920278978e-06,
+            9.235737688138436e-07,
+            8.600607056152264e-07,
+            8.16368594899558e-07,
+            7.570883892201536e-07,
+            7.122683923688094e-07,
+            6.619921532506881e-07,
+            6.041152576838948e-07,
+            5.434983523680305e-07,
+            4.847451753614343e-07,
+            4.366367942948602e-07,
+            3.926822779153054e-07,
+            3.5651830810010534e-07,
+            3.217649375180048e-07,
+            2.8295764777126376e-07,
+            2.541641329822323e-07,
+            1.838421516932017e-07,
+            1.0311817737510133e-07,
+            5.863784477262151e-08,
+            3.4374982007777274e-08,
+            2.0867191481579913e-08,
+            1.1976860246846375e-08,
+            5.227560791477518e-09,
+            1.4751511338376528e-09,
+            3.914037106005603e-10,
+            3.685655409837482e-44
+          ]
+        },
+        "histogram": "flux_E_cvweighted",
+        "integral": 0.0006229922661506821,
+        "opened_by": "MAT string constructor, constrained GetFluxReweighted(14)",
+        "original_path": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root",
+        "raw_file_integral_descriptive_only": 0.0006916708300357685,
+        "retention": "pscratch, purged when unread 56 days: stat on login23 at 2026-11-22T22:01:53Z (epoch 1795384913): atime 2026-11-16T20:30:38Z, mtime 2021-07-07T16:56:03Z, 3188849 bytes, inode 882722362129161251; earliest purge exposure 2027-01-11T20:30:38Z",
+        "sha256": "951a400ea3aa9c62ab289119ac91b835fcb473ff8898d65065eb229fc2668ae5",
+        "title": "h_flux_reference",
+        "values": [
+          4.379209760746145e-06,
+          7.282605508413722e-06,
+          6.907245116010183e-06,
+          9.248426592397429e-06,
+          1.1469646587942838e-05,
+          1.3809757154541343e-05,
+          1.7208766213512324e-05,
+          2.0762648403266523e-05,
+          2.425156147393713e-05,
+          2.795118486995538e-05,
+          3.360761314898612e-05,
+          3.871648664000571e-05,
+          4.4553669113659504e-05,
+          4.947228270283359e-05,
+          5.386402203746457e-05,
+          5.946676475293168e-05,
+          6.371189089687422e-05,
+          6.748166566741848e-05,
+          7.023344757421574e-05,
+          7.398846789562754e-05,
+          7.652285110730331e-05,
+          7.86706937323194e-05,
+          8.073409033776605e-05,
+          8.283992706225914e-05,
+          8.410823268775654e-05,
+          8.47810433032205e-05,
+          8.674713529130152e-05,
+          8.777061070091884e-05,
+          8.989685986668222e-05,
+          9.165290097333754e-05,
+          9.368400315269731e-05,
+          9.625273882824367e-05,
+          9.88592079074537e-05,
+          0.00010205439750050004,
+          0.00010419434840692671,
+          0.00010718563211850008,
+          0.0001091065861208847,
+          0.00011157039698614605,
+          0.00011367092603677678,
+          0.00011575640067882712,
+          0.00011830687996026201,
+          0.00012077236983616027,
+          0.00012126462947145042,
+          0.00012281751351179732,
+          0.00012377321287161303,
+          0.00012430569216801755,
+          0.00012437824705582132,
+          0.0001242087167246142,
+          0.000122781087555188,
+          0.00012153247867581372,
+          0.00012030338533982173,
+          0.00011724870097645046,
+          0.00011472450441730558,
+          0.00011150301247989054,
+          0.00010782060144581398,
+          0.00010430773899894415,
+          9.991555981180182e-05,
+          9.611585117132153e-05,
+          9.13824384602262e-05,
+          8.615412673810409e-05,
+          8.151559308146798e-05,
+          7.644055097785895e-05,
+          7.198085625003157e-05,
+          6.758799219670533e-05,
+          6.244627915257245e-05,
+          5.790915692874381e-05,
+          5.418249162196913e-05,
+          4.989226485357803e-05,
+          4.644267382581816e-05,
+          4.2457739610685586e-05,
+          3.9587801287405486e-05,
+          3.635391967599783e-05,
+          3.36155128983132e-05,
+          3.057385907032132e-05,
+          2.8273887237451814e-05,
+          2.596152167786582e-05,
+          2.3844555679189966e-05,
+          2.1404427223256616e-05,
+          1.9912927710679692e-05,
+          1.8349482551001416e-05,
+          1.6554664395205543e-05,
+          1.5274481588767732e-05,
+          1.4006243122075694e-05,
+          1.3001578913763142e-05,
+          1.1952851073578477e-05,
+          1.1113839110251452e-05,
+          1.0163909068160725e-05,
+          9.2448484513302e-06,
+          7.737836325726873e-06,
+          5.709578594041623e-06,
+          4.418020889318651e-06,
+          3.6459249433673527e-06,
+          3.1306181189003223e-06,
+          2.6668620949013546e-06,
+          2.3039292645354256e-06,
+          2.0741052496746436e-06,
+          1.8130045468629508e-06,
+          1.655685112974578e-06,
+          1.5029498853019794e-06,
+          1.37526325143766e-06,
+          1.2622532769641629e-06,
+          1.1567673381343062e-06,
+          1.105935036590414e-06,
+          1.00902264747144e-06,
+          9.322810114199641e-07,
+          8.797894405628866e-07,
+          8.064564317668349e-07,
+          7.584382208300929e-07,
+          7.059900358697146e-07,
+          6.361020986203336e-07,
+          5.538289634872963e-07,
+          4.7255693783849554e-07,
+          4.1205388365085354e-07,
+          3.5913439965229624e-07,
+          3.2339510448499156e-07,
+          2.9401633942661263e-07,
+          2.6927046061597814e-07,
+          2.4913610029864916e-07,
+          1.8234592157655573e-07,
+          1.1886192388935281e-07,
+          8.326685760880674e-08,
+          5.639542290323048e-08,
+          3.279361118750938e-08,
+          1.3385121428789953e-08,
+          5.407227885511506e-09,
+          1.512356281275127e-09,
+          3.456516135331988e-10,
+          2.521346930429729e-44
+        ]
+      },
+      "1M": {
+        "axis_titles": {
+          "x": "",
+          "y": ""
+        },
+        "bytes": 3187397,
+        "class_name": "PlotUtils::MnvH1D",
+        "edges": [
+          0.0,
+          0.5,
+          1.0,
+          1.5,
+          1.6,
+          1.7,
+          1.8,
+          1.9,
+          2.0,
+          2.1,
+          2.2,
+          2.3,
+          2.4,
+          2.5,
+          2.6,
+          2.7,
+          2.8,
+          2.9000000000000004,
+          3.0,
+          3.1,
+          3.2,
+          3.3,
+          3.4000000000000004,
+          3.5,
+          3.6,
+          3.7,
+          3.8000000000000003,
+          3.9000000000000004,
+          4.0,
+          4.1,
+          4.2,
+          4.300000000000001,
+          4.4,
+          4.5,
+          4.6,
+          4.7,
+          4.800000000000001,
+          4.9,
+          5.0,
+          5.1,
+          5.2,
+          5.300000000000001,
+          5.4,
+          5.5,
+          5.6000000000000005,
+          5.7,
+          5.8,
+          5.9,
+          6.0,
+          6.1000000000000005,
+          6.2,
+          6.300000000000001,
+          6.4,
+          6.5,
+          6.6000000000000005,
+          6.7,
+          6.800000000000001,
+          6.9,
+          7.0,
+          7.1000000000000005,
+          7.2,
+          7.300000000000001,
+          7.4,
+          7.5,
+          7.6000000000000005,
+          7.7,
+          7.800000000000001,
+          7.9,
+          8.0,
+          8.100000000000001,
+          8.2,
+          8.3,
+          8.4,
+          8.5,
+          8.600000000000001,
+          8.7,
+          8.8,
+          8.9,
+          9.0,
+          9.100000000000001,
+          9.2,
+          9.3,
+          9.4,
+          9.5,
+          9.6,
+          9.700000000000001,
+          9.8,
+          9.9,
+          10.0,
+          10.5,
+          11.0,
+          11.5,
+          12.0,
+          12.5,
+          13.0,
+          13.5,
+          14.0,
+          14.5,
+          15.0,
+          15.5,
+          16.0,
+          16.5,
+          17.0,
+          17.5,
+          18.0,
+          18.5,
+          19.0,
+          19.5,
+          20.0,
+          21.0,
+          22.0,
+          23.0,
+          24.0,
+          25.0,
+          26.0,
+          27.0,
+          28.0,
+          29.0,
+          30.0,
+          35.0,
+          40.0,
+          45.0,
+          50.0,
+          55.0,
+          60.0,
+          70.0,
+          80.0,
+          90.0,
+          100.0
+        ],
+        "error_convention": "constrained MnvH1D base CV GetBinError",
+        "errors": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "extract_path_opened": "/pscratch/sd/j/josephrb/rpd-reco-p0-20261123/run/staged/flux-extract-input.json",
+        "extract_sha256": "90445ece147213fae5ffa08ed93d91f3e781e6983991a352241c2585b478a659",
+        "file_units_metadata": {},
+        "flow_errors": [
+          0.0,
+          0.0
+        ],
+        "flow_values": [
+          0.0,
+          0.0
+        ],
+        "generated_spectrum": {
+          "axis_titles": {
+            "x": "",
+            "y": ""
+          },
+          "class_name": "PlotUtils::MnvH1D",
+          "edges": [
+            0.0,
+            0.5,
+            1.0,
+            1.5,
+            1.6,
+            1.7,
+            1.8,
+            1.9,
+            2.0,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7,
+            2.8,
+            2.9000000000000004,
+            3.0,
+            3.1,
+            3.2,
+            3.3,
+            3.4000000000000004,
+            3.5,
+            3.6,
+            3.7,
+            3.8000000000000003,
+            3.9000000000000004,
+            4.0,
+            4.1,
+            4.2,
+            4.300000000000001,
+            4.4,
+            4.5,
+            4.6,
+            4.7,
+            4.800000000000001,
+            4.9,
+            5.0,
+            5.1,
+            5.2,
+            5.300000000000001,
+            5.4,
+            5.5,
+            5.6000000000000005,
+            5.7,
+            5.8,
+            5.9,
+            6.0,
+            6.1000000000000005,
+            6.2,
+            6.300000000000001,
+            6.4,
+            6.5,
+            6.6000000000000005,
+            6.7,
+            6.800000000000001,
+            6.9,
+            7.0,
+            7.1000000000000005,
+            7.2,
+            7.300000000000001,
+            7.4,
+            7.5,
+            7.6000000000000005,
+            7.7,
+            7.800000000000001,
+            7.9,
+            8.0,
+            8.100000000000001,
+            8.2,
+            8.3,
+            8.4,
+            8.5,
+            8.600000000000001,
+            8.7,
+            8.8,
+            8.9,
+            9.0,
+            9.100000000000001,
+            9.2,
+            9.3,
+            9.4,
+            9.5,
+            9.6,
+            9.700000000000001,
+            9.8,
+            9.9,
+            10.0,
+            10.5,
+            11.0,
+            11.5,
+            12.0,
+            12.5,
+            13.0,
+            13.5,
+            14.0,
+            14.5,
+            15.0,
+            15.5,
+            16.0,
+            16.5,
+            17.0,
+            17.5,
+            18.0,
+            18.5,
+            19.0,
+            19.5,
+            20.0,
+            21.0,
+            22.0,
+            23.0,
+            24.0,
+            25.0,
+            26.0,
+            27.0,
+            28.0,
+            29.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            50.0,
+            55.0,
+            60.0,
+            70.0,
+            80.0,
+            90.0,
+            100.0
+          ],
+          "error_convention": "constrained MnvH1D base CV GetBinError",
+          "errors": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "flow_errors": [
+            0.0,
+            0.0
+          ],
+          "flow_values": [
+            0.0,
+            0.0
+          ],
+          "integral": 0.0007427393953234513,
+          "title": "h_flux_reference",
+          "values": [
+            6.011091370687672e-06,
+            9.468553716086645e-06,
+            9.113513230177575e-06,
+            1.2331440493113515e-05,
+            1.4178416442204634e-05,
+            1.7826817018363515e-05,
+            2.129310156505271e-05,
+            2.5913668828853175e-05,
+            3.0472412895134047e-05,
+            3.571520696659768e-05,
+            4.28228331942536e-05,
+            4.9349689222598527e-05,
+            5.555236679260496e-05,
+            6.193765095168145e-05,
+            6.790236988344787e-05,
+            7.244015121350704e-05,
+            7.852893209918542e-05,
+            8.318950439263071e-05,
+            8.897252048427901e-05,
+            9.207051937319437e-05,
+            9.619424325550598e-05,
+            9.94526271405811e-05,
+            0.00010066253860801772,
+            0.00010292773334383577,
+            0.00010526351020303693,
+            0.0001068848579243801,
+            0.00010688018023561527,
+            0.00011125867857941717,
+            0.00011187706665917028,
+            0.00011370328236089534,
+            0.0001177366841423293,
+            0.00011923631063121988,
+            0.00012154148243001393,
+            0.00012592614501329147,
+            0.00012866365250751614,
+            0.0001320432655021374,
+            0.0001346853590651327,
+            0.00013749317729242535,
+            0.00014003903112162902,
+            0.00014226862832076282,
+            0.0001432561237277308,
+            0.0001449041973282065,
+            0.0001463823258529739,
+            0.00014834943480572524,
+            0.0001486479654846618,
+            0.0001482599012825678,
+            0.0001472359249783396,
+            0.00014569070644265787,
+            0.0001441705998369417,
+            0.0001422569881597267,
+            0.00013901709875855148,
+            0.00013747211618942427,
+            0.00013257757625897258,
+            0.00012978068856410734,
+            0.00012474985644121673,
+            0.00011958908900101166,
+            0.00011479526488530132,
+            0.00010845348014825683,
+            0.00010361264037594652,
+            9.769367546162541e-05,
+            9.240579312972765e-05,
+            8.789078012592577e-05,
+            8.132540179929372e-05,
+            7.687250178561385e-05,
+            7.171376660129316e-05,
+            6.582975144456783e-05,
+            6.087375462952398e-05,
+            5.755583082534806e-05,
+            5.299771768078e-05,
+            4.915945736789032e-05,
+            4.584431960224259e-05,
+            4.13830674595205e-05,
+            3.869966045289659e-05,
+            3.591873912901553e-05,
+            3.2517843328494156e-05,
+            2.9779995208786895e-05,
+            2.7534197178044743e-05,
+            2.5453463342953688e-05,
+            2.294632900076916e-05,
+            2.1494081961768757e-05,
+            1.9285711051475785e-05,
+            1.781849758858047e-05,
+            1.6386787853522597e-05,
+            1.4926919625016194e-05,
+            1.389537190477854e-05,
+            1.2768412649872416e-05,
+            1.1670238011657014e-05,
+            1.0643877416641907e-05,
+            8.754050080028152e-06,
+            6.215818613154176e-06,
+            4.746096029855035e-06,
+            3.7068034423152168e-06,
+            3.0826027179673908e-06,
+            2.5730322458082356e-06,
+            2.202488620841822e-06,
+            1.934104159160815e-06,
+            1.7282948500558692e-06,
+            1.5224822552716777e-06,
+            1.4026247730629383e-06,
+            1.2564768373791124e-06,
+            1.1505609997521476e-06,
+            1.04836913659952e-06,
+            9.978990307294733e-07,
+            9.38756961841387e-07,
+            8.697396948336472e-07,
+            8.116591335175377e-07,
+            7.707827158865752e-07,
+            7.240538715190563e-07,
+            6.605233478408687e-07,
+            6.016648843274361e-07,
+            5.371886196907177e-07,
+            4.928311260561191e-07,
+            4.3885940785214084e-07,
+            3.8794711260796667e-07,
+            3.544983734652773e-07,
+            3.182086615109117e-07,
+            2.840174249498923e-07,
+            2.497288284750792e-07,
+            1.836515187179539e-07,
+            1.0225290756111665e-07,
+            5.878324486933128e-08,
+            3.426197371643581e-08,
+            2.047980806370902e-08,
+            1.1573438545003656e-08,
+            5.224474632634103e-09,
+            1.5303945925324574e-09,
+            4.039314433141801e-10,
+            2.1412857781239503e-44
+          ]
+        },
+        "histogram": "flux_E_cvweighted",
+        "integral": 0.0006291408598300282,
+        "opened_by": "MAT string constructor, constrained GetFluxReweighted(14)",
+        "original_path": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root",
+        "raw_file_integral_descriptive_only": 0.0006981368863190413,
+        "retention": "pscratch, purged when unread 56 days: stat on login23 at 2026-11-22T22:01:53Z (epoch 1795384913): atime 2026-11-16T20:49:33Z, mtime 2021-07-07T16:56:03Z, 3187397 bytes, inode 882722362129161272; earliest purge exposure 2027-01-11T20:49:33Z",
+        "sha256": "3c76ed6fbb2d0623c645b0192b720253843f37d015cfc4c1cfc10f283433db0f",
+        "title": "h_flux_reference",
+        "values": [
+          4.590346509752135e-06,
+          7.349788444967053e-06,
+          6.963813545050114e-06,
+          9.402041667348429e-06,
+          1.071139488594211e-05,
+          1.3724566160562194e-05,
+          1.6577133370651e-05,
+          2.0104000998566714e-05,
+          2.372224951969901e-05,
+          2.79466396252709e-05,
+          3.3663411190010866e-05,
+          3.9035707997785935e-05,
+          4.383389191121754e-05,
+          4.879728396034775e-05,
+          5.406271912910996e-05,
+          5.721562827710044e-05,
+          6.197464681348526e-05,
+          6.57078775166693e-05,
+          7.006387044444648e-05,
+          7.248117670416715e-05,
+          7.552440133257003e-05,
+          7.798982992110057e-05,
+          7.896595262272995e-05,
+          8.14052111038848e-05,
+          8.314262066235682e-05,
+          8.463367013480531e-05,
+          8.425908966438298e-05,
+          8.754008918499207e-05,
+          8.788984551552898e-05,
+          8.91053544045387e-05,
+          9.229919472202615e-05,
+          9.364838011313583e-05,
+          9.566757426257693e-05,
+          9.963044419747478e-05,
+          0.00010172970557819091,
+          0.0001049556850983705,
+          0.00010736563811627538,
+          0.00010977548273542497,
+          0.00011249579976938707,
+          0.00011477782263214069,
+          0.00011616256367133857,
+          0.00011789977578813967,
+          0.00011969674041345188,
+          0.00012217297836872703,
+          0.00012289970779888484,
+          0.00012328869919098765,
+          0.000123156034240441,
+          0.00012285362116276318,
+          0.0001223814594338746,
+          0.0001217055408741835,
+          0.00011948579767511328,
+          0.00011908716683915167,
+          0.00011556017144915474,
+          0.00011413096962257324,
+          0.00011063332519758132,
+          0.00010662072106509894,
+          0.00010300951719245751,
+          9.820280980374013e-05,
+          9.421965904401583e-05,
+          8.929371390610233e-05,
+          8.5145772949837e-05,
+          8.128454191364138e-05,
+          7.527108388712158e-05,
+          7.1417859537781e-05,
+          6.664794734206168e-05,
+          6.125542209907364e-05,
+          5.691275522602984e-05,
+          5.404364547678096e-05,
+          5.00558982999484e-05,
+          4.6606232719239645e-05,
+          4.361920144445905e-05,
+          3.9476129671136275e-05,
+          3.686919504935541e-05,
+          3.427030012622418e-05,
+          3.112127998239267e-05,
+          2.851463983798244e-05,
+          2.6429690012367916e-05,
+          2.4627578793303826e-05,
+          2.2268804747184172e-05,
+          2.0968046151970446e-05,
+          1.8923620294742672e-05,
+          1.7392116682755694e-05,
+          1.6044061765422245e-05,
+          1.4618108688463148e-05,
+          1.3525698087124987e-05,
+          1.2512758151859492e-05,
+          1.1442164906759866e-05,
+          1.0411202956382692e-05,
+          8.63490159055311e-06,
+          6.293376832657465e-06,
+          4.720139689267354e-06,
+          3.806186822477272e-06,
+          3.228692140090437e-06,
+          2.737301207165942e-06,
+          2.3661273654491453e-06,
+          2.0867071446737384e-06,
+          1.872644098142061e-06,
+          1.6690593303213561e-06,
+          1.549160711400434e-06,
+          1.3900559626063023e-06,
+          1.2511457261160889e-06,
+          1.1402505475539032e-06,
+          1.0900904470179447e-06,
+          1.0235579263099055e-06,
+          9.427587642277366e-07,
+          8.68719322655962e-07,
+          8.311375319902415e-07,
+          7.807540513952429e-07,
+          6.960549832752473e-07,
+          6.363122344363441e-07,
+          5.465454465252402e-07,
+          4.892603046194363e-07,
+          4.2478570205538617e-07,
+          3.6866279222402013e-07,
+          3.3669325135185687e-07,
+          3.063752498235893e-07,
+          2.842985536765362e-07,
+          2.5651491189347617e-07,
+          1.9023568474876667e-07,
+          1.2389548811150292e-07,
+          8.840495237571777e-08,
+          5.8781076979437174e-08,
+          3.186663627210346e-08,
+          1.3197302692832306e-08,
+          5.459507098407085e-09,
+          1.5664178875954112e-09,
+          3.557440119050569e-10,
+          1.403310565614024e-44
+        ]
+      },
+      "1N": {
+        "axis_titles": {
+          "x": "",
+          "y": ""
+        },
+        "bytes": 3182011,
+        "class_name": "PlotUtils::MnvH1D",
+        "edges": [
+          0.0,
+          0.5,
+          1.0,
+          1.5,
+          1.6,
+          1.7,
+          1.8,
+          1.9,
+          2.0,
+          2.1,
+          2.2,
+          2.3,
+          2.4,
+          2.5,
+          2.6,
+          2.7,
+          2.8,
+          2.9000000000000004,
+          3.0,
+          3.1,
+          3.2,
+          3.3,
+          3.4000000000000004,
+          3.5,
+          3.6,
+          3.7,
+          3.8000000000000003,
+          3.9000000000000004,
+          4.0,
+          4.1,
+          4.2,
+          4.300000000000001,
+          4.4,
+          4.5,
+          4.6,
+          4.7,
+          4.800000000000001,
+          4.9,
+          5.0,
+          5.1,
+          5.2,
+          5.300000000000001,
+          5.4,
+          5.5,
+          5.6000000000000005,
+          5.7,
+          5.8,
+          5.9,
+          6.0,
+          6.1000000000000005,
+          6.2,
+          6.300000000000001,
+          6.4,
+          6.5,
+          6.6000000000000005,
+          6.7,
+          6.800000000000001,
+          6.9,
+          7.0,
+          7.1000000000000005,
+          7.2,
+          7.300000000000001,
+          7.4,
+          7.5,
+          7.6000000000000005,
+          7.7,
+          7.800000000000001,
+          7.9,
+          8.0,
+          8.100000000000001,
+          8.2,
+          8.3,
+          8.4,
+          8.5,
+          8.600000000000001,
+          8.7,
+          8.8,
+          8.9,
+          9.0,
+          9.100000000000001,
+          9.2,
+          9.3,
+          9.4,
+          9.5,
+          9.6,
+          9.700000000000001,
+          9.8,
+          9.9,
+          10.0,
+          10.5,
+          11.0,
+          11.5,
+          12.0,
+          12.5,
+          13.0,
+          13.5,
+          14.0,
+          14.5,
+          15.0,
+          15.5,
+          16.0,
+          16.5,
+          17.0,
+          17.5,
+          18.0,
+          18.5,
+          19.0,
+          19.5,
+          20.0,
+          21.0,
+          22.0,
+          23.0,
+          24.0,
+          25.0,
+          26.0,
+          27.0,
+          28.0,
+          29.0,
+          30.0,
+          35.0,
+          40.0,
+          45.0,
+          50.0,
+          55.0,
+          60.0,
+          70.0,
+          80.0,
+          90.0,
+          100.0
+        ],
+        "error_convention": "constrained MnvH1D base CV GetBinError",
+        "errors": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "extract_path_opened": "/pscratch/sd/j/josephrb/rpd-reco-p0-20261123/run/staged/flux-extract-input.json",
+        "extract_sha256": "90445ece147213fae5ffa08ed93d91f3e781e6983991a352241c2585b478a659",
+        "file_units_metadata": {},
+        "flow_errors": [
+          0.0,
+          0.0
+        ],
+        "flow_values": [
+          0.0,
+          0.0
+        ],
+        "generated_spectrum": {
+          "axis_titles": {
+            "x": "",
+            "y": ""
+          },
+          "class_name": "PlotUtils::MnvH1D",
+          "edges": [
+            0.0,
+            0.5,
+            1.0,
+            1.5,
+            1.6,
+            1.7,
+            1.8,
+            1.9,
+            2.0,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7,
+            2.8,
+            2.9000000000000004,
+            3.0,
+            3.1,
+            3.2,
+            3.3,
+            3.4000000000000004,
+            3.5,
+            3.6,
+            3.7,
+            3.8000000000000003,
+            3.9000000000000004,
+            4.0,
+            4.1,
+            4.2,
+            4.300000000000001,
+            4.4,
+            4.5,
+            4.6,
+            4.7,
+            4.800000000000001,
+            4.9,
+            5.0,
+            5.1,
+            5.2,
+            5.300000000000001,
+            5.4,
+            5.5,
+            5.6000000000000005,
+            5.7,
+            5.8,
+            5.9,
+            6.0,
+            6.1000000000000005,
+            6.2,
+            6.300000000000001,
+            6.4,
+            6.5,
+            6.6000000000000005,
+            6.7,
+            6.800000000000001,
+            6.9,
+            7.0,
+            7.1000000000000005,
+            7.2,
+            7.300000000000001,
+            7.4,
+            7.5,
+            7.6000000000000005,
+            7.7,
+            7.800000000000001,
+            7.9,
+            8.0,
+            8.100000000000001,
+            8.2,
+            8.3,
+            8.4,
+            8.5,
+            8.600000000000001,
+            8.7,
+            8.8,
+            8.9,
+            9.0,
+            9.100000000000001,
+            9.2,
+            9.3,
+            9.4,
+            9.5,
+            9.6,
+            9.700000000000001,
+            9.8,
+            9.9,
+            10.0,
+            10.5,
+            11.0,
+            11.5,
+            12.0,
+            12.5,
+            13.0,
+            13.5,
+            14.0,
+            14.5,
+            15.0,
+            15.5,
+            16.0,
+            16.5,
+            17.0,
+            17.5,
+            18.0,
+            18.5,
+            19.0,
+            19.5,
+            20.0,
+            21.0,
+            22.0,
+            23.0,
+            24.0,
+            25.0,
+            26.0,
+            27.0,
+            28.0,
+            29.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            50.0,
+            55.0,
+            60.0,
+            70.0,
+            80.0,
+            90.0,
+            100.0
+          ],
+          "error_convention": "constrained MnvH1D base CV GetBinError",
+          "errors": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "flow_errors": [
+            0.0,
+            0.0
+          ],
+          "flow_values": [
+            0.0,
+            0.0
+          ],
+          "integral": 0.0007422113835837182,
+          "title": "h_flux_reference",
+          "values": [
+            5.368408578530701e-06,
+            9.640869386729094e-06,
+            9.72104484905789e-06,
+            1.16195994249335e-05,
+            1.5789947828223837e-05,
+            1.764114850419531e-05,
+            2.1467457391553197e-05,
+            2.4803507577720065e-05,
+            3.2093717687688974e-05,
+            3.5493564724320414e-05,
+            4.2427851026606396e-05,
+            4.9371809277002764e-05,
+            5.540725272553971e-05,
+            6.19478378448146e-05,
+            6.59137154964941e-05,
+            7.31861020090918e-05,
+            7.774744163702263e-05,
+            8.37278908700032e-05,
+            8.754420271520317e-05,
+            9.380727443194264e-05,
+            9.591762184632581e-05,
+            9.867980750970982e-05,
+            0.00010085213476847325,
+            0.00010344213359422252,
+            0.00010610869113322,
+            0.00010594959270182459,
+            0.00010816036237865583,
+            0.00011181343001873063,
+            0.00011252345810106356,
+            0.00011332454977186866,
+            0.00011692459426167974,
+            0.00012015917936125454,
+            0.00012346126847581745,
+            0.00012516055620678704,
+            0.00012952784172233698,
+            0.00013186045677485752,
+            0.00013378853712490515,
+            0.00013716429924553802,
+            0.0001405755825108975,
+            0.00014102294161312293,
+            0.00014430489663605264,
+            0.0001461376068306748,
+            0.00014693555270833545,
+            0.00014736364788703834,
+            0.00014753117161171717,
+            0.00014657392346413637,
+            0.00014702319212253607,
+            0.00014515629262337347,
+            0.0001443938610229411,
+            0.00014142577758419604,
+            0.0001386234111166746,
+            0.00013575071637081295,
+            0.00013249716271719888,
+            0.0001295721090137846,
+            0.00012391871921929758,
+            0.00011863772814019265,
+            0.00011449238888602337,
+            0.00010950909123925668,
+            0.0001028305730826363,
+            9.768021759188623e-05,
+            9.194055893147409e-05,
+            8.687848080681924e-05,
+            8.111698576714187e-05,
+            7.623910537362547e-05,
+            7.15468680834563e-05,
+            6.660487498353975e-05,
+            6.21409499161558e-05,
+            5.754536376775193e-05,
+            5.320814440818214e-05,
+            4.976621307140636e-05,
+            4.518752927958827e-05,
+            4.106037765082452e-05,
+            3.881305519608861e-05,
+            3.5676375303930046e-05,
+            3.28566059016763e-05,
+            3.013142697421757e-05,
+            2.7343058541884728e-05,
+            2.5102417994491275e-05,
+            2.2995539318442227e-05,
+            2.1037425732669403e-05,
+            1.918007145796277e-05,
+            1.7992010657740007e-05,
+            1.6503945985031995e-05,
+            1.510147605275996e-05,
+            1.3586342176936345e-05,
+            1.27049223213216e-05,
+            1.1779660723161032e-05,
+            1.0952812559934134e-05,
+            8.722649897064987e-06,
+            6.282051331776268e-06,
+            4.7345498215169115e-06,
+            3.8139960399132455e-06,
+            3.119781824081928e-06,
+            2.5982698106401415e-06,
+            2.1979190972875006e-06,
+            1.8882060648257893e-06,
+            1.721572575356972e-06,
+            1.4926789668902958e-06,
+            1.3880661294696696e-06,
+            1.2522751686286926e-06,
+            1.1909237331896324e-06,
+            1.0265475625844925e-06,
+            9.957780541081132e-07,
+            9.315411398805108e-07,
+            8.659267342525302e-07,
+            7.9765309355847e-07,
+            7.609251056715748e-07,
+            7.076189445852633e-07,
+            6.57832005630607e-07,
+            5.855660867408747e-07,
+            5.427663837391349e-07,
+            4.7303049934096724e-07,
+            4.3577240066770163e-07,
+            3.9016699309150476e-07,
+            3.5302070726751216e-07,
+            3.117475089254227e-07,
+            2.829851844401105e-07,
+            2.506554779406617e-07,
+            1.8414400943363348e-07,
+            1.0292061144616971e-07,
+            5.9370693358300324e-08,
+            3.502245363249914e-08,
+            2.0551820942441785e-08,
+            1.2110365239589034e-08,
+            5.202864239326892e-09,
+            1.5662233835878593e-09,
+            4.1228245782827126e-10,
+            5.071582595290664e-44
+          ]
+        },
+        "histogram": "flux_E_cvweighted",
+        "integral": 0.0006203643221928254,
+        "opened_by": "MAT string constructor, constrained GetFluxReweighted(14)",
+        "original_path": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root",
+        "raw_file_integral_descriptive_only": 0.0006887601054324519,
+        "retention": "pscratch, purged when unread 56 days: stat on login23 at 2026-11-22T22:01:53Z (epoch 1795384913): atime 2026-11-16T20:59:21Z, mtime 2021-07-07T16:56:03Z, 3182011 bytes, inode 882722362129161271; earliest purge exposure 2027-01-11T20:59:21Z",
+        "sha256": "bfe5e3c5fb66252c64f1fde06f66dd0d656e2f69f5e5bd7cc159a537f31e5cfa",
+        "title": "h_flux_reference",
+        "values": [
+          4.216845380825706e-06,
+          7.481864413311249e-06,
+          7.355509915403867e-06,
+          8.812611508228214e-06,
+          1.2104189892203705e-05,
+          1.3570667908896863e-05,
+          1.676195363285921e-05,
+          1.924884674603477e-05,
+          2.5222656492823496e-05,
+          2.8334143019870307e-05,
+          3.3556670751903566e-05,
+          3.913155003044575e-05,
+          4.396493010182167e-05,
+          4.965295440254721e-05,
+          5.268799266689816e-05,
+          5.861397058516654e-05,
+          6.215486162059304e-05,
+          6.693150010632996e-05,
+          6.980408379511483e-05,
+          7.444541025014028e-05,
+          7.604754712794448e-05,
+          7.859871539586029e-05,
+          8.041839092264589e-05,
+          8.225497285362443e-05,
+          8.459855954280915e-05,
+          8.429503287694497e-05,
+          8.586514204624376e-05,
+          8.932080168442579e-05,
+          8.925637887647722e-05,
+          8.96834537411745e-05,
+          9.269166847981282e-05,
+          9.532840785309866e-05,
+          9.840581501342063e-05,
+          0.0001007723088344278,
+          0.00010408199757838266,
+          0.00010630198857923555,
+          0.00010845589868961737,
+          0.00011113204011022416,
+          0.00011385380491549914,
+          0.00011444037487047969,
+          0.0001176199521534157,
+          0.00011932970629928662,
+          0.00012077502392347858,
+          0.00012158713521390243,
+          0.00012272540120464529,
+          0.00012210837327605503,
+          0.0001232218785202263,
+          0.00012198331233840362,
+          0.00012181920905941303,
+          0.00011983187987223055,
+          0.00011801009190013535,
+          0.00011592316139547136,
+          0.00011368717798287083,
+          0.0001116711906964739,
+          0.00010739188213018723,
+          0.00010270228736355829,
+          9.9798725960706e-05,
+          9.575282599392105e-05,
+          8.994162857343466e-05,
+          8.57472234828381e-05,
+          8.106861330793626e-05,
+          7.622966820107052e-05,
+          7.103177463792834e-05,
+          6.688603496832546e-05,
+          6.259173617908964e-05,
+          5.834864068163214e-05,
+          5.4184156451609455e-05,
+          4.999968929444042e-05,
+          4.628239564157476e-05,
+          4.3546334648750876e-05,
+          3.939419707619707e-05,
+          3.574192712873741e-05,
+          3.390596880795784e-05,
+          3.114899772249235e-05,
+          2.8782045782418553e-05,
+          2.6325984940765377e-05,
+          2.3961403271393536e-05,
+          2.1978826377983853e-05,
+          2.0246575834602985e-05,
+          1.8557248114863997e-05,
+          1.693842525492526e-05,
+          1.578632946939886e-05,
+          1.4615410483427593e-05,
+          1.3318324452407729e-05,
+          1.2065631486473444e-05,
+          1.1363633088460187e-05,
+          1.0503165820556172e-05,
+          9.922715489336299e-06,
+          7.98600478646866e-06,
+          5.910165414196767e-06,
+          4.597678791262541e-06,
+          3.82820557006482e-06,
+          3.20806388209166e-06,
+          2.70889450190758e-06,
+          2.3100935613393743e-06,
+          2.010767201837395e-06,
+          1.8460640815061128e-06,
+          1.6156445727570081e-06,
+          1.4981402149048293e-06,
+          1.3700625606241756e-06,
+          1.2865492776755018e-06,
+          1.1068337825195843e-06,
+          1.0893844794069481e-06,
+          1.0234292819678728e-06,
+          9.346938883171088e-07,
+          8.521818812490335e-07,
+          8.139752198191674e-07,
+          7.64762925968558e-07,
+          6.931125060956002e-07,
+          6.114165784792468e-07,
+          5.485517105775144e-07,
+          4.6247676959859514e-07,
+          4.112350621689421e-07,
+          3.577345704806456e-07,
+          3.2235119604852977e-07,
+          2.870983082189505e-07,
+          2.689749533423756e-07,
+          2.4516175322552587e-07,
+          1.8264716489086785e-07,
+          1.1952047179325047e-07,
+          8.607325283271172e-08,
+          5.785540970323851e-08,
+          3.169496614641251e-08,
+          1.3902320552857945e-08,
+          5.403607216519475e-09,
+          1.626909559462969e-09,
+          3.9063485563110587e-10,
+          3.6147849092463417e-44
+        ]
+      }
+    },
+    "zero_patterns": {
+      "1A": {
+        "1D": {
+          "0": {
+            "count": 1728905,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 1.0,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          }
+        },
+        "1M": {
+          "0": {
+            "count": 1728905,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 1.0,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          }
+        }
+      },
+      "1B": {
+        "1D": {
+          "0": {
+            "count": 466977,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.9999973911318959,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 1,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 2.6088681039258186e-06,
+            "target_zero": true
+          }
+        },
+        "1M": {
+          "0": {
+            "count": 466977,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.9999973911318959,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 1,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 2.6088681039258186e-06,
+            "target_zero": true
+          }
+        }
+      },
+      "1C": {
+        "1D": {
+          "0": {
+            "count": 890047,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 1.0,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          }
+        },
+        "1M": {
+          "0": {
+            "count": 890047,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 1.0,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          }
+        }
+      },
+      "1D": {
+        "1D": {
+          "0": {
+            "count": 2583499,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 1.0,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          }
+        },
+        "1M": {
+          "0": {
+            "count": 2583499,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 1.0,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          }
+        }
+      },
+      "1E": {
+        "1D": {
+          "0": {
+            "count": 2155965,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.9999988695892533,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 2,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 1.1304107461092243e-06,
+            "target_zero": true
+          }
+        },
+        "1M": {
+          "0": {
+            "count": 2155965,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.9999988695892533,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 2,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 1.1304107461092243e-06,
+            "target_zero": true
+          }
+        }
+      },
+      "1F": {
+        "1D": {
+          "0": {
+            "count": 2905995,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 1.0,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          }
+        },
+        "1M": {
+          "0": {
+            "count": 2905995,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 1.0,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          }
+        }
+      },
+      "1G": {
+        "1D": {
+          "0": {
+            "count": 2472825,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.999999519122954,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 1,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 4.808770453301602e-07,
+            "target_zero": true
+          }
+        },
+        "1M": {
+          "0": {
+            "count": 2472825,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.999999519122954,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 1,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 4.808770453301602e-07,
+            "target_zero": true
+          }
+        }
+      },
+      "1L": {
+        "1D": {
+          "0": {
+            "count": 231003,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 1.0,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          }
+        },
+        "1M": {
+          "0": {
+            "count": 231003,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 1.0,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          }
+        }
+      },
+      "1M": {
+        "1D": {
+          "0": {
+            "count": 3566414,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 1.0,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          }
+        },
+        "1M": {
+          "0": {
+            "count": 3566414,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 1.0,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          }
+        }
+      },
+      "1N": {
+        "1D": {
+          "0": {
+            "count": 2032497,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 1.0,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          }
+        },
+        "1M": {
+          "0": {
+            "count": 2032497,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 1.0,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          }
+        }
+      },
+      "1O": {
+        "1D": {
+          "0": {
+            "count": 590350,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.9999979238116717,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 1,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 2.076188328222381e-06,
+            "target_zero": true
+          }
+        },
+        "1M": {
+          "0": {
+            "count": 590350,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.9999979238116717,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 1,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 2.076188328222381e-06,
+            "target_zero": true
+          }
+        }
+      },
+      "1P": {
+        "1D": {
+          "0": {
+            "count": 778054,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.9999984241824246,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 1,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 1.5758175760950075e-06,
+            "target_zero": true
+          }
+        },
+        "1M": {
+          "0": {
+            "count": 778054,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.9999984241824246,
+            "target_zero": false
+          },
+          "1": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "2": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "3": {
+            "count": 0,
+            "generated_zero": false,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "4": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "5": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": false
+          },
+          "6": {
+            "count": 0,
+            "generated_zero": true,
+            "own_zero": false,
+            "pass_reco_weight_share": 0.0,
+            "target_zero": true
+          },
+          "7": {
+            "count": 1,
+            "generated_zero": true,
+            "own_zero": true,
+            "pass_reco_weight_share": 1.5758175760950075e-06,
+            "target_zero": true
+          }
+        }
+      }
+    }
+  },
+  "run_class": "diagnostic",
+  "scheduler_request": {
+    "SLURM_CPUS_PER_TASK": null,
+    "SLURM_JOB_CPUS_PER_NODE": null,
+    "SLURM_JOB_ID": null,
+    "SLURM_JOB_QOS": null,
+    "SLURM_MEM_PER_CPU": null,
+    "SLURM_MEM_PER_NODE": null,
+    "SLURM_QOS": null
+  },
+  "schema": "fd-rpd-reco-step/1",
+  "status": "PASS",
+  "step": "p0",
+  "step_estimate": {
+    "factor": 10.0,
+    "planned_seconds": 0.0,
+    "poisson_draws": 0,
+    "seconds_per_draw": 0.0,
+    "step": "p0",
+    "unmeasured_costs": [
+      "input staging and decompression",
+      "weighted-quantile sorting",
+      "output writing"
+    ]
+  },
+  "timing_chunk_shape": null,
+  "timing_source": null,
+  "wall_budget_seconds": 7200
+}

@@ -1,0 +1,20 @@
+z 1.645: KILLED
+kappa strict (labels): KILLED
+kappa strict (select): KILLED
+kappa 0.9: KILLED
+kappa_disc 0.6: KILLED
+disc ignores flips: KILLED
+flips ignored: KILLED
+abs dropped: KILLED
+se not in Tune v1 units: KILLED
+beta not in Tune v1 units: KILLED
+closure split term dropped: KILLED
+split var ddof 0: KILLED
+sg divisor: KILLED
+panel shrunk: KILLED
+gibuu cells: KILLED
+R=1 check off: KILLED
+noise unchecked: KILLED
+split U without SE: KILLED
+seed set unchecked: KILLED
+tiny-value leak check off: KILLED

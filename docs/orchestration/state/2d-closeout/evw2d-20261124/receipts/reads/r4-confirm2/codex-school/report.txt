@@ -1,0 +1,6 @@
+CONFIRMATION: FIX 1 HOLDS
+
+- The first extraction produces `hXSec2D`. REF-C2C1 records that call’s arguments and delegates to EVW2D’s wrapper, which snapshots the result and returns the original histogram. `inputs/pinned/re2_driver.py:2479`, `inputs/pinned/ref_c2c1.py:365`, `inputs/new/evw2d.py:357,910`
+- The driver leaves `hXSec2D` unchanged through `Write()`. Later extractions create separate clones, and both projections only read it. A clean in-memory ROOT round trip preserved every bin bit for bit. `inputs/pinned/re2_driver.py:1302,1340,2479,2525,2564,2585`
+- C-SELF reconstructs the cross section from saved weights and constants, compares it to the captured interior in pT-major order at `1e-8`, and requires bitwise equality of all persisted bin contents, including flow. An in-memory `1e-12` perturbation passed the tolerance check and failed the bitwise check. A pre-hash replacement confined to errors or metadata can still pass. `inputs/new/evw2d.py:428,506,626,1001`
+- No defect found that changes the published weight values, physics constants, or other exactness gates. Reviewed the supplied regression and mutants by inspection. The full suite and mutation campaign require filesystem writes. `inputs/new/evw2d.py:939,952,980,1014`, `inputs/new/test_evw2d.py:1269`, `inputs/new/evw2d_mutation.py:81`

@@ -1,0 +1,1 @@
+echo "utc $(date -u +%FT%TZ)"; echo "node $(hostname)"; echo "== iris"; timeout 120 iris < /dev/null 2>&1; echo "iris rc=$?"

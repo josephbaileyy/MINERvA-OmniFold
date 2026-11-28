@@ -1,0 +1,18 @@
+ssh rc=0
+node login38 staged sha256 e7f875eabff78091a706d435165be2d507cd680736a61f44908e90c5165714bc
+host login38 utc 2026-11-24T16:23:21Z
+path ok: /pscratch/sd/j/josephrb/ibub-20261123 (directory, owner josephrb, realpath equal)
+sacct ok: 1 ibub_ rows, all ended; 61914825: 61914825|ibub_run|CANCELLED by 112498
+dir stat before: mtime inode owner = 1795531043 882727748622181832 josephrb
+== inventory begin: find /pscratch/sd/j/josephrb/ibub-20261123 -printf '%y %s %T@ %p\n'
+== inventory end
+inventory: 32660 entries, 29413 files, 3667054967 bytes
+dir stat after the inventory: 1795531043 882727748622181832 josephrb (stat_match=yes)
+rm rc=0
+stat rc=1: stat: cannot statx '/pscratch/sd/j/josephrb/ibub-20261123': No such file or directory
+removed: /pscratch/sd/j/josephrb/ibub-20261123 is gone (ENOENT)
+rm-ibub rc=0
+script rc=0
+the script's rc=0; the full session (with the inventory) is /Users/josephbailey/cov2d-work/ibub-rm-20261124/session/session.out
+launcher rc=0
+2026-11-24T16:24:04Z

@@ -1,0 +1,715 @@
+{
+ "pin": {
+  "main_pid": "1346746",
+  "n_bad_seen": 23,
+  "paths": {
+   "/global/common/software/nersc9/darshan/3.4.6-gcc-13.2.1/lib": [
+    {
+     "line": 1297,
+     "pid": "1346746",
+     "main": true,
+     "arg": "/global/common/software/nersc9/darshan/default/lib",
+     "flags": "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY",
+     "directory": true
+    }
+   ],
+   "/opt/cray/libfabric/2.3.1/lib64": [
+    {
+     "line": 1304,
+     "pid": "1346746",
+     "main": true,
+     "arg": "/opt/cray/libfabric/2.3.1/lib64",
+     "flags": "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY",
+     "directory": true
+    },
+    {
+     "line": 1305,
+     "pid": "1346746",
+     "main": true,
+     "arg": "/opt/cray/libfabric/default/lib64",
+     "flags": "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY",
+     "directory": true
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/init/bash": [
+    {
+     "line": 1579,
+     "pid": "1346910",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/init/bash",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/libexec/addto": [
+    {
+     "line": 1662,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/addto",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/BeautifulTbl.lua": [
+    {
+     "line": 1916,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/BeautifulTbl.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1917,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/BeautifulTbl.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/Cosmic.lua": [
+    {
+     "line": 1912,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/Cosmic.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1913,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/Cosmic.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/Dbg.lua": [
+    {
+     "line": 1882,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/Dbg.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1883,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/Dbg.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/Optiks.lua": [
+    {
+     "line": 1894,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/Optiks.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1895,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/Optiks.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/Optiks_Option.lua": [
+    {
+     "line": 1918,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/Optiks_Option.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1919,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/Optiks_Option.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/TermWidth.lua": [
+    {
+     "line": 1896,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/TermWidth.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1897,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/TermWidth.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/capture.lua": [
+    {
+     "line": 1910,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/capture.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1911,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/capture.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/declare.lua": [
+    {
+     "line": 1914,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/declare.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1915,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/declare.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/haveTermSupport.lua": [
+    {
+     "line": 1898,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/haveTermSupport.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1899,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/haveTermSupport.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/pairsByKeys.lua": [
+    {
+     "line": 1880,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/pairsByKeys.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1881,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/pairsByKeys.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/strict.lua": [
+    {
+     "line": 1876,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/strict.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1877,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/strict.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/string_utils.lua": [
+    {
+     "line": 1878,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/string_utils.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1879,
+     "pid": "1346912",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/string_utils.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/papi/7.3.0.1/lib": [
+    {
+     "line": 1303,
+     "pid": "1346746",
+     "main": true,
+     "arg": "/opt/cray/pe/papi/7.3.0.1/lib64",
+     "flags": "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY",
+     "directory": true
+    }
+   ],
+   "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/CUPTI/lib64": [
+    {
+     "line": 1300,
+     "pid": "1346746",
+     "main": true,
+     "arg": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/CUPTI/lib64",
+     "flags": "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY",
+     "directory": true
+    }
+   ],
+   "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/nvvm/lib64": [
+    {
+     "line": 1301,
+     "pid": "1346746",
+     "main": true,
+     "arg": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/nvvm/lib64",
+     "flags": "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY",
+     "directory": true
+    }
+   ],
+   "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/targets/x86_64-linux/include/cuda.h": [
+    {
+     "line": 857,
+     "pid": "1346746",
+     "main": true,
+     "arg": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/include/cuda.h",
+     "flags": "O_RDONLY|O_CLOEXEC",
+     "directory": false
+    }
+   ],
+   "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/targets/x86_64-linux/lib": [
+    {
+     "line": 1302,
+     "pid": "1346746",
+     "main": true,
+     "arg": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/lib64",
+     "flags": "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY",
+     "directory": true
+    }
+   ],
+   "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/math_libs/13.2/targets/x86_64-linux/lib": [
+    {
+     "line": 1299,
+     "pid": "1346746",
+     "main": true,
+     "arg": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/math_libs/13.2/lib64",
+     "flags": "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY",
+     "directory": true
+    }
+   ],
+   "/var/lib/sss/mc/passwd": [
+    {
+     "line": 238,
+     "pid": "1346746",
+     "main": true,
+     "arg": "/var/lib/sss/mc/passwd",
+     "flags": "O_RDONLY|O_CLOEXEC",
+     "directory": false
+    }
+   ]
+  },
+  "child_first5": {
+   "1346910": [
+    "/etc/ld.so.cache",
+    "/lib64/libreadline.so.7.0",
+    "/lib64/libdl.so.2",
+    "/lib64/libc.so.6",
+    "/lib64/libtinfo.so.6.1"
+   ],
+   "1346912": [
+    "/etc/ld.so.cache",
+    "/lib64/libreadline.so.7.0",
+    "/lib64/libm.so.6",
+    "/lib64/libdl.so.2",
+    "/lib64/libc.so.6"
+   ]
+  }
+ },
+ "pat": {
+  "main_pid": "722811",
+  "n_bad_seen": 23,
+  "paths": {
+   "/global/common/software/nersc9/darshan/3.4.6-gcc-13.2.1/lib": [
+    {
+     "line": 1297,
+     "pid": "722811",
+     "main": true,
+     "arg": "/global/common/software/nersc9/darshan/default/lib",
+     "flags": "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY",
+     "directory": true
+    }
+   ],
+   "/opt/cray/libfabric/2.3.1/lib64": [
+    {
+     "line": 1304,
+     "pid": "722811",
+     "main": true,
+     "arg": "/opt/cray/libfabric/2.3.1/lib64",
+     "flags": "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY",
+     "directory": true
+    },
+    {
+     "line": 1305,
+     "pid": "722811",
+     "main": true,
+     "arg": "/opt/cray/libfabric/default/lib64",
+     "flags": "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY",
+     "directory": true
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/init/bash": [
+    {
+     "line": 1579,
+     "pid": "722951",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/init/bash",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/libexec/addto": [
+    {
+     "line": 1662,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/addto",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/BeautifulTbl.lua": [
+    {
+     "line": 1916,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/BeautifulTbl.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1917,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/BeautifulTbl.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/Cosmic.lua": [
+    {
+     "line": 1912,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/Cosmic.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1913,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/Cosmic.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/Dbg.lua": [
+    {
+     "line": 1882,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/Dbg.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1883,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/Dbg.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/Optiks.lua": [
+    {
+     "line": 1894,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/Optiks.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1895,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/Optiks.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/Optiks_Option.lua": [
+    {
+     "line": 1918,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/Optiks_Option.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1919,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/Optiks_Option.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/TermWidth.lua": [
+    {
+     "line": 1896,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/TermWidth.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1897,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/TermWidth.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/capture.lua": [
+    {
+     "line": 1910,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/capture.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1911,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/capture.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/declare.lua": [
+    {
+     "line": 1914,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/declare.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1915,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/declare.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/haveTermSupport.lua": [
+    {
+     "line": 1898,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/haveTermSupport.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1899,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/haveTermSupport.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/pairsByKeys.lua": [
+    {
+     "line": 1880,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/pairsByKeys.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1881,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/pairsByKeys.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/strict.lua": [
+    {
+     "line": 1876,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/strict.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1877,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/strict.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/lmod/8.7.60/tools/string_utils.lua": [
+    {
+     "line": 1878,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/string_utils.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    },
+    {
+     "line": 1879,
+     "pid": "722954",
+     "main": false,
+     "arg": "/opt/cray/pe/lmod/lmod/libexec/../tools/string_utils.lua",
+     "flags": "O_RDONLY",
+     "directory": false
+    }
+   ],
+   "/opt/cray/pe/papi/7.3.0.1/lib": [
+    {
+     "line": 1303,
+     "pid": "722811",
+     "main": true,
+     "arg": "/opt/cray/pe/papi/7.3.0.1/lib64",
+     "flags": "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY",
+     "directory": true
+    }
+   ],
+   "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/CUPTI/lib64": [
+    {
+     "line": 1300,
+     "pid": "722811",
+     "main": true,
+     "arg": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/CUPTI/lib64",
+     "flags": "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY",
+     "directory": true
+    }
+   ],
+   "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/nvvm/lib64": [
+    {
+     "line": 1301,
+     "pid": "722811",
+     "main": true,
+     "arg": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/nvvm/lib64",
+     "flags": "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY",
+     "directory": true
+    }
+   ],
+   "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/targets/x86_64-linux/include/cuda.h": [
+    {
+     "line": 857,
+     "pid": "722811",
+     "main": true,
+     "arg": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/include/cuda.h",
+     "flags": "O_RDONLY|O_CLOEXEC",
+     "directory": false
+    }
+   ],
+   "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/targets/x86_64-linux/lib": [
+    {
+     "line": 1302,
+     "pid": "722811",
+     "main": true,
+     "arg": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/lib64",
+     "flags": "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY",
+     "directory": true
+    }
+   ],
+   "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/math_libs/13.2/targets/x86_64-linux/lib": [
+    {
+     "line": 1299,
+     "pid": "722811",
+     "main": true,
+     "arg": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/math_libs/13.2/lib64",
+     "flags": "O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY",
+     "directory": true
+    }
+   ],
+   "/var/lib/sss/mc/passwd": [
+    {
+     "line": 238,
+     "pid": "722811",
+     "main": true,
+     "arg": "/var/lib/sss/mc/passwd",
+     "flags": "O_RDONLY|O_CLOEXEC",
+     "directory": false
+    }
+   ]
+  },
+  "child_first5": {
+   "722951": [
+    "/etc/ld.so.cache",
+    "/lib64/libreadline.so.7.0",
+    "/lib64/libdl.so.2",
+    "/lib64/libc.so.6",
+    "/lib64/libtinfo.so.6.1"
+   ],
+   "722954": [
+    "/etc/ld.so.cache",
+    "/lib64/libreadline.so.7.0",
+    "/lib64/libm.so.6",
+    "/lib64/libdl.so.2",
+    "/lib64/libc.so.6"
+   ]
+  }
+ },
+ "test2_stop_hits": []
+}

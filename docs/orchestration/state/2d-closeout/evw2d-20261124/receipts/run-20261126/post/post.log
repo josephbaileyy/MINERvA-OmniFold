@@ -1,0 +1,30 @@
+node login02 2026-11-26T08:48:25Z post sha256 f1d81c63750fbc2eda06bc154900159a617a6f917f12b7ae22dbc20400e4f491
+62022231|evw2d|COMPLETED|0:0|713|1|2026-11-26T00:34:00|2026-11-26T00:45:53|
+62022231.batch|batch|COMPLETED|0:0|713|1|2026-11-26T00:34:00|2026-11-26T00:45:53|292896K
+62022231.extern|extern|COMPLETED|0:0|713|1|2026-11-26T00:34:00|2026-11-26T00:45:53|
+62022231.0|bash|COMPLETED|0:0|0|1|2026-11-26T00:34:13|2026-11-26T00:34:13|0
+62022231.1|python3|COMPLETED|0:0|694|1|2026-11-26T00:34:13|2026-11-26T00:45:47|16197532K
+allocation 62022231: state=COMPLETED exit=0:0 nnodes=1 elapsed_s=713 ACCOUNTING_OK=true
+charge_node_h=0.1981   (the allocation's line only: JobID compared as a string)
+product set exact: 1
+constants.json: OK
+run.json: OK
+weights.npz: OK
+xsec.root: OK
+VERIFY=PASS (the products against SHA256SUMS, in place)
+evw2d.accepted rc=0
+ACCEPTED=true
+== stat (name|bytes|atime|mtime|inode) after the last read: products and staged copies; exposure = atime + 56 days
+/pscratch/sd/j/josephrb/evw2d-20261126/out/constants.json|3963|1795682916|1795682731|882727659451199816
+/pscratch/sd/j/josephrb/evw2d-20261126/out/evw2d.done|390|1795682916|1795682747|882727659451199819
+/pscratch/sd/j/josephrb/evw2d-20261126/out/run.json|7424|1795682918|1795682746|882727659451199817
+/pscratch/sd/j/josephrb/evw2d-20261126/out/SHA256SUMS|310|1795682918|1795682746|882727659451199818
+/pscratch/sd/j/josephrb/evw2d-20261126/out/weights.npz|1182583158|1795682918|1795682730|882727659451199815
+/pscratch/sd/j/josephrb/evw2d-20261126/out/xsec.root|61508|1795682918|1795682644|882727659451199814
+/pscratch/sd/j/josephrb/evw2d-20261126/stage/runEventLoopMC_MEFHC.root|5143|1795682081|1795678004|882727771355285005
+/pscratch/sd/j/josephrb/evw2d-20261126/stage/runEventLoopOmniFold_MEFHC.root|2144008221|1795682673|1795678002|882727771355285004
+SHA256SUMS sha256 e60867ef66eb47172a0e90140abc7a366d780dfc3aa3f9beb426a40a48d1416e
+/pscratch/sd/j/josephrb/evw2d-20261126/deploy_M HEAD 77d76cfc2d621f8faa010b75006811868494652a status rc=0 lines=0
+/pscratch/sd/j/josephrb/evw2d-20261126/deploy_C HEAD 462a0756f7eb20f3a99a4a05c3175ee5f3a7243b status rc=0 lines=0
+files 37
+POST: accounting=true verify=PASS accepted=true receipts_ok=true PASS=true 2026-11-26T08:48:46Z

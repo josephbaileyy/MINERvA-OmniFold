@@ -1,0 +1,60 @@
+--- /Users/josephbailey/vf-figs-wt/docs/orchestration/state/2d-closeout/stageF/methods/note-genresid-20261120/tools/make_fig_fived16_genresidual.py	2026-11-26 02:33:03
++++ /Users/josephbailey/vf-figs-wt/docs/orchestration/state/2d-closeout/stageF/methods/note-vffigs-20261126/tools/make_fig_fived16_genresidual.py	2026-11-26 02:42:28
+@@ -27,6 +27,13 @@
+ fived16_genresidual_values.json (every plotted number, the inputs' paths and sha256, the checks).
+ Descriptive only: the bars are the reported covariance's diagonal; the chi2 of tab:fived16-gen also includes V_g and the
+ correlations, which no bar shows.
++V_F COPY (note-vffigs-20261126, 2026-11-26): note-genresid-20261120's producer with only its inputs changed to the
++C_e^infl (V_F) records (V_F option C, readings #1368), each at the pin make_values_fived16.py READOUTS gives it in #1378:
++INPUTS (dp: the V_F data product; g: the V_F with-arm Stage G readout; gdefs: the V_F gdefs recompute), COV_KEY (the
++reported matrix C_total + C_resp + C_PL,5D + DeltaC_e), and the labels the records must carry (the data product's schema,
++the readouts' reported-covariance and chi2-matrix names). It checks against the note's own values_fived16.tex, as the
++original does; this branch is cut from #1378's head, whose file prints the V_F values. The drawing, every other check
++and every output are unchanged.
+ """
+ import argparse
+ import hashlib
+@@ -49,12 +56,12 @@
+ 
+ FD = "docs/orchestration/state/measurement-paper/5d-community-20261024"
+ INPUTS = {
+-    "dp": (f"{FD}/fd/with-cpl/data-product/fd_data_product_cpl.json", "d6752d2c"),
+-    "g": (f"{FD}/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json", "a19009e0"),
+-    "gdefs": (f"{FD}/fd/gencmp/readout/defs.json", "544f4f43"),
++    "dp": (f"{FD}/fd/with-vf/data-product/fd_data_product_vf.json", "1a37b082"),
++    "g": (f"{FD}/fd/with-vf/readout/vf-with-E/fd_g_readout.json", "7034a08e"),
++    "gdefs": (f"{FD}/fd/with-vf/p2/gdefs.vf.json", "6c202b08b5d9ed0b"),
+ }
+ VALUES = "docs/analysis-note/values_fived16.tex"
+-COV_KEY = "C_total_plus_C_resp_plus_C_PL5D"
++COV_KEY = "C_total_plus_C_resp_plus_C_PL5D_plus_DeltaC_e"
+ # (readout name, values key, palette identity, marker, source)
+ SERIES = (
+     ("genie_cv", "gcv", "genie_cv", "v", "g"),
+@@ -94,7 +101,7 @@
+     tv = tex_values(vtex)
+ 
+     dp = d["dp"]
+-    assert dp["schema"] == "fd-data-product-cpl/1"
++    assert dp["schema"] == "fd-data-product-vf/1"
+     assert [c["cell"] for c in dp["cells"]] == CELLS
+     f = dp["f"]
+     C = dp["matrices"][COV_KEY]
+@@ -102,7 +109,7 @@
+     assert all(abs(rel_sig[i] - dp["relative_sigma"][COV_KEY][i]) < 1e-12 for i in range(16)), "relative sigma"
+     assert d["g"]["schema"] == "fd-g-readout/2" and d["gdefs"]["schema"] == "fd-gencmp-defs/1"
+     gpred = {p["name"]: p for p in d["g"]["predictions"]}
+-    assert all(p["reported_covariance"] == "C_total + C_resp + C_PL5D" for p in gpred.values())
++    assert all(p["reported_covariance"] == "C_total + C_resp + C_PL5D + DeltaC_e" for p in gpred.values())
+     mid_pz = float(tv["h2-mid-pz"])
+     low = [c["cell"] for c in dp["cells"] if c["box"]["pz"][1] <= mid_pz]
+     assert len(low) == 8, low
+@@ -120,7 +127,7 @@
+             assert g == ad["g"], f"{name}: the carbon chi2 record's g is not the analysis-definition g"
+             printed = tv[f"g-{key}-carbon-total-chi2"]
+             assert f"{rec['total']['chi2']:.2f}" == printed, f"{name}: chi2 {rec['total']['chi2']} vs printed {printed}"
+-            assert rec["total"]["matrix"] == "C_total + C_resp + C_PL5D + V_g"
++            assert rec["total"]["matrix"] == "C_total + C_resp + C_PL5D + DeltaC_e + V_g"
+         assert cells == (low if name == "gibuu" else CELLS), f"{name}: cells {cells}"
+         idx = [CELLS.index(c) for c in cells]
+         assert all(fr[j] == f[i] for j, i in enumerate(idx)), f"{name}: f differs from the data product's"

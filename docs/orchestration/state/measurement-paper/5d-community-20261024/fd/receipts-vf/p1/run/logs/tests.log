@@ -1,0 +1,746 @@
+test_a_v_f_step_is_checked_as_soon_as_it_returns (test_fd_vf_addition.Arms.test_a_v_f_step_is_checked_as_soon_as_it_returns) ... ok
+test_each_arms_block_key_name_and_file (test_fd_vf_addition.Arms.test_each_arms_block_key_name_and_file) ... ok
+test_f0_takes_no_block_in_the_old_arm_and_df_in_the_v_f_arm (test_fd_vf_addition.Arms.test_f0_takes_no_block_in_the_old_arm_and_df_in_the_v_f_arm) ... ok
+test_f0s_c_e_infl_arm_is_checked_with_its_block_and_the_old_arm_is_not (test_fd_vf_addition.Arms.test_f0s_c_e_infl_arm_is_checked_with_its_block_and_the_old_arm_is_not) ... ok
+test_f1_reads_the_committed_f0b_in_an_old_arm_and_its_own_in_a_v_f_arm (test_fd_vf_addition.Arms.test_f1_reads_the_committed_f0b_in_an_old_arm_and_its_own_in_a_v_f_arm) ... ok
+test_the_chdefs_set_pins_committed_upstreams_in_old_arms_and_written_ones_in_v_f_arms (test_fd_vf_addition.Arms.test_the_chdefs_set_pins_committed_upstreams_in_old_arms_and_written_ones_in_v_f_arms) ... ok
+test_a_c_e_that_is_not_the_products_refuses_v1 (test_fd_vf_addition.Block.test_a_c_e_that_is_not_the_products_refuses_v1) ... ok
+test_a_cpl_block_whose_c_pl5d_is_not_the_products_refuses_v1 (test_fd_vf_addition.Block.test_a_cpl_block_whose_c_pl5d_is_not_the_products_refuses_v1) ... ok
+test_a_df_that_is_not_psd_refuses_v3 (test_fd_vf_addition.Block.test_a_df_that_is_not_psd_refuses_v3) ... ok
+test_a_member_stored_big_endian_refuses_v4 (test_fd_vf_addition.Block.test_a_member_stored_big_endian_refuses_v4) ... ok
+test_a_record_naming_another_v_f_refuses_v0 (test_fd_vf_addition.Block.test_a_record_naming_another_v_f_refuses_v0) ... ok
+test_a_record_whose_v_f_is_not_the_csvs_refuses_v0 (test_fd_vf_addition.Block.test_a_record_whose_v_f_is_not_the_csvs_refuses_v0) ... ok
+test_a_v_f_that_is_not_l_c_e_l_refuses_v2 (test_fd_vf_addition.Block.test_a_v_f_that_is_not_l_c_e_l_refuses_v2) ... ok
+test_an_asymmetric_l_refuses_v2 (test_fd_vf_addition.Block.test_an_asymmetric_l_refuses_v2) ... ok
+test_an_asymmetric_l_with_a_consistent_v_f_refuses_on_symmetry (test_fd_vf_addition.Block.test_an_asymmetric_l_with_a_consistent_v_f_refuses_on_symmetry) ... ok
+test_an_existing_output_refuses (test_fd_vf_addition.Block.test_an_existing_output_refuses) ... ok
+test_an_input_that_is_not_its_pin_refuses_v0 (test_fd_vf_addition.Block.test_an_input_that_is_not_its_pin_refuses_v0) ... ok
+test_an_l_that_does_not_commute_with_c_e_refuses_v2 (test_fd_vf_addition.Block.test_an_l_that_does_not_commute_with_c_e_refuses_v2) ... ok
+test_the_block_is_the_pinned_bytes_and_written_as_declared (test_fd_vf_addition.Block.test_the_block_is_the_pinned_bytes_and_written_as_declared) ... ok
+test_the_committed_block_is_the_pinned_bytes (test_fd_vf_addition.Block.test_the_committed_block_is_the_pinned_bytes) ... ok
+test_the_committed_block_readout_is_what_this_code_writes (test_fd_vf_addition.Block.test_the_committed_block_readout_is_what_this_code_writes) ... ok
+test_the_identity_l_gives_a_zero_df_and_the_committed_matrices (test_fd_vf_addition.Block.test_the_identity_l_gives_a_zero_df_and_the_committed_matrices) ... ok
+test_the_bootstrap_gives_each_variant_its_module (test_fd_vf_addition.Boot.test_the_bootstrap_gives_each_variant_its_module) ... ok
+test_the_v_f_variant_reaches_the_tool_through_the_bootstrap (test_fd_vf_addition.Boot.test_the_v_f_variant_reaches_the_tool_through_the_bootstrap) ... ok
+test_c_fires_on_an_upstream_digest_that_is_not_the_written_one (test_fd_vf_addition.Checks.test_c_fires_on_an_upstream_digest_that_is_not_the_written_one) ... ok
+test_c_requires_each_producers_structured_fields_and_its_argv_role (test_fd_vf_addition.Checks.test_c_requires_each_producers_structured_fields_and_its_argv_role) ... ok
+test_r_figures_fires_on_a_committed_figure_that_is_not_e_a2s_receipt_bytes (test_fd_vf_addition.Checks.test_r_figures_fires_on_a_committed_figure_that_is_not_e_a2s_receipt_bytes) ... ok
+test_r_figures_holds_on_the_committed_figures_and_fires_on_a_changed_pdf (test_fd_vf_addition.Checks.test_r_figures_holds_on_the_committed_figures_and_fires_on_a_changed_pdf) ... ok
+test_r_fires_on_a_committed_file_that_is_not_its_pin (test_fd_vf_addition.Checks.test_r_fires_on_a_committed_file_that_is_not_its_pin) ... ok
+test_r_fires_on_an_infinity_in_place_of_a_finite_number_and_on_a_non_finite_constant (test_fd_vf_addition.Checks.test_r_fires_on_an_infinity_in_place_of_a_finite_number_and_on_a_non_finite_constant) ... ok
+test_r_fires_on_an_overflowed_exponent_that_decodes_to_infinity (test_fd_vf_addition.Checks.test_r_fires_on_an_overflowed_exponent_that_decodes_to_infinity) ... ok
+test_r_holds_on_the_committed_readout_but_argv_and_block_file_and_fires_on_a_number (test_fd_vf_addition.Checks.test_r_holds_on_the_committed_readout_but_argv_and_block_file_and_fires_on_a_number) ... ok
+test_r_with_strings_fires_on_a_changed_label_and_without_them_does_not (test_fd_vf_addition.Checks.test_r_with_strings_fires_on_a_changed_label_and_without_them_does_not) ... ok
+test_s_and_c_hold_on_a_consistent_readout_and_fire_otherwise (test_fd_vf_addition.Checks.test_s_and_c_hold_on_a_consistent_readout_and_fire_otherwise) ... ok
+test_s_fires_on_a_stage_g_without_its_five_predictions (test_fd_vf_addition.Checks.test_s_fires_on_a_stage_g_without_its_five_predictions) ... ok
+test_s_fires_on_an_f0b_whose_sigma_is_not_the_revised_matrix (test_fd_vf_addition.Checks.test_s_fires_on_an_f0b_whose_sigma_is_not_the_revised_matrix) ... ok
+test_strict_decoding_refuses_every_non_finite_constant (test_fd_vf_addition.Checks.test_strict_decoding_refuses_every_non_finite_constant) ... ok
+test_the_experiment_table_must_be_the_readouts_and_the_declared_one (test_fd_vf_addition.Checks.test_the_experiment_table_must_be_the_readouts_and_the_declared_one) ... ok
+test_the_renderer_must_be_e_a2s (test_fd_vf_addition.Checks.test_the_renderer_must_be_e_a2s) ... ok
+test_the_cpl_variant_cannot_build_from_the_v_f_product (test_fd_vf_addition.Deposit.test_the_cpl_variant_cannot_build_from_the_v_f_product) ... ok
+test_the_variant_builds_and_checks_the_reported_matrix_with_v_f (test_fd_vf_addition.Deposit.test_the_variant_builds_and_checks_the_reported_matrix_with_v_f) ... ok
+test_a_committed_deposit_file_that_is_not_the_5b_receipts_refuses (test_fd_vf_addition.OldDepositReceipt.test_a_committed_deposit_file_that_is_not_the_5b_receipts_refuses) ... ok
+test_the_committed_with_block_product_and_deposit_are_reproduced_and_checked_as_recorded (test_fd_vf_addition.OldProductDeposit.test_the_committed_with_block_product_and_deposit_are_reproduced_and_checked_as_recorded) ... ok
+test_a_committed_block_that_is_not_the_pinned_bytes_refuses_before_any_step (test_fd_vf_addition.Order.test_a_committed_block_that_is_not_the_pinned_bytes_refuses_before_any_step) ... ok
+test_a_failed_old_control_stops_before_any_v_f_step (test_fd_vf_addition.Order.test_a_failed_old_control_stops_before_any_v_f_step) ... ok
+test_a_failed_product_or_deposit_control_stops_before_the_v_f_part (test_fd_vf_addition.Order.test_a_failed_product_or_deposit_control_stops_before_the_v_f_part) ... ok
+test_a_predictions_specification_that_is_not_the_committed_one_refuses_before_any_step (test_fd_vf_addition.Order.test_a_predictions_specification_that_is_not_the_committed_one_refuses_before_any_step) ... ok
+test_a_staged_manifest_that_is_not_the_recorded_one_refuses_before_any_step (test_fd_vf_addition.Order.test_a_staged_manifest_that_is_not_the_recorded_one_refuses_before_any_step) ... ok
+test_an_existing_logs_directory_refuses (test_fd_vf_addition.Order.test_an_existing_logs_directory_refuses) ... ok
+test_an_existing_run_directory_refuses (test_fd_vf_addition.Order.test_an_existing_run_directory_refuses) ... ok
+test_every_old_control_passing_reaches_the_v_f_part_last (test_fd_vf_addition.Order.test_every_old_control_passing_reaches_the_v_f_part_last) ... ok
+test_matplotlib_and_temporary_files_stay_under_the_run_directory (test_fd_vf_addition.Order.test_matplotlib_and_temporary_files_stay_under_the_run_directory) ... ok
+test_the_chdefs_old_with_arm_compares_strings_and_the_nopl_arm_does_not (test_fd_vf_addition.Order.test_the_chdefs_old_with_arm_compares_strings_and_the_nopl_arm_does_not) ... ok
+test_the_old_arms_run_in_order_before_the_first_v_f_step (test_fd_vf_addition.Order.test_the_old_arms_run_in_order_before_the_first_v_f_step) ... ok
+test_a_block_readout_on_other_inputs_refuses_k1 (test_fd_vf_addition.Product.test_a_block_readout_on_other_inputs_refuses_k1) ... ok
+test_a_block_whose_df_is_not_v_f_minus_c_e_refuses_k2 (test_fd_vf_addition.Product.test_a_block_whose_df_is_not_v_f_minus_c_e_refuses_k2) ... ok
+test_a_block_whose_v_f_is_not_df_plus_c_e_refuses_on_df (test_fd_vf_addition.Product.test_a_block_whose_v_f_is_not_df_plus_c_e_refuses_on_df) ... ok
+test_a_box_edge_of_minus_zero_refuses_k6_on_readback (test_fd_vf_addition.Product.test_a_box_edge_of_minus_zero_refuses_k6_on_readback) ... ok
+test_a_cells_csv_whose_box_edges_are_not_the_products_refuses_k6_on_readback (test_fd_vf_addition.Product.test_a_cells_csv_whose_box_edges_are_not_the_products_refuses_k6_on_readback) ... ok
+test_a_cells_csv_whose_f_is_not_the_products_refuses_k6_on_readback (test_fd_vf_addition.Product.test_a_cells_csv_whose_f_is_not_the_products_refuses_k6_on_readback) ... ok
+test_a_file_changed_on_disk_after_writing_refuses_k6 (test_fd_vf_addition.Product.test_a_file_changed_on_disk_after_writing_refuses_k6) ... ok
+test_a_json_whose_bytes_changed_on_disk_refuses_k6 (test_fd_vf_addition.Product.test_a_json_whose_bytes_changed_on_disk_refuses_k6) ... ok
+test_a_stage_g_naming_the_old_covariance_refuses_k3 (test_fd_vf_addition.Product.test_a_stage_g_naming_the_old_covariance_refuses_k3) ... ok
+test_a_stage_g_on_the_nopl_key_refuses_k1 (test_fd_vf_addition.Product.test_a_stage_g_on_the_nopl_key_refuses_k1) ... ok
+test_a_stage_g_on_the_old_block_name_refuses_k1 (test_fd_vf_addition.Product.test_a_stage_g_on_the_old_block_name_refuses_k1) ... ok
+test_a_stage_g_sigma_that_is_not_the_revised_matrix_refuses_k3 (test_fd_vf_addition.Product.test_a_stage_g_sigma_that_is_not_the_revised_matrix_refuses_k3) ... ok
+test_a_stage_g_with_a_shortened_cell_list_refuses_k3 (test_fd_vf_addition.Product.test_a_stage_g_with_a_shortened_cell_list_refuses_k3) ... ok
+test_an_existing_output_refuses (test_fd_vf_addition.Product.test_an_existing_output_refuses) ... ok
+test_another_committed_product_refuses_k0 (test_fd_vf_addition.Product.test_another_committed_product_refuses_k0) ... ok
+test_another_committed_product_with_its_own_digest_refuses_k0 (test_fd_vf_addition.Product.test_another_committed_product_with_its_own_digest_refuses_k0) ... ok
+test_cells_whose_box_edges_are_not_the_products_refuse_k6 (test_fd_vf_addition.Product.test_cells_whose_box_edges_are_not_the_products_refuse_k6) ... ok
+test_the_product_carries_both_revised_matrices_and_reads_back (test_fd_vf_addition.Product.test_the_product_carries_both_revised_matrices_and_reads_back) ... ok
+test_without_the_chains_pins_it_refuses (test_fd_vf_addition.Product.test_without_the_chains_pins_it_refuses) ... ok
+test_a_nonzero_exit_or_a_missing_output_stops (test_fd_vf_addition.Runner.test_a_nonzero_exit_or_a_missing_output_stops) ... ok
+test_pins_and_the_prediction_set_reach_the_tool_in_process (test_fd_vf_addition.Runner.test_pins_and_the_prediction_set_reach_the_tool_in_process) ... ok
+test_the_figures_check_runs_as_its_cli_even_with_pins (test_fd_vf_addition.Runner.test_the_figures_check_runs_as_its_cli_even_with_pins) ... ok
+test_curated_checks_identities_in_a_family_it_has_no_rows_for (test_fd_vf_addition.Table.test_curated_checks_identities_in_a_family_it_has_no_rows_for) ... ok
+test_curated_names_newly_listed_and_cleared_truths (test_fd_vf_addition.Table.test_curated_names_newly_listed_and_cleared_truths) ... ok
+test_each_side_names_its_matrix (test_fd_vf_addition.Table.test_each_side_names_its_matrix) ... ok
+test_f0s_sigma_pairs_its_base_with_the_revised_one_on_the_same_cells (test_fd_vf_addition.Table.test_f0s_sigma_pairs_its_base_with_the_revised_one_on_the_same_cells) ... ok
+test_named_records_are_checked_in_every_readout_family_before_pairing (test_fd_vf_addition.Table.test_named_records_are_checked_in_every_readout_family_before_pairing) ... ok
+test_renaming_maps_each_v_f_key_to_the_old_spelling (test_fd_vf_addition.Table.test_renaming_maps_each_v_f_key_to_the_old_spelling) ... ok
+test_same_bits_tells_minus_zero_and_dtype_apart (test_fd_vf_addition.Table.test_same_bits_tells_minus_zero_and_dtype_apart) ... ok
+test_stage_g_matrices_carry_df_before_v_g_and_the_order_is_checked (test_fd_vf_addition.Table.test_stage_g_matrices_carry_df_before_v_g_and_the_order_is_checked) ... ok
+test_the_table_is_written_from_pinned_pairs (test_fd_vf_addition.Table.test_the_table_is_written_from_pinned_pairs) ... ok
+test_the_table_refuses_without_the_chains_pins (test_fd_vf_addition.Table.test_the_table_refuses_without_the_chains_pins) ... ok
+test_truths_in_another_order_refuse_t (test_fd_vf_addition.Table.test_truths_in_another_order_refuse_t) ... ok
+test_the_v_f_part_runs_f0_both_sides_the_product_the_deposit_and_the_table_in_order (test_fd_vf_addition.VfArms.test_the_v_f_part_runs_f0_both_sides_the_product_the_deposit_and_the_table_in_order) ... ok
+test_a_5b_readout_on_another_s1_refuses (test_fd_cpl_addition.Block.test_a_5b_readout_on_another_s1_refuses) ... ok
+test_a_cresp_whose_total_is_not_its_parts_refuses_b2 (test_fd_cpl_addition.Block.test_a_cresp_whose_total_is_not_its_parts_refuses_b2) ... ok
+test_a_pin_that_is_not_the_files_refuses (test_fd_cpl_addition.Block.test_a_pin_that_is_not_the_files_refuses) ... ok
+test_a_rank_three_block_refuses (test_fd_cpl_addition.Block.test_a_rank_three_block_refuses) ... ok
+test_a_sigma_that_is_not_the_5b_readouts_refuses (test_fd_cpl_addition.Block.test_a_sigma_that_is_not_the_5b_readouts_refuses) ... ok
+test_a_stop_condition_with_a_clause_named_refuses (test_fd_cpl_addition.Block.test_a_stop_condition_with_a_clause_named_refuses) ... ok
+test_a_stop_that_fired_refuses (test_fd_cpl_addition.Block.test_a_stop_that_fired_refuses) ... ok
+test_a_trace_share_that_is_not_the_5b_readouts_refuses (test_fd_cpl_addition.Block.test_a_trace_share_that_is_not_the_5b_readouts_refuses) ... ok
+test_an_asymmetric_block_refuses (test_fd_cpl_addition.Block.test_an_asymmetric_block_refuses) ... ok
+test_an_audit_on_another_5b_readout_refuses (test_fd_cpl_addition.Block.test_an_audit_on_another_5b_readout_refuses) ... ok
+test_an_existing_output_refuses (test_fd_cpl_addition.Block.test_an_existing_output_refuses) ... ok
+test_the_block_is_written_as_declared_and_reproduced (test_fd_cpl_addition.Block.test_the_block_is_written_as_declared_and_reproduced) ... ok
+test_a_failed_check_stops_and_is_recorded (test_fd_cpl_addition.ChainRunner.test_a_failed_check_stops_and_is_recorded) ... ok
+test_a_missing_output_stops_the_chain (test_fd_cpl_addition.ChainRunner.test_a_missing_output_stops_the_chain) ... ok
+test_a_nonzero_exit_stops_the_chain (test_fd_cpl_addition.ChainRunner.test_a_nonzero_exit_stops_the_chain) ... ok
+test_pins_reach_the_tool_in_process_and_argv_is_the_tools (test_fd_cpl_addition.ChainRunner.test_pins_reach_the_tool_in_process_and_argv_is_the_tools) ... ok
+test_the_deposit_variant_reaches_the_tool_through_the_bootstrap (test_fd_cpl_addition.ChainRunner.test_the_deposit_variant_reaches_the_tool_through_the_bootstrap) ... ok
+test_without_pins_the_tool_runs_as_its_cli (test_fd_cpl_addition.ChainRunner.test_without_pins_the_tool_runs_as_its_cli) ... ok
+test_the_committed_audit_did_not_stop (test_fd_cpl_addition.Committed.test_the_committed_audit_did_not_stop) ... ok
+test_the_pins_are_the_committed_files (test_fd_cpl_addition.Committed.test_the_pins_are_the_committed_files) ... ok
+test_the_table_reads_every_curated_field_from_the_committed_readouts (test_fd_cpl_addition.Committed.test_the_table_reads_every_curated_field_from_the_committed_readouts) ... ok
+test_a_bool_and_a_null_are_compared_by_type (test_fd_cpl_addition.Compare.test_a_bool_and_a_null_are_compared_by_type) ... ok
+test_a_changed_number_is_found_and_a_last_bit_is_not (test_fd_cpl_addition.Compare.test_a_changed_number_is_found_and_a_last_bit_is_not) ... ok
+test_a_changed_structure_is_found (test_fd_cpl_addition.Compare.test_a_changed_structure_is_found) ... ok
+test_a_readout_equals_itself (test_fd_cpl_addition.Compare.test_a_readout_equals_itself) ... ok
+test_argv_and_code_digests_are_excluded_but_named (test_fd_cpl_addition.Compare.test_argv_and_code_digests_are_excluded_but_named) ... ok
+test_pairing_renames_the_blocks_key (test_fd_cpl_addition.Compare.test_pairing_renames_the_blocks_key) ... ok
+test_strings_are_compared_outside_the_exclusions (test_fd_cpl_addition.Compare.test_strings_are_compared_outside_the_exclusions) ... ok
+test_the_figure_sidecar_exclusion_is_argv_code_and_versions_only (test_fd_cpl_addition.Compare.test_the_figure_sidecar_exclusion_is_argv_code_and_versions_only) ... ok
+test_a_package_edited_after_the_build_fails_the_variants_check (test_fd_cpl_addition.Deposit.test_a_package_edited_after_the_build_fails_the_variants_check) ... ok
+test_the_default_check_with_the_variants_pins_refuses_the_package_content (test_fd_cpl_addition.Deposit.test_the_default_check_with_the_variants_pins_refuses_the_package_content) ... ok
+test_the_default_variant_is_todays_constants (test_fd_cpl_addition.Deposit.test_the_default_variant_is_todays_constants) ... ok
+test_the_default_variant_refuses_the_revised_product_at_its_pins (test_fd_cpl_addition.Deposit.test_the_default_variant_refuses_the_revised_product_at_its_pins) ... ok
+test_the_variant_builds_and_checks_the_revised_matrix (test_fd_cpl_addition.Deposit.test_the_variant_builds_and_checks_the_revised_matrix) ... ok
+test_the_variant_package_fails_the_default_check_at_its_pins (test_fd_cpl_addition.Deposit.test_the_variant_package_fails_the_default_check_at_its_pins) ... ok
+test_the_variant_with_another_stage_g_pin_refuses (test_fd_cpl_addition.Deposit.test_the_variant_with_another_stage_g_pin_refuses) ... ok
+test_a_readout_on_another_block_fails_control_c (test_fd_cpl_addition.DryWith.test_a_readout_on_another_block_fails_control_c) ... ok
+test_a_stage_g_sigma_that_is_not_the_revised_matrix_fails_control_s (test_fd_cpl_addition.DryWith.test_a_stage_g_sigma_that_is_not_the_revised_matrix_fails_control_s) ... ok
+test_a_step_that_reads_a_stale_upstream_fails_control_c (test_fd_cpl_addition.DryWith.test_a_step_that_reads_a_stale_upstream_fails_control_c) ... ok
+test_each_steps_pins_are_the_files_the_steps_before_wrote (test_fd_cpl_addition.DryWith.test_each_steps_pins_are_the_files_the_steps_before_wrote) ... ok
+test_a_changed_byte_in_a_data_product_csv_fires (test_fd_cpl_addition.DryWithout.test_a_changed_byte_in_a_data_product_csv_fires) ... ok
+test_a_changed_deposit_label_fires_and_a_changed_code_digest_does_not (test_fd_cpl_addition.DryWithout.test_a_changed_deposit_label_fires_and_a_changed_code_digest_does_not) ... ok
+test_a_changed_number_in_a_readout_fires (test_fd_cpl_addition.DryWithout.test_a_changed_number_in_a_readout_fires) ... ok
+test_a_changed_pdf_fires (test_fd_cpl_addition.DryWithout.test_a_changed_pdf_fires) ... ok
+test_the_committed_files_pass_every_r_check (test_fd_cpl_addition.DryWithout.test_the_committed_files_pass_every_r_check) ... ok
+test_a_renamed_tree_whose_f0b_key_is_the_old_one_refuses_k2 (test_fd_cpl_addition.Figures.test_a_renamed_tree_whose_f0b_key_is_the_old_one_refuses_k2) ... ok
+test_a_renamed_tree_with_one_old_matrix_name_refuses_k5 (test_fd_cpl_addition.Figures.test_a_renamed_tree_with_one_old_matrix_name_refuses_k5) ... ok
+test_the_default_name_refuses_the_renamed_tree (test_fd_cpl_addition.Figures.test_the_default_name_refuses_the_renamed_tree) ... ok
+test_the_default_names_c_resp_and_records_no_new_option (test_fd_cpl_addition.Figures.test_the_default_names_c_resp_and_records_no_new_option) ... 'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+ok
+test_the_new_name_refuses_the_default_tree (test_fd_cpl_addition.Figures.test_the_new_name_refuses_the_default_tree) ... ok
+test_the_renamed_block_draws_with_its_name (test_fd_cpl_addition.Figures.test_the_renamed_block_draws_with_its_name) ... 'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+ok
+test_a_name_that_is_not_stage_gs_refuses (test_fd_cpl_addition.FluxBoot.test_a_name_that_is_not_stage_gs_refuses) ... ok
+test_the_default_labels_are_the_committed_readouts (test_fd_cpl_addition.FluxBoot.test_the_default_labels_are_the_committed_readouts) ... ok
+test_the_labels_name_the_runs_matrix_in_both_directions (test_fd_cpl_addition.FluxBoot.test_the_labels_name_the_runs_matrix_in_both_directions) ... ok
+test_a_context_not_marked_descriptive_fires_L (test_fd_cpl_addition.Labels.test_a_context_not_marked_descriptive_fires_L) ... ok
+test_a_context_number_that_is_not_the_audits_fires_L (test_fd_cpl_addition.Labels.test_a_context_number_that_is_not_the_audits_fires_L) ... ok
+test_a_missing_decision_label_fires_L (test_fd_cpl_addition.Labels.test_a_missing_decision_label_fires_L) ... ok
+test_every_context_number_is_the_committed_audit_readouts (test_fd_cpl_addition.Labels.test_every_context_number_is_the_committed_audit_readouts) ... ok
+test_two_numbers_swapped_between_periods_fire_L (test_fd_cpl_addition.Labels.test_two_numbers_swapped_between_periods_fire_L) ... ok
+test_a_different_array_gives_different_bytes (test_fd_cpl_addition.Npz.test_a_different_array_gives_different_bytes) ... ok
+test_another_process_writes_the_same_bytes (test_fd_cpl_addition.Npz.test_another_process_writes_the_same_bytes) ... ok
+test_the_same_arrays_give_the_same_bytes_and_np_load_reads_them (test_fd_cpl_addition.Npz.test_the_same_arrays_give_the_same_bytes_and_np_load_reads_them) ... ok
+test_a_block_of_rank_three_refuses_k4 (test_fd_cpl_addition.Product.test_a_block_of_rank_three_refuses_k4) ... ok
+test_a_csv_that_does_not_read_back_refuses_k6 (test_fd_cpl_addition.Product.test_a_csv_that_does_not_read_back_refuses_k6) ... ok
+test_a_data_product_whose_c_resp_is_not_the_blocks_refuses (test_fd_cpl_addition.Product.test_a_data_product_whose_c_resp_is_not_the_blocks_refuses) ... ok
+test_a_data_product_whose_matrix_is_not_its_parts_plus_the_block_refuses (test_fd_cpl_addition.Product.test_a_data_product_whose_matrix_is_not_its_parts_plus_the_block_refuses) ... ok
+test_a_stage_g_on_another_block_name_refuses (test_fd_cpl_addition.Product.test_a_stage_g_on_another_block_name_refuses) ... ok
+test_a_stage_g_sigma_that_is_not_the_revised_matrix_refuses (test_fd_cpl_addition.Product.test_a_stage_g_sigma_that_is_not_the_revised_matrix_refuses) ... ok
+test_a_without_sigma_that_is_not_the_committed_products_refuses_k5 (test_fd_cpl_addition.Product.test_a_without_sigma_that_is_not_the_committed_products_refuses_k5) ... ok
+test_an_existing_output_refuses (test_fd_cpl_addition.Product.test_an_existing_output_refuses) ... ok
+test_the_product_is_written_beside_the_without_matrix_and_reads_back (test_fd_cpl_addition.Product.test_the_product_is_written_beside_the_without_matrix_and_reads_back) ... ok
+test_without_the_chains_pins_it_refuses (test_fd_cpl_addition.Product.test_without_the_chains_pins_it_refuses) ... ok
+test_a_flag_dropped_from_a_step_would_be_seen (test_fd_cpl_addition.StepArgv.test_a_flag_dropped_from_a_step_would_be_seen) ... ok
+test_every_steps_flags_are_its_bound_runs (test_fd_cpl_addition.StepArgv.test_every_steps_flags_are_its_bound_runs) ... ok
+test_the_without_arm_uses_cresp_and_the_with_arm_the_block (test_fd_cpl_addition.StepArgv.test_the_without_arm_uses_cresp_and_the_with_arm_the_block) ... ok
+test_the_without_data_product_is_the_bound_tools_argv (test_fd_cpl_addition.StepArgv.test_the_without_data_product_is_the_bound_tools_argv) ... ok
+test_a_with_side_in_another_order_refuses (test_fd_cpl_addition.Table.test_a_with_side_in_another_order_refuses) ... ok
+test_a_with_side_that_kept_the_old_shape_only_name_refuses (test_fd_cpl_addition.Table.test_a_with_side_that_kept_the_old_shape_only_name_refuses) ... ok
+test_a_without_side_that_is_not_the_committed_readout_refuses (test_fd_cpl_addition.Table.test_a_without_side_that_is_not_the_committed_readout_refuses) ... ok
+test_the_table_is_written_from_the_committed_readouts (test_fd_cpl_addition.Table.test_the_table_is_written_from_the_committed_readouts) ... ok
+test_gibuu_cells_and_counts (test_fd_g_compare.CommittedPins.test_gibuu_cells_and_counts) ... ok
+test_prediction_digests_are_the_archive_manifest_and_the_pv2d_config (test_fd_g_compare.CommittedPins.test_prediction_digests_are_the_archive_manifest_and_the_pv2d_config) ... ok
+test_record_pins (test_fd_g_compare.CommittedPins.test_record_pins) ... ok
+test_g0_digests (test_fd_g_compare.Controls.test_g0_digests) ... ok
+test_g0_s1_readout_names_the_npz (test_fd_g_compare.Controls.test_g0_s1_readout_names_the_npz) ... ok
+test_g1_structure (test_fd_g_compare.Controls.test_g1_structure) ... ok
+test_g2_one_entry_defects (test_fd_g_compare.Controls.test_g2_one_entry_defects) ... ok
+test_g2_s1 (test_fd_g_compare.Controls.test_g2_s1) ... ok
+test_g3_gibuu_cells (test_fd_g_compare.Controls.test_g3_gibuu_cells) ... ok
+test_g4_a_high_gibuu_cell_is_never_integrated (test_fd_g_compare.Controls.test_g4_a_high_gibuu_cell_is_never_integrated) ... ok
+test_g4_positive_integrals (test_fd_g_compare.Controls.test_g4_positive_integrals) ... ok
+test_no_gibuu_value_above_p_parallel_4p5_is_shown (test_fd_g_compare.EndToEnd.test_no_gibuu_value_above_p_parallel_4p5_is_shown) ... ok
+test_no_gibuu_value_above_p_parallel_4p5_is_shown_with_an_adopted_block (test_fd_g_compare.EndToEnd.test_no_gibuu_value_above_p_parallel_4p5_is_shown_with_an_adopted_block) ... ok
+test_refuses_to_overwrite (test_fd_g_compare.EndToEnd.test_refuses_to_overwrite) ... ok
+test_run_as_invoked_and_recomputed_by_hand (test_fd_g_compare.EndToEnd.test_run_as_invoked_and_recomputed_by_hand) ... ok
+test_adopted_reports_the_block_and_labels_the_other_without_it (test_fd_g_compare.ExtraBlock.test_adopted_reports_the_block_and_labels_the_other_without_it) ... ok
+test_refusals (test_fd_g_compare.ExtraBlock.test_refusals) ... ok
+test_sensitivity_reports_c_total_and_labels_the_block_a_variant (test_fd_g_compare.ExtraBlock.test_sensitivity_reports_c_total_and_labels_the_block_a_variant) ... ok
+test_the_five_options_go_together_and_the_role_is_one_of_two (test_fd_g_compare.ExtraBlock.test_the_five_options_go_together_and_the_role_is_one_of_two) ... ok
+test_the_two_roles_swap_the_same_two_comparisons (test_fd_g_compare.ExtraBlock.test_the_two_roles_swap_the_same_two_comparisons) ... ok
+test_without_the_option_there_is_no_variant (test_fd_g_compare.ExtraBlock.test_without_the_option_there_is_no_variant) ... ok
+test_help_and_argparse_under_isolation (test_fd_g_compare.Invocation.test_help_and_argparse_under_isolation) ... ok
+test_the_real_script_reaches_g0_and_refuses_synthetic_records (test_fd_g_compare.Invocation.test_the_real_script_reaches_g0_and_refuses_synthetic_records) ... ok
+test_chi2_survival_is_exact_for_every_ndf_used (test_fd_g_compare.Statistics.test_chi2_survival_is_exact_for_every_ndf_used) ... ok
+test_compare_by_hand (test_fd_g_compare.Statistics.test_compare_by_hand) ... ok
+test_rank_counts_eigenvalues_above_the_relative_threshold (test_fd_g_compare.Statistics.test_rank_counts_eigenvalues_above_the_relative_threshold) ... ok
+test_shape_only_removes_a_pure_normalization (test_fd_g_compare.Statistics.test_shape_only_removes_a_pure_normalization) ... ok
+test_an_ill_conditioned_removal_is_flagged (test_fd_g_diag.Analytic.test_an_ill_conditioned_removal_is_flagged) ... ok
+test_an_indefinite_matrix_is_unstable_and_carries_no_chi2 (test_fd_g_diag.Analytic.test_an_indefinite_matrix_is_unstable_and_carries_no_chi2) ... ok
+test_disjoint_blocks_own_their_modes (test_fd_g_diag.Analytic.test_disjoint_blocks_own_their_modes) ... ok
+test_modes_needed (test_fd_g_diag.Analytic.test_modes_needed) ... ok
+test_near_singular_is_exposed_by_the_ridge (test_fd_g_diag.Analytic.test_near_singular_is_exposed_by_the_ridge) ... ok
+test_non_finite_numbers_are_written_as_null_and_counted (test_fd_g_diag.Analytic.test_non_finite_numbers_are_written_as_null_and_counted) ... ok
+test_ridge_sensitivity_threshold_and_ridge_size_are_the_declared_ones (test_fd_g_diag.Analytic.test_ridge_sensitivity_threshold_and_ridge_size_are_the_declared_ones)
+A diagonal M with a known ridge response pins RIDGE (times the MEAN diagonal), UNSTABLE, and the change's ... ok
+test_the_stdout_line_carries_the_flags_and_the_dominant_block (test_fd_g_diag.Analytic.test_the_stdout_line_carries_the_flags_and_the_dominant_block) ... ok
+test_well_conditioned_decomposition_is_analytic (test_fd_g_diag.Analytic.test_well_conditioned_decomposition_is_analytic) ... ok
+test_every_committed_s1_block_maps_to_the_seven_groups (test_fd_g_diag.CommittedPins.test_every_committed_s1_block_maps_to_the_seven_groups) ... ok
+test_the_stage_g_readout_pin_and_its_extra_block (test_fd_g_diag.CommittedPins.test_the_stage_g_readout_pin_and_its_extra_block) ... ok
+test_d0_extra_block_digest (test_fd_g_diag.Controls.test_d0_extra_block_digest) ... ok
+test_d0_stage_g_readout_pin (test_fd_g_diag.Controls.test_d0_stage_g_readout_pin) ... ok
+test_d1_prediction_structure (test_fd_g_diag.Controls.test_d1_prediction_structure) ... ok
+test_d2_a_missing_block (test_fd_g_diag.Controls.test_d2_a_missing_block) ... ok
+test_d2_an_unknown_group (test_fd_g_diag.Controls.test_d2_an_unknown_group) ... ok
+test_d2_c_e_is_not_the_sum_of_the_blocks (test_fd_g_diag.Controls.test_d2_c_e_is_not_the_sum_of_the_blocks) ... ok
+test_d2_no_block_list (test_fd_g_diag.Controls.test_d2_no_block_list) ... ok
+test_d2_s_not_c_model (test_fd_g_diag.Controls.test_d2_s_not_c_model) ... ok
+test_d2_the_extra_block (test_fd_g_diag.Controls.test_d2_the_extra_block) ... ok
+test_d2_vertices_in_another_order (test_fd_g_diag.Controls.test_d2_vertices_in_another_order) ... ok
+test_d3_gibuu_cells (test_fd_g_diag.Controls.test_d3_gibuu_cells) ... ok
+test_d4_a_non_positive_integral (test_fd_g_diag.Controls.test_d4_a_non_positive_integral) ... ok
+test_d5_another_cell_set (test_fd_g_diag.Controls.test_d5_another_cell_set) ... ok
+test_d5_each_sub_check (test_fd_g_diag.Controls.test_d5_each_sub_check) ... ok
+test_d5_numbers_to_1e_10 (test_fd_g_diag.Controls.test_d5_numbers_to_1e_10) ... ok
+test_d6_a_block_left_out_or_off_by_1e_9 (test_fd_g_diag.Controls.test_d6_a_block_left_out_or_off_by_1e_9) ... ok
+test_d7_the_breakdowns_residual_is_not_stage_gs (test_fd_g_diag.Controls.test_d7_the_breakdowns_residual_is_not_stage_gs) ... /pscratch/sd/j/josephrb/vf-20261125-p1/deploy/nd-unfolding/tests/test_fd_g_diag.py:692: RuntimeWarning: divide by zero encountered in divide
+  with mock.patch.object(D, "residual", lambda f, g, i, sc: ((f - g) / g * sc)[i]):
+ok
+test_refuses_to_overwrite (test_fd_g_diag.EndToEnd.test_refuses_to_overwrite) ... ok
+test_run_as_invoked_reproduces_stage_g_and_partitions_m (test_fd_g_diag.EndToEnd.test_run_as_invoked_reproduces_stage_g_and_partitions_m) ... ok
+test_sensitivity_role_swaps_which_comparison_is_reported (test_fd_g_diag.EndToEnd.test_sensitivity_role_swaps_which_comparison_is_reported) ... ok
+test_help_and_argparse_under_isolation (test_fd_g_diag.Invocation.test_help_and_argparse_under_isolation) ... ok
+test_the_real_script_reaches_d0_and_refuses_synthetic_records (test_fd_g_diag.Invocation.test_the_real_script_reaches_d0_and_refuses_synthetic_records) ... ok
+test_item_1_spectrum_ascending (test_fd_g_diag.PlantedDefects.test_item_1_spectrum_ascending) ... ok
+test_item_2_modes_needed_off_by_one (test_fd_g_diag.PlantedDefects.test_item_2_modes_needed_off_by_one) ... ok
+test_item_2_per_mode_chi2_over_sqrt_lambda (test_fd_g_diag.PlantedDefects.test_item_2_per_mode_chi2_over_sqrt_lambda) ... ok
+test_item_3_shares_not_divided_by_lambda (test_fd_g_diag.PlantedDefects.test_item_3_shares_not_divided_by_lambda) ... ok
+test_item_4_block_added_instead_of_removed (test_fd_g_diag.PlantedDefects.test_item_4_block_added_instead_of_removed) ... ok
+test_item_4_no_p_value_on_a_removal (test_fd_g_diag.PlantedDefects.test_item_4_no_p_value_on_a_removal)
+Amendment 1: a p-value planted back into the removal record is caught. ... ok
+test_item_5_methods_compared_to_themselves (test_fd_g_diag.PlantedDefects.test_item_5_methods_compared_to_themselves) ... ok
+test_item_5_no_ridge_hides_the_artefact (test_fd_g_diag.PlantedDefects.test_item_5_no_ridge_hides_the_artefact) ... ok
+test_r04_leads_the_top_modes_its_cells_load_in (test_fd_g_followup.CommittedPins.test_r04_leads_the_top_modes_its_cells_load_in)
+The cells are the director's: R04 is the largest-|loading| cell of a reported relative-to-f top mode of ... ok
+test_s1s_readout_carries_what_r2_checks (test_fd_g_followup.CommittedPins.test_s1s_readout_carries_what_r2_checks) ... ok
+test_the_g_diag_readout_pin_and_what_it_ran_on (test_fd_g_followup.CommittedPins.test_the_g_diag_readout_pin_and_what_it_ran_on) ... ok
+test_d0_runs_first (test_fd_g_followup.Controls.test_d0_runs_first) ... ok
+test_f0_each_sub_check (test_fd_g_followup.Controls.test_f0_each_sub_check) ... ok
+test_f0_the_g_diag_readout_pin (test_fd_g_followup.Controls.test_f0_the_g_diag_readout_pin) ... ok
+test_r1_a_cell_not_reported (test_fd_g_followup.Controls.test_r1_a_cell_not_reported) ... ok
+test_r1_a_fine_bin_mapped_outside_the_cells (test_fd_g_followup.Controls.test_r1_a_fine_bin_mapped_outside_the_cells) ... ok
+test_r1_u_disagrees_with_the_fine_map (test_fd_g_followup.Controls.test_r1_u_disagrees_with_the_fine_map) ... ok
+test_r2_a_group_off_by_1e_9_or_a_median_missing (test_fd_g_followup.Controls.test_r2_a_group_off_by_1e_9_or_a_median_missing) ... ok
+test_r2_a_median_or_stage_gs_sigma_total_off_by_1e_9 (test_fd_g_followup.Controls.test_r2_a_median_or_stage_gs_sigma_total_off_by_1e_9) ... ok
+test_r2_item_2s_median_is_a_mean (test_fd_g_followup.Controls.test_r2_item_2s_median_is_a_mean) ... ok
+test_r2_not_stage_gs_sigma_total (test_fd_g_followup.Controls.test_r2_not_stage_gs_sigma_total) ... ok
+test_r2_vertices_do_not_sum_to_c_model (test_fd_g_followup.Controls.test_r2_vertices_do_not_sum_to_c_model) ... ok
+test_r4_and_s0_tolerances (test_fd_g_followup.Controls.test_r4_and_s0_tolerances) ... ok
+test_every_listed_cells_reporting_neighbours_match_the_geometry (test_fd_g_followup.Definition.test_every_listed_cells_reporting_neighbours_match_the_geometry) ... ok
+test_h2_boxes_rebuild_every_cells_box (test_fd_g_followup.Definition.test_h2_boxes_rebuild_every_cells_box) ... ok
+test_r04s_neighbours_by_hand (test_fd_g_followup.Definition.test_r04s_neighbours_by_hand) ... ok
+test_the_definitions_search_fields (test_fd_g_followup.Definition.test_the_definitions_search_fields) ... ok
+test_a_non_finite_number_is_written_as_null_and_counted (test_fd_g_followup.EndToEnd.test_a_non_finite_number_is_written_as_null_and_counted) ... ok
+test_refuses_to_overwrite (test_fd_g_followup.EndToEnd.test_refuses_to_overwrite) ... ok
+test_run_as_invoked_every_number_by_hand (test_fd_g_followup.EndToEnd.test_run_as_invoked_every_number_by_hand) ... ok
+test_the_sensitivity_role_reports_the_matrix_without_c_resp (test_fd_g_followup.EndToEnd.test_the_sensitivity_role_reports_the_matrix_without_c_resp) ... ok
+test_help_and_argparse_under_isolation (test_fd_g_followup.Invocation.test_help_and_argparse_under_isolation) ... ok
+test_the_real_script_reaches_d0_and_refuses_synthetic_records (test_fd_g_followup.Invocation.test_the_real_script_reaches_d0_and_refuses_synthetic_records) ... ok
+test_item_0_the_variant_comparisons_modes (test_fd_g_followup.PlantedDefects.test_item_0_the_variant_comparisons_modes) ... ok
+test_item_1_fine_bins_counted_over_the_whole_grid (test_fd_g_followup.PlantedDefects.test_item_1_fine_bins_counted_over_the_whole_grid) ... ok
+test_item_1_neighbours_across_two_axes (test_fd_g_followup.PlantedDefects.test_item_1_neighbours_across_two_axes) ... ok
+test_item_1_the_h2_bit_order_reversed (test_fd_g_followup.PlantedDefects.test_item_1_the_h2_bit_order_reversed) ... ok
+test_item_2_median_over_the_listed_cells (test_fd_g_followup.PlantedDefects.test_item_2_median_over_the_listed_cells) ... ok
+test_item_2_not_divided_by_f (test_fd_g_followup.PlantedDefects.test_item_2_not_divided_by_f) ... ok
+test_item_2_variance_not_sigma (test_fd_g_followup.PlantedDefects.test_item_2_variance_not_sigma) ... ok
+test_item_3_correlation_without_the_square_root (test_fd_g_followup.PlantedDefects.test_item_3_correlation_without_the_square_root) ... ok
+test_item_3_the_reported_covariance_without_c_resp (test_fd_g_followup.PlantedDefects.test_item_3_the_reported_covariance_without_c_resp) ... ok
+test_item_4_a_gibuu_value_formed_on_r04 (test_fd_g_followup.PlantedDefects.test_item_4_a_gibuu_value_formed_on_r04) ... ok
+test_item_4_a_readout_whose_pulls_do_not_follow_from_its_sigmas (test_fd_g_followup.PlantedDefects.test_item_4_a_readout_whose_pulls_do_not_follow_from_its_sigmas) ... ok
+test_item_4_the_variants_pulls (test_fd_g_followup.PlantedDefects.test_item_4_the_variants_pulls) ... ok
+test_item_5_a_case_sensitive_search (test_fd_g_followup.PlantedDefects.test_item_5_a_case_sensitive_search) ... ok
+test_item_5_a_dotted_key_is_one_key (test_fd_g_followup.PlantedDefects.test_item_5_a_dotted_key_is_one_key) ... ok
+test_sens_a_group_outside_the_family_shrunk_too (test_fd_g_followup.PlantedDefects.test_sens_a_group_outside_the_family_shrunk_too) ... ok
+test_sens_a_p_value (test_fd_g_followup.PlantedDefects.test_sens_a_p_value) ... ok
+test_sens_an_indefinite_shrunk_matrix (test_fd_g_followup.PlantedDefects.test_sens_an_indefinite_shrunk_matrix) ... ok
+test_sens_c_resp_dropped (test_fd_g_followup.PlantedDefects.test_sens_c_resp_dropped) ... ok
+test_sens_normalization_is_bit_identical_in_every_second_family_matrix (test_fd_g_followup.PlantedDefects.test_sens_normalization_is_bit_identical_in_every_second_family_matrix) ... ok
+test_sens_normalization_put_back_in_the_second_family (test_fd_g_followup.PlantedDefects.test_sens_normalization_put_back_in_the_second_family) ... ok
+test_sens_the_diagonal_scaled_too (test_fd_g_followup.PlantedDefects.test_sens_the_diagonal_scaled_too) ... ok
+test_sens_the_modes_in_absolute_units (test_fd_g_followup.PlantedDefects.test_sens_the_modes_in_absolute_units) ... ok
+test_sens_the_wrong_group_shrunk (test_fd_g_followup.PlantedDefects.test_sens_the_wrong_group_shrunk) ... ok
+test_normalization_and_every_other_block_bit_identical (test_fd_g_followup.Sens2.test_normalization_and_every_other_block_bit_identical) ... ok
+test_refuses_to_overwrite (test_fd_g_followup.Sens2.test_refuses_to_overwrite) ... ok
+test_run_as_invoked_every_number_by_hand (test_fd_g_followup.Sens2.test_run_as_invoked_every_number_by_hand) ... ok
+test_the_declared_constants (test_fd_g_followup.Sens2.test_the_declared_constants) ... ok
+test_the_g_followup_readout_pin_and_the_identity_records (test_fd_g_followup.Sens2CommittedPins.test_the_g_followup_readout_pin_and_the_identity_records) ... ok
+test_h0_each_sub_check (test_fd_g_followup.Sens2Controls.test_h0_each_sub_check) ... ok
+test_h0_the_pin (test_fd_g_followup.Sens2Controls.test_h0_the_pin) ... ok
+test_s0_runs_on_the_new_families (test_fd_g_followup.Sens2Controls.test_s0_runs_on_the_new_families) ... ok
+test_s1_an_indefinite_shrunk_matrix (test_fd_g_followup.Sens2Controls.test_s1_an_indefinite_shrunk_matrix) ... ok
+test_h0_refuses_a_recomputed_chi2_that_is_none (test_fd_g_followup.Sens2Coverage.test_h0_refuses_a_recomputed_chi2_that_is_none) ... ok
+test_h1_refuses_a_family_named_for_a_forbidden_group (test_fd_g_followup.Sens2Coverage.test_h1_refuses_a_family_named_for_a_forbidden_group) ... ok
+test_h2_tolerance_followed_shares_and_a_flipped_loading (test_fd_g_followup.Sens2Coverage.test_h2_tolerance_followed_shares_and_a_flipped_loading) ... ok
+test_identity_fields_below_the_tolerance (test_fd_g_followup.Sens2Coverage.test_identity_fields_below_the_tolerance) ... ok
+test_s2_one_ulp_on_a_diagonal_an_off_diagonal_and_an_extra_block (test_fd_g_followup.Sens2Coverage.test_s2_one_ulp_on_a_diagonal_an_off_diagonal_and_an_extra_block) ... ok
+test_the_default_pins_are_sens2s (test_fd_g_followup.Sens2Coverage.test_the_default_pins_are_sens2s) ... ok
+test_the_sensitivity_role_leaves_c_resp_out_of_unchanged (test_fd_g_followup.Sens2Coverage.test_the_sensitivity_role_leaves_c_resp_out_of_unchanged) ... ok
+test_part_sens2_needs_the_followup_readout_and_followup_needs_g_diag (test_fd_g_followup.Sens2Invocation.test_part_sens2_needs_the_followup_readout_and_followup_needs_g_diag) ... ok
+test_the_real_script_reaches_d0_and_refuses_synthetic_records (test_fd_g_followup.Sens2Invocation.test_the_real_script_reaches_d0_and_refuses_synthetic_records) ... ok
+test_detector_family_scales_the_diagonal (test_fd_g_followup.Sens2PlantedDefects.test_detector_family_scales_the_diagonal) ... ok
+test_flux_family_names_detector (test_fd_g_followup.Sens2PlantedDefects.test_flux_family_names_detector) ... ok
+test_identity_against_a_tampered_readout (test_fd_g_followup.Sens2PlantedDefects.test_identity_against_a_tampered_readout) ... ok
+test_identity_recomputed_with_the_wrong_family (test_fd_g_followup.Sens2PlantedDefects.test_identity_recomputed_with_the_wrong_family) ... ok
+test_lateral_family_shrinks_normalization_too (test_fd_g_followup.Sens2PlantedDefects.test_lateral_family_shrinks_normalization_too) ... ok
+test_shares_from_the_unshrunk_blocks (test_fd_g_followup.Sens2PlantedDefects.test_shares_from_the_unshrunk_blocks) ... ok
+test_shares_not_divided_by_lambda (test_fd_g_followup.Sens2PlantedDefects.test_shares_not_divided_by_lambda) ... ok
+test_shares_of_the_mode_with_the_least_chi2 (test_fd_g_followup.Sens2PlantedDefects.test_shares_of_the_mode_with_the_least_chi2) ... ok
+test_alpha_0_is_the_identity_and_alpha_1_the_diagonal (test_fd_g_followup.Shrink.test_alpha_0_is_the_identity_and_alpha_1_the_diagonal) ... ok
+test_each_searched_word_alone (test_fd_g_followup.Shrink.test_each_searched_word_alone) ... ok
+test_key_paths_and_the_leaf_rule (test_fd_g_followup.Shrink.test_key_paths_and_the_leaf_rule) ... ok
+test_off_diagonal_and_the_literal_form (test_fd_g_followup.Shrink.test_off_diagonal_and_the_literal_form) ... ok
+test_only_the_family_is_shrunk (test_fd_g_followup.Shrink.test_only_the_family_is_shrunk) ... ok
+test_positive_semidefinite_is_kept (test_fd_g_followup.Shrink.test_positive_semidefinite_is_kept) ... ok
+test_the_declared_constants (test_fd_g_followup.Shrink.test_the_declared_constants) ... ok
+test_the_diagonal_is_kept_bit_for_bit (test_fd_g_followup.Shrink.test_the_diagonal_is_kept_bit_for_bit) ... ok
+test_the_search_matches_whole_words_only (test_fd_g_followup.Shrink.test_the_search_matches_whole_words_only) ... ok
+test_worst_rel_counts_equal_zeros_as_agreement (test_fd_g_followup.Shrink.test_worst_rel_counts_equal_zeros_as_agreement) ... ok
+test_the_pins_are_s1s_committed_records (test_fd_flux_boot.CommittedPins.test_the_pins_are_s1s_committed_records) ... ok
+test_the_stage_g_pins_are_g_diags (test_fd_flux_boot.CommittedPins.test_the_stage_g_pins_are_g_diags) ... ok
+test_b0_a_missing_universe (test_fd_flux_boot.Controls.test_b0_a_missing_universe) ... ok
+test_b0_a_universe_named_for_another (test_fd_flux_boot.Controls.test_b0_a_universe_named_for_another) ... ok
+test_b0_a_universe_whose_digest_is_not_s1s (test_fd_flux_boot.Controls.test_b0_a_universe_whose_digest_is_not_s1s) ... ok
+test_b0_s1_records_a_101st_universe (test_fd_flux_boot.Controls.test_b0_s1_records_a_101st_universe) ... ok
+test_b0_s1_records_another_number_of_universes (test_fd_flux_boot.Controls.test_b0_s1_records_another_number_of_universes) ... ok
+test_b0_the_constraint_file_is_not_the_pin_or_s1s (test_fd_flux_boot.Controls.test_b0_the_constraint_file_is_not_the_pin_or_s1s) ... ok
+test_b0_the_weights_are_not_s1s (test_fd_flux_boot.Controls.test_b0_the_weights_are_not_s1s) ... ok
+test_b0_too_few_flux_weights (test_fd_flux_boot.Controls.test_b0_too_few_flux_weights) ... ok
+test_b1_the_block_rebuilt_without_the_weights (test_fd_flux_boot.Controls.test_b1_the_block_rebuilt_without_the_weights) ... ok
+test_b2_a_shape_only_chi2_that_is_not_stage_gs (test_fd_flux_boot.Controls.test_b2_a_shape_only_chi2_that_is_not_stage_gs) ... ok
+test_b3_another_index_matrix (test_fd_flux_boot.Controls.test_b3_another_index_matrix) ... ok
+test_b4_a_replicate_with_a_non_positive_variance (test_fd_flux_boot.Controls.test_b4_a_replicate_with_a_non_positive_variance) ... ok
+test_b4_an_indefinite_swapped_matrix (test_fd_flux_boot.Controls.test_b4_an_indefinite_swapped_matrix) ... ok
+test_b4_an_indefinite_uniform_matrix_refuses (test_fd_flux_boot.Controls.test_b4_an_indefinite_uniform_matrix_refuses) ... ok
+test_b5_a_swap_that_moves_a_variance_by_one_ulp (test_fd_flux_boot.Controls.test_b5_a_swap_that_moves_a_variance_by_one_ulp) ... ok
+test_b6_a_swap_that_scales_the_difference_by_one_plus_1e_6 (test_fd_flux_boot.Controls.test_b6_a_swap_that_scales_the_difference_by_one_plus_1e_6)
+A swap error too small for B2 (the identity's difference is a few ulp) or B4 (every matrix stays positive ... ok
+test_gross_swap_errors_refuse_before_b6 (test_fd_flux_boot.Controls.test_gross_swap_errors_refuse_before_b6) ... ok
+test_refuses_to_overwrite (test_fd_flux_boot.EndToEnd.test_refuses_to_overwrite) ... ok
+test_run_as_invoked_and_recomputed_by_hand (test_fd_flux_boot.EndToEnd.test_run_as_invoked_and_recomputed_by_hand) ... ok
+test_the_identity_is_stage_gs_compare_on_the_declared_swap_bit_for_bit (test_fd_flux_boot.EndToEnd.test_the_identity_is_stage_gs_compare_on_the_declared_swap_bit_for_bit)
+Amendment 1 (review): the identity record is compare() on C_total + C_resp + (C1 - C0), exactly, with C1 the ... ok
+test_the_two_variants_differ_and_the_correlation_one_keeps_variances (test_fd_flux_boot.EndToEnd.test_the_two_variants_differ_and_the_correlation_one_keeps_variances) ... ok
+test_every_input_is_required (test_fd_flux_boot.Invocation.test_every_input_is_required) ... ok
+test_the_real_script_reaches_d0_and_refuses_synthetic_records (test_fd_flux_boot.Invocation.test_the_real_script_reaches_d0_and_refuses_synthetic_records) ... ok
+test_a_replicate_carries_each_drawn_universes_weight (test_fd_flux_boot.Pure.test_a_replicate_carries_each_drawn_universes_weight) ... ok
+test_band_percentiles_and_halves (test_fd_flux_boot.Pure.test_band_percentiles_and_halves) ... ok
+test_chi2s_is_stage_gs_compare_in_absolute_units_and_none_when_not_positive_definite (test_fd_flux_boot.Pure.test_chi2s_is_stage_gs_compare_in_absolute_units_and_none_when_not_positive_definite) ... ok
+test_the_band_records_label_agrees_with_labels_band (test_fd_flux_boot.Pure.test_the_band_records_label_agrees_with_labels_band) ... ok
+test_the_correlation_swap_keeps_s1s_variances_and_takes_the_replicates_correlations (test_fd_flux_boot.Pure.test_the_correlation_swap_keeps_s1s_variances_and_takes_the_replicates_correlations) ... ok
+test_the_identity_replicate_is_s1s_rule_and_an_independent_weighted_covariance (test_fd_flux_boot.Pure.test_the_identity_replicate_is_s1s_rule_and_an_independent_weighted_covariance) ... ok
+test_the_seed_gives_the_declared_index_matrix (test_fd_flux_boot.Pure.test_the_seed_gives_the_declared_index_matrix) ... ok
+test_the_spread_follows_one_over_n_eff (test_fd_flux_boot.Pure.test_the_spread_follows_one_over_n_eff)
+Section 4: under this resampling the weighted mean's bootstrap sd is its linearized value ... ok
+test_the_fixtures_flux_block_is_in_the_real_blocks_regime (test_fd_flux_boot.Regime.test_the_fixtures_flux_block_is_in_the_real_blocks_regime)
+Amendment 1: correlations about 0.913-0.998 with top ones at or above 0.97, lambda_min about 2e-7 relative ... ok
+test_declared_counts_are_the_manifests (test_fd_f0_regrade.CommittedPins.test_declared_counts_are_the_manifests) ... ok
+test_fd_plan_table_2_1_reproduces_from_the_committed_records (test_fd_f0_regrade.CommittedPins.test_fd_plan_table_2_1_reproduces_from_the_committed_records) ... ok
+test_gibuu_cells_are_the_p_parallel_below_4p5_cells (test_fd_f0_regrade.CommittedPins.test_gibuu_cells_are_the_p_parallel_below_4p5_cells) ... ok
+test_record_pins (test_fd_f0_regrade.CommittedPins.test_record_pins) ... ok
+test_the_committed_cresp_preserve_inventory_is_the_cresp_report (test_fd_f0_regrade.CommittedPins.test_the_committed_cresp_preserve_inventory_is_the_cresp_report)
+F0b section 2.2: one line, the npz the C_resp report names, by the digest it records (CRESP-REPORT.md). ... ok
+test_the_committed_f4_preserve_inventory_is_the_d16_records (test_fd_f0_regrade.CommittedPins.test_the_committed_f4_preserve_inventory_is_the_d16_records) ... ok
+test_truth_groups_are_the_plan_table (test_fd_f0_regrade.CommittedPins.test_truth_groups_are_the_plan_table) ... ok
+test_truth_identity_digests_are_the_committed_files (test_fd_f0_regrade.CommittedPins.test_truth_identity_digests_are_the_committed_files) ... ok
+test_control_0_d16_record_pin (test_fd_f0_regrade.Controls.test_control_0_d16_record_pin) ... ok
+test_control_0_f4_digest_before_anything_else (test_fd_f0_regrade.Controls.test_control_0_f4_digest_before_anything_else) ... ok
+test_control_0_unlisted_f4_product (test_fd_f0_regrade.Controls.test_control_0_unlisted_f4_product) ... ok
+test_control_1_product_digest (test_fd_f0_regrade.Controls.test_control_1_product_digest) ... ok
+test_control_1_record_pins (test_fd_f0_regrade.Controls.test_control_1_record_pins) ... ok
+test_control_1_unlisted_product (test_fd_f0_regrade.Controls.test_control_1_unlisted_product) ... ok
+test_control_2_array_length_and_dtype (test_fd_f0_regrade.Controls.test_control_2_array_length_and_dtype) ... ok
+test_control_2_meta (test_fd_f0_regrade.Controls.test_control_2_meta) ... ok
+test_control_3_counts (test_fd_f0_regrade.Controls.test_control_3_counts) ... ok
+test_control_4_matrices (test_fd_f0_regrade.Controls.test_control_4_matrices) ... ok
+test_control_5_closure_bias (test_fd_f0_regrade.Controls.test_control_5_closure_bias) ... ok
+test_control_6_floor (test_fd_f0_regrade.Controls.test_control_6_floor) ... ok
+test_control_8_truth_integral (test_fd_f0_regrade.Controls.test_control_8_truth_integral) ... ok
+test_a_failed_offset_control_leaves_row_6_ungraded (test_fd_f0_regrade.EndToEnd.test_a_failed_offset_control_leaves_row_6_ungraded) ... ok
+test_a_run_prints_no_f_no_absolute_value_and_no_f_minus_g (test_fd_f0_regrade.EndToEnd.test_a_run_prints_no_f_no_absolute_value_and_no_f_minus_g) ... ok
+test_grades_recomputed_by_hand (test_fd_f0_regrade.EndToEnd.test_grades_recomputed_by_hand) ... ok
+test_negative_control_without_the_guard_the_leak_is_written_and_this_scan_finds_it (test_fd_f0_regrade.EndToEnd.test_negative_control_without_the_guard_the_leak_is_written_and_this_scan_finds_it) ... ok
+test_o1_units_rely_on_the_exact_match_not_the_floor (test_fd_f0_regrade.EndToEnd.test_o1_units_rely_on_the_exact_match_not_the_floor) ... ok
+test_planted_leaks_are_refused_and_nothing_is_written (test_fd_f0_regrade.EndToEnd.test_planted_leaks_are_refused_and_nothing_is_written) ... ok
+test_refuses_to_overwrite (test_fd_f0_regrade.EndToEnd.test_refuses_to_overwrite) ... ok
+test_a_planted_leak_is_refused_with_the_block (test_fd_f0_regrade.ExtraBlockF0b.test_a_planted_leak_is_refused_with_the_block) ... ok
+test_a_zero_block_reproduces_f0_and_a_psd_block_only_lowers_grades (test_fd_f0_regrade.ExtraBlockF0b.test_a_zero_block_reproduces_f0_and_a_psd_block_only_lowers_grades) ... ok
+test_chi2_against_the_full_matrix (test_fd_f0_regrade.ExtraBlockF0b.test_chi2_against_the_full_matrix)
+The noise matrix is internal, so the chi2 is recomputed from the products: the same estimator as ... ok
+test_grades_recomputed_by_hand_and_everything_else_is_f0s (test_fd_f0_regrade.ExtraBlockF0b.test_grades_recomputed_by_hand_and_everything_else_is_f0s) ... ok
+test_refusals (test_fd_f0_regrade.ExtraBlockF0b.test_refusals) ... ok
+test_stdout_with_and_without (test_fd_f0_regrade.ExtraBlockF0b.test_stdout_with_and_without) ... ok
+test_the_four_options_go_together (test_fd_f0_regrade.ExtraBlockF0b.test_the_four_options_go_together) ... ok
+test_without_the_option_the_readout_is_f0s_key_for_key (test_fd_f0_regrade.ExtraBlockF0b.test_without_the_option_the_readout_is_f0s_key_for_key) ... ok
+test_any_absolute_magnitude_is_refused_even_if_unlisted (test_fd_f0_regrade.Guard.test_any_absolute_magnitude_is_refused_even_if_unlisted) ... ok
+test_check_exits_3 (test_fd_f0_regrade.Guard.test_check_exits_3) ... REFUSED leak guard: x carries 16 number(s) equal to f, an absolute cell value or f - g (ruling 6); nothing more was written
+ok
+test_refuses_every_form_of_f_and_of_an_absolute_value (test_fd_f0_regrade.Guard.test_refuses_every_form_of_f_and_of_an_absolute_value) ... ok
+test_silent_on_relative_outputs (test_fd_f0_regrade.Guard.test_silent_on_relative_outputs) ... ok
+test_argparse_error_is_not_an_import_error (test_fd_f0_regrade.Invocation.test_argparse_error_is_not_an_import_error) ... ok
+test_help_under_isolation (test_fd_f0_regrade.Invocation.test_help_under_isolation) ... ok
+test_the_real_script_reaches_control_0_and_refuses_synthetic_records (test_fd_f0_regrade.Invocation.test_the_real_script_reaches_control_0_and_refuses_synthetic_records) ... ok
+test_chi2_survival_is_exact_for_even_ndf (test_fd_f0_regrade.Statistics.test_chi2_survival_is_exact_for_even_ndf) ... ok
+test_leave_out_and_grade (test_fd_f0_regrade.Statistics.test_leave_out_and_grade) ... ok
+test_unweighted_mean_and_noise_of_the_mean (test_fd_f0_regrade.Statistics.test_unweighted_mean_and_noise_of_the_mean) ... ok
+test_weighted_mean_is_the_ratio_estimator (test_fd_f0_regrade.Statistics.test_weighted_mean_is_the_ratio_estimator) ... ok
+test_passes_on_the_tools_output (test_fd_g_figures.Check.test_passes_on_the_tools_output) ... 'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+ok
+test_refuses_planted_defects (test_fd_g_figures.Check.test_refuses_planted_defects) ... 'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+ok
+test_pins_schemas_and_chain (test_fd_g_figures.CommittedPins.test_pins_schemas_and_chain) ... ok
+test_k0_pin_and_schema (test_fd_g_figures.Controls.test_k0_pin_and_schema) ... ok
+test_k1_each_clause (test_fd_g_figures.Controls.test_k1_each_clause) ... ok
+test_k2_f0b_and_the_data (test_fd_g_figures.Controls.test_k2_f0b_and_the_data) ... ok
+test_k2_k3_each_clause (test_fd_g_figures.Controls.test_k2_k3_each_clause) ... ok
+test_k2_the_error_bar_is_c_total_plus_c_resp (test_fd_g_figures.Controls.test_k2_the_error_bar_is_c_total_plus_c_resp) ... ok
+test_k3_a_gibuu_point_drawn_above_4_5 (test_fd_g_figures.Controls.test_k3_a_gibuu_point_drawn_above_4_5) ... ok
+test_k3_gibuu_cells (test_fd_g_figures.Controls.test_k3_gibuu_cells) ... ok
+test_k3_gibuu_joined_by_a_line (test_fd_g_figures.Controls.test_k3_gibuu_joined_by_a_line) ... ok
+test_k3_the_definition (test_fd_g_figures.Controls.test_k3_the_definition) ... ok
+test_k4_each_clause (test_fd_g_figures.Controls.test_k4_each_clause) ... ok
+test_k4_modes (test_fd_g_figures.Controls.test_k4_modes) ... ok
+test_k5_each_clause (test_fd_g_figures.Controls.test_k5_each_clause) ... ok
+test_k5_sens (test_fd_g_figures.Controls.test_k5_sens) ... ok
+test_k6_a_missing_and_an_unmodelled_artist (test_fd_g_figures.Controls.test_k6_a_missing_and_an_unmodelled_artist) ... ok
+test_k6_a_model_label_on_the_wrong_row (test_fd_g_figures.Controls.test_k6_a_model_label_on_the_wrong_row) ... ok
+test_k6_a_point_drawn_off_the_model (test_fd_g_figures.Controls.test_k6_a_point_drawn_off_the_model) ... ok
+test_k6_an_error_bar_and_a_loading (test_fd_g_figures.Controls.test_k6_an_error_bar_and_a_loading) ... ok
+test_k6_clipped (test_fd_g_figures.Controls.test_k6_clipped) ... ok
+test_k6_each_drawn_kind (test_fd_g_figures.Controls.test_k6_each_drawn_kind) ... ok
+test_k6_legend_handles_reversed (test_fd_g_figures.Controls.test_k6_legend_handles_reversed) ... ok
+test_k6_style_and_axes (test_fd_g_figures.Controls.test_k6_style_and_axes) ... ok
+test_k6_text_over_text_and_over_bars (test_fd_g_figures.Controls.test_k6_text_over_text_and_over_bars) ... ok
+test_k6_the_band_and_the_page (test_fd_g_figures.Controls.test_k6_the_band_and_the_page) ... ok
+test_k7_each_clause (test_fd_g_figures.Controls.test_k7_each_clause) ... ok
+test_k7_labels (test_fd_g_figures.Controls.test_k7_labels) ... ok
+test_k8_a_type3_font (test_fd_g_figures.Controls.test_k8_a_type3_font) ... ok
+test_k8_raster_and_bytes (test_fd_g_figures.Controls.test_k8_raster_and_bytes) ... 'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+ok
+test_rel_and_check_pdf (test_fd_g_figures.Controls.test_rel_and_check_pdf) ... ok
+test_tolerances (test_fd_g_figures.Controls.test_tolerances)
+K6's 1e-12 and the readouts' 1e-10, each at a defect between them and a looser tolerance. ... ok
+test_a_later_refusal_writes_nothing (test_fd_g_figures.EndToEnd.test_a_later_refusal_writes_nothing) ... 'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+ok
+test_declared_layout_and_wording (test_fd_g_figures.EndToEnd.test_declared_layout_and_wording)
+The ylabel per form, the key's axis names and units, the offsets, the line styles and the legend order, ... ok
+test_gibuu_has_nothing_above_p_parallel_4_5 (test_fd_g_figures.EndToEnd.test_gibuu_has_nothing_above_p_parallel_4_5) ... ok
+test_modes_against_the_keys (test_fd_g_figures.EndToEnd.test_modes_against_the_keys) ... ok
+test_no_overwrite (test_fd_g_figures.EndToEnd.test_no_overwrite) ... ok
+test_ratio_data_over_prediction_against_the_keys (test_fd_g_figures.EndToEnd.test_ratio_data_over_prediction_against_the_keys) ... ok
+test_ratio_key_is_the_definition (test_fd_g_figures.EndToEnd.test_ratio_key_is_the_definition) ... ok
+test_ratio_prediction_over_data_against_the_keys (test_fd_g_figures.EndToEnd.test_ratio_prediction_over_data_against_the_keys) ... ok
+test_runs_and_writes_three_figures_with_sidecars (test_fd_g_figures.EndToEnd.test_runs_and_writes_three_figures_with_sidecars) ... 'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+ok
+test_same_bytes_in_two_processes (test_fd_g_figures.EndToEnd.test_same_bytes_in_two_processes) ... ok
+test_sens_against_the_keys (test_fd_g_figures.EndToEnd.test_sens_against_the_keys) ... ok
+test_sidecar_provenance (test_fd_g_figures.EndToEnd.test_sidecar_provenance) ... 'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+ok
+test_style_is_the_articles (test_fd_g_figures.EndToEnd.test_style_is_the_articles) ... 'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+'created' timestamp seems very low; regarding as unix timestamp
+'modified' timestamp seems very low; regarding as unix timestamp
+ok
+test_argparse (test_fd_g_figures.Invocation.test_argparse) ... ok
+test_real_pins_refuse_synthetic_readouts (test_fd_g_figures.Invocation.test_real_pins_refuse_synthetic_readouts) ... ok
+test_p0_a_crlf_file_left_unstamped (test_fd_deposit_candidate.Defects.test_p0_a_crlf_file_left_unstamped) ... ok
+test_p0_an_unstamped_edit (test_fd_deposit_candidate.Defects.test_p0_an_unstamped_edit) ... ok
+test_p0_another_data_product (test_fd_deposit_candidate.Defects.test_p0_another_data_product) ... ok
+test_p0_the_reference_file_missing (test_fd_deposit_candidate.Defects.test_p0_the_reference_file_missing) ... ok
+test_p1_a_box_edge (test_fd_deposit_candidate.Defects.test_p1_a_box_edge) ... ok
+test_p1_a_box_that_is_not_its_h2_boxes (test_fd_deposit_candidate.Defects.test_p1_a_box_that_is_not_its_h2_boxes) ... ok
+test_p1_a_box_wider_than_its_h2_boxes (test_fd_deposit_candidate.Defects.test_p1_a_box_wider_than_its_h2_boxes) ... ok
+test_p1_boxes_whose_bounding_box_is_the_cell_but_that_leave_a_hole (test_fd_deposit_candidate.Defects.test_p1_boxes_whose_bounding_box_is_the_cell_but_that_leave_a_hole) ... ok
+test_p1_two_rows_swapped (test_fd_deposit_candidate.Defects.test_p1_two_rows_swapped) ... ok
+test_p2_one_ulp_in_f (test_fd_deposit_candidate.Defects.test_p2_one_ulp_in_f) ... ok
+test_p2_one_ulp_in_one_covariance_entry (test_fd_deposit_candidate.Defects.test_p2_one_ulp_in_one_covariance_entry) ... ok
+test_p2_one_ulp_in_the_correlation (test_fd_deposit_candidate.Defects.test_p2_one_ulp_in_the_correlation) ... ok
+test_p3_an_asymmetric_reported_matrix (test_fd_deposit_candidate.Defects.test_p3_an_asymmetric_reported_matrix) ... ok
+test_p3_the_sigma_column (test_fd_deposit_candidate.Defects.test_p3_the_sigma_column) ... ok
+test_p4_a_gibuu_flag (test_fd_deposit_candidate.Defects.test_p4_a_gibuu_flag) ... ok
+test_p4_stage_gs_gibuu_cells_differ (test_fd_deposit_candidate.Defects.test_p4_stage_gs_gibuu_cells_differ) ... ok
+test_p5_a_stage_g_chi2_off_by_more_than_the_tolerance (test_fd_deposit_candidate.Defects.test_p5_a_stage_g_chi2_off_by_more_than_the_tolerance) ... ok
+test_p5_stage_gs_f_differs (test_fd_deposit_candidate.Defects.test_p5_stage_gs_f_differs) ... ok
+test_p6_a_reference_chi2_that_is_not_the_readouts (test_fd_deposit_candidate.Defects.test_p6_a_reference_chi2_that_is_not_the_readouts) ... ok
+test_p6_a_source_digest (test_fd_deposit_candidate.Defects.test_p6_a_source_digest) ... ok
+test_p6_a_source_that_is_not_fd_g_compares (test_fd_deposit_candidate.Defects.test_p6_a_source_that_is_not_fd_g_compares) ... ok
+test_p6_gibuu_on_sixteen_cells (test_fd_deposit_candidate.Defects.test_p6_gibuu_on_sixteen_cells) ... ok
+test_p6_one_ulp_in_a_reference_g (test_fd_deposit_candidate.Defects.test_p6_one_ulp_in_a_reference_g) ... ok
+test_p6_one_ulp_in_a_reference_v_g (test_fd_deposit_candidate.Defects.test_p6_one_ulp_in_a_reference_v_g) ... ok
+test_p6_the_label_that_keeps_it_apart (test_fd_deposit_candidate.Defects.test_p6_the_label_that_keeps_it_apart) ... ok
+test_p6_two_predictions_swapped (test_fd_deposit_candidate.Defects.test_p6_two_predictions_swapped) ... ok
+test_p7_a_csv_byte_that_parses_the_same (test_fd_deposit_candidate.Defects.test_p7_a_csv_byte_that_parses_the_same) ... ok
+test_p7_a_json_type_that_compares_equal_in_python (test_fd_deposit_candidate.Defects.test_p7_a_json_type_that_compares_equal_in_python) ... ok
+test_p7_a_stage_g_matrix_name (test_fd_deposit_candidate.Defects.test_p7_a_stage_g_matrix_name) ... ok
+test_p7_a_unit (test_fd_deposit_candidate.Defects.test_p7_a_unit) ... ok
+test_p7_an_integer_ndf_written_as_a_float (test_fd_deposit_candidate.Defects.test_p7_an_integer_ndf_written_as_a_float) ... ok
+test_p7_not_citable_for_removed (test_fd_deposit_candidate.Defects.test_p7_not_citable_for_removed) ... ok
+test_p7_the_covariance_name (test_fd_deposit_candidate.Defects.test_p7_the_covariance_name) ... ok
+test_p7_the_gibuu_domain_label (test_fd_deposit_candidate.Defects.test_p7_the_gibuu_domain_label) ... ok
+test_p7_the_reference_status (test_fd_deposit_candidate.Defects.test_p7_the_reference_status) ... ok
+test_p7_the_status (test_fd_deposit_candidate.Defects.test_p7_the_status) ... ok
+test_build_refuses_to_overwrite (test_fd_deposit_candidate.EndToEnd.test_build_refuses_to_overwrite) ... ok
+test_build_then_check_passes_every_control (test_fd_deposit_candidate.EndToEnd.test_build_then_check_passes_every_control) ... ok
+test_measurement_only_refuses_a_descriptive_defect (test_fd_deposit_candidate.EndToEnd.test_measurement_only_refuses_a_descriptive_defect) ... ok
+test_measurement_only_still_refuses_a_measurement_defect (test_fd_deposit_candidate.EndToEnd.test_measurement_only_still_refuses_a_measurement_defect) ... ok
+test_the_committed_package_is_what_build_writes (test_fd_deposit_candidate.EndToEnd.test_the_committed_package_is_what_build_writes) ... ok
+test_the_gibuu_subset_is_r00_r03_and_r08_r11 (test_fd_deposit_candidate.EndToEnd.test_the_gibuu_subset_is_r00_r03_and_r08_r11) ... ok
+test_the_matrix_csvs_are_the_data_products_files_byte_for_byte (test_fd_deposit_candidate.EndToEnd.test_the_matrix_csvs_are_the_data_products_files_byte_for_byte) ... ok
+test_the_measurement_checks_alone_without_the_reference_or_the_readout (test_fd_deposit_candidate.EndToEnd.test_the_measurement_checks_alone_without_the_reference_or_the_readout) ... ok
+test_the_measurement_does_not_name_the_reference_file (test_fd_deposit_candidate.EndToEnd.test_the_measurement_does_not_name_the_reference_file) ... ok
+test_the_reference_holds_five_predictions_and_gibuus_eight_cells (test_fd_deposit_candidate.EndToEnd.test_the_reference_holds_five_predictions_and_gibuus_eight_cells) ... ok
+test_the_unreported_boxes_are_2_6_10_14 (test_fd_deposit_candidate.EndToEnd.test_the_unreported_boxes_are_2_6_10_14) ... ok
+test_as_written (test_fd_deposit_candidate.Invocation.test_as_written) ... ok
+test_pins_and_chain (test_fd_data_product.CommittedPins.test_pins_and_chain) ... ok
+test_q0 (test_fd_data_product.Controls.test_q0) ... ok
+test_q1 (test_fd_data_product.Controls.test_q1) ... ok
+test_q2_the_sum_of_its_parts (test_fd_data_product.Controls.test_q2_the_sum_of_its_parts) ... ok
+test_q3_each_committed_sigma (test_fd_data_product.Controls.test_q3_each_committed_sigma) ... ok
+test_q4 (test_fd_data_product.Controls.test_q4) ... ok
+test_q5_and_q6 (test_fd_data_product.Controls.test_q5_and_q6) ... ok
+test_every_number_against_the_products (test_fd_data_product.EndToEnd.test_every_number_against_the_products) ... ok
+test_no_overwrite (test_fd_data_product.EndToEnd.test_no_overwrite) ... ok
+test_argparse (test_fd_data_product.Invocation.test_argparse) ... ok
+test_real_pins_refuse_synthetic_products (test_fd_data_product.Invocation.test_real_pins_refuse_synthetic_products) ... ok
+test_check_chain_compares_against_the_passed_set (test_fd_gencmp_e.Sets.test_check_chain_compares_against_the_passed_set)
+K1 on the committed nopl readouts (the inputs of the committed nopl figures): it holds against Stage G's set ... ok
+test_default_set_is_todays (test_fd_gencmp_e.Sets.test_default_set_is_todays) ... ok
+test_every_label_carries_its_legend_qualifiers (test_fd_gencmp_e.Sets.test_every_label_carries_its_legend_qualifiers) ... ok
+test_figure_legend_equals_the_checkers_declared_name_in_both_sets (test_fd_gencmp_e.Sets.test_figure_legend_equals_the_checkers_declared_name_in_both_sets) ... ok
+test_figures_refuse_the_chdefs_set_without_its_predictions (test_fd_gencmp_e.Sets.test_figures_refuse_the_chdefs_set_without_its_predictions) ... ok
+test_names_cells_and_order_are_stage_gs (test_fd_gencmp_e.Sets.test_names_cells_and_order_are_stage_gs) ... ok
+test_copies_under_the_scratch_layout_and_records (test_fd_gencmp_e.Stage.test_copies_under_the_scratch_layout_and_records) ... ok
+test_refuses_a_pin_mismatch (test_fd_gencmp_e.Stage.test_refuses_a_pin_mismatch) ... ok
+test_refuses_overwrite (test_fd_gencmp_e.Stage.test_refuses_overwrite) ... ok
+test_the_inputs_file_pins_every_scratch_input_the_chain_reads (test_fd_gencmp_e.Stage.test_the_inputs_file_pins_every_scratch_input_the_chain_reads) ... ok
+test_corner_is_defs_combination_bitwise (test_fd_gencmp_e.Materialize.test_corner_is_defs_combination_bitwise) ... ok
+test_e0_names_the_quantity_that_differs (test_fd_gencmp_e.Materialize.test_e0_names_the_quantity_that_differs) ... ok
+test_e0_refuses_a_chi2_off_by_1e_9 (test_fd_gencmp_e.Materialize.test_e0_refuses_a_chi2_off_by_1e_9) ... ok
+test_e0_refuses_a_one_entry_defect_in_a_rebuilt_product (test_fd_gencmp_e.Materialize.test_e0_refuses_a_one_entry_defect_in_a_rebuilt_product) ... ok
+test_load_chdefs_refuses_a_changed_file (test_fd_gencmp_e.Materialize.test_load_chdefs_refuses_a_changed_file) ... ok
+test_load_chdefs_refuses_names_out_of_order (test_fd_gencmp_e.Materialize.test_load_chdefs_refuses_names_out_of_order) ... ok
+test_refuses_a_staged_mnvtune_other_than_stage_gs (test_fd_gencmp_e.Materialize.test_refuses_a_staged_mnvtune_other_than_stage_gs) ... ok
+test_refuses_an_unpinned_defs (test_fd_gencmp_e.Materialize.test_refuses_an_unpinned_defs) ... ok
+test_refuses_another_rebuild_directory (test_fd_gencmp_e.Materialize.test_refuses_another_rebuild_directory) ... ok
+test_refuses_overwrite (test_fd_gencmp_e.Materialize.test_refuses_overwrite) ... ok
+test_writes_five_predictions_stage_g_accepts (test_fd_gencmp_e.Materialize.test_writes_five_predictions_stage_g_accepts) ... ok
+test_arm_blocks_are_the_committed_arms (test_fd_gencmp_e.Chain.test_arm_blocks_are_the_committed_arms) ... ok
+test_chain_steps_run_only_with_explicit_pins (test_fd_gencmp_e.Chain.test_chain_steps_run_only_with_explicit_pins) ... ok
+test_r0_compares_strings_in_the_with_arm_only (test_fd_gencmp_e.Chain.test_r0_compares_strings_in_the_with_arm_only) ... ok
+test_r0_comparison_ignores_argv_and_block_path_only (test_fd_gencmp_e.Chain.test_r0_comparison_ignores_argv_and_block_path_only) ... ok
+test_r0_passes_on_committed_copies_and_refuses_one_change (test_fd_gencmp_e.Chain.test_r0_passes_on_committed_copies_and_refuses_one_change) ... ok
+test_step_pins_replace_only_the_upstream_and_the_manifest (test_fd_gencmp_e.Chain.test_step_pins_replace_only_the_upstream_and_the_manifest) ... ok
+test_the_chdefs_set_never_runs_after_an_r0_failure (test_fd_gencmp_e.Chain.test_the_chdefs_set_never_runs_after_an_r0_failure) ... [STOP] R0: with arm differs
+ok
+test_the_committed_pins_are_the_committed_bytes (test_fd_gencmp_e.Chain.test_the_committed_pins_are_the_committed_bytes) ... ok
+test_xc_nopl_passes_against_without_c_pl5d (test_fd_gencmp_e.Chain.test_xc_nopl_passes_against_without_c_pl5d) ... ok
+test_xc_passes_when_stage_g_is_defs (test_fd_gencmp_e.Chain.test_xc_passes_when_stage_g_is_defs) ... ok
+test_xc_reads_the_matrix_of_its_arm (test_fd_gencmp_e.Chain.test_xc_reads_the_matrix_of_its_arm) ... ok
+test_xc_refuses_a_chi2_off_by_1e_9 (test_fd_gencmp_e.Chain.test_xc_refuses_a_chi2_off_by_1e_9) ... ok
+test_xc_refuses_a_g_or_a_shape_chi2_or_a_missing_prediction (test_fd_gencmp_e.Chain.test_xc_refuses_a_g_or_a_shape_chi2_or_a_missing_prediction) ... ok
+
+----------------------------------------------------------------------
+Ran 541 tests in 697.770s
+
+OK

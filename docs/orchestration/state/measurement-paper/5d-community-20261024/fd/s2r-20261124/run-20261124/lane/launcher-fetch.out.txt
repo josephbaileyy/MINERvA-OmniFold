@@ -1,0 +1,10 @@
+ssh rc=0
+node login38 staged sha256 b5c9f5bc717ac5ad97959c17873b9b02528ba1d1e8d23ee5a76b54505444c4f3
+detached pid 1851297, output /dev/shm/s2rc.1850678.sh.out
+script rc=0
+fetch fetch-records.tar rc=0 bytes 266240
+fetch logs/connect-records.log rc=0 bytes 952
+fetch logs/connect-records.done rc=0 bytes 2
+fetch-records.tar sha256 bff9f7c1ccf806df1ba5ead55f2a71f278d3bafcd98c4ab32843c4081cc50c23 (the log's: bff9f7c1ccf806df1ba5ead55f2a71f278d3bafcd98c4ab32843c4081cc50c23)
+RECORDS.SHA256SUMS check rc=0 (53 lines, 53 files in the tar besides it)
+connect done file: 0

@@ -1,0 +1,42 @@
+== script rc=5
+== the connect log
+  node c89521bda2d8 nproc=4 loadavg 0.66 0.19 0.06
+  2026-11-24T08:05:38Z
+  window_end_epoch 1795508437 (now 1795507537); fence prefixes cov2d,rpd_,ibub_,ibuchi_,d2s0,covfix
+  connect script sha256 9fc0f3c01303278c21fb284aad86bef8ee0d07b873becca29a0c55e4c4aa1846
+  == cov2d fence rev 3 (7e81a721476da987a0e1262ab2054132bd8440cd49b0dc7a5c4f01d50a310738)
+  fence host=c89521bda2d8 utc=2026-11-24T08:05:38Z
+  sacct -X -n -P -u root -S 2026-11-10T08:05:38 -E now -o JobID,JobName,State 2>&1
+  sacct matching rows: 1
+  FENCE CLEAR
+  == fence (sacct)
+  fence clear
+  == extractor sha256 9ef4a1f247726532c2c98c84de9f66af221db55a949006ce0d9ec43b38274255 (checked)
+  threads 2; nice 19; ionice idle; python 3.11.18
+  == extract (mc_signal_reco only; O_NOATIME)
+  STOP rc 3: omnifile sha256 706c40a897b7c3585ec32ef0e6d44f3199db338b974b8fbbdff9684cc7493da8 is not the pin b6d2651cfdbc52790cc7ed6032f2062a3e0ea50c12d63725beba29098dd5175a
+  	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.58
+  	Maximum resident set size (kbytes): 48592
+  STOP: extract rc 3
+  == records
+  2026-11-24T08:05:38Z
+  a10f97b5fa54892e24bee7356c5d865d427f761a94a7c13ac64efddaffa99071  logs/extract.err
+  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  logs/extract.out
+  9ef4a1f247726532c2c98c84de9f66af221db55a949006ce0d9ec43b38274255  logs/q0_extract.py
+  9fc0f3c01303278c21fb284aad86bef8ee0d07b873becca29a0c55e4c4aa1846  logs/q0_q0.sh
+  fetch-q0.tar sha256 7dec1838f9e1844041594d1c61808ee1d29866819d6ecd75226b11da0c3bb5a5 bytes 40960
+  q0 q0 rc=5
+  2026-11-24T08:05:38Z
+== done: 5
+RECORDS.SHA256SUMS
+extract
+fetch-q0.tar
+logs
+== tar members
+logs/
+logs/extract.out
+logs/q0_extract.py
+logs/extract.err
+logs/q0_q0.sh
+extract/
+RECORDS.SHA256SUMS

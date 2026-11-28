@@ -1,0 +1,31 @@
+main commit 75c63def725d17ec829e484a115c41a8720fa2b2
+input docs/orchestration/state/2d-closeout/stageC/production/evidence/production/results/production_cov.npz sha256 6689d2fc2a795a72e66ee953a32d94c7906dd81a866771979f379c5f163a9ddc bytes 16877824
+input docs/orchestration/state/2d-closeout/stageF/rebuild/outputs/recompute/recompute_results.json sha256 35e00182ec934d678c32185d4fde6406daf406bdd9dca01b5d0110f451a58e03 bytes 7982
+input docs/orchestration/state/2d-closeout/stageF/rebuild/outputs/recompute/input_sha256.txt sha256 9d6747466ba7f38195b63babb59bf8459e2708a3c50969d56cccdc1909eb6bd9 bytes 660
+input docs/orchestration/state/2d-closeout/c04-repair/products/budget.json sha256 aab8a24ebd61df54e7277999d49300c3bdaa045710835bfa05adf3bfc71dd8fa bytes 26269
+S5 npz sha256 is one of Q's recorded inputs: True
+formula control against recompute_results.json:
+  total: median 6.040559265 vs 6.040559265 (|d| 8.9e-16); integral 4.328435633 vs 4.328435633 (|d| 0.0e+00)
+  universe: median 5.968625171 vs 5.968625171 (|d| 0.0e+00); integral 4.328004839 vs 4.328004839 (|d| 8.9e-16)
+per band, S5 against VL175 (percent of x):
+  GEANT_Neutron: S5 median 0.101137 p84 0.284412 max 1.346278 (cell 15) integral 0.014798 | VL175 median 0.125545 p84 0.292490 max 1.532248 integral 0.020422
+  GEANT_Pion: S5 median 0.291159 p84 1.213715 max 7.849489 (cell 0) integral 0.011819 | VL175 median 0.259702 p84 0.998588 max 3.695121 integral 0.040644
+  GEANT_Proton: S5 median 0.115735 p84 0.332186 max 1.308173 (cell 27) integral 0.024473 | VL175 median 0.088865 p84 0.198061 max 0.803357 integral 0.018279
+S5 GEANT quadrature of medians 0.329236; integral of the summed matrix 0.030945
+median (approximate bound, caveat 2 stands): remove 6.447900 -> 6.439489; double -> 6.473068
+integral (exact: variances add): remove 4.754980 -> 4.754879; double -> 4.755282
+per-cell tail against S5 total (205 cells), G = sum of the three band matrices:
+  cells with GEANT sigma / total sigma > 0.05: 127
+  cells with GEANT sigma / total sigma > 0.1: 57
+  cells with GEANT sigma / total sigma > 0.2: 24
+  cells with GEANT sigma / total sigma > 0.3: 13
+  median variance share 0.003597
+  cell 195: total 5.9706% GEANT 2.6392% ratio 0.4420 variance share 0.1954
+  cell 203: total 7.6832% GEANT 3.1762% ratio 0.4134 variance share 0.1709
+  cell 193: total 5.3975% GEANT 2.2311% ratio 0.4134 variance share 0.1709
+  cell 1: total 9.6006% GEANT 3.8224% ratio 0.3981 variance share 0.1585
+  cell 0: total 20.1229% GEANT 7.9491% ratio 0.3950 variance share 0.1560
+  cell 194: total 5.9012% GEANT 2.3076% ratio 0.3910 variance share 0.1529
+  cell 182: total 4.8938% GEANT 1.8351% ratio 0.3750 variance share 0.1406
+  cell 183: total 5.1478% GEANT 1.9020% ratio 0.3695 variance share 0.1365
+S5-only per-cell bound on removal (too loose to bound the median): max shift 1.636616 pp in cell 0

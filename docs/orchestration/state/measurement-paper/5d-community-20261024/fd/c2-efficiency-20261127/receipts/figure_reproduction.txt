@@ -1,0 +1,2 @@
+C2-CORR FIGURE OK f7ac9a0e8ebd64aeaddd3da9944ba301c7d48747ff6389332695baf21537b18f
+byte-identical to docs/analysis-note/figures/c2_corr_spectra.pdf
