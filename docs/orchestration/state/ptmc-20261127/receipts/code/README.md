@@ -141,3 +141,23 @@ director ruled that all five be fixed, followed by one scoped fix-check and no f
 The only case was a receipt with no pins at all, which the key check refuses on its own. A case whose before pins are
 valid and whose after pins differ now kills it (run 10). The harness kill of `SH_LIB_SHA_ARG` was re-applied to a copy
 outside the repository: it failed exactly "post-pilot: passes --jobid, --rows and the bound --lib-sha (B11)".
+
+**Evidence for the three harness kills whose failing line the stored record cut** (`SH_STAT_STATUS` and `SH_PILOT_T60`
+in run 6, `SH_LIB_SHA_ARG` in run 9). The mutation records keep only a 1,500-character tail of each harness run, and
+for these three that tail ends after the failing line. The evidence is therefore a hand re-application at
+`bb9e526a4`. `reapply_harness_mutant.sh` applies the named mutant from `ptmc_mutation.py` to a copy of `launch/`
+outside the repository, runs `harness_remote.sh` in debian:bookworm-slim, and prints every FAIL line and the count.
+`harness-reapplications.txt` holds the commands and their output verbatim. Each mutant failed exactly its own case and
+nothing else (97 pass, 1 fail).
+
+## The fix-check (codex-school2, fresh session)
+
+The director's scoped fix-check of `bb9e526a4` saw only `FIXES-4.diff` (780eda964 → bb9e526a4, `2d-unfolding/ptmc`)
+and the five blocker texts with the director's rulings. It ran as a fresh codex-school2 session (`gpt-6.2-sol`, high,
+read-only) and gave **5 HOLD, 0 FAIL** (B1 both halves, B2, B3, B8, B11). Its note becomes a documented residual:
+
+<!-- absence-ok: the campaign's own operational state (no NERSC step has run; each connect needs the director's GO), not a claim that a result does not exist -->
+- **An old launcher's empty `setup.done`.** A scratch run set up by the old launcher, whose `setup.done` is empty,
+  would STOP at post's new timestamp check. No such run exists: nothing has run on NERSC, and the namespace
+  `ptmc-20261128` is created by this launcher's setup.
+
