@@ -247,6 +247,11 @@ class PilotPost(unittest.TestCase):
             rec["after"] = dict(rec["before"])
             (u / "pins_p_off_b2.json").write_text(json.dumps(rec))
             check(u, why)
+        u = pilot_units(self.p)  # a receipt whose pins changed during the unit (before is valid, after differs)
+        rec = json.loads((u / "pins_p_off_b3.json").read_text())
+        rec["after"] = dict(rec["before"], config="0" * 64)
+        (u / "pins_p_off_b3.json").write_text(json.dumps(rec))
+        check(u, "pins that changed during the unit")
         # confirm-3 B11: the unit's unfolder is the bound RooUnfold digest
         check(pilot_units(self.p, lambda u, m: m.update(unfolder="f" * 64)), "another RooUnfold")
         check(pilot_units(self.p, lambda u, m: m.pop("unfolder")), "no unfolder label")
