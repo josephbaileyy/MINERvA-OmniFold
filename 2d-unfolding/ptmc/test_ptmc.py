@@ -550,6 +550,82 @@ class Runner(unittest.TestCase):
                                 "--numpy-unfolder", "--unit", "p_off_c"])
         self.assertEqual(rc, ptmc_run.RC_GATE)  # the module's pins are r3's, not the fixture's
 
+    def test_rows_file_not_its_pin_refuses(self):
+        """The rows file's own bytes are checked against the pin, not only the --rows-sha256 argument."""
+        import ptmc_run
+        alt = self.rows_path.with_name("oofvc_rows_altered.npz")
+        alt.write_bytes(self.rows_path.read_bytes() + b"\0")
+        with mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True), mock.patch.dict(ptmc_run.PINS, self.pins):
+            rc = ptmc_run.main(["--tree", str(tree()), "--rows", str(alt), "--rows-sha256", self.pins["rows"],
+                                "--join-record", str(self.join), "--out", str(Path(tempfile.mkdtemp())),
+                                "--numpy-unfolder", "--unit", "p_off_b2"])
+        self.assertEqual(rc, ptmc_run.RC_GATE)
+
+    def corrupted_unit(self, unit, corrupt):
+        """One unit on a fresh output with `corrupt` applied to the capture before the controls run."""
+        import ptmc_run
+        out = Path(tempfile.mkdtemp())
+        orig = ptmc_run.run_paired
+
+        def wrapped(*a, **k):
+            cap = orig(*a, **k)
+            corrupt(cap)
+            return cap
+        argv = ["--tree", str(tree()), "--rows", str(self.rows_path), "--rows-sha256", self.pins["rows"],
+                "--join-record", str(self.join), "--out", str(out), "--numpy-unfolder", "--unit", unit]
+        with mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True), \
+                mock.patch.dict(ptmc_run.PINS, self.pins), mock.patch.object(ptmc_run, "run_paired", wrapped):
+            rc = ptmc_run.main(argv)
+        meta = json.loads(str(np.load(out / f"{unit}.npz", allow_pickle=False)["meta"]))
+        verdict = json.loads((out / f"{unit}.done").read_text())["verdict"]
+        return rc, meta, verdict
+
+    def assert_only_failure(self, rc, meta, verdict, control):
+        import ptmc_run
+        failed = sorted(k for k, v in meta["controls"].items() if v["pass"] is not True)
+        self.assertEqual(failed, [control] if control else [])
+        self.assertEqual((rc, verdict), (ptmc_run.RC_CONTROL, "FAIL"))
+
+    def test_pair_measured_mask_defect_fails(self):
+        def corrupt(cap):
+            m = np.array(cap["seam"]["measured_pass_reco"], copy=True)
+            m[0] = False
+            cap["seam"]["measured_pass_reco"] = m
+        rc, meta, verdict = self.corrupted_unit("p_off_b1", corrupt)
+        self.assertFalse(meta["controls"]["C-PAIR"]["measured_mask_all_true"])
+        self.assert_only_failure(rc, meta, verdict, "C-PAIR")
+
+    def test_refined_weight_not_the_measured_weight_fails(self):
+        def corrupt(cap):
+            w = np.array(cap["refined_w"], copy=True)
+            w[0] = np.nextafter(w[0], np.inf)
+            cap["refined_w"] = w
+        self.assert_only_failure(*self.corrupted_unit("p_off_b1", corrupt), "C-REFINE")
+
+    def test_completeness_axes_not_the_grid_fail(self):
+        def corrupt(cap):
+            from array import array
+            a, k = cap["extract"]
+            h = a[0].Clone("ptmc_test_shifted_axes")
+            h.SetDirectory(0)
+            edges = [float(e) for e in PT]
+            edges[-1] *= 1.01
+            h.GetXaxis().Set(len(edges) - 1, array("d", edges))
+            cap["extract"] = ((h,) + tuple(a[1:]), k)
+        rc, meta, verdict = self.corrupted_unit("p_off_b1", corrupt)
+        self.assertFalse(meta["controls"]["C-COMP"]["axes"])
+        self.assert_only_failure(rc, meta, verdict, "C-COMP")
+
+    def test_non_finite_extraction_argument_fails(self):
+        """An infinite nucleon count zeroes every cell, so every rel_close control passes on exact zeros; only the
+        finiteness of the extraction's arguments fails the unit."""
+        def corrupt(cap):
+            a, k = cap["extract"]
+            cap["extract"] = (tuple(a[:3]) + (float("inf"),) + tuple(a[4:]), k)
+        rc, meta, verdict = self.corrupted_unit("p_off_b1", corrupt)
+        self.assertIs(meta["extract_args_finite"], False)
+        self.assert_only_failure(rc, meta, verdict, None)
+
 
 if __name__ == "__main__":
     unittest.main()

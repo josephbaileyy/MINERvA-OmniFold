@@ -250,6 +250,16 @@ class StageD4(unittest.TestCase):
         self.assertEqual(rc, 5)
         self.assertFalse((out / "manifest.json").exists())
 
+    def test_a_fifo_fails_before_any_copy(self):
+        """A non-regular source fails at its lstat: a FIFO would otherwise copy as an empty file (no writer)."""
+        f = self.ref / "units" / "c2_replica_b11.npz"
+        f.unlink()
+        os.mkfifo(f)
+        rc, out = self.stage()
+        self.assertEqual(rc, 5)
+        self.assertFalse((out / "manifest.json").exists())
+        self.assertFalse((out / "c2_replica_b11.npz").exists())
+
 
 if __name__ == "__main__":
     unittest.main()
