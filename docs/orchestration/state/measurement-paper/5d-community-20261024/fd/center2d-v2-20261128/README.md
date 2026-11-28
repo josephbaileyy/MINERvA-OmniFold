@@ -3,9 +3,8 @@
 **Authority:** [`CENTER2D-DECLARATION.md`](CENTER2D-DECLARATION.md), merged in #1446 at main `f5c6db0e`, and the
 director's rulings on the PR (issuecomment-7235721166).
 
-**Status:** code only. Nothing has run on any input except the tests and the mutation campaign below (71 of 71
-killed). Part R waits for the director's binding, and the connect waits for the binding and the director's GO on the
-fetch package.
+**Status:** bound (CENTER2D-BINDING-1). Part R, the one read, and parts T and D have run (below). The data label is
+APPRECIABLE, with §4's caveat. The fetched files are held outside the repo until the director confirms removal.
 
 **CANNOT AUTHORIZE:** what the declaration excludes. That is any covariance or convention change, any note, paper or
 Overleaf text, a coverage statement, a cause, and any separation of physical asymmetry from training noise.
@@ -154,6 +153,99 @@ worktree, and it is pinned by sha.
   - `receipts/mutation-run1-superseded.txt`: 61 of 62 killed. The survivor `verify-count-off` showed that no test gave
     the verifier a consistent 15-file set, so that test was added.
   - `receipts/mutation-run2-superseded.txt`: 62 of 62 killed, on the sources before the Grok fixes.
+
+## Part R: the rehearsal on the committed pre-G2R blocks (2026-11-28)
+
+**Authority:** CENTER2D-BINDING-1 (issuecomment-7237048152) and the director's GO for part R only. The bound files were
+checked by shasum before the run (`run-rehearsal/bound_shas.txt`): driver `1dc764e7…`, wrapper `e4ab0552…`, remote
+`dd1215a1…`, verify `e3385e8e…`, fence `ee696ee6…`.
+
+**The run:**
+- a fresh worktree at `cdda5317`;
+- `python3 -I -B center2d.py rehearsal --out run-rehearsal/center2d_rehearsal.json`, with OMP, OpenBLAS, MKL and vecLib
+  threads at 1;
+- 2026-11-28T09:09:46Z to 09:09:47Z;
+- rc 0; stdout `R:AR23: OK`, `R:G18: OK`, `CENTER2D OK`; stderr empty.
+
+**The record:** `run-rehearsal/center2d_rehearsal.json`,
+`ac08d3f8a1cea1b6e611f60377cce2d0a8fb83916a7b10881bf7d2b5c2c935c8`. Status OK, with noise term "not separable,
+disclosed". Every control passed at both tunes:
+- C-PIN, C-FINITE (43 bands) and the C-X0 mask (205 cells);
+- C-FLUX, equal to the logged sum and n_eff exactly;
+- C-ID, worst 1.2e-13 (AR23) and 2.2e-13 (G18);
+- C-RECON: C_univ 6.5e-21 and 5.6e-21, C_lat 0, C_T as its block sum 0;
+- C-PSD for C and M;
+- C-ADD, at most 7.1e-16.
+
+The readings went to the director first, who accepted part R on 2026-11-28.
+
+**Part R carries no label, as declared.** Its numbers describe a superseded matrix, the pre-G2R C_T. R5's per-subset
+label strings in the leave-one-band-out entries, and the label list in their range, are descriptive outputs of the
+bound code and decide nothing (director, 2026-11-28). The label is decided only at part D.
+
+## The read and parts T and D (2026-11-28)
+
+**Authority:**
+- CENTER2D-BINDING-1 and the director's GO for one read.
+- cov2d's ack at 09:10:56Z, with three conditions:
+  - O_NOATIME/O_NOFOLLOW reads only, with the same-process stats;
+  - one run, with nothing written on the cluster or CFS and no job submitted;
+  - COVFIX blinding: nothing fetched or derived goes to tune-generator.
+- limitation-resolver was told START at 09:14:00Z and END at 09:14:44Z.
+
+**Before the run:**
+- the five bound files checked by shasum (`1dc764e7`, `e4ab0552`, `dd1215a1`, `e3385e8e`, `ee696ee6`), with 0 files
+  changed against `cdda5317`;
+- `--check-only` passed;
+- the cert had 28,243 s left.
+
+**The read** (`fetch/`):
+- **Wrapper:** 09:14:19Z to 09:14:33Z, rc 0, `CENTER2D FETCH OK: 16 files` (`wrapper.out`).
+- **Fence:** clear at 09:14:28Z. 119 sacct rows (`fence_sacct.txt`), none refusing; squeue empty; `fence_hits.txt` and
+  both `.err` files empty.
+- **Remote:** login13, 09:14:32Z to 09:14:33Z, `remote.err` `FETCH-DONE 16 files`. In all 16 rows of `MANIFEST.tsv`,
+  atime before equals atime after.
+- **Verifier:** `verify.out` reads `VERIFY OK 16`. `fetch.tar` is
+  `8a40c1ebafcba4b98a0e750694e533344b8faf37af470719df5f2c8e9ccc39c6` (`fetch.tar.sha256`). `SHA256SUMS` lists the 16
+  files, each equal to `expected.tsv`'s committed digest.
+- **Nothing was written on the cluster or CFS, and no job was submitted.**
+
+**Retention (the director's addition to the binding):**
+- The 16 fetched files and `fetch.tar` stay outside the repo at `/Users/josephbailey/center2d-data/fetch-run1/`. They
+  are never committed.
+- They are removed manifest-first, by literal path, once this receipt has merged and the director confirms.
+
+**Parts T and D** (`run/`):
+- `center2d.py main <OUT_DIR> --out run/center2d.json`, with the bound driver at `cdda5317` and threads at 1;
+- 09:14:57Z to 09:15:03Z;
+- rc 0; stdout `D: OK`, `T:AR23: OK`, `T:G18: OK`, `CENTER2D OK`; stderr empty.
+
+The record is `run/center2d.json`, `b90070e12e544cc160ef8b9e44c21052f331b1e074f926e44a59543977684344`. Status OK, no stopped parts, noise term "not separable, disclosed".
+C-FETCH passed for all 16 files. Every control passed:
+- **D:**
+  - C-RECON: C_univ_new to 1.3e-20; each of the five laterals equal to S5_R exactly; C_univ_old, the S5_R sum to Q's
+    universe, and C_new = Q − Σ₃₈ S5_R + C_univ_new all exact (0);
+  - C-X0: x equals E_R's 205 positive cells bit for bit;
+  - C-FLUX exact; C-ID 7.6e-14; C-PSD; C-ADD at most 3.0e-16.
+- **T:** C-X0, C-FLUX, the laterals kept, and C-RECON (C_univ at most 7.5e-21, C_lat 0, C_T 0); C-ID at most
+  2.2e-13; C-PSD; C-ADD.
+
+The readings went to the director first.
+
+| | D, against C_new | T:AR23, against C_T′ | T:G18, against C_T′ |
+|---|---|---|---|
+| ndf | 205 | 204 | 205 |
+| R1 tr(M)/tr(C) | 0.03471 | 0.01280 | 0.01937 |
+| R3 mean r_k, ranks 1–73 / 74–139 / 140–ndf | 2.483 / 5.824 / 6.280 | 1.625 / 2.602 / 3.941 | 2.205 / 3.929 / 5.596 |
+| R4 ε | 375.9 | 233.0 | 412.5 |
+| label | **APPRECIABLE** | APPRECIABLE (descriptive; it does not carry over to the data) | APPRECIABLE (descriptive) |
+
+- **Every leave-one-band-out set at D** is also APPRECIABLE.
+- **The fixed reading of APPRECIABLE (§5, verbatim):** "as built (one training seed), M adds at least 10 % on
+  average in some rank band. How much of it is asymmetric response and how much is training noise is not separable from these
+  records (§4)."
+- **v2 records only.** Nothing in `docs/analysis-note` changes. Whether any v1 text should mention this is Joseph's
+  call.
 
 ## How it reads and writes
 

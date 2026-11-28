@@ -1,0 +1,16 @@
+g2r/data_g2r.npz	3b8cc7ceaef97c3dc6bbcd2c5cfdf853442c347e37e23f64eca54898d0e9eb4b	/pscratch/sd/j/josephrb/cov2d-g2r-20261112/readout/data/data_g2r.npz
+g2r/blocks_g2r_AR23.npz	c060cb40232e0112ec440951f94841e87fc98b542a165eed2c8242898508a70a	/pscratch/sd/j/josephrb/cov2d-g2r-20261112/readout/AR23/blocks_g2r_AR23.npz
+g2r/blocks_g2r_G18.npz	55ad7cc4faa4680b49391a9d68f52fcaa707150bd1300915063d66a16be9bfbe	/pscratch/sd/j/josephrb/cov2d-g2r-20261112/readout/G18/blocks_g2r_G18.npz
+partc/cov2d_Q_205.npz	7153b194b95c27f80db5997bdde35fe2475f2b1c40c9ff456edd409850cf47d2	/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/outA/cov2d_Q_205.npz
+partc/production_cov.npz	631cf255fff43b5cb35acd9cefdcee99e5ee95b85dc2f30d8e0aca513095eea1	/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/s5/production_cov.npz
+partb/S3_BeamAngleX0.root	b8bf4ac39c9d6d75c661705be27a029d8f510fc28de8f53199b65559e1086ea9	/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S3_BeamAngleX0/xsec.root
+partb/S3_BeamAngleX1.root	1c1017fc95162e1775673066e79ec717783e32db6a96f4f23d2925d459c0734f	/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S3_BeamAngleX1/xsec.root
+partb/S3_BeamAngleY0.root	2401b8e418a6bc1dd2f0a954325dc57ef2f45ee174467f1d9bb0d8a2f9318bc4	/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S3_BeamAngleY0/xsec.root
+partb/S3_BeamAngleY1.root	0a696e87fa7059ec3ad0fa67fb2f0964b47856d4d433d62e946ac611c318e7f5	/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S3_BeamAngleY1/xsec.root
+partb/S3_MuonResolution0.root	2182fb6a2310b63c75d4e4c94a86d53d68d485a9ac7dec689a284d73fe0b8828	/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S3_MuonResolution0/xsec.root
+partb/S3_MuonResolution1.root	69d6813612ec627c457afb302b360e5579c7bf8b7b45ce3e401c73a84db0908b	/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S3_MuonResolution1/xsec.root
+partb/S3_MuonEnergyMINERvA0.root	842ed621eb9258051be194f73a740afa8712c8de0c41326d551ef857eefe2e5f	/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S3_MuonEnergyMINERvA0/xsec.root
+partb/S3_MuonEnergyMINERvA1.root	c54d154506598a8fb0f044dfa855d4bc98b539c3cf6eae7c1e20b1ef720bcc33	/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S3_MuonEnergyMINERvA1/xsec.root
+partb/S3_MuonEnergyMINOS0.root	47616036ef6408302a535cba1a7667317da216397cc4d91c3160f91bbc802d90	/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S3_MuonEnergyMINOS0/xsec.root
+partb/S3_MuonEnergyMINOS1.root	d380303a73c901ee110a305ac4c42335265c18e7293f47bbeb0f9e2d1d335aa8	/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S3_MuonEnergyMINOS1/xsec.root
+c04/minos_rescaled.npz	8912376ef2a6cfce8bed515cc945d9d5778cf5c838154a685435c3c7ce25416d	/pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/minos_rescaled.npz
