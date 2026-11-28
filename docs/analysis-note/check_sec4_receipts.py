@@ -2,8 +2,8 @@
 """Tie the paper's Sec. IV printed values, and the note values moved from it, to their committed receipts (PRD release
 audit ea939701, G11).
 
-Each check finds one printed value in the note's values.tex, sec3_twod.tex, appC_supplementary.tex, sec_validation.tex,
-sec_5d.tex, or in the primer's primer_body.tex, recomputes it
+Each check finds one printed value in the note's values.tex, sec3_twod.tex, appC_supplementary.tex, appB_negweight.tex
+and the other built sources it loads, or in the primer's primer_body.tex, recomputes it
 from the committed receipt that backs it, and compares at the printed precision: |computed - printed| <= half a unit in
 the printed last digit ("round"), or printed - one unit <= computed < printed ("below", for "below X%": true, and tight
 to one unit). "round-3dp-source" is "round" for a record that prints only 3 dp: the whole interval the record's value
@@ -12,16 +12,20 @@ be located, or a receipt key that is missing, is a failure. Release-reproducible
 publication/release/figs/fig_numbers.py instead; this covers the Sec. IV values the release cannot recompute.
 
 Register round r18 (DECISION-20261025-joseph-r18-history-to-note.md item 1) moved the history of the two superseded
-2D statistical bands out of the paper. Its bound values are now found where they print, in the note: the two-sigma
-nominal of the earlier band's test in sec_validation.tex (erf(2/sqrt 2), as a fraction); the post hoc rescoring against
+2D statistical bands out of the paper. Its bound values were then found where they printed, in the note: the two-sigma
+nominal of the earlier band's test in sec_validation.tex (erf(2/sqrt 2), as a fraction; its check was dropped on
+2026-11-28 with that file, which no built document inputs and whose value prints nowhere built, DECISION-20261127
+sec. 6); the post hoc rescoring against
 the rebuilt band, in sec_validation.tex until the deep restructure (DECISION-20261118) moved it verbatim to App. I's
 app:devhistory-band in app_devhistory.tex (move rows CV-VA02..VA04; the same receipt, rescore_vl169_toys_vl170.json, as
 fractions), whose check was dropped on 2026-11-27 with that file, which no built document inputs (DECISION-20261127,
 option (c)); and the earlier
 band's C2 as \\covTwoDCTwo in values.tex (the macro the note prints; the paper's percent form is no longer printed).
 The targeted round of 2026-11-03 moved the paper's background-closure paragraph (Sec. IV D) to the note, so its four
-bound values (VL149, VL151, VL152) are now found in sec_5d.tex's sec:val-negweight, with the residual of the other
-(E_avail, W) cells that the note now prints too.
+bound values (VL149, VL151, VL152) were found in sec_5d.tex's sec:val-negweight, with the residual of the other
+(E_avail, W) cells. sec_5d.tex has not been built since the journal-voice rewrite, and the values print in App. B
+(appB_negweight.tex), where these checks are re-anchored (DECISION-20261127 sec. 6, 2026-11-28). The regularization
+bias's sec_5d copy is dropped, because its App. C check remains.
 
 The short paper (main_paper.tex, paper_body.tex) was retired on 2026-11-21 (docs/POST_PUBLICATION_REORG_PLAN.md, family
 "short paper"). Its five values bind where they still print, from the same receipts: the statistical block median in
@@ -1061,26 +1065,23 @@ CHECKS = [
      r"\\newcommand\{\\covTwoDCTwo\}\{([0-9.]+)\}", lambda: interim("C2"), "round"),
     ("first-built band, within 1 sigma (VL169)", "values.tex", r"\\newcommand\{\\covTwoDCOne\}\{([0-9.]+)\}",
      lambda: interim("C1"), "round"),
-    ("two-sigma nominal of the earlier band's test (note sec:coverage)", "sec_validation.tex",
-     r"lies entirely below its window \(Gaussian ([0-9.]+)\)", lambda: math.erf(2.0 / math.sqrt(2.0)), "round"),
     ("statistical block median (Q_R, S1)", "sec3_twod.tex", r"Statistical bootstrap & ([0-9.]+) &", stat_median, "round"),
-    # The background-closure values bind in the note since the targeted round (DECISION-20261103-joseph-retire-density-
-    # gate.md item 3b) moved the paper's Sec. IV D closure paragraph there: sec_5d.tex sec:val-negweight prints them
-    ("purity bias, highest-W cells (VL149)", "sec_5d.tex",
-     r"return the highest-\$W\$ column of \$\(\\Eavail,W\)\$ \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\} low",
+    # The background-closure values (VL149, VL151, VL152): the targeted round (DECISION-20261103-joseph-retire-density-
+    # gate.md item 3b) moved them into sec_5d.tex, which no built document inputs since the journal-voice rewrite. They
+    # print in App. B (appB_negweight.tex), where they are re-anchored (DECISION-20261127 sec. 6, the second PR).
+    ("purity bias, highest-W cells (VL149)", "appB_negweight.tex",
+     r"the highest-\$W\$ column of the \$E_\{\\mathrm\{avail\}\}\$--\$W\$ plane is \$([0-9.]+)\\%\$ to \$([0-9.]+)\\%\$ low",
      purity_bias_range, "round"),
-    ("negative-weight residual, highest-W cells (VL151)", "sec_5d.tex",
-     r"brings the highest-\$W\$ column to \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\}", negweight_highw_range, "round"),
-    ("negative-weight residual, other (E_avail, W) cells (VL151)", "sec_5d.tex",
-     r"every other \$\(\\Eavail,W\)\$ cell to at most \\SI\{([0-9.]+)\}\{\\percent\}", negweight_other_ew_max, "round"),
-    ("negative-weight residual, joint cells (VL151)", "sec_5d.tex",
-     r"Some joint cells remain up to \\SI\{([0-9.]+)\}\{\\percent\} high", negweight_joint_max, "round"),
-    ("treatments on data (VL152)", "sec_5d.tex", r"and at most \\SI\{([0-9.]+)\}\{\\percent\} over the reported functionals",
-     data_method_diff, "round"),
+    ("negative-weight residual, highest-W cells (VL151)", "appB_negweight.tex",
+     r"reduces the absolute residuals to \$([0-9.]+)\\%\$--\$([0-9.]+)\\%\$ in that column", negweight_highw_range, "round"),
+    ("negative-weight residual, other (E_avail, W) cells (VL151)", "appB_negweight.tex",
+     r"in that column and to at most \$([0-9.]+)\\%\$", negweight_other_ew_max, "round"),
+    ("negative-weight residual, joint cells (VL151)", "appB_negweight.tex",
+     r"The largest failures are joint cells, at up to \$([0-9.]+)\\%\$ high", negweight_joint_max, "round"),
+    ("treatments on data (VL152)", "appB_negweight.tex",
+     r"shifts the tested integrals by a median of \$[0-9.]+\\%\$ and at most \$([0-9.]+)\\%\$", data_method_diff, "round"),
     ("regularization bias at high W (VL151)", "appC_supplementary.tex",
      r"reaches \$([0-9.]+)\\%\$ in the highest-\$W\$ column", regularization_max, "round"),
-    ("regularization bias at high W (VL151), sec_5d's copy", "sec_5d.tex",
-     r"They reach \\SI\{([0-9.]+)\}\{\\percent\} in the highest-\$W\$ column", regularization_max, "round"),
     ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "appA_methods.tex",
      r"The lowest empirical coverage for the \$68\\%\$ intervals is ([0-9.]+)\.", tilt_coverage68_min, "round"),
     ("other fixed shapes, most affected cell (VL154)", "primer_body.tex",
@@ -1343,8 +1344,8 @@ def ibub_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 
 def load() -> dict[str, str]:
-    return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "sec_validation.tex",
-                                               "sec_5d.tex", "primer_body.tex", "appA_methods.tex",
+    return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "appB_negweight.tex",
+                                               "primer_body.tex", "appA_methods.tex",
                                                "appC_supplementary.tex", "records_r03_twod.tex", "sec2_method.tex",
                                                "appD_reproducibility.tex", "sec5_multidim.tex", "sec6_conclusions.tex", "values_fived16.tex")}
 
