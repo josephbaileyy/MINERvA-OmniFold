@@ -52,6 +52,10 @@ class Rules(unittest.TestCase):
         self.assertEqual(m.label(0.0, [0.0, 0.10, 0.0]), "APPRECIABLE")
         self.assertEqual(m.label(0.5, [0.0, 0.0, 0.1000001]), "APPRECIABLE")
 
+    def test_no_non_empty_band_refuses(self):
+        with self.assertRaisesRegex(m.Stop, "C-FINITE"):
+            m.label(0.0, [None, None, None])
+
     def test_empty_rank_bands_are_ignored(self):
         self.assertEqual(m.label(0.001, [0.05, 0.02, None]), "NEGLIGIBLE")
         self.assertEqual(m.label(0.001, [0.05, None, None]), "NEGLIGIBLE")
@@ -121,6 +125,51 @@ class Readings(unittest.TestCase):
             m.psd({}, "x", np.array([[1.0, 0.5], [0.4, 1.0]]))
         with self.assertRaisesRegex(m.Stop, "C-PSD"):
             m.psd({}, "x", np.array([[1.0, 2.0], [2.0, 1.0]]))
+
+    def test_psd_refuses_a_negative_definite_matrix(self):
+        with self.assertRaisesRegex(m.Stop, "C-PSD"):
+            m.psd({}, "x", -np.eye(3))
+        with self.assertRaisesRegex(m.Stop, "C-PSD"):
+            m.psd({}, "x", -np.eye(3), positive=True)
+
+    def test_psd_positive_needs_a_positive_diagonal(self):
+        A = np.diag([1.0, 2.0, 0.0])
+        m.psd({}, "m", A)
+        with self.assertRaisesRegex(m.Stop, "C-PSD"):
+            m.psd({}, "c", A, positive=True)
+
+    def test_a_zero_m_passes_psd(self):
+        ctl = {}
+        m.psd(ctl, "m", np.zeros((3, 3)))
+        self.assertTrue(ctl["C-PSD:m"]["pass"])
+
+    def test_r6_is_null_when_a_cell_has_zero_band_variance(self):
+        n = 30
+        C = np.eye(n)
+        b = np.full(n, 0.01)
+        v = np.ones(n)
+        v[4] = 0.0
+        r = m.readings({"a": b}, {"a": v}, np.ones(n) * 2, C, C, np.arange(n), {}, "t")["R6"]["a"]
+        self.assertIsNone(r["median_abs_b_over_sigma_band"])
+        self.assertEqual((r["cells_with_zero_band_variance"], r["of_which_b_is_zero"], r["of_which_b_is_nonzero"]),
+                         (1, 0, 1))
+        self.assertAlmostEqual(r["median_abs_b_over_sigma_band_positive_variance_cells_only"], 0.01, 15)
+        self.assertAlmostEqual(r["median_abs_b_over_x0"], 0.005, 15)
+        r2 = m.readings({"a": b}, {"a": np.ones(n)}, np.ones(n) * 2, C, C, np.arange(n), {}, "t")["R6"]["a"]
+        self.assertAlmostEqual(r2["median_abs_b_over_sigma_band"], 0.01, 15)
+
+    def test_r6_refuses_a_zero_x0(self):
+        n = 5
+        x0 = np.ones(n)
+        x0[2] = 0.0
+        with self.assertRaisesRegex(m.Stop, "C-FINITE"):
+            m.readings({"a": np.ones(n) * 0.1}, {"a": np.ones(n)}, x0, np.eye(n), np.eye(n), np.arange(n), {}, "t")
+
+    def test_top5_keys_name_the_declared_bands(self):
+        n = 205
+        r = m.readings({"a": np.ones(n) * 0.01}, {"a": np.ones(n)}, np.ones(n), np.eye(n), np.eye(n), np.arange(n),
+                       {}, "t")
+        self.assertEqual(sorted(r["R5"]["top5"]), ["ranks_140_ndf", "ranks_1_73", "ranks_74_139", "trace_share"])
 
     def test_c_add_catches_a_wrong_sum(self):
         n = 10
@@ -247,6 +296,14 @@ class PartTune(unittest.TestCase):
         def mut(G):
             G["band__BeamAngleX"][0, 2] *= 1 + 1e-15
         self.assertIn("C-RECON:T:AR23:laterals_kept", self.run_tune(mut)["stop"])
+
+    def test_an_unreadable_fetched_file_is_a_stop_not_a_crash(self):
+        lab = "g2r/blocks_g2r_AR23.npz"
+        p = os.path.join(self.d, "junk.npz")
+        with open(p, "wb") as f:
+            f.write(b"not an npz")
+        r = m.part_tune("AR23", SETS, {lab: {"pass": True}}, {lab: p})
+        self.assertEqual(r["status"], "STOP")
 
     def test_changed_flux_weights_stop(self):
         def mut(G):
@@ -458,6 +515,27 @@ class Files(unittest.TestCase):
             with open(p) as f:
                 rec = json.load(f)
             self.assertEqual((rec["status"], rec["stopped_parts"]), ("STOP", ["D"]))
+        finally:
+            m.expected_digests, m.fetched, m.part_tune, m.part_data = saved
+
+    def test_a_non_finite_record_becomes_a_stop_record(self):
+        p = os.path.join(self.d, "nan.json")
+        rec = m.write({"schema": "center2d/1", "parts": {"D": {"status": "OK", "x": float("nan")}}}, p)
+        self.assertEqual(rec["status"], "STOP")
+        with open(p) as f:
+            self.assertEqual(json.load(f)["status"], "STOP")
+
+    def test_main_returns_3_when_the_record_had_to_become_a_stop(self):
+        saved = (m.expected_digests, m.fetched, m.part_tune, m.part_data)
+        m.expected_digests = lambda: {}
+        m.fetched = lambda d, e: ({}, {})
+        m.part_tune = lambda T, sets, fst, paths: {"status": "OK"}
+        m.part_data = lambda sets, fst, paths, er: {"status": "OK", "readings": {"x": float("inf")}}
+        try:
+            p = os.path.join(self.d, "r2.json")
+            self.assertEqual(m.main(["main", self.d, "--out", p]), 3)
+            with open(p) as f:
+                self.assertEqual(json.load(f)["status"], "STOP")
         finally:
             m.expected_digests, m.fetched, m.part_tune, m.part_data = saved
 

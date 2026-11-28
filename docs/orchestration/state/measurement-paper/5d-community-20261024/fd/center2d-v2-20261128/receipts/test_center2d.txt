@@ -11,6 +11,7 @@ test_consistent_synthetic_data_passes_every_control (__main__.Data.test_consiste
 test_wrong_er_file_refuses (__main__.Data.test_wrong_er_file_refuses) ... ok
 test_wrong_minos_scale_fails_c_recon (__main__.Data.test_wrong_minos_scale_fails_c_recon) ... ok
 test_x0_not_er_fails_c_x0 (__main__.Data.test_x0_not_er_fails_c_x0) ... ok
+test_a_non_finite_record_becomes_a_stop_record (__main__.Files.test_a_non_finite_record_becomes_a_stop_record) ... ok
 test_a_stopped_part_makes_the_record_a_stop (__main__.Files.test_a_stopped_part_makes_the_record_a_stop) ... ok
 test_expected_digests_cover_the_fetch (__main__.Files.test_expected_digests_cover_the_fetch) ... ok
 test_fetch_list_equals_the_remote_readers (__main__.Files.test_fetch_list_equals_the_remote_readers) ... ok
@@ -18,19 +19,28 @@ test_fetched_marks_a_bad_digest (__main__.Files.test_fetched_marks_a_bad_digest)
 test_fetched_refuses_without_the_verifier_line (__main__.Files.test_fetched_refuses_without_the_verifier_line) ... ok
 test_main_records_a_stop_for_a_missing_fetch (__main__.Files.test_main_records_a_stop_for_a_missing_fetch) ... ok
 test_main_refuses_an_existing_record (__main__.Files.test_main_refuses_an_existing_record) ... ok
+test_main_returns_3_when_the_record_had_to_become_a_stop (__main__.Files.test_main_returns_3_when_the_record_had_to_become_a_stop) ... ok
+test_an_unreadable_fetched_file_is_a_stop_not_a_crash (__main__.PartTune.test_an_unreadable_fetched_file_is_a_stop_not_a_crash) ... ok
 test_changed_flux_weights_stop (__main__.PartTune.test_changed_flux_weights_stop) ... ok
 test_changed_lateral_stops (__main__.PartTune.test_changed_lateral_stops) ... ok
 test_changed_x_t_stops (__main__.PartTune.test_changed_x_t_stops) ... ok
 test_equal_blocks_pass_with_a_descriptive_label_only (__main__.PartTune.test_equal_blocks_pass_with_a_descriptive_label_only) ... ok
 test_failed_fetch_stops (__main__.PartTune.test_failed_fetch_stops) ... ok
+test_a_zero_m_passes_psd (__main__.Readings.test_a_zero_m_passes_psd) ... ok
 test_analytic_diagonal_case (__main__.Readings.test_analytic_diagonal_case) ... ok
 test_c_add_catches_a_wrong_sum (__main__.Readings.test_c_add_catches_a_wrong_sum) ... ok
 test_label_reads_carry_the_realization_sentence (__main__.Readings.test_label_reads_carry_the_realization_sentence) ... ok
 test_per_band_contributions_add_and_attribution (__main__.Readings.test_per_band_contributions_add_and_attribution) ... ok
+test_psd_positive_needs_a_positive_diagonal (__main__.Readings.test_psd_positive_needs_a_positive_diagonal) ... ok
 test_psd_refuses (__main__.Readings.test_psd_refuses) ... ok
+test_psd_refuses_a_negative_definite_matrix (__main__.Readings.test_psd_refuses_a_negative_definite_matrix) ... ok
+test_r6_is_null_when_a_cell_has_zero_band_variance (__main__.Readings.test_r6_is_null_when_a_cell_has_zero_band_variance) ... ok
+test_r6_refuses_a_zero_x0 (__main__.Readings.test_r6_refuses_a_zero_x0) ... ok
 test_singular_c_drops_the_null_ranks (__main__.Readings.test_singular_c_drops_the_null_ranks) ... ok
+test_top5_keys_name_the_declared_bands (__main__.Readings.test_top5_keys_name_the_declared_bands) ... ok
 test_empty_rank_bands_are_ignored (__main__.Rules.test_empty_rank_bands_are_ignored) ... ok
 test_labels_at_the_boundaries (__main__.Rules.test_labels_at_the_boundaries) ... ok
+test_no_non_empty_band_refuses (__main__.Rules.test_no_non_empty_band_refuses) ... ok
 test_rank_slices (__main__.Rules.test_rank_slices) ... ok
 test_an_inconsistent_offset_fails_c_id (__main__.Tune.test_an_inconsistent_offset_fails_c_id) ... ok
 test_missing_band_refuses (__main__.Tune.test_missing_band_refuses) ... ok
@@ -40,7 +50,7 @@ test_wrong_mask_refuses (__main__.Tune.test_wrong_mask_refuses) ... ok
 test_wrong_universe_count_refuses (__main__.Tune.test_wrong_universe_count_refuses) ... ok
 
 ----------------------------------------------------------------------
-Ran 40 tests in 12.336s
+Ran 50 tests in 21.900s
 
 OK
 
@@ -51,5 +61,6 @@ D: STOP
 T:AR23: OK
 T:G18: OK
 CENTER2D STOP in ['D']
-CENTER2D STOP: FileNotFoundError: [Errno 2] No such file or directory: '/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/center2d-f-5s5ya9cl/none/verify.out'
-refusing: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/center2d-f-fa8lqlod/r.json exists
+CENTER2D STOP: FileNotFoundError: [Errno 2] No such file or directory: '/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/center2d-f-tmnp5wx1/none/verify.out'
+refusing: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/center2d-f-r10at1ei/r.json exists
+CENTER2D STOP: C-FINITE: the record holds a non-finite value (Out of range float values are not JSON compliant: inf)

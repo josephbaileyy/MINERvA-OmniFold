@@ -289,11 +289,18 @@ def check(ctl: dict, name: str, ok: bool, **info) -> None:
         raise Stop(f"{name.split(':')[0]}: {name} failed ({json.dumps(info, default=str)[:300]})")
 
 
-def psd(ctl: dict, name: str, A: np.ndarray) -> None:
-    sym = amax(A - A.T) / amax(A) if amax(A) > 0 else 0.0
+def psd(ctl: dict, name: str, A: np.ndarray, positive: bool = False) -> None:
+    """Symmetric to 1e-12 and smallest eigenvalue >= -1e-12 of the largest (no division, so a matrix whose largest
+    eigenvalue is <= 0 cannot pass by a sign). positive=True (the covariance C) also needs a positive largest
+    eigenvalue and a positive diagonal, so every R2 ratio is defined."""
+    big = amax(A)
+    sym = amax(A - A.T) / big if big > 0 else 0.0
     lam = np.linalg.eigvalsh((A + A.T) / 2)
-    low = float(lam.min() / lam.max()) if lam.max() > 0 else 0.0
-    check(ctl, f"C-PSD:{name}", sym <= TOL and low >= -TOL, symmetry=sym, min_over_max_eig=low)
+    ok = sym <= TOL and lam.min() >= -TOL * max(lam.max(), 0.0)
+    if positive:
+        ok = ok and lam.max() > 0 and bool(np.all(np.diag(A) > 0))
+    check(ctl, f"C-PSD:{name}", ok, symmetry=sym, min_eig=float(lam.min()), max_eig=float(lam.max()),
+          min_diag=float(np.diag(A).min()))
 
 
 def eig_desc(C: np.ndarray):
@@ -312,6 +319,8 @@ def rank_slices(ndf: int) -> list:
 
 def label(s_tr: float, means: list) -> str:
     vals = [m for m in means if m is not None]
+    if not vals:
+        raise Stop("C-FINITE: no rank band is non-empty, so no label can be applied")
     if any(m >= RANK_CUT for m in vals):
         return "APPRECIABLE"
     if s_tr < S_TR_CUT and all(m < RANK_CUT for m in vals):
@@ -326,7 +335,7 @@ def readings(offsets: dict, vmean_diag: dict, x0: np.ndarray, C: np.ndarray, C_s
     M = np.zeros_like(C)
     for b in bands:
         M += np.outer(offsets[b], offsets[b])
-    psd(ctl, f"C:{tag}", C)
+    psd(ctl, f"C:{tag}", C, positive=True)
     psd(ctl, f"M:{tag}", M)
     lam, U = eig_desc(C)
     ndf = int(np.sum(lam > RANK_TOL * lam[0]))
@@ -357,8 +366,9 @@ def readings(offsets: dict, vmean_diag: dict, x0: np.ndarray, C: np.ndarray, C_s
     coupling = float(np.linalg.norm(P_perp @ M @ Ur / sq[None, :], 2))
     # R5: top five by each decision quantity, and leave-one-band-out
     top = {"trace_share": sorted(bands, key=lambda b: -per[b]["trace_share"])[:5]}
-    for k, (lo, hi, s) in enumerate(sl):
-        top[f"ranks_{lo}_{hi}"] = None if s is None else sorted(bands, key=lambda b: -per[b]["rank_band_means"][k])[:5]
+    for k, ((lo, hi_decl), (_, _, s)) in enumerate(zip(RANK_BANDS, sl)):
+        top[f"ranks_{lo}_{hi_decl or 'ndf'}"] = (None if s is None else
+                                                 sorted(bands, key=lambda b: -per[b]["rank_band_means"][k])[:5])
     loo = {}
     for b in bands:
         s2 = s_tr - per[b]["trace_share"]
@@ -370,14 +380,20 @@ def readings(offsets: dict, vmean_diag: dict, x0: np.ndarray, C: np.ndarray, C_s
                                       max(v["rank_band_means"][k] for v in loo.values())] for k in range(len(sl))],
                  "labels": sorted({v["label"] for v in loo.values()})}
     # R6
+    if not np.all(x0 != 0):
+        raise Stop(f"C-FINITE: {tag}: X0 has a zero cell, so R6's |b_c| / X0_c is undefined")
     r6 = {}
     for b in bands:
-        ab = np.abs(offsets[b])
-        pos = vmean_diag[b] > 0
-        r6[b] = {"median_abs_b_over_x0": float(np.median(ab / np.abs(x0))),
-                 "median_abs_b_over_sigma_band": float(np.median(ab[pos] / np.sqrt(vmean_diag[b][pos]))) if pos.any()
-                 else None,
-                 "cells_with_positive_band_variance": int(pos.sum())}
+        ab, v = np.abs(offsets[b]), vmean_diag[b]
+        pos = v > 0
+        r6[b] = {"median_abs_b_over_x0": float(np.median(ab / x0)),
+                 # the declared median over all cells; undefined (null) when a cell has zero band variance
+                 "median_abs_b_over_sigma_band": float(np.median(ab / np.sqrt(v))) if pos.all() else None,
+                 "cells_with_zero_band_variance": int((~pos).sum()),
+                 "of_which_b_is_zero": int(np.sum(~pos & (ab == 0))),
+                 "of_which_b_is_nonzero": int(np.sum(~pos & (ab > 0))),
+                 "median_abs_b_over_sigma_band_positive_variance_cells_only":
+                     float(np.median(ab[pos] / np.sqrt(v[pos]))) if pos.any() else None}
     lab = label(s_tr, means)
     return {
         "ndf": ndf,
@@ -532,8 +548,8 @@ def part_tune(T: str, sets: tuple, fst: dict, paths: dict) -> dict:
         return {"status": "OK", "label": None, "descriptive_label": lab_, "descriptive_label_reads": reads,
                 "note": "a tune result does not carry over to the data's matrix (COV2D-DECLARATION.md:226-227)",
                 "controls": ctl, "readings": rd}
-    except Stop as e:
-        return {"status": "STOP", "stop": str(e), "controls": ctl}
+    except (Stop, OSError, KeyError, ValueError) as e:
+        return {"status": "STOP", "stop": f"{type(e).__name__}: {e}", "controls": ctl}
 
 
 def part_data(sets: tuple, fst: dict, paths: dict, er_path: str) -> dict:
@@ -606,10 +622,20 @@ def head(mode: str) -> dict:
             "pins": {k: v[1] for k, v in PINS.items()}, "partb_sums_concat_sha256": PARTB_SUMS_CAT}
 
 
-def write(rec: dict, out: str) -> None:
+def write(rec: dict, out: str) -> dict:
+    """Serialize first, then create the file, so a non-finite value cannot leave a partial record; such a record is
+    replaced by a STOP record that keeps the header."""
+    try:
+        text = json.dumps(rec, indent=1, sort_keys=True, allow_nan=False)
+    except ValueError as e:
+        keep = ("schema", "mode", "declaration", "noise_term", "noise_statement", "code_sha256", "pins",
+                "partb_sums_concat_sha256")
+        rec = {k: rec[k] for k in keep if k in rec}
+        rec.update(status="STOP", stop=f"C-FINITE: the record holds a non-finite value ({e})")
+        text = json.dumps(rec, indent=1, sort_keys=True, allow_nan=False)
     with open(out, "x") as f:
-        json.dump(rec, f, indent=1, sort_keys=True, allow_nan=False)
-        f.write("\n")
+        f.write(text + "\n")
+    return rec
 
 
 def main(argv=None) -> int:
@@ -655,7 +681,10 @@ def main(argv=None) -> int:
     bad = sorted(k for k, v in rec["parts"].items() if v["status"] != "OK")
     rec["status"] = "OK" if not bad else "STOP"
     rec["stopped_parts"] = bad
-    write(rec, a.out)
+    rec = write(rec, a.out)
+    if "parts" not in rec:
+        print(f"CENTER2D STOP: {rec['stop']}")
+        return 3
     for k in sorted(rec["parts"]):
         print(f"{k}: {rec['parts'][k]['status']}")
     print("CENTER2D OK" if not bad else f"CENTER2D STOP in {bad}")
