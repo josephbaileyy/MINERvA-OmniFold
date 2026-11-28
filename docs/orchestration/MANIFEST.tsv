@@ -10136,6 +10136,9 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/reads/grok-20261128/report.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/reads/grok-20261128/run.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/reads/grok-20261128/stderr.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/receipts/mutation-run1-superseded.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/receipts/mutation-run2-superseded.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/receipts/mutation.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/receipts/test_center2d.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/receipts/test_center2d_fetch.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/test_center2d.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
