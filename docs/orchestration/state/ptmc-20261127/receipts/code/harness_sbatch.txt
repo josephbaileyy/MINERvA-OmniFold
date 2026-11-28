@@ -1,9 +1,25 @@
-ok   pilot: no ready refuses (rc 2)
-ok   pilot: the 8 units, once each
-ok   pilot: a failed unit exits 6
+ok   pilot: 3 nodes refuses
+ok   pilot: no ready refuses
 ok   pilot: an existing units dir refuses
-ok   replicas: no PROCEED refuses (rc 2)
-ok   replicas: b = 2..200, 199 steps, each once
-ok   replicas: a failed unit exits 6, its lane continues, rc recorded
-pass 7 fail 0
-sbatch rc=0
+ok   pilot: a wrong rows pin refuses
+ok   pilot: no rows.sha256 refuses
+ok   pilot: a failed conda hook refuses
+ok   pilot: an existing record dir refuses
+ok   pilot: the 8 units, once each, 8 outcomes recorded
+ok   pilot: a failed unit exits 6, every outcome recorded
+ok   replicas: 4 nodes refuses
+ok   replicas: no PROCEED refuses
+ok   replicas: no L refuses
+ok   replicas: a malformed L refuses
+ok   replicas: a failed squeue refuses
+ok   replicas: an UNLIMITED time limit refuses
+ok   replicas: a limit that bash arithmetic would evaluate refuses
+ok   replicas: a limit one second over L refuses
+ok   replicas: a day-form limit over L refuses
+ok   replicas: a wrong rows pin refuses
+ok   replicas: a failed conda hook refuses
+ok   replicas: an existing record dir refuses
+ok   replicas: b = 2..200, 199 steps, each once, 199 outcomes, lane 0 takes b22
+ok   replicas: a failed unit exits 6, its lane continues, its outcome recorded
+pass 23 fail 0
+rc=0

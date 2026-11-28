@@ -1,0 +1,1660 @@
+{
+ "schema": "ptmc-mutation/1",
+ "python": "/Users/josephbailey/ew2d-env/bin/python",
+ "files": {
+  "launch/fill_pins.sh": "2bc3dd4cb529acc6cfd55fb97ac09a42b13df84d2c3db6d87c820f96032d1267",
+  "launch/harness_launch.sh": "9aee1a9c0e90a5d64c2ccc4d165249d0c051e263f6bcafd66a6d22492c0b9c52",
+  "launch/harness_remote.sh": "16cc74898e776f6306c48975f591857211377e42e1a13ec5d7aff40315b8c15a",
+  "launch/harness_sbatch.sh": "c078112b0758d261cb7b688a8e969e3bfa0213e18bae85f96eef2a0433987d0e",
+  "launch/pilot.sbatch": "38aa6bd487027b7bcd9481869c5a245bd0f7481e2a814cd4fb54dc0c3dd10df2",
+  "launch/ptmc_couple_check.py": "13901cbe0bddbe27fce515c9b37ad01fec8c48e3440485f62754c56f9fe32262",
+  "launch/ptmc_couple_launch.sh": "584c7c8a031d1e2a7d54c293be019f17c5dfa02ad2edfdb3a113b7ac962776da",
+  "launch/ptmc_launch.sh": "953ce9982f8058a9d2b32ff4a99a7a617373a6ada7b9dc384b659ac28ae909dd",
+  "launch/ptmc_pilot_post.py": "8326980a949b1db2cf3f7b12dec721ddfb9bb8eb8ce9b8898e6c9344b8dcb3fa",
+  "launch/ptmc_remote.sh": "cdc10111e5c0ed9209d0ebe570fa038b69f980ee155a6ce941b9e34b4df04d7c",
+  "launch/ptmc_stage_d4.py": "cecd17f6826f0f7f96310820147c0fc9de0934c1eb512fb474a3c9d8716b8e1e",
+  "launch/ptmc_stat.sh": "6b775e313107d81b772e8bfcc6226fbafaf75a55be57c1db3bb72dd24a9e2142",
+  "launch/ptmc_stat_launch.sh": "fa76d4e55fa7ef6c8df9ce5582d5f147ec2977ebdafce3abd307a8c40b270e11",
+  "launch/replicas.sbatch": "df0870f8a1823f717dfc4dd8cbfba10fd5d31bf1012c38309c02e1142265dcf2",
+  "launch/test_launch.py": "61e8fdedf658a417a52e142f2872dfd92eb3bb770f6cffba6cac69ece33c014b",
+  "make_tree.sh": "8b531b55e6262b56a67848fd79568dfac5dcbf91cd8e8e08f3a0a765286dcf67",
+  "ptmc_driver.diff": "d1f7072ea06503e7cef2d9da286cfcc5f9ba899b19e019f94b6d3019ef45ff5f",
+  "ptmc_lib.py": "43ee87c13f148d699da4e92c9bcfaa88ccf64ec46c27909fcd53db3faab9f85d",
+  "ptmc_mutation.py": "bd4d9dea51425008d81b24a2945c465cbbdef08ed74bf3a4e4e69d17906d952d",
+  "ptmc_run.py": "2c242d1160bc3f3f19c08ad7f2fb9c476c772e921a3e88bb3d802aa81a1e9114",
+  "ptmc_score.py": "c544aea251f601ca5c4bea0217a050f78a527301fb6a01be3d50fe50ccfd299e",
+  "test_ptmc.py": "7c772739328d497e5179dc40c66cd1b86a21c6a08a813b2d2c7bf9fc27c4cf87",
+  "test_ptmc_score.py": "e292baa779ee494c89d0a758245f522f22a0b2e84ab84a66faaa3e21c9c7d445"
+ },
+ "results": [
+  {
+   "name": "CONTROL",
+   "file": null,
+   "tests": [
+    [
+     "test_ptmc.py",
+     "test_ptmc_score.py",
+     "launch/test_launch.py",
+     "HARNESS:harness_remote.sh",
+     "HARNESS:harness_sbatch.sh",
+     "LOCAL:harness_launch.sh"
+    ],
+    null
+   ],
+   "rc": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "seconds": 1079.5,
+   "verdict": "PASS",
+   "tail": "ok   an unfilled sha: STOP 9\nok   a non-empty session dir: STOP 9\nok   a missing session dir: STOP 9\nok   a bad node name: STOP 9\nok   a login mode on dtn01: STOP 9\nok   stage on a login node: STOP 9\nok   stage with no node: STOP 9\nok   an unknown mode: STOP 9\nok   stage: direct ssh to dtn01.nersc.gov, no saul hop\nok   prestage: through saul to the login node\nok   fetch: both tars, hashed\nok   fetch: a failed scp fails\nok   fetch: a failed hash fails\nok   a changed remote script: STOP 8\nok   a failed hash of the remote script: STOP 9\npass 15 fail 0\n"
+  },
+  {
+   "name": "LIB_SIG_OFFSET",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Draws"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 23.1,
+   "verdict": "KILLED",
+   "tail": "1., 1.,...0, 2, 1, 0, 2, 1, 2, 1, 1, 0, 3, 1, 1, 0, 1, 1, 0, 2, 1, 0, 2,\n       0, 0, 0, 3, 0, 0, 0, 0, 2, 4, 2, 1, 1, 0, 0, 2]))\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Arrays are not equal', 'strict': False}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Arrays are not equal\nE           \nE           Mismatched elements: 36 / 60 (60%)\nE           Max absolute difference: 4.\nE           Max relative difference: 2.\nE            x: array([0., 0., 1., 1., 0., 2., 1., 0., 0., 3., 0., 0., 2., 1., 1., 1., 0.,\nE                  2., 1., 1., 2., 2., 2., 1., 1., 1., 0., 1., 0., 0., 2., 2., 0., 3.,\nE                  0., 1., 1., 2., 2., 0., 4., 3., 1., 0., 0., 1., 1., 3., 1., 0., 1.,\nE                  2., 2., 0., 0., 1., 1., 0., 4., 0.])\nE            y: array([2, 3, 1, 1, 0, 2, 1, 0, 1, 1, 2, 1, 0, 1, 1, 0, 0, 0, 1, 3, 2, 0,\nE                  3, 0, 2, 1, 0, 2, 1, 2, 1, 1, 0, 3, 1, 1, 0, 1, 1, 0, 2, 1, 0, 2,\nE                  0, 0, 0, 3, 0, 0, 0, 0, 2, 4, 2, 1, 1, 0, 0, 2])\n\n../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Draws::test_expected_factors_are_the_drivers_streams - A...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 27 deselected in 18.64s\n"
+  },
+  {
+   "name": "LIB_APPENDED_ORDER",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Draws"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 9.6,
+   "verdict": "KILLED",
+   "tail": "lf.n_orig, self.n_entries, self.app)\n        np.testing.assert_array_equal(e[\"data\"], np.random.default_rng(7).poisson(1.0, 50).astype(float))\n        np.testing.assert_array_equal(e[\"signal\"], np.random.default_rng(7 + 10_000_000).poisson(1.0, 60))\n        bkg = np.random.default_rng(7 + 20_000_000).poisson(1.0, 40)\n        np.testing.assert_array_equal(e[\"bkg\"], bkg)\n>       np.testing.assert_array_equal(e[\"appended\"], bkg[self.app])\n\ntest_ptmc.py:65: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = (<built-in function eq>, array([1., 3., 1., 0.]), array([0, 1, 3, 1]))\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Arrays are not equal', 'strict': False}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Arrays are not equal\nE           \nE           Mismatched elements: 4 / 4 (100%)\nE           Max absolute difference: 2.\nE           Max relative difference: 2.\nE            x: array([1., 3., 1., 0.])\nE            y: array([0, 1, 3, 1])\n\n../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Draws::test_expected_factors_are_the_drivers_streams - A...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 27 deselected in 8.30s\n"
+  },
+  {
+   "name": "LIB_DRAW_TRUTH",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Draws"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 6.9,
+   "verdict": "KILLED",
+   "tail": ".F\n=================================== FAILURES ===================================\n_____________ Draws.test_draw_check_passes_and_catches_each_defect _____________\n\nself = <test_ptmc.Draws testMethod=test_draw_check_passes_and_catches_each_defect>\n\n    def test_draw_check_passes_and_catches_each_defect(self):\n        self.assertTrue(P.draw_check(self.b, **self.kw)[\"pass\"])\n        perm = dict(self.kw, w_truth_seen=self.kw[\"w_truth_seen\"][::-1])  # a row permutation, same sum\n>       self.assertFalse(P.draw_check(self.b, **perm)[\"pass\"])\nE       AssertionError: True is not false\n\ntest_ptmc.py:70: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Draws::test_draw_check_passes_and_catches_each_defect - ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 27 deselected in 5.91s\n"
+  },
+  {
+   "name": "LIB_INJ_OPEN",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Draws"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 5.1,
+   "verdict": "KILLED",
+   "tail": "...F\n=================================== FAILURES ===================================\n_________________ Draws.test_injected_entries_closed_rectangle _________________\n\nself = <test_ptmc.Draws testMethod=test_injected_entries_closed_rectangle>\n\n    def test_injected_entries_closed_rectangle(self):\n        rows = {\"entry\": np.arange(6), \"pt\": np.array([0, 4.5, 4.6, 1, 1, 1.0]),\n                \"pz\": np.array([1.5, 60, 2, 1.4, 60.0, 5])}\n>       np.testing.assert_array_equal(P.injected_entries(rows, 0, 4.5, 1.5, 60), [0, 1, 4, 5])\n\ntest_ptmc.py:88: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = (<built-in function eq>, array([0, 5]), [0, 1, 4, 5])\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Arrays are not equal', 'strict': False}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Arrays are not equal\nE           \nE           (shapes (2,), (4,) mismatch)\nE            x: array([0, 5])\nE            y: array([0, 1, 4, 5])\n\n../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Draws::test_injected_entries_closed_rectangle - Assertio...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 27 deselected in 4.42s\n"
+  },
+  {
+   "name": "LIB_LOST_NOT_ZERO",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Completeness"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 6.1,
+   "verdict": "KILLED",
+   "tail": ".F\n=================================== FAILURES ===================================\n__________________ Completeness.test_lost_support_gives_zero ___________________\n\nself = <test_ptmc.Completeness testMethod=test_lost_support_gives_zero>\n\n    def test_lost_support_gives_zero(self):\n        r = P.c_star([1.0], [0.0], [2.0], [2.0], [1.0])\n        self.assertEqual(r[\"n_lost_support\"], 1)\n>       self.assertEqual(r[\"c_star\"][0], 0.0)\nE       AssertionError: 1.0 != 0.0\n\ntest_ptmc.py:108: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Completeness::test_lost_support_gives_zero - AssertionEr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 26 deselected in 5.08s\n"
+  },
+  {
+   "name": "LIB_DSTAR",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Completeness"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 6.1,
+   "verdict": "KILLED",
+   "tail": "r_orig = np.array([12.0, 4, 0, 3, 0])\n        r = P.c_star(t_star_orig + np.array([0, 2.5, 3.0, 0, 0]), t_star_orig, t_orig, d, c_cv)\n        self.assertEqual(r[\"n_lost_support\"], 0)\n>       np.testing.assert_allclose(r[\"c_star\"][[0, 3]], [1.0, 1.0], rtol=1e-15)  # nothing moved: c_CV\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ntest_ptmc.py:100: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = (<function assert_allclose.<locals>.compare at 0x301a562a0>, array([1.2, 1. ]), array([1., 1.]))\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Not equal to tolerance rtol=1e-15, atol=0', 'equal_nan': True}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Not equal to tolerance rtol=1e-15, atol=0\nE           \nE           Mismatched elements: 1 / 2 (50%)\nE           Max absolute difference: 0.2\nE           Max relative difference: 0.2\nE            x: array([1.2, 1. ])\nE            y: array([1., 1.])\n\n../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Completeness::test_reduces_to_c_cv_with_nothing_moved_and_handles_cells\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 26 deselected in 4.69s\n"
+  },
+  {
+   "name": "LIB_SUPPORT_UNWEIGHTED",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Completeness"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 15.1,
+   "verdict": "KILLED",
+   "tail": " self.assertEqual(r[\"failures\"], want)\n        self.assertEqual(r[\"n_seed_cells\"], sum(len(v) for v in want.values()))\n        self.assertFalse(P.support(g, w, np.ones(5, bool), 4, [1], n=3)[\"pass\"])  # the mask must end at n_orig\n        # the trigger is the weighted sum: a zero-weight row drawing a positive factor does not keep a cell supported\n        gz, wz = np.array([0, 0]), np.array([0.0, 1.0])\n        lost = {b: [0] for b in range(1, 40)\n                if np.random.default_rng(b + 10_000_000).poisson(1.0, 2)[1] == 0}\n        self.assertTrue(lost)\n>       self.assertEqual(P.support(gz, wz, np.ones(2, bool), 2, range(1, 40), n=1)[\"failures\"], lost)\nE       AssertionError: {1: [0], 6: [0], 8: [0], 22: [0], 25: [0], 31: [0][14 chars] [0]} != {1: [0], 4: [0], 6: [0], 8: [0], 14: [0], 22: [0],[67 chars] [0]}\nE       - {1: [0], 6: [0], 8: [0], 22: [0], 25: [0], 31: [0], 33: [0], 39: [0]}\nE       + {1: [0],\nE       +  4: [0],\nE       +  6: [0],\nE       +  8: [0],\nE       +  14: [0],\nE       +  22: [0],\nE       +  24: [0],\nE       +  25: [0],\nE       +  28: [0],\nE       +  30: [0],\nE       +  31: [0],\nE       +  33: [0],\nE       +  36: [0],\nE       +  39: [0]}\n\ntest_ptmc.py:146: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Completeness::test_support - AssertionError: {1: [0], 6:...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 26 deselected in 13.44s\n"
+  },
+  {
+   "name": "LIB_COUPLE_ZERO_W",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Coupling"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 9.2,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n_________________________ Coupling.test_exact_multiset _________________________\n\nself = <test_ptmc.Coupling testMethod=test_exact_multiset>\n\n    def test_exact_multiset(self):\n        g = np.array([0, 0, 1, 2])\n        pt, pz, w = np.array([.1, .2, .3, .4]), np.array([2.0, 2.1, 3.0, 4.0]), np.array([1.0, 2.0, 0.5, 0.0])\n        perm = np.array([1, 0, 2, 3])\n        self.assertTrue(P.coupling_exact(g, pt, pz, w, g[perm], pt[perm], pz[perm], w[perm])[\"pass\"])\n        # equal cell sums from different weights (codex r3 #1): fails\n        self.assertFalse(P.coupling_exact(g, pt, pz, np.array([0.5, 2.5, 0.5, 0]), g, pt, pz, w)[\"pass\"])\n        # a zero-weight row on one side only is irrelevant\n>       self.assertTrue(P.coupling_exact(g[:3], pt[:3], pz[:3], w[:3], g, pt, pz, w)[\"pass\"])\nE       AssertionError: False is not true\n\ntest_ptmc.py:159: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Coupling::test_exact_multiset - AssertionError: False is...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 28 deselected in 7.46s\n"
+  },
+  {
+   "name": "LIB_COUPLE_COUNTS_ONLY",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Coupling"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 30.8,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n_________________________ Coupling.test_exact_multiset _________________________\n\nself = <test_ptmc.Coupling testMethod=test_exact_multiset>\n\n    def test_exact_multiset(self):\n        g = np.array([0, 0, 1, 2])\n        pt, pz, w = np.array([.1, .2, .3, .4]), np.array([2.0, 2.1, 3.0, 4.0]), np.array([1.0, 2.0, 0.5, 0.0])\n        perm = np.array([1, 0, 2, 3])\n        self.assertTrue(P.coupling_exact(g, pt, pz, w, g[perm], pt[perm], pz[perm], w[perm])[\"pass\"])\n        # equal cell sums from different weights (codex r3 #1): fails\n>       self.assertFalse(P.coupling_exact(g, pt, pz, np.array([0.5, 2.5, 0.5, 0]), g, pt, pz, w)[\"pass\"])\nE       AssertionError: True is not false\n\ntest_ptmc.py:157: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Coupling::test_exact_multiset - AssertionError: True is ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 28 deselected in 28.43s\n"
+  },
+  {
+   "name": "LIB_APPID_WRECO",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Coupling"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 12.9,
+   "verdict": "KILLED",
+   "tail": "S ===================================\n_______________________ Coupling.test_appended_identity ________________________\n\nself = <test_ptmc.Coupling testMethod=test_appended_identity>\n\n    def test_appended_identity(self):\n        rows = {\"entry\": np.array([5, 9, 12], np.int64), \"reco_pt\": np.array([.1, .2, .3]),\n                \"reco_pz\": np.array([2., 3., 4.]), \"true_pt\": np.array([.11, .21, .31]),\n                \"true_pz\": np.array([2.1, 3.1, 4.1]), \"w_reco\": np.array([1., 2., 3.]), \"w_truth\": np.array([1.1, 2.2, 3.3])}\n        app = np.array([12, 5], np.int64)\n        pot = 0.25\n        tail = {\"reco_pt\": np.array([.3, .1]), \"reco_pz\": np.array([4., 2.]), \"truth_pt\": np.array([.31, .11]),\n                \"truth_pz\": np.array([4.1, 2.1]), \"w_truth\": np.array([3.3, 1.1]) * pot,\n                \"w_reco\": np.array([3., 1.]) * pot, \"pass_reco\": np.array([True, True]),\n                \"pass_truth\": np.array([True, True])}\n        self.assertTrue(P.appended_identity(rows, app, pot, tail)[\"pass\"])\n        bad = dict(tail, w_reco=tail[\"w_reco\"][::-1])\n>       self.assertFalse(P.appended_identity(rows, app, pot, bad)[\"pass\"])\nE       AssertionError: True is not false\n\ntest_ptmc.py:183: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Coupling::test_appended_identity - AssertionError: True ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 28 deselected in 11.34s\n"
+  },
+  {
+   "name": "LIB_RELCLOSE_ZERO",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Gates"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 8.9,
+   "verdict": "KILLED",
+   "tail": "...F\n=================================== FAILURES ===================================\n______________________ Gates.test_rel_close_zero_and_nan _______________________\n\nself = <test_ptmc.Gates testMethod=test_rel_close_zero_and_nan>\n\n    def test_rel_close_zero_and_nan(self):\n        self.assertTrue(P.rel_close([0.0, 2.0], [0.0, 2.0 * (1 + 1e-12)], 1e-9)[\"pass\"])\n>       self.assertFalse(P.rel_close([1e-300, 2.0], [0.0, 2.0], 1e-9)[\"pass\"])\nE       AssertionError: True is not false\n\ntest_ptmc.py:191: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Gates::test_rel_close_zero_and_nan - AssertionError: Tru...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 25 deselected in 7.25s\n"
+  },
+  {
+   "name": "LIB_RELCLOSE_NAN",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Gates"
+   ],
+   "rc": [
+    0
+   ],
+   "seconds": 13.7,
+   "verdict": "SURVIVED",
+   "tail": "......                                                                   [100%]\n6 passed, 25 deselected in 11.81s\n"
+  },
+  {
+   "name": "LIB_SHAPE_LOO",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Gates"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 8.2,
+   "verdict": "KILLED",
+   "tail": "....F\n=================================== FAILURES ===================================\n____________________________ Gates.test_shape_gate _____________________________\n\nself = <test_ptmc.Gates testMethod=test_shape_gate>\n\n    def test_shape_gate(self):\n        rng = np.random.default_rng(0)\n        D = rng.normal(size=(200, 224))\n        self.assertTrue(P.shape_gate(D[0], D)[\"pass\"])\n        self.assertFalse(P.shape_gate(D[0][:205], D[:, :205])[\"pass\"])\n        bad = D.copy()\n        bad[3, 4] = np.nan\n        self.assertFalse(P.shape_gate(D[0], bad)[\"pass\"])\n        # full rank 50, but one leave-one-out drops to 49: the 50th mode lives in replica 0 alone\n        X = np.zeros((200, 224))\n        X[:, :49] = rng.normal(size=(200, 49))\n        X[0, 49] = 5.0\n        r = P.shape_gate(X[0], X)\n        self.assertTrue(r[\"full\"])\n>       self.assertFalse(r[\"pass\"])\nE       AssertionError: True is not false\n\ntest_ptmc.py:209: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Gates::test_shape_gate - AssertionError: True is not false\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 25 deselected in 6.98s\n"
+  },
+  {
+   "name": "LIB_COND_FLOOR",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Gates"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 9.6,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n________________________ Gates.test_conditioning_guard _________________________\n\nself = <test_ptmc.Gates testMethod=test_conditioning_guard>\n\n    def test_conditioning_guard(self):\n        \"\"\"The binding's guard (the director, 2026-11-27): lambda_r / lambda_1 at 1e-13 STOPs, at 1e-6 passes.\"\"\"\n        rng = np.random.default_rng(3)\n        for ratio, want in ((1e-13, False), (1e-6, True)):\n            scales = np.geomspace(1.0, ratio, 50)\n            D = np.zeros((200, 224))\n            D[:, :50] = rng.normal(size=(200, 50)) * np.sqrt(scales)\n            D[:, 50:] = rng.normal(size=(200, 174)) * np.sqrt(ratio * 1e-3)\n            c = P.conditioning(D, rank=50)\n>           self.assertEqual(c[\"pass\"], want, c)\nE           AssertionError: True != False : {'ratio': 7.160212081401285e-14, 'floor': 1e-14, 'pass': True}\n\ntest_ptmc.py:228: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Gates::test_conditioning_guard - AssertionError: True !=...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 25 deselected in 7.81s\n"
+  },
+  {
+   "name": "LIB_STAGED_INDEX",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Gates"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 14.0,
+   "verdict": "KILLED",
+   "tail": ".....F\n=================================== FAILURES ===================================\n___________________________ Gates.test_staged_index ____________________________\n\nself = <test_ptmc.Gates testMethod=test_staged_index>\n\n    def test_staged_index(self):\n>       self.assertEqual(P.staged_index(1), \"002_xsec.root\")\nE       AssertionError: '001_xsec.root' != '002_xsec.root'\nE       - 001_xsec.root\nE       ?   ^\nE       + 002_xsec.root\nE       ?   ^\n\ntest_ptmc.py:249: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Gates::test_staged_index - AssertionError: '001_xsec.roo...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 passed, 25 deselected in 12.70s\n"
+  },
+  {
+   "name": "LIB_DISP_MISMATCH",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Readings"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 25.6,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n_______________________ Readings.test_disposition_order ________________________\n\nself = <test_ptmc.Readings testMethod=test_disposition_order>\n\n    def test_disposition_order(self):\n        self.assertEqual(P.disposition(False, True, False, False, True), \"stop\")      # an R control failed\n        self.assertEqual(P.disposition(True, False, False, False, True), \"stop\")      # the mandatory E_R central\n>       self.assertEqual(P.disposition(True, True, True, True, None), \"stop\")         # a present product mismatched\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       AssertionError: 'unavailable' != 'stop'\nE       - unavailable\nE       + stop\n\ntest_ptmc.py:259: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Readings::test_disposition_order - AssertionError: 'unav...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 29 deselected in 24.18s\n"
+  },
+  {
+   "name": "LIB_STATEMENT_ROW3",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Readings"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 9.7,
+   "verdict": "KILLED",
+   "tail": ".F\n=================================== FAILURES ===================================\n______________________ Readings.test_statement_partition _______________________\n\nself = <test_ptmc.Readings testMethod=test_statement_partition>\n\n    def test_statement_partition(self):\n        rows = {}\n        for r1 in P.WORDS:\n            for b in P.WORDS:\n                t = P.statement(r1, \"formed\", b)\n                rows[(r1, b)] = t[\"row\"]\n                self.assertNotIn(\"held fixed\", t[\"text\"])\n            rows[(r1, None)] = P.statement(r1, \"unavailable\", None)[\"row\"]\n        self.assertEqual(len(rows), 12)\n        self.assertEqual(rows[(\"differ\", \"differ\")], 1)\n        self.assertEqual({rows[(\"marginal\", \"differ\")], rows[(\"agree\", \"differ\")]}, {2})\n>       self.assertEqual({rows[(r, b)] for r in P.WORDS for b in (\"agree\", \"marginal\")}, {3})\nE       AssertionError: Items in the first set but not the second:\nE       1\nE       2\n\ntest_ptmc.py:276: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Readings::test_statement_partition - AssertionError: Ite...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 29 deselected in 7.50s\n"
+  },
+  {
+   "name": "DRV_APPENDED_DRAW",
+   "file": "DRIVER",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 347.2,
+   "verdict": "KILLED",
+   "tail": "ates': True, 'appended_list': True}} is not false : p_R_b1: {'C-DRAW-R': {'n_data': 4000, 'n_original': 6000, 'n_appended': 295, 'n_injected': 1908, 'data_sum': 4070.0, 'original_sum': 5844.0, 'appended_sum': 307.0, 'injected_sum': 1925.0, 'appended_sha256': 'b7e0a35f100b05672d20ebd8ad75fd0e3e13aa93fb18c676fd61bb8374a6fe3d', 'data_factors_sha256': 'aec81b09ea51e95309999c66ae534cc780b41e1e0ab7ea4fc4ce98b3b3731c01', 'signal_factors_sha256': '6d98481d1187c633f027e620d1f3f3471f30f88d6b9b71ef165b91b46b45d999', 'appended_factors_sha256': 'fc31745bc36fd7253bdbc9cd28175e7d1d3655cd61fe640da8a0768e77099a5e', 'injected_factors_sha256': '7cf7e3dcaf74e615c99c25f684a5c818657f39f9fe8c4028030630cb9d9e3cd5', 'checks': {'signed': True, 'w_truth': False, 'w_reco': False}, 'pass': False, 'injected_entries_recomputed': True, 'coordinates': True, 'appended_list': True}}\n\ntest_ptmc.py:467: AssertionError\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_units_pass_with_every_control - AssertionEr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 6 passed, 23 deselected, 1 warning in 340.56s (0:05:40)\n"
+  },
+  {
+   "name": "DRV_DRAW_SIZE",
+   "file": "DRIVER",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 172.9,
+   "verdict": "KILLED",
+   "tail": "m^-2/POT = 1.05e-05 cm^-2/POT\n[INFO] OOFVC: --signal-convention minerva, 300 rows from /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-h5mk_wid/stage/oofvc_rows.npz\n[INFO] OOFVC: 300 mc_background entries moved to the signal\n[INFO] OOFVC: {'appended': 295, 'outside': 5, 'dropped_appended_weight': 0, 'dropped_outside_weight': 0}\n[INFO] truth_denom events kept (in binning): 6000\n[INFO]   sum(w_truth) = 1501.3\n[INFO] Data reco entries: 4000\n[INFO] hDataReco2D integral: 4000\n[INFO] hBkgReco2D integral (incl. fakes): 474.902\n[INFO] hMeasSub2D integral: 3525.1\n[INFO] hMeasTrain2D integral: 3525.1\n[INFO] bkg-mode=negweight-refined: prepared 1908 injected background reco events (bkg-MC 1908 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).\n[INFO] PTMC: signal factors over 6295 original rows (seed+10000000) and 295 appended rows at b_bkg[entry] (seed+20000000)\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nERROR test_ptmc.py::Runner::test_controls_present - ValueError: operands coul...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n23 deselected, 1 warning, 1 error in 167.15s (0:02:47)\n"
+  },
+  {
+   "name": "DRV_LOST_NOT_ZERO",
+   "file": "DRIVER",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 280.4,
+   "verdict": "KILLED",
+   "tail": "......F\n=================================== FAILURES ===================================\n__________________ Runner.test_units_pass_with_every_control ___________________\n\nself = <test_ptmc.Runner testMethod=test_units_pass_with_every_control>\n\n    def test_units_pass_with_every_control(self):\n        for u in self.UNITS:\n            m = self.meta(u)\n            failed = {k: v for k, v in m[\"controls\"].items() if not v[\"pass\"]}\n>           self.assertFalse(failed, f\"{u}: {failed}\")\nE           AssertionError: {'C-COMP': {'mode': 'resampled', 'n_keep_cv': 61, 'n_lost_support': 1, 'max_rel': inf, 'pass': False, 'axes': True}} is not false : p_R_b1: {'C-COMP': {'mode': 'resampled', 'n_keep_cv': 61, 'n_lost_support': 1, 'max_rel': inf, 'pass': False, 'axes': True}}\n\ntest_ptmc.py:467: AssertionError\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_units_pass_with_every_control - AssertionEr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 6 passed, 23 deselected, 1 warning in 277.19s (0:04:37)\n"
+  },
+  {
+   "name": "DRV_DSTAR",
+   "file": "DRIVER",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 130.1,
+   "verdict": "KILLED",
+   "tail": "......F\n=================================== FAILURES ===================================\n__________________ Runner.test_units_pass_with_every_control ___________________\n\nself = <test_ptmc.Runner testMethod=test_units_pass_with_every_control>\n\n    def test_units_pass_with_every_control(self):\n        for u in self.UNITS:\n            m = self.meta(u)\n            failed = {k: v for k, v in m[\"controls\"].items() if not v[\"pass\"]}\n>           self.assertFalse(failed, f\"{u}: {failed}\")\nE           AssertionError: {'C-COMP': {'mode': 'resampled', 'n_keep_cv': 61, 'n_lost_support': 1, 'max_rel': 0.8210380152781558, 'pass': False, 'axes': True}} is not false : p_R_b1: {'C-COMP': {'mode': 'resampled', 'n_keep_cv': 61, 'n_lost_support': 1, 'max_rel': 0.8210380152781558, 'pass': False, 'axes': True}}\n\ntest_ptmc.py:467: AssertionError\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_units_pass_with_every_control - AssertionEr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 6 passed, 23 deselected, 1 warning in 128.51s (0:02:08)\n"
+  },
+  {
+   "name": "DRV_APPENDED_ORDER",
+   "file": "DRIVER",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 167.0,
+   "verdict": "KILLED",
+   "tail": "and m[\"n_appended\"] > 0, m)\nE       AssertionError: False is not true : {'n_data': 4000, 'n_original': 6000, 'n_appended': 295, 'n_injected': 1908, 'data_sum': 4070.0, 'original_sum': 5844.0, 'appended_sum': 307.0, 'injected_sum': 1925.0, 'appended_sha256': '76c3442718aa7f90dccb4e16da5fd89b1fbf47c1d6b7875800782a19f3ec3897', 'data_factors_sha256': 'aec81b09ea51e95309999c66ae534cc780b41e1e0ab7ea4fc4ce98b3b3731c01', 'signal_factors_sha256': '6d98481d1187c633f027e620d1f3f3471f30f88d6b9b71ef165b91b46b45d999', 'appended_factors_sha256': '1b5cb0b5080e0f4a7c1eb7fc276d5d7aa025346cbabf38798feee18019ca49d8', 'injected_factors_sha256': '7cf7e3dcaf74e615c99c25f684a5c818657f39f9fe8c4028030630cb9d9e3cd5', 'checks': {'signed': True, 'w_truth': True, 'w_reco': True}, 'pass': False, 'injected_entries_recomputed': True, 'coordinates': True, 'appended_list': False}\n\ntest_ptmc.py:497: AssertionError\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_r_replica_appended_factors_are_background_streams\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 23 deselected, 1 warning in 165.24s (0:02:45)\n"
+  },
+  {
+   "name": "DRV_STREAMS",
+   "file": "DRIVER",
+   "tests": [
+    "test_ptmc.py",
+    "Driver"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 250.6,
+   "verdict": "KILLED",
+   "tail": "2352943296224835e+30\\n[INFO] Flux source: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rhtapjf2/stage/flux.root:pTmu_reweightedflux_integrated\\n[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012\\n 0.013 0.014]\\n[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT\\n[INFO] OOFVC: --signal-convention minerva, 300 rows from /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rhtapjf2/stage/rows.npz\\n[INFO] OOFVC: 300 mc_background entries moved to the signal\\n[INFO] OOFVC: {'appended': 299, 'outside': 1, 'dropped_appended_weight': 0, 'dropped_outside_weight': 0}\\n[INFO] truth_denom events kept (in binning): 6000\\n[INFO]   sum(w_truth) = 1501.3\\n[INFO] Data reco entries: 4000\\n[INFO] hDataReco2D integral: 4000\\n[INFO] hBkgReco2D integral (incl. fakes): 471.817\\n[INFO] hMeasSub2D integral: 3528.18\\n[INFO] hMeasTrain2D integral: 3528.18\\n[INFO] bkg-mode=negweight-refined: prepared 1904 injected background reco events (bkg-MC 1904 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).\\n[FAIL] PTMC: the R bootstrap needs the three streams and no unit factors\\n\"\n\ntest_ptmc.py:418: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Driver::test_refusals - AssertionError: 'runs on the cen...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 25 deselected in 247.54s (0:04:07)\n"
+  },
+  {
+   "name": "DRV_UNIT_FACTORS",
+   "file": "DRIVER",
+   "tests": [
+    "test_ptmc.py",
+    "Driver"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 327.9,
+   "verdict": "KILLED",
+   "tail": "2352943296224835e+30\\n[INFO] Flux source: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-fg14usg7/stage/flux.root:pTmu_reweightedflux_integrated\\n[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012\\n 0.013 0.014]\\n[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT\\n[INFO] OOFVC: --signal-convention minerva, 300 rows from /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-fg14usg7/stage/rows.npz\\n[INFO] OOFVC: 300 mc_background entries moved to the signal\\n[INFO] OOFVC: {'appended': 299, 'outside': 1, 'dropped_appended_weight': 0, 'dropped_outside_weight': 0}\\n[INFO] truth_denom events kept (in binning): 6000\\n[INFO]   sum(w_truth) = 1501.3\\n[INFO] Data reco entries: 4000\\n[INFO] hDataReco2D integral: 4000\\n[INFO] hBkgReco2D integral (incl. fakes): 471.817\\n[INFO] hMeasSub2D integral: 3528.18\\n[INFO] hMeasTrain2D integral: 3528.18\\n[INFO] bkg-mode=negweight-refined: prepared 1904 injected background reco events (bkg-MC 1904 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).\\n[FAIL] PTMC: the R bootstrap needs the three streams and no unit factors\\n\"\n\ntest_ptmc.py:418: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Driver::test_refusals - AssertionError: 'runs on the cen...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 25 deselected in 325.59s (0:05:25)\n"
+  },
+  {
+   "name": "DRV_PRODUCTION_TOO",
+   "file": "DRIVER",
+   "tests": [
+    "test_ptmc.py",
+    "Driver"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 112.3,
+   "verdict": "KILLED",
+   "tail": " weights: 6000\nE           [INFO] step2 sum=1.741e+04, mean=2.9017, min=0.2981, max=4.9529\nE           [CHECK] hTruth2D integral: 1508.24\nE           [CHECK] hUnfold2D integral: 4333.98\nE           [CHECK] hMeasSub2D integral: 3453.42\nE           [CHECK] hMeasTrain2D integral: 3453.42\nE           [INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)\nE           [CHECK] hEffNum integral: 1072.14\nE           [CHECK] hEffDen integral: 1501.3\nE           [INFO] Phase-17 MC bootstrap: completeness uses the un-resampled MC truth weights, as the central value does (KNOWN_ISSUES 84).\nE           Traceback (most recent call last):\nE             File \"/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-xckaand6/tree/2d-unfolding/re2/re2_driver.py\", line 2797, in <module>\nE               main()\nE             File \"/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-xckaand6/tree/2d-unfolding/re2/re2_driver.py\", line 2648, in main\nE               sig, w_truth_cv, sig[\"oofvc_outside\"][\"appended_entry\"].size, pt_edges, pz_edges, truth_denom)\nE                                ~~~^^^^^^^^^^^^^^^^^\nE           KeyError: 'oofvc_outside'\n\ntest_ptmc.py:318: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Driver::test_production_paths_are_byte_identical_to_oofvcs\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 25 deselected in 107.88s (0:01:47)\n"
+  },
+  {
+   "name": "RUN_NO_MINERVA",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 138.0,
+   "verdict": "KILLED",
+   "tail": "egral: 1066.12\n[CHECK] hEffDen integral: 1501.3\n[CHECK] hOFInputTruth2D integral: 1501.3\n[CHECK] hOFTruthDenom2D integral: 1501.3\n[CHECK] global completeness c = 1.0000 (expected \u2248 N(mc_signal_reco truth-pass) / N(mc_truth_denom))\n[CHECK] Total xsec from p_T projection: 2.23e-41 cm^2/nucleon\n[CHECK] Total xsec from p_|| projection: 2.23e-41 cm^2/nucleon\n[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-usgaquj7/tree/2d-unfolding/re2/re2_driver.py\n[INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55\n[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-usgaquj7/tree/unbinned_unfolding/python/omnifold.py\n[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a\n[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-usgaquj7/units/p_R_c.root\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nERROR test_ptmc.py::Runner::test_controls_present - KeyError: 'oofvc_outside'\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n23 deselected, 1 warning, 1 error in 133.32s (0:02:13)\n"
+  },
+  {
+   "name": "RUN_FILL_K",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 312.3,
+   "verdict": "KILLED",
+   "tail": "nd_refuses_unknown _______________\n\nself = <test_ptmc.Runner testMethod=test_rerun_skips_pass_and_refuses_unknown>\n\n    def test_rerun_skips_pass_and_refuses_unknown(self):\n        import ptmc_run\n        with mock.patch.object(os, \"O_NOATIME\", os.O_NONBLOCK, create=True), mock.patch.dict(ptmc_run.PINS, self.pins):\n            rc = ptmc_run.main([\"--tree\", str(tree()), \"--rows\", str(self.rows_path), \"--rows-sha256\",\n                                hashlib.sha256(self.rows_path.read_bytes()).hexdigest(), \"--join-record\",\n                                str(self.join), \"--out\", str(self.out), \"--numpy-unfolder\", \"--unit\", \"p_off_c\"])\n>       self.assertEqual(rc, 0)\nE       AssertionError: 6 != 0\n\ntest_ptmc.py:523: AssertionError\n----------------------------- Captured stderr call -----------------------------\nrefusing: p_off_c exists, and its marker and products do not agree as a PASS\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_rerun_skips_pass_and_refuses_unknown - Asse...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 23 deselected, 1 warning in 308.46s (0:05:08)\n"
+  },
+  {
+   "name": "RUN_APPID_POT",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 310.6,
+   "verdict": "KILLED",
+   "tail": "ry_control>\n\n    def test_units_pass_with_every_control(self):\n        for u in self.UNITS:\n            m = self.meta(u)\n            failed = {k: v for k, v in m[\"controls\"].items() if not v[\"pass\"]}\n>           self.assertFalse(failed, f\"{u}: {failed}\")\nE           AssertionError: {'C-MOVE-UNIT': {'skip_disjoint_from_injected': True, 'skip_disjoint_from_fill_rows': True, 'appended_identity': {'checks': {'reco_pt': True, 'reco_pz': True, 'truth_pt': True, 'truth_pz': True, 'w_truth': False, 'w_reco': False, 'masks': True}, 'pass': False}, 'pass': False}} is not false : p_R_c: {'C-MOVE-UNIT': {'skip_disjoint_from_injected': True, 'skip_disjoint_from_fill_rows': True, 'appended_identity': {'checks': {'reco_pt': True, 'reco_pz': True, 'truth_pt': True, 'truth_pz': True, 'w_truth': False, 'w_reco': False, 'masks': True}, 'pass': False}, 'pass': False}}\n\ntest_ptmc.py:467: AssertionError\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_units_pass_with_every_control - AssertionEr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 6 passed, 23 deselected, 1 warning in 307.20s (0:05:07)\n"
+  },
+  {
+   "name": "RUN_PAIR_DIGEST",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 157.6,
+   "verdict": "KILLED",
+   "tail": "nd_refuses_unknown _______________\n\nself = <test_ptmc.Runner testMethod=test_rerun_skips_pass_and_refuses_unknown>\n\n    def test_rerun_skips_pass_and_refuses_unknown(self):\n        import ptmc_run\n        with mock.patch.object(os, \"O_NOATIME\", os.O_NONBLOCK, create=True), mock.patch.dict(ptmc_run.PINS, self.pins):\n            rc = ptmc_run.main([\"--tree\", str(tree()), \"--rows\", str(self.rows_path), \"--rows-sha256\",\n                                hashlib.sha256(self.rows_path.read_bytes()).hexdigest(), \"--join-record\",\n                                str(self.join), \"--out\", str(self.out), \"--numpy-unfolder\", \"--unit\", \"p_off_c\"])\n>       self.assertEqual(rc, 0)\nE       AssertionError: 6 != 0\n\ntest_ptmc.py:523: AssertionError\n----------------------------- Captured stderr call -----------------------------\nrefusing: p_off_c exists, and its marker and products do not agree as a PASS\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_rerun_skips_pass_and_refuses_unknown - Asse...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 23 deselected, 1 warning in 155.55s (0:02:35)\n"
+  },
+  {
+   "name": "RUN_INJ_STORED_REVERSED",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 215.3,
+   "verdict": "KILLED",
+   "tail": "mc.py:515: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = (<built-in function eq>, array([2499, 2498, 2497, ...,    5,    4,    0]), array([   0,    4,    5, ..., 2497, 2498, 2499]))\nkwds = {'err_msg': '', 'verbose': True, 'header': 'Arrays are not equal', 'strict': False}\n\n    @wraps(func)\n    def inner(*args, **kwds):\n        with self._recreate_cm():\n>           return func(*args, **kwds)\n                   ^^^^^^^^^^^^^^^^^^^\nE           AssertionError: \nE           Arrays are not equal\nE           \nE           Mismatched elements: 1908 / 1908 (100%)\nE           Max absolute difference: 2499\nE           Max relative difference: 623.5\nE            x: array([2499, 2498, 2497, ...,    5,    4,    0])\nE            y: array([   0,    4,    5, ..., 2497, 2498, 2499])\n\n../../../ew2d-env/lib/python3.11/contextlib.py:81: AssertionError\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_r_replica_fill_records_are_the_filtered_production_ones\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 23 deselected, 1 warning in 212.95s (0:03:32)\n"
+  },
+  {
+   "name": "SC_ABSENT_AS_FORMED",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    "Scorer"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 16.6,
+   "verdict": "KILLED",
+   "tail": " rec)\nE       AssertionError: 3 != 0 : {'schema': 'ptmc-stop/1', 'stopped': True, 'why': 'KeyError: 5', 'traceback': 'Traceback (most recent call last):\\n  File \"/Users/josephbailey/ptmc-code-wt/2d-unfolding/ptmc_mut_sc_absent_as_formed/ptmc_score.py\", line 612, in main\\n    rec = score(a)\\n          ^^^^^^^^\\n  File \"/Users/josephbailey/ptmc-code-wt/2d-unfolding/ptmc_mut_sc_absent_as_formed/ptmc_score.py\", line 544, in score\\n    arms[(\"B\", K)] = (ref_c2[None][K] - x_er, np.array([ref_c2[b][K] - q_r[b][\"x\"] for b in seeds()]))\\n                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/Users/josephbailey/ptmc-code-wt/2d-unfolding/ptmc_mut_sc_absent_as_formed/ptmc_score.py\", line 544, in <listcomp>\\n    arms[(\"B\", K)] = (ref_c2[None][K] - x_er, np.array([ref_c2[b][K] - q_r[b][\"x\"] for b in seeds()]))\\n                                                        ~~~~~~^^^\\nKeyError: 5\\n'}\n\ntest_ptmc_score.py:310: AssertionError\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n----------------------------- Captured stderr call -----------------------------\nSTOP: KeyError: 5\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::Scorer::test_absent_replica_is_unavailable_and_corrupt_marker_stops\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 14.64s\n"
+  },
+  {
+   "name": "SC_RANK_LITERAL",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    "Scorer"
+   ],
+   "rc": [
+    0
+   ],
+   "seconds": 34.2,
+   "verdict": "SURVIVED",
+   "tail": ".................                                                        [100%]\n17 passed in 30.93s\n"
+  },
+  {
+   "name": "SC_DRAW_AGG",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    "Scorer"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 19.5,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n______ Scorer.test_absent_replica_is_unavailable_and_corrupt_marker_stops ______\n\nself = <test_ptmc_score.Scorer testMethod=test_absent_replica_is_unavailable_and_corrupt_marker_stops>\n\n    def test_absent_replica_is_unavailable_and_corrupt_marker_stops(self):\n        p = Products(delta_scale=0.05)\n        p.mark_absent(\"c2_replica_b5.npz\")\n        rc, rec = p.score()\n>       self.assertEqual(rc, 0, rec)\nE       AssertionError: 3 != 0 : {'schema': 'ptmc-stop/1', 'stopped': True, 'why': \"C-DRAW-R against Q_R's p1Streams: seeds [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\", 'traceback': None}\n\ntest_ptmc_score.py:310: AssertionError\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n----------------------------- Captured stderr call -----------------------------\nSTOP: C-DRAW-R against Q_R's p1Streams: seeds [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::Scorer::test_absent_replica_is_unavailable_and_corrupt_marker_stops\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 16.47s\n"
+  },
+  {
+   "name": "SC_WORDS",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    "Scorer"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 46.1,
+   "verdict": "KILLED",
+   "tail": ".F\n=================================== FAILURES ===================================\n_____________________ Scorer.test_agree_when_delta_is_zero _____________________\n\nself = <test_ptmc_score.Scorer testMethod=test_agree_when_delta_is_zero>\n\n    def test_agree_when_delta_is_zero(self):\n        p = Products(delta_scale=0.0)\n        rc, rec = p.score()\n        self.assertEqual(rc, 0, rec)\n>       self.assertIn(rec[\"PTMC-R1\"], (\"agree\", \"marginal\"))\nE       AssertionError: 'differ' not found in ('agree', 'marginal')\n\ntest_ptmc_score.py:304: AssertionError\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n{\"PTMC-R1\": \"differ\", \"PTMC-B\": \"agree\", \"disposition\": \"formed\"}\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::Scorer::test_agree_when_delta_is_zero - AssertionE...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed in 42.21s\n"
+  },
+  {
+   "name": "D4_SYMLINK_OK",
+   "file": "launch/ptmc_stage_d4.py",
+   "tests": [
+    "launch/test_launch.py",
+    "StageD4"
+   ],
+   "rc": [
+    0
+   ],
+   "seconds": 28.6,
+   "verdict": "SURVIVED",
+   "tail": "....                                                                     [100%]\n4 passed, 11 deselected in 26.35s\n"
+  },
+  {
+   "name": "SH_FENCE_STATE",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 86.9,
+   "verdict": "KILLED",
+   "tail": "ars\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nFAIL replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 78 fail 10\n"
+  },
+  {
+   "name": "SH_NO_PTMC",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 90.5,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nFAIL replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nFAIL post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 85 fail 3\n"
+  },
+  {
+   "name": "SH_LIMIT_RANGE",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 61.7,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nFAIL replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 87 fail 1\n"
+  },
+  {
+   "name": "SH_DEPLOY_CHECK",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 67.3,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 87 fail 1\n"
+  },
+  {
+   "name": "SH_LANE_SEEDS",
+   "file": "launch/replicas.sbatch",
+   "tests": [
+    "HARNESS:harness_sbatch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 8.3,
+   "verdict": "KILLED",
+   "tail": "ok   pilot: 3 nodes refuses\nok   pilot: no ready refuses\nok   pilot: an existing units dir refuses\nok   pilot: a wrong rows pin refuses\nok   pilot: no rows.sha256 refuses\nok   pilot: a failed conda hook refuses\nok   pilot: an existing record dir refuses\nok   pilot: the 8 units, once each, 8 outcomes recorded\nok   pilot: a failed unit exits 6, every outcome recorded\nok   replicas: 4 nodes refuses\nok   replicas: no PROCEED refuses\nok   replicas: no L refuses\nok   replicas: a malformed L refuses\nok   replicas: a failed squeue refuses\nok   replicas: an UNLIMITED time limit refuses\nok   replicas: a limit that bash arithmetic would evaluate refuses\nok   replicas: a limit one second over L refuses\nok   replicas: a day-form limit over L refuses\nok   replicas: a wrong rows pin refuses\nok   replicas: a failed conda hook refuses\nok   replicas: an existing record dir refuses\nFAIL replicas: b = 2..200, 199 steps, each once, 199 outcomes, lane 0 takes b22\nFAIL replicas: a failed unit exits 6, its lane continues, its outcome recorded\npass 21 fail 2\n"
+  },
+  {
+   "name": "LIB_SHAPE_TOP",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Gates"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 25.7,
+   "verdict": "KILLED",
+   "tail": "....F\n=================================== FAILURES ===================================\n____________________________ Gates.test_shape_gate _____________________________\n\nself = <test_ptmc.Gates testMethod=test_shape_gate>\n\n    def test_shape_gate(self):\n        rng = np.random.default_rng(0)\n        D = rng.normal(size=(200, 224))\n        self.assertTrue(P.shape_gate(D[0], D)[\"pass\"])\n        self.assertFalse(P.shape_gate(D[0][:205], D[:, :205])[\"pass\"])\n        bad = D.copy()\n        bad[3, 4] = np.nan\n        self.assertFalse(P.shape_gate(D[0], bad)[\"pass\"])\n        # full rank 50, but one leave-one-out drops to 49: the 50th mode lives in replica 0 alone\n        X = np.zeros((200, 224))\n        X[:, :49] = rng.normal(size=(200, 49))\n        X[0, 49] = 5.0\n        r = P.shape_gate(X[0], X)\n        self.assertTrue(r[\"full\"])\n>       self.assertFalse(r[\"pass\"])\nE       AssertionError: True is not false\n\ntest_ptmc.py:209: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Gates::test_shape_gate - AssertionError: True is not false\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 25 deselected in 22.96s\n"
+  },
+  {
+   "name": "LIB_PROTO_ZEROVAR",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Gates"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 31.8,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n_____________________________ Gates.test_proto_eps _____________________________\n\nself = <test_ptmc.Gates testMethod=test_proto_eps>\n\n    def test_proto_eps(self):\n        c = np.array([4.0, 1.0, 0.0])\n        r = P.proto_eps(np.array([[0.002, 0.0, 0.0]]), np.zeros((1, 3)), c)\n        self.assertAlmostEqual(r[\"eps\"], 0.001)\n        # codex's probe: a difference [10, 1] over the diagonal [4, 0] is eps = 5 plus one zero-variance discrepancy\n        r = P.proto_eps(np.array([[10.0, 1.0]]), np.zeros((1, 2)), np.array([4.0, 0.0]))\n        self.assertAlmostEqual(r[\"eps\"], 5.0)\n>       self.assertEqual(r[\"zero_variance_cells_differing\"], 1)\nE       AssertionError: 0 != 1\n\ntest_ptmc.py:242: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Gates::test_proto_eps - AssertionError: 0 != 1\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 25 deselected in 29.51s\n"
+  },
+  {
+   "name": "LIB_CSTAR_ONESIDED",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Completeness"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 11.6,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n___________ Completeness.test_one_sided_and_negative_are_not_finite ____________\n\nself = <test_ptmc.Completeness testMethod=test_one_sided_and_negative_are_not_finite>\n\n    def test_one_sided_and_negative_are_not_finite(self):\n        \"\"\"codex r1 #15: T_orig,CV = 0 with D_CV = 2 is a STOP (section 2.2's table), as is a negative operand.\"\"\"\n>       self.assertFalse(P.c_star([1.0], [1.0], [0.0], [2.0], [0.5])[\"finite\"])\nE       AssertionError: True is not false\n\ntest_ptmc.py:112: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Completeness::test_one_sided_and_negative_are_not_finite\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 26 deselected in 9.36s\n"
+  },
+  {
+   "name": "LIB_CSTAR_NEGATIVE",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Completeness"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 8.1,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n___________ Completeness.test_one_sided_and_negative_are_not_finite ____________\n\nself = <test_ptmc.Completeness testMethod=test_one_sided_and_negative_are_not_finite>\n\n    def test_one_sided_and_negative_are_not_finite(self):\n        \"\"\"codex r1 #15: T_orig,CV = 0 with D_CV = 2 is a STOP (section 2.2's table), as is a negative operand.\"\"\"\n        self.assertFalse(P.c_star([1.0], [1.0], [0.0], [2.0], [0.5])[\"finite\"])\n        self.assertFalse(P.c_star([1.0], [1.0], [2.0], [0.0], [0.0])[\"finite\"])\n        self.assertFalse(P.c_star([1.0], [1.0], [-2.0], [2.0], [0.5])[\"finite\"])\n        # a negative operand that trips no other rule: T*_all < 0 would give a finite, negative c* (pre-flight mutant)\n>       self.assertFalse(P.c_star([-1.0], [1.0], [2.0], [2.0], [0.5])[\"finite\"])\nE       AssertionError: True is not false\n\ntest_ptmc.py:116: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Completeness::test_one_sided_and_negative_are_not_finite\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 26 deselected in 6.73s\n"
+  },
+  {
+   "name": "LIB_COUPLE_NEGATIVE",
+   "file": "ptmc_lib.py",
+   "tests": [
+    "test_ptmc.py",
+    "Coupling"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 11.3,
+   "verdict": "KILLED",
+   "tail": "ray([0, 0, 1, 2])\n        pt, pz, w = np.array([.1, .2, .3, .4]), np.array([2.0, 2.1, 3.0, 4.0]), np.array([1.0, 2.0, 0.5, 0.0])\n        perm = np.array([1, 0, 2, 3])\n        self.assertTrue(P.coupling_exact(g, pt, pz, w, g[perm], pt[perm], pz[perm], w[perm])[\"pass\"])\n        # equal cell sums from different weights (codex r3 #1): fails\n        self.assertFalse(P.coupling_exact(g, pt, pz, np.array([0.5, 2.5, 0.5, 0]), g, pt, pz, w)[\"pass\"])\n        # a zero-weight row on one side only is irrelevant\n        self.assertTrue(P.coupling_exact(g[:3], pt[:3], pz[:3], w[:3], g, pt, pz, w)[\"pass\"])\n        # a missing row fails and is located\n        r = P.coupling_exact(g[1:], pt[1:], pz[1:], w[1:], g, pt, pz, w)\n        self.assertFalse(r[\"pass\"])\n        self.assertEqual(r[\"cells_with_count_mismatch\"], [0])\n        self.assertFalse(P.coupling_exact(g, pt, pz, np.array([1.0, np.nan, .5, 0]), g, pt, pz, w)[\"pass\"])\n        # a negative weight fails even when both sides carry it identically\n        wn = np.array([1.0, -2.0, 0.5, 0.0])\n        r = P.coupling_exact(g, pt, pz, wn, g, pt, pz, wn)\n>       self.assertFalse(r[\"pass\"])\nE       AssertionError: True is not false\n\ntest_ptmc.py:168: AssertionError\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Coupling::test_exact_multiset - AssertionError: True is ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 28 deselected in 9.53s\n"
+  },
+  {
+   "name": "LIB_RECEIPT_DIGEST",
+   "file": "ptmc_lib.py",
+   "tests": [
+    [
+     "launch/test_launch.py",
+     "test_ptmc_score.py"
+    ],
+    null
+   ],
+   "rc": [
+    1,
+    0
+   ],
+   "seconds": 50.7,
+   "verdict": "KILLED",
+   "tail": ".................                                                        [100%]\n17 passed in 29.34s\n"
+  },
+  {
+   "name": "LIB_RECEIPT_ARGS_FINITE",
+   "file": "ptmc_lib.py",
+   "tests": [
+    [
+     "launch/test_launch.py",
+     "test_ptmc_score.py"
+    ],
+    null
+   ],
+   "rc": [
+    1,
+    0
+   ],
+   "seconds": 51.5,
+   "verdict": "KILLED",
+   "tail": ".................                                                        [100%]\n17 passed in 29.65s\n"
+  },
+  {
+   "name": "LIB_RECEIPT_EXTRA_CONTROL",
+   "file": "ptmc_lib.py",
+   "tests": [
+    [
+     "launch/test_launch.py",
+     "test_ptmc_score.py"
+    ],
+    null
+   ],
+   "rc": [
+    1,
+    0
+   ],
+   "seconds": 50.5,
+   "verdict": "KILLED",
+   "tail": ".................                                                        [100%]\n17 passed in 28.45s\n"
+  },
+  {
+   "name": "LIB_RECEIPT_REQUIRED",
+   "file": "ptmc_lib.py",
+   "tests": [
+    [
+     "launch/test_launch.py",
+     "test_ptmc_score.py"
+    ],
+    null
+   ],
+   "rc": [
+    1,
+    1
+   ],
+   "seconds": 59.5,
+   "verdict": "KILLED",
+   "tail": "32, -25.575607790976836, 39.07071356616354, -31.97676620284522, 37.61014820796189, -42.335786601756105, -30.79528344431947, -37.687034903619114, -29.633441395606393, None, None, -34.50722181976027, 27.14117139905616, 33.60315805312268, None, 43.46996825018811, -34.19226600996027, 37.715720515145335, -27.725405816643285, 36.904701451642715, None, 50.557612998255806, None, -32.10187174542487, -34.43633279559986, 33.76609637762706, 26.41287072250229, None, 28.113586495047198, 64.27587630529702, 29.07195307976704, None, 19.613411834327334, -35.175582450640206, -30.917449480124198, -37.73573687014682, -38.06663008630648, 40.287016466324204, 37.52022857923809, 45.46251265097292, 43.62060777395028, -32.86820058552042, 30.820434449397627, 27.002929121139307, 36.3981844584091, 24.346723921213147, -32.54305818603316, 42.34300314522449, -26.259511174317456, -37.029784916325234, -40.71281412271382, 44.668065317757325, -30.368749780096557, 27.778163694470674, 28.81730986394139, 42.847631724645034, -27.729614122399664]}}\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n{\"PTMC-R1\": \"differ\", \"PTMC-B\": \"differ\", \"disposition\": \"formed\"}\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::ScorerGates::test_missing_required_control - Asser...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 11 passed in 28.16s\n"
+  },
+  {
+   "name": "LIB_RECEIPT_IDENTITY",
+   "file": "ptmc_lib.py",
+   "tests": [
+    [
+     "launch/test_launch.py",
+     "test_ptmc_score.py"
+    ],
+    null
+   ],
+   "rc": [
+    1,
+    0
+   ],
+   "seconds": 37.2,
+   "verdict": "KILLED",
+   "tail": ".................                                                        [100%]\n17 passed in 22.18s\n"
+  },
+  {
+   "name": "RUN_REUSE_DIGEST",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 215.3,
+   "verdict": "KILLED",
+   "tail": "ts_to_match>\n\n    def test_reuse_requires_both_products_to_match(self):\n        \"\"\"codex r1 #2: a PASS marker with a missing or altered product is refused, never reused.\"\"\"\n        import ptmc_run\n        tmp = Path(tempfile.mkdtemp())\n        for f in (\"p_off_c.npz\", \"p_off_c.root\", \"p_off_c.done\"):\n            (tmp / f).write_bytes((self.out / f).read_bytes())\n        (tmp / \"p_off_c.root\").write_bytes(b\"altered\")\n        args = [\"--tree\", str(tree()), \"--rows\", str(self.rows_path), \"--rows-sha256\", self.pins[\"rows\"],\n                \"--join-record\", str(self.join), \"--out\", str(tmp), \"--numpy-unfolder\", \"--unit\", \"p_off_c\"]\n        with mock.patch.object(os, \"O_NOATIME\", os.O_NONBLOCK, create=True), mock.patch.dict(ptmc_run.PINS, self.pins):\n>           self.assertEqual(ptmc_run.main(args), ptmc_run.RC_CONTROL)\nE           AssertionError: 0 != 6\n\ntest_ptmc.py:541: AssertionError\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_reuse_requires_both_products_to_match - Ass...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 passed, 23 deselected, 1 warning in 213.43s (0:03:33)\n"
+  },
+  {
+   "name": "RUN_ROWS_FILE_PIN",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    0
+   ],
+   "seconds": 140.9,
+   "verdict": "SURVIVED",
+   "tail": "........                                                                 [100%]\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n8 passed, 23 deselected, 1 warning in 139.17s (0:02:19)\n"
+  },
+  {
+   "name": "RUN_DUP_UNIT",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 231.6,
+   "verdict": "KILLED",
+   "tail": "                                    \"x\", \"--out\", str(self.out), \"--unit\", \"p_off_b6\"]), 2)\n        self.assertEqual(ptmc_run.main([\"--tree\", str(tree()), \"--rows\", \"x\", \"--rows-sha256\", \"0\", \"--join-record\",\n                                        \"x\", \"--out\", str(self.out), \"--unit\", \"p_R_b201\"]), 2)\n>       self.assertEqual(ptmc_run.main([\"--tree\", str(tree()), \"--rows\", \"x\", \"--rows-sha256\", \"0\", \"--join-record\",\n                                        \"x\", \"--out\", str(self.out), \"--unit\", \"p_R_b3\", \"--unit\", \"p_R_b3\"]), 2)\nE       AssertionError: 4 != 2\n\ntest_ptmc.py:528: AssertionError\n----------------------------- Captured stderr call -----------------------------\nrefusing: unit p_off_b6: seed 6 is outside the declared set for off\nrefusing: unit p_R_b201: seed 201 is outside the declared set for R\nrefusing: O_NOATIME is not available on this platform: refusing a plain read\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED test_ptmc.py::Runner::test_rerun_skips_pass_and_refuses_unknown - Asse...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 23 deselected, 1 warning in 229.30s (0:03:49)\n"
+  },
+  {
+   "name": "RUN_PAIR_MASK",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    0
+   ],
+   "seconds": 249.9,
+   "verdict": "SURVIVED",
+   "tail": "........                                                                 [100%]\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n8 passed, 23 deselected, 1 warning in 246.58s (0:04:06)\n"
+  },
+  {
+   "name": "RUN_REFINE_DIGEST",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    0
+   ],
+   "seconds": 176.2,
+   "verdict": "SURVIVED",
+   "tail": "........                                                                 [100%]\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n8 passed, 23 deselected, 1 warning in 174.51s (0:02:54)\n"
+  },
+  {
+   "name": "RUN_ARGS_FINITE",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    0
+   ],
+   "seconds": 176.8,
+   "verdict": "SURVIVED",
+   "tail": "........                                                                 [100%]\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n8 passed, 23 deselected, 1 warning in 173.41s (0:02:53)\n"
+  },
+  {
+   "name": "RUN_COMP_AXES",
+   "file": "ptmc_run.py",
+   "tests": [
+    "test_ptmc.py",
+    "Runner"
+   ],
+   "rc": [
+    0
+   ],
+   "seconds": 183.0,
+   "verdict": "SURVIVED",
+   "tail": "........                                                                 [100%]\n=============================== warnings summary ===============================\ntest_ptmc.py::Runner::test_controls_present\n  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n8 passed, 23 deselected, 1 warning in 181.07s (0:03:01)\n"
+  },
+  {
+   "name": "SC_FILL_SETS_ONLY",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    "Scorer"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 19.0,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n________________ Scorer.test_changed_retained_fill_value_stops _________________\n\nself = <test_ptmc_score.Scorer testMethod=test_changed_retained_fill_value_stops>\n\n    def test_changed_retained_fill_value_stops(self):\n        \"\"\"C-MOVE compares every fill array exactly, not only the entry set: one retained row's pT changed STOPs.\"\"\"\n        p = Products(delta_scale=0.05)\n        z = dict(np.load(p.units / \"p_R_b2.npz\"))\n        z[\"fill_pt\"] = np.asarray(z[\"fill_pt\"]).copy()\n        z[\"fill_pt\"][0] += 1e-3\n        p.rewrite_unit(\"p_R_b2\", z)\n        rc, rec = p.score()\n>       self.assertEqual(rc, 3)\nE       AssertionError: 0 != 3\n\ntest_ptmc_score.py:349: AssertionError\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n{\"PTMC-R1\": \"differ\", \"PTMC-B\": \"differ\", \"disposition\": \"formed\"}\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::Scorer::test_changed_retained_fill_value_stops - A...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed in 17.59s\n"
+  },
+  {
+   "name": "SC_MISMATCH_IGNORED",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    "Scorer"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 16.9,
+   "verdict": "KILLED",
+   "tail": "taging digest agrees) but not REF's product (its marker disagrees): a mismatch, and\n        # the STOP is the disposition's, naming the mismatched product (not an incidental failure downstream)\n        m = json.loads((q.d4 / \"manifest.json\").read_text())\n        m[\"copied\"][\"c2_replica_b3.npz\"][\"sha256\"] = sha(q.d4 / \"c2_replica_b3.npz\")\n        (q.d4 / \"manifest.json\").write_text(json.dumps(m))\n        (q.tmp / \"STOP.json\").unlink()  # the scorer refuses to run over an earlier STOP\n        rc, rec = q.score()\n        self.assertEqual(rc, 3)\n>       self.assertIn(\"the disposition is STOP\", rec[\"why\"])\nE       AssertionError: 'the disposition is STOP' not found in \"TypeError: 'NoneType' object is not subscriptable\"\n\ntest_ptmc_score.py:327: AssertionError\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n{\"PTMC-R1\": \"differ\", \"PTMC-B\": null, \"disposition\": \"unavailable\"}\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n----------------------------- Captured stderr call -----------------------------\nSTOP: C-D4: c2_replica_b3.npz differs from its staging digest\nSTOP: TypeError: 'NoneType' object is not subscriptable\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::Scorer::test_absent_replica_is_unavailable_and_corrupt_marker_stops\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 14.97s\n"
+  },
+  {
+   "name": "SC_INVENTORY_EXTRA",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 22.4,
+   "verdict": "KILLED",
+   "tail": "532, -25.575607790976836, 39.07071356616354, -31.97676620284522, 37.61014820796189, -42.335786601756105, -30.79528344431947, -37.687034903619114, -29.633441395606393, None, None, -34.50722181976027, 27.14117139905616, 33.60315805312268, None, 43.46996825018811, -34.19226600996027, 37.715720515145335, -27.725405816643285, 36.904701451642715, None, 50.557612998255806, None, -32.10187174542487, -34.43633279559986, 33.76609637762706, 26.41287072250229, None, 28.113586495047198, 64.27587630529702, 29.07195307976704, None, 19.613411834327334, -35.175582450640206, -30.917449480124198, -37.73573687014682, -38.06663008630648, 40.287016466324204, 37.52022857923809, 45.46251265097292, 43.62060777395028, -32.86820058552042, 30.820434449397627, 27.002929121139307, 36.3981844584091, 24.346723921213147, -32.54305818603316, 42.34300314522449, -26.259511174317456, -37.029784916325234, -40.71281412271382, 44.668065317757325, -30.368749780096557, 27.778163694470674, 28.81730986394139, 42.847631724645034, -27.729614122399664]}}\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n{\"PTMC-R1\": \"differ\", \"PTMC-B\": \"differ\", \"disposition\": \"formed\"}\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::ScorerGates::test_extra_file_in_units - AssertionE...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 9 passed in 20.28s\n"
+  },
+  {
+   "name": "SC_CANONICAL_ARGV",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 20.8,
+   "verdict": "KILLED",
+   "tail": "32, -25.575607790976836, 39.07071356616354, -31.97676620284522, 37.61014820796189, -42.335786601756105, -30.79528344431947, -37.687034903619114, -29.633441395606393, None, None, -34.50722181976027, 27.14117139905616, 33.60315805312268, None, 43.46996825018811, -34.19226600996027, 37.715720515145335, -27.725405816643285, 36.904701451642715, None, 50.557612998255806, None, -32.10187174542487, -34.43633279559986, 33.76609637762706, 26.41287072250229, None, 28.113586495047198, 64.27587630529702, 29.07195307976704, None, 19.613411834327334, -35.175582450640206, -30.917449480124198, -37.73573687014682, -38.06663008630648, 40.287016466324204, 37.52022857923809, 45.46251265097292, 43.62060777395028, -32.86820058552042, 30.820434449397627, 27.002929121139307, 36.3981844584091, 24.346723921213147, -32.54305818603316, 42.34300314522449, -26.259511174317456, -37.029784916325234, -40.71281412271382, 44.668065317757325, -30.368749780096557, 27.778163694470674, 28.81730986394139, 42.847631724645034, -27.729614122399664]}}\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n{\"PTMC-R1\": \"differ\", \"PTMC-B\": \"differ\", \"disposition\": \"formed\"}\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::ScorerGates::test_non_canonical_argv - AssertionEr...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 12 passed in 19.61s\n"
+  },
+  {
+   "name": "SC_D4_FETCHED",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 52.1,
+   "verdict": "KILLED",
+   "tail": "6532, -25.575607790976836, 39.07071356616354, -31.97676620284522, 37.61014820796189, -42.335786601756105, -30.79528344431947, -37.687034903619114, -29.633441395606393, None, None, -34.50722181976027, 27.14117139905616, 33.60315805312268, None, 43.46996825018811, -34.19226600996027, 37.715720515145335, -27.725405816643285, 36.904701451642715, None, 50.557612998255806, None, -32.10187174542487, -34.43633279559986, 33.76609637762706, 26.41287072250229, None, 28.113586495047198, 64.27587630529702, 29.07195307976704, None, 19.613411834327334, -35.175582450640206, -30.917449480124198, -37.73573687014682, -38.06663008630648, 40.287016466324204, 37.52022857923809, 45.46251265097292, 43.62060777395028, -32.86820058552042, 30.820434449397627, 27.002929121139307, 36.3981844584091, 24.346723921213147, -32.54305818603316, 42.34300314522449, -26.259511174317456, -37.029784916325234, -40.71281412271382, 44.668065317757325, -30.368749780096557, 27.778163694470674, 28.81730986394139, 42.847631724645034, -27.729614122399664]}}\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n{\"PTMC-R1\": \"differ\", \"PTMC-B\": \"differ\", \"disposition\": \"formed\"}\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::ScorerGates::test_fetched_file_outside_the_manifest\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 10 passed in 50.45s\n"
+  },
+  {
+   "name": "SC_DUP_MARKER",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 33.9,
+   "verdict": "KILLED",
+   "tail": "532, -25.575607790976836, 39.07071356616354, -31.97676620284522, 37.61014820796189, -42.335786601756105, -30.79528344431947, -37.687034903619114, -29.633441395606393, None, None, -34.50722181976027, 27.14117139905616, 33.60315805312268, None, 43.46996825018811, -34.19226600996027, 37.715720515145335, -27.725405816643285, 36.904701451642715, None, 50.557612998255806, None, -32.10187174542487, -34.43633279559986, 33.76609637762706, 26.41287072250229, None, 28.113586495047198, 64.27587630529702, 29.07195307976704, None, 19.613411834327334, -35.175582450640206, -30.917449480124198, -37.73573687014682, -38.06663008630648, 40.287016466324204, 37.52022857923809, 45.46251265097292, 43.62060777395028, -32.86820058552042, 30.820434449397627, 27.002929121139307, 36.3981844584091, 24.346723921213147, -32.54305818603316, 42.34300314522449, -26.259511174317456, -37.029784916325234, -40.71281412271382, 44.668065317757325, -30.368749780096557, 27.778163694470674, 28.81730986394139, 42.847631724645034, -27.729614122399664]}}\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n{\"PTMC-R1\": \"differ\", \"PTMC-B\": \"differ\", \"disposition\": \"formed\"}\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::ScorerGates::test_duplicate_ref_marker - Assertion...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 8 passed in 31.59s\n"
+  },
+  {
+   "name": "SC_SIM_COVERAGE",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 31.0,
+   "verdict": "KILLED",
+   "tail": "32, -25.575607790976836, 39.07071356616354, -31.97676620284522, 37.61014820796189, -42.335786601756105, -30.79528344431947, -37.687034903619114, -29.633441395606393, None, None, -34.50722181976027, 27.14117139905616, 33.60315805312268, None, 43.46996825018811, -34.19226600996027, 37.715720515145335, -27.725405816643285, 36.904701451642715, None, 50.557612998255806, None, -32.10187174542487, -34.43633279559986, 33.76609637762706, 26.41287072250229, None, 28.113586495047198, 64.27587630529702, 29.07195307976704, None, 19.613411834327334, -35.175582450640206, -30.917449480124198, -37.73573687014682, -38.06663008630648, 40.287016466324204, 37.52022857923809, 45.46251265097292, 43.62060777395028, -32.86820058552042, 30.820434449397627, 27.002929121139307, 36.3981844584091, 24.346723921213147, -32.54305818603316, 42.34300314522449, -26.259511174317456, -37.029784916325234, -40.71281412271382, 44.668065317757325, -30.368749780096557, 27.778163694470674, 28.81730986394139, 42.847631724645034, -27.729614122399664]}}\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n{\"PTMC-R1\": \"differ\", \"PTMC-B\": \"differ\", \"disposition\": \"formed\"}\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::ScorerGates::test_sim_coverage_by_index - Assertio...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 15 passed in 28.73s\n"
+  },
+  {
+   "name": "SC_COND_GUARD",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 36.0,
+   "verdict": "KILLED",
+   "tail": "532, -25.575607790976836, 39.07071356616354, -31.97676620284522, 37.61014820796189, -42.335786601756105, -30.79528344431947, -37.687034903619114, -29.633441395606393, None, None, -34.50722181976027, 27.14117139905616, 33.60315805312268, None, 43.46996825018811, -34.19226600996027, 37.715720515145335, -27.725405816643285, 36.904701451642715, None, 50.557612998255806, None, -32.10187174542487, -34.43633279559986, 33.76609637762706, 26.41287072250229, None, 28.113586495047198, 64.27587630529702, 29.07195307976704, None, 19.613411834327334, -35.175582450640206, -30.917449480124198, -37.73573687014682, -38.06663008630648, 40.287016466324204, 37.52022857923809, 45.46251265097292, 43.62060777395028, -32.86820058552042, 30.820434449397627, 27.002929121139307, 36.3981844584091, 24.346723921213147, -32.54305818603316, 42.34300314522449, -26.259511174317456, -37.029784916325234, -40.71281412271382, 44.668065317757325, -30.368749780096557, 27.778163694470674, 28.81730986394139, 42.847631724645034, -27.729614122399664]}}\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n{\"PTMC-R1\": \"differ\", \"PTMC-B\": \"differ\", \"disposition\": \"formed\"}\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::ScorerGates::test_conditioning_guard_stops - Asser...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 6 passed in 32.29s\n"
+  },
+  {
+   "name": "SC_EXCEPTION_STOP",
+   "file": "ptmc_score.py",
+   "tests": [
+    "test_ptmc_score.py",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 31.7,
+   "verdict": "KILLED",
+   "tail": "   It would be better if the zipfile could read\n        #   (or at least uncompress) the data\n        #   directly into the array memory.\n        member = False\n        if key in self._files:\n            member = True\n        elif key in self.files:\n            member = True\n            key += '.npy'\n        if member:\n            bytes = self.zip.open(key)\n            magic = bytes.read(len(format.MAGIC_PREFIX))\n            bytes.close()\n            if magic == format.MAGIC_PREFIX:\n                bytes = self.zip.open(key)\n                return format.read_array(bytes,\n                                         allow_pickle=self.allow_pickle,\n                                         pickle_kwargs=self.pickle_kwargs,\n                                         max_header_size=self.max_header_size)\n            else:\n                return self.zip.read(key)\n        else:\n>           raise KeyError(f\"{key} is not a file in the archive\")\nE           KeyError: 'appended_entry is not a file in the archive'\n\n../../../ew2d-env/lib/python3.11/site-packages/numpy/lib/npyio.py:263: KeyError\n----------------------------- Captured stdout call -----------------------------\n[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)\n=========================== short test summary info ============================\nFAILED test_ptmc_score.py::ScorerGates::test_unexpected_exception_is_a_stop\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 16 passed in 30.29s\n"
+  },
+  {
+   "name": "PP_FLOOR",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 14.2,
+   "verdict": "KILLED",
+   "tail": "...F\n=================================== FAILURES ===================================\n__________________ PilotPost.test_limit_below_the_floor_stops __________________\n\nself = <test_launch.PilotPost testMethod=test_limit_below_the_floor_stops>\n\n    def test_limit_below_the_floor_stops(self):\n        rc, d, _ = run(sacct(job_el=800, steps={u: 792 for u in PILOT}), self.p)\n>       self.assertEqual(rc, 6)\nE       AssertionError: 0 != 6\n\nlaunch/test_launch.py:96: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_limit_below_the_floor_stops - A...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 4 deselected in 13.22s\n"
+  },
+  {
+   "name": "PP_CAP_PER_NODE",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 9.0,
+   "verdict": "KILLED",
+   "tail": "}, 'p_off_b5': {'id': '4242.7', 'name': 'p_off_b5', 'state': 'COMPLETED', 'exit': '0:0', 'elapsed': 1364, 'nodes': 1}}, 'rules': {'job_completed': True, 'every_pilot_step_completed': True, 'every_pilot_unit_passes': True, 'C-NORM': True, 'C-FIX': True, 'C-MOVE-seed1': True, 'C-SUPPORT-table': True, 'o_nonnegative': True, 'projection_within_11.5': True, 'limit_positive': True, 'limit_covers_1.1x_runtime': True, 'reservation_within_cap_left': False}, 'units': {'p_off_c': True, 'p_R_c': True, 'p_off_b1': True, 'p_R_b1': True, 'p_off_b2': True, 'p_off_b3': True, 'p_off_b4': True, 'p_off_b5': True}, 'cross_unit': {'C-NORM': True, 'C-FIX': True, 'C-MOVE-seed1': True, 'C-SUPPORT-table': True, 'seconds': {'p_off_c': 1.0, 'p_R_c': 1.0, 'p_off_b1': 1.0, 'p_R_b1': 1.0, 'p_off_b2': 1.0, 'p_off_b3': 1.0, 'p_off_b4': 1.0, 'p_off_b5': 1.0}}, 'C-SUPPORT': {'pass': True, 'n_seeds': 200, 'failures': {}}, 't_R_s': 750, 'o_s': 136, 'pilot_node_s': 3000, 'pilot_node_h': 0.8333333333333334, 'runtime_s': 7636, 'projection_node_s': 41180, 'projection_node_h': 11.438888888888888, 'cap_left_node_s': 42000, 'time_limit_minutes': 189, 'reservation_node_s': 56700, 'verdict': 'STOP'}\n\nlaunch/test_launch.py:81: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_codex_float_case_proceeds - Ass...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 4 deselected in 7.86s\n"
+  },
+  {
+   "name": "PP_STOP_AT",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 9.0,
+   "verdict": "KILLED",
+   "tail": "....F\n=================================== FAILURES ===================================\n_____________________ PilotPost.test_projection_rule_flag ______________________\n\nself = <test_launch.PilotPost testMethod=test_projection_rule_flag>\n\n    def test_projection_rule_flag(self):\n        rc, d, _ = run(sacct(job_el=840, steps={u: 830 for u in PILOT}), self.p)\n        self.assertEqual(rc, 6)\n        self.assertFalse(d[\"rules\"][\"projection_within_11.5\"])\n        # between 11.5 and 12.0 node-h: 1650 + 5 x 8160 = 42450 node-s (11.79 node-h) is over the 11.5 STOP\n        rc, d, _ = run(sacct(job_el=825, steps={u: 815 for u in PILOT}), self.p)\n        self.assertEqual(rc, 6)\n        self.assertEqual(d[\"projection_node_s\"], 42450)\n>       self.assertFalse(d[\"rules\"][\"projection_within_11.5\"])\nE       AssertionError: True is not false\n\nlaunch/test_launch.py:92: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_projection_rule_flag - Assertio...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed, 4 deselected in 7.82s\n"
+  },
+  {
+   "name": "PP_RECEIPTS",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 23.9,
+   "verdict": "KILLED",
+   "tail": ".....F\n=================================== FAILURES ===================================\n_____________________ PilotPost.test_receipt_defects_stop ______________________\n\nself = <test_launch.PilotPost testMethod=test_receipt_defects_stop>\n\n    def test_receipt_defects_stop(self):\n        \"\"\"unit_receipt (shared with the scorer): each planted meta defect fails its unit.\"\"\"\n        cases = {\"non-finite extraction arguments\": (\"p_off_b3\", lambda m: m.update(extract_args_finite=False)),\n                 \"controls ['C-EXTRA']\": (\"p_off_b4\", lambda m: m[\"controls\"].update({\"C-EXTRA\": {\"pass\": False}})),\n                 \"meta identity\": (\"p_off_b5\", lambda m: m.update(bootstrap_seed=6))}\n        for why, (unit, change) in cases.items():\n            rc, d, out = self.meta_defect(unit, change)\n>           self.assertEqual(rc, 6, why)\nE           AssertionError: 0 != 6 : non-finite extraction arguments\n\nlaunch/test_launch.py:144: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_receipt_defects_stop - Assertio...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 passed, 4 deselected in 21.18s\n"
+  },
+  {
+   "name": "PP_JOBID",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 10.0,
+   "verdict": "KILLED",
+   "tail": ": '0:0', 'elapsed': 700, 'nodes': 1}, 'p_off_b5': {'id': '4242.7', 'name': 'p_off_b5', 'state': 'COMPLETED', 'exit': '0:0', 'elapsed': 700, 'nodes': 1}}, 'rules': {'job_completed': True, 'every_pilot_step_completed': True, 'every_pilot_unit_passes': True, 'C-NORM': True, 'C-FIX': True, 'C-MOVE-seed1': True, 'C-SUPPORT-table': True, 'o_nonnegative': True, 'projection_within_11.5': True, 'limit_positive': True, 'limit_covers_1.1x_runtime': True, 'reservation_within_cap_left': True}, 'units': {'p_off_c': True, 'p_R_c': True, 'p_off_b1': True, 'p_R_b1': True, 'p_off_b2': True, 'p_off_b3': True, 'p_off_b4': True, 'p_off_b5': True}, 'cross_unit': {'C-NORM': True, 'C-FIX': True, 'C-MOVE-seed1': True, 'C-SUPPORT-table': True, 'seconds': {'p_off_c': 1.0, 'p_R_c': 1.0, 'p_off_b1': 1.0, 'p_R_b1': 1.0, 'p_off_b2': 1.0, 'p_off_b3': 1.0, 'p_off_b4': 1.0, 'p_off_b5': 1.0}}, 'C-SUPPORT': {'pass': True, 'n_seeds': 200, 'failures': {}}, 't_R_s': 704, 'o_s': 52, 'pilot_node_s': 1512, 'pilot_node_h': 0.42, 'runtime_s': 7092, 'projection_node_s': 36972, 'projection_node_h': 10.27, 'cap_left_node_s': 43488, 'time_limit_minutes': 144, 'reservation_node_s': 43200, 'verdict': 'PROCEED'})\n\nlaunch/test_launch.py:110: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_accounting_defects_stop - Asser...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 deselected in 8.83s\n"
+  },
+  {
+   "name": "PP_JOB_NODES",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 11.1,
+   "verdict": "KILLED",
+   "tail": ": '0:0', 'elapsed': 700, 'nodes': 1}, 'p_off_b5': {'id': '4242.7', 'name': 'p_off_b5', 'state': 'COMPLETED', 'exit': '0:0', 'elapsed': 700, 'nodes': 1}}, 'rules': {'job_completed': True, 'every_pilot_step_completed': True, 'every_pilot_unit_passes': True, 'C-NORM': True, 'C-FIX': True, 'C-MOVE-seed1': True, 'C-SUPPORT-table': True, 'o_nonnegative': True, 'projection_within_11.5': True, 'limit_positive': True, 'limit_covers_1.1x_runtime': True, 'reservation_within_cap_left': True}, 'units': {'p_off_c': True, 'p_R_c': True, 'p_off_b1': True, 'p_R_b1': True, 'p_off_b2': True, 'p_off_b3': True, 'p_off_b4': True, 'p_off_b5': True}, 'cross_unit': {'C-NORM': True, 'C-FIX': True, 'C-MOVE-seed1': True, 'C-SUPPORT-table': True, 'seconds': {'p_off_c': 1.0, 'p_R_c': 1.0, 'p_off_b1': 1.0, 'p_R_b1': 1.0, 'p_off_b2': 1.0, 'p_off_b3': 1.0, 'p_off_b4': 1.0, 'p_off_b5': 1.0}}, 'C-SUPPORT': {'pass': True, 'n_seeds': 200, 'failures': {}}, 't_R_s': 704, 'o_s': 52, 'pilot_node_s': 2268, 'pilot_node_h': 0.63, 'runtime_s': 7092, 'projection_node_s': 37728, 'projection_node_h': 10.48, 'cap_left_node_s': 42732, 'time_limit_minutes': 142, 'reservation_node_s': 42600, 'verdict': 'PROCEED'})\n\nlaunch/test_launch.py:110: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_accounting_defects_stop - Asser...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 deselected in 9.78s\n"
+  },
+  {
+   "name": "PP_STEP_NODES",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 13.3,
+   "verdict": "KILLED",
+   "tail": " '0:0', 'elapsed': 700, 'nodes': 1}, 'p_off_b5': {'id': '4242.7', 'name': 'p_off_b5', 'state': 'COMPLETED', 'exit': '0:0', 'elapsed': 700, 'nodes': 1}}, 'rules': {'job_completed': True, 'every_pilot_step_completed': True, 'every_pilot_unit_passes': True, 'C-NORM': True, 'C-FIX': True, 'C-MOVE-seed1': True, 'C-SUPPORT-table': True, 'o_nonnegative': True, 'projection_within_11.5': True, 'limit_positive': True, 'limit_covers_1.1x_runtime': True, 'reservation_within_cap_left': True}, 'units': {'p_off_c': True, 'p_R_c': True, 'p_off_b1': True, 'p_R_b1': True, 'p_off_b2': True, 'p_off_b3': True, 'p_off_b4': True, 'p_off_b5': True}, 'cross_unit': {'C-NORM': True, 'C-FIX': True, 'C-MOVE-seed1': True, 'C-SUPPORT-table': True, 'seconds': {'p_off_c': 1.0, 'p_R_c': 1.0, 'p_off_b1': 1.0, 'p_R_b1': 1.0, 'p_off_b2': 1.0, 'p_off_b3': 1.0, 'p_off_b4': 1.0, 'p_off_b5': 1.0}}, 'C-SUPPORT': {'pass': True, 'n_seeds': 200, 'failures': {}}, 't_R_s': 704, 'o_s': 52, 'pilot_node_s': 1512, 'pilot_node_h': 0.42, 'runtime_s': 7092, 'projection_node_s': 36972, 'projection_node_h': 10.27, 'cap_left_node_s': 43488, 'time_limit_minutes': 144, 'reservation_node_s': 43200, 'verdict': 'PROCEED'})\n\nlaunch/test_launch.py:110: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_accounting_defects_stop - Asser...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 deselected in 11.43s\n"
+  },
+  {
+   "name": "PP_NO_CNORM",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 16.0,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n____________________ PilotPost.test_cross_unit_defects_stop ____________________\n\nself = <test_launch.PilotPost testMethod=test_cross_unit_defects_stop>\n\n    def test_cross_unit_defects_stop(self):\n        \"\"\"Each pilot-computable cross-unit control STOPs on its own defect.\"\"\"\n        rc, d, _ = self.meta_defect(\"p_off_b2\", lambda m: m.update(extract_args_sha256=\"0\" * 64))\n>       self.assertEqual(rc, 6)\nE       AssertionError: 0 != 6\n\nlaunch/test_launch.py:151: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_cross_unit_defects_stop - Asser...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 4 deselected in 14.63s\n"
+  },
+  {
+   "name": "PP_NO_CFIX",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 14.0,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n____________________ PilotPost.test_cross_unit_defects_stop ____________________\n\nself = <test_launch.PilotPost testMethod=test_cross_unit_defects_stop>\n\n    def test_cross_unit_defects_stop(self):\n        \"\"\"Each pilot-computable cross-unit control STOPs on its own defect.\"\"\"\n        rc, d, _ = self.meta_defect(\"p_off_b2\", lambda m: m.update(extract_args_sha256=\"0\" * 64))\n        self.assertEqual(rc, 6)\n        self.assertFalse(d[\"rules\"][\"C-NORM\"])\n        rc, d, _ = self.meta_defect(\"p_R_c\", lambda m: m[\"support\"].update(n_seeds=199))\n        self.assertEqual(rc, 6)\n        self.assertFalse(d[\"rules\"][\"C-SUPPORT-table\"])\n        import ptmc_score as S\n        with mock.patch.object(S, \"fix_equal\", return_value={\"axes\": True, \"contents\": False}):\n            rc, d, _ = run(sacct(), self.p)\n>       self.assertEqual(rc, 6)\nE       AssertionError: 0 != 6\n\nlaunch/test_launch.py:159: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_cross_unit_defects_stop - Asser...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 4 deselected in 12.54s\n"
+  },
+  {
+   "name": "PP_NO_CMOVE",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 16.7,
+   "verdict": "KILLED",
+   "tail": ".........F\n=================================== FAILURES ===================================\n__________________ PilotPost.test_seed1_fill_duplicate_stops ___________________\n\nself = <test_launch.PilotPost testMethod=test_seed1_fill_duplicate_stops>\n\n    def test_seed1_fill_duplicate_stops(self):\n        q = products()\n        z = dict(np.load(q.units / \"p_R_b1.npz\"))\n        for k in (\"fill_entry\", \"fill_pt\", \"fill_pz\", \"fill_w\"):\n            z[k] = np.concatenate([z[k], z[k][:1]])\n        q.rewrite_unit(\"p_R_b1\", z)\n        rc, d, _ = run(sacct(), q)\n>       self.assertEqual(rc, 6)\nE       AssertionError: 0 != 6\n\nlaunch/test_launch.py:169: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_seed1_fill_duplicate_stops - As...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 9 passed, 4 deselected in 13.87s\n"
+  },
+  {
+   "name": "PP_NO_CSUPPORT",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 12.8,
+   "verdict": "KILLED",
+   "tail": "..F\n=================================== FAILURES ===================================\n____________________ PilotPost.test_cross_unit_defects_stop ____________________\n\nself = <test_launch.PilotPost testMethod=test_cross_unit_defects_stop>\n\n    def test_cross_unit_defects_stop(self):\n        \"\"\"Each pilot-computable cross-unit control STOPs on its own defect.\"\"\"\n        rc, d, _ = self.meta_defect(\"p_off_b2\", lambda m: m.update(extract_args_sha256=\"0\" * 64))\n        self.assertEqual(rc, 6)\n        self.assertFalse(d[\"rules\"][\"C-NORM\"])\n        rc, d, _ = self.meta_defect(\"p_R_c\", lambda m: m[\"support\"].update(n_seeds=199))\n>       self.assertEqual(rc, 6)\nE       AssertionError: 0 != 6\n\nlaunch/test_launch.py:154: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_cross_unit_defects_stop - Asser...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed, 4 deselected in 11.67s\n"
+  },
+  {
+   "name": "PP_RECHECK_L",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 15.3,
+   "verdict": "KILLED",
+   "tail": "......F\n=================================== FAILURES ===================================\n________________ PilotPost.test_recheck_requires_the_same_limit ________________\n\nself = <test_launch.PilotPost testMethod=test_recheck_requires_the_same_limit>\n\n    def test_recheck_requires_the_same_limit(self):\n        rc, d, out = run(sacct(), self.p)\n        self.assertEqual(rc, 0)\n        rc2, _, _ = run(sacct(), self.p, recheck=out / \"decision.json\")\n        self.assertEqual(rc2, 0)\n        rc3, _, _ = run(sacct(job_el=1050), self.p, recheck=out / \"decision.json\")  # L = 143 (a PROCEED), not 144\n>       self.assertEqual(rc3, 6)\nE       AssertionError: 0 != 6\n\nlaunch/test_launch.py:178: AssertionError\n----------------------------- Captured stdout call -----------------------------\n{\"recheck\": \"SAME\", \"time_limit_minutes\": 144}\n{\"recheck\": \"SAME\", \"time_limit_minutes\": 143}\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_recheck_requires_the_same_limit\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 6 passed, 4 deselected in 13.71s\n"
+  },
+  {
+   "name": "D4_ABSENT_FAILS",
+   "file": "launch/ptmc_stage_d4.py",
+   "tests": [
+    "launch/test_launch.py",
+    "StageD4"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 15.9,
+   "verdict": "KILLED",
+   "tail": ".F\n=================================== FAILURES ===================================\n_____________ StageD4.test_absent_is_recorded_and_a_symlink_fails ______________\n\nself = <test_launch.StageD4 testMethod=test_absent_is_recorded_and_a_symlink_fails>\n\n    def test_absent_is_recorded_and_a_symlink_fails(self):\n        (self.ref / \"units\" / \"c2_replica_b7.npz\").unlink()\n        rc, out = self.stage()\n>       self.assertEqual(rc, 0)\nE       AssertionError: 5 != 0\n\nlaunch/test_launch.py:243: AssertionError\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::StageD4::test_absent_is_recorded_and_a_symlink_fails\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 11 deselected in 14.30s\n"
+  },
+  {
+   "name": "D4_MANDATORY",
+   "file": "launch/ptmc_stage_d4.py",
+   "tests": [
+    "launch/test_launch.py",
+    "StageD4"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 15.1,
+   "verdict": "KILLED",
+   "tail": "...F\n=================================== FAILURES ===================================\n___________ StageD4.test_mandatory_absent_and_symlinked_parent_fail ____________\n\nself = <test_launch.StageD4 testMethod=test_mandatory_absent_and_symlinked_parent_fail>\n\n    def test_mandatory_absent_and_symlinked_parent_fail(self):\n        (self.ref / \"read-2\" / \"inputs\" / \"001_xsec.root\").unlink()\n        rc, out = self.stage()\n>       self.assertEqual(rc, 5)\nE       AssertionError: 0 != 5\n\nlaunch/test_launch.py:215: AssertionError\n----------------------------- Captured stdout call -----------------------------\nstaged 402 products, 1 absent\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::StageD4::test_mandatory_absent_and_symlinked_parent_fail\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 11 deselected in 13.43s\n"
+  },
+  {
+   "name": "D4_PARENT_DIR",
+   "file": "launch/ptmc_stage_d4.py",
+   "tests": [
+    "launch/test_launch.py",
+    "StageD4"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 9.3,
+   "verdict": "KILLED",
+   "tail": "...F\n=================================== FAILURES ===================================\n___________ StageD4.test_mandatory_absent_and_symlinked_parent_fail ____________\n\nself = <test_launch.StageD4 testMethod=test_mandatory_absent_and_symlinked_parent_fail>\n\n    def test_mandatory_absent_and_symlinked_parent_fail(self):\n        (self.ref / \"read-2\" / \"inputs\" / \"001_xsec.root\").unlink()\n        rc, out = self.stage()\n        self.assertEqual(rc, 5)\n        self.assertFalse((out / \"manifest.json\").exists())\n        self.setUp()\n        real = self.ref / \"units\"\n        moved = self.ref / \"units_real\"\n        real.rename(moved)\n        real.symlink_to(moved)\n        rc, out = self.stage()\n>       self.assertEqual(rc, 5)\nE       AssertionError: 0 != 5\n\nlaunch/test_launch.py:223: AssertionError\n----------------------------- Captured stdout call -----------------------------\nstaged 403 products, 0 absent\n----------------------------- Captured stderr call -----------------------------\nFAIL: the mandatory /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyukpgt2z/read-2/inputs/001_xsec.root is absent\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::StageD4::test_mandatory_absent_and_symlinked_parent_fail\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed, 11 deselected in 7.97s\n"
+  },
+  {
+   "name": "D4_CHANGED",
+   "file": "launch/ptmc_stage_d4.py",
+   "tests": [
+    "launch/test_launch.py",
+    "StageD4"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 8.9,
+   "verdict": "KILLED",
+   "tail": "F\n=================================== FAILURES ===================================\n_____________ StageD4.test_a_source_changed_during_its_copy_fails ______________\n\nself = <test_launch.StageD4 testMethod=test_a_source_changed_during_its_copy_fails>\n\n    def test_a_source_changed_during_its_copy_fails(self):\n        sys.path.insert(0, str(self.T.tree() / \"2d-unfolding\" / \"ref_c2c1\"))\n        import ref_c2c1 as C  # the module object ptmc_stage_d4 imports\n        orig = C.copy_noatime\n    \n        def copy_then_touch(src, dst):\n            d = orig(src, dst)\n            if Path(src).name == \"c2_replica_b9.npz\":\n                Path(src).write_bytes(b\"grown during the copy\")\n            return d\n        with mock.patch.object(C, \"copy_noatime\", copy_then_touch):\n            rc, out = self.stage()\n>       self.assertEqual(rc, 5)\nE       AssertionError: 0 != 5\n\nlaunch/test_launch.py:237: AssertionError\n----------------------------- Captured stdout call -----------------------------\nstaged 403 products, 0 absent\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::StageD4::test_a_source_changed_during_its_copy_fails\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 11 deselected in 7.99s\n"
+  },
+  {
+   "name": "SH_COPY_PIN",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 42.3,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 87 fail 1\n"
+  },
+  {
+   "name": "SH_STAGE_HOST",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 31.6,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 87 fail 1\n"
+  },
+  {
+   "name": "SH_LOGIN_HOST",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 38.1,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 81 fail 7\n"
+  },
+  {
+   "name": "SH_STAGE_AGE",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 28.1,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 86 fail 2\n"
+  },
+  {
+   "name": "SH_CLAIM",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 44.2,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nFAIL pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 87 fail 1\n"
+  },
+  {
+   "name": "SH_AWK_STATUS",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 43.9,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 87 fail 1\n"
+  },
+  {
+   "name": "SH_STAGE_LS",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 34.9,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 87 fail 1\n"
+  },
+  {
+   "name": "SH_RECHECK_L",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 37.6,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nFAIL replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 87 fail 1\n"
+  },
+  {
+   "name": "SH_REPLICAS_N5",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 42.4,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nFAIL replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 87 fail 1\n"
+  },
+  {
+   "name": "SH_PILOT_N2",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 34.9,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 87 fail 1\n"
+  },
+  {
+   "name": "SH_DEPLOY_INVENTORY",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 40.9,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 86 fail 2\n"
+  },
+  {
+   "name": "SH_DRIVER_PIN",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 54.3,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 87 fail 1\n"
+  },
+  {
+   "name": "SH_JOBID_PERSIST",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 61.7,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nFAIL pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 87 fail 1\n"
+  },
+  {
+   "name": "SH_POST_OTHER_JOB",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 56.8,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nFAIL post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 87 fail 1\n"
+  },
+  {
+   "name": "SH_SACCT_EMPTY",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 58.6,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nFAIL post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 87 fail 1\n"
+  },
+  {
+   "name": "SH_THREADS",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 48.0,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nFAIL post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 86 fail 2\n"
+  },
+  {
+   "name": "SH_SHA_STATUS",
+   "file": "launch/ptmc_remote.sh",
+   "tests": [
+    "HARNESS:harness_remote.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 47.5,
+   "verdict": "KILLED",
+   "tail": "ears\nok   pilot: an unparsable sbatch STOPs\nok   pilot: a failed sbatch STOPs\nok   pilot after a failed sbatch: the claim refuses a resubmit\nok   pilot: an unrecordable job id STOPs and names the job\nok   post-pilot: a failed sacct STOPs, printed\nok   post-pilot: empty accounting STOPs\nok   post-pilot: a STOP decision exits 6, no PROCEED\nok   post-pilot: passes --jobid and --rows\nok   post-pilot: python runs with one thread\nok   post-pilot: PROCEED\nok   post-pilot again: STOP\nok   post-pilot: a failed activation STOPs\nok   replicas: time limit '0' STOPs\nok   replicas: time limit 'abc' STOPs\nok   replicas: time limit '700' STOPs\nok   replicas: time limit '' STOPs\nok   replicas: submitted with -N 5 -t 145\nok   replicas: the recheck ran on fresh accounting\nok   replicas again: STOP\nok   replicas: a DIFFERS recheck exits 6, no sbatch\nok   replicas: a recheck at another L STOPs\nok   replicas: a failed sacct STOPs\nok   replicas: a live cov2d job STOPs before the claim\nok   replicas: no PROCEED STOPs\nok   replicas: a queued ptmc job STOPs\nok   post: accounting without the job's own line STOPs\nok   post: a row of another job STOPs\nok   post: empty accounting STOPs\nok   post: a failed sacct STOPs\nok   post: no replicas job id STOPs\nok   post: a running ptmc job STOPs before the claim\nok   post: a failed D4 staging STOPs, no tar\nok   post: both tars written, the charge from both allocation lines\nok   post: the tar carries the claims and the recheck\nok   post again: STOP\npass 87 fail 1\n"
+  },
+  {
+   "name": "SH_PILOT_UNITS",
+   "file": "launch/pilot.sbatch",
+   "tests": [
+    "HARNESS:harness_sbatch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 4.4,
+   "verdict": "KILLED",
+   "tail": "ok   pilot: 3 nodes refuses\nok   pilot: no ready refuses\nok   pilot: an existing units dir refuses\nok   pilot: a wrong rows pin refuses\nok   pilot: no rows.sha256 refuses\nok   pilot: a failed conda hook refuses\nok   pilot: an existing record dir refuses\nFAIL pilot: the 8 units, once each, 8 outcomes recorded\nFAIL pilot: a failed unit exits 6, every outcome recorded\nok   replicas: 4 nodes refuses\nok   replicas: no PROCEED refuses\nok   replicas: no L refuses\nok   replicas: a malformed L refuses\nok   replicas: a failed squeue refuses\nok   replicas: an UNLIMITED time limit refuses\nok   replicas: a limit that bash arithmetic would evaluate refuses\nok   replicas: a limit one second over L refuses\nok   replicas: a day-form limit over L refuses\nok   replicas: a wrong rows pin refuses\nok   replicas: a failed conda hook refuses\nok   replicas: an existing record dir refuses\nok   replicas: b = 2..200, 199 steps, each once, 199 outcomes, lane 0 takes b22\nok   replicas: a failed unit exits 6, its lane continues, its outcome recorded\npass 21 fail 2\n"
+  },
+  {
+   "name": "SB_PILOT_NODES",
+   "file": "launch/pilot.sbatch",
+   "tests": [
+    "HARNESS:harness_sbatch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 3.2,
+   "verdict": "KILLED",
+   "tail": "FAIL pilot: 3 nodes refuses\nok   pilot: no ready refuses\nok   pilot: an existing units dir refuses\nok   pilot: a wrong rows pin refuses\nok   pilot: no rows.sha256 refuses\nok   pilot: a failed conda hook refuses\nok   pilot: an existing record dir refuses\nok   pilot: the 8 units, once each, 8 outcomes recorded\nok   pilot: a failed unit exits 6, every outcome recorded\nok   replicas: 4 nodes refuses\nok   replicas: no PROCEED refuses\nok   replicas: no L refuses\nok   replicas: a malformed L refuses\nok   replicas: a failed squeue refuses\nok   replicas: an UNLIMITED time limit refuses\nok   replicas: a limit that bash arithmetic would evaluate refuses\nok   replicas: a limit one second over L refuses\nok   replicas: a day-form limit over L refuses\nok   replicas: a wrong rows pin refuses\nok   replicas: a failed conda hook refuses\nok   replicas: an existing record dir refuses\nok   replicas: b = 2..200, 199 steps, each once, 199 outcomes, lane 0 takes b22\nok   replicas: a failed unit exits 6, its lane continues, its outcome recorded\npass 22 fail 1\n"
+  },
+  {
+   "name": "SB_PILOT_ROWS",
+   "file": "launch/pilot.sbatch",
+   "tests": [
+    "HARNESS:harness_sbatch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 4.4,
+   "verdict": "KILLED",
+   "tail": "ok   pilot: 3 nodes refuses\nok   pilot: no ready refuses\nok   pilot: an existing units dir refuses\nFAIL pilot: a wrong rows pin refuses\nok   pilot: no rows.sha256 refuses\nok   pilot: a failed conda hook refuses\nok   pilot: an existing record dir refuses\nok   pilot: the 8 units, once each, 8 outcomes recorded\nok   pilot: a failed unit exits 6, every outcome recorded\nok   replicas: 4 nodes refuses\nok   replicas: no PROCEED refuses\nok   replicas: no L refuses\nok   replicas: a malformed L refuses\nok   replicas: a failed squeue refuses\nok   replicas: an UNLIMITED time limit refuses\nok   replicas: a limit that bash arithmetic would evaluate refuses\nok   replicas: a limit one second over L refuses\nok   replicas: a day-form limit over L refuses\nok   replicas: a wrong rows pin refuses\nok   replicas: a failed conda hook refuses\nok   replicas: an existing record dir refuses\nok   replicas: b = 2..200, 199 steps, each once, 199 outcomes, lane 0 takes b22\nok   replicas: a failed unit exits 6, its lane continues, its outcome recorded\npass 22 fail 1\n"
+  },
+  {
+   "name": "SB_PILOT_OUTCOMES",
+   "file": "launch/pilot.sbatch",
+   "tests": [
+    "HARNESS:harness_sbatch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 4.0,
+   "verdict": "KILLED",
+   "tail": "ok   pilot: 3 nodes refuses\nok   pilot: no ready refuses\nok   pilot: an existing units dir refuses\nok   pilot: a wrong rows pin refuses\nok   pilot: no rows.sha256 refuses\nok   pilot: a failed conda hook refuses\nok   pilot: an existing record dir refuses\nok   pilot: the 8 units, once each, 8 outcomes recorded\nFAIL pilot: a failed unit exits 6, every outcome recorded\nok   replicas: 4 nodes refuses\nok   replicas: no PROCEED refuses\nok   replicas: no L refuses\nok   replicas: a malformed L refuses\nok   replicas: a failed squeue refuses\nok   replicas: an UNLIMITED time limit refuses\nok   replicas: a limit that bash arithmetic would evaluate refuses\nok   replicas: a limit one second over L refuses\nok   replicas: a day-form limit over L refuses\nok   replicas: a wrong rows pin refuses\nok   replicas: a failed conda hook refuses\nok   replicas: an existing record dir refuses\nok   replicas: b = 2..200, 199 steps, each once, 199 outcomes, lane 0 takes b22\nok   replicas: a failed unit exits 6, its lane continues, its outcome recorded\npass 22 fail 1\n"
+  },
+  {
+   "name": "SB_REPS_NODES",
+   "file": "launch/replicas.sbatch",
+   "tests": [
+    "HARNESS:harness_sbatch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 2.8,
+   "verdict": "KILLED",
+   "tail": "ok   pilot: 3 nodes refuses\nok   pilot: no ready refuses\nok   pilot: an existing units dir refuses\nok   pilot: a wrong rows pin refuses\nok   pilot: no rows.sha256 refuses\nok   pilot: a failed conda hook refuses\nok   pilot: an existing record dir refuses\nok   pilot: the 8 units, once each, 8 outcomes recorded\nok   pilot: a failed unit exits 6, every outcome recorded\nFAIL replicas: 4 nodes refuses\nok   replicas: no PROCEED refuses\nok   replicas: no L refuses\nok   replicas: a malformed L refuses\nok   replicas: a failed squeue refuses\nok   replicas: an UNLIMITED time limit refuses\nok   replicas: a limit that bash arithmetic would evaluate refuses\nok   replicas: a limit one second over L refuses\nok   replicas: a day-form limit over L refuses\nok   replicas: a wrong rows pin refuses\nok   replicas: a failed conda hook refuses\nok   replicas: an existing record dir refuses\nok   replicas: b = 2..200, 199 steps, each once, 199 outcomes, lane 0 takes b22\nok   replicas: a failed unit exits 6, its lane continues, its outcome recorded\npass 22 fail 1\n"
+  },
+  {
+   "name": "SB_REPS_LIMIT",
+   "file": "launch/replicas.sbatch",
+   "tests": [
+    "HARNESS:harness_sbatch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 3.5,
+   "verdict": "KILLED",
+   "tail": "ok   pilot: 3 nodes refuses\nok   pilot: no ready refuses\nok   pilot: an existing units dir refuses\nok   pilot: a wrong rows pin refuses\nok   pilot: no rows.sha256 refuses\nok   pilot: a failed conda hook refuses\nok   pilot: an existing record dir refuses\nok   pilot: the 8 units, once each, 8 outcomes recorded\nok   pilot: a failed unit exits 6, every outcome recorded\nok   replicas: 4 nodes refuses\nok   replicas: no PROCEED refuses\nok   replicas: no L refuses\nok   replicas: a malformed L refuses\nok   replicas: a failed squeue refuses\nok   replicas: an UNLIMITED time limit refuses\nok   replicas: a limit that bash arithmetic would evaluate refuses\nFAIL replicas: a limit one second over L refuses\nFAIL replicas: a day-form limit over L refuses\nok   replicas: a wrong rows pin refuses\nok   replicas: a failed conda hook refuses\nok   replicas: an existing record dir refuses\nok   replicas: b = 2..200, 199 steps, each once, 199 outcomes, lane 0 takes b22\nok   replicas: a failed unit exits 6, its lane continues, its outcome recorded\npass 21 fail 2\n"
+  },
+  {
+   "name": "SB_REPS_PARSE",
+   "file": "launch/replicas.sbatch",
+   "tests": [
+    "HARNESS:harness_sbatch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 3.1,
+   "verdict": "KILLED",
+   "tail": "ok   pilot: 3 nodes refuses\nok   pilot: no ready refuses\nok   pilot: an existing units dir refuses\nok   pilot: a wrong rows pin refuses\nok   pilot: no rows.sha256 refuses\nok   pilot: a failed conda hook refuses\nok   pilot: an existing record dir refuses\nok   pilot: the 8 units, once each, 8 outcomes recorded\nok   pilot: a failed unit exits 6, every outcome recorded\nok   replicas: 4 nodes refuses\nok   replicas: no PROCEED refuses\nok   replicas: no L refuses\nok   replicas: a malformed L refuses\nok   replicas: a failed squeue refuses\nok   replicas: an UNLIMITED time limit refuses\nFAIL replicas: a limit that bash arithmetic would evaluate refuses\nok   replicas: a limit one second over L refuses\nok   replicas: a day-form limit over L refuses\nok   replicas: a wrong rows pin refuses\nok   replicas: a failed conda hook refuses\nok   replicas: an existing record dir refuses\nok   replicas: b = 2..200, 199 steps, each once, 199 outcomes, lane 0 takes b22\nok   replicas: a failed unit exits 6, its lane continues, its outcome recorded\npass 22 fail 1\n"
+  },
+  {
+   "name": "SB_REPS_ROWS",
+   "file": "launch/replicas.sbatch",
+   "tests": [
+    "HARNESS:harness_sbatch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 4.0,
+   "verdict": "KILLED",
+   "tail": "ok   pilot: 3 nodes refuses\nok   pilot: no ready refuses\nok   pilot: an existing units dir refuses\nok   pilot: a wrong rows pin refuses\nok   pilot: no rows.sha256 refuses\nok   pilot: a failed conda hook refuses\nok   pilot: an existing record dir refuses\nok   pilot: the 8 units, once each, 8 outcomes recorded\nok   pilot: a failed unit exits 6, every outcome recorded\nok   replicas: 4 nodes refuses\nok   replicas: no PROCEED refuses\nok   replicas: no L refuses\nok   replicas: a malformed L refuses\nok   replicas: a failed squeue refuses\nok   replicas: an UNLIMITED time limit refuses\nok   replicas: a limit that bash arithmetic would evaluate refuses\nok   replicas: a limit one second over L refuses\nok   replicas: a day-form limit over L refuses\nFAIL replicas: a wrong rows pin refuses\nok   replicas: a failed conda hook refuses\nok   replicas: an existing record dir refuses\nok   replicas: b = 2..200, 199 steps, each once, 199 outcomes, lane 0 takes b22\nok   replicas: a failed unit exits 6, its lane continues, its outcome recorded\npass 22 fail 1\n"
+  },
+  {
+   "name": "SB_REPS_COUNT",
+   "file": "launch/replicas.sbatch",
+   "tests": [
+    "HARNESS:harness_sbatch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 5.6,
+   "verdict": "KILLED",
+   "tail": "ok   pilot: 3 nodes refuses\nok   pilot: no ready refuses\nok   pilot: an existing units dir refuses\nok   pilot: a wrong rows pin refuses\nok   pilot: no rows.sha256 refuses\nok   pilot: a failed conda hook refuses\nok   pilot: an existing record dir refuses\nok   pilot: the 8 units, once each, 8 outcomes recorded\nok   pilot: a failed unit exits 6, every outcome recorded\nok   replicas: 4 nodes refuses\nok   replicas: no PROCEED refuses\nok   replicas: no L refuses\nok   replicas: a malformed L refuses\nok   replicas: a failed squeue refuses\nok   replicas: an UNLIMITED time limit refuses\nok   replicas: a limit that bash arithmetic would evaluate refuses\nok   replicas: a limit one second over L refuses\nok   replicas: a day-form limit over L refuses\nok   replicas: a wrong rows pin refuses\nok   replicas: a failed conda hook refuses\nok   replicas: an existing record dir refuses\nok   replicas: b = 2..200, 199 steps, each once, 199 outcomes, lane 0 takes b22\nFAIL replicas: a failed unit exits 6, its lane continues, its outcome recorded\npass 22 fail 1\n"
+  },
+  {
+   "name": "LA_STAGE_NODE",
+   "file": "launch/ptmc_launch.sh",
+   "tests": [
+    "LOCAL:harness_launch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 5.3,
+   "verdict": "KILLED",
+   "tail": "ok   an unfilled sha: STOP 9\nok   a non-empty session dir: STOP 9\nok   a missing session dir: STOP 9\nok   a bad node name: STOP 9\nok   a login mode on dtn01: STOP 9\nFAIL stage on a login node: STOP 9\nFAIL stage with no node: STOP 9\nok   an unknown mode: STOP 9\nok   stage: direct ssh to dtn01.nersc.gov, no saul hop\nok   prestage: through saul to the login node\nok   fetch: both tars, hashed\nok   fetch: a failed scp fails\nok   fetch: a failed hash fails\nok   a changed remote script: STOP 8\nok   a failed hash of the remote script: STOP 9\npass 13 fail 2\n"
+  },
+  {
+   "name": "LA_DTN_ROUTE",
+   "file": "launch/ptmc_launch.sh",
+   "tests": [
+    "LOCAL:harness_launch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 3.2,
+   "verdict": "KILLED",
+   "tail": "ok   an unfilled sha: STOP 9\nok   a non-empty session dir: STOP 9\nok   a missing session dir: STOP 9\nok   a bad node name: STOP 9\nok   a login mode on dtn01: STOP 9\nok   stage on a login node: STOP 9\nok   stage with no node: STOP 9\nok   an unknown mode: STOP 9\nFAIL stage: direct ssh to dtn01.nersc.gov, no saul hop\nok   prestage: through saul to the login node\nok   fetch: both tars, hashed\nok   fetch: a failed scp fails\nok   fetch: a failed hash fails\nok   a changed remote script: STOP 8\nok   a failed hash of the remote script: STOP 9\npass 14 fail 1\n"
+  },
+  {
+   "name": "LA_LOGIN_NODE",
+   "file": "launch/ptmc_launch.sh",
+   "tests": [
+    "LOCAL:harness_launch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 3.8,
+   "verdict": "KILLED",
+   "tail": "ok   an unfilled sha: STOP 9\nok   a non-empty session dir: STOP 9\nok   a missing session dir: STOP 9\nFAIL a bad node name: STOP 9\nFAIL a login mode on dtn01: STOP 9\nok   stage on a login node: STOP 9\nok   stage with no node: STOP 9\nok   an unknown mode: STOP 9\nok   stage: direct ssh to dtn01.nersc.gov, no saul hop\nok   prestage: through saul to the login node\nok   fetch: both tars, hashed\nok   fetch: a failed scp fails\nok   fetch: a failed hash fails\nok   a changed remote script: STOP 8\nok   a failed hash of the remote script: STOP 9\npass 13 fail 2\n"
+  },
+  {
+   "name": "LA_FETCH_HASH",
+   "file": "launch/ptmc_launch.sh",
+   "tests": [
+    "LOCAL:harness_launch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 6.0,
+   "verdict": "KILLED",
+   "tail": "ok   an unfilled sha: STOP 9\nok   a non-empty session dir: STOP 9\nok   a missing session dir: STOP 9\nok   a bad node name: STOP 9\nok   a login mode on dtn01: STOP 9\nok   stage on a login node: STOP 9\nok   stage with no node: STOP 9\nok   an unknown mode: STOP 9\nok   stage: direct ssh to dtn01.nersc.gov, no saul hop\nok   prestage: through saul to the login node\nok   fetch: both tars, hashed\nok   fetch: a failed scp fails\nFAIL fetch: a failed hash fails\nok   a changed remote script: STOP 8\nok   a failed hash of the remote script: STOP 9\npass 14 fail 1\n"
+  },
+  {
+   "name": "LA_SCRIPT_SHA",
+   "file": "launch/ptmc_launch.sh",
+   "tests": [
+    "LOCAL:harness_launch.sh",
+    null
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 4.8,
+   "verdict": "KILLED",
+   "tail": "ok   an unfilled sha: STOP 9\nok   a non-empty session dir: STOP 9\nok   a missing session dir: STOP 9\nok   a bad node name: STOP 9\nok   a login mode on dtn01: STOP 9\nok   stage on a login node: STOP 9\nok   stage with no node: STOP 9\nok   an unknown mode: STOP 9\nok   stage: direct ssh to dtn01.nersc.gov, no saul hop\nok   prestage: through saul to the login node\nok   fetch: both tars, hashed\nok   fetch: a failed scp fails\nok   fetch: a failed hash fails\nFAIL a changed remote script: STOP 8\nok   a failed hash of the remote script: STOP 9\npass 14 fail 1\n"
+  }
+ ],
+ "summary": "105/113 killed"
+}

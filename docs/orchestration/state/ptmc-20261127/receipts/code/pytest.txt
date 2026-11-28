@@ -1,8 +1,597 @@
-...........................................                              [100%]
+.....................................................................    [100%]
 =============================== warnings summary ===============================
-test_ptmc.py::Runner::test_controls_present
+test_ptmc.py::Runner::test_completeness_axes_not_the_grid_fail
   TROOT::Append:0: RuntimeWarning: Replacing existing TH1: ptmc_fill_K20 (Potential memory leak).
 
+test_ptmc.py::Runner::test_completeness_axes_not_the_grid_fail
+  TROOT::Append:0: RuntimeWarning: Replacing existing TH1: hOFInputTruth2D (Potential memory leak).
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-43 passed, 1 warning in 94.84s (0:01:34)
+==================================== PASSES ====================================
+_______________ Runner.test_completeness_axes_not_the_grid_fail ________________
+---------------------------- Captured stdout setup -----------------------------
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Stay-Positive refine: 4000 pos / 2203 neg events; g in [0.000,0.999]; clipped(2g-1<0) 400 events; sum(w_refined)=3517.56 (signed sum 3453.42).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.0645; effective measured sum=3517.56 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3517.56
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+Starting iteration 0
+Starting iteration 1
+[INFO] OmniFold complete. step1 weights: 6000, step2 weights: 6000
+[INFO] step2 sum=1.75e+04, mean=2.9159, min=0.4683, max=7.8510
+[CHECK] hTruth2D integral: 1501.3
+[CHECK] hUnfold2D integral: 4379.45
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1066.12
+[CHECK] hEffDen integral: 1501.3
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.23e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.23e-41 cm^2/nucleon
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/units/p_off_c.root
+{"unit": "p_off_c", "seconds": 24.217, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": true, "C-COUPLE": true, "C-SIM": true}}
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Poisson bootstrap: seed=1, streams=three, data factor sum=4070 (n=4000, APPLIED), mc factor sum=5844 (n=6000, APPLIED)
+[INFO] Stay-Positive refine: 2524 pos / 3679 neg events; g in [0.000,1.000]; clipped(2g-1<0) 674 events; sum(w_refined)=3636.3 (signed sum 3509.24).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.1087; effective measured sum=3636.3 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3636.3
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+Starting iteration 0
+Starting iteration 1
+[INFO] OmniFold complete. step1 weights: 6000, step2 weights: 6000
+[INFO] step2 sum=1.855e+04, mean=3.0912, min=0.3162, max=5.8935
+[CHECK] hTruth2D integral: 1467.65
+[CHECK] hUnfold2D integral: 4496.09
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1036.05
+[CHECK] hEffDen integral: 1501.3
+[INFO] Phase-17 MC bootstrap: completeness uses the un-resampled MC truth weights, as the central value does (KNOWN_ISSUES 84).
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.308e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.308e-41 cm^2/nucleon
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/units/p_off_b1.root
+{"unit": "p_off_b1", "seconds": 7.241, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": true}}
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] OOFVC: --signal-convention minerva, 300 rows from /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/stage/oofvc_rows.npz
+[INFO] OOFVC: 300 mc_background entries moved to the signal
+[INFO] OOFVC: {'appended': 295, 'outside': 5, 'dropped_appended_weight': 0, 'dropped_outside_weight': 0}
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 474.902
+[INFO] hMeasSub2D integral: 3525.1
+[INFO] hMeasTrain2D integral: 3525.1
+[INFO] bkg-mode=negweight-refined: prepared 1908 injected background reco events (bkg-MC 1908 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Stay-Positive refine: 4000 pos / 1908 neg events; g in [0.000,0.999]; clipped(2g-1<0) 354 events; sum(w_refined)=3580.08 (signed sum 3525.1).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 5908 signed events (4000 data + 1908 bkg) to NON-NEGATIVE weights; clipped frac=0.0599; effective measured sum=3580.08 (cf hMeasSub2D integral 3525.1).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6295, pass_truth: 6295, pass_reco: 4534
+[INFO] Measured events: 5908, effective training sum=3580.08
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+Starting iteration 0
+Starting iteration 1
+[INFO] OmniFold complete. step1 weights: 6295, step2 weights: 6295
+[INFO] step2 sum=1.806e+04, mean=2.8692, min=0.1350, max=43.6779
+[CHECK] hTruth2D integral: 1580.15
+[CHECK] hUnfold2D integral: 4528.72
+[CHECK] hMeasSub2D integral: 3525.1
+[CHECK] hMeasTrain2D integral: 3525.1
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1137.8
+[CHECK] hEffDen integral: 1501.3
+[CHECK] hOFInputTruth2D integral: 1580.15
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0525 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[WARN] hasTruthOnlyMisses=1 but c_global deviates from 1 by 5.25% — check event-ID matching in runEventLoopOmniFold.cpp Phase-17 path and that the Python truth-pass gate (in_truth_phase_space) matches CCInclusive2DPhaseSpace.
+[CHECK] Total xsec from p_T projection: 2.151e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.151e-41 cm^2/nucleon
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/units/p_R_c.root
+{"unit": "p_R_c", "seconds": 7.67, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-MOVE-UNIT": true, "C-COMP": true, "C-COUPLE": true, "C-SIM": true}}
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] OOFVC: --signal-convention minerva, 300 rows from /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/stage/oofvc_rows.npz
+[INFO] OOFVC: 300 mc_background entries moved to the signal
+[INFO] OOFVC: {'appended': 295, 'outside': 5, 'dropped_appended_weight': 0, 'dropped_outside_weight': 0}
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 474.902
+[INFO] hMeasSub2D integral: 3525.1
+[INFO] hMeasTrain2D integral: 3525.1
+[INFO] bkg-mode=negweight-refined: prepared 1908 injected background reco events (bkg-MC 1908 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] PTMC: signal factors over 6000 original rows (seed+10000000) and 295 appended rows at b_bkg[entry] (seed+20000000)
+[INFO] Poisson bootstrap: seed=1, streams=three, data factor sum=4070 (n=4000, APPLIED), mc factor sum=6151 (n=6295, APPLIED)
+[INFO] Stay-Positive refine: 2524 pos / 3384 neg events; g in [0.000,1.000]; clipped(2g-1<0) 612 events; sum(w_refined)=3697.26 (signed sum 3584.91).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 5908 signed events (4000 data + 1908 bkg) to NON-NEGATIVE weights; clipped frac=0.1036; effective measured sum=3697.26 (cf hMeasSub2D integral 3525.1).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6295, pass_truth: 6295, pass_reco: 4534
+[INFO] Measured events: 5908, effective training sum=3697.26
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+Starting iteration 0
+Starting iteration 1
+[INFO] OmniFold complete. step1 weights: 6295, step2 weights: 6295
+[INFO] step2 sum=1.864e+04, mean=2.9613, min=0.1051, max=14.0216
+[CHECK] hTruth2D integral: 1550.88
+[CHECK] hUnfold2D integral: 4568.35
+[CHECK] hMeasSub2D integral: 3525.1
+[CHECK] hMeasTrain2D integral: 3525.1
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1111.72
+[CHECK] hEffDen integral: 1501.3
+[INFO] Phase-17 MC bootstrap: completeness uses the un-resampled MC truth weights, as the central value does (KNOWN_ISSUES 84).
+[INFO] PTMC: R replica completeness resampled consistently (61 cells keep c_CV, 1 lost their original-row support and give 0)
+[CHECK] hOFInputTruth2D integral: 1550.88
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0330 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[WARN] hasTruthOnlyMisses=1 but c_global deviates from 1 by 3.30% — check event-ID matching in runEventLoopOmniFold.cpp Phase-17 path and that the Python truth-pass gate (in_truth_phase_space) matches CCInclusive2DPhaseSpace.
+[CHECK] Total xsec from p_T projection: 2.19e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.19e-41 cm^2/nucleon
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/units/p_R_b1.root
+{"unit": "p_R_b1", "seconds": 11.347, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-MOVE-UNIT": true, "C-COMP": true}}
+----------------------------- Captured stdout call -----------------------------
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Poisson bootstrap: seed=1, streams=three, data factor sum=4070 (n=4000, APPLIED), mc factor sum=5844 (n=6000, APPLIED)
+[INFO] Stay-Positive refine: 2524 pos / 3679 neg events; g in [0.000,1.000]; clipped(2g-1<0) 674 events; sum(w_refined)=3636.3 (signed sum 3509.24).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.1087; effective measured sum=3636.3 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3636.3
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+Starting iteration 0
+Starting iteration 1
+[INFO] OmniFold complete. step1 weights: 6000, step2 weights: 6000
+[INFO] step2 sum=1.855e+04, mean=3.0912, min=0.3162, max=5.8935
+[CHECK] hTruth2D integral: 1467.65
+[CHECK] hUnfold2D integral: 4496.09
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1036.05
+[CHECK] hEffDen integral: 1501.3
+[INFO] Phase-17 MC bootstrap: completeness uses the un-resampled MC truth weights, as the central value does (KNOWN_ISSUES 84).
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.308e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.308e-41 cm^2/nucleon
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpdgdfeptp/p_off_b1.root
+{"unit": "p_off_b1", "seconds": 12.681, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": false}}
+_______________ Runner.test_non_finite_extraction_argument_fails _______________
+----------------------------- Captured stdout call -----------------------------
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Poisson bootstrap: seed=1, streams=three, data factor sum=4070 (n=4000, APPLIED), mc factor sum=5844 (n=6000, APPLIED)
+[INFO] Stay-Positive refine: 2524 pos / 3679 neg events; g in [0.000,1.000]; clipped(2g-1<0) 674 events; sum(w_refined)=3636.3 (signed sum 3509.24).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.1087; effective measured sum=3636.3 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3636.3
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+Starting iteration 0
+Starting iteration 1
+[INFO] OmniFold complete. step1 weights: 6000, step2 weights: 6000
+[INFO] step2 sum=1.855e+04, mean=3.0912, min=0.3162, max=5.8935
+[CHECK] hTruth2D integral: 1467.65
+[CHECK] hUnfold2D integral: 4496.09
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1036.05
+[CHECK] hEffDen integral: 1501.3
+[INFO] Phase-17 MC bootstrap: completeness uses the un-resampled MC truth weights, as the central value does (KNOWN_ISSUES 84).
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.308e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.308e-41 cm^2/nucleon
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmps_zhcmsb/p_off_b1.root
+{"unit": "p_off_b1", "seconds": 7.757, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": true}}
+_________________ Runner.test_pair_measured_mask_defect_fails __________________
+----------------------------- Captured stdout call -----------------------------
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Poisson bootstrap: seed=1, streams=three, data factor sum=4070 (n=4000, APPLIED), mc factor sum=5844 (n=6000, APPLIED)
+[INFO] Stay-Positive refine: 2524 pos / 3679 neg events; g in [0.000,1.000]; clipped(2g-1<0) 674 events; sum(w_refined)=3636.3 (signed sum 3509.24).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.1087; effective measured sum=3636.3 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3636.3
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+Starting iteration 0
+Starting iteration 1
+[INFO] OmniFold complete. step1 weights: 6000, step2 weights: 6000
+[INFO] step2 sum=1.855e+04, mean=3.0912, min=0.3162, max=5.8935
+[CHECK] hTruth2D integral: 1467.65
+[CHECK] hUnfold2D integral: 4496.09
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1036.05
+[CHECK] hEffDen integral: 1501.3
+[INFO] Phase-17 MC bootstrap: completeness uses the un-resampled MC truth weights, as the central value does (KNOWN_ISSUES 84).
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.308e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.308e-41 cm^2/nucleon
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpkooj_cvw/p_off_b1.root
+{"unit": "p_off_b1", "seconds": 12.084, "controls": {"C-FILL-IBU": true, "C-PAIR": false, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": true, "C-COMP": true}}
+___________ Runner.test_refined_weight_not_the_measured_weight_fails ___________
+----------------------------- Captured stdout call -----------------------------
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Poisson bootstrap: seed=1, streams=three, data factor sum=4070 (n=4000, APPLIED), mc factor sum=5844 (n=6000, APPLIED)
+[INFO] Stay-Positive refine: 2524 pos / 3679 neg events; g in [0.000,1.000]; clipped(2g-1<0) 674 events; sum(w_refined)=3636.3 (signed sum 3509.24).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.1087; effective measured sum=3636.3 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3636.3
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+Starting iteration 0
+Starting iteration 1
+[INFO] OmniFold complete. step1 weights: 6000, step2 weights: 6000
+[INFO] step2 sum=1.855e+04, mean=3.0912, min=0.3162, max=5.8935
+[CHECK] hTruth2D integral: 1467.65
+[CHECK] hUnfold2D integral: 4496.09
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1036.05
+[CHECK] hEffDen integral: 1501.3
+[INFO] Phase-17 MC bootstrap: completeness uses the un-resampled MC truth weights, as the central value does (KNOWN_ISSUES 84).
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.308e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.308e-41 cm^2/nucleon
+[INFO] driverFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/tree/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55
+[INFO] omnifoldHelperFile: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/ptmc-test-rpxykuw7/tree/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpd6prjpso/p_off_b1.root
+{"unit": "p_off_b1", "seconds": 11.616, "controls": {"C-FILL-IBU": true, "C-PAIR": true, "C-ROO": true, "C-DRAW-R": true, "C-REFINE": false, "C-COMP": true}}
+_______________ Runner.test_rerun_skips_pass_and_refuses_unknown _______________
+----------------------------- Captured stderr call -----------------------------
+refusing: unit p_off_b6: seed 6 is outside the declared set for off
+refusing: unit p_R_b201: seed 201 is outside the declared set for R
+refusing: a unit is named twice
+______________ Runner.test_reuse_requires_both_products_to_match _______________
+----------------------------- Captured stderr call -----------------------------
+refusing: p_off_c exists, and its marker and products do not agree as a PASS
+refusing: p_off_c exists, and its marker and products do not agree as a PASS
+__________________ Runner.test_rows_file_not_its_pin_refuses ___________________
+----------------------------- Captured stderr call -----------------------------
+refusing: the rows file or the join record is not its pin, or the rows are not under the staging root
+______________________ Runner.test_wrong_rows_pin_refuses ______________________
+----------------------------- Captured stderr call -----------------------------
+refusing: the rows file or the join record is not its pin, or the rows are not under the staging root
+______ Scorer.test_absent_replica_is_unavailable_and_corrupt_marker_stops ______
+----------------------------- Captured stdout call -----------------------------
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+{"PTMC-R1": "differ", "PTMC-B": null, "disposition": "unavailable"}
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+----------------------------- Captured stderr call -----------------------------
+STOP: C-D4: c2_replica_b3.npz differs from its staging digest
+STOP: the disposition is STOP: absent [], mismatch ['c2_replica_b3.npz'], C-REPOFF True
+_____________________ Scorer.test_agree_when_delta_is_zero _____________________
+----------------------------- Captured stdout call -----------------------------
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+{"PTMC-R1": "agree", "PTMC-B": "differ", "disposition": "formed"}
+________________ Scorer.test_changed_retained_fill_value_stops _________________
+----------------------------- Captured stdout call -----------------------------
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+----------------------------- Captured stderr call -----------------------------
+STOP: C-MOVE: replica sets p_R_b2
+_______________________ Scorer.test_differ_with_b_formed _______________________
+----------------------------- Captured stdout call -----------------------------
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+{"PTMC-R1": "differ", "PTMC-B": "differ", "disposition": "formed"}
+________________ Scorer.test_duplicated_retained_fill_row_stops ________________
+----------------------------- Captured stdout call -----------------------------
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+----------------------------- Captured stderr call -----------------------------
+STOP: C-MOVE: replica sets p_R_b2
+_______________________ Scorer.test_nan_in_a_unit_stops ________________________
+----------------------------- Captured stdout call -----------------------------
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+----------------------------- Captured stderr call -----------------------------
+STOP: an IBU vector is not a finite 224-vector
+__________________ ScorerGates.test_conditioning_guard_stops ___________________
+----------------------------- Captured stdout call -----------------------------
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+----------------------------- Captured stderr call -----------------------------
+STOP: the conditioning guard: ('R', 10) lambda_r/lambda_1 = 1e-12 < 1e-10
+__________ ScorerGates.test_draw_aggregate_runs_when_b_is_unavailable __________
+----------------------------- Captured stdout call -----------------------------
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+----------------------------- Captured stderr call -----------------------------
+STOP: C-DRAW-R against Q_R's p1Streams: seeds [9]
+____________________ ScorerGates.test_duplicate_ref_marker _____________________
+----------------------------- Captured stdout call -----------------------------
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+----------------------------- Captured stderr call -----------------------------
+STOP: C-D4: two markers for c2_replica_b2
+_____________________ ScorerGates.test_extra_file_in_units _____________________
+----------------------------- Captured stderr call -----------------------------
+STOP: C-UNITS: inventory: missing [], extra ['p_R_b99.npz']
+______________ ScorerGates.test_fetched_file_outside_the_manifest ______________
+----------------------------- Captured stderr call -----------------------------
+STOP: C-D4: the fetched files are not the manifest's: ['stray.root']
+__________________ ScorerGates.test_missing_required_control ___________________
+----------------------------- Captured stderr call -----------------------------
+STOP: C-UNITS: p_R_b7: controls ['C-REFINE']
+_____________________ ScorerGates.test_non_canonical_argv ______________________
+----------------------------- Captured stderr call -----------------------------
+STOP: C-UNITS: p_R_b6: argv is not the canonical one
+_________________ ScorerGates.test_pins_must_cover_every_unit __________________
+----------------------------- Captured stderr call -----------------------------
+STOP: C-PINS: pins files cover 18 of 19 units
+_________ ScorerGates.test_repoff_runs_when_another_replica_is_absent __________
+----------------------------- Captured stdout call -----------------------------
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+----------------------------- Captured stderr call -----------------------------
+STOP: the disposition is STOP: absent ['c2_replica_b5.npz'], mismatch [], C-REPOFF False
+____________________ ScorerGates.test_sim_coverage_by_index ____________________
+----------------------------- Captured stdout call -----------------------------
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+----------------------------- Captured stderr call -----------------------------
+STOP: C-SIM coverage: p_R_c misses reported cells
+_______________ ScorerGates.test_unexpected_exception_is_a_stop ________________
+----------------------------- Captured stdout call -----------------------------
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+----------------------------- Captured stderr call -----------------------------
+STOP: KeyError: 'appended_entry is not a file in the archive'
+________________ PilotPost.test_recheck_requires_the_same_limit ________________
+----------------------------- Captured stdout call -----------------------------
+{"recheck": "SAME", "time_limit_minutes": 144}
+{"recheck": "DIFFERS", "time_limit_minutes": 143}
+_________________________ PilotPost.test_rerun_refuses _________________________
+----------------------------- Captured stderr call -----------------------------
+refusing: a decision exists
+__________________ StageD4.test_a_fifo_fails_before_any_copy ___________________
+----------------------------- Captured stderr call -----------------------------
+FAIL: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpqtp8vt12/units/c2_replica_b11.npz is not a regular file
+_____________ StageD4.test_a_source_changed_during_its_copy_fails ______________
+----------------------------- Captured stderr call -----------------------------
+FAIL: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp7e19ve62/units/c2_replica_b9.npz changed during its copy
+_____________ StageD4.test_absent_is_recorded_and_a_symlink_fails ______________
+----------------------------- Captured stdout call -----------------------------
+staged 402 products, 1 absent
+----------------------------- Captured stderr call -----------------------------
+FAIL: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpuxng8z4q/units/c2_replica_b8.npz is not a regular file
+____________________________ StageD4.test_complete _____________________________
+----------------------------- Captured stdout call -----------------------------
+staged 403 products, 0 absent
+___________ StageD4.test_mandatory_absent_and_symlinked_parent_fail ____________
+----------------------------- Captured stderr call -----------------------------
+FAIL: the mandatory /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpky6gs2pf/read-2/inputs/001_xsec.root is absent
+FAIL: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpu5ga6yd4/units is not a real directory
+=========================== short test summary info ============================
+PASSED test_ptmc.py::Draws::test_central_has_unit_factors
+PASSED test_ptmc.py::Draws::test_draw_check_passes_and_catches_each_defect
+PASSED test_ptmc.py::Draws::test_expected_factors_are_the_drivers_streams
+PASSED test_ptmc.py::Draws::test_injected_entries_closed_rectangle
+PASSED test_ptmc.py::Completeness::test_coupling
+PASSED test_ptmc.py::Completeness::test_lost_support_gives_zero
+PASSED test_ptmc.py::Completeness::test_one_sided_and_negative_are_not_finite
+PASSED test_ptmc.py::Completeness::test_reduces_to_c_cv_with_nothing_moved_and_handles_cells
+PASSED test_ptmc.py::Completeness::test_support
+PASSED test_ptmc.py::Coupling::test_appended_identity
+PASSED test_ptmc.py::Coupling::test_exact_multiset
+PASSED test_ptmc.py::Gates::test_conditioning_guard
+PASSED test_ptmc.py::Gates::test_finite_t
+PASSED test_ptmc.py::Gates::test_proto_eps
+PASSED test_ptmc.py::Gates::test_rel_close_zero_and_nan
+PASSED test_ptmc.py::Gates::test_shape_gate
+PASSED test_ptmc.py::Gates::test_staged_index
+PASSED test_ptmc.py::Readings::test_disposition_order
+PASSED test_ptmc.py::Readings::test_statement_partition
+PASSED test_ptmc.py::Driver::test_production_paths_are_byte_identical_to_oofvcs
+PASSED test_ptmc.py::Driver::test_r_central_is_oofvcs
+PASSED test_ptmc.py::Driver::test_r_replica_runs_and_oofvc_alone_refuses
+PASSED test_ptmc.py::Driver::test_refusals
+PASSED test_ptmc.py::Runner::test_completeness_axes_not_the_grid_fail
+PASSED test_ptmc.py::Runner::test_controls_present
+PASSED test_ptmc.py::Runner::test_hxsec_is_the_plain_drivers_omnifold
+PASSED test_ptmc.py::Runner::test_non_finite_extraction_argument_fails
+PASSED test_ptmc.py::Runner::test_pair_measured_mask_defect_fails
+PASSED test_ptmc.py::Runner::test_r_replica_appended_factors_are_background_streams
+PASSED test_ptmc.py::Runner::test_r_replica_fill_records_are_the_filtered_production_ones
+PASSED test_ptmc.py::Runner::test_refined_weight_not_the_measured_weight_fails
+PASSED test_ptmc.py::Runner::test_rerun_skips_pass_and_refuses_unknown
+PASSED test_ptmc.py::Runner::test_reuse_requires_both_products_to_match
+PASSED test_ptmc.py::Runner::test_rows_file_not_its_pin_refuses
+PASSED test_ptmc.py::Runner::test_units_pass_with_every_control
+PASSED test_ptmc.py::Runner::test_wrong_rows_pin_refuses
+PASSED test_ptmc_score.py::Scorer::test_absent_replica_is_unavailable_and_corrupt_marker_stops
+PASSED test_ptmc_score.py::Scorer::test_agree_when_delta_is_zero
+PASSED test_ptmc_score.py::Scorer::test_changed_retained_fill_value_stops
+PASSED test_ptmc_score.py::Scorer::test_differ_with_b_formed
+PASSED test_ptmc_score.py::Scorer::test_duplicated_retained_fill_row_stops
+PASSED test_ptmc_score.py::Scorer::test_nan_in_a_unit_stops
+PASSED test_ptmc_score.py::ScorerGates::test_conditioning_guard_stops
+PASSED test_ptmc_score.py::ScorerGates::test_draw_aggregate_runs_when_b_is_unavailable
+PASSED test_ptmc_score.py::ScorerGates::test_duplicate_ref_marker
+PASSED test_ptmc_score.py::ScorerGates::test_extra_file_in_units
+PASSED test_ptmc_score.py::ScorerGates::test_fetched_file_outside_the_manifest
+PASSED test_ptmc_score.py::ScorerGates::test_missing_required_control
+PASSED test_ptmc_score.py::ScorerGates::test_non_canonical_argv
+PASSED test_ptmc_score.py::ScorerGates::test_pins_must_cover_every_unit
+PASSED test_ptmc_score.py::ScorerGates::test_repoff_runs_when_another_replica_is_absent
+PASSED test_ptmc_score.py::ScorerGates::test_sim_coverage_by_index
+PASSED test_ptmc_score.py::ScorerGates::test_unexpected_exception_is_a_stop
+PASSED launch/test_launch.py::PilotPost::test_accounting_defects_stop
+PASSED launch/test_launch.py::PilotPost::test_codex_float_case_proceeds
+PASSED launch/test_launch.py::PilotPost::test_cross_unit_defects_stop
+PASSED launch/test_launch.py::PilotPost::test_limit_below_the_floor_stops
+PASSED launch/test_launch.py::PilotPost::test_projection_rule_flag
+PASSED launch/test_launch.py::PilotPost::test_receipt_defects_stop
+PASSED launch/test_launch.py::PilotPost::test_recheck_requires_the_same_limit
+PASSED launch/test_launch.py::PilotPost::test_rerun_refuses
+PASSED launch/test_launch.py::PilotPost::test_scoped_timing_proceeds_with_the_capped_limit
+PASSED launch/test_launch.py::PilotPost::test_seed1_fill_duplicate_stops
+PASSED launch/test_launch.py::PilotPost::test_unit_defects_stop
+PASSED launch/test_launch.py::StageD4::test_a_fifo_fails_before_any_copy
+PASSED launch/test_launch.py::StageD4::test_a_source_changed_during_its_copy_fails
+PASSED launch/test_launch.py::StageD4::test_absent_is_recorded_and_a_symlink_fails
+PASSED launch/test_launch.py::StageD4::test_complete
+PASSED launch/test_launch.py::StageD4::test_mandatory_absent_and_symlinked_parent_fail
+69 passed, 2 warnings in 413.81s (0:06:53)
 pytest rc=0

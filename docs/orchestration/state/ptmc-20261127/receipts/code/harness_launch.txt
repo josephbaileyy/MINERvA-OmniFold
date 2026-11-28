@@ -1,7 +1,17 @@
 ok   an unfilled sha: STOP 9
 ok   a non-empty session dir: STOP 9
+ok   a missing session dir: STOP 9
 ok   a bad node name: STOP 9
+ok   a login mode on dtn01: STOP 9
+ok   stage on a login node: STOP 9
+ok   stage with no node: STOP 9
 ok   an unknown mode: STOP 9
+ok   stage: direct ssh to dtn01.nersc.gov, no saul hop
+ok   prestage: through saul to the login node
+ok   fetch: both tars, hashed
+ok   fetch: a failed scp fails
+ok   fetch: a failed hash fails
 ok   a changed remote script: STOP 8
-pass 5 fail 0
-launch rc=0
+ok   a failed hash of the remote script: STOP 9
+pass 15 fail 0
+rc=0
