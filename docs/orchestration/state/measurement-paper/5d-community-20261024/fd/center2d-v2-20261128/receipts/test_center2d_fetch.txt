@@ -1,0 +1,26 @@
+test_a_read_that_moves_atime_is_caught (__main__.Fetch.test_a_read_that_moves_atime_is_caught) ... ok
+test_arguments_refuse (__main__.Fetch.test_arguments_refuse) ... ok
+test_committed_digest_mismatch_refuses (__main__.Fetch.test_committed_digest_mismatch_refuses) ... ok
+test_duplicate_member_refuses (__main__.Fetch.test_duplicate_member_refuses) ... ok
+test_empty_file_refuses (__main__.Fetch.test_empty_file_refuses) ... ok
+test_existing_files_dir_refuses (__main__.Fetch.test_existing_files_dir_refuses) ... ok
+test_expected_with_a_path_label_refuses (__main__.Fetch.test_expected_with_a_path_label_refuses) ... ok
+test_good_tree_fetches_and_verifies (__main__.Fetch.test_good_tree_fetches_and_verifies) ... ok
+test_missing_file_refuses_before_any_tar (__main__.Fetch.test_missing_file_refuses_before_any_tar) ... ok
+test_missing_manifest_refuses (__main__.Fetch.test_missing_manifest_refuses) ... ok
+test_moved_atime_in_manifest_refuses (__main__.Fetch.test_moved_atime_in_manifest_refuses) ... ok
+test_no_o_noatime_refuses (__main__.Fetch.test_no_o_noatime_refuses) ... ok
+test_short_expected_refuses (__main__.Fetch.test_short_expected_refuses) ... ok
+test_sixteen_distinct_labels (__main__.Fetch.test_sixteen_distinct_labels) ... ok
+test_symlink_refuses (__main__.Fetch.test_symlink_refuses) ... ok
+test_tampered_member_refuses (__main__.Fetch.test_tampered_member_refuses) ... ok
+test_unexpected_member_refuses (__main__.Fetch.test_unexpected_member_refuses) ... ok
+test_check_only_passes_local_gates_and_never_connects (__main__.Wrapper.test_check_only_passes_local_gates_and_never_connects) ... ok
+test_tampered_helper_refuses (__main__.Wrapper.test_tampered_helper_refuses) ... ok
+test_too_many_arguments_refuse (__main__.Wrapper.test_too_many_arguments_refuse) ... ok
+test_unknown_mode_refuses (__main__.Wrapper.test_unknown_mode_refuses) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 6.372s
+
+OK

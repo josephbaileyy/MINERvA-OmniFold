@@ -1,0 +1,44 @@
+test_identity_is_exact_for_any_weights (__main__.Algebra.test_identity_is_exact_for_any_weights) ... ok
+test_scaled_uses_the_total_for_a_null_block (__main__.Algebra.test_scaled_uses_the_total_for_a_null_block) ... ok
+test_wcov_is_build_repairs_formula (__main__.Algebra.test_wcov_is_build_repairs_formula) ... ok
+test_a_1e9_change_to_minos_x_fails_c_recon (__main__.CommittedControls.test_a_1e9_change_to_minos_x_fails_c_recon) ... ok
+test_a_1e9_change_to_one_universe_fails_c_recon (__main__.CommittedControls.test_a_1e9_change_to_one_universe_fails_c_recon) ... ok
+test_controls_pass_on_the_committed_blocks (__main__.CommittedControls.test_controls_pass_on_the_committed_blocks) ... ok
+test_flux_weights_reproduce_the_logged_values (__main__.CommittedControls.test_flux_weights_reproduce_the_logged_values) ... ok
+test_a_failed_data_fetch_stops_part_d (__main__.Data.test_a_failed_data_fetch_stops_part_d) ... ok
+test_c_new_off_by_1e9_fails (__main__.Data.test_c_new_off_by_1e9_fails) ... ok
+test_consistent_synthetic_data_passes_every_control (__main__.Data.test_consistent_synthetic_data_passes_every_control) ... ok
+test_wrong_er_file_refuses (__main__.Data.test_wrong_er_file_refuses) ... ok
+test_wrong_minos_scale_fails_c_recon (__main__.Data.test_wrong_minos_scale_fails_c_recon) ... ok
+test_x0_not_er_fails_c_x0 (__main__.Data.test_x0_not_er_fails_c_x0) ... ok
+test_expected_digests_cover_the_fetch (__main__.Files.test_expected_digests_cover_the_fetch) ... ok
+test_fetch_list_equals_the_remote_readers (__main__.Files.test_fetch_list_equals_the_remote_readers) ... ok
+test_fetched_marks_a_bad_digest (__main__.Files.test_fetched_marks_a_bad_digest) ... ok
+test_fetched_refuses_without_the_verifier_line (__main__.Files.test_fetched_refuses_without_the_verifier_line) ... ok
+test_main_records_a_stop_for_a_missing_fetch (__main__.Files.test_main_records_a_stop_for_a_missing_fetch) ... ok
+test_main_refuses_an_existing_record (__main__.Files.test_main_refuses_an_existing_record) ... ok
+test_analytic_diagonal_case (__main__.Readings.test_analytic_diagonal_case) ... ok
+test_c_add_catches_a_wrong_sum (__main__.Readings.test_c_add_catches_a_wrong_sum) ... ok
+test_label_reads_carry_the_realization_sentence (__main__.Readings.test_label_reads_carry_the_realization_sentence) ... ok
+test_per_band_contributions_add_and_attribution (__main__.Readings.test_per_band_contributions_add_and_attribution) ... ok
+test_psd_refuses (__main__.Readings.test_psd_refuses) ... ok
+test_singular_c_drops_the_null_ranks (__main__.Readings.test_singular_c_drops_the_null_ranks) ... ok
+test_empty_rank_bands_are_ignored (__main__.Rules.test_empty_rank_bands_are_ignored) ... ok
+test_labels_at_the_boundaries (__main__.Rules.test_labels_at_the_boundaries) ... ok
+test_rank_slices (__main__.Rules.test_rank_slices) ... ok
+test_missing_band_refuses (__main__.Tune.test_missing_band_refuses) ... ok
+test_synthetic_tune_passes_every_control (__main__.Tune.test_synthetic_tune_passes_every_control) ... ok
+test_wrong_flux_weights_refuse (__main__.Tune.test_wrong_flux_weights_refuse) ... ok
+test_wrong_mask_refuses (__main__.Tune.test_wrong_mask_refuses) ... ok
+test_wrong_universe_count_refuses (__main__.Tune.test_wrong_universe_count_refuses) ... ok
+
+----------------------------------------------------------------------
+Ran 33 tests in 11.648s
+
+OK
+
+  AR23: C-X0:R:AR23:mask ; C-FINITE:R:AR23 ; C-FLUX:R:AR23 ; C-ID:R:AR23 1.225053855948978e-13; C-RECON:R:AR23:C_univ 6.483669595541323e-21; C-RECON:R:AR23:C_lat 0.0; C-RECON:R:AR23:C_T_sum_of_blocks 0.0
+
+  G18: C-X0:R:G18:mask ; C-FINITE:R:G18 ; C-FLUX:R:G18 ; C-ID:R:G18 2.2182802676611807e-13; C-RECON:R:G18:C_univ 5.5948896115589586e-21; C-RECON:R:G18:C_lat 0.0; C-RECON:R:G18:C_T_sum_of_blocks 0.0
+CENTER2D STOP: FileNotFoundError: [Errno 2] No such file or directory: '/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/center2d-f-jvi5ct1s/none/verify.out'
+refusing: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/center2d-f-fkahbj8e/r.json exists
