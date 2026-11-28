@@ -231,6 +231,26 @@ class Fetch(unittest.TestCase):
         self.t.write_expected()
         self.assertEqual(self.t.verify()[0], 9)
 
+    def test_a_consistent_fifteen_file_set_refuses(self):
+        self.ok_remote()
+        drop = "c04/minos_rescaled.npz"
+
+        def mut(ms):
+            out = []
+            for name, b in ms:
+                if name == drop:
+                    continue
+                if name == "MANIFEST.tsv":
+                    b = ("\n".join(ln for ln in b.decode().splitlines() if not ln.startswith(drop + "\t")) + "\n").encode()
+                out.append((name, b))
+            return out
+        rewrite_tar(os.path.join(self.t.out, "fetch.tar"), mut)
+        self.t.exp.pop(drop)
+        self.t.write_expected()
+        rc, last = self.t.verify()
+        self.assertEqual(rc, 9)
+        self.assertIn("not 16", last)
+
     def test_existing_files_dir_refuses(self):
         self.ok_remote()
         os.mkdir(os.path.join(self.t.out, "files"))

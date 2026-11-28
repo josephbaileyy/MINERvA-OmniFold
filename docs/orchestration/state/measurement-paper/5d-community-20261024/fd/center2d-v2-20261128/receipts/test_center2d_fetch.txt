@@ -8,6 +8,7 @@ test_squeue_row_of_a_family_refuses_whatever_its_state (__main__.Fence.test_sque
 test_unknown_state_refuses (__main__.Fence.test_unknown_state_refuses) ... ok
 test_unreadable_input_fails_closed (__main__.Fence.test_unreadable_input_fails_closed) ... ok
 test_wrapper_families_equal_the_tested_ones (__main__.Fence.test_wrapper_families_equal_the_tested_ones) ... ok
+test_a_consistent_fifteen_file_set_refuses (__main__.Fetch.test_a_consistent_fifteen_file_set_refuses) ... ok
 test_a_read_that_moves_atime_is_caught (__main__.Fetch.test_a_read_that_moves_atime_is_caught) ... ok
 test_arguments_refuse (__main__.Fetch.test_arguments_refuse) ... ok
 test_committed_digest_mismatch_refuses (__main__.Fetch.test_committed_digest_mismatch_refuses) ... ok
@@ -31,6 +32,6 @@ test_too_many_arguments_refuse (__main__.Wrapper.test_too_many_arguments_refuse)
 test_unknown_mode_refuses (__main__.Wrapper.test_unknown_mode_refuses) ... ok
 
 ----------------------------------------------------------------------
-Ran 31 tests in 8.473s
+Ran 32 tests in 10.137s
 
 OK
