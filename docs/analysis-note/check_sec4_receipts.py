@@ -967,6 +967,101 @@ def highpz_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
             for lab, s, fact in HIGHPZ_CLAIMS]
 
 
+
+# Readability pass (Joseph's wording, 2026-11-28, via rewrite-helper and the director): verbal claims about the sixteen
+# cells. Each fact is computed from the values_fived16.tex macros that print Table 3 (box edges), Table 4 (f-Rxx) and the
+# H2 accounting, so a changed cell integral, box edge or count stops the build instead of leaving the words behind.
+def _cell(s: dict[str, str], k: str) -> dict[str, str]:
+    return {a: _fv(s, f"box-{k}-{a}") for a in ("pt", "pz", "eavail", "q3", "W")}
+
+
+def _f(s: dict[str, str], k: str) -> float:
+    try:
+        return float(_fv(s, f"f-{k}"))
+    except ValueError:
+        return float("nan")
+
+
+LOW_RECOIL = {"eavail": "0--0.8", "q3": "0--2"}
+HIGH_Q3_W = {"q3": "2--100", "W": "1.8--100"}
+LOW_PT, HIGH_PT, LOW_PZ, HIGH_PZ = {"pt": "0--0.7"}, {"pt": "0.7--4.5"}, {"pz": "1.5--4.5"}, {"pz": "4.5--60"}
+CELLS16 = [f"R{i:02d}" for i in range(16)]
+
+
+def _sel(s: dict[str, str], k: str, *want: dict[str, str]) -> bool:
+    c = _cell(s, k)
+    return all(c[a] == v for w in want for a, v in w.items())
+
+
+def _quadrant(s: dict[str, str], *want: dict[str, str]) -> list[str]:
+    return [k for k in CELLS16 if _sel(s, k, *want)]
+
+
+def _about_equal_pair(s: dict[str, str]) -> bool:  # R00 and R01 hold most of their quadrant, within 25% of each other
+    q = _quadrant(s, LOW_PT, LOW_PZ)
+    a, b = _f(s, "R00"), _f(s, "R01")
+    return (_sel(s, "R00", LOW_PT, LOW_PZ, LOW_RECOIL) and _sel(s, "R01", LOW_PT, LOW_PZ, HIGH_Q3_W) and len(q) == 4
+            and 0.8 <= b / a <= 1.25 and (a + b) > 0.5 * sum(_f(s, k) for k in q))
+
+
+def _five_times(s: dict[str, str]) -> bool:  # R04 is the low-recoil cell and about five times the next in its quadrant
+    q = _quadrant(s, LOW_PT, HIGH_PZ)
+    rest = [_f(s, k) for k in q if k != "R04"]
+    return _sel(s, "R04", LOW_PT, HIGH_PZ, LOW_RECOIL) and len(q) == 4 and 4.5 <= _f(s, "R04") / max(rest) <= 5.5
+
+
+def _r14_most(s: dict[str, str]) -> bool:
+    return _sel(s, "R14", HIGH_PT, HIGH_PZ, HIGH_Q3_W) and max(CELLS16, key=lambda k: _f(s, k)) == "R14"
+
+
+def _lowstab_selection(s: dict[str, str]) -> bool:  # three at low W, plus the one at any W in the high-pT, high-p_par quadrant
+    high_e_low_q3 = {"eavail": "0.8--100", "q3": "0--2"}
+    three = _quadrant(s, high_e_low_q3, {"W": "0--1.8"})
+    fourth = _quadrant(s, HIGH_PT, HIGH_PZ, high_e_low_q3)
+    named = _fv(s, "h2-lowstab-cells").replace(" and ", ", ").split(", ")
+    return (len(three) == 3 and fourth == ["R15"] and _cell(s, "R15")["W"] == "0--100"
+            and sorted(three + fourth) == sorted(named) and named[-1] == "R15")
+
+
+def _h2_words(s: dict[str, str]) -> bool:  # "one unsupported box" and "the other four"; the counts close to sixteen
+    try:
+        n = {k: int(_fv(s, f"h2-{k}")) for k in ("nboxes", "nsupported", "nmerge", "nabsorbed", "nunreported")}
+    except ValueError:
+        return False
+    return (n["nabsorbed"] == 1 and n["nunreported"] == 4 and n["nsupported"] + n["nabsorbed"] - n["nmerge"] == 16
+            and n["nboxes"] - n["nsupported"] - n["nabsorbed"] == n["nunreported"])
+
+
+READABILITY_CLAIMS = [
+    ("cells: R00 and R01 hold most of the low-pT, low-p_par quadrant, about equally (f-R00..R03, Table 3 boxes)",
+     "sec5_multidim.tex", "most of the cross section lies about equally in two cells: low recoil (low $E_{\\mathrm{avail}}$ "
+     "and $q_3$, R00) and high momentum transfer with high hadronic mass (R01).", _about_equal_pair),
+    ("cells: R04 about five times the next cell of the low-pT, high-p_par quadrant (f-R04..R07)", "sec5_multidim.tex",
+     "the low-recoil cell (R04) dominates, with about five times the cross section of the next cell.", _five_times),
+    ("cells: R14 contributes the most overall (f-R00..R15)", "sec5_multidim.tex",
+     "the cell with high momentum transfer and high hadronic mass at high $p_T$ and high $p_\\parallel$ (R14) "
+     "contributes the most.", _r14_most),
+    ("cells: the four low-stability cells are the three high-E_avail, low-q3, low-W cells and R15 (h2-lowstab-cells)",
+     "sec4_higherdim.tex", "Three cells select high available energy, low momentum transfer, and low hadronic mass. At high "
+     "$p_T$ and high $p_\\parallel$, a fourth selects high available energy and low momentum transfer at any mass",
+     _lowstab_selection),
+    ("cells: Table 3's caption, all four select high E_avail and low q3 (h2-lowstab-cells)", "sec4_higherdim.tex",
+     "All four select high available energy and low momentum transfer. The first three also select low mass, and R15 spans "
+     "the full mass interval.", _lowstab_selection),
+    ("H2: one absorbed unsupported box and the other four omitted (h2-nabsorbed, h2-nunreported)", "sec4_higherdim.tex",
+     "the supported boxes and one unsupported box, absorbed into R09, form sixteen supported regions", _h2_words),
+    ("H2: the other four unsupported boxes (h2-nunreported)", "sec4_higherdim.tex",
+     "The other four unsupported boxes are omitted and unreported.", _h2_words),
+]
+
+
+def readability_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    out = []
+    for lab, f, sent, fact in READABILITY_CLAIMS:
+        n, ok = text(f, sources).count(sent), fact(sources)
+        out.append((lab, n == 1 and ok, f"sentence found {n} time(s) | macros {ok}"))
+    return out
+
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
     # OOFVC (oofv-convention-20261126, r3 score.json), sec3_twod.tex
@@ -1178,6 +1273,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     rows += c2_claims(sources)
     rows += highpz_claims(sources)
     rows += oofvc_claims(sources)
+    rows += readability_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
         found = len(re.findall(pat, text(src, sources))) == 1
         c = fn()
@@ -1347,7 +1443,8 @@ def load() -> dict[str, str]:
     return {n: (HERE / n).read_text() for n in ("values.tex", "sec3_twod.tex", "appB_negweight.tex",
                                                "primer_body.tex", "appA_methods.tex",
                                                "appC_supplementary.tex", "records_r03_twod.tex", "sec2_method.tex",
-                                               "appD_reproducibility.tex", "sec5_multidim.tex", "sec6_conclusions.tex", "values_fived16.tex")}
+                                               "appD_reproducibility.tex", "sec5_multidim.tex", "sec6_conclusions.tex", "values_fived16.tex",
+                                               "sec4_higherdim.tex")}
 
 
 def gzip_self_test() -> bool:
@@ -1889,6 +1986,23 @@ def self_test() -> int:
         print("  NOT CAUGHT  verbal phrase removal"); ok = False
     else:
         caught += 1; print("  caught      verbal phrase changed")
+    for what, lab, macro, new in (
+            ("R01 twice R00", 0, "f-R01", "65.2"), ("R05 half R04", 1, "f-R05", "24.5"), ("R04 above R14", 2, "f-R04", "52.0"),
+            ("R03 at low W", 3, "box-R03-W", "0--1.8"), ("R15 split in W", 4, "box-R15-W", "0--1.8"),
+            ("two boxes absorbed", 5, "h2-nabsorbed", "2"), ("five boxes omitted", 6, "h2-nunreported", "5")):
+        trial = dict(base)
+        pat = r"(\\@namedef\{fv@" + re.escape(macro) + r"\}\{)[^}]*(\})"
+        trial["values_fived16.tex"], n = re.subn(pat, lambda m: m[1] + new + m[2], base["values_fived16.tex"])
+        if n != 1 or dict((r[0], r[1]) for r in evaluate(trial))[READABILITY_CLAIMS[lab][0]]:
+            print(f"  NOT CAUGHT  readability claim: {what}"); ok = False
+        else:
+            caught += 1; print(f"  caught      readability claim: {what}")
+    trial = dict(base)
+    trial["sec5_multidim.tex"] = base["sec5_multidim.tex"].replace("about five times", "about three times")
+    if dict((r[0], r[1]) for r in evaluate(trial))[READABILITY_CLAIMS[1][0]]:
+        print("  NOT CAUGHT  readability phrase changed"); ok = False
+    else:
+        caught += 1; print("  caught      readability phrase changed")
     print(f"SELF-TEST :: {'PASS' if ok else 'FAIL'} ({caught} perturbations rejected)")
     return 0 if ok else 1
 

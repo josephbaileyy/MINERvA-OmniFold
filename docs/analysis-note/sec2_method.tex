@@ -7,7 +7,7 @@
 \label{sec:minerva-data}
 \label{sec:experiment}
 
-MINERvA was a fine-grained scintillator detector in Fermilab's NuMI beam~\cite{MINERvA:2013zvz}. The central scintillator tracker provides the hydrocarbon target and reconstructs the interaction vertex and outgoing charged tracks. The tracker and electromagnetic calorimeter measure energy deposited by the hadronic recoil. The downstream MINOS spectrometer measures the charge and momentum of muons matched to MINERvA tracks. The exposure was taken with forward horn current. We use the published flux prediction, which includes the PPFX hadron-production reweighting of the NuMI simulation and the neutrino--electron scattering constraint~\cite{MINERvA:2016iqn,Valencia:2019nue,MINERvA:2021owq}.
+MINERvA was a fine-grained scintillator detector in the NuMI beam at Fermilab, immediately upstream of the MINOS near detector~\cite{MINERvA:2013zvz}. The central scintillator tracker provides the hydrocarbon target and reconstructs the interaction vertex and outgoing charged tracks. The tracker and electromagnetic calorimeter measure energy deposited by the hadronic recoil. The downstream MINOS spectrometer measures the charge and momentum of muons matched to MINERvA tracks. The exposure was taken with forward horn current. We use the published flux prediction, which includes the PPFX hadron-production reweighting of the NuMI simulation and the neutrino--electron scattering constraint~\cite{MINERvA:2016iqn,Valencia:2019nue,MINERvA:2021owq}.
 
 \phantomsection
 \label{sec:evloop}
@@ -96,19 +96,7 @@ where $m_\mu$ is the muon mass. The inputs $(p_T,p_\parallel,q_3^{\mathrm{reco}}
 \label{sec:method}
 \label{sec:method-algo}
 
-OmniFold estimates the truth distribution by iteratively reweighting simulated events with classifier-based likelihood ratios~\cite{Andreassen:2019cjw,Andreassen:2021zzk}. The first classifier distinguishes the background-corrected measured sample from selected simulated signal with the current weights. The odds $p/(1-p)$ for measured-class probability $p$ estimate the ratio of their weighted densities with the corresponding class normalization. We multiply each selected signal weight by this ratio and transfer it to the paired generator record. The second classifier compares the reweighted and original truth samples. Its likelihood ratio gives new weights relative to the original simulation. The matched detector-level records carry those weights into the next iteration.
-
-Truth signal events without a selected reconstructed partner enter the second step. The selection-efficiency denominator includes all $32\,849\,103$ generated signal events, including those that fail reconstruction or selection. At each iteration, a regressor trained with uniform weights on matched events predicts first-step weights for missed events from their truth observables. This corrects for selection efficiency using the simulated acceptance and assumes that the weights transfer from matched to missed events at the same truth inputs. At very low simulated efficiency the regressor extrapolates from matched events. We use five OmniFold iterations, with gradient-boosted-tree classifiers and regressor. The classifiers train and evaluate on the full samples without a held-out split, cross-fitting, or early stopping. The iteration count and learner capacity regularize the weights.
-
-For the principal results, we give each data event unit weight and append the simulated background with the negative of its exposure-scaled weights. If $D(x)$ and $B(x)$ are the selected data and background densities in reconstructed coordinates $x$, the signed measured class targets the first-step ratio $[D(x)-B(x)]/S(x)$ where the net density is positive, with $S(x)$ the current weighted density of selected simulated signal.
-
-Before the first OmniFold classifier is trained, we convert the signed sample to nonnegative weights. A separate classifier, trained with absolute event weights, estimates the probability $g(x)$ that an event in the signed sample has positive weight. The refinement of Ref.~\cite{Nachman:2025staypositive} replaces the original weight $w$ by $|w|(2g(x)-1)$. We clip this factor at zero, so the weight becomes $|w|\max\{0,2g(x)-1\}$. The absolute-weight sample has density $D+B$. In the population limit $g=D/(D+B)$, so multiplying this density by the clipped factor gives the positive part of $D-B$. A classifier-based likelihood ratio cannot be negative, so it cannot represent the target $D-B$ where the background exceeds the data. There the clipping raises the target to zero. In the two-dimensional unfolding of the data, the sign classifier's score is at least 0.53 for every event, so no weight is clipped. The learned factor implements this prescription without a subtraction grid. Some checks and diagnostics instead subtract the background with binned purity, weighting data by the estimated signal fraction in each reconstructed bin. We label these purity-subtracted (Appendix~\ref{app:negative-weight-background}).
-
-\subsection{Estimators and cross-section extraction}
-\label{sec:estimators-and-extraction}
-\label{sec:method-config}
-
-The benchmark against MINERvA uses the two-dimensional (2D) muon kinematics $(p_T,p_\parallel)$. The three-dimensional (3D), four-dimensional (4D), and five-dimensional (5D) unfoldings add $E_{\mathrm{avail}}$, $q_3$, and $W$ in sequence at both reconstruction and truth level. Table~\ref{tab:estimators} gives the settings for the principal results. The 2D covariance uses the analysis edges in Sec.~\ref{sec:muon-cross-section-comparison}.
+OmniFold estimates the truth distribution by iteratively reweighting simulated events with classifier-based likelihood ratios~\cite{Andreassen:2019cjw,Andreassen:2021zzk}. The first classifier distinguishes the background-corrected measured sample from selected simulated signal with the current weights. The odds $p/(1-p)$ for measured-class probability $p$ estimate the ratio of their weighted densities with the corresponding class normalization. We multiply each selected signal weight by this ratio and transfer it to the paired truth event. The second classifier compares the reweighted and original truth samples. Its likelihood ratio gives new weights relative to the original simulation. The matched detector-level records carry those weights into the next iteration.
 
 \begin{table}[!t]
   \centering\small
@@ -122,17 +110,29 @@ The benchmark against MINERvA uses the two-dimensional (2D) muon kinematics $(p_
     \toprule
     Result or control & Learner and subtraction & Quantity or diagnostic \\
     \midrule
-    Muon benchmark & Seeded LightGBM, central seed 42, refined negative weights & Published muon grid for the central-value comparison. Our grid supplies the \lrval{q-ncells}-bin $\CrepTwoD$ (three $p_T$ edges differ by \SI{0.005}{GeV/c}, Sec.~\ref{sec:results-xsec}). \\
-    Recoil extensions & Deterministic LightGBM, refined negative weights & 3D and 4D central values on fine grids. \ResSixteen{} on merged regions with reported covariance $\CrepFiveD$. \\
+    Muon benchmark (\estTwoD{}) & Seeded LightGBM, central seed 42, refined negative weights & Published muon grid for the central-value comparison. Our grid supplies the \lrval{q-ncells}-bin $\CrepTwoD$ (three $p_T$ edges differ by \SI{0.005}{GeV/c}, Sec.~\ref{sec:results-xsec}). \\
+    Recoil extensions (\estMultiD{}) & Deterministic LightGBM, refined negative weights & 3D and 4D central values on fine grids. \ResSixteen{} on merged regions with reported covariance $\CrepFiveD$. \\
     \ResJoint{} & Variant of the \estMultiD{} with refined negative weights & Shrinkage-based quadratic distances on \jtNcells{} supported coarse cells (\jtNcellsGiBUU{} for GiBUU), Appendix~\ref{app:joint-generator-tests}. \\
     \midrule
-    \EstPurity{} & Seeded nominal LightGBM in 2D--5D, seed 42 in 2D, binned purity weights & Injected-feature closures, classifier-family cross-check, and \resFiveAxis{} with descriptive $V_Z$ and its $E_{\mathrm{avail}}$--$W$ projection. \\
+    \EstPurity{} & Seeded nominal LightGBM in 2D--5D, seed 42 in 2D, binned purity weights & Injected-feature closures, classifier-family cross-check, and \resFiveAxis{} on the fine five-axis grid with descriptive covariance $V_Z$ (Appendix~\ref{app:multidimensional-statistics}) and its $E_{\mathrm{avail}}$--$W$ projection. \\
     \EstDetPurity{} & Deterministic LightGBM, binned purity weights & Background-subtraction bias and 5D statistical coverage. \\
     \EstLowCap{} & Deterministic LightGBM, refined negative weights using 100 trees and eight leaves for refinement & Background-subtraction bias and generator-sized available-energy change. \\
     \EstExact{} & Scikit-learn gradient-boosted trees with exact splits, binned purity weights & 2D cross-check on our muon grid, the published $14\times16$ layout with three $p_T$ edges shifted by \SI{0.005}{GeV/c}. \\
     \bottomrule
   \end{tabular}
 \end{table}
+
+Truth signal events without a selected reconstructed partner enter the second step. The denominator for the selection efficiency is the full sample of $32\,849\,103$ generated signal events, including those that fail reconstruction or selection. At each iteration, a regressor trained with uniform weights on matched events predicts first-step weights for missed events from their truth observables. This corrects for selection efficiency using the simulated acceptance and assumes that the weights transfer from matched to missed events at the same truth inputs. At very low simulated efficiency the regressor extrapolates from matched events. We use five OmniFold iterations, with gradient-boosted-tree classifiers and regressor. The classifiers train and evaluate on the full samples without a held-out split, cross-fitting, or early stopping. The iteration count and learner capacity regularize the weights. The final weights can be integrated on any reporting grid.
+
+For the principal results, we give each data event unit weight and append the simulated background with the negative of its exposure-scaled weights. If $D(x)$ and $B(x)$ are the selected data and background densities in reconstructed coordinates $x$, the signed measured class targets the first-step ratio $[D(x)-B(x)]/S(x)$ where the net density is positive, with $S(x)$ the current weighted density of selected simulated signal.
+
+Before the first OmniFold classifier is trained, we convert the signed sample to nonnegative weights. A separate classifier, trained with absolute event weights, estimates the probability $g(x)$ that an event in the signed sample has positive weight. The refinement of Ref.~\cite{Nachman:2025staypositive} replaces the original weight $w$ by $|w|(2g(x)-1)$. We clip this factor at zero, so the weight becomes $|w|\max\{0,2g(x)-1\}$. The absolute-weight sample has density $D+B$. In the population limit $g=D/(D+B)$, so multiplying this density by the clipped factor gives the positive part of $D-B$. A classifier-based likelihood ratio cannot be negative, so it cannot represent the target $D-B$ where the background exceeds the data. There the clipping raises the target to zero. In the two-dimensional unfolding of the data, the sign classifier's score is at least 0.53 for every event, so no weight is clipped. The learned factor implements this prescription without a subtraction grid. Some checks and diagnostics instead subtract the background with binned purity, weighting data by the estimated signal fraction in each reconstructed bin. We label these purity-subtracted (Appendix~\ref{app:negative-weight-background}).
+
+\subsection{Estimators and cross-section extraction}
+\label{sec:estimators-and-extraction}
+\label{sec:method-config}
+
+The benchmark against MINERvA uses the two-dimensional (2D) muon kinematics $(p_T,p_\parallel)$. The three-dimensional (3D), four-dimensional (4D), and five-dimensional (5D) unfoldings add $E_{\mathrm{avail}}$, $q_3$, and $W$ in sequence at both reconstruction and truth level. Table~\ref{tab:estimators} gives the settings for the principal results. The 2D covariance uses the analysis edges in Sec.~\ref{sec:muon-cross-section-comparison}.
 
 \phantomsection
 \label{sec:method-xsec}

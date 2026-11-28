@@ -6,7 +6,7 @@
 \label{sec:muon-cross-section-comparison}
 \label{sec:results-xsec}
 
-OmniFold gives the flux-averaged inclusive charged-current $\nu_\mu$ cross section per nucleon on hydrocarbon, $d^2\sigma/(dp_T\,dp_\parallel)$. The 205 reported bins follow the published phase space and $14\times16$ layout~\cite{MINERvA:2021owq}. Three of our $p_T$ edges (0.07, 0.33 and \SI{0.47}{GeV/c}) differ by \SI{0.005}{GeV/c} from the published 0.075, 0.325 and 0.475. The central-value comparisons below use an unfolding on MINERvA's exact edges. Comparisons that include OmniFold uncertainties use our analysis grid. Figure~\ref{fig:muon-projections} shows the projections onto each muon momentum. In every $p_T$ slice and every $p_\parallel$ slice, the unfolded spectrum is closer to the published result than to the prior. \phantomsection\label{sec:results-model}The published GENIE 2.12.6 prediction with MINERvA Tune v1 gives about $\fpeval{100*0.91}\%$ of the published integrated cross section, with the deficit concentrated near the peak of the $p_T$ spectrum. The two unfolded results show the same excess over that prediction in the peak region. Per bin, the OmniFold projections agree with the published result to within $2.5\%$, except at the edges of the phase space: the ratio is 1.04 in both the lowest and the highest $p_T$ bins, and 1.06 and 0.93 in the two highest $p_\parallel$ bins. At reconstruction level, the selected data also exceed the simulation folded with the published result above the reported range, at reconstructed $p_\parallel \geq 60$~GeV/$c$. The origin of the excess is not yet understood. Appendix~\ref{app:high-pz-tracks} describes the track investigation.
+OmniFold gives the flux-averaged inclusive charged-current $\nu_\mu$ cross section per nucleon on hydrocarbon, $d^2\sigma/(dp_T\,dp_\parallel)$. The 205 reported bins follow the published phase space and $14\times16$ layout~\cite{MINERvA:2021owq}. Three of our $p_T$ edges (0.07, 0.33 and \SI{0.47}{GeV/c}) differ by \SI{0.005}{GeV/c} from the published 0.075, 0.325 and 0.475. The central-value comparisons below use an unfolding on MINERvA's exact edges. The OmniFold uncertainties are available only on our analysis grid, which we use for comparisons that include them. Figure~\ref{fig:muon-projections} shows the projections onto each muon momentum. In every $p_T$ slice and every $p_\parallel$ slice, the unfolded spectrum is closer to the published result than to the prior. \phantomsection\label{sec:results-model}The published GENIE 2.12.6 prediction with MINERvA Tune v1 gives about $\fpeval{100*0.91}\%$ of the published integrated cross section, with the deficit concentrated near the peak of the $p_T$ spectrum. The two unfolded results show the same excess over that prediction in the peak region. Per bin, the OmniFold projections agree with the published result to within $2.5\%$, except at the edges of the phase space: the ratio is 1.04 in both the lowest and the highest $p_T$ bins, and 1.06 and 0.93 in the two highest $p_\parallel$ bins. At reconstruction level, the selected data also exceed the simulation folded with the published result above the reported range, at reconstructed $p_\parallel \geq 60$~GeV/$c$. The origin of the excess is not yet understood. Appendix~\ref{app:high-pz-tracks} describes the track investigation.
 
 \begin{figure}[H]
   \centering
@@ -41,12 +41,12 @@ The distances describe differences between results that share data and flux, det
 \label{sec:systematics}
 \label{sec:uq-combine}
 
-The OmniFold covariance gives a smaller median bin uncertainty than the published covariance, $\uqMedian\%$ compared with $\uqPaper\%$, but a larger fractional uncertainty on the integral, $\uqIntegral\%$ compared with $\uqPaperIntegral\%$. The reported $205\times205$ covariance $\CrepTwoD$ matches the central-value estimator and sums four contributions,
+The OmniFold covariance gives a smaller median bin uncertainty than the published covariance, $\uqMedian\%$ compared with $\uqPaper\%$, but a larger fractional uncertainty on the integral, $\uqIntegral\%$ compared with $\uqPaperIntegral\%$. The reported $205\times205$ covariance $\CrepTwoD$ describes the differential cross section obtained with the same estimator as the central value. It is the sum of the systematic, statistical, training-seed, and run-period contributions,
 \begin{equation}
   \CrepTwoD=V_{\mathrm{syst}}+V_{\mathrm{stat}}+V_{\mathrm{seed}}+\Crun .
   \label{eq:muon-covariance-block-sum}
 \end{equation}
-The sum assumes zero cross-covariances and a linear response to simultaneous perturbations. Shared data and unfolding can couple these effects, including seed variation with bootstrap or systematic perturbations. Appendix~\ref{app:covariance-construction} defines the terms and their construction.
+The sum assumes zero cross-covariances between terms and a linear response to simultaneous perturbations. The common data and unfolding can couple these effects, including seed variation with bootstrap or systematic perturbations, for which the sum has no separate term. Appendix~\ref{app:covariance-construction} describes how each term is built, including the flux normalization, band centering, bootstrap offset, and covariance sum.
 
 \phantomsection\label{sec:results-uq}
 \begin{table}[H]
@@ -95,7 +95,7 @@ The rank-two run-period term represents the spread of the three groups, includin
   \label{fig:runperiod-steps}
 \end{figure}
 
-Appendix~\ref{app:comparison-closure-coverage} gives the covariance projection rule and the integral variance. A fully correlated normalization term retains its fractional size in both projections and the integral, so smaller bin uncertainties can coexist with a larger integral uncertainty.
+For the projections we use $P \CrepTwoD P^{\mathsf T}$, where $P$ integrates over the removed momentum component. The integral has variance $a^{\mathsf T}\CrepTwoD a$ for the vector $a$ of bin areas. A fully correlated normalization term retains its fractional size in both projections and the integral, so smaller bin uncertainties can coexist with a larger integral uncertainty.
 
 Appendix~\ref{app:covariance-inversion} discusses how small eigenvalues affect the inversion of $\CrepTwoD$.
 
@@ -108,7 +108,7 @@ $\CrepTwoD$ is conditional on the chosen learner, regularization, and parametriz
 \label{sec:muon-cross-section-validation}
 \label{sec:validation}
 
-All closure tests use the same detector simulation as the unfolding, and their conclusions apply to the specific injected shapes and amplitudes. The signal-only tests use five iterations and simulation from one run period. They measure recovery of injected $p_T$ and $p_\parallel$ features, including a Gaussian truth feature. The quasielastic axial-mass and flux variations use references extrapolated from accepted signal, so their scope is conditional on simulated acceptance. Table~\ref{tab:validation-inventory} gives the residuals, injection size, feature-recovery fraction and thresholds.
+All closure tests use the same detector simulation as the unfolding, and their conclusions apply to the specific injected shapes and amplitudes. The signal-only closure tests recover the injected $p_T$ and $p_\parallel$ features to median absolute fractional residuals of $0.046\%$ and $0.013\%$, respectively, against a descriptive $1.5\%$ threshold. These signal-only tests use five iterations and simulation from one run period, and they include a Gaussian truth feature. The quasielastic axial-mass and flux variations use references extrapolated from accepted signal, so their scope is conditional on simulated acceptance. Table~\ref{tab:validation-inventory} gives the residuals, injection size, feature-recovery fraction and thresholds.
 
 A separate check of the effective response finds an approximately linear rise in the median signed fractional residual, from $0.57\%$ to $1.14\%$ and $3.43\%$ across the tested amplitudes (Table~\ref{tab:validation-inventory}). The check reweights reconstructed events as a function of the resolution variable $\Delta p_T=p_T^{\mathrm{reco}}-p_T^{\mathrm{true}}$ at fixed truth. The two momenta are classifier inputs at their respective levels, and their eventwise difference is outside the feature set. We assign no additional uncertainty from these closure residuals.
 

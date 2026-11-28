@@ -6,16 +6,16 @@
 \label{sec:fived16}
 \label{sec:fived16-result}
 
-OmniFold gives the sixteen flux-averaged cross-section integrals per nucleon in Table~\ref{tab:sixteen-cell-cross-sections} and Fig.~\ref{fig:fived16-headline}. The reported covariance is too small for the deviations seen at both held-out simulation tunes (Sec.~\ref{sec:sixteen-cell-closure-tunes}). The integrals span $\fvval{f-R07}$ to $\fvval{f-R14}$ in units of $\fvval{f-unit}\,\mathrm{cm}^2$ per nucleon and sum to $\fpeval{round((\fvval{cr-QA-s16}+\fvval{cr-QB-s16}+\fvval{cr-QC-s16}+\fvval{cr-QD-s16})/10,3)}\times10^{-38}\,\mathrm{cm}^2$ per nucleon over the reported regions. In both low-$p_T$ quadrants, the largest contributions come from the low-$E_{\mathrm{avail}}$, low-$q_3$ cell and the high-$q_3$, high-$W$ cell. The high-$q_3$, high-$W$ cell in the high-$p_T$, high-$p_\parallel$ quadrant (R14) contributes the most overall.
+OmniFold gives the sixteen flux-averaged cross-section integrals per nucleon in Table~\ref{tab:sixteen-cell-cross-sections} and Fig.~\ref{fig:fived16-headline}. The reported covariance is too small for the deviations seen at both held-out simulation tunes (Sec.~\ref{sec:sixteen-cell-closure-tunes}). The integrals span $\fvval{f-R07}$ to $\fvval{f-R14}$ in units of $\fvval{f-unit}\,\mathrm{cm}^2$ per nucleon and sum to $\fpeval{round((\fvval{cr-QA-s16}+\fvval{cr-QB-s16}+\fvval{cr-QC-s16}+\fvval{cr-QD-s16})/10,3)}\times10^{-38}\,\mathrm{cm}^2$ per nucleon over the reported regions. At low $p_T$ and low $p_\parallel$, most of the cross section lies about equally in two cells: low recoil (low $E_{\mathrm{avail}}$ and $q_3$, R00) and high momentum transfer with high hadronic mass (R01). At low $p_T$ and high $p_\parallel$, the low-recoil cell (R04) dominates, with about five times the cross section of the next cell. Overall, the cell with high momentum transfer and high hadronic mass at high $p_T$ and high $p_\parallel$ (R14) contributes the most.
 
-\begin{figure}[!hbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{figures/fived16_headline.pdf}
   \caption{The sixteen unfolded cell integrals range from $\fvval{f-R07}$ (R07) to $\fvval{f-R14}$ (R14) in units of $\fvval{f-unit}\,\mathrm{cm}^2$ per nucleon. The covariance includes no term estimated from closure at held-out tunes and is too small for the deviations from truth there. See Secs.~\ref{sec:closure-interval-diagnostics} and~\ref{sec:result-validity} for the limits on using these uncertainties. The points are grouped by muon quadrant, with alternate quadrants shaded. The bars show standard deviations $\sqrt{(\CrepFiveD)_{ii}}$ on a logarithmic cross-section axis. The three rows below the axis give each cell's range in hadronic energy $E_{\mathrm{avail}}$, momentum transfer $q_3$ and hadronic mass $W$, with \emph{any} denoting the full interval in Table~\ref{tab:five-dimensional-regions}.}
   \label{fig:fived16-headline}
 \end{figure}
 
-\begin{table}[htbp]
+\begin{table}[H]
   \centering\footnotesize
   \caption{Cell-integrated cross sections $f_i$ in units of $\fvval{f-unit}\,\mathrm{cm}^2$ per nucleon and total fractional standard deviations $100\sqrt{(\CrepFiveD)_{ii}}/f_i$. The cell definitions are given in Table~\ref{tab:five-dimensional-regions}.}
   \label{tab:sixteen-cell-cross-sections}
@@ -48,7 +48,6 @@ To obtain $V_{\mathrm{stat+syst}}$, we repeat the unfolding with statistical res
 
 The reported covariance in Eq.~\eqref{eq:sixteen-cell-covariance} gives a median per-cell uncertainty of $\fvval{sigmed-reported}\%$. Flux and prior-shape variations give the largest median contributions. Shifts to reconstructed observables and the spread across run periods also contribute appreciably. Prior-shape sensitivity gives fractional standard deviations above $\fpeval{floor(min(\fvval{sig-C_model-R02},\fvval{sig-C_model-R03},\fvval{sig-C_model-R11}))}\%$ in R02, R03, and R11. Before adding the run-period term, adding the energy-response covariance to $V_{\mathrm{stat+syst}}^{\mathrm{infl}}+V_{\mathrm{prior}}$ increases the per-cell standard deviation by up to about \fvval{sigratio-infl-maxpct}\%. Appendix~\ref{app:higher-dimensional-projections} gives the cell-by-cell decomposition and the correlation matrix.
 
-\FloatBarrier
 \subsection{Projection consistency}
 \label{sec:sixteen-cell-projections}
 \label{sec:fived16-quadrants}
@@ -78,7 +77,7 @@ Closure recovers the tested marginal features, with residuals in joint cells and
 \label{sec:3d-closure}
 A marginal sums over the other coordinates, so recovery of the marginal can hide redistribution among joint cells. We reweight simulated truth and reconstructed events, then compare the unfolded result with the reweighted truth using the simulated MINERvA response.
 
-The signal-only checks leave residuals of $1.84\%$ in the 3D $E_{\mathrm{avail}}$ marginal and at most $1.1\%$ in the 4D $q_3$ marginal for the tested smooth features. The $W$ marginal meets its recovery criterion, while the joint $(E_{\mathrm{avail}},W)$ cells near the peak remain $2.2\%$ to $9.4\%$ low and some injected strength appears in adjacent mass bins (Appendix~\ref{sec:closure} and Table~\ref{tab:higher-dimensional-validation}).
+The signal-only checks leave residuals of $1.84\%$ in the 3D $E_{\mathrm{avail}}$ marginal and at most $1.1\%$ in the 4D $q_3$ marginal for the tested smooth features. The $W$ marginal meets its recovery criterion, while the joint $(E_{\mathrm{avail}},W)$ cells near the peak remain $2.2\%$ to $9.4\%$ low, distortions that dilute in the $W$ projection (Appendix~\ref{sec:closure} and Table~\ref{tab:higher-dimensional-validation}).
 
 \label{sec:val-negweight}
 At nominal truth, negative-weight refinement removes most of the high-$W$ bias from purity subtraction and meets the closure criterion for the sixteen cells. Appendix~\ref{app:negative-weight-background} compares the background treatments in detail.
@@ -86,8 +85,7 @@ At nominal truth, negative-weight refinement removes most of the high-$W$ bias f
 \label{sec:val-departure}
 Recovery is weaker under alternative truths. Changing the true available-energy spectrum by the difference between two generator shapes leaves large joint residuals with a negative-weight refinement trained with fewer trees. The residuals persist when the test is repeated without background. Changing the conditional $q_3$ distribution while holding the $(E_{\mathrm{avail}},W)$ truth fixed also shifts the unfolded cells in that plane. The sixteen-cell estimator recovers only part of the generator-derived changes (Appendix~\ref{app:bias-prior-stability}).
 
-\paragraph{Prior dependence.}
-\label{sec:higher-dimensional-prior}
+\paragraph{Prior dependence.} \phantomsection\label{sec:higher-dimensional-prior}
 \label{sec:fived16-fd}
 
 Under $\CrepFiveD$, the sixteen-cell estimator exceeds the bias criteria at \fvval{f0b-nlisted-word} of the \fvval{f0b-all-truths} simulated truths, the GiBUU hybrid truth, which takes its fine-bin integrals from GiBUU and the composition inside each bin from the MINERvA simulation. Under $\CrepFiveDzero$, the reported covariance with unscaled $V_{\mathrm{stat+syst}}$ in place of $V_{\mathrm{stat+syst}}^{\mathrm{infl}}$, the synthetic $q_3$ tilt also exceeded them. It changes the conditional momentum transfer at fixed $(E_{\mathrm{avail}},W)$. Its bias is the same under both covariances, so the difference is the covariance's. The standardized residuals for the GiBUU truth exceed the per-cell threshold in R02 and R06, the two low-$p_T$ cells with high available energy, low momentum transfer, and low mass (Table~\ref{tab:five-dimensional-regions}). Appendix~\ref{app:bias-prior-stability} gives the bias criteria and statistics.
@@ -108,8 +106,7 @@ On data, both methods use \lrval{rg1-K} iterations and share the data, signal si
 \label{sec:3d-classifier}
 Appendix~\ref{app:algorithm-classifier-controls} and Table~\ref{tab:validation-inventory} give the 3D purity-baseline comparison of gradient-boosted trees and a multilayer perceptron.
 
-\paragraph{Numerical stability.}
-\label{sec:higher-dimensional-calibration}
+\paragraph{Numerical stability.} \phantomsection\label{sec:higher-dimensional-calibration}
 \label{sec:5d}
 
 Rounding-level changes to data inputs shift the sixteen-cell estimates by 0.8 at the median and up to \lrval{stab-max} statistical standard deviations. These shifts exceed both tolerances set before the test, \fvval{ens1-bar-median} at the median and \fvval{ens1-bar-max} at the maximum. We perturb stored inputs by up to half a single-precision unit in the last place with fine-bin membership fixed, and test the joint cells, $E_{\mathrm{avail}}$--$W$ integrals and their sum, and the total rate. Appendix~\ref{app:bias-prior-stability} gives the alternative settings and stricter pseudo-data comparison.
@@ -130,7 +127,7 @@ Using $\CrepFiveDzero$ on the same draws lowers the mean $\chi^2/\mathrm{ndf}$ f
 
 All three hydrocarbon predictions lie below the unfolded integrals in every high-$p_T$ cell. Figure~\ref{fig:sixteen-cell-generator-residuals} compares the sixteen integrals with GENIE 2.12.10~\cite{Andreopoulos:2009rq} without and with the Valencia meson-exchange current (MEC) contribution~\cite{Nieves:2011pp} and with MINERvA Tune v1~\cite{MINERvA:2021owq}, the unfolding prior. We also compare with NuWro 21.09~\cite{Golan:2012wx} and GiBUU 2019~\cite{Buss:2011mx} on carbon. All predictions use the analysis definitions of $W$ and the muon angle. The generated GiBUU sample ends at $E_\nu=\fvval{cmodel-gibuu-enu}~\mathrm{GeV}$, so the sixteen-cell comparison with GiBUU uses the eight cells with $p_\parallel<\fvval{h2-mid-pz}~\mathrm{GeV}/c$, which contain about $\fpeval{round(100*(\fvval{cr-QA-s16}+\fvval{cr-QC-s16})/(\fvval{cr-QA-s16}+\fvval{cr-QB-s16}+\fvval{cr-QC-s16}+\fvval{cr-QD-s16}),0)}\%$ of the reported cross section. The data are normalized per nucleon of hydrocarbon (CH), so the carbon comparisons also differ in target. The GiBUU prior-shape variation instead extends to $p_\parallel<\fvval{cmodel-gibuu-pz-max}~\mathrm{GeV}/c$, and the calibrated joint test uses its own domain (Sec.~\ref{sec:joint5d}).
 
-\begin{figure}[!hbp]
+\begin{figure}[H]
   \centering
   % Series targets and the GiBUU cell count verified against inputs2/fived16_genresidual_values.json.
   \includegraphics[width=\linewidth]{figures/fived16_genresidual.pdf}

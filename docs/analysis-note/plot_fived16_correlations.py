@@ -92,9 +92,13 @@ def checked_annotations(rho: list[list[float]]) -> list[list[str]]:
 
 
 def draw(rho: list[list[float]], annotations: list[list[str]], output: Path) -> None:
+    import sys
     import matplotlib
     matplotlib.use("Agg")
-    matplotlib.rcParams["pdf.fonttype"] = 42
+    sys.path.insert(0, str(NOTE.parents[1]))
+    import note_print_style as nps  # the style the other fived16 figures use: DejaVu Serif, Computer Modern math
+
+    nps.apply()  # PRINT_RC, which also sets pdf.fonttype 42
     import matplotlib.pyplot as plt
     import numpy as np
     from matplotlib.colors import TwoSlopeNorm
