@@ -45,6 +45,21 @@ TOTAL               629      8    99%
 
 The full suite under trace was not rerun at 9fdd024ea.
 
+## The plain suite at the final head, b2140be7a
+
+b2140be7a is the merge of origin/main (7428eea60, as a merge commit) plus the regenerated MANIFEST.tsv. The merge
+changed no package file. `python3 -m pytest -q -p no:cacheprovider tests/` in `code/`, 2026-11-28T16:28:21Z to
+16:39:12Z, with the checkout clean afterwards:
+
+```
+head=b2140be7aeb246b1971c045466ef29102e1095df
+pytest rc=0
+585 passed, 2 warnings in 634.48s (0:10:34)
+```
+
+585 is the 579 above plus the six tests 9fdd024ea adds. No record-checks step runs this suite. On b2140be7a all 42
+of record-checks.yml's run steps (its other 2 steps are `uses:`) exit 0 locally with BASE=origin/main.
+
 ## Mutation (`code/mutation.txt`), at f313e5dbf
 
 `python3 mutation.py --jobs 6` (rc 1). The unmutated control passed for every file (mutation.py prints only a
