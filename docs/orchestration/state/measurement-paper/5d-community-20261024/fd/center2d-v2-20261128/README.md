@@ -18,8 +18,9 @@ Overleaf text, a coverage statement, a cause, and any separation of physical asy
 | `center2d_fetch_remote.py` | `dd1215a1bdef87c046bb538eaadd61811734660bf62d3961c019faad1cbe79e6` | the remote reader, piped on stdin; the 16 paths are fixed in it |
 | `center2d_fetch_verify.py` | `e3385e8e8b869f672be9aeccc4a4cae27c355826fa82ee319e0681a18cd048b9` | the laptop verifier |
 | `center2d_fence.py` | `ee696ee63877cd2ee52719d42fa63fcfa79dee8d1b6f5c3d9c8cd7fa588db9d6` | the fence decision on the sacct and squeue rows |
-| `test_center2d.py` | `e971dd573f02bf52819da6914f39f369dc4ca65cf109121130181d162571bd43` | 33 tests, OK (`receipts/test_center2d.txt`) |
-| `test_center2d_fetch.py` | `71f8b166f3a012e1e6fe14f8187256ec6f07f6e1875f9edd77fffa9b934203da` | 31 tests, OK (`receipts/test_center2d_fetch.txt`) |
+| `test_center2d.py` | `883781aed703679f4bde30fd66b53ced5fa2788fc256f80dc99d6db3da39cff1` | 40 tests, OK (`receipts/test_center2d.txt`) |
+| `mutants_center2d.py` | `e0d97ef08e6caf7ff5b3551981e90ed6fa17af34639a6be30f6d28d86b53db27` | the mutation runner (62 mutants; its receipt follows in `receipts/mutation.txt`) |
+| `test_center2d_fetch.py` | `5dc5430e0e3775ce1997b5addd2e22b70b052a984a276e411ae21999e715ba93` | 31 tests, OK (`receipts/test_center2d_fetch.txt`) |
 
 **The wrapper pins:**
 - remote `dd1215a1…`, verify `e3385e8e…`, fence `ee696ee6…` and driver `554ee0bc…`;

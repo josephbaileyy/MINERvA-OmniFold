@@ -282,6 +282,7 @@ class Fence(unittest.TestCase):
     def test_squeue_row_of_a_family_refuses_whatever_its_state(self):
         self.assertEqual(self.fence("", "77|ibuchi_x|PENDING\n"), (0, "1"))
         self.assertEqual(self.fence("", "77|other|RUNNING\n"), (0, "0"))
+        self.assertEqual(self.fence("", "78|oofvc_x|COMPLETED\n"), (0, "1"))
 
     def test_malformed_row_refuses(self):
         self.assertEqual(self.fence("garbage\n"), (0, "1"))

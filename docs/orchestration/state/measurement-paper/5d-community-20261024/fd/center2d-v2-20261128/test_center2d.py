@@ -73,9 +73,12 @@ class Readings(unittest.TestCase):
         b = np.zeros(n)
         b[0] = 1.0                                   # adds 1/10 along rank 1 only
         ctl = {}
-        r = m.readings({"x": b}, {"x": np.ones(n)}, np.ones(n), C, C, np.arange(n), ctl, "t")
+        r = m.readings({"x": b}, {"x": np.ones(n)}, np.ones(n), C, 2 * C, np.arange(n), ctl, "t")
         self.assertEqual(r["ndf"], n)
         self.assertAlmostEqual(r["R1"]["trace_share"], 1.0 / lam.sum(), 15)
+        self.assertAlmostEqual(r["R1"]["trace_share_of_C_sys"], 0.5 / lam.sum(), 15)
+        self.assertAlmostEqual(r["R2"]["max"], 0.1, 15)
+        self.assertEqual(r["R2"]["max_cell_globalid"], 0)
         self.assertAlmostEqual(r["R3"]["rank_band_means"][0], 0.1 / 73, 15)
         self.assertEqual(r["R3"]["rank_band_means"][1:], [0.0, 0.0])
         self.assertAlmostEqual(r["R3"]["max_r"], 0.1, 15)
@@ -88,7 +91,8 @@ class Readings(unittest.TestCase):
     def test_per_band_contributions_add_and_attribution(self):
         n = 30
         C = spd(n, scale=4.0)
-        offs = {f"b{i}": RNG.normal(size=n) * (i + 1) * 0.1 for i in range(6)}
+        rng = np.random.default_rng(5)
+        offs = {f"b{i}": rng.normal(size=n) * 0.1 * 3.0 ** i for i in range(6)}
         ctl = {}
         r = m.readings(offs, {k: np.ones(n) for k in offs}, np.ones(n) * 3, C, C, np.arange(n), ctl, "t")
         self.assertTrue(ctl["C-ADD:t"]["pass"])
@@ -179,11 +183,75 @@ class Tune(unittest.TestCase):
         with self.assertRaisesRegex(m.Stop, "C-X0"):
             m.tune_controls(fake_blocks(p), SETS, {}, "t")
 
+    def test_an_inconsistent_offset_fails_c_id(self):
+        orig = m.centre
+        m.centre = lambda X, w: orig(X, w) * (1 + 1e-9)
+        try:
+            with self.assertRaisesRegex(m.Stop, "C-ID"):
+                m.tune_controls(fake_blocks(), SETS, {}, "t")
+        finally:
+            m.centre = orig
+
     def test_wrong_universe_count_refuses(self):
         def p(B):
             B["band__2p2h"] = B["band__2p2h"][:2]
         with self.assertRaisesRegex(m.Stop, "C-FINITE"):
             m.tune_controls(fake_blocks(p), SETS, {}, "t")
+
+
+class PartTune(unittest.TestCase):
+    """part_tune on a fetched blocks_g2r file, against a stand-in for the committed blocks."""
+
+    def setUp(self):
+        self.d = tempfile.mkdtemp(prefix="center2d-pt-")
+        self.B = fake_blocks()
+        self.orig = m.pinned
+        buf = os.path.join(self.d, "B.npz")
+        np.savez(buf, **self.B)
+        with open(buf, "rb") as f:
+            self.Bbytes = f.read()
+        m.pinned = lambda name: self.Bbytes if name.startswith("blocks_") else self.orig(name)
+
+    def tearDown(self):
+        m.pinned = self.orig
+        shutil.rmtree(self.d)
+
+    def run_tune(self, mutate=None, fetch_ok=True):
+        G = {k: np.array(v, copy=True) for k, v in self.B.items()}
+        if mutate:
+            mutate(G)
+        p = os.path.join(self.d, "G.npz")
+        np.savez(p, **G)
+        lab = "g2r/blocks_g2r_AR23.npz"
+        return m.part_tune("AR23", SETS, {lab: {"pass": fetch_ok}}, {lab: p})
+
+    def test_equal_blocks_pass_with_a_descriptive_label_only(self):
+        r = self.run_tune()
+        self.assertEqual(r["status"], "OK", r.get("stop"))
+        self.assertIsNone(r["label"])
+        self.assertIn(r["descriptive_label"], m.LABEL_READS)
+        for k in ("C-FETCH:T:AR23", "C-X0:T:AR23", "C-FLUX:T:AR23:equal", "C-RECON:T:AR23:laterals_kept"):
+            self.assertTrue(r["controls"][k]["pass"])
+
+    def test_failed_fetch_stops(self):
+        r = self.run_tune(fetch_ok=False)
+        self.assertEqual(r["status"], "STOP")
+        self.assertIn("C-FETCH", r["stop"])
+
+    def test_changed_x_t_stops(self):
+        def mut(G):
+            G["x_T"][5] *= 1 + 1e-15
+        self.assertIn("C-X0", self.run_tune(mut)["stop"])
+
+    def test_changed_lateral_stops(self):
+        def mut(G):
+            G["band__BeamAngleX"][0, 2] *= 1 + 1e-15
+        self.assertIn("C-RECON:T:AR23:laterals_kept", self.run_tune(mut)["stop"])
+
+    def test_changed_flux_weights_stop(self):
+        def mut(G):
+            G["w_flux"][3] *= 1 + 1e-15
+        self.assertIn("C-FLUX:T:AR23:equal", self.run_tune(mut)["stop"])
 
 
 class CommittedControls(unittest.TestCase):
@@ -377,6 +445,21 @@ class Files(unittest.TestCase):
         p = os.path.join(self.d, "r.json")
         open(p, "w").close()
         self.assertEqual(m.main(["rehearsal", "--out", p]), 2)
+
+    def test_a_stopped_part_makes_the_record_a_stop(self):
+        saved = (m.expected_digests, m.fetched, m.part_tune, m.part_data)
+        m.expected_digests = lambda: {}
+        m.fetched = lambda d, e: ({}, {})
+        m.part_tune = lambda T, sets, fst, paths: {"status": "OK"}
+        m.part_data = lambda sets, fst, paths, er: {"status": "STOP", "stop": "C-RECON: x"}
+        try:
+            p = os.path.join(self.d, "r.json")
+            self.assertEqual(m.main(["main", self.d, "--out", p]), 3)
+            with open(p) as f:
+                rec = json.load(f)
+            self.assertEqual((rec["status"], rec["stopped_parts"]), ("STOP", ["D"]))
+        finally:
+            m.expected_digests, m.fetched, m.part_tune, m.part_data = saved
 
     def test_main_records_a_stop_for_a_missing_fetch(self):
         p = os.path.join(self.d, "r.json")

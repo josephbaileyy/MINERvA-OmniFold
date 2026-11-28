@@ -31,6 +31,6 @@ test_too_many_arguments_refuse (__main__.Wrapper.test_too_many_arguments_refuse)
 test_unknown_mode_refuses (__main__.Wrapper.test_unknown_mode_refuses) ... ok
 
 ----------------------------------------------------------------------
-Ran 31 tests in 10.346s
+Ran 31 tests in 8.473s
 
 OK
