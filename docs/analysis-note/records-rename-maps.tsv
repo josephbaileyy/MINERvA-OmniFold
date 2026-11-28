@@ -1,0 +1,10 @@
+# R-RENAME symbol maps for check_note_records.py P5 (docstring, "R-RENAME"): map id, order, old, new, authority.
+# Literal LaTeX strings, applied in order by plain replacement to a base RECORD paragraph as P5 reads it.
+# Every entry's old string occurs in the base text of at least one of its map's rows (no chained entries).
+M-20261127-V	1	C_{EW}	V_{EW}	DECISION-20261127-joseph-note-symbols-records-rename-orphans.md sec. 5
+M-20261127-V	2	C_{Z}	V_Z	DECISION-20261127-joseph-note-symbols-records-rename-orphans.md sec. 5
+M-20261127-V	3	C_Z	V_Z	DECISION-20261127-joseph-note-symbols-records-rename-orphans.md sec. 5
+M-20261127-V	4	C_{\mathrm{ML}}	V_{\mathrm{ML}}	DECISION-20261127-joseph-note-symbols-records-rename-orphans.md sec. 5
+M-20261127-V	5	\sqrt{\Tr C}	\sqrt{\Tr V}	DECISION-20261127-joseph-note-symbols-records-rename-orphans.md sec. 5
+M-20261127-V	6	\max|C-C^{\top}|	\max|V-V^{\top}|	DECISION-20261127-joseph-note-symbols-records-rename-orphans.md sec. 5
+M-20261127-V	7	($C_{\mathrm{new}}$)	($C_{\mathrm{new}}$, now $\CrepTwoD$)	DECISION-20261127-joseph-note-symbols-records-rename-orphans.md sec. 5

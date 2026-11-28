@@ -1,0 +1,274 @@
+MINERvA-OmniFold analysis note figure pass · 2026-11-27
+
+Worktree branch note/figs-20261127, base 6ff1383331b16e3867c41c4600f8bb0de021ac21.
+This is a local figure edit. The worktree's Git index, refs and history were left
+untouched, and no network operation or standalone-repository synchronization was
+performed. The separately requested records pin self-test creates, writes and
+cleans up its own synthetic Git repository under the system temporary directory.
+
+Throughout this report, M denotes
+docs/orchestration/state/2d-closeout/stageF/methods.
+
+FIGURE 1 · Reconstructed distributions
+
+Producer is nd-unfolding/make_control_plots.py. The note includes
+docs/analysis-note/figures/control_plots.pdf from sec2_method.tex.
+The final displayed intervals now read 3–100 for E_avail, 10–100 for q3 and
+5–100 for W, using the true bin edges in the input arrays. The inset legend
+annotation reads “Wide final intervals are compressed”. The existing breaks
+and the compressed interval widths are retained.
+
+Verified local input, read by --from-arrays with --extended-display --print-style
+815e6c0a2bfcdbf95ca5c5b53c344f1f53410043164675eee92639125fc9dee2
+  M/note-figstyle-20261113/runs/family1b/dumps/control_plots_ext_arrays.npz
+Pin in M/note-figstyle-20261113/runs/family1b/connect-family1b.session.txt.
+Used M/note-figstyle-20261117/tools/palette_run.py, then the existing
+M/note-figround-20261121/tools/strip_stamp.py stamp removal on both arms.
+
+Old PDF SHA-256 65353e3acff2b22db326dd85dc766d9d981e5450d19edc2b4270d93e91be59f3
+New PDF SHA-256 2c2ae1cc41b90f1d188039ed0d4312e0a37b0f712803dfb07023495a6c89cc1c
+The pre-edit render is byte-identical to the old PDF. All 225 drawn arrays
+(4,319 scalar slots) and 50 artist/style entries match exactly. The PDF crop
+narrows from 486.736 × 392.791 pt to 479.197 × 392.791 pt. Outside the page
+background and BT/ET text objects, 3,697 of 3,701 content-stream operators match
+exactly. The four differences are the placement transforms immediately before
+the three revised tick-label text objects and the revised annotation.
+
+FIGURE 3 · 2D standardized differences
+
+Producer is 2d-unfolding/compare_to_paper_fullcov.py, with the existing
+M/note-figround3-20261121/tools/compose_fig3_r3.py and palette chain. The note
+includes docs/analysis-note/figures/MEFHC_5iter_pull_full.pdf from sec3_twod.tex.
+The producer used --style restyle-2026-10 --print-font --sd-label, and no
+additional OmniFold covariance inputs.
+The heatmap uses equal-width cells on both axes and now labels selected cell
+boundaries in GeV/c, using the axes of hXSec2D from the refined 2D input on the
+published binning. The pT ticks at boundaries 0, 5, 10 and 14 are 0, 0.4, 1 and
+4.5. The p_parallel ticks at every second boundary from 0 through 16 are 1.5,
+2.5, 3.5, 4.5, 6, 8, 10, 20 and 60.
+
+Verified local inputs
+5171c7b8ecacda6090e242349dd622218c1c38885c60ef8b91027033a8c4b780
+  docs/orchestration/state/ibu-chi2-20261123/tier1/units/e/er.root
+  Producer reads hXSec2D.
+6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3
+  docs/orchestration/state/precharge-20261125/inputs/replay/release.root
+  This is byte-identical to the pinned cov_ptpl_minerva_inclusive_6GeV.root.
+  remap_anc.py maps that name to the local file. The producer reads
+  pt_pl_cross_section, TotalCovariance, StatOnlyCovariance, FluxCovariance
+  and MuonEnergyScaleCovariance.
+
+The remap wrapper also verifies all ancillary text files under
+2d-unfolding/minerva_paper_anc/. The producer uses the ROOT objects above.
+d21a41eb746fea64e5c37a69b87bff93318e7997252686b8880e10b35bf4e12a  bin_mapping.txt
+de434a568d6947755a0ce111f532be9496c3f8cb8cc04f16de69dbbd443f785c  cov_ptpl_minerva_inclusive_6GeV_energyscale.txt
+a2ba53fd152143703d81c3cc7a177d472e2d0b7e8c31467adacd74bf289ca13d  cov_ptpl_minerva_inclusive_6GeV_flux.txt
+83f7e22a9d1e2890a3334130e3ff3c0413fc8ed3473032e264a30fcf911fd74b  cov_ptpl_minerva_inclusive_6GeV_stat.txt
+39ef5b72117d65392ff9c7b323261b0ea55cd0e355188344a8d282afdda83a38  cov_ptpl_minerva_inclusive_6GeV_total.txt
+02153e7af054a98254ddfc42cce65fc7520f95032c544dbc33555ac60376c2f3  data_result_ptpl_2D_minerva_inclusive_6GeV.txt
+222317522662b7001e8d4fcc155c1ec0b28b85f2cd868ab10206a7e7f6bf8240  model_ptpl_minerva_inclusive_6GeV_MINERvA_Tune_v1.txt
+All nine pins are in
+docs/orchestration/state/ibu-chi2-20261123/regenA4/AMENDMENT-A4.txt.
+
+Old PDF SHA-256 8787db1e91688b4faa53088e0ef1f304fead8ff6d4de907e368efbab49bd884c
+New PDF SHA-256 0a9454b60d0ad2e56432e9493f8c9afb97d4d51e57623cf11ac98890f88c9daf
+All 102 drawn arrays (4,558 scalar slots), including the heatmap and histogram
+geometry, and 31 artist/style entries match exactly. Both arms report 205
+reported cells, mean 0.133 and SD 0.513. The label-dependent layout and crop
+changed the page from 292.877 × 129.978 pt to 292.025 × 129.954 pt and the
+heatmap frame is 0.972 pt narrower. The final composer detected zero text
+overlaps in both arms.
+
+FIGURE 5 · GENIE CV mode decomposition
+
+Producer is M/note-figpass-20261119/tools/compose_family4.py. The note includes
+docs/analysis-note/figures/mode_decomp_mec_eavail_central.pdf from
+sec4_higherdim.tex. The outline legend now reads “Unfolded − GENIE CV”. In
+docs/analysis-note/redraw_central_only.py the outline height is
+(data[:n] - cv[:n]).clip(min=0), and data is the unfolded 3D E_avail projection.
+The outline starts at the CV stack before the Valencia MEC addition. The legend
+identifies that residual. The producer retains its existing positive-part rule.
+The composer measured zero fractional discrepancy between the outline bottoms
+and the corresponding input CV bar tops, and between the two inputs' unfolded
+data lines, on both arms.
+
+Verified local inputs under M/note-figstyle-20261113/runs/family4/pickles/
+5c3c6cea96c04a8c9d301129ee999e8a69779123a654ea7104f5e43aefdb5349  mode_decomp_eavail_central.pdf.figpickle
+846b3277db722600be9b5aa315b1d6b192584fc5d4c56b91cc8e0017886982e9  compare_mec_eavail_central.pdf.figpickle
+Pins are in M/note-figstyle-20261113/tools/restyle_family4.py and are also
+enforced by its loader. The same existing stamp-removal pass ran on both arms.
+
+Old PDF SHA-256 b56f4d90b1047b8aa8842bf47534d457848208d97c201f3fd3e60ca2f32d2f0c
+New PDF SHA-256 fd05d1f082cb215e2c5a7e16da271a5adc8c561f6d783dfe022f7b6c3eb3caaa
+All 112 drawn arrays (672 scalar slots) and 37 artist/style entries match
+exactly. The page size stays 468 × 257.4 pt. At 200 dpi, all 24,291 changed
+pixels were confined to the legend band, 215.28–247.68 pt from the page top.
+
+DATA IDENTITY AND INSTALLATION
+
+All local data inputs were located and hashed against the pins above before
+the paired redraws. The before arm executed each figure producer from git
+show HEAD:<path> with the same local inputs, render tools and options as the
+edited arm. Matplotlib 3.10.8 was used for all figures. Both arms were filtered
+to save only the requested figure stem in scratch. The installed PDFs were
+copied only after the validation below passed, and compared byte for byte to
+the verified candidates.
+
+For each figure the before PDF matched the committed PDF in all word bounding
+boxes (pdftotext -bbox), page size and every RGB pixel (pdftoppm at 200 dpi).
+The before PDF hashes, in order 1, 3, 5, were
+65353e3acff2b22db326dd85dc766d9d981e5450d19edc2b4270d93e91be59f3
+14cfbe2894c9afe03ed91254757865555f4128745eafe7f11987765d72b86b80
+e074f7b8ea110ea2153baa59ac0b87bf5465cd7d7b884fa672fd090b2616656c
+
+M/note-figstyle-20261117/tools/capture_palette.py uses
+M/fig-restyle-20261031/tools/artists.py to extract numbers from the artists at
+save time. The before/after NPZ members matched in key and order, dtype, shape
+and array bytes. Their artist-index JSON records also compared equal. These
+checks include plotted coordinates and numerical values in addition to PDF text.
+The SHA-256 values below are equal in both arms, calculated by feeding
+repr((key, dtype.str, shape)).encode("ascii") and then array.tobytes() for each
+member in NPZ order.
+
+Fig. 1  d1506217a3e9b58ce9b73ab48e40cfa4986b057af73164e30491a282a14155d2
+Fig. 3  f8c0ed075e1543897c9f43b02ae27fabb8d831cd8a2e09f71515c32c5cecb4d8
+Fig. 5  fa5169977563995a037d15c993bfc7a1b319633c72a7e9515eaa558011e4d677
+
+PDF text differences were the interval ticks and compression annotation in
+Fig. 1, the two heatmap axis labels and tick labels in Fig. 3, and the residual
+legend label in Fig. 5. Visual inspection confirmed those labels are legible.
+The versioned archival PDF install recipes in make_figures.sh still name the
+historical pinned files. The changes here are in the figure producers and the
+three PDFs included directly by the note.
+
+APPENDIX C · Classifier comparison
+
+Removed the fig:calibration figure environment and its prose citation from
+docs/analysis-note/appC_supplementary.tex. The sentence giving the 1.20%, 1.36%
+and 0.66% projection differences remains. Removed the reference from
+sec_q3_3d.tex, which is outside the active main_note.tex input closure. The
+internal records paragraph in records_r04_higherdim.tex was restored after the
+freeze check below. Its citation resolves through the existing earlier-draft
+label in records_earlier_labels.tex, which main_records.tex loads if the active
+note lacks the label. In the posted note, fig:calibration has no active reference.
+
+docs/analysis-note/make_figures.sh names nd-unfolding/plot_nn_vs_gbdt_full.py
+with --gbdt res_lgbm_3d.npz and --nn res_nn_3d.npz. The historical producer and
+both named inputs are absent in this checkout, so their SHA-256 values are
+unverified. See ISSUES.md and M/note-figstyle-20261113/README.md. No redraw was
+needed. The retained image docs/analysis-note/figures/nn_vs_gbdt_full.pdf
+matches the committed stamp-removal receipt SHA-256
+491bcd64d66d70352c1632e04cbd253ee06feab2c90e975a55f6968636db39f0.
+
+RECORDS FREEZE
+
+python3 docs/analysis-note/check_note_records.py --self-test-pin
+  rc 0. RECORDS-PIN SELF-TEST :: PASS (11 of 11 cases as expected).
+python3 docs/analysis-note/check_note_records.py pin docs/analysis-note
+  rc 0. RECORDS-PIN :: PASS. 0 citations, 0 tag references, 0 heading references.
+  Pin 3c3a6f742d3aca583924903bd45f4cdea7b0b642.
+python3 docs/analysis-note/check_note_records.py probe docs/analysis-note/records-inventory-base-20261122.json docs/analysis-note --ledger docs/analysis-note/records-move-ledger-20261122.md
+  rc 0. RECORDS-MOVE :: PASS. 104 record paragraphs, 0 failures.
+  Base 1ce680617792fd70345e38e2fc111a04a27b05fc.
+The “MLP and GBDT classifier comparison” paragraph falls outside this narrow
+P5 inventory. It is frozen by the records-reorganization post-reflow gate,
+which compares reflowed paragraphs throughout the internal records closure.
+Running records_reorg.post_gate on that file against HEAD reported one
+“LOST paragraph not declared” for the original and one “NEW paragraph not
+declared” for the edited version. The one paragraph edit was reverted from
+HEAD, leaving no diff for the records file. No ledger rows were added.
+The earlier-draft label is fig:calibration → Fig. 30, p. 75 (earlier draft).
+The full records-reorganization command was also run on the restored worktree
+with --phase D --base ab0596ac3 --reflowed-from 666d71fdd --since
+6ff1383331b16e3867c41c4600f8bb0de021ac21. It returned rc 1 with 3,707 historical
+chain failures between 666d71fdd and the committed HEAD. The SINCE stage found
+0 changed lines from HEAD to the worktree (5,687 printed paragraphs and 1,861
+comment lines on both sides).
+
+FIGURE 6 · Refined 4D counterpart
+
+No committed refined 4D product containing the same joint E_avail–q3 ratio
+and both marginals was found in this checkout.
+
+The note's sec4_higherdim.tex labels Fig. 6 as a purity-subtracted check.
+nd-unfolding/q3_excess_projection.py projects the 4D unfolded counts
+(hUnfoldND_flat) and normalizes by the MINERvA Tune v1 prior from
+runEventLoopOmniFold_4D_MEFHC.root. The committed plot source is
+M/note-figstyle-20261113/runs/family5/dumps/q3_arrays.npz, pinned at
+aa02d0c32e6bee24d6a38558cd560d9043c19f132f9d6008fe66341d3d871af4.
+Its connect-family5.session.txt binds the purity ROOT input
+nd-unfolding/products/4d/xsec_4d_MEFHC_5iter_lgbm.root to SHA-256
+1fb8250820c00428fc547cb05aa95535023146723acdccb61f615f3fa763f9d2.
+
+Refined 4D configuration (e), P4, was produced, as documented in
+M/re1/RE1-REPORT-2.md §§3–4, M/re1/run2/receipts/SHA256SUMS.nd and
+M/re1/run2/f/new/conv4.json. These receipts are committed. Both P4 files are
+absent from this checkout.
+The cluster paths under /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/
+are 4d/p4.npz (2a18599f952eb497acddaad596668a04b32b1bf7f6ac3842a4475e8dbdfb2bdf)
+and f/new/xsec_4d_p4.root
+(ece4055e29756eeef81932b93199d507ca69296bbe7a90b2776c0c39a330998e).
+The report explicitly records that the refined product carries xsec_flat and
+the count-based Fig. 6 producer requires hUnfoldND_flat, so that projection
+was not regenerated. Its committed movement_4d.tsv in M/re1/run2/readouts/
+(SHA-256 214278a6c053915679160aae42312e41bdce6da431998dbd1a889e25cf384bbf)
+contains refined cross sections for 4,830 of 10,976 grid cells, restricted
+to cells positive in all three operands by nd-unfolding/re1/re1_nd_movement.py.
+The committed M/re1/run2/f/new/ascencio_fullcov_compare_central.pdf is a
+comparison on the Ascencio grid with low-E_avail cuts, a different projection.
+
+Search used git ls-files and git ls-tree -r --name-only HEAD for the named
+P4 products, nd-unfolding/products/4d/, q3 arrays, tracked ROOT files and
+4D/refined/central product names, then rg through the N-D status, note sources,
+figure recipe, RE-1 report and receipts. The query is scoped to committed
+products in this checkout. No Fig. 6 files were edited.
+
+DIFF AND GATES
+
+git diff review and git diff --check passed. The tracked diff has eight files
+with 26 insertions and 13 deletions across five text files, plus three PDFs.
+It consists of three producer label edits, the three corresponding note PDFs,
+the Appendix C figure/citation removal and the dormant sec_q3_3d.tex citation
+removal. The report is the additional untracked deliverable. All three edited
+Python producers passed an AST parse and executed successfully for their
+targeted figures.
+
+The main_note.fls recorder lists all three regenerated PDFs and has no
+nn_vs_gbdt_full.pdf entry. The compiled note still prints the 1.20%, 1.36%
+and 0.66% classifier comparison. The compiled internal records print the
+restored citation as “Fig. 30 (earlier draft)”.
+
+bash docs/analysis-note/build_all.sh
+  Strict read-only attempt rc 1. The Git guard blocked git init inside the
+  script's nested pin self-test. The self-test itself had already passed when
+  invoked separately as requested, using its auto-removed temporary fixture.
+  Full build rc 0 with that measured self-test result reused in place of
+  rerunning the fixture under the guard. All other build stages executed.
+  The guard also blocked containment's git -C metadata probe. The standalone
+  read-only containment rerun returned rc 0 in canonical strict mode at HEAD
+  6ff1383331b16e3867c41c4600f8bb0de021ac21.
+
+Final page counts and undefined references/citations from the fresh build
+  main_note.pdf  69 pages, 0 undefined reference warnings, 0 undefined citation warnings
+  main_primer.pdf  16 pages, 0 undefined reference warnings, 0 undefined citation warnings
+  pet_note.pdf  26 pages, 0 undefined reference warnings, 0 undefined citation warnings
+  main_records.pdf  145 pages, 0 undefined reference warnings, 0 undefined citation warnings
+
+Selected build gate output
+RECORDS-MOVE :: PASS (27 labels, 32 tags, 97 struck bodies, 31 paths, 104 record and 0 reader paragraphs, 6 App. G pointers; thinning: 0 citation keys at 1ce68061, 0 now, 0 listed drops, targets checked in the tree and at HEAD; P9: entries required for 0 cited tags and 7 added entries, 4 repeated records checked; 0 failure(s))
+VALUES-FIVED16 :: PASS (3998 values, readouts pinned, 1 figures equal their sources, 18 listed-truth sentences agree)
+SUPPLEMENTAL :: PASS (3 files pinned, reproduced from the data product and equal to the printed table to its precision)
+ENTRY-NUMBERS-AUX :: PASS (18 posted numbers, 18 records labels; 0 mismatch(es))
+SELF-TEST :: PASS (244 perturbations rejected)
+SEC4-RECEIPTS :: PASS (91/91)
+RESULT :: PASS :: head=6ff1383331b16e3867c41c4600f8bb0de021ac21 tree=dirty(tracked=5,untracked=2) scope=docs/analysis-note mode=strict products=main_records.pdf@sha256:8b2d98ba363c8e6ff8bf0ba2089defc5cc8931aa7fc708273b1e404887c3788d(fresh),pet_note.pdf@sha256:f4cffa11e9fc57aad6225aca6a7536cf6f8c39e30d54cc9e046cc8602d8e733b(fresh),main_note.pdf@sha256:3b71aaf3507dbb62a02127594335df6dbefce927c86d7d85c7bc304f796dfc6c(fresh),main_primer.pdf@sha256:3105e894aeb23a04be1e180f9d9e562bd73b6548e35de0997df6a8dc2b500169(fresh)
+
+Post-build checks run separately from the worktree root
+  python3 docs/analysis-note/check_sec4_receipts.py  rc 0
+    SEC4-RECEIPTS :: PASS (91/91)
+  python3 docs/analysis-note/limitations_export.py --check  rc 0
+    LIMITATIONS-EXPORT :: PASS (90 rows located: present 2, reanchor 42, moved 0, records 46, review 0)
+  python3 docs/analysis-note/check_body_pointers.py  rc 0
+    BODY-POINTERS :: PASS (0 internal pointers in 13 body files)
+
+The temporary figure directory was removed after recording the evidence above.

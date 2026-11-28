@@ -113,6 +113,13 @@ def main():
     rf4.LAYOUT[NEW] = (1.0, 0.55)
     rf4.LEGEND_BELOW[NEW] = 3
     fig = rf4.restyle(figs[BASE], NEW)
+    gap_entry = next(
+        entry for entry in fig.legends[0].get_texts()
+        if entry.get_text().endswith("(2p2h-shaped gap)")
+    )
+    gap_label = "Unfolded − GENIE CV"
+    want[want.index(gap_entry.get_text())] = gap_label
+    gap_entry.set_text(gap_label)
     got = palette_lib.legend_entries(fig)
     if sorted(want) != got:
         raise SystemExit(f"compose: legend {got}, wanted {sorted(want)}")

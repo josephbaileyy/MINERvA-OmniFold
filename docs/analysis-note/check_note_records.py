@@ -113,6 +113,20 @@ with the digests as for R-EDIT. P5 then accepts the base paragraph whose digest 
   - <authority> names an existing decision record, a file DECISION-<...>.md under docs/ of this repository.
 An R-FIX has no pointer-only constraint; an R-EDIT keeps its. Each failure names its row.
 
+R-RENAME (the director's ruling on DECISION-20261127 sec. 5, 2026-11-27). A RECORD paragraph whose symbols are renamed
+to the posted note's names changes only by a declared map, under a ledger row
+  | R-RENAME-<n> | <old sha256> | <new sha256> | <map id> | <authority> |
+The map is a committed, ordered table of literal LaTeX strings, RENAME_MAPS (records-rename-maps.tsv):
+  map id <TAB> order <TAB> old <TAB> new <TAB> authority
+applied in order by plain string replacement (every occurrence; no regex) to the base paragraph as P5 reads it.
+P5 then accepts the base paragraph whose digest is <old> if:
+  - <old> is the digest of a base RECORD paragraph, which no longer prints verbatim (otherwise the row is stale);
+  - a records paragraph has the digest <new>;
+  - the map exists, and <authority> and every entry's authority name an existing decision record;
+  - with pointer tokens masked, the new paragraph equals the base paragraph with the map applied, and the pointer
+    counts per class are unchanged. Any other difference fails.
+Every entry of a map that some row uses must change at least one of that map's rows: an unused entry fails.
+
 THE PIN (plan commit 3, 2026-10-21). The posted note cites the records as NoteRecords2026 (technote.bib), whose URL
 names one full commit sha. `pin` requires, in the canonical repository:
   Q1 the entry names a full 40-hex commit sha (never a branch such as tree/main);
@@ -474,6 +488,107 @@ def rfix_accepted(inv: dict, rtext: dict[str, str], rall: str, ledger: Path, fai
     return accepted
 
 
+
+RRENAME_ROW = re.compile(r"\|\s*(R-RENAME-\d+)\s*\|")
+RENAME_MAPS = "records-rename-maps.tsv"
+
+
+def rrename_rows(ledger: Path) -> list[tuple[str, list[str]]]:
+    """(row id, cells) for every ledger table row whose first cell is R-RENAME-<n>."""
+    if not ledger.exists():
+        return []
+    return [(m.group(1), [c.strip() for c in line.strip()[1:-1].split("|")])
+            for line in ledger.read_text().splitlines() if (m := RRENAME_ROW.match(line))]
+
+
+def rename_maps(path: Path, fails: list[str]) -> dict[str, list[tuple[int, str, str, str]]]:
+    """{map id: [(order, old, new, authority), ...] in order} from the committed TSV; a malformed line fails."""
+    maps: dict[str, list[tuple[int, str, str, str]]] = {}
+    if not path.exists():
+        return maps
+    for k, line in enumerate(path.read_text().splitlines(), 1):
+        if not line.strip() or line.startswith("#"):
+            continue
+        cells = line.split("\t")
+        if len(cells) != 5 or not cells[0] or not cells[1].isdigit() or not cells[2] or cells[2] == cells[3]:
+            fails.append(f"P5 R-RENAME map {path.name}:{k}: malformed (want map id, order, old, new, authority; "
+                         f"old non-empty and different from new)")
+            continue
+        maps.setdefault(cells[0], []).append((int(cells[1]), cells[2], cells[3], cells[4]))
+    for mid, entries in maps.items():
+        orders = [e[0] for e in entries]
+        if orders != sorted(orders) or len(set(orders)) != len(orders):
+            fails.append(f"P5 R-RENAME map {mid}: the order column is not strictly increasing in file order")
+    return maps
+
+
+def apply_rename_map(text: str, entries: list[tuple[int, str, str, str]]) -> str:
+    """The declared literal replacements, in order, every occurrence."""
+    for _, old, new, _ in entries:
+        text = text.replace(old, new)
+    return text
+
+
+def rrename_accepted(inv: dict, rtext: dict[str, str], rall: str, ledger: Path, fails: list[str],
+                     maps_path: Path | None = None) -> set[str]:
+    """The base RECORD paragraphs an R-RENAME row accounts for (docstring, "R-RENAME"); each row that does not hold,
+    and each unused entry of a map a row uses, appends its failure."""
+    base = {digest(p): p for p in inv["record_paragraphs"]}
+    now = {digest(p): p for t in rtext.values() for p in paragraphs(t)}
+    rows = rrename_rows(ledger)
+    if not rows:
+        return set()
+    maps = rename_maps(maps_path or ledger.parent / RENAME_MAPS, fails)
+    used: dict[str, set[int]] = {}
+    accepted = set()
+    for rid, cells in rows:
+        if len(cells) != 5 or not all(re.fullmatch(r"[0-9a-f]{64}", c) for c in cells[1:3]) or not cells[3]:
+            fails.append(f"P5 R-RENAME row {rid}: malformed (want | id | old sha256 | new sha256 | map id | "
+                         "authority |)")
+            continue
+        names = DECISION_NAME.findall(cells[4])
+        if not names or not all(decision_exists(n) for n in names):
+            fails.append(f"P5 R-RENAME row {rid}: its authority names no existing decision record: {cells[4]!r}")
+            continue
+        entries = maps.get(cells[3])
+        if entries is None:
+            fails.append(f"P5 R-RENAME row {rid}: no map {cells[3]!r} in {RENAME_MAPS}")
+            continue
+        bad = [e for e in entries if not DECISION_NAME.findall(e[3])
+               or not all(decision_exists(n) for n in DECISION_NAME.findall(e[3]))]
+        if bad:
+            fails.append(f"P5 R-RENAME row {rid}: map {cells[3]} entry {bad[0][0]} names no existing decision record")
+            continue
+        old_d, new_d = cells[1], cells[2]
+        old = base.get(old_d)
+        if old is None:
+            fails.append(f"P5 R-RENAME row {rid}: old digest {old_d} is the digest of no base RECORD paragraph")
+            continue
+        if old in rall:
+            fails.append(f"P5 R-RENAME row {rid}: stale: base paragraph {old_d} still prints verbatim in the "
+                         f"records: {old[:60]!r}")
+            continue
+        new_p = now.get(new_d)
+        if new_p is None:
+            fails.append(f"P5 R-RENAME row {rid}: no records paragraph has the row's new digest {new_d}: the "
+                         f"renamed text is not the row's ({old[:60]!r})")
+            continue
+        want = apply_rename_map(old, entries)
+        if unpointed(new_p) != unpointed(want):
+            fails.append(f"P5 R-RENAME row {rid}: the paragraph differs from the base with map {cells[3]} applied: "
+                         f"{_first_difference(want, new_p)}")
+            continue
+        if pointer_counts(new_p) != pointer_counts(old):
+            fails.append(f"P5 R-RENAME row {rid}: the rename deletes or adds pointer tokens")
+            continue
+        used.setdefault(cells[3], set()).update(e[0] for e in entries if e[1] in old)
+        accepted.add(old)
+    for mid in used:
+        for order, o, n, _ in maps[mid]:
+            if order not in used[mid]:
+                fails.append(f"P5 R-RENAME map {mid}: entry {order} ({o!r} -> {n!r}) changes none of its rows")
+    return accepted
+
 def _split_top(text: str, sep: str) -> list[str]:
     """Split at `sep` outside braces, never at an escaped one (\\& or a \\\\ inside \\shortstack{...} stays)."""
     out, depth, cur, k = [], 0, [], 0
@@ -573,7 +688,8 @@ def probe_fails(inv: dict, new: Path, ledger: Path, thin: Counter | None = None,
     if leaked:
         fails.append(f"P3 the posted note's closure still strikes values: {leaked}")
     # P5 paragraphs
-    edited = redit_accepted(inv, rtext, rall, ledger, fails) | rfix_accepted(inv, rtext, rall, ledger, fails)
+    edited = (redit_accepted(inv, rtext, rall, ledger, fails) | rfix_accepted(inv, rtext, rall, ledger, fails)
+              | rrename_accepted(inv, rtext, rall, ledger, fails, new / RENAME_MAPS))
     for p in inv["record_paragraphs"]:
         if p not in rall and p not in edited:
             fails.append(f"P5 RECORD paragraph not verbatim in the records closure: {p[:90]!r}")
@@ -1264,6 +1380,38 @@ def _redit_row(inv: dict, new: str, anchor: str = _R_ANCHOR, old_digest: str | N
             "self-test |")
 
 
+
+_RR_AUTH = "DECISION-20261127-joseph-note-symbols-records-rename-orphans.md"
+
+
+def _rr_edit(new_anchor: str, map_lines: list[tuple[str, int, str, str]]):
+    """A plant edit: the rank paragraph's anchor becomes `new_anchor`, and the copy's map file gains `map_lines`."""
+    def edit(p: Path) -> None:
+        p.write_text(p.read_text().replace(_R_ANCHOR, new_anchor, 1))
+        with (p.parent / RENAME_MAPS).open("a") as fh:
+            for mid, order, old, new in map_lines:
+                fh.write(f"{mid}\t{order}\t{old}\t{new}\t{_RR_AUTH} sec. 5 (self-test)\n")
+    return edit
+
+
+def _rrename_row(inv: dict, new_anchor: str, map_id: str = "T-90", authority: str = _RR_AUTH) -> str:
+    """A planted R-RENAME row for the base rank paragraph, whose anchor now reads `new_anchor`."""
+    hits = [p for p in inv["record_paragraphs"] if _R_ANCHOR in p]
+    if len(hits) != 1:
+        raise SystemExit(f"self-test plant: {_R_ANCHOR!r} is in {len(hits)} base RECORD paragraphs, not 1")
+    old = hits[0]
+    return (f"| R-RENAME-90 | {digest(old)} | {digest(old.replace(_R_ANCHOR, new_anchor))} | {map_id} | "
+            f"{authority} |")
+
+
+_RR_NEW = _R_ANCHOR.replace("rank deficiency", "rank shortfall")
+# "rank deficiency at" occurs once in the paragraph (the map replaces every occurrence; the anchor edit only one)
+_RR_ONE = [("T-90", 1, "rank deficiency at", "rank shortfall at")]
+_RR_TWO = [("T-90", 1, "rank deficiency at", "rank loss at"), ("T-90", 2, "rank loss at", "rank gap at")]
+# the map application's mutant: the entries applied in reverse order; the out-of-order plant must kill it
+RENAME_MUTANT_PLANT = "R-RENAME map applied out of order"
+
+
 PLANTS = [
     # (name, probe that must fire, file, old, new[, ledger row appended[, ledger row ids removed]])  -- old=None appends
     # `new`; a callable edits the file; a probe of None means the plant must leave the probe SILENT (no failure at all).
@@ -1387,6 +1535,23 @@ PLANTS = [
      lambda p: _drop_paragraph(p, _R_ANCHOR), None, lambda inv: _rfix_row(inv, _RF_NEW)),
     ("R-FIX row, paragraph unchanged", "P5 R-FIX row R-FIX-90: stale", LEDGER, None, "",
      lambda inv: _rfix_row(inv, _RF_NEW)),
+    # R-RENAME (DECISION-20261127 sec. 5): a declared literal symbol map, applied in order, on the same paragraph
+    ("recorded rename (control)", None, "app_history.tex", _rr_edit(_RR_NEW, _RR_ONE), None,
+     lambda inv: _rrename_row(inv, _RR_NEW)),
+    ("R-RENAME with an extra word changed", "P5 R-RENAME row R-RENAME-90: the paragraph differs from the base",
+     "app_history.tex", _rr_edit(_RR_NEW.replace("From", "Since"), _RR_ONE), None,
+     lambda inv: _rrename_row(inv, _RR_NEW.replace("From", "Since"))),
+    (RENAME_MUTANT_PLANT, "P5 R-RENAME row R-RENAME-90: the paragraph differs from the base", "app_history.tex",
+     _rr_edit(_R_ANCHOR.replace("rank deficiency", "rank loss"), _RR_TWO), None,
+     lambda inv: _rrename_row(inv, _R_ANCHOR.replace("rank deficiency", "rank loss"))),
+    ("R-RENAME map with an unused entry", "P5 R-RENAME map T-90: entry 2", "app_history.tex",
+     _rr_edit(_RR_NEW, _RR_ONE + [("T-90", 2, "no such words here", "none")]), None,
+     lambda inv: _rrename_row(inv, _RR_NEW)),
+    ("R-RENAME paragraph edited outside the map", "P5 R-RENAME row R-RENAME-90: the paragraph differs from the base",
+     "app_history.tex", _rr_edit(_R_ANCHOR.replace("From", "Since"), _RR_ONE), None,
+     lambda inv: _rrename_row(inv, _R_ANCHOR.replace("From", "Since"))),
+    ("R-RENAME row naming no map", "P5 R-RENAME row R-RENAME-90: no map", "app_history.tex",
+     _rr_edit(_RR_NEW, _RR_ONE), None, lambda inv: _rrename_row(inv, _RR_NEW, map_id="T-99")),
 ]
 
 
@@ -1505,6 +1670,18 @@ def self_test(base: Path, new: Path, ledger: Path) -> int:
                 row = extra[0](inv) if callable(extra[0]) else extra[0]
                 led.write_text("\n".join(kept) + "\n" + row + "\n")
             got = probe_fails(inv, work, led, thin, head)
+            if name == RENAME_MUTANT_PLANT:
+                global apply_rename_map
+                real_apply = apply_rename_map
+                apply_rename_map = lambda text, entries: real_apply(text, list(reversed(entries)))
+                try:
+                    mutant_got = probe_fails(inv, work, led, thin, head)
+                finally:
+                    apply_rename_map = real_apply
+                if any(f.startswith(want) for f in mutant_got):
+                    failures.append(f"mutant (rename map applied in reverse order) SURVIVED plant {name!r}")
+                else:
+                    print(f"  killed mutant (rename map applied in reverse order) by plant {name!r}")
             if want is None:
                 if got:
                     failures.append(f"{name}: expected SILENT, got {got[:3]}")
