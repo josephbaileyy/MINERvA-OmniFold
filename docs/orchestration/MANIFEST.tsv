@@ -10130,6 +10130,12 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/center2d_fetch.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/center2d_fetch_remote.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/center2d_fetch_verify.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/mutants_center2d.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/reads/grok-20261128/grok_version.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/reads/grok-20261128/prompt.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/reads/grok-20261128/report.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/reads/grok-20261128/run.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/reads/grok-20261128/stderr.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/receipts/test_center2d.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/receipts/test_center2d_fetch.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/center2d-v2-20261128/test_center2d.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
