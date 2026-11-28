@@ -3,9 +3,8 @@
 **Authority:** [`CENTER2D-DECLARATION.md`](CENTER2D-DECLARATION.md), merged in #1446 at main `f5c6db0e`, and the
 director's rulings on the PR (issuecomment-7235721166).
 
-**Status:** code only. Nothing has run on any input except the tests and the mutation campaign below (71 of 71
-killed). Part R waits for the director's binding, and the connect waits for the binding and the director's GO on the
-fetch package.
+**Status:** bound (CENTER2D-BINDING-1). Part R has run on the committed pre-G2R blocks, and the director accepted it
+(below). The read and parts T and D wait for the director's GO, cov2d's ack, the cert check and LR START.
 
 **CANNOT AUTHORIZE:** what the declaration excludes. That is any covariance or convention change, any note, paper or
 Overleaf text, a coverage statement, a cause, and any separation of physical asymmetry from training noise.
@@ -154,6 +153,35 @@ worktree, and it is pinned by sha.
   - `receipts/mutation-run1-superseded.txt`: 61 of 62 killed. The survivor `verify-count-off` showed that no test gave
     the verifier a consistent 15-file set, so that test was added.
   - `receipts/mutation-run2-superseded.txt`: 62 of 62 killed, on the sources before the Grok fixes.
+
+## Part R: the rehearsal on the committed pre-G2R blocks (2026-11-28)
+
+**Authority:** CENTER2D-BINDING-1 (issuecomment-7237048152) and the director's GO for part R only. The bound files were
+checked by shasum before the run (`run-rehearsal/bound_shas.txt`): driver `1dc764e7…`, wrapper `e4ab0552…`, remote
+`dd1215a1…`, verify `e3385e8e…`, fence `ee696ee6…`.
+
+**The run:**
+- a fresh worktree at `cdda5317`;
+- `python3 -I -B center2d.py rehearsal --out run-rehearsal/center2d_rehearsal.json`, with OMP, OpenBLAS, MKL and vecLib
+  threads at 1;
+- 2026-11-28T09:09:46Z to 09:09:47Z;
+- rc 0; stdout `R:AR23: OK`, `R:G18: OK`, `CENTER2D OK`; stderr empty.
+
+**The record:** `run-rehearsal/center2d_rehearsal.json`,
+`ac08d3f8a1cea1b6e611f60377cce2d0a8fb83916a7b10881bf7d2b5c2c935c8`. Status OK, with noise term "not separable,
+disclosed". Every control passed at both tunes:
+- C-PIN, C-FINITE (43 bands) and the C-X0 mask (205 cells);
+- C-FLUX, equal to the logged sum and n_eff exactly;
+- C-ID, worst 1.2e-13 (AR23) and 2.2e-13 (G18);
+- C-RECON: C_univ 6.5e-21 and 5.6e-21, C_lat 0, C_T as its block sum 0;
+- C-PSD for C and M;
+- C-ADD, at most 7.1e-16.
+
+The readings went to the director first, who accepted part R on 2026-11-28.
+
+**Part R carries no label, as declared.** Its numbers describe a superseded matrix, the pre-G2R C_T. R5's per-subset
+label strings in the leave-one-band-out entries, and the label list in their range, are descriptive outputs of the
+bound code and decide nothing (director, 2026-11-28). The label is decided only at part D.
 
 ## How it reads and writes
 
