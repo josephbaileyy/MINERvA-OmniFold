@@ -280,6 +280,14 @@ class PilotPost(unittest.TestCase):
             self.assertEqual(rc, 6, bad)
             self.assertFalse(d["rules"]["C-SUPPORT-table"], bad)
 
+    def test_the_allocation_id_is_exact(self):
+        """B4: parse_sacct itself refuses "4242." as the allocation id (the pilot's job-id check would also catch it
+        later; this is the gate's own case)."""
+        with self.assertRaisesRegex(ValueError, "malformed allocation id"):
+            PP.parse_sacct(sacct().replace(f"{JOB}|ptmc_pilot|", f"{JOB}.|ptmc_pilot|"), JOB)
+        job, steps = PP.parse_sacct(sacct(), JOB)
+        self.assertEqual((job["id"], len(steps)), (JOB, 8))
+
     def test_recheck_requires_the_same_limit(self):
         rc, d, out = run(sacct(), self.p)
         self.assertEqual(rc, 0)
