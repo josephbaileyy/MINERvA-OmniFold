@@ -22,6 +22,7 @@ import ptmc_pilot_post as PP  # noqa: E402
 
 PILOT = PP.PILOT
 JOB = "4242"
+LIB = "lib"  # the hand-made units' unfolder label (test_ptmc_score's Products)
 
 try:
     import ROOT  # noqa: F401
@@ -68,7 +69,9 @@ def pilot_units(prod, change=None, job=JOB):
         mk["sha256"] = sha(d / f"{u}.npz")
         (d / f"{u}.done").write_text(json.dumps(mk))
         outs = {n: sha(d / n) for n in (f"{u}.done", f"{u}.npz", f"{u}.root")}
-        pins = {"driver": "d" * 64, "rows": "r" * 64}
+        pins = {"driver": "d" * 64, "runner": "u" * 64, "ptmc_run": sha(HERE.parent / "ptmc_run.py"),
+                "ptmc_lib": sha(HERE.parent / "ptmc_lib.py"), "rows": sha(prod.rows), "join_record": "j" * 64,
+                "config": "c" * 64, "inputs": {"CV": "v" * 64, "MC": "m" * 64}, "roounfold_lib": LIB}
         (d / f"pins_{u}.json").write_text(json.dumps({"units": [u], "before": pins, "after": pins, "pass": True,
                                                       "outputs": {u: outs}}))
     return d
@@ -79,7 +82,8 @@ def run(text, prod, recheck=None, units=None):
     s = out / "sacct.txt"
     s.write_text(text)
     units = units or pilot_units(prod)
-    argv = ["--sacct", str(s), "--jobid", JOB, "--units", str(units), "--rows", str(prod.rows), "--out", str(out)]
+    argv = ["--sacct", str(s), "--jobid", JOB, "--units", str(units), "--rows", str(prod.rows), "--lib-sha", LIB,
+            "--out", str(out)]
     if recheck is not None:
         argv += ["--recheck", str(recheck)]
     rc = PP.main(argv)
@@ -232,6 +236,20 @@ class PilotPost(unittest.TestCase):
         del rec["before"], rec["after"]
         (u / "pins_p_off_b5.json").write_text(json.dumps(rec))
         check(u, "a pins receipt without its before and after pins (B3)")
+        # confirm-3 B3: exactly the runner's pin keys, with the values post-pilot can verify
+        for change, why in ((lambda b: b.update(rows="0" * 64), "another rows file"),
+                            (lambda b: b.pop("config"), "a missing pin key"),
+                            (lambda b: b.update(unrelated=1), "an extra pin key"),
+                            (lambda b: b.update(ptmc_lib="0" * 64), "another ptmc_lib")):
+            u = pilot_units(self.p)
+            rec = json.loads((u / "pins_p_off_b2.json").read_text())
+            change(rec["before"])
+            rec["after"] = dict(rec["before"])
+            (u / "pins_p_off_b2.json").write_text(json.dumps(rec))
+            check(u, why)
+        # confirm-3 B11: the unit's unfolder is the bound RooUnfold digest
+        check(pilot_units(self.p, lambda u, m: m.update(unfolder="f" * 64)), "another RooUnfold")
+        check(pilot_units(self.p, lambda u, m: m.pop("unfolder")), "no unfolder label")
 
     def test_cnorm_requires_a_digest(self):
         rc, d, _ = run(sacct(), self.p, units=pilot_units(self.p, lambda u, m: m.update(extract_args_sha256="same")))
@@ -298,7 +316,8 @@ class PilotPost(unittest.TestCase):
 
     def test_rerun_refuses(self):
         rc, d, out = run(sacct(), self.p)
-        self.assertEqual(PP.main(["--sacct", str(out / "sacct.txt"), "--jobid", JOB, "--units", str(pilot_units(self.p)),
+        self.assertEqual(PP.main(["--sacct", str(out / "sacct.txt"), "--jobid", JOB, "--lib-sha", LIB,
+                                  "--units", str(pilot_units(self.p)),
                                   "--rows", str(self.p.rows), "--out", str(out)]), 2)
 
 

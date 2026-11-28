@@ -54,7 +54,7 @@ TREE_FILES = ("2d-unfolding/re2/re2_driver.py", "2d-unfolding/ref_c2c1/config.js
               "2d-unfolding/ref_c2c1/ref_c2c1_read.py", "unbinned_unfolding/python/omnifold.py",
               "2d-unfolding/compare_to_paper_fullcov.py", "2d-unfolding/uq/reported_cells.py",
               "2d-unfolding/oofvc/oofvc_lib.py")
-OWN_FILES = ("ptmc_lib.py", "ptmc_score.py", "ptmc_run.py")
+OWN_FILES = ("ptmc_lib.py", "ptmc_score.py", "ptmc_run.py", "make_tree.sh")  # make_tree.sh: confirm-3 B8
 FIX = ("hOFTruthDenom2D", "hDataReco2D", "hFlux_pt", "dataPOT", "mcPOT", "potScale", "fluxIntegral_m2_per_POT",
        "fluxIntegral_cm2_per_POT", "nNucleons")
 EDGES = ([0, 0.07, 0.15, 0.25, 0.33, 0.40, 0.47, 0.55, 0.70, 0.85, 1.00, 1.25, 1.50, 2.50, 4.50],
@@ -673,7 +673,7 @@ def score(a) -> dict:
                     "roounfold_lib_sha256": pins["roounfold_lib_sha256"],
                     "d4_manifest_sha256": sha256(a.d4 / "manifest.json"),
                     "inputs": {"CV": tree_cfg["inputs"]["CV_sha256"], "MC (its flux included)": tree_cfg["inputs"]["MC_sha256"]},
-                    "make_tree_sha256": sha256(HERE / "make_tree.sh"),
+                    "make_tree_sha256": pins["own"]["make_tree.sh"],  # verified by check_bytes before scoring
                     "constants": {k: CONST[k] for k in ("CELLS_SHA", "E_R_SHA", "PUB_SHA", "READOUT_SHA",
                                                         "CENTRAL_MARKER_SHA", "ROWS_SHA")},
                     "units": len(names), "rank": CONST["RANK"], "n_replicas": CONST["N"]}}

@@ -276,12 +276,12 @@ def runtime_versions() -> dict:
 
 
 def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, unfolder, lib_label: str,
-             inputs_verified: dict, gidx) -> int:
+             inputs_verified: dict, gidx, cfg_sha: str) -> int:
     conv, b = parse_unit(name)
     root, npz, marker = out / f"{name}.root", out / f"{name}.npz", out / f"{name}.done"
     own = {"runner_sha256": sha256(Path(__file__).resolve()), "lib_sha256": sha256(HERE / "ptmc_lib.py"),
            "code_sha256": cfg["code_sha256"], "inputs_sha256": inputs_verified, "unfolder": lib_label,
-           "config_sha256": sha256(C.CONFIG)}
+           "config_sha256": cfg_sha}  # the digest of the bytes parsed (confirm-3 B2)
     if npz.exists() or root.exists() or marker.exists():
         # a unit is reused only if its marker is PASS, names it, was made by this binding's code and inputs (B2), and
         # both products match the marker's digests
@@ -515,7 +515,8 @@ def run(a) -> int:
     except (RuntimeError, OSError) as e:
         print(f"refusing: {e}", file=sys.stderr)
         return RC_GATE
-    cfg = json.loads(C.CONFIG.read_text())
+    cfg_bytes = C.CONFIG.read_bytes()  # read once: the digest is of the bytes parsed (confirm-3 B2)
+    cfg, cfg_sha = json.loads(cfg_bytes), hashlib.sha256(cfg_bytes).hexdigest()
     try:
         C.check_code(cfg)
         verified = C.check_inputs(cfg)
@@ -554,7 +555,7 @@ def run(a) -> int:
     rc = 0
     outputs = {}
     for name in names:
-        urc = run_unit(C, driver, ohf, cfg, name, a.out, a.rows, unfolder, lib_label, verified, gidx)
+        urc = run_unit(C, driver, ohf, cfg, name, a.out, a.rows, unfolder, lib_label, verified, gidx, cfg_sha)
         outputs[name] = {n: sha256(a.out / n) for n in (f"{name}.done", f"{name}.npz", f"{name}.root")
                          if (a.out / n).exists()}
         rc = rc or urc

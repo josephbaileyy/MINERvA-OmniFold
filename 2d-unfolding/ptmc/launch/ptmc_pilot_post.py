@@ -96,21 +96,31 @@ def support_table_ok(sup) -> bool:
     return total == n
 
 
-def pilot_files_ok(units: Path, jobid: str) -> dict:
+RUNNER_PIN_KEYS = {"driver", "runner", "ptmc_run", "ptmc_lib", "rows", "join_record", "config", "inputs", "roounfold_lib"}
+
+
+def pilot_files_ok(units: Path, jobid: str, rows: Path, lib_sha: str) -> dict:
     """The pilot's units directory holds exactly the 8 units' products and their pins receipts, each receipt passing
     and naming its unit and products' digests, and every unit's meta names this pilot job."""
     import hashlib
     want = {f"{u}{x}" for u in PILOT for x in (".npz", ".root", ".done")} | {f"pins_{u}.json" for u in PILOT}
     have = {p.name for p in units.iterdir()}
     out = {"files_exactly_the_pilot's": have == want}
+    # the pins post-pilot can verify itself (confirm-3 B3): rows, the tool's runner and library, the bound RooUnfold.
+    # It cannot see the deploy tree's driver, runner or config, nor the staged inputs: the scorer's C-PINS checks those
+    sha = lambda p: hashlib.sha256(Path(p).read_bytes()).hexdigest()  # noqa: E731
+    own = {"rows": sha(rows), "ptmc_run": sha(HERE.parent / "ptmc_run.py"), "ptmc_lib": sha(HERE.parent / "ptmc_lib.py"),
+           "roounfold_lib": lib_sha}
     ok = out["files_exactly_the_pilot's"]
     for u in PILOT if ok else ():
         rec = json.loads((units / f"pins_{u}.json").read_text())
         digests = {n: hashlib.sha256((units / n).read_bytes()).hexdigest() for n in (f"{u}.done", f"{u}.npz", f"{u}.root")}
         meta = json.loads(str(np.load(units / f"{u}.npz", allow_pickle=False)["meta"]))
         ok = ok and rec.get("pass") is True and rec.get("units") == [u] and rec.get("outputs") == {u: digests}
-        ok = ok and isinstance(rec.get("before"), dict) and bool(rec["before"]) and rec.get("before") == rec.get("after")
+        ok = ok and isinstance(rec.get("before"), dict) and set(rec["before"]) == RUNNER_PIN_KEYS \
+            and rec.get("before") == rec.get("after") and all(rec["before"][k] == v for k, v in own.items())
         ok = ok and str(meta.get("slurm_job")) == jobid
+        ok = ok and meta.get("unfolder") == lib_sha  # the bound RooUnfold, as ptmc_remote.sh pins it (confirm-3 B11)
     out["pins_receipts_and_job"] = bool(ok)
     return out
 
@@ -135,7 +145,7 @@ def pilot_cross_unit(units: Path, rows: Path) -> dict:
     return out
 
 
-def decide(job: dict, steps: dict, units: Path, rows: Path) -> dict:
+def decide(job: dict, steps: dict, units: Path, rows: Path, lib_sha: str) -> dict:
     d = {"job": job, "steps": steps, "rules": {}}
     r = d["rules"]
     r["job_completed"] = (job["name"] == "ptmc_pilot" and job["state"] == "COMPLETED" and job["exit"] == "0:0"
@@ -144,7 +154,7 @@ def decide(job: dict, steps: dict, units: Path, rows: Path) -> dict:
         s["state"] == "COMPLETED" and s["exit"] == "0:0" and s["nodes"] == 1 and 0 < s["elapsed"] <= job["elapsed"]
         for s in steps.values()))
     receipts = {u: P.unit_receipt(units, u) for u in PILOT}
-    files = pilot_files_ok(units, job["id"])
+    files = pilot_files_ok(units, job["id"], rows, lib_sha)
     d["files"] = files
     r["pilot_files_and_pins_receipts"] = all(files.values())
     d["units"] = {u: (True if v["ok"] else v["why"]) for u, v in receipts.items()}
@@ -182,6 +192,7 @@ def main(argv=None) -> int:
     ap.add_argument("--jobid", required=True)
     ap.add_argument("--units", type=Path, required=True)
     ap.add_argument("--rows", type=Path, required=True)
+    ap.add_argument("--lib-sha", required=True, help="the bound libRooUnfold.so digest (ptmc_remote.sh's LIB_SHA)")
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--recheck", type=Path, default=None)
     a = ap.parse_args(argv)
@@ -193,7 +204,7 @@ def main(argv=None) -> int:
         return 2
     try:
         job, steps = parse_sacct(a.sacct.read_text(), a.jobid)
-        d = decide(job, steps, a.units, a.rows)
+        d = decide(job, steps, a.units, a.rows, a.lib_sha)
     except Exception as e:  # a STOP, never a pass
         d = {"verdict": "STOP", "why": f"{type(e).__name__}: {e}"}
     if a.recheck is not None:  # the replicas' submit: the same PROCEED and the same L, or nothing is submitted

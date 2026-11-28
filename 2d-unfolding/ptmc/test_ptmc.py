@@ -594,6 +594,23 @@ class Runner(unittest.TestCase):
             (tmp / "p_off_c.done").write_text(json.dumps(mk))
             self.assertEqual(ptmc_run.main(args), ptmc_run.RC_CONTROL)
 
+    def test_reuse_hashes_the_config_bytes_it_parsed(self):
+        """confirm-3 B2: the reuse check and the marker use the digest of the config bytes the runner parsed, not a
+        second read of the path (here the path's digest is made to differ after the parse)."""
+        import ptmc_run
+        tmp = Path(tempfile.mkdtemp())
+        for f in ("p_off_c.npz", "p_off_c.root", "p_off_c.done"):
+            (tmp / f).write_bytes((self.out / f).read_bytes())
+        orig = ptmc_run.sha256
+
+        def later_read(p):
+            return "0" * 64 if Path(p).name == "config.json" else orig(p)
+        args = ["--tree", str(tree()), "--rows", str(self.rows_path), "--rows-sha256", self.pins["rows"],
+                "--join-record", str(self.join), "--out", str(tmp), "--numpy-unfolder", "--unit", "p_off_c"]
+        with mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True), \
+                mock.patch.dict(ptmc_run.PINS, self.pins), mock.patch.object(ptmc_run, "sha256", later_read):
+            self.assertEqual(ptmc_run.main(args), 0)
+
     def test_a_running_unit_holds_its_claim(self):
         """Confirm read B2: the unit's marker is created exclusively (RUNNING) before the driver runs, so a second
         run of the same unit refuses instead of racing it."""

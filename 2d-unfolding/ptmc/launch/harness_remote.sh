@@ -18,6 +18,7 @@ cat > $H/bin/sacct <<'S'
 #!/bin/bash
 # the fence (-X -S ...) prints SACCT_OUT; a job's accounting (-j N) prints SACCT_J
 case " $* " in
+  *" --name=ptmc_reps "*) [ -n "${SACCT_REPS_FAIL:-}" ] && exit 1; printf '%b' "${SACCT_REPS-12346|ptmc_reps\n}" ;;
   *" -j "*) [ -n "${SACCT_J_FAIL:-}" ] && exit 1
             n=$(printf '%s\n' "$@" | grep -A1 -x -- -j | tail -1); v=SACCT_J_$n
             if [ -n "${!v+x}" ]; then printf '%b' "${!v}"; else printf '%b' "${SACCT_J-12345|ptmc_pilot|COMPLETED|0:0|1500|2|s|e\n}"; fi ;;
@@ -142,7 +143,7 @@ mk; sed -i 's#^TOOLC=.*#TOOLC=__TOOL_COMMIT__#' $H/r.sh; out=$(bash $H/r.sh $H/r
 mk; sed -i 's#^DRIVER_SHA=.*#DRIVER_SHA=__DRIVER_SHA256__#' $H/r.sh; out=$(bash $H/r.sh $H/r.sh setup 2>&1); rc=$?
 [ "$rc" != 0 ] && has "not filled in"; ok $? "an unfilled driver pin: STOP"
 # --- setup (login): no copies
-setup_ok; [ -e $H/R/logs/setup.done ] && [ -d $H/R/claims/setup ] && [ -z "$(ls -A $H/R/stage)" ]
+setup_ok; grep -Eqx '[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}' $H/R/logs/setup.done && [ -d $H/R/claims/setup ] && [ -z "$(ls -A $H/R/stage)" ]
 ok $? "setup: rc 0, claimed, the stage left empty (no copy on a login node)"
 [ "$(cat $H/env.make_tree)" = "$(printf 'MKL_NUM_THREADS=1\nNUMEXPR_NUM_THREADS=1\nOMP_NUM_THREADS=1\nOPENBLAS_NUM_THREADS=1')" ]
 ok $? "setup: make_tree runs with one thread"
@@ -210,7 +211,7 @@ staged; SBATCH_BLOCK=$H/R/logs/pilot.jobid run pilot; [ "$rc" != 0 ] && has "was
 piloted; SACCT_J_FAIL=1 run post-pilot; [ "$rc" != 0 ] && has "STOP: sacct failed"; ok $? "post-pilot: a failed sacct STOPs, printed"
 piloted; SACCT_J='' run post-pilot; [ "$rc" != 0 ] && has "sacct returned nothing"; ok $? "post-pilot: empty accounting STOPs"
 piloted; POST_RC=6 run post-pilot; [ "$rc" = 6 ] && has "did not PROCEED" && [ ! -e $H/R/pilot-post/PROCEED ]; ok $? "post-pilot: a STOP decision exits 6, no PROCEED"
-grep -q -- '--jobid 12345 .*--rows .*oofvc_rows.npz' $H/python.args; ok $? "post-pilot: passes --jobid and --rows"
+grep -q -- '--jobid 12345 .*--rows .*oofvc_rows.npz --lib-sha [0-9a-f]\{64\} ' $H/python.args; ok $? "post-pilot: passes --jobid, --rows and the bound --lib-sha (B11)"
 [ "$(cat $H/env.python)" = "$(printf 'MKL_NUM_THREADS=1\nNUMEXPR_NUM_THREADS=1\nOMP_NUM_THREADS=1\nOPENBLAS_NUM_THREADS=1')" ]
 ok $? "post-pilot: python runs with one thread"
 piloted; POST_DECISION_DIR=1 run post-pilot; [ "$rc" != 0 ] && has "printing the decision (the C-SUPPORT table) failed"; ok $? "post-pilot: an unprintable decision STOPs before PROCEED is reported"
@@ -237,7 +238,7 @@ proceeded; SQUEUE_OUT='ptmc_pilot\n' run replicas; [ "$rc" != 0 ] && has "a ptmc
 # --- post
 P1='12345|ptmc_pilot|COMPLETED|0:0|1500|2|s|e\n12345.batch|batch|COMPLETED|0:0|1500|1|s|e\n'
 P2='12346|ptmc_reps|COMPLETED|0:0|8000|5|s|e\n12346.0|p_R_b2|COMPLETED|0:0|700|1|s|e\n'
-mkpost() { proceeded; run replicas; echo 12346 > $H/R/logs/replicas.jobid; }
+mkpost() { proceeded; run replicas; echo 12346 > $H/R/logs/replicas.jobid; echo 12346 > $H/R/replicas-check/recheck.claim; }
 mkpost; SACCT_J_12345=$P1 SACCT_J_12346='12346.0|p_R_b2|COMPLETED|0:0|700|1|s|e\n' run post
 [ "$rc" != 0 ] && has "sacct has no allocation line for the replicas job 12346" && [ ! -e $H/R/post.tar.gz ]; ok $? "post: accounting without the job's own line STOPs"
 mkpost; SACCT_J_12345=$P1 SACCT_J_12346="$P2$P1" run post
@@ -253,6 +254,10 @@ mkpost; echo 12345 > $H/R/logs/replicas.jobid; SACCT_J_12345=$P1 run post
 [ "$rc" != 0 ] && has "the pilot and replicas job ids are both '12345'" && [ ! -e $H/R/post.tar.gz ]; ok $? "post: the pilot's id as the replicas' STOPs, no double charge"
 mkpost; SACCT_J_12345=$P1 SACCT_J_12346='12346|ptmc_pilot|COMPLETED|0:0|8000|2|s|e\n' run post
 [ "$rc" != 0 ] && has "has no single allocation named ptmc_reps on 5 nodes" && [ ! -e $H/R/post.tar.gz ]; ok $? "post: a replicas allocation of the wrong name or size STOPs"
+mkpost; echo 12399 > $H/R/replicas-check/recheck.claim; SACCT_J_12345=$P1 SACCT_J_12346=$P2 run post
+[ "$rc" != 0 ] && has "the recheck was claimed by job '12399', not the replicas job 12346" && [ ! -e $H/R/post.tar.gz ]; ok $? "post: a recheck claimed by another job STOPs (confirm-3 B1)"
+mkpost; SACCT_REPS='12346|ptmc_reps\n12399|ptmc_reps\n' SACCT_J_12345=$P1 SACCT_J_12346=$P2 run post
+[ "$rc" != 0 ] && has "sacct shows 2 ptmc_reps allocations since setup" && [ ! -e $H/R/post.tar.gz ]; ok $? "post: a second replica allocation since setup STOPs, counted (confirm-3 B1)"
 mkpost; SACCT_J_12345=$P1 SACCT_J_12346='12346|ptmc_reps|COMPLETED|0:0|8x00|5|s|e\n' run post
 [ "$rc" != 0 ] && has "STOP: charge" && [ ! -e $H/R/post.tar.gz ]; ok $? "post: a malformed elapsed time STOPs the charge"
 mkpost; SACCT_J_12345=$P1 SACCT_J_12346=$P2 run post

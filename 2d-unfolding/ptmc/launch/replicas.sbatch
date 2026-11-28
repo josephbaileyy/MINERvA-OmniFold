@@ -35,6 +35,12 @@ tm=$(minutes "$tl") || refuse "the job's time limit '$tl' does not parse"
 [ "$tm" -ge 1 ] && [ "$tm" = "$L" ] || refuse "the job's time limit is $tm minutes; the authorized L is $L"
 rk=$(cat $R/replicas-check/recheck.json) || refuse "no recheck record"  # the fresh recheck at submit, not only the file (B1)
 [ "$rk" = "{\"recheck\": \"SAME\", \"time_limit_minutes\": $L}" ] || refuse "the recheck record does not authorize L = $L: $rk"
+# one allocation per recheck (confirm-3 B1): this job claims it exclusively (noclobber is O_EXCL) before any lane starts
+CLAIM=$R/replicas-check/recheck.claim
+if ! ( set -C; printf '%s\n' "${SLURM_JOB_ID:-}" > "$CLAIM" ) 2>/dev/null; then
+  held=$(cat "$CLAIM") || refuse "the recheck claim exists and cannot be read"
+  [ "$held" = "${SLURM_JOB_ID:-}" ] || refuse "the recheck is claimed by job '$held'; this is job ${SLURM_JOB_ID:-}"
+fi
 hook=$(/global/common/software/nersc/pe/conda/24.10.0/Miniforge3-24.7.1-0/bin/conda shell.bash hook) \
   || refuse "the conda hook failed"
 eval "$hook" || refuse "the conda hook did not evaluate"

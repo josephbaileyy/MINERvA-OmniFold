@@ -68,6 +68,8 @@ fresh; mkdir -p $H/R/units $H/R/pilot-post; Q; refused "no PROCEED"; ok $? "repl
 proceed; rm $H/R/pilot-post/time_limit_minutes; Q; refused "no authorized time limit"; ok $? "replicas: no L refuses"
 proceed; echo 1x > $H/R/pilot-post/time_limit_minutes; Q; refused "the authorized time limit"; ok $? "replicas: a malformed L refuses"
 proceed; rm $H/R/replicas-check/recheck.json; Q; refused "no recheck record"; ok $? "replicas: no recheck record refuses (B1)"
+proceed; echo 4300 > $H/R/replicas-check/recheck.claim; Q; refused "the recheck is claimed by job '4300'; this is job 4242"
+ok $? "replicas: a recheck claimed by another job refuses, no lane started (confirm-3 B1)"
 proceed; echo 145 > $H/R/pilot-post/time_limit_minutes; out=$(SQUEUE_L=2:25:00 SLURM_JOB_NUM_NODES=5 bash $H/replicas.sbatch 2>&1); rc=$?
 refused "the recheck record does not authorize L = 145"; ok $? "replicas: a stale L file the recheck did not authorize refuses (B1)"
 proceed; out=$(SQUEUE_FAIL=1 SLURM_JOB_NUM_NODES=5 bash $H/replicas.sbatch 2>&1); rc=$?
@@ -87,7 +89,7 @@ proceed; mkdir -p $H/R/logs/replicas-4242; Q; refused "mkdir"; ok $? "replicas: 
 proceed; out=$(SQUEUE_L=2:00:00 SLURM_JOB_NUM_NODES=5 bash $H/replicas.sbatch 2>&1); rc=$?
 refused "the job's time limit is 120 minutes; the authorized L is 144"; ok $? "replicas: a limit below L refuses (it must be exactly L)"
 proceed; rm -f $H/seq.calls; out=$(SQUEUE_L=2:24:00 SLURM_JOB_NUM_NODES=5 bash $H/replicas.sbatch 2>&1); rc=$?
-[ "$rc" = 0 ] && [ ! -e $H/seq.calls ] && [ "$(awk '$3 == "0"' $H/R/logs/replicas-4242/lanes | wc -l)" = 20 ] && [ "$(sort -u $H/steps | wc -l)" = 199 ] && [ "$(wc -l < $H/steps)" = 199 ] && \
+[ "$rc" = 0 ] && [ ! -e $H/seq.calls ] && [ "$(cat $H/R/replicas-check/recheck.claim)" = 4242 ] && [ "$(awk '$3 == "0"' $H/R/logs/replicas-4242/lanes | wc -l)" = 20 ] && [ "$(sort -u $H/steps | wc -l)" = 199 ] && [ "$(wc -l < $H/steps)" = 199 ] && \
   ! grep -qx 'p_R_b1' $H/steps && grep -qx p_R_b2 $H/steps && grep -qx p_R_b200 $H/steps && \
   [ "$(cat $H/R/logs/replicas-4242/lane_* | awk '$2=="0"' | wc -l)" = 199 ] && grep -qx 'p_R_b22 0' $H/R/logs/replicas-4242/lane_0
 ok $? "replicas: b = 2..200, 199 steps, each once, 199 outcomes, 20 lanes (no seq), lane 0 takes b22"

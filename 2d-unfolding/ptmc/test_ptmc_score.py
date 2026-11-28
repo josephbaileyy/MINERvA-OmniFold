@@ -531,6 +531,14 @@ class ScorerGates(unittest.TestCase):
         (p.d4 / "manifest.json").write_text(json.dumps(m))
         self.stops(p, "absence records that name no declared source")
 
+    def test_make_tree_is_a_verified_pin(self):
+        """confirm-3 B8: make_tree.sh is one of the scorer's own pinned files, checked before scoring."""
+        p = Products(delta_scale=0.05)
+        d = json.loads(p.pins.read_text())
+        d["own"]["make_tree.sh"] = "0" * 64
+        p.pins.write_text(json.dumps(d))
+        self.stops(p, "C-PINS: the scorer's own make_tree.sh")
+
     def test_a_staging_of_another_root_stops(self):
         """B7: the manifest must name the bound REF root, so its absence records are that root's."""
         p = Products(delta_scale=0.05)

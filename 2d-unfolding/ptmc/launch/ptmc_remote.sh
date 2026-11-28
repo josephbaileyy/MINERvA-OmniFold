@@ -141,7 +141,7 @@ setup)
   h=$(sha_of "$LIB") || stop "sha256 of libRooUnfold.so failed"
   [ "$h" = "$LIB_SHA" ] || stop "libRooUnfold.so differs from its pin"
   echo "libRooUnfold.so $LIB_SHA"
-  touch "$R/logs/setup.done" || stop "setup.done"
+  date -u +%FT%T > "$R/logs/setup.done" || stop "setup.done"  # the window post counts replica allocations from
   echo "setup done $(now)" ;;
 prestage)  # repeatable until stage is claimed: a stale fence is refreshed, never reused
   [ -e "$R/logs/setup.done" ] || stop "setup has not run"
@@ -186,7 +186,7 @@ post-pilot)
   cat "$R/pilot-post/sacct.txt"
   activate
   nice -n 19 "$PY" -B "$O/launch/ptmc_pilot_post.py" --sacct "$R/pilot-post/sacct.txt" --jobid "$j" \
-    --units "$R/units" --rows "$R/stage/oofvc_rows.npz" --out "$R/pilot-post" ; r=$?
+    --units "$R/units" --rows "$R/stage/oofvc_rows.npz" --lib-sha "$LIB_SHA" --out "$R/pilot-post" ; r=$?
   if [ -e "$R/pilot-post/decision.json" ]; then
     cat "$R/pilot-post/decision.json" || stop "printing the decision (the C-SUPPORT table) failed"
   fi
@@ -207,7 +207,7 @@ replicas)
   j=$(pilot_sacct "$R/replicas-check/sacct.txt") || { r=$?; echo "$j"; exit $r; }
   activate
   chk=$(nice -n 19 "$PY" -B "$O/launch/ptmc_pilot_post.py" --sacct "$R/replicas-check/sacct.txt" --jobid "$j" \
-    --units "$R/units" --rows "$R/stage/oofvc_rows.npz" --out "$R/replicas-check" \
+    --units "$R/units" --rows "$R/stage/oofvc_rows.npz" --lib-sha "$LIB_SHA" --out "$R/replicas-check" \
     --recheck "$R/pilot-post/decision.json") || STOP_RC=6 stop "the recheck does not give the same PROCEED and L: $chk"
   echo "recheck $chk"
   printf '%s' "$chk" | grep -q "\"time_limit_minutes\": $L}" || stop "the recheck's L is not $L"
@@ -239,6 +239,15 @@ post)
       END {exit (c != 1 || bad)}' || stop "the $f job $j has no single allocation named $jn on $nn nodes"
     printf '%s\n' "$out" >> "$R/post/sacct.txt" || stop "write sacct.txt"
   done
+  # the recheck's claim names the replicas job charged, and no other replica allocation exists since setup (B1)
+  cl=$(cat "$R/replicas-check/recheck.claim") || stop "no recheck claim"
+  [ "$cl" = "$jr" ] || stop "the recheck was claimed by job '$cl', not the replicas job $jr"
+  since=$(cat "$R/logs/setup.done") || stop "setup.done unreadable"
+  case "$since" in [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9]) ;; *) stop "setup.done '$since'";; esac
+  reps=$(TZ=UTC sacct -X -n -P -S "$since" --name=ptmc_reps -o JobID,JobName) || stop "sacct of the replica allocations"
+  nr=$(printf '%s\n' "$reps" | awk -F'|' '$2 == "ptmc_reps"' | wc -l) || stop "counting the replica allocations"
+  [ "$nr" = 1 ] && printf '%s\n' "$reps" | awk -F'|' -v j="$jr" '$2 == "ptmc_reps" && ($1 "") == (j "") {f = 1} END {exit !f}' \
+    || stop "sacct shows $nr ptmc_reps allocations since setup, not exactly the replicas job $jr"
   awk -F'|' '$1 !~ /\./ {if ($5 !~ /^[0-9]+$/ || $6 !~ /^[0-9]+$/ || $5 == 0 || $6 == 0) bad = 1; s += $5 * $6 / 3600; n++}
     END {if (n != 2 || bad) exit 1; printf "charged_node_h=%.4f\n", s}' \
     "$R/post/sacct.txt" > "$R/post/charge.txt" || stop "charge"
