@@ -23194,6 +23194,13 @@ docs/orchestration/state/producers-oi126-r5/sbatch_c_perm_ens.sh	tracked	MACHINE
 docs/orchestration/state/producers-oi126-r5/sbatch_c_perm_ens5.sh	tracked	MACHINE	state-artifact	producers-oi126-r5		generated		exact-path-only	yes
 docs/orchestration/state/ptmc-20261127/PTMC-DECLARATION.md	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
 docs/orchestration/state/ptmc-20261127/PTMC-SCOPING.md	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
+docs/orchestration/state/ptmc-20261127/binding/README.md	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
+docs/orchestration/state/ptmc-20261127/binding/fill_pins-output.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
+docs/orchestration/state/ptmc-20261127/binding/make_tree-output.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
+docs/orchestration/state/ptmc-20261127/binding/selfcheck-output.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
+docs/orchestration/state/ptmc-20261127/binding/selfcheck_pins.py	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
+docs/orchestration/state/ptmc-20261127/binding/write_pins_json-output.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
+docs/orchestration/state/ptmc-20261127/binding/write_pins_json.py	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
 docs/orchestration/state/ptmc-20261127/reads/r1/DISPOSITION.md	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
 docs/orchestration/state/ptmc-20261127/reads/r1/README.md	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
 docs/orchestration/state/ptmc-20261127/reads/r1/agy-hydrogen-high-report.txt	tracked	MACHINE	state-artifact	ptmc-20261127		generated		exact-path-only	yes
