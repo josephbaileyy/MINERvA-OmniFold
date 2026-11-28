@@ -322,6 +322,25 @@ def test_verify_fails_on_a_tampered_slim(ws, tamper, capsys):
     assert verify(ws) == 1 and slim_out(ws)["verdict"] == "FAIL"
 
 
+@pytest.mark.parametrize("tamper", ["extra_tree", "short_tree"])
+def test_verify_fails_on_a_slim_of_another_shape(ws, tamper):
+    """An extra top-level tree fails on the keys alone; a tree one row short fails on its entry count."""
+    assert build(ws) == 0
+    p = ws["out"] / PS.SLIMS["patov"]
+    f = uproot.open(p)
+    trees = {t: {b: f[t][b].array(library="np") for b in f[t].keys()} for t in PS.TREES}
+    if tamper == "extra_tree":
+        trees["leak"] = {"x": np.zeros(3)}
+        want = f"{PS.SLIMS['patov']}: keys "
+    else:
+        trees["data"] = {b: v[:-1] for b, v in trees["data"].items()}
+        want = f"{PS.SLIMS['patov']}:data entries"
+    write(p, trees, extra=False)
+    assert verify(ws) == 1
+    rec = slim_out(ws)
+    assert rec["verdict"] == "FAIL" and any(x.startswith(want) for x in rec["problems"]), rec["problems"]
+
+
 def test_verify_fails_on_a_tparameter_class_mismatch(ws, monkeypatch):
     assert build(ws) == 0
     monkeypatch.setattr(PS, "tpclass", lambda f, n: "TParameter<float>" if names(f) == "slim-patched.root" else UCLASS[n])
@@ -486,6 +505,18 @@ def test_tparams_cli_refusals(tmp_path, capsys):
     ST = _load("slim_tparams")
     assert ST.main(["only-one"]) == 2
     assert ST.main([str(tmp_path / "absent.json"), "S"]) == 2 and "cannot read" in capsys.readouterr().out
+
+
+def test_tparams_main_refuses_what_write_refuses(tmp_path, monkeypatch, capsys):
+    """A slim ROOT cannot open makes main print REFUSED and return 2."""
+    import sys
+    ST = _load("slim_tparams")
+    root = fake_root({})
+    root.gROOT = types.SimpleNamespace(SetBatch=lambda v: None)
+    monkeypatch.setitem(sys.modules, "ROOT", root)
+    rec = tmp_path / "build.json"
+    rec.write_text(json.dumps(record()))
+    assert ST.main([str(rec), str(tmp_path / "s.root")]) == 2 and "REFUSED: " in capsys.readouterr().out
 
 
 

@@ -130,6 +130,20 @@ def test_a_dump_missing_a_branch_is_unusable(ws):
     assert p.returncode == 2 and "lacks ['sim_pass']" in p.stdout
 
 
+def test_a_dump_missing_a_tree_is_unusable(ws):
+    write(ws["tmp"] / "pin_1L.root", {t: v for t, v in ws["parts"]["1L"].items() if t != "data"})
+    p, _ = run(ws, "pre", "--dump", str(ws["tmp"] / "pin_1L.root"))
+    assert p.returncode == 2 and "has no tree data" in p.stdout
+
+
+def test_a_slice_past_uomnis_end_is_unusable(ws):
+    """An offset that puts the 1L slice past UOMNI's last row refuses before any row is read."""
+    total = sum(N[pl] for pl in PLS)
+    ws["off"] = {t: total - N["1L"] + 1 for t in C2.TREES}
+    p, _ = run(ws, "pre", "--dump", str(ws["tmp"] / "pin_1L.root"))
+    assert p.returncode == 2 and "exceed UOMNI's" in p.stdout
+
+
 @pytest.mark.skipif(hasattr(os, "O_NOATIME"), reason="this OS has O_NOATIME")
 def test_outside_the_tests_no_noatime_is_unusable(ws):
     p, _ = run(ws, "pre", "--dump", str(ws["tmp"] / "pin_1L.root"), door=False)

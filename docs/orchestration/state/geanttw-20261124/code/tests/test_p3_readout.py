@@ -235,6 +235,15 @@ def test_extract_refuses_a_july_file_that_is_not_sweeps_jsons(tmp_path):
                    "--slims", "pin"]) == 2
 
 
+def test_extract_refuses_a_sweeps_json_that_is_not_s5s(tmp_path, capsys):
+    repo = fake_s5(tmp_path)
+    sj = tmp_path / "sweeps.json"
+    sj.write_text(sj.read_text() + "\n")
+    assert R.main(["extract", "--repo", str(repo), "--outs", str(tmp_path / "o"), "--out", str(tmp_path / "v.npz"),
+                   "--slims", "pin"]) == 2
+    assert "sweeps.json is not S5's" in capsys.readouterr().out and not (tmp_path / "v.npz").exists()
+
+
 def test_extract_refuses_another_e_u(tmp_path):
     repo = tmp_path / "repo"
     (repo / R.S5).parent.mkdir(parents=True)
