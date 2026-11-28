@@ -1,7 +1,7 @@
-# COVFIX PG seal and ledger: follow-ups carried forward (cov2d, 2026-11-27)
+# COVFIX PG seal and ledger: follow-ups carried forward (cov2d, 2026-11-27, updated 2026-11-28)
 
-These are the items from the PG seal and ledger reads that the director ruled non-blocking (ruling on round 6,
-2026-11-27). The scope rule: after round 6, only a finding that could change a published number or a gate's acceptance,
+These are the items from the PG seal and ledger reads that the director ruled non-blocking (rulings of 2026-11-27 and
+2026-11-28), and one that cov2d classed as non-blocking under the same rule (item 3). The scope rule: after round 6, only a finding that could change a published number or a gate's acceptance,
 or cause a false STOP of a correct run, blocks; everything else comes here. Each item is closed in the code chain that
 owns it, with its own test and mutant, or kept with a reason.
 
@@ -31,3 +31,16 @@ owns it, with its own test and mutant, or kept with a reason.
    showed the intended behavior (`reads/codex2-r5/REPRO-r5.txt`, last block). The fix is to add that check as a test
    with a mutant, for example one removing the `max(...)` mark, in the next code chain that touches covfix_pg.py. It
    only acts on a run that is already failing. (cov2d, round 6 receipt run, 2026-11-28)
+
+4. **gpgconf is not re-verified at the cleanup exec.** Round 6 hashes gpg and gpgconf at gpg_run's entry, before the
+   SIGTERM hold, and cleanup runs gpgconf by that verified path. If gpgconf is replaced during the final gpg call,
+   that run does not detect it. Cleanup runs it on the throwaway home only, and the next run's entry verify refuses
+   it. No sealed byte depends on gpgconf; PV checks the sealed bytes with its own pinned gpg. The director ruled it
+   non-blocking on 2026-11-28 (a 16 h receipt run for a seconds-long window that cannot move a sealed byte is not
+   proportionate). A fix for a later chain: after cleanup, with no SIGTERM pending, re-verify gpgconf and refuse on
+   a change, with a test and a mutant. (codex-school2 round 6, "Major"; `reads/codex2-r6/REPORT.md`)
+5. **The trap's hashes after a walk error.** If walking W fails partway (an inaccessible directory, not one unreadable
+   file), `plaintext_hashes` raises and the trap discards the hashes it had already collected, so the scratch scan
+   cannot recognize a spill naming those files, and a scratch sums file can be left behind. PG still refuses the run.
+   The fix is to return the partial set along with the failure, with a test and a mutant. The director ruled it
+   non-blocking on 2026-11-28. (codex-school2 round 6, row 5 PARTIAL and non-blocking item 1)

@@ -207,6 +207,13 @@ must be absolute and fully resolved. Each binary is hashed through a file descri
 the start of every gpg call, before its SIGTERM hold begins, so nothing is hashed while a SIGTERM waits (round 6). A mismatch, for example after a NERSC update, is a STOP and a rebinding, never a
 fallback. The exec is by path after the hash, the same residual window as above.
 
+**The pin gate's window at cleanup (round 6, the director's ruling of 2026-11-28).** gpgconf is verified at the
+start of each gpg call, not again when cleanup runs it. If gpgconf is replaced during the final gpg call, for example
+by a site update, that run does not detect it. Cleanup runs the replacement on the throwaway home only, to shut the
+agent down after gpg has written the ciphertext. The next run's entry check refuses it. No sealed byte depends on
+gpgconf: PV checks the sealed bytes with its own pinned gpg. Round 5 re-hashed gpgconf at cleanup; round 6 moved that
+hash before the SIGTERM hold, which opened this window (`FOLLOWUPS.md` item 4).
+
 Each call gets a fresh GNUPGHOME under /dev/shm: under 80 characters, mode 700, and never under $SCRATCH. The binary
 kills gpg-agent with it and removes it. An agent shutdown or a removal that cannot be confirmed is a role failure. ~/.gnupg is never touched.
 
