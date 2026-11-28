@@ -1,0 +1,8 @@
+# regenA4 e (2026-11-28T06:55:19Z): W=02ae86003006bcaf50c1f509b45d84256bc17d81 X=/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7e3f49f7-e8e4-452d-b380-399d4f6c529e/scratchpad/wtFF/docs/orchestration/state/ibu-chi2-20261123/tier1/units/e/er.root
+fig2 rc=0
+fig3 rc=0
+slices markers rc=0
+strip MEFHC_5iter_xsec_paper_pt_slices rc=0
+strip MEFHC_5iter_xsec_paper_pz_slices rc=0
+tension rc=0
+# done e (2026-11-28T06:56:43Z) rc_all=0

@@ -1,0 +1,9 @@
+# Part (c): the two tension figures at about 8 pt printed. Each is included at 0.49 \textwidth = 3.185 in
+# (appC_supplementary.tex), so the canvas width stays 3.185 in and a size in points prints at that size. The
+# producer's restyle base (diagnose_tension.py:275, rs.apply(6.5)) draws labels at 6.5 pt and ticks at 5.5 pt; the
+# scale 8.5/6.5 brings the labels to 8.5 pt and the floor raises the ticks (7.2 pt after the scale) to 8.0 pt, the
+# sizes Fig. 2's composer prints (note-figround-20261121/tools/compose_fig2_round.py: 8.5 pt labels, 8.0 pt ticks).
+# The height grows so that the larger text fits; both are the same height, as they print side by side.
+figure	width_in	height_in	text_scale	text_floor_pt
+tension_spectrum	3.185	3.4	1.3077	8.0
+tension_chi2_map	3.185	3.4	1.3077	8.0

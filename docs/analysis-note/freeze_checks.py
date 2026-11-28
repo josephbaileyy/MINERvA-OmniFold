@@ -32,9 +32,13 @@ The defaults are main_note.pdf, main_note.aux and the .tsv files in --note-dir (
 6. BUILD TESTS. test_build_all.py in --note-dir; its failing tests are named.
 7. ACCENTS. No accented letter in the NEW PDF text that the base PDF does not print, and never "ś" (a possessive written
    \\'s prints so); and no \\'s on a printed source line of the closure.
-5. FONTS. pdffonts, page by page: a sans-serif font may appear only on the pages of the figures allowed one
-   (SANS_ALLOWED; the plan: base Figs. 6, 17, 18, 33 = fig:eff, fig:eavail-marg, fig:calibration,
-   fig:negweight-ratio). Monospace fonts are listed, not failed.
+5. FONTS. pdffonts, page by page: a sans-serif font embedded by a FIGURE (a name SANS_RE matches that is also one of
+   the figure fonts FIGURE_FONT_RE names: matplotlib's DejaVu Sans, Arial, Helvetica, Liberation Sans) may appear only on
+   the pages of the figures allowed one (SANS_ALLOWED), and fails the check anywhere else. SANS_ALLOWED is empty since
+   note-figfonts-20261128 (2026-11-28) drew the last two sans-serif figures, fig:eavail-marg and fig:negweight-ratio, in
+   the note's serif fonts; fig:eff and fig:calibration had left the note, and a label named there that is not in the
+   aux fails the check. TeX's own sans fonts (CMSS, the \mathsf T of a transpose in the prose's math) are not figure
+   fonts: they are listed page by page, not failed, as monospace fonts are (the director's ruling of 2026-11-28).
 """
 from __future__ import annotations
 
@@ -50,7 +54,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 SPELLING_REV = "6f1e59ca4"
 SPELLING_PATH = "docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/check_spelling_us.py"
-SANS_ALLOWED = ("fig:eff", "fig:eavail-marg", "fig:calibration", "fig:negweight-ratio")
+SANS_ALLOWED = ()   # no figure may print a sans-serif font (note-figfonts-20261128)
 SANS_RE = re.compile(r"(Sans(?!Mono)|Helvetica|Arial|CMSS|SFSS|LMSans|cmss|Gothic|Verdana)", re.I)
 MONO_RE = re.compile(r"(Mono|Courier|CMTT|SFTT|LMMono)", re.I)
 EXCLUDED_INPUTS = re.compile(r"^(preamble|values[a-z_]*)\.tex$")     # definitions only, no printed prose
@@ -443,31 +447,39 @@ def page_fonts(pdf: Path, p: int) -> list[str]:
     return [l.split()[0] for l in out if l.strip()]
 
 
+def pdf_pages(pdf: Path) -> int:
+    return int(re.search(r"Pages:\s+(\d+)", subprocess.run(["pdfinfo", str(pdf)], capture_output=True, text=True,
+                                                          check=True).stdout).group(1))
+
+
 def check_fonts(new_pdf: Path, aux: Path):
     labs = aux_pages(aux)
     allowed = {labs[l] for l in SANS_ALLOWED if l in labs}
     missing = [l for l in SANS_ALLOWED if l not in labs]
-    npages = int(re.search(r"Pages:\s+(\d+)", subprocess.run(["pdfinfo", str(new_pdf)], capture_output=True,
-                                                                 text=True, check=True).stdout).group(1))
+    npages = pdf_pages(new_pdf)
     by_page = collections.defaultdict(list)
     for l, p in labs.items():
         if l.startswith("fig:"):
             by_page[p].append(l)
-    lines, bad, mono = [], 0, []
+    lines, bad, mono, tex_sans = [], 0, [], []
     for p in range(1, npages + 1):
-        fonts = page_fonts(new_pdf, p)
-        sans = sorted({f.split("+")[-1] for f in fonts if SANS_RE.search(f)})
-        ms = sorted({f.split("+")[-1] for f in fonts if MONO_RE.search(f)})
+        names = {f.split("+")[-1] for f in page_fonts(new_pdf, p)}
+        sans = sorted(n for n in names if SANS_RE.search(n) and FIGURE_FONT_RE.match(n))
+        ts = sorted(n for n in names if SANS_RE.search(n) and not FIGURE_FONT_RE.match(n))
+        ms = sorted(n for n in names if MONO_RE.search(n))
         if ms:
             mono.append(f"p.{p} {','.join(ms)}")
+        if ts:
+            tex_sans.append(f"p.{p} {','.join(ts)}")
         if sans and p not in allowed:
             bad += 1
             lines.append(f"  sans on p.{p}: {', '.join(sans)}; figures there: {', '.join(by_page.get(p, [])) or 'none'}")
     if missing:
         lines.append(f"  allowed labels not in the aux: {missing}")
     lines.append(f"  (listed, not failed) monospace: {'; '.join(mono[:12])}{' ...' if len(mono) > 12 else ''}")
-    lines.append(f"FONTS :: {'PASS' if not bad and not missing else 'FAIL'} ({bad} page(s) with a sans font outside "
-                 f"the allowed figures' pages {sorted(allowed)})")
+    lines.append(f"  (listed, not failed) TeX sans, not a figure font: {'; '.join(tex_sans) or 'none'}")
+    lines.append(f"FONTS :: {'PASS' if not bad and not missing else 'FAIL'} ({bad} page(s) with a figure's sans font "
+                 f"outside the allowed figures' pages {sorted(allowed)})")
     return (not bad and not missing), lines
 
 # ---------------------------------------------------------------- 6. build tests

@@ -1,0 +1,8 @@
+nw_remote mode=pscratch host=login25 utc=2026-11-28T06:57:03Z
+fence sacct rc=0 rows=119 since 2026-11-14
+fence squeue rc=0 rows=0
+FENCE CLEAR (0 other active job(s) listed above, none of a protected family)
+node-read 2d-unfolding/HANDOFF_bkg_negweight/runs/2d_xsec_purity_seed1_hist5.root bytes=55578 sha256=e8adc1179e3d85bec32f3a9842e5e2ce3366981f9246c251c7e9bdf72ffff91e atime_ns pre=1791191415000000000 post=1791191415000000000 mtime_ns pre=1783478008000000000 post=1783478008000000000 UNCHANGED
+node-read 2d-unfolding/HANDOFF_bkg_negweight/runs/2d_xsec_negweight_seed1_hist5.root bytes=55565 sha256=2624448dd7608bb33c43fbb8ff4648a4d7b4831515a698212d000079ac0083c8 atime_ns pre=1789007544000000000 post=1789007544000000000 mtime_ns pre=1783477984000000000 post=1783477984000000000 UNCHANGED
+nw_remote: pscratch payload written to stdout (2 members)
+nw_remote: payload rc=0 utc=2026-11-28T06:57:04Z

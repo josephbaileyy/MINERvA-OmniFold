@@ -39,7 +39,9 @@ run MEFHC_5iter_eff_fig5.png         2d-unfolding  python plot_efficiency_fig5_s
 run MEFHC_5iter_xsec_paper_pt_slices.png 2d-unfolding python plot_2d_paper_comparison.py --infile "$CV42"
 run MEFHC_5iter_xsec_proj_pt.png     2d-unfolding  python plot_2d_cross_section.py --infile "$CV42" --prefix MEFHC_5iter_xsec
 run MEFHC_5iter_pull_full.png        2d-unfolding  python compare_to_paper_fullcov.py --ours "$CV42"
-run ../docs/analysis-note/figures/negweight_ratio_2d.pdf 2d-unfolding python plot_negweight_ratio.py
+# 2026-11-28 (note-figfonts-20261128): --print-style, the note's print style; the installed file is that record's copy,
+# installed below after the sync loop (install_current_fig negweight_ratio_2d.pdf).
+run ../docs/analysis-note/figures/negweight_ratio_2d.pdf 2d-unfolding python plot_negweight_ratio.py --print-style
 run model_comp_projections.png       2d-unfolding  python compare_to_models.py --ours "$CV42"
 run tension_spectrum.png             2d-unfolding  python diagnose_tension.py --ours "$CV42"
 
@@ -510,7 +512,9 @@ install_current_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     4216003cfe47d376b97
 install_current_fig control_corner.pdf                       f077a7a9cb052cdc02df0195d6c62c821471ab52490c36673939508b8d88d89d
 install_current_fig control_plots.pdf                        8910181e147c32515159f477e7e6864870c5c1f46aa64638c55d2bcd447f098c
 install_current_fig eavailW_band.pdf                         9e71e493612596634584adf57993d0bd2649373c25028141882a740359655d52
+# layered (2026-11-28): overridden later in this run by install_current_fig eavail_marginal_vs_paper_pull_full.pdf (e0de179e4cfc4e05...), the figure in the note's serif fonts, with Fig. 3's GeV/c axis labels
 install_current_fig eavail_marginal_vs_paper_pull_full.pdf   7f272d2639db72b2cecec5ada11d4bf4e0da470703f2729189bed86c880f0cb9
+# layered (2026-11-28): overridden later in this run by install_current_fig mode_decomp_mec_eavail_central.pdf (fd05d1f082cb215e...), the file 430b42db2 installed (legend "Unfolded − GENIE CV"), pinned
 install_current_fig mode_decomp_mec_eavail_central.pdf       b56f4d90b1047b8aa8842bf47534d457848208d97c201f3fd3e60ca2f32d2f0c
 # install_current_fig q3_excess_projection.pdf               2c836ace97c0c36d811f698d9aa6652ff8f8b38867abb6ec6d149841029f8222   (symmetric ratio scale in note-figscales-20261125 below)
 
@@ -560,20 +564,28 @@ install_regena4_fig() {  # install_regena4_fig <basename in $FIGDIR> <dir under 
   fi
   echo "  installed $1 ($want)"
 }
+# layered (2026-11-28): overridden later in this run by install_current_fig MEFHC_5iter_xsec_proj_pt.pdf (711e2e439f0ca8e7...), the figure with TrueType fonts
 install_regena4_fig MEFHC_5iter_xsec_proj_pt.pdf           a4b/e  82c0d63fc612b196d5a1abb0a187a0392f2ea791ac49011f7558ea94826cdf00
 install_regena4_fig MEFHC_5iter_xsec_proj_pz.pdf           a4b/e  4d73ab9210fabf569d126d196ef205b7030257f66996a349657f5615d0a34a1d
+# layered (2026-11-28): overridden later in this run by install_current_fig MEFHC_5iter_pull_full.pdf (2625646d5392a848...), 430b42db2's GeV/c-labelled figure with TrueType fonts
 install_regena4_fig MEFHC_5iter_pull_full.pdf              e      8787db1e91688b4faa53088e0ef1f304fead8ff6d4de907e368efbab49bd884c
 install_regena4_fig MEFHC_5iter_xsec_paper_pt_slices.pdf   e      9fca64a7779ce4f913325b3e551a2b3653fa09e47748ac9bb5608dcb0a0eee8b
 install_regena4_fig MEFHC_5iter_xsec_paper_pz_slices.pdf   e      4d56eb9b5033b855a9c9ea0f83a8829bffccd5ae6f0f6def563b04bfe6ab3bb1
+# layered (2026-11-28): overridden later in this run by install_current_fig tension_spectrum.pdf (dd195ec57b8038d9...), the figure at about 8 pt, with TrueType fonts
 install_regena4_fig tension_spectrum.pdf                   e      f25ee7d28384cfac6f77dd35844db86ffa7ad31d5b99ab1586d48fdb3aa9772f
+# layered (2026-11-28): overridden later in this run by install_current_fig tension_chi2_map.pdf (7d4b3d24fee983bf...), the figure at about 8 pt, with TrueType fonts
 install_regena4_fig tension_chi2_map.pdf                   e      affa1fefae38443f12d28ea938149d57943a83f309210e20810a448966808427
+# layered (2026-11-28): overridden later in this run by install_current_fig tension_mode_maps.pdf (d302f68cda4acf29...), the figure with TrueType fonts
 install_regena4_fig tension_mode_maps.pdf                  e      fe405d2fcab8f55e74c2ab37ff42dd83421fc0352f58db77d9c9ba1805b1869d
 
 # MINERvA Tune v1 labels on the current figure recipes. See note-tune-v1-legends-20261126/README.md.
 NFR="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-tune-v1-legends-20261126/figs"
 install_current_fig MEFHC_5iter_xsec_paper_pt_slices.pdf     846be3bd1647c14b5cb525626e129aa6753c03547681f432842c8b55afdadc5f
+# layered (2026-11-28): overridden later in this run by install_current_fig MEFHC_5iter_xsec_paper_pz_slices.pdf (c7c160407ba36202...), the figure with TrueType fonts
 install_current_fig MEFHC_5iter_xsec_paper_pz_slices.pdf     4e9560615d51839562cdf65e1399467110db220435cebe5c4fd1256a8cee8cf2
+# layered (2026-11-28): overridden later in this run by install_current_fig MEFHC_5iter_xsec_proj_pz.pdf (44c6ee4e61a14552...), the figure with TrueType fonts
 install_current_fig MEFHC_5iter_xsec_proj_pz.pdf             f50545b425446f4dc3b762a14f3714af8574c80778b5faf310437843bc2962ae
+# layered (2026-11-28): overridden later in this run by install_current_fig control_plots.pdf (2c2ae1cc41b90f1d...), the file 430b42db2 installed (Fig. 1 overflow labels), pinned
 install_current_fig control_plots.pdf                       65353e3acff2b22db326dd85dc766d9d981e5450d19edc2b4270d93e91be59f3
 install_current_fig generators_vs_unfolded_band_central.pdf 5757bd67f2ce7a37e53479a6c41daf9c280c96fa4e5ecf160a514ca5cee32378
 install_current_fig paper_fig2_joint.pdf                    9023625a876bd5ca6071fbc1f0b55de672f8a5b2609ff3e56a573f8e91d45fd5
@@ -587,6 +599,25 @@ install_current_fig q3_excess_projection.pdf                c36d48dd624b3bf268cf
 NFR="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-vffigs-20261126/figs"
 install_current_fig fived16_headline.pdf                    7700c4d474b3857d4485699803cbe50c1c7b23483624c1b58072797f6035e297
 install_current_fig fived16_genresidual.pdf                 4400bd70a3454b23d28e4b1c1f3885a60d2e48cdc6472f5722c5db59abb12b35
+
+# 2026-11-28 (the figure-consistency pass; Joseph's go via the director): TrueType fonts for the 2D figures drawn in the
+# paper fonts (restyle_2026_10.PRINT_FONT gains "pdf.fonttype": 42), the two tension figures at about 8 pt, and the
+# last two sans-serif figures (eavail marginal, negative-weight ratio) in the note's serif fonts. Presentation only:
+# every plotted array is equal to its unchanged recipe's. Also pins control_plots and mode_decomp_mec_eavail_central
+# as 430b42db2 installed them, which no line here did. Record: note-figfonts-20261128/README.md (recipes, checks).
+# MEFHC_5iter_xsec_paper_pt_slices.pdf is not here: the readability pass redraws it.
+NFR="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/note-figfonts-20261128/figs"
+install_current_fig MEFHC_5iter_xsec_proj_pt.pdf            711e2e439f0ca8e753819ba3ee23436c7f7b4b8ad9a44606898b876d02df412f
+install_current_fig MEFHC_5iter_xsec_proj_pz.pdf            44c6ee4e61a1455212dca13effea56578ffa4241c80abf17960d34ff9e4e0aac
+install_current_fig MEFHC_5iter_pull_full.pdf               2625646d5392a84830b51a4964c7dc0f89df17cd3c3ccc36c2da752e9faaf5a7
+install_current_fig MEFHC_5iter_xsec_paper_pz_slices.pdf    c7c160407ba36202152d40b6171ad5f23b4fb65df33b3cf5621c88bfed4089ff
+install_current_fig tension_spectrum.pdf                    dd195ec57b8038d972f5d3dff7530309cef2d4fa5e14fb7ef7b9322892debdc0
+install_current_fig tension_chi2_map.pdf                    7d4b3d24fee983bff0ef5236fb09d05784d6717adbd29b65678a16e267164d73
+install_current_fig tension_mode_maps.pdf                   d302f68cda4acf2919c37f3a5f5055bcb5da030b64a420cd7360d76d77b00219
+install_current_fig eavail_marginal_vs_paper_pull_full.pdf  e0de179e4cfc4e057e640f22989c404fde50c1a13cb645a88ba0b8ca92acc199
+install_current_fig negweight_ratio_2d.pdf                  32e9d2bd599e7200ccf0ae339918906f104b4fccd2743af92f23776b7e07c8c1
+install_current_fig control_plots.pdf                       2c2ae1cc41b90f1d188039ed0d4312e0a37b0f712803dfb07023495a6c89cc1c
+install_current_fig mode_decomp_mec_eavail_central.pdf      fd05d1f082cb215e2c5a7e16da271a5adc8c561f6d783dfe022f7b6c3eb3caaa
 
 echo
 echo "== paper-only vector crops =="

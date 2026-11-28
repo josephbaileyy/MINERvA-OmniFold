@@ -1,0 +1,52 @@
+# base 02ae86003006 (02ae86003006bcaf50c1f509b45d84256bc17d81)
+== (a) arm 0 (regenA4_run.sh at W, PRINT_FONT unchanged) against the installed file, date masked
+  ok   arm0 MEFHC_5iter_xsec_proj_pt: EQUAL-MOD-DATE MEFHC_5iter_xsec_proj_pt.pdf: lengths 27987 27987
+  ok   arm0 MEFHC_5iter_xsec_proj_pz: EQUAL-MOD-DATE MEFHC_5iter_xsec_proj_pz.pdf: lengths 33810 33804
+  ok   arm0 MEFHC_5iter_pull_full: EQUAL-MOD-DATE MEFHC_5iter_pull_full.pdf: lengths 22513 22507
+  ok   arm0 MEFHC_5iter_xsec_paper_pt_slices: EQUAL-MOD-DATE MEFHC_5iter_xsec_paper_pt_slices.pdf: lengths 106347 106341
+  ok   arm0 MEFHC_5iter_xsec_paper_pz_slices: EQUAL-MOD-DATE MEFHC_5iter_xsec_paper_pz_slices.pdf: lengths 110009 110003
+  ok   arm0 tension_spectrum: EQUAL-MOD-DATE tension_spectrum.pdf: lengths 27185 27185
+  ok   arm0 tension_chi2_map: EQUAL-MOD-DATE tension_chi2_map.pdf: lengths 24189 24189
+  ok   arm0 tension_mode_maps: EQUAL-MOD-DATE tension_mode_maps.pdf: lengths 45825 45825
+== (a) arm 1 (PRINT_FONT + pdf.fonttype 42) against arm 0: arrays, artist index, texts (sizes included)
+  ok   arm1 MEFHC_5iter_xsec_proj_pt: EQUAL MEFHC_5iter_xsec_proj_pt.pdf: 75 arrays, 18 index entries; data sha256 90ec577d14ea6656d5a74cf69bd8d24984a52e7749e9cced397f26df34e03fd6
+  ok   arm1 MEFHC_5iter_xsec_proj_pt fonts: DejaVuSerif CID TrueType, Cmmi10 CID TrueType, Cmr10 CID TrueType, Cmsy10 CID TrueType
+  ok   arm1 MEFHC_5iter_xsec_proj_pz: EQUAL MEFHC_5iter_xsec_proj_pz.pdf: 75 arrays, 18 index entries; data sha256 cbdecf3eb74cb67e883afea5e39133364b3aa43989957e220f48b4b1d258ef05
+  ok   arm1 MEFHC_5iter_xsec_proj_pz fonts: DejaVuSerif CID TrueType, STIXGeneral-Regular CID TrueType, Cmmi10 CID TrueType, Cmr10 CID TrueType, Cmsy10 CID TrueType
+  ok   arm1 MEFHC_5iter_pull_full: EQUAL MEFHC_5iter_pull_full.pdf: 102 arrays, 31 index entries; data sha256 f8c0ed075e1543897c9f43b02ae27fabb8d831cd8a2e09f71515c32c5cecb4d8
+  ok   arm1 MEFHC_5iter_pull_full fonts: DejaVuSerif CID TrueType, STIXGeneral-Regular CID TrueType, Cmmi10 CID TrueType
+  ok   arm1 MEFHC_5iter_xsec_paper_pt_slices: EQUAL MEFHC_5iter_xsec_paper_pt_slices.pdf: 882 arrays, 210 index entries; data sha256 fa137243293a780573991d9442d18fd4e6fa2a8b2020716ae286c1915f5300df
+  ok   arm1 MEFHC_5iter_xsec_paper_pt_slices fonts: DejaVuSerif CID TrueType, Cmmi10 CID TrueType, Cmr10 CID TrueType, STIXGeneral-Regular CID TrueType, Cmsy10 CID TrueType
+  ok   arm1 MEFHC_5iter_xsec_paper_pz_slices: EQUAL MEFHC_5iter_xsec_paper_pz_slices.pdf: 1008 arrays, 240 index entries; data sha256 ca97e514d18ce98490597ef6fdb95973a08242c18e49560ac28c1d17591e57e8
+  ok   arm1 MEFHC_5iter_xsec_paper_pz_slices fonts: DejaVuSerif CID TrueType, Cmmi10 CID TrueType, Cmr10 CID TrueType, STIXGeneral-Regular CID TrueType, Cmsy10 CID TrueType
+  ok   arm1 tension_spectrum: EQUAL tension_spectrum.pdf: 12 arrays, 3 index entries; data sha256 20e1b836f0f7e37291dcd20065a08efb137ae7d8b713f5993a6f5d74be4fa2f2
+  ok   arm1 tension_spectrum fonts: DejaVuSerif CID TrueType, Cmmi10 CID TrueType, Cmr10 CID TrueType
+  ok   arm1 tension_chi2_map: EQUAL tension_chi2_map.pdf: 17 arrays, 3 index entries; data sha256 71d726870353a3a6d92bc401fb9f6f8eeca00e0899c12ec03d57793e3dbc315b
+  ok   arm1 tension_chi2_map fonts: DejaVuSerif CID TrueType, STIXGeneral-Regular CID TrueType, Cmmi10 CID TrueType, Cmr10 CID TrueType
+  ok   arm1 tension_mode_maps: EQUAL tension_mode_maps.pdf: 102 arrays, 18 index entries; data sha256 7d95bedd36abccd68da74f436361ca21933140c9c5ef79c237da229ce4f64173
+  ok   arm1 tension_mode_maps fonts: DejaVuSerif-Bold CID TrueType, DejaVuSerif CID TrueType, STIXGeneral-Regular CID TrueType, Cmmi10 CID TrueType
+== (c) tension_spectrum, tension_chi2_map at about 8 pt (run_tension_c.sh) against arm 1
+  ok   armc tension_spectrum data and strings: EQUAL tension_spectrum.pdf: 12 arrays, 3 index entries; data sha256 20e1b836f0f7e37291dcd20065a08efb137ae7d8b713f5993a6f5d74be4fa2f2
+  ok   armc tension_spectrum sizes: canvas 3.185 x 2.6 in -> 3.185 x 3.4 in; text min/median 5.5/5.5 pt -> 8.0/8.0 pt (printed at 3.185 in)
+  ok   armc tension_spectrum overlaps (saved file): tension_spectrum.pdf: 52 words, 0 overlapping pairs []
+  ok   armc tension_chi2_map data and strings: EQUAL tension_chi2_map.pdf: 17 arrays, 3 index entries; data sha256 71d726870353a3a6d92bc401fb9f6f8eeca00e0899c12ec03d57793e3dbc315b
+  ok   armc tension_chi2_map sizes: canvas 3.185 x 2.6 in -> 3.185 x 3.4 in; text min/median 5.5/5.5 pt -> 8.0/8.0 pt (printed at 3.185 in)
+  ok   armc tension_chi2_map overlaps (saved file): tension_chi2_map.pdf: 31 words, 0 overlapping pairs []
+  ok   armc tension_mode_maps unchanged: EQUAL tension_mode_maps.pdf: 102 arrays, 18 index entries; data sha256 7d95bedd36abccd68da74f436361ca21933140c9c5ef79c237da229ce4f64173
+  ok   armc tension_mode_maps file: EQUAL-MOD-DATE tension_mode_maps.pdf: lengths 46230 46230
+== (b) eavail_marginal_vs_paper_pull_full (run_eavail.sh)
+  ok   eav0 (HOUSEFONT=0) against the installed file: EQUAL-MOD-DATE eavail_marginal_vs_paper_pull_full.pdf: lengths 33551 33551
+  ok   eav1 (main's producer, HOUSEFONT=1) against eav0: arrays and artist index equal; the only string changes are the heat map's axis and tick labels, now Fig. 3's (GeV/c), and the statistics box's rms= : DIFFER (drawn strings) eavail_marginal_vs_paper_pull_full.pdf: 111 arrays, 34 index entries; data sha256 7abc57c25aacf436cb22bb60da11e002ca1c3a5a0dc57b5a1596c228f67dd617; removed ['$p_T$ bin', '$p_\\parallel$ bin', '0', '10', '12', '12', '14', '14', '16', '2', '2', '4', '4', '6', '8', 'mean=0.16 rms =0.83 $\\chi^2$/ndf paper = 4.98']; added ['$p_T$ (GeV/c)', '$p_\\parallel$ (GeV/c)', '0.4', '1', '1.5', '2.5', '20', '3.5', '4.5', '4.5', '60', 'mean=0.16 rms=0.83 $\\chi^2$/ndf paper = 4.98']
+  ok   eav0 printed values: chi2/ndf 4.981, mean/rms 0.159/0.828
+  ok   eav1 printed values: chi2/ndf 4.981, mean/rms 0.159/0.828
+  ok   eav1 fonts: no sans, no Type 3: DejaVuSerif CID TrueType, Cmmi10 CID TrueType, STIXGeneral-Regular CID TrueType, Cmr10 CID TrueType, Cmsy10 CID TrueType
+  ok   eav1 overlaps (saved file): eavail_marginal_vs_paper_pull_full.pdf: 52 words, 0 overlapping pairs []
+== (b) negweight_ratio_2d (run_negweight.sh, on the fetched inputs)
+  ok   nw0 (default) against the installed file: the same words: 33 words
+  ok   nw0 against the installed file: page size: 345.6 x 273.6 pts
+  info nw0 is not byte-equal to the installed file (2026-07-14, 4e8033eef; no reproduction record): its colour bar and tick labels sit about 1.8 pt to the right (pdftotext -bbox); words, page size and the map are the same
+  ok   nw1 (--print-style) against nw0: arrays and artist index equal; the only string changes are the two axis labels: DIFFER (drawn strings) negweight_ratio_2d.pdf: 21 arrays, 3 index entries; data sha256 ca5e7682f3aed56fbbe6bc0330df837458939b53e16fe934096912fae996bdeb; removed ['p$_T$ (GeV/c)', 'p$_{||}$ (GeV/c)']; added ['$p_T$ (GeV/$c$)', '$p_\\parallel$ (GeV/$c$)']
+  ok   nw1 plotted ratio against values.tex: 178 bins; from the plot {'nwMedianBin': '1.000', 'nwRmsBin': '1.4', 'nwWorstBin': '-12.6'}; values.tex {'nwMedianBin': '1.000', 'nwRmsBin': '1.4', 'nwWorstBin': '-12.6'}
+  ok   nw1 fonts: no sans, no Type 3: DejaVuSerif CID TrueType, STIXGeneral-Regular CID TrueType, Cmmi10 CID TrueType
+  ok   nw1 overlaps (saved file): negweight_ratio_2d.pdf: 34 words, 0 overlapping pairs []
+CHECKS :: PASS
