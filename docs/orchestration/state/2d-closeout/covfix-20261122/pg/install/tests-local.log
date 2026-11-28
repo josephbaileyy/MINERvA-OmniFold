@@ -35,6 +35,6 @@ test_the_kept_records_are_checked_on_every_path (test_pg_install.Replay.test_the
 test_the_runners_own_result_passes_the_launcher (test_pg_install.Replay.test_the_runners_own_result_passes_the_launcher) ... ok
 
 ----------------------------------------------------------------------
-Ran 35 tests in 42.813s
+Ran 35 tests in 34.227s
 
 OK
