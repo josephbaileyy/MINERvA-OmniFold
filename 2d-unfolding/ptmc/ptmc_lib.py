@@ -107,11 +107,14 @@ def c_star(t_star_all, t_star_orig, t_cv_orig, d_cv, c_cv) -> dict:
     c = c_cv.copy()
     c[lost] = 0.0
     live = ~keep & ~lost
-    d_star = d_cv[live] * t_star_orig[live] / t_cv_orig[live]
-    c[live] = np.divide(t_star_all[live], d_star, out=np.zeros_like(d_star), where=d_star != 0)
+    with np.errstate(over="ignore", under="ignore", divide="ignore", invalid="ignore"):
+        d_star = d_cv[live] * t_star_orig[live] / t_cv_orig[live]
+    d_ok = bool(np.all(np.isfinite(d_star)) and np.all(d_star > 0))  # a live cell's D* is finite and positive (B10)
+    c[live] = np.divide(t_star_all[live], d_star, out=np.zeros_like(d_star), where=(d_star > 0) & np.isfinite(d_star))
     return {"c_star": c, "n_keep_cv": int(keep.sum()), "n_lost_support": int(lost.sum()),
             "n_lost_with_moved_weight": int((lost & (t_star_all > t_star_orig)).sum()),
-            "n_one_sided": int(one_sided.sum()), "finite": bool(np.all(np.isfinite(c)) and not one_sided.any())}
+            "n_one_sided": int(one_sided.sum()), "live_denominators_ok": d_ok,
+            "finite": bool(np.all(np.isfinite(c)) and not one_sided.any() and d_ok)}
 
 
 def rel_close(a, b, rtol) -> dict:
@@ -242,8 +245,10 @@ def statement(r1: str, disp: str, b: str | None) -> dict:
     if disp != "formed" or b not in WORDS:
         raise ValueError(f"PTMC-B {b!r} with B {disp!r}")
     if b != "differ":
-        return {"row": 3, "text": f"Under R the paired test reads {r1}; the matched baseline reads {b}, so it does not "
-                                  "reproduce the original's differ and no change of reading is stated."}
+        # section 5: B is named as "the production convention, in REF-C2C1's separate-refit protocol" (codex 23)
+        return {"row": 3, "text": f"{PROTO_R[0].upper() + PROTO_R[1:]}, the paired test reads {r1}; {PROTO_B}, on the "
+                                  f"same draws, N and rank, it reads {b}. That arm does not reproduce the original's "
+                                  "differ, so no change of reading is stated."}
     if r1 == "differ":
         return {"row": 1, "text": "Under OOFVC's R reclassification, binned IBU and 2D OmniFold stay distinguishable by "
                                   f"the paired test: it reads differ {PROTO_R}, as it does {PROTO_B} on the same "
@@ -411,6 +416,9 @@ def unit_receipt(units, name: str) -> dict:
         bad += sorted(c for c, v in ctl.items() if not (isinstance(v, dict) and v.get("pass") is True))
         if bad:
             return {"ok": False, "why": f"controls {sorted(set(bad))}"}
+        # C-ROO's pass means the bound RooUnfoldBayes ran and agreed; only the tests' numpy unfolder skips it (B11)
+        if meta.get("unfolder") != "numpy unfolder" and ctl["C-ROO"].get("ran") is not True:
+            return {"ok": False, "why": "C-ROO did not run"}
         return {"ok": True, "why": "", "meta": meta}
     except (OSError, ValueError, KeyError, TypeError) as e:
         return {"ok": False, "why": f"unreadable: {type(e).__name__}: {e}"}

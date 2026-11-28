@@ -57,10 +57,24 @@ def parse_unit(name: str) -> tuple[str, int | None]:
     conv, b = m.group(1), (int(m.group(3)) if m.group(3) else None)
     if b is not None and b not in SEEDS[conv]:
         raise ValueError(f"unit {name}: seed {b} is outside the declared set for {conv}")
+    if name != (f"p_{conv}_c" if b is None else f"p_{conv}_b{b}"):  # one spelling per unit: no p_R_b01 (codex 11)
+        raise ValueError(f"unit {name!r} is not the canonical spelling")
     return conv, b
 
 
+# the modules the runner imports from the deploy tree, checked byte for byte BEFORE import (make_tree.sh's RUNNER_SHA
+# and OOFVC_LIB_SHA; a test holds these equal to make_tree's)
+MODULE_PINS = {"2d-unfolding/ref_c2c1/ref_c2c1.py": "285dd138363d090a4ce5dea3361be81fada8680bd782b918e9d95198d1b5d6ea",
+               "2d-unfolding/oofvc/oofvc_lib.py": "a3df5569b3adfea06f544ae574238ab0d56123add2eb8d31a41a5b56558cb2b8"}
+
+
+def module_ok(tree: Path, rel: str) -> None:
+    if sha256(tree / rel) != MODULE_PINS[rel]:
+        raise RuntimeError(f"{rel} in the deploy tree is not its pin {MODULE_PINS[rel][:8]}")
+
+
 def import_runner(tree: Path):
+    module_ok(tree, "2d-unfolding/ref_c2c1/ref_c2c1.py")
     sys.path.insert(0, str(tree / "2d-unfolding" / "ref_c2c1"))
     import ref_c2c1 as C
     if Path(C.__file__).resolve().parent != (tree / "2d-unfolding" / "ref_c2c1").resolve():
@@ -69,6 +83,7 @@ def import_runner(tree: Path):
 
 
 def global_index_fn(tree: Path):
+    module_ok(tree, "2d-unfolding/oofvc/oofvc_lib.py")
     sys.path.insert(0, str(tree / "2d-unfolding" / "oofvc"))
     import oofvc_lib as L
     return L.global_index
@@ -264,11 +279,15 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
              inputs_verified: dict, gidx) -> int:
     conv, b = parse_unit(name)
     root, npz, marker = out / f"{name}.root", out / f"{name}.npz", out / f"{name}.done"
+    own = {"runner_sha256": sha256(Path(__file__).resolve()), "lib_sha256": sha256(HERE / "ptmc_lib.py"),
+           "code_sha256": cfg["code_sha256"], "inputs_sha256": inputs_verified}
     if npz.exists() or root.exists() or marker.exists():
-        # a unit is reused only if its marker is PASS, names it, and both products match the marker's digests
+        # a unit is reused only if its marker is PASS, names it, was made by this binding's code and inputs (B2), and
+        # both products match the marker's digests
         try:
             mk = json.loads(marker.read_text())
             ok = (mk.get("verdict") == "PASS" and mk.get("unit") == name and npz.is_file() and root.is_file()
+                  and all(mk.get(k) == v for k, v in own.items())
                   and sha256(npz) == mk.get("sha256") and sha256(root) == mk.get("root_sha256"))
         except (OSError, ValueError):
             ok = False
@@ -283,6 +302,12 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
               f"{threads}", file=sys.stderr)
         return RC_GATE
     out.mkdir(parents=True, exist_ok=True)
+    try:  # the unit's claim: its marker, created exclusively, says RUNNING until the verdict replaces it (B2)
+        with open(marker, "x") as fh:
+            fh.write(json.dumps({"unit": name, "verdict": "RUNNING"}) + "\n")
+    except FileExistsError:
+        print(f"refusing: {name} is claimed by another run", file=sys.stderr)
+        return RC_CONTROL
     cfg_u = copy.deepcopy(cfg)
     if conv == "R":
         cfg_u["e_r"]["argv"] = list(cfg["e_r"]["argv"]) + MINERVA_ARGV + [str(rows_path)]
@@ -403,7 +428,13 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
     controls["C-COMP"]["axes"] = axes_ok
     controls["C-COMP"]["pass"] = bool(controls["C-COMP"]["pass"] and axes_ok)
     # section 2.2's printed counts: structural-zero cells whose moved truth weight the extraction suppresses
-    suppressed = int(np.sum((ts["t_orig"] == 0) & (d_cv == 0) & (ts["t_all"] > ts["t_orig"]))) if conv == "R" else 0
+    # on an R replica, the moved weight that survives is the replica's own (its resampled truth weights; agy 8)
+    if conv == "R" and b is not None:
+        ws = cap["w_truth_seen"]
+        t_all_u, t_orig_u = P.cell_sums(ts["g"], ws, ts["pt_ok"]), P.cell_sums(ts["g"], ws, ts["pt_ok"] & ts["orig"])
+    else:
+        t_all_u, t_orig_u = ts["t_all"], ts["t_orig"]
+    suppressed = int(np.sum((ts["t_orig"] == 0) & (d_cv == 0) & (t_all_u > t_orig_u))) if conv == "R" else 0
     support_rec = None
     if b is None:
         # C-COUPLE: KNOWN_ISSUES 84's premise as an exact multiset identity per cell (the sums' agreement printed)
@@ -415,7 +446,7 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
             controls["C-COUPLE"] = P.coupling_exact(
                 gidx(td["truth_pt"], td["truth_pz"]), td["truth_pt"], td["truth_pz"], td["w_truth"],
                 np.where(m, ts["g"], -1), sig_cv["truth_pt"], sig_cv["truth_pz"], sig_cv["w_truth"])
-            controls["C-COUPLE"]["sums"] = P.coupling(ts["t_orig"], d_cv)
+            controls["C-COUPLE"]["sums"] = P.coupling(ts["t_orig"], d_cv)  # the driver's D_CV against T_orig (B10)
             # the input's hasTruthOnlyMisses, read as the driver reads it: bool(int(...)), i.e. non-zero (hadd sums the
             # per-playlist flag: 12 on 43f8cc16, receipts/couple/run2)
             import ROOT
@@ -424,7 +455,8 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
             flag = int(par.GetVal()) if par else 0
             fcv.Close()
             controls["C-COUPLE"]["hasTruthOnlyMisses"] = flag
-            controls["C-COUPLE"]["pass"] = bool(controls["C-COUPLE"]["pass"] and flag != 0)
+            controls["C-COUPLE"]["pass"] = bool(controls["C-COUPLE"]["pass"] and flag != 0
+                                                and controls["C-COUPLE"]["sums"]["pass"])
         # C-SIM on the centrals, through the completeness the extraction consumed
         import ROOT
         f = ROOT.TFile.Open(str(root))
@@ -443,6 +475,7 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
             "oofvc_counts": sig_cv.get("oofvc_outside", {}).get("counts") if conv == "R" else None,
             "ptmc_record": {k2: v for k2, v in cap["ptmc_record"].items() if k2 != "completeness"},
             "support": support_rec, "extract_args_sha256": P.digest(*extract_args), "extract_args_finite": args_finite,
+            "grid": {"pt": [float(e) for e in driver.PT_EDGES], "pz": [float(e) for e in driver.PZ_EDGES]},
             "completeness_counts": {k2: v for k2, v in cap["ptmc_record"].get("completeness", {}).items()
                                     if k2 != "c_star"},
             "suppressed_moved_support_cells": suppressed,
@@ -461,7 +494,7 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
               "inj_entries": np.asarray(cap.get("inj_entries", np.zeros(0, np.int64)), np.int64)}
     np.savez_compressed(npz, **arrays, meta=json.dumps(meta, default=str))
     marker.write_text(json.dumps({"unit": name, "verdict": "PASS" if passed else "FAIL", "sha256": sha256(npz),
-                                  "root_sha256": sha256(root)}) + "\n")
+                                  "root_sha256": sha256(root), **own}) + "\n")
     print(json.dumps({"unit": name, "seconds": meta["seconds"], "controls": {k2: v["pass"] for k2, v in controls.items()}}),
           flush=True)
     return 0 if passed else RC_CONTROL
@@ -476,7 +509,11 @@ def run(a) -> int:
     if len(set(names)) != len(names):
         print("refusing: a unit is named twice", file=sys.stderr)
         return 2
-    C = import_runner(a.tree)
+    try:
+        C = import_runner(a.tree)
+    except (RuntimeError, OSError) as e:
+        print(f"refusing: {e}", file=sys.stderr)
+        return RC_GATE
     cfg = json.loads(C.CONFIG.read_text())
     try:
         C.check_code(cfg)
@@ -498,7 +535,11 @@ def run(a) -> int:
             print("refusing: libRooUnfold.so is not its pin", file=sys.stderr)
             return RC_GATE
         unfolder, lib_label = (lambda M, T, y, k: C.roounfold_bayes(M, T, y, k, str(lib))), sha256(lib)
-    gfn = global_index_fn(a.tree)
+    try:
+        gfn = global_index_fn(a.tree)
+    except (RuntimeError, OSError) as e:
+        print(f"refusing: {e}", file=sys.stderr)
+        return RC_GATE
 
     def gidx(pt, pz):
         return gfn(pt, pz, driver.PT_EDGES, driver.PZ_EDGES)

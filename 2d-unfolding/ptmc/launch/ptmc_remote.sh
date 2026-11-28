@@ -36,6 +36,7 @@ DEPLOY_FILES="2d-unfolding/re2/re2_driver.py 2d-unfolding/ref_c2c1/config.json 2
 2d-unfolding/ref_c2c1/ref_c2c1_read.py unbinned_unfolding/python/omnifold.py 2d-unfolding/compare_to_paper_fullcov.py
 2d-unfolding/uq/reported_cells.py 2d-unfolding/oofvc/oofvc_lib.py"
 O=$R/tool/2d-unfolding/ptmc
+PILOT_MIN=60  # the pilot's time limit, given on the command line and checked by pilot.sbatch
 stop() { echo "STOP: $*"; exit "${STOP_RC:-7}"; }
 now() { date -u +%FT%TZ; }
 case "$TOOLC$DRIVER_SHA" in *__*) stop "a pin is not filled in";; esac
@@ -93,12 +94,14 @@ stage_ok() {
   [ "$(cat "$R/stage/rows.sha256")" = "$ROWS_SHA" ] || stop "rows.sha256"
 }
 copy_noatime() {  # copy_noatime SRC DEST PIN: one O_NOATIME read, then the copy re-hashed against the pin
-  local h
+  local h st
   [ -f "$1" ] && [ ! -L "$1" ] || stop "$1 is absent or a symlink"
   [ ! -e "$2" ] || stop "$2 exists"
-  echo "pre  $(stat -c '%n|atime=%x' "$1")" || stop "stat $1"
+  st=$(stat -c '%n|atime=%x' "$1") && [ -n "$st" ] || stop "stat $1 (before the copy)"
+  echo "pre  $st"
   dd iflag=noatime if="$1" of="$2" bs=16M status=none || stop "dd $1"
-  echo "post $(stat -c '%n|atime=%x' "$1")" || stop "stat $1"
+  st=$(stat -c '%n|atime=%x' "$1") && [ -n "$st" ] || stop "stat $1 (after the copy)"
+  echo "post $st"
   h=$(sha_of "$2") || stop "sha256 of $2 failed"
   [ "$h" = "$3" ] || stop "the copy of $1 is not $3"
   chmod a-w "$2" || stop "chmod $2"
@@ -170,7 +173,7 @@ pilot)
   no_ptmc_job
   fence_check "before the pilot's submit"
   claim pilot
-  j=$(sbatch --parsable -N 2 "$O/launch/pilot.sbatch") || stop "sbatch"
+  j=$(sbatch --parsable -N 2 -t "$PILOT_MIN" "$O/launch/pilot.sbatch") || stop "sbatch"
   submitted pilot "$j" ;;
 post-pilot)
   tool_ok
@@ -184,7 +187,9 @@ post-pilot)
   activate
   nice -n 19 "$PY" -B "$O/launch/ptmc_pilot_post.py" --sacct "$R/pilot-post/sacct.txt" --jobid "$j" \
     --units "$R/units" --rows "$R/stage/oofvc_rows.npz" --out "$R/pilot-post" ; r=$?
-  cat "$R/pilot-post/decision.json" 2>/dev/null
+  if [ -e "$R/pilot-post/decision.json" ]; then
+    cat "$R/pilot-post/decision.json" || stop "printing the decision (the C-SUPPORT table) failed"
+  fi
   [ "$r" = 0 ] || STOP_RC=6 stop "the pilot's post did not PROCEED (rc $r)"
   [ -e "$R/pilot-post/PROCEED" ] || stop "no PROCEED file"
   echo "post-pilot PROCEED $(now)" ;;
@@ -228,7 +233,8 @@ post)
     printf '%s\n' "$out" | grep -q "^$j|" || stop "sacct has no allocation line for the $f job $j"
     printf '%s\n' "$out" >> "$R/post/sacct.txt" || stop "write sacct.txt"
   done
-  awk -F'|' '$1 !~ /\./ {s += $5 * $6 / 3600; n++} END {if (n != 2) exit 1; printf "charged_node_h=%.4f\n", s}' \
+  awk -F'|' '$1 !~ /\./ {if ($5 !~ /^[0-9]+$/ || $6 !~ /^[0-9]+$/ || $5 == 0 || $6 == 0) bad = 1; s += $5 * $6 / 3600; n++}
+    END {if (n != 2 || bad) exit 1; printf "charged_node_h=%.4f\n", s}' \
     "$R/post/sacct.txt" > "$R/post/charge.txt" || stop "charge"
   cat "$R/post/sacct.txt" "$R/post/charge.txt"
   activate
@@ -238,7 +244,8 @@ post)
   (cd "$R" && sha256sum stage/* > "$R/post/stage.sha256") || stop "stage digests"
   (cd "$R" && nice -n 19 tar -czf "$R/post.tar.gz" logs post pilot-post replicas-check claims units) || stop "tar post"
   (cd "$R" && nice -n 19 tar -czf "$R/d4.tar.gz" d4) || stop "tar d4"
-  sha256sum "$R/post.tar.gz" "$R/d4.tar.gz" || stop "the tars' digests"
+  (cd "$R" && sha256sum post.tar.gz d4.tar.gz > tars.sha256) || stop "the tars' digests"
+  cat "$R/tars.sha256" || stop "printing the tars' digests"
   echo "post done $(now)" ;;
 esac
 exit 0

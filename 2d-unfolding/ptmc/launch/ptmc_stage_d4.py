@@ -3,7 +3,8 @@
 REF-C2C1's own copy_noatime under its read_guards, with its sha256 taken in the same pass, into a new directory.
 
 A product whose source is cleanly absent (no directory entry) is recorded as absent. The scorer then decides between
-"B unavailable" and STOP (section 3.3).
+"B unavailable" and STOP (section 3.3). Every product under units/ is optional, so a cleanly absent units/ directory
+records each of them as absent; the REF root, read-2/ and read-2/inputs/ (which hold the mandatory products) must exist.
 - The mandatory products, the publication (000) and E_R's central (001), must be present.
 - A present source that cannot be copied is a failure: exit 5, with no manifest, never an absence. That covers a
   permission or I/O error, a symlink, a non-regular file, a parent directory that is not a real directory, or a file
@@ -46,12 +47,19 @@ def main(argv=None, ref: Path = REF) -> int:
         return 2
     a.out.mkdir(parents=True)
     manifest = {"schema": "ptmc-d4-stage/2", "ref_root": str(ref), "copied": {}, "absent": []}
-    # every parent directory on the way is a real directory (a symlinked parent fails; codex r1 #8)
+    # every parent directory on the way is a real directory (a symlinked parent fails; codex r1 #8). units/ holds only
+    # optional products: its clean absence (ENOENT) is an absence of each of them (confirm read B13)
+    absent_dirs = set()
     for d in (ref, ref / "units", ref / "read-2", ref / "read-2" / "inputs"):
         try:
             if not stat.S_ISDIR(os.lstat(d).st_mode):
                 print(f"FAIL: {d} is not a real directory", file=sys.stderr)
                 return 5
+        except FileNotFoundError as e:
+            if d != ref / "units":
+                print(f"FAIL: lstat {d}: {e}", file=sys.stderr)
+                return 5
+            absent_dirs.add(d)
         except OSError as e:
             print(f"FAIL: lstat {d}: {e}", file=sys.stderr)
             return 5
@@ -60,6 +68,9 @@ def main(argv=None, ref: Path = REF) -> int:
         return (st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, stat.S_IFMT(st.st_mode))
     with C.read_guards(C.PROTECTED, (a.out,), (a.out,)):
         for src, name in products(ref):
+            if src.parent in absent_dirs:
+                manifest["absent"].append(str(src))
+                continue
             try:
                 st = os.lstat(src)
             except FileNotFoundError:

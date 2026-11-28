@@ -20,6 +20,11 @@ cat > $H/bin/squeue <<'S'
 [ "${SQUEUE_FAIL:-}" = 1 ] && exit 1
 echo "${SQUEUE_L:-02:24:00}"
 S
+cat > $H/bin/seq <<'S'
+#!/bin/bash
+echo "$*" >> /tmp/hs/seq.calls
+exec /usr/bin/seq "$@"
+S
 printf '#!/bin/bash\n"$@"\n' > $H/bin/time; chmod +x $H/bin/*
 mkdir -p $H/global/conda/bin
 printf '#!/bin/bash\n[ "${CONDA_FAIL:-}" = 1 ] && exit 1\necho "conda() { return 0; }"\n' > $H/global/conda/bin/conda
@@ -33,24 +38,26 @@ fresh() { rm -rf $H/R $H/steps; mkdir -p $H/R/stage $H/R/logs; echo $PIN > $H/R/
 ready() { fresh; touch $H/R/stage/ready; }
 proceed() { fresh; mkdir -p $H/R/units $H/R/pilot-post; echo PROCEED > $H/R/pilot-post/PROCEED
             echo 144 > $H/R/pilot-post/time_limit_minutes; }
-P() { out=$(SLURM_JOB_NUM_NODES=${NN:-2} bash $H/pilot.sbatch 2>&1); rc=$?; }
+P() { out=$(SQUEUE_L=${PL:-1:00:00} SLURM_JOB_NUM_NODES=${NN:-2} bash $H/pilot.sbatch 2>&1); rc=$?; }
 Q() { out=$(SLURM_JOB_NUM_NODES=${NN:-5} bash $H/replicas.sbatch 2>&1); rc=$?; }
 refused() { [ "$rc" = 2 ] && printf '%s' "$out" | grep -q "REFUSED: $1" && [ ! -e $H/steps ]; }
 # pilot
 mk pilot.sbatch
 ready; NN=3 P; refused "the allocation has '3' nodes"; ok $? "pilot: 3 nodes refuses"
+ready; PL=1:30:00 P; refused "the job's time limit is 90 minutes, not 60"; ok $? "pilot: a time limit other than ptmc_remote.sh's 60 refuses"
+ready; out=$(SQUEUE_FAIL=1 SQUEUE_L=1:00:00 SLURM_JOB_NUM_NODES=2 bash $H/pilot.sbatch 2>&1); rc=$?; refused "squeue failed"; ok $? "pilot: a failed squeue refuses"
 fresh; P; refused "the stage is not ready"; ok $? "pilot: no ready refuses"
 ready; mkdir $H/R/units; P; refused "units exists"; ok $? "pilot: an existing units dir refuses"
 ready; echo abc > $H/R/stage/rows.sha256; P; refused "rows.sha256 is not the pinned rows"; ok $? "pilot: a wrong rows pin refuses"
 ready; rm $H/R/stage/rows.sha256; P; refused "rows.sha256 unreadable"; ok $? "pilot: no rows.sha256 refuses"
-ready; out=$(CONDA_FAIL=1 SLURM_JOB_NUM_NODES=2 bash $H/pilot.sbatch 2>&1); rc=$?
+ready; out=$(CONDA_FAIL=1 SQUEUE_L=1:00:00 SLURM_JOB_NUM_NODES=2 bash $H/pilot.sbatch 2>&1); rc=$?
 refused "the conda hook failed"; ok $? "pilot: a failed conda hook refuses"
 ready; mkdir -p $H/R/logs/pilot-4242; P; refused "mkdir"; ok $? "pilot: an existing record dir refuses"
 ready; P
 want=$(printf '%s\n' p_off_c p_R_c p_off_b1 p_R_b1 p_off_b2 p_off_b3 p_off_b4 p_off_b5 | sort | tr '\n' ' ')
 [ "$rc" = 0 ] && [ "$(sort $H/steps | tr '\n' ' ')" = "$want" ] && [ "$(awk '$2=="0"' $H/R/logs/pilot-4242/outcomes | wc -l)" = 8 ]
 ok $? "pilot: the 8 units, once each, 8 outcomes recorded"
-ready; out=$(SRUN_FAIL_FOR=p_off_b3 SLURM_JOB_NUM_NODES=2 bash $H/pilot.sbatch 2>&1); rc=$?
+ready; out=$(SRUN_FAIL_FOR=p_off_b3 SQUEUE_L=1:00:00 SLURM_JOB_NUM_NODES=2 bash $H/pilot.sbatch 2>&1); rc=$?
 [ "$rc" = 6 ] && grep -qx 'p_off_b3 1' $H/R/logs/pilot-4242/outcomes && [ "$(wc -l < $H/R/logs/pilot-4242/outcomes)" = 8 ]
 ok $? "pilot: a failed unit exits 6, every outcome recorded"
 # replicas
@@ -74,10 +81,12 @@ proceed; out=$(CONDA_FAIL=1 SLURM_JOB_NUM_NODES=5 bash $H/replicas.sbatch 2>&1);
 refused "the conda hook failed"; ok $? "replicas: a failed conda hook refuses"
 proceed; mkdir -p $H/R/logs/replicas-4242; Q; refused "mkdir"; ok $? "replicas: an existing record dir refuses"
 proceed; out=$(SQUEUE_L=2:00:00 SLURM_JOB_NUM_NODES=5 bash $H/replicas.sbatch 2>&1); rc=$?
-[ "$rc" = 0 ] && [ "$(sort -u $H/steps | wc -l)" = 199 ] && [ "$(wc -l < $H/steps)" = 199 ] && \
+refused "the job's time limit is 120 minutes; the authorized L is 144"; ok $? "replicas: a limit below L refuses (it must be exactly L)"
+proceed; rm -f $H/seq.calls; out=$(SQUEUE_L=2:24:00 SLURM_JOB_NUM_NODES=5 bash $H/replicas.sbatch 2>&1); rc=$?
+[ "$rc" = 0 ] && [ ! -e $H/seq.calls ] && [ "$(awk '$3 == "0"' $H/R/logs/replicas-4242/lanes | wc -l)" = 20 ] && [ "$(sort -u $H/steps | wc -l)" = 199 ] && [ "$(wc -l < $H/steps)" = 199 ] && \
   ! grep -qx 'p_R_b1' $H/steps && grep -qx p_R_b2 $H/steps && grep -qx p_R_b200 $H/steps && \
   [ "$(cat $H/R/logs/replicas-4242/lane_* | awk '$2=="0"' | wc -l)" = 199 ] && grep -qx 'p_R_b22 0' $H/R/logs/replicas-4242/lane_0
-ok $? "replicas: b = 2..200, 199 steps, each once, 199 outcomes, lane 0 takes b22"
+ok $? "replicas: b = 2..200, 199 steps, each once, 199 outcomes, 20 lanes (no seq), lane 0 takes b22"
 proceed; out=$(SRUN_FAIL_FOR=p_R_b57 SLURM_JOB_NUM_NODES=5 bash $H/replicas.sbatch 2>&1); rc=$?
 [ "$rc" = 6 ] && [ "$(wc -l < $H/steps)" = 199 ] && grep -qx 'p_R_b57 1' $H/R/logs/replicas-4242/lane_15 && \
   grep -qx 'p_R_b77 0' $H/R/logs/replicas-4242/lane_15

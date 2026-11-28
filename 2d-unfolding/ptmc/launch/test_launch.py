@@ -45,11 +45,39 @@ def products():
     return TS.Products(delta_scale=0.05)
 
 
-def run(text, prod, recheck=None):
+def sha(p):
+    import hashlib
+    return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+
+
+def pilot_units(prod, change=None, job=JOB):
+    """The pilot's units directory as pilot.sbatch leaves it: the 8 units' products (each meta naming the pilot job,
+    then `change(unit, meta)` if given), and one pins receipt per unit, as ptmc_run.py writes them."""
+    d = Path(tempfile.mkdtemp()) / "units"
+    d.mkdir()
+    for u in PILOT:
+        z = dict(np.load(prod.units / f"{u}.npz"))
+        m = json.loads(str(z["meta"]))
+        m["slurm_job"] = job
+        if change:
+            change(u, m)
+        z["meta"] = json.dumps(m)
+        np.savez(d / f"{u}.npz", **z)
+        (d / f"{u}.root").write_bytes((prod.units / f"{u}.root").read_bytes())
+        mk = json.loads((prod.units / f"{u}.done").read_text())
+        mk["sha256"] = sha(d / f"{u}.npz")
+        (d / f"{u}.done").write_text(json.dumps(mk))
+        outs = {n: sha(d / n) for n in (f"{u}.done", f"{u}.npz", f"{u}.root")}
+        (d / f"pins_{u}.json").write_text(json.dumps({"units": [u], "pass": True, "outputs": {u: outs}}))
+    return d
+
+
+def run(text, prod, recheck=None, units=None):
     out = Path(tempfile.mkdtemp())
     s = out / "sacct.txt"
     s.write_text(text)
-    argv = ["--sacct", str(s), "--jobid", JOB, "--units", str(prod.units), "--rows", str(prod.rows), "--out", str(out)]
+    units = units or pilot_units(prod)
+    argv = ["--sacct", str(s), "--jobid", JOB, "--units", str(units), "--rows", str(prod.rows), "--out", str(out)]
     if recheck is not None:
         argv += ["--recheck", str(recheck)]
     rc = PP.main(argv)
@@ -104,7 +132,10 @@ class PilotPost(unittest.TestCase):
                sacct(extra=["999.batch|batch|COMPLETED|0:0|700|1|s|e"]),  # a foreign job's housekeeping row
                sacct().replace(f"{JOB}.0|p_off_c|COMPLETED|0:0|700|1|", f"{JOB}.0|p_off_c|COMPLETED|0:0|700|2|"),
                sacct(extra=["garbled"]), sacct(steps={u: 0 for u in PILOT}),
-               sacct(steps={**{u: 700 for u in PILOT}, "p_R_b1": 900})]  # a step longer than its job
+               sacct(steps={**{u: 700 for u in PILOT}, "p_R_b1": 900}),  # a step longer than its job
+               "\n".join(l if "|batch|" in l or "|extern|" in l or "|ptmc_pilot|" in l
+                         else f"{JOB}.0|" + l.split("|", 1)[1] for l in sacct().splitlines()) + "\n",  # one step id
+               sacct().replace(f"{JOB}.3|", f"{JOB}.x|")]  # a non-numeric step id
         for text in bad:
             rc, d, out = run(text, self.p)
             self.assertEqual(rc, 6, (text, d))
@@ -138,7 +169,8 @@ class PilotPost(unittest.TestCase):
         """unit_receipt (shared with the scorer): each planted meta defect fails its unit."""
         cases = {"non-finite extraction arguments": ("p_off_b3", lambda m: m.update(extract_args_finite=False)),
                  "controls ['C-EXTRA']": ("p_off_b4", lambda m: m["controls"].update({"C-EXTRA": {"pass": False}})),
-                 "meta identity": ("p_off_b5", lambda m: m.update(bootstrap_seed=6))}
+                 "meta identity": ("p_off_b5", lambda m: m.update(bootstrap_seed=6)),
+                 "C-ROO did not run": ("p_off_b2", lambda m: m["controls"]["C-ROO"].update(ran=False))}
         for why, (unit, change) in cases.items():
             rc, d, out = self.meta_defect(unit, change)
             self.assertEqual(rc, 6, why)
@@ -169,6 +201,52 @@ class PilotPost(unittest.TestCase):
         self.assertEqual(rc, 6)
         self.assertFalse(d["rules"]["C-MOVE-seed1"])
 
+    def test_pilot_files_and_job_defects_stop(self):
+        """The units directory holds exactly the pilot's products and receipts, each receipt passes and names its
+        products, and every meta names this pilot job."""
+        def check(units, why):
+            rc, d, out = run(sacct(), self.p, units=units)
+            self.assertEqual(rc, 6, why)
+            self.assertFalse(d["rules"]["pilot_files_and_pins_receipts"], why)
+            self.assertFalse((out / "PROCEED").exists())
+        check(pilot_units(self.p, job="999"), "another job's units")
+        u = pilot_units(self.p)
+        (u / "p_R_b2.npz").write_bytes(b"extra")
+        check(u, "an extra product")
+        u = pilot_units(self.p)
+        rec = json.loads((u / "pins_p_off_b3.json").read_text())
+        rec["pass"] = False
+        (u / "pins_p_off_b3.json").write_text(json.dumps(rec))
+        check(u, "a failed pins receipt")
+        u = pilot_units(self.p)
+        (u / "pins_p_off_b4.json").unlink()
+        check(u, "a missing pins receipt")
+
+    def test_cnorm_requires_a_digest(self):
+        rc, d, _ = run(sacct(), self.p, units=pilot_units(self.p, lambda u, m: m.update(extract_args_sha256="same")))
+        self.assertEqual(rc, 6)
+        self.assertFalse(d["rules"]["C-NORM"])
+
+    def test_seed1_injection_defect_stops(self):
+        """C-MOVE's seed-1 check is the scorer's: the injection must be the fiducial rule on the filtered record."""
+        q = products()
+        z = dict(np.load(q.units / "p_R_b1.npz"))
+        z["inj_entries"] = np.asarray(z["inj_entries"], np.int64)[1:]
+        q.rewrite_unit("p_R_b1", z)
+        rc, d, _ = run(sacct(), q)
+        self.assertEqual(rc, 6)
+        self.assertFalse(d["rules"]["C-MOVE-seed1"])
+
+    def test_support_table_defects_stop(self):
+        for bad in ({"1": "x"}, {"0": [3]}, {"5": []}, {"5": [224]}, {"5": [3, 3]}):
+            def change(u, m, bad=bad):
+                if u == "p_R_c":
+                    m["support"]["failures"] = bad
+                    m["support"]["n_seed_cells"] = 1
+            rc, d, _ = run(sacct(), self.p, units=pilot_units(self.p, change))
+            self.assertEqual(rc, 6, bad)
+            self.assertFalse(d["rules"]["C-SUPPORT-table"], bad)
+
     def test_recheck_requires_the_same_limit(self):
         rc, d, out = run(sacct(), self.p)
         self.assertEqual(rc, 0)
@@ -179,7 +257,7 @@ class PilotPost(unittest.TestCase):
 
     def test_rerun_refuses(self):
         rc, d, out = run(sacct(), self.p)
-        self.assertEqual(PP.main(["--sacct", str(out / "sacct.txt"), "--jobid", JOB, "--units", str(self.p.units),
+        self.assertEqual(PP.main(["--sacct", str(out / "sacct.txt"), "--jobid", JOB, "--units", str(pilot_units(self.p)),
                                   "--rows", str(self.p.rows), "--out", str(out)]), 2)
 
 
@@ -249,6 +327,29 @@ class StageD4(unittest.TestCase):
         rc, out = self.stage()
         self.assertEqual(rc, 5)
         self.assertFalse((out / "manifest.json").exists())
+
+    def test_an_absent_units_directory_is_an_absence_of_its_products(self):
+        """Confirm read B13: units/ holds only optional products, so its clean absence records each as absent (the
+        scorer then reads B as unavailable) instead of failing; read-2/inputs/ stays mandatory."""
+        import shutil
+        shutil.rmtree(self.ref / "units")
+        rc, out = self.stage()
+        self.assertEqual(rc, 0)
+        m = json.loads((out / "manifest.json").read_text())
+        self.assertEqual(len(m["absent"]), 201)
+        self.assertEqual(len(m["copied"]), 1 + 201)
+        self.setUp()
+        shutil.rmtree(self.ref / "read-2" / "inputs")
+        rc, out = self.stage()
+        self.assertEqual(rc, 5)
+
+    def test_the_scorer_names_the_stagers_sources(self):
+        """ptmc_score.d4_source (which absence records must match, B7) is the stager's own source path per product."""
+        import ptmc_score as S
+        got = {name: S.d4_source(name) for name in S.D4_PRODUCTS}
+        want = {name: str(src) for src, name in self.SD.products(self.SD.REF)}
+        self.assertEqual(got, want)
+        self.assertEqual(S.REF_ROOT, str(self.SD.REF))
 
     def test_a_fifo_fails_before_any_copy(self):
         """A non-regular source fails at its lstat: a FIFO would otherwise copy as an empty file (no writer)."""

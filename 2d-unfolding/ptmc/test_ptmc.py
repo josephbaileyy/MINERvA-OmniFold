@@ -116,6 +116,16 @@ class Completeness(unittest.TestCase):
         self.assertFalse(P.c_star([-1.0], [1.0], [2.0], [2.0], [0.5])["finite"])
         self.assertFalse(P.coupling_exact([0], [.1], [2.], [-1.0], [0], [.1], [2.], [-1.0])["pass"])
 
+    def test_a_live_denominator_must_be_finite_and_positive(self):
+        """Confirm read B10: a live cell whose D* underflows to 0 or overflows to inf would give a finite c* (0); it
+        fails instead."""
+        under = P.c_star([1.0], [1e-200], [1e200], [1e-200], [0.5])
+        self.assertFalse(under["live_denominators_ok"])
+        self.assertFalse(under["finite"])
+        over = P.c_star([1.0], [1e200], [1e-200], [1e200], [0.5])
+        self.assertFalse(over["finite"])
+        self.assertTrue(P.c_star([1.0], [1.0], [2.0], [2.0], [0.5])["finite"])
+
     def test_coupling(self):
         self.assertTrue(P.coupling([1.0, 0, 2], [1.0, 0, 2])["pass"])
         self.assertFalse(P.coupling([1.0, 1e-3], [1.0, 0])["pass"])  # one-sided
@@ -186,6 +196,16 @@ class Coupling(unittest.TestCase):
 
 
 class Gates(unittest.TestCase):
+    def test_module_pins_are_make_trees(self):
+        """B8: the runner's pre-import pins are make_tree.sh's RUNNER_SHA and OOFVC_LIB_SHA, not a second copy that
+        could drift."""
+        import re
+        import ptmc_run
+        mt = (HERE / "make_tree.sh").read_text()
+        want = {"2d-unfolding/ref_c2c1/ref_c2c1.py": re.search(r"^RUNNER_SHA=([0-9a-f]{64})$", mt, re.M).group(1),
+                "2d-unfolding/oofvc/oofvc_lib.py": re.search(r"^OOFVC_LIB_SHA=([0-9a-f]{64})$", mt, re.M).group(1)}
+        self.assertEqual(ptmc_run.MODULE_PINS, want)
+
     def test_rel_close_zero_and_nan(self):
         self.assertTrue(P.rel_close([0.0, 2.0], [0.0, 2.0 * (1 + 1e-12)], 1e-9)["pass"])
         self.assertFalse(P.rel_close([1e-300, 2.0], [0.0, 2.0], 1e-9)["pass"])
@@ -261,6 +281,15 @@ class Readings(unittest.TestCase):
         self.assertEqual(P.disposition(True, True, True, False, None), "unavailable")
         self.assertEqual(P.disposition(True, True, False, False, True), "formed")
         self.assertEqual(P.disposition(True, True, False, False, None), "stop")
+
+    def test_row3_names_b_as_section_5_requires(self):
+        """codex 23 (class a): when B is read, it is named as the production convention in REF-C2C1's separate-refit
+        protocol, never only as "the matched baseline"."""
+        t = P.statement("agree", "formed", "marginal")
+        self.assertEqual(t["row"], 3)
+        self.assertIn("the production convention in REF-C2C1's separate-refit protocol", t["text"])
+        self.assertNotIn("the matched baseline reads", t["text"])
+        self.assertIn("no change of reading is stated", t["text"])
 
     def test_statement_partition(self):
         rows = {}
@@ -479,6 +508,7 @@ class Runner(unittest.TestCase):
         self.assertIsNotNone(self.meta("p_R_c")["support"])
         self.assertEqual(self.meta("p_R_b1")["controls"]["C-COMP"]["mode"], "resampled")
         self.assertEqual(self.meta("p_off_b1")["controls"]["C-COMP"]["mode"], "cv")
+        self.assertIsInstance(self.meta("p_R_b1")["suppressed_moved_support_cells"], int)  # agy 8: per replica
 
     def test_hxsec_is_the_plain_drivers_omnifold(self):
         """The unit's hXSec2D is OmniFold's: a plain run of the same driver with the unit's argv (no seam) gives it bit
@@ -541,6 +571,102 @@ class Runner(unittest.TestCase):
             self.assertEqual(ptmc_run.main(args), ptmc_run.RC_CONTROL)
             (tmp / "p_off_c.root").unlink()
             self.assertEqual(ptmc_run.main(args), ptmc_run.RC_CONTROL)
+
+    def test_reuse_requires_this_bindings_code(self):
+        """Confirm read B2: a PASS unit made by other code (its marker's runner digest differs) is refused, never
+        reused."""
+        import ptmc_run
+        tmp = Path(tempfile.mkdtemp())
+        for f in ("p_off_c.npz", "p_off_c.root", "p_off_c.done"):
+            (tmp / f).write_bytes((self.out / f).read_bytes())
+        mk = json.loads((tmp / "p_off_c.done").read_text())
+        self.assertEqual(mk["verdict"], "PASS")
+        args = ["--tree", str(tree()), "--rows", str(self.rows_path), "--rows-sha256", self.pins["rows"],
+                "--join-record", str(self.join), "--out", str(tmp), "--numpy-unfolder", "--unit", "p_off_c"]
+        with mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True), mock.patch.dict(ptmc_run.PINS, self.pins):
+            self.assertEqual(ptmc_run.main(args), 0)  # the same code: reused
+            mk["runner_sha256"] = "0" * 64
+            (tmp / "p_off_c.done").write_text(json.dumps(mk))
+            self.assertEqual(ptmc_run.main(args), ptmc_run.RC_CONTROL)
+
+    def test_a_running_unit_holds_its_claim(self):
+        """Confirm read B2: the unit's marker is created exclusively (RUNNING) before the driver runs, so a second
+        run of the same unit refuses instead of racing it."""
+        seen = {}
+        import ptmc_run
+        out = Path(tempfile.mkdtemp())
+        orig = ptmc_run.run_paired
+
+        def wrapped(*a, **k):
+            seen["marker"] = json.loads((out / "p_off_b2.done").read_text())
+            return orig(*a, **k)
+        argv = ["--tree", str(tree()), "--rows", str(self.rows_path), "--rows-sha256", self.pins["rows"],
+                "--join-record", str(self.join), "--out", str(out), "--numpy-unfolder", "--unit", "p_off_b2"]
+        with mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True), \
+                mock.patch.dict(ptmc_run.PINS, self.pins), mock.patch.object(ptmc_run, "run_paired", wrapped):
+            self.assertEqual(ptmc_run.main(argv), 0)
+        self.assertEqual(seen["marker"], {"unit": "p_off_b2", "verdict": "RUNNING"})
+        self.assertEqual(json.loads((out / "p_off_b2.done").read_text())["verdict"], "PASS")
+
+    def test_coupling_sums_are_part_of_c_couple(self):
+        """Confirm read B10: the central's C-COUPLE requires the driver's D_CV to agree with the independently summed
+        T_orig,CV (the sums record), not only the multiset identity."""
+        import ptmc_run
+        orig = ptmc_run.read_hist
+
+        def shifted(C, driver, root, name, allowed):
+            h = orig(C, driver, root, name, allowed)
+            return h * 1.01 if name == "hOFTruthDenom2D" else h
+        with mock.patch.object(ptmc_run, "read_hist", shifted):
+            rc, meta, verdict = self.corrupted_unit("p_off_c", lambda cap: None)
+        self.assertFalse(meta["controls"]["C-COUPLE"]["sums"]["pass"])
+        self.assertFalse(meta["controls"]["C-COUPLE"]["pass"])
+        self.assertEqual(verdict, "FAIL")
+
+    def test_the_denominator_is_the_same_in_every_unit(self):
+        """The scorer's C-DEN premise on the real driver: hOFTruthDenom2D is bit-identical across conventions, centrals
+        and replicas."""
+        ref = th2v(self.out / "p_off_c.root", "hOFTruthDenom2D")
+        for u in self.UNITS[1:]:
+            np.testing.assert_array_equal(th2v(self.out / f"{u}.root", "hOFTruthDenom2D"), ref, err_msg=u)
+        # and C-FIX's class and grid rules (B9) hold on the real driver's objects
+        import ptmc_score as S
+        for u in self.UNITS:
+            ro = S.root_objects(self.out / f"{u}.root")
+            self.assertTrue(all(S.fix_equal(ro, ro).values()), (u, S.fix_equal(ro, ro)))
+
+    def test_deploy_modules_are_checked_before_import(self):
+        """B8: ref_c2c1.py and oofvc_lib.py are hashed against their pins before the runner imports them."""
+        import ptmc_run
+        for rel in ptmc_run.MODULE_PINS:
+            with mock.patch.dict(ptmc_run.MODULE_PINS, {rel: "0" * 64}), \
+                    mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True), \
+                    mock.patch.dict(ptmc_run.PINS, self.pins):
+                rc = ptmc_run.main(["--tree", str(tree()), "--rows", str(self.rows_path), "--rows-sha256",
+                                    self.pins["rows"], "--join-record", str(self.join), "--out",
+                                    str(Path(tempfile.mkdtemp())), "--numpy-unfolder", "--unit", "p_off_b3"])
+            self.assertEqual(rc, ptmc_run.RC_GATE, rel)
+
+    def test_one_spelling_per_unit(self):
+        """codex 11: p_R_b01 is not a second name for p_R_b1."""
+        import ptmc_run
+        self.assertEqual(ptmc_run.main(["--tree", str(tree()), "--rows", "x", "--rows-sha256", "0", "--join-record",
+                                        "x", "--out", str(self.out), "--unit", "p_R_b01"]), 2)
+        self.assertEqual(ptmc_run.parse_unit("p_R_b1"), ("R", 1))
+
+    def test_a_replicas_suppressed_count_uses_its_own_weights(self):
+        """agy 8: an R replica's suppressed-moved-support count is taken on its own resampled weights. With every
+        moved row's draw zeroed, no structural-zero cell keeps surviving moved weight, whatever the CV count is."""
+        central = self.meta("p_R_c")["suppressed_moved_support_cells"]
+        self.assertGreater(central, 0, "the fixture has no structural-zero cell with moved weight: the case is vacuous")
+
+        def corrupt(cap):
+            n_app = len(cap["sig_cv"]["oofvc_outside"]["appended_entry"])
+            ws = np.array(cap["w_truth_seen"], float, copy=True)
+            ws[ws.size - n_app:] = 0.0
+            cap["w_truth_seen"] = ws
+        rc, meta, verdict = self.corrupted_unit("p_R_b1", corrupt)
+        self.assertEqual(meta["suppressed_moved_support_cells"], 0)
 
     def test_wrong_rows_pin_refuses(self):
         import ptmc_run

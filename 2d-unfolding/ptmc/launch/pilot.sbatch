@@ -19,7 +19,18 @@ PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
 ROWS_SHA=cbf34bd8cad0f4978dc1aea22713eb5057bf521118dc7ce8d10b93b30defcb03
 UNITS="p_off_c p_R_c p_off_b1 p_R_b1 p_off_b2 p_off_b3 p_off_b4 p_off_b5"
 refuse() { echo "[ptmc_pilot] REFUSED: $*"; exit 2; }
+minutes() {  # a Slurm time limit ([D-]HH:MM:SS, MM:SS or MM) in whole minutes, rounded up; anything else fails
+  local t=$1 d=0 h=0 m s=0
+  case "$t" in *-*) d=${t%%-*}; t=${t#*-};; esac
+  IFS=: read -r a b c <<< "$t"
+  if [ -n "${c:-}" ]; then h=$a; m=$b; s=$c; elif [ -n "${b:-}" ]; then m=$a; s=$b; else m=$a; fi
+  for v in "$d" "$h" "$m" "$s"; do case "$v" in ''|*[!0-9]*) return 1;; esac; done
+  echo $(( 10#$d * 1440 + 10#$h * 60 + 10#$m + (10#$s > 0 ? 1 : 0) ))
+}
 [ "${SLURM_JOB_NUM_NODES:-}" = 2 ] || refuse "the allocation has '${SLURM_JOB_NUM_NODES:-}' nodes, not 2"
+tl=$(squeue -h -j "${SLURM_JOB_ID:-}" -o %l) || refuse "squeue failed"
+tm=$(minutes "$tl") || refuse "the job's time limit '$tl' does not parse"
+[ "$tm" = 60 ] || refuse "the job's time limit is $tm minutes, not 60 (ptmc_remote.sh's -t 60)"
 [ -e $R/stage/ready ] || refuse "the stage is not ready"
 [ ! -e $R/units ] || refuse "units exists"
 hook=$(/global/common/software/nersc/pe/conda/24.10.0/Miniforge3-24.7.1-0/bin/conda shell.bash hook) \

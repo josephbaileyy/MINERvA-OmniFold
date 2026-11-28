@@ -55,6 +55,11 @@ cat > $H/bin/sha256sum <<'S'
 [ -n "${SHA_FAIL:-}" ] && [ $# = 0 ] && exit 1
 exec /usr/bin/sha256sum "$@"
 S
+cat > $H/bin/stat <<'S'
+#!/bin/bash
+[ -n "${STAT_FAIL:-}" ] && exit 1
+exec /usr/bin/stat "$@"
+S
 cat > $H/bin/git <<'S'
 #!/bin/bash
 # clone URL DEST | -C DIR rev-parse HEAD | -C DIR status ... | -C DIR -c ... checkout -q REV
@@ -99,7 +104,8 @@ case "$*" in
       echo "{\"recheck\": \"${RECHECK:-SAME}\", \"time_limit_minutes\": ${RECHECK_L:-145}}"; exit ${RECHECK_RC:-0}
     fi
     [ "${POST_RC:-0}" = 0 ] && { echo PROCEED > $out/PROCEED; echo "${POST_L:-145}" > $out/time_limit_minutes; }
-    echo '{"verdict": "stub"}' > $out/decision.json; exit ${POST_RC:-0} ;;
+    if [ -n "${POST_DECISION_DIR:-}" ]; then mkdir $out/decision.json; else echo '{"verdict": "stub"}' > $out/decision.json; fi
+    exit ${POST_RC:-0} ;;
   *ptmc_stage_d4.py*)
     [ "${D4_RC:-0}" = 0 ] || exit ${D4_RC}; mkdir -p $out; echo '{}' > $out/manifest.json; exit 0 ;;
 esac
@@ -175,6 +181,7 @@ setup_ok; run prestage; CVPIN=0000 HOST=dtn01 run stage; [ "$rc" != 0 ] && has "
 setup_ok; run prestage; mv $H/src/cv $H/src/cv.real; ln -s $H/src/cv.real $H/src/cv; HOST=dtn01 run stage
 [ "$rc" != 0 ] && has "absent or a symlink" && [ ! -e $H/R/stage/ready ]; ok $? "stage: a symlinked source STOPs"
 rm $H/src/cv; mv $H/src/cv.real $H/src/cv
+setup_ok; run prestage; STAT_FAIL=1 HOST=dtn01 run stage; [ "$rc" != 0 ] && has "STOP: stat $H/src/cv (before the copy)" && [ ! -e $H/R/stage/ready ]; ok $? "stage: a failed stat of a source STOPs"
 setup_ok; run prestage; SHA_FAIL=1 HOST=dtn01 run stage; [ "$rc" != 0 ] && has "sha256 of" && [ ! -e $H/R/stage/ready ]; ok $? "stage: a failed re-hash STOPs"
 setup_ok; run prestage; HOST=dtn01 run stage; [ "$rc" = 0 ] && [ -e $H/R/stage/ready ] && cmp -s $H/R/stage/runEventLoopOmniFold_MEFHC.root $H/src/cv
 ok $? "stage: rc 0, ready, the CV copy byte-identical"
@@ -183,8 +190,8 @@ has "pre  $H/src/cv|atime=" && has "post $H/src/cv|atime="; ok $? "stage: the so
 HOST=dtn01 run stage; [ "$rc" != 0 ] && has "already claimed\|not empty"; ok $? "stage again: STOP"
 run prestage; [ "$rc" != 0 ] && has "stage is claimed"; ok $? "prestage after stage: STOP"
 # --- pilot
-staged; run pilot; [ "$rc" = 0 ] && [ "$(cat $H/R/logs/pilot.jobid)" = 12345 ] && grep -q -- '-N 2 .*pilot.sbatch' $H/sbatch.args
-ok $? "pilot: submitted on -N 2, jobid recorded"
+staged; run pilot; [ "$rc" = 0 ] && [ "$(cat $H/R/logs/pilot.jobid)" = 12345 ] && grep -q -- '-N 2 -t 60 .*pilot.sbatch' $H/sbatch.args
+ok $? "pilot: submitted on -N 2 -t 60, jobid recorded"
 run pilot; [ "$rc" != 0 ] && has "has been submitted"; ok $? "pilot again: STOP"
 staged; echo tampered >> $H/R/deploy/2d-unfolding/re2/re2_driver.py; run pilot
 [ "$rc" != 0 ] && has "deploy tree differs" && [ ! -e $H/R/logs/pilot.jobid ]; ok $? "pilot: a changed deploy file STOPs"
@@ -206,7 +213,8 @@ piloted; POST_RC=6 run post-pilot; [ "$rc" = 6 ] && has "did not PROCEED" && [ !
 grep -q -- '--jobid 12345 .*--rows .*oofvc_rows.npz' $H/python.args; ok $? "post-pilot: passes --jobid and --rows"
 [ "$(cat $H/env.python)" = "$(printf 'MKL_NUM_THREADS=1\nNUMEXPR_NUM_THREADS=1\nOMP_NUM_THREADS=1\nOPENBLAS_NUM_THREADS=1')" ]
 ok $? "post-pilot: python runs with one thread"
-piloted; run post-pilot; [ "$rc" = 0 ] && [ -e $H/R/pilot-post/PROCEED ]; ok $? "post-pilot: PROCEED"
+piloted; POST_DECISION_DIR=1 run post-pilot; [ "$rc" != 0 ] && has "printing the decision (the C-SUPPORT table) failed"; ok $? "post-pilot: an unprintable decision STOPs before PROCEED is reported"
+piloted; run post-pilot; [ "$rc" = 0 ] && [ -e $H/R/pilot-post/PROCEED ] && has '"verdict": "stub"'; ok $? "post-pilot: PROCEED, the decision printed"
 run post-pilot; [ "$rc" != 0 ] && has "has run"; ok $? "post-pilot again: STOP"
 piloted; CONDA_RC=1 run post-pilot; [ "$rc" != 0 ] && has "conda activate"; ok $? "post-pilot: a failed activation STOPs"
 # --- replicas
@@ -238,9 +246,12 @@ mkpost; SACCT_J_FAIL=1 run post; [ "$rc" != 0 ] && has "STOP: sacct pilot"; ok $
 proceeded; run post; [ "$rc" != 0 ] && has "a PTMC job id is missing" && [ ! -e $H/R/post ]; ok $? "post: no replicas job id STOPs"
 mkpost; SQUEUE_OUT='ptmc_reps\n' run post; [ "$rc" != 0 ] && [ ! -e $H/R/post ] && [ ! -e $H/R/claims/post ]; ok $? "post: a running ptmc job STOPs before the claim"
 mkpost; D4_RC=5 SACCT_J_12345=$P1 SACCT_J_12346=$P2 run post; [ "$rc" != 0 ] && has "the D4 staging" && [ ! -e $H/R/post.tar.gz ]; ok $? "post: a failed D4 staging STOPs, no tar"
+mkpost; SACCT_J_12345=$P1 SACCT_J_12346='12346|ptmc_reps|COMPLETED|0:0|8x00|5|s|e\n' run post
+[ "$rc" != 0 ] && has "STOP: charge" && [ ! -e $H/R/post.tar.gz ]; ok $? "post: a malformed elapsed time STOPs the charge"
 mkpost; SACCT_J_12345=$P1 SACCT_J_12346=$P2 run post
 [ "$rc" = 0 ] && [ -s $H/R/post.tar.gz ] && [ -s $H/R/d4.tar.gz ] && grep -qx 'charged_node_h=11.9444' $H/R/post/charge.txt
 ok $? "post: both tars written, the charge from both allocation lines"
+(cd $H/R && /usr/bin/sha256sum -c --quiet tars.sha256) && [ "$(wc -l < $H/R/tars.sha256)" = 2 ]; ok $? "post: tars.sha256 holds both tars' digests"
 tar -tzf $H/R/post.tar.gz | grep -q '^claims/' && tar -tzf $H/R/post.tar.gz | grep -q '^replicas-check/'; ok $? "post: the tar carries the claims and the recheck"
 run post; [ "$rc" != 0 ] && has "post has run"; ok $? "post again: STOP"
 echo "pass $pass fail $fail"

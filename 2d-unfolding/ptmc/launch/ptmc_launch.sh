@@ -7,7 +7,8 @@
 # fails closed (exit 9, or 8 for the sha).
 # Usage: bash ptmc_launch.sh setup|prestage|pilot|post-pilot|replicas|post <new empty session dir> <loginNN>
 #        bash ptmc_launch.sh stage <new empty session dir> dtn01
-#        bash ptmc_launch.sh fetch <new empty dir>     (post.tar.gz and d4.tar.gz by scp; no remote script)
+#        bash ptmc_launch.sh fetch <new empty dir>     (post.tar.gz, d4.tar.gz and post's tars.sha256 by scp; each tar's
+#                                                       local sha256 must equal the remote one; no remote script)
 set -u -o pipefail
 MODE=${1:-}; F=${2:-}; NODE=${3:-}
 HERE=$(cd "$(dirname "$0")" && pwd) || { echo "STOP: the launcher's directory"; exit 9; }
@@ -24,15 +25,20 @@ case "$MODE" in
     [ "$NODE" = dtn01 ] || { echo "STOP: stage runs on dtn01, not '$NODE'"; exit 9; } ;;
   fetch)
     r=0
-    for f in post.tar.gz d4.tar.gz; do
+    for f in tars.sha256 post.tar.gz d4.tar.gz; do
       scp "${SSH[@]}" "saul.nersc.gov:$OUT/$f" "$F/" >> "$F/scp.out" 2>> "$F/scp.err"; s=$?
       echo "scp $f rc=$s"
-      if [ $s = 0 ]; then
-        h=$(shasum -a 256 "$F/$f") || { echo "STOP: hashing $f failed"; r=9; continue; }
-        echo "$h"
-      else r=$s; fi
+      [ $s = 0 ] || r=$s
     done
-    exit $r ;;
+    [ "$r" = 0 ] || exit $r
+    for f in post.tar.gz d4.tar.gz; do
+      h=$(shasum -a 256 "$F/$f" | cut -d' ' -f1) || { echo "STOP: hashing $f failed"; exit 9; }
+      want=$(awk -v f="$f" '$2 == f {print $1}' "$F/tars.sha256") || { echo "STOP: reading tars.sha256 failed"; exit 9; }
+      [ ${#want} = 64 ] || { echo "STOP: tars.sha256 has no single digest for $f"; exit 9; }
+      [ "$h" = "$want" ] || { echo "STOP: the fetched $f is $h, the remote one $want"; exit 9; }
+      echo "$h  $f (equal to the remote digest)"
+    done
+    exit 0 ;;
   *) echo "STOP: mode '$MODE'"; exit 9 ;;
 esac
 case "$SHA" in *__*) echo "STOP: the approved sha256 is not filled in"; exit 9;; esac

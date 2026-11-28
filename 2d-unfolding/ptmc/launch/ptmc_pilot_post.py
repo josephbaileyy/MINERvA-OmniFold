@@ -38,7 +38,7 @@ HOUSEKEEPING = ("batch", "extern")
 
 def parse_sacct(text: str, jobid: str) -> tuple[dict, dict]:
     """The allocation line and the eight named unit steps of job `jobid`; anything else is refused."""
-    job, steps = None, {}
+    job, steps, ids = None, {}, set()
     for line in text.splitlines():
         if not line.strip():
             continue
@@ -49,6 +49,11 @@ def parse_sacct(text: str, jobid: str) -> tuple[dict, dict]:
         head, _, tail = jid.partition(".")
         if head != jobid:
             raise ValueError(f"a row of another job: {jid}")
+        if jid in ids:
+            raise ValueError(f"a repeated step id {jid}")
+        ids.add(jid)
+        if tail and tail not in HOUSEKEEPING and not tail.isdigit():
+            raise ValueError(f"a step id that is neither numeric nor housekeeping: {jid}")
         if not (el.isdigit() and nn.isdigit()):
             raise ValueError(f"non-numeric elapsed or nodes: {line!r}")
         rec = {"id": jid, "name": name, "state": state.split()[0] if state else "", "exit": exitc,
@@ -68,25 +73,58 @@ def parse_sacct(text: str, jobid: str) -> tuple[dict, dict]:
     return job, steps
 
 
+def support_table_ok(sup) -> bool:
+    """C-SUPPORT's table is complete: 200 seeds, every listed seed in 1..200 with a non-empty, duplicate-free list
+    of cell indices in 0..223, and the cell count equal to the listed cells."""
+    if not (isinstance(sup, dict) and sup.get("pass") is True and sup.get("n_seeds") == 200):
+        return False
+    fails, n = sup.get("failures"), sup.get("n_seed_cells")
+    if not isinstance(fails, dict) or not isinstance(n, int) or isinstance(n, bool):
+        return False
+    total = 0
+    for k, cells in fails.items():
+        if not (isinstance(k, str) and k.isdigit() and 1 <= int(k) <= 200 and isinstance(cells, list) and cells):
+            return False
+        if not all(isinstance(c, int) and not isinstance(c, bool) and 0 <= c < 224 for c in cells):
+            return False
+        if len(set(cells)) != len(cells):
+            return False
+        total += len(cells)
+    return total == n
+
+
+def pilot_files_ok(units: Path, jobid: str) -> dict:
+    """The pilot's units directory holds exactly the 8 units' products and their pins receipts, each receipt passing
+    and naming its unit and products' digests, and every unit's meta names this pilot job."""
+    import hashlib
+    want = {f"{u}{x}" for u in PILOT for x in (".npz", ".root", ".done")} | {f"pins_{u}.json" for u in PILOT}
+    have = {p.name for p in units.iterdir()}
+    out = {"files_exactly_the_pilot's": have == want}
+    ok = out["files_exactly_the_pilot's"]
+    for u in PILOT if ok else ():
+        rec = json.loads((units / f"pins_{u}.json").read_text())
+        digests = {n: hashlib.sha256((units / n).read_bytes()).hexdigest() for n in (f"{u}.done", f"{u}.npz", f"{u}.root")}
+        meta = json.loads(str(np.load(units / f"{u}.npz", allow_pickle=False)["meta"]))
+        ok = ok and rec.get("pass") is True and rec.get("units") == [u] and rec.get("outputs") == {u: digests}
+        ok = ok and str(meta.get("slurm_job")) == jobid
+    out["pins_receipts_and_job"] = bool(ok)
+    return out
+
+
 def pilot_cross_unit(units: Path, rows: Path) -> dict:
     """C-NORM, C-FIX and C-MOVE's seed-1 fill record, on the pilot's units (the scorer's own checks)."""
+    import re
     import ptmc_score as S
     out = {}
     metas = {u: json.loads(str(np.load(units / f"{u}.npz", allow_pickle=False)["meta"])) for u in PILOT}
     norm = {metas[u].get("extract_args_sha256") for u in PILOT}
-    out["C-NORM"] = len(norm) == 1 and isinstance(next(iter(norm)), str)
+    out["C-NORM"] = len(norm) == 1 and bool(re.fullmatch(r"[0-9a-f]{64}", str(next(iter(norm)))))
     ro, rr = S.root_objects(units / "p_off_c.root"), S.root_objects(units / "p_R_c.root")
     out["C-FIX"] = all(S.fix_equal(ro, rr).values())
     entries = np.asarray(np.load(rows)["entry"], np.int64)
-    keys = ("fill_entry", "fill_pt", "fill_pz", "fill_w")
-    ref = np.load(units / "p_off_b1.npz", allow_pickle=False)
-    r1 = np.load(units / "p_R_b1.npz", allow_pickle=False)
-    keep = ~np.isin(np.asarray(ref["fill_entry"], np.int64), entries)
-    e = np.asarray(ref["fill_entry"])
-    out["C-MOVE-seed1"] = bool(e.size > 0 and np.unique(e).size == e.size
-                               and all(np.array_equal(np.asarray(r1[k]), np.asarray(ref[k])[keep]) for k in keys))
+    out["C-MOVE-seed1"] = S.replica_moves(units, "p_R_b1", S.move_reference(units, entries))
     sup = metas["p_R_c"].get("support")
-    out["C-SUPPORT-table"] = bool(isinstance(sup, dict) and sup.get("n_seeds") == 200 and "failures" in sup)
+    out["C-SUPPORT-table"] = support_table_ok(sup)
     out["support"] = sup
     out["seconds"] = {u: metas[u].get("seconds") for u in PILOT}
     return out
@@ -101,6 +139,9 @@ def decide(job: dict, steps: dict, units: Path, rows: Path) -> dict:
         s["state"] == "COMPLETED" and s["exit"] == "0:0" and s["nodes"] == 1 and 0 < s["elapsed"] <= job["elapsed"]
         for s in steps.values()))
     receipts = {u: P.unit_receipt(units, u) for u in PILOT}
+    files = pilot_files_ok(units, job["id"])
+    d["files"] = files
+    r["pilot_files_and_pins_receipts"] = all(files.values())
     d["units"] = {u: (True if v["ok"] else v["why"]) for u, v in receipts.items()}
     r["every_pilot_unit_passes"] = all(v["ok"] for v in receipts.values())
     if not all(r.values()):

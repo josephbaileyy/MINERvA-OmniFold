@@ -11,7 +11,7 @@
 # PTMC replicas (PTMC-DECLARATION.md section 7): R replicas b = 2..200 on 5 nodes, 4 lanes of 64 CPUs each and up to 10
 # units per lane in sequence, each unit its own named srun step. The time limit is set on the sbatch command line (L,
 # from the pilot's post); none is written here. The job refuses (2) unless its allocation is exactly 5 nodes and its
-# time limit is at most the authorized L. A unit's failure does not stop its lane (the others are independent); every
+# time limit is exactly the authorized L. A unit's failure does not stop its lane (the others are independent); every
 # unit's outcome goes to this job's own record directory, and the job fails (6) unless all 199 are recorded as 0.
 set -u -o pipefail
 R=/pscratch/sd/j/josephrb/ptmc-20261128; O=$R/tool/2d-unfolding/ptmc
@@ -32,7 +32,7 @@ L=$(cat $R/pilot-post/time_limit_minutes) || refuse "no authorized time limit"
 case "$L" in ''|*[!0-9]*) refuse "the authorized time limit '$L'";; esac
 tl=$(squeue -h -j "$SLURM_JOB_ID" -o %l) || refuse "squeue failed"
 tm=$(minutes "$tl") || refuse "the job's time limit '$tl' does not parse"
-[ "$tm" -ge 1 ] && [ "$tm" -le "$L" ] || refuse "the job's time limit is $tm minutes; the authorized L is $L"
+[ "$tm" -ge 1 ] && [ "$tm" = "$L" ] || refuse "the job's time limit is $tm minutes; the authorized L is $L"
 hook=$(/global/common/software/nersc/pe/conda/24.10.0/Miniforge3-24.7.1-0/bin/conda shell.bash hook) \
   || refuse "the conda hook failed"
 eval "$hook" || refuse "the conda hook did not evaluate"
@@ -59,10 +59,11 @@ lane() {
   done
   return 0
 }
+LANES="0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19"  # literal: no substitution can leave a lane out
 declare -A pid_of
-for l in $(seq 0 19); do lane $l & pid_of[$l]=$!; done
+for l in $LANES; do lane $l & pid_of[$l]=$!; done
 bad=0
-for l in $(seq 0 19); do
+for l in $LANES; do
   wait "${pid_of[$l]}"; rc=$?
   echo "lane $l $rc" >> $REC/lanes || bad=1
   [ "$rc" = 0 ] || bad=1
@@ -71,5 +72,7 @@ echo "[ptmc_reps] done $(date -u +%FT%TZ)"
 cat $REC/lanes $REC/lane_* 2>/dev/null
 n=$(cat $REC/lane_* | awk '$2 == "0" {print $1}' | sort -u | wc -l) || n=-1
 t=$(cat $REC/lane_* | wc -l) || t=-1
-[ "$bad" = 0 ] && [ "$n" = 199 ] && [ "$t" = 199 ] || { echo "[ptmc_reps] FAIL: $n of 199 units succeeded ($t recorded)"; exit 6; }
+nl=$(awk '$1 == "lane" && $3 == "0" {print $2}' $REC/lanes | sort -u | wc -l) || nl=-1
+[ "$bad" = 0 ] && [ "$n" = 199 ] && [ "$t" = 199 ] && [ "$nl" = 20 ] \
+  || { echo "[ptmc_reps] FAIL: $n of 199 units succeeded ($t recorded), $nl of 20 lanes"; exit 6; }
 exit 0

@@ -17,7 +17,9 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import re
+import stat
 import sys
 import traceback
 from pathlib import Path
@@ -134,20 +136,42 @@ def named_json(path: Path, name: str) -> dict:
     return json.loads(o[1])
 
 
-def fix_equal(ro: dict, rr: dict) -> dict:
+def fix_equal(ro: dict, rr: dict, names=FIX) -> dict:
     """C-FIX: each fixed object of two units' ROOT files equal bit for bit (axes, contents, errors, overflow),
     of the same class, and finite. Shared by the scorer and the pilot's post."""
     fix = {}
-    for nm in FIX:
+    for nm in names:
         o, r = ro.get(nm), rr.get(nm)
-        if o is None or r is None or o[:2] != r[:2]:
-            fix[nm] = False
+        if o is None or r is None or o[:2] != r[:2] or o[1] != FIX_CLASS.get(nm, "TParameter<double>"):
+            fix[nm] = False  # absent, of different kinds, or not the class the driver writes (B9)
         elif o[0] == "TH1":
-            fix[nm] = bool(o[2].tolist() == r[2].tolist() and bits(o[3]) == bits(r[3]) and bits(o[4]) == bits(r[4])
+            fix[nm] = bool(o[2].tolist() == r[2].tolist() and fix_axes_ok(nm, o[2])
+                           and bits(o[3]) == bits(r[3]) and bits(o[4]) == bits(r[4])
                            and np.all(np.isfinite(o[3])) and np.all(np.isfinite(o[4])))
         else:
             fix[nm] = bool(bits([o[2]]) == bits([r[2]]) and math.isfinite(o[2]))
     return fix
+
+
+FIX_CLASS = {"hOFTruthDenom2D": "TH2D", "hDataReco2D": "TH2D", "hFlux_pt": "TH1D"}
+
+
+def fix_axes_ok(nm: str, axes) -> bool:
+    """A fixed histogram's x (and, in 2D, y) edges are section 2.5's exactly, and every edge is finite (B9)."""
+    ax = [list(map(float, a)) for a in axes]
+    if not all(math.isfinite(e) for a in ax for e in a):
+        return False
+    want = [[float(e) for e in EDGES[0]]] + ([[float(e) for e in EDGES[1]]] if FIX_CLASS[nm] == "TH2D" else [])
+    return ax[:len(want)] == want
+
+
+def finite_ratio(num, den):
+    """num / den where both are finite, den != 0 and the quotient is finite; otherwise undefined (None)."""
+    if not (math.isfinite(num) and math.isfinite(den)) or den == 0:
+        return None
+    with np.errstate(over="ignore"):
+        q = float(np.float64(num) / np.float64(den))
+    return q if math.isfinite(q) else None
 
 
 def bits(a) -> bytes:
@@ -174,13 +198,47 @@ def ibu(z: dict, K: int) -> np.ndarray:
     return x
 
 
+ROWS_STAGED = "oofvc_rows.npz"  # the rows file's name in the stage, as ptmc_remote.sh copies it
+FILL_KEYS = ("fill_entry", "fill_pt", "fill_pz", "fill_w")
+
+
+def move_reference(units: Path, entries: np.ndarray) -> dict:
+    """C-MOVE's per-replica reference: p_off_b1's fill record (checked for shape, finiteness, entry range and
+    uniqueness), the rows file's entries removed in order, and the fiducial injection on what remains. Shared by the
+    scorer and the pilot's post (seed 1)."""
+    ref = load(units / "p_off_b1.npz", FILL_KEYS)
+    n_bkg = named_json(units / "p_off_b1.root", "p1Streams")["n"]["bkg"]
+    need(isinstance(n_bkg, int) and n_bkg > 0, "C-MOVE: p_off_b1's background-stream size")
+
+    def fill_ok(z):
+        e = np.asarray(z["fill_entry"])
+        n = e.size
+        return (e.dtype.kind in "iu" and np.unique(e).size == n and (n == 0 or (e.min() >= 0 and e.max() < n_bkg))
+                and all(np.asarray(z[k]).shape == (n,) for k in FILL_KEYS)
+                and all(np.all(np.isfinite(np.asarray(z[k], float))) for k in FILL_KEYS[1:]))
+    need(fill_ok(ref) and ref["fill_entry"].size > 0, "C-MOVE: p_off_b1's fill record")
+    keep = ~np.isin(np.asarray(ref["fill_entry"], np.int64), np.asarray(entries, np.int64))
+    want = {k: np.asarray(ref[k])[keep] for k in FILL_KEYS}
+    want_inj = P.injected_entries({"entry": want["fill_entry"], "pt": want["fill_pt"], "pz": want["fill_pz"]},
+                                  EDGES[0][0], EDGES[0][-1], EDGES[1][0], EDGES[1][-1])
+    return {"fill_ok": fill_ok, "want": want, "want_inj": want_inj}
+
+
+def replica_moves(units: Path, u: str, mref: dict) -> bool:
+    """One R replica's fill record and injection against move_reference's."""
+    z = load(units / f"{u}.npz", FILL_KEYS + ("inj_entries",))
+    return bool(mref["fill_ok"](z) and all(np.array_equal(np.asarray(z[k]), mref["want"][k]) for k in FILL_KEYS)
+                and np.array_equal(np.asarray(z["inj_entries"], np.int64), mref["want_inj"]))
+
+
 def canonical_argv(tree_cfg: dict, conv: str, b, rows: Path) -> list:
     e = tree_cfg["e_r"]
     stage = tree_cfg["inputs"]["staging"]
     subs = {"$CV": str(Path(stage["root"]) / stage["CV"]), "$MC": str(Path(stage["root"]) / stage["MC"])}
     argv = [subs.get(x, x) for x in e["argv"]]
     if conv == "R":
-        argv += ["--signal-convention", "minerva", "--oofvc-rows", str(Path(stage["root"]) / rows.name)]
+        # the bound staged path (ptmc_remote.sh's stage/oofvc_rows.npz), never the scorer's local copy's name (B14)
+        argv += ["--signal-convention", "minerva", "--oofvc-rows", str(Path(stage["root"]) / ROWS_STAGED)]
     if b is not None:
         argv += [x.format(b=b) for x in e["replica_argv_extra"]]
     return argv
@@ -191,7 +249,7 @@ def check_units(units: Path, pins: dict, tree_cfg: dict, rows: Path) -> tuple[di
     literal CPUs, threads and scan, a complete and uniform runtime, and pins files that cover every unit."""
     names = unit_names()
     want_files = {f"{u}.{x}" for u in names for x in ("npz", "root", "done")}
-    have = {p.name for p in units.iterdir()}
+    have = regular_files(units, "C-UNITS")
     pins_files = sorted(n for n in have if re.fullmatch(r"pins_[A-Za-z0-9_.]+\.json", n))
     extra, missing = have - want_files - set(pins_files), want_files - have
     need(not extra and not missing, f"C-UNITS: inventory: missing {sorted(missing)[:5]}, extra {sorted(extra)[:5]}")
@@ -216,6 +274,9 @@ def check_units(units: Path, pins: dict, tree_cfg: dict, rows: Path) -> tuple[di
              f"C-PINS: {u}: code or inputs")
         need(isinstance(m.get("extract_args_sha256"), str) and HEX64.fullmatch(m["extract_args_sha256"]),
              f"C-NORM: {u}: no valid digest")
+        # the driver's effective grid as the unit ran it, Tier 1's outer extents included (agy 15, codex 12)
+        need(m.get("grid") == {"pt": [float(e) for e in EDGES[0]], "pz": [float(e) for e in EDGES[1]]},
+             f"C-GRID: {u}: the driver's effective edges are not section 2.5's")
         metas[u] = m
     need(len(runtimes) == 1, f"C-UNITS: {len(runtimes)} distinct runtime sets")
     covered = set()
@@ -243,6 +304,26 @@ def check_units(units: Path, pins: dict, tree_cfg: dict, rows: Path) -> tuple[di
 # ------------------------------------------------------------------------------------------------ the D4
 
 
+REF_ROOT = "/pscratch/sd/j/josephrb/ref-c2c1-20261106"  # ptmc_stage_d4.REF
+D4_PRODUCTS = (["c2_central.npz"] + [f"c2_replica_b{b}.npz" for b in range(1, 201)]
+               + ["000_cov_ptpl_minerva_inclusive_6GeV.root"] + [f"{k:03d}_xsec.root" for k in range(1, 202)])
+
+
+def d4_source(name: str) -> str:
+    """A D4 product's source path, as ptmc_stage_d4.products names it."""
+    sub = "units" if name.startswith("c2_") else "read-2/inputs"
+    return f"{REF_ROOT}/{sub}/{name}"
+
+
+def regular_files(d: Path, control: str) -> set:
+    """The names in a fetched directory, every one a regular file (a symlink or anything else fails; B7)."""
+    names = set()
+    for p in d.iterdir():
+        need(stat.S_ISREG(os.lstat(p).st_mode), f"{control}: {p.name} is not a regular file")
+        names.add(p.name)
+    return names
+
+
 def d4_manifest(d4: Path) -> dict:
     """The staging's manifest reconciled with the fetched directory (codex r1 #8): exactly manifest.json and the
     copied products; each fetched file's sha256 equals the manifest's; the mandatory 000 and 001 copied."""
@@ -250,14 +331,21 @@ def d4_manifest(d4: Path) -> dict:
     need(mf.is_file(), "C-D4: no staging manifest")
     m = json.loads(mf.read_text())
     copied, absent = m.get("copied", {}), m.get("absent", [])
-    have = {p.name for p in d4.iterdir()}
+    need(m.get("ref_root") == REF_ROOT, f"C-D4: the staging read {m.get('ref_root')!r}, not {REF_ROOT}")
+    have = regular_files(d4, "C-D4")
     need(have == set(copied) | {"manifest.json"}, f"C-D4: the fetched files are not the manifest's: "
                                                   f"{sorted(have ^ (set(copied) | {'manifest.json'}))[:5]}")
     for name, rec in copied.items():
         need(sha256(d4 / name) == rec.get("sha256"), f"C-D4: {name} differs from its staging digest")
     for name in ("000_cov_ptpl_minerva_inclusive_6GeV.root", "001_xsec.root"):
         need(name in copied, f"C-IN: the mandatory {name} was not staged")
-    return {"copied": set(copied), "absent": [Path(a).name for a in absent]}
+    # an absence is recorded by its full source path, and must be one of the declared products' (B7)
+    by_path = {d4_source(n): n for n in D4_PRODUCTS}
+    unknown = [a for a in absent if a not in by_path]
+    need(not unknown and len(set(absent)) == len(absent), f"C-D4: absence records that name no declared source: "
+                                                          f"{unknown[:3]}")
+    need(not (set(by_path[a] for a in absent) & set(copied)), "C-D4: a product recorded both copied and absent")
+    return {"copied": set(copied), "absent": [by_path[a] for a in absent]}
 
 
 def ref_markers(repo: Path) -> dict:
@@ -265,7 +353,7 @@ def ref_markers(repo: Path) -> dict:
     unit; the central marker's own bytes pinned."""
     base = repo / REF_RECEIPTS
     need(sha256(repo / CENTRAL_MARKER) == CONST["CENTRAL_MARKER_SHA"], "C-D4: the committed central marker's sha256")
-    files = list(base.rglob("c2_replica_b*.done")) + list((base / "units-centrals").glob("c2_central.done"))
+    files = list(base.rglob("c2_replica_b*.done")) + list(base.rglob("c2_central.done"))  # a stray copy anywhere (B7)
     out = {}
     for f in files:
         mk = json.loads(f.read_text())
@@ -325,7 +413,13 @@ def publication(a, RR, rc) -> tuple:
     cp = RR.compare()
     f = ROOT.TFile.Open(str(pub_path))
     need(f and not f.IsZombie(), "C-IN: the publication does not open")
-    x = np.asarray(cp.flatten_th2d(f.Get("pt_pl_cross_section")), float)
+    h = f.Get("pt_pl_cross_section")
+    need(bool(h) and h.ClassName() == "TH2D", "C-IN: the publication's pt_pl_cross_section is not a TH2D")
+    pax = [[ax.GetBinLowEdge(i) for i in range(1, ax.GetNbins() + 2)] for ax in (h.GetXaxis(), h.GetYaxis())]
+    need(sorted(len(e) - 1 for e in pax) == [14, 16] and all(np.all(np.isfinite(e)) and np.all(np.diff(e) > 0)
+                                                            for e in pax),
+         "C-IN: the publication histogram's axes are not 14 x 16 finite, increasing bins (codex 19)")
+    x = np.asarray(cp.flatten_th2d(h), float)
     cov = np.asarray(cp.tmatrix_to_numpy(f.Get("TotalCovariance")), float)
     stat = np.asarray(cp.tmatrix_to_numpy(f.Get("StatOnlyCovariance")), float)
     f.Close()
@@ -390,6 +484,14 @@ def score(a) -> dict:
     fix = fix_equal(ro, rr)
     need(all(fix.values()), f"C-FIX: {fix}")
     controls["C-FIX"] = {"pass": True, "equal": fix}
+    # C-DEN: every unit's denominator is the central's, bit for bit, so each replica's C-COMP reference is the D_CV
+    # that the central's C-COUPLE sums tie to the independently summed T_orig,CV (confirm read B10)
+    den = ro["hOFTruthDenom2D"]
+    bad = [u for u in names if not fix_equal({"hOFTruthDenom2D": den},
+                                             {"hOFTruthDenom2D": root_objects(a.units / f"{u}.root").get(
+                                                 "hOFTruthDenom2D")}, ("hOFTruthDenom2D",))["hOFTruthDenom2D"]]
+    need(not bad, f"C-DEN: the denominator differs from p_off_c's in {bad[:5]}")
+    controls["C-DEN"] = {"pass": True}
     # C-NORM
     ref_norm = metas["p_off_c"]["extract_args_sha256"]
     bad = [u for u in names if metas[u]["extract_args_sha256"] != ref_norm]
@@ -427,28 +529,10 @@ def score(a) -> dict:
                                                                       out=np.zeros(224), where=b_off != 0)))}
     printed["upper_edge_rows"] = int(np.sum(rect & (gid < 0)))
     # C-MOVE in every R replica: ordered, multiplicity-preserving fill records against p_off_b1's, streamed
-    fill_keys = ("fill_entry", "fill_pt", "fill_pz", "fill_w")
-    ref = load(a.units / "p_off_b1.npz", fill_keys)
-    n_bkg = named_json(a.units / "p_off_b1.root", "p1Streams")["n"]["bkg"]
-
-    def fill_ok(z):
-        e = np.asarray(z["fill_entry"])
-        n = e.size
-        return (e.dtype.kind in "iu" and np.unique(e).size == n and (n == 0 or (e.min() >= 0 and e.max() < n_bkg))
-                and all(np.asarray(z[k]).shape == (n,) for k in fill_keys)
-                and all(np.all(np.isfinite(np.asarray(z[k], float))) for k in fill_keys[1:]))
-    need(fill_ok(ref) and ref["fill_entry"].size > 0, "C-MOVE: p_off_b1's fill record")
-    keep = ~np.isin(np.asarray(ref["fill_entry"], np.int64), entries)
-    want = {k: np.asarray(ref[k])[keep] for k in fill_keys}
-    want_inj = P.injected_entries({"entry": want["fill_entry"], "pt": want["fill_pt"], "pz": want["fill_pz"]},
-                                  EDGES[0][0], EDGES[0][-1], EDGES[1][0], EDGES[1][-1])
-    del ref
+    mref = move_reference(a.units, entries)
     for u in names:
-        if not u.startswith("p_R_b"):
-            continue
-        z = load(a.units / f"{u}.npz", fill_keys + ("inj_entries",))
-        need(fill_ok(z) and all(np.array_equal(np.asarray(z[k]), want[k]) for k in fill_keys)
-             and np.array_equal(np.asarray(z["inj_entries"], np.int64), want_inj), f"C-MOVE: replica sets {u}")
+        if u.startswith("p_R_b"):
+            need(replica_moves(a.units, u, mref), f"C-MOVE: replica sets {u}")
     controls["C-MOVE"]["replica_sets"] = True
     # C-COUPLE, and C-SIM's coverage by index
     for u in ("p_off_c", "p_R_c"):
@@ -458,6 +542,8 @@ def score(a) -> dict:
     printed["C-SUPPORT"] = metas["p_R_c"].get("support")
     printed["completeness_counts"] = {u: metas[u].get("completeness_counts") for u in names if u.startswith("p_R_b")}
     printed["suppressed_moved_support_cells"] = metas["p_R_c"].get("suppressed_moved_support_cells")
+    printed["suppressed_moved_support_cells_replicas"] = {u: metas[u].get("suppressed_moved_support_cells")
+                                                          for u in names if u.startswith("p_R_b")}
     # C-BASE (mandatory half)
     r = P.rel_close(X_OF["p_off_c"], x_er, 1e-8)
     need(r["pass"], f"C-BASE: E_R {r}")
@@ -535,6 +621,20 @@ def score(a) -> dict:
     disp = P.disposition(True, True, bool(absent), bool(mismatch), repoff)
     controls["disposition"] = disp
     need(disp != "stop", f"the disposition is STOP: absent {absent[:5]}, mismatch {mismatch[:5]}, C-REPOFF {repoff}")
+    # section 3.3 item 3: the checks the absent products would have fed, skipped and listed with their operands
+    skipped = []
+    if None not in ref_c2:
+        skipped.append({"check": "C-BASE's IBU half against REF's c2_central", "missing": ["c2_central.npz"],
+                        "instead": "the D_IBU fallback (every K)"})
+    if repoff is None:
+        skipped.append({"check": "C-REPOFF", "missing": [n for n in ("c2_replica_b1.npz", P.staged_index(1))
+                                                          if n in absent]})
+    no_q = [P.staged_index(b) for b in seeds() if b not in q_r]
+    if no_q:
+        skipped.append({"check": "C-DRAW-R's aggregate half (Q_R's p1Streams)", "missing": no_q})
+    if disp == "unavailable":
+        skipped.append({"check": "the B arm (T, q95, max at K = 10 and 5) and C-PROTO", "missing": list(absent)})
+    controls["C-D4"]["skipped"] = skipped
     # the statistic, each arm after C-SHAPE and the binding's conditioning guard
     arms = {}
     for K in (10, 5):
@@ -553,7 +653,7 @@ def score(a) -> dict:
         t = RR.t_and_null(delta, D, CONST["RANK"])
         need(P.finite_t(t), f"C-SHAPE: a non-finite T or bar in {arm} K={K}")
         readings[f"{arm}_K{K}"] = {**t, "reading": RR.classify_t(t, P.WORDS),
-                                   "T_over_q95": (t["T"] / t["q95"]) if t["q95"] > 0 else None}
+                                   "T_over_q95": finite_ratio(t["T"], t["q95"])}  # undefined if q95 = 0 (section 4)
     controls["C-SHAPE"] = {"pass": True}
     r1 = readings["R_K10"]["reading"]
     bread = readings["B_K10"]["reading"] if disp == "formed" else None
@@ -565,7 +665,15 @@ def score(a) -> dict:
               triples={arm: {k: readings[f"{arm}_K10"][k] for k in ("T", "q95", "max")}
                        for arm in (("R", "B") if disp == "formed" else ("R",))})
     rec = {"schema": "ptmc-score/2", "controls": controls, "readings": readings, "primary_K": 10,
-           "disposition": disp, "PTMC-R1": r1, "PTMC-B": bread, "statement": st}
+           "disposition": disp, "PTMC-R1": r1, "PTMC-B": bread, "statement": st,
+           # section 1's bound values, as this score verified them (B8)
+           "pins": {"pin_manifest_sha256": sha256(Path(a.pins)), "tree": pins["tree"], "own": pins["own"],
+                    "rows": pins["rows"], "join_record": pins["join"],
+                    "roounfold_lib_sha256": pins["roounfold_lib_sha256"],
+                    "d4_manifest_sha256": sha256(a.d4 / "manifest.json"),
+                    "constants": {k: CONST[k] for k in ("CELLS_SHA", "E_R_SHA", "PUB_SHA", "READOUT_SHA",
+                                                        "CENTRAL_MARKER_SHA", "ROWS_SHA")},
+                    "units": len(names), "rank": CONST["RANK"], "n_replicas": CONST["N"]}}
     # printed, read by nothing
     if disp == "formed":
         dB, DB = arms[("B", 10)]
@@ -582,7 +690,7 @@ def score(a) -> dict:
         per = {}
         for b in seeds():
             de, di = dist(X_OF[f"p_R_b{b}"])[0], dist(X_IBU[f"p_R_b{b}"][K])[0]
-            per[b] = (di / de) if (de != 0 and math.isfinite(de) and math.isfinite(di)) else None
+            per[b] = finite_ratio(di, de)  # an overflowed quotient is undefined, never serialized as Infinity
         vals = [v for v in per.values() if v is not None and math.isfinite(v)]
         printed[f"rho_K{K}"] = {"per_seed": per, "n_defined": len(vals),
                                 "interval": [float(np.quantile(vals, 0.05)), float(np.quantile(vals, 0.95))]

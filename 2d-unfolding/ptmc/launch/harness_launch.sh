@@ -14,7 +14,12 @@ S
 cat > "$T/bin/scp" <<'S'
 #!/bin/bash
 [ -n "${SCP_FAIL:-}" ] && exit 1
-for a in "$@"; do :; done; f=${@: -2:1}; printf 'tar' > "$a/${f##*/}"; exit 0
+for a in "$@"; do :; done; f=${@: -2:1}
+if [ "${f##*/}" = tars.sha256 ]; then
+  h=$(printf tar | /usr/bin/shasum -a 256 | cut -d' ' -f1); d=$h; [ -n "${SUM_BAD:-}" ] && d=$(printf x | /usr/bin/shasum -a 256 | cut -d' ' -f1)
+  printf '%s  post.tar.gz\n%s  d4.tar.gz\n' "$h" "$d" > "$a/tars.sha256"
+else printf 'tar' > "$a/${f##*/}"; fi
+exit 0
 S
 cat > "$T/bin/shasum" <<'S'
 #!/bin/bash
@@ -42,6 +47,7 @@ ok $? "prestage: through saul to the login node"
 y=$(d); run fetch "$y"; [ "$rc" = 0 ] && [ -s "$y/post.tar.gz" ] && [ -s "$y/d4.tar.gz" ]; ok $? "fetch: both tars, hashed"
 y=$(d); SCP_FAIL=1 run fetch "$y"; [ "$rc" != 0 ]; ok $? "fetch: a failed scp fails"
 y=$(d); SHASUM_FAIL=1 run fetch "$y"; [ "$rc" = 9 ] && has 'hashing post.tar.gz failed'; ok $? "fetch: a failed hash fails"
+y=$(d); SUM_BAD=1 run fetch "$y"; [ "$rc" = 9 ] && has 'the fetched d4.tar.gz is'; ok $? "fetch: a tar unequal to the remote digest fails"
 echo "# changed" >> "$T/ptmc_remote.sh"; run pilot "$(d)" login04; [ "$rc" = 8 ] && has 'not the approved one' && [ ! -e "$SSH_LOG" ]
 ok $? "a changed remote script: STOP 8"
 SHASUM_FAIL=1 run pilot "$(d)" login04; [ "$rc" = 9 ] && has 'hashing the remote script failed'; ok $? "a failed hash of the remote script: STOP 9"
