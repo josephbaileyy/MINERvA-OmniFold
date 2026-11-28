@@ -77,6 +77,35 @@ Every pin was computed by command.
     STOP every run.
   - The worst-case leak into M is about 1e-12 of the largest band.
 
+- **"The only measurement of this noise" is wrong.** Declaration §4 (line 148) says D11's X03, made on Stage C's July
+  universes, "is the only measurement of this noise … not on part B's or G2R's". The record's `noise_statement` says
+  the same. A second measurement is committed: the refined X03 on part B's S4(ii) panel, at the data.
+  - **Where it is:**
+    - S5_R's `s5.json` `numbers.x03`, at
+      `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/s5/s5.json.gz`. The `.gz` has
+      sha256 `5c489837f999ea4bf8ea416be7d67fa5ba9e3107acf32cfc18f74545a1ee705e` and git blob
+      `ad8a86351ceed27ab5fa4aac1bc008142c830efa`. Decompressed, it has sha256
+      `ec4a407b33200cb2c9792e943c924b1e2043974f12b81eacdc605bccc52b90c2`.
+    - It is printed in the `x03-*` rows of the values table, `RE2-PARTC-REPORT.md:597-611` (the "regenerated"
+      column), at `docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-PARTC-REPORT.md`. That file has
+      sha256 `70d620bac2994a423282ff342300d39579c0b930cfecfd36c739c63bf8c0ee36` and git blob
+      `c8083d02ec91cdb8576a4bfffbd4c1de6ce79392`.
+  - **What it measures.** Part B's J7 ran 7 universes at seeds 42, 45, 48, 51 and 54, and the CV at 45, 48, 51 and 54.
+    For the six non-null universes, the seed SD of one universe's shift U(s) − CV(s), with both at the same seed s,
+    is:
+    - 0.19–0.23 % of the cross section, as a per-bin median;
+    - 1.08–1.36 σ_ML (MaRES:0 1.13, Flux:23 1.23), with dof 4.
+  - **A comparison of scale only, not the noise share.** This record's R6 median |b|/x₀ is 0.166 % across the 43
+    bands, and 0.19–0.57 % for the top five (MaRES 0.565 %, Muon_Energy_MINOS 0.547 %). So the single-shift noise is
+    of the same order as the typical |b|. That does not measure how much of M is noise:
+    - the panel has single universes, not any band's b;
+    - they are part B's pre-G2R universes;
+    - the figures are per-bin medians, not a matrix;
+    - the correlation between a band's ± universe noise is unknown.
+  - **Nothing else changes.** No reading, label or control changes. `noise_term` stays "not separable, disclosed",
+    because the universes in C_new still share X₀'s seed. The merged declaration and the run record are not edited
+    (director, 2026-11-28).
+
 ## The fetch is all or nothing
 
 The declaration's §6 C-FETCH says that if a part-D file is missing or differs, part D STOPs and the tunes continue.
