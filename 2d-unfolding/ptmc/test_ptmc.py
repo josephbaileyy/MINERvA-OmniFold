@@ -588,6 +588,11 @@ class Runner(unittest.TestCase):
             mk["runner_sha256"] = "0" * 64
             (tmp / "p_off_c.done").write_text(json.dumps(mk))
             self.assertEqual(ptmc_run.main(args), ptmc_run.RC_CONTROL)
+            # B2: nor one made by another unfolder
+            mk = json.loads((self.out / "p_off_c.done").read_text())
+            mk["unfolder"] = "f" * 64
+            (tmp / "p_off_c.done").write_text(json.dumps(mk))
+            self.assertEqual(ptmc_run.main(args), ptmc_run.RC_CONTROL)
 
     def test_a_running_unit_holds_its_claim(self):
         """Confirm read B2: the unit's marker is created exclusively (RUNNING) before the driver runs, so a second

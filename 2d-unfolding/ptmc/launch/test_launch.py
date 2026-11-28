@@ -68,7 +68,9 @@ def pilot_units(prod, change=None, job=JOB):
         mk["sha256"] = sha(d / f"{u}.npz")
         (d / f"{u}.done").write_text(json.dumps(mk))
         outs = {n: sha(d / n) for n in (f"{u}.done", f"{u}.npz", f"{u}.root")}
-        (d / f"pins_{u}.json").write_text(json.dumps({"units": [u], "pass": True, "outputs": {u: outs}}))
+        pins = {"driver": "d" * 64, "rows": "r" * 64}
+        (d / f"pins_{u}.json").write_text(json.dumps({"units": [u], "before": pins, "after": pins, "pass": True,
+                                                      "outputs": {u: outs}}))
     return d
 
 
@@ -135,7 +137,9 @@ class PilotPost(unittest.TestCase):
                sacct(steps={**{u: 700 for u in PILOT}, "p_R_b1": 900}),  # a step longer than its job
                "\n".join(l if "|batch|" in l or "|extern|" in l or "|ptmc_pilot|" in l
                          else f"{JOB}.0|" + l.split("|", 1)[1] for l in sacct().splitlines()) + "\n",  # one step id
-               sacct().replace(f"{JOB}.3|", f"{JOB}.x|")]  # a non-numeric step id
+               sacct().replace(f"{JOB}.3|", f"{JOB}.x|"),  # a non-numeric step id
+               sacct().replace(f"{JOB}|ptmc_pilot|", f"{JOB}.|ptmc_pilot|"),  # a malformed allocation id (B4)
+               sacct().replace(f"{JOB}.3|", f"{JOB}.03|")]  # a non-canonical step id (B4)
         for text in bad:
             rc, d, out = run(text, self.p)
             self.assertEqual(rc, 6, (text, d))
@@ -170,7 +174,9 @@ class PilotPost(unittest.TestCase):
         cases = {"non-finite extraction arguments": ("p_off_b3", lambda m: m.update(extract_args_finite=False)),
                  "controls ['C-EXTRA']": ("p_off_b4", lambda m: m["controls"].update({"C-EXTRA": {"pass": False}})),
                  "meta identity": ("p_off_b5", lambda m: m.update(bootstrap_seed=6)),
-                 "C-ROO did not run": ("p_off_b2", lambda m: m["controls"]["C-ROO"].update(ran=False))}
+                 "C-ROO did not run": ("p_off_b2", lambda m: m["controls"]["C-ROO"].update(ran=False)),
+                 "the numpy unfolder (tests only)": ("p_off_c", lambda m: (m.update(unfolder="numpy unfolder"),
+                                                                           m["controls"]["C-ROO"].update(ran=False)))}
         for why, (unit, change) in cases.items():
             rc, d, out = self.meta_defect(unit, change)
             self.assertEqual(rc, 6, why)
@@ -221,9 +227,18 @@ class PilotPost(unittest.TestCase):
         u = pilot_units(self.p)
         (u / "pins_p_off_b4.json").unlink()
         check(u, "a missing pins receipt")
+        u = pilot_units(self.p)
+        rec = json.loads((u / "pins_p_off_b5.json").read_text())
+        del rec["before"], rec["after"]
+        (u / "pins_p_off_b5.json").write_text(json.dumps(rec))
+        check(u, "a pins receipt without its before and after pins (B3)")
 
     def test_cnorm_requires_a_digest(self):
         rc, d, _ = run(sacct(), self.p, units=pilot_units(self.p, lambda u, m: m.update(extract_args_sha256="same")))
+        self.assertEqual(rc, 6)
+        self.assertFalse(d["rules"]["C-NORM"])
+        # B3: a non-string whose text is 64 hex digits is not a digest
+        rc, d, _ = run(sacct(), self.p, units=pilot_units(self.p, lambda u, m: m.update(extract_args_sha256=int("1" * 64))))
         self.assertEqual(rc, 6)
         self.assertFalse(d["rules"]["C-NORM"])
 
@@ -237,12 +252,30 @@ class PilotPost(unittest.TestCase):
         self.assertEqual(rc, 6)
         self.assertFalse(d["rules"]["C-MOVE-seed1"])
 
+    def test_seed1_float_injection_stops(self):
+        """B3: fractional injection entries are refused, not truncated to integers."""
+        q = products()
+        z = dict(np.load(q.units / "p_R_b1.npz"))
+        z["inj_entries"] = np.asarray(z["inj_entries"], float) + 0.25
+        q.rewrite_unit("p_R_b1", z)
+        rc, d, _ = run(sacct(), q)
+        self.assertEqual(rc, 6)
+        self.assertFalse(d["rules"]["C-MOVE-seed1"])
+
+    def test_proceed_only_after_the_decision_is_printed(self):
+        """B12: PROCEED is written only once the decision (with the C-SUPPORT table) has been printed."""
+        with mock.patch.object(PP, "print", create=True, side_effect=OSError("broken pipe")):
+            rc, d, out = run(sacct(), self.p)
+        self.assertEqual(rc, 6)
+        self.assertEqual(d["verdict"], "PROCEED")
+        self.assertFalse((out / "PROCEED").exists())
+
     def test_support_table_defects_stop(self):
-        for bad in ({"1": "x"}, {"0": [3]}, {"5": []}, {"5": [224]}, {"5": [3, 3]}):
+        for bad in ({"1": "x"}, {"0": [3]}, {"5": []}, {"5": [224]}, {"5": [3, 3]}, {"1": [3], "01": [4]}):
             def change(u, m, bad=bad):
                 if u == "p_R_c":
                     m["support"]["failures"] = bad
-                    m["support"]["n_seed_cells"] = 1
+                    m["support"]["n_seed_cells"] = sum(len(v) for v in bad.values() if isinstance(v, list)) or 1
             rc, d, _ = run(sacct(), self.p, units=pilot_units(self.p, change))
             self.assertEqual(rc, 6, bad)
             self.assertFalse(d["rules"]["C-SUPPORT-table"], bad)
@@ -350,6 +383,15 @@ class StageD4(unittest.TestCase):
         want = {name: str(src) for src, name in self.SD.products(self.SD.REF)}
         self.assertEqual(got, want)
         self.assertEqual(S.REF_ROOT, str(self.SD.REF))
+
+    def test_the_deploy_trees_ref_c2c1_is_checked_before_import(self):
+        """B8: the stager hashes the deploy tree's ref_c2c1.py against its pin before importing it or writing."""
+        import ptmc_run
+        rel = "2d-unfolding/ref_c2c1/ref_c2c1.py"
+        with mock.patch.dict(ptmc_run.MODULE_PINS, {rel: "0" * 64}):
+            rc, out = self.stage()
+        self.assertEqual(rc, 5)
+        self.assertFalse(out.exists())
 
     def test_a_fifo_fails_before_any_copy(self):
         """A non-regular source fails at its lstat: a FIFO would otherwise copy as an empty file (no writer)."""

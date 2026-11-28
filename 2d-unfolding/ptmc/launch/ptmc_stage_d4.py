@@ -40,6 +40,13 @@ def main(argv=None, ref: Path = REF) -> int:
     ap.add_argument("--tree", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
+    # the deploy tree's ref_c2c1 is hashed against its pin before it is imported or anything is written (B8)
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    from ptmc_run import MODULE_PINS, sha256
+    rel = "2d-unfolding/ref_c2c1/ref_c2c1.py"
+    if sha256(a.tree / rel) != MODULE_PINS[rel]:
+        print(f"FAIL: the deploy tree's {rel} is not its pin", file=sys.stderr)
+        return 5
     sys.path.insert(0, str(a.tree / "2d-unfolding" / "ref_c2c1"))
     import ref_c2c1 as C
     if a.out.exists():

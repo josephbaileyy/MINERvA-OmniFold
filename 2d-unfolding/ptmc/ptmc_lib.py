@@ -416,8 +416,11 @@ def unit_receipt(units, name: str) -> dict:
         bad += sorted(c for c, v in ctl.items() if not (isinstance(v, dict) and v.get("pass") is True))
         if bad:
             return {"ok": False, "why": f"controls {sorted(set(bad))}"}
-        # C-ROO's pass means the bound RooUnfoldBayes ran and agreed; only the tests' numpy unfolder skips it (B11)
-        if meta.get("unfolder") != "numpy unfolder" and ctl["C-ROO"].get("ran") is not True:
+        # C-ROO's pass means the bound RooUnfoldBayes ran and agreed. The tests' numpy unfolder skips C-ROO, so its
+        # units are never admitted, at the pilot or the score (B11)
+        if meta.get("unfolder") == "numpy unfolder":
+            return {"ok": False, "why": "the numpy unfolder (tests only)"}
+        if ctl["C-ROO"].get("ran") is not True:
             return {"ok": False, "why": "C-ROO did not run"}
         return {"ok": True, "why": "", "meta": meta}
     except (OSError, ValueError, KeyError, TypeError) as e:

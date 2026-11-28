@@ -226,6 +226,7 @@ proceeded; run replicas
 [ "$rc" = 0 ] && grep -q -- '-N 5 -t 145 .*replicas.sbatch' $H/sbatch.args && [ "$(cat $H/R/logs/replicas.jobid)" = 12345 ]
 ok $? "replicas: submitted with -N 5 -t 145"
 grep -q -- '--recheck .*decision.json' $H/python.args && [ -s $H/R/replicas-check/sacct.txt ]; ok $? "replicas: the recheck ran on fresh accounting"
+[ "$(cat $H/R/replicas-check/recheck.json)" = '{"recheck": "SAME", "time_limit_minutes": 145}' ]; ok $? "replicas: the recheck recorded for replicas.sbatch (B1)"
 run replicas; [ "$rc" != 0 ] && has "have been submitted"; ok $? "replicas again: STOP"
 proceeded; RECHECK=DIFFERS RECHECK_RC=6 run replicas; [ "$rc" = 6 ] && has "does not give the same" && [ ! -e $H/sbatch.args ]; ok $? "replicas: a DIFFERS recheck exits 6, no sbatch"
 proceeded; RECHECK_L=144 run replicas; [ "$rc" != 0 ] && has "recheck's L is not 145" && [ ! -e $H/sbatch.args ]; ok $? "replicas: a recheck at another L STOPs"
@@ -241,11 +242,17 @@ mkpost; SACCT_J_12345=$P1 SACCT_J_12346='12346.0|p_R_b2|COMPLETED|0:0|700|1|s|e\
 [ "$rc" != 0 ] && has "sacct has no allocation line for the replicas job 12346" && [ ! -e $H/R/post.tar.gz ]; ok $? "post: accounting without the job's own line STOPs"
 mkpost; SACCT_J_12345=$P1 SACCT_J_12346="$P2$P1" run post
 [ "$rc" != 0 ] && has "has a row of another job" && [ ! -e $H/R/post.tar.gz ]; ok $? "post: a row of another job STOPs"
+mkpost; SACCT_J_12345=$P1 SACCT_J_12346="${P2}012346.1|p_R_b3|COMPLETED|0:0|700|1|s|e\n" run post
+[ "$rc" != 0 ] && has "has a row of another job" && [ ! -e $H/R/post.tar.gz ]; ok $? "post: a row whose id only equals the job's as a number STOPs"
 mkpost; SACCT_J_12345=$P1 SACCT_J_12346='' run post; [ "$rc" != 0 ] && has "sacct returned nothing for the replicas job"; ok $? "post: empty accounting STOPs"
 mkpost; SACCT_J_FAIL=1 run post; [ "$rc" != 0 ] && has "STOP: sacct pilot"; ok $? "post: a failed sacct STOPs"
 proceeded; run post; [ "$rc" != 0 ] && has "a PTMC job id is missing" && [ ! -e $H/R/post ]; ok $? "post: no replicas job id STOPs"
 mkpost; SQUEUE_OUT='ptmc_reps\n' run post; [ "$rc" != 0 ] && [ ! -e $H/R/post ] && [ ! -e $H/R/claims/post ]; ok $? "post: a running ptmc job STOPs before the claim"
 mkpost; D4_RC=5 SACCT_J_12345=$P1 SACCT_J_12346=$P2 run post; [ "$rc" != 0 ] && has "the D4 staging" && [ ! -e $H/R/post.tar.gz ]; ok $? "post: a failed D4 staging STOPs, no tar"
+mkpost; echo 12345 > $H/R/logs/replicas.jobid; SACCT_J_12345=$P1 run post
+[ "$rc" != 0 ] && has "the pilot and replicas job ids are both '12345'" && [ ! -e $H/R/post.tar.gz ]; ok $? "post: the pilot's id as the replicas' STOPs, no double charge"
+mkpost; SACCT_J_12345=$P1 SACCT_J_12346='12346|ptmc_pilot|COMPLETED|0:0|8000|2|s|e\n' run post
+[ "$rc" != 0 ] && has "has no single allocation named ptmc_reps on 5 nodes" && [ ! -e $H/R/post.tar.gz ]; ok $? "post: a replicas allocation of the wrong name or size STOPs"
 mkpost; SACCT_J_12345=$P1 SACCT_J_12346='12346|ptmc_reps|COMPLETED|0:0|8x00|5|s|e\n' run post
 [ "$rc" != 0 ] && has "STOP: charge" && [ ! -e $H/R/post.tar.gz ]; ok $? "post: a malformed elapsed time STOPs the charge"
 mkpost; SACCT_J_12345=$P1 SACCT_J_12346=$P2 run post

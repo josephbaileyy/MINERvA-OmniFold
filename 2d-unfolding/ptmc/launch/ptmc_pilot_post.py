@@ -52,8 +52,10 @@ def parse_sacct(text: str, jobid: str) -> tuple[dict, dict]:
         if jid in ids:
             raise ValueError(f"a repeated step id {jid}")
         ids.add(jid)
-        if tail and tail not in HOUSEKEEPING and not tail.isdigit():
-            raise ValueError(f"a step id that is neither numeric nor housekeeping: {jid}")
+        if tail and tail not in HOUSEKEEPING and not (tail.isdigit() and tail == str(int(tail))):
+            raise ValueError(f"a step id that is neither canonical numeric nor housekeeping: {jid}")
+        if not tail and jid != jobid:  # the allocation line is exactly the job id ("4242.", B4)
+            raise ValueError(f"a malformed allocation id {jid!r}")
         if not (el.isdigit() and nn.isdigit()):
             raise ValueError(f"non-numeric elapsed or nodes: {line!r}")
         rec = {"id": jid, "name": name, "state": state.split()[0] if state else "", "exit": exitc,
@@ -83,7 +85,8 @@ def support_table_ok(sup) -> bool:
         return False
     total = 0
     for k, cells in fails.items():
-        if not (isinstance(k, str) and k.isdigit() and 1 <= int(k) <= 200 and isinstance(cells, list) and cells):
+        if not (isinstance(k, str) and k.isdigit() and k == str(int(k)) and 1 <= int(k) <= 200
+                and isinstance(cells, list) and cells):
             return False
         if not all(isinstance(c, int) and not isinstance(c, bool) and 0 <= c < 224 for c in cells):
             return False
@@ -106,6 +109,7 @@ def pilot_files_ok(units: Path, jobid: str) -> dict:
         digests = {n: hashlib.sha256((units / n).read_bytes()).hexdigest() for n in (f"{u}.done", f"{u}.npz", f"{u}.root")}
         meta = json.loads(str(np.load(units / f"{u}.npz", allow_pickle=False)["meta"]))
         ok = ok and rec.get("pass") is True and rec.get("units") == [u] and rec.get("outputs") == {u: digests}
+        ok = ok and isinstance(rec.get("before"), dict) and bool(rec["before"]) and rec.get("before") == rec.get("after")
         ok = ok and str(meta.get("slurm_job")) == jobid
     out["pins_receipts_and_job"] = bool(ok)
     return out
@@ -118,7 +122,8 @@ def pilot_cross_unit(units: Path, rows: Path) -> dict:
     out = {}
     metas = {u: json.loads(str(np.load(units / f"{u}.npz", allow_pickle=False)["meta"])) for u in PILOT}
     norm = {metas[u].get("extract_args_sha256") for u in PILOT}
-    out["C-NORM"] = len(norm) == 1 and bool(re.fullmatch(r"[0-9a-f]{64}", str(next(iter(norm)))))
+    one = next(iter(norm))
+    out["C-NORM"] = len(norm) == 1 and isinstance(one, str) and bool(re.fullmatch(r"[0-9a-f]{64}", one))
     ro, rr = S.root_objects(units / "p_off_c.root"), S.root_objects(units / "p_R_c.root")
     out["C-FIX"] = all(S.fix_equal(ro, rr).values())
     entries = np.asarray(np.load(rows)["entry"], np.int64)
@@ -199,6 +204,11 @@ def main(argv=None) -> int:
         return 0 if same else 6
     (a.out / "decision.json").write_text(json.dumps(d, indent=1, default=str) + "\n")
     if d["verdict"] != "PROCEED":
+        return 6
+    try:  # the decision, the C-SUPPORT table with it, is printed before PROCEED exists (B12)
+        print(json.dumps({"decision": d}, indent=1, default=str), flush=True)
+    except (OSError, ValueError) as e:
+        sys.stderr.write(f"STOP: printing the decision failed: {e}\n")
         return 6
     (a.out / "time_limit_minutes").write_text(f"{d['time_limit_minutes']}\n")
     (a.out / "PROCEED").write_text("PROCEED\n")

@@ -36,8 +36,9 @@ mk() { sed -e "s#/pscratch/sd/j/josephrb/ptmc-20261128#$H/R#g" -e "s#/usr/bin/ti
           /h/$1 > $H/$1; }
 fresh() { rm -rf $H/R $H/steps; mkdir -p $H/R/stage $H/R/logs; echo $PIN > $H/R/stage/rows.sha256; }
 ready() { fresh; touch $H/R/stage/ready; }
-proceed() { fresh; mkdir -p $H/R/units $H/R/pilot-post; echo PROCEED > $H/R/pilot-post/PROCEED
-            echo 144 > $H/R/pilot-post/time_limit_minutes; }
+proceed() { fresh; mkdir -p $H/R/units $H/R/pilot-post $H/R/replicas-check; echo PROCEED > $H/R/pilot-post/PROCEED
+            echo 144 > $H/R/pilot-post/time_limit_minutes
+            echo '{"recheck": "SAME", "time_limit_minutes": 144}' > $H/R/replicas-check/recheck.json; }
 P() { out=$(SQUEUE_L=${PL:-1:00:00} SLURM_JOB_NUM_NODES=${NN:-2} bash $H/pilot.sbatch 2>&1); rc=$?; }
 Q() { out=$(SLURM_JOB_NUM_NODES=${NN:-5} bash $H/replicas.sbatch 2>&1); rc=$?; }
 refused() { [ "$rc" = 2 ] && printf '%s' "$out" | grep -q "REFUSED: $1" && [ ! -e $H/steps ]; }
@@ -66,6 +67,9 @@ proceed; NN=4 Q; refused "the allocation has '4' nodes"; ok $? "replicas: 4 node
 fresh; mkdir -p $H/R/units $H/R/pilot-post; Q; refused "no PROCEED"; ok $? "replicas: no PROCEED refuses"
 proceed; rm $H/R/pilot-post/time_limit_minutes; Q; refused "no authorized time limit"; ok $? "replicas: no L refuses"
 proceed; echo 1x > $H/R/pilot-post/time_limit_minutes; Q; refused "the authorized time limit"; ok $? "replicas: a malformed L refuses"
+proceed; rm $H/R/replicas-check/recheck.json; Q; refused "no recheck record"; ok $? "replicas: no recheck record refuses (B1)"
+proceed; echo 145 > $H/R/pilot-post/time_limit_minutes; out=$(SQUEUE_L=2:25:00 SLURM_JOB_NUM_NODES=5 bash $H/replicas.sbatch 2>&1); rc=$?
+refused "the recheck record does not authorize L = 145"; ok $? "replicas: a stale L file the recheck did not authorize refuses (B1)"
 proceed; out=$(SQUEUE_FAIL=1 SLURM_JOB_NUM_NODES=5 bash $H/replicas.sbatch 2>&1); rc=$?
 refused "squeue failed"; ok $? "replicas: a failed squeue refuses"
 proceed; out=$(SQUEUE_L=UNLIMITED SLURM_JOB_NUM_NODES=5 bash $H/replicas.sbatch 2>&1); rc=$?

@@ -211,6 +211,7 @@ replicas)
     --recheck "$R/pilot-post/decision.json") || STOP_RC=6 stop "the recheck does not give the same PROCEED and L: $chk"
   echo "recheck $chk"
   printf '%s' "$chk" | grep -q "\"time_limit_minutes\": $L}" || stop "the recheck's L is not $L"
+  printf '%s\n' "$chk" > "$R/replicas-check/recheck.json" || stop "recording the recheck"  # replicas.sbatch reads it (B1)
   fence_check "before the replicas' submit"
   j=$(sbatch --parsable -N 5 -t "$L" "$O/launch/replicas.sbatch") || stop "sbatch"
   submitted replicas "$j"
@@ -223,14 +224,19 @@ post)
   claim post
   mkdir "$R/post" || stop "mkdir"
   : > "$R/post/sacct.txt" || stop "sacct.txt"
+  jp=$(cat "$R/logs/pilot.jobid") && jr=$(cat "$R/logs/replicas.jobid") || stop "a job id is unreadable"
+  [ "$jp" != "$jr" ] || stop "the pilot and replicas job ids are both '$jp'"
   for f in pilot replicas; do
     j=$(cat "$R/logs/$f.jobid") || stop "$f job id"
     case "$j" in *[!0-9]*|'') stop "$f job id '$j'";; esac
+    case "$f" in pilot) jn=ptmc_pilot; nn=2;; replicas) jn=ptmc_reps; nn=5;; esac
     out=$(TZ=UTC sacct -j "$j" -n -P -o JobID,JobName,State,ExitCode,ElapsedRaw,NNodes,Start,End) || stop "sacct $f"
     [ -n "$out" ] || stop "sacct returned nothing for the $f job $j"
-    printf '%s\n' "$out" | awk -F'|' -v j="$j" '{split($1, a, "."); if (a[1] != j) bad = 1} END {exit bad}' \
+    printf '%s\n' "$out" | awk -F'|' -v j="$j" '{split($1, a, "."); if ((a[1] "") != (j "")) bad = 1} END {exit bad}' \
       || stop "sacct for the $f job $j has a row of another job"
     printf '%s\n' "$out" | grep -q "^$j|" || stop "sacct has no allocation line for the $f job $j"
+    printf '%s\n' "$out" | awk -F'|' -v j="$j" -v n="$jn" -v nn="$nn" '($1 "") == (j "") {c++; if ($2 != n || $6 != nn) bad = 1}
+      END {exit (c != 1 || bad)}' || stop "the $f job $j has no single allocation named $jn on $nn nodes"
     printf '%s\n' "$out" >> "$R/post/sacct.txt" || stop "write sacct.txt"
   done
   awk -F'|' '$1 !~ /\./ {if ($5 !~ /^[0-9]+$/ || $6 !~ /^[0-9]+$/ || $5 == 0 || $6 == 0) bad = 1; s += $5 * $6 / 3600; n++}

@@ -33,6 +33,8 @@ case "$L" in ''|*[!0-9]*) refuse "the authorized time limit '$L'";; esac
 tl=$(squeue -h -j "$SLURM_JOB_ID" -o %l) || refuse "squeue failed"
 tm=$(minutes "$tl") || refuse "the job's time limit '$tl' does not parse"
 [ "$tm" -ge 1 ] && [ "$tm" = "$L" ] || refuse "the job's time limit is $tm minutes; the authorized L is $L"
+rk=$(cat $R/replicas-check/recheck.json) || refuse "no recheck record"  # the fresh recheck at submit, not only the file (B1)
+[ "$rk" = "{\"recheck\": \"SAME\", \"time_limit_minutes\": $L}" ] || refuse "the recheck record does not authorize L = $L: $rk"
 hook=$(/global/common/software/nersc/pe/conda/24.10.0/Miniforge3-24.7.1-0/bin/conda shell.bash hook) \
   || refuse "the conda hook failed"
 eval "$hook" || refuse "the conda hook did not evaluate"

@@ -280,7 +280,8 @@ def run_unit(C, driver, ohf, cfg: dict, name: str, out: Path, rows_path: Path, u
     conv, b = parse_unit(name)
     root, npz, marker = out / f"{name}.root", out / f"{name}.npz", out / f"{name}.done"
     own = {"runner_sha256": sha256(Path(__file__).resolve()), "lib_sha256": sha256(HERE / "ptmc_lib.py"),
-           "code_sha256": cfg["code_sha256"], "inputs_sha256": inputs_verified}
+           "code_sha256": cfg["code_sha256"], "inputs_sha256": inputs_verified, "unfolder": lib_label,
+           "config_sha256": sha256(C.CONFIG)}
     if npz.exists() or root.exists() or marker.exists():
         # a unit is reused only if its marker is PASS, names it, was made by this binding's code and inputs (B2), and
         # both products match the marker's digests

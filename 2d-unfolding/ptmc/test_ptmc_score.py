@@ -312,6 +312,8 @@ class Scorer(unittest.TestCase):
         self.assertEqual(rec["pins"]["rows"], sha(p.rows))
         self.assertEqual(rec["pins"]["pin_manifest_sha256"], sha(p.pins))
         self.assertEqual(rec["pins"]["d4_manifest_sha256"], sha(p.d4 / "manifest.json"))
+        self.assertEqual(set(rec["pins"]["inputs"]), {"CV", "MC (its flux included)"})  # B8
+        self.assertEqual(len(rec["pins"]["make_tree_sha256"]), 64)
         self.assertEqual(set(rec["pins"]["tree"]), set(json.loads(p.pins.read_text())["tree"]))
 
     def test_a_renamed_rows_copy_scores_the_same(self):

@@ -228,6 +228,7 @@ def replica_moves(units: Path, u: str, mref: dict) -> bool:
     """One R replica's fill record and injection against move_reference's."""
     z = load(units / f"{u}.npz", FILL_KEYS + ("inj_entries",))
     return bool(mref["fill_ok"](z) and all(np.array_equal(np.asarray(z[k]), mref["want"][k]) for k in FILL_KEYS)
+                and np.asarray(z["inj_entries"]).dtype.kind in "iu"  # no float entries truncated (B3)
                 and np.array_equal(np.asarray(z["inj_entries"], np.int64), mref["want_inj"]))
 
 
@@ -671,6 +672,8 @@ def score(a) -> dict:
                     "rows": pins["rows"], "join_record": pins["join"],
                     "roounfold_lib_sha256": pins["roounfold_lib_sha256"],
                     "d4_manifest_sha256": sha256(a.d4 / "manifest.json"),
+                    "inputs": {"CV": tree_cfg["inputs"]["CV_sha256"], "MC (its flux included)": tree_cfg["inputs"]["MC_sha256"]},
+                    "make_tree_sha256": sha256(HERE / "make_tree.sh"),
                     "constants": {k: CONST[k] for k in ("CELLS_SHA", "E_R_SHA", "PUB_SHA", "READOUT_SHA",
                                                         "CENTRAL_MARKER_SHA", "ROWS_SHA")},
                     "units": len(names), "rank": CONST["RANK"], "n_replicas": CONST["N"]}}
