@@ -277,8 +277,8 @@ EDGE_STEP_APPC = r"with three interior \$p_T\$ edges \\SI\{([0-9.]+)\}\{GeV/c\} 
 # Every printed copy of the edge step: "$p_T$ edges", an optional parenthetical (sec3's edge list), an optional
 # "differ by"/"shifted by", then the step. Pinned per file, so a reworded or dropped copy also fails.
 EDGE_STEP_COPY = r"\$p_T\$ edges(?: \([^)]*\))?(?: differ by| shifted by)? \\SI\{([0-9.]+)\}\{GeV/c\}"
-EDGE_STEP_COPIES = {"sec2_method.tex": 1, "sec3_twod.tex": 1, "appC_supplementary.tex": 2, "appD_reproducibility.tex": 1}
-EDGE_STEP_ALL = "pT edge step, all 5 printed copies (sec2, sec3, appC x2, appD) equal sec3's, exactly"
+EDGE_STEP_COPIES = {"sec2_method.tex": 2, "sec3_twod.tex": 1, "appC_supplementary.tex": 1, "appD_reproducibility.tex": 1}
+EDGE_STEP_ALL = "pT edge step, all 5 printed copies (sec2 x2, sec3, appC, appD) equal sec3's, exactly"
 
 # EVW5D (#1353, #1355): App. D's paragraph on the 5D per-event weights in the release (DECISION-20261125b sec. 3;
 # C-COMPLETE option (a), DECISION-20261126). Every number and claim in it is bound to EVW5D attempt 2's receipts and to
@@ -705,7 +705,7 @@ def evw2d_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
             for lab, s, fact in EVW2D_CLAIMS]
 
 
-# The high-p_par open issue in sec3_twod.tex (Joseph 2026-11-26, via the director; a PROPOSAL for his wording). Every
+# The high-p_par open issue in sec3_twod.tex and appC_supplementary.tex (Joseph 2026-11-26, via the director; a PROPOSAL for his wording). Every
 # number and reading is bound to the precharge study's committed outputs (state/precharge-20261125/). The sentence states
 # no cause: the study's declarations make no cause determination.
 PRECHARGE = "precharge-20261125"
@@ -904,7 +904,7 @@ def oofvc_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 
 def highpz_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
-    t, d = text("sec3_twod.tex", sources), highpz()
+    t, d = text("appC_supplementary.tex", sources), highpz()
     return [(lab, t.count(s) == 1 and fact(d), f"sentence found {t.count(s)} time(s) | record {fact(d)}")
             for lab, s, fact in HIGHPZ_CLAIMS]
 
@@ -917,15 +917,15 @@ CHECKS = [
      r"result gives ([0-9.]+) instead of \\fvval\{c2c1-der\}\.",
      lambda: (oofvc()["score"]["operands"]["D_IBU_R"], oofvc()["score"]["operands"]["D_ER_R"]) if oofvc_ok(oofvc())
      else (-1.0, -1.0), "round"),
-    # The high-p_par open issue (precharge-20261125), sec3_twod.tex
+    # The high-p_par open issue (precharge-20261125), sec3_twod.tex and appC_supplementary.tex
     ("high p_par: the reco edge of the excess (merged-comparison.csv rows 60-80 and >=80)", "sec3_twod.tex",
      r"above the reported range, at reconstructed \$p_\\parallel \\geq ([0-9]+)\$~GeV/\$c\$\.",
      lambda: 60.0 if {x["reco_p_parallel_GeV_c"] for x in highpz()["merged"]} >= {"60–80", "≥80"} else -1.0, "round"),
     ("high p_par: the curvature-tail excess (signed-qp.csv) and the excess at reco >= 60, both signs (merged-comparison.csv)",
-     "sec3_twod.tex",
+     "appC_supplementary.tex",
      r"About ([0-9]+) of the roughly ([0-9]+) excess tracks, counting both charges, lie in the tails of the fitted muon curvature",
      lambda: (highpz_tails(), highpz_excess()), "round"),
-    ("high p_par: test B's share of the 50-80 excess (test-b.json epsilon S2, test1.json fold)", "sec3_twod.tex",
+    ("high p_par: test B's share of the 50-80 excess (test-b.json epsilon S2, test1.json fold)", "appC_supplementary.tex",
      r"A constant offset in the fitted curvature accounts for about \$([0-9]+)\\%\$ of the excess between 50 and 80~GeV/\$c\$",
      highpz_b_share, "round"),
     # One printed 1.04 stands for both pT edge bins, so it is bound twice: once to each bin.
@@ -1393,11 +1393,11 @@ def self_test() -> int:
                          ("fitted at lower $p_\\parallel$", "fitted at higher $p_\\parallel$"),
                          ("highest muon momenta remains possible", "highest muon momenta is excluded"),
                          ("confined to the highest muon momenta", "confined to the highest energies")):
-        t = text("sec3_twod.tex", base)
+        t = text("appC_supplementary.tex", base)
         if t.count(old_s) != 1:
             print(f"  NOT FOUND   high p_par mutation {old_s!r}"); ok = False; continue
         trial = dict(base)
-        trial["sec3_twod.tex"] = t.replace(old_s, new_s)
+        trial["appC_supplementary.tex"] = t.replace(old_s, new_s)
         if all(r[1] for r in highpz_claims(trial)):
             print(f"  NOT CAUGHT  high p_par: {old_s} -> {new_s}"); ok = False
         else:
@@ -1473,10 +1473,10 @@ def self_test() -> int:
             ("sec3_twod.tex", "differ by \\SI{0.005}{GeV/c} from", "differ by \\SI{0.006}{GeV/c} from", EDGE_STEP_ALL),
             ("appC_supplementary.tex", "edges \\SI{0.005}{GeV/c} from the published ones",
              "edges \\SI{0.006}{GeV/c} from the published ones", EDGE_STEP_ALL),
-            ("appC_supplementary.tex", "shifted by \\SI{0.005}{GeV/c}", "shifted by \\SI{0.006}{GeV/c}", EDGE_STEP_ALL),
+            ("sec2_method.tex", "shifted by \\SI{0.005}{GeV/c}", "shifted by \\SI{0.006}{GeV/c}", EDGE_STEP_ALL),
             ("appD_reproducibility.tex", "edges \\SI{0.005}{GeV/c} from the published values",
              "edges \\SI{0.006}{GeV/c} from the published values", EDGE_STEP_ALL),
-            ("appC_supplementary.tex", "edges shifted by \\SI", "edges moved by \\SI", EDGE_STEP_ALL),
+            ("sec2_method.tex", "edges shifted by \\SI", "edges moved by \\SI", EDGE_STEP_ALL),
             ("appD_reproducibility.tex", "three $p_T$ edges \\SI{0.005}", "three $p_T$ bin edges \\SI{0.005}", EDGE_STEP_ALL)):
         t = text(src, base)
         if t.count(old_s) != 1:

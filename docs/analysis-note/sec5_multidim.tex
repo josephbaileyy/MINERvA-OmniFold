@@ -48,6 +48,7 @@ To obtain $V_{\mathrm{stat+syst}}$, we repeat the unfolding with statistical res
 
 The reported covariance in Eq.~\eqref{eq:sixteen-cell-covariance} gives a median per-cell uncertainty of $\fvval{sigmed-reported}\%$. Flux and prior-shape variations give the largest median contributions. Shifts to reconstructed observables and the spread across run periods also contribute appreciably. Prior-shape sensitivity gives fractional standard deviations above $\fpeval{floor(min(\fvval{sig-C_model-R02},\fvval{sig-C_model-R03},\fvval{sig-C_model-R11}))}\%$ in R02, R03, and R11. Before adding the run-period term, adding the energy-response covariance to $V_{\mathrm{stat+syst}}^{\mathrm{infl}}+V_{\mathrm{prior}}$ increases the per-cell standard deviation by up to about \fvval{sigratio-infl-maxpct}\%. Appendix~\ref{app:higher-dimensional-projections} gives the cell-by-cell decomposition and the correlation matrix.
 
+\FloatBarrier
 \subsection{Projection consistency}
 \label{sec:sixteen-cell-projections}
 \label{sec:fived16-quadrants}
@@ -69,7 +70,7 @@ The run-period covariance represents the spread of the three groups across the s
 
 Closure recovers the tested marginal features, with residuals in joint cells and bias at alternative truths. The held-out joint intervals fall short (Sec.~\ref{sec:sixteen-cell-closure-tunes}). On data, the binned IBU and OmniFold difference statistic is $T=\lrval{rg1-T}$, above the \fpeval{100*\lrval{rg1-lev2}}th null percentile of \lrval{rg1-bar2} (Sec.~\ref{sec:fived16-ibu}). Rounding-level input changes also exceed the stability tolerances. The cells support comparisons of central values. Using them to constrain models would require addressing these limits.
 
-\subsubsection{Closure and background-subtraction bias}
+\subsubsection{Truth recovery}
 \label{sec:higher-dimensional-closure}
 \label{sec:closure-map}
 \label{sec:val-fiveaxis}
@@ -77,7 +78,7 @@ Closure recovers the tested marginal features, with residuals in joint cells and
 \label{sec:3d-closure}
 A marginal sums over the other coordinates, so recovery of the marginal can hide redistribution among joint cells. We reweight simulated truth and reconstructed events, then compare the unfolded result with the reweighted truth using the simulated MINERvA response.
 
-The signal-only checks leave residuals of $1.84\%$ in the 3D $E_{\mathrm{avail}}$ marginal and at most $1.1\%$ in the 4D $q_3$ marginal for the tested smooth features. The $W$ marginal meets its recovery criterion, while the joint $(E_{\mathrm{avail}},W)$ cells near the peak remain $2.2\%$ to $9.4\%$ low and some injected strength appears in adjacent mass bins (Appendix~\ref{app:comparison-closure-coverage} and Table~\ref{tab:higher-dimensional-validation}).
+The signal-only checks leave residuals of $1.84\%$ in the 3D $E_{\mathrm{avail}}$ marginal and at most $1.1\%$ in the 4D $q_3$ marginal for the tested smooth features. The $W$ marginal meets its recovery criterion, while the joint $(E_{\mathrm{avail}},W)$ cells near the peak remain $2.2\%$ to $9.4\%$ low and some injected strength appears in adjacent mass bins (Appendix~\ref{sec:closure} and Table~\ref{tab:higher-dimensional-validation}).
 
 \label{sec:val-negweight}
 At nominal truth, negative-weight refinement removes most of the high-$W$ bias from purity subtraction and meets the closure criterion for the sixteen cells. Appendix~\ref{app:negative-weight-background} compares the background treatments in detail.
@@ -85,19 +86,19 @@ At nominal truth, negative-weight refinement removes most of the high-$W$ bias f
 \label{sec:val-departure}
 Recovery is weaker under alternative truths. Changing the true available-energy spectrum by the difference between two generator shapes leaves large joint residuals with a negative-weight refinement trained with fewer trees. The residuals persist when the test is repeated without background. Changing the conditional $q_3$ distribution while holding the $(E_{\mathrm{avail}},W)$ truth fixed also shifts the unfolded cells in that plane. The sixteen-cell estimator recovers only part of the generator-derived changes (Appendix~\ref{app:bias-prior-stability}).
 
-\subsubsection{Prior dependence}
+\paragraph{Prior dependence.}
 \label{sec:higher-dimensional-prior}
 \label{sec:fived16-fd}
 
 Under $\CrepFiveD$, the sixteen-cell estimator exceeds the bias criteria at \fvval{f0b-nlisted-word} of the \fvval{f0b-all-truths} simulated truths, the GiBUU hybrid truth, which takes its fine-bin integrals from GiBUU and the composition inside each bin from the MINERvA simulation. Under $\CrepFiveDzero$, the reported covariance with unscaled $V_{\mathrm{stat+syst}}$ in place of $V_{\mathrm{stat+syst}}^{\mathrm{infl}}$, the synthetic $q_3$ tilt also exceeded them. It changes the conditional momentum transfer at fixed $(E_{\mathrm{avail}},W)$. Its bias is the same under both covariances, so the difference is the covariance's. The standardized residuals for the GiBUU truth exceed the per-cell threshold in R02 and R06, the two low-$p_T$ cells with high available energy, low momentum transfer, and low mass (Table~\ref{tab:five-dimensional-regions}). Appendix~\ref{app:bias-prior-stability} gives the bias criteria and statistics.
 
 \label{sec:fived16-prr}
-In simulation without counting fluctuations, $\rho$ is the signed fraction of the shift along the prior-to-truth direction still missing after unfolding. Thus $\rho=0$ means exact recovery and $\rho=1$ means no shift from the prior (Eq.~\eqref{eq:five-dimensional-retained-prior}). At the two truths flagged under $\CrepFiveDzero$, the result matches the reconstructed pseudo-data while $\rho$ remains \fvval{prr-rho-e-gibuu} for GiBUU and \fvval{prr-rho-e-q3} for the momentum-transfer tilt. These true-weight substitutions serve only as simulation diagnostics. The outcomes are consistent with a limit from estimating weights for missed events at the GiBUU truth and from how the truth-level classifier represents the change in momentum transfer at the tilt. The true weights are unknown for data. Changing inputs, learner capacity, training statistics, or iterations leaves both biases above the criteria under $\CrepFiveDzero$, and the GiBUU hybrid's under $\CrepFiveD$ (Appendix~\ref{app:bias-prior-stability}).
+In simulation without counting fluctuations, $\rho$ is the signed fraction of the shift along the prior-to-truth direction still missing after unfolding. Thus $\rho=0$ means exact recovery and $\rho=1$ means no shift from the prior (Eq.~\eqref{eq:five-dimensional-retained-prior}). At the two truths flagged under $\CrepFiveDzero$, the result matches the reconstructed pseudo-data while $\rho$ remains \fvval{prr-rho-e-gibuu} for GiBUU and \fvval{prr-rho-e-q3} for the momentum-transfer tilt. At the GiBUU hybrid, supplying true weights for missed events reduces retention about as much as supplying true weights for every event before the truth-level fit. At the tilt, bias persists even when the truth-level classifier receives true weights for every event. These true-weight substitutions serve only as simulation diagnostics. The outcomes are consistent with a limit from estimating weights for missed events at the GiBUU truth and from how the truth-level classifier represents the change in momentum transfer at the tilt. The true weights are unknown for data. Changing inputs, learner capacity, training statistics, or iterations leaves both biases above the criteria under $\CrepFiveDzero$, and the GiBUU hybrid's under $\CrepFiveD$ (Appendix~\ref{app:bias-prior-stability}).
 
 \label{sec:gbdt-model-dependence}
 Coarsening leaves substantial prior dependence (Appendix~\ref{app:bias-prior-stability}). The prior-shape terms for the sixteen cells and the 2D result measure shifts under the tested priors and give no calibrated bound on bias.
 
-\subsubsection{Algorithm dependence}
+\subsubsection{Estimator robustness}
 
 Binned IBU overshoots the prior-to-truth shift for both simulated truths. It reduces the momentum-transfer tilt's bias below the test criteria, leaves the GiBUU bias above them, and exceeds those criteria at other truths (Appendix~\ref{app:bias-prior-stability}). IBU and OmniFold discretize the problem differently, so the comparison includes the effect of IBU's response grid.
 
@@ -105,15 +106,15 @@ Binned IBU overshoots the prior-to-truth shift for both simulated truths. It red
 On data, both methods use \lrval{rg1-K} iterations and share the data, signal simulation, simulated background, and systematic variations that change event weights. For their sixteen-cell difference $\Delta$, $T=\Delta^{\mathsf T}V_\Delta^{-1}\Delta$, with $V_\Delta$ the covariance of that difference. Estimated by varying both results together, $V_\Delta$ includes statistical, event-weight, and normalization variations and omits prior-shape, reconstructed-observable, energy-response, and run-period terms. The \fpeval{100*\lrval{rg1-lev1}}th null percentile is \lrval{rg1-bar1}. The reported measurement covariance omits the observed method difference.
 
 \label{sec:3d-classifier}
-In the purity-subtracted 3D unfolding, replacing gradient-boosted trees with a multilayer perceptron gives median differences of $0.7\%$--$1.4\%$ in the one-dimensional projections (Appendix~\ref{app:algorithm-classifier-controls}).
+Appendix~\ref{app:algorithm-classifier-controls} and Table~\ref{tab:validation-inventory} give the 3D purity-baseline comparison of gradient-boosted trees and a multilayer perceptron.
 
-\subsubsection{Numerical stability}
+\paragraph{Numerical stability.}
 \label{sec:higher-dimensional-calibration}
 \label{sec:5d}
 
 Rounding-level changes to data inputs shift the sixteen-cell estimates by 0.8 at the median and up to \lrval{stab-max} statistical standard deviations. These shifts exceed both tolerances set before the test, \fvval{ens1-bar-median} at the median and \fvval{ens1-bar-max} at the maximum. We perturb stored inputs by up to half a single-precision unit in the last place with fine-bin membership fixed, and test the joint cells, $E_{\mathrm{avail}}$--$W$ integrals and their sum, and the total rate. Appendix~\ref{app:bias-prior-stability} gives the alternative settings and stricter pseudo-data comparison.
 
-\subsubsection{Closure at held-out tunes}
+\subsubsection{Coverage at held-out tunes}
 \label{sec:closure-interval-diagnostics}
 
 Mean residuals and repeated containment test different properties. Separate Poisson and noise-free checks meet the mean-bias criteria at both held-out GENIE v3 tunes, with the largest cell bias below \fvval{f1-bsig-ceil} of its reported standard deviation. The shortfall is in the joint regions rather than in individual cells. For the muon cross section, the per-bin test flags \lrval{cov2d-ar23-nflagged} of the \lrval{q-ncells} bins at the first tune and \lrval{cov2d-g18-nflagged} at the second, while the joint regions contain the truth in \lrval{cov2d-ar23-joint} and \lrval{cov2d-g18-joint} of \lrval{cov2d-ntoys} pseudo-experiments (Sec.~\ref{sec:coverage-tunes}). Under the covariance rebuilt at each tune, the mean offset from the truth alone gives $\chi^2/\mathrm{ndf}$ of \fvval{t2a-bias-ndf-ar23} at the first tune and \fvval{t2a-bias-ndf-g18} at the second, so that covariance does not describe the estimator's bias at these tunes. Neither $\CrepTwoD$ nor $\CrepFiveD$ includes a term estimated from these closures.
@@ -137,9 +138,7 @@ All three hydrocarbon predictions lie below the unfolded integrals in every high
   \label{fig:sixteen-cell-generator-residuals}
 \end{figure}
 
-GENIE without Valencia MEC is below the unfolded result by $\fpeval{abs(\fvval{g-gcv-gf-R08})}\%$ in R08 and $\fpeval{abs(\fvval{g-gcv-gf-R14})}\%$ in R14. Both have $p_T\geq\fvval{h2-mid-pt}~\mathrm{GeV}/c$, but R08 selects low available energy and low hadronic mass, while R14 selects high momentum transfer and high hadronic mass. Adding Valencia MEC reduces these deficits to $\fpeval{abs(\fvval{g-gmec-gf-R08})}\%$ and $\fpeval{abs(\fvval{g-gmec-gf-R14})}\%$. The added strength also brings the prediction closer to the central value in R00, from $\fpeval{abs(\fvval{g-gcv-gf-R00})}\%$ below to $\fpeval{abs(\fvval{g-gmec-gf-R00})}\%$ below, at low $p_T$, $E_{\mathrm{avail}}$, and $q_3$. In both low-$p_T$ cells with high $E_{\mathrm{avail}}$, low $q_3$, and low $W$ (R02 and R06), GENIE already exceeds the central values by $\fpeval{round(\fvval{g-gcv-gf-R02},0)}$--$\fpeval{round(\fvval{g-gcv-gf-R06},0)}\%$ and the extra strength increases the excess to $\fpeval{round(\fvval{g-gmec-gf-R02},0)}$--$\fpeval{round(\fvval{g-gmec-gf-R06},0)}\%$. MINERvA Tune v1 lies below the unfolded result in fourteen cells, with deficits of about $\fpeval{round((abs(\fvval{g-tune-gf-R08})+abs(\fvval{g-tune-gf-R14}))/2,0)}\%$ in R08 and R14.
-
-Appendix~\ref{app:higher-dimensional-projections} gives the quadratic distance to each prediction (Table~\ref{tab:sixteen-cell-model-distances}) and its sensitivity to the covariance. These distances characterize the differences and are not calibrated goodness-of-fit probabilities.
+Adding Valencia MEC improves agreement in several cells and increases the excess in R02 and R06. Appendix~\ref{app:higher-dimensional-projections} gives the cell-level comparisons and the quadratic distance to each prediction (Table~\ref{tab:sixteen-cell-model-distances}), including its sensitivity to the covariance. These distances characterize the differences and are not calibrated goodness-of-fit probabilities.
 
 \subsubsection{Calibrated joint tests}
 \label{sec:joint5d}

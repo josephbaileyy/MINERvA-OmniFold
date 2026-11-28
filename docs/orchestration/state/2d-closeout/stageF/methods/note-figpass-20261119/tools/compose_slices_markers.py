@@ -15,7 +15,7 @@ final save is wrapped: before the slice figures are saved, each panel's two poin
 No x or y value changes (no offset), so every data item keeps its xhash. The figure legend is drawn again from the
 restyled handles with the same entries, order and keywords. The projections (Fig. 4) are saved untouched.
 --pt-ncols 3 / --pz-ncols 3 lay the panels out in three columns (canvas taller, same width); the y label goes to the new first
-column and the x label to each column's lowest panel. Without it the four-column grid is kept.
+column and the x label to each column's lowest panel. The four-column p_T layout centers its legend across the two empty slots.
 check_slices_markers.py checks the captures against the tier-2 run's committed captures.
 """
 import sys
@@ -113,7 +113,13 @@ def restyle(fig, stem):
     old.remove()
     leg = fig.legend([pick[back.get(x, x)] for x in order],
                      [names.get(x, x) for x in order], **kwl)
-    if NCOLS != 4:
+    if stem == SLICES[0] and NCOLS == 4:
+        # Center the legend across the two empty slots in the p_T slice grid.
+        from matplotlib.transforms import Bbox
+        left, right = [ax.get_position() for ax in fig.axes if not ax.get_visible()]
+        leg.set_bbox_to_anchor(Bbox.union([left, right]), transform=fig.transFigure)
+        leg.set_loc("center")
+    elif NCOLS != 4:
         place_legend(fig, leg, panels)
     if FONT_FLOOR:
         from matplotlib.text import Text

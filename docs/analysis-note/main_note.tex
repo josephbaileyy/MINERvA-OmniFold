@@ -3,6 +3,11 @@
 \input{preamble}
 % Table 1 (tab:result-status, sec_execsummary.tex) is an xltabular with ragged-right X columns, so that it breaks across pages instead of running past the bottom margin (director, 2026-11-13; layout only). Loaded here, not in preamble.tex, so the other targets that share the preamble are unchanged.
 \usepackage{xltabular}
+\usepackage{placeins}
+\renewcommand{\topfraction}{.90}
+\renewcommand{\bottomfraction}{.80}
+\renewcommand{\textfraction}{.08}
+\renewcommand{\floatpagefraction}{.76}
 \usepackage{ragged2e}
 \NOTEtrue
 \input{values}
@@ -66,6 +71,7 @@ Using unbinned OmniFold on MINERvA's public data at a mean neutrino energy of ab
 \input{part2_method}
 \input{part3_reproduction}
 \input{part4_fivedim}
+\FloatBarrier
 \input{part5_validation}
 \input{part6_validity}
 
