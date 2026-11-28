@@ -1,0 +1,762 @@
+{
+ "host": "login02",
+ "inputs": [
+  {
+   "atime_unchanged": true,
+   "bytes": 127968221,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1A.npz",
+   "sha256": "ed08f44d02a1b5c8219c91864924d7d6251925ba1e13884d8dae478c7b0403d7"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 69734258,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1A.npz",
+   "sha256": "8b8e3e557d4c362797842fe2829a21b53292bb334902e42fbd5f4ef3185ecdda"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 33980383,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1B.npz",
+   "sha256": "1ec638e3ab8b37c11f2bdb49a41f17a4edd60fa213ddd27a4aef72c2bc14123e"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 18747660,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1B.npz",
+   "sha256": "baf3f3d8cd922a5a3511dab93a7f784128d0e098cb6f1ec905ae4b83c9e68a9f"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 65471177,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1C.npz",
+   "sha256": "26b91bd5fd7531c0cc2d2ef5045e2c21d0d059c4e34a0d67f3938d400f2b70ba"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 35795756,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1C.npz",
+   "sha256": "5ef5e81e490a4e7bd92f1bdf1eee706d413b653e055612b04f3b1b627d1ae6fc"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 192006622,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1D.npz",
+   "sha256": "7bc329ef93fce3e9eedf92ed9e4ac084e92e6ee73ffebb2d2055282b7b85c3c6"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 104087408,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1D.npz",
+   "sha256": "6ea8f726ea6ed619b1b2eb2aab0f34d8a41fff908c0c0515bf7194ca0fe3d131"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 158814144,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1E.npz",
+   "sha256": "edd17efb72766f7550ce08267db0bf1de36ebd743d2458de071f119300a76350"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 87094536,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1E.npz",
+   "sha256": "4e8f97c179b6bbbc3c5e1fd82472c621c9bc56427e802edb464ab85627a26565"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 221027198,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1F.npz",
+   "sha256": "96b4a02cb173c3c549e06f5662d8e2afea997db6b74157689f8a37691c39cf17"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 121156018,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1F.npz",
+   "sha256": "b607e3a8a114036391df8dd27a1e06b0ea59db7093fbd093bd84d117ef207e46"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 186899533,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1G.npz",
+   "sha256": "eed27d58cdf2078c2d96712542967033ed139448d8cf18ef74c342926eb9fdbd"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 101984346,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1G.npz",
+   "sha256": "c23ef28aded4319d468c73b237d648641b204d86c5788b4c2cd58cfe063b7e5a"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 18061361,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L.npz",
+   "sha256": "65ab4446b66524a2993fb5542d5a14aeda5584bbfc5cbcfb7ce22d112c584412"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 9980460,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1L.npz",
+   "sha256": "e731f300f48d1732be0f7dc40ce6e9983947198fa886e84a93df8054afa92007"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 274076044,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1M.npz",
+   "sha256": "0bb7d5ff27ab19cc6fdfdc20a4fe7b798d343d41cfa5b51960334e327f9d1f41"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 153840540,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1M.npz",
+   "sha256": "166a2217468f8bfb392baca71c6920ffbf765bbd0dd60a68eb4b560ab6026f4b"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 159089937,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1N.npz",
+   "sha256": "3d40b0296878c4540de0c19d1615ab6fa970dca81e16bf97229724046c49c3ee"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 88816178,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1N.npz",
+   "sha256": "739043f4f4a21734c1e256744ba11c8ac4a511542be6161404b68f2916292a21"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 47673627,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1O.npz",
+   "sha256": "2022cc9deddff0412c94e7347f1dfbdaca894b66b4bddf0ba0935c1ce9423690"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 27093088,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1O.npz",
+   "sha256": "fd8afa1e08938e1fce4c0b1445d3713d6c8c9ab72bc900012e52b8fc54f3ac6b"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 63445665,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1P.npz",
+   "sha256": "82b9a5195293a88b8bcf7310652fa24477fb3cf9b2a6aee0b0d578a75ba6c96f"
+  },
+  {
+   "atime_unchanged": true,
+   "bytes": 35688844,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/rpd-reco-flux4-20261126/run/flux-factors-1P.npz",
+   "sha256": "a2db271daa6b9af500b892c8e1ba2af0e12ac4da500b8a0814c879882ee0fa9e"
+  }
+ ],
+ "numpy": "2.2.6",
+ "python": "3.10.19",
+ "schema": "rpd-reco-ce3-diag/1",
+ "seconds": 72.3,
+ "started": "2026-11-27T05:25:11Z",
+ "strata": {
+  "1.5:8": {
+   "C-E1_fraction": 1.0,
+   "i_bound": {
+    "gates": true,
+    "median_q99_q999": [
+     0.001292799080046425,
+     0.02399240943409464,
+     0.054071462025385264
+    ],
+    "nonfinite": 0
+   },
+   "ii_exact": {
+    "gates": true,
+    "median_q99_q999": [
+     0.0009600797542319572,
+     0.023773352416519344,
+     0.05367234153892464
+    ],
+    "negative_Q2_rows": 0,
+    "nonfinite": 0
+   },
+   "iii_float32": {
+    "max_abs_shift": 1.046606886367929e-05,
+    "rowwise_max_median_q99_q999": [
+     0.001292941837464423,
+     0.02399264737680351,
+     0.05407179510614313
+    ],
+    "rowwise_min_median_q99_q999": [
+     0.0012926644471417115,
+     0.023992121385402188,
+     0.054071128943498525
+    ]
+   },
+   "rows": 17508038,
+   "stratum_enu_within_1pct_of_emu_weight_fraction": 0.0043767933383824275,
+   "tail_over_gate": {
+    "enu_within_1pct_of_emu": {
+     "rows": 36539,
+     "weight_fraction_of_tail": 0.20644249398265246
+    },
+    "quantiles_05_50_95": {
+     "e2": [
+      0.029479287722995906,
+      0.038179802467941615,
+      0.07747922832211762
+     ],
+     "emu": [
+      3.7591411673353967,
+      5.867456360459344,
+      7.995800598553451
+     ],
+     "enu": [
+      3.850991151656505,
+      5.974056206153953,
+      8.10640232789475
+     ],
+     "pt": [
+      0.07563499361276627,
+      0.2402246594429016,
+      0.4666852653026581
+     ],
+     "pzr": [
+      3.5688390731811523,
+      5.686771392822266,
+      7.595530986785889
+     ],
+     "pzt": [
+      3.751143217086792,
+      5.859288692474365,
+      7.990105628967285
+     ],
+     "q2": [
+      0.00593952114286948,
+      0.05899059999960084,
+      0.22466754307605144
+     ],
+     "q3": [
+      0.09891573339700699,
+      0.26696762442588806,
+      0.511671781539917
+     ],
+     "theta": [
+      0.01297246415961831,
+      0.04124843850291856,
+      0.08687001034690883
+     ]
+    },
+    "rows": 134306,
+    "weight_fraction": 0.005629839789779856,
+    "weight_share_by_bin": {
+     "enu": {
+      "edges": [
+       0,
+       2,
+       4,
+       6,
+       8,
+       10,
+       15,
+       20,
+       50,
+       1000000000.0
+      ],
+      "share": [
+       0.000676,
+       0.061538,
+       0.445235,
+       0.43406,
+       0.052834,
+       0.003246,
+       0.000611,
+       0.001646,
+       0.000153
+      ]
+     },
+     "pt": {
+      "edges": [
+       0,
+       0.07,
+       0.15,
+       0.25,
+       0.4,
+       0.7,
+       1.0,
+       1.5,
+       4.5,
+       1000000000.0
+      ],
+      "share": [
+       0.041691,
+       0.177903,
+       0.310243,
+       0.351778,
+       0.11712,
+       0.001154,
+       0.000111,
+       0.0,
+       0.0
+      ]
+     },
+     "pz_true": {
+      "edges": [
+       0,
+       1.5,
+       4.5,
+       8,
+       10,
+       15,
+       20,
+       60,
+       1000000000.0
+      ],
+      "share": [
+       0.0,
+       0.141191,
+       0.809653,
+       0.043837,
+       0.00295,
+       0.00057,
+       0.0018,
+       0.0
+      ]
+     },
+     "q3": {
+      "edges": [
+       0,
+       0.1,
+       0.2,
+       0.4,
+       0.8,
+       1.2,
+       2.0,
+       100,
+       1000000000.0
+      ],
+      "share": [
+       0.051843,
+       0.25092,
+       0.517689,
+       0.178446,
+       0.000959,
+       0.000142,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   }
+  },
+  "15:60": {
+   "C-E1_fraction": 1.0,
+   "i_bound": {
+    "gates": false,
+    "median_q99_q999": [
+     0.0006726267117753704,
+     0.0506179498426923,
+     0.13673029280783933
+    ],
+    "nonfinite": 0
+   },
+   "ii_exact": {
+    "gates": false,
+    "median_q99_q999": [
+     0.0006639467816653699,
+     0.050642784040924926,
+     0.1367718041665933
+    ],
+    "negative_Q2_rows": 0,
+    "nonfinite": 0
+   },
+   "iii_float32": {
+    "max_abs_shift": 2.4080731606201944e-05,
+    "rowwise_max_median_q99_q999": [
+     0.0006728903779105178,
+     0.05061951865801417,
+     0.13673247605337302
+    ],
+    "rowwise_min_median_q99_q999": [
+     0.0006724133618155603,
+     0.05061638102415278,
+     0.13672810959443127
+    ]
+   },
+   "rows": 903501,
+   "stratum_enu_within_1pct_of_emu_weight_fraction": 0.03190874769992033,
+   "tail_over_gate": {
+    "enu_within_1pct_of_emu": {
+     "rows": 14512,
+     "weight_fraction_of_tail": 0.5685194822219034
+    },
+    "quantiles_05_50_95": {
+     "e2": [
+      0.030971922875250524,
+      0.04491092368529448,
+      0.1277094995506597
+     ],
+     "emu": [
+      15.541821075192768,
+      27.78545441321265,
+      50.19470979967378
+     ],
+     "enu": [
+      15.690853569606316,
+      28.08021985763798,
+      50.683548764418944
+     ],
+     "pt": [
+      0.1554870903491974,
+      0.43221747875213623,
+      0.8916007876396179
+     ],
+     "pzr": [
+      16.00101661682129,
+      26.248302459716797,
+      47.5706672668457
+     ],
+     "pzt": [
+      15.531854629516602,
+      27.78059959411621,
+      50.191017150878906
+     ],
+     "q2": [
+      0.024405709803502547,
+      0.18905655824679646,
+      0.8114114017842995
+     ],
+     "q3": [
+      0.1927969604730606,
+      0.5182205438613892,
+      1.147981882095337
+     ],
+     "theta": [
+      0.005394935458336056,
+      0.01548090391792856,
+      0.03460455603386024
+     ]
+    },
+    "rows": 23435,
+    "weight_fraction": 0.02503287763413744,
+    "weight_share_by_bin": {
+     "enu": {
+      "edges": [
+       0,
+       2,
+       4,
+       6,
+       8,
+       10,
+       15,
+       20,
+       50,
+       1000000000.0
+      ],
+      "share": [
+       0.0,
+       0.00034,
+       0.003739,
+       0.005433,
+       0.002768,
+       0.021539,
+       0.159884,
+       0.747863,
+       0.058434
+      ]
+     },
+     "pt": {
+      "edges": [
+       0,
+       0.07,
+       0.15,
+       0.25,
+       0.4,
+       0.7,
+       1.0,
+       1.5,
+       4.5,
+       1000000000.0
+      ],
+      "share": [
+       0.007631,
+       0.038345,
+       0.112109,
+       0.276127,
+       0.420198,
+       0.119295,
+       0.025601,
+       0.000693,
+       0.0
+      ]
+     },
+     "pz_true": {
+      "edges": [
+       0,
+       1.5,
+       4.5,
+       8,
+       10,
+       15,
+       20,
+       60,
+       1000000000.0
+      ],
+      "share": [
+       0.0,
+       0.001087,
+       0.00875,
+       0.002553,
+       0.025999,
+       0.16557,
+       0.79604,
+       0.0
+      ]
+     },
+     "q3": {
+      "edges": [
+       0,
+       0.1,
+       0.2,
+       0.4,
+       0.8,
+       1.2,
+       2.0,
+       100,
+       1000000000.0
+      ],
+      "share": [
+       0.007089,
+       0.048057,
+       0.235336,
+       0.526468,
+       0.142315,
+       0.039045,
+       0.001691,
+       0.0
+      ]
+     }
+    }
+   }
+  },
+  "8:15": {
+   "C-E1_fraction": 1.0,
+   "i_bound": {
+    "gates": false,
+    "median_q99_q999": [
+     0.0009871258308031816,
+     0.0301471583174564,
+     0.06993854160509083
+    ],
+    "nonfinite": 0
+   },
+   "ii_exact": {
+    "gates": false,
+    "median_q99_q999": [
+     0.0009385154610186408,
+     0.030146502369534645,
+     0.06986715345144645
+    ],
+    "negative_Q2_rows": 0,
+    "nonfinite": 0
+   },
+   "iii_float32": {
+    "max_abs_shift": 1.7905572023968475e-05,
+    "rowwise_max_median_q99_q999": [
+     0.0009873472343405743,
+     0.030147640740070147,
+     0.06993943464204566
+    ],
+    "rowwise_min_median_q99_q999": [
+     0.00098689002730179,
+     0.03014612279150297,
+     0.0699376485785046
+    ]
+   },
+   "rows": 1990998,
+   "self_check": {
+    "bit_equal": true,
+    "recomputed": [
+     0.0009871258308031816,
+     0.0301471583174564
+    ],
+    "stop_record": [
+     0.0009871258308031816,
+     0.0301471583174564
+    ]
+   },
+   "stratum_enu_within_1pct_of_emu_weight_fraction": 0.018797502040062995,
+   "tail_over_gate": {
+    "enu_within_1pct_of_emu": {
+     "rows": 16328,
+     "weight_fraction_of_tail": 0.47385127864416754
+    },
+    "quantiles_05_50_95": {
+     "e2": [
+      0.030513719815513318,
+      0.039679599746187844,
+      0.08605628583002312
+     ],
+     "emu": [
+      6.845549317264223,
+      9.73166058547111,
+      16.09306425968757
+     ],
+     "enu": [
+      6.948307270375198,
+      9.857128833298532,
+      16.281459568932302
+     ],
+     "pt": [
+      0.09159340709447861,
+      0.2781035006046295,
+      0.5839579105377197
+     ],
+     "pzr": [
+      8.117403030395508,
+      9.755884170532227,
+      14.223382949829102
+     ],
+     "pzt": [
+      6.838949203491211,
+      9.725753784179688,
+      16.0851993560791
+     ],
+     "q2": [
+      0.008532598774935861,
+      0.07829858263569593,
+      0.3493140671850697
+     ],
+     "q3": [
+      0.11368428170681,
+      0.30825749039649963,
+      0.6609787940979004
+     ],
+     "theta": [
+      0.009134914782032672,
+      0.02734597602496421,
+      0.05957119185615969
+     ]
+    },
+    "rows": 26925,
+    "weight_fraction": 0.01011308675753431,
+    "weight_share_by_bin": {
+     "enu": {
+      "edges": [
+       0,
+       2,
+       4,
+       6,
+       8,
+       10,
+       15,
+       20,
+       50,
+       1000000000.0
+      ],
+      "share": [
+       0.0,
+       0.001077,
+       0.017889,
+       0.14639,
+       0.353298,
+       0.38867,
+       0.079485,
+       0.01294,
+       0.00025
+      ]
+     },
+     "pt": {
+      "edges": [
+       0,
+       0.07,
+       0.15,
+       0.25,
+       0.4,
+       0.7,
+       1.0,
+       1.5,
+       4.5,
+       1000000000.0
+      ],
+      "share": [
+       0.025095,
+       0.128862,
+       0.269439,
+       0.353594,
+       0.204489,
+       0.017539,
+       0.000947,
+       3.5e-05,
+       0.0
+      ]
+     },
+     "pz_true": {
+      "edges": [
+       0,
+       1.5,
+       4.5,
+       8,
+       10,
+       15,
+       20,
+       60,
+       1000000000.0
+      ],
+      "share": [
+       0.0,
+       0.003603,
+       0.179668,
+       0.354981,
+       0.376943,
+       0.07219,
+       0.012615,
+       0.0
+      ]
+     },
+     "q3": {
+      "edges": [
+       0,
+       0.1,
+       0.2,
+       0.4,
+       0.8,
+       1.2,
+       2.0,
+       100,
+       1000000000.0
+      ],
+      "share": [
+       0.032912,
+       0.186829,
+       0.478674,
+       0.282433,
+       0.017958,
+       0.00116,
+       3.5e-05,
+       0.0
+      ]
+     }
+    }
+   }
+  }
+ },
+ "verdict": "R-B (ii) does not pass every stratum"
+}

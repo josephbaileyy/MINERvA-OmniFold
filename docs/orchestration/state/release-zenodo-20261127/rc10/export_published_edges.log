@@ -1,0 +1,14 @@
+ok   er.root sha256 5171c7b8
+ok   references.npz sha256 1b214582
+ok   references.npz records er.root 5171c7b8 as its `paper` source
+ok   er.root's hXSec2D axes equal the published p_T and p_par edges
+ok   er.root hXSec2D (pT x 16 + p_par order) equals references.npz `paper` bit for bit
+ok   the 205 reported cells equal the published covariance's reported bins
+ok   chi2 vs the published total covariance 434.8944 (regenA P1a 434.89/205)
+ok   chi2/ndf 2.121436 (A3's D_E_R 2.121436)
+ok   pull mean 0.1334 and RMS 0.5132 (P1a 0.133 / 0.513)
+ok   175/205 within 5 % (P7 175/205)
+ok   result_2d_published_edges.npz reloads equal
+wrote cells.csv 087db1390911d080fee9cf403f094966c6f617fe92d00fb982804d492da72fb4
+wrote result_2d_published_edges.npz 45e3a49a390da66458c2cd9a8463a6e9504e40162e3e4bfce9fd1e1fc1e64419
+EXPORT E(a): PASS

@@ -1,0 +1,22 @@
+test_c_cells_refuses_a_different_set (__main__.Core.test_c_cells_refuses_a_different_set) ... ok
+test_c_finite_refuses (__main__.Core.test_c_finite_refuses) ... ok
+test_c_qr_accepts_within_tolerance (__main__.Core.test_c_qr_accepts_within_tolerance) ... ok
+test_c_qr_refuses_another_ensemble (__main__.Core.test_c_qr_refuses_another_ensemble) ... ok
+test_c_stat_refuses (__main__.Core.test_c_stat_refuses) ... ok
+test_cells_outside_the_set_do_not_enter (__main__.Core.test_cells_outside_the_set_do_not_enter) ... ok
+test_jackknife_se_of_a_mean (__main__.Core.test_jackknife_se_of_a_mean) ... ok
+test_ratios_on_a_known_scaling (__main__.Core.test_ratios_on_a_known_scaling) ... ok
+test_sqrt_tr_cov_matches_numpy (__main__.Core.test_sqrt_tr_cov_matches_numpy) ... ok
+test_a_stop_is_recorded_not_raised (__main__.Files.test_a_stop_is_recorded_not_raised) ... ok
+test_fetch_tamper_refuses (__main__.Files.test_fetch_tamper_refuses) ... ok
+test_flatten_is_global_id_order (__main__.Files.test_flatten_is_global_id_order) ... ok
+test_main_refuses_an_existing_record (__main__.Files.test_main_refuses_an_existing_record) ... ok
+test_meta_checks (__main__.Files.test_meta_checks) ... ok
+test_wrong_axes_refuse (__main__.Files.test_wrong_axes_refuse) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 21.738s
+
+OK
+C2-EFF STOP: FileNotFoundError: [Errno 2] No such file or directory: '/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/c2eff-t-6amrayob/nothing/SHA256SUMS'
+refusing: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/c2eff-t-s6h8h1x2/r.json exists

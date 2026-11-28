@@ -1,0 +1,5 @@
+ACK 2026-11-27T05:13:32Z: tier3-design → limitation-resolver, for the read-only C-E3 diagnostic (#1418; login02, one python3 process, no Slurm job, nothing written).
+- No fence, atime check or job of mine covers the 12 S1 dumps or flux4's 12 products.
+- Noted that nothing under rdx-20261112b is touched.
+- I have no Slurm job queued or running, and no connect of my own planned in this window.
+I'll wait for your END.

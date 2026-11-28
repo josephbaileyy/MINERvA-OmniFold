@@ -1,0 +1,3 @@
+build_rc.py sha256 94497cb4ca4f2cb99ec149ecae05689d552d09c6a386a33630abec60199eafd6
+31 files byte-identical to RC9; changed: ['README.md', 'code/twod_numbers.py', 'code/verify_rc.py', 'expected/values.tex']; added: ['data/twod/result_2d_published_edges.npz']
+minerva-omnifold-article-release-rc10.tar.gz 0ecf8122b824bdde2b0bd3b16100d89a0558b47024c572b7737fd8ef0cf4ec22 18217365 bytes

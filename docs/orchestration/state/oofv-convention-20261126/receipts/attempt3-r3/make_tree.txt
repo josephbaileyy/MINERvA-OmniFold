@@ -1,0 +1,7 @@
+tree /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/oofvc-run/r3-score/tree (archive at 77d76cfc2d621f8faa010b75006811868494652a)
+9d11bd4b1ff72f41ceabc94184220fdca26fff75a640fda43680085cd8fca396  2d-unfolding/re2/re2_driver.py
+0842914ea0d95eec65cf75a89ee37aa1b738dda6d0d1b786b659c37783886f4d  2d-unfolding/ref_c2c1/config.json
+285dd138363d090a4ce5dea3361be81fada8680bd782b918e9d95198d1b5d6ea  2d-unfolding/ref_c2c1/ref_c2c1.py
+e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a  unbinned_unfolding/python/omnifold.py
+1dd5ff52d0c140921a3bcc411bd4108337dbe756c43bffc2c707eb2a8f633314  2d-unfolding/compare_to_paper_fullcov.py
+510d749a2e82fa448de6172753ae2adc9ebd81a89d4f18bf76beb5faa8bb3968  nd-unfolding/s5c_unfold.py

@@ -1,0 +1,4 @@
+command: ~/.grok/bin/grok -m grok-4.7 --reasoning-effort high --sandbox read-only --cwd <readdir> --prompt-file <readdir>/prompt.txt --no-subagents --output-format plain --disallowed-tools Write </dev/null
+inputs: git archive of ad3553551cb03c0d0b0d0e9a73845033b3476aac (the center2d-v2-20261128 dir, re2c_rollup.py, build_repair.py, g2r_readout.py, g2r.py, cov2d.py, cov2d_blocks.py), made read-only (chmod a-w)
+start 2026-11-28T07:37:46Z end 2026-11-28T07:59:04Z rc 0
+stderr 'sandbox could not be applied': 0 occurrences (stderr is empty)

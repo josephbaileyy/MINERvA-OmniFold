@@ -1,0 +1,20 @@
+sha256:e67eeead736ff7bbe258ef088bff683635c561b1fcfefad0806c1df4ab49ce0e
+PASS manifest
+PASS r3-state
+PASS wrong-sha
+PASS no-sha
+PASS long-sha
+PASS changed-file
+PASS fence-queue
+PASS fence-squeue-fail
+PASS remove
+PASS absent-root
+PASS symlink-root
+PASS hardlink
+PASS newline-name
+PASS owner
+PASS bad-mode
+PASS manifest-arg
+PASS root-user
+pass=17 fail=0
+harness rc=0

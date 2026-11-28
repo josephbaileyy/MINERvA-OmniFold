@@ -1,0 +1,3 @@
+scp post.tar.gz rc=0
+7e4fd78bc98c4d83a5283bed934cbf815683f3357a73e1e01cbdd69f14b70bc6  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/8f21a498-e586-4293-aaeb-c5560401abaa/scratchpad/oofvc-run/r3-fetch/post.tar.gz
+launcher rc=0

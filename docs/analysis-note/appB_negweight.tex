@@ -24,7 +24,7 @@ The classifier uses the continuous event coordinates. Its measured-class density
 \end{equation}
 In bins with $D_b\geq B_b$, the signed target differs from the purity-weighted target by $D(x)B_b/D_b-B(x)$, with zero net change in the bin.
 
-The refinement gives the first-step classifier a nonnegative target. The sign classifier is trained on the absolute-weight sample, with density $D+B$. Its population score is $g=D/(D+B)$ wherever $D+B>0$. The factor $\max(0,2g-1)$ then gives the target $[D-B]_+$, where $[z]_+\equiv\max(0,z)$~\cite{Nachman:2025staypositive}. For a finite learner, the clipping acts on the fitted score. With histogram-based boosting in scikit-learn, the direct signed fit and the clipped refinement gave a median cross-section bin ratio of $\nwMedianBin$. With exact-split trees, the direct fit produced large excursions at low $p_T$ that the refinement removed.
+The refinement gives the first-step classifier a nonnegative target. The sign classifier is trained on the absolute-weight sample, with density $D+B$. Its population score is $g=D/(D+B)$ wherever $D+B>0$. The refinement factor $2g-1$ of Ref.~\cite{Nachman:2025staypositive} would give the signed target $D-B$. Clipped at zero, the factor $\max(0,2g-1)$ gives the target $[D-B]_+$, where $[z]_+\equiv\max(0,z)$. For a finite learner, the clipping acts on the fitted score. With histogram-based boosting in scikit-learn, the direct signed fit and the clipped refinement gave a median cross-section bin ratio of $\nwMedianBin$. With exact-split trees, the direct fit produced large excursions at low $p_T$ that the refinement removed.
 
 \subsection{Binned limit}
 \label{sec:negweight-binned}
@@ -88,7 +88,7 @@ On data, switching from purity to the refined estimator shifts the integral by $
 
 Both systematic and statistical variations enter before the background correction. A systematic change to the simulated background enters through its varied weights or reconstructed selection, as applicable. In the statistical bootstrap, independent Poisson multiplicities for data, signal simulation, and background simulation enter each refit. Each unfolding uses the background correction formed from its own inputs, including a new sign fit when using the refined estimator. Appendix~\ref{app:covariance-construction} gives the ensemble definitions.
 
-In a matched, full-statistics LightGBM check in two dimensions, the ratios of $\sqrt{\operatorname{tr} C}$ for negative-weight to purity subtraction are $\nwSystRatio$ for the 187-universe systematic ensemble and $\nwStatRatio$ for the statistical ensemble with matched training seeds. The trace ratios quantify agreement only in the aggregate diagonal variance.
+In a matched, full-statistics LightGBM check in two dimensions, the ratios of $\sqrt{\operatorname{tr} V}$ for negative-weight to purity subtraction are $\nwSystRatio$ for the 187-universe systematic ensemble and $\nwStatRatio$ for the statistical ensemble with matched training seeds. The trace ratios quantify agreement only in the aggregate diagonal variance.
 
 A common shift from changing the subtraction cancels in a mean-centered covariance. If the change shifts the cross-section vector of member $u$ by $\delta_u$, the centered vector shifts by $\delta_u-\bar\delta$, where $\bar\delta$ is the mean shift within the systematic band or the bootstrap ensemble.
 
