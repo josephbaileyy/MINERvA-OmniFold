@@ -198,7 +198,7 @@ The five-axis purity covariance $V_Z$ uses separate vertical (weight-only), resi
  \label{eq:app-five-axis-inflation}
  \label{eq:zinflation}
 \end{equation}
-The matching band covariances use universe-mean centering. The joint variance about the central value also includes the squared offset of the joint ensemble mean. The purity covariance supplies a descriptive scale. Its required null bound was unspecified at production. Appendix~\ref{app:higher-dimensional-projections} gives the seed-stability evidence from companion builds.
+The matching band covariances use universe-mean centering. The joint variance about the central value also includes the squared offset of the joint ensemble mean. The purity covariance is used only as a scale. Its required null bound was unspecified at production. Appendix~\ref{app:higher-dimensional-projections} gives the seed-stability evidence from companion builds.
 
 The paired rounding diagnostic measures the standard deviation of the difference between jittered and unjittered replicas divided by $\sqrt{2}$. We compare this scale from 50 pairs both with the spread from 20 jitters of the base input and with the unperturbed bootstrap spread. Inputs are perturbed within half a single-precision unit in the last place while holding fine-grid membership fixed. The prespecified containment rule requires a median paired-to-base ratio in $[0.7,1.4]$ and bootstrap variance at least as large as the paired estimate in at least $95\%$ of supported cells. This compares variability within the refit procedure.
 
@@ -276,7 +276,7 @@ The decision samples contain 1365, 1366, \jtBmin{}, \jtBmax{}, and 1351 complete
 \makeatother
 \begin{xltabular}{\textwidth}{@{}
   >{\footnotesize\RaggedRight\arraybackslash\hsize=1.15\hsize}X >{\footnotesize\RaggedRight\arraybackslash\hsize=0.85\hsize}X >{\footnotesize\RaggedRight\arraybackslash\hsize=1.0\hsize}X@{}}
-  \caption{Validation tests and scoring rules for the estimators in Table~\ref{tab:estimators}. A prespecified criterion was recorded before its outcome was read. Appendix~\ref{app:choices-after-results} gives the data-informed choices.}
+  \caption{Validation tests and scoring rules for the estimators in Table~\ref{tab:estimators}. A prespecified criterion was recorded before its outcome was read. A descriptive test supports no statistical decision, either because no criterion was recorded in advance or because its statistic cannot be calibrated. Appendix~\ref{app:choices-after-results} gives the data-informed choices.}
   \label{tab:validation-inventory}\label{tab:test-index}\label{tab:closure-map}\\
   \toprule Test and estimator & Criterion and status & Outcome and scope \\
   \midrule \endfirsthead \multicolumn{3}{@{}l}{\tablename~\thetable\ (continued)} \\
