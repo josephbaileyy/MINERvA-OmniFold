@@ -59,7 +59,7 @@ ok   pilot: an unrecordable job id STOPs and names the job
 ok   post-pilot: a failed sacct STOPs, printed
 ok   post-pilot: empty accounting STOPs
 ok   post-pilot: a STOP decision exits 6, no PROCEED
-ok   post-pilot: passes --jobid and --rows
+ok   post-pilot: passes --jobid, --rows and the bound --lib-sha (B11)
 ok   post-pilot: python runs with one thread
 ok   post-pilot: an unprintable decision STOPs before PROCEED is reported
 ok   post-pilot: PROCEED, the decision printed
@@ -89,10 +89,12 @@ ok   post: a running ptmc job STOPs before the claim
 ok   post: a failed D4 staging STOPs, no tar
 ok   post: the pilot's id as the replicas' STOPs, no double charge
 ok   post: a replicas allocation of the wrong name or size STOPs
+ok   post: a recheck claimed by another job STOPs (confirm-3 B1)
+ok   post: a second replica allocation since setup STOPs, counted (confirm-3 B1)
 ok   post: a malformed elapsed time STOPs the charge
 ok   post: both tars written, the charge from both allocation lines
 ok   post: tars.sha256 holds both tars' digests
 ok   post: the tar carries the claims and the recheck
 ok   post again: STOP
-pass 96 fail 0
+pass 98 fail 0
 rc=0

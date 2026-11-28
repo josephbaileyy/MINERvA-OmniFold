@@ -1,15 +1,15 @@
 # PTMC code: the tests, harnesses and mutation campaigns (2026-11-27/28)
 
 All of this ran on the Mac and none of it touched NERSC. The tests and harnesses ran at the code branch's commit
-`4cb747866` (`head.txt`), before main was merged in. Each mutation run names its own commit below.
+`069eb2652` (`head.txt`), before main was merged in. Each mutation run names its own commit below.
 
 ## Tests and harnesses, on the final files
 
 | record | what | result |
 |---|---|---|
-| `pytest.txt` | `test_ptmc.py` (pure, driver and runner tests on RE-2's fixture), `test_ptmc_score.py` (the scorer end to end on hand-made products) and `launch/test_launch.py` (the pilot's post and the D4 staging), with PyROOT 6.40 | 99 passed, rc 0 |
-| `harness_remote.txt` | `launch/harness_remote.sh` in debian:bookworm-slim: every gate of `ptmc_remote.sh`, run against stubs with real dd, sha256sum, stat and tar | 96/96 |
-| `harness_sbatch.txt` | `launch/harness_sbatch.sh`: the two sbatch files' unit coverage, failure propagation and refusals, one case per gate | 28/28 |
+| `pytest.txt` | `test_ptmc.py` (pure, driver and runner tests on RE-2's fixture), `test_ptmc_score.py` (the scorer end to end on hand-made products) and `launch/test_launch.py` (the pilot's post and the D4 staging), with PyROOT 6.40 | 101 passed, rc 0 |
+| `harness_remote.txt` | `launch/harness_remote.sh` in debian:bookworm-slim: every gate of `ptmc_remote.sh`, run against stubs with real dd, sha256sum, stat and tar | 98/98 |
+| `harness_sbatch.txt` | `launch/harness_sbatch.sh`: the two sbatch files' unit coverage, failure propagation and refusals, one case per gate | 29/29 |
 | `harness_launch.txt` | `launch/harness_launch.sh`: the Mac launcher's STOP paths, the stage mode's dtn01 route, and the fetch's hashes against the remote digests | 16/16 |
 
 ## Mutation campaigns (`ptmc_mutation.py`)
@@ -28,6 +28,8 @@ make_tree's pin. Shell mutants run the docker harnesses.
 | 6, `mutation-6.json.txt` (`mutation-6-log.txt`) | committed at `d43c670b1` (code-confirm-1's fixes), 2026-11-28 08:34:30Z to 09:13:03Z UTC: the 41 new mutants (one per new gate) and the 5 earlier mutants whose anchors the fixes changed. Digests unchanged after | CONTROL PASS; 45/46 killed, each by its own test; the survivor `SB_LANES_20` is an equivalent (below) |
 | 7, `mutation-7.json.txt` (`mutation-7-log.txt`) | committed at `f0df1b727` (code-confirm-2's fixes), 2026-11-28 10:16:35Z to 10:36:46Z UTC: the 17 new mutants and the 3 earlier ones whose anchors moved. Digests unchanged after | CONTROL PASS; 19/20 killed, each by its own test; the survivor `PP_ALLOC_ID` got its own test (next row) |
 | 8, `mutation-8.json.txt` (`mutation-8-log.txt`) | committed at `4cb747866`, 10:39:50Z to 10:50:25Z UTC: `PP_ALLOC_ID` after its test. Digests unchanged after | CONTROL PASS; 1/1 killed, by `test_the_allocation_id_is_exact` |
+| 9, `mutation-9.json.txt` (`mutation-9-log.txt`) | committed at `98a00885e` (code-confirm-3's fixes), 2026-11-28 11:46:29Z to 12:03:55Z UTC: the 9 new mutants (both halves of B1 included) and the 3 earlier ones whose anchors moved. Digests unchanged after | CONTROL PASS; 11/12 killed, each by its own test; the survivor `PP_PINS_BEFORE_AFTER` got its own case (next row) |
+| 10, `mutation-10.json.txt` (`mutation-10-log.txt`) | committed at `069eb2652`, 2026-11-28 12:07:35Z to 12:18:55Z UTC: `PP_PINS_BEFORE_AFTER` after its case. Digests unchanged after | CONTROL PASS; 1/1 killed, by `test_pilot_files_and_job_defects_stop`'s changed-pins case |
 
 **Run 1's eight survivors:**
 
@@ -115,3 +117,27 @@ compare as strings.
 **Run 7's survivor.** `PP_ALLOC_ID` removes `parse_sacct`'s exact-allocation-id gate. The accounting test's `4242.`
 case still STOPped, because the pilot's job-id check (each unit's `slurm_job` against the parsed id) fails later. The
 gate now has its own test, which calls `parse_sacct` directly, and run 8 killed the mutant with it.
+
+## code-confirm-3 (codex-school2) and its fixes
+
+The last review round, on `780eda964`, found 3 of 8 fixed and 5 blockers, all in lines that round had changed. The
+director ruled that all five be fixed, followed by one scoped fix-check and no further review rounds. Commit
+`98a00885e` holds the fixes, each with one test and one mutant (runs 9 and 10):
+
+- **B1:** `replicas.sbatch` claims the recheck before any lane starts. It creates `replicas-check/recheck.claim`
+  under noclobber (O_EXCL) holding its job id, and refuses if another job holds it. Post requires the claim to name
+  the replicas job it charges, and exactly one `ptmc_reps` allocation in sacct since setup (`setup.done` now holds
+  setup's UTC time). A second allocation is thereby both refused and counted.
+- **B2:** the runner reads `config.json` once; the reuse check and the marker use the digest of the bytes parsed.
+- **B3:** post-pilot requires exactly the runner's pin keys. It checks the values it can see: rows, the tool's
+  `ptmc_run.py` and `ptmc_lib.py`, and the bound RooUnfold digest. **Residual:** post-pilot cannot see the deploy
+  tree's driver, runner or config, nor the staged inputs. The scorer's C-PINS checks those.
+- **B8:** `make_tree.sh` is one of the scorer's own pinned files (`OWN_FILES`), checked by `check_bytes` before
+  scoring. The record emits that verified value, and the binding's PINS manifest lists it under "own".
+- **B11:** `ptmc_remote.sh` passes `LIB_SHA` to post-pilot (`--lib-sha`), which requires every pilot unit's unfolder
+  to equal it, alongside `ran` true.
+
+**Run 9's survivor.** `PP_PINS_BEFORE_AFTER` drops the requirement that a receipt's before and after pins be equal.
+The only case was a receipt with no pins at all, which the key check refuses on its own. A case whose before pins are
+valid and whose after pins differ now kills it (run 10). The harness kill of `SH_LIB_SHA_ARG` was re-applied to a copy
+outside the repository: it failed exactly "post-pilot: passes --jobid, --rows and the bound --lib-sha (B11)".

@@ -1,0 +1,72 @@
+{
+ "schema": "ptmc-mutation/1",
+ "python": "/Users/josephbailey/ew2d-env/bin/python",
+ "files": {
+  "launch/fill_pins.sh": "2bc3dd4cb529acc6cfd55fb97ac09a42b13df84d2c3db6d87c820f96032d1267",
+  "launch/harness_launch.sh": "5cd82070df308b0fe2a300dd3282db8d89973c2d70b888ce93b2cc1c1c7bd1e4",
+  "launch/harness_remote.sh": "5374ce4a13398829d71a2ea64df1152fd57148d18110bcc6388e5c4814e7f9d5",
+  "launch/harness_sbatch.sh": "303583cda8b80973975561489be996ee83d74c1b805bfe7a71071da28fea9555",
+  "launch/pilot.sbatch": "09fa3217741ca738bde4f133b3757ffa97e6ad7062695e4d3c00fbb153567056",
+  "launch/ptmc_couple_check.py": "13901cbe0bddbe27fce515c9b37ad01fec8c48e3440485f62754c56f9fe32262",
+  "launch/ptmc_couple_launch.sh": "584c7c8a031d1e2a7d54c293be019f17c5dfa02ad2edfdb3a113b7ac962776da",
+  "launch/ptmc_launch.sh": "eb5006bac97636156cba8067221d5d8cda0b2e12020bdac8aa0bc08517eb336f",
+  "launch/ptmc_pilot_post.py": "0a58c1048c6f94997918977fcadec0d107740288954e341623f2ca8877588e58",
+  "launch/ptmc_remote.sh": "b050396ca3347fe21fd49e09658280e8e389d2ddde6fa52ee6d249cfbab17995",
+  "launch/ptmc_stage_d4.py": "e4ee170b078bd09ec0289fe017ce084291cf2408dbd95328b3fad2a6650f10d5",
+  "launch/ptmc_stat.sh": "6b775e313107d81b772e8bfcc6226fbafaf75a55be57c1db3bb72dd24a9e2142",
+  "launch/ptmc_stat_launch.sh": "fa76d4e55fa7ef6c8df9ce5582d5f147ec2977ebdafce3abd307a8c40b270e11",
+  "launch/replicas.sbatch": "c769b31f169026d2f7da4c6a654e7522b3d5c11cc7bca4f38423d789109619c3",
+  "launch/test_launch.py": "9712e4599135f4d8e0b558cd86702f9ce8aea086f3782945b263984e1e8ccf1d",
+  "make_tree.sh": "8b531b55e6262b56a67848fd79568dfac5dcbf91cd8e8e08f3a0a765286dcf67",
+  "ptmc_driver.diff": "d1f7072ea06503e7cef2d9da286cfcc5f9ba899b19e019f94b6d3019ef45ff5f",
+  "ptmc_lib.py": "2d4006886afb4dbae8263d914e619134d391e01dd72c8e497250a4a54c9a83a4",
+  "ptmc_mutation.py": "523a6d3e204660736480f14ee8faf36582e2dbe2ea068e45417aa210384bb6c7",
+  "ptmc_run.py": "56f0ba0a5056282482e59d071107628a7991f7484c475efab2a83dd060804172",
+  "ptmc_score.py": "5c075cadfb97fe9db20b8cc628d43c4fa526f11ee7241bf3fbd9b195fe8405cf",
+  "test_ptmc.py": "9ae0c8fc8c3b5c3c81dd0ee1341b66f186cc68f3f0dbc4fc1c0567aee6ea1cc5",
+  "test_ptmc_score.py": "1cbf44fd74cacec2a4d2ffe1a4ba04258bfd01fd2e1695dd7c1a39f44ed215c9"
+ },
+ "results": [
+  {
+   "name": "CONTROL",
+   "file": null,
+   "tests": [
+    [
+     "test_ptmc.py",
+     "test_ptmc_score.py",
+     "launch/test_launch.py",
+     "HARNESS:harness_remote.sh",
+     "HARNESS:harness_sbatch.sh",
+     "LOCAL:harness_launch.sh"
+    ],
+    null
+   ],
+   "rc": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "seconds": 661.7,
+   "verdict": "PASS",
+   "tail": "ok   an unfilled sha: STOP 9\nok   a non-empty session dir: STOP 9\nok   a missing session dir: STOP 9\nok   a bad node name: STOP 9\nok   a login mode on dtn01: STOP 9\nok   stage on a login node: STOP 9\nok   stage with no node: STOP 9\nok   an unknown mode: STOP 9\nok   stage: direct ssh to dtn01.nersc.gov, no saul hop\nok   prestage: through saul to the login node\nok   fetch: both tars, hashed\nok   fetch: a failed scp fails\nok   fetch: a failed hash fails\nok   fetch: a tar unequal to the remote digest fails\nok   a changed remote script: STOP 8\nok   a failed hash of the remote script: STOP 9\npass 16 fail 0\n"
+  },
+  {
+   "name": "PP_PINS_BEFORE_AFTER",
+   "file": "launch/ptmc_pilot_post.py",
+   "tests": [
+    "launch/test_launch.py",
+    "PilotPost"
+   ],
+   "rc": [
+    1
+   ],
+   "seconds": 17.7,
+   "verdict": "KILLED",
+   "tail": "_unit_passes\": true,\n   \"C-NORM\": true,\n   \"C-FIX\": true,\n   \"C-MOVE-seed1\": true,\n   \"C-SUPPORT-table\": true,\n   \"o_nonnegative\": true,\n   \"projection_within_11.5\": true,\n   \"limit_positive\": true,\n   \"limit_covers_1.1x_runtime\": true,\n   \"reservation_within_cap_left\": true\n  },\n  \"files\": {\n   \"files_exactly_the_pilot's\": true,\n   \"pins_receipts_and_job\": true\n  },\n  \"units\": {\n   \"p_off_c\": true,\n   \"p_R_c\": true,\n   \"p_off_b1\": true,\n   \"p_R_b1\": true,\n   \"p_off_b2\": true,\n   \"p_off_b3\": true,\n   \"p_off_b4\": true,\n   \"p_off_b5\": true\n  },\n  \"cross_unit\": {\n   \"C-NORM\": true,\n   \"C-FIX\": true,\n   \"C-MOVE-seed1\": true,\n   \"C-SUPPORT-table\": true,\n   \"seconds\": {\n    \"p_off_c\": 1.0,\n    \"p_R_c\": 1.0,\n    \"p_off_b1\": 1.0,\n    \"p_R_b1\": 1.0,\n    \"p_off_b2\": 1.0,\n    \"p_off_b3\": 1.0,\n    \"p_off_b4\": 1.0,\n    \"p_off_b5\": 1.0\n   }\n  },\n  \"C-SUPPORT\": {\n   \"pass\": true,\n   \"n_seeds\": 200,\n   \"failures\": {},\n   \"n_seed_cells\": 0\n  },\n  \"t_R_s\": 704,\n  \"o_s\": 52,\n  \"pilot_node_s\": 1512,\n  \"pilot_node_h\": 0.42,\n  \"runtime_s\": 7092,\n  \"projection_node_s\": 36972,\n  \"projection_node_h\": 10.27,\n  \"cap_left_node_s\": 43488,\n  \"time_limit_minutes\": 144,\n  \"reservation_node_s\": 43200,\n  \"verdict\": \"PROCEED\"\n }\n}\n=========================== short test summary info ============================\nFAILED launch/test_launch.py::PilotPost::test_pilot_files_and_job_defects_stop\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 passed, 8 deselected in 16.41s\n"
+  }
+ ],
+ "summary": "1/1 killed"
+}

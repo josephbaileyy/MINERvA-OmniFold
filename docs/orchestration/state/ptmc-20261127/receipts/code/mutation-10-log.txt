@@ -1,0 +1,3 @@
+PP_PINS_BEFORE_AFTER KILLED 17.7
+1/1 killed
+exit 0

@@ -14,6 +14,7 @@ ok   replicas: no PROCEED refuses
 ok   replicas: no L refuses
 ok   replicas: a malformed L refuses
 ok   replicas: no recheck record refuses (B1)
+ok   replicas: a recheck claimed by another job refuses, no lane started (confirm-3 B1)
 ok   replicas: a stale L file the recheck did not authorize refuses (B1)
 ok   replicas: a failed squeue refuses
 ok   replicas: an UNLIMITED time limit refuses
@@ -26,5 +27,5 @@ ok   replicas: an existing record dir refuses
 ok   replicas: a limit below L refuses (it must be exactly L)
 ok   replicas: b = 2..200, 199 steps, each once, 199 outcomes, 20 lanes (no seq), lane 0 takes b22
 ok   replicas: a failed unit exits 6, its lane continues, its outcome recorded
-pass 28 fail 0
+pass 29 fail 0
 rc=0
