@@ -678,6 +678,60 @@ T2A_SENTENCE = ("Under the covariance rebuilt at each tune, the mean offset from
                 "does not describe the estimator's bias at these tunes.")
 
 
+# Sec. 3.2's C2 statistical-covariance sentences and Fig. c2-stat-spectra (Joseph 2026-11-27). Records: c2_corr.json and
+# c2_eff.json (fd/c2-efficiency-20261127); all controls must pass and the record must be the committed one (a084016f).
+C2_DIR = "measurement-paper/5d-community-20261024/fd/c2-efficiency-20261127"
+C2_OVERRIDE = None
+
+
+def c2_records() -> dict:
+    if C2_OVERRIDE is not None:
+        return C2_OVERRIDE
+    raw = (STATE / C2_DIR / "run-corr/c2_corr.json").read_bytes()
+    return {"sha256": hashlib.sha256(raw).hexdigest(), "corr": json.loads(raw),
+            "eff": json.loads((STATE / C2_DIR / "run/c2_eff.json").read_text())}
+
+
+def c2_ok(d: dict) -> bool:
+    c, e = d["corr"], d["eff"]
+    return (d["sha256"].startswith("a084016f") and c["status"] == "OK" and e["status"] == "OK" and c["cells"] == 205
+            and all(v["pass"] for v in c["controls"].values()) and all(v["pass"] for v in c["c2_eff_controls"].values())
+            and all(v["pass"] for v in e["controls"].values()) and e["n_replicas"] == 300 and e["primary_K"] == 10)
+
+
+def c2_ranks(d: dict) -> tuple[bool, bool]:
+    """(below IBU at every rank, below the published at every rank but the smallest and not at the smallest)."""
+    s = d["corr"]["figure_spectra"]
+    o, i, p = s["C_OF"], s["C_IBU_K10"], s["StatOnly"]
+    n = len(o)
+    return (n == len(i) == len(p) == 205 and all(a < b for a, b in zip(o, i)),
+            all(o[k] < p[k] for k in range(n - 1)) and not o[n - 1] < p[n - 1])
+
+
+C2_CLAIMS = (
+    ("C2: IBU K=10 reproduces the published statistical covariance (sqrt-tr ratio 1.02, leading cosine 0.94, similar participation and neighbor rho)",
+     "On the same bootstrap draws, our ten-iteration IBU reproduces the size, eigenvalue spectrum and correlation pattern of the published statistical covariance, with a square-root trace 1.02 times the published value.",
+     lambda d: c2_ok(d) and f"{d['corr']['headline']['r_b_k10_ibu_over_published']:.2f}" == "1.02"
+     and d["corr"]["headline"]["leading_vector_cosine_ibu_k10_published"] >= 0.9
+     and abs(d["corr"]["headline"]["participation_ratio_ibu_k10"] / d["corr"]["headline"]["participation_ratio_published"] - 1) < 0.2
+     and max(d["corr"]["headline"]["neighbour_rho_ppar_ibu_k10"], d["corr"]["headline"]["neighbour_rho_pt_ibu_k10"]) < 0.15),
+    ("C2: OmniFold smaller at every rank except the smallest, fewer modes (participation 16.7 vs 36.5/41.3), neighbor rho +0.34/+0.30",
+     "The OmniFold statistical covariance is smaller at every eigenvalue rank except the smallest, concentrates its variance in fewer modes, and correlates neighboring bins positively (Fig.~\\ref{fig:c2-stat-spectra}), as expected for a more strongly smoothed estimator.",
+     lambda d: c2_ok(d) and all(c2_ranks(d))
+     and d["corr"]["headline"]["participation_ratio_of"] < 0.6 * min(d["corr"]["headline"]["participation_ratio_ibu_k10"], d["corr"]["headline"]["participation_ratio_published"])
+     and min(d["corr"]["headline"]["neighbour_rho_ppar_of"], d["corr"]["headline"]["neighbour_rho_pt_of"]) > 0.25),
+    ("C2 caption: below the published and IBU covariances at every rank except the smallest; 300 shared draws",
+     "The OmniFold statistical covariance has smaller eigenvalues than the published statistical covariance and the ten-iteration IBU covariance at every rank except the smallest.",
+     lambda d: c2_ok(d) and all(c2_ranks(d))),
+)
+
+
+def c2_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
+    t, d = text("sec3_twod.tex", sources), c2_records()
+    return [(lab, t.count(s) == 1 and fact(d), f"sentence found {t.count(s)} time(s) | record {fact(d)}")
+            for lab, s, fact in C2_CLAIMS]
+
+
 def t2a_claims(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     """The printed macros equal the record's e-bar' C+ e-bar / ndf at one decimal, every control passed, and the
     mean-error term alone is far above 1 per ndf at both tunes (AR23 first, G18 second, as in the paragraph)."""
@@ -1120,6 +1174,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
     rows += clip2d_claims(sources)
     rows += regrade_vf_claims(sources)
     rows += t2a_claims(sources)
+    rows += c2_claims(sources)
     rows += highpz_claims(sources)
     rows += oofvc_claims(sources)
     for label, src, pat, fn, lo, hi in VERBAL:
@@ -1767,6 +1822,42 @@ def self_test() -> int:
             print(f"  NOT CAUGHT  T2A: {old_s} -> {new_s}"); ok = False
         else:
             caught += 1; print(f"  caught      T2A: {old_s} -> {new_s}")
+
+    def plant5(what, fn):
+        global C2_OVERRIDE
+        nonlocal ok, caught
+        data = copy.deepcopy(c2_records())
+        fn(data)
+        C2_OVERRIDE = data
+        try:
+            rows = dict((r[0], r[1]) for r in evaluate(base))
+        except (ValueError, KeyError, TypeError):
+            rows = {"refused": False}
+        finally:
+            C2_OVERRIDE = None
+        if all(rows.values()):
+            print(f"  NOT CAUGHT  C2 planted: {what}"); ok = False
+        else:
+            caught += 1; print(f"  caught      C2 planted: {what}")
+    hd = lambda d: d["corr"]["headline"]
+    plant5("another record", lambda d: d.__setitem__("sha256", "0" * 64))
+    plant5("IBU ratio 1.10", lambda d: hd(d).__setitem__("r_b_k10_ibu_over_published", 1.10))
+    plant5("OF above IBU at rank 50", lambda d: d["corr"]["figure_spectra"]["C_OF"].__setitem__(49, 1.0))
+    plant5("OF below published at the smallest rank", lambda d: d["corr"]["figure_spectra"]["C_OF"].__setitem__(204, 1e-95))
+    plant5("OF participation 40", lambda d: hd(d).__setitem__("participation_ratio_of", 40.0))
+    plant5("OF neighbor rho 0.05", lambda d: hd(d).__setitem__("neighbour_rho_pt_of", 0.05))
+    plant5("a control failed", lambda d: d["corr"]["controls"]["C-PSD"].__setitem__("pass", False))
+    for old_s, new_s in (("1.02 times the published", "1.20 times the published"),
+                         ("at every eigenvalue rank except the smallest", "at every eigenvalue rank"),
+                         ("correlates neighboring bins positively", "correlates neighboring bins negatively")):
+        t3 = base["sec3_twod.tex"]
+        if t3.count(old_s) != 1:
+            print(f"  NOT FOUND   C2 mutation {old_s!r}"); ok = False; continue
+        trial = dict(base); trial["sec3_twod.tex"] = t3.replace(old_s, new_s)
+        if all(r[1] for r in evaluate(trial)):
+            print(f"  NOT CAUGHT  C2: {old_s} -> {new_s}"); ok = False
+        else:
+            caught += 1; print(f"  caught      C2: {old_s} -> {new_s}")
     plant2("evw2d.done verdict FAIL", lambda d: d["done"].__setitem__("verdict", "FAIL"))
     plant2("a finding recorded", lambda d: d["run"].__setitem__("findings", ["C-COMPLETE"]))
     plant2("deposit copy not accepted", lambda d: d.__setitem__("deposit", d["deposit"].replace("ACCEPTED", "REFUSED")))
