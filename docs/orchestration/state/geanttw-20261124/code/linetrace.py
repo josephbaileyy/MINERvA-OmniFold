@@ -7,12 +7,13 @@ Everything runs in a scratch copy of this directory; nothing here is modified.
 
   - Python (dumpcmp.py, p0_check.py, geanttw_sacct.py, geanttw_provenance.py): coverage.py, with `patch = subprocess`, so the tests' `python3 -I` child
     processes are measured too. The report lists every executable line that no test runs.
-  - Shell (geanttw_evloop.sbatch, geanttw_build.sh, geanttw_connect.sh, geanttw_remote.sh): in the copy, one line is inserted after
+  - Shell (geanttw_evloop.sbatch, geanttw_build.sh, geanttw_connect.sh, geanttw_remote.sh, geanttw_p3.sbatch): in the copy, one line is inserted after
     the shebang. It sets a DEBUG trap (with set -T, so functions inherit it) that writes '+<file>:<line>:' to a
     trace file. bash 3.2 on macOS has no BASH_XTRACEFD. Lines are mapped back to the original numbering (minus 1). A shell line counts as executable unless it is blank, a comment, an SBATCH
     header, a heredoc body, the inside of a multi-line quoted string, a continuation line or a case label. The report lists every executable line that never appears in the trace.
 """
 import argparse
+import os
 import re
 import shutil
 import subprocess
@@ -21,12 +22,15 @@ import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-PY = ["dumpcmp.py", "p0_check.py", "geanttw_sacct.py", "geanttw_provenance.py"]
-SH = ["geanttw_evloop.sbatch", "geanttw_build.sh", "geanttw_connect.sh", "geanttw_remote.sh"]
+PY = ["dumpcmp.py", "p0_check.py", "geanttw_sacct.py", "geanttw_provenance.py", "p2_limits.py", "c2_check.py",
+      "p3_slim.py", "slim_tparams.py", "p3_readout.py"]
+SH = ["geanttw_evloop.sbatch", "geanttw_build.sh", "geanttw_connect.sh", "geanttw_remote.sh", "geanttw_p3.sbatch"]
 HEREDOC = re.compile(r"<<-?\s*['\"]?([A-Za-z_]+)['\"]?")
 
 
 CASE_LABEL = re.compile(r"^[A-Za-z0-9_|*.-]+\)$")
+SQ_OPEN = re.compile(r"\s-c '\s*$")  # a `python3 -c '` whose body runs over the next lines
+TRAIL = re.compile(r"\s+#.*$")
 
 
 def shell_executable(text):
@@ -35,7 +39,7 @@ def shell_executable(text):
     block keyword. bash's DEBUG trap fires once per simple command, usually on its first line; inside a command
     substitution that continues over `\\` lines, bash 3.2 reports the last line instead. So the second value maps every
     continuation line to the line its command starts on, and a hit there counts for that line."""
-    lines, out, term, in_str, cont = text.splitlines(), set(), None, False, False
+    lines, out, term, in_str, cont = text.splitlines(), set(), None, None, False
     owner, start = {}, None
     for i, ln in enumerate(lines, 1):
         s = ln.strip()
@@ -44,8 +48,8 @@ def shell_executable(text):
                 term = None
             continue
         if in_str:
-            if ln.count('"') % 2 == 1:
-                in_str = False
+            if ln.count(in_str) % 2 == 1:
+                in_str = None
             continue
         was_cont, cont = cont, ln.rstrip().endswith("\\")
         if not was_cont:
@@ -53,13 +57,16 @@ def shell_executable(text):
         elif start is not None:
             owner[i] = start
         if not s.startswith("#") and ln.count('"') % 2 == 1:
-            in_str = True
-        if was_cont or CASE_LABEL.match(s):
+            in_str = '"'
+        elif not s.startswith("#") and SQ_OPEN.search(ln):
+            in_str = "'"
+        if was_cont or CASE_LABEL.match(TRAIL.sub("", s)):
             continue
         m = HEREDOC.search(ln)
         if m and not s.startswith("#"):
             term = m.group(1)
-        if not s or s.startswith("#") or s in ("fi", "done", "esac", "}", "else", "then", "do", ";;", "EOF"):
+        if not s or s.startswith("#") or re.sub(r"\s*;;$", "", s) in ("", "fi", "done", "esac", "}", "else", "then",
+                                                                    "do", "EOF"):
             continue
         out.add(i)
     return out, owner
@@ -89,7 +96,8 @@ def main():
                       f"source = {work}\n")
         env_cmd = [sys.executable, "-m", "coverage", "run", f"--rcfile={rc}", "-m", "pytest", "tests", "-q",
                    "-p", "no:cacheprovider"]
-        r = subprocess.run(env_cmd, cwd=work, capture_output=True, text=True)
+        r = subprocess.run(env_cmd, cwd=work, capture_output=True, text=True,
+                           env=dict(os.environ, GEANTTW_REPO=str(HERE.parents[4])))
         report.append(f"pytest under trace: rc={r.returncode}; {r.stdout.strip().splitlines()[-1] if r.stdout else ''}")
         subprocess.run([sys.executable, "-m", "coverage", "combine", f"--rcfile={rc}"], cwd=work,
                        capture_output=True, text=True)
@@ -102,7 +110,7 @@ def main():
         hit = {}
         if trace.exists():
             for ln in trace.read_text(errors="replace").splitlines():
-                m = re.match(r"^\++([A-Za-z_.]+):(\d+):", ln)
+                m = re.match(r"^\++([A-Za-z0-9_.]+):(\d+):", ln)
                 if m:
                     hit.setdefault(m.group(1), set()).add(int(m.group(2)) - 1)
         report.append("")
@@ -113,8 +121,15 @@ def main():
             miss = sorted(exe - got)
             report.append(f"{name}: {len(got)}/{len(exe)} executable lines traced; not traced: "
                           f"{', '.join(map(str, miss)) if miss else 'none'}")
+        dark = [n for n in SH if not hit.get(n)]
     Path(args.out).write_text("\n".join(report) + "\n")
     print("\n".join(report))
+    if dark:  # a script with no trace at all is a broken trace, not an untested script
+        print(f"LINETRACE FAILED: no trace lines for {', '.join(dark)}")
+        sys.exit(1)
+    if r.returncode != 0:   # a trace of a failing suite is not a receipt
+        print(f"LINETRACE FAILED: pytest under trace rc={r.returncode}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -37,7 +37,13 @@ OWNER = {
     "geanttw_evloop.sbatch": "tests/test_shell_scripts.py",
     "geanttw_build.sh": "tests/test_shell_scripts.py",
     "geanttw_connect.sh": "tests/test_shell_scripts.py",
-    "geanttw_remote.sh": "tests/test_shell_scripts.py",
+    "geanttw_remote.sh": ("tests/test_shell_scripts.py", "tests/test_p2p3_steps.py"),
+    "p2_limits.py": "tests/test_p2_limits.py",
+    "c2_check.py": "tests/test_c2_check.py",
+    "p3_slim.py": "tests/test_p3_slim.py",
+    "slim_tparams.py": "tests/test_p3_slim.py",
+    "p3_readout.py": "tests/test_p3_readout.py",
+    "geanttw_p3.sbatch": "tests/test_p3_sbatch.py",
 }
 PY_OPS = [
     (r"==", "!="), (r"!=", "=="), (r"(?<![<>=!])<(?![<=])", ">="), (r"(?<![<>=!-])>(?![>=])", "<="),
@@ -101,6 +107,9 @@ def mutants():
     return out
 
 
+REPO = HERE.parents[4]
+
+
 def run_one(mut):
     name, line, a, b, rep, op = mut
     with tempfile.TemporaryDirectory(prefix="geanttw-mut-") as td:
@@ -113,9 +122,10 @@ def run_one(mut):
         lines[line - 1] = ln[:a] + rep + ln[b:]
         p.write_text("".join(lines))
         os.chmod(p, (HERE / name).stat().st_mode)
-        env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
+        env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1", GEANTTW_REPO=str(REPO))
         try:
-            r = subprocess.run([sys.executable, "-m", "pytest", OWNER[name], "-q", "-x", "-p", "no:cacheprovider"],
+            owners = OWNER[name] if isinstance(OWNER[name], tuple) else (OWNER[name],)
+            r = subprocess.run([sys.executable, "-m", "pytest", *owners, "-q", "-x", "-p", "no:cacheprovider"],
                                cwd=work, env=env, capture_output=True, text=True, timeout=TIMEOUT)
             verdict = "SURVIVED" if r.returncode == 0 else "KILLED"
         except subprocess.TimeoutExpired:
@@ -130,6 +140,13 @@ def main():
     ap.add_argument("--only", help="restrict to one source file name")
     args = ap.parse_args()
     ms = [m for m in mutants() if not args.only or m[0] == args.only]
+    # The positive control: each owner's tests must pass on an unmutated copy, run exactly as the mutants are.
+    # Without it, a test that cannot run in the copy "kills" every mutant (a copy that could not find the repo did).
+    for name in sorted({m[0] for m in ms}):
+        n, _l, _o, v = run_one((name, 1, 0, 0, "", "control"))
+        if v != "SURVIVED":
+            print(f"CONTROL FAILED: {name}'s tests do not pass on an unmutated copy ({v}); no mutant is scored")
+            sys.exit(2)
     results = []
     with cf.ThreadPoolExecutor(max_workers=args.jobs) as ex:
         for res in ex.map(run_one, ms):

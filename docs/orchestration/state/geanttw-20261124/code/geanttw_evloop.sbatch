@@ -12,8 +12,11 @@
 #   sbatch --job-name=geanttw_p0_<build>_<PL> --time=<limit> --output=<B>/run/logs/%x_%j.out \
 #          geanttw_evloop.sbatch <B> <build pin|pat> <PL> <binary-md5> <deploy> [<p2-limits-file> <its sha256>]
 # P0: PL must be 1L, TimeLimit <= 01:00:00, runs under strace.
-# P2: build must be pat; limit from the limits file, whose sha256 must match.
-# Refuses if any cov2d or t2a job is queued/running (checked twice: at start and before binary).
+# P2: build must be pat; limit from the limits file, whose sha256 must match. Job names geanttw_p2_<PL> (traced:
+#     openat/open and the stat family), geanttw_p2_pilot_<PL> (also read/pread64) and geanttw_p2_pilotref_<PL>
+#     (untraced), per p2p3/AMENDMENT-P2P3.md A2.
+# Refuses if any cov2d, t2a or covfix_ job is queued/running (checked twice: at start and before binary).
+# The binary runs under env -u BASH_ENV -u ENV, and refuses unless that launch has neither set.
 # Refuses if MNV101_DUMP_POINTCLOUD is set.
 # GEANTTW_SMOKE=1 runs every check then exits 0 before the binary.
 set -o pipefail
@@ -54,8 +57,13 @@ if [[ "${PHASE}" == p0 ]]; then
   [[ "${PL}" == 1L ]] || { say "REFUSE: p0 requires PL=1L, got '${PL}'"; exit 2; }
   LIMIT=01:00:00
 elif [[ "${PHASE}" == p2 ]]; then
-  WANT="geanttw_p2_${PL}"
+  VARIANT=""; TRACE=stat
+  [[ "${NAME}" == "geanttw_p2_pilot_${PL}" ]] && { VARIANT=pilot_; TRACE=read; }
+  [[ "${NAME}" == "geanttw_p2_pilotref_${PL}" ]] && { VARIANT=pilotref_; TRACE=none; }
+  WANT="geanttw_p2_${VARIANT}${PL}"
+  [[ -z "${VARIANT}" || "${PL}" == 1B ]] || { say "REFUSE: the pilot pair runs on 1B only, got '${PL}'"; exit 2; }
   [[ "${GBUILD}" == pat ]] || { say "REFUSE: p2 requires build=pat, got '${GBUILD}'"; exit 2; }
+  [[ "${PL}" != 1L ]] || { say "REFUSE: p2 reuses P0's 1L output; it does not run 1L"; exit 2; }
   [[ -n "${P2_LIMITS}" && -n "${P2_LIMITS_SHA}" ]] || { say "REFUSE: p2 requires a limits file and its sha256"; exit 2; }
   actual_sha=$(sha256sum "${P2_LIMITS}" | cut -d' ' -f1)
   [[ "${actual_sha}" == "${P2_LIMITS_SHA}" ]] || { say "REFUSE: p2 limits file sha256 ${actual_sha} is not ${P2_LIMITS_SHA}"; exit 2; }
@@ -92,14 +100,15 @@ trc=$?
 CODE="${DEPLOY}/docs/orchestration/state/geanttw-20261124/code"
 fence_check() {
   local label="$1" psv since rc
-  psv=$(mktemp) || { say "REFUSE: mktemp failed (${label})"; exit 2; }
+  psv=$(mktemp -p "${B}/run") || { say "REFUSE: mktemp failed (${label})"; exit 2; }   # its file stays under B
   since=$(python3 -c 'import datetime; print((datetime.date.today() - datetime.timedelta(14)).isoformat())')
   sacct -X -n -P -S "${since}" -o JobID,JobName,State,ElapsedRaw,NNodes,TimelimitRaw > "${psv}" 2>&1 \
     || { say "REFUSE: sacct failed (${label})"; rm -f "${psv}"; exit 2; }
-  python3 -I "${CODE}/geanttw_sacct.py" fence --sacct "${psv}" --regex '^(cov2d|t2a)' >&2; rc=$?
+  python3 -I "${CODE}/geanttw_sacct.py" fence --sacct "${psv}" --regex '^(cov2d|t2a|covfix_)' >&2; rc=$?
   rm -f "${psv}"
   [[ ${rc} -eq 0 ]] || { say "REFUSE: fenced jobs are live, or sacct is unreadable (${label}, rc ${rc})"; exit 2; }
 }
+mkdir -p "${B}/run" || { say "REFUSE: cannot make ${B}/run"; exit 2; }
 fence_check "at start"
 
 # --- refuse if MNV101_DUMP_POINTCLOUD is set ---
@@ -152,7 +161,7 @@ sys.exit(1 if bad else 0)
 EOF
 
 # --- output check ---
-OUT="${B}/run/${PHASE}/${GBUILD}/runEventLoopOmniFold_GEANTTW_${GBUILD}_${PL}.root"
+OUT="${B}/run/${PHASE}/${GBUILD}/runEventLoopOmniFold_GEANTTW_${GBUILD}_${VARIANT:-}${PL}.root"
 [[ -e "${OUT}" ]] && { say "REFUSE: ${OUT} exists"; exit 3; }
 
 # --- environment setup ---
@@ -185,16 +194,25 @@ export MNV101_DUMP_UNIVERSES=GEANT_Neutron,GEANT_Pion,GEANT_Proton
 # --- NuE file logging ---
 NUE="${B}/prefix-${GBUILD}/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt"
 [[ -f "${NUE}" ]] || { say "REFUSE: the NuE file ${NUE} is missing"; exit 2; }
-nue() {
+UOMNI="${GEANTTW_TEST_UOMNI:-/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root}"
+stamps() {   # cov2d's carried conditions, fail-closed (amendment 3): the NuE file's and UOMNI's atime_ns and mtime_ns,
+             # by stat (never an open), with UTC; ino shows which file a symlinked path reached
   python3 -c "
 import os,sys,time
-s=os.stat(sys.argv[1])
-print('[geanttw-evloop] NUE %s utc=%s atime_ns=%d mtime_ns=%d size=%d' % (
-    sys.argv[2], time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
-    s.st_atime_ns, s.st_mtime_ns, s.st_size))" "${NUE}" "$1"
+utc = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+st = [(n, os.stat(p)) for n, p in (('NUE', sys.argv[1]), ('UOMNI', sys.argv[2]))]
+for n, s in st:
+    print('[geanttw-evloop] %s %s utc=%s atime_ns=%d mtime_ns=%d size=%d ino=%d' % (
+        n, sys.argv[3], utc, s.st_atime_ns, s.st_mtime_ns, s.st_size, s.st_ino))" "${NUE}" "${UOMNI}" "$1"
 }
 
 say "env: $(env | grep '^MNV101_' | sort | tr '\n' ' ')"
+
+# --- the binary's launch environment: no BASH_ENV and no ENV, so no child bash sources Lmod (C0e's attribution) ---
+LAUNCH=(env -u BASH_ENV -u ENV)
+"${LAUNCH[@]}" python3 -c 'import os, sys; sys.exit(1 if {"BASH_ENV", "ENV"} & set(os.environ) else 0)' \
+  || { say "REFUSE: BASH_ENV or ENV is still set under the binary's launch"; exit 2; }
+say "launch env: BASH_ENV and ENV unset"
 
 # --- smoke mode: every check above passed (environment, ldd and MNV101_ included); stop before the binary ---
 [[ -n "${GEANTTW_SMOKE:-}" ]] && { echo "[geanttw-evloop] smoke: checks passed for ${GBUILD} ${PL} (${NAME}, ${TL})"; exit 0; }
@@ -202,22 +220,29 @@ say "env: $(env | grep '^MNV101_' | sort | tr '\n' ' ')"
 # --- second fence check immediately before the binary ---
 fence_check "immediately before the binary"
 
-nue before
+stamps before || { say "REFUSE: cannot log the stamps before the binary"; exit 2; }
 
 mkdir -p "$(dirname "${OUT}")"
-WORK="${B}/run/${PHASE}/${GBUILD}/work_${PL}_$$"
+WORK="${B}/run/${PHASE}/${GBUILD}/work_${VARIANT:-}${PL}_$$"
 mkdir -p "${WORK}" && cd "${WORK}" || exit 4
 
 say "${GBUILD} ${PL} job=${SLURM_JOB_ID:-smoke} host=$(hostname) bin=${BIN} md5=${EXPECT_MD5} start=$(date -u +%FT%TZ)"
 t0=$(date +%s)
+STAT_SET=openat,open,stat,lstat,newfstatat,statx,access
 if [[ "${PHASE}" == p0 ]]; then
   STRACE_OUT="${B}/run/p0/${GBUILD}/strace.${GBUILD}.${PL}"
-  strace -f -y -e trace=openat,open -o "${STRACE_OUT}" "${BIN}" "${DATA}" "${MC}"; rc=$?
+  "${LAUNCH[@]}" strace -f -y -e trace=openat,open -o "${STRACE_OUT}" "${BIN}" "${DATA}" "${MC}"; rc=$?
+elif [[ "${TRACE}" == stat ]]; then
+  STRACE_OUT="${B}/run/p2/${GBUILD}/strace.${GBUILD}.${PL}"
+  "${LAUNCH[@]}" strace -f -y -e trace="${STAT_SET}" -o "${STRACE_OUT}" "${BIN}" "${DATA}" "${MC}"; rc=$?
+elif [[ "${TRACE}" == read ]]; then
+  STRACE_OUT="${B}/run/p2/${GBUILD}/strace.${GBUILD}.pilot_${PL}"
+  "${LAUNCH[@]}" strace -f -y -s 0 -e trace="${STAT_SET},read,pread64" -o "${STRACE_OUT}" "${BIN}" "${DATA}" "${MC}"; rc=$?
 else
-  "${BIN}" "${DATA}" "${MC}"; rc=$?
+  "${LAUNCH[@]}" "${BIN}" "${DATA}" "${MC}"; rc=$?
 fi
 
-nue after
+stamps after || { say "the stamps after the binary cannot be written"; exit 20; }
 
 say "rc=${rc} elapsed=$(( $(date +%s) - t0 ))s"
 [[ ${rc} -eq 0 && -s runEventLoopOmniFold.root ]] || exit 5

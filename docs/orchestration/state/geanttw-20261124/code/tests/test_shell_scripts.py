@@ -197,6 +197,7 @@ while [[ "$1" == -* ]]; do
   case "$1" in
     -o) shift 2 ;;
     -e) shift 2 ;;
+    -s) shift 2 ;;
     -f) shift ;;
     *) shift ;;
   esac
@@ -219,6 +220,7 @@ fi
             "#!/bin/bash\n"
             "env | grep '^MNV101_' | sort > \"$PWD/../binary_env.txt\"\n"
             "echo \"$CONDA_PREFIX\" > \"$PWD/../binary_conda.txt\"\n"
+            "echo \"BASH_ENV=${BASH_ENV-unset} ENV=${ENV-unset}\" > \"$PWD/../binary_shellenv.txt\"\n"
             "echo fake-root-output > runEventLoopOmniFold.root\n"
         )
         self.binary.chmod(0o755)
@@ -251,6 +253,9 @@ fi
         e["GEANTTW_NAME"] = overrides.pop("name", self.job_name)
         e["GEANTTW_TIMELIMIT"] = overrides.pop("timelimit", "01:00:00" if self.phase == "p0" else "01:00:00")
         e["GEANTTW_ANATUPLE_ROOT"] = str(self.anatuple_root) + "/"
+        uomni = self.B.parent / "uomni_stamp.root"
+        uomni.exists() or uomni.write_bytes(b"u")
+        e["GEANTTW_TEST_UOMNI"] = str(uomni)
         e["ROOT628_CONDA"] = str(self.bindir / "conda")
         e["ROOT628_PREFIX"] = str(self.conda_env)
         e.pop("CONDA_PREFIX", None)
@@ -564,27 +569,27 @@ class TestEvloopP2Build:
     """Test that p2 refuses build=pin."""
 
     def test_p2_with_build_pin_refuses(self, tmp_path):
-        h = EvloopHarness(tmp_path, build="pin", phase="p2")
+        h = EvloopHarness(tmp_path, build="pin", phase="p2", pl="1A")
         # Create a p2 limits file
         limits = tmp_path / "limits.txt"
-        limits.write_text("1L 01:00:00\n")
+        limits.write_text("1A 01:00:00\n")
         limits_sha = sha256_of(limits)
         r = h.run_evloop(
             extra_args=[str(limits), limits_sha],
-            name="geanttw_p2_1L",
+            name="geanttw_p2_1A",
         )
         assert r.returncode != 0
         assert "REFUSE" in r.stderr
         assert "pat" in r.stderr
 
     def test_p2_with_build_pat_passes(self, tmp_path):
-        h = EvloopHarness(tmp_path, build="pat", phase="p2")
+        h = EvloopHarness(tmp_path, build="pat", phase="p2", pl="1A")
         limits = tmp_path / "limits.txt"
-        limits.write_text("1L 01:00:00\n")
+        limits.write_text("1A 01:00:00\n")
         limits_sha = sha256_of(limits)
         r = h.run_evloop(
             extra_args=[str(limits), limits_sha],
-            name="geanttw_p2_1L",
+            name="geanttw_p2_1A",
         )
         assert r.returncode == 0, f"stdout={r.stdout}\nstderr={r.stderr}"
 
@@ -631,6 +636,13 @@ class TestEvloopFencedJobs:
         r = h.run_evloop()
         assert r.returncode != 0
         assert "REFUSE" in r.stderr
+
+    @pytest.mark.parametrize("row", ["14|covfix_pg_connect|RUNNING|0|1|60", "15|covfix_pv_writer|PENDING|0|1|60"])
+    def test_covfix_job_refuses(self, tmp_path, row):
+        h = EvloopHarness(tmp_path)
+        _write_stub(h.bindir, "sacct", f'echo "{row}"')
+        r = h.run_evloop()
+        assert r.returncode == 2 and "fenced jobs are live" in r.stderr
 
     def test_ended_cov2d_job_does_not_block(self, tmp_path):
         h = EvloopHarness(tmp_path)
@@ -814,7 +826,7 @@ class TestEvloopFullRun:
 echo "$*" > "{strace_seen}"
 out=""
 while [[ "$1" == -* ]]; do
-  case "$1" in -o) out="$2"; shift 2 ;; -e) shift 2 ;; *) shift ;; esac
+  case "$1" in -o) out="$2"; shift 2 ;; -e|-s) shift 2 ;; *) shift ;; esac
 done
 echo 'openat(AT_FDCWD, "/x", O_RDONLY) = 3' > "$out"
 exec "$@"
@@ -837,13 +849,34 @@ exec "$@"
         assert env_seen == ["MNV101_DUMP_UNIVERSES=GEANT_Neutron,GEANT_Pion,GEANT_Proton"]
         assert (h.B / "run" / "p0" / h.build / "binary_conda.txt").read_text().strip() == str(h.conda_env)
 
-    def test_nue_logged_before_and_after(self, tmp_path):
+    def test_nue_and_uomni_logged_before_and_after(self, tmp_path):
         h, r, _ = self.run(tmp_path)
         assert r.returncode == 0, r.stderr
-        lines = [ln for ln in r.stdout.splitlines() if "] NUE " in ln]
-        assert [ln.split()[2] for ln in lines] == ["before", "after"], r.stdout
+        lines = [ln for ln in r.stdout.splitlines() if "] NUE " in ln or "] UOMNI " in ln]
+        assert [ln.split()[1:3] for ln in lines] == [["NUE", "before"], ["UOMNI", "before"], ["NUE", "after"],
+                                                      ["UOMNI", "after"]], r.stdout
         for ln in lines:
-            assert "atime_ns=" in ln and "mtime_ns=" in ln and "utc=" in ln
+            assert "atime_ns=" in ln and "mtime_ns=" in ln and "utc=" in ln and "ino=" in ln
+
+    def test_a_stamp_that_cannot_be_taken_refuses_before_the_binary(self, tmp_path):
+        h, r, _ = self.run(tmp_path, GEANTTW_TEST_UOMNI=str(tmp_path / "absent.root"))
+        assert r.returncode == 2 and "cannot log the stamps before the binary" in r.stderr
+
+    def test_an_unmakeable_run_dir_refuses(self, tmp_path):
+        h = EvloopHarness(tmp_path)
+        h.slurm_stubs()
+        shutil.rmtree(h.B / "run")
+        (h.B / "run").write_text("a file in the way\n")
+        r = h.run_full()
+        assert r.returncode == 2 and f"REFUSE: cannot make {h.B}/run" in r.stderr
+        assert r.stderr.count("REFUSE") == 1   # it stops there, not at the fence's mktemp after it
+
+    def test_the_fences_file_stays_under_b(self, tmp_path):
+        h = EvloopHarness(tmp_path)
+        h.slurm_stubs()
+        _write_stub(h.bindir, "mktemp", f'echo "MKTEMP $*" >> "{tmp_path}/mktemp.log"; exec /usr/bin/mktemp "$@"')
+        assert h.run_full().returncode == 0
+        assert set((tmp_path / "mktemp.log").read_text().splitlines()) == {f"MKTEMP -p {h.B}/run"}
 
     def test_p0_runs_under_strace(self, tmp_path):
         h, r, seen = self.run(tmp_path)
@@ -862,17 +895,73 @@ exec "$@"
         assert r.returncode == 5, r.stderr
         assert not (h.B / "run" / "p0" / h.build / f"runEventLoopOmniFold_GEANTTW_{h.build}_{h.pl}.root").exists()
 
-    def test_p2_full_run_without_strace(self, tmp_path):
-        h = EvloopHarness(tmp_path, build="pat", phase="p2")
+    def p2_run(self, tmp_path, name, pl="1A", **env):
+        """A real P2 run of playlist pl as job `name`, with strace recording its args then running the command."""
+        h = EvloopHarness(tmp_path, build="pat", phase="p2", pl=pl)
         h.slurm_stubs()
-        _write_stub(h.bindir, "strace", 'echo "strace must not run in p2" >&2; exit 99')
+        seen = tmp_path / "strace_args.txt"
+        _write_stub(h.bindir, "strace", f'''
+echo "$*" > "{seen}"
+out=""
+while [[ "$1" == -* ]]; do
+  case "$1" in -o) out="$2"; shift 2 ;; -e|-s) shift 2 ;; *) shift ;; esac
+done
+: > "$out"
+exec "$@"
+''')
         limits = tmp_path / "limits.txt"
-        limits.write_text("1L 01:00:00\n")
-        r = h.run_full(str(limits), sha256_of(limits))
+        limits.write_text(f"{pl} 01:00:00\n")
+        return h, h.run_full(str(limits), sha256_of(limits), name=name, **env), seen
+
+    def test_p2_traces_openat_and_the_stat_family(self, tmp_path):
+        h, r, seen = self.p2_run(tmp_path, "geanttw_p2_1A")
         assert r.returncode == 0, r.stderr
-        out = h.B / "run" / "p2" / "pat" / "runEventLoopOmniFold_GEANTTW_pat_1L.root"
-        assert out.read_text() == "fake-root-output\n"
+        a = seen.read_text()
+        assert "-e trace=openat,open,stat,lstat,newfstatat,statx,access -o" in a and "read" not in a
+        assert a.split(" -o ")[1].split()[0] == str(h.B / "run" / "p2" / "pat" / "strace.pat.1A")
+        assert (h.B / "run" / "p2" / "pat" / "runEventLoopOmniFold_GEANTTW_pat_1A.root").read_text() == "fake-root-output\n"
+
+    def test_p2_pilot_also_traces_reads(self, tmp_path):
+        h, r, seen = self.p2_run(tmp_path, "geanttw_p2_pilot_1B", pl="1B")
+        assert r.returncode == 0, r.stderr
+        a = seen.read_text()
+        assert "-s 0 -e trace=openat,open,stat,lstat,newfstatat,statx,access,read,pread64 -o" in a
+        assert str(h.B / "run" / "p2" / "pat" / "strace.pat.pilot_1B") in a
+        assert (h.B / "run" / "p2" / "pat" / "runEventLoopOmniFold_GEANTTW_pat_pilot_1B.root").exists()
+
+    def test_p2_pilotref_runs_untraced(self, tmp_path):
+        h, r, seen = self.p2_run(tmp_path, "geanttw_p2_pilotref_1B", pl="1B")
+        assert r.returncode == 0, r.stderr
+        assert not seen.exists(), "strace ran for the untraced reference"
+        assert (h.B / "run" / "p2" / "pat" / "runEventLoopOmniFold_GEANTTW_pat_pilotref_1B.root").exists()
         assert not list((h.B / "run" / "p2" / "pat").glob("strace.*"))
+
+    @pytest.mark.parametrize("name", ["geanttw_p2_pilot_1A", "geanttw_p2_pilotref_1C"])
+    def test_the_pilot_pair_runs_on_1b_only(self, tmp_path, name):
+        h, r, _ = self.p2_run(tmp_path, name, pl=name[-2:])
+        assert r.returncode == 2 and f"REFUSE: the pilot pair runs on 1B only, got '{name[-2:]}'" in r.stderr
+
+    @pytest.mark.parametrize("name,pl", [("geanttw_p2_1A", "1A"), ("geanttw_p2_pilotref_1B", "1B")])
+    def test_the_binary_runs_without_bash_env_or_env(self, tmp_path, name, pl):
+        h, r, _ = self.p2_run(tmp_path, name, pl=pl, BASH_ENV="/opt/cray/pe/lmod/lmod/init/bash", ENV="/etc/profile")
+        assert r.returncode == 0, r.stderr
+        assert (h.B / "run" / "p2" / "pat" / "binary_shellenv.txt").read_text() == "BASH_ENV=unset ENV=unset\n"
+        assert "launch env: BASH_ENV and ENV unset" in r.stderr
+
+    def test_a_launch_that_keeps_bash_env_refuses(self, tmp_path):
+        """An `env` that ignores -u leaves BASH_ENV set: the job refuses before the binary."""
+        h = EvloopHarness(tmp_path, build="pat", phase="p2", pl="1A")
+        h.slurm_stubs()
+        _write_stub(h.bindir, "env", 'while [[ "$1" == -u ]]; do shift 2; done; exec "$@"')
+        limits = tmp_path / "limits.txt"
+        limits.write_text("1A 01:00:00\n")
+        r = h.run_full(str(limits), sha256_of(limits), name="geanttw_p2_1A", BASH_ENV="/x")
+        assert r.returncode == 2 and "REFUSE: BASH_ENV or ENV is still set" in r.stderr
+        assert not (h.B / "run" / "p2" / "pat" / "binary_shellenv.txt").exists(), "the binary ran"
+
+    def test_p2_refuses_1L(self, tmp_path):
+        h, r, _ = self.p2_run(tmp_path, "geanttw_p2_1L", pl="1L")
+        assert r.returncode == 2 and "REFUSE: p2 reuses P0's 1L output" in r.stderr
 
     def test_slurm_timelimit_too_long_refuses(self, tmp_path):
         h = EvloopHarness(tmp_path)
@@ -1114,8 +1203,15 @@ class RemoteHarness:
             '[ "$2" = "${TEST_SMOKE_REFUSES:-}" ] && exit 2\n'
             "exit 0\n")
         shutil.copy(HERE / "geanttw_sacct.py", code / "geanttw_sacct.py")
-        for f in ("dumpcmp.py", "geanttw_provenance.py"):
+        for f in ("dumpcmp.py", "geanttw_provenance.py", "c2_check.py", "p3_slim.py", "slim_tparams.py", "p3_readout.py"):
             (code / f).write_text("# stub\n")
+        (code / "geanttw_p3.sbatch").write_text("#!/bin/bash\n# stub\n")
+        (code / "p2_limits.py").write_text(
+            "import os, sys\n"
+            "open(os.environ['TEST_CALLS'], 'a').write('p2_limits ' + ' '.join(sys.argv[1:]) + '\\n')\n"
+            "sys.exit(int(os.environ.get('TEST_LIMITS_RC', '0')))\n")
+        (code / "p2_limits.txt").write_text("".join(f"{pl} 01:00:00\n" for pl in
+                                                    ("1A", "1B", "1C", "1D", "1E", "1F", "1G", "1M", "1N", "1O", "1P")))
         self.s0 = tmp_path / "s0" / "MANIFEST.sha256"   # S0's manifest, which deploy re-hashes
         self.s0.parent.mkdir()
         self.s0.write_bytes(b"S0 manifest bytes\n")
@@ -1816,12 +1912,12 @@ class TestEachEvloopGuardIsItsOwn:
         h = EvloopHarness(tmp_path)
         only_refusal(_run(self.args(h, pl="1A"), h.env(name="geanttw_p0_pin_1A")), "REFUSE: p0 requires PL=1L, got '1A'")
 
-    def p2(self, tmp_path, text="1L 01:00:00\n", sha=None, extra=None):
-        h = EvloopHarness(tmp_path, build="pat", phase="p2")
+    def p2(self, tmp_path, text="1A 01:00:00\n", sha=None, extra=None):
+        h = EvloopHarness(tmp_path, build="pat", phase="p2", pl="1A")
         lim = tmp_path / "limits.txt"
         lim.write_text(text)
         ex = [str(lim), sha or sha256_of(lim)] if extra is None else extra
-        return h.run_evloop(extra_args=ex, name="geanttw_p2_1L")
+        return h.run_evloop(extra_args=ex, name="geanttw_p2_1A")
 
     def test_p2_needs_a_limits_file(self, tmp_path):
         only_refusal(self.p2(tmp_path, extra=[]), "REFUSE: p2 requires a limits file and its sha256")
@@ -1830,7 +1926,7 @@ class TestEachEvloopGuardIsItsOwn:
         only_refusal(self.p2(tmp_path, sha="0" * 64), "REFUSE: p2 limits file sha256")
 
     def test_p2_limits_must_name_the_playlist(self, tmp_path):
-        only_refusal(self.p2(tmp_path, text="1A 01:00:00\n"), "REFUSE: no limit found for playlist 1L")
+        only_refusal(self.p2(tmp_path, text="1B 01:00:00\n"), "REFUSE: no limit found for playlist 1A")
 
     def test_fence_mktemp_failure_refuses(self, tmp_path):
         h = EvloopHarness(tmp_path)
@@ -1885,7 +1981,7 @@ class TestEachRemoteStopIsItsOwn:
     def test_connect_names_each_refusal(self, tmp_path):
         h = RemoteHarness(tmp_path)
         r = h.connect("p2")
-        assert r.returncode == 9 and "REFUSED: step must be deploy, build, p0 or check, got 'p2'" in r.stdout
+        assert r.returncode == 9 and "REFUSED: step must be deploy, build, p0, check, c2pre, p2pilot, p2run, p3slim, p3unf or p3extract, got 'p2'" in r.stdout
         r = h.connect("deploy", m="abc")
         assert r.returncode == 9 and "REFUSED: M 'abc' is not a 40-hex commit" in r.stdout
         r = h.connect("deploy", m="f" * 40)

@@ -1,0 +1,7 @@
+cert:        Valid: from 2026-11-26T18:04:00 to 2026-11-27T18:05:18 (now 2026-11-27T08:55:30 local)
+script: 21476b68de9eae3f200c7662517e1069220307d28c85c6a2620062cedc820377 dump_header.py; mac_utc=2026-11-27T16:55:30Z
+host=login21 utc=2026-11-27T16:55:36Z
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'uproot'
+== d1 rc=1 2026-11-27T16:55:36Z
