@@ -1097,6 +1097,8 @@ docs/orchestration/state/2d-closeout/covfix-20261122/pg/seal/reads/codex2-r4/REP
 docs/orchestration/state/2d-closeout/covfix-20261122/pg/seal/reads/codex2-r5/DISPOSITIONS.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/pg/seal/reads/codex2-r5/REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/pg/seal/reads/codex2-r5/REPRO-r5.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/pg/seal/reads/codex2-r6/DISPOSITIONS.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/covfix-20261122/pg/seal/reads/codex2-r6/REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/agy-rev1-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/agy-rev10-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/covfix-20261122/reads/agy-rev10-read-prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
