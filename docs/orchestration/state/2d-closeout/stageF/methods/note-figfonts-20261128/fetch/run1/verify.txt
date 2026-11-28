@@ -1,0 +1,3 @@
+ok   2d_xsec_negweight_seed1_hist5.root 2624448dd7608bb33c43fbb8ff4648a4d7b4831515a698212d000079ac0083c8
+ok   2d_xsec_purity_seed1_hist5.root e8adc1179e3d85bec32f3a9842e5e2ce3366981f9246c251c7e9bdf72ffff91e
+NW-VERIFY :: PASS

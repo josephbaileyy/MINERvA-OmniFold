@@ -42,9 +42,11 @@ GEVC = r"(GeV/$c$)"
 
 
 # The paper's fonts, for the note's font-only pass over these figures (note-figstyle-20261113, group R; the director's
-# rulings of 2026-11-14: font family and mathtext only, the sizes above unchanged). The three keys of
-# note_print_style.PRINT_RC that name fonts; docs/analysis-note/test_note_print_style.py pins them to it.
-PRINT_FONT = {"font.family": "serif", "font.serif": ["DejaVu Serif"], "mathtext.fontset": "cm"}
+# rulings of 2026-11-14: font family and mathtext only, the sizes above unchanged). The keys of
+# note_print_style.PRINT_RC that name fonts or how they are embedded; docs/analysis-note/test_note_print_style.py pins
+# them to it. "pdf.fonttype": 42 embeds TrueType (CID) fonts, as PRINT_RC does, instead of matplotlib's default Type 3
+# (note-figfonts-20261128; Joseph 2026-11-28). It changes the font embedding only, never a glyph's place or size.
+PRINT_FONT = {"font.family": "serif", "font.serif": ["DejaVu Serif"], "mathtext.fontset": "cm", "pdf.fonttype": 42}
 
 
 def add_option(ap):

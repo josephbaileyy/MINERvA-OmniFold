@@ -1,0 +1,23 @@
+[paper] opening: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+[paper] reported bins: 205 / 224
+[paper] cross-section sum (reported bins): 3.6892e-37
+
+[ours] opening: /Users/josephbailey/cov2d-work/figfetch/f3d-a/xsec_3d_MEFHC_5iter_lgbm.root
+[ours] cross-section sum (all bins): 3.7243e-37
+
+=== chi^2 comparisons (ours vs paper) ===
+  stat only                       chi2 =      2558.32   ndf = 205   chi2/ndf =  12.480
+  flux only                       chi2 = 2517537361.21   ndf = 205   chi2/ndf = 12280670.055
+  muon E scale only               chi2 = -670790611193.01   ndf = 205   chi2/ndf = -3272149322.893
+  PAPER (stat+syst)               chi2 =      1021.11   ndf = 205   chi2/ndf =   4.981
+
+wrote /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7e3f49f7-e8e4-452d-b380-399d4f6c529e/scratchpad/figruns/eavF0/o/eavail_marginal_vs_paper_pull_full.png
+
+Summary for run log:
+  reported bins: 205
+  chi^2/ndf  stat only        : 12.480
+  chi^2/ndf  flux only        : 12280670.055
+  chi^2/ndf  muon E scale     : -3272149322.893
+  chi^2/ndf  PAPER (full cov) : 4.981
+  pull mean / rms             : 0.159 / 0.828

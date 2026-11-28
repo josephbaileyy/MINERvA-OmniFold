@@ -6,6 +6,11 @@ unfold_2d_omnifold_unbinned.py with --bkg-mode {purity,negweight}, forms the
 per-bin ratio, and draws it as a (p_||, p_T) heatmap with the technote diverging
 colormap centered at unity. Bins where the purity cross section is negligible
 are blanked. Output goes straight into the note's figures/ directory as a PDF.
+
+--print-style (off by default; note-figfonts-20261128) draws the note's print style: note_print_style.apply() (serif
+DejaVu Serif, Computer Modern mathtext, TrueType embedding, the paper's sizes) on a canvas of the figure's printed width
+(0.7 \textwidth, appB_negweight.tex), with the axis labels in math ($p_\parallel$, $p_T$, GeV/$c$). The data, colour
+map, norm and colour bar are the same; the default output is unchanged.
 """
 import sys as _sys
 import pathlib as _pathlib
@@ -48,6 +53,8 @@ def main():
     ap.add_argument("--est", default="hist", help="estimator tag (hist|exact)")
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--out", default=OUT)
+    ap.add_argument("--print-style", action="store_true",
+                    help="the note's print style (note_print_style.py); off by default")
     args = ap.parse_args()
 
     pur, ptx, pzy = load(f"{DEF}/2d_xsec_purity_seed{args.seed}_{args.est}5.root")
@@ -61,8 +68,12 @@ def main():
     import matplotlib.pyplot as plt
     from matplotlib.colors import TwoSlopeNorm
 
+    if args.print_style:
+        import note_print_style as nps   # at the repository root, on sys.path with technote_style
+        nps.apply()
+
     # arr is [ipt, ipz]; plot p_|| (pz) on x, p_T on y.
-    fig, ax = plt.subplots(figsize=(4.8, 3.8))
+    fig, ax = plt.subplots(figsize=(4.8, 3.8) if not args.print_style else nps.figsize(0.7, 3.8 / 4.8))
     # per-bin deviations are ~0.5-2% RMS (worst single bin -12.6%), so a +-15%
     # window rendered as an all-white map; +-2% puts the typical sub-percent
     # deviations at half-scale (clearly red/blue) and lets the few larger bins
@@ -73,16 +84,25 @@ def main():
                          shading="flat")
     ax.set_xlim(pzy[0], pzy[-1])
     ax.set_ylim(ptx[0], ptx[-1])
-    ax.set_xlabel(r"p$_{||}$ (GeV/c)", fontsize=13)
-    ax.set_ylabel(r"p$_T$ (GeV/c)", fontsize=13)
-    ax.tick_params(axis="both", which="major", direction="in",
-                   length=6, width=1.0, labelsize=11)
+    if not args.print_style:
+        ax.set_xlabel(r"p$_{||}$ (GeV/c)", fontsize=13)
+        ax.set_ylabel(r"p$_T$ (GeV/c)", fontsize=13)
+        ax.tick_params(axis="both", which="major", direction="in",
+                       length=6, width=1.0, labelsize=11)
+    else:   # the print style's sizes (PRINT_RC) and math labels
+        ax.set_xlabel(r"$p_\parallel$ (GeV/$c$)")
+        ax.set_ylabel(r"$p_T$ (GeV/$c$)")
+        ax.tick_params(axis="both", which="major", direction="in", length=4, width=0.6)
     ax.minorticks_on()
 
     cbar = fig.colorbar(mesh, ax=ax, pad=0.035, fraction=0.055,
                         extend="both")
-    cbar.set_label("negative-weight / purity", fontsize=12)
-    cbar.ax.tick_params(direction="in", length=4, labelsize=10)
+    if not args.print_style:
+        cbar.set_label("negative-weight / purity", fontsize=12)
+        cbar.ax.tick_params(direction="in", length=4, labelsize=10)
+    else:
+        cbar.set_label("negative-weight / purity")
+        cbar.ax.tick_params(direction="in", length=3)
 
     fig.tight_layout()
     fig.savefig(args.out, dpi=220)

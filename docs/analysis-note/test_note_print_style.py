@@ -56,10 +56,11 @@ def test_apply_and_figsize():
 
 
 def test_group_r_print_font_is_the_papers_fonts():
-    """restyle_2026_10.PRINT_FONT (group R's font-only pass) is exactly the font keys of PRINT_RC."""
+    """restyle_2026_10.PRINT_FONT (group R's font-only pass) is exactly the font and font-embedding keys of PRINT_RC."""
     sys.path.insert(0, str(ROOT / "2d-unfolding"))
     rs = importlib.import_module("restyle_2026_10")
-    assert rs.PRINT_FONT == {k: nps.PRINT_RC[k] for k in ("font.family", "font.serif", "mathtext.fontset")}
+    assert rs.PRINT_FONT == {k: nps.PRINT_RC[k] for k in ("font.family", "font.serif", "mathtext.fontset",
+                                                               "pdf.fonttype")}
 
 
 def test_group_r_print_font_is_opt_in():

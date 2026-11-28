@@ -1,0 +1,56 @@
+### freeze_checks.py (old: main 02ae8600) --only 5 on main's build (02ae8600) (main_note.pdf 9f3d9e7ee2cd, 69 pp)
+=== 5. Fonts ===
+  sans on p.9: CMSS8; figures there: fig:muon-projections, fig:xsec
+  sans on p.12: CMSS8; figures there: fig:c2-stat-spectra
+  sans on p.22: CMSS8; figures there: none
+  sans on p.27: CMSS8; figures there: none
+  sans on p.28: CMSS8; figures there: none
+  sans on p.29: CMSS8; figures there: none
+  sans on p.30: CMSS8; figures there: none
+  sans on p.31: CMSS8; figures there: none
+  sans on p.33: CMSS8; figures there: fig:coverage-5d-paper
+  sans on p.35: CMSS8; figures there: none
+  sans on p.45: CMSS8; figures there: fig:tension
+  sans on p.52: CMSS8; figures there: fig:eavailWband
+  sans on p.64: CMSS8; figures there: none
+  allowed labels not in the aux: ['fig:eff', 'fig:calibration']
+  (listed, not failed) monospace: p.1 SFTT0900,SFTT1000; p.58 DejaVuSansMono; p.63 SFTT1095; p.64 SFTT1095; p.66 SFTT1095; p.67 SFTT1095; p.68 SFTT1095; p.69 SFTT1095
+FONTS :: FAIL (13 page(s) with a sans font outside the allowed figures' pages [42, 58])
+FREEZE-CHECKS :: FAIL (Fonts)
+
+### freeze_checks.py (old: main 02ae8600) --only 5 on this branch's build (main_note.pdf f90b46cb228f, 70 pp)
+=== 5. Fonts ===
+  sans on p.9: CMSS8; figures there: fig:muon-projections, fig:xsec
+  sans on p.12: CMSS8; figures there: fig:c2-stat-spectra
+  sans on p.22: CMSS8; figures there: none
+  sans on p.27: CMSS8; figures there: none
+  sans on p.28: CMSS8; figures there: none
+  sans on p.29: CMSS8; figures there: none
+  sans on p.30: CMSS8; figures there: none
+  sans on p.31: CMSS8; figures there: none
+  sans on p.33: CMSS8; figures there: fig:coverage-5d-paper
+  sans on p.35: CMSS8; figures there: none
+  sans on p.45: CMSS8; figures there: none
+  sans on p.53: CMSS8; figures there: fig:eavailWband
+  sans on p.65: CMSS8; figures there: none
+  allowed labels not in the aux: ['fig:eff', 'fig:calibration']
+  (listed, not failed) monospace: p.1 SFTT0900,SFTT1000; p.64 SFTT1095; p.65 SFTT1095; p.67 SFTT1095; p.68 SFTT1095; p.69 SFTT1095; p.70 SFTT1095
+FONTS :: FAIL (13 page(s) with a sans font outside the allowed figures' pages [42, 59])
+FREEZE-CHECKS :: FAIL (Fonts)
+
+### freeze_checks.py (new: this branch) --only 5 on main's build (02ae8600) (main_note.pdf 9f3d9e7ee2cd, 69 pp)
+=== 5. Fonts ===
+  sans on p.42: DejaVuSans, DejaVuSans-Oblique; figures there: fig:negweight-ratio
+  sans on p.58: DejaVuSans, DejaVuSans-Oblique; figures there: fig:eavail-marg
+  (listed, not failed) monospace: p.1 SFTT0900,SFTT1000; p.58 DejaVuSansMono; p.63 SFTT1095; p.64 SFTT1095; p.66 SFTT1095; p.67 SFTT1095; p.68 SFTT1095; p.69 SFTT1095
+  (listed, not failed) TeX sans, not a figure font: p.9 CMSS8; p.12 CMSS8; p.22 CMSS8; p.27 CMSS8; p.28 CMSS8; p.29 CMSS8; p.30 CMSS8; p.31 CMSS8; p.33 CMSS8; p.35 CMSS8; p.45 CMSS8; p.52 CMSS8; p.64 CMSS8
+FONTS :: FAIL (2 page(s) with a figure's sans font outside the allowed figures' pages [])
+FREEZE-CHECKS :: FAIL (Fonts)
+
+### freeze_checks.py (new: this branch) --only 5 on this branch's build (main_note.pdf f90b46cb228f, 70 pp)
+=== 5. Fonts ===
+  (listed, not failed) monospace: p.1 SFTT0900,SFTT1000; p.64 SFTT1095; p.65 SFTT1095; p.67 SFTT1095; p.68 SFTT1095; p.69 SFTT1095; p.70 SFTT1095
+  (listed, not failed) TeX sans, not a figure font: p.9 CMSS8; p.12 CMSS8; p.22 CMSS8; p.27 CMSS8; p.28 CMSS8; p.29 CMSS8; p.30 CMSS8; p.31 CMSS8; p.33 CMSS8; p.35 CMSS8; p.45 CMSS8; p.53 CMSS8; p.65 CMSS8
+FONTS :: PASS (0 page(s) with a figure's sans font outside the allowed figures' pages [])
+FREEZE-CHECKS :: PASS
+
