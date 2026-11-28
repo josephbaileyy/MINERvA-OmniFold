@@ -22530,6 +22530,9 @@ docs/orchestration/state/note-boot-20261003/boot_spreads.py	tracked	MACHINE	stat
 docs/orchestration/state/note-capgap-20261003/README.md	tracked	MACHINE	state-artifact	note-capgap-20261003		generated		exact-path-only	yes
 docs/orchestration/state/note-capgap-20261003/cap_share.json	tracked	MACHINE	state-artifact	note-capgap-20261003		generated		exact-path-only	yes
 docs/orchestration/state/note-capgap-20261003/cap_share.py	tracked	MACHINE	state-artifact	note-capgap-20261003		generated		exact-path-only	yes
+docs/orchestration/state/note-figs-20261127/FIGS-REPORT-20261127.txt	tracked	MACHINE	state-artifact	note-figs-20261127	20261127	generated		exact-path-only	yes
+docs/orchestration/state/note-figs-20261127/codex-prompt-1.txt	tracked	MACHINE	state-artifact	note-figs-20261127		generated		exact-path-only	yes
+docs/orchestration/state/note-figs-20261127/codex-prompt-2.txt	tracked	MACHINE	state-artifact	note-figs-20261127		generated		exact-path-only	yes
 docs/orchestration/state/oi120c-loader-purity-perturbation-56975592.json	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/oi120c-loader-purity-perturbation-56975592.txt	tracked	MACHINE	state-artifact			generated		exact-path-only	yes
 docs/orchestration/state/oi126-successor-R5-aggregate-guard-20260823.json	tracked	MACHINE	state-artifact		20260823	generated		exact-path-only	yes

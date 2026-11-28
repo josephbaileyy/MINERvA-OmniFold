@@ -1,0 +1,59 @@
+CONTINUATION. A previous session started the task below in this worktree and stopped partway on a usage limit. Its
+state, which you should verify rather than trust:
+- Producer edits, uncommitted: nd-unfolding/make_control_plots.py (Fig. 1), 2d-unfolding/compare_to_paper_fullcov.py
+  (Fig. 3) and docs/orchestration/state/2d-closeout/stageF/methods/note-figpass-20261119/tools/compose_family4.py
+  (Fig. 5).
+- Candidate regenerated figures, NOT yet copied into the note's figure files, are in
+  docs/analysis-note/.figs-20261127.4The9n/fig{1,3,5}-{before,after}/, with a render_figures.sh there.
+- fig:calibration was removed from appC_supplementary.tex. Its references were edited in sec_q3_3d.tex and in
+  records_r04_higherdim.tex, which is part of the internal records document (main_records.tex).
+- No report was written, no data-identity check was recorded, and no build or gate was run.
+
+Finish the ORIGINAL TASK below. Additionally:
+(a) Review every uncommitted change with `git diff` and keep only what the task requires.
+(b) Copy a regenerated figure into the note's figure file ONLY after its data-identity check passes. The check must
+    show that the plotted data are unchanged, e.g. from the producer's arrays or a numeric comparison, not only from
+    the PDF text.
+(c) For records_r04_higherdim.tex: run `python3 docs/analysis-note/check_note_records.py --self-test-pin` and
+    `python3 docs/analysis-note/check_note_records.py pin docs/analysis-note`, plus any probe that checks frozen
+    records paragraphs. Say whether the edited paragraph is frozen. If it is, revert that one edit and report it; do
+    not add ledger rows.
+(d) Delete the .figs-20261127.* scratch directory at the end, after copying whatever evidence the report needs into
+    FIGS-REPORT-20261127.txt as text.
+
+ORIGINAL TASK:
+You are working in a git worktree of the MINERvA-OmniFold analysis repository (the current directory), on branch
+note/figs-20261127. The analysis note's source is docs/analysis-note/ (main_note.tex and the files it inputs). Make
+ONLY the four figure changes below. Do not run any git command that writes (no add, commit, checkout, reset, stash,
+push). Do not touch any file outside docs/analysis-note/ except a figure's own producer script and its committed
+output. Do not use the network.
+
+Changes (decided by the author):
+1. Fig. 1 (the first figure in the note): label the overflow bins, or the wide final intervals, so the axis doesn't
+   suggest even spacing to 100.
+2. Fig. 3: use physical momentum-bin labels instead of bin indices.
+3. Fig. 5: change the legend entry "2p2h-shaped gap" to "Data − GENIE CV" (or "Unfolded − GENIE CV", whichever
+   matches what the plotted quantity actually is; decide from the producer and say why).
+4. The figure labelled fig:calibration (MLP vs GBDT): remove it from the note. Keep its one-sentence result in the
+   App. C prose (appC_supplementary.tex:362, already there), and fix every reference to fig:calibration so the build
+   has 0 undefined references. Do not delete its producer or image file; only remove it from the note.
+
+How:
+- Find each figure's producer script (the make_fig_*.py or equivalent that writes the included image). The caption's
+  authority is the producer. Report the producer path and the inputs it reads.
+- Change only labels or legends in the producer, then regenerate ONLY that figure from inputs present in this
+  checkout. Before regenerating, verify that each input exists locally and, where a sha256 for it is recorded in the
+  repo, that it matches. If an input is missing or its sha doesn't match, STOP for that figure and report it; do not
+  fabricate data or substitute another input.
+- Confirm the regenerated figure differs from the old one only in the intended labels or legend. Compare the plotted
+  data: e.g. extract both PDFs' text, and where the producer can dump its arrays, compare them.
+- Build: run `bash docs/analysis-note/build_all.sh`. Report its rc, the page counts, and undefined references (must be
+  0). Then run `python3 docs/analysis-note/check_sec4_receipts.py`, `python3 docs/analysis-note/limitations_export.py
+  --check` and `python3 docs/analysis-note/check_body_pointers.py`, and report each rc.
+- Also answer one question, without changing anything: Fig. 6 shows a purity-subtracted 4D projection. Does a
+  committed refined (non-purity) 4D product with the same projection exist in this checkout? Give paths and evidence,
+  or say none was found and how you searched.
+
+Finally, write docs/analysis-note/FIGS-REPORT-20261127.txt with: each change, its producer and inputs (with shas), the
+diff summary, the data-identity evidence, the gate outputs, and the Fig. 6 answer. Be precise; mark anything
+unverified as such.
