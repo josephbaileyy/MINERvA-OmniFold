@@ -36,13 +36,14 @@ ok   stage: a fence from the future STOPs
 ok   stage: a non-empty stage STOPs
 ok   stage: a CV pin mismatch STOPs, no ready
 ok   stage: a symlinked source STOPs
+ok   stage: a failed stat of a source STOPs
 ok   stage: a failed re-hash STOPs
 ok   stage: rc 0, ready, the CV copy byte-identical
 ok   stage: the source's atime is printed before and after
 ok   stage: the copies are read-only
 ok   stage again: STOP
 ok   prestage after stage: STOP
-ok   pilot: submitted on -N 2, jobid recorded
+ok   pilot: submitted on -N 2 -t 60, jobid recorded
 ok   pilot again: STOP
 ok   pilot: a changed deploy file STOPs
 ok   pilot: an extra deploy digest STOPs
@@ -60,7 +61,8 @@ ok   post-pilot: empty accounting STOPs
 ok   post-pilot: a STOP decision exits 6, no PROCEED
 ok   post-pilot: passes --jobid and --rows
 ok   post-pilot: python runs with one thread
-ok   post-pilot: PROCEED
+ok   post-pilot: an unprintable decision STOPs before PROCEED is reported
+ok   post-pilot: PROCEED, the decision printed
 ok   post-pilot again: STOP
 ok   post-pilot: a failed activation STOPs
 ok   replicas: time limit '0' STOPs
@@ -83,8 +85,10 @@ ok   post: a failed sacct STOPs
 ok   post: no replicas job id STOPs
 ok   post: a running ptmc job STOPs before the claim
 ok   post: a failed D4 staging STOPs, no tar
+ok   post: a malformed elapsed time STOPs the charge
 ok   post: both tars written, the charge from both allocation lines
+ok   post: tars.sha256 holds both tars' digests
 ok   post: the tar carries the claims and the recheck
 ok   post again: STOP
-pass 88 fail 0
+pass 92 fail 0
 rc=0

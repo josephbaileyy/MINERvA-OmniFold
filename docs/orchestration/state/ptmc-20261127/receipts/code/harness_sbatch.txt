@@ -1,4 +1,6 @@
 ok   pilot: 3 nodes refuses
+ok   pilot: a time limit other than ptmc_remote.sh's 60 refuses
+ok   pilot: a failed squeue refuses
 ok   pilot: no ready refuses
 ok   pilot: an existing units dir refuses
 ok   pilot: a wrong rows pin refuses
@@ -19,7 +21,8 @@ ok   replicas: a day-form limit over L refuses
 ok   replicas: a wrong rows pin refuses
 ok   replicas: a failed conda hook refuses
 ok   replicas: an existing record dir refuses
-ok   replicas: b = 2..200, 199 steps, each once, 199 outcomes, lane 0 takes b22
+ok   replicas: a limit below L refuses (it must be exactly L)
+ok   replicas: b = 2..200, 199 steps, each once, 199 outcomes, 20 lanes (no seq), lane 0 takes b22
 ok   replicas: a failed unit exits 6, its lane continues, its outcome recorded
-pass 23 fail 0
+pass 26 fail 0
 rc=0

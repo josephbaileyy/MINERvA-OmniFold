@@ -11,7 +11,8 @@ ok   prestage: through saul to the login node
 ok   fetch: both tars, hashed
 ok   fetch: a failed scp fails
 ok   fetch: a failed hash fails
+ok   fetch: a tar unequal to the remote digest fails
 ok   a changed remote script: STOP 8
 ok   a failed hash of the remote script: STOP 9
-pass 15 fail 0
+pass 16 fail 0
 rc=0
