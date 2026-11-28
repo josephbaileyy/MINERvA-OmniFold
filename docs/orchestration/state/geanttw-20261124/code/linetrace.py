@@ -65,7 +65,8 @@ def shell_executable(text):
         m = HEREDOC.search(ln)
         if m and not s.startswith("#"):
             term = m.group(1)
-        if not s or s.startswith("#") or s in ("fi", "done", "esac", "}", "else", "then", "do", ";;", "EOF"):
+        if not s or s.startswith("#") or re.sub(r"\s*;;$", "", s) in ("", "fi", "done", "esac", "}", "else", "then",
+                                                                    "do", "EOF"):
             continue
         out.add(i)
     return out, owner

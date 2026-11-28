@@ -869,6 +869,7 @@ exec "$@"
         (h.B / "run").write_text("a file in the way\n")
         r = h.run_full()
         assert r.returncode == 2 and f"REFUSE: cannot make {h.B}/run" in r.stderr
+        assert r.stderr.count("REFUSE") == 1   # it stops there, not at the fence's mktemp after it
 
     def test_the_fences_file_stays_under_b(self, tmp_path):
         h = EvloopHarness(tmp_path)
