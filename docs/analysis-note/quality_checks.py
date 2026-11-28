@@ -480,7 +480,7 @@ def check_text(src: Source, manifests: list[dict], n: int, min_sentence: int):
         if r['intended']:
             intended_from[r['id']].add(r['from_file'])
     # sec_q1_limitations.tex holds section 12's 2D block, landed verbatim in Part 3 (JE-07) until Part 3 is condensed
-    receiving = ('sec_limitations.tex', 'sec_q1_limitations.tex')
+    receiving = ('sec_q1_limitations.tex',)
     file_text = {f: re.sub(r'\s+', ' ', '\n'.join(src.lines[f])) for f in src.files}
     file_shas = {f: {hashlib.sha256(x.encode('utf-8')).hexdigest() for raw in src.lines[f] for x in raw_sentences(raw)}
                  for f in src.files}
@@ -1243,7 +1243,7 @@ def main(argv=None):
              f'is a maximal run of shared {args.ngram}-word sequences, or an identical sentence of {args.min_sentence}+ '
              'words, whose occurrences lie in different (sub)sections. One row per passage; a passage in k places has k '
              'locations. Set aside: a move-manifest row whose mode or note says the body keeps a copy, with one copy in '
-             'sec_limitations.tex or sec_q1_limitations.tex; and a row of the definitions table or the test index whose other '
+             'sec_q1_limitations.tex; and a row of the definitions table or the test index whose other '
              'occurrence lies in a (sub)section the row cites with `\\ref`; a run that is a listed object name with fewer '
              f'than {NAME_SLACK} other words ({"; ".join(NAMES)}); and a pair a manifest restatement row records, with its reason.')
     R.append('')
