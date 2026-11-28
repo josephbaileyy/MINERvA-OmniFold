@@ -1,0 +1,10 @@
+$ bash 2d-unfolding/ptmc/make_tree.sh $TMPDIR/bind-tree archive /Users/josephbailey/ptmc-code-wt /pscratch/sd/j/josephrb/ptmc-20261128/stage
+tree /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T//bind-tree (archive at 77d76cfc2d621f8faa010b75006811868494652a)
+b5c1c9f0cca0670bd33ca1000a42ecf6efcc7a2cdb47f14bc72b5f11d7ea4e55  2d-unfolding/re2/re2_driver.py
+6f32567134c35a3d787d2915fe155074a76e795f7ecec2181374db53ea1ca93a  2d-unfolding/ref_c2c1/config.json
+285dd138363d090a4ce5dea3361be81fada8680bd782b918e9d95198d1b5d6ea  2d-unfolding/ref_c2c1/ref_c2c1.py
+5107111f8eaead62b122d2a71f0147b7d427a292b36e91542676cea1d4dc0468  2d-unfolding/ref_c2c1/ref_c2c1_read.py
+e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a  unbinned_unfolding/python/omnifold.py
+1dd5ff52d0c140921a3bcc411bd4108337dbe756c43bffc2c707eb2a8f633314  2d-unfolding/compare_to_paper_fullcov.py
+2ddf7c9fbe4c0ffc236c3f82e4b81b12204d17005f90b2dcc0f7a5db5e501594  2d-unfolding/uq/reported_cells.py
+a3df5569b3adfea06f544ae574238ab0d56123add2eb8d31a41a5b56558cb2b8  2d-unfolding/oofvc/oofvc_lib.py
