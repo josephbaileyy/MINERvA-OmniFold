@@ -3,8 +3,9 @@
 **Authority:** [`CENTER2D-DECLARATION.md`](CENTER2D-DECLARATION.md), merged in #1446 at main `f5c6db0e`, and the
 director's rulings on the PR (issuecomment-7235721166).
 
-**Status:** code only. Nothing has run on any input except the tests below. Before part R or any connect, three things
-come first: mutation testing, the director's binding, and the director's GO on the fetch package.
+**Status:** code only. Nothing has run on any input except the tests and the mutation campaign below (71 of 71
+killed). Part R waits for the director's binding, and the connect waits for the binding and the director's GO on the
+fetch package.
 
 **CANNOT AUTHORIZE:** what the declaration excludes. That is any covariance or convention change, any note, paper or
 Overleaf text, a coverage statement, a cause, and any separation of physical asymmetry from training noise.
@@ -69,6 +70,14 @@ Every pin was computed by command.
   the exact-equality rule are unchanged, and the code pins that line. The merged declaration is not edited (director,
   2026-11-28).
 
+- **The interpretation of §6 C-ID** (accepted by the director, 2026-11-28): "max |V_nom|" is read as each band's own
+  max |V_nom|. A null band, one below 1e-12 of the largest band's max |V_nom|, is scored at that global max. This is
+  the rule §6 already gives for C-RECON's null bands ("null bands at the total's scale, as S5's control does").
+  - NormDISCC is the only null band.
+  - At its own scale its rounding residual is 5.5e-4 at AR23 and 1.1e-3 at G18, so a strict own-scale C-ID would
+    STOP every run.
+  - The worst-case leak into M is about 1e-12 of the largest band.
+
 ## The fetch is all or nothing
 
 The declaration's §6 C-FETCH says that if a part-D file is missing or differs, part D STOPs and the tunes continue.
@@ -127,7 +136,24 @@ was no "sandbox could not be applied". The prompt, the report (verbatim), stderr
 - `write` serializes before creating the file, and a non-finite record becomes a STOP record with rc 3.
 - The NEGLIGIBLE sentence stays, per the director's ruling (C) on #1446.
 
-**Tests:** 50 for the driver, 32 for the fetch. The campaign is rerun on these sources (`receipts/mutation.txt`).
+**Tests:** 50 for the driver, 32 for the fetch. The final mutation run is on these sources (see Mutants).
+
+## Mutants
+
+`mutants_center2d.py` applies one exact-text edit per mutant to a temp-dir copy, never to the files in place. Each
+mutant must make its suite fail: `test_center2d.py` for driver mutants, and `test_center2d_fetch.py`'s Fetch and Fence
+classes for mutants of the reader, the verifier and the fence. The wrapper is not mutated: its tests need the git
+worktree, and it is pinned by sha.
+
+- **The final run** (`receipts/mutation.txt`, `833ff47773b6fbe55205f6ce0113b2a56f1ad4756d4e44413209d054f62026c6`), on the final sources (driver `1dc764e7…`):
+  - 2026-11-28T08:28:17Z to 08:44:47Z, one process, BLAS threads 1, started at the director's go;
+  - the baseline passed;
+  - **71 of 71 killed**;
+  - the sources hashed identically before and after.
+- **Superseded runs**, kept as history:
+  - `receipts/mutation-run1-superseded.txt`: 61 of 62 killed. The survivor `verify-count-off` showed that no test gave
+    the verifier a consistent 15-file set, so that test was added.
+  - `receipts/mutation-run2-superseded.txt`: 62 of 62 killed, on the sources before the Grok fixes.
 
 ## How it reads and writes
 
