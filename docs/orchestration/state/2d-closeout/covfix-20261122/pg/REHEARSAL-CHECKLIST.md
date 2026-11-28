@@ -81,3 +81,18 @@ From `W/out/pin_hash_start.json` and `pin_hash_end.json` (Q1): `files`, `links` 
 | graphs, coverage, gevgen and gntpc trace checks | pass; the family bound "interpreter pin", children only | |
 | allowed '..' directories | only `/`, `/usr/include/bits`, `/usr/x86_64-suse-linux/lib`, probes or directory opens | |
 
+**Round 10 (B3 run 4's coverage STOP; Joseph's decision, 2026-11-27): D3′(ii) on the flux path, validated in run 5.**
+- Record from coverage_check.json and coverage_check_slot2.json, and from both coverage_kept.json files (kept on
+  every exit under the runner's flag). The rule gates the sealed G only after run 5 has passed on both tunes and the
+  director has read the kept records.
+
+| item | expected | recorded |
+|---|---|---|
+| slot 1 (G21_11a_00_000) and slot 2 (G18_02a_00_000) coverage checks | pass: per pair one driver, its inventory found and in the reduced spline, one sum spline of N blocks | |
+| each driver's N ("using N knots") | the same for every pair (GMCJDriver.cxx:467 sets 100) | |
+| inventory size per pair, both tunes | recorded | |
+| kept records, both slots | 0600, their sha in deleted.json, the other records' counts by stream | |
+| records of other streams inside a sum spline | none (each a STOP) | |
+| the coverage log's bytes and lines | measured (DESIGN §3, cost) | |
+| each coverage run's stderr (gevgen.err) | its sha256, bytes, and lines by ROOT's message forms; no GENIE record in it | |
+

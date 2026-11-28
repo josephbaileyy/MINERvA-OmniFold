@@ -235,7 +235,11 @@ CONTROL = dict(REC, holds_public_seed=True, decoded=dict(ROOTREC["decoded"], hol
                                                          hits=["bytes", "int32-object", "path"],
                                                          seed_objects=[SEED_OBJ]))   # the seed, decoded
 RUN = {"gevgen.status": REC, "input-flux.root": ROOTREC}       # what each run leaves (t0's GHEP the wrapper removes)
-COV = dict(RUN, **{"gevgen.log": REC, "gntp.ghep.root": CONTROL})
+KEPT_TEXT = json.dumps({"check": "coverage-keep", "records": [], "n_records": 0, "other": {}, "log_sha256": "a" * 64,
+                        "log_size": 10, "problems": []})        # round 10: what coverage-keep writes (D3′(ii) §4)
+KEPT = {"file": "coverage_kept.json", "rc": 0, "sha256": hashlib.sha256(KEPT_TEXT.encode()).hexdigest(),
+        "bytes": len(KEPT_TEXT)}
+COV = dict(RUN, **{"gevgen.log": dict(REC, kept=KEPT), "gntp.ghep.root": CONTROL})
 GOOD_DELETED = {"t0": dict(RUN, **{"genie_v3.gst.root": dict(ROOTREC, schema=GOOD_REPLAY["gst_schema"])}),
                 "coverage_slot1": COV, "coverage_slot2": COV,
                 "merged": {"genie_v3_g21_ALL.gst.root": dict(ROOTREC, schema=GOOD_REPLAY["gst_merged_schema"])}}
@@ -421,6 +425,12 @@ DRIVER = """#!/bin/bash
 [ "$1" = --workdir ] || exit 2
 echo "[replay] stub $PG_STUB_RC"
 mkdir -p "$2/work/t0" "$2/coverage/G21_11a_00_000" "$2/coverage/G18_02a_00_000" "$2/gst"
+[ "$3" = --keep-coverage-records ] || exit 3
+for d in G21_11a_00_000 G18_02a_00_000; do
+  [ -n "$PG_STUB_NO_KEPT" ] && break
+  printf '%s' "${PG_STUB_KEPT_TEXT:-$GOOD_KEPT}" > "$2/coverage/$d/coverage_kept.json"
+  chmod "${PG_STUB_KEPT_MODE:-600}" "$2/coverage/$d/coverage_kept.json"
+done
 printf '%s' "${PG_STUB_REPLAY:-$GOOD_REPLAY}" > "$2/replay.json"
 printf '%s' "${PG_STUB_DELETED:-$GOOD_DELETED}" > "$2/deleted.json"
 [ -z "$PG_STUB_STRAGGLER" ] || { sleep 30 > /dev/null 2>&1 & }
@@ -454,7 +464,7 @@ class Replay(unittest.TestCase):
         def run(argv, **k):
             self.seen.append(argv)
             k["env"] = dict(k["env"], GOOD_REPLAY=json.dumps(GOOD_REPLAY), GOOD_DELETED=json.dumps(GOOD_DELETED),
-                            **(env or {}))
+                            GOOD_KEPT=KEPT_TEXT, **(env or {}))
             return RP._run(argv[5:], **k)                 # without nice and timeout, which macOS lacks; the pid kept
         import datetime as dt
         self.calls = getattr(self, "calls", 0) + 1                # a distinct replay directory per call
@@ -477,6 +487,31 @@ class Replay(unittest.TestCase):
         self.assertEqual(r["driver_lines"], ["[replay] stub "])
         self.assertTrue(r["replay"]["pass"])
         self.assertEqual(sorted(os.listdir(r["replay_dir"])), ["deploy", "driver.log", "run", "tmp"])
+        self.assertEqual(self.seen[0][-1], "--keep-coverage-records")             # round 10: the runner's flag
+        self.assertEqual({k: v["sha256"] for k, v in r["kept"].items()},
+                         {"coverage_slot1": KEPT["sha256"], "coverage_slot2": KEPT["sha256"]})
+
+    def test_the_kept_records_are_checked_on_every_path(self):                 # round 10: D3′(ii) §3, §4
+        no_kept = dict(GOOD_DELETED, coverage_slot1=dict(COV, **{"gevgen.log": REC}))
+        for env, text in (({"PG_STUB_NO_KEPT": "1"}, "kept-records: coverage_slot1: deleted.json names kept records"),
+                          ({"PG_STUB_RC": "4", "PG_STUB_KEPT_MODE": "644"}, "kept-records: coverage_slot1: "
+                           "coverage_kept.json is not a regular 0600 file"),
+                          ({"PG_STUB_KEPT_TEXT": KEPT_TEXT.replace('"problems": []', '"problems": ["x"]')},
+                           "coverage_kept.json differs from the sha256 deleted.json records"),
+                          ({"PG_STUB_RC": "4", "PG_STUB_KEPT_TEXT": "{"}, "coverage_kept.json is unreadable"),
+                          ({"PG_STUB_KEPT_TEXT": '{"check": "other"}', "PG_STUB_DELETED": json.dumps(no_kept)},
+                           "coverage_slot2: coverage_kept.json is not coverage-keep's record"),
+                          ({"PG_STUB_NO_KEPT": "1", "PG_STUB_DELETED": json.dumps(no_kept)},
+                           "coverage_slot1/gevgen.log: its recognized records were not kept"),
+                          ({"PG_STUB_KEPT_TEXT": KEPT_TEXT.replace('"coverage-keep"', '"coverage"')},   # only the check
+                           "coverage_slot2: coverage_kept.json is not coverage-keep's record"),
+                          ({"PG_STUB_KEPT_TEXT": KEPT_TEXT.replace('"n_records": 0', '"n_records": 1')},  # only the count
+                           "coverage_slot2: coverage_kept.json is not coverage-keep's record")):
+            with self.subTest(env=sorted(env)):
+                self.assert_stop(self.run_replay(env=env), text)
+        from unittest import mock
+        with mock.patch.object(RP, "KEPT_MAX", 5):                               # bounded before it is read
+            self.assert_stop(self.run_replay(), "coverage_kept.json is not a regular 0600 file of at most 5 bytes")
 
     def test_the_archive_and_the_blobs(self):
         import gzip
@@ -514,7 +549,9 @@ class Replay(unittest.TestCase):
 
     def test_files_left_on_any_exit_are_removed_and_stop(self):
         for env in ({"PG_STUB_RC": "4", "PG_STUB_LEFT": "gntp.123456789.ghep.root"},
-                    {"PG_STUB_LEFT": "genie_v3_g21_ALL.gst.root", "PG_STUB_LEFT_DIR": "gst"}):
+                    {"PG_STUB_LEFT": "genie_v3_g21_ALL.gst.root", "PG_STUB_LEFT_DIR": "gst"},
+                    {"PG_STUB_RC": "4", "PG_STUB_LEFT": "gevgen.err",                  # round 10: coverage's stderr
+                     "PG_STUB_LEFT_DIR": "coverage/G21_11a_00_000"}):
             with self.subTest(env=env):
                 r = self.run_replay(env=env)
                 self.assertEqual(r["left"], 1)

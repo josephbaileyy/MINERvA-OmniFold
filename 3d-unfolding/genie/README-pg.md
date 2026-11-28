@@ -61,10 +61,22 @@ Slot 1 is G21_11a_00_000, from a sha-pinned private copy of SciSoft's G2111a0000
    (a commented-out spline is not one), compared by tune, key, the knots counted against nknots and their values,
    with duplicates refused (`reduce-check`). The coverage run uses the public seed, F1's argv (`argv-check`: its
    block sets only N, the seed and the messenger, and the genie block only F1's positional inputs and the laconic
-   messenger) and a messenger with only GEVGDriver at DEBUG.
-   GENIE builds every spline at initialisation, so one event covers them all. Before any sealed seed is used, the
-   log must show that GENIE found every spline of every pair in the pinned file (`coverage-log`). Its outputs are
-   then deleted, and its log's hash is kept.
+   messenger) and a messenger with only GEVGDriver and XSecSplLst at DEBUG.
+   In flux mode gevgen builds each driver's sum spline in Configure, before any event (GMCJDriver.cxx:399-447), so one
+   event covers the bootstrap. Before any sealed seed is used, `coverage-log` reads its log as D3′(ii) was adopted
+   (pg/DESIGN-D3PRIME-II.md §3, Joseph 2026-11-27). For each pair of F1's argv it requires:
+   - one driver, whose UseSplines lookups, all found, are its required inventory, each a full key of the reduced
+     spline in its tune;
+   - one sum spline of N knot blocks, N from the driver's own record, each looking up and evaluating exactly that
+     inventory from its spline;
+   - none of GENIE's missing-spline messages.
+   The coverage mode writes gevgen's stderr to its own file, gevgen.err. GENIE's one log appender writes to cout
+   (Messenger.cxx:62), so every record is in gevgen.log, and an unbuffered ROOT warning cannot land inside a buffered
+   record. The stderr file is hashed and its lines counted, never parsed.
+   On a pass the run's outputs are deleted and the log's hash is kept. On a STOP (§4) the public-seed event, status,
+   GHEP and flux files are deleted, and only the log's recognized records are kept (`coverage-keep`, with the raw
+   log's hash and size). The replay runner's `--keep-coverage-records` keeps them on a pass too, for validation;
+   production has no such flag.
 The generation runs in its own session (setsid). GNU timeout gives each task a process group of its own, but the
 session survives that and any reparenting. On any exit, every background step's tree is stopped and reaped, then
 `pg_verify.py drain` KILLs every survivor in that session, again at each poll, until none is left or 30 s (monotonic)

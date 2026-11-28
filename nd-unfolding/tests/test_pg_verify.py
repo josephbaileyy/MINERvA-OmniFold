@@ -505,7 +505,9 @@ class Prefix(Tmp):
         w = self.tmp / f"w-{mode}-{len(list(self.tmp.iterdir()))}"
         w.mkdir()
         args = {"reduce": [tune, str(w / "spl")], "graphs": [tune, str(w / "spl"), str(w / "g.root")],
-                "genie": [tune, str(w / "spl"), "100", "123456789", str(w / "work"), str(w / "flux.root")]}[mode]
+                "genie": [tune, str(w / "spl"), "100", "123456789", str(w / "work"), str(w / "flux.root")],
+                "coverage": [tune, str(w / "spl"), str(self.tmp / "cov"), str(w / "flux.root"),
+                             str(RECORD_DIR / "Messenger_laconic.xml")]}[mode]
         e = {"PATH": f"{self.bin}:/usr/bin:/bin", "PG_ARGV_LOG": str(self.log), "PG_STUB_BIN": str(self.bin)}
         e.update(env)
         kw = {}
@@ -585,6 +587,23 @@ class Prefix(Tmp):
         p, argv = self.go(pg, "reduce", fd=True, PG_STRACE_FD="FD", PG_TRACE_DIR="okdir")   # reduce stays in the cwd
         self.assertEqual(p.returncode, 2, p.stderr)
         self.assertFalse([x for x in argv if x.startswith("strace ")])
+
+    def test_the_coverage_mode_keeps_stderr_apart(self):                  # round 10: no ROOT line inside a record
+        pg = self.script((GENIE / "run_gevgen_v3.sh").read_text(), "pg")
+        gv = self.bin / "gevgen"
+        gv.write_text(gv.read_text() + 'echo "1764271685 NOTICE GEVGDriver : [n] <G.cxx::F (1)> : rec"\n'
+                      'echo "Warning in <TFile::Init>: x" >&2\n')
+        p, argv = self.go(pg, "coverage")
+        self.assertEqual(p.returncode, 0, p.stderr)
+        cov = self.tmp / "cov"
+        self.assertIn("rec", (cov / "gevgen.log").read_text())
+        self.assertNotIn("Warning in", (cov / "gevgen.log").read_text())
+        self.assertEqual((cov / "gevgen.err").read_text(), "Warning in <TFile::Init>: x\n")
+        (cov / "gevgen.log").unlink()                                       # an earlier stderr file alone refuses
+        p, argv = self.go(pg, "coverage")
+        self.assertEqual(p.returncode, 2, p.stderr)
+        self.assertIn("refusing to overwrite", p.stderr)
+        self.assertFalse([x for x in argv if x.startswith("gevgen ")])
 
     def test_slot1_reads_its_private_source(self):
         pg = self.script((GENIE / "run_gevgen_v3.sh").read_text(), "pg")
@@ -1009,7 +1028,7 @@ class Round3(Trace):
 class Coverage(Tmp):
     LACONIC = RECORD_DIR / "Messenger_laconic.xml"
 
-    def test_the_messenger_differs_from_laconic_by_exactly_the_gevgdriver_line(self):
+    def test_the_messenger_differs_from_laconic_by_exactly_the_two_raised_lines(self):
         lac = self.LACONIC.read_bytes()
         self.assertEqual(sha(lac), V.LACONIC_SHA256)
         man = json.loads((RECORD_DIR / "genie-manifest.json").read_text())["members"]
@@ -1020,8 +1039,9 @@ class Coverage(Tmp):
         a, b = lac.split(b"\n"), out.split(b"\n")
         self.assertEqual(len(a), len(b))
         diff = [(x, y) for x, y in zip(a, b) if x != y]
-        self.assertEqual(diff, [V.MESSENGER_LINE])
-        self.assertIn(b'msgstream="GEVGDriver"', diff[0][1])
+        self.assertEqual(diff, list(V.MESSENGER_LINES))
+        self.assertEqual([y.split(b'"')[1] for _, y in diff], [b"GEVGDriver", b"XSecSplLst"])
+        self.assertTrue(all(b"DEBUG" in y and b"WARN" in x for x, y in diff))
         for bad, code in ((lac + b" ", "messenger-laconic"),):
             with self.subTest(code), self.assertRaises(V.Fail) as cm:
                 V.messenger(bad)
@@ -1035,16 +1055,337 @@ class Coverage(Tmp):
             self.assertEqual(V.main(["messenger", "--laconic", str(self.LACONIC), "--out", str(out)]), 1)
         self.assertEqual(sha(out.read_bytes()), V.MESSENGER_SHA256)
 
-    def test_the_coverage_log(self):
-        need = lambda x: f"1700 NOTICE GEVGDriver : [n] <CreateSplines (646)> : Need xsec spline for {x}"
-        found = "1700 DEBUG GEVGDriver : [n] <CreateSplines (657)> : Spline was found"
-        built = "1700 DEBUG GEVGDriver : [n] <CreateSplines (651)> : The spline wasn't loaded at initialization. I can build..."
-        self.assertEqual(V.coverage_problems("\n".join([need("a"), found, need("b"), found])), [])
-        for lines, code in (([need("a"), found, need("b")], "coverage-unanswered"), ([need("a"), built], "coverage-built"),
-                            (["nothing"], "coverage-none"), ([found, need("a"), found], "coverage-orphan"),
-                            ([need("a"), need("b"), found], "coverage-unanswered")):
+
+class Rev12Coverage(Tmp):
+    """D3′(ii) as adopted (DESIGN-D3PRIME-II.md §3, Joseph 2026-11-27): logs in GENIE R-3_04_00's record layout
+    (b3-run4-diag3.out), built from the format strings the note cites."""
+    TUNE = "G21_11a_00_000"
+    TGTS = ("1000060120", "1000010010")
+    PROCS = ("N:2112;proc:Weak[CC],QES;", "N:2212;proc:Weak[NC],QES;", "N:2112;proc:Weak[CC],RES;res:0;")
+
+    @staticmethod
+    def rec(prio, stream, where, text="", *cont, line=1):
+        tag = "n" if "::" in where else "s"
+        return [f"1764271685 {prio} {stream} : [{tag}] <{where} ({line})> : {text}", *cont]
+
+    def code(self, tgt, i):
+        return f"nu:14;tgt:{tgt};{self.PROCS[i]}"
+
+    def key(self, tgt, i, cfg="Default"):
+        return f"genie::Alg{i}XSec/{cfg}/{self.code(tgt, i)}"
+
+    def lookup(self, k, found="Y", tune=None):
+        t = tune or self.TUNE
+        return (self.rec("DEBUG", "XSecSplLst", "SplineExists", f"Checking for spline: {k} in tune: {t}", line=103)
+                + self.rec("DEBUG", "XSecSplLst", "SplineExists", f"Spline found?....{found}", line=115))
+
+    def group(self, tgt, i, label="*interpolated*", get=True, k=None):
+        k = k or self.key(tgt, i)
+        return (self.rec("DEBUG", "GEVGDriver", "XSecSum", "Compute cross section for interaction: ",
+                         self.code(tgt, i), line=398) + self.lookup(k)
+                + (self.rec("DEBUG", "XSecSplLst", "GetSpline", f"Getting spline: {k} in tune: {self.TUNE}", line=135)
+                   if get else [])
+                + self.rec("DEBUG", "GEVGDriver", "GEVGDriver.cxx::XSecSum", "", f"Interaction   = {self.code(tgt, i)}",
+                           f"Cross Section {label} = 1.2e-39 cm2", line=419))
+
+    def configure(self, tgt, keys=None):
+        frame = "*" * 40
+        lines = self.rec("NOTICE", "GEVGDriver", "GEVGDriver.cxx::Configure", "", frame,
+                         f"* Configuring event generation driver for initial state: `nu-pdg:14;tgt-pdg:{tgt};' using "
+                         "event generator list: `Default'.", frame, line=154)
+        lines += self.rec("INFO", "GEVGDriver", "GEVGDriver.cxx::BuildInteractionGeneratorMap",
+                          "Building the interaction -> generator associations...", line=194)
+        for k in (keys if keys is not None else [self.key(tgt, i) for i in range(len(self.PROCS))]):
+            lines += self.lookup(*k) if isinstance(k, tuple) else self.lookup(k)
+        return lines
+
+    def summation(self, tgt, n, blocks=None, group=None):
+        lines = self.rec("INFO", "GEVGDriver", "GEVGDriver.cxx::CreateXSecSumSpline",
+                         f"Creating spline (sum-xsec = f(logE)) in E = [0.001, 110] using {n} knots", line=449)
+        for b in range(n if blocks is None else blocks):
+            lines += self.rec("DEBUG", "GEVGDriver", "GEVGDriver.cxx::XSecSum", "Computing the cross section sum", line=378)
+            for i in range(len(self.PROCS)):
+                lines += (group or self.group)(tgt, i) if group is None or b == 0 else self.group(tgt, i)
+            lines += self.rec("INFO", "GEVGDriver", "GEVGDriver.cxx::XSecSum",
+                              f"SumXSec(nu_mu+C12->X, E = {b + 1} GeV)*interpolated* = 3.4e-38 cm2", line=429)
+        return lines
+
+    def log(self, n=4, parts=None):
+        """A passing log: banner, preamble, both drivers configured, both sum splines, then event-time records."""
+        pre = ["", "*" * 60, "*   GENIE banner", "*" * 60]
+        pre += self.rec("NOTICE", "Messenger", "SetPrioritiesFromXmlFile", "Reading msg stream priorities", line=136)
+        pre += self.rec("NOTICE", "XSecSplLst", "XSecSplineList.cxx::LoadFromXml", "Loading spline: x", line=461)
+        parts = parts or {}
+        body = (parts.get("config", lambda: self.configure(self.TGTS[0]) + self.configure(self.TGTS[1]))()
+                + parts.get("sum", lambda: self.summation(self.TGTS[0], n) + self.summation(self.TGTS[1], n))())
+        post = self.rec("DEBUG", "XSecSplLst", "GetSpline", f"Getting spline: {self.key(self.TGTS[0], 0)} in tune: "
+                        f"{self.TUNE}", line=135)
+        post += self.rec("NOTICE", "gevgen", "gEvGen.cxx::GenerateEventsUsingFluxOrTgtMix", "Generated event: 0")
+        post += ["Warning in <TTree::Bronch>: a ROOT message on stderr"]
+        return pre + body + post
+
+    def reduced(self, extra=(), tune=None):
+        names = [self.key(t, i) for t in self.TGTS for i in range(len(self.PROCS))] + list(extra)
+        body = (f'<genie_xsec_spline_list>\n<genie_tune name="{tune or self.TUNE}">\n'
+                + "".join(f'<spline name="{k}" nknots="1">\n<knot> <E> 1 </E> <xsec> 2 </xsec> </knot>\n</spline>\n'
+                          for k in names) + "</genie_tune>\n</genie_xsec_spline_list>\n")
+        p = self.tmp / f"red{len(list(self.tmp.iterdir()))}.xml"
+        p.write_text(body)
+        return str(p)
+
+    def scan(self, lines, red=None, raw=None):
+        p = self.tmp / f"g{len(list(self.tmp.iterdir()))}.log"
+        p.write_bytes(raw if raw is not None else ("\n".join(lines) + "\n").encode())
+        return V.coverage_scan(str(p), *V.coverage_inputs(str(GENIE / "run_gevgen_v3.sh"), red or self.reduced()))
+
+    def codes(self, lines, red=None):
+        return {q.split(":")[0] for q in self.scan(lines, red).probs}
+
+    def test_a_correct_log_passes_on_both_tunes(self):
+        self.assertEqual(self.scan(self.log()).probs, [])
+        self.TUNE = "G18_02a_00_000"
+        self.assertEqual(self.scan(self.log(), self.reduced(tune="G18_02a_00_000")).probs, [])
+
+    def test_n_is_the_drivers_own_and_the_blocks_must_match_it(self):
+        self.assertEqual(self.scan(self.log(n=50)).probs, [])                     # not a literal 100
+        more = self.log(parts={"sum": lambda: self.summation(self.TGTS[0], 50, 51) + self.summation(self.TGTS[1], 50)})
+        self.assertIn("coverage-blocks", self.codes(more))
+        less = self.log(parts={"sum": lambda: self.summation(self.TGTS[0], 50, 49) + self.summation(self.TGTS[1], 50)})
+        self.assertIn("coverage-blocks", self.codes(less))
+        nonum = [ln.replace("using 4 knots", "using knots") for ln in self.log()]
+        self.assertIn("coverage-phase", self.codes(nonum))                        # no N: no sum spline at all
+        self.assertIn("coverage-knots", self.codes(self.log(n=2)))                # nk > 2 (GEVGDriver.cxx:457)
+
+    def test_the_inventory_is_the_drivers_and_every_key_is_the_reduced_splines(self):
+        t = self.TGTS[0]
+        self.assertEqual(self.scan(self.log(), self.reduced(extra=[self.key(t, 0, "Unused")])).probs, [])  # unused: fine
+        other_cfg = lambda: self.configure(t, [self.key(t, 0, "Other"), self.key(t, 1), self.key(t, 2)]) + self.configure(self.TGTS[1])
+        self.assertIn("coverage-key", self.codes(self.log(parts={"config": other_cfg})))
+        tune = lambda: self.configure(t, [(self.key(t, 0), "Y", "G18_02a_00_000"), self.key(t, 1), self.key(t, 2)]) \
+            + self.configure(self.TGTS[1])
+        self.assertIn("coverage-key", self.codes(self.log(parts={"config": tune})))
+        dup = lambda: self.configure(t, [self.key(t, 0), self.key(t, 0), self.key(t, 1), self.key(t, 2)]) + self.configure(self.TGTS[1])
+        self.assertIn("coverage-inventory", self.codes(self.log(parts={"config": dup})))
+        notfound = lambda: self.configure(t, [(self.key(t, 0), "N"), self.key(t, 1), self.key(t, 2)]) + self.configure(self.TGTS[1])
+        self.assertIn("coverage-lookup", self.codes(self.log(parts={"config": notfound})))
+        short = lambda: self.configure(t, [self.key(t, 0), self.key(t, 1)]) + self.configure(self.TGTS[1])
+        self.assertIn("coverage-blocks", self.codes(self.log(parts={"config": short})))   # blocks evaluate a third
+        self.assertIn("coverage-key", self.codes(self.log(), self.reduced_without(t, 2)))   # an inventory key gone
+
+    def reduced_without(self, tgt, i):
+        p = self.reduced()
+        body = open(p).read().replace(f'<spline name="{self.key(tgt, i)}"', '<spline name="genie::Gone/Default/x"')
+        open(p, "w").write(body)
+        return p
+
+    def test_one_driver_and_one_sum_spline_per_pair(self):
+        t0, t1 = self.TGTS
+        twice = lambda: self.configure(t0) + self.configure(t0) + self.configure(t1)
+        self.assertIn("coverage-phase", self.codes(self.log(parts={"config": twice})))
+        once = lambda: self.configure(t0)
+        self.assertIn("coverage-phase", self.codes(self.log(parts={"config": once})))
+        late = self.log()
+        late[-3:-3] = self.configure(t0)
+        self.assertIn("coverage-phase", self.codes(late))
+        nosum = lambda: self.summation(t0, 4)
+        self.assertIn("coverage-phase", self.codes(self.log(parts={"sum": nosum})))
+
+    def test_every_found_lookup_is_evaluated_from_its_spline(self):
+        t0 = self.TGTS[0]
+        noget = lambda: self.summation(t0, 4, group=lambda tg, i: self.group(tg, i, get=i != 1)) + self.summation(self.TGTS[1], 4)
+        self.assertIn("coverage-order", self.codes(self.log(parts={"sum": noget})))
+        other = self.log()
+        k = self.key(t0, 1)
+        idx = next(n for n, ln in enumerate(other) if ln.endswith(f"Getting spline: {k} in tune: {self.TUNE}"))
+        other[idx] = other[idx].replace(k, self.key(t0, 2))
+        self.assertIn("coverage-lookup", self.codes(other))
+        comp = lambda: self.summation(t0, 4, group=lambda tg, i: self.group(tg, i, label="*computed*")) + self.summation(self.TGTS[1], 4)
+        self.assertIn("coverage-computed", self.codes(self.log(parts={"sum": comp})))
+        nf = self.log()
+        idx = next(n for n, ln in enumerate(nf) if "Spline found?....Y" in ln and n > nf.index(next(x for x in nf if "Creating spline" in x)))
+        nf[idx] = nf[idx].replace("....Y", "....N")
+        self.assertIn("coverage-lookup", self.codes(nf))
+
+    def test_damage_and_truncation_stop(self):
+        lines = self.log()
+        idx = next(n for n, ln in enumerate(lines) if ln.startswith("Interaction   = ") and n > 60)
+        split = lines[:idx + 1] + ["Warning in <TDirectoryFile::Append>: Replacing existing TH1"] + lines[idx + 1:]
+        self.assertIn("coverage-damage", self.codes(split))
+        foreign = lines[:idx - 2] + self.rec("WARN", "Spline", "Spline.cxx::Evaluate", "x") + lines[idx - 2:]
+        self.assertIn("coverage-damage", self.codes(foreign))
+        cut = lines[:idx]
+        self.assertIn("coverage-truncated", self.codes(cut))
+        self.assertEqual(self.scan(lines[:-1] + ["Warning in <TTree>: after the bootstrap"]).probs, [])   # event time
+
+    def test_genies_missing_spline_messages_and_the_old_path_stop(self):
+        for text, code in (("*** At least a spline (algorithm: A, interaction: X doesn't exist. Reverting back to not "
+                            "using splines", "coverage-revert"), ("You haven't loaded any splines!! ", "coverage-unloaded"),
+                           ("Couldn't find spline: K in tune: T", "coverage-missing"), ("No splines for tune T were found!",
+                            "coverage-tune"), ("Need xsec spline for nu:14;", "coverage-path"),
+                           ("Spline was found", "coverage-path"), ("Spline requested while CurrentTune not set",
+                            "coverage-tune"), ("The spline wasn't loaded at initialization. I can build it",
+                            "coverage-path")):
             with self.subTest(code):
-                self.assertIn(code, {p.split(":")[0] for p in V.coverage_problems("\n".join(lines))})
+                lines = self.log()
+                lines[-3:-3] = self.rec("WARN", "GEVGDriver", "GEVGDriver.cxx::UseSplines", text)
+                self.assertIn(code, self.codes(lines))
+
+    def test_an_ignored_messenger_stops(self):
+        quiet = [ln for ln in self.log() if " DEBUG " not in ln and " INFO " not in ln and " NOTICE GEVGDriver " not in ln]
+        self.assertIn("coverage-none", self.codes([ln for ln in quiet if not ln.startswith(("Interaction", "Cross", "nu:", "*"))]))
+
+    def test_the_log_is_hashed_as_raw_bytes(self):
+        raw = ("\n".join(self.log()) + "\n").encode().replace(b"GENIE banner", b"GENIE \xff\r banner")
+        sc = self.scan(None, raw=raw)
+        self.assertEqual((sc.h.hexdigest(), sc.size), (sha(raw), len(raw)))
+        self.assertEqual(sc.probs, [])
+
+    SPLICE = "Warning in <TDirectoryFile::Append>: Replacing existing TH1: mec_cc (Potential memory leak)."  # diag3
+
+    def err(self, text=SPLICE + "\n"):
+        p = self.tmp / f"e{len(list(self.tmp.iterdir()))}.err"
+        p.write_text(text)
+        return p
+
+    def test_a_root_warning_spliced_into_a_record_stops_merged_and_passes_split(self):
+        """b3-run4-diag3.out: stdout is buffered and stderr is not, so under `2>&1` ROOT's warning landed in the middle
+        of a GENIE record. GENIE's one appender writes to cout (Messenger.cxx:62): with stderr apart, no record breaks."""
+        import contextlib
+        lines = self.log()
+        first = lines.index(next(x for x in lines if "Creating spline" in x))
+        i = next(n for n, ln in enumerate(lines) if ln.endswith("<GEVGDriver.cxx::XSecSum (419)> : ") and n > first)
+        merged = lines[:i] + [lines[i][:40] + self.SPLICE, lines[i][40:]] + lines[i + 1:]
+        self.assertIn("coverage-damage", self.codes(merged))                   # the old merged form: a STOP
+        p, e = self.tmp / "split.log", self.err()
+        p.write_text("\n".join(lines) + "\n")
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            rc = V.main(["coverage-log", "--log", str(p), "--err", str(e), "--script", str(GENIE / "run_gevgen_v3.sh"),
+                         "--reduced", self.reduced()])
+        rec = json.loads(out.getvalue())
+        self.assertEqual((rc, rec["pass"]), (0, True), rec)                     # split: a pass
+        self.assertEqual(rec["err"], {"sha256": sha(e.read_bytes()), "bytes": e.stat().st_size, "lines": 1,
+                                      "counts": {"Warning": 1}})
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            rc = V.main(["coverage-log", "--log", str(p), "--err", str(self.tmp / "absent.err"), "--script",
+                         str(GENIE / "run_gevgen_v3.sh"), "--reduced", self.reduced()])
+        self.assertEqual(rc, 1)                                                 # no stderr file: fails closed
+        self.assertTrue(json.loads(out.getvalue())["problems"][0].startswith("coverage-unreadable: absent.err"))
+
+    def test_the_cli(self):
+        import contextlib
+        p = self.tmp / "gevgen.log"
+        p.write_text("\n".join(self.log()) + "\n")
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            rc = V.main(["coverage-log", "--log", str(p), "--err", str(self.err()), "--script", str(GENIE / "run_gevgen_v3.sh"),
+                         "--reduced", self.reduced()])
+        rec = json.loads(out.getvalue())
+        self.assertEqual((rc, rec["pass"], rec["log_sha256"], rec["log_size"]), (0, True, sha(p.read_bytes()),
+                                                                                 p.stat().st_size))
+
+    def test_each_record_is_checked_where_it_stands(self):
+        t0, t1 = self.TGTS
+        L = self.log
+        nofound = lambda: self.configure(t0)[:-1] + self.configure(t1)      # a lookup, then the next driver
+        self.assertIn("coverage-damage", self.codes(L(parts={"config": nofound})))
+        orphan = lambda: self.configure(t0) + self.rec("DEBUG", "XSecSplLst", "SplineExists", "Spline found?....Y") \
+            + self.configure(t1)
+        self.assertIn("coverage-damage", self.codes(L(parts={"config": orphan})))
+        getcfg = lambda: self.configure(t0) + self.rec("DEBUG", "XSecSplLst", "GetSpline",
+                                                       f"Getting spline: {self.key(t0, 0)} in tune: {self.TUNE}") \
+            + self.configure(t1)
+        self.assertIn("coverage-phase", self.codes(L(parts={"config": getcfg})))
+        nosum = [ln for ln in L() if not ln.endswith("Computing the cross section sum")]
+        self.assertIn("coverage-blocks", self.codes(nosum))                  # a block that never opened
+        mixed = lambda: self.summation(t0, 4, group=lambda tg, i: self.group(t1 if i == 2 else tg, i)) \
+            + self.summation(t1, 4)
+        self.assertIn("coverage-pair", self.codes(L(parts={"sum": mixed})))
+        lines = L()
+        i = next(n for n, ln in enumerate(lines) if "Checking for spline" in ln and n > lines.index(
+            next(x for x in lines if "Creating spline" in x)))
+        bad = lines[:i] + [lines[i].replace(self.key(t0, 0), self.key(t0, 1))] + lines[i + 1:]
+        self.assertIn("coverage-key", self.codes(bad))                       # a lookup for another interaction
+        tune = lines[:i] + [lines[i].replace(f"in tune: {self.TUNE}", "in tune: G18_02a_00_000")] + lines[i + 1:]
+        self.assertIn("coverage-key", self.codes(tune))
+        j = next(n for n, ln in enumerate(lines) if "Getting spline" in ln and n > i)
+        gtune = lines[:j] + [lines[j].replace(f"in tune: {self.TUNE}", "in tune: G18_02a_00_000")] + lines[j + 1:]
+        self.assertIn("coverage-lookup", self.codes(gtune))
+        k = next(n for n, ln in enumerate(lines) if ln.startswith("Interaction   = ") and n > i)
+        xs = lines[:k] + [f"Interaction   = {self.code(t0, 2)}"] + lines[k + 1:]
+        self.assertIn("coverage-order", self.codes(xs))                      # the record names another interaction
+
+    def test_the_pairs_and_the_inventory(self):
+        t0, t1 = self.TGTS
+        L = self.log
+        nu12 = lambda: self.configure(t0) + self.configure(t1) + self.rec(
+            "NOTICE", "GEVGDriver", "GEVGDriver.cxx::Configure", "", "* Configuring event generation driver for initial "
+            "state: `nu-pdg:12;tgt-pdg:1000060120;' using x.")
+        self.assertIn("coverage-phase", self.codes(L(parts={"config": nu12})))
+        empty = lambda: self.configure(t0, []) + self.configure(t1)
+        self.assertIn("coverage-inventory", self.codes(L(parts={"config": empty})))
+        cross = lambda: self.configure(t0, [self.key(t0, 0), self.key(t0, 1), self.key(t0, 2), self.key(t1, 0)]) \
+            + self.configure(t1)
+        self.assertIn("coverage-key", self.codes(L(parts={"config": cross})))
+        two = self.reduced()
+        open(two, "a").write("")
+        body = open(two).read().replace("</genie_xsec_spline_list>",
+                                        f'<genie_tune name="G18_02a_00_000">\n<spline name="{self.key(t0, 0)}" '
+                                        'nknots="1">\n<knot> <E> 1 </E> <xsec> 2 </xsec> </knot>\n</spline>\n</genie_tune>\n'
+                                        "</genie_xsec_spline_list>")
+        open(two, "w").write(body)
+        with self.assertRaises(V.Fail) as cm:
+            V.coverage_inputs(str(GENIE / "run_gevgen_v3.sh"), two)
+        self.assertTrue(str(cm.exception).startswith("coverage-tune"))
+
+    def test_problems_are_unique_and_capped(self):
+        comp = lambda: self.summation(self.TGTS[0], 4, group=lambda tg, i: self.group(tg, i, label="*computed*")) \
+            + self.summation(self.TGTS[1], 4)
+        probs = self.scan(self.log(parts={"sum": comp})).probs
+        self.assertEqual(len(probs), len(set(probs)))
+        t0 = self.TGTS[0]
+        bogus = [f"genie::Bogus/Default/nu:14;tgt:{t0};k:{n};" for n in range(V.COVERAGE_CAP + 5)]
+        many = self.log(parts={"config": lambda: self.configure(t0, bogus) + self.configure(self.TGTS[1])})
+        probs = self.scan(many).probs                                           # each key a problem of its own
+        self.assertEqual(len(probs), V.COVERAGE_CAP + 1)
+        self.assertTrue(probs[-1].startswith("coverage-more: "))
+
+    def test_coverage_keep_writes_only_the_recognized_records_once(self):
+        import contextlib
+        lines = self.log()
+        lines[4:4] = self.rec("NOTICE", "gevgen", "gEvGen.cxx::Main", "GHEP record", "|  0 | nu_mu | SEED-123456789")
+        lines[-3:-3] = self.rec("WARN", "GEVGDriver", "GEVGDriver.cxx::UseSplines", "first line",
+                                "Reverting back to not using splines")
+        lines[-3:-3] = self.rec("DEBUG", "GEVGDriver", "GEVGDriver.cxx::XSecSum", "", "Interaction   = x",
+                                "Cross Section *interpolated* = 1 cm2", "DAMAGED-TEXT")      # a damaged record
+        p, k = self.tmp / "gevgen.log", self.tmp / "coverage_kept.json"
+        p.write_text("\n".join(lines) + "\n")
+        args = ["coverage-keep", "--log", str(p), "--out", str(k)]
+        e = self.err(self.SPLICE + "\nError in <TFile>: x\nplain\n")
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(V.main(args + ["--err", str(e), "--script", str(GENIE / "run_gevgen_v3.sh"),
+                                            "--reduced", self.reduced()]), 0)
+            self.assertEqual(V.main(args), 1)                                     # once: O_EXCL
+        self.assertEqual(k.stat().st_mode & 0o777, 0o600)
+        d = json.loads(k.read_text())
+        self.assertEqual((d["log_sha256"], d["log_size"]), (sha(p.read_bytes()), p.stat().st_size))
+        self.assertEqual(d["err"], {"sha256": sha(e.read_bytes()), "bytes": e.stat().st_size, "lines": 3,
+                                    "counts": {"Warning": 1, "Error": 1, "other": 1}})
+        self.assertNotIn("TDirectoryFile", k.read_text())                        # stderr's text is not kept
+        self.assertNotIn("SEED-123456789", k.read_text())                        # no other record's text
+        self.assertNotIn("first line", k.read_text())                             # a marker record: its marker line only
+        self.assertNotIn("DAMAGED-TEXT", k.read_text())                           # a damaged record: counted only
+        self.assertEqual(d["other"].get("GEVGDriver DEBUG damaged"), 1)
+        types = {r["t"] for r in d["records"]}
+        self.assertEqual(types, {"configure", "check", "found", "get", "create", "sum", "compute", "xsec", "sumxsec",
+                                 "marker"})
+        self.assertEqual(d["other"].get("gevgen NOTICE"), 2)                     # the dump and the event line
+        self.assertIn("coverage-revert", {q.split(":")[0] for q in d["problems"]})
+        k2 = self.tmp / "k2.json"                                                 # no script or reduced: records only
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(V.main(["coverage-keep", "--log", str(p), "--out", str(k2)]), 0)
+        self.assertEqual(json.loads(k2.read_text())["n_records"], d["n_records"])
 
 
 SPL = '<spline name="genie::X/Default/nu:{nu};tgt:{tgt};N:2112;proc:Weak[CC],QES;" nknots="{k}">\n{knots}</spline>\n'
@@ -1116,7 +1457,7 @@ class Wrappers(Tmp):
                       "--tool-check", str(bad), "--traces", str(bad), "--slot2-reduce", str(bad)],
                      ["reduce-check", "--source", str(bad), "--reduced", str(bad), "--script", str(bad)],
                      ["argv-check", "--script", str(self.tmp)],
-                     ["coverage-log", "--log", str(self.tmp), "--script", str(bad), "--reduced", str(bad)],
+                     ["coverage-log", "--log", str(self.tmp), "--err", str(self.tmp), "--script", str(bad), "--reduced", str(bad)],
                      ["revision-compare", "--start", str(bad), "--end", str(bad)]):
             with self.subTest(argv[0]):
                 rc, rec = self.run_main(argv)
@@ -1377,31 +1718,6 @@ class Round4Reduce(Tmp):
 
 
 class Round4Coverage(Tmp):
-    def test_every_pair_is_needed_and_every_need_is_in_the_reduced_spline(self):
-        need = lambda t: f"x : Need xsec spline for nu:14;tgt:{t};N:2112;proc:Weak[CC],QES;"
-        found = "x : Spline was found"
-        pairs = {("14", "1000060120"), ("14", "1000010010")}
-        keys = {f"nu:14;tgt:{t};N:2112;proc:Weak[CC],QES;" for t in ("1000060120", "1000010010")}
-        log = "\n".join([need("1000060120"), found, need("1000010010"), found])
-        self.assertEqual(V.coverage_problems(log, pairs, keys), [])
-        one = "\n".join([need("1000010010"), found])
-        self.assertIn("coverage-pair", {p.split(":")[0] for p in V.coverage_problems(one, pairs, keys)})
-        self.assertIn("coverage-key", {p.split(":")[0] for p in V.coverage_problems(log, pairs, keys - {min(keys)})})
-
-    def test_the_cli_takes_the_pairs_and_keys(self):
-        import contextlib
-        red = self.tmp / "red.xml"
-        red.write_text("<genie_xsec_spline_list>\n" + "".join(
-            f'<spline name="genie::X/D/nu:14;tgt:{t};N:2112;proc:Weak[CC],QES;" nknots="1">\n<knot> 1 2 </knot>\n'
-            f'</spline>\n' for t in ("1000060120", "1000010010")) + "</genie_xsec_spline_list>\n")
-        log = self.tmp / "g.log"
-        log.write_text("x : Need xsec spline for nu:14;tgt:1000010010;N:2112;proc:Weak[CC],QES;\nx : Spline was found\n")
-        out = io.StringIO()
-        with contextlib.redirect_stdout(out):
-            rc = V.main(["coverage-log", "--log", str(log), "--script", str(GENIE / "run_gevgen_v3.sh"), "--reduced", str(red)])
-        self.assertEqual(rc, 1)
-        self.assertEqual([p.split(":")[0] for p in json.loads(out.getvalue())["problems"]], ["coverage-pair"])
-
     def test_the_coverage_block_assigns_nothing_else(self):
         s = (GENIE / "run_gevgen_v3.sh").read_text()
         cov = '    N=1; SEED=123456789; MSG="$MSGFILE"'
@@ -1412,7 +1728,8 @@ class Round4Coverage(Tmp):
         early = s.replace(pos, pos + "    TUNE=G18_02a_00_000\n")                  # before the tail, which stays whole
         self.assertNotEqual(early, s)
         self.assertIn("argv-coverage", {p.split(":")[0] for p in V.argv_problems(early)})
-        moved = s.replace(cov + "\n    gevgen_cmd > gevgen.log 2>&1", "    gevgen_cmd > gevgen.log 2>&1\n" + cov)
+        run = "    gevgen_cmd > gevgen.log 2> gevgen.err"                         # round 10: its stderr apart
+        moved = s.replace(cov + "\n" + run, run + "\n" + cov)
         self.assertNotEqual(moved, s)                                         # the seed set after gevgen has run
         self.assertIn("argv-coverage", {p.split(":")[0] for p in V.argv_problems(moved)})
         bad = s.replace('    --tune "$TUNE" \\\n', '    --tune "$TUNE" \\\n    --xml-path /evil \\\n')

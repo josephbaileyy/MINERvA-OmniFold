@@ -59,6 +59,6 @@ correct run, or a gate that can miss something correct producers really emit. Th
 - C12: interaction strings in the coverage log carry no tune identity. The coverage run's argv and its spline read
   bind the tune.
 - S9, S11 (a symlinked directory in W refused at publish), S12 (cosmetic).
-- Test timing under load (round 9's A2 run, PG_MUTANT_JOBS=6, host load 100–350): test_a_term_during_generation_ends_every_task
-  (its `proc.wait(timeout=25)`) failed under 15 mutants against 5 in the committed run. Each of the 10 new ones was
-  also killed by another test, and the baseline was clean, so no verdict rests on it. Give it a load-independent wait.
+- Round 10, the replay's pass path deletes the coverage logs (D5, `delete_events`) before replay.json is written. A
+  STOP after that point keeps the coverage checks' results, but no records unless the runner's flag is set.
+

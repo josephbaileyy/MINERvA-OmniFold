@@ -1,0 +1,124 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3116c0s5b0n0:
+
+host login32
+== 1. /pscratch/sd/j/josephrb/covfix-pg/replay-20261127T194805Z/run/graphs_G21_11a_00_000.log lines 279
+== 2. matching 39 | prefix-like but not matching 1
+         4  ERROR  IntLst [n]
+         1  INFO   RunOpt [n]
+         4  INFO   TransverseEnhancementFFModel [n]
+         2  INFO   TuneId [n]
+        15  INFO   gspl2root [n]
+         2  NOTICE Decay [n]
+         1  NOTICE Messenger [s]
+         1  NOTICE Rndm [n]
+         2  WARN   Algorithm [n]
+         7  WARN   IntLst [n]
+== 3. the first 40 matching lines
+   ########## NOTICE Messenger : [s] <SetPrioritiesFromXmlFile (136)> : Reading msg stream priorities from XML file: /cvmfs/larsoft.opensciencegrid.org/products/genie/v3_04_00/Linux64bit+3.10-2.17-e20-prof/GENIE-Generator/config/Messenger.xml
+   ########## INFO gspl2root : [n] <gSplineXml2Root.cxx::GetCommandLineArgs (1444)> : Parsing command line arguments
+   ########## INFO TuneId : [n] <TuneId.cxx::Build (132)> : G21_11a_00_000 Tune configured 
+   ########## INFO gspl2root : [n] <gSplineXml2Root.cxx::GetCommandLineArgs (1455)> : Reading input XML filename
+   ########## INFO gspl2root : [n] <gSplineXml2Root.cxx::GetCommandLineArgs (1465)> : Reading probe PDG code
+   ########## INFO gspl2root : [n] <gSplineXml2Root.cxx::GetCommandLineArgs (1476)> : Reading target PDG code
+   ########## INFO gspl2root : [n] <gSplineXml2Root.cxx::GetCommandLineArgs (1487)> : Reading neutrino energy
+   ########## INFO gspl2root : [n] <gSplineXml2Root.cxx::GetCommandLineArgs (1515)> : Reading output ROOT filename
+   ########## INFO gspl2root : [n] <gSplineXml2Root.cxx::GetCommandLineArgs (1532)> : Command line arguments:
+   ########## INFO gspl2root : [n] <gSplineXml2Root.cxx::GetCommandLineArgs (1533)> :   Input XML file  = /pscratch/sd/j/josephrb/covfix-pg/replay-20261127T194805Z/run/splines/G21_11a_00_000_CH.xml.gz
+   ########## INFO gspl2root : [n] <gSplineXml2Root.cxx::GetCommandLineArgs (1534)> :   Probe PDG code  = 0
+   ########## INFO gspl2root : [n] <gSplineXml2Root.cxx::GetCommandLineArgs (1535)> :   Target PDG code = 0
+   ########## INFO gspl2root : [n] <gSplineXml2Root.cxx::GetCommandLineArgs (1536)> :   Min neutrino E  = 0.01
+   ########## INFO gspl2root : [n] <gSplineXml2Root.cxx::GetCommandLineArgs (1537)> :   Max neutrino E  = 100
+   ########## INFO gspl2root : [n] <gSplineXml2Root.cxx::GetCommandLineArgs (1538)> :   In logE         = 0
+   ########## INFO RunOpt : [n] <RunOpt.cxx::BuildTune (94)> : Building tune G21_11a_00_000
+   ########## INFO TuneId : [n] <TuneId.cxx::Build (132)> : G21_11a_00_000 Tune configured 
+   ########## WARN Algorithm : [n] <Algorithm.cxx::FindConfig (157)> : No Configuration available for genie::EventGeneratorListAssembler/Default at the ConfigPool
+   ########## NOTICE Rndm : [n] <RandomGen.cxx::SetSeed (84)> : Setting default random number seed at random number generator initialization: 65539
+   ########## NOTICE Decay : [n] <Decayer.cxx::LoadConfig (221)> : 
+   ########## NOTICE Decay : [n] <Decayer.cxx::LoadConfig (221)> : 
+   ########## INFO TransverseEnhancementFFModel : [n] <ConfigIsotopeMapUtils.cxx::LoadAllNucARangesForKey (61)> : For 0 < A < 12 -> using MagFF_RT_A = 0
+   ########## INFO TransverseEnhancementFFModel : [n] <ConfigIsotopeMapUtils.cxx::LoadAllNucARangesForKey (61)> : For 11 < A < 420 -> using MagFF_RT_A = 5.19
+   ########## INFO TransverseEnhancementFFModel : [n] <ConfigIsotopeMapUtils.cxx::LoadAllNucARangesForKey (61)> : For 0 < A < 12 -> using MagFF_RT_B = 1
+   ########## INFO TransverseEnhancementFFModel : [n] <ConfigIsotopeMapUtils.cxx::LoadAllNucARangesForKey (61)> : For 11 < A < 420 -> using MagFF_RT_B = 0.376
+   ########## ERROR IntLst : [n] <QELInteractionListGenerator.cxx::CreateInteractionListStrangeCC (257)> : Returning NULL InteractionList for init-state: nu-pdg:14;tgt-pdg:1000060120;
+   ########## WARN IntLst : [n] <MECInteractionListGenerator.cxx::CreateInteractionList (55)> : fIsCC(val) = 1
+   ########## WARN IntLst : [n] <MECInteractionListGenerator.cxx::CreateInteractionList (99)> : fIsNC = 1
+   ########## WARN IntLst : [n] <MECInteractionListGenerator.cxx::CreateInteractionList (99)> : fIsNC = 1
+   ########## WARN IntLst : [n] <MECInteractionListGenerator.cxx::CreateInteractionList (99)> : fIsNC = 1
+   ########## ERROR IntLst : [n] <QELInteractionListGenerator.cxx::CreateInteractionListStrangeCC (257)> : Returning NULL InteractionList for init-state: nu-pdg:14;tgt-pdg:1000060120;
+   ########## WARN IntLst : [n] <MECInteractionListGenerator.cxx::CreateInteractionList (55)> : fIsCC(val) = 1
+   ########## WARN IntLst : [n] <MECInteractionListGenerator.cxx::CreateInteractionList (99)> : fIsNC = 1
+   ########## WARN IntLst : [n] <MECInteractionListGenerator.cxx::CreateInteractionList (99)> : fIsNC = 1
+   ########## INFO gspl2root : [n] <gSplineXml2Root.cxx::SaveGraphsToRootFile (564)> : Will store graphs in root directory = nu_mu_C12
+   ########## WARN Algorithm : [n] <Algorithm.cxx::FindConfig (157)> : No Configuration available for genie::EventGeneratorListAssembler/Default at the ConfigPool
+   ########## ERROR IntLst : [n] <QELInteractionListGenerator.cxx::CreateInteractionListStrangeCC (257)> : Returning NULL InteractionList for init-state: nu-pdg:14;tgt-pdg:1000010010;
+   ########## ERROR IntLst : [n] <QELInteractionListGenerator.cxx::CreateInteractionListStrangeCC (257)> : Returning NULL InteractionList for init-state: nu-pdg:14;tgt-pdg:1000010010;
+   ########## INFO gspl2root : [n] <gSplineXml2Root.cxx::SaveGraphsToRootFile (564)> : Will store graphs in root directory = nu_mu_H1
+-- the first 40 non-matching lines
+   
+   
+   *****************************************************************************************************************
+   *                                                                                                               *
+   *                                                   .oooooo.    oooooooooooo ooooo      ooo ooooo oooooooooooo  *
+   *                                                  d8P'  `Y8b   `888'     `8 `888b.     `8' `888' `888'     `8  *
+   *                                                 888            888          8 `88b.    8   888   888          * 
+   *                        Ndyooym          dN      888            888oooo8     8   `88b.  8   888   888oooo8     *
+   *                     Nds//+sdmoy       d+m       888     ooooo  888    "     8     `88b.8   888   888    "     * 
+   *                   Nh+//ohN  m+s      N//syyN    `88.    .88'   888       o  8       `888   888   888       o  *
+   *                 Ny+//od   Nh+oN       o///+      `Y8bood8P'   o888ooooood8 o8o        `8  o888o o888ooooood8  *
+   *               Nh+//om   Nh+/yN       o///s                                                                    *
+   *              d+//+d   my+/smmyhN    m///h                                      NEUTRINO MONTE CARLO GENERATOR *   
+   *            Ns///yN NdyoshNNs///d   h////yN                                                                    *
+   *           mo//om        ms///+m   d///////oyhmN                                               Version 3.04.00 *
+   *          N+//yN       ms////+N    h////////////oym                                                            *
+   *          s//h       ho/+///sN     N///////////////od                                  http://www.genie-mc.org *
+   *         N+/h     my++yh+//y       s/////////////////oN                                                        *
+   *         Ns/m Nmy++ymNh//+d        s//////////////////+m                                                       *
+   *          NhssoshN  Ny//sN         m///////////////////+                                                       *
+   *                  Nmo/+ohdmN        mo//////////////////h            NmmN                                      *
+   *              ms/+s//o/-----:+sdN     mhso+ooys/////////o      mhs+/------/ohN                                 *
+   *    Nhd     N+-/o+/o+------------/shN     Ndy+//////////+ mhs+:---------------om                               *
+   *  mo/sN    m:/oo/oo:-----------------:://////////////////-----------------------y                              *
+   *  y//d    Noo++o+:----------:------------:://///////////:-------:/+osyso/:-------h                             *
+   *  Nyo+syysooo+/--------------::--------------:://///////:----::////+ossyso/------:                             *
+   *     NNNNNs--------------------:/::-------------:://///:-:://////////oosyo+:------                             *
+   *          y---------------------:////:::-----------:////////////////+o++++/:-----/                             *
+   *          m-----------------------://////////////////////////////+so/--:---------y                             *
+   *           +------------------------://////////////////////////+yy:---+oh/--:y+-/N                             *
+   *           N/-------------------------://////////////////////ohy/-------yy--os-/m                              *
+   *            No--------------------------://///////////////+shs/---------/d++/-oN                               *
+   *              mo--------------------------:////////////+shyo:------------sy/sm                                 *
+   *                Ny+:------------------------::://///oyhyo:--------------/sd                                    *
+   *                    mhso+/:------------------:/+oyhyo/----------:/+syhm                                        *
+   *                           NmddhyyyssssyyyhdmmNNNmhhhyyyyhhddmN                                                *
+   *                                                                                                               *
+   *                                                             Copyright (c) 2003-2023, The GENIE Collaboration  *
+   *                                                                                                               *
+   *                                                                                                               *
+-- every prefix-like line that does not match, at most 40
+   ########## WARN IntLst : [n] <MECInteractionListGenerator.cxx::CreateInteractiWarning in <TDirectoryFile::Append>: Replacing existing TH1: mec_cc (Potential memory leak).
+== end

@@ -94,17 +94,20 @@ case "$MODE" in
     [ -s input-flux.root ] || { echo "no input-flux.root from gevgen" >&2; exit 1; }
     ;;
   coverage)   # COVFIX PG only: one public-seed event with gevgen_cmd's argv, the messenger file given, for the spline
-    # coverage check (GEVGDriver at DEBUG names each spline it needs and whether it was found); never F1's or the sealed run
+    # coverage check (GEVGDriver and XSecSplLst at DEBUG log each lookup); never F1's or the sealed run. GENIE's one
+    # log appender writes to cout (Messenger.cxx:62), so its records are all in gevgen.log; stderr goes to its own file,
+    # so an unbuffered stderr write (ROOT's warnings) cannot land inside a buffered record
     TUNE=$1; SPLDIR=$2; WORK=$3; FLUX=$4; MSGFILE=$5
     case "$MSGFILE" in /*) ;; *) echo "refusing: the messenger file is not absolute" >&2; exit 2 ;; esac
     [ -f "$MSGFILE" ] || { echo "refusing: no messenger file" >&2; exit 2; }
     set +e; source "$HERE/setup_genie_v3.sh" "$TUNE" "$SPLDIR"; RC=$?; set -e
     [ $RC -eq 0 ] || { echo "setup_genie_v3.sh failed rc=$RC" >&2; exit 1; }
-    [ ! -e "$WORK/gevgen.log" ] || { echo "refusing to overwrite $WORK/gevgen.log" >&2; exit 2; }
+    [ ! -e "$WORK/gevgen.log" ] && [ ! -e "$WORK/gevgen.err" ] \
+      || { echo "refusing to overwrite $WORK/gevgen.log or gevgen.err" >&2; exit 2; }
     mkdir -p "$WORK"; cd "$WORK"
     pg_trace coverage
     N=1; SEED=123456789; MSG="$MSGFILE"
-    gevgen_cmd > gevgen.log 2>&1
+    gevgen_cmd > gevgen.log 2> gevgen.err
     echo "[v3] coverage gevgen rc=$?"
     ;;
   graphs)

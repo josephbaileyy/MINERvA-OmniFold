@@ -1,6 +1,6 @@
-PG_MUTANT_JOBS=2 (set in the command)
+PG_MUTANT_JOBS=3 (set in the command)
 KILL RULE (the director, 2026-11-25): an import or collection error (unittest's _FailedTest, ImportError, ModuleNotFoundError, SyntaxError) makes a mutant INVALID; otherwise a FAIL or an ERROR with a non-zero exit kills (an error raised by the mutated code is detectable behaviour); a timeout, or a FAIL with exit 0, is INVALID; a clean pass SURVIVES. Every suite must pass clean on the unmutated copy first.
-baseline install: clean ['Ran 34 tests in 27.443s', 'OK']
+baseline install: clean ['Ran 35 tests in 34.184s', 'OK']
 M01 KILLED by test_refusals_write_nothing, test_refusals_write_nothing (error): identity not enforced [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
 M02 KILLED by test_refusals_write_nothing, test_refusals_write_nothing (error): an unfilled dbconfig pin [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
 M03 KILLED by test_refusals_write_nothing: an existing product directory [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
@@ -49,7 +49,7 @@ M45 KILLED by test_replay_payloads: B3's driver rc in a GO [docs/orchestration/s
 M46 KILLED by test_install_payloads, test_receipts: the payload unchecked [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
 M47 KILLED by test_receipts: the launcher passes no pins [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
 M48 KILLED by test_refusals_and_driver_failures: a failed replay record [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
-M49 KILLED by test_refusals_and_driver_failures: an event file left [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M49 KILLED by test_refusals_and_driver_failures, test_the_kept_records_are_checked_on_every_path: an event file left [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
 M50 KILLED by test_install_payloads: B2's members count [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
 M51 KILLED by test_replay_payloads: B3's replay record in a GO [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
 M52 KILLED by test_replay_payloads: B3's deleted record in a GO [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
@@ -63,7 +63,7 @@ M59 KILLED by test_refusals_and_driver_failures: r3: B3 host checks unchecked [d
 M60 KILLED by test_refusals_and_driver_failures: r3: an untyped gated record [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
 M61 KILLED by test_refusals_and_driver_failures: r3: a bool or negative size [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
 M62 KILLED by test_refusals_and_driver_failures: r3: coverage log hashes missing [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
-M63 KILLED by test_refusals_and_driver_failures: r3: a coverage log left [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M63 KILLED by test_files_left_on_any_exit_are_removed_and_stop, test_refusals_and_driver_failures: r3: a coverage log left [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
 M64 KILLED by test_scratch_is_checked_on_the_real_path: r3: an ancestor off scratch [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
 M65 KILLED by test_a_missing_or_file_upsfiles_is_a_problem: r3: a missing .upsfiles [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-install-g2111a.py]
 M66 KILLED by test_replay_payloads: r4: the replay's identity (launcher) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
@@ -91,7 +91,7 @@ M87 KILLED by test_the_runners_own_result_passes_the_launcher: r5: B3's record c
 M88 KILLED by test_files_left_on_any_exit_are_removed_and_stop, test_refusals_and_driver_failures: r5: files left on a failing exit [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
 M89 KILLED by test_files_left_on_any_exit_are_removed_and_stop: r5: files left are not removed [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
 M90 KILLED by test_files_left_on_any_exit_are_removed_and_stop: r5: the merged gst's directory unchecked [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
-M91 KILLED by test_go, test_refusals_and_driver_failures, test_replay_payloads, test_the_runners_own_result_passes_the_launcher: r6: t0's GHEP expected (node, K2) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M91 KILLED by test_go, test_refusals_and_driver_failures, test_replay_payloads, test_the_kept_records_are_checked_on_every_path, test_the_runners_own_result_passes_the_launcher: r6: t0's GHEP expected (node, K2) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
 M92 KILLED by test_refusals_and_driver_failures: r6: the control unchecked (node, K6) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
 M93 KILLED by test_refusals_and_driver_failures: r6: the control's decode unchecked (node, K6) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
 M94 KILLED by test_refusals_and_driver_failures: r6: the control's decoded hit unchecked (node, K6) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
@@ -118,4 +118,15 @@ M114 KILLED by test_replay_payloads: r7: a seed object's kind unchecked (launche
 M115 KILLED by test_replay_payloads (error): r7: the seed objects' list unchecked (launcher, R1) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
 M116 KILLED by test_replay_payloads: r7: the control without a seed object (launcher, R1) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-node-launch.py]
 M117 KILLED by test_a_name_that_is_not_utf8 (error): r7: the node's /proc stat read as text (R2) [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
-117 of 117 killed; 0 invalid; 0 survived
+M118 KILLED by test_files_left_on_any_exit_are_removed_and_stop, test_go, test_refusals_and_driver_failures, test_the_kept_records_are_checked_on_every_path, test_the_runners_own_result_passes_the_launcher: r10: the runner without its flag [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M119 KILLED by test_the_kept_records_are_checked_on_every_path: r10: deleted.json's kept records unchecked [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M120 KILLED by test_the_kept_records_are_checked_on_every_path: r10: the kept files unchecked [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M121 KILLED by test_the_kept_records_are_checked_on_every_path: r10: a kept file of any mode [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M122 KILLED by test_the_kept_records_are_checked_on_every_path: r10: a kept file of any size [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M123 KILLED by test_the_kept_records_are_checked_on_every_path: r10: a named kept file missing [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M124 KILLED by test_the_kept_records_are_checked_on_every_path: r10: an unreadable kept file [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M125 KILLED by test_the_kept_records_are_checked_on_every_path: r10: a kept file's count unchecked [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M126 KILLED by test_the_kept_records_are_checked_on_every_path: r10: a kept file of another check [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M127 KILLED by test_the_kept_records_are_checked_on_every_path: r10: a kept file differing from its record [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+M128 KILLED by test_files_left_on_any_exit_are_removed_and_stop: r10: a coverage stderr file left [docs/orchestration/state/2d-closeout/covfix-20261122/pg/install/pg-replay-g2111a.py]
+128 of 128 killed; 0 invalid; 0 survived

@@ -147,12 +147,40 @@ drain() {      # end every background step and its tree; then KILL the generatio
   [ "$(n foreign)" -eq 0 ] || echo "[pg] cleanup: $(n foreign) processes outside this run have a cwd in W (not killed)"
   return $([ "$rc" -eq 0 ] && echo 0 || echo 1)
 }
+covstop() {    # D3′(ii) on a STOP (DESIGN-D3PRIME-II.md §4), once the writers have ended: each coverage run's public-seed
+  # event, status, GHEP and flux files are deleted; of its gevgen.log only the recognized records are kept (pg_verify
+  # coverage-keep: the records, the other records' counts, the raw log's sha256 and size), then the log is deleted,
+  # whether or not the keep succeeded. Never on a pass: there the files go after the check (below), and nothing is kept
+  local c t f bad=0
+  for c in "$O"/coverage/*/; do
+    [ -d "$c" ] || continue
+    c=${c%/}; t=${c##*/}
+    rm -f "$c/gntp.123456789.ghep.root" "$c/genie-mcjob-123456789.status" "$c/input-flux.root"
+    if [ -f "$c/gevgen.log" ]; then
+      "$PY" -I -B "$G/pg_verify.py" coverage-keep --log "$c/gevgen.log" --err "$c/gevgen.err" \
+        --out "$c/coverage_kept.json" --script "$G/run_gevgen_v3.sh" --reduced "$O/splines/${t}_CH.xml.gz" \
+        >> "$O/logs/coverage.log" 2>&1 || echo "[pg] cleanup: the coverage records of $t were not kept"
+      rm -f "$c/gevgen.log"
+    fi
+    rm -f "$c/gevgen.err"
+    for f in gntp.123456789.ghep.root genie-mcjob-123456789.status input-flux.root gevgen.log gevgen.err; do
+      [ ! -e "$c/$f" ] || { echo "[pg] STOP: the coverage file $t/$f could not be deleted"; bad=1; }
+    done
+  done
+  return $bad
+}
 cleanup() {    # on every exit: end this script's background steps and everything under them, verify nothing is left
   local rc=$? ok=0   # running in W, then leave no seed in a file name (a live task could otherwise write one after
   drain || ok=1      # seedfree); on any STOP the publication set is withdrawn
   seedfree || { echo "[pg] STOP: seedfree could not rename every seed-named file"; ok=1; }
+  if [ "$rc" -ne 0 ]; then
+    if [ "$ok" -eq 0 ]; then covstop || ok=1
+    else echo "[pg] cleanup: the coverage files are left, a writer may be alive"; fi
+  fi
   if [ "$ok" -ne 0 ] || [ "$rc" -ne 0 ]; then rm -f "$W/out/PG-PUBLISH-SHA256SUMS" "$W/out/leak_scan.json"; fi
-  if [ "$ok" -ne 0 ]; then echo "[pg] STOP: processes survived the cleanup, or a rename failed"; exit 1; fi
+  if [ "$ok" -ne 0 ]; then
+    echo "[pg] STOP: processes survived the cleanup, a rename failed, or a coverage file was left"; exit 1
+  fi
   return 0
 }
 trap cleanup EXIT
@@ -269,16 +297,18 @@ done
 pass "trace check before generation" "$(echo $TUNES | wc -w | tr -d ' ') tunes"
 V messenger --laconic "$GENIE_CFG/Messenger_laconic.xml" --out "$O/Messenger_pg.xml" > "$O/messenger_check.json" \
   2>> "$O/logs/coverage.log" || need 1 "the coverage messenger"
-for T in $TUNES; do   # D3' (ii): one public-seed event per tune, before any sealed seed is used; GEVGDriver at DEBUG
-  C="$O/coverage/$T"; mkdir -p "$C"    # names every spline it needs and whether the pinned file supplied it
+for T in $TUNES; do   # D3' (ii): one public-seed event per tune, before any sealed seed is used; GEVGDriver and
+  C="$O/coverage/$T"; mkdir -p "$C"    # XSecSplLst at DEBUG log every lookup (DESIGN-D3PRIME-II.md §3)
   PG_TRACE_DIR="$C" bash "$G/run_gevgen_v3.sh" coverage "$T" "$O/splines" "$C" "$O/flux_phi_t_0_100.root" \
     "$O/Messenger_pg.xml" > "$O/logs/coverage_$T.log" 2>&1 || need 1 "the coverage run ($T)"
   tcheck coverage "$T" "$C/coverage.trace" "$O/splines/${T}_CH.xml.gz" "$(reduced_sha "$T")" "$C" \
     "$O/trace_check_coverage_$T.json" --messenger "$O/Messenger_pg.xml" >> "$O/logs/trace_check.log" 2>&1 \
     || need 1 "trace check (coverage $T)"
-  V coverage-log --log "$C/gevgen.log" --script "$G/run_gevgen_v3.sh" --reduced "$O/splines/${T}_CH.xml.gz" \
+  V coverage-log --log "$C/gevgen.log" --err "$C/gevgen.err" --script "$G/run_gevgen_v3.sh" \
+    --reduced "$O/splines/${T}_CH.xml.gz" \
     > "$O/coverage_check_$T.json" 2>> "$O/logs/coverage.log" || need 1 "spline coverage ($T)"
-  rm -f "$C/gevgen.log" "$C/gntp.123456789.ghep.root" "$C/genie-mcjob-123456789.status" "$C/input-flux.root"
+  rm -f "$C/gevgen.log" "$C/gevgen.err" "$C/gntp.123456789.ghep.root" "$C/genie-mcjob-123456789.status" \
+    "$C/input-flux.root"
   extra=$(ls -A "$C" | grep -vx coverage.trace | tr '\n' ' ')   # the public seed's run: its names may be shown
   [ -z "$extra" ] || need 1 "the coverage run's outputs ($T): unexpected $extra"   # its log's sha is in the check
 done

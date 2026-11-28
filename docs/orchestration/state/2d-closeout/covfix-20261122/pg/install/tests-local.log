@@ -31,9 +31,10 @@ test_files_left_on_any_exit_are_removed_and_stop (test_pg_install.Replay.test_fi
 test_go (test_pg_install.Replay.test_go) ... ok
 test_refusals_and_driver_failures (test_pg_install.Replay.test_refusals_and_driver_failures) ... ok
 test_the_archive_and_the_blobs (test_pg_install.Replay.test_the_archive_and_the_blobs) ... ok
+test_the_kept_records_are_checked_on_every_path (test_pg_install.Replay.test_the_kept_records_are_checked_on_every_path) ... ok
 test_the_runners_own_result_passes_the_launcher (test_pg_install.Replay.test_the_runners_own_result_passes_the_launcher) ... ok
 
 ----------------------------------------------------------------------
-Ran 34 tests in 27.379s
+Ran 35 tests in 42.813s
 
 OK

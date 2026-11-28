@@ -347,10 +347,13 @@ case "$1" in
          cp "$PG_STUB_ROOT" input-flux.root
          [ -z "$PG_STUB_UNLISTABLE" ] || chmod a-r .
          [ "$5" != "${PG_STUB_LOCK_SEED:-none}" ] || chmod 0555 . ;;
-  coverage) mkdir -p "$4"; cd "$4"; echo "Need xsec spline for a" > gevgen.log; echo st > genie-mcjob-123456789.status
+  coverage) mkdir -p "$4"; cd "$4"; echo st > genie-mcjob-123456789.status   # a GENIE record, and one not to keep
+         echo "Warning in <TDirectoryFile::Append>: Replacing existing TH1: mec_cc (Potential memory leak)." > gevgen.err
+         printf '1764271685 NOTICE GEVGDriver : [n] <GEVGDriver.cxx::Configure (154)> : \n* Configuring event generation driver for initial state: \x60nu-pdg:14;tgt-pdg:1000060120;\x27 using x.\n1764271685 NOTICE gevgen : [n] <gEvGen.cxx::Main (1)> : GHEP-RECORD\n' > gevgen.log
          cp "${PG_STUB_GHEP:-$PG_STUB_ROOT}" gntp.123456789.ghep.root; cp "$PG_STUB_ROOT" input-flux.root
          echo t > "$PG_TRACE_DIR/coverage.trace"
-         [ -z "$PG_STUB_COVERAGE_EXTRA" ] || echo x > extra.root ;;
+         [ -z "$PG_STUB_COVERAGE_EXTRA" ] || echo x > extra.root
+         [ -z "$PG_STUB_LOCK_COV" ] || chmod 0555 . ;;
 esac
 '''
 STUB_V3 = r'''import sys, os, json
@@ -368,7 +371,7 @@ elif a[0] == "convert":
 STUB_VERIFY = r'''import sys, os
 log = open(os.environ["PG_STUB_LOG"], "a"); log.write("pg_verify " + " ".join(sys.argv[1:]) + "\n"); log.flush()
 a = sys.argv[1:]
-if a[0] == "drain":                                   # the real scan and drain, the code under test
+if a[0] in ("drain", "coverage-keep"):                 # the real scan and drain, and the real keep: the code under test
     os.execv(sys.executable, [sys.executable, "-I", "-B", "{real}"] + a)
 if a[0] == "trace-check":
     opened = "false" if os.environ.get("PG_STUB_NO_SPLINE") else "true"
@@ -554,6 +557,9 @@ class Generate(unittest.TestCase):
         self.assertTrue(all(checks.values()))
         self.assertIn("[pg] generation: pass (14 gst)", out)
         log = self.log.read_text().splitlines()
+        cl = [ln.split() for ln in log if ln.startswith("pg_verify coverage-log")]     # round 10: its stderr apart
+        self.assertEqual([c[c.index("--err") + 1] if "--err" in c else None for c in cl],
+                         [str(self.W / f"out/coverage/{t}/gevgen.err") for t in ("G21_11a_00_000", "G18_02a_00_000")])
         gen = [ln.split() for ln in log if ln.startswith("run_gevgen_v3 genie")]
         self.assertEqual(len(gen), 14)
         want = {(t["name"], str(s), f"u{t['u']}/t{k}") for t in seeds()["tunes"] for k, s in enumerate(t["task_seeds"])}
@@ -771,11 +777,14 @@ class Generate(unittest.TestCase):
         while len(list(self.W.rglob("genie-mcjob-*.status"))) < 14 and time.time() - t0 < 20:
             time.sleep(0.05)
         os.kill(proc.pid, signal.SIGTERM)
-        self.assertEqual(proc.wait(timeout=25), 143)                      # no 30 s stall on a zombie job
-        out.close()
-        self.assertNotIn("outlived their trees", (self.tmp / "term.out").read_text())   # the walk, not the backstop
-        time.sleep(4)
-        self.assertFalse(mark.exists(), "a task kept running after the script ended")
+        self.assertEqual(proc.wait(timeout=300), 143)                     # load-independent (round 10): the bound
+        out.close()                                                         # is only against a hang
+        at_exit = mark.read_text() if mark.exists() else ""                 # a task may finish before the TERM
+        text = (self.tmp / "term.out").read_text()
+        self.assertNotIn("still alive 30 s after KILL", text)               # no 30 s stall on a zombie job
+        self.assertNotIn("outlived their trees", text)                      # the walk, not the backstop
+        time.sleep(8)                                                       # longer than PG_STUB_SLOW
+        self.assertEqual(mark.read_text() if mark.exists() else "", at_exit, "a task kept running after the script ended")
         self.no_seed_in_any_name()
 
     def test_round3_stops(self):
@@ -1102,6 +1111,48 @@ class Generate(unittest.TestCase):
                 self.assertFalse((self.W / "PRODUCTS.json").exists())
                 self.log.unlink()
 
+    # round 10: D3′(ii) on a STOP (DESIGN-D3PRIME-II.md §4): the public-seed files deleted, only the records kept
+
+    def test_a_stop_after_the_coverage_run_keeps_only_its_records(self):
+        p = self.run_gen(PG_STUB_VERIFY_FAIL="coverage-log")
+        self.assertNotEqual(p.returncode, 0, p.stdout)
+        self.assertIn("[pg] STOP: spline coverage", p.stdout)
+        c = self.W / "out/coverage/G21_11a_00_000"
+        self.assertEqual(sorted(x.name for x in c.iterdir()), ["coverage.trace", "coverage_kept.json"])
+        k = c / "coverage_kept.json"
+        self.assertEqual(k.stat().st_mode & 0o777, 0o600)
+        d = json.loads(k.read_text())
+        self.assertEqual([r["t"] for r in d["records"]], ["configure"])
+        self.assertEqual(d["other"], {"gevgen NOTICE": 1})
+        self.assertNotIn("GHEP-RECORD", k.read_text())                      # no other record's text
+        self.assertTrue(d["problems"][0].startswith("argv-none"))          # the stub's script: records only
+        self.assertFalse((self.W / "out/coverage/G18_02a_00_000").exists())
+
+    def test_a_coverage_file_that_cannot_be_deleted_stops(self):
+        c = self.W / "out/coverage/G21_11a_00_000"
+        self.addCleanup(lambda: c.exists() and c.chmod(0o755))
+        p = self.run_gen(PG_STUB_VERIFY_FAIL="coverage-log", PG_STUB_LOCK_COV="1")
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("[pg] STOP: the coverage file G21_11a_00_000/gntp.123456789.ghep.root could not be deleted",
+                      p.stdout)
+        self.assertIn("[pg] cleanup: the coverage records of G21_11a_00_000 were not kept", p.stdout)
+        self.assertIn("a coverage file was left", p.stdout)
+
+    def test_production_never_keeps_on_a_pass(self):
+        src = (GENIE / "pg_generate.sh").read_text()
+        self.assertNotIn("--keep-coverage-records", src)                    # the replay runner's flag only
+        self.assertNotIn("KEEPCOV", src)
+        p = self.run_gen(KEEPCOV="1", PG_KEEP_COVERAGE_RECORDS="1")
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        self.assertEqual([x for x in self.W.rglob("coverage_kept.json")], [])
+        self.assertEqual(sorted(x.name for x in (self.W / "out/coverage/G21_11a_00_000").iterdir()), ["coverage.trace"])
+
+    def test_a_stop_before_any_coverage_run_touches_no_coverage_directory(self):
+        p = self.run_gen(PG_STUB_VERIFY_FAIL="argv-check")
+        self.assertNotEqual(p.returncode, 0)
+        self.assertFalse((self.W / "out/coverage").exists())
+        self.assertNotIn("coverage-keep", self.log.read_text())
+
 
 class Replay(unittest.TestCase):
     """pg_replay.sh (B3's driver) against the same stubbed deploy (Generate's setUp, none of its tests)."""
@@ -1114,13 +1165,13 @@ class Replay(unittest.TestCase):
         self.R = self.tmp / "R"
         self.R.mkdir()
 
-    def run_replay(self, **env):
+    def run_replay(self, args=(), **env):
         e = {"PATH": f"/usr/bin:/bin:/usr/sbin:/sbin:{self.sysbin}", "HOME": str(self.tmp), "TMPDIR": str(self.W / "tmp"),
              "PG_STUB_LOG": str(self.log), "PG_STUB_BIN": str(self.bin), "PG_STUB_DEPLOY": str(self.dep),
              "PG_STUB_GST": str(self.gst_tpl), "PG_STUB_ROOT": str(self.root_tpl), "PG_STUB_GHEP": str(self.ghep_tpl)}
         e.update(env)
-        return subprocess.run(["bash", str(self.dep / "3d-unfolding/genie/pg_replay.sh"), "--workdir", str(self.R)],
-                              cwd=self.R, env=e, stdin=subprocess.DEVNULL, capture_output=True, text=True)
+        return subprocess.run(["bash", str(self.dep / "3d-unfolding/genie/pg_replay.sh"), "--workdir", str(self.R),
+                               *args], cwd=self.R, env=e, stdin=subprocess.DEVNULL, capture_output=True, text=True)
 
     def test_the_replay(self):
         import resource
@@ -1162,6 +1213,9 @@ class Replay(unittest.TestCase):
         cov = [ln for ln in log if ln.startswith("pg_verify trace-check") and "--role coverage" in ln]
         self.assertTrue(cov and all(f"--messenger {self.R}/Messenger_pg.xml" in ln for ln in cov))   # pinned in the check
         self.assertTrue(all("--script" in ln and "--reduced" in ln for ln in log if ln.startswith("pg_verify coverage-log")))
+        cl = [ln.split() for ln in log if ln.startswith("pg_verify coverage-log")]     # round 10: its stderr apart
+        self.assertEqual([c[c.index("--err") + 1] if "--err" in c else None for c in cl],
+                         [str(self.R / f"coverage/{t}/gevgen.err") for t in ("G21_11a_00_000", "G18_02a_00_000")])
         rec = json.loads((self.R / "replay.json").read_text())
         self.assertTrue(rec["pass"])
         self.assertEqual(len(rec["checks"]), 24)
@@ -1190,10 +1244,12 @@ class Replay(unittest.TestCase):
         self.assertEqual(sorted(gone), ["coverage_slot1", "coverage_slot2", "merged", "t0"])
         self.assertEqual(sorted(gone["t0"]), ["genie_v3.gst.root", "gevgen.status", "input-flux.root"])
         self.assertEqual(sorted(gone["coverage_slot1"]), ["gevgen.log", "gevgen.status", "gntp.ghep.root", "input-flux.root"])
-        for d, ends in (("work/t0", (".root", ".status")), ("coverage/G21_11a_00_000", (".root", ".status", ".log")),
-                        ("coverage/G18_02a_00_000", (".root", ".status", ".log"))):    # t0's logs stay: a public seed
+        for d, ends in (("work/t0", (".root", ".status")), ("coverage/G21_11a_00_000", (".root", ".status", ".log", ".err")),
+                        ("coverage/G18_02a_00_000", (".root", ".status", ".log", ".err"))):   # t0's logs stay: a public seed
             self.assertEqual([q.name for q in (self.R / d).iterdir() if q.name.endswith(ends)], [])
         self.assertNotIn("123456789", json.dumps(gone))
+        for slot in ("coverage_slot1", "coverage_slot2"):                     # round 10: coverage's stderr, apart
+            self.assertEqual(sorted(gone[slot]["gevgen.log"]["err"]), ["bytes", "holds_public_seed", "sha256"])
         g = gone["t0"]["genie_v3.gst.root"]                                    # C4's control: the gst decoded too
         self.assertEqual((g["decoded"]["holds_seed"], g["schema"]), (False, rec["gst_schema"]))
 
@@ -1209,7 +1265,7 @@ class Replay(unittest.TestCase):
             with self.subTest(name):                                         # R1: GENIE's header, either way
                 shutil.rmtree(self.R)
                 self.R.mkdir()
-                p = self.run_replay(PG_STUB_GHEP=str(tpl))
+                p = self.run_replay(args=["--keep-coverage-records"], PG_STUB_GHEP=str(tpl))   # as the runner runs it
                 self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
                 r = json.loads((self.R / "replay.json").read_text())
                 d = json.loads((self.R / "deleted.json").read_text())
@@ -1229,7 +1285,7 @@ class Replay(unittest.TestCase):
         self.assertIn("[replay] STOP: t0's directory could not be listed", p.stdout)
 
     def test_a_control_without_the_seed_stops_at_both_validators(self):
-        p = self.run_replay(PG_STUB_GHEP=str(self.root_tpl))                 # a GHEP whose bytes lack the seed
+        p = self.run_replay(args=["--keep-coverage-records"], PG_STUB_GHEP=str(self.root_tpl))   # no seed in its bytes
         self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
         r = json.loads((self.R / "replay.json").read_text())
         d = json.loads((self.R / "deleted.json").read_text())
@@ -1421,6 +1477,47 @@ class Replay(unittest.TestCase):
         p = subprocess.run(["bash", str(self.dep / "3d-unfolding/genie/pg_replay.sh"), "--workdir", "rel"],
                            cwd=self.tmp, capture_output=True, text=True)
         self.assertEqual(p.returncode, 2)
+
+
+    # round 10: D3′(ii)'s validation flag (DESIGN-D3PRIME-II.md §3, §4): only the replay runner sets it
+
+    def kept(self):
+        return {d: (self.R / "coverage" / d / "coverage_kept.json") for d in ("G21_11a_00_000", "G18_02a_00_000")}
+
+    def test_the_runners_flag_keeps_the_records_on_a_pass(self):
+        p = self.run_replay(args=["--keep-coverage-records"])
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        gone = json.loads((self.R / "deleted.json").read_text())
+        for slot, d in (("coverage_slot1", "G21_11a_00_000"), ("coverage_slot2", "G18_02a_00_000")):
+            k = self.kept()[d]
+            self.assertEqual(k.stat().st_mode & 0o777, 0o600)
+            e = gone[slot]["gevgen.log"]["kept"]
+            self.assertEqual((e["file"], e["sha256"]), ("coverage_kept.json", hashlib.sha256(k.read_bytes()).hexdigest()))
+            self.assertEqual(json.loads(k.read_text())["log_sha256"], gone[slot]["gevgen.log"]["sha256"])
+            self.assertNotIn("GHEP-RECORD", k.read_text())
+            self.assertFalse((self.R / "coverage" / d / "gevgen.log").exists())
+
+    def test_without_the_flag_a_pass_keeps_nothing_and_a_stop_keeps(self):
+        p = self.run_replay()
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        self.assertFalse(any(k.exists() for k in self.kept().values()))
+        gone = json.loads((self.R / "deleted.json").read_text())
+        self.assertIsNone(gone["coverage_slot1"]["gevgen.log"]["kept"])
+        shutil.rmtree(self.R)
+        self.R.mkdir()
+        p = self.run_replay(PG_STUB_VERIFY_FAIL="coverage-log")
+        self.assertNotEqual(p.returncode, 0)
+        self.assertTrue(self.kept()["G21_11a_00_000"].exists())
+        self.assertFalse((self.R / "coverage/G21_11a_00_000/gevgen.log").exists())
+        self.assertEqual(json.loads((self.R / "deleted.json").read_text())["coverage_slot1"]["gevgen.log"]["kept"]["file"],
+                         "coverage_kept.json")
+
+    def test_only_the_one_flag_is_accepted(self):
+        for extra in (["--keep"], ["--keep-coverage-records", "x"]):
+            with self.subTest(extra):
+                p = self.run_replay(args=extra)
+                self.assertEqual(p.returncode, 2)
+                self.assertIn("usage: --workdir R [--keep-coverage-records]", p.stderr)
 
 
 if __name__ == "__main__":

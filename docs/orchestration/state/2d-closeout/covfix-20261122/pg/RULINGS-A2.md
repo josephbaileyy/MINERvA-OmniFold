@@ -402,3 +402,43 @@ the system or a pin. Five causes:
   (b3-run3-recheck.out): pass, no problems; all 21 interpreter execs bound; the three directories allowed.
 - Tests: Round9 (12), with run 3's exec lines and its three walks as the fixtures; the family's pins held to
   b3-interp-pins.out; the two driver refusals. 48 mutants.
+
+## Round 10: D3′(ii) on gevgen's flux path (B3 run 4's STOP; Joseph's decision, 2026-11-27)
+
+**The STOP.** B3's fourth run (receipt install/pg-replay-g2111a.py.out, 3c88ff0e…) cleared round 9's graphs check
+and STOPped at slot 1's spline coverage: `coverage-none` plus two `coverage-pair` problems.
+
+**The evidence** (read-only, install/b3-diag/, each script's sha to the director before it ran): b3-run4-diag.out
+and b3-run4-diag2.out. The cause is in D3′'s design. In flux mode gevgen calls GMCJDriver::Configure before
+UseSplines (gEvGen.cxx:360-361), so CreateSplines, where D3′'s markers live, never runs. The pinned libGFwEG holds
+no assert expression and no `__assert_fail`, so a missing spline can still exit 0. The director classed it as a
+design false STOP (class c).
+
+**The decision.** Joseph, 2026-11-27: "okay yes I go with the recommendations", after an unanchored codex-school2
+read (decision-read/). DESIGN-D3PRIME-II.md (3ba97d78) records the adopted design, with the director's tightenings:
+the `Getting spline` requirement, the comparison against the driver's own inventory, N from the driver's record (not
+a literal), and the validation flag set only by the replay runner.
+
+**As built.**
+- Messenger: GEVGDriver and XSecSplLst raised to DEBUG; `MESSENGER_SHA256` eaf9f276….
+- `coverage-log`: CoverageScan, one pass over the raw bytes, records split at GENIE's layout prefix (confirmed on
+  real bytes, b3-run4-diag3.out). P1-P4 as §3 states. A next phase arriving inside a sum spline closes it, so a sum
+  spline cut short is counted.
+- `coverage-keep`: written once (O_EXCL, 0600). It keeps typed records, and only the marker lines of a marker record.
+  Damaged and foreign records are counted, not kept.
+- pg_generate.sh: on a nonzero exit, after drain, each coverage directory's public-seed files are deleted, its
+  records kept and the raw log deleted, each deletion verified. Nothing on a pass.
+- pg_replay.sh: D5's trap keeps the records on a STOP, or on every exit under `--keep-coverage-records`; deleted.json
+  names the kept file and its sha. The runner passes the flag, `deleted_problems` requires the kept records, and
+  `kept_problems` checks every kept file in `finally` on every path.
+- **The stderr split** (the director's ruling, 2026-11-27: fix it in round 10, not after run 5). The layout diagnostic
+  (b3-run4-diag3.out) showed a ROOT warning spliced into the middle of a GENIE record: stdout is buffered, stderr is
+  not, and the coverage mode merged them. Inside a sum spline that would false-STOP run 5. GENIE R-3_04_00 has
+  exactly one log4cpp appender, `new log4cpp::OstreamAppender("default", &cout)` (Messenger.cxx:62), added to the
+  root category (:74). The only other "Appender" in the tree is the physics class InitialStateAppender. So every
+  record goes to stdout. run_gevgen_v3.sh's coverage mode now writes `gevgen_cmd > gevgen.log 2> gevgen.err` and
+  refuses an existing gevgen.err; argv-check expects exactly that line, and F1's genie mode is unchanged.
+  `coverage-log --err` (required) and `coverage-keep --err` hash stderr and count its lines by ROOT's message forms,
+  never parsing it. The drivers delete gevgen.err with the log, deleted.json records its hash, and the runner's
+  sweep covers it. A test with diag3's own line STOPs under the merged form and passes under the split.
+

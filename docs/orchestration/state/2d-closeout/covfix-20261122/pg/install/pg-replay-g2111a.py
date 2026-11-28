@@ -29,6 +29,7 @@ import os
 import pwd
 import re
 import socket
+import stat
 import subprocess
 import sys
 import tarfile
@@ -283,7 +284,58 @@ def deleted_problems(d, r=None):
               d[k]["gntp.ghep.root"]["decoded"]["holds_seed"] is True and d[k]["gntp.ghep.root"]["decoded"]["bytes_inflated"] > 0
               and {"inflated", "int32-object"} & set(d[k]["gntp.ghep.root"]["decoded"]["hits"])
               and d[k]["gntp.ghep.root"]["decoded"]["seed_objects"] != [])]
+    # D3′(ii)'s validation (DESIGN-D3PRIME-II.md §3, §4): under --keep-coverage-records each coverage log's records
+    p += [f"{k}/gevgen.log: its recognized records were not kept" for k in ("coverage_slot1", "coverage_slot2")
+          if f"{k}/gevgen.log" not in bad and not (type(d[k]["gevgen.log"].get("kept")) is dict
+                                                     and d[k]["gevgen.log"]["kept"].get("file") == "coverage_kept.json"
+                                                     and _hex64(d[k]["gevgen.log"]["kept"].get("sha256")))]
     return p + bad
+
+
+KEPT_MAX = 1 << 30   # a kept-records file larger than this is a STOP, not a read
+
+
+def kept_problems(run_dir):
+    """[problems], {slot: summary}: every coverage_kept.json under a coverage directory, on every terminal path (a
+    nonzero driver exit bypasses deleted_problems): a regular file, mode 0600, at most KEPT_MAX bytes, coverage-keep's
+    JSON, and the sha256 deleted.json records for it when that record is readable."""
+    probs, seen = [], {}
+    try:
+        with open(os.path.join(run_dir, "deleted.json")) as f:
+            d = json.load(f)
+    except (OSError, ValueError):
+        d = None
+    for slot, sub in (("coverage_slot1", "coverage/G21_11a_00_000"), ("coverage_slot2", "coverage/G18_02a_00_000")):
+        k = os.path.join(run_dir, sub, "coverage_kept.json")
+        rec = (d.get(slot, {}).get("gevgen.log", {}).get("kept") if type(d) is dict and type(d.get(slot)) is dict
+               and type(d[slot].get("gevgen.log")) is dict else None)
+        try:
+            st = os.lstat(k)
+        except FileNotFoundError:
+            if type(rec) is dict and rec.get("file"):
+                probs.append(f"{slot}: deleted.json names kept records that are not there")
+            continue
+        if not stat.S_ISREG(st.st_mode) or stat.S_IMODE(st.st_mode) != 0o600 or st.st_size > KEPT_MAX:
+            probs.append(f"{slot}: coverage_kept.json is not a regular 0600 file of at most {KEPT_MAX} bytes")
+            continue
+        try:
+            fd = os.open(k, os.O_RDONLY | O_NOFOLLOW)
+            with os.fdopen(fd, "rb") as f:
+                data = f.read()
+            j = json.loads(data)
+        except (OSError, ValueError):
+            probs.append(f"{slot}: coverage_kept.json is unreadable")
+            continue
+        h = hashlib.sha256(data).hexdigest()
+        if not (type(j) is dict and j.get("check") == "coverage-keep" and type(j.get("records")) is list
+                and type(j.get("n_records")) is int and j["n_records"] == len(j["records"])):
+            probs.append(f"{slot}: coverage_kept.json is not coverage-keep's record")
+        if type(rec) is dict and rec.get("sha256") != h:
+            probs.append(f"{slot}: coverage_kept.json differs from the sha256 deleted.json records")
+        seen[slot] = {"sha256": h, "bytes": len(data), "n_records": j.get("n_records") if type(j) is dict else None,
+                      "log_sha256": j.get("log_sha256") if type(j) is dict else None,
+                      "problems": (j.get("problems") or [])[:20] if type(j) is dict else None}
+    return probs, seen
 
 
 EVENT_DIRS = ("work/t0", "coverage/G21_11a_00_000", "coverage/G18_02a_00_000", "gst")
@@ -300,7 +352,7 @@ def leftovers(run_dir):
             continue
         for n in names:
             if (n.endswith((".ghep.root", ".gst.root", ".status")) or n == "input-flux.root"
-                    or (d.startswith("coverage") and n == "gevgen.log")):
+                    or (d.startswith("coverage") and n in ("gevgen.log", "gevgen.err"))):
                 out.append(f"{d}/{n}")
                 try:
                     os.unlink(os.path.join(run_dir, d, n))
@@ -406,7 +458,8 @@ def replay(parent=REPLAY_PARENT, archive_b64=None, archive_sha=None, blobs=None,
             p = None
             try:
                 p = run(["/usr/bin/nice", "-n", "19", "/usr/bin/timeout", str(WALL_CAP_S), "bash", driver,
-                         "--workdir", os.path.join(w, "run")], cwd=os.path.join(w, "run"), env=env,
+                         "--workdir", os.path.join(w, "run"), "--keep-coverage-records"],
+                        cwd=os.path.join(w, "run"), env=env,
                         stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
             finally:                    # no writer outlives the driver: its session's stragglers are KILLed
                 rec["quiesced"], rec["quiet"] = quiesce(getattr(p, "pid", None))
@@ -439,6 +492,8 @@ def replay(parent=REPLAY_PARENT, archive_b64=None, archive_sha=None, blobs=None,
             rec["left"] = len(left)
             if left:
                 rec["stops"].append(f"Stop: deleted-record: {len(left)} event or status files were left, now removed")
+            kp, rec["kept"] = kept_problems(os.path.join(rec["replay_dir"], "run"))
+            rec["stops"] += [f"Stop: kept-records: {x}" for x in kp]
     rec["verdict"] = "GO" if not rec["stops"] else "STOP"
     return rec
 

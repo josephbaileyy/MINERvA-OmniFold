@@ -29,8 +29,12 @@ CVMFS_REPO=/cvmfs/larsoft.opensciencegrid.org
 PY=/usr/bin/python3.11   # the checks' interpreter outside the analysis environment (the probe's; not the node's python3)
 
 refuse() { echo "[replay] refusing: $1" >&2; exit 2; }
-[ "$1" = "--workdir" ] && [ $# -eq 2 ] || refuse "usage: --workdir R"
+KEEPCOV=""     # --keep-coverage-records: the replay runner's validation flag (DESIGN-D3PRIME-II.md §3): keep the
+#   coverage logs' recognized records on every exit, a pass too; production (pg_generate.sh) has no such flag
+[ "$1" = "--workdir" ] && { [ $# -eq 2 ] || { [ $# -eq 3 ] && [ "$3" = "--keep-coverage-records" ]; }; } \
+  || refuse "usage: --workdir R [--keep-coverage-records]"
 R=$2
+[ $# -eq 3 ] && KEEPCOV=1
 case "$R" in /*) ;; *) refuse "R must be absolute" ;; esac
 [ -d "$R" ] && [ -z "$(ls -A "$R")" ] || refuse "R must be an existing empty directory"
 [ "$(cd "$R" && pwd -P)" = "$(pwd -P)" ] || refuse "cwd is not R"
@@ -94,11 +98,32 @@ DELETED=""
 delete_events() {   # D5: on every exit, once the writers have ended (every step here runs in the foreground), the event
   # and status files of the public-seed runs are deleted; R/deleted.json keeps each file's sha256 and size, whether
   # its bytes hold the public seed as text, and for a ROOT file the decoded scan and (the gst) its schema. Every file's
-  # unlink is tried even if reading it fails; any file left is a failure, and the trap tries again on exit
+  # unlink is tried even if reading it fails; any file left is a failure, and the trap tries again on exit. A coverage
+  # log's recognized records are kept first (pg_verify coverage-keep, DESIGN-D3PRIME-II.md §4) on a STOP, or on every
+  # exit under --keep-coverage-records; the log is deleted whether or not that succeeds
+  local st=$? keep=""
   [ -z "$DELETED" ] || return 0
-  "$PY" -I -B - "$R/deleted.json" "$HERE" "$W1" "$C1" "$C2" "$M1" <<'EOF' || return 1
-import glob, hashlib, json, os, sys
-out, here, dirs = sys.argv[1], sys.argv[2], sys.argv[3:]
+  { [ "$st" -ne 0 ] || [ -n "$KEEPCOV" ]; } && keep=1
+  "$PY" -I -B - "$R/deleted.json" "$HERE" "$keep" "$R/splines/${T}_CH.xml.gz" "$R/splines/${T2}_CH.xml.gz" \
+    "$W1" "$C1" "$C2" "$M1" <<'EOF' || return 1
+import glob, hashlib, json, os, subprocess, sys
+out, here, keep, reduced, dirs = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4:6], sys.argv[6:]
+def kept_records(log, slot):                         # the recognized records only, written once beside the log
+    k = os.path.join(os.path.dirname(log), "coverage_kept.json")
+    red = reduced[0 if slot == "coverage_slot1" else 1]
+    extra = ["--script", os.path.join(here, "run_gevgen_v3.sh"), "--reduced", red] if os.path.isfile(red) else []
+    err = os.path.join(os.path.dirname(log), "gevgen.err")
+    extra += ["--err", err] if os.path.isfile(err) else []
+    try:
+        p = subprocess.run([sys.executable, "-I", "-B", os.path.join(here, "pg_verify.py"), "coverage-keep",
+                            "--log", log, "--out", k] + extra, stdin=subprocess.DEVNULL, capture_output=True,
+                           timeout=1800)
+        with open(k, "rb") as f:
+            data = f.read()
+        return {"file": "coverage_kept.json", "rc": p.returncode, "sha256": hashlib.sha256(data).hexdigest(),
+                "bytes": len(data)}
+    except Exception as x:
+        return {"file": None, "error": type(x).__name__}
 sys.path.insert(0, here)
 import pg_lib
 forms = [b"123456789", format(123456789, "x").encode(), format(123456789, "X").encode()]
@@ -141,6 +166,21 @@ for key, w in zip(("t0", "coverage_slot1", "coverage_slot2", "merged"), dirs):
                     bad = 1
         except Exception as x:                       # whatever fails, the file is still unlinked below
             e, bad = {"error": f"unreadable: {type(x).__name__}"}, 1
+        if name == "gevgen.log":
+            e["kept"] = kept_records(p, key) if keep else None
+            err = os.path.join(w, "gevgen.err")             # its stderr, apart (round 10): hashed, then deleted
+            if os.path.lexists(err):
+                try:
+                    with open(err, "rb") as f:
+                        data = f.read()
+                    e["err"] = {"sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data),
+                                "holds_public_seed": any(x in data for x in forms)}
+                except Exception as x:
+                    e["err"], bad = {"error": f"unreadable: {type(x).__name__}"}, 1
+                try:
+                    os.remove(err)
+                except OSError:
+                    bad = 1
         got[name] = e
         try:
             save()                                   # the record first, so an abort cannot lose what was read
@@ -150,7 +190,8 @@ for key, w in zip(("t0", "coverage_slot1", "coverage_slot2", "merged"), dirs):
             os.remove(p)
         except OSError:
             bad = 1
-    left = sum(len(glob.glob(os.path.join(w, x))) for x in pats)
+    logs = ("gevgen.log", "gevgen.err") if key.startswith("cov") else ()
+    left = sum(len(glob.glob(os.path.join(w, x))) for x in pats + logs)
     if left:
         got["_left"], bad = left, 1
 save()
@@ -227,7 +268,8 @@ PG_TRACE_DIR="$C1" bash "$HERE/run_gevgen_v3.sh" coverage "$T" "$R/splines" "$C1
   "$R/Messenger_pg.xml" > "$R/logs/coverage_slot1.log" 2>&1 || need 1 "the coverage run (slot 1)"
 tcheck coverage "$C1/coverage.trace" "$R/splines/${T}_CH.xml.gz" "$RED" "$C1" "$R/trace_check_coverage.json" \
   --messenger "$R/Messenger_pg.xml" || need 1 "trace check (coverage)"
-V coverage-log --log "$C1/gevgen.log" --script "$HERE/run_gevgen_v3.sh" --reduced "$R/splines/${T}_CH.xml.gz" \
+V coverage-log --log "$C1/gevgen.log" --err "$C1/gevgen.err" --script "$HERE/run_gevgen_v3.sh" \
+  --reduced "$R/splines/${T}_CH.xml.gz" \
   > "$R/coverage_check.json" 2>> "$R/logs/coverage.log" || need 1 "spline coverage (slot 1)"
 pass "slot 1's spline coverage, before its gevgen"
 
@@ -261,7 +303,8 @@ PG_TRACE_DIR="$C2" bash "$HERE/run_gevgen_v3.sh" coverage "$T2" "$R/splines" "$C
 TT=$T2 tcheck coverage "$C2/coverage.trace" "$R/splines/${T2}_CH.xml.gz" "$RED2" "$C2" "$R/trace_check_coverage_slot2.json" \
   --w-pin "$R/splines/${T2}_CH.xml.gz=$RED2" --pin "$X2/gxspl-NUsmall.xml=$S2" --pin "$X2/README=$(spin "$T2" 1)" \
   --messenger "$R/Messenger_pg.xml" || need 1 "trace check (slot 2's coverage)"
-V coverage-log --log "$C2/gevgen.log" --script "$HERE/run_gevgen_v3.sh" --reduced "$R/splines/${T2}_CH.xml.gz" \
+V coverage-log --log "$C2/gevgen.log" --err "$C2/gevgen.err" --script "$HERE/run_gevgen_v3.sh" \
+  --reduced "$R/splines/${T2}_CH.xml.gz" \
   > "$R/coverage_check_slot2.json" 2>> "$R/logs/coverage.log" || need 1 "spline coverage (slot 2)"
 pass "slot 2's reduce at its real path, its completeness and its spline coverage"
 

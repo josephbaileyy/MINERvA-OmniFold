@@ -60,12 +60,20 @@ any check is the single reason "internal-error: <exception type>", which is a fa
       run (a final directory on another mount, no mount inside a walked root, the real strace line for a path holding
       ') = -1').
   revision --repo R; reduce-check --source S --reduced R --script run_gevgen_v3.sh; messenger --laconic L --out M;
-  coverage-log --log L; argv-check --script run_gevgen_v3.sh
+  coverage-log --log L --err E --script S --reduced R;
+  coverage-keep --log L --out K [--err E --script S --reduced R];
+  argv-check --script run_gevgen_v3.sh
       the CVMFS revision and root hash; the reduce's completeness for F1's argv pairs (tune, key and every knot, no
-      duplicate); the coverage messenger (laconic with only GEVGDriver at DEBUG, pinned); the coverage log (--script
-      and --reduced: every spline needed was found, none built, each argv pair needed, each need in the reduced
-      spline); that gevgen runs only through gevgen_cmd, sealed and coverage argv differing in N, the seed and the
-      messenger, with no other XML path.
+      duplicate); the coverage messenger (laconic with only GEVGDriver and XSecSplLst at DEBUG, pinned); the coverage
+      log (D3′(ii) as adopted, DESIGN-D3PRIME-II.md §3: for each argv pair, one driver whose UseSplines lookups, all
+      found, are its inventory, every key a full key of the reduced spline in its tune; one sum spline of N knot
+      blocks, N from its own record, each looking up and evaluating exactly that inventory, every found lookup
+      followed by its Getting-spline record, every label interpolated; none of GENIE's missing-spline messages; no
+      damaged record inside a sum spline; read as raw bytes, hashed; stderr, E, apart: hashed and its lines counted,
+      never parsed, as GENIE's records all go to cout); coverage-keep writes only the recognized records, the other
+      records' counts, the raw log's and stderr's hash and size and stderr's line counts, O_EXCL (§4); that gevgen
+      runs only through gevgen_cmd, sealed and coverage argv differing in N, the seed and the messenger, with no other
+      XML path.
   revision-compare --start S --end E [--trace-check J ...]; node-record
       a changed revision passes only if every CVMFS file the run read re-hashes to its pin now; /proc's options,
       the Slurm job and its CPUs, and other users' processes, recorded (never a gate).
@@ -993,51 +1001,311 @@ def exe_problems(paths, manifest, genie_root=GENIE_ROOT, ld_library_path=None, c
 
 # --------------------------------------------------------------------------------------- the spline coverage (D3')
 
-NEED, FOUND, BUILT = "Need xsec spline for ", "Spline was found", "The spline wasn't loaded at initialization"
-MESSENGER_LINE = (b'  <priority msgstream="GEVGDriver">                    WARN   </priority>',
-                  b'  <priority msgstream="GEVGDriver">                    DEBUG  </priority>')
+MESSENGER_LINES = (           # D3′(ii) as adopted (DESIGN-D3PRIME-II.md §3): GEVGDriver and XSecSplLst raised to DEBUG
+    (b'  <priority msgstream="GEVGDriver">                    WARN   </priority>',
+     b'  <priority msgstream="GEVGDriver">                    DEBUG  </priority>'),
+    (b'  <priority msgstream="XSecSplLst">                    WARN   </priority>',
+     b'  <priority msgstream="XSecSplLst">                    DEBUG  </priority>'))
 LACONIC_SHA256 = "13169e5b5b3f1d9a78a632982c70fbb47eb6f7f44451cbe006d6959e63e58129"     # = the genie manifest's
-MESSENGER_SHA256 = "aaf85992b47174aa47ae6e5d2c609e48e000ee879eaf256addd77a83b63e62e8"
+MESSENGER_SHA256 = "eaf9f27655b0117b14f5398dd400705f9ec0f15db0a45dba9bd1a7b6c5431479"
 
 
 def messenger(laconic_bytes):
-    """The coverage run's messenger: Messenger_laconic.xml with only GEVGDriver raised to DEBUG, or a Fail."""
+    """The coverage run's messenger: Messenger_laconic.xml with only GEVGDriver and XSecSplLst raised to DEBUG, or a
+    Fail."""
     if hashlib.sha256(laconic_bytes).hexdigest() != LACONIC_SHA256:
         raise Fail("messenger-laconic: Messenger_laconic.xml differs from its pin")
-    if laconic_bytes.count(MESSENGER_LINE[0]) != 1:
-        raise Fail("messenger-line: the GEVGDriver line is not there exactly once")
-    out = laconic_bytes.replace(*MESSENGER_LINE)
+    out = laconic_bytes
+    for old, new in MESSENGER_LINES:
+        if out.count(old) != 1:
+            raise Fail("messenger-line: a raised stream's line is not there exactly once")
+        out = out.replace(old, new)
     if hashlib.sha256(out).hexdigest() != MESSENGER_SHA256:
         raise Fail("messenger-sha: the coverage messenger differs from its pin")
     return out
 
 
-def coverage_problems(log_text, pairs=None, keys=None):
-    """[problems]: every 'Need xsec spline for X' answered by 'Spline was found' before the next one, none built;
-    with pairs, each (nu, target) of F1's argv needed at least once; with keys, every X among the reduced spline's."""
-    probs, need, n, asked = [], None, 0, []
-    for ln in log_text.splitlines():
-        if NEED in ln:
-            if need is not None:
-                probs.append(f"coverage-unanswered: {need}")
-            need, n = ln.split(NEED, 1)[1].strip(), n + 1
-            asked.append(need)
-        elif FOUND in ln:
-            if need is None:
-                probs.append("coverage-orphan: a 'Spline was found' with no spline asked for")
-            need = None
-        elif BUILT in ln:
-            probs.append(f"coverage-built: GENIE computed a spline the pinned file lacks ({need})")
-            need = None
-    if need is not None:
-        probs.append(f"coverage-unanswered: {need}")
-    if n == 0:
-        probs.append("coverage-none: the log names no spline needed")
-    got = {(f.get("nu"), f.get("tgt")) for f in (dict(re.findall(r"(?:^|;)(nu|tgt):([^;]+)", x)) for x in asked)}
-    probs += [f"coverage-pair: no spline needed for nu {a} on {b}" for a, b in sorted(pairs or ()) if (a, b) not in got]
-    if keys is not None:
-        probs += [f"coverage-key: {x} is not in the reduced spline" for x in sorted(set(asked) - set(keys))]
-    return probs
+# A GENIE log record (log4cpp's BasicLayout, GENIE's LOG and SLOG macros, Messenger.h:84-99; on real bytes in
+# b3-run4-diag3.out): "<seconds> <PRIORITY> <stream> <ndc>: [n] <File.cxx::Function (line)> : <text>", or
+# "[s] <Function (line)> : <text>"; each newline in the message continues the record on its own line.
+GENIE_RECORD = re.compile(r"\d+ (FATAL|ALERT|CRIT|ERROR|WARN|NOTICE|INFO|DEBUG) (\S+) \S*: \[[ns]\] <(.+?) \((\d+)\)> : (.*)\Z")
+COVERAGE_TYPES = (    # (type, stream, priority, function, first line, continuation lines): GENIE R-3_04_00's own text
+    ("configure", "GEVGDriver", "NOTICE", "Configure", None, None),                       # GEVGDriver.cxx:146-156
+    ("check", "XSecSplLst", "DEBUG", "SplineExists", re.compile(r"Checking for spline: (\S+) in tune: (\S+)\Z"), 0),
+    ("found", "XSecSplLst", "DEBUG", "SplineExists", re.compile(r"Spline found\?\.\.\.\.([YN])\Z"), 0),   # :103-116
+    ("get", "XSecSplLst", "DEBUG", "GetSpline", re.compile(r"Getting spline: (\S+) in tune: (\S+)\Z"), 0),  # :135-136
+    ("create", "GEVGDriver", "INFO", "CreateXSecSumSpline",
+     re.compile(r"Creating spline \(sum-xsec = f\(logE\)\) in E = \[\S+, \S+\] using (\d+) knots\Z"), 0),  # :449-451
+    ("sum", "GEVGDriver", "DEBUG", "XSecSum", re.compile(r"Computing the cross section sum\Z"), 0),       # :378
+    ("compute", "GEVGDriver", "DEBUG", "XSecSum", re.compile(r"Compute cross section for interaction: ?\Z"), 1),  # :398
+    ("xsec", "GEVGDriver", "DEBUG", "XSecSum", re.compile(r"\Z"), 2),                                     # :419-423
+    ("sumxsec", "GEVGDriver", "INFO", "XSecSum",
+     re.compile(r"SumXSec\(.*GeV\)(\*interpolated\*|\*computed\*) = \S+ cm2\Z"), 0))                     # :429-434
+XSEC_LINES = (re.compile(r"Interaction   = (\S+)\Z"), re.compile(r"Cross Section (\*interpolated\*|\*computed\*) = \S+ cm2\Z"))
+CONFIGURED = re.compile(r"Configuring event generation driver for initial state: `nu-pdg:(-?\d+);tgt-pdg:(\d+);'")
+COVERAGE_MARKERS = (  # anywhere in the log, each a STOP (§3 P3)
+    ("Reverting back to not using splines", "coverage-revert"),                 # GEVGDriver.cxx:566-570
+    ("You haven't loaded any splines", "coverage-unloaded"),                     # :453-455
+    ("Couldn't find spline: ", "coverage-missing"),                              # XSecSplineList.cxx:149-150
+    ("No splines for tune ", "coverage-tune"),                                   # :109-110, :141-142
+    ("Spline requested while CurrentTune not set", "coverage-tune"),             # :99, :131
+    ("*computed*", "coverage-computed"),                                         # GEVGDriver.cxx:421, :433
+    ("Need xsec spline for ", "coverage-path"),                                  # CreateSplines (:646, :652, :656), a
+    ("The spline wasn't loaded at initialization", "coverage-path"),             # path this design does not model
+    ("Spline was found", "coverage-path"))
+KNOT_FLOOR = 3        # CreateXSecSumSpline's own precondition, nk > 2 (GEVGDriver.cxx:457)
+COVERAGE_CAP = 200    # problems reported in full; the rest counted
+
+
+def _fields(code):
+    """{field: value} of an interaction string, "nu:14;tgt:1000060120;N:2112;proc:..." (Interaction.cxx:246-284)."""
+    return dict(x.split(":", 1) for x in code.split(";") if ":" in x)
+
+
+class CoverageScan:
+    """D3′(ii) as adopted (DESIGN-D3PRIME-II.md §3): one pass over a coverage run's gevgen.log, as raw bytes.
+
+    GMCJDriver::Configure (GMCJDriver.cxx:399-447) makes exactly one driver per (nu, target) (:575-595), whose
+    Configure phase ends with UseSplines' lookup of every interaction it needs (GEVGDriver.cxx:524-571): those keys
+    are the driver's required inventory. Then it builds each driver's sum spline once (:636-662): N knot blocks, N from
+    the driver's own "using N knots" record, each looking every interaction up again and evaluating its spline
+    (:386-434). The scan checks the bootstrap only; lookups after the last sum spline (event time) are not checked."""
+
+    def __init__(self, pairs, keys, tune, keep=None):
+        self.pairs, self.keys, self.tune, self.keep = set(pairs), keys, tune, keep
+        self.h, self.size, self.probs, self.more = hashlib.sha256(), 0, [], 0
+        self.configs, self.sums = [], []          # each driver's pair and inventory; each sum spline's blocks
+        self.state, self.cur, self.wait_found, self.records, self.other = "pre", None, None, 0, {}
+        self.rec = None
+
+    def problem(self, p):
+        if p in self.probs:
+            return
+        if len(self.probs) < COVERAGE_CAP:
+            self.probs.append(p)
+        else:
+            self.more += 1
+
+    def feed(self, raw):
+        self.h.update(raw)
+        self.size += len(raw)
+        line = raw.rstrip(b"\n").decode("utf-8", "replace")
+        for text, code in COVERAGE_MARKERS:
+            if text in line:
+                self.problem(f"{code}: the log has {text.strip()!r}")
+        m = GENIE_RECORD.match(line)
+        if m:
+            self.close()
+            self.rec = {"p": m.group(1), "s": m.group(2), "w": m.group(3).split("::")[-1], "l": int(m.group(4)),
+                        "x": [m.group(5)]}
+        elif self.rec is not None:                          # a continuation line; any line before the first
+            self.rec["x"].append(line)                      # record (the banner) belongs to none
+
+    def kind(self, r):
+        """(type, groups) of a recognized record, ("damaged", None) of a GEVGDriver or XSecSplLst record whose text is
+        not its type's, or (None, None)."""
+        for t, stream, prio, fn, first, cont in COVERAGE_TYPES:
+            if r["s"] != stream or r["p"] != prio or r["w"] != fn:
+                continue
+            if t == "configure":
+                m = CONFIGURED.search(" ".join(r["x"]))
+                return (t, m.groups()) if m else (None, None)
+            m = first.match(r["x"][0])
+            if not m:
+                continue
+            if len(r["x"]) - 1 != cont:
+                return "damaged", None
+            if t == "compute":
+                return t, (r["x"][1],)
+            if t == "xsec":
+                a, b = (rx.match(x) for rx, x in zip(XSEC_LINES, r["x"][1:]))
+                return (t, (a.group(1), b.group(1))) if a and b else ("damaged", None)
+            return t, m.groups()
+        return ("damaged", None) if r["s"] in ("GEVGDriver", "XSecSplLst") else (None, None)
+
+    def close(self):
+        r, self.rec = self.rec, None
+        if r is None:
+            return
+        self.records += 1
+        t, g = self.kind(r)
+        if self.keep is not None:
+            marked = [x for x in r["x"] if any(m in x for m, _ in COVERAGE_MARKERS)]
+            if t not in (None, "damaged"):
+                self.keep(dict(r, t=t))
+            elif marked:                                    # only the lines that carry a marker
+                self.keep(dict(r, t="marker", x=marked))
+            else:
+                k = f'{r["s"]} {r["p"]}{" damaged" if t == "damaged" else ""}'
+                self.other[k] = self.other.get(k, 0) + 1
+        if self.wait_found is not None and t != "found":      # a lookup's two records are adjacent (:103-116)
+            self.problem(f"coverage-damage: a spline lookup with no 'Spline found?' after it ({self.wait_found})")
+            self.wait_found = None
+        if self.state == "sum" and t in ("create", "configure"):   # the next phase closes this one, and the count
+            self.state = "after"                                # below finds a sum spline cut short
+        if self.state == "sum":
+            return self.in_sum(t, g, r)
+        if t == "configure":                                # a second one for a pair is counted in finish()
+            self.state, self.cur = "config", {"pair": g, "inv": []}
+            self.configs.append(self.cur)
+        elif t == "create":
+            n = int(g[0])
+            if n < KNOT_FLOOR:
+                self.problem(f"coverage-knots: a sum spline of {n} knots")
+            self.state, self.cur = "sum", {"n": n, "blocks": 0, "pair": None, "block": None, "step": None}
+            self.sums.append(self.cur)
+        elif self.state == "config" and t == "check":
+            self.cur["inv"].append([g[0], g[1], None])
+            self.wait_found = g[0]
+        elif self.state == "config" and t == "found":
+            if not self.cur["inv"] or self.cur["inv"][-1][2] is not None:
+                self.problem("coverage-damage: a 'Spline found?' with no lookup before it")
+            else:
+                self.cur["inv"][-1][2] = g[0]
+            self.wait_found = None
+        elif self.state == "config" and t == "get":
+            self.problem("coverage-phase: a spline evaluated while a driver was being configured")
+        elif self.state == "after" and t == "sum":
+            self.problem("coverage-blocks: a knot block after its sum spline closed")
+        elif t == "found":
+            self.wait_found = None
+
+    def in_sum(self, t, g, r):
+        s = self.cur
+        b, step = s["block"], s["step"]
+        if t is None or t == "damaged":
+            self.problem(f"coverage-damage: a {r['s']} {r['p']} record ({r['w']}) inside a sum spline"
+                         if t is None else f"coverage-damage: a {r['s']} {r['w']} record of the wrong shape")
+            return
+        if b is None:                                       # between blocks: a block opens
+            if t != "sum":
+                return self.problem(f"coverage-blocks: a {t} record where a knot block should open")
+            s["block"], s["step"] = {"keys": []}, "compute"
+            return
+        order = {"compute": ("compute", "sumxsec"), "check": ("check",), "found": ("found",), "get": ("get",),
+                 "xsec": ("xsec",)}
+        if t not in order[step]:                            # reported once; the scan then follows the record seen
+            self.problem(f"coverage-order: a {t} record where {' or '.join(order[step])} should be")
+        if t == "compute":
+            b["x"] = g[0]
+            f = _fields(g[0])
+            pair = (f.get("nu"), f.get("tgt"))
+            if s["pair"] is None:
+                s["pair"] = pair
+            elif s["pair"] != pair:
+                self.problem(f"coverage-pair: one sum spline evaluates nu {pair[0]} on {pair[1]} and {s['pair']}")
+            s["step"] = "check"
+        elif t == "check":
+            if g[0].split("/", 2)[-1] != b.get("x") or g[1] != self.tune:
+                self.problem(f"coverage-key: {g[0]} in tune {g[1]} looked up for {b.get('x')}")
+            b["k"] = g[0]
+            b["keys"].append(g[0])
+            s["step"] = "found"
+        elif t == "found":
+            if g[0] != "Y":
+                self.problem(f"coverage-lookup: {b.get('k')} not found in a knot block")
+            s["step"] = "get"
+        elif t == "get":
+            if g[0] != b.get("k") or g[1] != self.tune:
+                self.problem(f"coverage-lookup: {b.get('k')} found but {g[0]} (tune {g[1]}) evaluated")
+            s["step"] = "xsec"
+        elif t == "xsec":
+            if g[0] != b.get("x"):                          # a "*computed*" label is a marker (P3), on any line
+                self.problem(f"coverage-order: {g[0]} reported after {b.get('x')} was evaluated")
+            s["step"] = "compute"
+        elif t == "sumxsec":                                # the block closes
+            s.setdefault("block_keys", []).append(b["keys"])
+            s["blocks"] += 1
+            s["block"] = None
+            if s["blocks"] == s["n"]:
+                self.state = "after"
+
+    def finish(self):
+        self.close()
+        if self.state == "sum":
+            self.problem("coverage-truncated: the log ends inside a sum spline")
+        if not self.configs and not self.sums:
+            self.problem("coverage-none: the log has no driver configuration and no sum spline "
+                         "(are GEVGDriver and XSecSplLst at DEBUG?)")
+        for c in self.configs:
+            if c["pair"] not in self.pairs:
+                self.problem(f"coverage-phase: a driver configured for nu {c['pair'][0]} on {c['pair'][1]}")
+        for s in self.sums:
+            if s["pair"] is not None and s["pair"] not in self.pairs:
+                self.problem(f"coverage-phase: a sum spline for nu {s['pair'][0]} on {s['pair'][1]}")
+        for pair in sorted(self.pairs):
+            nu, tgt = pair
+            cs = [c for c in self.configs if c["pair"] == pair]
+            ss = [s for s in self.sums if s["pair"] == pair]
+            if len(cs) != 1 or len(ss) != 1:
+                self.problem(f"coverage-phase: nu {nu} on {tgt} has {len(cs)} driver configurations and {len(ss)} "
+                             "sum splines, not one of each")
+                continue
+            inv, s = cs[0]["inv"], ss[0]
+            ks = [k for k, _, _ in inv]
+            if not inv:
+                self.problem(f"coverage-inventory: nu {nu} on {tgt}'s driver looked up no spline")
+            if len(set(ks)) != len(ks):
+                self.problem(f"coverage-inventory: nu {nu} on {tgt}'s driver looked a spline up twice")
+            for k, t, found in inv:
+                f = _fields(k.split("/", 2)[-1])
+                if found != "Y":
+                    self.problem(f"coverage-lookup: {k} not found when nu {nu} on {tgt}'s driver was configured")
+                if t != self.tune:
+                    self.problem(f"coverage-key: {k} looked up in tune {t}, not {self.tune}")
+                if (f.get("nu"), f.get("tgt")) != pair:
+                    self.problem(f"coverage-key: {k} in nu {nu} on {tgt}'s inventory")
+                if (self.tune, k) not in self.keys:
+                    self.problem(f"coverage-key: {k} is not in the reduced spline")
+            if s["blocks"] != s["n"]:
+                self.problem(f"coverage-blocks: nu {nu} on {tgt}'s sum spline has {s['blocks']} knot blocks, "
+                             f"not its {s['n']}")
+            if any(bk != ks for bk in s.get("block_keys", [])):
+                self.problem(f"coverage-blocks: a knot block of nu {nu} on {tgt} evaluates other splines than its "
+                             "driver's inventory")
+        if self.more:
+            self.probs.append(f"coverage-more: {self.more} further problems")
+        return self.probs
+
+
+def coverage_inputs(script, reduced):
+    """(pairs, {(tune, key)}, tune) for a coverage check: F1's argv pairs, the reduced spline's full keys for them,
+    and its one tune."""
+    pairs = argv_pairs(open(script).read())
+    keys = {k for d in _spline_keys(reduced, pairs)[0].values() for k in d}
+    tunes = {t for t, _ in keys}
+    if len(tunes) != 1:
+        raise Fail(f"coverage-tune: the reduced spline holds {len(tunes)} tunes for F1's pairs, not one")
+    return pairs, keys, tunes.pop()
+
+
+ERR_KINDS = (b"Warning in <", b"Error in <", b"Info in <", b"Fatal in <", b"Break in <")   # ROOT's message forms
+
+
+def stderr_summary(path):
+    """{sha256, bytes, lines, counts}: a coverage run's stderr (gevgen.err), hashed as raw bytes and its lines counted
+    by ROOT's message forms. It is non-record text and never parsed for records: GENIE's one log appender writes to
+    cout (Messenger.cxx:62, added to the root category at :74), so every GENIE record is in the stdout log."""
+    h, size, n, counts = hashlib.sha256(), 0, 0, {}
+    fd = _open(path)
+    with os.fdopen(fd, "rb") as f:
+        for raw in f:
+            h.update(raw)
+            size, n = size + len(raw), n + 1
+            k = next((x.decode().split(" in")[0] for x in ERR_KINDS if raw.startswith(x)), "other")
+            counts[k] = counts.get(k, 0) + 1
+    return {"sha256": h.hexdigest(), "bytes": size, "lines": n, "counts": counts}
+
+
+def coverage_scan(log_path, pairs, keys, tune, keep=None):
+    """The CoverageScan of a log, read once as raw bytes through one descriptor."""
+    sc = CoverageScan(pairs, keys, tune, keep)
+    fd = _open(log_path)
+    with os.fdopen(fd, "rb") as f:
+        for raw in f:
+            sc.feed(raw)
+    sc.finish()
+    return sc
 
 
 def argv_pairs(script_text):
@@ -1063,14 +1331,14 @@ def argv_problems(script_text):
     if len(calls) != 1:
         probs.append(f"argv-gevgen: gevgen is invoked {len(calls)} times, not once inside gevgen_cmd")
     uses = re.findall(r"^[ \t]+gevgen_cmd(.*)$", script_text, re.M)            # the calls, indented; not the definition
-    if uses != [" > gevgen.log 2>&1", " > gevgen.log 2>&1"]:
+    if uses != [" > gevgen.log 2>&1", " > gevgen.log 2> gevgen.err"]:     # F1's genie mode; coverage's split
         probs.append(f"argv-modes: gevgen_cmd is called as {uses}")
     cov = re.search(r"^  coverage\)(.*?)^    ;;$", script_text, re.M | re.S)
     gen = re.search(r"^  genie\)(.*?)^    ;;$", script_text, re.M | re.S)
     body = re.search(r"^gevgen_cmd\(\) \{(.*?)^\}", script_text, re.S | re.M)
     if not body or "--xml-path" in body.group(1) or re.search(r"GXMLPATHS|GALGCONF", script_text):
         probs.append("argv-xmlpath: gevgen_cmd or the script sets GENIE's XML path other than by GXMLPATH")
-    tail = ["    pg_trace coverage", '    N=1; SEED=123456789; MSG="$MSGFILE"', "    gevgen_cmd > gevgen.log 2>&1"]
+    tail = ["    pg_trace coverage", '    N=1; SEED=123456789; MSG="$MSGFILE"', "    gevgen_cmd > gevgen.log 2> gevgen.err"]
     cl = cov.group(1).splitlines() if cov else []
     inputs = {"TUNE", "FLUX", "N", "SEED", "MSG", "GENIE_SPLINES_V3", "GENIE", "PG_TRACE", "GXMLPATH"}
     sets = [ln for ln in cl if inputs & set(re.findall(r"(?:^|[;\s])([A-Z_][A-Z0-9_]*)(?:\[[^\]]*\])?\+?=", ln))]
@@ -1114,11 +1382,6 @@ def _spline_keys(path, pairs=None):
       except (ET.ParseError, EOFError) as e:
         raise Fail(f"spline-unparsable: {os.path.basename(path)} is not a well-formed XML document") from e
     return out, dups
-
-
-def spline_codes(path, pairs):
-    """{interaction string}: what GEVGDriver's "Need xsec spline for" names, for each spline of pairs in path."""
-    return {name.split("/", 2)[2] for d in _spline_keys(path, pairs)[0].values() for _, name in d if name.count("/") >= 2}
 
 
 def reduce_problems(source, reduced, pairs):
@@ -1414,18 +1677,60 @@ def cmd_messenger(a):
 
 
 def cmd_coverage(a):
+    h = size = err = None
     try:
-        text = open(a.log, errors="replace").read()
-        pairs = argv_pairs(open(a.script).read())
-        probs = coverage_problems(text, pairs, spline_codes(a.reduced, pairs))
-        h = hashlib.sha256(text.encode()).hexdigest()
+        sc = coverage_scan(a.log, *coverage_inputs(a.script, a.reduced))
+        probs, h, size = sc.probs, sc.h.hexdigest(), sc.size
+        err = stderr_summary(a.err)
     except Fail as e:
-        probs, h = [str(e)], None
+        probs = [str(e)]
     except OSError as e:
-        probs, h = [f"coverage-unreadable: {e.strerror}"], None
+        probs = [f"coverage-unreadable: {os.path.basename(e.filename or '')} {e.strerror}"]
     except Exception as e:
-        probs, h = [f"internal-error: {type(e).__name__}"], None
-    return _out({"check": "coverage", "pass": not probs, "log_sha256": h, "problems": probs})
+        probs = [f"internal-error: {type(e).__name__}"]
+    return _out({"check": "coverage", "pass": not probs, "log_sha256": h, "log_size": size, "err": err,
+                 "problems": probs})
+
+
+def cmd_coverage_keep(a):
+    """D3′(ii)'s retention (DESIGN-D3PRIME-II.md §4): from a coverage run's gevgen.log, written once to --out (O_EXCL,
+    0600), only the recognized records (their type, priority, stream, function, line and text), counts of every other
+    record by stream and priority, the raw log's sha256 and size, and the scan's problems. No other text is kept."""
+    try:
+        fd = os.open(a.out, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0), 0o600)
+    except OSError as e:
+        return _out({"check": "coverage-keep", "pass": False, "problems": [f"keep-exists: {e.strerror}"]})
+    probs, sc = [], None
+    with os.fdopen(fd, "w") as f:
+        f.write('{"check": "coverage-keep", "records": [')
+        n = [0]
+
+        def keep(r):
+            f.write((", " if n[0] else "") + json.dumps(r, sort_keys=True))
+            n[0] += 1
+        inputs, why = (set(), set(), None), None             # without its inputs the scan still recognizes records
+        if a.script and a.reduced:
+            try:
+                inputs = coverage_inputs(a.script, a.reduced)
+            except (Fail, OSError) as e:
+                why = str(e) if isinstance(e, Fail) else f"keep-inputs: {e.strerror}"
+        try:
+            sc = coverage_scan(a.log, *inputs, keep=keep)
+        except (Fail, OSError) as e:
+            probs = [str(e) if isinstance(e, Fail) else f"keep-unreadable: {e.strerror}"]
+        except Exception as e:
+            probs = [f"internal-error: {type(e).__name__}"]
+        found = (sc.probs if inputs[2] else [why or "keep-inputs: no --script and --reduced"]) if sc else probs
+        try:
+            err = stderr_summary(a.err) if a.err else None
+        except OSError as e:
+            err = {"error": e.strerror}
+        tail = {"n_records": n[0], "other": sc.other if sc else {}, "log_sha256": sc.h.hexdigest() if sc else None,
+                "log_size": sc.size if sc else None, "err": err, "problems": found}
+        f.write("], " + json.dumps(tail, sort_keys=True)[1:])
+    print(json.dumps({"check": "coverage-keep", "pass": sc is not None, "out": a.out, "n_records": n[0],
+                      "problems": probs}))
+    return 0 if sc is not None else 1
 
 
 def cmd_argv(a):
@@ -1712,8 +2017,13 @@ def main(argv=None):
     g2.add_argument("--laconic", required=True)
     g2.add_argument("--out", required=True)
     c = sub.add_parser("coverage-log")
-    for k in ("log", "script", "reduced"):
+    for k in ("log", "err", "script", "reduced"):
         c.add_argument("--" + k, required=True)
+    ck = sub.add_parser("coverage-keep")
+    for k in ("log", "out"):
+        ck.add_argument("--" + k, required=True)
+    for k in ("err", "script", "reduced"):                       # for the scan's problems; records are recognized without
+        ck.add_argument("--" + k)
     sub.add_parser("node-record")
     dr = sub.add_parser("drain")
     dr.add_argument("--w", required=True)
@@ -1740,7 +2050,8 @@ def main(argv=None):
         ap.error("--fd must be 3 or more")
     return {"members-check": cmd_members, "tool-check": cmd_tool, "trace-check": cmd_trace, "exe-check": cmd_exe,
             "shape-check": cmd_shape, "revision": cmd_revision, "reduce-check": cmd_reduce,
-            "messenger": cmd_messenger, "coverage-log": cmd_coverage, "argv-check": cmd_argv,
+            "messenger": cmd_messenger, "coverage-log": cmd_coverage, "coverage-keep": cmd_coverage_keep,
+            "argv-check": cmd_argv,
             "host-check": cmd_host, "revision-compare": cmd_revision_compare, "node-record": cmd_node,
             "pin-hash": cmd_pin_hash, "drain": cmd_drain}[a.cmd](a)
 
