@@ -280,20 +280,11 @@ TRUTH_LABEL = {"nominal": ("the simulation prior", "simulation prior"),
 # or without the block and under C_total alone. The sentences that say what the earlier covariance C_e listed are
 # declared with the "cleared" kinds and bind to the C_e-era readouts (f0bce, f0bcenopl, f0ce). Every sentence a PROPOSAL.
 LISTED_CLAIMS = [
-    ("sec_q3_fived16.tex", "only the GiBUU hybrid truth meets the listing criterion ($p<", {"kind": "keys"}),
-    ("sec_q3_fived16.tex", "listed by $p$ alone under the baseline covariance", {"kind": "cleared"}),
-    ("sec_q3_fived16.tex", "the same single truth meets it: the GiBUU", {"kind": "without"}),
-    ("sec_q3_fived16.tex", "listed without $C_{\\mathrm{PL,5D}}$ under the baseline covariance by its cell R06", {"kind": "cleared-nopl"}),
-    ("sec_q3_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds", {"kind": "both"}),
-    ("sec_q3_fived16.tex", "Under each of the three covariances, the fake-data bias meets", {"kind": "all"}),
-    ("sec_q3_fived16.tex", "the $q_3$ tilt was also listed, and the two smaller covariances listed more truths", {"kind": "ce-more"}),
     ("appC_supplementary.tex", "simulated truths: the GiBUU hybrid, which uses", {"kind": "both"}),
     ("appC_supplementary.tex", "Under $\\CrepFiveDzero$, the synthetic $q_3$ tilt, a momentum", {"kind": "cleared"}),
     ("appC_supplementary.tex", "omitting the run-period term also flagged the separate GiBUU", {"kind": "cleared-nopl"}),
     ("appC_supplementary.tex", "the $q_3$ tilt also did.", {"kind": "cleared"}),
     ("appA_methods.tex", "Under $\\CrepFiveDzero$, the $q_3$ tilt was also flagged.", {"kind": "cleared"}),
-    ("sec_fived16.tex", "the fake-data bias exceeds the stated criteria at the GiBUU hybrid truth (", {"kind": "both"}),
-    ("sec_validity_table.tex", "Residual bias exceeds the fake-data criteria at the GiBUU hybrid truth", {"kind": "with-ce"}),
     # the compiled note's own fake-data and PRR sentences (Gemini read r1, finding 1)
     ("sec5_multidim.tex", "simulated truths, the GiBUU hybrid truth, which takes", {"kind": "both"}),
     ("sec5_multidim.tex", "the synthetic $q_3$ tilt also exceeded them", {"kind": "cleared"}),
@@ -2401,34 +2392,12 @@ def self_test():
         print(f"  ok   the C_e-era readouts in the C_rep slots fail all {len(want)} era-specific listed-truth sentences")
     else:
         print(f"  FAIL the C_e-era readouts in the C_rep slots passed {sorted(want - swapped)}"); ok = False
-    ce = {k: {y["truth"] for y in ced[k]["triggers"]["listed"]} for k in ced}
-    small = dict(ce, f0bcenopl=set(list(ce["f0bce"])))               # C_e's smaller covariances listing no more truths
-    if any("(ce-more)" in b for b in check_listed_claims(d["f0b"], texts, dn["f0b"], ce=small)):
-        print("  ok   C_e-era readouts whose smaller covariance lists no more truths fail the caption's clause")
-    else:
-        print("  FAIL C_e-era readouts whose smaller covariance lists no more truths passed the caption's clause"); ok = False
+    # The "ce-more" and "keys" plants left with their only sentences (sec_q3_fived16.tex, removed 2026-11-28 under
+    # DECISION-20261127 sec. 6): no built source states those rules now, so check_listed_claims has nothing to bind.
     for what, name, anchor, edit in (
-            ("keys a truth the readout does not list", "sec_q3_fived16.tex", LISTED_CLAIMS[0][1],
-             lambda t: t.replace(r"by its cells \fvval{f0b-A7_gibuu-cells}.", r"by its cells \fvval{f0b-A7_gibuu-cells} and $\fvval{f0b-W3-pr}$.", 1)),
-            ("drops a listed truth's keys", "sec_q3_fived16.tex", LISTED_CLAIMS[0][1],
-             lambda t: t.replace(r", by $p$ and by its cells \fvval{f0b-A7_gibuu-cells}", "", 1)),
-            ("names a truth not listed without the block", "sec_q3_fived16.tex", "the same single truth meets it: the GiBUU",
-             lambda t: t.replace(r"by its cells \fvval{f0b-A7_gibuu-cells-nopl}.", r"by its cells \fvval{f0b-A7_gibuu-cells-nopl}, and the NuWro hybrid truth.", 1)),
-            ("drops the listed truth", "sec_q3_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds",
-             lambda t: t.replace(r"the stated thresholds at the GiBUU hybrid truth alone,", r"the stated thresholds alone,", 1)),
-            ("names one more truth C_e listed", "sec_q3_fived16.tex", "listed by $p$ alone under the baseline covariance",
-             lambda t: t.replace(r"The $q_3$ tilt, listed by $p$ alone", r"The $q_3$ tilt and the NuWro hybrid truth, listed by $p$ alone", 1)),
             ("adds the q3 tilt to the without-block clearing", "appC_supplementary.tex",
              "omitting the run-period term also flagged the separate GiBUU",
-             lambda t: t.replace(r"GiBUU $\Eavail$ shape through R06,", r"GiBUU $\Eavail$ shape and the $q_3$ tilt through R06,", 1)),
-            ("lists the q3 tilt under every covariance", "sec_q3_fived16.tex",
-             "Under each of the three covariances, the fake-data bias meets",
-             lambda t: t.replace(r"at the GiBUU hybrid truth only.", r"at the GiBUU hybrid truth and the $q_3$ tilt.", 1)),
-            ("drops the C_e-era truth from the validity row", "sec_validity_table.tex",
-             "Residual bias exceeds the fake-data criteria at the GiBUU hybrid truth",
-             lambda t: t.replace(r"retains part of its prior there and at the $q_3$ tilt,", r"retains part of its prior there,", 1)),
-            ("loses its anchor", "sec_q3_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds",
-             lambda t: t.replace("The fake-data bias therefore exceeds", "The fake-data bias thus exceeds", 1))):
+             lambda t: t.replace(r"GiBUU $\Eavail$ shape through R06,", r"GiBUU $\Eavail$ shape and the $q_3$ tilt through R06,", 1)),):
         planted = dict(texts, **{name: edit(texts[name])})
         if planted[name] == texts[name]:
             print(f"  FAIL the plant that {what} did not apply"); ok = False
@@ -2438,12 +2407,6 @@ def self_test():
             print(f"  ok   a {name} sentence that {what} fails")
         else:
             print(f"  FAIL a {name} sentence that {what} passed"); ok = False
-    d = load()                                               # a readout listing one more truth fails the "keys" sentence
-    d["f0b"]["triggers"]["listed"].append({"truth": "W3", "cells": [], "p_lt_0.01": True})
-    if len([b for b in check_listed_claims(d["f0b"], texts, dn["f0b"]) if "(keys)" in b]) == 1:
-        print("  ok   a readout that lists one more truth fails the enumerating sentence")
-    else:
-        print("  FAIL a readout that lists one more truth did not fail the enumerating sentence"); ok = False
     v = all_values()
     # C_e^infl (V_F): one truth in each arm (C_e: the q3 tilt and the GiBUU hybrid; and the GiBUU E_avail shape without)
     if (v["f0b-listed-names"], v["f0b-listed-names-nopl"]) != ("the GiBUU hybrid truth", "the GiBUU hybrid truth"):
